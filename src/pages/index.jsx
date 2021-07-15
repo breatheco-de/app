@@ -15,16 +15,16 @@ export default function Home() {
       <main className={styles.main}>
         <h1 className={styles.title}>
           Welcome to
-      {' '}
-      <a href="https://nextjs.org">Next.js!</a>
-    </h1>
+                  {' '}
+                  <a href="https://nextjs.org">Next.js!</a>
+                </h1>
 
-    <div className={styles.grid}>
-      <a href="/" className={styles.card}>
-        <h2>Hola mundo</h2>
-      </a>
-    </div>
-  </main>
+                <div className={styles.grid}>
+                  <a href="/" className={styles.card}>
+                    <h2>Hola mundo</h2>
+                  </a>
+                </div>
+              </main>
 
       <footer className={styles.footer}>
         <a href="/">
