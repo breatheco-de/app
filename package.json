@@ -3,18 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "lint-staged": {
-    "*.js, *.jsx": "eslint --cache --fix"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged && pretty-quick --staged"
-    }
+    "*.js, *.jsx": "eslint --cache --fix",
+    "*.js": "eslint --cache --fix"
   },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "husky install"
   },
   "dependencies": {
     "next": "11.0.1",
@@ -32,7 +29,7 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "husky": "^4.3.8",
+    "husky": "^7.0.1",
     "lint-staged": "^11.0.1",
     "prettier": "^2.3.2",
     "pretty-quick": "^3.1.1"
