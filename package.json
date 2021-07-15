@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "lint-staged": {
-    "*.js, *.jsx": [
+    "src/**/*.{js,jsx}":[
       "eslint",
       "prettier-eslint --config",
       "git add"
