@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "lint-staged": {
-    "*.js": "eslint --cache --fix"
+    "*.js, *.jsx": "eslint --cache --fix"
   },
   "husky": {
     "hooks": {
