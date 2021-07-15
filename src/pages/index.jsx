@@ -21,10 +21,10 @@ export default function Home() {
 
                             <div className={styles.grid}>
                               <a href="/" className={styles.card}>
-                                <h2>Hola mundo</h2>
-                              </a>
-                            </div>
-                          </main>
+                                  <h2>Hola mundo</h2>
+                                </a>
+                              </div>
+                            </main>
 
       <footer className={styles.footer}>
         <a href="/">
