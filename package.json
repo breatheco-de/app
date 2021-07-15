@@ -6,6 +6,11 @@
     "*.js, *.jsx": "eslint --cache --fix",
     "*.js": "eslint --cache --fix"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged && pretty-quick --staged"
+    }
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
