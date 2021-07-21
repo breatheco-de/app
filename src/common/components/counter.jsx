@@ -1,31 +1,11 @@
-import { useSelector, useDispatch } from 'react-redux';
 import { Button, Heading, Stack } from '@chakra-ui/react';
-// import styles from '../../../styles/Home.module.css';
-
-const useCounter = () => {
-  const count = useSelector((state) => state.count);
-  const dispatch = useDispatch();
-  const increment = () => dispatch({
-    type: 'INCREMENT',
-  });
-  const decrement = () => dispatch({
-    type: 'DECREMENT',
-  });
-  const reset = () => dispatch({
-    type: 'RESET',
-  });
-  return {
-    count,
-    increment,
-    decrement,
-    reset,
-  };
-};
+import useCounter from '../store/actions/counterAction';
 
 const Counter = () => {
   const {
     count, increment, decrement, reset,
   } = useCounter();
+  console.log('COUNT', count);
   return (
     <div>
       <Heading py="30px" as="h2" size="xl" isTruncated>

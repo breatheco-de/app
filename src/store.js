@@ -1,66 +1,35 @@
-import { useMemo } from 'react';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
+import { HYDRATE, createWrapper } from 'next-redux-wrapper';
 import { composeWithDevTools } from 'redux-devtools-extension';
+import thunkMiddleware from 'redux-thunk';
+import counterReducer from './common/store/reducers/counterReducer';
+import todosReducer from './common/store/reducers/todoReducer';
 
-let store;
-
-const initialState = {
-  count: 0,
-};
-
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case 'INCREMENT':
-      return {
-        ...state,
-        count: state.count + 1,
-      };
-    case 'DECREMENT':
-      return {
-        ...state,
-        count: state.count - 1,
-      };
-    case 'RESET':
-      return {
-        ...state,
-        count: initialState.count,
-      };
-    default:
-      return state;
+const bindMiddleware = (middleware) => {
+  if (process.env.NODE_ENV !== 'production') {
+    return composeWithDevTools(applyMiddleware(...middleware));
   }
+  return applyMiddleware(...middleware);
 };
 
-function initStore(preloadedState = initialState) {
-  return createStore(
-    reducer,
-    preloadedState,
-    composeWithDevTools(applyMiddleware()),
-  );
-}
+const combinedReducer = combineReducers({
+  counterReducer,
+  todosReducer,
+});
 
-export const initializeStore = (preloadedState) => {
-  let currentStore = store ?? initStore(preloadedState);
-
-  // After navigating to a page with an initial Redux state, merge that state
-  // with the current state in the store, and create a new store
-  if (preloadedState && store) {
-    currentStore = initStore({
-      ...store.getState(),
-      ...preloadedState,
-    });
-    // Reset the current store
-    store = undefined;
+const reducer = (state, action) => {
+  if (action.type === HYDRATE) {
+    const nextState = {
+      ...state, // use previous state
+      ...action.payload, // apply delta from hydration
+    };
+    return nextState;
   }
-
-  // For SSG and SSR always create a new store
-  if (typeof window === 'undefined') return currentStore;
-  // Create the store once in the client
-  if (!store) store = currentStore;
-
-  return currentStore;
+  // console.log('working state:::', state);
+  return combinedReducer(state, action);
 };
 
-export function useStore(initializedState) {
-  const startStore = useMemo(() => initializeStore(initializedState), [initializedState]);
-  return startStore;
-}
+const initStore = () => createStore(reducer, bindMiddleware([thunkMiddleware]));
+
+const wrapper = createWrapper(initStore);
+export default wrapper;
