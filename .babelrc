@@ -7,7 +7,7 @@
 {
   "env": {
     "development": {
-      "presets": ["next/babel", "@babel/preset-env"],
+      "presets": ["next/babel"],
       "plugins": [
         [
           "babel-plugin-styled-components",
