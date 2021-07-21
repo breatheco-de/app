@@ -3,10 +3,11 @@
 //   "plugins": [["styled-components", { "ssr": true }]]
 // }
 
+// config with next and styled components
 {
   "env": {
     "development": {
-      "presets": ["next/babel"],
+      "presets": ["next/babel", "@babel/preset-env"],
       "plugins": [
         [
           "babel-plugin-styled-components",

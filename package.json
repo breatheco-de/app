@@ -17,7 +17,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "analyze": "ANALYZE=true next build"
+    "analyze": "ANALYZE=true next build",
+    "jest": "jest"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.6.5",
@@ -38,6 +39,8 @@
     "styled-components": "^5.3.0"
   },
   "devDependencies": {
+    "@testing-library/react": "^12.0.0",
+    "babel-jest": "^27.0.6",
     "babel-plugin-styled-components": "^1.13.2",
     "eslint": "^7.30.0",
     "eslint-config-airbnb": "^18.2.1",
@@ -49,6 +52,7 @@
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "husky": "^7.0.0",
+    "jest": "^27.0.6",
     "lint-staged": "^11.0.1"
   }
 }

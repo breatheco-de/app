@@ -10,7 +10,7 @@ const Counter = () => {
       <Heading py="30px" as="h2" size="xl" isTruncated>
         Redux Count:
         {' '}
-        <span>{count}</span>
+        <span data-testid="count">{count}</span>
       </Heading>
       <Stack direction="row" spacing={4} align="center" justify="center" py="5px">
         <Button colorScheme="green" variant="outline" type="button" onClick={increment}>
