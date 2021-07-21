@@ -5,19 +5,11 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 let store;
 
 const initialState = {
-  lastUpdate: 0,
-  light: false,
   count: 0,
 };
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'TICK':
-      return {
-        ...state,
-        lastUpdate: action.lastUpdate,
-        light: !!action.light,
-      };
     case 'INCREMENT':
       return {
         ...state,

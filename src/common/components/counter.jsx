@@ -1,4 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
+import { Button, Heading, Stack } from '@chakra-ui/react';
+// import styles from '../../../styles/Home.module.css';
 
 const useCounter = () => {
   const count = useSelector((state) => state.count);
@@ -26,14 +28,22 @@ const Counter = () => {
   } = useCounter();
   return (
     <div>
-      <h1>
-        Count:
+      <Heading py="30px" as="h2" size="xl" isTruncated>
+        Redux Count:
         {' '}
         <span>{count}</span>
-      </h1>
-      <button type="button" onClick={increment}>+1</button>
-      <button type="button" onClick={decrement}>-1</button>
-      <button type="button" onClick={reset}>Reset</button>
+      </Heading>
+      <Stack direction="row" spacing={4} align="center" justify="center" py="5px">
+        <Button colorScheme="green" variant="outline" type="button" onClick={increment}>
+          +1
+        </Button>
+        <Button colorScheme="green" variant="outline" type="button" onClick={decrement}>
+          -1
+        </Button>
+        <Button colorScheme="green" variant="outline" type="button" onClick={reset}>
+          Reset
+        </Button>
+      </Stack>
     </div>
   );
 };

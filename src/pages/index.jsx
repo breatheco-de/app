@@ -1,7 +1,9 @@
 // import React from 'react';
+import { Box } from '@chakra-ui/react';
 import Head from 'next/head';
 import Image from 'next/image';
 import styles from '../../styles/Home.module.css';
+import Counter from '../common/components/counter';
 
 export default function Home() {
   return (
@@ -16,14 +18,17 @@ export default function Home() {
         <h1 className={styles.title}>
           Welcome to
           {' '}
-          <a href="https://nextjs.org">Next.js!</a>
+          <a href="/">Learn!</a>
         </h1>
 
-        <div className={styles.grid}>
+        <Counter />
+        {/* <div className={styles.grid}> */}
+        <Box mt="1" fontWeight="semibold" as="h4" lineHeight="tight" isTruncated>
           <a href="/" className={styles.card}>
             <h2>Hola mundo</h2>
           </a>
-        </div>
+        </Box>
+        {/* </div> */}
       </main>
 
       <footer className={styles.footer}>
