@@ -4,6 +4,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import styles from '../../styles/Home.module.css';
 import Counter from '../common/components/counter';
+import { H1 } from '../common/styledComponents/Head';
 
 export default function Home() {
   return (
@@ -15,11 +16,11 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
+        <H1 type="h1" className={styles.title}>
           Welcome to
           {' '}
           <a href="/">Learn!</a>
-        </h1>
+        </H1>
 
         <Counter />
         {/* <div className={styles.grid}> */}

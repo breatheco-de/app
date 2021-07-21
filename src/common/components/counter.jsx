@@ -5,7 +5,6 @@ const Counter = () => {
   const {
     count, increment, decrement, reset,
   } = useCounter();
-  console.log('COUNT', count);
   return (
     <div>
       <Heading py="30px" as="h2" size="xl" isTruncated>
