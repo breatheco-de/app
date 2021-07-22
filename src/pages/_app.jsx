@@ -3,6 +3,7 @@ import '../../styles/globals.css';
 import PropTypes from 'prop-types';
 import { ChakraProvider } from '@chakra-ui/react';
 import { appWithTranslation } from 'next-i18next';
+// import { ThemeProvider } from '@chakra-ui/core';
 import wrapper from '../store';
 
 function LearnApp({ Component, pageProps }) {

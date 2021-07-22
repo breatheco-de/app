@@ -6,6 +6,7 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import styles from '../../styles/Home.module.css';
 import Counter from '../common/components/counter';
+import ToggleColor from '../common/components/toggleColor';
 import { H1 } from '../common/styledComponents/Head';
 
 export default function Home() {
@@ -31,6 +32,7 @@ export default function Home() {
         </H1>
 
         <Counter title={t('counter:title')} resetText={t('counter:resetButton')} />
+        <ToggleColor />
       </main>
 
       <footer className={styles.footer}>
