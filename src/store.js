@@ -25,7 +25,6 @@ const reducer = (state, action) => {
     };
     return nextState;
   }
-  // console.log('working state:::', state);
   return combinedReducer(state, action);
 };
 
