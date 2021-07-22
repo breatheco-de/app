@@ -2,8 +2,9 @@
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
+const { i18n } = require('./next-i18next.config');
 
-// NOTE: nextRuntimeDotenv not have a good documentation
+// NOTE: next-runtime-dotenv not have a good documentation
 // const withConfig = nextRuntimeDotenv({
 //   // path: '.env',
 //   public: ['MY_API_URL', 'NEXT_PUBLIC_ID'],
@@ -12,6 +13,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 module.exports = withBundleAnalyzer({
   // rest of config here
+  i18n,
   reactStrictMode: true,
   serverRuntimeConfig: {
     // Will only be available on the server side

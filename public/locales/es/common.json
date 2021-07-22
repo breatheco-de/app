@@ -1,0 +1,7 @@
+{
+  "heading": "Bienvenido a",
+  "change-locale": "Cambiar Idioma",
+  "error-with-status": "{{statusCode}} error ocurrió en el server",
+  "error-without-status": "Un error ocurrió en el server",
+  "title": "Bienvenido | Learn"
+}

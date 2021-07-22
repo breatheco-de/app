@@ -2,6 +2,7 @@
 import '../../styles/globals.css';
 import PropTypes from 'prop-types';
 import { ChakraProvider } from '@chakra-ui/react';
+import { appWithTranslation } from 'next-i18next';
 import wrapper from '../store';
 
 function LearnApp({ Component, pageProps }) {
@@ -16,4 +17,4 @@ LearnApp.propTypes = {
   pageProps: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
   Component: PropTypes.elementType.isRequired,
 };
-export default wrapper.withRedux(LearnApp);
+export default appWithTranslation(wrapper.withRedux(LearnApp));

@@ -8,7 +8,7 @@ import styles from '../../styles/Home.module.css';
 import Counter from '../common/components/counter';
 import { H1 } from '../common/styledComponents/Head';
 
-export default function Home() {
+export default function Example() {
   const router = useRouter();
   const { t } = useTranslation(['common', 'counter']);
 
@@ -21,13 +21,13 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <Link href="/" locale={router.locale === 'en' ? 'es' : 'en'}>
+        <Link href="/example" locale={router.locale === 'en' ? 'es' : 'en'}>
           <button type="button">{t('change-locale')}</button>
         </Link>
         <H1 type="h1" className={styles.title}>
           {t('heading')}
           {' '}
-          <a href="/">Learn!</a>
+          <a href="/example">Example!</a>
         </H1>
 
         <Counter title={t('counter:title')} resetText={t('counter:resetButton')} />
