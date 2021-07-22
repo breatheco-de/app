@@ -5,7 +5,7 @@ const ToggleColor = () => {
 
   return (
     <Stack py="10px">
-      <Button onClick={toggleColorMode}>
+      <Button onClick={toggleColorMode} variant="switchOutline">
         Switch
         {' '}
         {colorMode === 'light' ? 'Dark' : 'Light'}

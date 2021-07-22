@@ -5,10 +5,11 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { appWithTranslation } from 'next-i18next';
 // import { ThemeProvider } from '@chakra-ui/core';
 import wrapper from '../store';
+import CustomTheme from '../../styles/theme';
 
 function LearnApp({ Component, pageProps }) {
   return (
-    <ChakraProvider>
+    <ChakraProvider resetCSS theme={CustomTheme}>
       <Component {...pageProps} />
     </ChakraProvider>
   );
