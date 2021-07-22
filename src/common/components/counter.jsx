@@ -2,16 +2,17 @@ import { Button, Heading, Stack } from '@chakra-ui/react';
 import getConfig from 'next/config';
 import useCounter from '../store/actions/counterAction';
 
-const {
-  // publicRuntimeConfig: { MY_API_URL }, // Available both client and server side
-  serverRuntimeConfig: { GITHUB_TOKEN }, // Only available server side
-} = getConfig();
+// Only holds serverRuntimeConfig and publicRuntimeConfig
+const { serverRuntimeConfig, publicRuntimeConfig } = getConfig();
 
 const Counter = () => {
   const {
     count, increment, decrement, reset,
   } = useCounter();
-  console.log('GITHUB_TOKEN:::', GITHUB_TOKEN);
+
+  console.log('GITHUB_TOKEN:::', serverRuntimeConfig.GITHUB_TOKEN); // return undefined in browser but in console return the value
+  console.log('NEXT_ID:::', publicRuntimeConfig.NEXT_PUBLIC_ID);
+  console.log('MY_API:::', publicRuntimeConfig.MY_API_URL);
 
   return (
     <div>
