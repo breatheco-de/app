@@ -10,6 +10,9 @@ export default {
       options: ['default', 'black', 'outline'],
       control: 'select',
     },
+    disabled: {
+      control: 'boolean',
+    }
   },
 };
 
@@ -18,16 +21,19 @@ const Template = (args) => <Button {...args} >Example</Button>;
 export const Default = Template.bind({});
 Default.args = {
   variant: 'default',
+  disabled: false
 };
 
 export const Black = Template.bind({});
 Black.args = {
   variant: 'black',
+  disabled: false
 };
 
 export const Outline = Template.bind({});
 Outline.args = {
   variant: 'outline',
+  disabled: false
 };
 
 // export const Secondary = Template.bind({});
