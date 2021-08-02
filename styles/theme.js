@@ -3,6 +3,14 @@ import Button from './components/customButton';
 
 const CustomTheme = extendTheme({
   // Color scheme of Components
+  styles: {
+    global: (props) => ({
+      body: {
+        bg: props.colorMode === 'dark' ? 'darkTheme' : 'white',
+        color: props.colorMode === 'dark' ? 'white' : 'black',
+      },
+    }),
+  },
   colors: {
     white: '#FFFFFF',
     featuredLight: '#EEF9FE',

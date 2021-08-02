@@ -4,22 +4,23 @@ import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
 
 const Icon = ({
-  icon, color, width, height, style,
+  icon, width, height, style,
 }) => {
   if (typeof window === 'undefined' || !window) return '';
 
   // eslint-disable-next-line no-console
   const Comp = loadable(() => import(`./set/${icon}`).catch((err) => console.error(err)));
-  return <Comp color={color} width={width} height={height} style={style} />;
+  return <Comp width={width} height={height} style={style} />;
 };
 Icon.propTypes = {
   icon: PropTypes.string.isRequired,
-  color: PropTypes.string.isRequired,
-  width: PropTypes.string.isRequired,
-  height: PropTypes.string.isRequired,
+  width: PropTypes.string,
+  height: PropTypes.string,
   style: PropTypes.objectOf(PropTypes.object),
 };
 Icon.defaultProps = {
   style: {},
+  width: '100%',
+  height: '100%',
 };
 export default Icon;

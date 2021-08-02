@@ -1,4 +1,4 @@
-const verify = (width, height, style) => (
+const verify = ({ width, height, style }) => (
   <svg
     style={style}
     width={width || '27px'}

@@ -1,6 +1,6 @@
 import { useColorMode } from '@chakra-ui/react';
 
-const book = (width, height, style) => {
+const book = ({ width, height, style }) => {
   const { colorMode } = useColorMode();
   return (
     <svg
