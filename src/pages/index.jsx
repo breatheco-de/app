@@ -7,6 +7,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import styles from '../../styles/Home.module.css';
 import Counter from '../common/components/counter';
 import ToggleColor from '../common/components/toggleColor';
+import SupportSidebar from '../common/components/supportSidebar';
 import { H1 } from '../common/styledComponents/Head';
 
 export default function Home() {
@@ -22,9 +23,11 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
+      <SupportSidebar />
         <Link href="/" locale={router.locale === 'en' ? 'es' : 'en'}>
           <button type="button">{t('change-locale')}</button>
         </Link>
+        
         <H1 type="h1" className={styles.title}>
           {t('heading')}
           {' '}
