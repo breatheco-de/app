@@ -9,6 +9,7 @@ import Counter from '../common/components/counter';
 import ToggleColor from '../common/components/toggleColor';
 import SupportSidebar from '../common/components/supportSidebar';
 import { H1 } from '../common/styledComponents/Head';
+import Module from '../stories/components/Module';
 
 export default function Home() {
   const router = useRouter();
@@ -37,7 +38,7 @@ export default function Home() {
         <Counter title={t('counter:title')} resetText={t('counter:resetButton')} />
         <ToggleColor />
       </main>
-
+      <Module title="READ" moduleNumber={1} paragraph="Introduction to the pre-work" resetText="RESETEA" />
       <footer className={styles.footer}>
         <a href="/">
           Powered by
