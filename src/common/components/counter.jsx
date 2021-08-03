@@ -26,13 +26,13 @@ const Counter = ({ title, resetText }) => {
         </span>
       </Heading>
       <Stack direction="row" spacing={4} align="center" justify="center" py="5px">
-        <Button colorScheme="green" variant="outline" type="button" onClick={increment}>
+        <Button colorScheme="green" variant="default" type="button" onClick={increment}>
           +1
         </Button>
-        <Button colorScheme="green" variant="outline" type="button" onClick={decrement}>
+        <Button colorScheme="green" variant="default" type="button" onClick={decrement}>
           -1
         </Button>
-        <Button colorScheme="green" variant="outline" type="button" onClick={reset}>
+        <Button colorScheme="green" variant="black" type="button" onClick={reset}>
           {resetText}
         </Button>
       </Stack>

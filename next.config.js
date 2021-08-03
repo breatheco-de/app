@@ -4,7 +4,6 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 const { i18n } = require('./next-i18next.config');
 
-// NOTE: next-runtime-dotenv not have a good documentation
 // const withConfig = nextRuntimeDotenv({
 //   // path: '.env',
 //   public: ['MY_API_URL', 'NEXT_PUBLIC_ID'],
