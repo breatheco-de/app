@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
-import SupportSidebar from '../common/components/supportSidebar';
+import SupportSidebar from "../common/components/supportSidebar";
 
 export default {
-  title: 'Components/SupportSidebar',
+  title: "Components/SupportSidebar",
   component: SupportSidebar,
   argTypes: {
     // icon: {

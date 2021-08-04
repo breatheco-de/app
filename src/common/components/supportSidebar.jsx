@@ -1,3 +1,4 @@
+/* eslint-disable object-curly-newline */
 /* eslint-disable no-console */
 /* eslint-disable quotes */
 import { Box, Heading, Text, Button } from "@chakra-ui/react";
@@ -17,11 +18,6 @@ const supportSidebar = () => {
       buttonIcon: "slack",
       buttonFunction: () => console.log("button2"),
     },
-    // {
-    //   buttonTitle: "title3",
-    //   buttonIcon: "conversation",
-    //   buttonFunction: () => console.log("button3"),
-    // },
   ];
   return (
     <Box
