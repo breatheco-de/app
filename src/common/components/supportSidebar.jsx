@@ -1,25 +1,27 @@
+/* eslint-disable no-console */
+/* eslint-disable quotes */
 import { Box, Heading, Text, Button } from "@chakra-ui/react";
 import Icon from "./Icon";
 
 // [height, weight, color]
 const supportSidebar = () => {
   const defaultProps = "450px";
-  let actionButtons = [
+  const actionButtons = [
     {
-      buttonTitle: "title1",
+      buttonTitle: "SCHEDULE MENTORING",
       buttonIcon: "conversation",
       buttonFunction: () => console.log("button1"),
     },
     {
-      buttonTitle: "title2",
-      buttonIcon: "conversation",
+      buttonTitle: "ASK IN SUPPORT CHAT",
+      buttonIcon: "slack",
       buttonFunction: () => console.log("button2"),
     },
-    {
-      buttonTitle: "title3",
-      buttonIcon: "conversation",
-      buttonFunction: () => console.log("button3"),
-    },
+    // {
+    //   buttonTitle: "title3",
+    //   buttonIcon: "conversation",
+    //   buttonFunction: () => console.log("button3"),
+    // },
   ];
   return (
     <Box
@@ -53,6 +55,7 @@ const supportSidebar = () => {
               key={button.buttonTitle}
               bg="#FFFFFF"
               width="75%"
+              borderWidth="0px"
               px="15px"
               my="8px"
               justifyContent="left"
@@ -60,9 +63,7 @@ const supportSidebar = () => {
               <Box pr="20px">
                 <Icon icon={button.buttonIcon} width="25px" height="25px" />
               </Box>
-              <Heading as="h3" fontSize="20px">
-                {button.buttonTitle}
-              </Heading>
+              <Text fontSize="md">{button.buttonTitle}</Text>
               <Box ml="auto">
                 <Icon icon="arrowright" width="25px" height="25px" />
               </Box>
