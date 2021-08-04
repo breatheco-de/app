@@ -1,22 +1,21 @@
-/* eslint-disable object-curly-newline */
-/* eslint-disable no-console */
-/* eslint-disable quotes */
-import { Box, Heading, Text, Button } from "@chakra-ui/react";
-import Icon from "./Icon";
+import {
+  Box, Heading, Text, Button,
+} from '@chakra-ui/react';
+import Icon from './Icon';
 
 // [height, weight, color]
 const supportSidebar = () => {
-  const defaultProps = "450px";
+  const defaultProps = '450px';
   const actionButtons = [
     {
-      buttonTitle: "SCHEDULE MENTORING",
-      buttonIcon: "conversation",
-      buttonFunction: () => console.log("button1"),
+      buttonTitle: 'SCHEDULE MENTORING',
+      buttonIcon: 'conversation',
+      buttonFunction: () => console.log('button1'),
     },
     {
-      buttonTitle: "ASK IN SUPPORT CHAT",
-      buttonIcon: "slack",
-      buttonFunction: () => console.log("button2"),
+      buttonTitle: 'ASK IN SUPPORT CHAT',
+      buttonIcon: 'slack',
+      buttonFunction: () => console.log('button2'),
     },
   ];
   return (
@@ -28,7 +27,7 @@ const supportSidebar = () => {
       overflow="hidden"
     >
       <Box d="flex" justifyContent="center">
-        <Icon icon="sidesupport" width="300px" height="70px" />
+        <Icon icon="sideSupport" width="300px" height="70px" />
       </Box>
       <Box p="4">
         <Box d="flex" alignItems="baseline" justifyContent="center">
@@ -61,7 +60,7 @@ const supportSidebar = () => {
               </Box>
               <Text fontSize="md">{button.buttonTitle}</Text>
               <Box ml="auto">
-                <Icon icon="arrowright" width="25px" height="25px" />
+                <Icon icon="arrowRight" width="25px" height="25px" />
               </Box>
             </Button>
           ))}

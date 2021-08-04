@@ -1,4 +1,4 @@
-const sidesupport = ({ width, height }) => (
+const sideSupport = ({ width, height }) => (
   <svg
     width={width}
     height={height}
@@ -27,4 +27,4 @@ const sidesupport = ({ width, height }) => (
   </svg>
 );
 
-export default sidesupport;
+export default sideSupport;
