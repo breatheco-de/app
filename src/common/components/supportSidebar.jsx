@@ -4,7 +4,7 @@ import {
 import Icon from './Icon';
 
 // [height, weight, color]
-const supportSidebar = () => {
+const supportSidebar = ({ title, subtitle }) => {
   const defaultProps = '450px';
   const actionButtons = [
     {
@@ -32,14 +32,13 @@ const supportSidebar = () => {
       <Box p="4">
         <Box d="flex" alignItems="baseline" justifyContent="center">
           <Heading textAlign="center" justify="center">
-            Don&#39;t Get Stuck
+            {title}
           </Heading>
         </Box>
 
         <Box pt="3" d="flex" alignItems="baseline" justifyContent="center">
           <Text fontSize="xl" textAlign="center">
-            Did you know you can schedule mentoring sessions any time or ask in
-            the Support Chat?
+            {subtitle}
           </Text>
         </Box>
 
