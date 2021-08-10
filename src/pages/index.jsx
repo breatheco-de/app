@@ -1,45 +1,48 @@
-import Link from "next/link";
-import { useRouter } from "next/router";
-import Head from "next/head";
-import Image from "next/image";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import styles from "../../styles/Home.module.css";
-import Counter from "../common/components/counter";
-import ToggleColor from "../common/components/toggleColor";
-import SupportSidebar from "../common/components/supportSidebar";
-import { H1 } from "../common/styledComponents/Head";
-import Module from "../stories/components/Module";
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import Head from 'next/head';
+import Image from 'next/image';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import styles from '../../styles/Home.module.css';
+import Counter from '../common/components/counter';
+import ToggleColor from '../common/components/toggleColor';
+import ProgressBar from '../common/components/progress';
+import { H1 } from '../common/styledComponents/Head';
+import Module from '../stories/components/Module';
 
 export default function Home() {
   const router = useRouter();
-  const { t } = useTranslation(["common", "counter"]);
+  const { t } = useTranslation(['common', 'counter']);
 
   return (
     <div className={styles.container}>
       <Head>
-        <title>{t("title")}</title>
+        <title>{t('title')}</title>
         <meta name="description" content="Learn with Breatheco.de" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
-        <SupportSidebar
+        <ProgressBar />
+        {/* <SupportSidebar
           title="Don&#39;t Get Stuck"
           subtitle="Did you know you can schedule mentoring sessions any time or ask in
             the Support Chat?"
-        />
-        <Link href="/" locale={router.locale === "en" ? "es" : "en"}>
-          <button type="button">{t("change-locale")}</button>
+        /> */}
+        <Link href="/" locale={router.locale === 'en' ? 'es' : 'en'}>
+          <button type="button">{t('change-locale')}</button>
         </Link>
 
         <H1 type="h1" className={styles.title}>
-          {t("heading")} <a href="/">Learn!</a>
+          {t('heading')}
+          {' '}
+          <a href="/">Learn!</a>
         </H1>
 
         <Counter
-          title={t("counter:title")}
-          resetText={t("counter:resetButton")}
+          title={t('counter:title')}
+          resetText={t('counter:resetButton')}
         />
         <ToggleColor />
       </main>
@@ -51,7 +54,8 @@ export default function Home() {
       />
       <footer className={styles.footer}>
         <a href="/">
-          Powered by{" "}
+          Powered by
+          {' '}
           <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
@@ -63,6 +67,6 @@ export default function Home() {
 
 export const getStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ["common", "counter"])),
+    ...(await serverSideTranslations(locale, ['common', 'counter'])),
   },
 });
