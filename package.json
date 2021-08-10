@@ -20,7 +20,7 @@
     "analyze": "ANALYZE=true next build",
     "jest": "jest",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook -o docs-build"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.6.5",
