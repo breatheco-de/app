@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Modules from './components/Module';
+import Modules from '../common/components/Module';
 
 export default {
   title: 'Components/Module',
