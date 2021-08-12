@@ -1,8 +1,10 @@
-import { Box, Stack, Text } from '@chakra-ui/react';
+import {
+  Box, Stack, useColorMode, Text,
+} from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
 const TagCapsule = ({ tags, separator, background }) => {
-  console.log('test');
+  const { colorMode } = useColorMode();
   return (
     <div>
       <Stack
@@ -24,6 +26,7 @@ const TagCapsule = ({ tags, separator, background }) => {
             style={{ margin: 0 }}
             key={tag.name}
             lineHeight="22px"
+            color={colorMode === 'light' ? 'black' : 'black'}
           >
             <Text
               margin="0"
