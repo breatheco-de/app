@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import styles from '../../styles/Home.module.css';
-import Counter from '../common/components/counter';
+import Counter from '../common/components/Counter';
 import { H1 } from '../common/styledComponents/Head';
 
 export default function Example() {

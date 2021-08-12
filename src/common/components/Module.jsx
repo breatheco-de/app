@@ -4,7 +4,7 @@ import {
 
 import PropTypes from 'prop-types';
 // import useCounter from '../store/actions/counterAction';
-import Icon from '../../common/components/Icon';
+import Icon from './Icon';
 
 const Module = ({
   title, paragraph, moduleNumber, width, icon,
