@@ -9,7 +9,6 @@ import styles from '../../styles/Home.module.css';
 import Counter from '../common/components/Counter';
 import ToggleColor from '../common/components/ToggleColor';
 import { H1 } from '../common/styledComponents/Head';
-// import ModuleMap from '../common/components/ModuleMap';
 
 export default function Home() {
   const router = useRouter();
@@ -38,12 +37,6 @@ export default function Home() {
         <Counter title={t('counter:title')} resetText={t('counter:resetButton')} />
         <ToggleColor />
       </main>
-      {/* <ModuleMap
-        title="READ"
-        moduleNumber={1}
-        paragraph="Introduction to the pre-work"
-        resetText="RESETEA"
-      /> */}
       <footer className={styles.footer}>
         <a href="/">
           Powered by

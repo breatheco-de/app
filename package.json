@@ -19,10 +19,10 @@
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
     "jest": "jest",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
-    "deploy-storybook": "build-storybook -s public",
-    "make:iconNames": "node ./scripts/make.iconDictionary.js"
+    "storybook": "npm run make:iconDict && start-storybook -p 6006",
+    "build-storybook": "npm run make:iconDict && build-storybook",
+    "deploy-storybook": "npm run make:iconDict && build-storybook -s public",
+    "make:iconDict": "node ./scripts/make.iconDict.js"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.6.5",

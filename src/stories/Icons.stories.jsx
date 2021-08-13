@@ -1,20 +1,21 @@
 import { Box } from '@chakra-ui/layout';
 import React from 'react';
 import Icon from '../common/components/Icon';
+const iconDict = require("../common/utils/iconDict.json")
 
 export default {
-  title: 'Components/Icon',
+  title: 'Components/Icons',
   component: Icon,
   argTypes: {
     width: {
       control: {
         type: 'range',
-        min: 0,
+        min: 15,
         max: 350,
       },
     },
     icon: {
-      options: ['verified', 'book'],
+      options: iconDict,
       control: 'select',
     },
   },

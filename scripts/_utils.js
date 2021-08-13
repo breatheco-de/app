@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const { promisify } = require('util');
 const { resolve } = require('path');
 const fs = require('fs');
