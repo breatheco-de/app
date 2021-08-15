@@ -10,88 +10,120 @@ import {
   InputGroup,
   Input,
   Stack,
+  useColorMode,
 } from '@chakra-ui/react';
-import NavLink from './navLink';
+import NextChakraLink from './nextChakraLink';
 import PropTypes from 'prop-types';
 import Icon from "./Icon";
+import { useRouter } from 'next/router';
 
-const linkStyle = {
-  textDecoration: "none",
-  color:"inherit",
-  textAlign: "center",
-  fontWeight:"900",
-  color:"#606060",
-}
-
-const iconStyles = {
-  marginRight:"7px",
-}
-
-const Navbar = ({menuList, user : { handleUser, avatar } }) => {
+const Navbar = ({ menuList, user: { handleUser, avatar, notifies }, handleSearch, value }) => {
+  const router = useRouter();
+  const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const linkStyle = {
+    textDecoration: "none",
+    textAlign: "center",
+    fontWeight: "900",
+  }
+
   return (
     <>
-      <Box bg={useColorModeValue('gray.100', 'gray.900')} px="25px" py="18px"  borderBottom={"1px solid #DADADA"}>
+      <Box bg={useColorModeValue('gray.100', 'gray.900')} px="25px" py="18px" borderBottom={"1px solid #DADADA"}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-          <IconButton
-            size={'md'}
-            icon={isOpen ? null : <Icon icon="hamburger" width="40px" height="40px"/>}
-            aria-label={'Open Menu'}
-            display={{ md: 'none' }}
-            onClick={isOpen ? onClose : onOpen}
-          />
           <HStack spacing={20} alignItems={'center'}>
             <Box>
               <Icon icon="logo" width="40px" height="40px" />
             </Box>
             <HStack
               as={'nav'}
-              spacing={20}
+              spacing={16}
               display={{ base: 'none', md: 'flex' }}>
               {menuList.map((nav) => (
-                <NavLink 
-                  key={nav.title} 
-                  leftIcon={nav.icon} 
+                <NextChakraLink
+                  key={nav.title}
                   href={nav.link}
                   style={linkStyle}
-                  iconStyles={iconStyles}
-                  iconHeight="20px" 
-                  iconWidth="20px"
-                  iconColor="gray"
+                  color="gray"
+                  _focus={{ boxShadow: "none", color: "#0097CF" }}
                 >
+                  <Icon
+                    icon={nav.icon}
+                    width="20px"
+                    height="20px"
+                    style={{ marginBottom: "-4px", marginRight: "4px" }}
+                    color={"#A4A4A4"}
+                    fill={router?.pathname === nav.link ? '#0097CF' : ''}
+                  />
                   {nav.title.toUpperCase()}
-                </NavLink>
+                </NextChakraLink>
               ))}
             </HStack>
           </HStack>
-          <HStack spacing={20} alignItems={'center'}>
+          <HStack spacing={12} alignItems={'center'}  marginLeft={"5%"}>
             <HStack
               as={'nav'}
-              spacing={20}
-              display={{ base: 'none', md: 'flex' }}>
-                <InputGroup>
-                  <Input placeholder="Basic usage" />
-                  <InputRightElement children={<Icon color="black" icon="search" width="20px" height="20px"/>} />
-                </InputGroup>
-                
-                <Icon icon="light" width="25px" height="25px" color="black"/>
-                <Icon icon="bell" width="25px" height="25px" color="black"/>
-            </HStack>
-            <Box>
+              spacing={16}
+              display={{ base: 'flex', md: 'flex' }}>
+              <InputGroup>
+                <Input
+                  borderRadius="20px"
+                  background={colorMode === "light" ? "#F5F5F5" : "#283340"}
+                  border="none"
+                  type="text"
+                  name="nav"
+                  value={value}
+                  onChange={handleSearch}
+                />
+                <InputRightElement children={<Icon color="black" icon="search" width="20px" height="20px" />} />
+              </InputGroup>
+              <IconButton
+                variant="default"
+                bg={colorMode === 'light' ? "white" : "darkTheme"}
+                isRound
+                onClick={toggleColorMode}
+                cursor="pointer"
+                _focus={{ boxShadow: "none" }}
+                _hover={{ background: "none" }}
+                _active={{ background: "none" }}
+                icon={<Icon icon="light" width="25px" height="25px" color="black" />}
+              />
+              <IconButton
+                variant="default"
+                bg={colorMode === 'light' ? "white" : "darkTheme"}
+                isRound
+                _focus={{ boxShadow: "none" }}
+                _hover={{ background: "none" }}
+                _active={{ background: "none" }}
+                cursor="pointer"
+                icon={<Icon icon="bell" width="25px" height="25px" color="black" />}
+                _after={notifies ? {
+                  content: '""',
+                  w: 2,
+                  h: 2,
+                  bg: 'green',
+                  rounded: 'full',
+                  pos: 'absolute',
+                  left: "21px",
+                  top: "7px",
+                } : null}
+              />
               <Avatar
                 onClick={handleUser}
                 width="40px"
                 height="40px"
+                cursor="pointer"
                 src={avatar}
               />
-            </Box>
+            </HStack>
           </HStack>
         </Flex>
         {isOpen ? (
           <Box pb={4} display={{ md: 'none' }}>
             <Stack as={'nav'} spacing={4}>
               {menuList.map((link) => (
-                <NavLink key={link.title} href={link.link}>{link.title}</NavLink>
+                <NextChakraLink key={link.title} href={link.link}>{link.title}</NextChakraLink>
               ))}
             </Stack>
           </Box>
@@ -102,37 +134,14 @@ const Navbar = ({menuList, user : { handleUser, avatar } }) => {
 }
 
 Navbar.propTypes = {
-  menuList:PropTypes.array.isRequired,
-  user:PropTypes.object.isRequired,
+  menuList: PropTypes.array.isRequired,
+  user: PropTypes.object.isRequired,
+  handleSearch: PropTypes.func,
+  value: PropTypes.any,
 };
 Navbar.defaultProps = {
-  menuList:[
-    {
-     icon: "home",
-     title: "Dashboard",
-     link: "/"
-    },
-    {
-     icon: "book",
-     title: "Learn",
-     link: "/learn"
-    },
-    {
-     icon: "message",
-     title: "Mentoring",
-     link: "/mentoring"
-    },
-    {
-     icon: "people",
-     title: "Community",
-     link: "/community"
-    },
-  ],
-  user: {
-    avatar:"https://storage.googleapis.com/media-breathecode/639857ed0ceb0a5e5e0429e16f7e3a84365270a0977fb94727cc3b6450d1ea9a",
-    handleUser: () => {
-    }
-  },
+  menuList: [],
+  user: {},
 };
 
 export default Navbar;

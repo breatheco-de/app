@@ -1,6 +1,6 @@
 import { useColorMode } from '@chakra-ui/react';
 
-const book = ({ width, height, style }) => {
+const book = ({ width, height, style, color, fill }) => {
   const { colorMode } = useColorMode();
   return (
     <svg
@@ -13,24 +13,27 @@ const book = ({ width, height, style }) => {
     >
       <path
         d="M10 6.01854L19 2.16998V14.1005L10 17.9491L1 14.1005V2.16998L10 6.01854Z"
-        stroke={colorMode === 'light' ? '#0097CF' : '#FFFFFF'}
+        stroke={colorMode === 'light' ? color || '#0097CF' : '#FFFFFF'}
         strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
+        fill={colorMode === 'light' ? fill: '#FFFFFF'}
       />
       <path
         d="M17.1998 1L9.9998 4.11733L2.7998 1"
-        stroke={colorMode === 'light' ? '#0097CF' : '#FFFFFF'}
+        stroke={colorMode === 'light' ? color || '#0097CF' : '#FFFFFF'}
         strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
+        fill={colorMode === 'light' ? fill: '#FFFFFF'}
       />
       <path
         d="M10 6.01849V17.949"
-        stroke={colorMode === 'light' ? '#0097CF' : '#FFFFFF'}
+        stroke={colorMode === 'light' ? color || '#0097CF' : '#FFFFFF'}
         strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
+        fill={colorMode === 'light' ? fill: '#FFFFFF'}
       />
     </svg>
   );

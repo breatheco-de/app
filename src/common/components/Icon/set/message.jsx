@@ -1,6 +1,6 @@
 import { useColorMode } from '@chakra-ui/react';
 
-const message = ({ width, height, style }) => {
+const message = ({ width, height, style, color, fill }) => {
     const { colorMode } = useColorMode();
     return <svg
         style={style}
@@ -13,14 +13,16 @@ const message = ({ width, height, style }) => {
     <g clipPath="url(#clip0)">
       <path
         d="M7.79183 11.9318H6.87516L3.2085 15.75V11.9318H0.458496V0.477295H17.8752V6.68184"
-        stroke={colorMode === 'light' ? '#0097CF' : '#FFFFFF'}
+        stroke={colorMode === 'light' ? color || '#0097CF' : '#FFFFFF'}
+        fill={colorMode === 'light' ? fill: '#FFFFFF'}
         strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M10.542 16.7045H15.5837L19.7087 20.5227V16.7045H21.542V9.06818H10.542V16.7045Z"
-        stroke={colorMode === 'light' ? '#0097CF' : '#FFFFFF'}
+        stroke={colorMode === 'light' ? color || '#0097CF' : '#FFFFFF'}
+        fill={colorMode === 'light' ? fill: '#FFFFFF'}
         strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
