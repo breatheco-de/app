@@ -2,6 +2,7 @@
   "name": "learn",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://github.com/breatheco-de/app",
   "lint-staged": {
     "src/**/*.{js,jsx}": [
       "eslint --fix"
@@ -21,7 +22,7 @@
     "jest": "jest",
     "storybook": "npm run make:iconDict && start-storybook -p 6006",
     "build-storybook": "npm run make:iconDict && build-storybook",
-    "deploy-storybook": "npm run make:iconDict && build-storybook -s public",
+    "deploy-storybook": "gh-pages -d storybook-static",
     "make:iconDict": "node ./scripts/make.iconDict.js"
   },
   "dependencies": {
@@ -31,7 +32,7 @@
     "@loadable/component": "^5.15.0",
     "@next/bundle-analyzer": "^11.0.1",
     "framer-motion": "^4.1.17",
-    "next": "11.0.1",
+    "next": "^11.1.0",
     "next-i18next": "^8.5.5",
     "next-redux-wrapper": "^7.0.2",
     "next-runtime-dotenv": "^1.4.0",
@@ -51,7 +52,6 @@
     "@storybook/addon-essentials": "^6.3.6",
     "@storybook/addon-links": "^6.3.6",
     "@storybook/react": "^6.3.6",
-    "@storybook/storybook-deployer": "^2.8.10",
     "@testing-library/react": "^12.0.0",
     "babel-jest": "^27.0.6",
     "babel-loader": "^8.2.2",
@@ -65,6 +65,7 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "gh-pages": "^3.2.3",
     "husky": "^7.0.0",
     "jest": "^27.0.6",
     "lint-staged": "^11.0.1"
