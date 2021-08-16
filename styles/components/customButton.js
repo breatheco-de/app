@@ -8,7 +8,7 @@ const ButtonStyles = {
   // styles for different visual variants ("outline", "solid", more...)
   variants: {
     default: () => ({
-      bg: 'blue',
+      bg: 'blue.default',
       color: 'white',
       border: '0',
       borderRadius: '3px',
@@ -22,11 +22,11 @@ const ButtonStyles = {
         },
       },
       _active: {
-        bg: 'blue',
+        bg: 'blue.default',
       },
       _disabled: {
         bg: '#EBEBEB',
-        color: '#3A3A3A',
+        color: 'darkGray',
         opacity: 1,
         _hover: {
           opacity: 0.7,
@@ -34,14 +34,14 @@ const ButtonStyles = {
       },
     }),
     black: (props) => ({
-      bg: props.colorMode === 'dark' ? '#283340' : 'black',
+      bg: props.colorMode === 'dark' ? 'featuredDark' : 'black',
       color: 'white',
       border: '0',
       borderRadius: '3px',
       fontSize: '13px',
       letterSpacing: '0.05em',
       _hover: {
-        bg: props.colorMode === 'dark' ? '#283340' : 'black',
+        bg: props.colorMode === 'dark' ? 'featuredDark' : 'black',
         opacity: 1,
         _disabled: {
           bgColor: '#EBEBEB',
@@ -52,7 +52,7 @@ const ButtonStyles = {
       // },
       _disabled: {
         bg: '#EBEBEB',
-        color: '#3A3A3A',
+        color: 'darkGray',
         opacity: 1,
         _hover: {
           opacity: 0.7,
@@ -83,7 +83,7 @@ const ButtonStyles = {
       _disabled: {
         bg: '#EBEBEB',
         border: 0,
-        color: '#3A3A3A',
+        color: 'darkGray',
         opacity: 1,
         _hover: {
           opacity: 0.7,

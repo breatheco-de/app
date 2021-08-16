@@ -9,7 +9,7 @@ import CustomTheme from '../../styles/theme';
 
 function LearnApp({ Component, pageProps }) {
   return (
-    <ChakraProvider resetCSS theme={CustomTheme}>
+    <ChakraProvider resetCSS={false} theme={CustomTheme}>
       <Component {...pageProps} />
     </ChakraProvider>
   );
