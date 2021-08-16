@@ -75,11 +75,6 @@ const ModuleMap = ({ modules, width }) => {
               <Icon icon="verified" />
             </Box>
           </HStack>
-          {/* <GridItem colSpan={6}>
-                <Button my="5px" colorScheme="green" variant="outline" type="button">
-                  {resetText}
-                </Button>
-              </GridItem> */}
         </Stack>
       ))}
     </Box>
