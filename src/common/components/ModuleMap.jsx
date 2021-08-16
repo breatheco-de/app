@@ -13,7 +13,7 @@ const ModuleMap = ({ modules, width }) => {
     <Box>
       <Heading as="h1">TITLE</Heading>
 
-      {modules.map((module) => (
+      {modules.map((module, i) => (
         <Stack
           direction="row"
           backgroundColor={colorMode === 'light' ? '#FFFFFF' : 'primary'}
@@ -41,7 +41,7 @@ const ModuleMap = ({ modules, width }) => {
               background="#0097CF"
             >
               <Text fontWeight="bold" margin="0" fontSize="13px" color="#FFFFFF">
-                {module.number}
+                {i}
               </Text>
             </Box>
             <Box mr="20px" ml="20px" display="flex" minWidth="22px" width="22px">
@@ -66,7 +66,7 @@ const ModuleMap = ({ modules, width }) => {
                 letterSpacing="0.05em"
                 margin="0"
               >
-                {module.paragraph}
+                {module.text}
               </Text>
             </Box>
           </Flex>
@@ -75,11 +75,6 @@ const ModuleMap = ({ modules, width }) => {
               <Icon icon="verified" />
             </Box>
           </HStack>
-          {/* <GridItem colSpan={6}>
-                <Button my="5px" colorScheme="green" variant="outline" type="button">
-                  {resetText}
-                </Button>
-              </GridItem> */}
         </Stack>
       ))}
     </Box>
