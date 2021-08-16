@@ -24,26 +24,22 @@ Default.args = {
   modules: [
     {
       title: 'Read',
-      paragraph: 'Introduction to the pre-work',
-      number: 1,
+      text: 'Introduction to the pre-work',
       icon: 'verified',
     },
     {
       title: 'Practice',
-      paragraph: 'Practice pre-work',
-      number: 2,
+      text: 'Practice pre-work',
       icon: 'book',
     },
     {
       title: 'Practice',
-      paragraph: 'Star wars',
-      number: 3,
+      text: 'Star wars',
       icon: 'verified',
     },
     {
       title: 'Practice',
-      paragraph: 'test',
-      number: 4,
+      text: 'test',
       icon: 'verified',
     },
   ],
