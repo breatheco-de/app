@@ -17,7 +17,7 @@ import PropTypes from 'prop-types';
 import Icon from "./Icon";
 import { useRouter } from 'next/router';
 
-const Navbar = ({ menuList, user: { handleUser, avatar, notifies }, handleSearch, value }) => {
+const Navbar = ({ menuList, user: { handleUser, avatar, notifies }, handleChange, value }) => {
   const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -33,7 +33,7 @@ const Navbar = ({ menuList, user: { handleUser, avatar, notifies }, handleSearch
       <Box bg={useColorModeValue('gray.100', 'gray.900')} px="25px" py="18px" borderBottom={"1px solid #DADADA"}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <HStack spacing={20} alignItems={'center'}>
-            <Box>
+            <Box onClick={isOpen ? onClose : onOpen} cursor={{base:"pointer", md:"default"}}>
               <Icon icon="logo" width="40px" height="40px" />
             </Box>
             <HStack
@@ -74,7 +74,7 @@ const Navbar = ({ menuList, user: { handleUser, avatar, notifies }, handleSearch
                   type="text"
                   name="nav"
                   value={value}
-                  onChange={handleSearch}
+                  onChange={handleChange}
                 />
                 <InputRightElement children={<Icon color="black" icon="search" width="20px" height="20px" />} />
               </InputGroup>
@@ -87,7 +87,7 @@ const Navbar = ({ menuList, user: { handleUser, avatar, notifies }, handleSearch
                 _focus={{ boxShadow: "none" }}
                 _hover={{ background: "none" }}
                 _active={{ background: "none" }}
-                icon={<Icon icon="light" width="25px" height="25px" color="black" />}
+                icon={colorMode === "light" ? <Icon icon="light" width="25px" height="25px" color="black" /> : <Icon icon="dark" width="25px" height="25px"/>}
               />
               <IconButton
                 variant="default"
@@ -122,8 +122,24 @@ const Navbar = ({ menuList, user: { handleUser, avatar, notifies }, handleSearch
         {isOpen ? (
           <Box pb={4} display={{ md: 'none' }}>
             <Stack as={'nav'} spacing={4}>
-              {menuList.map((link) => (
-                <NextChakraLink key={link.title} href={link.link}>{link.title}</NextChakraLink>
+            {menuList.map((nav) => (
+                <NextChakraLink
+                  key={nav.title}
+                  href={nav.link}
+                  style={linkStyle}
+                  color="gray"
+                  _focus={{ boxShadow: "none", color: "#0097CF" }}
+                >
+                  <Icon
+                    icon={nav.icon}
+                    width="20px"
+                    height="20px"
+                    style={{ marginBottom: "-4px", marginRight: "4px" }}
+                    color={"#A4A4A4"}
+                    fill={router?.pathname === nav.link ? '#0097CF' : ''}
+                  />
+                  {nav.title.toUpperCase()}
+                </NextChakraLink>
               ))}
             </Stack>
           </Box>
@@ -136,7 +152,7 @@ const Navbar = ({ menuList, user: { handleUser, avatar, notifies }, handleSearch
 Navbar.propTypes = {
   menuList: PropTypes.array.isRequired,
   user: PropTypes.object.isRequired,
-  handleSearch: PropTypes.func,
+  handleChange: PropTypes.func,
   value: PropTypes.any,
 };
 Navbar.defaultProps = {
