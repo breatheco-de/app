@@ -22,7 +22,6 @@
     "jest": "jest",
     "storybook": "npm run make:iconDict && start-storybook -p 6006",
     "build-storybook": "npm run make:iconDict && build-storybook",
-    "deploy-storybook": "gh-pages -d storybook-static",
     "make:iconDict": "node ./scripts/make.iconDict.js"
   },
   "dependencies": {
@@ -65,7 +64,6 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "gh-pages": "^3.2.3",
     "husky": "^7.0.0",
     "jest": "^27.0.6",
     "lint-staged": "^11.0.1"
