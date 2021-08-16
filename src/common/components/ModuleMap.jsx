@@ -11,7 +11,7 @@ const ModuleMap = ({ modules, width }) => {
 
   return (
     <Box>
-      <Heading as="h1">TITLE</Heading>
+      <Heading as="h1">Module Map</Heading>
 
       {modules.map((module, i) => (
         <Stack
