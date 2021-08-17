@@ -23,7 +23,11 @@ const Navbar = ({
 }) => {
   const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen,
+    onOpen,
+    onClose,
+  } = useDisclosure();
 
   const linkStyle = {
     textDecoration: 'none',
