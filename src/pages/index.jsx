@@ -6,9 +6,9 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { Button } from '@chakra-ui/react';
 import styles from '../../styles/Home.module.css';
-import Counter from '../common/components/counter';
-import ToggleColor from '../common/components/toggleColor';
-import ProgressBar from '../common/components/progress';
+import Counter from '../common/components/Counter';
+import ToggleColor from '../common/components/ToggleColor';
+import ProgressBar from '../common/components/Progress';
 import { H1 } from '../common/styledComponents/Head';
 
 export default function Home() {
