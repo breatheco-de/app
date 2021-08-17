@@ -43,7 +43,7 @@ Default.args = {
   user: {
     avatar: text("Avatar","https://storage.googleapis.com/media-breathecode/639857ed0ceb0a5e5e0429e16f7e3a84365270a0977fb94727cc3b6450d1ea9a"),
     handleUser: action("handleUser"),
-    notifies: boolean("Notifies", false)
+    notifies: boolean("Notifies", false),
   },
-  handleChange: action("handleChange")
+  handleChange: action("handleChange"),
 };

@@ -1,7 +1,8 @@
-import NextLink from "next/link"
+import NextLink from 'next/link';
 import {
   Link as ChakraLink,
-} from "@chakra-ui/react"
+} from '@chakra-ui/react';
+import PropTypes from 'prop-types';
 
 const NextChakraLink = ({
   href,
@@ -12,20 +13,37 @@ const NextChakraLink = ({
   prefetch,
   children,
   ...chakraProps
-}) => {
-  return (
-    <NextLink
-      passHref={true}
-      href={href}
-      as={as}
-      replace={replace}
-      scroll={scroll}
-      shallow={shallow}
-      prefetch={prefetch}
-    >
-      <ChakraLink {...chakraProps}>{children}</ChakraLink>
-    </NextLink>
-  )
-}
+}) => (
+  <NextLink
+    passHref
+    href={href}
+    as={as}
+    replace={replace}
+    scroll={scroll}
+    shallow={shallow}
+    prefetch={prefetch}
+  >
+    <ChakraLink {...chakraProps}>{children}</ChakraLink>
+  </NextLink>
+);
+
+NextChakraLink.propTypes = {
+  href: PropTypes.string,
+  as: PropTypes.string,
+  replace: PropTypes.bool,
+  scroll: PropTypes.bool,
+  shallow: PropTypes.bool,
+  prefetch: PropTypes.bool,
+  children: PropTypes.any,
+};
+NextChakraLink.defaultProps = {
+  href: '',
+  as: '',
+  replace: false,
+  scroll: false,
+  shallow: false,
+  prefetch: true,
+  children: '',
+};
 
 export default NextChakraLink;

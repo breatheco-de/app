@@ -4,7 +4,7 @@ import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
 
 const Icon = ({
-  icon, width, height, style, color, fill
+  icon, width, height, style, color, fill,
 }) => {
   if (typeof window === 'undefined' || !window) return '';
 
@@ -16,7 +16,7 @@ Icon.propTypes = {
   icon: PropTypes.string.isRequired,
   width: PropTypes.string,
   height: PropTypes.string,
-  color:PropTypes.string,
+  color: PropTypes.string,
   fill: PropTypes.string,
   style: PropTypes.objectOf(PropTypes.object),
 };
@@ -24,6 +24,7 @@ Icon.defaultProps = {
   style: {},
   width: '100%',
   height: '100%',
-  colort:"",
+  color: '',
+  fill: '',
 };
 export default Icon;
