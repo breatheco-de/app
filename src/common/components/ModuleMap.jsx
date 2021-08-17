@@ -45,7 +45,7 @@ const ModuleMap = ({ modules, width }) => {
               </Text>
             </Box>
             <Box mr="20px" ml="20px" display="flex" minWidth="22px" width="22px">
-              <Icon icon={module.icon || 'book'} color="#FFFFFF" />
+              <Icon icon={module.icon || 'book'} />
             </Box>
 
             <Box>
