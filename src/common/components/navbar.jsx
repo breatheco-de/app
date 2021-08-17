@@ -86,7 +86,9 @@ const Navbar = ({
                   value={value}
                   onChange={handleChange}
                 />
-                <InputRightElement children={<Icon color="black" icon="search" width="20px" height="20px" />} />
+                <InputRightElement>
+                  <Icon color="black" icon="search" width="20px" height="20px" />
+                </InputRightElement>
               </InputGroup>
               <IconButton
                 variant="default"
@@ -160,8 +162,8 @@ const Navbar = ({
 };
 
 Navbar.propTypes = {
-  menuList: PropTypes.array.isRequired,
-  user: PropTypes.object.isRequired,
+  menuList: PropTypes.arrayOf(PropTypes.array).isRequired,
+  user: PropTypes.objectOf(PropTypes.object).isRequired,
   handleChange: PropTypes.func,
   value: PropTypes.string,
 };
