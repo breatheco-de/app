@@ -1,7 +1,6 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import NextLink from 'next/link';
-import {
-  Link as ChakraLink,
-} from '@chakra-ui/react';
+import { Link as ChakraLink } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
 const NextChakraLink = ({
@@ -34,7 +33,7 @@ NextChakraLink.propTypes = {
   scroll: PropTypes.bool,
   shallow: PropTypes.bool,
   prefetch: PropTypes.bool,
-  children: PropTypes.any,
+  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
 };
 NextChakraLink.defaultProps = {
   href: '',
@@ -43,7 +42,6 @@ NextChakraLink.defaultProps = {
   scroll: false,
   shallow: false,
   prefetch: true,
-  children: '',
 };
 
 export default NextChakraLink;

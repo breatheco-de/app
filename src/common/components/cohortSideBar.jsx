@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import {
   Box, Heading, Text, Image, Divider, Grid, Link, useColorMode,
 } from '@chakra-ui/react';
@@ -71,9 +72,9 @@ const CohortSideBar = ({
 CohortSideBar.propTypes = {
   title: PropTypes.string,
   cohortCity: PropTypes.string,
-  professor: PropTypes.object,
-  assistant: PropTypes.array,
-  classmates: PropTypes.array,
+  professor: PropTypes.objectOf(PropTypes.object),
+  assistant: PropTypes.arrayOf(PropTypes.array),
+  classmates: PropTypes.arrayOf(PropTypes.array),
   background: PropTypes.string,
 };
 CohortSideBar.defaultProps = {
