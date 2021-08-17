@@ -8,6 +8,7 @@ import { Button } from '@chakra-ui/react';
 import styles from '../../styles/Home.module.css';
 import Counter from '../common/components/Counter';
 import ToggleColor from '../common/components/ToggleColor';
+import ProgressBar from '../common/components/Progress';
 import { H1 } from '../common/styledComponents/Head';
 
 export default function Home() {
@@ -23,11 +24,18 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
+        <ProgressBar />
+        {/* <SupportSidebar
+          title="Don&#39;t Get Stuck"
+          subtitle="Did you know you can schedule mentoring sessions any time or ask in
+            the Support Chat?"
+        /> */}
         <Link href="/" locale={router.locale === 'en' ? 'es' : 'en'}>
           <Button variant="default" type="button">
             {t('change-locale')}
           </Button>
         </Link>
+
         <H1 type="h1" className={styles.title}>
           {t('heading')}
           {' '}
