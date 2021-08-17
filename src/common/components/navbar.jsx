@@ -5,16 +5,17 @@ import {
   HStack,
   IconButton,
   useDisclosure,
-  useColorModeValue,
   InputRightElement,
   InputGroup,
   Input,
   Stack,
   useColorMode,
+  Image,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import NextChakraLink from './nextChakraLink';
+import logo from '../../../public/static/images/bc_logo.png';
 import Icon from './Icon';
 
 const Navbar = ({
@@ -32,11 +33,11 @@ const Navbar = ({
 
   return (
     <>
-      <Box bg={useColorModeValue('gray.100', 'gray.900')} px="25px" py="18px" borderBottom="1px solid #DADADA">
+      <Box px="25px" py="18px" borderBottom="1px solid #DADADA">
         <Flex h={16} alignItems="center" justifyContent="space-between">
           <HStack spacing={20} alignItems="center">
             <Box onClick={isOpen ? onClose : onOpen} cursor={{ base: 'pointer', md: 'default' }}>
-              <Icon icon="logo" width="40px" height="40px" />
+              <Image src={logo} width="40px" height="40px" />
             </Box>
             <HStack
               as="nav"
