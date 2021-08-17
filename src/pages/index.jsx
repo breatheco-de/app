@@ -4,12 +4,12 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { Button } from '@chakra-ui/react';
 import styles from '../../styles/Home.module.css';
 import Counter from '../common/components/counter';
 import ToggleColor from '../common/components/toggleColor';
 import ProgressBar from '../common/components/progress';
 import { H1 } from '../common/styledComponents/Head';
-import Module from '../stories/components/Module';
 
 export default function Home() {
   const router = useRouter();
@@ -31,7 +31,9 @@ export default function Home() {
             the Support Chat?"
         /> */}
         <Link href="/" locale={router.locale === 'en' ? 'es' : 'en'}>
-          <button type="button">{t('change-locale')}</button>
+          <Button variant="default" type="button">
+            {t('change-locale')}
+          </Button>
         </Link>
 
         <H1 type="h1" className={styles.title}>
@@ -39,19 +41,9 @@ export default function Home() {
           {' '}
           <a href="/">Learn!</a>
         </H1>
-
-        <Counter
-          title={t('counter:title')}
-          resetText={t('counter:resetButton')}
-        />
+        <Counter title={t('counter:title')} resetText={t('counter:resetButton')} />
         <ToggleColor />
       </main>
-      <Module
-        title="READ"
-        moduleNumber={1}
-        paragraph="Introduction to the pre-work"
-        resetText="RESETEA"
-      />
       <footer className={styles.footer}>
         <a href="/">
           Powered by

@@ -2,6 +2,7 @@
   "name": "learn",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://github.com/breatheco-de/app",
   "lint-staged": {
     "src/**/*.{js,jsx}": [
       "eslint --fix"
@@ -19,8 +20,9 @@
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
     "jest": "jest",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "storybook": "npm run make:iconDict && start-storybook -p 6006",
+    "build-storybook": "npm run make:iconDict && build-storybook",
+    "make:iconDict": "node ./scripts/make.iconDict.js"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.6.5",
@@ -29,7 +31,7 @@
     "@loadable/component": "^5.15.0",
     "@next/bundle-analyzer": "^11.0.1",
     "framer-motion": "^4.1.17",
-    "next": "11.0.1",
+    "next": "^11.1.0",
     "next-i18next": "^8.5.5",
     "next-redux-wrapper": "^7.0.2",
     "next-runtime-dotenv": "^1.4.0",
@@ -45,8 +47,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.14.8",
-    "@storybook/addon-actions": "^6.3.6",
+    "@storybook/addon-actions": "^6.3.7",
     "@storybook/addon-essentials": "^6.3.6",
+    "@storybook/addon-knobs": "^6.3.0",
     "@storybook/addon-links": "^6.3.6",
     "@storybook/react": "^6.3.6",
     "@testing-library/react": "^12.0.0",

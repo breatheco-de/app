@@ -1,19 +1,11 @@
 import { Button, Heading, Stack } from '@chakra-ui/react';
-// import getConfig from 'next/config';
 import PropTypes from 'prop-types';
 import useCounter from '../store/actions/counterAction';
-
-// Only holds serverRuntimeConfig and publicRuntimeConfig
-// const { serverRuntimeConfig, publicRuntimeConfig } = getConfig();
 
 const Counter = ({ title, resetText }) => {
   const {
     count, increment, decrement, reset,
   } = useCounter();
-
-  // serverRuntimeConfig env var return undefined in browser but in console return the value
-  // console.log('GITHUB_TOKEN:::', serverRuntimeConfig.GITHUB_TOKEN);
-  // console.log('NEXT_ID:::', publicRuntimeConfig.NEXT_PUBLIC_ID);
 
   return (
     <div>
