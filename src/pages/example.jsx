@@ -7,7 +7,6 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import styles from '../../styles/Home.module.css';
 import Counter from '../common/components/Counter';
 import { H1 } from '../common/styledComponents/Head';
-import Navbar from '../common/components/navbar';
 
 export default function Example() {
   const router = useRouter();
@@ -33,35 +32,6 @@ export default function Example() {
 
         <Counter title={t('counter:title')} resetText={t('counter:resetButton')} />
       </main>
-      <Navbar
-        menuList={[
-          {
-            icon: 'home',
-            title: 'Dashboard',
-            link: '/',
-          },
-          {
-            icon: 'book',
-            title: 'Learn',
-            link: '/learn',
-          },
-          {
-            icon: 'message',
-            title: 'Mentoring',
-            link: '/mentoring',
-          },
-          {
-            icon: 'people',
-            title: 'Community',
-            link: '/community',
-          },
-        ]}
-        user={{
-          avatar: 'https://storage.googleapis.com/media-breathecode/639857ed0ceb0a5e5e0429e16f7e3a84365270a0977fb94727cc3b6450d1ea9a',
-          handleUser: () => {},
-          notifies: false,
-        }}
-      />
 
       <footer className={styles.footer}>
         <a href="/">

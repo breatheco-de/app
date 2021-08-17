@@ -33,7 +33,7 @@ const Navbar = ({
 
   return (
     <>
-      <Box px="25px" py="18px" borderBottom="1px solid #DADADA">
+      <Box px="25px" py="15px" borderBottom="1px solid #DADADA">
         <Flex h={16} alignItems="center" justifyContent="space-between">
           <HStack spacing={20} alignItems="center">
             <Box onClick={isOpen ? onClose : onOpen} cursor={{ base: 'pointer', md: 'default' }}>
@@ -78,6 +78,7 @@ const Navbar = ({
                   border="none"
                   type="text"
                   name="nav"
+                  color="inherit"
                   value={value}
                   onChange={handleChange}
                 />
@@ -92,7 +93,7 @@ const Navbar = ({
                 _focus={{ boxShadow: 'none' }}
                 _hover={{ background: 'none' }}
                 _active={{ background: 'none' }}
-                icon={colorMode === 'light' ? <Icon icon="light" width="25px" height="25px" color="black" /> : <Icon icon="dark" width="25px" height="25px" />}
+                icon={colorMode === 'light' ? <Icon icon="light" width="25px" height="23px" color="black" /> : <Icon icon="dark" width="25px" height="25px" />}
               />
               <IconButton
                 variant="default"
@@ -116,8 +117,8 @@ const Navbar = ({
               />
               <Avatar
                 onClick={handleUser}
-                width="40px"
-                height="40px"
+                width="43px"
+                height="43px"
                 cursor="pointer"
                 src={avatar}
               />

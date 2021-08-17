@@ -13,7 +13,8 @@ export default {
 };
 
 const Component = (args) => {
-  return  <Navbar {...args}/>
+  const [value, setValue] = useState("");
+  return  <Navbar {...args} value={value} handleChange={(e) => setValue(e.target.value)}/>
 };
 
 export const Default = Component.bind({});
