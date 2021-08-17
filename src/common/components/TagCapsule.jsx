@@ -38,7 +38,7 @@ const TagCapsule = ({ tags, separator, background }) => {
               {tag.name?.toUpperCase()}
             </Text>
             {i < tags.length - 1 && (
-              <Box as="span" alignSelf="center" fontSize="15px" mx="0.5rem">
+              <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
                 {separator}
               </Box>
             )}
