@@ -16,11 +16,7 @@ const Component = (args) => <ModuleMap {...args} />;
 
 export const Default = Component.bind({});
 Default.args = {
-  // moduleNumber: 1,
-  // title: 'READ',
-  // paragraph: 'Introduction to the pre-work',
   width: '40%',
-  // icon: 'book',
   modules: [
     {
       title: 'Read',

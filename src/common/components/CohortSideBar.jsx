@@ -10,7 +10,7 @@ const CohortSideBar = ({
 }) => {
   const { colorMode } = useColorMode();
   return (
-    <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" bg={colorMode === 'light' ? background || 'lightBlue' : 'featuredDark'}>
+    <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" bg={colorMode === 'light' ? background || 'blue.light' : 'featuredDark'}>
       <Box padding={26}>
         <Heading as="h4" size="md" fontWeight="900" margin={0} marginBottom={18}>ABOUT YOUR COHORT</Heading>
         <Box d="flex" alignItems="center" marginBottom={18}>

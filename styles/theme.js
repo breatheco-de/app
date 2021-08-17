@@ -29,10 +29,10 @@ const CustomTheme = extendTheme({
       500: '#e69e00',
       600: '#D69E2E',
     },
-    lightYellow: '#FFF4DC',
 
     blue: {
       default: '#0097CD',
+      light: '#EEF9FE',
       100: '#BEE3F8',
       200: '#90CDF4',
       300: '#63B3ED',
@@ -42,11 +42,11 @@ const CustomTheme = extendTheme({
       700: '#2B6CB0',
       800: '#2C5282',
     },
-    lightBlue: '#EEF9FE',
 
-    lightGray: '#F5F5F5',
     gray: {
       default: '#A4A4A4',
+      light: '#F5F5F5',
+      dark: '#3A3A3A',
       100: '#EDF2F7',
       200: '#E2E8F0',
       300: '#CBD5E0',
@@ -56,7 +56,6 @@ const CustomTheme = extendTheme({
       700: '#2D3748',
       800: '#1A202C',
     },
-    darkGray: '#3A3A3A',
 
     success: '#25BF6C',
     danger: '#CD0000',
