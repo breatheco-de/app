@@ -4,12 +4,10 @@ import {
   Progress,
   CircularProgress,
   CircularProgressLabel,
-} from "@chakra-ui/react";
-import Icon from "./Icon";
+} from '@chakra-ui/react';
 
-// [height, weight, color]
 const ProgressBar = () => {
-  const defaultProps = "450px";
+  const defaultProps = '450px';
   return (
     <>
       <CircularProgress value={40} color="green.400">
