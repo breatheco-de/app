@@ -1,5 +1,5 @@
 import React from 'react';
-import CohortSideBar from '../common/components/cohortSideBar';
+import CohortSideBar from '../common/components/CohortSideBar';
 
 export default {
   title: 'Components/CohortSideBar',
