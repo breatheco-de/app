@@ -11,7 +11,9 @@ walk(`${__dirname}/../src/common/components/Icon/set`)
     const slugs = [];
     for (let i = 0; i < files.length; i += 1) {
       const path = files[i];
-      const slug = path.split('.')[0].substr(path.lastIndexOf(`${process.platform === 'win32' ? '\\' : '/'}`) + 1);
+      const slug = path
+        .split('.')[0]
+        .substr(path.lastIndexOf(`${process.platform === 'win32' ? '\\' : '/'}`) + 1);
       slugs.push(slug);
     }
     console.log('Stored icons:', slugs);
