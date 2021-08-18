@@ -7,6 +7,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import styles from '../../styles/Home.module.css';
 import Counter from '../common/components/Counter';
 import { H1 } from '../common/styledComponents/Head';
+import Navbar from '../common/components/Navbar';
 
 export default function Example() {
   const router = useRouter();
