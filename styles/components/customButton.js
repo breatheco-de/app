@@ -26,7 +26,7 @@ const ButtonStyles = {
       },
       _disabled: {
         bg: '#EBEBEB',
-        color: 'darkGray',
+        color: 'gray.dark',
         opacity: 1,
         _hover: {
           opacity: 0.7,
@@ -52,7 +52,7 @@ const ButtonStyles = {
       // },
       _disabled: {
         bg: '#EBEBEB',
-        color: 'darkGray',
+        color: 'gray.dark',
         opacity: 1,
         _hover: {
           opacity: 0.7,
@@ -83,7 +83,7 @@ const ButtonStyles = {
       _disabled: {
         bg: '#EBEBEB',
         border: 0,
-        color: 'darkGray',
+        color: 'gray.dark',
         opacity: 1,
         _hover: {
           opacity: 0.7,

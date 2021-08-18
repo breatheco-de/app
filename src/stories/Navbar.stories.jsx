@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import Navbar from '../common/components/navbar';
+import Navbar from '../common/components/Navbar';
 import { text, withKnobs, boolean } from '@storybook/addon-knobs';
 import { action } from '@storybook/addon-actions';
 
