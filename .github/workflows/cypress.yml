@@ -23,7 +23,7 @@ jobs:
         uses: cypress-io/github-action@v2.9.7
         with:
           build: npm run build
-          start: npm run serve
+          start: npm start
           browser: electron
           wait-on-timeout: 1000
           config: baseUrl=http://localhost:3080
