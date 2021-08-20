@@ -14,15 +14,17 @@
     }
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3000",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3080",
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
     "jest": "jest",
     "storybook": "npm run make:iconDict && start-storybook -p 6006",
     "build-storybook": "npm run make:iconDict && build-storybook",
-    "make:iconDict": "node ./scripts/make.iconDict.js"
+    "make:iconDict": "node ./scripts/make.iconDict.js",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.6.5",
@@ -56,6 +58,8 @@
     "babel-jest": "^27.0.6",
     "babel-loader": "^8.2.2",
     "babel-plugin-styled-components": "^1.13.2",
+    "cypress": "^8.3.0",
+    "cypress-terminal-report": "^3.3.2",
     "eslint": "^7.30.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-next": "11.0.1",
