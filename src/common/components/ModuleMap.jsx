@@ -1,18 +1,25 @@
 import {
   Text, Box, HStack, Heading, Stack, useColorMode, Flex,
 } from '@chakra-ui/react';
-
 import PropTypes from 'prop-types';
+import NextChakraLink from './NextChakraLink';
+import useModuleMap from '../store/actions/moduleMapAction';
+
 // import useCounter from '../store/actions/counterAction';
 import Icon from './Icon';
 
-const ModuleMap = ({ modules, width }) => {
+const ModuleMap = ({ width, handleModuleStatus }) => {
   const { colorMode } = useColorMode();
+  const { modules } = useModuleMap();
+  const statusIcons = {
+    finished: 'verified',
+    inactive: 'lesson',
+    active: 'unverified',
+  };
 
   return (
     <Box>
       <Heading as="h1">Module Map</Heading>
-
       {modules.map((module, i) => (
         <Stack
           direction="row"
@@ -25,6 +32,8 @@ const ModuleMap = ({ modules, width }) => {
           my="10px"
           rounded="2xl"
           overflow="hidden"
+          key={module.text}
+          _hover={{ bg: colorMode === 'light' ? 'blue.light' : 'featuredDark' }}
         >
           <Flex width="100%">
             <Box
@@ -47,7 +56,6 @@ const ModuleMap = ({ modules, width }) => {
             <Box mr="20px" ml="20px" display="flex" minWidth="22px" width="22px">
               <Icon icon={module.icon || 'book'} />
             </Box>
-
             <Box>
               <Heading
                 as="h3"
@@ -70,9 +78,11 @@ const ModuleMap = ({ modules, width }) => {
               </Text>
             </Box>
           </Flex>
-          <HStack width="auto">
-            <Box display="flex" width="30px" margin="0 0 0 auto">
-              <Icon icon="verified" />
+          <HStack width="inherit">
+            <Box display="flex" margin="0 0 0 auto" onClick={(e) => handleModuleStatus(e, { ...module, index: i })}>
+              {module.status === 'inactive'
+                ? <NextChakraLink href="/" color="#0097CF" fontWeight="bold" fontStyle="normal">{`${module.title} lesson`}</NextChakraLink>
+                : <Icon icon={statusIcons[module.status]} width="27px" />}
             </Box>
           </HStack>
         </Stack>
@@ -80,12 +90,15 @@ const ModuleMap = ({ modules, width }) => {
     </Box>
   );
 };
+
 ModuleMap.propTypes = {
-  modules: PropTypes.objectOf(PropTypes.object).isRequired,
   width: PropTypes.string,
+  handleModuleStatus: PropTypes.func,
 };
 ModuleMap.defaultProps = {
   width: '100%',
+  handleModuleStatus: () => {
+  },
 };
 
 export default ModuleMap;
