@@ -1,67 +1,165 @@
 /* eslint-disable react/no-array-index-key */
 import {
-  Box, Heading, Text, Image, Divider, Grid, Link, useColorMode,
+  Box,
+  Heading,
+  Text,
+  Divider,
+  Grid,
+  Link,
+  useColorMode,
+  WrapItem,
+  Avatar,
+  AvatarBadge,
+  Tooltip,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Icon from './Icon';
 
 const CohortSideBar = ({
-  title, cohortCity, professor, assistant, classmates, background,
+  title,
+  cohortCity,
+  professor,
+  assistant,
+  classmates,
+  background,
+  width,
 }) => {
   const { colorMode } = useColorMode();
   return (
-    <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" bg={colorMode === 'light' ? background || 'blue.light' : 'featuredDark'}>
+    <Box
+      minW="200px"
+      maxW="500px"
+      width={width}
+      borderWidth="1px"
+      borderRadius="lg"
+      overflow="hidden"
+      bg={colorMode === 'light' ? background || 'blue.light' : 'featuredDark'}
+    >
       <Box padding={26}>
-        <Heading as="h4" size="md" fontWeight="900" margin={0} marginBottom={18}>ABOUT YOUR COHORT</Heading>
+        <Heading
+          as="h4"
+          fontSize={15}
+          fontWeight="900"
+          margin={0}
+          lineHeight="18px"
+          letterSpacing="0.05em"
+          marginBottom={18}
+        >
+          ABOUT YOUR COHORT
+        </Heading>
         <Box d="flex" alignItems="center" marginBottom={18}>
           <Icon icon="group" width="39px" height="39px" />
           <Box marginLeft={13}>
-            <Heading as="h4" size="md" lineHeight="tight" margin={0}>{title}</Heading>
-            <Text fontSize="md" lineHeight="tight" margin={0}>{cohortCity}</Text>
+            <Heading as="h4" fontSize={15} fontWeight="700" lineHeight="18px" margin={0}>
+              {title}
+            </Heading>
+            <Text fontSize={15} fontWeight="400" lineHeight="18px" margin={0}>
+              {cohortCity}
+            </Text>
           </Box>
         </Box>
         <Box d="flex" alignItems="center">
-          <Box>
-            <Box width="9px" height="9px" borderRadius="full" bg={professor.active ? 'success' : 'danger'} position="relative" left="30px" top="11px" border="1px solid white" />
-            <Image margin="auto" borderRadius="full" width="39px" height="39px" src="https://storage.googleapis.com/media-breathecode/639857ed0ceb0a5e5e0429e16f7e3a84365270a0977fb94727cc3b6450d1ea9a" />
-          </Box>
+          <Tooltip label={professor.name} placement="top">
+            <WrapItem justifyContent="center" alignItems="center">
+              <Avatar
+                width="39px"
+                height="39px"
+                name={professor.name}
+                src={professor.image}
+              >
+                <AvatarBadge
+                  boxSize="9px"
+                  bg={professor.active ? 'success' : 'danger'}
+                  top="0"
+                  border="1px solid"
+                />
+              </Avatar>
+            </WrapItem>
+          </Tooltip>
           <Box marginLeft={13}>
-            <Heading as="h4" size="md" lineHeight="tight" margin={0}>Main Teacher</Heading>
-            <Text fontSize="md" lineHeight="tight" margin={0}>{professor.name}</Text>
+            <Heading as="h4" fontSize={15} fontWeight="700" lineHeight="tight" margin={0}>
+              Main Teacher
+            </Heading>
+            <Text fontSize={15} fontWeight="400" lineHeight="18px" margin={0}>
+              {professor.name}
+            </Text>
           </Box>
         </Box>
       </Box>
       <Divider margin={0} style={{ borderColor: '#DADADA' }} />
-      <Box padding={26}>
-        {assistant ? (
+      <Box padding="0 26px">
+        <Heading as="h4" padding="25px 0 8px 0" fontSize={15} lineHeight="18px" margin={0}>
+          Assistant Professors
+        </Heading>
+        {assistant && (
           <>
-            <Box>
-              <Heading as="h4" size="md" lineHeight="tight" margin={0}>Assistant Professors</Heading>
-            </Box>
-            <Grid templateColumns="repeat(5, 1fr)" gap={0}>
+            <Grid
+              gridAutoRows="3.4rem"
+              templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
+              gap={0}
+            >
               {assistant.map((a, i) => (
-                <Box margin="6px">
-                  <Box width="9px" height="9px" borderRadius="full" bg={a.active ? 'success' : 'danger'} position="relative" left="30px" top="11px" border="1px solid white" />
-                  <Image key={i} margin="auto" borderRadius="full" width="39px" height="39px" src="https://storage.googleapis.com/media-breathecode/639857ed0ceb0a5e5e0429e16f7e3a84365270a0977fb94727cc3b6450d1ea9a" />
-                </Box>
+                <Tooltip label={a.name} placement="top">
+                  <WrapItem justifyContent="center" alignItems="center">
+                    <Avatar
+                      key={i}
+                      width="39px"
+                      height="39px"
+                      name={a.name}
+                      src={a.image}
+                    >
+                      <AvatarBadge
+                        boxSize="9px"
+                        bg={a.active ? 'success' : 'danger'}
+                        top="0"
+                        border="1px solid"
+                      />
+                    </Avatar>
+                  </WrapItem>
+                </Tooltip>
               ))}
             </Grid>
           </>
-        ) : null}
-        <Box>
-          <Heading as="h4" size="md" lineHeight="tight" margin={0}>Your Classmates</Heading>
-        </Box>
-        <Grid templateColumns="repeat(5, 1fr)" gap={0}>
+        )}
+        <Heading as="h4" padding="25px 0 8px 0" fontSize={15} lineHeight="18px" margin={0}>
+          Your Classmates
+        </Heading>
+        <Grid
+          gridAutoRows="3.4rem"
+          templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
+          gap={0}
+        >
           {classmates.map((c, i) => (
-            <Box margin="6px">
-              <Box width="9px" height="9px" borderRadius="full" bg={c.active ? 'success' : 'danger'} position="relative" left="30px" top="11px" border="1px solid white" />
-              <Image key={i} margin="auto" borderRadius="full" width="39px" height="39px" src="https://storage.googleapis.com/media-breathecode/639857ed0ceb0a5e5e0429e16f7e3a84365270a0977fb94727cc3b6450d1ea9a" />
-            </Box>
+            <Tooltip label={c.name} placement="top">
+              <WrapItem justifyContent="center" alignItems="center">
+                <Avatar
+                  key={i}
+                  width="39px"
+                  height="39px"
+                  name={c.name}
+                  src={c.image}
+                >
+                  <AvatarBadge
+                    boxSize="9px"
+                    bg={c.active ? 'success' : 'danger'}
+                    top="0"
+                    border="1px solid"
+                  />
+                </Avatar>
+              </WrapItem>
+            </Tooltip>
           ))}
         </Grid>
       </Box>
-      <Box textAlign="center" padding={26}>
-        <Link color="blue" href="/" fontWeight="bold">
+      <Box textAlign="center" padding="30px 0">
+        <Link
+          href="/"
+          color="blue.default"
+          fontWeight="700"
+          fontSize={15}
+          lineHeight="22px"
+          letterSpacing="0.05em"
+        >
           Create a study session
         </Link>
       </Box>
@@ -70,6 +168,7 @@ const CohortSideBar = ({
 };
 
 CohortSideBar.propTypes = {
+  width: PropTypes.string,
   title: PropTypes.string,
   cohortCity: PropTypes.string,
   professor: PropTypes.objectOf(PropTypes.object),
@@ -78,43 +177,26 @@ CohortSideBar.propTypes = {
   background: PropTypes.string,
 };
 CohortSideBar.defaultProps = {
-  title: 'Test Cohort Side Bar',
-  cohortCity: 'Miami Downtown',
+  width: '352px',
+  title: '',
+  cohortCity: '',
   professor: {
-    name: 'Paolo Lucano',
+    name: 'Jhon doe',
     image: '',
     active: true,
   },
   assistant: [
     {
       active: false,
-      image: 'image.com/...',
-    },
-    {
-      active: true,
       image: '',
+      name: '',
     },
   ],
   classmates: [
     {
       active: true,
       image: '',
-    },
-    {
-      active: true,
-      image: '',
-    },
-    {
-      active: true,
-      image: '',
-    },
-    {
-      active: true,
-      image: '',
-    },
-    {
-      active: true,
-      image: '',
+      name: 'jhon',
     },
   ],
   background: '',
