@@ -2,6 +2,11 @@ import { extendTheme } from '@chakra-ui/react';
 import Button from './components/customButton';
 
 const CustomTheme = extendTheme({
+  fonts: {
+    heading: 'Lato',
+    body: 'Lato',
+  },
+
   // Color scheme of Components
   styles: {
     global: (props) => ({
