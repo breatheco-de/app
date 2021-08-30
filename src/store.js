@@ -4,6 +4,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import thunkMiddleware from 'redux-thunk';
 import counterReducer from './common/store/reducers/counterReducer';
 import todosReducer from './common/store/reducers/todoReducer';
+import moduleMapReducer from './common/store/reducers/moduleMapReducer';
 
 const bindMiddleware = (middleware) => {
   if (process.env.NODE_ENV !== 'production') {
@@ -15,6 +16,7 @@ const bindMiddleware = (middleware) => {
 const combinedReducer = combineReducers({
   counterReducer,
   todosReducer,
+  moduleMapReducer,
 });
 
 const reducer = (state, action) => {
@@ -28,7 +30,7 @@ const reducer = (state, action) => {
   return combinedReducer(state, action);
 };
 
-const initStore = () => createStore(reducer, bindMiddleware([thunkMiddleware]));
+export const initStore = () => createStore(reducer, bindMiddleware([thunkMiddleware]));
 
 const wrapper = createWrapper(initStore);
 export default wrapper;
