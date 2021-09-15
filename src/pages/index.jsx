@@ -9,6 +9,7 @@ import styles from '../../styles/Home.module.css';
 import Counter from '../common/components/Counter';
 import ToggleColor from '../common/components/ToggleColor';
 import { H1 } from '../common/styledComponents/Head';
+import Layout from '../../Layout';
 
 export default function Home() {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
+      <Layout/>
       <Head>
         <title>{t('title')}</title>
         <meta name="description" content="Learn with Breatheco.de" />
@@ -30,7 +32,6 @@ export default function Home() {
         </Link>
         <H1 type="h1" className={styles.title}>
           {t('heading')}
-          {' '}
           <a href="/">Learn!</a>
         </H1>
         <Counter title={t('counter:title')} resetText={t('counter:resetButton')} />
@@ -39,7 +40,6 @@ export default function Home() {
       <footer className={styles.footer}>
         <a href="/">
           Powered by
-          {' '}
           <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
