@@ -164,6 +164,31 @@ const callToAction = {
   background: 'blue.default',
   title: 'Todays lessons',
   text: 'Your lesson today is Internet Architecture in First Time Website Module.',
+  width: 'auto',
+};
+
+const progressBar = {
+  programs: [
+    {
+      title: 'Lessons',
+      Icon: 'book',
+      taskLength: 30,
+      taskCompleted: 12,
+    },
+    {
+      title: 'Projects',
+      icon: 'book',
+      taskLength: 15,
+      taskCompleted: 5,
+    },
+    {
+      title: 'Exercises',
+      icon: 'book',
+      taskLength: 15,
+      taskCompleted: 5,
+    },
+  ],
+  progressText: 'progress in the program',
   width: '100%',
 };
 
@@ -174,4 +199,5 @@ export default {
   supportSideBar,
   tapCapsule,
   callToAction,
+  progressBar,
 };
