@@ -14,7 +14,7 @@ export default function Example() {
 
   return (
     <div className={styles.container}>
-      <Head>
+      {/* <Head>
         <title>{t('title')}</title>
         <meta name="description" content="Learn with Breatheco.de" />
         <link rel="icon" href="/favicon.ico" />
@@ -41,7 +41,7 @@ export default function Example() {
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
         </a>
-      </footer>
+      </footer> */}
     </div>
   );
 }
