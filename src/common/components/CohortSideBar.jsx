@@ -27,8 +27,6 @@ const CohortSideBar = ({
   const { colorMode } = useColorMode();
   return (
     <Box
-      minW="200px"
-      maxW="500px"
       width={width}
       borderWidth="1px"
       borderRadius="lg"

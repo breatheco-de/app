@@ -1,6 +1,5 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Navbar from '../common/components/Navbar';
-import { text, withKnobs, boolean } from '@storybook/addon-knobs';
 import { action } from '@storybook/addon-actions';
 
 
@@ -8,17 +7,29 @@ export default {
   title: 'Components/Navbar',
   component: Navbar,
   argTypes: {
+    user: {
+      control: {
+        type: 'object'
+      }
+    },
+    width: {
+      control: {
+        type: 'range',
+        min: 0,
+        max: 100,
+    },
   },
-  decorators: [withKnobs],
+  }
 };
 
 const Component = (args) => {
-  const [value, setValue] = useState("");
-  return  <Navbar {...args} value={value} handleChange={(e) => setValue(e.target.value)}/>
+  return <Navbar {...args} width={`${args.width}%`}  />
 };
 
 export const Default = Component.bind({});
 Default.args = {
+  width: 100,
+  handleChange: action('change'),
   menuList: [
     {
       icon: "home",
@@ -42,9 +53,8 @@ Default.args = {
     },
   ],
   user: {
-    avatar: text("Avatar","https://storage.googleapis.com/media-breathecode/639857ed0ceb0a5e5e0429e16f7e3a84365270a0977fb94727cc3b6450d1ea9a"),
-    handleUser: action("handleUser"),
-    notifies: boolean("Notifies", false),
+    avatar: "https://storage.googleapis.com/media-breathecode/639857ed0ceb0a5e5e0429e16f7e3a84365270a0977fb94727cc3b6450d1ea9a",
+    handleUser: () => { },
+    notifies: true,
   },
-  handleChange: action("handleChange"),
 };
