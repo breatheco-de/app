@@ -37,8 +37,8 @@ const Navbar = ({
 
   return (
     <>
-      <Box px="25px" py="15px" borderBottom="1px solid #DADADA" width={width}>
-        <Flex h={16} alignItems="center" justifyContent="space-between">
+      <Box width={width}>
+        <Flex alignItems="center" justifyContent="space-between" padding="22px" borderBottom="1px solid #DADADA">
           <HStack spacing={20} alignItems="center">
             <Box onClick={isOpen ? onClose : onOpen} cursor={{ base: 'pointer', md: 'default' }}>
               <Image src={logo} width="40px" height="40px" />

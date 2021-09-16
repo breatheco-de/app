@@ -4,7 +4,6 @@ import {
   Heading,
   Text,
   Button,
-  useColorMode,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
@@ -12,9 +11,8 @@ const CallToAction = (props) => {
   const {
     background, title, text, width,
   } = props;
-  const { colorMode } = useColorMode();
   return (
-    <Box justifyContent="space-between" width={width} display="flex" bg={colorMode === 'light' ? background || 'blue.light' : 'featuredDark'} borderRadius="17px" paddingY="21px" paddingX="25px">
+    <Box justifyContent="space-between" width={width} display="flex" bg={background} borderRadius="17px" paddingY="21px" paddingX="25px">
       <Box>
         <Heading Heading as="h5" fontSize="22px" color="white" margin={0} marginBottom="11px">
           {title}

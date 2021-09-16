@@ -23,13 +23,13 @@ const ModuleMap = ({
     <Box width={width || '100%'}>
       <Box display="flex" justifyContent="space-between">
         <Heading as="h1" margin={0} fontSize="22px">{title}</Heading>
-        <Heading as="h6" margin={0} fontSize="15px" color="gray.default" fontWeight="normal">
+        <Heading as="h6" margin={0} fontSize="15px" color={colorMode === 'light' ? 'gray.default' : 'white'} fontWeight="normal">
           {modules?.length}
           {' '}
           LESSONS
         </Heading>
       </Box>
-      <Text color="#606060" fontSize="14px">
+      <Text color={colorMode === 'light' ? '#606060' : 'white'} fontSize="14px">
         {description}
       </Text>
       {modules.map((module, i) => (
