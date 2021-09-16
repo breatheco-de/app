@@ -1,5 +1,6 @@
 import React from 'react';
 import CohortSideBar from '../common/components/CohortSideBar';
+import { text, withKnobs,  } from '@storybook/addon-knobs';
 
 export default {
   title: 'Components/CohortSideBar',
@@ -8,18 +9,19 @@ export default {
     width: {
       control: {
         type: 'range',
-        min: 200,
-        max: 450,
+        min: 0,
+        max: 100,
       },
     },
   },
+  decorators:[withKnobs]
 };
 
-const Component = (args) => <CohortSideBar width={`${args.width}px`} {...args} />;
+const Component = (args) => <CohortSideBar  {...args} width={`${args.width}%`}/>;
 
 export const Default = Component.bind({});
 Default.args = {
-  width: 352,
+  width: 100,
   title: 'Cohort',
   cohortCity: 'Miami Downtown',
   professor: {

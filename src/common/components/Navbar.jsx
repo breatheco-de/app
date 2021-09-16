@@ -19,7 +19,7 @@ import logo from '../../../public/static/images/bc_logo.png';
 import Icon from './Icon';
 
 const Navbar = ({
-  menuList, user: { handleUser, avatar, notifies }, handleChange, value,
+  menuList, user: { handleUser, avatar, notifies }, handleChange, width,
 }) => {
   const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
@@ -37,7 +37,7 @@ const Navbar = ({
 
   return (
     <>
-      <Box px="25px" py="15px" borderBottom="1px solid #DADADA">
+      <Box px="25px" py="15px" borderBottom="1px solid #DADADA" width={width}>
         <Flex h={16} alignItems="center" justifyContent="space-between">
           <HStack spacing={20} alignItems="center">
             <Box onClick={isOpen ? onClose : onOpen} cursor={{ base: 'pointer', md: 'default' }}>
@@ -83,8 +83,7 @@ const Navbar = ({
                   type="text"
                   name="nav"
                   color="inherit"
-                  value={value}
-                  onChange={handleChange}
+                  onChange={(e) => handleChange(e.target.value)}
                 />
                 <InputRightElement>
                   <Icon color="black" icon="search" width="20px" height="20px" />
@@ -165,12 +164,12 @@ Navbar.propTypes = {
   menuList: PropTypes.arrayOf(PropTypes.array).isRequired,
   user: PropTypes.objectOf(PropTypes.object).isRequired,
   handleChange: PropTypes.func,
-  value: PropTypes.string,
+  width: PropTypes.string,
 };
 Navbar.defaultProps = {
-  value: '',
   handleChange: () => {
   },
+  width: '',
 };
 
 export default Navbar;
