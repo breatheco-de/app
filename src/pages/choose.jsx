@@ -17,11 +17,11 @@ function Choose() {
         border="lightgray solid 2px"
         fontSize={['12px', '13px', '14px', '15px', '15px']}
       >
-        <Text display='flex' flexDirection='column' marginLeft='25px'>
-          <Text color={'gray.700'} marginLeft='20px' fontWeight='800' margin='0px'>
+        <Text display="flex" flexDirection="column" marginLeft="25px">
+          <Text color="gray.700" marginLeft="20px" fontWeight="800" margin="0px">
             PRE WORK
           </Text>
-          <Text color={'gray.700'} sans-serif marginLeft="20px" marginRight="30px" margin="0px">
+          <Text color="gray.700" sans-serif marginLeft="20px" marginRight="30px" margin="0px">
             Cohort: Miami Prework
           </Text>
         </Text>
