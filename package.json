@@ -25,7 +25,7 @@
     "make:iconDict": "node ./scripts/make.iconDict.js",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "lint:staged": "lint-staged"
+    "lint:file": "eslint /src/pages/choose.jsx"
   },
   "dependencies": {
     "@chakra-ui/icons": "^1.0.15",
