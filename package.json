@@ -24,7 +24,8 @@
     "build-storybook": "npm run make:iconDict && build-storybook",
     "make:iconDict": "node ./scripts/make.iconDict.js",
     "cy:open": "cypress open",
-    "cy:run": "cypress run"
+    "cy:run": "cypress run",
+    "lint:staged": "lint-staged"
   },
   "dependencies": {
     "@chakra-ui/icons": "^1.0.15",
