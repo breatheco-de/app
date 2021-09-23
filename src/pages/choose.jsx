@@ -10,11 +10,11 @@ function Choose() {
       <Text
         display="flex"
         justifyContent="space-between"
-        flexDirection='row'
-        borderRadius='25px'
+        flexDirection="row"
+        borderRadius="25px"
         height={['40px', '70px', '80px', '80px']}
         width={['70%', '68%', '56%', '50%']}
-        border='lightgray solid 2px'
+        border="lightgray solid 2px"
         fontSize={['12px', '13px', '14px', '15px', '15px']}
       >
         <Text display='flex' flexDirection='column' marginLeft='25px'>
