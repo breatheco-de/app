@@ -3,10 +3,10 @@ import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Flex, Text } from '@chakra-ui/react';
 
 function Choose() {
-    return(
-        <Flex alignItems='center' flexDirection='column'>
+    return (
+        <Flex alignItems="center" flexDirection="column">
             <Text fontWeight='800' width={['70%', '68%', '56%', '50%']} fontSize={['40px', '50px', '55px', '70px']}>Your programs</Text>
-            <Text fontWeight='600' width={['70%', '68%', '56%', '50%']} fontSize={['10px', '15px', '15px', '20px']} color={'gray.600'}>Some text here as an example to see how it will all look together. more random text because we needed a bigger example. 4Geeks Academy is a great school that gives you great tool and teachers for you to learn all about how computers work!</Text>
+            <Text fontWeight='600' width={['70%', '68%', '56%', '50%']} fontSize={['10px', '15px', '15px', '20px']} color='gray.600'>Some text here as an example to see how it will all look together. more random text because we needed a bigger example. 4Geeks Academy is a great school that gives you great tool and teachers for you to learn all about how computers work!</Text>
             <Text
             display='flex'
             justifyContent='space-between'
@@ -25,8 +25,9 @@ function Choose() {
                         Cohort: Miami Prework
                     </Text>
                 </Text>
-                <Text fontSize={['10px', '15px', '15px', '20px']} margin='0px' color='blue.400' fontWeight='800' justifyContent='center' alignContent='center' alignItem='center' marginRight='15px'>
-                    Launch this program <ArrowForwardIcon color={'blue.400'} height={['40px', '70px', '80px', '80px']} width='40px'/>
+                <Text fontSize={['10px', '15px', '15px', '20px']} margin='0px' color='blue.400' fontWeight='800' justifyContent:center alignContent:center alignItem:center marginRight='15px'>
+                    Launch this program
+                    <ArrowForwardIcon color={'blue.400'} height={['40px', '70px', '80px', '80px']} width='40px'/>
                 </Text>
             </Text>
         </Flex>
