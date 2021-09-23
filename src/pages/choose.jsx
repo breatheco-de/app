@@ -17,19 +17,19 @@ function Choose() {
         border='lightgray solid 2px'
         fontSize={['12px', '13px', '14px', '15px', '15px']}
       >
-      <Text display='flex' flexDirection='column' marginLeft='25px'>
-      <Text color={'gray.700'} marginLeft='20px' fontWeight='800' margin='0px'>
-        PRE WORK
+        <Text display='flex' flexDirection='column' marginLeft='25px'>
+        <Text color={'gray.700'} marginLeft='20px' fontWeight='800' margin='0px'>
+          PRE WORK
+        </Text>
+        <Text color={'gray.700'} sans-serif marginLeft='20px' marginRight='30px' margin='0px'>
+          Cohort: Miami Prework
+        </Text>
       </Text>
-      <Text color={'gray.700'} sans-serif marginLeft='20px' marginRight='30px' margin='0px'>
-        Cohort: Miami Prework
-      </Text>
-    </Text>
-    <Text fontSize={['10px', '15px', '15px', '20px']} margin='0px' color='blue.400' fontWeight='800' justifyContent:center alignContent:center alignItem:center marginRight='15px'>
+      <Text fontSize={['10px', '15px', '15px', '20px']} margin='0px' color='blue.400' fontWeight='800' justifyContent:center alignContent:center alignItem:center marginRight='15px'>
         Launch this program
         <ArrowForwardIcon color={'blue.400'} height={['40px', '70px', '80px', '80px']} width='40px'/>
-    </Text>
-    </Text>
+      </Text>
+      </Text>
     </Flex>
 );
 }
