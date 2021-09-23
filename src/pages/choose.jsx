@@ -6,10 +6,10 @@ function Choose() {
   return (
     <Flex alignItems="center" flexDirection="column">
       <Text fontWeight={800} width={['70%', '68%', '56%', '50%']} fontSize={['40px', '50px', '55px', '70px']}>Your programs</Text>
-      <Text fontWeight='600' width={['70%', '68%', '56%', '50%']} fontSize={['10px', '15px', '15px', '20px']} color='gray.600'>Some text here as an example to see how it will all look together. more random text because we needed a bigger example. 4Geeks Academy is a great school that gives you great tool and teachers for you to learn all about how computers work!</Text>
+      <Text fontWeight={600} width={['70%', '68%', '56%', '50%']} fontSize={['10px', '15px', '15px', '20px']} color="gray.600">Some text here as an example to see how it will all look together. more random text because we needed a bigger example. 4Geeks Academy is a great school that gives you great tool and teachers for you to learn all about how computers work!</Text>
       <Text
-        display='flex'
-        justifyContent='space-between'
+        display="flex"
+        justifyContent="space-between"
         flexDirection='row'
         borderRadius='25px'
         height={['40px', '70px', '80px', '80px']}
