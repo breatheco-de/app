@@ -3,8 +3,6 @@ import {
   Box,
   Grid,
   GridItem,
-  Heading,
-  Text,
   Container,
 } from '@chakra-ui/react';
 import Navbar from '../components/Navbar';
@@ -18,6 +16,8 @@ import Icon from '../components/Icon';
 import SupportSidebar from '../components/SupportSidebar';
 import CallToAction from '../components/CallToAction';
 import ProgressBar from '../components/ProgressBar';
+import Heading from '../components/Heading';
+import Text from '../components/Text';
 
 const Dashboard = () => {
   const { updateModuleStatus } = useModuleMap();
@@ -57,11 +57,11 @@ const Dashboard = () => {
           gap={16}
         >
           <GridItem colSpan={8}>
-            <Heading as="h1" size="2xl">
+            <Heading as="h1" size="xl">
               Full Stack Developer
             </Heading>
             <TagCapsule {...tapCapsule} />
-            <Text fontSize="14px">
+            <Text size="m">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit,
               sed do eiusmod tempor incididunt ut labore et dolore magna
               aliqua. Ut enim ad minim veniam, quis
@@ -73,9 +73,9 @@ const Dashboard = () => {
             <Box marginTop="36px">
               <ProgressBar {...progressBar} />
             </Box>
-            <Box height="1px" bg="#3A444C" marginY="32px" />
+            <Box height="1px" bg="gray.dark" marginY="32px" />
             <Box>
-              <Heading as="h6" fontSize="15px">MODULE MAP</Heading>
+              <Heading size="m">MODULE MAP</Heading>
             </Box>
             <Box marginTop="30px">
               <ModuleMap {...moduleMap} handleModuleStatus={handleModuleStatus} width="100%" />
