@@ -9,7 +9,6 @@ import styles from '../../styles/Home.module.css';
 import Counter from '../common/components/Counter';
 import ToggleColor from '../common/components/ToggleColor';
 import { H1 } from '../common/styledComponents/Head';
-import HoldButton from '../common/components/HoldButton';
 
 export default function Home() {
   const router = useRouter();
@@ -34,8 +33,6 @@ export default function Home() {
           {' '}
           <a href="/">Learn!</a>
         </H1>
-
-        <HoldButton />
 
         <Counter title={t('counter:title')} resetText={t('counter:resetButton')} />
         <ToggleColor />
