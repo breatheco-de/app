@@ -24,9 +24,11 @@
     "build-storybook": "npm run make:iconDict && build-storybook",
     "make:iconDict": "node ./scripts/make.iconDict.js",
     "cy:open": "cypress open",
-    "cy:run": "cypress run"
+    "cy:run": "cypress run",
+    "lint:files": "eslint src/**/*.{js,jsx}"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^1.0.15",
     "@chakra-ui/react": "^1.6.5",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
@@ -34,6 +36,7 @@
     "@loadable/component": "^5.15.0",
     "@next/bundle-analyzer": "^11.0.1",
     "framer-motion": "^4.1.17",
+    "history": "^5.0.1",
     "next": "^11.1.0",
     "next-i18next": "^8.5.5",
     "next-redux-wrapper": "^7.0.2",
@@ -43,6 +46,7 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-redux": "^7.2.4",
+    "react-router-dom": "^5.3.0",
     "redux": "^4.1.0",
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.3.0",

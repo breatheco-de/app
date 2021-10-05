@@ -30,7 +30,6 @@ export default function Home() {
         </Link>
         <H1 type="h1" className={styles.title}>
           {t('heading')}
-          {' '}
           <a href="/">Learn!</a>
         </H1>
 
@@ -40,7 +39,6 @@ export default function Home() {
       <footer className={styles.footer}>
         <a href="/">
           Powered by
-          {' '}
           <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
