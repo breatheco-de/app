@@ -33,6 +33,7 @@ export default function Home() {
           {' '}
           <a href="/">Learn!</a>
         </H1>
+
         <Counter title={t('counter:title')} resetText={t('counter:resetButton')} />
         <ToggleColor />
       </main>

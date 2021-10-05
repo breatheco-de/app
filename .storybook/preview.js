@@ -4,6 +4,7 @@ import {ChakraProvider} from '@chakra-ui/react';
 import { Provider } from 'react-redux';
 import { initStore } from '../src/store';
 import CustomTheme from '../styles/theme';
+import '../styles/globals.css';
 
 import "@fontsource/lato/100.css"
 import "@fontsource/lato/300.css"
