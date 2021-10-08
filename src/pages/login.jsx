@@ -35,8 +35,8 @@ function login() {
         <FormControl id="password" borderRadius="3px">
           <Input type="password" placeholder="Password" height="50px" width="365px" borderColor="gray.default" />
         </FormControl>
-        <Box color="blue.default" fontSize="m" fontWeight="700" font="lato" align="center" marginLeft="245px">Reset Password</Box>
-        <Button disabled="True" variant="default" marginTop="70px" width="365px">Login</Button>
+        <Box color="blue.default" fontWeight="700" align="center" marginLeft="245px">Reset Password</Box>
+        <Button disabled="True" variant="default" marginTop="70px" width="365px" fontSize="l" color="gray.dark">Login</Button>
       </Box>
       <Image src={bg} quality="100" placeholder="blur" height="100vh" width="900px" />
     </Box>
