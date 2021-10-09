@@ -1,10 +1,10 @@
 import React from 'react';
-import Navbar from '../common/components/Navbar';
+import Navbar from '../../common/components/Navbar/Session';
 import { action } from '@storybook/addon-actions';
 
 
 export default {
-  title: 'Components/Navbar',
+  title: 'Components/Navbar/Session',
   component: Navbar,
   argTypes: {
     user: {
