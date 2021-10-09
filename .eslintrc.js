@@ -16,5 +16,5 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'linebreak-style': ['error', process.platform === 'win32' ? 'windows' : 'unix'],
   },
-  ignorePatterns: ['src/__tests__/*', 'src/stories/*.jsx', 'src/stories/*.js'],
+  ignorePatterns: ['src/__tests__/*', 'src/stories/**/*.jsx', 'src/stories/**/*.js'],
 };
