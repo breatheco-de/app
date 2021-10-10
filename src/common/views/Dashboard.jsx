@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import {
   Box,
@@ -61,7 +62,7 @@ const Dashboard = () => {
               Full Stack Developer
             </Heading>
             <TagCapsule {...tapCapsule} />
-            <Text size="m">
+            <Text size="md">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit,
               sed do eiusmod tempor incididunt ut labore et dolore magna
               aliqua. Ut enim ad minim veniam, quis
