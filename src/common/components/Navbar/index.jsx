@@ -6,12 +6,12 @@ import {
   useDisclosure,
   Stack,
   useColorMode,
-  Image,
   Button,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import NextChakraLink from '../NextChakraLink';
+import Image from '../Image';
 import logo from '../../../../public/static/images/bc_logo.png';
 import Icon from '../Icon';
 
@@ -36,9 +36,14 @@ const Navbar = ({ menuList, width }) => {
           borderBottom="1px solid #DADADA"
         >
           <HStack spacing={20} alignItems="center">
-            <Box onClick={isOpen ? onClose : onOpen} cursor={{ base: 'pointer', md: 'default' }}>
-              <Image src={logo} width="40px" height="40px" />
-            </Box>
+            <Image
+              onClick={isOpen ? onClose : onOpen}
+              cursor={{ base: 'pointer', md: 'default' }}
+              src={logo}
+              width="40px"
+              height="40px"
+              alt="breathecode logo"
+            />
             <HStack as="nav" spacing={16} display={{ base: 'none', md: 'flex' }}>
               {menuList.map((nav) => (
                 <NextChakraLink
@@ -86,7 +91,7 @@ const Navbar = ({ menuList, width }) => {
             </HStack>
           </HStack>
         </Flex>
-        {isOpen ? (
+        {isOpen && (
           <Box pb={4} display={{ md: 'none' }}>
             <Stack as="nav" spacing={4}>
               {menuList.map((nav) => (
@@ -97,27 +102,34 @@ const Navbar = ({ menuList, width }) => {
                   color="gray"
                   _focus={{ boxShadow: 'none', color: '#0097CF' }}
                 >
-                  <Icon
-                    icon={nav.icon}
-                    width="20px"
-                    height="20px"
-                    style={{ marginBottom: '-4px', marginRight: '4px' }}
-                    color="#A4A4A4"
-                    fill={router?.pathname === nav.link ? '#0097CF' : ''}
-                  />
+                  {nav.icon && (
+                    <Icon
+                      icon={nav.icon}
+                      width="20px"
+                      height="20px"
+                      style={{ marginBottom: '-4px', marginRight: '4px' }}
+                      color="#A4A4A4"
+                      fill={router?.pathname === nav.link ? '#0097CF' : ''}
+                    />
+                  )}
                   {nav.title.toUpperCase()}
                 </NextChakraLink>
               ))}
             </Stack>
           </Box>
-        ) : null}
+        )}
       </Box>
     </>
   );
 };
 
 Navbar.propTypes = {
-  menuList: PropTypes.arrayOf(PropTypes.array),
+  menuList: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      link: PropTypes.string.isRequired,
+    }),
+  ),
   width: PropTypes.string,
 };
 Navbar.defaultProps = {
