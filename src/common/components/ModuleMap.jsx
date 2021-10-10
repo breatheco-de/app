@@ -1,9 +1,10 @@
 import {
-  Text, Box, HStack, Heading, Stack, useColorMode, Flex,
+  Box, HStack, Heading, Stack, useColorMode, Flex,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import NextChakraLink from './NextChakraLink';
 import useModuleMap from '../store/actions/moduleMapAction';
+import Text from './Text';
 
 // import useCounter from '../store/actions/counterAction';
 import Icon from './Icon';
@@ -22,14 +23,22 @@ const ModuleMap = ({
   return (
     <Box width={width || '100%'}>
       <Box display="flex" justifyContent="space-between">
-        <Heading as="h1" margin={0} fontSize="22px">{title}</Heading>
-        <Heading as="h6" margin={0} fontSize="15px" color={colorMode === 'light' ? 'gray.default' : 'white'} fontWeight="normal">
+        <Heading as="h1" margin={0} fontSize="22px">
+          {title}
+        </Heading>
+        <Heading
+          as="h6"
+          margin={0}
+          fontSize="15px"
+          color={colorMode === 'light' ? 'gray.default' : 'white'}
+          fontWeight="normal"
+        >
           {modules?.length}
           {' '}
           LESSONS
         </Heading>
       </Box>
-      <Text color={colorMode === 'light' ? '#606060' : 'white'} fontSize="14px">
+      <Text color={colorMode === 'light' ? '#606060' : 'white'} size="md">
         {description}
       </Text>
       {modules.map((module, i) => (
@@ -60,7 +69,7 @@ const ModuleMap = ({
               align="center"
               background="#0097CF"
             >
-              <Text fontWeight="bold" margin="0" fontSize="13px" color="#FFFFFF">
+              <Text fontWeight="bold" margin="0" size="sm" color="#FFFFFF">
                 {i + 1}
               </Text>
             </Box>
@@ -79,7 +88,7 @@ const ModuleMap = ({
                 {module.title?.toUpperCase()}
               </Heading>
               <Text
-                fontSize="15px"
+                size="l"
                 fontWeight="light"
                 lineHeight="18px"
                 letterSpacing="0.05em"
@@ -90,10 +99,23 @@ const ModuleMap = ({
             </Box>
           </Flex>
           <HStack width="-webkit-fill-available">
-            <Box display="flex" margin="0 0 0 auto" onClick={(e) => handleModuleStatus(e, { ...module, index: i })}>
-              {module.status === 'inactive'
-                ? <NextChakraLink href="/" color="#0097CF" fontWeight="bold" fontStyle="normal">{`${module.title} lesson`}</NextChakraLink>
-                : <Icon icon={statusIcons[module.status]} width="27px" />}
+            <Box
+              display="flex"
+              margin="0 0 0 auto"
+              onClick={(e) => handleModuleStatus(e, { ...module, index: i })}
+            >
+              {module.status === 'inactive' ? (
+                <NextChakraLink
+                  href="/"
+                  color="#0097CF"
+                  fontWeight="bold"
+                  fontStyle="normal"
+                >
+                  {`${module.title} lesson`}
+                </NextChakraLink>
+              ) : (
+                <Icon icon={statusIcons[module.status]} width="27px" />
+              )}
             </Box>
           </HStack>
         </Stack>
@@ -112,8 +134,7 @@ ModuleMap.defaultProps = {
   width: '100%',
   title: 'HTML/CSS/Bootstrap',
   description: '',
-  handleModuleStatus: () => {
-  },
+  handleModuleStatus: () => {},
 };
 
 export default ModuleMap;

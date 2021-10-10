@@ -7,7 +7,7 @@ export default {
     component: Text,
     argTypes: {
         size: {
-            options: ['l', 'm', 'sm'],
+            options: ['l', 'md', 'sm', 'xs'],
             control: 'select',
         },
         color: {

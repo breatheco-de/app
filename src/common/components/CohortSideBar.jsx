@@ -2,7 +2,6 @@
 import {
   Box,
   Heading,
-  Text,
   Divider,
   Grid,
   Link,
@@ -14,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Icon from './Icon';
+import Text from './Text';
 
 const CohortSideBar = ({
   title,
@@ -51,7 +51,7 @@ const CohortSideBar = ({
             <Heading as="h4" fontSize={15} fontWeight="700" lineHeight="18px" margin={0}>
               {title}
             </Heading>
-            <Text fontSize={15} fontWeight="400" lineHeight="18px" margin={0}>
+            <Text size="l" fontWeight="400" lineHeight="18px" margin={0}>
               {cohortCity}
             </Text>
           </Box>
@@ -78,7 +78,7 @@ const CohortSideBar = ({
             <Heading as="h4" fontSize={15} fontWeight="700" lineHeight="tight" margin={0}>
               Main Teacher
             </Heading>
-            <Text fontSize={15} fontWeight="400" lineHeight="18px" margin={0}>
+            <Text size="l" fontWeight="400" lineHeight="18px" margin={0}>
               {professor.name}
             </Text>
           </Box>

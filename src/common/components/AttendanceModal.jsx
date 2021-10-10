@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -22,9 +23,7 @@ import {
 import Icon from './Icon';
 import Text from './Text';
 
-const AttendanceModal = ({
-  attendance, days, title,
-}) => {
+const AttendanceModal = ({ attendance, days, title }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [checked, setChecked] = useState([]);
   const { getCheckboxProps } = useCheckboxGroup({
@@ -36,20 +35,30 @@ const AttendanceModal = ({
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent maxWidth="-webkit-fit-content" borderRadius="17px" padding="10px">
-          <ModalHeader fontSize="30px" paddingBottom={0}>{title}</ModalHeader>
+          <ModalHeader fontSize="30px" paddingBottom={0}>
+            {title}
+          </ModalHeader>
           <ModalBody>
             <Box>
               <Box>
                 <Text size="l" color="gray.dark">
-                  Hello Paolo, today is 27th of July and the cohort started taking
-                  classes on Monday Jun 10th. Please, select your today module.
+                  Hello Paolo, today is 27th of July and the cohort started taking classes on Monday
+                  Jun 10th. Please, select your today module.
                 </Text>
               </Box>
               <Box>
                 <FormControl id="days">
                   <FormLabel color="gray.default">Day</FormLabel>
-                  <Select placeholder="Select Day" borderRadius="3px" _placeholder={{ color: 'gray.dark', paddingY: '10px' }}>
-                    {days.map((day) => <option key={day.id} value={day.id}>{day.subtitle}</option>)}
+                  <Select
+                    placeholder="Select Day"
+                    borderRadius="3px"
+                    _placeholder={{ color: 'gray.dark', paddingY: '10px' }}
+                  >
+                    {days.map((day) => (
+                      <option key={day.id} value={day.id}>
+                        {day.subtitle}
+                      </option>
+                    ))}
                   </Select>
                 </FormControl>
               </Box>
@@ -57,8 +66,12 @@ const AttendanceModal = ({
             <Box height="1px" bg="gray.light" marginTop="32px" marginBottom="15px" />
             <Box>
               <Flex justifyContent="space-between">
-                <Text size="l" color="gray.dark">Select the student in the class</Text>
-                <Text size="l" color="gray.dark">11 Student selected</Text>
+                <Text size="l" color="gray.dark">
+                  Select the student in the class
+                </Text>
+                <Text size="l" color="gray.dark">
+                  11 Student selected
+                </Text>
               </Flex>
               <Grid templateColumns={{ md: 'repeat(4, 4fr)', sm: 'repeat(1, 1fr)' }} gap={6}>
                 {attendance.map((item) => {
@@ -67,10 +80,22 @@ const AttendanceModal = ({
                     <CheckboxCard key={item.id} {...checkbox}>
                       <Flex justifyContent="space-between">
                         <Flex marginRight="12px">
-                          <Avatar name="Dan Abrahmov" width="30px" marginY="auto" marginRight="5px" height="30px" src={item.image} />
-                          <Text size="m">{item.name}</Text>
+                          <Avatar
+                            name="Dan Abrahmov"
+                            width="30px"
+                            marginY="auto"
+                            marginRight="5px"
+                            height="30px"
+                            src={item.image}
+                          />
+                          <Text size="md">{item.name}</Text>
                         </Flex>
-                        <Icon icon={checkbox.isChecked ? 'checked' : 'unverified'} width="15px" height="15px" style={{ marginTop: 'auto', marginBottom: 'auto' }} />
+                        <Icon
+                          icon={checkbox.isChecked ? 'checked' : 'unverified'}
+                          width="15px"
+                          height="15px"
+                          style={{ marginTop: 'auto', marginBottom: 'auto' }}
+                        />
                       </Flex>
                     </CheckboxCard>
                   );
@@ -79,7 +104,13 @@ const AttendanceModal = ({
             </Box>
           </ModalBody>
           <ModalFooter>
-            <Button fontSize="13px" disabled={checked.length < 1} variant="default" onClick={onClose} rightIcon={<Icon icon="longArrowRight" width="15px" color="white" />}>
+            <Button
+              fontSize="13px"
+              disabled={checked.length < 1}
+              variant="default"
+              onClick={onClose}
+              rightIcon={<Icon icon="longArrowRight" width="15px" color="white" />}
+            >
               START CLASS DAY
             </Button>
           </ModalFooter>
@@ -90,6 +121,7 @@ const AttendanceModal = ({
 };
 
 export const CheckboxCard = (props) => {
+  const { children } = props;
   const { getInputProps, getCheckboxProps } = useCheckbox(props);
   const input = getInputProps();
   const checkbox = getCheckboxProps();
@@ -115,10 +147,14 @@ export const CheckboxCard = (props) => {
         px={5}
         py={3}
       >
-        {props.children}
+        {children}
       </Box>
     </Box>
   );
+};
+
+CheckboxCard.propTypes = {
+  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
 };
 
 AttendanceModal.propTypes = {
