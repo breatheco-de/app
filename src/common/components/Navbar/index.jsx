@@ -9,7 +9,7 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { useTranslation } from 'next-i18next';
+// import { useTranslation } from 'next-i18next';
 import Link from '../NextChakraLink';
 import Image from '../Image';
 import logo from '../../../../public/static/images/bc_logo.png';
@@ -20,7 +20,7 @@ const Navbar = () => {
   const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { t } = useTranslation(['navbar']);
+  // const { t } = useTranslation(['navbar']);
 
   const linkStyle = {
     textDecoration: 'none',
@@ -30,21 +30,21 @@ const Navbar = () => {
 
   const menuList = [
     {
-      title: t('menu.about-us'),
+      title: "t('menu.about-us')",
       link: '/',
     },
     {
-      title: t('menu.practice'),
-      link: '/',
-      // icon: 'home',
-    },
-    {
-      title: t('menu.build'),
+      title: "t('menu.practice')",
       link: '/',
       // icon: 'home',
     },
     {
-      title: t('menu.bootcamp'),
+      title: "t('menu.build')",
+      link: '/',
+      // icon: 'home',
+    },
+    {
+      title: "t('menu.bootcamp')",
       link: '/',
       // icon: 'home',
     },
@@ -127,7 +127,7 @@ const Navbar = () => {
             </Link>
             <Link href={`${router.locale === 'es' ? 'es' : ''}/example`}>
               <Button variant="default" px="25px">
-                {t('login')}
+                test
               </Button>
             </Link>
           </HStack>
