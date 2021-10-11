@@ -8,7 +8,7 @@ export default {
 }
 
 const Component = (args) => {
-    return <Dashboard />
+    return <Dashboard {...args} />
 };
 
 export const Default = Component.bind({});
