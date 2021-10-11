@@ -1,0 +1,9 @@
+{
+  "menu": {
+    "about-us": "Sobre Nosotros",
+    "practice": "Practicar",
+    "build": "Desarrollar",
+    "bootcamp": "Bootcamp de Codificación"
+  },
+  "login": "Ingresar"
+}

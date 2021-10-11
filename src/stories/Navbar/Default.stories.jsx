@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box } from '@chakra-ui/react';
 import Navbar from '../../common/components/Navbar';
 
 export default {
@@ -10,14 +11,16 @@ export default {
         type: 'range',
         min: 0,
         max: 100,
+      },
     },
   },
-  }
 };
 
-const Component = (args) => {
-  return <Navbar {...args} width={`${args.width}%`}  />
-};
+const Component = (args) => (
+  <Box width={`${args.width}%`}>
+    <Navbar {...args} />
+  </Box>
+);
 
 export const Default = Component.bind({});
 Default.args = {
