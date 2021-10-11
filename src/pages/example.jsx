@@ -48,6 +48,6 @@ export default function Example() {
 
 export const getStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ['common', 'counter'])),
+    ...(await serverSideTranslations(locale, ['common', 'counter', 'navbar'])),
   },
 });

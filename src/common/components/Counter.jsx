@@ -1,8 +1,9 @@
 import { Button, Heading, Stack } from '@chakra-ui/react';
-import PropTypes from 'prop-types';
+import { useTranslation } from 'next-i18next';
 import useCounter from '../store/actions/counterAction';
 
-const Counter = ({ title, resetText }) => {
+const Counter = () => {
+  const { t } = useTranslation(['counter']);
   const {
     count, increment, decrement, reset,
   } = useCounter();
@@ -10,7 +11,7 @@ const Counter = ({ title, resetText }) => {
   return (
     <div>
       <Heading py="30px" as="h2" size="xl" isTruncated>
-        {title}
+        {t('title')}
         :
         <span data-testid="count">
           {' '}
@@ -25,20 +26,11 @@ const Counter = ({ title, resetText }) => {
           -1
         </Button>
         <Button colorScheme="green" variant="black" type="button" onClick={reset}>
-          {resetText}
+          {t('resetText')}
         </Button>
       </Stack>
     </div>
   );
-};
-
-Counter.propTypes = {
-  title: PropTypes.string,
-  resetText: PropTypes.string,
-};
-Counter.defaultProps = {
-  title: 'Counter',
-  resetText: 'reset',
 };
 
 export default Counter;

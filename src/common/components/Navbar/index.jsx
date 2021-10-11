@@ -8,18 +8,19 @@ import {
   useColorMode,
   Button,
 } from '@chakra-ui/react';
-import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import NextChakraLink from '../NextChakraLink';
+import { useTranslation } from 'next-i18next';
+import Link from '../NextChakraLink';
 import Image from '../Image';
 import logo from '../../../../public/static/images/bc_logo.png';
 import Icon from '../Icon';
 import Text from '../Text';
 
-const Navbar = ({ menuList, width }) => {
+const Navbar = () => {
   const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { t } = useTranslation(['navbar']);
 
   const linkStyle = {
     textDecoration: 'none',
@@ -27,12 +28,34 @@ const Navbar = ({ menuList, width }) => {
     fontWeight: '900',
   };
 
+  const menuList = [
+    {
+      title: t('menu.about-us'),
+      link: '/',
+    },
+    {
+      title: t('menu.practice'),
+      link: '/',
+      // icon: 'home',
+    },
+    {
+      title: t('menu.build'),
+      link: '/',
+      // icon: 'home',
+    },
+    {
+      title: t('menu.bootcamp'),
+      link: '/',
+      // icon: 'home',
+    },
+  ];
+
   return (
-    <Box width={width}>
+    <>
       <Flex
         alignItems="center"
         justifyContent="space-between"
-        padding="22px"
+        padding="16px 22px"
         // borderBottom="1px solid #DADADA"
       >
         <HStack spacing={20} alignItems="center">
@@ -46,7 +69,7 @@ const Navbar = ({ menuList, width }) => {
           />
           <HStack as="nav" spacing={16} display={{ base: 'none', md: 'flex' }}>
             {menuList.map((nav) => (
-              <NextChakraLink
+              <Link
                 key={nav.title}
                 href={nav.link}
                 style={linkStyle}
@@ -63,12 +86,15 @@ const Navbar = ({ menuList, width }) => {
                     fill={router?.pathname === nav.link ? '#0097CF' : ''}
                   />
                 )}
-                <Text>{nav.title.toUpperCase()}</Text>
-              </NextChakraLink>
+                <Text size="13px" color="gray.600">
+                  {nav.title.toUpperCase()}
+                </Text>
+              </Link>
             ))}
           </HStack>
         </HStack>
-        <HStack spacing={12} alignItems="center" marginLeft="5%">
+        {/* {t('navbar:test')} */}
+        <HStack spacing={12} alignItems="center" marginLeft="1%">
           <HStack as="nav" spacing={16} display={{ base: 'flex', md: 'flex' }}>
             <IconButton
               variant="default"
@@ -87,9 +113,23 @@ const Navbar = ({ menuList, width }) => {
                 )
               }
             />
-            <Button variant="default" px="35px">
-              Login
-            </Button>
+            <Link href={router.pathname} locale={router.locale === 'es' ? 'en' : 'es'}>
+              <IconButton
+                variant="default"
+                bg={colorMode === 'light' ? 'white' : 'darkTheme'}
+                isRound
+                cursor="pointer"
+                _focus={{ boxShadow: 'none' }}
+                _hover={{ background: 'none' }}
+                _active={{ background: 'none' }}
+                icon={<Icon icon="switchLanguage" width="25px" height="25px" />}
+              />
+            </Link>
+            <Link href={`${router.locale === 'es' ? 'es' : ''}/example`}>
+              <Button variant="default" px="25px">
+                {t('login')}
+              </Button>
+            </Link>
           </HStack>
         </HStack>
       </Flex>
@@ -97,7 +137,7 @@ const Navbar = ({ menuList, width }) => {
         <Box pb={4} display={{ md: 'none' }}>
           <Stack as="nav" spacing={4}>
             {menuList.map((nav) => (
-              <NextChakraLink
+              <Link
                 key={nav.title}
                 href={nav.link}
                 style={linkStyle}
@@ -115,47 +155,13 @@ const Navbar = ({ menuList, width }) => {
                   />
                 )}
                 {nav.title.toUpperCase()}
-              </NextChakraLink>
+              </Link>
             ))}
           </Stack>
         </Box>
       )}
-    </Box>
+    </>
   );
-};
-
-Navbar.propTypes = {
-  menuList: PropTypes.arrayOf(
-    PropTypes.shape({
-      title: PropTypes.string.isRequired,
-      link: PropTypes.string.isRequired,
-    }),
-  ),
-  width: PropTypes.string,
-};
-Navbar.defaultProps = {
-  width: '',
-  menuList: [
-    {
-      title: 'About us',
-      link: '/',
-    },
-    {
-      title: 'Practice',
-      link: '/',
-      // icon: 'home',
-    },
-    {
-      title: 'Build',
-      link: '/',
-      // icon: 'home',
-    },
-    {
-      title: 'Coding Bootcamp',
-      link: '/',
-      // icon: 'home',
-    },
-  ],
 };
 
 export default Navbar;
