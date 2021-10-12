@@ -22,9 +22,9 @@ function login() {
       <Box align="center" alignContent="center" width="50%" marginTop="47px">
         <Image src={logo} height="67px" width="67px" />
         <Tabs marginTop="67px">
-          <TabList justifyContent="center" width="365px">
-            <Tab boxShadow="none !important" fontWeight="600" width="182px" backgroundColor="white" padding="17px" borderBottomColor="gray.200" borderTop="none" borderRight="none" borderLeft="none" color="gray.dark">Log In</Tab>
-            <Tab boxShadow="none !important" fontWeight="600" width="182px" backgroundColor="white" padding="17px" borderBottomColor="gray.200" borderTop="none" borderRight="none" borderLeft="none" color="gray.dark">Registration</Tab>
+          <TabList justifyContent="center" width="365px" bottomBorder="1px solid gray.300">
+            <Tab _selected={{ color: 'gray.dark', bg: 'white', borderBottomColor: 'blue.default' }} color="gray.default" boxShadow="none !important" fontWeight="600" width="182px" backgroundColor="white" padding="17px" borderBottomColor="gray.200" borderTop="none" borderRight="none" borderLeft="none">Log In</Tab>
+            <Tab _selected={{ color: 'gray.dark', bg: 'white', borderBottomColor: 'blue.default' }} color="gray.default" boxShadow="none !important" fontWeight="600" width="182px" backgroundColor="white" padding="17px" borderBottomColor="gray.200" borderTop="none" borderRight="none" borderLeft="none">Registration</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
@@ -44,20 +44,20 @@ function login() {
                 <Input type="password" placeholder="Password" height="50px" width="365px" borderColor="gray.default" borderRadius="3px" />
               </FormControl>
               <Box color="blue.default" fontWeight="700" align="center" marginLeft="245px">Reset Password</Box>
-              <Button disabled="True" variant="default" marginTop="70px" width="365px" fontSize="l" color="gray.dark">Login</Button>
+              <Button disabled="True" variant="default" marginTop="70px" width="365px" fontSize="l" color="gray.dark">LOGIN</Button>
             </TabPanel>
             <TabPanel width="365px" padding="0px">
               <FormControl marginTop="22px">
                 <Text color="gray.default" fontSize="sm" float="left" marginBottom="px">Full Name </Text>
-                <Input type="password" placeholder="Andrea Castillo" height="50px" width="365px" borderColor="gray.default" borderRadius="3px" />
+                <Input type="fullName" placeholder="Andrea Castillo" height="50px" width="365px" borderColor="gray.default" borderRadius="3px" />
               </FormControl>
               <FormControl>
                 <Text color="gray.default" fontSize="sm" float="left" marginBottom="px">Email </Text>
-                <Input type="password" placeholder="Andrea@4geeks.co" height="50px" width="365px" borderColor="gray.default" borderRadius="3px" />
+                <Input type="email" placeholder="Andrea@4geeks.co" height="50px" width="365px" borderColor="gray.default" borderRadius="3px" />
               </FormControl>
               <FormControl>
                 <Text color="gray.default" fontSize="sm" float="left" marginBottom="px">Date of Birth </Text>
-                <Input type="password" placeholder="29 / 10 / 1990" height="50px" width="365px" borderColor="gray.default" borderRadius="3px" />
+                <Input type="" placeholder="29 / 10 / 1990" height="50px" width="365px" borderColor="gray.default" borderRadius="3px" />
               </FormControl>
               <FormControl>
                 <Text color="gray.default" fontSize="sm" float="left" marginBottom="px">Password </Text>
@@ -67,7 +67,7 @@ function login() {
                 <Text color="gray.default" fontSize="sm" float="left" marginBottom="px">Repeat Password </Text>
                 <Input type="password" placeholder="***********" height="50px" width="365px" borderColor="gray.default" borderRadius="3px" />
               </FormControl>
-              <Button variant="default" marginTop="33px" width="365px" fontSize="l">Register</Button>
+              <Button variant="default" marginTop="33px" width="365px" fontSize="l">REGISTER</Button>
             </TabPanel>
           </TabPanels>
         </Tabs>
