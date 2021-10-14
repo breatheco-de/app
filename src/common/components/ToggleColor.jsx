@@ -8,7 +8,6 @@ const ToggleColor = ({ title }) => {
     <Stack py="10px">
       <Button onClick={toggleColorMode} variant="outline">
         {title}
-        {' '}
         {colorMode === 'light' ? 'Dark' : 'Light'}
         -Mode
       </Button>

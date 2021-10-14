@@ -14,9 +14,9 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import NextChakraLink from './NextChakraLink';
-import logo from '../../../public/static/images/bc_logo.png';
-import Icon from './Icon';
+import NextChakraLink from '../NextChakraLink';
+import logo from '../../../../public/static/images/bc_logo.png';
+import Icon from '../Icon';
 
 const Navbar = ({
   menuList, user: { handleUser, avatar, notifies }, handleChange, width,

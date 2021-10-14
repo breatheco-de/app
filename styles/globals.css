@@ -2,6 +2,9 @@ html,
 body {
   padding: 0;
   margin: 0;
+
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
@@ -12,3 +15,99 @@ a {
 * {
   box-sizing: border-box;
 }
+
+
+
+
+
+
+.button-hold > div svg.icon, .button-hold > div svg.tick {
+  position: absolute;
+}
+
+.button-hold > div svg.icon {
+  width: 8px;
+  height: 8px;
+  left: 6px;
+  top: 6px;
+  fill: var(--icon);
+  z-index: 1;
+  -webkit-transition: opacity .2s, -webkit-transform .2s;
+  transition: opacity .2s, -webkit-transform .2s;
+  transition: opacity .2s, transform .2s;
+  transition: opacity .2s, transform .2s, -webkit-transform .2s;
+  opacity: var(--icon-opacity, 1);
+  -webkit-transform: translateY(var(--icon-y, 0)) scale(var(--icon-scale, 1));
+          transform: translateY(var(--icon-y, 0)) scale(var(--icon-scale, 1));
+}
+.button-hold > div svg.progress, .button-hold > div svg.tick {
+  fill: none;
+}
+
+.button-hold > div svg.progress {
+  width: 20px;
+  height: 20px;
+  -webkit-transform: rotate(-90deg) scale(var(--progress-scale, 1));
+  transform: rotate(-90deg) scale(var(--progress-scale, 1));
+  -webkit-transition: -webkit-transform .5s ease;
+  transition: -webkit-transform .5s ease;
+  transition: transform .5s ease;
+  transition: transform .5s ease, -webkit-transform .5s ease;
+}
+
+.button-hold > div svg.progress circle {
+  stroke-dashoffset: 1;
+  stroke-dasharray: var(--progress-array, 0) 52;
+  stroke-width: 16;
+  stroke: var(--progress-active);
+  -webkit-transition: stroke-dasharray var(--duration) linear;
+  transition: stroke-dasharray var(--duration) linear;
+}
+
+.button-hold > div svg.tick {
+  width: 20px;
+  height: 20px;
+  left: 0;
+  top: 0;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke: var(--tick-stroke);
+  -webkit-transition: stroke .3s ease .7s;
+  transition: stroke .3s ease .7s;
+}
+
+.button-hold > div svg.tick polyline {
+  stroke-dasharray: 18 18 18;
+  stroke-dashoffset: var(--tick-offset, 18);
+  -webkit-transition: stroke-dashoffset .4s ease .7s;
+  transition: stroke-dashoffset .4s ease .7s;
+}
+
+.button-hold:focus:not(.process), .button-hold:hover:not(.process) {
+  --shadow-y: 8px;
+  --shadow-blur: 16px;
+}
+
+.button-hold:active:not(.success) {
+  --scale: .96;
+  --shadow-y: 4px;
+  --shadow-blur: 8px;
+}
+
+.button-hold.process, .button-hold.success {
+  --progress-array: 52;
+  --icon-y: -4px;
+  --icon-scale: .6;
+  --icon-opacity: 0;
+}
+
+.button-hold.success {
+  --progress-border: none;
+  --progress-scale: .01;
+  --tick-stroke: var(--progress-success);
+  --background-scale: 0;
+  --tick-offset: 36;
+}
+
+/*# sourceMappingURL=index.css.map */

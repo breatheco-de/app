@@ -13,8 +13,8 @@ const longArrowRight = ({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M12.48 9L16.48 5L12.48 1" stroke={colorMode === 'light' ? color || '#0097CF' : '#FFFFFF'} strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M0.999981 5L16.48 5" stroke={colorMode === 'light' ? color || '#0097CF' : '#FFFFFF'} strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12.48 9L16.48 5L12.48 1" stroke={colorMode === 'light' ? color || '#0097CF' : 'gray'} strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M0.999981 5L16.48 5" stroke={colorMode === 'light' ? color || '#0097CF' : 'gray'} strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
 
   );

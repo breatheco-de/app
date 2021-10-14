@@ -1,5 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import AttendanceModal from '../common/components/AttendanceModal';
+import { useDisclosure } from '@chakra-ui/hooks';
+import { action } from '@storybook/addon-actions';
+import { withKnobs } from "@storybook/addon-knobs";
 
 export default {
   title: 'Components/AttendanceModal',
@@ -12,14 +15,20 @@ export default {
         max: 100,
       },
     },
-  }
+  },
+  decorators:[withKnobs]
 };
 
-const Component = (args) => <AttendanceModal {...args} width={`${args.width}%`} />;
+const Component = (args) =>{
+  const { isOpen, onClose, onOpen } = useDisclosure();
+  useEffect(()=> onOpen(), [])
+  return isOpen ? <AttendanceModal {...args} isOpen={isOpen} onClose={onClose} width={`${args.width}%`} /> : <></>
+  };
 
 export const Default = Component.bind({});
 Default.args = {
   title: "Start your today’s class",
+  message: "Hello Paolo, today is 27th of July and the cohort started taking classes on Monday Jun 10th. Please, select your today module.",
   width: 100,
   days: [
     {
@@ -78,5 +87,11 @@ Default.args = {
       'image': 'https://bit.ly/prosper-baba',
       'name': 'Harry smith',
     },
-  ]
+  ],
+  onSubmit: (e, checked) => {
+    action('clicked' + JSON.stringify(checked, null, 4))(e)
+  },
+  onChangeDay: (e) => {
+    action('change day')(e)
+  }
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import Dashboard from '../common/views/Dashboard';
+import Dashboard from '../../common/views/Dashboard';
 
 export default {
     title: 'Views/Dashboard',
@@ -8,7 +8,7 @@ export default {
 }
 
 const Component = (args) => {
-    return <Dashboard />
+    return <Dashboard {...args} />
 };
 
 export const Default = Component.bind({});

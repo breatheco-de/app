@@ -1,0 +1,9 @@
+{
+  "menu": {
+    "about-us": "About us",
+    "practice": "Practice",
+    "build": "Build",
+    "bootcamp": "Coding Bootcamp"
+  },
+  "login": "Login"
+}
