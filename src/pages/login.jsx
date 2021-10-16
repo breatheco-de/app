@@ -22,7 +22,7 @@ function login() {
       <Box align="center" alignContent="center" width="50%" marginTop="47px">
         <Image src={logo} height="67px" width="67px" />
         <Tabs marginTop="67px">
-          <TabList justifyContent="center" width="365px" bottomBorder="1px solid gray.300">
+          <TabList justifyContent="center" width="365px">
             <Tab _selected={{ color: 'gray.dark', bg: 'white', borderBottomColor: 'blue.default' }} color="gray.default" boxShadow="none !important" fontWeight="600" width="182px" backgroundColor="white" padding="17px" borderBottomColor="gray.200" borderTop="none" borderRight="none" borderLeft="none">Log In</Tab>
             <Tab _selected={{ color: 'gray.dark', bg: 'white', borderBottomColor: 'blue.default' }} color="gray.default" boxShadow="none !important" fontWeight="600" width="182px" backgroundColor="white" padding="17px" borderBottomColor="gray.200" borderTop="none" borderRight="none" borderLeft="none">Registration</Tab>
           </TabList>
