@@ -10,12 +10,10 @@ import {
   Input,
   Stack,
   useColorMode,
-  Image,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import NextChakraLink from '../NextChakraLink';
-import logo from '../../../../public/static/images/bc_logo.png';
 import Icon from '../Icon';
 
 const Navbar = ({
@@ -41,7 +39,7 @@ const Navbar = ({
         <Flex alignItems="center" justifyContent="space-between" padding="22px" borderBottom="1px solid #DADADA">
           <HStack spacing={20} alignItems="center">
             <Box onClick={isOpen ? onClose : onOpen} cursor={{ base: 'pointer', md: 'default' }}>
-              <Image src={logo} width="40px" height="40px" />
+              <Icon icon="logoModern" width="92px" height="21px" />
             </Box>
             <HStack
               as="nav"
@@ -53,14 +51,16 @@ const Navbar = ({
                   key={nav.title}
                   href={nav.link}
                   style={linkStyle}
-                  color="gray"
+                  color="#606060"
+                  fontWeight="90"
+                  fontSize="16px"
                   _focus={{ boxShadow: 'none', color: '#0097CF' }}
                 >
                   <Icon
                     icon={nav.icon}
-                    width="20px"
-                    height="20px"
-                    style={{ marginBottom: '-4px', marginRight: '4px' }}
+                    width="22px"
+                    height="22px"
+                    style={{ marginBottom: '-4px', marginRight: '8px' }}
                     color="#A4A4A4"
                     fill={router?.pathname === nav.link ? '#0097CF' : ''}
                   />
@@ -138,13 +138,14 @@ const Navbar = ({
                   key={nav.title}
                   href={nav.link}
                   style={linkStyle}
-                  color="gray"
+                  fontSize="13px"
+                  color="#606060"
                   _focus={{ boxShadow: 'none', color: '#0097CF' }}
                 >
                   <Icon
                     icon={nav.icon}
-                    width="20px"
-                    height="20px"
+                    width="15px"
+                    height="15px"
                     style={{ marginBottom: '-4px', marginRight: '4px' }}
                     color="#A4A4A4"
                     fill={router?.pathname === nav.link ? '#0097CF' : ''}

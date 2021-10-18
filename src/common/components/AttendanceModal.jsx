@@ -9,9 +9,12 @@ import {
   ModalFooter,
   ModalBody,
   Button,
-  useDisclosure,
   Box,
-  Select,
+  NumberInput,
+  NumberInputStepper,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInputField,
   FormControl,
   FormLabel,
   Flex,
@@ -19,22 +22,25 @@ import {
   useCheckbox,
   useCheckboxGroup,
   Avatar,
+  useColorMode,
 } from '@chakra-ui/react';
 import Icon from './Icon';
 import Text from './Text';
 
-const AttendanceModal = ({ attendance, days, title }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+const AttendanceModal = ({
+  attendance, title, message, isOpen, onClose, maxDays, minDays, onSubmit,
+}) => {
   const [checked, setChecked] = useState([]);
+  const [day, setDay] = useState(0);
   const { getCheckboxProps } = useCheckboxGroup({
     onChange: setChecked,
   });
+  const { colorMode } = useColorMode();
   return (
     <>
-      <Button onClick={onOpen}>Open Modal</Button>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent maxWidth="-webkit-fit-content" borderRadius="17px" padding="10px">
+        <ModalContent maxWidth="-webkit-fit-content" borderRadius="17px" padding="10px" bg={colorMode === 'light' ? 'white' : 'featuredDark'}>
           <ModalHeader fontSize="30px" paddingBottom={0}>
             {title}
           </ModalHeader>
@@ -42,24 +48,26 @@ const AttendanceModal = ({ attendance, days, title }) => {
             <Box>
               <Box>
                 <Text size="l" color="gray.dark">
-                  Hello Paolo, today is 27th of July and the cohort started taking classes on Monday
-                  Jun 10th. Please, select your today module.
+                  {message}
                 </Text>
               </Box>
               <Box>
                 <FormControl id="days">
                   <FormLabel color="gray.default">Day</FormLabel>
-                  <Select
-                    placeholder="Select Day"
-                    borderRadius="3px"
-                    _placeholder={{ color: 'gray.dark', paddingY: '10px' }}
+                  <NumberInput
+                    defaultValue={0}
+                    max={maxDays}
+                    min={minDays}
+                    keepWithinRange={false}
+                    clampValueOnBlur={false}
+                    onChange={(d) => setDay(d)}
                   >
-                    {days.map((day) => (
-                      <option key={day.id} value={day.id}>
-                        {day.subtitle}
-                      </option>
-                    ))}
-                  </Select>
+                    <NumberInputField color={colorMode === 'light' ? 'black' : 'white'} />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
                 </FormControl>
               </Box>
             </Box>
@@ -70,7 +78,9 @@ const AttendanceModal = ({ attendance, days, title }) => {
                   Select the student in the class
                 </Text>
                 <Text size="l" color="gray.dark">
-                  11 Student selected
+                  {checked.length}
+                  {' '}
+                  Student selected
                 </Text>
               </Flex>
               <Grid templateColumns={{ md: 'repeat(4, 4fr)', sm: 'repeat(1, 1fr)' }} gap={6}>
@@ -108,7 +118,7 @@ const AttendanceModal = ({ attendance, days, title }) => {
               fontSize="13px"
               disabled={checked.length < 1}
               variant="default"
-              onClick={onClose}
+              onClick={(e) => onSubmit(e, { checked, day })}
               rightIcon={<Icon icon="longArrowRight" width="15px" color="white" />}
             >
               START CLASS DAY
@@ -125,7 +135,7 @@ export const CheckboxCard = (props) => {
   const { getInputProps, getCheckboxProps } = useCheckbox(props);
   const input = getInputProps();
   const checkbox = getCheckboxProps();
-
+  const { colorMode } = useColorMode();
   return (
     <Box as="label">
       <input {...input} />
@@ -137,15 +147,15 @@ export const CheckboxCard = (props) => {
         border="1px solid"
         borderColor="#A9A9A9"
         _checked={{
-          bg: 'blue.light',
+          bg: colorMode === 'light' ? 'blue.light' : 'featuredDark',
           color: 'black',
           borderColor: 'blue.default',
         }}
         _focus={{
           boxShadow: 'outline',
         }}
-        px={5}
-        py={3}
+        px={2}
+        py={1}
       >
         {children}
       </Box>
@@ -160,12 +170,24 @@ CheckboxCard.propTypes = {
 AttendanceModal.propTypes = {
   title: PropTypes.string,
   attendance: PropTypes.arrayOf(PropTypes.array),
+  message: PropTypes.string,
   days: PropTypes.arrayOf(PropTypes.array),
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
+  maxDays: PropTypes.number,
+  minDays: PropTypes.number,
+  onSubmit: PropTypes.func,
 };
 AttendanceModal.defaultProps = {
   title: '',
   attendance: [],
   days: [],
+  message: '',
+  isOpen: true,
+  onClose: () => { },
+  onSubmit: () => { },
+  maxDays: 10,
+  minDays: 0,
 };
 
 export default AttendanceModal;
