@@ -33,6 +33,7 @@ const TagCapsule = ({ tags, separator, background }) => {
               letterSpacing="0.05em"
               textAlign="center"
               size="11px"
+              color="black"
             >
               {tag.name?.toUpperCase()}
             </Text>
