@@ -154,8 +154,8 @@ export const CheckboxCard = (props) => {
         _focus={{
           boxShadow: 'outline',
         }}
-        px={5}
-        py={3}
+        px={2}
+        py={1}
       >
         {children}
       </Box>
