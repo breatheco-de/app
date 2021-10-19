@@ -1,7 +1,6 @@
-import {
-  Box, Stack, useColorMode, Text,
-} from '@chakra-ui/react';
+import { Box, Stack, useColorMode } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import Text from './Text';
 
 const TagCapsule = ({ tags, separator, background }) => {
   const { colorMode } = useColorMode();
@@ -33,7 +32,8 @@ const TagCapsule = ({ tags, separator, background }) => {
               alignSelf="center"
               letterSpacing="0.05em"
               textAlign="center"
-              fontSize="11px"
+              size="11px"
+              color="black"
             >
               {tag.name?.toUpperCase()}
             </Text>

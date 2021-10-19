@@ -9,8 +9,8 @@ const NextChakraLink = ({
   replace,
   scroll,
   shallow,
-  prefetch,
   children,
+  locale,
   ...chakraProps
 }) => (
   <NextLink
@@ -18,9 +18,9 @@ const NextChakraLink = ({
     href={href}
     as={as}
     replace={replace}
+    locale={locale}
     scroll={scroll}
     shallow={shallow}
-    prefetch={prefetch}
   >
     <ChakraLink {...chakraProps}>{children}</ChakraLink>
   </NextLink>
@@ -28,20 +28,20 @@ const NextChakraLink = ({
 
 NextChakraLink.propTypes = {
   href: PropTypes.string,
+  locale: PropTypes.string,
   as: PropTypes.string,
   replace: PropTypes.bool,
   scroll: PropTypes.bool,
   shallow: PropTypes.bool,
-  prefetch: PropTypes.bool,
   children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
 };
 NextChakraLink.defaultProps = {
+  locale: 'en',
   href: '',
   as: '',
   replace: false,
   scroll: false,
   shallow: false,
-  prefetch: true,
 };
 
 export default NextChakraLink;

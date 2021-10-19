@@ -1,14 +1,17 @@
 import {
-  Box, Heading, Text, Button, useColorMode,
+  Box, Heading, Button, useColorMode,
 } from '@chakra-ui/react';
 import Icon from './Icon';
+import Text from './Text';
 
-const supportSidebar = ({ title, subtitle, actionButtons }) => {
+const supportSidebar = ({
+  title, subtitle, actionButtons, width,
+}) => {
   const { colorMode } = useColorMode();
   return (
     <Box
       backgroundColor={colorMode === 'light' ? 'yellow.light' : 'featuredDark'}
-      width="490px"
+      width={width}
       height="auto"
       borderWidth="0px"
       borderRadius="lg"
@@ -19,13 +22,13 @@ const supportSidebar = ({ title, subtitle, actionButtons }) => {
       </Box>
       <Box p="4" pb="30px" pt="20px">
         <Box d="flex" alignItems="baseline" justifyContent="center">
-          <Heading textAlign="center" justify="center" mt="0px" mb="0px">
+          <Heading fontSize="22px" textAlign="center" justify="center" mt="0px" mb="0px">
             {title}
           </Heading>
         </Box>
 
         <Box d="flex" alignItems="baseline" justifyContent="center">
-          <Text fontSize="xl" textAlign="center" mt="10px" px="0px">
+          <Text size="md" textAlign="center" mt="10px" px="0px">
             {subtitle}
           </Text>
         </Box>
@@ -53,7 +56,7 @@ const supportSidebar = ({ title, subtitle, actionButtons }) => {
               <Box pr="20px">
                 <Icon icon={button.icon} width="25px" height="25px" />
               </Box>
-              <Text fontSize="md" color={colorMode === 'light' ? 'black' : 'white'}>
+              <Text size="13px" color={colorMode === 'light' ? 'black' : 'white'}>
                 {button.title}
               </Text>
               <Box ml="auto">

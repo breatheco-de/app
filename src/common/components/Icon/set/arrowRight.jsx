@@ -1,7 +1,8 @@
-const arrowRight = () => (
+const arrowRight = ({ style, width, height }) => (
   <svg
-    width="8"
-    height="14"
+    style={style}
+    width={width || '20px'}
+    height={height || '20px'}
     viewBox="0 0 8 14"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

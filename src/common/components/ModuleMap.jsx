@@ -1,14 +1,17 @@
 import {
-  Text, Box, HStack, Heading, Stack, useColorMode, Flex,
+  Box, HStack, Heading, Stack, useColorMode, Flex,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import NextChakraLink from './NextChakraLink';
 import useModuleMap from '../store/actions/moduleMapAction';
+import Text from './Text';
 
 // import useCounter from '../store/actions/counterAction';
 import Icon from './Icon';
 
-const ModuleMap = ({ width, handleModuleStatus }) => {
+const ModuleMap = ({
+  width, handleModuleStatus, title, description,
+}) => {
   const { colorMode } = useColorMode();
   const { modules } = useModuleMap();
   const statusIcons = {
@@ -18,14 +21,31 @@ const ModuleMap = ({ width, handleModuleStatus }) => {
   };
 
   return (
-    <Box>
-      <Heading as="h1">Module Map</Heading>
+    <Box width={width || '100%'}>
+      <Box display="flex" justifyContent="space-between">
+        <Heading as="h1" margin={0} fontSize="22px">
+          {title}
+        </Heading>
+        <Heading
+          as="h6"
+          margin={0}
+          fontSize="15px"
+          color={colorMode === 'light' ? 'gray.default' : 'white'}
+          fontWeight="normal"
+        >
+          {modules?.length}
+          {' '}
+          LESSONS
+        </Heading>
+      </Box>
+      <Text color={colorMode === 'light' ? '#606060' : 'white'} size="md">
+        {description}
+      </Text>
       {modules.map((module, i) => (
         <Stack
           direction="row"
           backgroundColor={colorMode === 'light' ? '#FFFFFF' : 'primary'}
           border="1px solid #C4C4C4"
-          width={width || '100%'}
           height="auto"
           py="10px"
           px="15px"
@@ -49,8 +69,8 @@ const ModuleMap = ({ width, handleModuleStatus }) => {
               align="center"
               background="#0097CF"
             >
-              <Text fontWeight="bold" margin="0" fontSize="13px" color="#FFFFFF">
-                {i}
+              <Text fontWeight="bold" margin="0" size="sm" color="#FFFFFF">
+                {i + 1}
               </Text>
             </Box>
             <Box mr="20px" ml="20px" display="flex" minWidth="22px" width="22px">
@@ -68,7 +88,7 @@ const ModuleMap = ({ width, handleModuleStatus }) => {
                 {module.title?.toUpperCase()}
               </Heading>
               <Text
-                fontSize="15px"
+                size="l"
                 fontWeight="light"
                 lineHeight="18px"
                 letterSpacing="0.05em"
@@ -78,11 +98,24 @@ const ModuleMap = ({ width, handleModuleStatus }) => {
               </Text>
             </Box>
           </Flex>
-          <HStack width="inherit">
-            <Box display="flex" margin="0 0 0 auto" onClick={(e) => handleModuleStatus(e, { ...module, index: i })}>
-              {module.status === 'inactive'
-                ? <NextChakraLink href="/" color="#0097CF" fontWeight="bold" fontStyle="normal">{`${module.title} lesson`}</NextChakraLink>
-                : <Icon icon={statusIcons[module.status]} width="27px" />}
+          <HStack width="-webkit-fill-available">
+            <Box
+              display="flex"
+              margin="0 0 0 auto"
+              onClick={(e) => handleModuleStatus(e, { ...module, index: i })}
+            >
+              {module.status === 'inactive' ? (
+                <NextChakraLink
+                  href="/"
+                  color="#0097CF"
+                  fontWeight="bold"
+                  fontStyle="normal"
+                >
+                  {`${module.title} lesson`}
+                </NextChakraLink>
+              ) : (
+                <Icon icon={statusIcons[module.status]} width="27px" />
+              )}
             </Box>
           </HStack>
         </Stack>
@@ -94,11 +127,14 @@ const ModuleMap = ({ width, handleModuleStatus }) => {
 ModuleMap.propTypes = {
   width: PropTypes.string,
   handleModuleStatus: PropTypes.func,
+  title: PropTypes.string,
+  description: PropTypes.string,
 };
 ModuleMap.defaultProps = {
   width: '100%',
-  handleModuleStatus: () => {
-  },
+  title: 'HTML/CSS/Bootstrap',
+  description: '',
+  handleModuleStatus: () => {},
 };
 
 export default ModuleMap;

@@ -1,5 +1,4 @@
 import React from "react";
-import { text, withKnobs, boolean } from '@storybook/addon-knobs';
 import SupportSidebar from "../common/components/SupportSidebar";
 
 export default {
