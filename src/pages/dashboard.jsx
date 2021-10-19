@@ -58,7 +58,7 @@ const Dashboard = () => {
             <Heading as="h1" size="xl">
               Full Stack Developer
             </Heading>
-            <TagCapsule {...tapCapsule} />
+            <TagCapsule tags={tapCapsule.tags} separator={tapCapsule.separator} />
             <Text size="md">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit,
               sed do eiusmod tempor incididunt ut labore et dolore magna
@@ -66,23 +66,50 @@ const Dashboard = () => {
               nostrud exercitation ullamco laboris.
             </Text>
             <Box>
-              <CallToAction {...callToAction} />
+              <CallToAction
+                background={callToAction.background}
+                title={callToAction.title}
+                text={callToAction.text}
+                width="100%"
+              />
             </Box>
             <Box marginTop="36px">
-              <ProgressBar {...progressBar} />
+              <ProgressBar
+                programs={progressBar.programs}
+                progressText={progressBar.progressText}
+                width="100%"
+              />
             </Box>
             <Box height="1px" bg="gray.dark" marginY="32px" />
             <Box>
               <Heading size="m">MODULE MAP</Heading>
             </Box>
             <Box marginTop="30px">
-              <ModuleMap {...moduleMap} handleModuleStatus={handleModuleStatus} width="100%" />
+              <ModuleMap
+                title={moduleMap.title}
+                description={moduleMap.description}
+                modules={moduleMap.modules}
+                handleModuleStatus={handleModuleStatus}
+                width="100%"
+              />
             </Box>
           </GridItem>
           <GridItem colSpan={4}>
-            <CohortSideBar {...cohortSideBar} width="100%" />
+            <CohortSideBar
+              title={cohortSideBar.title}
+              cohortCity={cohortSideBar.cohortCity}
+              professor={cohortSideBar.professor}
+              assistant={cohortSideBar.assistant}
+              classmates={cohortSideBar.classmates}
+              width="100%"
+            />
             <Box marginTop="30px">
-              <SupportSidebar {...supportSideBar} width="100%" />
+              <SupportSidebar
+                title={supportSideBar.title}
+                subtitle={supportSideBar.subtitle}
+                actionButtons={supportSideBar.actionButtons}
+                width="100%"
+              />
             </Box>
           </GridItem>
         </Grid>
