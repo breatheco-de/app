@@ -5,7 +5,6 @@ import {
   GridItem,
   Container,
 } from '@chakra-ui/react';
-import Navbar from '../common/components/Navbar';
 import mockData from '../common/utils/mockData/DashboardView';
 import NextChakraLink from '../common/components/NextChakraLink';
 import TagCapsule from '../common/components/TagCapsule';

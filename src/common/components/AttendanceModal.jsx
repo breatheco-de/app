@@ -47,7 +47,7 @@ const AttendanceModal = ({
           <ModalBody>
             <Box>
               <Box>
-                <Text size="l" color="gray.dark">
+                <Text size="l" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
                   {message}
                 </Text>
               </Box>
@@ -74,10 +74,10 @@ const AttendanceModal = ({
             <Box height="1px" bg="gray.light" marginTop="32px" marginBottom="15px" />
             <Box>
               <Flex justifyContent="space-between">
-                <Text size="l" color="gray.dark">
+                <Text size="l" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
                   Select the student in the class
                 </Text>
-                <Text size="l" color="gray.dark">
+                <Text size="l" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
                   {checked.length}
                   {' '}
                   Student selected
@@ -148,7 +148,7 @@ export const CheckboxCard = (props) => {
         borderColor="#A9A9A9"
         _checked={{
           bg: colorMode === 'light' ? 'blue.light' : 'featuredDark',
-          color: 'black',
+          color: colorMode === 'light' ? 'dark' : 'white',
           borderColor: 'blue.default',
         }}
         _focus={{
