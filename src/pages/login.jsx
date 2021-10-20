@@ -28,7 +28,7 @@ function login() {
           </TabList>
           <TabPanels>
             <TabPanel>
-              <Button cursor="pointer" width="365px" variant="outline" weight="700" marginTop="57px">
+              <Button cursor="pointer" width="100%" max-width="365px" variant="outline" weight="700" marginTop="57px">
                 <Icon icon="github" width="18px" height="18px" />
                 <Text fontSize="13px" marginLeft="10px">LOG IN WITH GITHUB</Text>
               </Button>
