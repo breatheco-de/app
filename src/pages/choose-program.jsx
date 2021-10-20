@@ -14,10 +14,10 @@ function Choose() {
         justifyContent="space-between"
         flexDirection="row"
         borderRadius="25px"
-        height={['40px', '70px', '80px', '80px']}
+        height={['66px', '70px', '80px', '80px']}
         width={['70%', '68%', '56%', '50%']}
         border="lightgray solid 2px"
-        fontSize={['12px', '13px', '14px', '15px', '15px']}
+        fontSize={['11px', '13px', '14px', '15px', '15px']}
       >
         <Box display="flex" flexDirection="column" marginLeft="25px">
           <Box color="gray.700" marginLeft="20px" fontWeight="800" margin="0px" marginTop="15px">
@@ -31,7 +31,7 @@ function Choose() {
           <Text fontSize={['10px', '15px', '15px', '20px']} margin="0px" color="blue.400" fontWeight="800" justifyContent="center" alignSelf="center" marginRight="15px">
             {isMobile ? "Launch this program" : ""}
           </Text>
-          <ArrowForwardIcon color="blue.400" height={['40px', '70px', '80px', '80px']} width="40px" />
+          <ArrowForwardIcon color="blue.400" height={['40px', '70px', '80px', '80px']} marginTop={['12px', '0px', '0px', '0px']} width="40px" />
         </Box>
       </Box>
     </Flex>
