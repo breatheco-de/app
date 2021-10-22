@@ -1,5 +1,7 @@
 import React from 'react';
 import CallToAction from '../common/components/CallToAction';
+import { action } from '@storybook/addon-actions';
+import { withKnobs } from "@storybook/addon-knobs";
 
 export default {
   title: 'Components/CallToAction',
@@ -12,6 +14,7 @@ export default {
           max: 100,
       }
   },
+  decorators:[withKnobs]
   }
 };
 
@@ -23,5 +26,8 @@ Default.args = {
     background: "blue.default",
     title: 'Todays lessons',
     text: 'Your lesson today is Internet Architecture in First Time Website Module.',
-    width: 100
+    width: 100, 
+    onClick:(e) => {
+      action("onClick")(e)
+    }
 };

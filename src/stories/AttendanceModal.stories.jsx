@@ -30,32 +30,12 @@ Default.args = {
   title: "Start your today’s class",
   message: "Hello Paolo, today is 27th of July and the cohort started taking classes on Monday Jun 10th. Please, select your today module.",
   width: 100,
-  days: [
-    {
-      id: 1,
-      title: "Read",
-      subtitle: "Introduction to prework",
-      icon: "book"
-    },
-    {
-      id: 2,
-      title: "Read",
-      subtitle: "Introduction to prework",
-      icon: "book"
-    },
-    {
-      id: 3,
-      title: "Read",
-      subtitle: "Introduction to prework",
-      icon: "book"
-    },
-    {
-      id: 4,
-      title: "Read",
-      subtitle: "Introduction to prework",
-      icon: "book"
-    }
-  ],
+  onSubmit: (e, checked) => {
+    action('onSubmit' + JSON.stringify(checked, null, 4))(e)
+  },
+  handleChangeDay: (e) => {
+    action('change day')(e)
+  },
   attendance: [
     {
       id: 1,
@@ -87,11 +67,5 @@ Default.args = {
       'image': 'https://bit.ly/prosper-baba',
       'name': 'Harry smith',
     },
-  ],
-  onSubmit: (e, checked) => {
-    action('clicked' + JSON.stringify(checked, null, 4))(e)
-  },
-  onChangeDay: (e) => {
-    action('change day')(e)
-  }
+  ]
 };

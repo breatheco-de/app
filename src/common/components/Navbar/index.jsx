@@ -31,7 +31,7 @@ const Navbar = () => {
   const menuList = [
     {
       title: t('menu.about-us'),
-      link: '/',
+      link: '/dashboard',
     },
     {
       title: t('menu.practice'),
@@ -40,15 +40,29 @@ const Navbar = () => {
     },
     {
       title: t('menu.build'),
-      link: '/',
+      link: '/about-us',
       // icon: 'home',
     },
     {
       title: t('menu.bootcamp'),
-      link: '/',
+      link: '/dashboard',
       // icon: 'home',
     },
   ];
+
+  const getColorLink = (link) => {
+    if (router.pathname === link) {
+      return 'blue.default';
+    }
+    return colorMode === 'light' ? 'gray.600' : 'white';
+  };
+
+  const getColorIcon = (link) => {
+    if (router?.pathname === link) {
+      return '#0097CD';
+    }
+    return colorMode === 'light' ? 'gray.default' : 'white';
+  };
 
   return (
     <>
@@ -73,7 +87,7 @@ const Navbar = () => {
                 key={nav.title}
                 href={nav.link}
                 style={linkStyle}
-                color="gray"
+                color={getColorLink(nav.link)}
                 _focus={{ boxShadow: 'none', color: '#0097CF' }}
               >
                 {nav.icon && (
@@ -82,11 +96,10 @@ const Navbar = () => {
                     width="20px"
                     height="20px"
                     style={{ marginBottom: '-4px', marginRight: '4px' }}
-                    color="#A4A4A4"
-                    fill={router?.pathname === nav.link ? '#0097CF' : ''}
+                    color={getColorIcon(nav.link)}
                   />
                 )}
-                <Text size="13px" color="gray.600">
+                <Text size="13px" color={getColorLink(nav.link)}>
                   {nav.title.toUpperCase()}
                 </Text>
               </Link>
