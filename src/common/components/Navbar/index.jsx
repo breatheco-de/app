@@ -116,13 +116,11 @@ const Navbar = () => {
             <Link href={router.pathname} locale={router.locale === 'es' ? 'en' : 'es'}>
               <IconButton
                 variant="default"
-                bg={colorMode === 'light' ? 'white' : 'darkTheme'}
-                isRound
+                bg="white"
                 cursor="pointer"
-                _focus={{ boxShadow: 'none' }}
-                _hover={{ background: 'none' }}
-                _active={{ background: 'none' }}
-                icon={<Icon icon="switchLanguage" width="25px" height="25px" />}
+                _hover={{ background: 'gray.100' }}
+                _active={{ background: 'gray.100' }}
+                icon={<Icon icon="hamburger" width="25px" height="25px" />}
               />
             </Link>
             <Link href={`${router.locale === 'es' ? 'es' : ''}/example`}>
