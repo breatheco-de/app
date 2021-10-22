@@ -17,7 +17,7 @@ import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
 
 const Navbar = ({
-  menuList, user: { handleUser, avatar, notifies }, handleChange, width,
+  menuList, user: { onClickUser, avatar, notifies }, handleChange, width, onClickNotifications,
 }) => {
   const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
@@ -31,6 +31,20 @@ const Navbar = ({
     textDecoration: 'none',
     textAlign: 'center',
     fontWeight: '900',
+  };
+
+  const getColorLink = (link) => {
+    if (router?.pathname === link) {
+      return 'blue.default';
+    }
+    return colorMode === 'light' ? 'gray.600' : 'white';
+  };
+
+  const getColorIcon = (link) => {
+    if (router?.pathname === link) {
+      return 'blue.default';
+    }
+    return colorMode === 'light' ? 'gray.default' : 'white';
   };
 
   return (
@@ -51,18 +65,17 @@ const Navbar = ({
                   key={nav.title}
                   href={nav.link}
                   style={linkStyle}
-                  color="#606060"
+                  color={getColorLink(nav.link)}
                   fontWeight="90"
                   fontSize="16px"
-                  _focus={{ boxShadow: 'none', color: '#0097CF' }}
+                  _focus={{ boxShadow: 'none', color: 'blue.default' }}
                 >
                   <Icon
                     icon={nav.icon}
                     width="22px"
                     height="22px"
                     style={{ marginBottom: '-4px', marginRight: '8px' }}
-                    color="#A4A4A4"
-                    fill={router?.pathname === nav.link ? '#0097CF' : ''}
+                    color={getColorIcon(nav.link)}
                   />
                   {nav.title.toUpperCase()}
                 </NextChakraLink>
@@ -104,6 +117,7 @@ const Navbar = ({
                 variant="default"
                 bg={colorMode === 'light' ? 'white' : 'darkTheme'}
                 isRound
+                onClick={onClickNotifications}
                 _focus={{ boxShadow: 'none' }}
                 _hover={{ background: 'none' }}
                 _active={{ background: 'none' }}
@@ -121,7 +135,7 @@ const Navbar = ({
                 } : null}
               />
               <Avatar
-                onClick={handleUser}
+                onClick={onClickUser}
                 width="43px"
                 height="43px"
                 cursor="pointer"
@@ -139,7 +153,7 @@ const Navbar = ({
                   href={nav.link}
                   style={linkStyle}
                   fontSize="13px"
-                  color="#606060"
+                  color={colorMode === 'light' ? 'gray.600' : 'white'}
                   _focus={{ boxShadow: 'none', color: '#0097CF' }}
                 >
                   <Icon
@@ -147,8 +161,7 @@ const Navbar = ({
                     width="15px"
                     height="15px"
                     style={{ marginBottom: '-4px', marginRight: '4px' }}
-                    color="#A4A4A4"
-                    fill={router?.pathname === nav.link ? '#0097CF' : ''}
+                    color={router?.pathname === nav.link ? 'blue.default' : 'gray.default'}
                   />
                   {nav.title.toUpperCase()}
                 </NextChakraLink>
@@ -166,11 +179,13 @@ Navbar.propTypes = {
   user: PropTypes.objectOf(PropTypes.object).isRequired,
   handleChange: PropTypes.func,
   width: PropTypes.string,
+  onClickNotifications: PropTypes.func,
 };
 Navbar.defaultProps = {
   handleChange: () => {
   },
   width: '',
+  onClickNotifications: () => {},
 };
 
 export default Navbar;

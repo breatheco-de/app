@@ -28,10 +28,9 @@ import Icon from './Icon';
 import Text from './Text';
 
 const AttendanceModal = ({
-  attendance, title, message, isOpen, onClose, maxDays, minDays, onSubmit,
+  attendance, title, message, isOpen, onClose, maxDays, minDays, onSubmit, handleChangeDay,
 }) => {
   const [checked, setChecked] = useState([]);
-  const [day, setDay] = useState(0);
   const { getCheckboxProps } = useCheckboxGroup({
     onChange: setChecked,
   });
@@ -60,7 +59,7 @@ const AttendanceModal = ({
                     min={minDays}
                     keepWithinRange={false}
                     clampValueOnBlur={false}
-                    onChange={(d) => setDay(d)}
+                    onChange={handleChangeDay}
                   >
                     <NumberInputField color={colorMode === 'light' ? 'black' : 'white'} />
                     <NumberInputStepper>
@@ -85,7 +84,7 @@ const AttendanceModal = ({
               </Flex>
               <Grid templateColumns={{ md: 'repeat(4, 4fr)', sm: 'repeat(1, 1fr)' }} gap={6}>
                 {attendance.map((item) => {
-                  const checkbox = getCheckboxProps({ value: item.name });
+                  const checkbox = getCheckboxProps({ value: JSON.stringify(item) });
                   return (
                     <CheckboxCard key={item.id} {...checkbox}>
                       <Flex justifyContent="space-between">
@@ -118,7 +117,7 @@ const AttendanceModal = ({
               fontSize="13px"
               disabled={checked.length < 1}
               variant="default"
-              onClick={(e) => onSubmit(e, { checked, day })}
+              onClick={(e) => onSubmit(e, { checked })}
               rightIcon={<Icon icon="longArrowRight" width="15px" color="white" />}
             >
               START CLASS DAY
@@ -165,6 +164,7 @@ export const CheckboxCard = (props) => {
 
 CheckboxCard.propTypes = {
   children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
+  value: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 
 AttendanceModal.propTypes = {
@@ -177,6 +177,7 @@ AttendanceModal.propTypes = {
   maxDays: PropTypes.number,
   minDays: PropTypes.number,
   onSubmit: PropTypes.func,
+  handleChangeDay: PropTypes.func,
 };
 AttendanceModal.defaultProps = {
   title: '',
@@ -188,6 +189,9 @@ AttendanceModal.defaultProps = {
   onSubmit: () => { },
   maxDays: 10,
   minDays: 0,
+  handleChangeDay: () => {
+
+  },
 };
 
 export default AttendanceModal;

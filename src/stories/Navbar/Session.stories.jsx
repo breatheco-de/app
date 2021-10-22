@@ -29,7 +29,8 @@ const Component = (args) => {
 export const Default = Component.bind({});
 Default.args = {
   width: 100,
-  handleChange: action('change'),
+  handleChange: action('onChange'),
+  onClickNotifications: action('onClickNotifications'),
   menuList: [
     {
       icon: "home",
@@ -54,7 +55,7 @@ Default.args = {
   ],
   user: {
     avatar: "https://storage.googleapis.com/media-breathecode/639857ed0ceb0a5e5e0429e16f7e3a84365270a0977fb94727cc3b6450d1ea9a",
-    handleUser: () => { },
+    onClickUser: action('onClickUser'),
     notifies: true,
   },
 };
