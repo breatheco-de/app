@@ -18,7 +18,10 @@ Icon.propTypes = {
   height: PropTypes.string,
   color: PropTypes.string,
   fill: PropTypes.string,
-  style: PropTypes.objectOf(PropTypes.object),
+  style: PropTypes.shape({
+    transform: PropTypes.string,
+    transition: PropTypes.string,
+  }),
 };
 Icon.defaultProps = {
   style: {},

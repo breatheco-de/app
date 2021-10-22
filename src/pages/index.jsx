@@ -17,6 +17,13 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      {/* <Box h="10" bg="tomato">
+        <H1 type="h1" className={styles.title}>
+          {t('heading')}
+          <a href="/">Learn!</a>
+        </H1>
+      </Box>
+      <Box h="10" bg="papayawhip" /> */}
       <main className={styles.main}>
         <H1 type="h1" className={styles.title}>
           {t('heading')}
@@ -26,6 +33,7 @@ export default function Home() {
         <Counter />
         <ToggleColor />
       </main>
+      {/* </Grid> */}
     </div>
   );
 }
