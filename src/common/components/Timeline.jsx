@@ -30,7 +30,7 @@ const Timeline = ({
               content: '""',
               position: 'absolute',
               width: '2px',
-              height: '100%',
+              height: assignments.length - 1 !== index ? '100%' : '0',
               bg: 'gray',
               left: '14px',
               zIndex: -15,
