@@ -73,7 +73,8 @@ const NavbarWithSubNavigation = () => {
       <Flex
         bg={useColorModeValue('white', 'gray.800')}
         color={useColorModeValue('gray.600', 'white')}
-        minH="60px"
+        // minH="60px"
+        height="10vh"
         py={{ base: '8px' }}
         px={{ base: 4 }}
         borderBottom={1}

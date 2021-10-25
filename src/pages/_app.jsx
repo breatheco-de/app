@@ -7,6 +7,7 @@ import { appWithTranslation } from 'next-i18next';
 import wrapper from '../store';
 import CustomTheme from '../../styles/theme';
 import NavbarWithSubNavigation from '../common/components/Navbar/index-2';
+import Footer from '../common/components/Footer';
 import '@fontsource/lato/100.css';
 import '@fontsource/lato/300.css';
 import '@fontsource/lato/400.css';
@@ -18,6 +19,7 @@ function LearnApp({ Component, pageProps }) {
     <ChakraProvider resetCSS theme={CustomTheme}>
       <NavbarWithSubNavigation />
       <Component {...pageProps} />
+      <Footer />
     </ChakraProvider>
   );
 }

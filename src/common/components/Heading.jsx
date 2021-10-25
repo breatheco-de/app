@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 const sizes = {
   /*
     Posible sizes:
+    xxl => 68px
     xl => 50px
     l => 40px
     m => 32px
@@ -22,7 +23,8 @@ const sizes = {
 const ThemeHeading = ({
   children, size, ...rest
 }) => (
-  <Heading fontSize={sizes[size]} {...rest}>
+  // size per default => in case of Heading need a size less than 20px (xxsm)
+  <Heading fontSize={sizes[size] || size} {...rest}>
     {children}
   </Heading>
 );
