@@ -1,6 +1,7 @@
 import React from 'react';
 import CohortSideBar from '../common/components/CohortSideBar';
-import { text, withKnobs,  } from '@storybook/addon-knobs';
+import {  withKnobs  } from '@storybook/addon-knobs';
+import { action } from '@storybook/addon-actions';
 
 export default {
   title: 'Components/CohortSideBar',
@@ -24,6 +25,18 @@ Default.args = {
   width: 100,
   title: 'Cohort',
   cohortCity: 'Miami Downtown',
+  handleTeacher:(e) => {
+    action('onClickTeacher')(e)
+  },
+  handleStudent:(e, name) => {
+    action('onClickStudent ' + name)(e)
+  },
+  handleAssistant:(e, name) => {
+    action('onClickAssistant ' + name)(e)
+  },
+  handleStudySession:(e) => {
+    action('onClickStudySession')(e)
+  },
   professor: {
     name: 'Paolo lucano',
     image: 'https://bit.ly/dan-abramov',
