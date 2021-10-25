@@ -18,17 +18,17 @@ import Icon from '../common/components/Icon/index';
 
 function login() {
   return (
-    <Box display="flex" justifyContent="space-between" marginBottom="47px" margin="0px" height="100vh">
-      <Box align="center" alignContent="center" width="50%" marginTop="47px">
+    <Box display="flex"  marginBottom="47px" margin="0px" height="100vh">
+      <Box align="center" alignContent="center" width={{base:'100%', sm:'100%', md:'100%', lg:'50%', xl:'50%' }} marginTop="47px">
         <Image src={logo} height="67px" width="67px" />
-        <Tabs marginTop="67px">
+        <Tabs isFitted variant="enclosed" marginTop="67px">
           <TabList justifyContent="center" width="365px">
             <Tab _selected={{ color: 'gray.dark', bg: 'white', borderBottomColor: 'blue.default' }} color="gray.default" boxShadow="none !important" fontWeight="600" width="182px" backgroundColor="white" padding="17px" borderBottomColor="gray.200" borderTop="none" borderRight="none" borderLeft="none">Log In</Tab>
             <Tab _selected={{ color: 'gray.dark', bg: 'white', borderBottomColor: 'blue.default' }} color="gray.default" boxShadow="none !important" fontWeight="600" width="182px" backgroundColor="white" padding="17px" borderBottomColor="gray.200" borderTop="none" borderRight="none" borderLeft="none">Registration</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
-              <Button cursor="pointer" width="100%" max-width="365px" variant="outline" weight="700" marginTop="57px">
+              <Button cursor="pointer" variant="outline" weight="700" marginTop="57px">
                 <Icon icon="github" width="18px" height="18px" />
                 <Text fontSize="13px" marginLeft="10px">LOG IN WITH GITHUB</Text>
               </Button>
@@ -72,7 +72,12 @@ function login() {
           </TabPanels>
         </Tabs>
       </Box>
-      <Image src={bg} quality="100" placeholder="blur" height="100vh" width="900px" />
+      <Box boxSize="xl" width="50%" display={{base:'none', sm:'none', md:'none', lg:'block'}}>
+        <Image src={bg} objectFit="cover" boxSize="100%" />
+      </Box>
+      {/* <Box height="100%" width="100%" display={{base:'none', sm:'none', md:'none', lg:'block'}} >
+        <Image src={bg} quality="100" placeholder="blur" />
+      </Box> */}
     </Box>
   );
 }
