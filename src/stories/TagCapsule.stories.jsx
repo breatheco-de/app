@@ -38,5 +38,5 @@ Default.args = {
     },
   ],
   separator: '/',
-  variant: 'rounded'
+  variant: 'slash'
 };
