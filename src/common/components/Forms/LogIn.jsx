@@ -21,7 +21,7 @@ import Icon from "../../../common/components/Icon/index";
 
 function LogIn() {
   return (
-    <Stack spacing={6}>
+    <Stack spacing={6} justifyContent="space-between">
       <Button cursor="pointer" variant="outline" weight="700">
         <Icon icon="github" width="18px" height="18px" />
         <Text fontSize="13px" marginLeft="10px">
@@ -33,9 +33,15 @@ function LogIn() {
           borderBottom="solid 1px #DADADA"
           width="165px"
           marginRight="13px"
+          marginBottom="9px"
         />
         <Box color="gray.default">or</Box>
-        <Box borderBottom="solid 1px #DADADA" width="165px" marginLeft="14px" />
+        <Box
+          borderBottom="solid 1px #DADADA"
+          width="165px"
+          marginLeft="14px"
+          marginBottom="9px"
+        />
       </Box>
       <FormControl id="email" borderRadius="3px">
         <Input
@@ -56,18 +62,10 @@ function LogIn() {
           borderRadius="3px"
         />
       </FormControl>
-      <Box
-        color="blue.default"
-        fontWeight="700"
-        align="right"
-      >
+      <Box color="blue.default" fontWeight="700" align="right">
         Reset Password
       </Box>
-      <Button
-        disabled=""
-        variant="default"
-        fontSize="l"
-      >
+      <Button disabled="" variant="default" fontSize="l">
         LOGIN
       </Button>
     </Stack>
