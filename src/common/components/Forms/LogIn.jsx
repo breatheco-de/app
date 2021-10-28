@@ -62,7 +62,7 @@ function LogIn() {
           borderRadius="3px"
         />
       </FormControl>
-      <Box color="blue.default" fontWeight="700" align="right">
+      <Box margin="0px" color="blue.default" fontWeight="700" align="right">
         Reset Password
       </Box>
       <Button disabled="" variant="default" fontSize="l">

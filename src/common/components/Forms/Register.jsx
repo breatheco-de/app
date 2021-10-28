@@ -23,7 +23,7 @@ function Register() {
     return (
       <Stack spacing={6}>
         <FormControl>
-          <Text color="gray.default" fontSize="sm" float="left">
+          <Text margin="0px" color="gray.default" fontSize="sm" float="left">
             Full Name
           </Text>
           <Input
@@ -35,7 +35,7 @@ function Register() {
           />
         </FormControl>
         <FormControl>
-          <Text color="gray.default" fontSize="sm" float="left">
+          <Text margin="0px" color="gray.default" fontSize="sm" float="left">
             Email
           </Text>
           <Input
@@ -47,7 +47,7 @@ function Register() {
           />
         </FormControl>
         <FormControl>
-          <Text color="gray.default" fontSize="sm" float="left">
+          <Text margin="0px" color="gray.default" fontSize="sm" float="left">
             Date of Birth
           </Text>
           <Input
@@ -59,7 +59,7 @@ function Register() {
           />
         </FormControl>
         <FormControl>
-          <Text color="gray.default" fontSize="sm" float="left">
+          <Text margin="0px" color="gray.default" fontSize="sm" float="left">
             Password
           </Text>
           <Input
@@ -71,7 +71,7 @@ function Register() {
           />
         </FormControl>
         <FormControl>
-          <Text color="gray.default" fontSize="sm" float="left">
+          <Text margin="0px" color="gray.default" fontSize="sm" float="left">
             Repeat Password
           </Text>
           <Input
