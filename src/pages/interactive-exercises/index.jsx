@@ -203,9 +203,9 @@ export const getStaticProps = async ({ locale }) => {
     .get(`${publicRuntimeConfig.BREATHECODE_HOST}/registry/asset?type=exercise&big=true`, {
       Accept: 'application/json, text/plain, */*',
     })
-    .then((res) => res.json())
+    .then((res) => res)
     .catch((err) => console.log(err));
-  // const data = await res.json();
+  // const data = await res;
 
   return {
     props: {

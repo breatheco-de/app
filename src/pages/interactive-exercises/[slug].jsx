@@ -67,7 +67,7 @@ const ExerciseSlug = ({ data }) => {
 export const getStaticPaths = async () => {
   const data = await axios
     .get(`${publicRuntimeConfig.BREATHECODE_HOST}/registry/asset?type=exercise&big=true`)
-    .then((res) => res.json())
+    .then((res) => res)
     .catch((err) => console.log(err));
 
   const paths = data.map((res) => {
@@ -89,7 +89,7 @@ export const getStaticProps = async ({ params, locale }) => {
 
   const results = await axios
     .get(`${publicRuntimeConfig.BREATHECODE_HOST}/registry/asset?type=exercise&big=true`)
-    .then((res) => res.json())
+    .then((res) => res)
     .catch((err) => console.log(err));
 
   // console.log(
