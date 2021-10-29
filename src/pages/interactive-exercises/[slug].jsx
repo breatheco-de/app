@@ -3,6 +3,7 @@ import { Box, useColorMode } from '@chakra-ui/react';
 import Head from 'next/head';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import getConfig from 'next/config';
+import axios from 'axios';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 // import Text from '../../common/components/Text';
@@ -64,9 +65,8 @@ const ExerciseSlug = ({ data }) => {
 
 // export const getStaticPaths = async () => {
 export const getStaticPaths = async () => {
-  const data = await fetch(
-    `${publicRuntimeConfig.BREATHECODE_HOST}/registry/asset?type=exercise&big=true`,
-  )
+  const data = await axios
+    .get(`${publicRuntimeConfig.BREATHECODE_HOST}/registry/asset?type=exercise&big=true`)
     .then((res) => res.json())
     .catch((err) => console.log(err));
 
@@ -87,9 +87,8 @@ export const getStaticProps = async ({ params, locale }) => {
   // const { slug } = params;
   console.log('PARAMS:::', params);
 
-  const results = await fetch(
-    `${publicRuntimeConfig.BREATHECODE_HOST}/registry/asset?type=exercise&big=true`,
-  )
+  const results = await axios
+    .get(`${publicRuntimeConfig.BREATHECODE_HOST}/registry/asset?type=exercise&big=true`)
     .then((res) => res.json())
     .catch((err) => console.log(err));
 

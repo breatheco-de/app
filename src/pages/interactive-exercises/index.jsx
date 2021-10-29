@@ -6,6 +6,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import getConfig from 'next/config';
+import axios from 'axios';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
@@ -198,12 +199,10 @@ Exercices.defaultProps = {
 };
 
 export const getStaticProps = async ({ locale }) => {
-  const data = await fetch(
-    `${publicRuntimeConfig.BREATHECODE_HOST}/registry/asset?type=exercise&big=true`,
-    {
+  const data = await axios
+    .get(`${publicRuntimeConfig.BREATHECODE_HOST}/registry/asset?type=exercise&big=true`, {
       Accept: 'application/json, text/plain, */*',
-    },
-  )
+    })
     .then((res) => res.json())
     .catch((err) => console.log(err));
   // const data = await res.json();
