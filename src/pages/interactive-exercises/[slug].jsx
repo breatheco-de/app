@@ -61,9 +61,7 @@ const ExerciseSlug = ({ data }) => {
 
 // export const getStaticPaths = async () => {
 export const getStaticPaths = async () => {
-  const data = await fetch(
-    'https://breathecode.herokuapp.com/v1/registry/asset?type=exercise&big=true',
-  )
+  const data = await fetch(`${process.env.BREATHECODE_HOST}/registry/asset?type=exercise&big=true`)
     .then((res) => res.json())
     .catch((err) => console.log(err));
 
@@ -85,7 +83,7 @@ export const getStaticProps = async ({ params, locale }) => {
   console.log('PARAMS:::', params);
 
   const results = await fetch(
-    'https://breathecode.herokuapp.com/v1/registry/asset?type=exercise&big=true',
+    `${process.env.BREATHECODE_HOST}/registry/asset?type=exercise&big=true`,
   )
     .then((res) => res.json())
     .catch((err) => console.log(err));
