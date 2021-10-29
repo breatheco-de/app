@@ -20,7 +20,7 @@ module.exports = withBundleAnalyzer({
   },
   publicRuntimeConfig: {
     // Will be available on both server and client
-    MY_API_URL: process.env.MY_API_URL,
+    BREATHECODE_HOST: process.env.BREATHECODE_HOST,
     NEXT_PUBLIC_ID: process.env.NEXT_PUBLIC_ID,
   },
   images: {

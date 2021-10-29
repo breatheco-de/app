@@ -5,6 +5,7 @@ import {
   Box, useColorMode, useColorModeValue, Stack, Grid,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import getConfig from 'next/config';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
@@ -12,6 +13,7 @@ import Link from '../../common/components/NextChakraLink';
 import Image from '../../common/components/Image';
 import TagCapsule from '../../common/components/TagCapsule';
 
+const { publicRuntimeConfig } = getConfig();
 function Exercices({ exercises }) {
   const { t } = useTranslation(['home']);
   const { colorMode } = useColorMode();
@@ -197,7 +199,7 @@ Exercices.defaultProps = {
 
 export const getStaticProps = async ({ locale }) => {
   const data = await fetch(
-    `${process.env.BREATHECODE_HOST}/registry/asset?type=exercise&big=true`,
+    `${publicRuntimeConfig.BREATHECODE_HOST}/registry/asset?type=exercise&big=true`,
     {
       Accept: 'application/json, text/plain, */*',
     },
