@@ -38,6 +38,7 @@ const CustomTheme = extendTheme({
     blue: {
       default: '#0097CD',
       light: '#EEF9FE',
+      50: '#E3F2FF',
       100: '#BEE3F8',
       200: '#90CDF4',
       300: '#63B3ED',

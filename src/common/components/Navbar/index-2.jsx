@@ -29,42 +29,41 @@ const NavbarWithSubNavigation = () => {
 
   const NAV_ITEMS = [
     {
-      label: 'Inspiration',
+      label: t('menu.about-us'),
+      href: '/about-us',
+    },
+    {
+      label: t('menu.practice'),
+      href: '/interactive-exercises',
+    },
+    {
+      label: t('menu.read.title'),
+      description: t('menu.read.description'),
       subMenu: [
         {
-          label: 'Explore Design Work',
-          subLabel: 'Trending Design to inspire you',
+          label: t('menu.read.child-1.label'),
+          // subLabel: t('menu.read.child-1.subLabel'),
           href: '#',
         },
         {
-          label: 'New & Noteworthy',
-          subLabel: 'Up-and-coming Designers',
+          label: t('menu.read.child-2.label'),
+          // subLabel: t('menu.read.child-2.subLabel'),
+          href: '#',
+        },
+        {
+          label: t('menu.read.child-3.label'),
+          // subLabel: t('menu.read.child-2.subLabel'),
           href: '#',
         },
       ],
     },
     {
-      label: 'Find Work',
-      subMenu: [
-        {
-          label: 'Job Board',
-          subLabel: 'Find your dream design job',
-          href: '#',
-        },
-        {
-          label: 'Freelance Projects',
-          subLabel: 'An exclusive list for contract work',
-          href: '#',
-        },
-      ],
+      label: t('menu.build'),
+      href: '/build',
     },
     {
-      label: 'Learn Design',
-      href: '#',
-    },
-    {
-      label: 'Hire Designers',
-      href: '#',
+      label: t('menu.bootcamp'),
+      href: 'https://4geeksacademy.com',
     },
   ];
 
@@ -73,7 +72,8 @@ const NavbarWithSubNavigation = () => {
       <Flex
         bg={useColorModeValue('white', 'gray.800')}
         color={useColorModeValue('gray.600', 'white')}
-        minH="60px"
+        // minH="60px"
+        height="10vh"
         py={{ base: '8px' }}
         px={{ base: 4 }}
         borderBottom={1}
@@ -137,7 +137,7 @@ const NavbarWithSubNavigation = () => {
             }
           />
           <NextChakraLink
-            href="/example"
+            href="/login"
             fontWeight="700"
             fontSize="13px"
             lineHeight="22px"
@@ -194,6 +194,7 @@ const DesktopNav = ({ NAV_ITEMS }) => {
                 p={2}
                 href={navItem.href ?? '#'}
                 fontSize="sm"
+                textTransform="uppercase"
                 fontWeight={500}
                 color={linkColor}
                 _hover={{
@@ -218,6 +219,16 @@ const DesktopNav = ({ NAV_ITEMS }) => {
                 minW="sm"
               >
                 <Stack>
+                  <Box fontSize="sm" fontWeight={500} color={linkColor}>
+                    {navItem.label}
+                    <Text
+                      transition="all .3s ease"
+                      _groupHover={{ color: 'pink.400' }}
+                      fontWeight={500}
+                    >
+                      {navItem.description}
+                    </Text>
+                  </Box>
                   {navItem.subMenu.map((child) => {
                     const { label, subLabel, href } = child;
                     return (
@@ -240,7 +251,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => (
     role="group"
     display="block"
     p={2}
-    rounded="md"
+    style={{ borderRadius: '5px' }}
     _hover={{ bg: useColorModeValue('pink.50', 'gray.900') }}
   >
     <Stack direction="row" align="center">
@@ -268,40 +279,68 @@ const DesktopSubNav = ({ label, href, subLabel }) => (
 const MobileNav = ({ NAV_ITEMS }) => (
   <Stack bg={useColorModeValue('white', 'gray.800')} p={4} display={{ md: 'none' }}>
     {NAV_ITEMS.map((navItem) => {
-      const { label, subMenu, href } = navItem;
-      return <MobileNavItem key={label} label={label} subMenu={subMenu} href={href} />;
+      const {
+        label, subMenu, href, description,
+      } = navItem;
+      return (
+        <MobileNavItem
+          key={label}
+          description={description}
+          label={label}
+          subMenu={subMenu}
+          href={href}
+        />
+      );
     })}
   </Stack>
 );
 
-const MobileNavItem = ({ label, subMenu, href }) => {
+const MobileNavItem = ({
+  label, subMenu, href, description,
+}) => {
   const { isOpen, onToggle } = useDisclosure();
 
   return (
     <Stack spacing={4} onClick={subMenu && onToggle}>
-      <Flex
-        py={2}
-        as={Link}
-        href={href ?? '#'}
-        justify="space-between"
-        align="center"
-        _hover={{
-          textDecoration: 'none',
-        }}
-      >
-        <Text fontWeight={600} color={useColorModeValue('gray.600', 'gray.200')}>
-          {label}
-        </Text>
-        {subMenu && (
+      {!subMenu && (
+        <NextChakraLink
+          py={2}
+          // as={Link}
+          href={href}
+          display="flex"
+          justifyContent="space-between"
+          align="center"
+          _hover={{
+            textDecoration: 'none',
+          }}
+        >
+          <Text fontWeight={600} color={useColorModeValue('gray.600', 'gray.200')}>
+            {label}
+          </Text>
+        </NextChakraLink>
+      )}
+      {subMenu && (
+        <Flex
+          py={2}
+          justifyContent="space-between"
+          align="center"
+          _hover={{
+            textDecoration: 'none',
+          }}
+        >
+          <Text fontWeight={600} color={useColorModeValue('gray.600', 'gray.200')}>
+            {label}
+          </Text>
           <Box
             display="flex"
+            onClick={(e) => e.preventDefault()}
             transition="all .25s ease-in-out"
             transform={isOpen ? 'rotate(180deg)' : ''}
           >
             <Icon icon="arrowDown" color="gray" width="25px" height="25px" />
           </Box>
-        )}
-      </Flex>
+        </Flex>
+      )}
 
       <Collapse in={isOpen} animateOpacity style={{ marginTop: '0!important' }}>
         <Stack
@@ -312,9 +351,16 @@ const MobileNavItem = ({ label, subMenu, href }) => {
           borderColor={useColorModeValue('gray.200', 'gray.700')}
           align="start"
         >
+          <Text fontWeight={600} color={useColorModeValue('gray.600', 'gray.200')}>
+            {label}
+          </Text>
+          <Text fontWeight={600} color={useColorModeValue('gray.600', 'gray.200')}>
+            {description}
+          </Text>
+
           {subMenu
             && subMenu.map((child) => (
-              <Link key={child.label} py={2} href={child.href}>
+              <Link key={child.label} style={{ textDecoration: 'none' }} py={2} href={child.href}>
                 {child.label}
               </Link>
             ))}
@@ -328,11 +374,12 @@ MobileNav.propTypes = {
   NAV_ITEMS: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string.isRequired,
+      description: PropTypes.string,
       href: PropTypes.string,
       subMenu: PropTypes.arrayOf(
         PropTypes.shape({
           label: PropTypes.string.isRequired,
-          subLabel: PropTypes.string.isRequired,
+          subLabel: PropTypes.string,
           href: PropTypes.string.isRequired,
         }),
       ),
@@ -344,6 +391,7 @@ DesktopNav.propTypes = {
   NAV_ITEMS: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string.isRequired,
+      description: PropTypes.string,
       href: PropTypes.string,
       subMenu: PropTypes.arrayOf(
         PropTypes.shape({
@@ -359,11 +407,12 @@ DesktopNav.propTypes = {
 DesktopSubNav.propTypes = {
   label: PropTypes.string.isRequired,
   href: PropTypes.string,
-  subLabel: PropTypes.string.isRequired,
+  subLabel: PropTypes.string,
 };
 
 MobileNavItem.propTypes = {
   label: PropTypes.string.isRequired,
+  description: PropTypes.string,
   href: PropTypes.string,
   subMenu: PropTypes.arrayOf(
     PropTypes.shape({
@@ -376,7 +425,8 @@ MobileNavItem.propTypes = {
 DesktopNav.defaultProps = {
   NAV_ITEMS: [
     {
-      href: '#',
+      href: '/',
+      description: '',
     },
   ],
 };
@@ -384,17 +434,23 @@ DesktopNav.defaultProps = {
 MobileNav.defaultProps = {
   NAV_ITEMS: [
     {
-      href: '#',
+      href: '/',
+      description: '',
+      subMenu: {
+        subLabel: '',
+      },
     },
   ],
 };
 
 DesktopSubNav.defaultProps = {
-  href: '#',
+  href: '/',
+  subLabel: '',
 };
 
 MobileNavItem.defaultProps = {
-  href: '#',
+  href: '/',
+  description: '',
   subMenu: undefined,
 };
 

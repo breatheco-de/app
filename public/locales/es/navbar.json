@@ -2,6 +2,22 @@
   "menu": {
     "about-us": "Sobre Nosotros",
     "practice": "Practicar",
+    "read": {
+      "title": "Leer",
+      "description": "Lorem ipsum dolor sit amet, consectetur adscing elit, sed do eiusmod tempor incidi.",
+      "child-1": {
+        "label": "Full Stack Developer",
+        "subLabel": "Descripción corta"
+      },
+      "child-2": {
+        "label": "Software Engineer",
+        "subLabel": "Descripción corta"
+      },
+      "child-3": {
+        "label": "AI Machine Learning",
+        "subLabel": "Descripción corta"
+      }
+    },
     "build": "Desarrollar",
     "bootcamp": "Bootcamp de Codificación"
   },
