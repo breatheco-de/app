@@ -197,7 +197,7 @@ Exercices.defaultProps = {
 
 export const getStaticProps = async ({ locale }) => {
   const data = await fetch(
-    'https://breathecode.herokuapp.com/v1/registry/asset?type=exercise&big=true',
+    `${process.env.BREATHECODE_HOST}/registry/asset?type=exercise&big=true`,
     {
       Accept: 'application/json, text/plain, */*',
     },
