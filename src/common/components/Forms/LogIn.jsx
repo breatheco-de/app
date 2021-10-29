@@ -1,22 +1,5 @@
 import React from "react";
-import {
-  Button,
-  Checkbox,
-  Flex,
-  FormControl,
-  FormLabel,
-  Heading,
-  Link,
-  Stack,
-  Text,
-  Box,
-  Input,
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
-} from "@chakra-ui/react";
+import { Button, FormControl, Stack, Text, Box, Input } from "@chakra-ui/react";
 import Icon from "../../../common/components/Icon/index";
 
 function LogIn() {

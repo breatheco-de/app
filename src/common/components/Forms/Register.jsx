@@ -1,92 +1,167 @@
 import React from "react";
 import {
   Button,
-  Checkbox,
-  Flex,
   FormControl,
-  FormLabel,
-  Heading,
-  Link,
   Stack,
-  Text,
-  Box,
+  FormLabel,
   Input,
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
+  FormErrorMessage,
 } from "@chakra-ui/react";
-import Icon from "../../../common/components/Icon/index";
+import { Form, Formik, Field } from "formik";
 
 function Register() {
-    return (
-      <Stack spacing={6}>
-        <FormControl>
-          <Text margin="0px" color="gray.default" fontSize="sm" float="left">
-            Full Name
-          </Text>
-          <Input
-            type="fullName"
-            placeholder="Andrea Castillo"
-            height="50px"
-            borderColor="gray.default"
-            borderRadius="3px"
-          />
-        </FormControl>
-        <FormControl>
-          <Text margin="0px" color="gray.default" fontSize="sm" float="left">
-            Email
-          </Text>
-          <Input
-            type="email"
-            placeholder="Andrea@4geeks.co"
-            height="50px"
-            borderColor="gray.default"
-            borderRadius="3px"
-          />
-        </FormControl>
-        <FormControl>
-          <Text margin="0px" color="gray.default" fontSize="sm" float="left">
-            Date of Birth
-          </Text>
-          <Input
-            type=""
-            placeholder="29 / 10 / 1990"
-            height="50px"
-            borderColor="gray.default"
-            borderRadius="3px"
-          />
-        </FormControl>
-        <FormControl>
-          <Text margin="0px" color="gray.default" fontSize="sm" float="left">
-            Password
-          </Text>
-          <Input
-            type="password"
-            placeholder="***********"
-            height="50px"
-            borderColor="gray.default"
-            borderRadius="3px"
-          />
-        </FormControl>
-        <FormControl>
-          <Text margin="0px" color="gray.default" fontSize="sm" float="left">
-            Repeat Password
-          </Text>
-          <Input
-            type="password"
-            placeholder="***********"
-            height="50px"
-            borderColor="gray.default"
-            borderRadius="3px"
-          />
-        </FormControl>
-        <Button variant="default" fontSize="l">
-          REGISTER
-        </Button>
-      </Stack>
-    );
+  function validateEmail(value) {
+    let error;
+    if (!value) {
+      error = "Required";
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+      error = "Invalid email address";
+    }
+    return error;
+  }
+
+  function validateName(value) {
+    let error;
+    if (!value) {
+      error = "Required";
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+      error = "Invalid email address";
+    }
+    return error;
+  }
+
+  return (
+    <Formik
+      initialValues={{
+        name: '',
+        email: '',
+        dateOfBirth: '',
+        password: '',
+        repeatPasword: '',
+      }}
+      onSubmit={(values, actions) => {
+        setTimeout(() => {
+          alert(JSON.stringify(values, null, 2));
+          actions.setSubmitting(false);
+        }, 1000);
+      }}
+    >
+      {(props) => {
+        return (
+          <Form>
+            <Stack spacing={6}>
+              <Field name="name" validate={validateName}>
+                <FormControl isInvalid={form.errors.name && form.touched.name}>
+                  <FormLabel
+                    margin="0px"
+                    color="gray.default"
+                    fontSize="sm"
+                    float="left"
+                    htmlFor="name"
+                  >
+                    Full Name
+                  </FormLabel>
+                  <Input
+                    id="name"
+                    type="name"
+                    type="fullName"
+                    placeholder="Andrea Castillo"
+                    height="50px"
+                    borderColor="gray.default"
+                    borderRadius="3px"
+                  />
+                  <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                </FormControl>
+              </Field>
+
+              <Field name="email" validate={validateEmail}>
+                {({ field, form }) => (
+                  <FormControl
+                    isInvalid={form.errors.email && form.touched.email}
+                  >
+                    <FormLabel
+                      margin="0px"
+                      color="gray.default"
+                      fontSize="sm"
+                      float="left"
+                      htmlFor="email"
+                    >
+                      Email
+                    </FormLabel>
+                    <Input
+                      {...field}
+                      id="email"
+                      type="email"
+                      placeholder="Andrea@4geeks.co"
+                      height="50px"
+                      borderColor="gray.default"
+                      borderRadius="3px"
+                    />
+                    <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
+
+              <FormControl>
+                <FormLabel
+                  margin="0px"
+                  color="gray.default"
+                  fontSize="sm"
+                  float="left"
+                >
+                  Date of Birth
+                </FormLabel>
+                <Input
+                  type=""
+                  placeholder="29 / 10 / 1990"
+                  height="50px"
+                  borderColor="gray.default"
+                  borderRadius="3px"
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel
+                  margin="0px"
+                  color="gray.default"
+                  fontSize="sm"
+                  float="left"
+                >
+                  Password
+                </FormLabel>
+                <Input
+                  type="password"
+                  placeholder="***********"
+                  height="50px"
+                  borderColor="gray.default"
+                  borderRadius="3px"
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel margin="0px" color="gray.default" fontSize="sm">
+                  Repeat Password
+                </FormLabel>
+                <Input
+                  type="password"
+                  placeholder="***********"
+                  height="50px"
+                  borderColor="gray.default"
+                  borderRadius="3px"
+                />
+              </FormControl>
+              <Button
+                variant="default"
+                fontSize="l"
+                isLoading={props.isSubmitting}
+                type="submit"
+              >
+                REGISTER
+              </Button>
+            </Stack>
+          </Form>
+        );
+      }}
+    </Formik>
+  );
 }
 
 export default Register;

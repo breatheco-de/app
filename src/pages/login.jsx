@@ -1,34 +1,27 @@
 import {
-  Button,
-  Checkbox,
   Flex,
-  FormControl,
-  FormLabel,
-  Heading,
-  Link,
   Stack,
-  Text,
   Box,
-  Input,
   Tabs,
   TabList,
   Tab,
   TabPanels,
   TabPanel,
+  Image,
 } from "@chakra-ui/react";
-import bg from "../../public/static/images/main-bg1.png";
-import Image from "next/image";
+// import bg from "../../public/static/images/main-bg1.png";
+import I from "next/image";
 import logo from "../../public/static/images/bc_logo.png";
-import Login from '../common/components/Forms/LogIn';
+import Login from "../common/components/Forms/LogIn";
 import Register from "../common/components/Forms/Register";
 
 function login() {
   return (
-    <Stack minH={"100vh"} direction={{ base: "column", lg: "row" }} >
+    <Stack minH={"100vh"} direction={{ md: "row" }}>
       <Flex p={8} flex={1} align={"center"} justify={"center"}>
         <Stack spacing={4} w={"full"} maxW={"md"}>
           <Box align={"center"} justify={"center"}>
-            <Image src={logo} height="67px" width="67px" />
+            <I src={logo} height="67px" width="67px" />
           </Box>
           <Stack spacing={6}>
             <Tabs isFitted variant="enclosed">
@@ -86,12 +79,24 @@ function login() {
           </Stack>
         </Stack>
       </Flex>
-      <Flex>
-        <Box
-          display={{ base: "none", sm: "none", md: "none", lg: "block" }}
-        >
-          <Image src={bg} objectFit="cover"  />
-        </Box>
+      <Flex
+        flex={1}
+        display={{
+          base: "none",
+          sm: "none",
+          md: "none",
+          lg: "block",
+          xl: "block",
+        }}
+      >
+        {/* <Box width="100%"> */}
+        <Image
+          height="100%"
+          width="100%"
+          objectFit="cover"
+          src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80"
+        />
+        {/* </Box> */}
       </Flex>
     </Stack>
   );
