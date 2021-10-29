@@ -12,11 +12,28 @@ import Link from '../../common/components/NextChakraLink';
 import Image from '../../common/components/Image';
 import TagCapsule from '../../common/components/TagCapsule';
 
+export const getStaticProps = async ({ locale }) => {
+  const data = await fetch(
+    'https://breathecode-test.herokuapp.com/v1/registry/asset?type=exercise&big=true',
+    {
+      Accept: 'application/json, text/plain, */*',
+    },
+  )
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
+  // const data = await res.json();
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['home', 'navbar', 'footer'])),
+      exercises: data,
+    },
+  };
+};
 function Exercices({ exercises }) {
   const { t } = useTranslation(['home']);
   const { colorMode } = useColorMode();
 
-  // console.log('EXERCISES:::', exercises);
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
       <Head>
@@ -48,7 +65,6 @@ function Exercices({ exercises }) {
         </Text>
 
         <Grid
-          // maxHeight="300vh"
           gridTemplateColumns={{
             base: 'repeat(auto-fill, minmax(15rem, 1fr))',
             md: 'repeat(auto-fill, minmax(20rem, 1fr))',
@@ -56,31 +72,6 @@ function Exercices({ exercises }) {
           gridAutoRows="28rem"
           gridGap="12px"
         >
-          {/* {exercises.map((ex) => (
-            <Box borderRadius="17px" border="1px solid">
-              <Link
-                className="card pointer"
-                href={`/interactive-exercise/${ex.slug}`}
-                key={`${ex.title}-${ex.difficulty}`}
-              >
-                {ex.preview && (
-                  <Image
-                    src={ex.preview}
-                    width="100%"
-                    height="150px"
-                    mb="0"
-                    alt={`Preview for ${ex.title}`}
-                  />
-                )}
-                <Box className="card-body">
-                  <Heading as="h5" size="20px" className="card-title">
-                    {ex.title}
-                  </Heading>
-                </Box>
-              </Link>
-            </Box>
-          ))} */}
-
           {exercises.map((ex) => (
             <Box
               py={2}
@@ -90,25 +81,13 @@ function Exercices({ exercises }) {
               bg={useColorModeValue('white', 'gray.800')}
               boxShadow="2xl"
               borderRadius="16px"
-              // pos="relative"
               padding="22px"
-              // margin="22px 0"
-              // padding="20px"
             >
-              {/* <Center py={2} key={`${ex.slug}-${ex.difficulty}`} border="1px solid"> */}
-              <Box
-                display="inline-block"
-                role="group"
-                // maxW="330px"
-                w="full"
-                zIndex={1}
-                borderRadius="15px"
-              >
+              <Box display="inline-block" role="group" w="full" zIndex={1} borderRadius="15px">
                 {ex.preview && (
                   <Link
                     href={`/interactive-exercises/${ex.slug}`}
                     display="inline-block"
-                    // maxW="330px"
                     w="full"
                     zIndex={1}
                     borderRadius="15px"
@@ -137,9 +116,6 @@ function Exercices({ exercises }) {
                         },
                       }}
                       style={{ borderRadius: '15px', overflow: 'hidden' }}
-                      // borderRadius="2xl"
-                      // height={230}
-                      // width={282}
                       objectFit="cover"
                       src={ex.preview}
                       alt={ex.title}
@@ -173,13 +149,11 @@ function Exercices({ exercises }) {
                     size="sm"
                     textTransform="uppercase"
                   >
-                    {/* {ex.title} */}
                     All you&apos;ve learned needs to be put together. Lets make our first entire
                     professional application using the Agile Development method!
                   </Text>
                 </Stack>
               </Box>
-              {/* </Center> */}
             </Box>
           ))}
         </Grid>
@@ -193,25 +167,6 @@ Exercices.propTypes = {
 };
 Exercices.defaultProps = {
   exercises: [],
-};
-
-export const getStaticProps = async ({ locale }) => {
-  const data = await fetch(
-    'https://breathecode-test.herokuapp.com/v1/registry/asset?type=exercise&big=true',
-    {
-      Accept: 'application/json, text/plain, */*',
-    },
-  )
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
-  // const data = await res.json();
-
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['home', 'navbar', 'footer'])),
-      exercises: data || null,
-    },
-  };
 };
 
 export default Exercices;

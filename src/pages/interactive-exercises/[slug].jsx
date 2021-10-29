@@ -4,7 +4,43 @@ import Head from 'next/head';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
-// import Text from '../../common/components/Text';
+
+export const getStaticPaths = async () => {
+  const data = await fetch(
+    'https://breathecode-test.herokuapp.com/v1/registry/asset?type=exercise&big=true',
+  )
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
+  const paths = data.map((res) => {
+    console.log('RESPONSE_PATH', res.slug);
+    return {
+      params: { slug: res.slug },
+    };
+  });
+  return {
+    fallback: false,
+    paths,
+  };
+};
+
+export const getStaticProps = async ({ params, locale }) => {
+  const { slug } = params;
+
+  const results = await fetch(
+    'https://breathecode-test.herokuapp.com/v1/registry/asset?type=exercise&big=true',
+  )
+    .then((res) => res.json())
+    .then((data) => data.find((e) => e.slug === slug))
+    .catch((err) => console.log(err));
+  return {
+    // props: { data:..., slug:..., more... },
+    props: {
+      fallback: false,
+      ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
+      data: results,
+    },
+  };
+};
 
 const ExerciseSlug = ({ data }) => {
   console.log('EXERCISE_DATA:', data);
@@ -24,13 +60,7 @@ const ExerciseSlug = ({ data }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Link
-        href="/interactive-exercises"
-        display="inline-block"
-        // maxW="330px"
-        w="full"
-        borderRadius="15px"
-      >
+      <Link href="/interactive-exercises" display="inline-block" w="full" borderRadius="15px">
         {'< Back to Projects'}
       </Link>
 
@@ -57,54 +87,6 @@ const ExerciseSlug = ({ data }) => {
       </Box>
     </Box>
   );
-};
-
-// export const getStaticPaths = async () => {
-export const getStaticPaths = async () => {
-  const data = await fetch(
-    'https://breathecode-test.herokuapp.com/v1/registry/asset?type=exercise&big=true',
-  )
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
-
-  const paths = data.map((res) => {
-    console.log('RESPONSE_PATH', res.slug);
-    return {
-      params: { slug: res.slug },
-    };
-  });
-  return {
-    fallback: false,
-    paths,
-  };
-};
-
-// export const getStaticProps = async ({ params }) => {
-export const getStaticProps = async ({ params, locale }) => {
-  // const { slug } = params;
-  console.log('PARAMS:::', params);
-
-  const results = await fetch(
-    'https://breathecode-test.herokuapp.com/v1/registry/asset?type=exercise&big=true',
-  )
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
-
-  // console.log(
-  //   'results:::::::',
-  //   results.find((el) => el.slug === slug),
-  // );
-
-  // const exercise = results.find((el) => el.Slug === slug);
-  // console.log('EXERCISE:::', exercise);
-  return {
-    props: {
-      // props: { exercise, ... },
-      fallback: false,
-      ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
-      data: results[0],
-    },
-  };
 };
 
 export default ExerciseSlug;
