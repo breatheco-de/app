@@ -41,11 +41,11 @@ export default function Home() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <rect x="700" y="158" width="65" height="65" rx="17" fill="#FFB718" />
-      <rect x="750" y="199" width="35" height="35" rx="17" fill="#0097CD" />
+      <rect x="700" y="148" width="65" height="65" rx="17" fill="#FFB718" />
+      <rect x="750" y="189" width="35" height="35" rx="17" fill="#0097CD" />
       <rect x="332" width="19" height="19" rx="9.5" fill="#CD0000" />
-      <rect x="649" y="550" width="36" height="36" rx="17" fill="#FFB718" />
-      <rect y="244" width="36" height="36" rx="17" fill="#E6E6E6" />
+      <rect x="649" y="450" width="36" height="36" rx="17" fill="#FFB718" />
+      <rect y="244" width="36" height="36" rx="17" fill="#E6E6E6" style={{ opacity: 0.7 }} />
     </svg>
   );
 
@@ -64,26 +64,51 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Grid gridTemplateColumns={{ base: 'repeat(1,1fr)', md: 'repeat(2,1fr)' }} height="100%">
-        <Box position="absolute" top="95" right="0" zIndex="-1">
+        <Box position="absolute" top="25" right="0" zIndex="-1" opacity={{ base: '0.4', md: '1' }}>
           <BubblesSvg />
         </Box>
-        <Box flex="1" margin="14% 14% 0 14%">
-          <Heading as="h1" size="14px" fontWeight="700" color="gray.600" textTransform="uppercase">
+        <Box flex="1" margin={{ base: '14% 8% 0 8%', md: '14% 14% 0 14%' }}>
+          <Heading
+            as="h1"
+            size="14px"
+            fontWeight="700"
+            color={colorMode === 'light' ? 'gray.600' : 'gray.300'}
+            textTransform="uppercase"
+          >
             {t('title')}
           </Heading>
-          <Heading as="h2" size="70px">
+          <Heading as="h2" size={{ base: '50px', md: '70px' }} style={{ wordWrap: 'normal' }}>
             {t('welcome')}
           </Heading>
-          <Text size="12px" color="gray.600">
+          <Text
+            size="36px"
+            display="flex"
+            gridGap="10px"
+            color={colorMode === 'light' ? 'gray.600' : 'gray.300'}
+          >
+            Join
+            <Text
+              size="36px"
+              fontWeight="bold"
+              color={colorMode === 'light' ? 'gray.600' : 'gray.300'}
+            >
+              2454
+            </Text>
+          </Text>
+          <Text size="sm" color={colorMode === 'light' ? 'gray.600' : 'gray.300'}>
             {t('description')}
           </Text>
+
+          {/* --------- Email Form (📧) --------- */}
+          <Box color={colorMode === 'light' ? 'danger' : 'red'} mt="20px" mb="10px" height="20px">
+            {errorMessage}
+          </Box>
           <Box
-            my="50px"
+            mb="50px"
             p="12px"
             borderRadius="3px"
             backgroundColor={colorMode === 'light' ? 'blue.50' : 'gray.800'}
           >
-            {/* --------- Email Form (📧) --------- */}
             <Formik
               initialValues={{ email: '' }}
               onSubmit={(values, actions) => {
@@ -97,7 +122,6 @@ export default function Home() {
                 const { isSubmitting } = props;
                 return (
                   <Form>
-                    <Box color="danger">{errorMessage}</Box>
                     <Box py="0" flexDirection="row" display="flex" alignItems="center">
                       <Field id="field923" name="email" validate={validator}>
                         {({ field, form }) => (
@@ -137,27 +161,29 @@ export default function Home() {
               }}
             </Formik>
           </Box>
-          <Text size="md" display="flex" alignItems="center" gridGap="14px">
-            {t('followUs')}
+          <Box display="flex" alignItems="center" gridGap="14px">
+            <Text size="md">
+              {t('followUs')}
+            </Text>
             <Icon icon="youtube" width="15px" height="15px" color="black" />
             <Icon icon="github" width="15px" height="15px" />
-          </Text>
+          </Box>
         </Box>
 
         {/* --------- Image of people smiling --------- */}
         <Box
           flex="1"
-          display="flex"
+          display={{ base: 'none', md: 'flex' }}
           flexDirection="row"
           justifyContent="center"
           gridGap="10px"
           pt="6%"
         >
-          <Box display="flex" width="35%" flexDirection="column" gridGap="10px">
+          <Box display="flex" width="auto" flexDirection="column" gridGap="10px">
             <Image src="/static/images/person-smile1.png" />
             <Image src="/static/images/person-smile3.png" borderRadius="15px" />
           </Box>
-          <Box display="flex" width="35%" flexDirection="column" gridGap="10px">
+          <Box display="flex" width="auto" flexDirection="column" gridGap="10px">
             <Image src="/static/images/person-smile2.png" />
             <Image src="/static/images/person-smile4.png" />
           </Box>

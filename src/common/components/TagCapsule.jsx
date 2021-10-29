@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Text from './Text';
 
 const TagCapsule = ({
-  tags, separator, background, variant,
+  tags, separator, background, variant, paddingX, marginY,
 }) => {
   const { colorMode } = useColorMode();
 
@@ -13,9 +13,9 @@ const TagCapsule = ({
       as="ul"
       direction="row"
       height="30px"
-      my="18px"
+      my={marginY}
       width="fit-content"
-      px="20px"
+      px={paddingX}
       borderRadius="15px"
     >
       {tags.map((tag, i) => (
@@ -27,7 +27,7 @@ const TagCapsule = ({
           padding={variant === 'rounded' ? '0 10px' : '0'}
           style={{ margin: variant === 'rounded' ? '0 4.5px' : '0' }}
           rounded={variant === 'rounded' ? '15px' : 'none'}
-          key={tag.name}
+          key={tag.name || `${tag}-${i}`}
           lineHeight="22px"
           color={colorMode === 'light' ? 'black' : 'black'}
         >
@@ -40,7 +40,7 @@ const TagCapsule = ({
             color="black"
             textTransform="uppercase"
           >
-            {tag.name}
+            {tag.name || tag}
           </Text>
           {variant === 'slash' && i < tags.length - 1 && (
             <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
@@ -54,15 +54,19 @@ const TagCapsule = ({
 };
 
 TagCapsule.propTypes = {
-  tags: PropTypes.string.isRequired,
+  tags: PropTypes.oneOfType([PropTypes.array, PropTypes.string]).isRequired,
   separator: PropTypes.string,
   background: PropTypes.string,
   variant: PropTypes.string,
+  paddingX: PropTypes.string,
+  marginY: PropTypes.string,
 };
 TagCapsule.defaultProps = {
   separator: '/',
   background: 'yellow.light',
   variant: 'slash',
+  paddingX: '20px',
+  marginY: '18px',
 };
 
 export default TagCapsule;

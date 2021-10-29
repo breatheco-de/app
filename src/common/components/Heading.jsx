@@ -20,9 +20,7 @@ const sizes = {
   sm: '12px',
 };
 
-const ThemeHeading = ({
-  children, size, ...rest
-}) => (
+const ThemeHeading = ({ children, size, ...rest }) => (
   // size per default => in case of Heading need a size less than 20px (xxsm)
   <Heading fontSize={sizes[size] || size} {...rest}>
     {children}
@@ -30,7 +28,7 @@ const ThemeHeading = ({
 );
 
 ThemeHeading.propTypes = {
-  size: PropTypes.string.isRequired,
+  size: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
   children: PropTypes.node.isRequired,
 };
 

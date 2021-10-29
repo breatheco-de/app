@@ -23,4 +23,9 @@ module.exports = withBundleAnalyzer({
     MY_API_URL: process.env.MY_API_URL,
     NEXT_PUBLIC_ID: process.env.NEXT_PUBLIC_ID,
   },
+  images: {
+    // whitelist for image providers
+    domains: ['assets.vercel.com', 'github.com'],
+    // formats: ['image/avif', 'image/webp'],
+  },
 });
