@@ -80,13 +80,19 @@ export default function Home() {
           <Heading as="h2" size={{ base: '50px', md: '70px' }} style={{ wordWrap: 'normal' }}>
             {t('welcome')}
           </Heading>
-          <Text
+          <Box
             size="36px"
             display="flex"
             gridGap="10px"
             color={colorMode === 'light' ? 'gray.600' : 'gray.300'}
           >
-            Join
+            <Text
+              size="36px"
+              fontWeight="bold"
+              color={colorMode === 'light' ? 'gray.600' : 'gray.300'}
+            >
+              Join
+            </Text>
             <Text
               size="36px"
               fontWeight="bold"
@@ -94,7 +100,7 @@ export default function Home() {
             >
               2454
             </Text>
-          </Text>
+          </Box>
           <Text size="sm" color={colorMode === 'light' ? 'gray.600' : 'gray.300'}>
             {t('description')}
           </Text>
@@ -162,9 +168,7 @@ export default function Home() {
             </Formik>
           </Box>
           <Box display="flex" alignItems="center" gridGap="14px">
-            <Text size="md">
-              {t('followUs')}
-            </Text>
+            <Text size="md">{t('followUs')}</Text>
             <Icon icon="youtube" width="15px" height="15px" color="black" />
             <Icon icon="github" width="15px" height="15px" />
           </Box>
