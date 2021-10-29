@@ -2,13 +2,9 @@
 import { Box, useColorMode } from '@chakra-ui/react';
 import Head from 'next/head';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import getConfig from 'next/config';
-import axios from 'axios';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 // import Text from '../../common/components/Text';
-
-const { publicRuntimeConfig } = getConfig();
 
 const ExerciseSlug = ({ data }) => {
   console.log('EXERCISE_DATA:', data);
@@ -65,9 +61,10 @@ const ExerciseSlug = ({ data }) => {
 
 // export const getStaticPaths = async () => {
 export const getStaticPaths = async () => {
-  const data = await axios
-    .get(`${publicRuntimeConfig.BREATHECODE_HOST}/registry/asset?type=exercise&big=true`)
-    .then((res) => res)
+  const data = await fetch(
+    'https://breathecode-test.herokuapp.com/v1/registry/asset?type=exercise&big=true',
+  )
+    .then((res) => res.json())
     .catch((err) => console.log(err));
 
   const paths = data.map((res) => {
@@ -87,9 +84,10 @@ export const getStaticProps = async ({ params, locale }) => {
   // const { slug } = params;
   console.log('PARAMS:::', params);
 
-  const results = await axios
-    .get(`${publicRuntimeConfig.BREATHECODE_HOST}/registry/asset?type=exercise&big=true`)
-    .then((res) => res)
+  const results = await fetch(
+    'https://breathecode-test.herokuapp.com/v1/registry/asset?type=exercise&big=true',
+  )
+    .then((res) => res.json())
     .catch((err) => console.log(err));
 
   // console.log(
