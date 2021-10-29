@@ -24,20 +24,32 @@ function Register() {
     let error;
     if (!value) {
       error = "Required";
-    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
-      error = "Invalid email address";
     }
+    // else if () {
+    //   error = "Invalid Name";
+    // }
+    return error;
+  }
+
+  function validatePassword(value) {
+    let error;
+    if (!value) {
+      error = "Required";
+    }
+    // else if () {
+    //   error = "Invalid Password";
+    // }
     return error;
   }
 
   return (
     <Formik
       initialValues={{
-        name: '',
-        email: '',
-        dateOfBirth: '',
-        password: '',
-        repeatPasword: '',
+        name: "",
+        email: "",
+        dateOfBirth: "",
+        password: "",
+        repeatPasword: "",
       }}
       onSubmit={(values, actions) => {
         setTimeout(() => {
@@ -51,27 +63,31 @@ function Register() {
           <Form>
             <Stack spacing={6}>
               <Field name="name" validate={validateName}>
-                <FormControl isInvalid={form.errors.name && form.touched.name}>
-                  <FormLabel
-                    margin="0px"
-                    color="gray.default"
-                    fontSize="sm"
-                    float="left"
-                    htmlFor="name"
+                {({ field, form }) => (
+                  <FormControl
+                    isInvalid={form.errors.name && form.touched.name}
                   >
-                    Full Name
-                  </FormLabel>
-                  <Input
-                    id="name"
-                    type="name"
-                    type="fullName"
-                    placeholder="Andrea Castillo"
-                    height="50px"
-                    borderColor="gray.default"
-                    borderRadius="3px"
-                  />
-                  <FormErrorMessage>{form.errors.name}</FormErrorMessage>
-                </FormControl>
+                    <FormLabel
+                      margin="0px"
+                      color="gray.default"
+                      fontSize="sm"
+                      float="left"
+                      htmlFor="name"
+                    >
+                      Full Name
+                    </FormLabel>
+                    <Input
+                      id="name"
+                      type="name"
+                      type="fullName"
+                      placeholder="Andrea Castillo"
+                      height="50px"
+                      borderColor="gray.default"
+                      borderRadius="3px"
+                    />
+                    <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                  </FormControl>
+                )}
               </Field>
 
               <Field name="email" validate={validateEmail}>
@@ -119,35 +135,61 @@ function Register() {
                   borderRadius="3px"
                 />
               </FormControl>
-              <FormControl>
-                <FormLabel
-                  margin="0px"
-                  color="gray.default"
-                  fontSize="sm"
-                  float="left"
-                >
-                  Password
-                </FormLabel>
-                <Input
-                  type="password"
-                  placeholder="***********"
-                  height="50px"
-                  borderColor="gray.default"
-                  borderRadius="3px"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel margin="0px" color="gray.default" fontSize="sm">
-                  Repeat Password
-                </FormLabel>
-                <Input
-                  type="password"
-                  placeholder="***********"
-                  height="50px"
-                  borderColor="gray.default"
-                  borderRadius="3px"
-                />
-              </FormControl>
+              <Field name="password" validate={validatePassword}>
+                {({ field, form }) => (
+                  <FormControl
+                    isInvalid={form.errors.password && form.touched.password}
+                  >
+                    <FormLabel
+                      margin="0px"
+                      color="gray.default"
+                      fontSize="sm"
+                      float="left"
+                      htmlFor="password"
+                    >
+                      Password
+                    </FormLabel>
+                    <Input
+                      {...field}
+                      id="password"
+                      type="password"
+                      placeholder="***********"
+                      height="50px"
+                      borderColor="gray.default"
+                      borderRadius="3px"
+                    />
+                    <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
+
+              <Field name="repeatPassword" validate={validatePassword}>
+                {({ field, form }) => (
+                  <FormControl
+                    isInvalid={form.errors.password && form.touched.password}
+                  >
+                    <FormLabel
+                      margin="0px"
+                      color="gray.default"
+                      fontSize="sm"
+                      htmlFor="password"
+                    >
+                      Repeat Password
+                    </FormLabel>
+                    <Input
+                      {...field}
+                      id="password"
+                      type="password"
+                      placeholder="***********"
+                      height="50px"
+                      borderColor="gray.default"
+                      borderRadius="3px"
+                    />
+                    <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
+
               <Button
                 variant="default"
                 fontSize="l"
