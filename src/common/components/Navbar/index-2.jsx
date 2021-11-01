@@ -43,17 +43,17 @@ const NavbarWithSubNavigation = () => {
         {
           label: t('menu.read.child-1.label'),
           // subLabel: t('menu.read.child-1.subLabel'),
-          href: '#',
+          href: '/lessons',
         },
         {
           label: t('menu.read.child-2.label'),
           // subLabel: t('menu.read.child-2.subLabel'),
-          href: '#',
+          href: '/lessons',
         },
         {
           label: t('menu.read.child-3.label'),
           // subLabel: t('menu.read.child-2.subLabel'),
-          href: '#',
+          href: '/lessons',
         },
       ],
     },

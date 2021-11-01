@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import Head from 'next/head';
 import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -14,11 +13,6 @@ export default function Example() {
 
   return (
     <div className={styles.container}>
-      <Head>
-        <title>{t('title')}</title>
-        <meta name="description" content="Learn with Breatheco.de" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
 
       <main className={styles.main}>
         <Link href="/example" locale={router.locale === 'en' ? 'es' : 'en'}>

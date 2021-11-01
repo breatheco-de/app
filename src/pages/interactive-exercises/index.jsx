@@ -1,4 +1,3 @@
-import Head from 'next/head';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import {
@@ -36,11 +35,7 @@ function Exercices({ exercises }) {
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-      <Head>
-        <title>Exercices</title>
-        <meta name="description" content="Learn with Breatheco.de" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+
       <Box flex="1" margin={{ base: '4% 4% 0 4%', md: '4% 10% 0 10%' }}>
         <Heading
           as="h1"

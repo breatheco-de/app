@@ -1,4 +1,3 @@
-import Head from 'next/head';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import {
@@ -58,11 +57,6 @@ export default function Home() {
       justifyContent="center"
       alignItems="center"
     >
-      <Head>
-        <title>{t('title')}</title>
-        <meta name="description" content="Learn with Breatheco.de" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <Grid gridTemplateColumns={{ base: 'repeat(1,1fr)', md: 'repeat(2,1fr)' }} height="100%">
         <Box position="absolute" top="25" right="0" zIndex="-1" opacity={{ base: '0.4', md: '1' }}>
           <BubblesSvg />
