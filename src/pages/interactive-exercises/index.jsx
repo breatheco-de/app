@@ -17,9 +17,7 @@ export const getStaticProps = async ({ locale }) => {
     {
       Accept: 'application/json, text/plain, */*',
     },
-  )
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
+  ).then((res) => res.json());
   // const data = await res.json();
 
   return {
@@ -32,10 +30,18 @@ export const getStaticProps = async ({ locale }) => {
 function Exercices({ exercises }) {
   const { t } = useTranslation(['home']);
   const { colorMode } = useColorMode();
+  const defaultImage = '/static/images/person-smile1.png';
+
+  console.log('PREVIEW', exercises);
+
+  const onImageNotFound = (event) => {
+    console.log('EVENT:TARGET:::', event.target);
+    event.target.setAttribute('src', defaultImage);
+    event.target.setAttribute('srcset', `${defaultImage} 1x`);
+  };
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-
       <Box flex="1" margin={{ base: '4% 4% 0 4%', md: '4% 10% 0 10%' }}>
         <Heading
           as="h1"
@@ -61,25 +67,29 @@ function Exercices({ exercises }) {
 
         <Grid
           gridTemplateColumns={{
-            base: 'repeat(auto-fill, minmax(15rem, 1fr))',
-            md: 'repeat(auto-fill, minmax(20rem, 1fr))',
+            base: "repeat(auto-fill, minmax(15rem, 1fr))",
+            md: "repeat(auto-fill, minmax(20rem, 1fr))"
           }}
-          gridAutoRows="28rem"
+          // gridAutoRows="28rem"
           gridGap="12px"
         >
-          {exercises.map((ex) => (
-            <Box
-              py={2}
-              key={`${ex.slug}-${ex.difficulty}`}
-              border="1px solid #DADADA"
-              className="card pointer"
-              bg={useColorModeValue('white', 'gray.800')}
-              boxShadow="2xl"
-              borderRadius="16px"
-              padding="22px"
-            >
-              <Box display="inline-block" role="group" w="full" zIndex={1} borderRadius="15px">
-                {ex.preview && (
+          {exercises.map((ex) => {
+            // console.log('EX_PREVIEW', ex.preview);
+            const getImage = ex.preview !== '' ? ex.preview : defaultImage;
+
+            return (
+              <Box
+                py={2}
+                key={`${ex.slug}-${ex.difficulty}`}
+                border={useColorModeValue('1px solid #DADADA', 'none')}
+                className="card pointer"
+                bg={useColorModeValue('white', 'gray.800')}
+                boxShadow="2xl"
+                borderRadius="16px"
+                padding="22px"
+              >
+                <Box display="inline-block" role="group" w="full" zIndex={1} borderRadius="15px">
+                  {/* CARD IMAGE */}
                   <Link
                     href={`/interactive-exercises/${ex.slug}`}
                     display="inline-block"
@@ -101,7 +111,7 @@ function Exercices({ exercises }) {
                         pos: 'absolute',
                         top: 0,
                         left: 0,
-                        backgroundImage: `url(${ex.preview})`,
+                        backgroundImage: `url(${getImage})`,
                         filter: 'blur(15px)',
                         zIndex: 0,
                       }}
@@ -110,34 +120,42 @@ function Exercices({ exercises }) {
                           filter: 'blur(50px)',
                         },
                       }}
+                      onError={(e) => onImageNotFound(e)}
                       style={{ borderRadius: '15px', overflow: 'hidden' }}
                       objectFit="cover"
-                      src={ex.preview}
+                      src={getImage}
                       alt={ex.title}
                     />
                   </Link>
-                )}
 
-                {ex.technologies.length >= 1 && (
-                  <TagCapsule
-                    tags={ex.technologies}
-                    variant="rounded"
-                    paddingX="0"
-                    key={`${ex.slug}-${ex.difficulty}`}
-                  />
-                )}
+                  {ex.technologies.length >= 1 && (
+                    <TagCapsule
+                      tags={ex.technologies}
+                      variant="rounded"
+                      paddingX="0"
+                      key={`${ex.slug}-${ex.difficulty}`}
+                    />
+                  )}
 
-                <Stack align="center">
-                  <Heading
-                    size="20px"
-                    textAlign="left"
-                    width="100%"
-                    fontFamily="body"
-                    fontWeight={500}
-                  >
-                    {ex.title}
-                  </Heading>
-                  <Text
+                  <Stack align="center">
+                    <Link
+                      href={`/interactive-exercises/${ex.slug}`}
+                      display="inline-block"
+                      w="full"
+                      zIndex={1}
+                      color="blue.default"
+                    >
+                      <Heading
+                        size="20px"
+                        textAlign="left"
+                        width="100%"
+                        fontFamily="body"
+                        fontWeight={700}
+                      >
+                        {ex.title}
+                      </Heading>
+                    </Link>
+                    {/* <Text
                     color="gray.500"
                     textAlign="left"
                     width="100%"
@@ -146,11 +164,12 @@ function Exercices({ exercises }) {
                   >
                     All you&apos;ve learned needs to be put together. Lets make our first entire
                     professional application using the Agile Development method!
-                  </Text>
-                </Stack>
+                  </Text> */}
+                  </Stack>
+                </Box>
               </Box>
-            </Box>
-          ))}
+            );
+          })}
         </Grid>
       </Box>
     </Box>
