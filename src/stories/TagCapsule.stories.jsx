@@ -9,6 +9,10 @@ export default {
     tags: {
       control: { type: 'object' },
     },
+    variant: {
+      control: 'select',
+      options: ['slash', 'rounded'],
+    },
   },
 };
 
@@ -34,4 +38,5 @@ Default.args = {
     },
   ],
   separator: '/',
+  variant: 'slash'
 };

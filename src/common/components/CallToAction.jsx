@@ -5,7 +5,7 @@ import Text from './Text';
 
 const CallToAction = (props) => {
   const {
-    background, title, text, width,
+    background, title, text, width, onClick,
   } = props;
   return (
     <Box
@@ -26,7 +26,7 @@ const CallToAction = (props) => {
         </Text>
       </Box>
       <Box alignSelf="center">
-        <Button marginY="auto" borderColor="white" color="white" variant="outline">
+        <Button marginY="auto" borderColor="white" color="white" variant="outline" onClick={onClick}>
           START TODAY’S MODULE
         </Button>
       </Box>
@@ -39,12 +39,15 @@ CallToAction.propTypes = {
   text: PropTypes.string,
   background: PropTypes.string,
   width: PropTypes.string,
+  onClick: PropTypes.func,
 };
+
 CallToAction.defaultProps = {
   title: 'Todays lessons',
   text: 'Your lesson today is Internet Architecture in First Time Website Module.',
   background: 'blue',
   width: '100%',
+  onClick: () => {},
 };
 
 export default CallToAction;

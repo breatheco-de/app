@@ -1,26 +1,24 @@
 import { useColorMode } from '@chakra-ui/react';
 
-const hamburger = ({
+const hamburguer = ({
   width, height, style, color,
 }) => {
   const { colorMode } = useColorMode();
   return (
     <svg
-      style={style}
       width={width || '20px'}
       height={height || '19px'}
-      aria-hidden="true"
+      style={style}
+      viewBox="0 0 24 24"
       focusable="false"
-      data-prefix="fas"
-      data-icon="bars"
-      className="svg-inline--fa fa-bars fa-w-14"
-      role="img"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 448 512"
+      aria-hidden="true"
     >
-      <path fill={colorMode === 'light' ? color || '#0097CF' : '#FFFFFF'} d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z" />
+      <path
+        fill={colorMode === 'light' ? color || '#0097CF' : '#FFFFFF'}
+        d="M 3 5 A 1.0001 1.0001 0 1 0 3 7 L 21 7 A 1.0001 1.0001 0 1 0 21 5 L 3 5 z M 3 11 A 1.0001 1.0001 0 1 0 3 13 L 21 13 A 1.0001 1.0001 0 1 0 21 11 L 3 11 z M 3 17 A 1.0001 1.0001 0 1 0 3 19 L 21 19 A 1.0001 1.0001 0 1 0 21 17 L 3 17 z"
+      />
     </svg>
   );
 };
 
-export default hamburger;
+export default hamburguer;

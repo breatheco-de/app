@@ -16,12 +16,17 @@ a {
   box-sizing: border-box;
 }
 
+.centerImageForBlur {
+  max-width: 90%!important;
+  min-width: 90%!important;
+  min-height: 90%!important;
+  max-height: 90%!important;
+  z-index: 1 !important;
+  border-radius: 8px;
+}
 
-
-
-
-
-.button-hold > div svg.icon, .button-hold > div svg.tick {
+.button-hold > div svg.icon,
+.button-hold > div svg.tick {
   position: absolute;
 }
 
@@ -32,15 +37,16 @@ a {
   top: 6px;
   fill: var(--icon);
   z-index: 1;
-  -webkit-transition: opacity .2s, -webkit-transform .2s;
-  transition: opacity .2s, -webkit-transform .2s;
-  transition: opacity .2s, transform .2s;
-  transition: opacity .2s, transform .2s, -webkit-transform .2s;
+  -webkit-transition: opacity 0.2s, -webkit-transform 0.2s;
+  transition: opacity 0.2s, -webkit-transform 0.2s;
+  transition: opacity 0.2s, transform 0.2s;
+  transition: opacity 0.2s, transform 0.2s, -webkit-transform 0.2s;
   opacity: var(--icon-opacity, 1);
   -webkit-transform: translateY(var(--icon-y, 0)) scale(var(--icon-scale, 1));
-          transform: translateY(var(--icon-y, 0)) scale(var(--icon-scale, 1));
+  transform: translateY(var(--icon-y, 0)) scale(var(--icon-scale, 1));
 }
-.button-hold > div svg.progress, .button-hold > div svg.tick {
+.button-hold > div svg.progress,
+.button-hold > div svg.tick {
   fill: none;
 }
 
@@ -49,10 +55,10 @@ a {
   height: 20px;
   -webkit-transform: rotate(-90deg) scale(var(--progress-scale, 1));
   transform: rotate(-90deg) scale(var(--progress-scale, 1));
-  -webkit-transition: -webkit-transform .5s ease;
-  transition: -webkit-transform .5s ease;
-  transition: transform .5s ease;
-  transition: transform .5s ease, -webkit-transform .5s ease;
+  -webkit-transition: -webkit-transform 0.5s ease;
+  transition: -webkit-transform 0.5s ease;
+  transition: transform 0.5s ease;
+  transition: transform 0.5s ease, -webkit-transform 0.5s ease;
 }
 
 .button-hold > div svg.progress circle {
@@ -73,38 +79,40 @@ a {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke: var(--tick-stroke);
-  -webkit-transition: stroke .3s ease .7s;
-  transition: stroke .3s ease .7s;
+  -webkit-transition: stroke 0.3s ease 0.7s;
+  transition: stroke 0.3s ease 0.7s;
 }
 
 .button-hold > div svg.tick polyline {
   stroke-dasharray: 18 18 18;
   stroke-dashoffset: var(--tick-offset, 18);
-  -webkit-transition: stroke-dashoffset .4s ease .7s;
-  transition: stroke-dashoffset .4s ease .7s;
+  -webkit-transition: stroke-dashoffset 0.4s ease 0.7s;
+  transition: stroke-dashoffset 0.4s ease 0.7s;
 }
 
-.button-hold:focus:not(.process), .button-hold:hover:not(.process) {
+.button-hold:focus:not(.process),
+.button-hold:hover:not(.process) {
   --shadow-y: 8px;
   --shadow-blur: 16px;
 }
 
 .button-hold:active:not(.success) {
-  --scale: .96;
+  --scale: 0.96;
   --shadow-y: 4px;
   --shadow-blur: 8px;
 }
 
-.button-hold.process, .button-hold.success {
+.button-hold.process,
+.button-hold.success {
   --progress-array: 52;
   --icon-y: -4px;
-  --icon-scale: .6;
+  --icon-scale: 0.6;
   --icon-opacity: 0;
 }
 
 .button-hold.success {
   --progress-border: none;
-  --progress-scale: .01;
+  --progress-scale: 0.01;
   --tick-stroke: var(--progress-success);
   --background-scale: 0;
   --tick-offset: 36;

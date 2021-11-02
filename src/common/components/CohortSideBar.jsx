@@ -23,6 +23,10 @@ const CohortSideBar = ({
   classmates,
   background,
   width,
+  handleStudySession,
+  handleTeacher,
+  handleStudent,
+  handleAssistant,
 }) => {
   const { colorMode } = useColorMode();
   return (
@@ -58,7 +62,7 @@ const CohortSideBar = ({
         </Box>
         <Box d="flex" alignItems="center">
           <Tooltip label={professor.name} placement="top">
-            <WrapItem justifyContent="center" alignItems="center">
+            <WrapItem justifyContent="center" alignItems="center" onClick={handleTeacher}>
               <Avatar
                 width="39px"
                 height="39px"
@@ -98,7 +102,7 @@ const CohortSideBar = ({
             >
               {assistant.map((a, i) => (
                 <Tooltip label={a.name} placement="top">
-                  <WrapItem justifyContent="center" alignItems="center">
+                  <WrapItem justifyContent="center" alignItems="center" onClick={(e) => handleAssistant(e, a.name)}>
                     <Avatar
                       key={i}
                       width="39px"
@@ -129,7 +133,7 @@ const CohortSideBar = ({
         >
           {classmates.map((c, i) => (
             <Tooltip label={c.name} placement="top">
-              <WrapItem justifyContent="center" alignItems="center">
+              <WrapItem justifyContent="center" alignItems="center" onClick={(e) => handleStudent(e, c.name)}>
                 <Avatar
                   key={i}
                   width="39px"
@@ -157,6 +161,7 @@ const CohortSideBar = ({
           fontSize={15}
           lineHeight="22px"
           letterSpacing="0.05em"
+          onClick={handleStudySession}
         >
           Create a study session
         </Link>
@@ -173,6 +178,10 @@ CohortSideBar.propTypes = {
   assistant: PropTypes.arrayOf(PropTypes.array),
   classmates: PropTypes.arrayOf(PropTypes.array),
   background: PropTypes.string,
+  handleStudySession: PropTypes.func,
+  handleTeacher: PropTypes.func,
+  handleStudent: PropTypes.func,
+  handleAssistant: PropTypes.func,
 };
 CohortSideBar.defaultProps = {
   width: '352px',
@@ -198,6 +207,14 @@ CohortSideBar.defaultProps = {
     },
   ],
   background: '',
+  handleTeacher: () => {
+  },
+  handleStudySession: () => {
+  },
+  handleStudent: () => {
+  },
+  handleAssistant: () => {
+  },
 };
 
 export default CohortSideBar;

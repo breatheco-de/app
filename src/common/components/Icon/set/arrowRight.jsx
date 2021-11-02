@@ -1,4 +1,6 @@
-const arrowRight = ({ style, width, height }) => (
+const arrowRight = ({
+  style, width, height, color,
+}) => (
   <svg
     style={style}
     width={width || '20px'}
@@ -9,7 +11,7 @@ const arrowRight = ({ style, width, height }) => (
   >
     <path
       d="M0.999999 1L7 7L1 13"
-      stroke="#0097CF"
+      stroke={color || '#0097CF'}
       strokeWidth="2"
       strokeMiterlimit="10"
       strokeLinecap="round"
