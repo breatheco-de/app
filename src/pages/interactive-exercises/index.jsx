@@ -68,7 +68,7 @@ function Exercices({ exercises }) {
         <Grid
           gridTemplateColumns={{
             base: "repeat(auto-fill, minmax(15rem, 1fr))",
-            md: "repeat(auto-fill, minmax(20rem, 1fr))"
+            md: "repeat(auto-fill, minmax(20rem, 1fr))",
           }}
           // gridAutoRows="28rem"
           gridGap="12px"
