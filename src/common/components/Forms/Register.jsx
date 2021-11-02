@@ -42,6 +42,17 @@ function Register() {
     return error;
   }
 
+  function validatePasswordTwo(value) {
+    let error;
+    if (!value) {
+      error = "Required";
+    }
+    // else if () {
+    //   error = "Invalid Password";
+    // }
+    return error;
+  }
+
   return (
     <Formik
       initialValues={{
@@ -163,7 +174,7 @@ function Register() {
                 )}
               </Field>
 
-              <Field name="repeatPassword" validate={validatePassword}>
+              <Field name="repeatPassword" validate={validatePasswordTwo}>
                 {({ field, form }) => (
                   <FormControl
                     isInvalid={form.errors.password && form.touched.password}
