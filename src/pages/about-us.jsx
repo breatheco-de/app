@@ -22,7 +22,7 @@ export const getStaticProps = async ({ locale }) => {
 };
 
 const AboutUs = ({ data }) => {
-  console.log('MD_DATA:', data);
+  // console.log('MD_DATA:', data);
   const { colorMode } = useColorMode();
 
   return (
