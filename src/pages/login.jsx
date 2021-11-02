@@ -8,9 +8,9 @@ import {
   TabPanels,
   TabPanel,
   Image,
-} from '@chakra-ui/react';
-import I from 'next/image';
-import logo from '../../public/static/images/bc_logo.png';
+} from "@chakra-ui/react";
+import I from "next/image";
+import logo from "../../public/static/images/bc_logo.png";
 import Login from "../common/components/Forms/LogIn";
 import Register from "../common/components/Forms/Register";
 
@@ -18,14 +18,14 @@ function login() {
   return (
     <Stack minH="100vh" direction={{ md: "row" }}>
       <Flex p={8} flex={1} align="center" justify="center">
-        <Stack spacing={4} w={"full"} maxW={"md"}>
-          <Box align="center" justify={"center"}>
+        <Stack spacing={4} w="full" maxW="md">
+          <Box align="center" justify="center">
             <I src={logo} height="67px" width="67px" />
           </Box>
           <Stack spacing={6}>
             <Tabs isFitted variant="enclosed">
               <Stack spacing={8}>
-                <TabList align={"center"} justify={"center"}>
+                <TabList align="center" justify="center">
                   <Tab
                     _selected={{
                       color: "gray.dark",
