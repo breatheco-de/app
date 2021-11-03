@@ -87,6 +87,7 @@ const NavbarWithSubNavigation = () => {
           flex={{ base: 1, md: 'auto' }}
           ml={{ base: -2 }}
           display={{ base: 'flex', md: 'none' }}
+          gridGap="12px"
         >
           <IconButton
             onClick={onToggle}
@@ -107,9 +108,17 @@ const NavbarWithSubNavigation = () => {
             variant="default"
             aria-label="Toggle Navigation"
           />
+
+          <NextChakraLink
+            href="/"
+            alignSelf="center"
+            display={{ base: 'flex', md: 'none' }}
+          >
+            <Image src={logo} width="30px" height="30px" alt="Breathecode logo" />
+          </NextChakraLink>
         </Flex>
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-          <NextChakraLink href="/" alignSelf="center">
+          <NextChakraLink href="/" alignSelf="center" display={{ base: 'none', md: 'flex' }}>
             <Image src={logo} width="30px" height="30px" alt="Breathecode logo" />
           </NextChakraLink>
 
