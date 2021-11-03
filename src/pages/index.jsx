@@ -155,8 +155,9 @@ export default function Home() {
                       <Button
                         margin="0"
                         borderRadius="3px"
-                        borderTopLeftRadius="0"
-                        borderBottomLeftRadius="0"
+                        borderTopLeftRadius={{ base: '0', md: '0' }}
+                        borderTopRightRadius={{ base: '0', md: '3px' }}
+                        borderBottomLeftRadius={{ base: '3px', md: '0' }}
                         width="100%"
                         padding="0"
                         whiteSpace="normal"

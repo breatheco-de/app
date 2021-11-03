@@ -40,6 +40,7 @@ const NavbarWithSubNavigation = () => {
     },
     {
       label: t('menu.read.title'),
+      icon: 'book',
       description: t('menu.read.description'),
       subMenu: [
         {
@@ -108,15 +109,11 @@ const NavbarWithSubNavigation = () => {
             variant="default"
             aria-label="Toggle Navigation"
           />
-
-          <NextChakraLink
-            href="/"
-            alignSelf="center"
-            display={{ base: 'flex', md: 'none' }}
-          >
+          <NextChakraLink href="/" alignSelf="center" display={{ base: 'flex', md: 'none' }}>
             <Image src={logo} width="30px" height="30px" alt="Breathecode logo" />
           </NextChakraLink>
         </Flex>
+
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
           <NextChakraLink href="/" alignSelf="center" display={{ base: 'none', md: 'flex' }}>
             <Image src={logo} width="30px" height="30px" alt="Breathecode logo" />
@@ -215,20 +212,29 @@ const DesktopNav = ({ NAV_ITEMS }) => {
                 boxShadow="xl"
                 bg={popoverContentBgColor}
                 p={4}
-                rounded="xl"
-                minW="sm"
+                rounded="md"
+                minW="md"
               >
                 <Stack>
-                  <Box fontSize="sm" fontWeight={500} color={linkColor}>
-                    {navItem.label}
-                    <Text
-                      transition="all .3s ease"
-                      _groupHover={{ color: 'pink.400' }}
-                      fontWeight={500}
-                    >
-                      {navItem.description}
-                    </Text>
-                  </Box>
+                  <Flex
+                    flexDirection="row"
+                    padding="20px 0"
+                    borderBottom={1}
+                    borderStyle="solid"
+                    borderColor={useColorModeValue('gray.200', 'gray.900')}
+                    alignItems="center"
+                    color={linkColor}
+                  >
+                    <Box width="140px">
+                      <Icon icon={navItem.icon} width="50px" height="50px" />
+                    </Box>
+                    <Box display="flex" flexDirection="column">
+                      <Text size="xl" fontWeight={900}>
+                        {navItem.label}
+                      </Text>
+                      <Text fontWeight={500}>{navItem.description}</Text>
+                    </Box>
+                  </Flex>
                   {navItem.subMenu.map((child) => {
                     const { label, subLabel, href } = child;
                     return (
@@ -257,11 +263,16 @@ const DesktopSubNav = ({ label, href, subLabel }) => (
     display="block"
     p={2}
     style={{ borderRadius: '5px' }}
-    _hover={{ bg: useColorModeValue('pink.50', 'gray.900') }}
+    _hover={{ bg: useColorModeValue('featuredLight', 'gray.900') }}
   >
     <Stack direction="row" align="center">
       <Box>
-        <Text transition="all .3s ease" _groupHover={{ color: 'pink.400' }} fontWeight={500}>
+        <Text
+          transition="all .3s ease"
+          color={useColorModeValue('gray.600', 'gray.300')}
+          _groupHover={{ color: useColorModeValue('gray.900', 'featuredLight') }}
+          fontWeight={500}
+        >
           {label}
         </Text>
         <Text fontSize="sm">{subLabel}</Text>
@@ -275,7 +286,12 @@ const DesktopSubNav = ({ label, href, subLabel }) => (
         align="center"
         flex={1}
       >
-        <Icon icon="arrowRight" color="pink" width="20px" height="20px" />
+        <Icon
+          icon="arrowRight"
+          color={useColorModeValue('#A4A4A4', '#EEF9FE')}
+          width="15px"
+          height="15px"
+        />
       </Flex>
     </Stack>
   </Link>
@@ -298,12 +314,13 @@ const MobileNav = ({ NAV_ITEMS }) => {
     >
       {NAV_ITEMS.map((navItem) => {
         const {
-          label, subMenu, href, description,
+          label, subMenu, href, description, icon,
         } = navItem;
         return (
           <MobileNavItem
             key={label}
             description={description}
+            icon={icon}
             label={label}
             subMenu={subMenu}
             href={href}
@@ -342,9 +359,10 @@ const MobileNav = ({ NAV_ITEMS }) => {
 };
 
 const MobileNavItem = ({
-  label, subMenu, href, description,
+  label, subMenu, href, description, icon,
 }) => {
   const { isOpen, onToggle } = useDisclosure();
+  const commonColor = useColorModeValue('gray.600', 'gray.300');
 
   return (
     <Stack spacing={4} onClick={subMenu && onToggle}>
@@ -360,7 +378,7 @@ const MobileNavItem = ({
             textDecoration: 'none',
           }}
         >
-          <Text fontWeight={600} color={useColorModeValue('gray.600', 'gray.200')}>
+          <Text fontWeight={400} color={commonColor}>
             {label}
           </Text>
         </NextChakraLink>
@@ -375,7 +393,7 @@ const MobileNavItem = ({
             textDecoration: 'none',
           }}
         >
-          <Text fontWeight={600} color={useColorModeValue('gray.600', 'gray.200')}>
+          <Text fontWeight={400} color={useColorModeValue('gray.600', 'gray.200')}>
             {label}
           </Text>
           <Box
@@ -391,23 +409,48 @@ const MobileNavItem = ({
 
       <Collapse in={isOpen} animateOpacity style={{ marginTop: '0!important' }}>
         <Stack
-          mt={2}
+          // mt={2}
           pl={4}
           borderLeft="2px solid"
           // borderStyle="solid"
           borderColor={useColorModeValue('gray.200', 'gray.700')}
           align="start"
         >
-          <Text fontWeight={600} color={useColorModeValue('gray.600', 'gray.200')}>
-            {label}
-          </Text>
-          <Text fontWeight={600} color={useColorModeValue('gray.600', 'gray.200')}>
-            {description}
-          </Text>
+          <Flex
+            flexDirection="row"
+            padding="20px 0"
+            gridGap="15px"
+            borderBottom={1}
+            borderStyle="solid"
+            borderColor={useColorModeValue('gray.200', 'gray.900')}
+            alignItems="center"
+            color={commonColor}
+          >
+            <Box width="auto">
+              <Icon icon={icon} width="50px" height="50px" />
+            </Box>
+            <Box display="flex" flexDirection="column">
+              <Text size="xl" fontWeight={900}>
+                {label}
+              </Text>
+              <Text color={commonColor} fontWeight={500}>
+                {description}
+              </Text>
+            </Box>
+          </Flex>
 
           {subMenu
             && subMenu.map((child) => (
-              <Link key={child.label} style={{ textDecoration: 'none' }} py={2} href={child.href}>
+              <Link
+                key={child.label}
+                color={commonColor}
+                _hover={{
+                  color: useColorModeValue('black', 'featuredLight'),
+                }}
+                style={{ textDecoration: 'none' }}
+                py={2}
+                href={child.href}
+              >
                 {child.label}
               </Link>
             ))}
@@ -422,6 +465,7 @@ MobileNav.propTypes = {
     PropTypes.shape({
       label: PropTypes.string.isRequired,
       description: PropTypes.string,
+      icon: PropTypes.string,
       href: PropTypes.string,
       subMenu: PropTypes.arrayOf(
         PropTypes.shape({
@@ -439,6 +483,7 @@ DesktopNav.propTypes = {
     PropTypes.shape({
       label: PropTypes.string.isRequired,
       description: PropTypes.string,
+      icon: PropTypes.string,
       href: PropTypes.string,
       subMenu: PropTypes.arrayOf(
         PropTypes.shape({
@@ -460,6 +505,7 @@ DesktopSubNav.propTypes = {
 MobileNavItem.propTypes = {
   label: PropTypes.string.isRequired,
   description: PropTypes.string,
+  icon: PropTypes.string,
   href: PropTypes.string,
   subMenu: PropTypes.arrayOf(
     PropTypes.shape({
@@ -474,6 +520,7 @@ DesktopNav.defaultProps = {
     {
       href: '/',
       description: '',
+      icon: 'book',
     },
   ],
 };
@@ -483,6 +530,7 @@ MobileNav.defaultProps = {
     {
       href: '/',
       description: '',
+      icon: 'book',
       subMenu: {
         subLabel: '',
       },
@@ -498,6 +546,7 @@ DesktopSubNav.defaultProps = {
 MobileNavItem.defaultProps = {
   href: '/',
   description: '',
+  icon: 'book',
   subMenu: undefined,
 };
 
