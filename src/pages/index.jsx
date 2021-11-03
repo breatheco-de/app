@@ -27,6 +27,7 @@ export default function Home() {
   const { t } = useTranslation(['home']);
   const { colorMode } = useColorMode();
   const [errorMessage, setErrorMessage] = useState('');
+  const commonColor = useColorModeValue('gray.600', 'gray.300');
 
   const validator = (value) => {
     let error;
@@ -73,7 +74,7 @@ export default function Home() {
             as="h1"
             size="14px"
             fontWeight="700"
-            color={colorMode === 'light' ? 'gray.600' : 'gray.300'}
+            color={commonColor}
             textTransform="uppercase"
           >
             {t('title')}
@@ -85,24 +86,24 @@ export default function Home() {
             size="36px"
             display="flex"
             gridGap="10px"
-            color={colorMode === 'light' ? 'gray.600' : 'gray.300'}
+            color={commonColor}
           >
             <Text
               size="36px"
               fontWeight="bold"
-              color={colorMode === 'light' ? 'gray.600' : 'gray.300'}
+              color={commonColor}
             >
               Join
             </Text>
             <Text
               size="36px"
               fontWeight="bold"
-              color={colorMode === 'light' ? 'gray.600' : 'gray.300'}
+              color={useColorModeValue('black', 'white')}
             >
               2454
             </Text>
           </Box>
-          <Text size="sm" color={colorMode === 'light' ? 'gray.600' : 'gray.300'}>
+          <Text size="sm" color={commonColor}>
             {t('description')}
           </Text>
 
@@ -115,6 +116,7 @@ export default function Home() {
             p="12px"
             borderRadius="3px"
             backgroundColor={useColorModeValue('blue.50', 'gray.800')}
+            transition="all .2s ease"
           >
             <Formik
               initialValues={{ email: '' }}
