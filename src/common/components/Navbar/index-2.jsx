@@ -27,6 +27,8 @@ const NavbarWithSubNavigation = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { t } = useTranslation(['navbar']);
 
+  const commonColors = useColorModeValue('white', 'gray.800');
+
   const NAV_ITEMS = [
     {
       label: t('menu.about-us'),
@@ -89,17 +91,17 @@ const NavbarWithSubNavigation = () => {
           <IconButton
             onClick={onToggle}
             _hover={{
-              background: colorMode === 'light' ? 'white' : 'gray.800',
+              background: commonColors,
             }}
             _active={{
-              background: colorMode === 'light' ? 'white' : 'gray.800',
+              background: commonColors,
             }}
-            background={colorMode === 'light' ? 'white' : 'gray.800'}
+            background={commonColors}
             icon={
               isOpen ? (
-                <Icon icon="close" width="15px" height="15px" />
+                <Icon icon="close2" width="22px" height="22px" />
               ) : (
-                <Icon icon="hamburger" width="22px" height="22px" />
+                <Icon icon="hamburger2" width="22px" height="22px" />
               )
             }
             variant="default"
@@ -107,7 +109,6 @@ const NavbarWithSubNavigation = () => {
           />
         </Flex>
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-          {/* NOTE: Put logo here */}
           <NextChakraLink href="/" alignSelf="center">
             <Image src={logo} width="30px" height="30px" alt="Breathecode logo" />
           </NextChakraLink>
@@ -121,12 +122,12 @@ const NavbarWithSubNavigation = () => {
           <IconButton
             display={useBreakpointValue({ base: 'none', md: 'flex' })}
             _hover={{
-              background: colorMode === 'light' ? 'white' : 'gray.800',
+              background: commonColors,
             }}
             _active={{
-              background: colorMode === 'light' ? 'white' : 'gray.800',
+              background: commonColors,
             }}
-            background={colorMode === 'light' ? 'white' : 'gray.800'}
+            background={commonColors}
             onClick={toggleColorMode}
             icon={
               colorMode === 'light' ? (
@@ -147,31 +148,21 @@ const NavbarWithSubNavigation = () => {
             letterSpacing="0.05em"
           >
             <Button
-              display={useBreakpointValue({ base: 'none', md: 'flex' })}
+              display={useBreakpointValue({ base: 'flex', md: 'flex' })}
               width="100px"
               fontWeight={400}
               variant="default"
             >
               {t('login')}
             </Button>
-
-            <IconButton
-              display={useBreakpointValue({ base: 'auto', md: 'none' })}
-              _hover={{
-                background: colorMode === 'light' ? 'white' : 'gray.800',
-              }}
-              _active={{
-                background: colorMode === 'light' ? 'white' : 'gray.800',
-              }}
-              background={colorMode === 'light' ? 'white' : 'gray.800'}
-              icon={<Icon icon="user" style={{ margin: '0 auto' }} width="30px" height="30px" />}
-            />
           </NextChakraLink>
         </Stack>
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
+        {/* <SlideFade in={isOpen} offsetY="20px"> */}
         <MobileNav NAV_ITEMS={NAV_ITEMS} />
+        {/* </SlideFade> */}
       </Collapse>
     </Box>
   );
@@ -232,7 +223,12 @@ const DesktopNav = ({ NAV_ITEMS }) => {
                   {navItem.subMenu.map((child) => {
                     const { label, subLabel, href } = child;
                     return (
-                      <DesktopSubNav key={label} label={label} subLabel={subLabel} href={href} />
+                      <DesktopSubNav
+                        key={`${label}-${subLabel}`}
+                        label={label}
+                        subLabel={subLabel}
+                        href={href}
+                      />
                     );
                   })}
                 </Stack>
@@ -276,24 +272,65 @@ const DesktopSubNav = ({ label, href, subLabel }) => (
   </Link>
 );
 
-const MobileNav = ({ NAV_ITEMS }) => (
-  <Stack bg={useColorModeValue('white', 'gray.800')} p={4} display={{ md: 'none' }}>
-    {NAV_ITEMS.map((navItem) => {
-      const {
-        label, subMenu, href, description,
-      } = navItem;
-      return (
-        <MobileNavItem
-          key={label}
-          description={description}
-          label={label}
-          subMenu={subMenu}
-          href={href}
+const MobileNav = ({ NAV_ITEMS }) => {
+  const { colorMode, toggleColorMode } = useColorMode();
+  const commonColors = useColorModeValue('white', 'gray.800');
+  return (
+    <Stack
+      position="absolute"
+      width="100%"
+      zIndex="10"
+      bg={useColorModeValue('white', 'gray.800')}
+      p={4}
+      display={{ md: 'none' }}
+      borderBottom={1}
+      borderStyle="solid"
+      borderColor={useColorModeValue('gray.200', 'gray.900')}
+    >
+      {NAV_ITEMS.map((navItem) => {
+        const {
+          label, subMenu, href, description,
+        } = navItem;
+        return (
+          <MobileNavItem
+            key={label}
+            description={description}
+            label={label}
+            subMenu={subMenu}
+            href={href}
+          />
+        );
+      })}
+
+      <Box
+        borderTop={1}
+        borderStyle="solid"
+        margin="4px auto"
+        borderColor={useColorModeValue('gray.200', 'gray.900')}
+      >
+        <IconButton
+          style={{ margin: '14px auto 0 auto' }}
+          display={useBreakpointValue({ base: 'flex', md: 'none' })}
+          _hover={{
+            background: commonColors,
+          }}
+          _active={{
+            background: commonColors,
+          }}
+          background={commonColors}
+          onClick={toggleColorMode}
+          icon={
+            colorMode === 'light' ? (
+              <Icon icon="light" width="25px" height="23px" color="black" />
+            ) : (
+              <Icon icon="dark" width="20px" height="20px" />
+            )
+          }
         />
-      );
-    })}
-  </Stack>
-);
+      </Box>
+    </Stack>
+  );
+};
 
 const MobileNavItem = ({
   label, subMenu, href, description,
@@ -322,7 +359,8 @@ const MobileNavItem = ({
       {subMenu && (
         <Flex
           py={2}
-          justifyContent="space-between"
+          justifyContent="left"
+          gridGap="10px"
           align="center"
           _hover={{
             textDecoration: 'none',
@@ -335,9 +373,9 @@ const MobileNavItem = ({
             display="flex"
             onClick={(e) => e.preventDefault()}
             transition="all .25s ease-in-out"
-            transform={isOpen ? 'rotate(180deg)' : ''}
+            transform={isOpen ? 'rotate(90deg)' : 'rotate(0deg)'}
           >
-            <Icon icon="arrowDown" color="gray" width="25px" height="25px" />
+            <Icon icon="arrowRight" color="gray" width="12px" height="12px" />
           </Box>
         </Flex>
       )}

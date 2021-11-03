@@ -1,7 +1,14 @@
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import {
-  Image, Box, Grid, FormControl, Input, Button, useColorMode,
+  Image,
+  Box,
+  Grid,
+  FormControl,
+  Input,
+  Button,
+  useColorMode,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { Formik, Form, Field } from 'formik';
@@ -58,7 +65,7 @@ export default function Home() {
       alignItems="center"
     >
       <Grid gridTemplateColumns={{ base: 'repeat(1,1fr)', md: 'repeat(2,1fr)' }} height="100%">
-        <Box position="absolute" top="25" right="0" zIndex="-1" opacity={{ base: '0.4', md: '1' }}>
+        <Box position="absolute" top="25" right="0" zIndex="-1" opacity={{ base: '0.6', md: '1' }}>
           <BubblesSvg />
         </Box>
         <Box flex="1" margin={{ base: '14% 8% 0 8%', md: '14% 14% 0 14%' }}>
@@ -100,14 +107,14 @@ export default function Home() {
           </Text>
 
           {/* --------- Email Form (📧) --------- */}
-          <Box color={colorMode === 'light' ? 'danger' : 'red'} mt="20px" mb="10px" height="20px">
+          <Box color={useColorModeValue('danger', 'red')} mt="20px" mb="10px" height="20px">
             {errorMessage}
           </Box>
           <Box
             mb="50px"
             p="12px"
             borderRadius="3px"
-            backgroundColor={colorMode === 'light' ? 'blue.50' : 'gray.800'}
+            backgroundColor={useColorModeValue('blue.50', 'gray.800')}
           >
             <Formik
               initialValues={{ email: '' }}
@@ -122,7 +129,12 @@ export default function Home() {
                 const { isSubmitting } = props;
                 return (
                   <Form>
-                    <Box py="0" flexDirection="row" display="flex" alignItems="center">
+                    <Box
+                      py="0"
+                      flexDirection={{ base: 'column', md: 'row' }}
+                      display="flex"
+                      alignItems="center"
+                    >
                       <Field id="field923" name="email" validate={validator}>
                         {({ field, form }) => (
                           <FormControl isInvalid={form.errors.email && form.touched.email}>
