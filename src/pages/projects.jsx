@@ -83,7 +83,7 @@ const Projects = ({
 
       <Box flex="1" margin={{ base: '4% 4% 0 4%', md: '4% 10% 0 10%' }}>
         {projects.map((project) => (
-          <Box padding="15px 0">
+          <Box padding="15px 0" key={`${project.url}-gitpod:${project.gitpod}`}>
             <Heading
               as="h1"
               size="l"

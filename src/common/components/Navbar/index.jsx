@@ -17,6 +17,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
 import Image from '../Image';
@@ -41,27 +42,28 @@ const NavbarWithSubNavigation = () => {
       label: t('menu.read.title'),
       icon: 'book',
       description: t('menu.read.description'),
+      asPath: '/lessons', // For colorLink
       subMenu: [
         {
           label: t('menu.read.child-1.label'),
           // subLabel: t('menu.read.child-1.subLabel'),
-          href: '/lessons',
+          href: '/lessons?child=1',
         },
         {
           label: t('menu.read.child-2.label'),
           // subLabel: t('menu.read.child-2.subLabel'),
-          href: '/lessons',
+          href: '/lessons?child=2',
         },
         {
           label: t('menu.read.child-3.label'),
           // subLabel: t('menu.read.child-2.subLabel'),
-          href: '/lessons',
+          href: '/lessons?child=3',
         },
       ],
     },
     {
       label: t('menu.build'),
-      href: '/build',
+      href: '/projects',
     },
     {
       label: t('menu.bootcamp'),
@@ -179,6 +181,20 @@ const DesktopNav = ({ NAV_ITEMS }) => {
   const linkColor = useColorModeValue('gray.600', 'gray.200');
   const linkHoverColor = useColorModeValue('blue.default', 'white');
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
+  const router = useRouter();
+  const getColorLink = (link) => {
+    if (router?.pathname === link) {
+      return 'blue.default';
+    }
+    return linkColor;
+  };
+
+  const getColorIcon = (link) => {
+    if (router?.pathname === link) {
+      return '#0097CD';
+    }
+    return 'gray';
+  };
 
   return (
     <Stack direction="row" spacing={4} alignItems="center">
@@ -194,7 +210,8 @@ const DesktopNav = ({ NAV_ITEMS }) => {
                 fontSize="sm"
                 textTransform="uppercase"
                 fontWeight={700}
-                color={linkColor}
+                color={getColorLink(navItem.href || navItem.asPath)}
+                // color={linkColor}
                 _hover={{
                   textDecoration: 'none',
                   color: linkHoverColor,
@@ -202,7 +219,12 @@ const DesktopNav = ({ NAV_ITEMS }) => {
               >
                 {navItem.label}
                 {navItem.subMenu && (
-                  <Icon icon="arrowDown" color="gray" width="22px" height="22px" />
+                  <Icon
+                    icon="arrowDown"
+                    color={getColorIcon(navItem.href || navItem.asPath)}
+                    width="22px"
+                    height="22px"
+                  />
                 )}
               </Link>
             </PopoverTrigger>
@@ -257,46 +279,57 @@ const DesktopNav = ({ NAV_ITEMS }) => {
   );
 };
 
-const DesktopSubNav = ({ label, href, subLabel }) => (
-  <Link
-    href={href}
-    role="group"
-    display="block"
-    p={2}
-    style={{ borderRadius: '5px' }}
-    _hover={{ bg: useColorModeValue('featuredLight', 'gray.900') }}
-  >
-    <Stack direction="row" align="center">
-      <Box>
-        <Text
+const DesktopSubNav = ({ label, href, subLabel }) => {
+  const linkColor = useColorModeValue('gray.600', 'gray.300');
+  const router = useRouter();
+  const getColorLink = (link) => {
+    if (router?.pathname === link || router?.asPath === link) {
+      return 'blue.default';
+    }
+    return linkColor;
+  };
+  return (
+    <Link
+      href={href}
+      role="group"
+      display="block"
+      p={2}
+      style={{ borderRadius: '5px' }}
+      _hover={{ bg: useColorModeValue('featuredLight', 'gray.900') }}
+    >
+      <Stack direction="row" align="center">
+        <Box>
+          <Text
+            transition="all .3s ease"
+            color={getColorLink(href)}
+            _groupHover={{ color: useColorModeValue('gray.900', 'featuredLight') }}
+            fontWeight={500}
+          >
+            {label}
+          </Text>
+          {/* optional short description */}
+          <Text fontSize="sm">{subLabel}</Text>
+        </Box>
+        <Flex
           transition="all .3s ease"
-          color={useColorModeValue('gray.600', 'gray.300')}
-          _groupHover={{ color: useColorModeValue('gray.900', 'featuredLight') }}
-          fontWeight={500}
+          transform="translateX(-10px)"
+          opacity={0}
+          _groupHover={{ opacity: '100%', transform: 'translateX(0)' }}
+          justify="flex-end"
+          align="center"
+          flex={1}
         >
-          {label}
-        </Text>
-        <Text fontSize="sm">{subLabel}</Text>
-      </Box>
-      <Flex
-        transition="all .3s ease"
-        transform="translateX(-10px)"
-        opacity={0}
-        _groupHover={{ opacity: '100%', transform: 'translateX(0)' }}
-        justify="flex-end"
-        align="center"
-        flex={1}
-      >
-        <Icon
-          icon="arrowRight"
-          color={useColorModeValue('#A4A4A4', '#EEF9FE')}
-          width="15px"
-          height="15px"
-        />
-      </Flex>
-    </Stack>
-  </Link>
-);
+          <Icon
+            icon="arrowRight"
+            color={useColorModeValue('#A4A4A4', '#EEF9FE')}
+            width="15px"
+            height="15px"
+          />
+        </Flex>
+      </Stack>
+    </Link>
+  );
+};
 
 const MobileNav = ({ NAV_ITEMS }) => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -486,6 +519,7 @@ DesktopNav.propTypes = {
       description: PropTypes.string,
       icon: PropTypes.string,
       href: PropTypes.string,
+      asPath: PropTypes.string,
       subMenu: PropTypes.arrayOf(
         PropTypes.shape({
           label: PropTypes.string,
@@ -522,6 +556,7 @@ DesktopNav.defaultProps = {
       href: '/',
       description: '',
       icon: 'book',
+      asPath: '/',
     },
   ],
 };
