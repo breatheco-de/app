@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Text from './Text';
 
 const TagCapsule = ({
-  tags, separator, background, variant, paddingX, marginY,
+  tags, separator, background, variant, paddingX, marginY, gap,
 }) => {
   const { colorMode } = useColorMode();
 
@@ -17,6 +17,7 @@ const TagCapsule = ({
       width="fit-content"
       px={paddingX}
       borderRadius="15px"
+      gridGap={gap}
     >
       {tags.map((tag, i) => (
         <Box
@@ -25,7 +26,7 @@ const TagCapsule = ({
           bg={variant === 'rounded' ? background : 'none'}
           direction="row"
           padding={variant === 'rounded' ? '0 10px' : '0'}
-          style={{ margin: variant === 'rounded' ? '0 4.5px' : '0' }}
+          style={{ margin: '0' }}
           rounded={variant === 'rounded' ? '15px' : 'none'}
           key={tag.name || `${tag}-${i}`}
           lineHeight="22px"
@@ -60,6 +61,7 @@ TagCapsule.propTypes = {
   variant: PropTypes.string,
   paddingX: PropTypes.string,
   marginY: PropTypes.string,
+  gap: PropTypes.string,
 };
 TagCapsule.defaultProps = {
   separator: '/',
@@ -67,6 +69,7 @@ TagCapsule.defaultProps = {
   variant: 'slash',
   paddingX: '20px',
   marginY: '18px',
+  gap: '0',
 };
 
 export default TagCapsule;

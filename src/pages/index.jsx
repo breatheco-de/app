@@ -1,7 +1,14 @@
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import {
-  Image, Box, Grid, FormControl, Input, Button, useColorMode,
+  Image,
+  Box,
+  Grid,
+  FormControl,
+  Input,
+  Button,
+  useColorMode,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { Formik, Form, Field } from 'formik';
@@ -20,6 +27,7 @@ export default function Home() {
   const { t } = useTranslation(['home']);
   const { colorMode } = useColorMode();
   const [errorMessage, setErrorMessage] = useState('');
+  const commonColor = useColorModeValue('gray.600', 'gray.300');
 
   const validator = (value) => {
     let error;
@@ -58,7 +66,7 @@ export default function Home() {
       alignItems="center"
     >
       <Grid gridTemplateColumns={{ base: 'repeat(1,1fr)', md: 'repeat(2,1fr)' }} height="100%">
-        <Box position="absolute" top="25" right="0" zIndex="-1" opacity={{ base: '0.4', md: '1' }}>
+        <Box position="absolute" top="25" right="0" zIndex="-1" opacity={{ base: '0.6', md: '1' }}>
           <BubblesSvg />
         </Box>
         <Box flex="1" margin={{ base: '14% 8% 0 8%', md: '14% 14% 0 14%' }}>
@@ -66,7 +74,7 @@ export default function Home() {
             as="h1"
             size="14px"
             fontWeight="700"
-            color={colorMode === 'light' ? 'gray.600' : 'gray.300'}
+            color={commonColor}
             textTransform="uppercase"
           >
             {t('title')}
@@ -78,36 +86,37 @@ export default function Home() {
             size="36px"
             display="flex"
             gridGap="10px"
-            color={colorMode === 'light' ? 'gray.600' : 'gray.300'}
+            color={commonColor}
           >
             <Text
               size="36px"
               fontWeight="bold"
-              color={colorMode === 'light' ? 'gray.600' : 'gray.300'}
+              color={commonColor}
             >
               Join
             </Text>
             <Text
               size="36px"
               fontWeight="bold"
-              color={colorMode === 'light' ? 'gray.600' : 'gray.300'}
+              color={useColorModeValue('black', 'white')}
             >
               2454
             </Text>
           </Box>
-          <Text size="sm" color={colorMode === 'light' ? 'gray.600' : 'gray.300'}>
+          <Text size="sm" color={commonColor}>
             {t('description')}
           </Text>
 
           {/* --------- Email Form (📧) --------- */}
-          <Box color={colorMode === 'light' ? 'danger' : 'red'} mt="20px" mb="10px" height="20px">
+          <Box color={useColorModeValue('danger', 'red')} mt="20px" mb="10px" height="20px">
             {errorMessage}
           </Box>
           <Box
             mb="50px"
             p="12px"
             borderRadius="3px"
-            backgroundColor={colorMode === 'light' ? 'blue.50' : 'gray.800'}
+            backgroundColor={useColorModeValue('blue.50', 'gray.800')}
+            transition="all .2s ease"
           >
             <Formik
               initialValues={{ email: '' }}
@@ -122,7 +131,12 @@ export default function Home() {
                 const { isSubmitting } = props;
                 return (
                   <Form>
-                    <Box py="0" flexDirection="row" display="flex" alignItems="center">
+                    <Box
+                      py="0"
+                      flexDirection={{ base: 'column', md: 'row' }}
+                      display="flex"
+                      alignItems="center"
+                    >
                       <Field id="field923" name="email" validate={validator}>
                         {({ field, form }) => (
                           <FormControl isInvalid={form.errors.email && form.touched.email}>
@@ -143,8 +157,9 @@ export default function Home() {
                       <Button
                         margin="0"
                         borderRadius="3px"
-                        borderTopLeftRadius="0"
-                        borderBottomLeftRadius="0"
+                        borderTopLeftRadius={{ base: '0', md: '0' }}
+                        borderTopRightRadius={{ base: '0', md: '3px' }}
+                        borderBottomLeftRadius={{ base: '3px', md: '0' }}
                         width="100%"
                         padding="0"
                         whiteSpace="normal"

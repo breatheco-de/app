@@ -6,7 +6,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { appWithTranslation } from 'next-i18next';
 import wrapper from '../store';
 import CustomTheme from '../../styles/theme';
-import NavbarWithSubNavigation from '../common/components/Navbar/index-2';
+import NavbarWithSubNavigation from '../common/components/Navbar/index';
 import Footer from '../common/components/Footer';
 import Helmet from '../common/components/Helmet';
 import '@fontsource/lato/100.css';
@@ -16,7 +16,7 @@ import '@fontsource/lato/700.css';
 import '@fontsource/lato/900.css';
 
 function LearnApp({ Component, pageProps }) {
-  console.log('pageProps', pageProps);
+  console.log('PageProps:', pageProps);
   return (
     <>
       <Helmet {...pageProps} />
