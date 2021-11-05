@@ -20,13 +20,13 @@ function LearnApp({ Component, pageProps }) {
   return (
     <>
       <Helmet {...pageProps} />
-      <ChakraProvider resetCSS theme={CustomTheme}>
-        <AuthProvider>
+      <AuthProvider>
+        <ChakraProvider resetCSS theme={CustomTheme}>
           <NavbarWithSubNavigation />
           <Component {...pageProps} />
           <Footer />
-        </AuthProvider>
-      </ChakraProvider>
+        </ChakraProvider>
+      </AuthProvider>
     </>
   );
 }

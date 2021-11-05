@@ -29,6 +29,7 @@ const Dashboard = () => {
   const {
     tapCapsule, callToAction, moduleMap, cohortSideBar, supportSideBar, progressBar,
   } = mockData;
+
   return (
     <div>
       <Container maxW="container.xl">
