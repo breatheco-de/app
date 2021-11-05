@@ -283,7 +283,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
   const linkColor = useColorModeValue('gray.600', 'gray.300');
   const router = useRouter();
   const getColorLink = (link) => {
-    if (router?.pathname === link || router?.asPath === link) {
+    if (router?.pathname === link || router.asPath === link) {
       return 'blue.default';
     }
     return linkColor;
