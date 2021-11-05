@@ -14,7 +14,7 @@
     }
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": "14.x"
   },
   "scripts": {
     "dev": "next dev -p 3000",
@@ -28,7 +28,8 @@
     "make:iconDict": "node ./scripts/make.iconDict.js",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "lint:files": "eslint src/**/*.{js,jsx}"
+    "lint:files": "eslint src/**/*.{js,jsx}",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@chakra-ui/icons": "^1.0.15",
