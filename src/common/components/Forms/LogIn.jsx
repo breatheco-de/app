@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Button,
   FormControl,
@@ -8,18 +8,17 @@ import {
   Input,
   FormErrorMessage,
   FormLabel,
-} from "@chakra-ui/react";
-import Icon from "../../../common/components/Icon/index";
-import { Form, Formik, Field } from "formik";
+} from '@chakra-ui/react';
+import { Form, Formik, Field } from 'formik';
+import Icon from '../Icon/index';
 
 function LogIn() {
-
   function validateEmail(value) {
     let error;
     if (!value) {
-      error = "Required";
+      error = 'Required';
     } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
-      error = "Invalid email address";
+      error = 'Invalid email address';
     }
     return error;
   }
@@ -27,18 +26,17 @@ function LogIn() {
   return (
     <Formik
       initialValues={{
-        email: "",
+        email: '',
       }}
-      onSubmit={({values, actions}) => {
+      onSubmit={({ values, actions }) => {
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
           actions.setSubmitting(false);
         }, 1000);
       }}
     >
-      {(props) => {
-        return (
-          <Form>
+      {() => (
+        <Form>
           <Stack spacing={6} justifyContent="space-between">
             <Button cursor="pointer" variant="outline" weight="700">
               <Icon icon="github" width="18px" height="18px" />
@@ -61,33 +59,33 @@ function LogIn() {
                 marginBottom="9px"
               />
             </Box>
-            <Field name="email" validate={validateEmail}>
-                {({ field, form }) => (
-                  <FormControl
-                    isInvalid={form.errors.email && form.touched.email}
+            <Field name="email" validate={() => validateEmail()}>
+              {({ field, form }) => (
+                <FormControl
+                  isInvalid={form.errors.email && form.touched.email}
+                >
+                  <FormLabel
+                    margin="0px"
+                    color="gray.default"
+                    fontSize="sm"
+                    float="left"
+                    htmlFor="email"
                   >
-                    <FormLabel
-                      margin="0px"
-                      color="gray.default"
-                      fontSize="sm"
-                      float="left"
-                      htmlFor="email"
-                    >
-                      Email
-                    </FormLabel>
-                    <Input
-                      {...field}
-                      id="email"
-                      type="email"
-                      placeholder="Andrea@4geeks.co"
-                      height="50px"
-                      borderColor="gray.default"
-                      borderRadius="3px"
-                    />
-                    <FormErrorMessage>{form.errors.name}</FormErrorMessage>
-                  </FormControl>
-                )}
-              </Field>
+                    Email
+                  </FormLabel>
+                  <Input
+                    {...field}
+                    id="email"
+                    type="email"
+                    placeholder="Andrea@4geeks.co"
+                    height="50px"
+                    borderColor="gray.default"
+                    borderRadius="3px"
+                  />
+                  <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                </FormControl>
+              )}
+            </Field>
             <FormControl id="password" borderRadius="3px">
               <Input
                 type="password"
@@ -104,10 +102,9 @@ function LogIn() {
               LOGIN
             </Button>
           </Stack>
-          </Form>
-        );
-      }}
-      </Formik>
+        </Form>
+      )}
+    </Formik>
   );
 }
 

@@ -8,15 +8,15 @@ import {
   TabPanels,
   TabPanel,
   Image,
-} from "@chakra-ui/react";
-import I from "next/image";
-import logo from "../../public/static/images/bc_logo.png";
-import Login from "../common/components/Forms/LogIn";
-import Register from "../common/components/Forms/Register";
+} from '@chakra-ui/react';
+import I from 'next/image';
+import logo from '../../public/static/images/bc_logo.png';
+import Login from '../common/components/Forms/LogIn';
+import Register from '../common/components/Forms/Register';
 
 function login() {
   return (
-    <Stack minH="100vh" direction={{ md: "row" }}>
+    <Stack minH="100vh" direction={{ md: 'row' }}>
       <Flex p={8} flex={1} align="center" justify="center">
         <Stack spacing={4} w="full" maxW="md">
           <Box align="center" justify="center">
@@ -28,10 +28,10 @@ function login() {
                 <TabList align="center" justify="center">
                   <Tab
                     _selected={{
-                      color: "gray.dark",
-                      bg: "white",
-                      borderBottomColor: "blue.default",
-                      borderBottomWidth: "3px",
+                      color: 'gray.dark',
+                      bg: 'white',
+                      borderBottomColor: 'blue.default',
+                      borderBottomWidth: '3px',
                     }}
                     color="gray.default"
                     boxShadow="none !important"
@@ -47,10 +47,10 @@ function login() {
                   </Tab>
                   <Tab
                     _selected={{
-                      color: "gray.dark",
-                      bg: "white",
-                      borderBottomColor: "blue.default",
-                      borderBottomWidth: "3px",
+                      color: 'gray.dark',
+                      bg: 'white',
+                      borderBottomColor: 'blue.default',
+                      borderBottomWidth: '3px',
                     }}
                     color="gray.default"
                     boxShadow="none !important"
@@ -81,11 +81,11 @@ function login() {
       <Flex
         flex={1}
         display={{
-          base: "none",
-          sm: "none",
-          md: "none",
-          lg: "block",
-          xl: "block",
+          base: 'none',
+          sm: 'none',
+          md: 'none',
+          lg: 'block',
+          xl: 'block',
         }}
       >
         {/* <Box width="100%"> */}
