@@ -34,6 +34,31 @@ export const getStaticProps = async ({ locale }) => {
     },
   };
 };
+
+const TitleContent = ({ title, mobile }) => (
+  <Flex
+    alignItems="center"
+    gridGap="20px"
+    padding={mobile === true ? '4% 4% 0 4%' : ''}
+    display={mobile === true ? { base: 'flex', md: 'none' } : { base: 'none', md: 'flex' }}
+  >
+    <Box
+      display="flex"
+      justifyContent="center"
+      width="35px"
+      height="35px"
+      borderRadius="3rem"
+      backgroundColor="yellow.default"
+    >
+      <Icon icon="strength" color="white" width="22px" />
+    </Box>
+
+    <Heading as="h1" size="30px">
+      {title}
+    </Heading>
+  </Flex>
+);
+
 function Exercices({ exercises }) {
   // const { t } = useTranslation(['home']);
   const defaultImage = '/static/images/code1.png';
@@ -46,35 +71,22 @@ function Exercices({ exercises }) {
     event.target.setAttribute('srcset', `${defaultImage} 1x`);
   };
 
+  // Component to adapt responsive style like figma
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
+      <TitleContent title="Exercices" mobile />
       <Flex
         justifyContent="space-between"
-        flexDirection={{ base: 'column', md: 'row' }}
         flex="1"
         gridGap="20px"
-        padding={{ base: '1.5% 4% 1.5% 4%', md: '1.5% 10% 1.5% 10%' }}
+        padding={{ base: '3% 4% 4% 4%', md: '1.5% 10% 1.5% 10%' }}
         borderBottom={1}
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.900')}
       >
-        <Flex alignItems="center" gridGap="20px">
-          <Box
-            display="flex"
-            justifyContent="center"
-            width="35px"
-            height="35px"
-            borderRadius="3rem"
-            backgroundColor="yellow.default"
-          >
-            <Icon icon="strength" color="white" width="22px" />
-          </Box>
+        <TitleContent title="Exercices" mobile={false} />
 
-          <Heading as="h1" size="30px">
-            Projects
-          </Heading>
-        </Flex>
-        <InputGroup width={{ base: 'auto', md: '36rem' }}>
+        <InputGroup width={{ base: '-webkit-fill-available', md: '36rem' }}>
           <InputLeftElement pointerEvents="none">
             <Icon icon="search" color="gray" width="16px" height="16px" />
           </InputLeftElement>
@@ -237,6 +249,14 @@ Exercices.propTypes = {
 };
 Exercices.defaultProps = {
   exercises: [],
+};
+TitleContent.propTypes = {
+  title: PropTypes.string,
+  mobile: PropTypes.bool,
+};
+TitleContent.defaultProps = {
+  title: 'Title',
+  mobile: true,
 };
 
 export default Exercices;
