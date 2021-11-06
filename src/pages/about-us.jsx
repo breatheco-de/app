@@ -3,20 +3,24 @@ import { Box, useColorMode } from '@chakra-ui/react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Heading from '../common/components/Heading';
 import Link from '../common/components/NextChakraLink';
-import Text from '../common/components/Text';
+import getMarkDownContent from '../common/components/MarkDownParser/markdown';
+import renderMarkdown from '../common/components/MarkDownParser/markdownToHtml';
 
 export const getStaticProps = async ({ locale }) => {
   const results = await fetch(
-    'https://raw.githubusercontent.com/breatheco-de/main-documentation/master/README.md',
+    'https://raw.githubusercontent.com/breatheco-de/content/master/src/content/lesson/intro-to-4geeks.es.md',
   )
     .then((res) => res.text())
     .catch((err) => console.error(err));
+  const markdownContent = getMarkDownContent(results);
+  const html = await renderMarkdown(markdownContent.content);
+  // console.log(html, '###########');
   return {
     // props: { data:..., slug:..., more... },
     props: {
       fallback: false,
       ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
-      data: results,
+      data: html,
     },
   };
 };
@@ -48,7 +52,7 @@ const AboutUs = ({ data }) => {
         >
           About Us - Markdown
         </Heading>
-        <Text>{data}</Text>
+        <main dangerouslySetInnerHTML={{ __html: data }} />
       </Box>
     </Box>
   );
