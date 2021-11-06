@@ -10,101 +10,75 @@ import {
   ModalBody,
   Button,
   Box,
-  NumberInput,
-  NumberInputStepper,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInputField,
-  FormControl,
-  FormLabel,
   Flex,
   Grid,
   useCheckbox,
   useCheckboxGroup,
-  Avatar,
+  Checkbox,
   useColorMode,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import Icon from './Icon';
 import Text from './Text';
 
 const FilterModal = ({
-  attendance, title, message, isOpen, onClose, maxDays, minDays, onSubmit, handleChangeDay,
+  attendance, title, isOpen, onClose, onSubmit, technologyTags,
 }) => {
   const [checked, setChecked] = useState([]);
   const { getCheckboxProps } = useCheckboxGroup({
     onChange: setChecked,
   });
-  const { colorMode } = useColorMode();
+  // const { colorMode } = useColorMode();
+  console.log('technologyTags', technologyTags);
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent maxWidth="-webkit-fit-content" borderRadius="17px" padding="10px" bg={colorMode === 'light' ? 'white' : 'featuredDark'}>
+        <ModalContent
+          maxWidth="-webkit-fit-content"
+          borderRadius="17px"
+          padding="10px"
+          bg={useColorModeValue('white', 'featuredDark')}
+          margin={{ base: '4% 4% 0 4%', md: '4% 22% 0 22%' }}
+        >
           <ModalHeader fontSize="30px" paddingBottom={0}>
             {title}
           </ModalHeader>
           <ModalBody>
             <Box>
-              <Box>
-                <Text size="l" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
-                  {message}
-                </Text>
-              </Box>
-              <Box>
-                <FormControl id="days">
-                  <FormLabel color="gray.default">Day</FormLabel>
-                  <NumberInput
-                    defaultValue={0}
-                    max={maxDays}
-                    min={minDays}
-                    keepWithinRange={false}
-                    clampValueOnBlur={false}
-                    onChange={handleChangeDay}
-                  >
-                    <NumberInputField color={colorMode === 'light' ? 'black' : 'white'} />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                </FormControl>
-              </Box>
-            </Box>
-            <Box height="1px" bg="gray.light" marginTop="32px" marginBottom="15px" />
-            <Box>
-              <Flex justifyContent="space-between">
-                <Text size="l" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
-                  Select the student in the class
-                </Text>
-                <Text size="l" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
-                  {checked.length}
-                  {' '}
-                  Student selected
-                </Text>
-              </Flex>
+              <Grid templateColumns={{ md: 'repeat(4, 4fr)', sm: 'repeat(1, 1fr)' }} gap={6}>
+                {technologyTags.map((technology) => {
+                  const checkbox = getCheckboxProps({ value: JSON.stringify(technology) });
+                  return (
+                    <CheckboxCard key={technology} {...checkbox}>
+                      <Flex gridGap="10px">
+                        <Checkbox isChecked={checkbox.isChecked} />
+                        <Text size="md">{technology}</Text>
+                        {/* <Icon
+                          icon={checkbox.isChecked ? 'checked' : 'unverified'}
+                          width="15px"
+                          height="15px"
+                          style={{ marginTop: 'auto', marginBottom: 'auto' }}
+                        /> */}
+                      </Flex>
+                    </CheckboxCard>
+                  );
+                })}
+              </Grid>
               <Grid templateColumns={{ md: 'repeat(4, 4fr)', sm: 'repeat(1, 1fr)' }} gap={6}>
                 {attendance.map((item) => {
                   const checkbox = getCheckboxProps({ value: JSON.stringify(item) });
                   return (
                     <CheckboxCard key={item.id} {...checkbox}>
-                      <Flex justifyContent="space-between">
-                        <Flex marginRight="12px">
-                          <Avatar
-                            name="Dan Abrahmov"
-                            width="30px"
-                            marginY="auto"
-                            marginRight="5px"
-                            height="30px"
-                            src={item.image}
-                          />
-                          <Text size="md">{item.name}</Text>
-                        </Flex>
-                        <Icon
+                      <Flex gridGap="10px">
+                        <Checkbox isChecked={checkbox.isChecked} />
+                        <Text size="md">{item.name}</Text>
+                        {/* <Icon
                           icon={checkbox.isChecked ? 'checked' : 'unverified'}
                           width="15px"
                           height="15px"
                           style={{ marginTop: 'auto', marginBottom: 'auto' }}
-                        />
+                        /> */}
                       </Flex>
                     </CheckboxCard>
                   );
@@ -117,7 +91,7 @@ const FilterModal = ({
               fontSize="13px"
               disabled={checked.length < 1}
               variant="default"
-              onClick={(e) => onSubmit(e, { checked })}
+              onClick={(e) => onSubmit(e, console.log({ checked }))}
               rightIcon={<Icon icon="longArrowRight" width="15px" color="white" />}
             >
               START CLASS DAY
@@ -164,13 +138,14 @@ export const CheckboxCard = (props) => {
 
 CheckboxCard.propTypes = {
   children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
-  value: PropTypes.objectOf(PropTypes.object).isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
 };
 
 FilterModal.propTypes = {
   title: PropTypes.string,
-  attendance: PropTypes.arrayOf(PropTypes.array),
+  attendance: PropTypes.arrayOf(PropTypes.object),
   message: PropTypes.string,
+  technologyTags: PropTypes.arrayOf(PropTypes.string),
   days: PropTypes.arrayOf(PropTypes.array),
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
@@ -181,17 +156,47 @@ FilterModal.propTypes = {
 };
 FilterModal.defaultProps = {
   title: '',
-  attendance: [],
+  attendance: [
+    {
+      id: 1,
+      active: true,
+      image: 'https://bit.ly/kent-c-dodds',
+      name: 'Jhon benavides',
+    },
+    {
+      id: 2,
+      active: false,
+      image: 'https://bit.ly/ryan-florence',
+      name: 'Alex door',
+    },
+    {
+      id: 3,
+      active: false,
+      image: 'https://bit.ly/sage-adebayo',
+      name: 'Jeff toreto',
+    },
+    {
+      id: 4,
+      active: true,
+      image: 'https://bit.ly/code-beast',
+      name: 'Doe philips',
+    },
+    {
+      id: 5,
+      active: false,
+      image: 'https://bit.ly/prosper-baba',
+      name: 'Harry smith',
+    },
+  ],
   days: [],
+  technologyTags: [],
   message: '',
   isOpen: true,
-  onClose: () => { },
-  onSubmit: () => { },
+  onClose: () => {},
+  onSubmit: () => {},
   maxDays: 10,
   minDays: 0,
-  handleChangeDay: () => {
-
-  },
+  handleChangeDay: () => {},
 };
 
 export default FilterModal;

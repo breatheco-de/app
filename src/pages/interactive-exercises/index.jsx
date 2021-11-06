@@ -10,6 +10,7 @@ import {
   Flex,
   InputLeftElement,
   InputGroup,
+  useDisclosure,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Heading from '../../common/components/Heading';
@@ -18,6 +19,7 @@ import Link from '../../common/components/NextChakraLink';
 import Image from '../../common/components/Image';
 import TagCapsule from '../../common/components/TagCapsule';
 import Icon from '../../common/components/Icon';
+import FilterModal from '../../common/components/FilterModal';
 
 export const getStaticProps = async ({ locale }) => {
   const data = await fetch(
@@ -35,6 +37,7 @@ export const getStaticProps = async ({ locale }) => {
   };
 };
 
+// Component to adapt responsive style like figma
 const TitleContent = ({ title, mobile }) => (
   <Flex
     alignItems="center"
@@ -61,9 +64,9 @@ const TitleContent = ({ title, mobile }) => (
 
 function Exercices({ exercises }) {
   // const { t } = useTranslation(['home']);
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const defaultImage = '/static/images/code1.png';
   const bgBlur = '/static/images/codeBlur.png';
-
   console.log('PREVIEW', exercises);
 
   const onImageNotFound = (event) => {
@@ -71,10 +74,9 @@ function Exercices({ exercises }) {
     event.target.setAttribute('srcset', `${defaultImage} 1x`);
   };
 
-  // Component to adapt responsive style like figma
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-      <TitleContent title="Exercices" mobile />
+      <TitleContent title="Practices" mobile />
       <Flex
         justifyContent="space-between"
         flex="1"
@@ -84,7 +86,7 @@ function Exercices({ exercises }) {
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.900')}
       >
-        <TitleContent title="Exercices" mobile={false} />
+        <TitleContent title="Practices" mobile={false} />
 
         <InputGroup width={{ base: '-webkit-fill-available', md: '36rem' }}>
           <InputLeftElement pointerEvents="none">
@@ -93,7 +95,6 @@ function Exercices({ exercises }) {
           <Input
             id="search"
             width="100%"
-            // width="70%"
             placeholder="Search Project"
             transition="all .2s ease"
             style={{
@@ -105,16 +106,20 @@ function Exercices({ exercises }) {
 
         <Button
           variant="outline"
+          backgroundColor={useColorModeValue('', 'gray.800')}
+          _hover={{ backgroundColor: useColorModeValue('', 'gray.700') }}
           border={1}
+          onClick={onOpen}
           borderStyle="solid"
           minWidth="125px"
-          borderColor={useColorModeValue('#DADADA', 'gray.900')}
+          borderColor={useColorModeValue('#DADADA', 'gray.800')}
         >
           <Icon icon="setting" width="20px" height="20px" style={{ minWidth: '20px' }} />
-          <Text textTransform="uppercase" color="black" pl="10px">
-            Filtros
+          <Text textTransform="uppercase" pl="10px">
+            Filter
           </Text>
         </Button>
+        <FilterModal isOpen={isOpen} onClose={onClose} />
       </Flex>
 
       <Box flex="1" margin={{ base: '0 4% 0 4%', md: '0 10% 0 10%' }}>
@@ -124,8 +129,8 @@ function Exercices({ exercises }) {
           padding={{ base: '30px 8%', md: '30px 28%' }}
           textAlign="center"
         >
-          Practice and develop your coding skills by building real live interactive autograded
-          projects with solutions and video tutorials
+          The following lessons explain different programing concepts and have been published by
+          breathe code members, search for a partiulars lesson using the filters bellow
         </Text>
 
         <Grid
@@ -153,12 +158,19 @@ function Exercices({ exercises }) {
                 borderRadius="16px"
                 padding="22px"
               >
-                <Box display="inline-block" role="group" w="full" zIndex={1} borderRadius="15px">
+                <Box
+                  display={{ base: 'flex', md: 'inline-block' }}
+                  gridGap="15px"
+                  role="group"
+                  w="full"
+                  zIndex={1}
+                  borderRadius="15px"
+                >
                   {/* CARD IMAGE */}
                   <Link
                     href={`/interactive-exercises/${ex.slug}`}
                     display="inline-block"
-                    w="full"
+                    w={{ base: 'auto', md: 'full' }}
                     zIndex={1}
                     borderRadius="15px"
                   >
@@ -167,7 +179,9 @@ function Exercices({ exercises }) {
                       borderRadius="15px"
                       classNameImg="centerImageForBlur"
                       pos="relative"
-                      height="180px"
+                      height={{ base: '60px', sm: '90px', md: '180px' }}
+                      width={{ base: '60px', sm: '90px', md: 'auto' }}
+                      maxWidth={{ base: '300px', sm: '230px', md: 'none' }}
                       // NOTE: test performance in production - Blur Background
                       _after={{
                         transition: 'all .8s ease',
@@ -193,37 +207,37 @@ function Exercices({ exercises }) {
                       alt={ex.title}
                     />
                   </Link>
+                  <Box display="flex" flexDirection="column">
+                    {ex.technologies.length >= 1 && (
+                      <TagCapsule
+                        tags={ex.technologies}
+                        variant="rounded"
+                        marginY="8px"
+                        gap="10px"
+                        paddingX="0"
+                        key={`${ex.slug}-${ex.difficulty}`}
+                      />
+                    )}
 
-                  {ex.technologies.length >= 1 && (
-                    <TagCapsule
-                      tags={ex.technologies}
-                      variant="rounded"
-                      marginY="8px"
-                      gap="10px"
-                      paddingX="0"
-                      key={`${ex.slug}-${ex.difficulty}`}
-                    />
-                  )}
-
-                  <Stack align="center" padding="18px 0 0 0">
-                    <Link
-                      href={`/interactive-exercises/${ex.slug}`}
-                      display="inline-block"
-                      w="full"
-                      zIndex={1}
-                      color="blue.default"
-                    >
-                      <Heading
-                        size="20px"
-                        textAlign="left"
-                        width="100%"
-                        fontFamily="body"
-                        fontWeight={700}
+                    <Stack align="center" padding="18px 0 0 0">
+                      <Link
+                        href={`/interactive-exercises/${ex.slug}`}
+                        display="inline-block"
+                        w="full"
+                        zIndex={1}
+                        color="blue.default"
                       >
-                        {ex.title}
-                      </Heading>
-                    </Link>
-                    {/* <Text
+                        <Heading
+                          size="20px"
+                          textAlign="left"
+                          width="100%"
+                          fontFamily="body"
+                          fontWeight={700}
+                        >
+                          {ex.title}
+                        </Heading>
+                      </Link>
+                      {/* <Text
                     color="gray.500"
                     textAlign="left"
                     width="100%"
@@ -233,7 +247,8 @@ function Exercices({ exercises }) {
                     All you&apos;ve learned needs to be put together. Lets make our first entire
                     professional application using the Agile Development method!
                   </Text> */}
-                  </Stack>
+                    </Stack>
+                  </Box>
                 </Box>
               </Box>
             );

@@ -179,7 +179,7 @@ const NavbarWithSubNavigation = () => {
 
 const DesktopNav = ({ NAV_ITEMS }) => {
   const linkColor = useColorModeValue('gray.600', 'gray.200');
-  const linkHoverColor = useColorModeValue('blue.default', 'white');
+  const linkHoverColor = useColorModeValue('blue.default', 'blue.default');
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
   const router = useRouter();
   const getColorLink = (link) => {
