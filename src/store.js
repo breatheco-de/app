@@ -5,6 +5,7 @@ import thunkMiddleware from 'redux-thunk';
 import counterReducer from './common/store/reducers/counterReducer';
 import todosReducer from './common/store/reducers/todoReducer';
 import moduleMapReducer from './common/store/reducers/moduleMapReducer';
+import filterReducer from './common/store/reducers/filterReducer';
 
 const bindMiddleware = (middleware) => {
   if (process.env.NODE_ENV !== 'production') {
@@ -17,6 +18,7 @@ const combinedReducer = combineReducers({
   counterReducer,
   todosReducer,
   moduleMapReducer,
+  filterReducer,
 });
 
 const reducer = (state, action) => {

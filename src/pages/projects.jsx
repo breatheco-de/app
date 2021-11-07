@@ -17,6 +17,7 @@ import Icon from '../common/components/Icon';
 import FilterModal from '../common/components/FilterModal';
 import TitleContent from '../js_modules/projects/TitleContent';
 import ProjectList from '../js_modules/projects/ProjectList';
+import useFilter from '../common/store/actions/filterAction';
 
 export const getStaticProps = async ({ locale }) => {
   const projects = []; // filtered projects after removing repeated
@@ -33,7 +34,7 @@ export const getStaticProps = async ({ locale }) => {
   }
 
   let technologyTags = [];
-  let difficulties = [];
+  let dificulties = [];
 
   for (let i = 0; i < arrProjects.length; i += 1) {
     // skip repeated projects
@@ -52,12 +53,12 @@ export const getStaticProps = async ({ locale }) => {
       else if (arrProjects[i].difficulty === 'semi-senior') arrProjects[i].difficulty = 'intermediate';
       else if (arrProjects[i].difficulty === 'senior') arrProjects[i].difficulty = 'hard';
 
-      difficulties.push(arrProjects[i].difficulty);
+      dificulties.push(arrProjects[i].difficulty);
     }
   }
 
   technologyTags = [...new Set(technologyTags)];
-  difficulties = [...new Set(difficulties)];
+  dificulties = [...new Set(dificulties)];
 
   return {
     props: {
@@ -65,15 +66,18 @@ export const getStaticProps = async ({ locale }) => {
       ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
       projects,
       technologyTags,
-      difficulties,
+      dificulties,
     },
   };
 };
 
-const Projects = ({ projects, technologyTags, difficulties }) => {
-  console.log('PROJECTS:', projects);
-  console.log('TECHNOLOGY TAGS:', technologyTags);
-  console.log('DIFFICULTIES:', difficulties);
+const Projects = ({ projects, technologyTags, dificulties }) => {
+  const { filteredBy } = useFilter();
+  const technologiesFiltered = filteredBy.checkboxOption.technologies;
+  // console.log('PROJECTS:', projects);
+  // console.log('TECHNOLOGY TAGS:', technologyTags);
+  // console.log('DIFFICULTIES:', dificulties);
+  // console.log('FILTER_BY:::', filteredBy);
 
   // const filtered = projects.filter((item) => Helpers.contains(item.tags, filter));
 
@@ -113,18 +117,44 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
           variant="outline"
           backgroundColor={useColorModeValue('', 'gray.800')}
           _hover={{ backgroundColor: useColorModeValue('', 'gray.700') }}
-          border={1}
+          border={technologiesFiltered.length >= 1 ? 2 : 1}
           onClick={onOpen}
           borderStyle="solid"
           minWidth="125px"
-          borderColor={useColorModeValue('#DADADA', 'gray.800')}
+          borderColor={useColorModeValue(
+            `${technologiesFiltered.length >= 1 ? 'blue.default' : '#DADADA'}`,
+            'gray.800',
+          )}
         >
           <Icon icon="setting" width="20px" height="20px" style={{ minWidth: '20px' }} />
           <Text textTransform="uppercase" pl="10px">
-            Filter
+            {technologiesFiltered.length >= 2 ? 'Filters' : 'Filter'}
           </Text>
+          {technologiesFiltered.length >= 1 && (
+            <Text
+              as="span"
+              margin="0 10px"
+              textTransform="uppercase"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              backgroundColor="blue.default"
+              color="white"
+              borderRadius="30px"
+              minWidth="20px"
+              height="20px"
+            >
+              {technologiesFiltered.length}
+            </Text>
+          )}
         </Button>
-        <FilterModal isOpen={isOpen} onClose={onClose} technologyTags={technologyTags} />
+
+        <FilterModal
+          isModalOpen={isOpen}
+          onClose={onClose}
+          technologyTags={technologyTags}
+          dificulties={dificulties}
+        />
       </Flex>
 
       <Box flex="1" margin={{ base: '0 4% 0 4%', md: '0 10% 0 10%' }}>
@@ -147,7 +177,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
 Projects.propTypes = {
   technologyTags: PropTypes.arrayOf(PropTypes.string).isRequired,
   projects: PropTypes.arrayOf(PropTypes.object).isRequired,
-  difficulties: PropTypes.arrayOf(PropTypes.string).isRequired,
+  dificulties: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default Projects;
