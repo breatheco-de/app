@@ -61,7 +61,7 @@ const FilterModal = ({
         borderRadius="17px"
         padding="10px"
         bg={useColorModeValue('white', 'featuredDark')}
-        margin={{ base: '4% 4% 0 4%', md: '4% 22% 0 22%' }}
+        margin={{ base: '3% 4% 0 4%', md: '3% 22% 0 22%' }}
       >
         <ModalHeader
           fontSize="xl"
@@ -204,6 +204,7 @@ const FilterModal = ({
           borderTop={1}
           borderStyle="solid"
           justifyContent="space-between"
+          padding="0 1rem"
           borderColor={commonBorderColor}
         >
           <Box
@@ -211,7 +212,7 @@ const FilterModal = ({
             margin="20px 0"
             color="blue.default"
             cursor="pointer"
-            fontSize="14px"
+            fontSize="15px"
             onClick={() => clearFilters()}
           >
             Clear All
