@@ -88,8 +88,6 @@ const Projects = ({ projects, technologyTags, dificulties }) => {
     initialSearchValue = router.query && router.query.search;
   }, [initialSearchValue]);
 
-  console.log('DIFICULTY', difficulty);
-
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   return (

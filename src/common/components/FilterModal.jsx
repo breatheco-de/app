@@ -11,8 +11,7 @@ import {
   Box,
   Flex,
   Grid,
-  useCheckbox,
-  useCheckboxGroup,
+  // useCheckboxGroup,
   Checkbox,
   useColorModeValue,
   Collapse,
@@ -26,31 +25,43 @@ import useFilter from '../store/actions/filterAction';
 const FilterModal = ({
   title, isModalOpen, onClose, technologyTags, dificulties,
 }) => {
-  const [checked, setChecked] = useState([]);
+  const [checkedTechnologies, setCheckedTechnologies] = useState([]);
   const [withVideo, setWithVideo] = useState(false);
   const [show, setShow] = useState(false);
   const { setFilter } = useFilter();
   const [dificultyPosition, setDificulty] = useState(null);
-  const { getCheckboxProps } = useCheckboxGroup({
-    onChange: setChecked,
-  });
+  // eslint-disable-next-line no-array-constructor
+  const itemEls = React.useRef(new Array());
+
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
+  // function that create new ref for each technology on technologyTags elements
 
   const handleToggle = () => setShow(!show);
 
   const handleSubmit = () => {
     setFilter({
-      technologies: checked,
+      technologies: checkedTechnologies,
       difficulty: dificulties[dificultyPosition],
       videoTutorials: withVideo,
     });
   };
 
   const clearFilters = () => {
-    setChecked([]);
+    setCheckedTechnologies([]);
     setDificulty(null);
     setWithVideo(false);
+  };
+
+  // const checkBoxValue
+  let multiselection;
+  let checkedBoxes;
+  const verifyCurrentCheckbox = () => {
+    // console.log('REF:::', itemEls.current);
+    checkedBoxes = itemEls.current.filter((checkbox) => checkbox.checked === true);
+    multiselection = checkedBoxes.map((checkbox) => checkbox.value);
+    console.log('checkedBoxes', checkedBoxes);
+    console.log('MULTI:::', multiselection);
   };
 
   return (
@@ -100,22 +111,54 @@ const FilterModal = ({
                   gap={6}
                 >
                   {technologyTags.map((technology) => {
-                    const checkbox = getCheckboxProps({
-                      value: technology,
-                      checked: checked.length === 0 ? false : checked.includes(technology),
-                      isChecked: false,
-                    });
+                    console.log(':');
+                    // const checkbox = getCheckboxProps({
+                    //   value: technology,
+                    //   checkedTechnologies:
+                    //     checkedTechnologies.length === 0
+                    //       ? false
+                    //       : checkedTechnologies.includes(technology),
+                    //   isChecked: false,
+                    // });
+                    // const { getInputProps } = useCheckbox(checkbox);
+                    // const input = getInputProps();
                     return (
-                      <CheckboxCard style={{ border: '0' }} key={technology} {...checkbox}>
-                        <Flex gridGap="10px">
+                      <Box
+                        key={technology}
+                        as="label"
+                        cursor="pointer"
+                        _focus={{
+                          boxShadow: 'outline',
+                        }}
+                      >
+                        <Box
+                          as="input"
+                          ref={(element) => itemEls.current.push(element)}
+                          type="checkbox"
+                          value={technology}
+                          onChange={() => verifyCurrentCheckbox()}
+                          name={technology}
+                        />
+                        <Text size="l">{technology}</Text>
+                        {/* <Flex gridGap="10px">
                           <Checkbox
                             {...checkbox}
                             borderColor="gray.default"
-                            isChecked={checkbox.checked}
+                            isChecked={checkbox.checkedTechnologies}
                           />
                           <Text size="l">{technology}</Text>
-                        </Flex>
-                      </CheckboxCard>
+                        </Flex> */}
+                      </Box>
+                      // <CheckboxCard style={{ border: '0' }} key={technology} {...checkbox}>
+                      //   <Flex gridGap="10px">
+                      //     <Checkbox
+                      //       {...checkbox}
+                      //       borderColor="gray.default"
+                      //       isChecked={checkbox.checkedTechnologies}
+                      //     />
+                      //     <Text size="l">{technology}</Text>
+                      //   </Flex>
+                      // </CheckboxCard>
                     );
                   })}
                 </Grid>
@@ -219,10 +262,6 @@ const FilterModal = ({
           </Box>
           <Button
             fontSize="13px"
-            // disabled={
-            //   checked.length + (dificulties[dificultyPosition] === undefined ? 0 : 1) + withVideo
-            //   <= 0
-            // }
             textTransform="uppercase"
             variant="default"
             onClick={() => handleSubmit()}
@@ -236,56 +275,19 @@ const FilterModal = ({
   );
 };
 
-export const CheckboxCard = (props) => {
-  const { children } = props;
-  const { getInputProps } = useCheckbox(props);
-  const input = getInputProps();
-
-  return (
-    <Box as="label">
-      <input {...input} />
-      <Box
-        cursor="pointer"
-        _focus={{
-          boxShadow: 'outline',
-        }}
-        px={2}
-        py={1}
-      >
-        {children}
-      </Box>
-    </Box>
-  );
-};
-
-CheckboxCard.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-};
-
 FilterModal.propTypes = {
   title: PropTypes.string,
-  message: PropTypes.string,
   technologyTags: PropTypes.arrayOf(PropTypes.string),
   dificulties: PropTypes.arrayOf(PropTypes.string),
-  days: PropTypes.arrayOf(PropTypes.array),
   isModalOpen: PropTypes.bool,
   onClose: PropTypes.func,
-  maxDays: PropTypes.number,
-  minDays: PropTypes.number,
-  handleChangeDay: PropTypes.func,
 };
 FilterModal.defaultProps = {
   title: 'FILTER',
-  days: [],
   technologyTags: [],
   dificulties: [],
-  message: '',
   isModalOpen: true,
   onClose: () => {},
-  maxDays: 10,
-  minDays: 0,
-  handleChangeDay: () => {},
 };
 
 export default FilterModal;
