@@ -2,6 +2,7 @@ import {
   Box, useColorModeValue, Stack, Grid,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 import Image from '../../common/components/Image';
@@ -11,18 +12,25 @@ import Text from '../../common/components/Text';
 
 const ProjectList = ({ projects }) => {
   const { filteredBy } = useFilter();
+  const arrOfTechs = filteredBy.filterOptions.technologies;
+  const { difficulty, videoTutorials } = filteredBy.filterOptions;
+  const router = useRouter();
   const defaultImage = '/static/images/code1.png';
   const bgBlur = '/static/images/codeBlur.png';
 
-  const arrOfTechs = filteredBy.checkboxOption.technologies;
-  const { difficulty } = filteredBy.checkboxOption;
-
   const contains = (project, selectedTechs) => {
+    const projectTitle = project.title.toLowerCase();
+    if (
+      typeof videoTutorials === 'boolean'
+      && videoTutorials === true
+      && !project.solution_video_url === true
+    ) return false;
+    if (typeof router.query.search === 'string' && !projectTitle.includes(router.query.search)) return false;
     if (typeof difficulty === 'string' && project.difficulty !== difficulty) return false;
     const res = selectedTechs.map((techs) => project.technologies.includes(techs));
     return !res.includes(false);
   };
-  // NOTE: Starting with filter functions
+
   const filteredProjects = projects.filter((project) => contains(project, arrOfTechs));
 
   const onImageNotFound = (event) => {

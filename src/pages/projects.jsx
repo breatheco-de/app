@@ -9,9 +9,13 @@ import {
   InputLeftElement,
   InputGroup,
   useDisclosure,
+  FormControl,
 } from '@chakra-ui/react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
+import { Formik, Form, Field } from 'formik';
+import { useEffect } from 'react';
 import Text from '../common/components/Text';
 import Icon from '../common/components/Icon';
 import FilterModal from '../common/components/FilterModal';
@@ -73,13 +77,18 @@ export const getStaticProps = async ({ locale }) => {
 
 const Projects = ({ projects, technologyTags, dificulties }) => {
   const { filteredBy } = useFilter();
-  const technologiesFiltered = filteredBy.checkboxOption.technologies;
-  // console.log('PROJECTS:', projects);
-  // console.log('TECHNOLOGY TAGS:', technologyTags);
-  // console.log('DIFFICULTIES:', dificulties);
-  // console.log('FILTER_BY:::', filteredBy);
+  const { technologies, difficulty, videoTutorials } = filteredBy.filterOptions;
+  // const technologiesFiltered = filteredBy.filterOptions.technologies;
+  const currentFilters = technologies.length
+    + (difficulty === undefined || difficulty.length === 0 ? 0 : 1)
+    + videoTutorials;
+  const router = useRouter();
+  let initialSearchValue;
+  useEffect(() => {
+    initialSearchValue = router.query && router.query.search;
+  }, [initialSearchValue]);
 
-  // const filtered = projects.filter((item) => Helpers.contains(item.tags, filter));
+  console.log('DIFICULTY', difficulty);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -96,41 +105,63 @@ const Projects = ({ projects, technologyTags, dificulties }) => {
         borderColor={useColorModeValue('gray.200', 'gray.900')}
       >
         <TitleContent title="Projects" mobile={false} />
-
-        <InputGroup width={{ base: '-webkit-fill-available', md: '36rem' }}>
-          <InputLeftElement pointerEvents="none">
-            <Icon icon="search" color="gray" width="16px" height="16px" />
-          </InputLeftElement>
-          <Input
-            id="search"
-            width="100%"
-            placeholder="Search Project"
-            transition="all .2s ease"
-            style={{
-              borderRadius: '3px',
-              backgroundColor: useColorModeValue('white', '#2D3748'),
-            }}
-          />
-        </InputGroup>
+        <Formik initialValues={{ search: initialSearchValue }}>
+          {() => (
+            <Form>
+              <Field id="field923" name="search">
+                {({ field, form }) => (
+                  <FormControl isInvalid={form.errors.search && form.touched.search}>
+                    <InputGroup width={{ base: '-webkit-fill-available', md: '36rem' }}>
+                      <InputLeftElement pointerEvents="none">
+                        <Icon icon="search" color="gray" width="16px" height="16px" />
+                      </InputLeftElement>
+                      <Input
+                        {...field}
+                        onChange={(values) => {
+                          // update the path query with search value
+                          router.push({
+                            pathname: '/projects',
+                            query: {
+                              search: values.target.value,
+                            },
+                          });
+                        }}
+                        id="search"
+                        width="100%"
+                        placeholder="Search Project"
+                        transition="all .2s ease"
+                        name="search"
+                        style={{
+                          borderRadius: '3px',
+                          backgroundColor: useColorModeValue('white', '#2D3748'),
+                        }}
+                      />
+                    </InputGroup>
+                  </FormControl>
+                )}
+              </Field>
+            </Form>
+          )}
+        </Formik>
 
         <Button
           variant="outline"
           backgroundColor={useColorModeValue('', 'gray.800')}
           _hover={{ backgroundColor: useColorModeValue('', 'gray.700') }}
-          border={technologiesFiltered.length >= 1 ? 2 : 1}
+          border={currentFilters >= 1 ? 2 : 1}
           onClick={onOpen}
           borderStyle="solid"
           minWidth="125px"
           borderColor={useColorModeValue(
-            `${technologiesFiltered.length >= 1 ? 'blue.default' : '#DADADA'}`,
+            `${currentFilters >= 1 ? 'blue.default' : '#DADADA'}`,
             'gray.800',
           )}
         >
           <Icon icon="setting" width="20px" height="20px" style={{ minWidth: '20px' }} />
           <Text textTransform="uppercase" pl="10px">
-            {technologiesFiltered.length >= 2 ? 'Filters' : 'Filter'}
+            {currentFilters >= 2 ? 'Filters' : 'Filter'}
           </Text>
-          {technologiesFiltered.length >= 1 && (
+          {currentFilters >= 1 && (
             <Text
               as="span"
               margin="0 10px"
@@ -144,7 +175,7 @@ const Projects = ({ projects, technologyTags, dificulties }) => {
               minWidth="20px"
               height="20px"
             >
-              {technologiesFiltered.length}
+              {currentFilters}
             </Text>
           )}
         </Button>

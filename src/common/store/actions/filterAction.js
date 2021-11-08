@@ -7,17 +7,9 @@ const useFilter = () => {
     type: 'HANDLE_FILTER',
     payload: newState,
   });
-  // const removeFilter = () => dispatch({
-  //   type: 'removeFilter',
-  // });
-  // const reset = () => dispatch({
-  //   type: 'RESET',
-  // });
   return {
     filteredBy,
     setFilter,
-    // removeFilter,
-    // reset,
   };
 };
 
