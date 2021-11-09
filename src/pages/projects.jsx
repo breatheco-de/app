@@ -1,27 +1,17 @@
 /* eslint-disable no-continue */
 /* eslint-disable no-console */
 import {
-  Box,
-  useColorModeValue,
-  Input,
-  Button,
-  Flex,
-  InputLeftElement,
-  InputGroup,
-  useDisclosure,
-  FormControl,
+  Box, useColorModeValue, Button, Flex, useDisclosure,
 } from '@chakra-ui/react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
-import { Formik, Form, Field } from 'formik';
-import { useEffect } from 'react';
 import Text from '../common/components/Text';
 import Icon from '../common/components/Icon';
 import FilterModal from '../common/components/FilterModal';
 import TitleContent from '../js_modules/projects/TitleContent';
 import ProjectList from '../js_modules/projects/ProjectList';
 import useFilter from '../common/store/actions/filterAction';
+import Search from '../js_modules/projects/Search';
 
 export const getStaticProps = async ({ locale }) => {
   const projects = []; // filtered projects after removing repeated
@@ -76,17 +66,11 @@ export const getStaticProps = async ({ locale }) => {
 };
 
 const Projects = ({ projects, technologyTags, dificulties }) => {
-  const { filteredBy } = useFilter();
-  const { technologies, difficulty, videoTutorials } = filteredBy.filterOptions;
-  // const technologiesFiltered = filteredBy.filterOptions.technologies;
+  const { filteredBy, setProjectFilters } = useFilter();
+  const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const currentFilters = technologies.length
     + (difficulty === undefined || difficulty.length === 0 ? 0 : 1)
     + videoTutorials;
-  const router = useRouter();
-  let initialSearchValue;
-  useEffect(() => {
-    initialSearchValue = router.query && router.query.search;
-  }, [initialSearchValue]);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -103,44 +87,8 @@ const Projects = ({ projects, technologyTags, dificulties }) => {
         borderColor={useColorModeValue('gray.200', 'gray.900')}
       >
         <TitleContent title="Projects" mobile={false} />
-        <Formik initialValues={{ search: initialSearchValue }}>
-          {() => (
-            <Form>
-              <Field id="field923" name="search">
-                {({ field, form }) => (
-                  <FormControl isInvalid={form.errors.search && form.touched.search}>
-                    <InputGroup width={{ base: '-webkit-fill-available', md: '36rem' }}>
-                      <InputLeftElement pointerEvents="none">
-                        <Icon icon="search" color="gray" width="16px" height="16px" />
-                      </InputLeftElement>
-                      <Input
-                        {...field}
-                        onChange={(values) => {
-                          // update the path query with search value
-                          router.push({
-                            pathname: '/projects',
-                            query: {
-                              search: values.target.value,
-                            },
-                          });
-                        }}
-                        id="search"
-                        width="100%"
-                        placeholder="Search Project"
-                        transition="all .2s ease"
-                        name="search"
-                        style={{
-                          borderRadius: '3px',
-                          backgroundColor: useColorModeValue('white', '#2D3748'),
-                        }}
-                      />
-                    </InputGroup>
-                  </FormControl>
-                )}
-              </Field>
-            </Form>
-          )}
-        </Formik>
+
+        <Search />
 
         <Button
           variant="outline"
@@ -181,6 +129,7 @@ const Projects = ({ projects, technologyTags, dificulties }) => {
         <FilterModal
           isModalOpen={isOpen}
           onClose={onClose}
+          setFilter={setProjectFilters}
           technologyTags={technologyTags}
           dificulties={dificulties}
         />
@@ -197,7 +146,7 @@ const Projects = ({ projects, technologyTags, dificulties }) => {
           projects with solutions and video tutorials
         </Text>
 
-        <ProjectList projects={projects} />
+        <ProjectList projects={projects} contextFilter={filteredBy.projectsOptions} />
       </Box>
     </Box>
   );

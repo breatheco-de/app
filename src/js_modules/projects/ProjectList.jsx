@@ -7,13 +7,11 @@ import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 import Image from '../../common/components/Image';
 import TagCapsule from '../../common/components/TagCapsule';
-import useFilter from '../../common/store/actions/filterAction';
 import Text from '../../common/components/Text';
 
-const ProjectList = ({ projects }) => {
-  const { filteredBy } = useFilter();
-  const arrOfTechs = filteredBy.filterOptions.technologies;
-  const { difficulty, videoTutorials } = filteredBy.filterOptions;
+const ProjectList = ({ projects, contextFilter }) => {
+  const arrOfTechs = contextFilter.technologies;
+  const { difficulty, videoTutorials } = contextFilter;
   const router = useRouter();
   const defaultImage = '/static/images/code1.png';
   const bgBlur = '/static/images/codeBlur.png';
@@ -74,7 +72,7 @@ const ProjectList = ({ projects }) => {
               >
                 {/* CARD IMAGE */}
                 <Link
-                  href={`/interactive-projects/${ex.slug}`}
+                  href={`/interactive-coding-tutorial/${ex.difficulty}/${ex.slug}`}
                   display="inline-block"
                   w={{ base: 'auto', md: 'full' }}
                   zIndex={1}
@@ -88,7 +86,7 @@ const ProjectList = ({ projects }) => {
                     height={{ base: '60px', sm: '90px', md: '180px' }}
                     width={{ base: '60px', sm: '90px', md: 'auto' }}
                     maxWidth={{ base: '300px', sm: '230px', md: 'none' }}
-                    // NOTE: test performance in production - Blur Background
+                    // NOTE: test performance in production - Blur and animation
                     _after={{
                       transition: 'all .8s ease',
                       content: '""',
@@ -131,7 +129,7 @@ const ProjectList = ({ projects }) => {
 
                   <Stack align="center" padding="18px 0 0 0">
                     <Link
-                      href={`/interactive-projects/${ex.slug}`}
+                      href={`/interactive-coding-tutorial/${ex.difficulty}/${ex.slug}`}
                       display="inline-block"
                       w="full"
                       zIndex={1}
@@ -177,6 +175,7 @@ const ProjectList = ({ projects }) => {
 
 ProjectList.propTypes = {
   projects: PropTypes.arrayOf(PropTypes.object).isRequired,
+  contextFilter: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 export default ProjectList;

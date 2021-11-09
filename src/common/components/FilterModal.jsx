@@ -11,7 +11,7 @@ import {
   Box,
   Flex,
   Grid,
-  // useCheckboxGroup,
+  useCheckboxGroup,
   Checkbox,
   useColorModeValue,
   Collapse,
@@ -20,18 +20,17 @@ import {
 } from '@chakra-ui/react';
 import Icon from './Icon';
 import Text from './Text';
-import useFilter from '../store/actions/filterAction';
 
 const FilterModal = ({
-  title, isModalOpen, onClose, technologyTags, dificulties,
+  title, isModalOpen, onClose, setFilter, technologyTags, dificulties,
 }) => {
   const [checkedTechnologies, setCheckedTechnologies] = useState([]);
   const [withVideo, setWithVideo] = useState(false);
   const [show, setShow] = useState(false);
-  const { setFilter } = useFilter();
   const [dificultyPosition, setDificulty] = useState(null);
-  // eslint-disable-next-line no-array-constructor
-  const itemEls = React.useRef(new Array());
+  const { getCheckboxProps } = useCheckboxGroup({
+    onChange: setCheckedTechnologies,
+  });
 
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
@@ -51,17 +50,6 @@ const FilterModal = ({
     setCheckedTechnologies([]);
     setDificulty(null);
     setWithVideo(false);
-  };
-
-  // const checkBoxValue
-  let multiselection;
-  let checkedBoxes;
-  const verifyCurrentCheckbox = () => {
-    // console.log('REF:::', itemEls.current);
-    checkedBoxes = itemEls.current.filter((checkbox) => checkbox.checked === true);
-    multiselection = checkedBoxes.map((checkbox) => checkbox.value);
-    console.log('checkedBoxes', checkedBoxes);
-    console.log('MULTI:::', multiselection);
   };
 
   return (
@@ -111,17 +99,14 @@ const FilterModal = ({
                   gap={6}
                 >
                   {technologyTags.map((technology) => {
-                    console.log(':');
-                    // const checkbox = getCheckboxProps({
-                    //   value: technology,
-                    //   checkedTechnologies:
-                    //     checkedTechnologies.length === 0
-                    //       ? false
-                    //       : checkedTechnologies.includes(technology),
-                    //   isChecked: false,
-                    // });
-                    // const { getInputProps } = useCheckbox(checkbox);
-                    // const input = getInputProps();
+                    const checkbox = getCheckboxProps({
+                      value: technology,
+                      checkedTechnologies:
+                        checkedTechnologies.length === 0
+                          ? false
+                          : checkedTechnologies.includes(technology),
+                      isChecked: false,
+                    });
                     return (
                       <Box
                         key={technology}
@@ -131,34 +116,15 @@ const FilterModal = ({
                           boxShadow: 'outline',
                         }}
                       >
-                        <Box
-                          as="input"
-                          ref={(element) => itemEls.current.push(element)}
-                          type="checkbox"
-                          value={technology}
-                          onChange={() => verifyCurrentCheckbox()}
-                          name={technology}
-                        />
-                        <Text size="l">{technology}</Text>
-                        {/* <Flex gridGap="10px">
+                        <Flex gridGap="10px">
                           <Checkbox
                             {...checkbox}
                             borderColor="gray.default"
                             isChecked={checkbox.checkedTechnologies}
                           />
                           <Text size="l">{technology}</Text>
-                        </Flex> */}
+                        </Flex>
                       </Box>
-                      // <CheckboxCard style={{ border: '0' }} key={technology} {...checkbox}>
-                      //   <Flex gridGap="10px">
-                      //     <Checkbox
-                      //       {...checkbox}
-                      //       borderColor="gray.default"
-                      //       isChecked={checkbox.checkedTechnologies}
-                      //     />
-                      //     <Text size="l">{technology}</Text>
-                      //   </Flex>
-                      // </CheckboxCard>
                     );
                   })}
                 </Grid>
@@ -277,6 +243,7 @@ const FilterModal = ({
 
 FilterModal.propTypes = {
   title: PropTypes.string,
+  setFilter: PropTypes.func.isRequired,
   technologyTags: PropTypes.arrayOf(PropTypes.string),
   dificulties: PropTypes.arrayOf(PropTypes.string),
   isModalOpen: PropTypes.bool,

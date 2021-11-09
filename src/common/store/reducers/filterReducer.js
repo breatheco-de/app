@@ -1,5 +1,10 @@
 const initialState = {
-  filterOptions: {
+  projectsOptions: {
+    technologies: [],
+    difficulty: [],
+    videoTutorials: false,
+  },
+  exercisesOptions: {
     technologies: [],
     difficulty: [],
     videoTutorials: false,
@@ -8,10 +13,15 @@ const initialState = {
 
 const filterReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'HANDLE_FILTER':
+    case 'HANDLE_FILTER_PROJECTS':
       return {
         ...state,
-        filterOptions: action.payload,
+        projectsOptions: action.payload,
+      };
+    case 'HANDLE_FILTER_EXERCISES':
+      return {
+        ...state,
+        exercisesOptions: action.payload,
       };
     default:
       return state;
