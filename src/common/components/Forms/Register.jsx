@@ -43,7 +43,7 @@ function Register() {
   }
 
   function validateConfirmPassword(password, repeatPassword) {
-    let error = '';
+    let error = 'Password Required';
     if (repeatPassword !== password) {
       error = 'Password not matched';
     }
@@ -200,7 +200,7 @@ function Register() {
             <Button
               variant="default"
               fontSize="l"
-              isLoading={props.isSubmitting}
+              // isLoading={props.isSubmitting}
               type="submit"
             >
               REGISTER

@@ -27,6 +27,7 @@ function LogIn() {
     <Formik
       initialValues={{
         email: '',
+        password: '',
       }}
       onSubmit={({ values, actions }) => {
         setTimeout(() => {
