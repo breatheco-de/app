@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable no-console */
 import {
   Box, useColorModeValue, Flex, Button, FormControl, Input,
@@ -47,6 +48,127 @@ export const getStaticProps = async ({ params, locale }) => {
     },
   };
 };
+
+const TabletWithForm = ({
+  exercise,
+  errorMessage,
+  commonTextColor,
+  validator,
+  commonBorderColor,
+}) => (
+  <>
+    <Box
+      px="22px"
+      pb="30px"
+      pt="24px"
+      borderBottom={1}
+      borderStyle="solid"
+      borderColor={commonBorderColor}
+    >
+      <Heading
+        size="15px"
+        textAlign="left"
+        textTransform="uppercase"
+        justify="center"
+        width="100%"
+        mt="0px"
+        mb="0px"
+      >
+        Direct access request
+      </Heading>
+
+      <Text size="md" color={commonTextColor} textAlign="left" mt="10px" px="0px">
+        Please enter your information and receive instant access
+      </Text>
+
+      <Formik
+        initialValues={{ email: '', password: '' }}
+        onSubmit={(values, actions) => {
+          setTimeout(() => {
+            alert(JSON.stringify(values, null, 2));
+            actions.setSubmitting(false);
+          }, 1000);
+        }}
+      >
+        {(props) => {
+          const { isSubmitting } = props;
+          return (
+            <Form>
+              <Box py="0" flexDirection="column" display="flex" alignItems="center">
+                <Box color={useColorModeValue('danger', 'red')} mt="20px" mb="10px">
+                  {errorMessage}
+                </Box>
+                <Field id="field923" name="email" validate={validator}>
+                  {({ field, form }) => (
+                    <FormControl
+                      padding="6px 0"
+                      isInvalid={form.errors.email && form.touched.email}
+                    >
+                      <Input
+                        {...field}
+                        id="email"
+                        placeholder="Email"
+                        style={{
+                          borderRadius: '3px',
+                          backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
+                          transition: 'background 0.2s ease-in-out',
+                        }}
+                      />
+                    </FormControl>
+                  )}
+                </Field>
+
+                <Field id="field912" name="password">
+                  {({ field, form }) => (
+                    <FormControl
+                      padding="6px 0"
+                      isInvalid={form.errors.password && form.touched.password}
+                    >
+                      <Input
+                        {...field}
+                        id="password"
+                        placeholder="Password"
+                        type="password"
+                        style={{
+                          borderRadius: '3px',
+                          backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
+                          transition: 'background 0.2s ease-in-out',
+                        }}
+                      />
+                    </FormControl>
+                  )}
+                </Field>
+                <Button
+                  marginTop="30px"
+                  borderRadius="3px"
+                  width="100%"
+                  padding="0"
+                  whiteSpace="normal"
+                  isLoading={isSubmitting}
+                  type="submit"
+                  variant="default"
+                  textTransform="uppercase"
+                >
+                  Get instant access
+                </Button>
+              </Box>
+            </Form>
+          );
+        }}
+      </Formik>
+    </Box>
+    <Box px="22px" pb="30px" pt="24px">
+      <SimpleTable
+        difficulty={exercise.difficulty}
+        repository={exercise.url}
+        duration={exercise.duration}
+        videoAvailable={exercise.intro_video_url}
+        technologies={exercise.technologies}
+        liveDemoAvailable={exercise.intro_video_url}
+      />
+    </Box>
+  </>
+);
 
 const regex = {
   email:
@@ -121,13 +243,15 @@ const ExerciseSlug = ({ exercise }) => {
           </Heading>
 
           <Image
+            width="100%"
+            height={{ base: '190px', md: '400px' }}
+            margin="30px 0"
+            maxWidth="55rem"
+            maxHeight="500px"
+            minHeight={{ base: 'auto', md: '300px' }}
             priority
             borderRadius="15px"
             pos="relative"
-            height={{ base: '60px', sm: '90px', md: '380px' }}
-            width={{ base: '60px', sm: '90px', md: '100%' }}
-            maxWidth={{ base: '300px', sm: '230px', md: '100%' }}
-            // NOTE: test performance in production - Blur and animation
             _groupHover={{
               _after: {
                 filter: 'blur(50px)',
@@ -139,6 +263,30 @@ const ExerciseSlug = ({ exercise }) => {
             src={getImage}
             alt={exercise.title}
           />
+
+          <Box
+            display={{ base: 'flex', md: 'none' }}
+            flexDirection="column"
+            margin="30px 0"
+            backgroundColor={useColorModeValue('white', 'featuredDark')}
+            transition="background 0.2s ease-in-out"
+            width="100%"
+            height="auto"
+            borderWidth="0px"
+            borderRadius="17px"
+            overflow="hidden"
+            border={1}
+            borderStyle="solid"
+            borderColor={commonBorderColor}
+          >
+            <TabletWithForm
+              exercise={exercise}
+              errorMessage={errorMessage}
+              commonTextColor={commonTextColor}
+              commonBorderColor={commonBorderColor}
+              validator={validator}
+            />
+          </Box>
 
           <Link
             href={exercise.url}
@@ -152,6 +300,8 @@ const ExerciseSlug = ({ exercise }) => {
         </Box>
 
         <Box
+          display={{ base: 'none', md: 'flex' }}
+          flexDirection="column"
           backgroundColor={useColorModeValue('white', 'featuredDark')}
           transition="background 0.2s ease-in-out"
           width="350px"
@@ -164,113 +314,13 @@ const ExerciseSlug = ({ exercise }) => {
           borderStyle="solid"
           borderColor={commonBorderColor}
         >
-          <Box px="22px" pb="30px" pt="24px">
-            <Heading
-              size="15px"
-              textAlign="left"
-              textTransform="uppercase"
-              justify="center"
-              width="100%"
-              mt="0px"
-              mb="0px"
-            >
-              Direct access request
-            </Heading>
-
-            <Text size="md" color={commonTextColor} textAlign="left" mt="10px" px="0px">
-              Please enter your information and receive instant access
-            </Text>
-
-            <Formik
-              initialValues={{ email: '', password: '' }}
-              onSubmit={(values, actions) => {
-                setTimeout(() => {
-                  alert(JSON.stringify(values, null, 2));
-                  actions.setSubmitting(false);
-                }, 1000);
-              }}
-            >
-              {(props) => {
-                const { isSubmitting } = props;
-                return (
-                  <Form>
-                    <Box py="0" flexDirection="column" display="flex" alignItems="center">
-                      <Box
-                        color={useColorModeValue('danger', 'red')}
-                        mt="20px"
-                        mb="10px"
-                        // height="20px"
-                      >
-                        {errorMessage}
-                      </Box>
-                      <Field id="field923" name="email" validate={validator}>
-                        {({ field, form }) => (
-                          <FormControl
-                            padding="6px 0"
-                            isInvalid={form.errors.email && form.touched.email}
-                          >
-                            <Input
-                              {...field}
-                              id="email"
-                              placeholder="Email"
-                              style={{
-                                borderRadius: '3px',
-                                backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
-                                transition: 'background 0.2s ease-in-out',
-                              }}
-                            />
-                          </FormControl>
-                        )}
-                      </Field>
-
-                      <Field id="field912" name="password">
-                        {({ field, form }) => (
-                          <FormControl
-                            padding="6px 0"
-                            isInvalid={form.errors.password && form.touched.password}
-                          >
-                            <Input
-                              {...field}
-                              id="password"
-                              placeholder="Password"
-                              type="password"
-                              style={{
-                                borderRadius: '3px',
-                                backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
-                                transition: 'background 0.2s ease-in-out',
-                              }}
-                            />
-                          </FormControl>
-                        )}
-                      </Field>
-                      <Button
-                        marginTop="30px"
-                        borderRadius="3px"
-                        width="100%"
-                        padding="0"
-                        whiteSpace="normal"
-                        isLoading={isSubmitting}
-                        type="submit"
-                        variant="default"
-                        textTransform="uppercase"
-                      >
-                        Get instant access
-                      </Button>
-                    </Box>
-                  </Form>
-                );
-              }}
-            </Formik>
-
-            <SimpleTable
-              difficulty={exercise.difficulty}
-              repository={exercise.url}
-              duration={exercise.duration}
-              videoAvailable={exercise.intro_video_url}
-              technologies={exercise.technologies}
-              liveDemoAvailable={exercise.intro_video_url}
-            />
-          </Box>
+          <TabletWithForm
+            exercise={exercise}
+            errorMessage={errorMessage}
+            commonTextColor={commonTextColor}
+            commonBorderColor={commonBorderColor}
+            validator={validator}
+          />
         </Box>
       </Flex>
     </Box>
@@ -279,10 +329,17 @@ const ExerciseSlug = ({ exercise }) => {
 
 ExerciseSlug.propTypes = {
   exercise: PropTypes.objectOf(PropTypes.any).isRequired,
-  isSubmitting: PropTypes.bool,
 };
 
-ExerciseSlug.defaultProps = {
+TabletWithForm.propTypes = {
+  exercise: PropTypes.objectOf(PropTypes.any).isRequired,
+  errorMessage: PropTypes.string.isRequired,
+  commonTextColor: PropTypes.string.isRequired,
+  commonBorderColor: PropTypes.string.isRequired,
+  validator: PropTypes.func.isRequired,
+  isSubmitting: PropTypes.bool,
+};
+TabletWithForm.defaultProps = {
   isSubmitting: false,
 };
 
