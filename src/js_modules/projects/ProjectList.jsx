@@ -90,7 +90,6 @@ const ProjectList = ({
                     height={{ base: '60px', sm: '90px', md: '180px' }}
                     width={{ base: '60px', sm: '90px', md: 'auto' }}
                     maxWidth={{ base: '300px', sm: '230px', md: 'none' }}
-                    // NOTE: test performance in production - Blur and animation
                     _after={{
                       transition: 'all .8s ease',
                       content: '""',
