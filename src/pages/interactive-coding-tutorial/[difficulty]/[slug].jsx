@@ -53,7 +53,12 @@ const ProjectSlug = ({ project }) => {
       alignItems="center"
       margin={{ base: '4% 4% 0 4%', md: '4% 10% 0 10%' }}
     >
-      <Link href="/interactive-exercises" display="inline-block" w="full" borderRadius="15px">
+      <Link
+        href="/interactive-exercises"
+        color={useColorModeValue('blue.600', 'blue.300')}
+        display="inline-block"
+        borderRadius="15px"
+      >
         {'< Back to Projects'}
       </Link>
 
@@ -61,9 +66,10 @@ const ProjectSlug = ({ project }) => {
         <Box flex="1">
           <Heading
             as="h1"
-            size="xl"
+            size="25px"
             fontWeight="700"
-            color={useColorModeValue('gray.600', 'gray.300')}
+            transition="color 0.2s ease-in-out"
+            color={useColorModeValue('black', 'white')}
             textTransform="uppercase"
           >
             {project.title}

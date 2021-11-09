@@ -77,7 +77,12 @@ const ExerciseSlug = ({ exercise }) => {
       alignItems="center"
       margin={{ base: '4% 4% 0 4%', md: '4% 10% 0 10%' }}
     >
-      <Link href="/interactive-exercises" display="inline-block" w="full" borderRadius="15px">
+      <Link
+        href="/interactive-exercises"
+        color={useColorModeValue('blue.600', 'blue.300')}
+        display="inline-block"
+        borderRadius="15px"
+      >
         {'< Back to Projects'}
       </Link>
 
@@ -85,9 +90,10 @@ const ExerciseSlug = ({ exercise }) => {
         <Box flex="1">
           <Heading
             as="h1"
-            size="xl"
+            size="25px"
             fontWeight="700"
-            color={useColorModeValue('gray.600', 'gray.300')}
+            transition="color 0.2s ease-in-out"
+            color={useColorModeValue('black', 'white')}
             textTransform="uppercase"
           >
             {exercise.title}
@@ -106,6 +112,7 @@ const ExerciseSlug = ({ exercise }) => {
 
         <Box
           backgroundColor={useColorModeValue('white', 'featuredDark')}
+          transition="background 0.2s ease-in-out"
           width="350px"
           minWidth="250px"
           height="auto"
@@ -116,7 +123,7 @@ const ExerciseSlug = ({ exercise }) => {
           borderStyle="solid"
           borderColor={commonBorderColor}
         >
-          <Box px="22px" pb="30px" pt="20px">
+          <Box px="22px" pb="30px" pt="24px">
             <Heading
               size="15px"
               textAlign="left"
@@ -151,20 +158,24 @@ const ExerciseSlug = ({ exercise }) => {
                         color={useColorModeValue('danger', 'red')}
                         mt="20px"
                         mb="10px"
-                        height="20px"
+                        // height="20px"
                       >
                         {errorMessage}
                       </Box>
                       <Field id="field923" name="email" validate={validator}>
                         {({ field, form }) => (
-                          <FormControl isInvalid={form.errors.email && form.touched.email}>
+                          <FormControl
+                            padding="6px 0"
+                            isInvalid={form.errors.email && form.touched.email}
+                          >
                             <Input
                               {...field}
                               id="email"
                               placeholder="Email"
                               style={{
                                 borderRadius: '3px',
-                                backgroundColor: useColorModeValue('white', 'darkTheme'),
+                                backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
+                                transition: 'background 0.2s ease-in-out',
                               }}
                             />
                           </FormControl>
@@ -173,14 +184,19 @@ const ExerciseSlug = ({ exercise }) => {
 
                       <Field id="field912" name="password">
                         {({ field, form }) => (
-                          <FormControl isInvalid={form.errors.password && form.touched.password}>
+                          <FormControl
+                            padding="6px 0"
+                            isInvalid={form.errors.password && form.touched.password}
+                          >
                             <Input
                               {...field}
                               id="password"
                               placeholder="Password"
+                              type="password"
                               style={{
                                 borderRadius: '3px',
-                                backgroundColor: useColorModeValue('white', 'darkTheme'),
+                                backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
+                                transition: 'background 0.2s ease-in-out',
                               }}
                             />
                           </FormControl>

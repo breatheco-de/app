@@ -92,9 +92,13 @@ const FilterModal = ({
               <Text size="l" color={commonTextColor} padding="0 0 25px 0">
                 TECHNOLOGIES
               </Text>
-              <Collapse in={show} startingHeight={200} animateOpacity>
+              <Collapse in={show} startingHeight={170} animateOpacity>
                 <Grid
-                  gridTemplateColumns="repeat(auto-fill, minmax(10rem, 1fr))"
+                  // repeat(auto-fill, minmax(8rem, 1fr))
+                  gridTemplateColumns={{
+                    base: 'repeat(auto-fill, minmax(10rem, 1fr))',
+                    md: 'repeat(auto-fill, minmax(10rem, 1fr))',
+                  }}
                   padding="5px"
                   gap={6}
                 >
