@@ -25,7 +25,7 @@ module.exports = withBundleAnalyzer({
   },
   images: {
     // whitelist for image providers
-    domains: ['assets.vercel.com', 'github.com'],
+    domains: ['assets.vercel.com', 'github.com', 'raw.githubusercontent.com'],
     // formats: ['image/avif', 'image/webp'],
   },
 });
