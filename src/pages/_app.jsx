@@ -7,6 +7,7 @@ import { appWithTranslation } from 'next-i18next';
 import wrapper from '../store';
 import CustomTheme from '../../styles/theme';
 import NavbarWithSubNavigation from '../common/components/Navbar/index';
+import AuthProvider from '../common/context/AuthContext';
 import Footer from '../common/components/Footer';
 import Helmet from '../common/components/Helmet';
 import '@fontsource/lato/100.css';
@@ -20,11 +21,13 @@ function LearnApp({ Component, pageProps }) {
   return (
     <>
       <Helmet {...pageProps} />
-      <ChakraProvider resetCSS theme={CustomTheme}>
-        <NavbarWithSubNavigation />
-        <Component {...pageProps} />
-        <Footer />
-      </ChakraProvider>
+      <AuthProvider>
+        <ChakraProvider resetCSS theme={CustomTheme}>
+          <NavbarWithSubNavigation />
+          <Component {...pageProps} />
+          <Footer />
+        </ChakraProvider>
+      </AuthProvider>
     </>
   );
 }

@@ -28,4 +28,7 @@ module.exports = withBundleAnalyzer({
     domains: ['assets.vercel.com', 'github.com', 'raw.githubusercontent.com'],
     // formats: ['image/avif', 'image/webp'],
   },
+  env: {
+    BREATHECODE_HOST: 'https://breathecode-test.herokuapp.com',
+  },
 });
