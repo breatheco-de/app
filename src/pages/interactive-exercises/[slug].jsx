@@ -1,8 +1,15 @@
-/* eslint-disable react/prop-types */
-import { Box, useColorMode } from '@chakra-ui/react';
+/* eslint-disable no-console */
+import {
+  Box, useColorModeValue, Flex, Button, FormControl, Input,
+} from '@chakra-ui/react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import PropTypes from 'prop-types';
+import { Formik, Form, Field } from 'formik';
+import { useState } from 'react';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
+import Text from '../../common/components/Text';
+import SimpleTable from '../../js_modules/projects/SimpleTable';
 
 export const getStaticPaths = async () => {
   const data = await fetch(
@@ -24,8 +31,6 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async ({ params, locale }) => {
   const { slug } = params;
-
-  // <Helmet title={`${data.title} - ${data.difficulty}`} />
   const results = await fetch(
     'https://breathecode-test.herokuapp.com/v1/registry/asset?type=exercise&big=true',
   )
@@ -33,18 +38,36 @@ export const getStaticProps = async ({ params, locale }) => {
     .then((data) => data.find((e) => e.slug === slug))
     .catch((err) => console.log(err));
   return {
-    // props: { data:..., slug:..., more... },
     props: {
       fallback: false,
       ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
-      data: results,
+      exercise: results,
     },
   };
 };
 
-const ExerciseSlug = ({ data }) => {
-  console.log('EXERCISE_DATA:', data);
-  const { colorMode } = useColorMode();
+const regex = {
+  email:
+    /^[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~](\.?[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~])*@(?!mailinator|leonvero|ichkoch|naymeo|naymio)[a-zA-Z0-9]*\.[a-zA-Z](-?[a-zA-Z0-9])+$/,
+  phone: /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/,
+};
+
+const ExerciseSlug = ({ exercise }) => {
+  console.log('EXERCISE_exercise:', exercise);
+  const [errorMessage, setErrorMessage] = useState('');
+  const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
+  const commonTextColor = useColorModeValue('gray.600', 'gray.200');
+
+  const validator = (value) => {
+    let error;
+    if (!value) {
+      error = 'Email is required';
+    } else if (!regex.email.test(value)) {
+      error = 'Invalid email address';
+    }
+    setErrorMessage(error);
+    return error;
+  };
 
   return (
     <Box
@@ -54,34 +77,172 @@ const ExerciseSlug = ({ data }) => {
       alignItems="center"
       margin={{ base: '4% 4% 0 4%', md: '4% 10% 0 10%' }}
     >
-
-      <Link href="/interactive-exercises" display="inline-block" w="full" borderRadius="15px">
+      <Link
+        href="/interactive-exercises"
+        color={useColorModeValue('blue.600', 'blue.300')}
+        display="inline-block"
+        borderRadius="15px"
+      >
         {'< Back to Projects'}
       </Link>
 
-      <Box flex="1" margin={{ base: '4% 4% 0 4%', md: '4% 10% 0 10%' }}>
-        <Heading
-          as="h1"
-          size="xl"
-          fontWeight="700"
-          color={colorMode === 'light' ? 'gray.600' : 'gray.300'}
-          textTransform="uppercase"
-        >
-          {data.title}
-        </Heading>
+      <Flex height="100%">
+        <Box flex="1">
+          <Heading
+            as="h1"
+            size="25px"
+            fontWeight="700"
+            transition="color 0.2s ease-in-out"
+            color={useColorModeValue('black', 'white')}
+            textTransform="uppercase"
+          >
+            {exercise.title}
+          </Heading>
 
-        <Link
-          href={data.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          size="12px"
-          color={colorMode === 'light' ? 'blue.600' : 'blue.300'}
+          <Link
+            href={exercise.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            size="12px"
+            color={useColorModeValue('blue.600', 'blue.300')}
+          >
+            {exercise.url}
+          </Link>
+        </Box>
+
+        <Box
+          backgroundColor={useColorModeValue('white', 'featuredDark')}
+          transition="background 0.2s ease-in-out"
+          width="350px"
+          minWidth="250px"
+          height="auto"
+          borderWidth="0px"
+          borderRadius="17px"
+          overflow="hidden"
+          border={1}
+          borderStyle="solid"
+          borderColor={commonBorderColor}
         >
-          {data.url}
-        </Link>
-      </Box>
+          <Box px="22px" pb="30px" pt="24px">
+            <Heading
+              size="15px"
+              textAlign="left"
+              textTransform="uppercase"
+              justify="center"
+              width="100%"
+              mt="0px"
+              mb="0px"
+            >
+              Direct access request
+            </Heading>
+
+            <Text size="md" color={commonTextColor} textAlign="left" mt="10px" px="0px">
+              Please enter your information and receive instant access
+            </Text>
+
+            <Formik
+              initialValues={{ email: '', password: '' }}
+              onSubmit={(values, actions) => {
+                setTimeout(() => {
+                  alert(JSON.stringify(values, null, 2));
+                  actions.setSubmitting(false);
+                }, 1000);
+              }}
+            >
+              {(props) => {
+                const { isSubmitting } = props;
+                return (
+                  <Form>
+                    <Box py="0" flexDirection="column" display="flex" alignItems="center">
+                      <Box
+                        color={useColorModeValue('danger', 'red')}
+                        mt="20px"
+                        mb="10px"
+                        // height="20px"
+                      >
+                        {errorMessage}
+                      </Box>
+                      <Field id="field923" name="email" validate={validator}>
+                        {({ field, form }) => (
+                          <FormControl
+                            padding="6px 0"
+                            isInvalid={form.errors.email && form.touched.email}
+                          >
+                            <Input
+                              {...field}
+                              id="email"
+                              placeholder="Email"
+                              style={{
+                                borderRadius: '3px',
+                                backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
+                                transition: 'background 0.2s ease-in-out',
+                              }}
+                            />
+                          </FormControl>
+                        )}
+                      </Field>
+
+                      <Field id="field912" name="password">
+                        {({ field, form }) => (
+                          <FormControl
+                            padding="6px 0"
+                            isInvalid={form.errors.password && form.touched.password}
+                          >
+                            <Input
+                              {...field}
+                              id="password"
+                              placeholder="Password"
+                              type="password"
+                              style={{
+                                borderRadius: '3px',
+                                backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
+                                transition: 'background 0.2s ease-in-out',
+                              }}
+                            />
+                          </FormControl>
+                        )}
+                      </Field>
+                      <Button
+                        marginTop="30px"
+                        borderRadius="3px"
+                        width="100%"
+                        padding="0"
+                        whiteSpace="normal"
+                        isLoading={isSubmitting}
+                        type="submit"
+                        variant="default"
+                        textTransform="uppercase"
+                      >
+                        Get instant access
+                      </Button>
+                    </Box>
+                  </Form>
+                );
+              }}
+            </Formik>
+
+            <SimpleTable
+              difficulty={exercise.difficulty}
+              repository={exercise.url}
+              duration={exercise.duration}
+              videoAvailable={exercise.intro_video_url}
+              technologies={exercise.technologies}
+              liveDemoAvailable={exercise.intro_video_url}
+            />
+          </Box>
+        </Box>
+      </Flex>
     </Box>
   );
+};
+
+ExerciseSlug.propTypes = {
+  exercise: PropTypes.objectOf(PropTypes.any).isRequired,
+  isSubmitting: PropTypes.bool,
+};
+
+ExerciseSlug.defaultProps = {
+  isSubmitting: false,
 };
 
 export default ExerciseSlug;

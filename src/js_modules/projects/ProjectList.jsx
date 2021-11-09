@@ -9,12 +9,16 @@ import Image from '../../common/components/Image';
 import TagCapsule from '../../common/components/TagCapsule';
 import Text from '../../common/components/Text';
 
-const ProjectList = ({ projects, contextFilter }) => {
+const ProjectList = ({
+  projects, contextFilter, projectPath, pathWithDifficulty,
+}) => {
   const arrOfTechs = contextFilter.technologies;
   const { difficulty, videoTutorials } = contextFilter;
   const router = useRouter();
   const defaultImage = '/static/images/code1.png';
   const bgBlur = '/static/images/codeBlur.png';
+
+  const checkIsPathDifficulty = (thisDifficulty) => (pathWithDifficulty ? `/${thisDifficulty}` : '');
 
   const contains = (project, selectedTechs) => {
     const projectTitle = project.title.toLowerCase();
@@ -72,7 +76,7 @@ const ProjectList = ({ projects, contextFilter }) => {
               >
                 {/* CARD IMAGE */}
                 <Link
-                  href={`/interactive-coding-tutorial/${ex.difficulty}/${ex.slug}`}
+                  href={`/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`}
                   display="inline-block"
                   w={{ base: 'auto', md: 'full' }}
                   zIndex={1}
@@ -129,7 +133,7 @@ const ProjectList = ({ projects, contextFilter }) => {
 
                   <Stack align="center" padding="18px 0 0 0">
                     <Link
-                      href={`/interactive-coding-tutorial/${ex.difficulty}/${ex.slug}`}
+                      href={`/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`}
                       display="inline-block"
                       w="full"
                       zIndex={1}
@@ -176,6 +180,12 @@ const ProjectList = ({ projects, contextFilter }) => {
 ProjectList.propTypes = {
   projects: PropTypes.arrayOf(PropTypes.object).isRequired,
   contextFilter: PropTypes.objectOf(PropTypes.any).isRequired,
+  projectPath: PropTypes.string.isRequired,
+  pathWithDifficulty: PropTypes.bool,
+};
+
+ProjectList.defaultProps = {
+  pathWithDifficulty: false,
 };
 
 export default ProjectList;
