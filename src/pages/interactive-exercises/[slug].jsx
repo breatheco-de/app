@@ -10,6 +10,8 @@ import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 import Text from '../../common/components/Text';
 import SimpleTable from '../../js_modules/projects/SimpleTable';
+import TagCapsule from '../../common/components/TagCapsule';
+import Image from '../../common/components/Image';
 
 export const getStaticPaths = async () => {
   const data = await fetch(
@@ -55,8 +57,15 @@ const regex = {
 const ExerciseSlug = ({ exercise }) => {
   console.log('EXERCISE_exercise:', exercise);
   const [errorMessage, setErrorMessage] = useState('');
+  const defaultImage = '/static/images/code1.png';
+  const getImage = exercise.preview !== '' ? exercise.preview : defaultImage;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
+
+  const onImageNotFound = (event) => {
+    event.target.setAttribute('src', defaultImage);
+    event.target.setAttribute('srcset', `${defaultImage} 1x`);
+  };
 
   const validator = (value) => {
     let error;
@@ -86,8 +95,20 @@ const ExerciseSlug = ({ exercise }) => {
         {'< Back to Projects'}
       </Link>
 
-      <Flex height="100%">
+      <Flex height="100%" gridGap="26px">
         <Box flex="1">
+          <TagCapsule
+            variant="rounded"
+            tags={exercise.technologies}
+            fontSize="13px"
+            marginY="8px"
+            style={{
+              padding: '2px 10px',
+              margin: '0',
+            }}
+            gap="10px"
+            paddingX="0"
+          />
           <Heading
             as="h1"
             size="25px"
@@ -98,6 +119,26 @@ const ExerciseSlug = ({ exercise }) => {
           >
             {exercise.title}
           </Heading>
+
+          <Image
+            priority
+            borderRadius="15px"
+            pos="relative"
+            height={{ base: '60px', sm: '90px', md: '380px' }}
+            width={{ base: '60px', sm: '90px', md: '100%' }}
+            maxWidth={{ base: '300px', sm: '230px', md: '100%' }}
+            // NOTE: test performance in production - Blur and animation
+            _groupHover={{
+              _after: {
+                filter: 'blur(50px)',
+              },
+            }}
+            onError={(e) => onImageNotFound(e)}
+            style={{ borderRadius: '15px', overflow: 'hidden' }}
+            objectFit="cover"
+            src={getImage}
+            alt={exercise.title}
+          />
 
           <Link
             href={exercise.url}
