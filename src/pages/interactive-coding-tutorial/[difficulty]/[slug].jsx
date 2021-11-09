@@ -40,6 +40,31 @@ export const getStaticProps = async ({ params, locale }) => {
   };
 };
 
+const TableInfo = ({ project, commonTextColor }) => (
+  <>
+    <Box d="flex" alignItems="baseline" justifyContent="center">
+      <Heading size="l" textAlign="center" justify="center" mt="0px" mb="0px">
+        Goal
+      </Heading>
+    </Box>
+
+    <Box d="flex" alignItems="baseline" justifyContent="center" flexDirection="column">
+      <Text size="md" color={commonTextColor} textAlign="center" my="10px" px="0px">
+        BreatheCode Coding Projects tutorials and exercises for people learning to code or improving
+        their coding skills
+      </Text>
+      <SimpleTable
+        difficulty={project.difficulty}
+        repository={project.url}
+        duration={project.duration}
+        videoAvailable={project.intro_video_url}
+        technologies={project.technologies}
+        liveDemoAvailable={project.intro_video_url}
+      />
+    </Box>
+  </>
+);
+
 const ProjectSlug = ({ project }) => {
   console.log('PROJECT_DATA:', project);
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
@@ -62,7 +87,7 @@ const ProjectSlug = ({ project }) => {
         {'< Back to Projects'}
       </Link>
 
-      <Flex height="100%">
+      <Flex height="100%" flexDirection={{ base: 'column', md: 'row' }}>
         <Box flex="1">
           <Heading
             as="h1"
@@ -74,7 +99,30 @@ const ProjectSlug = ({ project }) => {
           >
             {project.title}
           </Heading>
+          <Box
+            display={{ base: 'flex', md: 'none' }}
+            flexDirection="column"
+            backgroundColor={useColorModeValue('white', 'featuredDark')}
+            margin="30px 0"
+            width={{ base: '100%', md: '350px' }}
+            minWidth={{ base: '100%', md: '250px' }}
+            height="auto"
+            borderWidth="0px"
+            borderRadius="17px"
+            overflow="hidden"
+            border={1}
+            borderStyle="solid"
+            borderColor={commonBorderColor}
+          >
+            <Box d="flex" justifyContent="center">
+              <Icon icon="sideSupport" width="300px" height="70px" />
+            </Box>
+            <Box px="22px" pb="30px" pt="20px">
+              <TableInfo project={project} commonTextColor={commonTextColor} />
+            </Box>
+          </Box>
 
+          {/* NOTE: Markdown here */}
           <Link
             href={project.url}
             target="_blank"
@@ -87,9 +135,12 @@ const ProjectSlug = ({ project }) => {
         </Box>
 
         <Box
+          display={{ base: 'none', md: 'flex' }}
+          flexDirection="column"
           backgroundColor={useColorModeValue('white', 'featuredDark')}
-          width="350px"
-          minWidth="250px"
+          margin="30px 0"
+          width={{ base: '100%', md: '350px' }}
+          minWidth={{ base: '100%', md: '250px' }}
           height="auto"
           borderWidth="0px"
           borderRadius="17px"
@@ -102,26 +153,7 @@ const ProjectSlug = ({ project }) => {
             <Icon icon="sideSupport" width="300px" height="70px" />
           </Box>
           <Box px="22px" pb="30px" pt="20px">
-            <Box d="flex" alignItems="baseline" justifyContent="center">
-              <Heading size="l" textAlign="center" justify="center" mt="0px" mb="0px">
-                Goal
-              </Heading>
-            </Box>
-
-            <Box d="flex" alignItems="baseline" justifyContent="center" flexDirection="column">
-              <Text size="md" color={commonTextColor} textAlign="center" mt="10px" px="0px">
-                BreatheCode Coding Projects tutorials and exercises for people learning to code or
-                improving their coding skills
-              </Text>
-              <SimpleTable
-                difficulty={project.difficulty}
-                repository={project.url}
-                duration={project.duration}
-                videoAvailable={project.intro_video_url}
-                technologies={project.technologies}
-                liveDemoAvailable={project.intro_video_url}
-              />
-            </Box>
+            <TableInfo project={project} commonTextColor={commonTextColor} />
           </Box>
         </Box>
       </Flex>
@@ -131,6 +163,11 @@ const ProjectSlug = ({ project }) => {
 
 ProjectSlug.propTypes = {
   project: PropTypes.objectOf(PropTypes.any).isRequired,
+};
+
+TableInfo.propTypes = {
+  project: PropTypes.objectOf(PropTypes.any).isRequired,
+  commonTextColor: PropTypes.string.isRequired,
 };
 
 export default ProjectSlug;
