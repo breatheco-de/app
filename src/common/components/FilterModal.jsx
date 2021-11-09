@@ -101,7 +101,7 @@ const FilterModal = ({
                   {technologyTags.map((technology) => {
                     const checkbox = getCheckboxProps({
                       value: technology,
-                      checkedTechnologies:
+                      checked:
                         checkedTechnologies.length === 0
                           ? false
                           : checkedTechnologies.includes(technology),
@@ -120,7 +120,7 @@ const FilterModal = ({
                           <Checkbox
                             {...checkbox}
                             borderColor="gray.default"
-                            isChecked={checkbox.checkedTechnologies}
+                            isChecked={checkbox.checked}
                           />
                           <Text size="l">{technology}</Text>
                         </Flex>

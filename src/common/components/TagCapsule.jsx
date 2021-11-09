@@ -57,7 +57,7 @@ const TagCapsule = ({
 };
 
 TagCapsule.propTypes = {
-  tags: PropTypes.oneOfType([PropTypes.array, PropTypes.string]).isRequired,
+  tags: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
   separator: PropTypes.string,
   background: PropTypes.string,
   variant: PropTypes.string,

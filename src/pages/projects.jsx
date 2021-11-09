@@ -146,7 +146,12 @@ const Projects = ({ projects, technologyTags, dificulties }) => {
           projects with solutions and video tutorials
         </Text>
 
-        <ProjectList projects={projects} contextFilter={filteredBy.projectsOptions} />
+        <ProjectList
+          projects={projects}
+          contextFilter={filteredBy.projectsOptions}
+          projectPath="interactive-coding-tutorial"
+          pathWithDifficulty
+        />
       </Box>
     </Box>
   );

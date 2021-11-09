@@ -151,7 +151,11 @@ function Exercices({ exercises, technologyTags, dificulties }) {
           The following lessons explain different programing concepts and have been published by
           breathe code members, search for a partiulars lesson using the filters bellow
         </Text>
-        <ProjectList projects={exercises} contextFilter={filteredBy.exercisesOptions} />
+        <ProjectList
+          projects={exercises}
+          contextFilter={filteredBy.exercisesOptions}
+          projectPath="interactive-exercises"
+        />
       </Box>
     </Box>
   );
