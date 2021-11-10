@@ -1,7 +1,7 @@
 import { useColorMode } from '@chakra-ui/react';
 
 const arrowDown = ({
-  width, height, style, color,
+  width, height, style, color, className,
 }) => {
   const { colorMode } = useColorMode();
 
@@ -12,7 +12,7 @@ const arrowDown = ({
       style={style}
       viewBox="0 0 24 24"
       focusable="false"
-      className="arrow-down-icon-rounded"
+      className={className || 'arrow-down-icon-rounded'}
     >
       <path
         fill={colorMode === 'light' ? color || '#0097CF' : '#FFFFFF'}

@@ -1,157 +1,161 @@
-import { useTranslation } from 'next-i18next';
+/* eslint-disable no-continue */
+/* eslint-disable no-console */
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import {
-  Box, useColorMode, useColorModeValue, Stack, Grid,
+  Box, useColorModeValue, Button, Flex, useDisclosure,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import Heading from '../../common/components/Heading';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
-import Link from '../../common/components/NextChakraLink';
-import Image from '../../common/components/Image';
-import TagCapsule from '../../common/components/TagCapsule';
+import FilterModal from '../../common/components/FilterModal';
+import TitleContent from '../../js_modules/projects/TitleContent';
+import ProjectList from '../../js_modules/projects/ProjectList';
+import useFilter from '../../common/store/actions/filterAction';
+import Search from '../../js_modules/projects/Search';
 
 export const getStaticProps = async ({ locale }) => {
+  const exercises = []; // filtered exercises after removing repeated
+  let arrExercises = []; // incoming exercises
   const data = await fetch(
     'https://breathecode-test.herokuapp.com/v1/registry/asset?type=exercise&big=true',
     {
       Accept: 'application/json, text/plain, */*',
     },
-  )
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
-  // const data = await res.json();
+  ).then((res) => res.json());
+
+  arrExercises = Object.values(data);
+  if (data.status >= 200 && data.status < 400) {
+    console.log(`Original Exercises: ${arrExercises}`);
+  } else {
+    console.error(`Error fetching exercises with ${data.status}`);
+  }
+
+  let technologyTags = [];
+  let dificulties = [];
+
+  for (let i = 0; i < arrExercises.length; i += 1) {
+    // skip repeated exercises
+    if (exercises.find((p) => arrExercises[i].slug === p.slug)) {
+      continue;
+    }
+    exercises.push(arrExercises[i]);
+
+    if (typeof arrExercises[i].technology === 'string') technologyTags.push(arrExercises[i].technology);
+    if (Array.isArray(arrExercises[i].technologies)) {
+      technologyTags = technologyTags.concat(arrExercises[i].technologies);
+    }
+
+    if (typeof arrExercises[i].difficulty === 'string') {
+      if (arrExercises[i].difficulty === 'beginner' || arrExercises[i].difficulty === 'BEGINNER') arrExercises[i].difficulty = 'easy';
+      dificulties.push(arrExercises[i].difficulty);
+    }
+  }
+
+  technologyTags = [...new Set(technologyTags)];
+  dificulties = [...new Set(dificulties)];
 
   return {
     props: {
       ...(await serverSideTranslations(locale, ['home', 'navbar', 'footer'])),
-      exercises: data,
+      exercises,
+      technologyTags,
+      dificulties,
     },
   };
 };
-function Exercices({ exercises }) {
-  const { t } = useTranslation(['home']);
-  const { colorMode } = useColorMode();
+
+function Exercices({ exercises, technologyTags, dificulties }) {
+  const { filteredBy, setExerciseFilters } = useFilter();
+  const { technologies, difficulty, videoTutorials } = filteredBy.exercisesOptions;
+
+  const currentFilters = technologies.length
+    + (difficulty === undefined || difficulty.length === 0 ? 0 : 1)
+    + videoTutorials;
+  const router = useRouter();
+  let initialSearchValue;
+  useEffect(() => {
+    initialSearchValue = router.query && router.query.search;
+  }, [initialSearchValue]);
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
+      <TitleContent title="Practices" mobile />
+      <Flex
+        justifyContent="space-between"
+        flex="1"
+        gridGap="20px"
+        padding={{ base: '3% 4% 4% 4%', md: '1.5% 10% 1.5% 10%' }}
+        borderBottom={1}
+        borderStyle="solid"
+        borderColor={useColorModeValue('gray.200', 'gray.900')}
+      >
+        <TitleContent title="Practices" mobile={false} />
 
-      <Box flex="1" margin={{ base: '4% 4% 0 4%', md: '4% 10% 0 10%' }}>
-        <Heading
-          as="h1"
-          size="14px"
-          fontWeight="700"
-          color={colorMode === 'light' ? 'gray.600' : 'gray.300'}
-          textTransform="uppercase"
+        <Search />
+
+        <Button
+          variant="outline"
+          backgroundColor={useColorModeValue('', 'gray.800')}
+          _hover={{ backgroundColor: useColorModeValue('', 'gray.700') }}
+          border={currentFilters >= 1 ? 2 : 1}
+          onClick={onOpen}
+          borderStyle="solid"
+          minWidth="125px"
+          borderColor={useColorModeValue(
+            `${currentFilters >= 1 ? 'blue.default' : '#DADADA'}`,
+            'gray.800',
+          )}
         >
-          Exercices
-        </Heading>
-        <Heading as="h2" size={{ base: '50px', md: '70px' }} style={{ wordWrap: 'normal' }}>
-          {t('welcome')}
-        </Heading>
-        <Text size="12px" color={colorMode === 'light' ? 'gray.600' : 'gray.300'}>
-          {t('description')}
-        </Text>
-
-        <Text size="md" display="flex" alignItems="center" gridGap="14px">
-          {t('followUs')}
-          <Icon icon="youtube" width="15px" height="15px" color="black" />
-          <Icon icon="github" width="15px" height="15px" />
-        </Text>
-
-        <Grid
-          gridTemplateColumns={{
-            base: 'repeat(auto-fill, minmax(15rem, 1fr))',
-            md: 'repeat(auto-fill, minmax(20rem, 1fr))',
-          }}
-          gridAutoRows="28rem"
-          gridGap="12px"
-        >
-          {exercises.map((ex) => (
-            <Box
-              py={2}
-              key={`${ex.slug}-${ex.difficulty}`}
-              border="1px solid #DADADA"
-              className="card pointer"
-              bg={useColorModeValue('white', 'gray.800')}
-              boxShadow="2xl"
-              borderRadius="16px"
-              padding="22px"
+          <Icon icon="setting" width="20px" height="20px" style={{ minWidth: '20px' }} />
+          <Text textTransform="uppercase" pl="10px">
+            {currentFilters >= 2 ? 'Filters' : 'Filter'}
+          </Text>
+          {currentFilters >= 1 && (
+            <Text
+              as="span"
+              margin="0 10px"
+              textTransform="uppercase"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              backgroundColor="blue.default"
+              color="white"
+              borderRadius="30px"
+              minWidth="20px"
+              height="20px"
             >
-              <Box display="inline-block" role="group" w="full" zIndex={1} borderRadius="15px">
-                {ex.preview && (
-                  <Link
-                    href={`/interactive-exercises/${ex.slug}`}
-                    display="inline-block"
-                    w="full"
-                    zIndex={1}
-                    borderRadius="15px"
-                  >
-                    <Image
-                      priority
-                      borderRadius="15px"
-                      classNameImg="centerImageForBlur"
-                      pos="relative"
-                      height="230px"
-                      _after={{
-                        transition: 'all .8s ease',
-                        content: '""',
-                        w: 'full',
-                        h: 'full',
-                        pos: 'absolute',
-                        top: 0,
-                        left: 0,
-                        backgroundImage: `url(${ex.preview})`,
-                        filter: 'blur(15px)',
-                        zIndex: 0,
-                      }}
-                      _groupHover={{
-                        _after: {
-                          filter: 'blur(50px)',
-                        },
-                      }}
-                      style={{ borderRadius: '15px', overflow: 'hidden' }}
-                      objectFit="cover"
-                      src={ex.preview}
-                      alt={ex.title}
-                    />
-                  </Link>
-                )}
+              {currentFilters}
+            </Text>
+          )}
+        </Button>
 
-                {ex.technologies.length >= 1 && (
-                  <TagCapsule
-                    tags={ex.technologies}
-                    variant="rounded"
-                    paddingX="0"
-                    key={`${ex.slug}-${ex.difficulty}`}
-                  />
-                )}
+        <FilterModal
+          isModalOpen={isOpen}
+          onClose={onClose}
+          setFilter={setExerciseFilters}
+          technologyTags={technologyTags}
+          dificulties={dificulties}
+        />
+      </Flex>
 
-                <Stack align="center">
-                  <Heading
-                    size="20px"
-                    textAlign="left"
-                    width="100%"
-                    fontFamily="body"
-                    fontWeight={500}
-                  >
-                    {ex.title}
-                  </Heading>
-                  <Text
-                    color="gray.500"
-                    textAlign="left"
-                    width="100%"
-                    size="sm"
-                    textTransform="uppercase"
-                  >
-                    All you&apos;ve learned needs to be put together. Lets make our first entire
-                    professional application using the Agile Development method!
-                  </Text>
-                </Stack>
-              </Box>
-            </Box>
-          ))}
-        </Grid>
+      <Box flex="1" margin={{ base: '0 4% 0 4%', md: '0 10% 0 10%' }}>
+        <Text
+          size="md"
+          display="flex"
+          padding={{ base: '30px 8%', md: '30px 28%' }}
+          textAlign="center"
+        >
+          The following lessons explain different programing concepts and have been published by
+          breathe code members, search for a partiulars lesson using the filters bellow
+        </Text>
+        <ProjectList
+          projects={exercises}
+          contextFilter={filteredBy.exercisesOptions}
+          projectPath="interactive-exercises"
+        />
       </Box>
     </Box>
   );
@@ -159,9 +163,13 @@ function Exercices({ exercises }) {
 
 Exercices.propTypes = {
   exercises: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+  technologyTags: PropTypes.arrayOf(PropTypes.string),
+  dificulties: PropTypes.arrayOf(PropTypes.string),
 };
 Exercices.defaultProps = {
   exercises: [],
+  technologyTags: [],
+  dificulties: [],
 };
 
 export default Exercices;
