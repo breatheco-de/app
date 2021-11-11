@@ -75,7 +75,14 @@ const getToken = () => {
   const query = new URLSearchParams(window.location.search);
   const queryToken = query.get('token');
   if (queryToken) return queryToken;
-  return JSON.parse(localStorage.getItem('accessToken'));
+  /*
+   * NOTE: JSON.parse(localStorage.getItem('accessToken')) not works as expected
+           returns:
+              Uncaught (in promise) SyntaxError: Unexpected token a in JSON at position 1
+              at JSON.parse (<anonymous>)
+  */
+  // localStorage.getItem('accessToken') returns token text instead of an object
+  return localStorage.getItem('accessToken');
 };
 
 export const AuthContext = createContext({
@@ -89,7 +96,7 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     (async () => {
       const token = getToken();
-      if (isValid(token)) {
+      if (await isValid(token)) {
         setSession(token);
         const response = await bc.auth().me();
         console.log('SESSION_RESPONSE:', response);
@@ -142,6 +149,9 @@ const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    router.push({
+      pathname: '/',
+    });
     setSession(null);
     dispatch({ type: 'LOGOUT' });
   };
