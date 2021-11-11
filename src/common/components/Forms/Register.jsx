@@ -1,13 +1,9 @@
 import React from 'react';
 import {
-  Button,
-  FormControl,
-  Stack,
-  FormLabel,
-  Input,
-  FormErrorMessage,
+  Button, FormControl, Stack, FormLabel, Input, FormErrorMessage,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
+import PropTypes from 'prop-types';
 
 function Register() {
   function validateEmail(value) {
@@ -57,7 +53,7 @@ function Register() {
         email: '',
         dateOfBirth: '',
         password: '',
-        repeatPasword: '',
+        repeatPassword: '',
       }}
       onSubmit={(values, actions) => {
         setTimeout(() => {
@@ -71,9 +67,7 @@ function Register() {
           <Stack spacing={6}>
             <Field name="name" validate={(value) => validateName(value)}>
               {({ field, form }) => (
-                <FormControl
-                  isInvalid={form.errors.name && form.touched.name}
-                >
+                <FormControl isInvalid={form.errors.name && form.touched.name}>
                   <FormLabel
                     margin="0px"
                     color="gray.default"
@@ -85,9 +79,9 @@ function Register() {
                   </FormLabel>
                   <Input
                     {...field}
-                    id="name"
+                    id="register-name"
                     type="name"
-                    placeholder="Andrea Castillo"
+                    placeholder="Name"
                     height="50px"
                     borderColor="gray.default"
                     borderRadius="3px"
@@ -99,9 +93,7 @@ function Register() {
 
             <Field name="email" validate={(value) => validateEmail(value)}>
               {({ field, form }) => (
-                <FormControl
-                  isInvalid={form.errors.email && form.touched.email}
-                >
+                <FormControl isInvalid={form.errors.email && form.touched.email}>
                   <FormLabel
                     margin="0px"
                     color="gray.default"
@@ -113,9 +105,9 @@ function Register() {
                   </FormLabel>
                   <Input
                     {...field}
-                    id="email"
+                    id="register-email"
                     type="email"
-                    placeholder="Andrea@4geeks.co"
+                    placeholder="Email"
                     height="50px"
                     borderColor="gray.default"
                     borderRadius="3px"
@@ -126,12 +118,7 @@ function Register() {
             </Field>
 
             <FormControl>
-              <FormLabel
-                margin="0px"
-                color="gray.default"
-                fontSize="sm"
-                float="left"
-              >
+              <FormLabel margin="0px" color="gray.default" fontSize="sm" float="left">
                 Date of Birth
               </FormLabel>
               <Input
@@ -144,9 +131,7 @@ function Register() {
             </FormControl>
             <Field name="password" validate={(value) => validatePassword(value)}>
               {({ field, form }) => (
-                <FormControl
-                  isInvalid={form.errors.password && form.touched.password}
-                >
+                <FormControl isInvalid={form.errors.password && form.touched.password}>
                   <FormLabel
                     margin="0px"
                     color="gray.default"
@@ -158,7 +143,7 @@ function Register() {
                   </FormLabel>
                   <Input
                     {...field}
-                    id="password"
+                    id="register-password"
                     type="password"
                     placeholder="***********"
                     height="50px"
@@ -170,23 +155,24 @@ function Register() {
               )}
             </Field>
 
-            <Field name="repeatPassword" validate={(value) => validateConfirmPassword(value, props.password)}>
+            <Field
+              name="repeatPassword"
+              validate={(value) => validateConfirmPassword(value, props.password)}
+            >
               {({ field, form }) => (
-                <FormControl
-                  isInvalid={form.errors.password && form.touched.password}
-                >
+                <FormControl isInvalid={form.errors.repeatPassword && form.touched.repeatPassword}>
                   <FormLabel
                     margin="0px"
                     color="gray.default"
                     fontSize="sm"
-                    htmlFor="password"
+                    htmlFor="repeatPassword"
                   >
                     Repeat Password
                   </FormLabel>
                   <Input
                     {...field}
-                    id="password_confirm"
-                    type="password"
+                    id="password_repeat"
+                    type="passsword"
                     placeholder="***********"
                     height="50px"
                     borderColor="gray.default"
@@ -211,5 +197,13 @@ function Register() {
     </Formik>
   );
 }
+
+Register.propTypes = {
+  password: PropTypes.string,
+};
+
+Register.defaultProps = {
+  password: '',
+};
 
 export default Register;

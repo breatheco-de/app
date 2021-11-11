@@ -98,7 +98,7 @@ function LogIn() {
                     </FormLabel>
                     <Input
                       {...field}
-                      id="email"
+                      id="login-email"
                       type="email"
                       placeholder="Andrea@4geeks.co"
                       height="50px"
@@ -109,15 +109,6 @@ function LogIn() {
                   </FormControl>
                 )}
               </Field>
-              {/* <FormControl id="password" borderRadius="3px">
-              <Input
-                type="password"
-                placeholder="Password"
-                height="50px"
-                borderColor="gray.default"
-                borderRadius="3px"
-              />
-            </FormControl> */}
 
               <Field name="password">
                 {({ field, form }) => (
@@ -133,7 +124,7 @@ function LogIn() {
                     </FormLabel>
                     <Input
                       {...field}
-                      id="password"
+                      id="login-password"
                       type="password"
                       placeholder="Password"
                       height="50px"
