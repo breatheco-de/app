@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
 import bc from '../services/breathecode';
 import axiosInstance from '../../axios';
 
@@ -83,6 +84,7 @@ export const AuthContext = createContext({
 
 const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const router = useRouter();
 
   useEffect(() => {
     (async () => {
@@ -90,9 +92,10 @@ const AuthProvider = ({ children }) => {
       if (isValid(token)) {
         setSession(token);
         const response = await bc.auth().me();
+        console.log('SESSION_RESPONSE:', response);
         dispatch({
           type: 'INIT',
-          payload: { user: response.data, isAuthenticated: true },
+          payload: { user: response, isAuthenticated: true },
         });
       } else {
         dispatch({
@@ -103,10 +106,16 @@ const AuthProvider = ({ children }) => {
     })();
   }, []);
 
-  const login = async (payload = null) => {
-    if (payload) {
-      const response = await bc.auth().login(payload);
+  const login = async (email, password) => {
+    if (email && password) {
+      const response = await bc.auth().login(email, password);
       if (response.status === 200) {
+        console.log('Successfully logged:', response);
+        router.push({
+          query: {
+            token: response.data.token,
+          },
+        });
         setSession(response.data.token || response.token);
         dispatch({
           type: 'LOGIN',
@@ -141,6 +150,7 @@ const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         ...state,
+        method: 'Bearer',
         login,
         logout,
         register,
