@@ -4,23 +4,22 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Heading from '../common/components/Heading';
 import Link from '../common/components/NextChakraLink';
 import getMarkDownContent from '../common/components/MarkDownParser/markdown';
-import renderMarkdown from '../common/components/MarkDownParser/markdownToHtml';
+import MarkDownParser from '../common/components/MarkDownParser';
 
 export const getStaticProps = async ({ locale }) => {
   const results = await fetch(
-    'https://raw.githubusercontent.com/breatheco-de/content/master/src/content/lesson/intro-to-4geeks.es.md',
+    'https://raw.githubusercontent.com/breatheco-de/exercise-instagram-feed/master/README.md',
   )
     .then((res) => res.text())
     .catch((err) => console.error(err));
   const markdownContent = getMarkDownContent(results);
-  const html = await renderMarkdown(markdownContent.content);
-  // console.log(html, '###########');
   return {
+    // props: { data:..., slug:..., more... },
     // props: { data:..., slug:..., more... },
     props: {
       fallback: false,
       ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
-      data: html,
+      data: markdownContent.content,
     },
   };
 };
@@ -52,7 +51,7 @@ const AboutUs = ({ data }) => {
         >
           About Us - Markdown
         </Heading>
-        <main dangerouslySetInnerHTML={{ __html: data }} />
+        <MarkDownParser content={data} />
       </Box>
     </Box>
   );
