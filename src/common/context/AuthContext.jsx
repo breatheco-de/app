@@ -1,6 +1,5 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
 import bc from '../services/breathecode';
 import axiosInstance from '../../axios';
 
@@ -80,13 +79,6 @@ const getToken = () => {
   const query = new URLSearchParams(window.location.search);
   const queryToken = query.get('token');
   if (queryToken) return queryToken;
-  /*
-   * NOTE: JSON.parse(localStorage.getItem('accessToken')) not works as expected
-           returns:
-              Uncaught (in promise) SyntaxError: Unexpected token a in JSON at position 1
-              at JSON.parse (<anonymous>)
-  */
-  // localStorage.getItem('accessToken') returns token text instead of an object
   return localStorage.getItem('accessToken');
 };
 
@@ -96,7 +88,6 @@ export const AuthContext = createContext({
 
 const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const router = useRouter();
 
   useEffect(() => {
     (async () => {
@@ -104,10 +95,9 @@ const AuthProvider = ({ children }) => {
       if (await isValid(token)) {
         setSession(token);
         const response = await bc.auth().me();
-        console.log('SESSION_RESPONSE:', response);
         dispatch({
           type: 'INIT',
-          payload: { user: response, isAuthenticated: true },
+          payload: { user: response.data, isAuthenticated: true },
         });
       } else {
         setSession(null);
@@ -119,45 +109,52 @@ const AuthProvider = ({ children }) => {
     })();
   }, []);
 
-  const login = async (email, password) => {
-    if (email && password) {
-      const response = await bc.auth().login(email, password);
-      if (response.status === 200) {
-        console.log('Successfully logged:', response);
-        router.push({
-          query: {
-            token: response.data.token,
-          },
-        });
-        setSession(response.data.token || response.token);
-        dispatch({
-          type: 'LOGIN',
-          payload: response.data,
-        });
-      }
+  const login = async (payload = null) => {
+    try {
+      if (payload) {
+        const response = await bc.auth().login(payload);
+        if (response.status === 200) {
+          setSession(response.data.token || response.token);
+          dispatch({
+            type: 'LOGIN',
+            payload: response.data,
+          });
+        }
+        return response;
+      } throw Error('Empty values');
+    } catch (e) {
+      const message = e.details || e.detail || Array.isArray(e.non_field_errors)
+        ? e.non_field_errors[0]
+        : 'Unable to login';
+      throw Error(message);
     }
   };
 
   const register = async (payload = null) => {
-    if (payload) {
-      const response = await bc.auth().register(payload);
-      if (response.status === 200) {
-        setSession(response.data.token || response.token);
-        dispatch({
-          type: 'REGISTER',
-          payload: {
-            isAuthenticated: true,
-            user: response.data,
-          },
-        });
-      }
+    try {
+      if (payload) {
+        const response = await bc.auth().register(payload);
+        if (response.status === 200) {
+          setSession(response.data.token || response.token);
+          dispatch({
+            type: 'REGISTER',
+            payload: {
+              isAuthenticated: true,
+              user: response.data,
+            },
+          });
+        }
+        return response;
+      } throw Error('Empty values');
+    } catch (e) {
+      const message = e.details || e.detail || Array.isArray(e.non_field_errors)
+        ? e.non_field_errors[0]
+        : 'Unable to register';
+      throw Error(message);
     }
   };
 
   const logout = () => {
-    router.push({
-      pathname: '/',
-    });
     setSession(null);
     dispatch({ type: 'LOGOUT' });
   };

@@ -17,7 +17,6 @@ import '@fontsource/lato/700.css';
 import '@fontsource/lato/900.css';
 
 function LearnApp({ Component, pageProps }) {
-  console.log('PageProps:', pageProps);
   return (
     <>
       <Helmet {...pageProps} />

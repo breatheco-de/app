@@ -17,8 +17,9 @@ import CallToAction from '../common/components/CallToAction';
 import ProgressBar from '../common/components/ProgressBar';
 import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
+import asPrivate from '../common/context/PrivateRouteWrapper';
 
-const Dashboard = () => {
+const dashboard = () => {
   const { updateModuleStatus } = useModuleMap();
   const handleModuleStatus = (event, module) => {
     event.stopPropagation();
@@ -119,4 +120,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default asPrivate(dashboard);

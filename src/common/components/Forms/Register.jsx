@@ -1,51 +1,22 @@
 import React from 'react';
 import {
-  Button, FormControl, Stack, FormLabel, Input, FormErrorMessage,
+  Button,
+  FormControl,
+  Stack,
+  FormLabel,
+  Input,
+  FormErrorMessage,
+  useToast,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
-import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
+import validationSchema from './validationSchemas';
+import useAuth from '../../hooks/useAuth';
 
 function Register() {
-  function validateEmail(value) {
-    let error;
-    if (!value) {
-      error = 'Required';
-    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
-      error = 'Invalid email address';
-    }
-    return error;
-  }
-
-  function validateName(value) {
-    let error;
-    if (!value) {
-      error = 'Required';
-    }
-    // else if () {
-    //   error = "Invalid Name";
-    // }
-    return error;
-  }
-
-  function validatePassword(value) {
-    let error;
-    if (!value) {
-      error = 'Required';
-    }
-    // else if () {
-    //   error = "Invalid Password";
-    // }
-    return error;
-  }
-
-  function validateConfirmPassword(password, repeatPassword) {
-    let error = 'Password Required';
-    if (repeatPassword !== password) {
-      error = 'Password not matched';
-    }
-    return error;
-  }
-
+  const { register } = useAuth();
+  const router = useRouter();
+  const toast = useToast();
   return (
     <Formik
       initialValues={{
@@ -53,19 +24,38 @@ function Register() {
         email: '',
         dateOfBirth: '',
         password: '',
-        repeatPassword: '',
+        passwordConfirmation: '',
       }}
       onSubmit={(values, actions) => {
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
+        register(values).then((data) => {
+          if (data.status === 200) {
+            actions.setSubmitting(false);
+            toast({
+              title: 'Welcome',
+              description: 'Find everything in the dashboard',
+              status: 'success',
+              duration: 9000,
+              isClosable: true,
+            });
+            router.push('/dashboard');
+          }
+        }).catch((error) => {
           actions.setSubmitting(false);
-        }, 1000);
+          toast({
+            title: 'There was an error',
+            description: error.message,
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          });
+        });
       }}
+      validationSchema={validationSchema.register}
     >
-      {(props) => (
+      {({ isSubmitting }) => (
         <Form>
           <Stack spacing={6}>
-            <Field name="name" validate={(value) => validateName(value)}>
+            <Field name="name">
               {({ field, form }) => (
                 <FormControl isInvalid={form.errors.name && form.touched.name}>
                   <FormLabel
@@ -79,7 +69,6 @@ function Register() {
                   </FormLabel>
                   <Input
                     {...field}
-                    id="register-name"
                     type="name"
                     placeholder="Name"
                     height="50px"
@@ -91,7 +80,7 @@ function Register() {
               )}
             </Field>
 
-            <Field name="email" validate={(value) => validateEmail(value)}>
+            <Field name="email">
               {({ field, form }) => (
                 <FormControl isInvalid={form.errors.email && form.touched.email}>
                   <FormLabel
@@ -105,14 +94,13 @@ function Register() {
                   </FormLabel>
                   <Input
                     {...field}
-                    id="register-email"
                     type="email"
                     placeholder="Email"
                     height="50px"
                     borderColor="gray.default"
                     borderRadius="3px"
                   />
-                  <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                  <FormErrorMessage>{form.errors.email}</FormErrorMessage>
                 </FormControl>
               )}
             </Field>
@@ -129,7 +117,7 @@ function Register() {
                 borderRadius="3px"
               />
             </FormControl>
-            <Field name="password" validate={(value) => validatePassword(value)}>
+            <Field name="password">
               {({ field, form }) => (
                 <FormControl isInvalid={form.errors.password && form.touched.password}>
                   <FormLabel
@@ -143,24 +131,21 @@ function Register() {
                   </FormLabel>
                   <Input
                     {...field}
-                    id="register-password"
                     type="password"
                     placeholder="***********"
                     height="50px"
                     borderColor="gray.default"
                     borderRadius="3px"
                   />
-                  <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                  <FormErrorMessage>{form.errors.password}</FormErrorMessage>
                 </FormControl>
               )}
             </Field>
-
-            <Field
-              name="repeatPassword"
-              validate={(value) => validateConfirmPassword(value, props.password)}
-            >
+            <Field name="passwordConfirmation">
               {({ field, form }) => (
-                <FormControl isInvalid={form.errors.repeatPassword && form.touched.repeatPassword}>
+                <FormControl
+                  isInvalid={form.errors.passwordConfirmation && form.touched.passwordConfirmation}
+                >
                   <FormLabel
                     margin="0px"
                     color="gray.default"
@@ -171,14 +156,13 @@ function Register() {
                   </FormLabel>
                   <Input
                     {...field}
-                    id="password_repeat"
-                    type="passsword"
+                    type="password"
                     placeholder="***********"
                     height="50px"
                     borderColor="gray.default"
                     borderRadius="3px"
                   />
-                  <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                  <FormErrorMessage>{form.errors.passwordConfirmation}</FormErrorMessage>
                 </FormControl>
               )}
             </Field>
@@ -186,7 +170,7 @@ function Register() {
             <Button
               variant="default"
               fontSize="l"
-              // isLoading={props.isSubmitting}
+              isLoading={isSubmitting}
               type="submit"
             >
               REGISTER
@@ -197,13 +181,5 @@ function Register() {
     </Formik>
   );
 }
-
-Register.propTypes = {
-  password: PropTypes.string,
-};
-
-Register.defaultProps = {
-  password: '',
-};
 
 export default Register;
