@@ -74,7 +74,7 @@ const getToken = () => {
   const query = new URLSearchParams(window.location.search);
   const queryToken = query.get('token');
   if (queryToken) return queryToken;
-  return JSON.parse(localStorage.getItem('accessToken'));
+  return localStorage.getItem('accessToken');
 };
 
 export const AuthContext = createContext({
@@ -157,6 +157,7 @@ const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         ...state,
+        method: 'Bearer',
         login,
         logout,
         register,

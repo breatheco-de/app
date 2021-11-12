@@ -1,20 +1,24 @@
 import {
-  Flex,
-  Stack,
-  Box,
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
-  Image,
+  Flex, Stack, Box, Tabs, TabList, Tab, TabPanels, TabPanel, Image,
 } from '@chakra-ui/react';
 import I from 'next/image';
+import { useSelector } from 'react-redux';
 import logo from '../../public/static/images/bc_logo.png';
 import Login from '../common/components/Forms/LogIn';
 import Register from '../common/components/Forms/Register';
+// import useAuth from '../common/hooks/useAuth';
 
 function login() {
+  const state = useSelector((reduxState) => reduxState);
+  console.log('STATE:::', state);
+  // const { me } = useAuth();
+
+  // const user = me();
+  // console.log('USER:::', user);
+
+  // const response2 = await bc.auth().me();
+  // console.log('USER_RESPONSE2:', response2);
+
   return (
     <Stack minH="100vh" direction={{ md: 'row' }}>
       <Flex p={8} flex={1} align="center" justify="center">
