@@ -57,9 +57,7 @@ function Register() {
           <Stack spacing={6}>
             <Field name="name">
               {({ field, form }) => (
-                <FormControl
-                  isInvalid={form.errors.name && form.touched.name}
-                >
+                <FormControl isInvalid={form.errors.name && form.touched.name}>
                   <FormLabel
                     margin="0px"
                     color="gray.default"
@@ -72,7 +70,7 @@ function Register() {
                   <Input
                     {...field}
                     type="name"
-                    placeholder="Andrea Castillo"
+                    placeholder="Name"
                     height="50px"
                     borderColor="gray.default"
                     borderRadius="3px"
@@ -84,9 +82,7 @@ function Register() {
 
             <Field name="email">
               {({ field, form }) => (
-                <FormControl
-                  isInvalid={form.errors.email && form.touched.email}
-                >
+                <FormControl isInvalid={form.errors.email && form.touched.email}>
                   <FormLabel
                     margin="0px"
                     color="gray.default"
@@ -99,7 +95,7 @@ function Register() {
                   <Input
                     {...field}
                     type="email"
-                    placeholder="Andrea@4geeks.co"
+                    placeholder="Email"
                     height="50px"
                     borderColor="gray.default"
                     borderRadius="3px"
@@ -110,12 +106,7 @@ function Register() {
             </Field>
 
             <FormControl>
-              <FormLabel
-                margin="0px"
-                color="gray.default"
-                fontSize="sm"
-                float="left"
-              >
+              <FormLabel margin="0px" color="gray.default" fontSize="sm" float="left">
                 Date of Birth
               </FormLabel>
               <Input
@@ -128,9 +119,7 @@ function Register() {
             </FormControl>
             <Field name="password">
               {({ field, form }) => (
-                <FormControl
-                  isInvalid={form.errors.password && form.touched.password}
-                >
+                <FormControl isInvalid={form.errors.password && form.touched.password}>
                   <FormLabel
                     margin="0px"
                     color="gray.default"
@@ -161,7 +150,7 @@ function Register() {
                     margin="0px"
                     color="gray.default"
                     fontSize="sm"
-                    htmlFor="password"
+                    htmlFor="repeatPassword"
                   >
                     Repeat Password
                   </FormLabel>

@@ -87,7 +87,7 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     (async () => {
       const token = getToken();
-      if (isValid(token)) {
+      if (await isValid(token)) {
         setSession(token);
         const response = await bc.auth().me();
         dispatch({
