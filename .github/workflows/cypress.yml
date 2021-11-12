@@ -12,18 +12,20 @@ jobs:
     runs-on: ubuntu-latest
     env: # environment variable
       EXAMPLE_API: https://my-api-cypress.herokuapp.com/v1
-    # strategy:
-    #   matrix:
-    #     node-version: [14.x]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Running Tests
-        # Install NPM dependencies, cache them correctly
-        uses: cypress-io/github-action@v2.9.7
-        with:
-          build: npm run build
-          start: npm start
-          browser: electron
-          wait-on-timeout: 1000
-          config: baseUrl=http://localhost:3080
+
+    #NOTE: Disabling the test until we can get the private token on github actions on each external PR
+    # # strategy:
+    # #   matrix:
+    # #     node-version: [14.x]
+    # steps:
+    #   - name: Checkout
+    #     uses: actions/checkout@v2
+    #   - name: Running Tests
+    #     # Install NPM dependencies, cache them correctly
+    #     uses: cypress-io/github-action@v2.9.7
+    #     with:
+    #       build: npm run build
+    #       start: npm start
+    #       browser: electron
+    #       wait-on-timeout: 1000
+    #       config: baseUrl=http://localhost:3080
