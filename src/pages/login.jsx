@@ -30,7 +30,7 @@ function login() {
               <Box align="center" textAlign="center" width="100%" fontSize="30px">
                 Welcome
                 {' '}
-                {user.data.first_name}
+                {user.first_name}
               </Box>
 
               <Box
