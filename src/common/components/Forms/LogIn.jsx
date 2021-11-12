@@ -8,35 +8,51 @@ import {
   Input,
   FormErrorMessage,
   FormLabel,
+  useToast,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
+import { useRouter } from 'next/router';
 import Icon from '../Icon/index';
+import validationSchema from './validationSchemas';
+import useAuth from '../../hooks/useAuth';
 
 function LogIn() {
-  function validateEmail(value) {
-    let error;
-    if (!value) {
-      error = 'Required';
-    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
-      error = 'Invalid email address';
-    }
-    return error;
-  }
-
+  const { login } = useAuth();
+  const toast = useToast();
+  const router = useRouter();
   return (
     <Formik
       initialValues={{
         email: '',
         password: '',
       }}
-      onSubmit={({ values, actions }) => {
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
+      onSubmit={(values, actions) => {
+        login(values).then((data) => {
+          if (data.status === 200) {
+            actions.setSubmitting(false);
+            toast({
+              title: 'Welcome',
+              description: 'Find everything in the dashboard',
+              status: 'success',
+              duration: 9000,
+              isClosable: true,
+            });
+            router.push('/dashboard');
+          }
+        }).catch((error) => {
           actions.setSubmitting(false);
-        }, 1000);
+          toast({
+            title: 'There was an error',
+            description: error.message,
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          });
+        });
       }}
+      validationSchema={validationSchema.login}
     >
-      {() => (
+      {({ isSubmitting }) => (
         <Form>
           <Stack spacing={6} justifyContent="space-between">
             <Button cursor="pointer" variant="outline" weight="700">
@@ -60,7 +76,7 @@ function LogIn() {
                 marginBottom="9px"
               />
             </Box>
-            <Field name="email" validate={() => validateEmail()}>
+            <Field name="email">
               {({ field, form }) => (
                 <FormControl
                   isInvalid={form.errors.email && form.touched.email}
@@ -76,30 +92,51 @@ function LogIn() {
                   </FormLabel>
                   <Input
                     {...field}
-                    id="email"
                     type="email"
                     placeholder="Andrea@4geeks.co"
                     height="50px"
                     borderColor="gray.default"
                     borderRadius="3px"
                   />
-                  <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                  <FormErrorMessage>{form.errors.email}</FormErrorMessage>
                 </FormControl>
               )}
             </Field>
-            <FormControl id="password" borderRadius="3px">
-              <Input
-                type="password"
-                placeholder="Password"
-                height="50px"
-                borderColor="gray.default"
-                borderRadius="3px"
-              />
-            </FormControl>
+            <Field name="password">
+              {({ field, form }) => (
+                <FormControl
+                  isInvalid={form.errors.password && form.touched.password}
+                >
+                  <FormLabel
+                    margin="0px"
+                    color="gray.default"
+                    fontSize="sm"
+                    float="left"
+                    htmlFor="password"
+                  >
+                    Password
+                  </FormLabel>
+                  <Input
+                    {...field}
+                    type="password"
+                    placeholder="***********"
+                    height="50px"
+                    borderColor="gray.default"
+                    borderRadius="3px"
+                  />
+                  <FormErrorMessage>{form.errors.password}</FormErrorMessage>
+                </FormControl>
+              )}
+            </Field>
             <Box margin="0px" color="blue.default" fontWeight="700" align="right">
               Reset Password
             </Box>
-            <Button disabled="" variant="default" fontSize="l">
+            <Button
+              variant="default"
+              fontSize="l"
+              isLoading={isSubmitting}
+              type="submit"
+            >
               LOGIN
             </Button>
           </Stack>

@@ -104,31 +104,47 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (payload = null) => {
-    if (payload) {
-      const response = await bc.auth().login(payload);
-      if (response.status === 200) {
-        setSession(response.data.token || response.token);
-        dispatch({
-          type: 'LOGIN',
-          payload: response.data,
-        });
-      }
+    try {
+      if (payload) {
+        const response = await bc.auth().login(payload);
+        if (response.status === 200) {
+          setSession(response.data.token || response.token);
+          dispatch({
+            type: 'LOGIN',
+            payload: response.data,
+          });
+        }
+        return response;
+      } throw Error('Empty values');
+    } catch (e) {
+      const message = e.details || e.detail || Array.isArray(e.non_field_errors)
+        ? e.non_field_errors[0]
+        : 'Unable to login';
+      throw Error(message);
     }
   };
 
   const register = async (payload = null) => {
-    if (payload) {
-      const response = await bc.auth().register(payload);
-      if (response.status === 200) {
-        setSession(response.data.token || response.token);
-        dispatch({
-          type: 'REGISTER',
-          payload: {
-            isAuthenticated: true,
-            user: response.data,
-          },
-        });
-      }
+    try {
+      if (payload) {
+        const response = await bc.auth().register(payload);
+        if (response.status === 200) {
+          setSession(response.data.token || response.token);
+          dispatch({
+            type: 'REGISTER',
+            payload: {
+              isAuthenticated: true,
+              user: response.data,
+            },
+          });
+        }
+        return response;
+      } throw Error('Empty values');
+    } catch (e) {
+      const message = e.details || e.detail || Array.isArray(e.non_field_errors)
+        ? e.non_field_errors[0]
+        : 'Unable to register';
+      throw Error(message);
     }
   };
 

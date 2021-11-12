@@ -65,7 +65,8 @@
     "remark-react": "^9.0.1",
     "remark-toc": "^8.0.1",
     "remark-variables": "^1.4.9",
-    "styled-components": "^5.3.0"
+    "styled-components": "^5.3.0",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@babel/core": "^7.14.8",
