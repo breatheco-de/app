@@ -3,21 +3,12 @@ import { Heading } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
 const sizes = {
-  /*
-    Posible sizes:
-    xxl => 68px
-    xl => 50px
-    l => 40px
-    m => 32px
-    sm => 26px
-    xsm => 22px
-
-    📚 more info here: https://blog.prototypr.io/heading-tags-what-are-they-and-how-to-use-ec7b0973b678
-  */
+  xxl: '68px',
   xl: '50px',
-  l: '22px',
-  m: '15px',
-  sm: '12px',
+  l: '40px',
+  m: '32px',
+  sm: '26px',
+  xsm: '22px',
 };
 
 const ThemeHeading = ({ children, size, ...rest }) => (
@@ -28,8 +19,12 @@ const ThemeHeading = ({ children, size, ...rest }) => (
 );
 
 ThemeHeading.propTypes = {
-  size: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  size: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   children: PropTypes.node.isRequired,
+};
+
+ThemeHeading.defaultProps = {
+  size: 'l',
 };
 
 export default ThemeHeading;
