@@ -66,7 +66,12 @@ const setSession = (token) => {
 
 const isValid = async (token) => {
   if (!token) return false;
-  const response = await bc.auth().isValidToken(token);
+  const response = await bc
+    .auth()
+    .isValidToken(token)
+    .then((res) => res)
+    // remove token from localstorage if expired (it prevents throwing error)
+    .catch(() => setSession(null));
   return response.status === 200;
 };
 
@@ -95,6 +100,7 @@ const AuthProvider = ({ children }) => {
           payload: { user: response.data, isAuthenticated: true },
         });
       } else {
+        setSession(null);
         dispatch({
           type: 'INIT',
           payload: { user: null, isAuthenticated: false },
