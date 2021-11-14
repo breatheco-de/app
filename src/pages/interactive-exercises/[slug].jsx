@@ -1,18 +1,28 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable no-console */
 import {
-  Box, useColorModeValue, Flex, Button, FormControl, Input,
+  Box,
+  useColorModeValue,
+  Flex,
+  Button,
+  FormControl,
+  Input,
+  SkeletonCircle,
+  SkeletonText,
+  useToast,
 } from '@chakra-ui/react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import PropTypes from 'prop-types';
 import { Formik, Form, Field } from 'formik';
 import { useState } from 'react';
+import atob from 'atob';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 import Text from '../../common/components/Text';
 import SimpleTable from '../../js_modules/projects/SimpleTable';
 import TagCapsule from '../../common/components/TagCapsule';
 import Image from '../../common/components/Image';
+import MarkDownParser from '../../common/components/MarkDownParser';
 
 export const getStaticPaths = async () => {
   const data = await fetch(
@@ -20,12 +30,9 @@ export const getStaticPaths = async () => {
   )
     .then((res) => res.json())
     .catch((err) => console.log(err));
-  const paths = data.map((res) => {
-    console.log('RESPONSE_PATH', res.slug);
-    return {
-      params: { slug: res.slug },
-    };
-  });
+  const paths = data.map((res) => ({
+    params: { slug: res.slug },
+  }));
   return {
     fallback: false,
     paths,
@@ -177,12 +184,31 @@ const regex = {
 };
 
 const ExerciseSlug = ({ exercise }) => {
-  console.log('EXERCISE_exercise:', exercise);
   const [errorMessage, setErrorMessage] = useState('');
+  const [notFound, setNotFound] = useState(false);
   const defaultImage = '/static/images/code1.png';
   const getImage = exercise.preview !== '' ? exercise.preview : defaultImage;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
+
+  const toast = useToast();
+
+  const MDecoded = exercise.readme && typeof exercise.readme === 'string' ? atob(exercise.readme) : null;
+
+  if (exercise.readme === '' && notFound === false) {
+    setTimeout(() => {
+      setNotFound(true);
+      toast({
+        title: 'The endpoint could not access the content of this exercise',
+        // description: 'Content not found',
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+    }, 4000);
+  }
+
+  const removeTitleAndImage = (str) => str.replace(new RegExp('(.+)', 'm'), '').replace(new RegExp('<a.*?>+.*>', 'g'), '');
 
   const onImageNotFound = (event) => {
     event.target.setAttribute('src', defaultImage);
@@ -210,11 +236,13 @@ const ExerciseSlug = ({ exercise }) => {
     >
       <Link
         href="/interactive-exercises"
-        color={useColorModeValue('blue.600', 'blue.300')}
+        color={useColorModeValue('blue.default', 'blue.300')}
         display="inline-block"
-        borderRadius="15px"
+        letterSpacing="0.05em"
+        fontWeight="700"
+        paddingBottom="10px"
       >
-        {'< Back to Projects'}
+        {'< Back to Exercises'}
       </Link>
 
       <Flex height="100%" gridGap="26px">
@@ -223,9 +251,10 @@ const ExerciseSlug = ({ exercise }) => {
             variant="rounded"
             tags={exercise.technologies}
             fontSize="13px"
-            marginY="8px"
+            marginY="18px"
+            fontWeight="700"
             style={{
-              padding: '2px 10px',
+              padding: '4px 12px',
               margin: '0',
             }}
             gap="10px"
@@ -288,15 +317,29 @@ const ExerciseSlug = ({ exercise }) => {
             />
           </Box>
 
-          <Link
-            href={exercise.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            size="12px"
-            color={useColorModeValue('blue.600', 'blue.300')}
+          {/* MARKDOWN SIDE */}
+          <Box
+            padding="28px 32px"
+            borderRadius="3px"
+            background={useColorModeValue('featuredLight', 'featuredDark')}
           >
-            {exercise.url}
-          </Link>
+            {MDecoded ? (
+              <MarkDownParser content={removeTitleAndImage(MDecoded)} />
+            ) : (
+              <Box
+                padding="6"
+                display={notFound === false ? 'block' : 'none'}
+                boxShadow="lg"
+                bg="white"
+              >
+                <SkeletonCircle size="10" />
+                <SkeletonText mt="6" noOfLines={2} spacing="4" />
+                <SkeletonText mt="16" noOfLines={10} spacing="4" />
+              </Box>
+            )}
+
+            {notFound && <Text size="l">No content to see here 🙄</Text>}
+          </Box>
         </Box>
 
         <Box
@@ -306,7 +349,7 @@ const ExerciseSlug = ({ exercise }) => {
           transition="background 0.2s ease-in-out"
           width="350px"
           minWidth="250px"
-          height="auto"
+          height="fit-content"
           borderWidth="0px"
           borderRadius="17px"
           overflow="hidden"
