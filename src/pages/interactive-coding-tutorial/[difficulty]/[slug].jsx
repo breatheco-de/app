@@ -1,12 +1,24 @@
 /* eslint-disable no-console */
-import { Box, useColorModeValue, Flex } from '@chakra-ui/react';
+import {
+  Box,
+  useColorModeValue,
+  Flex,
+  SkeletonCircle,
+  SkeletonText,
+  useToast,
+} from '@chakra-ui/react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import Heading from '../../../common/components/Heading';
 import Link from '../../../common/components/NextChakraLink';
 import Text from '../../../common/components/Text';
 import Icon from '../../../common/components/Icon';
 import SimpleTable from '../../../js_modules/projects/SimpleTable';
+import MarkDownParser from '../../../common/components/MarkDownParser';
+import TagCapsule from '../../../common/components/TagCapsule';
+import Image from '../../../common/components/Image';
 
 export const getStaticPaths = async () => {
   const data = await fetch('https://breathecode.herokuapp.com/v1/registry/asset?type=project')
@@ -14,6 +26,7 @@ export const getStaticPaths = async () => {
     .catch((err) => console.log(err));
   const paths = data.map((res) => ({
     params: {
+      lang: 'es' || 'en',
       difficulty: res.difficulty,
       slug: res.slug,
     },
@@ -66,9 +79,54 @@ const TableInfo = ({ project, commonTextColor }) => (
 );
 
 const ProjectSlug = ({ project }) => {
-  console.log('PROJECT_DATA:', project);
+  const [readme, setReadme] = useState('');
+  const [notFound, setNotFound] = useState(false);
+  const defaultImage = '/static/images/code1.png';
+  const getImage = project.preview !== '' ? project.preview : defaultImage;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
+
+  const router = useRouter();
+  const toast = useToast();
+
+  const EventIfNotFound = () => {
+    setNotFound(true);
+    toast({
+      title: 'The endpoint could not access the content of this Project',
+      // description: 'Content not found',
+      status: 'error',
+      duration: 7000,
+      isClosable: true,
+    });
+  };
+
+  useEffect(() => {
+    const language = router.query.lang || router.locale;
+
+    if (project.readme_url !== null) {
+      fetch(project.readme_url)
+        .then((resp) => resp.text())
+        .then((data) => {
+          setReadme({ markdown: data, lang: language });
+          setNotFound(false);
+        })
+        .catch((err) => {
+          console.error('Error loading markdown file from github', err);
+          setTimeout(() => {
+            EventIfNotFound();
+          }, 4000);
+        });
+    } else {
+      setTimeout(() => {
+        EventIfNotFound();
+      }, 4000);
+    }
+  }, []);
+
+  const onImageNotFound = (event) => {
+    event.target.setAttribute('src', defaultImage);
+    event.target.setAttribute('srcset', `${defaultImage} 1x`);
+  };
 
   return (
     <Box
@@ -79,16 +137,31 @@ const ProjectSlug = ({ project }) => {
       margin={{ base: '4% 4% 0 4%', md: '4% 10% 0 10%' }}
     >
       <Link
-        href="/interactive-exercises"
-        color={useColorModeValue('blue.600', 'blue.300')}
+        href="/projects"
+        color={useColorModeValue('blue.default', 'blue.300')}
         display="inline-block"
-        borderRadius="15px"
+        letterSpacing="0.05em"
+        fontWeight="700"
+        paddingBottom="10px"
       >
         {'< Back to Projects'}
       </Link>
 
-      <Flex height="100%" flexDirection={{ base: 'column', md: 'row' }}>
+      <Flex height="100%" gridGap="26px">
         <Box flex="1">
+          <TagCapsule
+            variant="rounded"
+            tags={project.technologies}
+            fontSize="13px"
+            marginY="18px"
+            fontWeight="700"
+            style={{
+              padding: '4px 12px',
+              margin: '0',
+            }}
+            gap="10px"
+            paddingX="0"
+          />
           <Heading
             as="h1"
             size="25px"
@@ -99,6 +172,28 @@ const ProjectSlug = ({ project }) => {
           >
             {project.title}
           </Heading>
+
+          <Image
+            width="100%"
+            height={{ base: '190px', md: '400px' }}
+            margin="30px 0"
+            maxWidth="55rem"
+            maxHeight="500px"
+            minHeight={{ base: 'auto', md: '300px' }}
+            priority
+            borderRadius="15px"
+            pos="relative"
+            _groupHover={{
+              _after: {
+                filter: 'blur(50px)',
+              },
+            }}
+            onError={(e) => onImageNotFound(e)}
+            style={{ borderRadius: '15px', overflow: 'hidden' }}
+            objectFit="cover"
+            src={getImage}
+            alt={project.title}
+          />
           <Box
             display={{ base: 'flex', md: 'none' }}
             flexDirection="column"
@@ -122,16 +217,28 @@ const ProjectSlug = ({ project }) => {
             </Box>
           </Box>
 
-          {/* NOTE: Markdown here */}
-          <Link
-            href={project.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            size="12px"
-            color={useColorModeValue('blue.600', 'blue.300')}
+          {/* MARKDOWN SIDE */}
+          <Box
+            padding="28px 32px"
+            borderRadius="3px"
+            background={useColorModeValue('featuredLight', 'featuredDark')}
           >
-            {project.url}
-          </Link>
+            {readme.markdown ? (
+              <MarkDownParser content={readme.markdown} />
+            ) : (
+              <Box
+                display={notFound === false ? 'block' : 'none'}
+                padding="6"
+                boxShadow="lg"
+                bg="white"
+              >
+                <SkeletonCircle size="10" />
+                <SkeletonText mt="6" noOfLines={2} spacing="4" />
+                <SkeletonText mt="16" noOfLines={10} spacing="4" />
+              </Box>
+            )}
+            {notFound && <Text size="l">No content to see here 🙄</Text>}
+          </Box>
         </Box>
 
         <Box

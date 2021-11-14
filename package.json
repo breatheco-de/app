@@ -39,6 +39,7 @@
     "@fontsource/lato": "^4.5.0",
     "@loadable/component": "^5.15.0",
     "@next/bundle-analyzer": "^11.0.1",
+    "atob": "^2.1.2",
     "axios": "^0.24.0",
     "formik": "^2.2.9",
     "framer-motion": "^4.1.17",
