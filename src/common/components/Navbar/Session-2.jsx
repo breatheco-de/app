@@ -19,72 +19,36 @@ import logo from '../../../../public/static/images/bc_logo.png';
 import DesktopNav from '../../../js_modules/navbar/DesktopNav';
 import MobileNav from '../../../js_modules/navbar/MobileNav';
 
+import useAuth from '../../hooks/useAuth';
+
 const NavbarWithSubNavigation = () => {
   const { isOpen, onToggle } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
   const { t } = useTranslation(['navbar']);
   const commonColors = useColorModeValue('white', 'gray.800');
+  const { user, isAuthenticated } = useAuth();
 
-  const EXTERNAL_ITEMS = [
+  console.log('USER:::', user);
+  console.log('IS_AUTH:::', isAuthenticated);
+
+  const INTERNAL_ITEMS = [
     {
-      label: t('menu.about-us'),
-      href: '/about-us',
+      label: 'Dashboard',
+      href: '/dashboard',
     },
     {
-      label: t('menu.practice'),
-      href: '/interactive-exercises',
+      label: 'Learn',
+      href: '/learn',
     },
     {
-      label: t('menu.read.title'),
-      icon: 'book',
-      description: t('menu.read.description'),
-      asPath: '/lessons', // For colorLink
-      subMenu: [
-        {
-          label: t('menu.read.child-1.label'),
-          // subLabel: t('menu.read.child-1.subLabel'),
-          href: '/lessons?child=1',
-        },
-        {
-          label: t('menu.read.child-2.label'),
-          // subLabel: t('menu.read.child-2.subLabel'),
-          href: '/lessons?child=2',
-        },
-        {
-          label: t('menu.read.child-3.label'),
-          // subLabel: t('menu.read.child-2.subLabel'),
-          href: '/lessons?child=3',
-        },
-      ],
+      label: 'Mentoring',
+      href: '/mentoring',
     },
     {
-      label: t('menu.build'),
-      href: '/projects',
-    },
-    {
-      label: t('menu.bootcamp'),
-      href: 'https://4geeksacademy.com',
+      label: 'Community',
+      href: '/community',
     },
   ];
-
-  // const INTERNAL_ITEMS = [
-  //   {
-  //     label: 'Dashboard',
-  //     href: '/dashboard',
-  //   },
-  //   {
-  //     label: 'Learn',
-  //     href: '/learn',
-  //   },
-  //   {
-  //     label: 'Mentoring',
-  //     href: '/mentoring',
-  //   },
-  //   {
-  //     label: 'Community',
-  //     href: '/community',
-  //   },
-  // ];
 
   // const HAVE_SESSION = typeof window !== 'undefined'
   // && localStorage.getItem('accessToken') !== null;
@@ -145,7 +109,7 @@ const NavbarWithSubNavigation = () => {
           </NextChakraLink>
 
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
-            <DesktopNav NAV_ITEMS={EXTERNAL_ITEMS} />
+            <DesktopNav NAV_ITEMS={INTERNAL_ITEMS} />
           </Flex>
         </Flex>
 
@@ -192,7 +156,7 @@ const NavbarWithSubNavigation = () => {
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
-        <MobileNav NAV_ITEMS={EXTERNAL_ITEMS} />
+        <MobileNav NAV_ITEMS={INTERNAL_ITEMS} />
       </Collapse>
     </Box>
   );
