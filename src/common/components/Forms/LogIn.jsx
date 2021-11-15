@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   FormControl,
@@ -20,6 +20,8 @@ function LogIn() {
   const { login } = useAuth();
   const toast = useToast();
   const router = useRouter();
+  const [curUrl, setUrl] = useState('');
+  useEffect(() => setUrl(typeof window !== 'undefined' ? window.location.href : ''), []);
   return (
     <Formik
       initialValues={{
@@ -32,12 +34,11 @@ function LogIn() {
             actions.setSubmitting(false);
             toast({
               title: 'Welcome',
-              description: 'Find everything in the dashboard',
               status: 'success',
               duration: 9000,
               isClosable: true,
             });
-            router.push('/dashboard');
+            router.push('/choose-program');
           }
         }).catch((error) => {
           actions.setSubmitting(false);
@@ -55,7 +56,7 @@ function LogIn() {
       {({ isSubmitting }) => (
         <Form>
           <Stack spacing={6} justifyContent="space-between">
-            <Button cursor="pointer" variant="outline" weight="700">
+            <Button target="_blank" as="a" href={(typeof window !== 'undefined') && `https://breathecode.herokuapp.com/v1/auth/github?url=${curUrl}`} cursor="pointer" variant="outline" weight="700">
               <Icon icon="github" width="18px" height="18px" />
               <Text fontSize="13px" marginLeft="10px">
                 LOG IN WITH GITHUB
