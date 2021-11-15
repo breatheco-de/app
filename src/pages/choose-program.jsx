@@ -28,7 +28,7 @@ function Choose() {
           <Box color="gray.700" marginLeft="20px" fontWeight="800" margin="0px" marginTop="15px">
             PRE WORK
           </Box>
-          <Box color="gray.700" sans-serif marginLeft="20px" marginRight="30px" margin="0px">
+          <Box color="gray.700" marginLeft="20px" marginRight="30px" margin="0px">
             Cohort: Miami Prework
           </Box>
         </Box>
