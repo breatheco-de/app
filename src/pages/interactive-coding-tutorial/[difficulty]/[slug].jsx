@@ -21,12 +21,28 @@ import TagCapsule from '../../../common/components/TagCapsule';
 import Image from '../../../common/components/Image';
 
 export const getStaticPaths = async () => {
+  let projects = [];
   const data = await fetch('https://breathecode.herokuapp.com/v1/registry/asset?type=project')
     .then((res) => res.json())
     .catch((err) => console.log(err));
-  const paths = data.map((res) => ({
+
+  projects = Object.values(data);
+  if (data.status >= 200 && data.status < 400) {
+    console.log(`Original projects: ${projects}`);
+  } else {
+    console.error(`Error fetching projects with ${data.status}`);
+  }
+
+  for (let i = 0; i < projects.length; i += 1) {
+    if (typeof projects[i].difficulty === 'string') {
+      if (projects[i].difficulty === 'junior') projects[i].difficulty = 'easy';
+      else if (projects[i].difficulty === 'semi-senior') projects[i].difficulty = 'intermediate';
+      else if (projects[i].difficulty === 'senior') projects[i].difficulty = 'hard';
+    }
+  }
+
+  const paths = projects.map((res) => ({
     params: {
-      lang: 'es' || 'en',
       difficulty: res.difficulty,
       slug: res.slug,
     },
