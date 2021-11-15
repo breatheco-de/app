@@ -3,7 +3,16 @@ import PropTypes from 'prop-types';
 import Text from './Text';
 
 const TagCapsule = ({
-  tags, separator, background, variant, paddingX, marginY, gap, style, fontSize,
+  tags,
+  separator,
+  background,
+  variant,
+  paddingX,
+  marginY,
+  gap,
+  style,
+  fontSize,
+  fontWeight,
 }) => {
   const { colorMode } = useColorMode();
 
@@ -40,6 +49,7 @@ const TagCapsule = ({
             letterSpacing="0.05em"
             textAlign="center"
             size={fontSize}
+            fontWeight={fontWeight}
             color="black"
             textTransform="uppercase"
           >
@@ -66,6 +76,7 @@ TagCapsule.propTypes = {
   marginY: PropTypes.string,
   gap: PropTypes.string,
   style: PropTypes.shape({}),
+  fontWeight: PropTypes.string,
 };
 TagCapsule.defaultProps = {
   separator: '/',
@@ -74,6 +85,7 @@ TagCapsule.defaultProps = {
   variant: 'slash',
   paddingX: '20px',
   marginY: '18px',
+  fontWeight: '500',
   gap: '0',
   style: {
     margin: '0',

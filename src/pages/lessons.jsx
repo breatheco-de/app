@@ -60,14 +60,16 @@ const Lessons = ({ data }) => {
 
         <Search />
 
-        <Box width="0" height="0" />
+        <Box width="0" height="0" display={{ base: 'none', md: 'block' }} />
       </Flex>
       <Flex
         flex="1"
         flexDirection="column"
         justifyContent="center"
         background="yellow.light"
-        height="220px"
+        height="auto"
+        padding="20px 0"
+        minHeight="220px"
         gridGap="10px"
       >
         <Text
@@ -102,6 +104,7 @@ const Lessons = ({ data }) => {
               padding="18px 0"
               borderBottom={1}
               borderStyle="solid"
+              flexDirection={{ base: 'column', md: 'row' }}
               borderColor={useColorModeValue('gray.200', 'gray.900')}
             >
               <Heading as="h2" fontWeight="700" size="xsm">
@@ -112,8 +115,8 @@ const Lessons = ({ data }) => {
                 size="l"
                 letterSpacing="0.05em"
                 fontWeight="400"
-                textAlign="center"
-                color="gray.dark"
+                textAlign={{ base: 'left', md: 'center' }}
+                color="gray.default"
                 textTransform="uppercase"
               >
                 {element.lessons.length}
@@ -133,7 +136,7 @@ const Lessons = ({ data }) => {
             {element.lessons.length >= 1 && (
             <Grid
               background="featuredLight"
-              gridTemplateColumns="repeat(auto-fill, minmax(20rem, 1fr))"
+              gridTemplateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
               padding="22px 30px"
               borderRadius="18px"
             >
