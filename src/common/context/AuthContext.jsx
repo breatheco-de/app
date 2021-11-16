@@ -92,8 +92,8 @@ export const AuthContext = createContext({
 });
 
 const AuthProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
   const router = useRouter();
+  const [state, dispatch] = useReducer(reducer, initialState);
   useEffect(() => {
     (async () => {
       const token = getToken();
@@ -127,7 +127,8 @@ const AuthProvider = ({ children }) => {
           });
         }
         return response;
-      } throw Error('Empty values');
+      }
+      throw Error('Empty values');
     } catch (e) {
       const message = e.details || e.detail || Array.isArray(e.non_field_errors)
         ? e.non_field_errors[0]
@@ -151,7 +152,8 @@ const AuthProvider = ({ children }) => {
           });
         }
         return response;
-      } throw Error('Empty values');
+      }
+      throw Error('Empty values');
     } catch (e) {
       const message = e.details || e.detail || Array.isArray(e.non_field_errors)
         ? e.non_field_errors[0]
@@ -169,6 +171,7 @@ const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setSession(null);
+    router.push('/login');
     dispatch({ type: 'LOGOUT' });
   };
 

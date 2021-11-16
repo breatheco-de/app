@@ -3,6 +3,8 @@ import {
 } from '@chakra-ui/react';
 import I from 'next/image';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 import logo from '../../public/static/images/bc_logo.png';
 import Login from '../common/components/Forms/LogIn';
 import Register from '../common/components/Forms/Register';
@@ -16,7 +18,14 @@ export const getStaticProps = async ({ locale }) => ({
 });
 
 function login() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user !== null && user !== undefined) {
+      router.push('/choose-program');
+    }
+  });
 
   return (
     <Stack minH="100vh" direction={{ md: 'row' }}>
@@ -25,26 +34,6 @@ function login() {
           <Box align="center" justify="center">
             <I src={logo} height="67px" width="67px" />
           </Box>
-          {user !== null && user !== undefined && (
-            <>
-              <Box align="center" textAlign="center" width="100%" fontSize="30px">
-                Welcome
-                {' '}
-                {user.first_name}
-              </Box>
-
-              <Box
-                as="button"
-                onClick={logout}
-                align="center"
-                textAlign="center"
-                width="100%"
-                fontSize="30px"
-              >
-                Logout
-              </Box>
-            </>
-          )}
           <Stack spacing={6}>
             <Tabs isFitted variant="enclosed">
               <Stack spacing={8}>

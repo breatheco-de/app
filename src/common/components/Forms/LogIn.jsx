@@ -29,27 +29,30 @@ function LogIn() {
         password: '',
       }}
       onSubmit={(values, actions) => {
-        login(values).then((data) => {
-          if (data.status === 200) {
+        login(values)
+          .then((data) => {
+            if (data.status === 200) {
+              actions.setSubmitting(false);
+              toast({
+                title: 'Welcome to breathecode',
+                description: 'Select a program',
+                status: 'success',
+                duration: 9000,
+                isClosable: true,
+              });
+              router.push('/choose-program');
+            }
+          })
+          .catch((error) => {
             actions.setSubmitting(false);
             toast({
-              title: 'Welcome',
-              status: 'success',
+              title: 'There was an error',
+              description: error.message,
+              status: 'error',
               duration: 9000,
               isClosable: true,
             });
-            router.push('/choose-program');
-          }
-        }).catch((error) => {
-          actions.setSubmitting(false);
-          toast({
-            title: 'There was an error',
-            description: error.message,
-            status: 'error',
-            duration: 9000,
-            isClosable: true,
           });
-        });
       }}
       validationSchema={validationSchema.login}
     >
@@ -79,9 +82,7 @@ function LogIn() {
             </Box>
             <Field name="email">
               {({ field, form }) => (
-                <FormControl
-                  isInvalid={form.errors.email && form.touched.email}
-                >
+                <FormControl isInvalid={form.errors.email && form.touched.email}>
                   <FormLabel
                     margin="0px"
                     color="gray.default"
@@ -94,7 +95,7 @@ function LogIn() {
                   <Input
                     {...field}
                     type="email"
-                    placeholder="Andrea@4geeks.co"
+                    placeholder="email@example.co"
                     height="50px"
                     borderColor="gray.default"
                     borderRadius="3px"
@@ -105,9 +106,7 @@ function LogIn() {
             </Field>
             <Field name="password">
               {({ field, form }) => (
-                <FormControl
-                  isInvalid={form.errors.password && form.touched.password}
-                >
+                <FormControl isInvalid={form.errors.password && form.touched.password}>
                   <FormLabel
                     margin="0px"
                     color="gray.default"
@@ -132,12 +131,7 @@ function LogIn() {
             <Box margin="0px" color="blue.default" fontWeight="700" align="right">
               Reset Password
             </Box>
-            <Button
-              variant="default"
-              fontSize="l"
-              isLoading={isSubmitting}
-              type="submit"
-            >
+            <Button variant="default" fontSize="l" isLoading={isSubmitting} type="submit">
               LOGIN
             </Button>
           </Stack>
