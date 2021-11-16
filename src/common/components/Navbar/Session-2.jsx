@@ -2,15 +2,19 @@ import {
   Box,
   Flex,
   IconButton,
-  Button,
+  Avatar,
   Stack,
   Collapse,
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
   useColorMode,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  Button,
 } from '@chakra-ui/react';
-import { useTranslation } from 'next-i18next';
+// import { useTranslation } from 'next-i18next';
 // import { useRouter } from 'next/router';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
@@ -18,18 +22,18 @@ import Image from '../Image';
 import logo from '../../../../public/static/images/bc_logo.png';
 import DesktopNav from '../../../js_modules/navbar/DesktopNav';
 import MobileNav from '../../../js_modules/navbar/MobileNav';
+import Heading from '../Heading';
 
 import useAuth from '../../hooks/useAuth';
 
 const NavbarWithSubNavigation = () => {
   const { isOpen, onToggle } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
-  const { t } = useTranslation(['navbar']);
   const commonColors = useColorModeValue('white', 'gray.800');
-  const { user, isAuthenticated } = useAuth();
+  const popoverContentBgColor = useColorModeValue('white', 'gray.800');
+  const { user, logout } = useAuth();
 
   console.log('USER:::', user);
-  console.log('IS_AUTH:::', isAuthenticated);
 
   const INTERNAL_ITEMS = [
     {
@@ -49,14 +53,6 @@ const NavbarWithSubNavigation = () => {
       href: '/community',
     },
   ];
-
-  // const HAVE_SESSION = typeof window !== 'undefined'
-  // && localStorage.getItem('accessToken') !== null;
-
-  // const isWithSession = () => {
-  //   if (HAVE_SESSION) return true;
-  //   return false;
-  // };
 
   return (
     <Box>
@@ -132,26 +128,52 @@ const NavbarWithSubNavigation = () => {
               )
             }
           />
-          <NextChakraLink
-            href="/login"
-            fontWeight="700"
-            fontSize="13px"
-            lineHeight="22px"
-            _hover={{
-              textDecoration: 'none',
-            }}
-            letterSpacing="0.05em"
-          >
-            <Button
-              display={useBreakpointValue({ base: 'flex', md: 'flex' })}
-              width="100px"
-              fontWeight={700}
-              lineHeight="0.05em"
-              variant="default"
+
+          <Popover id="Avatar-Hover" trigger="hover" placement="bottom-start">
+            <PopoverTrigger>
+              <Avatar
+                name="example"
+                width="30px"
+                marginY="auto"
+                marginRight="5px"
+                height="30px"
+                src="https://storage.googleapis.com/media-breathecode/639857ed0ceb0a5e5e0429e16f7e3a84365270a0977fb94727cc3b6450d1ea9a"
+              />
+            </PopoverTrigger>
+
+            <PopoverContent
+              border={0}
+              boxShadow="xl"
+              bg={popoverContentBgColor}
+              p={4}
+              rounded="md"
+              minW="md"
             >
-              {t('login')}
-            </Button>
-          </NextChakraLink>
+              <Stack gridGap="10px" pb="15px">
+                <Flex alignItems="center" gridGap="6px">
+                  <Box as="span" fontSize="18px" lineHeight="18px">
+                    Welcome
+                  </Box>
+                  <Heading as="p" size="18px">{`${user?.first_name} ${user?.last_name}`}</Heading>
+                </Flex>
+
+                <Flex alignItems="center" gridGap="6px">
+                  <Box as="span" fontSize="18px" lineHeight="18px">
+                    Current Role:
+                  </Box>
+                  <Heading as="p" size="18px">{`${user?.roles[0].role}`}</Heading>
+                </Flex>
+              </Stack>
+              <Flex padding="20px 0" alignItems="center">
+                <Button gridGap="10px" onClick={logout} width="100%" py="25px">
+                  <Box as="span" fontSize="15px">
+                    Logout
+                  </Box>
+                  <Icon icon="logout" width="20px" height="20px" />
+                </Button>
+              </Flex>
+            </PopoverContent>
+          </Popover>
         </Stack>
       </Flex>
 

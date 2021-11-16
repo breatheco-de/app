@@ -67,33 +67,6 @@ const NavbarWithSubNavigation = () => {
     },
   ];
 
-  // const INTERNAL_ITEMS = [
-  //   {
-  //     label: 'Dashboard',
-  //     href: '/dashboard',
-  //   },
-  //   {
-  //     label: 'Learn',
-  //     href: '/learn',
-  //   },
-  //   {
-  //     label: 'Mentoring',
-  //     href: '/mentoring',
-  //   },
-  //   {
-  //     label: 'Community',
-  //     href: '/community',
-  //   },
-  // ];
-
-  // const HAVE_SESSION = typeof window !== 'undefined'
-  // && localStorage.getItem('accessToken') !== null;
-
-  // const isWithSession = () => {
-  //   if (HAVE_SESSION) return true;
-  //   return false;
-  // };
-
   return (
     <Box>
       <Flex
