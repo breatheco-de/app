@@ -10,7 +10,6 @@ function Choose({ chooseList, handleChoose }) {
   const { colorMode } = useColorMode();
   const router = useRouter();
 
-  console.log('CHOOSE-LIST', chooseList);
   return (
     <>
       {chooseList.map((item) => (

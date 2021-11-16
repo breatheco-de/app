@@ -51,7 +51,12 @@ const NavbarWithSubNavigation = () => {
     return '';
   };
 
-  console.log('USER:::', user);
+  const getName = () => {
+    if (user && user?.first_name) {
+      return `${user?.first_name} ${user?.last_name}`;
+    }
+    return user?.github.name;
+  };
 
   const INTERNAL_ITEMS = [
     {
@@ -149,11 +154,9 @@ const NavbarWithSubNavigation = () => {
 
           <Popover
             id="Avatar-Hover"
-            // returnFocusOnClose={false}
             isOpen={settingsOpen}
             onClose={closeSettings}
             placement="bottom-start"
-            // closeOnBlur={false}
             trigger="click"
           >
             <PopoverTrigger>
@@ -191,7 +194,9 @@ const NavbarWithSubNavigation = () => {
                   <Box as="span" fontSize="18px" lineHeight="18px">
                     Welcome
                   </Box>
-                  <Heading as="p" size="18px">{`${user?.first_name} ${user?.last_name}`}</Heading>
+                  <Heading as="p" size="18px">
+                    {getName()}
+                  </Heading>
                 </Flex>
 
                 <Flex alignItems="center" gridGap="6px">
