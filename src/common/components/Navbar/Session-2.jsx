@@ -12,10 +12,12 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
+  PopoverArrow,
   Button,
 } from '@chakra-ui/react';
 // import { useTranslation } from 'next-i18next';
 // import { useRouter } from 'next/router';
+import { useState } from 'react';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
 import Image from '../Image';
@@ -32,6 +34,15 @@ const NavbarWithSubNavigation = () => {
   const commonColors = useColorModeValue('white', 'gray.800');
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
   const { user, logout } = useAuth();
+
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const closeSettings = () => {
+    setSettingsOpen(false);
+  };
+  const toggleSettings = () => {
+    setSettingsOpen(!settingsOpen);
+  };
 
   console.log('USER:::', user);
 
@@ -129,16 +140,34 @@ const NavbarWithSubNavigation = () => {
             }
           />
 
-          <Popover id="Avatar-Hover" trigger="hover" placement="bottom-start">
+          <Popover
+            id="Avatar-Hover"
+            // returnFocusOnClose={false}
+            isOpen={settingsOpen}
+            onClose={closeSettings}
+            placement="bottom-start"
+            // closeOnBlur={false}
+            trigger="click"
+          >
             <PopoverTrigger>
-              <Avatar
-                name="example"
-                width="30px"
-                marginY="auto"
-                marginRight="5px"
+              <Button
+                bg="rgba(0,0,0,0)"
+                alignSelf="center"
+                width="20px"
+                minWidth="20px"
+                maxWidth="20px"
                 height="30px"
-                src="https://storage.googleapis.com/media-breathecode/639857ed0ceb0a5e5e0429e16f7e3a84365270a0977fb94727cc3b6450d1ea9a"
-              />
+                borderRadius="30px"
+                onClick={() => toggleSettings()}
+              >
+                <Avatar
+                  // name={user?.first_name}
+                  width="30px"
+                  marginY="auto"
+                  height="30px"
+                  src="https://storage.googleapis.com/media-breathecode/639857ed0ceb0a5e5e0429e16f7e3a84365270a0977fb94727cc3b6450d1ea9a"
+                />
+              </Button>
             </PopoverTrigger>
 
             <PopoverContent
@@ -149,6 +178,7 @@ const NavbarWithSubNavigation = () => {
               rounded="md"
               minW="md"
             >
+              <PopoverArrow />
               <Stack gridGap="10px" pb="15px">
                 <Flex alignItems="center" gridGap="6px">
                   <Box as="span" fontSize="18px" lineHeight="18px">
