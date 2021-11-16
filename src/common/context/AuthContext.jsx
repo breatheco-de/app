@@ -32,6 +32,10 @@ const reducer = (state, action) => {
       return {
         ...state,
         isAuthenticated: true,
+        user: {
+          ...state.user,
+          active_cohort: action.payload,
+        },
       };
     }
     case 'LOGOUT': {
@@ -90,7 +94,6 @@ export const AuthContext = createContext({
 const AuthProvider = ({ children }) => {
   const router = useRouter();
   const [state, dispatch] = useReducer(reducer, initialState);
-
   useEffect(() => {
     (async () => {
       const token = getToken();
@@ -101,6 +104,7 @@ const AuthProvider = ({ children }) => {
           type: 'INIT',
           payload: { user: response.data, isAuthenticated: true },
         });
+        router.push('/choose-program');
       } else {
         setSession(null);
         dispatch({
@@ -158,6 +162,13 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const choose = async (payload) => {
+    dispatch({
+      type: 'CHOOSE',
+      payload,
+    });
+  };
+
   const logout = () => {
     setSession(null);
     router.push('/login');
@@ -172,6 +183,7 @@ const AuthProvider = ({ children }) => {
         login,
         logout,
         register,
+        choose,
       }}
     >
       {children}
