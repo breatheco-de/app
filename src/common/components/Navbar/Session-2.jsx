@@ -44,6 +44,13 @@ const NavbarWithSubNavigation = () => {
     setSettingsOpen(!settingsOpen);
   };
 
+  const getImage = () => {
+    if (user && user.github) {
+      return user.github.avatar_url;
+    }
+    return '';
+  };
+
   console.log('USER:::', user);
 
   const INTERNAL_ITEMS = [
@@ -165,7 +172,7 @@ const NavbarWithSubNavigation = () => {
                   width="30px"
                   marginY="auto"
                   height="30px"
-                  src="https://storage.googleapis.com/media-breathecode/639857ed0ceb0a5e5e0429e16f7e3a84365270a0977fb94727cc3b6450d1ea9a"
+                  src={getImage()}
                 />
               </Button>
             </PopoverTrigger>

@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  useMediaQuery,
-  useColorMode,
-} from '@chakra-ui/react';
+import { Box, useMediaQuery, useColorMode } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Icon from './Icon';
@@ -13,6 +9,8 @@ function Choose({ chooseList, handleChoose }) {
   const [isMobile] = useMediaQuery('(min-width: 600px)');
   const { colorMode } = useColorMode();
   const router = useRouter();
+
+  console.log('CHOOSE-LIST', chooseList);
   return (
     <>
       {chooseList.map((item) => (
@@ -26,13 +24,26 @@ function Choose({ chooseList, handleChoose }) {
           width={['70%', '68%', '56%', '50%']}
           border="lightgray solid 2px"
           fontSize={['11px', '13px', '14px', '15px', '15px']}
-          key={item?.id}
+          key={item?.id || item?.cohort.name}
         >
           <Box display="flex" flexDirection="column" marginLeft="25px">
-            <Text size="sm" color={colorMode === 'light' ? 'gray.700' : 'white'} marginLeft="20px" fontWeight="900" margin="0px" marginTop="15px">
+            <Text
+              size="sm"
+              color={colorMode === 'light' ? 'gray.700' : 'white'}
+              marginLeft="20px"
+              fontWeight="900"
+              margin="0px"
+              marginTop="15px"
+            >
               {item.cohort.syllabus_version.name.toUpperCase()}
             </Text>
-            <Text size="l" color={colorMode === 'light' ? 'gray.700' : 'white'} sans-serif marginLeft="20px" marginRight="30px" margin="0px">
+            <Text
+              size="l"
+              color={colorMode === 'light' ? 'gray.700' : 'white'}
+              marginLeft="20px"
+              marginRight="30px"
+              margin="0px"
+            >
               Cohort:
               {' '}
               {item.cohort.name}
@@ -53,10 +64,24 @@ function Choose({ chooseList, handleChoose }) {
             _focus={{ boxShadow: 'none' }}
             cursor="pointer"
           >
-            <Text size="l" margin="0px" color="blue.400" fontWeight="800" justifyContent="center" alignSelf="center" marginRight="15px">
+            <Text
+              size="l"
+              margin="0px"
+              color="blue.400"
+              fontWeight="800"
+              justifyContent="center"
+              alignSelf="center"
+              marginRight="15px"
+            >
               {isMobile ? 'Launch this program' : ''}
             </Text>
-            <Icon color={colorMode === 'light' ? '#0097CD' : '#FFFFFF'} icon="longArrowRight" width="22px" height="11" style={{ margin: 'auto' }} />
+            <Icon
+              color={colorMode === 'light' ? '#0097CD' : '#FFFFFF'}
+              icon="longArrowRight"
+              width="22px"
+              height="11"
+              style={{ margin: 'auto' }}
+            />
           </Box>
         </Box>
       ))}
@@ -65,7 +90,7 @@ function Choose({ chooseList, handleChoose }) {
 }
 
 Choose.propTypes = {
-  chooseList: PropTypes.arrayOf(PropTypes.array),
+  chooseList: PropTypes.arrayOf(PropTypes.object),
   handleChoose: PropTypes.func,
 };
 Choose.defaultProps = {
