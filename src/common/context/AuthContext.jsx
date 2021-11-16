@@ -69,14 +69,17 @@ const setSession = (token) => {
   }
 };
 
-const isValid = async (token) => {
+const isValid = async (token, router) => {
   if (!token) return false;
   const response = await bc
     .auth()
     .isValidToken(token)
     .then((res) => res)
     // remove token from localstorage if expired (it prevents throwing error)
-    .catch(() => setSession(null));
+    .catch(() => {
+      router.push('/login');
+      setSession(null);
+    });
   return response.status === 200;
 };
 
@@ -92,12 +95,12 @@ export const AuthContext = createContext({
 });
 
 const AuthProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
   const router = useRouter();
+  const [state, dispatch] = useReducer(reducer, initialState);
   useEffect(() => {
     (async () => {
       const token = getToken();
-      if (await isValid(token)) {
+      if (await isValid(token, router)) {
         setSession(token);
         const response = await bc.auth().me();
         dispatch({
@@ -127,7 +130,8 @@ const AuthProvider = ({ children }) => {
           });
         }
         return response;
-      } throw Error('Empty values');
+      }
+      throw Error('Empty values');
     } catch (e) {
       const message = e.details || e.detail || Array.isArray(e.non_field_errors)
         ? e.non_field_errors[0]
@@ -151,7 +155,8 @@ const AuthProvider = ({ children }) => {
           });
         }
         return response;
-      } throw Error('Empty values');
+      }
+      throw Error('Empty values');
     } catch (e) {
       const message = e.details || e.detail || Array.isArray(e.non_field_errors)
         ? e.non_field_errors[0]
@@ -169,6 +174,7 @@ const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setSession(null);
+    router.push('/login');
     dispatch({ type: 'LOGOUT' });
   };
 
