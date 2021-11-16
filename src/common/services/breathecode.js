@@ -11,6 +11,12 @@ const breathecode = {
       register: (payload) => axios.post(`${url}/user/register`, payload),
     };
   },
+  admissions: () => {
+    const url = `${host}/admissions`;
+    return {
+      me: () => axios.get(`${url}/user/me`),
+    };
+  },
 };
 
 export default breathecode;

@@ -5,22 +5,24 @@ import {
   GridItem,
   Container,
 } from '@chakra-ui/react';
-import mockData from '../common/utils/mockData/DashboardView';
-import NextChakraLink from '../common/components/NextChakraLink';
-import TagCapsule from '../common/components/TagCapsule';
-import ModuleMap from '../common/components/ModuleMap';
-import useModuleMap from '../common/store/actions/moduleMapAction';
-import CohortSideBar from '../common/components/CohortSideBar';
-import Icon from '../common/components/Icon';
-import SupportSidebar from '../common/components/SupportSidebar';
-import CallToAction from '../common/components/CallToAction';
-import ProgressBar from '../common/components/ProgressBar';
-import Heading from '../common/components/Heading';
-import Text from '../common/components/Text';
-import asPrivate from '../common/context/PrivateRouteWrapper';
+import mockData from '../../common/utils/mockData/DashboardView';
+import NextChakraLink from '../../common/components/NextChakraLink';
+import TagCapsule from '../../common/components/TagCapsule';
+import ModuleMap from '../../common/components/ModuleMap';
+import useModuleMap from '../../common/store/actions/moduleMapAction';
+import CohortSideBar from '../../common/components/CohortSideBar';
+import Icon from '../../common/components/Icon';
+import SupportSidebar from '../../common/components/SupportSidebar';
+import CallToAction from '../../common/components/CallToAction';
+import ProgressBar from '../../common/components/ProgressBar';
+import Heading from '../../common/components/Heading';
+import Text from '../../common/components/Text';
+import asPrivate from '../../common/context/PrivateRouteWrapper';
+import useAuth from '../../common/hooks/useAuth';
 
-const dashboard = () => {
+const dashboard = ({ slug }) => {
   const { updateModuleStatus } = useModuleMap();
+  const { user } = useAuth();
   const handleModuleStatus = (event, module) => {
     event.stopPropagation();
     if (module.status === 'inactive') updateModuleStatus({ ...module, status: 'active' });
@@ -59,13 +61,12 @@ const dashboard = () => {
           <GridItem colSpan={8}>
             <Heading as="h1" size="xl">
               Full Stack Developer
+              {' '}
+              {slug}
             </Heading>
             <TagCapsule tags={tapCapsule.tags} separator={tapCapsule.separator} />
             <Text size="md">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-              sed do eiusmod tempor incididunt ut labore et dolore magna
-              aliqua. Ut enim ad minim veniam, quis
-              nostrud exercitation ullamco laboris.
+              {JSON.stringify(user, 4, null)}
             </Text>
             <Box>
               <CallToAction
@@ -119,5 +120,11 @@ const dashboard = () => {
     </div>
   );
 };
+
+export const getServerSideProps = async ({ params: { slug } }) => ({
+  props: {
+    slug,
+  },
+});
 
 export default asPrivate(dashboard);
