@@ -44,7 +44,19 @@ const NavbarWithSubNavigation = () => {
     setSettingsOpen(!settingsOpen);
   };
 
-  console.log('USER:::', user);
+  const getImage = () => {
+    if (user && user.github) {
+      return user.github.avatar_url;
+    }
+    return '';
+  };
+
+  const getName = () => {
+    if (user && user?.first_name) {
+      return `${user?.first_name} ${user?.last_name}`;
+    }
+    return user?.github.name;
+  };
 
   const INTERNAL_ITEMS = [
     {
@@ -142,11 +154,9 @@ const NavbarWithSubNavigation = () => {
 
           <Popover
             id="Avatar-Hover"
-            // returnFocusOnClose={false}
             isOpen={settingsOpen}
             onClose={closeSettings}
             placement="bottom-start"
-            // closeOnBlur={false}
             trigger="click"
           >
             <PopoverTrigger>
@@ -165,7 +175,7 @@ const NavbarWithSubNavigation = () => {
                   width="30px"
                   marginY="auto"
                   height="30px"
-                  src="https://storage.googleapis.com/media-breathecode/639857ed0ceb0a5e5e0429e16f7e3a84365270a0977fb94727cc3b6450d1ea9a"
+                  src={getImage()}
                 />
               </Button>
             </PopoverTrigger>
@@ -184,7 +194,9 @@ const NavbarWithSubNavigation = () => {
                   <Box as="span" fontSize="18px" lineHeight="18px">
                     Welcome
                   </Box>
-                  <Heading as="p" size="18px">{`${user?.first_name} ${user?.last_name}`}</Heading>
+                  <Heading as="p" size="18px">
+                    {getName()}
+                  </Heading>
                 </Flex>
 
                 <Flex alignItems="center" gridGap="6px">

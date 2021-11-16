@@ -69,14 +69,17 @@ const setSession = (token) => {
   }
 };
 
-const isValid = async (token) => {
+const isValid = async (token, router) => {
   if (!token) return false;
   const response = await bc
     .auth()
     .isValidToken(token)
     .then((res) => res)
     // remove token from localstorage if expired (it prevents throwing error)
-    .catch(() => setSession(null));
+    .catch(() => {
+      router.push('/login');
+      setSession(null);
+    });
   return response.status === 200;
 };
 
@@ -97,7 +100,7 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     (async () => {
       const token = getToken();
-      if (await isValid(token)) {
+      if (await isValid(token, router)) {
         setSession(token);
         const response = await bc.auth().me();
         dispatch({
