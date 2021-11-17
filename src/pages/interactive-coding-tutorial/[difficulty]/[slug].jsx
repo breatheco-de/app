@@ -86,7 +86,7 @@ const TableInfo = ({ project, commonTextColor }) => (
         difficulty={project.difficulty}
         repository={project.url}
         duration={project.duration}
-        videoAvailable={project.intro_video_url}
+        videoAvailable={project.solution_video_url}
         technologies={project.technologies}
         liveDemoAvailable={project.intro_video_url}
       />
