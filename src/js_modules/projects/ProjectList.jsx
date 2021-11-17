@@ -16,7 +16,7 @@ const ProjectList = ({
   const { difficulty, videoTutorials } = contextFilter;
   const router = useRouter();
   const defaultImage = '/static/images/code1.png';
-  const bgBlur = '/static/images/codeBlur.png';
+  // const bgBlur = '/static/images/codeBlur.png';
 
   const checkIsPathDifficulty = (thisDifficulty) => (pathWithDifficulty ? `/${thisDifficulty}` : '');
 
@@ -57,12 +57,11 @@ const ProjectList = ({
               border={useColorModeValue('1px solid #DADADA', 'none')}
               className="card pointer"
               bg={useColorModeValue('white', 'gray.800')}
-              // boxShadow="xl"
-              transition="transform .3s ease-in-out"
-              _hover={{
-                transform: 'scale(1.05)',
-                boxShadow: '0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06)',
-              }}
+              // transition="transform .3s ease-in-out"
+              // _hover={{
+              //   transform: 'scale(1.05)',
+              //   boxShadow: '0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06)',
+              // }}
               borderRadius="16px"
               padding="22px"
             >
@@ -90,23 +89,23 @@ const ProjectList = ({
                     height={{ base: '60px', sm: '90px', md: '180px' }}
                     width={{ base: '60px', sm: '90px', md: 'auto' }}
                     maxWidth={{ base: '300px', sm: '230px', md: 'none' }}
-                    _after={{
-                      transition: 'all .8s ease',
-                      content: '""',
-                      w: 'full',
-                      h: 'full',
-                      pos: 'absolute',
-                      top: 0,
-                      left: 0,
-                      backgroundImage: `url(${bgBlur})`,
-                      filter: 'blur(15px)',
-                      zIndex: 0,
-                    }}
-                    _groupHover={{
-                      _after: {
-                        filter: 'blur(50px)',
-                      },
-                    }}
+                    // _after={{
+                    //   transition: 'all .8s ease',
+                    //   content: '""',
+                    //   w: 'full',
+                    //   h: 'full',
+                    //   pos: 'absolute',
+                    //   top: 0,
+                    //   left: 0,
+                    //   backgroundImage: `url(${bgBlur})`,
+                    //   filter: 'blur(15px)',
+                    //   zIndex: 0,
+                    // }}
+                    // _groupHover={{
+                    //   _after: {
+                    //     filter: 'blur(50px)',
+                    //   },
+                    // }}
                     onError={(e) => onImageNotFound(e)}
                     style={{ borderRadius: '15px', overflow: 'hidden' }}
                     objectFit="cover"
@@ -114,14 +113,14 @@ const ProjectList = ({
                     alt={ex.title}
                   />
                 </Link>
-                <Box display="flex" flexDirection="column">
+                <Box display="flex" flexDirection="column" paddingTop="4px">
                   {ex.technologies.length >= 1 && (
                     <TagCapsule
                       tags={ex.technologies}
                       variant="rounded"
                       marginY="8px"
                       style={{
-                        padding: '2px 10px',
+                        padding: '4px 10px',
                         margin: '0',
                       }}
                       gap="10px"
