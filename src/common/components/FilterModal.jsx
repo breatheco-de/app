@@ -22,7 +22,7 @@ import Icon from './Icon';
 import Text from './Text';
 
 const FilterModal = ({
-  title, isModalOpen, onClose, setFilter, technologyTags, dificulties,
+  title, isModalOpen, onClose, setFilter, technologyTags, difficulties,
 }) => {
   const [checkedTechnologies, setCheckedTechnologies] = useState([]);
   const [withVideo, setWithVideo] = useState(false);
@@ -40,7 +40,7 @@ const FilterModal = ({
   const handleSubmit = () => {
     setFilter({
       technologies: checkedTechnologies,
-      difficulty: dificulties[dificultyPosition],
+      difficulty: difficulties[dificultyPosition],
       videoTutorials: withVideo,
     });
   };
@@ -56,9 +56,7 @@ const FilterModal = ({
     });
   };
 
-  const currentFilters = checkedTechnologies.length
-    + (dificultyPosition === null ? 0 : 1)
-    + withVideo;
+  const fLength = checkedTechnologies.length + (dificultyPosition === null ? 0 : 1) + withVideo;
 
   return (
     <Modal isOpen={isModalOpen} onClose={onClose}>
@@ -169,7 +167,7 @@ const FilterModal = ({
                 DIFFICULTIES
               </Text>
               <Grid gridTemplateColumns="repeat(auto-fill, minmax(10rem, 1fr))" gap={6}>
-                {dificulties.map((dificulty, index) => (
+                {difficulties.map((dificulty, index) => (
                   <Flex
                     gridGap="10px"
                     key={dificulty}
@@ -243,7 +241,7 @@ const FilterModal = ({
             fontSize="13px"
             textTransform="uppercase"
             variant="default"
-            disabled={currentFilters <= 0}
+            disabled={fLength <= 0}
             onClick={() => handleSubmit()}
             rightIcon={<Icon icon="longArrowRight" width="15px" color="white" />}
           >
@@ -259,14 +257,14 @@ FilterModal.propTypes = {
   title: PropTypes.string,
   setFilter: PropTypes.func.isRequired,
   technologyTags: PropTypes.arrayOf(PropTypes.string),
-  dificulties: PropTypes.arrayOf(PropTypes.string),
+  difficulties: PropTypes.arrayOf(PropTypes.string),
   isModalOpen: PropTypes.bool,
   onClose: PropTypes.func,
 };
 FilterModal.defaultProps = {
   title: 'FILTER',
   technologyTags: [],
-  dificulties: [],
+  difficulties: [],
   isModalOpen: true,
   onClose: () => {},
 };

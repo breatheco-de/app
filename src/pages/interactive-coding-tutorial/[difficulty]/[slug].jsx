@@ -217,7 +217,7 @@ const ProjectSlug = ({ project }) => {
             margin="30px 0"
             width={{ base: '100%', md: '350px' }}
             minWidth={{ base: '100%', md: '250px' }}
-            height="auto"
+            height="fit-content"
             borderWidth="0px"
             borderRadius="17px"
             overflow="hidden"
@@ -264,7 +264,7 @@ const ProjectSlug = ({ project }) => {
           margin="30px 0"
           width={{ base: '100%', md: '350px' }}
           minWidth={{ base: '100%', md: '250px' }}
-          height="auto"
+          height="fit-content"
           borderWidth="0px"
           borderRadius="17px"
           overflow="hidden"
