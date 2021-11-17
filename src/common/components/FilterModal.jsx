@@ -34,7 +34,6 @@ const FilterModal = ({
 
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
-  // function that create new ref for each technology on technologyTags elements
 
   const handleToggle = () => setShow(!show);
 
@@ -50,7 +49,16 @@ const FilterModal = ({
     setCheckedTechnologies([]);
     setDificulty(null);
     setWithVideo(false);
+    setFilter({
+      technologies: [],
+      difficulty: [],
+      videoTutorials: false,
+    });
   };
+
+  const currentFilters = checkedTechnologies.length
+    + (dificultyPosition === null ? 0 : 1)
+    + withVideo;
 
   return (
     <Modal isOpen={isModalOpen} onClose={onClose}>
@@ -80,7 +88,7 @@ const FilterModal = ({
             right: '30px',
           }}
         />
-        <ModalBody>
+        <ModalBody padding="0 24px">
           <Box>
             {/* <------------------- Technologies section -------------------> */}
             <Flex
@@ -89,7 +97,7 @@ const FilterModal = ({
               borderStyle="solid"
               borderColor={commonBorderColor}
             >
-              <Text size="l" color={commonTextColor} padding="0 0 25px 0">
+              <Text size="l" color={commonTextColor} padding="25px 0 18px 0">
                 TECHNOLOGIES
               </Text>
               <Collapse in={show} startingHeight={170} animateOpacity>
@@ -157,7 +165,7 @@ const FilterModal = ({
               borderColor={commonBorderColor}
               padding="0 0 30px 0"
             >
-              <Text size="l" color={commonTextColor} padding="25px 0">
+              <Text size="l" color={commonTextColor} padding="25px 0 18px 0">
                 DIFFICULTIES
               </Text>
               <Grid gridTemplateColumns="repeat(auto-fill, minmax(10rem, 1fr))" gap={6}>
@@ -189,8 +197,8 @@ const FilterModal = ({
               )}
             </Flex>
 
-            <Flex flexDirection="row" padding="0 0 30px 0" justifyContent="space-between">
-              <Text size="l" textTransform="uppercase" color={commonTextColor} padding="25px 0">
+            <Flex flexDirection="row" justifyContent="space-between">
+              <Text size="l" textTransform="uppercase" color={commonTextColor} padding="20px 0">
                 Only with video tutorials
               </Text>
 
@@ -207,8 +215,9 @@ const FilterModal = ({
                   width="40px"
                   position="absolute"
                   height="26px"
+                  zIndex="10"
                 />
-                <Switch size="md" isChecked={withVideo} isReadOnly />
+                <Switch size="md" zIndex="0" isChecked={withVideo} />
               </Box>
             </Flex>
           </Box>
@@ -234,6 +243,7 @@ const FilterModal = ({
             fontSize="13px"
             textTransform="uppercase"
             variant="default"
+            disabled={currentFilters <= 0}
             onClick={() => handleSubmit()}
             rightIcon={<Icon icon="longArrowRight" width="15px" color="white" />}
           >

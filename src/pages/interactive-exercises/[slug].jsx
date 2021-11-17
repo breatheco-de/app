@@ -169,7 +169,7 @@ const TabletWithForm = ({
         difficulty={exercise.difficulty}
         repository={exercise.url}
         duration={exercise.duration}
-        videoAvailable={exercise.intro_video_url}
+        videoAvailable={exercise.solution_video_url}
         technologies={exercise.technologies}
         liveDemoAvailable={exercise.intro_video_url}
       />

@@ -74,8 +74,6 @@ const Projects = ({ projects, technologyTags, dificulties }) => {
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  console.log('PROJECTS:::', projects);
-
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
       <TitleContent title="Projects" mobile />

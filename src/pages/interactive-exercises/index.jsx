@@ -70,7 +70,6 @@ function Exercices({ exercises, technologyTags, dificulties }) {
   const { filteredBy, setExerciseFilters } = useFilter();
   const { technologies, difficulty, videoTutorials } = filteredBy.exercisesOptions;
 
-  console.log('EXERCISES:::', exercises);
   const currentFilters = technologies.length
     + (difficulty === undefined || difficulty.length === 0 ? 0 : 1)
     + videoTutorials;

@@ -71,7 +71,7 @@ const ProjectList = ({
                 role="group"
                 w="full"
                 zIndex={1}
-                borderRadius="15px"
+                borderRadius="10px"
               >
                 {/* CARD IMAGE */}
                 <Link
