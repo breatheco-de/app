@@ -28,7 +28,7 @@ export const getStaticProps = async ({ locale }) => {
   }
 
   let technologyTags = [];
-  let dificulties = [];
+  let difficulties = [];
 
   for (let i = 0; i < arrProjects.length; i += 1) {
     // skip repeated projects
@@ -47,12 +47,24 @@ export const getStaticProps = async ({ locale }) => {
       else if (arrProjects[i].difficulty === 'semi-senior') arrProjects[i].difficulty = 'intermediate';
       else if (arrProjects[i].difficulty === 'senior') arrProjects[i].difficulty = 'hard';
 
-      dificulties.push(arrProjects[i].difficulty);
+      difficulties.push(arrProjects[i].difficulty);
     }
   }
 
   technologyTags = [...new Set(technologyTags)];
-  dificulties = [...new Set(dificulties)];
+  difficulties = [...new Set(difficulties)];
+
+  const verifyDifficultyPosition = (difficulty) => {
+    if (difficulty === 'beginner') return 0;
+    if (difficulty === 'easy') return 1;
+    if (difficulty === 'intermediate') return 2;
+    if (difficulty === 'hard') return 3;
+    return -1;
+  };
+  const difficultiesSorted = [];
+  difficulties.forEach((difficulty) => {
+    difficultiesSorted.push(difficulties[verifyDifficultyPosition(difficulty)]);
+  });
 
   return {
     props: {
@@ -60,12 +72,12 @@ export const getStaticProps = async ({ locale }) => {
       ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
       projects,
       technologyTags,
-      dificulties,
+      difficulties: difficultiesSorted,
     },
   };
 };
 
-const Projects = ({ projects, technologyTags, dificulties }) => {
+const Projects = ({ projects, technologyTags, difficulties }) => {
   const { filteredBy, setProjectFilters } = useFilter();
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const currentFilters = technologies.length
@@ -131,7 +143,7 @@ const Projects = ({ projects, technologyTags, dificulties }) => {
           onClose={onClose}
           setFilter={setProjectFilters}
           technologyTags={technologyTags}
-          dificulties={dificulties}
+          difficulties={difficulties}
         />
       </Flex>
 
@@ -160,7 +172,7 @@ const Projects = ({ projects, technologyTags, dificulties }) => {
 Projects.propTypes = {
   technologyTags: PropTypes.arrayOf(PropTypes.string).isRequired,
   projects: PropTypes.arrayOf(PropTypes.object).isRequired,
-  dificulties: PropTypes.arrayOf(PropTypes.string).isRequired,
+  difficulties: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default Projects;
