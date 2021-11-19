@@ -3,8 +3,8 @@ import {
   Box,
   useColorModeValue,
   Flex,
-  SkeletonText,
   useToast,
+  useColorMode,
 } from '@chakra-ui/react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import PropTypes from 'prop-types';
@@ -18,6 +18,7 @@ import SimpleTable from '../../../js_modules/projects/SimpleTable';
 import MarkDownParser from '../../../common/components/MarkDownParser';
 import TagCapsule from '../../../common/components/TagCapsule';
 import Image from '../../../common/components/Image';
+import MDSkeleton from '../../../common/components/MDSkeleton';
 
 export const getStaticPaths = async () => {
   let projects = [];
@@ -99,6 +100,7 @@ const ProjectSlug = ({ project }) => {
   const getImage = project.preview !== '' ? project.preview : defaultImage;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
+  const { colorMode } = useColorMode();
 
   const router = useRouter();
   const toast = useToast();
@@ -234,23 +236,11 @@ const ProjectSlug = ({ project }) => {
             padding="28px 32px"
             borderRadius="3px"
             background={useColorModeValue('featuredLight', 'featuredDark')}
+            width={{ base: '34rem', md: '54rem' }}
+            className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
+            transition="background .2s ease"
           >
-            {readme.markdown ? (
-              <MarkDownParser content={readme.markdown} />
-            ) : (
-              <Box
-                padding="2"
-                boxShadow="lg"
-                bg="white"
-              >
-                <SkeletonText width="60%" mt="6" noOfLines={1} spacing="4" />
-                <SkeletonText width="100%" mt="8" noOfLines={4} spacing="4" />
-                <Box padding="6" marginY="8" borderRadius="8px" boxShadow="lg" bg="featuredDark">
-                  <SkeletonText width="100%" noOfLines={2} spacing="4" />
-                </Box>
-                <SkeletonText width="100%" mt="8" noOfLines={4} spacing="4" />
-              </Box>
-            )}
+            {readme.markdown ? <MarkDownParser content={readme.markdown} /> : <MDSkeleton />}
           </Box>
         </Box>
 
