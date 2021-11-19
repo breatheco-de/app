@@ -2,68 +2,78 @@ import {
   Box,
   Flex,
   IconButton,
-  Button,
+  Avatar,
   Stack,
   Collapse,
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
   useColorMode,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  Button,
 } from '@chakra-ui/react';
-import { useTranslation } from 'next-i18next';
+// import { useTranslation } from 'next-i18next';
 // import { useRouter } from 'next/router';
+import { useState } from 'react';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
 import Image from '../Image';
 import logo from '../../../../public/static/images/bc_logo.png';
 import DesktopNav from '../../../js_modules/navbar/DesktopNav';
 import MobileNav from '../../../js_modules/navbar/MobileNav';
+import Heading from '../Heading';
+
+import useAuth from '../../hooks/useAuth';
 
 const NavbarWithSubNavigation = () => {
   const { isOpen, onToggle } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
-  const { t } = useTranslation(['navbar']);
   const commonColors = useColorModeValue('white', 'gray.800');
+  const popoverContentBgColor = useColorModeValue('white', 'gray.800');
+  const { user, logout } = useAuth();
 
-  const EXTERNAL_ITEMS = [
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const closeSettings = () => {
+    setSettingsOpen(false);
+  };
+  const toggleSettings = () => {
+    setSettingsOpen(!settingsOpen);
+  };
+
+  const getImage = () => {
+    if (user && user.github) {
+      return user.github.avatar_url;
+    }
+    return '';
+  };
+
+  const getName = () => {
+    if (user && user?.first_name) {
+      return `${user?.first_name} ${user?.last_name}`;
+    }
+    return user?.github.name;
+  };
+
+  const INTERNAL_ITEMS = [
     {
-      label: t('menu.about-us'),
-      href: '/about-us',
+      label: 'Dashboard',
+      href: '/dashboard',
     },
     {
-      label: t('menu.practice'),
-      href: '/interactive-exercises',
+      label: 'Learn',
+      href: '/learn',
     },
     {
-      label: t('menu.read.title'),
-      icon: 'book',
-      description: t('menu.read.description'),
-      asPath: '/lessons', // For colorLink
-      subMenu: [
-        {
-          label: t('menu.read.child-1.label'),
-          // subLabel: t('menu.read.child-1.subLabel'),
-          href: '/lessons?child=1',
-        },
-        {
-          label: t('menu.read.child-2.label'),
-          // subLabel: t('menu.read.child-2.subLabel'),
-          href: '/lessons?child=2',
-        },
-        {
-          label: t('menu.read.child-3.label'),
-          // subLabel: t('menu.read.child-2.subLabel'),
-          href: '/lessons?child=3',
-        },
-      ],
+      label: 'Mentoring',
+      href: '/mentoring',
     },
     {
-      label: t('menu.build'),
-      href: '/projects',
-    },
-    {
-      label: t('menu.bootcamp'),
-      href: 'https://4geeksacademy.com',
+      label: 'Community',
+      href: '/community',
     },
   ];
 
@@ -118,7 +128,7 @@ const NavbarWithSubNavigation = () => {
           </NextChakraLink>
 
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
-            <DesktopNav NAV_ITEMS={EXTERNAL_ITEMS} />
+            <DesktopNav NAV_ITEMS={INTERNAL_ITEMS} />
           </Flex>
         </Flex>
 
@@ -141,31 +151,76 @@ const NavbarWithSubNavigation = () => {
               )
             }
           />
-          <NextChakraLink
-            href="/login"
-            fontWeight="700"
-            fontSize="13px"
-            lineHeight="22px"
-            _hover={{
-              textDecoration: 'none',
-            }}
-            letterSpacing="0.05em"
+
+          <Popover
+            id="Avatar-Hover"
+            isOpen={settingsOpen}
+            onClose={closeSettings}
+            placement="bottom-start"
+            trigger="click"
           >
-            <Button
-              display={useBreakpointValue({ base: 'flex', md: 'flex' })}
-              width="100px"
-              fontWeight={700}
-              lineHeight="0.05em"
-              variant="default"
+            <PopoverTrigger>
+              <Button
+                bg="rgba(0,0,0,0)"
+                alignSelf="center"
+                width="20px"
+                minWidth="20px"
+                maxWidth="20px"
+                height="30px"
+                borderRadius="30px"
+                onClick={() => toggleSettings()}
+              >
+                <Avatar
+                  // name={user?.first_name}
+                  width="30px"
+                  marginY="auto"
+                  height="30px"
+                  src={getImage()}
+                />
+              </Button>
+            </PopoverTrigger>
+
+            <PopoverContent
+              border={0}
+              boxShadow="xl"
+              bg={popoverContentBgColor}
+              p={4}
+              rounded="md"
+              minW="md"
             >
-              {t('login')}
-            </Button>
-          </NextChakraLink>
+              <PopoverArrow />
+              <Stack gridGap="10px" pb="15px">
+                <Flex alignItems="center" gridGap="6px">
+                  <Box as="span" fontSize="18px" lineHeight="18px">
+                    Welcome
+                  </Box>
+                  <Heading as="p" size="18px">
+                    {getName()}
+                  </Heading>
+                </Flex>
+
+                <Flex alignItems="center" gridGap="6px">
+                  <Box as="span" fontSize="18px" lineHeight="18px">
+                    Current Role:
+                  </Box>
+                  <Heading as="p" size="18px">{`${user?.roles[0].role}`}</Heading>
+                </Flex>
+              </Stack>
+              <Flex padding="20px 0" alignItems="center">
+                <Button gridGap="10px" onClick={logout} width="100%" py="25px">
+                  <Box as="span" fontSize="15px">
+                    Logout
+                  </Box>
+                  <Icon icon="logout" width="20px" height="20px" />
+                </Button>
+              </Flex>
+            </PopoverContent>
+          </Popover>
         </Stack>
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
-        <MobileNav NAV_ITEMS={EXTERNAL_ITEMS} />
+        <MobileNav NAV_ITEMS={INTERNAL_ITEMS} />
       </Collapse>
     </Box>
   );
