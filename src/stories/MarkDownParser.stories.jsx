@@ -14,12 +14,11 @@ const Component = (args) => {
     useEffect(() => {
         (async () => {
             const results = await fetch(
-                'https://raw.githubusercontent.com/breatheco-de/exercise-instagram-feed/master/README.md',
+                'https://raw.githubusercontent.com/breatheco-de/content/master/src/content/lesson/what-is-an-array-define-array.md',
             )
                 .then((res) => res.text())
                 .catch((err) => console.error(err));
             const markdownContent = getMarkDownContent(results);
-            console.log(markdownContent)
             setData(markdownContent.content)
         })()
     }, [data])
