@@ -3,7 +3,6 @@ import {
   Box,
   useColorModeValue,
   Flex,
-  SkeletonCircle,
   SkeletonText,
   useToast,
 } from '@chakra-ui/react';
@@ -86,7 +85,7 @@ const TableInfo = ({ project, commonTextColor }) => (
         difficulty={project.difficulty}
         repository={project.url}
         duration={project.duration}
-        videoAvailable={project.intro_video_url}
+        videoAvailable={project.solution_video_url}
         technologies={project.technologies}
         liveDemoAvailable={project.intro_video_url}
       />
@@ -96,7 +95,6 @@ const TableInfo = ({ project, commonTextColor }) => (
 
 const ProjectSlug = ({ project }) => {
   const [readme, setReadme] = useState('');
-  const [notFound, setNotFound] = useState(false);
   const defaultImage = '/static/images/code1.png';
   const getImage = project.preview !== '' ? project.preview : defaultImage;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
@@ -106,7 +104,6 @@ const ProjectSlug = ({ project }) => {
   const toast = useToast();
 
   const EventIfNotFound = () => {
-    setNotFound(true);
     toast({
       title: 'The endpoint could not access the content of this Project',
       // description: 'Content not found',
@@ -124,7 +121,6 @@ const ProjectSlug = ({ project }) => {
         .then((resp) => resp.text())
         .then((data) => {
           setReadme({ markdown: data, lang: language });
-          setNotFound(false);
         })
         .catch((err) => {
           console.error('Error loading markdown file from github', err);
@@ -217,7 +213,7 @@ const ProjectSlug = ({ project }) => {
             margin="30px 0"
             width={{ base: '100%', md: '350px' }}
             minWidth={{ base: '100%', md: '250px' }}
-            height="auto"
+            height="fit-content"
             borderWidth="0px"
             borderRadius="17px"
             overflow="hidden"
@@ -243,17 +239,18 @@ const ProjectSlug = ({ project }) => {
               <MarkDownParser content={readme.markdown} />
             ) : (
               <Box
-                display={notFound === false ? 'block' : 'none'}
-                padding="6"
+                padding="2"
                 boxShadow="lg"
                 bg="white"
               >
-                <SkeletonCircle size="10" />
-                <SkeletonText mt="6" noOfLines={2} spacing="4" />
-                <SkeletonText mt="16" noOfLines={10} spacing="4" />
+                <SkeletonText width="60%" mt="6" noOfLines={1} spacing="4" />
+                <SkeletonText width="100%" mt="8" noOfLines={4} spacing="4" />
+                <Box padding="6" marginY="8" borderRadius="8px" boxShadow="lg" bg="featuredDark">
+                  <SkeletonText width="100%" noOfLines={2} spacing="4" />
+                </Box>
+                <SkeletonText width="100%" mt="8" noOfLines={4} spacing="4" />
               </Box>
             )}
-            {notFound && <Text size="l">No content to see here 🙄</Text>}
           </Box>
         </Box>
 
@@ -264,7 +261,7 @@ const ProjectSlug = ({ project }) => {
           margin="30px 0"
           width={{ base: '100%', md: '350px' }}
           minWidth={{ base: '100%', md: '250px' }}
-          height="auto"
+          height="fit-content"
           borderWidth="0px"
           borderRadius="17px"
           overflow="hidden"

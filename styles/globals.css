@@ -16,14 +16,14 @@ a {
   box-sizing: border-box;
 }
 
-.centerImageForBlur {
+/* .centerImageForBlur {
   max-width: 90%!important;
   min-width: 90%!important;
   min-height: 90%!important;
   max-height: 90%!important;
   z-index: 1 !important;
   border-radius: 8px;
-}
+} */
 
 .button-hold > div svg.icon,
 .button-hold > div svg.tick {

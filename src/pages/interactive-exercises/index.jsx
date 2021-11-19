@@ -33,7 +33,7 @@ export const getStaticProps = async ({ locale }) => {
   }
 
   let technologyTags = [];
-  let dificulties = [];
+  let difficulties = [];
 
   for (let i = 0; i < arrExercises.length; i += 1) {
     // skip repeated exercises
@@ -48,29 +48,41 @@ export const getStaticProps = async ({ locale }) => {
     }
 
     if (typeof arrExercises[i].difficulty === 'string') {
-      if (arrExercises[i].difficulty === 'beginner' || arrExercises[i].difficulty === 'BEGINNER') arrExercises[i].difficulty = 'easy';
-      dificulties.push(arrExercises[i].difficulty);
+      if (arrExercises[i].difficulty === 'BEGINNER') arrExercises[i].difficulty = 'beginner';
+      difficulties.push(arrExercises[i].difficulty);
     }
   }
 
   technologyTags = [...new Set(technologyTags)];
-  dificulties = [...new Set(dificulties)];
+  difficulties = [...new Set(difficulties)];
+
+  const verifyDifficultyPosition = (difficulty) => {
+    if (difficulty === 'beginner') return 0;
+    if (difficulty === 'easy') return 1;
+    if (difficulty === 'intermediate') return 2;
+    if (difficulty === 'hard') return 3;
+    return -1;
+  };
+  const difficultiesSorted = [];
+  difficulties.forEach((difficulty) => {
+    difficultiesSorted.push(difficulties[verifyDifficultyPosition(difficulty)]);
+  });
 
   return {
     props: {
+      fallback: false,
       ...(await serverSideTranslations(locale, ['home', 'navbar', 'footer'])),
       exercises,
       technologyTags,
-      dificulties,
+      difficulties: difficultiesSorted,
     },
   };
 };
 
-function Exercices({ exercises, technologyTags, dificulties }) {
+function Exercices({ exercises, technologyTags, difficulties }) {
   const { filteredBy, setExerciseFilters } = useFilter();
   const { technologies, difficulty, videoTutorials } = filteredBy.exercisesOptions;
 
-  console.log('EXERCISES:::', exercises);
   const currentFilters = technologies.length
     + (difficulty === undefined || difficulty.length === 0 ? 0 : 1)
     + videoTutorials;
@@ -138,7 +150,7 @@ function Exercices({ exercises, technologyTags, dificulties }) {
           onClose={onClose}
           setFilter={setExerciseFilters}
           technologyTags={technologyTags}
-          dificulties={dificulties}
+          difficulties={difficulties}
         />
       </Flex>
 
@@ -165,12 +177,12 @@ function Exercices({ exercises, technologyTags, dificulties }) {
 Exercices.propTypes = {
   exercises: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   technologyTags: PropTypes.arrayOf(PropTypes.string),
-  dificulties: PropTypes.arrayOf(PropTypes.string),
+  difficulties: PropTypes.arrayOf(PropTypes.string),
 };
 Exercices.defaultProps = {
   exercises: [],
   technologyTags: [],
-  dificulties: [],
+  difficulties: [],
 };
 
 export default Exercices;

@@ -22,7 +22,7 @@ import Icon from './Icon';
 import Text from './Text';
 
 const FilterModal = ({
-  title, isModalOpen, onClose, setFilter, technologyTags, dificulties,
+  title, isModalOpen, onClose, setFilter, technologyTags, difficulties,
 }) => {
   const [checkedTechnologies, setCheckedTechnologies] = useState([]);
   const [withVideo, setWithVideo] = useState(false);
@@ -34,14 +34,13 @@ const FilterModal = ({
 
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
-  // function that create new ref for each technology on technologyTags elements
 
   const handleToggle = () => setShow(!show);
 
   const handleSubmit = () => {
     setFilter({
       technologies: checkedTechnologies,
-      difficulty: dificulties[dificultyPosition],
+      difficulty: difficulties[dificultyPosition],
       videoTutorials: withVideo,
     });
   };
@@ -50,7 +49,14 @@ const FilterModal = ({
     setCheckedTechnologies([]);
     setDificulty(null);
     setWithVideo(false);
+    setFilter({
+      technologies: [],
+      difficulty: [],
+      videoTutorials: false,
+    });
   };
+
+  const fLength = checkedTechnologies.length + (dificultyPosition === null ? 0 : 1) + withVideo;
 
   return (
     <Modal isOpen={isModalOpen} onClose={onClose}>
@@ -80,7 +86,7 @@ const FilterModal = ({
             right: '30px',
           }}
         />
-        <ModalBody>
+        <ModalBody padding="0 24px">
           <Box>
             {/* <------------------- Technologies section -------------------> */}
             <Flex
@@ -89,7 +95,7 @@ const FilterModal = ({
               borderStyle="solid"
               borderColor={commonBorderColor}
             >
-              <Text size="l" color={commonTextColor} padding="0 0 25px 0">
+              <Text size="l" color={commonTextColor} padding="25px 0 18px 0">
                 TECHNOLOGIES
               </Text>
               <Collapse in={show} startingHeight={170} animateOpacity>
@@ -157,11 +163,11 @@ const FilterModal = ({
               borderColor={commonBorderColor}
               padding="0 0 30px 0"
             >
-              <Text size="l" color={commonTextColor} padding="25px 0">
+              <Text size="l" color={commonTextColor} padding="25px 0 18px 0">
                 DIFFICULTIES
               </Text>
               <Grid gridTemplateColumns="repeat(auto-fill, minmax(10rem, 1fr))" gap={6}>
-                {dificulties.map((dificulty, index) => (
+                {difficulties.map((dificulty, index) => (
                   <Flex
                     gridGap="10px"
                     key={dificulty}
@@ -189,8 +195,8 @@ const FilterModal = ({
               )}
             </Flex>
 
-            <Flex flexDirection="row" padding="0 0 30px 0" justifyContent="space-between">
-              <Text size="l" textTransform="uppercase" color={commonTextColor} padding="25px 0">
+            <Flex flexDirection="row" justifyContent="space-between">
+              <Text size="l" textTransform="uppercase" color={commonTextColor} padding="20px 0">
                 Only with video tutorials
               </Text>
 
@@ -207,8 +213,9 @@ const FilterModal = ({
                   width="40px"
                   position="absolute"
                   height="26px"
+                  zIndex="10"
                 />
-                <Switch size="md" isChecked={withVideo} isReadOnly />
+                <Switch size="md" zIndex="0" isChecked={withVideo} />
               </Box>
             </Flex>
           </Box>
@@ -234,6 +241,7 @@ const FilterModal = ({
             fontSize="13px"
             textTransform="uppercase"
             variant="default"
+            disabled={fLength <= 0}
             onClick={() => handleSubmit()}
             rightIcon={<Icon icon="longArrowRight" width="15px" color="white" />}
           >
@@ -249,14 +257,14 @@ FilterModal.propTypes = {
   title: PropTypes.string,
   setFilter: PropTypes.func.isRequired,
   technologyTags: PropTypes.arrayOf(PropTypes.string),
-  dificulties: PropTypes.arrayOf(PropTypes.string),
+  difficulties: PropTypes.arrayOf(PropTypes.string),
   isModalOpen: PropTypes.bool,
   onClose: PropTypes.func,
 };
 FilterModal.defaultProps = {
   title: 'FILTER',
   technologyTags: [],
-  dificulties: [],
+  difficulties: [],
   isModalOpen: true,
   onClose: () => {},
 };

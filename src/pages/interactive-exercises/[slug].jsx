@@ -7,7 +7,6 @@ import {
   Button,
   FormControl,
   Input,
-  SkeletonCircle,
   SkeletonText,
   useToast,
 } from '@chakra-ui/react';
@@ -169,7 +168,7 @@ const TabletWithForm = ({
         difficulty={exercise.difficulty}
         repository={exercise.url}
         duration={exercise.duration}
-        videoAvailable={exercise.intro_video_url}
+        videoAvailable={exercise.solution_video_url}
         technologies={exercise.technologies}
         liveDemoAvailable={exercise.intro_video_url}
       />
@@ -326,19 +325,15 @@ const ExerciseSlug = ({ exercise }) => {
             {MDecoded ? (
               <MarkDownParser content={removeTitleAndImage(MDecoded)} />
             ) : (
-              <Box
-                padding="6"
-                display={notFound === false ? 'block' : 'none'}
-                boxShadow="lg"
-                bg="white"
-              >
-                <SkeletonCircle size="10" />
-                <SkeletonText mt="6" noOfLines={2} spacing="4" />
-                <SkeletonText mt="16" noOfLines={10} spacing="4" />
+              <Box padding="2" boxShadow="lg" bg="white">
+                <SkeletonText width="60%" mt="6" noOfLines={1} spacing="4" />
+                <SkeletonText width="100%" mt="8" noOfLines={4} spacing="4" />
+                <Box padding="6" marginY="8" borderRadius="8px" boxShadow="lg" bg="featuredDark">
+                  <SkeletonText width="100%" noOfLines={2} spacing="4" />
+                </Box>
+                <SkeletonText width="100%" mt="8" noOfLines={4} spacing="4" />
               </Box>
             )}
-
-            {notFound && <Text size="l">No content to see here 🙄</Text>}
           </Box>
         </Box>
 
