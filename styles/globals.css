@@ -109,6 +109,9 @@ a {
 .markdown-body p pre {
   border-radius: 4px;
 }
+.markdown-body pre {
+  border-radius: 4px;
+}
 
 .markdown-body ol li {
   padding: 6px 0;
@@ -150,6 +153,29 @@ a {
   border-radius: 3px;
   padding: 0.1em 1rem !important;
   margin: 10px auto !important;
+}
+
+.markdown-body h1,
+.markdown-body h2 {
+  font-weight: 700;
+  padding: 20px 0 15px 0;
+  margin-bottom: 16px;
+}
+.markdown-body.light h1,
+.markdown-body.light h2 {
+  border-bottom: 2px solid #CBD5E0;
+}
+
+.markdown-body.dark h1,
+.markdown-body.dark h2 {
+  border-bottom: 2px solid #1A202C;
+}
+
+.markdown-body h1 {
+  font-size: 26px;
+}
+.markdown-body h2 {
+  font-size: 22px;
 }
 
 .markdown-body h3,
@@ -348,6 +374,12 @@ a {
 
 .markdown-body img[align='left'] {
   padding-right: 20px;
+}
+
+.markdown-body p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .markdown-body .emoji {

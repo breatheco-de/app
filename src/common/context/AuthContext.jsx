@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
+// import { useRouter } from 'next/router';
 import { useRouter } from 'next/router';
 import bc from '../services/breathecode';
 import axiosInstance from '../../axios';
@@ -107,7 +108,8 @@ const AuthProvider = ({ children }) => {
           type: 'INIT',
           payload: { user: response.data, isAuthenticated: true },
         });
-        router.push('/choose-program');
+        // router.push('/choose-program');
+        console.log(state);
       } else {
         setSession(null);
         dispatch({

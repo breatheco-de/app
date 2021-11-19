@@ -33,56 +33,56 @@ Default.args = {
       title: "Read",
       subtitle: "Introduction to prework",
       icon: "book",
-      muted: true
+      muted: false
     },
     {
       id: 2,
       title: "Read",
       subtitle: "Introduction to prework",
       icon: "book",
-      muted: false
+      muted: true
     },
     {
       id: 3,
       title: "Read",
       subtitle: "Introduction to prework",
       icon: "book",
-      muted: false
+      muted: true
     },
     {
       id: 4,
       title: "Read",
       subtitle: "Introduction to prework",
       icon: "book",
-      muted: false
+      muted: true
     },
     {
       id: 5,
       title: "Read",
       subtitle: "Introduction to prework",
       icon: "book",
-      muted: false
+      muted: true
     },
     {
       id: 6,
       title: "Read",
       subtitle: "Introduction to prework",
       icon: "book",
-      muted: false
+      muted: true
     },
     {
       id: 7,
       title: "Read",
       subtitle: "Introduction to prework",
       icon: "book",
-      muted: false
+      muted: true
     },
     {
       id: 8,
       title: "Read",
       subtitle: "Introduction to prework",
       icon: "book",
-      muted: false
+      muted: true
     },
   ]
 };

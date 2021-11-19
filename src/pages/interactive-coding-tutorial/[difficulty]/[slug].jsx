@@ -1,10 +1,6 @@
 /* eslint-disable no-console */
 import {
-  Box,
-  useColorModeValue,
-  Flex,
-  useToast,
-  useColorMode,
+  Box, useColorModeValue, Flex, useToast, useColorMode,
 } from '@chakra-ui/react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import PropTypes from 'prop-types';

@@ -1,12 +1,14 @@
 import PropTypes from 'prop-types';
-import Markdown from 'markdown-to-jsx';
+import { compiler } from 'markdown-to-jsx';
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { Link } from '@chakra-ui/react';
 import jsx from 'react-syntax-highlighter/dist/cjs/languages/prism/jsx';
 import js from 'react-syntax-highlighter/dist/cjs/languages/prism/javascript';
 import bash from 'react-syntax-highlighter/dist/cjs/languages/prism/bash';
-import Heading from '../Heading';
+import Heading from './Heading';
+import Anchor from './Anchor';
+// import ChakraHeading from '../Heading';
 import Text from '../Text';
 
 // okaidia-tomorrow
@@ -19,7 +21,7 @@ const Code = ({ className, children }) => {
   if (className.includes('lang-')) {
     language = className.replace('lang-', '');
   } else {
-    language = className;
+    language = 'bash';
   }
 
   return (
@@ -30,7 +32,13 @@ const Code = ({ className, children }) => {
 };
 
 const MDHeading = ({ children, id }) => (
-  <Heading id={id} size="sm" padding="20px 0 15px 0" marginBottom="16px" borderBottom="1px solid hsla(210,18%,87%,1)">
+  <Heading
+    id={id}
+    size="sm"
+    padding="20px 0 15px 0"
+    marginBottom="16px"
+    borderBottom="1px solid hsla(210,18%,87%,1)"
+  >
     {children}
   </Heading>
 );
@@ -55,19 +63,19 @@ const MDLink = ({ children, href }) => (
 );
 
 const MarkDownParser = ({ content }) => (
-  <Markdown
-    options={{
-      slugify: (str) => str,
+  <>
+    {compiler(content, {
+      wrapper: null,
       overrides: {
         code: {
           component: Code,
         },
-        h1: {
-          component: MDHeading,
-        },
-        h2: {
-          component: MDHeading,
-        },
+        // h1: {
+        //   component: MDHeading,
+        // },
+        // h2: {
+        //   component: MDHeading,
+        // },
         p: {
           component: MDText,
         },
@@ -79,11 +87,110 @@ const MarkDownParser = ({ content }) => (
             className: 'MDImg',
           },
         },
+
+        h1: {
+          component: Anchor,
+          props: {
+            className: 'foo',
+          },
+        },
+        h2: {
+          component: Anchor,
+          props: {
+            className: 'foo',
+          },
+        },
+        h3: {
+          component: Anchor,
+          props: {
+            className: 'foo',
+          },
+        },
+        h4: {
+          component: Anchor,
+          props: {
+            className: 'foo',
+          },
+        },
+        h5: {
+          component: Anchor,
+          props: {
+            className: 'foo',
+          },
+        },
+        h6: {
+          component: Anchor,
+          props: {
+            className: 'foo',
+          },
+        },
       },
-    }}
-  >
-    {content}
-  </Markdown>
+      slugify: (str) => str.split(' ').join('-').toLowerCase(),
+    }).filter((item) => typeof item.type === 'function')}
+    {compiler(content, {
+      wrapper: null,
+      overrides: {
+        code: {
+          component: Code,
+        },
+        // h1: {
+        //   component: MDHeading,
+        // },
+        // h2: {
+        //   component: MDHeading,
+        // },
+        p: {
+          component: MDText,
+        },
+        a: {
+          component: MDLink,
+        },
+        img: {
+          props: {
+            className: 'MDImg',
+          },
+        },
+
+        h1: {
+          component: Heading.H1,
+          props: {
+            className: 'foo',
+          },
+        },
+        h2: {
+          component: Heading.H2,
+          props: {
+            className: 'foo',
+          },
+        },
+        h3: {
+          component: Heading.H3,
+          props: {
+            className: 'foo',
+          },
+        },
+        h4: {
+          component: Heading.H4,
+          props: {
+            className: 'foo',
+          },
+        },
+        h5: {
+          component: Heading.H5,
+          props: {
+            className: 'foo',
+          },
+        },
+        h6: {
+          component: Heading.H6,
+          props: {
+            className: 'foo',
+          },
+        },
+      },
+      slugify: (str) => str.split(' ').join('-').toLowerCase(),
+    })}
+  </>
 );
 
 MarkDownParser.propTypes = {
