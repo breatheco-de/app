@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import bc from '../services/breathecode';
 import axiosInstance from '../../axios';
 
@@ -93,7 +93,7 @@ export const AuthContext = createContext({
 
 const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const router = useRouter();
+  // const router = useRouter();
   useEffect(() => {
     (async () => {
       const token = getToken();
@@ -104,7 +104,8 @@ const AuthProvider = ({ children }) => {
           type: 'INIT',
           payload: { user: response.data, isAuthenticated: true },
         });
-        router.push('/choose-program');
+        // router.push('/choose-program');
+        console.log(state);
       } else {
         setSession(null);
         dispatch({
