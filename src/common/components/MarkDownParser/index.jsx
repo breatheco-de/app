@@ -7,7 +7,7 @@ import jsx from 'react-syntax-highlighter/dist/cjs/languages/prism/jsx';
 import js from 'react-syntax-highlighter/dist/cjs/languages/prism/javascript';
 import bash from 'react-syntax-highlighter/dist/cjs/languages/prism/bash';
 import Heading from './Heading';
-import Anchor from './Anchor';
+// import Anchor from './Anchor';
 // import ChakraHeading from '../Heading';
 import Text from '../Text';
 
@@ -70,12 +70,6 @@ const MarkDownParser = ({ content }) => (
         code: {
           component: Code,
         },
-        // h1: {
-        //   component: MDHeading,
-        // },
-        // h2: {
-        //   component: MDHeading,
-        // },
         p: {
           component: MDText,
         },
@@ -87,45 +81,8 @@ const MarkDownParser = ({ content }) => (
             className: 'MDImg',
           },
         },
-
-        h1: {
-          component: Anchor,
-          props: {
-            className: 'foo',
-          },
-        },
-        h2: {
-          component: Anchor,
-          props: {
-            className: 'foo',
-          },
-        },
-        h3: {
-          component: Anchor,
-          props: {
-            className: 'foo',
-          },
-        },
-        h4: {
-          component: Anchor,
-          props: {
-            className: 'foo',
-          },
-        },
-        h5: {
-          component: Anchor,
-          props: {
-            className: 'foo',
-          },
-        },
-        h6: {
-          component: Anchor,
-          props: {
-            className: 'foo',
-          },
-        },
       },
-      slugify: (str) => str.split(' ').join('-').toLowerCase(),
+      // slugify: (str) => str.split(' ').join('-').toLowerCase(),
     }).filter((item) => typeof item.type === 'function')}
     {compiler(content, {
       wrapper: null,
@@ -133,12 +90,6 @@ const MarkDownParser = ({ content }) => (
         code: {
           component: Code,
         },
-        // h1: {
-        //   component: MDHeading,
-        // },
-        // h2: {
-        //   component: MDHeading,
-        // },
         p: {
           component: MDText,
         },
@@ -150,45 +101,8 @@ const MarkDownParser = ({ content }) => (
             className: 'MDImg',
           },
         },
-
-        h1: {
-          component: Heading.H1,
-          props: {
-            className: 'foo',
-          },
-        },
-        h2: {
-          component: Heading.H2,
-          props: {
-            className: 'foo',
-          },
-        },
-        h3: {
-          component: Heading.H3,
-          props: {
-            className: 'foo',
-          },
-        },
-        h4: {
-          component: Heading.H4,
-          props: {
-            className: 'foo',
-          },
-        },
-        h5: {
-          component: Heading.H5,
-          props: {
-            className: 'foo',
-          },
-        },
-        h6: {
-          component: Heading.H6,
-          props: {
-            className: 'foo',
-          },
-        },
       },
-      slugify: (str) => str.split(' ').join('-').toLowerCase(),
+      // slugify: (str) => str.split(' ').join('-').toLowerCase(),
     })}
   </>
 );

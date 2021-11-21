@@ -37,7 +37,7 @@ function Register() {
               duration: 9000,
               isClosable: true,
             });
-            router.push('/choose-program');
+            router.push('/dashboard');
           }
         }).catch((error) => {
           actions.setSubmitting(false);
