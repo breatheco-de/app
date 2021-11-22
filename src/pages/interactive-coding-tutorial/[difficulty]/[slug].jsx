@@ -191,7 +191,7 @@ const ProjectSlug = ({ project }) => {
             maxHeight="500px"
             minHeight={{ base: 'auto', md: '300px' }}
             priority
-            borderRadius="15px"
+            borderRadius="3px"
             pos="relative"
             _groupHover={{
               _after: {
@@ -199,7 +199,7 @@ const ProjectSlug = ({ project }) => {
               },
             }}
             onError={(e) => onImageNotFound(e)}
-            style={{ borderRadius: '15px', overflow: 'hidden' }}
+            style={{ overflow: 'hidden' }}
             objectFit="cover"
             src={getImage}
             alt={project.title}

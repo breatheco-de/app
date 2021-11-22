@@ -163,12 +163,12 @@ a {
 }
 .markdown-body.light h1,
 .markdown-body.light h2 {
-  border-bottom: 2px solid #CBD5E0;
+  border-bottom: 2px solid #cbd5e0;
 }
 
 .markdown-body.dark h1,
 .markdown-body.dark h2 {
-  border-bottom: 2px solid #1A202C;
+  border-bottom: 2px solid rgb(55 62 71);
 }
 
 .markdown-body h1 {
@@ -352,16 +352,25 @@ a {
 .markdown-body table th,
 .markdown-body table td {
   padding: 6px 13px;
-  border: 1px solid #d0d7de;
+  border: 1px solid #606060;
 }
 
-.markdown-body table tr {
+.markdown-body.light table tr {
   background-color: #ffffff;
   border-top: 1px solid hsla(210, 18%, 87%, 1);
 }
 
-.markdown-body table tr:nth-child(2n) {
-  background-color: #f6f8fa;
+.markdown-body.dark table tr {
+  background-color: #1a202c;
+  border-top: 1px solid rgb(55 62 71);
+}
+
+.markdown-body.light table tr:nth-child(2n) {
+  background-color: #EDF2F7;
+}
+
+.markdown-body.dark table tr:nth-child(2n) {
+  background-color: #283340;
 }
 
 .markdown-body table img {
@@ -377,9 +386,14 @@ a {
 }
 
 .markdown-body p {
-  display: flex;
+  display: block;
+  /* flex-wrap: wrap; */
   align-items: center;
   gap: 8px;
+}
+
+.markdown-body pre.bash {
+  padding: 0.6em 1em !important;
 }
 
 .markdown-body .emoji {
