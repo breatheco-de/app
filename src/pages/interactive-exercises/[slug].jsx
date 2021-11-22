@@ -7,8 +7,8 @@ import {
   Button,
   FormControl,
   Input,
-  SkeletonText,
   useToast,
+  useColorMode,
 } from '@chakra-ui/react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import PropTypes from 'prop-types';
@@ -22,6 +22,7 @@ import SimpleTable from '../../js_modules/projects/SimpleTable';
 import TagCapsule from '../../common/components/TagCapsule';
 import Image from '../../common/components/Image';
 import MarkDownParser from '../../common/components/MarkDownParser';
+import MDSkeleton from '../../common/components/MDSkeleton';
 
 export const getStaticPaths = async () => {
   const data = await fetch(
@@ -189,6 +190,7 @@ const ExerciseSlug = ({ exercise }) => {
   const getImage = exercise.preview !== '' ? exercise.preview : defaultImage;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
+  const { colorMode } = useColorMode();
 
   const toast = useToast();
 
@@ -278,7 +280,7 @@ const ExerciseSlug = ({ exercise }) => {
             maxHeight="500px"
             minHeight={{ base: 'auto', md: '300px' }}
             priority
-            borderRadius="15px"
+            borderRadius="3px"
             pos="relative"
             _groupHover={{
               _after: {
@@ -286,7 +288,7 @@ const ExerciseSlug = ({ exercise }) => {
               },
             }}
             onError={(e) => onImageNotFound(e)}
-            style={{ borderRadius: '15px', overflow: 'hidden' }}
+            style={{ overflow: 'hidden' }}
             objectFit="cover"
             src={getImage}
             alt={exercise.title}
@@ -321,19 +323,10 @@ const ExerciseSlug = ({ exercise }) => {
             padding="28px 32px"
             borderRadius="3px"
             background={useColorModeValue('featuredLight', 'featuredDark')}
+            width={{ base: '34rem', md: '54rem' }}
+            className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
           >
-            {MDecoded ? (
-              <MarkDownParser content={removeTitleAndImage(MDecoded)} />
-            ) : (
-              <Box padding="2" boxShadow="lg" bg="white">
-                <SkeletonText width="60%" mt="6" noOfLines={1} spacing="4" />
-                <SkeletonText width="100%" mt="8" noOfLines={4} spacing="4" />
-                <Box padding="6" marginY="8" borderRadius="8px" boxShadow="lg" bg="featuredDark">
-                  <SkeletonText width="100%" noOfLines={2} spacing="4" />
-                </Box>
-                <SkeletonText width="100%" mt="8" noOfLines={4} spacing="4" />
-              </Box>
-            )}
+            {MDecoded ? <MarkDownParser content={removeTitleAndImage(MDecoded)} /> : <MDSkeleton />}
           </Box>
         </Box>
 
