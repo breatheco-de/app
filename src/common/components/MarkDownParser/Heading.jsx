@@ -1,27 +1,27 @@
 import PropTypes from 'prop-types';
 
 const H1 = ({ children, ...props }) => (
-  <div id={`#${children[0].split(' ').join('-').toLowerCase()}`}><h1 {...props}>{children}</h1></div>
+  <div><h1 {...props}>{children}</h1></div>
 );
 
 const H2 = ({ children, ...props }) => (
-  <div id={`#${children[0].split(' ').join('-').toLowerCase()}`}><h2 {...props}>{children}</h2></div>
+  <div><h2 {...props}>{children}</h2></div>
 );
 
 const H3 = ({ children, ...props }) => (
-  <div id={`#${children[0].split(' ').join('-').toLowerCase()}`}><h3 {...props}>{children}</h3></div>
+  <div><h3 {...props}>{children}</h3></div>
 );
 
 const H4 = ({ children, ...props }) => (
-  <div id={`#${children[0].split(' ').join('-').toLowerCase()}`}><h4 {...props}>{children}</h4></div>
+  <div><h4 {...props}>{children}</h4></div>
 );
 
 const H5 = ({ children, ...props }) => (
-  <div id={`#${children[0].split(' ').join('-').toLowerCase()}`}><h5 {...props}>{children}</h5></div>
+  <div><h5 {...props}>{children}</h5></div>
 );
 
 const H6 = ({ children, ...props }) => (
-  <div id={`#${children[0].split(' ').join('-').toLowerCase()}`}><h6 {...props}>{children}</h6></div>
+  <div><h6 {...props}>{children}</h6></div>
 );
 
 H1.propTypes = {
