@@ -6,10 +6,11 @@ import { useRouter } from 'next/router';
 import Icon from '../../common/components/Icon';
 
 const DesktopSubNav = ({ label, href, subLabel }) => {
-  const linkColor = useColorModeValue('gray.600', 'gray.300');
   const router = useRouter();
+  const linkColor = useColorModeValue('gray.600', 'gray.300');
+
   const getColorLink = (link) => {
-    if (router?.pathname === link || router.asPath === link) {
+    if (router?.pathname === link || router.asPath === link || router?.pathname.includes(link)) {
       return 'blue.default';
     }
     return linkColor;

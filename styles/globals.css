@@ -26,11 +26,11 @@ a {
 } */
 
 .MDImg {
-  padding: 24px 0;
+  padding: 8px!important;
 }
 
 .markdown-body {
-  color-scheme: dark;
+  /* color-scheme: dark; */
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   margin: 0;
