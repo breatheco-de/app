@@ -9,14 +9,23 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import Icon from '../../common/components/Icon';
 
 const MobileNavItem = ({
   label, subMenu, href, description, icon,
 }) => {
+  const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
   const commonColor = useColorModeValue('gray.600', 'gray.300');
+
+  const getColorLink = (link) => {
+    if (router?.pathname === link || router?.pathname.includes(link)) {
+      return 'blue.default';
+    }
+    return commonColor;
+  };
 
   return (
     <Stack spacing={4} onClick={subMenu && onToggle}>
@@ -32,7 +41,7 @@ const MobileNavItem = ({
             textDecoration: 'none',
           }}
         >
-          <Text fontWeight={400} color={commonColor}>
+          <Text fontWeight={400} color={getColorLink(href)}>
             {label}
           </Text>
         </NextChakraLink>
@@ -47,7 +56,7 @@ const MobileNavItem = ({
             textDecoration: 'none',
           }}
         >
-          <Text fontWeight={400} color={useColorModeValue('gray.600', 'gray.200')}>
+          <Text fontWeight={400} color={getColorLink(href)}>
             {label}
           </Text>
           <Box
@@ -95,10 +104,7 @@ const MobileNavItem = ({
             && subMenu.map((child) => (
               <Link
                 key={child.label}
-                color={commonColor}
-                _hover={{
-                  color: useColorModeValue('black', 'featuredLight'),
-                }}
+                color={getColorLink(child.href)}
                 style={{ textDecoration: 'none' }}
                 py={2}
                 href={child.href}

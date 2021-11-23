@@ -16,19 +16,20 @@ import Icon from '../../common/components/Icon';
 import DesktopSubNav from './DesktopSubNav';
 
 const DesktopNav = ({ NAV_ITEMS }) => {
-  const linkColor = useColorModeValue('gray.600', 'gray.200');
-  const linkHoverColor = useColorModeValue('blue.default', 'blue.default');
-  const popoverContentBgColor = useColorModeValue('white', 'gray.800');
   const router = useRouter();
+  const linkColor = useColorModeValue('gray.600', 'gray.200');
+  const popoverContentBgColor = useColorModeValue('white', 'gray.800');
+  const linkHoverColor = useColorModeValue('blue.default', 'blue.default');
+
   const getColorLink = (link) => {
-    if (router?.pathname === link) {
+    if (router?.pathname === link || router?.pathname.includes(link)) {
       return 'blue.default';
     }
     return linkColor;
   };
 
   const getColorIcon = (link) => {
-    if (router?.pathname === link) {
+    if (router?.pathname === link || router?.pathname.includes(link)) {
       return '#0097CD';
     }
     return 'gray';
