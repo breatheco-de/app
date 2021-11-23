@@ -6,7 +6,8 @@ import { Link } from '@chakra-ui/react';
 import jsx from 'react-syntax-highlighter/dist/cjs/languages/prism/jsx';
 import js from 'react-syntax-highlighter/dist/cjs/languages/prism/javascript';
 import bash from 'react-syntax-highlighter/dist/cjs/languages/prism/bash';
-import Heading from './Heading';
+import Toc from './toc';
+import Heading from '../Heading';
 // import Anchor from './Anchor';
 // import ChakraHeading from '../Heading';
 import Text from '../Text';
@@ -64,6 +65,7 @@ const MDLink = ({ children, href }) => (
 
 const MarkDownParser = ({ content }) => (
   <>
+    <Toc content={content} />
     {compiler(content, {
       wrapper: null,
       overrides: {
@@ -82,27 +84,7 @@ const MarkDownParser = ({ content }) => (
           },
         },
       },
-      // slugify: (str) => str.split(' ').join('-').toLowerCase(),
-    }).filter((item) => typeof item.type === 'function')}
-    {compiler(content, {
-      wrapper: null,
-      overrides: {
-        code: {
-          component: Code,
-        },
-        p: {
-          component: MDText,
-        },
-        a: {
-          component: MDLink,
-        },
-        img: {
-          props: {
-            className: 'MDImg',
-          },
-        },
-      },
-      // slugify: (str) => str.split(' ').join('-').toLowerCase(),
+      slugify: (str) => str.split(' ').join('-').toLowerCase(),
     })}
   </>
 );
