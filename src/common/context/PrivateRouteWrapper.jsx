@@ -1,17 +1,22 @@
-import { useRouter } from 'next/router';
+import Login from '../views/Login';
 import useAuth from '../hooks/useAuth';
 
-export const withGuard = (PassedComponent) => (props) => {
-  if (typeof window !== 'undefined') {
-    const Router = useRouter();
+export const withGuard = (PassedComponent) => {
+  const Auth = (props) => {
     const { isAuthenticated } = useAuth();
-    if (!isAuthenticated) {
-      Router.replace('/login');
-      return null;
-    }
-    return <PassedComponent {...props} />;
+
+    if (!isAuthenticated) return <Login />;
+
+    return (
+      <PassedComponent {...props} />
+    );
+  };
+
+  if (PassedComponent.getInitialProps) {
+    Auth.getInitialProps = PassedComponent.getInitialProps;
   }
-  return null;
+
+  return Auth;
 };
 
 export default withGuard;
