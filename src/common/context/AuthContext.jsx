@@ -107,7 +107,6 @@ const AuthProvider = ({ children }) => {
           type: 'INIT',
           payload: { user: response.data, isAuthenticated: true },
         });
-        router.push('/choose-program');
       } else {
         setSession(null);
         dispatch({

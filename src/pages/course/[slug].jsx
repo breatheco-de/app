@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Box,
   Grid,
   GridItem,
   Container,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import mockData from '../../common/utils/mockData/DashboardView';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import TagCapsule from '../../common/components/TagCapsule';
@@ -23,6 +24,7 @@ import useAuth from '../../common/hooks/useAuth';
 const dashboard = ({ slug }) => {
   const { updateModuleStatus } = useModuleMap();
   const { user } = useAuth();
+  const router = useRouter();
   const handleModuleStatus = (event, module) => {
     event.stopPropagation();
     if (module.status === 'inactive') updateModuleStatus({ ...module, status: 'active' });
@@ -32,6 +34,10 @@ const dashboard = ({ slug }) => {
   const {
     tapCapsule, callToAction, moduleMap, cohortSideBar, supportSideBar, progressBar,
   } = mockData;
+
+  useEffect(() => {
+    if (!user.active_cohort) router.push('/choose-program');
+  }, []);
 
   return (
     <div>
