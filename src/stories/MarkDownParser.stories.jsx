@@ -14,19 +14,22 @@ const Component = (args) => {
     useEffect(() => {
         (async () => {
             const results = await fetch(
-                'https://raw.githubusercontent.com/breatheco-de/exercise-instagram-feed/master/README.md',
+                'https://raw.githubusercontent.com/breatheco-de/content/master/src/content/lesson/intro-to-prework.md',
             )
                 .then((res) => res.text())
                 .catch((err) => console.error(err));
             const markdownContent = getMarkDownContent(results);
-            console.log(markdownContent)
             setData(markdownContent.content)
         })()
     }, [data])
-    return <MarkDownParser content={data ? data : '#Hello'} />;
+    return <MarkDownParser content={data ? data : '#Hello'} {...args}/>;
 }
 
 export const Default = Component.bind({});
 Default.args = {
-
 };
+
+export const ContentControl = Component.bind({});
+ContentControl.args = {
+    content: ""
+}
