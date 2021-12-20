@@ -10,19 +10,18 @@ import {
   Button,
   Box,
   Flex,
-  Grid,
   useCheckboxGroup,
-  Checkbox,
   useColorModeValue,
-  Collapse,
   ModalCloseButton,
   Switch,
 } from '@chakra-ui/react';
-import Icon from './Icon';
-import Text from './Text';
+import Icon from '../Icon';
+import Text from '../Text';
+import TechnologiesSection from './technologies';
+import DifficultySection from './difficulty';
 
 const FilterModal = ({
-  title, isModalOpen, onClose, setFilter, technologyTags, difficulties,
+  title, isModalOpen, onClose, setFilter, contextFilter, technologyTags, difficulties,
 }) => {
   const [checkedTechnologies, setCheckedTechnologies] = useState([]);
   const [withVideo, setWithVideo] = useState(false);
@@ -40,7 +39,7 @@ const FilterModal = ({
   const handleSubmit = () => {
     setFilter({
       technologies: checkedTechnologies,
-      difficulty: difficulties[dificultyPosition],
+      difficulty: difficulties[dificultyPosition] || [],
       videoTutorials: withVideo,
     });
   };
@@ -89,111 +88,28 @@ const FilterModal = ({
         <ModalBody padding="0 24px">
           <Box>
             {/* <------------------- Technologies section -------------------> */}
-            <Flex
-              flexDirection="column"
-              borderBottom={1}
-              borderStyle="solid"
-              borderColor={commonBorderColor}
-            >
-              <Text size="l" color={commonTextColor} padding="25px 0 18px 0">
-                TECHNOLOGIES
-              </Text>
-              <Collapse in={show} startingHeight={170} animateOpacity>
-                <Grid
-                  // repeat(auto-fill, minmax(8rem, 1fr))
-                  gridTemplateColumns={{
-                    base: 'repeat(auto-fill, minmax(10rem, 1fr))',
-                    md: 'repeat(auto-fill, minmax(10rem, 1fr))',
-                  }}
-                  padding="5px"
-                  gap={6}
-                >
-                  {technologyTags.map((technology) => {
-                    const checkbox = getCheckboxProps({
-                      value: technology,
-                      checked:
-                        checkedTechnologies.length === 0
-                          ? false
-                          : checkedTechnologies.includes(technology),
-                      isChecked: false,
-                    });
-                    return (
-                      <Box
-                        key={technology}
-                        as="label"
-                        cursor="pointer"
-                        _focus={{
-                          boxShadow: 'outline',
-                        }}
-                      >
-                        <Flex gridGap="10px">
-                          <Checkbox
-                            {...checkbox}
-                            borderColor="gray.default"
-                            isChecked={checkbox.checked}
-                          />
-                          <Text size="l">{technology}</Text>
-                        </Flex>
-                      </Box>
-                    );
-                  })}
-                </Grid>
-              </Collapse>
-              {technologyTags.length >= 17 && (
-                <Flex width="100%" justifyContent="right">
-                  <Box
-                    as="button"
-                    margin="20px 0"
-                    color="blue.default"
-                    cursor="pointer"
-                    fontSize="14px"
-                    onClick={handleToggle}
-                  >
-                    {`Show ${show ? 'Less' : 'More'}`}
-                  </Box>
-                </Flex>
-              )}
-            </Flex>
+            <TechnologiesSection
+              show={show}
+              title="TECHNOLOGIES"
+              handleToggle={handleToggle}
+              technologyTags={technologyTags}
+              commonTextColor={commonTextColor}
+              getCheckboxProps={getCheckboxProps}
+              commonBorderColor={commonBorderColor}
+              checkedTechnologies={checkedTechnologies}
+            />
 
             {/* <------------------- Difficulty section -------------------> */}
-            <Flex
-              flexDirection="column"
-              borderBottom={1}
-              borderStyle="solid"
-              borderColor={commonBorderColor}
-              padding="0 0 30px 0"
-            >
-              <Text size="l" color={commonTextColor} padding="25px 0 18px 0">
-                DIFFICULTIES
-              </Text>
-              <Grid gridTemplateColumns="repeat(auto-fill, minmax(10rem, 1fr))" gap={6}>
-                {difficulties.map((dificulty, index) => (
-                  <Flex
-                    gridGap="10px"
-                    key={dificulty}
-                    cursor="pointer"
-                    onClick={() => setDificulty(index)}
-                  >
-                    <Checkbox borderColor="gray.default" isChecked={index === dificultyPosition} />
-                    <Text size="md">{dificulty}</Text>
-                  </Flex>
-                ))}
-              </Grid>
-              {typeof dificultyPosition === 'number' && dificultyPosition !== null && (
-                <Flex width="100%" justifyContent="right">
-                  <Box
-                    as="button"
-                    margin="20px 0"
-                    color="blue.default"
-                    cursor="pointer"
-                    fontSize="14px"
-                    onClick={() => setDificulty(null)}
-                  >
-                    Remove difficulty
-                  </Box>
-                </Flex>
-              )}
-            </Flex>
+            <DifficultySection
+              title="DIFFICULTIES"
+              setFilter={setFilter}
+              contextFilter={contextFilter}
+              setDificulty={setDificulty}
+              difficulties={difficulties}
+              commonTextColor={commonTextColor}
+              dificultyPosition={dificultyPosition}
+              commonBorderColor={commonBorderColor}
+            />
 
             <Flex flexDirection="row" justifyContent="space-between">
               <Text size="l" textTransform="uppercase" color={commonTextColor} padding="20px 0">
@@ -256,6 +172,7 @@ const FilterModal = ({
 FilterModal.propTypes = {
   title: PropTypes.string,
   setFilter: PropTypes.func.isRequired,
+  contextFilter: PropTypes.objectOf(PropTypes.any).isRequired,
   technologyTags: PropTypes.arrayOf(PropTypes.string),
   difficulties: PropTypes.arrayOf(PropTypes.string),
   isModalOpen: PropTypes.bool,

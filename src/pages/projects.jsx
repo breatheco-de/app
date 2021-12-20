@@ -141,6 +141,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         <FilterModal
           isModalOpen={isOpen}
           onClose={onClose}
+          contextFilter={filteredBy.projectsOptions}
           setFilter={setProjectFilters}
           technologyTags={technologyTags}
           difficulties={difficulties}
