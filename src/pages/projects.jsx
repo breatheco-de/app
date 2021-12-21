@@ -54,16 +54,18 @@ export const getStaticProps = async ({ locale }) => {
   technologyTags = [...new Set(technologyTags)];
   difficulties = [...new Set(difficulties)];
 
-  const verifyDifficultyPosition = (difficulty) => {
-    if (difficulty === 'beginner') return 0;
-    if (difficulty === 'easy') return 1;
-    if (difficulty === 'intermediate') return 2;
-    if (difficulty === 'hard') return 3;
-    return -1;
+  // Verify if difficulty exist in expected position, else fill void array with 'nullString'
+  const verifyDifficultyExists = (difficultiesArray, difficulty) => {
+    if (difficultiesArray.some((el) => el === difficulty)) {
+      return difficulty;
+    }
+    return 'nullString';
   };
+
+  // Fill common difficulties in expected position
   const difficultiesSorted = [];
-  difficulties.forEach((difficulty) => {
-    difficultiesSorted.push(difficulties[verifyDifficultyPosition(difficulty)]);
+  ['beginner', 'easy', 'intermediate', 'hard'].forEach((difficulty) => {
+    difficultiesSorted.push(verifyDifficultyExists(difficulties, difficulty));
   });
 
   return {
