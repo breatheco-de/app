@@ -1,6 +1,6 @@
-/* eslint-disable react/prop-types */
-import { Box, useColorMode } from '@chakra-ui/react';
+import { Box, useColorMode, useColorModeValue } from '@chakra-ui/react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import PropTypes from 'prop-types';
 import Heading from '../common/components/Heading';
 import Link from '../common/components/NextChakraLink';
 import getMarkDownContent from '../common/components/MarkDownParser/markdown';
@@ -14,8 +14,6 @@ export const getStaticProps = async ({ locale }) => {
     .catch((err) => console.error(err));
   const markdownContent = getMarkDownContent(results);
   return {
-    // props: { data:..., slug:..., more... },
-    // props: { data:..., slug:..., more... },
     props: {
       fallback: false,
       ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
@@ -25,7 +23,6 @@ export const getStaticProps = async ({ locale }) => {
 };
 
 const AboutUs = ({ data }) => {
-  // console.log('MD_DATA:', data);
   const { colorMode } = useColorMode();
 
   return (
@@ -34,16 +31,30 @@ const AboutUs = ({ data }) => {
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      margin={{ base: '4% 4% 0 4%', md: '4% 10% 0 10%' }}
+      padding="45px 0 0 0"
+      margin={{ base: '0', md: '4% 10% 0 10%' }}
     >
-
-      <Link href="/" display="inline-block" w="full" borderRadius="15px">
+      <Link
+        href="/"
+        display="inline-block"
+        padding={{ base: '0px 10px 15px 10px', md: '0' }}
+        w="auto"
+        borderRadius="15px"
+      >
         {'< Back to Home'}
       </Link>
 
-      <Box flex="1" margin={{ base: '4% 4% 0 4%', md: '4% 10% 0 10%' }}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        flex="1"
+        margin={{ base: '0', md: '4% 10% 0 10%' }}
+      >
         <Heading
           as="h1"
+          w="100%"
+          padding="0 0 30px 0"
           size="xl"
           fontWeight="700"
           color={colorMode === 'light' ? 'gray.600' : 'gray.300'}
@@ -51,10 +62,24 @@ const AboutUs = ({ data }) => {
         >
           About Us - Markdown
         </Heading>
-        <MarkDownParser content={data} />
+
+        <Box
+          padding="28px 32px"
+          borderRadius="3px"
+          background={useColorModeValue('#F2F6FA', 'featuredDark')}
+          width="100%"
+          className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
+          transition="background .2s ease"
+        >
+          <MarkDownParser content={data} />
+        </Box>
       </Box>
     </Box>
   );
+};
+
+AboutUs.propTypes = {
+  data: PropTypes.string.isRequired,
 };
 
 export default AboutUs;

@@ -148,6 +148,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
         <FilterModal
           isModalOpen={isOpen}
           onClose={onClose}
+          contextFilter={filteredBy.projectsOptions}
           setFilter={setExerciseFilters}
           technologyTags={technologyTags}
           difficulties={difficulties}
