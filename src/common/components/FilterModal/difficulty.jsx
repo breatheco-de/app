@@ -1,6 +1,4 @@
-import {
-  Box, Flex, Grid, Checkbox,
-} from '@chakra-ui/react';
+import { Box, Flex, Tooltip } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Text from '../Text';
 
@@ -9,9 +7,9 @@ const DifficultySection = ({
   commonTextColor,
   commonBorderColor,
   difficulties,
-  dificultyPosition,
+  difficultyPosition,
   contextFilter,
-  setDificulty,
+  setDifficulty,
   setFilter,
 }) => (
   <Flex
@@ -21,27 +19,59 @@ const DifficultySection = ({
     borderColor={commonBorderColor}
     padding="0 0 30px 0"
   >
-    <Text size="l" color={commonTextColor} padding="25px 0 18px 0">
+    <Text fontSize="xl" fontWeight="bold" color={commonTextColor} padding="25px 0 18px 0">
       {title}
     </Text>
-    <Grid gridTemplateColumns="repeat(auto-fill, minmax(10rem, 1fr))" gap={6}>
-      {difficulties.map((dificulty, index) => (
-        <Flex gridGap="10px" key={dificulty} cursor="pointer" onClick={() => setDificulty(index)}>
-          <Checkbox borderColor="gray.default" isChecked={index === dificultyPosition} />
-          <Text size="md">{dificulty}</Text>
-        </Flex>
+    <Box
+      width="100%"
+      padding="30px 0 25px 0"
+      minHeight="80px"
+      display="flex"
+      justifyContent="space-between"
+      position="relative"
+      alignItems="center"
+    >
+      {/* CONECTOR */}
+      <Box position="absolute" top="auto" height="3px" width="100%" background="gray.default" />
+      {/* CIRCLE */}
+      {difficulties.map((difficulty, index) => (
+        <Tooltip hasArrow defaultIsOpen label={difficulty} placement="top">
+          <Box
+            key={`${difficulty}`}
+            onClick={() => setDifficulty(index)}
+            width={index === difficultyPosition ? '20px' : '15px'}
+            height={index === difficultyPosition ? '20px' : '15px'}
+            borderRadius="50%"
+            background={index === difficultyPosition ? 'blue.default' : 'gray.default'}
+            cursor="pointer"
+            position="relative"
+            zIndex={1}
+          >
+            <Box
+              padding="8px 0"
+              display={{ base: index === difficultyPosition ? 'block' : 'none', md: 'none' }}
+              color="black"
+              width="100px"
+              fontSize=" 12px"
+              position="absolute"
+              top="20px"
+            >
+              {difficulty}
+            </Box>
+          </Box>
+        </Tooltip>
       ))}
-    </Grid>
-    {typeof dificultyPosition === 'number' && dificultyPosition !== null && (
+    </Box>
+    {typeof difficultyPosition === 'number' && difficultyPosition !== null && (
       <Flex width="100%" justifyContent="right">
         <Box
           as="button"
-          margin="20px 0"
+          margin={{ base: '20px 0 0 0', md: '0' }}
           color="blue.default"
           cursor="pointer"
           fontSize="14px"
           onClick={() => {
-            setDificulty(null);
+            setDifficulty(null);
             setFilter({
               ...contextFilter,
               difficulty: [],
@@ -59,16 +89,16 @@ DifficultySection.propTypes = {
   difficulties: PropTypes.arrayOf(PropTypes.string),
   commonBorderColor: PropTypes.string.isRequired,
   commonTextColor: PropTypes.string.isRequired,
-  dificultyPosition: PropTypes.number,
+  difficultyPosition: PropTypes.number,
   contextFilter: PropTypes.objectOf(PropTypes.any).isRequired,
-  setDificulty: PropTypes.func.isRequired,
+  setDifficulty: PropTypes.func.isRequired,
   setFilter: PropTypes.func.isRequired,
 };
 
 DifficultySection.defaultProps = {
   title: 'TECHNOLOGIES',
   difficulties: [],
-  dificultyPosition: null,
+  difficultyPosition: null,
 };
 
 export default DifficultySection;

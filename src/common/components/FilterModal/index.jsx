@@ -26,7 +26,7 @@ const FilterModal = ({
   const [checkedTechnologies, setCheckedTechnologies] = useState([]);
   const [withVideo, setWithVideo] = useState(false);
   const [show, setShow] = useState(false);
-  const [dificultyPosition, setDificulty] = useState(null);
+  const [difficultyPosition, setDifficulty] = useState(null);
   const { getCheckboxProps } = useCheckboxGroup({
     onChange: setCheckedTechnologies,
   });
@@ -39,14 +39,14 @@ const FilterModal = ({
   const handleSubmit = () => {
     setFilter({
       technologies: checkedTechnologies,
-      difficulty: difficulties[dificultyPosition] || [],
+      difficulty: difficulties[difficultyPosition] || [],
       videoTutorials: withVideo,
     });
   };
 
   const clearFilters = () => {
     setCheckedTechnologies([]);
-    setDificulty(null);
+    setDifficulty(null);
     setWithVideo(false);
     setFilter({
       technologies: [],
@@ -55,7 +55,7 @@ const FilterModal = ({
     });
   };
 
-  const fLength = checkedTechnologies.length + (dificultyPosition === null ? 0 : 1) + withVideo;
+  const fLength = checkedTechnologies.length + (difficultyPosition === null ? 0 : 1) + withVideo;
 
   return (
     <Modal isOpen={isModalOpen} onClose={onClose}>
@@ -104,10 +104,10 @@ const FilterModal = ({
               title="DIFFICULTIES"
               setFilter={setFilter}
               contextFilter={contextFilter}
-              setDificulty={setDificulty}
+              setDifficulty={setDifficulty}
               difficulties={difficulties}
               commonTextColor={commonTextColor}
-              dificultyPosition={dificultyPosition}
+              difficultyPosition={difficultyPosition}
               commonBorderColor={commonBorderColor}
             />
 
