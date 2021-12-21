@@ -109,11 +109,15 @@ MDHeading.propTypes = {
   id: PropTypes.string.isRequired,
 };
 MDText.propTypes = {
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
 };
 MDLink.propTypes = {
   children: PropTypes.node.isRequired,
   href: PropTypes.string.isRequired,
+};
+
+MDText.defaultProps = {
+  children: '',
 };
 
 export default MarkDownParser;

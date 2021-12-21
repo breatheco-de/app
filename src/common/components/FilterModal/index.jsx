@@ -112,7 +112,7 @@ const FilterModal = ({
             />
 
             <Flex flexDirection="row" justifyContent="space-between">
-              <Text size="l" textTransform="uppercase" color={commonTextColor} padding="20px 0">
+              <Text fontSize="xl" fontWeight="bold" textTransform="uppercase" color={commonTextColor} padding="20px 0">
                 Only with video tutorials
               </Text>
 
