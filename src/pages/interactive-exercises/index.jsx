@@ -109,7 +109,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
       >
         <TitleContent title="Practices" mobile={false} />
 
-        <Search />
+        <Search placeholder="Search Exercises" />
 
         <Button
           variant="outline"
