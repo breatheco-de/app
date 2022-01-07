@@ -3,12 +3,13 @@ import { compiler } from 'markdown-to-jsx';
 import { SimpleGrid, useMediaQuery } from '@chakra-ui/react';
 import Anchor from './Anchor';
 
-const Toc = ({ content }) => {
+const Toc = ({ content, showTableOfContents }) => {
   const [isNotMobile] = useMediaQuery('(min-width: 1082px)');
 
   return (
     <SimpleGrid
       margin="0 0 40px 0"
+      display={showTableOfContents ? 'grid' : 'none'}
       columns={2}
       spacing={5}
       bg="blue.light"
@@ -64,6 +65,7 @@ const Toc = ({ content }) => {
 
 Toc.propTypes = {
   content: PropTypes.string,
+  showTableOfContents: PropTypes.bool.isRequired,
 };
 Toc.defaultProps = {
   content: '',

@@ -64,9 +64,9 @@ const MDLink = ({ children, href }) => (
   </Link>
 );
 
-const MarkDownParser = ({ content }) => (
+const MarkDownParser = ({ content, showTableOfContents }) => (
   <>
-    <Toc content={content} />
+    <Toc content={content} showTableOfContents={showTableOfContents} />
     {compiler(content, {
       wrapper: null,
       overrides: {
@@ -92,9 +92,11 @@ const MarkDownParser = ({ content }) => (
 
 MarkDownParser.propTypes = {
   content: PropTypes.string,
+  showTableOfContents: PropTypes.bool,
 };
 MarkDownParser.defaultProps = {
   content: '',
+  showTableOfContents: true,
 };
 
 Code.propTypes = {

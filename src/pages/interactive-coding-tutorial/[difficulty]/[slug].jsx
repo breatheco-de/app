@@ -12,8 +12,8 @@ import Text from '../../../common/components/Text';
 import Icon from '../../../common/components/Icon';
 import SimpleTable from '../../../js_modules/projects/SimpleTable';
 import MarkDownParser from '../../../common/components/MarkDownParser';
-import TagCapsule from '../../../common/components/TagCapsule';
-import Image from '../../../common/components/Image';
+// import TagCapsule from '../../../common/components/TagCapsule';
+// import Image from '../../../common/components/Image';
 import MDSkeleton from '../../../common/components/MDSkeleton';
 
 export const getStaticPaths = async () => {
@@ -92,8 +92,8 @@ const TableInfo = ({ project, commonTextColor }) => (
 
 const ProjectSlug = ({ project }) => {
   const [readme, setReadme] = useState('');
-  const defaultImage = '/static/images/code1.png';
-  const getImage = project.preview !== '' ? project.preview : defaultImage;
+  // const defaultImage = '/static/images/code1.png';
+  // const getImage = project.preview !== '' ? project.preview : defaultImage;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
@@ -133,10 +133,10 @@ const ProjectSlug = ({ project }) => {
     }
   }, []);
 
-  const onImageNotFound = (event) => {
-    event.target.setAttribute('src', defaultImage);
-    event.target.setAttribute('srcset', `${defaultImage} 1x`);
-  };
+  // const onImageNotFound = (event) => {
+  //   event.target.setAttribute('src', defaultImage);
+  //   event.target.setAttribute('srcset', `${defaultImage} 1x`);
+  // };
 
   return (
     <Box
@@ -159,7 +159,7 @@ const ProjectSlug = ({ project }) => {
 
       <Flex height="100%" gridGap="26px">
         <Box flex="1">
-          <TagCapsule
+          {/* <TagCapsule
             variant="rounded"
             tags={project.technologies}
             fontSize="13px"
@@ -171,11 +171,12 @@ const ProjectSlug = ({ project }) => {
             }}
             gap="10px"
             paddingX="0"
-          />
+          /> */}
           <Heading
             as="h1"
             size="25px"
             fontWeight="700"
+            padding="10px 0 35px 0"
             transition="color 0.2s ease-in-out"
             color={useColorModeValue('black', 'white')}
             textTransform="uppercase"
@@ -183,7 +184,7 @@ const ProjectSlug = ({ project }) => {
             {project.title}
           </Heading>
 
-          <Image
+          {/* <Image
             width="100%"
             height={{ base: '190px', md: '400px' }}
             margin="30px 0"
@@ -203,7 +204,7 @@ const ProjectSlug = ({ project }) => {
             objectFit="cover"
             src={getImage}
             alt={project.title}
-          />
+          /> */}
           <Box
             display={{ base: 'flex', md: 'none' }}
             flexDirection="column"
@@ -236,7 +237,11 @@ const ProjectSlug = ({ project }) => {
             className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
             transition="background .2s ease"
           >
-            {readme.markdown ? <MarkDownParser content={readme.markdown} /> : <MDSkeleton />}
+            {readme.markdown ? (
+              <MarkDownParser content={readme.markdown} showTableOfContents={false} />
+            ) : (
+              <MDSkeleton />
+            )}
           </Box>
         </Box>
 
