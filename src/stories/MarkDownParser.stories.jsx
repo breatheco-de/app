@@ -14,7 +14,7 @@ const Component = (args) => {
     useEffect(() => {
         (async () => {
             const results = await fetch(
-                'https://raw.githubusercontent.com/breatheco-de/content/master/src/content/lesson/mastering-css-selectors.md',
+                'https://raw.githubusercontent.com/breatheco-de/content/master/src/content/lesson/css-layouts.md',
             )
                 .then((res) => res.text())
                 .catch((err) => console.error(err));
