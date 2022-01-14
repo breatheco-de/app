@@ -4,7 +4,7 @@ import { Box } from '@chakra-ui/react';
 const Anchor = ({ children, ...props }) => {
   const { id, ...rest } = props;
   return (
-    <Box><Box {...rest} color="blue.default" as="a" href={`#${id}`}>{children}</Box></Box>
+    <Box><Box fontWeight="bold" fontSize="18px" {...rest} color="blue.default" as="a" href={`#${id}`}>{children}</Box></Box>
   );
 };
 

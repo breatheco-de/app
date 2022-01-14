@@ -144,7 +144,7 @@ const ProjectSlug = ({ project }) => {
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      margin={{ base: '4% 4% 0 4%', md: '4% 10% 0 10%' }}
+      margin={{ base: '2% 4% 0 4%', md: '2% 10% 0 10%' }}
     >
       <Link
         href="/projects"
@@ -157,8 +157,8 @@ const ProjectSlug = ({ project }) => {
         {'< Back to Projects'}
       </Link>
 
-      <Flex height="100%" gridGap="26px">
-        <Box flex="1">
+      <Flex gridGap="26px" justifyContent="center">
+        <Box>
           <TagCapsule
             variant="rounded"
             tags={project.technologies}
