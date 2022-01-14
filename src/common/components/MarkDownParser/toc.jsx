@@ -57,7 +57,7 @@ const Toc = ({ content }) => {
       {getHierarchy().map((item) => (
         <>
           {Array.isArray(item.childs) ? (
-            <UnorderedList listStyleType="none" margin={0} padding={0}>
+            <UnorderedList listStyleType="none" margin={0} padding={0} style={{ margin: 0 }}>
               {item.h}
               {item.childs.map((c) => <ListItem margin={0}>{c.h}</ListItem>)}
             </UnorderedList>

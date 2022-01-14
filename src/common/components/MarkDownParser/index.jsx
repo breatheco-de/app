@@ -63,9 +63,9 @@ const MDLink = ({ children, href }) => (
   </Link>
 );
 
-const MarkDownParser = ({ content }) => (
+const MarkDownParser = ({ content, withToc }) => (
   <>
-    <Toc content={content} />
+    {withToc ? <Toc content={content} /> : null}
     {compiler(content, {
       wrapper: null,
       overrides: {
@@ -91,9 +91,11 @@ const MarkDownParser = ({ content }) => (
 
 MarkDownParser.propTypes = {
   content: PropTypes.string,
+  withToc: PropTypes.bool,
 };
 MarkDownParser.defaultProps = {
   content: '',
+  withToc: false,
 };
 
 Code.propTypes = {

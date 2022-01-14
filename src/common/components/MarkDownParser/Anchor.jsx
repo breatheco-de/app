@@ -27,7 +27,7 @@ const Child = ({ children, ...props }) => {
         content: '""',
         position: 'absolute',
         width: '2px',
-        height: '26px',
+        height: '35px',
         bg: colorMode === 'light' ? '#DADADA' : '#3E526A',
         marginLeft: '-9px',
         borderRadius: '2px',
