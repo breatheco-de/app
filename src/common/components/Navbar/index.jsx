@@ -8,20 +8,18 @@ import {
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
-  useColorMode,
 } from '@chakra-ui/react';
 import { useTranslation } from 'next-i18next';
 // import { useRouter } from 'next/router';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
-import Image from '../Image';
-import logo from '../../../../public/static/images/bc_logo.png';
+/* import Image from '../Image';
+import logo from '../../../../public/static/images/bc_logo.png'; */
 import DesktopNav from '../../../js_modules/navbar/DesktopNav';
 import MobileNav from '../../../js_modules/navbar/MobileNav';
 
 const NavbarWithSubNavigation = () => {
   const { isOpen, onToggle } = useDisclosure();
-  const { colorMode, toggleColorMode } = useColorMode();
   const { t } = useTranslation(['navbar']);
   const commonColors = useColorModeValue('white', 'gray.800');
 
@@ -74,7 +72,7 @@ const NavbarWithSubNavigation = () => {
         bg={useColorModeValue('white', 'gray.800')}
         color={useColorModeValue('gray.600', 'white')}
         // minH="60px"
-        height="10vh"
+        height="7vh"
         py={{ base: '8px' }}
         px={{ base: 4 }}
         borderBottom={1}
@@ -108,13 +106,14 @@ const NavbarWithSubNavigation = () => {
             aria-label="Toggle Navigation"
           />
           <NextChakraLink href="/" alignSelf="center" display={{ base: 'flex', md: 'none' }}>
-            <Image src={logo} width="30px" height="30px" alt="Breathecode logo" />
+            <Icon icon="logoModern" width="90px" height="20px" />
+            {/* <Image src={logo} width="30px" height="30px" alt="Breathecode logo" /> */}
           </NextChakraLink>
         </Flex>
 
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
           <NextChakraLink href="/" alignSelf="center" display={{ base: 'none', md: 'flex' }}>
-            <Image src={logo} width="30px" height="30px" alt="Breathecode logo" />
+            <Icon icon="logoModern" width="90px" height="20px" />
           </NextChakraLink>
 
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
@@ -123,7 +122,7 @@ const NavbarWithSubNavigation = () => {
         </Flex>
 
         <Stack flex={{ base: 1, md: 0 }} justify="flex-end" direction="row" spacing={6}>
-          <IconButton
+          {/* <IconButton
             display={useBreakpointValue({ base: 'none', md: 'flex' })}
             _hover={{
               background: commonColors,
@@ -140,7 +139,7 @@ const NavbarWithSubNavigation = () => {
                 <Icon icon="dark" width="20px" height="20px" />
               )
             }
-          />
+          /> */}
           <NextChakraLink
             href="/login"
             fontWeight="700"

@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import { compiler } from 'markdown-to-jsx';
+import { Link } from '@chakra-ui/react';
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism';
-import { Link } from '@chakra-ui/react';
 import jsx from 'react-syntax-highlighter/dist/cjs/languages/prism/jsx';
 import js from 'react-syntax-highlighter/dist/cjs/languages/prism/javascript';
 import bash from 'react-syntax-highlighter/dist/cjs/languages/prism/bash';
@@ -63,9 +63,9 @@ const MDLink = ({ children, href }) => (
   </Link>
 );
 
-const MarkDownParser = ({ content }) => (
+const MarkDownParser = ({ content, withToc }) => (
   <>
-    <Toc content={content} />
+    {withToc ? <Toc content={content} /> : null}
     {compiler(content, {
       wrapper: null,
       overrides: {
@@ -91,9 +91,11 @@ const MarkDownParser = ({ content }) => (
 
 MarkDownParser.propTypes = {
   content: PropTypes.string,
+  withToc: PropTypes.bool,
 };
 MarkDownParser.defaultProps = {
   content: '',
+  withToc: false,
 };
 
 Code.propTypes = {
