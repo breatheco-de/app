@@ -1,5 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable no-console */
 import {
   Box,
   useColorModeValue,
@@ -9,6 +7,7 @@ import {
   Input,
   useToast,
   useColorMode,
+  FormErrorMessage,
 } from '@chakra-ui/react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import PropTypes from 'prop-types';
@@ -23,6 +22,8 @@ import SimpleTable from '../../js_modules/projects/SimpleTable';
 // import Image from '../../common/components/Image';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import MDSkeleton from '../../common/components/MDSkeleton';
+import validationSchema from '../../common/components/Forms/validationSchemas';
+import { processFormEntry } from '../../common/components/Forms/actions';
 
 export const getStaticPaths = async () => {
   const data = await fetch(
@@ -56,135 +57,161 @@ export const getStaticProps = async ({ params, locale }) => {
   };
 };
 
+const fields = {
+  full_name: {
+    value: '', type: 'name', required: true, place_holder: 'Full name *', error: 'Please specify a valid full name',
+  },
+  email: {
+    value: '', type: 'email', required: true, place_holder: 'Email *', error: 'Please specify a valid email',
+  },
+};
+
 const TabletWithForm = ({
+  toast,
   exercise,
-  errorMessage,
   commonTextColor,
-  validator,
   commonBorderColor,
-}) => (
-  <>
-    <Box
-      px="22px"
-      pb="30px"
-      pt="24px"
-      borderBottom={1}
-      borderStyle="solid"
-      borderColor={commonBorderColor}
-    >
-      <Heading
-        size="15px"
-        textAlign="left"
-        textTransform="uppercase"
-        justify="center"
-        width="100%"
-        mt="0px"
-        mb="0px"
+}) => {
+  const [formStatus, setFormStatus] = useState({ status: 'idle', msg: '' });
+  return (
+    <>
+      <Box
+        px="22px"
+        pb="30px"
+        pt="24px"
+        borderBottom={1}
+        borderStyle="solid"
+        borderColor={commonBorderColor}
       >
-        Direct access request
-      </Heading>
+        <Heading
+          size="15px"
+          textAlign="left"
+          textTransform="uppercase"
+          justify="center"
+          width="100%"
+          mt="0px"
+          mb="0px"
+        >
+          Direct access request
+        </Heading>
 
-      <Text size="md" color={commonTextColor} textAlign="left" mt="10px" px="0px">
-        Please enter your information and receive instant access
-      </Text>
+        <Text size="md" color={commonTextColor} textAlign="left" my="10px" px="0px">
+          Please enter your information and receive instant access
+        </Text>
 
-      <Formik
-        initialValues={{ email: '', password: '' }}
-        onSubmit={(values, actions) => {
-          setTimeout(() => {
-            alert(JSON.stringify(values, null, 2));
-            actions.setSubmitting(false);
-          }, 1000);
-        }}
-      >
-        {(props) => {
-          const { isSubmitting } = props;
-          return (
-            <Form>
-              <Box py="0" flexDirection="column" display="flex" alignItems="center">
-                <Box color={useColorModeValue('danger', 'red')} mt="20px" mb="10px">
-                  {errorMessage}
+        <Formik
+          initialValues={{ full_name: '', email: '', current_download: exercise.slug }}
+          onSubmit={(values, actions) => {
+            processFormEntry(values).then((data) => {
+              actions.setSubmitting(false);
+              if (data && data.error !== false && data.error !== undefined) {
+                setFormStatus({ status: 'error', msg: data.error });
+              } else {
+                setFormStatus({ status: 'thank-you', msg: 'Thank you for your request!' });
+                toast({
+                  title: 'Thank you for your request!',
+                  description: 'An email will be sent to you shortly.',
+                  status: 'success',
+                  duration: 7000,
+                  isClosable: true,
+                });
+              }
+            })
+              .catch((error) => {
+                console.error('error', error);
+                actions.setSubmitting(false);
+                setFormStatus({ status: 'error', msg: error.message || error });
+              });
+          }}
+          validationSchema={validationSchema.leadForm}
+        >
+          {(props) => {
+            const { isSubmitting } = props;
+            return (
+              <Form>
+                <Box py="0" flexDirection="column" display="flex" alignItems="center">
+                  <Field id="field912" name="full_name">
+                    {({ field, form }) => (
+                      <FormControl
+                        padding="6px 0"
+                        isInvalid={form.errors.full_name && form.touched.full_name}
+                      >
+                        <Input
+                          {...field}
+                          id="full_name"
+                          placeholder={fields.full_name.place_holder}
+                          type="name"
+                          style={{
+                            borderRadius: '3px',
+                            backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
+                            transition: 'background 0.2s ease-in-out',
+                          }}
+                        />
+                        <FormErrorMessage>{fields.full_name.error}</FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+
+                  <Field id="field923" name="email">
+                    {({ field, form }) => (
+                      <FormControl
+                        padding="6px 0"
+                        isInvalid={form.errors.email && form.touched.email}
+                      >
+                        <Input
+                          {...field}
+                          id="email"
+                          placeholder={fields.email.place_holder}
+                          type="email"
+                          style={{
+                            borderRadius: '3px',
+                            backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
+                            transition: 'background 0.2s ease-in-out',
+                          }}
+                        />
+                        <FormErrorMessage>{fields.email.error}</FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+
+                  {formStatus.status === 'error' && (
+                    <FormErrorMessage>{formStatus.msg}</FormErrorMessage>
+                  )}
+                  <Button
+                    marginTop="30px"
+                    borderRadius="3px"
+                    width="100%"
+                    padding="0"
+                    disabled={formStatus.status === 'thank-you'}
+                    whiteSpace="normal"
+                    isLoading={isSubmitting}
+                    type="submit"
+                    variant="default"
+                    textTransform="uppercase"
+                  >
+                    Get instant access
+                  </Button>
                 </Box>
-                <Field id="field923" name="email" validate={validator}>
-                  {({ field, form }) => (
-                    <FormControl
-                      padding="6px 0"
-                      isInvalid={form.errors.email && form.touched.email}
-                    >
-                      <Input
-                        {...field}
-                        id="email"
-                        placeholder="Email"
-                        style={{
-                          borderRadius: '3px',
-                          backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
-                          transition: 'background 0.2s ease-in-out',
-                        }}
-                      />
-                    </FormControl>
-                  )}
-                </Field>
-
-                <Field id="field912" name="password">
-                  {({ field, form }) => (
-                    <FormControl
-                      padding="6px 0"
-                      isInvalid={form.errors.password && form.touched.password}
-                    >
-                      <Input
-                        {...field}
-                        id="password"
-                        placeholder="Password"
-                        type="password"
-                        style={{
-                          borderRadius: '3px',
-                          backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
-                          transition: 'background 0.2s ease-in-out',
-                        }}
-                      />
-                    </FormControl>
-                  )}
-                </Field>
-                <Button
-                  marginTop="30px"
-                  borderRadius="3px"
-                  width="100%"
-                  padding="0"
-                  whiteSpace="normal"
-                  isLoading={isSubmitting}
-                  type="submit"
-                  variant="default"
-                  textTransform="uppercase"
-                >
-                  Get instant access
-                </Button>
-              </Box>
-            </Form>
-          );
-        }}
-      </Formik>
-    </Box>
-    <Box px="22px" pb="30px" pt="24px">
-      <SimpleTable
-        difficulty={exercise.difficulty}
-        repository={exercise.url}
-        duration={exercise.duration}
-        videoAvailable={exercise.solution_video_url}
-        technologies={exercise.technologies}
-        liveDemoAvailable={exercise.intro_video_url}
-      />
-    </Box>
-  </>
-);
-
-const regex = {
-  email:
-    /^[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~](\.?[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~])*@(?!mailinator|leonvero|ichkoch|naymeo|naymio)[a-zA-Z0-9]*\.[a-zA-Z](-?[a-zA-Z0-9])+$/,
-  phone: /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/,
+              </Form>
+            );
+          }}
+        </Formik>
+      </Box>
+      <Box px="22px" pb="30px" pt="24px">
+        <SimpleTable
+          difficulty={exercise.difficulty}
+          repository={exercise.url}
+          duration={exercise.duration}
+          videoAvailable={exercise.solution_video_url}
+          technologies={exercise.technologies}
+          liveDemoAvailable={exercise.intro_video_url}
+        />
+      </Box>
+    </>
+  );
 };
 
 const ExerciseSlug = ({ exercise }) => {
-  const [errorMessage, setErrorMessage] = useState('');
   const [notFound, setNotFound] = useState(false);
   // const defaultImage = '/static/images/code1.png';
   // const getImage = exercise.preview !== '' ? exercise.preview : defaultImage;
@@ -215,17 +242,6 @@ const ExerciseSlug = ({ exercise }) => {
   //   event.target.setAttribute('src', defaultImage);
   //   event.target.setAttribute('srcset', `${defaultImage} 1x`);
   // };
-
-  const validator = (value) => {
-    let error;
-    if (!value) {
-      error = 'Email is required';
-    } else if (!regex.email.test(value)) {
-      error = 'Invalid email address';
-    }
-    setErrorMessage(error);
-    return error;
-  };
 
   return (
     <Box
@@ -311,11 +327,10 @@ const ExerciseSlug = ({ exercise }) => {
             borderColor={commonBorderColor}
           >
             <TabletWithForm
+              toast={toast}
               exercise={exercise}
-              errorMessage={errorMessage}
               commonTextColor={commonTextColor}
               commonBorderColor={commonBorderColor}
-              validator={validator}
             />
           </Box>
 
@@ -351,11 +366,10 @@ const ExerciseSlug = ({ exercise }) => {
           borderColor={commonBorderColor}
         >
           <TabletWithForm
+            toast={toast}
             exercise={exercise}
-            errorMessage={errorMessage}
             commonTextColor={commonTextColor}
             commonBorderColor={commonBorderColor}
-            validator={validator}
           />
         </Box>
       </Flex>
@@ -368,12 +382,11 @@ ExerciseSlug.propTypes = {
 };
 
 TabletWithForm.propTypes = {
-  exercise: PropTypes.objectOf(PropTypes.any).isRequired,
-  errorMessage: PropTypes.string.isRequired,
+  isSubmitting: PropTypes.bool,
+  toast: PropTypes.func.isRequired,
   commonTextColor: PropTypes.string.isRequired,
   commonBorderColor: PropTypes.string.isRequired,
-  validator: PropTypes.func.isRequired,
-  isSubmitting: PropTypes.bool,
+  exercise: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 TabletWithForm.defaultProps = {
   isSubmitting: false,

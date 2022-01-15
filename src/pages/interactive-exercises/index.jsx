@@ -1,5 +1,4 @@
 /* eslint-disable no-continue */
-/* eslint-disable no-console */
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import {
   Box, useColorModeValue, Button, Flex, useDisclosure,

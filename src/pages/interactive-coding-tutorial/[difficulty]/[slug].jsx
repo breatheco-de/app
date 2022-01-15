@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import {
   Box, useColorModeValue, Flex, useToast, useColorMode,
 } from '@chakra-ui/react';
@@ -75,8 +74,8 @@ const TableInfo = ({ project, commonTextColor }) => (
 
     <Box d="flex" alignItems="baseline" justifyContent="center" flexDirection="column">
       <Text size="md" color={commonTextColor} textAlign="center" my="10px" px="0px">
-        BreatheCode Coding Projects tutorials and exercises for people learning to code or improving
-        their coding skills
+        BreatheCode Coding Projects tutorials and exercises for people learning
+        to code or improving their coding skills
       </Text>
       <SimpleTable
         difficulty={project.difficulty}
