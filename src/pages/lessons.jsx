@@ -8,7 +8,7 @@ import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
 import Search from '../js_modules/projects/Search';
 import TitleContent from '../js_modules/projects/TitleContent';
-// import Link from '../common/components/NextChakraLink';
+import Link from '../common/components/NextChakraLink';
 
 export const getStaticProps = async ({ locale }) => {
   const data = await fetch(
@@ -34,7 +34,6 @@ export const getStaticProps = async ({ locale }) => {
 
 const Lessons = ({ data }) => {
   const router = useRouter();
-  console.log('MD_DATA:', data);
 
   const contains = (lesson) => {
     const lessonTitle = lesson.label.toLowerCase();
@@ -136,20 +135,25 @@ const Lessons = ({ data }) => {
             {element.lessons.length >= 1 && (
             <Grid
               background="featuredLight"
+              gridRowGap="10px"
               gridTemplateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
               padding="22px 30px"
               borderRadius="18px"
             >
               {element.lessons.map((lesson) => (
-                <Text
+                <Link
                   key={`${lesson.slug}-${lesson.title}`}
-                  color="blue.default"
-                  size="l"
-                  lineHeight="28px"
+                  href={`/lesson/${lesson.slug}`}
+                  fontSize="15px"
+                  width="fit-content"
+                  height="fit-content"
+                  color={useColorModeValue('blue.default', 'blue.300')}
+                  display="inline-block"
+                  letterSpacing="0.05em"
                   fontWeight="700"
                 >
                   {lesson.title}
-                </Text>
+                </Link>
               ))}
             </Grid>
             )}
