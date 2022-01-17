@@ -186,7 +186,8 @@ const NavbarWithSubNavigation = () => {
               bg={popoverContentBgColor}
               p={4}
               rounded="md"
-              minW="md"
+              width={{ base: '100%', md: 'auto' }}
+              minW={{ base: 'auto', md: 'md' }}
             >
               <PopoverArrow />
               <Stack gridGap="10px" pb="15px">
