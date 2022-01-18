@@ -22,7 +22,7 @@ import SimpleTable from '../../js_modules/projects/SimpleTable';
 import TagCapsule from '../../common/components/TagCapsule';
 import Image from '../../common/components/Image';
 import MarkDownParser from '../../common/components/MarkDownParser';
-import MDSkeleton from '../../common/components/MDSkeleton';
+import { MDSkeleton } from '../../common/components/Skeleton';
 
 export const getStaticPaths = async () => {
   const data = await fetch(

@@ -63,18 +63,6 @@ const NavbarWithSubNavigation = () => {
       label: 'Dashboard',
       href: '/dashboard',
     },
-    {
-      label: 'Learn',
-      href: '/learn',
-    },
-    {
-      label: 'Mentoring',
-      href: '/mentoring',
-    },
-    {
-      label: 'Community',
-      href: '/community',
-    },
   ];
 
   return (

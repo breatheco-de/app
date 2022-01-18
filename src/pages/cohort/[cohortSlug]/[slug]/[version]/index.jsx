@@ -10,7 +10,6 @@ import mockData from '../../../../../common/utils/mockData/DashboardView';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
 import ModuleMap from '../../../../../common/components/ModuleMap';
-import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import CohortSideBar from '../../../../../common/components/CohortSideBar';
 import Icon from '../../../../../common/components/Icon';
 import SupportSidebar from '../../../../../common/components/SupportSidebar';
@@ -20,25 +19,40 @@ import Heading from '../../../../../common/components/Heading';
 import Text from '../../../../../common/components/Text';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import useAuth from '../../../../../common/hooks/useAuth';
+import { ModuleMapSkeleton } from '../../../../../common/components/Skeleton';
+import bc from '../../../../../common/services/breathecode';
 
 const dashboard = ({ slug }) => {
-  const { updateModuleStatus } = useModuleMap();
+  const [cohort, setCohort] = React.useState([]);
+  const [taskTodo, setTaskTodo] = React.useState([]);
   const { user } = useAuth();
   const router = useRouter();
-  const handleModuleStatus = (event, module) => {
-    event.stopPropagation();
-    if (module.status === 'inactive') updateModuleStatus({ ...module, status: 'active' });
-    else if (module.status === 'active') updateModuleStatus({ ...module, status: 'finished' });
-    else if (module.status === 'finished') updateModuleStatus({ ...module, status: 'active' });
-  };
 
   const {
-    tapCapsule, callToAction, moduleMap, cohortSideBar, supportSideBar, progressBar,
+    tapCapsule, callToAction, cohortSideBar, supportSideBar, progressBar,
   } = mockData;
 
   useEffect(() => {
     if (!user.active_cohort) router.push('/choose-program');
   }, []);
+
+  useEffect(() => {
+    if (user && user.active_cohort) {
+      const academyId = user.active_cohort.academy_id;
+      const { version } = user.active_cohort;
+      bc.syllabus().get(academyId, slug, version).then((res) => {
+        const studentLessons = res.data;
+        setCohort(studentLessons);
+      });
+
+      bc.todo().getTaskByStudent().then((res) => {
+        const tasks = res.data;
+        setTaskTodo(tasks);
+      });
+    }
+  }, [user]);
+
+  console.log('COHORT_PAGE:::', cohort);
 
   return (
     <div>
@@ -67,9 +81,10 @@ const dashboard = ({ slug }) => {
         >
           <GridItem colSpan={8}>
             <Heading as="h1" size="xl">
-              Full Stack Developer
+              {cohort.name}
+              {/* Full Stack Developer
               {' '}
-              {slug}
+              {slug} */}
             </Heading>
             <TagCapsule tags={tapCapsule.tags} separator={tapCapsule.separator} />
             <Text size="md">
@@ -95,13 +110,29 @@ const dashboard = ({ slug }) => {
               <Heading size="m">MODULE MAP</Heading>
             </Box>
             <Box marginTop="30px">
-              <ModuleMap
-                title={moduleMap.title}
-                description={moduleMap.description}
-                modules={moduleMap.modules}
-                handleModuleStatus={handleModuleStatus}
-                width="100%"
-              />
+              {(cohort.json && taskTodo) ? (
+                cohort.json ? cohort.json.days : []
+              ).map((assignment) => {
+                const {
+                  // id,                   Read   Practice    Code        Answer
+                  id, label, description, lessons, replits, assignments, quizzes,
+                } = assignment;
+                return (
+                  <ModuleMap
+                    key={id}
+                    title={label}
+                    description={description}
+                    taskTodo={taskTodo}
+                    read={lessons}
+                    practice={replits}
+                    code={assignments}
+                    answer={quizzes}
+                    width="100%"
+                  />
+                );
+              }) : (
+                <ModuleMapSkeleton />
+              )}
             </Box>
           </GridItem>
           <GridItem colSpan={4}>

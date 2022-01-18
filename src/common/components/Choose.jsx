@@ -16,7 +16,6 @@ function Choose({ chooseList, handleChoose }) {
         const cohort = item?.cohort;
         // Destructuring the cohort.syllabus_version object with version, slug, name
         const { version, slug, name } = cohort?.syllabus_version;
-
         return (
           <Box
             marginBottom="22px"
@@ -61,6 +60,7 @@ function Choose({ chooseList, handleChoose }) {
                   slug,
                   cohort_name: cohort.name,
                   syllabus_name: name,
+                  academy_id: cohort.academy.id,
                 });
                 router.push(`/cohort/${cohort?.slug}/${slug}/v${version}`);
               }}
