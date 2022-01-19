@@ -9,9 +9,10 @@ import {
 import { Formik, Form, Field } from 'formik';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import Icon from '../../common/components/Icon';
 
-const Search = () => {
+const Search = ({ placeholder }) => {
   const router = useRouter();
   let initialSearchValue;
   useEffect(() => {
@@ -35,13 +36,13 @@ const Search = () => {
                         // update the path query with search value
                         router.push({
                           query: {
-                            search: values.target.value,
+                            search: values.target.value.toLowerCase(),
                           },
                         });
                       }}
                       id="search"
                       width="100%"
-                      placeholder="Search Project"
+                      placeholder={placeholder}
                       transition="all .2s ease"
                       name="search"
                       style={{
@@ -58,6 +59,14 @@ const Search = () => {
       )}
     </Formik>
   );
+};
+
+Search.propTypes = {
+  placeholder: PropTypes.string,
+};
+
+Search.defaultProps = {
+  placeholder: 'Search',
 };
 
 export default Search;

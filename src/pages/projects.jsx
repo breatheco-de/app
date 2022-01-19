@@ -102,7 +102,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
       >
         <TitleContent title="Projects" mobile={false} />
 
-        <Search />
+        <Search placeholder="Search Project" />
 
         <Button
           variant="outline"

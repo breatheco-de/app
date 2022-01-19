@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { useState, useEffect } from 'react';
 import { Box, useColorModeValue, useToast } from '@chakra-ui/react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -162,6 +161,7 @@ const LessonSlug = ({ lesson }) => {
         </Heading>
 
         <Box
+          transition="all 0.2s ease-in-out"
           borderRadius="3px"
           background={useColorModeValue('white', 'dark')}
           width={{ base: '100%', md: 'auto' }}

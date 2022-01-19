@@ -47,9 +47,8 @@ const DifficultySection = ({
           const getAvailables = verifyDifficultyisAvailable(index, difficultyPosition, difficulty, difficulties);
           const difficultyIsMatch = difficulties[index] === difficulty || false;
           return (
-            <Tooltip label={difficultyIsMatch ? difficulty : `${difficulty} (not available)`} placement="top">
+            <Tooltip key={`${difficulty}`} label={difficultyIsMatch ? difficulty : `${difficulty} (not available)`} placement="top">
               <Box
-                key={`${difficulty}`}
                 onClick={() => (difficultyIsMatch && setDifficulty(index)) || null}
                 width={getAvailables ? '20px' : '15px'}
                 height={getAvailables ? '20px' : '15px'}
