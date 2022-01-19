@@ -19,6 +19,10 @@ const initialState = {
       status: 'finished',
     },
   ],
+  contextState: {
+    cohort: [],
+    taskTodo: [],
+  },
 };
 
 const moduleMapReducer = (state = initialState, action) => {
@@ -27,6 +31,11 @@ const moduleMapReducer = (state = initialState, action) => {
       return {
         ...state,
         modules: action.payload,
+      };
+    case 'CHANGE_CONTEXT_STATE':
+      return {
+        ...state,
+        contextState: action.payload,
       };
     default:
       return state;

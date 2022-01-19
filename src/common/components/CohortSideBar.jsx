@@ -101,7 +101,7 @@ const CohortSideBar = ({
               gap={0}
             >
               {assistant.map((a, i) => (
-                <Tooltip label={a.name} placement="top">
+                <Tooltip key={`${a.name}-${a.active}`} label={a.name} placement="top">
                   <WrapItem justifyContent="center" alignItems="center" onClick={(e) => handleAssistant(e, a.name)}>
                     <Avatar
                       key={i}

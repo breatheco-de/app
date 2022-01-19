@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import MarkDownParser from '../../common/components/MarkDownParser';
-import MDSkeleton from '../../common/components/MDSkeleton';
+import { MDSkeleton } from '../../common/components/Skeleton';
 import TagCapsule from '../../common/components/TagCapsule';
 import Link from '../../common/components/NextChakraLink';
 // import atob from 'atob';

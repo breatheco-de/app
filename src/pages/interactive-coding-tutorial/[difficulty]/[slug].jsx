@@ -11,9 +11,7 @@ import Text from '../../../common/components/Text';
 import Icon from '../../../common/components/Icon';
 import SimpleTable from '../../../js_modules/projects/SimpleTable';
 import MarkDownParser from '../../../common/components/MarkDownParser';
-// import TagCapsule from '../../../common/components/TagCapsule';
-// import Image from '../../../common/components/Image';
-import MDSkeleton from '../../../common/components/MDSkeleton';
+import { MDSkeleton } from '../../../common/components/Skeleton';
 
 export const getStaticPaths = async () => {
   let projects = [];
