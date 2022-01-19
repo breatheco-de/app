@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { useState, useEffect } from 'react';
 import { Box, useColorModeValue, useToast } from '@chakra-ui/react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -6,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import MarkDownParser from '../../common/components/MarkDownParser';
-import MDSkeleton from '../../common/components/MDSkeleton';
+import { MDSkeleton } from '../../common/components/Skeleton';
 import TagCapsule from '../../common/components/TagCapsule';
 import Link from '../../common/components/NextChakraLink';
 // import atob from 'atob';
@@ -162,6 +161,7 @@ const LessonSlug = ({ lesson }) => {
         </Heading>
 
         <Box
+          transition="all 0.2s ease-in-out"
           borderRadius="3px"
           background={useColorModeValue('white', 'dark')}
           width={{ base: '100%', md: 'auto' }}

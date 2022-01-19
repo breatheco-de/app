@@ -43,7 +43,7 @@ CallToAction.propTypes = {
 };
 
 CallToAction.defaultProps = {
-  title: 'Todays lessons',
+  title: 'What is next!',
   text: 'Your lesson today is Internet Architecture in First Time Website Module.',
   background: 'blue',
   width: '100%',
