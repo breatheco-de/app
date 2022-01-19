@@ -34,10 +34,12 @@ export const getStaticProps = async ({ locale }) => {
 
 const Lessons = ({ data }) => {
   const router = useRouter();
+  const commonTextColor = useColorModeValue('gray.600', 'gray.200');
 
   const contains = (lesson) => {
     const lessonTitle = lesson.label.toLowerCase();
     if (typeof router.query.search === 'string' && !lessonTitle.includes(router.query.search)) return false;
+    if (lesson.lessons.length <= 0) return false;
     return true;
   };
 
@@ -75,13 +77,19 @@ const Lessons = ({ data }) => {
           fontWeight="400"
           letterSpacing="0.05em"
           size="md"
-          color={useColorModeValue('gray.600', 'gray.200')}
+          color={useColorModeValue('gray.600', 'gray.600')}
           textTransform="uppercase"
           textAlign="center"
         >
           Module map
         </Text>
-        <Heading as="h1" fontWeight="700" size="m" textAlign="center">
+        <Heading
+          as="h1"
+          fontWeight="700"
+          color={useColorModeValue('gray.900', 'gray.900')}
+          size="m"
+          textAlign="center"
+        >
           Full Stack Developer
         </Heading>
         <Text
@@ -101,10 +109,10 @@ const Lessons = ({ data }) => {
             <Flex
               justifyContent="space-between"
               padding="18px 0"
-              borderBottom={1}
+              borderBottom={2}
               borderStyle="solid"
               flexDirection={{ base: 'column', md: 'row' }}
-              borderColor={useColorModeValue('gray.200', 'gray.900')}
+              borderColor={useColorModeValue('gray.200', 'gray.500')}
             >
               <Heading as="h2" fontWeight="700" size="xsm">
                 {element.label}
@@ -126,15 +134,16 @@ const Lessons = ({ data }) => {
             <Text
               size="md"
               padding="15px 0"
-              color="gray.dark"
+              // color="gray.dark"
               letterSpacing="0.05em"
               lineHeight="24px"
+              color={commonTextColor}
             >
               {element.description}
             </Text>
             {element.lessons.length >= 1 && (
             <Grid
-              background="featuredLight"
+              background={useColorModeValue('featuredLight', 'featuredDark')}
               gridRowGap="10px"
               gridTemplateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
               padding="22px 30px"

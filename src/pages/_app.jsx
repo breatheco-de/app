@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../styles/globals.css';
 import PropTypes from 'prop-types';
 import { ChakraProvider } from '@chakra-ui/react';
@@ -19,10 +19,18 @@ import '@fontsource/lato/700.css';
 import '@fontsource/lato/900.css';
 
 function LearnApp({ Component, pageProps }) {
+  const [haveSession, setHaveSession] = useState(false);
   const HAVE_SESSION = typeof window !== 'undefined' && localStorage.getItem('accessToken') !== null;
 
-  const Navbar = () => {
+  useEffect(() => {
+    // verify if accessToken is in localStorage
     if (HAVE_SESSION) {
+      setHaveSession(true);
+    }
+  }, []);
+
+  const Navbar = () => {
+    if (haveSession) {
       return <NavbarSession />;
     }
     return <NavbarExternal />;

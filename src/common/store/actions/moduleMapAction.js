@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 const useModuleMap = () => {
   const dispatch = useDispatch();
   const modules = useSelector((state) => state.moduleMapReducer.modules);
+  const contextState = useSelector((state) => state.moduleMapReducer.contextState);
   const updateModuleStatus = (module) => {
     const changedModules = modules.map((m, index) => {
       if (index === module.index) {
@@ -17,9 +18,18 @@ const useModuleMap = () => {
       payload: changedModules,
     });
   };
+
+  const setContextState = (newState) => {
+    dispatch({
+      type: 'CHANGE_CONTEXT_STATE',
+      payload: newState,
+    });
+  };
   return {
-    updateModuleStatus,
     modules,
+    contextState,
+    setContextState,
+    updateModuleStatus,
   };
 };
 

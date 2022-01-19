@@ -17,6 +17,39 @@ const breathecode = {
       me: () => axios.get(`${url}/user/me`),
     };
   },
+
+  syllabus: () => {
+    const url = `${host}/admissions`;
+    return {
+      get: (academyVersion = '4', slug, version = '1') => {
+        if (!slug) throw new Error('Missing slug');
+        else return axios.get(`${url}/academy/${academyVersion}/syllabus/${slug}/version/${version}`);
+      },
+    };
+  },
+
+  todo: () => {
+    const url = `${host}/assignment`;
+    return {
+      getTaskByStudent: () => axios.get(`${url}/user/me/task`),
+      // add: (id, args) => {
+      //  return this.post(url+'/user/'+id+'/task', args);
+      // },
+      // delete: (args) => {
+      //  return this.delete(`${url}/user/${user_id}/task/${args.id}`, args);
+      // },
+      // update: (user_id, args) => {
+      //  return this.put(`${url}/task/${args.id}`, args);
+      // }
+    };
+  },
+
+  // assignments: () => {
+  //   const url = `${host}/assignment`;
+  //   return {
+  //     get: () => axios.get(`${url}/user/me/task`),
+  //   };
+  // },
 };
 
 export default breathecode;

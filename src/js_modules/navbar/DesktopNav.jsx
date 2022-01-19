@@ -12,6 +12,7 @@ import {
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Icon from '../../common/components/Icon';
+import { isAbsoluteUrl } from '../../utils/url';
 
 import DesktopSubNav from './DesktopSubNav';
 
@@ -46,6 +47,8 @@ const DesktopNav = ({ NAV_ITEMS }) => {
                 alignItems="center"
                 p={2}
                 href={navItem.href ?? '#'}
+                target={isAbsoluteUrl(navItem.href) ? '_blank' : undefined}
+                rel={isAbsoluteUrl(navItem.href) ? 'noopener noreferrer' : undefined}
                 fontSize="sm"
                 textTransform="uppercase"
                 fontWeight={700}

@@ -58,22 +58,12 @@ const NavbarWithSubNavigation = () => {
     return user?.github.name;
   };
 
+  const getCohort = typeof window !== 'undefined' && localStorage.getItem('cohortSelected');
+
   const INTERNAL_ITEMS = [
     {
       label: 'Dashboard',
-      href: '/dashboard',
-    },
-    {
-      label: 'Learn',
-      href: '/learn',
-    },
-    {
-      label: 'Mentoring',
-      href: '/mentoring',
-    },
-    {
-      label: 'Community',
-      href: '/community',
+      href: getCohort || '/choose-program',
     },
   ];
 
@@ -186,7 +176,8 @@ const NavbarWithSubNavigation = () => {
               bg={popoverContentBgColor}
               p={4}
               rounded="md"
-              minW="md"
+              width={{ base: '100%', md: 'auto' }}
+              minW={{ base: 'auto', md: 'md' }}
             >
               <PopoverArrow />
               <Stack gridGap="10px" pb="15px">

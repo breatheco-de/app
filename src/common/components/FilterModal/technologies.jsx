@@ -21,7 +21,6 @@ const TechnologiesSection = ({
       <Text fontSize="xl" fontWeight="bold" color={commonTextColor} padding="25px 0 18px 0">
         {title}
       </Text>
-      {/* TODO: AÑADIR OVERFLOW IN MOBILE */}
       <Collapse in={show} startingHeight={170} animateOpacity>
         <Grid
           gridTemplateColumns={{
