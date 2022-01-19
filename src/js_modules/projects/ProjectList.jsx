@@ -29,10 +29,15 @@ const ProjectList = ({
     ) return false;
     if (typeof router.query.search === 'string' && !projectTitle.includes(router.query.search)) return false;
     if (typeof difficulty === 'string' && project.difficulty !== difficulty) return false;
-    const res = selectedTechs.map((techs) => project.technologies.includes(techs));
-    return !res.includes(false);
+    // Match checked technologies
+    const res = selectedTechs.length > 0 ? (
+      selectedTechs.some((tech) => project.technologies.includes(tech))
+    ) : true;
+    return res;
+    // const res = selectedTechs.map((techs) => project.technologies.includes(techs));
+    // if response not match with current checked technologies return false
+    // return !res.includes(false);
   };
-
   const filteredProjects = projects.filter((project) => contains(project, arrOfTechs));
 
   const onImageNotFound = (event) => {

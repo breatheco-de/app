@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import Icon from '../../common/components/Icon';
+import { isAbsoluteUrl } from '../../utils/url';
 
 const MobileNavItem = ({
   label, subMenu, href, description, icon,
@@ -34,6 +35,8 @@ const MobileNavItem = ({
           py={2}
           // as={Link}
           href={href}
+          target={isAbsoluteUrl(href) ? '_blank' : undefined}
+          rel={isAbsoluteUrl(href) ? 'noopener noreferrer' : undefined}
           display="flex"
           justifyContent="space-between"
           align="center"

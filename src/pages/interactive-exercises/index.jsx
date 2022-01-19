@@ -1,5 +1,4 @@
 /* eslint-disable no-continue */
-/* eslint-disable no-console */
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import {
   Box, useColorModeValue, Button, Flex, useDisclosure,
@@ -109,7 +108,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
       >
         <TitleContent title="Practices" mobile={false} />
 
-        <Search />
+        <Search placeholder="Search Exercises" />
 
         <Button
           variant="outline"
