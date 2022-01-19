@@ -29,6 +29,7 @@
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "lint:files": "eslint src/**/*.{js,jsx}",
+    "lint:fix": "eslint src/**/*.{js,jsx} --fix",
     "prepare": "husky install"
   },
   "dependencies": {

@@ -6,20 +6,20 @@ import {
   Container,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import mockData from '../../common/utils/mockData/DashboardView';
-import NextChakraLink from '../../common/components/NextChakraLink';
-import TagCapsule from '../../common/components/TagCapsule';
-import ModuleMap from '../../common/components/ModuleMap';
-import useModuleMap from '../../common/store/actions/moduleMapAction';
-import CohortSideBar from '../../common/components/CohortSideBar';
-import Icon from '../../common/components/Icon';
-import SupportSidebar from '../../common/components/SupportSidebar';
-import CallToAction from '../../common/components/CallToAction';
-import ProgressBar from '../../common/components/ProgressBar';
-import Heading from '../../common/components/Heading';
-import Text from '../../common/components/Text';
-import asPrivate from '../../common/context/PrivateRouteWrapper';
-import useAuth from '../../common/hooks/useAuth';
+import mockData from '../../../../../common/utils/mockData/DashboardView';
+import NextChakraLink from '../../../../../common/components/NextChakraLink';
+import TagCapsule from '../../../../../common/components/TagCapsule';
+import ModuleMap from '../../../../../common/components/ModuleMap';
+import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
+import CohortSideBar from '../../../../../common/components/CohortSideBar';
+import Icon from '../../../../../common/components/Icon';
+import SupportSidebar from '../../../../../common/components/SupportSidebar';
+import CallToAction from '../../../../../common/components/CallToAction';
+import ProgressBar from '../../../../../common/components/ProgressBar';
+import Heading from '../../../../../common/components/Heading';
+import Text from '../../../../../common/components/Text';
+import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
+import useAuth from '../../../../../common/hooks/useAuth';
 
 const dashboard = ({ slug }) => {
   const { updateModuleStatus } = useModuleMap();
@@ -31,6 +31,7 @@ const dashboard = ({ slug }) => {
     else if (module.status === 'active') updateModuleStatus({ ...module, status: 'finished' });
     else if (module.status === 'finished') updateModuleStatus({ ...module, status: 'active' });
   };
+
   const {
     tapCapsule, callToAction, moduleMap, cohortSideBar, supportSideBar, progressBar,
   } = mockData;
@@ -127,9 +128,15 @@ const dashboard = ({ slug }) => {
   );
 };
 
-export const getServerSideProps = async ({ params: { slug } }) => ({
+export const getServerSideProps = async ({
+  params: {
+    cohortSlug, slug, version,
+  },
+}) => ({
   props: {
+    cohortSlug,
     slug,
+    version,
   },
 });
 
