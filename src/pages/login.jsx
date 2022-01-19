@@ -41,14 +41,12 @@ function login() {
                   <Tab
                     _selected={{
                       color: 'gray.dark',
-                      bg: 'white',
                       borderBottomColor: 'blue.default',
                       borderBottomWidth: '3px',
                     }}
                     color="gray.default"
                     boxShadow="none !important"
                     fontWeight="600"
-                    backgroundColor="white"
                     padding="17px"
                     borderBottomColor="gray.200"
                     borderTop="none"
@@ -60,14 +58,12 @@ function login() {
                   <Tab
                     _selected={{
                       color: 'gray.dark',
-                      bg: 'white',
                       borderBottomColor: 'blue.default',
                       borderBottomWidth: '3px',
                     }}
                     color="gray.default"
                     boxShadow="none !important"
                     fontWeight="600"
-                    backgroundColor="white"
                     padding="17px"
                     borderBottomColor="gray.200"
                     borderTop="none"
