@@ -11,6 +11,7 @@ import NavbarSession from '../common/components/Navbar/Session-2';
 import AuthProvider from '../common/context/AuthContext';
 import Footer from '../common/components/Footer';
 import Helmet from '../common/components/Helmet';
+import Loading from '../common/components/Loading';
 import '@fontsource/lato/100.css';
 import '@fontsource/lato/300.css';
 import '@fontsource/lato/400.css';
@@ -34,6 +35,7 @@ function LearnApp({ Component, pageProps }) {
         <ChakraProvider resetCSS theme={CustomTheme}>
           {/* <NavbarExternal /> */}
           <Navbar />
+          <Loading />
           <Component {...pageProps} />
           <Footer />
         </ChakraProvider>

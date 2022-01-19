@@ -4,7 +4,7 @@ import { Box, useColorMode } from '@chakra-ui/react';
 const Parent = ({ children, ...props }) => {
   const { id, ...rest } = props;
   return (
-    <Box><Box fontWeight="bold" fontSize="18px" {...rest} color="blue.default" as="a" href={`#${id}`}>{children}</Box></Box>
+    <Box><Box {...rest} color="blue.default" fontSize="15px" fontWeight="700" as="a" href={`#${id}`}>{children}</Box></Box>
   );
 };
 

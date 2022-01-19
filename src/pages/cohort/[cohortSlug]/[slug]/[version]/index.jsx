@@ -1,25 +1,23 @@
 import React, { useEffect } from 'react';
 import {
   Box,
-  Grid,
-  GridItem,
+  Flex,
   Container,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import mockData from '../../common/utils/mockData/DashboardView';
-import NextChakraLink from '../../common/components/NextChakraLink';
-import TagCapsule from '../../common/components/TagCapsule';
-import ModuleMap from '../../common/components/ModuleMap';
-import useModuleMap from '../../common/store/actions/moduleMapAction';
-import CohortSideBar from '../../common/components/CohortSideBar';
-import Icon from '../../common/components/Icon';
-import SupportSidebar from '../../common/components/SupportSidebar';
-import CallToAction from '../../common/components/CallToAction';
-import ProgressBar from '../../common/components/ProgressBar';
-import Heading from '../../common/components/Heading';
-import Text from '../../common/components/Text';
-import asPrivate from '../../common/context/PrivateRouteWrapper';
-import useAuth from '../../common/hooks/useAuth';
+import mockData from '../../../../../common/utils/mockData/DashboardView';
+import NextChakraLink from '../../../../../common/components/NextChakraLink';
+import TagCapsule from '../../../../../common/components/TagCapsule';
+import ModuleMap from '../../../../../common/components/ModuleMap';
+import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
+import CohortSideBar from '../../../../../common/components/CohortSideBar';
+import Icon from '../../../../../common/components/Icon';
+import SupportSidebar from '../../../../../common/components/SupportSidebar';
+import CallToAction from '../../../../../common/components/CallToAction';
+import ProgressBar from '../../../../../common/components/ProgressBar';
+import Heading from '../../../../../common/components/Heading';
+import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
+import useAuth from '../../../../../common/hooks/useAuth';
 
 const dashboard = ({ slug }) => {
   const { updateModuleStatus } = useModuleMap();
@@ -31,6 +29,7 @@ const dashboard = ({ slug }) => {
     else if (module.status === 'active') updateModuleStatus({ ...module, status: 'finished' });
     else if (module.status === 'finished') updateModuleStatus({ ...module, status: 'active' });
   };
+
   const {
     tapCapsule, callToAction, moduleMap, cohortSideBar, supportSideBar, progressBar,
   } = mockData;
@@ -46,6 +45,7 @@ const dashboard = ({ slug }) => {
           <NextChakraLink
             href="/"
             color="#0097CF"
+            display="inline-flex"
             _focus={{ boxShadow: 'none', color: '#0097CF' }}
           >
             <Icon
@@ -58,22 +58,19 @@ const dashboard = ({ slug }) => {
             Back to Dashboard
           </NextChakraLink>
         </Box>
-        <Grid
-          h="200px"
-          templateRows="repeat(1, 1fr)"
-          templateColumns="repeat(12, 1fr)"
-          gap={16}
+        <Flex
+          justifyContent="space-between"
+          flexDirection={{
+            base: 'column', sm: 'column', md: 'row', lg: 'row',
+          }}
         >
-          <GridItem colSpan={8}>
+          <Box>
             <Heading as="h1" size="xl">
               Full Stack Developer
               {' '}
               {slug}
             </Heading>
             <TagCapsule tags={tapCapsule.tags} separator={tapCapsule.separator} />
-            <Text size="md">
-              {JSON.stringify(user, 4, null)}
-            </Text>
             <Box>
               <CallToAction
                 background={callToAction.background}
@@ -102,8 +99,9 @@ const dashboard = ({ slug }) => {
                 width="100%"
               />
             </Box>
-          </GridItem>
-          <GridItem colSpan={4}>
+          </Box>
+          <Box width="10rem" />
+          <Box>
             <CohortSideBar
               title={cohortSideBar.title}
               cohortCity={cohortSideBar.cohortCity}
@@ -120,16 +118,22 @@ const dashboard = ({ slug }) => {
                 width="100%"
               />
             </Box>
-          </GridItem>
-        </Grid>
+          </Box>
+        </Flex>
       </Container>
     </div>
   );
 };
 
-export const getServerSideProps = async ({ params: { slug } }) => ({
+export const getServerSideProps = async ({
+  params: {
+    cohortSlug, slug, version,
+  },
+}) => ({
   props: {
+    cohortSlug,
     slug,
+    version,
   },
 });
 

@@ -16,6 +16,7 @@ import Text from '../Text';
 SyntaxHighlighter.registerLanguage('jsx', jsx);
 SyntaxHighlighter.registerLanguage('bash', bash);
 SyntaxHighlighter.registerLanguage('js', js);
+SyntaxHighlighter.registerLanguage('html', jsx);
 
 const Code = ({ className, children }) => {
   let language;
