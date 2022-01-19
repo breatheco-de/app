@@ -47,7 +47,6 @@ const supportSidebar = ({
               _active={{
                 background: `${colorMode === 'light' ? 'gray.light' : 'rgba(255, 255, 255, 0.22)'}`,
               }}
-              width="75%"
               borderWidth="0px"
               px="15px"
               my="8px"
