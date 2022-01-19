@@ -58,10 +58,12 @@ const NavbarWithSubNavigation = () => {
     return user?.github.name;
   };
 
+  const getCohort = typeof window !== 'undefined' && localStorage.getItem('cohortSelected');
+
   const INTERNAL_ITEMS = [
     {
       label: 'Dashboard',
-      href: '/dashboard',
+      href: getCohort || '/choose-program',
     },
   ];
 

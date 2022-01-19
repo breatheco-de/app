@@ -29,7 +29,7 @@ const ProgressBar = ({ progressText, programs, width }) => {
       <Progress value={calculatePercentage()} borderRadius="2px" height="4px" />
       <Flex justifyContent="space-around" marginTop="18px">
         {programs.map((program) => (
-          <Box display="flex">
+          <Box key={program.title} display="flex">
             <Icon
               icon={program.icon || 'book'}
               width="18px"

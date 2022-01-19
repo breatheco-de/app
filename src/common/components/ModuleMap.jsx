@@ -1,120 +1,138 @@
 import {
-  Box, Heading, Stack, Flex, useColorModeValue,
+  Box, Heading, Stack, Flex, useColorModeValue, HStack,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Text from './Text';
+import Link from './NextChakraLink';
 
 import Icon from './Icon';
 
-const Module = ({ data, icon, index }) => (
-  <Stack
-    direction="row"
-    backgroundColor={useColorModeValue('#FFFFFF', 'primary')}
-    border="1px solid #C4C4C4"
-    height="auto"
-    py="10px"
-    px="15px"
-    my="10px"
-    rounded="2xl"
-    overflow="hidden"
-    key={index}
-    _hover={{ bg: useColorModeValue('blue.light', 'featuredDark') }}
-  >
-    <Flex width="100%">
-      <Box
-        width="30px"
-        minWidth="30px"
-        alignSelf="center"
-        mr="15px"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="30px"
-        rounded="full"
-        align="center"
-        background="#0097CF"
-      >
-        <Text fontWeight="bold" margin="0" size="sm" color="#FFFFFF">
-          {index + 1}
-        </Text>
-      </Box>
-      <Box mr="20px" ml="20px" display="flex" minWidth="22px" width="22px">
-        <Icon icon={icon} color="blue.default" />
-      </Box>
-      <Box>
-        <Heading
-          as="h3"
-          fontSize="13px"
-          lineHeight="18px"
-          letterSpacing="0.05em"
-          margin="0"
-          isTruncated
-          textTransform="uppercase"
+const Module = ({ data, index, taskTodo }) => {
+  const currentSlug = data.slug ? data.slug : '';
+
+  const currentTask = taskTodo.find((el) => el.task_type === data.task_type
+    && el.associated_slug === currentSlug);
+  return (
+    <Stack
+      direction="row"
+      backgroundColor={useColorModeValue('#FFFFFF', 'primary')}
+      border="1px solid #C4C4C4"
+      height="auto"
+      py="10px"
+      px="15px"
+      my="10px"
+      rounded="2xl"
+      overflow="hidden"
+      key={index}
+      _hover={{ bg: useColorModeValue('blue.light', 'featuredDark') }}
+    >
+      <Flex width="100%">
+        <Box
+          width="30px"
+          minWidth="30px"
+          alignSelf="center"
+          mr="15px"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="30px"
+          rounded="full"
+          align="center"
+          background="#0097CF"
         >
-          {data.type || 'Read'}
-        </Heading>
-        <Text
-          size="l"
-          fontWeight="light"
-          lineHeight="18px"
-          letterSpacing="0.05em"
-          margin="0"
-        >
-          {data.title}
-        </Text>
-      </Box>
-    </Flex>
-    {/* <HStack width="-webkit-fill-available">
-      <Box
-        display="flex"
-        margin="0 0 0 auto"
-        // onClick={(e) => handleModuleStatus(e, { ...module, index: i })}
-      >
-        {module.status === 'inactive' ? (
-          <NextChakraLink
-            href="/"
-            color="#0097CF"
-            fontWeight="bold"
-            fontStyle="normal"
+          <Text fontWeight="bold" margin="0" size="sm" color="#FFFFFF">
+            {index + 1}
+          </Text>
+        </Box>
+        <Box mr="20px" ml="20px" display="flex" minWidth="22px" width="22px">
+          {data.icon && (
+            <Icon icon={data.icon || 'book'} color="#0097CF" />
+          )}
+        </Box>
+        <Box>
+          <Heading
+            as="h3"
+            fontSize="13px"
+            lineHeight="18px"
+            letterSpacing="0.05em"
+            margin="0"
+            isTruncated
+            textTransform="uppercase"
           >
-            {`${module.title} lesson`}
-          </NextChakraLink>
-        ) : (
-          <Icon icon={statusIcons[module.status]} width="27px" />
-        )}
-      </Box>
-    </HStack> */}
-  </Stack>
-);
+            {data.type || 'Read'}
+          </Heading>
+          <Text
+            size="l"
+            fontWeight="light"
+            lineHeight="18px"
+            letterSpacing="0.05em"
+            margin="0"
+          >
+            {data.title}
+          </Text>
+        </Box>
+      </Flex>
+      <HStack width="-webkit-fill-available">
+        <Box
+          display="flex"
+          margin="0 0 0 auto"
+
+          // NOTE: USAR REDUX
+
+          // onClick={(e) => handleModuleStatus(e, { ...module, index: i })}
+          // onClick={() => {
+          //   console.log('click');
+          // }}
+        >
+          {currentTask && currentTask.task_type !== 'PROJECT' && currentTask.task_status === 'DONE' ? (
+            <Icon icon="verified" width="27px" />
+          ) : (
+            <Link
+              href="/"
+              color="#0097CF"
+              fontWeight="bold"
+              fontStyle="normal"
+            >
+              Open lesson
+            </Link>
+          )}
+        </Box>
+      </HStack>
+    </Stack>
+  );
+};
 
 const ModuleMap = ({
-  // eslint-disable-next-line no-unused-vars
   width, read, practice, code, answer, title, description, taskTodo,
 }) => {
   const updatedRead = read.map((el) => ({
     ...el,
     type: 'Read',
     icon: 'book',
+    task_type: 'LESSON',
   }));
   const updatedPractice = practice.map((el) => ({
     ...el,
     type: 'Practice',
-    icon: 'strenght',
+    icon: 'strength',
+    task_type: 'EXERCISE',
   }));
   const updatedCode = code.map((el) => ({
     ...el,
     type: 'Code',
     icon: 'code',
+    task_type: 'PROJECT',
   }));
   const updatedAnswer = answer.map((el) => ({
     ...el,
     type: 'Answer',
     icon: 'answer',
+    task_type: 'QUIZ',
   }));
 
   const modules = [...updatedRead, ...updatedPractice, ...updatedCode, ...updatedAnswer];
   // console.log('MODULES__sortedModules:::', modules);
-  console.log('taskTodo:::', taskTodo);
+  // console.log('taskTodo:::', taskTodo);
 
   return (
     <Box width={width || '100%'}>
@@ -138,7 +156,7 @@ const ModuleMap = ({
         {description}
       </Text>
       {modules.map((module, i) => (
-        <Module data={module} index={i} />
+        <Module data={module} index={i} taskTodo={taskTodo} />
       ))}
     </Box>
   );
@@ -167,12 +185,11 @@ ModuleMap.defaultProps = {
 
 Module.propTypes = {
   data: PropTypes.objectOf(PropTypes.any),
-  icon: PropTypes.string,
   index: PropTypes.number,
+  taskTodo: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 Module.defaultProps = {
   data: {},
-  icon: 'book',
   index: 0,
 };
 
