@@ -20,8 +20,8 @@ import {
 import { useState } from 'react';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
-import Image from '../Image';
-import logo from '../../../../public/static/images/bc_logo.png';
+/* import Image from '../Image';
+import logo from '../../../../public/static/images/bc_logo.png'; */
 import DesktopNav from '../../../js_modules/navbar/DesktopNav';
 import MobileNav from '../../../js_modules/navbar/MobileNav';
 import Heading from '../Heading';
@@ -74,7 +74,7 @@ const NavbarWithSubNavigation = () => {
         bg={useColorModeValue('white', 'gray.800')}
         color={useColorModeValue('gray.600', 'white')}
         // minH="60px"
-        height="10vh"
+        height="7vh"
         py={{ base: '8px' }}
         px={{ base: 4 }}
         borderBottom={1}
@@ -108,13 +108,13 @@ const NavbarWithSubNavigation = () => {
             aria-label="Toggle Navigation"
           />
           <NextChakraLink href="/" alignSelf="center" display={{ base: 'flex', md: 'none' }}>
-            <Image src={logo} width="30px" height="30px" alt="Breathecode logo" />
+            <Icon icon="logoModern" width="90px" height="20px" />
           </NextChakraLink>
         </Flex>
 
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
           <NextChakraLink href="/" alignSelf="center" display={{ base: 'none', md: 'flex' }}>
-            <Image src={logo} width="30px" height="30px" alt="Breathecode logo" />
+            <Icon icon="logoModern" width="90px" height="20px" />
           </NextChakraLink>
 
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>

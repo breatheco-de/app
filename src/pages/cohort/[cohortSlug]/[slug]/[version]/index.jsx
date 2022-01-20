@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import {
   Box,
-  Grid,
-  GridItem,
+  Flex,
   Container,
 } from '@chakra-ui/react';
 import mockData from '../../../../../common/utils/mockData/DashboardView';
@@ -15,7 +14,6 @@ import SupportSidebar from '../../../../../common/components/SupportSidebar';
 import CallToAction from '../../../../../common/components/CallToAction';
 import ProgressBar from '../../../../../common/components/ProgressBar';
 import Heading from '../../../../../common/components/Heading';
-import Text from '../../../../../common/components/Text';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import useAuth from '../../../../../common/hooks/useAuth';
 import { ModuleMapSkeleton } from '../../../../../common/components/Skeleton';
@@ -86,30 +84,27 @@ const dashboard = ({ slug, cohortSlug }) => {
             style={{ marginBottom: '-4px', marginRight: '4px' }}
             color="#0097CF"
           />
-          Back to choose progrm
+          Back to choose program
         </NextChakraLink>
       </Box>
-      <Grid
-        h="100%"
-        templateRows="repeat(1, 1fr)"
-        templateColumns="repeat(12, 1fr)"
-        gap={16}
+      <Flex
+        justifyContent="space-between"
+        flexDirection={{
+          base: 'column', sm: 'column', md: 'row', lg: 'row',
+        }}
       >
-        <GridItem colSpan={8}>
+        <Box>
           <Heading as="h1" size="xl">
             {cohort.name}
             {/* Full Stack Developer
-            {' '}
-            {slug} */}
+          {' '}
+          {slug} */}
           </Heading>
           <TagCapsule tags={tapCapsule.tags} separator={tapCapsule.separator} />
-          <Text size="md">
-            {JSON.stringify(user, 4, null)}
-          </Text>
           <Box>
             <CallToAction
               background={callToAction.background}
-              title="What is next!"
+              title={callToAction.title}
               text={callToAction.text}
               width="100%"
             />
@@ -130,7 +125,7 @@ const dashboard = ({ slug, cohortSlug }) => {
               cohort.json ? cohort.json.days : []
             ).map((assignment) => {
               const {
-                // id,                   Read   Practice    Code        Answer
+              // id,                   Read   Practice    Code        Answer
                 id, label, description, lessons, replits, assignments, quizzes,
               } = assignment;
               return (
@@ -150,8 +145,9 @@ const dashboard = ({ slug, cohortSlug }) => {
               <ModuleMapSkeleton />
             )}
           </Box>
-        </GridItem>
-        <GridItem colSpan={4}>
+        </Box>
+        <Box width="10rem" />
+        <Box>
           <CohortSideBar
             title={cohortSideBar.title}
             cohortCity={cohortSideBar.cohortCity}
@@ -168,8 +164,8 @@ const dashboard = ({ slug, cohortSlug }) => {
               width="100%"
             />
           </Box>
-        </GridItem>
-      </Grid>
+        </Box>
+      </Flex>
     </Container>
   );
 };

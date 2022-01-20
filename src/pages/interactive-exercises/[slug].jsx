@@ -343,7 +343,7 @@ const ExerciseSlug = ({ exercise }) => {
             className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
           >
             {MDecoded ? (
-              <MarkDownParser content={removeTitleAndImage(MDecoded)} showTableOfContents={false} />
+              <MarkDownParser content={removeTitleAndImage(MDecoded)} />
             ) : (
               <MDSkeleton />
             )}

@@ -27,6 +27,8 @@ a {
 
 .MDImg {
   padding: 8px!important;
+  display: block;
+  margin: auto;
 }
 
 .markdown-body {

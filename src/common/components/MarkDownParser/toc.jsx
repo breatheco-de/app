@@ -1,72 +1,75 @@
 import PropTypes from 'prop-types';
 import { compiler } from 'markdown-to-jsx';
-import { SimpleGrid, useMediaQuery, useColorModeValue } from '@chakra-ui/react';
+import {
+  SimpleGrid, UnorderedList, ListItem, useColorMode,
+} from '@chakra-ui/react';
 import Anchor from './Anchor';
 
-const Toc = ({ content, showTableOfContents }) => {
-  const [isNotMobile] = useMediaQuery('(min-width: 1082px)');
-
-  return (
-    <SimpleGrid
-      margin="0 0 40px 0"
-      transition="all .2s ease-in-out"
-      display={showTableOfContents ? 'grid' : 'none'}
-      columns={2}
-      spacing={5}
-      background={useColorModeValue('featuredLight', 'featuredDark')}
-      style={{ columnGap: isNotMobile ? '4rem' : '2rem' }}
-      padding={{ base: '22px', md: '25px 50px' }}
-      borderRadius="17px"
-    >
-      {compiler(content, {
-        wrapper: null,
-        overrides: {
-          h1: {
-            component: Anchor,
-            props: {
-              className: 'foo',
-            },
-          },
-          h2: {
-            component: Anchor,
-            props: {
-              className: 'foo',
-            },
-          },
-          h3: {
-            component: Anchor,
-            props: {
-              className: 'foo',
-            },
-          },
-          h4: {
-            component: Anchor,
-            props: {
-              className: 'foo',
-            },
-          },
-          h5: {
-            component: Anchor,
-            props: {
-              className: 'foo',
-            },
-          },
-          h6: {
-            component: Anchor,
-            props: {
-              className: 'foo',
-            },
+const Toc = ({ content }) => {
+  const { colorMode } = useColorMode();
+  const getHierarchy = () => {
+    const hierarchy = [];
+    const headers = compiler(content, {
+      wrapper: null,
+      overrides: {
+        h1: {
+          component: Anchor.Parent,
+          props: {
+            className: 'h1',
           },
         },
-        slugify: (str) => str.split(' ').join('-').toLowerCase(),
-      }).filter((item) => typeof item.type === 'function')}
+        h2: {
+          component: Anchor.Parent,
+          props: {
+            className: 'h2',
+          },
+        },
+        h3: {
+          component: Anchor.Child,
+          props: {
+            className: 'h3',
+          },
+        },
+      },
+      slugify: (str) => str.split(' ').join('-').toLowerCase(),
+    }).filter((item) => item.props && item.props.className);
+    /* Hierarchy, h1 or h2 being parents and h3 being its inmediate childs, childs become a list. */
+    let lastParent = 0;
+    for (let i = 0; i < headers.length; i += 1) {
+      if (headers[i].props.className === 'h1' || headers[i].props.className === 'h2') {
+        hierarchy.push({
+          h: headers[i],
+          childs: [],
+        });
+        lastParent = i;
+      } else {
+        hierarchy[lastParent].childs.push({
+          h: headers[i],
+          childs: null,
+        });
+      }
+    }
+    return hierarchy;
+  };
+
+  return (
+    <SimpleGrid columns={[1, null, 2]} spacing={3} bg={colorMode === 'light' ? 'blue.light' : 'featuredDark'} paddingX="28px" paddingY={22} borderRadius="17px">
+      {getHierarchy().map((item) => (
+        <>
+          {Array.isArray(item.childs) ? (
+            <UnorderedList listStyleType="none" margin={0} padding={0} style={{ margin: 0 }}>
+              {item.h}
+              {item.childs.map((c) => <ListItem margin={0}>{c.h}</ListItem>)}
+            </UnorderedList>
+          ) : item.h}
+        </>
+      ))}
     </SimpleGrid>
   );
 };
 
 Toc.propTypes = {
   content: PropTypes.string,
-  showTableOfContents: PropTypes.bool.isRequired,
 };
 Toc.defaultProps = {
   content: '',

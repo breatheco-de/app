@@ -9,10 +9,10 @@ import {
   Button,
   useColorMode,
   useColorModeValue,
+  FormErrorMessage,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { Formik, Form, Field } from 'formik';
-import { useState } from 'react';
 import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
 import Icon from '../common/components/Icon';
@@ -26,7 +26,6 @@ const regex = {
 export default function Home() {
   const { t } = useTranslation(['home']);
   const { colorMode } = useColorMode();
-  const [errorMessage, setErrorMessage] = useState('');
   const commonColor = useColorModeValue('gray.600', 'gray.300');
 
   const validator = (value) => {
@@ -36,7 +35,6 @@ export default function Home() {
     } else if (!regex.email.test(value)) {
       error = 'Invalid email address';
     }
-    setErrorMessage(error);
     return error;
   };
 
@@ -108,9 +106,6 @@ export default function Home() {
           </Text>
 
           {/* --------- Email Form (📧) --------- */}
-          <Box color={useColorModeValue('danger', 'red')} mt="20px" mb="10px" height="20px">
-            {errorMessage}
-          </Box>
           <Box
             mb="50px"
             p="12px"
@@ -151,6 +146,7 @@ export default function Home() {
                                 backgroundColor: colorMode === 'light' ? '#FFFFFF' : '#17202A',
                               }}
                             />
+                            <FormErrorMessage marginTop={0}>{form.errors.email}</FormErrorMessage>
                           </FormControl>
                         )}
                       </Field>
