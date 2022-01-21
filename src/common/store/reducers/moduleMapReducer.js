@@ -37,6 +37,14 @@ const moduleMapReducer = (state = initialState, action) => {
         ...state,
         contextState: action.payload,
       };
+    case 'CHANGE_SINGLE_TASK_STATUS':
+      return {
+        ...state,
+        contextState: {
+          ...state.contextState,
+          taskTodo: action.payload,
+        },
+      };
     default:
       return state;
   }

@@ -1,17 +1,90 @@
 import {
-  Box, Heading, Stack, Flex, useColorModeValue, HStack,
+  Box, Heading, Stack, Flex, useColorModeValue, HStack, Popover,
+  PopoverTrigger, PopoverContent, PopoverArrow, Button, PopoverHeader,
+  PopoverCloseButton, PopoverBody,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
 import Text from './Text';
-import Link from './NextChakraLink';
+import { updateAssignment } from '../hooks/useTodoHandler';
+// import Link from './NextChakraLink';
 
 import Icon from './Icon';
 
-const Module = ({ data, index, taskTodo }) => {
+const Module = ({
+  data, index, taskTodo, contextHandler,
+}) => {
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [currentTask, setCurrentTask] = useState(null);
+
+  const closeSettings = () => {
+    setSettingsOpen(false);
+  };
+
+  const toggleSettings = () => {
+    setSettingsOpen(!settingsOpen);
+  };
+
   const currentSlug = data.slug ? data.slug : '';
 
-  const currentTask = taskTodo.find((el) => el.task_type === data.task_type
-    && el.associated_slug === currentSlug);
+  useEffect(() => {
+    setCurrentTask(taskTodo.find((el) => el.task_type === data.task_type
+    && el.associated_slug === currentSlug));
+  });
+  // const currentTask = taskTodo.find((el) => el.task_type === data.task_type
+  //   && el.associated_slug === currentSlug);
+
+  const getIconByTaskStatus = () => {
+    if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
+      if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {
+        // NOTE: Icon for Revision pending...
+        return <Icon icon="group" color="#0097CF" width="27px" />;
+      }
+      if (currentTask.revision_status === 'DONE') {
+        return <Icon icon="verified" color="#0097CF" width="27px" />;
+      }
+      return <Icon icon="checked" color="#0097CF" width="27px" />;
+    }
+    if (currentTask && currentTask.task_type !== 'PROJECT' && currentTask.task_status === 'DONE') {
+      return <Icon icon="verified" color="#0097CF" width="27px" />;
+    }
+    return <Icon icon="checked" color="#0097CF" width="27px" />;
+  };
+
+  const getOptionsByTaskStatus = () => {
+    if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
+      if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {
+        // NOTE: Option case Revision pending...
+        return (
+          <Button colorScheme="red">Remove current assignment delivery</Button>
+        );
+      }
+      if (currentTask.revision_status === 'DONE') {
+        return (
+          <Button colorScheme="blue">Approved by teacher</Button>
+        );
+      }
+      return (
+        <Button colorScheme="blue">Deliver assignment</Button>
+      );
+    }
+
+    if (currentTask && currentTask.task_type !== 'PROJECT' && currentTask.task_status === 'DONE') {
+      return (
+        <Button onClick={() => updateAssignment(currentTask, contextHandler)} colorScheme="red">Mark as NOT read</Button>
+      );
+    }
+    return (
+      // { task_status: 'PENDING', github_url: '', revision_status: 'PENDING' }
+      <Button
+        onClick={() => updateAssignment(currentTask, contextHandler)}
+        colorScheme="blue"
+      >
+        Mark as read
+      </Button>
+    );
+  };
+
   return (
     <Stack
       direction="row"
@@ -72,38 +145,57 @@ const Module = ({ data, index, taskTodo }) => {
           </Text>
         </Box>
       </Flex>
-      <HStack width="-webkit-fill-available">
-        <Box
-          display="flex"
-          margin="0 0 0 auto"
-
-          // NOTE: USAR REDUX
-
-          // onClick={(e) => handleModuleStatus(e, { ...module, index: i })}
-          // onClick={() => {
-          //   console.log('click');
-          // }}
+      <HStack width="-webkit-fill-available" justifyContent="right">
+        <Popover
+          id="task-status"
+          isOpen={settingsOpen}
+          onClose={closeSettings}
+          trigger="click"
         >
-          {currentTask && currentTask.task_type !== 'PROJECT' && currentTask.task_status === 'DONE' ? (
-            <Icon icon="verified" width="27px" />
-          ) : (
-            <Link
-              href="/"
-              color="#0097CF"
-              fontWeight="bold"
-              fontStyle="normal"
+
+          <PopoverTrigger>
+            <Button
+              display="flex"
+              // bg="rgba(0,0,0,0)"
+              minWidth="26px"
+              minHeight="26px"
+              height="fit-content"
+              padding="0"
+              borderRadius="30px"
+              onClick={() => toggleSettings()}
+
+              // NOTE: Use Redux
+              // When click on task open the page in curren page
+              // when when click the button open dropdown with options
+              // when click an option open modal
+
+              // onClick={(e) => handleModuleStatus(e, { ...module, index: i })}
             >
-              Open lesson
-            </Link>
-          )}
-        </Box>
+              <Box>
+                {getIconByTaskStatus(currentTask && currentTask)}
+              </Box>
+            </Button>
+          </PopoverTrigger>
+
+          <PopoverContent>
+            <PopoverArrow />
+            <PopoverHeader>Select option</PopoverHeader>
+            <PopoverCloseButton />
+            <PopoverBody>
+              {getOptionsByTaskStatus()}
+              {/* <Button colorScheme="blue">Mark as read</Button>
+              <Button colorScheme="green">Deliver assignments</Button>
+              <Button colorScheme="green">Mark as done</Button> */}
+            </PopoverBody>
+          </PopoverContent>
+        </Popover>
       </HStack>
     </Stack>
   );
 };
 
 const ModuleMap = ({
-  width, read, practice, code, answer, title, description, taskTodo,
+  width, read, practice, code, answer, title, description, taskTodo, changeSingleTask,
 }) => {
   const updatedRead = read.map((el) => ({
     ...el,
@@ -131,8 +223,6 @@ const ModuleMap = ({
   }));
 
   const modules = [...updatedRead, ...updatedPractice, ...updatedCode, ...updatedAnswer];
-  // console.log('MODULES__sortedModules:::', modules);
-  // console.log('taskTodo:::', taskTodo);
 
   return (
     <Box width={width || '100%'}>
@@ -156,7 +246,12 @@ const ModuleMap = ({
         {description}
       </Text>
       {modules.map((module, i) => (
-        <Module data={module} index={i} taskTodo={taskTodo} />
+        <Module
+          index={i}
+          data={module}
+          contextHandler={changeSingleTask}
+          taskTodo={taskTodo}
+        />
       ))}
     </Box>
   );
@@ -165,6 +260,7 @@ const ModuleMap = ({
 ModuleMap.propTypes = {
   width: PropTypes.string,
   title: PropTypes.string,
+  changeSingleTask: PropTypes.func,
   read: PropTypes.arrayOf(PropTypes.object),
   practice: PropTypes.arrayOf(PropTypes.object),
   code: PropTypes.arrayOf(PropTypes.object),
@@ -179,11 +275,13 @@ ModuleMap.defaultProps = {
   code: [],
   answer: [],
   title: 'HTML/CSS/Bootstrap',
+  changeSingleTask: () => {},
   description: '',
   taskTodo: [],
 };
 
 Module.propTypes = {
+  contextHandler: PropTypes.func.isRequired,
   data: PropTypes.objectOf(PropTypes.any),
   index: PropTypes.number,
   taskTodo: PropTypes.arrayOf(PropTypes.object).isRequired,

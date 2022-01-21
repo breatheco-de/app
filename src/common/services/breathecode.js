@@ -38,9 +38,7 @@ const breathecode = {
       // delete: (args) => {
       //  return this.delete(`${url}/user/${user_id}/task/${args.id}`, args);
       // },
-      // update: (user_id, args) => {
-      //  return this.put(`${url}/task/${args.id}`, args);
-      // }
+      update: (args) => axios.put(`${url}/task/${args.id}`, args),
     };
   },
 

@@ -21,7 +21,7 @@ import bc from '../../../../../common/services/breathecode';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 
 const dashboard = ({ slug, cohortSlug }) => {
-  const { contextState, setContextState } = useModuleMap();
+  const { contextState, setContextState, changeSingleTask } = useModuleMap();
   const [cohort, setNewCohort] = React.useState([]);
   const [taskTodo, setTaskTodo] = React.useState([]);
   const { user, choose } = useAuth();
@@ -133,6 +133,7 @@ const dashboard = ({ slug, cohortSlug }) => {
                   key={id}
                   title={label}
                   description={description}
+                  changeSingleTask={changeSingleTask}
                   taskTodo={contextState.taskTodo}
                   read={lessons}
                   practice={replits}
