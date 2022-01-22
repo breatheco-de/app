@@ -4,7 +4,7 @@ import {
   Box, Flex, useColorMode,
 } from '@chakra-ui/react';
 import Icon from './Icon';
-import Heading from './Heading';
+// import Heading from './Heading';
 import Text from './Text';
 
 const color = {
@@ -18,9 +18,9 @@ const Timeline = ({
   const { colorMode } = useColorMode();
   return (
     <Box width={width}>
-      <Flex>
-        <Heading size="m" fontWeight="900" color={colorMode === 'light' ? 'gray.dark' : 'white'}>WELCOME TO</Heading>
-        <Heading size="m" marginLeft="10px" fontWeight="400" color={colorMode === 'light' ? 'gray.dark' : 'white'}>{title}</Heading>
+      <Flex width="100%" marginBottom="1.5rem">
+        <Text size="l" fontWeight="900" color={colorMode === 'light' ? 'gray.dark' : 'white'}>WELCOME TO</Text>
+        <Text size="l" marginLeft="10px" fontWeight="400" color={colorMode === 'light' ? 'gray.dark' : 'white'}>{title}</Text>
       </Flex>
       <Box>
         {assignments.map((item, index) => (
@@ -38,15 +38,16 @@ const Timeline = ({
             }}
             position="relative"
             marginBottom="5px"
+            width="100%"
           >
             <Box marginY="auto">
-              <Box width="30px" height="30px" bg={!item.muted ? 'blue.default' : 'gray.default'} borderRadius="50px">
+              <Box width="30px" height="30px" bg={item.muted ? 'blue.default' : 'gray.default'} borderRadius="50px">
                 <Text size="sm" margin={0} color="white" textAlign="center" position="relative" top="5px">{index + 1}</Text>
               </Box>
             </Box>
-            <Flex cursor="pointer" onClick={(e) => onClickAssignment(e, item)} borderRadius="17px" bg={!item.muted ? `${color[colorMode]}` : 'none'} paddingY="8px" paddingX="10px">
+            <Flex cursor="pointer" onClick={(e) => onClickAssignment(e, item)} borderRadius="17px" bg={item.muted ? `${color[colorMode]}` : 'none'} paddingY="8px" paddingX="12px" marginLeft="1.5rem">
               <Box padding="8px" bg={item.muted ? 'blue.default' : 'none'} borderRadius="50px" height="36px" margin="auto">
-                <Icon width="20px" height="20px" icon={item.icon} color={!item.muted ? 'white' : 'gray'} />
+                <Icon width="20px" height="20px" icon={item.icon} color={!item.muted ? 'gray' : 'white'} />
               </Box>
               <Box marginLeft="12px">
                 <Text size="sm" color={colorMode === 'light' ? 'gray.dark' : 'gray.light'} fontWeight="900" marginY={0}>{item.title.toUpperCase()}</Text>

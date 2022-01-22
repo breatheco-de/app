@@ -11,6 +11,7 @@ import Heading from '../Heading';
 // import Anchor from './Anchor';
 // import ChakraHeading from '../Heading';
 import Text from '../Text';
+import ContentHeading from './ContentHeading';
 
 // okaidia-tomorrow
 SyntaxHighlighter.registerLanguage('jsx', jsx);
@@ -64,9 +65,13 @@ const MDLink = ({ children, href }) => (
   </Link>
 );
 
-const MarkDownParser = ({ content, withToc }) => (
+const MarkDownParser = ({ content, withToc, frontMatter }) => (
   <>
-    {withToc ? <Toc content={content} /> : null}
+    {frontMatter && (
+    <ContentHeading content={frontMatter}>
+      {withToc && <Toc content={content} />}
+    </ContentHeading>
+    )}
     {compiler(content, {
       wrapper: null,
       overrides: {
@@ -93,10 +98,12 @@ const MarkDownParser = ({ content, withToc }) => (
 MarkDownParser.propTypes = {
   content: PropTypes.string,
   withToc: PropTypes.bool,
+  frontMatter: PropTypes.string,
 };
 MarkDownParser.defaultProps = {
   content: '',
   withToc: false,
+  frontMatter: '',
 };
 
 Code.propTypes = {

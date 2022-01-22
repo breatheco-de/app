@@ -71,17 +71,18 @@ const dashboard = ({ slug, cohortSlug }) => {
 
   return (
     <Container maxW="container.xl">
-      <Box marginTop="17px" marginBottom="17px">
+      <Box marginTop="17px" marginBottom="17px" display="inline-flex">
         <NextChakraLink
           href="/choose-program"
           color="#0097CF"
           _focus={{ boxShadow: 'none', color: '#0097CF' }}
+          display="inline-flex"
         >
           <Icon
             icon="arrowLeft"
             width="20px"
             height="20px"
-            style={{ marginBottom: '-4px', marginRight: '4px' }}
+            style={{ marginBottom: '-4px', marginRight: '7px' }}
             color="#0097CF"
           />
           Back to choose program
