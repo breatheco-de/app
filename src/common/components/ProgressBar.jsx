@@ -49,7 +49,7 @@ const ProgressBar = ({ progressText, programs, width }) => {
 
 ProgressBar.propTypes = {
   progressText: PropTypes.string,
-  programs: PropTypes.arrayOf(PropTypes.array),
+  programs: PropTypes.arrayOf(PropTypes.object),
   width: PropTypes.string,
 };
 ProgressBar.defaultProps = {

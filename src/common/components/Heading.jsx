@@ -20,11 +20,12 @@ const ThemeHeading = ({ children, size, ...rest }) => (
 
 ThemeHeading.propTypes = {
   size: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
 };
 
 ThemeHeading.defaultProps = {
   size: 'l',
+  children: null,
 };
 
 export default ThemeHeading;

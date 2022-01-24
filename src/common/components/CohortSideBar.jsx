@@ -101,7 +101,7 @@ const CohortSideBar = ({
               gap={0}
             >
               {assistant.map((a, i) => (
-                <Tooltip key={`${a.name}-${a.active}`} label={a.name} placement="top">
+                <Tooltip key={`${a.name}-${a.active}-${i}`} label={a.name} placement="top">
                   <WrapItem justifyContent="center" alignItems="center" onClick={(e) => handleAssistant(e, a.name)}>
                     <Avatar
                       key={i}
@@ -132,7 +132,7 @@ const CohortSideBar = ({
           gap={0}
         >
           {classmates.map((c, i) => (
-            <Tooltip label={c.name} placement="top">
+            <Tooltip key={`${c.name}-${i}`} label={c.name} placement="top">
               <WrapItem justifyContent="center" alignItems="center" onClick={(e) => handleStudent(e, c.name)}>
                 <Avatar
                   key={i}
@@ -174,9 +174,9 @@ CohortSideBar.propTypes = {
   width: PropTypes.string,
   title: PropTypes.string,
   cohortCity: PropTypes.string,
-  professor: PropTypes.objectOf(PropTypes.object),
-  assistant: PropTypes.arrayOf(PropTypes.array),
-  classmates: PropTypes.arrayOf(PropTypes.array),
+  professor: PropTypes.objectOf(PropTypes.any),
+  assistant: PropTypes.arrayOf(PropTypes.object),
+  classmates: PropTypes.arrayOf(PropTypes.object),
   background: PropTypes.string,
   handleStudySession: PropTypes.func,
   handleTeacher: PropTypes.func,
