@@ -1,5 +1,5 @@
 const checked = ({
-  width, height, style,
+  width, height, style, color,
 }) => (
   <svg
     style={style}
@@ -9,7 +9,7 @@ const checked = ({
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <circle cx="7.5" cy="7.5" r="7.5" fill="#0097CF" />
+    <circle cx="7.5" cy="7.5" r="7.5" fill={color || '#0097CF'} />
     <circle cx="7.5" cy="7.5" r="3.5" fill="#EEF9FE" />
   </svg>
 

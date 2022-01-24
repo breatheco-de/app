@@ -26,18 +26,18 @@ const useModuleMap = () => {
     });
   };
 
-  const changeSingleTask = (newState) => {
-    dispatch({
-      type: 'CHANGE_SINGLE_TASK_STATUS',
-      payload: newState,
-    });
-  };
+  // const changeSingleTask = (newState) => {
+  //   dispatch({
+  //     type: 'CHANGE_SINGLE_TASK_STATUS',
+  //     payload: newState,
+  //   });
+  // };
   return {
     modules,
     contextState,
     setContextState,
-    changeSingleTask,
     updateModuleStatus,
+    // changeSingleTask,
   };
 };
 

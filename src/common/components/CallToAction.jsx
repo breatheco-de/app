@@ -16,16 +16,17 @@ const CallToAction = (props) => {
       borderRadius="17px"
       paddingY="21px"
       paddingX="25px"
+      flexDirection={{ base: 'column', lg: 'row' }}
     >
       <Box>
-        <Heading Heading as="h5" fontSize="22px" color="white" margin={0} marginBottom="11px">
+        <Heading as="h5" fontSize="22px" color="white" margin={0} marginBottom="11px">
           {title}
         </Heading>
         <Text color="white" size="l" margin={0}>
           {text}
         </Text>
       </Box>
-      <Box alignSelf="center">
+      <Box padding={{ base: '24px 0 0 0', lg: '0' }} alignSelf="center">
         <Button marginY="auto" borderColor="white" color="white" variant="outline" onClick={onClick}>
           START TODAY’S MODULE
         </Button>

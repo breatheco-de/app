@@ -7,7 +7,7 @@ import {
 import mockData from '../../../../../common/utils/mockData/DashboardView';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
-import ModuleMap from '../../../../../common/components/ModuleMap';
+import ModuleMap from '../../../../../js_modules/moduleMap/index';
 import CohortSideBar from '../../../../../common/components/CohortSideBar';
 import Icon from '../../../../../common/components/Icon';
 import SupportSidebar from '../../../../../common/components/SupportSidebar';
@@ -21,7 +21,7 @@ import bc from '../../../../../common/services/breathecode';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 
 const dashboard = ({ slug, cohortSlug }) => {
-  const { contextState, setContextState, changeSingleTask } = useModuleMap();
+  const { contextState, setContextState } = useModuleMap();
   const [cohort, setNewCohort] = React.useState([]);
   const [taskTodo, setTaskTodo] = React.useState([]);
   const { user, choose } = useAuth();
@@ -118,28 +118,30 @@ const dashboard = ({ slug, cohortSlug }) => {
           </Box>
           <Box height="1px" bg="gray.dark" marginY="32px" />
           <Box>
-            <Heading size="m">MODULE MAP</Heading>
+            <Heading as="h2" size="m">MODULE MAP</Heading>
           </Box>
           <Box marginTop="30px">
             {(contextState.cohort.json && taskTodo) ? (
               cohort.json ? cohort.json.days : []
-            ).map((assignment) => {
+            ).map((assignment, i) => {
+              const index = i;
               const {
               // id,                   Read   Practice    Code        Answer
-                id, label, description, lessons, replits, assignments, quizzes,
+                label, description, lessons, replits, assignments, quizzes,
               } = assignment;
+
+              console.log('ASSIGNMENT:::', assignment);
               return (
                 <ModuleMap
-                  key={id}
+                  key={`${label}-${index}`}
+                  index={index}
                   title={label}
                   description={description}
-                  changeSingleTask={changeSingleTask}
                   taskTodo={contextState.taskTodo}
                   read={lessons}
                   practice={replits}
                   code={assignments}
                   answer={quizzes}
-                  width="100%"
                 />
               );
             }) : (
