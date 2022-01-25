@@ -1,5 +1,3 @@
-import { useColorModeValue } from '@chakra-ui/react';
-
 const code = ({
   width, height, style, color,
 }) => (
@@ -9,7 +7,7 @@ const code = ({
     width={width || '24px'}
     height={height || '24px'}
     viewBox="0 0 24 24"
-    fill={useColorModeValue(`${color || '#000'}`, '#FFF')}
+    fill={color || '#000'}
   >
     <path
       stroke="none"

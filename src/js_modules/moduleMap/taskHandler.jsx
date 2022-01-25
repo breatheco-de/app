@@ -14,12 +14,12 @@ export const getIconByTaskStatus = ({ currentTask }) => {
     if (currentTask.revision_status === 'DONE') {
       return <Icon icon="verified" color="#25BF6C" width="27px" />;
     }
-    return <Icon icon="checked" color="#0097CF" width="27px" />;
+    return <Icon icon="unchecked" color="#C4C4C4" width="27px" />;
   }
   if (currentTask && currentTask.task_type !== 'PROJECT' && currentTask.task_status === 'DONE') {
     return <Icon icon="verified" color="#25BF6C" width="27px" />;
   }
-  return <Icon icon="checked" color="#0097CF" width="27px" />;
+  return <Icon icon="unchecked" color="#C4C4C4" width="27px" />;
 };
 
 export const getOptionsByTaskStatus = ({ currentTask, sendProject, changeStatusAssignment }) => {

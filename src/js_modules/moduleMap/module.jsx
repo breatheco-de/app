@@ -41,11 +41,17 @@ const Module = ({
     });
   };
 
+  const isDone = currentTask?.task_status === 'DONE';
+  const containerBackground = isDone ? useColorModeValue('featuredLight', 'featuredDark') : useColorModeValue('#FFFFFF', 'primary');
+
   return (
     <Stack
       direction="row"
-      backgroundColor={useColorModeValue('#FFFFFF', 'primary')}
-      border="1px solid #C4C4C4"
+      backgroundColor={containerBackground}
+      // featuredDark
+      // #C4C4C4
+      border={`${useColorModeValue('1px', '2px')} solid`}
+      borderColor={isDone ? 'transparent' : useColorModeValue('#C4C4C4', 'gray.700')}
       height="auto"
       py="10px"
       px="15px"
@@ -67,7 +73,7 @@ const Module = ({
           height="30px"
           rounded="full"
           align="center"
-          background="#0097CF"
+          background={isDone ? '#0097CF' : '#BFBFBF'}
         >
           <Text fontWeight="bold" margin="0" size="sm" color="#FFFFFF">
             {currIndex + 1}
@@ -75,7 +81,10 @@ const Module = ({
         </Box>
         <Box mr="20px" ml="20px" display="flex" minWidth="22px" width="22px">
           {data.icon && (
-            <Icon icon={data.icon || 'book'} color="#0097CF" />
+            <Icon
+              icon={data.icon || 'book'}
+              color={isDone ? '#0097CF' : '#A4A4A4'}
+            />
           )}
         </Box>
         <Box>
@@ -86,13 +95,14 @@ const Module = ({
             letterSpacing="0.05em"
             margin="0"
             isTruncated
+            fontWeight="900"
             textTransform="uppercase"
           >
             {data.type || 'Read'}
           </Heading>
           <Text
             size="l"
-            fontWeight="light"
+            fontWeight="normal"
             lineHeight="18px"
             letterSpacing="0.05em"
             margin="0"

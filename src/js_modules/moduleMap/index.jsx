@@ -13,12 +13,12 @@ const ModuleMap = ({
 
   return (
     <Box key={index} width="100%">
-      <Box display="flex" justifyContent="space-between">
-        <Heading as="h1" fontSize="22px">
+      <Box margin="14px 0" display="flex" alignItems="center" justifyContent="space-between">
+        <Heading as="h2" fontSize="22px">
           {title}
         </Heading>
         <Heading
-          as="h6"
+          as="span"
           fontSize="15px"
           color={useColorModeValue('gray.default', 'white')}
           fontWeight="normal"
@@ -28,7 +28,7 @@ const ModuleMap = ({
           Lessons
         </Heading>
       </Box>
-      <Text color={useColorModeValue('#606060', 'white')} size="md">
+      <Text margin="0 0 22px 0px" color={useColorModeValue('#606060', 'white')} size="md">
         {description}
       </Text>
 

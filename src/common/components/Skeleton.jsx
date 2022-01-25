@@ -84,7 +84,7 @@ export const ModuleMapSkeleton = () => {
         endColor={commonEndColor}
         height="38px"
         color="white"
-        borderRadius="1rem"
+        borderRadius="10px"
         width="100%"
         mt="6"
       />
@@ -101,7 +101,7 @@ export const ModuleMapSkeleton = () => {
         endColor={commonEndColor}
         height="58px"
         color="white"
-        borderRadius="1rem"
+        borderRadius="10px"
         width="100%"
         mt="6"
       />
@@ -110,7 +110,7 @@ export const ModuleMapSkeleton = () => {
         endColor={commonEndColor}
         height="58px"
         color="white"
-        borderRadius="1rem"
+        borderRadius="10px"
         width="100%"
         mt="6"
       />
@@ -119,7 +119,7 @@ export const ModuleMapSkeleton = () => {
         endColor={commonEndColor}
         height="58px"
         color="white"
-        borderRadius="1rem"
+        borderRadius="10px"
         width="100%"
         mt="6"
       />
@@ -128,7 +128,7 @@ export const ModuleMapSkeleton = () => {
         endColor={commonEndColor}
         height="38px"
         color="white"
-        borderRadius="1rem"
+        borderRadius="10px"
         width="100%"
         mt="6"
       />
@@ -145,7 +145,7 @@ export const ModuleMapSkeleton = () => {
         endColor={commonEndColor}
         height="58px"
         color="white"
-        borderRadius="1rem"
+        borderRadius="10px"
         width="100%"
         mt="6"
       />
@@ -154,7 +154,7 @@ export const ModuleMapSkeleton = () => {
         endColor={commonEndColor}
         height="58px"
         color="white"
-        borderRadius="1rem"
+        borderRadius="10px"
         width="100%"
         mt="6"
       />
@@ -163,7 +163,7 @@ export const ModuleMapSkeleton = () => {
         endColor={commonEndColor}
         height="58px"
         color="white"
-        borderRadius="1rem"
+        borderRadius="10px"
         width="100%"
         mt="6"
       />
