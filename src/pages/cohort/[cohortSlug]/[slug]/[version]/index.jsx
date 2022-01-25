@@ -222,18 +222,43 @@ const dashboard = ({ slug, cohortSlug }) => {
   );
 };
 
-export const getStaticProps = async ({
+export const getServerSideProps = async ({
+  params,
   params: {
     cohortSlug, slug, version,
   },
   locale,
-}) => ({
-  props: {
-    cohortSlug,
-    slug,
-    version,
-    ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
-  },
-});
+}) => {
+  console.log('params', params);
+  return {
+    props: {
+      cohortSlug,
+      slug,
+      version,
+      ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
+      fallback: true,
+      paths: [
+        {
+          params: {
+            cohortSlug, slug, version,
+          },
+        },
+      ],
+    },
+  };
+};
+
+// export const getStaticPaths = async () => {
+//   const paths = projects.map((res) => ({
+//     params: {
+//       difficulty: res.difficulty,
+//       slug: res.slug,
+//     },
+//   }));
+//   return {
+//     fallback: false,
+//     paths,
+//   };
+// };
 
 export default asPrivate(dashboard);
