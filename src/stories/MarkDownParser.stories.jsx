@@ -19,17 +19,20 @@ const Component = (args) => {
                 .then((res) => res.text())
                 .catch((err) => console.error(err));
             const markdownContent = getMarkDownContent(results);
-            setData(markdownContent.content)
+            setData(markdownContent)
         })()
     }, [data])
-    return <MarkDownParser content={data ? data : '##Hello'} {...args}/>;
+    return <MarkDownParser content={data ? data.content : '##Hello'} frontMatter={data ? data.frontMatter: ""}{...args}/>;
 }
 
 export const Default = Component.bind({});
 Default.args = {
+    withToc:false,
+    frontMatter:"",
 };
 
 export const ContentControl = Component.bind({});
 ContentControl.args = {
-    content: ""
+    content: "",
+    withToc:false,
 }
