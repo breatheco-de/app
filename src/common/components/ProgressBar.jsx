@@ -17,10 +17,9 @@ const ProgressBar = ({ progressText, programs, width }) => {
   };
   return (
     <Box width={width || '100%'}>
-      <Flex marginBottom="15px">
-        <Heading fontSize="22px" marginRight="5px" marginY="0">
-          {calculatePercentage()}
-          %
+      <Flex marginBottom="15px" gridGap="10px" align="center">
+        <Heading fontSize="22px" marginY="0">
+          {`${calculatePercentage()}%`}
         </Heading>
         <Text size="l" marginY="0">
           {progressText}

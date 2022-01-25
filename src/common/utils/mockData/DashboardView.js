@@ -165,7 +165,7 @@ const tapCapsule = {
 
 const callToAction = {
   background: 'blue.default',
-  title: 'Todays lessons',
+  title: 'Today\'s lessons',
   text: 'Your lesson today is Internet Architecture in First Time Website Module.',
   width: 'auto',
 };

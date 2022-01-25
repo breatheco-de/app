@@ -27,18 +27,23 @@ export const updateAssignment = ({
     });
   } else {
     // Project case
-    const projectUrl = (task?.github_url === undefined || task?.github_url === '') ? githubUrl : '';
+    const projectUrl = (task.github_url === undefined || task.github_url === '') ? githubUrl : '';
     const isDelivering = projectUrl !== '';
     const updatedTask = Object.assign(task, { task_status: toggleStatus, github_url: projectUrl });
-    bc.todo().update(updatedTask).then(() => {
-      toast({
-        // title: `"${res.data.title}" has been updated successfully`,
-        title: `Your project ${isDelivering ? 'has been delivered' : 'delivery has been removed'} successfully`,
-        status: 'success',
-        duration: 6000,
-        isClosable: true,
-      });
-      closeSettings();
+    bc.todo().update(updatedTask).then((res) => {
+      const { data } = res;
+      // verify if form is equal to the response
+      if (data.github_url === projectUrl) {
+        toast({
+          // title: `"${res.data.title}" has been updated successfully`,
+          title: `Your project ${isDelivering ? 'has been delivered' : 'delivery has been removed'} successfully`,
+          description: isDelivering ? `Link: ${data.github_url} has been delivered successfully` : '',
+          status: 'success',
+          duration: 6000,
+          isClosable: true,
+        });
+        closeSettings();
+      }
     }).catch(() => {
       toast({
         title: 'There was an error delivering your project',

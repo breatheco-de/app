@@ -9,17 +9,21 @@ const sizes = {
   xs: '10px',
 };
 
-const ThemeText = ({ children, size, ...rest }) => (
-  <Text fontSize={sizes[size] || size} {...rest}>
+const ThemeText = ({
+  children, size, letterSpacing, ...rest
+}) => (
+  <Text letterSpacing={letterSpacing} fontSize={sizes[size] || size} {...rest}>
     {children}
   </Text>
 );
 
 ThemeText.propTypes = {
   size: PropTypes.string,
+  letterSpacing: PropTypes.string,
   children: PropTypes.node.isRequired,
 };
 ThemeText.defaultProps = {
+  letterSpacing: '0.05em',
   size: 'sm',
 };
 

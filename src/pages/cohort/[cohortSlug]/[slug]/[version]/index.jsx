@@ -1,8 +1,6 @@
 import React, { Fragment, useEffect } from 'react';
 import {
-  Box,
-  Flex,
-  Container,
+  Box, Flex, Container, useColorModeValue, Skeleton,
 } from '@chakra-ui/react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import mockData from '../../../../../common/utils/mockData/DashboardView';
@@ -91,13 +89,14 @@ const dashboard = ({ slug, cohortSlug }) => {
 
   console.log('Technologies from all assignments:::', technologies);
   return (
-    <Container maxW="container.xl">
-      <Box marginTop="17px" marginBottom="17px">
+    <Container maxW="container.xl" padding={{ base: '0 2%', md: '0 4%' }}>
+      <Box marginTop="18px" marginBottom="48px">
         <NextChakraLink
           href="/choose-program"
           display="flex"
           flexDirection="row"
           alignItems="center"
+          fontWeight="700"
           gridGap="12px"
           color="#0097CF"
           _focus={{ boxShadow: 'none', color: '#0097CF' }}
@@ -118,19 +117,27 @@ const dashboard = ({ slug, cohortSlug }) => {
           base: 'column', sm: 'column', md: 'row', lg: 'row',
         }}
       >
-        <Box>
-          <Heading as="h1" size="xl">
-            {cohort.name}
-          </Heading>
-          <TagCapsule tags={tapCapsule.tags} separator={tapCapsule.separator} />
-          <Box>
-            <CallToAction
-              background={callToAction.background}
-              title={callToAction.title}
-              text={callToAction.text}
+        <Box width="100%" minW={{ base: 'auto', md: '770px' }}>
+          {cohort.name ? (
+            <Heading as="h1" size="xl">
+              {cohort.name}
+            </Heading>
+          ) : (
+            <Skeleton
+              startColor={useColorModeValue('gray.300', 'gray.light')}
+              endColor={useColorModeValue('gray.400', 'gray.400')}
+              height="60px"
               width="100%"
+              borderRadius="10px"
             />
-          </Box>
+          )}
+          <TagCapsule containerStyle={{ padding: '6px 18px 6px 18px' }} tags={tapCapsule.tags} separator={tapCapsule.separator} />
+          <CallToAction
+            background={callToAction.background}
+            title={callToAction.title}
+            text={callToAction.text}
+            width="100%"
+          />
           <Box marginTop="36px">
             <ProgressBar
               programs={progressBar.programs}
@@ -138,11 +145,16 @@ const dashboard = ({ slug, cohortSlug }) => {
               width="100%"
             />
           </Box>
-          <Box height="1px" bg="gray.dark" marginY="32px" />
-          <Box>
-            <Heading as="h2" size="m">MODULE MAP</Heading>
-          </Box>
-          <Box marginTop="30px">
+          <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="32px" />
+
+          <Heading as="h2" fontWeight="900" size="16px">MODULE MAP</Heading>
+
+          <Box
+            marginTop="30px"
+            gridGap="24px"
+            display="flex"
+            flexDirection="column"
+          >
             {(contextState.cohort.json && contextState.taskTodo) ? (
               cohort.json ? cohort.json.days : []
             ).map((assignment, i) => {
