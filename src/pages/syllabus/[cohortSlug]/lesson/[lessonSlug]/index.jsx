@@ -10,13 +10,14 @@ import {
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useRouter } from 'next/router';
 import Heading from '../../../../../common/components/Heading';
 import Timeline from '../../../../../common/components/Timeline';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkdownParser from '../../../../../common/components/MarkDownParser';
 import useSyllabus from '../../../../../common/store/actions/syllabusActions';
 
-export const getStaticProps = async ({ locale }) => {
+export const getServerSideProps = async ({ locale, params: { cohortSlug } }) => {
   const results = await fetch(
     'https://raw.githubusercontent.com/breatheco-de/content/master/src/content/lesson/css-layouts.md',
   )
@@ -28,23 +29,16 @@ export const getStaticProps = async ({ locale }) => {
       fallback: false,
       ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
       data: markdownContent,
+      cohortSlug,
     },
   };
 };
 
-export const getStaticPaths = async () => ({
-  paths: [
-    {
-      params: { cohortSlug: 'santiago-pt-21', lessonSlug: 'intro-to-4geeks' },
-    },
-  ],
-  fallback: false,
-});
-
-const Content = ({ data }) => {
+const Content = ({ data, cohortSlug }) => {
   const { isOpen, onToggle } = useDisclosure();
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const { syllabus = [] } = useSyllabus();
+  const router = useRouter();
   const checkScrollTop = () => {
     if (!showScrollToTop && window.pageYOffset > 400) {
       setShowScrollToTop(true);
@@ -61,44 +55,50 @@ const Content = ({ data }) => {
     window.addEventListener('scroll', checkScrollTop);
   }
 
+  const onClickAssignment = (e, item) => {
+    router.push(`/syllabus/${cohortSlug}/lesson/${item.slug}`);
+  };
+
   return (
     <Flex position="relative">
-      <IconButton
-        style={{ zIndex: 20 }}
-        variant="default"
-        onClick={onToggle}
-        position="fixed"
-        top="50%"
-        left={isOpen ? '19%' : '0%'}
-        borderRadius="none"
-        padding={0}
-        icon={isOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-      />
-      <IconButton
-        icon={<ArrowUpIcon />}
-        onClick={scrollTop}
-        borderRadius="full"
-        style={{ height: 40, display: showScrollToTop ? 'flex' : 'none' }}
-        position="fixed"
-        animation="fadeIn 0.3s"
-        justifyContent="center"
-        height="20px"
+      <Box
         bottom="20px"
+        position="fixed"
         left="95%"
-        variant="default"
-        transition="opacity 0.4s"
-        opacity="0.5"
-        _hover={{
-          opacity: 1,
-        }}
-      />
+      >
+        <IconButton
+          style={{ zIndex: 20 }}
+          variant="default"
+          onClick={onToggle}
+          borderRadius="full"
+          padding={0}
+          icon={isOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+          marginBottom="1rem"
+        />
+        <IconButton
+          icon={<ArrowUpIcon />}
+          onClick={scrollTop}
+          borderRadius="full"
+          style={{ height: 40, display: showScrollToTop ? 'flex' : 'none' }}
+          animation="fadeIn 0.3s"
+          justifyContent="center"
+          height="20px"
+          variant="default"
+          transition="opacity 0.4s"
+          opacity="0.5"
+          _hover={{
+            opacity: 1,
+          }}
+        />
+      </Box>
+
       <Slide
         direction="left"
         in={isOpen}
         style={{
           zIndex: 10,
           position: 'sticky',
-          width: '20%',
+          width: '40%',
           display: isOpen ? 'block' : 'none',
           height: '100vh',
           borderRight: 1,
@@ -118,13 +118,17 @@ const Content = ({ data }) => {
         </Box>
         <Box padding="1.5rem">
           {syllabus && syllabus.map((section) => (
-            <Timeline
-              key={section.id}
-              title={section.label}
-              assignments={section.lessons.concat(section.replits,
-                section.assigments,
-                section.quizzes)}
-            />
+            <Box marginBottom="2rem">
+              <Timeline
+                key={section.id}
+                title={section.label}
+                lessons={section.lessons}
+                answer={section.quizzes}
+                code={section.assigments}
+                practice={section.replits}
+                onClickAssignment={onClickAssignment}
+              />
+            </Box>
           ))}
         </Box>
       </Slide>
@@ -137,6 +141,7 @@ const Content = ({ data }) => {
 
 Content.propTypes = {
   data: PropTypes.string.isRequired,
+  cohortSlug: PropTypes.string.isRequired,
 };
 
 export default Content;
