@@ -34,14 +34,14 @@ const Navbar = ({
   };
 
   const getColorLink = (link) => {
-    if (router?.pathname === link) {
+    if (router?.pathname === link || router.asPath === link) {
       return 'blue.default';
     }
     return colorMode === 'light' ? 'gray.600' : 'white';
   };
 
   const getColorIcon = (link) => {
-    if (router?.pathname === link) {
+    if (router?.pathname === link || router?.asPath === link) {
       return 'blue.default';
     }
     return colorMode === 'light' ? 'gray.default' : 'white';

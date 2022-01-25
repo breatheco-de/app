@@ -6,7 +6,7 @@ import {
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import Text from '../../common/components/Text';
-import { updateAssignment } from '../../common/hooks/useTodoHandler';
+import { updateAssignment } from '../../common/hooks/useModuleHandler';
 import { getIconByTaskStatus, getOptionsByTaskStatus } from './taskHandler';
 
 import Icon from '../../common/components/Icon';

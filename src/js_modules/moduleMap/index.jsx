@@ -6,36 +6,11 @@ import Text from '../../common/components/Text';
 import Module from './module';
 
 const ModuleMap = ({
-  index, read, practice, code, answer, title, description, taskTodo,
+  index, modules, filteredModules, title, description, taskTodo,
 }) => {
-  const updatedRead = read.map((el) => ({
-    ...el,
-    type: 'Read',
-    icon: 'book',
-    task_type: 'LESSON',
-  }));
-  const updatedPractice = practice.map((el) => ({
-    ...el,
-    type: 'Practice',
-    icon: 'strength',
-    task_type: 'EXERCISE',
-  }));
-  const updatedCode = code.map((el) => ({
-    ...el,
-    type: 'Code',
-    icon: 'code',
-    task_type: 'PROJECT',
-  }));
-  const updatedAnswer = answer.map((el) => ({
-    ...el,
-    type: 'Answer',
-    icon: 'answer',
-    task_type: 'QUIZ',
-  }));
+  console.log('allModules:::', modules);
+  console.log('filteredModules:::', filteredModules);
 
-  const modules = [...updatedRead, ...updatedPractice, ...updatedCode, ...updatedAnswer];
-
-  // console.log('taskTodo:::', taskTodo);
   return (
     <Box key={index} width="100%">
       <Box display="flex" justifyContent="space-between">
@@ -57,16 +32,24 @@ const ModuleMap = ({
         {description}
       </Text>
 
+      {filteredModules.length > 0 && modules.length !== filteredModules.length && (
+        <Text color={useColorModeValue('blue.default', 'blue.300')} size="sm">
+          unsynchronized module
+        </Text>
+      )}
+
       {/* NOTE: MODULE COMPONENT */}
-      {modules.map((module, i) => (
-        <Module
-          // eslint-disable-next-line react/no-array-index-key
-          key={`${module.title}-${i}`}
-          currIndex={i}
-          data={module}
-          taskTodo={taskTodo}
-        />
-      ))}
+      {filteredModules.map((module, i) => {
+        const cheatedIndex = i;
+        return (
+          <Module
+            key={`${module.title}-${cheatedIndex}`}
+            currIndex={i}
+            data={module}
+            taskTodo={taskTodo}
+          />
+        );
+      })}
     </Box>
   );
 };
@@ -74,18 +57,14 @@ const ModuleMap = ({
 ModuleMap.propTypes = {
   index: PropTypes.number.isRequired,
   title: PropTypes.string,
-  read: PropTypes.arrayOf(PropTypes.object),
-  practice: PropTypes.arrayOf(PropTypes.object),
-  code: PropTypes.arrayOf(PropTypes.object),
-  answer: PropTypes.arrayOf(PropTypes.object),
+  modules: PropTypes.arrayOf(PropTypes.object),
+  filteredModules: PropTypes.arrayOf(PropTypes.object),
   description: PropTypes.string,
   taskTodo: PropTypes.arrayOf(PropTypes.object),
 };
 ModuleMap.defaultProps = {
-  read: [],
-  practice: [],
-  code: [],
-  answer: [],
+  modules: [],
+  filteredModules: [],
   title: 'HTML/CSS/Bootstrap',
   description: '',
   taskTodo: [],

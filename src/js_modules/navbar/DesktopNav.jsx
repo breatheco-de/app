@@ -23,14 +23,14 @@ const DesktopNav = ({ NAV_ITEMS }) => {
   const linkHoverColor = useColorModeValue('blue.default', 'blue.default');
 
   const getColorLink = (link) => {
-    if (router?.pathname === link || router?.pathname.includes(link)) {
+    if (router?.pathname === link || router.asPath === link || router?.pathname.includes(link)) {
       return 'blue.default';
     }
     return linkColor;
   };
 
   const getColorIcon = (link) => {
-    if (router?.pathname === link || router?.pathname.includes(link)) {
+    if (router?.pathname === link || router?.asPath === link || router?.pathname.includes(link)) {
       return '#0097CD';
     }
     return 'gray';

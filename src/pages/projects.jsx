@@ -1,5 +1,4 @@
 /* eslint-disable no-continue */
-/* eslint-disable no-console */
 import {
   Box, useColorModeValue, Button, Flex, useDisclosure,
 } from '@chakra-ui/react';

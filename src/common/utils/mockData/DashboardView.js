@@ -59,16 +59,19 @@ const moduleMap = {
   handleModuleStatus: () => {},
 };
 
+// used in dashboard page
 const supportSideBar = {
   title: 'Don’t Get Stuck',
   subtitle: 'Did you know you can schedule mentoring sessions any time or ask in the Support Chat?',
   actionButtons: [
     {
       title: 'SCHEDULE MENTORING',
+      href: '#',
       icon: 'conversation',
     },
     {
       title: 'ASK IN SUPPORT CHAT',
+      href: 'https://4geeksacademy.slack.com/',
       icon: 'slack',
     },
   ],

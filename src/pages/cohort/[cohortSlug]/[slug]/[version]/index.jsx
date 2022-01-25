@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import {
   Box,
   Flex,
   Container,
 } from '@chakra-ui/react';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import mockData from '../../../../../common/utils/mockData/DashboardView';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
@@ -19,11 +20,13 @@ import useAuth from '../../../../../common/hooks/useAuth';
 import { ModuleMapSkeleton } from '../../../../../common/components/Skeleton';
 import bc from '../../../../../common/services/breathecode';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
+import { nestAssignments, getTechonologies } from '../../../../../common/hooks/useModuleHandler';
 
 const dashboard = ({ slug, cohortSlug }) => {
   const { contextState, setContextState } = useModuleMap();
   const [cohort, setNewCohort] = React.useState([]);
   const [taskTodo, setTaskTodo] = React.useState([]);
+  const [technologies, setTechnologies] = React.useState([]);
   const { user, choose } = useAuth();
 
   const {
@@ -41,11 +44,25 @@ const dashboard = ({ slug, cohortSlug }) => {
         version,
         slug: currentCohort?.syllabus_version.slug,
         cohort_name: currentCohort.name,
+        cohort_id: currentCohort.id,
         syllabus_name: name,
         academy_id: currentCohort.academy.id,
       });
     });
   }, []);
+
+  // Error 404: "Missing academy_id parameter expected for the endpoint url or 'Academy' header"
+  // useEffect(() => {
+  //   if (user && user.active_cohort) {
+  //     const cohortId = user.active_cohort.slug;
+  //     console.log('COHORT_ID', cohortId);
+  //     bc.cohort().getStudents(cohortId).then((res) => {
+  //       console.log('response_STUDENTS', res);
+  //     }).catch((err) => {
+  //       console.log('error_STUDENTS', err);
+  //     });
+  //   }
+  // }, [user]);
 
   useEffect(() => {
     if (user && user.active_cohort) {
@@ -54,6 +71,9 @@ const dashboard = ({ slug, cohortSlug }) => {
       bc.syllabus().get(academyId, slug, version).then((res) => {
         const studentLessons = res.data;
         setNewCohort(studentLessons);
+
+        // a lot of tags...
+        setTechnologies(getTechonologies(studentLessons.json.days));
       });
 
       bc.todo().getTaskByStudent().then((res) => {
@@ -69,11 +89,16 @@ const dashboard = ({ slug, cohortSlug }) => {
     });
   }, [cohort, taskTodo]);
 
+  console.log('Technologies from all assignments:::', technologies);
   return (
     <Container maxW="container.xl">
       <Box marginTop="17px" marginBottom="17px">
         <NextChakraLink
           href="/choose-program"
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          gridGap="12px"
           color="#0097CF"
           _focus={{ boxShadow: 'none', color: '#0097CF' }}
         >
@@ -96,9 +121,6 @@ const dashboard = ({ slug, cohortSlug }) => {
         <Box>
           <Heading as="h1" size="xl">
             {cohort.name}
-            {/* Full Stack Developer
-          {' '}
-          {slug} */}
           </Heading>
           <TagCapsule tags={tapCapsule.tags} separator={tapCapsule.separator} />
           <Box>
@@ -121,28 +143,43 @@ const dashboard = ({ slug, cohortSlug }) => {
             <Heading as="h2" size="m">MODULE MAP</Heading>
           </Box>
           <Box marginTop="30px">
-            {(contextState.cohort.json && taskTodo) ? (
+            {(contextState.cohort.json && contextState.taskTodo) ? (
               cohort.json ? cohort.json.days : []
             ).map((assignment, i) => {
               const index = i;
               const {
-              // id,                   Read   Practice    Code        Answer
                 label, description, lessons, replits, assignments, quizzes,
               } = assignment;
 
-              console.log('ASSIGNMENT:::', assignment);
+              const nestedAssignmentsByTask = nestAssignments({
+                read: lessons,
+                practice: replits,
+                code: assignments,
+                answer: quizzes,
+                taskTodo: contextState.taskTodo,
+              }).filteredModules;
+
+              const nestedAssignments = nestAssignments({
+                read: lessons,
+                practice: replits,
+                code: assignments,
+                answer: quizzes,
+                taskTodo: contextState.taskTodo,
+              }).modules;
+
               return (
-                <ModuleMap
-                  key={`${label}-${index}`}
-                  index={index}
-                  title={label}
-                  description={description}
-                  taskTodo={contextState.taskTodo}
-                  read={lessons}
-                  practice={replits}
-                  code={assignments}
-                  answer={quizzes}
-                />
+                <Fragment key={`${label}-${index}`}>
+                  {nestedAssignmentsByTask !== [] && nestedAssignmentsByTask.length !== 0 && (
+                    <ModuleMap
+                      index={index}
+                      title={label}
+                      description={description}
+                      taskTodo={contextState.taskTodo}
+                      modules={nestedAssignments}
+                      filteredModules={nestedAssignmentsByTask}
+                    />
+                  )}
+                </Fragment>
               );
             }) : (
               <ModuleMapSkeleton />
@@ -177,11 +214,13 @@ export const getServerSideProps = async ({
   params: {
     cohortSlug, slug, version,
   },
+  locale,
 }) => ({
   props: {
     cohortSlug,
     slug,
     version,
+    ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
   },
 });
 
