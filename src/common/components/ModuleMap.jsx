@@ -7,7 +7,9 @@ import Link from './NextChakraLink';
 
 import Icon from './Icon';
 
-const Module = ({ data, index, taskTodo }) => {
+const Module = ({
+  data, index, taskTodo, cohortSlug,
+}) => {
   const currentSlug = data.slug ? data.slug : '';
 
   const currentTask = taskTodo.find((el) => el.task_type === data.task_type
@@ -88,7 +90,7 @@ const Module = ({ data, index, taskTodo }) => {
             <Icon icon="verified" width="27px" />
           ) : (
             <Link
-              href="/"
+              href={`/syllabus/${cohortSlug}/lesson/${data.slug}`}
               color="#0097CF"
               fontWeight="bold"
               fontStyle="normal"
@@ -103,7 +105,7 @@ const Module = ({ data, index, taskTodo }) => {
 };
 
 const ModuleMap = ({
-  width, read, practice, code, answer, title, description, taskTodo,
+  width, read, practice, code, answer, title, description, taskTodo, cohortSlug,
 }) => {
   const updatedRead = read.map((el) => ({
     ...el,
@@ -156,7 +158,7 @@ const ModuleMap = ({
         {description}
       </Text>
       {modules.map((module, i) => (
-        <Module data={module} index={i} taskTodo={taskTodo} />
+        <Module data={module} index={i} taskTodo={taskTodo} cohortSlug={cohortSlug} />
       ))}
     </Box>
   );
@@ -171,6 +173,7 @@ ModuleMap.propTypes = {
   answer: PropTypes.arrayOf(PropTypes.object),
   description: PropTypes.string,
   taskTodo: PropTypes.arrayOf(PropTypes.object),
+  cohortSlug: PropTypes.string,
 };
 ModuleMap.defaultProps = {
   width: '100%',
@@ -181,16 +184,19 @@ ModuleMap.defaultProps = {
   title: 'HTML/CSS/Bootstrap',
   description: '',
   taskTodo: [],
+  cohortSlug: '',
 };
 
 Module.propTypes = {
   data: PropTypes.objectOf(PropTypes.any),
   index: PropTypes.number,
   taskTodo: PropTypes.arrayOf(PropTypes.object).isRequired,
+  cohortSlug: PropTypes.string,
 };
 Module.defaultProps = {
   data: {},
   index: 0,
+  cohortSlug: '',
 };
 
 export default ModuleMap;

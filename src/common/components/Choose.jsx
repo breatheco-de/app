@@ -59,10 +59,15 @@ function Choose({ chooseList, handleChoose }) {
                   version,
                   slug,
                   cohort_name: cohort.name,
+                  cohort_slug: cohort?.slug,
                   syllabus_name: name,
                   academy_id: cohort.academy.id,
                 });
-                if (typeof window !== 'undefined') localStorage.setItem('cohortSelected', `/cohort/${cohort?.slug}/${slug}/v${version}`);
+                if (typeof window !== 'undefined') {
+                  localStorage.removeItem('active_cohort');
+                  localStorage.setItem('cohortSelected', `/cohort/${cohort?.slug}/${slug}/v${version}`);
+                  localStorage.setItem('active_cohort', cohort.slug);
+                }
                 router.push(`/cohort/${cohort?.slug}/${slug}/v${version}`);
               }}
               marginRight="15px"
