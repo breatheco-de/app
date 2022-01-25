@@ -14,6 +14,7 @@ import Heading from '../../../../../common/components/Heading';
 import Timeline from '../../../../../common/components/Timeline';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkdownParser from '../../../../../common/components/MarkDownParser';
+import useSyllabus from '../../../../../common/store/actions/syllabusActions';
 
 export const getStaticProps = async ({ locale }) => {
   const results = await fetch(
@@ -34,7 +35,7 @@ export const getStaticProps = async ({ locale }) => {
 export const getStaticPaths = async () => ({
   paths: [
     {
-      params: { cohortSlug: 'some-slug', lessonSlug: 'intro' },
+      params: { cohortSlug: 'santiago-pt-21', lessonSlug: 'intro-to-4geeks' },
     },
   ],
   fallback: false,
@@ -43,7 +44,7 @@ export const getStaticPaths = async () => ({
 const Content = ({ data }) => {
   const { isOpen, onToggle } = useDisclosure();
   const [showScrollToTop, setShowScrollToTop] = useState(false);
-
+  const { syllabus = [] } = useSyllabus();
   const checkScrollTop = () => {
     if (!showScrollToTop && window.pageYOffset > 400) {
       setShowScrollToTop(true);
@@ -56,7 +57,9 @@ const Content = ({ data }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  window.addEventListener('scroll', checkScrollTop);
+  if (typeof window !== 'undefined') {
+    window.addEventListener('scroll', checkScrollTop);
+  }
 
   return (
     <Flex position="relative">
@@ -81,7 +84,8 @@ const Content = ({ data }) => {
         justifyContent="center"
         height="20px"
         bottom="20px"
-        left={0}
+        left="95%"
+        variant="default"
         transition="opacity 0.4s"
         opacity="0.5"
         _hover={{
@@ -99,6 +103,8 @@ const Content = ({ data }) => {
           height: '100vh',
           borderRight: 1,
           borderStyle: 'solid',
+          overflowX: 'hidden',
+          overflowY: 'auto',
           borderColor: '#E2E8F0',
         }}
       >
@@ -111,71 +117,18 @@ const Content = ({ data }) => {
           <Heading size="xsm">Full Stack Developer</Heading>
         </Box>
         <Box padding="1.5rem">
-          <Timeline
-            title="<HTML/CSS>"
-            assignments={[
-              {
-                id: 1,
-                title: 'Read',
-                subtitle: 'Introduction to prework',
-                icon: 'book',
-                muted: true,
-              },
-              {
-                id: 2,
-                title: 'Read',
-                subtitle: 'Introduction to ',
-                icon: 'book',
-                muted: false,
-              },
-              {
-                id: 3,
-                title: 'Read',
-                subtitle: 'Introduction to prework',
-                icon: 'book',
-                muted: true,
-              },
-              {
-                id: 4,
-                title: 'Read',
-                subtitle: 'Introduction to prework',
-                icon: 'book',
-                muted: false,
-              },
-              {
-                id: 5,
-                title: 'Read',
-                subtitle: 'Introduction to prework',
-                icon: 'book',
-                muted: true,
-              },
-              {
-                id: 6,
-                title: 'Read',
-                subtitle: 'Introduction to prework',
-                icon: 'book',
-                muted: false,
-              },
-              {
-                id: 7,
-                title: 'Read',
-                subtitle: 'Introduction to prework',
-                icon: 'book',
-                muted: true,
-              },
-              {
-                id: 8,
-                title: 'Read',
-                subtitle: 'Introduction to prework',
-                icon: 'book',
-                muted: false,
-              },
-            ]}
-          />
+          {syllabus && syllabus.map((section) => (
+            <Timeline
+              key={section.id}
+              title={section.label}
+              assignments={section.lessons.concat(section.replits,
+                section.assigments,
+                section.quizzes)}
+            />
+          ))}
         </Box>
       </Slide>
       <Container maxW="container.xl">
-
         <MarkdownParser content={data.content} withToc frontMatter={data.frontMatter || ''} />
       </Container>
     </Flex>

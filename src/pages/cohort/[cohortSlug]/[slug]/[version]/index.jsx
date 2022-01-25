@@ -19,12 +19,14 @@ import useAuth from '../../../../../common/hooks/useAuth';
 import { ModuleMapSkeleton } from '../../../../../common/components/Skeleton';
 import bc from '../../../../../common/services/breathecode';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
+import useSyllabus from '../../../../../common/store/actions/syllabusActions';
 
 const dashboard = ({ slug, cohortSlug }) => {
   const { contextState, setContextState } = useModuleMap();
   const [cohort, setNewCohort] = React.useState([]);
   const [taskTodo, setTaskTodo] = React.useState([]);
   const { user, choose } = useAuth();
+  const { setSyllabus } = useSyllabus();
 
   const {
     tapCapsule, callToAction, cohortSideBar, supportSideBar, progressBar,
@@ -38,6 +40,7 @@ const dashboard = ({ slug, cohortSlug }) => {
       const currentCohort = findCohort?.cohort;
       const { version, name } = currentCohort?.syllabus_version;
       choose({
+        cohort_slug: cohortSlug,
         version,
         slug: currentCohort?.syllabus_version.slug,
         cohort_name: currentCohort.name,
@@ -54,6 +57,7 @@ const dashboard = ({ slug, cohortSlug }) => {
       bc.syllabus().get(academyId, slug, version).then((res) => {
         const studentLessons = res.data;
         setNewCohort(studentLessons);
+        setSyllabus(studentLessons.json.days);
       });
 
       bc.todo().getTaskByStudent().then((res) => {
@@ -140,6 +144,7 @@ const dashboard = ({ slug, cohortSlug }) => {
                   code={assignments}
                   answer={quizzes}
                   width="100%"
+                  cohortSlug={cohortSlug}
                 />
               );
             }) : (

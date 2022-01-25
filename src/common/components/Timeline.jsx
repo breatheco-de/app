@@ -16,16 +16,22 @@ const Timeline = ({
   title, assignments, width, onClickAssignment,
 }) => {
   const { colorMode } = useColorMode();
+  const updatedAssignments = assignments.map((el) => ({
+    ...el,
+    subtitle: 'Read',
+    icon: 'book',
+    task_type: 'LESSON',
+  }));
   return (
     <Box width={width}>
       <Flex width="100%" marginBottom="1.5rem">
         <Text size="l" fontWeight="900" color={colorMode === 'light' ? 'gray.dark' : 'white'}>WELCOME TO</Text>
-        <Text size="l" marginLeft="10px" fontWeight="400" color={colorMode === 'light' ? 'gray.dark' : 'white'}>{title}</Text>
+        <Text size="l" marginLeft="10px" fontWeight="400" color={colorMode === 'light' ? 'gray.dark' : 'white'}>{title && title}</Text>
       </Flex>
       <Box>
-        {assignments.map((item, index) => (
+        {assignments && updatedAssignments.map((item, index) => (
           <Flex
-            key={item.id}
+            key={item?.id}
             _before={{
               content: '""',
               position: 'absolute',
@@ -41,17 +47,17 @@ const Timeline = ({
             width="100%"
           >
             <Box marginY="auto">
-              <Box width="30px" height="30px" bg={item.muted ? 'blue.default' : 'gray.default'} borderRadius="50px">
-                <Text size="sm" margin={0} color="white" textAlign="center" position="relative" top="5px">{index + 1}</Text>
+              <Box width="30px" height="30px" bg={item && item?.muted ? 'blue.default' : 'gray.default'} borderRadius="50px">
+                <Text size="sm" margin={0} color="white" textAlign="center" position="relative" top="5px">{index}</Text>
               </Box>
             </Box>
-            <Flex cursor="pointer" onClick={(e) => onClickAssignment(e, item)} borderRadius="17px" bg={item.muted ? `${color[colorMode]}` : 'none'} paddingY="8px" paddingX="12px" marginLeft="1.5rem">
-              <Box padding="8px" bg={item.muted ? 'blue.default' : 'none'} borderRadius="50px" height="36px" margin="auto">
-                <Icon width="20px" height="20px" icon={item.icon} color={!item.muted ? 'gray' : 'white'} />
+            <Flex cursor="pointer" onClick={(e) => onClickAssignment(e)} borderRadius="17px" bg={item && item?.muted ? color[colorMode] : 'none'} paddingY="8px" paddingX="12px" marginLeft="1.5rem">
+              <Box padding="8px" bg={item && item?.muted ? 'blue.default' : 'none'} borderRadius="50px" height="36px" margin="auto">
+                <Icon width="20px" height="20px" icon={item && item?.icon} color={!item?.muted ? 'gray' : 'white'} />
               </Box>
               <Box marginLeft="12px">
-                <Text size="sm" color={colorMode === 'light' ? 'gray.dark' : 'gray.light'} fontWeight="900" marginY={0}>{item.title.toUpperCase()}</Text>
-                <Text size="l" fontWeight="400" marginY={0} color={colorMode === 'light' ? 'gray.dark' : 'gray.light'}>{item.subtitle}</Text>
+                <Text size="sm" color={colorMode === 'light' ? 'gray.dark' : 'gray.light'} fontWeight="900" marginY={0}>{item && item?.subtitle?.toUpperCase()}</Text>
+                <Text size="l" fontWeight="400" marginY={0} color={colorMode === 'light' ? 'gray.dark' : 'gray.light'}>{item && item?.title}</Text>
               </Box>
             </Flex>
           </Flex>
