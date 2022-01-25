@@ -20,7 +20,7 @@ import '@fontsource/lato/900.css';
 
 function LearnApp({ Component, pageProps }) {
   const [haveSession, setHaveSession] = useState(false);
-  const HAVE_SESSION = typeof window !== 'undefined' && localStorage.getItem('accessToken') !== null;
+  const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
 
   useEffect(() => {
     // verify if accessToken is in localStorage

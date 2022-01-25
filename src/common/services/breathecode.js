@@ -32,16 +32,20 @@ const breathecode = {
     const url = `${host}/assignment`;
     return {
       getTaskByStudent: () => axios.get(`${url}/user/me/task`),
-      // add: (id, args) => {
-      //  return this.post(url+'/user/'+id+'/task', args);
-      // },
-      // delete: (args) => {
-      //  return this.delete(`${url}/user/${user_id}/task/${args.id}`, args);
-      // },
+      // add: (id, args) => axios.post(url+'/user/'+id+'/task', args);
+      // delete: (args) => axios.delete(`${url}/user/${user_id}/task/${args.id}`, args);
       update: (args) => axios.put(`${url}/task/${args.id}`, args),
     };
   },
 
+  cohort: () => {
+    const url = `${host}/admissions/academy`;
+    return {
+      getStudents: (cohortId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}`),
+    };
+  },
+
+  // Error 404: "Missing academy_id parameter expected for the endpoint url or 'Academy' header"
   // assignments: () => {
   //   const url = `${host}/assignment`;
   //   return {

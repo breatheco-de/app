@@ -18,6 +18,8 @@ function chooseProgram() {
     });
   }, []);
 
+  console.log('Cohorts:::', data);
+
   const handleChoose = (cohort) => {
     choose(cohort);
   };
