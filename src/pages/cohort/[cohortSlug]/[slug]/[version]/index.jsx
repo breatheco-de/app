@@ -238,9 +238,11 @@ export const getServerSideProps = async ({
       ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
       fallback: true,
       paths: [
-        cohortSlug,
-        slug,
-        version,
+        {
+          params: {
+            cohortSlug, slug, version,
+          },
+        },
       ],
     },
   };
