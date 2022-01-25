@@ -222,7 +222,7 @@ const dashboard = ({ slug, cohortSlug }) => {
   );
 };
 
-export const getServerSideProps = async ({
+export const getStaticProps = async ({
   params: {
     cohortSlug, slug, version,
   },
