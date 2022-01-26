@@ -20,6 +20,7 @@ import bc from '../../../../../common/services/breathecode';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import { nestAssignments, getTechonologies } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
+import dashboardTR from '../../../../../common/translations/dashboard';
 
 // { slug, cohortSlug }
 const dashboard = () => {
@@ -33,9 +34,14 @@ const dashboard = () => {
   const { cohortSlug, slug } = router.query;
   console.log('cohortSlug:::', cohortSlug);
   console.log('slug:::', slug);
+  console.log('router:::', router);
 
   const {
-    tapCapsule, callToAction, cohortSideBar, supportSideBar, progressBar,
+    cohortSideBar, backToChooseProgram, progressText, callToAction,
+  } = dashboardTR[router.locale];
+
+  const {
+    tapCapsule, supportSideBar, progressBar,
   } = mockData;
 
   useEffect(() => {
@@ -118,7 +124,7 @@ const dashboard = () => {
             style={{ marginBottom: '-4px', marginRight: '4px' }}
             color="#0097CF"
           />
-          Back to choose program
+          {backToChooseProgram}
         </NextChakraLink>
       </Box>
       <Flex
@@ -143,15 +149,16 @@ const dashboard = () => {
           )}
           <TagCapsule containerStyle={{ padding: '6px 18px 6px 18px' }} tags={tapCapsule.tags} separator={tapCapsule.separator} />
           <CallToAction
-            background={callToAction.background}
+            background="blue.default"
             title={callToAction.title}
-            text={callToAction.text}
+            text={`${callToAction.description} Internet Architecture in First Time Website Module.`}
+            buttonText={callToAction.buttonText}
             width="100%"
           />
           <Box marginTop="36px">
             <ProgressBar
               programs={progressBar.programs}
-              progressText={progressBar.progressText}
+              progressText={progressText}
               width="100%"
             />
           </Box>
@@ -211,11 +218,12 @@ const dashboard = () => {
         <Box width="10rem" />
         <Box>
           <CohortSideBar
-            title={cohortSideBar.title}
-            cohortCity={cohortSideBar.cohortCity}
-            professor={cohortSideBar.professor}
-            assistant={cohortSideBar.assistant}
-            classmates={cohortSideBar.classmates}
+            cohortSideBarTR={cohortSideBar}
+            // title={cohortSideBar.title}
+            // cohortCity={cohortSideBar.cohortCity}
+            // professor={cohortSideBar.professor}
+            // assistant={cohortSideBar.assistant}
+            // classmates={cohortSideBar.classmates}
             width="100%"
           />
           <Box marginTop="30px">

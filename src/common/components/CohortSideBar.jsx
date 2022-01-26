@@ -27,6 +27,7 @@ const CohortSideBar = ({
   handleTeacher,
   handleStudent,
   handleAssistant,
+  cohortSideBarTR,
 }) => {
   const { colorMode } = useColorMode();
   return (
@@ -46,14 +47,15 @@ const CohortSideBar = ({
           lineHeight="18px"
           letterSpacing="0.05em"
           marginBottom={18}
+          textTransform="uppercase"
         >
-          ABOUT YOUR COHORT
+          {cohortSideBarTR.title || 'ABOUT YOUR COHORT'}
         </Heading>
         <Box d="flex" alignItems="center" marginBottom={18}>
           <Icon icon="group" width="39px" height="39px" />
           <Box marginLeft={13}>
             <Heading as="h4" fontSize={15} fontWeight="700" lineHeight="18px" margin={0}>
-              {title}
+              {cohortSideBarTR.cohort || title}
             </Heading>
             <Text size="l" fontWeight="400" lineHeight="18px" margin={0}>
               {cohortCity}
@@ -80,7 +82,7 @@ const CohortSideBar = ({
           </Tooltip>
           <Box marginLeft={13}>
             <Heading as="h4" fontSize={15} fontWeight="700" lineHeight="tight" margin={0}>
-              Main Teacher
+              {cohortSideBarTR.mainTeacher || 'Main Teacher'}
             </Heading>
             <Text size="l" fontWeight="400" lineHeight="18px" margin={0}>
               {professor.name}
@@ -91,7 +93,7 @@ const CohortSideBar = ({
       <Divider margin={0} style={{ borderColor: '#DADADA' }} />
       <Box padding="0 26px">
         <Heading as="h4" padding="25px 0 8px 0" fontSize={15} lineHeight="18px" margin={0}>
-          Assistant Professors
+          {cohortSideBarTR.assistant || 'Assistant Professors'}
         </Heading>
         {assistant && (
           <>
@@ -124,7 +126,7 @@ const CohortSideBar = ({
           </>
         )}
         <Heading as="h4" padding="25px 0 8px 0" fontSize={15} lineHeight="18px" margin={0}>
-          Your Classmates
+          {cohortSideBarTR.classmates || 'Your Classmates'}
         </Heading>
         <Grid
           gridAutoRows="3.4rem"
@@ -182,11 +184,12 @@ CohortSideBar.propTypes = {
   handleTeacher: PropTypes.func,
   handleStudent: PropTypes.func,
   handleAssistant: PropTypes.func,
+  cohortSideBarTR: PropTypes.objectOf(PropTypes.any),
 };
 CohortSideBar.defaultProps = {
   width: '352px',
   title: '',
-  cohortCity: '',
+  cohortCity: 'Miami Downtown',
   professor: {
     name: 'Jhon doe',
     image: '',
@@ -196,7 +199,7 @@ CohortSideBar.defaultProps = {
     {
       active: false,
       image: '',
-      name: '',
+      name: 'Jhon dude',
     },
   ],
   classmates: [
@@ -215,6 +218,7 @@ CohortSideBar.defaultProps = {
   },
   handleAssistant: () => {
   },
+  cohortSideBarTR: {},
 };
 
 export default CohortSideBar;
