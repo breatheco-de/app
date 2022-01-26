@@ -3,6 +3,7 @@ import {
   Box, Flex, Container, useColorModeValue, Skeleton,
 } from '@chakra-ui/react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useRouter } from 'next/router';
 import mockData from '../../../../../common/utils/mockData/DashboardView';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
@@ -21,12 +22,18 @@ import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import { nestAssignments, getTechonologies } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 
-const dashboard = ({ slug, cohortSlug }) => {
+// { slug, cohortSlug }
+const dashboard = () => {
   const { contextState, setContextState } = useModuleMap();
   const [cohort, setNewCohort] = React.useState([]);
   const [taskTodo, setTaskTodo] = React.useState([]);
   const [technologies, setTechnologies] = React.useState([]);
   const { user, choose } = useAuth();
+  const router = useRouter();
+
+  const { cohortSlug, slug } = router.query;
+  console.log('cohortSlug:::', cohortSlug);
+  console.log('slug:::', slug);
 
   const {
     tapCapsule, callToAction, cohortSideBar, supportSideBar, progressBar,
@@ -54,7 +61,6 @@ const dashboard = ({ slug, cohortSlug }) => {
   useEffect(() => {
     if (user && user.active_cohort) {
       const cohortId = user.active_cohort.slug;
-      console.log('COHORT_ID', cohortId);
 
       // NOTE: returns response with object data with empty array :/
       bc.cohort().getStudents(cohortId).then((res) => {
@@ -89,6 +95,8 @@ const dashboard = ({ slug, cohortSlug }) => {
       cohort,
     });
   }, [cohort, taskTodo]);
+
+  const cohortDays = cohort.json ? cohort.json.days : [];
 
   console.log('Technologies from all assignments:::', technologies);
   return (
@@ -159,7 +167,7 @@ const dashboard = ({ slug, cohortSlug }) => {
             flexDirection="column"
           >
             {(contextState.cohort.json && contextState.taskTodo) ? (
-              cohort.json ? cohort.json.days : []
+              cohortDays
             ).map((assignment, i) => {
               const index = i;
               const {
@@ -226,42 +234,18 @@ const dashboard = ({ slug, cohortSlug }) => {
 };
 
 export const getServerSideProps = async ({
-  params,
   params: {
     cohortSlug, slug, version,
   },
   locale,
-}) => {
-  console.log('params', params);
-  return {
-    props: {
-      cohortSlug,
-      slug,
-      version,
-      ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
-      fallback: true,
-      paths: [
-        {
-          params: {
-            cohortSlug, slug, version,
-          },
-        },
-      ],
-    },
-  };
-};
-
-// export const getStaticPaths = async () => {
-//   const paths = projects.map((res) => ({
-//     params: {
-//       difficulty: res.difficulty,
-//       slug: res.slug,
-//     },
-//   }));
-//   return {
-//     fallback: false,
-//     paths,
-//   };
-// };
+}) => ({
+  props: {
+    cohortSlug,
+    slug,
+    version,
+    ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
+    fallback: true,
+  },
+});
 
 export default asPrivate(dashboard);
