@@ -45,13 +45,12 @@ const breathecode = {
     };
   },
 
-  // Error 404: "Missing academy_id parameter expected for the endpoint url or 'Academy' header"
-  // assignments: () => {
-  //   const url = `${host}/assignment`;
-  //   return {
-  //     get: () => axios.get(`${url}/user/me/task`),
-  //   };
-  // },
+  assignments: () => {
+    const url = `${host}/assignment`;
+    return {
+      get: () => axios.get(`${url}/user/me/task`),
+    };
+  },
 };
 
 export default breathecode;

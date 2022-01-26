@@ -8,8 +8,9 @@ import Module from './module';
 const ModuleMap = ({
   index, modules, filteredModules, title, description, taskTodo,
 }) => {
-  console.log('allModules:::', modules);
-  console.log('filteredModules:::', filteredModules);
+  // console.log('allModules:::', modules);
+  // console.log('filteredModules:::', filteredModules);
+  console.log('log from moduleMap.jsx');
 
   return (
     <Box key={index} width="100%">

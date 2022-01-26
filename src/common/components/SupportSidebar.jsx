@@ -36,6 +36,8 @@ const supportSidebar = ({
         <Box pt="3" display="flex" flexDirection="column" alignItems="center">
           {actionButtons.map((button, i) => {
             const index = i;
+            // NOTE: more info: https://github.com/4GeeksAcademy/About-4Geeks-Academy/issues/2064
+            // NOTE: https://mentor.breatheco.de/academy/<academy_slug-downtown-miami>/?token=<token_6486c608a07f4bfc9119f6f31e737731ba5d9b0b>
             return (
               <a
                 key={`${button.title}-${index}`}
