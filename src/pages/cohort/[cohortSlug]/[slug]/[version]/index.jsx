@@ -2,7 +2,6 @@ import React, { Fragment, useEffect } from 'react';
 import {
   Box, Flex, Container, useColorModeValue, Skeleton,
 } from '@chakra-ui/react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import mockData from '../../../../../common/utils/mockData/DashboardView';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
@@ -232,20 +231,5 @@ const dashboard = () => {
     </Container>
   );
 };
-
-export const getServerSideProps = async ({
-  params: {
-    cohortSlug, slug, version,
-  },
-  locale,
-}) => ({
-  props: {
-    cohortSlug,
-    slug,
-    version,
-    ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
-    fallback: true,
-  },
-});
 
 export default asPrivate(dashboard);
