@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, useMediaQuery, useColorMode } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
+import axios from '../../axios';
 import Icon from './Icon';
 import Text from './Text';
 
@@ -62,6 +63,8 @@ function Choose({ chooseList, handleChoose }) {
                   syllabus_name: name,
                   academy_id: cohort.academy.id,
                 });
+                // TODO: Implementar session segun guia de nextjs
+                axios.defaults.headers.common.Academy = cohort.academy.id;
                 if (typeof window !== 'undefined') localStorage.setItem('cohortSelected', `/cohort/${cohort?.slug}/${slug}/v${version}`);
                 router.push(`/cohort/${cohort?.slug}/${slug}/v${version}`);
               }}

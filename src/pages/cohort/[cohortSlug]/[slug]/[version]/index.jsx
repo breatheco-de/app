@@ -19,6 +19,7 @@ import { ModuleMapSkeleton } from '../../../../../common/components/Skeleton';
 import bc from '../../../../../common/services/breathecode';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import { nestAssignments, getTechonologies } from '../../../../../common/hooks/useModuleHandler';
+import axios from '../../../../../axios';
 
 const dashboard = ({ slug, cohortSlug }) => {
   const { contextState, setContextState } = useModuleMap();
@@ -46,21 +47,23 @@ const dashboard = ({ slug, cohortSlug }) => {
         syllabus_name: name,
         academy_id: currentCohort.academy.id,
       });
+      axios.defaults.headers.common.Academy = currentCohort.academy.id;
     });
   }, []);
 
-  // Error 404: "Missing academy_id parameter expected for the endpoint url or 'Academy' header"
-  // useEffect(() => {
-  //   if (user && user.active_cohort) {
-  //     const cohortId = user.active_cohort.slug;
-  //     console.log('COHORT_ID', cohortId);
-  //     bc.cohort().getStudents(cohortId).then((res) => {
-  //       console.log('response_STUDENTS', res);
-  //     }).catch((err) => {
-  //       console.log('error_STUDENTS', err);
-  //     });
-  //   }
-  // }, [user]);
+  useEffect(() => {
+    if (user && user.active_cohort) {
+      const cohortId = user.active_cohort.slug;
+      console.log('COHORT_ID', cohortId);
+
+      // NOTE: returns response with object data with empty array :/
+      bc.cohort().getStudents(cohortId).then((res) => {
+        console.log('res_STUDENTS', res);
+      }).catch((err) => {
+        console.log('err_STUDENTS', err);
+      });
+    }
+  }, [user]);
 
   useEffect(() => {
     if (user && user.active_cohort) {
