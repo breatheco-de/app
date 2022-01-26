@@ -14,7 +14,7 @@ import SupportSidebar from '../../../../common/components/SupportSidebar';
 import CallToAction from '../../../../common/components/CallToAction';
 import ProgressBar from '../../../../common/components/ProgressBar';
 import Heading from '../../../../common/components/Heading';
-import asPrivate from '../../../../common/context/PrivateRouteWrapper';
+// import asPrivate from '../../../../common/context/PrivateRouteWrapper';
 import useAuth from '../../../../common/hooks/useAuth';
 import { ModuleMapSkeleton } from '../../../../common/components/Skeleton';
 import bc from '../../../../common/services/breathecode';
@@ -248,4 +248,4 @@ export const getServerSideProps = async ({
   },
 });
 
-export default asPrivate(testPage);
+export default testPage;
