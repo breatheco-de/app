@@ -18,7 +18,7 @@ import useAuth from '../../../../../common/hooks/useAuth';
 import { ModuleMapSkeleton } from '../../../../../common/components/Skeleton';
 import bc from '../../../../../common/services/breathecode';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
-import { nestAssignments, getTechonologies } from '../../../../../common/hooks/useModuleHandler';
+import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import dashboardTR from '../../../../../common/translations/dashboard';
 
@@ -27,21 +27,17 @@ const dashboard = () => {
   const { contextState, setContextState } = useModuleMap();
   const [cohort, setNewCohort] = React.useState([]);
   const [taskTodo, setTaskTodo] = React.useState([]);
-  const [technologies, setTechnologies] = React.useState([]);
   const { user, choose } = useAuth();
-  const router = useRouter();
 
+  const router = useRouter();
   const { cohortSlug, slug } = router.query;
-  console.log('cohortSlug:::', cohortSlug);
-  console.log('slug:::', slug);
-  console.log('router:::', router);
 
   const {
-    cohortSideBar, backToChooseProgram, progressText, callToAction,
+    cohortSideBar, supportSideBar, backToChooseProgram, progressText, callToAction,
   } = dashboardTR[router.locale];
 
   const {
-    tapCapsule, supportSideBar, progressBar,
+    tapCapsule, progressBar,
   } = mockData;
 
   useEffect(() => {
@@ -83,9 +79,6 @@ const dashboard = () => {
       bc.syllabus().get(academyId, slug, version).then((res) => {
         const studentLessons = res.data;
         setNewCohort(studentLessons);
-
-        // a lot of tags...
-        setTechnologies(getTechonologies(studentLessons.json.days));
       });
 
       bc.todo().getTaskByStudent().then((res) => {
@@ -103,7 +96,6 @@ const dashboard = () => {
 
   const cohortDays = cohort.json ? cohort.json.days : [];
 
-  console.log('Technologies from all assignments:::', technologies);
   return (
     <Container maxW="container.xl" padding={{ base: '0 2%', md: '0 4%' }}>
       <Box marginTop="18px" marginBottom="48px">
@@ -229,7 +221,7 @@ const dashboard = () => {
           <Box marginTop="30px">
             <SupportSidebar
               title={supportSideBar.title}
-              subtitle={supportSideBar.subtitle}
+              subtitle={supportSideBar.description}
               actionButtons={supportSideBar.actionButtons}
               width="100%"
             />

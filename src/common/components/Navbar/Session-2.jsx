@@ -58,12 +58,12 @@ const NavbarWithSubNavigation = () => {
     return user?.github.name;
   };
 
-  const getCohort = typeof window !== 'undefined' && localStorage.getItem('cohortSelected');
-
+  const getCohort = typeof window !== 'undefined' && JSON.parse(localStorage.getItem('cohortSession') || '{}');
+  const { selectedSlug } = getCohort;
   const INTERNAL_ITEMS = [
     {
       label: 'Dashboard',
-      href: getCohort || '/choose-program',
+      href: selectedSlug || '/choose-program',
     },
   ];
 
