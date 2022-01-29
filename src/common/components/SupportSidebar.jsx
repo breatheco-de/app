@@ -65,7 +65,7 @@ const supportSidebar = ({
                   <Box pr="20px">
                     <Icon icon={button.icon} width="25px" height="25px" />
                   </Box>
-                  <Text size="13px" color={colorMode === 'light' ? 'black' : 'white'}>
+                  <Text textTransform="uppercase" size="13px" color={colorMode === 'light' ? 'black' : 'white'}>
                     {button.title}
                   </Text>
                   <Box ml="auto">

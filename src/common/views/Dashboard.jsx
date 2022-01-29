@@ -10,8 +10,8 @@ import Navbar from '../components/Navbar/Session';
 import mockData from '../utils/mockData/DashboardView';
 import NextChakraLink from '../components/NextChakraLink';
 import TagCapsule from '../components/TagCapsule';
-import ModuleMap from '../components/ModuleMap';
-import useModuleMap from '../store/actions/moduleMapAction';
+// import ModuleMap from '../components/ModuleMap';
+// import useModuleMap from '../store/actions/moduleMapAction';
 import CohortSideBar from '../components/CohortSideBar';
 import Icon from '../components/Icon';
 import SupportSidebar from '../components/SupportSidebar';
@@ -21,15 +21,15 @@ import Heading from '../components/Heading';
 import Text from '../components/Text';
 
 const Dashboard = () => {
-  const { updateModuleStatus } = useModuleMap();
-  const handleModuleStatus = (event, module) => {
-    event.stopPropagation();
-    if (module.status === 'inactive') updateModuleStatus({ ...module, status: 'active' });
-    else if (module.status === 'active') updateModuleStatus({ ...module, status: 'finished' });
-    else if (module.status === 'finished') updateModuleStatus({ ...module, status: 'active' });
-  };
+  // const { updateModuleStatus } = useModuleMap();
+  // const handleModuleStatus = (event, module) => {
+  //   event.stopPropagation();
+  //   if (module.status === 'inactive') updateModuleStatus({ ...module, status: 'active' });
+  //   else if (module.status === 'active') updateModuleStatus({ ...module, status: 'finished' });
+  //   else if (module.status === 'finished') updateModuleStatus({ ...module, status: 'active' });
+  // };
   const {
-    navbar, tapCapsule, callToAction, moduleMap, cohortSideBar, supportSideBar, progressBar,
+    navbar, tapCapsule, callToAction, cohortSideBar, supportSideBar, progressBar,
   } = mockData;
   return (
     <div>
@@ -79,7 +79,8 @@ const Dashboard = () => {
               <Heading size="m">MODULE MAP</Heading>
             </Box>
             <Box marginTop="30px">
-              <ModuleMap {...moduleMap} handleModuleStatus={handleModuleStatus} width="100%" />
+              {/* <ModuleMap {...moduleMap}
+              handleModuleStatus={handleModuleStatus} width="100%" /> */}
             </Box>
           </GridItem>
           <GridItem colSpan={4}>

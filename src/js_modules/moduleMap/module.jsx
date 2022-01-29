@@ -1,14 +1,11 @@
 import {
-  Box, Heading, Stack, Flex, useColorModeValue, HStack, Popover,
-  PopoverTrigger, PopoverContent, PopoverArrow, Button, PopoverHeader,
-  PopoverCloseButton, PopoverBody, useToast,
+  Box, Heading, Stack, Flex, useColorModeValue, HStack, useToast,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import Text from '../../common/components/Text';
 import { updateAssignment } from '../../common/hooks/useModuleHandler';
-import { getIconByTaskStatus, getOptionsByTaskStatus } from './taskHandler';
-
+import { IconByTaskStatus, getHandlerByTaskStatus } from './taskHandler';
 import Icon from '../../common/components/Icon';
 
 const Module = ({
@@ -16,6 +13,7 @@ const Module = ({
 }) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [currentTask, setCurrentTask] = useState(null);
+  const [, setUpdatedTask] = useState(null);
   const toast = useToast();
 
   const closeSettings = () => {
@@ -29,10 +27,18 @@ const Module = ({
   useEffect(() => {
     setCurrentTask(taskTodo.find((el) => el.task_type === data.task_type
     && el.associated_slug === currentSlug));
-  });
+  }, [taskTodo, data.task_type, currentSlug]);
 
-  const changeStatusAssignment = (task) => {
-    updateAssignment({ task, closeSettings, toast });
+  const changeStatusAssignment = (event, task) => {
+    event.preventDefault();
+    //  setUpdatedTask, has been added because currentTask cant update when task status is changed
+    //  improvements: Fast change of IconByTaskStatus
+    setUpdatedTask({
+      ...task,
+    });
+    updateAssignment({
+      task, closeSettings, toast,
+    });
   };
 
   const sendProject = (task, githubUrl) => {
@@ -112,40 +118,15 @@ const Module = ({
         </Box>
       </Flex>
       <HStack justifyContent="flex-end">
-        <Popover
-          id="task-status"
-          isOpen={settingsOpen}
-          onClose={closeSettings}
-          trigger="click"
-        >
-
-          <PopoverTrigger>
-            <Button
-              display="flex"
-              minWidth="26px"
-              minHeight="26px"
-              height="fit-content"
-              background="none"
-              padding="0"
-              borderRadius="30px"
-              onClick={() => toggleSettings()}
-              // NOTE/TODO: When click on task open the page on current page
-            >
-              <Box>
-                {getIconByTaskStatus({ currentTask })}
-              </Box>
-            </Button>
-          </PopoverTrigger>
-
-          <PopoverContent>
-            <PopoverArrow />
-            <PopoverHeader>Select option</PopoverHeader>
-            <PopoverCloseButton />
-            <PopoverBody>
-              {getOptionsByTaskStatus({ currentTask, sendProject, changeStatusAssignment })}
-            </PopoverBody>
-          </PopoverContent>
-        </Popover>
+        {getHandlerByTaskStatus({
+          currentTask,
+          sendProject,
+          changeStatusAssignment,
+          icon: <IconByTaskStatus currentTask={currentTask} />,
+          toggleSettings,
+          closeSettings,
+          settingsOpen,
+        })}
       </HStack>
     </Stack>
   );

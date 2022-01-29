@@ -63,9 +63,14 @@ function Choose({ chooseList, handleChoose }) {
                   syllabus_name: name,
                   academy_id: cohort.academy.id,
                 });
-                // TODO: Implementar session segun guia de nextjs
+
                 axios.defaults.headers.common.Academy = cohort.academy.id;
-                if (typeof window !== 'undefined') localStorage.setItem('cohortSelected', `/cohort/${cohort?.slug}/${slug}/v${version}`);
+                if (typeof window !== 'undefined') {
+                  localStorage.setItem('cohortSession', JSON.stringify({
+                    ...cohort,
+                    selectedProgramSlug: `/cohort/${cohort?.slug}/${slug}/v${version}`,
+                  }));
+                }
                 router.push(`/cohort/${cohort?.slug}/${slug}/v${version}`);
               }}
               marginRight="15px"
