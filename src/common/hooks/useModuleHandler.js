@@ -57,28 +57,36 @@ export const updateAssignment = ({
 };
 
 export const nestAssignments = ({
-  read, practice, code, answer, taskTodo,
+  id, label = '', read, practice, code, answer, taskTodo,
 }) => {
   const updatedRead = read.map((el) => ({
     ...el,
+    id,
+    label,
     type: 'Read',
     icon: 'book',
     task_type: 'LESSON',
   }));
   const updatedPractice = practice.map((el) => ({
     ...el,
+    id,
+    label,
     type: 'Practice',
     icon: 'strength',
     task_type: 'EXERCISE',
   }));
   const updatedCode = code.map((el) => ({
     ...el,
+    id,
+    label,
     type: 'Code',
     icon: 'code',
     task_type: 'PROJECT',
   }));
   const updatedAnswer = answer.map((el) => ({
     ...el,
+    id,
+    label,
     type: 'Answer',
     icon: 'answer',
     task_type: 'QUIZ',

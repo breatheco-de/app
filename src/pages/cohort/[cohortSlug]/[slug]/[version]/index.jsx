@@ -22,11 +22,11 @@ import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import dashboardTR from '../../../../../common/translations/dashboard';
 
-// { slug, cohortSlug }
 const dashboard = () => {
   const { contextState, setContextState } = useModuleMap();
   const [cohort, setNewCohort] = React.useState([]);
   const [taskTodo, setTaskTodo] = React.useState([]);
+  const [startedTasks, setStartedTasks] = React.useState([]);
   const { user, choose } = useAuth();
 
   const router = useRouter();
@@ -93,8 +93,42 @@ const dashboard = () => {
       cohort,
     });
   }, [cohort, taskTodo]);
-
   const cohortDays = cohort.json ? cohort.json.days : [];
+
+  useEffect(() => {
+    if (contextState.cohort.json && contextState.taskTodo) {
+      cohortDays.map((assignment) => {
+        const {
+          id, label, lessons, replits, assignments, quizzes,
+        } = assignment;
+
+        const nestedAssignmentsByTask = nestAssignments({
+          id,
+          label,
+          read: lessons,
+          practice: replits,
+          code: assignments,
+          answer: quizzes,
+          taskTodo: contextState.taskTodo,
+        }).filteredModules;
+        // const cleanedTasks = [...new Set(nestedAssignmentsByTask)];
+        if (nestedAssignmentsByTask.length > 0) {
+          startedTasks.push(...nestedAssignmentsByTask);
+        }
+        return setStartedTasks([...startedTasks, ...nestedAssignmentsByTask]);
+      });
+      // return latest day id for button 'Start today's module'
+      // NOTE Next step: implement startDay function with endpoint
+      const latestDay = Math.max(...startedTasks.map((day) => day.id));
+
+      console.log('latestDay:::', latestDay);
+    }
+  }, [contextState.cohort.json, contextState.taskTodo]);
+
+  // Gets last day started in current cohort
+  // const latestDay = Math.max.apply(Math, arrEx.map(el => el))
+  // const { apply } = Math.max;
+  // const latestDay = Math.max.apply(Math, startedTasks.map((day) => day.id));
 
   return (
     <Container maxW="container.xl" padding={{ base: '0 2%', md: '0 4%' }}>
@@ -172,32 +206,24 @@ const dashboard = () => {
                 label, description, lessons, replits, assignments, quizzes,
               } = assignment;
 
-              const nestedAssignmentsByTask = nestAssignments({
-                read: lessons,
-                practice: replits,
-                code: assignments,
-                answer: quizzes,
-                taskTodo: contextState.taskTodo,
-              }).filteredModules;
-
               const nestedAssignments = nestAssignments({
                 read: lessons,
                 practice: replits,
                 code: assignments,
                 answer: quizzes,
                 taskTodo: contextState.taskTodo,
-              }).modules;
-
+              });
+              const { filteredModules, modules } = nestedAssignments;
               return (
                 <Fragment key={`${label}-${index}`}>
-                  {nestedAssignmentsByTask !== [] && nestedAssignmentsByTask.length !== 0 && (
+                  {filteredModules !== [] && filteredModules.length !== 0 && (
                     <ModuleMap
                       index={index}
                       title={label}
                       description={description}
                       taskTodo={contextState.taskTodo}
-                      modules={nestedAssignments}
-                      filteredModules={nestedAssignmentsByTask}
+                      modules={modules}
+                      filteredModules={filteredModules}
                     />
                   )}
                 </Fragment>

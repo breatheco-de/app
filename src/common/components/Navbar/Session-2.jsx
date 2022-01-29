@@ -59,11 +59,11 @@ const NavbarWithSubNavigation = () => {
   };
 
   const getCohort = typeof window !== 'undefined' && JSON.parse(localStorage.getItem('cohortSession') || '{}');
-  const { selectedSlug } = getCohort;
+  const { selectedProgramSlug } = getCohort;
   const INTERNAL_ITEMS = [
     {
       label: 'Dashboard',
-      href: selectedSlug || '/choose-program',
+      href: selectedProgramSlug || '/choose-program',
     },
   ];
 
