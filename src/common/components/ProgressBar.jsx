@@ -1,5 +1,5 @@
 import {
-  Progress, Box, Flex, Heading,
+  Progress, Box, Flex, Heading, useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Icon from './Icon';
@@ -33,7 +33,7 @@ const ProgressBar = ({ progressText, programs, width }) => {
               icon={program.icon || 'book'}
               width="18px"
               height="18px"
-              color="black"
+              color={useColorModeValue('black', '#FFFFFF')}
               style={{ marginTop: '2px' }}
             />
             <Text marginLeft="11px" size="l" marginY="0">

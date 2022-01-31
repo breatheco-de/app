@@ -32,7 +32,6 @@ const Module = ({
   const changeStatusAssignment = (event, task) => {
     event.preventDefault();
     //  setUpdatedTask, has been added because currentTask cant update when task status is changed
-    //  improvements: Fast change of IconByTaskStatus
     setUpdatedTask({
       ...task,
     });
