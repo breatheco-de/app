@@ -7,54 +7,48 @@ import Module from './module';
 
 const ModuleMap = ({
   index, modules, filteredModules, title, description, taskTodo,
-}) => {
-  // console.log('allModules:::', modules);
-  // console.log('filteredModules:::', filteredModules);
-  console.log('log from moduleMap.jsx');
-
-  return (
-    <Box key={index} width="100%">
-      <Box margin="14px 0" display="flex" alignItems="center" justifyContent="space-between">
-        <Heading as="h2" fontSize="22px">
-          {title}
-        </Heading>
-        <Heading
-          as="span"
-          fontSize="15px"
-          color={useColorModeValue('gray.default', 'white')}
-          fontWeight="normal"
-        >
-          {modules.length}
-          {' '}
-          Lessons
-        </Heading>
-      </Box>
-      <Text margin="0 0 22px 0px" color={useColorModeValue('#606060', 'white')} size="md">
-        {description}
-      </Text>
-
-      {/* NOTE: Add sync button style and function */}
-      {filteredModules.length > 0 && modules.length !== filteredModules.length && (
-        <Text color={useColorModeValue('blue.default', 'blue.300')} size="sm">
-          unsynchronized module
-        </Text>
-      )}
-
-      {/* NOTE: MODULE COMPONENT */}
-      {filteredModules.map((module, i) => {
-        const cheatedIndex = i;
-        return (
-          <Module
-            key={`${module.title}-${cheatedIndex}`}
-            currIndex={i}
-            data={module}
-            taskTodo={taskTodo}
-          />
-        );
-      })}
+}) => (
+  <Box key={index} width="100%">
+    <Box margin="14px 0" display="flex" alignItems="center" justifyContent="space-between">
+      <Heading as="h2" fontSize="22px">
+        {title}
+      </Heading>
+      <Heading
+        as="span"
+        fontSize="15px"
+        color={useColorModeValue('gray.default', 'white')}
+        fontWeight="normal"
+      >
+        {modules.length}
+        {' '}
+        Lessons
+      </Heading>
     </Box>
-  );
-};
+    <Text margin="0 0 22px 0px" color={useColorModeValue('#606060', 'white')} size="md">
+      {description}
+    </Text>
+
+    {/* NOTE: Add sync button style and function */}
+    {filteredModules.length > 0 && modules.length !== filteredModules.length && (
+      <Text color={useColorModeValue('blue.default', 'blue.300')} size="sm">
+        unsynchronized module
+      </Text>
+    )}
+
+    {/* NOTE: MODULE COMPONENT */}
+    {filteredModules.map((module, i) => {
+      const cheatedIndex = i;
+      return (
+        <Module
+          key={`${module.title}-${cheatedIndex}`}
+          currIndex={i}
+          data={module}
+          taskTodo={taskTodo}
+        />
+      );
+    })}
+  </Box>
+);
 
 ModuleMap.propTypes = {
   index: PropTypes.number.isRequired,

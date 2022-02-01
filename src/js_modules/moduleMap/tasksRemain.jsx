@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment } from 'react';
 import {
   Box, useColorModeValue, Accordion, AccordionItem,
   AccordionButton, AccordionPanel, Skeleton, Button, useToast,
@@ -20,17 +20,6 @@ const TasksRemain = ({
     (el) => el.filteredModules.length !== el.modules.length,
   );
 
-  useEffect(() => {
-    console.log('sortedAssignments:::', sortedAssignments);
-  }, [sortedAssignments]);
-
-  // const currentAssignmnets = sortedAssignments.map((el) => {
-  //   const result = [el.filteredModules, el.modules];
-  //   return result;
-  // });
-
-  // console.log('filteredAssignments:::', currentAssignmnets);
-
   const handleStartDay = (data) => {
     const { modules, label } = data;
     const updatedTasks = (modules || [])?.map((l) => ({
@@ -38,8 +27,6 @@ const TasksRemain = ({
       associated_slug: l.slug,
     }));
 
-    // console.log('modules:::', data);
-    // console.log('updatedModules:::', updatedModules);
     startDay({
       id: userId,
       newTasks: updatedTasks,
@@ -75,8 +62,8 @@ const TasksRemain = ({
       borderColor={commonBorderColor}
     >
       <AccordionItem border="0">
-        <AccordionButton id="lessons_remain" borderBottom="2px solid" borderColor={commonBorderColor}>
-          <Box fontSize="20px" fontWeight="900" flex="1" textAlign="left">
+        <AccordionButton borderBottom="2px solid" borderColor={commonBorderColor}>
+          <Box id="tasks_remain" fontSize="20px" fontWeight="900" flex="1" textAlign="left">
             Modules remain:
           </Box>
           <Icon icon="arrowDown" width="28px" />

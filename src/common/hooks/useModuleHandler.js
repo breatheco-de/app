@@ -1,13 +1,22 @@
 import bc from '../services/breathecode';
 
 export const updateAssignment = ({
-  task = {}, closeSettings, toast, githubUrl = '',
+  task = {}, closeSettings, toast, githubUrl = '', contextState, setContextState,
 }) => {
   // Task case
   const toggleStatus = (task.task_status === undefined || task.task_status === 'PENDING') ? 'DONE' : 'PENDING';
   if (task.task_type !== 'PROJECT') {
     const updatedTask = Object.assign(task, { task_status: toggleStatus });
     bc.todo().update(updatedTask).then(() => {
+      const keyIndex = contextState.taskTodo.findIndex((x) => x.id === task.id);
+      setContextState({
+        ...contextState,
+        taskTodo: [
+          ...contextState.taskTodo.slice(0, keyIndex), // before keyIndex (inclusive)
+          updatedTask, // key item (updated)
+          ...contextState.taskTodo.slice(keyIndex + 1), // after keyIndex (exclusive)
+        ],
+      });
       toast({
         title: 'Your assignment has been updated successfully',
         status: 'success',
@@ -59,9 +68,7 @@ export const updateAssignment = ({
 export const startDay = ({
   id, newTasks, label, contextState, setContextState, toast,
 }) => {
-  console.log('todos_startDay', newTasks);
   bc.todo().add(id, newTasks).then(({ data }) => {
-    console.log('contextState___startDay:::', contextState);
     toast({
       title: `Module ${label} started successfully`,
       status: 'success',

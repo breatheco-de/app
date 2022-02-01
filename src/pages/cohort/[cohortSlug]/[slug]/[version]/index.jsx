@@ -1,4 +1,6 @@
-import { Fragment, useEffect, useState } from 'react';
+import {
+  Fragment, useMemo, useEffect, useState,
+} from 'react';
 import {
   Box, Flex, Container, useColorModeValue, Skeleton,
 } from '@chakra-ui/react';
@@ -104,9 +106,9 @@ const Dashboard = () => {
       });
     }
   }, [cohort, taskTodo]);
-  const cohortDays = cohort.json ? cohort.json.days : [];
 
-  useEffect(() => {
+  useMemo(() => {
+    const cohortDays = cohort.json ? cohort.json.days : [];
     if (contextState.cohort.json && contextState.taskTodo) {
       cohortDays.map((assignment) => {
         const {
@@ -121,31 +123,22 @@ const Dashboard = () => {
           taskTodo: contextState.taskTodo,
         });
         const { filteredModules, modules } = nestedAssignments;
-        // BUG: duplicate the modules when startModule
-        return setSortedAssignments((prevState) => [
-          ...prevState,
-          {
-            id, label, description, filteredModules, modules,
-          },
-        ]);
 
-        // if (filteredModules.length > 0) {
-        //   startedTasks.push(...filteredModules);
-        // }
-        // return setStartedTasks([...startedTasks, ...filteredModules]);
+        // prevent duplicates when a new module has been started
+        const keyIndex = sortedAssignments.findIndex((x) => x.id === id);
+        if (keyIndex > -1) {
+          sortedAssignments.splice(keyIndex, 1, {
+            id, label, description, modules, filteredModules,
+          });
+        } else {
+          sortedAssignments.push({
+            id, label, description, modules, filteredModules,
+          });
+        }
+        return setSortedAssignments(sortedAssignments);
       });
-      // return latest day id for button 'Start today's module'
-      // NOTE Next step: implement startDay function with endpoint
-      // const latestDay = Math.max(...startedTasks.map((day) => day.id));
-
-      // console.log('latestDay:::', latestDay);
     }
-  }, [contextState.cohort.json, contextState.taskTodo]);
-
-  // Gets last day started in current cohort
-  // const latestDay = Math.max.apply(Math, arrEx.map(el => el))
-  // const { apply } = Math.max;
-  // const latestDay = Math.max.apply(Math, startedTasks.map((day) => day.id));
+  }, [contextState.cohort.json, contextState.taskTodo, cohort]);
 
   return (
     <Container maxW="container.xl">
@@ -227,6 +220,7 @@ const Dashboard = () => {
 
           <Box marginTop="36px">
             <ProgressBar
+              taskTodo={contextState.taskTodo}
               programs={progressBar.programs}
               progressText={progressText}
               width="100%"

@@ -26,7 +26,7 @@ const CallToAction = ({
       </Text>
     </Box>
     <Box padding={{ base: '24px 0 0 0', lg: '0' }} alignSelf="center">
-      <Button marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
+      <Button as="a" href="#tasks_remain" marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
         {buttonText}
       </Button>
     </Box>
