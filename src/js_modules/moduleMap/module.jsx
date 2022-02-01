@@ -5,16 +5,22 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import Text from '../../common/components/Text';
 import { updateAssignment } from '../../common/hooks/useModuleHandler';
+import useModuleMap from '../../common/store/actions/moduleMapAction';
 import { IconByTaskStatus, getHandlerByTaskStatus } from './taskHandler';
 import Icon from '../../common/components/Icon';
+import Link from '../../common/components/NextChakraLink';
 
 const Module = ({
   data, taskTodo, currIndex,
 }) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);
   const [, setUpdatedTask] = useState(null);
   const toast = useToast();
+
+  const isWindow = typeof window !== 'undefined';
+  const cohortSession = isWindow ? JSON.parse(localStorage.getItem('cohortSession') || '{}') : {};
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -32,18 +38,17 @@ const Module = ({
   const changeStatusAssignment = (event, task) => {
     event.preventDefault();
     //  setUpdatedTask, has been added because currentTask cant update when task status is changed
-    //  improvements: Fast change of IconByTaskStatus
     setUpdatedTask({
       ...task,
     });
     updateAssignment({
-      task, closeSettings, toast,
+      task, closeSettings, toast, contextState, setContextState,
     });
   };
 
   const sendProject = (task, githubUrl) => {
     updateAssignment({
-      task, closeSettings, toast, githubUrl,
+      task, closeSettings, toast, githubUrl, contextState, setContextState,
     });
   };
 
@@ -54,8 +59,6 @@ const Module = ({
     <Stack
       direction="row"
       backgroundColor={containerBackground}
-      // featuredDark
-      // #C4C4C4
       border={`${useColorModeValue('1px', '2px')} solid`}
       borderColor={isDone ? 'transparent' : useColorModeValue('#C4C4C4', 'gray.700')}
       height="auto"
@@ -85,7 +88,7 @@ const Module = ({
             {currIndex + 1}
           </Text>
         </Box>
-        <Box mr="20px" ml="20px" display="flex" minWidth="22px" width="22px">
+        <Box display={{ base: 'none', sm: 'flex' }} mr="20px" ml="20px" minWidth="22px" width="22px">
           {data.icon && (
             <Icon
               icon={data.icon || 'book'}
@@ -93,7 +96,7 @@ const Module = ({
             />
           )}
         </Box>
-        <Box>
+        <Link href={`/syllabus/${cohortSession.slug}/lesson/${currentTask?.associated_slug}`}>
           <Heading
             as="h3"
             fontSize="13px"
@@ -115,7 +118,7 @@ const Module = ({
           >
             {data.title}
           </Text>
-        </Box>
+        </Link>
       </Flex>
       <HStack justifyContent="flex-end">
         {getHandlerByTaskStatus({

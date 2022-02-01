@@ -36,18 +36,19 @@ const supportSidebar = ({
         <Box pt="3" display="flex" flexDirection="column" alignItems="center">
           {actionButtons.map((button, i) => {
             const index = i;
-            // NOTE: more info: https://github.com/4GeeksAcademy/About-4Geeks-Academy/issues/2064
-            // NOTE: https://mentor.breatheco.de/academy/<academy_slug-downtown-miami>/?token=<token_6486c608a07f4bfc9119f6f31e737731ba5d9b0b>
             return (
               <a
                 key={`${button.title}-${index}`}
                 href={button.href}
                 target="_blank"
                 rel="noopener noreferrer"
+                style={{ width: '100%' }}
               >
                 <Button
                   onClick={() => console.log('Clicked', button.title)}
                   size="lg"
+                  gridGap="10px"
+                  width="100%"
                   key={button.title}
                   bg={colorMode === 'light' ? 'white' : 'rgba(255, 255, 255, 0.1)'}
                   // gray
@@ -58,18 +59,26 @@ const supportSidebar = ({
                     background: `${colorMode === 'light' ? 'gray.light' : 'rgba(255, 255, 255, 0.22)'}`,
                   }}
                   borderWidth="0px"
-                  px="15px"
+                  padding="14px 20px"
                   my="8px"
-                  justifyContent="left"
+                  borderRadius="8px"
+                  justifyContent="space-between"
                 >
-                  <Box pr="20px">
+                  <Box>
                     <Icon icon={button.icon} width="25px" height="25px" />
                   </Box>
-                  <Text textTransform="uppercase" size="13px" color={colorMode === 'light' ? 'black' : 'white'}>
+                  <Text
+                    display="flex"
+                    whiteSpace="pre-wrap"
+                    textAlign="left"
+                    textTransform="uppercase"
+                    size="12px"
+                    color={colorMode === 'light' ? 'black' : 'white'}
+                  >
                     {button.title}
                   </Text>
-                  <Box ml="auto">
-                    <Icon icon="arrowRight" width="25px" height="25px" />
+                  <Box>
+                    <Icon icon="arrowRight" width="22px" height="22px" />
                   </Box>
                 </Button>
               </a>

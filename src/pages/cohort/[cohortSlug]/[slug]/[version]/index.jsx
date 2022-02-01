@@ -1,4 +1,6 @@
-import React, { Fragment, useEffect } from 'react';
+import {
+  Fragment, useMemo, useEffect, useState,
+} from 'react';
 import {
   Box, Flex, Container, useColorModeValue, Skeleton,
 } from '@chakra-ui/react';
@@ -18,19 +20,25 @@ import useAuth from '../../../../../common/hooks/useAuth';
 import { ModuleMapSkeleton } from '../../../../../common/components/Skeleton';
 import bc from '../../../../../common/services/breathecode';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
-import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
+import { nestAssignments, startDay } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import dashboardTR from '../../../../../common/translations/dashboard';
+import TasksRemain from '../../../../../js_modules/moduleMap/tasksRemain';
 
-const dashboard = () => {
+const Dashboard = () => {
   const { contextState, setContextState } = useModuleMap();
-  const [cohort, setNewCohort] = React.useState([]);
-  const [taskTodo, setTaskTodo] = React.useState([]);
-  const [startedTasks, setStartedTasks] = React.useState([]);
+  const [cohort, setNewCohort] = useState([]);
+  const [taskTodo, setTaskTodo] = useState([]);
+  // const [startedTasks, setStartedTasks] = useState([]);
+  const [studentAndTeachers, setSudentAndTeachers] = useState();
+  const [sortedAssignments, setSortedAssignments] = useState([]);
   const { user, choose } = useAuth();
 
   const router = useRouter();
   const { cohortSlug, slug } = router.query;
+
+  const skeletonStartColor = useColorModeValue('gray.300', 'gray.light');
+  const skeletonEndColor = useColorModeValue('gray.400', 'gray.400');
 
   const {
     cohortSideBar, supportSideBar, backToChooseProgram, progressText, callToAction,
@@ -63,11 +71,14 @@ const dashboard = () => {
     if (user && user.active_cohort) {
       const cohortId = user.active_cohort.slug;
 
-      // NOTE: returns response with object data with empty array :/
       bc.cohort().getStudents(cohortId).then((res) => {
-        console.log('res_STUDENTS', res);
+        const { data } = res;
+        console.log('current_students', data);
+        if (data.length > 0) {
+          setSudentAndTeachers(data);
+        }
       }).catch((err) => {
-        console.log('err_STUDENTS', err);
+        console.error('err:', err);
       });
     }
   }, [user]);
@@ -88,50 +99,49 @@ const dashboard = () => {
     }
   }, [user]);
   useEffect(() => {
-    setContextState({
-      taskTodo,
-      cohort,
-    });
+    if (taskTodo && cohort) {
+      setContextState({
+        taskTodo,
+        cohort,
+      });
+    }
   }, [cohort, taskTodo]);
-  const cohortDays = cohort.json ? cohort.json.days : [];
 
-  useEffect(() => {
+  useMemo(() => {
+    const cohortDays = cohort.json ? cohort.json.days : [];
     if (contextState.cohort.json && contextState.taskTodo) {
       cohortDays.map((assignment) => {
         const {
-          id, label, lessons, replits, assignments, quizzes,
+          id, label, description, lessons, replits, assignments, quizzes,
         } = assignment;
-
-        const nestedAssignmentsByTask = nestAssignments({
+        const nestedAssignments = nestAssignments({
           id,
-          label,
           read: lessons,
           practice: replits,
           code: assignments,
           answer: quizzes,
           taskTodo: contextState.taskTodo,
-        }).filteredModules;
-        // const cleanedTasks = [...new Set(nestedAssignmentsByTask)];
-        if (nestedAssignmentsByTask.length > 0) {
-          startedTasks.push(...nestedAssignmentsByTask);
+        });
+        const { filteredModules, modules } = nestedAssignments;
+
+        // prevent duplicates when a new module has been started
+        const keyIndex = sortedAssignments.findIndex((x) => x.id === id);
+        if (keyIndex > -1) {
+          sortedAssignments.splice(keyIndex, 1, {
+            id, label, description, modules, filteredModules,
+          });
+        } else {
+          sortedAssignments.push({
+            id, label, description, modules, filteredModules,
+          });
         }
-        return setStartedTasks([...startedTasks, ...nestedAssignmentsByTask]);
+        return setSortedAssignments(sortedAssignments);
       });
-      // return latest day id for button 'Start today's module'
-      // NOTE Next step: implement startDay function with endpoint
-      const latestDay = Math.max(...startedTasks.map((day) => day.id));
-
-      console.log('latestDay:::', latestDay);
     }
-  }, [contextState.cohort.json, contextState.taskTodo]);
-
-  // Gets last day started in current cohort
-  // const latestDay = Math.max.apply(Math, arrEx.map(el => el))
-  // const { apply } = Math.max;
-  // const latestDay = Math.max.apply(Math, startedTasks.map((day) => day.id));
+  }, [contextState.cohort.json, contextState.taskTodo, cohort]);
 
   return (
-    <Container maxW="container.xl" padding={{ base: '0 2%', md: '0 4%' }}>
+    <Container maxW="container.xl">
       <Box marginTop="18px" marginBottom="48px">
         <NextChakraLink
           href="/choose-program"
@@ -166,58 +176,76 @@ const dashboard = () => {
             </Heading>
           ) : (
             <Skeleton
-              startColor={useColorModeValue('gray.300', 'gray.light')}
-              endColor={useColorModeValue('gray.400', 'gray.400')}
+              startColor={skeletonStartColor}
+              endColor={skeletonEndColor}
               height="60px"
               width="100%"
               borderRadius="10px"
             />
           )}
           <TagCapsule containerStyle={{ padding: '6px 18px 6px 18px' }} tags={tapCapsule.tags} separator={tapCapsule.separator} />
+
+          <Box display={{ base: 'block', md: 'none' }}>
+            <CohortSideBar
+              cohortSideBarTR={cohortSideBar}
+              studentAndTeachers={studentAndTeachers}
+              containerStyle={{
+                margin: '30px 0 0 0',
+              }}
+              // title={cohortSideBar.title}
+              // cohortCity={cohortSideBar.cohortCity}
+              // professor={cohortSideBar.professor}
+              // assistant={cohortSideBar.assistant}
+              // classmates={cohortSideBar.classmates}
+              width="100%"
+            />
+            <Box marginTop="30px">
+              <SupportSidebar
+                title={supportSideBar.title}
+                subtitle={supportSideBar.description}
+                actionButtons={supportSideBar.actionButtons}
+                width="100%"
+              />
+            </Box>
+          </Box>
+
           <CallToAction
             background="blue.default"
+            margin="40px 0 auto 0"
             title={callToAction.title}
             text={`${callToAction.description} Internet Architecture in First Time Website Module.`}
             buttonText={callToAction.buttonText}
-            width="100%"
+            width={{ base: '100%', md: 'fit-content' }}
           />
+
           <Box marginTop="36px">
             <ProgressBar
+              taskTodo={contextState.taskTodo}
               programs={progressBar.programs}
               progressText={progressText}
               width="100%"
             />
           </Box>
+
           <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="32px" />
 
           <Heading as="h2" fontWeight="900" size="16px">MODULE MAP</Heading>
-
           <Box
             marginTop="30px"
             gridGap="24px"
             display="flex"
             flexDirection="column"
           >
-            {(contextState.cohort.json && contextState.taskTodo) ? (
-              cohortDays
-            ).map((assignment, i) => {
-              const index = i;
-              const {
-                label, description, lessons, replits, assignments, quizzes,
-              } = assignment;
-
-              const nestedAssignments = nestAssignments({
-                read: lessons,
-                practice: replits,
-                code: assignments,
-                answer: quizzes,
-                taskTodo: contextState.taskTodo,
-              });
-              const { filteredModules, modules } = nestedAssignments;
-              return (
-                <Fragment key={`${label}-${index}`}>
-                  {filteredModules !== [] && filteredModules.length !== 0 && (
+            {sortedAssignments.length >= 1 ? (
+              <>
+                {sortedAssignments.map((assignment, i) => {
+                  const {
+                    label, description, filteredModules, modules,
+                  } = assignment;
+                  const index = i;
+                  return (assignment.filteredModules.length > 0 && (
                     <ModuleMap
+                      key={index}
                       index={index}
                       title={label}
                       description={description}
@@ -225,18 +253,43 @@ const dashboard = () => {
                       modules={modules}
                       filteredModules={filteredModules}
                     />
-                  )}
-                </Fragment>
-              );
-            }) : (
-              <ModuleMapSkeleton />
-            )}
+                  ));
+                })}
+              </>
+            ) : <ModuleMapSkeleton />}
+
+          </Box>
+
+          <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="70px" />
+
+          <Box
+            marginTop="30px"
+            gridGap="24px"
+            display="flex"
+            flexDirection="column"
+          >
+            <TasksRemain
+              userId={user.id}
+              // contextState={taskTodo}
+              // setContextState={setTaskTodo}
+              contextState={contextState}
+              setContextState={setContextState}
+              sortedAssignments={sortedAssignments}
+              startDay={startDay}
+            />
           </Box>
         </Box>
-        <Box width="10rem" />
-        <Box>
+        <Box width="5rem" />
+        <Box
+          // position="sticky"
+          // top="15px"
+          // overflowY="auto"
+          // height="95vh"
+          display={{ base: 'none', md: 'block' }}
+        >
           <CohortSideBar
             cohortSideBarTR={cohortSideBar}
+            studentAndTeachers={studentAndTeachers}
             // title={cohortSideBar.title}
             // cohortCity={cohortSideBar.cohortCity}
             // professor={cohortSideBar.professor}
@@ -258,4 +311,4 @@ const dashboard = () => {
   );
 };
 
-export default asPrivate(dashboard);
+export default asPrivate(Dashboard);

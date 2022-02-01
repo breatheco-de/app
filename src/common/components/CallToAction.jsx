@@ -4,19 +4,20 @@ import PropTypes from 'prop-types';
 import Text from './Text';
 
 const CallToAction = ({
-  background, title, text, buttonText, width, onClick,
+  background, title, text, buttonText, width, onClick, margin,
 }) => (
   <Box
     justifyContent="space-between"
     width={width}
     display="flex"
     bg={background}
+    margin={margin}
     borderRadius="17px"
     paddingY="21px"
     paddingX="25px"
     flexDirection={{ base: 'column', lg: 'row' }}
   >
-    <Box>
+    <Box paddingRight="4vh">
       <Heading as="h5" fontSize="22px" color="white" margin={0} marginBottom="11px">
         {title}
       </Heading>
@@ -25,7 +26,7 @@ const CallToAction = ({
       </Text>
     </Box>
     <Box padding={{ base: '24px 0 0 0', lg: '0' }} alignSelf="center">
-      <Button marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
+      <Button as="a" href="#tasks_remain" marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
         {buttonText}
       </Button>
     </Box>
@@ -37,7 +38,8 @@ CallToAction.propTypes = {
   text: PropTypes.string,
   buttonText: PropTypes.string,
   background: PropTypes.string,
-  width: PropTypes.string,
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  margin: PropTypes.string,
   onClick: PropTypes.func,
 };
 
@@ -47,6 +49,7 @@ CallToAction.defaultProps = {
   buttonText: 'Start Today\'s module',
   background: 'blue',
   width: '100%',
+  margin: '0 auto',
   onClick: () => {},
 };
 

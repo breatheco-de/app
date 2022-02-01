@@ -1,13 +1,22 @@
 import bc from '../services/breathecode';
 
 export const updateAssignment = ({
-  task = {}, closeSettings, toast, githubUrl = '',
+  task = {}, closeSettings, toast, githubUrl = '', contextState, setContextState,
 }) => {
   // Task case
   const toggleStatus = (task.task_status === undefined || task.task_status === 'PENDING') ? 'DONE' : 'PENDING';
   if (task.task_type !== 'PROJECT') {
     const updatedTask = Object.assign(task, { task_status: toggleStatus });
     bc.todo().update(updatedTask).then(() => {
+      const keyIndex = contextState.taskTodo.findIndex((x) => x.id === task.id);
+      setContextState({
+        ...contextState,
+        taskTodo: [
+          ...contextState.taskTodo.slice(0, keyIndex), // before keyIndex (inclusive)
+          updatedTask, // key item (updated)
+          ...contextState.taskTodo.slice(keyIndex + 1), // after keyIndex (exclusive)
+        ],
+      });
       toast({
         title: 'Your assignment has been updated successfully',
         status: 'success',
@@ -54,6 +63,34 @@ export const updateAssignment = ({
       closeSettings();
     });
   }
+};
+
+export const startDay = ({
+  id, newTasks, label, contextState, setContextState, toast,
+}) => {
+  bc.todo().add(id, newTasks).then(({ data }) => {
+    toast({
+      title: `Module ${label} started successfully`,
+      status: 'success',
+      duration: 6000,
+      isClosable: true,
+    });
+    setContextState({
+      ...contextState,
+      taskTodo: [
+        ...contextState.taskTodo,
+        ...data,
+      ],
+    });
+  }).catch((err) => {
+    console.log('error_ADD_TASK 🔴 ', err);
+    toast({
+      title: 'Something went wrong while starting module',
+      status: 'error',
+      duration: 6000,
+      isClosable: true,
+    });
+  });
 };
 
 export const nestAssignments = ({

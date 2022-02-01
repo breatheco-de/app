@@ -6,33 +6,33 @@ import {
   Grid,
   Link,
   useColorMode,
-  WrapItem,
-  Avatar,
-  AvatarBadge,
-  Tooltip,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Icon from './Icon';
 import Text from './Text';
+import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 
 const CohortSideBar = ({
   title,
   cohortCity,
-  professor,
-  assistant,
-  classmates,
   background,
   width,
   handleStudySession,
-  handleTeacher,
-  handleStudent,
-  handleAssistant,
+  containerStyle,
   cohortSideBarTR,
+  studentAndTeachers,
 }) => {
   const { colorMode } = useColorMode();
+  const teacher = studentAndTeachers.filter((st) => st.role === 'TEACHER');
+  const students = studentAndTeachers.filter((st) => st.role === 'STUDENT');
+  const teacherAssistants = studentAndTeachers.filter((st) => st.role === 'ASSISTANT');
+
   return (
     <Box
+      transition="background 0.2s ease-in-out"
       width={width}
+      style={containerStyle}
       borderWidth="1px"
       borderRadius="lg"
       overflow="hidden"
@@ -62,66 +62,42 @@ const CohortSideBar = ({
             </Text>
           </Box>
         </Box>
-        <Box d="flex" alignItems="center">
-          <Tooltip label={professor.name} placement="top">
-            <WrapItem justifyContent="center" alignItems="center" onClick={handleTeacher}>
-              <Avatar
-                width="39px"
-                height="39px"
-                name={professor.name}
-                src={professor.image}
-              >
-                <AvatarBadge
-                  boxSize="9px"
-                  bg={professor.active ? 'success' : 'danger'}
-                  top="0"
-                  border="1px solid"
-                />
-              </Avatar>
-            </WrapItem>
-          </Tooltip>
-          <Box marginLeft={13}>
-            <Heading as="h4" fontSize={15} fontWeight="700" lineHeight="tight" margin={0}>
-              {cohortSideBarTR.mainTeacher || 'Main Teacher'}
-            </Heading>
-            <Text size="l" fontWeight="400" lineHeight="18px" margin={0}>
-              {professor.name}
-            </Text>
-          </Box>
-        </Box>
+        {teacher && teacher.map((el) => {
+          const { user } = el;
+          const fullName = `${user.first_name} ${user.last_name}`;
+          return (
+            <Box key={fullName} d="flex" alignItems="center">
+              <AvatarUser data={el} />
+              <Box marginLeft={13}>
+                <Heading as="h4" fontSize={15} fontWeight="700" lineHeight="tight" margin={0}>
+                  {cohortSideBarTR.mainTeacher || 'Main Teacher'}
+                </Heading>
+                <Text size="l" fontWeight="400" lineHeight="18px" margin={0}>
+                  {fullName}
+                </Text>
+              </Box>
+            </Box>
+          );
+        })}
       </Box>
-      <Divider margin={0} style={{ borderColor: '#DADADA' }} />
+      <Divider margin={0} style={{ borderColor: useColorModeValue('#DADADA', 'gray.700') }} />
       <Box padding="0 26px">
         <Heading as="h4" padding="25px 0 8px 0" fontSize={15} lineHeight="18px" margin={0}>
           {cohortSideBarTR.assistant || 'Assistant Professors'}
         </Heading>
-        {assistant && (
+        {teacherAssistants && (
           <>
             <Grid
               gridAutoRows="3.4rem"
               templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
               gap={0}
             >
-              {assistant.map((a, i) => (
-                <Tooltip key={`${a.name}-${a.active}-${i}`} label={a.name} placement="top">
-                  <WrapItem justifyContent="center" alignItems="center" onClick={(e) => handleAssistant(e, a.name)}>
-                    <Avatar
-                      key={i}
-                      width="39px"
-                      height="39px"
-                      name={a.name}
-                      src={a.image}
-                    >
-                      <AvatarBadge
-                        boxSize="9px"
-                        bg={a.active ? 'success' : 'danger'}
-                        top="0"
-                        border="1px solid"
-                      />
-                    </Avatar>
-                  </WrapItem>
-                </Tooltip>
-              ))}
+              {teacherAssistants.map((a) => {
+                const fullName = `${a.user.first_name} ${a.user.last_name}`;
+                return (
+                  <AvatarUser key={fullName} data={a} />
+                );
+              })}
             </Grid>
           </>
         )}
@@ -133,26 +109,12 @@ const CohortSideBar = ({
           templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
           gap={0}
         >
-          {classmates.map((c, i) => (
-            <Tooltip key={`${c.name}-${i}`} label={c.name} placement="top">
-              <WrapItem justifyContent="center" alignItems="center" onClick={(e) => handleStudent(e, c.name)}>
-                <Avatar
-                  key={i}
-                  width="39px"
-                  height="39px"
-                  name={c.name}
-                  src={c.image}
-                >
-                  <AvatarBadge
-                    boxSize="9px"
-                    bg={c.active ? 'success' : 'danger'}
-                    top="0"
-                    border="1px solid"
-                  />
-                </Avatar>
-              </WrapItem>
-            </Tooltip>
-          ))}
+          {students.map((c) => {
+            const fullName = `${c.user.first_name} ${c.user.last_name}`;
+            return (
+              <AvatarUser key={fullName} data={c} />
+            );
+          })}
         </Grid>
       </Box>
       <Box textAlign="center" padding="30px 0">
@@ -175,26 +137,74 @@ const CohortSideBar = ({
 CohortSideBar.propTypes = {
   width: PropTypes.string,
   title: PropTypes.string,
+  containerStyle: PropTypes.objectOf(PropTypes.any),
+  studentAndTeachers: PropTypes.arrayOf(PropTypes.object),
   cohortCity: PropTypes.string,
-  professor: PropTypes.objectOf(PropTypes.any),
   assistant: PropTypes.arrayOf(PropTypes.object),
   classmates: PropTypes.arrayOf(PropTypes.object),
   background: PropTypes.string,
   handleStudySession: PropTypes.func,
-  handleTeacher: PropTypes.func,
-  handleStudent: PropTypes.func,
-  handleAssistant: PropTypes.func,
   cohortSideBarTR: PropTypes.objectOf(PropTypes.any),
 };
 CohortSideBar.defaultProps = {
   width: '352px',
   title: '',
+  containerStyle: {},
+  studentAndTeachers: [
+    {
+      id: 688,
+      user: {
+        id: 545,
+        first_name: 'Fake',
+        last_name: 'Student',
+        email: 'fake_mail+1@gmail.com',
+      },
+      role: 'STUDENT',
+      finantial_status: null,
+      educational_status: 'GRADUATED',
+      created_at: '2020-11-09T17:02:18.273000Z',
+    },
+    {
+      id: 753,
+      user: {
+        id: 584,
+        first_name: 'Carlos',
+        last_name: 'Maldonado',
+        email: 'carlos234213ddewcdzxc@gmail.com',
+      },
+      role: 'STUDENT',
+      finantial_status: null,
+      educational_status: 'GRADUATED',
+      created_at: '2020-11-09T17:02:18.600000Z',
+    },
+    {
+      id: 2164,
+      user: {
+        id: 1563,
+        first_name: 'Felipe',
+        last_name: 'Valenzuela',
+        email: 'felipe_+43@gmail.com',
+      },
+      role: 'TEACHER',
+      finantial_status: null,
+      educational_status: null,
+      created_at: '2020-11-09T17:02:33.773000Z',
+    },
+    {
+      id: 2308,
+      user: {
+        id: 1593,
+        first_name: 'Hernan',
+        last_name: 'Garcia',
+        email: 'hernan.jkd@gmail.com',
+      },
+      role: 'ASSISTANT',
+      finantial_status: null,
+      educational_status: null,
+      created_at: '2020-11-09T17:02:34.279000Z',
+    },
+  ],
   cohortCity: 'Miami Downtown',
-  professor: {
-    name: 'Jhon doe',
-    image: '',
-    active: true,
-  },
   assistant: [
     {
       active: false,
@@ -210,13 +220,7 @@ CohortSideBar.defaultProps = {
     },
   ],
   background: '',
-  handleTeacher: () => {
-  },
   handleStudySession: () => {
-  },
-  handleStudent: () => {
-  },
-  handleAssistant: () => {
   },
   cohortSideBarTR: {},
 };
