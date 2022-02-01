@@ -24,20 +24,20 @@ function Choose({ chooseList, handleChoose }) {
             justifyContent="space-between"
             flexDirection="row"
             borderRadius="25px"
-            height={['66px', '70px', '80px', '80px']}
-            width={['70%', '68%', '56%', '50%']}
+            height="100%"
+            padding="22px 12px 22px 22px"
+            width={['70%', '68%', '70%', '50%']}
             border="lightgray solid 2px"
             fontSize={['11px', '13px', '14px', '15px', '15px']}
             key={item?.id || cohort.name}
           >
-            <Box display="flex" flexDirection="column" marginLeft="25px">
+            <Box display="flex" flexDirection="column">
               <Text
                 size="sm"
                 color={colorMode === 'light' ? 'gray.700' : 'white'}
                 marginLeft="20px"
                 fontWeight="900"
                 margin="0px"
-                marginTop="15px"
                 textTransform="uppercase"
               >
                 {name}

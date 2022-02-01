@@ -56,6 +56,36 @@ export const updateAssignment = ({
   }
 };
 
+export const startDay = ({
+  id, newTasks, label, contextState, setContextState, toast,
+}) => {
+  console.log('todos_startDay', newTasks);
+  bc.todo().add(id, newTasks).then(({ data }) => {
+    console.log('contextState___startDay:::', contextState);
+    toast({
+      title: `Module ${label} started successfully`,
+      status: 'success',
+      duration: 6000,
+      isClosable: true,
+    });
+    setContextState({
+      ...contextState,
+      taskTodo: [
+        ...contextState.taskTodo,
+        ...data,
+      ],
+    });
+  }).catch((err) => {
+    console.log('error_ADD_TASK 🔴 ', err);
+    toast({
+      title: 'Something went wrong while starting module',
+      status: 'error',
+      duration: 6000,
+      isClosable: true,
+    });
+  });
+};
+
 export const nestAssignments = ({
   id, label = '', read, practice, code, answer, taskTodo,
 }) => {

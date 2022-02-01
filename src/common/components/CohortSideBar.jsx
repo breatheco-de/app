@@ -19,6 +19,7 @@ const CohortSideBar = ({
   background,
   width,
   handleStudySession,
+  containerStyle,
   cohortSideBarTR,
   studentAndTeachers,
 }) => {
@@ -31,6 +32,7 @@ const CohortSideBar = ({
     <Box
       transition="background 0.2s ease-in-out"
       width={width}
+      style={containerStyle}
       borderWidth="1px"
       borderRadius="lg"
       overflow="hidden"
@@ -135,6 +137,7 @@ const CohortSideBar = ({
 CohortSideBar.propTypes = {
   width: PropTypes.string,
   title: PropTypes.string,
+  containerStyle: PropTypes.objectOf(PropTypes.any),
   studentAndTeachers: PropTypes.arrayOf(PropTypes.object),
   cohortCity: PropTypes.string,
   assistant: PropTypes.arrayOf(PropTypes.object),
@@ -146,6 +149,7 @@ CohortSideBar.propTypes = {
 CohortSideBar.defaultProps = {
   width: '352px',
   title: '',
+  containerStyle: {},
   studentAndTeachers: [
     {
       id: 688,

@@ -18,22 +18,25 @@ import useAuth from '../../../../../common/hooks/useAuth';
 import { ModuleMapSkeleton } from '../../../../../common/components/Skeleton';
 import bc from '../../../../../common/services/breathecode';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
-import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
+import { nestAssignments, startDay } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import dashboardTR from '../../../../../common/translations/dashboard';
-import TaskRemain from '../../../../../js_modules/moduleMap/tasksRemain';
+import TasksRemain from '../../../../../js_modules/moduleMap/tasksRemain';
 
-const dashboard = () => {
+const Dashboard = () => {
   const { contextState, setContextState } = useModuleMap();
   const [cohort, setNewCohort] = useState([]);
   const [taskTodo, setTaskTodo] = useState([]);
-  const [startedTasks, setStartedTasks] = useState([]);
+  // const [startedTasks, setStartedTasks] = useState([]);
   const [studentAndTeachers, setSudentAndTeachers] = useState();
   const [sortedAssignments, setSortedAssignments] = useState([]);
   const { user, choose } = useAuth();
 
   const router = useRouter();
   const { cohortSlug, slug } = router.query;
+
+  const skeletonStartColor = useColorModeValue('gray.300', 'gray.light');
+  const skeletonEndColor = useColorModeValue('gray.400', 'gray.400');
 
   const {
     cohortSideBar, supportSideBar, backToChooseProgram, progressText, callToAction,
@@ -66,15 +69,14 @@ const dashboard = () => {
     if (user && user.active_cohort) {
       const cohortId = user.active_cohort.slug;
 
-      // NOTE: returns response with object data with empty array :/
       bc.cohort().getStudents(cohortId).then((res) => {
         const { data } = res;
-        console.log('res_STUDENTS', data);
+        console.log('current_students', data);
         if (data.length > 0) {
           setSudentAndTeachers(data);
         }
       }).catch((err) => {
-        console.log('err_STUDENTS', err);
+        console.error('err:', err);
       });
     }
   }, [user]);
@@ -95,10 +97,12 @@ const dashboard = () => {
     }
   }, [user]);
   useEffect(() => {
-    setContextState({
-      taskTodo,
-      cohort,
-    });
+    if (taskTodo && cohort) {
+      setContextState({
+        taskTodo,
+        cohort,
+      });
+    }
   }, [cohort, taskTodo]);
   const cohortDays = cohort.json ? cohort.json.days : [];
 
@@ -117,23 +121,24 @@ const dashboard = () => {
           taskTodo: contextState.taskTodo,
         });
         const { filteredModules, modules } = nestedAssignments;
-        setSortedAssignments((prevState) => [
+        // BUG: duplicate the modules when startModule
+        return setSortedAssignments((prevState) => [
           ...prevState,
           {
             id, label, description, filteredModules, modules,
           },
         ]);
 
-        if (filteredModules.length > 0) {
-          startedTasks.push(...filteredModules);
-        }
-        return setStartedTasks([...startedTasks, ...filteredModules]);
+        // if (filteredModules.length > 0) {
+        //   startedTasks.push(...filteredModules);
+        // }
+        // return setStartedTasks([...startedTasks, ...filteredModules]);
       });
       // return latest day id for button 'Start today's module'
       // NOTE Next step: implement startDay function with endpoint
-      const latestDay = Math.max(...startedTasks.map((day) => day.id));
+      // const latestDay = Math.max(...startedTasks.map((day) => day.id));
 
-      console.log('latestDay:::', latestDay);
+      // console.log('latestDay:::', latestDay);
     }
   }, [contextState.cohort.json, contextState.taskTodo]);
 
@@ -178,26 +183,22 @@ const dashboard = () => {
             </Heading>
           ) : (
             <Skeleton
-              startColor={useColorModeValue('gray.300', 'gray.light')}
-              endColor={useColorModeValue('gray.400', 'gray.400')}
+              startColor={skeletonStartColor}
+              endColor={skeletonEndColor}
               height="60px"
               width="100%"
               borderRadius="10px"
             />
           )}
           <TagCapsule containerStyle={{ padding: '6px 18px 6px 18px' }} tags={tapCapsule.tags} separator={tapCapsule.separator} />
-          <CallToAction
-            background="blue.default"
-            title={callToAction.title}
-            text={`${callToAction.description} Internet Architecture in First Time Website Module.`}
-            buttonText={callToAction.buttonText}
-            width="100%"
-          />
 
           <Box display={{ base: 'block', md: 'none' }}>
             <CohortSideBar
               cohortSideBarTR={cohortSideBar}
               studentAndTeachers={studentAndTeachers}
+              containerStyle={{
+                margin: '30px 0 0 0',
+              }}
               // title={cohortSideBar.title}
               // cohortCity={cohortSideBar.cohortCity}
               // professor={cohortSideBar.professor}
@@ -214,6 +215,15 @@ const dashboard = () => {
               />
             </Box>
           </Box>
+
+          <CallToAction
+            background="blue.default"
+            margin="40px 0 auto 0"
+            title={callToAction.title}
+            text={`${callToAction.description} Internet Architecture in First Time Website Module.`}
+            buttonText={callToAction.buttonText}
+            width={{ base: '100%', md: 'fit-content' }}
+          />
 
           <Box marginTop="36px">
             <ProgressBar
@@ -241,6 +251,7 @@ const dashboard = () => {
                   const index = i;
                   return (assignment.filteredModules.length > 0 && (
                     <ModuleMap
+                      key={index}
                       index={index}
                       title={label}
                       description={description}
@@ -263,11 +274,25 @@ const dashboard = () => {
             display="flex"
             flexDirection="column"
           >
-            <TaskRemain sortedAssignments={sortedAssignments} />
+            <TasksRemain
+              userId={user.id}
+              // contextState={taskTodo}
+              // setContextState={setTaskTodo}
+              contextState={contextState}
+              setContextState={setContextState}
+              sortedAssignments={sortedAssignments}
+              startDay={startDay}
+            />
           </Box>
         </Box>
         <Box width="5rem" />
-        <Box display={{ base: 'none', md: 'block' }}>
+        <Box
+          // position="sticky"
+          // top="15px"
+          // overflowY="auto"
+          // height="95vh"
+          display={{ base: 'none', md: 'block' }}
+        >
           <CohortSideBar
             cohortSideBarTR={cohortSideBar}
             studentAndTeachers={studentAndTeachers}
@@ -292,4 +317,4 @@ const dashboard = () => {
   );
 };
 
-export default asPrivate(dashboard);
+export default asPrivate(Dashboard);

@@ -1,35 +1,83 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 import {
   Box, useColorModeValue, Accordion, AccordionItem,
-  AccordionButton, AccordionPanel, Skeleton, Button,
+  AccordionButton, AccordionPanel, Skeleton, Button, useToast,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 
-const TaskRemain = ({ sortedAssignments }) => {
-  console.log('test');
-  const filteredAssignments = sortedAssignments.filter(
+const TasksRemain = ({
+  userId, sortedAssignments, startDay, contextState, setContextState,
+}) => {
+  const commonStartColor = useColorModeValue('gray.300', 'gray.light');
+  const commonEndColor = useColorModeValue('gray.400', 'gray.400');
+  const commonBorderColor = useColorModeValue('gray.200', 'gray.700');
+  const modulesLengthColor = useColorModeValue('gray.default', 'white');
+  const toast = useToast();
+  const filteredAssignments = (sortedAssignments.length >= 1 ? sortedAssignments : []).filter(
     (el) => el.filteredModules.length !== el.modules.length,
   );
 
-  const commonStartColor = useColorModeValue('gray.300', 'gray.light');
-  const commonEndColor = useColorModeValue('gray.400', 'gray.400');
+  useEffect(() => {
+    console.log('sortedAssignments:::', sortedAssignments);
+  }, [sortedAssignments]);
 
-  console.log('sortedAssignments:::', sortedAssignments);
-  console.log('filteredAssignments:::', filteredAssignments);
+  // const currentAssignmnets = sortedAssignments.map((el) => {
+  //   const result = [el.filteredModules, el.modules];
+  //   return result;
+  // });
+
+  // console.log('filteredAssignments:::', currentAssignmnets);
+
+  const handleStartDay = (data) => {
+    const { modules, label } = data;
+    const updatedTasks = (modules || [])?.map((l) => ({
+      ...l,
+      associated_slug: l.slug,
+    }));
+
+    // console.log('modules:::', data);
+    // console.log('updatedModules:::', updatedModules);
+    startDay({
+      id: userId,
+      newTasks: updatedTasks,
+      label,
+      contextState,
+      setContextState,
+      toast,
+    });
+  };
+
+  const NoTaskRemain = () => {
+    if (filteredAssignments.length === 0) {
+      return <Box>No modules remain</Box>;
+    }
+    return (
+      <Skeleton
+        startColor={commonStartColor}
+        endColor={commonEndColor}
+        height="38px"
+        color="white"
+        borderRadius="10px"
+        width="100%"
+        mt="6"
+      />
+    );
+  };
+
   return (
     <Accordion
       allowMultiple
       borderRadius="3px"
       border="2px solid"
-      borderColor={useColorModeValue('gray.200', 'gray.700')}
+      borderColor={commonBorderColor}
     >
       <AccordionItem border="0">
-        <AccordionButton id="lessons_remain" borderBottom="2px solid" borderColor={useColorModeValue('gray.200', 'gray.700')}>
+        <AccordionButton id="lessons_remain" borderBottom="2px solid" borderColor={commonBorderColor}>
           <Box fontSize="20px" fontWeight="900" flex="1" textAlign="left">
-            Lessons remain:
+            Modules remain:
           </Box>
           <Icon icon="arrowDown" width="28px" />
         </AccordionButton>
@@ -42,12 +90,12 @@ const TaskRemain = ({ sortedAssignments }) => {
               borderLeft="0"
               borderRight="0"
               borderTop="0"
-              borderColor={useColorModeValue('gray.200', 'gray.700')}
+              borderColor={commonBorderColor}
             >
               {filteredAssignments.map((assignment, i) => {
                 const index = i;
                 const {
-                  label, modules, description,
+                  id, label, modules, description,
                 } = assignment;
 
                 return (
@@ -59,15 +107,21 @@ const TaskRemain = ({ sortedAssignments }) => {
                         padding="14px"
                         justifyContent="space-between"
                         borderTop="2px solid"
-                        borderColor={useColorModeValue('gray.200', 'gray.700')}
+                        borderColor={commonBorderColor}
                       >
-                        <Heading as="h2" fontSize="16px">
-                          {label}
-                        </Heading>
+                        <Box flex="1" display="flex" gridGap="20px">
+                          <Heading as="span" fontSize="14spx" fontWeight="500">
+                            {id}
+                          </Heading>
+                          <Heading as="h2" fontSize="16px">
+                            {label}
+                          </Heading>
+
+                        </Box>
                         <Heading
                           as="span"
                           fontSize="14px"
-                          color={useColorModeValue('gray.default', 'white')}
+                          color={modulesLengthColor}
                           fontWeight="normal"
                         >
                           {modules.length}
@@ -81,6 +135,7 @@ const TaskRemain = ({ sortedAssignments }) => {
                         </Text>
                         <Box width="100%" textAlign="right" margin="20px 0 10px 0">
                           <Button
+                            onClick={() => handleStartDay({ modules, label })}
                             fontSize="14px"
                             background="blue.default"
                             color="white"
@@ -101,15 +156,7 @@ const TaskRemain = ({ sortedAssignments }) => {
               })}
             </Accordion>
           ) : (
-            <Skeleton
-              startColor={commonStartColor}
-              endColor={commonEndColor}
-              height="38px"
-              color="white"
-              borderRadius="10px"
-              width="100%"
-              mt="6"
-            />
+            <NoTaskRemain />
           )}
         </AccordionPanel>
       </AccordionItem>
@@ -117,8 +164,12 @@ const TaskRemain = ({ sortedAssignments }) => {
   );
 };
 
-TaskRemain.propTypes = {
+TasksRemain.propTypes = {
+  userId: PropTypes.number.isRequired,
   sortedAssignments: PropTypes.arrayOf(PropTypes.any).isRequired,
+  startDay: PropTypes.func.isRequired,
+  contextState: PropTypes.objectOf(PropTypes.any).isRequired,
+  setContextState: PropTypes.func.isRequired,
 };
 
-export default TaskRemain;
+export default TasksRemain;

@@ -24,7 +24,10 @@ export const IconByTaskStatus = ({ currentTask }) => {
 };
 
 IconByTaskStatus.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.any).isRequired,
+  currentTask: PropTypes.objectOf(PropTypes.any),
+};
+IconByTaskStatus.defaultProps = {
+  currentTask: {},
 };
 
 export const getHandlerByTaskStatus = ({

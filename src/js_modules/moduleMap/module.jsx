@@ -84,7 +84,7 @@ const Module = ({
             {currIndex + 1}
           </Text>
         </Box>
-        <Box mr="20px" ml="20px" display="flex" minWidth="22px" width="22px">
+        <Box display={{ base: 'none', sm: 'flex' }} mr="20px" ml="20px" minWidth="22px" width="22px">
           {data.icon && (
             <Icon
               icon={data.icon || 'book'}

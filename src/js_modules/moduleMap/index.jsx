@@ -33,6 +33,7 @@ const ModuleMap = ({
         {description}
       </Text>
 
+      {/* NOTE: Add sync button style and function */}
       {filteredModules.length > 0 && modules.length !== filteredModules.length && (
         <Text color={useColorModeValue('blue.default', 'blue.300')} size="sm">
           unsynchronized module

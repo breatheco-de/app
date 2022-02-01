@@ -42,11 +42,13 @@ const supportSidebar = ({
                 href={button.href}
                 target="_blank"
                 rel="noopener noreferrer"
+                style={{ width: '100%' }}
               >
                 <Button
                   onClick={() => console.log('Clicked', button.title)}
                   size="lg"
                   gridGap="10px"
+                  width="100%"
                   key={button.title}
                   bg={colorMode === 'light' ? 'white' : 'rgba(255, 255, 255, 0.1)'}
                   // gray
@@ -57,17 +59,25 @@ const supportSidebar = ({
                     background: `${colorMode === 'light' ? 'gray.light' : 'rgba(255, 255, 255, 0.22)'}`,
                   }}
                   borderWidth="0px"
-                  px="15px"
+                  padding="14px 20px"
                   my="8px"
-                  justifyContent="left"
+                  borderRadius="8px"
+                  justifyContent="space-between"
                 >
                   <Box>
                     <Icon icon={button.icon} width="25px" height="25px" />
                   </Box>
-                  <Text textTransform="uppercase" size={{ base: '10px', md: '13px' }} color={colorMode === 'light' ? 'black' : 'white'}>
+                  <Text
+                    display="flex"
+                    whiteSpace="pre-wrap"
+                    textAlign="left"
+                    textTransform="uppercase"
+                    size="12px"
+                    color={colorMode === 'light' ? 'black' : 'white'}
+                  >
                     {button.title}
                   </Text>
-                  <Box ml="auto">
+                  <Box>
                     <Icon icon="arrowRight" width="22px" height="22px" />
                   </Box>
                 </Button>
