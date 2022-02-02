@@ -36,12 +36,16 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async ({ params, locale }) => {
   const { slug } = params;
-  // `https://breathecode.herokuapp.com/v1/registry/asset/${slug}`
-  // `https://breathecode.herokuapp.com/v1/registry/asset/readme/${slug}`
   const results = await fetch(`https://breathecode.herokuapp.com/v1/registry/asset/${slug}`)
     .then((res) => res.json())
     .catch((err) => console.log(err));
 
+  // Prevent unexpected white error page and replace with 404 page
+  if (results.status_code === 404) {
+    return {
+      notFound: true,
+    };
+  }
   return {
     props: {
       fallback: false,
