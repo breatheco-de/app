@@ -1,5 +1,5 @@
 import {
-  Fragment, useMemo, useEffect, useState,
+  Fragment, useMemo, useEffect,
 } from 'react';
 import {
   Box, Flex, Container, useColorModeValue, Skeleton,
@@ -24,14 +24,15 @@ import { nestAssignments, startDay } from '../../../../../common/hooks/useModule
 import axios from '../../../../../axios';
 import dashboardTR from '../../../../../common/translations/dashboard';
 import TasksRemain from '../../../../../js_modules/moduleMap/tasksRemain';
+import usePersistent from '../../../../../common/hooks/usePersistent';
 
 const Dashboard = () => {
   const { contextState, setContextState } = useModuleMap();
-  const [cohort, setNewCohort] = useState([]);
-  const [taskTodo, setTaskTodo] = useState([]);
+  const [cohort, setNewCohort] = usePersistent('cohortState', []);
+  const [taskTodo, setTaskTodo] = usePersistent('taskTodoState', []);
   // const [startedTasks, setStartedTasks] = useState([]);
-  const [studentAndTeachers, setSudentAndTeachers] = useState();
-  const [sortedAssignments, setSortedAssignments] = useState([]);
+  const [studentAndTeachers, setSudentAndTeachers] = usePersistent('studentAndTeachersState', []);
+  const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignmentsState', []);
   const { user, choose } = useAuth();
 
   const router = useRouter();
