@@ -1,5 +1,5 @@
 import {
-  Fragment, useMemo, useEffect,
+  Fragment, useMemo, useEffect, useState,
 } from 'react';
 import {
   Box, Flex, Container, useColorModeValue, Skeleton,
@@ -28,11 +28,11 @@ import usePersistent from '../../../../../common/hooks/usePersistent';
 
 const Dashboard = () => {
   const { contextState, setContextState } = useModuleMap();
-  const [cohort, setNewCohort] = usePersistent('cohortState', []);
-  const [taskTodo, setTaskTodo] = usePersistent('taskTodoState', []);
+  const [cohort, setNewCohort] = usePersistent('cohort', {});
+  const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   // const [startedTasks, setStartedTasks] = useState([]);
-  const [studentAndTeachers, setSudentAndTeachers] = usePersistent('studentAndTeachersState', []);
-  const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignmentsState', []);
+  const [studentAndTeachers, setSudentAndTeachers] = useState();
+  const [sortedAssignments, setSortedAssignments] = useState([]);
   const { user, choose } = useAuth();
 
   const router = useRouter();
