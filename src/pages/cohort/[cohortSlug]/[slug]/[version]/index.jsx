@@ -24,11 +24,12 @@ import { nestAssignments, startDay } from '../../../../../common/hooks/useModule
 import axios from '../../../../../axios';
 import dashboardTR from '../../../../../common/translations/dashboard';
 import TasksRemain from '../../../../../js_modules/moduleMap/tasksRemain';
+import usePersistent from '../../../../../common/hooks/usePersistent';
 
 const Dashboard = () => {
   const { contextState, setContextState } = useModuleMap();
-  const [cohort, setNewCohort] = useState([]);
-  const [taskTodo, setTaskTodo] = useState([]);
+  const [cohort, setNewCohort] = usePersistent('cohort', {});
+  const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   // const [startedTasks, setStartedTasks] = useState([]);
   const [studentAndTeachers, setSudentAndTeachers] = useState();
   const [sortedAssignments, setSortedAssignments] = useState([]);
