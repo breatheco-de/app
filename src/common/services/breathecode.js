@@ -51,6 +51,15 @@ const breathecode = {
       get: () => axios.get(`${url}/user/me/task`),
     };
   },
+
+  mentorship: () => {
+    const url = 'https://breathecode.herokuapp.com/v1/mentorship/academy';
+    // https://breathecode.herokuapp.com/v1/mentorship/academy
+    return {
+      getService: () => axios.get(`${url}/service`),
+      getMentor: ({ serviceSlug }) => axios.get(`${url}/mentor?service=${serviceSlug}`),
+    };
+  },
 };
 
 export default breathecode;
