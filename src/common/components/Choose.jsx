@@ -60,6 +60,7 @@ function Choose({ chooseList, handleChoose }) {
                   version,
                   slug,
                   cohort_name: cohort.name,
+                  cohort_slug: cohort?.slug,
                   syllabus_name: name,
                   academy_id: cohort.academy.id,
                 });

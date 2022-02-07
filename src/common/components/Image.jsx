@@ -21,7 +21,7 @@ const ChakraNextImage = (props) => {
 };
 
 ChakraNextImage.propTypes = {
-  src: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  src: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   alt: PropTypes.string.isRequired,
   quality: PropTypes.number,
   layout: PropTypes.string,
@@ -30,6 +30,7 @@ ChakraNextImage.propTypes = {
   classNameImg: PropTypes.string,
 };
 ChakraNextImage.defaultProps = {
+  src: '/static/images/code1.png',
   quality: 100,
   layout: 'fill',
   priority: false,
