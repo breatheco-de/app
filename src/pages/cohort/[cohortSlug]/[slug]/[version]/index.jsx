@@ -49,6 +49,10 @@ const Dashboard = () => {
     tapCapsule, progressBar,
   } = mockData;
 
+  const isWindow = typeof window !== 'undefined';
+  const cohortSession = isWindow && JSON.parse(localStorage.getItem('cohortSession') || '{}');
+  axios.defaults.headers.common.Academy = cohortSession?.academy.id || '';
+
   useEffect(() => {
     bc.admissions().me().then((res) => {
       const { cohorts } = res.data;
@@ -64,7 +68,6 @@ const Dashboard = () => {
         syllabus_name: name,
         academy_id: currentCohort.academy.id,
       });
-      axios.defaults.headers.common.Academy = currentCohort.academy.id;
     });
   }, []);
 
@@ -74,12 +77,11 @@ const Dashboard = () => {
 
       bc.cohort().getStudents(cohortId).then((res) => {
         const { data } = res;
-        console.log('current_students', data);
         if (data.length > 0) {
           setSudentAndTeachers(data);
         }
       }).catch((err) => {
-        console.error('err:', err);
+        console.error('err_studentAndTeachers:', err);
       });
     }
   }, [user]);

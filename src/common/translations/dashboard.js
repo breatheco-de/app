@@ -26,11 +26,13 @@ const dashboardTR = {
       description: 'Did you know you can schedule mentoring sessions any time or ask in the Support Chat?',
       actionButtons: [
         {
+          name: 'mentoring',
           title: 'Schedule mentoring',
           href: `https://mentor.breatheco.de/academy/${slug}/?token=${accessToken}`,
           icon: 'conversation',
         },
         {
+          name: 'support',
           title: 'Ask in support chat',
           href: 'https://4geeksacademy.slack.com/',
           icon: 'slack',
@@ -60,11 +62,13 @@ const dashboardTR = {
       description: '¿Sabías que puedes programar sesiones de mentoría en cualquier momento o preguntar en el Chat de soporte?',
       actionButtons: [
         {
+          name: 'mentoring',
           title: 'Programar sesion de mentoría',
           href: `https://mentor.breatheco.de/academy/${slug}/?token=${accessToken}`,
           icon: 'conversation',
         },
         {
+          name: 'support',
           title: 'Preguntar en el chat de soporte',
           href: 'https://4geeksacademy.slack.com/',
           icon: 'slack',
