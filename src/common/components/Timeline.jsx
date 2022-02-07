@@ -4,7 +4,7 @@ import {
   Box, Flex, useColorMode,
 } from '@chakra-ui/react';
 import Icon from './Icon';
-import Heading from './Heading';
+// import Heading from './Heading';
 import Text from './Text';
 
 const color = {
@@ -13,19 +13,49 @@ const color = {
 };
 
 const Timeline = ({
-  title, assignments, width, onClickAssignment,
+  title, lessons, practice, code, answer, width, onClickAssignment,
 }) => {
   const { colorMode } = useColorMode();
+  const updatedLessons = lessons.map((el) => ({
+    ...el,
+    subtitle: 'Read',
+    icon: 'book',
+    task_type: 'LESSON',
+    muted: true,
+  }));
+  const updatedPractice = practice.map((el) => ({
+    ...el,
+    subtitle: 'Practice',
+    icon: 'strength',
+    task_type: 'EXERCISE',
+    muted: true,
+  }));
+  const updatedCode = code.map((el) => ({
+    ...el,
+    subtitle: 'Code',
+    icon: 'code',
+    task_type: 'PROJECT',
+    muted: true,
+  }));
+  const updatedAnswer = answer.map((el) => ({
+    ...el,
+    subtitle: 'Answer',
+    icon: 'answer',
+    task_type: 'QUIZ',
+    muted: true,
+  }));
+
+  const assignments = [...updatedLessons, ...updatedPractice, ...updatedCode, ...updatedAnswer];
   return (
     <Box width={width}>
-      <Flex>
-        <Heading size="m" fontWeight="900" color={colorMode === 'light' ? 'gray.dark' : 'white'}>WELCOME TO</Heading>
-        <Heading size="m" marginLeft="10px" fontWeight="400" color={colorMode === 'light' ? 'gray.dark' : 'white'}>{title}</Heading>
+      <Flex width="100%" marginBottom="1.5rem">
+        <Text size="l" fontWeight="900" color={colorMode === 'light' ? 'gray.dark' : 'white'}>{title && title}</Text>
+        <Text size="l" marginLeft="10px" fontWeight="400" color={colorMode === 'light' ? 'gray.dark' : 'white'} />
       </Flex>
       <Box>
-        {assignments.map((item, index) => (
+        {assignments && assignments.map((item, index) => (
           <Flex
-            key={item.id}
+            key={item?.id}
             _before={{
               content: '""',
               position: 'absolute',
@@ -34,23 +64,24 @@ const Timeline = ({
               bg: 'gray',
               left: '14px',
               zIndex: -15,
-              top: '35%',
+              top: '55%',
             }}
             position="relative"
             marginBottom="5px"
+            width="100%"
           >
             <Box marginY="auto">
-              <Box width="30px" height="30px" bg={!item.muted ? 'blue.default' : 'gray.default'} borderRadius="50px">
+              <Box width="30px" height="30px" bg={item && item?.muted ? 'blue.default' : 'gray.default'} borderRadius="50px">
                 <Text size="sm" margin={0} color="white" textAlign="center" position="relative" top="5px">{index + 1}</Text>
               </Box>
             </Box>
-            <Flex cursor="pointer" onClick={(e) => onClickAssignment(e, item)} borderRadius="17px" bg={!item.muted ? `${color[colorMode]}` : 'none'} paddingY="8px" paddingX="10px">
-              <Box padding="8px" bg={item.muted ? 'blue.default' : 'none'} borderRadius="50px" height="36px" margin="auto">
-                <Icon width="20px" height="20px" icon={item.icon} color={!item.muted ? 'white' : 'gray'} />
+            <Flex cursor="pointer" onClick={(e) => onClickAssignment(e, item)} borderRadius="17px" bg={item && item?.muted ? color[colorMode] : 'none'} paddingY="8px" paddingX="12px" marginLeft="1.5rem">
+              <Box padding="8px" bg={item && item?.muted ? 'blue.default' : 'none'} borderRadius="50px" height="36px" margin="auto">
+                <Icon width="20px" height="20px" icon={item && item?.icon} color={!item?.muted ? 'gray' : 'white'} />
               </Box>
               <Box marginLeft="12px">
-                <Text size="sm" color={colorMode === 'light' ? 'gray.dark' : 'gray.light'} fontWeight="900" marginY={0}>{item.title.toUpperCase()}</Text>
-                <Text size="l" fontWeight="400" marginY={0} color={colorMode === 'light' ? 'gray.dark' : 'gray.light'}>{item.subtitle}</Text>
+                <Text size="sm" color={colorMode === 'light' ? 'gray.dark' : 'gray.light'} fontWeight="900" marginY={0}>{item && item?.subtitle?.toUpperCase()}</Text>
+                <Text size="l" fontWeight="400" marginY={0} color={colorMode === 'light' ? 'gray.dark' : 'gray.light'}>{item && item?.title}</Text>
               </Box>
             </Flex>
           </Flex>
@@ -62,14 +93,20 @@ const Timeline = ({
 
 Timeline.propTypes = {
   title: PropTypes.string,
-  assignments: PropTypes.arrayOf(PropTypes.array),
+  lessons: PropTypes.arrayOf(PropTypes.array),
+  code: PropTypes.arrayOf(PropTypes.array),
+  practice: PropTypes.arrayOf(PropTypes.array),
+  answer: PropTypes.arrayOf(PropTypes.array),
   width: PropTypes.string,
   onClickAssignment: PropTypes.func,
 };
 
 Timeline.defaultProps = {
   title: '',
-  assignments: [],
+  lessons: [],
+  code: [],
+  practice: [],
+  answer: [],
   width: '100%',
   onClickAssignment: () => {
   },

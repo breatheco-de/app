@@ -25,6 +25,7 @@ import axios from '../../../../../axios';
 import dashboardTR from '../../../../../common/translations/dashboard';
 import TasksRemain from '../../../../../js_modules/moduleMap/tasksRemain';
 import usePersistent from '../../../../../common/hooks/usePersistent';
+import useSyllabus from '../../../../../common/store/actions/syllabusActions';
 
 const Dashboard = () => {
   const { contextState, setContextState } = useModuleMap();
@@ -34,6 +35,7 @@ const Dashboard = () => {
   const [studentAndTeachers, setSudentAndTeachers] = useState();
   const [sortedAssignments, setSortedAssignments] = useState([]);
   const { user, choose } = useAuth();
+  const { setSyllabus } = useSyllabus();
 
   const router = useRouter();
   const { cohortSlug, slug } = router.query;
@@ -61,6 +63,7 @@ const Dashboard = () => {
       const currentCohort = findCohort?.cohort;
       const { version, name } = currentCohort?.syllabus_version;
       choose({
+        cohort_slug: cohortSlug,
         version,
         slug: currentCohort?.syllabus_version.slug,
         cohort_name: currentCohort.name,
@@ -93,6 +96,7 @@ const Dashboard = () => {
       bc.syllabus().get(academyId, slug, version).then((res) => {
         const studentLessons = res.data;
         setNewCohort(studentLessons);
+        setSyllabus(studentLessons.json.days);
       });
 
       bc.todo().getTaskByStudent().then((res) => {
@@ -160,7 +164,7 @@ const Dashboard = () => {
             icon="arrowLeft"
             width="20px"
             height="20px"
-            style={{ marginBottom: '-4px', marginRight: '4px' }}
+            style={{ marginBottom: '-4px', marginRight: '7px' }}
             color="#0097CF"
           />
           {backToChooseProgram}
