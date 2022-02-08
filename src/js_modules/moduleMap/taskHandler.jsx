@@ -31,7 +31,7 @@ IconByTaskStatus.defaultProps = {
 };
 
 export const getHandlerByTaskStatus = ({
-  currentTask, icon, sendProject, changeStatusAssignment, toggleSettings, closeSettings,
+  currentTask, sendProject, changeStatusAssignment, toggleSettings, closeSettings,
   settingsOpen,
 }) => {
   const TaskButton = () => (
@@ -45,7 +45,7 @@ export const getHandlerByTaskStatus = ({
       padding="0"
       borderRadius="30px"
     >
-      {icon}
+      <IconByTaskStatus currentTask={currentTask} />
     </Button>
   );
 
@@ -68,7 +68,7 @@ export const getHandlerByTaskStatus = ({
           padding="0"
           borderRadius="30px"
         >
-          {icon}
+          <IconByTaskStatus currentTask={currentTask} />
         </Button>
       );
     }
@@ -92,7 +92,7 @@ export const getHandlerByTaskStatus = ({
             borderRadius="30px"
             onClick={() => toggleSettings()}
           >
-            {icon}
+            <IconByTaskStatus currentTask={currentTask} />
           </Button>
         </PopoverTrigger>
 

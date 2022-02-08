@@ -1,14 +1,12 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 const usePersistent = (key, initialValue) => {
-  const [storedValue, setStoredValue] = useState(() => {
-    try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      return initialValue;
-    }
-  });
+  const getStoredValues = useMemo(() => {
+    const item = window.localStorage.getItem(key);
+    return JSON.parse(item) || initialValue;
+  }, [key, initialValue]);
+
+  const [storedValue, setStoredValue] = useState(getStoredValues);
 
   const setValue = (value) => {
     try {

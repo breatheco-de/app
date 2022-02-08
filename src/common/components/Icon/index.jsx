@@ -41,4 +41,4 @@ Icon.defaultProps = {
   fill: '',
   className: '',
 };
-export default Icon;
+export default React.memo(Icon);
