@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import {
   WrapItem,
   Avatar,
@@ -34,4 +35,4 @@ AvatarUser.propTypes = {
   data: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
-export default AvatarUser;
+export default memo(AvatarUser);

@@ -1,8 +1,8 @@
-const isWindow = typeof window !== 'undefined';
-const cohortSession = isWindow ? JSON.parse(localStorage.getItem('cohortSession') || '{}') : {};
-const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
+// const isWindow = typeof window !== 'undefined';
+// const cohortSession = isWindow ? JSON.parse(localStorage.getItem('cohortSession') || '{}') : {};
+// const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
 
-const slug = cohortSession && cohortSession.academy?.slug;
+// const slug = cohortSession && cohortSession.academy?.slug;
 
 const dashboardTR = {
   en: {
@@ -28,7 +28,8 @@ const dashboardTR = {
         {
           name: 'mentoring',
           title: 'Schedule mentoring',
-          href: `https://mentor.breatheco.de/academy/${slug}/?token=${accessToken}`,
+          href: '#',
+          // href: `https://mentor.breatheco.de/academy/${slug}/?token=${accessToken}`,
           icon: 'conversation',
         },
         {
@@ -64,7 +65,8 @@ const dashboardTR = {
         {
           name: 'mentoring',
           title: 'Programar sesion de mentoría',
-          href: `https://mentor.breatheco.de/academy/${slug}/?token=${accessToken}`,
+          href: '#',
+          // href: `https://mentor.breatheco.de/academy/${slug}/?token=${accessToken}`,
           icon: 'conversation',
         },
         {

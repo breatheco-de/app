@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, memo } from 'react';
 import {
   Box, Heading, Button, useColorMode, Accordion, AccordionItem, AccordionPanel,
   AccordionButton, useColorModeValue,
 } from '@chakra-ui/react';
+import PropTypes from 'prop-types';
 import Icon from './Icon';
 import Text from './Text';
 import bc from '../services/breathecode';
@@ -14,7 +15,7 @@ const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
 
 const academySlug = cohortSession && cohortSession.academy?.slug;
 
-const supportSidebar = ({
+const SupportSidebar = ({
   title, subtitle, actionButtons, width,
 }) => {
   const { colorMode } = useColorMode();
@@ -215,4 +216,18 @@ const supportSidebar = ({
   );
 };
 
-export default supportSidebar;
+SupportSidebar.propTypes = {
+  title: PropTypes.string,
+  subtitle: PropTypes.string,
+  actionButtons: PropTypes.arrayOf(PropTypes.any),
+  width: PropTypes.string,
+};
+
+SupportSidebar.defaultProps = {
+  actionButtons: [],
+  title: '',
+  subtitle: '',
+  width: '100%',
+};
+
+export default memo(SupportSidebar);

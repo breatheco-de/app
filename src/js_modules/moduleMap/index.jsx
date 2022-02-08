@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import {
   Box, Heading, useColorModeValue,
 } from '@chakra-ui/react';
@@ -66,4 +67,4 @@ ModuleMap.defaultProps = {
   taskTodo: [],
 };
 
-export default ModuleMap;
+export default memo(ModuleMap);

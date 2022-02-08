@@ -18,7 +18,7 @@ import '@fontsource/lato/400.css';
 import '@fontsource/lato/700.css';
 import '@fontsource/lato/900.css';
 
-function LearnApp({ Component, pageProps }) {
+function App({ Component, pageProps }) {
   const [haveSession, setHaveSession] = useState(false);
   const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
 
@@ -52,8 +52,8 @@ function LearnApp({ Component, pageProps }) {
   );
 }
 
-LearnApp.propTypes = {
+App.propTypes = {
   pageProps: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
   Component: PropTypes.elementType.isRequired,
 };
-export default appWithTranslation(wrapper.withRedux(LearnApp));
+export default appWithTranslation(wrapper.withRedux(App));

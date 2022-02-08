@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react';
 // import { useTranslation } from 'next-i18next';
 // import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
 /* import Image from '../Image';
@@ -217,4 +217,4 @@ const NavbarWithSubNavigation = () => {
   );
 };
 
-export default NavbarWithSubNavigation;
+export default memo(NavbarWithSubNavigation);

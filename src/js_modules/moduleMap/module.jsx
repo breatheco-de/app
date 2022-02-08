@@ -2,11 +2,11 @@ import {
   Box, Heading, Stack, Flex, useColorModeValue, HStack, useToast,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 import Text from '../../common/components/Text';
 import { updateAssignment } from '../../common/hooks/useModuleHandler';
 import useModuleMap from '../../common/store/actions/moduleMapAction';
-import { IconByTaskStatus, getHandlerByTaskStatus } from './taskHandler';
+import { getHandlerByTaskStatus } from './taskHandler';
 import Icon from '../../common/components/Icon';
 import Link from '../../common/components/NextChakraLink';
 
@@ -125,7 +125,6 @@ const Module = ({
           currentTask,
           sendProject,
           changeStatusAssignment,
-          icon: <IconByTaskStatus currentTask={currentTask} />,
           toggleSettings,
           closeSettings,
           settingsOpen,
@@ -145,4 +144,4 @@ Module.defaultProps = {
   currIndex: 0,
 };
 
-export default Module;
+export default memo(Module);

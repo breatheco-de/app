@@ -91,7 +91,7 @@ function Choose({ chooseList, handleChoose }) {
                 {isMobile ? 'Launch this program' : ''}
               </Text>
               <Icon
-                color={colorMode === 'light' ? '#0097CD' : '#FFFFFF'}
+                color="#0097CD"
                 icon="longArrowRight"
                 width="22px"
                 height="11"

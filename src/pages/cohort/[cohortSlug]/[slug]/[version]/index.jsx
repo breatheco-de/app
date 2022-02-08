@@ -55,6 +55,7 @@ const Dashboard = () => {
   const cohortSession = isWindow && JSON.parse(localStorage.getItem('cohortSession') || '{}');
   axios.defaults.headers.common.Academy = cohortSession?.academy.id || '';
 
+  // Fetch cohort data with pathName structure
   useEffect(() => {
     bc.admissions().me().then((res) => {
       const { cohorts } = res.data;
@@ -74,6 +75,7 @@ const Dashboard = () => {
     });
   }, []);
 
+  // Students and Teachers data
   useEffect(() => {
     if (user && user.active_cohort) {
       const cohortId = user.active_cohort.slug;
@@ -89,6 +91,7 @@ const Dashboard = () => {
     }
   }, [user]);
 
+  // Fetch cohort assignments (lesson, exercise, project, quiz)
   useEffect(() => {
     if (user && user.active_cohort) {
       const academyId = user.active_cohort.academy_id;
@@ -105,6 +108,8 @@ const Dashboard = () => {
       });
     }
   }, [user]);
+
+  // Sync data fetched to contextState (useModuleMap - action)
   useEffect(() => {
     if (taskTodo && cohort) {
       setContextState({
@@ -114,6 +119,7 @@ const Dashboard = () => {
     }
   }, [cohort, taskTodo]);
 
+  // Sort all data fetched in order of taskTodo
   useMemo(() => {
     const cohortDays = cohort.json ? cohort.json.days : [];
     if (contextState.cohort.json && contextState.taskTodo) {
@@ -131,7 +137,7 @@ const Dashboard = () => {
         });
         const { filteredModules, modules } = nestedAssignments;
 
-        // prevent duplicates when a new module has been started
+        // prevent duplicates when a new module has been started (added to sortedAssignments array)
         const keyIndex = sortedAssignments.findIndex((x) => x.id === id);
         if (keyIndex > -1) {
           sortedAssignments.splice(keyIndex, 1, {

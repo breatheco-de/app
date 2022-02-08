@@ -1,4 +1,5 @@
 /* eslint-disable react/no-array-index-key */
+import { memo } from 'react';
 import {
   Box,
   Heading,
@@ -220,9 +221,8 @@ CohortSideBar.defaultProps = {
     },
   ],
   background: '',
-  handleStudySession: () => {
-  },
+  handleStudySession: () => {},
   cohortSideBarTR: {},
 };
 
-export default CohortSideBar;
+export default memo(CohortSideBar);
