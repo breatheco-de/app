@@ -30,6 +30,5 @@ module.exports = withBundleAnalyzer({
   },
   env: {
     BREATHECODE_HOST: process.env.BREATHECODE_HOST,
-    // BREATHECODE_HOST: 'https://breathecode.herokuapp.com',
   },
 });

@@ -31,8 +31,9 @@ const Dashboard = () => {
   const { contextState, setContextState } = useModuleMap();
   const [cohortProgram, setNewCohortProgram] = usePersistent('cohortProgram', {});
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
+  const [cohortSession] = usePersistent('cohortSession', {});
   // const [startedTasks, setStartedTasks] = useState([]);
-  const [studentAndTeachers, setSudentAndTeachers] = useState();
+  const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [sortedAssignments, setSortedAssignments] = useState([]);
   const { user, choose } = useAuth();
   const { setSyllabus } = useSyllabus();
@@ -51,8 +52,6 @@ const Dashboard = () => {
     tapCapsule, progressBar,
   } = mockData;
 
-  const isWindow = typeof window !== 'undefined';
-  const cohortSession = isWindow && JSON.parse(localStorage.getItem('cohortSession') || '{}');
   axios.defaults.headers.common.Academy = cohortSession?.academy.id || '';
 
   // Fetch cohort data with pathName structure
@@ -208,14 +207,10 @@ const Dashboard = () => {
             <CohortSideBar
               cohortSideBarTR={cohortSideBar}
               studentAndTeachers={studentAndTeachers}
+              cohortCity={cohortSession.name}
               containerStyle={{
                 margin: '30px 0 0 0',
               }}
-              // title={cohortSideBar.title}
-              // cohortCity={cohortSideBar.cohortCity}
-              // professor={cohortSideBar.professor}
-              // assistant={cohortSideBar.assistant}
-              // classmates={cohortSideBar.classmates}
               width="100%"
             />
             <Box marginTop="30px">
@@ -309,13 +304,10 @@ const Dashboard = () => {
           <CohortSideBar
             cohortSideBarTR={cohortSideBar}
             studentAndTeachers={studentAndTeachers}
-            // title={cohortSideBar.title}
-            // cohortCity={cohortSideBar.cohortCity}
-            // professor={cohortSideBar.professor}
-            // assistant={cohortSideBar.assistant}
-            // classmates={cohortSideBar.classmates}
+            cohortCity={cohortSession.name}
             width="100%"
           />
+
           <Box marginTop="30px">
             <SupportSidebar
               title={supportSideBar.title}

@@ -19,8 +19,8 @@ const SupportSidebar = ({
   title, subtitle, actionButtons, width,
 }) => {
   const { colorMode } = useColorMode();
-  const [cohortServices, setCohortServices] = usePersistent('cohortServices', []);
-  const [cohortMentors, setCohortMentors] = usePersistent('cohortMentors', []);
+  const [programServices, setProgramServices] = usePersistent('programServices', []);
+  const [programMentors, setProgramMentors] = usePersistent('programMentors', []);
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
 
@@ -28,20 +28,20 @@ const SupportSidebar = ({
     bc.mentorship().getService().then((res) => {
       const { data } = res;
       if (data !== undefined && data.length > 0) {
-        setCohortServices(data);
+        setProgramServices(data);
+
+        Promise.all(programServices.map((service) => bc.mentorship().getMentor({
+          serviceSlug: service.slug,
+        })
+          .then((resp) => {
+            setProgramMentors(resp.data);
+          }).catch((err) => {
+            console.error('err_mentorship:getMentor:', err);
+          })));
       }
     }).catch((err) => {
       console.error('err_mentorship:', err);
     });
-
-    Promise.all(cohortServices.map((service) => bc.mentorship().getMentor({
-      serviceSlug: service.slug,
-    })
-      .then(({ data }) => {
-        setCohortMentors(data);
-      }).catch((err) => {
-        console.error('err_mentorship:getMentor:', err);
-      })));
   }, []);
 
   return (
@@ -163,7 +163,7 @@ const SupportSidebar = ({
                   </Box>
                 </AccordionButton>
                 <AccordionPanel padding="0" width="100%">
-                  {cohortServices && cohortServices.map((service) => (
+                  {programServices && programServices.map((service) => (
                     <Accordion
                       key={service.slug}
                       allowMultiple
@@ -178,28 +178,29 @@ const SupportSidebar = ({
                           {service.name}
                         </AccordionButton>
                         <AccordionPanel
-                          pb={4}
+                          padding="0"
                           width="100%"
                           borderTop="1px solid"
                           borderLeft="5px solid"
                           maxWidth="100%"
                           borderColor={commonBorderColor}
                         >
-                          {cohortMentors && cohortMentors.filter(
+                          {programMentors && programMentors.filter(
                             (mentor) => mentor.service.slug === service.slug,
-                          ) && cohortMentors.map((l) => (
+                          ) && programMentors.map((l) => (
                             // https://mentor.breatheco.de/academy/santiago-chile/service/geekpal-chile/mentor?token=913u7x-ss8ad7057839fj3289dj28m9ew00
                             // https://mentor.breatheco.de/academy/downtown-miami/service/geekpal/mentor/ariel-calisaya?token=308ad70c6bb31a42e73e3cb06a8857961858a000
-                            <Box
-                              padding="16px"
-                              as="a"
-                              color="blue.default"
-                              key={`${l.slug}-${l.id}`}
-                              href={`https://mentor.breatheco.de/academy/${academySlug}/service/${service.slug}/mentor/${l.slug}?token=${accessToken}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {`${l.user.first_name} ${l.user.last_name}`}
+                            <Box padding="16px" width="100%">
+                              <Box
+                                as="a"
+                                color="blue.default"
+                                key={`${l.slug}-${l.id}`}
+                                href={`https://mentor.breatheco.de/academy/${academySlug}/service/${service.slug}/mentor/${l.slug}?token=${accessToken}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {`${l.user.first_name} ${l.user.last_name}`}
+                              </Box>
                             </Box>
                           ))}
                         </AccordionPanel>
