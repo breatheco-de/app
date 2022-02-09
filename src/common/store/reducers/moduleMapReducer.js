@@ -20,7 +20,7 @@ const initialState = {
     },
   ],
   contextState: {
-    cohort: [],
+    cohortProgram: [],
     taskTodo: [],
   },
 };
