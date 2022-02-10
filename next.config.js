@@ -22,11 +22,13 @@ module.exports = withBundleAnalyzer({
     // Will only be available on the server side
     BREATHECODE_HOST: defaultEnpoint,
     GITHUB_TOKEN: process.env.GITHUB_TOKEN, // Pass through env variables
+    BC_ACADEMY_TOKEN: process.env.BC_ACADEMY_TOKEN,
   },
   publicRuntimeConfig: {
     // Will be available on both server and client
     BREATHECODE_HOST: defaultEnpoint,
     NEXT_PUBLIC_ID: process.env.NEXT_PUBLIC_ID,
+    BC_ACADEMY_TOKEN: process.env.BC_ACADEMY_TOKEN,
   },
   images: {
     // whitelist for image providers
