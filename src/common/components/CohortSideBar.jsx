@@ -5,7 +5,6 @@ import {
   Heading,
   Divider,
   Grid,
-  Link,
   useColorMode,
   useColorModeValue,
 } from '@chakra-ui/react';
@@ -13,13 +12,13 @@ import PropTypes from 'prop-types';
 import Icon from './Icon';
 import Text from './Text';
 import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
+import { AvatarSkeleton } from './Skeleton';
 
 const CohortSideBar = ({
   title,
   cohortCity,
   background,
   width,
-  handleStudySession,
   containerStyle,
   cohortSideBarTR,
   studentAndTeachers,
@@ -63,7 +62,7 @@ const CohortSideBar = ({
             </Text>
           </Box>
         </Box>
-        {teacher && teacher.map((el) => {
+        {teacher.map((el) => {
           const { user } = el;
           const fullName = `${user.first_name} ${user.last_name}`;
           return (
@@ -83,11 +82,11 @@ const CohortSideBar = ({
       </Box>
       <Divider margin={0} style={{ borderColor: useColorModeValue('#DADADA', 'gray.700') }} />
       <Box padding="0 26px">
-        <Heading as="h4" padding="25px 0 8px 0" fontSize={15} lineHeight="18px" margin={0}>
-          {cohortSideBarTR.assistant || 'Assistant Professors'}
-        </Heading>
-        {teacherAssistants && (
+        {teacherAssistants.length > 0 && (
           <>
+            <Heading as="h4" padding="25px 0 8px 0" fontSize={15} lineHeight="18px" margin={0}>
+              {cohortSideBarTR.assistant || 'Assistant Professors'}
+            </Heading>
             <Grid
               gridAutoRows="3.4rem"
               templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
@@ -110,16 +109,18 @@ const CohortSideBar = ({
           templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
           gap={0}
         >
-          {students.map((c) => {
-            const fullName = `${c.user.first_name} ${c.user.last_name}`;
-            return (
-              <AvatarUser key={fullName} data={c} />
-            );
-          })}
+          {
+            students.length !== 0 ? students.map((c) => {
+              const fullName = `${c.user.first_name} ${c.user.last_name}`;
+              return (
+                <AvatarUser key={fullName} data={c} />
+              );
+            }) : <AvatarSkeleton quantity={12} />
+          }
         </Grid>
       </Box>
       <Box textAlign="center" padding="30px 0">
-        <Link
+        {/* <Link
           href="/"
           color="blue.default"
           fontWeight="700"
@@ -129,7 +130,7 @@ const CohortSideBar = ({
           onClick={handleStudySession}
         >
           Create a study session
-        </Link>
+        </Link> */}
       </Box>
     </Box>
   );
@@ -144,7 +145,7 @@ CohortSideBar.propTypes = {
   assistant: PropTypes.arrayOf(PropTypes.object),
   classmates: PropTypes.arrayOf(PropTypes.object),
   background: PropTypes.string,
-  handleStudySession: PropTypes.func,
+  // handleStudySession: PropTypes.func,
   cohortSideBarTR: PropTypes.objectOf(PropTypes.any),
 };
 CohortSideBar.defaultProps = {
@@ -221,7 +222,7 @@ CohortSideBar.defaultProps = {
     },
   ],
   background: '',
-  handleStudySession: () => {},
+  // handleStudySession: () => {},
   cohortSideBarTR: {},
 };
 

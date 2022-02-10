@@ -2,8 +2,8 @@ import { memo } from 'react';
 import {
   WrapItem,
   Avatar,
-  AvatarBadge,
   Tooltip,
+  // AvatarBadge,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
@@ -16,15 +16,17 @@ const AvatarUser = ({ data }) => {
         <Avatar
           width="39px"
           height="39px"
-          name={fullName}
-          src={user?.image}
+          style={{ userSelect: 'none' }}
+          src={user.profile?.avatar_url}
         >
+          {/*
+          //ONLINE/OFFLINE BADGE icon
           <AvatarBadge
             boxSize="9px"
             bg={user?.active ? 'success' : 'danger'}
             top="0"
             border="1px solid"
-          />
+          /> */}
         </Avatar>
       </WrapItem>
     </Tooltip>

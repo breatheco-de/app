@@ -6,7 +6,7 @@ body {
   -webkit-font-smoothing: antialiased;
 
   scroll-behavior: smooth;
-  /* scroll-padding: 10%; */
+  scroll-padding: 14px;
 }
 
 a {

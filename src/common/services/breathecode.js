@@ -41,6 +41,8 @@ const breathecode = {
   cohort: () => {
     const url = `${host}/admissions/academy`;
     return {
+      // la cohorte es miami-xxx
+      // se puede poner &limit
       getStudents: (cohortId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}`),
     };
   },
@@ -52,9 +54,10 @@ const breathecode = {
     };
   },
 
+  // v1/auth/suscribe + email form - home page
+  // si not academy list = you are in waiting list wait for invittion... - in choose-program pages
   mentorship: () => {
-    const url = 'https://breathecode.herokuapp.com/v1/mentorship/academy';
-    // https://breathecode.herokuapp.com/v1/mentorship/academy
+    const url = `${host}/mentorship/academy`;
     return {
       getService: () => axios.get(`${url}/service`),
       getMentor: ({ serviceSlug }) => axios.get(`${url}/mentor?service=${serviceSlug}`),

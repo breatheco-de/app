@@ -29,10 +29,11 @@ import useSyllabus from '../../../../../common/store/actions/syllabusActions';
 
 const Dashboard = () => {
   const { contextState, setContextState } = useModuleMap();
-  const [cohort, setNewCohort] = usePersistent('cohort', {});
+  const [cohortProgram, setNewCohortProgram] = usePersistent('cohortProgram', {});
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
+  const [cohortSession] = usePersistent('cohortSession', {});
   // const [startedTasks, setStartedTasks] = useState([]);
-  const [studentAndTeachers, setSudentAndTeachers] = useState();
+  const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [sortedAssignments, setSortedAssignments] = useState([]);
   const { user, choose } = useAuth();
   const { setSyllabus } = useSyllabus();
@@ -51,8 +52,6 @@ const Dashboard = () => {
     tapCapsule, progressBar,
   } = mockData;
 
-  const isWindow = typeof window !== 'undefined';
-  const cohortSession = isWindow && JSON.parse(localStorage.getItem('cohortSession') || '{}');
   axios.defaults.headers.common.Academy = cohortSession?.academy.id || '';
 
   // Fetch cohort data with pathName structure
@@ -78,7 +77,7 @@ const Dashboard = () => {
   // Students and Teachers data
   useEffect(() => {
     if (user && user.active_cohort) {
-      const cohortId = user.active_cohort.slug;
+      const cohortId = user.active_cohort.cohort_slug;
 
       bc.cohort().getStudents(cohortId).then((res) => {
         const { data } = res;
@@ -98,31 +97,37 @@ const Dashboard = () => {
       const { version } = user.active_cohort;
       bc.syllabus().get(academyId, slug, version).then((res) => {
         const studentLessons = res.data;
-        setNewCohort(studentLessons);
+        setNewCohortProgram(studentLessons);
         setSyllabus(studentLessons.json.days);
+      }).catch((err) => {
+        console.log('syllabus_error:', err);
+        setNewCohortProgram([]);
       });
 
       bc.todo().getTaskByStudent().then((res) => {
         const tasks = res.data;
         setTaskTodo(tasks);
+      }).catch((err) => {
+        console.log('todo_error:', err);
+        setTaskTodo([]);
       });
     }
   }, [user]);
 
   // Sync data fetched to contextState (useModuleMap - action)
   useEffect(() => {
-    if (taskTodo && cohort) {
+    if (taskTodo && cohortProgram) {
       setContextState({
         taskTodo,
-        cohort,
+        cohortProgram,
       });
     }
-  }, [cohort, taskTodo]);
+  }, [cohortProgram, taskTodo]);
 
   // Sort all data fetched in order of taskTodo
   useMemo(() => {
-    const cohortDays = cohort.json ? cohort.json.days : [];
-    if (contextState.cohort.json && contextState.taskTodo) {
+    const cohortDays = cohortProgram.json ? cohortProgram.json.days : [];
+    if (contextState.cohortProgram.json && contextState.taskTodo) {
       cohortDays.map((assignment) => {
         const {
           id, label, description, lessons, replits, assignments, quizzes,
@@ -151,7 +156,7 @@ const Dashboard = () => {
         return setSortedAssignments(sortedAssignments);
       });
     }
-  }, [contextState.cohort.json, contextState.taskTodo, cohort]);
+  }, [contextState.cohortProgram.json, contextState.taskTodo, cohortProgram]);
 
   return (
     <Container maxW="container.xl">
@@ -183,9 +188,9 @@ const Dashboard = () => {
         }}
       >
         <Box width="100%" minW={{ base: 'auto', md: '770px' }}>
-          {cohort.name ? (
+          {cohortProgram.name ? (
             <Heading as="h1" size="xl">
-              {cohort.name}
+              {cohortProgram.name}
             </Heading>
           ) : (
             <Skeleton
@@ -202,14 +207,10 @@ const Dashboard = () => {
             <CohortSideBar
               cohortSideBarTR={cohortSideBar}
               studentAndTeachers={studentAndTeachers}
+              cohortCity={cohortSession.name}
               containerStyle={{
                 margin: '30px 0 0 0',
               }}
-              // title={cohortSideBar.title}
-              // cohortCity={cohortSideBar.cohortCity}
-              // professor={cohortSideBar.professor}
-              // assistant={cohortSideBar.assistant}
-              // classmates={cohortSideBar.classmates}
               width="100%"
             />
             <Box marginTop="30px">
@@ -303,13 +304,10 @@ const Dashboard = () => {
           <CohortSideBar
             cohortSideBarTR={cohortSideBar}
             studentAndTeachers={studentAndTeachers}
-            // title={cohortSideBar.title}
-            // cohortCity={cohortSideBar.cohortCity}
-            // professor={cohortSideBar.professor}
-            // assistant={cohortSideBar.assistant}
-            // classmates={cohortSideBar.classmates}
+            cohortCity={cohortSession.name}
             width="100%"
           />
+
           <Box marginTop="30px">
             <SupportSidebar
               title={supportSideBar.title}

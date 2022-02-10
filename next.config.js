@@ -29,6 +29,6 @@ module.exports = withBundleAnalyzer({
     // formats: ['image/avif', 'image/webp'],
   },
   env: {
-    BREATHECODE_HOST: 'https://breathecode.herokuapp.com',
+    BREATHECODE_HOST: process.env.BREATHECODE_HOST,
   },
 });
