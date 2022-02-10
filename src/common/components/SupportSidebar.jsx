@@ -180,17 +180,24 @@ const SupportSidebar = ({
                         <AccordionPanel
                           padding="0"
                           width="100%"
-                          borderTop="1px solid"
-                          borderLeft="5px solid"
+                          border="0"
+                          // borderTop="1px solid"
+                          // borderLeft="5px solid"
                           maxWidth="100%"
-                          borderColor={commonBorderColor}
+                          // borderColor={commonBorderColor}
                         >
                           {programMentors && programMentors.filter(
                             (mentor) => mentor.service.slug === service.slug,
                           ) && programMentors.map((l) => (
                             // https://mentor.breatheco.de/academy/santiago-chile/service/geekpal-chile/mentor?token=913u7x-ss8ad7057839fj3289dj28m9ew00
                             // https://mentor.breatheco.de/academy/downtown-miami/service/geekpal/mentor/ariel-calisaya?token=308ad70c6bb31a42e73e3cb06a8857961858a000
-                            <Box padding="16px" width="100%">
+                            <Box
+                              padding="16px"
+                              borderTop="1px solid"
+                              borderLeft="5px solid"
+                              borderColor={commonBorderColor}
+                              width="100%"
+                            >
                               <Box
                                 as="a"
                                 color="blue.default"
