@@ -30,7 +30,7 @@ const Template = (args) => <Box width={`${args.width}%`}>
 
 export const Default = Template.bind({});
 Default.args = {
-  size: 'default',
+  size: 'm',
   color:'gray',
   width:100,
   text: 'Fron end development',

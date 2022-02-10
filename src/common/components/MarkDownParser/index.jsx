@@ -67,9 +67,9 @@ const MDLink = ({ children, href }) => (
 
 const MarkDownParser = ({ content, withToc, frontMatter }) => (
   <>
-    {frontMatter && (
+    {withToc && (
     <ContentHeading content={frontMatter}>
-      {withToc && <Toc content={content} />}
+      <Toc content={content} />
     </ContentHeading>
     )}
     {compiler(content, {

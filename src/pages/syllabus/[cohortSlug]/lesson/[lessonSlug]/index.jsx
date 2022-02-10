@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Flex,
@@ -6,39 +6,41 @@ import {
   useDisclosure,
   Slide,
   IconButton,
+  useToast,
 } from '@chakra-ui/react';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
+import atob from 'atob';
+import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import Timeline from '../../../../../common/components/Timeline';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkdownParser from '../../../../../common/components/MarkDownParser';
 import useSyllabus from '../../../../../common/store/actions/syllabusActions';
+import bc from '../../../../../common/services/breathecode';
+import useAuth from '../../../../../common/hooks/useAuth';
+import { MDSkeleton } from '../../../../../common/components/Skeleton';
 
-export const getServerSideProps = async ({ locale, params: { cohortSlug } }) => {
-  const results = await fetch(
-    'https://raw.githubusercontent.com/breatheco-de/content/master/src/content/lesson/css-layouts.md',
-  )
-    .then((res) => res.text())
-    .catch((err) => console.error(err));
-  const markdownContent = getMarkDownContent(results);
-  return {
-    props: {
-      fallback: false,
-      ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
-      data: markdownContent,
-      cohortSlug,
-    },
-  };
-};
+export const getServerSideProps = async ({ locale, params: { cohortSlug, lessonSlug } }) => ({
+  props: {
+    fallback: false,
+    ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
+    cohortSlug,
+    lessonSlug,
+  },
+});
 
-const Content = ({ data, cohortSlug }) => {
+const Content = ({ cohortSlug, lessonSlug }) => {
   const { isOpen, onToggle } = useDisclosure();
   const [showScrollToTop, setShowScrollToTop] = useState(false);
-  const { syllabus = [] } = useSyllabus();
+  const [readme, setReadme] = useState(null);
+  const { syllabus = [], setSyllabus } = useSyllabus();
+  const { user, choose } = useAuth();
+  const toast = useToast();
   const router = useRouter();
+
   const checkScrollTop = () => {
     if (!showScrollToTop && window.pageYOffset > 400) {
       setShowScrollToTop(true);
@@ -57,7 +59,69 @@ const Content = ({ data, cohortSlug }) => {
 
   const onClickAssignment = (e, item) => {
     router.push(`/syllabus/${cohortSlug}/lesson/${item.slug}`);
+    setReadme(null);
   };
+
+  const EventIfNotFound = () => {
+    toast({
+      title: 'The endpoint could not access the content of this Project',
+      // description: 'Content not found',
+      status: 'error',
+      duration: 7000,
+      isClosable: true,
+    });
+  };
+
+  useEffect(() => {
+    bc.admissions().me().then((res) => {
+      const { cohorts } = res.data;
+      // find cohort with current slug
+      const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
+      const currentCohort = findCohort?.cohort;
+      const { version, name } = currentCohort?.syllabus_version;
+      choose({
+        cohort_slug: cohortSlug,
+        version,
+        slug: currentCohort?.syllabus_version.slug,
+        cohort_name: currentCohort.name,
+        syllabus_name: name,
+        academy_id: currentCohort.academy.id,
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    if (user && user.active_cohort) {
+      const academyId = user.active_cohort.academy_id;
+      const { version, slug } = user.active_cohort;
+      bc.syllabus().get(academyId, slug, version).then((res) => {
+        const studentLessons = res.data;
+        setSyllabus(studentLessons.json.days);
+      });
+    }
+  }, [user]);
+
+  useEffect(() => {
+    bc.lesson({
+      type: 'lesson',
+      slug: lessonSlug,
+      big: true,
+    })
+      .get()
+      .then((lesson) => {
+        console.log(lesson);
+        if (lesson.data[0] !== undefined && lesson.data[0].readme !== null) {
+          const MDecoded = lesson.data[0].readme && typeof lesson.data[0].readme === 'string' ? atob(lesson.data[0].readme) : null;
+          console.log(MDecoded);
+          const markdown = getMarkDownContent(MDecoded);
+          setReadme(markdown);
+        } else {
+          setTimeout(() => {
+            EventIfNotFound();
+          }, 4000);
+        }
+      });
+  }, [lessonSlug]);
 
   return (
     <Flex position="relative">
@@ -98,7 +162,7 @@ const Content = ({ data, cohortSlug }) => {
         style={{
           zIndex: 10,
           position: 'sticky',
-          width: '40%',
+          width: '30%',
           display: isOpen ? 'block' : 'none',
           height: '100vh',
           borderRight: 1,
@@ -114,13 +178,15 @@ const Content = ({ data, cohortSlug }) => {
           borderStyle="solid"
           borderColor="gray.200"
         >
-          <Heading size="xsm">Full Stack Developer</Heading>
+          <Heading size="xsm">{user.active_cohort && user.active_cohort.syllabus_name}</Heading>
         </Box>
         <Box padding="1.5rem">
           {syllabus && syllabus.map((section) => (
             <Box marginBottom="2rem">
               <Timeline
                 key={section.id}
+                technologies={section.technologies.length > 0
+                  ? section.technologies.map((t) => t.title) : []}
                 title={section.label}
                 lessons={section.lessons}
                 answer={section.quizzes}
@@ -133,15 +199,20 @@ const Content = ({ data, cohortSlug }) => {
         </Box>
       </Slide>
       <Container maxW="container.xl">
-        <MarkdownParser content={data.content} withToc frontMatter={data.frontMatter || ''} />
+        {readme ? (
+          <MarkdownParser content={readme.content} withToc frontMatter={readme.frontMatter || ''} />
+        ) : (
+          <MDSkeleton />
+        )}
+
       </Container>
     </Flex>
   );
 };
 
 Content.propTypes = {
-  data: PropTypes.string.isRequired,
   cohortSlug: PropTypes.string.isRequired,
+  lessonSlug: PropTypes.string.isRequired,
 };
 
-export default Content;
+export default asPrivate(Content);

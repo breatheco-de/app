@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { compiler } from 'markdown-to-jsx';
 import {
-  SimpleGrid, UnorderedList, ListItem, useColorMode,
+  UnorderedList, ListItem, useColorMode, Box,
 } from '@chakra-ui/react';
 import Anchor from './Anchor';
 
@@ -53,18 +53,48 @@ const Toc = ({ content }) => {
   };
 
   return (
-    <SimpleGrid columns={[1, null, 2]} spacing={3} bg={colorMode === 'light' ? 'blue.light' : 'featuredDark'} paddingX="28px" paddingY={22} borderRadius="17px">
+    <Box
+      w="100%"
+      mx="auto"
+      sx={{ columnCount: [1, 2, 3], columnGap: '20%' }}
+      bg={colorMode === 'light' ? 'blue.light' : 'featuredDark'}
+      paddingX="28px"
+      paddingY={22}
+      borderRadius="17px"
+    >
       {getHierarchy().map((item) => (
         <>
           {Array.isArray(item.childs) ? (
-            <UnorderedList listStyleType="none" margin={0} padding={0} style={{ margin: 0 }}>
+            <Box
+              marginBottom="0.6rem"
+              d="inline-block"
+            >
               {item.h}
-              {item.childs.map((c) => <ListItem margin={0}>{c.h}</ListItem>)}
-            </UnorderedList>
-          ) : item.h}
+              <UnorderedList
+                position="relative"
+                _before={item.childs.length > 0 && {
+                  content: '""',
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  width: '2px',
+                  height: '85%',
+                  bg: colorMode === 'light' ? '#DADADA' : '#3E526A',
+                  borderRadius: '2px',
+                  transform: 'translate(0, 10%)',
+                }}
+                listStyleType="none"
+                margin={0}
+                padding={0}
+                style={{ margin: 0 }}
+              >
+                {item.childs.map((c) => <ListItem margin={0}>{c.h}</ListItem>)}
+              </UnorderedList>
+            </Box>
+          ) : <Box marginBottom="0.5rem" d="inline-block">{item.h}</Box>}
         </>
       ))}
-    </SimpleGrid>
+    </Box>
   );
 };
 
