@@ -10,12 +10,17 @@ const { i18n } = require('./next-i18next.config');
 //   server: ['GITHUB_TOKEN'],
 // });
 
+const dev = process.env.NODE_ENV !== 'production';
+
+const defaultEnpoint = dev ? process.env.BREATHECODE_HOST : 'https://breathecode-test.herokuapp.com';
+
 module.exports = withBundleAnalyzer({
   // rest of config here
   i18n,
   reactStrictMode: true,
   serverRuntimeConfig: {
     // Will only be available on the server side
+    BREATHECODE_HOST: process.env.BREATHECODE_HOST,
     GITHUB_TOKEN: process.env.GITHUB_TOKEN, // Pass through env variables
   },
   publicRuntimeConfig: {
@@ -29,6 +34,6 @@ module.exports = withBundleAnalyzer({
     // formats: ['image/avif', 'image/webp'],
   },
   env: {
-    BREATHECODE_HOST: process.env.BREATHECODE_HOST,
+    BREATHECODE_HOST: process.env.BREATHECODE_HOST || defaultEnpoint,
   },
 });
