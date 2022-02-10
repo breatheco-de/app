@@ -35,5 +35,6 @@ module.exports = withBundleAnalyzer({
   },
   env: {
     BREATHECODE_HOST: process.env.BREATHECODE_HOST || defaultEnpoint,
+    BC_ACADEMY_TOKEN: process.env.BC_ACADEMY_TOKEN,
   },
 });
