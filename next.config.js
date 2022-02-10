@@ -20,12 +20,12 @@ module.exports = withBundleAnalyzer({
   reactStrictMode: true,
   serverRuntimeConfig: {
     // Will only be available on the server side
-    BREATHECODE_HOST: process.env.BREATHECODE_HOST,
+    BREATHECODE_HOST: defaultEnpoint,
     GITHUB_TOKEN: process.env.GITHUB_TOKEN, // Pass through env variables
   },
   publicRuntimeConfig: {
     // Will be available on both server and client
-    BREATHECODE_HOST: process.env.BREATHECODE_HOST,
+    BREATHECODE_HOST: defaultEnpoint,
     NEXT_PUBLIC_ID: process.env.NEXT_PUBLIC_ID,
   },
   images: {
@@ -34,7 +34,7 @@ module.exports = withBundleAnalyzer({
     // formats: ['image/avif', 'image/webp'],
   },
   env: {
-    BREATHECODE_HOST: process.env.BREATHECODE_HOST || defaultEnpoint,
+    BREATHECODE_HOST: defaultEnpoint,
     BC_ACADEMY_TOKEN: process.env.BC_ACADEMY_TOKEN,
   },
 });

@@ -33,6 +33,7 @@ export const getStaticProps = async ({ locale }) => {
 };
 
 const Lessons = ({ data }) => {
+  console.log('data_lessons', data);
   const router = useRouter();
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
 
