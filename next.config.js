@@ -17,7 +17,7 @@ const defaultEnpoint = dev ? process.env.BREATHECODE_HOST : 'https://breathecode
 module.exports = withBundleAnalyzer({
   // rest of config here
   i18n,
-  reactStrictMode: true,
+  reactStrictMode: false,
   serverRuntimeConfig: {
     // Will only be available on the server side
     BREATHECODE_HOST: defaultEnpoint,
