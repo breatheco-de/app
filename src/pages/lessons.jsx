@@ -25,12 +25,6 @@ export const getStaticProps = async ({ locale }) => {
   ).then((res) => res.json());
   console.log('data_lessons:::', data);
 
-  if (!data) {
-    return {
-      notFound: true,
-    };
-  }
-
   return {
     props: {
       fallback: false,
