@@ -241,7 +241,7 @@ const ProjectSlug = ({ project }) => {
             transition="background .2s ease"
           >
             {readme.markdown ? (
-              <MarkDownParser content={readme.markdown} showTableOfContents={false} />
+              <MarkDownParser content={readme.markdown} withToc />
             ) : (
               <MDSkeleton />
             )}

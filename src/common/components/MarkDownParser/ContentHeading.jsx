@@ -14,6 +14,7 @@ const ContentHeading = ({ content, children }) => {
       paddingBottom="2rem"
       marginBottom="2rem"
     >
+      {content && (
       <Box marginBottom="1.2rem">
         <Heading size="m" display="inline-flex" marginTop="1.5rem">
           <Icon icon="book" height="30px" width="28px" style={{ margin: 'auto', marginRight: '0.4rem' }} />
@@ -24,6 +25,7 @@ const ContentHeading = ({ content, children }) => {
           {subtitle}
         </Text>
       </Box>
+      )}
       {children}
     </Box>
   );

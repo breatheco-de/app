@@ -63,6 +63,15 @@ const breathecode = {
       getMentor: ({ serviceSlug }) => axios.get(`${url}/mentor?service=${serviceSlug}`),
     };
   },
+  lesson: (query) => {
+    const url = `${host}/registry/asset`;
+    const qs = Object.keys(query)
+      .map((key) => `${key}=${query[key]}`)
+      .join('&');
+    return {
+      get: () => axios.get(`${url}?${qs}`),
+    };
+  },
 };
 
 export default breathecode;
