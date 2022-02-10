@@ -12,7 +12,6 @@ import Link from '../common/components/NextChakraLink';
 
 export const getStaticProps = async ({ locale }) => {
   const data = await fetch(
-    // 'https://breathecode-test.herokuapp.com/v1/admissions/syllabus/full-stack/version/latest',
     'https://breathecode-test.herokuapp.com/v1/admissions/syllabus/full-stack/version/latest',
     {
       method: 'GET',
@@ -23,7 +22,6 @@ export const getStaticProps = async ({ locale }) => {
       },
     },
   ).then((res) => res.json());
-  console.log('data_lessons:::', data);
 
   return {
     props: {
@@ -45,7 +43,7 @@ const Lessons = ({ data }) => {
     return true;
   };
 
-  const filteredBySearch = data.json && data.json?.days.filter((lesson) => contains(lesson));
+  const filteredBySearch = data.json.days.filter((lesson) => contains(lesson));
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
