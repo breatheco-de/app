@@ -34,7 +34,7 @@ function LogIn() {
             if (data.status === 200) {
               actions.setSubmitting(false);
               toast({
-                title: 'Welcome to breathecode',
+                title: 'Welcome to 4Geeks',
                 description: 'Select a program',
                 status: 'success',
                 duration: 9000,
