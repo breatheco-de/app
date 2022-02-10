@@ -23,6 +23,12 @@ export const getStaticProps = async ({ locale }) => {
     },
   ).then((res) => res.json());
 
+  if (!data) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
     props: {
       fallback: false,
@@ -43,7 +49,7 @@ const Lessons = ({ data }) => {
     return true;
   };
 
-  const filteredBySearch = data.json.days.filter((lesson) => contains(lesson));
+  const filteredBySearch = data.json && data.json?.days.filter((lesson) => contains(lesson));
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
