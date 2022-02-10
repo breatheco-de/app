@@ -17,7 +17,7 @@ const { i18n } = require('./next-i18next.config');
 module.exports = withBundleAnalyzer({
   // rest of config here
   i18n,
-  reactStrictMode: false,
+  reactStrictMode: true,
   serverRuntimeConfig: {
     // Will only be available on the server side
     BREATHECODE_HOST: process.env.BREATHECODE_HOST,
