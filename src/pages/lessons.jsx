@@ -11,6 +11,8 @@ import TitleContent from '../js_modules/projects/TitleContent';
 import Link from '../common/components/NextChakraLink';
 
 export const getStaticProps = async ({ locale }) => {
+  console.log('env_BC_ACADEMY_TOKEN', process.env.BC_ACADEMY_TOKEN);
+  console.log('env_BREATHECODE_HOST', process.env.BREATHECODE_HOST);
   const data = await fetch(
     'https://breathecode-test.herokuapp.com/v1/admissions/syllabus/full-stack/version/latest',
     {
