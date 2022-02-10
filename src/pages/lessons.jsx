@@ -12,6 +12,7 @@ import Link from '../common/components/NextChakraLink';
 
 export const getStaticProps = async ({ locale }) => {
   const data = await fetch(
+    // 'https://breathecode-test.herokuapp.com/v1/admissions/syllabus/full-stack/version/latest',
     `${process.env.BREATHECODE_HOST}/v1/admissions/syllabus/full-stack/version/latest`,
     {
       method: 'GET',
@@ -22,6 +23,7 @@ export const getStaticProps = async ({ locale }) => {
       },
     },
   ).then((res) => res.json());
+  console.log('data_lessons:::', data);
 
   if (!data) {
     return {
