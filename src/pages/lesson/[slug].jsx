@@ -12,7 +12,7 @@ import Link from '../../common/components/NextChakraLink';
 
 export const getStaticPaths = async () => {
   let lessons = [];
-  const data = await fetch('https://breathecode.herokuapp.com/v1/registry/asset?type=lesson')
+  const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson`)
     .then((res) => res.json())
     .catch((err) => console.log(err));
 
@@ -36,7 +36,7 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async ({ params, locale }) => {
   const { slug } = params;
-  const results = await fetch(`https://breathecode.herokuapp.com/v1/registry/asset/${slug}`)
+  const results = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`)
     .then((res) => res.json())
     .catch((err) => console.log(err));
 
