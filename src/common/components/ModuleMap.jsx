@@ -4,7 +4,6 @@ import {
 import PropTypes from 'prop-types';
 import Text from './Text';
 import Link from './NextChakraLink';
-
 import Icon from './Icon';
 
 const Module = ({

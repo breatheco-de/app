@@ -30,7 +30,7 @@ const Template = (args) => <Box width={`${args.width}%`}>
 
 export const Default = Template.bind({});
 Default.args = {
-    size: 'default',
+    size: 'md',
     color: 'gray',
     width: 100,
     text: 'During the pre-work you learn some basic CSS and HTML, and hopefully how to use the flex-box to create simple layouts. The first day we will review the pre-work completion and introduce a more evolved CSS that enables amazing layouts and the amazing Bootstrap framework that wil'

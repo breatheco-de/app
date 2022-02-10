@@ -43,13 +43,21 @@ const breathecode = {
       // }
     };
   },
-
-  // assignments: () => {
-  //   const url = `${host}/assignment`;
-  //   return {
-  //     get: () => axios.get(`${url}/user/me/task`),
-  //   };
-  // },
+  assignments: () => {
+    const url = `${host}/assignment`;
+    return {
+      get: () => axios.get(`${url}/user/me/task`),
+    };
+  },
+  lesson: (query) => {
+    const url = `${host}/registry/asset`;
+    const qs = Object.keys(query)
+      .map((key) => `${key}=${query[key]}`)
+      .join('&');
+    return {
+      get: () => axios.get(`${url}?${qs}`),
+    };
+  },
 };
 
 export default breathecode;
