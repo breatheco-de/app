@@ -118,8 +118,6 @@ export default function Home() {
                 email: '',
               }}
               onSubmit={(values, actions) => {
-                // console.log('values:::', values);
-                console.log(values);
                 bc.auth().subscribe(values).then(() => {
                   toast({
                     title: 'Your email has been added to our list!',
@@ -128,8 +126,7 @@ export default function Home() {
                     isClosable: true,
                   });
                   router.push('/thank-you');
-                }).catch((err) => {
-                  console.log('subscribe:err:::', err);
+                }).catch(() => {
                   toast({
                     title: 'Your email is already subscribed!',
                     status: 'warning',
