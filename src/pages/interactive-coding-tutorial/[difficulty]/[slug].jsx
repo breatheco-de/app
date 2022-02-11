@@ -78,7 +78,7 @@ const TableInfo = ({ project, commonTextColor }) => (
 
     <Box d="flex" alignItems="baseline" justifyContent="center" flexDirection="column">
       <Text size="md" color={commonTextColor} textAlign="center" my="10px" px="0px">
-        BreatheCode Coding Projects tutorials and exercises for people learning
+        4Geeks Coding Projects tutorials and exercises for people learning
         to code or improving their coding skills
       </Text>
       <SimpleTable
@@ -241,7 +241,7 @@ const ProjectSlug = ({ project }) => {
             transition="background .2s ease"
           >
             {readme.markdown ? (
-              <MarkDownParser content={readme.markdown} showTableOfContents={false} />
+              <MarkDownParser content={readme.markdown} withToc />
             ) : (
               <MDSkeleton />
             )}

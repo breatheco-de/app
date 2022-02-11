@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
 import {
   Box, Flex, useColorMode,
 } from '@chakra-ui/react';
@@ -13,44 +14,48 @@ const color = {
 };
 
 const Timeline = ({
-  title, lessons, practice, code, answer, width, onClickAssignment,
+  title, technologies, lessons, practice, code, answer, width, onClickAssignment,
 }) => {
   const { colorMode } = useColorMode();
+  const router = useRouter();
+  console.log(router.query.lessonSlug);
   const updatedLessons = lessons.map((el) => ({
     ...el,
     subtitle: 'Read',
     icon: 'book',
     task_type: 'LESSON',
-    muted: true,
+    muted: el.slug !== router.query.lessonSlug,
   }));
   const updatedPractice = practice.map((el) => ({
     ...el,
     subtitle: 'Practice',
     icon: 'strength',
     task_type: 'EXERCISE',
-    muted: true,
+    muted: el.slug !== router.query.lessonSlug,
   }));
   const updatedCode = code.map((el) => ({
     ...el,
     subtitle: 'Code',
     icon: 'code',
     task_type: 'PROJECT',
-    muted: true,
+    muted: el.slug !== router.query.lessonSlug,
   }));
   const updatedAnswer = answer.map((el) => ({
     ...el,
     subtitle: 'Answer',
     icon: 'answer',
     task_type: 'QUIZ',
-    muted: true,
+    muted: el.slug !== router.query.lessonSlug,
   }));
 
   const assignments = [...updatedLessons, ...updatedPractice, ...updatedCode, ...updatedAnswer];
   return (
     <Box width={width}>
       <Flex width="100%" marginBottom="1.5rem">
-        <Text size="l" fontWeight="900" color={colorMode === 'light' ? 'gray.dark' : 'white'}>{title && title}</Text>
-        <Text size="l" marginLeft="10px" fontWeight="400" color={colorMode === 'light' ? 'gray.dark' : 'white'} />
+        <Text size="l" fontWeight="900" color={colorMode === 'light' ? 'gray.dark' : 'white'}>{title && title.toUpperCase()}</Text>
+        <Text size="l" marginLeft="10px" fontWeight="400" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
+          {technologies && technologies.join(',').toUpperCase()}
+        </Text>
       </Flex>
       <Box>
         {assignments && assignments.map((item, index) => (
@@ -71,13 +76,13 @@ const Timeline = ({
             width="100%"
           >
             <Box marginY="auto">
-              <Box width="30px" height="30px" bg={item && item?.muted ? 'blue.default' : 'gray.default'} borderRadius="50px">
+              <Box width="30px" height="30px" bg={item && !item?.muted ? 'blue.default' : 'gray.default'} borderRadius="50px">
                 <Text size="sm" margin={0} color="white" textAlign="center" position="relative" top="5px">{index + 1}</Text>
               </Box>
             </Box>
-            <Flex cursor="pointer" onClick={(e) => onClickAssignment(e, item)} borderRadius="17px" bg={item && item?.muted ? color[colorMode] : 'none'} paddingY="8px" paddingX="12px" marginLeft="1.5rem">
-              <Box padding="8px" bg={item && item?.muted ? 'blue.default' : 'none'} borderRadius="50px" height="36px" margin="auto">
-                <Icon width="20px" height="20px" icon={item && item?.icon} color={!item?.muted ? 'gray' : 'white'} />
+            <Flex cursor="pointer" onClick={(e) => onClickAssignment(e, item)} borderRadius="17px" bg={item && !item?.muted ? color[colorMode] : 'none'} paddingY="8px" paddingX="12px" marginLeft="1.5rem">
+              <Box padding="8px" bg={item && !item?.muted ? 'blue.default' : 'none'} borderRadius="50px" height="36px" margin="auto">
+                <Icon width="20px" height="20px" icon={item && item?.icon} color={item?.muted ? 'gray' : 'white'} />
               </Box>
               <Box marginLeft="12px">
                 <Text size="sm" color={colorMode === 'light' ? 'gray.dark' : 'gray.light'} fontWeight="900" marginY={0}>{item && item?.subtitle?.toUpperCase()}</Text>
@@ -97,6 +102,7 @@ Timeline.propTypes = {
   code: PropTypes.arrayOf(PropTypes.array),
   practice: PropTypes.arrayOf(PropTypes.array),
   answer: PropTypes.arrayOf(PropTypes.array),
+  technologies: PropTypes.arrayOf(PropTypes.array),
   width: PropTypes.string,
   onClickAssignment: PropTypes.func,
 };
@@ -107,6 +113,7 @@ Timeline.defaultProps = {
   code: [],
   practice: [],
   answer: [],
+  technologies: [],
   width: '100%',
   onClickAssignment: () => {
   },

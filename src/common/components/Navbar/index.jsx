@@ -107,7 +107,7 @@ const NavbarWithSubNavigation = () => {
           />
           <NextChakraLink href="/" alignSelf="center" display={{ base: 'flex', md: 'none' }}>
             <Icon icon="logoModern" width="90px" height="20px" />
-            {/* <Image src={logo} width="30px" height="30px" alt="Breathecode logo" /> */}
+            {/* <Image src={logo} width="30px" height="30px" alt="4Geeks logo" /> */}
           </NextChakraLink>
         </Flex>
 

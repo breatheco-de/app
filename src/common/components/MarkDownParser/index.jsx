@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { compiler } from 'markdown-to-jsx';
-import { Link } from '@chakra-ui/react';
+import { Box, Link } from '@chakra-ui/react';
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import jsx from 'react-syntax-highlighter/dist/cjs/languages/prism/jsx';
@@ -40,7 +40,6 @@ const MDHeading = ({ children, id }) => (
     size="sm"
     padding="20px 0 15px 0"
     marginBottom="16px"
-    borderBottom="1px solid hsla(210,18%,87%,1)"
   >
     {children}
   </Heading>
@@ -65,11 +64,13 @@ const MDLink = ({ children, href }) => (
   </Link>
 );
 
+const MDHr = () => (<Box d="none" />);
+
 const MarkDownParser = ({ content, withToc, frontMatter }) => (
   <>
-    {frontMatter && (
+    {withToc && (
     <ContentHeading content={frontMatter}>
-      {withToc && <Toc content={content} />}
+      <Toc content={content} />
     </ContentHeading>
     )}
     {compiler(content, {
@@ -83,6 +84,16 @@ const MarkDownParser = ({ content, withToc, frontMatter }) => (
         },
         a: {
           component: MDLink,
+        },
+        hr: { component: MDHr },
+        h2: {
+          component: MDHeading,
+        },
+        h3: {
+          component: MDHeading,
+        },
+        h1: {
+          component: MDHeading,
         },
         img: {
           props: {

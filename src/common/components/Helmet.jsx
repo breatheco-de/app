@@ -44,11 +44,11 @@ Helmet.propTypes = {
 };
 
 Helmet.defaultProps = {
-  title: 'BreatheCode',
-  url: 'https://breatheco.de',
+  title: '4Geeks',
+  url: 'https://4geeks.com',
   description:
-    "BreatheCode's mission is to accelerate the way junior developers learn and evolve using technology.",
-  previewImage: 'https://raw.githubusercontent.com/breatheco-de/admin/master/public/favicon.ico',
+    "4Geeks's mission is to accelerate the way software developers learn and evolve.",
+  previewImage: 'https://raw.githubusercontent.com/4GeeksAcademy/website-v2/master/src/assets/logos/favicon.png',
   type: 'website',
   unlisted: false,
 };
