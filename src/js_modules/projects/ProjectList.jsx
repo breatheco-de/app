@@ -54,7 +54,6 @@ const ProjectList = ({
         gridGap="12px"
       >
         {filteredProjects.map((ex) => {
-          // ex.preview ? ex.preview : defaultImage;
           const getImage = ex.preview || defaultImage;
           return (
             <Box

@@ -43,8 +43,6 @@ const breathecode = {
   cohort: () => {
     const url = `${host}/admissions/academy`;
     return {
-      // la cohorte es miami-xxx
-      // se puede poner &limit
       getStudents: (cohortId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}`),
     };
   },
@@ -55,9 +53,6 @@ const breathecode = {
       get: () => axios.get(`${url}/user/me/task`),
     };
   },
-
-  // v1/auth/suscribe + email form - home page
-  // si not academy list = you are in waiting list wait for invittion... - in choose-program pages
   mentorship: () => {
     const url = `${host}/mentorship/academy`;
     return {
