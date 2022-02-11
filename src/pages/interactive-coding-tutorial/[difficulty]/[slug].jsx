@@ -15,7 +15,7 @@ import { MDSkeleton } from '../../../common/components/Skeleton';
 
 export const getStaticPaths = async () => {
   let projects = [];
-  const data = await fetch('https://breathecode.herokuapp.com/v1/registry/asset?type=project')
+  const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`)
     .then((res) => res.json())
     .catch((err) => console.log(err));
 
@@ -27,6 +27,7 @@ export const getStaticPaths = async () => {
   }
 
   for (let i = 0; i < projects.length; i += 1) {
+    if (projects[i].difficulty === null) projects[i].difficulty = 'unknown';
     if (typeof projects[i].difficulty === 'string') {
       if (projects[i].difficulty === 'junior') projects[i].difficulty = 'easy';
       else if (projects[i].difficulty === 'semi-senior') projects[i].difficulty = 'intermediate';
@@ -48,11 +49,16 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async ({ params, locale }) => {
   const { slug } = params;
-  const results = await fetch('https://breathecode.herokuapp.com/v1/registry/asset?type=project')
+  const results = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`)
     .then((res) => res.json())
     .then((data) => data.find((e) => e.slug === slug))
-    .catch((err) => console.log(err));
+    .catch((err) => console.log('interactive-coding-tutorial-page - getStaticProps: ', err));
 
+  if (!results) {
+    return {
+      notFound: true,
+    };
+  }
   return {
     props: {
       fallback: false,

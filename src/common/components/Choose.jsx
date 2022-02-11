@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, useMediaQuery, useColorMode } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
+import axios from '../../axios';
 import Icon from './Icon';
 import Text from './Text';
 
@@ -23,20 +24,20 @@ function Choose({ chooseList, handleChoose }) {
             justifyContent="space-between"
             flexDirection="row"
             borderRadius="25px"
-            height={['66px', '70px', '80px', '80px']}
-            width={['70%', '68%', '56%', '50%']}
+            height="100%"
+            padding="22px 12px 22px 22px"
+            width={['70%', '68%', '70%', '50%']}
             border="lightgray solid 2px"
             fontSize={['11px', '13px', '14px', '15px', '15px']}
             key={item?.id || cohort.name}
           >
-            <Box display="flex" flexDirection="column" marginLeft="25px">
+            <Box display="flex" flexDirection="column">
               <Text
                 size="sm"
                 color={colorMode === 'light' ? 'gray.700' : 'white'}
                 marginLeft="20px"
                 fontWeight="900"
                 margin="0px"
-                marginTop="15px"
                 textTransform="uppercase"
               >
                 {name}
@@ -63,10 +64,13 @@ function Choose({ chooseList, handleChoose }) {
                   syllabus_name: name,
                   academy_id: cohort.academy.id,
                 });
+
+                axios.defaults.headers.common.Academy = cohort.academy.id;
                 if (typeof window !== 'undefined') {
-                  localStorage.removeItem('active_cohort');
-                  localStorage.setItem('cohortSelected', `/cohort/${cohort?.slug}/${slug}/v${version}`);
-                  localStorage.setItem('active_cohort', cohort.slug);
+                  localStorage.setItem('cohortSession', JSON.stringify({
+                    ...cohort,
+                    selectedProgramSlug: `/cohort/${cohort?.slug}/${slug}/v${version}`,
+                  }));
                 }
                 router.push(`/cohort/${cohort?.slug}/${slug}/v${version}`);
               }}
@@ -87,7 +91,7 @@ function Choose({ chooseList, handleChoose }) {
                 {isMobile ? 'Launch this program' : ''}
               </Text>
               <Icon
-                color={colorMode === 'light' ? '#0097CD' : '#FFFFFF'}
+                color="#0097CD"
                 icon="longArrowRight"
                 width="22px"
                 height="11"

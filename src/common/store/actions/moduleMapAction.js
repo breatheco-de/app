@@ -25,11 +25,19 @@ const useModuleMap = () => {
       payload: newState,
     });
   };
+
+  // const changeSingleTask = (newState) => {
+  //   dispatch({
+  //     type: 'CHANGE_SINGLE_TASK_STATUS',
+  //     payload: newState,
+  //   });
+  // };
   return {
     modules,
     contextState,
     setContextState,
     updateModuleStatus,
+    // changeSingleTask,
   };
 };
 

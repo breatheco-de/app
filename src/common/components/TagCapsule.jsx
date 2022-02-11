@@ -12,6 +12,7 @@ const TagCapsule = ({
   gap,
   style,
   fontSize,
+  containerStyle,
   fontWeight,
 }) => {
   const { colorMode } = useColorMode();
@@ -23,6 +24,7 @@ const TagCapsule = ({
       flexWrap="wrap"
       direction="row"
       height="auto"
+      style={containerStyle}
       // minHeight="130px"
       my={marginY}
       width="fit-content"
@@ -70,6 +72,7 @@ TagCapsule.propTypes = {
   tags: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
   fontSize: PropTypes.string,
   separator: PropTypes.string,
+  containerStyle: PropTypes.objectOf(PropTypes.any),
   background: PropTypes.string,
   variant: PropTypes.string,
   paddingX: PropTypes.string,
@@ -81,6 +84,7 @@ TagCapsule.propTypes = {
 TagCapsule.defaultProps = {
   separator: '/',
   background: 'yellow.light',
+  containerStyle: {},
   fontSize: '11px',
   variant: 'slash',
   paddingX: '20px',

@@ -27,7 +27,7 @@ import { processFormEntry } from '../../common/components/Forms/actions';
 
 export const getStaticPaths = async () => {
   const data = await fetch(
-    'https://breathecode-test.herokuapp.com/v1/registry/asset?type=exercise&big=true',
+    `${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`,
   )
     .then((res) => res.json())
     .catch((err) => console.log(err));
@@ -43,7 +43,7 @@ export const getStaticPaths = async () => {
 export const getStaticProps = async ({ params, locale }) => {
   const { slug } = params;
   const results = await fetch(
-    'https://breathecode-test.herokuapp.com/v1/registry/asset?type=exercise&big=true',
+    `${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`,
   )
     .then((res) => res.json())
     .then((data) => data.find((e) => e.slug === slug))

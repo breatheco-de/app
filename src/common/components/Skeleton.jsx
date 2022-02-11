@@ -1,5 +1,6 @@
+import PropTypes from 'prop-types';
 import {
-  Box, SkeletonText, Skeleton, useColorModeValue,
+  Box, SkeletonText, Skeleton, useColorModeValue, SkeletonCircle,
 } from '@chakra-ui/react';
 
 export const MDSkeleton = () => {
@@ -84,7 +85,7 @@ export const ModuleMapSkeleton = () => {
         endColor={commonEndColor}
         height="38px"
         color="white"
-        borderRadius="1rem"
+        borderRadius="10px"
         width="100%"
         mt="6"
       />
@@ -101,7 +102,7 @@ export const ModuleMapSkeleton = () => {
         endColor={commonEndColor}
         height="58px"
         color="white"
-        borderRadius="1rem"
+        borderRadius="10px"
         width="100%"
         mt="6"
       />
@@ -110,7 +111,7 @@ export const ModuleMapSkeleton = () => {
         endColor={commonEndColor}
         height="58px"
         color="white"
-        borderRadius="1rem"
+        borderRadius="10px"
         width="100%"
         mt="6"
       />
@@ -119,7 +120,7 @@ export const ModuleMapSkeleton = () => {
         endColor={commonEndColor}
         height="58px"
         color="white"
-        borderRadius="1rem"
+        borderRadius="10px"
         width="100%"
         mt="6"
       />
@@ -128,7 +129,7 @@ export const ModuleMapSkeleton = () => {
         endColor={commonEndColor}
         height="38px"
         color="white"
-        borderRadius="1rem"
+        borderRadius="10px"
         width="100%"
         mt="6"
       />
@@ -145,7 +146,7 @@ export const ModuleMapSkeleton = () => {
         endColor={commonEndColor}
         height="58px"
         color="white"
-        borderRadius="1rem"
+        borderRadius="10px"
         width="100%"
         mt="6"
       />
@@ -154,7 +155,7 @@ export const ModuleMapSkeleton = () => {
         endColor={commonEndColor}
         height="58px"
         color="white"
-        borderRadius="1rem"
+        borderRadius="10px"
         width="100%"
         mt="6"
       />
@@ -163,10 +164,42 @@ export const ModuleMapSkeleton = () => {
         endColor={commonEndColor}
         height="58px"
         color="white"
-        borderRadius="1rem"
+        borderRadius="10px"
         width="100%"
         mt="6"
       />
     </Box>
   );
+};
+
+export const AvatarSkeleton = ({ quantity }) => {
+  const commonStartColor = useColorModeValue('gray.300', 'gray.light');
+  const commonEndColor = useColorModeValue('gray.400', 'gray.400');
+
+  const arrOfCircles = new Array(quantity).fill(['circles']);
+
+  return (
+    <>
+      {
+      arrOfCircles.map((item, index) => {
+        const indx = index;
+        return (
+          <SkeletonCircle
+            key={indx}
+            startColor={commonStartColor}
+            endColor={commonEndColor}
+            size="10"
+          />
+        );
+      })
+      }
+    </>
+  );
+};
+
+AvatarSkeleton.propTypes = {
+  quantity: PropTypes.number,
+};
+AvatarSkeleton.defaultProps = {
+  quantity: 3,
 };

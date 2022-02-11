@@ -2,9 +2,11 @@ html,
 body {
   padding: 0;
   margin: 0;
-
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
+
+  scroll-behavior: smooth;
+  scroll-padding: 14px;
 }
 
 a {

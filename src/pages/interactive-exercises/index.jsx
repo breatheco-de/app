@@ -18,7 +18,7 @@ export const getStaticProps = async ({ locale }) => {
   const exercises = []; // filtered exercises after removing repeated
   let arrExercises = []; // incoming exercises
   const data = await fetch(
-    'https://breathecode-test.herokuapp.com/v1/registry/asset?type=exercise&big=true',
+    `${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`,
     {
       Accept: 'application/json, text/plain, */*',
     },

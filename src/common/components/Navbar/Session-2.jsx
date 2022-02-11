@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react';
 // import { useTranslation } from 'next-i18next';
 // import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
 /* import Image from '../Image';
@@ -58,12 +58,12 @@ const NavbarWithSubNavigation = () => {
     return user?.github.name;
   };
 
-  const getCohort = typeof window !== 'undefined' && localStorage.getItem('cohortSelected');
-
+  const getCohort = typeof window !== 'undefined' && JSON.parse(localStorage.getItem('cohortSession') || '{}');
+  const { selectedProgramSlug } = getCohort;
   const INTERNAL_ITEMS = [
     {
       label: 'Dashboard',
-      href: getCohort || '/choose-program',
+      href: selectedProgramSlug || '/choose-program',
     },
   ];
 
@@ -217,4 +217,4 @@ const NavbarWithSubNavigation = () => {
   );
 };
 
-export default NavbarWithSubNavigation;
+export default memo(NavbarWithSubNavigation);

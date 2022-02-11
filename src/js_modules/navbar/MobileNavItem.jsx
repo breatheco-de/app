@@ -22,7 +22,7 @@ const MobileNavItem = ({
   const commonColor = useColorModeValue('gray.600', 'gray.300');
 
   const getColorLink = (link) => {
-    if (router?.pathname === link || router?.pathname.includes(link)) {
+    if (router?.pathname === link || router?.asPath === link || router?.pathname.includes(link)) {
       return 'blue.default';
     }
     return commonColor;

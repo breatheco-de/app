@@ -32,21 +32,30 @@ const breathecode = {
     const url = `${host}/assignment`;
     return {
       getTaskByStudent: () => axios.get(`${url}/user/me/task`),
-      // add: (id, args) => {
-      //  return this.post(url+'/user/'+id+'/task', args);
-      // },
-      // delete: (args) => {
-      //  return this.delete(`${url}/user/${user_id}/task/${args.id}`, args);
-      // },
-      // update: (user_id, args) => {
-      //  return this.put(`${url}/task/${args.id}`, args);
-      // }
+      add: (id, args) => axios.post(`${url}/user/${id}/task`, args),
+      // delete: (args) => axios.delete(`${url}/user/${user_id}/task/${args.id}`, args);
+      update: (args) => axios.put(`${url}/task/${args.id}`, args),
     };
   },
+
+  cohort: () => {
+    const url = `${host}/admissions/academy`;
+    return {
+      getStudents: (cohortId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}`),
+    };
+  },
+
   assignments: () => {
     const url = `${host}/assignment`;
     return {
       get: () => axios.get(`${url}/user/me/task`),
+    };
+  },
+  mentorship: () => {
+    const url = `${host}/mentorship/academy`;
+    return {
+      getService: () => axios.get(`${url}/service`),
+      getMentor: ({ serviceSlug }) => axios.get(`${url}/mentor?service=${serviceSlug}`),
     };
   },
   lesson: (query) => {

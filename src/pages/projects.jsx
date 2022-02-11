@@ -1,5 +1,4 @@
 /* eslint-disable no-continue */
-/* eslint-disable no-console */
 import {
   Box, useColorModeValue, Button, Flex, useDisclosure,
 } from '@chakra-ui/react';
@@ -16,7 +15,8 @@ import Search from '../js_modules/projects/Search';
 export const getStaticProps = async ({ locale }) => {
   const projects = []; // filtered projects after removing repeated
   let arrProjects = []; // incoming projects
-  const resp = await fetch('https://breathecode.herokuapp.com/v1/registry/asset?type=project')
+
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`)
     .then((res) => res.json())
     .catch((err) => console.error(err));
 
@@ -42,7 +42,8 @@ export const getStaticProps = async ({ locale }) => {
       technologyTags = technologyTags.concat(arrProjects[i].technologies);
     }
 
-    if (typeof arrProjects[i].difficulty === 'string') {
+    if (arrProjects[i].difficulty === null) arrProjects[i].difficulty = 'unknown';
+    if (typeof arrProjects[i].difficulty === 'string' || arrProjects[i].difficulty === null) {
       if (arrProjects[i].difficulty === 'junior') arrProjects[i].difficulty = 'easy';
       else if (arrProjects[i].difficulty === 'semi-senior') arrProjects[i].difficulty = 'intermediate';
       else if (arrProjects[i].difficulty === 'senior') arrProjects[i].difficulty = 'hard';
