@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   FormControl,
@@ -7,16 +7,24 @@ import {
   Input,
   FormErrorMessage,
   useToast,
+  InputRightElement,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 import { useRouter } from 'next/router';
+import Icon from '../Icon';
 import validationSchema from './validationSchemas';
 import useAuth from '../../hooks/useAuth';
 
 function Register() {
+  const [showPSW, setShowPSW] = useState(false);
+  const [showRepeatPSW, setShowRepeatPSW] = useState(false);
   const { register } = useAuth();
   const router = useRouter();
   const toast = useToast();
+
+  const toggleShowRepeatPSW = () => setShowRepeatPSW(!showRepeatPSW);
+  const toggleShowPSW = () => setShowPSW(!showPSW);
+
   return (
     <Formik
       initialValues={{
@@ -131,12 +139,27 @@ function Register() {
                   </FormLabel>
                   <Input
                     {...field}
-                    type="password"
+                    type={showPSW ? 'text' : 'password'}
                     placeholder="***********"
                     height="50px"
                     borderColor="gray.default"
                     borderRadius="3px"
                   />
+                  <InputRightElement width="2.5rem" top="33.5px" right="10px">
+                    <Button
+                      background="transparent"
+                      width="100%"
+                      height="100%"
+                      padding="0"
+                      onClick={toggleShowPSW}
+                    >
+                      {showPSW ? (
+                        <Icon icon="eyeOpen" color="#A4A4A4" width="24px" height="24px" />
+                      ) : (
+                        <Icon icon="eyeClosed" color="#A4A4A4" width="24px" height="24px" />
+                      )}
+                    </Button>
+                  </InputRightElement>
                   <FormErrorMessage>{form.errors.password}</FormErrorMessage>
                 </FormControl>
               )}
@@ -156,12 +179,27 @@ function Register() {
                   </FormLabel>
                   <Input
                     {...field}
-                    type="password"
+                    type={showRepeatPSW ? 'text' : 'password'}
                     placeholder="***********"
                     height="50px"
                     borderColor="gray.default"
                     borderRadius="3px"
                   />
+                  <InputRightElement width="2.5rem" top="33.5px" right="10px">
+                    <Button
+                      background="transparent"
+                      width="100%"
+                      height="100%"
+                      padding="0"
+                      onClick={toggleShowRepeatPSW}
+                    >
+                      {showRepeatPSW ? (
+                        <Icon icon="eyeOpen" color="#A4A4A4" width="24px" height="24px" />
+                      ) : (
+                        <Icon icon="eyeClosed" color="#A4A4A4" width="24px" height="24px" />
+                      )}
+                    </Button>
+                  </InputRightElement>
                   <FormErrorMessage>{form.errors.passwordConfirmation}</FormErrorMessage>
                 </FormControl>
               )}
