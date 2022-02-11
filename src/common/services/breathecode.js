@@ -9,8 +9,10 @@ const breathecode = {
       me: () => axios.get(`${url}/user/me`),
       isValidToken: (token) => axios.get(`${url}/token/${token}`),
       register: (payload) => axios.post(`${url}/user/register`, payload),
+      subscribe: (payload) => axios.post(`${url}/subscribe/`, { ...payload }),
     };
   },
+
   admissions: () => {
     const url = `${host}/admissions`;
     return {

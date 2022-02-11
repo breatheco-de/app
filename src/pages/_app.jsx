@@ -36,6 +36,13 @@ function App({ Component, pageProps }) {
     return <NavbarExternal />;
   };
 
+  const SessionLoading = () => {
+    if (haveSession) {
+      return <Loading />;
+    }
+    return null;
+  };
+
   return (
     <>
       <Helmet {...pageProps} />
@@ -43,7 +50,8 @@ function App({ Component, pageProps }) {
         <ChakraProvider resetCSS theme={CustomTheme}>
           {/* <NavbarExternal /> */}
           <Navbar />
-          <Loading />
+          <SessionLoading />
+          {/* <Loading /> */}
           <Component {...pageProps} />
           <Footer />
         </ChakraProvider>
