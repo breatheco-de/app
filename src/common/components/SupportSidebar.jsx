@@ -163,70 +163,67 @@ const SupportSidebar = ({
                   </Box>
                 </AccordionButton>
                 <AccordionPanel padding="0" width="100%">
-                  {programServices && programServices.map((service) => {
-                    console.log('service:::');
-                    return (
-                      <Accordion
-                        key={service.slug}
-                        allowMultiple
-                        background={commonBackground}
-                        borderRadius="3px"
-                        width="100%"
+                  {programServices && programServices.map((service) => (
+                    <Accordion
+                      key={service.slug}
+                      allowMultiple
+                      background={commonBackground}
+                      borderRadius="3px"
+                      width="100%"
+                    >
+                      <AccordionItem
+                        border="0"
                       >
-                        <AccordionItem
+                        <AccordionButton width="100%" padding="16px">
+                          {service.name}
+                        </AccordionButton>
+                        <AccordionPanel
+                          padding="0"
+                          width="100%"
                           border="0"
+                          // borderTop="1px solid"
+                          // borderLeft="5px solid"
+                          maxWidth="100%"
+                          // borderColor={commonBorderColor}
                         >
-                          <AccordionButton width="100%" padding="16px">
-                            {service.name}
-                          </AccordionButton>
-                          <AccordionPanel
-                            padding="0"
-                            width="100%"
-                            border="0"
-                            // borderTop="1px solid"
-                            // borderLeft="5px solid"
-                            maxWidth="100%"
-                            // borderColor={commonBorderColor}
-                          >
-                            {programMentors.filter(
-                              (mentor) => mentor.service.slug === service.slug
-                                && mentor.status !== 'INNACTIVE',
-                            ).length !== 0 ? programMentors.map((l) => (
+                          {programMentors.filter(
+                            (mentor) => mentor.service.slug === service.slug
+                              && mentor.status !== 'INNACTIVE',
+                          ).length !== 0 ? programMentors.map((l) => (
+                            <Box
+                              padding="16px"
+                              borderTop="1px solid"
+                              borderLeft="5px solid"
+                              borderColor={commonBorderColor}
+                              width="100%"
+                            >
+                              <Box
+                                as="a"
+                                color="blue.default"
+                                key={`${l.slug}-${l.id}`}
+                                href={`https://mentor.breatheco.de/academy/${academySlug}/service/${service.slug}/mentor/${l.slug}?token=${accessToken}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {`${l.user.first_name} ${l.user.last_name}`}
+                              </Box>
+                            </Box>
+                            )) : (
                               <Box
                                 padding="16px"
                                 borderTop="1px solid"
                                 borderLeft="5px solid"
+                                color="gray.600"
                                 borderColor={commonBorderColor}
                                 width="100%"
                               >
-                                <Box
-                                  as="a"
-                                  color="blue.default"
-                                  key={`${l.slug}-${l.id}`}
-                                  href={`https://mentor.breatheco.de/academy/${academySlug}/service/${service.slug}/mentor/${l.slug}?token=${accessToken}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  {`${l.user.first_name} ${l.user.last_name}`}
-                                </Box>
+                                No mentors available
                               </Box>
-                              )) : (
-                                <Box
-                                  padding="16px"
-                                  borderTop="1px solid"
-                                  borderLeft="5px solid"
-                                  color="gray.600"
-                                  borderColor={commonBorderColor}
-                                  width="100%"
-                                >
-                                  No mentors available
-                                </Box>
-                              )}
-                          </AccordionPanel>
-                        </AccordionItem>
-                      </Accordion>
-                    );
-                  })}
+                            )}
+                        </AccordionPanel>
+                      </AccordionItem>
+                    </Accordion>
+                  ))}
                 </AccordionPanel>
               </AccordionItem>
             </Accordion>
