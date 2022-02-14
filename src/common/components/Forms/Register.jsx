@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Button,
   FormControl,
@@ -7,55 +7,54 @@ import {
   Input,
   FormErrorMessage,
   useToast,
-  InputRightElement,
+  Box,
+  // InputRightElement,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 import { useRouter } from 'next/router';
-import Icon from '../Icon';
+// import Icon from '../Icon';
 import validationSchema from './validationSchemas';
-import useAuth from '../../hooks/useAuth';
+import bc from '../../services/breathecode';
 
 function Register() {
-  const [showPSW, setShowPSW] = useState(false);
-  const [showRepeatPSW, setShowRepeatPSW] = useState(false);
-  const { register } = useAuth();
+  // const [showPSW, setShowPSW] = useState(false);
+  // const [showRepeatPSW, setShowRepeatPSW] = useState(false);
+
   const router = useRouter();
   const toast = useToast();
 
-  const toggleShowRepeatPSW = () => setShowRepeatPSW(!showRepeatPSW);
-  const toggleShowPSW = () => setShowPSW(!showPSW);
+  // const toggleShowRepeatPSW = () => setShowRepeatPSW(!showRepeatPSW);
+  // const toggleShowPSW = () => setShowPSW(!showPSW);
 
   return (
     <Formik
       initialValues={{
-        name: '',
+        first_name: '',
+        last_name: '',
         email: '',
-        dateOfBirth: '',
-        password: '',
-        passwordConfirmation: '',
+        // dateOfBirth: '',
+        // password: '',
+        // passwordConfirmation: '',
       }}
       onSubmit={(values, actions) => {
-        register(values).then((data) => {
-          if (data.status === 200) {
-            actions.setSubmitting(false);
-            toast({
-              title: 'Welcome',
-              description: 'Find everything in the dashboard',
-              status: 'success',
-              duration: 9000,
-              isClosable: true,
-            });
-            router.push('/choose-program');
-          }
-        }).catch((error) => {
-          actions.setSubmitting(false);
+        console.log('values:::', values);
+
+        bc.auth().subscribe(values).then(() => {
           toast({
-            title: 'There was an error',
-            description: error.message,
-            status: 'error',
+            title: 'Your email has been added to our list!',
+            status: 'success',
             duration: 9000,
             isClosable: true,
           });
+          router.push('/thank-you');
+        }).catch(() => {
+          toast({
+            title: 'Your email is already subscribed!',
+            status: 'warning',
+            duration: 6000,
+            isClosable: true,
+          });
+          actions.setSubmitting(false);
         });
       }}
       validationSchema={validationSchema.register}
@@ -63,30 +62,56 @@ function Register() {
       {({ isSubmitting }) => (
         <Form>
           <Stack spacing={6}>
-            <Field name="name">
-              {({ field, form }) => (
-                <FormControl isInvalid={form.errors.name && form.touched.name}>
-                  <FormLabel
-                    margin="0px"
-                    color="gray.default"
-                    fontSize="sm"
-                    float="left"
-                    htmlFor="name"
-                  >
-                    Full Name
-                  </FormLabel>
-                  <Input
-                    {...field}
-                    type="name"
-                    placeholder="Name"
-                    height="50px"
-                    borderColor="gray.default"
-                    borderRadius="3px"
-                  />
-                  <FormErrorMessage>{form.errors.name}</FormErrorMessage>
-                </FormControl>
-              )}
-            </Field>
+            <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="25px">
+              <Field name="first_name">
+                {({ field, form }) => (
+                  <FormControl isInvalid={form.errors.first_name && form.touched.first_name}>
+                    <FormLabel
+                      margin="0px"
+                      color="gray.default"
+                      fontSize="sm"
+                      float="left"
+                      htmlFor="first_name"
+                    >
+                      First Name
+                    </FormLabel>
+                    <Input
+                      {...field}
+                      type="text"
+                      placeholder="First Name"
+                      height="50px"
+                      borderColor="gray.default"
+                      borderRadius="3px"
+                    />
+                    <FormErrorMessage>{form.errors.first_name}</FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
+              <Field name="last_name">
+                {({ field, form }) => (
+                  <FormControl isInvalid={form.errors.last_name && form.touched.last_name}>
+                    <FormLabel
+                      margin="0px"
+                      color="gray.default"
+                      fontSize="sm"
+                      float="left"
+                      htmlFor="lest_name"
+                    >
+                      Last Name
+                    </FormLabel>
+                    <Input
+                      {...field}
+                      type="text"
+                      placeholder="Last Name"
+                      height="50px"
+                      borderColor="gray.default"
+                      borderRadius="3px"
+                    />
+                    <FormErrorMessage>{form.errors.last_name}</FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
+            </Box>
 
             <Field name="email">
               {({ field, form }) => (
@@ -113,7 +138,7 @@ function Register() {
               )}
             </Field>
 
-            <FormControl>
+            {/* <FormControl>
               <FormLabel margin="0px" color="gray.default" fontSize="sm" float="left">
                 Date of Birth
               </FormLabel>
@@ -124,8 +149,9 @@ function Register() {
                 borderColor="gray.default"
                 borderRadius="3px"
               />
-            </FormControl>
-            <Field name="password">
+            </FormControl> */}
+
+            {/* <Field name="password">
               {({ field, form }) => (
                 <FormControl isInvalid={form.errors.password && form.touched.password}>
                   <FormLabel
@@ -152,6 +178,12 @@ function Register() {
                       height="100%"
                       padding="0"
                       onClick={toggleShowPSW}
+                      _hover={{
+                        background: 'transparent',
+                      }}
+                      _active={{
+                        background: 'transparent',
+                      }}
                     >
                       {showPSW ? (
                         <Icon icon="eyeOpen" color="#A4A4A4" width="24px" height="24px" />
@@ -192,6 +224,12 @@ function Register() {
                       height="100%"
                       padding="0"
                       onClick={toggleShowRepeatPSW}
+                      _hover={{
+                        background: 'transparent',
+                      }}
+                      _active={{
+                        background: 'transparent',
+                      }}
                     >
                       {showRepeatPSW ? (
                         <Icon icon="eyeOpen" color="#A4A4A4" width="24px" height="24px" />
@@ -203,7 +241,7 @@ function Register() {
                   <FormErrorMessage>{form.errors.passwordConfirmation}</FormErrorMessage>
                 </FormControl>
               )}
-            </Field>
+            </Field> */}
 
             <Button
               variant="default"

@@ -35,7 +35,7 @@ const dashboardTR = {
         {
           name: 'support',
           title: 'Ask in support chat',
-          href: 'https://4geeksacademy.slack.com/',
+          href: 'https://4geeksacademy.slack.com/archives/CAZ9W99U4',
           icon: 'slack',
         },
       ],
@@ -72,7 +72,7 @@ const dashboardTR = {
         {
           name: 'support',
           title: 'Preguntar en el chat de soporte',
-          href: 'https://4geeksacademy.slack.com/',
+          href: 'https://4geeksacademy.slack.com/archives/CAZ9W99U4',
           icon: 'slack',
         },
       ],
