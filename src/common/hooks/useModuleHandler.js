@@ -1,7 +1,7 @@
 import bc from '../services/breathecode';
 
 export const updateAssignment = ({
-  task = {}, closeSettings, toast, githubUrl = '', contextState, setContextState,
+  task = {}, closeSettings, toast, githubUrl, contextState, setContextState,
 }) => {
   // Task case
   const toggleStatus = (task.task_status === undefined || task.task_status === 'PENDING') ? 'DONE' : 'PENDING';
@@ -36,9 +36,18 @@ export const updateAssignment = ({
     });
   } else {
     // Project case
-    const projectUrl = (task.github_url === undefined || task.github_url === '') ? githubUrl : '';
+    const getProjectUrl = () => {
+      if ((githubUrl !== undefined && task.github_url === undefined) || task.github_url === '') {
+        return githubUrl;
+      }
+      return '';
+    };
+
+    const projectUrl = getProjectUrl();
+
     const isDelivering = projectUrl !== '';
     const updatedTask = Object.assign(task, { task_status: toggleStatus, github_url: projectUrl });
+
     bc.todo().update(updatedTask).then((res) => {
       const { data } = res;
       // verify if form is equal to the response
