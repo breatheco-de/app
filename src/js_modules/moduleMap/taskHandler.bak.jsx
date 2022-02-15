@@ -29,10 +29,10 @@ export const getOptionsByTaskStatus = ({ currentTask, sendProject, changeStatusA
     }
     return false;
   };
-  // NOTE: PRROJECT CASE
+  // PRROJECT CASE
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
     if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {
-      // NOTE: Option case Revision pending...
+      // Option case Revision pending...
       return (
         <Button
           onClick={() => changeStatusAssignment(currentTask)}
@@ -80,7 +80,6 @@ export const getOptionsByTaskStatus = ({ currentTask, sendProject, changeStatusA
       </Formik>
     );
   }
-  // NOTE: Dinamic 'Mark as <task_type>'
   // NOTE: ASSIGNMENTS CASE
   if (currentTask && currentTask.task_type !== 'PROJECT' && currentTask.task_status === 'DONE') {
     return (
