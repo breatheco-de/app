@@ -173,8 +173,8 @@ const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    setSession(null);
     router.push('/login');
+    setSession(null);
     dispatch({ type: 'LOGOUT' });
   };
 

@@ -15,20 +15,25 @@ import {
   PopoverArrow,
   Button,
 } from '@chakra-ui/react';
-// import { useTranslation } from 'next-i18next';
-// import { useRouter } from 'next/router';
 import { useState, memo } from 'react';
+import { useRouter } from 'next/router';
+import PropTypes from 'prop-types';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
-/* import Image from '../Image';
-import logo from '../../../../public/static/images/bc_logo.png'; */
 import DesktopNav from '../../../js_modules/navbar/DesktopNav';
 import MobileNav from '../../../js_modules/navbar/MobileNav';
 import Heading from '../Heading';
 
 import useAuth from '../../hooks/useAuth';
+import navbarTR from '../../translations/navbar';
 
-const NavbarWithSubNavigation = () => {
+const NavbarWithSubNavigation = ({ haveSession }) => {
+  const router = useRouter();
+
+  const {
+    loginText, ITEMS,
+  } = navbarTR[router.locale];
+
   const { isOpen, onToggle } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
   const commonColors = useColorModeValue('white', 'gray.800');
@@ -57,15 +62,6 @@ const NavbarWithSubNavigation = () => {
     }
     return user?.github.name;
   };
-
-  const getCohort = typeof window !== 'undefined' && JSON.parse(localStorage.getItem('cohortSession') || '{}');
-  const { selectedProgramSlug } = getCohort;
-  const INTERNAL_ITEMS = [
-    {
-      label: 'Dashboard',
-      href: selectedProgramSlug || '/choose-program',
-    },
-  ];
 
   return (
     <Box>
@@ -118,7 +114,7 @@ const NavbarWithSubNavigation = () => {
           </NextChakraLink>
 
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
-            <DesktopNav NAV_ITEMS={INTERNAL_ITEMS} />
+            <DesktopNav NAV_ITEMS={ITEMS} haveSession={haveSession} />
           </Flex>
         </Flex>
 
@@ -142,79 +138,110 @@ const NavbarWithSubNavigation = () => {
             }
           />
 
-          <Popover
-            id="Avatar-Hover"
-            isOpen={settingsOpen}
-            onClose={closeSettings}
-            placement="bottom-start"
-            trigger="click"
-          >
-            <PopoverTrigger>
-              <Button
-                bg="rgba(0,0,0,0)"
-                alignSelf="center"
-                width="20px"
-                minWidth="20px"
-                maxWidth="20px"
-                height="30px"
-                borderRadius="30px"
-                onClick={() => toggleSettings()}
-              >
-                <Avatar
-                  // name={user?.first_name}
-                  width="30px"
-                  marginY="auto"
-                  height="30px"
-                  src={getImage()}
-                />
-              </Button>
-            </PopoverTrigger>
-
-            <PopoverContent
-              border={0}
-              boxShadow="xl"
-              bg={popoverContentBgColor}
-              p={4}
-              rounded="md"
-              width={{ base: '100%', md: 'auto' }}
-              minW={{ base: 'auto', md: 'md' }}
+          {haveSession ? (
+            <Popover
+              id="Avatar-Hover"
+              isOpen={settingsOpen}
+              onClose={closeSettings}
+              placement="bottom-start"
+              trigger="click"
             >
-              <PopoverArrow />
-              <Stack gridGap="10px" pb="15px">
-                <Flex alignItems="center" gridGap="6px">
-                  <Box as="span" fontSize="18px" lineHeight="18px">
-                    Welcome
-                  </Box>
-                  <Heading as="p" size="18px">
-                    {getName()}
-                  </Heading>
-                </Flex>
-
-                <Flex alignItems="center" gridGap="6px">
-                  <Box as="span" fontSize="18px" lineHeight="18px">
-                    Current Role:
-                  </Box>
-                  <Heading as="p" size="18px">{`${user?.roles[0].role}`}</Heading>
-                </Flex>
-              </Stack>
-              <Flex padding="20px 0" alignItems="center">
-                <Button gridGap="10px" onClick={logout} width="100%" py="25px">
-                  <Box as="span" fontSize="15px">
-                    Logout
-                  </Box>
-                  <Icon icon="logout" width="20px" height="20px" />
+              <PopoverTrigger>
+                <Button
+                  bg="rgba(0,0,0,0)"
+                  alignSelf="center"
+                  width="20px"
+                  minWidth="20px"
+                  maxWidth="20px"
+                  height="30px"
+                  borderRadius="30px"
+                  onClick={() => toggleSettings()}
+                >
+                  <Avatar
+                    // name={user?.first_name}
+                    width="30px"
+                    marginY="auto"
+                    height="30px"
+                    src={getImage()}
+                  />
                 </Button>
-              </Flex>
-            </PopoverContent>
-          </Popover>
+              </PopoverTrigger>
+
+              <PopoverContent
+                border={0}
+                boxShadow="xl"
+                bg={popoverContentBgColor}
+                p={4}
+                rounded="md"
+                width={{ base: '100%', md: 'auto' }}
+                minW={{ base: 'auto', md: 'md' }}
+              >
+                <PopoverArrow />
+                <Stack gridGap="10px" pb="15px">
+                  <Flex alignItems="center" gridGap="6px">
+                    <Box as="span" fontSize="18px" lineHeight="18px">
+                      Welcome
+                    </Box>
+                    <Heading as="p" size="18px">
+                      {getName()}
+                    </Heading>
+                  </Flex>
+
+                  <Flex alignItems="center" gridGap="6px">
+                    <Box as="span" fontSize="18px" lineHeight="18px">
+                      Current Role:
+                    </Box>
+                    <Heading as="p" size="18px">{`${user?.roles[0].role}`}</Heading>
+                  </Flex>
+                </Stack>
+
+                <Flex padding="20px 0" alignItems="center">
+                  <Button gridGap="10px" onClick={logout} width="100%" py="25px">
+                    <Box as="span" fontSize="15px">
+                      Logout
+                    </Box>
+                    <Icon icon="logout" width="20px" height="20px" />
+                  </Button>
+                </Flex>
+              </PopoverContent>
+            </Popover>
+          ) : (
+            <NextChakraLink
+              href="/login"
+              fontWeight="700"
+              fontSize="13px"
+              lineHeight="22px"
+              _hover={{
+                textDecoration: 'none',
+              }}
+              letterSpacing="0.05em"
+            >
+              <Button
+                display={useBreakpointValue({ base: 'flex', md: 'flex' })}
+                width="100px"
+                fontWeight={700}
+                lineHeight="0.05em"
+                variant="default"
+              >
+                {loginText}
+              </Button>
+            </NextChakraLink>
+          )}
         </Stack>
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
-        <MobileNav NAV_ITEMS={INTERNAL_ITEMS} />
+        <MobileNav NAV_ITEMS={ITEMS} haveSession={haveSession} />
       </Collapse>
     </Box>
   );
+};
+
+NavbarWithSubNavigation.propTypes = {
+  haveSession: PropTypes.bool,
+};
+NavbarWithSubNavigation.defaultProps = {
+  haveSession: false,
 };
 
 export default memo(NavbarWithSubNavigation);
