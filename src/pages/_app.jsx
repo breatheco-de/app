@@ -6,7 +6,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { appWithTranslation } from 'next-i18next';
 import wrapper from '../store';
 import CustomTheme from '../../styles/theme';
-import NavbarExternal from '../common/components/Navbar/index';
+// import NavbarExternal from '../common/components/Navbar/index';
 import NavbarSession from '../common/components/Navbar/Session-2';
 import AuthProvider from '../common/context/AuthContext';
 import Footer from '../common/components/Footer';
@@ -31,9 +31,9 @@ function App({ Component, pageProps }) {
 
   const Navbar = () => {
     if (haveSession) {
-      return <NavbarSession />;
+      return <NavbarSession haveSession={haveSession} />;
     }
-    return <NavbarExternal />;
+    return <NavbarSession />;
   };
 
   const SessionLoading = () => {

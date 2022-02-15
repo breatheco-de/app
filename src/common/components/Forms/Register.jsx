@@ -37,8 +37,6 @@ function Register() {
         // passwordConfirmation: '',
       }}
       onSubmit={(values, actions) => {
-        console.log('values:::', values);
-
         bc.auth().subscribe(values).then(() => {
           toast({
             title: 'Your email has been added to our list!',
