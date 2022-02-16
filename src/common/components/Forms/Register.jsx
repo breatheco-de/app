@@ -32,6 +32,7 @@ function Register() {
         first_name: '',
         last_name: '',
         email: '',
+        phone: '',
         // dateOfBirth: '',
         // password: '',
         // passwordConfirmation: '',
@@ -110,6 +111,31 @@ function Register() {
                 )}
               </Field>
             </Box>
+
+            <Field name="phone">
+              {({ field, form }) => (
+                <FormControl isInvalid={form.errors.phone && form.touched.phone}>
+                  <FormLabel
+                    margin="0px"
+                    color="gray.default"
+                    fontSize="sm"
+                    float="left"
+                    htmlFor="phone"
+                  >
+                    Phone
+                  </FormLabel>
+                  <Input
+                    {...field}
+                    type="tel"
+                    placeholder="+123 4567 8900"
+                    height="50px"
+                    borderColor="gray.default"
+                    borderRadius="3px"
+                  />
+                  <FormErrorMessage>{form.errors.phone}</FormErrorMessage>
+                </FormControl>
+              )}
+            </Field>
 
             <Field name="email">
               {({ field, form }) => (
