@@ -127,8 +127,13 @@ Code.defaultProps = {
 
 MDHeading.propTypes = {
   children: PropTypes.node.isRequired,
-  id: PropTypes.string.isRequired,
+  id: PropTypes.string,
 };
+
+MDHeading.defaultProps = {
+  id: '',
+};
+
 MDText.propTypes = {
   children: PropTypes.node,
 };

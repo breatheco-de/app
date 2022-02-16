@@ -83,7 +83,7 @@ export const getHandlerByTaskStatus = ({
         </>
       );
     }
-    if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'DONE') {
+    if (currentTask.revision_status === 'DONE') {
       return (
         <>
           <OpenModalButton />
