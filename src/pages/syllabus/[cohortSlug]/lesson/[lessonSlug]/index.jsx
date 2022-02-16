@@ -9,8 +9,6 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
-import PropTypes from 'prop-types';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import atob from 'atob';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
@@ -23,16 +21,7 @@ import bc from '../../../../../common/services/breathecode';
 import useAuth from '../../../../../common/hooks/useAuth';
 import { MDSkeleton } from '../../../../../common/components/Skeleton';
 
-export const getServerSideProps = async ({ locale, params: { cohortSlug, lessonSlug } }) => ({
-  props: {
-    fallback: false,
-    ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
-    cohortSlug,
-    lessonSlug,
-  },
-});
-
-const Content = ({ cohortSlug, lessonSlug }) => {
+const Content = () => {
   const { isOpen, onToggle } = useDisclosure();
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [readme, setReadme] = useState(null);
@@ -40,6 +29,8 @@ const Content = ({ cohortSlug, lessonSlug }) => {
   const { user, choose } = useAuth();
   const toast = useToast();
   const router = useRouter();
+
+  const { cohortSlug, lessonSlug } = router.query;
 
   const checkScrollTop = () => {
     if (!showScrollToTop && window.pageYOffset > 400) {
@@ -208,11 +199,6 @@ const Content = ({ cohortSlug, lessonSlug }) => {
       </Container>
     </Flex>
   );
-};
-
-Content.propTypes = {
-  cohortSlug: PropTypes.string.isRequired,
-  lessonSlug: PropTypes.string.isRequired,
 };
 
 export default asPrivate(Content);
