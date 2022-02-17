@@ -122,25 +122,14 @@ const Content = () => {
       });
   }, [lessonSlug]);
 
-  const GetReadmeOrQuiz = () => {
+  const GetReadme = () => {
     if (readme) {
       return <MarkdownParser content={readme.content} withToc frontMatter={readme.frontMatter || ''} />;
     }
     if (!readme && quizSlug !== null && quizSlug !== lessonSlug) {
       return <MDSkeleton />;
     }
-    return (
-      <iframe
-        id="iframe"
-        src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
-        // {`https://assessment.4geeks.com/quiz/${quizSlug}`}
-        style={{
-          width: '100%',
-          height: '100%',
-        }}
-        title="Breathecode Quiz"
-      />
-    );
+    return false;
   };
 
   return (
@@ -219,7 +208,20 @@ const Content = () => {
         </Box>
       </Slide>
       <Container height="100vh" maxW="container.xl">
-        <GetReadmeOrQuiz />
+        {GetReadme() !== false ? (
+          GetReadme()
+        ) : (
+          <iframe
+            id="iframe"
+            src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
+            // {`https://assessment.4geeks.com/quiz/${quizSlug}`}
+            style={{
+              width: '100%',
+              height: '100%',
+            }}
+            title="Breathecode Quiz"
+          />
+        )}
       </Container>
     </Flex>
   );
