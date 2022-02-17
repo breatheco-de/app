@@ -32,7 +32,7 @@ const Toc = ({ content }) => {
         },
       },
       slugify: (str) => str.split(' ').join('-').toLowerCase(),
-    }).filter((item) => item.props && item.props.className);
+    }).filter((item) => item && item.props !== null && item.props?.className);
     /* Hierarchy, h1 or h2 being parents and h3 being its inmediate childs, childs become a list. */
     let lastParent = 0;
     for (let i = 0; i < headers.length; i += 1) {
@@ -43,7 +43,7 @@ const Toc = ({ content }) => {
         });
         lastParent = i;
       } else {
-        hierarchy[lastParent].childs.push({
+        hierarchy[lastParent]?.childs.push({
           h: headers[i],
           childs: null,
         });
