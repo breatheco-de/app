@@ -25,6 +25,7 @@ const Content = () => {
   const { isOpen, onToggle } = useDisclosure();
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [readme, setReadme] = useState(null);
+  const [quizSlug, setQuizSlug] = useState(null);
   const { syllabus = [], setSyllabus } = useSyllabus();
   const { user, choose } = useAuth();
   const toast = useToast();
@@ -55,13 +56,15 @@ const Content = () => {
 
   const EventIfNotFound = () => {
     toast({
-      title: 'The endpoint could not access the content of this Project',
+      title: 'The endpoint could not access the content of this lesson',
       // description: 'Content not found',
       status: 'error',
       duration: 7000,
       isClosable: true,
     });
   };
+
+  const Open = !isOpen;
 
   useEffect(() => {
     bc.admissions().me().then((res) => {
@@ -94,25 +97,51 @@ const Content = () => {
 
   useEffect(() => {
     bc.lesson({
-      type: 'lesson',
+      // type: 'lesson',
       slug: lessonSlug,
       big: true,
     })
       .get()
       .then((lesson) => {
-        console.log(lesson);
-        if (lesson.data[0] !== undefined && lesson.data[0].readme !== null) {
+        if (lesson.data.length === 0 || lesson.data[0].asset_type === 'QUIZ') {
+          setQuizSlug(lessonSlug);
+        }
+        if (lesson.data.length !== 0
+            && lesson.data[0] !== undefined
+            && lesson.data[0].readme !== null
+        ) {
           const MDecoded = lesson.data[0].readme && typeof lesson.data[0].readme === 'string' ? atob(lesson.data[0].readme) : null;
-          console.log(MDecoded);
+          // console.log(MDecoded);
           const markdown = getMarkDownContent(MDecoded);
           setReadme(markdown);
-        } else {
-          setTimeout(() => {
-            EventIfNotFound();
-          }, 4000);
         }
+      }).catch(() => {
+        setTimeout(() => {
+          EventIfNotFound();
+        }, 4000);
       });
   }, [lessonSlug]);
+
+  const GetReadmeOrQuiz = () => {
+    if (readme) {
+      return <MarkdownParser content={readme.content} withToc frontMatter={readme.frontMatter || ''} />;
+    }
+    if (!readme && quizSlug !== null && quizSlug !== lessonSlug) {
+      return <MDSkeleton />;
+    }
+    return (
+      <iframe
+        id="iframe"
+        src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
+        // {`https://assessment.4geeks.com/quiz/${quizSlug}`}
+        style={{
+          width: '100%',
+          height: '100%',
+        }}
+        title="Breathecode Quiz"
+      />
+    );
+  };
 
   return (
     <Flex position="relative">
@@ -127,7 +156,7 @@ const Content = () => {
           onClick={onToggle}
           borderRadius="full"
           padding={0}
-          icon={isOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+          icon={Open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           marginBottom="1rem"
         />
         <IconButton
@@ -149,12 +178,12 @@ const Content = () => {
 
       <Slide
         direction="left"
-        in={isOpen}
+        in={Open}
         style={{
           zIndex: 10,
           position: 'sticky',
           width: '30%',
-          display: isOpen ? 'block' : 'none',
+          display: Open ? 'block' : 'none',
           height: '100vh',
           borderRight: 1,
           borderStyle: 'solid',
@@ -181,7 +210,7 @@ const Content = () => {
                 title={section.label}
                 lessons={section.lessons}
                 answer={section.quizzes}
-                code={section.assigments}
+                code={section.assignments}
                 practice={section.replits}
                 onClickAssignment={onClickAssignment}
               />
@@ -189,13 +218,8 @@ const Content = () => {
           ))}
         </Box>
       </Slide>
-      <Container maxW="container.xl">
-        {readme ? (
-          <MarkdownParser content={readme.content} withToc frontMatter={readme.frontMatter || ''} />
-        ) : (
-          <MDSkeleton />
-        )}
-
+      <Container height="100vh" maxW="container.xl">
+        <GetReadmeOrQuiz />
       </Container>
     </Flex>
   );
