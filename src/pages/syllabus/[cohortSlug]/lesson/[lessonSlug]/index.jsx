@@ -95,6 +95,18 @@ const Content = () => {
     }
   }, [user]);
 
+  const decodeFromBinary = (encoded) => {
+    // decode base 64 encoded string with emojis
+    const decoded = decodeURIComponent(
+      atob(encoded).split('').map((c) => {
+        const decodedEmoist = `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`;
+        return decodedEmoist;
+      }).join(''),
+    );
+
+    return decoded;
+  };
+
   useEffect(() => {
     bc.lesson({
       // type: 'lesson',
@@ -110,8 +122,8 @@ const Content = () => {
             && lesson.data[0] !== undefined
             && lesson.data[0].readme !== null
         ) {
-          const MDecoded = lesson.data[0].readme && typeof lesson.data[0].readme === 'string' ? atob(lesson.data[0].readme) : null;
-          // console.log(MDecoded);
+          // Binary base64 decoding ⇢ UTF-8
+          const MDecoded = lesson.data[0].readme && typeof lesson.data[0].readme === 'string' ? decodeFromBinary(lesson.data[0].readme) : null;
           const markdown = getMarkDownContent(MDecoded);
           setReadme(markdown);
         }
@@ -214,7 +226,6 @@ const Content = () => {
           <iframe
             id="iframe"
             src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
-            // {`https://assessment.4geeks.com/quiz/${quizSlug}`}
             style={{
               width: '100%',
               height: '100%',

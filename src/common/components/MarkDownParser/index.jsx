@@ -6,6 +6,7 @@ import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import jsx from 'react-syntax-highlighter/dist/cjs/languages/prism/jsx';
 import js from 'react-syntax-highlighter/dist/cjs/languages/prism/javascript';
 import bash from 'react-syntax-highlighter/dist/cjs/languages/prism/bash';
+import css from 'react-syntax-highlighter/dist/cjs/languages/prism/css';
 import Toc from './toc';
 import Heading from '../Heading';
 // import Anchor from './Anchor';
@@ -18,6 +19,7 @@ SyntaxHighlighter.registerLanguage('jsx', jsx);
 SyntaxHighlighter.registerLanguage('bash', bash);
 SyntaxHighlighter.registerLanguage('js', js);
 SyntaxHighlighter.registerLanguage('html', jsx);
+SyntaxHighlighter.registerLanguage('css', css);
 
 const Code = ({ className, children }) => {
   let language;

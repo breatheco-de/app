@@ -127,7 +127,7 @@ export const getHandlerByTaskStatus = ({
             <Formik
               initialValues={{ githubUrl: '' }}
               onSubmit={(values) => {
-                console.log('values:::', values);
+                // console.log('values:::', values);
                 if (values.githubUrl !== '') {
                 // NOTE_BUG: when the user starts module and send the link, it not sends to
                 // the endpoint, It occurs by the taskTodo persistent not changes in localStorage
