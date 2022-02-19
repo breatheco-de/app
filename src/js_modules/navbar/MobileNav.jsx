@@ -27,7 +27,7 @@ const MobileNav = ({ NAV_ITEMS, haveSession }) => {
     <Stack
       position="absolute"
       width="100%"
-      zIndex="10"
+      zIndex="99"
       bg={useColorModeValue('white', 'gray.800')}
       p={4}
       display={{ md: 'none' }}

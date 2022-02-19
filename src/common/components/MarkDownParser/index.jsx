@@ -2,10 +2,11 @@ import PropTypes from 'prop-types';
 import { compiler } from 'markdown-to-jsx';
 import { Box, Link } from '@chakra-ui/react';
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import jsx from 'react-syntax-highlighter/dist/cjs/languages/prism/jsx';
 import js from 'react-syntax-highlighter/dist/cjs/languages/prism/javascript';
-import bash from 'react-syntax-highlighter/dist/cjs/languages/prism/bash';
+import css from 'react-syntax-highlighter/dist/cjs/languages/prism/css';
+import emoji from 'emoji-dictionary';
+import tomorrow from './syntaxHighlighter/tomorrow';
 import Toc from './toc';
 import Heading from '../Heading';
 // import Anchor from './Anchor';
@@ -15,20 +16,20 @@ import ContentHeading from './ContentHeading';
 
 // okaidia-tomorrow
 SyntaxHighlighter.registerLanguage('jsx', jsx);
-SyntaxHighlighter.registerLanguage('bash', bash);
 SyntaxHighlighter.registerLanguage('js', js);
 SyntaxHighlighter.registerLanguage('html', jsx);
+SyntaxHighlighter.registerLanguage('css', css);
 
 const Code = ({ className, children }) => {
   let language;
   if (className.includes('lang-')) {
     language = className.replace('lang-', '');
   } else {
-    language = 'bash';
+    language = 'highlight';
   }
 
   return (
-    <SyntaxHighlighter style={tomorrow} className={language} language={language} wrapLines>
+    <SyntaxHighlighter style={tomorrow} className={language} language={language}>
       {children}
     </SyntaxHighlighter>
   );
@@ -66,55 +67,62 @@ const MDLink = ({ children, href }) => (
 
 const MDHr = () => (<Box d="none" />);
 
-const MarkDownParser = ({ content, withToc, frontMatter }) => (
-  <>
-    {withToc && (
-    <ContentHeading content={frontMatter}>
-      <Toc content={content} />
-    </ContentHeading>
-    )}
-    {compiler(content, {
-      wrapper: null,
-      overrides: {
-        code: {
-          component: Code,
-        },
-        p: {
-          component: MDText,
-        },
-        a: {
-          component: MDLink,
-        },
-        hr: { component: MDHr },
-        h2: {
-          component: MDHeading,
-        },
-        h3: {
-          component: MDHeading,
-        },
-        h1: {
-          component: MDHeading,
-        },
-        img: {
-          props: {
-            className: 'MDImg',
+const MarkDownParser = ({ content, withToc, frontMatter }) => {
+  // support for emoji shortcodes
+  // exapmle: :heart_eyes: -> 😍
+  const emojiSupport = (text) => text.replace(/:\w+:/gi, (name) => emoji.getUnicode(name));
+  const contentFormated = emojiSupport(content);
+
+  return (
+    <>
+      {withToc && (
+      <ContentHeading content={frontMatter}>
+        <Toc content={content} />
+      </ContentHeading>
+      )}
+      {compiler(contentFormated, {
+        wrapper: null,
+        overrides: {
+          code: {
+            component: Code,
+          },
+          p: {
+            component: MDText,
+          },
+          a: {
+            component: MDLink,
+          },
+          hr: { component: MDHr },
+          h2: {
+            component: MDHeading,
+          },
+          h3: {
+            component: MDHeading,
+          },
+          h1: {
+            component: MDHeading,
+          },
+          img: {
+            props: {
+              className: 'MDImg',
+            },
           },
         },
-      },
-      slugify: (str) => str.split(' ').join('-').toLowerCase(),
-    })}
-  </>
-);
+        slugify: (str) => str.split(' ').join('-').toLowerCase(),
+      })}
+    </>
+  );
+};
 
 MarkDownParser.propTypes = {
   content: PropTypes.string,
   withToc: PropTypes.bool,
-  frontMatter: PropTypes.string,
+  frontMatter: PropTypes.objectOf(PropTypes.any),
 };
 MarkDownParser.defaultProps = {
   content: '',
   withToc: false,
-  frontMatter: '',
+  frontMatter: {},
 };
 
 Code.propTypes = {

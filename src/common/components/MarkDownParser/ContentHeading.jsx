@@ -32,11 +32,11 @@ const ContentHeading = ({ content, children }) => {
 };
 
 ContentHeading.propTypes = {
-  content: PropTypes.string,
+  content: PropTypes.objectOf(PropTypes.any),
   children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
 };
 ContentHeading.defaultProps = {
-  content: '',
+  content: {},
 };
 
 export default ContentHeading;
