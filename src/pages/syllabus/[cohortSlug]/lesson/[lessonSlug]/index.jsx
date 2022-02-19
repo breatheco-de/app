@@ -7,6 +7,7 @@ import {
   Slide,
   IconButton,
   useToast,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
@@ -30,6 +31,9 @@ const Content = () => {
   const { user, choose } = useAuth();
   const toast = useToast();
   const router = useRouter();
+
+  //                                          gray.200    gray.500
+  const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
 
   const { cohortSlug, lessonSlug } = router.query;
 
@@ -135,11 +139,11 @@ const Content = () => {
   }, [lessonSlug]);
 
   const GetReadme = () => {
+    if (readme === null && quizSlug !== lessonSlug) {
+      return <MDSkeleton />;
+    }
     if (readme) {
       return <MarkdownParser content={readme.content} withToc frontMatter={readme.frontMatter || ''} />;
-    }
-    if (!readme && quizSlug !== null && quizSlug !== lessonSlug) {
-      return <MDSkeleton />;
     }
     return false;
   };
@@ -157,10 +161,12 @@ const Content = () => {
           onClick={onToggle}
           borderRadius="full"
           padding={0}
+          fontSize="20px"
           icon={Open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           marginBottom="1rem"
         />
         <IconButton
+          fontSize="20px"
           icon={<ArrowUpIcon />}
           onClick={scrollTop}
           borderRadius="full"
@@ -180,32 +186,41 @@ const Content = () => {
       <Slide
         direction="left"
         in={Open}
+        // className="horizontal-slide"
         style={{
-          zIndex: 10,
+          zIndex: 5,
           position: 'sticky',
-          width: '30%',
+          // perfect size for tablets and devices above 700px
+          width: '56vh',
           display: Open ? 'block' : 'none',
-          height: '100vh',
+          height: '100%',
           borderRight: 1,
           borderStyle: 'solid',
           overflowX: 'hidden',
           overflowY: 'auto',
-          borderColor: '#E2E8F0',
+          borderColor: commonBorderColor,
         }}
       >
         <Box
           padding="1.5rem"
           borderBottom={1}
           borderStyle="solid"
-          borderColor="gray.200"
+          borderColor={commonBorderColor}
         >
           <Heading size="xsm">{user.active_cohort && user.active_cohort.syllabus_name}</Heading>
         </Box>
-        <Box padding="1.5rem">
+        <Box
+          padding="1.5rem"
+          className="horizontal-slide"
+          style={{
+            height: '87.2vh',
+            overflowX: 'hidden',
+            overflowY: 'auto',
+          }}
+        >
           {syllabus && syllabus.map((section) => (
-            <Box marginBottom="2rem">
+            <Box key={section.id} marginBottom="2rem">
               <Timeline
-                key={section.id}
                 technologies={section.technologies.length > 0
                   ? section.technologies.map((t) => t.title) : []}
                 title={section.label}
@@ -219,19 +234,26 @@ const Content = () => {
           ))}
         </Box>
       </Slide>
-      <Container height="100vh" maxW="container.xl">
+      <Container
+        className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+        marginTop="6vh"
+        height="100%"
+        maxW="container.md"
+      >
         {GetReadme() !== false ? (
           GetReadme()
         ) : (
-          <iframe
-            id="iframe"
-            src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
-            style={{
-              width: '100%',
-              height: '100%',
-            }}
-            title="Breathecode Quiz"
-          />
+          <Box width="100%" height="100vh">
+            <iframe
+              id="iframe"
+              src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
+              title="Breathecode Quiz"
+            />
+          </Box>
         )}
       </Container>
     </Flex>
