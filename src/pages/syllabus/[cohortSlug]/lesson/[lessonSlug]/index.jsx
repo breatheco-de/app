@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   Flex,
-  Container,
   useDisclosure,
-  Slide,
   IconButton,
   useToast,
+  useColorMode,
 } from '@chakra-ui/react';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
@@ -34,12 +33,37 @@ export const getServerSideProps = async ({ locale, params: { cohortSlug, lessonS
 
 const Content = ({ cohortSlug, lessonSlug }) => {
   const { isOpen, onToggle } = useDisclosure();
+  const { colorMode } = useColorMode();
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [readme, setReadme] = useState(null);
   const { syllabus = [], setSyllabus } = useSyllabus();
   const { user, choose } = useAuth();
   const toast = useToast();
   const router = useRouter();
+  const slide = {
+    zIndex: 1200,
+    position: 'sticky',
+    top: 0,
+    left: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    flex: '1 0 auto',
+    width: 'inherit',
+    transform: isOpen ? 'none' : 'translateX(-30rem)',
+    visibility: isOpen ? 'visible' : 'hidden',
+    height: '100vh',
+    outline: 0,
+    borderRight: 1,
+    borderStyle: 'solid',
+    overflowX: 'hidden',
+    overflowY: 'auto',
+    borderColor: '#E2E8F0',
+    transition: isOpen ? 'transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+    transitionProperty: isOpen ? 'transform' : 'box-shadow',
+    transitionDuration: isOpen ? '225ms' : '300ms',
+    transitionTimingFunction: isOpen ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.2, 1)',
+    transitionDelay: isOpen ? '0ms' : '0ms',
+  };
 
   const checkScrollTop = () => {
     if (!showScrollToTop && window.pageYOffset > 400) {
@@ -131,15 +155,6 @@ const Content = ({ cohortSlug, lessonSlug }) => {
         left="95%"
       >
         <IconButton
-          style={{ zIndex: 20 }}
-          variant="default"
-          onClick={onToggle}
-          borderRadius="full"
-          padding={0}
-          icon={isOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          marginBottom="1rem"
-        />
-        <IconButton
           icon={<ArrowUpIcon />}
           onClick={scrollTop}
           borderRadius="full"
@@ -155,57 +170,91 @@ const Content = ({ cohortSlug, lessonSlug }) => {
           }}
         />
       </Box>
+      <Box flex="0 0 auto" width="30rem">
+        <IconButton
+          style={{ zIndex: 20 }}
+          variant="default"
+          onClick={onToggle}
+          width="17px"
+          height="36px"
+          minW={0}
+          position="fixed"
+          transition={isOpen ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
+          transitionProperty="margin"
+          transitionDuration={isOpen ? '225ms' : '195ms'}
+          transitionTimingFunction={isOpen ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
+          top="50%"
+          left={isOpen ? '30rem' : 0}
+          padding={0}
+          icon={isOpen ? (
+            <ChevronLeftIcon
+              width="17px"
+              height="36px"
+            />
+          ) : (
+            <ChevronRightIcon
+              width="17px"
+              height="36px"
+            />
+          )}
+          marginBottom="1rem"
+        />
+        <Box style={slide}>
+          <Box
+            padding="1.5rem"
+            position="sticky"
+            top={0}
+            zIndex={200}
+            bg={colorMode === 'light' ? 'white' : 'darkTheme'}
+            borderBottom={1}
+            borderStyle="solid"
+            borderColor="gray.200"
+          >
+            <Heading size="xsm">{user.active_cohort && user.active_cohort.syllabus_name}</Heading>
+          </Box>
 
-      <Slide
-        direction="left"
-        in={isOpen}
-        style={{
-          zIndex: 10,
-          position: 'sticky',
-          width: '30%',
-          display: isOpen ? 'block' : 'none',
-          height: '100vh',
-          borderRight: 1,
-          borderStyle: 'solid',
-          overflowX: 'hidden',
-          overflowY: 'auto',
-          borderColor: '#E2E8F0',
-        }}
+          <Box>
+            {syllabus && syllabus.map((section) => (
+              <Box
+                padding="1.5rem"
+                borderBottom={1}
+                borderStyle="solid"
+                borderColor="gray.200"
+              >
+                <Timeline
+                  key={section.id}
+                  technologies={section.technologies.length > 0
+                    ? section.technologies.map((t) => t.title) : []}
+                  title={section.label}
+                  lessons={section.lessons}
+                  answer={section.quizzes}
+                  code={section.assigments}
+                  practice={section.replits}
+                  onClickAssignment={onClickAssignment}
+                />
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      </Box>
+      <Box
+        flexGrow={1}
+        marginLeft={isOpen ? '0' : '-20rem'}
+        padding="6rem"
+        marginRight="10rem"
+        paddingTop="2rem"
+        transition={isOpen ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
+        transitionProperty="margin"
+        transitionDuration={isOpen ? '225ms' : '195ms'}
+        transitionTimingFunction={isOpen ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
+        transitionDelay="0ms"
       >
-        <Box
-          padding="1.5rem"
-          borderBottom={1}
-          borderStyle="solid"
-          borderColor="gray.200"
-        >
-          <Heading size="xsm">{user.active_cohort && user.active_cohort.syllabus_name}</Heading>
-        </Box>
-        <Box padding="1.5rem">
-          {syllabus && syllabus.map((section) => (
-            <Box marginBottom="2rem">
-              <Timeline
-                key={section.id}
-                technologies={section.technologies.length > 0
-                  ? section.technologies.map((t) => t.title) : []}
-                title={section.label}
-                lessons={section.lessons}
-                answer={section.quizzes}
-                code={section.assigments}
-                practice={section.replits}
-                onClickAssignment={onClickAssignment}
-              />
-            </Box>
-          ))}
-        </Box>
-      </Slide>
-      <Container maxW="container.xl">
         {readme ? (
           <MarkdownParser content={readme.content} withToc frontMatter={readme.frontMatter || ''} />
         ) : (
           <MDSkeleton />
         )}
-
-      </Container>
+      </Box>
     </Flex>
   );
 };
