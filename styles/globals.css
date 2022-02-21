@@ -452,7 +452,7 @@ pre code {
 
 .highlight {
   font-size: 13px;
-  line-height: 19px;
+  line-height: 2.0 !important;
   overflow: auto;
   width: fit-content;
   display: initial;
