@@ -6,6 +6,7 @@ import jsx from 'react-syntax-highlighter/dist/cjs/languages/prism/jsx';
 import js from 'react-syntax-highlighter/dist/cjs/languages/prism/javascript';
 import css from 'react-syntax-highlighter/dist/cjs/languages/prism/css';
 import emoji from 'emoji-dictionary';
+import { useEffect, useState } from 'react';
 import tomorrow from './syntaxHighlighter/tomorrow';
 import Toc from './toc';
 import Heading from '../Heading';
@@ -46,11 +47,23 @@ const MDHeading = ({ children, id }) => (
   </Heading>
 );
 
-const MDText = ({ children }) => (
-  <Text size="l" letterSpacing="0.05em" marginBottom="16px" fontWeight="400" lineHeight="24px">
-    {children}
-  </Text>
-);
+const MDText = ({ children }) => {
+  const [haveHighlight, setHaveHighlight] = useState(false);
+  useEffect(() => {
+    // eslint-disable-next-line array-callback-return
+    children.map((child) => {
+      if (child && child.type && child.type.name === 'Code') {
+        setHaveHighlight(true);
+      }
+    });
+  }, [children]);
+
+  return (
+    <Text size="l" className={haveHighlight ? 'text-highlight' : ''} letterSpacing="0.05em" marginBottom="16px" fontWeight="400" lineHeight="24px">
+      {children}
+    </Text>
+  );
+};
 
 const MDLink = ({ children, href }) => (
   <Link

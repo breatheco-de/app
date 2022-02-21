@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   Flex,
-  Container,
   useDisclosure,
-  Slide,
   IconButton,
   useToast,
   useColorModeValue,
@@ -34,6 +32,32 @@ const Content = () => {
 
   //                                          gray.200    gray.500
   const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
+  const Open = !isOpen;
+
+  const slide = {
+    zIndex: 1200,
+    position: 'sticky',
+    top: 0,
+    left: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    flex: '1 0 auto',
+    width: 'inherit',
+    transform: Open ? 'none' : 'translateX(-30rem)',
+    visibility: Open ? 'visible' : 'hidden',
+    height: '100vh',
+    outline: 0,
+    borderRight: 1,
+    borderStyle: 'solid',
+    // overflowX: 'hidden',
+    // overflowY: 'auto',
+    borderColor: commonBorderColor,
+    transition: Open ? 'transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+    transitionProperty: Open ? 'transform' : 'box-shadow',
+    transitionDuration: Open ? '225ms' : '300ms',
+    transitionTimingFunction: Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.2, 1)',
+    transitionDelay: Open ? '0ms' : '0ms',
+  };
 
   const { cohortSlug, lessonSlug } = router.query;
 
@@ -67,8 +91,6 @@ const Content = () => {
       isClosable: true,
     });
   };
-
-  const Open = !isOpen;
 
   useEffect(() => {
     bc.admissions().me().then((res) => {
@@ -156,17 +178,6 @@ const Content = () => {
         left="95%"
       >
         <IconButton
-          style={{ zIndex: 20 }}
-          variant="default"
-          onClick={onToggle}
-          borderRadius="full"
-          padding={0}
-          fontSize="20px"
-          icon={Open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          marginBottom="1rem"
-        />
-        <IconButton
-          fontSize="20px"
           icon={<ArrowUpIcon />}
           onClick={scrollTop}
           borderRadius="full"
@@ -182,63 +193,91 @@ const Content = () => {
           }}
         />
       </Box>
+      <Box flex="0 0 auto" width="28.6vw">
+        <IconButton
+          style={{ zIndex: 20 }}
+          variant="default"
+          onClick={onToggle}
+          width="17px"
+          height="36px"
+          minW={0}
+          position="fixed"
+          transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
+          transitionProperty="margin"
+          transitionDuration={Open ? '225ms' : '195ms'}
+          transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
+          top="50%"
+          left={Open ? '28.6vw' : 0}
+          padding={0}
+          icon={Open ? (
+            <ChevronLeftIcon
+              width="17px"
+              height="36px"
+            />
+          ) : (
+            <ChevronRightIcon
+              width="17px"
+              height="36px"
+            />
+          )}
+          marginBottom="1rem"
+        />
+        <Box style={slide}>
+          <Box
+            padding="1.5rem"
+            // position="sticky"
+            top={0}
+            zIndex={200}
+            bg={useColorModeValue('white', 'darkTheme')}
+            borderBottom={1}
+            borderStyle="solid"
+            borderColor={commonBorderColor}
+          >
+            <Heading size="xsm">{user.active_cohort && user.active_cohort.syllabus_name}</Heading>
+          </Box>
 
-      <Slide
-        direction="left"
-        in={Open}
-        // className="horizontal-slide"
-        style={{
-          zIndex: 5,
-          position: 'sticky',
-          // perfect size for tablets and devices above 700px
-          width: '56vh',
-          display: Open ? 'block' : 'none',
-          height: '100%',
-          borderRight: 1,
-          borderStyle: 'solid',
-          overflowX: 'hidden',
-          overflowY: 'auto',
-          borderColor: commonBorderColor,
-        }}
-      >
-        <Box
-          padding="1.5rem"
-          borderBottom={1}
-          borderStyle="solid"
-          borderColor={commonBorderColor}
-        >
-          <Heading size="xsm">{user.active_cohort && user.active_cohort.syllabus_name}</Heading>
+          <Box
+            className={`horizontal-sroll ${useColorModeValue('light', 'dark')}`}
+            style={{
+              height: '90.5vh',
+              overflowX: 'hidden',
+              overflowY: 'auto',
+            }}
+          >
+            {syllabus && syllabus.map((section) => (
+              <Box
+                padding="1.5rem"
+                borderBottom={1}
+                borderStyle="solid"
+                borderColor={commonBorderColor}
+              >
+                <Timeline
+                  key={section.id}
+                  technologies={section.technologies.length > 0
+                    ? section.technologies.map((t) => t.title) : []}
+                  title={section.label}
+                  lessons={section.lessons}
+                  answer={section.quizzes}
+                  code={section.assigments}
+                  practice={section.replits}
+                  onClickAssignment={onClickAssignment}
+                />
+              </Box>
+            ))}
+          </Box>
         </Box>
-        <Box
-          padding="1.5rem"
-          className="horizontal-slide"
-          style={{
-            height: '87.2vh',
-            overflowX: 'hidden',
-            overflowY: 'auto',
-          }}
-        >
-          {syllabus && syllabus.map((section) => (
-            <Box key={section.id} marginBottom="2rem">
-              <Timeline
-                technologies={section.technologies.length > 0
-                  ? section.technologies.map((t) => t.title) : []}
-                title={section.label}
-                lessons={section.lessons}
-                answer={section.quizzes}
-                code={section.assignments}
-                practice={section.replits}
-                onClickAssignment={onClickAssignment}
-              />
-            </Box>
-          ))}
-        </Box>
-      </Slide>
-      <Container
+      </Box>
+      <Box
         className={`markdown-body ${useColorModeValue('light', 'dark')}`}
-        marginTop="6vh"
-        height="100%"
-        maxW="container.md"
+        flexGrow={1}
+        marginLeft={Open ? '0' : '-20rem'}
+        padding="4rem 8vw"
+        // marginRight="10rem"
+        transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
+        transitionProperty="margin"
+        transitionDuration={Open ? '225ms' : '195ms'}
+        transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
+        transitionDelay="0ms"
       >
         {GetReadme() !== false ? (
           GetReadme()
@@ -255,9 +294,69 @@ const Content = () => {
             />
           </Box>
         )}
-      </Container>
+      </Box>
     </Flex>
   );
 };
 
 export default asPrivate(Content);
+
+// <Slide
+// direction="left"
+// in={Open}
+// // className="horizontal-slide"
+// style={{
+//   zIndex: 5,
+//   position: 'sticky',
+//   // perfect size for tablets and devices above 700px
+//   width: '28.6vw',
+//   display: Open ? 'block' : 'none',
+//   height: '100%',
+//   borderRight: 1,
+//   borderStyle: 'solid',
+//   overflowX: 'hidden',
+//   overflowY: 'auto',
+//   borderColor: commonBorderColor,
+// }}
+// >
+// <Box
+//   padding="1.5rem"
+//   borderBottom={1}
+//   borderStyle="solid"
+//   borderColor={commonBorderColor}
+// >
+//   <Heading size="xsm">{user.active_cohort && user.active_cohort.syllabus_name}</Heading>
+// </Box>
+// <Box
+//   padding="1.5rem"
+//   className="horizontal-slide"
+//   style={{
+//     height: '87.2vh',
+//     overflowX: 'hidden',
+//     overflowY: 'auto',
+//   }}
+// >
+//   {syllabus && syllabus.map((section) => (
+//     <Box key={section.id} marginBottom="2rem">
+//       <Timeline
+//         technologies={section.technologies.length > 0
+//           ? section.technologies.map((t) => t.title) : []}
+//         title={section.label}
+//         lessons={section.lessons}
+//         answer={section.quizzes}
+//         code={section.assignments}
+//         practice={section.replits}
+//         onClickAssignment={onClickAssignment}
+//       />
+//     </Box>
+//   ))}
+// </Box>
+// </Slide>
+// <Container
+// className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+// marginTop="6vh"
+// height="100%"
+// maxW="container.md"
+// >
+// {GetReadme() !== false ? (
+//   GetReadme()

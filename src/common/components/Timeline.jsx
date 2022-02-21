@@ -53,8 +53,8 @@ const Timeline = ({
     <Box width={width}>
       <Flex width="100%" marginBottom="1.5rem">
         <Text size="l" fontWeight="900" color={colorMode === 'light' ? 'gray.dark' : 'white'}>{title && title.toUpperCase()}</Text>
-        <Text size="l" marginLeft="10px" fontWeight="400" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
-          {technologies && technologies.join(',').toUpperCase()}
+        <Text size="l" textTransform="uppercase" marginLeft="10px" fontWeight="400" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
+          {technologies && technologies.join(',')}
         </Text>
       </Flex>
       <Box>
