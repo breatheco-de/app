@@ -9,10 +9,8 @@ const saveForm = async (formData = null, tags = [], automations = []) => {
   if (!Array.isArray(tags)) throw Error('Tags must be an array');
   if (typeof (formData) !== 'object') throw Error('Missing formData');
 
-  const replaceThisWithEnvVar = 'https://breathecode-cypress.herokuapp.com/v1';
-
   console.log('formData', formData);
-  const resp = await fetch(`${replaceThisWithEnvVar}/marketing/lead`, {
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/marketing/lead`, {
     headers: new Headers({ 'content-type': 'application/json' }),
     method: 'POST',
     body: JSON.stringify({

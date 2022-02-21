@@ -42,6 +42,7 @@
     "@next/bundle-analyzer": "11.0.1",
     "atob": "2.1.2",
     "axios": "0.24.0",
+    "emoji-dictionary": "^1.0.11",
     "formik": "2.2.9",
     "framer-motion": "4.1.17",
     "gray-matter": "4.0.3",

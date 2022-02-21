@@ -5,11 +5,9 @@ import {
   useDisclosure,
   IconButton,
   useToast,
-  useColorMode,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
-import PropTypes from 'prop-types';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import atob from 'atob';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
@@ -22,24 +20,20 @@ import bc from '../../../../../common/services/breathecode';
 import useAuth from '../../../../../common/hooks/useAuth';
 import { MDSkeleton } from '../../../../../common/components/Skeleton';
 
-export const getServerSideProps = async ({ locale, params: { cohortSlug, lessonSlug } }) => ({
-  props: {
-    fallback: false,
-    ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
-    cohortSlug,
-    lessonSlug,
-  },
-});
-
-const Content = ({ cohortSlug, lessonSlug }) => {
+const Content = () => {
   const { isOpen, onToggle } = useDisclosure();
-  const { colorMode } = useColorMode();
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [readme, setReadme] = useState(null);
+  const [quizSlug, setQuizSlug] = useState(null);
   const { syllabus = [], setSyllabus } = useSyllabus();
   const { user, choose } = useAuth();
   const toast = useToast();
   const router = useRouter();
+
+  //                                          gray.200    gray.500
+  const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
+  const Open = !isOpen;
+
   const slide = {
     zIndex: 1200,
     position: 'sticky',
@@ -49,21 +43,23 @@ const Content = ({ cohortSlug, lessonSlug }) => {
     flexDirection: 'column',
     flex: '1 0 auto',
     width: 'inherit',
-    transform: isOpen ? 'none' : 'translateX(-30rem)',
-    visibility: isOpen ? 'visible' : 'hidden',
+    transform: Open ? 'none' : 'translateX(-30rem)',
+    visibility: Open ? 'visible' : 'hidden',
     height: '100vh',
     outline: 0,
     borderRight: 1,
     borderStyle: 'solid',
-    overflowX: 'hidden',
-    overflowY: 'auto',
-    borderColor: '#E2E8F0',
-    transition: isOpen ? 'transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-    transitionProperty: isOpen ? 'transform' : 'box-shadow',
-    transitionDuration: isOpen ? '225ms' : '300ms',
-    transitionTimingFunction: isOpen ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.2, 1)',
-    transitionDelay: isOpen ? '0ms' : '0ms',
+    // overflowX: 'hidden',
+    // overflowY: 'auto',
+    borderColor: commonBorderColor,
+    transition: Open ? 'transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+    transitionProperty: Open ? 'transform' : 'box-shadow',
+    transitionDuration: Open ? '225ms' : '300ms',
+    transitionTimingFunction: Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.2, 1)',
+    transitionDelay: Open ? '0ms' : '0ms',
   };
+
+  const { cohortSlug, lessonSlug } = router.query;
 
   const checkScrollTop = () => {
     if (!showScrollToTop && window.pageYOffset > 400) {
@@ -88,7 +84,7 @@ const Content = ({ cohortSlug, lessonSlug }) => {
 
   const EventIfNotFound = () => {
     toast({
-      title: 'The endpoint could not access the content of this Project',
+      title: 'The endpoint could not access the content of this lesson',
       // description: 'Content not found',
       status: 'error',
       duration: 7000,
@@ -125,27 +121,54 @@ const Content = ({ cohortSlug, lessonSlug }) => {
     }
   }, [user]);
 
+  const decodeFromBinary = (encoded) => {
+    // decode base 64 encoded string with emojis
+    const decoded = decodeURIComponent(
+      atob(encoded).split('').map((c) => {
+        const decodedEmoist = `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`;
+        return decodedEmoist;
+      }).join(''),
+    );
+
+    return decoded;
+  };
+
   useEffect(() => {
     bc.lesson({
-      type: 'lesson',
+      // type: 'lesson',
       slug: lessonSlug,
       big: true,
     })
       .get()
       .then((lesson) => {
-        console.log(lesson);
-        if (lesson.data[0] !== undefined && lesson.data[0].readme !== null) {
-          const MDecoded = lesson.data[0].readme && typeof lesson.data[0].readme === 'string' ? atob(lesson.data[0].readme) : null;
-          console.log(MDecoded);
+        if (lesson.data.length === 0 || lesson.data[0].asset_type === 'QUIZ') {
+          setQuizSlug(lessonSlug);
+        }
+        if (lesson.data.length !== 0
+            && lesson.data[0] !== undefined
+            && lesson.data[0].readme !== null
+        ) {
+          // Binary base64 decoding ⇢ UTF-8
+          const MDecoded = lesson.data[0].readme && typeof lesson.data[0].readme === 'string' ? decodeFromBinary(lesson.data[0].readme) : null;
           const markdown = getMarkDownContent(MDecoded);
           setReadme(markdown);
-        } else {
-          setTimeout(() => {
-            EventIfNotFound();
-          }, 4000);
         }
+      }).catch(() => {
+        setTimeout(() => {
+          EventIfNotFound();
+        }, 4000);
       });
   }, [lessonSlug]);
+
+  const GetReadme = () => {
+    if (readme === null && quizSlug !== lessonSlug) {
+      return <MDSkeleton />;
+    }
+    if (readme) {
+      return <MarkdownParser content={readme.content} withToc frontMatter={readme.frontMatter || ''} />;
+    }
+    return false;
+  };
 
   return (
     <Flex position="relative">
@@ -170,7 +193,7 @@ const Content = ({ cohortSlug, lessonSlug }) => {
           }}
         />
       </Box>
-      <Box flex="0 0 auto" width="30rem">
+      <Box flex="0 0 auto" width="28.6vw">
         <IconButton
           style={{ zIndex: 20 }}
           variant="default"
@@ -179,14 +202,14 @@ const Content = ({ cohortSlug, lessonSlug }) => {
           height="36px"
           minW={0}
           position="fixed"
-          transition={isOpen ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
+          transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
           transitionProperty="margin"
-          transitionDuration={isOpen ? '225ms' : '195ms'}
-          transitionTimingFunction={isOpen ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
+          transitionDuration={Open ? '225ms' : '195ms'}
+          transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
           top="50%"
-          left={isOpen ? '30rem' : 0}
+          left={Open ? '28.6vw' : 0}
           padding={0}
-          icon={isOpen ? (
+          icon={Open ? (
             <ChevronLeftIcon
               width="17px"
               height="36px"
@@ -202,24 +225,31 @@ const Content = ({ cohortSlug, lessonSlug }) => {
         <Box style={slide}>
           <Box
             padding="1.5rem"
-            position="sticky"
+            // position="sticky"
             top={0}
             zIndex={200}
-            bg={colorMode === 'light' ? 'white' : 'darkTheme'}
+            bg={useColorModeValue('white', 'darkTheme')}
             borderBottom={1}
             borderStyle="solid"
-            borderColor="gray.200"
+            borderColor={commonBorderColor}
           >
             <Heading size="xsm">{user.active_cohort && user.active_cohort.syllabus_name}</Heading>
           </Box>
 
-          <Box>
+          <Box
+            className={`horizontal-sroll ${useColorModeValue('light', 'dark')}`}
+            style={{
+              height: '90.5vh',
+              overflowX: 'hidden',
+              overflowY: 'auto',
+            }}
+          >
             {syllabus && syllabus.map((section) => (
               <Box
                 padding="1.5rem"
                 borderBottom={1}
                 borderStyle="solid"
-                borderColor="gray.200"
+                borderColor={commonBorderColor}
               >
                 <Timeline
                   key={section.id}
@@ -238,30 +268,95 @@ const Content = ({ cohortSlug, lessonSlug }) => {
         </Box>
       </Box>
       <Box
+        className={`markdown-body ${useColorModeValue('light', 'dark')}`}
         flexGrow={1}
-        marginLeft={isOpen ? '0' : '-20rem'}
-        padding="6rem"
-        marginRight="10rem"
-        paddingTop="2rem"
-        transition={isOpen ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
+        marginLeft={Open ? '0' : '-20rem'}
+        padding="4rem 8vw"
+        // marginRight="10rem"
+        transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
         transitionProperty="margin"
-        transitionDuration={isOpen ? '225ms' : '195ms'}
-        transitionTimingFunction={isOpen ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
+        transitionDuration={Open ? '225ms' : '195ms'}
+        transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
         transitionDelay="0ms"
       >
-        {readme ? (
-          <MarkdownParser content={readme.content} withToc frontMatter={readme.frontMatter || ''} />
+        {GetReadme() !== false ? (
+          GetReadme()
         ) : (
-          <MDSkeleton />
+          <Box width="100%" height="100vh">
+            <iframe
+              id="iframe"
+              src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
+              title="Breathecode Quiz"
+            />
+          </Box>
         )}
       </Box>
     </Flex>
   );
 };
 
-Content.propTypes = {
-  cohortSlug: PropTypes.string.isRequired,
-  lessonSlug: PropTypes.string.isRequired,
-};
-
 export default asPrivate(Content);
+
+// <Slide
+// direction="left"
+// in={Open}
+// // className="horizontal-slide"
+// style={{
+//   zIndex: 5,
+//   position: 'sticky',
+//   // perfect size for tablets and devices above 700px
+//   width: '28.6vw',
+//   display: Open ? 'block' : 'none',
+//   height: '100%',
+//   borderRight: 1,
+//   borderStyle: 'solid',
+//   overflowX: 'hidden',
+//   overflowY: 'auto',
+//   borderColor: commonBorderColor,
+// }}
+// >
+// <Box
+//   padding="1.5rem"
+//   borderBottom={1}
+//   borderStyle="solid"
+//   borderColor={commonBorderColor}
+// >
+//   <Heading size="xsm">{user.active_cohort && user.active_cohort.syllabus_name}</Heading>
+// </Box>
+// <Box
+//   padding="1.5rem"
+//   className="horizontal-slide"
+//   style={{
+//     height: '87.2vh',
+//     overflowX: 'hidden',
+//     overflowY: 'auto',
+//   }}
+// >
+//   {syllabus && syllabus.map((section) => (
+//     <Box key={section.id} marginBottom="2rem">
+//       <Timeline
+//         technologies={section.technologies.length > 0
+//           ? section.technologies.map((t) => t.title) : []}
+//         title={section.label}
+//         lessons={section.lessons}
+//         answer={section.quizzes}
+//         code={section.assignments}
+//         practice={section.replits}
+//         onClickAssignment={onClickAssignment}
+//       />
+//     </Box>
+//   ))}
+// </Box>
+// </Slide>
+// <Container
+// className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+// marginTop="6vh"
+// height="100%"
+// maxW="container.md"
+// >
+// {GetReadme() !== false ? (
+//   GetReadme()

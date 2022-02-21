@@ -9,6 +9,9 @@ import {
   FormErrorMessage,
   FormLabel,
   useToast,
+  Link,
+  Spacer,
+  Flex,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 import { useRouter } from 'next/router';
@@ -22,6 +25,11 @@ function LogIn() {
   const router = useRouter();
   const [curUrl, setUrl] = useState('');
   useEffect(() => setUrl(typeof window !== 'undefined' ? window.location.href : ''), []);
+
+  const githubLoginUrl = (typeof window !== 'undefined')
+    ? `${process.env.BREATHECODE_HOST}/v1/auth/github?url=${curUrl}`
+    : '#';
+
   return (
     <Formik
       initialValues={{
@@ -59,7 +67,7 @@ function LogIn() {
       {({ isSubmitting }) => (
         <Form>
           <Stack spacing={6} justifyContent="space-between">
-            <Button target="_blank" as="a" href={(typeof window !== 'undefined') ? `https://breathecode.herokuapp.com/v1/auth/github?url=${curUrl}` : '#'} cursor="pointer" variant="outline" weight="700">
+            <Button as="a" href={githubLoginUrl} cursor="pointer" variant="outline" weight="700">
               <Icon icon="github" width="18px" height="18px" />
               <Text fontSize="13px" marginLeft="10px">
                 LOG IN WITH GITHUB
@@ -68,14 +76,14 @@ function LogIn() {
             <Box display="flex" justifyContent="center" width="100%">
               <Box
                 borderBottom="solid 1px #DADADA"
-                width="165px"
+                width="100%"
                 marginRight="13px"
                 marginBottom="9px"
               />
               <Box color="gray.default">or</Box>
               <Box
                 borderBottom="solid 1px #DADADA"
-                width="165px"
+                width="100%"
                 marginLeft="14px"
                 marginBottom="9px"
               />
@@ -128,9 +136,20 @@ function LogIn() {
                 </FormControl>
               )}
             </Field>
-            <Box margin="0px" color="blue.default" fontWeight="700" align="right">
-              Reset Password
-            </Box>
+            <Flex marginTop="1.5rem">
+              <Spacer />
+              <Link
+                margin="0"
+                color="blue.default"
+                fontWeight="700"
+                align="right"
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`${process.env.BREATHECODE_HOST}/v1/auth/password/reset?url=${curUrl}`}
+              >
+                Reset Password
+              </Link>
+            </Flex>
             <Button variant="default" fontSize="l" isLoading={isSubmitting} type="submit">
               LOGIN
             </Button>

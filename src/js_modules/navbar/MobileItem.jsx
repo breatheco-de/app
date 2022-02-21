@@ -14,18 +14,19 @@ import NextChakraLink from '../../common/components/NextChakraLink';
 import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
 
-const MobileNavItem = ({
-  label, subMenu, href, description, icon,
+const MobileItem = ({
+  label, subMenu, href, asPath, description, icon,
 }) => {
   const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
-  const commonColor = useColorModeValue('gray.600', 'gray.300');
+  const linkColor = useColorModeValue('gray.600', 'gray.200');
+  const linkHoverColor = useColorModeValue('blue.default', 'blue.default');
 
   const getColorLink = (link) => {
-    if (router?.pathname === link || router?.asPath === link || router?.pathname.includes(link)) {
+    if (router?.pathname === link || router.asPath === link || router?.pathname.includes(link)) {
       return 'blue.default';
     }
-    return commonColor;
+    return linkColor;
   };
 
   return (
@@ -33,7 +34,6 @@ const MobileNavItem = ({
       {!subMenu && (
         <NextChakraLink
           py={2}
-          // as={Link}
           href={href}
           target={isAbsoluteUrl(href) ? '_blank' : undefined}
           rel={isAbsoluteUrl(href) ? 'noopener noreferrer' : undefined}
@@ -42,9 +42,10 @@ const MobileNavItem = ({
           align="center"
           _hover={{
             textDecoration: 'none',
+            color: linkHoverColor,
           }}
         >
-          <Text fontWeight={400} color={getColorLink(href)}>
+          <Text fontWeight={400} color={getColorLink(href || asPath)}>
             {label}
           </Text>
         </NextChakraLink>
@@ -59,7 +60,7 @@ const MobileNavItem = ({
             textDecoration: 'none',
           }}
         >
-          <Text fontWeight={400} color={getColorLink(href)}>
+          <Text fontWeight={400} color={getColorLink(href || asPath)}>
             {label}
           </Text>
           <Box
@@ -88,7 +89,7 @@ const MobileNavItem = ({
             borderStyle="solid"
             borderColor={useColorModeValue('gray.200', 'gray.900')}
             alignItems="center"
-            color={commonColor}
+            color={linkColor}
           >
             <Box width="auto">
               <Icon icon={icon} width="50px" height="50px" />
@@ -97,7 +98,7 @@ const MobileNavItem = ({
               <Text size="xl" fontWeight={900}>
                 {label}
               </Text>
-              <Text color={commonColor} fontWeight={500}>
+              <Text color={linkColor} fontWeight={500}>
                 {description}
               </Text>
             </Box>
@@ -121,11 +122,12 @@ const MobileNavItem = ({
   );
 };
 
-MobileNavItem.propTypes = {
+MobileItem.propTypes = {
   label: PropTypes.string.isRequired,
   description: PropTypes.string,
   icon: PropTypes.string,
   href: PropTypes.string,
+  asPath: PropTypes.string,
   subMenu: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string,
@@ -135,11 +137,12 @@ MobileNavItem.propTypes = {
   ),
 };
 
-MobileNavItem.defaultProps = {
+MobileItem.defaultProps = {
+  asPath: '',
   href: '/',
   description: '',
   icon: 'book',
   subMenu: undefined,
 };
 
-export default MobileNavItem;
+export default MobileItem;

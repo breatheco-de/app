@@ -186,10 +186,12 @@ const SupportSidebar = ({
                           maxWidth="100%"
                           // borderColor={commonBorderColor}
                         >
-                          {programMentors && programMentors.filter(
-                            (mentor) => mentor.service.slug === service.slug,
-                          ) && programMentors.map((l) => (
+                          {programMentors.filter(
+                            (mentor) => mentor.service.slug === service.slug
+                              && mentor.status !== 'INNACTIVE',
+                          ).length !== 0 ? programMentors.map((l) => (
                             <Box
+                              key={`${l.slug}-${l.id}`}
                               padding="16px"
                               borderTop="1px solid"
                               borderLeft="5px solid"
@@ -199,7 +201,6 @@ const SupportSidebar = ({
                               <Box
                                 as="a"
                                 color="blue.default"
-                                key={`${l.slug}-${l.id}`}
                                 href={`https://mentor.breatheco.de/academy/${academySlug}/service/${service.slug}/mentor/${l.slug}?token=${accessToken}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -207,7 +208,18 @@ const SupportSidebar = ({
                                 {`${l.user.first_name} ${l.user.last_name}`}
                               </Box>
                             </Box>
-                          ))}
+                            )) : (
+                              <Box
+                                padding="16px"
+                                borderTop="1px solid"
+                                borderLeft="5px solid"
+                                color="gray.600"
+                                borderColor={commonBorderColor}
+                                width="100%"
+                              >
+                                No mentors available
+                              </Box>
+                            )}
                         </AccordionPanel>
                       </AccordionItem>
                     </Accordion>

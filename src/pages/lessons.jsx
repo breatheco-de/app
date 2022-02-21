@@ -34,6 +34,9 @@ export const getStaticProps = async ({ locale }) => {
 
 const Lessons = ({ data }) => {
   const router = useRouter();
+  // NOTE: split env var SYLLABUS
+  // console.log('router:::', router);
+
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
 
   const contains = (lesson) => {
