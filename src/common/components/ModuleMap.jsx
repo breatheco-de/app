@@ -132,9 +132,6 @@ const ModuleMap = ({
   }));
 
   const modules = [...updatedRead, ...updatedPractice, ...updatedCode, ...updatedAnswer];
-  // console.log('MODULES__sortedModules:::', modules);
-  // console.log('taskTodo:::', taskTodo);
-
   return (
     <Box width={width || '100%'}>
       <Box display="flex" justifyContent="space-between">

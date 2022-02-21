@@ -10,20 +10,20 @@ import {
   useColorMode,
   useColorModeValue,
   FormErrorMessage,
+  useToast,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { Formik, Form, Field } from 'formik';
+import { useRouter } from 'next/router';
 import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
 import Icon from '../common/components/Icon';
-
-const regex = {
-  email:
-    /^[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~](\.?[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~])*@(?!mailinator|leonvero|ichkoch|naymeo|naymio)[a-zA-Z0-9]*\.[a-zA-Z](-?[a-zA-Z0-9])+$/,
-  phone: /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/,
-};
+import { email } from '../utils/regex';
+import bc from '../common/services/breathecode';
 
 export default function Home() {
+  const toast = useToast();
+  const router = useRouter();
   const { t } = useTranslation(['home']);
   const { colorMode } = useColorMode();
   const commonColor = useColorModeValue('gray.600', 'gray.300');
@@ -32,7 +32,7 @@ export default function Home() {
     let error;
     if (!value) {
       error = 'Email is required';
-    } else if (!regex.email.test(value)) {
+    } else if (!email.test(value)) {
       error = 'Invalid email address';
     }
     return error;
@@ -114,12 +114,32 @@ export default function Home() {
             transition="all .2s ease"
           >
             <Formik
-              initialValues={{ email: '' }}
+              initialValues={{
+                email: '',
+              }}
               onSubmit={(values, actions) => {
-                setTimeout(() => {
-                  alert(JSON.stringify(values, null, 2));
+                bc.auth().subscribe(values).then(() => {
+                  toast({
+                    title: 'Your email has been added to our list!',
+                    status: 'success',
+                    duration: 9000,
+                    isClosable: true,
+                  });
+                  router.push('/thank-you');
+                }).catch(() => {
+                  toast({
+                    title: 'Your email is already subscribed!',
+                    status: 'warning',
+                    duration: 6000,
+                    isClosable: true,
+                  });
                   actions.setSubmitting(false);
-                }, 1000);
+                });
+
+                // setTimeout(() => {
+                //   alert(JSON.stringify(values, null, 2));
+                //   actions.setSubmitting(false);
+                // }, 1000);
               }}
             >
               {(props) => {
@@ -146,7 +166,7 @@ export default function Home() {
                                 backgroundColor: colorMode === 'light' ? '#FFFFFF' : '#17202A',
                               }}
                             />
-                            <FormErrorMessage marginTop={0}>{form.errors.email}</FormErrorMessage>
+                            <FormErrorMessage position="absolute" marginTop={0}>{form.errors.email}</FormErrorMessage>
                           </FormControl>
                         )}
                       </Field>

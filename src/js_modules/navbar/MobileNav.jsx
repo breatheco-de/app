@@ -7,17 +7,27 @@ import {
   useColorMode,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
 import Icon from '../../common/components/Icon';
-import MobileNavItem from './MobileNavItem';
+import MobileItem from './MobileItem';
 
-const MobileNav = ({ NAV_ITEMS }) => {
+const MobileNav = ({ NAV_ITEMS, haveSession }) => {
+  const [privateItems, setPrivateItems] = useState([]);
   const { colorMode, toggleColorMode } = useColorMode();
   const commonColors = useColorModeValue('white', 'gray.800');
+
+  useEffect(() => {
+    if (haveSession) {
+      setPrivateItems(NAV_ITEMS.filter((item) => item.private === true));
+    }
+  }, [haveSession]);
+  const publicItems = NAV_ITEMS.filter((item) => item.private !== true);
+
   return (
     <Stack
       position="absolute"
       width="100%"
-      zIndex="10"
+      zIndex="99"
       bg={useColorModeValue('white', 'gray.800')}
       p={4}
       display={{ md: 'none' }}
@@ -25,12 +35,29 @@ const MobileNav = ({ NAV_ITEMS }) => {
       borderStyle="solid"
       borderColor={useColorModeValue('gray.200', 'gray.900')}
     >
-      {NAV_ITEMS.map((navItem) => {
+      {privateItems.length > 0 && privateItems.map((privateItem) => {
+        const {
+          label, subMenu, href, asPath, description, icon,
+        } = privateItem;
+        return (
+          <MobileItem
+            key={label}
+            description={description}
+            icon={icon}
+            label={label}
+            subMenu={subMenu}
+            href={href}
+            asPath={asPath}
+          />
+        );
+      })}
+
+      {publicItems.map((publicItem) => {
         const {
           label, subMenu, href, description, icon,
-        } = navItem;
+        } = publicItem;
         return (
-          <MobileNavItem
+          <MobileItem
             key={label}
             description={description}
             icon={icon}
@@ -72,6 +99,7 @@ const MobileNav = ({ NAV_ITEMS }) => {
 };
 
 MobileNav.propTypes = {
+  haveSession: PropTypes.bool.isRequired,
   NAV_ITEMS: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string.isRequired,

@@ -1,10 +1,11 @@
 import {
   FormControl, Input, Button, Popover, PopoverTrigger, PopoverContent,
-  PopoverArrow, PopoverHeader, PopoverCloseButton, PopoverBody,
+  PopoverArrow, PopoverHeader, PopoverCloseButton, PopoverBody, useDisclosure,
 } from '@chakra-ui/react';
 import { Formik, Form, Field } from 'formik';
 import PropTypes from 'prop-types';
 import Icon from '../../common/components/Icon';
+import ModalInfo from './modalInfo';
 
 export const IconByTaskStatus = ({ currentTask }) => {
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
@@ -34,10 +35,26 @@ export const getHandlerByTaskStatus = ({
   currentTask, sendProject, changeStatusAssignment, toggleSettings, closeSettings,
   settingsOpen,
 }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const TaskButton = () => (
     <Button
       display="flex"
       onClick={(event) => changeStatusAssignment(event, currentTask)}
+      minWidth="26px"
+      minHeight="26px"
+      height="fit-content"
+      background="none"
+      padding="0"
+      borderRadius="30px"
+    >
+      <IconByTaskStatus currentTask={currentTask} />
+    </Button>
+  );
+
+  const OpenModalButton = () => (
+    <Button
+      onClick={onOpen}
+      display="flex"
       minWidth="26px"
       minHeight="26px"
       height="fit-content"
@@ -54,22 +71,28 @@ export const getHandlerByTaskStatus = ({
     if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {
       // Option case Revision pending...
       return (
-        <TaskButton />
+        <>
+          <OpenModalButton />
+          <ModalInfo
+            isOpen={isOpen}
+            onClose={onClose}
+            description="Your teacher is still reviewing your deliver and will provide feedback once it's done"
+            projectUrl={currentTask.github_url}
+            removeDelivery={(event) => changeStatusAssignment(event, currentTask)}
+          />
+        </>
       );
     }
-    if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'DONE') {
+    if (currentTask.revision_status === 'DONE') {
       return (
-        <Button
-          display="flex"
-          minWidth="26px"
-          minHeight="26px"
-          height="fit-content"
-          background="none"
-          padding="0"
-          borderRadius="30px"
-        >
-          <IconByTaskStatus currentTask={currentTask} />
-        </Button>
+        <>
+          <OpenModalButton />
+          <ModalInfo
+            isOpen={isOpen}
+            onClose={onClose}
+            isDone
+          />
+        </>
       );
     }
 
@@ -104,7 +127,12 @@ export const getHandlerByTaskStatus = ({
             <Formik
               initialValues={{ githubUrl: '' }}
               onSubmit={(values) => {
-                sendProject(currentTask, values.githubUrl);
+                // console.log('values:::', values);
+                if (values.githubUrl !== '') {
+                // NOTE_BUG: when the user starts module and send the link, it not sends to
+                // the endpoint, It occurs by the taskTodo persistent not changes in localStorage
+                  sendProject(currentTask, values.githubUrl);
+                }
               }}
             >
               {({ isSubmitting }) => (
