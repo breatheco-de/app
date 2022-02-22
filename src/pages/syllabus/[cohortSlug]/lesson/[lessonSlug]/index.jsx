@@ -32,8 +32,8 @@ const Content = () => {
   const { user, choose } = useAuth();
   const toast = useToast();
   const router = useRouter();
-  const [isBelowTablet] = useMediaQuery('(max-width: 996px)');
-  const [isBelowMobile] = useMediaQuery('(max-width: 768px)');
+  const [isBelowLaptop] = useMediaQuery('(max-width: 996px)');
+  const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
 
   //                                          gray.200    gray.500
   const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
@@ -41,9 +41,9 @@ const Content = () => {
   const Open = !isOpen;
 
   const slide = {
-    minWidth: '265px',
+    minWidth: '310px',
     zIndex: 1200,
-    position: isBelowTablet ? 'inherit' : 'sticky',
+    position: isBelowLaptop ? 'inherit' : 'sticky',
     backgroundColor: bgColor,
     top: 0,
     left: 0,
@@ -153,8 +153,8 @@ const Content = () => {
           setQuizSlug(lessonSlug);
         }
         if (lesson.data.length !== 0
-            && lesson.data[0] !== undefined
-            && lesson.data[0].readme !== null
+          && lesson.data[0] !== undefined
+          && lesson.data[0].readme !== null
         ) {
           // Binary base64 decoding ⇢ UTF-8
           const MDecoded = lesson.data[0].readme && typeof lesson.data[0].readme === 'string' ? decodeFromBinary(lesson.data[0].readme) : null;
@@ -169,24 +169,24 @@ const Content = () => {
   }, [lessonSlug]);
 
   const containerSlide = () => {
-    if (isBelowTablet) {
+    if (isBelowLaptop) {
       return '0';
     }
     return Open ? '0' : '0 auto';
   };
 
   const timelineSlide = () => {
-    if (isBelowTablet) {
+    if (isBelowLaptop) {
       return 'fixed';
     }
     return Open ? 'initial' : 'fixed';
   };
 
   const timelineWidth = () => {
-    if (isBelowMobile) {
+    if (isBelowTablet) {
       return '74.6vw';
     }
-    if (isBelowTablet) {
+    if (isBelowLaptop) {
       return '46.6vw';
     }
     return '26.6vw';
@@ -245,7 +245,7 @@ const Content = () => {
           }}
         />
       </Box>
-      <Box position={timelineSlide} flex="0 0 auto" minWidth="265px" width={timelineWidth} zIndex={Open ? 99 : 0}>
+      <Box position={timelineSlide} flex="0 0 auto" minWidth="310px" width={timelineWidth} zIndex={Open ? 99 : 0}>
         <Box style={slide}>
           <Box
             padding="1.5rem"

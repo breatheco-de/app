@@ -2,15 +2,13 @@
 import PropTypes from 'prop-types';
 import { compiler } from 'markdown-to-jsx';
 import {
-  UnorderedList, ListItem, useColorMode, Box,
-  useMediaQuery,
+  UnorderedList, ListItem, useColorMode, Grid, GridItem,
 } from '@chakra-ui/react';
 import React, { Fragment } from 'react';
 import Anchor from './Anchor';
 
 const Toc = ({ content }) => {
   const { colorMode } = useColorMode();
-  const [isMobile] = useMediaQuery('(max-width: 768px)');
   const getHierarchy = () => {
     const hierarchy = [];
     const headers = compiler(content, {
@@ -56,19 +54,22 @@ const Toc = ({ content }) => {
     return hierarchy;
   };
 
-  const getColumnCount = () => {
-    const columnLimitator = (getHierarchy().length / 3) < 3;
-    const count = columnLimitator ? 2 : 3;
-    return count;
+  const getRows = () => {
+    let count = getHierarchy().length;
+    getHierarchy().forEach((e) => {
+      if (Array.isArray(e.childs)) {
+        count += e.childs.length;
+      }
+    });
+    return Math.ceil(count / 3);
   };
-  const columnCount = isMobile ? 2 : getColumnCount();
 
   return (
-    <Box
-      w="100%"
-      mx="auto"
-      sx={{ columnCount, columnGap: '20%' }}
+    <Grid
       bg={colorMode === 'light' ? 'blue.light' : 'featuredDark'}
+      templateRows={`repeat(${getRows()}, 1fr)`}
+      gridTemplateColumns="repeat(auto-fill, minmax(min(100%, 12rem), 1fr))"
+      gap={4}
       paddingX="28px"
       paddingY={22}
       borderRadius="17px"
@@ -78,9 +79,9 @@ const Toc = ({ content }) => {
         return (
           <Fragment key={mapIndex}>
             {Array.isArray(item.childs) && item.childs.length > 0 ? (
-              <Box
-                marginBottom="0.6rem"
-                d="inline-block"
+              <GridItem
+                rowSpan={item.childs.length}
+                colSpan={1}
               >
                 {item.h}
                 <UnorderedList
@@ -101,12 +102,12 @@ const Toc = ({ content }) => {
                 >
                   {item.childs.map((c, i) => <ListItem key={i} margin={0}>{c.h}</ListItem>)}
                 </UnorderedList>
-              </Box>
-            ) : <Box marginBottom="0.5rem" d="block">{item.h}</Box>}
+              </GridItem>
+            ) : <GridItem colSpan={1}>{item.h}</GridItem>}
           </Fragment>
         );
       })}
-    </Box>
+    </Grid>
   );
 };
 
