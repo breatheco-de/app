@@ -2,7 +2,7 @@
 import PropTypes from 'prop-types';
 import { compiler } from 'markdown-to-jsx';
 import {
-  UnorderedList, ListItem, useColorMode, Box,
+  UnorderedList, ListItem, useColorMode, Grid, GridItem,
 } from '@chakra-ui/react';
 import React, { Fragment } from 'react';
 import Anchor from './Anchor';
@@ -61,12 +61,22 @@ const Toc = ({ content }) => {
   };
   const columnCount = getColumnCount();
 
+  const getRows = () => {
+    let count = getHierarchy().length;
+    getHierarchy().forEach((e) => {
+      if (Array.isArray(e.childs)) {
+        count += e.childs.length;
+      }
+    });
+    return Math.ceil(count / 3);
+  };
+
   return (
-    <Box
-      w="100%"
-      mx="auto"
-      sx={{ columnCount, columnGap: '20%' }}
+    <Grid
       bg={colorMode === 'light' ? 'blue.light' : 'featuredDark'}
+      templateRows={`repeat(${getRows()}, 1fr)`}
+      templateColumns={`repeat(${columnCount}, 1fr)`}
+      gap={4}
       paddingX="28px"
       paddingY={22}
       borderRadius="17px"
@@ -76,9 +86,9 @@ const Toc = ({ content }) => {
         return (
           <Fragment key={mapIndex}>
             {Array.isArray(item.childs) ? (
-              <Box
-                marginBottom="0.6rem"
-                d="inline-block"
+              <GridItem
+                rowSpan={item.childs.length}
+                colSpan={1}
               >
                 {item.h}
                 <UnorderedList
@@ -101,12 +111,12 @@ const Toc = ({ content }) => {
                 >
                   {item.childs.map((c, i) => <ListItem key={i} margin={0}>{c.h}</ListItem>)}
                 </UnorderedList>
-              </Box>
-            ) : <Box marginBottom="0.5rem" d="inline-block">{item.h}</Box>}
+              </GridItem>
+            ) : <GridItem colSpan={1}>{item.h}</GridItem>}
           </Fragment>
         );
       })}
-    </Box>
+    </Grid>
   );
 };
 

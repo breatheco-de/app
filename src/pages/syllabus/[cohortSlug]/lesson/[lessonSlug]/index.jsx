@@ -145,8 +145,8 @@ const Content = () => {
           setQuizSlug(lessonSlug);
         }
         if (lesson.data.length !== 0
-            && lesson.data[0] !== undefined
-            && lesson.data[0].readme !== null
+          && lesson.data[0] !== undefined
+          && lesson.data[0].readme !== null
         ) {
           // Binary base64 decoding ⇢ UTF-8
           const MDecoded = lesson.data[0].readme && typeof lesson.data[0].readme === 'string' ? decodeFromBinary(lesson.data[0].readme) : null;
@@ -270,7 +270,7 @@ const Content = () => {
       <Box
         className={`markdown-body ${useColorModeValue('light', 'dark')}`}
         flexGrow={1}
-        marginLeft={Open ? '0' : '-20rem'}
+        marginLeft={Open ? '0' : '-28.6vw'}
         padding="4rem 8vw"
         // marginRight="10rem"
         transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
