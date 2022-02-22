@@ -50,12 +50,16 @@ const MDHeading = ({ children, id }) => (
 const MDText = ({ children }) => {
   const [haveHighlight, setHaveHighlight] = useState(false);
   useEffect(() => {
-    // eslint-disable-next-line array-callback-return
-    children.map((child) => {
-      if (child && child.type && child.type.name === 'Code') {
-        setHaveHighlight(true);
-      }
-    });
+    if (children) {
+      // eslint-disable-next-line array-callback-return
+      children.map((child) => {
+        if (child && child.type && child.type.name === 'Code') {
+          setHaveHighlight(true);
+        }
+      });
+    } else {
+      console.log('something was wrong');
+    }
   }, [children]);
 
   return (
@@ -71,6 +75,7 @@ const MDLink = ({ children, href }) => (
     fontSize="15px"
     color="blue.400"
     fontWeight="700"
+    overflowWrap="anywhere"
     target="_blank"
     rel="noopener noreferrer"
   >

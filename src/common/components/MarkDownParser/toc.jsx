@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 import { compiler } from 'markdown-to-jsx';
 import {
   UnorderedList, ListItem, useColorMode, Box,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import React, { Fragment } from 'react';
 import Anchor from './Anchor';
 
 const Toc = ({ content }) => {
   const { colorMode } = useColorMode();
+  const [isMobile] = useMediaQuery('(max-width: 768px)');
   const getHierarchy = () => {
     const hierarchy = [];
     const headers = compiler(content, {
@@ -59,7 +61,7 @@ const Toc = ({ content }) => {
     const count = columnLimitator ? 2 : 3;
     return count;
   };
-  const columnCount = getColumnCount();
+  const columnCount = isMobile ? 2 : getColumnCount();
 
   return (
     <Box
@@ -75,7 +77,7 @@ const Toc = ({ content }) => {
         const mapIndex = index;
         return (
           <Fragment key={mapIndex}>
-            {Array.isArray(item.childs) ? (
+            {Array.isArray(item.childs) && item.childs.length > 0 ? (
               <Box
                 marginBottom="0.6rem"
                 d="inline-block"
@@ -95,14 +97,12 @@ const Toc = ({ content }) => {
                     transform: 'translate(0, 10%)',
                   }}
                   listStyleType="none"
-                  margin={0}
-                  padding={0}
-                  style={{ margin: 0 }}
+                  style={{ margin: 0, padding: 0 }}
                 >
                   {item.childs.map((c, i) => <ListItem key={i} margin={0}>{c.h}</ListItem>)}
                 </UnorderedList>
               </Box>
-            ) : <Box marginBottom="0.5rem" d="inline-block">{item.h}</Box>}
+            ) : <Box marginBottom="0.5rem" d="block">{item.h}</Box>}
           </Fragment>
         );
       })}
