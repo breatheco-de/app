@@ -38,7 +38,7 @@ pre {
   line-height: 19px;
   overflow: auto;
   display: block;
-  width: 52vw !important;
+  width: 53vw;
   font-size: 85%;
   line-height: 1.45;
   border-radius: 6px;
@@ -303,13 +303,16 @@ blockquote > :last-child {
   margin-bottom: 0;
 } */
 
-table {
+.markdown-body table {
   padding: 0;
   border-collapse:collapse;
   /* responsive to tablet device (760px) */
-  width: 52vw;
   overflow: auto;
+  width: 100%;
+  display: block;
+  /* width: 52vw;
   display: table-caption;
+  */
 }
 
 .markdown-body.light thead {
@@ -504,7 +507,7 @@ pre code {
 .text-highlight{
   display: block;
   overflow: auto;
-  width: 52vw;
+  width: 53vw;
   margin-block-start: 1em;
   margin-block-end: 1em;
   margin-inline-start: 0px;
@@ -514,4 +517,33 @@ pre code {
 pre code, pre tt {
   background-color: transparent;
   border: none;
+}
+
+
+@media screen and (min-width: 1440px) {
+  .text-highlight {
+    width: 100%;
+  }
+  pre {
+    width: 100%;
+  }
+}
+/* table {
+  display: block;
+  width: 100%;
+} */
+
+@media screen and (max-width: 996px) {
+  .text-highlight {
+    width: 84vw;
+  }
+  pre {
+    width: 84vw;
+  }
+  .markdown-body table {
+    max-width: 84vw;
+    width: 100%;
+    overflow: auto;
+    display: grid;
+  }
 }

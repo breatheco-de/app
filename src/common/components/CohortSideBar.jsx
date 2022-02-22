@@ -81,7 +81,7 @@ const CohortSideBar = ({
         })}
       </Box>
       <Divider margin={0} style={{ borderColor: useColorModeValue('#DADADA', 'gray.700') }} />
-      <Box padding="0 26px">
+      <Box padding="18px 26px">
         {teacherAssistants.length > 0 && (
           <>
             <Heading as="h4" padding="25px 0 8px 0" fontSize={15} lineHeight="18px" margin={0}>
