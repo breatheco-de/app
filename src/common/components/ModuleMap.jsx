@@ -77,13 +77,6 @@ const Module = ({
         <Box
           display="flex"
           margin="0 0 0 auto"
-
-          // NOTE: USAR REDUX
-
-          // onClick={(e) => handleModuleStatus(e, { ...module, index: i })}
-          // onClick={() => {
-          //   console.log('click');
-          // }}
         >
           {currentTask && currentTask.task_type !== 'PROJECT' && currentTask.task_status === 'DONE' ? (
             <Icon icon="verified" width="27px" />
