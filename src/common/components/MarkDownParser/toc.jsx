@@ -54,13 +54,6 @@ const Toc = ({ content }) => {
     return hierarchy;
   };
 
-  const getColumnCount = () => {
-    const columnLimitator = (getHierarchy().length / 3) < 3;
-    const count = columnLimitator ? 2 : 3;
-    return count;
-  };
-  const columnCount = getColumnCount();
-
   const getRows = () => {
     let count = getHierarchy().length;
     getHierarchy().forEach((e) => {
@@ -75,7 +68,7 @@ const Toc = ({ content }) => {
     <Grid
       bg={colorMode === 'light' ? 'blue.light' : 'featuredDark'}
       templateRows={`repeat(${getRows()}, 1fr)`}
-      templateColumns={`repeat(${columnCount}, 1fr)`}
+      gridTemplateColumns="repeat(auto-fill, minmax(min(100%, 12rem), 1fr))"
       gap={4}
       paddingX="28px"
       paddingY={22}
@@ -85,7 +78,7 @@ const Toc = ({ content }) => {
         const mapIndex = index;
         return (
           <Fragment key={mapIndex}>
-            {Array.isArray(item.childs) ? (
+            {Array.isArray(item.childs) && item.childs.length > 0 ? (
               <GridItem
                 rowSpan={item.childs.length}
                 colSpan={1}
@@ -105,9 +98,7 @@ const Toc = ({ content }) => {
                     transform: 'translate(0, 10%)',
                   }}
                   listStyleType="none"
-                  margin={0}
-                  padding={0}
-                  style={{ margin: 0 }}
+                  style={{ margin: 0, padding: 0 }}
                 >
                   {item.childs.map((c, i) => <ListItem key={i} margin={0}>{c.h}</ListItem>)}
                 </UnorderedList>
