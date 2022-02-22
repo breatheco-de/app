@@ -37,7 +37,7 @@ export default {
     msHyphens: 'none',
     hyphens: 'none',
     padding: '1em',
-    margin: '.5em 0',
+    margin: '15px 0',
     overflow: 'auto',
   },
   ':not(pre) > code[class*="language-"]': {
