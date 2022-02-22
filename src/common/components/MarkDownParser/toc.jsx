@@ -55,8 +55,8 @@ const Toc = ({ content }) => {
   };
 
   const getColumnCount = () => {
-    const columnLimitator = (getHierarchy().length / 3) < 3;
-    const count = columnLimitator ? 2 : 3;
+    const columnLimitator = (getHierarchy().length / 2) < 2;
+    const count = columnLimitator ? 2 : 2;
     return count;
   };
   const columnCount = getColumnCount();
@@ -68,7 +68,7 @@ const Toc = ({ content }) => {
         count += e.childs.length;
       }
     });
-    return Math.ceil(count / 3);
+    return Math.ceil(count / 2);
   };
 
   return (
@@ -76,6 +76,7 @@ const Toc = ({ content }) => {
       bg={colorMode === 'light' ? 'blue.light' : 'featuredDark'}
       templateRows={`repeat(${getRows()}, 1fr)`}
       templateColumns={`repeat(${columnCount}, 1fr)`}
+      autoFlow
       gap={4}
       paddingX="28px"
       paddingY={22}

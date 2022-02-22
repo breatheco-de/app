@@ -258,7 +258,7 @@ const Content = () => {
                   title={section.label}
                   lessons={section.lessons}
                   answer={section.quizzes}
-                  code={section.assigments}
+                  code={section.assignments}
                   practice={section.replits}
                   onClickAssignment={onClickAssignment}
                 />
