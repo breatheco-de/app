@@ -520,7 +520,7 @@ pre code, pre tt {
 }
 
 .md-bullet {
-  margin-left: 1.5rem;
+  margin-left: 1rem !important;
 }
 
 @media screen and (min-width: 1440px) {
