@@ -2,7 +2,7 @@
 import PropTypes from 'prop-types';
 import { compiler } from 'markdown-to-jsx';
 import {
-  UnorderedList, ListItem, useColorMode, Grid, GridItem,
+  UnorderedList, ListItem, useColorMode, Box,
 } from '@chakra-ui/react';
 import React, { Fragment } from 'react';
 import Anchor from './Anchor';
@@ -67,12 +67,11 @@ const Toc = ({ content }) => {
   };
  */
   return (
-    <Grid
+    <Box
       bg={colorMode === 'light' ? 'blue.light' : 'featuredDark'}
-      /* templateRows={`repeat(${getRows()}, 1fr)`} */
-      templateColumns="repeat(auto-fill, minmax(min(100%, 12rem), 1fr))"
-      gap={2}
-      autoFlow="row"
+      w="100%"
+      mx="auto"
+      sx={{ columnCount: [1, 2, 3], columnGap: '8px' }}
       paddingX="28px"
       paddingY={22}
       borderRadius="17px"
@@ -82,35 +81,40 @@ const Toc = ({ content }) => {
         return (
           <Fragment key={mapIndex}>
             {Array.isArray(item.childs) && item.childs.length > 0 ? (
-              <GridItem
-                rowSpan={item.childs.length}
-                colSpan={1}
-              >
-                {item.h}
-                <UnorderedList
-                  position="relative"
-                  _before={item.childs.length > 0 && {
-                    content: '""',
-                    position: 'absolute',
-                    left: 0,
-                    top: 0,
-                    width: '2px',
-                    height: '85%',
-                    bg: colorMode === 'light' ? '#DADADA' : '#3E526A',
-                    borderRadius: '2px',
-                    transform: 'translate(0, 10%)',
-                  }}
-                  listStyleType="none"
-                  style={{ margin: 0, padding: 0 }}
-                >
-                  {item.childs.map((c, i) => <ListItem key={i} margin={0}>{c.h}</ListItem>)}
-                </UnorderedList>
-              </GridItem>
-            ) : <GridItem colSpan={1} rowSpan={1}>{item.h}</GridItem>}
+              <Box>
+                <Box display="inline-flex" flexDirection="column">
+                  {item.h}
+                  <UnorderedList
+                    display="flex"
+                    flexDirection="column"
+                    position="relative"
+                    _before={item.childs.length > 0 && {
+                      content: '""',
+                      position: 'absolute',
+                      left: 0,
+                      top: 0,
+                      width: '2px',
+                      height: '90%',
+                      bg: colorMode === 'light' ? '#DADADA' : '#3E526A',
+                      borderRadius: '2px',
+                      transform: 'translate(0, 5%)',
+                    }}
+                    listStyleType="none"
+                    style={{ margin: 0, padding: 0 }}
+                  >
+                    {item.childs.map((c, i) => (
+                      <ListItem key={i} style={{ margin: 0 }}>
+                        {c.h}
+                      </ListItem>
+                    ))}
+                  </UnorderedList>
+                </Box>
+              </Box>
+            ) : <Box>{item.h}</Box>}
           </Fragment>
         );
       })}
-    </Grid>
+    </Box>
   );
 };
 
