@@ -82,7 +82,7 @@ const Module = ({
             <Icon icon="verified" width="27px" />
           ) : (
             <Link
-              href={`/syllabus/${cohortSlug}/lesson/${data.slug}`}
+              href={`/syllabus/${cohortSlug}/${data.type.toLowerCase()}/${data.slug}`}
               color="#0097CF"
               fontWeight="bold"
               fontStyle="normal"

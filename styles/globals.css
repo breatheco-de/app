@@ -519,6 +519,9 @@ pre code, pre tt {
   border: none;
 }
 
+.md-bullet {
+  margin-left: 1.5rem;
+}
 
 @media screen and (min-width: 1440px) {
   .text-highlight {
