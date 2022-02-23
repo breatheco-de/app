@@ -67,7 +67,7 @@ const Content = () => {
     transitionDelay: Open ? '0ms' : '0ms',
   };
 
-  const { cohortSlug, lessonSlug } = router.query;
+  const { cohortSlug, lessonSlug, lesson } = router.query;
 
   const checkScrollTop = () => {
     if (!showScrollToTop && window.pageYOffset > 400) {
@@ -86,7 +86,7 @@ const Content = () => {
   }
 
   const onClickAssignment = (e, item) => {
-    router.push(`/syllabus/${cohortSlug}/lesson/${item.slug}`);
+    router.push(`/syllabus/${cohortSlug}/${item.subtitle.toLowerCase()}/${item.slug}`);
     setReadme(null);
   };
 
@@ -148,16 +148,16 @@ const Content = () => {
       big: true,
     })
       .get()
-      .then((lesson) => {
-        if (lesson.data.length === 0 || lesson.data[0].asset_type === 'QUIZ') {
+      .then((le) => {
+        if (le.data.length === 0 || le.data[0].asset_type === 'QUIZ') {
           setQuizSlug(lessonSlug);
         }
-        if (lesson.data.length !== 0
-          && lesson.data[0] !== undefined
-          && lesson.data[0].readme !== null
+        if (le.data.length !== 0
+          && le.data[0] !== undefined
+          && le.data[0].readme !== null
         ) {
           // Binary base64 decoding ⇢ UTF-8
-          const MDecoded = lesson.data[0].readme && typeof lesson.data[0].readme === 'string' ? decodeFromBinary(lesson.data[0].readme) : null;
+          const MDecoded = le.data[0].readme && typeof le.data[0].readme === 'string' ? decodeFromBinary(le.data[0].readme) : null;
           const markdown = getMarkDownContent(MDecoded);
           setReadme(markdown);
         }
@@ -197,7 +197,7 @@ const Content = () => {
       return <MDSkeleton />;
     }
     if (readme) {
-      return <MarkdownParser content={readme.content} withToc frontMatter={readme.frontMatter || ''} />;
+      return <MarkdownParser content={readme.content} withToc={lesson.toLowerCase() === 'read'} frontMatter={readme.frontMatter || ''} />;
     }
     return false;
   };
@@ -306,7 +306,7 @@ const Content = () => {
                   title={section.label}
                   lessons={section.lessons}
                   answer={section.quizzes}
-                  code={section.assigments}
+                  code={section.assignments}
                   practice={section.replits}
                   onClickAssignment={onClickAssignment}
                 />

@@ -54,22 +54,25 @@ const Toc = ({ content }) => {
     return hierarchy;
   };
 
-  const getRows = () => {
+  /*   const getRows = () => {
     let count = getHierarchy().length;
     getHierarchy().forEach((e) => {
-      if (Array.isArray(e.childs)) {
+      console.log(e.childs);
+      if (Array.isArray(e.childs) && e.childs.length > 0) {
         count += e.childs.length;
       }
     });
-    return Math.ceil(count / 3);
+    console.log(Math.trunc(count / 3));
+    return Math.trunc(count / 3);
   };
-
+ */
   return (
     <Grid
       bg={colorMode === 'light' ? 'blue.light' : 'featuredDark'}
-      templateRows={`repeat(${getRows()}, 1fr)`}
-      gridTemplateColumns="repeat(auto-fill, minmax(min(100%, 12rem), 1fr))"
-      gap={4}
+      /* templateRows={`repeat(${getRows()}, 1fr)`} */
+      templateColumns="repeat(auto-fill, minmax(min(100%, 12rem), 1fr))"
+      gap={2}
+      autoFlow="row"
       paddingX="28px"
       paddingY={22}
       borderRadius="17px"
@@ -103,7 +106,7 @@ const Toc = ({ content }) => {
                   {item.childs.map((c, i) => <ListItem key={i} margin={0}>{c.h}</ListItem>)}
                 </UnorderedList>
               </GridItem>
-            ) : <GridItem colSpan={1}>{item.h}</GridItem>}
+            ) : <GridItem colSpan={1} rowSpan={1}>{item.h}</GridItem>}
           </Fragment>
         );
       })}

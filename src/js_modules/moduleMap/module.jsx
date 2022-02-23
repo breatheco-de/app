@@ -96,7 +96,7 @@ const Module = ({
             />
           )}
         </Box>
-        <Link href={`/syllabus/${cohortSession.slug}/lesson/${currentTask?.associated_slug}`}>
+        <Link href={`/syllabus/${cohortSession.slug}/${data.type.toLowerCase()}/${currentTask?.associated_slug}`}>
           <Heading
             as="h3"
             fontSize="13px"
