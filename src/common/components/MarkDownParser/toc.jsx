@@ -82,29 +82,33 @@ const Toc = ({ content }) => {
           <Fragment key={mapIndex}>
             {Array.isArray(item.childs) && item.childs.length > 0 ? (
               <Box>
-                {item.h}
-                <UnorderedList
-                  position="relative"
-                  _before={item.childs.length > 0 && {
-                    content: '""',
-                    position: 'absolute',
-                    left: 0,
-                    top: 0,
-                    width: '2px',
-                    height: '90%',
-                    bg: colorMode === 'light' ? '#DADADA' : '#3E526A',
-                    borderRadius: '2px',
-                    transform: 'translate(0, 5%)',
-                  }}
-                  listStyleType="none"
-                  style={{ margin: 0, padding: 0 }}
-                >
-                  {item.childs.map((c, i) => (
-                    <ListItem key={i} style={{ margin: 0 }}>
-                      {c.h}
-                    </ListItem>
-                  ))}
-                </UnorderedList>
+                <Box display="inline-flex" flexDirection="column">
+                  {item.h}
+                  <UnorderedList
+                    display="flex"
+                    flexDirection="column"
+                    position="relative"
+                    _before={item.childs.length > 0 && {
+                      content: '""',
+                      position: 'absolute',
+                      left: 0,
+                      top: 0,
+                      width: '2px',
+                      height: '90%',
+                      bg: colorMode === 'light' ? '#DADADA' : '#3E526A',
+                      borderRadius: '2px',
+                      transform: 'translate(0, 5%)',
+                    }}
+                    listStyleType="none"
+                    style={{ margin: 0, padding: 0 }}
+                  >
+                    {item.childs.map((c, i) => (
+                      <ListItem key={i} style={{ margin: 0 }}>
+                        {c.h}
+                      </ListItem>
+                    ))}
+                  </UnorderedList>
+                </Box>
               </Box>
             ) : <Box>{item.h}</Box>}
           </Fragment>
