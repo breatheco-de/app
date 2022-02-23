@@ -31,7 +31,7 @@ const Dashboard = () => {
   const { contextState, setContextState } = useModuleMap();
   const [cohortProgram, setNewCohortProgram] = usePersistent('cohortProgram', {});
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
-  const [cohortSession] = usePersistent('cohortSession', {});
+  const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   // const [startedTasks, setStartedTasks] = useState([]);
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [sortedAssignments, setSortedAssignments] = useState([]);
@@ -86,6 +86,12 @@ const Dashboard = () => {
         }
       }).catch((err) => {
         console.error('err_studentAndTeachers:', err);
+      });
+
+      bc.cohort().get(cohortId).then(({ data }) => {
+        setCohortSession(data);
+      }).catch((err) => {
+        console.error('err_cohortSessoin:', err);
       });
     }
   }, [user]);

@@ -18,7 +18,7 @@ import { useRouter } from 'next/router';
 import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
 import Icon from '../common/components/Icon';
-import { email } from '../utils/regex';
+import validationSchema from '../common/components/Forms/validationSchemas';
 import bc from '../common/services/breathecode';
 
 export default function Home() {
@@ -27,16 +27,6 @@ export default function Home() {
   const { t } = useTranslation(['home']);
   const { colorMode } = useColorMode();
   const commonColor = useColorModeValue('gray.600', 'gray.300');
-
-  const validator = (value) => {
-    let error;
-    if (!value) {
-      error = 'Email is required';
-    } else if (!email.test(value)) {
-      error = 'Invalid email address';
-    }
-    return error;
-  };
 
   const BubblesSvg = () => (
     <svg
@@ -135,12 +125,8 @@ export default function Home() {
                   });
                   actions.setSubmitting(false);
                 });
-
-                // setTimeout(() => {
-                //   alert(JSON.stringify(values, null, 2));
-                //   actions.setSubmitting(false);
-                // }, 1000);
               }}
+              validationSchema={validationSchema.subscribe}
             >
               {(props) => {
                 const { isSubmitting } = props;
@@ -152,7 +138,7 @@ export default function Home() {
                       display="flex"
                       alignItems="center"
                     >
-                      <Field id="field923" name="email" validate={validator}>
+                      <Field id="field923" name="email">
                         {({ field, form }) => (
                           <FormControl isInvalid={form.errors.email && form.touched.email}>
                             <Input
