@@ -28,9 +28,9 @@ const Code = ({ className, children }) => {
   } else {
     language = 'highlight';
   }
-
+  console.log(language);
   return (
-    <SyntaxHighlighter style={tomorrow} className={language} language={language}>
+    <SyntaxHighlighter style={tomorrow} className={language} language={language} showLineNumbers={language !== 'highlight'}>
       {children}
     </SyntaxHighlighter>
   );
@@ -94,9 +94,9 @@ const MarkDownParser = ({ content, withToc, frontMatter }) => {
   return (
     <>
       {withToc && (
-      <ContentHeading content={frontMatter}>
-        <Toc content={content} />
-      </ContentHeading>
+        <ContentHeading content={frontMatter}>
+          <Toc content={content} />
+        </ContentHeading>
       )}
       {compiler(contentFormated, {
         wrapper: null,
@@ -119,6 +119,11 @@ const MarkDownParser = ({ content, withToc, frontMatter }) => {
           },
           h1: {
             component: MDHeading,
+          },
+          li: {
+            props: {
+              className: 'md-bullet',
+            },
           },
           img: {
             props: {
