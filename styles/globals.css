@@ -486,3 +486,7 @@ pre code, pre tt {
   background-color: transparent;
   border: none;
 }
+
+.md-bullet {
+  margin-left: 1.5rem;
+}
