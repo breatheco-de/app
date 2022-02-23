@@ -10,7 +10,6 @@ import ModalInfo from './modalInfo';
 export const IconByTaskStatus = ({ currentTask }) => {
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
     if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {
-      // NOTE: Icon for Revision pending...
       return <Icon icon="checked" color="#FFB718" width="27px" height="27px" />;
     }
     if (currentTask.revision_status === 'DONE') {
@@ -66,7 +65,7 @@ export const getHandlerByTaskStatus = ({
     </Button>
   );
 
-  // NOTE: PRROJECT CASE
+  // PRROJECT CASE
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
     if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {
       // Option case Revision pending...

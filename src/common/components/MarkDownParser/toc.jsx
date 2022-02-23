@@ -101,9 +101,7 @@ const Toc = ({ content }) => {
                     transform: 'translate(0, 10%)',
                   }}
                   listStyleType="none"
-                  margin={0}
-                  padding={0}
-                  style={{ margin: 0 }}
+                  style={{ margin: 0, padding: 0 }}
                 >
                   {item.childs.map((c, i) => <ListItem key={i} margin={0}>{c.h}</ListItem>)}
                 </UnorderedList>

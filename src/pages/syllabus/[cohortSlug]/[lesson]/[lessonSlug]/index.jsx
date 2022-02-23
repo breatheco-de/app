@@ -6,6 +6,7 @@ import {
   IconButton,
   useToast,
   useColorModeValue,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
@@ -15,35 +16,42 @@ import Heading from '../../../../../common/components/Heading';
 import Timeline from '../../../../../common/components/Timeline';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkdownParser from '../../../../../common/components/MarkDownParser';
-import useSyllabus from '../../../../../common/store/actions/syllabusActions';
+// import useSyllabus from '../../../../../common/store/actions/syllabusActions';
 import bc from '../../../../../common/services/breathecode';
 import useAuth from '../../../../../common/hooks/useAuth';
 import { MDSkeleton } from '../../../../../common/components/Skeleton';
+import usePersistent from '../../../../../common/hooks/usePersistent';
 
 const Content = () => {
   const { isOpen, onToggle } = useDisclosure();
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [readme, setReadme] = useState(null);
   const [quizSlug, setQuizSlug] = useState(null);
-  const { syllabus = [], setSyllabus } = useSyllabus();
+  // const { syllabus = [], setSyllabus } = useSyllabus();
+  const [syllabus, setSyllabus] = usePersistent('syllabus', []);
   const { user, choose } = useAuth();
   const toast = useToast();
   const router = useRouter();
+  const [isBelowLaptop] = useMediaQuery('(max-width: 996px)');
+  const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
 
   //                                          gray.200    gray.500
   const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
+  const bgColor = useColorModeValue('#FFFFFF', '#17202A');
   const Open = !isOpen;
 
   const slide = {
+    minWidth: '310px',
     zIndex: 1200,
-    position: 'sticky',
+    position: isBelowLaptop ? 'inherit' : 'sticky',
+    backgroundColor: bgColor,
     top: 0,
     left: 0,
     display: 'flex',
     flexDirection: 'column',
     flex: '1 0 auto',
     width: 'inherit',
-    transform: Open ? 'none' : 'translateX(-30rem)',
+    transform: Open ? 'translateX(0rem)' : 'translateX(-30rem)',
     visibility: Open ? 'visible' : 'hidden',
     height: '100vh',
     outline: 0,
@@ -160,6 +168,30 @@ const Content = () => {
       });
   }, [lessonSlug]);
 
+  const containerSlide = () => {
+    if (isBelowLaptop) {
+      return '0';
+    }
+    return Open ? '0' : '0 auto';
+  };
+
+  const timelineSlide = () => {
+    if (isBelowLaptop) {
+      return 'fixed';
+    }
+    return Open ? 'initial' : 'fixed';
+  };
+
+  const timelineWidth = () => {
+    if (isBelowTablet) {
+      return '74.6vw';
+    }
+    if (isBelowLaptop) {
+      return '46.6vw';
+    }
+    return '26.6vw';
+  };
+
   const GetReadme = () => {
     if (readme === null && quizSlug !== lessonSlug) {
       return <MDSkeleton />;
@@ -172,6 +204,26 @@ const Content = () => {
 
   return (
     <Flex position="relative">
+      <IconButton
+        style={{ zIndex: 20 }}
+        variant="default"
+        display={Open ? 'none' : 'initial'}
+        onClick={onToggle}
+        width="17px"
+        height="36px"
+        minW={0}
+        position="fixed"
+        top="50%"
+        left="0"
+        padding={0}
+        icon={(
+          <ChevronRightIcon
+            width="17px"
+            height="36px"
+          />
+        )}
+        // marginBottom="1rem"
+      />
       <Box
         bottom="20px"
         position="fixed"
@@ -193,35 +245,7 @@ const Content = () => {
           }}
         />
       </Box>
-      <Box flex="0 0 auto" width="28.6vw">
-        <IconButton
-          style={{ zIndex: 20 }}
-          variant="default"
-          onClick={onToggle}
-          width="17px"
-          height="36px"
-          minW={0}
-          position="fixed"
-          transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
-          transitionProperty="margin"
-          transitionDuration={Open ? '225ms' : '195ms'}
-          transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
-          top="50%"
-          left={Open ? '28.6vw' : 0}
-          padding={0}
-          icon={Open ? (
-            <ChevronLeftIcon
-              width="17px"
-              height="36px"
-            />
-          ) : (
-            <ChevronRightIcon
-              width="17px"
-              height="36px"
-            />
-          )}
-          marginBottom="1rem"
-        />
+      <Box position={timelineSlide} flex="0 0 auto" minWidth="310px" width={timelineWidth} zIndex={Open ? 99 : 0}>
         <Box style={slide}>
           <Box
             padding="1.5rem"
@@ -235,6 +259,30 @@ const Content = () => {
           >
             <Heading size="xsm">{user.active_cohort && user.active_cohort.syllabus_name}</Heading>
           </Box>
+
+          <IconButton
+            style={{ zIndex: 20 }}
+            variant="default"
+            onClick={onToggle}
+            width="17px"
+            height="36px"
+            minW={0}
+            position="absolute"
+            transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
+            transitionProperty="margin"
+            transitionDuration={Open ? '225ms' : '195ms'}
+            transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
+            top="50%"
+            right="-20px"
+            padding={0}
+            icon={(
+              <ChevronLeftIcon
+                width="17px"
+                height="36px"
+              />
+            )}
+            marginBottom="1rem"
+          />
 
           <Box
             className={`horizontal-sroll ${useColorModeValue('light', 'dark')}`}
@@ -270,8 +318,10 @@ const Content = () => {
       <Box
         className={`markdown-body ${useColorModeValue('light', 'dark')}`}
         flexGrow={1}
-        marginLeft={Open ? '0' : '-28.6vw'}
-        padding="4rem 8vw"
+        marginLeft={0}
+        margin={containerSlide}
+        padding={GetReadme() !== false ? '4rem 8vw' : '4rem 4vw'}
+        maxWidth="1012px"
         // marginRight="10rem"
         transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
         transitionProperty="margin"
@@ -282,13 +332,14 @@ const Content = () => {
         {GetReadme() !== false ? (
           GetReadme()
         ) : (
-          <Box width="100%" height="100vh">
+          <Box background={useColorModeValue('featuredLight', 'featuredDark')} width="100%" height="100vh" borderRadius="14px">
             <iframe
               id="iframe"
               src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
               style={{
                 width: '100%',
                 height: '100%',
+                borderRadius: '14px',
               }}
               title="Breathecode Quiz"
             />
@@ -300,63 +351,3 @@ const Content = () => {
 };
 
 export default asPrivate(Content);
-
-// <Slide
-// direction="left"
-// in={Open}
-// // className="horizontal-slide"
-// style={{
-//   zIndex: 5,
-//   position: 'sticky',
-//   // perfect size for tablets and devices above 700px
-//   width: '28.6vw',
-//   display: Open ? 'block' : 'none',
-//   height: '100%',
-//   borderRight: 1,
-//   borderStyle: 'solid',
-//   overflowX: 'hidden',
-//   overflowY: 'auto',
-//   borderColor: commonBorderColor,
-// }}
-// >
-// <Box
-//   padding="1.5rem"
-//   borderBottom={1}
-//   borderStyle="solid"
-//   borderColor={commonBorderColor}
-// >
-//   <Heading size="xsm">{user.active_cohort && user.active_cohort.syllabus_name}</Heading>
-// </Box>
-// <Box
-//   padding="1.5rem"
-//   className="horizontal-slide"
-//   style={{
-//     height: '87.2vh',
-//     overflowX: 'hidden',
-//     overflowY: 'auto',
-//   }}
-// >
-//   {syllabus && syllabus.map((section) => (
-//     <Box key={section.id} marginBottom="2rem">
-//       <Timeline
-//         technologies={section.technologies.length > 0
-//           ? section.technologies.map((t) => t.title) : []}
-//         title={section.label}
-//         lessons={section.lessons}
-//         answer={section.quizzes}
-//         code={section.assignments}
-//         practice={section.replits}
-//         onClickAssignment={onClickAssignment}
-//       />
-//     </Box>
-//   ))}
-// </Box>
-// </Slide>
-// <Container
-// className={`markdown-body ${useColorModeValue('light', 'dark')}`}
-// marginTop="6vh"
-// height="100%"
-// maxW="container.md"
-// >
-// {GetReadme() !== false ? (
-//   GetReadme()
