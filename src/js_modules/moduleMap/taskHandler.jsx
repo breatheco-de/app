@@ -1,7 +1,7 @@
 import {
   FormControl, Input, Button, Popover, PopoverTrigger, PopoverContent,
   PopoverArrow, PopoverHeader, PopoverCloseButton, PopoverBody, useDisclosure,
-  FormErrorMessage, ModalFooter, Modal, ModalOverlay, ModalContent, ModalHeader,
+  FormErrorMessage,
 } from '@chakra-ui/react';
 import { Formik, Form, Field } from 'formik';
 import PropTypes from 'prop-types';
@@ -82,9 +82,12 @@ export const ButtonHandlerByTaskStatus = ({
           <ModalInfo
             isOpen={isOpen}
             onClose={onClose}
+            title="Review status"
             description="Your teacher is still reviewing your deliver and will provide feedback once it's done"
-            projectUrl={currentTask.github_url}
-            removeDelivery={(event) => changeStatusAssignment(event, currentTask)}
+            linkInfo="Link of project sended to your teacher:"
+            link={currentTask.github_url}
+            handlerText="Remove delivery"
+            actionHandler={(event) => changeStatusAssignment(event, currentTask)}
           />
         </>
       );
@@ -96,7 +99,11 @@ export const ButtonHandlerByTaskStatus = ({
           <ModalInfo
             isOpen={isOpen}
             onClose={onClose}
-            isDone
+            title="Review status"
+            description="Your teacher has successfully received and approved your project"
+            linkInfo="Link of project sended to your teacher:"
+            link={currentTask.github_url}
+            disableHandler
           />
         </>
       );
@@ -179,34 +186,24 @@ export const ButtonHandlerByTaskStatus = ({
               )}
             </Formik>
 
-            <Modal isOpen={showUrlWarn} onClose={onClose}>
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>Are you sure to send an project external of Github?</ModalHeader>
-                <ModalFooter>
-                  <Button
-                    colorScheme="blue"
-                    mr={3}
-                    onClick={() => {
-                      setShowUrlWarn(false);
-                      setIsSubmitting(false);
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      setShowUrlWarn(false);
-                      setIsSubmitting(false);
-                      sendProject(currentTask, githubUrl);
-                    }}
-                    colorScheme="green"
-                  >
-                    Confirm
-                  </Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
+            <ModalInfo
+              isOpen={showUrlWarn}
+              closeText="Cancel"
+              onClose={() => {
+                setShowUrlWarn(false);
+                setIsSubmitting(false);
+              }}
+              title="non-github URL detected"
+              description="Usually projects are delivered through Github, are you sure you want to submit a non-github URL?"
+              handlerText="Confirm"
+              actionHandler={() => {
+                setShowUrlWarn(false);
+                setIsSubmitting(false);
+                sendProject(currentTask, githubUrl);
+              }}
+              texLink="How to deliver projects"
+              link="https://github.com/breatheco-de/app/blob/main/README.md#getting-started"
+            />
           </PopoverBody>
         </PopoverContent>
       </Popover>
