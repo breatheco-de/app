@@ -120,7 +120,12 @@ const MarkDownParser = ({ content, withToc, frontMatter }) => {
           h1: {
             component: MDHeading,
           },
-          li: {
+          ul: {
+            props: {
+              className: 'md-bullet',
+            },
+          },
+          ol: {
             props: {
               className: 'md-bullet',
             },
