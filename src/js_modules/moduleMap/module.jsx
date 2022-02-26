@@ -6,7 +6,7 @@ import { useEffect, useState, memo } from 'react';
 import Text from '../../common/components/Text';
 import { updateAssignment } from '../../common/hooks/useModuleHandler';
 import useModuleMap from '../../common/store/actions/moduleMapAction';
-import { getHandlerByTaskStatus } from './taskHandler';
+import { ButtonHandlerByTaskStatus } from './taskHandler';
 import Icon from '../../common/components/Icon';
 import Link from '../../common/components/NextChakraLink';
 
@@ -121,14 +121,14 @@ const Module = ({
         </Link>
       </Flex>
       <HStack justifyContent="flex-end">
-        {getHandlerByTaskStatus({
-          currentTask,
-          sendProject,
-          changeStatusAssignment,
-          toggleSettings,
-          closeSettings,
-          settingsOpen,
-        })}
+        <ButtonHandlerByTaskStatus
+          currentTask={currentTask}
+          sendProject={sendProject}
+          changeStatusAssignment={changeStatusAssignment}
+          toggleSettings={toggleSettings}
+          closeSettings={closeSettings}
+          settingsOpen={settingsOpen}
+        />
       </HStack>
     </Stack>
   );

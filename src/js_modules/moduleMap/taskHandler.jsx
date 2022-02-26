@@ -34,7 +34,7 @@ IconByTaskStatus.defaultProps = {
   currentTask: {},
 };
 
-export const getHandlerByTaskStatus = ({
+export const ButtonHandlerByTaskStatus = ({
   currentTask, sendProject, changeStatusAssignment, toggleSettings, closeSettings,
   settingsOpen,
 }) => {
@@ -132,13 +132,10 @@ export const getHandlerByTaskStatus = ({
           <PopoverBody>
             <Formik
               initialValues={{ githubUrl: '' }}
-              onSubmit={(values) => {
+              onSubmit={() => {
                 setIsSubmitting(true);
-                if (values.githubUrl !== '') {
-                  // NOTE_BUG: when the user starts module and send the link, it not sends to
-                  // the endpoint, It occurs by the taskTodo persistent not changes in localStorage
-
-                  const getUrlResult = !isGithubUrl.test(values.githubUrl);
+                if (githubUrl !== '') {
+                  const getUrlResult = !isGithubUrl.test(githubUrl);
                   const haveGithubDomain = getUrlResult;
                   if (haveGithubDomain) {
                     setShowUrlWarn(haveGithubDomain);
@@ -218,4 +215,13 @@ export const getHandlerByTaskStatus = ({
   return (
     <TaskButton />
   );
+};
+
+ButtonHandlerByTaskStatus.propTypes = {
+  currentTask: PropTypes.objectOf(PropTypes.any).isRequired,
+  sendProject: PropTypes.func.isRequired,
+  changeStatusAssignment: PropTypes.func.isRequired,
+  toggleSettings: PropTypes.func.isRequired,
+  closeSettings: PropTypes.func.isRequired,
+  settingsOpen: PropTypes.bool.isRequired,
 };
