@@ -29,9 +29,14 @@ import useSyllabus from '../../../../../common/store/actions/syllabusActions';
 
 const Dashboard = () => {
   const { contextState, setContextState } = useModuleMap();
-  const [cohortProgram, setNewCohortProgram] = usePersistent('cohortProgram', {});
-  const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
-  const [cohortSession] = usePersistent('cohortSession', {});
+  // const [cohortProgram, setNewCohortProgram] = usePersistent('cohortProgram', {});
+  // const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
+  const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
+
+  const { cohortProgram } = contextState;
+  // const [cohortProgram, setNewCohortProgram] = useState({});
+  // const [taskTodo, setTaskTodo] = useState([]);
+
   // const [startedTasks, setStartedTasks] = useState([]);
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [sortedAssignments, setSortedAssignments] = useState([]);
@@ -87,6 +92,12 @@ const Dashboard = () => {
       }).catch((err) => {
         console.error('err_studentAndTeachers:', err);
       });
+
+      bc.cohort().get(cohortId).then(({ data }) => {
+        setCohortSession(data);
+      }).catch((err) => {
+        console.error('err_cohortSessoin:', err);
+      });
     }
   }, [user]);
 
@@ -95,39 +106,28 @@ const Dashboard = () => {
     if (user && user.active_cohort) {
       const academyId = user.active_cohort.academy_id;
       const { version } = user.active_cohort;
-      bc.syllabus().get(academyId, slug, version).then((res) => {
-        const studentLessons = res.data;
-        setNewCohortProgram(studentLessons);
-        setSyllabus(studentLessons.json.days);
-      }).catch((err) => {
-        console.log('syllabus_error:', err);
-        setNewCohortProgram([]);
-      });
 
-      bc.todo().getTaskByStudent().then((res) => {
-        const tasks = res.data;
-        setTaskTodo(tasks);
+      // Fetch cohortProgram and TaskTodo then apply to contextState (useModuleMap - action)
+      Promise.all([
+        bc.syllabus().get(academyId, slug, version),
+        bc.todo().getTaskByStudent(),
+      ]).then(([programData, taskTodoData]) => {
+        setSyllabus(programData.data.json.days);
+        setContextState({
+          taskTodo: taskTodoData.data,
+          cohortProgram: programData.data,
+        });
       }).catch((err) => {
-        console.log('todo_error:', err);
-        setTaskTodo([]);
+        console.log('err_fetching_cohort-assignemnts:', err);
       });
     }
   }, [user]);
-
-  // Sync data fetched to contextState (useModuleMap - action)
-  useEffect(() => {
-    if (taskTodo && cohortProgram) {
-      setContextState({
-        taskTodo,
-        cohortProgram,
-      });
-    }
-  }, [cohortProgram, taskTodo]);
 
   // Sort all data fetched in order of taskTodo
   useMemo(() => {
     const cohortDays = cohortProgram.json ? cohortProgram.json.days : [];
     if (contextState.cohortProgram.json && contextState.taskTodo) {
+      // NOTE: Rethink an improvement to prevent innecesary rerenderings
       cohortDays.map((assignment) => {
         const {
           id, label, description, lessons, replits, assignments, quizzes,
@@ -156,7 +156,8 @@ const Dashboard = () => {
         return setSortedAssignments(sortedAssignments);
       });
     }
-  }, [contextState.cohortProgram.json, contextState.taskTodo, cohortProgram]);
+  }, [contextState.cohortProgram, contextState.taskTodo]);
+  // [contextState.cohortProgram.json, contextState.taskTodo]
 
   return (
     <Container maxW="container.xl">

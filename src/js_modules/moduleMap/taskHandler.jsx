@@ -1,11 +1,15 @@
 import {
   FormControl, Input, Button, Popover, PopoverTrigger, PopoverContent,
   PopoverArrow, PopoverHeader, PopoverCloseButton, PopoverBody, useDisclosure,
+  FormErrorMessage, ModalFooter, Modal, ModalOverlay, ModalContent, ModalHeader,
 } from '@chakra-ui/react';
 import { Formik, Form, Field } from 'formik';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import Icon from '../../common/components/Icon';
 import ModalInfo from './modalInfo';
+import validationSchema from '../../common/components/Forms/validationSchemas';
+import { isGithubUrl } from '../../utils/regex';
 
 export const IconByTaskStatus = ({ currentTask }) => {
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
@@ -30,11 +34,14 @@ IconByTaskStatus.defaultProps = {
   currentTask: {},
 };
 
-export const getHandlerByTaskStatus = ({
+export const ButtonHandlerByTaskStatus = ({
   currentTask, sendProject, changeStatusAssignment, toggleSettings, closeSettings,
   settingsOpen,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [showUrlWarn, setShowUrlWarn] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [githubUrl, setGithubUrl] = useState('');
   const TaskButton = () => (
     <Button
       display="flex"
@@ -125,28 +132,40 @@ export const getHandlerByTaskStatus = ({
           <PopoverBody>
             <Formik
               initialValues={{ githubUrl: '' }}
-              onSubmit={(values) => {
-                // console.log('values:::', values);
-                if (values.githubUrl !== '') {
-                // NOTE_BUG: when the user starts module and send the link, it not sends to
-                // the endpoint, It occurs by the taskTodo persistent not changes in localStorage
-                  sendProject(currentTask, values.githubUrl);
+              onSubmit={() => {
+                setIsSubmitting(true);
+                if (githubUrl !== '') {
+                  const getUrlResult = !isGithubUrl.test(githubUrl);
+                  const haveGithubDomain = getUrlResult;
+                  if (haveGithubDomain) {
+                    setShowUrlWarn(haveGithubDomain);
+                  } else {
+                    sendProject(currentTask, githubUrl);
+                    setIsSubmitting(false);
+                  }
                 }
               }}
+              validationSchema={validationSchema.projectUrlValidation}
             >
-              {({ isSubmitting }) => (
+              {() => (
                 <Form>
                   <Field name="githubUrl">
-                    {({ field, form }) => (
-                      <FormControl isInvalid={form.errors.githubUrl && form.touched.githubUrl}>
-                        <Input
-                          {...field}
-                          type="url"
-                          id="githubUrl"
-                          placeholder="https://github.com/..."
-                        />
-                      </FormControl>
-                    )}
+                    {({ field, form }) => {
+                      setGithubUrl(form.values.githubUrl);
+                      return (
+                        <FormControl isInvalid={form.errors.githubUrl && form.touched.githubUrl}>
+                          <Input
+                            {...field}
+                            type="text"
+                            id="githubUrl"
+                            placeholder="https://github.com/..."
+                          />
+                          <FormErrorMessage marginTop="10px">
+                            {form.errors.githubUrl}
+                          </FormErrorMessage>
+                        </FormControl>
+                      );
+                    }}
                   </Field>
                   <Button
                     mt={4}
@@ -159,6 +178,35 @@ export const getHandlerByTaskStatus = ({
                 </Form>
               )}
             </Formik>
+
+            <Modal isOpen={showUrlWarn} onClose={onClose}>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Are you sure to send an project external of Github?</ModalHeader>
+                <ModalFooter>
+                  <Button
+                    colorScheme="blue"
+                    mr={3}
+                    onClick={() => {
+                      setShowUrlWarn(false);
+                      setIsSubmitting(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setShowUrlWarn(false);
+                      setIsSubmitting(false);
+                      sendProject(currentTask, githubUrl);
+                    }}
+                    colorScheme="green"
+                  >
+                    Confirm
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
           </PopoverBody>
         </PopoverContent>
       </Popover>
@@ -167,4 +215,13 @@ export const getHandlerByTaskStatus = ({
   return (
     <TaskButton />
   );
+};
+
+ButtonHandlerByTaskStatus.propTypes = {
+  currentTask: PropTypes.objectOf(PropTypes.any).isRequired,
+  sendProject: PropTypes.func.isRequired,
+  changeStatusAssignment: PropTypes.func.isRequired,
+  toggleSettings: PropTypes.func.isRequired,
+  closeSettings: PropTypes.func.isRequired,
+  settingsOpen: PropTypes.bool.isRequired,
 };

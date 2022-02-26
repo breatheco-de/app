@@ -43,6 +43,7 @@ const breathecode = {
   cohort: () => {
     const url = `${host}/admissions/academy`;
     return {
+      get: (id) => axios.get(`${url}/cohort/${id}`),
       getStudents: (cohortId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}`),
     };
   },
