@@ -1,7 +1,7 @@
 import {
   FormControl, Input, Button, Popover, PopoverTrigger, PopoverContent,
   PopoverArrow, PopoverHeader, PopoverCloseButton, PopoverBody, useDisclosure,
-  FormErrorMessage,
+  FormErrorMessage, Box, Link,
 } from '@chakra-ui/react';
 import { Formik, Form, Field } from 'formik';
 import PropTypes from 'prop-types';
@@ -42,6 +42,9 @@ export const ButtonHandlerByTaskStatus = ({
   const [showUrlWarn, setShowUrlWarn] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [githubUrl, setGithubUrl] = useState('');
+
+  const howToSendProjectUrl = 'https://github.com/breatheco-de/app/blob/main/README.md#getting-started';
+
   const TaskButton = () => (
     <Button
       display="flex"
@@ -174,6 +177,11 @@ export const ButtonHandlerByTaskStatus = ({
                       );
                     }}
                   </Field>
+                  <Box padding="6px 0 0 0">
+                    <Link href={howToSendProjectUrl} color="blue.default" target="_blank" rel="noopener noreferrer">
+                      How to deliver projects
+                    </Link>
+                  </Box>
                   <Button
                     mt={4}
                     colorScheme="blue"
@@ -202,7 +210,7 @@ export const ButtonHandlerByTaskStatus = ({
                 sendProject(currentTask, githubUrl);
               }}
               texLink="How to deliver projects"
-              link="https://github.com/breatheco-de/app/blob/main/README.md#getting-started"
+              link={howToSendProjectUrl}
             />
           </PopoverBody>
         </PopoverContent>
