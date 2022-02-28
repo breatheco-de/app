@@ -37,10 +37,13 @@ export const getStaticProps = async ({ params, locale }) => {
       },
     },
   )
-    .then((res) => res.json())
-    .catch(() => ({
+    .then((res) => res.json());
+
+  if (!data) {
+    return {
       notFound: true,
-    }));
+    };
+  }
 
   return {
     props: {
