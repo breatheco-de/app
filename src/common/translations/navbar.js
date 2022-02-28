@@ -3,6 +3,9 @@ const isWindow = typeof window !== 'undefined';
 const getCohort = isWindow && JSON.parse(localStorage.getItem('cohortSession') || '{}');
 const { selectedProgramSlug } = getCohort;
 
+const syllabus = process.env.SYLLABUS;
+const syllabusArray = syllabus?.split(',');
+
 const navbarTR = {
   en: {
     loginText: 'Login',
@@ -25,23 +28,10 @@ const navbarTR = {
         icon: 'book',
         description: 'Lorem ipsum dolor sit amet, consectetur adscing elit, sed do eiusmod tempor incidi.',
         asPath: '/lessons', // For colorLink
-        subMenu: [
-          {
-            label: 'Full Stack Developer',
-            // subLabel: 'some description',
-            href: '/lessons?child=1',
-          },
-          {
-            label: 'Software Engineer',
-            // subLabel: 'some description',
-            href: '/lessons?child=2',
-          },
-          {
-            label: 'AI Machine Learning',
-            // subLabel: 'some description',
-            href: '/lessons?child=3',
-          },
-        ],
+        subMenu: (syllabusArray || []).map((l) => ({
+          label: l,
+          href: `/read/${l}`,
+        })),
       },
       {
         label: 'Build',
@@ -52,12 +42,6 @@ const navbarTR = {
         href: 'https://4geeksacademy.com',
       },
     ],
-    // INTERNAL_ITEMS: [
-    //   {
-    //     label: 'Dashboard',
-    //     href: selectedProgramSlug || '/choose-program',
-    //   },
-    // ],
   },
 
   es: {
@@ -81,23 +65,10 @@ const navbarTR = {
         icon: 'book',
         description: 'Lorem ipsum dolor sit amet, consectetur adscing elit, sed do eiusmod tempor incidi.',
         asPath: '/lessons', // For colorLink
-        subMenu: [
-          {
-            label: 'Full Stack Developer',
-            // subLabel: 'Descripción corta',
-            href: '/lessons?child=1',
-          },
-          {
-            label: 'Software Engineer',
-            // subLabel: 'Descripción corta',
-            href: '/lessons?child=2',
-          },
-          {
-            label: 'AI Machine Learning',
-            // subLabel: 'Descripción corta',
-            href: '/lessons?child=3',
-          },
-        ],
+        subMenu: (syllabusArray || []).map((l) => ({
+          label: l,
+          href: `/read/${l}`,
+        })),
       },
       {
         label: 'Desarrollar',
@@ -108,12 +79,6 @@ const navbarTR = {
         href: 'https://4geeksacademy.com',
       },
     ],
-    // INTERNAL_ITEMS: [
-    //   {
-    //     label: 'Dashboard',
-    //     href: selectedProgramSlug || '/choose-program',
-    //   },
-    // ],
   },
 };
 export default navbarTR;

@@ -36,6 +36,7 @@ const Search = ({ placeholder }) => {
                         // update the path query with search value
                         router.push({
                           query: {
+                            ...router.query,
                             search: values.target.value.toLowerCase(),
                           },
                         });

@@ -7,13 +7,20 @@ import useAuth from '../common/hooks/useAuth';
 
 function chooseProgram() {
   const [data, setData] = useState([]);
+  const [invites, setInvites] = useState([]);
   const { choose } = useAuth();
   useEffect(() => {
     bc.admissions().me().then((res) => {
       const { cohorts } = res.data;
       setData(cohorts);
     });
+
+    bc.auth().invites().then((res) => {
+      setInvites(res.data);
+    });
   }, []);
+
+  console.log('invites:::', invites);
 
   const handleChoose = (cohort) => {
     choose(cohort);

@@ -4,15 +4,30 @@ import {
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import Heading from '../common/components/Heading';
-import Text from '../common/components/Text';
-import Search from '../js_modules/projects/Search';
-import TitleContent from '../js_modules/projects/TitleContent';
-import Link from '../common/components/NextChakraLink';
+import Heading from '../../common/components/Heading';
+import Text from '../../common/components/Text';
+import Search from '../../js_modules/projects/Search';
+import TitleContent from '../../js_modules/projects/TitleContent';
+import Link from '../../common/components/NextChakraLink';
 
-export const getStaticProps = async ({ locale }) => {
+export const getStaticPaths = async () => {
+  const syllabus = process.env.SYLLABUS;
+  const syllabusArray = syllabus?.split(',');
+
+  const paths = syllabusArray.map((res) => ({
+    params: { slug: res },
+  }));
+  return {
+    fallback: false,
+    paths,
+  };
+};
+
+export const getStaticProps = async ({ params, locale }) => {
+  const { slug } = params;
+
   const data = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/admissions/syllabus/full-stack/version/latest`,
+    `${process.env.BREATHECODE_HOST}/v1/admissions/syllabus/${slug}/version/latest`,
     {
       method: 'GET',
       headers: {
@@ -32,21 +47,22 @@ export const getStaticProps = async ({ locale }) => {
   };
 };
 
-const Lessons = ({ data }) => {
+const Read = ({ data }) => {
   const router = useRouter();
-  // NOTE: split env var SYLLABUS
-  // console.log('router:::', router);
-
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
 
-  const contains = (lesson) => {
+  const containsQueryString = (lesson) => {
     const lessonTitle = lesson.label.toLowerCase();
     if (typeof router.query.search === 'string' && !lessonTitle.includes(router.query.search)) return false;
     if (lesson.lessons.length <= 0) return false;
     return true;
   };
 
-  const filteredBySearch = data.json.days.filter((lesson) => contains(lesson));
+  const filteredBySearch = () => {
+    if (data === null) return [];
+    return data.json.days.filter(containsQueryString);
+  };
+  const datafiltered = filteredBySearch();
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
@@ -93,7 +109,7 @@ const Lessons = ({ data }) => {
           size="m"
           textAlign="center"
         >
-          Full Stack Developer
+          {data.name}
         </Heading>
         <Text
           size="md"
@@ -106,7 +122,7 @@ const Lessons = ({ data }) => {
         </Text>
       </Flex>
       <Box flex="1" margin={{ base: '0 4% 0 4%', md: '0 22% 0 22%' }}>
-        {filteredBySearch.map(
+        {datafiltered.map(
           (element) => element.label !== '' && (
           <Box key={`${element.id} - ${element.position}`} margin="50px 0 0 0">
             <Flex
@@ -177,8 +193,11 @@ const Lessons = ({ data }) => {
   );
 };
 
-Lessons.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any).isRequired,
+Read.propTypes = {
+  data: PropTypes.string,
+};
+Read.defaultProps = {
+  data: null,
 };
 
-export default Lessons;
+export default Read;
