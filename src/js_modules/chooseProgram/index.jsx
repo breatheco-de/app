@@ -52,6 +52,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
               <Text
                 as="button"
                 size="md"
+                fontWeight="bold"
                 _focus={{
                   boxShadow: '0 0 0 3px rgb(66 153 225 / 60%)',
                 }}

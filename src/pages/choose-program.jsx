@@ -24,7 +24,7 @@ function chooseProgram() {
       <Box
         fontWeight={800}
         width={['70%', '68%', '56%', '50%']}
-        fontSize={['40px', '50px', '55px', '70px']}
+        fontSize="50px"
         marginTop="90px"
       >
         Your programs
@@ -32,7 +32,7 @@ function chooseProgram() {
       <Box
         fontWeight={400}
         width={['70%', '68%', '56%', '50%']}
-        fontSize={['10px', '15px', '15px', '20px']}
+        fontSize="14px"
         color={useColorModeValue('gray.600', 'gray.200')}
         letterSpacing="0.05em"
         marginBottom="49px"
