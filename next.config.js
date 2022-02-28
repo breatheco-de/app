@@ -23,12 +23,14 @@ module.exports = withBundleAnalyzer({
     BREATHECODE_HOST: process.env.BREATHECODE_HOST,
     GITHUB_TOKEN: process.env.GITHUB_TOKEN, // Pass through env variables
     BC_ACADEMY_TOKEN: process.env.BC_ACADEMY_TOKEN,
+    SYLLABUS: process.env.SYLLABUS,
   },
   publicRuntimeConfig: {
     // Will be available on both server and client
     BREATHECODE_HOST: process.env.BREATHECODE_HOST,
     NEXT_PUBLIC_ID: process.env.NEXT_PUBLIC_ID,
     BC_ACADEMY_TOKEN: process.env.BC_ACADEMY_TOKEN,
+    SYLLABUS: process.env.SYLLABUS,
   },
   images: {
     // whitelist for image providers
@@ -38,5 +40,6 @@ module.exports = withBundleAnalyzer({
   env: {
     BREATHECODE_HOST: process.env.BREATHECODE_HOST,
     BC_ACADEMY_TOKEN: process.env.BC_ACADEMY_TOKEN,
+    SYLLABUS: process.env.SYLLABUS,
   },
 });
