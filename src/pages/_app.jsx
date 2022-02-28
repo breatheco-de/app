@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useState, useEffect } from 'react';
 import '../../styles/globals.css';
 import '../../styles/markdown.css';
@@ -7,7 +6,6 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { appWithTranslation } from 'next-i18next';
 import wrapper from '../store';
 import CustomTheme from '../../styles/theme';
-// import NavbarExternal from '../common/components/Navbar/index';
 import NavbarSession from '../common/components/Navbar/Session-2';
 import AuthProvider from '../common/context/AuthContext';
 import Footer from '../common/components/Footer';
@@ -37,22 +35,13 @@ function App({ Component, pageProps }) {
     return <NavbarSession />;
   };
 
-  const SessionLoading = () => {
-    if (haveSession) {
-      return <Loading />;
-    }
-    return null;
-  };
-
   return (
     <>
       <Helmet {...pageProps} />
       <AuthProvider>
         <ChakraProvider resetCSS theme={CustomTheme}>
-          {/* <NavbarExternal /> */}
           <Navbar />
-          <SessionLoading />
-          {/* <Loading /> */}
+          <Loading />
           <Component {...pageProps} />
           <Footer />
         </ChakraProvider>
