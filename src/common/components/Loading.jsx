@@ -19,7 +19,17 @@ const Loading = () => {
     };
   }, []);
   return loading && (
-    <Progress color="blue.default" size="xs" isIndeterminate />
+    <Progress
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+      }}
+      color="blue.default"
+      size="xs"
+      isIndeterminate
+    />
   );
 };
 
