@@ -36,7 +36,11 @@ export const getStaticProps = async ({ params, locale }) => {
         Academy: 4,
       },
     },
-  ).then((res) => res.json());
+  )
+    .then((res) => res.json())
+    .catch(() => ({
+      notFound: true,
+    }));
 
   return {
     props: {
