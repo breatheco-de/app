@@ -8,7 +8,6 @@ import Text from '../../common/components/Text';
 import ProgramList from './programList';
 
 function ChooseProgram({ chooseList, handleChoose }) {
-  console.log('chooseList:::', chooseList);
   const [showFinished, setShowFinished] = useState(false);
 
   const programsFinished = chooseList.filter(((program) => {
