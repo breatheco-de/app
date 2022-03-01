@@ -10,23 +10,28 @@ import ProgramList from './programList';
 function ChooseProgram({ chooseList, handleChoose }) {
   const [showFinished, setShowFinished] = useState(false);
 
-  const programsFinished = chooseList.filter(((program) => {
-    if (program.educational_status === 'GRADUATED' || program.cohort.stage === 'ENDED') {
-      return true;
-    }
-    return false;
-  }));
-
-  const programsRemain = chooseList.filter(((program) => {
-    if (program.cohort.stage !== 'ENDED') {
-      return true;
-    }
-    return false;
-  }));
+  const activeCohorts = chooseList.filter((program) => {
+    const showCohort = [
+      'PREWORK',
+      'STARTED',
+      'ACTIVE',
+      'FINAL_PROJECT',
+    ].includes(program.cohort.stage);
+    const showStudent = ['ACTIVE'].includes(program.educational_status)
+        && program.role === 'STUDENT';
+    return showCohort || showStudent;
+  });
+  const finishedCohorts = chooseList.filter((program) => {
+    const showCohort = ['ENDED'].includes(program.cohort.stage);
+    const showStudent = ['GRADUATED', 'POSPONED'].includes(
+      program.educational_status,
+    );
+    return program.role !== 'STUDENT' || (showCohort && showStudent);
+  });
 
   return (
     <>
-      {programsRemain.length > 0 && programsRemain.map((item, i) => {
+      {activeCohorts.length > 0 && activeCohorts.map((item, i) => {
         const index = i;
         return (
           <ProgramList
@@ -38,7 +43,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
       })}
 
       {
-        programsFinished.length > 0 && (
+        finishedCohorts.length > 0 && (
           <>
             <Text
               width={['70%', '68%', '56%', '50%']}
@@ -48,7 +53,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
               gridGap="6px"
               size="md"
             >
-              {`There are ${programsFinished.length} programs you have already finished.`}
+              {`There are ${finishedCohorts.length} programs you have already finished.`}
               <Text
                 as="button"
                 size="md"
@@ -69,7 +74,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
                 />
               </Text>
             </Text>
-            {showFinished && programsFinished.map((item, i) => {
+            {showFinished && finishedCohorts.map((item, i) => {
               const index = i;
               return (
                 <ProgramList
