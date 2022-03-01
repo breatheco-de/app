@@ -233,6 +233,7 @@ const Dashboard = () => {
             background="blue.default"
             margin="40px 0 auto 0"
             title={callToAction.title}
+            href={`#${dailyModuleData && slugify(dailyModuleData.label)}`}
             text={dailyModuleData.description}
             buttonText={callToAction.buttonText}
             width={{ base: '100%', md: 'fit-content' }}
