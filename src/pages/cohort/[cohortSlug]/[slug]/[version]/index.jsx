@@ -26,6 +26,7 @@ import dashboardTR from '../../../../../common/translations/dashboard';
 import TasksRemain from '../../../../../js_modules/moduleMap/tasksRemain';
 import usePersistent from '../../../../../common/hooks/usePersistent';
 import useSyllabus from '../../../../../common/store/actions/syllabusActions';
+import { slugify } from '../../../../../utils/index';
 
 const Dashboard = () => {
   const { contextState, setContextState } = useModuleMap();
@@ -127,7 +128,6 @@ const Dashboard = () => {
   useMemo(() => {
     const cohortDays = cohortProgram.json ? cohortProgram.json.days : [];
     if (contextState.cohortProgram.json && contextState.taskTodo) {
-      // NOTE: Rethink an improvement to prevent innecesary rerenderings
       cohortDays.map((assignment) => {
         const {
           id, label, description, lessons, replits, assignments, quizzes,
@@ -157,7 +157,12 @@ const Dashboard = () => {
       });
     }
   }, [contextState.cohortProgram, contextState.taskTodo]);
-  // [contextState.cohortProgram.json, contextState.taskTodo]
+
+  const getDailyModuleData = () => {
+    const dailyModule = sortedAssignments[cohortSession.current_day];
+    return dailyModule;
+  };
+  const dailyModuleData = getDailyModuleData() || '';
 
   return (
     <Container maxW="container.xl">
@@ -228,7 +233,8 @@ const Dashboard = () => {
             background="blue.default"
             margin="40px 0 auto 0"
             title={callToAction.title}
-            text={`${callToAction.description} Internet Architecture in First Time Website Module.`}
+            href={`#${dailyModuleData && slugify(dailyModuleData.label)}`}
+            text={dailyModuleData.description}
             buttonText={callToAction.buttonText}
             width={{ base: '100%', md: 'fit-content' }}
           />
@@ -263,6 +269,7 @@ const Dashboard = () => {
                       key={index}
                       index={index}
                       title={label}
+                      slug={slugify(label)}
                       description={description}
                       taskTodo={contextState.taskTodo}
                       modules={modules}

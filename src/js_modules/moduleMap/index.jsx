@@ -7,9 +7,13 @@ import Text from '../../common/components/Text';
 import Module from './module';
 
 const ModuleMap = ({
-  index, modules, filteredModules, title, description, taskTodo,
+  index, slug, modules, filteredModules, title, description, taskTodo,
 }) => (
-  <Box key={index} width="100%">
+  <Box
+    key={index}
+    width="100%"
+    id={slug}
+  >
     <Box margin="14px 0" display="flex" alignItems="center" justifyContent="space-between">
       <Heading as="h2" fontSize="22px">
         {title}
@@ -54,6 +58,7 @@ const ModuleMap = ({
 ModuleMap.propTypes = {
   index: PropTypes.number.isRequired,
   title: PropTypes.string,
+  slug: PropTypes.string,
   modules: PropTypes.arrayOf(PropTypes.object),
   filteredModules: PropTypes.arrayOf(PropTypes.object),
   description: PropTypes.string,
@@ -63,6 +68,7 @@ ModuleMap.defaultProps = {
   modules: [],
   filteredModules: [],
   title: 'HTML/CSS/Bootstrap',
+  slug: 'html-css-bootstrap',
   description: '',
   taskTodo: [],
 };
