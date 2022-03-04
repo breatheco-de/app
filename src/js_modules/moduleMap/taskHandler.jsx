@@ -12,11 +12,12 @@ import validationSchema from '../../common/components/Forms/validationSchemas';
 import { isGithubUrl } from '../../utils/regex';
 
 export const IconByTaskStatus = ({ currentTask }) => {
+  // task project status
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
     if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {
       return <Icon icon="checked" color="#FFB718" width="27px" height="27px" />;
     }
-    if (currentTask.revision_status === 'DONE') {
+    if (currentTask.revision_status === 'APPROVED') {
       return <Icon icon="verified" color="#25BF6C" width="27px" />;
     }
     if (currentTask.revision_status === 'REJECTED') {
@@ -24,6 +25,7 @@ export const IconByTaskStatus = ({ currentTask }) => {
     }
     return <Icon icon="unchecked" color="#C4C4C4" width="27px" />;
   }
+  // common task status
   if (currentTask && currentTask.task_type !== 'PROJECT' && currentTask.task_status === 'DONE') {
     return <Icon icon="verified" color="#25BF6C" width="27px" />;
   }
@@ -98,7 +100,7 @@ export const ButtonHandlerByTaskStatus = ({
         </>
       );
     }
-    if (currentTask.revision_status === 'DONE') {
+    if (currentTask.revision_status === 'APPROVED') {
       return (
         <>
           <OpenModalButton />
