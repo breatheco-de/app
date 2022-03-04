@@ -167,7 +167,6 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
                   onClick={() => toggleSettings()}
                 >
                   <Avatar
-                    // name={user?.first_name}
                     width="30px"
                     marginY="auto"
                     height="30px"
