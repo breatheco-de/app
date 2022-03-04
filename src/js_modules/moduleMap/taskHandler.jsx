@@ -20,7 +20,7 @@ export const IconByTaskStatus = ({ currentTask }) => {
       return <Icon icon="verified" color="#25BF6C" width="27px" />;
     }
     if (currentTask.revision_status === 'REJECTED') {
-      return <Icon icon="verified" color="#CC3333" width="27px" />;
+      return <Icon icon="checked" color="#FF4433" width="27px" />;
     }
     return <Icon icon="unchecked" color="#C4C4C4" width="27px" />;
   }

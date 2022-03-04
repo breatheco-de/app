@@ -20,7 +20,6 @@ export const getStaticPaths = async () => {
     params: { slug: res.slug },
   }));
 
-  console.log('paths:::', paths);
   return {
     fallback: false,
     paths,
