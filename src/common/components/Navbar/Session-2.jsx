@@ -15,7 +15,7 @@ import {
   PopoverArrow,
   Button,
 } from '@chakra-ui/react';
-import { useState, memo } from 'react';
+import { useState, memo, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import NextChakraLink from '../NextChakraLink';
@@ -29,11 +29,11 @@ import navbarTR from '../../translations/navbar';
 
 const NavbarWithSubNavigation = ({ haveSession }) => {
   const router = useRouter();
-
   const {
     loginText, ITEMS,
   } = navbarTR[router.locale];
 
+  const [readSyllabus, setReadSyllabus] = useState([]);
   const { isOpen, onToggle } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
   const commonColors = useColorModeValue('white', 'gray.800');
@@ -62,6 +62,15 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
     }
     return user?.github.name;
   };
+
+  useEffect(async () => {
+    const resp = await fetch(
+      `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`,
+    )
+      .then((res) => res.json());
+
+    setReadSyllabus(resp);
+  }, []);
 
   return (
     <Box>
@@ -114,7 +123,7 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
           </NextChakraLink>
 
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
-            <DesktopNav NAV_ITEMS={ITEMS} haveSession={haveSession} />
+            <DesktopNav NAV_ITEMS={ITEMS} readSyllabus={readSyllabus} haveSession={haveSession} />
           </Flex>
         </Flex>
 
@@ -231,7 +240,7 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
-        <MobileNav NAV_ITEMS={ITEMS} haveSession={haveSession} />
+        <MobileNav NAV_ITEMS={ITEMS} readSyllabus={readSyllabus} haveSession={haveSession} />
       </Collapse>
     </Box>
   );
