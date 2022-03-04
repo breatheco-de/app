@@ -1,8 +1,8 @@
-import React from "react";
-import SupportSidebar from "../common/components/SupportSidebar";
+import React from 'react';
+import SupportSidebar from '../common/components/SupportSidebar';
 
 export default {
-  title: "Components/SupportSidebar",
+  title: 'Components/SupportSidebar',
   component: SupportSidebar,
   argTypes: {
     actionButtons: {
@@ -26,5 +26,5 @@ Default.args = {
       title: 'ASK IN SUPPORT CHAT',
       icon: 'slack',
     },
-  ]
+  ],
 };

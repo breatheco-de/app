@@ -12,5 +12,5 @@ const Component = (args) => <ToggleColor {...args} />;
 
 export const Default = Component.bind({});
 Default.args = {
-  title: "Example",
+  title: 'Example',
 };

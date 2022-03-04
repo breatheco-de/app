@@ -3,8 +3,8 @@ const isWindow = typeof window !== 'undefined';
 const getCohort = isWindow && JSON.parse(localStorage.getItem('cohortSession') || '{}');
 const { selectedProgramSlug } = getCohort;
 
-const syllabus = process.env.SYLLABUS;
-const syllabusArray = syllabus?.split(',');
+// const syllabus = process.env.SYLLABUS;
+// const syllabusArray = syllabus?.split(',');
 
 const navbarTR = {
   en: {
@@ -27,11 +27,8 @@ const navbarTR = {
         label: 'Read',
         icon: 'book',
         description: 'Lorem ipsum dolor sit amet, consectetur adscing elit, sed do eiusmod tempor incidi.',
-        asPath: '/lessons', // For colorLink
-        subMenu: (syllabusArray || []).map((l) => ({
-          label: l,
-          href: `/read/${l}`,
-        })),
+        asPath: '/read', // For colorLink
+        subMenu: [],
       },
       {
         label: 'Build',
@@ -64,11 +61,8 @@ const navbarTR = {
         label: 'Leer',
         icon: 'book',
         description: 'Lorem ipsum dolor sit amet, consectetur adscing elit, sed do eiusmod tempor incidi.',
-        asPath: '/lessons', // For colorLink
-        subMenu: (syllabusArray || []).map((l) => ({
-          label: l,
-          href: `/read/${l}`,
-        })),
+        asPath: '/read', // For colorLink
+        subMenu: [],
       },
       {
         label: 'Desarrollar',

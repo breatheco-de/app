@@ -1,7 +1,8 @@
 import { Box } from '@chakra-ui/layout';
 import React from 'react';
 import Icon from '../common/components/Icon';
-const iconDict = require("../common/utils/iconDict.json")
+
+const iconDict = require('../common/utils/iconDict.json');
 
 export default {
   title: 'Components/Icons',
@@ -14,20 +15,20 @@ export default {
     },
     style: {
       control: {
-        type: 'object'
+        type: 'object',
       },
     },
     fill: {
       control: 'color',
       table: {
-        category: 'Icon Colors'
-      }
+        category: 'Icon Colors',
+      },
     },
     color: {
       control: 'color',
       table: {
-        category: 'Icon Colors'
-      }
+        category: 'Icon Colors',
+      },
     },
 
     width: {
@@ -37,16 +38,16 @@ export default {
         max: 350,
       },
       table: {
-        category: 'Size in px'
-      }
+        category: 'Size in px',
+      },
     },
     height: {
       control: {
-        type: null
+        type: null,
       },
       table: {
-        category: 'Size in px'
-      }
+        category: 'Size in px',
+      },
     },
   },
 };

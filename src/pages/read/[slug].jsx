@@ -11,12 +11,16 @@ import TitleContent from '../../js_modules/projects/TitleContent';
 import Link from '../../common/components/NextChakraLink';
 
 export const getStaticPaths = async () => {
-  const syllabus = process.env.SYLLABUS;
-  const syllabusArray = syllabus?.split(',');
+  const resp = await fetch(
+    `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`,
+  )
+    .then((res) => res.json());
 
-  const paths = syllabusArray.map((res) => ({
-    params: { slug: res },
+  const paths = resp.map((res) => ({
+    params: { slug: res.slug },
   }));
+
+  console.log('paths:::', paths);
   return {
     fallback: false,
     paths,
@@ -39,7 +43,7 @@ export const getStaticProps = async ({ params, locale }) => {
   )
     .then((res) => res.json());
 
-  if (!data) {
+  if (!data.status_code === 401) {
     return {
       notFound: true,
     };
