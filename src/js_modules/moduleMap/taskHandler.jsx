@@ -19,6 +19,9 @@ export const IconByTaskStatus = ({ currentTask }) => {
     if (currentTask.revision_status === 'DONE') {
       return <Icon icon="verified" color="#25BF6C" width="27px" />;
     }
+    if (currentTask.revision_status === 'REJECTED') {
+      return <Icon icon="verified" color="#CC3333" width="27px" />;
+    }
     return <Icon icon="unchecked" color="#C4C4C4" width="27px" />;
   }
   if (currentTask && currentTask.task_type !== 'PROJECT' && currentTask.task_status === 'DONE') {
@@ -107,6 +110,24 @@ export const ButtonHandlerByTaskStatus = ({
             linkInfo="Link of project sended to your teacher:"
             link={currentTask.github_url}
             disableHandler
+          />
+        </>
+      );
+    }
+
+    if (currentTask.revision_status === 'REJECTED') {
+      return (
+        <>
+          <OpenModalButton />
+          <ModalInfo
+            isOpen={isOpen}
+            onClose={onClose}
+            title="Review status"
+            description="Your teacher has rejected your project"
+            linkInfo="Link of project sended to your teacher:"
+            link={currentTask.github_url}
+            handlerText="Remove current project link"
+            actionHandler={(event) => changeStatusAssignment(event, currentTask)}
           />
         </>
       );
