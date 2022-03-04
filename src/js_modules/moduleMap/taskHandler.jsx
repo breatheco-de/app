@@ -12,15 +12,20 @@ import validationSchema from '../../common/components/Forms/validationSchemas';
 import { isGithubUrl } from '../../utils/regex';
 
 export const IconByTaskStatus = ({ currentTask }) => {
+  // task project status
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
     if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {
       return <Icon icon="checked" color="#FFB718" width="27px" height="27px" />;
     }
-    if (currentTask.revision_status === 'DONE') {
+    if (currentTask.revision_status === 'APPROVED') {
       return <Icon icon="verified" color="#25BF6C" width="27px" />;
+    }
+    if (currentTask.revision_status === 'REJECTED') {
+      return <Icon icon="checked" color="#FF4433" width="27px" />;
     }
     return <Icon icon="unchecked" color="#C4C4C4" width="27px" />;
   }
+  // common task status
   if (currentTask && currentTask.task_type !== 'PROJECT' && currentTask.task_status === 'DONE') {
     return <Icon icon="verified" color="#25BF6C" width="27px" />;
   }
@@ -95,7 +100,7 @@ export const ButtonHandlerByTaskStatus = ({
         </>
       );
     }
-    if (currentTask.revision_status === 'DONE') {
+    if (currentTask.revision_status === 'APPROVED') {
       return (
         <>
           <OpenModalButton />
@@ -107,6 +112,24 @@ export const ButtonHandlerByTaskStatus = ({
             linkInfo="Link of project sended to your teacher:"
             link={currentTask.github_url}
             disableHandler
+          />
+        </>
+      );
+    }
+
+    if (currentTask.revision_status === 'REJECTED') {
+      return (
+        <>
+          <OpenModalButton />
+          <ModalInfo
+            isOpen={isOpen}
+            onClose={onClose}
+            title="Review status"
+            description="Your teacher has rejected your project"
+            linkInfo="Link of project sended to your teacher:"
+            link={currentTask.github_url}
+            handlerText="Remove current project link"
+            actionHandler={(event) => changeStatusAssignment(event, currentTask)}
           />
         </>
       );

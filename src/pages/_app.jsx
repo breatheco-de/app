@@ -6,7 +6,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { appWithTranslation } from 'next-i18next';
 import wrapper from '../store';
 import CustomTheme from '../../styles/theme';
-import NavbarSession from '../common/components/Navbar/Session-2';
+import NavbarSession from '../common/components/Navbar';
 import AuthProvider from '../common/context/AuthContext';
 import Footer from '../common/components/Footer';
 import Helmet from '../common/components/Helmet';

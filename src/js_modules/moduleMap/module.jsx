@@ -52,7 +52,7 @@ const Module = ({
     });
   };
 
-  const isDone = currentTask?.task_status === 'DONE';
+  const isDone = currentTask?.task_status === 'DONE' || currentTask?.revision_status === 'APPROVED';
   const containerBackground = isDone ? useColorModeValue('featuredLight', 'featuredDark') : useColorModeValue('#FFFFFF', 'primary');
 
   return (
