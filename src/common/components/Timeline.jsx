@@ -14,52 +14,47 @@ const color = {
 };
 
 const Timeline = ({
-  title, technologies, lessons, practice, code, answer, width, onClickAssignment,
+  title, assignments, technologies, width, onClickAssignment,
 }) => {
   const { colorMode } = useColorMode();
   const router = useRouter();
-  // console.log(router.query.lessonSlug);
-  const updatedLessons = lessons.map((el) => ({
-    ...el,
-    subtitle: 'Read',
-    icon: 'book',
-    task_type: 'LESSON',
-    muted: el.slug !== router.query.lessonSlug,
-  }));
-  const updatedPractice = practice.map((el) => ({
-    ...el,
-    subtitle: 'Practice',
-    icon: 'strength',
-    task_type: 'EXERCISE',
-    muted: el.slug !== router.query.lessonSlug,
-  }));
-  const updatedCode = code.map((el) => ({
-    ...el,
-    subtitle: 'Code',
-    icon: 'code',
-    task_type: 'PROJECT',
-    muted: el.slug !== router.query.lessonSlug,
-  }));
-  const updatedAnswer = answer.map((el) => ({
-    ...el,
-    subtitle: 'Answer',
-    icon: 'answer',
-    task_type: 'QUIZ',
-    muted: el.slug !== router.query.lessonSlug,
-  }));
 
-  const assignments = [...updatedLessons, ...updatedPractice, ...updatedCode, ...updatedAnswer];
   return (
     <Box width={width}>
       <Flex width="100%" marginBottom="1.5rem">
         <Text size="l" fontWeight="900" color={colorMode === 'light' ? 'gray.dark' : 'white'}>{title && title.toUpperCase()}</Text>
-        <Text size="l" textTransform="uppercase" marginLeft="10px" fontWeight="400" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
-          {technologies && technologies.join(',')}
-        </Text>
+        {technologies.length >= 1 && (
+          <Text
+            size="l"
+            textTransform="uppercase"
+            display="flex"
+            marginLeft="10px"
+            fontWeight="400"
+            color={colorMode === 'light' ? 'gray.dark' : 'white'}
+          >
+            {'<'}
+            {technologies && technologies.map((tech, index) => {
+              const techIndex = index;
+              return (
+                <Box key={techIndex}>
+                  {tech}
+
+                  {index < technologies.length - 1 && (
+                    <Box as="span" userSelect="none" fontSize="15px" mx="0.3rem">
+                      /
+                    </Box>
+                  )}
+                </Box>
+              );
+            })}
+            {'>'}
+          </Text>
+        )}
       </Flex>
       <Box>
         {assignments && assignments.map((item, index) => {
           const mapIndex = index;
+          const muted = item.slug !== router.query.lessonSlug;
           return (
             <Flex
               key={`${item?.id}-${mapIndex}`}
@@ -78,17 +73,17 @@ const Timeline = ({
               width="100%"
             >
               <Box marginY="auto">
-                <Box width="30px" height="30px" bg={item && !item?.muted ? 'blue.default' : 'gray.default'} borderRadius="50px">
+                <Box width="30px" height="30px" bg={!muted ? 'blue.default' : 'gray.default'} borderRadius="50px">
                   <Text size="sm" margin={0} color="white" textAlign="center" position="relative" top="5px">{index + 1}</Text>
                 </Box>
               </Box>
-              <Flex cursor="pointer" onClick={(e) => onClickAssignment(e, item)} borderRadius="17px" bg={item && !item?.muted ? color[colorMode] : 'none'} paddingY="8px" paddingX="12px" marginLeft="1.5rem">
-                <Box padding="8px" bg={item && !item?.muted ? 'blue.default' : 'none'} borderRadius="50px" height="36px" margin="auto">
-                  <Icon width="20px" height="20px" icon={item && item?.icon} color={item?.muted ? 'gray' : 'white'} />
+              <Flex cursor="pointer" onClick={(e) => onClickAssignment(e, item)} borderRadius="17px" bg={!muted ? color[colorMode] : 'none'} paddingY="8px" paddingX="12px" marginLeft="1.5rem">
+                <Box padding="8px" bg={!muted ? 'blue.default' : 'none'} borderRadius="50px" height="36px" margin="auto">
+                  <Icon width="20px" height="20px" icon={item && item?.icon} color={muted ? 'gray' : 'white'} />
                 </Box>
                 <Box marginLeft="12px">
-                  <Text size="sm" color={colorMode === 'light' ? 'gray.dark' : 'gray.light'} fontWeight="900" marginY={0}>{item && item?.subtitle?.toUpperCase()}</Text>
-                  <Text size="l" fontWeight="400" marginY={0} color={colorMode === 'light' ? 'gray.dark' : 'gray.light'}>{item && item?.title}</Text>
+                  <Text size="sm" color={colorMode === 'light' ? 'gray.dark' : 'gray.light'} fontWeight="900" marginY={0}>{item.type}</Text>
+                  <Text size="l" fontWeight="400" marginY={0} color={colorMode === 'light' ? 'gray.dark' : 'gray.light'}>{item.title}</Text>
                 </Box>
               </Flex>
             </Flex>
@@ -101,10 +96,7 @@ const Timeline = ({
 
 Timeline.propTypes = {
   title: PropTypes.string,
-  lessons: PropTypes.arrayOf(PropTypes.object),
-  code: PropTypes.arrayOf(PropTypes.object),
-  practice: PropTypes.arrayOf(PropTypes.object),
-  answer: PropTypes.arrayOf(PropTypes.object),
+  assignments: PropTypes.arrayOf(PropTypes.any),
   technologies: PropTypes.arrayOf(PropTypes.object),
   width: PropTypes.string,
   onClickAssignment: PropTypes.func,
@@ -112,10 +104,7 @@ Timeline.propTypes = {
 
 Timeline.defaultProps = {
   title: '',
-  lessons: [],
-  code: [],
-  practice: [],
-  answer: [],
+  assignments: [],
   technologies: [],
   width: '100%',
   onClickAssignment: () => {

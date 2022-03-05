@@ -119,7 +119,7 @@ export const startDay = ({
 };
 
 export const nestAssignments = ({
-  id, label = '', read, practice, code, answer, taskTodo,
+  id, label = '', read, practice, code, answer, taskTodo = [],
 }) => {
   const updatedRead = read.map((el) => ({
     ...el,

@@ -5,11 +5,19 @@ import {
 import Icon from './Icon';
 import Text from './Text';
 
-const StickySideBar = ({ menu, width, onClickMenuItem }) => {
+const StickySideBar = ({
+  menu, width, onClickMenuItem, top, right, left,
+}) => {
   const { colorMode } = useColorMode();
   return (
     <>
-      <VStack width={width}>
+      <VStack
+        width={width}
+        position="fixed"
+        top={top}
+        right={right}
+        left={left}
+      >
         {
           menu.map((item) => (
             <Box
@@ -35,6 +43,7 @@ const StickySideBar = ({ menu, width, onClickMenuItem }) => {
                 <Icon icon={item.icon} width="18px" height="18px" color={colorMode === 'light' ? 'gray' : 'white'} />
               </Box>
               <Text
+                width="80px"
                 size="sm"
                 marginTop="3px"
                 color={colorMode === 'light' ? 'gray.default' : 'white'}
@@ -54,12 +63,18 @@ StickySideBar.propTypes = {
   menu: PropTypes.arrayOf(PropTypes.array),
   width: PropTypes.string,
   onClickMenuItem: PropTypes.func,
+  top: PropTypes.string,
+  right: PropTypes.string,
+  left: PropTypes.string,
 };
 
 StickySideBar.defaultProps = {
   menu: [],
   width: '100%',
   onClickMenuItem: () => {},
+  top: '12%',
+  right: '15px',
+  left: 'unset',
 };
 
 export default StickySideBar;
