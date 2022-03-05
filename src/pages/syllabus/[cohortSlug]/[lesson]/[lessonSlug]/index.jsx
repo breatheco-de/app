@@ -32,6 +32,7 @@ const Content = () => {
   // const { syllabus = [], setSyllabus } = useSyllabus();
   const [syllabus, setSyllabus] = usePersistent('syllabus', []);
   const [sortedAssignments, setSortedAssignments] = useState([]);
+  const [selectedSyllabus, setSelectedSyllabus] = useState([]);
   const { user, choose } = useAuth();
   const toast = useToast();
   const router = useRouter();
@@ -217,6 +218,15 @@ const Content = () => {
       });
   }, [lessonSlug]);
 
+  useEffect(() => {
+    const findSelectedSyllabus = sortedAssignments.filter(
+      (l) => l.modules.find((m) => m.slug === router.query.lessonSlug),
+    );
+    if (findSelectedSyllabus) {
+      setSelectedSyllabus(findSelectedSyllabus);
+    }
+  }, [sortedAssignments, router.query.lessonSlug]);
+
   const containerSlide = () => {
     if (isBelowLaptop) {
       return '0';
@@ -251,26 +261,35 @@ const Content = () => {
     return false;
   };
 
-  console.log('sortedAssignments:::', sortedAssignments);
+  const currentTeacherInstructions = selectedSyllabus.map((s) => s.teacherInstructions);
+  const currentKeyConcepts = selectedSyllabus.map((s) => s.keyConcepts);
 
-  // NOTE: Enable current teacher instructions and key concepts from current module slug
   return (
     <Flex position="relative">
-      <StickySideBar
-        width="auto"
-        menu={[
-          {
-            icon: 'message',
-            text: 'Teacher instructions',
-            id: 1,
-          },
-          {
-            icon: 'key',
-            text: 'Key Concepts',
-            id: 2,
-          },
-        ]}
-      />
+      {
+        user?.roles[0].role === 'teacher' && (
+          <StickySideBar
+            width="auto"
+            menu={[
+              {
+                icon: 'message',
+                slug: 'teacher-instructions',
+                title: 'Teacher instructions',
+                content: currentTeacherInstructions[0],
+                id: 1,
+              },
+              {
+                icon: 'key',
+                slug: 'key-concepts',
+                title: 'Key Concepts',
+                content: currentKeyConcepts[0],
+                id: 2,
+              },
+            ]}
+          />
+        )
+      }
+
       <IconButton
         style={{ zIndex: 20 }}
         variant="default"
