@@ -8,7 +8,9 @@ const { selectedProgramSlug } = getCohort;
 
 const navbarTR = {
   en: {
-    loginText: 'Login',
+    loginTR: 'Login',
+    logoutTR: 'Logout',
+    languageTR: 'Language',
     ITEMS: [
       {
         label: 'Dashboard',
@@ -42,7 +44,9 @@ const navbarTR = {
   },
 
   es: {
-    loginText: 'Ingresar',
+    loginTR: 'Ingresar',
+    logoutTR: 'Cerrar sesión',
+    languageTR: 'Idioma',
     ITEMS: [
       {
         label: 'Dashboard',

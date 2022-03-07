@@ -20,7 +20,6 @@ const MobileItem = ({
   const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
   const linkColor = useColorModeValue('gray.600', 'gray.200');
-  const linkHoverColor = useColorModeValue('blue.default', 'blue.default');
 
   const getColorLink = (link) => {
     if (router?.pathname === link || router.asPath === link || router?.pathname.includes(link)) {
@@ -31,24 +30,27 @@ const MobileItem = ({
 
   return (
     <Stack spacing={4} onClick={subMenu && onToggle}>
+      {/* Box is important for popover content trigger */}
       {!subMenu && (
-        <NextChakraLink
-          py={2}
-          href={href}
-          target={isAbsoluteUrl(href) ? '_blank' : undefined}
-          rel={isAbsoluteUrl(href) ? 'noopener noreferrer' : undefined}
-          display="flex"
-          justifyContent="space-between"
-          align="center"
-          _hover={{
-            textDecoration: 'none',
-            color: linkHoverColor,
-          }}
-        >
-          <Text fontWeight={400} color={getColorLink(href || asPath)}>
-            {label}
-          </Text>
-        </NextChakraLink>
+        <Box>
+          <NextChakraLink
+            py={2}
+            href={href}
+            target={isAbsoluteUrl(href) ? '_blank' : undefined}
+            rel={isAbsoluteUrl(href) ? 'noopener noreferrer' : undefined}
+            display="flex"
+            justifyContent="space-between"
+            align="center"
+            _hover={{
+              textDecoration: 'none',
+              color: 'blue.default',
+            }}
+          >
+            <Text fontWeight={400} color={getColorLink(href || asPath)}>
+              {label}
+            </Text>
+          </NextChakraLink>
+        </Box>
       )}
       {subMenu && (
         <Flex
