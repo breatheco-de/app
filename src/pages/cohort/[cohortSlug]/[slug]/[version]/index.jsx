@@ -12,6 +12,7 @@ import ModuleMap from '../../../../../js_modules/moduleMap/index';
 import CohortSideBar from '../../../../../common/components/CohortSideBar';
 import Icon from '../../../../../common/components/Icon';
 import SupportSidebar from '../../../../../common/components/SupportSidebar';
+import TeacherSidebar from '../../../../../common/components/TeacherSidebar';
 import CallToAction from '../../../../../common/components/CallToAction';
 import ProgressBar from '../../../../../common/components/ProgressBar';
 import Heading from '../../../../../common/components/Heading';
@@ -210,23 +211,39 @@ const Dashboard = () => {
           <TagCapsule containerStyle={{ padding: '6px 18px 6px 18px' }} tags={tapCapsule.tags} separator={tapCapsule.separator} />
 
           <Box display={{ base: 'block', md: 'none' }}>
-            <CohortSideBar
-              cohortSideBarTR={cohortSideBar}
-              studentAndTeachers={studentAndTeachers}
-              cohortCity={cohortSession.name}
-              containerStyle={{
-                margin: '30px 0 0 0',
-              }}
-              width="100%"
-            />
-            <Box marginTop="30px">
-              <SupportSidebar
-                title={supportSideBar.title}
-                subtitle={supportSideBar.description}
-                actionButtons={supportSideBar.actionButtons}
-                width="100%"
-              />
-            </Box>
+            {
+              user?.roles[0].role === 'teacher' || user?.roles[0].role === 'assistant' ? (
+                <Box marginTop="30px">
+                  <TeacherSidebar
+                    title="Teacher"
+                    subtitle="Actions"
+                    studentAndTeachers={studentAndTeachers}
+                    actionButtons={supportSideBar.actionButtons}
+                    width="100%"
+                  />
+                </Box>
+              ) : (
+                <>
+                  <CohortSideBar
+                    cohortSideBarTR={cohortSideBar}
+                    studentAndTeachers={studentAndTeachers}
+                    cohortCity={cohortSession.name}
+                    containerStyle={{
+                      margin: '30px 0 0 0',
+                    }}
+                    width="100%"
+                  />
+                  <Box marginTop="30px">
+                    <SupportSidebar
+                      title={supportSideBar.title}
+                      subtitle={supportSideBar.description}
+                      actionButtons={supportSideBar.actionButtons}
+                      width="100%"
+                    />
+                  </Box>
+                </>
+              )
+            }
           </Box>
 
           <CallToAction
@@ -309,21 +326,36 @@ const Dashboard = () => {
           // height="95vh"
           display={{ base: 'none', md: 'block' }}
         >
-          <CohortSideBar
-            cohortSideBarTR={cohortSideBar}
-            studentAndTeachers={studentAndTeachers}
-            cohortCity={cohortSession.name}
-            width="100%"
-          />
+          {
+            user?.roles[0].role === 'teacher' || user?.roles[0].role === 'assistant' ? (
+              <Box marginTop="30px">
+                <TeacherSidebar
+                  title="Teacher"
+                  subtitle="Actions"
+                  actionButtons={supportSideBar.actionButtons}
+                  width="100%"
+                />
+              </Box>
+            ) : (
+              <>
+                <CohortSideBar
+                  cohortSideBarTR={cohortSideBar}
+                  studentAndTeachers={studentAndTeachers}
+                  cohortCity={cohortSession.name}
+                  width="100%"
+                />
 
-          <Box marginTop="30px">
-            <SupportSidebar
-              title={supportSideBar.title}
-              subtitle={supportSideBar.description}
-              actionButtons={supportSideBar.actionButtons}
-              width="100%"
-            />
-          </Box>
+                <Box marginTop="30px">
+                  <SupportSidebar
+                    title={supportSideBar.title}
+                    subtitle={supportSideBar.description}
+                    actionButtons={supportSideBar.actionButtons}
+                    width="100%"
+                  />
+                </Box>
+              </>
+            )
+          }
         </Box>
       </Flex>
     </Container>

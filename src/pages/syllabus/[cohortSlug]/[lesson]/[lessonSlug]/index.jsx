@@ -267,7 +267,7 @@ const Content = () => {
   return (
     <Flex position="relative">
       {
-        user?.roles[0].role === 'teacher' && (
+        (user?.roles[0].role === 'teacher' || user?.roles[0].role === 'assistant') && (
           <StickySideBar
             width="auto"
             menu={[

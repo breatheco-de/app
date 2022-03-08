@@ -246,10 +246,13 @@ export const ButtonHandlerByTaskStatus = ({
 };
 
 ButtonHandlerByTaskStatus.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.any).isRequired,
+  currentTask: PropTypes.objectOf(PropTypes.any),
   sendProject: PropTypes.func.isRequired,
   changeStatusAssignment: PropTypes.func.isRequired,
   toggleSettings: PropTypes.func.isRequired,
   closeSettings: PropTypes.func.isRequired,
   settingsOpen: PropTypes.bool.isRequired,
+};
+ButtonHandlerByTaskStatus.defaultProps = {
+  currentTask: null,
 };
