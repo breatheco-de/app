@@ -23,6 +23,7 @@ import {
   useCheckboxGroup,
   Avatar,
   useColorMode,
+  useToast,
 } from '@chakra-ui/react';
 import Icon from './Icon';
 import Text from './Text';
@@ -30,11 +31,26 @@ import bc from '../services/breathecode';
 import usePersistent from '../hooks/usePersistent';
 
 const AttendanceModal = ({
-  title, message, isOpen, onClose, maxDays, minDays, onSubmit, handleChangeDay,
+  title, message, isOpen, onClose,
 }) => {
   const [students, setSudents] = useState([]);
-  const [cohortSession] = usePersistent('cohortSession', {});
+  const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
+  const [day, setDay] = useState(0);
+  const [defaultDay, setDefaultDay] = useState(0);
+  const [checked, setChecked] = useState([]);
+  const { colorMode } = useColorMode();
+  const toast = useToast();
+  const { getCheckboxProps } = useCheckboxGroup({
+    onChange: setChecked,
+  });
+
+  const durationInDays = cohortSession.syllabus_version.duration_in_days;
+
+  console.log('checked:::', checked);
+
   useEffect(() => {
+    const currentCohortDay = cohortSession.current_day;
+    setDefaultDay(currentCohortDay);
     bc.cohort().getStudents(cohortSession.slug).then((res) => {
       const { data } = res;
       if (data.length > 0) {
@@ -44,14 +60,71 @@ const AttendanceModal = ({
     }).catch((err) => {
       console.error('err_student:', err);
     });
-  }, []);
+  }, [cohortSession]);
 
-  const [checked, setChecked] = useState([]);
-  const { getCheckboxProps } = useCheckboxGroup({
-    onChange: setChecked,
+  const updateCohortDay = () => new Promise((resolve, reject) => {
+    bc.cohort()
+      .update(cohortSession.id, { current_day: day })
+      .then(({ data }) => {
+        setCohortSession({ ...cohortSession, ...data });
+        resolve(data);
+        return data;
+      })
+      .catch((error) => reject(error));
   });
-  const { colorMode } = useColorMode();
-  console.log('checked:::', checked);
+
+  const saveCohortAttendancy = () => {
+    const cohortSlug = cohortSession.slug;
+    return new Promise((resolve, reject) => {
+      if (checked.length === 0) {
+        toast({
+          title: 'No attendancy to report',
+          status: 'warning',
+          duration: 9000,
+          isClosable: true,
+        });
+      } else {
+        bc.activity()
+          .addBulk(
+            cohortSlug,
+            students.map(({ user }) => {
+              const attended = checked.find((id) => parseInt(id, 10) === user.id);
+              return {
+                user_id: user.id,
+                user_agent: 'bc/teacher',
+                cohort: cohortSlug,
+                // day: currentCohort.cohort.current_day.toString()
+                day: cohortSession.current_day.toString(),
+                slug: typeof attended === 'undefined' || !attended ? 'classroom_unattendance' : 'classroom_attendance',
+                data: `{ "cohort": "${cohortSlug}", "day": "${cohortSession.current_day}"}`,
+              };
+            }),
+          )
+          .then((res) => {
+            console.log('res_attendance', res);
+            toast({
+              title: 'The Attendancy has been reported',
+              status: 'success',
+              duration: 9000,
+              isClosable: true,
+            });
+            resolve(true);
+          })
+          .catch(() => {
+            toast({
+              title: 'There was an error reporting the attendancy',
+              status: 'error',
+              duration: 9000,
+              isClosable: true,
+            });
+            reject(new Error('There was an error reporting the attendancy'));
+          });
+      }
+    });
+  };
+
+  console.log('day:::', day);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -70,12 +143,10 @@ const AttendanceModal = ({
               <FormControl id="days">
                 <FormLabel color="gray.default">Day</FormLabel>
                 <NumberInput
-                  defaultValue={0}
-                  max={maxDays}
-                  min={minDays}
-                  keepWithinRange={false}
-                  clampValueOnBlur={false}
-                  onChange={handleChangeDay}
+                  defaultValue={defaultDay}
+                  max={durationInDays}
+                  min={0}
+                  onChange={(newDay) => setDay(newDay)}
                 >
                   <NumberInputField color={colorMode === 'light' ? 'black' : 'white'} />
                   <NumberInputStepper>
@@ -100,8 +171,7 @@ const AttendanceModal = ({
             </Flex>
             <Grid templateColumns={{ md: 'repeat(4, 4fr)', sm: 'repeat(1, 1fr)' }} gap={6}>
               {students.map((item) => {
-                const checkbox = getCheckboxProps({ value: item.id.toString() });
-                console.log('checkbox:::', checkbox);
+                const checkbox = getCheckboxProps({ value: item.user.id.toString() });
                 return (
                   <CheckboxCard key={item.user.first_name} {...checkbox}>
                     <Flex justifyContent="space-between">
@@ -111,7 +181,7 @@ const AttendanceModal = ({
                           marginY="auto"
                           marginRight="5px"
                           height="30px"
-                          src={item.user?.profile.avatar_url}
+                          src={item.user?.profile?.avatar_url || ''}
                         />
                         <Text size="md">{`${item.user.first_name} ${item.user.last_name}`}</Text>
                       </Flex>
@@ -133,7 +203,10 @@ const AttendanceModal = ({
             fontSize="13px"
             disabled={checked.length < 1}
             variant="default"
-            onClick={(e) => onSubmit(e, { checked })}
+            onClick={() => {
+              saveCohortAttendancy();
+              updateCohortDay();
+            }}
             rightIcon={<Icon icon="longArrowRight" width="15px" color="white" />}
           >
             START CLASS DAY
@@ -190,7 +263,6 @@ AttendanceModal.propTypes = {
   onClose: PropTypes.func,
   maxDays: PropTypes.number,
   minDays: PropTypes.number,
-  onSubmit: PropTypes.func,
   handleChangeDay: PropTypes.func,
 };
 AttendanceModal.defaultProps = {
@@ -199,7 +271,6 @@ AttendanceModal.defaultProps = {
   message: '',
   isOpen: true,
   onClose: () => { },
-  onSubmit: () => { },
   maxDays: 10,
   minDays: 0,
   handleChangeDay: () => {
