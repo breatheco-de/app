@@ -21,6 +21,8 @@ import bc from '../../../../../common/services/breathecode';
 import useAuth from '../../../../../common/hooks/useAuth';
 import { MDSkeleton } from '../../../../../common/components/Skeleton';
 import usePersistent from '../../../../../common/hooks/usePersistent';
+import StickySideBar from '../../../../../common/components/StickySideBar';
+import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 
 const Content = () => {
   const { isOpen, onToggle } = useDisclosure();
@@ -29,6 +31,8 @@ const Content = () => {
   const [quizSlug, setQuizSlug] = useState(null);
   // const { syllabus = [], setSyllabus } = useSyllabus();
   const [syllabus, setSyllabus] = usePersistent('syllabus', []);
+  const [sortedAssignments, setSortedAssignments] = useState([]);
+  const [selectedSyllabus, setSelectedSyllabus] = useState([]);
   const { user, choose } = useAuth();
   const toast = useToast();
   const router = useRouter();
@@ -86,7 +90,7 @@ const Content = () => {
   }
 
   const onClickAssignment = (e, item) => {
-    router.push(`/syllabus/${cohortSlug}/${item.subtitle.toLowerCase()}/${item.slug}`);
+    router.push(`/syllabus/${cohortSlug}/${item.type.toLowerCase()}/${item.slug}`);
     setReadme(null);
   };
 
@@ -129,6 +133,52 @@ const Content = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    const cohortDays = syllabus || [];
+    cohortDays.map((assignment) => {
+      const {
+        id, label, description, lessons, replits, assignments,
+        quizzes, technologies,
+      } = assignment;
+
+      // const keyConcepts = assignment['key-concepts'];
+
+      const nestedAssignments = nestAssignments({
+        id,
+        read: lessons,
+        practice: replits,
+        code: assignments,
+        answer: quizzes,
+      });
+      const { modules } = nestedAssignments;
+
+      // prevent duplicates when a new module has been started (added to sortedAssignments array)
+      const keyIndex = sortedAssignments.findIndex((x) => x.id === id);
+      if (keyIndex > -1) {
+        sortedAssignments.splice(keyIndex, 1, {
+          id,
+          label,
+          description,
+          technologies,
+          modules,
+          teacherInstructions: assignment.teacher_instructions,
+          keyConcepts: assignment['key-concepts'],
+        });
+      } else {
+        sortedAssignments.push({
+          id,
+          label,
+          description,
+          technologies,
+          modules,
+          teacherInstructions: assignment.teacher_instructions,
+          keyConcepts: assignment['key-concepts'],
+        });
+      }
+      return setSortedAssignments(sortedAssignments);
+    });
+  }, [syllabus]);
+
   const decodeFromBinary = (encoded) => {
     // decode base 64 encoded string with emojis
     const decoded = decodeURIComponent(
@@ -168,6 +218,15 @@ const Content = () => {
       });
   }, [lessonSlug]);
 
+  useEffect(() => {
+    const findSelectedSyllabus = sortedAssignments.filter(
+      (l) => l.modules.find((m) => m.slug === router.query.lessonSlug),
+    );
+    if (findSelectedSyllabus) {
+      setSelectedSyllabus(findSelectedSyllabus);
+    }
+  }, [sortedAssignments, router.query.lessonSlug]);
+
   const containerSlide = () => {
     if (isBelowLaptop) {
       return '0';
@@ -202,8 +261,35 @@ const Content = () => {
     return false;
   };
 
+  const currentTeacherInstructions = selectedSyllabus.map((s) => s.teacherInstructions);
+  const currentKeyConcepts = selectedSyllabus.map((s) => s.keyConcepts);
+
   return (
     <Flex position="relative">
+      {
+        (user?.roles[0].role === 'teacher' || user?.roles[0].role === 'assistant') && (
+          <StickySideBar
+            width="auto"
+            menu={[
+              {
+                icon: 'message',
+                slug: 'teacher-instructions',
+                title: 'Teacher instructions',
+                content: currentTeacherInstructions[0],
+                id: 1,
+              },
+              {
+                icon: 'key',
+                slug: 'key-concepts',
+                title: 'Key Concepts',
+                content: currentKeyConcepts[0],
+                id: 2,
+              },
+            ]}
+          />
+        )
+      }
+
       <IconButton
         style={{ zIndex: 20 }}
         variant="default"
@@ -292,7 +378,7 @@ const Content = () => {
               overflowY: 'auto',
             }}
           >
-            {syllabus && syllabus.map((section) => (
+            {sortedAssignments && sortedAssignments.map((section) => (
               <Box
                 padding="1.5rem"
                 borderBottom={1}
@@ -301,13 +387,9 @@ const Content = () => {
               >
                 <Timeline
                   key={section.id}
-                  technologies={section.technologies.length > 0
-                    ? section.technologies.map((t) => t.title) : []}
+                  assignments={section.modules}
+                  technologies={section.technologies || []}
                   title={section.label}
-                  lessons={section.lessons}
-                  answer={section.quizzes}
-                  code={section.assignments}
-                  practice={section.replits}
                   onClickAssignment={onClickAssignment}
                 />
               </Box>

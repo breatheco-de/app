@@ -46,6 +46,7 @@ const breathecode = {
     return {
       get: (id) => axios.get(`${url}/cohort/${id}`),
       getStudents: (cohortId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}`),
+      update: (id, args) => axios.put(`${url}/cohort/${id}`, args),
     };
   },
 
@@ -69,6 +70,13 @@ const breathecode = {
       .join('&');
     return {
       get: () => axios.get(`${url}?${qs}`),
+    };
+  },
+  activity: () => {
+    const url = `${host}/activity`;
+    return {
+      addBulk: (cohortId, activities) => axios.post(`${url}/academy/cohort/${cohortId}`, activities),
+      getAttendance: (cohortId) => axios.get(`${url}/cohort/${cohortId}?slug=classroom_attendance,classroom_unattendance`),
     };
   },
 };

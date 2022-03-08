@@ -95,7 +95,7 @@ export const startDay = ({
 }) => {
   bc.todo().add(id, newTasks).then(({ data }) => {
     toast({
-      title: `Module ${label} started successfully`,
+      title: `Module ${label ? `${label}started` : 'synchronized'} successfully`,
       status: 'success',
       duration: 6000,
       isClosable: true,
@@ -119,7 +119,7 @@ export const startDay = ({
 };
 
 export const nestAssignments = ({
-  id, label = '', read, practice, code, answer, taskTodo,
+  id, label = '', read, practice, code, answer, taskTodo = [],
 }) => {
   const updatedRead = read.map((el) => ({
     ...el,

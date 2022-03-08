@@ -15,7 +15,7 @@ import {
   PopoverArrow,
   Button,
 } from '@chakra-ui/react';
-import { useState, memo } from 'react';
+import { useState, memo, Fragment } from 'react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import NextChakraLink from '../NextChakraLink';
@@ -32,7 +32,7 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
   const router = useRouter();
 
   const {
-    loginText, ITEMS,
+    loginTR, logoutTR, languageTR, ITEMS,
   } = navbarTR[router.locale];
 
   const { isOpen, onToggle } = useDisclosure();
@@ -41,6 +41,9 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
   const { user, logout } = useAuth();
+
+  const langs = ['en', 'es'];
+  const linkColor = useColorModeValue('gray.600', 'gray.200');
 
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -105,17 +108,17 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
             variant="default"
             aria-label="Toggle Navigation"
           />
-          <NextChakraLink href="/" alignSelf="center" display={{ base: 'flex', md: 'none' }}>
+          <NextChakraLink href="/" locale={router.locale} alignSelf="center" display="flex">
             <Icon icon="logoModern" width="90px" height="20px" />
           </NextChakraLink>
         </Flex>
 
-        <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-          <NextChakraLink href="/" alignSelf="center" display={{ base: 'none', md: 'flex' }}>
+        <Flex flex={{ base: 1 }} display={{ base: 'none', md: 'flex' }} justify={{ base: 'center', md: 'start' }}>
+          <NextChakraLink href="/" locale={router.locale} alignSelf="center" display="flex">
             <Icon icon="logoModern" width="90px" height="20px" />
           </NextChakraLink>
 
-          <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
+          <Flex display="flex" ml={10}>
             <DesktopNav NAV_ITEMS={ITEMS} haveSession={haveSession} />
           </Flex>
         </Flex>
@@ -182,56 +185,90 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
                 {/* Language Section */}
                 <Box
                   width="100%"
-                  borderBottom={1}
+                  borderBottom={2}
                   borderStyle="solid"
                   borderColor={commonBorderColor}
                   display="flex"
                   justifyContent="space-between"
                   padding="12px"
                 >
-                  <Text size="m">
-                    Language
+                  <Text size="md" fontWeight="700">
+                    {languageTR}
                   </Text>
                   <Box display="flex" flexDirection="row">
-                    <Text display="flex" alignItems="center" gridGap="5px" size="sm" color="gray.600">
-                      <Icon icon="usaFlag" width="16px" height="16px" />
-                      ENG
-                    </Text>
-                    <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
-                    <Text display="flex" alignItems="center" gridGap="5px" size="sm" color="gray.600">
-                      <Icon icon="spainFlag" width="16px" height="16px" />
-                      ESP
-                    </Text>
+                    {langs.map((lang, i) => {
+                      const getIconFlags = lang === 'en' ? 'usaFlag' : 'spainFlag';
+                      const getLangName = lang === 'en' ? 'Eng' : 'Esp';
+                      return (
+                        <Fragment key={lang}>
+                          <NextChakraLink
+                            _hover={{
+                              textDecoration: 'none',
+                              color: 'blue.default',
+                            }}
+                            color={router.locale === lang ? 'blue.default' : linkColor}
+                            fontWeight={router.locale === lang ? '700' : '400'}
+                            href={router.asPath}
+                            locale={lang}
+                            display="flex"
+                            alignItems="center"
+                            textTransform="uppercase"
+                            gridGap="5px"
+                            size="sm"
+                          >
+                            <Icon icon={getIconFlags} width="16px" height="16px" />
+                            {getLangName}
+                          </NextChakraLink>
+                          {
+                            i < langs.length && (
+                              <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
+                            )
+                          }
+                        </Fragment>
+                      );
+                    })}
                   </Box>
                 </Box>
 
                 {/* Container Section */}
-                <Box p={4}>
-                  <Stack gridGap="10px" pb="15px">
-                    <Flex alignItems="center" gridGap="6px">
-                      <Box as="span" fontSize="18px" lineHeight="18px">
-                        Welcome
-                      </Box>
-                      <Heading as="p" size="18px">
-                        {getName()}
+                <Box p="1rem 1.5rem 1rem 1.5rem">
+                  <Stack flexDirection="row" gridGap="10px" pb="15px">
+                    <Avatar
+                      // name={user?.first_name}
+                      width="62px"
+                      marginY="auto"
+                      height="62px"
+                      src={getImage()}
+                    />
+                    <Flex flexDirection="column" alignItems="flex-start" gridGap="6px">
+                      <Heading as="p" size="20px" fontWeight="700">
+                        {getName() || ''}
                       </Heading>
-                    </Flex>
-
-                    <Flex alignItems="center" gridGap="6px">
-                      <Box as="span" fontSize="18px" lineHeight="18px">
-                        Current Role:
-                      </Box>
-                      <Heading as="p" size="18px">{`${user?.roles[0].role}`}</Heading>
+                      <Heading as="p" size="16px" textTransform="capitalize" fontWeight="400">{`${user?.roles[0].role || ''}`}</Heading>
                     </Flex>
                   </Stack>
 
-                  <Flex padding="20px 0" alignItems="center">
-                    <Button gridGap="10px" onClick={logout} width="100%" py="25px">
-                      <Box as="span" fontSize="15px">
-                        Logout
-                      </Box>
+                  <Flex
+                    borderTop={2}
+                    borderStyle="solid"
+                    borderColor={commonBorderColor}
+                    // padding="20px 0"
+                    alignItems="center"
+                    padding="1rem 0rem"
+                  >
+                    <Box cursor="pointer" width="auto" display="flex" gridGap="10px" onClick={logout}>
                       <Icon icon="logout" width="20px" height="20px" />
-                    </Button>
+                      <Box
+                        _hover={{
+                          fontWeight: '700',
+                        }}
+                        color="blue.default"
+                        as="span"
+                        fontSize="15px"
+                      >
+                        {logoutTR}
+                      </Box>
+                    </Box>
                   </Flex>
                 </Box>
 
@@ -255,7 +292,7 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
                 lineHeight="0.05em"
                 variant="default"
               >
-                {loginText}
+                {loginTR}
               </Button>
             </NextChakraLink>
           )}

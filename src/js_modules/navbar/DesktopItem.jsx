@@ -4,7 +4,6 @@ import {
   Text,
   Stack,
   Popover,
-  Link,
   PopoverTrigger,
   PopoverContent,
   useColorModeValue,
@@ -14,12 +13,12 @@ import { useRouter } from 'next/router';
 import Icon from '../../common/components/Icon';
 import DesktopSubNav from './DesktopSubNav';
 import { isAbsoluteUrl } from '../../utils/url';
+import NextChakraLink from '../../common/components/NextChakraLink';
 
 const DesktopItem = ({ item }) => {
   const router = useRouter();
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
   const linkColor = useColorModeValue('gray.600', 'gray.200');
-  const linkHoverColor = useColorModeValue('blue.default', 'blue.default');
 
   const getColorLink = (link) => {
     if (router?.pathname === link || router.asPath === link || router?.pathname.includes(link)) {
@@ -39,33 +38,37 @@ const DesktopItem = ({ item }) => {
     <Box key={item.label}>
       <Popover id={item.href ?? 'trigger-64'} trigger="hover" placement="bottom-start">
         <PopoverTrigger>
-          <Link
-            display="flex"
-            alignItems="center"
-            p={2}
-            href={item.href ?? '#'}
-            target={isAbsoluteUrl(item.href) ? '_blank' : undefined}
-            rel={isAbsoluteUrl(item.href) ? 'noopener noreferrer' : undefined}
-            fontSize="sm"
-            textTransform="uppercase"
-            fontWeight={700}
-            color={getColorLink(item.href || item.asPath)}
-            // color={linkColor}
-            _hover={{
-              textDecoration: 'none',
-              color: linkHoverColor,
-            }}
-          >
-            {item.label}
-            {item.subMenu && (
-              <Icon
-                icon="arrowDown"
-                color={getColorIcon(item.href || item.asPath)}
-                width="22px"
-                height="22px"
-              />
-            )}
-          </Link>
+          {/* Box is important for popover content trigger */}
+          <Box>
+            <NextChakraLink
+              display="flex"
+              alignItems="center"
+              p={2}
+              href={item.href ?? '#'}
+              locale={router.locale}
+              target={isAbsoluteUrl(item.href) ? '_blank' : undefined}
+              rel={isAbsoluteUrl(item.href) ? 'noopener noreferrer' : undefined}
+              fontSize="sm"
+              textTransform="uppercase"
+              fontWeight={700}
+              color={getColorLink(item.href || item.asPath)}
+              // color={linkColor}
+              _hover={{
+                textDecoration: 'none',
+                color: 'blue.default',
+              }}
+            >
+              {item.label}
+              {item.subMenu && (
+                <Icon
+                  icon="arrowDown"
+                  color={getColorIcon(item.href || item.asPath)}
+                  width="22px"
+                  height="22px"
+                />
+              )}
+            </NextChakraLink>
+          </Box>
         </PopoverTrigger>
 
         {item.subMenu && (
