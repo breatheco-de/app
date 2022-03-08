@@ -96,7 +96,7 @@ const Dashboard = () => {
       });
 
       bc.cohort().get(cohortId).then(({ data }) => {
-        setCohortSession(data);
+        setCohortSession({ ...cohortSession, ...data });
       }).catch((err) => {
         console.error('err_cohortSessoin:', err);
       });
@@ -284,6 +284,9 @@ const Dashboard = () => {
                   return (assignment.filteredModules.length > 0 && (
                     <ModuleMap
                       key={index}
+                      userId={user.id}
+                      contextState={contextState}
+                      setContextState={setContextState}
                       index={index}
                       title={label}
                       slug={slugify(label)}

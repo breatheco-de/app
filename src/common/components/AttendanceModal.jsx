@@ -43,7 +43,7 @@ const AttendanceModal = ({
   const { getCheckboxProps } = useCheckboxGroup({
     onChange: setChecked,
   });
-
+  // TODO: add module_day to modal option
   const durationInDays = cohortSession.syllabus_version.duration_in_days;
 
   console.log('checked:::', checked);

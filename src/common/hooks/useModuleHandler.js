@@ -95,7 +95,7 @@ export const startDay = ({
 }) => {
   bc.todo().add(id, newTasks).then(({ data }) => {
     toast({
-      title: `Module ${label} started successfully`,
+      title: `Module ${label ? `${label}started` : 'synchronized'} successfully`,
       status: 'success',
       duration: 6000,
       isClosable: true,
