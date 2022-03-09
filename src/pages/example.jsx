@@ -15,13 +15,13 @@ export default function Example() {
     <div className={styles.container}>
 
       <main className={styles.main}>
-        <Link href="/example" locale={router.locale === 'en' ? 'es' : 'en'}>
+        <Link passHref href="/example" locale={router.locale === 'en' ? 'es' : 'en'}>
           <button type="button">{t('change-locale')}</button>
         </Link>
         <H1 type="h1" className={styles.title}>
           {t('heading')}
           {' '}
-          <a href="/example">Example!</a>
+          <Link href="/example">Example!</Link>
         </H1>
 
         <Counter title={t('counter:title')} resetText={t('counter:resetButton')} />

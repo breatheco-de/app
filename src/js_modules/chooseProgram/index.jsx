@@ -21,6 +21,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
         && program.role === 'STUDENT';
     return showCohort || showStudent;
   });
+  // TODO: revisar bien y traer exactamente el codigo de chooseProgram
   const finishedCohorts = chooseList.filter((program) => {
     const showCohort = ['ENDED'].includes(program.cohort.stage);
     const showStudent = ['GRADUATED', 'POSPONED'].includes(

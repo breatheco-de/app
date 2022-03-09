@@ -7,7 +7,7 @@ import Text from '../../common/components/Text';
 import Module from './module';
 import { startDay } from '../../common/hooks/useModuleHandler';
 import Icon from '../../common/components/Icon';
-
+// TODO: El modulo deberia usarse tambien en choose-program
 const ModuleMap = ({
   index, userId, contextState, setContextState, slug, modules, filteredModules,
   title, description, taskTodo,
