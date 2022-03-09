@@ -46,14 +46,13 @@ const ModuleMap = ({
         >
           {modules.length}
           {' '}
-          Lessons
+          Activities
         </Heading>
       </Box>
       <Text margin="0 0 22px 0px" color={useColorModeValue('#606060', 'white')} size="md">
         {description}
       </Text>
 
-      {/* NOTE: Add sync button style and function */}
       {filteredModules.length > 0 && modules.length !== filteredModules.length && (
         <Box display="flex" alignItems="center" justifyContent="space-between" padding="16px 20px" borderRadius="18px" width="100%" background="yellow.light">
           <Text color={useColorModeValue('black', 'black')} size="16px">
@@ -75,7 +74,6 @@ const ModuleMap = ({
         </Box>
       )}
 
-      {/* NOTE: MODULE COMPONENT */}
       {filteredModules.map((module, i) => {
         const cheatedIndex = i;
         return (

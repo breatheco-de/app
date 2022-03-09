@@ -11,6 +11,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
   const [showFinished, setShowFinished] = useState(false);
 
   const activeCohorts = chooseList.filter((program) => {
+    console.log('program:::', program);
     const showCohort = [
       'PREWORK',
       'STARTED',

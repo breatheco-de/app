@@ -61,7 +61,7 @@ const ProgressBar = ({
         </Text>
       </Flex>
       <Progress value={calculatePercentage()} borderRadius="2px" height="4px" />
-      <Flex justifyContent="space-around" marginTop="18px">
+      <Flex justifyContent="space-around" marginTop="18px" flexWrap="wrap" gridGap="6px">
         {allTasks.map((program) => (
           <Box key={program.title} display="flex">
             <Icon

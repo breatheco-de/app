@@ -216,6 +216,8 @@ const Dashboard = () => {
                 <Box marginTop="30px">
                   <TeacherSidebar
                     title="Teacher"
+                    user={user}
+                    students={studentAndTeachers.filter((x) => x.role === 'STUDENT')}
                     subtitle="Actions"
                     sortedAssignments={sortedAssignments}
                     studentAndTeachers={studentAndTeachers}
@@ -335,6 +337,8 @@ const Dashboard = () => {
               <Box marginTop="30px">
                 <TeacherSidebar
                   title="Teacher"
+                  user={user}
+                  students={studentAndTeachers.filter((x) => x.role === 'STUDENT')}
                   subtitle="Actions"
                   sortedAssignments={sortedAssignments}
                   studentAndTeachers={studentAndTeachers}
