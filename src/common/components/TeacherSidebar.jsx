@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { useState } from 'react';
 import {
   Box, Heading, Button, useColorMode, useColorModeValue,
 } from '@chakra-ui/react';
@@ -58,13 +58,12 @@ const ItemButton = ({ children, actionHandler }) => {
 // });
 
 const TeacherSidebar = ({
-  title, subtitle, width,
+  title, subtitle, width, sortedAssignments,
 }) => {
   const { colorMode } = useColorMode();
   const [openAttendance, setOpenAttendance] = useState(false);
   // const [programMentors, setProgramMentors] = usePersistent('programMentors', []);
   // const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
-
   return (
     <Box
       backgroundColor={colorMode === 'light' ? 'yellow.light' : 'featuredDark'}
@@ -107,16 +106,11 @@ const TeacherSidebar = ({
 
         <AttendanceModal
           isOpen={openAttendance}
+          sortedAssignments={sortedAssignments}
           onClose={() => setOpenAttendance(false)}
           title="Start your today’s class"
           message="Hello Paolo, today is 27th of July and the cohort started taking classes on Monday Jun 10th. Please, select your today module."
           width="100%"
-          onSubmit={(e, checked) => {
-            console.log('onSubmit', checked);
-          }}
-          handleChangeDay={() => {
-            console.log('change day');
-          }}
         />
       </Box>
     </Box>
@@ -127,12 +121,14 @@ TeacherSidebar.propTypes = {
   title: PropTypes.string,
   subtitle: PropTypes.string,
   width: PropTypes.string,
+  sortedAssignments: PropTypes.arrayOf(PropTypes.object),
 };
 
 TeacherSidebar.defaultProps = {
   title: 'Teacher',
   subtitle: 'Actions',
   width: '100%',
+  sortedAssignments: [],
 };
 
 ItemText.propTypes = {
@@ -150,4 +146,4 @@ ItemButton.defaultProps = {
   children: null,
   actionHandler: () => {},
 };
-export default memo(TeacherSidebar);
+export default TeacherSidebar;

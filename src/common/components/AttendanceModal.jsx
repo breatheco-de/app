@@ -24,6 +24,7 @@ import {
   Avatar,
   useColorMode,
   useToast,
+  Select,
 } from '@chakra-ui/react';
 import Icon from './Icon';
 import Text from './Text';
@@ -31,11 +32,12 @@ import bc from '../services/breathecode';
 import usePersistent from '../hooks/usePersistent';
 
 const AttendanceModal = ({
-  title, message, isOpen, onClose,
+  title, message, isOpen, onClose, sortedAssignments,
 }) => {
   const [students, setSudents] = useState([]);
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
-  const [day, setDay] = useState(0);
+  const [day, setDay] = useState(cohortSession.current_day);
+  const [currentModule, setCurrentModule] = useState(cohortSession.current_module);
   const [defaultDay, setDefaultDay] = useState(0);
   const [checked, setChecked] = useState([]);
   const { colorMode } = useColorMode();
@@ -47,9 +49,9 @@ const AttendanceModal = ({
   const durationInDays = cohortSession.syllabus_version.duration_in_days;
 
   console.log('checked:::', checked);
+  const currentCohortDay = cohortSession.current_day;
 
   useEffect(() => {
-    const currentCohortDay = cohortSession.current_day;
     setDefaultDay(currentCohortDay);
     bc.cohort().getStudents(cohortSession.slug).then((res) => {
       const { data } = res;
@@ -94,7 +96,7 @@ const AttendanceModal = ({
                 user_agent: 'bc/teacher',
                 cohort: cohortSlug,
                 // day: currentCohort.cohort.current_day.toString()
-                day: cohortSession.current_day.toString(),
+                day: day.toString(),
                 slug: typeof attended === 'undefined' || !attended ? 'classroom_unattendance' : 'classroom_attendance',
                 data: `{ "cohort": "${cohortSlug}", "day": "${cohortSession.current_day}"}`,
               };
@@ -124,6 +126,7 @@ const AttendanceModal = ({
   };
 
   console.log('day:::', day);
+  console.log('currentModule:::', currentModule);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -133,29 +136,37 @@ const AttendanceModal = ({
           {title}
         </ModalHeader>
         <ModalBody>
-          <Box>
-            <Box>
-              <Text size="l" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
-                {message}
-              </Text>
-            </Box>
-            <Box>
-              <FormControl id="days">
-                <FormLabel color="gray.default">Day</FormLabel>
-                <NumberInput
-                  defaultValue={defaultDay}
-                  max={durationInDays}
-                  min={0}
-                  onChange={(newDay) => setDay(newDay)}
-                >
-                  <NumberInputField color={colorMode === 'light' ? 'black' : 'white'} />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-              </FormControl>
-            </Box>
+          <Text size="l" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
+            {message}
+          </Text>
+          <Box display="flex" gridGap="25px" padding="20px 0 0 0">
+            <FormControl id="days">
+              <FormLabel htmlFor="day" color="gray.600" fontSize="12px">Day</FormLabel>
+              <NumberInput
+                defaultValue={defaultDay}
+                max={durationInDays}
+                min={0}
+                onChange={(newDay) => setDay(newDay)}
+              >
+                <NumberInputField color={colorMode === 'light' ? 'black' : 'white'} />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </FormControl>
+
+            <FormControl>
+              <FormLabel htmlFor="current_module" color="gray.600" fontSize="12px">Module</FormLabel>
+              {sortedAssignments.length > 0 && (
+                <Select onChange={(e) => setCurrentModule(e.target.value)} id="module" placeholder="Select module">
+                  {sortedAssignments.map((module) => (
+                    <option key={module.id} value={module.id}>{module.label}</option>
+                    // <option>{module.label}</option>
+                  ))}
+                </Select>
+              )}
+            </FormControl>
           </Box>
           <Box height="1px" bg="gray.light" marginTop="32px" marginBottom="15px" />
           <Box>
@@ -259,6 +270,7 @@ AttendanceModal.propTypes = {
   title: PropTypes.string,
   message: PropTypes.string,
   days: PropTypes.arrayOf(PropTypes.array),
+  sortedAssignments: PropTypes.arrayOf(PropTypes.object).isRequired,
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
   maxDays: PropTypes.number,

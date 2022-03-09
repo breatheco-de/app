@@ -164,7 +164,6 @@ const Dashboard = () => {
     return dailyModule;
   };
   const dailyModuleData = getDailyModuleData() || '';
-
   return (
     <Container maxW="container.xl">
       <Box marginTop="18px" marginBottom="48px">
@@ -211,12 +210,14 @@ const Dashboard = () => {
           <TagCapsule containerStyle={{ padding: '6px 18px 6px 18px' }} tags={tapCapsule.tags} separator={tapCapsule.separator} />
 
           <Box display={{ base: 'block', md: 'none' }}>
+            {/* TODO: cambiar user.roles por Cohort Role */}
             {
               user?.roles[0].role === 'teacher' || user?.roles[0].role === 'assistant' ? (
                 <Box marginTop="30px">
                   <TeacherSidebar
                     title="Teacher"
                     subtitle="Actions"
+                    sortedAssignments={sortedAssignments}
                     studentAndTeachers={studentAndTeachers}
                     actionButtons={supportSideBar.actionButtons}
                     width="100%"
@@ -335,6 +336,8 @@ const Dashboard = () => {
                 <TeacherSidebar
                   title="Teacher"
                   subtitle="Actions"
+                  sortedAssignments={sortedAssignments}
+                  studentAndTeachers={studentAndTeachers}
                   actionButtons={supportSideBar.actionButtons}
                   width="100%"
                 />
