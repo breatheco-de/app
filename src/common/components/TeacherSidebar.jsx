@@ -10,7 +10,7 @@ import Icon from './Icon';
 import Text from './Text';
 // import bc from '../services/breathecode';
 import AttendanceModal from './AttendanceModal';
-// import usePersistent from '../hooks/usePersistent';
+import usePersistent from '../hooks/usePersistent';
 
 // const isWindow = typeof window !== 'undefined';
 // const cohortSession = isWindow ? JSON.parse(localStorage.getItem('cohortSession') || '{}') : {};
@@ -65,6 +65,8 @@ const TeacherSidebar = ({
 }) => {
   const { colorMode } = useColorMode();
   const [openAttendance, setOpenAttendance] = useState(false);
+  const [cohortSession] = usePersistent('cohortSession', {});
+
   const router = useRouter();
 
   const todayIs = {
@@ -72,11 +74,17 @@ const TeacherSidebar = ({
     es: format(new Date(), "'Hoy es' dd 'de' MMMM", { locale: es }),
   };
 
+  const kickoffDate = {
+    en: format(new Date(cohortSession.kickoff_date), 'eeee MMMM Mo'),
+    es: format(new Date(cohortSession.kickoff_date), "eeee dd 'de' MMMM", { locale: es }),
+  };
+
   console.log('user:::', user);
+  console.log('cohortSession:::', cohortSession);
 
   const greetings = {
-    en: `Hello ${user.first_name}, ${todayIs[router.locale]} and the cohort started taking classes on Monday Jun 10th. Please, select today's module.`,
-    es: `Hola ${user.first_name}, ${todayIs[router.locale]} y la cohorte comenzó a tomar clases el lunes 10 de junio. Por favor, selecciona el módulo de hoy.`,
+    en: `Hello ${user.first_name}, ${todayIs[router.locale]} and the cohort started taking classes on ${kickoffDate[router.locale]}. Please, select today's module.`,
+    es: `Hola ${user.first_name}, ${todayIs[router.locale]} y la cohorte comenzó a tomar clases el ${kickoffDate[router.locale]}. Por favor, selecciona el módulo de hoy.`,
   };
 
   // router.locale
