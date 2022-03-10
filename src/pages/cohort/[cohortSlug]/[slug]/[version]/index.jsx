@@ -217,9 +217,8 @@ const Dashboard = () => {
           <TagCapsule containerStyle={{ padding: '6px 18px 6px 18px' }} tags={tapCapsule.tags} separator={tapCapsule.separator} />
 
           <Box display={{ base: 'block', md: 'none' }}>
-            {/* TODO: cambiar user.roles por Cohort Role */}
             {
-              user?.roles[0].role === 'teacher' || user?.roles[0].role === 'assistant' ? (
+              ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_role) ? (
                 <Box marginTop="30px">
                   <TeacherSidebar
                     title="Teacher"
@@ -340,7 +339,7 @@ const Dashboard = () => {
           display={{ base: 'none', md: 'block' }}
         >
           {
-            user?.roles[0].role === 'teacher' || user?.roles[0].role === 'assistant' ? (
+            ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_role) ? (
               <Box marginTop="30px">
                 <TeacherSidebar
                   title="Teacher"
