@@ -31,16 +31,7 @@ const ModalInfo = ({
             size="l"
             fontWeight="400"
             color={commonTextColor}
-            padding="6px 6px 6px 12px"
             margin="10px 0 0 0"
-            borderLeft={4}
-            opacity={0.8}
-            borderStyle="solid"
-            borderColor={commonBorderColor}
-            _hover={{
-              opacity: 1,
-              transition: 'opacity 0.2s ease-in-out',
-            }}
           >
             {description}
           </Text>
@@ -49,7 +40,21 @@ const ModalInfo = ({
               <Text size="l" fontWeight="700" color={useColorModeValue('gray.800', 'gray.light')}>
                 {`${router.locale === 'es' ? 'Comentario del profesor:' : 'Teacher feedback:'}`}
               </Text>
-              <Text size="l" fontWeight="500" color={commonTextColor}>
+              <Text
+                size="l"
+                fontWeight="500"
+                color={commonTextColor}
+                padding="6px 6px 6px 12px"
+                margin="10px 0 0 0"
+                borderLeft={4}
+                opacity={0.8}
+                borderStyle="solid"
+                borderColor={commonBorderColor}
+                _hover={{
+                  opacity: 1,
+                  transition: 'opacity 0.2s ease-in-out',
+                }}
+              >
                 {teacherFeedback}
               </Text>
             </Box>

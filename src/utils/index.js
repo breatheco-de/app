@@ -9,8 +9,16 @@ const slugify = (str) => str
   .replace(/[\s_-]+/g, '-')
   .replace(/^-+|-+$/g, '');
 
+const isPlural = (element) => {
+  if (element.length > 1) {
+    return true;
+  }
+  return false;
+};
+
 export {
   isWindow,
   HAVE_SESSION,
   slugify,
+  isPlural,
 };

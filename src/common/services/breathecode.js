@@ -7,7 +7,10 @@ const breathecode = {
     return {
       login: (payload) => axios.post(`${url}/login/`, { ...payload, user_agent: 'bc/student' }),
       me: () => axios.get(`${url}/user/me`),
-      invites: () => axios.get(`${url}/user/me/invite?status=PENDING`),
+      invites: () => ({
+        get: () => axios.get(`${url}/user/me/invite?status=PENDING`),
+        accept: (id) => axios.put(`${url}/user/me/invite/accepted?id=${id}`),
+      }),
       isValidToken: (token) => axios.get(`${url}/token/${token}`),
       register: (payload) => axios.post(`${url}/user/register`, payload),
       subscribe: (payload) => axios.post(`${url}/subscribe/`, { ...payload }),

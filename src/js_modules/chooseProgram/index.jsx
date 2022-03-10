@@ -46,7 +46,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
         finishedCohorts.length > 0 && (
           <>
             <Text
-              width={['70%', '68%', '56%', '50%']}
+              width={['70%', '68%', '70%', '50%']}
               display="flex"
               padding="25px 0"
               flexDirection="row"
@@ -58,11 +58,14 @@ function ChooseProgram({ chooseList, handleChoose }) {
                 as="button"
                 size="md"
                 fontWeight="bold"
+                textAlign="left"
+                gridGap="10px"
                 _focus={{
                   boxShadow: '0 0 0 3px rgb(66 153 225 / 60%)',
                 }}
                 color="blue.default"
                 display="flex"
+                alignItems="center"
                 onClick={() => setShowFinished(!showFinished)}
               >
                 {`click here to ${showFinished ? 'hide' : 'display'} them`}

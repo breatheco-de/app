@@ -64,6 +64,9 @@ const setSession = (token) => {
     localStorage.setItem('accessToken', token);
     axiosInstance.defaults.headers.common.Authorization = `Token ${token}`;
   } else {
+    localStorage.removeItem('syllabus');
+    localStorage.removeItem('programMentors');
+    localStorage.removeItem('programServices');
     localStorage.removeItem('cohortSession');
     localStorage.removeItem('accessToken');
     delete axiosInstance.defaults.headers.common.Authorization;

@@ -1,26 +1,55 @@
 import React, { useEffect, useState } from 'react';
-import { Flex, Box, useColorModeValue } from '@chakra-ui/react';
+import {
+  Flex, Box, useColorModeValue, Button, useToast,
+} from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import ChooseProgram from '../js_modules/chooseProgram';
+import Text from '../common/components/Text';
 import bc from '../common/services/breathecode';
 import asPrivate from '../common/context/PrivateRouteWrapper';
 import useAuth from '../common/hooks/useAuth';
+import Icon from '../common/components/Icon';
+import { isPlural } from '../utils';
 
 function chooseProgram() {
   const [data, setData] = useState([]);
   const [invites, setInvites] = useState([]);
+  const [showInvites, setShowInvites] = useState(false);
   const { choose } = useAuth();
+  const router = useRouter();
+  const toast = useToast();
   useEffect(() => {
     bc.admissions().me().then((res) => {
       const { cohorts } = res.data;
       setData(cohorts);
     });
 
-    bc.auth().invites().then((res) => {
+    bc.auth().invites().get().then((res) => {
       setInvites(res.data);
     });
   }, []);
 
-  console.log('invites:::', invites);
+  const acceptInvite = ({ id }) => {
+    bc.auth().invites().accept(id).then((res) => {
+      const cohortName = res.data[0].cohort.name;
+      toast({
+        title: `Cohort ${cohortName} successfully accepted!`,
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      });
+      setTimeout(() => {
+        router.reload();
+      }, 800);
+    });
+  };
+
+  const inviteWord = () => {
+    if (isPlural(invites)) {
+      return `${invites.length} new cohort invitations`;
+    }
+    return `${invites.length} new cohort invitation`;
+  };
 
   const handleChoose = (cohort) => {
     choose(cohort);
@@ -30,15 +59,93 @@ function chooseProgram() {
     <Flex alignItems="center" flexDirection="column">
       <Box
         fontWeight={800}
-        width={['70%', '68%', '56%', '50%']}
+        width={['70%', '68%', '70%', '50%']}
         fontSize="50px"
-        marginTop="90px"
+        marginTop="40px"
       >
         Your programs
       </Box>
+
+      {invites.length > 0 && (
+        <Box margin="25px 0 0 0" display="flex" alignItems="center" justifyContent="space-between" padding="16px 20px" borderRadius="18px" width={['70%', '68%', '70%', '50%']} background="yellow.light">
+          <Text
+            color="black"
+            display="flex"
+            flexDirection="row"
+            gridGap="15px"
+            width="100%"
+            justifyContent="space-between"
+            size="md"
+          >
+            {`Ey! There are ${inviteWord()} for you to accept.`}
+            <Text
+              as="button"
+              size="md"
+              fontWeight="bold"
+              textAlign="left"
+              gridGap="5px"
+              _focus={{
+                boxShadow: '0 0 0 3px rgb(66 153 225 / 60%)',
+              }}
+              color="blue.default"
+              display="flex"
+              alignItems="center"
+              onClick={() => setShowInvites(!showInvites)}
+            >
+              {`${showInvites ? 'hide' : 'show'} invites`}
+              <Icon
+                icon="arrowDown"
+                width="20px"
+                height="20px"
+                style={{ transform: showInvites ? 'rotate(180deg)' : 'rotate(0deg)' }}
+              />
+            </Text>
+          </Text>
+        </Box>
+      )}
+
+      {showInvites && invites.map((item, i) => {
+        const { id } = item;
+        const index = i;
+        return (
+          <Box
+            key={index}
+            margin="20px 0 0 0"
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            padding="16px 20px"
+            borderRadius="18px"
+            width={['70%', '68%', '70%', '50%']}
+            background="yellow.light"
+            border={2}
+            borderStyle="solid"
+            borderColor={useColorModeValue('gray.200', 'gray.500')}
+          >
+            <Text color={useColorModeValue('black', 'black')} size="16px">
+              {item.cohort.name}
+            </Text>
+            <Button
+              color="blue.default"
+              textTransform="uppercase"
+              onClick={() => {
+                acceptInvite({ id });
+              }}
+              background="white"
+              border="1px solid #0097CD"
+              gridGap="8px"
+            >
+              <Text color="blue.default" size="15px">
+                Accept
+              </Text>
+            </Button>
+          </Box>
+        );
+      })}
+
       <Box
         fontWeight={400}
-        width={['70%', '68%', '56%', '50%']}
+        width={['70%', '68%', '70%', '50%']}
         fontSize="14px"
         color={useColorModeValue('gray.600', 'gray.200')}
         letterSpacing="0.05em"

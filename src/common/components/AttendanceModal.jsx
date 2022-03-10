@@ -248,7 +248,7 @@ export const CheckboxCard = (props) => {
 
 CheckboxCard.propTypes = {
   children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
-  value: PropTypes.objectOf(PropTypes.object).isRequired,
+  value: PropTypes.string.isRequired,
 };
 
 AttendanceModal.propTypes = {
