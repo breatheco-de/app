@@ -46,7 +46,6 @@ const AttendanceModal = ({
   });
   const durationInDays = cohortSession.syllabus_version.duration_in_days;
 
-  console.log('checked:::', checked);
   const currentCohortDay = cohortSession.current_day;
 
   useEffect(() => {
@@ -113,9 +112,6 @@ const AttendanceModal = ({
       }
     });
   };
-
-  console.log('day:::', day);
-  console.log('currentModule:::', currentModule);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>

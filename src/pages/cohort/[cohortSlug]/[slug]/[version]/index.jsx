@@ -63,14 +63,21 @@ const Dashboard = () => {
 
   // Fetch cohort data with pathName structure
   useEffect(() => {
-    bc.admissions().me().then((res) => {
-      const { cohorts } = res.data;
+    bc.admissions().me().then(({ data }) => {
+      const { cohorts } = data;
       // find cohort with current slug
       const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
       const currentCohort = findCohort?.cohort;
       const { version, name } = currentCohort?.syllabus_version;
+      setCohortSession({
+        ...cohortSession,
+        date_joined: data.date_joined,
+        cohort_role: findCohort.role,
+      });
       choose({
         cohort_slug: cohortSlug,
+        date_joined: data.date_joined,
+        cohort_role: findCohort.role,
         version,
         slug: currentCohort?.syllabus_version.slug,
         cohort_name: currentCohort.name,

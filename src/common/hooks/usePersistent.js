@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
+import { isWindow } from '../../utils/index';
 
 const usePersistent = (key, initialValue) => {
   const getStoredValues = useMemo(() => {
-    const item = window.localStorage.getItem(key);
+    const item = isWindow ? window.localStorage.getItem(key) : null;
     return JSON.parse(item) || initialValue;
   }, [key, initialValue]);
 
