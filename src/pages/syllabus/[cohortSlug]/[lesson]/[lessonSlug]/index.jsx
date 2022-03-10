@@ -32,6 +32,7 @@ const Content = () => {
   // const { syllabus = [], setSyllabus } = useSyllabus();
   const [syllabus, setSyllabus] = usePersistent('syllabus', []);
   const [sortedAssignments, setSortedAssignments] = useState([]);
+  const [cohortSession] = usePersistent('cohortSession', {});
   const [selectedSyllabus, setSelectedSyllabus] = useState([]);
   const { user, choose } = useAuth();
   const toast = useToast();
@@ -105,8 +106,8 @@ const Content = () => {
   };
 
   useEffect(() => {
-    bc.admissions().me().then((res) => {
-      const { cohorts } = res.data;
+    bc.admissions().me().then(({ data }) => {
+      const { cohorts } = data;
       // find cohort with current slug
       const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
       const currentCohort = findCohort?.cohort;
@@ -267,7 +268,7 @@ const Content = () => {
   return (
     <Flex position="relative">
       {
-        (user?.roles[0].role === 'teacher' || user?.roles[0].role === 'assistant') && (
+        ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_role) && (
           <StickySideBar
             width="auto"
             menu={[

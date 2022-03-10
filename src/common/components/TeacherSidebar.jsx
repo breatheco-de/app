@@ -1,13 +1,16 @@
-import { memo, useState } from 'react';
+import { useState } from 'react';
 import {
   Box, Heading, Button, useColorMode, useColorModeValue,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 import Icon from './Icon';
 import Text from './Text';
 // import bc from '../services/breathecode';
 import AttendanceModal from './AttendanceModal';
-// import usePersistent from '../hooks/usePersistent';
+import usePersistent from '../hooks/usePersistent';
 
 // const isWindow = typeof window !== 'undefined';
 // const cohortSession = isWindow ? JSON.parse(localStorage.getItem('cohortSession') || '{}') : {};
@@ -58,13 +61,32 @@ const ItemButton = ({ children, actionHandler }) => {
 // });
 
 const TeacherSidebar = ({
-  title, subtitle, width,
+  title, user, students, subtitle, width, sortedAssignments,
 }) => {
   const { colorMode } = useColorMode();
   const [openAttendance, setOpenAttendance] = useState(false);
+  const [cohortSession] = usePersistent('cohortSession', {});
+
+  const router = useRouter();
+
+  const todayIs = {
+    en: format(new Date(), "'Today is' do 'of' MMMM"),
+    es: format(new Date(), "'Hoy es' dd 'de' MMMM", { locale: es }),
+  };
+
+  const kickoffDate = {
+    en: format(new Date(cohortSession.kickoff_date), 'eeee MMMM Mo'),
+    es: format(new Date(cohortSession.kickoff_date), "eeee dd 'de' MMMM", { locale: es }),
+  };
+
+  const greetings = {
+    en: `Hello ${user.first_name}, ${todayIs[router.locale]} and the cohort started taking classes on ${kickoffDate[router.locale]}. Please, select today's module.`,
+    es: `Hola ${user.first_name}, ${todayIs[router.locale]} y la cohorte comenzó a tomar clases el ${kickoffDate[router.locale]}. Por favor, selecciona el módulo de hoy.`,
+  };
+
+  // router.locale
   // const [programMentors, setProgramMentors] = usePersistent('programMentors', []);
   // const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
-
   return (
     <Box
       backgroundColor={colorMode === 'light' ? 'yellow.light' : 'featuredDark'}
@@ -107,16 +129,12 @@ const TeacherSidebar = ({
 
         <AttendanceModal
           isOpen={openAttendance}
+          students={students}
+          sortedAssignments={sortedAssignments}
           onClose={() => setOpenAttendance(false)}
           title="Start your today’s class"
-          message="Hello Paolo, today is 27th of July and the cohort started taking classes on Monday Jun 10th. Please, select your today module."
+          message={greetings[router.locale]}
           width="100%"
-          onSubmit={(e, checked) => {
-            console.log('onSubmit', checked);
-          }}
-          handleChangeDay={() => {
-            console.log('change day');
-          }}
         />
       </Box>
     </Box>
@@ -126,13 +144,19 @@ const TeacherSidebar = ({
 TeacherSidebar.propTypes = {
   title: PropTypes.string,
   subtitle: PropTypes.string,
+  user: PropTypes.objectOf(PropTypes.any),
+  students: PropTypes.arrayOf(PropTypes.any),
   width: PropTypes.string,
+  sortedAssignments: PropTypes.arrayOf(PropTypes.object),
 };
 
 TeacherSidebar.defaultProps = {
   title: 'Teacher',
   subtitle: 'Actions',
+  user: {},
+  students: [],
   width: '100%',
+  sortedAssignments: [],
 };
 
 ItemText.propTypes = {
@@ -150,4 +174,4 @@ ItemButton.defaultProps = {
   children: null,
   actionHandler: () => {},
 };
-export default memo(TeacherSidebar);
+export default TeacherSidebar;

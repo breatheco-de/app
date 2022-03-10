@@ -37,45 +37,47 @@ const StickySideBar = ({
             const currentModalState = getCurrentModalState(item.slug);
             return (
               <Fragment key={item.id}>
-                <Box
-                  key={item.id}
-                  textAlign="center"
-                  cursor="pointer"
-                  as="button"
-                  bg="transparent"
-                  border="none"
-                  onClick={() => {
-                    if (item.slug === 'key-concepts') {
-                      setOpenKeyConcepts(true);
-                    }
-                    if (item.slug === 'teacher-instructions') {
-                      setOpenTeacherInstructions(true);
-                    }
-                  }}
-                >
+                {item.content && (
                   <Box
-                    bg={colorMode === 'light' ? 'white' : 'blue.default'}
-                    margin="auto"
-                    width="fit-content"
-                    height="48px"
-                    variant="default"
-                    padding="15px"
-                    border="1px solid"
-                    borderColor={colorMode === 'light' ? 'gray.default' : 'blue.default'}
-                    borderRadius="full"
+                    key={item.id}
+                    textAlign="center"
+                    cursor="pointer"
+                    as="button"
+                    bg="transparent"
+                    border="none"
+                    onClick={() => {
+                      if (item.slug === 'key-concepts') {
+                        setOpenKeyConcepts(true);
+                      }
+                      if (item.slug === 'teacher-instructions') {
+                        setOpenTeacherInstructions(true);
+                      }
+                    }}
                   >
-                    <Icon icon={item.icon} width="18px" height="18px" color={colorMode === 'light' ? 'gray' : 'white'} />
-                  </Box>
-                  <Text
-                    width="80px"
-                    size="sm"
-                    marginTop="3px"
-                    color={colorMode === 'light' ? 'gray.default' : 'white'}
-                  >
-                    {item.title}
+                    <Box
+                      bg={colorMode === 'light' ? 'white' : 'blue.default'}
+                      margin="auto"
+                      width="fit-content"
+                      height="48px"
+                      variant="default"
+                      padding="15px"
+                      border="1px solid"
+                      borderColor={colorMode === 'light' ? 'gray.default' : 'blue.default'}
+                      borderRadius="full"
+                    >
+                      <Icon icon={item.icon} width="18px" height="18px" color={colorMode === 'light' ? 'gray' : 'white'} />
+                    </Box>
+                    <Text
+                      width="80px"
+                      size="sm"
+                      marginTop="3px"
+                      color={colorMode === 'light' ? 'gray.default' : 'white'}
+                    >
+                      {item.title}
 
-                  </Text>
-                </Box>
+                    </Text>
+                  </Box>
+                )}
                 {
                   item.content && (
                     <Modal

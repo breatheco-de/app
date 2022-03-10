@@ -18,10 +18,13 @@ import {
 import { useState, memo, Fragment } from 'react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
+import { es } from 'date-fns/locale';
+import { formatDistanceStrict } from 'date-fns';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
 import DesktopNav from '../../../js_modules/navbar/DesktopNav';
 import MobileNav from '../../../js_modules/navbar/MobileNav';
+import usePersistent from '../../hooks/usePersistent';
 import Heading from '../Heading';
 import Text from '../Text';
 
@@ -41,11 +44,30 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
   const { user, logout } = useAuth();
+  const [cohortSession] = usePersistent('cohortSession', {});
 
   const langs = ['en', 'es'];
   const linkColor = useColorModeValue('gray.600', 'gray.200');
 
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  // Verify if teacher acces is with current cohort role
+  const getDateJoined = user?.active_cohort?.date_joined
+    || cohortSession?.date_joined
+    || new Date();
+
+  const dateJoined = {
+    en: `Member since ${formatDistanceStrict(
+      new Date(getDateJoined),
+      new Date(),
+      { addSuffix: true },
+    )}`,
+    es: `Miembro desde ${formatDistanceStrict(
+      new Date(getDateJoined),
+      new Date(),
+      { addSuffix: true, locale: es },
+    )}`,
+  };
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -244,7 +266,12 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
                       <Heading as="p" size="20px" fontWeight="700">
                         {getName() || ''}
                       </Heading>
-                      <Heading as="p" size="16px" textTransform="capitalize" fontWeight="400">{`${user?.roles[0].role || ''}`}</Heading>
+                      {(cohortSession?.date_joined || user?.active_cohort?.date_joined) && (
+                        <Heading as="p" size="16px" maxWidth="300px" textTransform="initial" fontWeight="400">
+                          {/* {`${user?.roles[0].role || ''}`} */}
+                          {dateJoined[router.locale]}
+                        </Heading>
+                      )}
                     </Flex>
                   </Stack>
 

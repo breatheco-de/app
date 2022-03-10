@@ -24,6 +24,7 @@ import {
   Avatar,
   useColorMode,
   useToast,
+  Select,
 } from '@chakra-ui/react';
 import Icon from './Icon';
 import Text from './Text';
@@ -31,11 +32,11 @@ import bc from '../services/breathecode';
 import usePersistent from '../hooks/usePersistent';
 
 const AttendanceModal = ({
-  title, message, isOpen, onClose,
+  title, message, isOpen, onClose, sortedAssignments, students,
 }) => {
-  const [students, setSudents] = useState([]);
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
-  const [day, setDay] = useState(0);
+  const [day, setDay] = useState(cohortSession.current_day);
+  const [currentModule, setCurrentModule] = useState(cohortSession.current_module);
   const [defaultDay, setDefaultDay] = useState(0);
   const [checked, setChecked] = useState([]);
   const { colorMode } = useColorMode();
@@ -43,28 +44,17 @@ const AttendanceModal = ({
   const { getCheckboxProps } = useCheckboxGroup({
     onChange: setChecked,
   });
-  // TODO: add module_day to modal option
   const durationInDays = cohortSession.syllabus_version.duration_in_days;
 
-  console.log('checked:::', checked);
+  const currentCohortDay = cohortSession.current_day;
 
   useEffect(() => {
-    const currentCohortDay = cohortSession.current_day;
     setDefaultDay(currentCohortDay);
-    bc.cohort().getStudents(cohortSession.slug).then((res) => {
-      const { data } = res;
-      if (data.length > 0) {
-        const onlyStudents = data.filter((student) => student.role === 'STUDENT');
-        setSudents(onlyStudents);
-      }
-    }).catch((err) => {
-      console.error('err_student:', err);
-    });
-  }, [cohortSession]);
+  }, [currentCohortDay]);
 
   const updateCohortDay = () => new Promise((resolve, reject) => {
     bc.cohort()
-      .update(cohortSession.id, { current_day: day })
+      .update(cohortSession.id, { current_day: day, current_module: currentModule })
       .then(({ data }) => {
         setCohortSession({ ...cohortSession, ...data });
         resolve(data);
@@ -94,7 +84,7 @@ const AttendanceModal = ({
                 user_agent: 'bc/teacher',
                 cohort: cohortSlug,
                 // day: currentCohort.cohort.current_day.toString()
-                day: cohortSession.current_day.toString(),
+                day: day.toString(),
                 slug: typeof attended === 'undefined' || !attended ? 'classroom_unattendance' : 'classroom_attendance',
                 data: `{ "cohort": "${cohortSlug}", "day": "${cohortSession.current_day}"}`,
               };
@@ -123,8 +113,6 @@ const AttendanceModal = ({
     });
   };
 
-  console.log('day:::', day);
-
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -133,40 +121,48 @@ const AttendanceModal = ({
           {title}
         </ModalHeader>
         <ModalBody>
-          <Box>
-            <Box>
-              <Text size="l" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
-                {message}
-              </Text>
-            </Box>
-            <Box>
-              <FormControl id="days">
-                <FormLabel color="gray.default">Day</FormLabel>
-                <NumberInput
-                  defaultValue={defaultDay}
-                  max={durationInDays}
-                  min={0}
-                  onChange={(newDay) => setDay(newDay)}
-                >
-                  <NumberInputField color={colorMode === 'light' ? 'black' : 'white'} />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-              </FormControl>
-            </Box>
+          <Text size="l" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
+            {message}
+          </Text>
+          <Box display="flex" gridGap="25px" padding="20px 0 0 0">
+            <FormControl id="days">
+              <FormLabel htmlFor="day" color="gray.600" fontSize="12px">Day</FormLabel>
+              <NumberInput
+                defaultValue={defaultDay}
+                max={durationInDays}
+                min={0}
+                onChange={(newDay) => setDay(parseInt(newDay, 10))}
+              >
+                <NumberInputField color={colorMode === 'light' ? 'black' : 'white'} />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </FormControl>
+
+            <FormControl>
+              <FormLabel htmlFor="current_module" color="gray.600" fontSize="12px">Module</FormLabel>
+              {sortedAssignments.length > 0 && (
+                <Select defaultValue={currentModule} onChange={(e) => setCurrentModule(parseInt(e.target.value, 10))} id="module" placeholder="Select module">
+                  {sortedAssignments.map((module) => (
+                    <option key={module.id} value={module.id}>
+                      {`#${module.id} - ${module.label}`}
+                    </option>
+                    // <option>{module.label}</option>
+                  ))}
+                </Select>
+              )}
+            </FormControl>
           </Box>
           <Box height="1px" bg="gray.light" marginTop="32px" marginBottom="15px" />
           <Box>
-            <Flex justifyContent="space-between">
+            <Flex justifyContent="space-between" padding="6px 0 16px 0">
               <Text size="l" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
                 Select the student in the class
               </Text>
               <Text size="l" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
-                {checked.length}
-                {' '}
-                Student selected
+                {`${checked.length} ${checked.length > 1 || checked.length === 0 ? 'Students' : 'Student'} selected`}
               </Text>
             </Flex>
             <Grid templateColumns={{ md: 'repeat(4, 4fr)', sm: 'repeat(1, 1fr)' }} gap={6}>
@@ -258,24 +254,16 @@ CheckboxCard.propTypes = {
 AttendanceModal.propTypes = {
   title: PropTypes.string,
   message: PropTypes.string,
-  days: PropTypes.arrayOf(PropTypes.array),
+  sortedAssignments: PropTypes.arrayOf(PropTypes.object).isRequired,
+  students: PropTypes.arrayOf(PropTypes.object).isRequired,
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
-  maxDays: PropTypes.number,
-  minDays: PropTypes.number,
-  handleChangeDay: PropTypes.func,
 };
 AttendanceModal.defaultProps = {
   title: '',
-  days: [],
   message: '',
   isOpen: true,
   onClose: () => { },
-  maxDays: 10,
-  minDays: 0,
-  handleChangeDay: () => {
-
-  },
 };
 
 export default AttendanceModal;
