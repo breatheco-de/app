@@ -457,7 +457,6 @@ blockquote > :last-child {
   width: fit-content;
   display: initial;
   padding: 0.3em 0.5em !important;
-  /* border-radius: 3px; */
 }
 .text-highlight{
   display: block;
