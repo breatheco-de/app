@@ -204,7 +204,7 @@ const Read = ({ data }) => {
 };
 
 Read.propTypes = {
-  data: PropTypes.string,
+  data: PropTypes.objectOf(PropTypes.any),
 };
 Read.defaultProps = {
   data: null,
