@@ -15,7 +15,9 @@ import {
   PopoverArrow,
   Button,
 } from '@chakra-ui/react';
-import { useState, memo, Fragment } from 'react';
+import {
+  useState, memo, useEffect, Fragment,
+} from 'react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { es } from 'date-fns/locale';
@@ -33,6 +35,7 @@ import navbarTR from '../../translations/navbar';
 
 const NavbarWithSubNavigation = ({ haveSession }) => {
   const router = useRouter();
+  const [readSyllabus, setReadSyllabus] = useState([]);
 
   const {
     loginTR, logoutTR, languageTR, ITEMS,
@@ -50,6 +53,15 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
   const linkColor = useColorModeValue('gray.600', 'gray.200');
 
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  useEffect(async () => {
+    const resp = await fetch(
+      `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`,
+    )
+      .then((res) => res.json());
+
+    setReadSyllabus(resp);
+  }, []);
 
   // Verify if teacher acces is with current cohort role
   const getDateJoined = user?.active_cohort?.date_joined
@@ -141,7 +153,7 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
           </NextChakraLink>
 
           <Flex display="flex" ml={10}>
-            <DesktopNav NAV_ITEMS={ITEMS} haveSession={haveSession} />
+            <DesktopNav NAV_ITEMS={ITEMS} haveSession={haveSession} readSyllabus={readSyllabus} />
           </Flex>
         </Flex>
 
@@ -327,7 +339,7 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
-        <MobileNav NAV_ITEMS={ITEMS} haveSession={haveSession} />
+        <MobileNav NAV_ITEMS={ITEMS} haveSession={haveSession} readSyllabus={readSyllabus} />
       </Collapse>
     </Box>
   );
