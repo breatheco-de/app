@@ -54,7 +54,9 @@ const Timeline = ({
       <Box>
         {assignments && assignments.map((item, index) => {
           const mapIndex = index;
-          const muted = item.slug !== router.query.lessonSlug;
+          const { cohortSlug } = router.query;
+          const assignmentPath = `/syllabus/${cohortSlug}/${item.type.toLowerCase()}/${item.slug}`;
+          const muted = assignmentPath !== router.asPath;
           return (
             <Flex
               key={`${item?.id}-${mapIndex}`}

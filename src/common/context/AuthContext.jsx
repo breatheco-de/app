@@ -69,6 +69,8 @@ const setSession = (token) => {
     localStorage.removeItem('programServices');
     localStorage.removeItem('cohortSession');
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('taskTodo');
+    localStorage.removeItem('sortedAssignments');
     delete axiosInstance.defaults.headers.common.Authorization;
   }
 };
