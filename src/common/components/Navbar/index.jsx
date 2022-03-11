@@ -280,7 +280,6 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
                       </Heading>
                       {(cohortSession?.date_joined || user?.active_cohort?.date_joined) && (
                         <Heading as="p" size="16px" maxWidth="300px" textTransform="initial" fontWeight="400">
-                          {/* {`${user?.roles[0].role || ''}`} */}
                           {dateJoined[router.locale]}
                         </Heading>
                       )}

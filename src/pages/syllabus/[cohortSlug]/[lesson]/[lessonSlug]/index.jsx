@@ -22,7 +22,6 @@ import useAuth from '../../../../../common/hooks/useAuth';
 import { MDSkeleton } from '../../../../../common/components/Skeleton';
 import usePersistent from '../../../../../common/hooks/usePersistent';
 import StickySideBar from '../../../../../common/components/StickySideBar';
-import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 
 const Content = () => {
   const { isOpen, onToggle } = useDisclosure();
@@ -30,8 +29,7 @@ const Content = () => {
   const [readme, setReadme] = useState(null);
   const [quizSlug, setQuizSlug] = useState(null);
   // const { syllabus = [], setSyllabus } = useSyllabus();
-  const [syllabus, setSyllabus] = usePersistent('syllabus', []);
-  const [sortedAssignments, setSortedAssignments] = useState([]);
+  const [sortedAssignments] = usePersistent('sortedAssignments', []);
   const [cohortSession] = usePersistent('cohortSession', {});
   const [selectedSyllabus, setSelectedSyllabus] = useState([]);
   const { user, choose } = useAuth();
@@ -106,79 +104,27 @@ const Content = () => {
   };
 
   useEffect(() => {
-    bc.admissions().me().then(({ data }) => {
-      const { cohorts } = data;
-      // find cohort with current slug
-      const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
-      const currentCohort = findCohort?.cohort;
-      const { version, name } = currentCohort?.syllabus_version;
-      choose({
-        cohort_slug: cohortSlug,
-        version,
-        slug: currentCohort?.syllabus_version.slug,
-        cohort_name: currentCohort.name,
-        syllabus_name: name,
-        academy_id: currentCohort.academy.id,
-      });
-    });
+    bc.admissions().me()
+      .then(({ data }) => {
+        const { cohorts } = data;
+        // find cohort with current slug
+        const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
+        const currentCohort = findCohort?.cohort;
+        const { version, name } = currentCohort?.syllabus_version;
+        choose({
+          cohort_slug: cohortSlug,
+          date_joined: data.date_joined,
+          cohort_role: findCohort.role,
+          version,
+          slug: currentCohort?.syllabus_version.slug,
+          cohort_name: currentCohort.name,
+          cohort_id: currentCohort.id,
+          syllabus_name: name,
+          academy_id: currentCohort.academy.id,
+        });
+      })
+      .catch((err) => console.log('err_admissions_me:', err));
   }, []);
-
-  useEffect(() => {
-    if (user && user.active_cohort) {
-      const academyId = user.active_cohort.academy_id;
-      const { version, slug } = user.active_cohort;
-      bc.syllabus().get(academyId, slug, version).then((res) => {
-        const studentLessons = res.data;
-        setSyllabus(studentLessons.json.days);
-      });
-    }
-  }, [user]);
-
-  useEffect(() => {
-    const cohortDays = syllabus || [];
-    cohortDays.map((assignment) => {
-      const {
-        id, label, description, lessons, replits, assignments,
-        quizzes, technologies,
-      } = assignment;
-
-      // const keyConcepts = assignment['key-concepts'];
-
-      const nestedAssignments = nestAssignments({
-        id,
-        read: lessons,
-        practice: replits,
-        code: assignments,
-        answer: quizzes,
-      });
-      const { modules } = nestedAssignments;
-
-      // prevent duplicates when a new module has been started (added to sortedAssignments array)
-      const keyIndex = sortedAssignments.findIndex((x) => x.id === id);
-      if (keyIndex > -1) {
-        sortedAssignments.splice(keyIndex, 1, {
-          id,
-          label,
-          description,
-          technologies,
-          modules,
-          teacherInstructions: assignment.teacher_instructions,
-          keyConcepts: assignment['key-concepts'],
-        });
-      } else {
-        sortedAssignments.push({
-          id,
-          label,
-          description,
-          technologies,
-          modules,
-          teacherInstructions: assignment.teacher_instructions,
-          keyConcepts: assignment['key-concepts'],
-        });
-      }
-      return setSortedAssignments(sortedAssignments);
-    });
-  }, [syllabus]);
 
   const decodeFromBinary = (encoded) => {
     // decode base 64 encoded string with emojis
@@ -309,7 +255,6 @@ const Content = () => {
             height="36px"
           />
         )}
-        // marginBottom="1rem"
       />
       <Box
         bottom="20px"

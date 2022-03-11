@@ -26,24 +26,17 @@ import axios from '../../../../../axios';
 import dashboardTR from '../../../../../common/translations/dashboard';
 import TasksRemain from '../../../../../js_modules/moduleMap/tasksRemain';
 import usePersistent from '../../../../../common/hooks/usePersistent';
-import useSyllabus from '../../../../../common/store/actions/syllabusActions';
 import { slugify } from '../../../../../utils/index';
 
 const Dashboard = () => {
   const { contextState, setContextState } = useModuleMap();
-  // const [cohortProgram, setNewCohortProgram] = usePersistent('cohortProgram', {});
-  // const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
-
   const { cohortProgram } = contextState;
-  // const [cohortProgram, setNewCohortProgram] = useState({});
-  // const [taskTodo, setTaskTodo] = useState([]);
-
-  // const [startedTasks, setStartedTasks] = useState([]);
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
-  const [sortedAssignments, setSortedAssignments] = useState([]);
+  const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
+  const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const { user, choose } = useAuth();
-  const { setSyllabus } = useSyllabus();
+  const [, setSyllabus] = usePersistent('syllabus', []);
 
   const router = useRouter();
   const { cohortSlug, slug } = router.query;
@@ -128,6 +121,7 @@ const Dashboard = () => {
         });
       }).catch((err) => {
         console.log('err_fetching_cohort-assignemnts:', err);
+        router.push('/choose-program');
       });
     }
   }, [user]);
@@ -136,6 +130,7 @@ const Dashboard = () => {
   useMemo(() => {
     const cohortDays = cohortProgram.json ? cohortProgram.json.days : [];
     if (contextState.cohortProgram.json && contextState.taskTodo) {
+      setTaskTodo(contextState.taskTodo);
       cohortDays.map((assignment) => {
         const {
           id, label, description, lessons, replits, assignments, quizzes,
@@ -201,9 +196,9 @@ const Dashboard = () => {
         }}
       >
         <Box width="100%" minW={{ base: 'auto', md: '770px' }}>
-          {cohortProgram.name ? (
+          {(cohortSession.syllabus_version.name || cohortProgram.name) ? (
             <Heading as="h1" size="xl">
-              {cohortProgram.name}
+              {cohortSession.syllabus_version.name || cohortProgram.name}
             </Heading>
           ) : (
             <Skeleton
@@ -267,7 +262,7 @@ const Dashboard = () => {
 
           <Box marginTop="36px">
             <ProgressBar
-              taskTodo={contextState.taskTodo}
+              taskTodo={taskTodo}
               programs={progressBar.programs}
               progressText={progressText}
               width="100%"
@@ -300,7 +295,7 @@ const Dashboard = () => {
                       title={label}
                       slug={slugify(label)}
                       description={description}
-                      taskTodo={contextState.taskTodo}
+                      taskTodo={taskTodo}
                       modules={modules}
                       filteredModules={filteredModules}
                     />
