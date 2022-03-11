@@ -123,7 +123,17 @@ const Content = () => {
           academy_id: currentCohort.academy.id,
         });
       })
-      .catch((err) => console.log('err_admissions_me:', err));
+      .catch((err) => {
+        router.push('/choose-program');
+        console.log('err_admissions_me:', err);
+        toast({
+          title: 'Invalid cohort slug',
+          // description: 'Content not found',
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
+      });
   }, []);
 
   const decodeFromBinary = (encoded) => {
