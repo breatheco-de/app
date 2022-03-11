@@ -1,5 +1,7 @@
 import React from 'react';
-import { Box, useMediaQuery, useColorMode } from '@chakra-ui/react';
+import {
+  Box, useMediaQuery, useColorMode, useColorModeValue,
+} from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import axios from '../../axios';
@@ -14,6 +16,7 @@ function CohortProgram({ item, handleChoose }) {
   const cohort = item?.cohort;
   // Destructuring the cohort.syllabus_version object with version, slug, name
   const { version, slug, name } = cohort?.syllabus_version;
+  const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
 
   return (
     <Box
@@ -25,7 +28,9 @@ function CohortProgram({ item, handleChoose }) {
       height="100%"
       padding="22px 12px 22px 22px"
       width={['70%', '68%', '70%', '50%']}
-      border="lightgray solid 2px"
+      border={2}
+      borderStyle="solid"
+      borderColor={commonBorderColor}
       fontSize={['11px', '13px', '14px', '15px', '15px']}
       key={item?.id || cohort.name}
     >
