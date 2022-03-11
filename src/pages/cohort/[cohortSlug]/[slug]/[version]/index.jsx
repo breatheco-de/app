@@ -2,7 +2,7 @@ import {
   Fragment, useMemo, useEffect, useState,
 } from 'react';
 import {
-  Box, Flex, Container, useColorModeValue, Skeleton,
+  Box, Flex, Container, useColorModeValue, Skeleton, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import mockData from '../../../../../common/utils/mockData/DashboardView';
@@ -38,6 +38,7 @@ const Dashboard = () => {
   const { user, choose } = useAuth();
   const [, setSyllabus] = usePersistent('syllabus', []);
 
+  const toast = useToast();
   const router = useRouter();
   const { cohortSlug, slug } = router.query;
 
@@ -52,7 +53,15 @@ const Dashboard = () => {
     tapCapsule, progressBar,
   } = mockData;
 
-  axios.defaults.headers.common.Academy = cohortSession?.academy.id || '';
+  // axios.defaults.headers.common.Academy = cohortSession?.academy?.id || '';
+
+  useEffect(() => {
+    if (cohortSession && cohortSession.academy.id) {
+      axios.defaults.headers.common.Academy = cohortSession.academy.id;
+    } else {
+      router.push('/choose-program');
+    }
+  }, [cohortSession]);
 
   // Fetch cohort data with pathName structure
   useEffect(() => {
@@ -78,6 +87,18 @@ const Dashboard = () => {
         syllabus_name: name,
         academy_id: currentCohort.academy.id,
       });
+    }).catch(() => {
+      router.push('/choose-program');
+      toast({
+        title: 'Invalid cohort slug',
+        // description: 'Content not found',
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+      setTimeout(() => {
+        localStorage.removeItem('cohortSession');
+      }, 4000);
     });
   }, []);
 
