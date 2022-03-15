@@ -8,15 +8,10 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import Icon from './Icon';
 import Text from './Text';
-// import bc from '../services/breathecode';
 import AttendanceModal from './AttendanceModal';
 import usePersistent from '../hooks/usePersistent';
+import { isWindow, getStorageItem } from '../../utils';
 
-// const isWindow = typeof window !== 'undefined';
-// const cohortSession = isWindow ? JSON.parse(localStorage.getItem('cohortSession') || '{}') : {};
-// const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
-
-// const academySlug = cohortSession && cohortSession.academy?.slug;
 const ItemText = ({ text }) => (
   <Text display="flex" whiteSpace="pre-wrap" textAlign="left" textTransform="uppercase" size="12px" color={useColorModeValue('black', 'white')}>
     {text}
@@ -66,6 +61,8 @@ const TeacherSidebar = ({
   const { colorMode } = useColorMode();
   const [openAttendance, setOpenAttendance] = useState(false);
   const [cohortSession] = usePersistent('cohortSession', {});
+  const accessToken = getStorageItem('accessToken');
+  // const bcId = user.id;
 
   const router = useRouter();
 
@@ -84,9 +81,6 @@ const TeacherSidebar = ({
     es: `Hola ${user.first_name}, ${todayIs[router.locale]} y la cohorte comenzó a tomar clases el ${kickoffDate[router.locale]}. Por favor, selecciona el módulo de hoy.`,
   };
 
-  // router.locale
-  // const [programMentors, setProgramMentors] = usePersistent('programMentors', []);
-  // const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   return (
     <Box
       backgroundColor={colorMode === 'light' ? 'yellow.light' : 'featuredDark'}
@@ -119,7 +113,12 @@ const TeacherSidebar = ({
               <Icon icon="arrowRight" width="22px" height="22px" />
             </Box>
           </ItemButton>
-          <ItemButton actionHandler={() => {}}>
+          <ItemButton actionHandler={() => {
+            if (isWindow) {
+              window.open(`https://attendance.breatheco.de/?cohort_slug=${cohortSession.slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${cohortSession.academy.id}`, '_blank');
+            }
+          }}
+          >
             <ItemText text="Review attendancy" />
             <Box>
               <Icon icon="arrowRight" width="22px" height="22px" />
