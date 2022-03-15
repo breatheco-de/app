@@ -9,6 +9,7 @@ import bc from '../common/services/breathecode';
 import asPrivate from '../common/context/PrivateRouteWrapper';
 import useAuth from '../common/hooks/useAuth';
 import Icon from '../common/components/Icon';
+import Module from '../common/components/Module';
 import { isPlural } from '../utils';
 
 function chooseProgram() {
@@ -108,38 +109,32 @@ function chooseProgram() {
         const { id } = item;
         const index = i;
         return (
-          <Box
+          <Module
             key={index}
-            margin="20px 0 0 0"
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-            padding="16px 20px"
-            borderRadius="18px"
+            data={{
+              title: item.cohort.name,
+            }}
+            containerStyle={{
+              background: '#FFF4DC',
+            }}
             width={['70%', '68%', '70%', '50%']}
-            background="yellow.light"
-            border={2}
-            borderStyle="solid"
-            borderColor={useColorModeValue('gray.200', 'gray.500')}
-          >
-            <Text color={useColorModeValue('black', 'black')} size="16px">
-              {item.cohort.name}
-            </Text>
-            <Button
-              color="blue.default"
-              textTransform="uppercase"
-              onClick={() => {
-                acceptInvite({ id });
-              }}
-              background="white"
-              border="1px solid #0097CD"
-              gridGap="8px"
-            >
-              <Text color="blue.default" size="15px">
-                Accept
-              </Text>
-            </Button>
-          </Box>
+            rightItemHandler={(
+              <Button
+                color="blue.default"
+                textTransform="uppercase"
+                onClick={() => {
+                  acceptInvite({ id });
+                }}
+                background="white"
+                border="1px solid #0097CD"
+                gridGap="8px"
+              >
+                <Text color="blue.default" size="15px">
+                  Accept
+                </Text>
+              </Button>
+            )}
+          />
         );
       })}
 

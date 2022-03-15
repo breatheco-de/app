@@ -73,6 +73,7 @@ const Dashboard = () => {
       const { version, name } = currentCohort?.syllabus_version;
       setCohortSession({
         ...cohortSession,
+        bc_id: user.id,
         date_joined: data.date_joined,
         cohort_role: findCohort.role,
       });

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-// import { useRouter } from 'next/router';
-// import axios from '../../axios';
+import { Box } from '@chakra-ui/react';
 
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
@@ -31,16 +30,28 @@ function ChooseProgram({ chooseList, handleChoose }) {
 
   return (
     <>
-      {activeCohorts.length > 0 && activeCohorts.map((item, i) => {
-        const index = i;
-        return (
-          <ProgramList
-            key={index}
-            item={item}
-            handleChoose={handleChoose}
-          />
-        );
-      })}
+      {activeCohorts.length > 0 && (
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          flexDirection="column"
+          borderRadius="25px"
+          height="100%"
+          width={['70%', '68%', '70%', '50%']}
+          gridGap="2px"
+        >
+          {activeCohorts.map((item, i) => {
+            const index = i;
+            return (
+              <ProgramList
+                key={index}
+                item={item}
+                handleChoose={handleChoose}
+              />
+            );
+          })}
+        </Box>
+      )}
 
       {
         finishedCohorts.length > 0 && (
@@ -77,16 +88,26 @@ function ChooseProgram({ chooseList, handleChoose }) {
                 />
               </Text>
             </Text>
-            {showFinished && finishedCohorts.map((item, i) => {
-              const index = i;
-              return (
-                <ProgramList
-                  key={index}
-                  item={item}
-                  handleChoose={handleChoose}
-                />
-              );
-            })}
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              flexDirection="column"
+              borderRadius="25px"
+              height="100%"
+              width={['70%', '68%', '70%', '50%']}
+              gridGap="2px"
+            >
+              {showFinished && finishedCohorts.map((item, i) => {
+                const index = i;
+                return (
+                  <ProgramList
+                    key={index}
+                    item={item}
+                    handleChoose={handleChoose}
+                  />
+                );
+              })}
+            </Box>
           </>
         )
       }
