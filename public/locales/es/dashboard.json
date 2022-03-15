@@ -1,0 +1,35 @@
+{
+  "title": "Tus noticias",
+  "backToChooseProgram": "Volver a elegir programa",
+  "progressText": "progreso en el programa",
+  "callToAction": {
+    "title": "Clase de hoy!",
+    "description": "Tu clase de hoy es ",
+    "buttonText": "Comenzar el módulo de hoy"
+  },
+  "cohortSideBar": {
+    "title": "Acerca de tu cohorte",
+    "cohort": "Cohorte",
+    "mainTeacher": "Profesor principal",
+    "assistant": "Profesores asistentes",
+    "classmates": "Tus compañeros"
+  },
+  "supportSideBar": {
+    "title": "No te quedes atascado",
+    "description": "¿Sabías que puedes programar sesiones de mentoría en cualquier momento o preguntar en el Chat de soporte?",
+    "actionButtons": [
+      {
+        "name": "mentoring",
+        "title": "Programar sesion de mentoría",
+        "href": "#",
+        "icon": "conversation"
+      },
+      {
+        "name": "support",
+        "title": "Preguntar en el chat de soporte",
+        "href": "https://4geeksacademy.slack.com/archives/CAZ9W99U4",
+        "icon": "slack"
+      }
+    ]
+  }
+}

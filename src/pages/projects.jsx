@@ -2,7 +2,7 @@
 import {
   Box, useColorModeValue, Button, Flex, useDisclosure,
 } from '@chakra-ui/react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import Text from '../common/components/Text';
 import Icon from '../common/components/Icon';
@@ -12,7 +12,7 @@ import ProjectList from '../js_modules/projects/ProjectList';
 import useFilter from '../common/store/actions/filterAction';
 import Search from '../js_modules/projects/Search';
 
-export const getStaticProps = async ({ locale }) => {
+export const getStaticProps = async () => {
   const projects = []; // filtered projects after removing repeated
   let arrProjects = []; // incoming projects
 
@@ -72,7 +72,6 @@ export const getStaticProps = async ({ locale }) => {
   return {
     props: {
       fallback: false,
-      ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
       projects,
       technologyTags,
       difficulties: difficultiesSorted,
@@ -81,6 +80,7 @@ export const getStaticProps = async ({ locale }) => {
 };
 
 const Projects = ({ projects, technologyTags, difficulties }) => {
+  const { t } = useTranslation('projects');
   const { filteredBy, setProjectFilters } = useFilter();
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const currentFilters = technologies.length
@@ -91,7 +91,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-      <TitleContent title="Projects" mobile />
+      <TitleContent title={t('title')} mobile />
       <Flex
         justifyContent="space-between"
         flex="1"
@@ -101,9 +101,9 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.900')}
       >
-        <TitleContent title="Projects" mobile={false} />
+        <TitleContent title={t('title')} mobile={false} />
 
-        <Search placeholder="Search Project" />
+        <Search placeholder={t('search')} />
 
         <Button
           variant="outline"
@@ -120,7 +120,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         >
           <Icon icon="setting" width="20px" height="20px" style={{ minWidth: '20px' }} />
           <Text textTransform="uppercase" pl="10px">
-            {currentFilters >= 2 ? 'Filters' : 'Filter'}
+            {currentFilters >= 2 ? t('filters') : t('filter')}
           </Text>
           {currentFilters >= 1 && (
             <Text
@@ -158,8 +158,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
           padding={{ base: '30px 8%', md: '30px 28%' }}
           textAlign="center"
         >
-          Practice and develop your coding skills by building real live interactive autograded
-          projects with solutions and video tutorials
+          {t('description')}
         </Text>
 
         <ProjectList

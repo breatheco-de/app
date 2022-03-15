@@ -1,11 +1,11 @@
 /* eslint-disable no-continue */
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import {
   Box, useColorModeValue, Button, Flex, useDisclosure,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import useTranslation from 'next-translate/useTranslation';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import FilterModal from '../../common/components/FilterModal';
@@ -14,7 +14,7 @@ import ProjectList from '../../js_modules/projects/ProjectList';
 import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 
-export const getStaticProps = async ({ locale }) => {
+export const getStaticProps = async () => {
   const exercises = []; // filtered exercises after removing repeated
   let arrExercises = []; // incoming exercises
   const data = await fetch(
@@ -72,7 +72,6 @@ export const getStaticProps = async ({ locale }) => {
   return {
     props: {
       fallback: false,
-      ...(await serverSideTranslations(locale, ['home', 'navbar', 'footer'])),
       exercises,
       technologyTags,
       difficulties: difficultiesSorted,
@@ -81,6 +80,7 @@ export const getStaticProps = async ({ locale }) => {
 };
 
 function Exercices({ exercises, technologyTags, difficulties }) {
+  const { t } = useTranslation('exercises');
   const { filteredBy, setExerciseFilters } = useFilter();
   const { technologies, difficulty, videoTutorials } = filteredBy.exercisesOptions;
 
@@ -96,7 +96,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-      <TitleContent title="Practices" mobile />
+      <TitleContent title={t('title')} mobile />
       <Flex
         justifyContent="space-between"
         flex="1"
@@ -106,9 +106,9 @@ function Exercices({ exercises, technologyTags, difficulties }) {
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.900')}
       >
-        <TitleContent title="Practices" mobile={false} />
+        <TitleContent title={t('title')} mobile={false} />
 
-        <Search placeholder="Search Exercises" />
+        <Search placeholder={t('search')} />
 
         <Button
           variant="outline"
@@ -125,7 +125,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
         >
           <Icon icon="setting" width="20px" height="20px" style={{ minWidth: '20px' }} />
           <Text textTransform="uppercase" pl="10px">
-            {currentFilters >= 2 ? 'Filters' : 'Filter'}
+            {currentFilters >= 2 ? t('filters') : t('filter')}
           </Text>
           {currentFilters >= 1 && (
             <Text
@@ -163,8 +163,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
           padding={{ base: '30px 8%', md: '30px 28%' }}
           textAlign="center"
         >
-          The following lessons explain different programing concepts and have been published by
-          breathe code members, search for a partiulars lesson using the filters bellow
+          {t('description')}
         </Text>
         <ProjectList
           projects={exercises}

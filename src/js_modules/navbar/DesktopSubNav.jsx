@@ -1,9 +1,10 @@
 import {
-  Box, Flex, Text, Stack, Link, useColorModeValue,
+  Box, Flex, Text, Stack, useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Icon from '../../common/components/Icon';
+import NextChakraLink from '../../common/components/NextChakraLink';
 
 const DesktopSubNav = ({ label, href, subLabel }) => {
   const router = useRouter();
@@ -16,7 +17,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
     return linkColor;
   };
   return (
-    <Link
+    <NextChakraLink
       href={href}
       role="group"
       display="block"
@@ -54,7 +55,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
           />
         </Flex>
       </Stack>
-    </Link>
+    </NextChakraLink>
   );
 };
 

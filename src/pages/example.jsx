@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import useTranslation from 'next-translate/useTranslation';
 import styles from '../../styles/Home.module.css';
 import Counter from '../common/components/Counter';
 import { H1 } from '../common/styledComponents/Head';
@@ -16,10 +15,10 @@ export default function Example() {
 
       <main className={styles.main}>
         <Link passHref href="/example" locale={router.locale === 'en' ? 'es' : 'en'}>
-          <button type="button">{t('change-locale')}</button>
+          <button type="button">{t('common:change-locale')}</button>
         </Link>
         <H1 type="h1" className={styles.title}>
-          {t('heading')}
+          {t('common:heading')}
           {' '}
           <Link href="/example">Example!</Link>
         </H1>
@@ -28,20 +27,14 @@ export default function Example() {
       </main>
 
       <footer className={styles.footer}>
-        <a href="/">
+        <Link passHref href="/">
           Powered by
           {' '}
           <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
-        </a>
+        </Link>
       </footer>
     </div>
   );
 }
-
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'counter', 'navbar'])),
-  },
-});

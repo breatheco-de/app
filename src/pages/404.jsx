@@ -1,14 +1,7 @@
 import {
   Box, Heading, Text, Button,
 } from '@chakra-ui/react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import NextChakraLink from '../common/components/NextChakraLink';
-
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
-  },
-});
 
 export default function NotFound() {
   return (

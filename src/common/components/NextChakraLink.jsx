@@ -2,6 +2,7 @@
 import NextLink from 'next/link';
 import { Link as ChakraLink } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
 
 const NextChakraLink = ({
   href,
@@ -12,19 +13,22 @@ const NextChakraLink = ({
   children,
   locale,
   ...chakraProps
-}) => (
-  <NextLink
-    passHref
-    href={href}
-    as={as}
-    replace={replace}
-    locale={locale}
-    scroll={scroll}
-    shallow={shallow}
-  >
-    <ChakraLink {...chakraProps}>{children}</ChakraLink>
-  </NextLink>
-);
+}) => {
+  const router = useRouter();
+  return (
+    <NextLink
+      passHref
+      href={href}
+      as={as}
+      replace={replace}
+      locale={locale || router.locale}
+      scroll={scroll}
+      shallow={shallow}
+    >
+      <ChakraLink {...chakraProps}>{children}</ChakraLink>
+    </NextLink>
+  );
+};
 
 NextChakraLink.propTypes = {
   href: PropTypes.string,
@@ -36,7 +40,7 @@ NextChakraLink.propTypes = {
   children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
 };
 NextChakraLink.defaultProps = {
-  locale: 'en',
+  locale: '',
   href: '',
   as: '',
   replace: false,
