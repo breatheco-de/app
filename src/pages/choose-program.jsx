@@ -135,9 +135,6 @@ function chooseProgram() {
               </Button>
             )}
           />
-          // <Text color={useColorModeValue('black', 'black')} size="16px">
-          //   {item.cohort.name}
-          // </Text>
         );
       })}
 

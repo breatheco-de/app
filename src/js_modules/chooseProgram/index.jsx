@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-// import { useRouter } from 'next/router';
-// import axios from '../../axios';
 import { Box } from '@chakra-ui/react';
 
 import Icon from '../../common/components/Icon';
@@ -39,7 +37,6 @@ function ChooseProgram({ chooseList, handleChoose }) {
           flexDirection="column"
           borderRadius="25px"
           height="100%"
-          // padding="22px 12px 22px 22px"
           width={['70%', '68%', '70%', '50%']}
           gridGap="2px"
         >
@@ -97,7 +94,6 @@ function ChooseProgram({ chooseList, handleChoose }) {
               flexDirection="column"
               borderRadius="25px"
               height="100%"
-              // padding="22px 12px 22px 22px"
               width={['70%', '68%', '70%', '50%']}
               gridGap="2px"
             >

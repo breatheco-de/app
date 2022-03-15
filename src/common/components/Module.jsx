@@ -117,14 +117,6 @@ const Module = ({
       </Flex>
       <HStack justifyContent="flex-end" width="100%">
         {rightItemHandler}
-        {/* <ButtonHandlerByTaskStatus
-          currentTask={currentTask}
-          sendProject={sendProject}
-          changeStatusAssignment={changeStatusAssignment}
-          toggleSettings={toggleSettings}
-          closeSettings={closeSettings}
-          settingsOpen={settingsOpen}
-        /> */}
       </HStack>
     </Stack>
   );
