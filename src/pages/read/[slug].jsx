@@ -1,7 +1,7 @@
 import {
   Box, useColorModeValue, Flex, Grid,
 } from '@chakra-ui/react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
@@ -10,15 +10,19 @@ import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
 import Link from '../../common/components/NextChakraLink';
 
-export const getStaticPaths = async () => {
+export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(
     `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`,
   )
     .then((res) => res.json());
 
-  const paths = resp.map((res) => ({
-    params: { slug: res.slug },
-  }));
+  // generate locale each param.slug with flatMap
+  const paths = resp.flatMap((res) => locales.map((locale) => ({
+    params: {
+      slug: res.slug,
+    },
+    locale,
+  })));
 
   return {
     fallback: false,
@@ -26,7 +30,7 @@ export const getStaticPaths = async () => {
   };
 };
 
-export const getStaticProps = async ({ params, locale }) => {
+export const getStaticProps = async ({ params }) => {
   const { slug } = params;
 
   const data = await fetch(
@@ -51,7 +55,6 @@ export const getStaticProps = async ({ params, locale }) => {
   return {
     props: {
       fallback: false,
-      ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
       data,
     },
   };
@@ -59,6 +62,7 @@ export const getStaticProps = async ({ params, locale }) => {
 
 const Read = ({ data }) => {
   const router = useRouter();
+  const { t } = useTranslation('read');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
 
   const containsQueryString = (lesson) => {
@@ -76,7 +80,7 @@ const Read = ({ data }) => {
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-      <TitleContent title="Lessons" mobile />
+      <TitleContent title={t('title')} mobile />
       <Flex
         justifyContent="space-between"
         flex="1"
@@ -86,9 +90,9 @@ const Read = ({ data }) => {
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.900')}
       >
-        <TitleContent title="Lessons" mobile={false} />
+        <TitleContent title={t('title')} mobile={false} />
 
-        <Search />
+        <Search placeholder={t('search')} />
 
         <Box width="0" height="0" display={{ base: 'none', md: 'block' }} />
       </Flex>
@@ -110,7 +114,7 @@ const Read = ({ data }) => {
           textTransform="uppercase"
           textAlign="center"
         >
-          Module map
+          {t('label')}
         </Text>
         <Heading
           as="h1"
@@ -127,8 +131,7 @@ const Read = ({ data }) => {
           textAlign="center"
           color="gray.dark"
         >
-          The following lessons explain different programing concepts and have been published by
-          breathe code members, search for a partiulars lesson using the filters bellow
+          {t('description')}
         </Text>
       </Flex>
       <Box flex="1" margin={{ base: '0 4% 0 4%', md: '0 22% 0 22%' }}>
@@ -157,7 +160,7 @@ const Read = ({ data }) => {
               >
                 {element.lessons.length}
                 {' '}
-                lessons
+                {element.lessons.length > 1 ? t('lessons') : t('lesson')}
               </Text>
             </Flex>
             <Text

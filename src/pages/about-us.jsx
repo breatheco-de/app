@@ -1,12 +1,12 @@
 import { Box, useColorMode, useColorModeValue } from '@chakra-ui/react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import PropTypes from 'prop-types';
+import useTranslation from 'next-translate/useTranslation';
 import Heading from '../common/components/Heading';
 import Link from '../common/components/NextChakraLink';
 import getMarkDownContent from '../common/components/MarkDownParser/markdown';
 import MarkDownParser from '../common/components/MarkDownParser';
 
-export const getStaticProps = async ({ locale }) => {
+export const getStaticProps = async () => {
   const results = await fetch(
     'https://raw.githubusercontent.com/breatheco-de/app/main/ABOUT.md',
   )
@@ -16,7 +16,6 @@ export const getStaticProps = async ({ locale }) => {
   return {
     props: {
       fallback: false,
-      ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
       data: markdownContent.content,
     },
   };
@@ -24,6 +23,7 @@ export const getStaticProps = async ({ locale }) => {
 
 const AboutUs = ({ data }) => {
   const { colorMode } = useColorMode();
+  const { t } = useTranslation(['common']);
 
   return (
     <Box
@@ -41,7 +41,7 @@ const AboutUs = ({ data }) => {
         w="auto"
         borderRadius="15px"
       >
-        {'< Back to Home'}
+        {`← ${t('common:backToHome')}`}
       </Link>
 
       <Box

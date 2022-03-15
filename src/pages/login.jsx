@@ -2,20 +2,12 @@ import {
   Flex, Stack, Box, Tabs, TabList, Tab, TabPanels, TabPanel, Image,
 } from '@chakra-ui/react';
 import I from 'next/image';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import logo from '../../public/static/images/bc_logo.png';
 import Login from '../common/components/Forms/LogIn';
 import Register from '../common/components/Forms/Register';
 import useAuth from '../common/hooks/useAuth';
-
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    fallback: false,
-    ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
-  },
-});
 
 function login() {
   const { user } = useAuth();

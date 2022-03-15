@@ -9,8 +9,8 @@ import {
   useColorMode,
   FormErrorMessage,
 } from '@chakra-ui/react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import PropTypes from 'prop-types';
+import useTranslation from 'next-translate/useTranslation';
 import { Formik, Form, Field } from 'formik';
 import { useState } from 'react';
 import atob from 'atob';
@@ -25,22 +25,27 @@ import { MDSkeleton } from '../../common/components/Skeleton';
 import validationSchema from '../../common/components/Forms/validationSchemas';
 import { processFormEntry } from '../../common/components/Forms/actions';
 
-export const getStaticPaths = async () => {
+export const getStaticPaths = async ({ locales }) => {
   const data = await fetch(
     `${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`,
   )
     .then((res) => res.json())
     .catch((err) => console.log(err));
-  const paths = data.map((res) => ({
-    params: { slug: res.slug },
-  }));
+
+  const paths = data.flatMap((res) => locales.map((locale) => ({
+    params: {
+      slug: res.slug,
+    },
+    locale,
+  })));
+
   return {
     fallback: false,
     paths,
   };
 };
 
-export const getStaticProps = async ({ params, locale }) => {
+export const getStaticProps = async ({ params }) => {
   const { slug } = params;
   const results = await fetch(
     `${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`,
@@ -51,7 +56,6 @@ export const getStaticProps = async ({ params, locale }) => {
   return {
     props: {
       fallback: false,
-      ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
       exercise: results,
     },
   };
@@ -212,6 +216,7 @@ const TabletWithForm = ({
 };
 
 const ExerciseSlug = ({ exercise }) => {
+  const { t } = useTranslation(['exercises']);
   const [notFound, setNotFound] = useState(false);
   // const defaultImage = '/static/images/code1.png';
   // const getImage = exercise.preview !== '' ? exercise.preview : defaultImage;
@@ -259,7 +264,7 @@ const ExerciseSlug = ({ exercise }) => {
         fontWeight="700"
         paddingBottom="10px"
       >
-        {'< Back to Exercises'}
+        {`← ${t('exercises:backToExercises')}`}
       </Link>
 
       <Flex height="100%" gridGap="26px">

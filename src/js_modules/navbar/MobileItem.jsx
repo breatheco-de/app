@@ -4,7 +4,6 @@ import {
   Text,
   Stack,
   Collapse,
-  Link,
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -29,7 +28,7 @@ const MobileItem = ({
   };
 
   return (
-    <Stack spacing={4} onClick={subMenu && onToggle}>
+    <Stack spacing={4}>
       {/* Box is important for popover content trigger */}
       {!subMenu && (
         <Box>
@@ -58,6 +57,8 @@ const MobileItem = ({
           justifyContent="left"
           gridGap="10px"
           align="center"
+          cursor="pointer"
+          onClick={subMenu && onToggle}
           _hover={{
             textDecoration: 'none',
           }}
@@ -108,7 +109,7 @@ const MobileItem = ({
 
           {subMenu
             && subMenu.map((child) => (
-              <Link
+              <NextChakraLink
                 key={child.label}
                 color={getColorLink(child.href)}
                 style={{ textDecoration: 'none' }}
@@ -116,7 +117,7 @@ const MobileItem = ({
                 href={child.href}
               >
                 {child.label}
-              </Link>
+              </NextChakraLink>
             ))}
         </Stack>
       </Collapse>

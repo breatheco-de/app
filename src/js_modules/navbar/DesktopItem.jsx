@@ -45,7 +45,7 @@ const DesktopItem = ({ item }) => {
               alignItems="center"
               p={2}
               href={item.href ?? '#'}
-              locale={router.locale}
+              // locale={router.locale}
               target={isAbsoluteUrl(item.href) ? '_blank' : undefined}
               rel={isAbsoluteUrl(item.href) ? 'noopener noreferrer' : undefined}
               fontSize="sm"

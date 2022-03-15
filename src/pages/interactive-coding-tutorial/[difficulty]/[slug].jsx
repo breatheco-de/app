@@ -1,10 +1,10 @@
 import {
   Box, useColorModeValue, Flex, useToast, useColorMode,
 } from '@chakra-ui/react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import useTranslation from 'next-translate/useTranslation';
 import Heading from '../../../common/components/Heading';
 import Link from '../../../common/components/NextChakraLink';
 import Text from '../../../common/components/Text';
@@ -13,7 +13,7 @@ import SimpleTable from '../../../js_modules/projects/SimpleTable';
 import MarkDownParser from '../../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 
-export const getStaticPaths = async () => {
+export const getStaticPaths = async ({ locales }) => {
   let projects = [];
   const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`)
     .then((res) => res.json())
@@ -35,19 +35,20 @@ export const getStaticPaths = async () => {
     }
   }
 
-  const paths = projects.map((res) => ({
+  const paths = projects.flatMap((res) => locales.map((locale) => ({
     params: {
-      difficulty: res.difficulty,
       slug: res.slug,
+      difficulty: res.difficulty,
     },
-  }));
+    locale,
+  })));
   return {
     fallback: false,
     paths,
   };
 };
 
-export const getStaticProps = async ({ params, locale }) => {
+export const getStaticProps = async ({ params }) => {
   const { slug } = params;
   const results = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`)
     .then((res) => res.json())
@@ -62,7 +63,6 @@ export const getStaticProps = async ({ params, locale }) => {
   return {
     props: {
       fallback: false,
-      ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
       project: results,
     },
   };
@@ -95,6 +95,7 @@ const TableInfo = ({ project, commonTextColor }) => (
 
 const ProjectSlug = ({ project }) => {
   const [readme, setReadme] = useState('');
+  const { t } = useTranslation(['projects']);
   // const defaultImage = '/static/images/code1.png';
   // const getImage = project.preview !== '' ? project.preview : defaultImage;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
@@ -157,7 +158,7 @@ const ProjectSlug = ({ project }) => {
         fontWeight="700"
         paddingBottom="10px"
       >
-        {'< Back to Projects'}
+        {`← ${t('projects:backToProjects')}`}
       </Link>
 
       <Flex height="100%" gridGap="26px">

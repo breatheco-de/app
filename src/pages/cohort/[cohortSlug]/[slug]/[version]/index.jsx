@@ -5,6 +5,7 @@ import {
   Box, Flex, Container, useColorModeValue, Skeleton, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import useTranslation from 'next-translate/useTranslation';
 import mockData from '../../../../../common/utils/mockData/DashboardView';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
@@ -29,6 +30,7 @@ import usePersistent from '../../../../../common/hooks/usePersistent';
 import { slugify } from '../../../../../utils/index';
 
 const Dashboard = () => {
+  const { t } = useTranslation('dashboard');
   const { contextState, setContextState } = useModuleMap();
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const { cohortProgram } = contextState;
@@ -45,9 +47,7 @@ const Dashboard = () => {
   const skeletonStartColor = useColorModeValue('gray.300', 'gray.light');
   const skeletonEndColor = useColorModeValue('gray.400', 'gray.400');
 
-  const {
-    cohortSideBar, supportSideBar, backToChooseProgram, progressText, callToAction,
-  } = dashboardTR[router.locale];
+  const { supportSideBar } = dashboardTR[router.locale];
 
   const {
     tapCapsule, progressBar,
@@ -207,7 +207,7 @@ const Dashboard = () => {
             style={{ marginBottom: '-4px', marginRight: '7px' }}
             color="#0097CF"
           />
-          {backToChooseProgram}
+          {t('backToChooseProgram')}
         </NextChakraLink>
       </Box>
       <Flex
@@ -250,7 +250,6 @@ const Dashboard = () => {
               ) : (
                 <>
                   <CohortSideBar
-                    cohortSideBarTR={cohortSideBar}
                     studentAndTeachers={studentAndTeachers}
                     cohortCity={cohortSession.name}
                     containerStyle={{
@@ -274,10 +273,10 @@ const Dashboard = () => {
           <CallToAction
             background="blue.default"
             margin="40px 0 auto 0"
-            title={callToAction.title}
+            title={t('callToAction.title')}
             href={`#${dailyModuleData && slugify(dailyModuleData.label)}`}
             text={dailyModuleData.description}
-            buttonText={callToAction.buttonText}
+            buttonText={t('callToAction.buttonText')}
             width={{ base: '100%', md: 'fit-content' }}
           />
 
@@ -285,7 +284,7 @@ const Dashboard = () => {
             <ProgressBar
               taskTodo={taskTodo}
               programs={progressBar.programs}
-              progressText={progressText}
+              progressText={t('progressText')}
               width="100%"
             />
           </Box>
@@ -371,7 +370,6 @@ const Dashboard = () => {
             ) : (
               <>
                 <CohortSideBar
-                  cohortSideBarTR={cohortSideBar}
                   studentAndTeachers={studentAndTeachers}
                   cohortCity={cohortSession.name}
                   width="100%"

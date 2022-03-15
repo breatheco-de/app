@@ -9,6 +9,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import Text from './Text';
 import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
@@ -20,9 +21,9 @@ const CohortSideBar = ({
   background,
   width,
   containerStyle,
-  cohortSideBarTR,
   studentAndTeachers,
 }) => {
+  const { t } = useTranslation('dashboard');
   const { colorMode } = useColorMode();
   const teacher = studentAndTeachers.filter((st) => st.role === 'TEACHER');
   const students = studentAndTeachers.filter((st) => st.role === 'STUDENT');
@@ -49,13 +50,13 @@ const CohortSideBar = ({
           marginBottom={18}
           textTransform="uppercase"
         >
-          {cohortSideBarTR.title || 'ABOUT YOUR COHORT'}
+          {t('cohortSideBar.title')}
         </Heading>
         <Box d="flex" alignItems="center" marginBottom={18}>
           <Icon icon="group" width="39px" height="39px" />
           <Box marginLeft={13}>
             <Heading as="h4" fontSize={15} fontWeight="700" lineHeight="18px" margin={0}>
-              {cohortSideBarTR.cohort || title}
+              {t('cohortSideBar.cohort') || title}
             </Heading>
             <Text size="l" fontWeight="400" lineHeight="18px" margin={0}>
               {cohortCity}
@@ -70,7 +71,7 @@ const CohortSideBar = ({
               <AvatarUser data={el} />
               <Box marginLeft={13}>
                 <Heading as="h4" fontSize={15} fontWeight="700" lineHeight="tight" margin={0}>
-                  {cohortSideBarTR.mainTeacher || 'Main Teacher'}
+                  {t('cohortSideBar.mainTeacher')}
                 </Heading>
                 <Text size="l" fontWeight="400" lineHeight="18px" margin={0}>
                   {fullName}
@@ -85,7 +86,7 @@ const CohortSideBar = ({
         {teacherAssistants.length > 0 && (
           <>
             <Heading as="h4" padding="25px 0 8px 0" fontSize={15} lineHeight="18px" margin={0}>
-              {cohortSideBarTR.assistant || 'Assistant Professors'}
+              {t('cohortSideBar.assistant')}
             </Heading>
             <Grid
               gridAutoRows="3.4rem"
@@ -102,7 +103,7 @@ const CohortSideBar = ({
           </>
         )}
         <Heading as="h4" padding="25px 0 8px 0" fontSize={15} lineHeight="18px" margin={0}>
-          {cohortSideBarTR.classmates || 'Your Classmates'}
+          {t('cohortSideBar.classmates')}
         </Heading>
         <Grid
           gridAutoRows="3.4rem"
@@ -142,11 +143,8 @@ CohortSideBar.propTypes = {
   containerStyle: PropTypes.objectOf(PropTypes.any),
   studentAndTeachers: PropTypes.arrayOf(PropTypes.object),
   cohortCity: PropTypes.string,
-  assistant: PropTypes.arrayOf(PropTypes.object),
-  classmates: PropTypes.arrayOf(PropTypes.object),
   background: PropTypes.string,
   // handleStudySession: PropTypes.func,
-  cohortSideBarTR: PropTypes.objectOf(PropTypes.any),
 };
 CohortSideBar.defaultProps = {
   width: '352px',
@@ -207,23 +205,8 @@ CohortSideBar.defaultProps = {
     },
   ],
   cohortCity: 'Miami Downtown',
-  assistant: [
-    {
-      active: false,
-      image: '',
-      name: 'Jhon dude',
-    },
-  ],
-  classmates: [
-    {
-      active: true,
-      image: '',
-      name: 'jhon',
-    },
-  ],
   background: '',
   // handleStudySession: () => {},
-  cohortSideBarTR: {},
 };
 
 export default memo(CohortSideBar);
