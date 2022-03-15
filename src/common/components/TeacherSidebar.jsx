@@ -44,17 +44,6 @@ const ItemButton = ({ children, actionHandler }) => {
   );
 };
 
-// const updateCohortDay = (currentCohort, currentDay) => new Promise((resolve, reject) => {
-//   bc.cohort()
-//     .update(currentCohort.cohort.id, { current_day: currentDay })
-//     .then((data) => {
-//       resolve(data);
-//       console.log('newDay_started', data);
-//       return data;
-//     })
-//     .catch((error) => reject(error));
-// });
-
 const TeacherSidebar = ({
   title, user, students, subtitle, width, sortedAssignments,
 }) => {
@@ -62,8 +51,6 @@ const TeacherSidebar = ({
   const [openAttendance, setOpenAttendance] = useState(false);
   const [cohortSession] = usePersistent('cohortSession', {});
   const accessToken = getStorageItem('accessToken');
-  // const bcId = user.id;
-
   const router = useRouter();
 
   const todayIs = {
