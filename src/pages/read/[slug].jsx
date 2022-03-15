@@ -1,18 +1,40 @@
 import {
   Box, useColorModeValue, Flex, Grid,
 } from '@chakra-ui/react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import Heading from '../common/components/Heading';
-import Text from '../common/components/Text';
-import Search from '../js_modules/projects/Search';
-import TitleContent from '../js_modules/projects/TitleContent';
-import Link from '../common/components/NextChakraLink';
+import Heading from '../../common/components/Heading';
+import Text from '../../common/components/Text';
+import Search from '../../js_modules/projects/Search';
+import TitleContent from '../../js_modules/projects/TitleContent';
+import Link from '../../common/components/NextChakraLink';
 
-export const getStaticProps = async ({ locale }) => {
+export const getStaticPaths = async ({ locales }) => {
+  const resp = await fetch(
+    `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`,
+  )
+    .then((res) => res.json());
+
+  // generate locale each param.slug with flatMap
+  const paths = resp.flatMap((res) => locales.map((locale) => ({
+    params: {
+      slug: res.slug,
+    },
+    locale,
+  })));
+
+  return {
+    fallback: false,
+    paths,
+  };
+};
+
+export const getStaticProps = async ({ params }) => {
+  const { slug } = params;
+
   const data = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/admissions/syllabus/full-stack/version/latest`,
+    `${process.env.BREATHECODE_HOST}/v1/admissions/syllabus/${slug}/version/latest`,
     {
       method: 'GET',
       headers: {
@@ -21,36 +43,44 @@ export const getStaticProps = async ({ locale }) => {
         Academy: 4,
       },
     },
-  ).then((res) => res.json());
+  )
+    .then((res) => res.json());
+
+  if (!data.status_code === 401) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
       fallback: false,
-      ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
       data,
     },
   };
 };
 
-const Lessons = ({ data }) => {
+const Read = ({ data }) => {
   const router = useRouter();
-  // NOTE: split env var SYLLABUS
-  // console.log('router:::', router);
-
+  const { t } = useTranslation('read');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
 
-  const contains = (lesson) => {
+  const containsQueryString = (lesson) => {
     const lessonTitle = lesson.label.toLowerCase();
     if (typeof router.query.search === 'string' && !lessonTitle.includes(router.query.search)) return false;
     if (lesson.lessons.length <= 0) return false;
     return true;
   };
 
-  const filteredBySearch = data.json.days.filter((lesson) => contains(lesson));
+  const filteredBySearch = () => {
+    if (data === null) return [];
+    return data.json.days.filter(containsQueryString);
+  };
+  const datafiltered = filteredBySearch();
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-      <TitleContent title="Lessons" mobile />
+      <TitleContent title={t('title')} mobile />
       <Flex
         justifyContent="space-between"
         flex="1"
@@ -60,9 +90,9 @@ const Lessons = ({ data }) => {
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.900')}
       >
-        <TitleContent title="Lessons" mobile={false} />
+        <TitleContent title={t('title')} mobile={false} />
 
-        <Search />
+        <Search placeholder={t('search')} />
 
         <Box width="0" height="0" display={{ base: 'none', md: 'block' }} />
       </Flex>
@@ -84,7 +114,7 @@ const Lessons = ({ data }) => {
           textTransform="uppercase"
           textAlign="center"
         >
-          Module map
+          {t('label')}
         </Text>
         <Heading
           as="h1"
@@ -93,7 +123,7 @@ const Lessons = ({ data }) => {
           size="m"
           textAlign="center"
         >
-          Full Stack Developer
+          {data.name}
         </Heading>
         <Text
           size="md"
@@ -101,12 +131,11 @@ const Lessons = ({ data }) => {
           textAlign="center"
           color="gray.dark"
         >
-          The following lessons explain different programing concepts and have been published by
-          breathe code members, search for a partiulars lesson using the filters bellow
+          {t('description')}
         </Text>
       </Flex>
       <Box flex="1" margin={{ base: '0 4% 0 4%', md: '0 22% 0 22%' }}>
-        {filteredBySearch.map(
+        {datafiltered.map(
           (element) => element.label !== '' && (
           <Box key={`${element.id} - ${element.position}`} margin="50px 0 0 0">
             <Flex
@@ -131,7 +160,7 @@ const Lessons = ({ data }) => {
               >
                 {element.lessons.length}
                 {' '}
-                lessons
+                {element.lessons.length > 1 ? t('lessons') : t('lesson')}
               </Text>
             </Flex>
             <Text
@@ -177,8 +206,11 @@ const Lessons = ({ data }) => {
   );
 };
 
-Lessons.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any).isRequired,
+Read.propTypes = {
+  data: PropTypes.objectOf(PropTypes.any),
+};
+Read.defaultProps = {
+  data: null,
 };
 
-export default Lessons;
+export default Read;

@@ -2,9 +2,10 @@ import {
   Fragment, useMemo, useEffect, useState,
 } from 'react';
 import {
-  Box, Flex, Container, useColorModeValue, Skeleton,
+  Box, Flex, Container, useColorModeValue, Skeleton, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import useTranslation from 'next-translate/useTranslation';
 import mockData from '../../../../../common/utils/mockData/DashboardView';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
@@ -12,6 +13,7 @@ import ModuleMap from '../../../../../js_modules/moduleMap/index';
 import CohortSideBar from '../../../../../common/components/CohortSideBar';
 import Icon from '../../../../../common/components/Icon';
 import SupportSidebar from '../../../../../common/components/SupportSidebar';
+import TeacherSidebar from '../../../../../common/components/TeacherSidebar';
 import CallToAction from '../../../../../common/components/CallToAction';
 import ProgressBar from '../../../../../common/components/ProgressBar';
 import Heading from '../../../../../common/components/Heading';
@@ -25,45 +27,59 @@ import axios from '../../../../../axios';
 import dashboardTR from '../../../../../common/translations/dashboard';
 import TasksRemain from '../../../../../js_modules/moduleMap/tasksRemain';
 import usePersistent from '../../../../../common/hooks/usePersistent';
-import useSyllabus from '../../../../../common/store/actions/syllabusActions';
+import { slugify } from '../../../../../utils/index';
 
 const Dashboard = () => {
+  const { t } = useTranslation('dashboard');
   const { contextState, setContextState } = useModuleMap();
-  const [cohortProgram, setNewCohortProgram] = usePersistent('cohortProgram', {});
-  const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
-  const [cohortSession] = usePersistent('cohortSession', {});
-  // const [startedTasks, setStartedTasks] = useState([]);
+  const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
+  const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
-  const [sortedAssignments, setSortedAssignments] = useState([]);
+  const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
+  const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const { user, choose } = useAuth();
-  const { setSyllabus } = useSyllabus();
+  const [, setSyllabus] = usePersistent('syllabus', []);
 
+  const toast = useToast();
   const router = useRouter();
   const { cohortSlug, slug } = router.query;
 
   const skeletonStartColor = useColorModeValue('gray.300', 'gray.light');
   const skeletonEndColor = useColorModeValue('gray.400', 'gray.400');
 
-  const {
-    cohortSideBar, supportSideBar, backToChooseProgram, progressText, callToAction,
-  } = dashboardTR[router.locale];
+  const { supportSideBar } = dashboardTR[router.locale];
 
   const {
     tapCapsule, progressBar,
   } = mockData;
 
-  axios.defaults.headers.common.Academy = cohortSession?.academy.id || '';
+  // axios.defaults.headers.common.Academy = cohortSession?.academy?.id || '';
+
+  useEffect(() => {
+    if (cohortSession && cohortSession.academy.id) {
+      axios.defaults.headers.common.Academy = cohortSession.academy.id;
+    } else {
+      router.push('/choose-program');
+    }
+  }, [cohortSession]);
 
   // Fetch cohort data with pathName structure
   useEffect(() => {
-    bc.admissions().me().then((res) => {
-      const { cohorts } = res.data;
+    bc.admissions().me().then(({ data }) => {
+      const { cohorts } = data;
       // find cohort with current slug
       const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
       const currentCohort = findCohort?.cohort;
       const { version, name } = currentCohort?.syllabus_version;
+      setCohortSession({
+        ...cohortSession,
+        date_joined: data.date_joined,
+        cohort_role: findCohort.role,
+      });
       choose({
         cohort_slug: cohortSlug,
+        date_joined: data.date_joined,
+        cohort_role: findCohort.role,
         version,
         slug: currentCohort?.syllabus_version.slug,
         cohort_name: currentCohort.name,
@@ -71,6 +87,18 @@ const Dashboard = () => {
         syllabus_name: name,
         academy_id: currentCohort.academy.id,
       });
+    }).catch(() => {
+      router.push('/choose-program');
+      toast({
+        title: 'Invalid cohort slug',
+        // description: 'Content not found',
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+      setTimeout(() => {
+        localStorage.removeItem('cohortSession');
+      }, 4000);
     });
   }, []);
 
@@ -87,6 +115,12 @@ const Dashboard = () => {
       }).catch((err) => {
         console.error('err_studentAndTeachers:', err);
       });
+
+      bc.cohort().get(cohortId).then(({ data }) => {
+        setCohortSession({ ...cohortSession, ...data });
+      }).catch((err) => {
+        console.error('err_cohortSessoin:', err);
+      });
     }
   }, [user]);
 
@@ -95,39 +129,29 @@ const Dashboard = () => {
     if (user && user.active_cohort) {
       const academyId = user.active_cohort.academy_id;
       const { version } = user.active_cohort;
-      bc.syllabus().get(academyId, slug, version).then((res) => {
-        const studentLessons = res.data;
-        setNewCohortProgram(studentLessons);
-        setSyllabus(studentLessons.json.days);
-      }).catch((err) => {
-        console.log('syllabus_error:', err);
-        setNewCohortProgram([]);
-      });
 
-      bc.todo().getTaskByStudent().then((res) => {
-        const tasks = res.data;
-        setTaskTodo(tasks);
+      // Fetch cohortProgram and TaskTodo then apply to contextState (useModuleMap - action)
+      Promise.all([
+        bc.syllabus().get(academyId, slug, version),
+        bc.todo().getTaskByStudent(),
+      ]).then(([programData, taskTodoData]) => {
+        setSyllabus(programData.data.json.days);
+        setContextState({
+          taskTodo: taskTodoData.data,
+          cohortProgram: programData.data,
+        });
       }).catch((err) => {
-        console.log('todo_error:', err);
-        setTaskTodo([]);
+        console.log('err_fetching_cohort-assignemnts:', err);
+        router.push('/choose-program');
       });
     }
   }, [user]);
-
-  // Sync data fetched to contextState (useModuleMap - action)
-  useEffect(() => {
-    if (taskTodo && cohortProgram) {
-      setContextState({
-        taskTodo,
-        cohortProgram,
-      });
-    }
-  }, [cohortProgram, taskTodo]);
 
   // Sort all data fetched in order of taskTodo
   useMemo(() => {
     const cohortDays = cohortProgram.json ? cohortProgram.json.days : [];
     if (contextState.cohortProgram.json && contextState.taskTodo) {
+      setTaskTodo(contextState.taskTodo);
       cohortDays.map((assignment) => {
         const {
           id, label, description, lessons, replits, assignments, quizzes,
@@ -156,8 +180,13 @@ const Dashboard = () => {
         return setSortedAssignments(sortedAssignments);
       });
     }
-  }, [contextState.cohortProgram.json, contextState.taskTodo, cohortProgram]);
+  }, [contextState.cohortProgram, contextState.taskTodo]);
 
+  const getDailyModuleData = () => {
+    const dailyModule = sortedAssignments[cohortSession.current_module];
+    return dailyModule;
+  };
+  const dailyModuleData = getDailyModuleData() || '';
   return (
     <Container maxW="container.xl">
       <Box marginTop="18px" marginBottom="48px">
@@ -178,7 +207,7 @@ const Dashboard = () => {
             style={{ marginBottom: '-4px', marginRight: '7px' }}
             color="#0097CF"
           />
-          {backToChooseProgram}
+          {t('backToChooseProgram')}
         </NextChakraLink>
       </Box>
       <Flex
@@ -188,9 +217,9 @@ const Dashboard = () => {
         }}
       >
         <Box width="100%" minW={{ base: 'auto', md: '770px' }}>
-          {cohortProgram.name ? (
+          {(cohortSession.syllabus_version.name || cohortProgram.name) ? (
             <Heading as="h1" size="xl">
-              {cohortProgram.name}
+              {cohortSession.syllabus_version.name || cohortProgram.name}
             </Heading>
           ) : (
             <Skeleton
@@ -204,39 +233,58 @@ const Dashboard = () => {
           <TagCapsule containerStyle={{ padding: '6px 18px 6px 18px' }} tags={tapCapsule.tags} separator={tapCapsule.separator} />
 
           <Box display={{ base: 'block', md: 'none' }}>
-            <CohortSideBar
-              cohortSideBarTR={cohortSideBar}
-              studentAndTeachers={studentAndTeachers}
-              cohortCity={cohortSession.name}
-              containerStyle={{
-                margin: '30px 0 0 0',
-              }}
-              width="100%"
-            />
-            <Box marginTop="30px">
-              <SupportSidebar
-                title={supportSideBar.title}
-                subtitle={supportSideBar.description}
-                actionButtons={supportSideBar.actionButtons}
-                width="100%"
-              />
-            </Box>
+            {
+              ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_role) ? (
+                <Box marginTop="30px">
+                  <TeacherSidebar
+                    title="Teacher"
+                    user={user}
+                    students={studentAndTeachers.filter((x) => x.role === 'STUDENT')}
+                    subtitle="Actions"
+                    sortedAssignments={sortedAssignments}
+                    studentAndTeachers={studentAndTeachers}
+                    actionButtons={supportSideBar.actionButtons}
+                    width="100%"
+                  />
+                </Box>
+              ) : (
+                <>
+                  <CohortSideBar
+                    studentAndTeachers={studentAndTeachers}
+                    cohortCity={cohortSession.name}
+                    containerStyle={{
+                      margin: '30px 0 0 0',
+                    }}
+                    width="100%"
+                  />
+                  <Box marginTop="30px">
+                    <SupportSidebar
+                      title={supportSideBar.title}
+                      subtitle={supportSideBar.description}
+                      actionButtons={supportSideBar.actionButtons}
+                      width="100%"
+                    />
+                  </Box>
+                </>
+              )
+            }
           </Box>
 
           <CallToAction
             background="blue.default"
             margin="40px 0 auto 0"
-            title={callToAction.title}
-            text={`${callToAction.description} Internet Architecture in First Time Website Module.`}
-            buttonText={callToAction.buttonText}
+            title={t('callToAction.title')}
+            href={`#${dailyModuleData && slugify(dailyModuleData.label)}`}
+            text={dailyModuleData.description}
+            buttonText={t('callToAction.buttonText')}
             width={{ base: '100%', md: 'fit-content' }}
           />
 
           <Box marginTop="36px">
             <ProgressBar
-              taskTodo={contextState.taskTodo}
+              taskTodo={taskTodo}
               programs={progressBar.programs}
-              progressText={progressText}
+              progressText={t('progressText')}
               width="100%"
             />
           </Box>
@@ -260,10 +308,14 @@ const Dashboard = () => {
                   return (assignment.filteredModules.length > 0 && (
                     <ModuleMap
                       key={index}
+                      userId={user.id}
+                      contextState={contextState}
+                      setContextState={setContextState}
                       index={index}
                       title={label}
+                      slug={slugify(label)}
                       description={description}
-                      taskTodo={contextState.taskTodo}
+                      taskTodo={taskTodo}
                       modules={modules}
                       filteredModules={filteredModules}
                     />
@@ -301,21 +353,39 @@ const Dashboard = () => {
           // height="95vh"
           display={{ base: 'none', md: 'block' }}
         >
-          <CohortSideBar
-            cohortSideBarTR={cohortSideBar}
-            studentAndTeachers={studentAndTeachers}
-            cohortCity={cohortSession.name}
-            width="100%"
-          />
+          {
+            ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_role) ? (
+              <Box marginTop="30px">
+                <TeacherSidebar
+                  title="Teacher"
+                  user={user}
+                  students={studentAndTeachers.filter((x) => x.role === 'STUDENT')}
+                  subtitle="Actions"
+                  sortedAssignments={sortedAssignments}
+                  studentAndTeachers={studentAndTeachers}
+                  actionButtons={supportSideBar.actionButtons}
+                  width="100%"
+                />
+              </Box>
+            ) : (
+              <>
+                <CohortSideBar
+                  studentAndTeachers={studentAndTeachers}
+                  cohortCity={cohortSession.name}
+                  width="100%"
+                />
 
-          <Box marginTop="30px">
-            <SupportSidebar
-              title={supportSideBar.title}
-              subtitle={supportSideBar.description}
-              actionButtons={supportSideBar.actionButtons}
-              width="100%"
-            />
-          </Box>
+                <Box marginTop="30px">
+                  <SupportSidebar
+                    title={supportSideBar.title}
+                    subtitle={supportSideBar.description}
+                    actionButtons={supportSideBar.actionButtons}
+                    width="100%"
+                  />
+                </Box>
+              </>
+            )
+          }
         </Box>
       </Flex>
     </Container>

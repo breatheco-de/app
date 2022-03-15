@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import Icon from '../../common/components/Icon';
 import MobileItem from './MobileItem';
 
-const MobileNav = ({ NAV_ITEMS, haveSession }) => {
+const MobileNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
   const [privateItems, setPrivateItems] = useState([]);
   const { colorMode, toggleColorMode } = useColorMode();
   const commonColors = useColorModeValue('white', 'gray.800');
@@ -53,6 +53,14 @@ const MobileNav = ({ NAV_ITEMS, haveSession }) => {
       })}
 
       {publicItems.map((publicItem) => {
+        if (publicItem.asPath === '/read' && readSyllabus.length > 0) {
+          // eslint-disable-next-line no-param-reassign
+          publicItem.subMenu = readSyllabus?.map((el) => ({
+            label: el.name,
+            href: `/read/${el.slug}`,
+          }));
+        }
+
         const {
           label, subMenu, href, description, icon,
         } = publicItem;
@@ -115,6 +123,7 @@ MobileNav.propTypes = {
       ),
     }),
   ),
+  readSyllabus: PropTypes.arrayOf(PropTypes.any),
 };
 
 MobileNav.defaultProps = {
@@ -128,6 +137,7 @@ MobileNav.defaultProps = {
       },
     },
   ],
+  readSyllabus: [],
 };
 
 export default MobileNav;

@@ -1,6 +1,10 @@
 /* eslint-disable max-len */
 import * as Yup from 'yup';
-import { phone } from '../../../utils/regex';
+import { phone, email, url } from '../../../utils/regex';
+
+const subscribe = Yup.object().shape({
+  email: Yup.string().matches(email, 'Invalid email').required('Email is required'),
+});
 
 const register = Yup.object().shape({
   first_name: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('First name is required'),
@@ -13,11 +17,22 @@ const register = Yup.object().shape({
 
 const login = Yup.object().shape({
   password: Yup.string().required('Password is required'),
-  email: Yup.string().email('Invalid email').required('Required'),
+  email: Yup.string().email('Invalid email').required('Password is required'),
 });
 
 const leadForm = Yup.object().shape({
   full_name: Yup.string().min(10, 'Too Short!').max(50, 'Too Long!').required('Full name is required'),
   email: Yup.string().email('Invalid email').required('Email is required'),
 });
-export default { register, login, leadForm };
+
+const projectUrlValidation = Yup.object().shape({
+  githubUrl: Yup.string().matches(url, 'Invalid Url').required('Url is required'),
+});
+
+export default {
+  register,
+  login,
+  leadForm,
+  subscribe,
+  projectUrlValidation,
+};

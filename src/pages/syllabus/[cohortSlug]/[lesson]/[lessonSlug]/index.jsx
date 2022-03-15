@@ -21,6 +21,7 @@ import bc from '../../../../../common/services/breathecode';
 import useAuth from '../../../../../common/hooks/useAuth';
 import { MDSkeleton } from '../../../../../common/components/Skeleton';
 import usePersistent from '../../../../../common/hooks/usePersistent';
+import StickySideBar from '../../../../../common/components/StickySideBar';
 
 const Content = () => {
   const { isOpen, onToggle } = useDisclosure();
@@ -28,7 +29,9 @@ const Content = () => {
   const [readme, setReadme] = useState(null);
   const [quizSlug, setQuizSlug] = useState(null);
   // const { syllabus = [], setSyllabus } = useSyllabus();
-  const [syllabus, setSyllabus] = usePersistent('syllabus', []);
+  const [sortedAssignments] = usePersistent('sortedAssignments', []);
+  const [cohortSession] = usePersistent('cohortSession', {});
+  const [selectedSyllabus, setSelectedSyllabus] = useState([]);
   const { user, choose } = useAuth();
   const toast = useToast();
   const router = useRouter();
@@ -86,7 +89,7 @@ const Content = () => {
   }
 
   const onClickAssignment = (e, item) => {
-    router.push(`/syllabus/${cohortSlug}/${item.subtitle.toLowerCase()}/${item.slug}`);
+    router.push(`/syllabus/${cohortSlug}/${item.type.toLowerCase()}/${item.slug}`);
     setReadme(null);
   };
 
@@ -101,33 +104,37 @@ const Content = () => {
   };
 
   useEffect(() => {
-    bc.admissions().me().then((res) => {
-      const { cohorts } = res.data;
-      // find cohort with current slug
-      const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
-      const currentCohort = findCohort?.cohort;
-      const { version, name } = currentCohort?.syllabus_version;
-      choose({
-        cohort_slug: cohortSlug,
-        version,
-        slug: currentCohort?.syllabus_version.slug,
-        cohort_name: currentCohort.name,
-        syllabus_name: name,
-        academy_id: currentCohort.academy.id,
+    bc.admissions().me()
+      .then(({ data }) => {
+        const { cohorts } = data;
+        // find cohort with current slug
+        const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
+        const currentCohort = findCohort?.cohort;
+        const { version, name } = currentCohort?.syllabus_version;
+        choose({
+          cohort_slug: cohortSlug,
+          date_joined: data.date_joined,
+          cohort_role: findCohort.role,
+          version,
+          slug: currentCohort?.syllabus_version.slug,
+          cohort_name: currentCohort.name,
+          cohort_id: currentCohort.id,
+          syllabus_name: name,
+          academy_id: currentCohort.academy.id,
+        });
+      })
+      .catch((err) => {
+        router.push('/choose-program');
+        console.log('err_admissions_me:', err);
+        toast({
+          title: 'Invalid cohort slug',
+          // description: 'Content not found',
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
       });
-    });
   }, []);
-
-  useEffect(() => {
-    if (user && user.active_cohort) {
-      const academyId = user.active_cohort.academy_id;
-      const { version, slug } = user.active_cohort;
-      bc.syllabus().get(academyId, slug, version).then((res) => {
-        const studentLessons = res.data;
-        setSyllabus(studentLessons.json.days);
-      });
-    }
-  }, [user]);
 
   const decodeFromBinary = (encoded) => {
     // decode base 64 encoded string with emojis
@@ -168,6 +175,15 @@ const Content = () => {
       });
   }, [lessonSlug]);
 
+  useEffect(() => {
+    const findSelectedSyllabus = sortedAssignments.filter(
+      (l) => l.modules.find((m) => m.slug === router.query.lessonSlug),
+    );
+    if (findSelectedSyllabus) {
+      setSelectedSyllabus(findSelectedSyllabus);
+    }
+  }, [sortedAssignments, router.query.lessonSlug]);
+
   const containerSlide = () => {
     if (isBelowLaptop) {
       return '0';
@@ -202,8 +218,35 @@ const Content = () => {
     return false;
   };
 
+  const currentTeacherInstructions = selectedSyllabus.map((s) => s.teacherInstructions);
+  const currentKeyConcepts = selectedSyllabus.map((s) => s.keyConcepts);
+
   return (
     <Flex position="relative">
+      {
+        ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_role) && (
+          <StickySideBar
+            width="auto"
+            menu={[
+              {
+                icon: 'message',
+                slug: 'teacher-instructions',
+                title: 'Teacher instructions',
+                content: currentTeacherInstructions[0],
+                id: 1,
+              },
+              {
+                icon: 'key',
+                slug: 'key-concepts',
+                title: 'Key Concepts',
+                content: currentKeyConcepts[0],
+                id: 2,
+              },
+            ]}
+          />
+        )
+      }
+
       <IconButton
         style={{ zIndex: 20 }}
         variant="default"
@@ -222,7 +265,6 @@ const Content = () => {
             height="36px"
           />
         )}
-        // marginBottom="1rem"
       />
       <Box
         bottom="20px"
@@ -292,7 +334,7 @@ const Content = () => {
               overflowY: 'auto',
             }}
           >
-            {syllabus && syllabus.map((section) => (
+            {sortedAssignments && sortedAssignments.map((section) => (
               <Box
                 padding="1.5rem"
                 borderBottom={1}
@@ -301,13 +343,9 @@ const Content = () => {
               >
                 <Timeline
                   key={section.id}
-                  technologies={section.technologies.length > 0
-                    ? section.technologies.map((t) => t.title) : []}
+                  assignments={section.modules}
+                  technologies={section.technologies || []}
                   title={section.label}
-                  lessons={section.lessons}
-                  answer={section.quizzes}
-                  code={section.assignments}
-                  practice={section.replits}
                   onClickAssignment={onClickAssignment}
                 />
               </Box>

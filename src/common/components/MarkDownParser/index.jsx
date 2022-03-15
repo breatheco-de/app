@@ -28,7 +28,6 @@ const Code = ({ className, children }) => {
   } else {
     language = 'highlight';
   }
-  console.log(language);
   return (
     <SyntaxHighlighter style={tomorrow} className={language} language={language} showLineNumbers={language !== 'highlight'}>
       {children}

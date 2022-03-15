@@ -1,19 +1,23 @@
 import bc from '../services/breathecode';
 
 export const updateAssignment = ({
-  task = {}, closeSettings, toast, githubUrl, contextState, setContextState,
+  task, closeSettings, toast, githubUrl, contextState, setContextState,
 }) => {
   // Task case
   const toggleStatus = (task.task_status === undefined || task.task_status === 'PENDING') ? 'DONE' : 'PENDING';
-  if (task.task_type !== 'PROJECT') {
-    const updatedTask = Object.assign(task, { task_status: toggleStatus });
-    bc.todo().update(updatedTask).then(() => {
+  if (task.task_type && task.task_type !== 'PROJECT') {
+    const taskToUpdate = {
+      ...task,
+      task_status: toggleStatus,
+    };
+
+    bc.todo().update(taskToUpdate).then(() => {
       const keyIndex = contextState.taskTodo.findIndex((x) => x.id === task.id);
       setContextState({
         ...contextState,
         taskTodo: [
           ...contextState.taskTodo.slice(0, keyIndex), // before keyIndex (inclusive)
-          updatedTask, // key item (updated)
+          taskToUpdate, // key item (updated)
           ...contextState.taskTodo.slice(keyIndex + 1), // after keyIndex (exclusive)
         ],
       });
@@ -37,7 +41,7 @@ export const updateAssignment = ({
   } else {
     // Project case
     const getProjectUrl = () => {
-      if ((githubUrl !== undefined && task.github_url === undefined) || task.github_url === '') {
+      if (githubUrl) {
         return githubUrl;
       }
       return '';
@@ -46,12 +50,24 @@ export const updateAssignment = ({
     const projectUrl = getProjectUrl();
 
     const isDelivering = projectUrl !== '';
-    const updatedTask = Object.assign(task, { task_status: toggleStatus, github_url: projectUrl });
+    const taskToUpdate = {
+      ...task,
+      task_status: toggleStatus,
+      github_url: projectUrl,
+    };
 
-    bc.todo().update(updatedTask).then((res) => {
-      const { data } = res;
+    bc.todo().update(taskToUpdate).then(({ data }) => {
       // verify if form is equal to the response
       if (data.github_url === projectUrl) {
+        const keyIndex = contextState.taskTodo.findIndex((x) => x.id === task.id);
+        setContextState({
+          ...contextState,
+          taskTodo: [
+            ...contextState.taskTodo.slice(0, keyIndex), // before keyIndex (inclusive)
+            taskToUpdate, // key item (updated)
+            ...contextState.taskTodo.slice(keyIndex + 1), // after keyIndex (exclusive)
+          ],
+        });
         toast({
           // title: `"${res.data.title}" has been updated successfully`,
           title: `Your project ${isDelivering ? 'has been delivered' : 'delivery has been removed'} successfully`,
@@ -79,7 +95,7 @@ export const startDay = ({
 }) => {
   bc.todo().add(id, newTasks).then(({ data }) => {
     toast({
-      title: `Module ${label} started successfully`,
+      title: `Module ${label ? `${label}started` : 'synchronized'} successfully`,
       status: 'success',
       duration: 6000,
       isClosable: true,
@@ -103,7 +119,7 @@ export const startDay = ({
 };
 
 export const nestAssignments = ({
-  id, label = '', read, practice, code, answer, taskTodo,
+  id, label = '', read, practice, code, answer, taskTodo = [],
 }) => {
   const updatedRead = read.map((el) => ({
     ...el,

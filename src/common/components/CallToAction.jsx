@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Text from './Text';
 
 const CallToAction = ({
-  background, title, text, buttonText, width, onClick, margin,
+  background, href, title, text, buttonText, width, onClick, margin,
 }) => (
   <Box
     justifyContent="space-between"
@@ -26,7 +26,7 @@ const CallToAction = ({
       </Text>
     </Box>
     <Box padding={{ base: '24px 0 0 0', lg: '0' }} alignSelf="center">
-      <Button as="a" href="#tasks_remain" marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
+      <Button as="a" href={href} marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
         {buttonText}
       </Button>
     </Box>
@@ -38,6 +38,7 @@ CallToAction.propTypes = {
   text: PropTypes.string,
   buttonText: PropTypes.string,
   background: PropTypes.string,
+  href: PropTypes.string,
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   margin: PropTypes.string,
   onClick: PropTypes.func,
@@ -47,6 +48,7 @@ CallToAction.defaultProps = {
   title: 'What is next!',
   text: 'Your lesson today is Internet Architecture in First Time Website Module.',
   buttonText: 'Start Today\'s module',
+  href: '#tasks_remain',
   background: 'blue',
   width: '100%',
   margin: '0 auto',

@@ -1,11 +1,11 @@
 import React from 'react';
 import { withKnobs } from '@storybook/addon-knobs';
-import Choose from '../common/components/Choose';
+import ChooseProgram from '../js_modules/chooseProgram';
 // import { action } from '@storybook/addon-actions';
 
 export default {
-  title: 'Components/Choose',
-  component: Choose,
+  title: 'Components/ChooseProgram',
+  component: ChooseProgram,
   argTypes: {
     width: {
       control: {
@@ -18,7 +18,7 @@ export default {
   },
 };
 
-const Component = (args) => <Choose {...args} width={`${args.width}%`} />;
+const Component = (args) => <ChooseProgram {...args} width={`${args.width}%`} />;
 export const Default = Component.bind({});
 Default.args = {
   chooseList: [

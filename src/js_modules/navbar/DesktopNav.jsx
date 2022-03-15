@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import DesktopItem from './DesktopItem';
 
-const DesktopNav = ({ NAV_ITEMS, haveSession }) => {
+const DesktopNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
   const [privateItems, setPrivateItems] = useState([]);
 
   useEffect(() => {
@@ -19,9 +19,18 @@ const DesktopNav = ({ NAV_ITEMS, haveSession }) => {
       {privateItems.length > 0 && privateItems.map((privateItem) => (
         <DesktopItem key={privateItem.label} item={privateItem} />
       ))}
-      {publicItems.map((publicItem) => (
-        <DesktopItem key={publicItem.label} item={publicItem} />
-      ))}
+      {publicItems.map((publicItem) => {
+        if (publicItem.asPath === '/read' && readSyllabus.length > 0) {
+          // eslint-disable-next-line no-param-reassign
+          publicItem.subMenu = readSyllabus?.map((el) => ({
+            label: el.name,
+            href: `/read/${el.slug}`,
+          }));
+        }
+        return (
+          <DesktopItem key={publicItem.label} item={publicItem} />
+        );
+      })}
     </Stack>
   );
 };
@@ -44,6 +53,7 @@ DesktopNav.propTypes = {
       ),
     }),
   ),
+  readSyllabus: PropTypes.arrayOf(PropTypes.any),
 };
 
 DesktopNav.defaultProps = {
@@ -55,6 +65,7 @@ DesktopNav.defaultProps = {
       asPath: '/',
     },
   ],
+  readSyllabus: [],
 };
 
 export default DesktopNav;

@@ -22,5 +22,8 @@ module.exports = {
     'no-console': 'off',
     'linebreak-style': ['error', process.platform === 'win32' ? 'windows' : 'unix'],
   },
-  ignorePatterns: ['src/__tests__/*', 'cypress', 'src/stories/**/*.jsx', 'src/stories/**/*.js'],
+  ignorePatterns: [
+    'src/__tests__/*', 'cypress', 'src/stories/**/*.jsx',
+    'src/stories/**/*.js',
+  ],
 };

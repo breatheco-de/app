@@ -4,7 +4,6 @@ import {
   Text,
   Stack,
   Collapse,
-  Link,
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -20,7 +19,6 @@ const MobileItem = ({
   const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
   const linkColor = useColorModeValue('gray.600', 'gray.200');
-  const linkHoverColor = useColorModeValue('blue.default', 'blue.default');
 
   const getColorLink = (link) => {
     if (router?.pathname === link || router.asPath === link || router?.pathname.includes(link)) {
@@ -30,25 +28,28 @@ const MobileItem = ({
   };
 
   return (
-    <Stack spacing={4} onClick={subMenu && onToggle}>
+    <Stack spacing={4}>
+      {/* Box is important for popover content trigger */}
       {!subMenu && (
-        <NextChakraLink
-          py={2}
-          href={href}
-          target={isAbsoluteUrl(href) ? '_blank' : undefined}
-          rel={isAbsoluteUrl(href) ? 'noopener noreferrer' : undefined}
-          display="flex"
-          justifyContent="space-between"
-          align="center"
-          _hover={{
-            textDecoration: 'none',
-            color: linkHoverColor,
-          }}
-        >
-          <Text fontWeight={400} color={getColorLink(href || asPath)}>
-            {label}
-          </Text>
-        </NextChakraLink>
+        <Box>
+          <NextChakraLink
+            py={2}
+            href={href}
+            target={isAbsoluteUrl(href) ? '_blank' : undefined}
+            rel={isAbsoluteUrl(href) ? 'noopener noreferrer' : undefined}
+            display="flex"
+            justifyContent="space-between"
+            align="center"
+            _hover={{
+              textDecoration: 'none',
+              color: 'blue.default',
+            }}
+          >
+            <Text fontWeight={400} color={getColorLink(href || asPath)}>
+              {label}
+            </Text>
+          </NextChakraLink>
+        </Box>
       )}
       {subMenu && (
         <Flex
@@ -56,6 +57,8 @@ const MobileItem = ({
           justifyContent="left"
           gridGap="10px"
           align="center"
+          cursor="pointer"
+          onClick={subMenu && onToggle}
           _hover={{
             textDecoration: 'none',
           }}
@@ -106,7 +109,7 @@ const MobileItem = ({
 
           {subMenu
             && subMenu.map((child) => (
-              <Link
+              <NextChakraLink
                 key={child.label}
                 color={getColorLink(child.href)}
                 style={{ textDecoration: 'none' }}
@@ -114,7 +117,7 @@ const MobileItem = ({
                 href={child.href}
               >
                 {child.label}
-              </Link>
+              </NextChakraLink>
             ))}
         </Stack>
       </Collapse>

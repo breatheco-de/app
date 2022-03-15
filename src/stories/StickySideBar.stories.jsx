@@ -1,7 +1,7 @@
 import React from 'react';
-import StickySideBar from '../common/components/StickySideBar';
 import { action } from '@storybook/addon-actions';
-import { withKnobs } from "@storybook/addon-knobs";
+import { withKnobs } from '@storybook/addon-knobs';
+import StickySideBar from '../common/components/StickySideBar';
 
 export default {
   title: 'Components/StickySideBar',
@@ -15,20 +15,18 @@ export default {
       },
     },
   },
-  decorators:[withKnobs]
+  decorators: [withKnobs],
 };
 
-const Component = (args) =>{
-    return  <StickySideBar {...args} width={`${args.width}%`} />
-};
+const Component = (args) => <StickySideBar {...args} width={`${args.width}%`} />;
 
 export const Default = Component.bind({});
 Default.args = {
   onClickMenuItem: (e, item) => {
-    action('onClickMenuItem: ' + JSON.stringify(item, null, 4))(e)
+    action(`onClickMenuItem: ${JSON.stringify(item, null, 4)}`)(e);
   },
-  width:100,
-  menu:[
+  width: 100,
+  menu: [
     {
       icon: 'book',
       text: 'Student Mode',
@@ -49,5 +47,5 @@ Default.args = {
       text: 'Assignments',
       id: 4,
     },
-  ]
+  ],
 };

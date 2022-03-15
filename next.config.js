@@ -2,7 +2,8 @@
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
-const { i18n } = require('./next-i18next.config');
+const nextTranslate = require('next-translate');
+// const { i18n } = require('./i18n');
 
 // const withConfig = nextRuntimeDotenv({
 //   // path: '.env',
@@ -14,21 +15,23 @@ const { i18n } = require('./next-i18next.config');
 
 // const defaultEnpoint = dev ? process.env.BREATHECODE_HOST : 'https://breathecode-test.herokuapp.com';
 
-module.exports = withBundleAnalyzer({
+module.exports = withBundleAnalyzer(nextTranslate({
   // rest of config here
-  i18n,
+  // i18n,
   reactStrictMode: true,
   serverRuntimeConfig: {
     // Will only be available on the server side
     BREATHECODE_HOST: process.env.BREATHECODE_HOST,
     GITHUB_TOKEN: process.env.GITHUB_TOKEN, // Pass through env variables
     BC_ACADEMY_TOKEN: process.env.BC_ACADEMY_TOKEN,
+    SYLLABUS: process.env.SYLLABUS,
   },
   publicRuntimeConfig: {
     // Will be available on both server and client
     BREATHECODE_HOST: process.env.BREATHECODE_HOST,
     NEXT_PUBLIC_ID: process.env.NEXT_PUBLIC_ID,
     BC_ACADEMY_TOKEN: process.env.BC_ACADEMY_TOKEN,
+    SYLLABUS: process.env.SYLLABUS,
   },
   images: {
     // whitelist for image providers
@@ -38,5 +41,6 @@ module.exports = withBundleAnalyzer({
   env: {
     BREATHECODE_HOST: process.env.BREATHECODE_HOST,
     BC_ACADEMY_TOKEN: process.env.BC_ACADEMY_TOKEN,
+    SYLLABUS: process.env.SYLLABUS,
   },
-});
+}));

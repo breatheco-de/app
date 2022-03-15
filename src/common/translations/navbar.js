@@ -3,9 +3,14 @@ const isWindow = typeof window !== 'undefined';
 const getCohort = isWindow && JSON.parse(localStorage.getItem('cohortSession') || '{}');
 const { selectedProgramSlug } = getCohort;
 
+// const syllabus = process.env.SYLLABUS;
+// const syllabusArray = syllabus?.split(',');
+
 const navbarTR = {
   en: {
-    loginText: 'Login',
+    loginTR: 'Login',
+    logoutTR: 'Logout',
+    languageTR: 'Language',
     ITEMS: [
       {
         label: 'Dashboard',
@@ -24,24 +29,8 @@ const navbarTR = {
         label: 'Read',
         icon: 'book',
         description: 'Lorem ipsum dolor sit amet, consectetur adscing elit, sed do eiusmod tempor incidi.',
-        asPath: '/lessons', // For colorLink
-        subMenu: [
-          {
-            label: 'Full Stack Developer',
-            // subLabel: 'some description',
-            href: '/lessons?child=1',
-          },
-          {
-            label: 'Software Engineer',
-            // subLabel: 'some description',
-            href: '/lessons?child=2',
-          },
-          {
-            label: 'AI Machine Learning',
-            // subLabel: 'some description',
-            href: '/lessons?child=3',
-          },
-        ],
+        asPath: '/read', // For colorLink
+        subMenu: [],
       },
       {
         label: 'Build',
@@ -52,16 +41,12 @@ const navbarTR = {
         href: 'https://4geeksacademy.com',
       },
     ],
-    // INTERNAL_ITEMS: [
-    //   {
-    //     label: 'Dashboard',
-    //     href: selectedProgramSlug || '/choose-program',
-    //   },
-    // ],
   },
 
   es: {
-    loginText: 'Ingresar',
+    loginTR: 'Ingresar',
+    logoutTR: 'Cerrar sesión',
+    languageTR: 'Idioma',
     ITEMS: [
       {
         label: 'Dashboard',
@@ -80,24 +65,8 @@ const navbarTR = {
         label: 'Leer',
         icon: 'book',
         description: 'Lorem ipsum dolor sit amet, consectetur adscing elit, sed do eiusmod tempor incidi.',
-        asPath: '/lessons', // For colorLink
-        subMenu: [
-          {
-            label: 'Full Stack Developer',
-            // subLabel: 'Descripción corta',
-            href: '/lessons?child=1',
-          },
-          {
-            label: 'Software Engineer',
-            // subLabel: 'Descripción corta',
-            href: '/lessons?child=2',
-          },
-          {
-            label: 'AI Machine Learning',
-            // subLabel: 'Descripción corta',
-            href: '/lessons?child=3',
-          },
-        ],
+        asPath: '/read', // For colorLink
+        subMenu: [],
       },
       {
         label: 'Desarrollar',
@@ -108,12 +77,6 @@ const navbarTR = {
         href: 'https://4geeksacademy.com',
       },
     ],
-    // INTERNAL_ITEMS: [
-    //   {
-    //     label: 'Dashboard',
-    //     href: selectedProgramSlug || '/choose-program',
-    //   },
-    // ],
   },
 };
 export default navbarTR;

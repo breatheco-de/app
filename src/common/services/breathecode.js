@@ -7,6 +7,10 @@ const breathecode = {
     return {
       login: (payload) => axios.post(`${url}/login/`, { ...payload, user_agent: 'bc/student' }),
       me: () => axios.get(`${url}/user/me`),
+      invites: () => ({
+        get: () => axios.get(`${url}/user/me/invite?status=PENDING`),
+        accept: (id) => axios.put(`${url}/user/me/invite/accepted?id=${id}`),
+      }),
       isValidToken: (token) => axios.get(`${url}/token/${token}`),
       register: (payload) => axios.post(`${url}/user/register`, payload),
       subscribe: (payload) => axios.post(`${url}/subscribe/`, { ...payload }),
@@ -43,7 +47,9 @@ const breathecode = {
   cohort: () => {
     const url = `${host}/admissions/academy`;
     return {
+      get: (id) => axios.get(`${url}/cohort/${id}`),
       getStudents: (cohortId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}`),
+      update: (id, args) => axios.put(`${url}/cohort/${id}`, args),
     };
   },
 
@@ -67,6 +73,13 @@ const breathecode = {
       .join('&');
     return {
       get: () => axios.get(`${url}?${qs}`),
+    };
+  },
+  activity: () => {
+    const url = `${host}/activity`;
+    return {
+      addBulk: (cohortId, activities) => axios.post(`${url}/academy/cohort/${cohortId}`, activities),
+      getAttendance: (cohortId) => axios.get(`${url}/cohort/${cohortId}?slug=classroom_attendance,classroom_unattendance`),
     };
   },
 };

@@ -1,7 +1,7 @@
 import React from 'react';
-import CohortSideBar from '../common/components/CohortSideBar';
-import {  withKnobs  } from '@storybook/addon-knobs';
+import { withKnobs } from '@storybook/addon-knobs';
 import { action } from '@storybook/addon-actions';
+import CohortSideBar from '../common/components/CohortSideBar';
 
 export default {
   title: 'Components/CohortSideBar',
@@ -15,27 +15,27 @@ export default {
       },
     },
   },
-  decorators:[withKnobs]
+  decorators: [withKnobs],
 };
 
-const Component = (args) => <CohortSideBar  {...args} width={`${args.width}%`}/>;
+const Component = (args) => <CohortSideBar {...args} width={`${args.width}%`} />;
 
 export const Default = Component.bind({});
 Default.args = {
   width: 100,
   title: 'Cohort',
   cohortCity: 'Miami Downtown',
-  handleTeacher:(e) => {
-    action('onClickTeacher')(e)
+  handleTeacher: (e) => {
+    action('onClickTeacher')(e);
   },
-  handleStudent:(e, name) => {
-    action('onClickStudent ' + name)(e)
+  handleStudent: (e, name) => {
+    action(`onClickStudent ${name}`)(e);
   },
-  handleAssistant:(e, name) => {
-    action('onClickAssistant ' + name)(e)
+  handleAssistant: (e, name) => {
+    action(`onClickAssistant ${name}`)(e);
   },
-  handleStudySession:(e) => {
-    action('onClickStudySession')(e)
+  handleStudySession: (e) => {
+    action('onClickStudySession')(e);
   },
   professor: {
     name: 'Paolo lucano',

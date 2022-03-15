@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Box, useColorModeValue, useToast } from '@chakra-ui/react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../common/components/Skeleton';
 import TagCapsule from '../../common/components/TagCapsule';
-import Link from '../../common/components/NextChakraLink';
 // import atob from 'atob';
 
-export const getStaticPaths = async () => {
+export const getStaticPaths = async ({ locales }) => {
   let lessons = [];
   const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson`)
     .then((res) => res.json())
@@ -23,18 +21,20 @@ export const getStaticPaths = async () => {
     console.error(`Error fetching lessons with ${data.status}`);
   }
 
-  const paths = lessons.map((res) => ({
+  const paths = lessons.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },
-  }));
+    locale,
+  })));
+
   return {
     fallback: false,
     paths,
   };
 };
 
-export const getStaticProps = async ({ params, locale }) => {
+export const getStaticProps = async ({ params }) => {
   const { slug } = params;
   const results = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`)
     .then((res) => res.json())
@@ -49,7 +49,6 @@ export const getStaticProps = async ({ params, locale }) => {
   return {
     props: {
       fallback: false,
-      ...(await serverSideTranslations(locale, ['navbar', 'footer'])),
       lesson: results,
     },
   };
@@ -128,7 +127,7 @@ const LessonSlug = ({ lesson }) => {
       alignItems="center"
       margin={{ base: '4rem 4% 0 4%', md: '4% 14% 0 14%' }}
     >
-      <Link
+      {/* <Link
         href="/lessons"
         color={useColorModeValue('blue.default', 'blue.300')}
         display="inline-block"
@@ -137,7 +136,7 @@ const LessonSlug = ({ lesson }) => {
         paddingBottom="10px"
       >
         {'< Back to Lessons'}
-      </Link>
+      </Link> */}
 
       <Box flex="1" margin={{ base: '28px 0', md: '28px 14% 0 14%' }}>
         <TagCapsule

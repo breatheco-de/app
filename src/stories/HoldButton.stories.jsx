@@ -6,17 +6,17 @@ export default {
   component: HoldButton,
   argTypes: {
     progressBorder: {
-      control:{
+      control: {
         type: 'color',
-      }
+      },
     },
     borderRadius: {
       control: {
         type: 'range',
         min: 0,
         max: 50,
+      },
     },
-  }
   },
 };
 
