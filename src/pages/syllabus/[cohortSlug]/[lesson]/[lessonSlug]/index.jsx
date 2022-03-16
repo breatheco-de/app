@@ -179,6 +179,7 @@ const Content = () => {
     const findSelectedSyllabus = sortedAssignments.filter(
       (l) => l.modules.find((m) => m.slug === router.query.lessonSlug),
     );
+
     if (findSelectedSyllabus) {
       setSelectedSyllabus(findSelectedSyllabus);
     }

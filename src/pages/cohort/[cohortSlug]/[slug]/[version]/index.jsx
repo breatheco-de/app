@@ -53,8 +53,6 @@ const Dashboard = () => {
     tapCapsule, progressBar,
   } = mockData;
 
-  // axios.defaults.headers.common.Academy = cohortSession?.academy?.id || '';
-
   useEffect(() => {
     if (cohortSession && cohortSession.academy.id) {
       axios.defaults.headers.common.Academy = cohortSession.academy.id;
@@ -73,7 +71,6 @@ const Dashboard = () => {
       const { version, name } = currentCohort?.syllabus_version;
       setCohortSession({
         ...cohortSession,
-        bc_id: user.id,
         date_joined: data.date_joined,
         cohort_role: findCohort.role,
       });
@@ -116,9 +113,12 @@ const Dashboard = () => {
       }).catch((err) => {
         console.error('err_studentAndTeachers:', err);
       });
-
       bc.cohort().get(cohortId).then(({ data }) => {
-        setCohortSession({ ...cohortSession, ...data });
+        setCohortSession({
+          ...cohortSession,
+          bc_id: user.id,
+          ...data,
+        });
       }).catch((err) => {
         console.error('err_cohortSessoin:', err);
       });
@@ -133,9 +133,9 @@ const Dashboard = () => {
 
       // Fetch cohortProgram and TaskTodo then apply to contextState (useModuleMap - action)
       Promise.all([
-        bc.syllabus().get(academyId, slug, version),
-        bc.todo().getTaskByStudent(),
-      ]).then(([programData, taskTodoData]) => {
+        bc.todo().getTaskByStudent(), // TaskTodo
+        bc.syllabus().get(academyId, slug, version), // cohortProgram
+      ]).then(([taskTodoData, programData]) => {
         setSyllabus(programData.data.json.days);
         setContextState({
           taskTodo: taskTodoData.data,
@@ -167,15 +167,25 @@ const Dashboard = () => {
         });
         const { filteredModules, modules } = nestedAssignments;
 
+        const assignmentsStruct = {
+          id,
+          label,
+          description,
+          modules,
+          filteredModules,
+          teacherInstructions: assignment.teacher_instructions,
+          keyConcepts: assignment['key-concepts'],
+        };
+
         // prevent duplicates when a new module has been started (added to sortedAssignments array)
         const keyIndex = sortedAssignments.findIndex((x) => x.id === id);
         if (keyIndex > -1) {
           sortedAssignments.splice(keyIndex, 1, {
-            id, label, description, modules, filteredModules,
+            ...assignmentsStruct,
           });
         } else {
           sortedAssignments.push({
-            id, label, description, modules, filteredModules,
+            ...assignmentsStruct,
           });
         }
         return setSortedAssignments(sortedAssignments);
@@ -188,6 +198,9 @@ const Dashboard = () => {
     return dailyModule;
   };
   const dailyModuleData = getDailyModuleData() || '';
+
+  const onlyStudents = studentAndTeachers.filter((x) => x.role === 'STUDENT');
+
   return (
     <Container maxW="container.xl">
       <Box marginTop="18px" marginBottom="48px">
@@ -240,7 +253,7 @@ const Dashboard = () => {
                   <TeacherSidebar
                     title="Teacher"
                     user={user}
-                    students={studentAndTeachers.filter((x) => x.role === 'STUDENT')}
+                    students={onlyStudents}
                     subtitle="Actions"
                     sortedAssignments={sortedAssignments}
                     studentAndTeachers={studentAndTeachers}
@@ -348,10 +361,6 @@ const Dashboard = () => {
         </Box>
         <Box width="5rem" />
         <Box
-          // position="sticky"
-          // top="15px"
-          // overflowY="auto"
-          // height="95vh"
           display={{ base: 'none', md: 'block' }}
         >
           {
@@ -360,7 +369,7 @@ const Dashboard = () => {
                 <TeacherSidebar
                   title="Teacher"
                   user={user}
-                  students={studentAndTeachers.filter((x) => x.role === 'STUDENT')}
+                  students={onlyStudents}
                   subtitle="Actions"
                   sortedAssignments={sortedAssignments}
                   studentAndTeachers={studentAndTeachers}
