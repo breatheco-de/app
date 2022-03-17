@@ -16,9 +16,17 @@ const isPlural = (element) => {
   return false;
 };
 
+const getStorageItem = (key) => {
+  if (isWindow) {
+    return localStorage.getItem(key);
+  }
+  return null;
+};
+
 export {
   isWindow,
   HAVE_SESSION,
   slugify,
   isPlural,
+  getStorageItem,
 };
