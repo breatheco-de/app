@@ -177,7 +177,7 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
             }
           />
 
-          {haveSession ? (
+          {console.log('haveSession:::', haveSession) && haveSession ? (
             <Popover
               id="Avatar-Hover"
               isOpen={settingsOpen}
