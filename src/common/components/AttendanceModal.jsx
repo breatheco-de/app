@@ -39,6 +39,7 @@ const AttendanceModal = ({
   const [currentModule, setCurrentModule] = useState(cohortSession.current_module);
   const [defaultDay, setDefaultDay] = useState(0);
   const [checked, setChecked] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const { colorMode } = useColorMode();
   const toast = useToast();
   const { getCheckboxProps } = useCheckboxGroup({
@@ -63,7 +64,9 @@ const AttendanceModal = ({
       .catch((error) => reject(error));
   });
 
+  // TODO: create conditional to prevent changes in a day started and assistance is taken
   const saveCohortAttendancy = () => {
+    setIsLoading(true);
     const cohortSlug = cohortSession.slug;
     return new Promise((resolve, reject) => {
       if (checked.length === 0) {
@@ -98,6 +101,7 @@ const AttendanceModal = ({
               duration: 9000,
               isClosable: true,
             });
+            setIsLoading(false);
             resolve(true);
           })
           .catch(() => {
@@ -107,6 +111,7 @@ const AttendanceModal = ({
               duration: 9000,
               isClosable: true,
             });
+            setIsLoading(false);
             reject(new Error('There was an error reporting the attendancy'));
           });
       }
@@ -196,8 +201,11 @@ const AttendanceModal = ({
         </ModalBody>
         <ModalFooter>
           <Button
+            isLoading={isLoading}
+            loadingText="SUBMITTING"
+            minWidth="173.4px"
             fontSize="13px"
-            disabled={checked.length < 1}
+            disabled={checked.length < 1 || isLoading}
             variant="default"
             onClick={() => {
               saveCohortAttendancy();

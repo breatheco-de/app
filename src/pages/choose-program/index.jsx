@@ -3,14 +3,14 @@ import {
   Flex, Box, useColorModeValue, Button, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import ChooseProgram from '../js_modules/chooseProgram';
-import Text from '../common/components/Text';
-import bc from '../common/services/breathecode';
-import asPrivate from '../common/context/PrivateRouteWrapper';
-import useAuth from '../common/hooks/useAuth';
-import Icon from '../common/components/Icon';
-import Module from '../common/components/Module';
-import { isPlural } from '../utils';
+import ChooseProgram from '../../js_modules/chooseProgram';
+import Text from '../../common/components/Text';
+import bc from '../../common/services/breathecode';
+import asPrivate from '../../common/context/PrivateRouteWrapper';
+import useAuth from '../../common/hooks/useAuth';
+import Icon from '../../common/components/Icon';
+import Module from '../../common/components/Module';
+import { isPlural } from '../../utils';
 
 function chooseProgram() {
   const [data, setData] = useState([]);

@@ -32,7 +32,7 @@ import { slugify } from '../../../../../utils/index';
 const Dashboard = () => {
   const { t } = useTranslation('dashboard');
   const { contextState, setContextState } = useModuleMap();
-  const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
+  const [cohortSession, setCohortSession] = usePersistent('cohortSession', null);
   const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
@@ -53,8 +53,6 @@ const Dashboard = () => {
     tapCapsule, progressBar,
   } = mockData;
 
-  // axios.defaults.headers.common.Academy = cohortSession?.academy?.id || '';
-
   useEffect(() => {
     if (cohortSession && cohortSession.academy.id) {
       axios.defaults.headers.common.Academy = cohortSession.academy.id;
@@ -73,7 +71,6 @@ const Dashboard = () => {
       const { version, name } = currentCohort?.syllabus_version;
       setCohortSession({
         ...cohortSession,
-        bc_id: user.id,
         date_joined: data.date_joined,
         cohort_role: findCohort.role,
       });
@@ -116,9 +113,12 @@ const Dashboard = () => {
       }).catch((err) => {
         console.error('err_studentAndTeachers:', err);
       });
-
       bc.cohort().get(cohortId).then(({ data }) => {
-        setCohortSession({ ...cohortSession, ...data });
+        setCohortSession({
+          ...cohortSession,
+          bc_id: user.id,
+          ...data,
+        });
       }).catch((err) => {
         console.error('err_cohortSessoin:', err);
       });
@@ -133,9 +133,9 @@ const Dashboard = () => {
 
       // Fetch cohortProgram and TaskTodo then apply to contextState (useModuleMap - action)
       Promise.all([
-        bc.syllabus().get(academyId, slug, version),
-        bc.todo().getTaskByStudent(),
-      ]).then(([programData, taskTodoData]) => {
+        bc.todo().getTaskByStudent(), // TaskTodo
+        bc.syllabus().get(academyId, slug, version), // cohortProgram
+      ]).then(([taskTodoData, programData]) => {
         setSyllabus(programData.data.json.days);
         setContextState({
           taskTodo: taskTodoData.data,
@@ -167,15 +167,25 @@ const Dashboard = () => {
         });
         const { filteredModules, modules } = nestedAssignments;
 
+        const assignmentsStruct = {
+          id,
+          label,
+          description,
+          modules,
+          filteredModules,
+          teacherInstructions: assignment.teacher_instructions,
+          keyConcepts: assignment['key-concepts'],
+        };
+
         // prevent duplicates when a new module has been started (added to sortedAssignments array)
         const keyIndex = sortedAssignments.findIndex((x) => x.id === id);
         if (keyIndex > -1) {
           sortedAssignments.splice(keyIndex, 1, {
-            id, label, description, modules, filteredModules,
+            ...assignmentsStruct,
           });
         } else {
           sortedAssignments.push({
-            id, label, description, modules, filteredModules,
+            ...assignmentsStruct,
           });
         }
         return setSortedAssignments(sortedAssignments);
@@ -184,10 +194,13 @@ const Dashboard = () => {
   }, [contextState.cohortProgram, contextState.taskTodo]);
 
   const getDailyModuleData = () => {
-    const dailyModule = sortedAssignments[cohortSession.current_module];
+    const dailyModule = sortedAssignments[cohortSession?.current_module];
     return dailyModule;
   };
   const dailyModuleData = getDailyModuleData() || '';
+
+  const onlyStudentsActive = studentAndTeachers.filter((x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE');
+
   return (
     <Container maxW="container.xl">
       <Box marginTop="18px" marginBottom="48px">
@@ -218,7 +231,7 @@ const Dashboard = () => {
         }}
       >
         <Box width="100%" minW={{ base: 'auto', md: '770px' }}>
-          {(cohortSession.syllabus_version.name || cohortProgram.name) ? (
+          {(cohortSession?.syllabus_version?.name || cohortProgram.name) ? (
             <Heading as="h1" size="xl">
               {cohortSession.syllabus_version.name || cohortProgram.name}
             </Heading>
@@ -235,16 +248,15 @@ const Dashboard = () => {
 
           <Box display={{ base: 'block', md: 'none' }}>
             {
-              ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_role) ? (
+              ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) ? (
                 <Box marginTop="30px">
                   <TeacherSidebar
                     title="Teacher"
                     user={user}
-                    students={studentAndTeachers.filter((x) => x.role === 'STUDENT')}
+                    students={onlyStudentsActive}
                     subtitle="Actions"
                     sortedAssignments={sortedAssignments}
-                    studentAndTeachers={studentAndTeachers}
-                    actionButtons={supportSideBar.actionButtons}
+                    // studentAndTeachers={studentAndTeachers}
                     width="100%"
                   />
                 </Box>
@@ -252,7 +264,7 @@ const Dashboard = () => {
                 <>
                   <CohortSideBar
                     studentAndTeachers={studentAndTeachers}
-                    cohortCity={cohortSession.name}
+                    cohortCity={cohortSession?.name}
                     containerStyle={{
                       margin: '30px 0 0 0',
                     }}
@@ -348,23 +360,18 @@ const Dashboard = () => {
         </Box>
         <Box width="5rem" />
         <Box
-          // position="sticky"
-          // top="15px"
-          // overflowY="auto"
-          // height="95vh"
           display={{ base: 'none', md: 'block' }}
         >
           {
-            ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_role) ? (
+            ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) ? (
               <Box marginTop="30px">
                 <TeacherSidebar
                   title="Teacher"
                   user={user}
-                  students={studentAndTeachers.filter((x) => x.role === 'STUDENT')}
+                  students={onlyStudentsActive}
                   subtitle="Actions"
                   sortedAssignments={sortedAssignments}
-                  studentAndTeachers={studentAndTeachers}
-                  actionButtons={supportSideBar.actionButtons}
+                  // studentAndTeachers={studentAndTeachers}
                   width="100%"
                 />
               </Box>
@@ -372,7 +379,7 @@ const Dashboard = () => {
               <>
                 <CohortSideBar
                   studentAndTeachers={studentAndTeachers}
-                  cohortCity={cohortSession.name}
+                  cohortCity={cohortSession?.name}
                   width="100%"
                 />
 

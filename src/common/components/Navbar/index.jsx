@@ -59,7 +59,6 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
       `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`,
     )
       .then((res) => res.json());
-
     setReadSyllabus(resp);
   }, []);
 
