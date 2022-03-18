@@ -199,7 +199,7 @@ const Dashboard = () => {
   };
   const dailyModuleData = getDailyModuleData() || '';
 
-  const onlyStudents = studentAndTeachers.filter((x) => x.role === 'STUDENT');
+  const onlyStudentsActive = studentAndTeachers.filter((x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE');
 
   return (
     <Container maxW="container.xl">
@@ -253,11 +253,10 @@ const Dashboard = () => {
                   <TeacherSidebar
                     title="Teacher"
                     user={user}
-                    students={onlyStudents}
+                    students={onlyStudentsActive}
                     subtitle="Actions"
                     sortedAssignments={sortedAssignments}
-                    studentAndTeachers={studentAndTeachers}
-                    actionButtons={supportSideBar.actionButtons}
+                    // studentAndTeachers={studentAndTeachers}
                     width="100%"
                   />
                 </Box>
@@ -369,11 +368,10 @@ const Dashboard = () => {
                 <TeacherSidebar
                   title="Teacher"
                   user={user}
-                  students={onlyStudents}
+                  students={onlyStudentsActive}
                   subtitle="Actions"
                   sortedAssignments={sortedAssignments}
-                  studentAndTeachers={studentAndTeachers}
-                  actionButtons={supportSideBar.actionButtons}
+                  // studentAndTeachers={studentAndTeachers}
                   width="100%"
                 />
               </Box>

@@ -68,8 +68,6 @@ const TeacherSidebar = ({
     es: `Hola ${user.first_name}, ${todayIs[router.locale]} y la cohorte comenzó a tomar clases el ${kickoffDate[router.locale]}. Por favor, selecciona el módulo de hoy.`,
   };
 
-  console.log(cohortSession.bc_id && `https://attendance.breatheco.de/?cohort_slug=${cohortSession.slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${cohortSession.academy.id}`);
-
   return (
     <Box
       backgroundColor={colorMode === 'light' ? 'yellow.light' : 'featuredDark'}
@@ -96,12 +94,15 @@ const TeacherSidebar = ({
         </Box>
 
         <Box pt="3" display="flex" flexDirection="column" alignItems="center">
+          {/* Start attendance */}
           <ItemButton actionHandler={() => setOpenAttendance(true)}>
             <ItemText text="Take attendancy" />
             <Box>
               <Icon icon="arrowRight" width="22px" height="22px" />
             </Box>
           </ItemButton>
+
+          {/* Review attendance */}
           <ItemButton actionHandler={() => {
             if (cohortSession.bc_id && isWindow) {
               window.open(`https://attendance.breatheco.de/?cohort_slug=${cohortSession.slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${cohortSession.academy.id}`, '_blank');
