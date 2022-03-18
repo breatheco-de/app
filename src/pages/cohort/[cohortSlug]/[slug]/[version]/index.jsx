@@ -32,7 +32,7 @@ import { slugify } from '../../../../../utils/index';
 const Dashboard = () => {
   const { t } = useTranslation('dashboard');
   const { contextState, setContextState } = useModuleMap();
-  const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
+  const [cohortSession, setCohortSession] = usePersistent('cohortSession', null);
   const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
@@ -194,7 +194,7 @@ const Dashboard = () => {
   }, [contextState.cohortProgram, contextState.taskTodo]);
 
   const getDailyModuleData = () => {
-    const dailyModule = sortedAssignments[cohortSession.current_module];
+    const dailyModule = sortedAssignments[cohortSession?.current_module];
     return dailyModule;
   };
   const dailyModuleData = getDailyModuleData() || '';
@@ -231,7 +231,7 @@ const Dashboard = () => {
         }}
       >
         <Box width="100%" minW={{ base: 'auto', md: '770px' }}>
-          {(cohortSession.syllabus_version.name || cohortProgram.name) ? (
+          {(cohortSession?.syllabus_version?.name || cohortProgram.name) ? (
             <Heading as="h1" size="xl">
               {cohortSession.syllabus_version.name || cohortProgram.name}
             </Heading>
@@ -248,7 +248,7 @@ const Dashboard = () => {
 
           <Box display={{ base: 'block', md: 'none' }}>
             {
-              ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_role) ? (
+              ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) ? (
                 <Box marginTop="30px">
                   <TeacherSidebar
                     title="Teacher"
@@ -264,7 +264,7 @@ const Dashboard = () => {
                 <>
                   <CohortSideBar
                     studentAndTeachers={studentAndTeachers}
-                    cohortCity={cohortSession.name}
+                    cohortCity={cohortSession?.name}
                     containerStyle={{
                       margin: '30px 0 0 0',
                     }}
@@ -363,7 +363,7 @@ const Dashboard = () => {
           display={{ base: 'none', md: 'block' }}
         >
           {
-            ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_role) ? (
+            ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) ? (
               <Box marginTop="30px">
                 <TeacherSidebar
                   title="Teacher"
@@ -379,7 +379,7 @@ const Dashboard = () => {
               <>
                 <CohortSideBar
                   studentAndTeachers={studentAndTeachers}
-                  cohortCity={cohortSession.name}
+                  cohortCity={cohortSession?.name}
                   width="100%"
                 />
 

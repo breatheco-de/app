@@ -61,9 +61,9 @@ const reducer = (state, action) => {
 
 const setSession = (token) => {
   if (token) {
-    document.cookie = `accessToken=${token}`;
     localStorage.setItem('accessToken', token);
     axiosInstance.defaults.headers.common.Authorization = `Token ${token}`;
+    document.cookie = `accessToken=${token}; path=/`;
   } else {
     document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     localStorage.removeItem('syllabus');
@@ -186,6 +186,7 @@ const AuthProvider = ({ children }) => {
   const logout = () => {
     router.push('/login');
     setSession(null);
+    document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     dispatch({ type: 'LOGOUT' });
   };
 
