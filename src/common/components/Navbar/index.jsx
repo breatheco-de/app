@@ -29,6 +29,7 @@ import MobileNav from '../../../js_modules/navbar/MobileNav';
 import usePersistent from '../../hooks/usePersistent';
 import Heading from '../Heading';
 import Text from '../Text';
+import styles from '../../../../styles/flags.module.css';
 
 import useAuth from '../../hooks/useAuth';
 import navbarTR from '../../translations/navbar';
@@ -37,9 +38,12 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
   const router = useRouter();
   const [readSyllabus, setReadSyllabus] = useState([]);
 
+  // TODO: for some reason link to home in english mode not work
   const {
-    loginTR, logoutTR, languageTR, ITEMS,
+    loginTR, logoutTR, languageTR, ITEMS, languagesTR,
   } = navbarTR[router.locale];
+
+  console.log('languagesTR:::', languagesTR);
 
   const { isOpen, onToggle } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
@@ -48,11 +52,14 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
   const { user, logout } = useAuth();
   const [cohortSession] = usePersistent('cohortSession', {});
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [languagesOpen, setLanguagesOpen] = useState(false);
 
   const langs = ['en', 'es'];
   const linkColor = useColorModeValue('gray.600', 'gray.200');
-
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  console.log('router.locale:::', router.locale);
+  const currentLanguage = languagesTR.filter((l) => l.value === router.locale)[0];
+  console.log('currentLanguage:::', currentLanguage);
 
   useEffect(async () => {
     const resp = await fetch(
@@ -83,9 +90,6 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
   const closeSettings = () => {
     setSettingsOpen(false);
   };
-  const toggleSettings = () => {
-    setSettingsOpen(!settingsOpen);
-  };
 
   const getImage = () => {
     if (user && user.github) {
@@ -100,6 +104,8 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
     }
     return user?.github.name;
   };
+
+  console.log('styles:::', styles);
 
   return (
     <Box>
@@ -157,6 +163,75 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
         </Flex>
 
         <Stack flex={{ base: 1, md: 0 }} justify="flex-end" direction="row" spacing={6}>
+          <Popover
+            id="Language-Hover"
+            isOpen={languagesOpen}
+            onClose={() => setLanguagesOpen(false)}
+            placement="bottom-start"
+            trigger="click"
+          >
+            <PopoverTrigger>
+              <Button
+                padding="0"
+                height="auto"
+                backgroundColor="transparent"
+                width="auto"
+                alignSelf="center"
+                _hover={{
+                  background: 'transparent',
+                }}
+                _active={{
+                  background: 'transparent',
+                }}
+                onClick={() => setLanguagesOpen(!languagesOpen)}
+              >
+                <Box
+                  className={`${styles.flag} ${styles[currentLanguage.value]}`}
+                  width="25px"
+                  height="25px"
+                />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              border={0}
+              boxShadow="dark-lg"
+              bg={popoverContentBgColor}
+              rounded="md"
+              width={{ base: '100%', md: 'auto' }}
+              minW="210px"
+            >
+              <PopoverArrow />
+              <Box
+                width="100%"
+                display="flex"
+                flexDirection="column"
+                gridGap="10px"
+                padding="12px"
+              >
+                {languagesTR.map((l) => (
+                  <NextChakraLink
+                    width="100%"
+                    key={l.value}
+                    locale={l.value}
+                    role="group"
+                    alignSelf="center"
+                    display="flex"
+                    gridGap="5px"
+                    fontWeight="bold"
+                    textDecoration="none"
+                    opacity={router.locale === l.value ? 1 : 0.75}
+                    _hover={{
+                      opacity: 1,
+                    }}
+                  >
+                    <Box className={`${styles.flag} ${styles[l.value]}`} width="25px" height="25px" />
+                    {l.label}
+                  </NextChakraLink>
+                ))}
+              </Box>
+            </PopoverContent>
+          </Popover>
+
           <IconButton
             display={useBreakpointValue({ base: 'none', md: 'flex' })}
             _hover={{
@@ -193,7 +268,7 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
                   maxWidth="20px"
                   height="30px"
                   borderRadius="30px"
-                  onClick={() => toggleSettings()}
+                  onClick={() => setSettingsOpen(!settingsOpen)}
                 >
                   <Avatar
                     // name={user?.first_name}

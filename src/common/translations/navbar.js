@@ -41,6 +41,16 @@ const navbarTR = {
         href: 'https://4geeksacademy.com',
       },
     ],
+    languagesTR: [
+      {
+        label: 'English',
+        value: 'en',
+      },
+      {
+        label: 'Spanish',
+        value: 'es',
+      },
+    ],
   },
 
   es: {
@@ -75,6 +85,16 @@ const navbarTR = {
       {
         label: 'Bootcamp de Codificación',
         href: 'https://4geeksacademy.com',
+      },
+    ],
+    languagesTR: [
+      {
+        label: 'Ingles',
+        value: 'en',
+      },
+      {
+        label: 'Español',
+        value: 'es',
       },
     ],
   },
