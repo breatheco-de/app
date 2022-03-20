@@ -43,8 +43,6 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
     loginTR, logoutTR, languageTR, ITEMS, languagesTR,
   } = navbarTR[router.locale];
 
-  console.log('languagesTR:::', languagesTR);
-
   const { isOpen, onToggle } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
   const commonColors = useColorModeValue('white', 'gray.800');
@@ -57,9 +55,7 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
 
   const langs = ['en', 'es'];
   const linkColor = useColorModeValue('gray.600', 'gray.200');
-  console.log('router.locale:::', router.locale);
   const currentLanguage = languagesTR.filter((l) => l.value === router.locale)[0];
-  console.log('currentLanguage:::', currentLanguage);
 
   useEffect(async () => {
     const resp = await fetch(
@@ -104,8 +100,6 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
     }
     return user?.github.name;
   };
-
-  console.log('styles:::', styles);
 
   return (
     <Box>
