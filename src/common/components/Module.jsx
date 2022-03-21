@@ -7,7 +7,8 @@ import Icon from './Icon';
 import Link from './NextChakraLink';
 
 const Module = ({
-  data, containerStyle, containerPX, width, currIndex, isDone, rightItemHandler, link, textWithLink,
+  data, containerStyle, leftContentStyle, containerPX, width, currIndex,
+  isDone, rightItemHandler, link, textWithLink,
 }) => {
   const containerBackground = isDone ? useColorModeValue('featuredLight', 'featuredDark') : useColorModeValue('#FFFFFF', 'primary');
   const commonFontColor = useColorModeValue('gray.600', 'gray.200');
@@ -58,7 +59,7 @@ const Module = ({
           </Box>
         )}
         {textWithLink ? (
-          <Link href={link}>
+          <Link href={link} style={leftContentStyle}>
             {data.type && (
               <Heading
                 as="h3"
@@ -86,7 +87,7 @@ const Module = ({
             </Text>
           </Link>
         ) : (
-          <Flex flexDirection="column" justifyContent="center">
+          <Flex flexDirection="column" style={leftContentStyle} justifyContent="center">
             {data.type && (
               <Heading
                 as="h3"
@@ -125,6 +126,7 @@ const Module = ({
 Module.propTypes = {
   data: PropTypes.objectOf(PropTypes.any),
   containerStyle: PropTypes.objectOf(PropTypes.any),
+  leftContentStyle: PropTypes.objectOf(PropTypes.any),
   containerPX: PropTypes.string,
   width: PropTypes.string,
   link: PropTypes.string,
@@ -136,6 +138,7 @@ Module.propTypes = {
 Module.defaultProps = {
   data: {},
   containerStyle: {},
+  leftContentStyle: {},
   containerPX: '',
   width: '100%',
   link: '',

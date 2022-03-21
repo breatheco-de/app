@@ -18,7 +18,9 @@ const ItemText = ({ text }) => (
   </Text>
 );
 
-const ItemButton = ({ children, actionHandler }) => {
+const ItemButton = ({
+  children, actionHandler,
+}) => {
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   return (
     <Button
@@ -45,7 +47,7 @@ const ItemButton = ({ children, actionHandler }) => {
 };
 
 const TeacherSidebar = ({
-  title, user, students, subtitle, width, sortedAssignments,
+  title, user, students, width, sortedAssignments,
 }) => {
   const { colorMode } = useColorMode();
   const [openAttendance, setOpenAttendance] = useState(false);
@@ -76,22 +78,12 @@ const TeacherSidebar = ({
       borderWidth="0px"
       borderRadius="lg"
       overflow="hidden"
+      minWidth="298px"
     >
-      <Box d="flex" justifyContent="center">
-        <Icon icon="sideSupport" width="300px" height="70px" />
-      </Box>
       <Box p="4" pb="30px" pt="20px">
-        <Box d="flex" alignItems="baseline" justifyContent="center">
-          <Heading fontSize="22px" textAlign="center" justify="center" mt="0px" mb="0px">
-            {title}
-          </Heading>
-        </Box>
-
-        <Box d="flex" alignItems="baseline" justifyContent="center">
-          <Text size="md" textAlign="center" mt="10px" px="0px">
-            {subtitle}
-          </Text>
-        </Box>
+        <Heading width="100%" fontWeight="900" fontSize="22px" textAlign="left" justify="center" mt="0px" mb="0px">
+          {title}
+        </Heading>
 
         <Box pt="3" display="flex" flexDirection="column" alignItems="center">
           {/* Start attendance */}
@@ -103,13 +95,56 @@ const TeacherSidebar = ({
           </ItemButton>
 
           {/* Review attendance */}
-          <ItemButton actionHandler={() => {
-            if (cohortSession.bc_id && isWindow) {
-              window.open(`https://attendance.breatheco.de/?cohort_slug=${cohortSession.slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${cohortSession.academy.id}`, '_blank');
-            }
-          }}
+          <ItemButton
+            actionHandler={() => {
+              if (cohortSession.bc_id && isWindow) {
+                window.open(`https://attendance.breatheco.de/?cohort_slug=${cohortSession.slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${cohortSession.academy.id}`, '_blank');
+              }
+            }}
           >
             <ItemText text="Review attendancy" />
+            <Box>
+              <Icon icon="arrowRight" width="22px" height="22px" />
+            </Box>
+          </ItemButton>
+
+          {/* Assignments */}
+          <ItemButton
+            actionHandler={() => {
+              if (isWindow) {
+                window.location.href = `/${router.locale}/${cohortSession.selectedProgramSlug}/assignments`;
+              }
+            }}
+          >
+            <ItemText text="Assignments" />
+            <Box>
+              <Icon icon="arrowRight" width="22px" height="22px" />
+            </Box>
+          </ItemButton>
+
+          {/* Teacher tutorial */}
+          <ItemButton
+            actionHandler={() => {
+              if (isWindow) {
+                window.location.href = `/${router.locale}/${cohortSession.selectedProgramSlug}/teacher-tutorial`;
+              }
+            }}
+          >
+            <ItemText text="Teacher tutorial" />
+            <Box>
+              <Icon icon="arrowRight" width="22px" height="22px" />
+            </Box>
+          </ItemButton>
+
+          {/* Other resources */}
+          <ItemButton
+            actionHandler={() => {
+              if (isWindow) {
+                window.location.href = `/${router.locale}/${cohortSession.selectedProgramSlug}/other-resources`;
+              }
+            }}
+          >
+            <ItemText text="Other resources" />
             <Box>
               <Icon icon="arrowRight" width="22px" height="22px" />
             </Box>
@@ -132,7 +167,6 @@ const TeacherSidebar = ({
 
 TeacherSidebar.propTypes = {
   title: PropTypes.string,
-  subtitle: PropTypes.string,
   user: PropTypes.objectOf(PropTypes.any),
   students: PropTypes.arrayOf(PropTypes.any),
   width: PropTypes.string,
@@ -140,8 +174,7 @@ TeacherSidebar.propTypes = {
 };
 
 TeacherSidebar.defaultProps = {
-  title: 'Teacher',
-  subtitle: 'Actions',
+  title: 'Actions',
   user: {},
   students: [],
   width: '100%',

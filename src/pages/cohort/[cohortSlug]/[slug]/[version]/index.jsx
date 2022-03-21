@@ -203,7 +203,7 @@ const Dashboard = () => {
 
   return (
     <Container maxW="container.xl">
-      <Box marginTop="18px" marginBottom="48px">
+      <Box width="fit-content" marginTop="18px" marginBottom="48px">
         <NextChakraLink
           href="/choose-program"
           display="flex"
@@ -246,41 +246,35 @@ const Dashboard = () => {
           )}
           <TagCapsule containerStyle={{ padding: '6px 18px 6px 18px' }} tags={tapCapsule.tags} separator={tapCapsule.separator} />
 
-          <Box display={{ base: 'block', md: 'none' }}>
-            {
-              ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) ? (
-                <Box marginTop="30px">
-                  <TeacherSidebar
-                    title="Teacher"
-                    user={user}
-                    students={onlyStudentsActive}
-                    subtitle="Actions"
-                    sortedAssignments={sortedAssignments}
-                    // studentAndTeachers={studentAndTeachers}
-                    width="100%"
-                  />
-                </Box>
-              ) : (
-                <>
-                  <CohortSideBar
-                    studentAndTeachers={studentAndTeachers}
-                    cohortCity={cohortSession?.name}
-                    containerStyle={{
-                      margin: '30px 0 0 0',
-                    }}
-                    width="100%"
-                  />
-                  <Box marginTop="30px">
-                    <SupportSidebar
-                      title={supportSideBar.title}
-                      subtitle={supportSideBar.description}
-                      actionButtons={supportSideBar.actionButtons}
-                      width="100%"
-                    />
-                  </Box>
-                </>
-              )
-            }
+          <Box
+            display={{ base: 'flex', md: 'none' }}
+            flexDirection="column"
+            gridGap="30px"
+          >
+            {['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) && (
+              <TeacherSidebar
+                title="Actions"
+                user={user}
+                students={onlyStudentsActive}
+                sortedAssignments={sortedAssignments}
+                width="100%"
+              />
+            )}
+            <CohortSideBar
+              teacherVersionActive={['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role)}
+              cohort={cohortSession}
+              studentAndTeachers={studentAndTeachers}
+              cohortCity={cohortSession?.name}
+              width="100%"
+            />
+            {!['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) && (
+              <SupportSidebar
+                title={supportSideBar.title}
+                subtitle={supportSideBar.description}
+                actionButtons={supportSideBar.actionButtons}
+                width="100%"
+              />
+            )}
           </Box>
 
           <CallToAction
@@ -360,40 +354,34 @@ const Dashboard = () => {
         </Box>
         <Box width="5rem" />
         <Box
-          display={{ base: 'none', md: 'block' }}
+          display={{ base: 'none', md: 'flex' }}
+          flexDirection="column"
+          gridGap="30px"
         >
-          {
-            ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) ? (
-              <Box marginTop="30px">
-                <TeacherSidebar
-                  title="Teacher"
-                  user={user}
-                  students={onlyStudentsActive}
-                  subtitle="Actions"
-                  sortedAssignments={sortedAssignments}
-                  // studentAndTeachers={studentAndTeachers}
-                  width="100%"
-                />
-              </Box>
-            ) : (
-              <>
-                <CohortSideBar
-                  studentAndTeachers={studentAndTeachers}
-                  cohortCity={cohortSession?.name}
-                  width="100%"
-                />
-
-                <Box marginTop="30px">
-                  <SupportSidebar
-                    title={supportSideBar.title}
-                    subtitle={supportSideBar.description}
-                    actionButtons={supportSideBar.actionButtons}
-                    width="100%"
-                  />
-                </Box>
-              </>
-            )
-          }
+          {['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) && (
+            <TeacherSidebar
+              title="Actions"
+              user={user}
+              students={onlyStudentsActive}
+              sortedAssignments={sortedAssignments}
+              width="100%"
+            />
+          )}
+          <CohortSideBar
+            teacherVersionActive={['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role)}
+            studentAndTeachers={studentAndTeachers}
+            cohort={cohortSession}
+            cohortCity={cohortSession?.name}
+            width="100%"
+          />
+          {!['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) && (
+            <SupportSidebar
+              title={supportSideBar.title}
+              subtitle={supportSideBar.description}
+              actionButtons={supportSideBar.actionButtons}
+              width="100%"
+            />
+          )}
         </Box>
       </Flex>
     </Container>
