@@ -11,7 +11,6 @@ import Text from './Text';
 import AttendanceModal from './AttendanceModal';
 import usePersistent from '../hooks/usePersistent';
 import { isWindow, getStorageItem } from '../../utils';
-import NextChakraLink from './NextChakraLink';
 
 const ItemText = ({ text }) => (
   <Text display="flex" whiteSpace="pre-wrap" textAlign="left" textTransform="uppercase" size="12px" color={useColorModeValue('black', 'white')}>
@@ -20,55 +19,30 @@ const ItemText = ({ text }) => (
 );
 
 const ItemButton = ({
-  children, actionHandler, isLink, link,
+  children, actionHandler,
 }) => {
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   return (
-    <>
-      {isLink ? (
-        <Button
-          size="lg"
-          gridGap="10px"
-          width="100%"
-          onClick={actionHandler}
-          bg={commonBackground}
-          _hover={{
-            background: `${useColorModeValue('white', 'rgba(255, 255, 255, 0.2)')}`,
-          }}
-          _active={{
-            background: `${useColorModeValue('gray.light', 'rgba(255, 255, 255, 0.22)')}`,
-          }}
-          borderWidth="0px"
-          padding="14px 20px"
-          my="8px"
-          borderRadius="8px"
-          justifyContent="space-between"
-        >
-          {children}
-        </Button>
-      ) : (
-        <NextChakraLink
-          size="lg"
-          gridGap="10px"
-          width="100%"
-          href={link}
-          bg={commonBackground}
-          _hover={{
-            background: `${useColorModeValue('white', 'rgba(255, 255, 255, 0.2)')}`,
-          }}
-          _active={{
-            background: `${useColorModeValue('gray.light', 'rgba(255, 255, 255, 0.22)')}`,
-          }}
-          borderWidth="0px"
-          padding="14px 20px"
-          my="8px"
-          borderRadius="8px"
-          justifyContent="space-between"
-        >
-          {children}
-        </NextChakraLink>
-      )}
-    </>
+    <Button
+      size="lg"
+      gridGap="10px"
+      width="100%"
+      onClick={actionHandler}
+      bg={commonBackground}
+      _hover={{
+        background: `${useColorModeValue('white', 'rgba(255, 255, 255, 0.2)')}`,
+      }}
+      _active={{
+        background: `${useColorModeValue('gray.light', 'rgba(255, 255, 255, 0.22)')}`,
+      }}
+      borderWidth="0px"
+      padding="14px 20px"
+      my="8px"
+      borderRadius="8px"
+      justifyContent="space-between"
+    >
+      {children}
+    </Button>
   );
 };
 
@@ -95,6 +69,9 @@ const TeacherSidebar = ({
     en: `Hello ${user.first_name}, ${todayIs[router.locale]} and the cohort started taking classes on ${kickoffDate[router.locale]}. Please, select today's module.`,
     es: `Hola ${user.first_name}, ${todayIs[router.locale]} y la cohorte comenzó a tomar clases el ${kickoffDate[router.locale]}. Por favor, selecciona el módulo de hoy.`,
   };
+
+  console.log('cohortSession.selectedProgramSlug:::', cohortSession.selectedProgramSlug);
+  console.log('cohortSession:::', cohortSession);
 
   return (
     <Box
@@ -135,7 +112,13 @@ const TeacherSidebar = ({
           </ItemButton>
 
           {/* Assignments */}
-          <ItemButton isLink link={`${cohortSession.selectedProgramSlug}/assignments`}>
+          <ItemButton
+            actionHandler={() => {
+              if (isWindow) {
+                window.location.href = `/${router.locale}/${cohortSession.selectedProgramSlug}/assignments`;
+              }
+            }}
+          >
             <ItemText text="Assignments" />
             <Box>
               <Icon icon="arrowRight" width="22px" height="22px" />
@@ -143,7 +126,13 @@ const TeacherSidebar = ({
           </ItemButton>
 
           {/* Teacher tutorial */}
-          <ItemButton isLink link={`${cohortSession.selectedProgramSlug}/teacher-tutorial`}>
+          <ItemButton
+            actionHandler={() => {
+              if (isWindow) {
+                window.location.href = `/${router.locale}/${cohortSession.selectedProgramSlug}/teacher-tutorial`;
+              }
+            }}
+          >
             <ItemText text="Teacher tutorial" />
             <Box>
               <Icon icon="arrowRight" width="22px" height="22px" />
@@ -153,8 +142,8 @@ const TeacherSidebar = ({
           {/* Other resources */}
           <ItemButton
             actionHandler={() => {
-              if (cohortSession.bc_id && isWindow) {
-                window.open(`https://attendance.breatheco.de/?cohort_slug=${cohortSession.slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${cohortSession.academy.id}`, '_blank');
+              if (isWindow) {
+                window.location.href = `/${router.locale}/${cohortSession.selectedProgramSlug}/other-resources`;
               }
             }}
           >
@@ -204,14 +193,10 @@ ItemText.defaultProps = {
 
 ItemButton.propTypes = {
   children: PropTypes.node,
-  isLink: PropTypes.bool,
-  link: PropTypes.string,
   actionHandler: PropTypes.func,
 };
 ItemButton.defaultProps = {
   children: null,
-  isLink: false,
-  link: '',
   actionHandler: () => {},
 };
 export default TeacherSidebar;
