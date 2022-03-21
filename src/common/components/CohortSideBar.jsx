@@ -63,10 +63,6 @@ const CohortSideBar = ({
     es: format(new Date(cohort.ending_date), 'MMM d', { locale: es }),
   };
 
-  console.log('kickoffDate:::', kickoffDate);
-
-  console.log('teacherVersionActive:::', teacherVersionActive);
-  console.log('cohort:::', cohort);
   return (
     <Box
       transition="background 0.2s ease-in-out"

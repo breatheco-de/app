@@ -70,9 +70,6 @@ const TeacherSidebar = ({
     es: `Hola ${user.first_name}, ${todayIs[router.locale]} y la cohorte comenzó a tomar clases el ${kickoffDate[router.locale]}. Por favor, selecciona el módulo de hoy.`,
   };
 
-  console.log('cohortSession.selectedProgramSlug:::', cohortSession.selectedProgramSlug);
-  console.log('cohortSession:::', cohortSession);
-
   return (
     <Box
       backgroundColor={colorMode === 'light' ? 'yellow.light' : 'featuredDark'}
