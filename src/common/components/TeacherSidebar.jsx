@@ -11,6 +11,7 @@ import Text from './Text';
 import AttendanceModal from './AttendanceModal';
 import usePersistent from '../hooks/usePersistent';
 import { isWindow, getStorageItem } from '../../utils';
+import NextChakraLink from './NextChakraLink';
 
 const ItemText = ({ text }) => (
   <Text display="flex" whiteSpace="pre-wrap" textAlign="left" textTransform="uppercase" size="12px" color={useColorModeValue('black', 'white')}>
@@ -18,34 +19,61 @@ const ItemText = ({ text }) => (
   </Text>
 );
 
-const ItemButton = ({ children, actionHandler }) => {
+const ItemButton = ({
+  children, actionHandler, isLink, link,
+}) => {
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   return (
-    <Button
-      size="lg"
-      gridGap="10px"
-      width="100%"
-      onClick={actionHandler}
-      bg={commonBackground}
-      _hover={{
-        background: `${useColorModeValue('white', 'rgba(255, 255, 255, 0.2)')}`,
-      }}
-      _active={{
-        background: `${useColorModeValue('gray.light', 'rgba(255, 255, 255, 0.22)')}`,
-      }}
-      borderWidth="0px"
-      padding="14px 20px"
-      my="8px"
-      borderRadius="8px"
-      justifyContent="space-between"
-    >
-      {children}
-    </Button>
+    <>
+      {isLink ? (
+        <Button
+          size="lg"
+          gridGap="10px"
+          width="100%"
+          onClick={actionHandler}
+          bg={commonBackground}
+          _hover={{
+            background: `${useColorModeValue('white', 'rgba(255, 255, 255, 0.2)')}`,
+          }}
+          _active={{
+            background: `${useColorModeValue('gray.light', 'rgba(255, 255, 255, 0.22)')}`,
+          }}
+          borderWidth="0px"
+          padding="14px 20px"
+          my="8px"
+          borderRadius="8px"
+          justifyContent="space-between"
+        >
+          {children}
+        </Button>
+      ) : (
+        <NextChakraLink
+          size="lg"
+          gridGap="10px"
+          width="100%"
+          href={link}
+          bg={commonBackground}
+          _hover={{
+            background: `${useColorModeValue('white', 'rgba(255, 255, 255, 0.2)')}`,
+          }}
+          _active={{
+            background: `${useColorModeValue('gray.light', 'rgba(255, 255, 255, 0.22)')}`,
+          }}
+          borderWidth="0px"
+          padding="14px 20px"
+          my="8px"
+          borderRadius="8px"
+          justifyContent="space-between"
+        >
+          {children}
+        </NextChakraLink>
+      )}
+    </>
   );
 };
 
 const TeacherSidebar = ({
-  title, user, students, subtitle, width, sortedAssignments,
+  title, user, students, width, sortedAssignments,
 }) => {
   const { colorMode } = useColorMode();
   const [openAttendance, setOpenAttendance] = useState(false);
@@ -76,22 +104,12 @@ const TeacherSidebar = ({
       borderWidth="0px"
       borderRadius="lg"
       overflow="hidden"
+      minWidth="298px"
     >
-      <Box d="flex" justifyContent="center">
-        <Icon icon="sideSupport" width="300px" height="70px" />
-      </Box>
       <Box p="4" pb="30px" pt="20px">
-        <Box d="flex" alignItems="baseline" justifyContent="center">
-          <Heading fontSize="22px" textAlign="center" justify="center" mt="0px" mb="0px">
-            {title}
-          </Heading>
-        </Box>
-
-        <Box d="flex" alignItems="baseline" justifyContent="center">
-          <Text size="md" textAlign="center" mt="10px" px="0px">
-            {subtitle}
-          </Text>
-        </Box>
+        <Heading width="100%" fontWeight="900" fontSize="22px" textAlign="left" justify="center" mt="0px" mb="0px">
+          {title}
+        </Heading>
 
         <Box pt="3" display="flex" flexDirection="column" alignItems="center">
           {/* Start attendance */}
@@ -103,13 +121,44 @@ const TeacherSidebar = ({
           </ItemButton>
 
           {/* Review attendance */}
-          <ItemButton actionHandler={() => {
-            if (cohortSession.bc_id && isWindow) {
-              window.open(`https://attendance.breatheco.de/?cohort_slug=${cohortSession.slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${cohortSession.academy.id}`, '_blank');
-            }
-          }}
+          <ItemButton
+            actionHandler={() => {
+              if (cohortSession.bc_id && isWindow) {
+                window.open(`https://attendance.breatheco.de/?cohort_slug=${cohortSession.slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${cohortSession.academy.id}`, '_blank');
+              }
+            }}
           >
             <ItemText text="Review attendancy" />
+            <Box>
+              <Icon icon="arrowRight" width="22px" height="22px" />
+            </Box>
+          </ItemButton>
+
+          {/* Assignments */}
+          <ItemButton isLink link={`${cohortSession.selectedProgramSlug}/assignments`}>
+            <ItemText text="Assignments" />
+            <Box>
+              <Icon icon="arrowRight" width="22px" height="22px" />
+            </Box>
+          </ItemButton>
+
+          {/* Teacher tutorial */}
+          <ItemButton isLink link={`${cohortSession.selectedProgramSlug}/teacher-tutorial`}>
+            <ItemText text="Teacher tutorial" />
+            <Box>
+              <Icon icon="arrowRight" width="22px" height="22px" />
+            </Box>
+          </ItemButton>
+
+          {/* Other resources */}
+          <ItemButton
+            actionHandler={() => {
+              if (cohortSession.bc_id && isWindow) {
+                window.open(`https://attendance.breatheco.de/?cohort_slug=${cohortSession.slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${cohortSession.academy.id}`, '_blank');
+              }
+            }}
+          >
+            <ItemText text="Other resources" />
             <Box>
               <Icon icon="arrowRight" width="22px" height="22px" />
             </Box>
@@ -132,7 +181,6 @@ const TeacherSidebar = ({
 
 TeacherSidebar.propTypes = {
   title: PropTypes.string,
-  subtitle: PropTypes.string,
   user: PropTypes.objectOf(PropTypes.any),
   students: PropTypes.arrayOf(PropTypes.any),
   width: PropTypes.string,
@@ -140,8 +188,7 @@ TeacherSidebar.propTypes = {
 };
 
 TeacherSidebar.defaultProps = {
-  title: 'Teacher',
-  subtitle: 'Actions',
+  title: 'Actions',
   user: {},
   students: [],
   width: '100%',
@@ -157,10 +204,14 @@ ItemText.defaultProps = {
 
 ItemButton.propTypes = {
   children: PropTypes.node,
+  isLink: PropTypes.bool,
+  link: PropTypes.string,
   actionHandler: PropTypes.func,
 };
 ItemButton.defaultProps = {
   children: null,
+  isLink: false,
+  link: '',
   actionHandler: () => {},
 };
 export default TeacherSidebar;

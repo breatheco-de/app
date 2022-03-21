@@ -9,9 +9,9 @@
   },
   "cohortSideBar": {
     "title": "About your cohort",
-    "cohort": "Cohort",
+    "cohort": "Your Cohort",
     "mainTeacher": "Main teacher",
-    "assistant": "Assistant Professors",
+    "assistant": "Assistant Teachers",
     "classmates": "Your classmates"
   },
   "supportSideBar": {

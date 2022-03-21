@@ -206,6 +206,7 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
                   <NextChakraLink
                     width="100%"
                     key={l.value}
+                    href={router.asPath}
                     locale={l.value}
                     role="group"
                     alignSelf="center"
