@@ -8,6 +8,7 @@ import css from 'react-syntax-highlighter/dist/cjs/languages/prism/css';
 import emoji from 'emoji-dictionary';
 import { useEffect, useState } from 'react';
 import tomorrow from './syntaxHighlighter/tomorrow';
+import BeforeAfterSlider from '../BeforeAfterSlider';
 import Toc from './toc';
 import Heading from '../Heading';
 // import Anchor from './Anchor';
@@ -34,6 +35,13 @@ const Code = ({ className, children }) => {
     </SyntaxHighlighter>
   );
 };
+
+const BeforeAfter = ({ before, after }) => (
+  <BeforeAfterSlider
+    firstImage={before}
+    secondImage={after}
+  />
+);
 
 const MDHeading = ({ children, id }) => (
   <Heading
@@ -100,40 +108,23 @@ const MarkDownParser = ({ content, withToc, frontMatter }) => {
       {compiler(contentFormated, {
         wrapper: null,
         overrides: {
-          code: {
-            component: Code,
-          },
-          p: {
-            component: MDText,
-          },
-          a: {
-            component: MDLink,
-          },
+          code: { component: Code },
+          p: { component: MDText },
+          a: { component: MDLink },
           hr: { component: MDHr },
-          h2: {
-            component: MDHeading,
-          },
-          h3: {
-            component: MDHeading,
-          },
-          h1: {
-            component: MDHeading,
-          },
+          h2: { component: MDHeading },
+          h3: { component: MDHeading },
+          h1: { component: MDHeading },
           ul: {
-            props: {
-              className: 'md-bullet',
-            },
+            props: { className: 'md-bullet' },
           },
           ol: {
-            props: {
-              className: 'md-bullet',
-            },
+            props: { className: 'md-bullet' },
           },
           img: {
-            props: {
-              className: 'MDImg',
-            },
+            props: { className: 'MDImg' },
           },
+          BeforeAfter,
         },
         slugify: (str) => str.split(' ').join('-').toLowerCase(),
       })}
@@ -179,6 +170,11 @@ MDLink.propTypes = {
 
 MDText.defaultProps = {
   children: '',
+};
+
+BeforeAfter.propTypes = {
+  before: PropTypes.string.isRequired,
+  after: PropTypes.string.isRequired,
 };
 
 export default MarkDownParser;
