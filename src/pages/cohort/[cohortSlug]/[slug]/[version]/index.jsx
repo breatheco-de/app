@@ -22,10 +22,9 @@ import useAuth from '../../../../../common/hooks/useAuth';
 import { ModuleMapSkeleton } from '../../../../../common/components/Skeleton';
 import bc from '../../../../../common/services/breathecode';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
-import { nestAssignments, startDay } from '../../../../../common/hooks/useModuleHandler';
+import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import dashboardTR from '../../../../../common/translations/dashboard';
-import TasksRemain from '../../../../../js_modules/moduleMap/tasksRemain';
 import usePersistent from '../../../../../common/hooks/usePersistent';
 import { slugify } from '../../../../../utils/index';
 
@@ -312,7 +311,7 @@ const Dashboard = () => {
                     label, description, filteredModules, modules,
                   } = assignment;
                   const index = i;
-                  return (assignment.filteredModules.length > 0 && (
+                  return (
                     <ModuleMap
                       key={index}
                       userId={user.id}
@@ -326,7 +325,7 @@ const Dashboard = () => {
                       modules={modules}
                       filteredModules={filteredModules}
                     />
-                  ));
+                  );
                 })}
               </>
             ) : <ModuleMapSkeleton />}
@@ -335,7 +334,7 @@ const Dashboard = () => {
 
           <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="70px" />
 
-          <Box
+          {/* <Box
             marginTop="30px"
             gridGap="24px"
             display="flex"
@@ -350,7 +349,7 @@ const Dashboard = () => {
               sortedAssignments={sortedAssignments}
               startDay={startDay}
             />
-          </Box>
+          </Box> */}
         </Box>
         <Box width="5rem" />
         <Box
