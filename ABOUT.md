@@ -11,10 +11,6 @@ Our goal is to empower talent with code by providing flexible educational experi
     after="https://raw.githubusercontent.com/4GeeksAcademy/website-v2/master/static/images/blog/python_y_javascript.png"
 />
 
-<BeforeAfter
-    before="https://raw.githubusercontent.com/4GeeksAcademy/website-v2/master/static/images/blog/graficas-05.jpg" 
-    after="https://raw.githubusercontent.com/4GeeksAcademy/website-v2/master/static/images/blog/python_y_javascript.png"
-/>
 <before-after
     before="https://raw.githubusercontent.com/4GeeksAcademy/website-v2/master/static/images/blog/graficas-05.jpg" 
     after="https://raw.githubusercontent.com/4GeeksAcademy/website-v2/master/static/images/blog/python_y_javascript.png"
