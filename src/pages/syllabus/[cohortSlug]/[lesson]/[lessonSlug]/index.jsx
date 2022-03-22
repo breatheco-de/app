@@ -10,12 +10,12 @@ import {
 } from '@chakra-ui/react';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
-import atob from 'atob';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import Timeline from '../../../../../common/components/Timeline';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkdownParser from '../../../../../common/components/MarkDownParser';
+import decodeFromBinary from '../../../../../utils/markdown';
 // import useSyllabus from '../../../../../common/store/actions/syllabusActions';
 import bc from '../../../../../common/services/breathecode';
 import useAuth from '../../../../../common/hooks/useAuth';
@@ -135,18 +135,6 @@ const Content = () => {
         });
       });
   }, []);
-
-  const decodeFromBinary = (encoded) => {
-    // decode base 64 encoded string with emojis
-    const decoded = decodeURIComponent(
-      atob(encoded).split('').map((c) => {
-        const decodedEmoist = `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`;
-        return decodedEmoist;
-      }).join(''),
-    );
-
-    return decoded;
-  };
 
   useEffect(() => {
     bc.lesson({
