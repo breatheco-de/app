@@ -11,10 +11,6 @@ const nextTranslate = require('next-translate');
 //   server: ['GITHUB_TOKEN'],
 // });
 
-// const dev = process.env.NODE_ENV !== 'production';
-
-// const defaultEnpoint = dev ? process.env.BREATHECODE_HOST : 'https://breathecode-test.herokuapp.com';
-
 module.exports = withBundleAnalyzer(nextTranslate({
   // rest of config here
   // i18n,
