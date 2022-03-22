@@ -473,6 +473,13 @@ blockquote > :last-child {
   border: none;
 }
 
+.markdown-body sup {
+  font-size: 12px
+}
+
+.markdown-body sup * {
+  font-size: 12px
+}
 
 @media screen and (min-width: 1440px) {
   .text-highlight {
