@@ -125,6 +125,9 @@ const MarkDownParser = ({ content, withToc, frontMatter }) => {
             props: { className: 'MDImg' },
           },
           BeforeAfter,
+          'before-after': {
+            component: BeforeAfter,
+          },
         },
         slugify: (str) => str.split(' ').join('-').toLowerCase(),
       })}

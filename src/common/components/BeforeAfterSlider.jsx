@@ -102,6 +102,7 @@ export default function BeforeAfterSlider({
   onReady,
   onChangePercentPosition,
   delimiterColor,
+  aspectRatio,
 }) {
   const classNames = ['before-after-slider'];
   className && classNames.push(className);
@@ -171,6 +172,7 @@ export default function BeforeAfterSlider({
   const imgStyles = !imagesWidth ? undefined : {
     width: `${imagesWidth}px`,
     maxWidth: 'none',
+    aspectRatio,
     backgroundColor: '#000',
   };
   const secondImgContainerStyle = { width: `${delimerPercentPosition}%` };
@@ -226,7 +228,15 @@ export default function BeforeAfterSlider({
       onTouchStart={onMouseDownHandler}
       onTouchMove={onTouchMoveHandler}
     >
-      <img src={firstImage} alt="width_calc" className={styles['before-after-slider__size-fix-img']} onLoad={updateContainerWidth} />
+      <img
+        src={firstImage}
+        alt="width_calc"
+        className={styles['before-after-slider__size-fix-img']}
+        onLoad={updateContainerWidth}
+        style={{
+          aspectRatio,
+        }}
+      />
       {Boolean(imagesWidth) && (
         <>
           <Box className={styles['before-after-slider__first-photo-container']}>
@@ -267,6 +277,7 @@ BeforeAfterSlider.propTypes = {
   onReady: PropTypes.func,
   onChangePercentPosition: PropTypes.func,
   delimiterColor: PropTypes.string,
+  aspectRatio: PropTypes.string,
 };
 
 BeforeAfterSlider.defaultProps = {
@@ -277,4 +288,5 @@ BeforeAfterSlider.defaultProps = {
   onReady: undefined,
   onChangePercentPosition: undefined,
   delimiterColor: '#0097CD',
+  aspectRatio: '16/9',
 };
