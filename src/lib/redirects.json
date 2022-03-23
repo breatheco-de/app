@@ -1,0 +1,8 @@
+{
+  "/inicio": {
+    "destination": "/es"
+  },
+  "/ingresar" : {
+    "destination": "/es/login"
+  }
+}

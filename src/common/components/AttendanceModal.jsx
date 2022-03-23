@@ -25,6 +25,7 @@ import {
   useColorMode,
   useToast,
   Select,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import Icon from './Icon';
 import Text from './Text';
@@ -39,8 +40,11 @@ const AttendanceModal = ({
   const [currentModule, setCurrentModule] = useState(cohortSession.current_module);
   const [defaultDay, setDefaultDay] = useState(0);
   const [checked, setChecked] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const { colorMode } = useColorMode();
   const toast = useToast();
+
+  const commonFontColor = useColorModeValue('gray.600', 'gray.200');
   const { getCheckboxProps } = useCheckboxGroup({
     onChange: setChecked,
   });
@@ -52,66 +56,76 @@ const AttendanceModal = ({
     setDefaultDay(currentCohortDay);
   }, [currentCohortDay]);
 
+  const saveCohortAttendancy = () => {
+    const cohortSlug = cohortSession.slug;
+    bc.activity()
+      .addBulk(
+        cohortSlug,
+        students.map(({ user }) => {
+          const attended = checked.find((id) => parseInt(id, 10) === user.id);
+          return {
+            user_id: user.id,
+            user_agent: 'bc/teacher',
+            cohort: cohortSlug,
+            day: day.toString(),
+            slug: typeof attended === 'undefined' || !attended ? 'classroom_unattendance' : 'classroom_attendance',
+            data: `{ "cohort": "${cohortSlug}", "day": "${cohortSession.current_day}"}`,
+          };
+        }),
+      )
+      .then(() => {
+        toast({
+          title: 'The Attendancy has been reported',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
+        setIsLoading(false);
+      })
+      .catch(() => {
+        toast({
+          title: 'There was an error reporting the attendancy',
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+        setIsLoading(false);
+      });
+  };
+
   const updateCohortDay = () => new Promise((resolve, reject) => {
+    setIsLoading(true);
     bc.cohort()
       .update(cohortSession.id, { current_day: day, current_module: currentModule })
       .then(({ data }) => {
         setCohortSession({ ...cohortSession, ...data });
+        bc.activity().getAttendance(cohortSession.id)
+          .then((res) => {
+            const activitiesForDay = res.data.filter((act) => act.day === day.toString());
+            if (activitiesForDay.length === 0) saveCohortAttendancy();
+            else {
+              toast({
+                title: 'No attendancy to report',
+                status: 'warning',
+                duration: 9000,
+                isClosable: true,
+              });
+              setIsLoading(false);
+            }
+          })
+          .catch((error) => {
+            console.log('getAttendance_error:', error);
+            setIsLoading(false);
+            reject(error);
+          });
         resolve(data);
         return data;
       })
-      .catch((error) => reject(error));
+      .catch((error) => {
+        setIsLoading(false);
+        reject(error);
+      });
   });
-
-  const saveCohortAttendancy = () => {
-    const cohortSlug = cohortSession.slug;
-    return new Promise((resolve, reject) => {
-      if (checked.length === 0) {
-        toast({
-          title: 'No attendancy to report',
-          status: 'warning',
-          duration: 9000,
-          isClosable: true,
-        });
-      } else {
-        bc.activity()
-          .addBulk(
-            cohortSlug,
-            students.map(({ user }) => {
-              const attended = checked.find((id) => parseInt(id, 10) === user.id);
-              return {
-                user_id: user.id,
-                user_agent: 'bc/teacher',
-                cohort: cohortSlug,
-                // day: currentCohort.cohort.current_day.toString()
-                day: day.toString(),
-                slug: typeof attended === 'undefined' || !attended ? 'classroom_unattendance' : 'classroom_attendance',
-                data: `{ "cohort": "${cohortSlug}", "day": "${cohortSession.current_day}"}`,
-              };
-            }),
-          )
-          .then((res) => {
-            console.log('res_attendance', res);
-            toast({
-              title: 'The Attendancy has been reported',
-              status: 'success',
-              duration: 9000,
-              isClosable: true,
-            });
-            resolve(true);
-          })
-          .catch(() => {
-            toast({
-              title: 'There was an error reporting the attendancy',
-              status: 'error',
-              duration: 9000,
-              isClosable: true,
-            });
-            reject(new Error('There was an error reporting the attendancy'));
-          });
-      }
-    });
-  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -149,7 +163,6 @@ const AttendanceModal = ({
                     <option key={module.id} value={module.id}>
                       {`#${module.id} - ${module.label}`}
                     </option>
-                    // <option>{module.label}</option>
                   ))}
                 </Select>
               )}
@@ -171,7 +184,7 @@ const AttendanceModal = ({
                 return (
                   <CheckboxCard key={item.user.first_name} {...checkbox}>
                     <Flex justifyContent="space-between">
-                      <Flex marginRight="12px">
+                      <Flex marginRight="12px" alignItems="center">
                         <Avatar
                           width="30px"
                           marginY="auto"
@@ -194,15 +207,21 @@ const AttendanceModal = ({
             </Grid>
           </Box>
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter justifyContent="space-between">
+          <Text
+            color={commonFontColor}
+            size="sm"
+          >
+            Only showing students with active educational status
+          </Text>
           <Button
+            isLoading={isLoading}
+            loadingText="SUBMITTING"
+            minWidth="173.4px"
             fontSize="13px"
-            disabled={checked.length < 1}
+            disabled={checked.length < 1 || isLoading}
             variant="default"
-            onClick={() => {
-              saveCohortAttendancy();
-              updateCohortDay();
-            }}
+            onClick={() => updateCohortDay()}
             rightIcon={<Icon icon="longArrowRight" width="15px" color="white" />}
           >
             START CLASS DAY

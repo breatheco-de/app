@@ -6,7 +6,8 @@ import Heading from '../../common/components/Heading';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../common/components/Skeleton';
 import TagCapsule from '../../common/components/TagCapsule';
-// import atob from 'atob';
+import decodeFromBinary from '../../utils/markdown';
+import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 
 export const getStaticPaths = async ({ locales }) => {
   let lessons = [];
@@ -55,7 +56,7 @@ export const getStaticProps = async ({ params }) => {
 };
 
 const LessonSlug = ({ lesson }) => {
-  const [readme, setReadme] = useState('');
+  const [readme, setReadme] = useState(null);
   // const [notFound, setNotFound] = useState(false);
   // const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   // const commonTextColor = useColorModeValue('gray.600', 'gray.200');
@@ -72,46 +73,14 @@ const LessonSlug = ({ lesson }) => {
     });
   };
 
-  // const removeTitleAndImage = (str) => str.replace(new RegExp('(.+)', 'm'), '')
-  // .replace(new RegExp('<a.*?>+.*>', 'g'), '');
-
-  // const MDecoded = lesson.readme && typeof lesson.readme === 'string'
-  // ? atob(lesson.readme) : null;
-  // console.log('readme', MDecoded);
-
-  // if (lesson.readme === '' && notFound === false) {
-  //   setTimeout(() => {
-  //     setNotFound(true);
-  //     toast({
-  //       title: 'The endpoint could not access the content of this lesson',
-  //       // description: 'Content not found',
-  //       status: 'error',
-  //       duration: 7000,
-  //       isClosable: true,
-  //     });
-  //   }, 4000);
-  // }
-
   useEffect(() => {
     const language = router.query.lang || router.locale;
 
-    if (lesson.readme_url !== null) {
-      const branch = 'master';
-      const slugCutted = lesson.readme_url.substring(lesson.readme_url.lastIndexOf(branch));
-      const indexOfMetaData = '---\n\n';
-      const rawSlug = `https://raw.githubusercontent.com/breatheco-de/content/${slugCutted}`;
-      fetch(rawSlug)
-        .then((resp) => resp.text())
-        .then((text) => text.substring(text.indexOf(indexOfMetaData) + indexOfMetaData.length))
-        .then((data) => {
-          setReadme({ markdown: data, lang: language });
-        })
-        .catch((err) => {
-          console.error('Error loading markdown file from github', err);
-          setTimeout(() => {
-            EventIfNotFound();
-          }, 4000);
-        });
+    if (lesson.readme !== null) {
+      const MDecoded = lesson.readme && typeof lesson.readme === 'string' ? decodeFromBinary(lesson.readme) : null;
+      const markdown = getMarkDownContent(MDecoded);
+      const { content } = markdown;
+      setReadme({ markdown: content, lang: language });
     } else {
       setTimeout(() => {
         EventIfNotFound();
@@ -172,9 +141,9 @@ const LessonSlug = ({ lesson }) => {
           // colorMode === 'light' ? 'light' : 'dark'
           className={`markdown-body ${useColorModeValue('light', 'dark')}`}
         >
-          {/* {MDecoded ? <MarkDownParser content={removeTitleAndImage(MDecoded)} />
-          : <MDSkeleton />} */}
-          {readme.markdown ? <MarkDownParser content={readme.markdown} /> : <MDSkeleton />}
+          {(readme && readme.markdown)
+            ? <MarkDownParser content={readme.markdown} />
+            : <MDSkeleton />}
         </Box>
       </Box>
     </Box>

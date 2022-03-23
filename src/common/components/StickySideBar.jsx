@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import {
-  Box, VStack, useColorMode, Modal, ModalOverlay, ModalContent,
+  Box, VStack, useColorModeValue, Modal, ModalOverlay, ModalContent,
   ModalHeader, ModalCloseButton, ModalBody,
 } from '@chakra-ui/react';
 import { Fragment, useState } from 'react';
@@ -10,9 +10,12 @@ import Text from './Text';
 const StickySideBar = ({
   menu, width, top, right, left,
 }) => {
-  const { colorMode } = useColorMode();
+  // Modal states
   const [openKeyConcepts, setOpenKeyConcepts] = useState(false);
   const [openTeacherInstructions, setOpenTeacherInstructions] = useState(false);
+
+  const highlightColors = useColorModeValue('featuredLight', 'featuredDark');
+  const commonBorderColor = useColorModeValue('white', 'gray.700');
 
   const getCurrentModalState = (itemSlug) => {
     if (itemSlug === 'key-concepts') {
@@ -33,85 +36,103 @@ const StickySideBar = ({
         left={left}
       >
         {
-          menu.map((item) => {
+          menu.map((item, i) => {
             const currentModalState = getCurrentModalState(item.slug);
-            return (
-              <Fragment key={item.id}>
-                {item.content && (
+            const index = i;
+            return item.content && (
+              <Fragment key={`${item.id}-index${index}`}>
+                <Box
+                  key={item.id}
+                  textAlign="center"
+                  cursor="pointer"
+                  as="button"
+                  bg="transparent"
+                  border="none"
+                  onClick={() => {
+                    if (item.slug === 'key-concepts') {
+                      setOpenKeyConcepts(true);
+                    }
+                    if (item.slug === 'teacher-instructions') {
+                      setOpenTeacherInstructions(true);
+                    }
+                  }}
+                >
                   <Box
-                    key={item.id}
-                    textAlign="center"
-                    cursor="pointer"
-                    as="button"
-                    bg="transparent"
-                    border="none"
-                    onClick={() => {
-                      if (item.slug === 'key-concepts') {
-                        setOpenKeyConcepts(true);
-                      }
-                      if (item.slug === 'teacher-instructions') {
-                        setOpenTeacherInstructions(true);
-                      }
-                    }}
+                    bg={useColorModeValue('white', 'blue.default')}
+                    margin="auto"
+                    width="fit-content"
+                    height="48px"
+                    variant="default"
+                    padding="15px"
+                    border="1px solid"
+                    borderColor={useColorModeValue('gray.default', 'blue.default')}
+                    borderRadius="full"
                   >
-                    <Box
-                      bg={colorMode === 'light' ? 'white' : 'blue.default'}
-                      margin="auto"
-                      width="fit-content"
-                      height="48px"
-                      variant="default"
-                      padding="15px"
-                      border="1px solid"
-                      borderColor={colorMode === 'light' ? 'gray.default' : 'blue.default'}
-                      borderRadius="full"
-                    >
-                      <Icon icon={item.icon} width="18px" height="18px" color={colorMode === 'light' ? 'gray' : 'white'} />
-                    </Box>
-                    <Text
-                      width="80px"
-                      size="sm"
-                      marginTop="3px"
-                      color={colorMode === 'light' ? 'gray.default' : 'white'}
-                    >
-                      {item.title}
-
-                    </Text>
+                    <Icon icon={item.icon} width="18px" height="18px" color={useColorModeValue('gray', 'white')} />
                   </Box>
-                )}
-                {
-                  item.content && (
-                    <Modal
-                      isOpen={currentModalState}
-                      onClose={() => {
-                        setOpenKeyConcepts(false);
-                        setOpenTeacherInstructions(false);
-                      }}
-                    >
-                      <ModalOverlay />
-                      <ModalContent>
-                        <ModalHeader>{item.title}</ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody>
-                          {
-                            Array.isArray(item.content) ? (
-                              item.content.map((content) => (
-                                <Box key={content}>
-                                  <Text size="l" fontWeight="400">
-                                    {content}
-                                  </Text>
-                                </Box>
-                              ))
-                            ) : item.content
-                          }
-                        </ModalBody>
-                      </ModalContent>
-                    </Modal>
-                  )
-                }
+                  <Text
+                    width="80px"
+                    size="sm"
+                    marginTop="3px"
+                    color={useColorModeValue('gray.default', 'white')}
+                  >
+                    {item.title}
+
+                  </Text>
+                </Box>
+
+                <Modal
+                  isOpen={currentModalState}
+                  onClose={() => {
+                    setOpenKeyConcepts(false);
+                    setOpenTeacherInstructions(false);
+                  }}
+                >
+                  <ModalOverlay />
+                  <ModalContent
+                    background={useColorModeValue('white', 'darkTheme')}
+                    border={2}
+                    borderStyle="solid"
+                    borderColor={commonBorderColor}
+                  >
+                    <ModalHeader>{item.title}</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                      {
+                        Array.isArray(item.content) ? (
+                          item.content.map((content, ix) => {
+                            const index2 = ix;
+                            return (
+                              <Box
+                                key={index2}
+                                as="ul"
+                                pl="30px"
+                                py="6px"
+                                mb="4px"
+                                borderRadius="6px"
+                                _hover={{
+                                  backgroundColor: highlightColors,
+                                }}
+                              >
+                                <Text key={index2} as="li" size="l" fontWeight="400">
+                                  {content}
+                                </Text>
+                              </Box>
+                            );
+                          })
+                        ) : (
+                          <Text size="l" pb="25px" fontWeight="400">
+                            {item.content}
+                          </Text>
+                        )
+                      }
+                    </ModalBody>
+                  </ModalContent>
+                </Modal>
               </Fragment>
             );
           })
-        }
+          }
       </VStack>
     </>
   );

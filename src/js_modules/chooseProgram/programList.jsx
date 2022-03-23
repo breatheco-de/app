@@ -8,14 +8,14 @@ import axios from '../../axios';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import Module from '../../common/components/Module';
+import usePersistent from '../../common/hooks/usePersistent';
 
 function CohortProgram({ item, handleChoose }) {
   const [isMobile] = useMediaQuery('(min-width: 600px)');
-  // const { colorMode } = useColorMode();
+  const [, setCohortSession] = usePersistent('cohortSession', {});
   const router = useRouter();
 
-  const cohort = item?.cohort;
-  // Destructuring the cohort.syllabus_version object with version, slug, name
+  const { cohort } = item;
   const { version, slug, name } = cohort?.syllabus_version;
   // const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
 
@@ -25,6 +25,9 @@ function CohortProgram({ item, handleChoose }) {
       data={{
         type: name,
         title: `Cohort: ${cohort.name}`,
+      }}
+      leftContentStyle={{
+        maxWidth: !isMobile ? '160px' : 'auto',
       }}
       rightItemHandler={(
         <Box
@@ -40,12 +43,10 @@ function CohortProgram({ item, handleChoose }) {
             });
 
             axios.defaults.headers.common.Academy = cohort.academy.id;
-            if (typeof window !== 'undefined') {
-              localStorage.setItem('cohortSession', JSON.stringify({
-                ...cohort,
-                selectedProgramSlug: `/cohort/${cohort?.slug}/${slug}/v${version}`,
-              }));
-            }
+            setCohortSession({
+              ...cohort,
+              selectedProgramSlug: `/cohort/${cohort?.slug}/${slug}/v${version}`,
+            });
             router.push(`/cohort/${cohort?.slug}/${slug}/v${version}`);
           }}
           // marginRight="15px"

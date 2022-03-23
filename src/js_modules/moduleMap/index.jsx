@@ -7,12 +7,13 @@ import Text from '../../common/components/Text';
 import Module from './module';
 import { startDay } from '../../common/hooks/useModuleHandler';
 import Icon from '../../common/components/Icon';
-// TODO: El modulo deberia usarse tambien en choose-program
+
 const ModuleMap = ({
   index, userId, contextState, setContextState, slug, modules, filteredModules,
   title, description, taskTodo,
 }) => {
   const toast = useToast();
+  const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
   const handleStartDay = () => {
     const updatedTasks = (modules || [])?.map((l) => ({
       ...l,
@@ -43,6 +44,7 @@ const ModuleMap = ({
           fontSize="15px"
           color={useColorModeValue('gray.default', 'white')}
           fontWeight="normal"
+          textTransform="uppercase"
         >
           {modules.length}
           {' '}
@@ -56,7 +58,7 @@ const ModuleMap = ({
       {filteredModules.length > 0 && modules.length !== filteredModules.length && (
         <Box display="flex" alignItems="center" justifyContent="space-between" padding="16px 20px" borderRadius="18px" width="100%" background="yellow.light">
           <Text color={useColorModeValue('black', 'black')} size="16px">
-            {`Ey! There are ${filteredModules.length - modules.length} new activities on this day`}
+            {`Ey! There are ${modules.length - filteredModules.length} new activities on this day`}
           </Text>
           <Button
             color="blue.default"
@@ -74,17 +76,46 @@ const ModuleMap = ({
         </Box>
       )}
 
-      {filteredModules.map((module, i) => {
-        const cheatedIndex = i;
-        return (
-          <Module
-            key={`${module.title}-${cheatedIndex}`}
-            currIndex={i}
-            data={module}
-            taskTodo={taskTodo}
-          />
-        );
-      })}
+      {filteredModules.length >= 1
+        ? filteredModules.map((module, i) => {
+          const cheatedIndex = i;
+          return (
+            <Module
+              key={`${module.title}-${cheatedIndex}`}
+              currIndex={i}
+              data={module}
+              taskTodo={taskTodo}
+            />
+          );
+        }) : (
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="space-between"
+            padding="0 0 28px 0"
+            borderBottom={2}
+            borderStyle="solid"
+            borderColor={commonBorderColor}
+          >
+            <Text fontSize="15px" color="gray.default">
+              {modules.length === 0 ? 'No activities for this module' : 'You have not started this module'}
+            </Text>
+            {modules.length !== 0 && (
+              <Button
+                color="blue.default"
+                textTransform="uppercase"
+                onClick={() => handleStartDay()}
+                background="white"
+                border="1px solid #0097CD"
+                gridGap="8px"
+              >
+                <Text color="blue.default" size="15px">
+                  Start module
+                </Text>
+              </Button>
+            )}
+          </Box>
+        )}
     </Box>
   );
 };

@@ -9,25 +9,59 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import Text from './Text';
 import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 import { AvatarSkeleton } from './Skeleton';
 
+const ProfilesSection = ({ title, profiles }) => (
+  <Box display="block">
+    <Heading as="h4" padding="0 0 8px 0" fontSize={15} lineHeight="18px" margin={0}>
+      {/* {t('cohortSideBar.classmates')} */}
+      {title}
+    </Heading>
+    <Grid
+      gridAutoRows="3.4rem"
+      templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
+      gap={0}
+    >
+      {
+        profiles.map((c) => {
+          const fullName = `${c.user.first_name} ${c.user.last_name}`;
+          return (
+            <AvatarUser key={fullName} data={c} />
+          );
+        })
+      }
+    </Grid>
+  </Box>
+);
+
 const CohortSideBar = ({
-  title,
-  cohortCity,
-  background,
-  width,
-  containerStyle,
+  title, teacherVersionActive, cohort, cohortCity, background, width, containerStyle,
   studentAndTeachers,
 }) => {
   const { t } = useTranslation('dashboard');
+  const router = useRouter();
   const { colorMode } = useColorMode();
   const teacher = studentAndTeachers.filter((st) => st.role === 'TEACHER');
   const students = studentAndTeachers.filter((st) => st.role === 'STUDENT');
   const teacherAssistants = studentAndTeachers.filter((st) => st.role === 'ASSISTANT');
+  const commonTextColor = useColorModeValue('gray.600', 'gray.200');
+
+  const kickoffDate = {
+    en: format(new Date(cohort.kickoff_date), 'MMM do'),
+    es: format(new Date(cohort.kickoff_date), 'MMM d', { locale: es }),
+  };
+
+  const endingDate = {
+    en: format(new Date(cohort.ending_date), 'MMM do'),
+    es: format(new Date(cohort.ending_date), 'MMM d', { locale: es }),
+  };
 
   return (
     <Box
@@ -55,15 +89,29 @@ const CohortSideBar = ({
         <Box d="flex" alignItems="center" marginBottom={18}>
           <Icon icon="group" width="39px" height="39px" />
           <Box marginLeft={13}>
-            <Heading as="h4" fontSize={15} fontWeight="700" lineHeight="18px" margin={0}>
-              {t('cohortSideBar.cohort') || title}
+            <Heading as="h4" color={commonTextColor} fontSize={15} fontWeight="700" lineHeight="18px" margin={0}>
+              {(`${t('cohortSideBar.cohort')} ${teacherVersionActive && ` | Day ${cohort.current_day}`}`) || title}
             </Heading>
-            <Text size="l" fontWeight="400" lineHeight="18px" margin={0}>
+            <Text size="l" color={commonTextColor} fontWeight="400" lineHeight="18px" margin={0}>
               {cohortCity}
+            </Text>
+            <Text pt="4px" size="sm" color={commonTextColor} fontWeight="700" lineHeight="18px" margin={0}>
+              Last Date:
+              {' '}
+              <Text as="span" size="sm" color={commonTextColor} fontWeight="400" lineHeight="18px" margin={0}>
+                {endingDate[router.locale]}
+              </Text>
+            </Text>
+            <Text size="sm" color={commonTextColor} fontWeight="700" lineHeight="18px" margin={0}>
+              Start Date:
+              {' '}
+              <Text as="span" size="sm" color={commonTextColor} fontWeight="400" lineHeight="18px" margin={0}>
+                {kickoffDate[router.locale]}
+              </Text>
             </Text>
           </Box>
         </Box>
-        {teacher.map((el) => {
+        {!teacherVersionActive && teacher.map((el) => {
           const { user } = el;
           const fullName = `${user.first_name} ${user.last_name}`;
           return (
@@ -82,73 +130,47 @@ const CohortSideBar = ({
         })}
       </Box>
       <Divider margin={0} style={{ borderColor: useColorModeValue('#DADADA', 'gray.700') }} />
-      <Box padding="18px 26px">
+      <Box display="flex" flexDirection="column" gridGap="20px" padding="18px 26px">
         {teacherAssistants.length > 0 && (
-          <>
-            <Heading as="h4" padding="25px 0 8px 0" fontSize={15} lineHeight="18px" margin={0}>
-              {t('cohortSideBar.assistant')}
-            </Heading>
-            <Grid
-              gridAutoRows="3.4rem"
-              templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
-              gap={0}
-            >
-              {teacherAssistants.map((a) => {
-                const fullName = `${a.user.first_name} ${a.user.last_name}`;
-                return (
-                  <AvatarUser key={fullName} data={a} />
-                );
-              })}
-            </Grid>
-          </>
+          <ProfilesSection
+            title={t('cohortSideBar.assistant')}
+            profiles={teacherAssistants}
+          />
         )}
-        <Heading as="h4" padding="25px 0 8px 0" fontSize={15} lineHeight="18px" margin={0}>
-          {t('cohortSideBar.classmates')}
-        </Heading>
-        <Grid
-          gridAutoRows="3.4rem"
-          templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
-          gap={0}
-        >
-          {
-            students.length !== 0 ? students.map((c) => {
-              const fullName = `${c.user.first_name} ${c.user.last_name}`;
-              return (
-                <AvatarUser key={fullName} data={c} />
-              );
-            }) : <AvatarSkeleton quantity={12} />
-          }
-        </Grid>
-      </Box>
-      <Box textAlign="center" padding="30px 0">
-        {/* <Link
-          href="/"
-          color="blue.default"
-          fontWeight="700"
-          fontSize={15}
-          lineHeight="22px"
-          letterSpacing="0.05em"
-          onClick={handleStudySession}
-        >
-          Create a study session
-        </Link> */}
+
+        {students.length !== 0 ? (
+          <ProfilesSection
+            title={t('cohortSideBar.classmates')}
+            profiles={students}
+          />
+        ) : (
+          <AvatarSkeleton withText quantity={12} />
+        )}
       </Box>
     </Box>
   );
 };
 
+ProfilesSection.propTypes = {
+  title: PropTypes.string.isRequired,
+  profiles: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
+
 CohortSideBar.propTypes = {
   width: PropTypes.string,
   title: PropTypes.string,
+  teacherVersionActive: PropTypes.bool,
   containerStyle: PropTypes.objectOf(PropTypes.any),
   studentAndTeachers: PropTypes.arrayOf(PropTypes.object),
   cohortCity: PropTypes.string,
+  cohort: PropTypes.objectOf(PropTypes.any),
   background: PropTypes.string,
   // handleStudySession: PropTypes.func,
 };
 CohortSideBar.defaultProps = {
   width: '352px',
   title: '',
+  teacherVersionActive: false,
   containerStyle: {},
   studentAndTeachers: [
     {
@@ -205,6 +227,7 @@ CohortSideBar.defaultProps = {
     },
   ],
   cohortCity: 'Miami Downtown',
+  cohort: {},
   background: '',
   // handleStudySession: () => {},
 };

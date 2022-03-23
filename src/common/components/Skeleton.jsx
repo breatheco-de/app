@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import {
-  Box, SkeletonText, Skeleton, useColorModeValue, SkeletonCircle,
+  Grid, Box, SkeletonText, Skeleton, useColorModeValue, SkeletonCircle,
 } from '@chakra-ui/react';
 
 export const MDSkeleton = () => {
@@ -172,7 +172,9 @@ export const ModuleMapSkeleton = () => {
   );
 };
 
-export const AvatarSkeleton = ({ quantity }) => {
+export const AvatarSkeleton = ({
+  withText, quantity, templateColumns, gridAutoRows, gridGap, ...chakraProps
+}) => {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
 
@@ -180,26 +182,51 @@ export const AvatarSkeleton = ({ quantity }) => {
 
   return (
     <>
-      {
-      arrOfCircles.map((item, index) => {
-        const indx = index;
-        return (
-          <SkeletonCircle
-            key={indx}
-            startColor={commonStartColor}
-            endColor={commonEndColor}
-            size="10"
-          />
-        );
-      })
-      }
+      {withText && (
+        <Skeleton
+          startColor={commonStartColor}
+          endColor={commonEndColor}
+          width="50%"
+          height="18px"
+          color="white"
+          borderRadius="10px"
+          mt="6"
+        />
+      )}
+      <Grid
+        {...chakraProps}
+        pt="25px"
+        gridAutoRows={gridAutoRows}
+        templateColumns={templateColumns}
+        gridGap={gridGap}
+      >
+        {arrOfCircles.map((item, index) => {
+          const indx = index;
+          return (
+            <SkeletonCircle
+              key={indx}
+              startColor={commonStartColor}
+              endColor={commonEndColor}
+              size="10"
+            />
+          );
+        })}
+      </Grid>
     </>
   );
 };
 
 AvatarSkeleton.propTypes = {
+  withText: PropTypes.bool,
   quantity: PropTypes.number,
+  templateColumns: PropTypes.string,
+  gridAutoRows: PropTypes.string,
+  gridGap: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 AvatarSkeleton.defaultProps = {
+  withText: false,
   quantity: 3,
+  templateColumns: 'repeat(auto-fill, minmax(3.5rem, 1fr))',
+  gridAutoRows: '3.4rem',
+  gridGap: 0,
 };

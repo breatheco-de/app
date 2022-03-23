@@ -8,7 +8,7 @@ import MarkDownParser from '../common/components/MarkDownParser';
 
 export const getStaticProps = async () => {
   const results = await fetch(
-    'https://raw.githubusercontent.com/breatheco-de/app/main/ABOUT.md',
+    'https://raw.githubusercontent.com/ArielCalisaya/app/main/ABOUT.md',
   )
     .then((res) => res.text())
     .catch((err) => console.error(err));
@@ -31,8 +31,8 @@ const AboutUs = ({ data }) => {
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      padding="45px 0 0 0"
-      margin={{ base: '0', md: '4% 10% 0 10%' }}
+      padding="35px 0 0 0"
+      margin={{ base: '0', md: '0 10% 0 10%' }}
     >
       <Link
         href="/"
@@ -40,6 +40,7 @@ const AboutUs = ({ data }) => {
         padding={{ base: '0px 10px 15px 10px', md: '0' }}
         w="auto"
         borderRadius="15px"
+        color="blue.default"
       >
         {`← ${t('common:backToHome')}`}
       </Link>

@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import bc from '../services/breathecode';
+import { isWindow } from '../../utils';
 import axiosInstance from '../../axios';
 
 const initialState = {
@@ -21,7 +22,6 @@ const reducer = (state, action) => {
     }
     case 'LOGIN': {
       const { user } = action.payload;
-
       return {
         ...state,
         isAuthenticated: true,
@@ -63,7 +63,9 @@ const setSession = (token) => {
   if (token) {
     localStorage.setItem('accessToken', token);
     axiosInstance.defaults.headers.common.Authorization = `Token ${token}`;
+    document.cookie = `accessToken=${token}; path=/`;
   } else {
+    document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     localStorage.removeItem('syllabus');
     localStorage.removeItem('programMentors');
     localStorage.removeItem('programServices');
@@ -90,10 +92,13 @@ const isValid = async (token, router) => {
 };
 
 const getToken = () => {
-  const query = new URLSearchParams(window.location.search);
-  const queryToken = query.get('token');
-  if (queryToken) return queryToken;
-  return localStorage.getItem('accessToken');
+  if (isWindow) {
+    const query = new URLSearchParams(window.location.search || '');
+    const queryToken = query.get('token');
+    if (queryToken) return queryToken;
+    return localStorage.getItem('accessToken');
+  }
+  return null;
 };
 
 export const AuthContext = createContext({
@@ -103,25 +108,26 @@ export const AuthContext = createContext({
 const AuthProvider = ({ children }) => {
   const router = useRouter();
   const [state, dispatch] = useReducer(reducer, initialState);
-  useEffect(() => {
-    (async () => {
-      const token = getToken();
-      if (await isValid(token, router)) {
-        setSession(token);
-        const response = await bc.auth().me();
-        dispatch({
-          type: 'INIT',
-          payload: { user: response.data, isAuthenticated: true },
-        });
-      } else {
-        setSession(null);
-        dispatch({
-          type: 'INIT',
-          payload: { user: null, isAuthenticated: false },
-        });
-      }
-    })();
-  }, []);
+
+  // Validate and Fetch user token from localstorage when it changes
+  const token = getToken();
+  useEffect(async () => {
+    const isValidToken = await isValid(token, router);
+    if (isValidToken) {
+      setSession(token);
+      const response = await bc.auth().me();
+      dispatch({
+        type: 'INIT',
+        payload: { user: response.data, isAuthenticated: true },
+      });
+    } else {
+      setSession(null);
+      dispatch({
+        type: 'INIT',
+        payload: { user: null, isAuthenticated: false },
+      });
+    }
+  }, [token]);
 
   const login = async (payload = null) => {
     try {
@@ -180,6 +186,7 @@ const AuthProvider = ({ children }) => {
   const logout = () => {
     router.push('/login');
     setSession(null);
+    document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     dispatch({ type: 'LOGOUT' });
   };
 

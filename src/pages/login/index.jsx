@@ -4,10 +4,10 @@ import {
 import I from 'next/image';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import logo from '../../public/static/images/bc_logo.png';
-import Login from '../common/components/Forms/LogIn';
-import Register from '../common/components/Forms/Register';
-import useAuth from '../common/hooks/useAuth';
+import logo from '../../../public/static/images/bc_logo.png';
+import Login from '../../common/components/Forms/LogIn';
+import Register from '../../common/components/Forms/Register';
+import useAuth from '../../common/hooks/useAuth';
 
 function login() {
   const { user } = useAuth();

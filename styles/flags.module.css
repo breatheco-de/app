@@ -1,0 +1,9 @@
+.flag {
+  width: 25px;
+  height: 25px;
+  background-image: url("../public/static/images/flags.png");
+  background-repeat: no-repeat;
+}
+
+.flag.es { background-position: -0px -120px; }
+.flag.en { background-position: -168px -336px; }
