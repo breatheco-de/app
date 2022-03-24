@@ -14,7 +14,7 @@ const StickySideBar = ({
   const [openKeyConcepts, setOpenKeyConcepts] = useState(false);
   const [openTeacherInstructions, setOpenTeacherInstructions] = useState(false);
 
-  const highlightColors = useColorModeValue('featuredLight', 'featuredDark');
+  const highlightColors = useColorModeValue('featuredLight', 'darkTheme');
   const commonBorderColor = useColorModeValue('white', 'gray.700');
 
   const getCurrentModalState = (itemSlug) => {
@@ -90,7 +90,7 @@ const StickySideBar = ({
                 >
                   <ModalOverlay />
                   <ModalContent
-                    background={useColorModeValue('white', 'darkTheme')}
+                    background={useColorModeValue('white', 'featuredDark')}
                     border={2}
                     borderStyle="solid"
                     borderColor={commonBorderColor}
@@ -128,7 +128,7 @@ const StickySideBar = ({
                             {item.slug === 'teacher-instructions' && (
                               <Box display="flex" justifyContent="center" pb="15px" width="100%">
                                 <Button variant="default" height="35px" padding="0 10px" onClick={item.actionHandler}>
-                                  Extend teacher instructions
+                                  {item.actionState ? 'Hide teacher instructions' : 'Extend teacher instructions'}
                                 </Button>
                               </Box>
                             )}

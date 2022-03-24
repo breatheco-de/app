@@ -42,6 +42,7 @@ const Content = () => {
 
   //                                          gray.200    gray.500
   const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
+  const commonFeaturedColors = useColorModeValue('featuredLight', 'featuredDark');
   const bgColor = useColorModeValue('#FFFFFF', '#17202A');
   const Open = !isOpen;
   const { teacherInstructions, keyConcepts } = selectedSyllabus;
@@ -232,6 +233,7 @@ const Content = () => {
                 title: 'Teacher instructions',
                 content: teacherInstructions,
                 actionHandler: () => setExtendedIsEnabled(!extendedIsEnabled),
+                actionState: extendedIsEnabled,
                 id: 1,
               },
               {
@@ -367,14 +369,16 @@ const Content = () => {
         transitionDelay="0ms"
       >
         {extendedIsEnabled && extendedInstructions !== null && (
-          <Box
-            pb="30px"
-            borderBottom={2}
-            borderStyle="solid"
-            borderColor={commonBorderColor}
-          >
-            <MarkdownParser content={extendedInstructions.content} />
-          </Box>
+          <>
+            <Box
+              p="20px 20px 30px 20px"
+              borderRadius="3px"
+              background={commonFeaturedColors}
+            >
+              <MarkdownParser content={extendedInstructions.content} />
+            </Box>
+            <Box margin="4rem 0" height="4px" width="100%" background={commonBorderColor} />
+          </>
         )}
         {GetReadme() !== false ? (
           GetReadme()
