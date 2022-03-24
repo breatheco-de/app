@@ -45,6 +45,8 @@ const AttendanceModal = ({
   const toast = useToast();
 
   const commonFontColor = useColorModeValue('gray.600', 'gray.200');
+  const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
+
   const { getCheckboxProps } = useCheckboxGroup({
     onChange: setChecked,
   });
@@ -105,7 +107,7 @@ const AttendanceModal = ({
             if (activitiesForDay.length === 0) saveCohortAttendancy();
             else {
               toast({
-                title: 'No attendancy to report',
+                title: `Attendance for day ${day} has already been taken`,
                 status: 'warning',
                 duration: 9000,
                 isClosable: true,
@@ -140,11 +142,11 @@ const AttendanceModal = ({
           </Text>
           <Box display="flex" gridGap="25px" padding="20px 0 0 0">
             <FormControl id="days">
-              <FormLabel htmlFor="day" color="gray.600" fontSize="12px">Day</FormLabel>
+              <FormLabel htmlFor="day" color={commonFontColor} fontSize="12px">Day</FormLabel>
               <NumberInput
                 defaultValue={defaultDay}
                 max={durationInDays}
-                min={0}
+                min={defaultDay}
                 onChange={(newDay) => setDay(parseInt(newDay, 10))}
               >
                 <NumberInputField color={colorMode === 'light' ? 'black' : 'white'} />
@@ -156,7 +158,7 @@ const AttendanceModal = ({
             </FormControl>
 
             <FormControl>
-              <FormLabel htmlFor="current_module" color="gray.600" fontSize="12px">Module</FormLabel>
+              <FormLabel htmlFor="current_module" color={commonFontColor} fontSize="12px">Module</FormLabel>
               {sortedAssignments.length > 0 && (
                 <Select defaultValue={currentModule} onChange={(e) => setCurrentModule(parseInt(e.target.value, 10))} id="module" placeholder="Select module">
                   {sortedAssignments.map((module) => (
@@ -168,7 +170,7 @@ const AttendanceModal = ({
               )}
             </FormControl>
           </Box>
-          <Box height="1px" bg="gray.light" marginTop="32px" marginBottom="15px" />
+          <Box height="1px" bg={commonBorderColor} marginTop="32px" marginBottom="15px" />
           <Box>
             <Flex justifyContent="space-between" padding="6px 0 16px 0">
               <Text size="l" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
@@ -235,6 +237,7 @@ const AttendanceModal = ({
 export const CheckboxCard = (props) => {
   const { children } = props;
   const { getInputProps, getCheckboxProps } = useCheckbox(props);
+  const commonBorderColor = useColorModeValue('gray.300', 'gray.500');
   const input = getInputProps();
   const checkbox = getCheckboxProps();
   const { colorMode } = useColorMode();
@@ -244,10 +247,10 @@ export const CheckboxCard = (props) => {
       <Box
         {...checkbox}
         cursor="pointer"
-        borderWidth="1px"
+        // borderWidth="2px"
         borderRadius="md"
-        border="1px solid"
-        borderColor="#A9A9A9"
+        border="2px solid"
+        borderColor={commonBorderColor}
         _checked={{
           bg: colorMode === 'light' ? 'blue.light' : 'featuredDark',
           color: colorMode === 'light' ? 'dark' : 'white',
