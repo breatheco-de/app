@@ -166,6 +166,7 @@ const Dashboard = () => {
         });
         const { filteredModules, modules } = nestedAssignments;
 
+        // Data to be sent to [sortedAssignments] = state
         const assignmentsStruct = {
           id,
           label,
@@ -173,6 +174,7 @@ const Dashboard = () => {
           modules,
           filteredModules,
           teacherInstructions: assignment.teacher_instructions,
+          extendedInstructions: assignment.extended_instructions,
           keyConcepts: assignment['key-concepts'],
         };
 

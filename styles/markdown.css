@@ -455,8 +455,8 @@ blockquote > :last-child {
   line-height: 2.0 !important;
   overflow: auto;
   width: fit-content;
-  display: initial;
-  padding: 0.3em 0.5em !important;
+  display: initial !important;
+  padding: 0.2em 0.5em !important;
 }
 .text-highlight{
   display: block;

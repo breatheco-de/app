@@ -3,7 +3,6 @@ import redirectHandler from '../../lib/redirectsHandler';
 
 const middleware = async (req) => {
   const token = await req.cookies.accessToken;
-  console.log('token:::', token);
 
   return redirectHandler(req, !token, NextResponse, '/login');
 };

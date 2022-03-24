@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import {
   Box, VStack, useColorModeValue, Modal, ModalOverlay, ModalContent,
-  ModalHeader, ModalCloseButton, ModalBody,
+  ModalHeader, ModalCloseButton, ModalBody, Button,
 } from '@chakra-ui/react';
 import { Fragment, useState } from 'react';
 import Icon from './Icon';
@@ -121,9 +121,18 @@ const StickySideBar = ({
                             );
                           })
                         ) : (
-                          <Text size="l" pb="25px" fontWeight="400">
-                            {item.content}
-                          </Text>
+                          <>
+                            <Text size="l" pb="25px" fontWeight="400">
+                              {item.content}
+                            </Text>
+                            {item.slug === 'teacher-instructions' && (
+                              <Box display="flex" justifyContent="center" pb="15px" width="100%">
+                                <Button variant="default" height="35px" padding="0 10px" onClick={item.actionHandler}>
+                                  Extend teacher instructions
+                                </Button>
+                              </Box>
+                            )}
+                          </>
                         )
                       }
                     </ModalBody>

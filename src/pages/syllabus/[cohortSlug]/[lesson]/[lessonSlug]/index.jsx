@@ -27,11 +27,13 @@ const Content = () => {
   const { isOpen, onToggle } = useDisclosure();
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [readme, setReadme] = useState(null);
+  const [extendedInstructions, setExtendedInstructions] = useState(null);
+  const [extendedIsEnabled, setExtendedIsEnabled] = useState(false);
   const [quizSlug, setQuizSlug] = useState(null);
   // const { syllabus = [], setSyllabus } = useSyllabus();
   const [sortedAssignments] = usePersistent('sortedAssignments', []);
   const [cohortSession] = usePersistent('cohortSession', {});
-  const [selectedSyllabus, setSelectedSyllabus] = useState([]);
+  const [selectedSyllabus, setSelectedSyllabus] = useState({});
   const { user, choose } = useAuth();
   const toast = useToast();
   const router = useRouter();
@@ -42,6 +44,7 @@ const Content = () => {
   const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
   const bgColor = useColorModeValue('#FFFFFF', '#17202A');
   const Open = !isOpen;
+  const { teacherInstructions, keyConcepts } = selectedSyllabus;
 
   const slide = {
     minWidth: '310px',
@@ -166,12 +169,21 @@ const Content = () => {
   useEffect(() => {
     const findSelectedSyllabus = sortedAssignments.filter(
       (l) => l.modules.find((m) => m.slug === router.query.lessonSlug),
-    );
+    )[0];
 
     if (findSelectedSyllabus) {
       setSelectedSyllabus(findSelectedSyllabus);
     }
   }, [sortedAssignments, router.query.lessonSlug]);
+
+  useEffect(() => {
+    if (selectedSyllabus.extendedInstructions) {
+      const content = selectedSyllabus.extendedInstructions;
+      // const MDecoded = content && typeof content === 'string' ? decodeFromBinary(content) : null;
+      const markdown = getMarkDownContent(content);
+      setExtendedInstructions(markdown);
+    }
+  }, [selectedSyllabus]);
 
   const containerSlide = () => {
     if (isBelowLaptop) {
@@ -207,9 +219,6 @@ const Content = () => {
     return false;
   };
 
-  const currentTeacherInstructions = selectedSyllabus.map((s) => s.teacherInstructions);
-  const currentKeyConcepts = selectedSyllabus.map((s) => s.keyConcepts);
-
   return (
     <Flex position="relative">
       {
@@ -221,14 +230,15 @@ const Content = () => {
                 icon: 'message',
                 slug: 'teacher-instructions',
                 title: 'Teacher instructions',
-                content: currentTeacherInstructions[0],
+                content: teacherInstructions,
+                actionHandler: () => setExtendedIsEnabled(!extendedIsEnabled),
                 id: 1,
               },
               {
                 icon: 'key',
                 slug: 'key-concepts',
                 title: 'Key Concepts',
-                content: currentKeyConcepts[0],
+                content: keyConcepts,
                 id: 2,
               },
             ]}
@@ -356,6 +366,16 @@ const Content = () => {
         transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
         transitionDelay="0ms"
       >
+        {extendedIsEnabled && extendedInstructions !== null && (
+          <Box
+            pb="30px"
+            borderBottom={2}
+            borderStyle="solid"
+            borderColor={commonBorderColor}
+          >
+            <MarkdownParser content={extendedInstructions.content} />
+          </Box>
+        )}
         {GetReadme() !== false ? (
           GetReadme()
         ) : (
