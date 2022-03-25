@@ -49,9 +49,9 @@ function useReadyStatus(
 function useInit(updateContainerWidth, onMouseUpHandler) {
   useEffect(() => {
     updateContainerWidth();
-    document.addEventListener('click', onMouseUpHandler);
+    document.addEventListener('onmousemove', onMouseUpHandler);
     return () => {
-      document.removeEventListener('click', onMouseUpHandler);
+      document.removeEventListener('onmousemove', onMouseUpHandler);
     };
   }, []);
 }

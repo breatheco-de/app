@@ -166,6 +166,7 @@ const Dashboard = () => {
         });
         const { filteredModules, modules } = nestedAssignments;
 
+        // Data to be sent to [sortedAssignments] = state
         const assignmentsStruct = {
           id,
           label,
@@ -173,6 +174,7 @@ const Dashboard = () => {
           modules,
           filteredModules,
           teacherInstructions: assignment.teacher_instructions,
+          extendedInstructions: assignment.extended_instructions,
           keyConcepts: assignment['key-concepts'],
         };
 
@@ -229,7 +231,7 @@ const Dashboard = () => {
           base: 'column', sm: 'column', md: 'row', lg: 'row',
         }}
       >
-        <Box width="100%" minW={{ base: 'auto', md: '770px' }}>
+        <Box width="100%" minW={{ base: 'auto', md: 'clamp(300px, 60vw, 770px)' }}>
           {(cohortSession?.syllabus_version?.name || cohortProgram.name) ? (
             <Heading as="h1" size="xl">
               {cohortSession.syllabus_version.name || cohortProgram.name}
@@ -249,6 +251,7 @@ const Dashboard = () => {
             display={{ base: 'flex', md: 'none' }}
             flexDirection="column"
             gridGap="30px"
+            // minWidth={{ base: 'auto', md: 'clamp(250px, 30vw, 380px)' }}
           >
             {['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) && (
               <TeacherSidebar
@@ -332,7 +335,8 @@ const Dashboard = () => {
 
           </Box>
 
-          <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="70px" />
+          {/* <Box height={useColorModeValue('1px', '2px')}
+          bg={useColorModeValue('gray.200', 'gray.700')} marginY="70px" /> */}
 
           {/* <Box
             marginTop="30px"
@@ -356,6 +360,7 @@ const Dashboard = () => {
           display={{ base: 'none', md: 'flex' }}
           flexDirection="column"
           gridGap="30px"
+          minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
         >
           {['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) && (
             <TeacherSidebar

@@ -78,7 +78,7 @@ const TeacherSidebar = ({
       borderWidth="0px"
       borderRadius="lg"
       overflow="hidden"
-      minWidth="298px"
+      // minWidth="298px"
     >
       <Box p="4" pb="30px" pt="20px">
         <Heading width="100%" fontWeight="900" fontSize="22px" textAlign="left" justify="center" mt="0px" mb="0px">
