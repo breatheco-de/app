@@ -28,12 +28,29 @@
   justify-content: center;
   align-items: center;
 }
+
+@keyframes outAnimation {
+  0% {
+      transform: scale(1.0);
+      -webkit-transform: scale(1.0);
+  }
+  100% {
+      transform: scale(1.2);
+      -webkit-transform: scale(1.2);
+  }
+}
+
 .before-after-slider__delimiter-icon {
   width: 25px;
   height: 25px;
   border-radius: 50%;
   background: #fff;
   cursor: pointer;
+  animation: outAnimation 0.5s ease-in-out infinite alternate;
+}
+
+.before-after-slider__delimiter-icon:hover {
+  animation: outAnimation -99s;
 }
 
 .before-after-slider__size-fix-img {
