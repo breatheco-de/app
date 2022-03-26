@@ -98,16 +98,25 @@ const BeforeAfter = ({ before, after }) => {
   );
 };
 
-const MDHeading = ({ children, id }) => (
-  <Heading
-    id={id}
-    size="sm"
-    padding="20px 0 15px 0"
-    marginBottom="16px"
-  >
-    {children}
-  </Heading>
-);
+const MDHeading = ({ children, id, tagType }) => {
+  const variantsStyle = {
+    h1: 'sm',
+    h2: 'sm',
+    h3: '18px',
+  };
+
+  return (
+    <Heading
+      as={tagType} // h1, h2, h3, h4, h5, h6
+      id={id}
+      size={variantsStyle[tagType] || 'sm'}
+      padding="20px 0 15px 0"
+      marginBottom="16px"
+    >
+      {children}
+    </Heading>
+  );
+};
 
 const MDText = ({ children }) => {
   const [haveHighlight, setHaveHighlight] = useState(false);
@@ -167,9 +176,24 @@ const MarkDownParser = ({ content, withToc, frontMatter }) => {
           p: { component: MDText },
           a: { component: MDLink },
           hr: { component: MDHr },
-          h2: { component: MDHeading },
-          h3: { component: MDHeading },
-          h1: { component: MDHeading },
+          h1: {
+            component: MDHeading,
+            props: {
+              tagType: 'h2',
+            },
+          },
+          h2: {
+            component: MDHeading,
+            props: {
+              tagType: 'h2',
+            },
+          },
+          h3: {
+            component: MDHeading,
+            props: {
+              tagType: 'h3',
+            },
+          },
           ul: {
             props: { className: 'md-bullet' },
           },
@@ -212,10 +236,12 @@ Code.defaultProps = {
 MDHeading.propTypes = {
   children: PropTypes.node.isRequired,
   id: PropTypes.string,
+  tagType: PropTypes.string,
 };
 
 MDHeading.defaultProps = {
   id: '',
+  tagType: 'h2',
 };
 
 MDText.propTypes = {

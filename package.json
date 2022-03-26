@@ -30,6 +30,7 @@
     "cy:run": "cypress run",
     "lint:files": "eslint src/**/*.{js,jsx}",
     "lint:fix": "eslint src/**/*.{js,jsx} --fix",
+    "lint:fix:components": "eslint --fix src/common/components/**/*.{js,jsx}",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -59,6 +60,7 @@
     "react-dom": "17.0.2",
     "react-redux": "7.2.4",
     "react-syntax-highlighter": "15.4.5",
+    "react-youtube": "^7.14.0",
     "redux": "4.1.0",
     "redux-devtools-extension": "2.13.9",
     "redux-thunk": "2.3.0",

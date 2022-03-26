@@ -26,11 +26,25 @@ const StickySideBar = ({
     }
     return false;
   };
+
+  const getCurrentHandler = (item) => {
+    if (item.slug === 'video-player') {
+      item.actionHandler();
+    }
+    if (item.slug === 'key-concepts') {
+      setOpenKeyConcepts(true);
+    }
+    if (item.slug === 'teacher-instructions') {
+      setOpenTeacherInstructions(true);
+    }
+  };
+
   return (
     <>
       <VStack
         width={width}
         position="fixed"
+        zIndex={99}
         top={top}
         right={right}
         left={left}
@@ -39,7 +53,7 @@ const StickySideBar = ({
           menu.map((item, i) => {
             const currentModalState = getCurrentModalState(item.slug);
             const index = i;
-            return item.content && (
+            return (item.content || item.actionHandler) && (
               <Fragment key={`${item.id}-index${index}`}>
                 <Box
                   key={item.id}
@@ -48,24 +62,19 @@ const StickySideBar = ({
                   as="button"
                   bg="transparent"
                   border="none"
-                  onClick={() => {
-                    if (item.slug === 'key-concepts') {
-                      setOpenKeyConcepts(true);
-                    }
-                    if (item.slug === 'teacher-instructions') {
-                      setOpenTeacherInstructions(true);
-                    }
-                  }}
+                  onClick={() => getCurrentHandler(item)}
                 >
                   <Box
-                    bg={useColorModeValue('white', 'blue.default')}
+                    bg={useColorModeValue('white', 'featuredDark')}
+                    display="flex"
+                    alignItems="center"
                     margin="auto"
                     width="fit-content"
                     height="48px"
                     variant="default"
                     padding="15px"
-                    border="1px solid"
-                    borderColor={useColorModeValue('gray.default', 'blue.default')}
+                    border={useColorModeValue('1px solid', '2px solid')}
+                    borderColor={useColorModeValue('gray.default', 'gray.500')}
                     borderRadius="full"
                   >
                     <Icon icon={item.icon} width="18px" height="18px" color={useColorModeValue('gray', 'white')} />
