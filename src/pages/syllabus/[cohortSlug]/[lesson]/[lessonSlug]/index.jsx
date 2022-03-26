@@ -34,6 +34,7 @@ const Content = () => {
   const [quizSlug, setQuizSlug] = useState(null);
   // const { syllabus = [], setSyllabus } = useSyllabus();
   const [sortedAssignments] = usePersistent('sortedAssignments', []);
+  const [showSolutionVideo, setShowSolutionVideo] = useState(false);
   const [cohortSession] = usePersistent('cohortSession', {});
   const [selectedSyllabus, setSelectedSyllabus] = useState({});
   const [currentData, setCurrentData] = useState({});
@@ -260,7 +261,14 @@ const Content = () => {
       },
     ] : [];
 
-  console.log('currentData:::', currentData);
+  const videoTutorial = currentData?.solution_video_url ? [{
+    icon: 'youtube',
+    slug: 'video-player',
+    title: 'Video tutorial',
+    content: '',
+    actionHandler: () => setShowSolutionVideo(!showSolutionVideo),
+    id: 3,
+  }] : [];
 
   return (
     <Flex position="relative">
@@ -268,13 +276,14 @@ const Content = () => {
         width="auto"
         menu={[
           ...teacherActions,
-          {
-            icon: 'youtube',
-            slug: 'video-player',
-            title: 'Video tutorial',
-            content: '#923jmi2m',
-            id: 3,
-          },
+          ...videoTutorial,
+          // {
+          //   icon: 'youtube',
+          //   slug: 'video-player',
+          //   title: 'Video tutorial',
+          //   content: '#923jmi2m',
+          //   id: 3,
+          // },
         ]}
       />
 
@@ -411,22 +420,35 @@ const Content = () => {
           </>
         )}
 
+        {currentData.solution_video_url && showSolutionVideo && (
+          <Box padding="0.4rem 2rem 2rem 2rem" background={useColorModeValue('featuredLight', 'featuredDark')}>
+            <Heading as="h2" size="sm">
+              Video Tutorial
+            </Heading>
+            <ReactPlayer
+              id={currentData.solution_video_url}
+              playOnThumbnail
+              imageSize="sddefault"
+              style={{
+                width: '100%',
+                objectFit: 'cover',
+                aspectRatio: '16/9',
+              }}
+            />
+          </Box>
+        )}
+
         {currentData && currentData.intro_video_url && (
           <>
             <Heading as="h2" size="sm">
               Video Introduction
             </Heading>
             <ReactPlayer
-              // width="400px"
-              // height="300px"
               id={currentData.intro_video_url}
               playOnThumbnail
-              // index={index}
-              // thumb={item.project_image}
               imageSize="sddefault"
               style={{
                 width: '100%',
-                // height: '450px',
                 objectFit: 'cover',
                 aspectRatio: '16/9',
               }}

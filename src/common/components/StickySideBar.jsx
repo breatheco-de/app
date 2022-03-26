@@ -29,7 +29,7 @@ const StickySideBar = ({
 
   const getCurrentHandler = (item) => {
     if (item.slug === 'video-player') {
-      console.log(`Video Player with id ${item.content} clicked`);
+      item.actionHandler();
     }
     if (item.slug === 'key-concepts') {
       setOpenKeyConcepts(true);
@@ -39,7 +39,6 @@ const StickySideBar = ({
     }
   };
 
-  console.log('menu:::', menu);
   return (
     <>
       <VStack
@@ -54,7 +53,7 @@ const StickySideBar = ({
           menu.map((item, i) => {
             const currentModalState = getCurrentModalState(item.slug);
             const index = i;
-            return item.content && (
+            return (item.content || item.actionHandler) && (
               <Fragment key={`${item.id}-index${index}`}>
                 <Box
                   key={item.id}
@@ -66,14 +65,16 @@ const StickySideBar = ({
                   onClick={() => getCurrentHandler(item)}
                 >
                   <Box
-                    bg={useColorModeValue('white', 'blue.default')}
+                    bg={useColorModeValue('white', 'featuredDark')}
+                    display="flex"
+                    alignItems="center"
                     margin="auto"
                     width="fit-content"
                     height="48px"
                     variant="default"
                     padding="15px"
-                    border="1px solid"
-                    borderColor={useColorModeValue('gray.default', 'blue.default')}
+                    border={useColorModeValue('1px solid', '2px solid')}
+                    borderColor={useColorModeValue('gray.default', 'gray.500')}
                     borderRadius="full"
                   >
                     <Icon icon={item.icon} width="18px" height="18px" color={useColorModeValue('gray', 'white')} />
