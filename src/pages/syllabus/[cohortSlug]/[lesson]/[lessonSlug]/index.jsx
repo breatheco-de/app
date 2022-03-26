@@ -147,16 +147,18 @@ const Content = () => {
       big: true,
     })
       .get()
-      .then((le) => {
-        if (le.data.length === 0 || le.data[0].asset_type === 'QUIZ') {
+      .then(({ data }) => {
+        const currData = data.find((el) => el.slug === lessonSlug);
+        console.log('currData', currData);
+        if (data.length === 0 || currData.asset_type === 'QUIZ') {
           setQuizSlug(lessonSlug);
         }
-        if (le.data.length !== 0
-          && le.data[0] !== undefined
-          && le.data[0].readme !== null
+        if (data.length !== 0
+          && currData !== undefined
+          && currData.readme !== null
         ) {
           // Binary base64 decoding ⇢ UTF-8
-          const MDecoded = le.data[0].readme && typeof le.data[0].readme === 'string' ? decodeFromBinary(le.data[0].readme) : null;
+          const MDecoded = currData.readme && typeof currData.readme === 'string' ? decodeFromBinary(currData.readme) : null;
           const markdown = getMarkDownContent(MDecoded);
           setReadme(markdown);
         }
@@ -220,33 +222,41 @@ const Content = () => {
     return false;
   };
 
+  const teacherActions = ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_role)
+    ? [
+      {
+        icon: 'message',
+        slug: 'teacher-instructions',
+        title: 'Teacher instructions',
+        content: teacherInstructions,
+        actionHandler: () => setExtendedIsEnabled(!extendedIsEnabled),
+        actionState: extendedIsEnabled,
+        id: 1,
+      },
+      {
+        icon: 'key',
+        slug: 'key-concepts',
+        title: 'Key Concepts',
+        content: keyConcepts,
+        id: 2,
+      },
+    ] : [];
+
   return (
     <Flex position="relative">
-      {
-        ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_role) && (
-          <StickySideBar
-            width="auto"
-            menu={[
-              {
-                icon: 'message',
-                slug: 'teacher-instructions',
-                title: 'Teacher instructions',
-                content: teacherInstructions,
-                actionHandler: () => setExtendedIsEnabled(!extendedIsEnabled),
-                actionState: extendedIsEnabled,
-                id: 1,
-              },
-              {
-                icon: 'key',
-                slug: 'key-concepts',
-                title: 'Key Concepts',
-                content: keyConcepts,
-                id: 2,
-              },
-            ]}
-          />
-        )
-      }
+      <StickySideBar
+        width="auto"
+        menu={[
+          ...teacherActions,
+          {
+            icon: 'youtube',
+            slug: 'video-player',
+            title: 'Video tutorial',
+            content: '#923jmi2m',
+            id: 3,
+          },
+        ]}
+      />
 
       <IconButton
         style={{ zIndex: 20 }}

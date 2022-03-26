@@ -1,23 +1,18 @@
-import { useColorMode } from '@chakra-ui/react';
-
 const youtube = ({
-  width, height, style, color,
-}) => {
-  const { colorMode } = useColorMode();
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={width || '24'}
-      height={height || '24'}
-      style={style}
-      viewBox="0 0 24 24"
-    >
-      <path
-        fill={colorMode === 'light' ? color || 'red' : '#FFFFFF'}
-        d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm4.441 16.892c-2.102.144-6.784.144-8.883 0-2.276-.156-2.541-1.27-2.558-4.892.017-3.629.285-4.736 2.558-4.892 2.099-.144 6.782-.144 8.883 0 2.277.156 2.541 1.27 2.559 4.892-.018 3.629-.285 4.736-2.559 4.892zm-6.441-7.234l4.917 2.338-4.917 2.346v-4.684z"
-      />
-    </svg>
-  );
-};
+  width, height, style,
+}) => (
+  <svg
+    style={style}
+    width={width || '24'}
+    height={height || '24'}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+  >
+    <path
+      fill="#f90000"
+      d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"
+    />
+  </svg>
+);
 
 export default youtube;

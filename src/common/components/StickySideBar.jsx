@@ -26,6 +26,20 @@ const StickySideBar = ({
     }
     return false;
   };
+
+  const getCurrentHandler = (item) => {
+    if (item.slug === 'video-player') {
+      console.log(`Video Player with id ${item.content} clicked`);
+    }
+    if (item.slug === 'key-concepts') {
+      setOpenKeyConcepts(true);
+    }
+    if (item.slug === 'teacher-instructions') {
+      setOpenTeacherInstructions(true);
+    }
+  };
+
+  console.log('menu:::', menu);
   return (
     <>
       <VStack
@@ -48,14 +62,7 @@ const StickySideBar = ({
                   as="button"
                   bg="transparent"
                   border="none"
-                  onClick={() => {
-                    if (item.slug === 'key-concepts') {
-                      setOpenKeyConcepts(true);
-                    }
-                    if (item.slug === 'teacher-instructions') {
-                      setOpenTeacherInstructions(true);
-                    }
-                  }}
+                  onClick={() => getCurrentHandler(item)}
                 >
                   <Box
                     bg={useColorModeValue('white', 'blue.default')}
