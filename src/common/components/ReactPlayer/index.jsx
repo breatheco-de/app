@@ -36,6 +36,7 @@ const VideoWrapper = styled.section`
 const Iframe = styled(YouTube)`
   padding: 0;
   border-radius: ${(props) => props.borderRadius || 'auto'};
+  aspect-ratio: ${(props) => props.aspectRatio || '16/9'};
   height: ${(props) => props.height};
 `;
 
@@ -115,6 +116,7 @@ const Player = ({
       {showVideo ? (
         <Iframe
           borderRadius={style.borderRadius}
+          aspectRatio={style.aspectRatio}
           videoId={ytParser(id)}
           id={`a-${id} do-not-delete-this-hack`}
           onReady={(e) => onReady(e)}
@@ -127,7 +129,7 @@ const Player = ({
           onPlaybackQualityChange={onPlaybackQualityChange}
           opts={{
             width: '100%',
-            height: `${style.height}`,
+            height: `${style.height || 'auto'}`,
             host: noCookies
               ? 'https://www.youtube-nocookie.com'
               : 'https://www.youtube.com',
@@ -151,6 +153,7 @@ const Player = ({
                 style={{
                   height: `${style.height}` || '100%',
                   objectFit: `${style.objectFit || 'cover'}`,
+                  aspectRatio: `${style.aspectRatio || '16/9'}`,
                   width: `${style.width}` || '100%',
                   borderRadius: `${style.borderRadius}` || 'auto',
                 }}

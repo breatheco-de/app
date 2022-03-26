@@ -27,17 +27,18 @@ export default function Example() {
         <Counter title={t('counter:title')} resetText={t('counter:resetButton')} />
 
         <ReactPlayer
-          width="400px"
-          height="300px"
-          id="https://www.youtube.com/watch?v=PWkgaAT8pHg"
+          width="700px"
+          // height="450px"
+          id="https://www.youtube.com/watch?v=BDKdUPDez-U"
           playOnThumbnail
           // index={index}
           // thumb={item.project_image}
-          imageSize="maxresdefault"
+          imageSize="sddefault"
           style={{
-            width: '900px',
-            height: '500px',
-            objectFit: 'contain',
+            width: '700px',
+            // height: '450px',
+            objectFit: 'cover',
+            aspectRatio: '16/9',
           }}
         />
       </main>

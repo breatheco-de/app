@@ -45,6 +45,7 @@ const StickySideBar = ({
       <VStack
         width={width}
         position="fixed"
+        zIndex={99}
         top={top}
         right={right}
         left={left}

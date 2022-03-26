@@ -195,6 +195,10 @@
   display: inline-block;
 }
 
+.markdown-body li * {
+  display: initial;
+}
+
 .markdown-body ul, ol {
   padding-left: 30px;
 }
@@ -317,6 +321,12 @@ blockquote > :last-child {
   text-align: left;
   margin: 0;
   padding: 6px 13px;
+}
+.markdown-body table tr td img {
+  display: inline-block;
+}
+.markdown-body table tr td a {
+  display: -webkit-inline-box;
 }
 
 .markdown-body.light table tr th {
