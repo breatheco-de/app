@@ -23,7 +23,7 @@ const middleware = async (req) => {
 
   // spanish handler
   if (
-    userPathName === `/lesson/${translations.es}`
+    userPathName === `/default/lesson/${translations.es}`
     || userPathName === `/es/lesson/${translations.us}`
   ) {
     console.log(`Middleware: redirecting from ${userPathName} → /es/lesson/${translations.es}`);
@@ -32,7 +32,7 @@ const middleware = async (req) => {
 
   // english handler
   if (
-    userPathName === `/lesson/${translations.us}`
+    userPathName === `/default/lesson/${translations.us}`
     || userPathName === `/en/lesson/${translations.es}`
   ) {
     console.log(`new change in conditional === ${userPathName}`);

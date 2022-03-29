@@ -5,19 +5,21 @@ import redirects from '../lib/redirects.json';
   the diference is that we can make smart redirects with backend
   or add functional queries to the url
 */
+
+const PUBLIC_FILE = /\.(.*)$/;
+
 const stripDefaultLocale = (str) => {
   const stripped = str.replace('/default', '');
   return stripped;
 };
 
 const middleware = async (req) => {
-  const PUBLIC_FILE = /\.(.*)$/;
   const url = await req.nextUrl.clone();
 
   const {
     pathname, origin, locale, search,
-  } = req.nextUrl.clone();
-  const currentPathname = url.pathname.toLowerCase();
+  } = url;
+  const currentPathname = pathname.toLowerCase();
   const start = Date.now();
 
   // Find the redirect from the local JSON file, do note this JSON shouldn't be
@@ -28,14 +30,17 @@ const middleware = async (req) => {
     return NextResponse.redirect(new URL(destinationFound, req.url));
   }
 
+  if (pathname.includes('/lesson/')) {
+    return '';
+  }
   const shouldHandleLocale = !PUBLIC_FILE.test(pathname)
     && !pathname.includes('/api/')
-    && !pathname.includes('/lesson/')
     && locale === 'default';
 
   const redirectURL = `${origin}/en${stripDefaultLocale(pathname)}${search}`;
 
   return shouldHandleLocale ? NextResponse.redirect(redirectURL) : '';
+
   // return '';
 };
 
