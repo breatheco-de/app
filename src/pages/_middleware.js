@@ -33,9 +33,7 @@ const middleware = async (req) => {
   const shouldHandleLocale = !PUBLIC_FILE.test(pathname)
     && !pathname.includes('/api/')
     && !pathname.includes('/lesson/')
-    && !pathname.includes('/default/lesson/')
-    && !pathname.includes('/es/lesson/')
-    && !pathname.includes('/en/lesson/')
+    && pathname.includes('/default/lesson/')
     && locale === 'default';
 
   console.log('pathname.includes("/lesson/")', pathname.includes('/lesson/'));
