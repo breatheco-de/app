@@ -2,7 +2,7 @@ const redirectHandler = async (req, conditionalResult, NextResponse, redirectVal
   const url = await req.nextUrl.clone();
 
   if (conditionalResult) {
-    console.log(`Middleware: redirecting fom ${url.pathname} → ${redirectValue}`);
+    console.log(`Middleware: redirecting from ${url.pathname} → ${redirectValue}`);
     return NextResponse.redirect(new URL(redirectValue, req.url));
   }
   return '';

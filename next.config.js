@@ -15,6 +15,7 @@ module.exports = withBundleAnalyzer(nextTranslate({
   // rest of config here
   // i18n,
   reactStrictMode: true,
+  trailingSlash: false,
   serverRuntimeConfig: {
     // Will only be available on the server side
     BREATHECODE_HOST: process.env.BREATHECODE_HOST,

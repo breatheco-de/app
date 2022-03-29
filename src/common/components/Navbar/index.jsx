@@ -34,14 +34,13 @@ import styles from '../../../../styles/flags.module.css';
 import useAuth from '../../hooks/useAuth';
 import navbarTR from '../../translations/navbar';
 
-const NavbarWithSubNavigation = ({ haveSession }) => {
+const NavbarWithSubNavigation = ({ haveSession, translations }) => {
   const router = useRouter();
   const [readSyllabus, setReadSyllabus] = useState([]);
-
-  // TODO: for some reason link to home in english mode not work
+  const locale = router.locale === 'default' ? 'en' : router.locale;
   const {
     loginTR, logoutTR, languageTR, ITEMS, languagesTR,
-  } = navbarTR[router.locale];
+  } = navbarTR[locale];
 
   const { isOpen, onToggle } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
@@ -55,7 +54,7 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
 
   const langs = ['en', 'es'];
   const linkColor = useColorModeValue('gray.600', 'gray.200');
-  const currentLanguage = languagesTR.filter((l) => l.value === router.locale)[0];
+  const currentLanguage = languagesTR.filter((l) => l.value === locale)[0];
 
   useEffect(async () => {
     const resp = await fetch(
@@ -202,27 +201,34 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
                 gridGap="10px"
                 padding="12px"
               >
-                {languagesTR.map((l) => (
-                  <NextChakraLink
-                    width="100%"
-                    key={l.value}
-                    href={router.asPath}
-                    locale={l.value}
-                    role="group"
-                    alignSelf="center"
-                    display="flex"
-                    gridGap="5px"
-                    fontWeight="bold"
-                    textDecoration="none"
-                    opacity={router.locale === l.value ? 1 : 0.75}
-                    _hover={{
-                      opacity: 1,
-                    }}
-                  >
-                    <Box className={`${styles.flag} ${styles[l.value]}`} width="25px" height="25px" />
-                    {l.label}
-                  </NextChakraLink>
-                ))}
+                {((typeof translations === 'object'
+                  && Object.keys(translations)) || languagesTR).map((l) => {
+                  const lang = languagesTR.filter((language) => language.value === l)[0];
+                  const value = typeof translations === 'object' ? lang.value : l.value;
+                  const label = typeof translations === 'object' ? lang.label : l.label;
+                  const path = typeof translations === 'object' ? translations[value] : router.asPath;
+                  return (
+                    <NextChakraLink
+                      width="100%"
+                      key={value}
+                      href={path}
+                      locale={value}
+                      role="group"
+                      alignSelf="center"
+                      display="flex"
+                      gridGap="5px"
+                      fontWeight="bold"
+                      textDecoration="none"
+                      opacity={locale === (value) ? 1 : 0.75}
+                      _hover={{
+                        opacity: 1,
+                      }}
+                    >
+                      <Box className={`${styles.flag} ${styles[value]}`} width="25px" height="25px" />
+                      {label}
+                    </NextChakraLink>
+                  );
+                })}
               </Box>
             </PopoverContent>
           </Popover>
@@ -309,8 +315,8 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
                               textDecoration: 'none',
                               color: 'blue.default',
                             }}
-                            color={router.locale === lang ? 'blue.default' : linkColor}
-                            fontWeight={router.locale === lang ? '700' : '400'}
+                            color={locale === lang ? 'blue.default' : linkColor}
+                            fontWeight={locale === lang ? '700' : '400'}
                             href={router.asPath}
                             locale={lang}
                             display="flex"
@@ -349,7 +355,7 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
                       </Heading>
                       {(cohortSession?.date_joined || user?.active_cohort?.date_joined) && (
                         <Heading as="p" size="16px" maxWidth="300px" textTransform="initial" fontWeight="400">
-                          {dateJoined[router.locale]}
+                          {dateJoined[locale]}
                         </Heading>
                       )}
                     </Flex>
@@ -415,9 +421,11 @@ const NavbarWithSubNavigation = ({ haveSession }) => {
 
 NavbarWithSubNavigation.propTypes = {
   haveSession: PropTypes.bool,
+  translations: PropTypes.objectOf(PropTypes.string),
 };
 NavbarWithSubNavigation.defaultProps = {
   haveSession: false,
+  translations: undefined,
 };
 
 export default memo(NavbarWithSubNavigation);
