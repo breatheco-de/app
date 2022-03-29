@@ -6,18 +6,18 @@ import redirects from '../lib/redirects.json';
   or add functional queries to the url
 */
 
-const PUBLIC_FILE = /\.(.*)$/;
+// const PUBLIC_FILE = /\.(.*)$/;
 
-const stripDefaultLocale = (str) => {
-  const stripped = str.replace('/default', '');
-  return stripped;
-};
+// const stripDefaultLocale = (str) => {
+//   const stripped = str.replace('/default', '');
+//   return stripped;
+// };
 
 const middleware = async (req) => {
   const url = await req.nextUrl.clone();
 
   const {
-    pathname, origin, locale, search,
+    pathname,
   } = url;
   const currentPathname = pathname.toLowerCase();
   const start = Date.now();
@@ -30,19 +30,19 @@ const middleware = async (req) => {
     return NextResponse.redirect(new URL(destinationFound, req.url));
   }
 
-  const shouldHandleLocale = !PUBLIC_FILE.test(pathname)
-    && !pathname.includes('/api/')
-    && locale !== 'en'
-    && locale !== 'es'
-    && locale === 'default';
+  // const shouldHandleLocale = !PUBLIC_FILE.test(pathname)
+  //   && !pathname.includes('/api/')
+  //   && locale !== 'en'
+  //   && locale !== 'es'
+  //   && locale === 'default';
 
-  console.log('pathname.includes("/lesson/")', pathname.includes('/lesson/'));
-  console.log('shouldHandleLocale:::', shouldHandleLocale);
+  // console.log('pathname.includes("/lesson/")', pathname.includes('/lesson/'));
+  // console.log('shouldHandleLocale:::', shouldHandleLocale);
 
-  const redirectURL = `${origin}/en${stripDefaultLocale(pathname)}${search}`;
+  // const redirectURL = `${origin}/en${stripDefaultLocale(pathname)}${search}`;
 
-  return shouldHandleLocale ? NextResponse.redirect(redirectURL) : '';
-  // return '';
+  // return shouldHandleLocale ? NextResponse.redirect(redirectURL) : '';
+  return '';
 };
 
 export default middleware;
