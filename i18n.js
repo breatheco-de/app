@@ -1,5 +1,6 @@
 module.exports = {
   pages: {
+    // Enable translations for the following pages
     '*': ['common', 'navbar', 'footer'],
     '/': ['home'],
     '/example': ['common', 'counter'],
@@ -11,10 +12,9 @@ module.exports = {
     '/interactive-exercises/[slug]': ['exercises'],
   },
   locales: ['default', 'en', 'es'],
-  // defaultLocale: 'en',
+  // defaultLocale: 'en', // removed for redirects handling purposes
   defaultLocale: 'default',
-  // TODO: test with vpn then check if defaultLocale is working
-  localeDetection: false,
+  localeDetection: true, // run and detects in home page = '/'
   // return a Promise with the JSON file.
   loadLocaleFrom: (lang, ns) => import(`./public/locales/${lang}/${ns}.json`).then((m) => m.default),
 };
