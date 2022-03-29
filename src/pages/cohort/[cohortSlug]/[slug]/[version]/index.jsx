@@ -41,12 +41,13 @@ const Dashboard = () => {
 
   const toast = useToast();
   const router = useRouter();
+  const locale = router.locale === 'default' ? 'en' : router.locale;
   const { cohortSlug, slug } = router.query;
 
   const skeletonStartColor = useColorModeValue('gray.300', 'gray.light');
   const skeletonEndColor = useColorModeValue('gray.400', 'gray.400');
 
-  const { supportSideBar } = dashboardTR[router.locale];
+  const { supportSideBar } = dashboardTR[locale];
 
   const {
     tapCapsule, progressBar,
