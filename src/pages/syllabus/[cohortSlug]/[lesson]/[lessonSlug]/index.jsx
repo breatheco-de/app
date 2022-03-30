@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import {
   Box,
   Flex,
@@ -79,7 +80,9 @@ const Content = () => {
     transitionDelay: Open ? '0ms' : '0ms',
   };
 
-  const { cohortSlug, lessonSlug, lesson } = router.query;
+  const { cohortSlug, lesson, lessonSlug } = router.query;
+
+  const isQuiz = lesson === 'answer';
 
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -160,19 +163,22 @@ const Content = () => {
   }, []);
 
   useEffect(() => {
-    bc.lesson({
-      // type: 'lesson',
-      slug: lessonSlug,
-      big: true,
-    })
-      .get()
+    /*
+      const assetTypeValues = {
+        read: 'LESSON',
+        practice: 'EXERCISE',
+        code: 'PROJECT',
+        answer: 'QUIZ',
+      };
+    */
+    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}`)
       .then(({ data }) => {
-        const currData = data.find((el) => el.slug === lessonSlug);
-        if (data.length === 0 || currData.asset_type === 'QUIZ') {
-          setQuizSlug(lessonSlug);
-        }
-        if (data.length !== 0
-          && currData !== undefined
+        const currData = Array.isArray(data) ? data.find((el) => el.slug === lessonSlug) : data;
+        console.log('data:::', data);
+        // if (currData.asset_type === 'QUIZ') {...}
+        setQuizSlug(lessonSlug);
+        if (
+          currData !== undefined
           && currData.readme !== null
         ) {
           // Binary base64 decoding ⇢ UTF-8
@@ -420,7 +426,7 @@ const Content = () => {
           </>
         )}
 
-        {currentData.solution_video_url && showSolutionVideo && (
+        {!isQuiz && currentData.solution_video_url && showSolutionVideo && (
           <Box padding="0.4rem 2rem 2rem 2rem" background={useColorModeValue('featuredLight', 'featuredDark')}>
             <Heading as="h2" size="sm">
               Video Tutorial
@@ -428,7 +434,7 @@ const Content = () => {
             <ReactPlayer
               id={currentData.solution_video_url}
               playOnThumbnail
-              imageSize="sddefault"
+              imageSize="hqdefault"
               style={{
                 width: '100%',
                 objectFit: 'cover',
@@ -438,7 +444,7 @@ const Content = () => {
           </Box>
         )}
 
-        {currentData && currentData.intro_video_url && (
+        {!isQuiz && currentData.intro_video_url && (
           <>
             <Heading as="h2" size="sm">
               Video Introduction
@@ -446,7 +452,7 @@ const Content = () => {
             <ReactPlayer
               id={currentData.intro_video_url}
               playOnThumbnail
-              imageSize="sddefault"
+              imageSize="hqdefault"
               style={{
                 width: '100%',
                 objectFit: 'cover',
@@ -455,10 +461,28 @@ const Content = () => {
             />
           </>
         )}
-        {GetReadme() !== false ? (
+
+        {
+          isQuiz ? (
+            <Box background={useColorModeValue('featuredLight', 'featuredDark')} width="100%" height="100vh" borderRadius="14px">
+              <iframe
+                id="iframe"
+                src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '14px',
+                }}
+                title="Breathecode Quiz"
+              />
+            </Box>
+          ) : GetReadme()
+        }
+        {/* {GetReadme() !== false ? (
           GetReadme()
         ) : (
-          <Box background={useColorModeValue('featuredLight', 'featuredDark')} width="100%" height="100vh" borderRadius="14px">
+          <Box background={useColorModeValue('featuredLight', 'featuredDark')}
+          width="100%" height="100vh" borderRadius="14px">
             <iframe
               id="iframe"
               src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
@@ -470,7 +494,7 @@ const Content = () => {
               title="Breathecode Quiz"
             />
           </Box>
-        )}
+        )} */}
       </Box>
     </Flex>
   );
