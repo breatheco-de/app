@@ -5,7 +5,7 @@
   "callToAction": {
     "title": "Today's lessons!",
     "description": "Your lesson today is ",
-    "button": "Start today's module"
+    "buttonText": "Start today's module"
   },
   "cohortSideBar": {
     "title": "About your cohort",
