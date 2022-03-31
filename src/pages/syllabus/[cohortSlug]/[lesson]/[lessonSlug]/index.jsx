@@ -173,26 +173,32 @@ const Content = () => {
     */
     axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}`)
       .then(({ data }) => {
-        const currData = Array.isArray(data) ? data.find((el) => el.slug === lessonSlug) : data;
-        console.log('data:::', data);
-        // if (currData.asset_type === 'QUIZ') {...}
-        setQuizSlug(lessonSlug);
-        if (
-          currData !== undefined
-          && currData.readme !== null
-        ) {
-          // Binary base64 decoding ⇢ UTF-8
-          const MDecoded = currData.readme && typeof currData.readme === 'string' ? decodeFromBinary(currData.readme) : null;
-          const markdown = getMarkDownContent(MDecoded);
-          setCurrentData(currData);
-          setReadme(markdown);
-        }
+        const language = router.locale === 'en' ? 'us' : 'es';
+        const slugBySessionLang = data.translations[language];
+        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slugBySessionLang}`)
+          .then((res) => {
+            const currData = Array.isArray(res.data)
+              ? res.data.find((el) => el.slug === lessonSlug)
+              : res.data;
+            // if (currData.asset_type === 'QUIZ') {...}
+            setQuizSlug(lessonSlug);
+            if (
+              currData !== undefined
+              && currData.readme !== null
+            ) {
+              // Binary base64 decoding ⇢ UTF-8
+              const MDecoded = currData.readme && typeof currData.readme === 'string' ? decodeFromBinary(currData.readme) : null;
+              const markdown = getMarkDownContent(MDecoded);
+              setCurrentData(currData);
+              setReadme(markdown);
+            }
+          });
       }).catch(() => {
         setTimeout(() => {
           EventIfNotFound();
         }, 4000);
       });
-  }, [lessonSlug]);
+  }, [router, lessonSlug]);
 
   useEffect(() => {
     const findSelectedSyllabus = sortedAssignments.filter(
