@@ -114,27 +114,27 @@
   font-size: inherit;
 }
 
-.markdown-body h1 {
+.markdown-body h1 * {
   font-size: 28px;
 }
 
-.markdown-body h2 {
+.markdown-body h2 * {
   font-size: 24px;
 }
 
-.markdown-body h3 {
+.markdown-body h3 * {
   font-size: 18px;
 }
 
-.markdown-body h4 {
+.markdown-body h4 * {
   font-size: 16px;
 }
 
-.markdown-body h5 {
+.markdown-body h5 * {
   font-size: 14px;
 }
 
-.markdown-body h6 {
+.markdown-body h6 * {
   color: #777777;
   font-size: 14px;
 }
@@ -193,6 +193,10 @@
 
 .markdown-body li p.first {
   display: inline-block;
+}
+
+.markdown-body li * {
+  display: initial;
 }
 
 .markdown-body ul, ol {
@@ -317,6 +321,12 @@ blockquote > :last-child {
   text-align: left;
   margin: 0;
   padding: 6px 13px;
+}
+.markdown-body table tr td img {
+  display: inline-block;
+}
+.markdown-body table tr td a {
+  display: -webkit-inline-box;
 }
 
 .markdown-body.light table tr th {
@@ -455,8 +465,8 @@ blockquote > :last-child {
   line-height: 2.0 !important;
   overflow: auto;
   width: fit-content;
-  display: initial;
-  padding: 0.3em 0.5em !important;
+  display: initial !important;
+  padding: 0.2em 0.5em !important;
 }
 .text-highlight{
   display: block;

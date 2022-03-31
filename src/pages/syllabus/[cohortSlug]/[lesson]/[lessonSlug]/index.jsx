@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Flex,
@@ -10,6 +10,8 @@ import {
 } from '@chakra-ui/react';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
+import { isWindow } from '../../../../../utils';
+import ReactPlayer from '../../../../../common/components/ReactPlayer';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import Timeline from '../../../../../common/components/Timeline';
@@ -27,21 +29,28 @@ const Content = () => {
   const { isOpen, onToggle } = useDisclosure();
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [readme, setReadme] = useState(null);
+  const [extendedInstructions, setExtendedInstructions] = useState(null);
+  const [extendedIsEnabled, setExtendedIsEnabled] = useState(false);
   const [quizSlug, setQuizSlug] = useState(null);
   // const { syllabus = [], setSyllabus } = useSyllabus();
   const [sortedAssignments] = usePersistent('sortedAssignments', []);
+  const [showSolutionVideo, setShowSolutionVideo] = useState(false);
   const [cohortSession] = usePersistent('cohortSession', {});
-  const [selectedSyllabus, setSelectedSyllabus] = useState([]);
+  const [selectedSyllabus, setSelectedSyllabus] = useState({});
+  const [currentData, setCurrentData] = useState({});
   const { user, choose } = useAuth();
   const toast = useToast();
   const router = useRouter();
+  const prevScrollY = useRef(0);
   const [isBelowLaptop] = useMediaQuery('(max-width: 996px)');
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
 
   //                                          gray.200    gray.500
   const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
+  const commonFeaturedColors = useColorModeValue('featuredLight', 'featuredDark');
   const bgColor = useColorModeValue('#FFFFFF', '#17202A');
   const Open = !isOpen;
+  const { teacherInstructions, keyConcepts } = selectedSyllabus;
 
   const slide = {
     minWidth: '310px',
@@ -72,21 +81,35 @@ const Content = () => {
 
   const { cohortSlug, lessonSlug, lesson } = router.query;
 
-  const checkScrollTop = () => {
-    if (!showScrollToTop && window.pageYOffset > 400) {
-      setShowScrollToTop(true);
-    } else if (showScrollToTop && window.pageYOffset <= 400) {
-      setShowScrollToTop(false);
-    }
-  };
-
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (typeof window !== 'undefined') {
-    window.addEventListener('scroll', checkScrollTop);
-  }
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = isWindow && window.scrollY;
+      if (prevScrollY.current > 400) {
+        setShowScrollToTop(true);
+      } else {
+        setShowScrollToTop(false);
+      }
+      /*
+        // visible when scrolls to top and hide when scrolls down
+
+        if (prevScrollY.current < currentScrollY && showScrollToTop) {
+          setShowScrollToTop(false);
+        }
+        if (prevScrollY.current > currentScrollY === 400 && !showScrollToTop) {
+          setShowScrollToTop(true);
+        }
+      */
+      prevScrollY.current = currentScrollY;
+    };
+    if (isWindow) {
+      window.addEventListener('scroll', handleScroll, { passive: true });
+    }
+    return () => isWindow && window.removeEventListener('scroll', handleScroll);
+  }, [showScrollToTop]);
 
   const onClickAssignment = (e, item) => {
     router.push(`/syllabus/${cohortSlug}/${item.type.toLowerCase()}/${item.slug}`);
@@ -143,17 +166,19 @@ const Content = () => {
       big: true,
     })
       .get()
-      .then((le) => {
-        if (le.data.length === 0 || le.data[0].asset_type === 'QUIZ') {
+      .then(({ data }) => {
+        const currData = data.find((el) => el.slug === lessonSlug);
+        if (data.length === 0 || currData.asset_type === 'QUIZ') {
           setQuizSlug(lessonSlug);
         }
-        if (le.data.length !== 0
-          && le.data[0] !== undefined
-          && le.data[0].readme !== null
+        if (data.length !== 0
+          && currData !== undefined
+          && currData.readme !== null
         ) {
           // Binary base64 decoding ⇢ UTF-8
-          const MDecoded = le.data[0].readme && typeof le.data[0].readme === 'string' ? decodeFromBinary(le.data[0].readme) : null;
+          const MDecoded = currData.readme && typeof currData.readme === 'string' ? decodeFromBinary(currData.readme) : null;
           const markdown = getMarkDownContent(MDecoded);
+          setCurrentData(currData);
           setReadme(markdown);
         }
       }).catch(() => {
@@ -166,12 +191,21 @@ const Content = () => {
   useEffect(() => {
     const findSelectedSyllabus = sortedAssignments.filter(
       (l) => l.modules.find((m) => m.slug === router.query.lessonSlug),
-    );
+    )[0];
 
     if (findSelectedSyllabus) {
       setSelectedSyllabus(findSelectedSyllabus);
     }
   }, [sortedAssignments, router.query.lessonSlug]);
+
+  useEffect(() => {
+    if (selectedSyllabus.extendedInstructions) {
+      const content = selectedSyllabus.extendedInstructions;
+      // const MDecoded = content && typeof content === 'string' ? decodeFromBinary(content) : null;
+      const markdown = getMarkDownContent(content);
+      setExtendedInstructions(markdown);
+    }
+  }, [selectedSyllabus]);
 
   const containerSlide = () => {
     if (isBelowLaptop) {
@@ -207,34 +241,51 @@ const Content = () => {
     return false;
   };
 
-  const currentTeacherInstructions = selectedSyllabus.map((s) => s.teacherInstructions);
-  const currentKeyConcepts = selectedSyllabus.map((s) => s.keyConcepts);
+  const teacherActions = ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_role)
+    ? [
+      {
+        icon: 'message',
+        slug: 'teacher-instructions',
+        title: 'Teacher instructions',
+        content: teacherInstructions,
+        actionHandler: () => setExtendedIsEnabled(!extendedIsEnabled),
+        actionState: extendedIsEnabled,
+        id: 1,
+      },
+      {
+        icon: 'key',
+        slug: 'key-concepts',
+        title: 'Key Concepts',
+        content: keyConcepts,
+        id: 2,
+      },
+    ] : [];
+
+  const videoTutorial = currentData?.solution_video_url ? [{
+    icon: 'youtube',
+    slug: 'video-player',
+    title: 'Video tutorial',
+    content: '',
+    actionHandler: () => setShowSolutionVideo(!showSolutionVideo),
+    id: 3,
+  }] : [];
 
   return (
     <Flex position="relative">
-      {
-        ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_role) && (
-          <StickySideBar
-            width="auto"
-            menu={[
-              {
-                icon: 'message',
-                slug: 'teacher-instructions',
-                title: 'Teacher instructions',
-                content: currentTeacherInstructions[0],
-                id: 1,
-              },
-              {
-                icon: 'key',
-                slug: 'key-concepts',
-                title: 'Key Concepts',
-                content: currentKeyConcepts[0],
-                id: 2,
-              },
-            ]}
-          />
-        )
-      }
+      <StickySideBar
+        width="auto"
+        menu={[
+          ...teacherActions,
+          ...videoTutorial,
+          // {
+          //   icon: 'youtube',
+          //   slug: 'video-player',
+          //   title: 'Video tutorial',
+          //   content: '#923jmi2m',
+          //   id: 3,
+          // },
+        ]}
+      />
 
       <IconButton
         style={{ zIndex: 20 }}
@@ -356,6 +407,54 @@ const Content = () => {
         transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
         transitionDelay="0ms"
       >
+        {extendedIsEnabled && extendedInstructions !== null && (
+          <>
+            <Box
+              p="20px 20px 30px 20px"
+              borderRadius="3px"
+              background={commonFeaturedColors}
+            >
+              <MarkdownParser content={extendedInstructions.content} />
+            </Box>
+            <Box margin="4rem 0" height="4px" width="100%" background={commonBorderColor} />
+          </>
+        )}
+
+        {currentData.solution_video_url && showSolutionVideo && (
+          <Box padding="0.4rem 2rem 2rem 2rem" background={useColorModeValue('featuredLight', 'featuredDark')}>
+            <Heading as="h2" size="sm">
+              Video Tutorial
+            </Heading>
+            <ReactPlayer
+              id={currentData.solution_video_url}
+              playOnThumbnail
+              imageSize="sddefault"
+              style={{
+                width: '100%',
+                objectFit: 'cover',
+                aspectRatio: '16/9',
+              }}
+            />
+          </Box>
+        )}
+
+        {currentData && currentData.intro_video_url && (
+          <>
+            <Heading as="h2" size="sm">
+              Video Introduction
+            </Heading>
+            <ReactPlayer
+              id={currentData.intro_video_url}
+              playOnThumbnail
+              imageSize="sddefault"
+              style={{
+                width: '100%',
+                objectFit: 'cover',
+                aspectRatio: '16/9',
+              }}
+            />
+          </>
+        )}
         {GetReadme() !== false ? (
           GetReadme()
         ) : (

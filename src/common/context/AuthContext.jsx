@@ -86,6 +86,7 @@ const isValid = async (token, router) => {
     // remove token from localstorage if expired (it prevents throwing error)
     .catch(() => {
       router.push('/login');
+      document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       setSession(null);
     });
   return response.status === 200;

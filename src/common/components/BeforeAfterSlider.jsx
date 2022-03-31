@@ -49,9 +49,9 @@ function useReadyStatus(
 function useInit(updateContainerWidth, onMouseUpHandler) {
   useEffect(() => {
     updateContainerWidth();
-    document.addEventListener('click', onMouseUpHandler);
+    document.addEventListener('onmousemove', onMouseUpHandler);
     return () => {
-      document.removeEventListener('click', onMouseUpHandler);
+      document.removeEventListener('onmousemove', onMouseUpHandler);
     };
   }, []);
 }
@@ -102,7 +102,7 @@ export default function BeforeAfterSlider({
   onReady,
   onChangePercentPosition,
   delimiterColor,
-  aspectRatio,
+  // aspectRatio,
 }) {
   const classNames = ['before-after-slider'];
   className && classNames.push(className);
@@ -171,8 +171,9 @@ export default function BeforeAfterSlider({
 
   const imgStyles = !imagesWidth ? undefined : {
     width: `${imagesWidth}px`,
+    height: '100%',
     maxWidth: 'none',
-    aspectRatio,
+    // aspectRatio,
     backgroundColor: '#000',
   };
   const secondImgContainerStyle = { width: `${delimerPercentPosition}%` };
@@ -234,7 +235,8 @@ export default function BeforeAfterSlider({
         className={styles['before-after-slider__size-fix-img']}
         onLoad={updateContainerWidth}
         style={{
-          aspectRatio,
+          // aspectRatio,
+          height: '100%',
         }}
       />
       {Boolean(imagesWidth) && (
@@ -277,7 +279,7 @@ BeforeAfterSlider.propTypes = {
   onReady: PropTypes.func,
   onChangePercentPosition: PropTypes.func,
   delimiterColor: PropTypes.string,
-  aspectRatio: PropTypes.string,
+  // aspectRatio: PropTypes.string,
 };
 
 BeforeAfterSlider.defaultProps = {
@@ -288,5 +290,5 @@ BeforeAfterSlider.defaultProps = {
   onReady: undefined,
   onChangePercentPosition: undefined,
   delimiterColor: '#0097CD',
-  aspectRatio: '16/9',
+  // aspectRatio: '16/9',
 };

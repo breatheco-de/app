@@ -42,6 +42,7 @@ const DesktopItem = ({ item }) => {
           <Box>
             <NextChakraLink
               display="flex"
+              width="max-content"
               alignItems="center"
               p={2}
               href={item.href ?? '#'}

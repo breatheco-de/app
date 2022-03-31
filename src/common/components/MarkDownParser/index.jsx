@@ -1,3 +1,5 @@
+/* eslint-disable no-loop-func */
+/* eslint-disable no-await-in-loop */
 import PropTypes from 'prop-types';
 import { compiler } from 'markdown-to-jsx';
 import { Box, Link } from '@chakra-ui/react';
@@ -36,23 +38,85 @@ const Code = ({ className, children }) => {
   );
 };
 
-const BeforeAfter = ({ before, after }) => (
-  <BeforeAfterSlider
-    firstImage={before}
-    secondImage={after}
-  />
-);
+function doWithDelay(timeout, doCallback) {
+  return new Promise((res) => {
+    setTimeout(() => {
+      doCallback();
+      res();
+    }, timeout);
+  });
+}
 
-const MDHeading = ({ children, id }) => (
-  <Heading
-    id={id}
-    size="sm"
-    padding="20px 0 15px 0"
-    marginBottom="16px"
-  >
-    {children}
-  </Heading>
-);
+const BeforeAfter = ({ before, after }) => {
+  const [delimerPersentPosition, setDelimerPercentPosition] = useState(50);
+  const animationDemo = () => {
+    setTimeout(async () => {
+      const PARTS = 50;
+      const timeSeconds = 0.1;
+      const borderMin = 35;
+      const delta = (delimerPersentPosition - borderMin) / PARTS;
+      const timeout = (timeSeconds / PARTS) * 1000;
+      let currentPosition = delimerPersentPosition;
+
+      for (let i = 1; i <= PARTS; i += 1) {
+        await doWithDelay(timeout, () => {
+          currentPosition -= delta;
+          setDelimerPercentPosition(currentPosition);
+        });
+      }
+      await doWithDelay(1000, () => {});
+      for (let i = 1; i <= PARTS; i += 1) {
+        await doWithDelay(timeout, () => {
+          currentPosition += delta;
+          setDelimerPercentPosition(currentPosition);
+        });
+      }
+      for (let i = 1; i <= PARTS; i += 1) {
+        await doWithDelay(timeout, () => {
+          currentPosition += delta;
+          setDelimerPercentPosition(currentPosition);
+        });
+      }
+      await doWithDelay(1000, () => {});
+      for (let i = 1; i <= PARTS; i += 1) {
+        await doWithDelay(timeout, () => {
+          currentPosition -= delta;
+          setDelimerPercentPosition(currentPosition);
+        });
+      }
+    }, 500);
+  };
+
+  return (
+    <BeforeAfterSlider
+      currentPercentPosition={delimerPersentPosition}
+      firstImage={before}
+      secondImage={after}
+      onVisible={animationDemo}
+      onChangePercentPosition={setDelimerPercentPosition}
+    />
+  );
+};
+
+const MDHeading = ({ children, id, tagType }) => {
+  const variantsStyle = {
+    h1: 'sm',
+    h2: 'sm',
+    h3: '18px',
+  };
+
+  return (
+    <Heading
+      as={tagType} // h1, h2, h3, h4, h5, h6
+      id={id}
+      size={variantsStyle[tagType] || 'sm'}
+      padding="20px 0 15px 0"
+      marginBottom="16px"
+    >
+      {children}
+    </Heading>
+  );
+};
 
 const MDText = ({ children }) => {
   const [haveHighlight, setHaveHighlight] = useState(false);
@@ -112,9 +176,24 @@ const MarkDownParser = ({ content, withToc, frontMatter }) => {
           p: { component: MDText },
           a: { component: MDLink },
           hr: { component: MDHr },
-          h2: { component: MDHeading },
-          h3: { component: MDHeading },
-          h1: { component: MDHeading },
+          h1: {
+            component: MDHeading,
+            props: {
+              tagType: 'h2',
+            },
+          },
+          h2: {
+            component: MDHeading,
+            props: {
+              tagType: 'h2',
+            },
+          },
+          h3: {
+            component: MDHeading,
+            props: {
+              tagType: 'h3',
+            },
+          },
           ul: {
             props: { className: 'md-bullet' },
           },
@@ -157,10 +236,12 @@ Code.defaultProps = {
 MDHeading.propTypes = {
   children: PropTypes.node.isRequired,
   id: PropTypes.string,
+  tagType: PropTypes.string,
 };
 
 MDHeading.defaultProps = {
   id: '',
+  tagType: 'h2',
 };
 
 MDText.propTypes = {

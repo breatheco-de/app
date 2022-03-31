@@ -9,7 +9,7 @@ import TagCapsule from '../../common/components/TagCapsule';
 import decodeFromBinary from '../../utils/markdown';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 
-export const getStaticPaths = async ({ locales }) => {
+export const getStaticPaths = async () => {
   let lessons = [];
   const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson`)
     .then((res) => res.json())
@@ -17,17 +17,20 @@ export const getStaticPaths = async ({ locales }) => {
 
   lessons = Object.values(data);
   if (data.status >= 200 && data.status < 400) {
+    data.asset_type = 'lesson';
     console.log(`Original lessons: ${lessons}`);
   } else {
     console.error(`Error fetching lessons with ${data.status}`);
   }
-
-  const paths = lessons.flatMap((res) => locales.map((locale) => ({
-    params: {
-      slug: res.slug,
-    },
-    locale,
-  })));
+  const paths = lessons.flatMap((res) => Object.keys(res.translations).map((locale) => {
+    const localeToUsEs = locale === 'us' ? 'en' : 'es';
+    return ({
+      params: {
+        slug: res.translations[locale],
+      },
+      locale: localeToUsEs,
+    });
+  }));
 
   return {
     fallback: false,
@@ -41,7 +44,12 @@ export const getStaticProps = async ({ params }) => {
     .then((res) => res.json())
     .catch((err) => console.log(err));
 
-  // Prevent unexpected white error page and replace with 404 page
+  // in "results.translations" rename "us" key to "en" key if exists
+  if (results.translations.us) {
+    results.translations.en = results.translations.us;
+    delete results.translations.us;
+  }
+
   if (results.status_code === 404) {
     return {
       notFound: true,
@@ -51,6 +59,7 @@ export const getStaticProps = async ({ params }) => {
     props: {
       fallback: false,
       lesson: results,
+      translations: results.translations,
     },
   };
 };
@@ -86,7 +95,7 @@ const LessonSlug = ({ lesson }) => {
         EventIfNotFound();
       }, 4000);
     }
-  }, []);
+  }, [lesson]);
 
   return (
     <Box

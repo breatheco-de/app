@@ -31,9 +31,9 @@ function App({ Component, pageProps }) {
 
   const Navbar = () => {
     if (HAVE_SESSION) {
-      return <NavbarSession haveSession={haveSession} />;
+      return <NavbarSession translations={pageProps?.translations} haveSession={haveSession} />;
     }
-    return <NavbarSession haveSession={false} />;
+    return <NavbarSession translations={pageProps?.translations} haveSession={false} />;
   };
 
   return (

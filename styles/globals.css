@@ -27,6 +27,11 @@ a {
   border-radius: 8px;
 } */
 
+.hideOverflowX__::-webkit-scrollbar {
+  width: 0!important;
+  height: 0!important;
+}
+
 .horizontal-sroll::-webkit-scrollbar {
   width: 6px;
 }

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import {
   Box, VStack, useColorModeValue, Modal, ModalOverlay, ModalContent,
-  ModalHeader, ModalCloseButton, ModalBody,
+  ModalHeader, ModalCloseButton, ModalBody, Button,
 } from '@chakra-ui/react';
 import { Fragment, useState } from 'react';
 import Icon from './Icon';
@@ -14,7 +14,7 @@ const StickySideBar = ({
   const [openKeyConcepts, setOpenKeyConcepts] = useState(false);
   const [openTeacherInstructions, setOpenTeacherInstructions] = useState(false);
 
-  const highlightColors = useColorModeValue('featuredLight', 'featuredDark');
+  const highlightColors = useColorModeValue('featuredLight', 'darkTheme');
   const commonBorderColor = useColorModeValue('white', 'gray.700');
 
   const getCurrentModalState = (itemSlug) => {
@@ -26,11 +26,25 @@ const StickySideBar = ({
     }
     return false;
   };
+
+  const getCurrentHandler = (item) => {
+    if (item.slug === 'video-player') {
+      item.actionHandler();
+    }
+    if (item.slug === 'key-concepts') {
+      setOpenKeyConcepts(true);
+    }
+    if (item.slug === 'teacher-instructions') {
+      setOpenTeacherInstructions(true);
+    }
+  };
+
   return (
     <>
       <VStack
         width={width}
         position="fixed"
+        zIndex={99}
         top={top}
         right={right}
         left={left}
@@ -39,7 +53,7 @@ const StickySideBar = ({
           menu.map((item, i) => {
             const currentModalState = getCurrentModalState(item.slug);
             const index = i;
-            return item.content && (
+            return (item.content || item.actionHandler) && (
               <Fragment key={`${item.id}-index${index}`}>
                 <Box
                   key={item.id}
@@ -48,24 +62,19 @@ const StickySideBar = ({
                   as="button"
                   bg="transparent"
                   border="none"
-                  onClick={() => {
-                    if (item.slug === 'key-concepts') {
-                      setOpenKeyConcepts(true);
-                    }
-                    if (item.slug === 'teacher-instructions') {
-                      setOpenTeacherInstructions(true);
-                    }
-                  }}
+                  onClick={() => getCurrentHandler(item)}
                 >
                   <Box
-                    bg={useColorModeValue('white', 'blue.default')}
+                    bg={useColorModeValue('white', 'featuredDark')}
+                    display="flex"
+                    alignItems="center"
                     margin="auto"
                     width="fit-content"
                     height="48px"
                     variant="default"
                     padding="15px"
-                    border="1px solid"
-                    borderColor={useColorModeValue('gray.default', 'blue.default')}
+                    border={useColorModeValue('1px solid', '2px solid')}
+                    borderColor={useColorModeValue('gray.default', 'gray.500')}
                     borderRadius="full"
                   >
                     <Icon icon={item.icon} width="18px" height="18px" color={useColorModeValue('gray', 'white')} />
@@ -90,7 +99,7 @@ const StickySideBar = ({
                 >
                   <ModalOverlay />
                   <ModalContent
-                    background={useColorModeValue('white', 'darkTheme')}
+                    background={useColorModeValue('white', 'featuredDark')}
                     border={2}
                     borderStyle="solid"
                     borderColor={commonBorderColor}
@@ -121,9 +130,18 @@ const StickySideBar = ({
                             );
                           })
                         ) : (
-                          <Text size="l" pb="25px" fontWeight="400">
-                            {item.content}
-                          </Text>
+                          <>
+                            <Text size="l" pb="25px" fontWeight="400">
+                              {item.content}
+                            </Text>
+                            {item.slug === 'teacher-instructions' && (
+                              <Box display="flex" justifyContent="center" pb="15px" width="100%">
+                                <Button variant="default" height="35px" padding="0 10px" onClick={item.actionHandler}>
+                                  {item.actionState ? 'Hide teacher instructions' : 'Extend teacher instructions'}
+                                </Button>
+                              </Box>
+                            )}
+                          </>
                         )
                       }
                     </ModalBody>
