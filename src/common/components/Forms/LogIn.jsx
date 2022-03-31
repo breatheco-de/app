@@ -20,6 +20,17 @@ import validationSchema from './validationSchemas';
 import useAuth from '../../hooks/useAuth';
 
 function LogIn() {
+  /*
+    TODO: Bug when we are in public and we have a token acces in localStorage
+    or Cookie and log in choose-program
+
+    ver forms-exercises (tabla)
+
+    another bug in prework, not loads properly maybe load the session by default
+
+    revisar los ejercicios en español e ingles, un bug
+  */
+
   const { login } = useAuth();
   const toast = useToast();
   const router = useRouter();

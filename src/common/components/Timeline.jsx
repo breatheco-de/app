@@ -109,8 +109,7 @@ Timeline.defaultProps = {
   assignments: [],
   technologies: [],
   width: '100%',
-  onClickAssignment: () => {
-  },
+  onClickAssignment: () => {},
 };
 
 export default Timeline;
