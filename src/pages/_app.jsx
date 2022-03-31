@@ -3,6 +3,7 @@ import '../../styles/globals.css';
 import '../../styles/markdown.css';
 import PropTypes from 'prop-types';
 import { ChakraProvider } from '@chakra-ui/react';
+import { CookiesProvider } from 'react-cookie';
 import wrapper from '../store';
 import CustomTheme from '../../styles/theme';
 import NavbarSession from '../common/components/Navbar';
@@ -39,14 +40,16 @@ function App({ Component, pageProps }) {
   return (
     <>
       <Helmet {...pageProps} />
-      <AuthProvider>
-        <ChakraProvider resetCSS theme={CustomTheme}>
-          <Navbar />
-          <Loading />
-          <Component {...pageProps} />
-          <Footer />
-        </ChakraProvider>
-      </AuthProvider>
+      <CookiesProvider>
+        <AuthProvider>
+          <ChakraProvider resetCSS theme={CustomTheme}>
+            <Navbar />
+            <Loading />
+            <Component {...pageProps} />
+            <Footer />
+          </ChakraProvider>
+        </AuthProvider>
+      </CookiesProvider>
     </>
   );
 }
