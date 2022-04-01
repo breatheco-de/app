@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
+import { useCookies } from 'react-cookie';
 import { useRouter } from 'next/router';
 import bc from '../services/breathecode';
 import { isWindow } from '../../utils';
@@ -63,9 +64,9 @@ const setSession = (token) => {
   if (token) {
     localStorage.setItem('accessToken', token);
     axiosInstance.defaults.headers.common.Authorization = `Token ${token}`;
-    document.cookie = `accessToken=${token}; path=/`;
+    // document.cookie = `accessToken=${token}; path=/`;
   } else {
-    document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    // document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     localStorage.removeItem('syllabus');
     localStorage.removeItem('programMentors');
     localStorage.removeItem('programServices');
@@ -77,16 +78,20 @@ const setSession = (token) => {
   }
 };
 
-const isValid = async (token, router) => {
+const isValid = async (token, router, setCookie, removeCookie) => {
   if (!token) return false;
   const response = await bc
     .auth()
     .isValidToken(token)
-    .then((res) => res)
+    .then((res) => {
+      setCookie('accessToken', token, { path: '/' });
+      return res;
+    })
     // remove token from localstorage if expired (it prevents throwing error)
     .catch(() => {
       router.push('/login');
-      document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      removeCookie('accessToken', { path: '/' });
+      // document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       setSession(null);
     });
   return response.status === 200;
@@ -109,11 +114,12 @@ export const AuthContext = createContext({
 const AuthProvider = ({ children }) => {
   const router = useRouter();
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [, setCookie, removeCookie] = useCookies(['accessToken']);
 
   // Validate and Fetch user token from localstorage when it changes
   const token = getToken();
   useEffect(async () => {
-    const isValidToken = await isValid(token, router);
+    const isValidToken = await isValid(token, router, setCookie, removeCookie);
     if (isValidToken) {
       setSession(token);
       const response = await bc.auth().me();
@@ -122,6 +128,7 @@ const AuthProvider = ({ children }) => {
         payload: { user: response.data, isAuthenticated: true },
       });
     } else {
+      removeCookie('accessToken', { path: '/' });
       setSession(null);
       dispatch({
         type: 'INIT',

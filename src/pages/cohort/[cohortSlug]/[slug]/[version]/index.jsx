@@ -53,13 +53,7 @@ const Dashboard = () => {
     tapCapsule, progressBar,
   } = mockData;
 
-  useEffect(() => {
-    if (cohortSession && cohortSession.academy.id) {
-      axios.defaults.headers.common.Academy = cohortSession.academy.id;
-    } else {
-      router.push('/choose-program');
-    }
-  }, [cohortSession]);
+  axios.defaults.headers.common.Academy = cohortSession.academy.id || '';
 
   // Fetch cohort data with pathName structure
   useEffect(() => {
@@ -69,6 +63,9 @@ const Dashboard = () => {
       const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
       const currentCohort = findCohort?.cohort;
       const { version, name } = currentCohort?.syllabus_version;
+      if (!cohortSession.academy.id) {
+        router.push('/choose-program');
+      }
       setCohortSession({
         ...cohortSession,
         date_joined: data.date_joined,
@@ -211,6 +208,10 @@ const Dashboard = () => {
           display="flex"
           flexDirection="row"
           alignItems="center"
+          onClick={() => {
+            setSortedAssignments([]);
+            // setCohortSession({});
+          }}
           fontWeight="700"
           gridGap="12px"
           color="#0097CF"
@@ -336,25 +337,6 @@ const Dashboard = () => {
 
           </Box>
 
-          {/* <Box height={useColorModeValue('1px', '2px')}
-          bg={useColorModeValue('gray.200', 'gray.700')} marginY="70px" /> */}
-
-          {/* <Box
-            marginTop="30px"
-            gridGap="24px"
-            display="flex"
-            flexDirection="column"
-          >
-            <TasksRemain
-              userId={user.id}
-              // contextState={taskTodo}
-              // setContextState={setTaskTodo}
-              contextState={contextState}
-              setContextState={setContextState}
-              sortedAssignments={sortedAssignments}
-              startDay={startDay}
-            />
-          </Box> */}
         </Box>
         <Box width="5rem" />
         <Box
