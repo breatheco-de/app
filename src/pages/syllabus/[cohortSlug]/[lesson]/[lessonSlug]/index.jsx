@@ -162,7 +162,7 @@ const Content = () => {
       });
   }, []);
 
-  useEffect(() => {
+  useEffect(async () => {
     /*
       const assetTypeValues = {
         read: 'LESSON',
@@ -180,8 +180,12 @@ const Content = () => {
             const currData = Array.isArray(res.data)
               ? res.data.find((el) => el.slug === lessonSlug)
               : res.data;
-            // if (currData.asset_type === 'QUIZ') {...}
-            setQuizSlug(lessonSlug);
+
+            if (lesson === 'answer') {
+              setQuizSlug(slugBySessionLang);
+            } else {
+              setQuizSlug(null);
+            }
             if (
               currData !== undefined
               && currData.readme !== null
@@ -450,21 +454,16 @@ const Content = () => {
         )}
 
         {!isQuiz && currentData.intro_video_url && (
-          <>
-            <Heading as="h2" size="sm">
-              Video Introduction
-            </Heading>
-            <ReactPlayer
-              id={currentData.intro_video_url}
-              playOnThumbnail
-              imageSize="hqdefault"
-              style={{
-                width: '100%',
-                objectFit: 'cover',
-                aspectRatio: '16/9',
-              }}
-            />
-          </>
+          <ReactPlayer
+            id={currentData.intro_video_url}
+            playOnThumbnail
+            imageSize="hqdefault"
+            style={{
+              width: '100%',
+              objectFit: 'cover',
+              aspectRatio: '16/9',
+            }}
+          />
         )}
 
         {
