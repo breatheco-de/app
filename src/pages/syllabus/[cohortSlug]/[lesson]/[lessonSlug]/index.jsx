@@ -194,9 +194,8 @@ const Content = () => {
             }
           });
       }).catch(() => {
-        setTimeout(() => {
-          EventIfNotFound();
-        }, 4000);
+        setCurrentData({});
+        EventIfNotFound();
       });
   }, [router, lessonSlug]);
 
