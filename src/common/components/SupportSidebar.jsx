@@ -1,4 +1,4 @@
-import { useEffect, memo } from 'react';
+import { useEffect, memo, useState } from 'react';
 import {
   Box, Heading, Button, useColorMode, Accordion, AccordionItem, AccordionPanel,
   AccordionButton, useColorModeValue,
@@ -20,24 +20,22 @@ const SupportSidebar = ({
 }) => {
   const { colorMode } = useColorMode();
   const [programServices, setProgramServices] = usePersistent('programServices', []);
-  const [programMentors, setProgramMentors] = usePersistent('programMentors', []);
+  const [programMentors, setProgramMentors] = useState([]);
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
 
   useEffect(() => {
-    bc.mentorship().getService().then((res) => {
-      const { data } = res;
+    bc.mentorship().getService().then(({ data }) => {
       if (data !== undefined && data.length > 0) {
         setProgramServices(data);
-
-        Promise.all(programServices.map((service) => bc.mentorship().getMentor({
-          serviceSlug: service.slug,
-        })
-          .then((resp) => {
-            setProgramMentors(resp.data);
-          }).catch((err) => {
-            console.error('err_mentorship:getMentor:', err);
-          })));
+        const allMentorsArray = [];
+        Promise.all(data.map(async (service) => {
+          const mentors = await bc.mentorship().getMentor({ serviceSlug: service.slug });
+          allMentorsArray.push(mentors.data);
+        })).then(() => {
+          const mentorsArray = allMentorsArray.reduce((acc, curr) => acc.concat(curr), []);
+          setProgramMentors(mentorsArray);
+        });
       }
     }).catch((err) => {
       console.error('err_mentorship:', err);
@@ -163,67 +161,71 @@ const SupportSidebar = ({
                   </Box>
                 </AccordionButton>
                 <AccordionPanel padding="0" width="100%">
-                  {programServices && programServices.map((service) => (
-                    <Accordion
-                      key={service.slug}
-                      allowMultiple
-                      background={commonBackground}
-                      borderRadius="3px"
-                      width="100%"
-                    >
-                      <AccordionItem
-                        border="0"
+                  {programServices && programServices.map((service) => {
+                    const programMentorsFiltered = programMentors.length > 0
+                      && programMentors.filter(
+                        (mentor) => mentor.service.slug === service.slug,
+                      );
+                    return (
+                      <Accordion
+                        key={service.slug}
+                        allowMultiple
+                        background={commonBackground}
+                        borderRadius="3px"
+                        width="100%"
                       >
-                        <AccordionButton width="100%" padding="16px">
-                          {service.name}
-                        </AccordionButton>
-                        <AccordionPanel
-                          padding="0"
-                          width="100%"
+                        <AccordionItem
                           border="0"
-                          // borderTop="1px solid"
-                          // borderLeft="5px solid"
-                          maxWidth="100%"
-                          // borderColor={commonBorderColor}
                         >
-                          {programMentors.filter(
-                            (mentor) => mentor.service.slug === service.slug
-                              && mentor.status !== 'INNACTIVE',
-                          ).length !== 0 ? programMentors.map((l) => (
-                            <Box
-                              key={`${l.slug}-${l.id}`}
-                              padding="16px"
-                              borderTop="1px solid"
-                              borderLeft="5px solid"
-                              borderColor={commonBorderColor}
-                              width="100%"
-                            >
-                              <Box
-                                as="a"
-                                color="blue.default"
-                                href={`https://mentor.breatheco.de/academy/${academySlug}/service/${service.slug}/mentor/${l.slug}?token=${accessToken}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {`${l.user.first_name} ${l.user.last_name}`}
-                              </Box>
-                            </Box>
-                            )) : (
-                              <Box
-                                padding="16px"
-                                borderTop="1px solid"
-                                borderLeft="5px solid"
-                                color="gray.600"
-                                borderColor={commonBorderColor}
-                                width="100%"
-                              >
-                                No mentors available
-                              </Box>
-                            )}
-                        </AccordionPanel>
-                      </AccordionItem>
-                    </Accordion>
-                  ))}
+                          <AccordionButton width="100%" padding="16px">
+                            {service.name}
+                          </AccordionButton>
+                          <AccordionPanel
+                            padding="0"
+                            width="100%"
+                            border="0"
+                            // borderTop="1px solid"
+                            // borderLeft="5px solid"
+                            maxWidth="100%"
+                            // borderColor={commonBorderColor}
+                          >
+                            {programMentorsFiltered && programMentorsFiltered.length !== 0
+                              ? programMentorsFiltered.map((l) => (
+                                <Box
+                                  key={`${l.slug}-${l.id}`}
+                                  padding="16px"
+                                  borderTop="1px solid"
+                                  borderLeft="5px solid"
+                                  borderColor={commonBorderColor}
+                                  width="100%"
+                                >
+                                  <Box
+                                    as="a"
+                                    color="blue.default"
+                                    href={`https://mentor.breatheco.de/academy/${academySlug}/service/${service.slug}/mentor/${l.slug}?token=${accessToken}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    {`${l.user.first_name} ${l.user.last_name}`}
+                                  </Box>
+                                </Box>
+                              )) : (
+                                <Box
+                                  padding="16px"
+                                  borderTop="1px solid"
+                                  borderLeft="5px solid"
+                                  color="gray.600"
+                                  borderColor={commonBorderColor}
+                                  width="100%"
+                                >
+                                  No mentors available
+                                </Box>
+                              )}
+                          </AccordionPanel>
+                        </AccordionItem>
+                      </Accordion>
+                    );
+                  })}
                 </AccordionPanel>
               </AccordionItem>
             </Accordion>

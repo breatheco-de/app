@@ -8,7 +8,6 @@ import Text from './Text';
 const ProgressBar = ({
   progressText, taskTodo, width,
 }) => {
-  console.log('taskTodo:::', taskTodo);
   const allLessons = taskTodo.filter((l) => l.task_type === 'LESSON');
   const allExercises = taskTodo.filter((e) => e.task_type === 'EXERCISE');
   const allProjects = taskTodo.filter((p) => p.task_type === 'PROJECT');
