@@ -50,10 +50,12 @@ export const updateAssignment = ({
     const projectUrl = getProjectUrl();
 
     const isDelivering = projectUrl !== '';
+    const linkIsRemoved = task.task_type === 'PROJECT' && !isDelivering;
     const taskToUpdate = {
       ...task,
       task_status: toggleStatus,
       github_url: projectUrl,
+      revision_status: linkIsRemoved ? 'PENDING' : task.revision_status,
     };
 
     bc.todo().update(taskToUpdate).then(({ data }) => {
