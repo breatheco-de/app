@@ -17,7 +17,7 @@ function login() {
     if (user !== null && user !== undefined) {
       router.push('/choose-program');
     }
-  });
+  }, [user]);
 
   return (
     <Stack minH="100vh" direction={{ md: 'row' }}>
