@@ -25,7 +25,7 @@ import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import dashboardTR from '../../../../../common/translations/dashboard';
-import usePersistent from '../../../../../common/hooks/usePersistent';
+import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import { slugify } from '../../../../../utils/index';
 
 const Dashboard = () => {

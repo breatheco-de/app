@@ -26,7 +26,7 @@ import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
 import DesktopNav from '../../../js_modules/navbar/DesktopNav';
 import MobileNav from '../../../js_modules/navbar/MobileNav';
-import usePersistent from '../../hooks/usePersistent';
+import { usePersistent } from '../../hooks/usePersistent';
 import Heading from '../Heading';
 import Text from '../Text';
 import styles from '../../../../styles/flags.module.css';
@@ -284,7 +284,6 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
               <PopoverContent
                 border={0}
                 boxShadow="dark-lg"
-                zIndex={100}
                 bg={popoverContentBgColor}
                 rounded="md"
                 width={{ base: '100%', md: 'auto' }}
@@ -330,7 +329,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                             {getLangName}
                           </NextChakraLink>
                           {
-                            i < langs.length && (
+                            i < langs.length - 1 && (
                               <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
                             )
                           }

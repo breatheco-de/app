@@ -23,7 +23,7 @@ import decodeFromBinary from '../../../../../utils/markdown';
 import bc from '../../../../../common/services/breathecode';
 import useAuth from '../../../../../common/hooks/useAuth';
 import { MDSkeleton } from '../../../../../common/components/Skeleton';
-import usePersistent from '../../../../../common/hooks/usePersistent';
+import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import StickySideBar from '../../../../../common/components/StickySideBar';
 
 const Content = () => {

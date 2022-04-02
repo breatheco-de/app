@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import Icon from './Icon';
 import Text from './Text';
 import bc from '../services/breathecode';
-import usePersistent from '../hooks/usePersistent';
+import { usePersistent } from '../hooks/usePersistent';
 
 const isWindow = typeof window !== 'undefined';
 const cohortSession = isWindow ? JSON.parse(localStorage.getItem('cohortSession') || '{}') : {};

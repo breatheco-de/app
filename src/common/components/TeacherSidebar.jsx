@@ -9,7 +9,7 @@ import { es } from 'date-fns/locale';
 import Icon from './Icon';
 import Text from './Text';
 import AttendanceModal from './AttendanceModal';
-import usePersistent from '../hooks/usePersistent';
+import { usePersistent } from '../hooks/usePersistent';
 import { isWindow, getStorageItem } from '../../utils';
 
 const ItemText = ({ text }) => (
