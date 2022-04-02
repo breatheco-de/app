@@ -132,7 +132,10 @@ export const ButtonHandlerByTaskStatus = ({
             linkInfo="Link of project sended to your teacher:"
             link={currentTask.github_url}
             handlerText="Remove current project link"
-            actionHandler={(event) => changeStatusAssignment(event, currentTask)}
+            actionHandler={(event) => {
+              changeStatusAssignment(event, currentTask);
+              onClose();
+            }}
           />
         </>
       );

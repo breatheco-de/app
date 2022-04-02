@@ -23,10 +23,18 @@ const getStorageItem = (key) => {
   return null;
 };
 
+const removeStorageItem = (key) => {
+  if (isWindow) {
+    return localStorage.removeItem(key);
+  }
+  return null;
+};
+
 export {
   isWindow,
   HAVE_SESSION,
   slugify,
   isPlural,
   getStorageItem,
+  removeStorageItem,
 };

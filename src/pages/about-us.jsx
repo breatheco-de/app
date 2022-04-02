@@ -8,7 +8,7 @@ import MarkDownParser from '../common/components/MarkDownParser';
 
 export const getStaticProps = async () => {
   const results = await fetch(
-    'https://raw.githubusercontent.com/ArielCalisaya/app/main/ABOUT.md',
+    'https://raw.githubusercontent.com/breatheco-de/app/main/ABOUT.md',
   )
     .then((res) => res.text())
     .catch((err) => console.error(err));

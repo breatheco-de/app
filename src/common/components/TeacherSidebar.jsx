@@ -55,6 +55,8 @@ const TeacherSidebar = ({
   const accessToken = getStorageItem('accessToken');
   const router = useRouter();
 
+  const { slug, academy } = cohortSession;
+
   const todayIs = {
     en: format(new Date(), "'Today is' do 'of' MMMM"),
     es: format(new Date(), "'Hoy es' dd 'de' MMMM", { locale: es }),
@@ -98,7 +100,7 @@ const TeacherSidebar = ({
           <ItemButton
             actionHandler={() => {
               if (cohortSession.bc_id && isWindow) {
-                window.open(`https://attendance.breatheco.de/?cohort_slug=${cohortSession.slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${cohortSession.academy.id}`, '_blank');
+                window.open(`https://attendance.breatheco.de/?cohort_slug=${slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${academy.id}`, '_blank');
               }
             }}
           >
@@ -112,7 +114,7 @@ const TeacherSidebar = ({
           <ItemButton
             actionHandler={() => {
               if (isWindow) {
-                window.location.href = `/${router.locale}/${cohortSession.selectedProgramSlug}/assignments`;
+                window.open(`https://assignments.breatheco.de/?attempt=1&token=${accessToken}`, '_blank');
               }
             }}
           >
@@ -126,7 +128,7 @@ const TeacherSidebar = ({
           <ItemButton
             actionHandler={() => {
               if (isWindow) {
-                window.location.href = `/${router.locale}/${cohortSession.selectedProgramSlug}/teacher-tutorial`;
+                window.open('https://www.notion.so/4geeksacademy/Mentor-training-433451eb9dac4dc680b7c5dae1796519', '_blank');
               }
             }}
           >
@@ -137,18 +139,14 @@ const TeacherSidebar = ({
           </ItemButton>
 
           {/* Other resources */}
-          <ItemButton
-            actionHandler={() => {
-              if (isWindow) {
-                window.location.href = `/${router.locale}/${cohortSession.selectedProgramSlug}/other-resources`;
-              }
-            }}
+          {/* <ItemButton
+            actionHandler={() => {}}
           >
             <ItemText text="Other resources" />
             <Box>
               <Icon icon="arrowRight" width="22px" height="22px" />
             </Box>
-          </ItemButton>
+          </ItemButton> */}
         </Box>
 
         <AttendanceModal
