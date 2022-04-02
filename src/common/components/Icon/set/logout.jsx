@@ -1,17 +1,17 @@
-import { useColorModeValue } from '@chakra-ui/react';
-
 const logout = ({
   width, height, style, color,
 }) => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
     style={style}
-    width={width || '24px'}
-    height={height || '24px'}
-    viewBox="0 0 24 24"
-    fill={useColorModeValue(`${color || '#0097CF'}`, 'white')}
+    width={width || '19px'}
+    height={height || '19px'}
+    viewBox="0 0 19 19"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
   >
-    <path d="M16 9v-4l8 7-8 7v-4h-8v-6h8zm-16-7v20h14v-2h-12v-16h12v-2h-14z" />
+    <path d="M12 16V18H1V1H12V3.5" stroke={color || '#00ABE9'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M4 10H18" stroke={color || '#00ABE9'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M14 6L18 10L14 14" stroke={color || '#00ABE9'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 

@@ -299,7 +299,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                   borderColor={commonBorderColor}
                   display="flex"
                   justifyContent="space-between"
-                  padding="12px"
+                  padding="12px 1.5rem"
                 >
                   <Text size="md" fontWeight="700">
                     {languageTR}
@@ -340,7 +340,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                 </Box>
 
                 {/* Container Section */}
-                <Box p="1rem 1.5rem 1rem 1.5rem">
+                <Box p="1rem 1.5rem 0 1.5rem">
                   <Stack flexDirection="row" gridGap="10px" pb="15px">
                     <Avatar
                       // name={user?.first_name}
@@ -369,15 +369,13 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                     alignItems="center"
                     padding="1rem 0rem"
                   >
-                    <Box cursor="pointer" width="auto" display="flex" gridGap="10px" onClick={logout}>
+                    <Box as="button" cursor="pointer" width="auto" display="flex" gridGap="10px" onClick={logout}>
                       <Icon icon="logout" width="20px" height="20px" />
                       <Box
-                        _hover={{
-                          fontWeight: '700',
-                        }}
-                        color="blue.default"
+                        fontWeight="700"
+                        color="blue.400"
                         as="span"
-                        fontSize="15px"
+                        fontSize="14px"
                       >
                         {logoutTR}
                       </Box>
