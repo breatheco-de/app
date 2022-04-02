@@ -49,6 +49,8 @@ const Dashboard = () => {
 
   const { supportSideBar } = dashboardTR[locale];
 
+  const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
+
   const {
     tapCapsule, progressBar,
   } = mockData;
@@ -255,7 +257,7 @@ const Dashboard = () => {
             gridGap="30px"
             // minWidth={{ base: 'auto', md: 'clamp(250px, 30vw, 380px)' }}
           >
-            {['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) && (
+            {profesionalRoles.includes(cohortSession?.cohort_role) && (
               <TeacherSidebar
                 title="Actions"
                 user={user}
@@ -265,13 +267,13 @@ const Dashboard = () => {
               />
             )}
             <CohortSideBar
-              teacherVersionActive={['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role)}
+              teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
               cohort={cohortSession}
               studentAndTeachers={studentAndTeachers}
               cohortCity={cohortSession?.name}
               width="100%"
             />
-            {!['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) && (
+            {!profesionalRoles.includes(cohortSession?.cohort_role) && (
               <SupportSidebar
                 title={supportSideBar.title}
                 subtitle={supportSideBar.description}
@@ -345,7 +347,7 @@ const Dashboard = () => {
           gridGap="30px"
           minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
         >
-          {['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) && (
+          {profesionalRoles.includes(cohortSession?.cohort_role) && (
             <TeacherSidebar
               title="Actions"
               user={user}
@@ -355,13 +357,13 @@ const Dashboard = () => {
             />
           )}
           <CohortSideBar
-            teacherVersionActive={['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role)}
+            teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
             studentAndTeachers={studentAndTeachers}
             cohort={cohortSession}
             cohortCity={cohortSession?.name}
             width="100%"
           />
-          {!['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) && (
+          {!profesionalRoles.includes(cohortSession?.cohort_role) && (
             <SupportSidebar
               title={supportSideBar.title}
               subtitle={supportSideBar.description}

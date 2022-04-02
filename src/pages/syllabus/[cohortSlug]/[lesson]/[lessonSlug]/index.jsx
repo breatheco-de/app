@@ -45,6 +45,7 @@ const Content = () => {
   const prevScrollY = useRef(0);
   const [isBelowLaptop] = useMediaQuery('(max-width: 996px)');
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
+  const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
 
   //                                          gray.200    gray.500
   const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
@@ -162,7 +163,7 @@ const Content = () => {
       });
   }, []);
 
-  useEffect(() => {
+  useEffect(async () => {
     /*
       const assetTypeValues = {
         read: 'LESSON',
@@ -180,8 +181,12 @@ const Content = () => {
             const currData = Array.isArray(res.data)
               ? res.data.find((el) => el.slug === lessonSlug)
               : res.data;
-            // if (currData.asset_type === 'QUIZ') {...}
-            setQuizSlug(lessonSlug);
+
+            if (lesson === 'answer') {
+              setQuizSlug(slugBySessionLang);
+            } else {
+              setQuizSlug(null);
+            }
             if (
               currData !== undefined
               && currData.readme !== null
@@ -252,7 +257,7 @@ const Content = () => {
     return false;
   };
 
-  const teacherActions = ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_role)
+  const teacherActions = profesionalRoles.includes(cohortSession.cohort_role)
     ? [
       {
         icon: 'message',
@@ -450,21 +455,16 @@ const Content = () => {
         )}
 
         {!isQuiz && currentData.intro_video_url && (
-          <>
-            <Heading as="h2" size="sm">
-              Video Introduction
-            </Heading>
-            <ReactPlayer
-              id={currentData.intro_video_url}
-              playOnThumbnail
-              imageSize="hqdefault"
-              style={{
-                width: '100%',
-                objectFit: 'cover',
-                aspectRatio: '16/9',
-              }}
-            />
-          </>
+          <ReactPlayer
+            id={currentData.intro_video_url}
+            playOnThumbnail
+            imageSize="hqdefault"
+            style={{
+              width: '100%',
+              objectFit: 'cover',
+              aspectRatio: '16/9',
+            }}
+          />
         )}
 
         {
