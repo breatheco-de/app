@@ -45,6 +45,7 @@ const Content = () => {
   const prevScrollY = useRef(0);
   const [isBelowLaptop] = useMediaQuery('(max-width: 996px)');
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
+  const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
 
   //                                          gray.200    gray.500
   const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
@@ -256,7 +257,7 @@ const Content = () => {
     return false;
   };
 
-  const teacherActions = ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_role)
+  const teacherActions = profesionalRoles.includes(cohortSession.cohort_role)
     ? [
       {
         icon: 'message',
