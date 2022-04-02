@@ -284,6 +284,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
               <PopoverContent
                 border={0}
                 boxShadow="dark-lg"
+                zIndex={100}
                 bg={popoverContentBgColor}
                 rounded="md"
                 width={{ base: '100%', md: 'auto' }}
