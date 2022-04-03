@@ -4,6 +4,7 @@ import {
   Text,
   Stack,
   Popover,
+  PopoverArrow,
   PopoverTrigger,
   PopoverContent,
   useColorModeValue,
@@ -74,14 +75,18 @@ const DesktopItem = ({ item }) => {
 
         {item.subMenu && (
           <PopoverContent
-            border={0}
-            boxShadow="xl"
             bg={popoverContentBgColor}
-            p={4}
             rounded="md"
             minW="md"
           >
-            <Stack>
+            <PopoverArrow />
+            <Stack
+              border={0}
+              boxShadow="2xl"
+              p={4}
+              rounded="md"
+              minW="md"
+            >
               <Flex
                 flexDirection="row"
                 padding="20px 0"

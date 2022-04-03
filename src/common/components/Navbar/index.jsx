@@ -186,8 +186,8 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
               </Button>
             </PopoverTrigger>
             <PopoverContent
-              border={0}
-              boxShadow="dark-lg"
+              // border={0}
+              // boxShadow="dark-lg"
               bg={popoverContentBgColor}
               rounded="md"
               width={{ base: '100%', md: 'auto' }}
@@ -197,6 +197,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
               <Box
                 width="100%"
                 display="flex"
+                boxShadow="2xl"
                 flexDirection="column"
                 gridGap="10px"
                 padding="12px"
@@ -283,106 +284,114 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
 
               <PopoverContent
                 border={0}
-                boxShadow="dark-lg"
-                bg={popoverContentBgColor}
+                boxShadow="2xl"
+                // bg={popoverContentBgColor}
                 rounded="md"
                 width={{ base: '100%', md: 'auto' }}
                 minW={{ base: 'auto', md: 'md' }}
               >
                 <PopoverArrow />
-
-                {/* Language Section */}
                 <Box
-                  width="100%"
-                  borderBottom={2}
-                  borderStyle="solid"
-                  borderColor={commonBorderColor}
-                  display="flex"
-                  justifyContent="space-between"
-                  padding="12px 1.5rem"
+                  // border={0}
+                  boxShadow="dark-lg"
+                  bg={popoverContentBgColor}
+                  rounded="md"
+                  width={{ base: '100%', md: 'auto' }}
+                  minW={{ base: 'auto', md: 'md' }}
                 >
-                  <Text size="md" fontWeight="700">
-                    {languageTR}
-                  </Text>
-                  <Box display="flex" flexDirection="row">
-                    {langs.map((lang, i) => {
-                      const getIconFlags = lang === 'en' ? 'usaFlag' : 'spainFlag';
-                      const getLangName = lang === 'en' ? 'Eng' : 'Esp';
-                      return (
-                        <Fragment key={lang}>
-                          <NextChakraLink
-                            _hover={{
-                              textDecoration: 'none',
-                              color: 'blue.default',
-                            }}
-                            color={locale === lang ? 'blue.default' : linkColor}
-                            fontWeight={locale === lang ? '700' : '400'}
-                            href={router.asPath}
-                            locale={lang}
-                            display="flex"
-                            alignItems="center"
-                            textTransform="uppercase"
-                            gridGap="5px"
-                            size="sm"
-                          >
-                            <Icon icon={getIconFlags} width="16px" height="16px" />
-                            {getLangName}
-                          </NextChakraLink>
-                          {
-                            i < langs.length - 1 && (
-                              <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
-                            )
-                          }
-                        </Fragment>
-                      );
-                    })}
-                  </Box>
-                </Box>
 
-                {/* Container Section */}
-                <Box p="1rem 1.5rem 0 1.5rem">
-                  <Stack flexDirection="row" gridGap="10px" pb="15px">
-                    <Avatar
-                      // name={user?.first_name}
-                      width="62px"
-                      marginY="auto"
-                      height="62px"
-                      src={getImage()}
-                    />
-                    <Flex flexDirection="column" alignItems="flex-start" gridGap="6px">
-                      <Heading as="p" size="20px" fontWeight="700">
-                        {getName() || ''}
-                      </Heading>
-                      {(cohortSession?.date_joined || user?.active_cohort?.date_joined) && (
-                        <Heading as="p" size="16px" maxWidth="300px" textTransform="initial" fontWeight="400">
-                          {dateJoined[locale]}
-                        </Heading>
-                      )}
-                    </Flex>
-                  </Stack>
-
-                  <Flex
-                    borderTop={2}
+                  {/* Language Section */}
+                  <Box
+                    width="100%"
+                    borderBottom={2}
                     borderStyle="solid"
                     borderColor={commonBorderColor}
-                    // padding="20px 0"
-                    alignItems="center"
-                    padding="1rem 0rem"
+                    display="flex"
+                    justifyContent="space-between"
+                    padding="12px 1.5rem"
                   >
-                    <Box as="button" cursor="pointer" width="auto" display="flex" gridGap="10px" onClick={logout}>
-                      <Icon icon="logout" width="20px" height="20px" />
-                      <Box
-                        fontWeight="700"
-                        color="blue.400"
-                        as="span"
-                        fontSize="14px"
-                      >
-                        {logoutTR}
-                      </Box>
+                    <Text size="md" fontWeight="700">
+                      {languageTR}
+                    </Text>
+                    <Box display="flex" flexDirection="row">
+                      {langs.map((lang, i) => {
+                        const getIconFlags = lang === 'en' ? 'usaFlag' : 'spainFlag';
+                        const getLangName = lang === 'en' ? 'Eng' : 'Esp';
+                        return (
+                          <Fragment key={lang}>
+                            <NextChakraLink
+                              _hover={{
+                                textDecoration: 'none',
+                                color: 'blue.default',
+                              }}
+                              color={locale === lang ? 'blue.default' : linkColor}
+                              fontWeight={locale === lang ? '700' : '400'}
+                              href={router.asPath}
+                              locale={lang}
+                              display="flex"
+                              alignItems="center"
+                              textTransform="uppercase"
+                              gridGap="5px"
+                              size="sm"
+                            >
+                              <Icon icon={getIconFlags} width="16px" height="16px" />
+                              {getLangName}
+                            </NextChakraLink>
+                            {
+                              i < langs.length - 1 && (
+                                <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
+                              )
+                            }
+                          </Fragment>
+                        );
+                      })}
                     </Box>
-                  </Flex>
-                </Box>
+                  </Box>
 
+                  {/* Container Section */}
+                  <Box p="1rem 1.5rem 0 1.5rem">
+                    <Stack flexDirection="row" gridGap="10px" pb="15px">
+                      <Avatar
+                        // name={user?.first_name}
+                        width="62px"
+                        marginY="auto"
+                        height="62px"
+                        src={getImage()}
+                      />
+                      <Flex flexDirection="column" alignItems="flex-start" gridGap="6px">
+                        <Heading as="p" size="20px" fontWeight="700">
+                          {getName() || ''}
+                        </Heading>
+                        {(cohortSession?.date_joined || user?.active_cohort?.date_joined) && (
+                          <Heading as="p" size="16px" maxWidth="300px" textTransform="initial" fontWeight="400">
+                            {dateJoined[locale]}
+                          </Heading>
+                        )}
+                      </Flex>
+                    </Stack>
+
+                    <Flex
+                      borderTop={2}
+                      borderStyle="solid"
+                      borderColor={commonBorderColor}
+                      // padding="20px 0"
+                      alignItems="center"
+                      padding="1rem 0rem"
+                    >
+                      <Box as="button" cursor="pointer" width="auto" display="flex" gridGap="10px" onClick={logout}>
+                        <Icon icon="logout" width="20px" height="20px" />
+                        <Box
+                          fontWeight="700"
+                          color="blue.400"
+                          as="span"
+                          fontSize="14px"
+                        >
+                          {logoutTR}
+                        </Box>
+                      </Box>
+                    </Flex>
+                  </Box>
+                </Box>
               </PopoverContent>
             </Popover>
           ) : (
