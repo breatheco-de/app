@@ -1,13 +1,14 @@
 import {
   Flex, Stack, Box, Tabs, TabList, Tab, TabPanels, TabPanel, Image,
 } from '@chakra-ui/react';
-import I from 'next/image';
+// import I from 'next/image';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import logo from '../../../public/static/images/bc_logo.png';
+// import logo from '../../../public/static/images/bc_logo.png';
 import Login from '../../common/components/Forms/LogIn';
 import Register from '../../common/components/Forms/Register';
 import useAuth from '../../common/hooks/useAuth';
+import Icon from '../../common/components/Icon';
 
 function login() {
   const { user } = useAuth();
@@ -24,7 +25,7 @@ function login() {
       <Flex p={8} flex={1} align="center" justify="center">
         <Stack spacing={4} w="full" maxW="md">
           <Box align="center" justify="center">
-            <I src={logo} height="67px" width="67px" />
+            <Icon icon="logoModern" width="200px" height="100px" />
           </Box>
           <Stack spacing={6}>
             <Tabs isFitted variant="enclosed">
