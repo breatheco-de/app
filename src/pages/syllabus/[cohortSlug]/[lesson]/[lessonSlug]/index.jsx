@@ -172,6 +172,7 @@ const Content = () => {
         answer: 'QUIZ',
       };
     */
+    // añadir querystring asset_type=<QUIZ>
     axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}`)
       .then(({ data }) => {
         const language = router.locale === 'en' ? 'us' : 'es';

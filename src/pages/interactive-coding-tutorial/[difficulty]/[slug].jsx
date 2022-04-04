@@ -50,6 +50,7 @@ export const getStaticPaths = async ({ locales }) => {
 
 export const getStaticProps = async ({ params }) => {
   const { slug } = params;
+  // TODO: PEdir solo el slug no los projects
   const results = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`)
     .then((res) => res.json())
     .then((data) => data.find((e) => e.slug === slug))

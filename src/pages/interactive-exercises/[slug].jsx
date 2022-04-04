@@ -47,6 +47,7 @@ export const getStaticPaths = async ({ locales }) => {
 
 export const getStaticProps = async ({ params }) => {
   const { slug } = params;
+  // TODO: PEdir solo el slug no los exercises
   const results = await fetch(
     `${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`,
   )
