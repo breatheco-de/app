@@ -18,6 +18,14 @@ a {
   box-sizing: border-box;
 }
 
+*:focus {
+  box-shadow: none !important;
+}
+
+.chakra-popover__arrow-positioner {
+  z-index: 99!important;
+}
+
 /* .centerImageForBlur {
   max-width: 90%!important;
   min-width: 90%!important;

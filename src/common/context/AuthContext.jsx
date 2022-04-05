@@ -88,11 +88,14 @@ const isValid = async (token, router, setCookie, removeCookie) => {
       return res;
     })
     // remove token from localstorage if expired (it prevents throwing error)
-    .catch(() => {
+    .catch((err) => {
       router.push('/login');
       removeCookie('accessToken', { path: '/' });
       // document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       setSession(null);
+      return {
+        status: err.response.status,
+      };
     });
   return response.status === 200;
 };

@@ -18,7 +18,7 @@ const CallToAction = ({
     flexDirection={{ base: 'column', lg: 'row' }}
   >
     <Box paddingRight="4vh">
-      <Heading as="h5" fontSize="22px" color="white" margin={0} marginBottom="11px">
+      <Heading as="h5" fontSize="xsm" color="white" margin={0} marginBottom="11px">
         {title}
       </Heading>
       <Text color="white" size="l" margin={0}>

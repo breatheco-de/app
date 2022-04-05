@@ -9,10 +9,11 @@ import {
   TabPanel,
   Image,
 } from '@chakra-ui/react';
-import I from 'next/image';
-import logo from '../../../public/static/images/bc_logo.png';
+// import I from 'next/image';
+// import logo from '../../../public/static/images/bc_logo.png';
 import LoginForm from '../components/Forms/LogIn';
 import RegisterForm from '../components/Forms/Register';
+import Icon from '../components/Icon';
 
 function Login() {
   return (
@@ -20,7 +21,8 @@ function Login() {
       <Flex p={8} flex={1} align="center" justify="center">
         <Stack spacing={4} w="full" maxW="md">
           <Box align="center" justify="center">
-            <I src={logo} height="67px" width="67px" />
+            {/* <I src={logo} height="67px" width="67px" /> */}
+            <Icon icon="logoModern" width="200px" height="100px" />
           </Box>
           <Stack spacing={6}>
             <Tabs isFitted variant="enclosed">

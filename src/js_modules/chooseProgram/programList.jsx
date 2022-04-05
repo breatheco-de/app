@@ -8,7 +8,7 @@ import axios from '../../axios';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import Module from '../../common/components/Module';
-import usePersistent from '../../common/hooks/usePersistent';
+import { usePersistent } from '../../common/hooks/usePersistent';
 
 function CohortProgram({ item, handleChoose }) {
   const [isMobile] = useMediaQuery('(min-width: 600px)');

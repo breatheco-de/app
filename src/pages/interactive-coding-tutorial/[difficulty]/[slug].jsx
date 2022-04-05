@@ -50,12 +50,14 @@ export const getStaticPaths = async ({ locales }) => {
 
 export const getStaticProps = async ({ params }) => {
   const { slug } = params;
-  const results = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`)
+  // TODO: PEdir solo el slug no los projects
+  const results = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
     .then((res) => res.json())
-    .then((data) => data.find((e) => e.slug === slug))
-    .catch((err) => console.log('interactive-coding-tutorial-page - getStaticProps: ', err));
+    .catch((err) => ({
+      status: err.response.status,
+    }));
 
-  if (!results) {
+  if (results.status === 404) {
     return {
       notFound: true,
     };
