@@ -47,13 +47,19 @@ export const getStaticPaths = async ({ locales }) => {
 
 export const getStaticProps = async ({ params }) => {
   const { slug } = params;
-  // TODO: PEdir solo el slug no los exercises
   const results = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`,
+    `${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`,
   )
     .then((res) => res.json())
-    .then((data) => data.find((e) => e.slug === slug))
-    .catch((err) => console.log(err));
+    .catch((err) => ({
+      status: err.response.status,
+    }));
+
+  if (results.status === 404) {
+    return {
+      notFound: true,
+    };
+  }
   return {
     props: {
       fallback: false,

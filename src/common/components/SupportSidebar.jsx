@@ -56,7 +56,7 @@ const SupportSidebar = ({
       </Box>
       <Box p="4" pb="30px" pt="20px">
         <Box d="flex" alignItems="baseline" justifyContent="center">
-          <Heading fontSize="22px" textAlign="center" justify="center" mt="0px" mb="0px">
+          <Heading fontSize="xsm" textAlign="center" justify="center" mt="0px" mb="0px">
             {title}
           </Heading>
         </Box>

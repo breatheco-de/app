@@ -82,6 +82,12 @@ const Content = () => {
   };
 
   const { cohortSlug, lesson, lessonSlug } = router.query;
+  const assetTypeValues = {
+    read: 'LESSON',
+    practice: 'EXERCISE',
+    code: 'PROJECT',
+    answer: 'QUIZ',
+  };
 
   const isQuiz = lesson === 'answer';
 
@@ -163,21 +169,26 @@ const Content = () => {
       });
   }, []);
 
-  useEffect(async () => {
-    /*
-      const assetTypeValues = {
-        read: 'LESSON',
-        practice: 'EXERCISE',
-        code: 'PROJECT',
-        answer: 'QUIZ',
-      };
-    */
-    // añadir querystring asset_type=<QUIZ>
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}`)
+  useEffect(() => {
+    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
       .then(({ data }) => {
         const language = router.locale === 'en' ? 'us' : 'es';
-        const slugBySessionLang = data.translations[language];
-        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slugBySessionLang}`)
+        const localeLangExists = data.translations[language] !== undefined;
+        const getSlugBySessionLang = () => {
+          if (localeLangExists) {
+            return data.translations[language];
+          }
+          toast({
+            title: `Data for language "${language}" not found, showing the english version`,
+            status: 'warning',
+            duration: 5500,
+            isClosable: true,
+          });
+          return data.translations.us; // us value in translation is the default language
+        };
+        const slugBySessionLang = getSlugBySessionLang();
+
+        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slugBySessionLang}?asset_type=${assetTypeValues[lesson]}&translation=${language}`)
           .then((res) => {
             const currData = Array.isArray(res.data)
               ? res.data.find((el) => el.slug === lessonSlug)
