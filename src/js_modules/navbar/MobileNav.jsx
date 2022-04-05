@@ -10,8 +10,11 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import Icon from '../../common/components/Icon';
 import MobileItem from './MobileItem';
+import LanguageSelector from '../../common/components/LanguageSelector';
 
-const MobileNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
+const MobileNav = ({
+  NAV_ITEMS, readSyllabus, haveSession, translations,
+}) => {
   const [privateItems, setPrivateItems] = useState([]);
   const { colorMode, toggleColorMode } = useColorMode();
   const commonColors = useColorModeValue('white', 'gray.800');
@@ -79,11 +82,14 @@ const MobileNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
       <Box
         borderTop={1}
         borderStyle="solid"
-        margin="4px auto"
+        display="flex"
+        padding="14px 0 0 0"
         borderColor={useColorModeValue('gray.200', 'gray.900')}
+        justifyContent="center"
+        gridGap="20px"
       >
         <IconButton
-          style={{ margin: '14px auto 0 auto' }}
+          // style={{ margin: '14px auto 0 auto' }}
           display={useBreakpointValue({ base: 'flex', md: 'none' })}
           _hover={{
             background: commonColors,
@@ -101,6 +107,7 @@ const MobileNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
             )
           }
         />
+        <LanguageSelector display={{ base: 'block ', md: 'none' }} translations={translations} />
       </Box>
     </Stack>
   );
@@ -123,6 +130,7 @@ MobileNav.propTypes = {
       ),
     }),
   ),
+  translations: PropTypes.objectOf(PropTypes.any),
   readSyllabus: PropTypes.arrayOf(PropTypes.any),
 };
 
@@ -138,6 +146,7 @@ MobileNav.defaultProps = {
     },
   ],
   readSyllabus: [],
+  translations: undefined,
 };
 
 export default MobileNav;
