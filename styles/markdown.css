@@ -3,7 +3,11 @@
   display: block;
   margin: auto;
 }
-
+.MDIframe {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16/9;
+}
 .markdown-body body > *:first-child {
   margin-top: 0 !important;
 }
@@ -527,11 +531,11 @@ blockquote > :last-child {
     max-width: 84vw;
     width: 100%;
     overflow: auto;
-    display: grid;
+    /* display: grid; */
   }
 
   .markdown-body table tr td {
-    display: block;
+    /* display: block; */
     width: 94vw;
   }
 }

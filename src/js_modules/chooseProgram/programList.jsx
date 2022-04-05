@@ -27,7 +27,7 @@ function CohortProgram({ item, handleChoose }) {
         title: `Cohort: ${cohort.name}`,
       }}
       leftContentStyle={{
-        maxWidth: !isMobile ? '160px' : 'auto',
+        maxWidth: !isMobile ? '135px' : 'auto',
       }}
       rightItemHandler={(
         <Box

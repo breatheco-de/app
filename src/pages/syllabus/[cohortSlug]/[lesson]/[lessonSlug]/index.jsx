@@ -55,7 +55,7 @@ const Content = () => {
   const { teacherInstructions, keyConcepts } = selectedSyllabus;
 
   const slide = {
-    minWidth: '310px',
+    minWidth: '290px',
     zIndex: 1200,
     position: isBelowLaptop ? 'inherit' : 'sticky',
     backgroundColor: bgColor,
@@ -67,7 +67,7 @@ const Content = () => {
     width: 'inherit',
     transform: Open ? 'translateX(0rem)' : 'translateX(-30rem)',
     visibility: Open ? 'visible' : 'hidden',
-    height: '100vh',
+    height: isBelowTablet ? '100%' : '100vh',
     outline: 0,
     borderRight: 1,
     borderStyle: 'solid',
@@ -337,7 +337,8 @@ const Content = () => {
       <Box
         bottom="20px"
         position="fixed"
-        left="95%"
+        right="30px"
+        // left="95%"
       >
         <IconButton
           icon={<ArrowUpIcon />}
@@ -355,7 +356,7 @@ const Content = () => {
           }}
         />
       </Box>
-      <Box position={timelineSlide} flex="0 0 auto" minWidth="310px" width={timelineWidth} zIndex={Open ? 99 : 0}>
+      <Box position={timelineSlide} flex="0 0 auto" minWidth="290px" width={timelineWidth} zIndex={Open ? 99 : 0}>
         <Box style={slide}>
           <Box
             padding="1.5rem"
@@ -396,8 +397,9 @@ const Content = () => {
 
           <Box
             className={`horizontal-sroll ${useColorModeValue('light', 'dark')}`}
+            height={{ base: '100%', md: '90.5vh' }}
             style={{
-              height: '90.5vh',
+              // height: '90.5vh',
               overflowX: 'hidden',
               overflowY: 'auto',
             }}
