@@ -466,7 +466,7 @@ const Content = () => {
           </Box>
         )}
 
-        {!isQuiz && currentData.intro_video_url && (
+        {!isQuiz && currentData.slug === lessonSlug && currentData.intro_video_url && (
           <ReactPlayer
             id={currentData.intro_video_url}
             playOnThumbnail

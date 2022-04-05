@@ -145,6 +145,18 @@
   margin: 15px 0;
 }
 
+.markdown-body.light blockquote table * {
+  color: black;
+}
+
+.markdown-body.dark blockquote table * {
+  color: #cbd5e0;
+}
+
+.markdown-body blockquote table {
+  padding: 15px 0 0 0;
+}
+
 .markdown-body ul {
   padding: 0 0 20px 27px;
 }
