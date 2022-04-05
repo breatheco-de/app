@@ -67,7 +67,7 @@ export default function Home() {
           >
             {t('title')}
           </Heading>
-          <Heading as="h2" size={{ base: '50px', md: '70px' }} style={{ wordWrap: 'normal' }}>
+          <Heading as="h2" size="xxl" style={{ wordWrap: 'normal' }}>
             {t('welcome')}
           </Heading>
           <Box

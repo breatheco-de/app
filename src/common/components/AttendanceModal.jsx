@@ -30,7 +30,7 @@ import {
 import Icon from './Icon';
 import Text from './Text';
 import bc from '../services/breathecode';
-import usePersistent from '../hooks/usePersistent';
+import { usePersistent } from '../hooks/usePersistent';
 
 const AttendanceModal = ({
   title, message, isOpen, onClose, sortedAssignments, students,

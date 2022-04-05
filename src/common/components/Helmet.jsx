@@ -20,7 +20,7 @@ const Helmet = ({
     ) : (
       <meta property="og:type" content="website" />
     )}
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" href="/4Geeks.ico" />
     <meta name="og:title" content={title} />
     <meta name="og:url" content={url} />
     <meta property="og:description" content={description} />
