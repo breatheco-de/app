@@ -154,6 +154,25 @@ const MDLink = ({ children, href }) => (
   </Link>
 );
 
+const MDTable = ({ children }) => (
+  <Box
+    as="div"
+    minW={{ base: '84vw', md: 'auto' }}
+    maxW={{ base: '84vw', md: 'auto' }}
+    // minW="100vw"
+    // maxW="100vw"
+    width="100%"
+    overflow="auto"
+  >
+    <Box
+      as="table"
+    >
+      {children}
+    </Box>
+
+  </Box>
+);
+
 const MDHr = () => (<Box d="none" />);
 
 const MarkDownParser = ({ content, withToc, frontMatter }) => {
@@ -207,6 +226,14 @@ const MarkDownParser = ({ content, withToc, frontMatter }) => {
           'before-after': {
             component: BeforeAfter,
           },
+          iframe: {
+            props: {
+              className: 'MDIframe',
+            },
+          },
+          table: {
+            component: MDTable,
+          },
         },
         slugify: (str) => str.split(' ').join('-').toLowerCase(),
       })}
@@ -259,6 +286,10 @@ MDText.defaultProps = {
 BeforeAfter.propTypes = {
   before: PropTypes.string.isRequired,
   after: PropTypes.string.isRequired,
+};
+
+MDTable.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default MarkDownParser;

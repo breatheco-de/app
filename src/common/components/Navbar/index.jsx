@@ -138,6 +138,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
               )
             }
             variant="default"
+            height="auto"
             aria-label="Toggle Navigation"
           />
           <NextChakraLink href="/" alignSelf="center" display="flex">
@@ -236,6 +237,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
 
           <IconButton
             display={useBreakpointValue({ base: 'none', md: 'flex' })}
+            height="auto"
             _hover={{
               background: commonColors,
             }}

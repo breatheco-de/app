@@ -3,7 +3,11 @@
   display: block;
   margin: auto;
 }
-
+.MDIframe {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16/9;
+}
 .markdown-body body > *:first-child {
   margin-top: 0 !important;
 }
@@ -143,6 +147,18 @@
 .markdown-body ul, .markdown-body ol, .markdown-body dl,
 .markdown-body li, .markdown-body table {
   margin: 15px 0;
+}
+
+.markdown-body.light blockquote table * {
+  color: black;
+}
+
+.markdown-body.dark blockquote table * {
+  color: #cbd5e0;
+}
+
+.markdown-body blockquote table {
+  padding: 15px 0 0 0;
 }
 
 .markdown-body ul {
@@ -515,11 +531,11 @@ blockquote > :last-child {
     max-width: 84vw;
     width: 100%;
     overflow: auto;
-    display: grid;
+    /* display: grid; */
   }
 
   .markdown-body table tr td {
-    display: block;
+    /* display: block; */
     width: 94vw;
   }
 }

@@ -11,6 +11,7 @@ import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
 import { isPlural } from '../../utils';
+import Heading from '../../common/components/Heading';
 
 function chooseProgram() {
   const [data, setData] = useState([]);
@@ -58,14 +59,15 @@ function chooseProgram() {
 
   return (
     <Flex alignItems="center" flexDirection="column">
-      <Box
+      <Heading
         fontWeight={800}
+        size="xl"
         width={['70%', '68%', '70%', '50%']}
-        fontSize="50px"
+        // fontSize="50px"
         marginTop="40px"
       >
         Your programs
-      </Box>
+      </Heading>
 
       {invites.length > 0 && (
         <Box margin="25px 0 0 0" display="flex" alignItems="center" justifyContent="space-between" padding="16px 20px" borderRadius="18px" width={['70%', '68%', '70%', '50%']} background="yellow.light">

@@ -24,7 +24,7 @@ function login() {
     <Stack minH="100vh" direction={{ md: 'row' }}>
       <Flex p={8} flex={1} align="center" justify="center">
         <Stack spacing={4} w="full" maxW="md">
-          <Box align="center" justify="center">
+          <Box display={{ base: 'none', md: 'block' }} align="center" justify="center">
             <Icon icon="logoModern" width="200px" height="100px" />
           </Box>
           <Stack spacing={6}>

@@ -59,7 +59,7 @@ const Module = ({
           </Box>
         )}
         {textWithLink ? (
-          <Link href={link} style={leftContentStyle}>
+          <Link href={link} style={leftContentStyle} minW="165px">
             {data.type && (
               <Heading
                 as="h3"
