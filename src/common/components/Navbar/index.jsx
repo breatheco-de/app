@@ -29,17 +29,16 @@ import MobileNav from '../../../js_modules/navbar/MobileNav';
 import { usePersistent } from '../../hooks/usePersistent';
 import Heading from '../Heading';
 import Text from '../Text';
-import styles from '../../../../styles/flags.module.css';
-
 import useAuth from '../../hooks/useAuth';
 import navbarTR from '../../translations/navbar';
+import LanguageSelector from '../LanguageSelector';
 
 const NavbarWithSubNavigation = ({ haveSession, translations }) => {
   const router = useRouter();
   const [readSyllabus, setReadSyllabus] = useState([]);
   const locale = router.locale === 'default' ? 'en' : router.locale;
   const {
-    loginTR, logoutTR, languageTR, ITEMS, languagesTR,
+    loginTR, logoutTR, languageTR, ITEMS,
   } = navbarTR[locale];
 
   const { isOpen, onToggle } = useDisclosure();
@@ -50,11 +49,9 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
   const { user, logout } = useAuth();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [languagesOpen, setLanguagesOpen] = useState(false);
 
   const langs = ['en', 'es'];
   const linkColor = useColorModeValue('gray.600', 'gray.200');
-  const currentLanguage = languagesTR.filter((l) => l.value === locale)[0];
 
   useEffect(async () => {
     const resp = await fetch(
@@ -138,6 +135,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
               )
             }
             variant="default"
+            height="auto"
             aria-label="Toggle Navigation"
           />
           <NextChakraLink href="/" alignSelf="center" display="flex">
@@ -155,87 +153,14 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
           </Flex>
         </Flex>
 
-        <Stack flex={{ base: 1, md: 0 }} justify="flex-end" direction="row" spacing={6}>
-          <Popover
-            id="Language-Hover"
-            isOpen={languagesOpen}
-            onClose={() => setLanguagesOpen(false)}
-            placement="bottom-start"
-            trigger="click"
-          >
-            <PopoverTrigger>
-              <Button
-                padding="0"
-                height="auto"
-                backgroundColor="transparent"
-                width="auto"
-                alignSelf="center"
-                _hover={{
-                  background: 'transparent',
-                }}
-                _active={{
-                  background: 'transparent',
-                }}
-                onClick={() => setLanguagesOpen(!languagesOpen)}
-              >
-                <Box
-                  className={`${styles.flag} ${styles[currentLanguage.value]}`}
-                  width="25px"
-                  height="25px"
-                />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent
-              // border={0}
-              // boxShadow="dark-lg"
-              bg={popoverContentBgColor}
-              rounded="md"
-              width={{ base: '100%', md: 'auto' }}
-              minW="210px"
-            >
-              <PopoverArrow />
-              <Box
-                width="100%"
-                display="flex"
-                boxShadow="2xl"
-                flexDirection="column"
-                gridGap="10px"
-                padding="12px"
-              >
-                {((typeof translations === 'object'
-                  && Object.keys(translations)) || languagesTR).map((l) => {
-                  const lang = languagesTR.filter((language) => language.value === l)[0];
-                  const value = typeof translations === 'object' ? lang.value : l.value;
-                  const label = typeof translations === 'object' ? lang.label : l.label;
-                  const path = typeof translations === 'object' ? translations[value] : router.asPath;
-                  return (
-                    <NextChakraLink
-                      width="100%"
-                      key={value}
-                      href={path}
-                      locale={value}
-                      role="group"
-                      alignSelf="center"
-                      display="flex"
-                      gridGap="5px"
-                      fontWeight="bold"
-                      textDecoration="none"
-                      opacity={locale === (value) ? 1 : 0.75}
-                      _hover={{
-                        opacity: 1,
-                      }}
-                    >
-                      <Box className={`${styles.flag} ${styles[value]}`} width="25px" height="25px" />
-                      {label}
-                    </NextChakraLink>
-                  );
-                })}
-              </Box>
-            </PopoverContent>
-          </Popover>
-
+        <Stack flex={{ base: 1, md: 0 }} justify="flex-end" direction="row" gridGap="5px">
+          <LanguageSelector display={{ base: 'none ', md: 'block' }} translations={translations} />
           <IconButton
+            style={{
+              margin: 0,
+            }}
             display={useBreakpointValue({ base: 'none', md: 'flex' })}
+            height="auto"
             _hover={{
               background: commonColors,
             }}
@@ -398,6 +323,9 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
             <NextChakraLink
               href="/login"
               fontWeight="700"
+              style={{
+                margin: '0 0px 0 10px',
+              }}
               fontSize="13px"
               lineHeight="22px"
               _hover={{
@@ -420,7 +348,12 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
-        <MobileNav NAV_ITEMS={ITEMS} haveSession={haveSession} readSyllabus={readSyllabus} />
+        <MobileNav
+          NAV_ITEMS={ITEMS}
+          haveSession={haveSession}
+          translations={translations}
+          readSyllabus={readSyllabus}
+        />
       </Collapse>
     </Box>
   );

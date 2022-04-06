@@ -17,6 +17,7 @@ const Module = ({
     <Stack
       width={width}
       style={containerStyle}
+      gridGap="12px"
       direction="row"
       backgroundColor={containerBackground}
       border={`${useColorModeValue('1px', '2px')} solid`}
@@ -59,7 +60,7 @@ const Module = ({
           </Box>
         )}
         {textWithLink ? (
-          <Link href={link} style={leftContentStyle}>
+          <Link href={link} style={leftContentStyle} width="100%">
             {data.type && (
               <Heading
                 as="h3"
@@ -116,7 +117,13 @@ const Module = ({
           </Flex>
         )}
       </Flex>
-      <HStack justifyContent="flex-end" width="100%">
+      <HStack
+        // justifyContent="flex-end"
+        width="auto"
+        style={{
+          margin: 0,
+        }}
+      >
         {rightItemHandler}
       </HStack>
     </Stack>
