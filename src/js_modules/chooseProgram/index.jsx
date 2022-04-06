@@ -56,15 +56,18 @@ function ChooseProgram({ chooseList, handleChoose }) {
       {
         finishedCohorts.length > 0 && (
           <>
-            <Text
+            <Box
               width={['70%', '68%', '70%', '50%']}
               display="flex"
               padding="25px 0"
-              flexDirection="row"
+              flexDirection={{ base: 'column', md: 'row' }}
               gridGap="6px"
-              size="md"
             >
-              {`There are ${finishedCohorts.length} programs you have already finished.`}
+              <Text
+                size="md"
+              >
+                {`There are ${finishedCohorts.length} programs you have already finished.`}
+              </Text>
               <Text
                 as="button"
                 size="md"
@@ -87,7 +90,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
                   style={{ transform: showFinished ? 'rotate(180deg)' : 'rotate(0deg)' }}
                 />
               </Text>
-            </Text>
+            </Box>
             <Box
               display="flex"
               justifyContent="space-between"
