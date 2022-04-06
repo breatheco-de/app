@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import {
   Box,
   Heading,
@@ -18,28 +18,48 @@ import Text from './Text';
 import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 import { AvatarSkeleton } from './Skeleton';
 
-const ProfilesSection = ({ title, profiles }) => (
-  <Box display="block">
-    <Heading as="h4" padding="0 0 8px 0" fontSize={15} lineHeight="18px" margin={0}>
-      {/* {t('cohortSideBar.classmates')} */}
-      {title}
-    </Heading>
-    <Grid
-      gridAutoRows="3.4rem"
-      templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
-      gap={0}
-    >
-      {
-        profiles.map((c) => {
-          const fullName = `${c.user.first_name} ${c.user.last_name}`;
-          return (
-            <AvatarUser key={fullName} data={c} />
-          );
-        })
-      }
-    </Grid>
-  </Box>
-);
+const ProfilesSection = ({ title, profiles }) => {
+  const [showMoreStudents, setShowMoreStudents] = useState(false);
+
+  // limit the student list to 15 and when "showMoreStudents" is true, show all
+  const studentsToShow = showMoreStudents ? profiles : profiles.slice(0, 15);
+  return (
+    <Box display="block">
+      <Heading as="h4" padding="0 0 8px 0" fontSize={15} lineHeight="18px" margin={0}>
+        {title}
+      </Heading>
+      <Grid
+        gridAutoRows="3.4rem"
+        templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
+        gap={0}
+      >
+        {
+          studentsToShow.map((c) => {
+            const fullName = `${c.user.first_name} ${c.user.last_name}`;
+            return (
+              <AvatarUser key={fullName} data={c} />
+            );
+          })
+        }
+        {profiles.length > 15 && (
+          <Text
+            display="flex"
+            cursor="pointer"
+            variantColor="blue"
+            color="blue.default"
+            alignItems="center"
+            width="max-content"
+            fontWeight="700"
+            size="md"
+            onClick={() => setShowMoreStudents(!showMoreStudents)}
+          >
+            {showMoreStudents ? 'Show less...' : 'Show more...'}
+          </Text>
+        )}
+      </Grid>
+    </Box>
+  );
+};
 
 const CohortSideBar = ({
   title, teacherVersionActive, cohort, cohortCity, background, width, containerStyle,
@@ -137,15 +157,15 @@ const CohortSideBar = ({
             profiles={teacherAssistants}
           />
         )}
-
-        {students.length !== 0 ? (
-          <ProfilesSection
-            title={t('cohortSideBar.classmates')}
-            profiles={students}
-          />
-        ) : (
-          <AvatarSkeleton withText quantity={12} />
-        )}
+        {students.length !== 0
+          ? (
+            <ProfilesSection
+              title={t('cohortSideBar.classmates')}
+              profiles={students}
+            />
+          ) : (
+            <AvatarSkeleton withText quantity={12} />
+          )}
       </Box>
     </Box>
   );

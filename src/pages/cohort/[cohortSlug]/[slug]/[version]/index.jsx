@@ -200,7 +200,9 @@ const Dashboard = () => {
   };
   const dailyModuleData = getDailyModuleData() || '';
 
-  const onlyStudentsActive = studentAndTeachers.filter((x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE');
+  const onlyStudentsActive = studentAndTeachers.filter(
+    (x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE',
+  );
 
   return (
     <Container maxW="container.xl">
@@ -282,16 +284,19 @@ const Dashboard = () => {
               />
             )}
           </Box>
-
-          <CallToAction
-            background="blue.default"
-            margin="40px 0 auto 0"
-            title={t('callToAction.title')}
-            href={`#${dailyModuleData && slugify(dailyModuleData.label)}`}
-            text={dailyModuleData.description}
-            buttonText={t('callToAction.buttonText')}
-            width={{ base: '100%', md: 'fit-content' }}
-          />
+          {
+            cohortSession.current_module && (
+              <CallToAction
+                background="blue.default"
+                margin="40px 0 auto 0"
+                title={t('callToAction.title')}
+                href={`#${dailyModuleData && slugify(dailyModuleData.label)}`}
+                text={dailyModuleData.description}
+                buttonText={t('callToAction.buttonText')}
+                width={{ base: '100%', md: 'fit-content' }}
+              />
+            )
+          }
 
           <Box marginTop="36px">
             <ProgressBar
@@ -304,7 +309,7 @@ const Dashboard = () => {
 
           <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="32px" />
 
-          <Heading as="h2" fontWeight="900" size="16px">MODULE MAP</Heading>
+          <Heading as="h2" fontWeight="900" size="15px">MODULE MAP</Heading>
           <Box
             marginTop="30px"
             gridGap="24px"

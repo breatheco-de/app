@@ -164,7 +164,7 @@ const SupportSidebar = ({
                   {programServices && programServices.map((service) => {
                     const programMentorsFiltered = programMentors.length > 0
                       && programMentors.filter(
-                        (mentor) => mentor.service.slug === service.slug,
+                        (mentor) => mentor.service.status === 'ACTIVE' && mentor.service.slug === service.slug,
                       );
                     return (
                       <Accordion
