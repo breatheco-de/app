@@ -49,7 +49,6 @@ function CohortProgram({ item, handleChoose }) {
             });
             router.push(`/cohort/${cohort?.slug}/${slug}/v${version}`);
           }}
-          // marginRight="15px"
           display="flex"
           justifyContent="flex-end"
           _focus={{ boxShadow: 'none' }}
@@ -58,6 +57,7 @@ function CohortProgram({ item, handleChoose }) {
           <Text
             size="l"
             margin="0px"
+            width="max-content"
             color="blue.400"
             fontWeight="800"
             justifyContent="center"
