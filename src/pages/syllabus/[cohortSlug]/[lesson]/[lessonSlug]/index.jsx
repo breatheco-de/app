@@ -88,6 +88,7 @@ const Content = () => {
     code: 'PROJECT',
     answer: 'QUIZ',
   };
+  const language = router.locale === 'en' ? 'us' : 'es';
 
   const isQuiz = lesson === 'answer';
 
@@ -127,13 +128,50 @@ const Content = () => {
   };
 
   const EventIfNotFound = () => {
+    setCurrentData({});
     toast({
-      title: 'The endpoint could not access the content of this lesson',
+      title: 'The endpoint could not access any content of this lesson',
       // description: 'Content not found',
       status: 'error',
       duration: 7000,
       isClosable: true,
     });
+  };
+
+  const defaultDataFetch = () => {
+    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}&current_translation=us`)
+      .then((res) => {
+        toast({
+          title: `Data for language "${language}" not found, showing the english version`,
+          status: 'warning',
+          duration: 5500,
+          isClosable: true,
+        });
+        const currData = res.data;
+
+        if (lesson === 'answer') {
+          setQuizSlug(lessonSlug);
+        } else {
+          setQuizSlug(null);
+        }
+        if (currData !== undefined && currData.readme !== null) {
+          // Binary base64 decoding ⇢ UTF-8
+          const MDecoded = currData.readme && typeof currData.readme === 'string'
+            ? decodeFromBinary(currData.readme) : null;
+          const markdown = getMarkDownContent(MDecoded);
+          setCurrentData(currData);
+          setReadme(markdown);
+        }
+      })
+      .catch(() => {
+        toast({
+          title: `The endpoint could not access any content of this ${lesson}`,
+          // description: 'Content not found',
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
+      });
   };
 
   useEffect(() => {
@@ -170,48 +208,33 @@ const Content = () => {
   }, []);
 
   useEffect(() => {
+    // convert this function with async and await
     axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
       .then(({ data }) => {
-        const language = router.locale === 'en' ? 'us' : 'es';
-        const localeLangExists = data.translations[language] !== undefined;
-        const getSlugBySessionLang = () => {
-          if (localeLangExists) {
-            return data.translations[language];
-          }
-          toast({
-            title: `Data for language "${language}" not found, showing the english version`,
-            status: 'warning',
-            duration: 5500,
-            isClosable: true,
-          });
-          return data.translations.us; // us value in translation is the default language
-        };
-        const slugBySessionLang = getSlugBySessionLang();
+        const currentlocaleLang = data.translations[language];
 
-        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slugBySessionLang}?asset_type=${assetTypeValues[lesson]}&translation=${language}`)
+        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=${assetTypeValues[lesson]}&current_translation=${language}&origin_slug=${lessonSlug}`)
           .then((res) => {
-            const currData = Array.isArray(res.data)
-              ? res.data.find((el) => el.slug === lessonSlug)
-              : res.data;
+            const currData = res.data;
 
             if (lesson === 'answer') {
-              setQuizSlug(slugBySessionLang);
+              setQuizSlug(currentlocaleLang);
             } else {
               setQuizSlug(null);
             }
-            if (
-              currData !== undefined
-              && currData.readme !== null
-            ) {
+            if (currData !== undefined && currData.readme !== null) {
               // Binary base64 decoding ⇢ UTF-8
-              const MDecoded = currData.readme && typeof currData.readme === 'string' ? decodeFromBinary(currData.readme) : null;
+              const MDecoded = currData.readme && typeof currData.readme === 'string'
+                ? decodeFromBinary(currData.readme) : null;
               const markdown = getMarkDownContent(MDecoded);
               setCurrentData(currData);
               setReadme(markdown);
             }
+          })
+          .catch(() => {
+            defaultDataFetch();
           });
       }).catch(() => {
-        setCurrentData({});
         EventIfNotFound();
       });
   }, [router, lessonSlug]);
