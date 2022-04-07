@@ -8,12 +8,12 @@ import {
   Button,
   useColorMode,
   useColorModeValue,
-  FormErrorMessage,
   useToast,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { Formik, Form, Field } from 'formik';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
 import Icon from '../common/components/Icon';
@@ -23,6 +23,7 @@ import bc from '../common/services/breathecode';
 export default function Home() {
   const toast = useToast();
   const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState('');
   const { t } = useTranslation('home');
 
   const { colorMode } = useColorMode();
@@ -46,7 +47,7 @@ export default function Home() {
 
   return (
     <Box
-      className="s"
+      margin="4vw 0 12vw 0"
       height={{ base: '100%', md: '100%' }}
       // minHeight="90vh"
       flexDirection="column"
@@ -69,8 +70,10 @@ export default function Home() {
           </Heading>
           <Heading as="h2" size="xxl" style={{ wordWrap: 'normal' }}>
             {t('welcome')}
+            <Icon icon="logoModern" width="15rem" height="auto" />
           </Heading>
           <Box
+            pt="2.25rem"
             size="36px"
             display="flex"
             gridGap="10px"
@@ -97,7 +100,8 @@ export default function Home() {
 
           {/* --------- Email Form (📧) --------- */}
           <Box
-            mb="50px"
+            mt="1.375rem"
+            mb="3.125rem"
             p="12px"
             borderRadius="3px"
             backgroundColor={useColorModeValue('blue.50', 'gray.800')}
@@ -107,6 +111,8 @@ export default function Home() {
               initialValues={{
                 email: '',
               }}
+              validateOnChange={false}
+              validateOnBlur={false}
               onSubmit={(values, actions) => {
                 bc.auth().subscribe(values).then(() => {
                   toast({
@@ -139,22 +145,24 @@ export default function Home() {
                       alignItems="center"
                     >
                       <Field id="field923" name="email">
-                        {({ field, form }) => (
-                          <FormControl isInvalid={form.errors.email && form.touched.email}>
-                            <Input
-                              {...field}
-                              id="email"
-                              placeholder="Email"
-                              style={{
-                                borderRadius: '3px',
-                                borderTopRightRadius: '0',
-                                borderBottomRightRadius: '0',
-                                backgroundColor: colorMode === 'light' ? '#FFFFFF' : '#17202A',
-                              }}
-                            />
-                            <FormErrorMessage position="absolute" marginTop={0}>{form.errors.email}</FormErrorMessage>
-                          </FormControl>
-                        )}
+                        {({ field, form }) => {
+                          setErrorMessage(form.errors.email);
+                          return (
+                            <FormControl isInvalid={form.errors.email}>
+                              <Input
+                                {...field}
+                                id="email"
+                                placeholder="Email"
+                                style={{
+                                  borderRadius: '3px',
+                                  borderTopRightRadius: '0',
+                                  borderBottomRightRadius: '0',
+                                  backgroundColor: colorMode === 'light' ? '#FFFFFF' : '#17202A',
+                                }}
+                              />
+                            </FormControl>
+                          );
+                        }}
                       </Field>
                       <Button
                         margin="0"
@@ -173,6 +181,7 @@ export default function Home() {
                         {t('sendButton')}
                       </Button>
                     </Box>
+                    <Text pt="5px" color="red.500" fontSize="sm" marginTop={0}>{errorMessage}</Text>
                   </Form>
                 );
               }}
