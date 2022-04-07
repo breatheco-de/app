@@ -54,6 +54,10 @@ const Content = () => {
   const Open = !isOpen;
   const { teacherInstructions, keyConcepts } = selectedSyllabus;
 
+  const filterEmptyModules = sortedAssignments.filter(
+    (assignment) => assignment.modules.length > 0,
+  );
+
   const slide = {
     minWidth: '290px',
     zIndex: 1200,
@@ -427,7 +431,7 @@ const Content = () => {
               overflowY: 'auto',
             }}
           >
-            {sortedAssignments && sortedAssignments.map((section) => (
+            {filterEmptyModules.map((section) => (
               <Box
                 padding="1.5rem"
                 borderBottom={1}
