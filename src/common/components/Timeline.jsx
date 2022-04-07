@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import {
@@ -18,6 +18,22 @@ const Timeline = ({
 }) => {
   const { colorMode } = useColorMode();
   const router = useRouter();
+  const { cohortSlug, lessonSlug } = router.query;
+
+  // scroll scrollIntoView for id when lessonSlug changes
+  const scrollIntoView = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  };
+
+  useEffect(() => {
+    scrollIntoView(lessonSlug);
+  }, [lessonSlug]);
 
   return (
     <Box width={width}>
@@ -54,12 +70,13 @@ const Timeline = ({
       <Box>
         {assignments && assignments.map((item, index) => {
           const mapIndex = index;
-          const { cohortSlug } = router.query;
           const assignmentPath = `/syllabus/${cohortSlug}/${item.type.toLowerCase()}/${item.slug}`;
           const muted = assignmentPath !== router.asPath;
           return (
             <Flex
               key={`${item?.id}-${mapIndex}`}
+              id={item.slug}
+              // href={`#${item.slug}`}
               _before={{
                 content: '""',
                 position: 'absolute',

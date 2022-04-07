@@ -452,6 +452,7 @@ const Content = () => {
       </Box>
       <Box
         className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+        id={lessonSlug}
         flexGrow={1}
         marginLeft={0}
         margin={containerSlide}
