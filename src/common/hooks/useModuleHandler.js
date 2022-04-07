@@ -7,7 +7,8 @@ export const updateAssignment = ({
   const toggleStatus = (task.task_status === undefined || task.task_status === 'PENDING') ? 'DONE' : 'PENDING';
   if (task.task_type && task.task_type !== 'PROJECT') {
     const taskToUpdate = {
-      ...task,
+      // ...task,
+      id: task.id,
       task_status: toggleStatus,
     };
 
@@ -93,9 +94,9 @@ export const updateAssignment = ({
 };
 
 export const startDay = ({
-  id, newTasks, label, contextState, setContextState, toast,
+  newTasks, label, contextState, setContextState, toast,
 }) => {
-  bc.todo({}).add(id, newTasks).then(({ data }) => {
+  bc.todo({}).add(newTasks).then(({ data }) => {
     toast({
       title: `Module ${label ? `${label}started` : 'synchronized'} successfully`,
       status: 'success',

@@ -35,7 +35,7 @@ const Dashboard = () => {
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', null);
   const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
-  const [taskCohortNull, setTaskCohortNull] = useState([]);
+  const [taskCohortNull, setTaskCohortNull] = usePersistent('taskCohortNull', []);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
@@ -61,38 +61,33 @@ const Dashboard = () => {
 
   axios.defaults.headers.common.Academy = cohortSession.academy.id || '';
 
-  const syncTaskWithCohort = () => {
-    ((taskCohortNull !== undefined) && taskCohortNull).map(async (task) => {
-      const isAproved = task.revision_status === 'APPROVED';
-      // eslint-disable-next-line no-param-reassign
-      task.task_status = isAproved ? 'DONE' : 'PENDING';
-      const taskToUpdate = {
-        ...task,
-        // task_status: isAproved ? 'DONE' : 'PENDING',
-        cohort: cohortSession.id,
-      };
-      await bc.todo({}).update(taskToUpdate)
-        .then(() => {
-          const keyIndex = contextState.taskTodo.findIndex((x) => x.id === task.id);
-          setContextState({
-            ...contextState,
-            taskTodo: [
-              ...contextState.taskTodo.slice(0, keyIndex), // before keyIndex (inclusive)
-              taskToUpdate, // key item (updated)
-              ...contextState.taskTodo.slice(keyIndex + 1), // after keyIndex (exclusive)
-            ],
-          });
-          setModalIsOpen(false);
-        })
-        .catch(() => {
-          toast({
-            title: `Task id ${task.id} (${task.title}) cannot synced with current cohort`,
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-          });
+  const syncTaskWithCohort = async () => {
+    const tasksToUpdate = ((taskCohortNull !== undefined) && taskCohortNull).map((task) => ({
+      // ...task,
+      id: task.id,
+      cohort: cohortSession.id,
+    }));
+    await bc.todo({}).updateBulk(tasksToUpdate)
+      .then(({ data }) => {
+        // TODO: console.log('data_synced:::', data);
+        setContextState({
+          ...contextState,
+          taskTodo: [
+            ...contextState.taskTodo,
+            ...data,
+          ],
         });
-    });
+        setModalIsOpen(false);
+      })
+      .catch(() => {
+        setModalIsOpen(false);
+        toast({
+          title: 'Some Tasks cannot synced with current cohort',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      });
   };
 
   // Fetch cohort data with pathName structure
@@ -280,8 +275,8 @@ const Dashboard = () => {
       <ModalInfo
         isOpen={modalIsOpen}
         onClose={() => setModalIsOpen(false)}
-        title="Unsynced cohort tasks"
-        description="Unsynced cohort tasks were found, do you want to sync them with the current cohort?"
+        title={`There are ${taskCohortNull.length} unsynced cohort tasks`}
+        description="These tasks may be deleted and lost in the future. Make sure to synch them if you don't want to lose them."
         // teacherFeedback={currentTask.description}
         // linkInfo="Link of project sended to your teacher:"
         // link={currentTask.github_url}
@@ -386,6 +381,7 @@ const Dashboard = () => {
                       key={index}
                       userId={user.id}
                       cohortSession={cohortSession}
+                      taskCohortNull={taskCohortNull}
                       contextState={contextState}
                       setContextState={setContextState}
                       index={index}

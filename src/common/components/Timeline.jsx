@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, memo } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import {
@@ -33,7 +33,7 @@ const Timeline = ({
 
   useEffect(() => {
     scrollIntoView(lessonSlug);
-  }, [lessonSlug]);
+  }, []);
 
   return (
     <Box width={width}>
@@ -129,4 +129,4 @@ Timeline.defaultProps = {
   onClickAssignment: () => {},
 };
 
-export default Timeline;
+export default memo(Timeline);

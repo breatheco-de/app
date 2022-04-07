@@ -215,9 +215,11 @@ const Content = () => {
     // convert this function with async and await
     axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
       .then(({ data }) => {
-        const currentlocaleLang = data.translations[language];
-
-        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=${assetTypeValues[lesson]}&current_translation=${language}&origin_slug=${lessonSlug}`)
+        let currentlocaleLang = data.translations[language];
+        if (currentlocaleLang === undefined) {
+          currentlocaleLang = `${lessonSlug}-${language}`;
+        }
+        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=${assetTypeValues[lesson]}`)
           .then((res) => {
             const currData = res.data;
 
@@ -452,7 +454,7 @@ const Content = () => {
       </Box>
       <Box
         className={`markdown-body ${useColorModeValue('light', 'dark')}`}
-        id={lessonSlug}
+        // id={lessonSlug}
         flexGrow={1}
         marginLeft={0}
         margin={containerSlide}
