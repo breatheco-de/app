@@ -10,7 +10,7 @@ import Icon from '../../common/components/Icon';
 
 const ModuleMap = ({
   index, userId, contextState, setContextState, slug, modules, filteredModules,
-  title, description, taskTodo,
+  title, description, taskTodo, cohortSession,
 }) => {
   const toast = useToast();
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
@@ -18,6 +18,7 @@ const ModuleMap = ({
     const updatedTasks = (modules || [])?.map((l) => ({
       ...l,
       associated_slug: l.slug,
+      cohort: cohortSession.id,
     }));
 
     startDay({
@@ -131,6 +132,7 @@ ModuleMap.propTypes = {
   filteredModules: PropTypes.arrayOf(PropTypes.object),
   description: PropTypes.string,
   taskTodo: PropTypes.arrayOf(PropTypes.object),
+  cohortSession: PropTypes.objectOf(PropTypes.any),
 };
 ModuleMap.defaultProps = {
   modules: [],
@@ -139,6 +141,7 @@ ModuleMap.defaultProps = {
   slug: 'html-css-bootstrap',
   description: '',
   taskTodo: [],
+  cohortSession: {},
 };
 
 export default memo(ModuleMap);

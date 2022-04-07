@@ -8,7 +8,7 @@ import Text from '../../common/components/Text';
 
 const ModalInfo = ({
   isOpen, onClose, actionHandler, disableHandler, title, description, teacherFeedback,
-  linkInfo, link, texLink, handlerText, closeText,
+  linkInfo, link, texLink, handlerText, closeText, handlerColorButton,
 }) => {
   const router = useRouter();
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
@@ -85,7 +85,7 @@ const ModalInfo = ({
           {!disableHandler && (
             <Button
               onClick={actionHandler}
-              colorScheme="red"
+              colorScheme={handlerColorButton}
             >
               {handlerText}
             </Button>
@@ -109,6 +109,7 @@ ModalInfo.propTypes = {
   texLink: PropTypes.string,
   handlerText: PropTypes.string,
   closeText: PropTypes.string,
+  handlerColorButton: PropTypes.string,
 };
 
 ModalInfo.defaultProps = {
@@ -122,6 +123,7 @@ ModalInfo.defaultProps = {
   texLink: '',
   handlerText: 'Remove delivery',
   closeText: 'Close',
+  handlerColorButton: 'red',
 };
 
 export default ModalInfo;

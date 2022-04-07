@@ -11,7 +11,7 @@ export const updateAssignment = ({
       task_status: toggleStatus,
     };
 
-    bc.todo().update(taskToUpdate).then(() => {
+    bc.todo({}).update(taskToUpdate).then(() => {
       const keyIndex = contextState.taskTodo.findIndex((x) => x.id === task.id);
       setContextState({
         ...contextState,
@@ -58,7 +58,7 @@ export const updateAssignment = ({
       revision_status: linkIsRemoved ? 'PENDING' : task.revision_status,
     };
 
-    bc.todo().update(taskToUpdate).then(({ data }) => {
+    bc.todo({}).update(taskToUpdate).then(({ data }) => {
       // verify if form is equal to the response
       if (data.github_url === projectUrl) {
         const keyIndex = contextState.taskTodo.findIndex((x) => x.id === task.id);
@@ -95,7 +95,7 @@ export const updateAssignment = ({
 export const startDay = ({
   id, newTasks, label, contextState, setContextState, toast,
 }) => {
-  bc.todo().add(id, newTasks).then(({ data }) => {
+  bc.todo({}).add(id, newTasks).then(({ data }) => {
     toast({
       title: `Module ${label ? `${label}started` : 'synchronized'} successfully`,
       status: 'success',
