@@ -27,6 +27,7 @@ import axios from '../../../../../axios';
 import dashboardTR from '../../../../../common/translations/dashboard';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import { slugify } from '../../../../../utils/index';
+import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 
 const Dashboard = () => {
   const { t } = useTranslation('dashboard');
@@ -34,6 +35,8 @@ const Dashboard = () => {
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', null);
   const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
+  const [taskCohortNull, setTaskCohortNull] = usePersistent('taskCohortNull', []);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const { user, choose } = useAuth();
@@ -42,6 +45,7 @@ const Dashboard = () => {
   const toast = useToast();
   const router = useRouter();
   const locale = router.locale === 'default' ? 'en' : router.locale;
+  // const modalIsOpen = taskCohortNull.length > 0;
   const { cohortSlug, slug } = router.query;
 
   const skeletonStartColor = useColorModeValue('gray.300', 'gray.light');
@@ -56,6 +60,35 @@ const Dashboard = () => {
   } = mockData;
 
   axios.defaults.headers.common.Academy = cohortSession.academy.id || '';
+
+  const syncTaskWithCohort = async () => {
+    const tasksToUpdate = ((taskCohortNull !== undefined) && taskCohortNull).map((task) => ({
+      // ...task,
+      id: task.id,
+      cohort: cohortSession.id,
+    }));
+    await bc.todo({}).updateBulk(tasksToUpdate)
+      .then(({ data }) => {
+        // TODO: console.log('data_synced:::', data);
+        setContextState({
+          ...contextState,
+          taskTodo: [
+            ...contextState.taskTodo,
+            ...data,
+          ],
+        });
+        setModalIsOpen(false);
+      })
+      .catch(() => {
+        setModalIsOpen(false);
+        toast({
+          title: 'Some Tasks cannot synced with current cohort',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  };
 
   // Fetch cohort data with pathName structure
   useEffect(() => {
@@ -88,7 +121,6 @@ const Dashboard = () => {
       router.push('/choose-program');
       toast({
         title: 'Invalid cohort slug',
-        // description: 'Content not found',
         status: 'error',
         duration: 7000,
         isClosable: true,
@@ -128,13 +160,21 @@ const Dashboard = () => {
   useEffect(() => {
     if (user && user.active_cohort) {
       const academyId = user.active_cohort.academy_id;
+      // const cohortId = cohortSession.bc_id;
       const { version } = user.active_cohort;
 
       // Fetch cohortProgram and TaskTodo then apply to contextState (useModuleMap - action)
       Promise.all([
-        bc.todo().getTaskByStudent(), // TaskTodo
+        bc.todo({
+          cohort: cohortSession.id,
+        }).getTaskByStudent(), // TaskTodo with cohortSession id
+        bc.todo({
+          cohort: null,
+        }).getTaskByStudent(), // TaskTodo with cohort null
         bc.syllabus().get(academyId, slug, version), // cohortProgram
-      ]).then(([taskTodoData, programData]) => {
+      ]).then(([taskTodoData, taskWithCohortNull, programData]) => {
+        setTaskCohortNull(taskWithCohortNull.data);
+        setModalIsOpen(taskWithCohortNull.data.length > 0);
         setSyllabus(programData.data.json.days);
         setContextState({
           taskTodo: taskTodoData.data,
@@ -231,6 +271,19 @@ const Dashboard = () => {
           {t('backToChooseProgram')}
         </NextChakraLink>
       </Box>
+
+      <ModalInfo
+        isOpen={modalIsOpen}
+        onClose={() => setModalIsOpen(false)}
+        title={`There are ${taskCohortNull.length} unsynced cohort tasks`}
+        description="These tasks may be deleted and lost in the future. Make sure to synch them if you don't want to lose them."
+        // teacherFeedback={currentTask.description}
+        // linkInfo="Link of project sended to your teacher:"
+        // link={currentTask.github_url}
+        handlerColorButton="green"
+        handlerText="Sync task with current cohort"
+        actionHandler={() => syncTaskWithCohort()}
+      />
       <Flex
         justifyContent="space-between"
         flexDirection={{
@@ -327,6 +380,8 @@ const Dashboard = () => {
                     <ModuleMap
                       key={index}
                       userId={user.id}
+                      cohortSession={cohortSession}
+                      taskCohortNull={taskCohortNull}
                       contextState={contextState}
                       setContextState={setContextState}
                       index={index}

@@ -7,17 +7,19 @@ import { updateAssignment } from '../../common/hooks/useModuleHandler';
 import useModuleMap from '../../common/store/actions/moduleMapAction';
 import { ButtonHandlerByTaskStatus } from './taskHandler';
 import ModuleComponent from '../../common/components/Module';
+import { isWindow } from '../../utils/index';
+// import { usePersistent } from '../../common/hooks/usePersistent';
 
 const Module = ({
   data, taskTodo, currIndex,
 }) => {
+  // const [cohortSession] = usePersistent('cohortSession', {});
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);
   const [, setUpdatedTask] = useState(null);
   const toast = useToast();
 
-  const isWindow = typeof window !== 'undefined';
   const cohortSession = isWindow ? JSON.parse(localStorage.getItem('cohortSession') || '{}') : {};
 
   const closeSettings = () => {
