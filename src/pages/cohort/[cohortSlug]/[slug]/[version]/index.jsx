@@ -90,6 +90,28 @@ const Dashboard = () => {
       });
   };
 
+  const removeUnsyncedTasks = async () => {
+    const tasksToUpdate = ((taskCohortNull !== undefined) && taskCohortNull).map((task) => ({
+      // ...task,
+      id: task.id,
+      // cohort: null,
+    }));
+    console.log('tasksToUpdate:::', tasksToUpdate);
+    await bc.todo({}).deleteBulk(tasksToUpdate)
+      .then((res) => {
+        console.log('res.removed:::', res);
+      })
+      .catch((err) => {
+        console.log('err:::', err);
+        toast({
+          title: 'Some Tasks cannot be removed',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  };
+
   // Fetch cohort data with pathName structure
   useEffect(() => {
     bc.admissions().me().then(({ data }) => {
@@ -254,6 +276,10 @@ const Dashboard = () => {
           alignItems="center"
           onClick={() => {
             setSortedAssignments([]);
+            setCohortSession({
+              ...cohortSession,
+              selectedProgramSlug: '/choose-program',
+            });
             // setCohortSession({});
           }}
           fontWeight="700"
@@ -281,8 +307,10 @@ const Dashboard = () => {
         // linkInfo="Link of project sended to your teacher:"
         // link={currentTask.github_url}
         handlerColorButton="green"
-        handlerText="Sync task with current cohort"
+        rejectHandler={() => removeUnsyncedTasks()}
+        closeText="Remove unsynced"
         actionHandler={() => syncTaskWithCohort()}
+        handlerText="Sync with current cohort"
       />
       <Flex
         justifyContent="space-between"

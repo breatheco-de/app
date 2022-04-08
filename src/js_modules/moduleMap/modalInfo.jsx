@@ -7,14 +7,21 @@ import { useRouter } from 'next/router';
 import Text from '../../common/components/Text';
 
 const ModalInfo = ({
-  isOpen, onClose, actionHandler, disableHandler, title, description, teacherFeedback,
-  linkInfo, link, texLink, handlerText, closeText, handlerColorButton,
+  isOpen, onClose, actionHandler, rejectHandler, disableHandler, title, description,
+  teacherFeedback, linkInfo, link, texLink, handlerText, closeText, handlerColorButton,
 }) => {
   const router = useRouter();
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
+  const rejectFunction = () => {
+    if (rejectHandler) {
+      rejectHandler();
+    }
+    onClose();
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal closeOnOverlayClick={!rejectHandler} isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader
@@ -25,7 +32,7 @@ const ModalInfo = ({
           {title}
         </ModalHeader>
 
-        <ModalCloseButton />
+        {!rejectHandler && <ModalCloseButton />}
         <ModalBody>
           <Text
             size="l"
@@ -78,7 +85,7 @@ const ModalInfo = ({
           <Button
             colorScheme="blue"
             mr={3}
-            onClick={onClose}
+            onClick={() => rejectFunction()}
           >
             {closeText}
           </Button>
@@ -100,6 +107,7 @@ ModalInfo.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   actionHandler: PropTypes.func,
+  rejectHandler: PropTypes.func,
   disableHandler: PropTypes.bool,
   title: PropTypes.string,
   description: PropTypes.string,
@@ -114,6 +122,7 @@ ModalInfo.propTypes = {
 
 ModalInfo.defaultProps = {
   actionHandler: () => {},
+  rejectHandler: () => {},
   disableHandler: false,
   title: 'Review status',
   description: '',
