@@ -48,6 +48,7 @@ const Content = () => {
   const [isBelowLaptop] = useMediaQuery('(max-width: 996px)');
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
+  const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
 
   //                                          gray.200    gray.500
   const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
@@ -100,6 +101,12 @@ const Content = () => {
 
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const callToActionProps = {
+    token: accessToken,
+    assetSlug: lessonSlug,
+    assetType: assetTypeValues[lesson],
   };
 
   useEffect(() => {
@@ -296,7 +303,7 @@ const Content = () => {
       return <MDSkeleton />;
     }
     if (readme) {
-      return <MarkdownParser content={readme.content} withToc={lesson.toLowerCase() === 'read'} frontMatter={readme.frontMatter || ''} />;
+      return <MarkdownParser content={readme.content} callToActionProps={callToActionProps} withToc={lesson.toLowerCase() === 'read'} frontMatter={readme.frontMatter || ''} />;
     }
     return false;
   };

@@ -39,10 +39,9 @@ const Dashboard = () => {
   // const [taskCohortNull, setTaskCohortNull] = usePersistent('taskCohortNull', []);
   const [taskCohortNull, setTaskCohortNull] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  // const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
-  const [sortedAssignments, setSortedAssignments] = useState([]);
-  // const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
-  const [taskTodo, setTaskTodo] = useState([]);
+  const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
+  const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
+  // const [taskTodo, setTaskTodo] = useState([]);
   const { user, choose } = useAuth();
   const [, setSyllabus] = usePersistent('syllabus', []);
 
@@ -187,6 +186,7 @@ const Dashboard = () => {
 
   // Fetch cohort assignments (lesson, exercise, project, quiz)
   useEffect(() => {
+    // setSortedAssignments([]); // clean session data for new cohort
     if (user && user.active_cohort) {
       const academyId = user.active_cohort.academy_id;
       // const cohortId = cohortSession.bc_id;
@@ -219,6 +219,7 @@ const Dashboard = () => {
   // Sort all data fetched in order of taskTodo
   useMemo(() => {
     const cohortDays = cohortProgram.json ? cohortProgram.json.days : [];
+    const assignmentsRecopilated = [];
     if (contextState.cohortProgram.json && contextState.taskTodo) {
       setTaskTodo(contextState.taskTodo);
       cohortDays.map((assignment) => {
@@ -248,20 +249,20 @@ const Dashboard = () => {
         };
 
         // prevent duplicates when a new module has been started (added to sortedAssignments array)
-        const keyIndex = sortedAssignments.findIndex((x) => x.id === id);
+        const keyIndex = assignmentsRecopilated.findIndex((x) => x.id === id);
         if (keyIndex > -1) {
-          sortedAssignments.splice(keyIndex, 1, {
+          assignmentsRecopilated.splice(keyIndex, 1, {
             ...assignmentsStruct,
           });
         } else {
-          sortedAssignments.push({
+          assignmentsRecopilated.push({
             ...assignmentsStruct,
           });
         }
-        return setSortedAssignments(sortedAssignments);
+        return setSortedAssignments(assignmentsRecopilated);
       });
     }
-  }, [contextState.cohortProgram, contextState.taskTodo]);
+  }, [contextState.cohortProgram, contextState.taskTodo, router]);
 
   const getDailyModuleData = () => {
     const dailyModule = sortedAssignments[cohortSession?.current_module];
