@@ -16,7 +16,7 @@ function CohortProgram({ item, handleChoose }) {
   const router = useRouter();
 
   const { cohort } = item;
-  const { version, slug, name } = cohort?.syllabus_version;
+  const { version, slug, name } = cohort.syllabus_version;
   // const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
 
   return (
