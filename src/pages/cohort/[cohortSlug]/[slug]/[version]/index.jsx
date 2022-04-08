@@ -307,6 +307,7 @@ const Dashboard = () => {
         // linkInfo="Link of project sended to your teacher:"
         // link={currentTask.github_url}
         handlerColorButton="green"
+        // TODO: remove function not works from endpoint
         rejectHandler={() => removeUnsyncedTasks()}
         closeText="Remove unsynced"
         actionHandler={() => syncTaskWithCohort()}
