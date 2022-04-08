@@ -34,13 +34,19 @@ const breathecode = {
     };
   },
 
-  todo: () => {
+  todo: (query = {}) => {
     const url = `${host}/assignment`;
+    const qs = Object.keys(query)
+      .map((key) => `${key}=${query[key]}`)
+      .join('&');
     return {
-      getTaskByStudent: () => axios.get(`${url}/user/me/task`),
-      add: (id, args) => axios.post(`${url}/user/${id}/task`, args),
-      // delete: (args) => axios.delete(`${url}/user/${user_id}/task/${args.id}`, args);
+      // getTaskByStudent: (cohortId) => axios.get(`${url}/user/me/task?cohort=${cohortId}`),
+      getTaskByStudent: () => axios.get(`${url}/user/me/task?${qs}`),
+      add: (args) => axios.post(`${url}/user/me/task`, args),
+      // delete: (id, args) => axios.delete(`${url}/user/${id}/task/${args.id}`, args),
       update: (args) => axios.put(`${url}/task/${args.id}`, args),
+      updateBulk: (args) => axios.put(`${url}/user/me/task`, args),
+      deleteBulk: (args) => axios.delete(`${url}/user/me/task`, args),
     };
   },
 

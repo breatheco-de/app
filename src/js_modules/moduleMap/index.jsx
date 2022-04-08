@@ -10,7 +10,7 @@ import Icon from '../../common/components/Icon';
 
 const ModuleMap = ({
   index, userId, contextState, setContextState, slug, modules, filteredModules,
-  title, description, taskTodo,
+  title, description, taskTodo, cohortSession, taskCohortNull,
 }) => {
   const toast = useToast();
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
@@ -18,6 +18,7 @@ const ModuleMap = ({
     const updatedTasks = (modules || [])?.map((l) => ({
       ...l,
       associated_slug: l.slug,
+      cohort: cohortSession.id,
     }));
 
     startDay({
@@ -27,6 +28,19 @@ const ModuleMap = ({
       setContextState,
       toast,
     });
+  };
+
+  const taskCohortNullExistsInModules = taskCohortNull.some((el) => {
+    const task = modules.find((l) => l.slug === el.associated_slug);
+    return task;
+  });
+
+  const isAvailableToSync = () => {
+    if (!taskCohortNullExistsInModules
+      && filteredModules.length > 0
+      && modules.length !== filteredModules.length
+    ) return true;
+    return false;
   };
 
   return (
@@ -46,7 +60,7 @@ const ModuleMap = ({
           fontWeight="normal"
           textTransform="uppercase"
         >
-          {modules.length}
+          {filteredModules.length}
           {' '}
           Activities
         </Heading>
@@ -55,7 +69,7 @@ const ModuleMap = ({
         {description}
       </Text>
 
-      {filteredModules.length > 0 && modules.length !== filteredModules.length && (
+      {isAvailableToSync() && (
         <Box display="flex" alignItems="center" justifyContent="space-between" padding="16px 20px" borderRadius="18px" width="100%" background="yellow.light">
           <Text color={useColorModeValue('black', 'black')} size="16px">
             {`Ey! There are ${modules.length - filteredModules.length} new activities on this day`}
@@ -131,6 +145,8 @@ ModuleMap.propTypes = {
   filteredModules: PropTypes.arrayOf(PropTypes.object),
   description: PropTypes.string,
   taskTodo: PropTypes.arrayOf(PropTypes.object),
+  cohortSession: PropTypes.objectOf(PropTypes.any),
+  taskCohortNull: PropTypes.arrayOf(PropTypes.object),
 };
 ModuleMap.defaultProps = {
   modules: [],
@@ -139,6 +155,8 @@ ModuleMap.defaultProps = {
   slug: 'html-css-bootstrap',
   description: '',
   taskTodo: [],
+  cohortSession: {},
+  taskCohortNull: [],
 };
 
 export default memo(ModuleMap);
