@@ -5,6 +5,7 @@ import {
   Flex,
   useDisclosure,
   IconButton,
+  Link,
   useToast,
   useColorModeValue,
   useMediaQuery,
@@ -25,6 +26,7 @@ import useAuth from '../../../../../common/hooks/useAuth';
 import { MDSkeleton } from '../../../../../common/components/Skeleton';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import StickySideBar from '../../../../../common/components/StickySideBar';
+import Icon from '../../../../../common/components/Icon';
 
 const Content = () => {
   const { isOpen, onToggle } = useDisclosure();
@@ -467,6 +469,10 @@ const Content = () => {
         transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
         transitionDelay="0ms"
       >
+        <Link href={currentData.readme_url} target="_blank" rel="noopener noreferrer">
+          <Icon icon="pencil" width="20px" height="20px" />
+          Edit this page on Github
+        </Link>
         {extendedIsEnabled && extendedInstructions !== null && (
           <>
             <Box

@@ -69,7 +69,6 @@ const Dashboard = () => {
     }));
     await bc.todo({}).updateBulk(tasksToUpdate)
       .then(({ data }) => {
-        // TODO: console.log('data_synced:::', data);
         setContextState({
           ...contextState,
           taskTodo: [
@@ -91,18 +90,20 @@ const Dashboard = () => {
   };
 
   const removeUnsyncedTasks = async () => {
-    const tasksToUpdate = ((taskCohortNull !== undefined) && taskCohortNull).map((task) => ({
-      // ...task,
-      id: task.id,
-      // cohort: null,
-    }));
-    console.log('tasksToUpdate:::', tasksToUpdate);
-    await bc.todo({}).deleteBulk(tasksToUpdate)
-      .then((res) => {
-        console.log('res.removed:::', res);
+    const idsParsed = ((taskCohortNull !== undefined) && taskCohortNull).map((task) => task.id).join(','); // 23,2,45,45
+    await bc.todo({
+      id: idsParsed,
+    }).deleteBulk()
+      .then(() => {
+        toast({
+          title: 'Unsynced tasks successfully removed!',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+        setModalIsOpen(false);
       })
-      .catch((err) => {
-        console.log('err:::', err);
+      .catch(() => {
         toast({
           title: 'Some Tasks cannot be removed',
           status: 'error',
@@ -303,11 +304,7 @@ const Dashboard = () => {
         onClose={() => setModalIsOpen(false)}
         title={`There are ${taskCohortNull.length} unsynced cohort tasks`}
         description="These tasks may be deleted and lost in the future. Make sure to synch them if you don't want to lose them."
-        // teacherFeedback={currentTask.description}
-        // linkInfo="Link of project sended to your teacher:"
-        // link={currentTask.github_url}
         handlerColorButton="green"
-        // TODO: remove function not works from endpoint
         rejectHandler={() => removeUnsyncedTasks()}
         closeText="Remove unsynced"
         actionHandler={() => syncTaskWithCohort()}
