@@ -5,53 +5,50 @@ import useTranslation from 'next-translate/useTranslation';
 import styles from '../../styles/Home.module.css';
 import Counter from '../common/components/Counter';
 import { H1 } from '../common/styledComponents/Head';
+import Heading from '../common/components/Heading';
 import ReactPlayer from '../common/components/ReactPlayer';
+import OnlyFor from '../common/components/OnlyFor';
 
 export default function Example() {
-  // const router = useRouter();
   const { t } = useTranslation(['common', 'counter']);
 
   return (
     <div className={styles.container}>
 
       <main className={styles.main}>
-        {/* <Link passHref href="/example" locale={router.locale === 'en' ? 'es' : 'en'}>
-          <button type="button">{t('common:change-locale')}</button>
-        </Link> */}
+        <Heading type="span" color="black" size="m">
+          {`
+            component behind: 
+            <OnlyFor academy={5} capabilities={['admin', 'teacher']}>
+          `}
+        </Heading>
+        <OnlyFor
+          academy="5"
+          capabilities={['admin', 'teacher']}
+        >
+          <Heading type="h3" color="green" size="m" className={styles.title}>
+            This text is handled with component and my current cohort capabilities
+          </Heading>
+        </OnlyFor>
+
         <H1 type="h1" className={styles.title}>
           {t('common:heading')}
-          {' '}
-          {/* <Link href="/example">Example!</Link> */}
         </H1>
 
         <Counter title={t('counter:title')} resetText={t('counter:resetButton')} />
 
         <ReactPlayer
           width="700px"
-          // height="450px"
           id="https://www.youtube.com/watch?v=BDKdUPDez-U"
           playOnThumbnail
-          // index={index}
-          // thumb={item.project_image}
           imageSize="sddefault"
           style={{
             width: '700px',
-            // height: '450px',
             objectFit: 'cover',
             aspectRatio: '16/9',
           }}
         />
       </main>
-
-      <footer className={styles.footer}>
-        {/* <Link passHref href="/">
-          Powered by
-          {' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </Link> */}
-      </footer>
     </div>
   );
 }
