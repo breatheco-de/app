@@ -7,7 +7,7 @@ export const updateAssignment = ({
   const toggleStatus = (task.task_status === undefined || task.task_status === 'PENDING') ? 'DONE' : 'PENDING';
   if (task.task_type && task.task_type !== 'PROJECT') {
     const taskToUpdate = {
-      // ...task,
+      ...task,
       id: task.id,
       task_status: toggleStatus,
     };

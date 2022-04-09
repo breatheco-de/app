@@ -138,13 +138,13 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
             height="auto"
             aria-label="Toggle Navigation"
           />
-          <NextChakraLink href="/" alignSelf="center" display="flex">
+          <NextChakraLink href={haveSession ? cohortSession.selectedProgramSlug : '/'} alignSelf="center" display="flex">
             <Icon icon="logoModern" width="90px" height="20px" />
           </NextChakraLink>
         </Flex>
 
         <Flex flex={{ base: 1 }} display={{ base: 'none', md: 'flex' }} justify={{ base: 'center', md: 'start' }}>
-          <NextChakraLink href="/" alignSelf="center" display="flex">
+          <NextChakraLink href={haveSession ? cohortSession.selectedProgramSlug : '/'} alignSelf="center" display="flex">
             <Icon icon="logoModern" width="90px" height="20px" />
           </NextChakraLink>
 
