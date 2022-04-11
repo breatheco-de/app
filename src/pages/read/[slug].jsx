@@ -34,7 +34,7 @@ export const getStaticProps = async ({ params }) => {
   const { slug } = params;
 
   const data = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/admissions/syllabus/${slug}/version/latest`,
+    `${process.env.BREATHECODE_HOST}/v1/admissions/syllabus/${slug}/version/1`,
     {
       method: 'GET',
       headers: {
