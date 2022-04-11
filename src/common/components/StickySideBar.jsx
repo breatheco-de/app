@@ -53,7 +53,7 @@ const StickySideBar = ({
           menu.map((item, i) => {
             const currentModalState = getCurrentModalState(item.slug);
             const index = i;
-            return (item.content || item.actionHandler) && (
+            return item.content && (
               <Fragment key={`${item.id}-index${index}`}>
                 <Box
                   key={item.id}
