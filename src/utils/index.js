@@ -30,11 +30,19 @@ const removeStorageItem = (key) => {
   return null;
 };
 
+const getExtensionName = (key) => {
+  // from: https://github.com/example/ipynbrepo/prob_stats.ipynb
+  // to: ipynb
+  const extExtractor = /(?:\.([^.]+))?$/;
+  return extExtractor.exec(key)[1];
+};
+
 export {
   isWindow,
   HAVE_SESSION,
   slugify,
   isPlural,
   getStorageItem,
+  getExtensionName,
   removeStorageItem,
 };
