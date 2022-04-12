@@ -16,27 +16,29 @@ const middleware = async (req) => {
       [x] /es/lesson/learn-to-code => /es/lesson/aprender-a-programar
       [x] /es/lesson/aprender-a-programar => no redirect, just show lesson content
   */
-  if (
-    userPathName === `/default/lesson/${translations.es}`
-    || userPathName === `/es/lesson/${translations.us}`
-  ) {
-    console.log(`Middleware: redirecting from ${userPathName} → /es/lesson/${translations.es}`);
-    return NextResponse.redirect(new URL(`/es/lesson/${translations.es}`, req.url));
-  }
+  if (!results.status_code === 404) {
+    if (
+      userPathName === `/default/lesson/${translations.es}`
+      || userPathName === `/es/lesson/${translations.us}`
+    ) {
+      console.log(`Middleware: redirecting from ${userPathName} → /es/lesson/${translations.es}`);
+      return NextResponse.redirect(new URL(`/es/lesson/${translations.es}`, req.url));
+    }
 
-  /*
-    english handler:
-      [x] /lesson/learn-to-code => /en/lesson/learn-to-code
-      [x] /en/lesson/aprender-a-programar => /en/lesson/learn-to-code
-      [x] /en/lesson/learn-to-code => no redirect, just show lesson content
-  */
-  if (
-    userPathName === `/default/lesson/${translations.us}`
-    || userPathName === `/en/lesson/${translations.es}`
-  ) {
-    console.log(`new change in conditional === ${userPathName}`);
-    console.log(`Middleware: redirecting from ${url.pathname} → /en/lesson/${translations.us}`);
-    return NextResponse.redirect(new URL(`/en/lesson/${translations.us}`, req.url));
+    /*
+      english handler:
+        [x] /lesson/learn-to-code => /en/lesson/learn-to-code
+        [x] /en/lesson/aprender-a-programar => /en/lesson/learn-to-code
+        [x] /en/lesson/learn-to-code => no redirect, just show lesson content
+    */
+    if (
+      userPathName === `/default/lesson/${translations.us}`
+      || userPathName === `/en/lesson/${translations.es}`
+    ) {
+      console.log(`new change in conditional === ${userPathName}`);
+      console.log(`Middleware: redirecting from ${url.pathname} → /en/lesson/${translations.us}`);
+      return NextResponse.redirect(new URL(`/en/lesson/${translations.us}`, req.url));
+    }
   }
   return '';
 };

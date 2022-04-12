@@ -33,12 +33,15 @@ const Dashboard = () => {
   const { t } = useTranslation('dashboard');
   const { contextState, setContextState } = useModuleMap();
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', null);
+  // const [cohortSession, setCohortSession] = useState({});
   const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
-  const [taskCohortNull, setTaskCohortNull] = usePersistent('taskCohortNull', []);
+  // const [taskCohortNull, setTaskCohortNull] = usePersistent('taskCohortNull', []);
+  const [taskCohortNull, setTaskCohortNull] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
+  // const [taskTodo, setTaskTodo] = useState([]);
   const { user, choose } = useAuth();
   const [, setSyllabus] = usePersistent('syllabus', []);
 
@@ -69,7 +72,6 @@ const Dashboard = () => {
     }));
     await bc.todo({}).updateBulk(tasksToUpdate)
       .then(({ data }) => {
-        // TODO: console.log('data_synced:::', data);
         setContextState({
           ...contextState,
           taskTodo: [
@@ -90,17 +92,42 @@ const Dashboard = () => {
       });
   };
 
+  const removeUnsyncedTasks = async () => {
+    const idsParsed = ((taskCohortNull !== undefined) && taskCohortNull).map((task) => task.id).join(','); // 23,2,45,45
+    await bc.todo({
+      id: idsParsed,
+    }).deleteBulk()
+      .then(() => {
+        toast({
+          title: 'Unsynced tasks successfully removed!',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+        setModalIsOpen(false);
+      })
+      .catch(() => {
+        toast({
+          title: 'Some Tasks cannot be removed',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  };
+
   // Fetch cohort data with pathName structure
   useEffect(() => {
     bc.admissions().me().then(({ data }) => {
       const { cohorts } = data;
       // find cohort with current slug
       const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
-      const currentCohort = findCohort?.cohort;
-      const { version, name } = currentCohort?.syllabus_version;
+      const currentCohort = findCohort.cohort;
+      const { version, name } = currentCohort.syllabus_version;
       if (!cohortSession.academy.id) {
         router.push('/choose-program');
       }
+
       setCohortSession({
         ...cohortSession,
         date_joined: data.date_joined,
@@ -129,35 +156,37 @@ const Dashboard = () => {
         localStorage.removeItem('cohortSession');
       }, 4000);
     });
-  }, []);
+  }, [cohortSlug]);
 
   // Students and Teachers data
   useEffect(() => {
-    if (user && user.active_cohort) {
-      const cohortId = user.active_cohort.cohort_slug;
-
-      bc.cohort().getStudents(cohortId).then((res) => {
-        const { data } = res;
-        if (data.length > 0) {
-          setSudentAndTeachers(data);
-        }
-      }).catch((err) => {
-        console.error('err_studentAndTeachers:', err);
+    bc.cohort().getStudents(cohortSlug).then((res) => {
+      const { data } = res;
+      if (data.length > 0) {
+        setSudentAndTeachers(data);
+      }
+    }).catch((err) => {
+      console.error('err_studentAndTeachers:', err);
+      toast({
+        title: 'Error fetching students and teachers',
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
       });
-      bc.cohort().get(cohortId).then(({ data }) => {
-        setCohortSession({
-          ...cohortSession,
-          bc_id: user.id,
-          ...data,
-        });
-      }).catch((err) => {
-        console.error('err_cohortSessoin:', err);
-      });
-    }
-  }, [user]);
+    });
+    // bc.cohort().get(cohortSlug).then(({ data }) => {
+    //   setCohortSession({
+    //     bc_id: user.id,
+    //     ...data,
+    //   });
+    // }).catch((err) => {
+    //   console.error('err_cohortSessoin:', err);
+    // });
+  }, []);
 
   // Fetch cohort assignments (lesson, exercise, project, quiz)
   useEffect(() => {
+    // setSortedAssignments([]); // clean session data for new cohort
     if (user && user.active_cohort) {
       const academyId = user.active_cohort.academy_id;
       // const cohortId = cohortSession.bc_id;
@@ -185,11 +214,12 @@ const Dashboard = () => {
         router.push('/choose-program');
       });
     }
-  }, [user]);
+  }, [user, slug]);
 
   // Sort all data fetched in order of taskTodo
   useMemo(() => {
     const cohortDays = cohortProgram.json ? cohortProgram.json.days : [];
+    const assignmentsRecopilated = [];
     if (contextState.cohortProgram.json && contextState.taskTodo) {
       setTaskTodo(contextState.taskTodo);
       cohortDays.map((assignment) => {
@@ -219,20 +249,20 @@ const Dashboard = () => {
         };
 
         // prevent duplicates when a new module has been started (added to sortedAssignments array)
-        const keyIndex = sortedAssignments.findIndex((x) => x.id === id);
+        const keyIndex = assignmentsRecopilated.findIndex((x) => x.id === id);
         if (keyIndex > -1) {
-          sortedAssignments.splice(keyIndex, 1, {
+          assignmentsRecopilated.splice(keyIndex, 1, {
             ...assignmentsStruct,
           });
         } else {
-          sortedAssignments.push({
+          assignmentsRecopilated.push({
             ...assignmentsStruct,
           });
         }
-        return setSortedAssignments(sortedAssignments);
+        return setSortedAssignments(assignmentsRecopilated);
       });
     }
-  }, [contextState.cohortProgram, contextState.taskTodo]);
+  }, [contextState.cohortProgram, contextState.taskTodo, router]);
 
   const getDailyModuleData = () => {
     const dailyModule = sortedAssignments[cohortSession?.current_module];
@@ -254,6 +284,10 @@ const Dashboard = () => {
           alignItems="center"
           onClick={() => {
             setSortedAssignments([]);
+            setCohortSession({
+              ...cohortSession,
+              selectedProgramSlug: '/choose-program',
+            });
             // setCohortSession({});
           }}
           fontWeight="700"
@@ -277,12 +311,11 @@ const Dashboard = () => {
         onClose={() => setModalIsOpen(false)}
         title={`There are ${taskCohortNull.length} unsynced cohort tasks`}
         description="These tasks may be deleted and lost in the future. Make sure to synch them if you don't want to lose them."
-        // teacherFeedback={currentTask.description}
-        // linkInfo="Link of project sended to your teacher:"
-        // link={currentTask.github_url}
         handlerColorButton="green"
-        handlerText="Sync task with current cohort"
+        rejectHandler={() => removeUnsyncedTasks()}
+        closeText="Remove unsynced"
         actionHandler={() => syncTaskWithCohort()}
+        handlerText="Sync with current cohort"
       />
       <Flex
         justifyContent="space-between"

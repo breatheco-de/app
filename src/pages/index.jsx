@@ -181,7 +181,7 @@ export default function Home() {
                         {t('sendButton')}
                       </Button>
                     </Box>
-                    <Text pt="5px" color="red.500" fontSize="sm" marginTop={0}>{errorMessage}</Text>
+                    {errorMessage && (<Text pt="5px" color="red.500" fontSize="sm" marginTop={0}>{errorMessage}</Text>)}
                   </Form>
                 );
               }}

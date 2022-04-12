@@ -11,6 +11,7 @@ import emoji from 'emoji-dictionary';
 import { useEffect, useState } from 'react';
 import tomorrow from './syntaxHighlighter/tomorrow';
 import BeforeAfterSlider from '../BeforeAfterSlider';
+import CallToAction from '../CallToAction';
 import Toc from './toc';
 import Heading from '../Heading';
 // import Anchor from './Anchor';
@@ -175,7 +176,10 @@ const MDTable = ({ children }) => (
 
 const MDHr = () => (<Box d="none" />);
 
-const MarkDownParser = ({ content, withToc, frontMatter }) => {
+const MarkDownParser = ({
+  content, callToActionProps, withToc, frontMatter,
+}) => {
+  const { token, assetSlug, assetType } = callToActionProps;
   // support for emoji shortcodes
   // exapmle: :heart_eyes: -> 😍
   const emojiSupport = (text) => text.replace(/:\w+:/gi, (name) => emoji.getUnicode(name));
@@ -183,6 +187,34 @@ const MarkDownParser = ({ content, withToc, frontMatter }) => {
 
   return (
     <>
+      {assetType === 'EXERCISE' && (
+        <CallToAction
+          styleContainer={{
+            maxWidth: '800px',
+          }}
+          buttonStyle={{
+            color: 'white',
+          }}
+          background="blue.default"
+          margin="40px 0 auto 0"
+          imageSrc="/static/images/learnpack.png"
+          text="This practice will run outside of 4Geeks.com thought LearnPack. An interactive learning tool that runs integrated with VSCode and Gitpod."
+          width={{ base: '100%', md: 'fit-content' }}
+          buttonsData={[
+            {
+              text: 'Start new exercise',
+              href: `https://breathecode.herokuapp.com/asset/${assetSlug}?token=${token}`,
+              isExternalLink: true,
+            },
+            {
+              text: 'Continue exercise',
+              href: 'https://gitpod.io/workspaces',
+              isExternalLink: true,
+            },
+          ]}
+        />
+
+      )}
       {withToc && (
         <ContentHeading content={frontMatter}>
           <Toc content={content} />
@@ -243,11 +275,13 @@ const MarkDownParser = ({ content, withToc, frontMatter }) => {
 
 MarkDownParser.propTypes = {
   content: PropTypes.string,
+  callToActionProps: PropTypes.objectOf(PropTypes.any),
   withToc: PropTypes.bool,
   frontMatter: PropTypes.objectOf(PropTypes.any),
 };
 MarkDownParser.defaultProps = {
   content: '',
+  callToActionProps: {},
   withToc: false,
   frontMatter: {},
 };

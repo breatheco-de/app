@@ -5,13 +5,14 @@ import {
   Flex,
   useDisclosure,
   IconButton,
+  Link,
   useToast,
   useColorModeValue,
   useMediaQuery,
 } from '@chakra-ui/react';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
-import { isWindow } from '../../../../../utils';
+import { isWindow, getExtensionName } from '../../../../../utils';
 import ReactPlayer from '../../../../../common/components/ReactPlayer';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
@@ -19,17 +20,18 @@ import Timeline from '../../../../../common/components/Timeline';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkdownParser from '../../../../../common/components/MarkDownParser';
 import decodeFromBinary from '../../../../../utils/markdown';
-// import useSyllabus from '../../../../../common/store/actions/syllabusActions';
 import bc from '../../../../../common/services/breathecode';
 import useAuth from '../../../../../common/hooks/useAuth';
 import { MDSkeleton } from '../../../../../common/components/Skeleton';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import StickySideBar from '../../../../../common/components/StickySideBar';
+import Icon from '../../../../../common/components/Icon';
 
 const Content = () => {
   const { isOpen, onToggle } = useDisclosure();
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [readme, setReadme] = useState(null);
+  const [ipynbHtmlUrl, setIpynbHtmlUrl] = useState(null);
   const [extendedInstructions, setExtendedInstructions] = useState(null);
   const [extendedIsEnabled, setExtendedIsEnabled] = useState(false);
   const [quizSlug, setQuizSlug] = useState(null);
@@ -46,6 +48,7 @@ const Content = () => {
   const [isBelowLaptop] = useMediaQuery('(max-width: 996px)');
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
+  const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
 
   //                                          gray.200    gray.500
   const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
@@ -100,6 +103,12 @@ const Content = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const callToActionProps = {
+    token: accessToken,
+    assetSlug: lessonSlug,
+    assetType: assetTypeValues[lesson],
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = isWindow && window.scrollY;
@@ -128,7 +137,9 @@ const Content = () => {
 
   const onClickAssignment = (e, item) => {
     router.push(`/syllabus/${cohortSlug}/${item.type.toLowerCase()}/${item.slug}`);
+    setCurrentData({});
     setReadme(null);
+    setIpynbHtmlUrl(null);
   };
 
   const EventIfNotFound = () => {
@@ -142,30 +153,30 @@ const Content = () => {
     });
   };
 
-  const defaultDataFetch = () => {
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}&current_translation=us`)
-      .then((res) => {
+  const defaultDataFetch = async () => {
+    await axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}&current_translation=us`)
+      .then(({ data }) => {
         toast({
           title: `Data for language "${language}" not found, showing the english version`,
           status: 'warning',
           duration: 5500,
           isClosable: true,
         });
-        const currData = res.data;
+        const exensionName = getExtensionName(data.readme_url);
 
-        if (lesson === 'answer') {
-          setQuizSlug(lessonSlug);
-        } else {
-          setQuizSlug(null);
-        }
-        if (currData !== undefined && currData.readme !== null) {
+        if (lesson === 'answer') setQuizSlug(lessonSlug);
+        else setQuizSlug(null);
+
+        if (data !== undefined && exensionName === 'md' && data.readme !== null) {
           // Binary base64 decoding ⇢ UTF-8
-          const MDecoded = currData.readme && typeof currData.readme === 'string'
-            ? decodeFromBinary(currData.readme) : null;
+          const MDecoded = data.readme && typeof data.readme === 'string'
+            ? decodeFromBinary(data.readme) : null;
           const markdown = getMarkDownContent(MDecoded);
-          setCurrentData(currData);
+          setCurrentData(data);
           setReadme(markdown);
         }
+        if (exensionName === 'ipynb') setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.html`);
+        else setIpynbHtmlUrl(null);
       })
       .catch(() => {
         toast({
@@ -216,30 +227,37 @@ const Content = () => {
     axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
       .then(({ data }) => {
         let currentlocaleLang = data.translations[language];
-        if (currentlocaleLang === undefined) {
-          currentlocaleLang = `${lessonSlug}-${language}`;
-        }
-        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=${assetTypeValues[lesson]}`)
-          .then((res) => {
-            const currData = res.data;
+        const exensionName = getExtensionName(data.readme_url);
+        if (exensionName === 'ipynb') {
+          setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.html`);
+          setCurrentData(data);
+        } else {
+          setIpynbHtmlUrl(null);
+          if (currentlocaleLang === undefined) {
+            currentlocaleLang = `${lessonSlug}-${language}`;
+          }
+          axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=${assetTypeValues[lesson]}`)
+            .then((res) => {
+              const currData = res.data;
 
-            if (lesson === 'answer') {
-              setQuizSlug(currentlocaleLang);
-            } else {
-              setQuizSlug(null);
-            }
-            if (currData !== undefined && currData.readme !== null) {
-              // Binary base64 decoding ⇢ UTF-8
-              const MDecoded = currData.readme && typeof currData.readme === 'string'
-                ? decodeFromBinary(currData.readme) : null;
-              const markdown = getMarkDownContent(MDecoded);
-              setCurrentData(currData);
-              setReadme(markdown);
-            }
-          })
-          .catch(() => {
-            defaultDataFetch();
-          });
+              if (lesson === 'answer') {
+                setQuizSlug(currentlocaleLang);
+              } else {
+                setQuizSlug(null);
+              }
+              if (currData !== undefined && currData.readme !== null) {
+                // Binary base64 decoding ⇢ UTF-8
+                const MDecoded = currData.readme && typeof currData.readme === 'string'
+                  ? decodeFromBinary(currData.readme) : null;
+                const markdown = getMarkDownContent(MDecoded);
+                setCurrentData(currData);
+                setReadme(markdown);
+              }
+            })
+            .catch(async () => {
+              await defaultDataFetch();
+            });
+        }
       }).catch(() => {
         EventIfNotFound();
       });
@@ -247,13 +265,13 @@ const Content = () => {
 
   useEffect(() => {
     const findSelectedSyllabus = sortedAssignments.filter(
-      (l) => l.modules.find((m) => m.slug === router.query.lessonSlug),
+      (l) => l.modules.find((m) => m.slug === lessonSlug),
     )[0];
 
     if (findSelectedSyllabus) {
       setSelectedSyllabus(findSelectedSyllabus);
     }
-  }, [sortedAssignments, router.query.lessonSlug]);
+  }, [sortedAssignments, lessonSlug]);
 
   useEffect(() => {
     if (selectedSyllabus.extendedInstructions) {
@@ -289,11 +307,11 @@ const Content = () => {
   };
 
   const GetReadme = () => {
-    if (readme === null && quizSlug !== lessonSlug) {
+    if (ipynbHtmlUrl === null && readme === null && quizSlug !== lessonSlug) {
       return <MDSkeleton />;
     }
-    if (readme) {
-      return <MarkdownParser content={readme.content} withToc={lesson.toLowerCase() === 'read'} frontMatter={readme.frontMatter || ''} />;
+    if (ipynbHtmlUrl === null && readme) {
+      return <MarkdownParser content={readme.content} callToActionProps={callToActionProps} withToc={lesson.toLowerCase() === 'read'} frontMatter={readme.frontMatter || ''} />;
     }
     return false;
   };
@@ -385,7 +403,7 @@ const Content = () => {
           }}
         />
       </Box>
-      <Box position={timelineSlide} flex="0 0 auto" minWidth="290px" width={timelineWidth} zIndex={Open ? 99 : 0}>
+      <Box position={timelineSlide} display={Open ? 'initial' : 'none'} flex="0 0 auto" minWidth="290px" width={timelineWidth} zIndex={Open ? 99 : 0}>
         <Box style={slide}>
           <Box
             padding="1.5rem"
@@ -452,98 +470,102 @@ const Content = () => {
           </Box>
         </Box>
       </Box>
-      <Box
-        className={`markdown-body ${useColorModeValue('light', 'dark')}`}
-        // id={lessonSlug}
-        flexGrow={1}
-        marginLeft={0}
-        margin={containerSlide}
-        padding={GetReadme() !== false ? '4rem 8vw' : '4rem 4vw'}
-        maxWidth="1012px"
-        // marginRight="10rem"
-        transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
-        transitionProperty="margin"
-        transitionDuration={Open ? '225ms' : '195ms'}
-        transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
-        transitionDelay="0ms"
-      >
-        {extendedIsEnabled && extendedInstructions !== null && (
-          <>
-            <Box
-              p="20px 20px 30px 20px"
-              borderRadius="3px"
-              background={commonFeaturedColors}
-            >
-              <MarkdownParser content={extendedInstructions.content} />
-            </Box>
-            <Box margin="4rem 0" height="4px" width="100%" background={commonBorderColor} />
-          </>
+      <Box width="100%" height="auto">
+        {currentData.readme_url && (
+          <Link href={currentData.readme_url} margin="3rem 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+            <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+            Edit this page on Github
+          </Link>
         )}
-
-        {!isQuiz && currentData.solution_video_url && showSolutionVideo && (
-          <Box padding="0.4rem 2rem 2rem 2rem" background={useColorModeValue('featuredLight', 'featuredDark')}>
-            <Heading as="h2" size="sm">
-              Video Tutorial
-            </Heading>
-            <ReactPlayer
-              id={currentData.solution_video_url}
-              playOnThumbnail
-              imageSize="hqdefault"
-              style={{
-                width: '100%',
-                objectFit: 'cover',
-                aspectRatio: '16/9',
-              }}
-            />
-          </Box>
-        )}
-
-        {!isQuiz && currentData.slug === lessonSlug && currentData.intro_video_url && (
+        {!isQuiz && currentData.intro_video_url && (
           <ReactPlayer
             id={currentData.intro_video_url}
             playOnThumbnail
             imageSize="hqdefault"
             style={{
               width: '100%',
+              maxWidth: isBelowTablet ? '100%' : '70vw',
               objectFit: 'cover',
               aspectRatio: '16/9',
             }}
           />
         )}
+        {ipynbHtmlUrl && (
+          <iframe
+            id="iframe"
+            src={ipynbHtmlUrl}
+            style={{
+              width: '100%',
+              height: '99vh',
+              borderRadius: '14px',
+            }}
+            title="4Geeks IPython Notebook"
+          />
+        )}
 
-        {
-          isQuiz ? (
-            <Box background={useColorModeValue('featuredLight', 'featuredDark')} width="100%" height="100vh" borderRadius="14px">
-              <iframe
-                id="iframe"
-                src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: '14px',
-                }}
-                title="Breathecode Quiz"
-              />
-            </Box>
-          ) : GetReadme()
-        }
-        {/* {GetReadme() !== false ? (
-          GetReadme()
-        ) : (
-          <Box background={useColorModeValue('featuredLight', 'featuredDark')}
-          width="100%" height="100vh" borderRadius="14px">
-            <iframe
-              id="iframe"
-              src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
-              style={{
-                width: '100%',
-                height: '100%',
-                borderRadius: '14px',
-              }}
-              title="Breathecode Quiz"
-            />
+        {!ipynbHtmlUrl && (
+          <Box
+            className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+            // id={lessonSlug}
+            flexGrow={1}
+            marginLeft={0}
+            margin={containerSlide}
+            padding={GetReadme() !== false ? '0 8vw 4rem 8vw' : '4rem 4vw'}
+            maxWidth="1012px"
+            // marginRight="10rem"
+            transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
+            transitionProperty="margin"
+            transitionDuration={Open ? '225ms' : '195ms'}
+            transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
+            transitionDelay="0ms"
+          >
+            {extendedIsEnabled && extendedInstructions !== null && (
+              <>
+                <Box
+                  p="20px 20px 30px 20px"
+                  borderRadius="3px"
+                  background={commonFeaturedColors}
+                >
+                  <MarkdownParser content={extendedInstructions.content} />
+                </Box>
+                <Box margin="4rem 0" height="4px" width="100%" background={commonBorderColor} />
+              </>
+            )}
+
+            {!isQuiz && currentData.solution_video_url && showSolutionVideo && (
+              <Box padding="0.4rem 2rem 2rem 2rem" background={useColorModeValue('featuredLight', 'featuredDark')}>
+                <Heading as="h2" size="sm">
+                  Video Tutorial
+                </Heading>
+                <ReactPlayer
+                  id={currentData.solution_video_url}
+                  playOnThumbnail
+                  imageSize="hqdefault"
+                  style={{
+                    width: '100%',
+                    objectFit: 'cover',
+                    aspectRatio: '16/9',
+                  }}
+                />
+              </Box>
+            )}
+
+            {isQuiz ? (
+              <Box background={useColorModeValue('featuredLight', 'featuredDark')} width="100%" height="100vh" borderRadius="14px">
+                <iframe
+                  id="iframe"
+                  src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '14px',
+                  }}
+                  title="Breathecode Quiz"
+                />
+              </Box>
+            ) : GetReadme()}
           </Box>
-        )} */}
+        )}
       </Box>
     </Flex>
   );

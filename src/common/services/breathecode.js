@@ -46,7 +46,7 @@ const breathecode = {
       // delete: (id, args) => axios.delete(`${url}/user/${id}/task/${args.id}`, args),
       update: (args) => axios.put(`${url}/task/${args.id}`, args),
       updateBulk: (args) => axios.put(`${url}/user/me/task`, args),
-      deleteBulk: (args) => axios.delete(`${url}/user/me/task`, args),
+      deleteBulk: (args) => axios.delete(`${url}/user/me/task?${qs}`, args),
     };
   },
 
