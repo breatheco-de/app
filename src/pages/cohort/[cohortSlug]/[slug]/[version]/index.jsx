@@ -265,7 +265,7 @@ const Dashboard = () => {
   }, [contextState.cohortProgram, contextState.taskTodo, router]);
 
   const getDailyModuleData = () => {
-    const dailyModule = sortedAssignments[cohortSession?.current_module];
+    const dailyModule = sortedAssignments[cohortSession?.current_module - 1];
     return dailyModule;
   };
   const dailyModuleData = getDailyModuleData() || '';

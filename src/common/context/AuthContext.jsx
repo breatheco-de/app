@@ -60,9 +60,10 @@ const reducer = (state, action) => {
   }
 };
 
-const setSession = (token) => {
+const setSession = (token, setCookie, removeCookie) => {
   if (token) {
     localStorage.setItem('accessToken', token);
+    setCookie('accessToken', token, { path: '/' });
     axiosInstance.defaults.headers.common.Authorization = `Token ${token}`;
     // document.cookie = `accessToken=${token}; path=/`;
   } else {
@@ -72,6 +73,7 @@ const setSession = (token) => {
     localStorage.removeItem('programServices');
     localStorage.removeItem('cohortSession');
     localStorage.removeItem('accessToken');
+    removeCookie('accessToken', { path: '/' });
     localStorage.removeItem('taskTodo');
     localStorage.removeItem('sortedAssignments');
     delete axiosInstance.defaults.headers.common.Authorization;
@@ -83,16 +85,14 @@ const isValid = async (token, router, setCookie, removeCookie) => {
   const response = await bc
     .auth()
     .isValidToken(token)
-    .then((res) => {
-      setCookie('accessToken', token, { path: '/' });
-      return res;
-    })
+    .then((res) => res) // setCookie('accessToken', token, { path: '/' });
+
     // remove token from localstorage if expired (it prevents throwing error)
     .catch((err) => {
       router.push('/login');
-      removeCookie('accessToken', { path: '/' });
+      // removeCookie('accessToken', { path: '/' });
       // document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-      setSession(null);
+      setSession(null, setCookie, removeCookie);
       return {
         status: err.response.status,
       };
@@ -100,12 +100,13 @@ const isValid = async (token, router, setCookie, removeCookie) => {
   return response.status === 200;
 };
 
-const getToken = () => {
+const getToken = (cookies) => {
   if (isWindow) {
     const query = new URLSearchParams(window.location.search || '');
     const queryToken = query.get('token');
     if (queryToken) return queryToken;
-    return localStorage.getItem('accessToken');
+    return cookies.accessToken;
+    // return localStorage.getItem('accessToken');
   }
   return null;
 };
@@ -117,14 +118,15 @@ export const AuthContext = createContext({
 const AuthProvider = ({ children }) => {
   const router = useRouter();
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [, setCookie, removeCookie] = useCookies(['accessToken']);
+  const [cookies, setCookie, removeCookie] = useCookies(['accessToken']);
 
   // Validate and Fetch user token from localstorage when it changes
-  const token = getToken();
+  const token = getToken(cookies);
+  const handleSession = (tokenString) => setSession(tokenString, setCookie, removeCookie);
   useEffect(async () => {
     const isValidToken = await isValid(token, router, setCookie, removeCookie);
     if (isValidToken) {
-      setSession(token);
+      handleSession(token);
       const response = await bc.auth().me();
       dispatch({
         type: 'INIT',
@@ -132,7 +134,7 @@ const AuthProvider = ({ children }) => {
       });
     } else {
       removeCookie('accessToken', { path: '/' });
-      setSession(null);
+      handleSession(null);
       dispatch({
         type: 'INIT',
         payload: { user: null, isAuthenticated: false },
@@ -145,7 +147,7 @@ const AuthProvider = ({ children }) => {
       if (payload) {
         const response = await bc.auth().login(payload);
         if (response.status === 200) {
-          setSession(response.data.token || response.token);
+          handleSession(response.data.token || response.token);
           dispatch({
             type: 'LOGIN',
             payload: response.data,
@@ -167,7 +169,7 @@ const AuthProvider = ({ children }) => {
       if (payload) {
         const response = await bc.auth().register(payload);
         if (response.status === 200) {
-          setSession(response.data.token || response.token);
+          handleSession(response.data.token || response.token);
           dispatch({
             type: 'REGISTER',
             payload: {
@@ -196,8 +198,9 @@ const AuthProvider = ({ children }) => {
 
   const logout = () => {
     router.push('/login');
-    setSession(null);
-    document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    handleSession(null);
+    removeCookie('accessToken', { path: '/' });
+    // document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     dispatch({ type: 'LOGOUT' });
   };
 
