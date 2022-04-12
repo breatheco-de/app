@@ -3,7 +3,7 @@ import '../../styles/globals.css';
 import '../../styles/markdown.css';
 import PropTypes from 'prop-types';
 import { ChakraProvider } from '@chakra-ui/react';
-import { CookiesProvider } from 'react-cookie';
+import { CookiesProvider, useCookies } from 'react-cookie';
 import wrapper from '../store';
 import CustomTheme from '../../styles/theme';
 import NavbarSession from '../common/components/Navbar';
@@ -20,8 +20,11 @@ import '@fontsource/lato/900.css';
 
 function App({ Component, pageProps }) {
   const { isAuthenticated } = useAuth();
+  const [cookies] = useCookies(['accessToken']);
   const [haveSession, setHaveSession] = useState(false);
-  const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
+  // const HAVE_SESSION = typeof window !== 'undefined'
+  // ? localStorage.getItem('accessToken') !== null : false;
+  const HAVE_SESSION = Object.keys(cookies).length > 0 && cookies.accessToken !== undefined;
 
   useEffect(() => {
     // verify if accessToken exists
