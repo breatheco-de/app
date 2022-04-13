@@ -33,22 +33,18 @@ const Dashboard = () => {
   const { t } = useTranslation('dashboard');
   const { contextState, setContextState } = useModuleMap();
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', null);
-  // const [cohortSession, setCohortSession] = useState({});
   const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
-  // const [taskCohortNull, setTaskCohortNull] = usePersistent('taskCohortNull', []);
   const [taskCohortNull, setTaskCohortNull] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
-  // const [taskTodo, setTaskTodo] = useState([]);
   const { user, choose } = useAuth();
   const [, setSyllabus] = usePersistent('syllabus', []);
 
   const toast = useToast();
   const router = useRouter();
   const locale = router.locale === 'default' ? 'en' : router.locale;
-  // const modalIsOpen = taskCohortNull.length > 0;
   const { cohortSlug, slug } = router.query;
 
   const skeletonStartColor = useColorModeValue('gray.300', 'gray.light');
@@ -62,7 +58,11 @@ const Dashboard = () => {
     tapCapsule, progressBar,
   } = mockData;
 
-  axios.defaults.headers.common.Academy = cohortSession.academy.id || '';
+  if (cohortSession?.academy?.id) {
+    axios.defaults.headers.common.Academy = cohortSession.academy.id;
+  } else {
+    router.push('/choose-program');
+  }
 
   const syncTaskWithCohort = async () => {
     const tasksToUpdate = ((taskCohortNull !== undefined) && taskCohortNull).map((task) => ({
@@ -186,11 +186,13 @@ const Dashboard = () => {
 
   // Fetch cohort assignments (lesson, exercise, project, quiz)
   useEffect(() => {
-    // setSortedAssignments([]); // clean session data for new cohort
     if (user && user.active_cohort) {
       const academyId = user.active_cohort.academy_id;
-      // const cohortId = cohortSession.bc_id;
       const { version } = user.active_cohort;
+      setCohortSession({
+        ...cohortSession,
+        bc_id: user.id,
+      });
 
       // Fetch cohortProgram and TaskTodo then apply to contextState (useModuleMap - action)
       Promise.all([
