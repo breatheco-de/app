@@ -1,5 +1,5 @@
 import {
-  Fragment, useMemo, useEffect, useState,
+  useMemo, useEffect, useState,
 } from 'react';
 import {
   Box, Flex, Container, useColorModeValue, Skeleton, useToast,
@@ -26,7 +26,7 @@ import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import dashboardTR from '../../../../../common/translations/dashboard';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
-import { slugify } from '../../../../../utils/index';
+import { slugify, devLog, devLogTable } from '../../../../../utils/index';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 
 const Dashboard = () => {
@@ -50,12 +50,14 @@ const Dashboard = () => {
   const skeletonStartColor = useColorModeValue('gray.300', 'gray.light');
   const skeletonEndColor = useColorModeValue('gray.400', 'gray.400');
 
+  devLog('(React State) taskCohortNull:', taskCohortNull);
+
   const { supportSideBar } = dashboardTR[locale];
 
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
 
   const {
-    tapCapsule, progressBar,
+    tapCapsule,
   } = mockData;
 
   if (cohortSession?.academy?.id) {
@@ -174,15 +176,7 @@ const Dashboard = () => {
         isClosable: true,
       });
     });
-    // bc.cohort().get(cohortSlug).then(({ data }) => {
-    //   setCohortSession({
-    //     bc_id: user.id,
-    //     ...data,
-    //   });
-    // }).catch((err) => {
-    //   console.error('err_cohortSessoin:', err);
-    // });
-  }, []);
+  }, [cohortSlug]);
 
   // Fetch cohort assignments (lesson, exercise, project, quiz)
   useEffect(() => {
@@ -196,16 +190,22 @@ const Dashboard = () => {
 
       // Fetch cohortProgram and TaskTodo then apply to contextState (useModuleMap - action)
       Promise.all([
-        bc.todo({
-          cohort: cohortSession.id,
-        }).getTaskByStudent(), // TaskTodo with cohortSession id
-        bc.todo({
-          cohort: null,
-        }).getTaskByStudent(), // TaskTodo with cohort null
+        bc.todo({ cohort: cohortSession.id }).getTaskByStudent(), // Tasks with cohort id
+        bc.todo({ cohort: null }).getTaskByStudent(), // Tasks with cohort null
         bc.syllabus().get(academyId, slug, version), // cohortProgram
-      ]).then(([taskTodoData, taskWithCohortNull, programData]) => {
-        setTaskCohortNull(taskWithCohortNull.data);
-        setModalIsOpen(taskWithCohortNull.data.length > 0);
+      ]).then((
+        [taskTodoData, taskWithCohortNull, programData],
+      ) => {
+        devLogTable('(Response Fetched) All_TasksWithCohortNull:', taskWithCohortNull.data);
+        const filteredUnsyncedCohortTasks = sortedAssignments.flatMap(
+          (assignment) => taskWithCohortNull.data.filter(
+            (task) => assignment.modules.some(
+              (module) => task.associated_slug === module.slug,
+            ),
+          ),
+        );
+        setTaskCohortNull(filteredUnsyncedCohortTasks);
+        setModalIsOpen(filteredUnsyncedCohortTasks.length > 0);
         setSyllabus(programData.data.json.days);
         setContextState({
           taskTodo: taskTodoData.data,
@@ -389,7 +389,6 @@ const Dashboard = () => {
           <Box marginTop="36px">
             <ProgressBar
               taskTodo={taskTodo}
-              programs={progressBar.programs}
               progressText={t('progressText')}
               width="100%"
             />
