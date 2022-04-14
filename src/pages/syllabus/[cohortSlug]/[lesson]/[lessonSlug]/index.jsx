@@ -347,9 +347,6 @@ const Content = () => {
     id: 3,
   }] : [];
 
-  console.log('ipynbHtmlUrl:::', ipynbHtmlUrl);
-  console.log('currentData:::', currentData);
-
   return (
     <Flex position="relative">
       <StickySideBar

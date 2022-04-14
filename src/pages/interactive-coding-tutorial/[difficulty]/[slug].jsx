@@ -2,8 +2,8 @@ import {
   Box, useColorModeValue, Flex, useToast, useColorMode,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+// import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from '../../../common/components/Heading';
 import Link from '../../../common/components/NextChakraLink';
@@ -13,7 +13,7 @@ import SimpleTable from '../../../js_modules/projects/SimpleTable';
 import MarkDownParser from '../../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 
-export const getStaticPaths = async ({ locales }) => {
+export const getStaticPaths = async () => {
   let projects = [];
   const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`)
     .then((res) => res.json())
@@ -35,13 +35,16 @@ export const getStaticPaths = async ({ locales }) => {
     }
   }
 
-  const paths = projects.flatMap((res) => locales.map((locale) => ({
-    params: {
-      slug: res.slug,
-      difficulty: res.difficulty,
-    },
-    locale,
-  })));
+  const paths = projects.flatMap((res) => Object.keys(res.translations).map((locale) => {
+    const localeToUsEs = locale === 'us' ? 'en' : 'es';
+    return ({
+      params: {
+        slug: res.translations[locale],
+        difficulty: res.difficulty,
+      },
+      locale: localeToUsEs,
+    });
+  }));
   return {
     fallback: false,
     paths,
@@ -55,6 +58,17 @@ export const getStaticProps = async ({ params }) => {
     .catch((err) => ({
       status: err.response.status,
     }));
+  const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
+    .then((res) => res.text())
+    .catch((err) => ({
+      status: err.response.status,
+    }));
+
+  // in "lesson.translations" rename "us" key to "en" key if exists
+  if (results?.translations && results.translations.us) {
+    results.translations.en = results.translations.us;
+    delete results.translations.us;
+  }
 
   if (results.status === 404) {
     return {
@@ -65,6 +79,8 @@ export const getStaticProps = async ({ params }) => {
     props: {
       fallback: false,
       project: results,
+      markdown,
+      // translations: results.translations,
     },
   };
 };
@@ -94,8 +110,7 @@ const TableInfo = ({ project, commonTextColor }) => (
   </>
 );
 
-const ProjectSlug = ({ project }) => {
-  const [readme, setReadme] = useState('');
+const ProjectSlug = ({ project, markdown }) => {
   const { t } = useTranslation(['projects']);
   // const defaultImage = '/static/images/code1.png';
   // const getImage = project.preview !== '' ? project.preview : defaultImage;
@@ -103,7 +118,6 @@ const ProjectSlug = ({ project }) => {
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
 
-  const router = useRouter();
   const toast = useToast();
 
   const EventIfNotFound = () => {
@@ -117,26 +131,12 @@ const ProjectSlug = ({ project }) => {
   };
 
   useEffect(() => {
-    const language = router.query.lang || router.locale;
-
-    if (project.readme_url !== null) {
-      fetch(project.readme_url)
-        .then((resp) => resp.text())
-        .then((data) => {
-          setReadme({ markdown: data, lang: language });
-        })
-        .catch((err) => {
-          console.error('Error loading markdown file from github', err);
-          setTimeout(() => {
-            EventIfNotFound();
-          }, 4000);
-        });
-    } else {
+    if (typeof markdown !== 'string') {
       setTimeout(() => {
         EventIfNotFound();
       }, 4000);
     }
-  }, []);
+  }, [markdown]);
 
   // const onImageNotFound = (event) => {
   //   event.target.setAttribute('src', defaultImage);
@@ -242,8 +242,8 @@ const ProjectSlug = ({ project }) => {
             className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
             transition="background .2s ease"
           >
-            {readme.markdown ? (
-              <MarkDownParser content={readme.markdown} withToc />
+            {typeof markdown === 'string' ? (
+              <MarkDownParser content={markdown} withToc />
             ) : (
               <MDSkeleton />
             )}
@@ -279,6 +279,7 @@ const ProjectSlug = ({ project }) => {
 
 ProjectSlug.propTypes = {
   project: PropTypes.objectOf(PropTypes.any).isRequired,
+  markdown: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
 };
 
 TableInfo.propTypes = {

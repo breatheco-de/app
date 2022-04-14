@@ -35,7 +35,6 @@ const middleware = async (req) => {
       userPathName === `/default/lesson/${translations.us}`
       || userPathName === `/en/lesson/${translations.es}`
     ) {
-      console.log(`new change in conditional === ${userPathName}`);
       console.log(`Middleware: redirecting from ${url.pathname} → /en/lesson/${translations.us}`);
       return NextResponse.redirect(new URL(`/en/lesson/${translations.us}`, req.url));
     }
