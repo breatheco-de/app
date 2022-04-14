@@ -261,7 +261,11 @@ const Dashboard = () => {
             ...assignmentsStruct,
           });
         }
-        return setSortedAssignments(assignmentsRecopilated);
+
+        const filterEmptyModules = assignmentsRecopilated.filter(
+          (l) => l.modules.length > 0,
+        );
+        return setSortedAssignments(filterEmptyModules);
       });
     }
   }, [contextState.cohortProgram, contextState.taskTodo, router]);
