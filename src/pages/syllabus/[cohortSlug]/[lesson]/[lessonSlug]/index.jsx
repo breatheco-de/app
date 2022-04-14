@@ -61,6 +61,8 @@ const Content = () => {
     (assignment) => assignment.modules.length > 0,
   );
 
+  const currentTheme = useColorModeValue('light', 'dark');
+
   const slide = {
     minWidth: '290px',
     zIndex: 1200,
@@ -175,7 +177,7 @@ const Content = () => {
           setCurrentData(data);
           setReadme(markdown);
         }
-        if (exensionName === 'ipynb') setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.html`);
+        if (exensionName === 'ipynb') setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.html?theme=${currentTheme}`);
         else setIpynbHtmlUrl(null);
       })
       .catch(() => {
@@ -229,7 +231,7 @@ const Content = () => {
         let currentlocaleLang = data.translations[language];
         const exensionName = getExtensionName(data.readme_url);
         if (exensionName === 'ipynb') {
-          setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.html`);
+          setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.html?theme=${currentTheme}`);
           setCurrentData(data);
         } else {
           setIpynbHtmlUrl(null);
@@ -345,6 +347,9 @@ const Content = () => {
     id: 3,
   }] : [];
 
+  console.log('ipynbHtmlUrl:::', ipynbHtmlUrl);
+  console.log('currentData:::', currentData);
+
   return (
     <Flex position="relative">
       <StickySideBar
@@ -443,7 +448,7 @@ const Content = () => {
           />
 
           <Box
-            className={`horizontal-sroll ${useColorModeValue('light', 'dark')}`}
+            className={`horizontal-sroll ${currentTheme}`}
             height={{ base: '100%', md: '90.5vh' }}
             style={{
               // height: '90.5vh',
@@ -505,7 +510,7 @@ const Content = () => {
 
         {!ipynbHtmlUrl && (
           <Box
-            className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+            className={`markdown-body ${currentTheme}`}
             // id={lessonSlug}
             flexGrow={1}
             marginLeft={0}
