@@ -16,7 +16,7 @@ const middleware = async (req) => {
       [x] /es/lesson/learn-to-code => /es/lesson/aprender-a-programar
       [x] /es/lesson/aprender-a-programar => no redirect, just show lesson content
   */
-  if (!results.status_code === 404) {
+  if (results.status_code !== 404) {
     if (
       userPathName === `/default/lesson/${translations.es}`
       || userPathName === `/es/lesson/${translations.us}`
