@@ -89,7 +89,7 @@ const navbarTR = {
     ],
     languagesTR: [
       {
-        label: 'Ingles',
+        label: 'Inglés',
         value: 'en',
       },
       {
