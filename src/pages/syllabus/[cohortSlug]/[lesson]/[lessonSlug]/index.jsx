@@ -177,7 +177,7 @@ const Content = () => {
           setCurrentData(data);
           setReadme(markdown);
         }
-        if (exensionName === 'ipynb') setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.html?theme=${currentTheme}`);
+        if (exensionName === 'ipynb') setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentTheme}&plain=true`);
         else setIpynbHtmlUrl(null);
       })
       .catch(() => {
