@@ -40,17 +40,17 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async ({ params }) => {
   const { slug } = params;
-  const results = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`)
+  const lesson = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`)
     .then((res) => res.json())
     .catch((err) => console.log(err));
 
-  // in "results.translations" rename "us" key to "en" key if exists
-  if (results.translations.us) {
-    results.translations.en = results.translations.us;
-    delete results.translations.us;
+  // in "lesson.translations" rename "us" key to "en" key if exists
+  if (lesson.translations.us) {
+    lesson.translations.en = lesson.translations.us;
+    delete lesson.translations.us;
   }
 
-  if (results.status_code === 404) {
+  if (lesson.status_code === 404) {
     return {
       notFound: true,
     };
@@ -58,8 +58,8 @@ export const getStaticProps = async ({ params }) => {
   return {
     props: {
       fallback: false,
-      lesson: results,
-      translations: results.translations,
+      lesson,
+      translations: lesson.translations,
     },
   };
 };

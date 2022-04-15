@@ -16,7 +16,7 @@ const middleware = async (req) => {
       [x] /es/lesson/learn-to-code => /es/lesson/aprender-a-programar
       [x] /es/lesson/aprender-a-programar => no redirect, just show lesson content
   */
-  if (!results.status_code === 404) {
+  if (results.status_code !== 404) {
     if (
       userPathName === `/default/lesson/${translations.es}`
       || userPathName === `/es/lesson/${translations.us}`
@@ -35,7 +35,6 @@ const middleware = async (req) => {
       userPathName === `/default/lesson/${translations.us}`
       || userPathName === `/en/lesson/${translations.es}`
     ) {
-      console.log(`new change in conditional === ${userPathName}`);
       console.log(`Middleware: redirecting from ${url.pathname} → /en/lesson/${translations.us}`);
       return NextResponse.redirect(new URL(`/en/lesson/${translations.us}`, req.url));
     }

@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import { memo, useState } from 'react';
+import { memo, useState, useEffect } from 'react';
 import {
   Box,
   Heading,
@@ -68,6 +68,7 @@ const CohortSideBar = ({
   const { t } = useTranslation('dashboard');
   const router = useRouter();
   const { colorMode } = useColorMode();
+  const [existsProfilesLoading, setExistsProfilesLoading] = useState(true);
   const teacher = studentAndTeachers.filter((st) => st.role === 'TEACHER');
   const students = studentAndTeachers.filter((st) => st.role === 'STUDENT');
   const teacherAssistants = studentAndTeachers.filter((st) => st.role === 'ASSISTANT');
@@ -82,6 +83,14 @@ const CohortSideBar = ({
     en: format(new Date(cohort.ending_date), 'MMM do'),
     es: format(new Date(cohort.ending_date), 'MMM d', { locale: es }),
   };
+
+  useEffect(() => {
+    if (students.length === 0 || teacher.length === 0) {
+      setTimeout(() => {
+        setExistsProfilesLoading(false);
+      }, 4000);
+    }
+  }, [students]);
 
   return (
     <Box
@@ -148,6 +157,7 @@ const CohortSideBar = ({
             </Box>
           );
         })}
+        {existsProfilesLoading && 'There are no teachers'}
       </Box>
       <Divider margin={0} style={{ borderColor: useColorModeValue('#DADADA', 'gray.700') }} />
       <Box display="flex" flexDirection="column" gridGap="20px" padding="18px 26px">
@@ -164,7 +174,11 @@ const CohortSideBar = ({
               profiles={students}
             />
           ) : (
-            <AvatarSkeleton withText quantity={12} />
+            <>
+              {existsProfilesLoading ? (
+                <AvatarSkeleton withText quantity={12} />
+              ) : 'This cohort does not have any students yet'}
+            </>
           )}
       </Box>
     </Box>

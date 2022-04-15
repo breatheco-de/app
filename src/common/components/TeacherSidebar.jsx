@@ -114,7 +114,7 @@ const TeacherSidebar = ({
           <ItemButton
             actionHandler={() => {
               if (isWindow) {
-                window.open(`https://assignments.breatheco.de/?cohort=${cohortSession.bc_id}&token=${accessToken}&academy=${academy.id}`, '_blank');
+                window.open(`https://assignments.breatheco.de/?cohort_slug=${slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${academy.id}`, '_blank');
               }
             }}
           >
