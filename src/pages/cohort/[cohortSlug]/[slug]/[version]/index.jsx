@@ -377,7 +377,7 @@ const Dashboard = () => {
             )}
           </Box>
           {
-            cohortSession.current_module && (
+            cohortSession.current_module && dailyModuleData && (
               <CallToAction
                 background="blue.default"
                 margin="40px 0 auto 0"

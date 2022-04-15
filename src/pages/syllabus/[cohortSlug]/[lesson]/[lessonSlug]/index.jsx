@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
-import { isWindow, getExtensionName } from '../../../../../utils';
+import { isWindow, getExtensionName, devLog } from '../../../../../utils';
 import ReactPlayer from '../../../../../common/components/ReactPlayer';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
@@ -313,10 +313,23 @@ const Content = () => {
       return <MDSkeleton />;
     }
     if (ipynbHtmlUrl === null && readme) {
-      return <MarkdownParser content={readme.content} callToActionProps={callToActionProps} withToc={lesson.toLowerCase() === 'read'} frontMatter={readme.frontMatter || ''} />;
+      return (
+        <MarkdownParser
+          content={readme.content}
+          callToActionProps={callToActionProps}
+          withToc={lesson.toLowerCase() === 'read'}
+          frontMatter={{
+            title: currentData.title,
+            subtitle: currentData.description,
+            assetType: currentData.asset_type,
+          }}
+        />
+      );
     }
     return false;
   };
+
+  devLog('currentData:', currentData);
 
   const teacherActions = profesionalRoles.includes(cohortSession.cohort_role)
     ? [
@@ -473,8 +486,8 @@ const Content = () => {
         </Box>
       </Box>
       <Box width="100%" height="auto">
-        {currentData.readme_url && (
-          <Link href={currentData.readme_url} margin="3rem 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+        {currentData.url && (
+          <Link href={`${currentData.url}#readme`} margin="3rem 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
             <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
             Edit this page on Github
           </Link>

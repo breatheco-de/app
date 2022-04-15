@@ -187,39 +187,41 @@ const MarkDownParser = ({
 
   return (
     <>
-      {assetType === 'EXERCISE' && (
-        <CallToAction
-          styleContainer={{
-            maxWidth: '800px',
-          }}
-          buttonStyle={{
-            color: 'white',
-          }}
-          background="blue.default"
-          margin="40px 0 auto 0"
-          imageSrc="/static/images/learnpack.png"
-          text="This practice will run outside of 4Geeks.com thought LearnPack. An interactive learning tool that runs integrated with VSCode and Gitpod."
-          width={{ base: '100%', md: 'fit-content' }}
-          buttonsData={[
-            {
-              text: 'Start new exercise',
-              href: `https://breathecode.herokuapp.com/asset/${assetSlug}?token=${token}`,
-              isExternalLink: true,
-            },
-            {
-              text: 'Continue exercise',
-              href: 'https://gitpod.io/workspaces',
-              isExternalLink: true,
-            },
-          ]}
-        />
-
-      )}
-      {withToc && (
-        <ContentHeading content={frontMatter}>
+      <ContentHeading
+        callToAction={assetType === 'EXERCISE' && (
+          <CallToAction
+            styleContainer={{
+              maxWidth: '800px',
+            }}
+            buttonStyle={{
+              color: 'white',
+            }}
+            background="blue.default"
+            margin="12px 0 20px 0px"
+            imageSrc="/static/images/learnpack.png"
+            text="This practice will run outside of 4Geeks.com thought LearnPack. An interactive learning tool that runs integrated with VSCode and Gitpod."
+            width={{ base: '100%', md: 'fit-content' }}
+            buttonsData={[
+              {
+                text: 'Start new exercise',
+                href: `https://breathecode.herokuapp.com/asset/${assetSlug}?token=${token}`,
+                isExternalLink: true,
+              },
+              {
+                text: 'Continue exercise',
+                href: 'https://gitpod.io/workspaces',
+                isExternalLink: true,
+              },
+            ]}
+          />
+        )}
+        content={frontMatter}
+      >
+        {withToc && (
           <Toc content={content} />
-        </ContentHeading>
-      )}
+        )}
+      </ContentHeading>
+
       {compiler(contentFormated, {
         wrapper: null,
         overrides: {
