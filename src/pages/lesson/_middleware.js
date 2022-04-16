@@ -18,8 +18,9 @@ const middleware = async (req) => {
   */
   if (results.status_code !== 404) {
     if (
-      userPathName === `/default/lesson/${translations.es}`
-      || userPathName === `/es/lesson/${translations.us}`
+      translations.es !== undefined && (
+        userPathName === `/default/lesson/${translations.es}`
+        || userPathName === `/es/lesson/${translations.us}`)
     ) {
       console.log(`Middleware: redirecting from ${userPathName} → /es/lesson/${translations.es}`);
       return NextResponse.redirect(new URL(`/es/lesson/${translations.es}`, req.url));
@@ -32,8 +33,9 @@ const middleware = async (req) => {
         [x] /en/lesson/learn-to-code => no redirect, just show lesson content
     */
     if (
-      userPathName === `/default/lesson/${translations.us}`
-      || userPathName === `/en/lesson/${translations.es}`
+      translations.us !== undefined && (
+        userPathName === `/default/lesson/${translations.us}`
+        || userPathName === `/en/lesson/${translations.es}`)
     ) {
       console.log(`Middleware: redirecting from ${url.pathname} → /en/lesson/${translations.us}`);
       return NextResponse.redirect(new URL(`/en/lesson/${translations.us}`, req.url));

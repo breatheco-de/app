@@ -8,6 +8,11 @@ const HAVE_SESSION = isWindow ? localStorage.getItem('accessToken') !== null : f
 */
 const isDevMode = isWindow && window.location.hostname === 'localhost';
 
+const languageLabel = {
+  es: 'Spanish',
+  us: 'English',
+};
+
 const slugify = (str) => str
   .toLowerCase()
   .trim()
@@ -67,4 +72,5 @@ export {
   isDevMode,
   devLogTable,
   devLog,
+  languageLabel,
 };

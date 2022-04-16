@@ -12,16 +12,18 @@ const middleware = async (req) => {
 
   if (results.status_code !== 404) {
     if (
-      userPathName === `/default/interactive-coding-tutorial/${difficulty}/${translations.es}`
-      || userPathName === `/es/interactive-coding-tutorial/${difficulty}/${translations.us}`
+      translations.es !== undefined && (
+        userPathName === `/default/interactive-coding-tutorial/${difficulty}/${translations.es}`
+        || userPathName === `/es/interactive-coding-tutorial/${difficulty}/${translations.us}`)
     ) {
       console.log(`Middleware: redirecting from ${userPathName} → /es/interactive-coding-tutorial/${translations.es}`);
       return NextResponse.redirect(new URL(`/es/interactive-coding-tutorial/${difficulty}/${translations.es}`, req.url));
     }
 
     if (
-      userPathName === `/default/interactive-coding-tutorial/${difficulty}/${translations.us}`
-      || userPathName === `/en/interactive-coding-tutorial/${difficulty}/${translations.es}`
+      translations.us !== undefined && (
+        userPathName === `/default/interactive-coding-tutorial/${difficulty}/${translations.us}`
+        || userPathName === `/en/interactive-coding-tutorial/${difficulty}/${translations.es}`)
     ) {
       console.log(`Middleware: redirecting from ${url.pathname} → /en/interactive-coding-tutorial/${translations.us}`);
       return NextResponse.redirect(new URL(`/en/interactive-coding-tutorial/${difficulty}/${translations.us}`, req.url));

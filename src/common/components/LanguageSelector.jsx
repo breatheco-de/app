@@ -25,6 +25,8 @@ const LanguageSelector = ({ display, translations }) => {
   const [languagesOpen, setLanguagesOpen] = useState(false);
   const currentLanguage = languagesTR.filter((l) => l.value === locale)[0];
 
+  const translationsPropsExists = Object.keys(translations).length > 0;
+
   return (
     <Popover
       id="Language-Hover"
@@ -74,12 +76,13 @@ const LanguageSelector = ({ display, translations }) => {
           gridGap="10px"
           padding="12px"
         >
-          {((typeof translations === 'object'
-            && Object.keys(translations)) || languagesTR).map((l) => {
+          {((translationsPropsExists
+            && Object.keys(translations))
+            || languagesTR).map((l) => {
             const lang = languagesTR.filter((language) => language.value === l)[0];
-            const value = typeof translations === 'object' ? lang.value : l.value;
-            const label = typeof translations === 'object' ? lang.label : l.label;
-            const path = typeof translations === 'object' ? translations[value] : router.asPath;
+            const value = translationsPropsExists ? lang.value : l.value;
+            const label = translationsPropsExists ? lang.label : l.label;
+            const path = translationsPropsExists ? translations[value] : router.asPath;
             return (
               <NextChakraLink
                 width="100%"
@@ -114,7 +117,7 @@ LanguageSelector.propTypes = {
 };
 
 LanguageSelector.defaultProps = {
-  translations: undefined,
+  translations: {},
 };
 
 export default LanguageSelector;

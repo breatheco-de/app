@@ -11,19 +11,23 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import axios from 'axios';
 import { Formik, Form, Field } from 'formik';
-import { useState } from 'react';
-import atob from 'atob';
-import Heading from '../../common/components/Heading';
-import Link from '../../common/components/NextChakraLink';
-import Text from '../../common/components/Text';
-import SimpleTable from '../../js_modules/projects/SimpleTable';
+import { useEffect, useState } from 'react';
+// import atob from 'atob';
+import { useRouter } from 'next/router';
+import { languageLabel } from '../../../utils';
+import Heading from '../../../common/components/Heading';
+import Link from '../../../common/components/NextChakraLink';
+import Text from '../../../common/components/Text';
+import SimpleTable from '../../../js_modules/projects/SimpleTable';
 // import TagCapsule from '../../common/components/TagCapsule';
 // import Image from '../../common/components/Image';
-import MarkDownParser from '../../common/components/MarkDownParser';
-import { MDSkeleton } from '../../common/components/Skeleton';
-import validationSchema from '../../common/components/Forms/validationSchemas';
-import { processFormEntry } from '../../common/components/Forms/actions';
+import MarkDownParser from '../../../common/components/MarkDownParser';
+import { MDSkeleton } from '../../../common/components/Skeleton';
+import validationSchema from '../../../common/components/Forms/validationSchemas';
+import { processFormEntry } from '../../../common/components/Forms/actions';
+import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await fetch(
@@ -47,13 +51,22 @@ export const getStaticPaths = async ({ locales }) => {
 
 export const getStaticProps = async ({ params }) => {
   const { slug } = params;
-  const results = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`,
-  )
+  const results = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`)
     .then((res) => res.json())
     .catch((err) => ({
       status: err.response.status,
     }));
+  const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
+    .then((res) => res.text())
+    .catch((err) => ({
+      status: err.response.status,
+    }));
+
+  // in "lesson.translations" rename "us" key to "en" key if exists
+  if (results?.translations && results.translations.us) {
+    results.translations.en = results.translations.us;
+    delete results.translations.us;
+  }
 
   if (results.status === 404) {
     return {
@@ -64,6 +77,8 @@ export const getStaticProps = async ({ params }) => {
     props: {
       fallback: false,
       exercise: results,
+      markdown,
+      // translations: results.translations,
     },
   };
 };
@@ -222,9 +237,14 @@ const TabletWithForm = ({
   );
 };
 
-const ExerciseSlug = ({ exercise }) => {
+const Exercise = ({ exercise, markdown }) => {
   const { t } = useTranslation(['exercises']);
+  const markdownData = getMarkDownContent(markdown);
   const [notFound, setNotFound] = useState(false);
+  const router = useRouter();
+  const language = router.locale === 'en' ? 'us' : 'es';
+  const currentLanguageLabel = languageLabel[language] || language;
+  const { slug } = router.query;
   // const defaultImage = '/static/images/code1.png';
   // const getImage = exercise.preview !== '' ? exercise.preview : defaultImage;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
@@ -233,7 +253,8 @@ const ExerciseSlug = ({ exercise }) => {
 
   const toast = useToast();
 
-  const MDecoded = exercise.readme && typeof exercise.readme === 'string' ? atob(exercise.readme) : null;
+  // const MDecoded = exercise.readme
+  //   && typeof exercise.readme === 'string' ? atob(exercise.readme) : null;
 
   if (exercise.readme === '' && notFound === false) {
     setTimeout(() => {
@@ -248,7 +269,22 @@ const ExerciseSlug = ({ exercise }) => {
     }, 4000);
   }
 
-  const removeTitleAndImage = (str) => str.replace(new RegExp('(.+)', 'm'), '').replace(new RegExp('<a.*?>+.*>', 'g'), '');
+  useEffect(() => {
+    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`)
+      .then(({ data }) => {
+        let currentlocaleLang = data.translations[language];
+        if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
+        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=EXERCISE`)
+          .catch(() => {
+            toast({
+              title: `Exercise for language "${currentLanguageLabel}" not found, showing the english version`,
+              status: 'warning',
+              duration: 5500,
+              isClosable: true,
+            });
+          });
+      });
+  }, [language]);
 
   // const onImageNotFound = (event) => {
   //   event.target.setAttribute('src', defaultImage);
@@ -354,8 +390,9 @@ const ExerciseSlug = ({ exercise }) => {
             width={{ base: '34rem', md: '54rem' }}
             className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
           >
-            {MDecoded ? (
-              <MarkDownParser content={removeTitleAndImage(MDecoded)} />
+            {markdown ? (
+              <MarkDownParser content={markdownData.content} />
+              // <MarkDownParser content={removeTitleAndImage(MDecoded)} />
             ) : (
               <MDSkeleton />
             )}
@@ -389,8 +426,9 @@ const ExerciseSlug = ({ exercise }) => {
   );
 };
 
-ExerciseSlug.propTypes = {
+Exercise.propTypes = {
   exercise: PropTypes.objectOf(PropTypes.any).isRequired,
+  markdown: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
 };
 
 TabletWithForm.propTypes = {
@@ -404,4 +442,4 @@ TabletWithForm.defaultProps = {
   isSubmitting: false,
 };
 
-export default ExerciseSlug;
+export default Exercise;

@@ -13,7 +13,7 @@ const ContentHeading = ({ content, children, callToAction }) => {
     QUIZ: 'answer',
   };
 
-  return (
+  return content && Object.keys(content).length !== 0 && (
     <Box
       borderBottom={1}
       borderStyle="solid"
@@ -21,7 +21,6 @@ const ContentHeading = ({ content, children, callToAction }) => {
       paddingBottom="2rem"
       marginBottom="2rem"
     >
-      {content && (
       <Box marginBottom="1.2rem">
         <Heading size="m" display="inline-flex" marginTop="1.5rem">
           <Icon icon={assetTypeIcons[assetType] || 'book'} height="30px" color="#0097CD" width="28px" style={{ margin: 'auto', marginRight: '0.4rem' }} />
@@ -33,7 +32,6 @@ const ContentHeading = ({ content, children, callToAction }) => {
           {subtitle}
         </Text>
       </Box>
-      )}
       {children}
     </Box>
   );

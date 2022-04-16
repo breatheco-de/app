@@ -12,7 +12,7 @@ const SimpleTable = ({
   liveDemoAvailable,
   technologies,
 }) => {
-  const verifyIfNull = (value) => (value !== null && value) || 'Not Available';
+  const verifyIfNull = (value) => value !== null && value;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   return (
@@ -29,7 +29,7 @@ const SimpleTable = ({
           Dificulty
         </Text>
         <Text size="l" color={commonTextColor}>
-          {verifyIfNull(difficulty)}
+          {verifyIfNull(difficulty) ? difficulty : 'Not Available'}
         </Text>
       </Flex>
       <Flex
@@ -91,9 +91,17 @@ const SimpleTable = ({
         <Text size="l" color={commonTextColor}>
           Live Demo Available
         </Text>
-        <Text size="l" color={commonTextColor}>
-          {verifyIfNull(liveDemoAvailable)}
-        </Text>
+        {liveDemoAvailable ? (
+          <Link
+            href={liveDemoAvailable}
+            color="blue.default"
+            fontSize="15px"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Click to Open
+          </Link>
+        ) : 'Not Available'}
       </Flex>
       <Flex
         width="100%"
@@ -106,7 +114,11 @@ const SimpleTable = ({
         <Text size="l" color={commonTextColor}>
           Project average Duration
         </Text>
-        <Text size="l" color={commonTextColor}>{`${verifyIfNull(duration)} hrs`}</Text>
+        <Text size="l" color={commonTextColor}>
+          {duration
+            ? `${duration} hrs`
+            : 'Not Available'}
+        </Text>
       </Flex>
 
       <Flex
@@ -142,7 +154,7 @@ SimpleTable.propTypes = {
   repository: PropTypes.string,
   duration: PropTypes.number,
   videoAvailable: PropTypes.string,
-  liveDemoAvailable: PropTypes.bool,
+  liveDemoAvailable: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   technologies: PropTypes.arrayOf(PropTypes.string),
 };
 
@@ -151,7 +163,7 @@ SimpleTable.defaultProps = {
   repository: 'Not available',
   videoAvailable: 'Not available',
   duration: 0,
-  liveDemoAvailable: false,
+  liveDemoAvailable: '',
   technologies: [],
 };
 
