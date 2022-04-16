@@ -236,7 +236,7 @@ const Content = () => {
         let currentlocaleLang = data.translations[language];
         const exensionName = getExtensionName(data.readme_url);
         if (exensionName === 'ipynb') {
-          setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.html?theme=${currentTheme}`);
+          setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentTheme}&plain=true`);
           setCurrentData(data);
         } else {
           setIpynbHtmlUrl(null);
