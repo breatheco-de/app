@@ -177,16 +177,14 @@ const Content = () => {
         if (lesson === 'answer') setQuizSlug(lessonSlug);
         else setQuizSlug(null);
 
-        if (exensionName === 'ipynb') {
-          setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.html?theme=${currentTheme}`);
-        } else setIpynbHtmlUrl(null);
-
         if (currData !== undefined && typeof markdownData === 'string') {
           // Binary base64 decoding ⇢ UTF-8
           const markdown = getMarkDownContent(markdownData);
           setReadme(markdown);
           setCurrentData(currData);
         }
+        if (exensionName === 'ipynb') setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentTheme}&plain=true`);
+        else setIpynbHtmlUrl(null);
       })
       .catch(() => {
         toast({
