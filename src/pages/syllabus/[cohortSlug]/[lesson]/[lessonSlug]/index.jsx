@@ -12,14 +12,16 @@ import {
 } from '@chakra-ui/react';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
-import { isWindow, getExtensionName, devLog } from '../../../../../utils';
+import {
+  isWindow, getExtensionName, devLog, languageLabel,
+} from '../../../../../utils';
 import ReactPlayer from '../../../../../common/components/ReactPlayer';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import Timeline from '../../../../../common/components/Timeline';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkdownParser from '../../../../../common/components/MarkDownParser';
-import decodeFromBinary from '../../../../../utils/markdown';
+// import decodeFromBinary from '../../../../../utils/markdown';
 import bc from '../../../../../common/services/breathecode';
 import useAuth from '../../../../../common/hooks/useAuth';
 import { MDSkeleton } from '../../../../../common/components/Skeleton';
@@ -98,6 +100,7 @@ const Content = () => {
     answer: 'QUIZ',
   };
   const language = router.locale === 'en' ? 'us' : 'es';
+  const currentLanguageLabel = languageLabel[language] || language;
 
   const isQuiz = lesson === 'answer';
 
@@ -156,29 +159,34 @@ const Content = () => {
   };
 
   const defaultDataFetch = async () => {
-    await axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}&current_translation=us`)
-      .then(({ data }) => {
+    Promise.all([
+      axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.md`),
+      axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`),
+    ])
+      .then(([respMarkdown, respData]) => {
+        const currData = respData.data;
+        const markdownData = respMarkdown.data;
         toast({
-          title: `Data for language "${language}" not found, showing the english version`,
+          title: `Data for language "${currentLanguageLabel}" not found, showing the english version`,
           status: 'warning',
           duration: 5500,
           isClosable: true,
         });
-        const exensionName = getExtensionName(data.readme_url);
+        const exensionName = getExtensionName(currData.readme_url);
 
         if (lesson === 'answer') setQuizSlug(lessonSlug);
         else setQuizSlug(null);
 
-        if (data !== undefined && exensionName === 'md' && data.readme !== null) {
+        if (exensionName === 'ipynb') {
+          setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.html?theme=${currentTheme}`);
+        } else setIpynbHtmlUrl(null);
+
+        if (currData !== undefined && typeof markdownData === 'string') {
           // Binary base64 decoding ⇢ UTF-8
-          const MDecoded = data.readme && typeof data.readme === 'string'
-            ? decodeFromBinary(data.readme) : null;
-          const markdown = getMarkDownContent(MDecoded);
-          setCurrentData(data);
+          const markdown = getMarkDownContent(markdownData);
           setReadme(markdown);
+          setCurrentData(currData);
         }
-        if (exensionName === 'ipynb') setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.html?theme=${currentTheme}`);
-        else setIpynbHtmlUrl(null);
       })
       .catch(() => {
         toast({
@@ -225,7 +233,6 @@ const Content = () => {
   }, []);
 
   useEffect(() => {
-    // convert this function with async and await
     axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
       .then(({ data }) => {
         let currentlocaleLang = data.translations[language];
@@ -238,26 +245,28 @@ const Content = () => {
           if (currentlocaleLang === undefined) {
             currentlocaleLang = `${lessonSlug}-${language}`;
           }
-          axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=${assetTypeValues[lesson]}`)
-            .then((res) => {
-              const currData = res.data;
+          Promise.all([
+            axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}.md`),
+            axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=${assetTypeValues[lesson]}`),
+          ])
+            .then(([respMarkdown, respData]) => {
+              const currData = respData.data;
+              const markdownData = respMarkdown.data;
 
               if (lesson === 'answer') {
                 setQuizSlug(currentlocaleLang);
               } else {
                 setQuizSlug(null);
               }
-              if (currData !== undefined && currData.readme !== null) {
+              if (currData !== undefined && typeof markdownData === 'string') {
                 // Binary base64 decoding ⇢ UTF-8
-                const MDecoded = currData.readme && typeof currData.readme === 'string'
-                  ? decodeFromBinary(currData.readme) : null;
-                const markdown = getMarkDownContent(MDecoded);
-                setCurrentData(currData);
+                const markdown = getMarkDownContent(markdownData);
                 setReadme(markdown);
+                setCurrentData(currData);
               }
             })
-            .catch(async () => {
-              await defaultDataFetch();
+            .catch(() => {
+              defaultDataFetch();
             });
         }
       }).catch(() => {
