@@ -1,13 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import axios from 'axios';
 import { Box, useColorModeValue, useToast } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
+import { languageLabel } from '../../utils';
 import Heading from '../../common/components/Heading';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../common/components/Skeleton';
 import TagCapsule from '../../common/components/TagCapsule';
-import decodeFromBinary from '../../utils/markdown';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
+// import decodeFromBinary from '../../utils/markdown';
+// import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 
 export const getStaticPaths = async () => {
   let lessons = [];
@@ -40,17 +43,23 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async ({ params }) => {
   const { slug } = params;
-  const results = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`)
+  const lesson = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`)
     .then((res) => res.json())
     .catch((err) => console.log(err));
 
-  // in "results.translations" rename "us" key to "en" key if exists
-  if (results.translations.us) {
-    results.translations.en = results.translations.us;
-    delete results.translations.us;
+  const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
+    .then((res) => res.text())
+    .catch((err) => ({
+      status: err.response.status,
+    }));
+
+  // in "lesson.translations" rename "us" key to "en" key if exists
+  if (lesson.translations.us) {
+    lesson.translations.en = lesson.translations.us;
+    delete lesson.translations.us;
   }
 
-  if (results.status_code === 404) {
+  if (lesson.status_code === 404) {
     return {
       notFound: true,
     };
@@ -58,19 +67,41 @@ export const getStaticProps = async ({ params }) => {
   return {
     props: {
       fallback: false,
-      lesson: results,
-      translations: results.translations,
+      lesson,
+      markdown,
+      // translations: lesson.translations,
     },
   };
 };
 
-const LessonSlug = ({ lesson }) => {
-  const [readme, setReadme] = useState(null);
-  // const [notFound, setNotFound] = useState(false);
-  // const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
-  // const commonTextColor = useColorModeValue('gray.600', 'gray.200');
+// TODO: implement jupyter notebook for lesson
+
+const LessonSlug = ({ lesson, markdown }) => {
+  // const [readme, setReadme] = useState(null);
+  // getMarkDownContent(markdown);
+  const markdownData = getMarkDownContent(markdown);
   const router = useRouter();
   const toast = useToast();
+  const language = router.locale === 'en' ? 'us' : 'es';
+  const { slug } = router.query;
+  const currentLanguageLabel = languageLabel[language] || language;
+
+  useEffect(() => {
+    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=lesson`)
+      .then(({ data }) => {
+        let currentlocaleLang = data.translations[language];
+        if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
+        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=LESSON`)
+          .catch(() => {
+            toast({
+              title: `Lesson for language "${currentLanguageLabel}" not found, showing the english version`,
+              status: 'warning',
+              duration: 5500,
+              isClosable: true,
+            });
+          });
+      });
+  }, [language]);
 
   const EventIfNotFound = () => {
     toast({
@@ -83,19 +114,12 @@ const LessonSlug = ({ lesson }) => {
   };
 
   useEffect(() => {
-    const language = router.query.lang || router.locale;
-
-    if (lesson.readme !== null) {
-      const MDecoded = lesson.readme && typeof lesson.readme === 'string' ? decodeFromBinary(lesson.readme) : null;
-      const markdown = getMarkDownContent(MDecoded);
-      const { content } = markdown;
-      setReadme({ markdown: content, lang: language });
-    } else {
+    if (typeof markdown !== 'string') {
       setTimeout(() => {
         EventIfNotFound();
       }, 4000);
     }
-  }, [lesson]);
+  }, [markdown]);
 
   return (
     <Box
@@ -150,8 +174,8 @@ const LessonSlug = ({ lesson }) => {
           // colorMode === 'light' ? 'light' : 'dark'
           className={`markdown-body ${useColorModeValue('light', 'dark')}`}
         >
-          {(readme && readme.markdown)
-            ? <MarkDownParser content={readme.markdown} />
+          {markdown
+            ? <MarkDownParser content={markdownData.content} />
             : <MDSkeleton />}
         </Box>
       </Box>
@@ -161,6 +185,7 @@ const LessonSlug = ({ lesson }) => {
 
 LessonSlug.propTypes = {
   lesson: PropTypes.objectOf(PropTypes.any).isRequired,
+  markdown: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
 };
 
 export default LessonSlug;

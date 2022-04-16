@@ -12,14 +12,16 @@ import {
 } from '@chakra-ui/react';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
-import { isWindow, getExtensionName } from '../../../../../utils';
+import {
+  isWindow, getExtensionName, devLog, languageLabel,
+} from '../../../../../utils';
 import ReactPlayer from '../../../../../common/components/ReactPlayer';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import Timeline from '../../../../../common/components/Timeline';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkdownParser from '../../../../../common/components/MarkDownParser';
-import decodeFromBinary from '../../../../../utils/markdown';
+// import decodeFromBinary from '../../../../../utils/markdown';
 import bc from '../../../../../common/services/breathecode';
 import useAuth from '../../../../../common/hooks/useAuth';
 import { MDSkeleton } from '../../../../../common/components/Skeleton';
@@ -61,6 +63,8 @@ const Content = () => {
     (assignment) => assignment.modules.length > 0,
   );
 
+  const currentTheme = useColorModeValue('light', 'dark');
+
   const slide = {
     minWidth: '290px',
     zIndex: 1200,
@@ -96,6 +100,7 @@ const Content = () => {
     answer: 'QUIZ',
   };
   const language = router.locale === 'en' ? 'us' : 'es';
+  const currentLanguageLabel = languageLabel[language] || language;
 
   const isQuiz = lesson === 'answer';
 
@@ -154,28 +159,31 @@ const Content = () => {
   };
 
   const defaultDataFetch = async () => {
-    await axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}&current_translation=us`)
-      .then(({ data }) => {
+    Promise.all([
+      axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.md`),
+      axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`),
+    ])
+      .then(([respMarkdown, respData]) => {
+        const currData = respData.data;
+        const markdownData = respMarkdown.data;
         toast({
-          title: `Data for language "${language}" not found, showing the english version`,
+          title: `Data for language "${currentLanguageLabel}" not found, showing the english version`,
           status: 'warning',
           duration: 5500,
           isClosable: true,
         });
-        const exensionName = getExtensionName(data.readme_url);
+        const exensionName = getExtensionName(currData.readme_url);
 
         if (lesson === 'answer') setQuizSlug(lessonSlug);
         else setQuizSlug(null);
 
-        if (data !== undefined && exensionName === 'md' && data.readme !== null) {
+        if (currData !== undefined && typeof markdownData === 'string') {
           // Binary base64 decoding ⇢ UTF-8
-          const MDecoded = data.readme && typeof data.readme === 'string'
-            ? decodeFromBinary(data.readme) : null;
-          const markdown = getMarkDownContent(MDecoded);
-          setCurrentData(data);
+          const markdown = getMarkDownContent(markdownData);
           setReadme(markdown);
+          setCurrentData(currData);
         }
-        if (exensionName === 'ipynb') setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.html`);
+        if (exensionName === 'ipynb') setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentTheme}&plain=true`);
         else setIpynbHtmlUrl(null);
       })
       .catch(() => {
@@ -223,39 +231,40 @@ const Content = () => {
   }, []);
 
   useEffect(() => {
-    // convert this function with async and await
     axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
       .then(({ data }) => {
         let currentlocaleLang = data.translations[language];
         const exensionName = getExtensionName(data.readme_url);
         if (exensionName === 'ipynb') {
-          setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.html`);
+          setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentTheme}&plain=true`);
           setCurrentData(data);
         } else {
           setIpynbHtmlUrl(null);
           if (currentlocaleLang === undefined) {
             currentlocaleLang = `${lessonSlug}-${language}`;
           }
-          axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=${assetTypeValues[lesson]}`)
-            .then((res) => {
-              const currData = res.data;
+          Promise.all([
+            axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}.md`),
+            axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=${assetTypeValues[lesson]}`),
+          ])
+            .then(([respMarkdown, respData]) => {
+              const currData = respData.data;
+              const markdownData = respMarkdown.data;
 
               if (lesson === 'answer') {
                 setQuizSlug(currentlocaleLang);
               } else {
                 setQuizSlug(null);
               }
-              if (currData !== undefined && currData.readme !== null) {
+              if (currData !== undefined && typeof markdownData === 'string') {
                 // Binary base64 decoding ⇢ UTF-8
-                const MDecoded = currData.readme && typeof currData.readme === 'string'
-                  ? decodeFromBinary(currData.readme) : null;
-                const markdown = getMarkDownContent(MDecoded);
-                setCurrentData(currData);
+                const markdown = getMarkDownContent(markdownData);
                 setReadme(markdown);
+                setCurrentData(currData);
               }
             })
-            .catch(async () => {
-              await defaultDataFetch();
+            .catch(() => {
+              defaultDataFetch();
             });
         }
       }).catch(() => {
@@ -311,10 +320,23 @@ const Content = () => {
       return <MDSkeleton />;
     }
     if (ipynbHtmlUrl === null && readme) {
-      return <MarkdownParser content={readme.content} callToActionProps={callToActionProps} withToc={lesson.toLowerCase() === 'read'} frontMatter={readme.frontMatter || ''} />;
+      return (
+        <MarkdownParser
+          content={readme.content}
+          callToActionProps={callToActionProps}
+          withToc={lesson.toLowerCase() === 'read'}
+          frontMatter={{
+            title: currentData.title,
+            subtitle: currentData.description,
+            assetType: currentData.asset_type,
+          }}
+        />
+      );
     }
     return false;
   };
+
+  devLog('currentData:', currentData);
 
   const teacherActions = profesionalRoles.includes(cohortSession.cohort_role)
     ? [
@@ -443,7 +465,7 @@ const Content = () => {
           />
 
           <Box
-            className={`horizontal-sroll ${useColorModeValue('light', 'dark')}`}
+            className={`horizontal-sroll ${currentTheme}`}
             height={{ base: '100%', md: '90.5vh' }}
             style={{
               // height: '90.5vh',
@@ -471,8 +493,8 @@ const Content = () => {
         </Box>
       </Box>
       <Box width="100%" height="auto">
-        {currentData.readme_url && (
-          <Link href={currentData.readme_url} margin="3rem 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+        {currentData.url && (
+          <Link href={`${currentData.url}#readme`} margin="3rem 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
             <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
             Edit this page on Github
           </Link>
@@ -505,7 +527,7 @@ const Content = () => {
 
         {!ipynbHtmlUrl && (
           <Box
-            className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+            className={`markdown-body ${currentTheme}`}
             // id={lessonSlug}
             flexGrow={1}
             marginLeft={0}

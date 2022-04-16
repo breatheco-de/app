@@ -1,6 +1,17 @@
+/* eslint-disable indent */
 const isWindow = typeof window !== 'undefined';
 
 const HAVE_SESSION = isWindow ? localStorage.getItem('accessToken') !== null : false;
+/** @const isDevMode
+ * principal use for dibuging for another issues and prevent
+ * to create unused console.logs in production
+*/
+const isDevMode = isWindow && window.location.hostname === 'localhost';
+
+const languageLabel = {
+  es: 'Spanish',
+  us: 'English',
+};
 
 const slugify = (str) => str
   .toLowerCase()
@@ -37,6 +48,19 @@ const getExtensionName = (key) => {
   return extExtractor.exec(key)[1];
 };
 
+const devLog = (msg, ...params) => { // Relevant logs only in dev mode
+  if (isDevMode) console.log(`🛠️ ${msg}`, ...params);
+};
+
+const devLogTable = (msg, array) => { // Relevant table logs with title only in dev mode
+  if (isDevMode) {
+    console.group();
+      console.log(`%c🛠️${msg}`, 'font-size: 14px');
+      console.table(array);
+    console.groupEnd();
+  }
+};
+
 export {
   isWindow,
   HAVE_SESSION,
@@ -45,4 +69,8 @@ export {
   getStorageItem,
   getExtensionName,
   removeStorageItem,
+  isDevMode,
+  devLogTable,
+  devLog,
+  languageLabel,
 };

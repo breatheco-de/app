@@ -3,8 +3,10 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
+import { languageLabel } from '../../../utils';
 import Heading from '../../../common/components/Heading';
 import Link from '../../../common/components/NextChakraLink';
 import Text from '../../../common/components/Text';
@@ -12,8 +14,9 @@ import Icon from '../../../common/components/Icon';
 import SimpleTable from '../../../js_modules/projects/SimpleTable';
 import MarkDownParser from '../../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../../common/components/Skeleton';
+import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 
-export const getStaticPaths = async ({ locales }) => {
+export const getStaticPaths = async () => {
   let projects = [];
   const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`)
     .then((res) => res.json())
@@ -35,13 +38,16 @@ export const getStaticPaths = async ({ locales }) => {
     }
   }
 
-  const paths = projects.flatMap((res) => locales.map((locale) => ({
-    params: {
-      slug: res.slug,
-      difficulty: res.difficulty,
-    },
-    locale,
-  })));
+  const paths = projects.flatMap((res) => Object.keys(res.translations).map((locale) => {
+    const localeToUsEs = locale === 'us' ? 'en' : 'es';
+    return ({
+      params: {
+        slug: res.translations[locale],
+        difficulty: res.difficulty,
+      },
+      locale: localeToUsEs,
+    });
+  }));
   return {
     fallback: false,
     paths,
@@ -55,6 +61,17 @@ export const getStaticProps = async ({ params }) => {
     .catch((err) => ({
       status: err.response.status,
     }));
+  const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
+    .then((res) => res.text())
+    .catch((err) => ({
+      status: err.response.status,
+    }));
+
+  // in "lesson.translations" rename "us" key to "en" key if exists
+  if (results?.translations && results.translations.us) {
+    results.translations.en = results.translations.us;
+    delete results.translations.us;
+  }
 
   if (results.status === 404) {
     return {
@@ -65,6 +82,8 @@ export const getStaticProps = async ({ params }) => {
     props: {
       fallback: false,
       project: results,
+      markdown,
+      // translations: results.translations,
     },
   };
 };
@@ -94,16 +113,20 @@ const TableInfo = ({ project, commonTextColor }) => (
   </>
 );
 
-const ProjectSlug = ({ project }) => {
-  const [readme, setReadme] = useState('');
+const ProjectSlug = ({ project, markdown }) => {
   const { t } = useTranslation(['projects']);
+  const markdownData = getMarkDownContent(markdown);
   // const defaultImage = '/static/images/code1.png';
   // const getImage = project.preview !== '' ? project.preview : defaultImage;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
-
   const router = useRouter();
+  const { slug } = router.query;
+  const language = router.locale === 'en' ? 'us' : 'es';
+
+  const currentLanguageLabel = languageLabel[language] || language;
+
   const toast = useToast();
 
   const EventIfNotFound = () => {
@@ -117,27 +140,29 @@ const ProjectSlug = ({ project }) => {
   };
 
   useEffect(() => {
-    const language = router.query.lang || router.locale;
-
-    if (project.readme_url !== null) {
-      fetch(project.readme_url)
-        .then((resp) => resp.text())
-        .then((data) => {
-          setReadme({ markdown: data, lang: language });
-        })
-        .catch((err) => {
-          console.error('Error loading markdown file from github', err);
-          setTimeout(() => {
-            EventIfNotFound();
-          }, 4000);
-        });
-    } else {
+    if (typeof markdown !== 'string') {
       setTimeout(() => {
         EventIfNotFound();
       }, 4000);
     }
-  }, []);
+  }, [markdown]);
 
+  useEffect(() => {
+    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`)
+      .then(({ data }) => {
+        let currentlocaleLang = data.translations[language];
+        if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
+        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=EXERCISE`)
+          .catch(() => {
+            toast({
+              title: `Exercise for language "${currentLanguageLabel}" not found, showing the english version`,
+              status: 'warning',
+              duration: 5500,
+              isClosable: true,
+            });
+          });
+      });
+  }, [language]);
   // const onImageNotFound = (event) => {
   //   event.target.setAttribute('src', defaultImage);
   //   event.target.setAttribute('srcset', `${defaultImage} 1x`);
@@ -242,8 +267,8 @@ const ProjectSlug = ({ project }) => {
             className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
             transition="background .2s ease"
           >
-            {readme.markdown ? (
-              <MarkDownParser content={readme.markdown} withToc />
+            {typeof markdown === 'string' ? (
+              <MarkDownParser content={markdownData.content} withToc />
             ) : (
               <MDSkeleton />
             )}
@@ -279,6 +304,7 @@ const ProjectSlug = ({ project }) => {
 
 ProjectSlug.propTypes = {
   project: PropTypes.objectOf(PropTypes.any).isRequired,
+  markdown: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
 };
 
 TableInfo.propTypes = {

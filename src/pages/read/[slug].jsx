@@ -9,6 +9,7 @@ import Text from '../../common/components/Text';
 import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
 import Link from '../../common/components/NextChakraLink';
+import { devLog } from '../../utils';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(
@@ -64,6 +65,7 @@ const Read = ({ data }) => {
   const router = useRouter();
   const { t } = useTranslation('read');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
+  devLog('data:', data);
 
   const containsQueryString = (lesson) => {
     const lessonTitle = lesson.label.toLowerCase();

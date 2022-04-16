@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import redirects from '../lib/redirects.json';
 /*
   The implementation of redirect in middleware is the same as the one in next.js,
-  the diference is that we can make smart redirects with backend
+  the diference is that we can make smart redirects with enpoints
   or add functional queries to the url
 */
 
