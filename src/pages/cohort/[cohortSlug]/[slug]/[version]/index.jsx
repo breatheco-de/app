@@ -193,7 +193,9 @@ const Dashboard = () => {
       ) => {
         devLogTable('(Response Fetched) All Tasks With Cohort null:', taskWithCohortNull.data);
 
-        const technologiesArray = programData.data.main_technologies.split(',').map((el) => el.trim());
+        const technologiesArray = programData.data.main_technologies
+          ? programData.data.main_technologies.split(',').map((el) => el.trim())
+          : [];
         const filteredUnsyncedCohortTasks = sortedAssignments.flatMap(
           (assignment) => taskWithCohortNull.data.filter(
             (task) => assignment.modules.some(
