@@ -6,7 +6,6 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import mockData from '../../../../../common/utils/mockData/DashboardView';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
 import ModuleMap from '../../../../../js_modules/moduleMap/index';
@@ -19,7 +18,7 @@ import ProgressBar from '../../../../../common/components/ProgressBar';
 import Heading from '../../../../../common/components/Heading';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import useAuth from '../../../../../common/hooks/useAuth';
-import { ModuleMapSkeleton } from '../../../../../common/components/Skeleton';
+import { ModuleMapSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
 import bc from '../../../../../common/services/breathecode';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
@@ -50,15 +49,11 @@ const Dashboard = () => {
   const skeletonStartColor = useColorModeValue('gray.300', 'gray.light');
   const skeletonEndColor = useColorModeValue('gray.400', 'gray.400');
 
-  devLog('(React State) taskCohortNull:', taskCohortNull);
+  devLog('(React State) current taskCohortNull:', taskCohortNull);
 
   const { supportSideBar } = dashboardTR[locale];
 
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
-
-  const {
-    tapCapsule,
-  } = mockData;
 
   if (cohortSession?.academy?.id) {
     axios.defaults.headers.common.Academy = cohortSession.academy.id;
@@ -196,7 +191,9 @@ const Dashboard = () => {
       ]).then((
         [taskTodoData, taskWithCohortNull, programData],
       ) => {
-        devLogTable('(Response Fetched) All_TasksWithCohortNull:', taskWithCohortNull.data);
+        devLogTable('(Response Fetched) All Tasks With Cohort null:', taskWithCohortNull.data);
+
+        const technologiesArray = programData.data.main_technologies.split(',').map((el) => el.trim());
         const filteredUnsyncedCohortTasks = sortedAssignments.flatMap(
           (assignment) => taskWithCohortNull.data.filter(
             (task) => assignment.modules.some(
@@ -204,6 +201,11 @@ const Dashboard = () => {
             ),
           ),
         );
+
+        setCohortSession({
+          ...cohortSession,
+          main_technologies: technologiesArray,
+        });
         setTaskCohortNull(filteredUnsyncedCohortTasks);
         setModalIsOpen(filteredUnsyncedCohortTasks.length > 0);
         setSyllabus(programData.data.json.days);
@@ -290,6 +292,7 @@ const Dashboard = () => {
           alignItems="center"
           onClick={() => {
             setSortedAssignments([]);
+            setSyllabus([]);
             setCohortSession({
               ...cohortSession,
               selectedProgramSlug: '/choose-program',
@@ -343,8 +346,18 @@ const Dashboard = () => {
               borderRadius="10px"
             />
           )}
-          <TagCapsule containerStyle={{ padding: '6px 18px 6px 18px' }} tags={tapCapsule.tags} separator={tapCapsule.separator} />
 
+          {cohortSession?.main_technologies ? (
+            <TagCapsule containerStyle={{ padding: '6px 18px 6px 18px' }} tags={cohortSession.main_technologies} separator="/" />
+          ) : (
+            <SimpleSkeleton
+              height="34px"
+              width="290px"
+              padding="6px 18px 6px 18px"
+              margin="18px 0"
+              borderRadius="30px"
+            />
+          )}
           <Box
             display={{ base: 'flex', md: 'none' }}
             flexDirection="column"

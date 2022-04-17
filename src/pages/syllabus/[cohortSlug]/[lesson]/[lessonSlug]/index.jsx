@@ -274,6 +274,15 @@ const Content = () => {
   }, [router, lessonSlug]);
 
   useEffect(() => {
+    if (sortedAssignments.length <= 0) {
+      router.push('/choose-program');
+      toast({
+        title: 'No cohort modules have been found, please choose a valid cohort',
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+    }
     const findSelectedSyllabus = sortedAssignments.filter(
       (l) => l.modules.find((m) => m.slug === lessonSlug),
     )[0];
