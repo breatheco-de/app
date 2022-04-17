@@ -149,7 +149,8 @@ function chooseProgram() {
         marginBottom="49px"
         marginTop="36px"
       >
-        These are the courses and cohorts that we found you are currently taking, please choose the course you want to take today:
+        These are the courses and cohorts that we found you are currently taking,
+        please choose the course you want to take today:
       </Box>
       <ChooseProgram chooseList={data} handleChoose={handleChoose} />
     </Flex>
