@@ -149,9 +149,8 @@ function chooseProgram() {
         marginBottom="49px"
         marginTop="36px"
       >
-        Some Box here as an example to see how it will all look together. more random Box
-        because we needed a bigger example. 4Geeks Academy is a great school that gives you
-        great tool and teachers for you to learn all about how computers work!
+        These are the courses and cohorts that we found you are currently taking,
+        please choose the course you want to take today:
       </Box>
       <ChooseProgram chooseList={data} handleChoose={handleChoose} />
     </Flex>

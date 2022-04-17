@@ -35,7 +35,7 @@ export const getStaticProps = async ({ params }) => {
   const { slug } = params;
 
   const data = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/admissions/syllabus/${slug}/version/latest`,
+    `${process.env.BREATHECODE_HOST}/v1/admissions/syllabus/${slug}/version/1`,
     {
       method: 'GET',
       headers: {
@@ -70,7 +70,7 @@ const Read = ({ data }) => {
   const containsQueryString = (lesson) => {
     const lessonTitle = lesson.label.toLowerCase();
     if (typeof router.query.search === 'string' && !lessonTitle.includes(router.query.search)) return false;
-    if (lesson.lessons.length <= 0) return false;
+    if (lesson?.lessons?.length <= 0) return false;
     return true;
   };
 
@@ -160,9 +160,9 @@ const Read = ({ data }) => {
                 color="gray.default"
                 textTransform="uppercase"
               >
-                {element.lessons.length}
+                {element?.lessons?.length}
                 {' '}
-                {element.lessons.length > 1 ? t('lessons') : t('lesson')}
+                {element?.lessons?.length > 1 ? t('lessons') : t('lesson')}
               </Text>
             </Flex>
             <Text
@@ -175,7 +175,7 @@ const Read = ({ data }) => {
             >
               {element.description}
             </Text>
-            {element.lessons.length >= 1 && (
+            {element?.lessons?.length >= 1 && (
             <Grid
               background={useColorModeValue('featuredLight', 'featuredDark')}
               gridRowGap="10px"
