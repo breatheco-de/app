@@ -30,11 +30,11 @@ const dashboardTR = {
   es: {
     supportSideBar: {
       title: 'No te quedes atascado',
-      description: '¿Sabías que puedes programar sesiones de mentoría en cualquier momento o preguntar en el Chat de soporte?',
+      description: '¿Sabías que puedes programar sesiones de asesoramiento en cualquier momento o preguntar en el Chat de soporte?',
       actionButtons: [
         {
           name: 'mentoring',
-          title: 'Programar sesion de mentoría',
+          title: 'Programar sesión de asesoramiento',
           href: '#',
           // href: `https://mentor.breatheco.de/academy/${slug}/?token=${accessToken}`,
           icon: 'conversation',

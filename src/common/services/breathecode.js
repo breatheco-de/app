@@ -69,8 +69,8 @@ const breathecode = {
   mentorship: () => {
     const url = `${host}/mentorship/academy`;
     return {
-      getService: () => axios.get(`${url}/service`),
-      getMentor: ({ serviceSlug }) => axios.get(`${url}/mentor?service=${serviceSlug}`),
+      getService: () => axios.get(`${url}/service?status=ACTIVE`),
+      getMentor: ({ serviceSlug }) => axios.get(`${url}/mentor?service=${serviceSlug}&status=ACTIVE`),
     };
   },
   lesson: (query) => {
