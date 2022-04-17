@@ -111,6 +111,7 @@ const Content = () => {
   const callToActionProps = {
     token: accessToken,
     assetSlug: lessonSlug,
+    gitpod: currentData.gitpod,
     assetType: assetTypeValues[lesson],
   };
 
