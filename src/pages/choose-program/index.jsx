@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Flex, Box, useColorModeValue, Button, useToast,
 } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import ChooseProgram from '../../js_modules/chooseProgram';
 import Text from '../../common/components/Text';
@@ -14,12 +15,14 @@ import { isPlural } from '../../utils';
 import Heading from '../../common/components/Heading';
 
 function chooseProgram() {
+  const { t } = useTranslation('choose-program');
   const [data, setData] = useState([]);
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
   const { choose } = useAuth();
   const router = useRouter();
   const toast = useToast();
+
   useEffect(() => {
     bc.admissions().me().then((res) => {
       const { cohorts } = res.data;
@@ -48,9 +51,9 @@ function chooseProgram() {
 
   const inviteWord = () => {
     if (isPlural(invites)) {
-      return `${invites.length} new cohort invitations`;
+      return t('invite.lural-word', { invitesLength: invites.length });
     }
-    return `${invites.length} new cohort invitation`;
+    return t('invite.singular-word', { invitesLength: invites.length });
   };
 
   const handleChoose = (cohort) => {
@@ -66,7 +69,7 @@ function chooseProgram() {
         // fontSize="50px"
         marginTop="40px"
       >
-        Your programs
+        {t('title')}
       </Heading>
 
       {invites.length > 0 && (
@@ -80,7 +83,8 @@ function chooseProgram() {
             justifyContent="space-between"
             size="md"
           >
-            {`Ey! There are ${inviteWord()} for you to accept.`}
+            {t('invite.notify', { cohortInvitationWord: inviteWord() })}
+            {/* {`Ey! There are ${inviteWord()} for you to accept.`} */}
             <Text
               as="button"
               size="md"
@@ -95,7 +99,7 @@ function chooseProgram() {
               alignItems="center"
               onClick={() => setShowInvites(!showInvites)}
             >
-              {`${showInvites ? 'hide' : 'show'} invites`}
+              {showInvites ? t('invite.hide') : t('invite.show')}
               <Icon
                 icon="arrowDown"
                 width="20px"
@@ -132,7 +136,7 @@ function chooseProgram() {
                 gridGap="8px"
               >
                 <Text color="blue.default" size="15px">
-                  Accept
+                  {t('invite.accept')}
                 </Text>
               </Button>
             )}
@@ -149,8 +153,7 @@ function chooseProgram() {
         marginBottom="49px"
         marginTop="36px"
       >
-        These are the courses and cohorts that we found you are currently taking,
-        please choose the course you want to take today:
+        {t('description')}
       </Box>
       <ChooseProgram chooseList={data} handleChoose={handleChoose} />
     </Flex>

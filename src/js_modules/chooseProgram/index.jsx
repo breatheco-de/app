@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import useTranslation from 'next-translate/useTranslation';
 import { Box } from '@chakra-ui/react';
-
 import Icon from '../../common/components/Icon';
+import { isPlural } from '../../utils';
 import Text from '../../common/components/Text';
 import ProgramList from './programList';
 
 function ChooseProgram({ chooseList, handleChoose }) {
+  const { t } = useTranslation('choose-program');
   const [showFinished, setShowFinished] = useState(false);
 
   const activeCohorts = chooseList.filter((program) => {
@@ -66,7 +68,9 @@ function ChooseProgram({ chooseList, handleChoose }) {
               <Text
                 size="md"
               >
-                {`There are ${finishedCohorts.length} programs you have already finished.`}
+                {isPlural(finishedCohorts)
+                  ? t('finished.plural', { finishedCohorts: finishedCohorts.length })
+                  : t('finished.singular', { finishedCohorts: finishedCohorts.length })}
               </Text>
               <Text
                 as="button"
@@ -82,7 +86,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
                 alignItems="center"
                 onClick={() => setShowFinished(!showFinished)}
               >
-                {`click here to ${showFinished ? 'hide' : 'display'} them`}
+                {showFinished ? t('finished.hide') : t('finished.show')}
                 <Icon
                   icon="arrowDown"
                   width="20px"
