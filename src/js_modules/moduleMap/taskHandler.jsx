@@ -3,6 +3,7 @@ import {
   PopoverArrow, PopoverHeader, PopoverCloseButton, PopoverBody, useDisclosure,
   FormErrorMessage, Box, Link,
 } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import { Formik, Form, Field } from 'formik';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
@@ -43,13 +44,13 @@ export const ButtonHandlerByTaskStatus = ({
   currentTask, sendProject, changeStatusAssignment, toggleSettings, closeSettings,
   settingsOpen,
 }) => {
+  const { t } = useTranslation('dashboard');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [showUrlWarn, setShowUrlWarn] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [githubUrl, setGithubUrl] = useState('');
 
   const howToSendProjectUrl = 'https://github.com/breatheco-de/app/blob/main/README.md#getting-started';
-
   const TaskButton = () => (
     <Button
       display="flex"
@@ -90,12 +91,13 @@ export const ButtonHandlerByTaskStatus = ({
           <ModalInfo
             isOpen={isOpen}
             onClose={onClose}
-            title="Review status"
-            description="Your teacher is still reviewing your deliver and will provide feedback once it's done"
+            title={t('modalInfo.title')}
+            description={t('modalInfo.still-reviewing')}
             teacherFeedback={currentTask.description}
-            linkInfo="Link of project sended to your teacher:"
+            linkInfo={t('modalInfo.link-info')}
             link={currentTask.github_url}
-            handlerText="Remove delivery"
+            closeText={t('modalInfo.non-github-url.cancel')}
+            handlerText={t('modalInfo.remove-delivery')}
             actionHandler={(event) => changeStatusAssignment(event, currentTask)}
           />
         </>
@@ -108,10 +110,10 @@ export const ButtonHandlerByTaskStatus = ({
           <ModalInfo
             isOpen={isOpen}
             onClose={onClose}
-            title="Review status"
-            description="Your teacher has successfully approved your project"
+            title={t('modalInfo.title')}
+            description={t('modalInfo.approved')}
             teacherFeedback={currentTask.description}
-            linkInfo="Link of project sended to your teacher:"
+            linkInfo={t('modalInfo.link-info')}
             link={currentTask.github_url}
             disableHandler
           />
@@ -126,12 +128,13 @@ export const ButtonHandlerByTaskStatus = ({
           <ModalInfo
             isOpen={isOpen}
             onClose={onClose}
-            title="Review status"
-            description="Your teacher has rejected your project"
+            title={t('modalInfo.title')}
+            description={t('modalInfo.rejected')}
+            // description="Your teacher has rejected your project"
             teacherFeedback={currentTask.description}
-            linkInfo="Link of project sended to your teacher:"
+            linkInfo={t('modalInfo.link-info')}
             link={currentTask.github_url}
-            handlerText="Remove current project link"
+            handlerText={t('modalInfo.remove-delivery')}
             actionHandler={(event) => {
               changeStatusAssignment(event, currentTask);
               onClose();
@@ -166,7 +169,7 @@ export const ButtonHandlerByTaskStatus = ({
 
         <PopoverContent>
           <PopoverArrow />
-          <PopoverHeader>Github repository url</PopoverHeader>
+          <PopoverHeader>{t('deliverProject.title')}</PopoverHeader>
           <PopoverCloseButton />
           <PopoverBody>
             <Formik
@@ -208,7 +211,7 @@ export const ButtonHandlerByTaskStatus = ({
                   </Field>
                   <Box padding="6px 0 0 0">
                     <Link href={howToSendProjectUrl} color="blue.default" target="_blank" rel="noopener noreferrer">
-                      How to deliver projects
+                      {t('deliverProject.how-to-deliver')}
                     </Link>
                   </Box>
                   <Button
@@ -217,7 +220,7 @@ export const ButtonHandlerByTaskStatus = ({
                     isLoading={isSubmitting}
                     type="submit"
                   >
-                    Deliver assignment
+                    {t('deliverProject.handler-text')}
                   </Button>
                 </Form>
               )}
@@ -225,20 +228,20 @@ export const ButtonHandlerByTaskStatus = ({
 
             <ModalInfo
               isOpen={showUrlWarn}
-              closeText="Cancel"
+              closeText={t('modalInfo.non-github-url.cancel')}
               onClose={() => {
                 setShowUrlWarn(false);
                 setIsSubmitting(false);
               }}
-              title="non-github URL detected"
-              description="Usually projects are delivered through Github, are you sure you want to submit a non-github URL?"
-              handlerText="Confirm"
+              title={t('modalInfo.non-github-url.title')}
+              description={t('modalInfo.non-github-url.description')}
+              handlerText={t('modalInfo.non-github-url.confirm')}
               actionHandler={() => {
                 setShowUrlWarn(false);
                 setIsSubmitting(false);
                 sendProject(currentTask, githubUrl);
               }}
-              texLink="How to deliver projects"
+              texLink={t('deliverProject.how-to-deliver')}
               link={howToSendProjectUrl}
             />
           </PopoverBody>

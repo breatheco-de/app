@@ -37,7 +37,8 @@ const Dashboard = () => {
   const [taskCohortNull, setTaskCohortNull] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
-  const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
+  const [taskTodo, setTaskTodo] = useState([]);
+  // const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const { user, choose } = useAuth();
   const [, setSyllabus] = usePersistent('syllabus', []);
 
@@ -320,13 +321,19 @@ const Dashboard = () => {
       <ModalInfo
         isOpen={modalIsOpen}
         onClose={() => setModalIsOpen(false)}
-        title={`There are ${taskCohortNull.length} unsynced cohort tasks`}
-        description="These tasks may be deleted and lost in the future. Make sure to synch them if you don't want to lose them."
+        title={t('unsynced.title', { taskLength: taskCohortNull.length })}
+        description={t('unsynced.description')}
         handlerColorButton="green"
         rejectHandler={() => removeUnsyncedTasks()}
-        closeText="Remove unsynced"
+        forceHandler
+        rejectData={{
+          title: t('unsynced.reject-unsync-title'),
+          closeText: t('unsynced.cancel'),
+          handlerText: t('unsynced.confirm'),
+        }}
+        closeText={t('unsynced.unsync')}
         actionHandler={() => syncTaskWithCohort()}
-        handlerText="Sync with current cohort"
+        handlerText={t('unsynced.sync')}
       />
       <Flex
         justifyContent="space-between"
@@ -415,7 +422,7 @@ const Dashboard = () => {
 
           <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="32px" />
 
-          <Heading as="h2" fontWeight="900" size="15px">MODULE MAP</Heading>
+          <Heading as="h2" fontWeight="900" size="15px" textTransform="uppercase">{t('moduleMap')}</Heading>
           <Box
             marginTop="30px"
             gridGap="24px"

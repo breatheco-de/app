@@ -19,6 +19,7 @@ import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 import { AvatarSkeleton } from './Skeleton';
 
 const ProfilesSection = ({ title, profiles }) => {
+  const { t } = useTranslation('dashboard');
   const [showMoreStudents, setShowMoreStudents] = useState(false);
 
   // limit the student list to 15 and when "showMoreStudents" is true, show all
@@ -53,7 +54,7 @@ const ProfilesSection = ({ title, profiles }) => {
             size="md"
             onClick={() => setShowMoreStudents(!showMoreStudents)}
           >
-            {showMoreStudents ? 'Show less...' : 'Show more...'}
+            {showMoreStudents ? t('cohortSideBar.show-less') : t('cohortSideBar.show-more')}
           </Text>
         )}
       </Grid>
@@ -125,14 +126,14 @@ const CohortSideBar = ({
               {cohortCity}
             </Text>
             <Text pt="4px" size="sm" color={commonTextColor} fontWeight="700" lineHeight="18px" margin={0}>
-              Last Date:
+              {t('cohortSideBar.last-date')}
               {' '}
               <Text as="span" size="sm" color={commonTextColor} fontWeight="400" lineHeight="18px" margin={0}>
                 {endingDate[router.locale]}
               </Text>
             </Text>
             <Text size="sm" color={commonTextColor} fontWeight="700" lineHeight="18px" margin={0}>
-              Start Date:
+              {t('cohortSideBar.start-date')}
               {' '}
               <Text as="span" size="sm" color={commonTextColor} fontWeight="400" lineHeight="18px" margin={0}>
                 {kickoffDate[router.locale]}
@@ -157,7 +158,7 @@ const CohortSideBar = ({
             </Box>
           );
         })}
-        {existsProfilesLoading && 'There are no teachers'}
+        {teacher.length === 0 && t('cohortSideBar.no-teachers')}
       </Box>
       <Divider margin={0} style={{ borderColor: useColorModeValue('#DADADA', 'gray.700') }} />
       <Box display="flex" flexDirection="column" gridGap="20px" padding="18px 26px">
@@ -177,7 +178,7 @@ const CohortSideBar = ({
             <>
               {existsProfilesLoading ? (
                 <AvatarSkeleton withText quantity={12} />
-              ) : 'This cohort does not have any students yet'}
+              ) : t('cohortSideBar.no-students')}
             </>
           )}
       </Box>

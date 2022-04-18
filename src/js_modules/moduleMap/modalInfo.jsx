@@ -8,15 +8,15 @@ import { useState } from 'react';
 import Text from '../../common/components/Text';
 
 const ModalInfo = ({
-  isOpen, onClose, actionHandler, rejectHandler, disableHandler, title, description,
-  teacherFeedback, linkInfo, link, texLink, handlerText, closeText, handlerColorButton,
+  isOpen, onClose, actionHandler, rejectHandler, forceHandler, disableHandler, title, description,
+  teacherFeedback, linkInfo, link, texLink, handlerText, closeText, handlerColorButton, rejectData,
 }) => {
   const router = useRouter();
   const [confirmRejection, setConfirmRejection] = useState(false);
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const rejectFunction = () => {
-    if (rejectHandler) {
+    if (forceHandler) {
       setConfirmRejection(true);
     } else {
       onClose();
@@ -25,7 +25,7 @@ const ModalInfo = ({
 
   return (
     <>
-      <Modal closeOnOverlayClick={!rejectHandler} isOpen={isOpen} onClose={onClose}>
+      <Modal closeOnOverlayClick={!forceHandler} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader
@@ -36,7 +36,7 @@ const ModalInfo = ({
             {title}
           </ModalHeader>
 
-          {!rejectHandler && <ModalCloseButton />}
+          {!forceHandler && <ModalCloseButton />}
           <ModalBody>
             <Text
               size="l"
@@ -114,7 +114,8 @@ const ModalInfo = ({
               borderStyle="solid"
               borderColor={commonBorderColor}
             >
-              Please confirm your action to reject all unsynced tasks
+              {/* Please confirm your action to reject all unsynced tasks */}
+              {rejectData.title}
             </ModalHeader>
             <ModalFooter>
               <Button
@@ -122,7 +123,7 @@ const ModalInfo = ({
                 mr={3}
                 onClick={() => setConfirmRejection(false)}
               >
-                close
+                {rejectData.closeText}
               </Button>
               {!disableHandler && (
                 <Button
@@ -132,7 +133,8 @@ const ModalInfo = ({
                     setConfirmRejection(false);
                   }}
                 >
-                  confirm
+                  {rejectData.handlerText}
+                  {/* confirm */}
                 </Button>
               )}
             </ModalFooter>
@@ -148,6 +150,7 @@ ModalInfo.propTypes = {
   onClose: PropTypes.func.isRequired,
   actionHandler: PropTypes.func,
   rejectHandler: PropTypes.func,
+  forceHandler: PropTypes.bool,
   disableHandler: PropTypes.bool,
   title: PropTypes.string,
   description: PropTypes.string,
@@ -158,11 +161,13 @@ ModalInfo.propTypes = {
   handlerText: PropTypes.string,
   closeText: PropTypes.string,
   handlerColorButton: PropTypes.string,
+  rejectData: PropTypes.objectOf(PropTypes.string),
 };
 
 ModalInfo.defaultProps = {
   actionHandler: () => {},
   rejectHandler: () => {},
+  forceHandler: false,
   disableHandler: false,
   title: 'Review status',
   description: '',
@@ -173,6 +178,7 @@ ModalInfo.defaultProps = {
   handlerText: 'Remove delivery',
   closeText: 'Close',
   handlerColorButton: 'red',
+  rejectData: {},
 };
 
 export default ModalInfo;

@@ -51,7 +51,7 @@ function chooseProgram() {
 
   const inviteWord = () => {
     if (isPlural(invites)) {
-      return t('invite.lural-word', { invitesLength: invites.length });
+      return t('invite.plural-word', { invitesLength: invites.length });
     }
     return t('invite.singular-word', { invitesLength: invites.length });
   };
