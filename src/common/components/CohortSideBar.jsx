@@ -120,7 +120,7 @@ const CohortSideBar = ({
           <Icon icon="group" width="39px" height="39px" />
           <Box marginLeft={13}>
             <Heading as="h4" color={commonTextColor} fontSize={15} fontWeight="700" lineHeight="18px" margin={0}>
-              {(`${t('cohortSideBar.cohort')} ${teacherVersionActive ? ` | Day ${cohort.current_day}` : ''}`) || title}
+              {(`${t('cohortSideBar.cohort')} ${teacherVersionActive ? ` | ${router.locale === 'en' ? 'Day' : 'Día'} ${cohort.current_day}` : ''}`) || title}
             </Heading>
             <Text size="l" color={commonTextColor} fontWeight="400" lineHeight="18px" margin={0}>
               {cohortCity}

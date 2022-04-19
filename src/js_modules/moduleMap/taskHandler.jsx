@@ -1,7 +1,7 @@
 import {
   FormControl, Input, Button, Popover, PopoverTrigger, PopoverContent,
   PopoverArrow, PopoverHeader, PopoverCloseButton, PopoverBody, useDisclosure,
-  FormErrorMessage, Box, Link,
+  FormErrorMessage, Box, Link, useColorModeValue,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { Formik, Form, Field } from 'formik';
@@ -49,6 +49,8 @@ export const ButtonHandlerByTaskStatus = ({
   const [showUrlWarn, setShowUrlWarn] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [githubUrl, setGithubUrl] = useState('');
+  const commonInputColor = useColorModeValue('gray.600', 'gray.200');
+  const commonInputActiveColor = useColorModeValue('gray.800', 'gray.350');
 
   const howToSendProjectUrl = 'https://github.com/breatheco-de/app/blob/main/README.md#getting-started';
   const TaskButton = () => (
@@ -96,9 +98,15 @@ export const ButtonHandlerByTaskStatus = ({
             teacherFeedback={currentTask.description}
             linkInfo={t('modalInfo.link-info')}
             link={currentTask.github_url}
-            closeText={t('modalInfo.non-github-url.cancel')}
-            handlerText={t('modalInfo.remove-delivery')}
-            actionHandler={(event) => changeStatusAssignment(event, currentTask)}
+            type="taskHandler"
+            handlerText={t('modalInfo.rejected.resubmit-assignment')}
+            actionHandler={(event) => {
+              changeStatusAssignment(event, currentTask, 'PENDING');
+              onClose();
+            }}
+            sendProject={sendProject}
+            currentTask={currentTask}
+            closeText={t('modalInfo.rejected.remove-delivery')}
           />
         </>
       );
@@ -129,14 +137,17 @@ export const ButtonHandlerByTaskStatus = ({
             isOpen={isOpen}
             onClose={onClose}
             title={t('modalInfo.title')}
-            description={t('modalInfo.rejected')}
-            // description="Your teacher has rejected your project"
+            description={t('modalInfo.rejected.title')}
+            type="taskHandler"
+            sendProject={sendProject}
+            currentTask={currentTask}
+            closeText={t('modalInfo.rejected.remove-delivery')}
             teacherFeedback={currentTask.description}
             linkInfo={t('modalInfo.link-info')}
             link={currentTask.github_url}
-            handlerText={t('modalInfo.remove-delivery')}
+            handlerText={t('modalInfo.rejected.resubmit-assignment')}
             actionHandler={(event) => {
-              changeStatusAssignment(event, currentTask);
+              changeStatusAssignment(event, currentTask, 'PENDING');
               onClose();
             }}
           />
@@ -200,6 +211,10 @@ export const ButtonHandlerByTaskStatus = ({
                             {...field}
                             type="text"
                             id="githubUrl"
+                            color={commonInputColor}
+                            _focus={{
+                              color: commonInputActiveColor,
+                            }}
                             placeholder="https://github.com/..."
                           />
                           <FormErrorMessage marginTop="10px">

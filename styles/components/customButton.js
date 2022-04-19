@@ -33,6 +33,32 @@ const ButtonStyles = {
         },
       },
     }),
+    danger: () => ({
+      bg: 'danger',
+      color: 'white',
+      border: '0',
+      borderRadius: '3px',
+      fontSize: '13px',
+      letterSpacing: '0.05em',
+      _hover: {
+        bg: '#d81111',
+        opacity: 1,
+        _disabled: {
+          bgColor: '#EBEBEB',
+        },
+      },
+      _active: {
+        bg: 'danger',
+      },
+      _disabled: {
+        bg: '#EBEBEB',
+        color: 'gray.dark',
+        opacity: 1,
+        _hover: {
+          opacity: 0.7,
+        },
+      },
+    }),
     black: (props) => ({
       bg: props.colorMode === 'dark' ? 'featuredDark' : 'black',
       color: 'white',

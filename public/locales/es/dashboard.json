@@ -58,8 +58,13 @@
   "modalInfo": {
     "title": "Estado de revisión",
     "still-reviewing": "Tu profesor todavía está revisando tu entrega, te dará su opinión una vez que esté lista.",
-    "approved": "Tu profesor ha aprobado con éxito tu proyecto",
-    "rejected": "Tu profesor ha rechazado tu proyecto",
+    "approved": "Tu profesor ha aprobado con éxito tu proyecto!",
+    "rejected": {
+      "title": "Tu profesor ha rechazado tu proyecto",
+      "teacher-feedback": "Comentario del profesor:",
+      "remove-delivery": "Eliminar entrega",
+      "resubmit-assignment": "Reenviar proyecto"
+    },
     "link-info": "Enlace del proyecto enviado a tu profesor:",
     "remove-delivery": "Quitar entrega",
     "non-github-url": {

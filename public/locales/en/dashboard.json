@@ -58,8 +58,13 @@
   "modalInfo": {
     "title": "Review status",
     "still-reviewing": "Your teacher is still reviewing your deliver and will provide feedback once it's done",
-    "approved": "Your teacher has successfully approved your project",
-    "rejected": "Your teacher has rejected your project",
+    "approved": "Your teacher has successfully approved your project!",
+    "rejected": {
+      "title": "Your teacher has rejected your project",
+      "teacher-feedback": "Teacher feedback:",
+      "remove-delivery": "Remove delivery",
+      "resubmit-assignment": "Resubmit assignment"
+    },
     "link-info": "Link of project sended to your teacher:",
     "remove-delivery": "Remove delivery",
     "non-github-url": {
