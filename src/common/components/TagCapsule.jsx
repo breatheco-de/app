@@ -17,7 +17,7 @@ const TagCapsule = ({
 }) => {
   const { colorMode } = useColorMode();
 
-  return (
+  return tags.length !== 0 && (
     <Stack
       bg={variant === 'rounded' ? 'none' : background}
       as="ul"

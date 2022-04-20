@@ -182,7 +182,9 @@ const MDHr = () => (<Box d="none" />);
 const MarkDownParser = ({
   content, callToActionProps, withToc, frontMatter,
 }) => {
-  const { token, assetSlug, assetType } = callToActionProps;
+  const {
+    token, assetSlug, assetType, gitpod,
+  } = callToActionProps;
   // support for emoji shortcodes
   // exapmle: :heart_eyes: -> 😍
   const emojiSupport = (text) => text.replace(/:\w+:/gi, (name) => emoji.getUnicode(name));
@@ -191,7 +193,7 @@ const MarkDownParser = ({
   return (
     <>
       <ContentHeading
-        callToAction={assetType === 'EXERCISE' && (
+        callToAction={gitpod === true && assetType === 'EXERCISE' && (
           <CallToAction
             styleContainer={{
               maxWidth: '800px',

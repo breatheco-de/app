@@ -3,13 +3,14 @@ module.exports = {
     // Enable translations for the following pages
     '*': ['common', 'navbar', 'footer'],
     '/': ['home'],
-    '/example': ['common', 'counter'],
+    '/example': ['counter'],
     '/cohort/[cohortSlug]/[slug]/[version]': ['dashboard'],
     '/interactive-exercises': ['exercises'],
     '/projects': ['projects'],
     '/read/[slug]': ['read'],
     '/interactive-coding-tutorial/[difficulty]/[slug]': ['projects'],
     '/interactive-exercises/[slug]': ['exercises'],
+    '/choose-program': ['choose-program'],
   },
   locales: ['default', 'en', 'es'],
   // defaultLocale: 'en', // removed for redirects handling purposes

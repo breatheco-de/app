@@ -1,7 +1,7 @@
 import bc from '../services/breathecode';
 
 export const updateAssignment = ({
-  task, closeSettings, toast, githubUrl, contextState, setContextState,
+  task, closeSettings, toast, githubUrl, contextState, setContextState, taskStatus,
 }) => {
   // Task case
   const toggleStatus = (task.task_status === undefined || task.task_status === 'PENDING') ? 'DONE' : 'PENDING';
@@ -51,12 +51,15 @@ export const updateAssignment = ({
     const projectUrl = getProjectUrl();
 
     const isDelivering = projectUrl !== '';
-    const linkIsRemoved = task.task_type === 'PROJECT' && !isDelivering;
+    // const linkIsRemoved = task.task_type === 'PROJECT' && !isDelivering;
     const taskToUpdate = {
       ...task,
-      task_status: toggleStatus,
+      task_status: taskStatus || toggleStatus,
       github_url: projectUrl,
-      revision_status: linkIsRemoved ? 'PENDING' : task.revision_status,
+      /*
+        TODO: uncomment when modification for students is available
+        revision_status: linkIsRemoved ? 'PENDING' : task.revision_status,
+      */
     };
 
     bc.todo({}).update(taskToUpdate).then(({ data }) => {

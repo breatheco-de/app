@@ -2,6 +2,7 @@ import { memo } from 'react';
 import {
   Box, Button, Heading, useColorModeValue, useToast,
 } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import Text from '../../common/components/Text';
 import Module from './module';
@@ -12,6 +13,7 @@ const ModuleMap = ({
   index, userId, contextState, setContextState, slug, modules, filteredModules,
   title, description, taskTodo, cohortSession, taskCohortNull,
 }) => {
+  const { t } = useTranslation('dashboard');
   const toast = useToast();
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
   const handleStartDay = () => {
@@ -60,9 +62,7 @@ const ModuleMap = ({
           fontWeight="normal"
           textTransform="uppercase"
         >
-          {filteredModules.length}
-          {' '}
-          Activities
+          {t('modules.activitiesLength', { count: filteredModules.length })}
         </Heading>
       </Box>
       <Text margin="0 0 22px 0px" color={useColorModeValue('#606060', 'white')} size="md">
@@ -72,7 +72,7 @@ const ModuleMap = ({
       {isAvailableToSync() && (
         <Box display="flex" alignItems="center" justifyContent="space-between" padding="16px 20px" borderRadius="18px" width="100%" background="yellow.light">
           <Text color={useColorModeValue('black', 'black')} size="16px">
-            {`Ey! There are ${modules.length - filteredModules.length} new activities on this day`}
+            {t('modules.newActivities.title', { tasksLength: (modules.length - filteredModules.length) })}
           </Text>
           <Button
             color="blue.default"
@@ -84,7 +84,7 @@ const ModuleMap = ({
           >
             <Icon icon="sync" width="20px" height="20px" />
             <Text color="blue.default" size="15px">
-              Sync now
+              {t('modules.newActivities.handler-text')}
             </Text>
           </Button>
         </Box>
@@ -109,10 +109,11 @@ const ModuleMap = ({
             padding="0 0 28px 0"
             borderBottom={2}
             borderStyle="solid"
+            alignItems="center"
             borderColor={commonBorderColor}
           >
             <Text fontSize="15px" color="gray.default">
-              {modules.length === 0 ? 'No activities for this module' : 'You have not started this module'}
+              {modules.length === 0 ? t('modules.no-activities') : t('modules.start-message')}
             </Text>
             {modules.length !== 0 && (
               <Button
@@ -124,7 +125,7 @@ const ModuleMap = ({
                 gridGap="8px"
               >
                 <Text color="blue.default" size="15px">
-                  Start module
+                  {t('modules.start-module')}
                 </Text>
               </Button>
             )}
