@@ -14,7 +14,7 @@ import MarkDownParser from '../../common/components/MarkDownParser';
 import TagCapsule from '../../common/components/TagCapsule';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 
-export const getStaticPaths = async () => {
+export const getStaticPaths = async ({ locales }) => {
   let lessons = [];
   const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson`)
     .then((res) => res.json())
@@ -27,13 +27,13 @@ export const getStaticPaths = async () => {
   } else {
     console.error(`Error fetching lessons with ${data.status}`);
   }
-  const paths = lessons.flatMap((res) => Object.keys(res.translations).map((locale) => {
+  const paths = lessons.flatMap((res) => locales.map((locale) => {
     const localeToUsEs = locale === 'us' ? 'en' : 'es';
     return ({
       params: {
-        slug: res.translations[locale],
+        slug: res.translations[localeToUsEs] || res.slug,
       },
-      locale: localeToUsEs,
+      locale,
     });
   }));
 
@@ -106,20 +106,22 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
   const currentLanguageLabel = languageLabel[language] || language;
 
   useEffect(() => {
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=lesson`)
-      .then(({ data }) => {
-        let currentlocaleLang = data.translations[language];
-        if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
-        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=LESSON`)
-          .catch(() => {
-            toast({
-              title: `Lesson for language "${currentLanguageLabel}" not found, showing the english version`,
-              status: 'warning',
-              duration: 5500,
-              isClosable: true,
+    if (ipynbHtmlUrl === '') {
+      axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=lesson`)
+        .then(({ data }) => {
+          let currentlocaleLang = data.translations[language];
+          if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
+          axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=LESSON`)
+            .catch(() => {
+              toast({
+                title: `Lesson for language "${currentLanguageLabel}" not found, showing the english version`,
+                status: 'warning',
+                duration: 5500,
+                isClosable: true,
+              });
             });
-          });
-      });
+        });
+    }
   }, [language]);
 
   const EventIfNotFound = () => {
