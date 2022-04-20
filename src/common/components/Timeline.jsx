@@ -6,7 +6,6 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
-// import Heading from './Heading';
 import Text from './Text';
 
 const color = {
