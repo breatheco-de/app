@@ -28,9 +28,11 @@ const ContentHeading = ({ content, children, callToAction }) => {
           {title}
         </Heading>
         {callToAction}
-        <Text size="l" marginTop="0.5rem">
-          {subtitle}
-        </Text>
+        {subtitle && (
+          <Text size="l" marginTop="0.5rem">
+            {subtitle}
+          </Text>
+        )}
       </Box>
       {children}
     </Box>

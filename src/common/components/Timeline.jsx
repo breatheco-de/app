@@ -2,8 +2,9 @@ import React, { useEffect, memo } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import {
-  Box, Flex, useColorMode,
+  Box, Flex, useColorMode, useColorModeValue,
 } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 // import Heading from './Heading';
 import Text from './Text';
@@ -16,9 +17,12 @@ const color = {
 const Timeline = ({
   title, assignments, technologies, width, onClickAssignment,
 }) => {
+  const { t } = useTranslation('syllabus');
   const { colorMode } = useColorMode();
   const router = useRouter();
   const { cohortSlug, lessonSlug } = router.query;
+  const fontColor1 = useColorModeValue('gray.dark', 'white');
+  const fontColor2 = useColorModeValue('gray.dark', 'gray.light');
 
   // scroll scrollIntoView for id when lessonSlug changes
   const scrollIntoView = (id) => {
@@ -38,7 +42,7 @@ const Timeline = ({
   return (
     <Box width={width}>
       <Flex width="100%" marginBottom="1.5rem">
-        <Text size="l" fontWeight="900" color={colorMode === 'light' ? 'gray.dark' : 'white'}>{title && title.toUpperCase()}</Text>
+        <Text size="l" fontWeight="900" color={fontColor1}>{title && title.toUpperCase()}</Text>
         {technologies.length >= 1 && (
           <Text
             size="l"
@@ -46,7 +50,7 @@ const Timeline = ({
             display="flex"
             marginLeft="10px"
             fontWeight="400"
-            color={colorMode === 'light' ? 'gray.dark' : 'white'}
+            color={fontColor1}
           >
             {'<'}
             {technologies && technologies.map((tech, index) => {
@@ -68,7 +72,7 @@ const Timeline = ({
         )}
       </Flex>
       <Box>
-        {assignments && assignments.map((item, index) => {
+        {assignments.length > 0 ? assignments.map((item, index) => {
           const mapIndex = index;
           const assignmentPath = `/syllabus/${cohortSlug}/${item.type.toLowerCase()}/${item.slug}`;
           const muted = assignmentPath !== router.asPath;
@@ -101,13 +105,17 @@ const Timeline = ({
                   <Icon width="20px" height="20px" icon={item && item?.icon} color={muted ? 'gray' : 'white'} />
                 </Box>
                 <Box marginLeft="12px">
-                  <Text size="sm" color={colorMode === 'light' ? 'gray.dark' : 'gray.light'} fontWeight="900" marginY={0}>{item.type}</Text>
-                  <Text size="l" fontWeight="400" marginY={0} color={colorMode === 'light' ? 'gray.dark' : 'gray.light'}>{item.title}</Text>
+                  <Text size="sm" color={fontColor2} fontWeight="900" marginY={0}>{item.type}</Text>
+                  <Text size="l" fontWeight="400" marginY={0} color={fontColor2}>{item.title}</Text>
                 </Box>
               </Flex>
             </Flex>
           );
-        })}
+        }) : (
+          <Text size="sm" margin={0} color={fontColor2} textAlign="left">
+            {t('module-not-started')}
+          </Text>
+        )}
       </Box>
     </Box>
   );
