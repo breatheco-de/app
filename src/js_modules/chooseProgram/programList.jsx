@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Box, useMediaQuery,
 } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import axios from '../../axios';
@@ -11,6 +12,7 @@ import Module from '../../common/components/Module';
 import { usePersistent } from '../../common/hooks/usePersistent';
 
 function CohortProgram({ item, handleChoose }) {
+  const { t } = useTranslation('choose-program');
   const [isMobile] = useMediaQuery('(min-width: 600px)');
   const [, setCohortSession] = usePersistent('cohortSession', {});
   const router = useRouter();
@@ -64,7 +66,7 @@ function CohortProgram({ item, handleChoose }) {
             alignSelf="center"
             marginRight="15px"
           >
-            {isMobile ? 'Launch this program' : ''}
+            {isMobile ? t('launch-program') : ''}
           </Text>
           <Icon
             color="#0097CD"

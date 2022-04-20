@@ -216,6 +216,29 @@ export const AvatarSkeleton = ({
   );
 };
 
+export const SimpleSkeleton = ({ width, height, ...chakraProps }) => {
+  const commonStartColor = useColorModeValue('gray.300', 'gray.light');
+  const commonEndColor = useColorModeValue('gray.400', 'gray.400');
+  return (
+    <Skeleton
+      {...chakraProps}
+      width={width}
+      height={height}
+      startColor={commonStartColor}
+      endColor={commonEndColor}
+    />
+  );
+};
+
+SimpleSkeleton.propTypes = {
+  width: PropTypes.string,
+  height: PropTypes.string,
+};
+SimpleSkeleton.defaultProps = {
+  width: '100%',
+  height: '100%',
+};
+
 AvatarSkeleton.propTypes = {
   withText: PropTypes.bool,
   quantity: PropTypes.number,

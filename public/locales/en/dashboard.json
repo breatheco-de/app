@@ -1,7 +1,18 @@
 {
   "title": "Your News",
   "backToChooseProgram": "Back to choose program",
+  "moduleMap": "Module map",
   "progressText": "progress in the program",
+  "modules": {
+    "activitiesLength": "{{count}} Activities",
+    "newActivities": {
+      "title": "Ey! There are {{tasksLength}} new activities on this day",
+      "handler-text": "Sync now"
+    },
+    "start-message": "You have not started this module",
+    "no-activities": "No activities for this modules",
+    "start-module": "Start module"
+  },
   "callToAction": {
     "title": "Today's lessons!",
     "description": "Your lesson today is ",
@@ -10,9 +21,16 @@
   "cohortSideBar": {
     "title": "About your cohort",
     "cohort": "Your Cohort",
+    "last-date": "Last Date:",
+    "start-date": "Start Date:",
     "mainTeacher": "Main teacher",
     "assistant": "Assistant Teachers",
-    "classmates": "Your classmates"
+    "classmates": "Your classmates",
+    "show-more": "Show more...",
+    "show-less": "Show less",
+    "no-teachers": "This cohort does not have any teachers yet",
+    "no-assistant": "This cohort does not have any assistants yet",
+    "no-students": "This cohort does not have any students yet"
   },
   "supportSideBar": {
     "title": "Don't Get Stuck",
@@ -31,5 +49,38 @@
         "icon": "slack"
       }
     ]
+  },
+  "deliverProject": {
+    "title": "Github repository url",
+    "how-to-deliver": "How to deliver projects",
+    "handler-text": "Deliver assignment"
+  },
+  "modalInfo": {
+    "title": "Review status",
+    "still-reviewing": "Your teacher is still reviewing your deliver and will provide feedback once it's done",
+    "approved": "Your teacher has successfully approved your project!",
+    "rejected": {
+      "title": "Your teacher has rejected your project",
+      "teacher-feedback": "Teacher feedback:",
+      "remove-delivery": "Remove delivery",
+      "resubmit-assignment": "Resubmit assignment"
+    },
+    "link-info": "Link of project sended to your teacher:",
+    "remove-delivery": "Remove delivery",
+    "non-github-url": {
+      "title": "non-github URL detected",
+      "description": "Usually projects are delivered through Github, are you sure you want to submit a non-github URL?",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    }
+  },
+  "unsynced": {
+    "title": "There are {{taskLength}} unsynced cohort tasks",
+    "description": "These tasks may be deleted and lost in the future. Make sure to synch them if you don't want to lose them.",
+    "unsync": "Remove unsynced",
+    "sync": "Sync with current cohort",
+    "reject-unsync-title": "Please confirm your action to reject all unsynced tasks",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
   }
 }

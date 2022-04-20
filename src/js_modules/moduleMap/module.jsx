@@ -35,19 +35,19 @@ const Module = ({
     && el.associated_slug === currentSlug));
   }, [taskTodo, data.task_type, currentSlug]);
 
-  const changeStatusAssignment = (event, task) => {
+  const changeStatusAssignment = (event, task, taskStatus) => {
     event.preventDefault();
     setUpdatedTask({
       ...task,
     });
     updateAssignment({
-      task, closeSettings, toast, contextState, setContextState,
+      task, taskStatus, closeSettings, toast, contextState, setContextState,
     });
   };
 
-  const sendProject = (task, githubUrl) => {
+  const sendProject = (task, githubUrl, taskStatus) => {
     updateAssignment({
-      task, closeSettings, toast, githubUrl, contextState, setContextState,
+      task, closeSettings, toast, githubUrl, taskStatus, contextState, setContextState,
     });
   };
 

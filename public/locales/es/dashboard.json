@@ -1,7 +1,18 @@
 {
   "title": "Tus noticias",
+  "moduleMap": "Mapa de módulos",
   "backToChooseProgram": "Volver a elegir programa",
   "progressText": "progreso en el programa",
+  "modules": {
+    "activitiesLength": "{{count}} Actividades",
+    "newActivities": {
+      "title": "¡Oye! Hay {{tasksLength}} nuevas actividades en este día",
+      "handler-text": "sincronizar ahora"
+    },
+    "start-message": "No has iniciado este módulo",
+    "no-activities": "No hay actividades para este módulo",
+    "start-module": "Iniciar módulo"
+  },
   "callToAction": {
     "title": "Clase de hoy!",
     "description": "Tu clase de hoy es ",
@@ -10,9 +21,16 @@
   "cohortSideBar": {
     "title": "Acerca de tu cohorte",
     "cohort": "Tu Cohorte",
+    "last-date": "Última fecha:",
+    "start-date": "Fecha de inicio:",
     "mainTeacher": "Profesor principal",
     "assistant": "Profesores asistentes",
-    "classmates": "Tus compañeros"
+    "classmates": "Tus compañeros",
+    "show-more": "Mostrar más...",
+    "show-less": "Mostrar menos",
+    "no-teachers": "Esta cohorte aún no tiene maestros",
+    "no-assistant": "Esta cohorte aún no tiene profesores asistentes",
+    "no-students": "Esta cohorte aún no tiene estudiantes"
   },
   "supportSideBar": {
     "title": "No te quedes atascado",
@@ -31,5 +49,38 @@
         "icon": "slack"
       }
     ]
+  },
+  "deliverProject": {
+    "title": "URL de repositorio Github",
+    "how-to-deliver": "Cómo entregar proyectos",
+    "handler-text": "Entregar proyecto"
+  },
+  "modalInfo": {
+    "title": "Estado de revisión",
+    "still-reviewing": "Tu profesor todavía está revisando tu entrega, te dará su opinión una vez que esté lista.",
+    "approved": "Tu profesor ha aprobado con éxito tu proyecto!",
+    "rejected": {
+      "title": "Tu profesor ha rechazado tu proyecto",
+      "teacher-feedback": "Comentario del profesor:",
+      "remove-delivery": "Eliminar entrega",
+      "resubmit-assignment": "Reenviar proyecto"
+    },
+    "link-info": "Enlace del proyecto enviado a tu profesor:",
+    "remove-delivery": "Quitar entrega",
+    "non-github-url": {
+      "title": "No se a detectado URL de Github",
+      "description": "Por lo general, los proyectos se entregan a través de Github, ¿está seguro de que desea enviar una URL externa a Github?",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar"
+    }
+  },
+  "unsynced": {
+    "title": "Hay {{taskLength}} tareas de cohorte no sincronizadas",
+    "description": "Estas tareas pueden eliminarse y perderse en el futuro. Asegúrate de sincronizarlos si no quieres perderlos.",
+    "unsync": "Eliminar",
+    "sync": "Sincronizar con la cohorte actual",
+    "reject-unsync-title": "Confirme su acción para rechazar todas las tareas no sincronizadas",
+    "confirm": "Confirmar",
+    "cancel": "Cancelar"
   }
 }
