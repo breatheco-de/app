@@ -13,9 +13,11 @@ import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
 import { isPlural } from '../../utils';
 import Heading from '../../common/components/Heading';
+import { usePersistent } from '../../common/hooks/usePersistent';
 
 function chooseProgram() {
   const { t } = useTranslation('choose-program');
+  const [, setCohortSession] = usePersistent('cohortSession', {});
   const [data, setData] = useState([]);
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
@@ -24,6 +26,7 @@ function chooseProgram() {
   const toast = useToast();
 
   useEffect(() => {
+    setCohortSession({});
     bc.admissions().me().then((res) => {
       const { cohorts } = res.data;
       setData(cohorts);

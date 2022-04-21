@@ -31,7 +31,7 @@ import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 const Dashboard = () => {
   const { t } = useTranslation('dashboard');
   const { contextState, setContextState } = useModuleMap();
-  const [cohortSession, setCohortSession] = usePersistent('cohortSession', null);
+  const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [taskCohortNull, setTaskCohortNull] = useState([]);
@@ -179,10 +179,10 @@ const Dashboard = () => {
     if (user && user.active_cohort) {
       const academyId = user.active_cohort.academy_id;
       const { version } = user.active_cohort;
-      setCohortSession({
-        ...cohortSession,
-        bc_id: user.id,
-      });
+      // setCohortSession({
+      //   ...cohortSession,
+      //   bc_id: user.id,
+      // });
 
       // Fetch cohortProgram and TaskTodo then apply to contextState (useModuleMap - action)
       Promise.all([
@@ -198,6 +198,7 @@ const Dashboard = () => {
         setCohortSession({
           ...cohortSession,
           main_technologies: technologiesArray,
+          bc_id: user.id,
         });
         setSyllabus(programData.data.json.days);
         setContextState({
