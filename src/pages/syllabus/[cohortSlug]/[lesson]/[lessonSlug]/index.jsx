@@ -10,6 +10,7 @@ import {
   useColorModeValue,
   useMediaQuery,
 } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import {
@@ -30,6 +31,7 @@ import StickySideBar from '../../../../../common/components/StickySideBar';
 import Icon from '../../../../../common/components/Icon';
 
 const Content = () => {
+  const { t } = useTranslation('syllabus');
   const { isOpen, onToggle } = useDisclosure();
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [readme, setReadme] = useState(null);
@@ -337,7 +339,7 @@ const Content = () => {
           withToc={lesson.toLowerCase() === 'read'}
           frontMatter={{
             title: currentData.title,
-            subtitle: currentData.description,
+            // subtitle: currentData.description,
             assetType: currentData.asset_type,
           }}
         />
@@ -353,7 +355,7 @@ const Content = () => {
       {
         icon: 'message',
         slug: 'teacher-instructions',
-        title: 'Teacher instructions',
+        title: t('teacherSidebar.instructions'),
         content: teacherInstructions,
         actionHandler: () => setExtendedIsEnabled(!extendedIsEnabled),
         actionState: extendedIsEnabled,
@@ -362,7 +364,7 @@ const Content = () => {
       {
         icon: 'key',
         slug: 'key-concepts',
-        title: 'Key Concepts',
+        title: t('teacherSidebar.key-concepts'),
         content: keyConcepts,
         id: 2,
       },
@@ -476,9 +478,8 @@ const Content = () => {
 
           <Box
             className={`horizontal-sroll ${currentTheme}`}
-            height={{ base: '100%', md: '90.5vh' }}
+            height="100%"
             style={{
-              // height: '90.5vh',
               overflowX: 'hidden',
               overflowY: 'auto',
             }}
@@ -492,7 +493,7 @@ const Content = () => {
               >
                 <Timeline
                   key={section.id}
-                  assignments={section.modules}
+                  assignments={section.sortedAssignments}
                   technologies={section.technologies || []}
                   title={section.label}
                   onClickAssignment={onClickAssignment}
@@ -506,7 +507,7 @@ const Content = () => {
         {currentData.url && (
           <Link href={`${currentData.url}#readme`} margin="3rem 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
             <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-            Edit this page on Github
+            {t('edit-page')}
           </Link>
         )}
         {!isQuiz && currentData.intro_video_url && (
