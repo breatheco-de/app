@@ -49,7 +49,7 @@ const ProfilesSection = ({ title, profiles }) => {
             variantColor="blue"
             color="blue.default"
             alignItems="center"
-            width="max-content"
+            width="auto"
             fontWeight="700"
             size="md"
             onClick={() => setShowMoreStudents(!showMoreStudents)}
@@ -72,6 +72,9 @@ const CohortSideBar = ({
   const [existsProfilesLoading, setExistsProfilesLoading] = useState(true);
   const teacher = studentAndTeachers.filter((st) => st.role === 'TEACHER');
   const students = studentAndTeachers.filter((st) => st.role === 'STUDENT');
+  // const students = studentAndTeachers.filter(
+  //   (st) => st.role === 'STUDENT' && st.educational_status === 'ACTIVE'
+  // );
   const teacherAssistants = studentAndTeachers.filter((st) => st.role === 'ASSISTANT');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
 
