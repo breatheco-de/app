@@ -7,6 +7,15 @@ const CustomTheme = extendTheme({
     body: 'Lato',
   },
 
+  // Breakpoints
+  breakpoints: {
+    sm: '30em', // 480px
+    md: '48em', // 768px
+    lg: '62.25em', // 996px
+    xl: '80em', // 1280px
+    '2xl': '96em', // 1536px
+  },
+
   // Color scheme of Components
   styles: {
     global: (props) => ({

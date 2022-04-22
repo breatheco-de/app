@@ -174,7 +174,7 @@ const ProjectSlug = ({ project, markdown }) => {
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      margin={{ base: '2% 4% 0 4%', md: '2% 10% 0 10%' }}
+      margin={{ base: '2% 4% 0 4%', lg: '2% 10% 0 10%' }}
     >
       <Link
         href="/projects"
@@ -236,12 +236,12 @@ const ProjectSlug = ({ project, markdown }) => {
             alt={project.title}
           /> */}
           <Box
-            display={{ base: 'flex', md: 'none' }}
+            display={{ base: 'flex', lg: 'none' }}
             flexDirection="column"
             backgroundColor={useColorModeValue('white', 'featuredDark')}
             margin="30px 0"
-            width={{ base: '100%', md: '350px' }}
-            minWidth={{ base: '100%', md: '250px' }}
+            // width={{ base: '100%', md: '350px' }}
+            minWidth={{ base: '100%', md: '300px' }}
             height="fit-content"
             borderWidth="0px"
             borderRadius="17px"
@@ -261,9 +261,10 @@ const ProjectSlug = ({ project, markdown }) => {
           {/* MARKDOWN SIDE */}
           <Box
             padding="28px 32px"
+            maxWidth="1012px"
             borderRadius="3px"
             background={useColorModeValue('#F2F6FA', 'featuredDark')}
-            width={{ base: '34rem', md: '54rem' }}
+            // width={{ base: '34rem', md: '54rem' }}
             className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
             transition="background .2s ease"
           >
@@ -276,12 +277,12 @@ const ProjectSlug = ({ project, markdown }) => {
         </Box>
 
         <Box
-          display={{ base: 'none', md: 'flex' }}
+          display={{ base: 'none', lg: 'flex' }}
           flexDirection="column"
           backgroundColor={useColorModeValue('white', 'featuredDark')}
           margin="30px 0"
-          width={{ base: '100%', md: '350px' }}
-          minWidth={{ base: '100%', md: '250px' }}
+          // minWidth={{ base: '100%', md: '250px' }}
+          minWidth={{ base: '100%', md: '300px' }}
           height="fit-content"
           borderWidth="0px"
           borderRadius="17px"
