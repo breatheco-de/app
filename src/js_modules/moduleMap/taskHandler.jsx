@@ -52,7 +52,7 @@ export const ButtonHandlerByTaskStatus = ({
   const commonInputColor = useColorModeValue('gray.600', 'gray.200');
   const commonInputActiveColor = useColorModeValue('gray.800', 'gray.350');
 
-  const howToSendProjectUrl = 'https://github.com/breatheco-de/app/blob/main/README.md#getting-started';
+  const howToSendProjectUrl = 'https://4geeksacademy.notion.site/How-to-deliver-a-project-e1db0a8b1e2e4fbda361fc2f5457c0de';
   const TaskButton = () => (
     <Button
       display="flex"
