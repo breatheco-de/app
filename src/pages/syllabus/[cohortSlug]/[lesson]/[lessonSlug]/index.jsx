@@ -303,30 +303,6 @@ const Content = () => {
     }
   }, [selectedSyllabus]);
 
-  const containerSlide = () => {
-    if (isBelowLaptop) {
-      return '0';
-    }
-    return Open ? '0' : '0 auto';
-  };
-
-  const timelineSlide = () => {
-    if (isBelowLaptop) {
-      return 'fixed';
-    }
-    return Open ? 'initial' : 'fixed';
-  };
-
-  const timelineWidth = () => {
-    if (isBelowTablet) {
-      return '74.6vw';
-    }
-    if (isBelowLaptop) {
-      return '46.6vw';
-    }
-    return '26.6vw';
-  };
-
   const GetReadme = () => {
     if (ipynbHtmlUrl === null && readme === null && quizSlug !== lessonSlug) {
       return <MDSkeleton />;
@@ -437,7 +413,7 @@ const Content = () => {
           }}
         />
       </Box>
-      <Box position={timelineSlide} display={Open ? 'initial' : 'none'} flex="0 0 auto" minWidth="290px" width={timelineWidth} zIndex={Open ? 99 : 0}>
+      <Box position={{ base: 'fixed', lg: Open ? 'initial' : 'fixed' }} display={Open ? 'initial' : 'none'} flex="0 0 auto" minWidth="290px" width={{ base: '74.6vw', md: '46.6vw', lg: '26.6vw' }} zIndex={Open ? 99 : 0}>
         <Box style={slide}>
           <Box
             padding="1.5rem"
@@ -542,7 +518,7 @@ const Content = () => {
             // id={lessonSlug}
             flexGrow={1}
             marginLeft={0}
-            margin={containerSlide}
+            margin={{ base: '0', lg: Open ? '0' : '0 auto' }}
             padding={GetReadme() !== false ? '0 8vw 4rem 8vw' : '4rem 4vw'}
             maxWidth="1012px"
             // marginRight="10rem"

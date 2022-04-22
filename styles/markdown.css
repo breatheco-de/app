@@ -76,6 +76,10 @@
   padding: 10px 0 10px 14px;
 }
 
+.markdown-body p img {
+  display: initial;
+}
+
 
 .markdown-body h1, .markdown-body h2, .markdown-body h3,
 .markdown-body h4, .markdown-body h5, .markdown-body h6 {
@@ -520,7 +524,7 @@ blockquote > :last-child {
   width: 100%;
 } */
 
-@media screen and (max-width: 996px) {
+@media screen and (max-width: 995px) {
   .text-highlight {
     width: 84vw;
   }
