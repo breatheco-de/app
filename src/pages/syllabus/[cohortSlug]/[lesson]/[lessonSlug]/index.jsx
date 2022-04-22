@@ -44,6 +44,7 @@ const Content = () => {
   const [showSolutionVideo, setShowSolutionVideo] = useState(false);
   const [cohortSession] = usePersistent('cohortSession', {});
   const [selectedSyllabus, setSelectedSyllabus] = useState({});
+  const [readmeUrlProps, setReadmeUrlProps] = useState(null);
   const [currentData, setCurrentData] = useState({});
   const { user, choose } = useAuth();
   const toast = useToast();
@@ -236,6 +237,7 @@ const Content = () => {
   useEffect(() => {
     axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
       .then(({ data }) => {
+        setReadmeUrlProps(new URL(data.readme_url));
         let currentlocaleLang = data.translations[language];
         const exensionName = getExtensionName(data.readme_url);
         if (exensionName === 'ipynb') {
@@ -480,10 +482,16 @@ const Content = () => {
         </Box>
       </Box>
       <Box width="100%" height="auto">
-        {currentData.url && (
+        {!ipynbHtmlUrl && currentData.url && (
           <Link href={`${currentData.url}#readme`} margin="3rem 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
             <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
             {t('edit-page')}
+          </Link>
+        )}
+        {ipynbHtmlUrl && readmeUrlProps && (
+          <Link href={`https://colab.research.google.com/github${readmeUrlProps.pathname}`} margin="3rem 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+            <Icon icon="google-collab" color="#A0AEC0" width="28px" height="28px" />
+            {t('open-google-collab')}
           </Link>
         )}
         {!isQuiz && currentData.intro_video_url && (
