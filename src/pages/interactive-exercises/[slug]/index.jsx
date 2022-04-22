@@ -312,19 +312,6 @@ const Exercise = ({ exercise, markdown }) => {
 
       <Flex display={{ base: 'block', lg: 'flex' }} height="100%" gridGap="26px">
         <Box flex="1">
-          {/* <TagCapsule
-            variant="rounded"
-            tags={exercise.technologies}
-            fontSize="13px"
-            marginY="18px"
-            fontWeight="700"
-            style={{
-              padding: '4px 12px',
-              margin: '0',
-            }}
-            gap="10px"
-            paddingX="0"
-          /> */}
           <Heading
             as="h1"
             size="25px"
