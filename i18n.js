@@ -2,7 +2,7 @@ module.exports = {
   pages: {
     // Enable translations for the following pages
     '*': ['common', 'navbar', 'footer'],
-    '/': ['home'],
+    '/': ['home', 'social'],
     '/example': ['counter'],
     '/cohort/[cohortSlug]/[slug]/[version]': ['dashboard'],
     '/interactive-exercises': ['exercises'],
