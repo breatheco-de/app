@@ -19,15 +19,14 @@ export default function Example() {
         <Heading type="span" color="black" size="m">
           {`
             component behind: 
-            <OnlyFor academy={5} capabilities={['admin', 'teacher']}>
+            <OnlyFor capabilities={['read_member', 'read_tet']}>
           `}
         </Heading>
         <OnlyFor
-          academy="5"
-          capabilities={['admin', 'teacher']}
+          capabilities={['read_member', 'read_test']}
         >
           <Heading type="h3" color="green" size="m" className={styles.title}>
-            This text is handled with component and my current cohort capabilities
+            This text is handled with my current cohort capabilities
           </Heading>
         </OnlyFor>
 

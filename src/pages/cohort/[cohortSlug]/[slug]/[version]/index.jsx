@@ -37,7 +37,6 @@ const Dashboard = () => {
   const [taskCohortNull, setTaskCohortNull] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
-  // const [sortedAssignments, setSortedAssignments] = useState([]);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const { user, choose } = useAuth();
   const [, setSyllabus] = usePersistent('syllabus', []);
