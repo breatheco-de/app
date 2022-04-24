@@ -1,4 +1,4 @@
-import { memo, useLayoutEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { usePersistent } from '../hooks/usePersistent';
 import bc from '../services/breathecode';
@@ -10,7 +10,7 @@ const OnlyFor = ({ academy, capabilities, children }) => {
   const academyNumber = Math.floor(academy);
   const cohortRole = typeof cohortSession.cohort_role === 'string' && cohortSession.cohort_role.toLowerCase();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (cohortRole) {
       bc.auth().getRoles(cohortRole).then(({ data }) => {
         setUserCapabilities(data.capabilities);
