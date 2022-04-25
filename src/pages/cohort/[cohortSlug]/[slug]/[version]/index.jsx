@@ -435,7 +435,7 @@ const Dashboard = () => {
           <Box display="flex" justifyContent="space-between">
             <Heading as="h2" fontWeight="900" size="15px" textTransform="uppercase">{t('moduleMap')}</Heading>
             <Checkbox onChange={(e) => setShowPendingTasks(e.target.checked)} color="gray.600">
-              {`Show only Pending Tasks: ${showPendingTasks}`}
+              {t('modules.show-pending-tasks')}
             </Checkbox>
           </Box>
           <Box
