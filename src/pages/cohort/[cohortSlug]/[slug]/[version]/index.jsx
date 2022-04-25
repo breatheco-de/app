@@ -3,6 +3,7 @@ import {
 } from 'react';
 import {
   Box, Flex, Container, useColorModeValue, Skeleton, useToast,
+  Checkbox,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -37,6 +38,7 @@ const Dashboard = () => {
   const [taskCohortNull, setTaskCohortNull] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
+  const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const { user, choose } = useAuth();
   const [, setSyllabus] = usePersistent('syllabus', []);
@@ -249,7 +251,7 @@ const Dashboard = () => {
           answer: quizzes,
           taskTodo: contextState.taskTodo,
         });
-        const { filteredModules, modules } = nestedAssignments;
+        const { modules, filteredModules, filteredModulesByPending } = nestedAssignments;
 
         // Data to be sent to [sortedAssignments] = state
         const assignmentsStruct = {
@@ -258,6 +260,7 @@ const Dashboard = () => {
           description,
           modules,
           filteredModules,
+          filteredModulesByPending,
           teacherInstructions: assignment.teacher_instructions,
           extendedInstructions: assignment.extended_instructions,
           keyConcepts: assignment['key-concepts'],
@@ -308,7 +311,6 @@ const Dashboard = () => {
               ...cohortSession,
               selectedProgramSlug: '/choose-program',
             });
-            // setCohortSession({});
           }}
           fontWeight="700"
           gridGap="12px"
@@ -430,7 +432,12 @@ const Dashboard = () => {
 
           <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="32px" />
 
-          <Heading as="h2" fontWeight="900" size="15px" textTransform="uppercase">{t('moduleMap')}</Heading>
+          <Box display="flex" justifyContent="space-between">
+            <Heading as="h2" fontWeight="900" size="15px" textTransform="uppercase">{t('moduleMap')}</Heading>
+            <Checkbox onChange={(e) => setShowPendingTasks(e.target.checked)} color="gray.600">
+              {`Show only Pending Tasks: ${showPendingTasks}`}
+            </Checkbox>
+          </Box>
           <Box
             marginTop="30px"
             gridGap="24px"
@@ -441,7 +448,7 @@ const Dashboard = () => {
               <>
                 {sortedAssignments.map((assignment, i) => {
                   const {
-                    label, description, filteredModules, modules,
+                    label, description, filteredModules, modules, filteredModulesByPending,
                   } = assignment;
                   const index = i;
                   return (
@@ -459,6 +466,8 @@ const Dashboard = () => {
                       taskTodo={taskTodo}
                       modules={modules}
                       filteredModules={filteredModules}
+                      showPendingTasks={showPendingTasks}
+                      filteredModulesByPending={filteredModulesByPending}
                     />
                   );
                 })}
