@@ -297,7 +297,7 @@ const Exercise = ({ exercise, markdown }) => {
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      margin={{ base: '4% 4% 0 4%', md: '4% 10% 0 10%' }}
+      margin={{ base: '4% 4% 0 4%', lg: '4% 10% 0 10%' }}
     >
       <Link
         href="/interactive-exercises"
@@ -310,21 +310,8 @@ const Exercise = ({ exercise, markdown }) => {
         {`← ${t('exercises:backToExercises')}`}
       </Link>
 
-      <Flex height="100%" gridGap="26px">
+      <Flex display={{ base: 'block', lg: 'flex' }} height="100%" gridGap="26px">
         <Box flex="1">
-          {/* <TagCapsule
-            variant="rounded"
-            tags={exercise.technologies}
-            fontSize="13px"
-            marginY="18px"
-            fontWeight="700"
-            style={{
-              padding: '4px 12px',
-              margin: '0',
-            }}
-            gap="10px"
-            paddingX="0"
-          /> */}
           <Heading
             as="h1"
             size="25px"
@@ -360,7 +347,7 @@ const Exercise = ({ exercise, markdown }) => {
           /> */}
 
           <Box
-            display={{ base: 'flex', md: 'none' }}
+            display={{ base: 'flex', lg: 'none' }}
             flexDirection="column"
             margin="30px 0"
             backgroundColor={useColorModeValue('white', 'featuredDark')}
@@ -384,10 +371,13 @@ const Exercise = ({ exercise, markdown }) => {
 
           {/* MARKDOWN SIDE */}
           <Box
-            padding="28px 32px"
+            padding={{ base: '28px 14px', md: '28px 32px' }}
             borderRadius="3px"
             background={useColorModeValue('#F2F6FA', 'featuredDark')}
-            width={{ base: '34rem', md: '54rem' }}
+            maxWidth="1012px"
+            flexGrow={1}
+            // margin="0 8vw 4rem 8vw"
+            // width={{ base: '34rem', md: '54rem' }}
             className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
           >
             {markdown ? (
@@ -400,7 +390,7 @@ const Exercise = ({ exercise, markdown }) => {
         </Box>
 
         <Box
-          display={{ base: 'none', md: 'flex' }}
+          display={{ base: 'none', lg: 'flex' }}
           flexDirection="column"
           backgroundColor={useColorModeValue('white', 'featuredDark')}
           transition="background 0.2s ease-in-out"

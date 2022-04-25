@@ -31,7 +31,7 @@ import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 const Dashboard = () => {
   const { t } = useTranslation('dashboard');
   const { contextState, setContextState } = useModuleMap();
-  const [cohortSession, setCohortSession] = usePersistent('cohortSession', null);
+  const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [taskCohortNull, setTaskCohortNull] = useState([]);
@@ -178,38 +178,27 @@ const Dashboard = () => {
     if (user && user.active_cohort) {
       const academyId = user.active_cohort.academy_id;
       const { version } = user.active_cohort;
-      setCohortSession({
-        ...cohortSession,
-        bc_id: user.id,
-      });
+      // setCohortSession({
+      //   ...cohortSession,
+      //   bc_id: user.id,
+      // });
 
       // Fetch cohortProgram and TaskTodo then apply to contextState (useModuleMap - action)
       Promise.all([
         bc.todo({ cohort: cohortSession.id }).getTaskByStudent(), // Tasks with cohort id
-        bc.todo({ cohort: null }).getTaskByStudent(), // Tasks with cohort null
         bc.syllabus().get(academyId, slug, version), // cohortProgram
       ]).then((
-        [taskTodoData, taskWithCohortNull, programData],
+        [taskTodoData, programData],
       ) => {
-        devLogTable('(Response Fetched) All Tasks With Cohort null:', taskWithCohortNull.data);
-
         const technologiesArray = programData.data.main_technologies
           ? programData.data.main_technologies.split(',').map((el) => el.trim())
           : [];
-        const filteredUnsyncedCohortTasks = sortedAssignments.flatMap(
-          (assignment) => taskWithCohortNull.data.filter(
-            (task) => assignment.modules.some(
-              (module) => task.associated_slug === module.slug,
-            ),
-          ),
-        );
 
         setCohortSession({
           ...cohortSession,
           main_technologies: technologiesArray,
+          bc_id: user.id,
         });
-        setTaskCohortNull(filteredUnsyncedCohortTasks);
-        setModalIsOpen(filteredUnsyncedCohortTasks.length > 0);
         setSyllabus(programData.data.json.days);
         setContextState({
           taskTodo: taskTodoData.data,
@@ -220,7 +209,27 @@ const Dashboard = () => {
         router.push('/choose-program');
       });
     }
-  }, [user, slug]);
+  }, [user]);
+
+  useEffect(() => {
+    // Tasks with cohort null
+    if (router.asPath === cohortSession.selectedProgramSlug) {
+      bc.todo({ cohort: null }).getTaskByStudent()
+        .then(({ data }) => {
+          devLogTable('(Response Fetched) All Tasks With Cohort null:', data);
+          const filteredUnsyncedCohortTasks = sortedAssignments.flatMap(
+            (assignment) => data.filter(
+              (task) => assignment.modules.some(
+                (module) => task.associated_slug === module.slug,
+              ),
+            ),
+          );
+
+          setModalIsOpen(filteredUnsyncedCohortTasks.length !== 0);
+          setTaskCohortNull(filteredUnsyncedCohortTasks);
+        });
+    }
+  }, [sortedAssignments]);
 
   // Sort all data fetched in order of taskTodo
   useMemo(() => {
@@ -322,7 +331,7 @@ const Dashboard = () => {
         onClose={() => setModalIsOpen(false)}
         title={t('unsynced.title', { taskLength: taskCohortNull.length })}
         description={t('unsynced.description')}
-        handlerColorButton="green"
+        handlerColorButton="blue"
         rejectHandler={() => removeUnsyncedTasks()}
         forceHandler
         rejectData={{

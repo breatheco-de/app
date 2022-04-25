@@ -10,6 +10,7 @@ import {
   useColorModeValue,
   useMediaQuery,
 } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import {
@@ -30,6 +31,7 @@ import StickySideBar from '../../../../../common/components/StickySideBar';
 import Icon from '../../../../../common/components/Icon';
 
 const Content = () => {
+  const { t } = useTranslation('syllabus');
   const { isOpen, onToggle } = useDisclosure();
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [readme, setReadme] = useState(null);
@@ -42,6 +44,7 @@ const Content = () => {
   const [showSolutionVideo, setShowSolutionVideo] = useState(false);
   const [cohortSession] = usePersistent('cohortSession', {});
   const [selectedSyllabus, setSelectedSyllabus] = useState({});
+  const [readmeUrlProps, setReadmeUrlProps] = useState(null);
   const [currentData, setCurrentData] = useState({});
   const { user, choose } = useAuth();
   const toast = useToast();
@@ -234,6 +237,7 @@ const Content = () => {
   useEffect(() => {
     axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
       .then(({ data }) => {
+        setReadmeUrlProps(new URL(data.readme_url));
         let currentlocaleLang = data.translations[language];
         const exensionName = getExtensionName(data.readme_url);
         if (exensionName === 'ipynb') {
@@ -301,30 +305,6 @@ const Content = () => {
     }
   }, [selectedSyllabus]);
 
-  const containerSlide = () => {
-    if (isBelowLaptop) {
-      return '0';
-    }
-    return Open ? '0' : '0 auto';
-  };
-
-  const timelineSlide = () => {
-    if (isBelowLaptop) {
-      return 'fixed';
-    }
-    return Open ? 'initial' : 'fixed';
-  };
-
-  const timelineWidth = () => {
-    if (isBelowTablet) {
-      return '74.6vw';
-    }
-    if (isBelowLaptop) {
-      return '46.6vw';
-    }
-    return '26.6vw';
-  };
-
   const GetReadme = () => {
     if (ipynbHtmlUrl === null && readme === null && quizSlug !== lessonSlug) {
       return <MDSkeleton />;
@@ -337,7 +317,7 @@ const Content = () => {
           withToc={lesson.toLowerCase() === 'read'}
           frontMatter={{
             title: currentData.title,
-            subtitle: currentData.description,
+            // subtitle: currentData.description,
             assetType: currentData.asset_type,
           }}
         />
@@ -353,7 +333,7 @@ const Content = () => {
       {
         icon: 'message',
         slug: 'teacher-instructions',
-        title: 'Teacher instructions',
+        title: t('teacherSidebar.instructions'),
         content: teacherInstructions,
         actionHandler: () => setExtendedIsEnabled(!extendedIsEnabled),
         actionState: extendedIsEnabled,
@@ -362,7 +342,7 @@ const Content = () => {
       {
         icon: 'key',
         slug: 'key-concepts',
-        title: 'Key Concepts',
+        title: t('teacherSidebar.key-concepts'),
         content: keyConcepts,
         id: 2,
       },
@@ -435,7 +415,7 @@ const Content = () => {
           }}
         />
       </Box>
-      <Box position={timelineSlide} display={Open ? 'initial' : 'none'} flex="0 0 auto" minWidth="290px" width={timelineWidth} zIndex={Open ? 99 : 0}>
+      <Box position={{ base: 'fixed', lg: Open ? 'initial' : 'fixed' }} display={Open ? 'initial' : 'none'} flex="0 0 auto" minWidth="290px" width={{ base: '74.6vw', md: '46.6vw', lg: '26.6vw' }} zIndex={Open ? 99 : 0}>
         <Box style={slide}>
           <Box
             padding="1.5rem"
@@ -476,9 +456,8 @@ const Content = () => {
 
           <Box
             className={`horizontal-sroll ${currentTheme}`}
-            height={{ base: '100%', md: '90.5vh' }}
+            height="100%"
             style={{
-              // height: '90.5vh',
               overflowX: 'hidden',
               overflowY: 'auto',
             }}
@@ -492,7 +471,7 @@ const Content = () => {
               >
                 <Timeline
                   key={section.id}
-                  assignments={section.modules}
+                  assignments={section.sortedAssignments}
                   technologies={section.technologies || []}
                   title={section.label}
                   onClickAssignment={onClickAssignment}
@@ -503,10 +482,16 @@ const Content = () => {
         </Box>
       </Box>
       <Box width="100%" height="auto">
-        {currentData.url && (
+        {!ipynbHtmlUrl && currentData.url && (
           <Link href={`${currentData.url}#readme`} margin="3rem 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
             <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-            Edit this page on Github
+            {t('edit-page')}
+          </Link>
+        )}
+        {ipynbHtmlUrl && readmeUrlProps && (
+          <Link href={`https://colab.research.google.com/github${readmeUrlProps.pathname}`} margin="3rem 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+            <Icon icon="google-collab" color="#A0AEC0" width="28px" height="28px" />
+            {t('open-google-collab')}
           </Link>
         )}
         {!isQuiz && currentData.intro_video_url && (
@@ -541,7 +526,7 @@ const Content = () => {
             // id={lessonSlug}
             flexGrow={1}
             marginLeft={0}
-            margin={containerSlide}
+            margin={{ base: '0', lg: Open ? '0' : '0 auto' }}
             padding={GetReadme() !== false ? '0 8vw 4rem 8vw' : '4rem 4vw'}
             maxWidth="1012px"
             // marginRight="10rem"

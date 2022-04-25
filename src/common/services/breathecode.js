@@ -11,7 +11,7 @@ const breathecode = {
         get: () => axios.get(`${url}/user/me/invite?status=PENDING`),
         accept: (id) => axios.put(`${url}/user/me/invite/accepted?id=${id}`),
       }),
-      roles: (cohortRole) => axios.get(`${url}/role/${cohortRole}`),
+      getRoles: (cohortRole) => axios.get(`${url}/role/${cohortRole}`),
       isValidToken: (token) => axios.get(`${url}/token/${token}`),
       register: (payload) => axios.post(`${url}/user/register`, payload),
       subscribe: (payload) => axios.post(`${url}/subscribe/`, { ...payload }),

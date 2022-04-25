@@ -1,0 +1,10 @@
+{
+  "title": "Lessons",
+  "module-not-started": "You haven't started this module yet",
+  "edit-page": "Edit this page on Github",
+  "open-google-collab": "Open in Google Collab",
+  "teacherSidebar": {
+    "instructions": "Instructions",
+    "key-concepts": "Key concepts"
+  }
+}

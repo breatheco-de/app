@@ -6,6 +6,7 @@ import {
   FormControl,
   Input,
   Button,
+  Link,
   useColorMode,
   useColorModeValue,
   useToast,
@@ -28,6 +29,8 @@ export default function Home() {
 
   const { colorMode } = useColorMode();
   const commonColor = useColorModeValue('gray.600', 'gray.300');
+  const socials = t('social:content', {}, { returnObjects: true });
+  const socialsFiltered = socials.filter((social) => social.available.includes('home'));
 
   const BubblesSvg = () => (
     <svg
@@ -189,8 +192,11 @@ export default function Home() {
           </Box>
           <Box display="flex" alignItems="center" gridGap="14px">
             <Text size="md">{t('followUs')}</Text>
-            <Icon icon="youtube" width="15px" height="15px" color="black" />
-            <Icon icon="github" width="15px" height="15px" />
+            {socialsFiltered.map((social) => (
+              <Link href={social.link} target="_blank" rel="noopener noreferrer">
+                <Icon icon={social.icon} width="15px" height="15px" color="black" />
+              </Link>
+            ))}
           </Box>
         </Box>
 
