@@ -296,6 +296,12 @@ const Dashboard = () => {
     (x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE',
   );
 
+  const modulesExists = sortedAssignments.some(
+    (assignment) => assignment.filteredModules.length !== 0,
+  );
+
+  console.log('emptyModules:::', modulesExists);
+
   return (
     <Container maxW="container.xl">
       <Box width="fit-content" marginTop="18px" marginBottom="48px">
@@ -434,9 +440,11 @@ const Dashboard = () => {
 
           <Box display="flex" justifyContent="space-between">
             <Heading as="h2" fontWeight="900" size="15px" textTransform="uppercase">{t('moduleMap')}</Heading>
-            <Checkbox onChange={(e) => setShowPendingTasks(e.target.checked)} color="gray.600">
-              {t('modules.show-pending-tasks')}
-            </Checkbox>
+            {modulesExists && (
+              <Checkbox onChange={(e) => setShowPendingTasks(e.target.checked)} color="gray.600">
+                {t('modules.show-pending-tasks')}
+              </Checkbox>
+            )}
           </Box>
           <Box
             marginTop="30px"

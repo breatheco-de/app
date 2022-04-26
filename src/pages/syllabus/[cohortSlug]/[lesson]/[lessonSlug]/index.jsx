@@ -9,6 +9,7 @@ import {
   useToast,
   useColorModeValue,
   useMediaQuery,
+  Checkbox,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
@@ -38,6 +39,7 @@ const Content = () => {
   const [ipynbHtmlUrl, setIpynbHtmlUrl] = useState(null);
   const [extendedInstructions, setExtendedInstructions] = useState(null);
   const [extendedIsEnabled, setExtendedIsEnabled] = useState(false);
+  const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [quizSlug, setQuizSlug] = useState(null);
   // const { syllabus = [], setSyllabus } = useSyllabus();
   const [sortedAssignments] = usePersistent('sortedAssignments', []);
@@ -420,6 +422,9 @@ const Content = () => {
           <Box
             padding="1.5rem"
             // position="sticky"
+            display="flex"
+            flexDirection="column"
+            gridGap="6px"
             top={0}
             zIndex={200}
             bg={useColorModeValue('white', 'darkTheme')}
@@ -428,6 +433,9 @@ const Content = () => {
             borderColor={commonBorderColor}
           >
             <Heading size="xsm">{user.active_cohort && user.active_cohort.syllabus_name}</Heading>
+            <Checkbox mb="-14px" onChange={(e) => setShowPendingTasks(e.target.checked)} color="gray.600">
+              {t('dashboard:modules.show-pending-tasks')}
+            </Checkbox>
           </Box>
 
           <IconButton
@@ -462,22 +470,28 @@ const Content = () => {
               overflowY: 'auto',
             }}
           >
-            {filterEmptyModules.map((section) => (
-              <Box
-                padding="1.5rem"
-                borderBottom={1}
-                borderStyle="solid"
-                borderColor={commonBorderColor}
-              >
-                <Timeline
-                  key={section.id}
-                  assignments={section.filteredModules}
-                  technologies={section.technologies || []}
-                  title={section.label}
-                  onClickAssignment={onClickAssignment}
-                />
-              </Box>
-            ))}
+            {filterEmptyModules.map((section) => {
+              const currentAssignments = showPendingTasks
+                ? section.filteredModulesByPending
+                : section.filteredModules;
+              return (
+                <Box
+                  padding="1.5rem"
+                  borderBottom={1}
+                  borderStyle="solid"
+                  borderColor={commonBorderColor}
+                >
+                  <Timeline
+                    key={section.id}
+                    showPendingTasks={showPendingTasks}
+                    assignments={currentAssignments}
+                    technologies={section.technologies || []}
+                    title={section.label}
+                    onClickAssignment={onClickAssignment}
+                  />
+                </Box>
+              );
+            })}
           </Box>
         </Box>
       </Box>
