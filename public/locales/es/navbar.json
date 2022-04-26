@@ -21,6 +21,7 @@
     "build": "Desarrollar",
     "bootcamp": "Bootcamp de Codificación"
   },
+
   "login": "Ingresar",
   "logout": "Cerrar sesión",
   "language": "Idioma",
