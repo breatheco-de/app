@@ -11,7 +11,7 @@ module.exports = {
     '/interactive-coding-tutorial/[difficulty]/[slug]': ['projects'],
     '/interactive-exercises/[slug]': ['exercises'],
     '/choose-program': ['choose-program'],
-    '/syllabus/[cohortSlug]/[lesson]/[lessonSlug]': ['syllabus'],
+    '/syllabus/[cohortSlug]/[lesson]/[lessonSlug]': ['syllabus', 'dashboard'],
   },
   locales: ['default', 'en', 'es'],
   // defaultLocale: 'en', // removed for redirects handling purposes
