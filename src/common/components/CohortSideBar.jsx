@@ -128,13 +128,15 @@ const CohortSideBar = ({
             <Text size="l" color={commonTextColor} fontWeight="400" lineHeight="18px" margin={0}>
               {cohortCity}
             </Text>
-            <Text pt="4px" size="sm" color={commonTextColor} fontWeight="700" lineHeight="18px" margin={0}>
-              {t('cohortSideBar.last-date')}
-              {' '}
-              <Text as="span" size="sm" color={commonTextColor} fontWeight="400" lineHeight="18px" margin={0}>
-                {endingDate[router.locale]}
+            {cohort.ending_date !== null && (
+              <Text pt="4px" size="sm" color={commonTextColor} fontWeight="700" lineHeight="18px" margin={0}>
+                {t('cohortSideBar.last-date')}
+                {' '}
+                <Text as="span" size="sm" color={commonTextColor} fontWeight="400" lineHeight="18px" margin={0}>
+                  {endingDate[router.locale]}
+                </Text>
               </Text>
-            </Text>
+            )}
             <Text size="sm" color={commonTextColor} fontWeight="700" lineHeight="18px" margin={0}>
               {t('cohortSideBar.start-date')}
               {' '}

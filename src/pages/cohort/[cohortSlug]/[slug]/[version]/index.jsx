@@ -26,7 +26,7 @@ import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import dashboardTR from '../../../../../common/translations/dashboard';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
-import { slugify, devLog, devLogTable } from '../../../../../utils/index';
+import { slugify, devLogTable } from '../../../../../utils/index';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 
 const Dashboard = () => {
@@ -50,8 +50,6 @@ const Dashboard = () => {
 
   const skeletonStartColor = useColorModeValue('gray.300', 'gray.light');
   const skeletonEndColor = useColorModeValue('gray.400', 'gray.400');
-
-  devLog('(React State) current taskCohortNull:', taskCohortNull);
 
   const { supportSideBar } = dashboardTR[locale];
 
