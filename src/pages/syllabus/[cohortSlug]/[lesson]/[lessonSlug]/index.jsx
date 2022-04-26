@@ -63,7 +63,7 @@ const Content = () => {
   const { teacherInstructions, keyConcepts } = selectedSyllabus;
 
   const filterEmptyModules = sortedAssignments.filter(
-    (assignment) => assignment.filteredModules.length > 0,
+    (assignment) => assignment.modules.length > 0,
   );
 
   const currentTheme = useColorModeValue('light', 'dark');
