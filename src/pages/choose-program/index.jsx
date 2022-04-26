@@ -26,7 +26,9 @@ function chooseProgram() {
   const toast = useToast();
 
   useEffect(() => {
-    setCohortSession({});
+    setCohortSession({
+      selectedProgramSlug: '/choose-program',
+    });
     bc.admissions().me().then((res) => {
       const { cohorts } = res.data;
       setData(cohorts);

@@ -300,8 +300,6 @@ const Dashboard = () => {
     (assignment) => assignment.filteredModules.length !== 0,
   );
 
-  console.log('emptyModules:::', modulesExists);
-
   return (
     <Container maxW="container.xl">
       <Box width="fit-content" marginTop="18px" marginBottom="48px">
@@ -313,10 +311,6 @@ const Dashboard = () => {
           onClick={() => {
             setSortedAssignments([]);
             setSyllabus([]);
-            setCohortSession({
-              ...cohortSession,
-              selectedProgramSlug: '/choose-program',
-            });
           }}
           fontWeight="700"
           gridGap="12px"
