@@ -18,6 +18,7 @@ import {
 import {
   useState, memo, useEffect, Fragment,
 } from 'react';
+import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { es } from 'date-fns/locale';
@@ -30,16 +31,14 @@ import { usePersistent } from '../../hooks/usePersistent';
 import Heading from '../Heading';
 import Text from '../Text';
 import useAuth from '../../hooks/useAuth';
-import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
 
 const NavbarWithSubNavigation = ({ haveSession, translations }) => {
+  const { t } = useTranslation('navbar');
   const router = useRouter();
   const [readSyllabus, setReadSyllabus] = useState([]);
+  const [ITEMS, setITEMS] = useState([]);
   const locale = router.locale === 'default' ? 'en' : router.locale;
-  const {
-    loginTR, logoutTR, languageTR, ITEMS,
-  } = navbarTR[locale];
 
   const { isOpen, onToggle } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
@@ -52,6 +51,14 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
 
   const langs = ['en', 'es'];
   const linkColor = useColorModeValue('gray.600', 'gray.200');
+
+  const { selectedProgramSlug } = cohortSession;
+
+  useEffect(() => {
+    setITEMS(t('ITEMS', {
+      selectedProgramSlug: selectedProgramSlug || '/choose-program',
+    }, { returnObjects: true }));
+  }, [selectedProgramSlug]);
 
   useEffect(async () => {
     const resp = await fetch(
@@ -236,7 +243,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                     padding="12px 1.5rem"
                   >
                     <Text size="md" fontWeight="700">
-                      {languageTR}
+                      {t('language')}
                     </Text>
                     <Box display="flex" flexDirection="row">
                       {langs.map((lang, i) => {
@@ -311,7 +318,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                           as="span"
                           fontSize="14px"
                         >
-                          {logoutTR}
+                          {t('logout')}
                         </Box>
                       </Box>
                     </Flex>
@@ -340,7 +347,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                 lineHeight="0.05em"
                 variant="default"
               >
-                {loginTR}
+                {t('login')}
               </Button>
             </NextChakraLink>
           )}

@@ -21,5 +21,48 @@
     "build": "Build",
     "bootcamp": "Coding Bootcamp"
   },
-  "login": "Login"
+
+  "login": "Login",
+  "logout": "Logout",
+  "language": "Language",
+  "ITEMS": [
+    {
+      "label": "Dashboard",
+      "private": true,
+      "href": "{{selectedProgramSlug}}"
+    },
+    {
+      "label": "About us",
+      "href": "/about-us"
+    },
+    {
+      "label": "Practice",
+      "href": "/interactive-exercises"
+    },
+    {
+      "label": "Read",
+      "icon": "book",
+      "description": "Here you can read and see the temary of some available programs.",
+      "asPath": "/read",
+      "subMenu": []
+    },
+    {
+      "label": "Build",
+      "href": "/projects"
+    },
+    {
+      "label": "Coding Bootcamp",
+      "href": "https://4geeksacademy.com"
+    }
+  ],
+  "languages": [
+    {
+      "label": "English",
+      "value": "en"
+    },
+    {
+      "label": "Spanish",
+      "value": "es"
+    }
+  ]
 }

@@ -21,5 +21,48 @@
     "build": "Desarrollar",
     "bootcamp": "Bootcamp de Codificación"
   },
-  "login": "Ingresar"
+
+  "login": "Ingresar",
+  "logout": "Cerrar sesión",
+  "language": "Idioma",
+  "ITEMS": [
+    {
+      "label": "Dashboard",
+      "private": true,
+      "href": "{{selectedProgramSlug}}"
+    },
+    {
+      "label": "Sobre Nosotros",
+      "href": "/about-us"
+    },
+    {
+      "label": "Practicar",
+      "href": "/interactive-exercises"
+    },
+    {
+      "label": "Leer",
+      "icon": "book",
+      "description": "Aquí puedes leer y ver el temario de algunos programas disponibles.",
+      "asPath": "/read",
+      "subMenu": []
+    },
+    {
+      "label": "Build",
+      "href": "/projects"
+    },
+    {
+      "label": "Coding Bootcamp",
+      "href": "https://4geeksacademy.com"
+    }
+  ],
+  "languages": [
+    {
+      "label": "Ingles",
+      "value": "en"
+    },
+    {
+      "label": "Español",
+      "value": "es"
+    }
+  ]
 }

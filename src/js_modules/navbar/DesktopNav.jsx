@@ -10,7 +10,7 @@ const DesktopNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
     if (haveSession) {
       setPrivateItems(NAV_ITEMS.filter((item) => item.private === true));
     }
-  }, [haveSession]);
+  }, [haveSession, NAV_ITEMS]);
 
   const publicItems = NAV_ITEMS.filter((item) => item.private !== true);
 
