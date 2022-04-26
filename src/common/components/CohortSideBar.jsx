@@ -121,7 +121,7 @@ const CohortSideBar = ({
         </Heading>
         <Box d="flex" alignItems="center" marginBottom={18}>
           <Icon icon="group" width="39px" height="39px" />
-          <Box marginLeft={13}>
+          <Box id="cohort-dates" marginLeft={13}>
             <Heading as="h4" color={commonTextColor} fontSize={15} fontWeight="700" lineHeight="18px" margin={0}>
               {(`${t('cohortSideBar.cohort')} ${teacherVersionActive ? ` | ${router.locale === 'en' ? 'Day' : 'Día'} ${cohort.current_day}` : ''}`) || title}
             </Heading>
@@ -148,7 +148,7 @@ const CohortSideBar = ({
           const { user } = el;
           const fullName = `${user.first_name} ${user.last_name}`;
           return (
-            <Box key={fullName} d="flex" alignItems="center">
+            <Box id="cohort-teachers" key={fullName} d="flex" alignItems="center">
               <AvatarUser data={el} />
               <Box marginLeft={13}>
                 <Heading as="h4" fontSize={15} fontWeight="700" lineHeight="tight" margin={0}>
@@ -164,7 +164,7 @@ const CohortSideBar = ({
         {teacher.length === 0 && t('cohortSideBar.no-teachers')}
       </Box>
       <Divider margin={0} style={{ borderColor: useColorModeValue('#DADADA', 'gray.700') }} />
-      <Box display="flex" flexDirection="column" gridGap="20px" padding="18px 26px">
+      <Box id="cohort-students" display="flex" flexDirection="column" gridGap="20px" padding="18px 26px">
         {teacherAssistants.length > 0 && (
           <ProfilesSection
             title={t('cohortSideBar.assistant')}
