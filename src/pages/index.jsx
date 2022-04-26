@@ -149,7 +149,9 @@ export default function Home() {
                     >
                       <Field id="field923" name="email">
                         {({ field, form }) => {
-                          setErrorMessage(form.errors.email);
+                          if (form.errors.email) {
+                            setErrorMessage(form.errors.email);
+                          }
                           return (
                             <FormControl isInvalid={form.errors.email}>
                               <Input
@@ -193,7 +195,7 @@ export default function Home() {
           <Box display="flex" alignItems="center" gridGap="14px">
             <Text size="md">{t('followUs')}</Text>
             {socialsFiltered.map((social) => (
-              <Link href={social.link} target="_blank" rel="noopener noreferrer">
+              <Link key={social.name} href={social.link} target="_blank" rel="noopener noreferrer">
                 <Icon icon={social.icon} width="15px" height="15px" color="black" />
               </Link>
             ))}

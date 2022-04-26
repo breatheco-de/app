@@ -471,7 +471,7 @@ const Content = () => {
               >
                 <Timeline
                   key={section.id}
-                  assignments={section.sortedAssignments}
+                  assignments={section.filteredModules}
                   technologies={section.technologies || []}
                   title={section.label}
                   onClickAssignment={onClickAssignment}

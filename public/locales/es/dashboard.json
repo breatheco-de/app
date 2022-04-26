@@ -4,6 +4,7 @@
   "backToChooseProgram": "Volver a elegir programa",
   "progressText": "progreso en el programa",
   "modules": {
+    "show-pending-tasks": "Mostrar Tareas Pendientes",
     "activitiesLength": "{{count}} Actividades",
     "newActivities": {
       "title": "¡Oye! Hay {{tasksLength}} nuevas actividades en este día",

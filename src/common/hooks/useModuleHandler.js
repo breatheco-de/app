@@ -127,10 +127,16 @@ export const startDay = ({
 export const nestAssignments = ({
   id, label = '', read, practice, code, answer, taskTodo = [],
 }) => {
+  const getTaskProps = (slug) => taskTodo.find(
+    (task) => task.associated_slug === slug,
+  );
+
   const updatedRead = read.map((el) => ({
     ...el,
     id,
     label,
+    task_status: getTaskProps(el.slug)?.task_status || '',
+    revision_status: getTaskProps(el.slug)?.revision_status || '',
     type: 'Read',
     icon: 'book',
     task_type: 'LESSON',
@@ -139,6 +145,8 @@ export const nestAssignments = ({
     ...el,
     id,
     label,
+    task_status: getTaskProps(el.slug)?.task_status || '',
+    revision_status: getTaskProps(el.slug)?.revision_status || '',
     type: 'Practice',
     icon: 'strength',
     task_type: 'EXERCISE',
@@ -147,6 +155,8 @@ export const nestAssignments = ({
     ...el,
     id,
     label,
+    task_status: getTaskProps(el.slug)?.task_status || '',
+    revision_status: getTaskProps(el.slug)?.revision_status || '',
     type: 'Code',
     icon: 'code',
     task_type: 'PROJECT',
@@ -155,6 +165,8 @@ export const nestAssignments = ({
     ...el,
     id,
     label,
+    task_status: getTaskProps(el.slug)?.task_status || '',
+    revision_status: getTaskProps(el.slug)?.revision_status || '',
     type: 'Answer',
     icon: 'answer',
     task_type: 'QUIZ',
@@ -167,11 +179,18 @@ export const nestAssignments = ({
     return getModules;
   };
 
+  const includesStatusPending = (module) => {
+    const getModules = module.task_status === 'PENDING' && module.revision_status !== 'APPROVED';
+    return getModules;
+  };
+
   const filteredModules = modules.filter((module) => includesDailyTask(module));
+  const filteredModulesByPending = modules.filter((module) => includesStatusPending(module));
 
   return {
     filteredModules,
     modules,
+    filteredModulesByPending,
   };
   /*
     example:
