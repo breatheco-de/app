@@ -11,11 +11,13 @@ import Icon from '../../common/components/Icon';
 
 const ModuleMap = ({
   index, userId, contextState, setContextState, slug, modules, filteredModules,
-  title, description, taskTodo, cohortSession, taskCohortNull,
+  title, description, taskTodo, cohortSession, taskCohortNull, filteredModulesByPending,
+  showPendingTasks,
 }) => {
   const { t } = useTranslation('dashboard');
   const toast = useToast();
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
+  const currentModules = showPendingTasks ? filteredModulesByPending : filteredModules;
   const handleStartDay = () => {
     const updatedTasks = (modules || [])?.map((l) => ({
       ...l,
@@ -91,7 +93,7 @@ const ModuleMap = ({
       )}
 
       {filteredModules.length >= 1
-        ? filteredModules.map((module, i) => {
+        ? currentModules.map((module, i) => {
           const cheatedIndex = i;
           return (
             <Module
@@ -148,6 +150,8 @@ ModuleMap.propTypes = {
   taskTodo: PropTypes.arrayOf(PropTypes.object),
   cohortSession: PropTypes.objectOf(PropTypes.any),
   taskCohortNull: PropTypes.arrayOf(PropTypes.object),
+  filteredModulesByPending: PropTypes.arrayOf(PropTypes.object),
+  showPendingTasks: PropTypes.bool,
 };
 ModuleMap.defaultProps = {
   modules: [],
@@ -158,6 +162,8 @@ ModuleMap.defaultProps = {
   taskTodo: [],
   cohortSession: {},
   taskCohortNull: [],
+  filteredModulesByPending: [],
+  showPendingTasks: false,
 };
 
 export default memo(ModuleMap);

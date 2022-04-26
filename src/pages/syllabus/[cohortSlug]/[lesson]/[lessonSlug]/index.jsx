@@ -63,7 +63,7 @@ const Content = () => {
   const { teacherInstructions, keyConcepts } = selectedSyllabus;
 
   const filterEmptyModules = sortedAssignments.filter(
-    (assignment) => assignment.modules.length > 0,
+    (assignment) => assignment.filteredModules.length > 0,
   );
 
   const currentTheme = useColorModeValue('light', 'dark');
@@ -471,7 +471,7 @@ const Content = () => {
               >
                 <Timeline
                   key={section.id}
-                  assignments={section.sortedAssignments}
+                  assignments={section.filteredModules}
                   technologies={section.technologies || []}
                   title={section.label}
                   onClickAssignment={onClickAssignment}
