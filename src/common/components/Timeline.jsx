@@ -14,7 +14,7 @@ const color = {
 };
 
 const Timeline = ({
-  title, assignments, technologies, width, onClickAssignment,
+  title, assignments, technologies, width, onClickAssignment, showPendingTasks,
 }) => {
   const { t } = useTranslation('syllabus');
   const { colorMode } = useColorMode();
@@ -112,7 +112,7 @@ const Timeline = ({
           );
         }) : (
           <Text size="sm" margin={0} color={fontColor2} textAlign="left">
-            {t('module-not-started')}
+            {showPendingTasks ? t('no-modules-to-show') : t('module-not-started')}
           </Text>
         )}
       </Box>
@@ -126,6 +126,7 @@ Timeline.propTypes = {
   technologies: PropTypes.arrayOf(PropTypes.object),
   width: PropTypes.string,
   onClickAssignment: PropTypes.func,
+  showPendingTasks: PropTypes.bool,
 };
 
 Timeline.defaultProps = {
@@ -134,6 +135,7 @@ Timeline.defaultProps = {
   technologies: [],
   width: '100%',
   onClickAssignment: () => {},
+  showPendingTasks: false,
 };
 
 export default memo(Timeline);
