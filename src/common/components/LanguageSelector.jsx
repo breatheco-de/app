@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import {
   Box,
@@ -11,17 +12,15 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import styles from '../../../styles/flags.module.css';
-import navbarTR from '../translations/navbar';
 import NextChakraLink from './NextChakraLink';
 
 const LanguageSelector = ({ display, translations }) => {
+  const { t } = useTranslation('navbar');
   const router = useRouter();
   const locale = router.locale === 'default' ? 'en' : router.locale;
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
 
-  const {
-    languagesTR,
-  } = navbarTR[locale];
+  const languagesTR = t('languages', {}, { returnObjects: true });
   const [languagesOpen, setLanguagesOpen] = useState(false);
   const currentLanguage = languagesTR.filter((l) => l.value === locale)[0];
 
