@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/globals.css';
 import '../../styles/markdown.css';
+import TagManager from 'react-gtm-module';
 import PropTypes from 'prop-types';
 import { ChakraProvider } from '@chakra-ui/react';
 import { CookiesProvider } from 'react-cookie';
@@ -22,6 +23,10 @@ function App({ Component, pageProps }) {
   const { isAuthenticated } = useAuth();
   const [haveSession, setHaveSession] = useState(false);
   const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
+
+  useEffect(() => {
+    TagManager.initialize({ gtmId: process.env.TAG_MANAGER_KEY });
+  }, []);
 
   useEffect(() => {
     // verify if accessToken exists

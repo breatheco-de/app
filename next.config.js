@@ -22,6 +22,7 @@ module.exports = withBundleAnalyzer(nextTranslate({
     GITHUB_TOKEN: process.env.GITHUB_TOKEN, // Pass through env variables
     BC_ACADEMY_TOKEN: process.env.BC_ACADEMY_TOKEN,
     SYLLABUS: process.env.SYLLABUS,
+    TAG_MANAGER_KEY: process.env.TAG_MANAGER_KEY,
   },
   publicRuntimeConfig: {
     // Will be available on both server and client
@@ -29,9 +30,10 @@ module.exports = withBundleAnalyzer(nextTranslate({
     NEXT_PUBLIC_ID: process.env.NEXT_PUBLIC_ID,
     BC_ACADEMY_TOKEN: process.env.BC_ACADEMY_TOKEN,
     SYLLABUS: process.env.SYLLABUS,
+    TAG_MANAGER_KEY: process.env.TAG_MANAGER_KEY,
   },
   images: {
-    // whitelist for image providers
+    // Whitelist for image providers
     domains: ['assets.vercel.com', 'github.com', 'raw.githubusercontent.com'],
     // formats: ['image/avif', 'image/webp'],
   },
@@ -39,5 +41,6 @@ module.exports = withBundleAnalyzer(nextTranslate({
     BREATHECODE_HOST: process.env.BREATHECODE_HOST,
     BC_ACADEMY_TOKEN: process.env.BC_ACADEMY_TOKEN,
     SYLLABUS: process.env.SYLLABUS,
+    TAG_MANAGER_KEY: process.env.TAG_MANAGER_KEY,
   },
 }));
