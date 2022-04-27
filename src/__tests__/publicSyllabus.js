@@ -6,8 +6,9 @@ const fail = (msg, ...params) => {
 
 const publicSyllabus = async () => {
   console.log('process.env.BREATHECODE_HOST:', process.env.BREATHECODE_HOST);
+  console.log('process.env.SYLLABUS:', process.env.SYLLABUS);
   const resp = await axios.get(
-    "https://breathecode-test.herokuapp.com/v1/admissions/public/syllabus?slug=full-stack,web-development",
+    `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`,
   )
     .then(({ data }) => {
       if (data.length === 0) {
