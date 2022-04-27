@@ -38,10 +38,10 @@ const CallToAction = ({
     )}
     <Box
       display="flex"
-      gridGap={buttonsData.length > 1 ? '14px' : '4vh'}
-      flexDirection={buttonsData.length > 1 ? 'column' : 'row'}
+      gridGap={{ base: '14px', md: buttonsData.length > 1 ? '14px' : '4vh' }}
+      flexDirection={{ base: 'column', md: buttonsData.length > 1 ? 'column' : 'row' }}
     >
-      <Box>
+      <Box maxWidth="530px">
         {title && (
           <Heading as="h5" fontSize="xsm" color="white" margin={0} marginBottom="11px">
             {title}
@@ -61,14 +61,18 @@ const CallToAction = ({
         )}
       </Box>
       <Box
-        padding={{ base: '24px 0 0 0', lg: '0' }}
+        padding={{ base: '0 0 0 0', lg: '0' }}
         width={buttonsData.length > 1 ? '100%' : 'auto'}
         alignSelf="center"
         gridGap="14px"
-        display="flex"
+        display="grid"
+        gridTemplateColumns={{
+          base: 'repeat(auto-fill, minmax(10rem, 1fr))',
+          md: buttonsData.length ? 'repeat(auto-fill, minmax(8rem, 1fr))' : 'repeat(auto-fill, minmax(10rem, 1fr))',
+        }}
       >
         {buttonText && (
-          <Button as="a" style={buttonStyle} href={href} target={isExternalLink ? '_blank' : '_self'} marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
+          <Button whiteSpace="wrap" as="a" style={buttonStyle} href={href} target={isExternalLink ? '_blank' : '_self'} marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
             {buttonText}
           </Button>
         )}

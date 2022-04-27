@@ -543,7 +543,10 @@ const Content = () => {
             flexGrow={1}
             marginLeft={0}
             margin={{ base: '0', lg: Open ? '0' : '0 auto' }}
-            padding={GetReadme() !== false ? '0 8vw 4rem 8vw' : '4rem 4vw'}
+            padding={{
+              base: GetReadme() !== false ? '0 5vw 4rem 5vw' : '4rem 4vw',
+              md: GetReadme() !== false ? '0 8vw 4rem 8vw' : '4rem 4vw',
+            }}
             maxWidth="1012px"
             // marginRight="10rem"
             transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
