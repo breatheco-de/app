@@ -129,21 +129,23 @@ const CohortSideBar = ({
               {cohortCity}
             </Text>
             {cohort.ending_date !== null && (
-              <Text pt="4px" size="sm" color={commonTextColor} fontWeight="700" lineHeight="18px" margin={0}>
-                {t('cohortSideBar.last-date')}
-                {' '}
-                <Text as="span" size="sm" color={commonTextColor} fontWeight="400" lineHeight="18px" margin={0}>
-                  {endingDate[router.locale]}
+              <>
+                <Text pt="4px" size="sm" color={commonTextColor} fontWeight="700" lineHeight="18px" margin={0}>
+                  {t('cohortSideBar.last-date')}
+                  {' '}
+                  <Text as="span" size="sm" color={commonTextColor} fontWeight="400" lineHeight="18px" margin={0}>
+                    {endingDate[router.locale]}
+                  </Text>
                 </Text>
-              </Text>
+                <Text size="sm" color={commonTextColor} fontWeight="700" lineHeight="18px" margin={0}>
+                  {t('cohortSideBar.start-date')}
+                  {' '}
+                  <Text as="span" size="sm" color={commonTextColor} fontWeight="400" lineHeight="18px" margin={0}>
+                    {kickoffDate[router.locale]}
+                  </Text>
+                </Text>
+              </>
             )}
-            <Text size="sm" color={commonTextColor} fontWeight="700" lineHeight="18px" margin={0}>
-              {t('cohortSideBar.start-date')}
-              {' '}
-              <Text as="span" size="sm" color={commonTextColor} fontWeight="400" lineHeight="18px" margin={0}>
-                {kickoffDate[router.locale]}
-              </Text>
-            </Text>
           </Box>
         </Box>
         {!teacherVersionActive && teacher.map((el) => {
