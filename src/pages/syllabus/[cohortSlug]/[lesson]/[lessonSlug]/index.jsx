@@ -46,7 +46,7 @@ const Content = () => {
   const [showSolutionVideo, setShowSolutionVideo] = useState(false);
   const [cohortSession] = usePersistent('cohortSession', {});
   const [selectedSyllabus, setSelectedSyllabus] = useState({});
-  const [readmeUrlPahname, setReadmeUrlPahname] = useState(null);
+  const [readmeUrlPathname, setReadmeUrlPathname] = useState(null);
   const [currentData, setCurrentData] = useState({});
   const { user, choose } = useAuth();
   const toast = useToast();
@@ -240,7 +240,7 @@ const Content = () => {
     axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
       .then(({ data }) => {
         const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
-        setReadmeUrlPahname(urlPathname);
+        setReadmeUrlPathname(urlPathname);
         let currentlocaleLang = data.translations[language];
         const exensionName = getExtensionName(data.readme_url);
         if (exensionName === 'ipynb') {
@@ -504,8 +504,8 @@ const Content = () => {
             {t('edit-page')}
           </Link>
         )}
-        {ipynbHtmlUrl && readmeUrlPahname && (
-          <Link href={`https://colab.research.google.com/github${readmeUrlPahname}`} margin="3rem 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+        {ipynbHtmlUrl && readmeUrlPathname && (
+          <Link href={`https://colab.research.google.com/github${readmeUrlPathname}`} margin="3rem 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
             <Icon icon="google-collab" color="#A0AEC0" width="28px" height="28px" />
             {t('open-google-collab')}
           </Link>
