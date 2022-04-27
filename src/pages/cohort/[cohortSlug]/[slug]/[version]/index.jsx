@@ -439,6 +439,7 @@ const Dashboard = () => {
             )}
           </Box>
           <Box
+            id="module-map"
             marginTop="30px"
             gridGap="24px"
             display="flex"
