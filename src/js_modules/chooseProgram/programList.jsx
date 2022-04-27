@@ -21,8 +21,27 @@ function CohortProgram({ item, handleChoose }) {
   const { version, slug, name } = cohort.syllabus_version;
   // const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
 
+  const onClickHandler = () => {
+    handleChoose({
+      version,
+      slug,
+      cohort_name: cohort.name,
+      cohort_slug: cohort?.slug,
+      syllabus_name: name,
+      academy_id: cohort.academy.id,
+    });
+
+    axios.defaults.headers.common.Academy = cohort.academy.id;
+    setCohortSession({
+      ...cohort,
+      selectedProgramSlug: `/cohort/${cohort?.slug}/${slug}/v${version}`,
+    });
+    router.push(`/cohort/${cohort?.slug}/${slug}/v${version}`);
+  };
+
   return (
     <Module
+      onClickHandler={onClickHandler}
       containerPX="24px"
       data={{
         type: name,
@@ -34,23 +53,7 @@ function CohortProgram({ item, handleChoose }) {
       rightItemHandler={(
         <Box
           width="100%"
-          onClick={() => {
-            handleChoose({
-              version,
-              slug,
-              cohort_name: cohort.name,
-              cohort_slug: cohort?.slug,
-              syllabus_name: name,
-              academy_id: cohort.academy.id,
-            });
-
-            axios.defaults.headers.common.Academy = cohort.academy.id;
-            setCohortSession({
-              ...cohort,
-              selectedProgramSlug: `/cohort/${cohort?.slug}/${slug}/v${version}`,
-            });
-            router.push(`/cohort/${cohort?.slug}/${slug}/v${version}`);
-          }}
+          onClick={() => onClickHandler()}
           display="flex"
           justifyContent="flex-end"
           _focus={{ boxShadow: 'none' }}
