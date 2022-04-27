@@ -7,7 +7,7 @@ import Icon from './Icon';
 import Link from './NextChakraLink';
 
 const Module = ({
-  data, containerStyle, leftContentStyle, containerPX, width, currIndex,
+  onClickHandler, data, containerStyle, leftContentStyle, containerPX, width, currIndex,
   isDone, rightItemHandler, link, textWithLink,
 }) => {
   const containerBackground = isDone ? useColorModeValue('featuredLight', 'featuredDark') : useColorModeValue('#FFFFFF', 'primary');
@@ -88,7 +88,13 @@ const Module = ({
             </Text>
           </Link>
         ) : (
-          <Flex flexDirection="column" style={leftContentStyle} justifyContent="center">
+          <Flex
+            cursor="pointer"
+            onClick={onClickHandler}
+            flexDirection="column"
+            style={leftContentStyle}
+            justifyContent="center"
+          >
             {data.type && (
               <Heading
                 as="h3"
@@ -131,6 +137,7 @@ const Module = ({
 };
 
 Module.propTypes = {
+  onClickHandler: PropTypes.func,
   data: PropTypes.objectOf(PropTypes.any),
   containerStyle: PropTypes.objectOf(PropTypes.any),
   leftContentStyle: PropTypes.objectOf(PropTypes.any),
@@ -143,6 +150,7 @@ Module.propTypes = {
   currIndex: PropTypes.number,
 };
 Module.defaultProps = {
+  onClickHandler: () => {},
   data: {},
   containerStyle: {},
   leftContentStyle: {},
