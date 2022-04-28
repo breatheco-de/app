@@ -26,6 +26,7 @@ const ModuleMap = ({
     }));
 
     startDay({
+      t,
       id: userId,
       newTasks: updatedTasks,
       contextState,
@@ -53,7 +54,7 @@ const ModuleMap = ({
       width="100%"
       id={slug}
     >
-      <Box margin="14px 0" display="flex" alignItems="center" justifyContent="space-between">
+      <Box margin="14px 0" display="flex" alignItems="center" justifyContent="space-between" gridGap="15px">
         <Heading as="h2" fontSize="22px">
           {title}
         </Heading>
@@ -63,6 +64,7 @@ const ModuleMap = ({
           color={useColorModeValue('gray.default', 'white')}
           fontWeight="normal"
           textTransform="uppercase"
+          textAlign="right"
         >
           {t('modules.activitiesLength', { count: filteredModules.length })}
         </Heading>

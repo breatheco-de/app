@@ -83,5 +83,22 @@
     "reject-unsync-title": "Please confirm your action to reject all unsynced tasks",
     "confirm": "Confirm",
     "cancel": "Cancel"
+  },
+  "attendance-modal": {
+    "start-today-class": "Start today's class",
+    "select-students": "Select the students in the class",
+    "showing-students-with-active-educational-status": "Only showing students with active educational status",
+    "apply-changes": "Apply changes",
+    "students-selected": "{{count}} students selected",
+    "student-selected": "{{count}} student selected",
+    "day": "Day",
+    "module": "Module"
+  },
+  "teacher-sidebar": {
+    "actions": "Actions",
+    "take-attendancy": "Take attendancy",
+    "review-attendancy": "Review attendancy",
+    "assignments": "Assignments",
+    "teacher-tutorial": "Teacher tutorial"
   }
 }

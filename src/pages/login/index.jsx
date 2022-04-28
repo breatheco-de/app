@@ -1,3 +1,4 @@
+import useTranslation from 'next-translate/useTranslation';
 import {
   Flex, Stack, Box, Tabs, TabList, Tab, TabPanels, TabPanel, Image,
 } from '@chakra-ui/react';
@@ -11,6 +12,7 @@ import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 
 function login() {
+  const { t } = useTranslation('login');
   const { user } = useAuth();
   const router = useRouter();
 
@@ -46,7 +48,7 @@ function login() {
                     borderRight="none"
                     borderLeft="none"
                   >
-                    Log In
+                    {t('login')}
                   </Tab>
                   <Tab
                     _selected={{
@@ -63,7 +65,7 @@ function login() {
                     borderRight="none"
                     borderLeft="none"
                   >
-                    Registration
+                    {t('register')}
                   </Tab>
                 </TabList>
                 <TabPanels>

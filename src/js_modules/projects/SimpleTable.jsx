@@ -1,4 +1,5 @@
 import { useColorModeValue, Flex } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import TagCapsule from '../../common/components/TagCapsule';
 import Text from '../../common/components/Text';
@@ -12,6 +13,7 @@ const SimpleTable = ({
   liveDemoAvailable,
   technologies,
 }) => {
+  const { t } = useTranslation('exercises');
   const verifyIfNull = (value) => value !== null && value;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
@@ -26,10 +28,10 @@ const SimpleTable = ({
         justifyContent="space-between"
       >
         <Text size="l" color={commonTextColor}>
-          Dificulty
+          {t('common:difficulty')}
         </Text>
         <Text size="l" color={commonTextColor}>
-          {verifyIfNull(difficulty) ? difficulty : 'Not Available'}
+          {verifyIfNull(difficulty) ? difficulty : t('common:not-available')}
         </Text>
       </Flex>
       <Flex
@@ -41,7 +43,7 @@ const SimpleTable = ({
         justifyContent="space-between"
       >
         <Text size="l" color={commonTextColor}>
-          Repository
+          {t('common:repository')}
         </Text>
         <Link
           href={repository}
@@ -50,7 +52,7 @@ const SimpleTable = ({
           target="_blank"
           rel="noopener noreferrer"
         >
-          Click to Open
+          {t('common:click-to-open')}
         </Link>
       </Flex>
       <Flex
@@ -62,11 +64,11 @@ const SimpleTable = ({
         justifyContent="space-between"
       >
         <Text size="l" color={commonTextColor}>
-          Video Available
+          Video
         </Text>
         {videoAvailable === null ? (
           <Text size="l" color={commonTextColor}>
-            Not Available
+            {t('common:not-available')}
           </Text>
         ) : (
           <Link
@@ -76,7 +78,7 @@ const SimpleTable = ({
             rel="noopener noreferrer"
             style={{ fontSize: '15px' }}
           >
-            Click to Open
+            {t('common:click-to-open')}
           </Link>
         )}
       </Flex>
@@ -89,7 +91,8 @@ const SimpleTable = ({
         justifyContent="space-between"
       >
         <Text size="l" color={commonTextColor}>
-          Live Demo Available
+          {t('common:live-demo')}
+          {/* Live Demo Available */}
         </Text>
         {liveDemoAvailable ? (
           <Link
@@ -99,9 +102,13 @@ const SimpleTable = ({
             target="_blank"
             rel="noopener noreferrer"
           >
-            Click to Open
+            {t('common:click-to-open')}
           </Link>
-        ) : 'Not Available'}
+        ) : (
+          <Text size="l" color={commonTextColor}>
+            {t('common:not-available')}
+          </Text>
+        )}
       </Flex>
       <Flex
         width="100%"
@@ -112,12 +119,12 @@ const SimpleTable = ({
         justifyContent="space-between"
       >
         <Text size="l" color={commonTextColor}>
-          Project average Duration
+          {t('average-duration')}
         </Text>
         <Text size="l" color={commonTextColor}>
           {duration
             ? `${duration} hrs`
-            : 'Not Available'}
+            : t('common:not-available')}
         </Text>
       </Flex>
 
@@ -131,7 +138,7 @@ const SimpleTable = ({
         justifyContent="space-between"
       >
         <Text size="l" color={commonTextColor}>
-          Technologies
+          {t('common:technologies')}
         </Text>
         <TagCapsule
           variant="rounded"

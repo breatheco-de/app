@@ -119,7 +119,7 @@ export default function Home() {
               onSubmit={(values, actions) => {
                 bc.auth().subscribe(values).then(() => {
                   toast({
-                    title: 'Your email has been added to our list!',
+                    title: t('alert-message:added-to-waiting-list'),
                     status: 'success',
                     duration: 9000,
                     isClosable: true,
@@ -127,7 +127,7 @@ export default function Home() {
                   router.push('/thank-you');
                 }).catch(() => {
                   toast({
-                    title: 'Your email is already subscribed!',
+                    title: t('alert-message:email-already-subscribed'),
                     status: 'warning',
                     duration: 6000,
                     isClosable: true,

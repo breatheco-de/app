@@ -43,7 +43,8 @@ function chooseProgram() {
     bc.auth().invites().accept(id).then((res) => {
       const cohortName = res.data[0].cohort.name;
       toast({
-        title: `Cohort ${cohortName} successfully accepted!`,
+        title: t('alert-message:invitation-accepted', { cohortName }),
+        // title: `Cohort ${cohortName} successfully accepted!`,
         status: 'success',
         duration: 9000,
         isClosable: true,

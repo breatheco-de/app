@@ -1,8 +1,9 @@
 module.exports = {
   pages: {
     // Enable translations for the following pages
-    '*': ['common', 'navbar', 'footer'],
+    '*': ['common', 'navbar', 'footer', 'alert-message'],
     '/': ['home', 'social'],
+    '/login': ['login'],
     '/example': ['counter'],
     '/cohort/[cohortSlug]/[slug]/[version]': ['dashboard'],
     '/interactive-exercises': ['exercises'],

@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import Text from './Text';
 import AttendanceModal from './AttendanceModal';
@@ -49,6 +50,7 @@ const ItemButton = ({
 const TeacherSidebar = ({
   title, user, students, width, sortedAssignments,
 }) => {
+  const { t } = useTranslation('dashboard');
   const { colorMode } = useColorMode();
   const [openAttendance, setOpenAttendance] = useState(false);
   const [cohortSession] = usePersistent('cohortSession', {});
@@ -90,7 +92,7 @@ const TeacherSidebar = ({
         <Box pt="3" display="flex" flexDirection="column" alignItems="center">
           {/* Start attendance */}
           <ItemButton actionHandler={() => setOpenAttendance(true)}>
-            <ItemText text="Take attendancy" />
+            <ItemText text={t('teacher-sidebar.take-attendancy')} />
             <Box>
               <Icon icon="arrowRight" width="22px" height="22px" />
             </Box>
@@ -104,7 +106,7 @@ const TeacherSidebar = ({
               }
             }}
           >
-            <ItemText text="Review attendancy" />
+            <ItemText text={t('teacher-sidebar.review-attendancy')} />
             <Box>
               <Icon icon="arrowRight" width="22px" height="22px" />
             </Box>
@@ -118,7 +120,7 @@ const TeacherSidebar = ({
               }
             }}
           >
-            <ItemText text="Assignments" />
+            <ItemText text={t('teacher-sidebar.assignments')} />
             <Box>
               <Icon icon="arrowRight" width="22px" height="22px" />
             </Box>
@@ -132,7 +134,7 @@ const TeacherSidebar = ({
               }
             }}
           >
-            <ItemText text="Teacher tutorial" />
+            <ItemText text={t('teacher-sidebar.teacher-tutorial')} />
             <Box>
               <Icon icon="arrowRight" width="22px" height="22px" />
             </Box>
@@ -154,7 +156,8 @@ const TeacherSidebar = ({
           students={students}
           sortedAssignments={sortedAssignments}
           onClose={() => setOpenAttendance(false)}
-          title="Start your today’s class"
+          title={t('attendance-modal.start-today-class')}
+          // title="Start your today's class"
           message={greetings[router.locale]}
           width="100%"
         />
