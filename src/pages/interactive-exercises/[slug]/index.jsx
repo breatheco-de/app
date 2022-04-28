@@ -98,6 +98,7 @@ const TabletWithForm = ({
   commonTextColor,
   commonBorderColor,
 }) => {
+  const { t } = useTranslation('exercises');
   const [formStatus, setFormStatus] = useState({ status: 'idle', msg: '' });
   return (
     <>
@@ -118,11 +119,11 @@ const TabletWithForm = ({
           mt="0px"
           mb="0px"
         >
-          Direct access request
+          {t('direct-access-request')}
         </Heading>
 
         <Text size="md" color={commonTextColor} textAlign="left" my="10px" px="0px">
-          Please enter your information and receive instant access
+          {t('direct-access-request-description')}
         </Text>
 
         <Formik
@@ -135,8 +136,8 @@ const TabletWithForm = ({
               } else {
                 setFormStatus({ status: 'thank-you', msg: 'Thank you for your request!' });
                 toast({
-                  title: 'Thank you for your request!',
-                  description: 'An email will be sent to you shortly.',
+                  title: t('alert-message:request-apply-success'),
+                  description: t('alert-message:email-will-be-sent'),
                   status: 'success',
                   duration: 7000,
                   isClosable: true,
@@ -165,7 +166,7 @@ const TabletWithForm = ({
                         <Input
                           {...field}
                           id="full_name"
-                          placeholder={fields.full_name.place_holder}
+                          placeholder={t('common:full-name')}
                           type="name"
                           style={{
                             borderRadius: '3px',
@@ -187,7 +188,7 @@ const TabletWithForm = ({
                         <Input
                           {...field}
                           id="email"
-                          placeholder={fields.email.place_holder}
+                          placeholder={t('common:email')}
                           type="email"
                           style={{
                             borderRadius: '3px',
@@ -215,7 +216,7 @@ const TabletWithForm = ({
                     variant="default"
                     textTransform="uppercase"
                   >
-                    Get instant access
+                    {t('get-instant-access')}
                   </Button>
                 </Box>
               </Form>
@@ -260,7 +261,7 @@ const Exercise = ({ exercise, markdown }) => {
     setTimeout(() => {
       setNotFound(true);
       toast({
-        title: 'The endpoint could not access the content of this exercise',
+        title: t('alert-message:content-not-found', { lesson: t('common:exercise') }),
         // description: 'Content not found',
         status: 'error',
         duration: 7000,
@@ -277,7 +278,7 @@ const Exercise = ({ exercise, markdown }) => {
         axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=EXERCISE`)
           .catch(() => {
             toast({
-              title: `Exercise for language "${currentLanguageLabel}" not found, showing the english version`,
+              title: t('alert-message:language-not-found', { currentLanguageLabel }),
               status: 'warning',
               duration: 5500,
               isClosable: true,

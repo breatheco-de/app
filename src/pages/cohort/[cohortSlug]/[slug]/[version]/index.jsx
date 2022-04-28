@@ -81,7 +81,8 @@ const Dashboard = () => {
       .catch(() => {
         setModalIsOpen(false);
         toast({
-          title: 'Some Tasks cannot synced with current cohort',
+          title: t('alert-message:task-cant-sync-with-cohort'),
+          // title: 'Some Tasks cannot synced with current cohort',
           status: 'error',
           duration: 5000,
           isClosable: true,
@@ -96,7 +97,8 @@ const Dashboard = () => {
     }).deleteBulk()
       .then(() => {
         toast({
-          title: 'Unsynced tasks successfully removed!',
+          title: t('alert-message:unsynced-tasks-removed'),
+          // title: 'Unsynced tasks successfully removed!',
           status: 'success',
           duration: 5000,
           isClosable: true,
@@ -105,7 +107,8 @@ const Dashboard = () => {
       })
       .catch(() => {
         toast({
-          title: 'Some Tasks cannot be removed',
+          title: t('alert-message:unsynced-tasks-cant-be-removed'),
+          // title: 'Some Tasks cannot be removed',
           status: 'error',
           duration: 5000,
           isClosable: true,
@@ -144,7 +147,8 @@ const Dashboard = () => {
     }).catch(() => {
       router.push('/choose-program');
       toast({
-        title: 'Invalid cohort slug',
+        title: t('alert-message:invalid-cohort-slug'),
+        // title: 'Invalid cohort slug',
         status: 'error',
         duration: 7000,
         isClosable: true,
@@ -165,7 +169,7 @@ const Dashboard = () => {
     }).catch((err) => {
       console.error('err_studentAndTeachers:', err);
       toast({
-        title: 'Error fetching students and teachers',
+        title: t('alert-message:error-fetching-students-and-teachers'),
         status: 'error',
         duration: 7000,
         isClosable: true,
@@ -285,7 +289,9 @@ const Dashboard = () => {
   }, [contextState.cohortProgram, contextState.taskTodo, router]);
 
   const getDailyModuleData = () => {
-    const dailyModule = sortedAssignments[cohortSession?.current_module - 1];
+    const dailyModule = sortedAssignments.find(
+      (assignment) => assignment.id === cohortSession?.current_module,
+    );
     return dailyModule;
   };
   const dailyModuleData = getDailyModuleData() || '';
@@ -383,7 +389,7 @@ const Dashboard = () => {
           >
             {profesionalRoles.includes(cohortSession?.cohort_role) && (
               <TeacherSidebar
-                title="Actions"
+                title={t('teacher-sidebar.actions')}
                 user={user}
                 students={onlyStudentsActive}
                 sortedAssignments={sortedAssignments}
@@ -430,10 +436,10 @@ const Dashboard = () => {
 
           <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="32px" />
 
-          <Box display="flex" justifyContent="space-between">
+          <Box display="flex" justifyContent="space-between" gridGap="18px">
             <Heading as="h2" fontWeight="900" size="15px" textTransform="uppercase">{t('moduleMap')}</Heading>
             {modulesExists && (
-              <Checkbox onChange={(e) => setShowPendingTasks(e.target.checked)} color="gray.600">
+              <Checkbox textAlign="right" gridGap="10px" display="flex" flexDirection="row-reverse" onChange={(e) => setShowPendingTasks(e.target.checked)} color="gray.600">
                 {t('modules.show-pending-tasks')}
               </Checkbox>
             )}
@@ -487,7 +493,7 @@ const Dashboard = () => {
         >
           {profesionalRoles.includes(cohortSession?.cohort_role) && (
             <TeacherSidebar
-              title="Actions"
+              title={t('teacher-sidebar.actions')}
               user={user}
               students={onlyStudentsActive}
               sortedAssignments={sortedAssignments}

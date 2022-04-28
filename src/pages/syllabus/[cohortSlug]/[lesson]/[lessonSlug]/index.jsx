@@ -156,7 +156,7 @@ const Content = () => {
   const EventIfNotFound = () => {
     setCurrentData({});
     toast({
-      title: 'The endpoint could not access any content of this lesson',
+      title: t('alert-message:content-not-found', { lesson }),
       // description: 'Content not found',
       status: 'error',
       duration: 7000,
@@ -173,7 +173,8 @@ const Content = () => {
         const currData = respData.data;
         const markdownData = respMarkdown.data;
         toast({
-          title: `Data for language "${currentLanguageLabel}" not found, showing the english version`,
+          title: t('alert-message:language-not-found', { currentLanguageLabel }),
+          // not found, showing the english version`,
           status: 'warning',
           duration: 5500,
           isClosable: true,
@@ -194,7 +195,7 @@ const Content = () => {
       })
       .catch(() => {
         toast({
-          title: `The endpoint could not access any content of this ${lesson}`,
+          title: t('alert-message:default-version-not-found', { lesson }),
           // description: 'Content not found',
           status: 'error',
           duration: 7000,
@@ -227,7 +228,7 @@ const Content = () => {
         router.push('/choose-program');
         console.log('err_admissions_me:', err);
         toast({
-          title: 'Invalid cohort slug',
+          title: t('alert-message:invalid-cohort-slug'),
           // description: 'Content not found',
           status: 'error',
           duration: 7000,
@@ -284,7 +285,7 @@ const Content = () => {
     if (sortedAssignments.length <= 0) {
       router.push('/choose-program');
       toast({
-        title: 'No cohort modules have been found, please choose a valid cohort',
+        title: t('alert-message:no-cohort-modules-found'),
         status: 'error',
         duration: 7000,
         isClosable: true,

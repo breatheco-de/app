@@ -4,5 +4,9 @@
   "filter": "Filter",
   "filters": "Filters",
   "description": "The following lessons explain different programing concepts and have been published by Breathe code members, search for a particular lesson using the filters",
-  "backToExercises": "Back to Exercises"
+  "backToExercises": "Back to Exercises",
+  "direct-access-request": "Direct access request",
+  "direct-access-request-description": "Enter your information and receive instant access",
+  "get-instant-access": "Get instant access",
+  "average-duration": "Average Duration"
 }

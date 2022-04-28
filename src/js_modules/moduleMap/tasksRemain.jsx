@@ -1,4 +1,5 @@
 import { Fragment } from 'react';
+import useTranslation from 'next-translate/useTranslation';
 import {
   Box, useColorModeValue, Accordion, AccordionItem,
   AccordionButton, AccordionPanel, Skeleton, Button, useToast,
@@ -11,6 +12,7 @@ import Text from '../../common/components/Text';
 const TasksRemain = ({
   userId, sortedAssignments, startDay, contextState, setContextState,
 }) => {
+  const { t } = useTranslation('dashboard');
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
   const commonBorderColor = useColorModeValue('gray.200', 'gray.700');
@@ -28,6 +30,7 @@ const TasksRemain = ({
     }));
 
     startDay({
+      t,
       id: userId,
       newTasks: updatedTasks,
       label,

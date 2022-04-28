@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import useTranslation from 'next-translate/useTranslation';
 import {
   Button,
   FormControl,
@@ -20,6 +21,7 @@ import validationSchema from './validationSchemas';
 import useAuth from '../../hooks/useAuth';
 
 function LogIn() {
+  const { t } = useTranslation('login');
   const { login } = useAuth();
   const toast = useToast();
   const router = useRouter();
@@ -42,8 +44,8 @@ function LogIn() {
             if (data.status === 200) {
               actions.setSubmitting(false);
               toast({
-                title: 'Welcome to 4Geeks',
-                description: 'Select a program',
+                title: t('alert-message:welcome'),
+                description: t('alert-message:select-program'),
                 status: 'success',
                 duration: 9000,
                 isClosable: true,
@@ -54,7 +56,7 @@ function LogIn() {
           .catch((error) => {
             actions.setSubmitting(false);
             toast({
-              title: 'There was an error',
+              title: t('alert-message:account-not-found'),
               description: error.message,
               status: 'error',
               duration: 9000,
@@ -69,8 +71,8 @@ function LogIn() {
           <Stack spacing={6} justifyContent="space-between">
             <Button as="a" href={githubLoginUrl} cursor="pointer" variant="outline" weight="700">
               <Icon icon="github" width="18px" height="18px" />
-              <Text fontSize="13px" marginLeft="10px">
-                LOG IN WITH GITHUB
+              <Text fontSize="13px" marginLeft="10px" textTransform="uppercase">
+                {t('login-with-github')}
               </Text>
             </Button>
             <Box display="flex" justifyContent="center" width="100%">
@@ -80,7 +82,7 @@ function LogIn() {
                 marginRight="13px"
                 marginBottom="9px"
               />
-              <Box color="gray.default">or</Box>
+              <Box color="gray.default">{t('or')}</Box>
               <Box
                 borderBottom="solid 1px #DADADA"
                 width="100%"
@@ -98,7 +100,7 @@ function LogIn() {
                     float="left"
                     htmlFor="email"
                   >
-                    Email
+                    {t('common:email')}
                   </FormLabel>
                   <Input
                     {...field}
@@ -122,7 +124,7 @@ function LogIn() {
                     float="left"
                     htmlFor="password"
                   >
-                    Password
+                    {t('common:password')}
                   </FormLabel>
                   <Input
                     {...field}
@@ -147,11 +149,11 @@ function LogIn() {
                 rel="noopener noreferrer"
                 href={`${process.env.BREATHECODE_HOST}/v1/auth/password/reset?url=${curUrl}`}
               >
-                Reset Password
+                {t('forgot-password')}
               </Link>
             </Flex>
             <Button variant="default" fontSize="l" isLoading={isSubmitting} type="submit">
-              LOGIN
+              {t('login')}
             </Button>
           </Stack>
         </Form>

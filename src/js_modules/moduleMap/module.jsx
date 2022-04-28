@@ -1,6 +1,7 @@
 import {
   useToast,
 } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useEffect, useState, memo } from 'react';
 import { updateAssignment } from '../../common/hooks/useModuleHandler';
@@ -13,6 +14,7 @@ import { isWindow } from '../../utils/index';
 const Module = ({
   data, taskTodo, currIndex,
 }) => {
+  const { t } = useTranslation('dashboard');
   // const [cohortSession] = usePersistent('cohortSession', {});
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { contextState, setContextState } = useModuleMap();
@@ -41,13 +43,13 @@ const Module = ({
       ...task,
     });
     updateAssignment({
-      task, taskStatus, closeSettings, toast, contextState, setContextState,
+      t, task, taskStatus, closeSettings, toast, contextState, setContextState,
     });
   };
 
   const sendProject = (task, githubUrl, taskStatus) => {
     updateAssignment({
-      task, closeSettings, toast, githubUrl, taskStatus, contextState, setContextState,
+      t, task, closeSettings, toast, githubUrl, taskStatus, contextState, setContextState,
     });
   };
 
