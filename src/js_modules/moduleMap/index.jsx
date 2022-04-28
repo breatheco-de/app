@@ -12,7 +12,7 @@ import Icon from '../../common/components/Icon';
 const ModuleMap = ({
   index, userId, contextState, setContextState, slug, modules, filteredModules,
   title, description, taskTodo, cohortSession, taskCohortNull, filteredModulesByPending,
-  showPendingTasks,
+  showPendingTasks, searchValue,
 }) => {
   const { t } = useTranslation('dashboard');
   const toast = useToast();
@@ -43,6 +43,7 @@ const ModuleMap = ({
   const isAvailableToSync = () => {
     if (!taskCohortNullExistsInModules
       && filteredModules.length > 0
+      && searchValue.length === 0
       && modules.length !== filteredModules.length
     ) return true;
     return false;
@@ -154,6 +155,7 @@ ModuleMap.propTypes = {
   taskCohortNull: PropTypes.arrayOf(PropTypes.object),
   filteredModulesByPending: PropTypes.arrayOf(PropTypes.object),
   showPendingTasks: PropTypes.bool,
+  searchValue: PropTypes.string,
 };
 ModuleMap.defaultProps = {
   modules: [],
@@ -166,6 +168,7 @@ ModuleMap.defaultProps = {
   taskCohortNull: [],
   filteredModulesByPending: [],
   showPendingTasks: false,
+  searchValue: '',
 };
 
 export default memo(ModuleMap);

@@ -3,7 +3,8 @@ import {
 } from 'react';
 import {
   Box, Flex, Container, useColorModeValue, Skeleton, useToast,
-  Checkbox,
+  Checkbox, Input, InputGroup, InputRightElement, IconButton,
+  keyframes, usePrefersReducedMotion,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -26,29 +27,49 @@ import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import dashboardTR from '../../../../../common/translations/dashboard';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
-import { slugify, devLogTable } from '../../../../../utils/index';
+import { slugify, devLogTable, includesToLowerCase } from '../../../../../utils/index';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
+import Text from '../../../../../common/components/Text';
 
 const Dashboard = () => {
   const { t } = useTranslation('dashboard');
+  const toast = useToast();
+  const router = useRouter();
   const { contextState, setContextState } = useModuleMap();
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [taskCohortNull, setTaskCohortNull] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
+  const [searchValue, setSearchValue] = useState(router.query.search || '');
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const { user, choose } = useAuth();
   const [, setSyllabus] = usePersistent('syllabus', []);
 
-  const toast = useToast();
-  const router = useRouter();
   const locale = router.locale === 'default' ? 'en' : router.locale;
   const { cohortSlug, slug } = router.query;
 
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const slideLeft = keyframes`
+  from {
+    -webkit-transform: translateX(30px);
+            transform: translateX(30px);
+  }
+  to {
+    -webkit-transform: translateX(0px);
+            transform: translateX(0px);
+  }
+`;
+  const slideLeftAnimation = prefersReducedMotion
+    ? undefined
+    : `${slideLeft} 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both`;
+
   const skeletonStartColor = useColorModeValue('gray.300', 'gray.light');
+  const commonInputColor = useColorModeValue('gray.default', 'gray.300');
+  const commonInputActiveColor = useColorModeValue('gray.800', 'gray.100');
   const skeletonEndColor = useColorModeValue('gray.400', 'gray.400');
 
   const { supportSideBar } = dashboardTR[locale];
@@ -304,6 +325,15 @@ const Dashboard = () => {
     (assignment) => assignment.filteredModules.length !== 0,
   );
 
+  const sortedAssignmentsSearched = sortedAssignments.filter((l) => {
+    const { filteredModules } = l;
+    const filtered = filteredModules.filter((module) => {
+      const { title } = module;
+      return title.toLowerCase().includes(searchValue.toLowerCase());
+    });
+    return filtered.length !== 0;
+  });
+
   return (
     <Container maxW="container.xl">
       <Box width="fit-content" marginTop="18px" marginBottom="48px">
@@ -436,13 +466,43 @@ const Dashboard = () => {
 
           <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="32px" />
 
-          <Box display="flex" justifyContent="space-between" gridGap="18px">
+          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} justifyContent="space-between" gridGap="18px">
             <Heading as="h2" fontWeight="900" size="15px" textTransform="uppercase">{t('moduleMap')}</Heading>
-            {modulesExists && (
-              <Checkbox textAlign="right" gridGap="10px" display="flex" flexDirection="row-reverse" onChange={(e) => setShowPendingTasks(e.target.checked)} color="gray.600">
-                {t('modules.show-pending-tasks')}
-              </Checkbox>
-            )}
+
+            <Box display="flex" alignItems="center">
+              <InputGroup>
+                <Input
+                  borderRadius="25px"
+                  type="text"
+                  value={searchValue}
+                  backgroundColor="white"
+                  style={{
+                    cursor: 'default',
+                    opacity: showSearch ? 1 : 0,
+                  }}
+                  disabled={!showSearch}
+                  animation={showSearch ? slideLeftAnimation : ''}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  color={commonInputColor}
+                  _focus={{
+                    color: commonInputActiveColor,
+                    backgroundColor: 'gray.light',
+                  }}
+                  _hover={{
+                    color: commonInputActiveColor,
+                    backgroundColor: 'gray.light',
+                  }}
+                />
+                <InputRightElement>
+                  <IconButton onClick={() => setShowSearch(!showSearch)} pr="8px" background="transparent" _hover={{ background: 'transparent' }} _active={{ background: 'transparent' }} aria-label="Search in modules" icon={<Icon icon="search" color={showSearch ? '#000000' : ''} width="18px" height="18px" />} />
+                </InputRightElement>
+              </InputGroup>
+              {modulesExists && (
+                <Checkbox onChange={(e) => setShowPendingTasks(e.target.checked)} textAlign="right" gridGap="10px" display="flex" flexDirection="row-reverse" color="gray.600">
+                  {t('modules.show-pending-tasks')}
+                </Checkbox>
+              )}
+            </Box>
           </Box>
           <Box
             id="module-map"
@@ -453,10 +513,18 @@ const Dashboard = () => {
           >
             {sortedAssignments.length >= 1 ? (
               <>
-                {sortedAssignments.map((assignment, i) => {
+                {sortedAssignmentsSearched.map((assignment, i) => {
                   const {
                     label, description, filteredModules, modules, filteredModulesByPending,
                   } = assignment;
+
+                  const filteredModulesSearched = filteredModules.filter(
+                    (l) => includesToLowerCase(l.title, searchValue),
+                  );
+                  const filteredModulesByPendingSearched = filteredModulesByPending.filter(
+                    (l) => includesToLowerCase(l.title, searchValue),
+                  );
+
                   const index = i;
                   return (
                     <ModuleMap
@@ -469,15 +537,21 @@ const Dashboard = () => {
                       index={index}
                       title={label}
                       slug={slugify(label)}
+                      searchValue={searchValue}
                       description={description}
                       taskTodo={taskTodo}
                       modules={modules}
-                      filteredModules={filteredModules}
+                      filteredModules={filteredModulesSearched}
                       showPendingTasks={showPendingTasks}
-                      filteredModulesByPending={filteredModulesByPending}
+                      filteredModulesByPending={filteredModulesByPendingSearched}
                     />
                   );
                 })}
+                {sortedAssignmentsSearched.length <= 0 && (
+                  <Text size="l">
+                    {t('modules.search-not-found')}
+                  </Text>
+                )}
               </>
             ) : <ModuleMapSkeleton />}
 

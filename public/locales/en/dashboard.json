@@ -4,6 +4,7 @@
   "moduleMap": "Module map",
   "progressText": "progress in the program",
   "modules": {
+    "search-not-found": "No matches found for this search",
     "show-pending-tasks": "Show only Pending Tasks",
     "activitiesLength": "{{count}} Activities",
     "newActivities": {

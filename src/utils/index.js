@@ -41,6 +41,8 @@ const removeStorageItem = (key) => {
   return null;
 };
 
+const includesToLowerCase = (text, keyValue) => text.toLowerCase().includes(keyValue.toLowerCase());
+
 const getExtensionName = (key) => {
   // from: https://github.com/example/ipynbrepo/prob_stats.ipynb
   // to: ipynb
@@ -67,6 +69,7 @@ export {
   slugify,
   isPlural,
   getStorageItem,
+  includesToLowerCase,
   getExtensionName,
   removeStorageItem,
   isDevMode,
