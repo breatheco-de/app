@@ -4,6 +4,7 @@
   "backToChooseProgram": "Volver a elegir programa",
   "progressText": "progreso en el programa",
   "modules": {
+    "search-not-found": "No se encontraron coincidencias para esta búsqueda",
     "show-pending-tasks": "Mostrar Tareas Pendientes",
     "activitiesLength": "{{count}} Actividades",
     "newActivities": {

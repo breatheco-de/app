@@ -1,18 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Button,
-  FormControl,
-  Stack,
-  Text,
-  Box,
-  Input,
-  FormErrorMessage,
-  FormLabel,
-  useToast,
-  Link,
-  Spacer,
-  Flex,
+  Button, FormControl, Stack, Text, Box, Input, FormErrorMessage,
+  FormLabel, useToast, Link, Spacer, Flex, InputRightElement,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 import { useRouter } from 'next/router';
@@ -22,6 +12,7 @@ import useAuth from '../../hooks/useAuth';
 
 function LogIn() {
   const { t } = useTranslation('login');
+  const [showPSW, setShowPSW] = useState(false);
   const { login } = useAuth();
   const toast = useToast();
   const router = useRouter();
@@ -53,11 +44,11 @@ function LogIn() {
               router.push('/choose-program');
             }
           })
-          .catch((error) => {
+          .catch(() => {
             actions.setSubmitting(false);
             toast({
               title: t('alert-message:account-not-found'),
-              description: error.message,
+              // description: error.message,
               status: 'error',
               duration: 9000,
               isClosable: true,
@@ -128,12 +119,33 @@ function LogIn() {
                   </FormLabel>
                   <Input
                     {...field}
-                    type="password"
+                    type={showPSW ? 'text' : 'password'}
                     placeholder="***********"
                     height="50px"
                     borderColor="gray.default"
                     borderRadius="3px"
                   />
+                  <InputRightElement width="2.5rem" top="33.5px" right="10px">
+                    <Button
+                      background="transparent"
+                      width="100%"
+                      height="100%"
+                      padding="0"
+                      onClick={() => setShowPSW(!showPSW)}
+                      _hover={{
+                        background: 'transparent',
+                      }}
+                      _active={{
+                        background: 'transparent',
+                      }}
+                    >
+                      {showPSW ? (
+                        <Icon icon="eyeOpen" color="#A4A4A4" width="24px" height="24px" />
+                      ) : (
+                        <Icon icon="eyeClosed" color="#A4A4A4" width="24px" height="24px" />
+                      )}
+                    </Button>
+                  </InputRightElement>
                   <FormErrorMessage>{form.errors.password}</FormErrorMessage>
                 </FormControl>
               )}
