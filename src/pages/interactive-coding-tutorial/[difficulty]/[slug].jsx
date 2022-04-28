@@ -131,7 +131,7 @@ const ProjectSlug = ({ project, markdown }) => {
 
   const EventIfNotFound = () => {
     toast({
-      title: 'The endpoint could not access the content of this Project',
+      title: t('alert-message:content-not-found', { lesson: t('common:project') }),
       // description: 'Content not found',
       status: 'error',
       duration: 7000,
@@ -155,7 +155,7 @@ const ProjectSlug = ({ project, markdown }) => {
         axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=EXERCISE`)
           .catch(() => {
             toast({
-              title: `Exercise for language "${currentLanguageLabel}" not found, showing the english version`,
+              title: t('alert-message:language-not-found', currentLanguageLabel),
               status: 'warning',
               duration: 5500,
               isClosable: true,

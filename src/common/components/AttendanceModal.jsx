@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
+import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import {
   Modal,
@@ -35,6 +36,7 @@ import { usePersistent } from '../hooks/usePersistent';
 const AttendanceModal = ({
   title, message, isOpen, onClose, sortedAssignments, students,
 }) => {
+  const { t } = useTranslation('dashboard');
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const [day, setDay] = useState(cohortSession.current_day);
   const [currentModule, setCurrentModule] = useState(cohortSession.current_module);
@@ -57,7 +59,7 @@ const AttendanceModal = ({
   useEffect(() => {
     setDefaultDay(currentCohortDay);
   }, [currentCohortDay]);
-
+  // err.response.status
   const saveCohortAttendancy = () => {
     const cohortSlug = cohortSession.slug;
     bc.activity()
@@ -77,7 +79,7 @@ const AttendanceModal = ({
       )
       .then(() => {
         toast({
-          title: 'The Attendancy has been reported',
+          title: t('alert-message:attendancy-reported'),
           status: 'success',
           duration: 9000,
           isClosable: true,
@@ -86,7 +88,7 @@ const AttendanceModal = ({
       })
       .catch(() => {
         toast({
-          title: 'There was an error reporting the attendancy',
+          title: t('alert-message:attendancy-report-error'),
           status: 'error',
           duration: 9000,
           isClosable: true,
@@ -107,19 +109,25 @@ const AttendanceModal = ({
             if (activitiesForDay.length === 0) saveCohortAttendancy();
             else {
               toast({
-                title: `Attendance for day ${day} has already been taken`,
+                title: t('alert-message:attenadance-already-taken'),
+                // title: `Attendance for day ${day} has already been taken`,
                 status: 'warning',
                 duration: 9000,
                 isClosable: true,
               });
-              setIsLoading(false);
             }
           })
           .catch((error) => {
+            toast({
+              title: t('alert-message:error-getting-previous-attendance'),
+              status: 'error',
+              duration: 9000,
+              isClosable: true,
+            });
             console.log('getAttendance_error:', error);
-            setIsLoading(false);
             reject(error);
-          });
+          })
+          .finally(() => setIsLoading(false));
         resolve(data);
         return data;
       })
@@ -142,7 +150,7 @@ const AttendanceModal = ({
           </Text>
           <Box display="flex" gridGap="25px" padding="20px 0 0 0">
             <FormControl id="days">
-              <FormLabel htmlFor="day" color={commonFontColor} fontSize="12px">Day</FormLabel>
+              <FormLabel htmlFor="day" color={commonFontColor} fontSize="12px">{t('attendance-modal.day')}</FormLabel>
               <NumberInput
                 defaultValue={defaultDay}
                 max={durationInDays}
@@ -158,7 +166,7 @@ const AttendanceModal = ({
             </FormControl>
 
             <FormControl>
-              <FormLabel htmlFor="current_module" color={commonFontColor} fontSize="12px">Module</FormLabel>
+              <FormLabel htmlFor="current_module" color={commonFontColor} fontSize="12px">{t('attendance-modal.module')}</FormLabel>
               {sortedAssignments.length > 0 && (
                 <Select defaultValue={currentModule} onChange={(e) => setCurrentModule(parseInt(e.target.value, 10))} id="module" placeholder="Select module">
                   {sortedAssignments.map((module) => (
@@ -174,10 +182,12 @@ const AttendanceModal = ({
           <Box>
             <Flex justifyContent="space-between" padding="6px 0 16px 0">
               <Text size="l" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
-                Select the student in the class
+                {t('attendance-modal.select-students')}
               </Text>
               <Text size="l" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
-                {`${checked.length} ${checked.length > 1 || checked.length === 0 ? 'Students' : 'Student'} selected`}
+                {checked.length > 1 || checked.length === 0
+                  ? t('attendance-modal.students-selected', { count: checked.length })
+                  : t('attendance-modal.student-selected', { count: checked.length })}
               </Text>
             </Flex>
             <Grid templateColumns={{ md: 'repeat(4, 4fr)', sm: 'repeat(1, 1fr)' }} gap={6}>
@@ -214,19 +224,20 @@ const AttendanceModal = ({
             color={commonFontColor}
             size="sm"
           >
-            Only showing students with active educational status
+            {t('attendance-modal.showing-students-with-active-educational-status')}
           </Text>
           <Button
             isLoading={isLoading}
             loadingText="SUBMITTING"
             minWidth="173.4px"
+            textTransform="uppercase"
             fontSize="13px"
             disabled={checked.length < 1 || isLoading}
             variant="default"
             onClick={() => updateCohortDay()}
-            rightIcon={<Icon icon="longArrowRight" width="15px" color="white" />}
+            rightIcon={<Icon icon="longArrowRight" width="15px" color={checked.length < 1 ? 'black' : 'white'} />}
           >
-            START CLASS DAY
+            {t('attendance-modal.apply-changes')}
           </Button>
         </ModalFooter>
       </ModalContent>

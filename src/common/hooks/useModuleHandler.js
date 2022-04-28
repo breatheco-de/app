@@ -1,7 +1,7 @@
 import bc from '../services/breathecode';
 
 export const updateAssignment = ({
-  task, closeSettings, toast, githubUrl, contextState, setContextState, taskStatus,
+  t, task, closeSettings, toast, githubUrl, contextState, setContextState, taskStatus,
 }) => {
   // Task case
   const toggleStatus = (task.task_status === undefined || task.task_status === 'PENDING') ? 'DONE' : 'PENDING';
@@ -23,7 +23,7 @@ export const updateAssignment = ({
         ],
       });
       toast({
-        title: 'Your assignment has been updated successfully',
+        title: t('alert-message:assignment-updated'),
         status: 'success',
         duration: 6000,
         isClosable: true,
@@ -32,7 +32,7 @@ export const updateAssignment = ({
       closeSettings();
     }).catch(() => {
       toast({
-        title: 'There was an error updated your assignment',
+        title: t('alert-message:assignment-update-error'),
         status: 'errror',
         duration: 5000,
         isClosable: true,
@@ -76,8 +76,12 @@ export const updateAssignment = ({
         });
         toast({
           // title: `"${res.data.title}" has been updated successfully`,
-          title: `Your project ${isDelivering ? 'has been delivered' : 'delivery has been removed'} successfully`,
-          description: isDelivering ? `Link: ${data.github_url} has been delivered successfully` : '',
+          title: isDelivering
+            ? t('alert-message:delivery-success')
+            : t('alert-message:delivery-removed'),
+          // title: `Your project ${isDelivering ?
+          // 'has been delivered' : 'delivery has been removed'} successfully`,
+          description: isDelivering ? t('alert-message:delivery-link', { url: data.github_url }) : '',
           status: 'success',
           duration: 6000,
           isClosable: true,
@@ -86,7 +90,7 @@ export const updateAssignment = ({
       }
     }).catch(() => {
       toast({
-        title: 'There was an error delivering your project',
+        title: t('alert-message:delivery-error'),
         status: 'errror',
         duration: 5000,
         isClosable: true,
@@ -97,11 +101,14 @@ export const updateAssignment = ({
 };
 
 export const startDay = ({
-  newTasks, label, contextState, setContextState, toast,
+  t, newTasks, label, contextState, setContextState, toast,
 }) => {
   bc.todo({}).add(newTasks).then(({ data }) => {
     toast({
-      title: `Module ${label ? `${label}started` : 'synchronized'} successfully`,
+      title: label
+        ? t('alert-message:module-started', { title: label })
+        : t('alert-message:module-sync-success'),
+      // title: `Module ${label ? `${label}started` : 'synchronized'} successfully`,
       status: 'success',
       duration: 6000,
       isClosable: true,
@@ -116,7 +123,7 @@ export const startDay = ({
   }).catch((err) => {
     console.log('error_ADD_TASK 🔴 ', err);
     toast({
-      title: 'Something went wrong while starting module',
+      title: t('alert-message:module-start-error'),
       status: 'error',
       duration: 6000,
       isClosable: true,

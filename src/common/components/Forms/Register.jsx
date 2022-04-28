@@ -1,4 +1,4 @@
-import React from 'react';
+import useTranslation from 'next-translate/useTranslation';
 import {
   Button,
   FormControl,
@@ -17,6 +17,7 @@ import validationSchema from './validationSchemas';
 import bc from '../../services/breathecode';
 
 function Register() {
+  const { t } = useTranslation('login');
   // const [showPSW, setShowPSW] = useState(false);
   // const [showRepeatPSW, setShowRepeatPSW] = useState(false);
 
@@ -40,7 +41,8 @@ function Register() {
       onSubmit={(values, actions) => {
         bc.auth().subscribe(values).then(() => {
           toast({
-            title: 'Your email has been added to our list!',
+            title: t('alert-message:added-to-waiting-list'),
+            // title: 'Your email has been added to our list!',
             status: 'success',
             duration: 9000,
             isClosable: true,
@@ -48,8 +50,8 @@ function Register() {
           router.push('/thank-you');
         }).catch(() => {
           toast({
-            title: 'Your email is already subscribed!',
-            status: 'warning',
+            title: t('alert-message:email-already-subscribed'),
+            status: 'info',
             duration: 6000,
             isClosable: true,
           });
@@ -72,12 +74,12 @@ function Register() {
                       float="left"
                       htmlFor="first_name"
                     >
-                      First Name
+                      {t('common:first-name')}
                     </FormLabel>
                     <Input
                       {...field}
                       type="text"
-                      placeholder="First Name"
+                      placeholder={t('common:first-name')}
                       height="50px"
                       borderColor="gray.default"
                       borderRadius="3px"
@@ -96,12 +98,12 @@ function Register() {
                       float="left"
                       htmlFor="lest_name"
                     >
-                      Last Name
+                      {t('common:last-name')}
                     </FormLabel>
                     <Input
                       {...field}
                       type="text"
-                      placeholder="Last Name"
+                      placeholder={t('common:last-name')}
                       height="50px"
                       borderColor="gray.default"
                       borderRadius="3px"
@@ -122,7 +124,7 @@ function Register() {
                     float="left"
                     htmlFor="phone"
                   >
-                    Phone
+                    {t('common:phone')}
                   </FormLabel>
                   <Input
                     {...field}
@@ -147,12 +149,12 @@ function Register() {
                     float="left"
                     htmlFor="email"
                   >
-                    Email
+                    {t('common:email')}
                   </FormLabel>
                   <Input
                     {...field}
                     type="email"
-                    placeholder="Email"
+                    placeholder="jhon.doe@gmail.com"
                     height="50px"
                     borderColor="gray.default"
                     borderRadius="3px"
@@ -273,7 +275,7 @@ function Register() {
               isLoading={isSubmitting}
               type="submit"
             >
-              REGISTER
+              {t('register')}
             </Button>
           </Stack>
         </Form>

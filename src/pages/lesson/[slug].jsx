@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { useEffect, useState } from 'react';
+import useTranslation from 'next-translate/useTranslation';
 import axios from 'axios';
 import {
   Box, useColorModeValue, useToast, Modal, Button, Tooltip,
@@ -92,6 +93,7 @@ export const getStaticProps = async ({ params }) => {
 };
 
 const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
+  const { t } = useTranslation('lesson');
   // const [readme, setReadme] = useState(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
   // getMarkDownContent(markdown);
@@ -114,7 +116,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
           axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=LESSON`)
             .catch(() => {
               toast({
-                title: `Lesson for language "${currentLanguageLabel}" not found, showing the english version`,
+                title: t('alert-message:language-not-found', { currentLanguageLabel }),
                 status: 'warning',
                 duration: 5500,
                 isClosable: true,
@@ -126,7 +128,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
 
   const EventIfNotFound = () => {
     toast({
-      title: 'The endpoint could not access the content of this lesson',
+      title: t('alert-message:content-not-found2', { lesson: t('common:lesson') }),
       // description: 'Content not found',
       status: 'error',
       duration: 7000,
@@ -208,7 +210,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
             // }}
             onClick={() => setIsFullScreen(true)}
           >
-            <Tooltip label="Full Screen" placement="top">
+            <Tooltip label={t('common:full-screen')} placement="top">
               <Box>
                 <Icon icon="screen" color={iconColorTheme} width="22px" height="22px" />
               </Box>

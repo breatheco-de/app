@@ -83,5 +83,22 @@
     "reject-unsync-title": "Confirme su acción para rechazar todas las tareas no sincronizadas",
     "confirm": "Confirmar",
     "cancel": "Cancelar"
+  },
+  "attendance-modal": {
+    "start-today-class": "Empezar la clase de hoy",
+    "select-students": "Selecciona los alumnos presentes en la clase",
+    "showing-students-with-active-educational-status": "Solo se muestran alumnos con estatus educativo activo",
+    "apply-changes": "Aplicar cambios",
+    "students-selected": "{{count}} alumnos seleccionados",
+    "student-selected": "{{count}} alumno seleccionado",
+    "day": "Día",
+    "module": "Módulo"
+  },
+  "teacher-sidebar": {
+    "actions": "Acciones",
+    "take-attendancy": "Tomar asistencia",
+    "review-attendancy": "Revisar asistencia",
+    "assignments": "Tareas",
+    "teacher-tutorial": "Tutorial de profesor"
   }
 }

@@ -4,5 +4,9 @@
   "filter": "Filtro",
   "filters": "Filtros",
   "description": "Los siguientes ejercicios explican conceptos diferentes de programación y han sido publicados por miembros de Breathe code, busca un ejercicio usando los filtros",
-  "backToExercises": "Volver a ejercicios"
+  "backToExercises": "Volver a ejercicios",
+  "direct-access-request": "Solicitud de acceso directo",
+  "direct-access-request-description": "Ingrese su información y reciba acceso instantáneo",
+  "get-instant-access": "Obtener acceso",
+  "average-duration": "Duración promedio"
 }
