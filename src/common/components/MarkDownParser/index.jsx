@@ -1,6 +1,7 @@
 /* eslint-disable no-loop-func */
 /* eslint-disable no-await-in-loop */
 import PropTypes from 'prop-types';
+import useTranslation from 'next-translate/useTranslation';
 import { compiler } from 'markdown-to-jsx';
 import { Box, Link } from '@chakra-ui/react';
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -182,9 +183,14 @@ const MDHr = () => (<Box d="none" />);
 const MarkDownParser = ({
   content, callToActionProps, withToc, frontMatter,
 }) => {
+  const { t } = useTranslation('syllabus');
   const {
     token, assetSlug, assetType, gitpod,
   } = callToActionProps;
+  const learnpackActions = t('learnpack.buttons-actions', {
+    assetSlug,
+    token,
+  }, { returnObjects: true });
   // support for emoji shortcodes
   // exapmle: :heart_eyes: -> 😍
   const emojiSupport = (text) => text.replace(/:\w+:/gi, (name) => emoji.getUnicode(name));
@@ -204,20 +210,9 @@ const MarkDownParser = ({
             background="blue.default"
             margin="12px 0 20px 0px"
             imageSrc="/static/images/learnpack.png"
-            text="This practice will run outside of 4Geeks.com thought LearnPack. An interactive learning tool that runs integrated with VSCode and Gitpod."
+            text={t('learnpack.description')}
             width={{ base: '100%', md: 'fit-content' }}
-            buttonsData={[
-              {
-                text: 'Start new exercise',
-                href: `https://breathecode.herokuapp.com/asset/${assetSlug}?token=${token}`,
-                isExternalLink: true,
-              },
-              {
-                text: 'Continue exercise',
-                href: 'https://gitpod.io/workspaces',
-                isExternalLink: true,
-              },
-            ]}
+            buttonsData={learnpackActions}
           />
         )}
         content={frontMatter}

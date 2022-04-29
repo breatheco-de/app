@@ -479,7 +479,7 @@ const Content = () => {
               return (
                 <Box
                   key={`${section.title}-${section.id}`}
-                  padding="1.5rem"
+                  padding={{ base: '1rem', md: '1.5rem' }}
                   borderBottom={1}
                   borderStyle="solid"
                   borderColor={commonBorderColor}
