@@ -71,6 +71,10 @@ const Dashboard = () => {
   const commonInputColor = useColorModeValue('gray.default', 'gray.300');
   const commonInputActiveColor = useColorModeValue('gray.800', 'gray.100');
   const skeletonEndColor = useColorModeValue('gray.400', 'gray.400');
+  const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
+  const commonFontColor = useColorModeValue('gray.600', 'gray.200');
+  const commonActiveBackground = useColorModeValue('gray.light', 'rgba(255, 255, 255, 0.22)');
+  const iconColor = useColorModeValue('#000000', '#FFFFFF');
 
   const { supportSideBar } = dashboardTR[locale];
 
@@ -475,7 +479,7 @@ const Dashboard = () => {
                   borderRadius="25px"
                   type="text"
                   value={searchValue}
-                  backgroundColor="white"
+                  backgroundColor={commonBackground}
                   style={{
                     cursor: 'default',
                     opacity: showSearch ? 1 : 0,
@@ -486,19 +490,19 @@ const Dashboard = () => {
                   color={commonInputColor}
                   _focus={{
                     color: commonInputActiveColor,
-                    backgroundColor: 'gray.light',
+                    backgroundColor: commonActiveBackground,
                   }}
                   _hover={{
                     color: commonInputActiveColor,
-                    backgroundColor: 'gray.light',
+                    backgroundColor: commonActiveBackground,
                   }}
                 />
                 <InputRightElement>
-                  <IconButton onClick={() => setShowSearch(!showSearch)} pr="8px" background="transparent" _hover={{ background: 'transparent' }} _active={{ background: 'transparent' }} aria-label="Search in modules" icon={<Icon icon="search" color={showSearch ? '#000000' : ''} width="18px" height="18px" />} />
+                  <IconButton onClick={() => setShowSearch(!showSearch)} pr="8px" background="transparent" _hover={{ background: 'transparent' }} _active={{ background: 'transparent' }} aria-label="Search in modules" icon={<Icon icon="search" color={showSearch ? iconColor : ''} width="18px" height="18px" />} />
                 </InputRightElement>
               </InputGroup>
               {modulesExists && (
-                <Checkbox onChange={(e) => setShowPendingTasks(e.target.checked)} textAlign="right" gridGap="10px" display="flex" flexDirection="row-reverse" color="gray.600">
+                <Checkbox onChange={(e) => setShowPendingTasks(e.target.checked)} textAlign="right" gridGap="10px" display="flex" flexDirection="row-reverse" color={commonFontColor}>
                   {t('modules.show-pending-tasks')}
                 </Checkbox>
               )}
