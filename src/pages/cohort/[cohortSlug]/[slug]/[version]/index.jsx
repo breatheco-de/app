@@ -325,14 +325,14 @@ const Dashboard = () => {
     (assignment) => assignment.filteredModules.length !== 0,
   );
 
-  const sortedAssignmentsSearched = sortedAssignments.filter((l) => {
+  const sortedAssignmentsSearched = searchValue.length > 0 ? sortedAssignments.filter((l) => {
     const { filteredModules } = l;
     const filtered = filteredModules.filter((module) => {
       const { title } = module;
       return title.toLowerCase().includes(searchValue.toLowerCase());
     });
     return filtered.length !== 0;
-  });
+  }) : sortedAssignments;
 
   return (
     <Container maxW="container.xl">
@@ -518,12 +518,17 @@ const Dashboard = () => {
                     label, description, filteredModules, modules, filteredModulesByPending,
                   } = assignment;
 
-                  const filteredModulesSearched = filteredModules.filter(
-                    (l) => includesToLowerCase(l.title, searchValue),
-                  );
-                  const filteredModulesByPendingSearched = filteredModulesByPending.filter(
-                    (l) => includesToLowerCase(l.title, searchValue),
-                  );
+                  const filteredModulesSearched = searchValue.length > 0
+                    ? filteredModules.filter(
+                      (l) => includesToLowerCase(l.title, searchValue),
+                    )
+                    : filteredModules;
+
+                  const filteredModulesByPendingSearched = searchValue.length > 0
+                    ? filteredModulesByPending.filter(
+                      (l) => includesToLowerCase(l.title, searchValue),
+                    )
+                    : filteredModulesByPending;
 
                   const index = i;
                   return (
