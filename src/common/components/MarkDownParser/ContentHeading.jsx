@@ -22,7 +22,7 @@ const ContentHeading = ({ content, children, callToAction }) => {
       marginBottom="2rem"
     >
       <Box marginBottom="1.2rem">
-        <Heading size="m" display="inline-flex" marginTop="1.5rem">
+        <Heading size="m" display="inline-flex" gridGap="10px" marginTop="1.5rem">
           <Icon icon={assetTypeIcons[assetType] || 'book'} height="30px" color="#0097CD" width="28px" style={{ margin: 'auto', marginRight: '0.4rem' }} />
           {' '}
           {title}

@@ -7,5 +7,20 @@
   "teacherSidebar": {
     "instructions": "Instrucciones",
     "key-concepts": "Conceptos clave"
+  },
+  "learnpack": {
+    "description": "Esta práctica se ejecutará fuera de 4Geeks.com a través de LearnPack. Una herramienta de aprendizaje interactivo que se ejecuta integrado con VSCode y Gitpod.",
+    "buttons-actions": [
+      {
+        "text": "Nuevo ejercicio",
+        "href": "https://breathecode.herokuapp.com/asset/{{assetSlug}}?token={{token}}",
+        "isExternalLink": true
+      },
+      {
+        "text": "Continuar ejercicio",
+        "href": "https://gitpod.io/workspaces",
+        "isExternalLink": true
+      }
+    ]
   }
 }
