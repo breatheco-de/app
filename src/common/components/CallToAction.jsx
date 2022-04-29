@@ -65,11 +65,8 @@ const CallToAction = ({
         width={buttonsData.length > 1 ? '100%' : 'auto'}
         alignSelf="center"
         gridGap="14px"
-        display="grid"
-        gridTemplateColumns={{
-          base: 'repeat(auto-fill, minmax(10rem, 1fr))',
-          md: buttonsData.length ? 'repeat(auto-fill, minmax(8rem, 1fr))' : 'repeat(auto-fill, minmax(10rem, 1fr))',
-        }}
+        display={{ base: 'grid', md: 'flex' }}
+        gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(10rem, 1fr))', md: '' }}
       >
         {buttonText && (
           <Button whiteSpace="wrap" as="a" style={buttonStyle} href={href} target={isExternalLink ? '_blank' : '_self'} marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
