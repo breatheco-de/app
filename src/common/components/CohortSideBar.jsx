@@ -46,6 +46,7 @@ const ProfilesSection = ({ title, profiles }) => {
           <Text
             display="flex"
             cursor="pointer"
+            variantColor="blue"
             color="blue.default"
             alignItems="center"
             width="auto"

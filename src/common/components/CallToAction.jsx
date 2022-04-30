@@ -69,7 +69,7 @@ const CallToAction = ({
         gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(10rem, 1fr))', md: '' }}
       >
         {buttonText && (
-          <Button whiteSpace="wrap" as="a" style={buttonStyle} href={href} target={isExternalLink ? '_blank' : '_self'} padding="0.5rem 1rem" height="auto" marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
+          <Button whiteSpace="wrap" as="a" style={buttonStyle} href={href} target={isExternalLink ? '_blank' : '_self'} marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
             {buttonText}
           </Button>
         )}
