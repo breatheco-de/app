@@ -5,9 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import styles from '../../styles/Home.module.css';
 import Counter from '../common/components/Counter';
 import { H1 } from '../common/styledComponents/Head';
-import Heading from '../common/components/Heading';
 import ReactPlayer from '../common/components/ReactPlayer';
-import OnlyFor from '../common/components/OnlyFor';
 
 export default function Example() {
   const { t } = useTranslation(['common', 'counter']);
@@ -16,20 +14,6 @@ export default function Example() {
     <div className={styles.container}>
 
       <main className={styles.main}>
-        <Heading type="span" color="black" size="m">
-          {`
-            component behind: 
-            <OnlyFor capabilities={['read_member', 'read_tet']}>
-          `}
-        </Heading>
-        <OnlyFor
-          capabilities={['read_member', 'read_test']}
-        >
-          <Heading type="h3" color="green" size="m" className={styles.title}>
-            This text is handled with my current cohort capabilities
-          </Heading>
-        </OnlyFor>
-
         <H1 type="h1" className={styles.title}>
           {t('common:heading')}
         </H1>

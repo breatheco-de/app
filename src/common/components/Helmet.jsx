@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 
 const Helmet = ({
   title, description, url, previewImage, type, unlisted,
+  stonlyScript,
 }) => (
   <Head>
     {/* <!-- Primary Meta Tags --> */}
@@ -12,7 +13,8 @@ const Helmet = ({
     {/* <link rel="canonical" href={`${siteUrl}${pagePath}`} /> */}
     {/* <meta name="keywords" content={keywords} /> */}
 
-    {/* <script
+    <script
+    // Stonly tracking script
       dangerouslySetInnerHTML={{
         __html: `
           (function(s,t,o,n,l,y,_) {
@@ -27,10 +29,11 @@ const Helmet = ({
             l = t.getElementsByTagName(o)[0];
             l.parentNode.insertBefore(y, l);
           })(window,document,'script','https://stonly.com/js/tracker/stn.js');
-          stonlyTrack('init', '<widget_id>');
+          stonlyTrack('init', '188858a7-c5a4-11ec-9fb8-0ae9fa2a18a2');
+          ${stonlyScript}
         `,
       }}
-    /> */}
+    />
 
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -62,6 +65,7 @@ Helmet.propTypes = {
   previewImage: PropTypes.string,
   type: PropTypes.string,
   unlisted: PropTypes.bool,
+  stonlyScript: PropTypes.string,
 };
 
 Helmet.defaultProps = {
@@ -72,6 +76,7 @@ Helmet.defaultProps = {
   previewImage: 'https://raw.githubusercontent.com/4GeeksAcademy/website-v2/master/src/assets/logos/favicon.png',
   type: 'website',
   unlisted: false,
+  stonlyScript: '',
 };
 
 export default Helmet;
