@@ -4,6 +4,7 @@ import '../../styles/markdown.css';
 import TagManager from 'react-gtm-module';
 import PropTypes from 'prop-types';
 import { ChakraProvider } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import { CookiesProvider } from 'react-cookie';
 import wrapper from '../store';
 import CustomTheme from '../../styles/theme';
@@ -22,7 +23,10 @@ import { usePersistent } from '../common/hooks/usePersistent';
 
 function App({ Component, pageProps }) {
   const [cohortSession] = usePersistent('cohortSession', {});
+  const [taskTodo] = usePersistent('taskTodo', {});
+  const router = useRouter();
   const [stonlyScript, setStonlyScript] = useState('');
+  const [stonlyLanguage, setStonlyLanguage] = useState('');
   const { isAuthenticated } = useAuth();
   const [haveSession, setHaveSession] = useState(false);
   const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
@@ -32,17 +36,33 @@ function App({ Component, pageProps }) {
   }, []);
 
   useEffect(() => {
-    if (cohortSession.slug !== undefined) {
+    if (cohortSession.slug !== undefined && taskTodo !== undefined) {
+      const tasksFilteredByPending = taskTodo.filter(
+        (task) => task.revision_status === 'PENDING',
+      );
+
       setStonlyScript(`
       console.log('stonlyTrack running')
       stonlyTrack('identify', '${cohortSession?.bc_id}', {
         'academy-role': '${cohortSession?.cohort_role?.toLowerCase()}',
         'cohort-slug': '${cohortSession?.slug}',
+        'cohort-stage': 'STARTED',
         'academy-slug': '${cohortSession?.academy?.slug}',
+        'cohort-pending-tasks': ${tasksFilteredByPending.length}
       });
       `);
     }
-  }, []);
+  }, [cohortSession]);
+
+  useEffect(() => {
+    if (cohortSession.bc_id && router.locale) {
+      setStonlyLanguage(`
+      stonlyTrack('identify', '${cohortSession?.bc_id}', {
+        'language': '${router.locale}'
+      });
+      `);
+    }
+  }, [cohortSession, router.locale]);
 
   useEffect(() => {
     // verify if accessToken exists
@@ -60,7 +80,11 @@ function App({ Component, pageProps }) {
 
   return (
     <>
-      <Helmet {...pageProps} stonlyScript={stonlyScript && stonlyScript} />
+      <Helmet
+        {...pageProps}
+        stonlyScript={stonlyScript && stonlyScript}
+        stonlyLanguage={stonlyLanguage}
+      />
       <CookiesProvider>
         <AuthProvider>
           <ChakraProvider resetCSS theme={CustomTheme}>

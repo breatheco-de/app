@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 const Helmet = ({
   title, description, url, previewImage, type, unlisted,
-  stonlyScript,
+  stonlyScript, stonlyLanguage,
 }) => (
   <Head>
     {/* <!-- Primary Meta Tags --> */}
@@ -31,6 +31,7 @@ const Helmet = ({
           })(window,document,'script','https://stonly.com/js/tracker/stn.js');
           stonlyTrack('init', '188858a7-c5a4-11ec-9fb8-0ae9fa2a18a2');
           ${stonlyScript}
+          ${stonlyLanguage}
         `,
       }}
     />
@@ -66,6 +67,7 @@ Helmet.propTypes = {
   type: PropTypes.string,
   unlisted: PropTypes.bool,
   stonlyScript: PropTypes.string,
+  stonlyLanguage: PropTypes.string,
 };
 
 Helmet.defaultProps = {
@@ -77,6 +79,7 @@ Helmet.defaultProps = {
   type: 'website',
   unlisted: false,
   stonlyScript: '',
+  stonlyLanguage: '',
 };
 
 export default Helmet;
