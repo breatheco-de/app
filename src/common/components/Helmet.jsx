@@ -29,7 +29,7 @@ const Helmet = ({
             l = t.getElementsByTagName(o)[0];
             l.parentNode.insertBefore(y, l);
           })(window,document,'script','https://stonly.com/js/tracker/stn.js');
-          stonlyTrack('init', '188858a7-c5a4-11ec-9fb8-0ae9fa2a18a2');
+          stonlyTrack('init', '${process.env.STONLY_ID}');
           ${stonlyScript}
           ${stonlyLanguage}
         `,
