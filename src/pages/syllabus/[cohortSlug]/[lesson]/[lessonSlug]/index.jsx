@@ -318,15 +318,11 @@ const Content = () => {
         <MarkdownParser
           content={readme.content}
           callToActionProps={callToActionProps}
-          titleRightSide={(
-            <>
-              {!ipynbHtmlUrl && currentData.url && (
-                <Link href={`${currentData.url}`} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center" margin="20px 0 10px !important">
-                  <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-                  {t('edit-page')}
-                </Link>
-              )}
-            </>
+          titleRightSide={!ipynbHtmlUrl && currentData.url && (
+            <Link href={`${currentData.url}`} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center" margin="20px 0 10px !important">
+              <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+              {t('edit-page')}
+            </Link>
           )}
           withToc={lesson.toLowerCase() === 'read'}
           frontMatter={{
