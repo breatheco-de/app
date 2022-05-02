@@ -326,12 +326,6 @@ const Content = () => {
                   {t('edit-page')}
                 </Link>
               )}
-              {ipynbHtmlUrl && readmeUrlPathname && (
-                <Link href={`https://colab.research.google.com/github${readmeUrlPathname}`} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center" margin="20px 0 10px !important">
-                  <Icon icon="google-collab" color="#A0AEC0" width="28px" height="28px" />
-                  {t('open-google-collab')}
-                </Link>
-              )}
             </>
           )}
           withToc={lesson.toLowerCase() === 'read'}
@@ -515,6 +509,12 @@ const Content = () => {
         </Box>
       </Box>
       <Box width="100%" height="auto">
+        {ipynbHtmlUrl && readmeUrlPathname && (
+          <Link href={`https://colab.research.google.com/github${readmeUrlPathname}`} margin="3rem 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+            <Icon icon="google-collab" color="#A0AEC0" width="28px" height="28px" />
+            {t('open-google-collab')}
+          </Link>
+        )}
         {!isQuiz && currentData.intro_video_url && (
           <ReactPlayer
             id={currentData.intro_video_url}
