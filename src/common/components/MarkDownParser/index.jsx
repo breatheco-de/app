@@ -181,7 +181,7 @@ const MDTable = ({ children }) => (
 const MDHr = () => (<Box d="none" />);
 
 const MarkDownParser = ({
-  content, callToActionProps, withToc, frontMatter,
+  content, callToActionProps, withToc, frontMatter, titleRightSide,
 }) => {
   const { t } = useTranslation('syllabus');
   const {
@@ -199,6 +199,7 @@ const MarkDownParser = ({
   return (
     <>
       <ContentHeading
+        titleRightSide={titleRightSide}
         callToAction={gitpod === true && assetType === 'EXERCISE' && (
           <CallToAction
             styleContainer={{
@@ -280,12 +281,14 @@ MarkDownParser.propTypes = {
   callToActionProps: PropTypes.objectOf(PropTypes.any),
   withToc: PropTypes.bool,
   frontMatter: PropTypes.objectOf(PropTypes.any),
+  titleRightSide: PropTypes.node,
 };
 MarkDownParser.defaultProps = {
   content: '',
   callToActionProps: {},
   withToc: false,
   frontMatter: {},
+  titleRightSide: null,
 };
 
 Code.propTypes = {
