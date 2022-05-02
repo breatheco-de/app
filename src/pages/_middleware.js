@@ -21,10 +21,6 @@ const middleware = async (req) => {
     pathname, origin, locale, search,
   } = url;
 
-  if (pathname.includes('/lesson/')) {
-    return '';
-  }
-
   // Replace "/default" from locale with "/en"
   const shouldHandleLocale = !PUBLIC_FILE.test(pathname)
     && !pathname.includes('/api/')
