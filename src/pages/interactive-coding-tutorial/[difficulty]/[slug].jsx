@@ -242,6 +242,7 @@ const ProjectSlug = ({ project, markdown }) => {
             margin="30px 0"
             // width={{ base: '100%', md: '350px' }}
             minWidth={{ base: '100%', md: '300px' }}
+            maxWidth="350px"
             height="fit-content"
             borderWidth="0px"
             borderRadius="17px"
@@ -283,6 +284,7 @@ const ProjectSlug = ({ project, markdown }) => {
           margin="30px 0"
           // minWidth={{ base: '100%', md: '250px' }}
           minWidth={{ base: '100%', md: '300px' }}
+          maxWidth="350px"
           height="fit-content"
           borderWidth="0px"
           borderRadius="17px"
