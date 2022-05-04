@@ -2,7 +2,7 @@ import { memo } from 'react';
 import PropTypes from 'prop-types';
 
 const OnlyFor = ({
-  cohortSession, academy, capabilities, children,
+  cohortSession, academy, capabilities, children, onlyMember,
 }) => {
   const academyNumber = Math.floor(academy);
   const userCapabilities = cohortSession.user_capabilities || [];
@@ -14,6 +14,7 @@ const OnlyFor = ({
 
   const haveRequiredCapabilities = () => {
     if (!cohortSession) return false;
+    if (onlyMember && cohortSession.cohort_role === 'STUDENT') return false;
     if (!academy && isCapableRole) return true;
     if (capabilities.length === 0 && isCapableAcademy) return true;
     if (academy && isCapableAcademy && isCapableRole) return true;
@@ -27,11 +28,13 @@ OnlyFor.propTypes = {
   academy: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   capabilities: PropTypes.arrayOf(PropTypes.string),
   children: PropTypes.node.isRequired,
+  onlyMember: PropTypes.bool,
 };
 
 OnlyFor.defaultProps = {
   academy: '',
   capabilities: [],
+  onlyMember: false,
 };
 
 export default memo(OnlyFor);

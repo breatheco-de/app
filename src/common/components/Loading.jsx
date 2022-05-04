@@ -9,11 +9,17 @@ const Loading = () => {
     axiosInstance.interceptors.request.use((req) => {
       setLoading(true);
       return req;
-    }, (error) => Promise.reject(error));
+    }, (error) => {
+      Promise.reject(error);
+      setLoading(false);
+    });
     axiosInstance.interceptors.response.use((res) => {
       setLoading(false);
       return res;
-    }, (error) => Promise.reject(error));
+    }, (error) => {
+      Promise.reject(error);
+      setLoading(false);
+    });
     return () => {
       setLoading(false);
     };

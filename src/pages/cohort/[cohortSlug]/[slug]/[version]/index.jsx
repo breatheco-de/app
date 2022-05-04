@@ -193,9 +193,9 @@ const Dashboard = () => {
         setSudentAndTeachers(data);
       }
     }).catch((err) => {
-      console.error('err_studentAndTeachers:', err);
       toast({
         title: t('alert-message:error-fetching-students-and-teachers'),
+        description: err.message,
         status: 'error',
         duration: 7000,
         isClosable: true,
@@ -208,16 +208,13 @@ const Dashboard = () => {
     if (user && user.active_cohort && cohortSession.cohort_role) {
       const academyId = user.active_cohort.academy_id;
       const { version } = user.active_cohort;
-      // setCohortSession({
-      //   ...cohortSession,
-      //   bc_id: user.id,
-      // });
+      const currentAcademy = user.roles.find((role) => role.academy.id === academyId);
 
       // Fetch cohortProgram and TaskTodo then apply to contextState (useModuleMap - action)
       Promise.all([
         bc.todo({ cohort: cohortSession.id }).getTaskByStudent(), // Tasks with cohort id
         bc.syllabus().get(academyId, slug, version), // cohortProgram
-        bc.auth().getRoles(cohortSession.cohort_role?.toLowerCase()),
+        bc.auth().getRoles(currentAcademy?.role), // Roles
       ]).then((
         [taskTodoData, programData, userRoles],
       ) => {
@@ -237,7 +234,13 @@ const Dashboard = () => {
           cohortProgram: programData.data,
         });
       }).catch((err) => {
-        console.log('err_fetching_cohort-assignemnts:', err);
+        toast({
+          title: t('alert-message:error-fetching-role', { role: currentAcademy?.role }),
+          description: err.message,
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
         router.push('/choose-program');
       });
     }
@@ -424,7 +427,7 @@ const Dashboard = () => {
             gridGap="30px"
             // minWidth={{ base: 'auto', md: 'clamp(250px, 30vw, 380px)' }}
           >
-            <OnlyFor cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
+            <OnlyFor onlyMember cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
               <TeacherSidebar
                 title={t('teacher-sidebar.actions')}
                 user={user}
@@ -577,7 +580,7 @@ const Dashboard = () => {
           gridGap="30px"
           minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
         >
-          <OnlyFor cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
+          <OnlyFor onlyMember cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
             <TeacherSidebar
               title={t('teacher-sidebar.actions')}
               user={user}
