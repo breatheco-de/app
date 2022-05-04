@@ -185,23 +185,25 @@ const MarkDownParser = ({
 }) => {
   const { t } = useTranslation('syllabus');
   const [learnpackActions, setLearnpackActions] = useState([]);
+  const newExerciseText = t('learnpack.new-exercise');
+  const continueExerciseText = t('learnpack.continue-exercise');
   const {
     token, assetSlug, assetType, gitpod,
   } = callToActionProps;
   useEffect(() => {
     setLearnpackActions([
       {
-        text: t('learnpack.new-exercise'),
-        href: `https://breathecode.herokuapp.com/asset/${assetSlug}?token=${token}`,
+        text: newExerciseText,
+        href: `${process.env.BREATHECODE_HOST}/asset/${assetSlug}?token=${token}`,
         isExternalLink: true,
       },
       {
-        text: t('learnpack.continue-exercise'),
+        text: continueExerciseText,
         href: 'https://gitpod.io/workspaces',
         isExternalLink: true,
       },
     ]);
-  }, [token, assetSlug]);
+  }, [token, assetSlug, newExerciseText, continueExerciseText]);
 
   // support for emoji shortcodes
   // exapmle: :heart_eyes: -> 😍
