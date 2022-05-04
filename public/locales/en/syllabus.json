@@ -10,17 +10,7 @@
   },
   "learnpack": {
     "description": "This practice will run outside of 4Geeks.com thought LearnPack. An interactive learning tool that runs integrated with VSCode and Gitpod.",
-    "buttons-actions": [
-      {
-        "text": "Start new exercise",
-        "href": "https://breathecode.herokuapp.com/asset/{{assetSlug}}?token={{token}}",
-        "isExternalLink": true
-      },
-      {
-        "text": "Continue exercise",
-        "href": "https://gitpod.io/workspaces",
-        "isExternalLink": true
-      }
-    ]
+    "new-exercise": "Start new exercise",
+    "continue-exercise": "Continue exercise"
   }
 }
