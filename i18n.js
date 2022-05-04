@@ -13,6 +13,7 @@ module.exports = {
     '/interactive-exercises/[slug]': ['exercises'],
     '/choose-program': ['choose-program'],
     '/syllabus/[cohortSlug]/[lesson]/[lessonSlug]': ['syllabus', 'dashboard'],
+    '/how-to': ['how-to'],
   },
   locales: ['default', 'en', 'es'],
   // defaultLocale: 'en', // removed for redirects handling purposes

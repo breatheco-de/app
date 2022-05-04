@@ -20,6 +20,11 @@ const slugify = (str) => str
   .replace(/[\s_-]+/g, '-')
   .replace(/^-+|-+$/g, '');
 
+const unSlugify = (str) => str
+  .replace(/-/g, ' ')
+  .replace(/\w\S*/g,
+  (txt) => txt.charAt(0) + txt.substr(1).toLowerCase());
+
 const isPlural = (element) => {
   if (element.length > 1) {
     return true;
@@ -67,6 +72,7 @@ export {
   isWindow,
   HAVE_SESSION,
   slugify,
+  unSlugify,
   isPlural,
   getStorageItem,
   includesToLowerCase,

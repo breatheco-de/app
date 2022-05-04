@@ -18,10 +18,10 @@ const TechnologiesSection = ({
   const [isMobile] = useMediaQuery('(min-width: 1082px)');
   return (
     <Flex flexDirection="column" padding="0 0 12px 0" borderBottom={1} borderStyle="solid" borderColor={commonBorderColor}>
-      <Text fontSize="xl" fontWeight="bold" color={commonTextColor} padding="25px 0 18px 0">
+      <Text fontSize="1rem" textTransform="uppercase" fontWeight="bold" color={commonTextColor} padding="25px 0 18px 0">
         {title}
       </Text>
-      <Collapse in={show} startingHeight={170} animateOpacity>
+      <Collapse in={show} startingHeight={technologyTags.length > 4 ? 170 : 38} animateOpacity>
         <Grid
           gridTemplateColumns={{
             base: 'repeat(auto-fill, minmax(6rem, 1fr))',

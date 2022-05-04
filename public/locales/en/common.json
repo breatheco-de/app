@@ -8,6 +8,8 @@
   "lesson": "Lesson",
   "exercise": "Exercise",
   "project": "Project",
+  "filter": "Filter",
+  "filters": "Filters",
   "quiz": "Quiz",
   "first-name": "First name",
   "last-name": "Last name",
@@ -23,5 +25,11 @@
   "not-available": "Not available",
   "live-demo": "Live demo",
   "technologies": "Technologies",
-  "full-screen": "Full screen"
+  "full-screen": "Full screen",
+  "no-title": "No title 🙂",
+  "search-not-found": "No matches found for this search",
+  "difficulties": "Difficulties",
+  "only-video-tutorials": "Only video tutorials",
+  "apply-filters": "Apply filters",
+  "clear-all": "Clear all"
 }
