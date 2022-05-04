@@ -167,7 +167,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
         <ProjectList
           projects={data}
           contextFilter={filteredBy.howToOptions}
-          projectPath="interactive-exercises"
+          projectPath="how-to"
         />
       </Box>
     </>
