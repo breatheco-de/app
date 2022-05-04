@@ -30,5 +30,6 @@
   "module-sync-error": "There was an error synchronizing the module",
   "invitation-accepted": "Cohort {{cohortName}} successfully accepted!",
   "request-apply-success": "¡Gracias por tu solicitud!",
-  "email-will-be-sent": "An email will be sent to you shortly"
+  "email-will-be-sent": "An email will be sent to you shortly",
+  "error-fetching-role": "There was an error trying to find the role \"{{role}}\""
 }
