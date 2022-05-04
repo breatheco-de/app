@@ -15,36 +15,6 @@ import ProjectList from '../../js_modules/projects/ProjectList';
 import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
 
-// export const getStaticPaths = async ({ locales }) => {
-//   let content = [];
-//   // ?type=ARTICLE&category=how-to
-//   const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`)
-//     .then((res) => res.json())
-//     .catch((err) => console.log(err));
-
-//   content = Object.values(data);
-//   if (data.status >= 200 && data.status < 400) {
-//     data.asset_type = 'article';
-//     console.log(`Original content: ${content}`);
-//   } else {
-//     console.error(`Error fetching content with ${data.status}`);
-//   }
-//   const paths = content.flatMap((res) => locales.map((locale) => {
-//     const localeToUsEs = locale === 'en' ? 'us' : 'es';
-//     return ({
-//       params: {
-//         slug: res.translations[localeToUsEs] || res.slug,
-//       },
-//       locale,
-//     });
-//   }));
-
-//   return {
-//     fallback: false,
-//     paths,
-//   };
-// };
-
 export const getStaticProps = async () => {
   const howTos = []; // filtered howTos after removing repeated
   let arrHowTos = []; // incoming howTos
@@ -137,10 +107,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
         borderColor={useColorModeValue('gray.200', 'gray.900')}
       >
         <TitleContent title={t('title')} icon="document" mobile={false} />
-
         <Search placeholder={t('search')} />
-        {/* <Search placeholder={t('search')} /> */}
-
         <Button
           variant="outline"
           backgroundColor={useColorModeValue('', 'gray.800')}
@@ -195,7 +162,6 @@ export default function HowTo({ data, technologyTags, difficulties }) {
             textAlign="center"
           >
             {t('description')}
-            example
           </Text>
         )}
         <ProjectList
