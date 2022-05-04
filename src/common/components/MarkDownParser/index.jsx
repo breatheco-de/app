@@ -184,13 +184,27 @@ const MarkDownParser = ({
   content, callToActionProps, withToc, frontMatter, titleRightSide,
 }) => {
   const { t } = useTranslation('syllabus');
+  const [learnpackActions, setLearnpackActions] = useState([]);
+  const newExerciseText = t('learnpack.new-exercise');
+  const continueExerciseText = t('learnpack.continue-exercise');
   const {
     token, assetSlug, assetType, gitpod,
   } = callToActionProps;
-  const learnpackActions = t('learnpack.buttons-actions', {
-    assetSlug,
-    token,
-  }, { returnObjects: true });
+  useEffect(() => {
+    setLearnpackActions([
+      {
+        text: newExerciseText,
+        href: `${process.env.BREATHECODE_HOST}/asset/${assetSlug}?token=${token}`,
+        isExternalLink: true,
+      },
+      {
+        text: continueExerciseText,
+        href: 'https://gitpod.io/workspaces',
+        isExternalLink: true,
+      },
+    ]);
+  }, [token, assetSlug, newExerciseText, continueExerciseText]);
+
   // support for emoji shortcodes
   // exapmle: :heart_eyes: -> 😍
   const emojiSupport = (text) => text.replace(/:\w+:/gi, (name) => emoji.getUnicode(name));
