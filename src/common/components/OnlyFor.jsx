@@ -1,24 +1,11 @@
-import { memo, useEffect, useState } from 'react';
+import { memo } from 'react';
 import PropTypes from 'prop-types';
-import { usePersistent } from '../hooks/usePersistent';
-import bc from '../services/breathecode';
-import { devLog } from '../../utils';
 
-const OnlyFor = ({ academy, capabilities, children }) => {
-  const [cohortSession] = usePersistent('cohortSession', {});
-  const [userCapabilities, setUserCapabilities] = useState([]);
+const OnlyFor = ({
+  cohortSession, academy, capabilities, children,
+}) => {
   const academyNumber = Math.floor(academy);
-  const cohortRole = typeof cohortSession.cohort_role === 'string' && cohortSession.cohort_role.toLowerCase();
-
-  useEffect(() => {
-    if (cohortRole) {
-      bc.auth().getRoles(cohortRole).then(({ data }) => {
-        setUserCapabilities(data.capabilities);
-      });
-    }
-  }, [cohortSession, cohortRole]);
-
-  devLog('(component OnlyFor) userCapabilities:', userCapabilities);
+  const userCapabilities = cohortSession.user_capabilities || [];
 
   const isCapableAcademy = cohortSession && cohortSession.academy?.id === academyNumber;
   const isCapableRole = capabilities.map(
@@ -36,6 +23,7 @@ const OnlyFor = ({ academy, capabilities, children }) => {
 };
 
 OnlyFor.propTypes = {
+  cohortSession: PropTypes.objectOf(PropTypes.any).isRequired,
   academy: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   capabilities: PropTypes.arrayOf(PropTypes.string),
   children: PropTypes.node.isRequired,

@@ -12,26 +12,6 @@ const Helmet = ({
     {/* <link rel="canonical" href={`${siteUrl}${pagePath}`} /> */}
     {/* <meta name="keywords" content={keywords} /> */}
 
-    {/* <script
-      dangerouslySetInnerHTML={{
-        __html: `
-          (function(s,t,o,n,l,y,_) {
-            if (s.stonlyTrack) return;
-            _ = s.stonlyTrack = function() {
-              _._api ? _._api.apply(_, arguments) : _.queue.push(arguments);
-            };
-            _.queue = [];
-            y = t.createElement(o);
-            y.async = !0;
-            y.src = n;
-            l = t.getElementsByTagName(o)[0];
-            l.parentNode.insertBefore(y, l);
-          })(window,document,'script','https://stonly.com/js/tracker/stn.js');
-          stonlyTrack('init', '<widget_id>');
-        `,
-      }}
-    /> */}
-
     <title>{title}</title>
     <meta name="description" content={description} />
     {unlisted === true && <meta name="robots" content="noindex" />}

@@ -30,6 +30,7 @@ import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import { slugify, devLogTable, includesToLowerCase } from '../../../../../utils/index';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
+import OnlyFor from '../../../../../common/components/OnlyFor';
 
 const Dashboard = () => {
   const { t } = useTranslation('dashboard');
@@ -204,7 +205,7 @@ const Dashboard = () => {
 
   // Fetch cohort assignments (lesson, exercise, project, quiz)
   useEffect(() => {
-    if (user && user.active_cohort) {
+    if (user && user.active_cohort && cohortSession.cohort_role) {
       const academyId = user.active_cohort.academy_id;
       const { version } = user.active_cohort;
       // setCohortSession({
@@ -216,8 +217,9 @@ const Dashboard = () => {
       Promise.all([
         bc.todo({ cohort: cohortSession.id }).getTaskByStudent(), // Tasks with cohort id
         bc.syllabus().get(academyId, slug, version), // cohortProgram
+        bc.auth().getRoles(cohortSession.cohort_role?.toLowerCase()),
       ]).then((
-        [taskTodoData, programData],
+        [taskTodoData, programData, userRoles],
       ) => {
         const technologiesArray = programData.data.main_technologies
           ? programData.data.main_technologies.split(',').map((el) => el.trim())
@@ -227,6 +229,7 @@ const Dashboard = () => {
           ...cohortSession,
           main_technologies: technologiesArray,
           bc_id: user.id,
+          user_capabilities: userRoles.data.capabilities,
         });
         setSyllabus(programData.data.json.days);
         setContextState({
@@ -421,7 +424,7 @@ const Dashboard = () => {
             gridGap="30px"
             // minWidth={{ base: 'auto', md: 'clamp(250px, 30vw, 380px)' }}
           >
-            {profesionalRoles.includes(cohortSession?.cohort_role) && (
+            <OnlyFor cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
               <TeacherSidebar
                 title={t('teacher-sidebar.actions')}
                 user={user}
@@ -429,7 +432,7 @@ const Dashboard = () => {
                 sortedAssignments={sortedAssignments}
                 width="100%"
               />
-            )}
+            </OnlyFor>
             <CohortSideBar
               teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
               cohort={cohortSession}
@@ -437,7 +440,7 @@ const Dashboard = () => {
               cohortCity={cohortSession?.name}
               width="100%"
             />
-            {!profesionalRoles.includes(cohortSession?.cohort_role) && (
+            {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
               <SupportSidebar
                 title={supportSideBar.title}
                 subtitle={supportSideBar.description}
@@ -574,7 +577,7 @@ const Dashboard = () => {
           gridGap="30px"
           minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
         >
-          {profesionalRoles.includes(cohortSession?.cohort_role) && (
+          <OnlyFor cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
             <TeacherSidebar
               title={t('teacher-sidebar.actions')}
               user={user}
@@ -582,7 +585,7 @@ const Dashboard = () => {
               sortedAssignments={sortedAssignments}
               width="100%"
             />
-          )}
+          </OnlyFor>
           <CohortSideBar
             teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
             studentAndTeachers={studentAndTeachers}
@@ -590,7 +593,7 @@ const Dashboard = () => {
             cohortCity={cohortSession?.name}
             width="100%"
           />
-          {!profesionalRoles.includes(cohortSession?.cohort_role) && (
+          {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
             <SupportSidebar
               title={supportSideBar.title}
               subtitle={supportSideBar.description}
