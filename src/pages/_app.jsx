@@ -44,7 +44,9 @@ function App({ Component, pageProps }) {
 
   return (
     <>
-      <Helmet {...pageProps} />
+      <Helmet
+        {...pageProps}
+      />
       <CookiesProvider>
         <AuthProvider>
           <ChakraProvider resetCSS theme={CustomTheme}>
