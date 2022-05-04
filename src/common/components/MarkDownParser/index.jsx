@@ -194,7 +194,7 @@ const MarkDownParser = ({
     setLearnpackActions([
       {
         text: newExerciseText,
-        href: `https://breathecode.herokuapp.com/asset/${assetSlug}?token=${token}`,
+        href: `${process.env.BREATHECODE_HOST}/asset/${assetSlug}?token=${token}`,
         isExternalLink: true,
       },
       {
