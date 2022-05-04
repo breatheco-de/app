@@ -15,7 +15,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import {
-  isWindow, getExtensionName, devLog, languageLabel,
+  isWindow, getExtensionName, languageLabel,
 } from '../../../../../utils';
 import ReactPlayer from '../../../../../common/components/ReactPlayer';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
@@ -46,6 +46,7 @@ const Content = () => {
   const [showSolutionVideo, setShowSolutionVideo] = useState(false);
   const [cohortSession] = usePersistent('cohortSession', {});
   const [selectedSyllabus, setSelectedSyllabus] = useState({});
+  const [callToActionProps, setCallToActionProps] = useState({});
   const [readmeUrlPathname, setReadmeUrlPathname] = useState(null);
   const [currentData, setCurrentData] = useState({});
   const { user, choose } = useAuth();
@@ -113,13 +114,6 @@ const Content = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const callToActionProps = {
-    token: accessToken,
-    assetSlug: lessonSlug,
-    gitpod: currentData.gitpod,
-    assetType: assetTypeValues[lesson],
-  };
-
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = isWindow && window.scrollY;
@@ -149,6 +143,7 @@ const Content = () => {
   const onClickAssignment = (e, item) => {
     router.push(`/syllabus/${cohortSlug}/${item.type.toLowerCase()}/${item.slug}`);
     setCurrentData({});
+    setCallToActionProps({});
     setReadme(null);
     setIpynbHtmlUrl(null);
   };
@@ -241,6 +236,12 @@ const Content = () => {
     axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
       .then(({ data }) => {
         const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
+        setCallToActionProps({
+          token: accessToken,
+          assetSlug: lessonSlug,
+          gitpod: data.gitpod,
+          assetType: assetTypeValues[lesson],
+        });
         setReadmeUrlPathname(urlPathname);
         let currentlocaleLang = data.translations[language];
         const exensionName = getExtensionName(data.readme_url);
@@ -335,8 +336,6 @@ const Content = () => {
     }
     return false;
   };
-
-  devLog('currentData:', currentData);
 
   const teacherActions = profesionalRoles.includes(cohortSession.cohort_role)
     ? [
