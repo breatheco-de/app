@@ -31,5 +31,12 @@
   "difficulties": "Dificultades",
   "only-video-tutorials": "Solo video tutoriales",
   "apply-filters": "Aplicar filtros",
-  "clear-all": "Limpiar todo"
+  "clear-all": "Limpiar todo",
+  "english": "Inglés",
+  "spanish": "Español",
+  "learnpack": {
+    "description": "Esta práctica se ejecutará fuera de 4Geeks.com a través de LearnPack. Una herramienta de aprendizaje interactivo que se ejecuta integrado con VSCode y Gitpod.",
+    "new-exercise": "Nuevo ejercicio",
+    "continue-exercise": "Continuar ejercicio"
+  }
 }

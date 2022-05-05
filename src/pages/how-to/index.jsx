@@ -168,6 +168,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
           projects={data}
           contextFilter={filteredBy.howToOptions}
           projectPath="how-to"
+          exampleImage="/static/images/coding-notebook.png"
         />
       </Box>
     </>

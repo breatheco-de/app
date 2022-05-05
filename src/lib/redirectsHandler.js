@@ -1,9 +1,9 @@
 const redirectByAsset = async ({
-  req, slug, results, userPathName, pathWithDifficulty, difficulty, NextResponse,
+  req, pathConector, results, userPathName, pathWithDifficulty = false, difficulty, NextResponse,
 }) => {
   const url = await req.nextUrl.clone();
   const { translations } = results;
-  const pagePath = pathWithDifficulty ? `${slug}/${difficulty}` : slug;
+  const pagePath = pathWithDifficulty ? `${pathConector}/${difficulty}` : pathConector;
 
   if (results.status_code !== 404) {
     if (

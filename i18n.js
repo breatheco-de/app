@@ -14,6 +14,7 @@ module.exports = {
     '/choose-program': ['choose-program'],
     '/syllabus/[cohortSlug]/[lesson]/[lessonSlug]': ['syllabus', 'dashboard'],
     '/how-to': ['how-to'],
+    '/how-to/[slug]': ['how-to'],
   },
   locales: ['default', 'en', 'es'],
   // defaultLocale: 'en', // removed for redirects handling purposes

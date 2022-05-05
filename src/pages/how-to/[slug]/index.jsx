@@ -3,15 +3,17 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import {
-  Box, toast, useColorModeValue,
+  Box, toast, useColorModeValue, Image,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { languageLabel } from '../../../utils';
+import Link from '../../../common/components/NextChakraLink';
 import MarkDownParser from '../../../common/components/MarkDownParser';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import { MDSkeleton } from '../../../common/components/Skeleton';
-import TitleContent from '../../../js_modules/projects/TitleContent';
+import Heading from '../../../common/components/Heading';
+import Text from '../../../common/components/Text';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`)
@@ -59,19 +61,21 @@ export const getStaticProps = async ({ params }) => {
 
 export default function HowToSlug({ data, markdown }) {
   const { t } = useTranslation('how-to');
+  const { title, author, preview } = data;
+  const defaultImage = '/static/images/coding-notebook.png';
+  const getImage = preview || defaultImage;
   const router = useRouter();
   const language = router.locale === 'en' ? 'us' : 'es';
   const { slug } = router.query;
   const currentLanguageLabel = languageLabel[language] || language;
-  console.log(`HowToSlug: ${data}`);
   const markdownData = getMarkDownContent(markdown);
 
   useEffect(() => {
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`)
+    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`)
       .then((res) => {
         let currentlocaleLang = res.data.translations[language];
         if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
-        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=EXERCISE`)
+        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=ARTICLE`)
           .catch(() => {
             toast({
               title: t('alert-message:language-not-found', { currentLanguageLabel }),
@@ -84,34 +88,56 @@ export default function HowToSlug({ data, markdown }) {
   }, [language]);
 
   return (
-    <Box
-      gridGap="20px"
-      padding={{ base: '3% 4% 4% 4%', md: '1.5% 10% 1.5% 10%' }}
-      borderBottom={1}
-      borderStyle="solid"
-      borderColor={useColorModeValue('gray.200', 'gray.900')}
-    >
-      <TitleContent title={t('title')} icon="document" mobile={false} />
-      {/* <Search placeholder={t('search')} /> */}
-      <Box
-        padding={{ base: '28px 14px', md: '28px 32px' }}
-        borderRadius="3px"
-        background={useColorModeValue('#F2F6FA', 'featuredDark')}
-        maxWidth="1012px"
-        flexGrow={1}
-        // margin="0 8vw 4rem 8vw"
-        // width={{ base: '34rem', md: '54rem' }}
-        className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+    <>
+      <Link
+        href="/projects"
+        color={useColorModeValue('blue.default', 'blue.300')}
+        display="inline-block"
+        letterSpacing="0.05em"
+        fontWeight="700"
+        paddingBottom="10px"
+        margin={{ base: '2% 4% 0 4%', lg: '2% 10% 0 10%' }}
       >
-        {markdown ? (
-          <MarkDownParser content={markdownData.content} />
-          // <MarkDownParser content={removeTitleAndImage(MDecoded)} />
-        ) : (
-          <MDSkeleton />
-        )}
-      </Box>
+        {`← ${t('back-to')}`}
+      </Link>
+      <Box
+        gridGap="20px"
+        maxWidth="1012px"
+        margin="0 auto"
+        padding="3% 4% 4% 4%"
+        borderBottom={1}
+        borderStyle="solid"
+        borderColor={useColorModeValue('gray.200', 'gray.900')}
+      >
+        <Heading size="l" fontWeight="700">
+          {title}
+        </Heading>
+        <Box margin="24px 0 0 0">
+          <Text size="l" fontWeight="900" textTransform="uppercase">
+            {t('written-by')}
+          </Text>
+          <Text fontSize="l">
+            {`${author.first_name} ${author.last_name}`}
+          </Text>
+        </Box>
 
-    </Box>
+        <Image src={getImage} alt={title} margin="20px 0 30px 0" width="100%" borderRadius="10px" height="100%" style={{ aspectRatio: '12/6' }} />
+        <Box
+          borderRadius="3px"
+          margin="0 auto"
+          maxWidth="1012px"
+          flexGrow={1}
+          className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+        >
+          {markdown ? (
+            <MarkDownParser content={markdownData.content} />
+          ) : (
+            <MDSkeleton />
+          )}
+        </Box>
+
+      </Box>
+    </>
   );
 }
 

@@ -12,13 +12,13 @@ import TagCapsule from '../../common/components/TagCapsule';
 import Text from '../../common/components/Text';
 
 const ProjectList = ({
-  projects, contextFilter, projectPath, pathWithDifficulty,
+  projects, contextFilter, projectPath, pathWithDifficulty, exampleImage,
 }) => {
   const { t } = useTranslation('common');
   const arrOfTechs = contextFilter.technologies;
   const { difficulty, videoTutorials } = contextFilter;
   const router = useRouter();
-  const defaultImage = '/static/images/code1.png';
+  const defaultImage = exampleImage || '/static/images/code1.png';
   // const bgBlur = '/static/images/codeBlur.png';
 
   const checkIsPathDifficulty = (thisDifficulty) => (pathWithDifficulty ? `/${thisDifficulty}` : '');
@@ -190,10 +190,12 @@ ProjectList.propTypes = {
   contextFilter: PropTypes.objectOf(PropTypes.any).isRequired,
   projectPath: PropTypes.string.isRequired,
   pathWithDifficulty: PropTypes.bool,
+  exampleImage: PropTypes.string,
 };
 
 ProjectList.defaultProps = {
   pathWithDifficulty: false,
+  exampleImage: '',
 };
 
 export default ProjectList;

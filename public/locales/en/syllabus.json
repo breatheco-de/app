@@ -7,10 +7,5 @@
   "teacherSidebar": {
     "instructions": "Instructions",
     "key-concepts": "Key concepts"
-  },
-  "learnpack": {
-    "description": "This practice will run outside of 4Geeks.com thought LearnPack. An interactive learning tool that runs integrated with VSCode and Gitpod.",
-    "new-exercise": "Start new exercise",
-    "continue-exercise": "Continue exercise"
   }
 }

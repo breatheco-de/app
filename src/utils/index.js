@@ -9,8 +9,8 @@ const HAVE_SESSION = isWindow ? localStorage.getItem('accessToken') !== null : f
 const isDevMode = isWindow && window.location.hostname === 'localhost';
 
 const languageLabel = {
-  es: 'Spanish',
-  us: 'English',
+  es: 'spanish',
+  us: 'english',
 };
 
 const slugify = (str) => str
