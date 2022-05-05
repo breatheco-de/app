@@ -29,7 +29,7 @@ export const getStaticPaths = async ({ locales }) => {
     console.error(`Error fetching lessons with ${data.status}`);
   }
   const paths = lessons.flatMap((res) => locales.map((locale) => {
-    const localeToUsEs = locale === 'us' ? 'en' : 'es';
+    const localeToUsEs = locale === 'en' ? 'us' : 'es';
     return ({
       params: {
         slug: res.translations[localeToUsEs] || res.slug,

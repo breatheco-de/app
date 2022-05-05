@@ -28,7 +28,7 @@ const DifficultySection = ({
       borderColor={commonBorderColor}
       padding="0 0 30px 0"
     >
-      <Text fontSize="xl" fontWeight="bold" color={commonTextColor} padding="25px 0 18px 0">
+      <Text fontSize="1rem" textTransform="uppercase" fontWeight="bold" color={commonTextColor} padding="25px 0 18px 0">
         {title}
       </Text>
       <Box

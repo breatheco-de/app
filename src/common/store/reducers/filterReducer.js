@@ -9,6 +9,11 @@ const initialState = {
     difficulty: [],
     videoTutorials: false,
   },
+  howToOptions: {
+    technologies: [],
+    difficulty: [],
+    videoTutorials: false,
+  },
 };
 
 const filterReducer = (state = initialState, action) => {
@@ -22,6 +27,11 @@ const filterReducer = (state = initialState, action) => {
       return {
         ...state,
         exercisesOptions: action.payload,
+      };
+    case 'HANDLE_FILTER_HOW_TO':
+      return {
+        ...state,
+        howToOptions: action.payload,
       };
     default:
       return state;

@@ -109,7 +109,7 @@ const AttendanceModal = ({
             if (activitiesForDay.length === 0) saveCohortAttendancy();
             else {
               toast({
-                title: t('alert-message:attenadance-already-taken'),
+                title: t('alert-message:attenadance-already-taken', { count: day }),
                 // title: `Attendance for day ${day} has already been taken`,
                 status: 'warning',
                 duration: 9000,

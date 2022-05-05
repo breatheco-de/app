@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import { useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
-import { languageLabel } from '../../../utils';
 import Heading from '../../../common/components/Heading';
 import Link from '../../../common/components/NextChakraLink';
 import Text from '../../../common/components/Text';
@@ -16,7 +15,7 @@ import MarkDownParser from '../../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 
-export const getStaticPaths = async () => {
+export const getStaticPaths = async ({ locales }) => {
   let projects = [];
   const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`)
     .then((res) => res.json())
@@ -38,16 +37,13 @@ export const getStaticPaths = async () => {
     }
   }
 
-  const paths = projects.flatMap((res) => Object.keys(res.translations).map((locale) => {
-    const localeToUsEs = locale === 'us' ? 'en' : 'es';
-    return ({
-      params: {
-        slug: res.translations[locale],
-        difficulty: res.difficulty,
-      },
-      locale: localeToUsEs,
-    });
-  }));
+  const paths = projects.flatMap((res) => locales.map((locale) => ({
+    params: {
+      slug: res.slug,
+      difficulty: res.difficulty,
+    },
+    locale,
+  })));
   return {
     fallback: false,
     paths,
@@ -124,8 +120,7 @@ const ProjectSlug = ({ project, markdown }) => {
   const router = useRouter();
   const { slug } = router.query;
   const language = router.locale === 'en' ? 'us' : 'es';
-
-  const currentLanguageLabel = languageLabel[language] || language;
+  const currentLanguageLabel = router.language === 'en' ? t('common:english') : t('common:spanish');
 
   const toast = useToast();
 
@@ -155,7 +150,7 @@ const ProjectSlug = ({ project, markdown }) => {
         axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=EXERCISE`)
           .catch(() => {
             toast({
-              title: t('alert-message:language-not-found', currentLanguageLabel),
+              title: t('alert-message:language-not-found', { currentLanguageLabel }),
               status: 'warning',
               duration: 5500,
               isClosable: true,
@@ -242,6 +237,7 @@ const ProjectSlug = ({ project, markdown }) => {
             margin="30px 0"
             // width={{ base: '100%', md: '350px' }}
             minWidth={{ base: '100%', md: '300px' }}
+            maxWidth="350px"
             height="fit-content"
             borderWidth="0px"
             borderRadius="17px"
@@ -283,6 +279,7 @@ const ProjectSlug = ({ project, markdown }) => {
           margin="30px 0"
           // minWidth={{ base: '100%', md: '250px' }}
           minWidth={{ base: '100%', md: '300px' }}
+          maxWidth="350px"
           height="fit-content"
           borderWidth="0px"
           borderRadius="17px"

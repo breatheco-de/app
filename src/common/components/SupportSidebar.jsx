@@ -72,6 +72,7 @@ const SupportSidebar = ({
             const index = i;
             return (
               <a
+                id={`support-action-${button.name}`}
                 key={`${button.title}-${index}`}
                 href={button.href}
                 target="_blank"
@@ -119,6 +120,7 @@ const SupportSidebar = ({
 
           {actionButtons.filter((el) => el.name === 'mentoring').map((button) => (
             <Accordion
+              id={`support-action-${button.name}`}
               key={button.title}
               allowMultiple
               width="100%"
