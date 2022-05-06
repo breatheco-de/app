@@ -21,21 +21,29 @@ function chooseProgram() {
   const [data, setData] = useState([]);
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
-  const { choose } = useAuth();
+  const { user, choose } = useAuth();
   const router = useRouter();
   const toast = useToast();
+  const userID = user?.id;
 
   useEffect(() => {
-    setCohortSession({
-      selectedProgramSlug: '/choose-program',
-    });
-    bc.admissions().me().then((res) => {
-      const { cohorts } = res.data;
-      setData(cohorts);
-    });
+    if (userID !== undefined) {
+      setCohortSession({
+        selectedProgramSlug: '/choose-program',
+        bc_id: userID,
+      });
+    }
+  }, [userID]);
 
-    bc.auth().invites().get().then((res) => {
-      setInvites(res.data);
+  useEffect(() => {
+    Promise.all([
+      bc.admissions().me(),
+      bc.auth().invites().get(),
+    ]).then((
+      [respAdmissions, respInvites],
+    ) => {
+      setData(respAdmissions.data.cohorts);
+      setInvites(respInvites.data);
     });
   }, []);
 

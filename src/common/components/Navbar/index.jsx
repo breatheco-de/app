@@ -64,7 +64,8 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
     const resp = await fetch(
       `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`,
     )
-      .then((res) => res.json());
+      .then((res) => res.json())
+      .catch(() => []);
     setReadSyllabus(resp);
   }, []);
 
