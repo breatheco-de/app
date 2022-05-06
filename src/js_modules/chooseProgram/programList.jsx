@@ -14,7 +14,7 @@ import { usePersistent } from '../../common/hooks/usePersistent';
 function CohortProgram({ item, handleChoose }) {
   const { t } = useTranslation('choose-program');
   const [isMobile] = useMediaQuery('(min-width: 600px)');
-  const [, setCohortSession] = usePersistent('cohortSession', {});
+  const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const router = useRouter();
 
   const { cohort } = item;
@@ -34,6 +34,7 @@ function CohortProgram({ item, handleChoose }) {
     axios.defaults.headers.common.Academy = cohort.academy.id;
     setCohortSession({
       ...cohort,
+      ...cohortSession,
       selectedProgramSlug: `/cohort/${cohort?.slug}/${slug}/v${version}`,
     });
     router.push(`/cohort/${cohort?.slug}/${slug}/v${version}`);
