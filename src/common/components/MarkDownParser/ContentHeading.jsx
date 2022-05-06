@@ -23,9 +23,9 @@ const ContentHeading = ({
       paddingBottom="2rem"
       marginBottom="2rem"
     >
-      <Box marginBottom="1.2rem">
+      <Box marginBottom="1.5rem">
         <Box display="flex" justifyContent="space-between" gridGap="16px" margin="2rem 0 0 0">
-          <Heading size="m" display="inline-flex" gridGap="10px" marginTop="1.5rem">
+          <Heading size="m" display="inline-flex" gridGap="10px" margin="0 0 0 0 !important">
             <Icon icon={assetTypeIcons[assetType] || 'book'} height="30px" color="#0097CD" width="28px" style={{ margin: 'auto', marginRight: '0.4rem' }} />
             {' '}
             {title}
