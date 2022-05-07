@@ -1,8 +1,10 @@
 import {
   Box, useColorModeValue, Stack, Grid,
 } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
+import { unSlugify } from '../../utils/index';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 import Image from '../../common/components/Image';
@@ -10,18 +12,20 @@ import TagCapsule from '../../common/components/TagCapsule';
 import Text from '../../common/components/Text';
 
 const ProjectList = ({
-  projects, contextFilter, projectPath, pathWithDifficulty,
+  projects, contextFilter, projectPath, pathWithDifficulty, exampleImage,
 }) => {
+  const { t } = useTranslation('common');
   const arrOfTechs = contextFilter.technologies;
   const { difficulty, videoTutorials } = contextFilter;
   const router = useRouter();
-  const defaultImage = '/static/images/code1.png';
+  const defaultImage = exampleImage || '/static/images/code1.png';
   // const bgBlur = '/static/images/codeBlur.png';
 
   const checkIsPathDifficulty = (thisDifficulty) => (pathWithDifficulty ? `/${thisDifficulty}` : '');
 
   const contains = (project, selectedTechs) => {
-    const projectTitle = project.title.toLowerCase();
+    // search with title and slug
+    const projectTitle = project.title.toLowerCase() || unSlugify(project.slug);
     if (
       typeof videoTutorials === 'boolean'
       && videoTutorials === true
@@ -145,11 +149,12 @@ const ProjectList = ({
                       <Heading
                         size="20px"
                         textAlign="left"
+                        wordBreak="break-word"
                         width="100%"
                         fontFamily="body"
                         fontWeight={700}
                       >
-                        {ex.title}
+                        {ex.title || t('no-title')}
                       </Heading>
                     </Link>
                     {/* <Text
@@ -171,8 +176,8 @@ const ProjectList = ({
       </Grid>
       {filteredProjects.length === 0 && (
         <Box height="50vh" width="100%">
-          <Text size="30px" padding="30px 0" textAlign="center" fontWeight={700}>
-            No projects found
+          <Text size="20px" padding="30px 0" textAlign="center" fontWeight={500}>
+            {t('search-not-found')}
           </Text>
         </Box>
       )}
@@ -185,10 +190,12 @@ ProjectList.propTypes = {
   contextFilter: PropTypes.objectOf(PropTypes.any).isRequired,
   projectPath: PropTypes.string.isRequired,
   pathWithDifficulty: PropTypes.bool,
+  exampleImage: PropTypes.string,
 };
 
 ProjectList.defaultProps = {
   pathWithDifficulty: false,
+  exampleImage: '',
 };
 
 export default ProjectList;

@@ -139,7 +139,7 @@ const MDText = ({ children }) => {
   }, [children]);
 
   return (
-    <Text size="l" className={haveHighlight ? 'text-highlight' : ''} letterSpacing="0.05em" marginBottom="16px" fontWeight="400" lineHeight="24px">
+    <Text size="l" className={haveHighlight ? 'text-highlight' : ''} overflow="auto !important" letterSpacing="0.05em" marginBottom="16px" fontWeight="400" lineHeight="24px">
       {children}
     </Text>
   );
@@ -183,7 +183,7 @@ const MDHr = () => (<Box d="none" />);
 const MarkDownParser = ({
   content, callToActionProps, withToc, frontMatter, titleRightSide,
 }) => {
-  const { t } = useTranslation('syllabus');
+  const { t } = useTranslation('common');
   const [learnpackActions, setLearnpackActions] = useState([]);
   const newExerciseText = t('learnpack.new-exercise');
   const continueExerciseText = t('learnpack.continue-exercise');

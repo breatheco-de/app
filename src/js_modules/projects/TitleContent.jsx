@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 
-const TitleContent = ({ title, mobile }) => (
+const TitleContent = ({ title, icon, mobile }) => (
   <Flex
     alignItems="center"
     gridGap="20px"
@@ -17,8 +17,9 @@ const TitleContent = ({ title, mobile }) => (
       height="35px"
       borderRadius="3rem"
       backgroundColor="yellow.default"
+      alignItems="center"
     >
-      <Icon icon="strength" color="white" width="22px" />
+      <Icon icon={icon} color="white" width="24px" height="24px" />
     </Box>
 
     <Heading as="h1" size="30px">
@@ -30,10 +31,12 @@ const TitleContent = ({ title, mobile }) => (
 TitleContent.propTypes = {
   title: PropTypes.string,
   mobile: PropTypes.bool,
+  icon: PropTypes.string,
 };
 TitleContent.defaultProps = {
   title: 'Title',
   mobile: true,
+  icon: 'strength',
 };
 
 export default TitleContent;

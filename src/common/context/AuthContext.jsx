@@ -85,19 +85,17 @@ const isValid = async (token, router, setCookie, removeCookie) => {
   const response = await bc
     .auth()
     .isValidToken(token)
-    .then((res) => res) // setCookie('accessToken', token, { path: '/' });
+    .then((res) => res)
 
     // remove token from localstorage if expired (it prevents throwing error)
     .catch((err) => {
       router.push('/login');
-      // removeCookie('accessToken', { path: '/' });
-      // document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       setSession(null, setCookie, removeCookie);
       return {
         status: err.response.status,
       };
     });
-  return response.status === 200;
+  return response?.status < 400;
 };
 
 const getToken = (cookies) => {
@@ -125,7 +123,7 @@ const AuthProvider = ({ children }) => {
   const handleSession = (tokenString) => setSession(tokenString, setCookie, removeCookie);
   useEffect(async () => {
     const isValidToken = await isValid(token, router, setCookie, removeCookie);
-    if (isValidToken) {
+    if (isValidToken === true) {
       handleSession(token);
       const response = await bc.auth().me();
       dispatch({

@@ -8,6 +8,8 @@
   "lesson": "Lección",
   "exercise": "Ejercicio",
   "project": "Proyecto",
+  "filter": "Filtro",
+  "filters": "Filtros",
   "quiz": "Cuestionario",
   "first-name": "Nombre",
   "last-name": "Apellido",
@@ -23,5 +25,18 @@
   "not-available": "No disponible",
   "live-demo": "Demo en vivo",
   "technologies": "Tecnologías",
-  "full-screen": "Pantalla completa"
+  "full-screen": "Pantalla completa",
+  "no-title": "Sin título 🙂",
+  "search-not-found": "No se encontraron coincidencias para esta búsqueda",
+  "difficulties": "Dificultades",
+  "only-video-tutorials": "Solo video tutoriales",
+  "apply-filters": "Aplicar filtros",
+  "clear-all": "Limpiar todo",
+  "english": "Inglés",
+  "spanish": "Español",
+  "learnpack": {
+    "description": "Esta práctica se ejecutará fuera de 4Geeks.com a través de LearnPack. Una herramienta de aprendizaje interactivo que se ejecuta integrado con VSCode y Gitpod.",
+    "new-exercise": "Nuevo ejercicio",
+    "continue-exercise": "Continuar ejercicio"
+  }
 }
