@@ -14,8 +14,6 @@ const stripDefaultLocale = (str) => {
 
 const middleware = async (req) => {
   const url = await req.nextUrl.clone();
-  const country = req.geo.country?.toLowerCase() || 'us';
-  console.log('country:', country);
 
   const {
     pathname, origin, locale, search,

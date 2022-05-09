@@ -6,14 +6,14 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import { useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
-import Heading from '../../../common/components/Heading';
-import Link from '../../../common/components/NextChakraLink';
-import Text from '../../../common/components/Text';
-import Icon from '../../../common/components/Icon';
-import SimpleTable from '../../../js_modules/projects/SimpleTable';
-import MarkDownParser from '../../../common/components/MarkDownParser';
-import { MDSkeleton } from '../../../common/components/Skeleton';
-import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
+import Heading from '../../common/components/Heading';
+import Link from '../../common/components/NextChakraLink';
+import Text from '../../common/components/Text';
+import Icon from '../../common/components/Icon';
+import SimpleTable from '../../js_modules/projects/SimpleTable';
+import MarkDownParser from '../../common/components/MarkDownParser';
+import { MDSkeleton } from '../../common/components/Skeleton';
+import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
@@ -40,7 +40,6 @@ export const getStaticPaths = async ({ locales }) => {
   const paths = projects.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
-      difficulty: res.difficulty,
     },
     locale,
   })));
