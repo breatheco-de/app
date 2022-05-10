@@ -256,7 +256,7 @@ export const ButtonHandlerByTaskStatus = ({
                 setIsSubmitting(false);
                 sendProject(currentTask, githubUrl);
               }}
-              texLink={t('deliverProject.how-to-deliver')}
+              linkText={t('deliverProject.how-to-deliver')}
               link={howToSendProjectUrl}
             />
           </PopoverBody>

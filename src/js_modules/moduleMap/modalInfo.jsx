@@ -12,7 +12,7 @@ import validationSchema from '../../common/components/Forms/validationSchemas';
 
 const ModalInfo = ({
   isOpen, onClose, actionHandler, rejectHandler, forceHandler, disableHandler, title, description,
-  teacherFeedback, linkInfo, texLink, link, handlerText, closeText, cancelColorButton,
+  teacherFeedback, linkInfo, linkText, link, handlerText, closeText, cancelColorButton,
   handlerColorButton, rejectData, sendProject, currentTask, type,
 }) => {
   const { t } = useTranslation('dashboard');
@@ -92,7 +92,7 @@ const ModalInfo = ({
               </Box>
             )}
 
-            {!disableHandler && link ? (
+            {!disableHandler && link && !linkText ? (
               <Box padding="18px 0 0 0">
                 <Formik
                   initialValues={{ githubUrl: link }}
@@ -148,7 +148,7 @@ const ModalInfo = ({
                   </Text>
                 )}
                 <Link href={link} color={useColorModeValue('blue.default', 'blue.300')} target="_blank" rel="noopener noreferrer">
-                  {texLink || link}
+                  {linkText || link}
                 </Link>
               </Box>
             )}
@@ -262,7 +262,7 @@ ModalInfo.propTypes = {
   description: PropTypes.string,
   teacherFeedback: PropTypes.string,
   linkInfo: PropTypes.string,
-  texLink: PropTypes.string,
+  linkText: PropTypes.string,
   link: PropTypes.string,
   handlerText: PropTypes.string,
   closeText: PropTypes.string,
@@ -283,7 +283,7 @@ ModalInfo.defaultProps = {
   description: '',
   teacherFeedback: '',
   linkInfo: '',
-  texLink: '',
+  linkText: '',
   link: '',
   handlerText: 'Remove delivery',
   closeText: 'Close',

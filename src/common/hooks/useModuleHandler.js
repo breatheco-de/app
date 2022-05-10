@@ -56,10 +56,7 @@ export const updateAssignment = ({
       ...task,
       task_status: taskStatus || toggleStatus,
       github_url: projectUrl,
-      /*
-        TODO: uncomment when modification for students is available
-        revision_status: linkIsRemoved ? 'PENDING' : task.revision_status,
-      */
+      revision_status: 'PENDING',
     };
 
     bc.todo({}).update(taskToUpdate).then(({ data }) => {
