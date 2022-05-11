@@ -1,15 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import {
-  Box,
-  Flex,
-  useDisclosure,
-  IconButton,
-  Link,
-  useToast,
-  useColorModeValue,
-  useMediaQuery,
-  Checkbox,
+  Box, Flex, useDisclosure, IconButton, Link, useToast,
+  useColorModeValue, useMediaQuery, Checkbox, Select,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
@@ -23,16 +16,20 @@ import Heading from '../../../../../common/components/Heading';
 import Timeline from '../../../../../common/components/Timeline';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkdownParser from '../../../../../common/components/MarkDownParser';
-// import decodeFromBinary from '../../../../../utils/markdown';
+import Text from '../../../../../common/components/Text';
 import bc from '../../../../../common/services/breathecode';
 import useAuth from '../../../../../common/hooks/useAuth';
 import { MDSkeleton } from '../../../../../common/components/Skeleton';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import StickySideBar from '../../../../../common/components/StickySideBar';
 import Icon from '../../../../../common/components/Icon';
+import AlertMessage from '../../../../../common/components/AlertMessage';
 
 const Content = () => {
   const { t } = useTranslation('syllabus');
+  const { user, choose } = useAuth();
+  const [cohortSession] = usePersistent('cohortSession', {});
+  const [sortedAssignments] = usePersistent('sortedAssignments', []);
   const { isOpen, onToggle } = useDisclosure();
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [readme, setReadme] = useState(null);
@@ -40,19 +37,18 @@ const Content = () => {
   const [extendedInstructions, setExtendedInstructions] = useState(null);
   const [extendedIsEnabled, setExtendedIsEnabled] = useState(false);
   const [showPendingTasks, setShowPendingTasks] = useState(false);
+  const [currentModule, setCurrentModule] = useState(null);
   const [quizSlug, setQuizSlug] = useState(null);
-  // const { syllabus = [], setSyllabus } = useSyllabus();
-  const [sortedAssignments] = usePersistent('sortedAssignments', []);
   const [showSolutionVideo, setShowSolutionVideo] = useState(false);
-  const [cohortSession] = usePersistent('cohortSession', {});
   const [selectedSyllabus, setSelectedSyllabus] = useState({});
+  const [defaultSelectedSyllabus, setDefaultSelectedSyllabus] = useState({});
   const [callToActionProps, setCallToActionProps] = useState({});
   const [readmeUrlPathname, setReadmeUrlPathname] = useState(null);
   const [currentData, setCurrentData] = useState({});
-  const { user, choose } = useAuth();
   const toast = useToast();
   const router = useRouter();
   const prevScrollY = useRef(0);
+
   const [isBelowLaptop] = useMediaQuery('(max-width: 996px)');
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
@@ -63,7 +59,7 @@ const Content = () => {
   const commonFeaturedColors = useColorModeValue('featuredLight', 'featuredDark');
   const bgColor = useColorModeValue('#FFFFFF', '#17202A');
   const Open = !isOpen;
-  const { teacherInstructions, keyConcepts } = selectedSyllabus;
+  const { label, teacherInstructions, keyConcepts } = selectedSyllabus;
 
   const filterEmptyModules = sortedAssignments.filter(
     (assignment) => assignment.modules.length > 0,
@@ -143,6 +139,7 @@ const Content = () => {
   const onClickAssignment = (e, item) => {
     router.push(`/syllabus/${cohortSlug}/${item.type.toLowerCase()}/${item.slug}`);
     setCurrentData({});
+    setCurrentModule(null);
     setCallToActionProps({});
     setReadme(null);
     setIpynbHtmlUrl(null);
@@ -221,10 +218,9 @@ const Content = () => {
       })
       .catch((err) => {
         router.push('/choose-program');
-        console.log('err_admissions_me:', err);
         toast({
           title: t('alert-message:invalid-cohort-slug'),
-          // description: 'Content not found',
+          description: err,
           status: 'error',
           duration: 7000,
           isClosable: true,
@@ -292,14 +288,16 @@ const Content = () => {
         isClosable: true,
       });
     }
-    const findSelectedSyllabus = sortedAssignments.filter(
+    const findSelectedSyllabus = sortedAssignments.find((l) => l.id === currentModule);
+    const defaultSyllabus = sortedAssignments.filter(
       (l) => l.modules.find((m) => m.slug === lessonSlug),
     )[0];
 
-    if (findSelectedSyllabus) {
-      setSelectedSyllabus(findSelectedSyllabus);
+    if (defaultSyllabus) {
+      setSelectedSyllabus(findSelectedSyllabus || defaultSyllabus);
+      setDefaultSelectedSyllabus(defaultSyllabus);
     }
-  }, [sortedAssignments, lessonSlug]);
+  }, [sortedAssignments, lessonSlug, currentModule]);
 
   useEffect(() => {
     if (selectedSyllabus.extendedInstructions) {
@@ -320,7 +318,7 @@ const Content = () => {
           content={readme.content}
           callToActionProps={callToActionProps}
           titleRightSide={!ipynbHtmlUrl && currentData.url && (
-            <Link href={`${currentData.url}`} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center" margin="20px 0 10px !important">
+            <Link href={`${currentData.url}`} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
               <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
               {t('edit-page')}
             </Link>
@@ -343,7 +341,7 @@ const Content = () => {
         icon: 'message',
         slug: 'teacher-instructions',
         title: t('teacherSidebar.instructions'),
-        content: teacherInstructions,
+        content: true,
         actionHandler: () => setExtendedIsEnabled(!extendedIsEnabled),
         actionState: extendedIsEnabled,
         id: 1,
@@ -352,7 +350,7 @@ const Content = () => {
         icon: 'key',
         slug: 'key-concepts',
         title: t('teacherSidebar.key-concepts'),
-        content: keyConcepts,
+        content: keyConcepts?.length > 0 ? keyConcepts : null,
         id: 2,
       },
     ] : [];
@@ -545,7 +543,7 @@ const Content = () => {
             margin={{ base: '0', lg: Open ? '0' : '0 auto' }}
             padding={{
               base: GetReadme() !== false ? '0 5vw 4rem 5vw' : '4rem 4vw',
-              md: GetReadme() !== false ? '0 8vw 4rem 8vw' : '4rem 4vw',
+              md: GetReadme() !== false ? '25px 8vw 4rem 8vw' : '4rem 4vw',
             }}
             maxWidth="1012px"
             // marginRight="10rem"
@@ -558,10 +556,57 @@ const Content = () => {
             {extendedIsEnabled && extendedInstructions !== null && (
               <>
                 <Box
-                  p="20px 20px 30px 20px"
-                  borderRadius="3px"
-                  background={commonFeaturedColors}
+                  margin="40px 0 0 0"
                 >
+                  <Text onClick={() => setExtendedIsEnabled(false)} color="blue.default" width="fit-content" fontSize="15px" fontWeight="700" cursor="pointer" margin="15px 0 35px 0 !important">
+                    {`← ${t('teacherSidebar.back-to-student-mode')}`}
+                  </Text>
+                  <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
+                    <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
+                      {`${t('teacherSidebar.instructions')}:`}
+                    </Heading>
+                    {sortedAssignments.length > 0 && (
+                      <Select
+                        id="module"
+                        placeholder="Select module"
+                        style={{
+                          padding: '0 16px 0 0',
+                        }}
+                        fontSize="20px"
+                        value={selectedSyllabus.id || defaultSelectedSyllabus.id}
+                        onChange={(e) => setCurrentModule(parseInt(e.target.value, 10))}
+                        width="auto"
+                        color="blue.default"
+                        border="0"
+                        cursor="pointer"
+                      >
+                        {sortedAssignments.map((module) => (
+                          <option key={module.id} value={module.id}>
+                            {`#${module.id} - ${module.label}`}
+                          </option>
+                        ))}
+                      </Select>
+                    )}
+                  </Box>
+
+                  {selectedSyllabus && defaultSelectedSyllabus.id !== selectedSyllabus.id && (
+                    <AlertMessage
+                      type="warning"
+                      style={{
+                        margin: '20px 0 18px 0',
+                      }}
+                      message={t('teacherSidebar.alert-updated-module-instructions')}
+                    />
+                  )}
+
+                  <Box display="flex" flexDirection="column" background={commonFeaturedColors} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
+                    <Heading as="h2" size="sm" style={{ margin: '0' }}>
+                      {label}
+                    </Heading>
+                    <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
+                      {teacherInstructions}
+                    </Text>
+                  </Box>
                   <MarkdownParser content={extendedInstructions.content} />
                 </Box>
                 <Box margin="4rem 0" height="4px" width="100%" background={commonBorderColor} />

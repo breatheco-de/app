@@ -6,11 +6,8 @@
   "open-google-collab": "Open in Google Collab",
   "teacherSidebar": {
     "instructions": "Instructions",
+    "back-to-student-mode": "Back to stundent mode",
+    "alert-updated-module-instructions": "Currently viewing instructions from a module that does not correspond to the selected lesson",
     "key-concepts": "Key concepts"
-  },
-  "learnpack": {
-    "description": "This practice will run outside of 4Geeks.com thought LearnPack. An interactive learning tool that runs integrated with VSCode and Gitpod.",
-    "new-exercise": "Start new exercise",
-    "continue-exercise": "Continue exercise"
   }
 }

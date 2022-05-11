@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import {
   Modal,
@@ -23,6 +24,7 @@ import DifficultySection from './difficulty';
 const FilterModal = ({
   title, isModalOpen, onClose, setFilter, contextFilter, technologyTags, difficulties,
 }) => {
+  const { t } = useTranslation('common');
   const [checkedTechnologies, setCheckedTechnologies] = useState([]);
   const [withVideo, setWithVideo] = useState(false);
   const [show, setShow] = useState(false);
@@ -70,6 +72,7 @@ const FilterModal = ({
         <ModalHeader
           fontSize="xl"
           padding="18px 0"
+          textTransform="uppercase"
           textAlign="center"
           color={commonTextColor}
           paddingBottom={0}
@@ -77,7 +80,7 @@ const FilterModal = ({
           borderStyle="solid"
           borderColor={commonBorderColor}
         >
-          {title}
+          {title || t('filter')}
         </ModalHeader>
         <ModalCloseButton
           style={{
@@ -90,7 +93,7 @@ const FilterModal = ({
             {/* <------------------- Technologies section -------------------> */}
             <TechnologiesSection
               show={show}
-              title="TECHNOLOGIES"
+              title={t('technologies')}
               handleToggle={handleToggle}
               technologyTags={technologyTags}
               commonTextColor={commonTextColor}
@@ -101,7 +104,7 @@ const FilterModal = ({
 
             {/* <------------------- Difficulty section -------------------> */}
             <DifficultySection
-              title="DIFFICULTIES"
+              title={t('difficulties')}
               setFilter={setFilter}
               contextFilter={contextFilter}
               setDifficulty={setDifficulty}
@@ -112,8 +115,8 @@ const FilterModal = ({
             />
 
             <Flex flexDirection="row" justifyContent="space-between">
-              <Text fontSize="xl" fontWeight="bold" textTransform="uppercase" color={commonTextColor} padding="20px 0">
-                Only with video tutorials
+              <Text fontSize="1rem" fontWeight="bold" textTransform="uppercase" color={commonTextColor} padding="20px 0">
+                {t('only-video-tutorials')}
               </Text>
 
               <Box
@@ -151,7 +154,7 @@ const FilterModal = ({
             fontSize="15px"
             onClick={() => clearFilters()}
           >
-            Clear All
+            {t('clear-all')}
           </Box>
           <Button
             fontSize="13px"
@@ -159,9 +162,9 @@ const FilterModal = ({
             variant="default"
             disabled={fLength <= 0}
             onClick={() => handleSubmit()}
-            rightIcon={<Icon icon="longArrowRight" width="15px" color="white" />}
+            rightIcon={<Icon icon="longArrowRight" width="15px" color={fLength <= 0 ? '#3A3A3A' : '#FFFFFF'} />}
           >
-            Filter projects
+            {t('apply-filters')}
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -179,7 +182,7 @@ FilterModal.propTypes = {
   onClose: PropTypes.func,
 };
 FilterModal.defaultProps = {
-  title: 'FILTER',
+  title: '',
   technologyTags: [],
   difficulties: [],
   isModalOpen: true,

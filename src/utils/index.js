@@ -9,8 +9,8 @@ const HAVE_SESSION = isWindow ? localStorage.getItem('accessToken') !== null : f
 const isDevMode = isWindow && window.location.hostname === 'localhost';
 
 const languageLabel = {
-  es: 'Spanish',
-  us: 'English',
+  es: 'spanish',
+  us: 'english',
 };
 
 const slugify = (str) => str
@@ -19,6 +19,11 @@ const slugify = (str) => str
   .replace(/[^\w\s-]/g, '')
   .replace(/[\s_-]+/g, '-')
   .replace(/^-+|-+$/g, '');
+
+const unSlugify = (str) => str
+  .replace(/-/g, ' ')
+  .replace(/\w\S*/g,
+  (txt) => txt.charAt(0) + txt.substr(1).toLowerCase());
 
 const isPlural = (element) => {
   if (element.length > 1) {
@@ -67,6 +72,7 @@ export {
   isWindow,
   HAVE_SESSION,
   slugify,
+  unSlugify,
   isPlural,
   getStorageItem,
   includesToLowerCase,

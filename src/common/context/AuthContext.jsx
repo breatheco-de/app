@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
+import useSWR from 'swr';
 import { useCookies } from 'react-cookie';
 import { useRouter } from 'next/router';
 import bc from '../services/breathecode';
@@ -60,6 +61,8 @@ const reducer = (state, action) => {
   }
 };
 
+const fetcher = (...args) => fetch(...args).then((res) => res.json());
+
 const setSession = (token, setCookie, removeCookie) => {
   if (token) {
     localStorage.setItem('accessToken', token);
@@ -78,26 +81,6 @@ const setSession = (token, setCookie, removeCookie) => {
     localStorage.removeItem('sortedAssignments');
     delete axiosInstance.defaults.headers.common.Authorization;
   }
-};
-
-const isValid = async (token, router, setCookie, removeCookie) => {
-  if (!token) return false;
-  const response = await bc
-    .auth()
-    .isValidToken(token)
-    .then((res) => res) // setCookie('accessToken', token, { path: '/' });
-
-    // remove token from localstorage if expired (it prevents throwing error)
-    .catch((err) => {
-      router.push('/login');
-      // removeCookie('accessToken', { path: '/' });
-      // document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-      setSession(null, setCookie, removeCookie);
-      return {
-        status: err.response.status,
-      };
-    });
-  return response.status === 200;
 };
 
 const getToken = (cookies) => {
@@ -123,24 +106,31 @@ const AuthProvider = ({ children }) => {
   // Validate and Fetch user token from localstorage when it changes
   const token = getToken(cookies);
   const handleSession = (tokenString) => setSession(tokenString, setCookie, removeCookie);
+  const { data, isValidating } = useSWR(`${process.env.BREATHECODE_HOST}/v1/auth/token/${token}`, fetcher);
+  const loading = isValidating || !data;
+
+  const isValidToken = data?.token !== undefined && token !== undefined && data?.token === token;
+  const tokenStatusSafe = data?.status_code !== 403;
+
   useEffect(async () => {
-    const isValidToken = await isValid(token, router, setCookie, removeCookie);
-    if (isValidToken) {
+    if (loading) return;
+    if (tokenStatusSafe === true && isValidToken === true) {
       handleSession(token);
       const response = await bc.auth().me();
       dispatch({
         type: 'INIT',
         payload: { user: response.data, isAuthenticated: true },
       });
-    } else {
+    } else if (cookies?.accessToken !== undefined) {
       removeCookie('accessToken', { path: '/' });
       handleSession(null);
+      router.push('/login');
       dispatch({
         type: 'INIT',
         payload: { user: null, isAuthenticated: false },
       });
     }
-  }, [token]);
+  }, [isValidToken, tokenStatusSafe]);
 
   const login = async (payload = null) => {
     try {
@@ -200,7 +190,6 @@ const AuthProvider = ({ children }) => {
     router.push('/login');
     handleSession(null);
     removeCookie('accessToken', { path: '/' });
-    // document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     dispatch({ type: 'LOGOUT' });
   };
 

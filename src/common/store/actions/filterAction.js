@@ -11,10 +11,15 @@ const useFilter = () => {
     type: 'HANDLE_FILTER_EXERCISES',
     payload: newState,
   });
+  const setHowToFilters = (newState) => dispatch({
+    type: 'HANDLE_FILTER_HOW_TO',
+    payload: newState,
+  });
   return {
     filteredBy,
     setProjectFilters,
     setExerciseFilters,
+    setHowToFilters,
   };
 };
 

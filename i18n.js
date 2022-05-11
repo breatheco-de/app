@@ -9,10 +9,13 @@ module.exports = {
     '/interactive-exercises': ['exercises'],
     '/projects': ['projects'],
     '/read/[slug]': ['read'],
+    '/project/[slug]': ['projects'],
     '/interactive-coding-tutorial/[difficulty]/[slug]': ['projects'],
     '/interactive-exercises/[slug]': ['exercises'],
     '/choose-program': ['choose-program'],
     '/syllabus/[cohortSlug]/[lesson]/[lessonSlug]': ['syllabus', 'dashboard'],
+    '/how-to': ['how-to'],
+    '/how-to/[slug]': ['how-to'],
   },
   locales: ['default', 'en', 'es'],
   // defaultLocale: 'en', // removed for redirects handling purposes
