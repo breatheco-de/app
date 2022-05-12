@@ -1,0 +1,13 @@
+{
+  "basic-profile-info": "Basic Profile Information",
+  "tabList": [
+    {
+      "title": "Basic Profile Info",
+      "disabled": false
+    },
+    {
+      "title": "My certificates",
+      "disabled": true
+    }
+  ]
+}
