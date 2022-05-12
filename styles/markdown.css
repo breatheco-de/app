@@ -5,7 +5,7 @@
 }
 .MDIframe {
   width: 100%;
-  height: auto;
+  /* height: auto; */
   aspect-ratio: 16/9;
 }
 .markdown-body body > *:first-child {

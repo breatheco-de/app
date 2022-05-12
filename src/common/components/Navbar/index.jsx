@@ -64,7 +64,8 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
     const resp = await fetch(
       `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`,
     )
-      .then((res) => res.json());
+      .then((res) => res.json())
+      .catch(() => []);
     setReadSyllabus(resp);
   }, []);
 
@@ -310,7 +311,40 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                       alignItems="center"
                       padding="1rem 0rem"
                     >
-                      <Box as="button" cursor="pointer" width="auto" display="flex" gridGap="10px" onClick={logout}>
+                      <NextChakraLink
+                        href="/profile"
+                        fontWeight="400"
+                        color="black"
+                        fontSize="14px"
+                        textDecoration="none"
+                        // cursor="pointer"
+                        _hover={{
+                          textDecoration: 'none',
+                        }}
+                        letterSpacing="0.05em"
+                      >
+                        {t('my-profile')}
+                      </NextChakraLink>
+                    </Flex>
+                    <Flex
+                      borderTop={2}
+                      borderStyle="solid"
+                      borderColor={commonBorderColor}
+                      // padding="20px 0"
+                      alignItems="center"
+                      padding="1rem 0rem"
+                    >
+                      <Box
+                        as="button"
+                        cursor="pointer"
+                        width="auto"
+                        display="flex"
+                        gridGap="10px"
+                        onClick={() => {
+                          logout();
+                          setSettingsOpen(false);
+                        }}
+                      >
                         <Icon icon="logout" width="20px" height="20px" />
                         <Box
                           fontWeight="700"
