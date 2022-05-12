@@ -334,7 +334,17 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                       alignItems="center"
                       padding="1rem 0rem"
                     >
-                      <Box as="button" cursor="pointer" width="auto" display="flex" gridGap="10px" onClick={logout}>
+                      <Box
+                        as="button"
+                        cursor="pointer"
+                        width="auto"
+                        display="flex"
+                        gridGap="10px"
+                        onClick={() => {
+                          logout();
+                          setSettingsOpen(false);
+                        }}
+                      >
                         <Icon icon="logout" width="20px" height="20px" />
                         <Box
                           fontWeight="700"

@@ -1,7 +1,7 @@
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box,
-  Button, FormControl, FormErrorMessage, FormLabel, Input, Stack, useColorModeValue, useToast,
+  Box, Button, FormControl, FormErrorMessage, FormLabel, Input,
+  InputGroup, InputLeftAddon, Stack, Text, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import { Field, Form, Formik } from 'formik';
 // import Icon from '../../common/components/Icon';
@@ -11,28 +11,31 @@ import validationSchemas from '../../common/components/Forms/validationSchemas';
 import { objectAreNotEqual } from '../../utils';
 import bc from '../../common/services/breathecode';
 import { usePersistent } from '../../common/hooks/usePersistent';
+import Icon from '../../common/components/Icon';
 
-const ProfileForm = ({ user }) => {
+const ProfileForm = ({ profile }) => {
   const { t } = useTranslation('profile');
   const toast = useToast();
-  const [profile, setProfile] = usePersistent('profile', {});
+  const [, setProfile] = usePersistent('profile', {});
   const inputColor = useColorModeValue('gray.600', 'gray.200');
+  const bgColor = useColorModeValue('white', 'darkTheme');
   const inputDisabledColor = useColorModeValue('gray.600', 'gray.350');
   const backgroundDisabledColor = useColorModeValue('gray.250', 'gray.600');
   const [userInfo, setUserInfo] = useState(null);
   const [defaultUserInfo, setDefaultUserInfo] = useState(null);
+
+  const hasGithub = profile.github && profile.github.username !== '';
   useEffect(() => {
-    if (user !== null && user) {
-      const userSchema = {
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        phone: user.phone,
-      };
-      setUserInfo(userSchema);
-      setDefaultUserInfo(userSchema);
-    }
-  }, [user]);
+    const userSchema = {
+      first_name: profile.first_name,
+      last_name: profile.last_name,
+      email: profile.email,
+      phone: profile.phone,
+    };
+    setUserInfo(userSchema);
+    setDefaultUserInfo(userSchema);
+    // }
+  }, [profile]);
 
   const isModified = userInfo !== null
     && defaultUserInfo !== null
@@ -203,7 +206,15 @@ const ProfileForm = ({ user }) => {
                         });
                         form.handleChange(e);
                       }}
-                      defaultValue={profile?.phone || ''}
+                      defaultValue={profile.profile?.phone || ''}
+                      disabled
+                      _disabled={{
+                        backgroundColor: backgroundDisabledColor,
+                        cursor: 'not-allowed',
+                        color: inputDisabledColor,
+                        border: '0',
+                        // opacity: '0.5',
+                      }}
                       type="tel"
                       placeholder=""
                       height="50px"
@@ -215,8 +226,46 @@ const ProfileForm = ({ user }) => {
                 )}
               </Field>
             </Box>
+            <InputGroup>
+              <InputLeftAddon background={bgColor} border="1px solid" borderRadius="3px" borderColor="gray.default" height="3.125rem">
+                <Icon icon="github" width="24px" height="24px" />
+              </InputLeftAddon>
+              {hasGithub ? (
+                <Input
+                  type="text"
+                  className="form-control github"
+                  placeholder="Your Github"
+                  readOnly
+                  value={profile.github.username.replace(/(:?https?:\/\/)?(?:www\.)?github.com\//gm, '')}
+                />
+              ) : (
+                <Box
+                  w="100%"
+                  h="3.125rem"
+                  border="1px solid"
+                  borderRightRadius="3px"
+                  display="flex"
+                  borderColor="gray.default"
+                  alignItems="center"
+                >
+                  <Text
+                    margin="0 0 0 24px"
+                    textAlign="start"
+                    color="blue.default"
+                    cursor="pointer"
+                    // href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.href = `${process.env.BREATHECODE_HOST}/v1/auth/github?url=${window.location.href}`;
+                    }}
+                  >
+                    {t('connect-github')}
+                  </Text>
+                </Box>
+              )}
+            </InputGroup>
             <Button variant="default" disabled={!isModified} fontSize="13px" fontWeight="700" letterSpacing="0.05em" textTransform="uppercase" width="fit-content" padding="0 24px" alignSelf="end" isLoading={isSubmitting} type="submit">
-              save changes
+              {t('save-changes')}
             </Button>
           </Stack>
         </Form>
@@ -226,11 +275,11 @@ const ProfileForm = ({ user }) => {
 };
 
 ProfileForm.propTypes = {
-  user: PropTypes.objectOf(PropTypes.any),
+  profile: PropTypes.objectOf(PropTypes.any),
 };
 
 ProfileForm.defaultProps = {
-  user: {},
+  profile: {},
 };
 
 export default memo(ProfileForm);

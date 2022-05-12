@@ -2,6 +2,8 @@
   "basic-profile-info": "Información básica del perfil",
   "profile-updated": "Perfil actualizado",
   "update-failed": "Algo salió mal al actualizar tu perfil",
+  "connect-github": "Conectar con GitHub",
+  "save-changes": "Guardar cambios",
   "tabList": [
     {
       "title": "Info básica del perfil",

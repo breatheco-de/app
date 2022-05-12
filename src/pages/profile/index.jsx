@@ -3,31 +3,36 @@ import {
   Box, Tab, TabList, TabPanel, TabPanels, Tabs, useColorModeValue,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 // import { useState } from 'react';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import useAuth from '../../common/hooks/useAuth';
+import { usePersistent } from '../../common/hooks/usePersistent';
 import ProfileForm from './profileForm';
 // import useTranslation from 'next-translate/useTranslation';
 const Profile = () => {
   const { t } = useTranslation('profile');
   const { user } = useAuth();
+  const [profile, setProfile] = usePersistent('profile', {});
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const tabListMenu = t('tabList', {}, { returnObjects: true });
+
+  useEffect(() => {
+    if (user) {
+      setProfile({
+        ...profile,
+        ...user,
+      });
+    }
+  }, [user]);
   // const [tabIndex, setTabIndex] = useState(0);
   // const colors = useColorModeValue(
   //   ['red.50', 'teal.50', 'blue.50'],
   //   ['red.900', 'teal.900', 'blue.900'],
   // );
   // const bg = colors[tabIndex];
-
-  const getImage = () => {
-    if (user && user.github) {
-      return user.github.avatar_url;
-    }
-    return '';
-  };
+  const hasAvatar = profile.github && profile.github.avatar_url && profile.github.avatar_url !== '';
 
   return (
     <Box margin={{ base: '3% 4% 0px', md: '3% 10% 0px' }}>
@@ -75,9 +80,9 @@ const Profile = () => {
                 width="140px"
                 margin="0"
                 height="140px"
-                src={getImage()}
+                src={hasAvatar ? profile?.github?.avatar_url : ''}
               />
-              <ProfileForm user={user} />
+              <ProfileForm profile={profile} />
             </Box>
           </TabPanel>
           <TabPanel p="0">certificates here!</TabPanel>
