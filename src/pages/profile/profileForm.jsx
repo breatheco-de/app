@@ -233,6 +233,14 @@ const ProfileForm = ({ profile }) => {
               {hasGithub ? (
                 <Input
                   type="text"
+                  h="3.125rem"
+                  borderColor="gray.default"
+                  _focus={{
+                    borderColor: 'gray.default',
+                  }}
+                  _hover={{
+                    borderColor: 'gray.default',
+                  }}
                   className="form-control github"
                   placeholder="Your Github"
                   readOnly

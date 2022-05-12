@@ -127,7 +127,7 @@ const AuthProvider = ({ children }) => {
         type: 'INIT',
         payload: { user: response.data, isAuthenticated: true },
       });
-    } else if (cookies?.accessToken !== undefined) {
+    } else {
       removeCookie('accessToken', { path: '/' });
       handleSession(null);
       router.push('/login');
