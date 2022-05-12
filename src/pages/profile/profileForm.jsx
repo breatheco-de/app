@@ -65,8 +65,7 @@ const ProfileForm = ({ profile }) => {
               phone: data?.phone,
             });
           })
-          .catch((err) => {
-            console.log('err:::', err);
+          .catch(() => {
             toast({
               title: t('profile:update-failed'),
               // description: err.message,
