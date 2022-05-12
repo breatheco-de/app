@@ -1,5 +1,7 @@
 {
   "basic-profile-info": "Información básica del perfil",
+  "profile-updated": "Perfil actualizado",
+  "update-failed": "Algo salió mal al actualizar tu perfil",
   "tabList": [
     {
       "title": "Info básica del perfil",

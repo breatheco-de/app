@@ -1,7 +1,7 @@
 import useTranslation from 'next-translate/useTranslation';
 import {
   Box,
-  Button, FormControl, FormErrorMessage, FormLabel, Input, Stack, useColorModeValue,
+  Button, FormControl, FormErrorMessage, FormLabel, Input, Stack, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import { Field, Form, Formik } from 'formik';
 // import Icon from '../../common/components/Icon';
@@ -9,9 +9,13 @@ import PropTypes from 'prop-types';
 import { memo, useEffect, useState } from 'react';
 import validationSchemas from '../../common/components/Forms/validationSchemas';
 import { objectAreNotEqual } from '../../utils';
+import bc from '../../common/services/breathecode';
+import { usePersistent } from '../../common/hooks/usePersistent';
 
 const ProfileForm = ({ user }) => {
   const { t } = useTranslation('profile');
+  const toast = useToast();
+  const [profile, setProfile] = usePersistent('profile', {});
   const inputColor = useColorModeValue('gray.600', 'gray.200');
   const inputDisabledColor = useColorModeValue('gray.600', 'gray.350');
   const backgroundDisabledColor = useColorModeValue('gray.250', 'gray.600');
@@ -41,8 +45,36 @@ const ProfileForm = ({ user }) => {
       validateOnBlur={false}
       initialValues={userInfo}
       onSubmit={(values, actions) => {
-        console.log('values:::', values);
-        actions.setSubmitting(false);
+        actions.setSubmitting(true);
+        bc.auth().updateProfile(values)
+          .then(({ data }) => {
+            toast({
+              title: t('profile:profile-updated'),
+              status: 'success',
+              duration: 9000,
+              isClosable: true,
+            });
+            setProfile({
+              ...profile,
+              first_name: data.first_name,
+              last_name: data.last_name,
+              email: data.email,
+              phone: data?.phone,
+            });
+          })
+          .catch((err) => {
+            console.log('err:::', err);
+            toast({
+              title: t('profile:update-failed'),
+              // description: err.message,
+              status: 'error',
+              duration: 9000,
+              isClosable: true,
+            });
+          })
+          .finally(() => {
+            actions.setSubmitting(false);
+          });
       }}
       validator={() => ({})}
       validationSchema={validationSchemas.handleProfile}
@@ -70,7 +102,7 @@ const ProfileForm = ({ user }) => {
                         setUserInfo({ ...userInfo, first_name: e.target.value });
                         form.handleChange(e);
                       }}
-                      defaultValue={userInfo?.first_name || ''}
+                      defaultValue={profile?.first_name || ''}
                       height="50px"
                       borderColor="gray.default"
                       borderRadius="3px"
@@ -100,7 +132,7 @@ const ProfileForm = ({ user }) => {
                         });
                         form.handleChange(e);
                       }}
-                      defaultValue={userInfo?.last_name || ''}
+                      defaultValue={profile?.last_name || ''}
                       height="50px"
                       borderColor="gray.default"
                       borderRadius="3px"
@@ -131,7 +163,7 @@ const ProfileForm = ({ user }) => {
                         });
                         form.handleChange(e);
                       }}
-                      defaultValue={userInfo?.email || ''}
+                      defaultValue={profile?.email || ''}
                       disabled
                       _disabled={{
                         backgroundColor: backgroundDisabledColor,
@@ -171,7 +203,7 @@ const ProfileForm = ({ user }) => {
                         });
                         form.handleChange(e);
                       }}
-                      defaultValue={userInfo?.phone || ''}
+                      defaultValue={profile?.phone || ''}
                       type="tel"
                       placeholder=""
                       height="50px"

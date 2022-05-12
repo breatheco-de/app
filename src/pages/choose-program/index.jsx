@@ -17,6 +17,7 @@ import { usePersistent } from '../../common/hooks/usePersistent';
 
 function chooseProgram() {
   const { t } = useTranslation('choose-program');
+  const [, setProfile] = usePersistent('profile', {});
   const [, setCohortSession] = usePersistent('cohortSession', {});
   const [data, setData] = useState([]);
   const [invites, setInvites] = useState([]);
@@ -43,6 +44,7 @@ function chooseProgram() {
       [respAdmissions, respInvites],
     ) => {
       setData(respAdmissions.data.cohorts);
+      setProfile(respAdmissions.data);
       setInvites(respInvites.data);
     });
   }, []);

@@ -1,5 +1,7 @@
 {
   "basic-profile-info": "Basic Profile Information",
+  "profile-updated": "Profile Updated",
+  "update-failed": "Something went wrong updating your profile",
   "tabList": [
     {
       "title": "Basic Profile Info",
