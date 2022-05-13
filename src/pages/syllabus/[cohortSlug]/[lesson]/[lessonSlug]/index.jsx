@@ -7,10 +7,10 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
+import ReactPlayer from 'react-player';
 import {
   isWindow, getExtensionName, languageLabel,
 } from '../../../../../utils';
-import ReactPlayer from '../../../../../common/components/ReactPlayer';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import Timeline from '../../../../../common/components/Timeline';
@@ -510,15 +510,11 @@ const Content = () => {
         )}
         {!isQuiz && currentData.intro_video_url && (
           <ReactPlayer
-            id={currentData.intro_video_url}
-            playOnThumbnail
-            imageSize="hqdefault"
-            style={{
-              width: '100%',
-              maxWidth: isBelowTablet ? '100%' : '70vw',
-              objectFit: 'cover',
-              aspectRatio: '16/9',
-            }}
+            className="react-player"
+            url={currentData.intro_video_url}
+            controls
+            width="100%"
+            height="100%"
           />
         )}
         {ipynbHtmlUrl && (
@@ -619,14 +615,11 @@ const Content = () => {
                   Video Tutorial
                 </Heading>
                 <ReactPlayer
-                  id={currentData.solution_video_url}
-                  playOnThumbnail
-                  imageSize="hqdefault"
-                  style={{
-                    width: '100%',
-                    objectFit: 'cover',
-                    aspectRatio: '16/9',
-                  }}
+                  className="react-player"
+                  url={currentData.solution_video_url}
+                  controls
+                  width="100%"
+                  height="100%"
                 />
               </Box>
             )}
