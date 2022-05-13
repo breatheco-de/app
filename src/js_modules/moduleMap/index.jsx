@@ -80,11 +80,11 @@ const ModuleMap = ({
             {t('modules.newActivities.title', { tasksLength: (modules.length - filteredModules.length) })}
           </Text>
           <Button
+            variant="outline"
             color="blue.default"
             textTransform="uppercase"
             onClick={() => handleStartDay()}
-            background="white"
-            border="1px solid #0097CD"
+            borderColor="blue.default"
             gridGap="8px"
           >
             <Icon icon="sync" width="20px" height="20px" />

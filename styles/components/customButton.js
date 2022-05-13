@@ -90,7 +90,7 @@ const ButtonStyles = {
       bg: 'none',
       color: props.colorMode === 'dark' ? 'white' : 'black',
       border: '1px solid',
-      borderColor: props.colorMode === 'dark' ? 'white' : 'black',
+      borderColor: props.borderColor || props.colorMode === 'dark' ? 'white' : 'black',
       borderRadius: '3px',
       fontSize: '13px',
       letterSpacing: '0.05em',
