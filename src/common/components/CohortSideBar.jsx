@@ -7,6 +7,11 @@ import {
   Grid,
   useColorMode,
   useColorModeValue,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
@@ -26,9 +31,11 @@ const ProfilesSection = ({ title, profiles }) => {
   const studentsToShow = showMoreStudents ? profiles : profiles.slice(0, 15);
   return (
     <Box display="block">
-      <Heading as="h4" padding="0 0 8px 0" fontSize={15} lineHeight="18px" margin={0}>
-        {title}
-      </Heading>
+      {title && (
+        <Heading as="h4" padding="0 0 8px 0" fontSize={15} lineHeight="18px" margin={0}>
+          {title}
+        </Heading>
+      )}
       <Grid
         gridAutoRows="3.4rem"
         templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
@@ -42,21 +49,32 @@ const ProfilesSection = ({ title, profiles }) => {
             );
           })
         }
-        {profiles.length > 15 && (
-          <Text
-            display="flex"
-            cursor="pointer"
-            color="blue.default"
-            alignItems="center"
-            width="auto"
-            fontWeight="700"
-            size="md"
-            onClick={() => setShowMoreStudents(!showMoreStudents)}
-          >
-            {showMoreStudents ? t('cohortSideBar.show-less') : t('cohortSideBar.show-more')}
-          </Text>
-        )}
       </Grid>
+      {profiles.length > 15 && (
+        <Text
+          display="flex"
+          cursor="pointer"
+          color="blue.default"
+          alignItems="center"
+          width="auto"
+          fontWeight="700"
+          justifyContent="center"
+          gridGap="10px"
+          size="md"
+          onClick={() => setShowMoreStudents(!showMoreStudents)}
+        >
+          {showMoreStudents ? t('cohortSideBar.show-less') : t('cohortSideBar.show-more')}
+          <Box
+            as="span"
+            display="flex"
+            onClick={(e) => e.preventDefault()}
+            transition="all .25s ease-in-out"
+            transform={showMoreStudents ? 'rotate(-90deg)' : 'rotate(90deg)'}
+          >
+            <Icon icon="arrowRight" color="#0097CD" width="12px" height="12px" />
+          </Box>
+        </Text>
+      )}
     </Box>
   );
 };
@@ -68,12 +86,16 @@ const CohortSideBar = ({
   const { t } = useTranslation('dashboard');
   const router = useRouter();
   const { colorMode } = useColorMode();
-  const [existsProfilesLoading, setExistsProfilesLoading] = useState(true);
+  const [activeStudentsLoading, setActiveStudentsLoading] = useState(true);
+  const [graduatedStudentsLoading, setGraduatedStudentsLoading] = useState(true);
   const teacher = studentAndTeachers.filter((st) => st.role === 'TEACHER');
-  const students = studentAndTeachers.filter((st) => st.role === 'STUDENT');
-  // const students = studentAndTeachers.filter(
-  //   (st) => st.role === 'STUDENT' && st.educational_status === 'ACTIVE'
-  // );
+  const activeStudents = studentAndTeachers.filter(
+    (st) => st.role === 'STUDENT' && st.educational_status !== 'GRADUATED',
+  );
+  const graduatedStudents = studentAndTeachers.filter(
+    (st) => st.role === 'STUDENT' && st.educational_status === 'GRADUATED',
+  );
+
   const teacherAssistants = studentAndTeachers.filter((st) => st.role === 'ASSISTANT');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
 
@@ -88,12 +110,17 @@ const CohortSideBar = ({
   };
 
   useEffect(() => {
-    if (students.length === 0 || teacher.length === 0) {
+    if (graduatedStudents.length === 0) {
       setTimeout(() => {
-        setExistsProfilesLoading(false);
+        setGraduatedStudentsLoading(false);
       }, 4000);
     }
-  }, [students]);
+    if (activeStudents.length === 0) {
+      setTimeout(() => {
+        setActiveStudentsLoading(false);
+      }, 4000);
+    }
+  }, []);
 
   return (
     <Box
@@ -174,19 +201,92 @@ const CohortSideBar = ({
             profiles={teacherAssistants}
           />
         )}
-        {students.length !== 0
-          ? (
-            <ProfilesSection
-              title={t('cohortSideBar.classmates')}
-              profiles={students}
-            />
-          ) : (
-            <>
-              {existsProfilesLoading ? (
-                <AvatarSkeleton withText quantity={12} />
-              ) : t('cohortSideBar.no-students')}
-            </>
-          )}
+
+        <Tabs display="flex" flexDirection="column" variant="unstyled" gridGap="16px">
+          <TabList display="flex" width="100%">
+            <Tab
+              p="0 14px 14px 14px"
+              display="block"
+              textAlign="center"
+              isDisabled={false}
+              textTransform="uppercase"
+              fontWeight="900"
+              fontSize="13px"
+              letterSpacing="0.05em"
+              width="100%"
+              // height="100%"
+              _selected={{
+                color: 'blue.default',
+                borderBottom: '4px solid',
+                borderColor: 'blue.default',
+              }}
+              _disabled={{
+                opacity: 0.5,
+                cursor: 'not-allowed',
+              }}
+            >
+              {t('cohortSideBar.active-geeks', { studentsLength: activeStudents.length })}
+            </Tab>
+            {cohort.ending_date === null && (
+              <Tab
+                p="0 14px 14px 14px"
+                display="block"
+                textAlign="center"
+                isDisabled={false}
+                textTransform="uppercase"
+                fontWeight="900"
+                fontSize="13px"
+                letterSpacing="0.05em"
+                width="100%"
+                // height="100%"
+                _selected={{
+                  color: 'blue.default',
+                  borderBottom: '4px solid',
+                  borderColor: 'blue.default',
+                }}
+                _disabled={{
+                  opacity: 0.5,
+                  cursor: 'not-allowed',
+                }}
+              >
+                {t('cohortSideBar.graduated-geeks', { studentsLength: graduatedStudents.length })}
+              </Tab>
+            )}
+          </TabList>
+          <TabPanels p="0">
+            <TabPanel p="0">
+              <ProfilesSection
+                profiles={activeStudents}
+              />
+              {activeStudents.length !== 0
+                ? (
+                  <ProfilesSection
+                    profiles={activeStudents}
+                  />
+                ) : (
+                  <>
+                    {activeStudentsLoading ? (
+                      <AvatarSkeleton pt="0" quantity={12} />
+                    ) : t('cohortSideBar.no-active-students')}
+                  </>
+                )}
+            </TabPanel>
+            <TabPanel p="0">
+              {graduatedStudents.length !== 0
+                ? (
+                  <ProfilesSection
+                    profiles={graduatedStudents}
+                  />
+                ) : (
+                  <>
+                    {graduatedStudentsLoading ? (
+                      <AvatarSkeleton pt="0" quantity={12} />
+                    ) : t('cohortSideBar.no-graduated-students')}
+                  </>
+                )}
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </Box>
     </Box>
   );

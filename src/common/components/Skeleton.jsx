@@ -195,7 +195,9 @@ export const AvatarSkeleton = ({
       )}
       <Grid
         {...chakraProps}
-        pt="25px"
+        pt={chakraProps.pt || '25px'}
+        alignItems="center"
+        justifyItems="center"
         gridAutoRows={gridAutoRows}
         templateColumns={templateColumns}
         gridGap={gridGap}
