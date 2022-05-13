@@ -514,7 +514,7 @@ const Content = () => {
             url={currentData.intro_video_url}
             controls
             width="100%"
-            height="100%"
+            height="-webkit-fill-available"
           />
         )}
         {ipynbHtmlUrl && (
@@ -619,7 +619,7 @@ const Content = () => {
                   url={currentData.solution_video_url}
                   controls
                   width="100%"
-                  height="100%"
+                  height="-webkit-fill-available"
                 />
               </Box>
             )}

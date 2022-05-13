@@ -40,7 +40,7 @@ export default function Example() {
             ]}
             controls
             width="100%"
-            height="100%"
+            height="-webkit-fill-available"
           />
         </div>
       </main>
