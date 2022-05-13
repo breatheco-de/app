@@ -256,7 +256,7 @@ const ProfileForm = ({ profile }) => {
                   alignItems="center"
                 >
                   <Text
-                    margin="0 0 0 24px"
+                    margin={{ base: '0 14px 0 14px', sm: '0 0 0 24px' }}
                     textAlign="start"
                     color="blue.default"
                     cursor="pointer"

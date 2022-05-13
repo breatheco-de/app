@@ -38,7 +38,7 @@ const Profile = () => {
     <Box margin={{ base: '3% 4% 0px', md: '3% 10% 0px' }}>
       <Heading as="h1" size="m" margin="45px 0">{t('navbar:my-profile')}</Heading>
       <Tabs display="flex" flexDirection={{ base: 'column', md: 'row' }} variant="unstyled" gridGap="40px">
-        <TabList display="flex" flexDirection="column" width="300px">
+        <TabList display="flex" flexDirection="column" width={{ base: '100%', md: '300px' }}>
           {tabListMenu.map((tab) => (
             <Tab
               key={tab.title}
@@ -70,7 +70,7 @@ const Profile = () => {
             <Text fontSize="15px" fontWeight="700" pb="18px">
               {t('basic-profile-info')}
             </Text>
-            <Box display="flex" gridGap="38px" width="100%" height="auto" borderRadius="17px" border="1px solid" borderColor={commonBorderColor} p="30px">
+            <Box display="flex" flexDirection={{ base: 'column', lg: 'row' }} alignItems={{ base: 'center', lg: 'start' }} gridGap="38px" width="100%" height="auto" borderRadius="17px" border="1px solid" borderColor={commonBorderColor} p="30px">
               {/* <Box height="140px" width="140px"
               minWidth="140px" borderRadius="50%" border="1px solid">
                 Avatar
