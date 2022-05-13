@@ -2,10 +2,11 @@
 // import { useRouter } from 'next/router';
 // import Image from 'next/image';
 import useTranslation from 'next-translate/useTranslation';
+import ReactPlayer from 'react-player';
 import styles from '../../styles/Home.module.css';
 import Counter from '../common/components/Counter';
 import { H1 } from '../common/styledComponents/Head';
-import ReactPlayer from '../common/components/ReactPlayer';
+// import ReactYTPlayer from '../common/components/ReactPlayer';
 
 export default function Example() {
   const { t } = useTranslation(['common', 'counter']);
@@ -20,7 +21,7 @@ export default function Example() {
 
         <Counter title={t('counter:title')} resetText={t('counter:resetButton')} />
 
-        <ReactPlayer
+        {/* <ReactYTPlayer
           width="700px"
           id="https://www.youtube.com/watch?v=BDKdUPDez-U"
           playOnThumbnail
@@ -30,7 +31,18 @@ export default function Example() {
             objectFit: 'cover',
             aspectRatio: '16/9',
           }}
-        />
+        /> */}
+        <div style={{ width: '700px', height: 'auto' }}>
+          <ReactPlayer
+            className="react-player"
+            url={[
+              'https://github.com/4GeeksAcademy/calculus-and-algebra-with-python/blob/main/lessons/assets/01-plotting-functions-with-python.mp4?raw=true',
+            ]}
+            controls
+            width="100%"
+            height="-webkit-fill-available"
+          />
+        </div>
       </main>
     </div>
   );
