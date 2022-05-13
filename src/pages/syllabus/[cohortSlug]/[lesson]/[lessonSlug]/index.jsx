@@ -7,9 +7,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
-import {
-  isWindow, getExtensionName, languageLabel,
-} from '../../../../../utils';
+import { isWindow, getExtensionName } from '../../../../../utils';
 import ReactPlayer from '../../../../../common/components/ReactPlayer';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
@@ -102,7 +100,7 @@ const Content = () => {
     answer: 'QUIZ',
   };
   const language = router.locale === 'en' ? 'us' : 'es';
-  const currentLanguageLabel = languageLabel[language] || language;
+  const currentLanguageLabel = router.language === 'en' ? t('common:english') : t('common:spanish');
 
   const isQuiz = lesson === 'answer';
 
@@ -292,6 +290,17 @@ const Content = () => {
     const defaultSyllabus = sortedAssignments.filter(
       (l) => l.modules.find((m) => m.slug === lessonSlug),
     )[0];
+
+    if ((findSelectedSyllabus !== undefined
+        && findSelectedSyllabus.teacherInstructions === undefined)
+        || findSelectedSyllabus?.teacherInstructions?.length === 0) {
+      toast({
+        title: t('alert-message:no-teacher-instructions-found'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+    }
 
     if (defaultSyllabus) {
       setSelectedSyllabus(findSelectedSyllabus || defaultSyllabus);
