@@ -31,6 +31,5 @@
   "invitation-accepted": "Cohorte {{cohortName}} aceptado con éxito!",
   "request-apply-success": "¡Gracias por tu solicitud!",
   "email-will-be-sent": "Un correo electrónico será enviado a usted pronto",
-  "error-fetching-role": "Hubo un error al intentar encontrar el rol \"{{role}}\"",
-  "no-teacher-instructions-found": "No se encontraron instrucciones para el módulo actual"
+  "error-fetching-role": "Hubo un error al intentar encontrar el rol \"{{role}}\""
 }

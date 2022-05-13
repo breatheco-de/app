@@ -291,17 +291,6 @@ const Content = () => {
       (l) => l.modules.find((m) => m.slug === lessonSlug),
     )[0];
 
-    if ((findSelectedSyllabus !== undefined
-        && findSelectedSyllabus.teacherInstructions === undefined)
-        || findSelectedSyllabus?.teacherInstructions?.length === 0) {
-      toast({
-        title: t('alert-message:no-teacher-instructions-found'),
-        status: 'error',
-        duration: 7000,
-        isClosable: true,
-      });
-    }
-
     if (defaultSyllabus) {
       setSelectedSyllabus(findSelectedSyllabus || defaultSyllabus);
       setDefaultSelectedSyllabus(defaultSyllabus);
@@ -311,7 +300,6 @@ const Content = () => {
   useEffect(() => {
     if (selectedSyllabus.extendedInstructions) {
       const content = selectedSyllabus.extendedInstructions;
-      // const MDecoded = content && typeof content === 'string' ? decodeFromBinary(content) : null;
       const markdown = getMarkDownContent(content);
       setExtendedInstructions(markdown);
     }
@@ -562,7 +550,7 @@ const Content = () => {
             transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
             transitionDelay="0ms"
           >
-            {extendedIsEnabled && extendedInstructions !== null && (
+            {extendedIsEnabled && (
               <>
                 <Box
                   margin="40px 0 0 0"
@@ -598,15 +586,30 @@ const Content = () => {
                     )}
                   </Box>
 
-                  {selectedSyllabus && defaultSelectedSyllabus.id !== selectedSyllabus.id && (
-                    <AlertMessage
-                      type="warning"
-                      style={{
-                        margin: '20px 0 18px 0',
-                      }}
-                      message={t('teacherSidebar.alert-updated-module-instructions')}
-                    />
-                  )}
+                  {selectedSyllabus
+                    && selectedSyllabus.teacherInstructions.length !== 0
+                    && defaultSelectedSyllabus.id !== selectedSyllabus.id
+                    && (
+                      <AlertMessage
+                        type="warning"
+                        style={{
+                          margin: '20px 0 18px 0',
+                        }}
+                        message={t('teacherSidebar.alert-updated-module-instructions')}
+                      />
+                    )}
+
+                  {selectedSyllabus
+                    && selectedSyllabus.teacherInstructions.length === 0
+                    && (
+                      <AlertMessage
+                        type="error"
+                        style={{
+                          margin: '20px 0 18px 0',
+                        }}
+                        message={t('teacherSidebar.no-teacher-instructions-found')}
+                      />
+                    )}
 
                   <Box display="flex" flexDirection="column" background={commonFeaturedColors} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
                     <Heading as="h2" size="sm" style={{ margin: '0' }}>
@@ -616,7 +619,7 @@ const Content = () => {
                       {teacherInstructions}
                     </Text>
                   </Box>
-                  <MarkdownParser content={extendedInstructions.content} />
+                  <MarkdownParser content={extendedInstructions?.content} />
                 </Box>
                 <Box margin="4rem 0" height="4px" width="100%" background={commonBorderColor} />
               </>
