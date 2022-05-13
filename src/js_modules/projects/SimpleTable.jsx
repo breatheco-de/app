@@ -119,7 +119,7 @@ const SimpleTable = ({
         justifyContent="space-between"
       >
         <Text size="l" color={commonTextColor}>
-          {t('average-duration')}
+          {t('common:average-duration')}
         </Text>
         <Text size="l" color={commonTextColor}>
           {duration

@@ -2,6 +2,7 @@ import axios from '../../axios';
 
 const host = `${process.env.BREATHECODE_HOST}/v1`;
 const breathecode = {
+  fetcher: (url) => axios.get(url).then((res) => res.data),
   auth: () => {
     const url = `${host}/auth`;
     return {
