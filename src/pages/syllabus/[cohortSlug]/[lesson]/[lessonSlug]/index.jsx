@@ -7,9 +7,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
-import {
-  isWindow, getExtensionName, languageLabel,
-} from '../../../../../utils';
+import { isWindow, getExtensionName } from '../../../../../utils';
 import ReactPlayer from '../../../../../common/components/ReactPlayer';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
@@ -102,7 +100,7 @@ const Content = () => {
     answer: 'QUIZ',
   };
   const language = router.locale === 'en' ? 'us' : 'es';
-  const currentLanguageLabel = languageLabel[language] || language;
+  const currentLanguageLabel = router.language === 'en' ? t('common:english') : t('common:spanish');
 
   const isQuiz = lesson === 'answer';
 
@@ -302,7 +300,6 @@ const Content = () => {
   useEffect(() => {
     if (selectedSyllabus.extendedInstructions) {
       const content = selectedSyllabus.extendedInstructions;
-      // const MDecoded = content && typeof content === 'string' ? decodeFromBinary(content) : null;
       const markdown = getMarkDownContent(content);
       setExtendedInstructions(markdown);
     }
@@ -553,7 +550,7 @@ const Content = () => {
             transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
             transitionDelay="0ms"
           >
-            {extendedIsEnabled && extendedInstructions !== null && (
+            {extendedIsEnabled && (
               <>
                 <Box
                   margin="40px 0 0 0"
@@ -589,15 +586,30 @@ const Content = () => {
                     )}
                   </Box>
 
-                  {selectedSyllabus && defaultSelectedSyllabus.id !== selectedSyllabus.id && (
-                    <AlertMessage
-                      type="warning"
-                      style={{
-                        margin: '20px 0 18px 0',
-                      }}
-                      message={t('teacherSidebar.alert-updated-module-instructions')}
-                    />
-                  )}
+                  {selectedSyllabus
+                    && selectedSyllabus.teacherInstructions.length !== 0
+                    && defaultSelectedSyllabus.id !== selectedSyllabus.id
+                    && (
+                      <AlertMessage
+                        type="warning"
+                        style={{
+                          margin: '20px 0 18px 0',
+                        }}
+                        message={t('teacherSidebar.alert-updated-module-instructions')}
+                      />
+                    )}
+
+                  {selectedSyllabus
+                    && selectedSyllabus.teacherInstructions.length === 0
+                    && (
+                      <AlertMessage
+                        type="error"
+                        style={{
+                          margin: '20px 0 18px 0',
+                        }}
+                        message={t('teacherSidebar.no-teacher-instructions-found')}
+                      />
+                    )}
 
                   <Box display="flex" flexDirection="column" background={commonFeaturedColors} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
                     <Heading as="h2" size="sm" style={{ margin: '0' }}>
@@ -607,7 +619,7 @@ const Content = () => {
                       {teacherInstructions}
                     </Text>
                   </Box>
-                  <MarkdownParser content={extendedInstructions.content} />
+                  <MarkdownParser content={extendedInstructions?.content} />
                 </Box>
                 <Box margin="4rem 0" height="4px" width="100%" background={commonBorderColor} />
               </>

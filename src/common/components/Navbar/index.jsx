@@ -341,8 +341,8 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                         display="flex"
                         gridGap="10px"
                         onClick={() => {
-                          logout();
                           setSettingsOpen(false);
+                          logout();
                         }}
                       >
                         <Icon icon="logout" width="20px" height="20px" />

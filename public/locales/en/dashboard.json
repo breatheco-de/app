@@ -27,12 +27,16 @@
     "start-date": "Start Date:",
     "mainTeacher": "Main teacher",
     "assistant": "Assistant Teachers",
+    "active-geeks": "{{studentsLength}} Active Geeks",
+    "graduated-geeks": "{{studentsLength}} Graduated Geeks",
     "classmates": "Your classmates",
-    "show-more": "Show more...",
-    "show-less": "Show less",
+    "show-more": "More students",
+    "show-less": "Hide students",
     "no-teachers": "This cohort does not have any teachers yet",
     "no-assistant": "This cohort does not have any assistants yet",
-    "no-students": "This cohort does not have any students yet"
+    "no-students": "This cohort does not have any students yet",
+    "no-active-students": "This cohort does not have any active students yet",
+    "no-graduated-students": "This cohort does not have any graduated students yet"
   },
   "supportSideBar": {
     "title": "Don't Get Stuck",

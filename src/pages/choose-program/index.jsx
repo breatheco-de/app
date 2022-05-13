@@ -143,12 +143,11 @@ function chooseProgram() {
             rightItemHandler={(
               <Button
                 color="blue.default"
+                borderColor="blue.default"
                 textTransform="uppercase"
                 onClick={() => {
                   acceptInvite({ id });
                 }}
-                background="white"
-                border="1px solid #0097CD"
                 gridGap="8px"
               >
                 <Text color="blue.default" size="15px">
