@@ -342,7 +342,12 @@ const Content = () => {
         slug: 'teacher-instructions',
         title: t('teacherSidebar.instructions'),
         content: true,
-        actionHandler: () => setExtendedIsEnabled(!extendedIsEnabled),
+        actionHandler: () => {
+          setExtendedIsEnabled(!extendedIsEnabled);
+          if (extendedIsEnabled === false) {
+            scrollTop();
+          }
+        },
         actionState: extendedIsEnabled,
         id: 1,
       },
