@@ -2,15 +2,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import {
   Box, Flex, useDisclosure, IconButton, Link, useToast,
-  useColorModeValue, useMediaQuery, Checkbox, Select,
+  useColorModeValue, useMediaQuery, Checkbox, Select, Modal, ModalOverlay,
+  ModalContent, ModalHeader, ModalCloseButton, ModalBody, Button,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
-import { isWindow, getExtensionName } from '../../../../../utils';
+import { isWindow, assetTypeValues, getExtensionName } from '../../../../../utils';
 import ReactPlayer from '../../../../../common/components/ReactPlayer';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
+import { updateAssignment } from '../../../../../common/hooks/useModuleHandler';
+import { ButtonHandlerByTaskStatus } from '../../../../../js_modules/moduleMap/taskHandler';
 import Timeline from '../../../../../common/components/Timeline';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkdownParser from '../../../../../common/components/MarkDownParser';
@@ -22,20 +25,27 @@ import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import StickySideBar from '../../../../../common/components/StickySideBar';
 import Icon from '../../../../../common/components/Icon';
 import AlertMessage from '../../../../../common/components/AlertMessage';
+import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 
 const Content = () => {
   const { t } = useTranslation('syllabus');
   const { user, choose } = useAuth();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [sortedAssignments] = usePersistent('sortedAssignments', []);
+  const [, setUpdatedTask] = useState(null);
+  const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
+  const { contextState, setContextState } = useModuleMap();
+  const [currentTask, setCurrentTask] = useState(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const { isOpen, onToggle } = useDisclosure();
+  const [openNextPageModal, setOpenNextPageModal] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [readme, setReadme] = useState(null);
   const [ipynbHtmlUrl, setIpynbHtmlUrl] = useState(null);
   const [extendedInstructions, setExtendedInstructions] = useState(null);
   const [extendedIsEnabled, setExtendedIsEnabled] = useState(false);
   const [showPendingTasks, setShowPendingTasks] = useState(false);
-  const [currentModule, setCurrentModule] = useState(null);
+  const [currentSelectedModule, setCurrentSelectedModule] = useState(null);
   const [quizSlug, setQuizSlug] = useState(null);
   const [showSolutionVideo, setShowSolutionVideo] = useState(false);
   const [selectedSyllabus, setSelectedSyllabus] = useState({});
@@ -46,6 +56,7 @@ const Content = () => {
   const toast = useToast();
   const router = useRouter();
   const prevScrollY = useRef(0);
+  const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
 
   const [isBelowLaptop] = useMediaQuery('(max-width: 996px)');
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
@@ -93,12 +104,7 @@ const Content = () => {
   };
 
   const { cohortSlug, lesson, lessonSlug } = router.query;
-  const assetTypeValues = {
-    read: 'LESSON',
-    practice: 'EXERCISE',
-    code: 'PROJECT',
-    answer: 'QUIZ',
-  };
+
   const language = router.locale === 'en' ? 'us' : 'es';
   const currentLanguageLabel = router.language === 'en' ? t('common:english') : t('common:spanish');
 
@@ -107,6 +113,30 @@ const Content = () => {
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  useEffect(() => {
+    Promise.all([
+      bc.todo({ cohort: cohortSession.id }).getTaskByStudent(), // Tasks with cohort id
+    ]).then(([taskTodoData]) => {
+      setContextState({
+        ...contextState,
+        taskTodo: taskTodoData.data,
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    if (contextState.taskTodo !== undefined) {
+      setTaskTodo(contextState.taskTodo);
+    }
+  }, [contextState.taskTodo]);
+
+  useEffect(() => {
+    if (taskTodo.length > 0) {
+      setCurrentTask(taskTodo.find((el) => el.task_type === assetTypeValues[lesson]
+      && el.associated_slug === lessonSlug));
+    }
+  }, [taskTodo, lessonSlug, lesson]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -134,10 +164,33 @@ const Content = () => {
     return () => isWindow && window.removeEventListener('scroll', handleScroll);
   }, [showScrollToTop]);
 
+  const closeSettings = () => {
+    setSettingsOpen(false);
+  };
+  const toggleSettings = () => {
+    setSettingsOpen(!settingsOpen);
+  };
+
+  const changeStatusAssignment = (event, task, taskStatus) => {
+    event.preventDefault();
+    setUpdatedTask({
+      ...task,
+    });
+    updateAssignment({
+      t, task, taskStatus, closeSettings, toast, contextState, setContextState,
+    });
+  };
+
+  const sendProject = (task, githubUrl, taskStatus) => {
+    updateAssignment({
+      t, task, closeSettings, toast, githubUrl, taskStatus, contextState, setContextState,
+    });
+  };
+
   const onClickAssignment = (e, item) => {
     router.push(`/syllabus/${cohortSlug}/${item.type.toLowerCase()}/${item.slug}`);
     setCurrentData({});
-    setCurrentModule(null);
+    setCurrentSelectedModule(null);
     setCallToActionProps({});
     setReadme(null);
     setIpynbHtmlUrl(null);
@@ -286,7 +339,7 @@ const Content = () => {
         isClosable: true,
       });
     }
-    const findSelectedSyllabus = sortedAssignments.find((l) => l.id === currentModule);
+    const findSelectedSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
     const defaultSyllabus = sortedAssignments.filter(
       (l) => l.modules.find((m) => m.slug === lessonSlug),
     )[0];
@@ -295,7 +348,7 @@ const Content = () => {
       setSelectedSyllabus(findSelectedSyllabus || defaultSyllabus);
       setDefaultSelectedSyllabus(defaultSyllabus);
     }
-  }, [sortedAssignments, lessonSlug, currentModule]);
+  }, [sortedAssignments, lessonSlug, currentSelectedModule]);
 
   useEffect(() => {
     if (selectedSyllabus.extendedInstructions) {
@@ -360,6 +413,31 @@ const Content = () => {
     actionHandler: () => setShowSolutionVideo(!showSolutionVideo),
     id: 3,
   }] : [];
+
+  const filteredCurrentAssignments = filterEmptyModules.map((section) => {
+    const currentAssignments = showPendingTasks
+      ? section.filteredModulesByPending
+      : section.filteredModules;
+    return currentAssignments;
+  });
+
+  const previousAssignment = filteredCurrentAssignments.map((section) => {
+    const currentIndex = section.findIndex((l) => l.slug === lessonSlug);
+    const prevIndex = currentIndex - 1;
+    if (prevIndex >= 0) {
+      return section[prevIndex];
+    }
+    return null;
+  })[selectedSyllabus.id - 1];
+
+  const nextAssignment = filteredCurrentAssignments.map((section) => {
+    const currentIndex = section.findIndex((l) => l.slug === lessonSlug);
+    const nextIndex = currentIndex + 1;
+    if (nextIndex < section.length) {
+      return section[nextIndex];
+    }
+    return null;
+  })[selectedSyllabus.id - 1];
 
   return (
     <Flex position="relative">
@@ -539,8 +617,8 @@ const Content = () => {
             marginLeft={0}
             margin={{ base: '0', lg: Open ? '0' : '0 auto' }}
             padding={{
-              base: GetReadme() !== false ? '0 5vw 4rem 5vw' : '4rem 4vw',
-              md: GetReadme() !== false ? '25px 8vw 4rem 8vw' : '4rem 4vw',
+              base: GetReadme() !== false ? '0 5vw 0 5vw' : '4rem 4vw 0 4vw',
+              md: GetReadme() !== false ? '25px 8vw 0 8vw' : '4rem 4vw 0 4vw',
             }}
             maxWidth="1012px"
             // marginRight="10rem"
@@ -571,7 +649,7 @@ const Content = () => {
                         }}
                         fontSize="20px"
                         value={selectedSyllabus.id || defaultSelectedSyllabus.id}
-                        onChange={(e) => setCurrentModule(parseInt(e.target.value, 10))}
+                        onChange={(e) => setCurrentSelectedModule(parseInt(e.target.value, 10))}
                         width="auto"
                         color="blue.default"
                         border="0"
@@ -657,6 +735,114 @@ const Content = () => {
                 />
               </Box>
             ) : GetReadme()}
+            <Box margin="4rem 0 0 0" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px" alignItems="center" justifyContent="space-between" padding="1.75rem 0 " borderTop="2px solid" borderColor={commonBorderColor} width="100%">
+              <ButtonHandlerByTaskStatus
+                allowText
+                currentTask={currentTask}
+                sendProject={sendProject}
+                changeStatusAssignment={changeStatusAssignment}
+                toggleSettings={toggleSettings}
+                closeSettings={closeSettings}
+                settingsOpen={settingsOpen}
+              />
+              <Box display="flex" gridGap="3rem">
+                {/* showPendingTasks bool to change states */}
+                {previousAssignment !== null && (
+                  <Box
+                    color="blue.default"
+                    cursor="pointer"
+                    fontSize="15px"
+                    display="flex"
+                    alignItems="center"
+                    gridGap="10px"
+                    letterSpacing="0.05em"
+                    fontWeight="700"
+                    onClick={() => {
+                      router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
+                    }}
+                  >
+                    <Box
+                      as="span"
+                      display="block"
+                    >
+                      <Icon icon="arrowLeft2" width="18px" height="10px" />
+                    </Box>
+                    {t('previous-page')}
+                  </Box>
+                )}
+                {nextAssignment !== null && (
+                  <Box
+                    color="blue.default"
+                    cursor="pointer"
+                    fontSize="15px"
+                    display="flex"
+                    alignItems="center"
+                    gridGap="10px"
+                    letterSpacing="0.05em"
+                    fontWeight="700"
+                    onClick={() => {
+                      if (taskIsNotDone) {
+                        setOpenNextPageModal(true);
+                      } else {
+                        router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                      }
+                    }}
+                  >
+                    {t('next-page')}
+                    <Box
+                      as="span"
+                      display="block"
+                      transform="rotate(180deg)"
+                    >
+                      <Icon icon="arrowLeft2" width="18px" height="10px" />
+                    </Box>
+                  </Box>
+                )}
+
+                <Modal isOpen={openNextPageModal} size="xl" margin="0 10px" onClose={() => setOpenNextPageModal(false)}>
+                  <ModalOverlay />
+                  <ModalContent>
+                    <ModalHeader borderBottom="1px solid" fontSize="15px" borderColor={commonBorderColor} textAlign="center">
+                      {assetTypeValues[lesson]}
+                    </ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody padding={{ base: '26px 18px', md: '42px 36px' }}>
+                      <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
+                        {t('ask-to-done', { taskType: assetTypeValues[lesson]?.toLowerCase() })}
+                      </Heading>
+                      <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="12px" justifyContent="space-between">
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                            setOpenNextPageModal(false);
+                          }}
+                          textTransform="uppercase"
+                          fontSize="13px"
+                        >
+                          {t('mark-later')}
+                        </Button>
+                        <ButtonHandlerByTaskStatus
+                          allowText
+                          currentTask={currentTask}
+                          sendProject={sendProject}
+                          changeStatusAssignment={changeStatusAssignment}
+                          toggleSettings={toggleSettings}
+                          closeSettings={closeSettings}
+                          settingsOpen={settingsOpen}
+                          onClickHandler={() => {
+                            setTimeout(() => {
+                              router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                            }, 1200);
+                            setOpenNextPageModal(false);
+                          }}
+                        />
+                      </Box>
+                    </ModalBody>
+                  </ModalContent>
+                </Modal>
+              </Box>
+            </Box>
           </Box>
         )}
       </Box>
