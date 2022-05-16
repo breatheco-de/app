@@ -502,12 +502,6 @@ const Content = () => {
         </Box>
       </Box>
       <Box width="100%" height="auto">
-        {ipynbHtmlUrl && readmeUrlPathname && (
-          <Link href={`https://colab.research.google.com/github${readmeUrlPathname}`} margin="3rem 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
-            <Icon icon="google-collab" color="#A0AEC0" width="28px" height="28px" />
-            {t('open-google-collab')}
-          </Link>
-        )}
         {!isQuiz && currentData.intro_video_url && (
           <ReactPlayer
             className="react-player"
@@ -517,129 +511,133 @@ const Content = () => {
             height="-webkit-fill-available"
           />
         )}
-        {ipynbHtmlUrl && (
-          <iframe
-            id="iframe"
-            src={ipynbHtmlUrl}
-            style={{
-              width: '100%',
-              height: '99vh',
-              borderRadius: '14px',
-            }}
-            title="4Geeks IPython Notebook"
-          />
-        )}
-
-        {!ipynbHtmlUrl && (
-          <Box
-            className={`markdown-body ${currentTheme}`}
-            // id={lessonSlug}
-            flexGrow={1}
-            marginLeft={0}
-            margin={{ base: '0', lg: Open ? '0' : '0 auto' }}
-            padding={{
-              base: GetReadme() !== false ? '0 5vw 4rem 5vw' : '4rem 4vw',
-              md: GetReadme() !== false ? '25px 8vw 4rem 8vw' : '4rem 4vw',
-            }}
-            maxWidth="1012px"
-            // marginRight="10rem"
-            transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
-            transitionProperty="margin"
-            transitionDuration={Open ? '225ms' : '195ms'}
-            transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
-            transitionDelay="0ms"
-          >
-            {extendedIsEnabled && extendedInstructions !== null && (
-              <>
-                <Box
-                  margin="40px 0 0 0"
-                >
-                  <Text onClick={() => setExtendedIsEnabled(false)} color="blue.default" width="fit-content" fontSize="15px" fontWeight="700" cursor="pointer" margin="15px 0 35px 0 !important">
-                    {`← ${t('teacherSidebar.back-to-student-mode')}`}
-                  </Text>
-                  <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
-                    <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
-                      {`${t('teacherSidebar.instructions')}:`}
-                    </Heading>
-                    {sortedAssignments.length > 0 && (
-                      <Select
-                        id="module"
-                        placeholder="Select module"
-                        style={{
-                          padding: '0 16px 0 0',
-                        }}
-                        fontSize="20px"
-                        value={selectedSyllabus.id || defaultSelectedSyllabus.id}
-                        onChange={(e) => setCurrentModule(parseInt(e.target.value, 10))}
-                        width="auto"
-                        color="blue.default"
-                        border="0"
-                        cursor="pointer"
-                      >
-                        {sortedAssignments.map((module) => (
-                          <option key={module.id} value={module.id}>
-                            {`#${module.id} - ${module.label}`}
-                          </option>
-                        ))}
-                      </Select>
-                    )}
-                  </Box>
-
-                  {selectedSyllabus && defaultSelectedSyllabus.id !== selectedSyllabus.id && (
-                    <AlertMessage
-                      type="warning"
+        <Box
+          className={`markdown-body ${currentTheme}`}
+          // id={lessonSlug}
+          flexGrow={1}
+          marginLeft={0}
+          margin={{ base: '0', lg: Open ? '0' : '0 auto' }}
+          padding={{
+            base: GetReadme() !== false ? '0 5vw 4rem 5vw' : '4rem 4vw',
+            md: GetReadme() !== false ? '25px 8vw 4rem 8vw' : '4rem 4vw',
+          }}
+          maxWidth="1012px"
+          // marginRight="10rem"
+          transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
+          transitionProperty="margin"
+          transitionDuration={Open ? '225ms' : '195ms'}
+          transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
+          transitionDelay="0ms"
+        >
+          {extendedIsEnabled && extendedInstructions !== null && (
+            <>
+              <Box
+                margin="40px 0 0 0"
+              >
+                <Text onClick={() => setExtendedIsEnabled(false)} color="blue.default" width="fit-content" fontSize="15px" fontWeight="700" cursor="pointer" margin="15px 0 35px 0 !important">
+                  {`← ${t('teacherSidebar.back-to-student-mode')}`}
+                </Text>
+                <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
+                  <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
+                    {`${t('teacherSidebar.instructions')}:`}
+                  </Heading>
+                  {sortedAssignments.length > 0 && (
+                    <Select
+                      id="module"
+                      placeholder="Select module"
                       style={{
-                        margin: '20px 0 18px 0',
+                        padding: '0 16px 0 0',
                       }}
-                      message={t('teacherSidebar.alert-updated-module-instructions')}
-                    />
+                      fontSize="20px"
+                      value={selectedSyllabus.id || defaultSelectedSyllabus.id}
+                      onChange={(e) => setCurrentModule(parseInt(e.target.value, 10))}
+                      width="auto"
+                      color="blue.default"
+                      border="0"
+                      cursor="pointer"
+                    >
+                      {sortedAssignments.map((module) => (
+                        <option key={module.id} value={module.id}>
+                          {`#${module.id} - ${module.label}`}
+                        </option>
+                      ))}
+                    </Select>
                   )}
-
-                  <Box display="flex" flexDirection="column" background={commonFeaturedColors} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
-                    <Heading as="h2" size="sm" style={{ margin: '0' }}>
-                      {label}
-                    </Heading>
-                    <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
-                      {teacherInstructions}
-                    </Text>
-                  </Box>
-                  <MarkdownParser content={extendedInstructions.content} />
                 </Box>
-                <Box margin="4rem 0" height="4px" width="100%" background={commonBorderColor} />
-              </>
-            )}
 
-            {!isQuiz && currentData.solution_video_url && showSolutionVideo && (
-              <Box padding="0.4rem 2rem 2rem 2rem" background={useColorModeValue('featuredLight', 'featuredDark')}>
-                <Heading as="h2" size="sm">
-                  Video Tutorial
-                </Heading>
-                <ReactPlayer
-                  className="react-player"
-                  url={currentData.solution_video_url}
-                  controls
-                  width="100%"
-                  height="-webkit-fill-available"
-                />
-              </Box>
-            )}
+                {selectedSyllabus && defaultSelectedSyllabus.id !== selectedSyllabus.id && (
+                  <AlertMessage
+                    type="warning"
+                    style={{
+                      margin: '20px 0 18px 0',
+                    }}
+                    message={t('teacherSidebar.alert-updated-module-instructions')}
+                  />
+                )}
 
-            {isQuiz ? (
-              <Box background={useColorModeValue('featuredLight', 'featuredDark')} width="100%" height="100vh" borderRadius="14px">
-                <iframe
-                  id="iframe"
-                  src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: '14px',
-                  }}
-                  title="Breathecode Quiz"
-                />
+                <Box display="flex" flexDirection="column" background={commonFeaturedColors} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
+                  <Heading as="h2" size="sm" style={{ margin: '0' }}>
+                    {label}
+                  </Heading>
+                  <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
+                    {teacherInstructions}
+                  </Text>
+                </Box>
+                <MarkdownParser content={extendedInstructions.content} />
               </Box>
-            ) : GetReadme()}
-          </Box>
-        )}
+              <Box margin="4rem 0" height="4px" width="100%" background={commonBorderColor} />
+            </>
+          )}
+
+          {!isQuiz && currentData.solution_video_url && showSolutionVideo && (
+            <Box padding="0.4rem 2rem 2rem 2rem" background={useColorModeValue('featuredLight', 'featuredDark')}>
+              <Heading as="h2" size="sm">
+                Video Tutorial
+              </Heading>
+              <ReactPlayer
+                className="react-player"
+                url={currentData.solution_video_url}
+                controls
+                width="100%"
+                height="-webkit-fill-available"
+              />
+            </Box>
+          )}
+
+          {ipynbHtmlUrl && readmeUrlPathname && (
+            <Link href={`https://colab.research.google.com/github${readmeUrlPathname}`} margin="0 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+              <Icon icon="google-collab" color="#A0AEC0" width="28px" height="28px" />
+              {t('open-google-collab')}
+            </Link>
+          )}
+          {ipynbHtmlUrl && (
+            <iframe
+              id="iframe"
+              src={ipynbHtmlUrl}
+              style={{
+                width: '100%',
+                height: '99vh',
+                borderRadius: '14px',
+              }}
+              title="4Geeks IPython Notebook"
+            />
+          )}
+
+          {isQuiz ? (
+            <Box background={useColorModeValue('featuredLight', 'featuredDark')} width="100%" height="100vh" borderRadius="14px">
+              <iframe
+                id="iframe"
+                src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '14px',
+                }}
+                title="Breathecode Quiz"
+              />
+            </Box>
+          ) : GetReadme()}
+        </Box>
       </Box>
     </Flex>
   );
