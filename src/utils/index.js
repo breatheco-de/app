@@ -13,6 +13,13 @@ const languageLabel = {
   us: 'english',
 };
 
+const assetTypeValues = {
+  read: 'LESSON',
+  practice: 'EXERCISE',
+  code: 'PROJECT',
+  answer: 'QUIZ',
+};
+
 const slugify = (str) => str
   .toLowerCase()
   .trim()
@@ -72,6 +79,7 @@ const objectAreNotEqual = (t1, t2) => Object.keys(t1).map((l) => t1[l] === t2[l]
 
 export {
   isWindow,
+  assetTypeValues,
   HAVE_SESSION,
   slugify,
   unSlugify,
