@@ -37,6 +37,7 @@ const Content = () => {
   const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [modalSettingsOpen, setModalSettingsOpen] = useState(false);
   const { isOpen, onToggle } = useDisclosure();
   const [openNextPageModal, setOpenNextPageModal] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
@@ -166,9 +167,14 @@ const Content = () => {
 
   const closeSettings = () => {
     setSettingsOpen(false);
+    setModalSettingsOpen(false);
   };
   const toggleSettings = () => {
-    setSettingsOpen(!settingsOpen);
+    if (openNextPageModal) {
+      setModalSettingsOpen(!modalSettingsOpen);
+    } else {
+      setSettingsOpen(!settingsOpen);
+    }
   };
 
   const changeStatusAssignment = (event, task, taskStatus) => {
@@ -829,7 +835,7 @@ const Content = () => {
                           changeStatusAssignment={changeStatusAssignment}
                           toggleSettings={toggleSettings}
                           closeSettings={closeSettings}
-                          settingsOpen={settingsOpen}
+                          settingsOpen={modalSettingsOpen}
                           onClickHandler={() => {
                             setTimeout(() => {
                               router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
