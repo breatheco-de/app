@@ -37,6 +37,7 @@
   "supportSideBar": {
     "title": "Don't Get Stuck",
     "description": "Did you know you can schedule mentoring sessions any time or ask in the Support Chat?",
+    "no-mentors": "No mentors available",
     "actionButtons": [
       {
         "name": "mentoring",

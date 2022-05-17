@@ -67,11 +67,14 @@ const breathecode = {
       get: () => axios.get(`${url}/user/me/task`),
     };
   },
-  mentorship: () => {
+  mentorship: (query = {}) => {
     const url = `${host}/mentorship/academy`;
+    const qs = Object.keys(query)
+      .map((key) => `${key}=${query[key]}`)
+      .join('&');
     return {
       getService: () => axios.get(`${url}/service?status=ACTIVE`),
-      getMentor: ({ serviceSlug }) => axios.get(`${url}/mentor?service=${serviceSlug}&status=ACTIVE`),
+      getMentor: () => axios.get(`${url}/mentor?${qs}`),
     };
   },
   lesson: (query) => {

@@ -49,6 +49,7 @@ const Dashboard = () => {
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const { user, choose } = useAuth();
   const [, setSyllabus] = usePersistent('syllabus', []);
+  const teacherAndAssistants = studentAndTeachers.filter((st) => st.role === 'TEACHER' || st.role === 'ASSISTANT');
 
   const locale = router.locale === 'default' ? 'en' : router.locale;
   const { cohortSlug, slug } = router.query;
@@ -447,6 +448,7 @@ const Dashboard = () => {
               <SupportSidebar
                 title={supportSideBar.title}
                 subtitle={supportSideBar.description}
+                teacherAndAssistants={teacherAndAssistants}
                 actionButtons={supportSideBar.actionButtons}
                 width="100%"
               />
@@ -600,6 +602,7 @@ const Dashboard = () => {
             <SupportSidebar
               title={supportSideBar.title}
               subtitle={supportSideBar.description}
+              teacherAndAssistants={teacherAndAssistants}
               actionButtons={supportSideBar.actionButtons}
               width="100%"
             />
