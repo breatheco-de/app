@@ -51,6 +51,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
 
   const langs = ['en', 'es'];
   const linkColor = useColorModeValue('gray.600', 'gray.200');
+  const fontColor = useColorModeValue('black', 'gray.200');
 
   const { selectedProgramSlug } = cohortSession;
 
@@ -314,7 +315,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                       <NextChakraLink
                         href="/profile"
                         fontWeight="400"
-                        color="black"
+                        color={fontColor}
                         fontSize="14px"
                         textDecoration="none"
                         // cursor="pointer"
