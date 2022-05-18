@@ -44,7 +44,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const commonColors = useColorModeValue('white', 'gray.800');
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
-  const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
+  const commonBorderColor = useColorModeValue('gray.200', 'gray.700');
   const { user, logout } = useAuth();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [settingsOpen, setSettingsOpen] = useState(false);

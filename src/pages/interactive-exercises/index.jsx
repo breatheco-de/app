@@ -14,7 +14,8 @@ import ProjectList from '../../js_modules/projects/ProjectList';
 import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 
-export const getStaticProps = async () => {
+export const getStaticProps = async ({ locale }) => {
+  const currentLang = locale === 'en' ? 'us' : 'es';
   const exercises = []; // filtered exercises after removing repeated
   let arrExercises = []; // incoming exercises
   const data = await fetch(
@@ -72,7 +73,7 @@ export const getStaticProps = async () => {
   return {
     props: {
       fallback: false,
-      exercises,
+      exercises: exercises.filter((project) => project.lang === currentLang),
       technologyTags,
       difficulties: difficultiesSorted,
     },

@@ -1,6 +1,6 @@
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Flex, Stack, Box, Tabs, TabList, Tab, TabPanels, TabPanel, Image,
+  Flex, Stack, Box, Tabs, TabList, Tab, TabPanels, TabPanel, Image, useColorModeValue,
 } from '@chakra-ui/react';
 // import I from 'next/image';
 import { useEffect } from 'react';
@@ -15,6 +15,8 @@ function login() {
   const { t } = useTranslation('login');
   const { user } = useAuth();
   const router = useRouter();
+  const fontColor = useColorModeValue('gray.default', 'gray.400');
+  const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
 
   useEffect(() => {
     if (user !== null && user !== undefined) {
@@ -35,15 +37,15 @@ function login() {
                 <TabList align="center" justify="center">
                   <Tab
                     _selected={{
-                      color: 'gray.dark',
+                      color: 'blue.default',
                       borderBottomColor: 'blue.default',
                       borderBottomWidth: '3px',
                     }}
-                    color="gray.default"
+                    color={fontColor}
                     boxShadow="none !important"
                     fontWeight="600"
                     padding="17px"
-                    borderBottomColor="gray.200"
+                    borderBottomColor={commonBorderColor}
                     borderTop="none"
                     borderRight="none"
                     borderLeft="none"
@@ -52,15 +54,15 @@ function login() {
                   </Tab>
                   <Tab
                     _selected={{
-                      color: 'gray.dark',
+                      color: 'blue.default',
                       borderBottomColor: 'blue.default',
                       borderBottomWidth: '3px',
                     }}
-                    color="gray.default"
+                    color={fontColor}
                     boxShadow="none !important"
                     fontWeight="600"
                     padding="17px"
-                    borderBottomColor="gray.200"
+                    borderBottomColor={commonBorderColor}
                     borderTop="none"
                     borderRight="none"
                     borderLeft="none"
