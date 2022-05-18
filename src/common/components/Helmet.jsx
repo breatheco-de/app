@@ -11,8 +11,8 @@ const Helmet = ({
     {/* <html lang="en" /> */}
     {/* <link rel="canonical" href={`${siteUrl}${pagePath}`} /> */}
     {/* <meta name="keywords" content={keywords} /> */}
-    <link rel="canonical" hreflLang="en" href="http://4geeks.com/en" />
-    <link rel="alternate" hrefLang="es" href="http://4geeks.com/es" />
+    <link rel="canonical" hreflLang="en" href="https://4geeks.com/en" />
+    <link rel="alternate" hrefLang="es" href="https://4geeks.com/es" />
 
     <title>{title}</title>
     <meta name="description" content={description} />
