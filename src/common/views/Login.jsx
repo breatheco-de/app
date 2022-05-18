@@ -17,7 +17,7 @@ import Icon from '../components/Icon';
 
 function Login() {
   return (
-    <Stack minH="100vh" direction={{ md: 'row' }}>
+    <Stack minH={{ base: 'auto', md: '100vh' }} direction={{ md: 'row' }}>
       <Flex p={8} flex={1} align="center" justify="center">
         <Stack spacing={4} w="full" maxW="md">
           <Box align="center" justify="center">
