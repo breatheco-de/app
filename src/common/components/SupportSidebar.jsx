@@ -4,6 +4,8 @@ import {
   AccordionButton, useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
+import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import Text from './Text';
 import bc from '../services/breathecode';
@@ -18,9 +20,13 @@ const academySlug = cohortSession && cohortSession.academy?.slug;
 const SupportSidebar = ({
   title, subtitle, actionButtons, width,
 }) => {
+  const { t } = useTranslation('dashboard');
   const { colorMode } = useColorMode();
+  const router = useRouter();
+  const { slug } = router.query;
   const [programServices, setProgramServices] = usePersistent('programServices', []);
   const [programMentors, setProgramMentors] = useState([]);
+  const fontColor = useColorModeValue('gray.600', 'gray.300');
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
 
@@ -30,7 +36,11 @@ const SupportSidebar = ({
         setProgramServices(data);
         const allMentorsArray = [];
         Promise.all(data.map(async (service) => {
-          const mentors = await bc.mentorship().getMentor({ serviceSlug: service.slug });
+          const mentors = await bc.mentorship({
+            service: service.slug,
+            status: 'ACTIVE',
+            syllabus: slug,
+          }).getMentor({ serviceSlug: service.slug });
           allMentorsArray.push(mentors.data);
         })).then(() => {
           const mentorsArray = allMentorsArray.reduce((acc, curr) => acc.concat(curr), []);
@@ -118,7 +128,9 @@ const SupportSidebar = ({
             );
           })}
 
-          {actionButtons.filter((el) => el.name === 'mentoring').map((button) => (
+          {programServices
+          && programServices.length > 0
+          && actionButtons.filter((el) => el.name === 'mentoring').map((button) => (
             <Accordion
               id={`support-action-${button.name}`}
               key={button.title}
@@ -216,11 +228,11 @@ const SupportSidebar = ({
                                   padding="16px"
                                   borderTop="1px solid"
                                   borderLeft="5px solid"
-                                  color="gray.600"
+                                  color={fontColor}
                                   borderColor={commonBorderColor}
                                   width="100%"
                                 >
-                                  No mentors available
+                                  {t('supportSideBar.no-mentors')}
                                 </Box>
                               )}
                           </AccordionPanel>

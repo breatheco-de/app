@@ -398,7 +398,12 @@ const Content = () => {
         slug: 'teacher-instructions',
         title: t('teacherSidebar.instructions'),
         content: true,
-        actionHandler: () => setExtendedIsEnabled(!extendedIsEnabled),
+        actionHandler: () => {
+          setExtendedIsEnabled(!extendedIsEnabled);
+          if (extendedIsEnabled === false) {
+            scrollTop();
+          }
+        },
         actionState: extendedIsEnabled,
         id: 1,
       },
@@ -583,274 +588,251 @@ const Content = () => {
         </Box>
       </Box>
       <Box width="100%" height="auto">
-        {ipynbHtmlUrl && readmeUrlPathname && (
-          <Link href={`https://colab.research.google.com/github${readmeUrlPathname}`} margin="3rem 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
-            <Icon icon="google-collab" color="#A0AEC0" width="28px" height="28px" />
-            {t('open-google-collab')}
-          </Link>
-        )}
         {!isQuiz && currentData.intro_video_url && (
           <ReactPlayer
-            id={currentData.intro_video_url}
-            playOnThumbnail
-            imageSize="hqdefault"
-            style={{
-              width: '100%',
-              maxWidth: isBelowTablet ? '100%' : '70vw',
-              objectFit: 'cover',
-              aspectRatio: '16/9',
-            }}
+            className="react-player"
+            url={currentData.intro_video_url}
+            controls
+            width="100%"
+            height="-webkit-fill-available"
           />
         )}
-        {ipynbHtmlUrl && (
-          <iframe
-            id="iframe"
-            src={ipynbHtmlUrl}
-            style={{
-              width: '100%',
-              height: '99vh',
-              borderRadius: '14px',
-            }}
-            title="4Geeks IPython Notebook"
-          />
-        )}
-
-        {!ipynbHtmlUrl && (
-          <Box
-            className={`markdown-body ${currentTheme}`}
-            // id={lessonSlug}
-            flexGrow={1}
-            marginLeft={0}
-            margin={{ base: '0', lg: Open ? '0' : '0 auto' }}
-            padding={{
-              base: GetReadme() !== false ? '0 5vw 0 5vw' : '4rem 4vw 0 4vw',
-              md: GetReadme() !== false ? '25px 8vw 0 8vw' : '4rem 4vw 0 4vw',
-            }}
-            maxWidth="1012px"
-            // marginRight="10rem"
-            transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
-            transitionProperty="margin"
-            transitionDuration={Open ? '225ms' : '195ms'}
-            transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
-            transitionDelay="0ms"
-          >
-            {extendedIsEnabled && (
-              <>
-                <Box
-                  margin="40px 0 0 0"
-                >
-                  <Text onClick={() => setExtendedIsEnabled(false)} color="blue.default" width="fit-content" fontSize="15px" fontWeight="700" cursor="pointer" margin="15px 0 35px 0 !important">
-                    {`← ${t('teacherSidebar.back-to-student-mode')}`}
-                  </Text>
-                  <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
-                    <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
-                      {`${t('teacherSidebar.instructions')}:`}
-                    </Heading>
-                    {sortedAssignments.length > 0 && (
-                      <Select
-                        id="module"
-                        placeholder="Select module"
-                        style={{
-                          padding: '0 16px 0 0',
-                        }}
-                        fontSize="20px"
-                        value={selectedSyllabus.id || defaultSelectedSyllabus.id}
-                        onChange={(e) => setCurrentSelectedModule(parseInt(e.target.value, 10))}
-                        width="auto"
-                        color="blue.default"
-                        border="0"
-                        cursor="pointer"
-                      >
-                        {sortedAssignments.map((module) => (
-                          <option key={module.id} value={module.id}>
-                            {`#${module.id} - ${module.label}`}
-                          </option>
-                        ))}
-                      </Select>
-                    )}
-                  </Box>
-
-                  {selectedSyllabus
-                    && selectedSyllabus.teacherInstructions.length !== 0
-                    && defaultSelectedSyllabus.id !== selectedSyllabus.id
-                    && (
-                      <AlertMessage
-                        type="warning"
-                        style={{
-                          margin: '20px 0 18px 0',
-                        }}
-                        message={t('teacherSidebar.alert-updated-module-instructions')}
-                      />
-                    )}
-
-                  {selectedSyllabus
-                    && selectedSyllabus.teacherInstructions.length === 0
-                    && (
-                      <AlertMessage
-                        type="error"
-                        style={{
-                          margin: '20px 0 18px 0',
-                        }}
-                        message={t('teacherSidebar.no-teacher-instructions-found')}
-                      />
-                    )}
-
-                  <Box display="flex" flexDirection="column" background={commonFeaturedColors} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
-                    <Heading as="h2" size="sm" style={{ margin: '0' }}>
-                      {label}
-                    </Heading>
-                    <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
-                      {teacherInstructions}
-                    </Text>
-                  </Box>
-                  <MarkdownParser content={extendedInstructions?.content} />
+        <Box
+          className={`markdown-body ${currentTheme}`}
+          // id={lessonSlug}
+          flexGrow={1}
+          marginLeft={0}
+          margin={{ base: '0', lg: Open ? '0' : '0 auto' }}
+          padding={{
+            base: GetReadme() !== false ? '0 5vw 4rem 5vw' : '4rem 4vw',
+            md: GetReadme() !== false ? '25px 8vw 4rem 8vw' : '4rem 4vw',
+          }}
+          maxWidth="1012px"
+          // marginRight="10rem"
+          transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
+          transitionProperty="margin"
+          transitionDuration={Open ? '225ms' : '195ms'}
+          transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
+          transitionDelay="0ms"
+        >
+          {extendedIsEnabled && extendedInstructions !== null && (
+            <>
+              <Box
+                margin="40px 0 0 0"
+              >
+                <Text onClick={() => setExtendedIsEnabled(false)} color="blue.default" width="fit-content" fontSize="15px" fontWeight="700" cursor="pointer" margin="15px 0 35px 0 !important">
+                  {`← ${t('teacherSidebar.back-to-student-mode')}`}
+                </Text>
+                <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
+                  <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
+                    {`${t('teacherSidebar.instructions')}:`}
+                  </Heading>
+                  {sortedAssignments.length > 0 && (
+                    <Select
+                      id="module"
+                      placeholder="Select module"
+                      style={{
+                        padding: '0 16px 0 0',
+                      }}
+                      fontSize="20px"
+                      value={selectedSyllabus.id || defaultSelectedSyllabus.id}
+                      onChange={(e) => setCurrentSelectedModule(parseInt(e.target.value, 10))}
+                      width="auto"
+                      color="blue.default"
+                      border="0"
+                      cursor="pointer"
+                    >
+                      {sortedAssignments.map((module) => (
+                        <option key={module.id} value={module.id}>
+                          {`#${module.id} - ${module.label}`}
+                        </option>
+                      ))}
+                    </Select>
+                  )}
                 </Box>
-                <Box margin="4rem 0" height="4px" width="100%" background={commonBorderColor} />
-              </>
-            )}
 
-            {!isQuiz && currentData.solution_video_url && showSolutionVideo && (
-              <Box padding="0.4rem 2rem 2rem 2rem" background={useColorModeValue('featuredLight', 'featuredDark')}>
-                <Heading as="h2" size="sm">
-                  Video Tutorial
-                </Heading>
-                <ReactPlayer
-                  id={currentData.solution_video_url}
-                  playOnThumbnail
-                  imageSize="hqdefault"
-                  style={{
-                    width: '100%',
-                    objectFit: 'cover',
-                    aspectRatio: '16/9',
-                  }}
-                />
-              </Box>
-            )}
+                {selectedSyllabus && defaultSelectedSyllabus.id !== selectedSyllabus.id && (
+                  <AlertMessage
+                    type="warning"
+                    style={{
+                      margin: '20px 0 18px 0',
+                    }}
+                    message={t('teacherSidebar.alert-updated-module-instructions')}
+                  />
+                )}
 
-            {isQuiz ? (
-              <Box background={useColorModeValue('featuredLight', 'featuredDark')} width="100%" height="100vh" borderRadius="14px">
-                <iframe
-                  id="iframe"
-                  src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: '14px',
-                  }}
-                  title="Breathecode Quiz"
-                />
+                <Box display="flex" flexDirection="column" background={commonFeaturedColors} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
+                  <Heading as="h2" size="sm" style={{ margin: '0' }}>
+                    {label}
+                  </Heading>
+                  <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
+                    {teacherInstructions}
+                  </Text>
+                </Box>
+                <MarkdownParser content={extendedInstructions.content} />
               </Box>
-            ) : GetReadme()}
-            <Box margin="4rem 0 0 0" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px" alignItems="center" justifyContent="space-between" padding="1.75rem 0 " borderTop="2px solid" borderColor={commonBorderColor} width="100%">
-              <ButtonHandlerByTaskStatus
-                allowText
-                currentTask={currentTask}
-                sendProject={sendProject}
-                changeStatusAssignment={changeStatusAssignment}
-                toggleSettings={toggleSettings}
-                closeSettings={closeSettings}
-                settingsOpen={settingsOpen}
+              <Box margin="4rem 0" height="4px" width="100%" background={commonBorderColor} />
+            </>
+          )}
+
+          {!isQuiz && currentData.solution_video_url && showSolutionVideo && (
+            <Box padding="0.4rem 2rem 2rem 2rem" background={useColorModeValue('featuredLight', 'featuredDark')}>
+              <Heading as="h2" size="sm">
+                Video Tutorial
+              </Heading>
+              <ReactPlayer
+                className="react-player"
+                url={currentData.solution_video_url}
+                controls
+                width="100%"
+                height="-webkit-fill-available"
               />
-              <Box display="flex" gridGap="3rem">
-                {/* showPendingTasks bool to change states */}
-                {previousAssignment !== null && (
-                  <Box
-                    color="blue.default"
-                    cursor="pointer"
-                    fontSize="15px"
-                    display="flex"
-                    alignItems="center"
-                    gridGap="10px"
-                    letterSpacing="0.05em"
-                    fontWeight="700"
-                    onClick={() => {
-                      router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
-                    }}
-                  >
-                    <Box
-                      as="span"
-                      display="block"
-                    >
-                      <Icon icon="arrowLeft2" width="18px" height="10px" />
-                    </Box>
-                    {t('previous-page')}
-                  </Box>
-                )}
-                {nextAssignment !== null && (
-                  <Box
-                    color="blue.default"
-                    cursor="pointer"
-                    fontSize="15px"
-                    display="flex"
-                    alignItems="center"
-                    gridGap="10px"
-                    letterSpacing="0.05em"
-                    fontWeight="700"
-                    onClick={() => {
-                      if (taskIsNotDone) {
-                        setOpenNextPageModal(true);
-                      } else {
-                        router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
-                      }
-                    }}
-                  >
-                    {t('next-page')}
-                    <Box
-                      as="span"
-                      display="block"
-                      transform="rotate(180deg)"
-                    >
-                      <Icon icon="arrowLeft2" width="18px" height="10px" />
-                    </Box>
-                  </Box>
-                )}
+            </Box>
+          )}
 
-                <Modal isOpen={openNextPageModal} size="xl" margin="0 10px" onClose={() => setOpenNextPageModal(false)}>
-                  <ModalOverlay />
-                  <ModalContent>
-                    <ModalHeader borderBottom="1px solid" fontSize="15px" borderColor={commonBorderColor} textAlign="center">
-                      {assetTypeValues[lesson]}
-                    </ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody padding={{ base: '26px 18px', md: '42px 36px' }}>
-                      <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
-                        {t('ask-to-done', { taskType: assetTypeValues[lesson]?.toLowerCase() })}
-                      </Heading>
-                      <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="12px" justifyContent="space-between">
-                        <Button
-                          variant="outline"
-                          onClick={() => {
+          {ipynbHtmlUrl && readmeUrlPathname && (
+            <Link href={`https://colab.research.google.com/github${readmeUrlPathname}`} margin="0 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+              <Icon icon="google-collab" color="#A0AEC0" width="28px" height="28px" />
+              {t('open-google-collab')}
+            </Link>
+          )}
+          {ipynbHtmlUrl && (
+            <iframe
+              id="iframe"
+              src={ipynbHtmlUrl}
+              style={{
+                width: '100%',
+                height: '99vh',
+                borderRadius: '14px',
+              }}
+              title="4Geeks IPython Notebook"
+            />
+          )}
+
+          {isQuiz ? (
+            <Box background={useColorModeValue('featuredLight', 'featuredDark')} width="100%" height="100vh" borderRadius="14px">
+              <iframe
+                id="iframe"
+                src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '14px',
+                }}
+                title="Breathecode Quiz"
+              />
+            </Box>
+          ) : GetReadme()}
+
+          <Box margin="4rem 0 0 0" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px" alignItems="center" justifyContent="space-between" padding="1.75rem 0 " borderTop="2px solid" borderColor={commonBorderColor} width="100%">
+            <ButtonHandlerByTaskStatus
+              allowText
+              currentTask={currentTask}
+              sendProject={sendProject}
+              changeStatusAssignment={changeStatusAssignment}
+              toggleSettings={toggleSettings}
+              closeSettings={closeSettings}
+              settingsOpen={settingsOpen}
+            />
+            <Box display="flex" gridGap="3rem">
+              {/* showPendingTasks bool to change states */}
+              {previousAssignment !== null && (
+                <Box
+                  color="blue.default"
+                  cursor="pointer"
+                  fontSize="15px"
+                  display="flex"
+                  alignItems="center"
+                  gridGap="10px"
+                  letterSpacing="0.05em"
+                  fontWeight="700"
+                  onClick={() => {
+                    router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
+                  }}
+                >
+                  <Box
+                    as="span"
+                    display="block"
+                  >
+                    <Icon icon="arrowLeft2" width="18px" height="10px" />
+                  </Box>
+                  {t('previous-page')}
+                </Box>
+              )}
+              {nextAssignment !== null && (
+                <Box
+                  color="blue.default"
+                  cursor="pointer"
+                  fontSize="15px"
+                  display="flex"
+                  alignItems="center"
+                  gridGap="10px"
+                  letterSpacing="0.05em"
+                  fontWeight="700"
+                  onClick={() => {
+                    if (taskIsNotDone) {
+                      setOpenNextPageModal(true);
+                    } else {
+                      router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                    }
+                  }}
+                >
+                  {t('next-page')}
+                  <Box
+                    as="span"
+                    display="block"
+                    transform="rotate(180deg)"
+                  >
+                    <Icon icon="arrowLeft2" width="18px" height="10px" />
+                  </Box>
+                </Box>
+              )}
+
+              <Modal isOpen={openNextPageModal} size="xl" margin="0 10px" onClose={() => setOpenNextPageModal(false)}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader borderBottom="1px solid" fontSize="15px" borderColor={commonBorderColor} textAlign="center">
+                    {assetTypeValues[lesson]}
+                  </ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody padding={{ base: '26px 18px', md: '42px 36px' }}>
+                    <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
+                      {t('ask-to-done', { taskType: assetTypeValues[lesson]?.toLowerCase() })}
+                    </Heading>
+                    <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="12px" justifyContent="space-between">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                          setOpenNextPageModal(false);
+                        }}
+                        textTransform="uppercase"
+                        fontSize="13px"
+                      >
+                        {t('mark-later')}
+                      </Button>
+                      <ButtonHandlerByTaskStatus
+                        allowText
+                        currentTask={currentTask}
+                        sendProject={sendProject}
+                        changeStatusAssignment={changeStatusAssignment}
+                        toggleSettings={toggleSettings}
+                        closeSettings={closeSettings}
+                        settingsOpen={modalSettingsOpen}
+                        onClickHandler={() => {
+                          setTimeout(() => {
                             router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
-                            setOpenNextPageModal(false);
-                          }}
-                          textTransform="uppercase"
-                          fontSize="13px"
-                        >
-                          {t('mark-later')}
-                        </Button>
-                        <ButtonHandlerByTaskStatus
-                          allowText
-                          currentTask={currentTask}
-                          sendProject={sendProject}
-                          changeStatusAssignment={changeStatusAssignment}
-                          toggleSettings={toggleSettings}
-                          closeSettings={closeSettings}
-                          settingsOpen={modalSettingsOpen}
-                          onClickHandler={() => {
-                            setTimeout(() => {
-                              router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
-                            }, 1200);
-                            setOpenNextPageModal(false);
-                          }}
-                        />
-                      </Box>
-                    </ModalBody>
-                  </ModalContent>
-                </Modal>
-              </Box>
+                          }, 1200);
+                          setOpenNextPageModal(false);
+                        }}
+                      />
+                    </Box>
+                  </ModalBody>
+                </ModalContent>
+              </Modal>
             </Box>
           </Box>
-        )}
+        </Box>
       </Box>
     </Flex>
   );

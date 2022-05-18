@@ -26,6 +26,10 @@ a {
   z-index: 99!important;
 }
 
+.react-player {
+  aspect-ratio: 16/9;
+}
+
 /* .centerImageForBlur {
   max-width: 90%!important;
   min-width: 90%!important;
