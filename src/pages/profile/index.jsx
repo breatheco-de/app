@@ -39,7 +39,7 @@ const Profile = () => {
       <Heading as="h1" size="m" margin="45px 0">{t('navbar:my-profile')}</Heading>
       <Tabs display="flex" flexDirection={{ base: 'column', md: 'row' }} variant="unstyled" gridGap="40px">
         <TabList display="flex" flexDirection={{ base: 'row', md: 'column' }} width={{ base: '100%', md: '300px' }}>
-          {tabListMenu.map((tab) => (
+          {tabListMenu.filter((l) => l.disabled !== true).map((tab) => (
             <Tab
               key={tab.title}
               p="14px"

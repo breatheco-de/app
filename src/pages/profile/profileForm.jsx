@@ -184,7 +184,7 @@ const ProfileForm = ({ profile }) => {
                   </FormControl>
                 )}
               </Field>
-              <Field name="phone">
+              {/* <Field name="phone">
                 {({ form }) => (
                   <FormControl isInvalid={form.errors.phone && form.touched.phone}>
                     <FormLabel
@@ -223,7 +223,7 @@ const ProfileForm = ({ profile }) => {
                     <FormErrorMessage>{form.errors.phone}</FormErrorMessage>
                   </FormControl>
                 )}
-              </Field>
+              </Field> */}
             </Box>
             <InputGroup>
               <InputLeftAddon background={bgColor} border="1px solid" borderRadius="3px" borderColor="gray.default" height="3.125rem">
