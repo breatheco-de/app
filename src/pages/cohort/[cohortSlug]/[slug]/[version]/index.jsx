@@ -193,10 +193,9 @@ const Dashboard = () => {
       if (data.length > 0) {
         setSudentAndTeachers(data);
       }
-    }).catch((err) => {
+    }).catch(() => {
       toast({
         title: t('alert-message:error-fetching-students-and-teachers'),
-        description: err.message,
         status: 'error',
         duration: 7000,
         isClosable: true,
@@ -580,6 +579,7 @@ const Dashboard = () => {
           display={{ base: 'none', md: 'flex' }}
           flexDirection="column"
           gridGap="30px"
+          maxWidth="380px"
           minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
         >
           <OnlyFor onlyMember cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>

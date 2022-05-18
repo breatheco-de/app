@@ -58,6 +58,7 @@ const ProfilesSection = ({ title, profiles }) => {
           alignItems="center"
           width="auto"
           fontWeight="700"
+          padding="14px 0 0 0"
           justifyContent="center"
           gridGap="10px"
           size="md"
@@ -85,6 +86,7 @@ const CohortSideBar = ({
 }) => {
   const { t } = useTranslation('dashboard');
   const router = useRouter();
+  console.log('cohort:::', cohort);
   const { colorMode } = useColorMode();
   const [activeStudentsLoading, setActiveStudentsLoading] = useState(true);
   const [graduatedStudentsLoading, setGraduatedStudentsLoading] = useState(true);
@@ -202,32 +204,32 @@ const CohortSideBar = ({
           />
         )}
 
-        <Tabs display="flex" flexDirection="column" variant="unstyled" gridGap="16px">
-          <TabList display="flex" width="100%">
-            <Tab
-              p="0 14px 14px 14px"
-              display="block"
-              textAlign="center"
-              isDisabled={false}
-              textTransform="uppercase"
-              fontWeight="900"
-              fontSize="13px"
-              letterSpacing="0.05em"
-              width="100%"
-              // height="100%"
-              _selected={{
-                color: 'blue.default',
-                borderBottom: '4px solid',
-                borderColor: 'blue.default',
-              }}
-              _disabled={{
-                opacity: 0.5,
-                cursor: 'not-allowed',
-              }}
-            >
-              {t('cohortSideBar.active-geeks', { studentsLength: activeStudents.length })}
-            </Tab>
-            {cohort.ending_date === null && (
+        {cohort.ending_date === null ? (
+          <Tabs display="flex" flexDirection="column" variant="unstyled" gridGap="16px">
+            <TabList display="flex" width="100%">
+              <Tab
+                p="0 14px 14px 14px"
+                display="block"
+                textAlign="center"
+                isDisabled={false}
+                textTransform="uppercase"
+                fontWeight="900"
+                fontSize="13px"
+                letterSpacing="0.05em"
+                width="100%"
+                // height="100%"
+                _selected={{
+                  color: 'blue.default',
+                  borderBottom: '4px solid',
+                  borderColor: 'blue.default',
+                }}
+                _disabled={{
+                  opacity: 0.5,
+                  cursor: 'not-allowed',
+                }}
+              >
+                {t('cohortSideBar.active-geeks', { studentsLength: activeStudents.length })}
+              </Tab>
               <Tab
                 p="0 14px 14px 14px"
                 display="block"
@@ -251,42 +253,55 @@ const CohortSideBar = ({
               >
                 {t('cohortSideBar.graduated-geeks', { studentsLength: graduatedStudents.length })}
               </Tab>
-            )}
-          </TabList>
-          <TabPanels p="0">
-            <TabPanel p="0">
-              <ProfilesSection
-                profiles={activeStudents}
-              />
-              {activeStudents.length !== 0
-                ? (
-                  <ProfilesSection
-                    profiles={activeStudents}
-                  />
-                ) : (
-                  <>
-                    {activeStudentsLoading ? (
-                      <AvatarSkeleton pt="0" quantity={12} />
-                    ) : t('cohortSideBar.no-active-students')}
-                  </>
-                )}
-            </TabPanel>
-            <TabPanel p="0">
-              {graduatedStudents.length !== 0
-                ? (
-                  <ProfilesSection
-                    profiles={graduatedStudents}
-                  />
-                ) : (
-                  <>
-                    {graduatedStudentsLoading ? (
-                      <AvatarSkeleton pt="0" quantity={12} />
-                    ) : t('cohortSideBar.no-graduated-students')}
-                  </>
-                )}
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
+            </TabList>
+            <TabPanels p="0">
+              <TabPanel p="0">
+                {activeStudents.length !== 0
+                  ? (
+                    <ProfilesSection
+                      profiles={activeStudents}
+                    />
+                  ) : (
+                    <>
+                      {activeStudentsLoading ? (
+                        <AvatarSkeleton pt="0" quantity={15} />
+                      ) : t('cohortSideBar.no-active-students')}
+                    </>
+                  )}
+              </TabPanel>
+              <TabPanel p="0">
+                {graduatedStudents.length !== 0
+                  ? (
+                    <ProfilesSection
+                      profiles={graduatedStudents}
+                    />
+                  ) : (
+                    <>
+                      {graduatedStudentsLoading ? (
+                        <AvatarSkeleton pt="0" quantity={15} />
+                      ) : t('cohortSideBar.no-graduated-students')}
+                    </>
+                  )}
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        ) : (
+          <>
+            {activeStudents.length !== 0
+              ? (
+                <ProfilesSection
+                  title={t('cohortSideBar.classmates')}
+                  profiles={activeStudents}
+                />
+              ) : (
+                <>
+                  {activeStudentsLoading ? (
+                    <AvatarSkeleton withText pt="0" quantity={15} />
+                  ) : t('cohortSideBar.no-active-students')}
+                </>
+              )}
+          </>
+        )}
       </Box>
     </Box>
   );
