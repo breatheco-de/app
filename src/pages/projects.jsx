@@ -12,7 +12,8 @@ import ProjectList from '../js_modules/projects/ProjectList';
 import useFilter from '../common/store/actions/filterAction';
 import Search from '../js_modules/projects/Search';
 
-export const getStaticProps = async () => {
+export const getStaticProps = async ({ locale }) => {
+  const currentLang = locale === 'en' ? 'us' : 'es';
   const projects = []; // filtered projects after removing repeated
   let arrProjects = []; // incoming projects
 
@@ -72,7 +73,7 @@ export const getStaticProps = async () => {
   return {
     props: {
       fallback: false,
-      projects,
+      projects: projects.filter((project) => project.lang === currentLang),
       technologyTags,
       difficulties: difficultiesSorted,
     },
