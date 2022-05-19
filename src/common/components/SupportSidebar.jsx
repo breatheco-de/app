@@ -113,6 +113,7 @@ const SupportSidebar = ({
                   <Text
                     display="flex"
                     whiteSpace="pre-wrap"
+                    fontWeight="400"
                     textAlign="left"
                     textTransform="uppercase"
                     size="12px"
@@ -163,6 +164,7 @@ const SupportSidebar = ({
                   <Text
                     display="flex"
                     whiteSpace="pre-wrap"
+                    fontWeight="400"
                     textAlign="left"
                     textTransform="uppercase"
                     size="12px"

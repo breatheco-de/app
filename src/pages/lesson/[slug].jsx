@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 import Icon from '../../common/components/Icon';
 import { languageLabel, getExtensionName } from '../../utils';
 import Heading from '../../common/components/Heading';
+import Link from '../../common/components/NextChakraLink';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import TagCapsule from '../../common/components/TagCapsule';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
@@ -152,20 +153,25 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
       alignItems="center"
       margin={{ base: '4rem 4% 0 4%', md: '4% 14% 0 14%' }}
     >
-
       <Box flex="1" margin={{ base: '28px 0', md: '28px 14% 0 14%' }}>
-        <TagCapsule
-          variant="rounded"
-          tags={lesson.technologies}
-          marginY="8px"
-          fontSize="13px"
-          style={{
-            padding: '2px 10px',
-            margin: '0',
-          }}
-          gap="10px"
-          paddingX="0"
-        />
+        <Box display="flex" gridGap="10px" justifyContent="space-between">
+          <TagCapsule
+            variant="rounded"
+            tags={lesson.technologies}
+            marginY="8px"
+            fontSize="13px"
+            style={{
+              padding: '2px 10px',
+              margin: '0',
+            }}
+            gap="10px"
+            paddingX="0"
+          />
+          <Link href={lesson.readme_url} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+            <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+            {t('common:edit-on-github')}
+          </Link>
+        </Box>
         <Heading
           as="h1"
           size="30px"

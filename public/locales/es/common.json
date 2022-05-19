@@ -3,6 +3,7 @@
   "change-locale": "Cambiar Idioma",
   "error-with-status": "{{statusCode}} error ocurrió en el server",
   "error-without-status": "Un error ocurrió en el server",
+  "edit-on-github": "Editar en Github",
   "title": "Bienvenido | Learn",
   "backToHome": "Volver a la página principal",
   "lesson": "Lección",

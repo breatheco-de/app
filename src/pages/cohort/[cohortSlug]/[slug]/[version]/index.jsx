@@ -25,7 +25,6 @@ import bc from '../../../../../common/services/breathecode';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
-import dashboardTR from '../../../../../common/translations/dashboard';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import { slugify, devLogTable, includesToLowerCase } from '../../../../../utils/index';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
@@ -51,7 +50,6 @@ const Dashboard = () => {
   const [, setSyllabus] = usePersistent('syllabus', []);
   const teacherAndAssistants = studentAndTeachers.filter((st) => st.role === 'TEACHER' || st.role === 'ASSISTANT');
 
-  const locale = router.locale === 'default' ? 'en' : router.locale;
   const { cohortSlug, slug } = router.query;
 
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -78,7 +76,7 @@ const Dashboard = () => {
   const commonActiveBackground = useColorModeValue('gray.light', 'rgba(255, 255, 255, 0.22)');
   const iconColor = useColorModeValue('#000000', '#FFFFFF');
 
-  const { supportSideBar } = dashboardTR[locale];
+  const supportSideBar = t('supportSideBar', {}, { returnObjects: true });
 
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
 
