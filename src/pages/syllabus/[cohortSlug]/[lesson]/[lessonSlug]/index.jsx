@@ -364,7 +364,7 @@ const Content = () => {
     icon: 'youtube',
     slug: 'video-player',
     title: 'Video tutorial',
-    content: '',
+    content: true,
     actionHandler: () => setShowSolutionVideo(!showSolutionVideo),
     id: 3,
   }] : [];
@@ -595,8 +595,8 @@ const Content = () => {
           )}
 
           {!isQuiz && currentData.solution_video_url && showSolutionVideo && (
-            <Box padding="0.4rem 2rem 2rem 2rem" background={useColorModeValue('featuredLight', 'featuredDark')}>
-              <Heading as="h2" size="sm">
+            <Box padding="1.2rem 2rem 2rem 2rem" borderRadius="3px" background={useColorModeValue('featuredLight', 'featuredDark')}>
+              <Heading as="h2" size="16">
                 Video Tutorial
               </Heading>
               <ReactPlayer
