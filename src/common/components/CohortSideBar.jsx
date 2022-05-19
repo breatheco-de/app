@@ -70,7 +70,10 @@ const CohortSideBar = ({
   const { colorMode } = useColorMode();
   const [existsProfilesLoading, setExistsProfilesLoading] = useState(true);
   const teacher = studentAndTeachers.filter((st) => st.role === 'TEACHER');
-  const students = studentAndTeachers.filter((st) => st.role === 'STUDENT');
+  const students = studentAndTeachers.filter(
+    (st) => st.role === 'STUDENT' && st.educational_status === 'ACTIVE',
+  );
+
   // const students = studentAndTeachers.filter(
   //   (st) => st.role === 'STUDENT' && st.educational_status === 'ACTIVE'
   // );
