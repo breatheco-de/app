@@ -44,9 +44,6 @@ const AttendanceModal = ({
   const [checked, setChecked] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const { colorMode } = useColorMode();
-  // const sortedStudents = students.sort(
-  //   (a, b) => a.user.first_name.localeCompare(b.user.first_name),
-  // );
   const toast = useToast();
 
   const commonFontColor = useColorModeValue('gray.600', 'gray.200');
