@@ -15,12 +15,16 @@ import ProjectList from '../../js_modules/projects/ProjectList';
 import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
 
-export const getStaticProps = async () => {
+export const getStaticProps = async ({ locale }) => {
   const howTos = []; // filtered howTos after removing repeated
   let arrHowTos = []; // incoming howTos
   const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`)
     .then((res) => res.json())
     .catch((err) => console.log(err));
+  const currentLang = {
+    en: 'us',
+    es: 'es',
+  };
 
   arrHowTos = Object.values(data);
   if (data.status >= 200 && data.status < 400) {
@@ -70,7 +74,7 @@ export const getStaticProps = async () => {
   return {
     props: {
       fallback: false,
-      data,
+      data: data.filter((l) => l.lang === currentLang[locale]),
       technologyTags,
       difficulties: difficultiesSorted,
     },

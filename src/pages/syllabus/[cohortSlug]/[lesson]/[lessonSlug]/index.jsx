@@ -8,8 +8,8 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
+import ReactPlayer from 'react-player';
 import { isWindow, assetTypeValues, getExtensionName } from '../../../../../utils';
-import ReactPlayer from '../../../../../common/components/ReactPlayer';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import { updateAssignment } from '../../../../../common/hooks/useModuleHandler';

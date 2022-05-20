@@ -86,13 +86,12 @@ const CohortSideBar = ({
 }) => {
   const { t } = useTranslation('dashboard');
   const router = useRouter();
-  console.log('cohort:::', cohort);
   const { colorMode } = useColorMode();
   const [activeStudentsLoading, setActiveStudentsLoading] = useState(true);
   const [graduatedStudentsLoading, setGraduatedStudentsLoading] = useState(true);
   const teacher = studentAndTeachers.filter((st) => st.role === 'TEACHER');
   const activeStudents = studentAndTeachers.filter(
-    (st) => st.role === 'STUDENT' && st.educational_status !== 'GRADUATED',
+    (st) => st.role === 'STUDENT' && st.educational_status === 'ACTIVE',
   );
   const graduatedStudents = studentAndTeachers.filter(
     (st) => st.role === 'STUDENT' && st.educational_status === 'GRADUATED',

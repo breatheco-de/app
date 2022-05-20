@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 // const nextRuntimeDotenv = require('next-runtime-dotenv');
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
@@ -16,6 +17,16 @@ module.exports = withBundleAnalyzer(nextTranslate({
   // i18n,
   reactStrictMode: true,
   trailingSlash: false,
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      require('./scripts/sitemap-generator');
+    }
+    return config;
+  },
+  compiler: {
+    // ssr and displayName are configured by default
+    styledComponents: true,
+  },
   serverRuntimeConfig: {
     // Will only be available on the server side
     BREATHECODE_HOST: process.env.BREATHECODE_HOST,
