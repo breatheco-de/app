@@ -86,7 +86,6 @@ const CohortSideBar = ({
 }) => {
   const { t } = useTranslation('dashboard');
   const router = useRouter();
-  console.log('cohort:::', cohort);
   const { colorMode } = useColorMode();
   const [activeStudentsLoading, setActiveStudentsLoading] = useState(true);
   const [graduatedStudentsLoading, setGraduatedStudentsLoading] = useState(true);
