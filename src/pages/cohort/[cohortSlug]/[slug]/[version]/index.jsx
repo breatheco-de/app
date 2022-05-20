@@ -188,10 +188,11 @@ const Dashboard = () => {
 
   // Students and Teachers data
   useEffect(() => {
-    bc.cohort().getStudents(cohortSlug).then((res) => {
-      const { data } = res;
+    bc.cohort().getStudents(cohortSlug).then(({ data }) => {
       if (data.length > 0) {
-        setSudentAndTeachers(data);
+        setSudentAndTeachers(data.sort(
+          (a, b) => a.user.first_name.localeCompare(b.user.first_name),
+        ));
       }
     }).catch(() => {
       toast({

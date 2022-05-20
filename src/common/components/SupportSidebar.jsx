@@ -216,7 +216,7 @@ const SupportSidebar = ({
                                   <Box
                                     as="a"
                                     color="blue.default"
-                                    href={`https://mentor.breatheco.de/academy/${academySlug}/service/${service.slug}/mentor/${l.slug}?token=${accessToken}`}
+                                    href={`https://mentor.breatheco.de/academy/${academySlug}/service/${service.slug}/mentor/${l.slug}?token=${accessToken}&syllabus=${slug}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                   >
