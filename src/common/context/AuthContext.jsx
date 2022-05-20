@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import bc from '../services/breathecode';
 import { isWindow } from '../../utils';
 import axiosInstance from '../../axios';
+import { usePersistent } from '../hooks/usePersistent';
 
 const initialState = {
   isAuthenticated: false,
@@ -102,6 +103,7 @@ const AuthProvider = ({ children }) => {
   const router = useRouter();
   const [state, dispatch] = useReducer(reducer, initialState);
   const [cookies, setCookie, removeCookie] = useCookies(['accessToken']);
+  const [profile, setProfile] = usePersistent('profile', {});
 
   // Validate and Fetch user token from localstorage when it changes
   const token = getToken(cookies);
@@ -117,14 +119,19 @@ const AuthProvider = ({ children }) => {
     if (tokenStatusSafe === true && isValidToken === true) {
       handleSession(token);
       const response = await bc.auth().me();
+      setProfile({
+        ...profile,
+        ...response.data,
+      });
       dispatch({
         type: 'INIT',
         payload: { user: response.data, isAuthenticated: true },
       });
-    } else if (cookies?.accessToken !== undefined) {
+    } else {
       removeCookie('accessToken', { path: '/' });
       handleSession(null);
       router.push('/login');
+      setProfile({});
       dispatch({
         type: 'INIT',
         payload: { user: null, isAuthenticated: false },
@@ -189,6 +196,7 @@ const AuthProvider = ({ children }) => {
   const logout = () => {
     router.push('/login');
     handleSession(null);
+    setProfile({});
     removeCookie('accessToken', { path: '/' });
     dispatch({ type: 'LOGOUT' });
   };

@@ -195,7 +195,9 @@ export const AvatarSkeleton = ({
       )}
       <Grid
         {...chakraProps}
-        pt="25px"
+        pt={chakraProps.pt || '25px'}
+        alignItems="center"
+        justifyItems="center"
         gridAutoRows={gridAutoRows}
         templateColumns={templateColumns}
         gridGap={gridGap}
@@ -212,6 +214,19 @@ export const AvatarSkeleton = ({
           );
         })}
       </Grid>
+      {arrOfCircles.length >= 15 && (
+        <Box padding="14px 0 0 0" boxShadow="lg">
+          <Skeleton
+            startColor={commonStartColor}
+            endColor={commonEndColor}
+            height="21px"
+            width="138px"
+            color="white"
+            borderRadius="10px"
+            margin="0 auto"
+          />
+        </Box>
+      )}
     </>
   );
 };

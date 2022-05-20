@@ -34,6 +34,13 @@
   "clear-all": "Clear all",
   "english": "English",
   "spanish": "Spanish",
+  "taskStatus": {
+    "project-approved": "Project approved",
+    "update-project-delivery": "Update project delivery",
+    "send-project": "Send project",
+    "mark-as-done": "Mark as done",
+    "mark-as-not-done": "Mark as not done"
+  },
   "learnpack": {
     "description": "This practice will run outside of 4Geeks.com thought LearnPack. An interactive learning tool that runs integrated with VSCode and Gitpod.",
     "new-exercise": "Start new exercise",

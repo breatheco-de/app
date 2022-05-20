@@ -48,6 +48,13 @@ a {
   width: 6px;
 }
 
+.chakra-popover__popper {
+  z-index: 99 !important;
+}
+.chakra-modal__content {
+  margin: 0 10px;
+}
+
 .horizontal-sroll::-webkit-scrollbar-track {
   border-radius: 10px;
 }
