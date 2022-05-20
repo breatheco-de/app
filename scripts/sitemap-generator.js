@@ -41,10 +41,9 @@ const getHowTo = () => {
 
 function addPage(page) {
   const path = page.replace('src/pages', '').replace('/index', '').replace('.jsx', '').replace('.js', '');
-  console.log('path:::', path);
   const route = path === '/index' ? '' : path;
   const websiteUrl = process.env.WEBSITE_URL || 'https://4geeks.com';
-  return `<url>
+  return `  <url>
     <loc>${`${websiteUrl}${route}`}</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
     <changefreq>monthly</changefreq>
