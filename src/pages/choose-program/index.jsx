@@ -17,6 +17,7 @@ import { usePersistent } from '../../common/hooks/usePersistent';
 
 function chooseProgram() {
   const { t } = useTranslation('choose-program');
+  const [, setProfile] = usePersistent('profile', {});
   const [, setCohortSession] = usePersistent('cohortSession', {});
   const [data, setData] = useState([]);
   const [invites, setInvites] = useState([]);
@@ -43,6 +44,7 @@ function chooseProgram() {
       [respAdmissions, respInvites],
     ) => {
       setData(respAdmissions.data.cohorts);
+      setProfile(respAdmissions.data);
       setInvites(respInvites.data);
     });
   }, []);
@@ -141,12 +143,11 @@ function chooseProgram() {
             rightItemHandler={(
               <Button
                 color="blue.default"
+                borderColor="blue.default"
                 textTransform="uppercase"
                 onClick={() => {
                   acceptInvite({ id });
                 }}
-                background="white"
-                border="1px solid #0097CD"
                 gridGap="8px"
               >
                 <Text color="blue.default" size="15px">

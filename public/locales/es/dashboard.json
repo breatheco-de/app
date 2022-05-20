@@ -28,11 +28,15 @@
     "mainTeacher": "Profesor principal",
     "assistant": "Profesores asistentes",
     "classmates": "Tus compañeros",
-    "show-more": "Mostrar más...",
-    "show-less": "Mostrar menos",
+    "active-geeks": "{{studentsLength}} Geeks activos",
+    "graduated-geeks": "{{studentsLength}} Geeks graduados",
+    "show-more": "Más estudiantes",
+    "show-less": "Ocultar estudiantes",
     "no-teachers": "Esta cohorte aún no tiene maestros",
     "no-assistant": "Esta cohorte aún no tiene profesores asistentes",
-    "no-students": "Esta cohorte aún no tiene estudiantes"
+    "no-students": "Esta cohorte aún no tiene estudiantes",
+    "no-active-students": "Esta cohorte aún no tiene estudiantes activos",
+    "no-graduated-students": "Esta cohorte aún no tiene estudiantes graduados"
   },
   "supportSideBar": {
     "title": "No te quedes atascado",

@@ -8,6 +8,7 @@ const breathecode = {
     return {
       login: (payload) => axios.post(`${url}/login/`, { ...payload, user_agent: 'bc/student' }),
       me: () => axios.get(`${url}/user/me`),
+      updateProfile: (arg) => axios.put(`${url}/user/me`, { ...arg }),
       invites: () => ({
         get: () => axios.get(`${url}/user/me/invite?status=PENDING`),
         accept: (id) => axios.put(`${url}/user/me/invite/accepted?id=${id}`),

@@ -51,6 +51,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
 
   const langs = ['en', 'es'];
   const linkColor = useColorModeValue('gray.600', 'gray.200');
+  const fontColor = useColorModeValue('black', 'gray.200');
 
   const { selectedProgramSlug } = cohortSession;
 
@@ -311,7 +312,40 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                       alignItems="center"
                       padding="1rem 0rem"
                     >
-                      <Box as="button" cursor="pointer" width="auto" display="flex" gridGap="10px" onClick={logout}>
+                      <NextChakraLink
+                        href="/profile"
+                        fontWeight="400"
+                        color={fontColor}
+                        fontSize="14px"
+                        textDecoration="none"
+                        // cursor="pointer"
+                        _hover={{
+                          textDecoration: 'none',
+                        }}
+                        letterSpacing="0.05em"
+                      >
+                        {t('my-profile')}
+                      </NextChakraLink>
+                    </Flex>
+                    <Flex
+                      borderTop={2}
+                      borderStyle="solid"
+                      borderColor={commonBorderColor}
+                      // padding="20px 0"
+                      alignItems="center"
+                      padding="1rem 0rem"
+                    >
+                      <Box
+                        as="button"
+                        cursor="pointer"
+                        width="auto"
+                        display="flex"
+                        gridGap="10px"
+                        onClick={() => {
+                          setSettingsOpen(false);
+                          logout();
+                        }}
+                      >
                         <Icon icon="logout" width="20px" height="20px" />
                         <Box
                           fontWeight="700"

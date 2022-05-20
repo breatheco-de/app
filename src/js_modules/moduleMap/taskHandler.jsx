@@ -12,6 +12,58 @@ import ModalInfo from './modalInfo';
 import validationSchema from '../../common/components/Forms/validationSchemas';
 import { isGithubUrl } from '../../utils/regex';
 
+export const TextByTaskStatus = ({ currentTask, t }) => {
+  const taskIsAproved = currentTask?.revision_status === 'APPROVED';
+  // task project status
+  if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
+    if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {
+      return (
+        <>
+          <Icon icon="checked" color="#FFB718" width="20px" height="20px" />
+          {t('common:taskStatus.update-project-delivery')}
+        </>
+      );
+    }
+    if (currentTask.revision_status === 'APPROVED') {
+      return (
+        <>
+          <Icon icon="verified" color="#606060" width="20px" />
+          {t('common:taskStatus.project-approved')}
+        </>
+      );
+    }
+    if (currentTask.revision_status === 'REJECTED') {
+      return (
+        <>
+          <Icon icon="checked" color="#FF4433" width="20px" />
+          {t('common:taskStatus.update-project-delivery')}
+        </>
+      );
+    }
+    return (
+      <>
+        <Icon icon="unchecked" color="#C4C4C4" width="20px" />
+        {t('common:taskStatus.send-project')}
+      </>
+    );
+  }
+  // common task status
+  if (currentTask && currentTask.task_type !== 'PROJECT' && currentTask.task_status === 'DONE') {
+    return (
+      <>
+        <Icon icon="close" color="#FFFFFF" width="12px" />
+        {t('common:taskStatus.mark-as-not-done')}
+      </>
+    );
+  }
+  return (
+    <>
+      <Icon icon="checked2" color={taskIsAproved ? '#606060' : '#FFFFFF'} width="14px" />
+      {t('common:taskStatus.mark-as-done')}
+    </>
+  );
+};
+
 export const IconByTaskStatus = ({ currentTask }) => {
   // task project status
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
@@ -33,6 +85,13 @@ export const IconByTaskStatus = ({ currentTask }) => {
   return <Icon icon="unchecked" color="#C4C4C4" width="27px" />;
 };
 
+TextByTaskStatus.propTypes = {
+  currentTask: PropTypes.objectOf(PropTypes.any),
+  t: PropTypes.func.isRequired,
+};
+TextByTaskStatus.defaultProps = {
+  currentTask: {},
+};
 IconByTaskStatus.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.any),
 };
@@ -42,7 +101,7 @@ IconByTaskStatus.defaultProps = {
 
 export const ButtonHandlerByTaskStatus = ({
   currentTask, sendProject, changeStatusAssignment, toggleSettings, closeSettings,
-  settingsOpen,
+  settingsOpen, allowText, onClickHandler,
 }) => {
   const { t } = useTranslation('dashboard');
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -51,35 +110,57 @@ export const ButtonHandlerByTaskStatus = ({
   const [githubUrl, setGithubUrl] = useState('');
   const commonInputColor = useColorModeValue('gray.600', 'gray.200');
   const commonInputActiveColor = useColorModeValue('gray.800', 'gray.350');
+  const taskIsAproved = allowText && currentTask?.revision_status === 'APPROVED';
 
   const howToSendProjectUrl = 'https://4geeksacademy.notion.site/How-to-deliver-a-project-e1db0a8b1e2e4fbda361fc2f5457c0de';
   const TaskButton = () => (
     <Button
       display="flex"
-      onClick={(event) => changeStatusAssignment(event, currentTask)}
+      onClick={(event) => {
+        changeStatusAssignment(event, currentTask);
+        onClickHandler();
+      }}
+      disabled={taskIsAproved}
       minWidth="26px"
       minHeight="26px"
       height="fit-content"
-      background="none"
-      padding="0"
-      borderRadius="30px"
+      background={allowText ? 'blue.default' : 'none'}
+      lineHeight={allowText ? '15px' : '0'}
+      padding={allowText ? '12px 24px' : '0'}
+      borderRadius={allowText ? '3px' : '30px'}
+      variant={allowText ? 'default' : 'none'}
+      textTransform={allowText ? 'uppercase' : 'none'}
+      gridGap={allowText ? '12px' : '0'}
     >
-      <IconByTaskStatus currentTask={currentTask} />
+      {allowText ? (
+        <TextByTaskStatus currentTask={currentTask} t={t} />
+      ) : (
+        <IconByTaskStatus currentTask={currentTask} />
+      )}
     </Button>
   );
 
   const OpenModalButton = () => (
     <Button
       onClick={onOpen}
+      disabled={taskIsAproved}
       display="flex"
       minWidth="26px"
       minHeight="26px"
       height="fit-content"
-      background="none"
-      padding="0"
-      borderRadius="30px"
+      background={allowText ? 'blue.default' : 'none'}
+      lineHeight={allowText ? '15px' : '0'}
+      padding={allowText ? '12px 24px' : '0'}
+      borderRadius={allowText ? '3px' : '30px'}
+      variant={allowText ? 'default' : 'none'}
+      textTransform={allowText ? 'uppercase' : 'none'}
+      gridGap={allowText ? '12px' : '0'}
     >
-      <IconByTaskStatus currentTask={currentTask} />
+      {allowText ? (
+        <TextByTaskStatus currentTask={currentTask} t={t} />
+      ) : (
+        <IconByTaskStatus currentTask={currentTask} />
+      )}
     </Button>
   );
 
@@ -166,15 +247,24 @@ export const ButtonHandlerByTaskStatus = ({
         <PopoverTrigger>
           <Button
             display="flex"
+            variant={allowText ? 'default' : 'none'}
+            disabled={taskIsAproved}
             minWidth="26px"
             minHeight="26px"
             height="fit-content"
-            background="none"
-            padding="0"
-            borderRadius="30px"
+            background={allowText ? 'blue.default' : 'none'}
+            lineHeight={allowText ? '15px' : '0'}
+            padding={allowText ? '12px 24px' : '0'}
+            borderRadius={allowText ? '3px' : '30px'}
+            textTransform={allowText ? 'uppercase' : 'none'}
+            gridGap={allowText ? '12px' : '0'}
             onClick={() => toggleSettings()}
           >
-            <IconByTaskStatus currentTask={currentTask} />
+            {allowText ? (
+              <TextByTaskStatus currentTask={currentTask} t={t} />
+            ) : (
+              <IconByTaskStatus currentTask={currentTask} />
+            )}
           </Button>
         </PopoverTrigger>
 
@@ -195,6 +285,7 @@ export const ButtonHandlerByTaskStatus = ({
                   } else {
                     sendProject(currentTask, githubUrl);
                     setIsSubmitting(false);
+                    onClickHandler();
                   }
                 }
               }}
@@ -255,6 +346,7 @@ export const ButtonHandlerByTaskStatus = ({
                 setShowUrlWarn(false);
                 setIsSubmitting(false);
                 sendProject(currentTask, githubUrl);
+                onClickHandler();
               }}
               linkText={t('deliverProject.how-to-deliver')}
               link={howToSendProjectUrl}
@@ -276,7 +368,11 @@ ButtonHandlerByTaskStatus.propTypes = {
   toggleSettings: PropTypes.func.isRequired,
   closeSettings: PropTypes.func.isRequired,
   settingsOpen: PropTypes.bool.isRequired,
+  allowText: PropTypes.bool,
+  onClickHandler: PropTypes.func,
 };
 ButtonHandlerByTaskStatus.defaultProps = {
   currentTask: null,
+  allowText: false,
+  onClickHandler: () => {},
 };
