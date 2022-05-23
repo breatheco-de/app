@@ -86,16 +86,15 @@ const CohortSideBar = ({
 }) => {
   const { t } = useTranslation('dashboard');
   const router = useRouter();
-  console.log('cohort:::', cohort);
   const { colorMode } = useColorMode();
   const [activeStudentsLoading, setActiveStudentsLoading] = useState(true);
   const [graduatedStudentsLoading, setGraduatedStudentsLoading] = useState(true);
   const teacher = studentAndTeachers.filter((st) => st.role === 'TEACHER');
   const activeStudents = studentAndTeachers.filter(
-    (st) => st.role === 'STUDENT' && st.educational_status !== 'GRADUATED',
+    (st) => st.role === 'STUDENT' && st.educational_status === 'ACTIVE',
   );
-  const graduatedStudents = studentAndTeachers.filter(
-    (st) => st.role === 'STUDENT' && st.educational_status === 'GRADUATED',
+  const studentsJoined = studentAndTeachers.filter(
+    (st) => st.role === 'STUDENT' && st.educational_status !== 'ACTIVE',
   );
 
   const teacherAssistants = studentAndTeachers.filter((st) => st.role === 'ASSISTANT');
@@ -112,7 +111,7 @@ const CohortSideBar = ({
   };
 
   useEffect(() => {
-    if (graduatedStudents.length === 0) {
+    if (studentsJoined.length === 0) {
       setTimeout(() => {
         setGraduatedStudentsLoading(false);
       }, 4000);
@@ -228,7 +227,9 @@ const CohortSideBar = ({
                   cursor: 'not-allowed',
                 }}
               >
-                {t('cohortSideBar.active-geeks', { studentsLength: activeStudents.length })}
+                {cohort.ending_date
+                  ? t('cohortSideBar.active-geeks', { studentsLength: activeStudents.length })
+                  : t('cohortSideBar.active-classmates', { studentsLength: activeStudents.length })}
               </Tab>
               <Tab
                 p="0 14px 14px 14px"
@@ -251,7 +252,7 @@ const CohortSideBar = ({
                   cursor: 'not-allowed',
                 }}
               >
-                {t('cohortSideBar.graduated-geeks', { studentsLength: graduatedStudents.length })}
+                {t('cohortSideBar.alumni-geeks', { studentsLength: studentsJoined.length })}
               </Tab>
             </TabList>
             <TabPanels p="0">
@@ -270,10 +271,10 @@ const CohortSideBar = ({
                   )}
               </TabPanel>
               <TabPanel p="0">
-                {graduatedStudents.length !== 0
+                {studentsJoined.length !== 0
                   ? (
                     <ProfilesSection
-                      profiles={graduatedStudents}
+                      profiles={studentsJoined}
                     />
                   ) : (
                     <>

@@ -91,26 +91,30 @@ const TeacherSidebar = ({
 
         <Box pt="3" display="flex" flexDirection="column" alignItems="center">
           {/* Start attendance */}
-          <ItemButton actionHandler={() => setOpenAttendance(true)}>
-            <ItemText text={t('teacher-sidebar.take-attendancy')} />
-            <Box>
-              <Icon icon="arrowRight" width="22px" height="22px" />
-            </Box>
-          </ItemButton>
+          {cohortSession.ending_date && (
+            <ItemButton actionHandler={() => setOpenAttendance(true)}>
+              <ItemText text={t('teacher-sidebar.take-attendancy')} />
+              <Box>
+                <Icon icon="arrowRight" width="22px" height="22px" />
+              </Box>
+            </ItemButton>
+          )}
 
           {/* Review attendance */}
-          <ItemButton
-            actionHandler={() => {
-              if (cohortSession.bc_id && isWindow) {
-                window.open(`https://attendance.breatheco.de/?cohort_slug=${slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${academy.id}`, '_blank');
-              }
-            }}
-          >
-            <ItemText text={t('teacher-sidebar.review-attendancy')} />
-            <Box>
-              <Icon icon="arrowRight" width="22px" height="22px" />
-            </Box>
-          </ItemButton>
+          {cohortSession.ending_date && (
+            <ItemButton
+              actionHandler={() => {
+                if (cohortSession.bc_id && isWindow) {
+                  window.open(`https://attendance.breatheco.de/?cohort_slug=${slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${academy.id}`, '_blank');
+                }
+              }}
+            >
+              <ItemText text={t('teacher-sidebar.review-attendancy')} />
+              <Box>
+                <Icon icon="arrowRight" width="22px" height="22px" />
+              </Box>
+            </ItemButton>
+          )}
 
           {/* Assignments */}
           <ItemButton

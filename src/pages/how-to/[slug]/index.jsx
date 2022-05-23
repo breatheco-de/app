@@ -14,6 +14,8 @@ import getMarkDownContent from '../../../common/components/MarkDownParser/markdo
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import Heading from '../../../common/components/Heading';
 import Text from '../../../common/components/Text';
+import Icon from '../../../common/components/Icon';
+import TagCapsule from '../../../common/components/TagCapsule';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`)
@@ -69,6 +71,7 @@ export default function HowToSlug({ data, markdown }) {
   const { slug } = router.query;
   const currentLanguageLabel = languageLabel[language] || language;
   const markdownData = getMarkDownContent(markdown);
+  const linkColor = useColorModeValue('blue.default', 'blue.300');
 
   useEffect(() => {
     axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`)
@@ -89,26 +92,43 @@ export default function HowToSlug({ data, markdown }) {
 
   return (
     <>
-      <Link
-        href="/projects"
-        color={useColorModeValue('blue.default', 'blue.300')}
-        display="inline-block"
-        letterSpacing="0.05em"
-        fontWeight="700"
-        paddingBottom="10px"
-        margin={{ base: '2% 4% 0 4%', lg: '2% 10% 0 10%' }}
-      >
-        {`← ${t('back-to')}`}
-      </Link>
+      <Box display="flex" justifyContent="space-between" margin={{ base: '2% 4% 0 4%', lg: '2% 10% 0 10%' }}>
+        <Link
+          href="/how-to"
+          color={linkColor}
+          display="inline-block"
+          letterSpacing="0.05em"
+          fontWeight="700"
+        >
+          {`← ${t('back-to')}`}
+        </Link>
+      </Box>
       <Box
         gridGap="20px"
         maxWidth="1012px"
-        margin="0 auto"
-        padding="3% 4% 4% 4%"
+        margin={{ base: '3% 4%', md: '3% 10% 4% 10%', lg: '3% 24% 4% 24%' }}
         borderBottom={1}
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.900')}
       >
+        <Box display="flex" gridGap="10px" justifyContent="space-between" mb="12px">
+          <TagCapsule
+            variant="rounded"
+            tags={data.technologies}
+            marginY="8px"
+            fontSize="13px"
+            style={{
+              padding: '2px 10px',
+              margin: '0',
+            }}
+            gap="10px"
+            paddingX="0"
+          />
+          <Link href={data.readme_url} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+            <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+            {t('common:edit-on-github')}
+          </Link>
+        </Box>
         <Heading size="l" fontWeight="700">
           {title}
         </Heading>
