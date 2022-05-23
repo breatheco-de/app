@@ -2,6 +2,11 @@ const { default: axios } = require('axios');
 const fs = require('fs');
 const globby = require('globby');
 
+const languages = {
+  us: 'en',
+  es: 'es',
+};
+
 const getReadPages = () => {
   const resp = axios.get(
     `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`,
@@ -65,12 +70,17 @@ async function generateSitemap() {
   const projectsPages = await getProjects();
   const howTosPages = await getHowTo();
 
-  const readRoute = readPages.map((l) => `/read/${l.slug}`);
-  const lessonsRoute = lessonsPages.map((l) => `/lesson/${l.slug}`);
-  const exercisesRoute = exercisesPages.map((l) => `/interactive-exercises/${l.slug}`);
-  const projectsCodingRoute = projectsPages.map((l) => `/interactive-coding-tutorial/${l.slug}`);
-  const projectsRoute = projectsPages.map((l) => `/project/${l.slug}`);
-  const howTosRoute = howTosPages.map((l) => `/how-to/${l.slug}`);
+  const generateSlugByLang = (l, conector) => {
+    if (languages[l.lang]) return `/${languages[l.lang]}/${conector}/${l.slug}`;
+    return `/${conector}/${l.slug}`;
+  };
+
+  const readRoute = readPages.map((l) => generateSlugByLang(l, 'read'));
+  const lessonsRoute = lessonsPages.map((l) => generateSlugByLang(l, 'lesson'));
+  const exercisesRoute = exercisesPages.map((l) => generateSlugByLang(l, 'interactive-exercises'));
+  const projectsCodingRoute = projectsPages.map((l) => generateSlugByLang(l, 'interactive-coding-tutorial'));
+  const projectsRoute = projectsPages.map((l) => generateSlugByLang(l, 'project'));
+  const howTosRoute = howTosPages.map((l) => generateSlugByLang(l, 'how-to'));
 
   // excludes Nextjs files and API routes.
   const pages = await globby([
