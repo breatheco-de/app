@@ -215,7 +215,7 @@ export const AvatarSkeleton = ({
         })}
       </Grid>
       {arrOfCircles.length >= 15 && (
-        <Box padding="14px 0 0 0" boxShadow="lg">
+        <Box padding="14px 0 0 0">
           <Skeleton
             startColor={commonStartColor}
             endColor={commonEndColor}
