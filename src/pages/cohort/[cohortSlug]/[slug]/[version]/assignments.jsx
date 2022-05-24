@@ -20,6 +20,7 @@ const Assignments = () => {
 
   const { cohortSlug } = router.query;
   const linkColor = useColorModeValue('blue.default', 'blue.300');
+  const borderColor = useColorModeValue('gray.200', 'gray.900');
 
   useEffect(() => {
     bc.admissions({ token: cookies.accessToken || null }).cohorts()
@@ -68,14 +69,7 @@ const Assignments = () => {
           {`← ${t('back-to')}`}
         </Link>
       </Box>
-      <Box
-        gridGap="20px"
-        maxWidth="1012px"
-        margin={{ base: '3% 4%', md: '3% 10% 4% 10%', lg: '3% 12% 4% 12%' }}
-        borderBottom={1}
-        borderStyle="solid"
-        borderColor={useColorModeValue('gray.200', 'gray.900')}
-      >
+      <Box display="flex" borderBottom="1px solid" borderColor={borderColor} flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} p={{ base: '50px 4% 30px 4%', md: '50px 10% 30px 10%', lg: '50px 12% 30px 12%' }} alignItems={{ base: 'start', md: 'center' }}>
         <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
           {`${t('title')}:`}
         </Heading>
@@ -84,7 +78,7 @@ const Assignments = () => {
             id="cohort-select"
             placeholder="Select cohort"
             style={{
-              padding: '0 16px 0 0',
+              padding: '0 2rem 0 0',
             }}
             fontSize="20px"
             value={selectedCohort.value || defaultSelected.value}
@@ -101,6 +95,15 @@ const Assignments = () => {
             ))}
           </Select>
         )}
+      </Box>
+      <Box
+        gridGap="20px"
+        maxWidth="1012px"
+        margin={{ base: '3% 4%', md: '3% 10% 4% 10%', lg: '3% 12% 4% 12%' }}
+        p="0 0 30px 0"
+        borderBottom="1px solid"
+        borderColor={borderColor}
+      >
         <Box
           borderRadius="3px"
           margin="0 auto"
@@ -109,7 +112,6 @@ const Assignments = () => {
         >
           contenedor
         </Box>
-
       </Box>
     </>
   );
