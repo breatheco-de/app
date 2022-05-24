@@ -2,28 +2,38 @@ import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useCookies } from 'react-cookie';
 import {
-  Box, Select, toast, useColorModeValue,
+  Box, Select, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import Link from '../../../../../common/components/NextChakraLink';
 import Heading from '../../../../../common/components/Heading';
+import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import bc from '../../../../../common/services/breathecode';
+import axios from '../../../../../axios';
+import Text from '../../../../../common/components/Text';
 
 const Assignments = () => {
+  const { t } = useTranslation('assignments');
   const [cookies] = useCookies(['accessToken']);
   const router = useRouter();
+  const { accessToken } = cookies;
+  const toast = useToast();
+  const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
-  const [defaultSelected, setDefaultSelected] = useState([]);
-  const [selectedCohort, setSelectedCohort] = useState([]);
+  // const [defaultSelected, setDefaultSelected] = useState([]);
+  const [studentTasks, setStudentTasks] = useState([]);
+
+  const [selectedCohort, setSelectedCohort] = useState({});
   const [selectedCohortValue, setSelectedCohortValue] = useState(null);
-  const { t } = useTranslation('assignments');
 
   const { cohortSlug } = router.query;
   const linkColor = useColorModeValue('blue.default', 'blue.300');
   const borderColor = useColorModeValue('gray.200', 'gray.900');
 
+  axios.defaults.headers.common.Authorization = `Token ${accessToken}`;
+
   useEffect(() => {
-    bc.admissions({ token: cookies.accessToken || null }).cohorts()
+    bc.admissions({ token: accessToken || null }).cohorts()
       .then(({ data }) => {
         const dataStruct = data.map((l) => ({
           label: l.name,
@@ -52,9 +62,37 @@ const Assignments = () => {
 
     if (defaultCohort) {
       setSelectedCohort(findSelectedCohort || defaultCohort);
-      setDefaultSelected(defaultCohort);
+      // setDefaultSelected(defaultCohort);
     }
   }, [allCohorts, cohortSlug, selectedCohortValue]);
+
+  useEffect(() => {
+    if (selectedCohort) {
+      Promise.all([
+        // bc.todo({ user: studentId }).get(), // for filtering purposes
+        bc.todo({ stu_cohort: selectedCohort.slug }).get(),
+        bc.todo({ teacher: cohortSession.bc_id }).get(),
+      ])
+        .then(([tasks, myTodos]) => {
+          console.log('teacher_todos:', myTodos.data);
+          setStudentTasks(tasks.data !== undefined ? tasks.data.filter((l) => l.task_type === 'PROJECT') : []);
+        })
+        .catch((error) => {
+          toast({
+            title: t('alert-message:error-fetching-tasks'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
+          console.error('There was an error fetching the tasks', error);
+        });
+    }
+  }, [cohortSlug, selectedCohort]);
+
+  console.log('studentTasks:', studentTasks);
+
+  console.log('selectedCohort:', selectedCohort);
+  // console.log('defaultSelected:', defaultSelected);
 
   return (
     <>
@@ -81,7 +119,7 @@ const Assignments = () => {
               padding: '0 2rem 0 0',
             }}
             fontSize="20px"
-            value={selectedCohort.value || defaultSelected.value}
+            value={selectedCohort.value}
             onChange={(e) => setSelectedCohortValue(parseInt(e.target.value, 10))}
             width="auto"
             color="blue.default"
@@ -101,8 +139,8 @@ const Assignments = () => {
         maxWidth="1012px"
         margin={{ base: '3% 4%', md: '3% 10% 4% 10%', lg: '3% 12% 4% 12%' }}
         p="0 0 30px 0"
-        borderBottom="1px solid"
-        borderColor={borderColor}
+        // borderBottom="1px solid"
+        // borderColor={borderColor}
       >
         <Box
           borderRadius="3px"
@@ -110,7 +148,20 @@ const Assignments = () => {
           maxWidth="1012px"
           flexGrow={1}
         >
-          contenedor
+          <Box display="flex">
+            <Text size="15px" display="flex" width="15vw" maxWidth="15vw" fontWeight="700">
+              Status
+            </Text>
+            <Text size="15px" display="flex" width="60vw" maxWidth="60vw" fontWeight="700">
+              Student and Assignments
+            </Text>
+            <Text size="15px" display="flex" width="10vw" maxWidth="10vw" fontWeight="700">
+              Link
+            </Text>
+            <Text size="15px" display="flex" width="15vw" maxWidth="15vw" fontWeight="700">
+              Actions
+            </Text>
+          </Box>
         </Box>
       </Box>
     </>

@@ -32,5 +32,6 @@
   "request-apply-success": "¡Gracias por tu solicitud!",
   "email-will-be-sent": "Un correo electrónico será enviado a usted pronto",
   "error-fetching-role": "Hubo un error al intentar encontrar el rol \"{{role}}\"",
-  "error-fetching-cohorts": "Se ha producido un error al obtener las cohortes"
+  "error-fetching-cohorts": "Se ha producido un error al obtener las cohortes",
+  "error-fetching-tasks": "Se ha producido un error al obtener las tareas"
 }
