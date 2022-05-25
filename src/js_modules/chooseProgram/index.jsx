@@ -12,15 +12,19 @@ function ChooseProgram({ chooseList, handleChoose }) {
   const [showFinished, setShowFinished] = useState(false);
 
   const activeCohorts = chooseList.filter((program) => {
-    const showCohort = [
+    const visibleForTeacher = [
       'PREWORK',
+    ].includes(program.cohort.stage)
+      && program.role !== 'STUDENT';
+
+    const showCohort = [
       'STARTED',
       'ACTIVE',
       'FINAL_PROJECT',
     ].includes(program.cohort.stage);
     const showStudent = ['ACTIVE'].includes(program.educational_status)
         && program.role === 'STUDENT';
-    return showCohort || showStudent;
+    return visibleForTeacher || showCohort || showStudent;
   });
   const finishedCohorts = chooseList.filter((program) => {
     const showCohort = ['ENDED'].includes(program.cohort.stage);
