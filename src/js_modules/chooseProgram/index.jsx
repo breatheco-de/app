@@ -27,7 +27,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
     const showStudent = ['GRADUATED', 'POSPONED'].includes(
       program.educational_status,
     );
-    return program.role !== 'STUDENT' || (showCohort && showStudent);
+    return showCohort && showStudent;
   });
 
   return (
