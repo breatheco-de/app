@@ -30,15 +30,6 @@ const ProfilesSection = ({
 }) => {
   const { t } = useTranslation('dashboard');
   const [showMoreStudents, setShowMoreStudents] = useState(false);
-  const uniqueIds = new Set();
-  const filterDuplicates = (data) => data.results.filter((l) => {
-    const isDuplicate = uniqueIds.has(l.id);
-    uniqueIds.add(l.id);
-    if (!isDuplicate) {
-      return true;
-    }
-    return false;
-  });
   // limit the student list to 15 and when "showMoreStudents" is true, show all
   const studentsToShow = showMoreStudents ? profiles : profiles?.slice(0, 15);
   return (
@@ -65,41 +56,7 @@ const ProfilesSection = ({
       </Grid>
 
       {paginationProps && (
-        <Box display={paginationProps || showMoreStudents ? 'flex' : 'none'} justifyContent="center" gridGap="10px">
-          <Box
-            color="blue.default"
-            cursor={paginationProps.previous ? 'pointer' : 'not-allowed'}
-            opacity={paginationProps.previous ? 1 : 0.6}
-            fontSize="15px"
-            display="flex"
-            alignItems="center"
-            gridGap="10px"
-            letterSpacing="0.05em"
-            fontWeight="700"
-            onClick={() => {
-              if (paginationProps.previous) {
-                axios.get(paginationProps.previous)
-                  .then(({ data }) => {
-                    const cleanedData = filterDuplicates(data);
-                    setAlumniGeeksList({
-                      ...data,
-                      results: cleanedData.sort(
-                        (a, b) => a.user.first_name.localeCompare(b.user.first_name),
-                      ),
-                    });
-                  });
-              }
-            }}
-          >
-            <Box
-              as="span"
-              display="block"
-            >
-              <Icon icon="arrowLeft2" width="18px" height="10px" />
-            </Box>
-            {t('common:previous-page')}
-          </Box>
-
+        <Box display={profiles.length <= 15 || showMoreStudents ? 'flex' : 'none'} justifyContent="center" gridGap="10px">
           <Box
             color="blue.default"
             cursor={paginationProps.next ? 'pointer' : 'not-allowed'}
@@ -109,12 +66,13 @@ const ProfilesSection = ({
             alignItems="center"
             gridGap="10px"
             letterSpacing="0.05em"
+            padding="14px 0 0 0"
             fontWeight="700"
             onClick={() => {
               if (paginationProps.next) {
                 axios.get(paginationProps.next)
                   .then(({ data }) => {
-                    const cleanedData = filterDuplicates(data);
+                    const cleanedData = [...profiles, ...data.results];
                     setAlumniGeeksList({
                       ...data,
                       results: cleanedData.sort(
@@ -125,11 +83,11 @@ const ProfilesSection = ({
               }
             }}
           >
-            {t('common:next-page')}
+            {t('common:load-more')}
             <Box
               as="span"
               display="block"
-              transform="rotate(180deg)"
+              transform="rotate(-90deg)"
             >
               <Icon icon="arrowLeft2" width="18px" height="10px" />
             </Box>
@@ -206,21 +164,22 @@ const CohortSideBar = ({
       limit: 35,
       roles: 'STUDENT',
       syllabus: slug,
+      distinct: true,
     }).getFilterStudents()
       .then(({ data }) => {
-        const uniqueIds = new Set();
-        const cleanedData = data.results.filter((l) => {
-          const isDuplicate = uniqueIds.has(l.id);
-          uniqueIds.add(l.id);
-          if (!isDuplicate) {
-            return true;
-          }
-          return false;
-        });
+        // const uniqueIds = new Set();
+        // const cleanedData = data.results.filter((l) => {
+        //   const isDuplicate = uniqueIds.has(l.id);
+        //   uniqueIds.add(l.id);
+        //   if (!isDuplicate) {
+        //     return true;
+        //   }
+        //   return false;
+        // });
 
         setAlumniGeeksList({
           ...data,
-          results: cleanedData.sort(
+          results: data.results.sort(
             (a, b) => a.user.first_name.localeCompare(b.user.first_name),
           ),
         });
@@ -246,8 +205,6 @@ const CohortSideBar = ({
       }, 4000);
     }
   }, [studentsJoined]);
-
-  console.log('studentsJoined:::', studentsJoined);
 
   return (
     <Box
