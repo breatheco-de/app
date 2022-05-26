@@ -26,7 +26,7 @@ import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
-import { slugify, devLogTable, includesToLowerCase } from '../../../../../utils/index';
+import { slugify, includesToLowerCase } from '../../../../../utils/index';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
@@ -250,7 +250,6 @@ const Dashboard = () => {
     if (router.asPath === cohortSession.selectedProgramSlug) {
       bc.todo({ cohort: null }).getTaskByStudent()
         .then(({ data }) => {
-          devLogTable('(Response Fetched) All Tasks With Cohort null:', data);
           const filteredUnsyncedCohortTasks = sortedAssignments.flatMap(
             (assignment) => data.filter(
               (task) => assignment.modules.some(

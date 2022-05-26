@@ -47,5 +47,7 @@
     "new-exercise": "Start new exercise",
     "continue-exercise": "Continue exercise"
   },
-  "average-duration": "Average duration"
+  "average-duration": "Average duration",
+  "previous-page": "Previous",
+  "next-page": "Next"
 }

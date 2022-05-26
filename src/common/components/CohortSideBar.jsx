@@ -1,4 +1,3 @@
-/* eslint-disable react/no-array-index-key */
 import { memo, useState, useEffect } from 'react';
 import {
   Box,
@@ -12,23 +11,36 @@ import {
   Tab,
   TabPanels,
   TabPanel,
+  useToast,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import bc from '../services/breathecode';
+import axios from '../../axios';
 import Icon from './Icon';
 import Text from './Text';
 import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 import { AvatarSkeleton } from './Skeleton';
 
-const ProfilesSection = ({ title, profiles }) => {
+const ProfilesSection = ({
+  title, paginationProps, setAlumniGeeksList, profiles,
+}) => {
   const { t } = useTranslation('dashboard');
   const [showMoreStudents, setShowMoreStudents] = useState(false);
-
+  const uniqueIds = new Set();
+  const filterDuplicates = (data) => data.results.filter((l) => {
+    const isDuplicate = uniqueIds.has(l.id);
+    uniqueIds.add(l.id);
+    if (!isDuplicate) {
+      return true;
+    }
+    return false;
+  });
   // limit the student list to 15 and when "showMoreStudents" is true, show all
-  const studentsToShow = showMoreStudents ? profiles : profiles.slice(0, 15);
+  const studentsToShow = showMoreStudents ? profiles : profiles?.slice(0, 15);
   return (
     <Box display="block">
       {title && (
@@ -40,17 +52,92 @@ const ProfilesSection = ({ title, profiles }) => {
         gridAutoRows="3.4rem"
         templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
         gap={0}
+        minH={showMoreStudents ? '395px' : 'auto'}
       >
         {
-          studentsToShow.map((c) => {
+          studentsToShow?.map((c) => {
             const fullName = `${c.user.first_name} ${c.user.last_name}`;
             return (
-              <AvatarUser key={fullName} data={c} />
+              <AvatarUser key={`${c.id} - ${c.user.first_name}`} fullName={fullName} data={c} />
             );
           })
         }
       </Grid>
-      {profiles.length > 15 && (
+
+      {paginationProps && (
+        <Box display={paginationProps || showMoreStudents ? 'flex' : 'none'} justifyContent="center" gridGap="10px">
+          <Box
+            color="blue.default"
+            cursor={paginationProps.previous ? 'pointer' : 'not-allowed'}
+            opacity={paginationProps.previous ? 1 : 0.6}
+            fontSize="15px"
+            display="flex"
+            alignItems="center"
+            gridGap="10px"
+            letterSpacing="0.05em"
+            fontWeight="700"
+            onClick={() => {
+              if (paginationProps.previous) {
+                axios.get(paginationProps.previous)
+                  .then(({ data }) => {
+                    const cleanedData = filterDuplicates(data);
+                    setAlumniGeeksList({
+                      ...data,
+                      results: cleanedData.sort(
+                        (a, b) => a.user.first_name.localeCompare(b.user.first_name),
+                      ),
+                    });
+                  });
+              }
+            }}
+          >
+            <Box
+              as="span"
+              display="block"
+            >
+              <Icon icon="arrowLeft2" width="18px" height="10px" />
+            </Box>
+            {t('common:previous-page')}
+          </Box>
+
+          <Box
+            color="blue.default"
+            cursor={paginationProps.next ? 'pointer' : 'not-allowed'}
+            opacity={paginationProps.next ? 1 : 0.6}
+            fontSize="15px"
+            display="flex"
+            alignItems="center"
+            gridGap="10px"
+            letterSpacing="0.05em"
+            fontWeight="700"
+            onClick={() => {
+              if (paginationProps.next) {
+                axios.get(paginationProps.next)
+                  .then(({ data }) => {
+                    const cleanedData = filterDuplicates(data);
+                    setAlumniGeeksList({
+                      ...data,
+                      results: cleanedData.sort(
+                        (a, b) => a.user.first_name.localeCompare(b.user.first_name),
+                      ),
+                    });
+                  });
+              }
+            }}
+          >
+            {t('common:next-page')}
+            <Box
+              as="span"
+              display="block"
+              transform="rotate(180deg)"
+            >
+              <Icon icon="arrowLeft2" width="18px" height="10px" />
+            </Box>
+          </Box>
+        </Box>
+      )}
+
+      {profiles?.length > 15 && (
         <Text
           display="flex"
           cursor="pointer"
@@ -86,14 +173,17 @@ const CohortSideBar = ({
 }) => {
   const { t } = useTranslation('dashboard');
   const router = useRouter();
+  const toast = useToast();
+  const { slug } = router.query;
   const { colorMode } = useColorMode();
+  const [alumniGeeksList, setAlumniGeeksList] = useState({});
   const [activeStudentsLoading, setActiveStudentsLoading] = useState(true);
   const [graduatedStudentsLoading, setGraduatedStudentsLoading] = useState(true);
   const teacher = studentAndTeachers.filter((st) => st.role === 'TEACHER');
   const activeStudents = studentAndTeachers.filter(
     (st) => st.role === 'STUDENT' && st.educational_status === 'ACTIVE',
   );
-  const studentsJoined = studentAndTeachers.filter(
+  const studentsJoined = alumniGeeksList.results?.filter(
     (st) => st.role === 'STUDENT' && st.educational_status !== 'ACTIVE',
   );
 
@@ -110,18 +200,54 @@ const CohortSideBar = ({
     es: format(new Date(cohort.ending_date), 'MMM d', { locale: es }),
   };
 
+  // Alumni Geeks data
   useEffect(() => {
-    if (studentsJoined.length === 0) {
+    bc.cohort({
+      limit: 35,
+      roles: 'STUDENT',
+      syllabus: slug,
+    }).getFilterStudents()
+      .then(({ data }) => {
+        const uniqueIds = new Set();
+        const cleanedData = data.results.filter((l) => {
+          const isDuplicate = uniqueIds.has(l.id);
+          uniqueIds.add(l.id);
+          if (!isDuplicate) {
+            return true;
+          }
+          return false;
+        });
+
+        setAlumniGeeksList({
+          ...data,
+          results: cleanedData.sort(
+            (a, b) => a.user.first_name.localeCompare(b.user.first_name),
+          ),
+        });
+      }).catch(() => {
+        toast({
+          title: t('alert-message:error-fetching-alumni-geeks'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
+      });
+  }, [slug]);
+
+  useEffect(() => {
+    if (studentsJoined?.length === 0) {
       setTimeout(() => {
         setGraduatedStudentsLoading(false);
-      }, 4000);
+      }, 2500);
     }
     if (activeStudents.length === 0) {
       setTimeout(() => {
         setActiveStudentsLoading(false);
       }, 4000);
     }
-  }, []);
+  }, [studentsJoined]);
+
+  console.log('studentsJoined:::', studentsJoined);
 
   return (
     <Box
@@ -202,107 +328,90 @@ const CohortSideBar = ({
             profiles={teacherAssistants}
           />
         )}
-
-        {cohort.ending_date === null ? (
-          <Tabs display="flex" flexDirection="column" variant="unstyled" gridGap="16px">
-            <TabList display="flex" width="100%">
-              <Tab
-                p="0 14px 14px 14px"
-                display="block"
-                textAlign="center"
-                isDisabled={false}
-                textTransform="uppercase"
-                fontWeight="900"
-                fontSize="13px"
-                letterSpacing="0.05em"
-                width="100%"
-                // height="100%"
-                _selected={{
-                  color: 'blue.default',
-                  borderBottom: '4px solid',
-                  borderColor: 'blue.default',
-                }}
-                _disabled={{
-                  opacity: 0.5,
-                  cursor: 'not-allowed',
-                }}
-              >
-                {cohort.ending_date
-                  ? t('cohortSideBar.active-geeks', { studentsLength: activeStudents.length })
-                  : t('cohortSideBar.active-classmates', { studentsLength: activeStudents.length })}
-              </Tab>
-              <Tab
-                p="0 14px 14px 14px"
-                display="block"
-                textAlign="center"
-                isDisabled={false}
-                textTransform="uppercase"
-                fontWeight="900"
-                fontSize="13px"
-                letterSpacing="0.05em"
-                width="100%"
-                // height="100%"
-                _selected={{
-                  color: 'blue.default',
-                  borderBottom: '4px solid',
-                  borderColor: 'blue.default',
-                }}
-                _disabled={{
-                  opacity: 0.5,
-                  cursor: 'not-allowed',
-                }}
-              >
-                {t('cohortSideBar.alumni-geeks', { studentsLength: studentsJoined.length })}
-              </Tab>
-            </TabList>
-            <TabPanels p="0">
-              <TabPanel p="0">
-                {activeStudents.length !== 0
-                  ? (
-                    <ProfilesSection
-                      profiles={activeStudents}
-                    />
-                  ) : (
-                    <>
-                      {activeStudentsLoading ? (
-                        <AvatarSkeleton pt="0" quantity={15} />
-                      ) : t('cohortSideBar.no-active-students')}
-                    </>
-                  )}
-              </TabPanel>
-              <TabPanel p="0">
-                {studentsJoined.length !== 0
-                  ? (
-                    <ProfilesSection
-                      profiles={studentsJoined}
-                    />
-                  ) : (
-                    <>
-                      {graduatedStudentsLoading ? (
-                        <AvatarSkeleton pt="0" quantity={15} />
-                      ) : t('cohortSideBar.no-graduated-students')}
-                    </>
-                  )}
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        ) : (
-          <>
-            {activeStudents.length !== 0
-              ? (
-                <ProfilesSection
-                  title={t('cohortSideBar.classmates')}
-                  profiles={activeStudents}
-                />
-              ) : (
-                <>
-                  {activeStudentsLoading ? (
-                    <AvatarSkeleton withText pt="0" quantity={15} />
-                  ) : t('cohortSideBar.no-active-students')}
-                </>
-              )}
-          </>
-        )}
+        <Tabs display="flex" flexDirection="column" variant="unstyled" gridGap="16px">
+          <TabList display="flex" width="100%">
+            <Tab
+              p="0 14px 14px 14px"
+              display="block"
+              textAlign="center"
+              isDisabled={false}
+              textTransform="uppercase"
+              fontWeight="900"
+              fontSize="13px"
+              letterSpacing="0.05em"
+              width="100%"
+              // height="100%"
+              _selected={{
+                color: 'blue.default',
+                borderBottom: '4px solid',
+                borderColor: 'blue.default',
+              }}
+              _disabled={{
+                opacity: 0.5,
+                cursor: 'not-allowed',
+              }}
+            >
+              {cohort.ending_date
+                ? t('cohortSideBar.classmates', { studentsLength: activeStudents.length })
+                : t('cohortSideBar.active-geeks', { studentsLength: activeStudents.length })}
+            </Tab>
+            <Tab
+              p="0 14px 14px 14px"
+              display="block"
+              textAlign="center"
+              isDisabled={false}
+              textTransform="uppercase"
+              fontWeight="900"
+              fontSize="13px"
+              letterSpacing="0.05em"
+              width="100%"
+              // height="100%"
+              _selected={{
+                color: 'blue.default',
+                borderBottom: '4px solid',
+                borderColor: 'blue.default',
+              }}
+              _disabled={{
+                opacity: 0.5,
+                cursor: 'not-allowed',
+              }}
+            >
+              {t('cohortSideBar.alumni-geeks', { studentsLength: alumniGeeksList?.count || 0 })}
+            </Tab>
+          </TabList>
+          <TabPanels p="0">
+            <TabPanel p="0">
+              {activeStudents.length !== 0
+                ? (
+                  <ProfilesSection
+                    profiles={activeStudents}
+                  />
+                ) : (
+                  <>
+                    {activeStudentsLoading ? (
+                      <AvatarSkeleton pt="0" quantity={15} />
+                    ) : t('cohortSideBar.no-active-students')}
+                  </>
+                )}
+            </TabPanel>
+            <TabPanel p="0">
+              {studentsJoined?.length !== 0
+                ? (
+                  <ProfilesSection
+                    profiles={studentsJoined}
+                    setAlumniGeeksList={setAlumniGeeksList}
+                    paginationProps={alumniGeeksList}
+                  />
+                ) : (
+                  <>
+                    {graduatedStudentsLoading ? (
+                      <AvatarSkeleton pt="0" quantity={15} />
+                    ) : t('cohortSideBar.no-graduated-students')}
+                  </>
+                )}
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </Box>
     </Box>
   );
@@ -310,7 +419,15 @@ const CohortSideBar = ({
 
 ProfilesSection.propTypes = {
   title: PropTypes.string.isRequired,
-  profiles: PropTypes.arrayOf(PropTypes.object).isRequired,
+  paginationProps: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
+  setAlumniGeeksList: PropTypes.oneOfType([PropTypes.func, PropTypes.any]),
+  profiles: PropTypes.arrayOf(PropTypes.object),
+};
+
+ProfilesSection.defaultProps = {
+  paginationProps: null,
+  setAlumniGeeksList: () => {},
+  profiles: [],
 };
 
 CohortSideBar.propTypes = {

@@ -47,5 +47,7 @@
     "new-exercise": "Nuevo ejercicio",
     "continue-exercise": "Continuar ejercicio"
   },
-  "average-duration": "Duración promedio"
+  "average-duration": "Duración promedio",
+  "previous-page": "Anterior",
+  "next-page": "Siguente"
 }
