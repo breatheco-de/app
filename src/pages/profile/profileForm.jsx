@@ -7,6 +7,7 @@ import { Field, Form, Formik } from 'formik';
 // import Icon from '../../common/components/Icon';
 import PropTypes from 'prop-types';
 import { memo, useEffect, useState } from 'react';
+import { useCookies } from 'react-cookie';
 import validationSchemas from '../../common/components/Forms/validationSchemas';
 import { objectAreNotEqual } from '../../utils';
 import bc from '../../common/services/breathecode';
@@ -17,6 +18,7 @@ const ProfileForm = ({ profile }) => {
   const { t } = useTranslation('profile');
   const toast = useToast();
   const [, setProfile] = usePersistent('profile', {});
+  const [cookies] = useCookies(['accessToken']);
   const inputColor = useColorModeValue('gray.600', 'gray.200');
   const bgColor = useColorModeValue('white', 'darkTheme');
   const inputDisabledColor = useColorModeValue('gray.600', 'gray.350');
@@ -263,7 +265,7 @@ const ProfileForm = ({ profile }) => {
                     // href="#"
                     onClick={(e) => {
                       e.preventDefault();
-                      window.location.href = `${process.env.BREATHECODE_HOST}/v1/auth/github?url=${window.location.href}`;
+                      window.location.href = `${process.env.BREATHECODE_HOST}/v1/auth/github/${cookies.accessToken}?url=${window.location.href}`;
                     }}
                   >
                     {t('connect-github')}
