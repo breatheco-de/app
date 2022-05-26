@@ -64,6 +64,8 @@ const privateRoutes = [
 ];
 
 async function generateSitemap() {
+  if (process.env.NODE_ENV === 'development') return;
+
   const readPages = await getReadPages();
   const lessonsPages = await getLessons();
   const exercisesPages = await getExercises();
