@@ -1,10 +1,9 @@
 const redirectByAsset = async ({
-  req, pathConector, results, userPathName, pathWithDifficulty = false,
-  difficulty, NextResponse, aliasRedirect = false,
+  req, pathConector, results, userPathName, NextResponse, aliasRedirect = false,
 }) => {
   const url = await req.nextUrl.clone();
   const { translations } = results;
-  const pagePath = pathWithDifficulty ? `${pathConector}/${difficulty}` : pathConector;
+  const pagePath = pathConector;
 
   if (results && aliasRedirect) {
     return NextResponse.redirect(new URL(aliasRedirect, req.url));
