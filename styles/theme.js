@@ -1,5 +1,6 @@
 import { extendTheme } from '@chakra-ui/react';
 import Button from './components/customButton';
+import Link from './components/customLink';
 
 const CustomTheme = extendTheme({
   fonts: {
@@ -80,6 +81,7 @@ const CustomTheme = extendTheme({
   },
   components: {
     Button,
+    Link,
   },
 });
 
