@@ -87,7 +87,7 @@ const setSession = (token, setCookie, removeCookie) => {
 const getToken = (cookies) => {
   if (isWindow) {
     const query = new URLSearchParams(window.location.search || '');
-    const queryToken = query.get('token');
+    const queryToken = query.get('token')?.split('?')[0]; // sometimes endpoint redirection returns 2 ?token querystring
     if (queryToken) return queryToken;
     return cookies.accessToken;
     // return localStorage.getItem('accessToken');

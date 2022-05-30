@@ -16,7 +16,7 @@
   "welcome": "Bienvenido a 4Geeks",
   "select-program": "Elige un programa",
   "account-not-found": "Lo sentimos, no pudimos encontrar una cuenta con las credenciales proporcionadas",
-  "added-to-waiting-list": "¡Su correo electrónico ha sido agregado a nuestra lista!",
+  "added-to-waiting-list": "¡Tu correo electrónico ha sido agregado a nuestra lista!",
   "email-already-subscribed": "¡Tu email ya está suscrito!",
   "assignment-updated": "Tu tarea ha sido actualizada con éxito",
   "assignment-update-error": "Hubo un error al actualizar tu tarea",
@@ -32,5 +32,9 @@
   "request-apply-success": "¡Gracias por tu solicitud!",
   "email-will-be-sent": "Un correo electrónico será enviado a usted pronto",
   "error-fetching-role": "Hubo un error al intentar encontrar el rol \"{{role}}\"",
-  "error-fetching-alumni-geeks": "Error al obtener Ex Alumnos"
+  "error-fetching-alumni-geeks": "Error al obtener Ex Alumnos",
+  "github-account-removed": "Tu cuenta de GitHub ha sido removido con éxito",
+  "error-removing-github": "Hubo un error al intentar remover tu cuenta de GitHub",
+  "any-removed": "{{any}} removido!",
+  "something-went-wrong": "Algo salió mal"
 }

@@ -17,6 +17,7 @@ module.exports = {
     '/how-to': ['how-to'],
     '/how-to/[slug]': ['how-to'],
     '/profile': ['profile'],
+    '/thank-you': ['thank-you'],
   },
   locales: ['default', 'en', 'es'],
   // defaultLocale: 'en', // removed for redirects handling purposes

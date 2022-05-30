@@ -1,12 +1,15 @@
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, Button, FormControl, FormErrorMessage, FormLabel, Input,
-  InputGroup, InputLeftAddon, Stack, Text, useColorModeValue, useToast,
+  Box, Button, FormControl, FormErrorMessage, FormLabel, Heading, Input,
+  InputGroup, InputLeftAddon, Modal, ModalBody, ModalCloseButton, ModalContent,
+  ModalHeader, ModalOverlay, Stack, Text, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import { Field, Form, Formik } from 'formik';
 // import Icon from '../../common/components/Icon';
 import PropTypes from 'prop-types';
 import { memo, useEffect, useState } from 'react';
+import { useCookies } from 'react-cookie';
+import { useRouter } from 'next/router';
 import validationSchemas from '../../common/components/Forms/validationSchemas';
 import { objectAreNotEqual } from '../../utils';
 import bc from '../../common/services/breathecode';
@@ -16,10 +19,14 @@ import Icon from '../../common/components/Icon';
 const ProfileForm = ({ profile }) => {
   const { t } = useTranslation('profile');
   const toast = useToast();
+  const router = useRouter();
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [, setProfile] = usePersistent('profile', {});
+  const [cookies] = useCookies(['accessToken']);
   const inputColor = useColorModeValue('gray.600', 'gray.200');
   const bgColor = useColorModeValue('white', 'darkTheme');
   const inputDisabledColor = useColorModeValue('gray.600', 'gray.350');
+  const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
   const backgroundDisabledColor = useColorModeValue('gray.250', 'gray.600');
   const [userInfo, setUserInfo] = useState(null);
   const [defaultUserInfo, setDefaultUserInfo] = useState(null);
@@ -229,32 +236,44 @@ const ProfileForm = ({ profile }) => {
               <InputLeftAddon background={bgColor} border="1px solid" borderRadius="3px" borderColor="gray.default" height="3.125rem">
                 <Icon icon="github" width="24px" height="24px" />
               </InputLeftAddon>
-              {hasGithub ? (
-                <Input
-                  type="text"
-                  h="3.125rem"
-                  borderColor="gray.default"
-                  _focus={{
-                    borderColor: 'gray.default',
-                  }}
-                  _hover={{
-                    borderColor: 'gray.default',
-                  }}
-                  className="form-control github"
-                  placeholder="Your Github"
-                  readOnly
-                  value={profile.github.username.replace(/(:?https?:\/\/)?(?:www\.)?github.com\//gm, '')}
-                />
-              ) : (
-                <Box
-                  w="100%"
-                  h="3.125rem"
-                  border="1px solid"
-                  borderRightRadius="3px"
-                  display="flex"
-                  borderColor="gray.default"
-                  alignItems="center"
-                >
+              <Box
+                w="100%"
+                h="3.125rem"
+                border="1px solid"
+                borderRightRadius="3px"
+                display="flex"
+                borderColor="gray.default"
+                alignItems="center"
+              >
+                {hasGithub ? (
+                  <>
+                    <Text
+                      margin={{ base: '0 14px 0 14px', sm: '0 0 0 24px' }}
+                      textAlign="start"
+                      cursor="default"
+                      // href="#"
+                    >
+                      {profile.github.username.replace(/(:?https?:\/\/)?(?:www\.)?github.com\//gm, '')}
+                    </Text>
+                    <Text
+                      margin={{ base: '0 14px 0 auto', sm: '0 24px 0 auto' }}
+                      textAlign="start"
+                      color="blue.default"
+                      cursor="pointer"
+                      display="flex"
+                      alignItems="center"
+                      gridGap="6px"
+                      textTransform="uppercase"
+                      fontSize="14px"
+                      onClick={() => {
+                        setModalIsOpen(true);
+                      }}
+                    >
+                      <Icon icon="close" width="10px" height="10px" />
+                      {t('remove')}
+                    </Text>
+                  </>
+                ) : (
                   <Text
                     margin={{ base: '0 14px 0 14px', sm: '0 0 0 24px' }}
                     textAlign="start"
@@ -263,18 +282,74 @@ const ProfileForm = ({ profile }) => {
                     // href="#"
                     onClick={(e) => {
                       e.preventDefault();
-                      window.location.href = `${process.env.BREATHECODE_HOST}/v1/auth/github?url=${window.location.href}`;
+                      window.location.href = `${process.env.BREATHECODE_HOST}/v1/auth/github/${cookies.accessToken}?url=${window.location.href}`;
                     }}
                   >
                     {t('connect-github')}
                   </Text>
-                </Box>
-              )}
+                )}
+              </Box>
             </InputGroup>
             <Button variant="default" disabled={!isModified} fontSize="13px" fontWeight="700" letterSpacing="0.05em" textTransform="uppercase" width="fit-content" padding="0 24px" alignSelf="end" isLoading={isSubmitting} type="submit">
               {t('save-changes')}
             </Button>
           </Stack>
+          <Modal isOpen={modalIsOpen} size="xl" margin="0 10px" onClose={() => setModalIsOpen(false)}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
+                {t('remove-github-modal.title')}
+              </ModalHeader>
+              <ModalCloseButton />
+              <ModalBody padding={{ base: '26px 18px', md: '42px 36px' }}>
+                <Heading as="p" size="xsm" fontWeight="700" letterSpacing="0.05em" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
+                  {t('remove-github-modal.description')}
+                </Heading>
+                <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="12px" justifyContent="space-around">
+                  <Button
+                    variant="outline"
+                    onClick={() => setModalIsOpen(false)}
+                    textTransform="uppercase"
+                    fontSize="13px"
+                  >
+                    {t('common:close')}
+                  </Button>
+                  <Button
+                    variant="default"
+                    onClick={() => {
+                      bc.auth().removeGithub()
+                        .then(() => {
+                          setModalIsOpen(false);
+                          setTimeout(() => {
+                            router.reload();
+                          }, 1000);
+                          toast({
+                            title: t('alert-message:any-removed', { any: 'GitHub' }),
+                            description: t('alert-message:github-account-removed'),
+                            status: 'success',
+                            duration: 5000,
+                            isClosable: true,
+                          });
+                        })
+                        .catch(() => {
+                          toast({
+                            title: t('alert-message:something-went-wrong'),
+                            description: t('alert-message:error-removing-github'),
+                            status: 'error',
+                            duration: 5000,
+                            isClosable: true,
+                          });
+                        });
+                    }}
+                    textTransform="uppercase"
+                    fontSize="13px"
+                  >
+                    {t('common:confirm')}
+                  </Button>
+                </Box>
+              </ModalBody>
+            </ModalContent>
+          </Modal>
         </Form>
       )}
     </Formik>
