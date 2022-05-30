@@ -5,38 +5,44 @@ import PropTypes from 'prop-types';
 
 const Helmet = ({
   title, description, url, previewImage, type, unlisted,
-}) => (
-  <Head>
-    {/* <!-- Primary Meta Tags --> */}
-    {/* <html lang="en" /> */}
-    {/* <link rel="canonical" href={`${siteUrl}${pagePath}`} /> */}
-    {/* <meta name="keywords" content={keywords} /> */}
-    <link rel="canonical" hrefLang="x-default" href="https://4geeks.com" />
-    <link rel="alternate" hrefLang="en" href="https://4geeks.com/en" />
-    <link rel="alternate" hrefLang="es" href="https://4geeks.com/es" />
+}) => {
+  console.log('title:::', title);
 
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    {unlisted === true && <meta name="robots" content="noindex" />}
-    <meta name="image" content={previewImage} />
-    {type === 'blog' ? (
-      <meta property="og:type" content="article" />
-    ) : (
-      <meta property="og:type" content="website" />
-    )}
-    <link rel="icon" href="/4Geeks.ico" />
-    <meta name="og:title" content={title} />
-    <meta name="og:url" content={url} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={previewImage} />
+  return (
+    <Head>
+      {/* <!-- Primary Meta Tags --> */}
+      {/* <html lang="en" /> */}
+      {/* <link rel="canonical" href={`${siteUrl}${pagePath}`} /> */}
+      {/* <meta name="keywords" content={keywords} /> */}
+      <link rel="canonical" hrefLang="x-default" href="https://4geeks.com" />
+      <link rel="alternate" hrefLang="en" href="https://4geeks.com/en" />
+      <link rel="alternate" hrefLang="es" href="https://4geeks.com/es" />
 
-    {/* <!-- Twitter --> */}
-    <meta name="twitter:card" content={previewImage} />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={previewImage} />
-  </Head>
-);
+      <title>{title}</title>
+      <meta name="description" content={description} />
+      {unlisted === true && <meta name="robots" content="noindex" />}
+      <meta name="image" content={previewImage} />
+      {type === 'blog' ? (
+        <meta property="og:type" content="article" />
+      ) : (
+        <meta property="og:type" content="website" />
+      )}
+      <link rel="icon" href="/4Geeks.ico" />
+
+      {/* <---------------- Open Graph protocol ----------------> */}
+      <meta name="og:title" content={title} />
+      <meta name="og:url" content={url} />
+      <meta property="og:description" content={description} />
+      <meta property="og:image" content={previewImage} />
+
+      {/* <!-- Twitter --> */}
+      <meta name="twitter:card" content={previewImage} />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={previewImage} />
+    </Head>
+  );
+};
 
 Helmet.propTypes = {
   title: PropTypes.string,

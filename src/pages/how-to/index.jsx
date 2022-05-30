@@ -73,6 +73,8 @@ export const getStaticProps = async ({ locale }) => {
 
   return {
     props: {
+      title: 'titulo de ejemplo recien generado para todas las paginas lun 30 de mayo',
+      previewImage: '/static/images/code1.png',
       fallback: false,
       data: data.filter((l) => l.lang === currentLang[locale]),
       technologyTags,
