@@ -75,7 +75,8 @@ export const getStaticProps = async ({ locale }) => {
     props: {
       title: 'titulo de ejemplo recien generado para todas las paginas lun 30 de mayo',
       url: 'https://www.4geeks.com/how-to',
-      previewImage: 'https://ia.media-imdb.com/images/rock.jpg',
+      description: 'Aqui podras ver guias sobre como hacer distintas cosas :)',
+      previewImage: 'https://tecnopymes.cl/wp-content/uploads/2019/03/programación-4Geeks-Academy.jpg',
       fallback: false,
       data: data.filter((l) => l.lang === currentLang[locale]),
       technologyTags,
