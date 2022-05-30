@@ -22,11 +22,6 @@ const Helmet = ({
       <meta name="description" content={description} />
       {unlisted === true && <meta name="robots" content="noindex" />}
       <meta name="image" content={previewImage} />
-      {type === 'blog' ? (
-        <meta property="og:type" content="article" />
-      ) : (
-        <meta property="og:type" content="website" />
-      )}
       <link rel="icon" href="/4Geeks.ico" />
 
       {/* <---------------- Open Graph protocol ----------------> */}
@@ -34,6 +29,11 @@ const Helmet = ({
       <meta name="og:url" content={url} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={previewImage} />
+      {type === 'blog' ? (
+        <meta property="og:type" content="article" />
+      ) : (
+        <meta property="og:type" content="website" />
+      )}
 
       {/* <!-- Twitter --> */}
       <meta name="twitter:card" content={previewImage} />
