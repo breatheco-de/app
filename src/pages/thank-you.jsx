@@ -22,7 +22,7 @@ const ThankYou = () => {
           {t('you-are-in-waiting-list')}
         </Text>
         <HStack justifyContent="center" p="30px 0 20px 0">
-          <PinInput defaultValue="12345" value={cookies.subscriptionId} size="lg" isDisabled placeholder="0">
+          <PinInput defaultValue="00000" value={cookies.subscriptionId} size="lg" isDisabled placeholder="0">
             {Array(cookies?.subscriptionId?.length || 5).fill(0).map((_, i) => {
               const index = i;
               return (
