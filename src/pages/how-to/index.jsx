@@ -79,7 +79,7 @@ export const getStaticProps = async ({ locale }) => {
       title: t('meta-tag.title'),
       url: 'https://4geeks.com/how-to', // current url
       description: t('meta-tag.description'),
-      image: t('meta-tag.image', { domain: process.env.WEBSITE_URL || '4geeks.com' }),
+      image: t('meta-tag.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' }),
 
       // page props
       fallback: false,
