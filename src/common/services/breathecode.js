@@ -17,6 +17,7 @@ const breathecode = {
       isValidToken: (token) => axios.get(`${url}/token/${token}`),
       register: (payload) => axios.post(`${url}/user/register`, payload),
       subscribe: (payload) => axios.post(`${url}/subscribe/`, { ...payload }),
+      removeGithub: () => axios.delete(`${url}/github/me`),
     };
   },
 
@@ -92,6 +93,12 @@ const breathecode = {
     return {
       addBulk: (cohortId, activities) => axios.post(`${url}/academy/cohort/${cohortId}`, activities),
       getAttendance: (cohortId) => axios.get(`${url}/cohort/${cohortId}?slug=classroom_attendance,classroom_unattendance`),
+    };
+  },
+  certificate: () => {
+    const url = `${host}/certificate`;
+    return {
+      get: () => axios.get(`${url}/me`),
     };
   },
 };
