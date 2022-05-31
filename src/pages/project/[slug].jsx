@@ -50,29 +50,42 @@ export const getStaticPaths = async ({ locales }) => {
 };
 
 export const getStaticProps = async ({ params }) => {
-  const { slug } = params;
-  const results = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
+  const {
+    slug, translations, description, preview,
+  } = params;
+  const result = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
     .then((res) => res.json())
     .catch((err) => ({
       status: err.response.status,
     }));
+
+  const { title } = result;
   const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
     .then((res) => res.text())
     .catch((err) => ({
       status: err.response.status,
     }));
 
-  if (results.status === 404) {
+  if (result.status === 404) {
     return {
       notFound: true,
     };
   }
   return {
     props: {
+      seo: {
+        title,
+        translations,
+        pathConnector: '/project',
+        image: preview,
+        description,
+        type: 'article',
+
+      },
       fallback: false,
-      project: results,
+      project: result,
       markdown,
-      // translations: results.translations,
+      // translations: result.translations,
     },
   };
 };

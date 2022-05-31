@@ -7,6 +7,15 @@ import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
 import Icon from '../common/components/Icon';
 
+export const getStaticProps = ({ locales }) => ({
+  props: {
+    seo: {
+      pathConnector: '/thank-you',
+      locales,
+    },
+  },
+});
+
 const ThankYou = () => {
   const { t } = useTranslation('thank-you');
   const [cookies] = useCookies(['subscriptionId']);

@@ -4,6 +4,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
+import getT from 'next-translate/getT';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import Search from '../../js_modules/projects/Search';
@@ -31,8 +32,9 @@ export const getStaticPaths = async ({ locales }) => {
   };
 };
 
-export const getStaticProps = async ({ params }) => {
+export const getStaticProps = async ({ locale, locales, params }) => {
   const { slug } = params;
+  const t = await getT(locale, 'read');
 
   const data = await fetch(
     `${process.env.BREATHECODE_HOST}/v1/admissions/syllabus/${slug}/version/1`,
@@ -55,6 +57,15 @@ export const getStaticProps = async ({ params }) => {
 
   return {
     props: {
+      seo: {
+        title: data.name,
+        description: t('description'),
+        image: data.logo,
+        url: `https://4geeks.com/${locale}/${slug}`,
+        locales,
+        pathConnector: `/read/${slug}`,
+        type: 'article',
+      },
       fallback: false,
       data,
     },

@@ -22,6 +22,15 @@ import Icon from '../common/components/Icon';
 import validationSchema from '../common/components/Forms/validationSchemas';
 import bc from '../common/services/breathecode';
 
+export const getStaticProps = ({ locales }) => ({
+  props: {
+    seo: {
+      locales,
+      fallback: false,
+    },
+  },
+});
+
 export default function Home() {
   const toast = useToast();
   const router = useRouter();

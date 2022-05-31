@@ -57,12 +57,15 @@ export const getStaticProps = async ({ params, locale }) => {
   }
   return {
     props: {
-      // meta tags props
-      title: data.title,
-      url: `https://4geeks.com/${locale}/how-to/${slug}`, // current url
-      description: data.description || t('meta-tag.description'),
-      image: data.preview || staticImage,
-      type: 'article',
+      seo: {
+        title: data.title,
+        url: `https://4geeks.com/${locale}/how-to/${slug}`, // current url
+        description: data.description || t('meta-tag.description'),
+        image: data.preview || staticImage,
+        type: 'article',
+        translations: data.translations,
+        params,
+      },
 
       // page props
       fallback: false,

@@ -4,16 +4,33 @@ import Head from 'next/head';
 import PropTypes from 'prop-types';
 
 const Helmet = ({
-  title, description, url, image, type, twitterUser, unlisted,
+  title, description, translations, url, image, type, twitterUser,
+  unlisted, pathConnector, locales,
 }) => (
   <Head>
     {/* <!-- Primary Meta Tags --> */}
     {/* <html lang="en" /> */}
     {/* <link rel="canonical" href={`${siteUrl}${pagePath}`} /> */}
     {/* <meta name="keywords" content={keywords} /> */}
-    <link rel="canonical" hrefLang="x-default" href="https://4geeks.com" />
-    <link rel="alternate" hrefLang="en" href="https://4geeks.com/en" />
-    <link rel="alternate" hrefLang="es" href="https://4geeks.com/es" />
+
+    {locales.length > 0 && !translations && (
+      <link rel="canonical" hrefLang="x-default" href={`https://4geeks.com${pathConnector}`} />
+    )}
+
+    {/* <---------------- Single web pages (ex: /projects) ----------------> */}
+    {locales.length > 0 && !translations && locales.map((lang) => (
+      <link rel="canonical" hrefLang={lang} href={`https://4geeks.com/${lang}${pathConnector}`} />
+    ))}
+
+    {/* <---------------- Assets ----------------> */}
+    {translations && Object.keys(translations).map((lang) => {
+      const language = lang === 'us' ? 'en' : lang;
+      const urlAlternate = `https://4geeks.com/${language}${pathConnector}/${translations[lang]}`;
+
+      return (
+        <link rel="alternate" hrefLang={language} href={urlAlternate} />
+      );
+    })}
 
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -51,6 +68,9 @@ Helmet.propTypes = {
   type: PropTypes.string,
   twitterUser: PropTypes.string,
   unlisted: PropTypes.bool,
+  translations: PropTypes.arrayOf(PropTypes.object),
+  pathConnector: PropTypes.string,
+  locales: PropTypes.arrayOf(PropTypes.string),
 };
 
 Helmet.defaultProps = {
@@ -61,6 +81,9 @@ Helmet.defaultProps = {
   type: 'website',
   twitterUser: '@4GeeksAcademy',
   unlisted: false,
+  translations: [],
+  pathConnector: '',
+  locales: [],
 };
 
 export default Helmet;

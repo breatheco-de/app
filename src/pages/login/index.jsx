@@ -11,6 +11,16 @@ import Register from '../../common/components/Forms/Register';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 
+export const getStaticProps = ({ locales }) => ({
+  props: {
+    seo: {
+      locales,
+      pathConnector: '/login',
+    },
+    fallback: false,
+  },
+});
+
 function login() {
   const { t } = useTranslation('login');
   const { user } = useAuth();

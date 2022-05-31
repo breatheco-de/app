@@ -5,7 +5,7 @@ import Link from '../common/components/NextChakraLink';
 import getMarkDownContent from '../common/components/MarkDownParser/markdown';
 import MarkDownParser from '../common/components/MarkDownParser';
 
-export const getStaticProps = async ({ locale }) => {
+export const getStaticProps = async ({ locale, locales }) => {
   const fileLanguage = {
     en: 'ABOUT.md',
     es: 'ABOUT.es.md',
@@ -19,6 +19,10 @@ export const getStaticProps = async ({ locale }) => {
   const markdownContent = getMarkDownContent(results);
   return {
     props: {
+      seo: {
+        locales,
+        pathConnector: '/about-us',
+      },
       fallback: false,
       data: markdownContent.content,
     },
