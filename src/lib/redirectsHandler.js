@@ -1,7 +1,7 @@
 const redirectByAsset = async ({
   req, pathConector, results, userPathName, NextResponse, aliasRedirect = false,
 }) => {
-  const url = await req.nextUrl.clone();
+  // const url = await req.nextUrl.clone();
   const { translations } = results;
   const pagePath = pathConector;
 
@@ -12,7 +12,7 @@ const redirectByAsset = async ({
   if (results.status_code !== 404) {
     /*
       spanish handler:
-        [x] /lesson/aprender-a-programar => /es/lesson/aprender-a-programar
+        [-] /lesson/aprender-a-programar => /es/lesson/aprender-a-programar
         [x] /es/lesson/learn-to-code => /es/lesson/aprender-a-programar
         [x] /es/lesson/aprender-a-programar => no redirect, just show lesson content
   */
@@ -27,17 +27,17 @@ const redirectByAsset = async ({
 
     /*
       english handler:
-        [x] /lesson/learn-to-code => /en/lesson/learn-to-code
+        [-] /lesson/learn-to-code => /en/lesson/learn-to-code
         [x] /en/lesson/aprender-a-programar => /en/lesson/learn-to-code
         [x] /en/lesson/learn-to-code => no redirect, just show lesson content
     */
     if (
       translations.us !== undefined && (
         userPathName === `/default/${pagePath}/${translations.us}`
-        || userPathName === `/en/${pagePath}/${translations.es}`)
+        || userPathName === `/${pagePath}/${translations.es}`)
     ) {
-      console.log(`Middleware: redirecting from ${url.pathname} → /en/${pagePath}/${translations.us}`);
-      return NextResponse.redirect(new URL(`/en/${pagePath}/${translations.us}`, req.url));
+      console.log(`Middleware: redirecting from ${userPathName} → /${pagePath}/${translations.us}`);
+      return NextResponse.redirect(new URL(`/${pagePath}/${translations.us}`, req.url));
     }
   }
   return '';

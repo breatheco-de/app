@@ -7,6 +7,7 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import getT from 'next-translate/getT';
 import { languageLabel } from '../../../utils';
 import Link from '../../../common/components/NextChakraLink';
 import MarkDownParser from '../../../common/components/MarkDownParser';
@@ -33,7 +34,9 @@ export const getStaticPaths = async ({ locales }) => {
     paths,
   };
 };
-export const getStaticProps = async ({ params }) => {
+export const getStaticProps = async ({ params, locale }) => {
+  const t = await getT(locale, 'how-to');
+  const staticImage = t('meta-tag.image', { domain: process.env.WEBSITE_URL || '4geeks.com' });
   const { slug } = params;
   const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`)
     .then((res) => res.json())
@@ -54,6 +57,14 @@ export const getStaticProps = async ({ params }) => {
   }
   return {
     props: {
+      // meta tags props
+      title: data.title,
+      url: `https://4geeks.com/${locale}/how-to/${slug}`, // current url
+      description: data.description || t('meta-tag.description'),
+      image: data.preview || staticImage,
+      type: 'article',
+
+      // page props
       fallback: false,
       data,
       markdown,

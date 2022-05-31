@@ -2,7 +2,7 @@
   "meta-tag": {
     "title": "4Geeks - How to",
     "description": "Sección donde podras ver guias sobre diversos temas relacionados con la programación",
-    "image": "../../static/images/code1.png"
+    "image": "{{domain}}/static/images/coding-notebook.png"
   },
   "title": "Como hacerlo",
   "search": "Buscar publicación",

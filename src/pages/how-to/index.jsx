@@ -75,10 +75,13 @@ export const getStaticProps = async ({ locale }) => {
 
   return {
     props: {
+      // meta tags props
       title: t('meta-tag.title'),
-      url: 'https://www.4geeks.com/how-to', // current url and pathname
+      url: 'https://4geeks.com/how-to', // current url
       description: t('meta-tag.description'),
-      image: t('meta-tag.image'),
+      image: t('meta-tag.image', { domain: process.env.WEBSITE_URL || '4geeks.com' }),
+
+      // page props
       fallback: false,
       data: data.filter((l) => l.lang === currentLang[locale]),
       technologyTags,
