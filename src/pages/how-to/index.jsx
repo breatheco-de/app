@@ -2,6 +2,7 @@
 import {
   Box, Button, Flex, useColorModeValue, useDisclosure,
 } from '@chakra-ui/react';
+import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -16,6 +17,7 @@ import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
 
 export const getStaticProps = async ({ locale }) => {
+  const t = await getT(locale, 'how-to');
   const howTos = []; // filtered howTos after removing repeated
   let arrHowTos = []; // incoming howTos
   const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`)
@@ -73,10 +75,10 @@ export const getStaticProps = async ({ locale }) => {
 
   return {
     props: {
-      title: 'titulo de ejemplo recien generado para todas las paginas lun 30 de mayo',
-      url: 'https://www.4geeks.com/how-to',
-      description: 'Aqui podras ver guias sobre como hacer distintas cosas :)',
-      previewImage: 'https://tecnopymes.cl/wp-content/uploads/2019/03/programación-4Geeks-Academy.jpg',
+      title: t('meta.title'),
+      url: 'https://www.4geeks.com/how-to', // current url and pathname
+      description: t('meta.description'),
+      image: t('meta.image'),
       fallback: false,
       data: data.filter((l) => l.lang === currentLang[locale]),
       technologyTags,

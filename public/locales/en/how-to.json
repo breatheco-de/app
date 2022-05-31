@@ -1,4 +1,9 @@
 {
+  "meta-tag": {
+    "title": "4Geeks - Como hacerlo",
+    "description": "Section where you can see guides on various topics related to programming",
+    "image": "https://tecnopymes.cl/wp-content/uploads/2019/03/programación-4Geeks-Academy.jpg"
+  },
   "title": "How To's",
   "search": "Search publication",
   "description": "",
