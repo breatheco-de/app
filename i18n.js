@@ -19,10 +19,13 @@ module.exports = {
     '/profile': ['profile'],
     '/thank-you': ['thank-you'],
   },
-  locales: ['default', 'en', 'es'],
-  // defaultLocale: 'en', // removed for redirects handling purposes
-  defaultLocale: 'default',
-  localeDetection: true, // run and detects in home page = '/'
+  locales: ['en', 'es'],
+  defaultLocale: 'en',
+  localeDetection: true,
+  // locales: ['default', 'en', 'es'],
+  // // defaultLocale: 'en', // removed for redirects handling purposes
+  // defaultLocale: 'default',
+  // localeDetection: true, // run and detects in home page = '/'
   // return a Promise with the JSON file.
   loadLocaleFrom: (lang, ns) => import(`./public/locales/${lang}/${ns}.json`).then((m) => m.default),
 };
