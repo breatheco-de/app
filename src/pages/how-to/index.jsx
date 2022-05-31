@@ -16,7 +16,8 @@ import ProjectList from '../../js_modules/projects/ProjectList';
 import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
 
-export const getStaticProps = async ({ locale }) => {
+export const getStaticProps = async ({ locale, locales }) => {
+  // TODO: No esta tomando este valor
   const t = await getT(locale, 'how-to');
   const howTos = []; // filtered howTos after removing repeated
   let arrHowTos = []; // incoming howTos
@@ -76,10 +77,14 @@ export const getStaticProps = async ({ locale }) => {
   return {
     props: {
       // meta tags props
-      title: t('meta-tag.title'),
-      url: 'https://4geeks.com/how-to', // current url
-      description: t('meta-tag.description'),
-      image: t('meta-tag.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' }),
+      seo: {
+        title: t('meta-tag.title'),
+        url: 'https://4geeks.com/how-to', // current url
+        description: t('meta-tag.description'),
+        image: t('meta-tag.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' }),
+        pathConnector: '/how-to',
+        locales,
+      },
 
       // page props
       fallback: false,

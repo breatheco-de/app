@@ -52,28 +52,43 @@ export const getStaticPaths = async ({ locales }) => {
 
 export const getStaticProps = async ({ params }) => {
   const { slug } = params;
-  const results = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
+  const result = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
     .then((res) => res.json())
     .catch((err) => ({
       status: err.response.status,
     }));
+
+  const {
+    title, description, translations, preview,
+  } = result;
   const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
     .then((res) => res.text())
     .catch((err) => ({
       status: err.response.status,
     }));
 
-  if (results.status === 404) {
+  if (result.status === 404) {
     return {
       notFound: true,
     };
   }
   return {
     props: {
+      seo: {
+        title,
+        url: `https://4geeks.com/interactive-coding-tutorial/${result.difficulty}/${slug}`,
+        description,
+        image: preview,
+        translations,
+        pathConnector: `/interactive-coding-tutorial/${result.difficulty}`,
+        type: 'article',
+        publishedTime: result.created_at,
+        modifiedTime: result.updated_at,
+      },
       fallback: false,
-      project: results,
+      project: result,
       markdown,
-      // translations: results.translations,
+      // translations: result.translations,
     },
   };
 };

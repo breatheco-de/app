@@ -70,6 +70,8 @@ export const getStaticProps = async ({ locale, locales }) => {
     difficultiesSorted.push(verifyDifficultyExists(difficulties, difficulty));
   });
 
+  console.log('locales:::', locales);
+
   return {
     props: {
       seo: {

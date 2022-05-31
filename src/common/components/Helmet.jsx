@@ -5,65 +5,73 @@ import PropTypes from 'prop-types';
 
 const Helmet = ({
   title, description, translations, url, image, type, twitterUser,
-  unlisted, pathConnector, locales,
-}) => (
-  <Head>
-    {/* <!-- Primary Meta Tags --> */}
-    {/* <html lang="en" /> */}
-    {/* <link rel="canonical" href={`${siteUrl}${pagePath}`} /> */}
-    {/* <meta name="keywords" content={keywords} /> */}
+  unlisted, pathConnector, locales, publishedTime, modifiedTime,
+}) => {
+  const translationsExists = translations.length > 0;
+  const maxCharacters = 155;
+  const descriptionCleaned = description.length > maxCharacters
+    ? `${description.substring(0, maxCharacters)}...`
+    : description;
 
-    {locales.length > 0 && !translations && (
-      <link rel="canonical" hrefLang="x-default" href={`https://4geeks.com${pathConnector}`} />
-    )}
+  return (
+    <Head>
+      {/* <!-- Primary Meta Tags --> */}
+      {/* <html lang="en" /> */}
+      {/* <link rel="canonical" href={`${siteUrl}${pagePath}`} /> */}
+      {/* <meta name="keywords" content={keywords} /> */}
 
-    {/* <---------------- Single web pages (ex: /projects) ----------------> */}
-    {locales.length > 0 && !translations && locales.map((lang) => (
-      <link rel="canonical" hrefLang={lang} href={`https://4geeks.com/${lang}${pathConnector}`} />
-    ))}
+      {locales.length > 0 && !translationsExists && (
+        <link rel="canonical" hrefLang="x-default" href={`https://4geeks.com${pathConnector}`} />
+      )}
 
-    {/* <---------------- Assets ----------------> */}
-    {translations && Object.keys(translations).map((lang) => {
-      const language = lang === 'us' ? 'en' : lang;
-      const urlAlternate = `https://4geeks.com/${language}${pathConnector}/${translations[lang]}`;
+      {/* <---------------- Single web pages (ex: /projects) ----------------> */}
+      {locales.length > 0 && !translationsExists && locales.map((lang) => (
+        <link rel="canonical" hrefLang={lang} href={`https://4geeks.com/${lang}${pathConnector}`} />
+      ))}
 
-      return (
-        <link
-          key={`${lang} - ${translations[lang]}`}
-          rel="alternate"
-          hrefLang={language}
-          href={urlAlternate}
-        />
-      );
-    })}
+      {/* <---------------- Assets ----------------> */}
+      {translationsExists && Object.keys(translations).map((lang) => {
+        const language = lang === 'us' ? 'en' : lang;
+        const urlAlternate = `https://4geeks.com/${language}${pathConnector}/${translations[lang]}`;
 
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    {unlisted === true && <meta name="robots" content="noindex" />}
-    <meta name="image" content={image} />
-    <link rel="icon" href="/4Geeks.ico" />
+        return (
+          <link
+            key={`${lang} - ${translations[lang]}`}
+            rel="alternate"
+            hrefLang={language}
+            href={urlAlternate}
+          />
+        );
+      })}
 
-    {/* <---------------- Open Graph protocol ----------------> */}
-    <meta name="og:title" content={title} />
-    <meta name="og:url" content={url} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={image} />
-    {type === 'blog' || type === 'article' ? (
-      <meta property="og:type" content="article" />
-    ) : (
-      <meta property="og:type" content="website" />
-    )}
+      <title>{title}</title>
+      <meta name="description" content={descriptionCleaned} />
+      {unlisted === true && <meta name="robots" content="noindex" />}
+      <meta name="image" content={image} />
+      <link rel="icon" href="/4Geeks.ico" />
 
-    {/* <!-- Twitter --> */}
-    {/* <meta name="twitter:card" content={image} /> */}
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content={twitterUser} />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={image} />
-    {/* <meta name="twitter:image" content={image} /> */}
-  </Head>
-);
+      {/* <---------------- Open Graph protocol ----------------> */}
+      <meta property="og:site_name" content="4Geeks" />
+      <meta name="og:title" content={title} />
+      <meta name="og:url" content={url} />
+      <meta property="og:description" content={descriptionCleaned} />
+      <meta property="og:image" content={image} />
+
+      <meta property="og:type" content={type} />
+      {type === 'article' && publishedTime && <meta property="article:published_time" content={publishedTime} />}
+      {type === 'article' && modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+
+      {/* <!-- Twitter --> */}
+      {/* <meta name="twitter:card" content={image} /> */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:site" content={twitterUser} />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={descriptionCleaned} />
+      <meta name="twitter:image" content={image} />
+      {/* <meta name="twitter:image" content={image} /> */}
+    </Head>
+  );
+};
 
 Helmet.propTypes = {
   title: PropTypes.string,
@@ -76,6 +84,8 @@ Helmet.propTypes = {
   translations: PropTypes.arrayOf(PropTypes.object),
   pathConnector: PropTypes.string,
   locales: PropTypes.arrayOf(PropTypes.string),
+  publishedTime: PropTypes.string,
+  modifiedTime: PropTypes.string,
 };
 
 Helmet.defaultProps = {
@@ -89,6 +99,8 @@ Helmet.defaultProps = {
   translations: [],
   pathConnector: '',
   locales: [],
+  publishedTime: '',
+  modifiedTime: '',
 };
 
 export default Helmet;
