@@ -28,7 +28,12 @@ const Helmet = ({
       const urlAlternate = `https://4geeks.com/${language}${pathConnector}/${translations[lang]}`;
 
       return (
-        <link rel="alternate" hrefLang={language} href={urlAlternate} />
+        <link
+          key={`${lang} - ${translations[lang]}`}
+          rel="alternate"
+          hrefLang={language}
+          href={urlAlternate}
+        />
       );
     })}
 

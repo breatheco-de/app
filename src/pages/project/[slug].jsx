@@ -50,14 +50,14 @@ export const getStaticPaths = async ({ locales }) => {
 };
 
 export const getStaticProps = async ({ params }) => {
-  const {
-    slug, translations, description, preview,
-  } = params;
+  const { slug } = params;
   const result = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
     .then((res) => res.json())
     .catch((err) => ({
       status: err.response.status,
     }));
+
+  const { translations, description, preview } = result;
 
   const { title } = result;
   const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
