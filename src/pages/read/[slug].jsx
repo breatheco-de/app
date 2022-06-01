@@ -44,10 +44,15 @@ export const getStaticProps = async ({ locale, locales, params }) => {
         Academy: 4,
       },
     },
-  )
-    .then((res) => res.json());
+  );
+  const resp = await data.json();
+  // .then((res) => res.json())
+  // .catch((err) => {
+  //   console.log('err:', err);
+  // });
 
-  if (!data.status_code === 401) {
+  if (resp.status_code === 401) {
+    console.error(`ERROR with /read/${slug}: something went wrong fetching "/v1/admissions/syllabus/${slug}/version/1", probably the env "BC_ACADEMY_TOKEN has expired"`);
     return {
       notFound: true,
     };
@@ -56,17 +61,17 @@ export const getStaticProps = async ({ locale, locales, params }) => {
   return {
     props: {
       seo: {
-        title: data.name,
-        image: data?.logo,
+        title: resp?.name || '',
+        image: resp?.logo || '',
         url: `/${locale}/read/${slug}`,
         pathConnector: `/read/${slug}`,
-        keywords: data?.seo_keywords,
+        keywords: resp?.seo_keywords || '',
         type: 'article',
         locales,
         locale,
       },
       fallback: false,
-      data,
+      data: resp,
     },
   };
 };
