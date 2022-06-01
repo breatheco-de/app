@@ -84,6 +84,7 @@ export const getStaticProps = async ({ params }) => {
         type: 'article',
         publishedTime: result.created_at,
         modifiedTime: result.updated_at,
+        card: 'large',
       },
       fallback: false,
       project: result,

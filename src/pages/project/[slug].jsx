@@ -74,12 +74,15 @@ export const getStaticProps = async ({ params }) => {
   return {
     props: {
       seo: {
+        type: 'article',
         title,
-        translations,
-        pathConnector: '/project',
         image: preview,
         description,
-        type: 'article',
+        card: 'large',
+        translations,
+        pathConnector: '/project',
+        publishedTime: result.created_at,
+        modifiedTime: result.updated_at,
 
       },
       fallback: false,

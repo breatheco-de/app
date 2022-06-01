@@ -4,7 +4,7 @@ import Head from 'next/head';
 import PropTypes from 'prop-types';
 
 const Helmet = ({
-  title, description, translations, url, image, type, twitterUser,
+  title, description, translations, url, image, card, type, twitterUser,
   unlisted, pathConnector, locales, publishedTime, modifiedTime,
 }) => {
   const translationsExists = translations.length > 0;
@@ -12,6 +12,12 @@ const Helmet = ({
   const descriptionCleaned = description.length > maxCharacters
     ? `${description.substring(0, maxCharacters)}...`
     : description;
+
+  const cardLayout = {
+    default: 'summary', // Title, description, and thumbnail.
+    large: 'summary_large_image', // Similar to the Summary Card, but with a prominently-featured image.
+    app: 'app', // A Card with a direct download to a mobile app.
+  };
 
   return (
     <Head>
@@ -25,8 +31,8 @@ const Helmet = ({
       )}
 
       {/* <---------------- Single web pages (ex: /projects) ----------------> */}
-      {locales.length > 0 && !translationsExists && locales.map((lang) => (
-        <link rel="canonical" hrefLang={lang} href={`https://4geeks.com/${lang}${pathConnector}`} />
+      {locales.length > 0 && !translationsExists && locales.map((lang) => lang !== 'default' && (
+        <link key={`${lang} - ${pathConnector}`} rel="canonical" hrefLang={lang} href={`https://4geeks.com/${lang}${pathConnector}`} />
       ))}
 
       {/* <---------------- Assets ----------------> */}
@@ -51,8 +57,8 @@ const Helmet = ({
       <link rel="icon" href="/4Geeks.ico" />
 
       {/* <---------------- Open Graph protocol ----------------> */}
-      <meta property="og:site_name" content="4Geeks" />
-      <meta name="og:title" content={title} />
+      <meta property="og:site_ame" content="4Geeks" />
+      <meta name="og:title" contentn={title} />
       <meta name="og:url" content={url} />
       <meta property="og:description" content={descriptionCleaned} />
       <meta property="og:image" content={image} />
@@ -61,9 +67,9 @@ const Helmet = ({
       {type === 'article' && publishedTime && <meta property="article:published_time" content={publishedTime} />}
       {type === 'article' && modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
 
-      {/* <!-- Twitter --> */}
+      {/* <---------------- Twitter ----------------> */}
       {/* <meta name="twitter:card" content={image} /> */}
-      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:card" content={cardLayout[card]} />
       <meta name="twitter:site" content={twitterUser} />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={descriptionCleaned} />
@@ -81,11 +87,12 @@ Helmet.propTypes = {
   type: PropTypes.string,
   twitterUser: PropTypes.string,
   unlisted: PropTypes.bool,
-  translations: PropTypes.arrayOf(PropTypes.object),
+  translations: PropTypes.objectOf(PropTypes.any),
   pathConnector: PropTypes.string,
   locales: PropTypes.arrayOf(PropTypes.string),
   publishedTime: PropTypes.string,
   modifiedTime: PropTypes.string,
+  card: PropTypes.string,
 };
 
 Helmet.defaultProps = {
@@ -96,11 +103,12 @@ Helmet.defaultProps = {
   type: 'website',
   twitterUser: '@4GeeksAcademy',
   unlisted: false,
-  translations: [],
+  translations: {},
   pathConnector: '',
   locales: [],
   publishedTime: '',
   modifiedTime: '',
+  card: 'default',
 };
 
 export default Helmet;

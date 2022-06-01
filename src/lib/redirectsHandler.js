@@ -6,6 +6,7 @@ const redirectByAsset = async ({
   const pagePath = pathConector;
 
   if (results && aliasRedirect) {
+    console.log('redirected by alias endpoint');
     return NextResponse.redirect(new URL(aliasRedirect, req.url));
   }
 
