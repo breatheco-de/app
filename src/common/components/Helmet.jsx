@@ -8,6 +8,7 @@ const Helmet = ({
   unlisted, pathConnector, locales, publishedTime, keywords, modifiedTime,
   locale,
 }) => {
+  const ogTitle = title.length > 0 ? title : '4Geeks';
   const translationsExists = translations.length > 0;
   const maxCharacters = 155;
   const descriptionCleaned = description.length > maxCharacters
@@ -58,7 +59,7 @@ const Helmet = ({
 
       {/* <---------------- Open Graph protocol ----------------> */}
       <meta property="og:site_name" content="4Geeks" />
-      <meta property="og:title" contentn={title || '4Geeks'} />
+      <meta property="og:title" content={ogTitle} />
       <meta property="og:url" content={url.length > 0 ? `https://4geeks.com${url}` : 'https://4geeks.com'} />
       <meta property="og:description" content={descriptionCleaned} />
       <meta property="og:image" content={image} />
@@ -82,7 +83,7 @@ const Helmet = ({
       {/* <---------------- Twitter ----------------> */}
       <meta property="twitter:card" content={cardLayout[card]} />
       <meta property="twitter:site" content={twitterUser} />
-      <meta property="twitter:title" content={title} />
+      <meta property="twitter:title" content={ogTitle} />
       <meta property="twitter:description" content={descriptionCleaned} />
       <meta property="twitter:image" content={image} />
       <meta property="twitter:image:alt" content={descriptionCleaned} />
