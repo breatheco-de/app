@@ -36,5 +36,6 @@
   "github-account-removed": "Your Github account has been successfully removed",
   "error-removing-github": "There was an error trying to remove your GitHub account",
   "any-removed": "{{any}} removed!",
-  "something-went-wrong": "Something went wrong"
+  "something-went-wrong": "Something went wrong",
+  "something-went-wrong-with": "Something went wrong with {{property}}"
 }

@@ -65,9 +65,9 @@ const Helmet = ({
       {locales.length > 0 && locales.map((lang) => lang !== 'default' && (
         <>
           {locale === lang ? (
-            <meta content={lang} property="og:locale" />
+            <meta key={lang} content={lang} property="og:locale" />
           ) : (
-            <meta content={lang} property="og:locale:alternate" />
+            <meta key={lang} content={lang} property="og:locale:alternate" />
           )}
         </>
       ))}

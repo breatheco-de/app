@@ -161,7 +161,7 @@ const CohortSideBar = ({
   // Alumni Geeks data
   useEffect(() => {
     bc.cohort({
-      limit: 35,
+      limit: 60,
       roles: 'STUDENT',
       syllabus: slug,
       distinct: true,
