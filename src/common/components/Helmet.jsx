@@ -63,13 +63,13 @@ const Helmet = ({
       <meta property="og:description" content={descriptionCleaned} />
       <meta property="og:image" content={image} />
       {locales.length > 0 && locales.map((lang) => lang !== 'default' && (
-        <>
+        <React.Fragment key={lang}>
           {locale === lang ? (
-            <meta key={lang} content={lang} property="og:locale" />
+            <meta content={lang} property="og:locale" />
           ) : (
-            <meta key={lang} content={lang} property="og:locale:alternate" />
+            <meta content={lang} property="og:locale:alternate" />
           )}
-        </>
+        </React.Fragment>
       ))}
       {image.includes('https:') && <meta property="og:image:secure_url" content={image} />}
       {/* <meta property="og:image:width" content={imageProps.width} />

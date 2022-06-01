@@ -92,7 +92,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     props: {
       seo: {
         title,
-        description,
+        description: description || '',
         image: lesson.preview || staticImage,
         pathConnector: '/lesson',
         url: `/${locale}/lesson/${slug}`,
@@ -101,9 +101,9 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         translations,
         locales,
         locale,
-        keywords: lesson.seo_keywords,
-        publishedTime: lesson.created_at,
-        modifiedTime: lesson.updated_at,
+        keywords: lesson?.seo_keywords || '',
+        publishedTime: lesson?.created_at || '',
+        modifiedTime: lesson?.updated_at || '',
       },
       fallback: false,
       lesson,

@@ -63,18 +63,18 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     props: {
       seo: {
         title,
-        description: description || t('seo.description'),
+        description: description || '',
         image: preview || staticImage,
         type: 'article',
         translations,
         pathConnector: '/how-to',
         url: `/${locale}/how-to/${slug}`, // current url
-        keywords: data.seo_keywords,
+        keywords: data?.seo_keywords || '',
         card: 'default',
         locales,
         locale,
-        publishedTime: data.created_at,
-        modifiedTime: data.updated_at,
+        publishedTime: data?.created_at || '',
+        modifiedTime: data?.updated_at || '',
       },
 
       // page props

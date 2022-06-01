@@ -57,7 +57,7 @@ export const getStaticProps = async ({ locale, locales, params }) => {
     props: {
       seo: {
         title: data.name,
-        image: data.logo,
+        image: data?.logo,
         url: `/${locale}/read/${slug}`,
         pathConnector: `/read/${slug}`,
         keywords: data?.seo_keywords,
