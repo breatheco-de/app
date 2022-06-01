@@ -8,6 +8,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
+import getT from 'next-translate/getT';
 import Icon from '../../common/components/Icon';
 import { languageLabel, getExtensionName } from '../../utils';
 import Heading from '../../common/components/Heading';
@@ -45,11 +46,16 @@ export const getStaticPaths = async ({ locales }) => {
   };
 };
 
-export const getStaticProps = async ({ params }) => {
+export const getStaticProps = async ({ params, locale, locales }) => {
+  const t = await getT(locale, 'lesson');
   const { slug } = params;
+  const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
+
   const lesson = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`)
     .then((res) => res.json())
     .catch((err) => console.log(err));
+
+  const { title, description, translations } = lesson;
 
   const exensionName = getExtensionName(lesson.readme_url);
   let markdown = '';
@@ -84,6 +90,21 @@ export const getStaticProps = async ({ params }) => {
   }
   return {
     props: {
+      seo: {
+        title,
+        description,
+        image: lesson.preview || staticImage,
+        pathConnector: '/lesson',
+        url: `/${locale}/lesson/${slug}`,
+        type: 'article',
+        card: 'large',
+        translations,
+        locales,
+        locale,
+        keywords: lesson.seo_keywords,
+        publishedTime: lesson.created_at,
+        modifiedTime: lesson.updated_at,
+      },
       fallback: false,
       lesson,
       markdown,

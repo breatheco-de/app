@@ -8,6 +8,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import getT from 'next-translate/getT';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
 import ModuleMap from '../../../../../js_modules/moduleMap/index';
@@ -30,6 +31,21 @@ import { slugify, includesToLowerCase } from '../../../../../utils/index';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
+
+export const getStaticProps = async ({ locale, locales }) => {
+  const t = await getT(locale, 'dashboard');
+
+  return {
+    props: {
+      seo: {
+        title: t('seo.title'),
+        locale,
+        locales,
+      },
+      fallback: false,
+    },
+  };
+};
 
 const Dashboard = () => {
   const { t } = useTranslation('dashboard');

@@ -16,6 +16,7 @@ import { Formik, Form, Field } from 'formik';
 import { useEffect, useState } from 'react';
 // import atob from 'atob';
 import { useRouter } from 'next/router';
+import getT from 'next-translate/getT';
 import { languageLabel } from '../../../utils';
 import Heading from '../../../common/components/Heading';
 import Link from '../../../common/components/NextChakraLink';
@@ -49,13 +50,19 @@ export const getStaticPaths = async ({ locales }) => {
   };
 };
 
-export const getStaticProps = async ({ params }) => {
+export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
-  const results = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`)
+  const t = await getT(locale, 'how-to');
+  const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
+  const result = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`)
     .then((res) => res.json())
     .catch((err) => ({
       status: err.response.status,
     }));
+
+  const {
+    title, translations, description, preview,
+  } = result;
   const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
     .then((res) => res.text())
     .catch((err) => ({
@@ -63,22 +70,37 @@ export const getStaticProps = async ({ params }) => {
     }));
 
   // in "lesson.translations" rename "us" key to "en" key if exists
-  if (results?.translations && results.translations.us) {
-    results.translations.en = results.translations.us;
-    delete results.translations.us;
+  if (result?.translations && result.translations.us) {
+    result.translations.en = result.translations.us;
+    delete result.translations.us;
   }
 
-  if (results.status === 404) {
+  if (result.status === 404) {
     return {
       notFound: true,
     };
   }
   return {
     props: {
+      seo: {
+        type: 'article',
+        title,
+        image: preview || staticImage,
+        description,
+        translations,
+        pathConnector: '/interactive-exercises',
+        url: `/${locale}/interactive-exercises${slug}`,
+        keywords: result.seo_keywords,
+        card: 'large',
+        locales,
+        locale,
+        publishedTime: result.created_at,
+        modifiedTime: result.updated_at,
+      },
       fallback: false,
-      exercise: results,
+      exercise: result,
       markdown,
-      // translations: results.translations,
+      // translations: result.translations,
     },
   };
 };

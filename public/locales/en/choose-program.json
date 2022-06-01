@@ -1,4 +1,7 @@
 {
+  "seo": {
+    "title": "Choose program"
+  },
   "title": "Your Programs",
   "invite": {
     "notify": "Ey! There are {{cohortInvitationWord}} for you to accept.",

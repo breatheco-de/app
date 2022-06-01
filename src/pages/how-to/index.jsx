@@ -17,8 +17,9 @@ import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
 
 export const getStaticProps = async ({ locale, locales }) => {
-  // TODO: No esta tomando este valor
   const t = await getT(locale, 'how-to');
+  const keywords = t('seo.keywords', {}, { returnObjects: true });
+  const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const howTos = []; // filtered howTos after removing repeated
   let arrHowTos = []; // incoming howTos
   const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`)
@@ -78,12 +79,14 @@ export const getStaticProps = async ({ locale, locales }) => {
     props: {
       // meta tags props
       seo: {
-        title: t('meta-tag.title'),
-        url: 'https://4geeks.com/how-to', // current url
-        description: t('meta-tag.description'),
-        image: t('meta-tag.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' }),
-        pathConnector: '/how-to',
+        title: t('seo.title'),
+        description: t('seo.description'),
+        keywords,
+        image,
         locales,
+        locale,
+        url: `/${locale}/how-to`,
+        pathConnector: '/how-to',
       },
 
       // page props

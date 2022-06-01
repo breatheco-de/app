@@ -1,4 +1,7 @@
 {
+  "seo": {
+    "title": "Profile"
+  },
   "basic-profile-info": "Basic Profile Information",
   "my-certificates": "My Certificates",
   "view-certificate": "View certificate",

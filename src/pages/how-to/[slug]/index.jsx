@@ -34,15 +34,19 @@ export const getStaticPaths = async ({ locales }) => {
     paths,
   };
 };
-export const getStaticProps = async ({ params, locale }) => {
+export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'how-to');
-  const staticImage = t('meta-tag.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
+  const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const { slug } = params;
   const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`)
     .then((res) => res.json())
     .catch((err) => ({
       status: err.response.status,
     }));
+
+  const {
+    title, description, translations, preview,
+  } = data;
 
   const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
     .then((res) => res.text())
@@ -58,14 +62,19 @@ export const getStaticProps = async ({ params, locale }) => {
   return {
     props: {
       seo: {
-        title: data.title,
-        url: `https://4geeks.com/${locale}/how-to/${slug}`, // current url
-        description: data.description || t('meta-tag.description'),
-        // TODO: Todo funciona perfecto, la imagen no aparece en la tarjeta
-        image: data.preview || staticImage,
+        title,
+        description: description || t('seo.description'),
+        image: preview || staticImage,
         type: 'article',
-        translations: data.translations,
-        params,
+        translations,
+        pathConnector: '/how-to',
+        url: `/${locale}/how-to/${slug}`, // current url
+        keywords: data.seo_keywords,
+        card: 'default',
+        locales,
+        locale,
+        publishedTime: data.created_at,
+        modifiedTime: data.updated_at,
       },
 
       // page props

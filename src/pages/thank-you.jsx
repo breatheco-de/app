@@ -3,18 +3,26 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useCookies } from 'react-cookie';
+import getT from 'next-translate/getT';
 import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
 import Icon from '../common/components/Icon';
 
-export const getStaticProps = ({ locales }) => ({
-  props: {
-    seo: {
-      pathConnector: '/thank-you',
-      locales,
+export const getStaticProps = async ({ locale, locales }) => {
+  const t = await getT(locale, 'projects');
+
+  return {
+    props: {
+      seo: {
+        title: t('seo.title'),
+        url: '/thank-you',
+        pathConnector: '/thank-you',
+        locales,
+        locale,
+      },
     },
-  },
-});
+  };
+};
 
 const ThankYou = () => {
   const { t } = useTranslation('thank-you');

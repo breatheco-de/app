@@ -7,15 +7,32 @@ import { memo, useEffect, useState } from 'react';
 import { formatRelative } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useRouter } from 'next/router';
+import getT from 'next-translate/getT';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import useAuth from '../../common/hooks/useAuth';
 import asPrivate from '../../common/context/PrivateRouteWrapper';
 import { usePersistent } from '../../common/hooks/usePersistent';
-import ProfileForm from './profileForm';
+import ProfileForm from '../../common/components/profileForm';
 import bc from '../../common/services/breathecode';
 import Icon from '../../common/components/Icon';
 // import useTranslation from 'next-translate/useTranslation';
+export const getStaticProps = async ({ locale, locales }) => {
+  const t = await getT(locale, 'profile');
+
+  return {
+    props: {
+      seo: {
+        title: t('seo.title'),
+        url: '/profile',
+        pathConnector: '/profile',
+        locales,
+        locale,
+      },
+    },
+  };
+};
+
 const Profile = () => {
   const { t } = useTranslation('profile');
   const { user } = useAuth();

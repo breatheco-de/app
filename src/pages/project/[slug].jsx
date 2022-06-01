@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import { useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
+import getT from 'next-translate/getT';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 import Text from '../../common/components/Text';
@@ -49,17 +50,20 @@ export const getStaticPaths = async ({ locales }) => {
   };
 };
 
-export const getStaticProps = async ({ params }) => {
+export const getStaticProps = async ({ params, locale, locales }) => {
+  const t = await getT(locale, 'projects');
   const { slug } = params;
+  const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const result = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
     .then((res) => res.json())
     .catch((err) => ({
       status: err.response.status,
     }));
 
-  const { translations, description, preview } = result;
+  const {
+    title, translations, description, preview,
+  } = result;
 
-  const { title } = result;
   const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
     .then((res) => res.text())
     .catch((err) => ({
@@ -76,14 +80,17 @@ export const getStaticProps = async ({ params }) => {
       seo: {
         type: 'article',
         title,
-        image: preview,
+        image: preview || staticImage,
         description,
-        card: 'large',
-        translations,
+        url: `/${locale}/project/${slug}`,
         pathConnector: '/project',
+        translations,
+        keywords: result.seo_keywords,
+        card: 'default',
         publishedTime: result.created_at,
         modifiedTime: result.updated_at,
-
+        locales,
+        locale,
       },
       fallback: false,
       project: result,

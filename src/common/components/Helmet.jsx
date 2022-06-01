@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 
 const Helmet = ({
   title, description, translations, url, image, card, type, twitterUser,
-  unlisted, pathConnector, locales, publishedTime, modifiedTime,
+  unlisted, pathConnector, locales, publishedTime, keywords, modifiedTime,
+  locale,
 }) => {
   const translationsExists = translations.length > 0;
   const maxCharacters = 155;
@@ -21,10 +22,15 @@ const Helmet = ({
 
   return (
     <Head>
+      <title>{title.length > 0 ? `${title} | 4Geeks` : '4Geeks'}</title>
+      <meta name="description" content={descriptionCleaned} />
+      {unlisted === true && <meta name="robots" content="noindex" />}
+      <link rel="icon" href="/4Geeks.ico" />
       {/* <!-- Primary Meta Tags --> */}
-      {/* <html lang="en" /> */}
-      {/* <link rel="canonical" href={`${siteUrl}${pagePath}`} /> */}
-      {/* <meta name="keywords" content={keywords} /> */}
+      {Array.isArray(keywords) && (
+        <meta name="keywords" content={keywords.join(', ')} />
+      )}
+      {typeof keywords === 'string' && <meta name="keywords" content={keywords} />}
 
       {locales.length > 0 && !translationsExists && (
         <link rel="canonical" hrefLang="x-default" href={`https://4geeks.com${pathConnector}`} />
@@ -50,31 +56,36 @@ const Helmet = ({
         );
       })}
 
-      <title>{title}</title>
-      <meta name="description" content={descriptionCleaned} />
-      {unlisted === true && <meta name="robots" content="noindex" />}
-      <meta name="image" content={image} />
-      <link rel="icon" href="/4Geeks.ico" />
-
       {/* <---------------- Open Graph protocol ----------------> */}
-      <meta property="og:site_ame" content="4Geeks" />
-      <meta name="og:title" contentn={title} />
-      <meta name="og:url" content={url} />
+      <meta property="og:site_name" content="4Geeks" />
+      <meta property="og:title" contentn={title || '4Geeks'} />
+      <meta property="og:url" content={url.length > 0 ? `https://4geeks.com${url}` : 'https://4geeks.com'} />
       <meta property="og:description" content={descriptionCleaned} />
       <meta property="og:image" content={image} />
+      {locales.length > 0 && locales.map((lang) => lang !== 'default' && (
+        <>
+          {locale === lang ? (
+            <meta content={lang} property="og:locale" />
+          ) : (
+            <meta content={lang} property="og:locale:alternate" />
+          )}
+        </>
+      ))}
+      {image.includes('https:') && <meta property="og:image:secure_url" content={image} />}
+      {/* <meta property="og:image:width" content={imageProps.width} />
+      <meta property="og:image:height" content={imageProps.height} /> */}
 
       <meta property="og:type" content={type} />
       {type === 'article' && publishedTime && <meta property="article:published_time" content={publishedTime} />}
       {type === 'article' && modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
 
       {/* <---------------- Twitter ----------------> */}
-      {/* <meta name="twitter:card" content={image} /> */}
-      <meta name="twitter:card" content={cardLayout[card]} />
-      <meta name="twitter:site" content={twitterUser} />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={descriptionCleaned} />
-      <meta name="twitter:image" content={image} />
-      {/* <meta name="twitter:image" content={image} /> */}
+      <meta property="twitter:card" content={cardLayout[card]} />
+      <meta property="twitter:site" content={twitterUser} />
+      <meta property="twitter:title" content={title} />
+      <meta property="twitter:description" content={descriptionCleaned} />
+      <meta property="twitter:image" content={image} />
+      <meta property="twitter:image:alt" content={descriptionCleaned} />
     </Head>
   );
 };
@@ -92,14 +103,16 @@ Helmet.propTypes = {
   locales: PropTypes.arrayOf(PropTypes.string),
   publishedTime: PropTypes.string,
   modifiedTime: PropTypes.string,
+  keywords: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   card: PropTypes.string,
+  locale: PropTypes.string,
 };
 
 Helmet.defaultProps = {
-  title: '4Geeks',
-  url: 'https://4geeks.com',
+  title: '',
+  url: '',
   description: "4Geeks's mission is to accelerate the way software developers learn and evolve.",
-  image: 'https://raw.githubusercontent.com/4GeeksAcademy/website-v2/master/src/assets/logos/favicon.png',
+  image: 'https://4geeks.com/static/images/4geeks.png',
   type: 'website',
   twitterUser: '@4GeeksAcademy',
   unlisted: false,
@@ -108,7 +121,9 @@ Helmet.defaultProps = {
   locales: [],
   publishedTime: '',
   modifiedTime: '',
+  keywords: 'programming bootcamp, programming course, professional mentoring',
   card: 'default',
+  locale: '',
 };
 
 export default Helmet;
