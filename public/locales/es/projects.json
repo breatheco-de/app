@@ -1,4 +1,10 @@
 {
+  "seo": {
+    "title": "Proyectos",
+    "description": "Un lugar para trabajar con nuevos proyectos y mejorar tus conocimientos sobre la programación.",
+    "keywords": ["codificación de proyectos interactiva", "proyectos"],
+    "image": "{{domain}}/static/images/4geeks.png"
+  },
   "title": "Proyectos",
   "search": "Buscar Proyectos",
   "filter": "Filtro",

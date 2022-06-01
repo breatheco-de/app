@@ -1,4 +1,10 @@
 {
+  "seo": {
+    "title": "Exercises",
+    "description": "",
+    "keywords": ["exercises"],
+    "image": "{{domain}}/static/images/4geeks.png"
+  },
   "title": "Exercises",
   "search": "Search Exercises",
   "filter": "Filter",

@@ -1,11 +1,15 @@
 import { Box, useColorMode, useColorModeValue } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import getT from 'next-translate/getT';
 import Link from '../common/components/NextChakraLink';
 import getMarkDownContent from '../common/components/MarkDownParser/markdown';
 import MarkDownParser from '../common/components/MarkDownParser';
 
-export const getStaticProps = async ({ locale }) => {
+export const getStaticProps = async ({ locale, locales }) => {
+  const t = await getT(locale, 'about-us');
+  const keywords = t('seo.keywords', {}, { returnObjects: true });
+  const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const fileLanguage = {
     en: 'ABOUT.md',
     es: 'ABOUT.es.md',
@@ -19,6 +23,16 @@ export const getStaticProps = async ({ locale }) => {
   const markdownContent = getMarkDownContent(results);
   return {
     props: {
+      seo: {
+        title: t('seo.title'),
+        description: t('seo.description'),
+        locales,
+        locale,
+        image,
+        url: `/${locale}/about-us`,
+        pathConnector: '/about-us',
+        keywords,
+      },
       fallback: false,
       data: markdownContent.content,
     },

@@ -1,23 +1,41 @@
 import {
   Avatar,
-  Box, Link, Tab, TabList, TabPanel, TabPanels, Tabs, useColorModeValue,
+  Box, Link, Tab, TabList, TabPanel, TabPanels, Tabs, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { memo, useEffect, useState } from 'react';
 import { formatRelative } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useRouter } from 'next/router';
+import getT from 'next-translate/getT';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import useAuth from '../../common/hooks/useAuth';
 import asPrivate from '../../common/context/PrivateRouteWrapper';
 import { usePersistent } from '../../common/hooks/usePersistent';
-import ProfileForm from './profileForm';
+import ProfileForm from '../../common/components/profileForm';
 import bc from '../../common/services/breathecode';
 import Icon from '../../common/components/Icon';
 // import useTranslation from 'next-translate/useTranslation';
+export const getStaticProps = async ({ locale, locales }) => {
+  const t = await getT(locale, 'profile');
+
+  return {
+    props: {
+      seo: {
+        title: t('seo.title'),
+        url: '/profile',
+        pathConnector: '/profile',
+        locales,
+        locale,
+      },
+    },
+  };
+};
+
 const Profile = () => {
   const { t } = useTranslation('profile');
+  const toast = useToast();
   const { user } = useAuth();
   const router = useRouter();
   const { locale } = router;
@@ -33,8 +51,13 @@ const Profile = () => {
       .then(({ data }) => {
         setCertificates(data);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        toast({
+          title: t('alert-message:something-went-wrong-with', { property: 'Certificates' }),
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
       });
   }, []);
 
@@ -138,6 +161,11 @@ const Profile = () => {
                 </Box>
               );
             })}
+            {certificates.length === 0 && (
+              <Text fontSize="15px" fontWeight="400" pb="6px">
+                {t('no-certificates')}
+              </Text>
+            )}
           </TabPanel>
         </TabPanels>
       </Tabs>

@@ -10,11 +10,11 @@ import PropTypes from 'prop-types';
 import { memo, useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useRouter } from 'next/router';
-import validationSchemas from '../../common/components/Forms/validationSchemas';
+import validationSchemas from './Forms/validationSchemas';
 import { objectAreNotEqual } from '../../utils';
-import bc from '../../common/services/breathecode';
-import { usePersistent } from '../../common/hooks/usePersistent';
-import Icon from '../../common/components/Icon';
+import bc from '../services/breathecode';
+import { usePersistent } from '../hooks/usePersistent';
+import Icon from './Icon';
 
 const ProfileForm = ({ profile }) => {
   const { t } = useTranslation('profile');

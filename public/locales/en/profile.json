@@ -1,7 +1,11 @@
 {
+  "seo": {
+    "title": "Profile"
+  },
   "basic-profile-info": "Basic Profile Information",
   "my-certificates": "My Certificates",
   "view-certificate": "View certificate",
+  "no-certificates": "There are no certificates to show yet, finish your final project and get it immediately",
   "remove": "Remove",
   "profile-updated": "Profile Updated",
   "update-failed": "Something went wrong updating your profile",

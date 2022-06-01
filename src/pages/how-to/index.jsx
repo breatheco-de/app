@@ -2,6 +2,7 @@
 import {
   Box, Button, Flex, useColorModeValue, useDisclosure,
 } from '@chakra-ui/react';
+import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -15,7 +16,10 @@ import ProjectList from '../../js_modules/projects/ProjectList';
 import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
 
-export const getStaticProps = async ({ locale }) => {
+export const getStaticProps = async ({ locale, locales }) => {
+  const t = await getT(locale, 'how-to');
+  const keywords = t('seo.keywords', {}, { returnObjects: true });
+  const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const howTos = []; // filtered howTos after removing repeated
   let arrHowTos = []; // incoming howTos
   const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`)
@@ -73,6 +77,19 @@ export const getStaticProps = async ({ locale }) => {
 
   return {
     props: {
+      // meta tags props
+      seo: {
+        title: t('seo.title'),
+        description: t('seo.description'),
+        keywords,
+        image,
+        locales,
+        locale,
+        url: `/${locale}/how-to`,
+        pathConnector: '/how-to',
+      },
+
+      // page props
       fallback: false,
       data: data.filter((l) => l.lang === currentLang[locale]),
       technologyTags,

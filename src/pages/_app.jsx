@@ -45,7 +45,7 @@ function App({ Component, pageProps }) {
   return (
     <>
       <Helmet
-        {...pageProps}
+        {...pageProps.seo}
       />
       <CookiesProvider>
         <AuthProvider>
