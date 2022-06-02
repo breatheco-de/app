@@ -1,4 +1,7 @@
 {
+  "seo": {
+    "title": "Dashboard"
+  },
   "title": "Tus noticias",
   "moduleMap": "Mapa de módulos",
   "backToChooseProgram": "Volver a elegir programa",

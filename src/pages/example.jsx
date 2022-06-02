@@ -8,6 +8,14 @@ import Counter from '../common/components/Counter';
 import { H1 } from '../common/styledComponents/Head';
 // import ReactYTPlayer from '../common/components/ReactPlayer';
 
+export const getStaticProps = () => ({
+  props: {
+    seo: {
+      unlisted: true,
+    },
+  },
+});
+
 export default function Example() {
   const { t } = useTranslation(['common', 'counter']);
 

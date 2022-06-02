@@ -54,5 +54,6 @@
     "new-exercise": "Start new exercise",
     "continue-exercise": "Continue exercise"
   },
-  "average-duration": "Average duration"
+  "average-duration": "Average duration",
+  "load-more": "Load more"
 }

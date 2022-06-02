@@ -1,4 +1,10 @@
 {
+  "seo": {
+    "title": "Ejercicios",
+    "description": "",
+    "keywords": ["ejercicios"],
+    "image": "{{domain}}/static/images/4geeks.png"
+  },
   "title": "Ejercicios",
   "search": "Buscar Ejercicios",
   "filter": "Filtro",
