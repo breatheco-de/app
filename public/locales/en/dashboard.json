@@ -99,7 +99,9 @@
     "students-selected": "{{count}} students selected",
     "student-selected": "{{count}} student selected",
     "day": "Day",
-    "module": "Module"
+    "module": "Module",
+    "attendance-taken-table-message": "This information is displayed based on the last issued assistance of the selected day, with date in UTC format",
+    "list-attendance-title": "Attendance list taken"
   },
   "teacher-sidebar": {
     "actions": "Actions",
