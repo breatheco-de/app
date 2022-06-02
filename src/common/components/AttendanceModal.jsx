@@ -3,31 +3,14 @@ import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  Button,
-  Box,
-  NumberInput,
-  NumberInputStepper,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInputField,
-  FormControl,
-  FormLabel,
-  Flex,
-  Grid,
-  useCheckbox,
-  useCheckboxGroup,
-  Avatar,
-  useColorMode,
-  useToast,
-  Select,
-  useColorModeValue,
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, Button, Box,
+  NumberInput, NumberInputStepper, NumberDecrementStepper, NumberIncrementStepper, NumberInputField,
+  FormControl, FormLabel, Flex, Grid, useCheckbox, useCheckboxGroup, Avatar,
+  useColorMode, useToast, Select, useColorModeValue, ModalCloseButton, TableContainer, Table,
+  TableCaption, Thead, Tr, Th, Tbody, Td,
 } from '@chakra-ui/react';
+import { format } from 'date-fns';
+import { useRouter } from 'next/router';
 import Icon from './Icon';
 import Text from './Text';
 import bc from '../services/breathecode';
@@ -39,11 +22,14 @@ const AttendanceModal = ({
   const { t } = useTranslation('dashboard');
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const [day, setDay] = useState(cohortSession.current_day);
+  const [attendanceWasTaken, setAttendanceWasTaken] = useState(false);
+  const [attendanceTaken, setAttendanceTaken] = useState([]);
   const [currentModule, setCurrentModule] = useState(cohortSession.current_module);
   const [defaultDay, setDefaultDay] = useState(0);
   const [checked, setChecked] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const { colorMode } = useColorMode();
+  const router = useRouter();
   const toast = useToast();
 
   const commonFontColor = useColorModeValue('gray.600', 'gray.200');
@@ -102,12 +88,21 @@ const AttendanceModal = ({
     bc.cohort()
       .update(cohortSession.id, { current_day: day, current_module: currentModule })
       .then(({ data }) => {
-        setCohortSession({ ...cohortSession, ...data });
+        setCohortSession({
+          ...cohortSession,
+          current_module: data.current_module,
+        });
         bc.activity().getAttendance(cohortSession.id)
           .then((res) => {
-            const activitiesForDay = res.data.filter((act) => act.day === day.toString());
-            if (activitiesForDay.length === 0) saveCohortAttendancy();
-            else {
+            const studentsForDay = res.data.filter(
+              (st) => students.find((student) => student.user.id === st.user_id),
+            ).filter((l) => l.day === day.toString());
+            setAttendanceTaken(studentsForDay);
+            if (studentsForDay.length === 0) {
+              setCohortSession({ ...cohortSession, ...data });
+              saveCohortAttendancy();
+            } else {
+              setAttendanceWasTaken(true);
               toast({
                 title: t('alert-message:attenadance-already-taken', { count: day }),
                 // title: `Attendance for day ${day} has already been taken`,
@@ -241,6 +236,63 @@ const AttendanceModal = ({
           </Button>
         </ModalFooter>
       </ModalContent>
+
+      <Modal isOpen={attendanceWasTaken} margin="0 10px" onClose={() => setAttendanceWasTaken(false)}>
+        <ModalOverlay />
+        <ModalContent style={{ maxWidth: '52rem' }}>
+          <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
+            {t('attendance-modal.list-attendance-title')}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <TableContainer>
+              {attendanceTaken.length > 0 && (
+                <Table variant="simple">
+                  <Thead>
+                    <Tr>
+                      <Th>{t('common:user-id')}</Th>
+                      <Th>{t('common:email')}</Th>
+                      <Th isNumeric>{t('common:day')}</Th>
+                      <Th>{t('common:taken-by')}</Th>
+                      <Th>{t('common:attended')}</Th>
+                      <Th>{t('common:modification-date')}</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {attendanceTaken.sort((a, b) => a.user_id - b.user_id).map((l) => (
+                      <Tr key={l.user_id}>
+                        <Td>{l.user_id}</Td>
+                        <Td>{l.email}</Td>
+                        <Td isNumeric>{l.day}</Td>
+                        <Td>{l.user_agent}</Td>
+                        <Td textAlign="-webkit-center">
+                          {l.slug === 'classroom_attendance'
+                            ? (<Icon icon="success" width="16px" height="16px" />)
+                            : (<Icon icon="error" width="16px" height="16px" />)}
+                        </Td>
+                        <Td>
+                          {router.locale === 'es'
+                            ? format(
+                              new Date(l.created_at), 'dd/MM/yyyy',
+                            )
+                            : format(
+                              new Date(l.created_at), 'yyyy/MM/dd',
+                            )}
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              )}
+            </TableContainer>
+          </ModalBody>
+          <ModalFooter>
+            <TableCaption padding="0 8%">
+              {t('attendance-modal.attendance-taken-table-message')}
+            </TableCaption>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Modal>
   );
 };

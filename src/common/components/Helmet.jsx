@@ -9,7 +9,7 @@ const Helmet = ({
   locale,
 }) => {
   const ogTitle = title.length > 0 ? title : '4Geeks';
-  const translationsExists = translations.length > 0;
+  const translationsExists = Object.keys(translations).length > 0;
   const maxCharacters = 155;
   const descriptionCleaned = description.length > maxCharacters
     ? `${description.substring(0, maxCharacters)}...`
@@ -39,10 +39,13 @@ const Helmet = ({
 
       {/* <---------------- Single web pages (ex: /projects) ----------------> */}
       {locales.length > 0 && !translationsExists && locales.map((lang) => lang !== 'default' && (
-        <link key={`${lang} - ${pathConnector}`} rel="canonical" hrefLang={lang} href={`https://4geeks.com/${lang}${pathConnector}`} />
+        <link key={`${lang} - ${pathConnector}`} rel="alternate" hrefLang={lang} href={`https://4geeks.com/${lang}${pathConnector}`} />
       ))}
 
       {/* <---------------- Assets ----------------> */}
+      {translationsExists && (
+        <link rel="canonical" hrefLang="x-default" href={`https://4geeks.com${pathConnector}/${translations.us || translations.en}`} />
+      )}
       {translationsExists && Object.keys(translations).map((lang) => {
         const language = lang === 'us' ? 'en' : lang;
         const urlAlternate = `https://4geeks.com/${language}${pathConnector}/${translations[lang]}`;
