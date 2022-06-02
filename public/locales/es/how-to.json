@@ -1,4 +1,10 @@
 {
+  "seo": {
+    "title": "4Geeks - Como hacerlo",
+    "description": "Sección donde podras ver guias sobre diversos temas relacionados a la programación",
+    "keywords": ["bootcamp de programación", "curso de programación", "tutoría profesional"],
+    "image": "{{domain}}/static/images/coding-notebook.png"
+  },
   "title": "Como hacerlo",
   "search": "Buscar publicación",
   "description": "",

@@ -7,13 +7,14 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
-const AvatarUser = ({ data }) => {
+const AvatarUser = ({ data, fullName }) => {
   const { user } = data;
-  const fullName = `${user.first_name} ${user.last_name}`;
+  const fullNameLabel = fullName || `${user.first_name} ${user.last_name}`;
   return (
-    <Tooltip key={fullName} label={fullName} placement="top">
+    <Tooltip key={fullNameLabel} label={fullNameLabel} placement="top">
       <WrapItem justifyContent="center" alignItems="center">
         <Avatar
+          id={fullNameLabel}
           width="39px"
           height="39px"
           style={{ userSelect: 'none' }}
@@ -35,6 +36,10 @@ const AvatarUser = ({ data }) => {
 
 AvatarUser.propTypes = {
   data: PropTypes.objectOf(PropTypes.any).isRequired,
+  fullName: PropTypes.string,
+};
+AvatarUser.defaultProps = {
+  fullName: '',
 };
 
 export default memo(AvatarUser);

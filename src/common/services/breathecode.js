@@ -54,10 +54,14 @@ const breathecode = {
     };
   },
 
-  cohort: () => {
+  cohort: (query = {}) => {
     const url = `${host}/admissions/academy`;
+    const qs = Object.keys(query)
+      .map((key) => `${key}=${query[key]}`)
+      .join('&');
     return {
       get: (id) => axios.get(`${url}/cohort/${id}`),
+      getFilterStudents: () => axios.get(`${url}/cohort/user?${qs}`),
       getStudents: (cohortId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}`),
       update: (id, args) => axios.put(`${url}/cohort/${id}`, args),
     };

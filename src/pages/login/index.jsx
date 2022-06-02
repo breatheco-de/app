@@ -6,10 +6,30 @@ import {
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 // import logo from '../../../public/static/images/bc_logo.png';
+import getT from 'next-translate/getT';
 import Login from '../../common/components/Forms/LogIn';
 import Register from '../../common/components/Forms/Register';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
+
+export const getStaticProps = async ({ locale, locales }) => {
+  const t = await getT(locale, 'login');
+  const keywords = t('seo.keywords', {}, { returnObjects: true });
+  return {
+    props: {
+      seo: {
+        title: t('seo.title'),
+        description: t('seo.description'),
+        keywords,
+        locales,
+        locale,
+        url: '/login',
+        pathConnector: '/login',
+      },
+      fallback: false,
+    },
+  };
+};
 
 function login() {
   const { t } = useTranslation('login');

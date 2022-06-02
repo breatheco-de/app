@@ -7,6 +7,7 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import getT from 'next-translate/getT';
 import { languageLabel } from '../../../utils';
 import Link from '../../../common/components/NextChakraLink';
 import MarkDownParser from '../../../common/components/MarkDownParser';
@@ -33,13 +34,19 @@ export const getStaticPaths = async ({ locales }) => {
     paths,
   };
 };
-export const getStaticProps = async ({ params }) => {
+export const getStaticProps = async ({ params, locale, locales }) => {
+  const t = await getT(locale, 'how-to');
+  const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const { slug } = params;
   const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`)
     .then((res) => res.json())
     .catch((err) => ({
       status: err.response.status,
     }));
+
+  const {
+    title, description, translations, preview,
+  } = data;
 
   const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
     .then((res) => res.text())
@@ -54,6 +61,23 @@ export const getStaticProps = async ({ params }) => {
   }
   return {
     props: {
+      seo: {
+        title,
+        description: description || '',
+        image: preview || staticImage,
+        type: 'article',
+        translations,
+        pathConnector: '/how-to',
+        url: `/${locale}/how-to/${slug}`, // current url
+        keywords: data?.seo_keywords || '',
+        card: 'default',
+        locales,
+        locale,
+        publishedTime: data?.created_at || '',
+        modifiedTime: data?.updated_at || '',
+      },
+
+      // page props
       fallback: false,
       data,
       markdown,
