@@ -6,6 +6,8 @@ const OnlyFor = ({
 }) => {
   const academyNumber = Math.floor(academy);
   const userCapabilities = cohortSession.user_capabilities || [];
+  const commonUser = ['STUDENT', 'REVIEWER'];
+  const cohortRole = cohortSession.cohort_role.toUpperCase();
 
   const isCapableAcademy = cohortSession && cohortSession.academy?.id === academyNumber;
   const isCapableRole = capabilities.map(
@@ -14,7 +16,7 @@ const OnlyFor = ({
 
   const haveRequiredCapabilities = () => {
     if (!cohortSession) return false;
-    if (onlyMember && cohortSession.cohort_role === 'STUDENT') return false;
+    if (onlyMember && commonUser.includes(cohortRole)) return false;
     if (!academy && isCapableRole) return true;
     if (capabilities.length === 0 && isCapableAcademy) return true;
     if (academy && isCapableAcademy && isCapableRole) return true;
