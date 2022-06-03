@@ -185,7 +185,7 @@ const MDTable = ({ children }) => (
   </Box>
 );
 
-const MDHr = () => (<Box d="none" />);
+const MDHr = () => (<Box d="inherit" />);
 
 const MarkDownParser = ({
   content, callToActionProps, withToc, frontMatter, titleRightSide,
