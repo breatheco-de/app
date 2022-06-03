@@ -56,6 +56,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     .catch((err) => console.log(err));
 
   const { title, description, translations } = lesson;
+  const translationsExists = Object.keys(translations).length > 0;
 
   const exensionName = getExtensionName(lesson.readme_url);
   let markdown = '';
@@ -94,7 +95,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         title,
         description: description || '',
         image: lesson.preview || staticImage,
-        pathConnector: '/lesson',
+        pathConnector: translationsExists ? '/lesson' : `/lesson/${slug}`,
         url: `/${locale}/lesson/${slug}`,
         type: 'article',
         card: 'large',
