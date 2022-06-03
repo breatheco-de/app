@@ -29,17 +29,24 @@ SyntaxHighlighter.registerLanguage('html', jsx);
 SyntaxHighlighter.registerLanguage('css', css);
 SyntaxHighlighter.registerLanguage('python', python);
 
-const Code = ({ className, children }) => {
-  let language;
-  if (className.includes('lang-')) {
-    language = className.replace('lang-', '');
-  } else {
-    language = 'highlight';
-  }
-  return (
-    <SyntaxHighlighter style={tomorrow} className={language} language={language} showLineNumbers={language !== 'highlight'}>
-      {children}
+const Code = ({
+  inline, className, children, ...props
+}) => {
+  const match = /lang-(\w+)/.exec(className || '');
+
+  return !inline && match ? (
+    <SyntaxHighlighter
+      style={tomorrow}
+      language={match[1]}
+      PreTag="div"
+      {...props}
+    >
+      {String(children).replace(/\n$/, '')}
     </SyntaxHighlighter>
+  ) : (
+    <code className={`${className} highlight`} {...props}>
+      {children}
+    </code>
   );
 };
 
@@ -190,6 +197,8 @@ const MarkDownParser = ({
   const {
     token, assetSlug, assetType, gitpod,
   } = callToActionProps;
+
+  const codeBlockBackticks = /\n``[^` ]*`/gm;
   useEffect(() => {
     setLearnpackActions([
       {
@@ -208,7 +217,8 @@ const MarkDownParser = ({
   // support for emoji shortcodes
   // exapmle: :heart_eyes: -> 😍
   const emojiSupport = (text) => text.replace(/:\w+:/gi, (name) => emoji.getUnicode(name));
-  const contentFormated = emojiSupport(content);
+  const formatForCodeBlocks = content.replace(codeBlockBackticks, '\n$&'); // new line for codeBlocks and content
+  const contentFormated = emojiSupport(formatForCodeBlocks);
 
   return (
     <>
@@ -308,9 +318,11 @@ MarkDownParser.defaultProps = {
 Code.propTypes = {
   className: PropTypes.string,
   children: PropTypes.node.isRequired,
+  inline: PropTypes.bool,
 };
 Code.defaultProps = {
   className: '',
+  inline: false,
 };
 
 MDHeading.propTypes = {
