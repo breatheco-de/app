@@ -80,7 +80,7 @@ async function generateSitemap() {
   const readRoute = readPages.map((l) => generateSlugByLang(l, 'read'));
   const lessonsRoute = lessonsPages.map((l) => generateSlugByLang(l, 'lesson'));
   const exercisesRoute = exercisesPages.map((l) => generateSlugByLang(l, 'interactive-exercises'));
-  const projectsCodingRoute = projectsPages.map((l) => generateSlugByLang(l, 'interactive-coding-tutorial'));
+  const projectsCodingRoute = projectsPages.map((l) => generateSlugByLang(l, `interactive-coding-tutorial/${l.difficulty}`));
   const projectsRoute = projectsPages.map((l) => generateSlugByLang(l, 'project'));
   const howTosRoute = howTosPages.map((l) => generateSlugByLang(l, 'how-to'));
 
