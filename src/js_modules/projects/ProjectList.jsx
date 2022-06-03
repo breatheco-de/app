@@ -15,11 +15,14 @@ const ProjectList = ({
   projects, contextFilter, projectPath, pathWithDifficulty, exampleImage,
 }) => {
   const { t } = useTranslation('common');
+  // const [limiter, setLimiter] = useState(12);
   const arrOfTechs = contextFilter.technologies;
   const { difficulty, videoTutorials } = contextFilter;
   const router = useRouter();
   const defaultImage = exampleImage || '/static/images/code1.png';
   // const bgBlur = '/static/images/codeBlur.png';
+
+  // const projectLimited = projects.slice(0, limiter);
 
   const checkIsPathDifficulty = (thisDifficulty) => (pathWithDifficulty ? `/${thisDifficulty}` : '');
 
@@ -42,7 +45,10 @@ const ProjectList = ({
     // if response not match with current checked technologies return false
     // return !res.includes(false);
   };
-  const filteredProjects = projects.filter((project) => contains(project, arrOfTechs));
+
+  const filteredProjects = projects.filter(
+    (project) => contains(project, arrOfTechs),
+  );
 
   const onImageNotFound = (event) => {
     event.target.setAttribute('src', defaultImage);
@@ -181,6 +187,11 @@ const ProjectList = ({
           </Text>
         </Box>
       )}
+      {/* {projects.length >= limiter && (
+        <Button variant="default" onClick={() => setLimiter(limiter + 12)}>
+          load more
+        </Button>
+      )} */}
     </>
   );
 };
