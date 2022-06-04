@@ -28,23 +28,30 @@ const Helmet = ({
       {unlisted === true && <meta name="robots" content="noindex" />}
       <link rel="icon" href="/4Geeks.ico" />
       {/* <!-- Primary Meta Tags --> */}
-      {Array.isArray(keywords) && (
+      {Array.isArray(keywords) && keywords.length > 0 && (
         <meta name="keywords" content={keywords.join(', ')} />
       )}
-      {typeof keywords === 'string' && <meta name="keywords" content={keywords} />}
+      {typeof keywords === 'string' && keywords.length > 0 && <meta name="keywords" content={keywords} />}
 
       {locales.length > 0 && !translationsExists && (
-        <link rel="canonical" hrefLang="x-default" href={`https://4geeks.com${pathConnector}`} />
+        <link rel="canonical" href={`https://4geeks.com/en${pathConnector}`} />
       )}
 
       {/* <---------------- Single web pages (ex: /projects) ----------------> */}
-      {locales.length > 0 && !translationsExists && locales.map((lang) => lang !== 'default' && (
+      {/* {locales.length > 0
+      && !translationsExists
+      && locales.filter((l) => !['default', 'en'].includes(l)).map((lang) => lang !== 'default' && (
+        <link key={`${lang} - ${pathConnector}`} rel="alternate" hrefLang={lang} href={`https://4geeks.com/${lang}${pathConnector}`} />
+      ))} */}
+      {locales.length > 0
+      && !translationsExists
+      && locales.map((lang) => lang !== 'default' && (
         <link key={`${lang} - ${pathConnector}`} rel="alternate" hrefLang={lang} href={`https://4geeks.com/${lang}${pathConnector}`} />
       ))}
 
       {/* <---------------- Assets ----------------> */}
       {translationsExists && (
-        <link rel="canonical" hrefLang="x-default" href={`https://4geeks.com${pathConnector}/${translations.us || translations.en}`} />
+        <link rel="canonical" hrefLang="x-default" href={`https://4geeks.com/en/${pathConnector}/${translations.us || translations.en}`} />
       )}
       {translationsExists && Object.keys(translations).map((lang) => {
         const language = lang === 'us' ? 'en' : lang;
@@ -59,6 +66,19 @@ const Helmet = ({
           />
         );
       })}
+      {/* {translationsExists && Object.keys(translations).filter((l) => l !== 'us').map((lang) => {
+        const language = lang === 'us' ? 'en' : lang;
+        const urlAlternate = `https://4geeks.com/${language}${pathConnector}/${translations[lang]}`;
+
+        return (
+          <link
+            key={`${lang} - ${translations[lang]}`}
+            rel="alternate"
+            hrefLang={language}
+            href={urlAlternate}
+          />
+        );
+      })} */}
 
       {/* <---------------- Open Graph protocol ----------------> */}
       <meta property="og:site_name" content="4Geeks" />
