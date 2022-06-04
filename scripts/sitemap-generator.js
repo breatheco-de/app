@@ -4,6 +4,7 @@ const globby = require('globby');
 
 const languages = {
   us: 'en',
+  en: 'en',
   es: 'es',
 };
 
@@ -73,8 +74,9 @@ async function generateSitemap() {
   const howTosPages = await getHowTo();
 
   const generateSlugByLang = (l, conector) => {
-    if (languages[l.lang]) return `/${languages[l.lang]}/${conector}/${l.slug}`;
-    return `/${conector}/${l.slug}`;
+    if (languages[l.lang] === 'en') return `/${conector}/${l.slug}`;
+    return `/${languages[l.lang]}/${conector}/${l.slug}`;
+    // return `/${conector}/${l.slug}`;
   };
 
   const readRoute = readPages.map((l) => generateSlugByLang(l, 'read'));

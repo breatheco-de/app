@@ -34,7 +34,7 @@ const Helmet = ({
       {typeof keywords === 'string' && keywords.length > 0 && <meta name="keywords" content={keywords} />}
 
       {locales.length > 0 && !translationsExists && (
-        <link rel="canonical" href={`https://4geeks.com/en${pathConnector}`} />
+        <link rel="canonical" href={`https://4geeks.com/${pathConnector}`} />
       )}
 
       {/* <---------------- Single web pages (ex: /projects) ----------------> */}
@@ -51,7 +51,7 @@ const Helmet = ({
 
       {/* <---------------- Assets ----------------> */}
       {translationsExists && (
-        <link rel="canonical" href={`https://4geeks.com/en${pathConnector}/${translations.us || translations.en}`} />
+        <link rel="canonical" href={`https://4geeks.com/${pathConnector}/${translations.us || translations.en}`} />
       )}
       {translationsExists && Object.keys(translations).map((lang) => {
         const language = lang === 'us' ? 'en' : lang;
