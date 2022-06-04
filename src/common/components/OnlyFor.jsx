@@ -7,7 +7,7 @@ const OnlyFor = ({
   const academyNumber = Math.floor(academy);
   const userCapabilities = cohortSession.user_capabilities || [];
   const commonUser = ['STUDENT', 'REVIEWER'];
-  const cohortRole = cohortSession.cohort_role.toUpperCase();
+  const cohortRole = cohortSession.cohort_role?.toUpperCase() || 'NONE';
 
   const isCapableAcademy = cohortSession && cohortSession.academy?.id === academyNumber;
   const isCapableRole = capabilities.map(
