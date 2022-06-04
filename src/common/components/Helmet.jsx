@@ -51,7 +51,7 @@ const Helmet = ({
 
       {/* <---------------- Assets ----------------> */}
       {translationsExists && (
-        <link rel="canonical" href={`https://4geeks.com/en/${pathConnector}/${translations.us || translations.en}`} />
+        <link rel="canonical" href={`https://4geeks.com/en${pathConnector}/${translations.us || translations.en}`} />
       )}
       {translationsExists && Object.keys(translations).map((lang) => {
         const language = lang === 'us' ? 'en' : lang;
