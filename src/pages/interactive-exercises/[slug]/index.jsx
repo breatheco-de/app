@@ -80,6 +80,12 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       notFound: true,
     };
   }
+
+  const ogUrl = {
+    en: `/interactive-exercises${slug}`,
+    us: `/interactive-exercises${slug}`,
+  };
+
   return {
     props: {
       seo: {
@@ -89,7 +95,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         description: description || '',
         translations,
         pathConnector: '/interactive-exercises',
-        url: `/${locale}/interactive-exercises${slug}`,
+        url: ogUrl[locale] || `/${locale}/interactive-exercises${slug}`,
         keywords: result?.seo_keywords || '',
         card: 'large',
         locales,
