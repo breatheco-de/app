@@ -31,7 +31,7 @@ export const getStaticPaths = async ({ locales }) => {
   };
 };
 
-export const getStaticProps = async ({ params }) => {
+export const getStaticProps = async ({ locale, locales, params }) => {
   const { slug } = params;
 
   const data = await fetch(
@@ -44,19 +44,39 @@ export const getStaticProps = async ({ params }) => {
         Academy: 4,
       },
     },
-  )
-    .then((res) => res.json());
+  );
+  const resp = await data.json();
+  // .then((res) => res.json())
+  // .catch((err) => {
+  //   console.log('err:', err);
+  // });
 
-  if (!data.status_code === 401) {
+  if (resp.status_code === 401) {
+    console.error(`ERROR with /read/${slug}: something went wrong fetching "/v1/admissions/syllabus/${slug}/version/1", probably the env "BC_ACADEMY_TOKEN has expired"`);
     return {
       notFound: true,
     };
   }
 
+  const ogUrl = {
+    en: `/read/${slug}`,
+    us: `/read/${slug}`,
+  };
+
   return {
     props: {
+      seo: {
+        title: resp?.name || '',
+        image: resp?.logo || '',
+        url: ogUrl.en || `/${locale}/read/${slug}`,
+        pathConnector: `/read/${slug}`,
+        keywords: resp?.seo_keywords || '',
+        type: 'article',
+        locales,
+        locale,
+      },
       fallback: false,
-      data,
+      data: resp,
     },
   };
 };

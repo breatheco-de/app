@@ -1,4 +1,7 @@
 {
+  "seo": {
+    "title": "Dashboard"
+  },
   "title": "Tus noticias",
   "moduleMap": "Mapa de módulos",
   "backToChooseProgram": "Volver a elegir programa",
@@ -99,7 +102,9 @@
     "students-selected": "{{count}} alumnos seleccionados",
     "student-selected": "{{count}} alumno seleccionado",
     "day": "Día",
-    "module": "Módulo"
+    "module": "Módulo",
+    "attendance-taken-table-message": "Esta información se muestra en base a la última asistencia emitida del día seleccionado, con fecha en formato UTC",
+    "list-attendance-title": "Lista de asistencia tomada"
   },
   "teacher-sidebar": {
     "actions": "Acciones",

@@ -1,35 +1,26 @@
 import { NextResponse } from 'next/server';
+import { redirectByAsset } from '../../../lib/redirectsHandler';
 
 const middleware = async (req) => {
-  const url = await req.nextUrl.clone();
   const { slug } = req.page.params;
-  const userPathName = new URL(req.url).pathname;
+  const currentPathName = new URL(req.url).pathname;
+  const pathConector = 'interactive-exercises';
 
-  const results = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`)
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
-  const { translations } = results;
+  const alias = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/alias/redirect`);
+  const aliasList = await alias.json();
+  const redirectSlug = aliasList[slug] || slug;
 
-  if (results.status_code !== 404) {
-    if (
-      translations.es !== undefined && (
-        userPathName === `/default/interactive-exercises/${translations.es}`
-        || userPathName === `/es/interactive-exercises/${translations.us}`)
-    ) {
-      console.log(`Middleware: redirecting from ${userPathName} → /es/interactive-exercises/${translations.es}`);
-      return NextResponse.redirect(new URL(`/es/interactive-exercises/${translations.es}`, req.url));
-    }
+  const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
+  const results = await data.json();
 
-    if (
-      translations.us !== undefined && (
-        userPathName === `/default/interactive-exercises/${translations.us}`
-        || userPathName === `/en/interactive-exercises/${translations.es}`)
-    ) {
-      console.log(`Middleware: redirecting from ${url.pathname} → /en/interactive-exercises/${translations.us}`);
-      return NextResponse.redirect(new URL(`/en/interactive-exercises/${translations.us}`, req.url));
-    }
-  }
-  return '';
+  const pathWithoutSlug = currentPathName.slice(0, currentPathName.lastIndexOf('/'));
+  const userPathName = `${pathWithoutSlug}/${results.slug || slug}`;
+
+  const aliasRedirect = aliasList[slug] !== undefined && userPathName;
+
+  return redirectByAsset({
+    req, pathConector, results, aliasRedirect, userPathName, NextResponse,
+  });
 };
 
 export default middleware;

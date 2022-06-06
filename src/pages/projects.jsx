@@ -4,6 +4,7 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import getT from 'next-translate/getT';
 import Text from '../common/components/Text';
 import Icon from '../common/components/Icon';
 import FilterModal from '../common/components/FilterModal';
@@ -12,7 +13,10 @@ import ProjectList from '../js_modules/projects/ProjectList';
 import useFilter from '../common/store/actions/filterAction';
 import Search from '../js_modules/projects/Search';
 
-export const getStaticProps = async ({ locale }) => {
+export const getStaticProps = async ({ locale, locales }) => {
+  const t = await getT(locale, 'projects');
+  const keywords = t('seo.keywords', {}, { returnObjects: true });
+  const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const currentLang = locale === 'en' ? 'us' : 'es';
   const projects = []; // filtered projects after removing repeated
   let arrProjects = []; // incoming projects
@@ -70,8 +74,25 @@ export const getStaticProps = async ({ locale }) => {
     difficultiesSorted.push(verifyDifficultyExists(difficulties, difficulty));
   });
 
+  const ogUrl = {
+    en: '/projects',
+    us: '/projects',
+  };
+
   return {
     props: {
+      seo: {
+        title: t('seo.title'),
+        description: t('seo.description'),
+        image,
+        keywords,
+        locales,
+        locale,
+        url: ogUrl.en || `/${locale}/projects`,
+        pathConnector: '/projects',
+        card: 'default',
+      },
+
       fallback: false,
       projects: projects.filter((project) => project.lang === currentLang),
       technologyTags,

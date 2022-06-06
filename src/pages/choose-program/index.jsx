@@ -4,6 +4,7 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import getT from 'next-translate/getT';
 import ChooseProgram from '../../js_modules/chooseProgram';
 import Text from '../../common/components/Text';
 import bc from '../../common/services/breathecode';
@@ -14,6 +15,23 @@ import Module from '../../common/components/Module';
 import { isPlural } from '../../utils';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
+
+export const getStaticProps = async ({ locale, locales }) => {
+  const t = await getT(locale, 'choose-program');
+
+  return {
+    props: {
+      seo: {
+        title: t('seo.title'),
+        locales,
+        locale,
+        url: '/choose-program',
+        pathConnector: '/choose-program',
+      },
+      fallback: false,
+    },
+  };
+};
 
 function chooseProgram() {
   const { t } = useTranslation('choose-program');

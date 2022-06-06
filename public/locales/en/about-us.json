@@ -1,0 +1,8 @@
+{
+  "seo": {
+    "title": "About Us",
+    "description": "",
+    "keywords": ["about 4Geeks", "about us 4Geeks"],
+    "image": "{{domain}}/static/images/4geeks.png"
+  }
+}

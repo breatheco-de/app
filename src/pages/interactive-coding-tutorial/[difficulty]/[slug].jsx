@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import { useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
+import getT from 'next-translate/getT';
 import Heading from '../../../common/components/Heading';
 import Link from '../../../common/components/NextChakraLink';
 import Text from '../../../common/components/Text';
@@ -50,30 +51,57 @@ export const getStaticPaths = async ({ locales }) => {
   };
 };
 
-export const getStaticProps = async ({ params }) => {
+export const getStaticProps = async ({ params, locale, locales }) => {
+  const t = await getT(locale, 'projects');
   const { slug } = params;
-  const results = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
+  const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
+  const result = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
     .then((res) => res.json())
     .catch((err) => ({
       status: err.response.status,
     }));
+
+  const {
+    title, description, translations, preview,
+  } = result;
   const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
     .then((res) => res.text())
     .catch((err) => ({
       status: err.response.status,
     }));
 
-  if (results.status === 404) {
+  if (result.status === 404) {
     return {
       notFound: true,
     };
   }
+
+  const ogUrl = {
+    en: `/interactive-coding-tutorial/${result.difficulty}/${slug}`,
+    us: `/interactive-coding-tutorial/${result.difficulty}/${slug}`,
+  };
+
   return {
     props: {
+      seo: {
+        title,
+        url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${result.difficulty}/${slug}`,
+        description: description || '',
+        image: preview || staticImage,
+        translations,
+        pathConnector: `/interactive-coding-tutorial/${result.difficulty}`,
+        type: 'article',
+        keywords: result?.seo_keywords || '',
+        card: 'large',
+        locales,
+        locale,
+        publishedTime: result?.created_at || '',
+        modifiedTime: result?.updated_at || '',
+      },
       fallback: false,
-      project: results,
+      project: result,
       markdown,
-      // translations: results.translations,
+      // translations: result.translations,
     },
   };
 };

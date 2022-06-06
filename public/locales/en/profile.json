@@ -1,5 +1,12 @@
 {
+  "seo": {
+    "title": "Profile"
+  },
   "basic-profile-info": "Basic Profile Information",
+  "my-certificates": "My Certificates",
+  "view-certificate": "View certificate",
+  "no-certificates": "There are no certificates to show yet, finish your final project and get it immediately",
+  "remove": "Remove",
   "profile-updated": "Profile Updated",
   "update-failed": "Something went wrong updating your profile",
   "connect-github": "Connect with GitHub",
@@ -11,7 +18,11 @@
     },
     {
       "title": "My certificates",
-      "disabled": true
+      "disabled": false
     }
-  ]
+  ],
+  "remove-github-modal": {
+    "title": "Remove Github account",
+    "description": "By removing your Github account, any github login will be unlinked; however, you will be able to sync it again, if you wish"
+  }
 }

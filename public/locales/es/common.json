@@ -12,6 +12,13 @@
   "filter": "Filtro",
   "filters": "Filtros",
   "quiz": "Cuestionario",
+  "close": "Cerrar",
+  "confirm": "Confirmar",
+  "user-id": "ID usuario",
+  "day": "Día",
+  "taken-by": "Tomado por",
+  "attended": "Asistió",
+  "modification-date": "Fecha de modificación",
   "first-name": "Nombre",
   "last-name": "Apellido",
   "full-name": "Nombre completo",
@@ -47,5 +54,6 @@
     "new-exercise": "Nuevo ejercicio",
     "continue-exercise": "Continuar ejercicio"
   },
-  "average-duration": "Duración promedio"
+  "average-duration": "Duración promedio",
+  "load-more": "Cargar más"
 }

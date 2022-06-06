@@ -1,11 +1,22 @@
 const redirectByAsset = async ({
-  req, pathConector, results, userPathName, pathWithDifficulty = false, difficulty, NextResponse,
+  req, pathConector, results, userPathName, NextResponse, aliasRedirect = false,
 }) => {
-  const url = await req.nextUrl.clone();
+  // const url = await req.nextUrl.clone();
   const { translations } = results;
-  const pagePath = pathWithDifficulty ? `${pathConector}/${difficulty}` : pathConector;
+  const pagePath = pathConector;
+
+  if (results && aliasRedirect) {
+    console.log('redirected by alias endpoint');
+    return NextResponse.redirect(new URL(aliasRedirect, req.url));
+  }
 
   if (results.status_code !== 404) {
+    /*
+      spanish handler:
+        [-] /lesson/aprender-a-programar => /es/lesson/aprender-a-programar
+        [x] /es/lesson/learn-to-code => /es/lesson/aprender-a-programar
+        [x] /es/lesson/aprender-a-programar => no redirect, just show lesson content
+  */
     if (
       translations.es !== undefined && (
         userPathName === `/default/${pagePath}/${translations.es}`
@@ -15,13 +26,19 @@ const redirectByAsset = async ({
       return NextResponse.redirect(new URL(`/es/${pagePath}/${translations.es}`, req.url));
     }
 
+    /*
+      english handler:
+        [-] /lesson/learn-to-code => /en/lesson/learn-to-code
+        [x] /en/lesson/aprender-a-programar => /en/lesson/learn-to-code
+        [x] /en/lesson/learn-to-code => no redirect, just show lesson content
+    */
     if (
       translations.us !== undefined && (
         userPathName === `/default/${pagePath}/${translations.us}`
-        || userPathName === `/en/${pagePath}/${translations.es}`)
+        || userPathName === `/${pagePath}/${translations.es}`)
     ) {
-      console.log(`Middleware: redirecting from ${url.pathname} → /en/${pagePath}/${translations.us}`);
-      return NextResponse.redirect(new URL(`/en/${pagePath}/${translations.us}`, req.url));
+      console.log(`Middleware: redirecting from ${userPathName} → /${pagePath}/${translations.us}`);
+      return NextResponse.redirect(new URL(`/${pagePath}/${translations.us}`, req.url));
     }
   }
   return '';

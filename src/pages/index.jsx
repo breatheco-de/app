@@ -15,16 +15,38 @@ import PropTypes from 'prop-types';
 import { Formik, Form, Field } from 'formik';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { useCookies } from 'react-cookie';
+import getT from 'next-translate/getT';
 import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
 import Icon from '../common/components/Icon';
 import validationSchema from '../common/components/Forms/validationSchemas';
 import bc from '../common/services/breathecode';
 
+export const getStaticProps = async ({ locale, locales }) => {
+  const t = await getT(locale, 'home');
+  const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
+  const keywords = t('seo.keywords', {}, { returnObjects: true });
+
+  return {
+    props: {
+      seo: {
+        description: t('seo.description'),
+        image,
+        locales,
+        locale,
+        keywords,
+      },
+      fallback: false,
+    },
+  };
+};
+
 export default function Home() {
   const toast = useToast();
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState('');
+  const [, setCookie] = useCookies(['subscriptionId']);
   const { t } = useTranslation('home');
 
   const { colorMode } = useColorMode();
@@ -117,7 +139,8 @@ export default function Home() {
               validateOnChange={false}
               validateOnBlur={false}
               onSubmit={(values, actions) => {
-                bc.auth().subscribe(values).then(() => {
+                bc.auth().subscribe(values).then(({ data }) => {
+                  setCookie('subscriptionId', data.id, { path: '/' });
                   toast({
                     title: t('alert-message:added-to-waiting-list'),
                     status: 'success',

@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
+import getT from 'next-translate/getT';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import FilterModal from '../../common/components/FilterModal';
@@ -14,7 +15,10 @@ import ProjectList from '../../js_modules/projects/ProjectList';
 import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 
-export const getStaticProps = async ({ locale }) => {
+export const getStaticProps = async ({ locale, locales }) => {
+  const t = await getT(locale, 'exercises');
+  const keywords = t('seo.keywords', {}, { returnObjects: true });
+  const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const currentLang = locale === 'en' ? 'us' : 'es';
   const exercises = []; // filtered exercises after removing repeated
   let arrExercises = []; // incoming exercises
@@ -70,8 +74,24 @@ export const getStaticProps = async ({ locale }) => {
     difficultiesSorted.push(verifyDifficultyExists(difficulties, difficulty));
   });
 
+  const ogUrl = {
+    en: '/interactive-exercises',
+    us: '/interactive-exercises',
+  };
+
   return {
     props: {
+      seo: {
+        title: t('seo.title'),
+        description: t('seo.description'),
+        image,
+        url: ogUrl.en || `/${locale}/interactive-exercises`,
+        pathConnector: '/interactive-exercises',
+        locales,
+        locale,
+        keywords,
+        card: 'large',
+      },
       fallback: false,
       exercises: exercises.filter((project) => project.lang === currentLang),
       technologyTags,
