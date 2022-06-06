@@ -88,7 +88,7 @@ export const getStaticProps = async ({ locale, locales }) => {
         keywords,
         locales,
         locale,
-        url: ogUrl[locale] || `/${locale}/projects`,
+        url: ogUrl.en || `/${locale}/projects`,
         pathConnector: '/projects',
         card: 'default',
       },

@@ -95,7 +95,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         description: description || '',
         translations,
         pathConnector: '/interactive-exercises',
-        url: ogUrl[locale] || `/${locale}/interactive-exercises${slug}`,
+        url: ogUrl.en || `/${locale}/interactive-exercises${slug}`,
         keywords: result?.seo_keywords || '',
         card: 'large',
         locales,

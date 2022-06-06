@@ -90,7 +90,7 @@ export const getStaticProps = async ({ locale, locales }) => {
         image,
         locales,
         locale,
-        url: ogUrl[locale] || `/${locale}/how-to`,
+        url: ogUrl.en || `/${locale}/how-to`,
         pathConnector: '/how-to',
       },
 

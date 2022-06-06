@@ -85,7 +85,7 @@ export const getStaticProps = async ({ locale, locales }) => {
         title: t('seo.title'),
         description: t('seo.description'),
         image,
-        url: ogUrl[locale] || `/${locale}/interactive-exercises`,
+        url: ogUrl.en || `/${locale}/interactive-exercises`,
         pathConnector: '/interactive-exercises',
         locales,
         locale,

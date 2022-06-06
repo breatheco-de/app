@@ -74,7 +74,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         type: 'article',
         translations,
         pathConnector: '/how-to',
-        url: ogUrl[locale] || `/${locale}/how-to/${slug}`,
+        url: ogUrl.en || `/${locale}/how-to/${slug}`,
         keywords: data?.seo_keywords || '',
         card: 'default',
         locales,
