@@ -10,5 +10,9 @@
   "filter": "Filtro",
   "filters": "Filtros",
   "description": "Practique y desarrolle sus habilidades de codificación mediante la creación de proyectos autograduados interactivos reales en vivo con soluciones y video tutoriales",
-  "backToProjects": "Volver a Proyectos"
+  "backToProjects": "Volver a Proyectos",
+  "table": {
+    "title": "Meta",
+    "description": "Tutoriales y ejercicios de 4Geeks Coding Projects para personas que están aprendiendo a codificar o mejorando sus habilidades de codificación"
+  }
 }
