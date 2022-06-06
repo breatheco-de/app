@@ -85,7 +85,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     props: {
       seo: {
         title,
-        url: ogUrl[locale] || `/${locale}/interactive-coding-tutorial/${result.difficulty}/${slug}`,
+        url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${result.difficulty}/${slug}`,
         description: description || '',
         image: preview || staticImage,
         translations,

@@ -100,7 +100,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         description: description || '',
         image: lesson.preview || staticImage,
         pathConnector: translationsExists ? '/lesson' : `/lesson/${slug}`,
-        url: ogUrl[locale] || `/${locale}/lesson/${slug}`,
+        url: ogUrl.en || `/${locale}/lesson/${slug}`,
         type: 'article',
         card: 'large',
         translations,
