@@ -66,7 +66,31 @@ const Helmet = ({
         <link rel="canonical" href={`https://4geeks.com${pathConnector}/${translations.us || translations.en}`} />
       )}
 
-      {translationsExists && Object.keys(translations).filter(
+      {translationsExists && Object.keys(translations).map((lang) => {
+        const language = lang === 'us' ? 'en' : lang;
+        const urlAlternate = `https://4geeks.com/${language}${pathConnector}/${translations[lang]}`;
+        const defaultUrl = `https://4geeks.com${pathConnector}/${translations.us || translations.en}`;
+
+        return (
+          <>
+            {['default', 'us', 'en'].includes(lang) ? (
+              <>
+                <link key={`${lang} - ${pathConnector} x-default`} rel="alternate" hrefLang="x-default" href={defaultUrl} />
+                <link key={`${lang} - ${pathConnector} alternate`} rel="alternate" hrefLang="en" href={defaultUrl} />
+              </>
+            ) : (
+              <link
+                key={`${lang} - ${translations[lang]}`}
+                rel="alternate"
+                hrefLang={language}
+                href={urlAlternate}
+              />
+            )}
+          </>
+        );
+      })}
+
+      {/* {translationsExists && Object.keys(translations).filter(
         (l) => !['default', 'us', 'en'].includes(l),
       ).map((lang) => {
         const language = lang === 'us' ? 'en' : lang;
@@ -80,13 +104,13 @@ const Helmet = ({
             href={urlAlternate}
           />
         );
-      })}
+      })} */}
 
       {/* <---------------- Open Graph protocol ----------------> */}
       <meta property="og:site_name" content="4Geeks" />
       <meta property="og:title" content={ogTitle} />
 
-      {/* og:url is reference to canonical URL */}
+      {/* og:url is reference to Canonical URL */}
       <meta property="og:url" content={url.length > 0 ? `https://4geeks.com${url}` : 'https://4geeks.com'} />
       <meta property="og:description" content={descriptionCleaned} />
       <meta property="og:image" content={image} />
