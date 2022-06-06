@@ -74,8 +74,8 @@ async function generateSitemap() {
   const howTosPages = await getHowTo();
 
   const generateSlugByLang = (l, conector) => {
-    if (languages[l.lang] === 'en') return `/${conector}/${l.slug}`;
-    return `/${languages[l.lang]}/${conector}/${l.slug}`;
+    if (languages[l.lang] !== 'en' && languages[l.lang] !== undefined) return `/${languages[l.lang]}/${conector}/${l.slug}`;
+    return `/${conector}/${l.slug}`;
     // return `/${conector}/${l.slug}`;
   };
 
