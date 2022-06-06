@@ -58,17 +58,12 @@ export const getStaticProps = async ({ locale, locales, params }) => {
     };
   }
 
-  const ogUrl = {
-    en: `/read/${slug}`,
-    us: `/read/${slug}`,
-  };
-
   return {
     props: {
       seo: {
         title: resp?.name || '',
         image: resp?.logo || '',
-        url: ogUrl[locale] || `/${locale}/read/${slug}`,
+        url: `/${locale}/read/${slug}`,
         pathConnector: `/read/${slug}`,
         keywords: resp?.seo_keywords || '',
         type: 'article',

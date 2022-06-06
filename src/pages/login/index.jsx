@@ -15,12 +15,6 @@ import Icon from '../../common/components/Icon';
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'login');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
-
-  const ogUrl = {
-    en: '/login',
-    us: '/login',
-  };
-
   return {
     props: {
       seo: {
@@ -29,7 +23,7 @@ export const getStaticProps = async ({ locale, locales }) => {
         keywords,
         locales,
         locale,
-        url: ogUrl[locale] || `/${locale}/login`,
+        url: '/login',
         pathConnector: '/login',
       },
       fallback: false,
