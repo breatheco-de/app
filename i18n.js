@@ -23,7 +23,7 @@ module.exports = {
   },
   locales: ['en', 'es'],
   defaultLocale: 'en',
-  localeDetection: false,
+  localeDetection: true,
 
   // locales: ['default', 'en', 'es'],
   // // defaultLocale: 'en', // removed for redirects handling purposes

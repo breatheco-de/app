@@ -74,11 +74,6 @@ export const getStaticProps = async ({ locale, locales }) => {
     difficultiesSorted.push(verifyDifficultyExists(difficulties, difficulty));
   });
 
-  const ogUrl = {
-    en: '/projects',
-    us: '/projects',
-  };
-
   return {
     props: {
       seo: {
@@ -88,7 +83,7 @@ export const getStaticProps = async ({ locale, locales }) => {
         keywords,
         locales,
         locale,
-        url: ogUrl[locale] || `/${locale}/projects`,
+        url: '/projects',
         pathConnector: '/projects',
         card: 'default',
       },

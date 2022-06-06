@@ -75,17 +75,11 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       notFound: true,
     };
   }
-
-  const ogUrl = {
-    en: `/interactive-coding-tutorial/${result.difficulty}/${slug}`,
-    us: `/interactive-coding-tutorial/${result.difficulty}/${slug}`,
-  };
-
   return {
     props: {
       seo: {
         title,
-        url: ogUrl[locale] || `/${locale}/interactive-coding-tutorial/${result.difficulty}/${slug}`,
+        url: `/${locale}/interactive-coding-tutorial/${result.difficulty}/${slug}`,
         description: description || '',
         image: preview || staticImage,
         translations,

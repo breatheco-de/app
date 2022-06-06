@@ -74,18 +74,13 @@ export const getStaticProps = async ({ locale, locales }) => {
     difficultiesSorted.push(verifyDifficultyExists(difficulties, difficulty));
   });
 
-  const ogUrl = {
-    en: '/interactive-exercises',
-    us: '/interactive-exercises',
-  };
-
   return {
     props: {
       seo: {
         title: t('seo.title'),
         description: t('seo.description'),
         image,
-        url: ogUrl[locale] || `/${locale}/interactive-exercises`,
+        url: `/${locale}/interactive-exercises`,
         pathConnector: '/interactive-exercises',
         locales,
         locale,

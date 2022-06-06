@@ -75,11 +75,6 @@ export const getStaticProps = async ({ locale, locales }) => {
     difficultiesSorted.push(verifyDifficultyExists(difficulties, difficulty));
   });
 
-  const ogUrl = {
-    en: '/how-to',
-    us: '/how-to',
-  };
-
   return {
     props: {
       // meta tags props
@@ -90,7 +85,7 @@ export const getStaticProps = async ({ locale, locales }) => {
         image,
         locales,
         locale,
-        url: ogUrl[locale] || `/${locale}/how-to`,
+        url: `/${locale}/how-to`,
         pathConnector: '/how-to',
       },
 

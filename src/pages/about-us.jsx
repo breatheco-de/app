@@ -10,10 +10,6 @@ export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'about-us');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
-  const ogUrl = {
-    en: '/about-us',
-    us: '/about-us',
-  };
   const fileLanguage = {
     en: 'ABOUT.md',
     es: 'ABOUT.es.md',
@@ -33,7 +29,7 @@ export const getStaticProps = async ({ locale, locales }) => {
         locales,
         locale,
         image,
-        url: ogUrl[locale] || `/${locale}/about-us`,
+        url: `/${locale}/about-us`,
         pathConnector: '/about-us',
         keywords,
       },
