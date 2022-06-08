@@ -50,12 +50,17 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'lesson');
   const { slug } = params;
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
+  const ogUrl = {
+    en: `/lesson/${slug}`,
+    us: `/lesson/${slug}`,
+  };
 
   const lesson = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`)
     .then((res) => res.json())
     .catch((err) => console.log(err));
 
   const { title, description, translations } = lesson;
+  const translationsExists = Object.keys(translations).length > 0;
 
   const exensionName = getExtensionName(lesson.readme_url);
   let markdown = '';
@@ -94,8 +99,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         title,
         description: description || '',
         image: lesson.preview || staticImage,
-        pathConnector: '/lesson',
-        url: `/${locale}/lesson/${slug}`,
+        pathConnector: translationsExists ? '/lesson' : `/lesson/${slug}`,
+        url: ogUrl.en || `/${locale}/lesson/${slug}`,
         type: 'article',
         card: 'large',
         translations,

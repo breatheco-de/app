@@ -155,6 +155,7 @@ const Dashboard = () => {
 
       setCohortSession({
         ...cohortSession,
+        ...currentCohort,
         date_joined: data.date_joined,
         cohort_role: findCohort.role,
       });

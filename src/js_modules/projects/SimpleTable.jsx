@@ -30,7 +30,7 @@ const SimpleTable = ({
         <Text size="l" color={commonTextColor}>
           {t('common:difficulty')}
         </Text>
-        <Text size="l" color={commonTextColor}>
+        <Text size="l" color={commonTextColor} textTransform="capitalize">
           {verifyIfNull(difficulty) ? difficulty : t('common:not-available')}
         </Text>
       </Flex>

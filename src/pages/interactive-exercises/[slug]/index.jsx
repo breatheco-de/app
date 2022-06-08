@@ -80,6 +80,12 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       notFound: true,
     };
   }
+
+  const ogUrl = {
+    en: `/interactive-exercises${slug}`,
+    us: `/interactive-exercises${slug}`,
+  };
+
   return {
     props: {
       seo: {
@@ -89,7 +95,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         description: description || '',
         translations,
         pathConnector: '/interactive-exercises',
-        url: `/${locale}/interactive-exercises${slug}`,
+        url: ogUrl.en || `/${locale}/interactive-exercises${slug}`,
         keywords: result?.seo_keywords || '',
         card: 'large',
         locales,
@@ -337,12 +343,12 @@ const Exercise = ({ exercise, markdown }) => {
         <Box flex="1">
           <Heading
             as="h1"
-            size="25px"
+            size="32px"
             fontWeight="700"
+            textTransform="capitalize"
             padding="10px 0 35px 0"
             transition="color 0.2s ease-in-out"
             color={useColorModeValue('black', 'white')}
-            textTransform="uppercase"
           >
             {exercise.title}
           </Heading>
@@ -394,9 +400,7 @@ const Exercise = ({ exercise, markdown }) => {
 
           {/* MARKDOWN SIDE */}
           <Box
-            padding={{ base: '28px 14px', md: '28px 32px' }}
             borderRadius="3px"
-            background={useColorModeValue('#F2F6FA', 'featuredDark')}
             maxWidth="1012px"
             flexGrow={1}
             // margin="0 8vw 4rem 8vw"

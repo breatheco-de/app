@@ -74,6 +74,11 @@ export const getStaticProps = async ({ locale, locales }) => {
     difficultiesSorted.push(verifyDifficultyExists(difficulties, difficulty));
   });
 
+  const ogUrl = {
+    en: '/projects',
+    us: '/projects',
+  };
+
   return {
     props: {
       seo: {
@@ -83,13 +88,15 @@ export const getStaticProps = async ({ locale, locales }) => {
         keywords,
         locales,
         locale,
-        url: '/projects',
+        url: ogUrl.en || `/${locale}/projects`,
         pathConnector: '/projects',
         card: 'default',
       },
 
       fallback: false,
-      projects: projects.filter((project) => project.lang === currentLang),
+      projects: projects.filter((project) => project.lang === currentLang).map(
+        (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() }),
+      ),
       technologyTags,
       difficulties: difficultiesSorted,
     },

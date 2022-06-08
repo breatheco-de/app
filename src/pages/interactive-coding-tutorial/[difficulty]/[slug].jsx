@@ -41,7 +41,7 @@ export const getStaticPaths = async ({ locales }) => {
   const paths = projects.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
-      difficulty: res.difficulty,
+      difficulty: res.difficulty?.toLowerCase(),
     },
     locale,
   })));
@@ -75,11 +75,17 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       notFound: true,
     };
   }
+
+  const ogUrl = {
+    en: `/interactive-coding-tutorial/${result.difficulty}/${slug}`,
+    us: `/interactive-coding-tutorial/${result.difficulty}/${slug}`,
+  };
+
   return {
     props: {
       seo: {
         title,
-        url: `/${locale}/interactive-coding-tutorial/${result.difficulty}/${slug}`,
+        url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${result.difficulty}/${slug}`,
         description: description || '',
         image: preview || staticImage,
         translations,
@@ -93,25 +99,27 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         modifiedTime: result?.updated_at || '',
       },
       fallback: false,
-      project: result,
+      project: {
+        ...result,
+        difficulty: result.difficulty?.toLowerCase(),
+      },
       markdown,
       // translations: result.translations,
     },
   };
 };
 
-const TableInfo = ({ project, commonTextColor }) => (
+const TableInfo = ({ t, project, commonTextColor }) => (
   <>
     <Box d="flex" alignItems="baseline" justifyContent="center">
       <Heading size="l" textAlign="center" justify="center" mt="0px" mb="0px">
-        Goal
+        {t('table.title')}
       </Heading>
     </Box>
 
     <Box d="flex" alignItems="baseline" justifyContent="center" flexDirection="column">
       <Text size="md" color={commonTextColor} textAlign="center" my="10px" px="0px">
-        4Geeks Coding Projects tutorials and exercises for people learning
-        to code or improving their coding skills
+        {t('table.description')}
       </Text>
       <SimpleTable
         difficulty={project.difficulty}
@@ -126,7 +134,7 @@ const TableInfo = ({ project, commonTextColor }) => (
 );
 
 const ProjectSlug = ({ project, markdown }) => {
-  const { t } = useTranslation(['projects']);
+  const { t } = useTranslation('projects');
   const markdownData = getMarkDownContent(markdown);
   // const defaultImage = '/static/images/code1.png';
   // const getImage = project.preview !== '' ? project.preview : defaultImage;
@@ -266,7 +274,7 @@ const ProjectSlug = ({ project, markdown }) => {
               <Icon icon="sideSupport" width="300px" height="70px" />
             </Box>
             <Box px="22px" pb="30px" pt="20px">
-              <TableInfo project={project} commonTextColor={commonTextColor} />
+              <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
             </Box>
           </Box>
 
@@ -308,7 +316,7 @@ const ProjectSlug = ({ project, markdown }) => {
             <Icon icon="sideSupport" width="300px" height="70px" />
           </Box>
           <Box px="22px" pb="30px" pt="20px">
-            <TableInfo project={project} commonTextColor={commonTextColor} />
+            <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
           </Box>
         </Box>
       </Flex>
@@ -324,6 +332,11 @@ ProjectSlug.propTypes = {
 TableInfo.propTypes = {
   project: PropTypes.objectOf(PropTypes.any).isRequired,
   commonTextColor: PropTypes.string.isRequired,
+  t: PropTypes.func,
+};
+
+TableInfo.defaultProps = {
+  t: () => {},
 };
 
 export default ProjectSlug;
