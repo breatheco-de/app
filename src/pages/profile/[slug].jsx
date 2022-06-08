@@ -7,7 +7,6 @@ import { memo, useEffect, useState } from 'react';
 import { formatRelative } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useRouter } from 'next/router';
-import getT from 'next-translate/getT';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import useAuth from '../../common/hooks/useAuth';
@@ -16,35 +15,29 @@ import { usePersistent } from '../../common/hooks/usePersistent';
 import ProfileForm from '../../common/components/profileForm';
 import bc from '../../common/services/breathecode';
 import Icon from '../../common/components/Icon';
-// import useTranslation from 'next-translate/useTranslation';
-export const getStaticProps = async ({ locale, locales }) => {
-  const t = await getT(locale, 'profile');
-
-  return {
-    props: {
-      seo: {
-        title: t('seo.title'),
-        url: '/profile',
-        pathConnector: '/profile',
-        locales,
-        locale,
-      },
-    },
-  };
-};
+import { cleanQueryStrings } from '../../utils';
 
 const Profile = () => {
   const { t } = useTranslation('profile');
   const toast = useToast();
   const { user } = useAuth();
   const router = useRouter();
-  const { locale } = router;
+  const { locale, asPath } = router;
+  const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [profile, setProfile] = usePersistent('profile', {});
   const [certificates, setCertificates] = useState([]);
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const tabListMenu = t('tabList', {}, { returnObjects: true });
 
-  // axios.defaults.headers.common.Authorization = cookies?.accessToken;
+  const tabPosition = {
+    '/profile/info': 0,
+    '/profile/certificates': 1,
+  };
+  const currentPathCleaned = cleanQueryStrings(asPath);
+
+  useEffect(() => {
+    setCurrentTabIndex(tabPosition[currentPathCleaned]);
+  }, [currentPathCleaned]);
 
   useEffect(() => {
     bc.certificate().get()
@@ -69,12 +62,12 @@ const Profile = () => {
       });
     }
   }, [user]);
-  const hasAvatar = profile.github && profile.github.avatar_url && profile.github.avatar_url !== '';
 
+  const hasAvatar = profile.github && profile.github.avatar_url && profile.github.avatar_url !== '';
   return (
     <Box margin={{ base: '3% 4% 0px', md: '3% 10% 0px' }} minH="65vh">
       <Heading as="h1" size="m" margin="45px 0">{t('navbar:my-profile')}</Heading>
-      <Tabs display="flex" flexDirection={{ base: 'column', md: 'row' }} variant="unstyled" gridGap="40px">
+      <Tabs index={currentTabIndex} display="flex" flexDirection={{ base: 'column', md: 'row' }} variant="unstyled" gridGap="40px">
         <TabList display="flex" flexDirection={{ base: 'row', md: 'column' }} width={{ base: '100%', md: '300px' }}>
           {tabListMenu.filter((l) => l.disabled !== true).map((tab) => (
             <Tab
