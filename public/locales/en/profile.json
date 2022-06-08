@@ -14,10 +14,12 @@
   "tabList": [
     {
       "title": "Basic Profile Info",
+      "value": "info",
       "disabled": false
     },
     {
       "title": "My certificates",
+      "value": "certificates",
       "disabled": false
     }
   ],

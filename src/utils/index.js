@@ -32,6 +32,8 @@ const unSlugify = (str) => str
   .replace(/\w\S*/g,
   (txt) => txt.charAt(0) + txt.substr(1).toLowerCase());
 
+const cleanQueryStrings = (url) => url.split('?')[0];
+
 const isPlural = (element) => {
   if (element.length > 1) {
     return true;
@@ -78,19 +80,8 @@ const devLogTable = (msg, array) => { // Relevant table logs with title only in 
 const objectAreNotEqual = (t1, t2) => Object.keys(t1).map((l) => t1[l] === t2[l]).includes(false);
 
 export {
-  isWindow,
-  assetTypeValues,
-  HAVE_SESSION,
-  slugify,
-  unSlugify,
-  isPlural,
-  getStorageItem,
-  includesToLowerCase,
-  getExtensionName,
-  removeStorageItem,
-  isDevMode,
-  devLogTable,
-  devLog,
-  languageLabel,
-  objectAreNotEqual,
+  isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
+  isPlural, getStorageItem, includesToLowerCase, getExtensionName,
+  removeStorageItem, isDevMode, devLogTable, devLog, languageLabel,
+  objectAreNotEqual, cleanQueryStrings,
 };
