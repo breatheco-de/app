@@ -29,6 +29,7 @@ module.exports = withBundleAnalyzer(nextTranslate({
       },
     ];
   },
+  swcMinify: false,
   reactStrictMode: true,
   trailingSlash: false,
   webpack: (config, { isServer }) => {

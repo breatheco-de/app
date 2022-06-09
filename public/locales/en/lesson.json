@@ -1,5 +1,7 @@
 {
   "seo": {
+    "title": "Lesson | 4Geeks",
+    "keywords": ["Lesson"],
     "description": "4Geeks's mission is to accelerate the way software developers learn and evolve.",
     "image": "{{domain}}/static/images/image1.png"
   }
