@@ -14,19 +14,30 @@
       "href": "/about-us"
     },
     {
-      "label": "Practicar",
-      "href": "/interactive-exercises"
-    },
-    {
       "label": "Leer",
       "icon": "book",
       "description": "Aquí puedes leer y ver el temario de algunos programas disponibles.",
       "asPath": "/read",
-      "subMenu": []
-    },
-    {
-      "label": "Build",
-      "href": "/projects"
+      "subMenu": [
+        {
+          "label": "Practicar",
+          "subLabel": "",
+          "href": "/interactive-exercises"
+        },
+        {
+          "label": "Read and Watch",
+          "asPath": "/read-and-watch",
+          "subMenu": []
+        },
+        {
+          "label": "Build",
+          "href": "/projects"
+        },
+        {
+          "label": "How to's?",
+          "href": "/how-to"
+        }
+      ]
     },
     {
       "label": "Coding Bootcamp",

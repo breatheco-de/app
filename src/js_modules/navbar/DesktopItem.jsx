@@ -77,7 +77,8 @@ const DesktopItem = ({ item }) => {
           <PopoverContent
             bg={popoverContentBgColor}
             rounded="md"
-            minW="md"
+            // width="auto"
+            minW="lg"
           >
             <PopoverArrow />
             <Stack
@@ -89,7 +90,7 @@ const DesktopItem = ({ item }) => {
             >
               <Flex
                 flexDirection="row"
-                padding="20px 0"
+                padding="0 0 20px 0"
                 borderBottom={1}
                 borderStyle="solid"
                 borderColor={useColorModeValue('gray.200', 'gray.900')}
@@ -107,11 +108,14 @@ const DesktopItem = ({ item }) => {
                 </Box>
               </Flex>
               {item.subMenu.map((child) => {
-                const { label, subLabel, href } = child;
+                const {
+                  label, subLabel, href, subMenu,
+                } = child;
                 return (
                   <DesktopSubNav
                     key={`${label}-${subLabel}`}
                     label={label}
+                    subMenu={subMenu}
                     subLabel={subLabel}
                     href={href}
                   />
