@@ -73,6 +73,12 @@ const breathecode = {
       get: () => axios.get(`${url}/user/me/task`),
     };
   },
+  feedback: () => {
+    const url = `${host}/feedback`;
+    return {
+      getSurvey: (id) => axios.get(`${url}/user/me/survey/${id}/questions`),
+    };
+  },
   mentorship: (query = {}) => {
     const url = `${host}/mentorship/academy`;
     const qs = Object.keys(query)
