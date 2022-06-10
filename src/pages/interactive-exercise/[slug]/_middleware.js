@@ -4,7 +4,7 @@ import { redirectByAsset } from '../../../lib/redirectsHandler';
 const middleware = async (req) => {
   const { slug } = req.page.params;
   const currentPathName = new URL(req.url).pathname;
-  const pathConector = 'interactive-exercises';
+  const pathConector = 'interactive-exercise';
 
   const alias = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/alias/redirect`);
   const aliasList = await alias.json();

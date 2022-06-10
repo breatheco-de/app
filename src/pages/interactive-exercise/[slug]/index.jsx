@@ -82,8 +82,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   }
 
   const ogUrl = {
-    en: `/interactive-exercises${slug}`,
-    us: `/interactive-exercises${slug}`,
+    en: `/interactive-exercise${slug}`,
+    us: `/interactive-exercise${slug}`,
   };
 
   return {
@@ -94,8 +94,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         image: preview || staticImage,
         description: description || '',
         translations,
-        pathConnector: '/interactive-exercises',
-        url: ogUrl.en || `/${locale}/interactive-exercises${slug}`,
+        pathConnector: '/interactive-exercise',
+        url: ogUrl.en || `/${locale}/interactive-exercise${slug}`,
         keywords: result?.seo_keywords || '',
         card: 'large',
         locales,
@@ -329,7 +329,7 @@ const Exercise = ({ exercise, markdown }) => {
       margin={{ base: '4% 4% 0 4%', lg: '4% 10% 0 10%' }}
     >
       <Link
-        href="/interactive-exercises"
+        href="/interactive-exercise"
         color={useColorModeValue('blue.default', 'blue.300')}
         display="inline-block"
         letterSpacing="0.05em"

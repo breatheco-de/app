@@ -75,8 +75,8 @@ export const getStaticProps = async ({ locale, locales }) => {
   });
 
   const ogUrl = {
-    en: '/interactive-exercises',
-    us: '/interactive-exercises',
+    en: '/interactive-exercise',
+    us: '/interactive-exercise',
   };
 
   return {
@@ -85,8 +85,8 @@ export const getStaticProps = async ({ locale, locales }) => {
         title: t('seo.title'),
         description: t('seo.description'),
         image,
-        url: ogUrl.en || `/${locale}/interactive-exercises`,
-        pathConnector: '/interactive-exercises',
+        url: ogUrl.en || `/${locale}/interactive-exercise`,
+        pathConnector: '/interactive-exercise',
         locales,
         locale,
         keywords,
@@ -189,7 +189,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
         <ProjectList
           projects={exercises}
           contextFilter={filteredBy.exercisesOptions}
-          projectPath="interactive-exercises"
+          projectPath="interactive-exercise"
         />
       </Box>
     </Box>
