@@ -22,18 +22,19 @@ export const getStaticProps = async ({ locale, locales }) => {
   const currentLang = locale === 'en' ? 'us' : 'es';
   const exercises = []; // filtered exercises after removing repeated
   let arrExercises = []; // incoming exercises
-  const data = await fetch(
+  const resp = await fetch(
     `${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`,
     {
       Accept: 'application/json, text/plain, */*',
     },
-  ).then((res) => res.json());
+  );
+  const data = await resp.json();
 
   arrExercises = Object.values(data);
-  if (data.status >= 200 && data.status < 400) {
-    console.log(`Original Exercises: ${arrExercises}`);
+  if (resp.status >= 200 && resp.status < 400) {
+    console.log(`SUCCESS: ${arrExercises.length} Exercises fetched for /interactive-exercises`);
   } else {
-    console.error(`Error fetching exercises with ${data.status}`);
+    console.error(`Error ${resp.status}: fetching Exercises list for /interactive-exercises`);
   }
 
   let technologyTags = [];

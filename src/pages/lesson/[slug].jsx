@@ -77,7 +77,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     delete lesson.translations.us;
   }
 
-  if (lesson.status_code === 404) {
+  if (response.status >= 400) {
     return {
       notFound: true,
     };

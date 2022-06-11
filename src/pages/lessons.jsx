@@ -21,16 +21,16 @@ export const getStaticProps = async ({ locale, locales }) => {
   const lessons = []; // filtered lessons after removing repeated
   let arrProjects = []; // incoming lessons
 
-  const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson`);
-  const resp = await data.json();
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson`);
+  const data = await resp.json();
   // .then((res) => res.json())
   // .catch((err) => console.error(err));
 
-  arrProjects = Object.values(resp);
-  if (resp.status >= 200 && resp.status < 400) {
-    console.log(`Original lessons: ${arrProjects}`);
+  arrProjects = Object.values(data);
+  if (resp.status !== undefined && resp.status >= 200 && resp.status < 400) {
+    console.log(`SUCCESS: ${arrProjects.length} Lessons fetched for /lessons`);
   } else {
-    console.error(`Error fetching lessons with ${resp.status}`);
+    console.error(`Error ${resp.status}: fetching Lessons list for /lessons`);
   }
 
   let technologyTags = [];
@@ -108,6 +108,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
   const { t } = useTranslation('lesson');
   const { filteredBy, setProjectFilters } = useFilter();
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
+  const iconColor = useColorModeValue('#FFF', '#283340');
   const currentFilters = technologies.length
     + (difficulty === undefined || difficulty.length === 0 ? 0 : 1)
     + videoTutorials;
@@ -116,7 +117,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-      <TitleContent title={t('title')} mobile />
+      <TitleContent title={t('title')} icon="book" mobile color={iconColor} />
       <Flex
         justifyContent="space-between"
         flex="1"
@@ -126,7 +127,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.900')}
       >
-        <TitleContent title={t('title')} mobile={false} />
+        <TitleContent title={t('title')} icon="book" color={iconColor} mobile={false} />
 
         <Search placeholder={t('search')} />
 
@@ -145,7 +146,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
         >
           <Icon icon="setting" width="20px" height="20px" style={{ minWidth: '20px' }} />
           <Text textTransform="uppercase" pl="10px">
-            {currentFilters >= 2 ? t('filters') : t('filter')}
+            {currentFilters >= 2 ? t('common:filters') : t('common:filter')}
           </Text>
           {currentFilters >= 1 && (
             <Text

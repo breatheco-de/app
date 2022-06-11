@@ -23,9 +23,9 @@ export const getStaticPaths = async ({ locales }) => {
 
   projects = Object.values(data);
   if (resp.status >= 200 && resp.status < 400) {
-    console.log(`Original projects: ${projects}`);
+    console.log(`SUCCESS: ${projects.length} Projects fetched for /interactive-coding-tutorial`);
   } else {
-    console.error(`Error fetching projects with ${data.status}`);
+    console.error(`Error ${resp.status}: fetching Projects list for /interactive-coding-tutorial`);
   }
 
   for (let i = 0; i < projects.length; i += 1) {

@@ -21,15 +21,16 @@ export const getStaticProps = async ({ locale, locales }) => {
   const projects = []; // filtered projects after removing repeated
   let arrProjects = []; // incoming projects
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`)
-    .then((res) => res.json())
-    .catch((err) => console.error(err));
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`);
+  const data = await resp.json();
+  // .then((res) => res.json())
+  // .catch((err) => console.error(err));
 
-  arrProjects = Object.values(resp);
+  arrProjects = Object.values(data);
   if (resp.status >= 200 && resp.status < 400) {
-    console.log(`Original projects: ${arrProjects}`);
+    console.log(`SUCCESS: ${arrProjects.length} Projects fetched`);
   } else {
-    console.error(`Error fetching projects with ${resp.status}`);
+    console.error(`Error ${resp.status}: fetching Projects list for /projects`);
   }
 
   let technologyTags = [];
@@ -107,6 +108,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
   const { t } = useTranslation('projects');
   const { filteredBy, setProjectFilters } = useFilter();
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
+  const iconColor = useColorModeValue('#FFF', '#283340');
   const currentFilters = technologies.length
     + (difficulty === undefined || difficulty.length === 0 ? 0 : 1)
     + videoTutorials;
@@ -115,7 +117,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-      <TitleContent title={t('title')} mobile />
+      <TitleContent title={t('title')} mobile color={iconColor} />
       <Flex
         justifyContent="space-between"
         flex="1"
@@ -125,7 +127,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.900')}
       >
-        <TitleContent title={t('title')} mobile={false} />
+        <TitleContent title={t('title')} mobile={false} color={iconColor} />
 
         <Search placeholder={t('search')} />
 

@@ -10,6 +10,7 @@ module.exports = {
     '/projects': ['projects'],
     '/read/[slug]': ['read'],
     '/lesson/[slug]': ['lesson'],
+    '/lessons': ['lesson'],
     '/project/[slug]': ['projects'],
     '/interactive-coding-tutorial/[difficulty]/[slug]': ['projects'],
     '/interactive-exercise/[slug]': ['exercises'],

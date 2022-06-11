@@ -46,7 +46,7 @@ export const getStaticProps = async ({ locale, locales, params }) => {
   const data = await resp.json();
 
   if (resp.status >= 400) {
-    console.error(`ERROR with /read/${slug}: something went wrong fetching "/v1/admissions/syllabus/${slug}/version/1", probably the env "BC_ACADEMY_TOKEN has expired"`);
+    console.error(`ERROR with /read/${slug}: something went wrong fetching "/v1/admissions/syllabus/${slug}/version/1", probably the env "BC_ACADEMY_TOKEN" has expired`);
     return {
       notFound: true,
     };
