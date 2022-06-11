@@ -246,7 +246,7 @@ const TabletWithForm = ({
       <Box px="22px" pb="30px" pt="24px">
         <SimpleTable
           href="/interactive-exercise"
-          difficulty={exercise.difficulty.toLowerCase()}
+          difficulty={exercise.difficulty !== null && exercise.difficulty.toLowerCase()}
           repository={exercise.url}
           duration={exercise.duration}
           videoAvailable={exercise.solution_video_url}
