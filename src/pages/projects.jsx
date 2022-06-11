@@ -62,7 +62,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
   // Verify if difficulty exist in expected position, else fill void array with 'nullString'
   const verifyDifficultyExists = (difficultiesArray, difficulty) => {
-    if (difficultiesArray.some((el) => el === difficulty)) {
+    if (difficultiesArray.some((el) => el?.toLowerCase() === difficulty)) {
       return difficulty;
     }
     return 'nullString';

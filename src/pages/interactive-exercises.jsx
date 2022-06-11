@@ -7,13 +7,13 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
-import Text from '../../common/components/Text';
-import Icon from '../../common/components/Icon';
-import FilterModal from '../../common/components/FilterModal';
-import TitleContent from '../../js_modules/projects/TitleContent';
-import ProjectList from '../../js_modules/projects/ProjectList';
-import useFilter from '../../common/store/actions/filterAction';
-import Search from '../../js_modules/projects/Search';
+import Text from '../common/components/Text';
+import Icon from '../common/components/Icon';
+import FilterModal from '../common/components/FilterModal';
+import TitleContent from '../js_modules/projects/TitleContent';
+import ProjectList from '../js_modules/projects/ProjectList';
+import useFilter from '../common/store/actions/filterAction';
+import Search from '../js_modules/projects/Search';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'exercises');
@@ -75,8 +75,8 @@ export const getStaticProps = async ({ locale, locales }) => {
   });
 
   const ogUrl = {
-    en: '/interactive-exercise',
-    us: '/interactive-exercise',
+    en: '/interactive-exercises',
+    us: '/interactive-exercises',
   };
 
   return {
@@ -85,8 +85,8 @@ export const getStaticProps = async ({ locale, locales }) => {
         title: t('seo.title'),
         description: t('seo.description'),
         image,
-        url: ogUrl.en || `/${locale}/interactive-exercise`,
-        pathConnector: '/interactive-exercise',
+        url: ogUrl.en || `/${locale}/interactive-exercises`,
+        pathConnector: '/interactive-exercises',
         locales,
         locale,
         keywords,
@@ -189,7 +189,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
         <ProjectList
           projects={exercises}
           contextFilter={filteredBy.exercisesOptions}
-          projectPath="interactive-exercise"
+          projectPath="interactive-exercises"
         />
       </Box>
     </Box>

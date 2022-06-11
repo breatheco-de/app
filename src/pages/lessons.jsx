@@ -5,13 +5,13 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import getT from 'next-translate/getT';
-import Text from '../../common/components/Text';
-import Icon from '../../common/components/Icon';
-import FilterModal from '../../common/components/FilterModal';
-import TitleContent from '../../js_modules/projects/TitleContent';
-import ProjectList from '../../js_modules/projects/ProjectList';
-import useFilter from '../../common/store/actions/filterAction';
-import Search from '../../js_modules/projects/Search';
+import Text from '../common/components/Text';
+import Icon from '../common/components/Icon';
+import FilterModal from '../common/components/FilterModal';
+import TitleContent from '../js_modules/projects/TitleContent';
+import ProjectList from '../js_modules/projects/ProjectList';
+import useFilter from '../common/store/actions/filterAction';
+import Search from '../js_modules/projects/Search';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'lesson');
@@ -63,7 +63,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
   // Verify if difficulty exist in expected position, else fill void array with 'nullString'
   const verifyDifficultyExists = (difficultiesArray, difficulty) => {
-    if (difficultiesArray.some((el) => el === difficulty)) {
+    if (difficultiesArray.some((el) => el?.toLowerCase() === difficulty)) {
       return difficulty;
     }
     return 'nullString';

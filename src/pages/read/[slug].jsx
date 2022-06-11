@@ -12,13 +12,11 @@ import Link from '../../common/components/NextChakraLink';
 import { devLog } from '../../utils';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`,
-  )
-    .then((res) => res.json());
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`);
+  const lessonList = await resp.json();
 
   // generate locale each param.slug with flatMap
-  const paths = resp.flatMap((res) => locales.map((locale) => ({
+  const paths = lessonList.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },
@@ -34,7 +32,7 @@ export const getStaticPaths = async ({ locales }) => {
 export const getStaticProps = async ({ locale, locales, params }) => {
   const { slug } = params;
 
-  const data = await fetch(
+  const resp = await fetch(
     `${process.env.BREATHECODE_HOST}/v1/admissions/syllabus/${slug}/version/1`,
     {
       method: 'GET',
@@ -45,13 +43,9 @@ export const getStaticProps = async ({ locale, locales, params }) => {
       },
     },
   );
-  const resp = await data.json();
-  // .then((res) => res.json())
-  // .catch((err) => {
-  //   console.log('err:', err);
-  // });
+  const data = await resp.json();
 
-  if (resp.status_code === 401) {
+  if (resp.status >= 400) {
     console.error(`ERROR with /read/${slug}: something went wrong fetching "/v1/admissions/syllabus/${slug}/version/1", probably the env "BC_ACADEMY_TOKEN has expired"`);
     return {
       notFound: true,
@@ -66,17 +60,17 @@ export const getStaticProps = async ({ locale, locales, params }) => {
   return {
     props: {
       seo: {
-        title: resp?.name || '',
-        image: resp?.logo || '',
+        title: data?.name || '',
+        image: data?.logo || '',
         url: ogUrl.en || `/${locale}/read/${slug}`,
         pathConnector: `/read/${slug}`,
-        keywords: resp?.seo_keywords || '',
+        keywords: data?.seo_keywords || '',
         type: 'article',
         locales,
         locale,
       },
       fallback: false,
-      data: resp,
+      data,
     },
   };
 };

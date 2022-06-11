@@ -125,6 +125,7 @@ const TableInfo = ({ t, project, commonTextColor }) => (
         {t('table.description')}
       </Text>
       <SimpleTable
+        href="/projects"
         difficulty={project.difficulty}
         repository={project.url}
         duration={project.duration}
