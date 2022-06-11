@@ -16,6 +16,7 @@ import {
   ModalCloseButton,
   Switch,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import Icon from '../Icon';
 import Text from '../Text';
 import TechnologiesSection from './technologies';
@@ -29,6 +30,7 @@ const FilterModal = ({
   const [withVideo, setWithVideo] = useState(false);
   const [show, setShow] = useState(false);
   const [difficultyPosition, setDifficulty] = useState(null);
+  const router = useRouter();
   const { getCheckboxProps } = useCheckboxGroup({
     onChange: setCheckedTechnologies,
   });
@@ -47,6 +49,9 @@ const FilterModal = ({
   };
 
   const clearFilters = () => {
+    router.push({
+      query: null,
+    });
     setCheckedTechnologies([]);
     setDifficulty(null);
     setWithVideo(false);

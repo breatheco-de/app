@@ -33,8 +33,9 @@ const TechnologiesSection = ({
           {technologyTags.map((technology) => {
             const checkbox = getCheckboxProps({
               value: technology,
-              checked:
-              checkedTechnologies.length === 0 ? false : checkedTechnologies.includes(technology),
+              checked: checkedTechnologies.length === 0
+                ? false
+                : checkedTechnologies.includes(technology),
               isChecked: false,
             });
             return (

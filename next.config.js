@@ -17,11 +17,11 @@ module.exports = withBundleAnalyzer(nextTranslate({
   // i18n,
   async redirects() {
     return [
-      {
-        source: '/interactive-exercises',
-        destination: '/interactive-exercise',
-        permanent: true,
-      },
+      // {
+      //   source: '/interactive-exercises',
+      //   destination: '/interactive-exercise',
+      //   permanent: true,
+      // },
       {
         source: '/interactive-exercises/:slug',
         destination: '/interactive-exercise/:slug',
@@ -29,6 +29,7 @@ module.exports = withBundleAnalyzer(nextTranslate({
       },
     ];
   },
+  swcMinify: false,
   reactStrictMode: true,
   trailingSlash: false,
   webpack: (config, { isServer }) => {

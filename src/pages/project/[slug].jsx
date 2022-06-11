@@ -18,15 +18,16 @@ import getMarkDownContent from '../../common/components/MarkDownParser/markdown'
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
-  const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`)
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`);
+  const data = await response.json();
+  // .then((res) => res.json())
+  // .catch((err) => console.log(err));
 
   projects = Object.values(data);
-  if (data.status >= 200 && data.status < 400) {
-    console.log(`Original projects: ${projects}`);
+  if (response.status >= 200 && response.status <= 400) {
+    console.log(`SUCCESS: ${projects.length} Projects fetched for /project/[slug]`);
   } else {
-    console.error(`Error fetching projects with ${data.status}`);
+    console.error(`Error ${response.status}: fetching Projects list for /project/[slug]`);
   }
 
   for (let i = 0; i < projects.length; i += 1) {
@@ -125,6 +126,7 @@ const TableInfo = ({ t, project, commonTextColor }) => (
         {t('table.description')}
       </Text>
       <SimpleTable
+        href="/projects"
         difficulty={project.difficulty}
         repository={project.url}
         duration={project.duration}
