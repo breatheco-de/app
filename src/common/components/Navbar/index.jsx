@@ -1,19 +1,7 @@
 import {
-  Box,
-  Flex,
-  IconButton,
-  Avatar,
-  Stack,
-  Collapse,
-  useColorModeValue,
-  useBreakpointValue,
-  useDisclosure,
-  useColorMode,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverArrow,
-  Button,
+  Box, Flex, IconButton, Avatar, Stack, Collapse, useColorModeValue,
+  useBreakpointValue, useDisclosure, useColorMode, Popover, PopoverTrigger,
+  PopoverContent, PopoverArrow, Button,
 } from '@chakra-ui/react';
 import {
   useState, memo, useEffect, Fragment,
