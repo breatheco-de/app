@@ -1,4 +1,3 @@
-/* eslint-disable no-dupe-keys */
 // For more info https://chakra-ui.com/docs/features/style-props
 const LinkStyles = {
   // style object for base or default style
