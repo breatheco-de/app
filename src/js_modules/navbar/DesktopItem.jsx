@@ -19,7 +19,6 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Icon from '../../common/components/Icon';
-// import DesktopSubNav from './DesktopSubNav';
 import { isAbsoluteUrl } from '../../utils/url';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import CustomText from '../../common/components/Text';
