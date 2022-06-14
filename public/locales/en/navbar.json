@@ -14,19 +14,52 @@
       "href": "/about-us"
     },
     {
-      "label": "Practice",
-      "href": "/interactive-exercise"
-    },
-    {
       "label": "Read",
       "icon": "book",
       "description": "Here you can read and see the temary of some available programs.",
       "asPath": "/read",
-      "subMenu": []
-    },
-    {
-      "label": "Build",
-      "href": "/projects"
+      "subMenu": [
+        {
+          "label": "Practice",
+          "subLabel": "",
+          "description": "",
+          "href": "/interactive-exercises",
+          "subMenu": [
+            {
+              "href": "/interactive-exercises",
+              "label": "Interactive exercises"
+            }
+          ]
+        },
+        {
+          "label": "Read and watch",
+          "asPath": "/read-and-watch",
+          "description": "It's time to start learning by reading and watching videos about the basics and how things work.",
+          "subMenu": []
+        },
+        {
+          "label": "Build",
+          "href": "/projects",
+          "description": "",
+          "subMenu": [
+            {
+              "href": "/projects",
+              "label": "Proyectos"
+            }
+          ]
+        },
+        {
+          "label": "How to's?",
+          "href": "/how-to",
+          "description": "Guides on different topics related to the technologies that we teach in our courses",
+          "subMenu": [
+            {
+              "href": "/how-to",
+              "label": "Cómo hacerlo"
+            }
+          ]
+        }
+      ]
     },
     {
       "label": "Coding Bootcamp",

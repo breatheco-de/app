@@ -26,6 +26,22 @@ const MobileNav = ({
   }, [haveSession]);
   const publicItems = NAV_ITEMS.filter((item) => item.private !== true);
 
+  const customPublicItems = publicItems.map((publicItem) => {
+    if (publicItem.asPath === '/read' && readSyllabus.length > 0) {
+      publicItem.subMenu.map((l) => {
+        if (l.asPath === '/read-and-watch') {
+          // eslint-disable-next-line no-param-reassign
+          l.subMenu = readSyllabus?.map((el) => ({
+            label: el.name,
+            href: `/read/${el.slug}`,
+          }));
+        }
+        return l;
+      });
+    }
+    return publicItem;
+  });
+
   return (
     <Stack
       position="absolute"
@@ -55,15 +71,7 @@ const MobileNav = ({
         );
       })}
 
-      {publicItems.map((publicItem) => {
-        if (publicItem.asPath === '/read' && readSyllabus.length > 0) {
-          // eslint-disable-next-line no-param-reassign
-          publicItem.subMenu = readSyllabus?.map((el) => ({
-            label: el.name,
-            href: `/read/${el.slug}`,
-          }));
-        }
-
+      {customPublicItems.map((publicItem) => {
         const {
           label, subMenu, href, description, icon,
         } = publicItem;

@@ -19,9 +19,8 @@ import Icon from '../../../common/components/Icon';
 import TagCapsule from '../../../common/components/TagCapsule';
 
 export const getStaticPaths = async ({ locales }) => {
-  const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`)
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`);
+  const data = await resp.json();
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
@@ -38,23 +37,17 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'how-to');
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const { slug } = params;
-  const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`)
-    .then((res) => res.json())
-    .catch((err) => ({
-      status: err.response.status,
-    }));
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`);
+  const data = await resp.json();
 
   const {
     title, description, translations, preview,
   } = data;
 
-  const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
-    .then((res) => res.text())
-    .catch((err) => ({
-      status: err.response.status,
-    }));
+  const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+  const markdown = await markdownResp.text();
 
-  if (data.status === 404) {
+  if (resp.status >= 400) {
     return {
       notFound: true,
     };

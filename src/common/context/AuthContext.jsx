@@ -117,7 +117,7 @@ const AuthProvider = ({ children }) => {
   useEffect(async () => {
     if (loading) return;
     if (tokenStatusSafe === true && isValidToken === true) {
-      handleSession(token);
+      handleSession(data.token);
       const response = await bc.auth().me();
       setProfile({
         ...profile,
@@ -137,7 +137,7 @@ const AuthProvider = ({ children }) => {
         payload: { user: null, isAuthenticated: false },
       });
     }
-  }, [isValidToken, tokenStatusSafe]);
+  }, [isValidToken, tokenStatusSafe, data]);
 
   const login = async (payload = null) => {
     try {
