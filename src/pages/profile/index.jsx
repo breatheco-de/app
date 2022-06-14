@@ -69,6 +69,12 @@ const Profile = () => {
       });
     }
   }, [user]);
+  // const [tabIndex, setTabIndex] = useState(0);
+  // const colors = useColorModeValue(
+  //   ['red.50', 'teal.50', 'blue.50'],
+  //   ['red.900', 'teal.900', 'blue.900'],
+  // );
+  // const bg = colors[tabIndex];
   const hasAvatar = profile.github && profile.github.avatar_url && profile.github.avatar_url !== '';
 
   return (
@@ -81,7 +87,6 @@ const Profile = () => {
               key={tab.title}
               p="14px"
               display="block"
-              onClick={() => router.push(`/profile/${tab.value}`, undefined, { shallow: true })}
               textAlign={{ base: 'center', md: 'start' }}
               isDisabled={tab.disabled}
               textTransform="uppercase"

@@ -6,11 +6,6 @@ import {
   Collapse,
   useColorModeValue,
   useDisclosure,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionIcon,
-  AccordionPanel,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -77,7 +72,7 @@ const MobileItem = ({
             transition="all .25s ease-in-out"
             transform={isOpen ? 'rotate(90deg)' : 'rotate(0deg)'}
           >
-            <Icon icon="arrowRight" color={isOpen ? '#0097CD' : 'gray'} width="12px" height="12px" />
+            <Icon icon="arrowRight" color="gray" width="12px" height="12px" />
           </Box>
         </Flex>
       )}
@@ -91,7 +86,7 @@ const MobileItem = ({
         >
           <Flex
             flexDirection="row"
-            padding="0 0 20px 0"
+            padding="20px 0"
             gridGap="15px"
             borderBottom={1}
             borderStyle="solid"
@@ -113,37 +108,7 @@ const MobileItem = ({
           </Flex>
 
           {subMenu
-            && subMenu.map((child) => (child.subMenu ? (
-              <Accordion allowMultiple width="100%">
-                <AccordionItem border="0">
-                  <AccordionButton>
-                    <Box flex="1" textAlign="left">
-                      {child.label}
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                  <AccordionPanel pb={4}>
-                    {child.description && (
-                      <Text fontSize="14px" textAlign="left" pb="15px">
-                        {child.description}
-                      </Text>
-                    )}
-                    <Box display="flex" flexDirection="column" gridGap="15px">
-                      {child.subMenu.map((l) => (
-                        <NextChakraLink
-                          key={l.label}
-                          color={getColorLink(l.href)}
-                          style={{ textDecoration: 'none' }}
-                          href={l.href}
-                        >
-                          {l.label}
-                        </NextChakraLink>
-                      ))}
-                    </Box>
-                  </AccordionPanel>
-                </AccordionItem>
-              </Accordion>
-            ) : (
+            && subMenu.map((child) => (
               <NextChakraLink
                 key={child.label}
                 color={getColorLink(child.href)}
@@ -153,7 +118,7 @@ const MobileItem = ({
               >
                 {child.label}
               </NextChakraLink>
-            )))}
+            ))}
         </Stack>
       </Collapse>
     </Stack>

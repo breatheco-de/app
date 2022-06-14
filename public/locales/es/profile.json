@@ -14,12 +14,10 @@
   "tabList": [
     {
       "title": "Info básica del perfil",
-      "value": "info",
       "disabled": false
     },
     {
       "title": "Mis certificados",
-      "value": "certificates",
       "disabled": false
     }
   ],

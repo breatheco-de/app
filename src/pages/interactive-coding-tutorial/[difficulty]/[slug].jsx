@@ -76,21 +76,20 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     };
   }
 
-  const difficulty = result.difficulty.toLowerCase();
   const ogUrl = {
-    en: `/interactive-coding-tutorial/${difficulty}/${slug}`,
-    us: `/interactive-coding-tutorial/${difficulty}/${slug}`,
+    en: `/interactive-coding-tutorial/${result.difficulty}/${slug}`,
+    us: `/interactive-coding-tutorial/${result.difficulty}/${slug}`,
   };
 
   return {
     props: {
       seo: {
         title,
-        url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${difficulty}/${slug}`,
+        url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${result.difficulty}/${slug}`,
         description: description || '',
         image: preview || staticImage,
         translations,
-        pathConnector: `/interactive-coding-tutorial/${difficulty}`,
+        pathConnector: `/interactive-coding-tutorial/${result.difficulty}`,
         type: 'article',
         keywords: result?.seo_keywords || '',
         card: 'large',
@@ -99,9 +98,10 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         publishedTime: result?.created_at || '',
         modifiedTime: result?.updated_at || '',
       },
+      fallback: false,
       project: {
         ...result,
-        difficulty,
+        difficulty: result.difficulty?.toLowerCase(),
       },
       markdown,
       // translations: result.translations,

@@ -2,18 +2,15 @@ const { default: axios } = require('axios');
 const fs = require('fs');
 const globby = require('globby');
 
-const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
-const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
-
-// const languages = {
-//   us: 'en',
-//   en: 'en',
-//   es: 'es',
-// };
+const languages = {
+  us: 'en',
+  en: 'en',
+  es: 'es',
+};
 
 const getReadPages = () => {
   const resp = axios.get(
-    `${BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${SYLLABUS}`,
+    `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`,
   )
     .then((res) => res.data)
     .catch((err) => console.log(err));
@@ -21,28 +18,28 @@ const getReadPages = () => {
 };
 
 const getLessons = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=lesson`)
+  const data = axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson`)
     .then((res) => res.data)
     .catch((err) => console.log(err));
   return data;
 };
 
 const getExercises = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`)
+  const data = axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`)
     .then((res) => res.data)
     .catch((err) => console.log(err));
   return data;
 };
 
 const getProjects = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=project`)
+  const data = axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`)
     .then((res) => res.data)
     .catch((err) => console.log(err));
   return data;
 };
 
 const getHowTo = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`)
+  const data = axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`)
     .then((res) => res.data)
     .catch((err) => console.log(err));
   return data;
@@ -76,19 +73,18 @@ async function generateSitemap() {
   const projectsPages = await getProjects();
   const howTosPages = await getHowTo();
 
-  const generateSlugByLang = (data, conector, withDifficulty) => data.filter(
-    (f) => f.lang === 'us', // canonical pages
-  ).map((l) => (withDifficulty
-    ? `/${conector}/${l.difficulty.toLowerCase()}/${l.slug}`
-    : `/${conector}/${l.slug}`));
+  const generateSlugByLang = (l, conector) => {
+    if (languages[l.lang] !== 'en' && languages[l.lang] !== undefined) return `/${languages[l.lang]}/${conector}/${l.slug}`;
+    return `/${conector}/${l.slug}`;
     // return `/${conector}/${l.slug}`;
+  };
 
-  const readRoute = generateSlugByLang(readPages, 'read');
-  const lessonsRoute = generateSlugByLang(lessonsPages, 'lesson');
-  const exercisesRoute = generateSlugByLang(exercisesPages, 'interactive-exercises');
-  const projectsCodingRoute = generateSlugByLang(projectsPages, 'interactive-coding-tutorial', true);
-  // const projectsRoute = generateSlugByLang(projectsPages, 'project'); // non-canonical
-  const howTosRoute = generateSlugByLang(howTosPages, 'how-to');
+  const readRoute = readPages.map((l) => generateSlugByLang(l, 'read'));
+  const lessonsRoute = lessonsPages.map((l) => generateSlugByLang(l, 'lesson'));
+  const exercisesRoute = exercisesPages.map((l) => generateSlugByLang(l, 'interactive-exercises'));
+  const projectsCodingRoute = projectsPages.map((l) => generateSlugByLang(l, `interactive-coding-tutorial/${l.difficulty}`));
+  const projectsRoute = projectsPages.map((l) => generateSlugByLang(l, 'project'));
+  const howTosRoute = howTosPages.map((l) => generateSlugByLang(l, 'how-to'));
 
   // excludes Nextjs files and API routes.
   const pages = await globby([
@@ -106,7 +102,7 @@ async function generateSitemap() {
     ...readRoute,
     ...lessonsRoute,
     ...exercisesRoute,
-    // ...projectsRoute,
+    ...projectsRoute,
     ...projectsCodingRoute,
     ...howTosRoute,
   ].map(addPage).join('\n')}

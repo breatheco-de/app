@@ -18,7 +18,6 @@ module.exports = {
     '/how-to': ['how-to'],
     '/how-to/[slug]': ['how-to'],
     '/profile': ['profile'],
-    '/profile/[slug]': ['profile'],
     '/thank-you': ['thank-you'],
     '/about-us': ['about-us'],
   },
