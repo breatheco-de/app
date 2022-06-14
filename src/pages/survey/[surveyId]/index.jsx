@@ -3,23 +3,25 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import styles from '../../../../styles/Home.module.css';
-// import { getParam } from '../../../utils/url';
+import Steps from '../../../common/styledComponents/Steps';
+import Question from '../../../common/components/Question';
 import bc from '../../../common/services/breathecode';
 import asPrivate from '../../../common/context/PrivateRouteWrapper';
 
 const Survey = () => {
   const router = useRouter();
-  const { surveyId, attempt, token } = router.query;
+  const { surveyId } = router.query;
   const [questions, setQuestions] = useState(null);
   const [msg, setMsg] = useState(null);
+  const [currentIndex, setcurrentIndex] = useState(0);
 
   useEffect(() => {
-    console.log(questions);
     console.log(msg);
 
-    if (parseInt(surveyId, 2)) {
+    if (surveyId) {
       bc.feedback().getSurvey(surveyId)
-        .then((data) => {
+        .then(({data}) => {
+          console.log(data);
           setQuestions(data.map((q) => ({ message: q.title, ...q })));
           setMsg(null);
         })
@@ -40,13 +42,22 @@ const Survey = () => {
     // }
   }, []);
 
+  // const lang = Array.isArray(questions) && typeof(questions[currentIndex]) !== "undefined" ? questions[currentIndex].lang.toLowerCase() : "en";
   return (
     <div className={styles.container}>
-
       <main className={styles.main}>
-        <h2>{surveyId}</h2>
-        <h2>{attempt}</h2>
-        <h2>{token}</h2>
+        <div style={{margin:'25px 0'}}>
+          <Steps 
+            currentIndex={currentIndex} 
+            steps={!Array.isArray(questions) ? [] : questions.map((q,i) => ({ label: i }))} 
+          />
+        </div>
+        { Array.isArray(questions) && questions.length > 0 &&
+            <Question key={currentIndex} question={questions[currentIndex]} onChange={q => {
+                setQuestions(qest => qest.map(_q => _q.id === q.id ? q : _q))
+                setMsg(null)
+            }} />
+        }
       </main>
     </div>
   );
