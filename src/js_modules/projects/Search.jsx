@@ -8,38 +8,45 @@ import {
 } from '@chakra-ui/react';
 import { Formik, Form, Field } from 'formik';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Icon from '../../common/components/Icon';
 
 const Search = ({ placeholder }) => {
   const router = useRouter();
-  let initialSearchValue;
+  const [value, setValue] = useState('');
+
   useEffect(() => {
-    initialSearchValue = router.query && router.query.search;
-  }, [initialSearchValue]);
+    if (router.query.search !== undefined) {
+      setValue(router.query.search);
+    }
+    // initialSearchValue = router.query && router.query.search;
+  }, [router.query.search]);
+
   return (
-    <Formik initialValues={{ search: initialSearchValue }}>
+    <Formik initialValues={{ search: value }}>
       {() => (
         <Box width={{ base: '-webkit-fill-available', md: '36rem' }}>
           <Form>
             <Field id="field923" name="search">
-              {({ field, form }) => (
+              {({ form }) => (
                 <FormControl isInvalid={form.errors.search && form.touched.search}>
                   <InputGroup>
                     <InputLeftElement pointerEvents="none">
                       <Icon icon="search" color="gray" width="16px" height="16px" />
                     </InputLeftElement>
                     <Input
-                      {...field}
+                      defaultValue={value}
                       onChange={(values) => {
                         // update the path query with search value
-                        router.push({
-                          query: {
-                            ...router.query,
-                            search: values.target.value.toLowerCase(),
-                          },
-                        });
+                        setTimeout(() => {
+                          router.push({
+                            query: {
+                              ...router.query,
+                              search: values.target.value.toLowerCase(),
+                            },
+                          });
+                        }, 200);
                       }}
                       id="search"
                       width="100%"

@@ -73,7 +73,7 @@ const Helmet = ({
             <link rel="alternate" hrefLang={language} href={defaultUrl} />
           </React.Fragment>
         ) : (
-          <link rel="alternate" hrefLang={language} href={urlAlternate} />
+          <link key={`${language} - ${urlAlternate}`} rel="alternate" hrefLang={language} href={urlAlternate} />
         );
       })}
 

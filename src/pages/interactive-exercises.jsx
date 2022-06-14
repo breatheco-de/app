@@ -2,8 +2,10 @@
 import {
   Box, useColorModeValue, Button, Flex, useDisclosure,
 } from '@chakra-ui/react';
-import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
 import Text from '../common/components/Text';
 import Icon from '../common/components/Icon';
@@ -14,47 +16,45 @@ import useFilter from '../common/store/actions/filterAction';
 import Search from '../js_modules/projects/Search';
 
 export const getStaticProps = async ({ locale, locales }) => {
-  const t = await getT(locale, 'projects');
+  const t = await getT(locale, 'exercises');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const currentLang = locale === 'en' ? 'us' : 'es';
-  const projects = []; // filtered projects after removing repeated
-  let arrProjects = []; // incoming projects
-
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`);
+  const exercises = []; // filtered exercises after removing repeated
+  let arrExercises = []; // incoming exercises
+  const resp = await fetch(
+    `${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`,
+    {
+      Accept: 'application/json, text/plain, */*',
+    },
+  );
   const data = await resp.json();
-  // .then((res) => res.json())
-  // .catch((err) => console.error(err));
 
-  arrProjects = Object.values(data);
+  arrExercises = Object.values(data);
   if (resp.status >= 200 && resp.status < 400) {
-    console.log(`SUCCESS: ${arrProjects.length} Projects fetched`);
+    console.log(`SUCCESS: ${arrExercises.length} Exercises fetched for /interactive-exercises`);
   } else {
-    console.error(`Error ${resp.status}: fetching Projects list for /projects`);
+    console.error(`Error ${resp.status}: fetching Exercises list for /interactive-exercises`);
   }
 
   let technologyTags = [];
   let difficulties = [];
 
-  for (let i = 0; i < arrProjects.length; i += 1) {
-    // skip repeated projects
-    if (projects.find((p) => arrProjects[i].slug === p.slug)) {
+  for (let i = 0; i < arrExercises.length; i += 1) {
+    // skip repeated exercises
+    if (exercises.find((p) => arrExercises[i].slug === p.slug)) {
       continue;
     }
-    projects.push(arrProjects[i]);
+    exercises.push(arrExercises[i]);
 
-    if (typeof arrProjects[i].technology === 'string') technologyTags.push(arrProjects[i].technology);
-    if (Array.isArray(arrProjects[i].technologies)) {
-      technologyTags = technologyTags.concat(arrProjects[i].technologies);
+    if (typeof arrExercises[i].technology === 'string') technologyTags.push(arrExercises[i].technology);
+    if (Array.isArray(arrExercises[i].technologies)) {
+      technologyTags = technologyTags.concat(arrExercises[i].technologies);
     }
 
-    if (arrProjects[i].difficulty === null) arrProjects[i].difficulty = 'unknown';
-    if (typeof arrProjects[i].difficulty === 'string' || arrProjects[i].difficulty === null) {
-      if (arrProjects[i].difficulty === 'junior') arrProjects[i].difficulty = 'easy';
-      else if (arrProjects[i].difficulty === 'semi-senior') arrProjects[i].difficulty = 'intermediate';
-      else if (arrProjects[i].difficulty === 'senior') arrProjects[i].difficulty = 'hard';
-
-      difficulties.push(arrProjects[i].difficulty);
+    if (typeof arrExercises[i].difficulty === 'string') {
+      if (arrExercises[i].difficulty === 'BEGINNER') arrExercises[i].difficulty = 'beginner';
+      difficulties.push(arrExercises[i].difficulty);
     }
   }
 
@@ -63,7 +63,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
   // Verify if difficulty exist in expected position, else fill void array with 'nullString'
   const verifyDifficultyExists = (difficultiesArray, difficulty) => {
-    if (difficultiesArray.some((el) => el?.toLowerCase() === difficulty)) {
+    if (difficultiesArray.some((el) => el === difficulty)) {
       return difficulty;
     }
     return 'nullString';
@@ -76,8 +76,8 @@ export const getStaticProps = async ({ locale, locales }) => {
   });
 
   const ogUrl = {
-    en: '/projects',
-    us: '/projects',
+    en: '/interactive-exercises',
+    us: '/interactive-exercises',
   };
 
   return {
@@ -86,38 +86,39 @@ export const getStaticProps = async ({ locale, locales }) => {
         title: t('seo.title'),
         description: t('seo.description'),
         image,
-        keywords,
+        url: ogUrl.en || `/${locale}/interactive-exercises`,
+        pathConnector: '/interactive-exercises',
         locales,
         locale,
-        url: ogUrl.en || `/${locale}/projects`,
-        pathConnector: '/projects',
-        card: 'default',
+        keywords,
+        card: 'large',
       },
-
       fallback: false,
-      projects: projects.filter((project) => project.lang === currentLang).map(
-        (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() }),
-      ),
+      exercises: exercises.filter((project) => project.lang === currentLang),
       technologyTags,
       difficulties: difficultiesSorted,
     },
   };
 };
 
-const Projects = ({ projects, technologyTags, difficulties }) => {
-  const { t } = useTranslation('projects');
-  const { filteredBy, setProjectFilters } = useFilter();
-  const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
-  const iconColor = useColorModeValue('#FFF', '#283340');
+function Exercices({ exercises, technologyTags, difficulties }) {
+  const { t } = useTranslation('exercises');
+  const { filteredBy, setExerciseFilters } = useFilter();
+  const { technologies, difficulty, videoTutorials } = filteredBy.exercisesOptions;
+
   const currentFilters = technologies.length
     + (difficulty === undefined || difficulty.length === 0 ? 0 : 1)
     + videoTutorials;
-
+  const router = useRouter();
+  let initialSearchValue;
+  useEffect(() => {
+    initialSearchValue = router.query && router.query.search;
+  }, [initialSearchValue]);
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-      <TitleContent title={t('title')} mobile color={iconColor} />
+      <TitleContent title={t('title')} mobile />
       <Flex
         justifyContent="space-between"
         flex="1"
@@ -127,7 +128,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.900')}
       >
-        <TitleContent title={t('title')} mobile={false} color={iconColor} />
+        <TitleContent title={t('title')} mobile={false} />
 
         <Search placeholder={t('search')} />
 
@@ -170,8 +171,8 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         <FilterModal
           isModalOpen={isOpen}
           onClose={onClose}
-          contextFilter={filteredBy.projectsOptions}
-          setFilter={setProjectFilters}
+          contextFilter={filteredBy.exercisesOptions}
+          setFilter={setExerciseFilters}
           technologyTags={technologyTags}
           difficulties={difficulties}
         />
@@ -186,22 +187,25 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         >
           {t('description')}
         </Text>
-
         <ProjectList
-          projects={projects}
-          contextFilter={filteredBy.projectsOptions}
-          projectPath="interactive-coding-tutorial"
-          pathWithDifficulty
+          projects={exercises}
+          contextFilter={filteredBy.exercisesOptions}
+          projectPath="interactive-exercises"
         />
       </Box>
     </Box>
   );
+}
+
+Exercices.propTypes = {
+  exercises: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+  technologyTags: PropTypes.arrayOf(PropTypes.string),
+  difficulties: PropTypes.arrayOf(PropTypes.string),
+};
+Exercices.defaultProps = {
+  exercises: [],
+  technologyTags: [],
+  difficulties: [],
 };
 
-Projects.propTypes = {
-  technologyTags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  projects: PropTypes.arrayOf(PropTypes.object).isRequired,
-  difficulties: PropTypes.arrayOf(PropTypes.string).isRequired,
-};
-
-export default Projects;
+export default Exercices;

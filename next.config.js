@@ -15,6 +15,21 @@ const nextTranslate = require('next-translate');
 module.exports = withBundleAnalyzer(nextTranslate({
   // rest of config here
   // i18n,
+  async redirects() {
+    return [
+      // {
+      //   source: '/interactive-exercises',
+      //   destination: '/interactive-exercise',
+      //   permanent: true,
+      // },
+      {
+        source: '/interactive-exercises/:slug',
+        destination: '/interactive-exercise/:slug',
+        permanent: true,
+      },
+    ];
+  },
+  swcMinify: false,
   reactStrictMode: true,
   trailingSlash: false,
   webpack: (config, { isServer }) => {

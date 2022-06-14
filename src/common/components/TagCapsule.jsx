@@ -1,4 +1,6 @@
+import { memo } from 'react';
 import { Box, Stack, useColorMode } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Text from './Text';
 
@@ -14,8 +16,11 @@ const TagCapsule = ({
   fontSize,
   containerStyle,
   fontWeight,
+  isLink,
+  herf,
 }) => {
   const { colorMode } = useColorMode();
+  const router = useRouter();
 
   return tags.length !== 0 && (
     <Stack
@@ -36,6 +41,8 @@ const TagCapsule = ({
         <Box
           as="li"
           display="flex"
+          cursor={isLink ? 'pointer' : 'default'}
+          onClick={() => isLink && router.push(`${herf}?techs=${tag}`)}
           bg={variant === 'rounded' ? background : 'none'}
           direction="row"
           padding={variant === 'rounded' ? '0 10px' : '0'}
@@ -80,6 +87,8 @@ TagCapsule.propTypes = {
   gap: PropTypes.string,
   style: PropTypes.shape({}),
   fontWeight: PropTypes.string,
+  isLink: PropTypes.bool,
+  herf: PropTypes.string,
 };
 TagCapsule.defaultProps = {
   separator: '/',
@@ -94,6 +103,8 @@ TagCapsule.defaultProps = {
   style: {
     margin: '0',
   },
+  isLink: false,
+  herf: '#',
 };
 
-export default TagCapsule;
+export default memo(TagCapsule);

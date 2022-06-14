@@ -18,15 +18,14 @@ import getMarkDownContent from '../../../common/components/MarkDownParser/markdo
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
-  const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`)
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`);
+  const data = await resp.json();
 
   projects = Object.values(data);
-  if (data.status >= 200 && data.status < 400) {
-    console.log(`Original projects: ${projects}`);
+  if (resp.status >= 200 && resp.status < 400) {
+    console.log(`SUCCESS: ${projects.length} Projects fetched for /interactive-coding-tutorial`);
   } else {
-    console.error(`Error fetching projects with ${data.status}`);
+    console.error(`Error ${resp.status}: fetching Projects list for /interactive-coding-tutorial`);
   }
 
   for (let i = 0; i < projects.length; i += 1) {
@@ -55,22 +54,16 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'projects');
   const { slug } = params;
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
-  const result = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
-    .then((res) => res.json())
-    .catch((err) => ({
-      status: err.response.status,
-    }));
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`);
+  const result = await response.json();
 
   const {
     title, description, translations, preview,
   } = result;
-  const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
-    .then((res) => res.text())
-    .catch((err) => ({
-      status: err.response.status,
-    }));
+  const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+  const markdown = await markdownResp.text();
 
-  if (result.status === 404) {
+  if (response.status > 400) {
     return {
       notFound: true,
     };
@@ -122,7 +115,8 @@ const TableInfo = ({ t, project, commonTextColor }) => (
         {t('table.description')}
       </Text>
       <SimpleTable
-        difficulty={project.difficulty}
+        href="/projects"
+        difficulty={project.difficulty !== null && project.difficulty.toLowerCase()}
         repository={project.url}
         duration={project.duration}
         videoAvailable={project.solution_video_url}
@@ -208,19 +202,6 @@ const ProjectSlug = ({ project, markdown }) => {
 
       <Flex height="100%" gridGap="26px">
         <Box flex="1">
-          {/* <TagCapsule
-            variant="rounded"
-            tags={project.technologies}
-            fontSize="13px"
-            marginY="18px"
-            fontWeight="700"
-            style={{
-              padding: '4px 12px',
-              margin: '0',
-            }}
-            gap="10px"
-            paddingX="0"
-          /> */}
           <Heading
             as="h1"
             size="25px"
