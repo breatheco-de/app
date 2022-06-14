@@ -1,6 +1,7 @@
 import{ useState, useEffect } from 'react';
-import { Heading, Container, Button, Flex } from '@chakra-ui/react'
+import { Heading, Container, Button, Flex, Center } from '@chakra-ui/react'
 import PropTypes from 'prop-types';
+import TextArea from '../styledComponents/TextArea';
 // import  from 'prop-types';
 
 const options = {
@@ -14,22 +15,21 @@ const Question = ({ question, onChange }) => {
         if(parseInt(question.score, 10)) setFocused(question.score - 1);
     }, question.score)
     return (
-        <div>
+        <div style={{marginTop: "40px"}}>
             <Container centerContent={true} maxW={'80%'}>
                 <Heading textAlign={'center'}>{question.message}</Heading>
             </Container>
-            <Flex justify="center" marginTop="20px" >
-                <div >
+            <Flex justify="center" marginTop="40px" >
+                <Center >
                     {question.lowest}
-                </div>
-                <div className="" style={{ maxWidth: "570px" }}>
+                </Center>
+                <div className="" style={{ maxWidth: "570px", margin: "0 20px" }}>
                     {
                         options.desktop.map((number, index) =>
-                            <Button 
-                                variant='outline'
+                            <Button
                                 marginLeft='5px'
                                 marginRight='5px'
-                                className={`${focused >= index ? "bg-primary text-white" : ""}`}
+                                colorScheme={focused >= index ? 'messenger' : 'gray'}
                                 onClick={() => { 
                                     setFocused(number - 1); 
                                     onChange({ ...question, score: number }); 
@@ -39,10 +39,22 @@ const Question = ({ question, onChange }) => {
                             </Button>)
                     }
                 </div>
-                <div className="col-1 col-lg-2 text-left pt-3">
+                <Center>
                     {question.highest}
-                </div>
+                </Center>
             </Flex>
+            <Container centerContent={true} maxW={'80%'} marginTop="20px">
+                <TextArea
+                    id="comments"
+                    name="comments"
+                    rows="4"
+                    maxLength="1000"
+                    placeholder={"Put your thoughts here..."}
+                    onChange={e => onChange({ ...question, comment: e.target.value })}
+                    value={question.comment}
+                    required
+                />
+            </Container>
         </div>
     )
 }
@@ -56,6 +68,7 @@ Question.propTypes = {
         lowest: PropTypes.string,
         highest: PropTypes.string,
         message: PropTypes.string,
+        comment: PropTypes.string,
         score: PropTypes.oneOfType([
             PropTypes.string,
             PropTypes.number

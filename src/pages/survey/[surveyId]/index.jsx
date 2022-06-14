@@ -46,17 +46,21 @@ const Survey = () => {
   return (
     <div className={styles.container}>
       <main className={styles.main}>
-        <div style={{margin:'25px 0'}}>
+        <div>
           <Steps 
             currentIndex={currentIndex} 
             steps={!Array.isArray(questions) ? [] : questions.map((q,i) => ({ label: i }))} 
           />
         </div>
         { Array.isArray(questions) && questions.length > 0 &&
-            <Question key={currentIndex} question={questions[currentIndex]} onChange={q => {
+            <Question 
+              key={currentIndex} 
+              question={questions[currentIndex]} 
+              onChange={q => {
                 setQuestions(qest => qest.map(_q => _q.id === q.id ? q : _q))
                 setMsg(null)
-            }} />
+              }} 
+            />
         }
       </main>
     </div>
