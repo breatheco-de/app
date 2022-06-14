@@ -22,20 +22,42 @@
         {
           "label": "Practicar",
           "subLabel": "",
-          "href": "/interactive-exercises"
+          "description": "",
+          "href": "/interactive-exercises",
+          "subMenu": [
+            {
+              "href": "/interactive-exercises",
+              "label": "Ejercicios interactivos"
+            }
+          ]
         },
         {
-          "label": "Read and Watch",
+          "label": "Leer y ver",
           "asPath": "/read-and-watch",
+          "description": "Es momentoa de comenzar a aprender leyendo y viendo videos sobre los fundamentos y cómo funcionan las cosas.",
           "subMenu": []
         },
         {
           "label": "Build",
-          "href": "/projects"
+          "href": "/projects",
+          "description": "",
+          "subMenu": [
+            {
+              "href": "/projects",
+              "label": "Proyectos"
+            }
+          ]
         },
         {
           "label": "How to's?",
-          "href": "/how-to"
+          "href": "/how-to",
+          "description": "Guias sobre distintos temas relacionados con las tecnologías que enseñamos en nuestros cursos",
+          "subMenu": [
+            {
+              "href": "/how-to",
+              "label": "Cómo hacerlo"
+            }
+          ]
         }
       ]
     },

@@ -29,7 +29,6 @@ const DesktopNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
     }
     return publicItem;
   });
-  console.log('customPublicItems:::', customPublicItems);
 
   return (
     <Stack className="hideOverflowX__" direction="row" overflow={{ base: 'auto', lg: 'auto' }} width="60vw" spacing={4} alignItems="center">
