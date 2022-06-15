@@ -14,37 +14,37 @@
       "href": "/about-us"
     },
     {
-      "label": "Read",
+      "label": "Learning library",
       "icon": "book",
-      "description": "Here you can read and see the temary of some available programs.",
+      "description": "For all the self-taught geeks out there, here our content library with most of the learning materials we have produces throughout the years.",
       "asPath": "/read",
       "subMenu": [
         {
-          "label": "Practice",
+          "label": "Read and watch",
+          "asPath": "/read-and-watch",
+          "description": "It makes sense to start learning by reading and watching videos about fundamentals and how things work.",
+          "subMenu": []
+        },
+        {
+          "label": "Practice interactively",
           "subLabel": "",
-          "description": "",
+          "description": "Curated list of small interactive and incremental exercises you can take to get better at any coding skill.",
           "href": "/interactive-exercises",
           "subMenu": [
             {
               "href": "/interactive-exercises",
-              "label": "Interactive exercises"
+              "label": "Start practicing"
             }
           ]
         },
         {
-          "label": "Read and watch",
-          "asPath": "/read-and-watch",
-          "description": "It's time to start learning by reading and watching videos about the basics and how things work.",
-          "subMenu": []
-        },
-        {
-          "label": "Build",
+          "label": "Build projects",
           "href": "/projects",
-          "description": "",
+          "description": "Curated section of projects to build while learning with simple instructions, videos, solutions and more.",
           "subMenu": [
             {
               "href": "/projects",
-              "label": "Proyectos"
+              "label": "Start building"
             }
           ]
         },
@@ -55,7 +55,7 @@
           "subMenu": [
             {
               "href": "/how-to",
-              "label": "Cómo hacerlo"
+              "label": "Browse questions"
             }
           ]
         }
