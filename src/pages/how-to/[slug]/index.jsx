@@ -137,6 +137,8 @@ export default function HowToSlug({ data, markdown }) {
         <Box display="flex" gridGap="10px" justifyContent="space-between" mb="12px">
           <TagCapsule
             variant="rounded"
+            isLink
+            href="/how-to"
             tags={data.technologies}
             marginY="8px"
             fontSize="13px"

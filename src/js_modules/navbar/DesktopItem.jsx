@@ -132,18 +132,19 @@ const DesktopItem = ({ item }) => {
             >
               <Flex
                 flexDirection="row"
-                padding="0 0 20px 0"
+                padding="0 0 16px 0"
                 borderBottom={1}
                 borderStyle="solid"
                 borderColor={useColorModeValue('gray.200', 'gray.900')}
                 alignItems="center"
                 color={linkColor}
                 mb="10px"
+                gridGap="20px"
               >
-                <Box width="140px">
+                <Box width="auto" ml="4px">
                   <Icon icon={item.icon} width="50px" height="50px" />
                 </Box>
-                <Box display="flex" flexDirection="column">
+                <Box display="flex" flexDirection="column" mr={{ base: '10px', md: '20px' }}>
                   <Text size="xl" fontWeight={900}>
                     {item.label}
                   </Text>
@@ -179,7 +180,7 @@ const DesktopItem = ({ item }) => {
 
                           <Text
                             // width="100%"
-                            minWidth="110px"
+                            minWidth="130px"
                             transition="all .3s ease"
                             color={getColorLink(href)}
                             _groupHover={{ color: useColorModeValue('gray.900', 'featuredLight') }}
@@ -210,7 +211,7 @@ const DesktopItem = ({ item }) => {
                         {subMenu.length > 0 && subMenu.map((l) => (
                           <NextChakraLink
                             href={l.href}
-                            role="group"
+                            // role="group"
                             display="block"
                             p={2}
                             style={{ borderRadius: '5px' }}
@@ -229,11 +230,8 @@ const DesktopItem = ({ item }) => {
                               </Box>
                               <Flex
                                 transition="all .3s ease"
-                                transform="translateX(-10px)"
-                                opacity={0}
-                                _groupHover={{ opacity: '100%', transform: 'translateX(0)' }}
+                                opacity={1}
                                 justify="flex-start"
-                                // justify="flex-end"
                                 align="center"
                                 flex={1}
                               >

@@ -39,11 +39,11 @@
         },
         {
           "label": "Build",
-          "href": "/projects",
+          "href": "/interactive-coding-tutorial",
           "description": "",
           "subMenu": [
             {
-              "href": "/projects",
+              "href": "/interactive-coding-tutorial",
               "label": "Proyectos"
             }
           ]

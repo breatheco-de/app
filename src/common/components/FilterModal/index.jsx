@@ -99,6 +99,7 @@ const FilterModal = ({
             <TechnologiesSection
               show={show}
               title={t('technologies')}
+              t={t}
               handleToggle={handleToggle}
               technologyTags={technologyTags}
               commonTextColor={commonTextColor}
