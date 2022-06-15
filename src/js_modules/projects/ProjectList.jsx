@@ -202,18 +202,20 @@ const ProjectList = ({
                     </Text>
                   )}
 
-                  <Link
-                    mt="8px"
-                    width="fit-content"
-                    href={`/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`}
-                    display="inline-block"
-                    zIndex={1}
-                    color="blue.default"
-                    fontSize="15px"
-                    letterSpacing="0.05em"
-                  >
-                    {`${t('read-lesson')} >`}
-                  </Link>
+                  {withoutImage && (
+                    <Link
+                      mt="8px"
+                      width="fit-content"
+                      href={`/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`}
+                      display="inline-block"
+                      zIndex={1}
+                      color="blue.default"
+                      fontSize="15px"
+                      letterSpacing="0.05em"
+                    >
+                      {`${t('read-lesson')} >`}
+                    </Link>
+                  )}
                 </Box>
               </Box>
             </Box>
