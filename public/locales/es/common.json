@@ -42,6 +42,8 @@
   "clear-all": "Limpiar todo",
   "english": "Inglés",
   "spanish": "Español",
+  "show-more": "Mostrar más",
+  "show-less": "Mostrar menos",
   "taskStatus": {
     "project-approved": "Proyecto aprobado",
     "update-project-delivery": "Actualizar entrega de proyecto",

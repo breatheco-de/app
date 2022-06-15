@@ -5,13 +5,13 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import getT from 'next-translate/getT';
-import Text from '../common/components/Text';
-import Icon from '../common/components/Icon';
-import FilterModal from '../common/components/FilterModal';
-import TitleContent from '../js_modules/projects/TitleContent';
-import ProjectList from '../js_modules/projects/ProjectList';
-import useFilter from '../common/store/actions/filterAction';
-import Search from '../js_modules/projects/Search';
+import Text from '../../common/components/Text';
+import Icon from '../../common/components/Icon';
+import FilterModal from '../../common/components/FilterModal';
+import TitleContent from '../../js_modules/projects/TitleContent';
+import ProjectList from '../../js_modules/projects/ProjectList';
+import useFilter from '../../common/store/actions/filterAction';
+import Search from '../../js_modules/projects/Search';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'projects');
@@ -30,7 +30,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   if (resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${arrProjects.length} Projects fetched`);
   } else {
-    console.error(`Error ${resp.status}: fetching Projects list for /projects`);
+    console.error(`Error ${resp.status}: fetching Projects list for /interactive-coding-tutorial`);
   }
 
   let technologyTags = [];
@@ -76,8 +76,8 @@ export const getStaticProps = async ({ locale, locales }) => {
   });
 
   const ogUrl = {
-    en: '/projects',
-    us: '/projects',
+    en: '/interactive-coding-tutorial',
+    us: '/interactive-coding-tutorial',
   };
 
   return {
@@ -89,8 +89,8 @@ export const getStaticProps = async ({ locale, locales }) => {
         keywords,
         locales,
         locale,
-        url: ogUrl.en || `/${locale}/projects`,
-        pathConnector: '/projects',
+        url: ogUrl.en || `/${locale}/interactive-coding-tutorial`,
+        pathConnector: '/interactive-coding-tutorial',
         card: 'default',
       },
 

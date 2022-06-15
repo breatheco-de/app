@@ -126,7 +126,7 @@ const TableInfo = ({ t, project, commonTextColor }) => (
         {t('table.description')}
       </Text>
       <SimpleTable
-        href="/projects"
+        href="/interactive-coding-tutorial"
         difficulty={project.difficulty}
         repository={project.url}
         duration={project.duration}
@@ -201,7 +201,7 @@ const ProjectSlug = ({ project, markdown }) => {
       margin={{ base: '2% 4% 0 4%', lg: '2% 10% 0 10%' }}
     >
       <Link
-        href="/projects"
+        href="/interactive-coding-tutorial"
         color={useColorModeValue('blue.default', 'blue.300')}
         display="inline-block"
         letterSpacing="0.05em"

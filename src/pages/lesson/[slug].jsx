@@ -182,7 +182,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
         <Box display="flex" gridGap="10px" justifyContent="space-between">
           <TagCapsule
             isLink
-            herf="/lesson"
+            href="/lessons"
             variant="rounded"
             tags={lesson.technologies}
             marginY="8px"

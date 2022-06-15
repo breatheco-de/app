@@ -17,7 +17,7 @@ const TagCapsule = ({
   containerStyle,
   fontWeight,
   isLink,
-  herf,
+  href,
 }) => {
   const { colorMode } = useColorMode();
   const router = useRouter();
@@ -42,7 +42,7 @@ const TagCapsule = ({
           as="li"
           display="flex"
           cursor={isLink ? 'pointer' : 'default'}
-          onClick={() => isLink && router.push(`${herf}?techs=${tag}`)}
+          onClick={() => isLink && router.push(`${href}?techs=${tag}`)}
           bg={variant === 'rounded' ? background : 'none'}
           direction="row"
           padding={variant === 'rounded' ? '0 10px' : '0'}
@@ -88,7 +88,7 @@ TagCapsule.propTypes = {
   style: PropTypes.shape({}),
   fontWeight: PropTypes.string,
   isLink: PropTypes.bool,
-  herf: PropTypes.string,
+  href: PropTypes.string,
 };
 TagCapsule.defaultProps = {
   separator: '/',
@@ -104,7 +104,7 @@ TagCapsule.defaultProps = {
     margin: '0',
   },
   isLink: false,
-  herf: '#',
+  href: '#',
 };
 
 export default memo(TagCapsule);
