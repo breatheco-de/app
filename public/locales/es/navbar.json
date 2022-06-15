@@ -39,11 +39,11 @@
         },
         {
           "label": "Construye Projectos",
-          "href": "/projects",
+          "href": "/interactive-coding-tutorial",
           "description": "Selección curada de tutoriales y projectos para construir con instrucciones simples y video soluciones",
           "subMenu": [
             {
-              "href": "/projects",
+              "href": "/interactive-coding-tutorial",
               "label": "Comienza a construir"
             }
           ]
