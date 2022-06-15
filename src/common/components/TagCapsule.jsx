@@ -18,6 +18,7 @@ const TagCapsule = ({
   fontWeight,
   isLink,
   href,
+  borderRadius,
 }) => {
   const { colorMode } = useColorMode();
   const router = useRouter();
@@ -47,7 +48,7 @@ const TagCapsule = ({
           direction="row"
           padding={variant === 'rounded' ? '0 10px' : '0'}
           style={style}
-          rounded={variant === 'rounded' ? '15px' : 'none'}
+          rounded={variant === 'rounded' ? borderRadius : 'none'}
           key={tag.name || `${tag}-${i}`}
           lineHeight="22px"
           color={colorMode === 'light' ? 'black' : 'black'}
@@ -89,6 +90,7 @@ TagCapsule.propTypes = {
   fontWeight: PropTypes.string,
   isLink: PropTypes.bool,
   href: PropTypes.string,
+  borderRadius: PropTypes.string,
 };
 TagCapsule.defaultProps = {
   separator: '/',
@@ -105,6 +107,7 @@ TagCapsule.defaultProps = {
   },
   isLink: false,
   href: '#',
+  borderRadius: '15px',
 };
 
 export default memo(TagCapsule);

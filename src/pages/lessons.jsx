@@ -189,6 +189,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
 
         <ProjectList
           projects={lessons}
+          withoutImage
           contextFilter={filteredBy.projectsOptions}
           projectPath="lesson"
         />
