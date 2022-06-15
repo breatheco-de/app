@@ -209,7 +209,7 @@ const ProjectSlug = ({ project, markdown }) => {
             padding="10px 0 35px 0"
             transition="color 0.2s ease-in-out"
             color={useColorModeValue('black', 'white')}
-            textTransform="uppercase"
+            textTransform="capitalize"
           >
             {project.title}
           </Heading>
@@ -261,10 +261,9 @@ const ProjectSlug = ({ project, markdown }) => {
 
           {/* MARKDOWN SIDE */}
           <Box
-            padding="28px 32px"
             maxWidth="1012px"
             borderRadius="3px"
-            background={useColorModeValue('#F2F6FA', 'featuredDark')}
+            background={useColorModeValue('white', 'featuredDark')}
             // width={{ base: '34rem', md: '54rem' }}
             className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
             transition="background .2s ease"
@@ -317,7 +316,7 @@ TableInfo.propTypes = {
 };
 
 TableInfo.defaultProps = {
-  t: () => {},
+  t: () => { },
 };
 
 export default ProjectSlug;
