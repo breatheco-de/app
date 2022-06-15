@@ -203,7 +203,7 @@ const ProjectList = ({
                   )}
 
                   <Link
-                    pt="8px"
+                    mt="8px"
                     width="fit-content"
                     href={`/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`}
                     display="inline-block"
@@ -212,7 +212,7 @@ const ProjectList = ({
                     fontSize="15px"
                     letterSpacing="0.05em"
                   >
-                    {'Read Lesson >'}
+                    {`${t('read-lesson')} >`}
                   </Link>
                 </Box>
               </Box>
