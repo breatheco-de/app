@@ -13,6 +13,7 @@ import Text from '../../common/components/Text';
 
 const ProjectList = ({
   projects, contextFilter, projectPath, pathWithDifficulty, exampleImage,
+  withoutImage,
 }) => {
   const { t } = useTranslation('common');
   // const [limiter, setLimiter] = useState(12);
@@ -20,6 +21,11 @@ const ProjectList = ({
   const { difficulty, videoTutorials } = contextFilter;
   const router = useRouter();
   const defaultImage = exampleImage || '/static/images/code1.png';
+  const { query } = router;
+  const techTagsQuery = (query.techs && decodeURI(query.techs?.toLocaleLowerCase())?.split(',')) || false;
+  const withVideoQuery = query.withVideo || false;
+  const difficultyQuery = query.difficulty || false;
+
   // const bgBlur = '/static/images/codeBlur.png';
 
   // const projectLimited = projects.slice(0, limiter);
@@ -31,14 +37,16 @@ const ProjectList = ({
     const projectTitle = project.title.toLowerCase() || unSlugify(project.slug);
     if (
       typeof videoTutorials === 'boolean'
-      && videoTutorials === true
+      && (withVideoQuery || videoTutorials === true)
       && !project.solution_video_url === true
     ) return false;
-    if (typeof router.query.search === 'string' && !projectTitle.includes(router.query.search)) return false;
-    if (typeof difficulty === 'string' && project.difficulty !== difficulty) return false;
+    if (typeof query.search === 'string' && !projectTitle.includes(query.search)) return false;
+    if ((typeof difficulty === 'string'
+      && project.difficulty !== difficulty)
+      || (difficultyQuery && project.difficulty !== difficultyQuery)) return false;
     // Match checked technologies
-    const res = selectedTechs.length > 0 ? (
-      selectedTechs.some((tech) => project.technologies.includes(tech))
+    const res = (techTagsQuery || selectedTechs.length > 0) ? (
+      (techTagsQuery || selectedTechs).some((tech) => project.technologies.includes(tech))
     ) : true;
     return res;
     // const res = selectedTechs.map((techs) => project.technologies.includes(techs));
@@ -88,51 +96,66 @@ const ProjectList = ({
                 zIndex={1}
                 borderRadius="10px"
               >
+                {withoutImage && (
+                  <Heading
+                    size="m"
+                    textAlign="left"
+                    wordBreak="break-word"
+                    width="100%"
+                    fontFamily="body"
+                    fontWeight={700}
+                  >
+                    {ex.title || t('no-title')}
+                  </Heading>
+                )}
                 {/* CARD IMAGE */}
-                <Link
-                  href={`/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`}
-                  display="inline-block"
-                  w={{ base: 'auto', md: 'full' }}
-                  zIndex={1}
-                  borderRadius="15px"
-                >
-                  <Image
-                    priority
+                {!withoutImage && (
+                  <Link
+                    href={`/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`}
+                    display="inline-block"
+                    w={{ base: 'auto', md: 'full' }}
+                    zIndex={1}
                     borderRadius="15px"
-                    classNameImg="centerImageForBlur"
-                    pos="relative"
-                    height={{ base: '60px', sm: '90px', md: '180px' }}
-                    width={{ base: '60px', sm: '90px', md: 'auto' }}
-                    maxWidth={{ base: '300px', sm: '230px', md: 'none' }}
-                    // _after={{
-                    //   transition: 'all .8s ease',
-                    //   content: '""',
-                    //   w: 'full',
-                    //   h: 'full',
-                    //   pos: 'absolute',
-                    //   top: 0,
-                    //   left: 0,
-                    //   backgroundImage: `url(${bgBlur})`,
-                    //   filter: 'blur(15px)',
-                    //   zIndex: 0,
-                    // }}
-                    // _groupHover={{
-                    //   _after: {
-                    //     filter: 'blur(50px)',
-                    //   },
-                    // }}
-                    onError={(e) => onImageNotFound(e)}
-                    style={{ borderRadius: '15px', overflow: 'hidden' }}
-                    objectFit="cover"
-                    src={getImage}
-                    alt={ex.title}
-                  />
-                </Link>
+                  >
+                    <Image
+                      priority
+                      borderRadius="15px"
+                      classNameImg="centerImageForBlur"
+                      pos="relative"
+                      height={{ base: '60px', sm: '90px', md: '180px' }}
+                      width={{ base: '60px', sm: '90px', md: 'auto' }}
+                      maxWidth={{ base: '300px', sm: '230px', md: 'none' }}
+                      // _after={{
+                      //   transition: 'all .8s ease',
+                      //   content: '""',
+                      //   w: 'full',
+                      //   h: 'full',
+                      //   pos: 'absolute',
+                      //   top: 0,
+                      //   left: 0,
+                      //   backgroundImage: `url(${bgBlur})`,
+                      //   filter: 'blur(15px)',
+                      //   zIndex: 0,
+                      // }}
+                      // _groupHover={{
+                      //   _after: {
+                      //     filter: 'blur(50px)',
+                      //   },
+                      // }}
+                      onError={(e) => onImageNotFound(e)}
+                      style={{ borderRadius: '15px', overflow: 'hidden' }}
+                      objectFit="cover"
+                      src={getImage}
+                      alt={ex.title}
+                    />
+                  </Link>
+                )}
                 <Box display="flex" flexDirection="column" paddingTop="4px">
                   {ex.technologies.length >= 1 && (
                     <TagCapsule
                       tags={ex.technologies}
                       variant="rounded"
+                      borderRadius="10px"
                       marginY="8px"
                       style={{
                         padding: '4px 10px',
@@ -144,36 +167,55 @@ const ProjectList = ({
                     />
                   )}
 
-                  <Stack align="center" padding="18px 0 0 0">
+                  {!withoutImage && (
+                    <Stack align="center" padding="18px 0 0 0">
+                      <Link
+                        href={`/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`}
+                        display="inline-block"
+                        w="full"
+                        zIndex={1}
+                        color="blue.default"
+                      >
+                        <Heading
+                          size="20px"
+                          textAlign="left"
+                          wordBreak="break-word"
+                          width="100%"
+                          fontFamily="body"
+                          fontWeight={700}
+                        >
+                          {ex.title || t('no-title')}
+                        </Heading>
+                      </Link>
+                    </Stack>
+                  )}
+
+                  {withoutImage && ex?.description && (
+                    <Text
+                      color="gray.500"
+                      textAlign="left"
+                      width="100%"
+                      size="sm"
+                      textTransform="uppercase"
+                    >
+                      {ex.description}
+                    </Text>
+                  )}
+
+                  {withoutImage && (
                     <Link
+                      mt="8px"
+                      width="fit-content"
                       href={`/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`}
                       display="inline-block"
-                      w="full"
                       zIndex={1}
                       color="blue.default"
+                      fontSize="15px"
+                      letterSpacing="0.05em"
                     >
-                      <Heading
-                        size="20px"
-                        textAlign="left"
-                        wordBreak="break-word"
-                        width="100%"
-                        fontFamily="body"
-                        fontWeight={700}
-                      >
-                        {ex.title || t('no-title')}
-                      </Heading>
+                      {`${t('read-lesson')} >`}
                     </Link>
-                    {/* <Text
-                    color="gray.500"
-                    textAlign="left"
-                    width="100%"
-                    size="sm"
-                    textTransform="uppercase"
-                  >
-                    All you&apos;ve learned needs to be put together. Lets make our first entire
-                    professional application using the Agile Development method!
-                  </Text> */}
-                  </Stack>
+                  )}
                 </Box>
               </Box>
             </Box>
@@ -202,11 +244,13 @@ ProjectList.propTypes = {
   projectPath: PropTypes.string.isRequired,
   pathWithDifficulty: PropTypes.bool,
   exampleImage: PropTypes.string,
+  withoutImage: PropTypes.bool,
 };
 
 ProjectList.defaultProps = {
   pathWithDifficulty: false,
   exampleImage: '',
+  withoutImage: false,
 };
 
 export default ProjectList;

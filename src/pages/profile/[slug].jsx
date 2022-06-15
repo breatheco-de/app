@@ -1,6 +1,6 @@
 import {
   Avatar,
-  Box, Link, Tab, TabList, TabPanel, TabPanels, Tabs, useColorModeValue, useToast,
+  Box, Link, Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { memo, useEffect, useState } from 'react';
@@ -31,7 +31,9 @@ const Profile = () => {
 
   const tabPosition = {
     '/profile/info': 0,
+    '/profile/info#': 0,
     '/profile/certificates': 1,
+    '/profile/certificates#': 1,
   };
   const currentPathCleaned = cleanQueryStrings(asPath);
 
@@ -125,8 +127,7 @@ const Profile = () => {
                 es: formatRelative(new Date(createdAt), new Date(), { locale: es }),
                 en: formatRelative(new Date(createdAt), new Date()),
               };
-
-              const certfToken = l.preview_url.split('/').pop();
+              const certfToken = l?.preview_url && l.preview_url?.split('/')?.pop();
 
               return (
                 <Box key={index} display="flex" flexDirection={{ base: 'column', sm: 'row' }} justifyContent="space-between" alignItems="center" gridGap="26px" border="1px solid" borderColor={commonBorderColor} p="23px 28px" borderRadius="18px">
@@ -143,9 +144,11 @@ const Profile = () => {
                       </Text>
                     </Box>
                   </Box>
-                  <Link variant="buttonDefault" textTransform="uppercase" href={`https://certificate.4geeks.com/${certfToken}`} target="_blank" rel="noopener noreferrer" fontSize="13px">
-                    {t('view-certificate')}
-                  </Link>
+                  <Tooltip placement="top" isDisabled={certfToken !== null} label={t('certificate-preview-not-available')}>
+                    <Link variant="buttonDefault" disabled={!certfToken} textTransform="uppercase" href={certfToken ? `https://certificate.4geeks.com/${certfToken}` : '#'} target={certfToken ? '_blank' : '_self'} rel="noopener noreferrer" fontSize="13px">
+                      {t('view-certificate')}
+                    </Link>
+                  </Tooltip>
                 </Box>
               );
             })}

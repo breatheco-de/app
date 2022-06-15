@@ -12,11 +12,13 @@ const SimpleTable = ({
   videoAvailable,
   liveDemoAvailable,
   technologies,
+  href,
 }) => {
   const { t } = useTranslation('exercises');
-  const verifyIfNull = (value) => value !== null && value;
+  const verifyIfNotNull = (value) => value !== null && value;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
+
   return (
     <Flex flexDirection="column" width="100%">
       <Flex
@@ -30,9 +32,20 @@ const SimpleTable = ({
         <Text size="l" color={commonTextColor}>
           {t('common:difficulty')}
         </Text>
-        <Text size="l" color={commonTextColor} textTransform="capitalize">
-          {verifyIfNull(difficulty) ? difficulty : t('common:not-available')}
-        </Text>
+        {verifyIfNotNull(difficulty) ? (
+          <Link
+            href={`${href}?difficulty=${difficulty}`}
+            color="blue.default"
+            fontSize="15px"
+            textTransform="capitalize"
+          >
+            {verifyIfNotNull(difficulty) ? difficulty : t('common:not-available')}
+          </Link>
+        ) : (
+          <Text size="l" color={commonTextColor} textTransform="capitalize">
+            {t('common:not-available')}
+          </Text>
+        )}
       </Flex>
       <Flex
         width="100%"
@@ -141,6 +154,8 @@ const SimpleTable = ({
           {t('common:technologies')}
         </Text>
         <TagCapsule
+          isLink
+          href={href}
           variant="rounded"
           tags={technologies}
           marginY="8px"
@@ -163,6 +178,7 @@ SimpleTable.propTypes = {
   videoAvailable: PropTypes.string,
   liveDemoAvailable: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   technologies: PropTypes.arrayOf(PropTypes.string),
+  href: PropTypes.string.isRequired,
 };
 
 SimpleTable.defaultProps = {

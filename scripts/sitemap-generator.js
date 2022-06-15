@@ -65,6 +65,7 @@ const privateRoutes = [
   '!src/pages/**/[cohortSlug]/[lesson]/[lessonSlug]/*{.js,.jsx}',
   '!src/pages/profile/*{.js,.jsx}',
   '!src/pages/choose-program/*{.js,.jsx}',
+  '!src/pages/example',
 ];
 
 async function generateSitemap() {
@@ -81,11 +82,10 @@ async function generateSitemap() {
   ).map((l) => (withDifficulty
     ? `/${conector}/${l.difficulty.toLowerCase()}/${l.slug}`
     : `/${conector}/${l.slug}`));
-    // return `/${conector}/${l.slug}`;
 
   const readRoute = generateSlugByLang(readPages, 'read');
   const lessonsRoute = generateSlugByLang(lessonsPages, 'lesson');
-  const exercisesRoute = generateSlugByLang(exercisesPages, 'interactive-exercises');
+  const exercisesRoute = generateSlugByLang(exercisesPages, 'interactive-exercise');
   const projectsCodingRoute = generateSlugByLang(projectsPages, 'interactive-coding-tutorial', true);
   // const projectsRoute = generateSlugByLang(projectsPages, 'project'); // non-canonical
   const howTosRoute = generateSlugByLang(howTosPages, 'how-to');

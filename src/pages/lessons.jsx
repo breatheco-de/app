@@ -14,33 +14,34 @@ import useFilter from '../common/store/actions/filterAction';
 import Search from '../js_modules/projects/Search';
 
 export const getStaticProps = async ({ locale, locales }) => {
-  const t = await getT(locale, 'projects');
+  const t = await getT(locale, 'lesson');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const currentLang = locale === 'en' ? 'us' : 'es';
-  const projects = []; // filtered projects after removing repeated
-  let arrProjects = []; // incoming projects
+  const lessons = []; // filtered lessons after removing repeated
+  let arrProjects = []; // incoming lessons
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`)
-    .then((res) => res.json())
-    .catch((err) => console.error(err));
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson`);
+  const data = await resp.json();
+  // .then((res) => res.json())
+  // .catch((err) => console.error(err));
 
-  arrProjects = Object.values(resp);
-  if (resp.status >= 200 && resp.status < 400) {
-    console.log(`Original projects: ${arrProjects}`);
+  arrProjects = Object.values(data);
+  if (resp.status !== undefined && resp.status >= 200 && resp.status < 400) {
+    console.log(`SUCCESS: ${arrProjects.length} Lessons fetched for /lessons`);
   } else {
-    console.error(`Error fetching projects with ${resp.status}`);
+    console.error(`Error ${resp.status}: fetching Lessons list for /lessons`);
   }
 
   let technologyTags = [];
   let difficulties = [];
 
   for (let i = 0; i < arrProjects.length; i += 1) {
-    // skip repeated projects
-    if (projects.find((p) => arrProjects[i].slug === p.slug)) {
+    // skip repeated lessons
+    if (lessons.find((p) => arrProjects[i].slug === p.slug)) {
       continue;
     }
-    projects.push(arrProjects[i]);
+    lessons.push(arrProjects[i]);
 
     if (typeof arrProjects[i].technology === 'string') technologyTags.push(arrProjects[i].technology);
     if (Array.isArray(arrProjects[i].technologies)) {
@@ -62,7 +63,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
   // Verify if difficulty exist in expected position, else fill void array with 'nullString'
   const verifyDifficultyExists = (difficultiesArray, difficulty) => {
-    if (difficultiesArray.some((el) => el === difficulty)) {
+    if (difficultiesArray.some((el) => el?.toLowerCase() === difficulty)) {
       return difficulty;
     }
     return 'nullString';
@@ -75,8 +76,8 @@ export const getStaticProps = async ({ locale, locales }) => {
   });
 
   const ogUrl = {
-    en: '/projects',
-    us: '/projects',
+    en: '/lessons',
+    us: '/lessons',
   };
 
   return {
@@ -88,13 +89,13 @@ export const getStaticProps = async ({ locale, locales }) => {
         keywords,
         locales,
         locale,
-        url: ogUrl.en || `/${locale}/projects`,
-        pathConnector: '/projects',
+        url: ogUrl.en || `/${locale}/lessons`,
+        pathConnector: '/lessons',
         card: 'default',
       },
 
       fallback: false,
-      projects: projects.filter((project) => project.lang === currentLang).map(
+      lessons: lessons.filter((project) => project.lang === currentLang).map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() }),
       ),
       technologyTags,
@@ -103,10 +104,11 @@ export const getStaticProps = async ({ locale, locales }) => {
   };
 };
 
-const Projects = ({ projects, technologyTags, difficulties }) => {
-  const { t } = useTranslation('projects');
+const Projects = ({ lessons, technologyTags, difficulties }) => {
+  const { t } = useTranslation('lesson');
   const { filteredBy, setProjectFilters } = useFilter();
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
+  const iconColor = useColorModeValue('#FFF', '#283340');
   const currentFilters = technologies.length
     + (difficulty === undefined || difficulty.length === 0 ? 0 : 1)
     + videoTutorials;
@@ -115,7 +117,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-      <TitleContent title={t('title')} mobile />
+      <TitleContent title={t('title')} icon="book" mobile color={iconColor} />
       <Flex
         justifyContent="space-between"
         flex="1"
@@ -125,7 +127,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.900')}
       >
-        <TitleContent title={t('title')} mobile={false} />
+        <TitleContent title={t('title')} icon="book" color={iconColor} mobile={false} />
 
         <Search placeholder={t('search')} />
 
@@ -144,7 +146,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         >
           <Icon icon="setting" width="20px" height="20px" style={{ minWidth: '20px' }} />
           <Text textTransform="uppercase" pl="10px">
-            {currentFilters >= 2 ? t('filters') : t('filter')}
+            {currentFilters >= 2 ? t('common:filters') : t('common:filter')}
           </Text>
           {currentFilters >= 1 && (
             <Text
@@ -186,10 +188,10 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         </Text>
 
         <ProjectList
-          projects={projects}
+          projects={lessons}
+          withoutImage
           contextFilter={filteredBy.projectsOptions}
-          projectPath="interactive-coding-tutorial"
-          pathWithDifficulty
+          projectPath="lesson"
         />
       </Box>
     </Box>
@@ -198,7 +200,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
 
 Projects.propTypes = {
   technologyTags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  projects: PropTypes.arrayOf(PropTypes.object).isRequired,
+  lessons: PropTypes.arrayOf(PropTypes.object).isRequired,
   difficulties: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 

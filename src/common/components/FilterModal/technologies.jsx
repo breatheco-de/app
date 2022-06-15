@@ -6,6 +6,7 @@ import Text from '../Text';
 
 // eslint-disable-next-line react/prop-types
 const TechnologiesSection = ({
+  t,
   title,
   show,
   commonBorderColor,
@@ -33,8 +34,9 @@ const TechnologiesSection = ({
           {technologyTags.map((technology) => {
             const checkbox = getCheckboxProps({
               value: technology,
-              checked:
-              checkedTechnologies.length === 0 ? false : checkedTechnologies.includes(technology),
+              checked: checkedTechnologies.length === 0
+                ? false
+                : checkedTechnologies.includes(technology),
               isChecked: false,
             });
             return (
@@ -65,7 +67,7 @@ const TechnologiesSection = ({
           fontSize="14px"
           onClick={handleToggle}
         >
-          {`Show ${show ? 'Less' : 'More'}`}
+          {show ? t('common:show-less') : t('common:show-more')}
         </Box>
       </Flex>
       )}
@@ -74,6 +76,7 @@ const TechnologiesSection = ({
 };
 
 TechnologiesSection.propTypes = {
+  t: PropTypes.func,
   title: PropTypes.string,
   show: PropTypes.bool.isRequired,
   commonBorderColor: PropTypes.string.isRequired,
@@ -85,6 +88,7 @@ TechnologiesSection.propTypes = {
 };
 
 TechnologiesSection.defaultProps = {
+  t: () => {},
   title: 'TECHNOLOGIES',
 };
 
