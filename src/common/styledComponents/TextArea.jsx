@@ -1,20 +1,33 @@
-import React from "react";
+/* eslint-disable no-else-return */
+import React from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
-const SmartTextArea = ({...props}) => {
-    const length = props.value && typeof(props.value) == "string" ? props.value.length : 0;
-    return (
-        <StyledTextArea>
-            <div className="smart-text-area">
-                <textarea maxLength={props.maxLength} {...props} />
-                <span className={`count ${props.maxLength <= (length + 1) ? "text-danger" : props.maxLength < (length + 40) ? "text-warning" : "text-black"}`}>
-                    {props.maxLength < (length + 40) && "Remaining: "} {props.maxLength - length}
-                </span>
-            </div>
-        </StyledTextArea>
-        
-    );
-}
+const SmartTextArea = ({ value, maxLength, ...props }) => {
+  const length = value && typeof (value) === 'string' ? value.length : 0;
+  const textColor = () => {
+    if (maxLength <= (length + 1)) {
+      return 'text-danger';
+    } else if (maxLength < (length + 40)) {
+      return 'text-warning';
+    } else {
+      return 'text-black';
+    }
+  };
+  return (
+    <StyledTextArea>
+      <div className="smart-text-area">
+        <textarea maxLength={maxLength} {...props} />
+        <span className={`count ${textColor()}`}>
+          {maxLength < (length + 40) && 'Remaining: '}
+          {' '}
+          {maxLength - length}
+        </span>
+      </div>
+    </StyledTextArea>
+
+  );
+};
 
 const StyledTextArea = styled.div`
 width: 100%;
@@ -30,6 +43,10 @@ width: 100%;
     }
     textarea:focus{
         outline: none;
+        box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.4);
+    }
+    textarea:active{
+        box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.4);
     }
     .count{
         position: absolute;
@@ -45,6 +62,16 @@ width: 100%;
         color: #ffc107 ;
     }
 }
-`
+`;
+
+SmartTextArea.defaultProps = {
+  value: null,
+  maxLength: 1000,
+};
+
+SmartTextArea.propTypes = {
+  value: PropTypes.string,
+  maxLength: PropTypes.number,
+};
 
 export default SmartTextArea;
