@@ -9,6 +9,7 @@ import {
   ModalFooter,
   ModalCloseButton,
 } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import styles from '../../../../styles/Home.module.css';
 import Steps from '../../../common/styledComponents/Steps';
 import Question from '../../../common/components/Question';
@@ -18,13 +19,14 @@ import asPrivate from '../../../common/context/PrivateRouteWrapper';
 
 const Survey = () => {
   const router = useRouter();
+  const { t } = useTranslation('survey');
   const { surveyId } = router.query;
   const [questions, setQuestions] = useState(null);
   const [msg, setMsg] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [currentIndex, setcurrentIndex] = useState(0);
-
+  console.log(t('send'));
   useEffect(() => {
     console.log(msg);
 
@@ -102,7 +104,7 @@ const Survey = () => {
               position="relative"
               style={{ textAlign: 'left' }}
             >
-              {currentIndex === questions.length - 1 ? 'Send answer' : 'Next'}
+              {currentIndex === questions.length - 1 ? 'Send answer' : t('next')}
               <Icon
                 style={{ position: 'absolute', left: '95%', top: '10' }}
                 width="25px"
