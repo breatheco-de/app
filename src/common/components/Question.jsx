@@ -3,6 +3,7 @@ import {
   Heading, Container, Button, Flex, Center,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import useTranslation from 'next-translate/useTranslation';
 import TextArea from '../styledComponents/TextArea';
 
 const options = {
@@ -11,6 +12,7 @@ const options = {
 };
 
 const Question = ({ question, onChange }) => {
+  const { t } = useTranslation('survey');
   const [focused, setFocused] = useState(-1);
   useEffect(() => {
     if (parseInt(question.score, 10)) setFocused(question.score - 1);
@@ -51,7 +53,7 @@ const Question = ({ question, onChange }) => {
           name="comments"
           rows="4"
           maxLength="1000"
-          placeholder="Put your thoughts here..."
+          placeholder={t('thoughts')}
           onChange={(e) => onChange({ ...question, comment: e.target.value })}
           value={question.comment}
           required

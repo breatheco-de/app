@@ -2,8 +2,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
+import useTranslation from 'next-translate/useTranslation';
 
 const SmartTextArea = ({ value, maxLength, ...props }) => {
+  const { t } = useTranslation('survey');
   const length = value && typeof (value) === 'string' ? value.length : 0;
   const textColor = () => {
     if (maxLength <= (length + 1)) {
@@ -19,7 +21,7 @@ const SmartTextArea = ({ value, maxLength, ...props }) => {
       <div className="smart-text-area">
         <textarea maxLength={maxLength} {...props} />
         <span className={`count ${textColor()}`}>
-          {maxLength < (length + 40) && 'Remaining: '}
+          {maxLength < (length + 40) && `${t('common:remaining')}:`}
           {' '}
           {maxLength - length}
         </span>

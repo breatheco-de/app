@@ -26,21 +26,30 @@ const Survey = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [currentIndex, setcurrentIndex] = useState(0);
-  console.log(t('send'));
-  useEffect(() => {
+
+  useEffect(async () => {
     console.log(msg);
 
     if (surveyId) {
-      bc.feedback().getSurvey(surveyId)
-        .then(({ data }) => {
-          console.log(data);
-          setQuestions(data.map((q) => ({ message: q.title, ...q })));
-          setMsg(null);
-        })
-        .catch((error) => {
-          setMsg({ text: error.message || error, type: 'danger' });
-          setQuestions([]);
-        });
+      try {
+        const { data } = await bc.feedback().getSurvey(surveyId);
+        console.log(data);
+        setQuestions(data.map((q) => ({ message: q.title, ...q })));
+        setMsg(null);
+      } catch (error) {
+        setMsg({ text: error.message || error, type: 'danger' });
+        setQuestions([]);
+      }
+      // bc.feedback().getSurvey(surveyId)
+      //   .then(({ data }) => {
+      //     console.log(data);
+      //     setQuestions(data.map((q) => ({ message: q.title, ...q })));
+      //     setMsg(null);
+      //   })
+      //   .catch((error) => {
+      //     setMsg({ text: error.message || error, type: 'danger' });
+      //     setQuestions([]);
+      //   });
     }
     // else if (parseInt(answer_id)) getQuestion(answer_id)
     //   .then(q => {
@@ -54,8 +63,6 @@ const Survey = () => {
     // }
   }, []);
 
-  // eslint-disable-next-line max-len
-  // const lang = Array.isArray(questions) && typeof (questions[currentIndex]) !== 'undefined' ? questions[currentIndex].lang.toLowerCase() : 'en';
   return (
     <div className={styles.container}>
       <main className={styles.main}>
@@ -104,7 +111,7 @@ const Survey = () => {
               position="relative"
               style={{ textAlign: 'left' }}
             >
-              {currentIndex === questions.length - 1 ? 'Send answer' : t('next')}
+              {currentIndex === questions.length - 1 ? t('send') : t('next')}
               <Icon
                 style={{ position: 'absolute', left: '95%', top: '10' }}
                 width="25px"
