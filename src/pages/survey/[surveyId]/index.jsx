@@ -7,7 +7,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalFooter,
-  // ModalBody,
   ModalCloseButton,
   Flex,
 } from '@chakra-ui/react';
@@ -16,6 +15,7 @@ import useTranslation from 'next-translate/useTranslation';
 import styles from '../../../../styles/Home.module.css';
 import Steps from '../../../common/styledComponents/Steps';
 import Question from '../../../common/components/Question';
+import AlertMessage from '../../../common/components/AlertMessage';
 import bc from '../../../common/services/breathecode';
 import asPrivate from '../../../common/context/PrivateRouteWrapper';
 
@@ -26,22 +26,44 @@ const Survey = () => {
   const [questions, setQuestions] = useState(null);
   const [msg, setMsg] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  // eslint-disable-next-line no-unused-vars
   const [currentIndex, setcurrentIndex] = useState(0);
 
   useEffect(async () => {
-    console.log(msg);
-
     if (surveyId) {
-      try {
-        const { data } = await bc.feedback().getSurvey(surveyId);
-        console.log(data);
-        setQuestions(data.map((q) => ({ message: q.title, ...q })));
-        setMsg(null);
-      } catch (error) {
-        setMsg({ text: error.message || error, type: 'danger' });
-        setQuestions([]);
-      }
+      await bc.feedback().getSurvey(surveyId)
+        .then(({ data }) => {
+          console.log(data);
+          setQuestions(data.map((q) => ({ message: q.title, ...q })));
+          setMsg(null);
+        })
+        .catch((error) => {
+          console.log('error_surver:', error);
+          setMsg({ text: error.message || error, type: 'error' });
+          setQuestions([]);
+        });
+      // try {
+      //   const result = await bc.feedback().getSurvey(surveyId).catch((err) => {
+      //     console.log(err);
+      //     console.log('INSIDE THE CATCH');
+      //   });
+      //   if (result && result.data) {
+      //     const { data } = result;
+      //     console.log(data);
+      //     if (data) {
+      //       setQuestions(data.map((q) => ({ message: q.title, ...q })));
+      //       setMsg(null);
+      //     }
+      //   }
+      //   // console.log(data);
+      //   // if (data) {
+      //   //   setQuestions(data.map((q) => ({ message: q.title, ...q })));
+      //   //   setMsg(null);
+      //   // }
+      // } catch (error) {
+      //   console.log(error);
+      //   setMsg({ text: error.message || error, type: 'error' });
+      //   setQuestions([]);
+      // }
       // bc.feedback().getSurvey(surveyId)
       //   .then(({ data }) => {
       //     console.log(data);
@@ -49,26 +71,17 @@ const Survey = () => {
       //     setMsg(null);
       //   })
       //   .catch((error) => {
-      //     setMsg({ text: error.message || error, type: 'danger' });
+      //     console.log(error);
+      //     setMsg({ text: error.message || error, type: 'error' });
       //     setQuestions([]);
       //   });
     }
-    // else if (parseInt(answer_id)) getQuestion(answer_id)
-    //   .then(q => {
-    //     setQuestions([({ message: q.title, ...q })])
-    //     setMsg(null)
-    //   })
-    //   .catch(error => {
-    //     setMsg({ text: error.message || error, type: "danger" })
-    //     setQuestions([])
-    //   })
-    // }
   }, []);
 
   const confirmSend = () => {
     const q = questions[currentIndex];
     if (q.score === null || !parseInt(q.score, 10) || q.score > 10 || q.score < 0) {
-      setMsg({ type: 'danger', text: 'Please choose one score between 1 and 10' });
+      setMsg({ type: 'error', text: 'Please choose one score between 1 and 10' });
     } else {
       bc.feedback().sendVote({
         score: q.score, comment: q.comment, entity_id: q.id,
@@ -78,11 +91,23 @@ const Survey = () => {
           if (questions.length - 1 > currentIndex) {
             setcurrentIndex(currentIndex + 1);
             setQuestions((qest) => qest.map((_q) => (_q.id === q.id ? q : _q)));
-          } else setMsg({ text: '😁 Thank you for your feedback!', type: 'success' });
+          } else setMsg({ text: t('thanks'), type: 'success' });
         })
-        .catch((error) => setMsg({ text: error.message || error, type: 'danger' }));
+        .catch((error) => setMsg({ text: error.message || error, type: 'error' }));
     }
   };
+
+  if (msg && msg.type === 'success') {
+    return (
+      <AlertMessage
+        type={msg.type}
+        style={{
+          margin: '20px 0 18px 0',
+        }}
+        message={t('thanks')}
+      />
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -93,6 +118,16 @@ const Survey = () => {
             steps={!Array.isArray(questions) ? [] : questions.map((q, i) => ({ label: i }))}
           />
         </div>
+        {msg
+          && (
+            <AlertMessage
+              type={msg.type}
+              style={{
+                margin: '20px 0 18px 0',
+              }}
+              message={msg.text}
+            />
+          )}
         {Array.isArray(questions) && questions.length > 0
           && (
             <Question
@@ -109,9 +144,6 @@ const Survey = () => {
           <ModalContent>
             <ModalHeader>{t('confirm')}</ModalHeader>
             <ModalCloseButton />
-            {/* <ModalBody>
-              {t('confirm')}
-            </ModalBody> */}
             <ModalFooter>
               <Button colorScheme="blue" mr={3} onClick={confirmSend}>
                 {t('yes')}
@@ -127,15 +159,15 @@ const Survey = () => {
             <Flex width="80%" justifyContent="space-between">
               {currentIndex > 0
                 && (
-                <Button
-                  colorScheme="gray"
-                  justifyContent="flex-start"
-                  onClick={() => setcurrentIndex(currentIndex - 1)}
-                  width="49%"
-                  leftIcon={<ArrowBackIcon />}
-                >
-                  {t('previous')}
-                </Button>
+                  <Button
+                    colorScheme="gray"
+                    justifyContent="flex-start"
+                    onClick={() => setcurrentIndex(currentIndex - 1)}
+                    width="49%"
+                    leftIcon={<ArrowBackIcon />}
+                  >
+                    {t('previous')}
+                  </Button>
                 )}
               <Button
                 width={currentIndex > 0 ? '49%' : '100%'}
@@ -146,7 +178,7 @@ const Survey = () => {
                 textAlign="left"
                 position="relative"
                 style={{ textAlign: 'left' }}
-                // rightIcon={<ArrowForwardIcon />}
+              // rightIcon={<ArrowForwardIcon />}
               >
                 {currentIndex === questions.length - 1 ? t('send') : t('next')}
                 <ArrowForwardIcon />
@@ -158,5 +190,4 @@ const Survey = () => {
   );
 };
 
-// export default Survey;
 export default asPrivate(Survey);

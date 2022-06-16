@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  Heading, Container, Button, Flex, Center, Select
+  Heading, Container, Button, Flex, Center, Select,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -19,10 +19,10 @@ const Question = ({ question, onChange }) => {
   }, question.score);
 
   const getLabel = (number) => {
-    if(number === 1){
-      return `${number} - ${question.lowest}`
-    } else if (number === options.mobile.length) {
-      return `${number} - ${question.highest}`
+    if (number === 1) {
+      return `${number} - ${question.lowest}`;
+    } if (number === options.mobile.length) {
+      return `${number} - ${question.highest}`;
     }
     return number;
   };
@@ -34,14 +34,12 @@ const Question = ({ question, onChange }) => {
       </Container>
       {/* Responsive score */}
       <Container display={['block', 'block', 'none', 'none']} marginTop="40px" maxW="none" padding="0">
-        <Select 
-          placeholder="Select option" 
+        <Select
+          placeholder="Select option"
           defaultValue={question.score}
           onChange={(e) => onChange({ ...question, score: parseInt(e.target.value, 10) })}
         >
-          {options.mobile.map(number => 
-            <option value={number}>{getLabel(number)}</option>)
-          }
+          {options.mobile.map((number) => <option value={number}>{getLabel(number)}</option>)}
         </Select>
       </Container>
       <Flex display={['none', 'none', 'flex', 'flex']} justify="center" marginTop="40px" maxW="none">
