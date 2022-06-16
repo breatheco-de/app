@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import {
-  Heading, Container, Button, Flex, Center,
+  Heading, Container, Button, Flex, Center, Select
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import TextArea from '../styledComponents/TextArea';
+import TextArea from './TextArea';
 
 const options = {
   desktop: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -17,32 +17,54 @@ const Question = ({ question, onChange }) => {
   useEffect(() => {
     if (parseInt(question.score, 10)) setFocused(question.score - 1);
   }, question.score);
+
+  const getLabel = (number) => {
+    if(number === 1){
+      return `${number} - ${question.lowest}`
+    } else if (number === options.mobile.length) {
+      return `${number} - ${question.highest}`
+    }
+    return number;
+  };
+
   return (
     <Container marginTop="40px" width="80%" maxW="none" padding="0">
       <Container centerContent maxW="none">
-        <Heading textAlign="center">{question.message}</Heading>
+        <Heading fontSize={['20px', '30px', '30px', '30px']} textAlign="center">{question.message}</Heading>
       </Container>
-      <Flex justify="center" marginTop="40px" maxW="none">
+      {/* Responsive score */}
+      <Container display={['block', 'block', 'none', 'none']} marginTop="40px" maxW="none" padding="0">
+        <Select 
+          placeholder="Select option" 
+          defaultValue={question.score}
+          onChange={(e) => onChange({ ...question, score: parseInt(e.target.value, 10) })}
+        >
+          {options.mobile.map(number => 
+            <option value={number}>{getLabel(number)}</option>)
+          }
+        </Select>
+      </Container>
+      <Flex display={['none', 'none', 'flex', 'flex']} justify="center" marginTop="40px" maxW="none">
         <Center>
           {question.lowest}
         </Center>
-        <div className="" style={{ maxWidth: '570px', margin: '0 20px' }}>
+        <Flex maxW="570px" margin="0 20px" padding="0">
           {
-                        options.desktop.map((number, index) => (
-                          <Button
-                            marginLeft="5px"
-                            marginRight="5px"
-                            colorScheme={focused >= index ? 'messenger' : 'gray'}
-                            onClick={() => {
-                              setFocused(number - 1);
-                              onChange({ ...question, score: number });
-                            }}
-                          >
-                            {number}
-                          </Button>
-                        ))
-                    }
-        </div>
+            options.desktop.map((number, index) => (
+              <Button
+                marginLeft="5px"
+                marginRight="5px"
+                colorScheme={focused >= index ? 'messenger' : 'gray'}
+                onClick={() => {
+                  setFocused(number - 1);
+                  onChange({ ...question, score: number });
+                }}
+              >
+                {number}
+              </Button>
+            ))
+          }
+        </Flex>
         <Center>
           {question.highest}
         </Center>
@@ -64,7 +86,7 @@ const Question = ({ question, onChange }) => {
 };
 
 Question.defaultProps = {
-  onChange: () => {},
+  onChange: () => { },
 };
 
 Question.propTypes = {
