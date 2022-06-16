@@ -31,7 +31,12 @@ const Survey = () => {
   useEffect(async () => {
     if (surveyId) {
       await bc.feedback().getSurvey(surveyId)
-        .then(({ data }) => {
+        .then((res) => {
+          if (res === undefined) {
+            setMsg({ text: 'expired', type: 'error' });
+            return;
+          }
+          const { data } = res;
           console.log(data);
           setQuestions(data.map((q) => ({ message: q.title, ...q })));
           setMsg(null);
@@ -41,47 +46,14 @@ const Survey = () => {
           setMsg({ text: error.message || error, type: 'error' });
           setQuestions([]);
         });
-      // try {
-      //   const result = await bc.feedback().getSurvey(surveyId).catch((err) => {
-      //     console.log(err);
-      //     console.log('INSIDE THE CATCH');
-      //   });
-      //   if (result && result.data) {
-      //     const { data } = result;
-      //     console.log(data);
-      //     if (data) {
-      //       setQuestions(data.map((q) => ({ message: q.title, ...q })));
-      //       setMsg(null);
-      //     }
-      //   }
-      //   // console.log(data);
-      //   // if (data) {
-      //   //   setQuestions(data.map((q) => ({ message: q.title, ...q })));
-      //   //   setMsg(null);
-      //   // }
-      // } catch (error) {
-      //   console.log(error);
-      //   setMsg({ text: error.message || error, type: 'error' });
-      //   setQuestions([]);
-      // }
-      // bc.feedback().getSurvey(surveyId)
-      //   .then(({ data }) => {
-      //     console.log(data);
-      //     setQuestions(data.map((q) => ({ message: q.title, ...q })));
-      //     setMsg(null);
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //     setMsg({ text: error.message || error, type: 'error' });
-      //     setQuestions([]);
-      //   });
     }
   }, []);
 
   const confirmSend = () => {
     const q = questions[currentIndex];
     if (q.score === null || !parseInt(q.score, 10) || q.score > 10 || q.score < 0) {
-      setMsg({ type: 'error', text: 'Please choose one score between 1 and 10' });
+      setMsg({ type: 'error', text: 'valdiation' });
+      setModalIsOpen(false);
     } else {
       bc.feedback().sendVote({
         score: q.score, comment: q.comment, entity_id: q.id,
@@ -125,7 +97,8 @@ const Survey = () => {
               style={{
                 margin: '20px 0 18px 0',
               }}
-              message={msg.text}
+              // message={msg.text}
+              message={t(msg.text)}
             />
           )}
         {Array.isArray(questions) && questions.length > 0
