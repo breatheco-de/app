@@ -17,6 +17,7 @@ import Heading from '../../../common/components/Heading';
 import Text from '../../../common/components/Text';
 import Icon from '../../../common/components/Icon';
 import TagCapsule from '../../../common/components/TagCapsule';
+import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`);
@@ -87,6 +88,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 export default function HowToSlug({ data, markdown }) {
   const { t } = useTranslation('how-to');
   const { title, author, preview } = data;
+  const { translations } = data;
   const defaultImage = '/static/images/coding-notebook.png';
   const getImage = preview || defaultImage;
   const router = useRouter();
@@ -112,6 +114,16 @@ export default function HowToSlug({ data, markdown }) {
           });
       });
   }, [language]);
+
+  useEffect(() => {
+    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${data.slug || slug}`;
+    const pagePath = 'how-to';
+
+    publicRedirectByAsset({
+      router, translations, userPathName, pagePath,
+    });
+  }, [router, router.locale, translations]);
 
   return (
     <>
