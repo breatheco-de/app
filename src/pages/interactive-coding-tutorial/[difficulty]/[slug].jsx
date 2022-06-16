@@ -155,27 +155,30 @@ const ProjectSlug = ({ project, markdown }) => {
 
   useEffect(() => {
     const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-    const userPathName = `${pathWithoutSlug}/${project.slug || slug}`;
-    const pagePath = 'interactive-coding-tutorial';
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${project.slug || slug}`;
+    const pagePath = `interactive-coding-tutorial/${project.difficulty}`;
+
+    console.log('userPathName:::', userPathName);
+    console.log(`/es/${pagePath}/${translations.us}`);
 
     if (translations?.es !== undefined && (
       userPathName === `/default/${pagePath}/${translations.es}`
       || userPathName === `/es/${pagePath}/${translations.us}`)
     ) {
-      console.log(`Pagina: redirección de ${userPathName} → ${`/${pagePath}/${translations.us}`}`);
+      console.log(`Pagina: redirección de ${userPathName} → ${`/es/${pagePath}/${translations.es}`}`);
       return router.push(`/es/${pagePath}/${translations.es}`);
     }
 
     if (
       translations?.us !== undefined && (
         userPathName === `/default/${pagePath}/${translations.us}`
-        || userPathName === `/${pagePath}/${translations.es}`)
+        || userPathName === `/en/${pagePath}/${translations.es}`)
     ) {
       console.log(`Page: redirecting from ${userPathName} → ${`/${pagePath}/${translations.us}`}`);
-      return router.push(`/${pagePath}/${translations.us}`);
+      return router.push(`/en/${pagePath}/${translations.us}`);
     }
-    return console.log('nothing to do');
-  }, [router, translations]);
+    return '';
+  }, [router, router.locale, translations]);
 
   useEffect(() => {
     if (typeof markdown !== 'string') {
@@ -332,7 +335,7 @@ const ProjectSlug = ({ project, markdown }) => {
 ProjectSlug.propTypes = {
   project: PropTypes.objectOf(PropTypes.any).isRequired,
   markdown: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-  translations: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
+  // translations: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
 };
 
 TableInfo.propTypes = {
