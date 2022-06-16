@@ -23,7 +23,13 @@
           "label": "Lecturas y videos",
           "asPath": "/read-and-watch",
           "description": "Tiene sentido comenzar a aprender leyendo y viendo videos sobre los fundamentos y cómo funcionan las cosas.",
-          "subMenu": []
+          "subMenu": [],
+          "subMenuContent": [
+            {
+              "href": "/lessons",
+              "label": "Buscar en lecciones"
+            }
+          ]
         },
         {
           "label": "Prácticas Interactivas",

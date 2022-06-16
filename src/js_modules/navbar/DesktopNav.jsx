@@ -18,11 +18,14 @@ const DesktopNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
     if (publicItem.asPath === '/read' && readSyllabus.length > 0) {
       publicItem.subMenu.map((l) => {
         if (l.asPath === '/read-and-watch') {
-          // eslint-disable-next-line no-param-reassign
-          l.subMenu = readSyllabus?.map((el) => ({
+          const courseFetched = readSyllabus?.map((el) => ({
             label: el.name,
             href: `/read/${el.slug}`,
           }));
+          const menus = [...courseFetched, ...l.subMenuContent];
+
+          // eslint-disable-next-line no-param-reassign
+          l.subMenu = menus;
         }
         return l;
       });

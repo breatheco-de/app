@@ -15,6 +15,7 @@ import SimpleTable from '../../../js_modules/projects/SimpleTable';
 import MarkDownParser from '../../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
+import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
@@ -97,7 +98,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         difficulty,
       },
       markdown,
-      // translations: result.translations,
+      // translations: result?.translations || false,
     },
   };
 };
@@ -130,13 +131,14 @@ const TableInfo = ({ t, project, commonTextColor }) => (
 const ProjectSlug = ({ project, markdown }) => {
   const { t } = useTranslation('projects');
   const markdownData = getMarkDownContent(markdown);
+  const { translations } = project;
   // const defaultImage = '/static/images/code1.png';
   // const getImage = project.preview !== '' ? project.preview : defaultImage;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
   const router = useRouter();
-  const { slug } = router.query;
+  const { slug, difficulty } = router.query;
   const language = router.locale === 'en' ? 'us' : 'es';
   const currentLanguageLabel = router.language === 'en' ? t('common:english') : t('common:spanish');
 
@@ -151,6 +153,16 @@ const ProjectSlug = ({ project, markdown }) => {
       isClosable: true,
     });
   };
+
+  useEffect(() => {
+    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${project.slug || slug}`;
+    const pagePath = `interactive-coding-tutorial/${difficulty}`;
+
+    publicRedirectByAsset({
+      router, translations, userPathName, pagePath,
+    });
+  }, [router, router.locale, translations]);
 
   useEffect(() => {
     if (typeof markdown !== 'string') {
@@ -307,6 +319,7 @@ const ProjectSlug = ({ project, markdown }) => {
 ProjectSlug.propTypes = {
   project: PropTypes.objectOf(PropTypes.any).isRequired,
   markdown: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  // translations: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
 };
 
 TableInfo.propTypes = {
