@@ -96,7 +96,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
       fallback: false,
       projects: projects.filter((project) => project.lang === currentLang).map(
-        (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() }),
+        (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
       technologyTags,
       difficulties: difficultiesSorted,

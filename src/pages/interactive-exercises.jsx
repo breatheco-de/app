@@ -54,7 +54,8 @@ export const getStaticProps = async ({ locale, locales }) => {
 
     if (typeof arrExercises[i].difficulty === 'string') {
       if (arrExercises[i].difficulty === 'BEGINNER') arrExercises[i].difficulty = 'beginner';
-      difficulties.push(arrExercises[i].difficulty);
+      if (arrExercises[i].difficulty.toUpperCase() === 'BEGGINER') arrExercises[i].difficulty = 'beginner';
+      difficulties.push(arrExercises[i].difficulty.toLowerCase());
     }
   }
 
@@ -63,7 +64,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
   // Verify if difficulty exist in expected position, else fill void array with 'nullString'
   const verifyDifficultyExists = (difficultiesArray, difficulty) => {
-    if (difficultiesArray.some((el) => el === difficulty)) {
+    if (difficultiesArray.some((el) => el?.toLowerCase() === difficulty)) {
       return difficulty;
     }
     return 'nullString';
@@ -94,7 +95,9 @@ export const getStaticProps = async ({ locale, locales }) => {
         card: 'large',
       },
       fallback: false,
-      exercises: exercises.filter((project) => project.lang === currentLang),
+      exercises: exercises.filter((project) => project.lang === currentLang).map(
+        (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
+      ),
       technologyTags,
       difficulties: difficultiesSorted,
     },
@@ -190,7 +193,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
         <ProjectList
           projects={exercises}
           contextFilter={filteredBy.exercisesOptions}
-          projectPath="interactive-exercises"
+          projectPath="interactive-exercise"
         />
       </Box>
     </Box>

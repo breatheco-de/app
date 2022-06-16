@@ -64,6 +64,26 @@ module.exports = withBundleAnalyzer(nextTranslate({
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        source: '/interactive-coding-tutorial/INTERMEDIATE/:slug',
+        destination: '/interactive-coding-tutorial/intermediate/:slug',
+      },
+      {
+        source: '/interactive-coding-tutorial/BEGINNER/:slug',
+        destination: '/interactive-coding-tutorial/beginner/:slug',
+      },
+      {
+        source: '/interactive-coding-tutorial/EASY/:slug',
+        destination: '/interactive-coding-tutorial/easy/:slug',
+      },
+      {
+        source: '/interactive-coding-tutorial/HARD/:slug',
+        destination: '/interactive-coding-tutorial/hard/:slug',
+      },
+    ];
+  },
   swcMinify: false,
   reactStrictMode: true,
   trailingSlash: false,

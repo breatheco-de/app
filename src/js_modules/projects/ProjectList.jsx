@@ -22,9 +22,9 @@ const ProjectList = ({
   const router = useRouter();
   const defaultImage = exampleImage || '/static/images/code1.png';
   const { query } = router;
-  const techTagsQuery = (query.techs && decodeURI(query.techs?.toLocaleLowerCase())?.split(',')) || false;
+  const techTagsQuery = (query.techs && decodeURI(query.techs?.toLowerCase())?.split(',')) || false;
   const withVideoQuery = query.withVideo || false;
-  const difficultyQuery = query.difficulty || false;
+  const difficultyQuery = query.difficulty?.toLowerCase() || false;
 
   // const bgBlur = '/static/images/codeBlur.png';
 
@@ -34,7 +34,8 @@ const ProjectList = ({
 
   const contains = (project, selectedTechs) => {
     // search with title and slug
-    const projectTitle = project.title.toLowerCase() || unSlugify(project.slug);
+    const projectDifficulty = project.difficulty?.toLowerCase();
+    const projectTitle = project.title?.toLowerCase() || unSlugify(project.slug);
     if (
       typeof videoTutorials === 'boolean'
       && (withVideoQuery || videoTutorials === true)
@@ -42,8 +43,8 @@ const ProjectList = ({
     ) return false;
     if (typeof query.search === 'string' && !projectTitle.includes(query.search)) return false;
     if ((typeof difficulty === 'string'
-      && project.difficulty !== difficulty)
-      || (difficultyQuery && project.difficulty !== difficultyQuery)) return false;
+      && projectDifficulty !== difficulty)
+      || (difficultyQuery && projectDifficulty !== difficultyQuery)) return false;
     // Match checked technologies
     const res = (techTagsQuery || selectedTechs.length > 0) ? (
       (techTagsQuery || selectedTechs).some((tech) => project.technologies.includes(tech))

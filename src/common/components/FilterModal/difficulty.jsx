@@ -22,7 +22,7 @@ const DifficultySection = ({
     return false;
   };
 
-  const defaultDifficulties = ['beginnerfake', 'easy', 'intermediate', 'hard'];
+  const defaultDifficulties = ['beginner', 'easy', 'intermediate', 'hard'];
   const difficultyExists = defaultDifficulties.some((l) => difficulties.includes(l));
 
   const getBackgroundColor = (difficultyIsMatch, isSelected) => {
@@ -54,7 +54,7 @@ const DifficultySection = ({
         {/* Conector */}
         <Box position="absolute" top="auto" height="3px" width="100%" background="gray.default" />
         {/* Circle of difficulties  */}
-        {['beginnerfake', 'easy', 'intermediate', 'hard'].map((difficulty, index) => {
+        {defaultDifficulties.map((difficulty, index) => {
           const isSelected = verifyDifficultyisAvailable(index, difficultyPosition, difficulty, difficulties);
           const difficultyIsMatch = difficulties[index] === difficulty || false;
           return (

@@ -64,7 +64,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
   // Verify if difficulty exist in expected position, else fill void array with 'nullString'
   const verifyDifficultyExists = (difficultiesArray, difficulty) => {
-    if (difficultiesArray.some((el) => el === difficulty)) {
+    if (difficultiesArray.some((el) => el.toLowerCase() === difficulty)) {
       return difficulty;
     }
     return 'nullString';
@@ -97,7 +97,9 @@ export const getStaticProps = async ({ locale, locales }) => {
 
       // page props
       fallback: false,
-      data: data.filter((l) => l.lang === currentLang[locale]),
+      data: data.filter((l) => l.lang === currentLang[locale]).map(
+        (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
+      ),
       technologyTags,
       difficulties: difficultiesSorted,
     },
