@@ -16,6 +16,7 @@ import Link from '../../common/components/NextChakraLink';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import TagCapsule from '../../common/components/TagCapsule';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
+import { publicRedirectByAsset } from '../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
   let lessons = [];
@@ -114,6 +115,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   // getMarkDownContent(markdown);
   const markdownData = getMarkDownContent(markdown);
+  const { translations } = lesson;
 
   const router = useRouter();
   const toast = useToast();
@@ -141,6 +143,16 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
         });
     }
   }, [language]);
+
+  useEffect(() => {
+    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${lesson.slug || slug}`;
+    const pagePath = 'lesson';
+
+    publicRedirectByAsset({
+      router, translations, userPathName, pagePath,
+    });
+  }, [router, router.locale, translations]);
 
   const EventIfNotFound = () => {
     toast({

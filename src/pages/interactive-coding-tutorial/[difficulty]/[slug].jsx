@@ -15,6 +15,7 @@ import SimpleTable from '../../../js_modules/projects/SimpleTable';
 import MarkDownParser from '../../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
+import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
@@ -137,7 +138,7 @@ const ProjectSlug = ({ project, markdown }) => {
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
   const router = useRouter();
-  const { slug } = router.query;
+  const { slug, difficulty } = router.query;
   const language = router.locale === 'en' ? 'us' : 'es';
   const currentLanguageLabel = router.language === 'en' ? t('common:english') : t('common:spanish');
 
@@ -156,28 +157,11 @@ const ProjectSlug = ({ project, markdown }) => {
   useEffect(() => {
     const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
     const userPathName = `/${router.locale}${pathWithoutSlug}/${project.slug || slug}`;
-    const pagePath = `interactive-coding-tutorial/${project.difficulty}`;
+    const pagePath = `interactive-coding-tutorial/${difficulty}`;
 
-    console.log('userPathName:::', userPathName);
-    console.log(`/es/${pagePath}/${translations.us}`);
-
-    if (translations?.es !== undefined && (
-      userPathName === `/default/${pagePath}/${translations.es}`
-      || userPathName === `/es/${pagePath}/${translations.us}`)
-    ) {
-      console.log(`Pagina: redirección de ${userPathName} → ${`/es/${pagePath}/${translations.es}`}`);
-      return router.push(`/es/${pagePath}/${translations.es}`);
-    }
-
-    if (
-      translations?.us !== undefined && (
-        userPathName === `/default/${pagePath}/${translations.us}`
-        || userPathName === `/en/${pagePath}/${translations.es}`)
-    ) {
-      console.log(`Page: redirecting from ${userPathName} → ${`/${pagePath}/${translations.us}`}`);
-      return router.push(`/en/${pagePath}/${translations.us}`);
-    }
-    return '';
+    publicRedirectByAsset({
+      router, translations, userPathName, pagePath,
+    });
   }, [router, router.locale, translations]);
 
   useEffect(() => {

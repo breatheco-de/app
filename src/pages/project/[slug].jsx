@@ -15,6 +15,7 @@ import SimpleTable from '../../js_modules/projects/SimpleTable';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../common/components/Skeleton';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
+import { publicRedirectByAsset } from '../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
@@ -143,6 +144,7 @@ const ProjectSlug = ({ project, markdown }) => {
   const markdownData = getMarkDownContent(markdown);
   // const defaultImage = '/static/images/code1.png';
   // const getImage = project.preview !== '' ? project.preview : defaultImage;
+  const { translations } = project;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
@@ -187,6 +189,17 @@ const ProjectSlug = ({ project, markdown }) => {
           });
       });
   }, [language]);
+
+  useEffect(() => {
+    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${project.slug || slug}`;
+    const pagePath = 'project';
+
+    publicRedirectByAsset({
+      router, translations, userPathName, pagePath,
+    });
+  }, [router, router.locale, translations]);
+
   // const onImageNotFound = (event) => {
   //   event.target.setAttribute('src', defaultImage);
   //   event.target.setAttribute('srcset', `${defaultImage} 1x`);

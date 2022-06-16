@@ -54,7 +54,30 @@ const redirectHandler = async (req, conditionalResult, NextResponse, redirectVal
   return '';
 };
 
+const publicRedirectByAsset = async ({
+  router, translations, userPathName, pagePath,
+}) => {
+  if (translations?.es !== undefined && (
+    userPathName === `/default/${pagePath}/${translations.es}`
+    || userPathName === `/es/${pagePath}/${translations.us}`)
+  ) {
+    console.log(`Page: redirecting from ${userPathName} → ${`/es/${pagePath}/${translations.es}`}`);
+    return router.push(`/es/${pagePath}/${translations.es}`);
+  }
+
+  if (
+    translations?.us !== undefined && (
+      userPathName === `/default/${pagePath}/${translations.us}`
+      || userPathName === `/en/${pagePath}/${translations.es}`)
+  ) {
+    console.log(`Page: redirecting from ${userPathName} → ${`/${pagePath}/${translations.us}`}`);
+    return router.push(`/en/${pagePath}/${translations.us}`);
+  }
+  return '';
+};
+
 export {
   redirectHandler,
   redirectByAsset,
+  publicRedirectByAsset,
 };

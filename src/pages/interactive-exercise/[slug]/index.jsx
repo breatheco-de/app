@@ -29,6 +29,7 @@ import { MDSkeleton } from '../../../common/components/Skeleton';
 import validationSchema from '../../../common/components/Forms/validationSchemas';
 import { processFormEntry } from '../../../common/components/Forms/actions';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
+import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`);
@@ -260,6 +261,7 @@ const TabletWithForm = ({
 
 const Exercise = ({ exercise, markdown }) => {
   const { t } = useTranslation(['exercises']);
+  const { translations } = exercise;
   const markdownData = getMarkDownContent(markdown);
   const [notFound, setNotFound] = useState(false);
   const router = useRouter();
@@ -273,6 +275,16 @@ const Exercise = ({ exercise, markdown }) => {
   const { colorMode } = useColorMode();
 
   const toast = useToast();
+
+  useEffect(() => {
+    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${exercise.slug || slug}`;
+    const pagePath = 'interactive-exercise';
+
+    publicRedirectByAsset({
+      router, translations, userPathName, pagePath,
+    });
+  }, [router, router.locale, translations]);
 
   // const MDecoded = exercise.readme
   //   && typeof exercise.readme === 'string' ? atob(exercise.readme) : null;
