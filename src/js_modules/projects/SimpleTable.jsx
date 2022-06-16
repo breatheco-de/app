@@ -18,6 +18,7 @@ const SimpleTable = ({
   const verifyIfNotNull = (value) => value !== null && value;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
+
   return (
     <Flex flexDirection="column" width="100%">
       <Flex

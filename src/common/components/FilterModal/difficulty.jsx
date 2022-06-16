@@ -22,13 +22,16 @@ const DifficultySection = ({
     return false;
   };
 
+  const defaultDifficulties = ['beginnerfake', 'easy', 'intermediate', 'hard'];
+  const difficultyExists = defaultDifficulties.some((l) => difficulties.includes(l));
+
   const getBackgroundColor = (difficultyIsMatch, isSelected) => {
     if (difficultyIsMatch && isSelected) return 'blue.default';
     if (difficultyIsMatch) return useColorModeValue('gray.default', 'gray.400');
     return useColorModeValue('gray.350', 'gray.default');
   };
 
-  return (
+  return difficultyExists && (
     <Flex
       flexDirection="column"
       borderBottom={1}

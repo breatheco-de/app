@@ -1,8 +1,8 @@
 import { memo } from 'react';
 import { Box, Stack, useColorMode } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Text from './Text';
+import Link from './NextChakraLink';
 
 const TagCapsule = ({
   tags,
@@ -17,10 +17,10 @@ const TagCapsule = ({
   containerStyle,
   fontWeight,
   isLink,
-  herf,
+  href,
+  borderRadius,
 }) => {
   const { colorMode } = useColorMode();
-  const router = useRouter();
 
   return tags.length !== 0 && (
     <Stack
@@ -37,17 +37,47 @@ const TagCapsule = ({
       borderRadius="15px"
       gridGap={gap}
     >
-      {tags.map((tag, i) => (
-        <Box
-          as="li"
+      {tags.map((tag, i) => (isLink ? (
+        <Link
+          href={`${href}?techs=${tag}`}
           display="flex"
           cursor={isLink ? 'pointer' : 'default'}
-          onClick={() => isLink && router.push(`${herf}?techs=${tag}`)}
           bg={variant === 'rounded' ? background : 'none'}
           direction="row"
           padding={variant === 'rounded' ? '0 10px' : '0'}
           style={style}
-          rounded={variant === 'rounded' ? '15px' : 'none'}
+          rounded={variant === 'rounded' ? borderRadius : 'none'}
+          key={tag.name || `${tag}-${i}`}
+          lineHeight="22px"
+          color={colorMode === 'light' ? 'black' : 'black'}
+        >
+          <Text
+            margin="0"
+            alignSelf="center"
+            letterSpacing="0.05em"
+            textAlign="center"
+            size={fontSize}
+            fontWeight={fontWeight}
+            color="black"
+            textTransform="uppercase"
+          >
+            {tag.name || tag}
+          </Text>
+          {variant === 'slash' && i < tags.length - 1 && (
+            <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
+              {separator}
+            </Box>
+          )}
+        </Link>
+      ) : (
+        <Box
+          as="li"
+          display="flex"
+          bg={variant === 'rounded' ? background : 'none'}
+          direction="row"
+          padding={variant === 'rounded' ? '0 10px' : '0'}
+          style={style}
+          rounded={variant === 'rounded' ? borderRadius : 'none'}
           key={tag.name || `${tag}-${i}`}
           lineHeight="22px"
           color={colorMode === 'light' ? 'black' : 'black'}
@@ -70,6 +100,7 @@ const TagCapsule = ({
             </Box>
           )}
         </Box>
+      )
       ))}
     </Stack>
   );
@@ -88,7 +119,8 @@ TagCapsule.propTypes = {
   style: PropTypes.shape({}),
   fontWeight: PropTypes.string,
   isLink: PropTypes.bool,
-  herf: PropTypes.string,
+  href: PropTypes.string,
+  borderRadius: PropTypes.string,
 };
 TagCapsule.defaultProps = {
   separator: '/',
@@ -104,7 +136,8 @@ TagCapsule.defaultProps = {
     margin: '0',
   },
   isLink: false,
-  herf: '#',
+  href: '#',
+  borderRadius: '15px',
 };
 
 export default memo(TagCapsule);

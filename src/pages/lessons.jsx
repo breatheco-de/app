@@ -76,8 +76,8 @@ export const getStaticProps = async ({ locale, locales }) => {
   });
 
   const ogUrl = {
-    en: '/lesson',
-    us: '/lesson',
+    en: '/lessons',
+    us: '/lessons',
   };
 
   return {
@@ -89,8 +89,8 @@ export const getStaticProps = async ({ locale, locales }) => {
         keywords,
         locales,
         locale,
-        url: ogUrl.en || `/${locale}/lesson`,
-        pathConnector: '/lesson',
+        url: ogUrl.en || `/${locale}/lessons`,
+        pathConnector: '/lessons',
         card: 'default',
       },
 
@@ -189,6 +189,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
 
         <ProjectList
           projects={lessons}
+          withoutImage
           contextFilter={filteredBy.projectsOptions}
           projectPath="lesson"
         />

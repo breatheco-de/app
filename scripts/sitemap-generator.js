@@ -65,6 +65,7 @@ const privateRoutes = [
   '!src/pages/**/[cohortSlug]/[lesson]/[lessonSlug]/*{.js,.jsx}',
   '!src/pages/profile/*{.js,.jsx}',
   '!src/pages/choose-program/*{.js,.jsx}',
+  '!src/pages/example',
 ];
 
 async function generateSitemap() {

@@ -301,7 +301,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                       padding="1rem 0rem"
                     >
                       <NextChakraLink
-                        href="/profile"
+                        href="/profile/info"
                         fontWeight="400"
                         color={fontColor}
                         fontSize="14px"

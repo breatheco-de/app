@@ -245,7 +245,7 @@ const TabletWithForm = ({
       </Box>
       <Box px="22px" pb="30px" pt="24px">
         <SimpleTable
-          href="/interactive-exercise"
+          href="/interactive-exercises"
           difficulty={exercise.difficulty !== null && exercise.difficulty.toLowerCase()}
           repository={exercise.url}
           duration={exercise.duration}
@@ -321,7 +321,7 @@ const Exercise = ({ exercise, markdown }) => {
       margin={{ base: '4% 4% 0 4%', lg: '4% 10% 0 10%' }}
     >
       <Link
-        href="/interactive-exercise"
+        href="/interactive-exercises"
         color={useColorModeValue('blue.default', 'blue.300')}
         display="inline-block"
         letterSpacing="0.05em"
