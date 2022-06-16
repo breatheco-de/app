@@ -276,12 +276,12 @@ const Exercise = ({ exercise, markdown }) => {
 
   const toast = useToast();
 
-  useEffect(() => {
+  useEffect(async () => {
     const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
     const userPathName = `/${router.locale}${pathWithoutSlug}/${exercise.slug || slug}`;
     const pagePath = 'interactive-exercise';
 
-    publicRedirectByAsset({
+    await publicRedirectByAsset({
       router, translations, userPathName, pagePath,
     });
   }, [router, router.locale, translations]);

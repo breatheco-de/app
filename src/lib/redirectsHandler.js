@@ -57,21 +57,23 @@ const redirectHandler = async (req, conditionalResult, NextResponse, redirectVal
 const publicRedirectByAsset = async ({
   router, translations, userPathName, pagePath,
 }) => {
+  const translationUs = translations.us || translations.en;
+
   if (translations?.es !== undefined && (
     userPathName === `/default/${pagePath}/${translations.es}`
-    || userPathName === `/es/${pagePath}/${translations.us}`)
+    || userPathName === `/es/${pagePath}/${translationUs}`)
   ) {
     console.log(`Page: redirecting from ${userPathName} → ${`/es/${pagePath}/${translations.es}`}`);
     return router.push(`/es/${pagePath}/${translations.es}`);
   }
 
   if (
-    translations?.us !== undefined && (
-      userPathName === `/default/${pagePath}/${translations.us}`
+    translationUs !== undefined && (
+      userPathName === `/default/${pagePath}/${translationUs}`
       || userPathName === `/en/${pagePath}/${translations.es}`)
   ) {
-    console.log(`Page: redirecting from ${userPathName} → ${`/${pagePath}/${translations.us}`}`);
-    return router.push(`/en/${pagePath}/${translations.us}`);
+    console.log(`Page: redirecting from ${userPathName} → ${`/${pagePath}/${translationUs}`}`);
+    return router.push(`/en/${pagePath}/${translationUs}`);
   }
   return '';
 };
