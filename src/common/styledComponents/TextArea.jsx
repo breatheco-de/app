@@ -3,28 +3,40 @@ import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import { Textarea, Text, useColorModeValue } from '@chakra-ui/react';
+// import CustomTheme from 'styles/theme';
 
 const SmartTextArea = ({ value, maxLength, ...props }) => {
   const { t } = useTranslation('survey');
   const length = value && typeof (value) === 'string' ? value.length : 0;
   const textColor = () => {
     if (maxLength <= (length + 1)) {
-      return 'text-danger';
+      // return 'text-danger';
+      return '#dc3545';
     } else if (maxLength < (length + 40)) {
-      return 'text-warning';
-    } else {
-      return 'text-black';
+      // return 'text-warning';
+      return '#ffc107';
     }
+    return '';
+    // else {
+    //   // return 'text-black';
+    //   return 'black';
+    // }
   };
   return (
     <StyledTextArea>
       <div className="smart-text-area">
-        <textarea maxLength={maxLength} {...props} />
-        <span className={`count ${textColor()}`}>
+        <Textarea maxLength={maxLength} value={value} resize="none" padding="15px" {...props} />
+        {/* <span className={`count ${textColor()}`}>
           {maxLength < (length + 40) && `${t('common:remaining')}:`}
           {' '}
           {maxLength - length}
-        </span>
+        </span> */}
+        <Text color={textColor()} zIndex={10} fontSize="xs" position="absolute" bottom="2px" right="20px" background={useColorModeValue('#FFF', '#17202A')}>
+          {maxLength < (length + 40) && `${t('common:remaining')}:`}
+          {' '}
+          {maxLength - length}
+        </Text>
       </div>
     </StyledTextArea>
 
@@ -33,29 +45,16 @@ const SmartTextArea = ({ value, maxLength, ...props }) => {
 
 const StyledTextArea = styled.div`
 width: 100%;
+background: inherit;
 .smart-text-area{
     position: relative;
-    textarea{
-        border-style: none;
-        box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.4);
-        border-radius:10px;
-        padding: 15px;
-        resize: none;
-        width: -webkit-fill-available;
-    }
-    textarea:focus{
-        outline: none;
-        box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.4);
-    }
-    textarea:active{
-        box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.4);
-    }
+    background: inherit;
     .count{
         position: absolute;
-        bottom: 10px;
+        bottom: 2px;
         right: 20px;
         font-size: 80%;
-        background: white;
+        background: inherit;
     }
     .text-danger{
         color: #dc3545;

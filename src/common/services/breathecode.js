@@ -77,6 +77,7 @@ const breathecode = {
     const url = `${host}/feedback`;
     return {
       getSurvey: (id) => axios.get(`${url}/user/me/survey/${id}/questions`),
+      sendVote: (arg) => axios.put(`${url}/user/me/answer/${arg.entity_id}`, { ...arg }),
     };
   },
   mentorship: (query = {}) => {

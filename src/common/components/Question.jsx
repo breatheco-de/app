@@ -47,7 +47,7 @@ const Question = ({ question, onChange }) => {
           {question.highest}
         </Center>
       </Flex>
-      <Container centerContent marginTop="20px" maxW="none" padding="0">
+      <Container centerContent marginTop="20px" marginBottom="10px" maxW="none" padding="0" background="inherit">
         <TextArea
           id="comments"
           name="comments"
