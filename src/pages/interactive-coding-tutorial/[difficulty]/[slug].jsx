@@ -97,7 +97,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         difficulty,
       },
       markdown,
-      // translations: result.translations,
+      translations: result?.translations || false,
     },
   };
 };
@@ -127,7 +127,7 @@ const TableInfo = ({ t, project, commonTextColor }) => (
   </>
 );
 
-const ProjectSlug = ({ project, markdown }) => {
+const ProjectSlug = ({ project, markdown, translations }) => {
   const { t } = useTranslation('projects');
   const markdownData = getMarkDownContent(markdown);
   // const defaultImage = '/static/images/code1.png';
@@ -151,6 +151,19 @@ const ProjectSlug = ({ project, markdown }) => {
       isClosable: true,
     });
   };
+
+  useEffect(() => {
+    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+    const userPathName = `${pathWithoutSlug}/${project.slug || slug}`;
+    const pagePath = 'interactive-coding-tutorial';
+
+    if (translations?.es !== undefined && (
+      userPathName === `/default/${pagePath}/${translations.es}`
+      || userPathName === `/es/${pagePath}/${translations.us}`)
+    ) {
+      router.push(`/es/${pagePath}/${translations.es}`);
+    }
+  }, [router, translations]);
 
   useEffect(() => {
     if (typeof markdown !== 'string') {
@@ -307,6 +320,7 @@ const ProjectSlug = ({ project, markdown }) => {
 ProjectSlug.propTypes = {
   project: PropTypes.objectOf(PropTypes.any).isRequired,
   markdown: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  translations: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
 };
 
 TableInfo.propTypes = {
