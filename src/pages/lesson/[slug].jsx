@@ -19,25 +19,15 @@ import getMarkDownContent from '../../common/components/MarkDownParser/markdown'
 import { publicRedirectByAsset } from '../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
-  let lessons = [];
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson`);
   const data = await resp.json();
 
-  lessons = Object.values(data);
-  if (resp.status >= 200 && resp.status < 400) {
-    data.asset_type = 'lesson';
-  } else {
-    console.error(`Error ${data.status}: fetching lessons`);
-  }
-  const paths = lessons.flatMap((res) => locales.map((locale) => {
-    const localeToUsEs = locale === 'en' ? 'us' : 'es';
-    return ({
-      params: {
-        slug: res.translations[localeToUsEs] || res.slug,
-      },
-      locale,
-    });
-  }));
+  const paths = data.flatMap((res) => locales.map((locale) => ({
+    params: {
+      slug: res.slug,
+    },
+    locale,
+  })));
 
   return {
     fallback: false,
@@ -125,6 +115,16 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
   const { slug } = router.query;
   const currentLanguageLabel = languageLabel[language] || language;
 
+  useEffect(async () => {
+    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${lesson.slug || slug}`;
+    const pagePath = 'lesson';
+
+    await publicRedirectByAsset({
+      router, translations, userPathName, pagePath,
+    });
+  }, [router, router.locale, translations]);
+
   useEffect(() => {
     if (ipynbHtmlUrl === '') {
       axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=lesson`)
@@ -143,16 +143,6 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
         });
     }
   }, [language]);
-
-  useEffect(() => {
-    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-    const userPathName = `/${router.locale}${pathWithoutSlug}/${lesson.slug || slug}`;
-    const pagePath = 'lesson';
-
-    publicRedirectByAsset({
-      router, translations, userPathName, pagePath,
-    });
-  }, [router, router.locale, translations]);
 
   const EventIfNotFound = () => {
     toast({
