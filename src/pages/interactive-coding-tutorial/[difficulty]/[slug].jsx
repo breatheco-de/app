@@ -161,8 +161,19 @@ const ProjectSlug = ({ project, markdown, translations }) => {
       userPathName === `/default/${pagePath}/${translations.es}`
       || userPathName === `/es/${pagePath}/${translations.us}`)
     ) {
-      router.push(`/es/${pagePath}/${translations.es}`);
+      console.log(`Pagina: redirección de ${userPathName} → ${`/${pagePath}/${translations.us}`}`);
+      return router.push(`/es/${pagePath}/${translations.es}`);
     }
+
+    if (
+      translations?.us !== undefined && (
+        userPathName === `/default/${pagePath}/${translations.us}`
+        || userPathName === `/${pagePath}/${translations.es}`)
+    ) {
+      console.log(`Page: redirecting from ${userPathName} → ${`/${pagePath}/${translations.us}`}`);
+      return router.push(`/${pagePath}/${translations.us}`);
+    }
+    return console.log('nothing to do');
   }, [router, translations]);
 
   useEffect(() => {
