@@ -97,7 +97,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         difficulty,
       },
       markdown,
-      translations: result?.translations || false,
+      // translations: result?.translations || false,
     },
   };
 };
@@ -127,9 +127,10 @@ const TableInfo = ({ t, project, commonTextColor }) => (
   </>
 );
 
-const ProjectSlug = ({ project, markdown, translations }) => {
+const ProjectSlug = ({ project, markdown }) => {
   const { t } = useTranslation('projects');
   const markdownData = getMarkDownContent(markdown);
+  const { translations } = project;
   // const defaultImage = '/static/images/code1.png';
   // const getImage = project.preview !== '' ? project.preview : defaultImage;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
