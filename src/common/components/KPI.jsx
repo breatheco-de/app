@@ -6,6 +6,7 @@ import Icon from './Icon';
 const KPI = ({
   label, icon, value, unit, max,
   variation, variationColor, style,
+  changeWithColor,
 }) => {
   // const variationIcon = {
   //   up: 'chevron-up-circle',
@@ -35,19 +36,27 @@ const KPI = ({
   const kpiColor = kpiColors[verifiVariation()];
   const defaultColor = kpiColors.default;
   const kpiPosition = kpiPositions[verifiVariation()] || kpiPositions.default;
-  const isPositive = value >= (max * 0.8); // value is greather than 80% of max
+  const isPositiveColor = max !== null
+    && value >= (max * 0.8)
+    && kpiColors.up; // value is greather than 80% of max
+
+  const getNumberColor = () => {
+    if (max === null) return changeWithColor ? kpiColor : '#000000';
+    return isPositiveColor || kpiColor;
+  };
+  const numberColors = getNumberColor();
 
   return (
-    <Stack style={style} display="flex" flexDirection="column" padding="17px 22px" border="2px solid" borderColor="blue.200" borderRadius="10px">
+    <Stack style={style} minWidth="220px" display="flex" flexDirection="column" padding="17px 22px" border="2px solid" borderColor="blue.200" borderRadius="10px">
       <Heading as="label" color="gray.dark" textTransform="capitalize" fontSize="14px">
         {label}
       </Heading>
       <Box display="flex" alignItems="center" style={{ margin: '6px 0 0 0' }} gridGap="10px">
         {icon && (
-          <Icon icon={icon} color={variationColor || (kpiColor || '#3A3A3A')} width="26px" height="26px" />
+          <Icon icon={icon} color={variationColor || (numberColors || kpiColor || '#3A3A3A')} width="26px" height="26px" />
         )}
         <Box display="flex" gridGap="6px">
-          <Heading as="p" size="m" color={isPositive || kpiColor || '#000000'}>
+          <Heading as="p" size="m" color={numberColors}>
             {unit}
             {value}
             {/* {value.toString().length >= 3
@@ -68,7 +77,9 @@ const KPI = ({
         {variation && (
           <Box display="flex" flexDirection="row" alignItems="center">
             {kpiPosition && (
-              <Icon icon="arrowDown" style={{ transition: 'all 0.3s ease-in-out', transform: kpiPosition }} color={kpiColor || defaultColor} width="20px" height="20px" />
+              <Box transition="all 0.3s ease-in-out" transform={kpiPosition}>
+                <Icon icon="arrowDown" color={kpiColor || defaultColor} width="20px" height="20px" />
+              </Box>
             )}
             <Text as="label" color={kpiColor || defaultColor} fontSize="15px" fontWeight="700">
               {`${variation.replace('+', '').replace('-', '')}%`}
@@ -89,6 +100,7 @@ KPI.propTypes = {
   variation: PropTypes.string,
   variationColor: PropTypes.string,
   style: PropTypes.objectOf(PropTypes.any),
+  changeWithColor: PropTypes.bool,
   // variationUnit: PropTypes.string.isRequired,
 };
 
@@ -100,6 +112,7 @@ KPI.defaultProps = {
   variation: '',
   variationColor: '',
   style: {},
+  changeWithColor: false,
   // variationUnit: '',
 };
 
