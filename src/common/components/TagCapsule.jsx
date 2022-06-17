@@ -1,6 +1,8 @@
+import { memo } from 'react';
 import { Box, Stack, useColorMode } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Text from './Text';
+import Link from './NextChakraLink';
 
 const TagCapsule = ({
   tags,
@@ -14,6 +16,9 @@ const TagCapsule = ({
   fontSize,
   containerStyle,
   fontWeight,
+  isLink,
+  href,
+  borderRadius,
 }) => {
   const { colorMode } = useColorMode();
 
@@ -32,7 +37,39 @@ const TagCapsule = ({
       borderRadius="15px"
       gridGap={gap}
     >
-      {tags.map((tag, i) => (
+      {tags.map((tag, i) => (isLink ? (
+        <Link
+          href={`${href}?techs=${tag}`}
+          display="flex"
+          cursor={isLink ? 'pointer' : 'default'}
+          bg={variant === 'rounded' ? background : 'none'}
+          direction="row"
+          padding={variant === 'rounded' ? '0 10px' : '0'}
+          style={style}
+          rounded={variant === 'rounded' ? borderRadius : 'none'}
+          key={tag.name || `${tag}-${i}`}
+          lineHeight="22px"
+          color={colorMode === 'light' ? 'black' : 'black'}
+        >
+          <Text
+            margin="0"
+            alignSelf="center"
+            letterSpacing="0.05em"
+            textAlign="center"
+            size={fontSize}
+            fontWeight={fontWeight}
+            color="black"
+            textTransform="uppercase"
+          >
+            {tag.name || tag}
+          </Text>
+          {variant === 'slash' && i < tags.length - 1 && (
+            <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
+              {separator}
+            </Box>
+          )}
+        </Link>
+      ) : (
         <Box
           as="li"
           display="flex"
@@ -40,7 +77,7 @@ const TagCapsule = ({
           direction="row"
           padding={variant === 'rounded' ? '0 10px' : '0'}
           style={style}
-          rounded={variant === 'rounded' ? '15px' : 'none'}
+          rounded={variant === 'rounded' ? borderRadius : 'none'}
           key={tag.name || `${tag}-${i}`}
           lineHeight="22px"
           color={colorMode === 'light' ? 'black' : 'black'}
@@ -63,6 +100,7 @@ const TagCapsule = ({
             </Box>
           )}
         </Box>
+      )
       ))}
     </Stack>
   );
@@ -80,6 +118,9 @@ TagCapsule.propTypes = {
   gap: PropTypes.string,
   style: PropTypes.shape({}),
   fontWeight: PropTypes.string,
+  isLink: PropTypes.bool,
+  href: PropTypes.string,
+  borderRadius: PropTypes.string,
 };
 TagCapsule.defaultProps = {
   separator: '/',
@@ -94,6 +135,9 @@ TagCapsule.defaultProps = {
   style: {
     margin: '0',
   },
+  isLink: false,
+  href: '#',
+  borderRadius: '15px',
 };
 
-export default TagCapsule;
+export default memo(TagCapsule);

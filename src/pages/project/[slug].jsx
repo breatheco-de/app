@@ -15,18 +15,20 @@ import SimpleTable from '../../js_modules/projects/SimpleTable';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../common/components/Skeleton';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
+import { publicRedirectByAsset } from '../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
-  const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`)
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`);
+  const data = await response.json();
+  // .then((res) => res.json())
+  // .catch((err) => console.log(err));
 
   projects = Object.values(data);
-  if (data.status >= 200 && data.status < 400) {
-    console.log(`Original projects: ${projects}`);
+  if (response.status >= 200 && response.status <= 400) {
+    console.log(`SUCCESS: ${projects.length} Projects fetched for /project/[slug]`);
   } else {
-    console.error(`Error fetching projects with ${data.status}`);
+    console.error(`Error ${response.status}: fetching Projects list for /project/[slug]`);
   }
 
   for (let i = 0; i < projects.length; i += 1) {
@@ -63,6 +65,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const {
     title, translations, description, preview,
   } = result;
+  const difficulty = result.difficulty?.toLowerCase();
+  const defaultSlug = translations.us || translations.en;
 
   const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
     .then((res) => res.text())
@@ -77,8 +81,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   }
 
   const ogUrl = {
-    en: `/project/${slug}`,
-    us: `/project/${slug}`,
+    en: `/interactive-coding-tutorial/${difficulty}/${defaultSlug}`,
+    us: `/interactive-coding-tutorial/${difficulty}/${defaultSlug}`,
   };
 
   return {
@@ -88,7 +92,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         title,
         image: preview || staticImage,
         description: description || '',
-        url: ogUrl.en || `/${locale}/project/${slug}`,
+        url: ogUrl.en,
+        canonicalPathConector: `/interactive-coding-tutorial/${difficulty}`,
         pathConnector: '/project',
         translations,
         keywords: result?.seo_keywords || '',
@@ -99,27 +104,30 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         locale,
       },
       fallback: false,
-      project: result,
+      project: {
+        ...result,
+        difficulty,
+      },
       markdown,
       // translations: result.translations,
     },
   };
 };
 
-const TableInfo = ({ project, commonTextColor }) => (
+const TableInfo = ({ t, project, commonTextColor }) => (
   <>
     <Box d="flex" alignItems="baseline" justifyContent="center">
       <Heading size="l" textAlign="center" justify="center" mt="0px" mb="0px">
-        Goal
+        {t('table.title')}
       </Heading>
     </Box>
 
     <Box d="flex" alignItems="baseline" justifyContent="center" flexDirection="column">
       <Text size="md" color={commonTextColor} textAlign="center" my="10px" px="0px">
-        4Geeks Coding Projects tutorials and exercises for people learning
-        to code or improving their coding skills
+        {t('table.description')}
       </Text>
       <SimpleTable
+        href="/interactive-coding-tutorial"
         difficulty={project.difficulty}
         repository={project.url}
         duration={project.duration}
@@ -132,10 +140,11 @@ const TableInfo = ({ project, commonTextColor }) => (
 );
 
 const ProjectSlug = ({ project, markdown }) => {
-  const { t } = useTranslation(['projects']);
+  const { t } = useTranslation('projects');
   const markdownData = getMarkDownContent(markdown);
   // const defaultImage = '/static/images/code1.png';
   // const getImage = project.preview !== '' ? project.preview : defaultImage;
+  const { translations } = project;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
@@ -180,6 +189,17 @@ const ProjectSlug = ({ project, markdown }) => {
           });
       });
   }, [language]);
+
+  useEffect(() => {
+    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${project.slug || slug}`;
+    const pagePath = 'project';
+
+    publicRedirectByAsset({
+      router, translations, userPathName, pagePath,
+    });
+  }, [router, router.locale, translations]);
+
   // const onImageNotFound = (event) => {
   //   event.target.setAttribute('src', defaultImage);
   //   event.target.setAttribute('srcset', `${defaultImage} 1x`);
@@ -194,7 +214,7 @@ const ProjectSlug = ({ project, markdown }) => {
       margin={{ base: '2% 4% 0 4%', lg: '2% 10% 0 10%' }}
     >
       <Link
-        href="/projects"
+        href="/interactive-coding-tutorial"
         color={useColorModeValue('blue.default', 'blue.300')}
         display="inline-block"
         letterSpacing="0.05em"
@@ -272,7 +292,7 @@ const ProjectSlug = ({ project, markdown }) => {
               <Icon icon="sideSupport" width="300px" height="70px" />
             </Box>
             <Box px="22px" pb="30px" pt="20px">
-              <TableInfo project={project} commonTextColor={commonTextColor} />
+              <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
             </Box>
           </Box>
 
@@ -314,7 +334,7 @@ const ProjectSlug = ({ project, markdown }) => {
             <Icon icon="sideSupport" width="300px" height="70px" />
           </Box>
           <Box px="22px" pb="30px" pt="20px">
-            <TableInfo project={project} commonTextColor={commonTextColor} />
+            <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
           </Box>
         </Box>
       </Flex>
@@ -330,6 +350,11 @@ ProjectSlug.propTypes = {
 TableInfo.propTypes = {
   project: PropTypes.objectOf(PropTypes.any).isRequired,
   commonTextColor: PropTypes.string.isRequired,
+  t: PropTypes.func,
+};
+
+TableInfo.defaultProps = {
+  t: () => {},
 };
 
 export default ProjectSlug;

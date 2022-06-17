@@ -493,10 +493,6 @@ blockquote > :last-child {
   background: transparent;
 }
 
-.markdown-body.dark pre div {
-  background: #17202A!important;
-}
-
 .highlight {
   font-size: .85em !important;
   line-height: 2.0 !important;

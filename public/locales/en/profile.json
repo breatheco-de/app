@@ -11,13 +11,16 @@
   "update-failed": "Something went wrong updating your profile",
   "connect-github": "Connect with GitHub",
   "save-changes": "Save changes",
+  "certificate-preview-not-available": "Certificate Preview Not Available",
   "tabList": [
     {
       "title": "Basic Profile Info",
+      "value": "info",
       "disabled": false
     },
     {
       "title": "My certificates",
+      "value": "certificates",
       "disabled": false
     }
   ],

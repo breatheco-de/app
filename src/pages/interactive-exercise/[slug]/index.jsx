@@ -29,13 +29,11 @@ import { MDSkeleton } from '../../../common/components/Skeleton';
 import validationSchema from '../../../common/components/Forms/validationSchemas';
 import { processFormEntry } from '../../../common/components/Forms/actions';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
+import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
-  const data = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`,
-  )
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`);
+  const data = await resp.json();
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
@@ -54,20 +52,14 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
   const t = await getT(locale, 'how-to');
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
-  const result = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`)
-    .then((res) => res.json())
-    .catch((err) => ({
-      status: err.response.status,
-    }));
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`);
+  const result = await resp.json();
 
   const {
     title, translations, description, preview,
   } = result;
-  const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
-    .then((res) => res.text())
-    .catch((err) => ({
-      status: err.response.status,
-    }));
+  const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+  const markdown = await markdownResp.text();
 
   // in "lesson.translations" rename "us" key to "en" key if exists
   if (result?.translations && result.translations.us) {
@@ -75,15 +67,15 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     delete result.translations.us;
   }
 
-  if (result.status === 404) {
+  if (resp.status >= 400) {
     return {
       notFound: true,
     };
   }
 
   const ogUrl = {
-    en: `/interactive-exercises${slug}`,
-    us: `/interactive-exercises${slug}`,
+    en: `/interactive-exercise/${slug}`,
+    us: `/interactive-exercise/${slug}`,
   };
 
   return {
@@ -94,8 +86,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         image: preview || staticImage,
         description: description || '',
         translations,
-        pathConnector: '/interactive-exercises',
-        url: ogUrl.en || `/${locale}/interactive-exercises${slug}`,
+        pathConnector: '/interactive-exercise',
+        url: ogUrl.en || `/${locale}/interactive-exercise/${slug}`,
         keywords: result?.seo_keywords || '',
         card: 'large',
         locales,
@@ -254,7 +246,8 @@ const TabletWithForm = ({
       </Box>
       <Box px="22px" pb="30px" pt="24px">
         <SimpleTable
-          difficulty={exercise.difficulty}
+          href="/interactive-exercises"
+          difficulty={exercise.difficulty !== null && exercise.difficulty.toLowerCase()}
           repository={exercise.url}
           duration={exercise.duration}
           videoAvailable={exercise.solution_video_url}
@@ -268,6 +261,7 @@ const TabletWithForm = ({
 
 const Exercise = ({ exercise, markdown }) => {
   const { t } = useTranslation(['exercises']);
+  const { translations } = exercise;
   const markdownData = getMarkDownContent(markdown);
   const [notFound, setNotFound] = useState(false);
   const router = useRouter();
@@ -281,6 +275,16 @@ const Exercise = ({ exercise, markdown }) => {
   const { colorMode } = useColorMode();
 
   const toast = useToast();
+
+  useEffect(async () => {
+    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${exercise.slug || slug}`;
+    const pagePath = 'interactive-exercise';
+
+    await publicRedirectByAsset({
+      router, translations, userPathName, pagePath,
+    });
+  }, [router, router.locale, translations]);
 
   // const MDecoded = exercise.readme
   //   && typeof exercise.readme === 'string' ? atob(exercise.readme) : null;

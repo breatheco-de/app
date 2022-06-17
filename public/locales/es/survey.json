@@ -1,0 +1,16 @@
+{
+    "usefull":"¿Qué tan útil fue esta sesión para ti?",
+    "comments":"Comentarios Adicionales",
+    "confirm":"¿Estás seguro/a?",
+    "valdiation": "Por favor escoja un número entre 1 y 10",
+    "expired": "Esta encuesta ha expirado",
+    "yes":"SI",
+    "no":"NO",
+    "thoughts":"Pon tus comentarios aquí...",
+    "thanks":"😁 ¡Gracias por tu opinión!",
+    "send":"Enviar respuesta",
+    "select": "Selecciona una opción",
+    "score":"Por favor selecciona una puntuación entre 1 y 10",
+    "previous": "Atras",
+    "next": "Siguiente"
+  }

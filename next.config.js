@@ -15,6 +15,76 @@ const nextTranslate = require('next-translate');
 module.exports = withBundleAnalyzer(nextTranslate({
   // rest of config here
   // i18n,
+  async redirects() {
+    return [
+      // {
+      //   source: '/interactive-exercises',
+      //   destination: '/interactive-exercise',
+      //   permanent: true,
+      // },
+      {
+        source: '/interactive-exercises/:slug',
+        destination: '/interactive-exercise/:slug',
+        permanent: true,
+      },
+      {
+        source: '/interactive-exercise',
+        destination: '/interactive-exercises',
+        permanent: true,
+      },
+      {
+        source: '/projects',
+        destination: '/interactive-coding-tutorial',
+        permanent: true,
+      },
+      {
+        source: '/project',
+        destination: '/interactive-coding-tutorial',
+        permanent: true,
+      },
+      {
+        source: '/lesson',
+        destination: '/lessons',
+        permanent: true,
+      },
+      {
+        source: '/lessons/:slug',
+        destination: '/lesson/:slug',
+        permanent: true,
+      },
+      {
+        source: '/interactive-exercise',
+        destination: '/interactive-exercises',
+        permanent: true,
+      },
+      {
+        source: '/interactive-exercises/:slug',
+        destination: '/interactive-exercise/:slug',
+        permanent: true,
+      },
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/interactive-coding-tutorial/INTERMEDIATE/:slug',
+        destination: '/interactive-coding-tutorial/intermediate/:slug',
+      },
+      {
+        source: '/interactive-coding-tutorial/BEGINNER/:slug',
+        destination: '/interactive-coding-tutorial/beginner/:slug',
+      },
+      {
+        source: '/interactive-coding-tutorial/EASY/:slug',
+        destination: '/interactive-coding-tutorial/easy/:slug',
+      },
+      {
+        source: '/interactive-coding-tutorial/HARD/:slug',
+        destination: '/interactive-coding-tutorial/hard/:slug',
+      },
+    ];
+  },
+  swcMinify: false,
   reactStrictMode: true,
   trailingSlash: false,
   webpack: (config, { isServer }) => {

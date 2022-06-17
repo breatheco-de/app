@@ -10,5 +10,9 @@
   "filter": "Filter",
   "filters": "Filters",
   "description": "Practice and develop your coding skills by building real live interactive autograded projects with solutions and video tutorials",
-  "backToProjects": "Back to Projects"
+  "backToProjects": "Back to Projects",
+  "table": {
+    "title": "Goal",
+    "description": "4Geeks Coding Projects tutorials and exercises for people learning to code or improving their coding skills"
+  }
 }

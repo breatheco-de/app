@@ -1,19 +1,7 @@
 import {
-  Box,
-  Flex,
-  IconButton,
-  Avatar,
-  Stack,
-  Collapse,
-  useColorModeValue,
-  useBreakpointValue,
-  useDisclosure,
-  useColorMode,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverArrow,
-  Button,
+  Box, Flex, IconButton, Avatar, Stack, Collapse, useColorModeValue,
+  useBreakpointValue, useDisclosure, useColorMode, Popover, PopoverTrigger,
+  PopoverContent, PopoverArrow, Button,
 } from '@chakra-ui/react';
 import {
   useState, memo, useEffect, Fragment,
@@ -313,7 +301,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                       padding="1rem 0rem"
                     >
                       <NextChakraLink
-                        href="/profile"
+                        href="/profile/info"
                         fontWeight="400"
                         color={fontColor}
                         fontSize="14px"

@@ -11,13 +11,16 @@
   "update-failed": "Algo salió mal al actualizar tu perfil",
   "connect-github": "Conectar con GitHub",
   "save-changes": "Guardar cambios",
+  "certificate-preview-not-available": "Vista previa del certificado no disponible",
   "tabList": [
     {
       "title": "Info básica del perfil",
+      "value": "info",
       "disabled": false
     },
     {
       "title": "Mis certificados",
+      "value": "certificates",
       "disabled": false
     }
   ],

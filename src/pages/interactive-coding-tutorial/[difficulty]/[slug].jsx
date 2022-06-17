@@ -15,18 +15,18 @@ import SimpleTable from '../../../js_modules/projects/SimpleTable';
 import MarkDownParser from '../../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
+import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
-  const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`)
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`);
+  const data = await resp.json();
 
   projects = Object.values(data);
-  if (data.status >= 200 && data.status < 400) {
-    console.log(`Original projects: ${projects}`);
+  if (resp.status >= 200 && resp.status < 400) {
+    console.log(`SUCCESS: ${projects.length} Projects fetched for /interactive-coding-tutorial`);
   } else {
-    console.error(`Error fetching projects with ${data.status}`);
+    console.error(`Error ${resp.status}: fetching Projects list for /interactive-coding-tutorial`);
   }
 
   for (let i = 0; i < projects.length; i += 1) {
@@ -41,7 +41,7 @@ export const getStaticPaths = async ({ locales }) => {
   const paths = projects.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
-      difficulty: res.difficulty,
+      difficulty: res.difficulty?.toLowerCase(),
     },
     locale,
   })));
@@ -55,41 +55,36 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'projects');
   const { slug } = params;
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
-  const result = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
-    .then((res) => res.json())
-    .catch((err) => ({
-      status: err.response.status,
-    }));
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`);
+  const result = await response.json();
 
   const {
     title, description, translations, preview,
   } = result;
-  const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
-    .then((res) => res.text())
-    .catch((err) => ({
-      status: err.response.status,
-    }));
+  const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+  const markdown = await markdownResp.text();
 
-  if (result.status === 404) {
+  if (response.status > 400) {
     return {
       notFound: true,
     };
   }
 
+  const difficulty = result.difficulty.toLowerCase();
   const ogUrl = {
-    en: `/interactive-coding-tutorial/${result.difficulty}/${slug}`,
-    us: `/interactive-coding-tutorial/${result.difficulty}/${slug}`,
+    en: `/interactive-coding-tutorial/${difficulty}/${slug}`,
+    us: `/interactive-coding-tutorial/${difficulty}/${slug}`,
   };
 
   return {
     props: {
       seo: {
         title,
-        url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${result.difficulty}/${slug}`,
+        url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${difficulty}/${slug}`,
         description: description || '',
         image: preview || staticImage,
         translations,
-        pathConnector: `/interactive-coding-tutorial/${result.difficulty}`,
+        pathConnector: `/interactive-coding-tutorial/${difficulty}`,
         type: 'article',
         keywords: result?.seo_keywords || '',
         card: 'large',
@@ -98,29 +93,31 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         publishedTime: result?.created_at || '',
         modifiedTime: result?.updated_at || '',
       },
-      fallback: false,
-      project: result,
+      project: {
+        ...result,
+        difficulty,
+      },
       markdown,
-      // translations: result.translations,
+      // translations: result?.translations || false,
     },
   };
 };
 
-const TableInfo = ({ project, commonTextColor }) => (
+const TableInfo = ({ t, project, commonTextColor }) => (
   <>
     <Box d="flex" alignItems="baseline" justifyContent="center">
       <Heading size="l" textAlign="center" justify="center" mt="0px" mb="0px">
-        Goal
+        {t('table.title')}
       </Heading>
     </Box>
 
     <Box d="flex" alignItems="baseline" justifyContent="center" flexDirection="column">
       <Text size="md" color={commonTextColor} textAlign="center" my="10px" px="0px">
-        4Geeks Coding Projects tutorials and exercises for people learning
-        to code or improving their coding skills
+        {t('table.description')}
       </Text>
       <SimpleTable
-        difficulty={project.difficulty}
+        href="/interactive-coding-tutorial"
+        difficulty={project.difficulty !== null && project.difficulty.toLowerCase()}
         repository={project.url}
         duration={project.duration}
         videoAvailable={project.solution_video_url}
@@ -132,15 +129,16 @@ const TableInfo = ({ project, commonTextColor }) => (
 );
 
 const ProjectSlug = ({ project, markdown }) => {
-  const { t } = useTranslation(['projects']);
+  const { t } = useTranslation('projects');
   const markdownData = getMarkDownContent(markdown);
+  const { translations } = project;
   // const defaultImage = '/static/images/code1.png';
   // const getImage = project.preview !== '' ? project.preview : defaultImage;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
   const router = useRouter();
-  const { slug } = router.query;
+  const { slug, difficulty } = router.query;
   const language = router.locale === 'en' ? 'us' : 'es';
   const currentLanguageLabel = router.language === 'en' ? t('common:english') : t('common:spanish');
 
@@ -155,6 +153,16 @@ const ProjectSlug = ({ project, markdown }) => {
       isClosable: true,
     });
   };
+
+  useEffect(() => {
+    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${project.slug || slug}`;
+    const pagePath = `interactive-coding-tutorial/${difficulty}`;
+
+    publicRedirectByAsset({
+      router, translations, userPathName, pagePath,
+    });
+  }, [router, router.locale, translations]);
 
   useEffect(() => {
     if (typeof markdown !== 'string') {
@@ -194,7 +202,7 @@ const ProjectSlug = ({ project, markdown }) => {
       margin={{ base: '2% 4% 0 4%', lg: '2% 10% 0 10%' }}
     >
       <Link
-        href="/projects"
+        href="/interactive-coding-tutorial"
         color={useColorModeValue('blue.default', 'blue.300')}
         display="inline-block"
         letterSpacing="0.05em"
@@ -206,19 +214,6 @@ const ProjectSlug = ({ project, markdown }) => {
 
       <Flex height="100%" gridGap="26px">
         <Box flex="1">
-          {/* <TagCapsule
-            variant="rounded"
-            tags={project.technologies}
-            fontSize="13px"
-            marginY="18px"
-            fontWeight="700"
-            style={{
-              padding: '4px 12px',
-              margin: '0',
-            }}
-            gap="10px"
-            paddingX="0"
-          /> */}
           <Heading
             as="h1"
             size="25px"
@@ -226,7 +221,7 @@ const ProjectSlug = ({ project, markdown }) => {
             padding="10px 0 35px 0"
             transition="color 0.2s ease-in-out"
             color={useColorModeValue('black', 'white')}
-            textTransform="uppercase"
+            textTransform="capitalize"
           >
             {project.title}
           </Heading>
@@ -272,16 +267,15 @@ const ProjectSlug = ({ project, markdown }) => {
               <Icon icon="sideSupport" width="300px" height="70px" />
             </Box>
             <Box px="22px" pb="30px" pt="20px">
-              <TableInfo project={project} commonTextColor={commonTextColor} />
+              <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
             </Box>
           </Box>
 
           {/* MARKDOWN SIDE */}
           <Box
-            padding="28px 32px"
             maxWidth="1012px"
             borderRadius="3px"
-            background={useColorModeValue('#F2F6FA', 'featuredDark')}
+            background={useColorModeValue('white', 'featuredDark')}
             // width={{ base: '34rem', md: '54rem' }}
             className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
             transition="background .2s ease"
@@ -314,7 +308,7 @@ const ProjectSlug = ({ project, markdown }) => {
             <Icon icon="sideSupport" width="300px" height="70px" />
           </Box>
           <Box px="22px" pb="30px" pt="20px">
-            <TableInfo project={project} commonTextColor={commonTextColor} />
+            <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
           </Box>
         </Box>
       </Flex>
@@ -325,11 +319,17 @@ const ProjectSlug = ({ project, markdown }) => {
 ProjectSlug.propTypes = {
   project: PropTypes.objectOf(PropTypes.any).isRequired,
   markdown: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  // translations: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
 };
 
 TableInfo.propTypes = {
   project: PropTypes.objectOf(PropTypes.any).isRequired,
   commonTextColor: PropTypes.string.isRequired,
+  t: PropTypes.func,
+};
+
+TableInfo.defaultProps = {
+  t: () => { },
 };
 
 export default ProjectSlug;

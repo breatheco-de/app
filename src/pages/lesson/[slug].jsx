@@ -16,29 +16,18 @@ import Link from '../../common/components/NextChakraLink';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import TagCapsule from '../../common/components/TagCapsule';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
+import { publicRedirectByAsset } from '../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
-  let lessons = [];
-  const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson`)
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson`);
+  const data = await resp.json();
 
-  lessons = Object.values(data);
-  if (data.status >= 200 && data.status < 400) {
-    data.asset_type = 'lesson';
-    console.log(`Original lessons: ${lessons}`);
-  } else {
-    console.error(`Error fetching lessons with ${data.status}`);
-  }
-  const paths = lessons.flatMap((res) => locales.map((locale) => {
-    const localeToUsEs = locale === 'en' ? 'us' : 'es';
-    return ({
-      params: {
-        slug: res.translations[localeToUsEs] || res.slug,
-      },
-      locale,
-    });
-  }));
+  const paths = data.flatMap((res) => locales.map((locale) => ({
+    params: {
+      slug: res.slug,
+    },
+    locale,
+  })));
 
   return {
     fallback: false,
@@ -50,14 +39,14 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'lesson');
   const { slug } = params;
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
+
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
+  const lesson = await response.json();
+
   const ogUrl = {
     en: `/lesson/${slug}`,
     us: `/lesson/${slug}`,
   };
-
-  const lesson = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`)
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
 
   const { title, description, translations } = lesson;
   const translationsExists = Object.keys(translations).length > 0;
@@ -67,20 +56,11 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   let ipynbHtmlUrl = '';
 
   if (exensionName !== 'ipynb') {
-    markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
-      .then((res) => res.text())
-      .catch((err) => ({
-        status: err.response.status,
-      }));
+    const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+    markdown = await resp.text();
   } else {
     ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
   }
-
-  // const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
-  //   .then((res) => res.text())
-  //   .catch((err) => ({
-  //     status: err.response.status,
-  //   }));
 
   // in "lesson.translations" rename "us" key to "en" key if exists
   if (lesson.translations.us) {
@@ -88,7 +68,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     delete lesson.translations.us;
   }
 
-  if (lesson.status_code === 404) {
+  if (response.status >= 400) {
     return {
       notFound: true,
     };
@@ -125,6 +105,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   // getMarkDownContent(markdown);
   const markdownData = getMarkDownContent(markdown);
+  const { translations } = lesson;
 
   const router = useRouter();
   const toast = useToast();
@@ -133,6 +114,16 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
   const language = router.locale === 'en' ? 'us' : 'es';
   const { slug } = router.query;
   const currentLanguageLabel = languageLabel[language] || language;
+
+  useEffect(async () => {
+    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${lesson.slug || slug}`;
+    const pagePath = 'lesson';
+
+    await publicRedirectByAsset({
+      router, translations, userPathName, pagePath,
+    });
+  }, [router, router.locale, translations]);
 
   useEffect(() => {
     if (ipynbHtmlUrl === '') {
@@ -179,9 +170,21 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
       alignItems="center"
       margin={{ base: '4rem 4% 0 4%', md: '4% 14% 0 14%' }}
     >
+      <Link
+        href="/lessons"
+        color={useColorModeValue('blue.default', 'blue.300')}
+        display="inline-block"
+        letterSpacing="0.05em"
+        fontWeight="700"
+        paddingBottom="10px"
+      >
+        {`← ${t('backToLessons')}`}
+      </Link>
       <Box flex="1" margin={{ base: '28px 0', md: '28px 14% 0 14%' }}>
         <Box display="flex" gridGap="10px" justifyContent="space-between">
           <TagCapsule
+            isLink
+            href="/lessons"
             variant="rounded"
             tags={lesson.technologies}
             marginY="8px"

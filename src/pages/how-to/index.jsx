@@ -22,19 +22,20 @@ export const getStaticProps = async ({ locale, locales }) => {
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const howTos = []; // filtered howTos after removing repeated
   let arrHowTos = []; // incoming howTos
-  const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`)
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`);
+  const data = await resp.json();
+  // .then((res) => res.json())
+  // .catch((err) => console.log(err));
   const currentLang = {
     en: 'us',
     es: 'es',
   };
 
   arrHowTos = Object.values(data);
-  if (data.status >= 200 && data.status < 400) {
-    console.log(`Original Exercises: ${arrHowTos}`);
+  if (resp.status >= 200 && resp.status < 400) {
+    console.log(`SUCCESS: ${arrHowTos.length} How To's fetched`);
   } else {
-    console.error(`Error fetching howTos with ${data.status}`);
+    console.error(`Error ${resp.status}: fetching How To's list for /how-to`);
   }
 
   let technologyTags = [];
@@ -63,7 +64,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
   // Verify if difficulty exist in expected position, else fill void array with 'nullString'
   const verifyDifficultyExists = (difficultiesArray, difficulty) => {
-    if (difficultiesArray.some((el) => el === difficulty)) {
+    if (difficultiesArray.some((el) => el.toLowerCase() === difficulty)) {
       return difficulty;
     }
     return 'nullString';
@@ -96,7 +97,9 @@ export const getStaticProps = async ({ locale, locales }) => {
 
       // page props
       fallback: false,
-      data: data.filter((l) => l.lang === currentLang[locale]),
+      data: data.filter((l) => l.lang === currentLang[locale]).map(
+        (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
+      ),
       technologyTags,
       difficulties: difficultiesSorted,
     },
@@ -107,6 +110,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
   const { t } = useTranslation('how-to');
   const router = useRouter();
   const { filteredBy, setHowToFilters } = useFilter();
+  const iconColor = useColorModeValue('#FFF', '#283340');
   const { technologies, difficulty, videoTutorials } = filteredBy.howToOptions;
 
   const currentFilters = technologies.length
@@ -122,7 +126,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
 
   return (
     <>
-      <TitleContent title={t('title')} icon="document" mobile />
+      <TitleContent title={t('title')} icon="document" color={iconColor} mobile />
       <Flex
         justifyContent="space-between"
         flex="1"
@@ -132,7 +136,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.900')}
       >
-        <TitleContent title={t('title')} icon="document" mobile={false} />
+        <TitleContent title={t('title')} icon="document" color={iconColor} mobile={false} />
         <Search placeholder={t('search')} />
         <Button
           variant="outline"

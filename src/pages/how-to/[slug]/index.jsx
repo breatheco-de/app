@@ -17,11 +17,11 @@ import Heading from '../../../common/components/Heading';
 import Text from '../../../common/components/Text';
 import Icon from '../../../common/components/Icon';
 import TagCapsule from '../../../common/components/TagCapsule';
+import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
-  const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`)
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`);
+  const data = await resp.json();
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
@@ -38,23 +38,17 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'how-to');
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const { slug } = params;
-  const data = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`)
-    .then((res) => res.json())
-    .catch((err) => ({
-      status: err.response.status,
-    }));
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`);
+  const data = await resp.json();
 
   const {
     title, description, translations, preview,
   } = data;
 
-  const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
-    .then((res) => res.text())
-    .catch((err) => ({
-      status: err.response.status,
-    }));
+  const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+  const markdown = await markdownResp.text();
 
-  if (data.status === 404) {
+  if (resp.status >= 400) {
     return {
       notFound: true,
     };
@@ -94,6 +88,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 export default function HowToSlug({ data, markdown }) {
   const { t } = useTranslation('how-to');
   const { title, author, preview } = data;
+  const { translations } = data;
   const defaultImage = '/static/images/coding-notebook.png';
   const getImage = preview || defaultImage;
   const router = useRouter();
@@ -120,6 +115,16 @@ export default function HowToSlug({ data, markdown }) {
       });
   }, [language]);
 
+  useEffect(() => {
+    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${data.slug || slug}`;
+    const pagePath = 'how-to';
+
+    publicRedirectByAsset({
+      router, translations, userPathName, pagePath,
+    });
+  }, [router, router.locale, translations]);
+
   return (
     <>
       <Box display="flex" justifyContent="space-between" margin={{ base: '2% 4% 0 4%', lg: '2% 10% 0 10%' }}>
@@ -144,6 +149,8 @@ export default function HowToSlug({ data, markdown }) {
         <Box display="flex" gridGap="10px" justifyContent="space-between" mb="12px">
           <TagCapsule
             variant="rounded"
+            isLink
+            href="/how-to"
             tags={data.technologies}
             marginY="8px"
             fontSize="13px"
