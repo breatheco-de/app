@@ -1,4 +1,6 @@
-import { Box, Stack, Text } from '@chakra-ui/react';
+import {
+  Box, Stack, Text, useColorModeValue,
+} from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Heading from './Heading';
 import Icon from './Icon';
@@ -33,6 +35,10 @@ const KPI = ({
     default: '#0097CF',
   };
 
+  const textColor = useColorModeValue('#1A202C', '#FFFFFF');
+  const labelColor = useColorModeValue('gray.dark', 'gray.light');
+  const bgColor = useColorModeValue('white', 'featuredDark');
+
   const kpiColor = kpiColors[verifiVariation()];
   const defaultColor = kpiColors.default;
   const kpiPosition = kpiPositions[verifiVariation()] || kpiPositions.default;
@@ -41,19 +47,19 @@ const KPI = ({
     && kpiColors.up; // value is greather than 80% of max
 
   const getNumberColor = () => {
-    if (max === null) return changeWithColor ? kpiColor : '#000000';
+    if (max === null) return changeWithColor ? kpiColor : textColor;
     return isPositiveColor || kpiColor;
   };
   const numberColors = getNumberColor();
 
   return (
-    <Stack style={style} minWidth="220px" display="flex" flexDirection="column" padding="17px 22px" border="2px solid" borderColor="blue.200" borderRadius="10px">
-      <Heading as="label" color="gray.dark" textTransform="capitalize" fontSize="14px">
+    <Stack style={style} minWidth="220px" background={bgColor} display="flex" flexDirection="column" padding="17px 22px" border="2px solid" borderColor="blue.200" borderRadius="10px">
+      <Heading as="label" color={labelColor} textTransform="capitalize" fontSize="14px">
         {label}
       </Heading>
       <Box display="flex" alignItems="center" style={{ margin: '6px 0 0 0' }} gridGap="10px">
         {icon && (
-          <Icon icon={icon} color={variationColor || (numberColors || kpiColor || '#3A3A3A')} width="26px" height="26px" />
+          <Icon icon={icon} color={variationColor || (numberColors || kpiColor || textColor)} width="26px" height="26px" />
         )}
         <Box display="flex" gridGap="6px">
           <Heading as="p" size="m" color={numberColors}>
