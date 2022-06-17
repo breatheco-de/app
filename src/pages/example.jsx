@@ -1,10 +1,12 @@
 // import Link from 'next/link';
 // import { useRouter } from 'next/router';
 // import Image from 'next/image';
+import { Box } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import ReactPlayer from 'react-player';
+// import ReactPlayer from 'react-player';
 import styles from '../../styles/Home.module.css';
 import Counter from '../common/components/Counter';
+import KPI from '../common/components/KPI';
 import { H1 } from '../common/styledComponents/Head';
 // import ReactYTPlayer from '../common/components/ReactPlayer';
 
@@ -29,28 +31,14 @@ export default function Example() {
 
         <Counter title={t('counter:title')} resetText={t('counter:resetButton')} />
 
-        {/* <ReactYTPlayer
-          width="700px"
-          id="https://www.youtube.com/watch?v=BDKdUPDez-U"
-          playOnThumbnail
-          imageSize="sddefault"
-          style={{
-            width: '700px',
-            objectFit: 'cover',
-            aspectRatio: '16/9',
-          }}
-        /> */}
-        <div style={{ width: '700px', height: 'auto' }}>
-          <ReactPlayer
-            className="react-player"
-            url={[
-              'https://github.com/4GeeksAcademy/calculus-and-algebra-with-python/blob/main/lessons/assets/01-plotting-functions-with-python.mp4?raw=true',
-            ]}
-            controls
-            width="100%"
-            height="-webkit-fill-available"
-          />
-        </div>
+        <Box display="flex" gridGap="10px">
+          <KPI label="student rating" icon="smile" value={8.5} max={10} />
+          <KPI label="Total monthly income" unit="$" value={2000} variation="+3.7" />
+          <KPI label="Mentor late arrivals" icon="running" variation="2" value={2} max={10} />
+          <KPI label="Overtime" icon="chronometer" value={3} max={10} variation="-4" />
+          <KPI label="The student didn't arrive" icon="ghost" value={0} max={10} variation="0" />
+        </Box>
+
       </main>
     </div>
   );
