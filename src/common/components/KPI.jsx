@@ -10,13 +10,6 @@ const KPI = ({
   variation, variationColor, style,
   changeWithColor,
 }) => {
-  // const variationIcon = {
-  //   up: 'chevron-up-circle',
-  //   '+': 'chevron-up-circle',
-  //   down: 'chevron-down-circle',
-  //   '-': 'chevron-down-circle',
-  // };
-
   const verifiVariation = () => {
     if (variation.includes('+')) return 'up';
     if (variation.includes('-')) return 'down';
