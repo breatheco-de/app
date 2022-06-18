@@ -2,31 +2,31 @@ import { memo } from 'react';
 import PropTypes from 'prop-types';
 import Text from './Text';
 
-const TaskLabel = ({ currentTask }) => {
+const TaskLabel = ({ currentTask, t }) => {
   const getStatus = () => {
     if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
       if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {
         return {
           status: 'delivered',
-          msg: 'Delivered',
+          msg: t('status.delivered') || 'Delivered',
         };
       }
       if (currentTask.revision_status === 'APPROVED') {
         return {
           status: 'approved',
-          msg: 'Approved',
+          msg: t('status.approved') || 'Approved',
         };
       }
       if (currentTask.revision_status === 'REJECTED') {
         return {
           status: 'rejected',
-          msg: 'Rejected',
+          msg: t('status.rejected') || 'Rejected',
         };
       }
     }
     return {
       status: 'undelivered',
-      msg: 'Undelivered',
+      msg: t('status.undelivered') || 'Undelivered',
     };
   };
 
@@ -69,9 +69,11 @@ const TaskLabel = ({ currentTask }) => {
 
 TaskLabel.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.any).isRequired,
+  t: PropTypes.func,
 };
 
 TaskLabel.defaultProps = {
+  t: () => {},
 };
 
 export default memo(TaskLabel);

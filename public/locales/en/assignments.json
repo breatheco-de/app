@@ -6,5 +6,10 @@
     "approved": "Approved",
     "rejected": "Rejected",
     "undelivered": "Undelivered"
+  },
+  "filter": {
+    "project": "Filter by Project",
+    "student": "Filter by Student",
+    "status": "Filter by Status"
   }
 }

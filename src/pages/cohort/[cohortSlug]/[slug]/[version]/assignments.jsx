@@ -221,7 +221,7 @@ const Assignments = () => {
           {projects.length > 0 && (
             <Select
               id="cohort-select"
-              placeholder="Filter by project"
+              placeholder={t('filter.project')}
               height="50px"
               fontSize="15px"
               onChange={(e) => setSelectedProjectValue(e.target.value)}
@@ -236,7 +236,7 @@ const Assignments = () => {
           {currentStudentList.length > 0 && (
             <Select
               id="student-select"
-              placeholder="Filter by Student"
+              placeholder={t('filter.student')}
               height="50px"
               fontSize="15px"
               onChange={(e) => setSelectedStudentValue(e.target.value)}
@@ -254,7 +254,7 @@ const Assignments = () => {
           {statusList.length > 0 && (
             <Select
               id="status-select"
-              placeholder="Filter by Status"
+              placeholder={t('filter.status')}
               height="50px"
               fontSize="15px"
               onChange={(e) => setSelectedStatus(e.target.value)}
@@ -301,7 +301,7 @@ const Assignments = () => {
               return (
                 <Box key={task.slug} p="28px" display="flex" gridGap="10px" justifyContent="space-between" flexDirection="row" alignItems="center" border="1px solid" borderColor="#DADADA" borderRadius="17px">
                   <Box width="auto" minWidth="calc(110px - 0.5vw)">
-                    <TaskLabel currentTask={task} />
+                    <TaskLabel currentTask={task} t={t} />
                   </Box>
 
                   <Box width="40%">
