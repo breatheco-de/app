@@ -1,4 +1,10 @@
 {
   "back-to": "Volver al Dashboard",
-  "title": "Asignaciones"
+  "title": "Asignaciones",
+  "status": {
+    "delivered": "Entregado",
+    "approved": "Aprobado",
+    "rejected": "Rechazado",
+    "undelivered": "No entregado"
+  }
 }

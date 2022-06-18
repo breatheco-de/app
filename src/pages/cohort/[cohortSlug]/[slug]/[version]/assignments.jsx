@@ -1,16 +1,21 @@
+/* eslint-disable no-continue */
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useCookies } from 'react-cookie';
 import {
-  Box, Select, useColorModeValue, useToast,
+  Box, Button, Select, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { LinkIcon } from '@chakra-ui/icons';
 import Link from '../../../../../common/components/NextChakraLink';
 import Heading from '../../../../../common/components/Heading';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import bc from '../../../../../common/services/breathecode';
 import axios from '../../../../../axios';
 import Text from '../../../../../common/components/Text';
+import TaskLabel from '../../../../../common/components/taskLabel';
+import Icon from '../../../../../common/components/Icon';
+import { isGithubUrl } from '../../../../../utils/regex';
 
 const Assignments = () => {
   const { t } = useTranslation('assignments');
@@ -22,6 +27,15 @@ const Assignments = () => {
   const [allCohorts, setAllCohorts] = useState([]);
   // const [defaultSelected, setDefaultSelected] = useState([]);
   const [studentTasks, setStudentTasks] = useState([]);
+  const [limitList, setLimitList] = useState(20);
+
+  const [currentStudentList, setCurrentStudentList] = useState([]);
+  const [selectedStudentValue, setSelectedStudentValue] = useState();
+
+  const [selectedStatus, setSelectedStatus] = useState();
+
+  const [projects, setProjects] = useState([]);
+  const [selectedProjectValue, setSelectedProjectValue] = useState();
 
   const [selectedCohort, setSelectedCohort] = useState({});
   const [selectedCohortValue, setSelectedCohortValue] = useState(null);
@@ -62,20 +76,47 @@ const Assignments = () => {
 
     if (defaultCohort) {
       setSelectedCohort(findSelectedCohort || defaultCohort);
-      // setDefaultSelected(defaultCohort);
     }
   }, [allCohorts, cohortSlug, selectedCohortValue]);
 
   useEffect(() => {
     if (selectedCohort) {
       Promise.all([
-        // bc.todo({ user: studentId }).get(), // for filtering purposes
         bc.todo({ stu_cohort: selectedCohort.slug }).get(),
         bc.todo({ teacher: cohortSession.bc_id }).get(),
       ])
         .then(([tasks, myTodos]) => {
           console.log('teacher_todos:', myTodos.data);
           setStudentTasks(tasks.data !== undefined ? tasks.data.filter((l) => l.task_type === 'PROJECT') : []);
+
+          const projectsList = [];
+          const studentsList = [];
+
+          for (let i = 0; i < tasks.data.length; i += 1) {
+            const isProject = tasks.data[i].task_type === 'PROJECT';
+            if (projectsList.find(
+              (p) => tasks.data[i] !== 'PROJECT' && tasks.data[i].associated_slug === p.associated_slug,
+            )) {
+              continue;
+            }
+            if (isProject) projectsList.push(tasks.data[i]);
+          }
+          for (let i = 0; i < tasks.data.length; i += 1) {
+            const firstName = tasks.data[i].user.first_name;
+            const lastName = tasks.data[i].user.last_name;
+            const isProject = tasks.data[i].task_type === 'PROJECT';
+            if (studentsList.find(
+              (p) => isProject && `${firstName}-${lastName}` === `${p.user.first_name}-${p.user.last_name}`,
+            )) {
+              continue;
+            }
+            if (isProject) studentsList.push(tasks.data[i]);
+          }
+          const sortedStudents = studentsList.sort(
+            (a, b) => a.user.first_name.localeCompare(b.user.first_name),
+          );
+          if (projectsList.length > 0) setProjects(projectsList);
+          if (studentsList.length > 0) setCurrentStudentList(sortedStudents);
         })
         .catch((error) => {
           toast({
@@ -89,10 +130,44 @@ const Assignments = () => {
     }
   }, [cohortSlug, selectedCohort]);
 
-  console.log('studentTasks:', studentTasks);
+  const filteredTasks = studentTasks.length > 0 && studentTasks.filter(
+    (task) => {
+      const fullName = `${task.user.first_name}-${task.user.last_name}`.toLowerCase();
+      const statusConditional = {
+        delivered: task.task_status === 'DONE' && task.revision_status === 'PENDING',
+        approved: task.revision_status === 'APPROVED',
+        rejected: task.revision_status === 'REJECTED',
+        undelivered: task.task_status === 'PENDING' && task.revision_status === 'PENDING',
+      };
+      if (selectedStatus && !statusConditional[selectedStatus]) return false;
+      if (selectedProjectValue
+        && task.associated_slug !== selectedProjectValue
+      ) return false;
+      if (selectedStudentValue
+        && fullName !== selectedStudentValue
+      ) return false;
+      return true;
+    },
+  );
 
-  console.log('selectedCohort:', selectedCohort);
-  // console.log('defaultSelected:', defaultSelected);
+  const statusList = [
+    {
+      label: t('status.delivered'),
+      value: 'delivered',
+    },
+    {
+      label: t('status.approved'),
+      value: 'approved',
+    },
+    {
+      label: t('status.rejected'),
+      value: 'rejected',
+    },
+    {
+      label: t('status.undelivered'),
+      value: 'undelivered',
+    },
+  ];
 
   return (
     <>
@@ -142,25 +217,131 @@ const Assignments = () => {
         // borderBottom="1px solid"
         // borderColor={borderColor}
       >
+        <Box display="grid" gridTemplateColumns="repeat(auto-fill, minmax(16rem, 1fr))" gridGap="14px" py="20px">
+          {projects.length > 0 && (
+            <Select
+              id="cohort-select"
+              placeholder="Filter by project"
+              height="50px"
+              fontSize="15px"
+              onChange={(e) => setSelectedProjectValue(e.target.value)}
+            >
+              {projects.map((project) => (
+                <option key={project.associated_slug} id="project-option" value={project.associated_slug}>
+                  {project.title}
+                </option>
+              ))}
+            </Select>
+          )}
+          {currentStudentList.length > 0 && (
+            <Select
+              id="student-select"
+              placeholder="Filter by Student"
+              height="50px"
+              fontSize="15px"
+              onChange={(e) => setSelectedStudentValue(e.target.value)}
+            >
+              {currentStudentList.map((student) => {
+                const fullName = `${student.user.first_name}-${student.user.last_name}`.toLowerCase();
+                return (
+                  <option key={fullName} id="student-option" value={fullName}>
+                    {`${student.user.first_name} ${student.user.last_name}`}
+                  </option>
+                );
+              })}
+            </Select>
+          )}
+          {statusList.length > 0 && (
+            <Select
+              id="status-select"
+              placeholder="Filter by Status"
+              height="50px"
+              fontSize="15px"
+              onChange={(e) => setSelectedStatus(e.target.value)}
+            >
+              {statusList.map((status) => (
+                <option key={status.value} id="status-option" value={status.value}>
+                  {status.label}
+                </option>
+              ))}
+            </Select>
+          )}
+        </Box>
         <Box
           borderRadius="3px"
           margin="0 auto"
           maxWidth="1012px"
           flexGrow={1}
         >
-          <Box display="flex">
-            <Text size="15px" display="flex" width="15vw" maxWidth="15vw" fontWeight="700">
+          <Box
+            display="flex"
+            margin="20px 32px"
+            gridGap="10px"
+            justifyContent="space-between"
+            flexDirection="row"
+            alignItems="center"
+          >
+            <Text size="15px" display="flex" width="auto" minWidth="calc(145px - 0.5vw)" fontWeight="700">
               Status
             </Text>
-            <Text size="15px" display="flex" width="60vw" maxWidth="60vw" fontWeight="700">
+            <Text size="15px" display="flex" width="44%" fontWeight="700">
               Student and Assignments
             </Text>
-            <Text size="15px" display="flex" width="10vw" maxWidth="10vw" fontWeight="700">
+            <Text size="15px" display="flex" width="90px" fontWeight="700">
               Link
             </Text>
-            <Text size="15px" display="flex" width="15vw" maxWidth="15vw" fontWeight="700">
+            <Text size="15px" display="flex" width="auto" fontWeight="700">
               Actions
             </Text>
+          </Box>
+          <Box display="flex" flexDirection="column" gridGap="18px">
+            {filteredTasks.length > 0 ? filteredTasks.map((task) => {
+              const githubUrl = task?.github_url;
+              const haveGithubDomain = githubUrl && !isGithubUrl.test(githubUrl);
+              return (
+                <Box key={task.slug} p="28px" display="flex" gridGap="10px" justifyContent="space-between" flexDirection="row" alignItems="center" border="1px solid" borderColor="#DADADA" borderRadius="17px">
+                  <Box width="auto" minWidth="calc(110px - 0.5vw)">
+                    <TaskLabel currentTask={task} />
+                  </Box>
+
+                  <Box width="40%">
+                    <Text size="15px">
+                      {`${task.user.first_name} ${task.user.last_name}`}
+                    </Text>
+                    <Link variant="default" href="https://github.com/breatheco-de" target="_blank" rel="noopener noreferrer">
+                      {task.title}
+                    </Link>
+                  </Box>
+
+                  <Box width={githubUrl ? 'auto' : '26px'}>
+                    {githubUrl && (!haveGithubDomain ? (
+                      <Link variant="default" width="26px" href={githubUrl || '#'} target="_blank" rel="noopener noreferrer">
+                        <Icon icon="github" width="26px" height="26px" />
+                      </Link>
+                    ) : (
+                      <Link variant="default" width="26px" href={githubUrl || '#'} target="_blank" rel="noopener noreferrer">
+                        <LinkIcon width="26px" height="26px" />
+                      </Link>
+                    ))}
+                  </Box>
+
+                  <Box width="auto">
+                    <Button variant="default" textTransform="uppercase">
+                      Deliver
+                    </Button>
+                  </Box>
+                </Box>
+              );
+            }) : (
+              <Text size="30px">
+                Loading...
+              </Text>
+            )}
+            {limitList <= studentTasks.length && (
+              <Button onClick={() => setLimitList(limitList + 20)}>
+                show more
+              </Button>
+            )}
           </Box>
         </Box>
       </Box>

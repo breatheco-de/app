@@ -6,6 +6,11 @@ const LinkStyles = {
   sizes: {},
   // styles for different visual variants ("outline", "solid", more...)
   variants: {
+    default: () => ({
+      color: 'blue.default',
+      fontSize: '15px',
+      letterSpacing: '0.05em',
+    }),
     buttonDefault: () => ({
       bg: 'blue.default',
       color: 'white',
