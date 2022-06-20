@@ -1,0 +1,21 @@
+{
+  "back-to": "Back to Dashboard",
+  "title": "Asignaciones",
+  "status": {
+    "delivered": "Delivered",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "undelivered": "Undelivered"
+  },
+  "filter": {
+    "project": "Filter by Project",
+    "student": "Filter by Student",
+    "status": "Filter by Status",
+    "assignments-length": "Current list of {{count}} assignments"
+  },
+  "task-handler": {
+    "review": "Review",
+    "deliver": "Deliver",
+    "undo-approval": "Undo Approval"
+  }
+}

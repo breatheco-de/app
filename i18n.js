@@ -6,6 +6,7 @@ module.exports = {
     '/login': ['login'],
     '/example': ['counter'],
     '/cohort/[cohortSlug]/[slug]/[version]': ['dashboard'],
+    '/cohort/[cohortSlug]/[slug]/[version]/assignments': ['assignments'],
     '/interactive-exercises': ['exercises'],
     '/interactive-coding-tutorial': ['projects'],
     '/read/[slug]': ['read'],

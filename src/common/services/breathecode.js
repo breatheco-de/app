@@ -21,10 +21,14 @@ const breathecode = {
     };
   },
 
-  admissions: () => {
+  admissions: (query = {}) => {
     const url = `${host}/admissions`;
+    const qs = Object.keys(query)
+      .map((key) => `${key}=${query[key]}`)
+      .join('&');
     return {
       me: () => axios.get(`${url}/user/me`),
+      cohorts: () => axios.get(`${url}/cohort/all?${qs}`),
     };
   },
 
@@ -44,6 +48,7 @@ const breathecode = {
       .map((key) => `${key}=${query[key]}`)
       .join('&');
     return {
+      get: () => axios.get(`${url}/task?${qs}`),
       // getTaskByStudent: (cohortId) => axios.get(`${url}/user/me/task?cohort=${cohortId}`),
       getTaskByStudent: () => axios.get(`${url}/user/me/task?${qs}`),
       add: (args) => axios.post(`${url}/user/me/task`, args),
@@ -90,7 +95,7 @@ const breathecode = {
       getMentor: () => axios.get(`${url}/mentor?${qs}`),
     };
   },
-  lesson: (query) => {
+  lesson: (query = {}) => {
     const url = `${host}/registry/asset`;
     const qs = Object.keys(query)
       .map((key) => `${key}=${query[key]}`)

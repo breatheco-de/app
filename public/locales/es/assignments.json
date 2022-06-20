@@ -1,0 +1,21 @@
+{
+  "back-to": "Volver al Dashboard",
+  "title": "Asignaciones",
+  "status": {
+    "delivered": "Entregado",
+    "approved": "Aprobado",
+    "rejected": "Rechazado",
+    "undelivered": "No entregado"
+  },
+  "filter": {
+    "project": "Filtrar por proyecto",
+    "student": "Filtrar por Estudiante",
+    "status": "Filtrar por Estado",
+    "assignments-length": "Lista actual de {{count}} asignaciones"
+  },
+  "task-handler": {
+    "review": "Revisar",
+    "deliver": "Entregar",
+    "undo-approval": "Deshacer aprobación"
+  }
+}
