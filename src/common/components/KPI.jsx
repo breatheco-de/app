@@ -46,7 +46,7 @@ const KPI = ({
   const numberColors = getNumberColor();
 
   return (
-    <Stack style={style} minWidth="220px" background={bgColor} display="flex" flexDirection="column" padding="17px 22px" border="2px solid" borderColor="blue.200" borderRadius="10px">
+    <Stack style={style} width="fit-content" background={bgColor} display="flex" flexDirection="column" padding="17px 22px" border="2px solid" borderColor="blue.200" borderRadius="10px">
       <Heading as="label" color={labelColor} textTransform="capitalize" fontSize="14px">
         {label}
       </Heading>
