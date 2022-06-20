@@ -10,6 +10,12 @@
   "filter": {
     "project": "Filtrar por proyecto",
     "student": "Filtrar por Estudiante",
-    "status": "Filtrar por Estado"
+    "status": "Filtrar por Estado",
+    "assignments-length": "Lista actual de {{count}} asignaciones"
+  },
+  "task-handler": {
+    "review": "Revisar",
+    "deliver": "Entregar",
+    "undo-approval": "Deshacer aprobación"
   }
 }

@@ -16,18 +16,20 @@ import Text from '../../../../../common/components/Text';
 import TaskLabel from '../../../../../common/components/taskLabel';
 import Icon from '../../../../../common/components/Icon';
 import { isGithubUrl } from '../../../../../utils/regex';
+import ButtonHandler from '../../../../../js_modules/assignmentHandler/index';
 
 const Assignments = () => {
   const { t } = useTranslation('assignments');
   const [cookies] = useCookies(['accessToken']);
   const router = useRouter();
   const { accessToken } = cookies;
+  const defaultLimiter = 10;
   const toast = useToast();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
   // const [defaultSelected, setDefaultSelected] = useState([]);
   const [studentTasks, setStudentTasks] = useState([]);
-  const [limitList, setLimitList] = useState(20);
+  const [limitList, setLimitList] = useState(defaultLimiter);
 
   const [currentStudentList, setCurrentStudentList] = useState([]);
   const [selectedStudentValue, setSelectedStudentValue] = useState();
@@ -195,7 +197,10 @@ const Assignments = () => {
             }}
             fontSize="20px"
             value={selectedCohort.value}
-            onChange={(e) => setSelectedCohortValue(parseInt(e.target.value, 10))}
+            onChange={(e) => {
+              setLimitList(defaultLimiter);
+              setSelectedCohortValue(parseInt(e.target.value, 10));
+            }}
             width="auto"
             color="blue.default"
             border="0"
@@ -212,19 +217,25 @@ const Assignments = () => {
       <Box
         gridGap="20px"
         maxWidth="1012px"
-        margin={{ base: '3% 4%', md: '3% 10% 4% 10%', lg: '3% 12% 4% 12%' }}
+        margin={{ base: '3% 4%', md: '3% auto 4% auto', lg: '3% auto 4% auto' }}
         p="0 0 30px 0"
         // borderBottom="1px solid"
         // borderColor={borderColor}
       >
-        <Box display="grid" gridTemplateColumns="repeat(auto-fill, minmax(16rem, 1fr))" gridGap="14px" py="20px">
+        <Text size="20px" display="flex" width="auto" fontWeight="400">
+          {t('filter.assignments-length', { count: filteredTasks.length || 0 })}
+        </Text>
+        <Box display="grid" gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(10rem, 1fr))', md: 'repeat(auto-fill, minmax(18rem, 1fr))' }} gridGap="14px" py="20px">
           {projects.length > 0 && (
             <Select
               id="cohort-select"
               placeholder={t('filter.project')}
               height="50px"
               fontSize="15px"
-              onChange={(e) => setSelectedProjectValue(e.target.value)}
+              onChange={(e) => {
+                setLimitList(defaultLimiter);
+                setSelectedProjectValue(e.target.value);
+              }}
             >
               {projects.map((project) => (
                 <option key={project.associated_slug} id="project-option" value={project.associated_slug}>
@@ -239,7 +250,10 @@ const Assignments = () => {
               placeholder={t('filter.student')}
               height="50px"
               fontSize="15px"
-              onChange={(e) => setSelectedStudentValue(e.target.value)}
+              onChange={(e) => {
+                setLimitList(defaultLimiter);
+                setSelectedStudentValue(e.target.value);
+              }}
             >
               {currentStudentList.map((student) => {
                 const fullName = `${student.user.first_name}-${student.user.last_name}`.toLowerCase();
@@ -257,7 +271,10 @@ const Assignments = () => {
               placeholder={t('filter.status')}
               height="50px"
               fontSize="15px"
-              onChange={(e) => setSelectedStatus(e.target.value)}
+              onChange={(e) => {
+                setLimitList(defaultLimiter);
+                setSelectedStatus(e.target.value);
+              }}
             >
               {statusList.map((status) => (
                 <option key={status.value} id="status-option" value={status.value}>
@@ -281,21 +298,22 @@ const Assignments = () => {
             flexDirection="row"
             alignItems="center"
           >
-            <Text size="15px" display="flex" width="auto" minWidth="calc(145px - 0.5vw)" fontWeight="700">
+            <Text size="15px" display="flex" width="39.6%" fontWeight="700">
               Status
             </Text>
-            <Text size="15px" display="flex" width="44%" fontWeight="700">
+            <Text size="15px" display="flex" width="100%" fontWeight="700">
               Student and Assignments
             </Text>
-            <Text size="15px" display="flex" width="90px" fontWeight="700">
+            <Text size="15px" display="flex" width="24%" fontWeight="700">
               Link
             </Text>
-            <Text size="15px" display="flex" width="auto" fontWeight="700">
+            <Text size="15px" display="flex" width="36%" fontWeight="700">
               Actions
             </Text>
           </Box>
           <Box display="flex" flexDirection="column" gridGap="18px">
-            {filteredTasks.length > 0 ? filteredTasks.map((task) => {
+
+            {filteredTasks.length > 0 ? filteredTasks.slice(0, limitList).map((task) => {
               const githubUrl = task?.github_url;
               const haveGithubDomain = githubUrl && !isGithubUrl.test(githubUrl);
               return (
@@ -313,7 +331,7 @@ const Assignments = () => {
                     </Link>
                   </Box>
 
-                  <Box width={githubUrl ? 'auto' : '26px'}>
+                  <Box width={githubUrl ? 'auto' : '4%'}>
                     {githubUrl && (!haveGithubDomain ? (
                       <Link variant="default" width="26px" href={githubUrl || '#'} target="_blank" rel="noopener noreferrer">
                         <Icon icon="github" width="26px" height="26px" />
@@ -325,10 +343,11 @@ const Assignments = () => {
                     ))}
                   </Box>
 
-                  <Box width="auto">
-                    <Button variant="default" textTransform="uppercase">
+                  <Box width="auto" minWidth="160px" textAlign="end">
+                    <ButtonHandler currentTask={task} />
+                    {/* <Button variant="outline" disabled textTransform="uppercase">
                       Deliver
-                    </Button>
+                    </Button> */}
                   </Box>
                 </Box>
               );
@@ -337,9 +356,10 @@ const Assignments = () => {
                 Loading...
               </Text>
             )}
-            {limitList <= studentTasks.length && (
-              <Button onClick={() => setLimitList(limitList + 20)}>
-                show more
+            {filteredTasks.length > limitList && (
+              <Button variant="link" onClick={() => setLimitList(limitList + 15)} fontSize="16px" _hover={{ textDecoration: 'none' }} width="fit-content" margin="20px auto 0 auto">
+                {t('common:show-more')}
+                <Icon icon="arrowDown" width="24px" height="24px" />
               </Button>
             )}
           </Box>

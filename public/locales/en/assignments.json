@@ -10,6 +10,12 @@
   "filter": {
     "project": "Filter by Project",
     "student": "Filter by Student",
-    "status": "Filter by Status"
+    "status": "Filter by Status",
+    "assignments-length": "Current list of {{count}} assignments"
+  },
+  "task-handler": {
+    "review": "Review",
+    "deliver": "Deliver",
+    "undo-approval": "Undo Approval"
   }
 }

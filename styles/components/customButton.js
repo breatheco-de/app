@@ -95,7 +95,7 @@ const ButtonStyles = {
       fontSize: '13px',
       letterSpacing: '0.05em',
       _hover: {
-        bg: 'none',
+        bg: props.colorMode === 'light' ? 'gray.light' : 'gray.700',
         // border: '1px solid black',
         opacity: 1,
         _disabled: {
@@ -114,6 +114,25 @@ const ButtonStyles = {
         _hover: {
           opacity: 0.7,
         },
+      },
+    }),
+
+    link: () => ({
+      bg: 'none',
+      color: 'blue.default',
+      border: '0',
+      borderRadius: '3px',
+      fontSize: '13px',
+      letterSpacing: '0.05em',
+      _hover: {
+        bg: 'none',
+        textDecoration: 'underline',
+        _disabled: {
+          bgColor: 'none',
+        },
+      },
+      _active: {
+        color: 'blue.default',
       },
     }),
   },
