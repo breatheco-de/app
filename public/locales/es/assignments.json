@@ -17,5 +17,18 @@
     "review": "Revisar",
     "deliver": "Entregar",
     "undo-approval": "Deshacer aprobación"
+  },
+  "deliver-assignment": {
+    "title": "Entregar tarea",
+    "label": "URL de entrega única",
+    "hint": "Comparte el enlace con el estudiante",
+    "button": "Ignorar tarea",
+    "copy": "Copiar enlace",
+    "copied": "¡Copiado!"
+  },
+  "review-assignment": {
+    "title": "Revisión de tarea",
+    "reject": "Marcar como rechazado",
+    "approve": "Marcar como aprobado"
   }
 }

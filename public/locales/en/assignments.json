@@ -17,5 +17,18 @@
     "review": "Review",
     "deliver": "Deliver",
     "undo-approval": "Undo Approval"
+  },
+  "deliver-assignment": {
+    "title": "Deliver assignment",
+    "label": "Unique Delivery URL",
+    "hint": "Share the link with the student",
+    "button": "Ignore task",
+    "copy": "Copy link",
+    "copied": "Copied!"
+  },
+  "review-assignment": {
+    "title": "Assignment Review",
+    "reject": "Mark as rejected",
+    "approve": "Mark as approved"
   }
 }

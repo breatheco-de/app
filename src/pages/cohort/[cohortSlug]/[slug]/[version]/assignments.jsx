@@ -44,9 +44,14 @@ const Assignments = () => {
 
   const { cohortSlug } = router.query;
   const linkColor = useColorModeValue('blue.default', 'blue.300');
-  const borderColor = useColorModeValue('gray.200', 'gray.900');
+  const borderColor = useColorModeValue('gray.200', 'gray.500');
 
   axios.defaults.headers.common.Authorization = `Token ${accessToken}`;
+
+  const lang = {
+    es: '/es/',
+    en: '/',
+  };
 
   useEffect(() => {
     bc.admissions({ token: accessToken || null }).cohorts()
@@ -207,7 +212,7 @@ const Assignments = () => {
             cursor="pointer"
           >
             {allCohorts.map((cohort) => (
-              <option key={cohort.value} id="cohort-option" value={cohort.value}>
+              <option key={`${cohort.value}-${cohort.label}`} id="cohort-option" value={cohort.value}>
                 {`${cohort.academy} - ${cohort.label}`}
               </option>
             ))}
@@ -218,6 +223,7 @@ const Assignments = () => {
         gridGap="20px"
         maxWidth="1012px"
         margin={{ base: '3% 4%', md: '3% auto 4% auto', lg: '3% auto 4% auto' }}
+        padding={{ base: '0', md: '0 10px', lg: '0' }}
         p="0 0 30px 0"
         // borderBottom="1px solid"
         // borderColor={borderColor}
@@ -238,7 +244,7 @@ const Assignments = () => {
               }}
             >
               {projects.map((project) => (
-                <option key={project.associated_slug} id="project-option" value={project.associated_slug}>
+                <option key={`${project.associated_slug}-${project.title}`} id="project-option" value={project.associated_slug}>
                   {project.title}
                 </option>
               ))}
@@ -304,10 +310,10 @@ const Assignments = () => {
             <Text size="15px" display="flex" width="100%" fontWeight="700">
               Student and Assignments
             </Text>
-            <Text size="15px" display="flex" width="24%" fontWeight="700">
+            <Text size="15px" display="flex" width="34%" fontWeight="700">
               Link
             </Text>
-            <Text size="15px" display="flex" width="36%" fontWeight="700">
+            <Text size="15px" display="flex" width="25%" minWidth="115px" fontWeight="700">
               Actions
             </Text>
           </Box>
@@ -316,17 +322,20 @@ const Assignments = () => {
             {filteredTasks.length > 0 ? filteredTasks.slice(0, limitList).map((task) => {
               const githubUrl = task?.github_url;
               const haveGithubDomain = githubUrl && !isGithubUrl.test(githubUrl);
+              const fullName = `${task.user.first_name} ${task.user.last_name}`;
+              const projectLink = `https://4geeks.com${lang[router.locale]}project/${task.associated_slug}`;
+
               return (
-                <Box key={task.slug} p="28px" display="flex" gridGap="10px" justifyContent="space-between" flexDirection="row" alignItems="center" border="1px solid" borderColor="#DADADA" borderRadius="17px">
+                <Box key={`${task.slug}-${task.title}-${fullName}`} p="18px 28px" display="flex" gridGap="10px" justifyContent="space-between" flexDirection="row" alignItems="center" border="1px solid" borderColor={borderColor} borderRadius="17px">
                   <Box width="auto" minWidth="calc(110px - 0.5vw)">
                     <TaskLabel currentTask={task} t={t} />
                   </Box>
 
                   <Box width="40%">
                     <Text size="15px">
-                      {`${task.user.first_name} ${task.user.last_name}`}
+                      {fullName}
                     </Text>
-                    <Link variant="default" href="https://github.com/breatheco-de" target="_blank" rel="noopener noreferrer">
+                    <Link variant="default" href={projectLink} target="_blank" rel="noopener noreferrer">
                       {task.title}
                     </Link>
                   </Box>
@@ -344,10 +353,8 @@ const Assignments = () => {
                   </Box>
 
                   <Box width="auto" minWidth="160px" textAlign="end">
-                    <ButtonHandler currentTask={task} />
-                    {/* <Button variant="outline" disabled textTransform="uppercase">
-                      Deliver
-                    </Button> */}
+                    <ButtonHandler currentTask={task} cohortSession={cohortSession} />
+                    {/* <BasicUsage currentTask={task} /> */}
                   </Box>
                 </Box>
               );
