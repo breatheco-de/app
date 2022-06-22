@@ -48,7 +48,7 @@ const breathecode = {
       .map((key) => `${key}=${query[key]}`)
       .join('&');
     return {
-      get: () => axios.get(`${url}/task?${qs}`),
+      get: () => axios.get(`${url}/task/?${qs}`),
       // getTaskByStudent: (cohortId) => axios.get(`${url}/user/me/task?cohort=${cohortId}`),
       getTaskByStudent: () => axios.get(`${url}/user/me/task?${qs}`),
       add: (args) => axios.post(`${url}/user/me/task`, args),

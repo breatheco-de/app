@@ -7,6 +7,12 @@
     "rejected": "Rechazado",
     "undelivered": "No entregado"
   },
+  "label": {
+    "status": "Estado",
+    "student-and-assignments": "Alumno y asignaciones",
+    "link": "Enlace",
+    "actions": "Acciones"
+  },
   "filter": {
     "project": "Filtrar por proyecto",
     "student": "Filtrar por Estudiante",
@@ -16,6 +22,20 @@
   "task-handler": {
     "review": "Revisar",
     "deliver": "Entregar",
-    "undo-approval": "Deshacer aprobación"
+    "undo-approval": "Deshacer acción"
+  },
+  "deliver-assignment": {
+    "title": "Entregar tarea",
+    "label": "URL de entrega única",
+    "hint": "Comparte el enlace con el estudiante",
+    "button": "Ignorar tarea",
+    "copy": "Copiar enlace",
+    "copied": "¡Copiado!"
+  },
+  "review-assignment": {
+    "title": "Revisión de asignación",
+    "reject": "Rechazar",
+    "approve": "Aprobar",
+    "comment-placeholder": "Comentario o retroalimentación para el estudiante (opcional)"
   }
 }

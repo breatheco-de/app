@@ -47,6 +47,7 @@ function login() {
   useEffect(() => {
     if (user !== null && user !== undefined) {
       router.push('/choose-program');
+      // router.back();
     }
   }, [user]);
 

@@ -39,5 +39,9 @@
   "error-removing-github": "Hubo un error al intentar remover tu cuenta de GitHub",
   "any-removed": "{{any}} removido!",
   "something-went-wrong": "Algo salió mal",
-  "something-went-wrong-with": "Algo salió mal con {{property}}"
+  "something-went-wrong-with": "Algo salió mal con {{property}}",
+  "review-assignment-error": "Algo salió mal al modificar la tarea",
+  "review-assignment-approve": "La tarea ha sido aprovada con éxito",
+  "review-assignment-updated": "Tarea modificada exitosamente",
+  "review-assignment-reject": "La tarea ha sido rechazada con éxito"
 }
