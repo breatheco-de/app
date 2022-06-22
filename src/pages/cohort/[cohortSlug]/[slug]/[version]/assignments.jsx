@@ -57,27 +57,31 @@ const Assignments = () => {
   };
 
   useEffect(() => {
-    bc.admissions({ token: accessToken || null }).cohorts()
-      .then(({ data }) => {
-        const dataStruct = data.map((l) => ({
-          label: l.name,
-          slug: l.slug,
-          value: l.id,
-          academy: l.academy.id,
-        }));
-        setAllCohorts(dataStruct.sort(
-          (a, b) => a.label.localeCompare(b.label),
-        ));
-      })
-      .catch((error) => {
-        toast({
-          title: t('alert-message:error-fetching-cohorts'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
+    if (cohortSession.cohort_role && cohortSession.cohort_role !== 'STUDENT') {
+      bc.admissions({ token: accessToken || null }).cohorts()
+        .then(({ data }) => {
+          const dataStruct = data.map((l) => ({
+            label: l.name,
+            slug: l.slug,
+            value: l.id,
+            academy: l.academy.id,
+          }));
+          setAllCohorts(dataStruct.sort(
+            (a, b) => a.label.localeCompare(b.label),
+          ));
+        })
+        .catch((error) => {
+          toast({
+            title: t('alert-message:error-fetching-cohorts'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
+          console.error('There was an error fetching the cohorts', error);
         });
-        console.error('There was an error fetching the cohorts', error);
-      });
+    } else {
+      router.push('/choose-program');
+    }
   }, []);
 
   useEffect(() => {
