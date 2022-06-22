@@ -17,6 +17,7 @@ import TaskLabel from '../../../../../common/components/taskLabel';
 import Icon from '../../../../../common/components/Icon';
 import { isGithubUrl } from '../../../../../utils/regex';
 import ButtonHandler from '../../../../../js_modules/assignmentHandler/index';
+import useAssignments from '../../../../../common/store/actions/assignmentsAction';
 
 const Assignments = () => {
   const { t } = useTranslation('assignments');
@@ -25,10 +26,12 @@ const Assignments = () => {
   const { accessToken } = cookies;
   const defaultLimiter = 10;
   const toast = useToast();
+  const { contextState, setContextState } = useAssignments();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
   // const [defaultSelected, setDefaultSelected] = useState([]);
-  const [studentTasks, setStudentTasks] = useState([]);
+  // const [studentTasks, setStudentTasks] = useState([]);
+
   const [limitList, setLimitList] = useState(defaultLimiter);
 
   const [currentStudentList, setCurrentStudentList] = useState([]);
@@ -92,9 +95,16 @@ const Assignments = () => {
         bc.todo({ stu_cohort: selectedCohort.slug }).get(),
         bc.todo({ teacher: cohortSession.bc_id }).get(),
       ])
-        .then(([tasks, myTodos]) => {
-          console.log('teacher_todos:', myTodos.data);
-          setStudentTasks(tasks.data !== undefined ? tasks.data.filter((l) => l.task_type === 'PROJECT') : []);
+        .then(([tasks, myTasks]) => {
+          const projectTasks = tasks.data !== undefined ? tasks.data.filter((l) => l.task_type === 'PROJECT') : [];
+          const myProjectTasks = myTasks.data !== undefined ? myTasks.data.filter((l) => l.task_type === 'PROJECT') : [];
+          setContextState({
+            allTasks: [
+              ...projectTasks,
+              ...myProjectTasks,
+            ],
+          });
+          // setStudentTasks([...projectTasks, ...myProjectTasks]);
 
           const projectsList = [];
           const studentsList = [];
@@ -137,7 +147,7 @@ const Assignments = () => {
     }
   }, [cohortSlug, selectedCohort]);
 
-  const filteredTasks = studentTasks.length > 0 && studentTasks.filter(
+  const filteredTasks = contextState.allTasks.length > 0 && contextState.allTasks.filter(
     (task) => {
       const fullName = `${task.user.first_name}-${task.user.last_name}`.toLowerCase();
       const statusConditional = {
@@ -179,15 +189,17 @@ const Assignments = () => {
   return (
     <>
       <Box display="flex" justifyContent="space-between" margin={{ base: '2% 4% 0 4%', lg: '2% 12% 0 12%' }}>
-        <Link
-          href="/"
-          color={linkColor}
-          display="inline-block"
-          letterSpacing="0.05em"
-          fontWeight="700"
-        >
-          {`← ${t('back-to')}`}
-        </Link>
+        {cohortSession?.selectedProgramSlug && (
+          <Link
+            href={cohortSession?.selectedProgramSlug}
+            color={linkColor}
+            display="inline-block"
+            letterSpacing="0.05em"
+            fontWeight="700"
+          >
+            {`← ${t('back-to')}`}
+          </Link>
+        )}
       </Box>
       <Box display="flex" borderBottom="1px solid" borderColor={borderColor} flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} p={{ base: '50px 4% 30px 4%', md: '50px 10% 30px 10%', lg: '50px 12% 30px 12%' }} alignItems={{ base: 'start', md: 'center' }}>
         <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
@@ -305,16 +317,16 @@ const Assignments = () => {
             alignItems="center"
           >
             <Text size="15px" display="flex" width="39.6%" fontWeight="700">
-              Status
+              {t('label.status')}
             </Text>
             <Text size="15px" display="flex" width="100%" fontWeight="700">
-              Student and Assignments
+              {t('label.student-and-assignments')}
             </Text>
             <Text size="15px" display="flex" width="34%" fontWeight="700">
-              Link
+              {t('label.link')}
             </Text>
             <Text size="15px" display="flex" width="25%" minWidth="115px" fontWeight="700">
-              Actions
+              {t('label.actions')}
             </Text>
           </Box>
           <Box display="flex" flexDirection="column" gridGap="18px">
@@ -353,7 +365,12 @@ const Assignments = () => {
                   </Box>
 
                   <Box width="auto" minWidth="160px" textAlign="end">
-                    <ButtonHandler currentTask={task} cohortSession={cohortSession} />
+                    <ButtonHandler
+                      currentTask={task}
+                      cohortSession={cohortSession}
+                      contextState={contextState}
+                      setContextState={setContextState}
+                    />
                     {/* <BasicUsage currentTask={task} /> */}
                   </Box>
                 </Box>

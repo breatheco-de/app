@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import {
-  Box, Button, FormLabel, Input, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, Textarea, useColorModeValue, useDisclosure,
+  Box, Button, FormLabel, Input, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, Textarea, useToast, useColorModeValue, useDisclosure,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -10,14 +10,19 @@ import {
   memo, useEffect, useState, useRef,
 } from 'react';
 import { useCookies } from 'react-cookie';
+import bc from '../../common/services/breathecode';
 // import Modal from './modal';
 
-const DeliverModal = ({ currentTask, projectLink, cohortSession }) => {
+const DeliverModal = ({
+  currentTask, projectLink, cohortSession, updpateAssignment,
+}) => {
   const { t } = useTranslation('assignments');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isLoading, setIsLoading] = useState(false);
   const [cookies] = useCookies();
   const [openIgnoreTask, setOpenIgnoreTask] = useState(false);
   const [deliveryUrl, setDeliveryUrl] = useState('');
+  const toast = useToast();
   const [copied, setCopied] = useState(false);
   const textAreaRef = useRef(null);
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
@@ -37,7 +42,9 @@ const DeliverModal = ({ currentTask, projectLink, cohortSession }) => {
     <Box width="auto" height="auto">
       <Button
         variant="outline"
+        isLoading={isLoading}
         onClick={async () => {
+          setIsLoading(true);
           const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/assignment/task/${currentTask.id}/deliver`, {
             headers: {
               Authorization: `Token ${cookies.accessToken}`,
@@ -47,7 +54,10 @@ const DeliverModal = ({ currentTask, projectLink, cohortSession }) => {
           const data = await resp.json();
           setDeliveryUrl(data.delivery_url);
 
-          if (data) onOpen();
+          if (data) {
+            onOpen();
+            setIsLoading(false);
+          }
         }}
         fontSize="15px"
         padding="0 24px"
@@ -143,7 +153,31 @@ const DeliverModal = ({ currentTask, projectLink, cohortSession }) => {
               </Text>
             </ModalBody>
             <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={commonBorderColor}>
-              <Button variant="outline" textTransform="uppercase">
+              <Button
+                onClick={() => {
+                  bc.todo().update({
+                    id: currentTask.id,
+                    revision_status: 'IGNORED',
+                  })
+                    .then(() => {
+                      updpateAssignment({
+                        ...currentTask,
+                        id: currentTask.id,
+                        revision_status: 'IGNORED',
+                      });
+                    })
+                    .catch(() => {
+                      toast({
+                        title: t('alert-message:review-assignment-error'),
+                        status: 'error',
+                        duration: 5000,
+                        isClosable: true,
+                      });
+                    });
+                }}
+                variant="outline"
+                textTransform="uppercase"
+              >
                 {t('deliver-assignment.button')}
               </Button>
             </ModalFooter>
@@ -155,11 +189,83 @@ const DeliverModal = ({ currentTask, projectLink, cohortSession }) => {
   );
 };
 
-const ReviewModal = ({ currentTask, projectLink }) => {
+const ReviewModal = ({ currentTask, projectLink, updpateAssignment }) => {
   const { t } = useTranslation('assignments');
+  const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [comment, setComment] = useState('');
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.500');
+
+  const ReviewButton = ({ type }) => {
+    const statusColor = {
+      approve: 'success',
+      reject: 'error',
+    };
+    const buttonColor = {
+      approve: 'success',
+      reject: 'danger',
+    };
+    const buttonText = {
+      approve: t('review-assignment.approve'),
+      reject: t('review-assignment.reject'),
+    };
+    const revisionStatus = {
+      approve: 'APPROVED',
+      reject: 'REJECTED',
+    };
+    const alertStatus = {
+      approve: t('alert-message:review-assignment-approve'),
+      reject: t('alert-message:review-assignment-reject'),
+    };
+    return (
+      <Button
+        background={buttonColor[type]}
+        _hover={{ background: buttonColor[type] }}
+        onClick={async () => {
+          if (revisionStatus[type] !== undefined) {
+            await bc.todo().update({
+              id: currentTask.id,
+              revision_status: revisionStatus[type],
+              description: comment,
+            })
+              .then(() => {
+                toast({
+                  title: alertStatus[type],
+                  status: statusColor[type],
+                  duration: 5000,
+                  isClosable: true,
+                });
+                updpateAssignment({
+                  ...currentTask,
+                  id: currentTask.id,
+                  revision_status: revisionStatus[type],
+                  description: comment,
+                });
+                onClose();
+              })
+              .catch(() => {
+                toast({
+                  title: t('alert-message:review-assignment-error'),
+                  status: 'error',
+                  duration: 5000,
+                  isClosable: true,
+                });
+              });
+          }
+        }}
+        color="white"
+        fontSize="13px"
+        textTransform="uppercase"
+      >
+        {buttonText[type]}
+      </Button>
+    );
+  };
+
+  ReviewButton.propTypes = {
+    type: PropTypes.string.isRequired,
+  };
 
   return (
     <Box width="auto" height="auto">
@@ -190,14 +296,11 @@ const ReviewModal = ({ currentTask, projectLink }) => {
                 {currentTask.title}
               </Link>
             </Box>
-            <Textarea placeholder="Comments for the student" fontSize="14px" height="128px" onChange={(e) => console.log('comment:::', e.target.value)} />
+            <Textarea onChange={(e) => setComment(e.target.value)} placeholder={t('review-assignment.comment-placeholder')} fontSize="14px" height="128px" />
             <Box pt={6} display="flex" flexDirection="row" justifyContent="space-between">
-              <Button background="danger" _hover={{ background: 'danger' }} color="white" fontSize="13px" textTransform="uppercase">
-                {t('review-assignment.reject')}
-              </Button>
-              <Button background="success" _hover={{ background: 'success' }} color="white" fontSize="13px" textTransform="uppercase">
-                {t('review-assignment.approve')}
-              </Button>
+              {['reject', 'approve'].map((type) => (
+                <ReviewButton type={type} />
+              ))}
             </Box>
           </ModalBody>
         </ModalContent>
@@ -207,23 +310,33 @@ const ReviewModal = ({ currentTask, projectLink }) => {
 };
 
 const ButtonHandler = ({
-  currentTask, cohortSession,
+  currentTask, cohortSession, contextState, setContextState,
 }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const { t } = useTranslation('assignments');
   const router = useRouter();
+  const toast = useToast();
   const lang = {
     es: '/es/',
     en: '/',
   };
   const projectLink = `https://4geeks.com${lang[router.locale]}project/${currentTask.associated_slug}`;
 
+  const updpateAssignment = async (taskUpdated) => {
+    const keyIndex = contextState.allTasks.findIndex((x) => x.id === taskUpdated.id);
+    await setContextState({
+      allTasks: [
+        ...contextState.allTasks.slice(0, keyIndex), // before keyIndex (inclusive)
+        taskUpdated, // key item (updated)
+        ...contextState.allTasks.slice(keyIndex + 1), // after keyIndex (exclusive)
+      ],
+    });
+  };
+
   // const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
 
   if (currentTask && currentTask.task_type) {
     const taskStatus = currentTask.task_status;
     const revisionStatus = currentTask.revision_status;
-    const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
 
     const statusConditional = {
       delivered: taskStatus === 'DONE' && revisionStatus === 'PENDING',
@@ -234,7 +347,7 @@ const ButtonHandler = ({
 
     if (statusConditional.delivered) {
       return (
-        <ReviewModal currentTask={currentTask} projectLink={projectLink} />
+        <ReviewModal currentTask={currentTask} projectLink={projectLink} cohortSession={cohortSession} updpateAssignment={updpateAssignment} />
       );
     }
     if (statusConditional.approved) {
@@ -242,60 +355,53 @@ const ButtonHandler = ({
         <Box width="auto" height="auto">
           <Button
             variant="link"
-            onClick={onOpen}
+            onClick={() => {
+              bc.todo().update({
+                id: currentTask.id,
+                revision_status: 'PENDING',
+              })
+                .then(() => {
+                  updpateAssignment({
+                    ...currentTask,
+                    id: currentTask.id,
+                    revision_status: 'PENDING',
+                  });
+                  toast({
+                    title: t('alert-message:review-assignment-updated'),
+                    status: 'success',
+                    duration: 5000,
+                    isClosable: true,
+                  });
+                })
+                .catch(() => {
+                  toast({
+                    title: t('alert-message:review-assignment-error'),
+                    status: 'error',
+                    duration: 5000,
+                    isClosable: true,
+                  });
+                });
+            }}
             fontSize="15px"
             color="blue.default"
             _hover={{ textDecoration: 'none' }}
           >
             {t('task-handler.undo-approval')}
           </Button>
-
-          {/* <Button onClick={onOpen}>Open Modal</Button> */}
-          <Modal
-            isOpen={isOpen}
-            onClose={onClose}
-          >
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader fontSize="15" textTransform="uppercase" fontWeight="900">
-                {t('deliver-assignment.title')}
-              </ModalHeader>
-              <ModalCloseButton />
-              <ModalBody pb={6}>
-                <Box display="flex" flexDirection="column">
-                  <Text>{fullName}</Text>
-                  <Link href="#test" color="blue.default">{currentTask.title}</Link>
-                </Box>
-                <FormLabel fontSize="12px">
-                  {t('deliver-assignment.label')}
-                </FormLabel>
-                <Input value={currentTask.github_url} readOnly borderTopRightRadius="0" borderBottomRightRadius="0" />
-                <Text>
-                  {t('deliver-assignment.hint')}
-                </Text>
-              </ModalBody>
-
-              <ModalFooter>
-                <Button variant="outline" textTransform="uppercase" colorScheme="blue" mr={3}>
-                  {t('deliver-assignment.button')}
-                </Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
         </Box>
       );
     }
     if (statusConditional.rejected) {
       return (
         <Box width="auto" height="auto">
-          <DeliverModal currentTask={currentTask} projectLink={projectLink} cohortSession={cohortSession} />
+          <DeliverModal currentTask={currentTask} projectLink={projectLink} cohortSession={cohortSession} updpateAssignment={updpateAssignment} />
         </Box>
       );
     }
   }
   return (
     <Box width="auto" height="auto">
-      <DeliverModal currentTask={currentTask} projectLink={projectLink} cohortSession={cohortSession} />
+      <DeliverModal currentTask={currentTask} projectLink={projectLink} cohortSession={cohortSession} updpateAssignment={updpateAssignment} />
     </Box>
   );
 };
@@ -303,28 +409,23 @@ const ButtonHandler = ({
 ButtonHandler.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.any),
   cohortSession: PropTypes.objectOf(PropTypes.any),
-  // sendProject: PropTypes.func.isRequired,
-  // changeStatusAssignment: PropTypes.func.isRequired,
-  // toggleSettings: PropTypes.func.isRequired,
-  // closeSettings: PropTypes.func.isRequired,
-  // settingsOpen: PropTypes.bool.isRequired,
-  // allowText: PropTypes.bool,
-  // onClickHandler: PropTypes.func,
+  contextState: PropTypes.objectOf(PropTypes.any).isRequired,
+  setContextState: PropTypes.func.isRequired,
 };
 ButtonHandler.defaultProps = {
   currentTask: null,
   cohortSession: null,
-  // allowText: false,
-  // onClickHandler: () => {},
 };
 DeliverModal.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.any).isRequired,
   projectLink: PropTypes.string.isRequired,
   cohortSession: PropTypes.objectOf(PropTypes.any).isRequired,
+  updpateAssignment: PropTypes.func.isRequired,
 };
 ReviewModal.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.any).isRequired,
   projectLink: PropTypes.string.isRequired,
+  updpateAssignment: PropTypes.func.isRequired,
 };
 
 export default memo(ButtonHandler);

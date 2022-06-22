@@ -7,6 +7,12 @@
     "rejected": "Rejected",
     "undelivered": "Undelivered"
   },
+  "label": {
+    "status": "Status",
+    "student-and-assignments": "Student and Assignments",
+    "link": "Link",
+    "actions": "Actions"
+  },
   "filter": {
     "project": "Filter by Project",
     "student": "Filter by Student",
@@ -29,6 +35,7 @@
   "review-assignment": {
     "title": "Assignment Review",
     "reject": "Mark as rejected",
-    "approve": "Mark as approved"
+    "approve": "Mark as approved",
+    "comment-placeholder": "Comment or feedback for the student (optional)"
   }
 }
