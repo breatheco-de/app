@@ -1,3 +1,27 @@
 {
-  "copyright": "Todos los derechos reservados, 4Geeks LLC 2021. Lea más sobre 4Geeks y lo que vamos a hacer aquí."
+  "copyright": "Todos los derechos reservados, 4Geeks LLC 2021. Lea más sobre 4Geeks y lo que vamos a hacer aquí.",
+  "company":{
+    "title":"COMPAÑÍA",
+    "about":"ACERCA DE",
+    "contact":"CONTACTO",
+    "media":"MEDIA KIT"
+  },
+  "learning":{
+    "title":"LIBRERÍA DE APRENDIZAJE",
+    "read":"Leer y observar",
+    "practice":"Practica interactivamente",
+    "build":"Realiza proyectos",
+    "how":"Como hacer..."
+  },
+  "community":{
+    "title":"COMUNIDAD DE 4GEEKS",
+    "work":"Talleres y eventos",
+    "live":"Mentorías en vivo",
+    "build":"Aprendizaje social y en vivo",
+    "conduct":"¿Código de conducta?"
+  },
+  "social":{
+    "title":"APRENDIZAJE SOCIAL Y EN VIVO",
+    "text":"La forma más eficiente de aprender: únase a una cohorte con compañeros de clase como usted, transmisiones en vivo, sesiones improvisadas de codificación, tutorías en vivo con expertos reales y mantenga la motivación."
+  }
 }
