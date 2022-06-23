@@ -10,7 +10,6 @@ import {
   useColorMode,
   Divider,
   Heading,
-  Stack,
 } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
@@ -55,47 +54,72 @@ const Footer = () => {
         </Box>
       </Flex>
       <Divider borderBottomWidth="2px" />
-      <Flex paddingTop="30px">
-        <Flex width="60%">
-          <Box>
-            <Heading as="h5" size="sm">
+      <Flex padding="30px 40px 0 40px">
+        <Flex minWidth="60%" width="60%" marginRight="3%">
+          <Box marginRight="5%">
+            <Heading as="h5" size="sm" marginBottom="15px">
               {t('company.title')}
             </Heading>
-            <Text fontSize="sm">{t('company.about')}</Text>
-            <Text fontSize="sm">{t('company.contact')}</Text>
-            <Text fontSize="sm">{t('company.media')}</Text>
+            <Text fontSize="sm">{t('company.about').toUpperCase()}</Text>
+            <Text fontSize="sm">{t('company.contact').toUpperCase()}</Text>
+            <Text fontSize="sm">{t('company.media').toUpperCase()}</Text>
           </Box>
-          <Container maxW="none">
-            <Stack direction="row" h="105px" marginBottom="20px">
-              <Divider orientation="vertical" />
-              <Box>
-                <Heading as="h5" size="sm">
-                  {t('learning.title')}
-                </Heading>
-                <Text fontSize="sm">{t('learning.read')}</Text>
-                <Text fontSize="sm">{t('learning.practice')}</Text>
-                <Text fontSize="sm">{t('learning.build')}</Text>
-                <Text fontSize="sm">{t('learning.how')}</Text>
-              </Box>
-            </Stack>
-            <Stack direction="row" h="105px">
-              <Divider orientation="vertical" />
-              <Box>
-                <Heading as="h5" size="sm">
-                  {t('community.title')}
-                </Heading>
-                <Text fontSize="sm">{t('community.work')}</Text>
-                <Text fontSize="sm">{t('community.live')}</Text>
-                <Text fontSize="sm">{t('community.build')}</Text>
-                <Text fontSize="sm">{t('community.conduct')}</Text>
-              </Box>
-            </Stack>
+          <Container maxW="none" padding="0">
+            <Box paddingLeft="15%" marginBottom="20px" borderLeft="2px" borderColor="#e2e8f0">
+              <Heading as="h5" size="sm" marginBottom="15px">
+                {t('learning.title')}
+              </Heading>
+              <Text fontSize="sm">{t('learning.read').toUpperCase()}</Text>
+              <Text fontSize="sm">{t('learning.practice').toUpperCase()}</Text>
+              <Text fontSize="sm">{t('learning.build').toUpperCase()}</Text>
+              <Text fontSize="sm">{t('learning.how').toUpperCase()}</Text>
+            </Box>
+            <Box paddingLeft="15%" marginBottom="20px" borderLeft="2px" borderColor="#e2e8f0">
+              <Heading as="h5" size="sm" marginBottom="15px">
+                {t('community.title')}
+              </Heading>
+              <Text fontSize="sm">{t('community.work').toUpperCase()}</Text>
+              <Text fontSize="sm">{t('community.live').toUpperCase()}</Text>
+              <Text fontSize="sm">{t('community.build').toUpperCase()}</Text>
+              <Text fontSize="sm">{t('community.conduct').toUpperCase()}</Text>
+            </Box>
           </Container>
+          <Divider orientation="vertical" borderRightWidth="2px" marginLeft="5%" marginRight="5%" />
           <Box>
-            <Heading as="h5" size="sm">
+            <Heading as="h5" size="sm" marginBottom="15px">
               {t('social.title')}
             </Heading>
             <Text fontSize="sm">{t('social.text')}</Text>
+          </Box>
+        </Flex>
+        <Flex width="40%" wrap="wrap">
+          <Box width="50%">
+            <Heading as="h5" fontSize="12px" marginBottom="15px">
+              <Icon style={{ display: 'inline', marginRight: '10px' }} icon="coding" width="40px" height="40px" />
+              {t('iconogram.intro.title').toUpperCase()}
+            </Heading>
+            <Text fontSize="sm" lineHeight="22px">{t('iconogram.intro.text')}</Text>
+          </Box>
+          <Box width="50%">
+            <Heading as="h5" fontSize="12px" marginBottom="15px">
+              <Icon style={{ display: 'inline', marginRight: '10px' }} icon="data-sience" width="40px" height="40px" />
+              {t('iconogram.data.title').toUpperCase()}
+            </Heading>
+            <Text fontSize="sm" lineHeight="22px">{t('iconogram.data.text')}</Text>
+          </Box>
+          <Box width="50%">
+            <Heading as="h5" fontSize="12px" marginBottom="15px">
+              <Icon style={{ display: 'inline', marginRight: '10px' }} icon="geekcoding" width="40px" height="40px" />
+              {t('iconogram.geekcoding.title').toUpperCase()}
+            </Heading>
+            <Text fontSize="sm" lineHeight="22px">{t('iconogram.geekcoding.text')}</Text>
+          </Box>
+          <Box width="50%">
+            <Heading as="h5" fontSize="12px" marginBottom="15px">
+              <Icon style={{ display: 'inline', marginRight: '10px' }} icon="machine-learning" width="40px" height="40px" />
+              {t('iconogram.machine.title').toUpperCase()}
+            </Heading>
+            <Text fontSize="sm" lineHeight="22px">{t('iconogram.machine.text')}</Text>
           </Box>
         </Flex>
       </Flex>

@@ -23,5 +23,23 @@
   "social":{
     "title":"SOCIAL & LIVE LEARNING",
     "text":"The most efficient way to learn: Join a cohort with classmates like yourself, live streamings, coding jam sessions, live mentorships with real experts and keep the motivation."
+  },
+  "iconogram":{
+    "intro":{
+      "title":"Intro to coding",
+      "text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quis libero eget dolor."
+    },
+    "data":{
+      "title":"Data Sience",
+      "text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quis libero eget dolor."
+    },
+    "geekcoding":{
+      "title":"30daysofgeekcoding",
+      "text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quis libero eget dolor."
+    },
+    "machine":{
+      "title":"A.I. & machine learning",
+      "text":"Develop necessary tools to upskill for the future of AI work."
+    }
   }
 }

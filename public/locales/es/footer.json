@@ -23,5 +23,24 @@
   "social":{
     "title":"APRENDIZAJE SOCIAL Y EN VIVO",
     "text":"La forma más eficiente de aprender: únase a una cohorte con compañeros de clase como usted, transmisiones en vivo, sesiones improvisadas de codificación, tutorías en vivo con expertos reales y mantenga la motivación."
+  },
+  "iconogram":{
+    "intro":{
+      "title":"Intro to coding",
+      "text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quis libero eget dolor."
+    },
+    "data":{
+      "title":"Data Sience",
+      "text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quis libero eget dolor."
+    },
+    "geekcoding":{
+      "title":"30daysofgeekcoding",
+      "text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quis libero eget dolor."
+    },
+    "machine":{
+      "title":"A.I. & machine learning",
+      "text":"Desarrollar las herramientas necesarias para mejorar las habilidades para el futuro del trabajo de IA."
+    }
   }
+  
 }
