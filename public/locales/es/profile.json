@@ -27,5 +27,27 @@
   "remove-github-modal": {
     "title": "Remover cuenta Github",
     "description": "Al remover tu cuenta GitHub, cualquier inicio de sesión con GitHub se desvinculará; sin embargo, podrá sincronizarlo nuevamente, si así lo desea"
+  },
+  "share-certificate": {
+    "socials": [
+      {
+        "name": "twitter",
+        "label": "Twitter",
+        "href": "https://twitter.com/share?url=&text=4Geeks.com/es Una nueva forma de aprender en comunidad y en vivo.",
+        "color": "#1DA1F2"
+      },
+      {
+        "name": "facebook",
+        "label": "Facebook",
+        "href": "https://facebook.com/sharer?u=https://4geeks.com",
+        "color": "#4267B2"
+      },
+      {
+        "name": "linkedin",
+        "label": "LinkedIn",
+        "href": "https://linkedin.com/sharing/share-offsite/?url=https://4geeks.com",
+        "color": "#0077B5"
+      }
+    ]
   }
 }
