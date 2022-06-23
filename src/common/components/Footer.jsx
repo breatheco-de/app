@@ -54,9 +54,19 @@ const Footer = () => {
         </Box>
       </Flex>
       <Divider borderBottomWidth="2px" />
-      <Flex padding="30px 40px 0 40px">
-        <Flex minWidth="60%" width="60%" marginRight="3%">
-          <Box marginRight="5%">
+      <Flex padding={['30px 30px', '30px 20px', '30px 20px', '30px 40px']}>
+        <Flex
+          minWidth="60%"
+          width={['100%', '100%', '60%', '60%']}
+          marginRight={['0', '0', '3%', '3%']}
+          justifyContent={['space-between', 'space-between', 'normal', 'normal']}
+          wrap={['wrap', 'wrap', 'nowrap', 'nowrap']}
+        >
+          <Box
+            textAlign={['center', 'center', 'left', 'left']}
+            width={['40%', '40%', 'auto', 'auto']}
+            marginRight={['0', '0', '5%', '5%']}
+          >
             <Heading as="h5" size="sm" marginBottom="15px">
               {t('company.title')}
             </Heading>
@@ -64,8 +74,79 @@ const Footer = () => {
             <Text fontSize="sm">{t('company.contact').toUpperCase()}</Text>
             <Text fontSize="sm">{t('company.media').toUpperCase()}</Text>
           </Box>
-          <Container maxW="none" padding="0">
-            <Box paddingLeft="15%" marginBottom="20px" borderLeft="2px" borderColor="#e2e8f0">
+          {/* ---- RESPONSIVE BOXES ---- */}
+          <Box
+            width={['40%', '40%', 'auto', 'auto']}
+            marginBottom="30px"
+            textAlign="center"
+            display={[
+              'block', // 0-30em
+              'block', // 30em-48em
+              'none', // 48em-62em
+              'none', // 62em+
+            ]}
+          >
+            <Heading as="h5" size="sm" marginBottom="15px">
+              {t('learning.title')}
+            </Heading>
+            <Text fontSize="sm">{t('learning.read').toUpperCase()}</Text>
+            <Text fontSize="sm">{t('learning.practice').toUpperCase()}</Text>
+            <Text fontSize="sm">{t('learning.build').toUpperCase()}</Text>
+            <Text fontSize="sm">{t('learning.how').toUpperCase()}</Text>
+          </Box>
+          <Box
+            textAlign="center"
+            width={['40%', '40%', 'auto', 'auto']}
+            display={[
+              'block', // 0-30em
+              'block', // 30em-48em
+              'none', // 48em-62em
+              'none', // 62em+
+            ]}
+          >
+            <Heading as="h5" size="sm" marginBottom="15px">
+              {t('community.title')}
+            </Heading>
+            <Text fontSize="sm">{t('community.work').toUpperCase()}</Text>
+            <Text fontSize="sm">{t('community.live').toUpperCase()}</Text>
+            <Text fontSize="sm">{t('community.build').toUpperCase()}</Text>
+            <Text fontSize="sm">{t('community.conduct').toUpperCase()}</Text>
+          </Box>
+          <Box
+            textAlign="center"
+            width={['40%', '40%', 'auto', 'auto']}
+            display={[
+              'block', // 0-30em
+              'block', // 30em-48em
+              'none', // 48em-62em
+              'none', // 62em+
+            ]}
+          >
+            <Heading as="h5" size="sm" marginBottom="15px">
+              {t('social.title')}
+            </Heading>
+            <Text fontSize="sm">{t('iconogram.intro.title')}</Text>
+            <Text fontSize="sm">{t('iconogram.data.title')}</Text>
+            <Text fontSize="sm">{t('iconogram.geekcoding.title')}</Text>
+            <Text fontSize="sm">{t('iconogram.machine.title')}</Text>
+          </Box>
+          {/* ---- RESPONSIVE BOXES ---- */}
+          <Container
+            marginRight="5%"
+            paddingRight="4%"
+            maxW="none"
+            paddingLeft="0"
+            borderRight="2px"
+            borderColor="#e2e8f0"
+            flexShrink="0.7"
+            display={[
+              'none', // 0-30em
+              'none', // 30em-48em
+              'block', // 48em-62em
+              'block', // 62em+
+            ]}
+          >
+            <Box width="100%" paddingLeft="15%" marginBottom="20px" borderLeft="2px" borderColor="#e2e8f0">
               <Heading as="h5" size="sm" marginBottom="15px">
                 {t('learning.title')}
               </Heading>
@@ -74,7 +155,7 @@ const Footer = () => {
               <Text fontSize="sm">{t('learning.build').toUpperCase()}</Text>
               <Text fontSize="sm">{t('learning.how').toUpperCase()}</Text>
             </Box>
-            <Box paddingLeft="15%" marginBottom="20px" borderLeft="2px" borderColor="#e2e8f0">
+            <Box width="100%" paddingLeft="15%" borderLeft="2px" borderColor="#e2e8f0">
               <Heading as="h5" size="sm" marginBottom="15px">
                 {t('community.title')}
               </Heading>
@@ -84,43 +165,91 @@ const Footer = () => {
               <Text fontSize="sm">{t('community.conduct').toUpperCase()}</Text>
             </Box>
           </Container>
-          <Divider orientation="vertical" borderRightWidth="2px" marginLeft="5%" marginRight="5%" />
-          <Box>
+          {/* <Divider
+            style={{ borderColor: colorMode === 'light' ? '#e2e8f0' : '#FFFFFF' }}
+            borderColor={colorMode === 'light' ? '#e2e8f0' : '#FFFFFF'}
+            orientation="vertical"
+            borderRightWidth="2px"
+            marginLeft="5%"
+            marginRight="5%"
+          /> */}
+          <Box
+            display={[
+              'none', // 0-30em
+              'none', // 30em-48em
+              'block', // 48em-62em
+              'block', // 62em+
+            ]}
+          >
             <Heading as="h5" size="sm" marginBottom="15px">
               {t('social.title')}
             </Heading>
             <Text fontSize="sm">{t('social.text')}</Text>
           </Box>
         </Flex>
-        <Flex width="40%" wrap="wrap">
-          <Box width="50%">
+        <Flex
+          key="iconogram"
+          width="40%"
+          wrap="wrap"
+          justifyContent="space-between"
+          display={[
+            'none', // 0-30em
+            'none', // 30em-48em
+            'flex', // 48em-62em
+            'flex', // 62em+
+          ]}
+        >
+          <Box width="48%" marginRight="2px" marginBottom="5px">
             <Heading as="h5" fontSize="12px" marginBottom="15px">
               <Icon style={{ display: 'inline', marginRight: '10px' }} icon="coding" width="40px" height="40px" />
               {t('iconogram.intro.title').toUpperCase()}
             </Heading>
             <Text fontSize="sm" lineHeight="22px">{t('iconogram.intro.text')}</Text>
           </Box>
-          <Box width="50%">
+          <Box width="48%" marginRight="2px" marginBottom="5px">
             <Heading as="h5" fontSize="12px" marginBottom="15px">
               <Icon style={{ display: 'inline', marginRight: '10px' }} icon="data-sience" width="40px" height="40px" />
               {t('iconogram.data.title').toUpperCase()}
             </Heading>
             <Text fontSize="sm" lineHeight="22px">{t('iconogram.data.text')}</Text>
           </Box>
-          <Box width="50%">
+          <Box width="48%" marginRight="2px" marginBottom="5px">
             <Heading as="h5" fontSize="12px" marginBottom="15px">
               <Icon style={{ display: 'inline', marginRight: '10px' }} icon="geekcoding" width="40px" height="40px" />
               {t('iconogram.geekcoding.title').toUpperCase()}
             </Heading>
             <Text fontSize="sm" lineHeight="22px">{t('iconogram.geekcoding.text')}</Text>
           </Box>
-          <Box width="50%">
+          <Box width="48%" marginRight="2px" marginBottom="5px">
             <Heading as="h5" fontSize="12px" marginBottom="15px">
               <Icon style={{ display: 'inline', marginRight: '10px' }} icon="machine-learning" width="40px" height="40px" />
               {t('iconogram.machine.title').toUpperCase()}
             </Heading>
             <Text fontSize="sm" lineHeight="22px">{t('iconogram.machine.text')}</Text>
           </Box>
+        </Flex>
+      </Flex>
+      <Divider borderBottomWidth="2px" />
+      <Flex padding="20px 20px 0 20px" key="copyright" justifyContent="space-between">
+        <Text fontSize="sm">{t('copyright')}</Text>
+        <Flex justifyContent="center" width="35%">
+          <Text fontSize="sm">{t('privacy')}</Text>
+          <Divider
+            orientation="vertical"
+            // borderRightWidth="2px"
+            marginLeft="10px"
+            marginRight="10px"
+            borderColor="#3A3A3A"
+          />
+          <Text fontSize="sm">{t('cookies')}</Text>
+          <Divider
+            orientation="vertical"
+            // borderRightWidth="2px"
+            marginLeft="10px"
+            marginRight="10px"
+            borderColor="#3A3A3A"
+          />
+          <Text fontSize="sm">{t('terms')}</Text>
         </Flex>
       </Flex>
     </Container>
