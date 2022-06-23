@@ -1,4 +1,30 @@
 // For more info https://chakra-ui.com/docs/features/style-props
+const bgHoverButtonColor = (props) => {
+  if (props.outline) return 'transparent';
+  return props.colorScheme || '#00A0DA';
+};
+
+const bgButtonColor = (props) => {
+  if (props.outline) return 'transparent';
+  return props.colorScheme || 'blue.default';
+};
+
+const borderColor = (props) => {
+  if (props.outline) {
+    if (props.colorScheme) return props.colorScheme;
+    return '#000000';
+  }
+  return 'transparent';
+};
+const buttonColor = (props) => {
+  if (props.outline) {
+    if (props.colorScheme) {
+      return props.colorScheme;
+    }
+  }
+  return 'white';
+};
+
 const LinkStyles = {
   // style object for base or default style
   baseStyle: {},
@@ -11,17 +37,19 @@ const LinkStyles = {
       fontSize: '15px',
       letterSpacing: '0.05em',
     }),
-    buttonDefault: () => ({
-      bg: 'blue.default',
-      color: 'white',
+    buttonDefault: (props) => ({
+      bg: bgButtonColor(props),
+      color: buttonColor(props),
+      fontWeight: '700',
       padding: '12px 24px',
       cursor: 'pointer',
-      border: '0',
+      border: props.outline ? '1px solid' : '0',
+      borderColor: borderColor(props),
       borderRadius: '3px',
       fontSize: '13px',
       letterSpacing: '0.05em',
       _hover: {
-        bg: '#00A0DA',
+        bg: bgHoverButtonColor(props),
         opacity: 1,
         textDecoration: 'none',
         _disabled: {
