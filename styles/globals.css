@@ -14,6 +14,10 @@ a {
   text-decoration: none;
 }
 
+a.active {
+  color: #0097CD;
+}
+
 * {
   box-sizing: border-box;
 }
