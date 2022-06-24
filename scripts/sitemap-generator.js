@@ -48,6 +48,26 @@ const getHowTo = () => {
   return data;
 };
 
+const getFrequently = (route) => {
+  if (
+    route.includes('/interactive-exercises')
+    || route.includes('/interactive-coding-tutorial')
+    || route.includes('/how-to')
+    || route.includes('/read/')
+    || route.includes('/lessons')
+    || route.includes('/about-us')
+    || route.includes('/login')
+    || route === ''
+  ) return 'weekly';
+  if (
+    route.includes('/lesson/')
+    || route.includes('/project/')
+    || route.includes('/interactive-exercise/')
+    || route.includes('/how-to/')
+  ) return 'monthly';
+  return 'yearly';
+}
+
 function addPage(page) {
   const path = page.replace('src/pages', '').replace('/index', '').replace('.jsx', '').replace('.js', '');
   const route = path === '/index' ? '' : path;
@@ -55,8 +75,8 @@ function addPage(page) {
   return `  <url>
     <loc>${`${websiteUrl}${route}`}</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
+    <changefreq>${getFrequently(route)}</changefreq>
+    <priority>0.9</priority>
   </url>`;
 }
 
