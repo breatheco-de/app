@@ -20,8 +20,20 @@ const Footer = () => {
   const { colorMode } = useColorMode();
   return (
     <Container maxW="none" padding="20px">
-      <Flex justifyContent="space-between" marginBottom="10px">
-        <Box key="icons" display="flex" flexDir="column" justifyContent="center" width="25%">
+      <Flex
+        direction={['column', 'column', 'row', 'row']}
+        justifyContent="space-between"
+        marginBottom="10px"
+        alignItems="center"
+      >
+        <Box
+          key="icons"
+          display="flex"
+          flexDir="column"
+          justifyContent="center"
+          width={['100%', '50%', '25%', '25%']}
+          marginBottom={['20px', '20px', '0', '0']}
+        >
           <Flex justifyContent="space-around">
             <Icon icon="twitter" width="23px" height="23px" />
             <Icon icon="facebook" width="23px" height="23px" />
@@ -30,10 +42,21 @@ const Footer = () => {
             <Icon icon="github" width="23px" height="23px" />
           </Flex>
         </Box>
-        <Box key="logo" width="25%">
+        <Box
+          marginBottom={['20px', '20px', '0', '0']}
+          order={[-1, -1, 0, 0]}
+          key="logo"
+          width={['100%', '50%', '25%', '25%']}
+        >
           <Icon style={{ margin: 'auto' }} icon="4GeeksIcon" width="150px" height="60px" />
         </Box>
-        <Box key="searchbar" display="flex" flexDir="column" justifyContent="center" width="25%">
+        <Box
+          key="searchbar"
+          display="flex"
+          flexDir="column"
+          ustifyContent="center"
+          width={['100%', '50%', '25%', '25%']}
+        >
           <InputGroup>
             <InputLeftElement
               pointerEvents="none"
@@ -47,14 +70,14 @@ const Footer = () => {
               color={colorMode === 'light' ? '#020203' : '#FFFFFF'}
               width="100%"
               borderRadius="50px"
-              placeholder="Search in 4Geeks"
+              placeholder={t('search')}
             />
             {/* <InputRightElement children={<Search2Icon color='green.500' />} /> */}
           </InputGroup>
         </Box>
       </Flex>
       <Divider borderBottomWidth="2px" />
-      <Flex padding={['30px 30px', '30px 20px', '30px 20px', '30px 40px']}>
+      <Flex padding={['30px 10px', '30px 20px', '30px 0 30px 20px', '30px 40px']}>
         <Flex
           minWidth="60%"
           width={['100%', '100%', '60%', '60%']}
@@ -64,7 +87,7 @@ const Footer = () => {
         >
           <Box
             textAlign={['center', 'center', 'left', 'left']}
-            width={['40%', '40%', 'auto', 'auto']}
+            width={['47%', '40%', 'auto', 'auto']}
             marginRight={['0', '0', '5%', '5%']}
           >
             <Heading as="h5" size="sm" marginBottom="15px">
@@ -76,7 +99,7 @@ const Footer = () => {
           </Box>
           {/* ---- RESPONSIVE BOXES ---- */}
           <Box
-            width={['40%', '40%', 'auto', 'auto']}
+            width={['47%', '40%', 'auto', 'auto']}
             marginBottom="30px"
             textAlign="center"
             display={[
@@ -96,7 +119,7 @@ const Footer = () => {
           </Box>
           <Box
             textAlign="center"
-            width={['40%', '40%', 'auto', 'auto']}
+            width={['47%', '40%', 'auto', 'auto']}
             display={[
               'block', // 0-30em
               'block', // 30em-48em
@@ -114,7 +137,7 @@ const Footer = () => {
           </Box>
           <Box
             textAlign="center"
-            width={['40%', '40%', 'auto', 'auto']}
+            width={['47%', '40%', 'auto', 'auto']}
             display={[
               'block', // 0-30em
               'block', // 30em-48em
@@ -230,9 +253,21 @@ const Footer = () => {
         </Flex>
       </Flex>
       <Divider borderBottomWidth="2px" />
-      <Flex padding="20px 20px 0 20px" key="copyright" justifyContent="space-between">
-        <Text fontSize="sm">{t('copyright')}</Text>
-        <Flex justifyContent="center" width="35%">
+      <Flex
+        key="copyright"
+        padding="20px 20px 0 20px"
+        justifyContent={['center', 'center', 'space-between', 'space-between']}
+        wrap={['wrap', 'wrap', 'nowrap', 'nowrap']}
+        // alignItems="center"
+        textAlign="center"
+      >
+        <Text marginBottom={['20px', '20px', '0', '0']} fontSize="sm">{t('copyright')}</Text>
+        <Flex
+          wrap={['wrap', 'wrap', 'nowrap', 'nowrap']}
+          justifyContent="center"
+          width={['100%', '100%', '35%', '35%']}
+          // alignItems="center"
+        >
           <Text fontSize="sm">{t('privacy')}</Text>
           <Divider
             orientation="vertical"
@@ -240,6 +275,7 @@ const Footer = () => {
             marginLeft="10px"
             marginRight="10px"
             borderColor="#3A3A3A"
+            maxH={['20px', '20px', '50', '50']}
           />
           <Text fontSize="sm">{t('cookies')}</Text>
           <Divider
@@ -248,6 +284,7 @@ const Footer = () => {
             marginLeft="10px"
             marginRight="10px"
             borderColor="#3A3A3A"
+            maxH={['20px', '20px', '50', '50']}
           />
           <Text fontSize="sm">{t('terms')}</Text>
         </Flex>
