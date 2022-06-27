@@ -18,6 +18,7 @@ module.exports = {
     '/choose-program': ['choose-program'],
     '/syllabus/[cohortSlug]/[lesson]/[lessonSlug]': ['syllabus', 'dashboard'],
     '/survey/[surveyId]': ['survey'],
+    '/mentorship': ['mentorship'],
     '/how-to': ['how-to'],
     '/how-to/[slug]': ['how-to'],
     '/profile': ['profile'],
