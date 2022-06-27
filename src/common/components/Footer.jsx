@@ -54,7 +54,7 @@ const Footer = () => {
           key="searchbar"
           display="flex"
           flexDir="column"
-          ustifyContent="center"
+          justifyContent="center"
           width={['100%', '50%', '25%', '25%']}
         >
           <InputGroup>
