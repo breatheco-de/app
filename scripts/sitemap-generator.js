@@ -66,7 +66,7 @@ const getFrequently = (route) => {
     || route.includes('/how-to/')
   ) return 'monthly';
   return 'yearly';
-}
+};
 
 function addPage(page) {
   const path = page.replace('src/pages', '').replace('/index', '').replace('.jsx', '').replace('.js', '');

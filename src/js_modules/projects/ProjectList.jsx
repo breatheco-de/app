@@ -23,7 +23,7 @@ const ProjectList = ({
   const defaultImage = exampleImage || '/static/images/code1.png';
   const { query } = router;
   const techTagsQuery = (query.techs && decodeURI(query.techs?.toLowerCase())?.split(',')) || false;
-  const withVideoQuery = query.withVideo || false;
+  const withVideoQuery = query.withVideo === 'true';
   const difficultyQuery = query.difficulty?.toLowerCase() || false;
 
   // const bgBlur = '/static/images/codeBlur.png';

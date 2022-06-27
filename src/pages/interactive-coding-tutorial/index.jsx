@@ -5,6 +5,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import getT from 'next-translate/getT';
+import { useRouter } from 'next/router';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import FilterModal from '../../common/components/FilterModal';
@@ -109,8 +110,19 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
   const { filteredBy, setProjectFilters } = useFilter();
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const iconColor = useColorModeValue('#FFF', '#283340');
-  const currentFilters = technologies.length
-    + (difficulty === undefined || difficulty.length === 0 ? 0 : 1)
+  const router = useRouter();
+  const techsQuery = router.query.techs;
+  const difficultyQuery = router.query.difficulty;
+
+  const technologiesActived = technologies.length || techsQuery?.split(',')?.length || 0;
+  const difficultyIsActive = () => {
+    if (difficultyQuery?.length > 0) return 1;
+    if (difficulty !== undefined && difficulty?.length > 0) return 1;
+    return 0;
+  };
+
+  const currentFilters = technologiesActived
+    + difficultyIsActive()
     + videoTutorials;
 
   const { isOpen, onClose, onOpen } = useDisclosure();
