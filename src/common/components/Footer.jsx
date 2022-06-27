@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import {
   Box,
@@ -10,6 +12,7 @@ import {
   useColorMode,
   Divider,
   Heading,
+  Link,
 } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
@@ -22,7 +25,7 @@ const Footer = () => {
     <Container maxW="none" padding="20px">
       <Flex
         direction={['column', 'column', 'row', 'row']}
-        justifyContent="space-between"
+        // justifyContent="space-between"
         marginBottom="10px"
         alignItems="center"
       >
@@ -35,11 +38,21 @@ const Footer = () => {
           marginBottom={['20px', '20px', '0', '0']}
         >
           <Flex justifyContent="space-around">
-            <Icon icon="twitter" width="23px" height="23px" />
-            <Icon icon="facebook" width="23px" height="23px" />
-            <Icon icon="instagram" width="23px" height="23px" />
-            <Icon icon="youtube" width="23px" height="23px" color={colorMode === 'light' ? '#020203' : '#FFFFFF'} />
-            <Icon icon="github" width="23px" height="23px" />
+            <Link key="twitter" href="https://twitter.com/4geeksacademy" target="_blank" rel="noopener noreferrer">
+              <Icon icon="twitter" width="23px" height="23px" />
+            </Link>
+            <Link key="facebook" href="https://www.facebook.com/4geeksacademy" target="_blank" rel="noopener noreferrer">
+              <Icon icon="facebook" width="23px" height="23px" />
+            </Link>
+            <Link key="instagram" href="https://www.instagram.com/4geeksacademy/" target="_blank" rel="noopener noreferrer">
+              <Icon icon="instagram" width="23px" height="23px" />
+            </Link>
+            <Link key="youtube" href="https://www.youtube.com/c/4GeeksAcademy" target="_blank" rel="noopener noreferrer">
+              <Icon icon="youtube" width="23px" height="23px" color={colorMode === 'light' ? '#020203' : '#FFFFFF'} />
+            </Link>
+            <Link key="github" href="https://github.com/4geeksAcademy" target="_blank" rel="noopener noreferrer">
+              <Icon icon="github" width="23px" height="23px" />
+            </Link>
           </Flex>
         </Box>
         <Box
@@ -47,10 +60,11 @@ const Footer = () => {
           order={[-1, -1, 0, 0]}
           key="logo"
           width={['100%', '50%', '25%', '25%']}
+          marginLeft={['0', '0', '10%', '10%']}
         >
           <Icon style={{ margin: 'auto' }} icon="4GeeksIcon" width="150px" height="60px" />
         </Box>
-        <Box
+        {/* <Box
           key="searchbar"
           display="flex"
           flexDir="column"
@@ -72,22 +86,25 @@ const Footer = () => {
               borderRadius="50px"
               placeholder={t('search')}
             />
-            {/* <InputRightElement children={<Search2Icon color='green.500' />} /> */}
           </InputGroup>
-        </Box>
+        </Box> */}
       </Flex>
       <Divider borderBottomWidth="2px" />
       <Flex padding={['30px 10px', '30px 20px', '30px 0 30px 20px', '30px 40px']}>
         <Flex
           minWidth="60%"
-          width={['100%', '100%', '60%', '60%']}
-          marginRight={['0', '0', '3%', '3%']}
-          justifyContent={['space-between', 'space-between', 'normal', 'normal']}
+          // width={['100%', '100%', '60%', '60%']}
+          width={['100%', '100%', '100%', '100%']}
+          // marginRight={['0', '0', '3%', '3%']}
+          // justifyContent={['space-between', 'space-between', 'normal', 'normal']}
+          justifyContent={['space-between', 'space-between', 'center', 'center']}
           wrap={['wrap', 'wrap', 'nowrap', 'nowrap']}
         >
           <Box
-            textAlign={['center', 'center', 'left', 'left']}
-            width={['47%', '40%', 'auto', 'auto']}
+            // textAlign={['center', 'center', 'left', 'left']}
+            textAlign={['center', 'center', 'center', 'center']}
+            // width={['47%', '40%', 'auto', 'auto']}
+            width={['47%', '40%', '40%', '40%']}
             marginRight={['0', '0', '5%', '5%']}
           >
             <Heading as="h5" size="sm" marginBottom="15px">
@@ -99,14 +116,21 @@ const Footer = () => {
           </Box>
           {/* ---- RESPONSIVE BOXES ---- */}
           <Box
-            width={['47%', '40%', 'auto', 'auto']}
+            // width={['47%', '40%', 'auto', 'auto']}
+            width={['47%', '40%', '40%', '40%']}
             marginBottom="30px"
             textAlign="center"
+            // display={[
+            //   'block', // 0-30em
+            //   'block', // 30em-48em
+            //   'none', // 48em-62em
+            //   'none', // 62em+
+            // ]}
             display={[
               'block', // 0-30em
               'block', // 30em-48em
-              'none', // 48em-62em
-              'none', // 62em+
+              'block', // 48em-62em
+              'block', // 62em+
             ]}
           >
             <Heading as="h5" size="sm" marginBottom="15px">
@@ -117,7 +141,7 @@ const Footer = () => {
             <Text fontSize="sm">{t('learning.build').toUpperCase()}</Text>
             <Text fontSize="sm">{t('learning.how').toUpperCase()}</Text>
           </Box>
-          <Box
+          {/* <Box
             textAlign="center"
             width={['47%', '40%', 'auto', 'auto']}
             display={[
@@ -152,9 +176,9 @@ const Footer = () => {
             <Text fontSize="sm">{t('iconogram.data.title')}</Text>
             <Text fontSize="sm">{t('iconogram.geekcoding.title')}</Text>
             <Text fontSize="sm">{t('iconogram.machine.title')}</Text>
-          </Box>
+          </Box> */}
           {/* ---- RESPONSIVE BOXES ---- */}
-          <Container
+          {/* <Container
             marginRight="5%"
             paddingRight="4%"
             maxW="none"
@@ -188,14 +212,6 @@ const Footer = () => {
               <Text fontSize="sm">{t('community.conduct').toUpperCase()}</Text>
             </Box>
           </Container>
-          {/* <Divider
-            style={{ borderColor: colorMode === 'light' ? '#e2e8f0' : '#FFFFFF' }}
-            borderColor={colorMode === 'light' ? '#e2e8f0' : '#FFFFFF'}
-            orientation="vertical"
-            borderRightWidth="2px"
-            marginLeft="5%"
-            marginRight="5%"
-          /> */}
           <Box
             display={[
               'none', // 0-30em
@@ -208,9 +224,9 @@ const Footer = () => {
               {t('social.title')}
             </Heading>
             <Text fontSize="sm">{t('social.text')}</Text>
-          </Box>
+          </Box> */}
         </Flex>
-        <Flex
+        {/* <Flex
           key="iconogram"
           width="40%"
           wrap="wrap"
@@ -250,7 +266,7 @@ const Footer = () => {
             </Heading>
             <Text fontSize="sm" lineHeight="22px">{t('iconogram.machine.text')}</Text>
           </Box>
-        </Flex>
+        </Flex> */}
       </Flex>
       <Divider borderBottomWidth="2px" />
       <Flex
@@ -262,7 +278,7 @@ const Footer = () => {
         textAlign="center"
       >
         <Text marginBottom={['20px', '20px', '0', '0']} fontSize="sm">{t('copyright')}</Text>
-        <Flex
+        {/* <Flex
           wrap={['wrap', 'wrap', 'nowrap', 'nowrap']}
           justifyContent="center"
           width={['100%', '100%', '35%', '35%']}
@@ -287,7 +303,7 @@ const Footer = () => {
             maxH={['20px', '20px', '50', '50']}
           />
           <Text fontSize="sm">{t('terms')}</Text>
-        </Flex>
+        </Flex> */}
       </Flex>
     </Container>
     // <Box
