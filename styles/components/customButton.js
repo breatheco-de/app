@@ -96,19 +96,15 @@ const ButtonStyles = {
       letterSpacing: '0.05em',
       _hover: {
         bg: props.colorMode === 'light' ? 'gray.light' : 'gray.700',
-        // border: '1px solid black',
         opacity: 1,
         _disabled: {
           bg: '#EBEBEB',
-          border: 0,
         },
       },
-      // _active: {
-      //   bg: 'blue',
-      // },
       _disabled: {
         bg: '#EBEBEB',
-        border: 0,
+        border: '1px solid',
+        borderColor: props.borderColor || props.colorMode === 'dark' ? 'white' : 'black',
         color: 'gray.dark',
         opacity: 1,
         _hover: {

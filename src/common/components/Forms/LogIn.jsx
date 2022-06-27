@@ -5,7 +5,7 @@ import {
   FormLabel, useToast, Link, Spacer, Flex, InputRightElement, useColorModeValue,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import Icon from '../Icon/index';
 import validationSchema from './validationSchemas';
 import useAuth from '../../hooks/useAuth';
@@ -15,7 +15,7 @@ function LogIn() {
   const [showPSW, setShowPSW] = useState(false);
   const { login } = useAuth();
   const toast = useToast();
-  const router = useRouter();
+  // const router = useRouter();
   const [curUrl, setUrl] = useState('');
   useEffect(() => setUrl(typeof window !== 'undefined' ? window.location.href : ''), []);
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
@@ -42,7 +42,14 @@ function LogIn() {
                 duration: 9000,
                 isClosable: true,
               });
-              router.push('/choose-program');
+              // router.push('/choose-program');
+              // if (window.history.length > 1
+              //   && document.referrer.indexOf(window.location.host) !== -1) {
+              //   console.log('window.location.host:::', window.location.host);
+              //   router.back();
+              // } else {
+              //   router.replace('/');
+              // }
             }
           })
           .catch(() => {

@@ -16,6 +16,7 @@ import ProfileForm from '../../common/components/profileForm';
 import bc from '../../common/services/breathecode';
 import Icon from '../../common/components/Icon';
 import { cleanQueryStrings } from '../../utils';
+import ShareButton from '../../common/components/ShareButton';
 
 const Profile = () => {
   const { t } = useTranslation('profile');
@@ -28,6 +29,8 @@ const Profile = () => {
   const [certificates, setCertificates] = useState([]);
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const tabListMenu = t('tabList', {}, { returnObjects: true });
+
+  const socials = t('share-certificate.socials', {}, { returnObjects: true });
 
   const tabPosition = {
     '/profile/info': 0,
@@ -144,11 +147,14 @@ const Profile = () => {
                       </Text>
                     </Box>
                   </Box>
-                  <Tooltip placement="top" isDisabled={certfToken !== null} label={t('certificate-preview-not-available')}>
-                    <Link variant="buttonDefault" disabled={!certfToken} textTransform="uppercase" href={certfToken ? `https://certificate.4geeks.com/${certfToken}` : '#'} target={certfToken ? '_blank' : '_self'} rel="noopener noreferrer" fontSize="13px">
-                      {t('view-certificate')}
-                    </Link>
-                  </Tooltip>
+                  <Box display="flex" flexDirection="row" gridGap="18px">
+                    <Tooltip placement="top" isDisabled={certfToken !== null} label={t('certificate-preview-not-available')}>
+                      <Link variant="buttonDefault" outline colorScheme="blue.default" disabled={!certfToken} textTransform="uppercase" href={certfToken ? `https://certificate.4geeks.com/${certfToken}` : '#'} target={certfToken ? '_blank' : '_self'} rel="noopener noreferrer" fontSize="13px">
+                        {t('view-certificate')}
+                      </Link>
+                    </Tooltip>
+                    <ShareButton socials={socials} />
+                  </Box>
                 </Box>
               );
             })}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import {
@@ -34,16 +34,41 @@ const FilterModal = ({
   const { getCheckboxProps } = useCheckboxGroup({
     onChange: setCheckedTechnologies,
   });
+  const technologiesQuery = router.query.techs;
+  const withVideoQuery = router.query.withVideo;
+
+  useEffect(() => {
+    if (technologiesQuery) {
+      setCheckedTechnologies(technologiesQuery.split(','));
+    }
+  }, [router.query.techs]);
+
+  useEffect(() => {
+    if (withVideoQuery) {
+      setWithVideo(withVideoQuery === 'true');
+    }
+  }, [router.query.withVideo]);
 
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
 
   const handleToggle = () => setShow(!show);
 
+  const currentDifficultyPosition = router.query.difficulty || difficultyPosition;
   const handleSubmit = () => {
+    const difficulty = difficulties[difficultyPosition] || '';
+    const techs = checkedTechnologies.join(',') || '';
+    router.push({
+      query: {
+        ...router.query,
+        difficulty,
+        techs,
+        withVideo,
+      },
+    });
     setFilter({
       technologies: checkedTechnologies,
-      difficulty: difficulties[difficultyPosition] || [],
+      // difficulty: router.query.difficulty,
       videoTutorials: withVideo,
     });
   };
@@ -54,7 +79,7 @@ const FilterModal = ({
     });
     setCheckedTechnologies([]);
     setDifficulty(null);
-    setWithVideo(false);
+    setWithVideo(null);
     setFilter({
       technologies: [],
       difficulty: [],
@@ -62,7 +87,9 @@ const FilterModal = ({
     });
   };
 
-  const fLength = checkedTechnologies.length + (difficultyPosition === null ? 0 : 1) + withVideo;
+  const fLength = checkedTechnologies.length
+    + (currentDifficultyPosition === null ? 0 : 1)
+    + withVideo;
 
   return (
     <Modal isOpen={isModalOpen} onClose={onClose}>

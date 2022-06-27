@@ -109,10 +109,21 @@ function Exercices({ exercises, technologyTags, difficulties }) {
   const { filteredBy, setExerciseFilters } = useFilter();
   const { technologies, difficulty, videoTutorials } = filteredBy.exercisesOptions;
 
-  const currentFilters = technologies.length
-    + (difficulty === undefined || difficulty.length === 0 ? 0 : 1)
-    + videoTutorials;
   const router = useRouter();
+  const techsQuery = router.query.techs;
+  const difficultyQuery = router.query.difficulty;
+
+  const technologiesActived = technologies.length || (techsQuery?.length > 0 ? techsQuery?.split(',')?.length : 0);
+  const difficultyIsActive = () => {
+    if (difficultyQuery?.length > 0) return 1;
+    if (difficulty !== undefined && difficulty?.length > 0) return 1;
+    return 0;
+  };
+
+  const currentFilters = technologiesActived
+    + difficultyIsActive()
+    + videoTutorials;
+
   let initialSearchValue;
   useEffect(() => {
     initialSearchValue = router.query && router.query.search;
