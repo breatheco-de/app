@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useCookies } from 'react-cookie';
 import { useRouter } from 'next/router';
 import bc from '../services/breathecode';
-import { isWindow } from '../../utils';
+import { isWindow, removeURLParameter } from '../../utils';
 import axiosInstance from '../../axios';
 import { usePersistent } from '../hooks/usePersistent';
 
@@ -104,6 +104,11 @@ const AuthProvider = ({ children }) => {
   const [cookies, setCookie, removeCookie] = useCookies(['accessToken']);
   const [profile, setProfile] = usePersistent('profile', {});
 
+  const query = isWindow && new URLSearchParams(window.location.search || '');
+  const queryToken = isWindow && query.get('token')?.split('?')[0];
+  const cleanUrl = isWindow && removeURLParameter(window.location.href, 'token');
+  const queryTokenExists = isWindow && queryToken !== undefined && queryToken.length > 0;
+
   // Validate and Fetch user token from localstorage when it changes
   const token = getToken(cookies);
   const handleSession = (tokenString) => setSession(tokenString, setCookie, removeCookie);
@@ -120,7 +125,11 @@ const AuthProvider = ({ children }) => {
       if (requestToken.status >= 400) {
         removeCookie('accessToken', { path: '/' });
         handleSession(null); // => setSession(null, setCookie, removeCookie);
-        router.reload();
+        if (!queryTokenExists) {
+          router.reload();
+        } else {
+          router.push(cleanUrl);
+        }
         dispatch({
           type: 'INIT',
           payload: { user: null, isAuthenticated: false, isLoading: false },
@@ -137,6 +146,9 @@ const AuthProvider = ({ children }) => {
               ...profile,
               ...data,
             });
+          })
+          .catch(() => {
+            handleSession(null);
           });
       }
     }
@@ -159,7 +171,6 @@ const AuthProvider = ({ children }) => {
             router.push(redirect);
             localStorage.removeItem('redirect');
           } else {
-            // router.back();
             router.push('/choose-program');
             localStorage.removeItem('redirect');
           }
@@ -209,7 +220,11 @@ const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    // router.push('/login');
+    if (queryTokenExists) {
+      router.push(cleanUrl);
+    } else {
+      router.reload();
+    }
     handleSession(null);
     setProfile({});
     removeCookie('accessToken', { path: '/' });
