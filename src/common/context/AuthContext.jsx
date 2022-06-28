@@ -77,6 +77,7 @@ const setSession = (token, setCookie, removeCookie) => {
     localStorage.removeItem('accessToken');
     removeCookie('accessToken', { path: '/' });
     localStorage.removeItem('taskTodo');
+    localStorage.removeItem('profile');
     localStorage.removeItem('sortedAssignments');
     delete axiosInstance.defaults.headers.common.Authorization;
   }
@@ -107,10 +108,6 @@ const AuthProvider = ({ children }) => {
   const token = getToken(cookies);
   const handleSession = (tokenString) => setSession(tokenString, setCookie, removeCookie);
 
-  useEffect(() => {
-    router.prefetch('/choose-program');
-  }, []);
-
   useEffect(async () => {
     if (token !== undefined) {
       const requestToken = await fetch(`${process.env.BREATHECODE_HOST}/v1/auth/token/${token}`, {
@@ -123,7 +120,7 @@ const AuthProvider = ({ children }) => {
       if (requestToken.status >= 400) {
         removeCookie('accessToken', { path: '/' });
         handleSession(null); // => setSession(null, setCookie, removeCookie);
-        router.push('/login');
+        router.reload();
         dispatch({
           type: 'INIT',
           payload: { user: null, isAuthenticated: false, isLoading: false },

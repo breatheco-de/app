@@ -77,11 +77,24 @@ const devLogTable = (msg, array) => { // Relevant table logs with title only in 
   }
 };
 
+const getCookie = (cName) => {
+  let res;
+  if (isWindow) {
+    const name = `${cName}=`;
+    const cDecoded = decodeURIComponent(document.cookie);
+    const cArr = cDecoded.split('; ');
+    cArr.forEach((val) => {
+      if (val.indexOf(name) === 0) res = val.substring(name.length);
+    });
+  }
+  return res || null;
+};
+
 const objectAreNotEqual = (t1, t2) => Object.keys(t1).map((l) => t1[l] === t2[l]).includes(false);
 
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
   removeStorageItem, isDevMode, devLogTable, devLog, languageLabel,
-  objectAreNotEqual, cleanQueryStrings,
+  objectAreNotEqual, cleanQueryStrings, getCookie,
 };
