@@ -94,6 +94,9 @@ const Profile = () => {
                 borderBottom: { base: '4px solid', md: 'none' },
                 borderColor: 'blue.default',
               }}
+              _hover={{
+                color: 'blue.default',
+              }}
               _disabled={{
                 opacity: 0.5,
                 cursor: 'not-allowed',

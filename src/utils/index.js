@@ -77,11 +77,44 @@ const devLogTable = (msg, array) => { // Relevant table logs with title only in 
   }
 };
 
+const getCookie = (cName) => {
+  let res;
+  if (isWindow) {
+    const name = `${cName}=`;
+    const cDecoded = decodeURIComponent(document.cookie);
+    const cArr = cDecoded.split('; ');
+    cArr.forEach((val) => {
+      if (val.indexOf(name) === 0) res = val.substring(name.length);
+    });
+  }
+  return res || null;
+};
+
 const objectAreNotEqual = (t1, t2) => Object.keys(t1).map((l) => t1[l] === t2[l]).includes(false);
+
+function removeURLParameter(url, parameter) {
+  const urlparts = url.split('?');
+  if (urlparts.length >= 2) {
+      const prefix = `${encodeURIComponent(parameter)}=`;
+      const pars = urlparts[1].split(/[&;]/g);
+
+      // reverse iteration as may be destructive
+      // eslint-disable-next-line no-plusplus
+      for (let i = pars.length; i-- > 0;) {
+          // idiom for string.startsWith
+          if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+              pars.splice(i, 1);
+          }
+      }
+
+      return urlparts[0] + (pars.length > 0 ? `?${pars.join('&')}` : '');
+  }
+  return url;
+}
 
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
   removeStorageItem, isDevMode, devLogTable, devLog, languageLabel,
-  objectAreNotEqual, cleanQueryStrings,
+  objectAreNotEqual, cleanQueryStrings, getCookie, removeURLParameter,
 };

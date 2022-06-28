@@ -83,6 +83,10 @@ module.exports = withBundleAnalyzer(nextTranslate({
         source: '/interactive-coding-tutorial/HARD/:slug',
         destination: '/interactive-coding-tutorial/hard/:slug',
       },
+      {
+        source: '/profile',
+        destination: '/profile/info',
+      },
     ];
   },
   // swcMinify: false,
