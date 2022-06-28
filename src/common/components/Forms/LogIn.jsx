@@ -37,19 +37,11 @@ function LogIn() {
               actions.setSubmitting(false);
               toast({
                 title: t('alert-message:welcome'),
-                description: t('alert-message:select-program'),
+                // description: t('alert-message:select-program'),
                 status: 'success',
                 duration: 9000,
                 isClosable: true,
               });
-              // router.push('/choose-program');
-              // if (window.history.length > 1
-              //   && document.referrer.indexOf(window.location.host) !== -1) {
-              //   console.log('window.location.host:::', window.location.host);
-              //   router.back();
-              // } else {
-              //   router.replace('/');
-              // }
             }
           })
           .catch(() => {

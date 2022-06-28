@@ -1,6 +1,5 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
-import useSWR from 'swr';
 import { useCookies } from 'react-cookie';
 import { useRouter } from 'next/router';
 import bc from '../services/breathecode';
@@ -9,6 +8,7 @@ import axiosInstance from '../../axios';
 import { usePersistent } from '../hooks/usePersistent';
 
 const initialState = {
+  isLoading: true,
   isAuthenticated: false,
   user: null,
 };
@@ -16,9 +16,10 @@ const initialState = {
 const reducer = (state, action) => {
   switch (action.type) {
     case 'INIT': {
-      const { isAuthenticated, user } = action.payload;
+      const { isLoading, isAuthenticated, user } = action.payload;
       return {
         ...state,
+        isLoading,
         isAuthenticated,
         user,
       };
@@ -27,6 +28,7 @@ const reducer = (state, action) => {
       const { user } = action.payload;
       return {
         ...state,
+        isLoading: false,
         isAuthenticated: true,
         user,
       };
@@ -62,16 +64,12 @@ const reducer = (state, action) => {
   }
 };
 
-const fetcher = (...args) => fetch(...args).then((res) => res.json());
-
 const setSession = (token, setCookie, removeCookie) => {
   if (token) {
     localStorage.setItem('accessToken', token);
     setCookie('accessToken', token, { path: '/' });
     axiosInstance.defaults.headers.common.Authorization = `Token ${token}`;
-    // document.cookie = `accessToken=${token}; path=/`;
   } else {
-    // document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     localStorage.removeItem('syllabus');
     localStorage.removeItem('programMentors');
     localStorage.removeItem('programServices');
@@ -108,38 +106,49 @@ const AuthProvider = ({ children }) => {
   // Validate and Fetch user token from localstorage when it changes
   const token = getToken(cookies);
   const handleSession = (tokenString) => setSession(tokenString, setCookie, removeCookie);
-  const { data, isValidating } = useSWR(`${process.env.BREATHECODE_HOST}/v1/auth/token/${token}`, fetcher);
-  const loading = isValidating || !data;
 
-  const isValidToken = data?.token !== undefined && token !== undefined && data?.token === token;
-  const tokenStatusSafe = data?.status_code !== 403;
+  useEffect(() => {
+    router.prefetch('/choose-program');
+  }, []);
 
   useEffect(async () => {
-    if (loading) return;
-    if (tokenStatusSafe === true && isValidToken === true) {
-      handleSession(data.token);
-      const response = await bc.auth().me();
-      setProfile({
-        ...profile,
-        ...response.data,
+    if (token !== undefined) {
+      const requestToken = await fetch(`${process.env.BREATHECODE_HOST}/v1/auth/token/${token}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
-      dispatch({
-        type: 'INIT',
-        payload: { user: response.data, isAuthenticated: true },
-      });
-    } else if (cookies?.accessToken !== undefined) {
-      removeCookie('accessToken', { path: '/' });
-      handleSession(null);
-      router.push('/login');
-      setProfile({});
-      dispatch({
-        type: 'INIT',
-        payload: { user: null, isAuthenticated: false },
-      });
+
+      if (requestToken.status >= 400) {
+        removeCookie('accessToken', { path: '/' });
+        handleSession(null); // => setSession(null, setCookie, removeCookie);
+        router.push('/login');
+        dispatch({
+          type: 'INIT',
+          payload: { user: null, isAuthenticated: false, isLoading: false },
+        });
+      } else {
+        handleSession(token);
+        bc.auth().me()
+          .then(({ data }) => {
+            dispatch({
+              type: 'INIT',
+              payload: { user: data, isAuthenticated: true, isLoading: false },
+            });
+            setProfile({
+              ...profile,
+              ...data,
+            });
+          });
+      }
     }
-  }, [isValidToken, tokenStatusSafe, data]);
+
+    return null;
+  }, [token]);
 
   const login = async (payload = null) => {
+    const redirect = localStorage.getItem('redirect');
     try {
       if (payload) {
         const response = await bc.auth().login(payload);
@@ -149,6 +158,14 @@ const AuthProvider = ({ children }) => {
             type: 'LOGIN',
             payload: response.data,
           });
+          if (redirect && redirect.length > 0) {
+            router.push(redirect);
+            localStorage.removeItem('redirect');
+          } else {
+            // router.back();
+            router.push('/choose-program');
+            localStorage.removeItem('redirect');
+          }
         }
         return response;
       }
@@ -170,6 +187,7 @@ const AuthProvider = ({ children }) => {
           dispatch({
             type: 'REGISTER',
             payload: {
+              isLoading: false,
               isAuthenticated: true,
               user: response.data,
             },
@@ -194,7 +212,7 @@ const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    router.push('/login');
+    // router.push('/login');
     handleSession(null);
     setProfile({});
     removeCookie('accessToken', { path: '/' });

@@ -43,6 +43,8 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
 
   const { selectedProgramSlug } = cohortSession;
 
+  const programSlug = cohortSession?.selectedProgramSlug || '/choose-program';
+
   useEffect(() => {
     setITEMS(t('ITEMS', {
       selectedProgramSlug: selectedProgramSlug || '/choose-program',
@@ -135,13 +137,13 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
             height="auto"
             aria-label="Toggle Navigation"
           />
-          <NextChakraLink href={haveSession ? cohortSession.selectedProgramSlug : '/'} alignSelf="center" display="flex">
+          <NextChakraLink href={haveSession ? programSlug : '/'} alignSelf="center" display="flex">
             <Icon icon="logoModern" width="90px" height="20px" />
           </NextChakraLink>
         </Flex>
 
         <Flex flex={{ base: 1 }} display={{ base: 'none', md: 'flex' }} justify={{ base: 'center', md: 'start' }}>
-          <NextChakraLink href={haveSession ? cohortSession.selectedProgramSlug : '/'} alignSelf="center" display="flex">
+          <NextChakraLink href={haveSession ? programSlug : '/'} alignSelf="center" display="flex">
             <Icon icon="logoModern" width="90px" height="20px" />
           </NextChakraLink>
 
@@ -331,7 +333,9 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                         gridGap="10px"
                         onClick={() => {
                           setSettingsOpen(false);
-                          logout();
+                          setTimeout(() => {
+                            logout();
+                          }, 300);
                         }}
                       >
                         <Icon icon="logout" width="20px" height="20px" />

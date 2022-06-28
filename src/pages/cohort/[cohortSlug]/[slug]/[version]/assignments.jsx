@@ -57,7 +57,9 @@ const Assignments = () => {
   };
 
   useEffect(() => {
-    if (cohortSession.cohort_role && cohortSession.cohort_role !== 'STUDENT') {
+    if (cohortSession?.cohort_role && cohortSession?.cohort_role === 'STUDENT') {
+      router.push('/choose-program');
+    } else {
       bc.admissions({ token: accessToken || null }).cohorts()
         .then(({ data }) => {
           const dataStruct = data.map((l) => ({
@@ -79,8 +81,6 @@ const Assignments = () => {
           });
           console.error('There was an error fetching the cohorts', error);
         });
-    } else {
-      router.push('/choose-program');
     }
   }, []);
 
