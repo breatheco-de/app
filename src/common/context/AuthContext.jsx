@@ -157,7 +157,7 @@ const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = async (payload = null) => {
-    const redirect = localStorage.getItem('redirect');
+    const redirect = isWindow && localStorage.getItem('redirect');
     try {
       if (payload) {
         const response = await bc.auth().login(payload);
