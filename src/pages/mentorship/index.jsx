@@ -4,6 +4,7 @@ import {
   Container,
   Heading,
   Divider,
+  Text,
   Table,
   Thead,
   Tbody,
@@ -15,6 +16,8 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import styled from 'styled-components';
+import { format } from 'date-fns';
 import bc from '../../common/services/breathecode';
 import Link from '../../common/components/NextChakraLink';
 import asPrivate from '../../common/context/PrivateRouteWrapper';
@@ -30,8 +33,8 @@ const Mentorship = () => {
   // }
   useEffect(async () => {
     const { data } = await bc.mentorship().getMySessions();
+    console.log(data);
     setSessions(data);
-    // console.log(res);
   }, []);
 
   return (
@@ -67,9 +70,50 @@ const Mentorship = () => {
         </Container>
       </Container>
       <Divider borderBottomWidth="2px" />
-      <TableContainer>
-        <Table variant="simple">
-          <TableCaption>Imperial to metric conversion factors</TableCaption>
+      <StyledContainer>
+        <table>
+          <tr className="table-head">
+            <th>Mentorship Session</th>
+            <th>Events</th>
+            <th>Billed Time</th>
+          </tr>
+          {sessions.map((session) => (
+            <tr className="table-rows">
+              <td
+                style={{
+                  borderRight: 'none',
+                }}
+              >
+                <Text fontSize="md">{format(new Date(session.started_at.slice(0, -1)), 'MMMM dd, y, h:mm aaa')}</Text>
+              </td>
+              <td
+                style={{
+                  borderLeft: 'none',
+                  borderRight: 'none',
+                }}
+              >
+                millimetres (mm)
+              </td>
+              <td
+                style={{
+                  borderLeft: 'none',
+                }}
+              >
+                25.4
+              </td>
+            </tr>
+          ))}
+        </table>
+      </StyledContainer>
+      {/* <TableContainer
+        padding="20px 10%"
+      >
+        <Table
+          variant="unstyled"
+          // border="none"
+          // cellspacing="0"
+          // cellpadding="0"
+        >
           <Thead>
             <Tr>
               <Th>Mentorship Session</Th>
@@ -78,17 +122,54 @@ const Mentorship = () => {
             </Tr>
           </Thead>
           <Tbody>
-            <Tr>
-              <Td>inches</Td>
-              <Td>millimetres (mm)</Td>
-              <Td>25.4</Td>
-            </Tr>
+            {sessions.map((session) => (
+              <Tr
+                // marginTop="20px"
+                borderRadius="25px"
+                border="1px gray solid"
+                style={{
+                  borderSpacing: '10px',
+                }}
+              >
+                <Td>inches</Td>
+                <Td>millimetres (mm)</Td>
+                <Td>25.4</Td>
+              </Tr>
+            ))}
           </Tbody>
         </Table>
-      </TableContainer>
+      </TableContainer> */}
     </Container>
 
   );
 };
+
+const StyledContainer = styled.div`
+  width: 100%;
+  padding: 20px 10%;
+
+  td:first-child,
+  th:first-child {
+    border-radius: 25px 0 0 25px;
+  }
+
+  // Set border-radius on the top-right and bottom-right of the last table data on the table row
+  td:last-child,
+  th:last-child {
+    border-radius: 0 25px 25px 0;
+  }
+  table{
+    width:100%;
+    border-collapse: separate;
+    border-spacing: 0 15px;
+    .table-head{
+      text-align: left;
+    }
+    td{
+      border: 1px solid gray;
+      padding: 20px;
+    }
+  }
+`;
 
 export default asPrivate(Mentorship);
