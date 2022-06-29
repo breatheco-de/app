@@ -14,6 +14,7 @@ export const withGuard = (PassedComponent) => {
     const accessToken = getCookie('accessToken');
     const pathname = isWindow ? window.location.pathname : '';
     const cleanUrl = isWindow && removeURLParameter(window.location.href, 'token');
+    const requiresDefaultRedirect = pathname.includes('/cohort/') || pathname.includes('/syllabus/');
 
     const redirectToLogin = () => {
       setTimeout(() => {
@@ -25,7 +26,11 @@ export const withGuard = (PassedComponent) => {
 
     if (!isLoading || queryTokenExists) {
       if (isNotAuthenticated) {
-        localStorage.setItem('redirect', pathname);
+        if (requiresDefaultRedirect) {
+          localStorage.setItem('redirect', '/choose-program');
+        } else {
+          localStorage.setItem('redirect', pathname);
+        }
         window.location.href = '/login';
       }
       if (queryTokenExists && isWindow) {
@@ -42,10 +47,7 @@ export const withGuard = (PassedComponent) => {
     }
     if (queryTokenExists === false) {
       if (!tokenExists && isWindow) {
-        if (
-          pathname.includes('/cohort/')
-          || pathname.includes('/syllabus/')
-        ) {
+        if (requiresDefaultRedirect) {
           console.log('redirect choose-program setted');
           localStorage.setItem('redirect', '/choose-program');
           redirectToLogin();
