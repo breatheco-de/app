@@ -11,6 +11,19 @@ export default {
       options: iconDict,
       control: 'select',
     },
+    max: {
+      control: 'number',
+    },
+    icon: {
+      table: {
+        category: 'Icon Settings',
+      },
+    },
+    variationColor: {
+      table: {
+        category: 'Icon Settings',
+      },
+    }
   }
 };
 
@@ -22,6 +35,6 @@ Default.args = {
   label: 'Student rating',
   icon: 'smile',
   value: 8.5,
-  max: 10,
+  max: null,
   variation: "4",
 };
