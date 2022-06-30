@@ -33,14 +33,9 @@ const Assignments = () => {
   // const [studentTasks, setStudentTasks] = useState([]);
 
   const [limitList, setLimitList] = useState(defaultLimiter);
-
   const [currentStudentList, setCurrentStudentList] = useState([]);
-  const [selectedStudentValue, setSelectedStudentValue] = useState();
-
-  const [selectedStatus, setSelectedStatus] = useState();
-
+  // const [selectedStatus, setSelectedStatus] = useState();
   const [projects, setProjects] = useState([]);
-  const [selectedProjectValue, setSelectedProjectValue] = useState();
 
   const [selectedCohort, setSelectedCohort] = useState({});
   const [selectedCohortValue, setSelectedCohortValue] = useState(null);
@@ -96,7 +91,11 @@ const Assignments = () => {
   useEffect(() => {
     if (selectedCohort) {
       Promise.all([
-        bc.todo({ stu_cohort: selectedCohort.slug }).get(),
+        bc.todo({
+          stu_cohort: selectedCohort.slug,
+          // limit: 100,
+          // type: 'project',
+        }).get(),
         bc.todo({ teacher: cohortSession.bc_id }).get(),
       ])
         .then(([tasks, myTasks]) => {
@@ -108,7 +107,6 @@ const Assignments = () => {
               ...myProjectTasks,
             ],
           });
-          // setStudentTasks([...projectTasks, ...myProjectTasks]);
 
           const projectsList = [];
           const studentsList = [];
@@ -160,12 +158,12 @@ const Assignments = () => {
         rejected: task.revision_status === 'REJECTED',
         undelivered: task.task_status === 'PENDING' && task.revision_status === 'PENDING',
       };
-      if (selectedStatus && !statusConditional[selectedStatus]) return false;
-      if (selectedProjectValue
-        && task.associated_slug !== selectedProjectValue
+      if (router.query.status && !statusConditional[router.query.status]) return false;
+      if (router.query.project
+        && task.associated_slug !== router.query.project
       ) return false;
-      if (selectedStudentValue
-        && fullName !== selectedStudentValue
+      if (router.query.student
+        && fullName !== router.query.student
       ) return false;
       return true;
     },
@@ -250,13 +248,19 @@ const Assignments = () => {
         <Box display="grid" gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(10rem, 1fr))', md: 'repeat(auto-fill, minmax(18rem, 1fr))' }} gridGap="14px" py="20px">
           {projects.length > 0 && (
             <Select
-              id="cohort-select"
+              id="project-select"
               placeholder={t('filter.project')}
+              value={router.query.project || ''}
               height="50px"
               fontSize="15px"
               onChange={(e) => {
                 setLimitList(defaultLimiter);
-                setSelectedProjectValue(e.target.value);
+                router.push({
+                  query: {
+                    ...router.query,
+                    project: e.target.value,
+                  },
+                });
               }}
             >
               {projects.map((project) => (
@@ -270,11 +274,17 @@ const Assignments = () => {
             <Select
               id="student-select"
               placeholder={t('filter.student')}
+              value={router.query.student || ''}
               height="50px"
               fontSize="15px"
               onChange={(e) => {
                 setLimitList(defaultLimiter);
-                setSelectedStudentValue(e.target.value);
+                router.push({
+                  query: {
+                    ...router.query,
+                    student: e.target.value,
+                  },
+                });
               }}
             >
               {currentStudentList.map((student) => {
@@ -291,11 +301,18 @@ const Assignments = () => {
             <Select
               id="status-select"
               placeholder={t('filter.status')}
+              value={router.query.status || ''}
               height="50px"
               fontSize="15px"
               onChange={(e) => {
                 setLimitList(defaultLimiter);
-                setSelectedStatus(e.target.value);
+                // setSelectedStatus(e.target.value);
+                router.push({
+                  query: {
+                    ...router.query,
+                    status: e.target.value,
+                  },
+                });
               }}
             >
               {statusList.map((status) => (
