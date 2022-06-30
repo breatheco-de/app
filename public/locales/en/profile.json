@@ -29,23 +29,25 @@
     "description": "By removing your Github account, any github login will be unlinked; however, you will be able to sync it again, if you wish"
   },
   "share-certificate": {
+    "title": "Share your new career title",
+    "shareText": "Share your new certificate via:",
     "socials": [
       {
         "name": "twitter",
         "label": "Twitter",
-        "href": "https://twitter.com/share?url=&text=4Geeks.com a new way to learn in community and live.",
+        "href": "https://twitter.com/share?url=&text=I have earn a new certificate as {{profession}} at 4Geeks.com {{certfLink}}",
         "color": "#1DA1F2"
       },
       {
         "name": "facebook",
         "label": "Facebook",
-        "href": "https://facebook.com/sharer?u=https://4geeks.com",
+        "href": "https://facebook.com/sharer?u={{certfLink}}",
         "color": "#4267B2"
       },
       {
         "name": "linkedin",
         "label": "LinkedIn",
-        "href": "https://linkedin.com/sharing/share-offsite/?url=https://4geeks.com",
+        "href": "https://linkedin.com/sharing/share-offsite/?url={{certfLink}}",
         "color": "#0077B5"
       }
     ]

@@ -111,6 +111,9 @@ const ButtonStyles = {
           opacity: 0.7,
         },
       },
+      _active: {
+        bg: props.colorMode === 'light' ? 'gray.light' : 'gray.700',
+      },
     }),
 
     link: () => ({

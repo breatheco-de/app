@@ -29,23 +29,25 @@
     "description": "Al remover tu cuenta GitHub, cualquier inicio de sesión con GitHub se desvinculará; sin embargo, podrá sincronizarlo nuevamente, si así lo desea"
   },
   "share-certificate": {
+    "title": "Comparte tu nuevo título profesional",
+    "shareText": "Comparte tu nuevo certificado a través de:",
     "socials": [
       {
         "name": "twitter",
         "label": "Twitter",
-        "href": "https://twitter.com/share?url=&text=4Geeks.com/es Una nueva forma de aprender en comunidad y en vivo.",
+        "href": "https://twitter.com/share?url=&text=Obtuve un nuevo certificado como {{profession}} en 4Geeks.com {{certfLink}}",
         "color": "#1DA1F2"
       },
       {
         "name": "facebook",
         "label": "Facebook",
-        "href": "https://facebook.com/sharer?u=https://4geeks.com",
+        "href": "https://facebook.com/sharer?u={{certfLink}}",
         "color": "#4267B2"
       },
       {
         "name": "linkedin",
         "label": "LinkedIn",
-        "href": "https://linkedin.com/sharing/share-offsite/?url=https://4geeks.com",
+        "href": "https://linkedin.com/sharing/share-offsite/?url={{certfLink}}",
         "color": "#0077B5"
       }
     ]
