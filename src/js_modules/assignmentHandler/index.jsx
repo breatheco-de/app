@@ -160,6 +160,12 @@ const DeliverModal = ({
                     revision_status: 'IGNORED',
                   })
                     .then(() => {
+                      toast({
+                        title: t('alert-message:review-assignment-ignored-task'),
+                        status: 'error',
+                        duration: 5000,
+                        isClosable: true,
+                      });
                       updpateAssignment({
                         ...currentTask,
                         id: currentTask.id,

@@ -47,6 +47,7 @@
   "show-less": "Mostrar menos",
   "read-lesson": "Leer lección",
   "copied": "Copiado!",
+  "no-options-message": "No hay mas opciones",
   "taskStatus": {
     "project-approved": "Proyecto aprobado",
     "update-project-delivery": "Actualizar entrega de proyecto",

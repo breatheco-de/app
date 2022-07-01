@@ -3,10 +3,11 @@ import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useCookies } from 'react-cookie';
 import {
-  Box, Button, Select, useColorModeValue, useToast,
+  Box, Button, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { LinkIcon } from '@chakra-ui/icons';
+import ReactSelect from '../../../../../common/components/ReactSelect';
 import Link from '../../../../../common/components/NextChakraLink';
 import Heading from '../../../../../common/components/Heading';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
@@ -29,8 +30,9 @@ const Assignments = () => {
   const { contextState, setContextState } = useAssignments();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
-  // const [defaultSelected, setDefaultSelected] = useState([]);
-  // const [studentTasks, setStudentTasks] = useState([]);
+  const [studentLabel, setStudentLabel] = useState(null);
+  const [projectLabel, setProjectLabel] = useState(null);
+  const [statusLabel, setStatusLabel] = useState(null);
 
   const [limitList, setLimitList] = useState(defaultLimiter);
   const [currentStudentList, setCurrentStudentList] = useState([]);
@@ -188,6 +190,19 @@ const Assignments = () => {
     },
   ];
 
+  const studentDefaultValue = currentStudentList?.filter((l) => {
+    const fullName = `${l.user.first_name}-${l.user.last_name}`.toLowerCase();
+    return fullName === router.query.student;
+  }).map((l) => `${l?.user?.first_name} ${l?.user?.last_name}`)[0];
+
+  const projectDefaultValue = projects.find(
+    (l) => l.associated_slug === router.query.project,
+  )?.title;
+
+  const statusDefaultValue = statusList.find(
+    (l) => l.value === router.query.status,
+  )?.label;
+
   return (
     <>
       <Box display="flex" justifyContent="space-between" margin={{ base: '2% 4% 0 4%', lg: '2% 12% 0 12%' }}>
@@ -207,30 +222,24 @@ const Assignments = () => {
         <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
           {`${t('title')}:`}
         </Heading>
-        {allCohorts.length > 0 && (
-          <Select
+        {selectedCohort.value && allCohorts.length > 0 && (
+          <ReactSelect
+            unstyled
+            color="#0097CD"
+            fontWeight="700"
             id="cohort-select"
-            placeholder="Select cohort"
-            style={{
-              padding: '0 2rem 0 0',
-            }}
-            fontSize="20px"
-            value={selectedCohort.value}
-            onChange={(e) => {
+            fontSize="25px"
+            noOptionsMessage={() => t('common:no-options-message')}
+            defaultInputValue={selectedCohort.label}
+            onChange={({ value }) => {
               setLimitList(defaultLimiter);
-              setSelectedCohortValue(parseInt(e.target.value, 10));
+              setSelectedCohortValue(parseInt(value, 10));
             }}
-            width="auto"
-            color="blue.default"
-            border="0"
-            cursor="pointer"
-          >
-            {allCohorts.map((cohort) => (
-              <option key={`${cohort.value}-${cohort.label}`} id="cohort-option" value={cohort.value}>
-                {`${cohort.academy} - ${cohort.label}`}
-              </option>
-            ))}
-          </Select>
+            options={allCohorts.map((cohort) => ({
+              value: cohort.value,
+              label: cohort.label,
+            }))}
+          />
         )}
       </Box>
       <Box
@@ -239,88 +248,93 @@ const Assignments = () => {
         margin={{ base: '3% 4%', md: '3% auto 4% auto', lg: '3% auto 4% auto' }}
         padding={{ base: '0', md: '0 10px', lg: '0' }}
         p="0 0 30px 0"
-        // borderBottom="1px solid"
-        // borderColor={borderColor}
       >
         <Text size="20px" display="flex" width="auto" fontWeight="400">
           {t('filter.assignments-length', { count: filteredTasks.length || 0 })}
         </Text>
         <Box display="grid" gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(10rem, 1fr))', md: 'repeat(auto-fill, minmax(18rem, 1fr))' }} gridGap="14px" py="20px">
           {projects.length > 0 && (
-            <Select
+            <ReactSelect
               id="project-select"
               placeholder={t('filter.project')}
-              value={router.query.project || ''}
-              height="50px"
-              fontSize="15px"
-              onChange={(e) => {
+              isClearable
+              value={projectLabel || ''}
+              defaultInputValue={projectDefaultValue}
+              onChange={(selected) => {
                 setLimitList(defaultLimiter);
+                setProjectLabel(selected !== null ? {
+                  value: selected?.value,
+                  label: selected?.label,
+                } : null);
                 router.push({
                   query: {
                     ...router.query,
-                    project: e.target.value,
+                    project: selected?.value,
                   },
                 });
               }}
-            >
-              {projects.map((project) => (
-                <option key={`${project.associated_slug}-${project.title}`} id="project-option" value={project.associated_slug}>
-                  {project.title}
-                </option>
-              ))}
-            </Select>
+              options={projects.map((project) => ({
+                value: project.associated_slug,
+                label: project.title,
+              }))}
+            />
           )}
+
           {currentStudentList.length > 0 && (
-            <Select
+            <ReactSelect
               id="student-select"
               placeholder={t('filter.student')}
-              value={router.query.student || ''}
+              isClearable
+              value={studentLabel || ''}
+              defaultInputValue={studentDefaultValue}
               height="50px"
               fontSize="15px"
-              onChange={(e) => {
+              onChange={(selected) => {
                 setLimitList(defaultLimiter);
+                setStudentLabel(selected !== null ? {
+                  value: selected?.value,
+                  label: selected?.label,
+                } : null);
                 router.push({
                   query: {
                     ...router.query,
-                    student: e.target.value,
+                    student: selected?.value,
                   },
                 });
               }}
-            >
-              {currentStudentList.map((student) => {
-                const fullName = `${student.user.first_name}-${student.user.last_name}`.toLowerCase();
-                return (
-                  <option key={fullName} id="student-option" value={fullName}>
-                    {`${student.user.first_name} ${student.user.last_name}`}
-                  </option>
-                );
-              })}
-            </Select>
+              options={currentStudentList.map((student) => ({
+                value: `${student.user.first_name}-${student.user.last_name}`.toLowerCase(),
+                label: `${student.user.first_name} ${student.user.last_name}`,
+              }))}
+            />
           )}
           {statusList.length > 0 && (
-            <Select
+            <ReactSelect
               id="status-select"
               placeholder={t('filter.status')}
-              value={router.query.status || ''}
+              isClearable
+              value={statusLabel}
               height="50px"
               fontSize="15px"
-              onChange={(e) => {
+              defaultInputValue={statusDefaultValue}
+              onChange={(selected) => {
                 setLimitList(defaultLimiter);
-                // setSelectedStatus(e.target.value);
+                setStatusLabel(selected !== null ? {
+                  value: selected?.value,
+                  label: selected?.label,
+                } : null);
                 router.push({
                   query: {
                     ...router.query,
-                    status: e.target.value,
+                    status: selected?.value,
                   },
                 });
               }}
-            >
-              {statusList.map((status) => (
-                <option key={status.value} id="status-option" value={status.value}>
-                  {status.label}
-                </option>
-              ))}
-            </Select>
+              options={statusList.map((status) => ({
+                value: status.value,
+                label: status.label,
+              }))}
+            />
           )}
         </Box>
         <Box
@@ -392,7 +406,6 @@ const Assignments = () => {
                       contextState={contextState}
                       setContextState={setContextState}
                     />
-                    {/* <BasicUsage currentTask={task} /> */}
                   </Box>
                 </Box>
               );
