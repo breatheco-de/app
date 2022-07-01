@@ -47,6 +47,7 @@
   "show-less": "Show less",
   "read-lesson": "Read lesson",
   "copied": "Copied!",
+  "no-options-message": "No options available",
   "taskStatus": {
     "project-approved": "Project approved",
     "update-project-delivery": "Update project delivery",
