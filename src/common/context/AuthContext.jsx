@@ -152,27 +152,6 @@ const AuthProvider = ({ children }) => {
     return null;
   }, [router]);
 
-  useEffect(() => {
-    axiosInstance.interceptors.request.use((req) => req, (error) => {
-      Promise.reject(error);
-      const statusError = error.response.status;
-      console.log('intercepted_response_error:', error);
-      console.log('intercepted_response_status_error:', statusError);
-    });
-    axiosInstance.interceptors.response.use((res) => res, (error) => {
-      Promise.reject(error);
-      const statusError = error.response.status;
-      console.log('intercepted_request_error:', error);
-
-      // Reject unauthorized fetchs
-      if (statusError === 401) {
-        handleSession(null);
-        dispatch({ type: 'LOGOUT' });
-      }
-    });
-    return () => {};
-  }, []);
-
   const login = async (payload = null) => {
     const redirect = isWindow && localStorage.getItem('redirect');
     try {
