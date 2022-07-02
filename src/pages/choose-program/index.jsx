@@ -63,9 +63,16 @@ function chooseProgram() {
     ]).then((
       [respAdmissions, respInvites],
     ) => {
-      setData(respAdmissions.data.cohorts);
+      setData(respAdmissions?.data?.cohorts);
       setProfile(respAdmissions.data);
       setInvites(respInvites.data);
+    }).catch(() => {
+      toast({
+        title: t('alert-message:something-went-wrong-with', { property: 'Admissions' }),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     });
   }, []);
 

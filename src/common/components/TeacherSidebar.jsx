@@ -120,7 +120,7 @@ const TeacherSidebar = ({
           <ItemButton
             actionHandler={() => {
               if (cohortSession.bc_id && isWindow) {
-                window.open(`${window.location.href}/assignments`, '_blank');
+                window.open(`${window.location.pathname}/assignments`, '_blank');
               }
             }}
           >

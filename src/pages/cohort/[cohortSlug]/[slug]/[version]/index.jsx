@@ -46,7 +46,7 @@ const Dashboard = () => {
   const [searchValue, setSearchValue] = useState(router.query.search || '');
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
-  const { user, choose } = useAuth();
+  const { user, choose, isLoading } = useAuth();
   const [, setSyllabus] = usePersistent('syllabus', []);
   const teacherAndAssistants = studentAndTeachers.filter((st) => st.role === 'TEACHER' || st.role === 'ASSISTANT');
 
@@ -205,7 +205,7 @@ const Dashboard = () => {
 
   // Fetch cohort assignments (lesson, exercise, project, quiz)
   useEffect(() => {
-    if (user && user.active_cohort && cohortSession.cohort_role) {
+    if (!isLoading && user && user.active_cohort && cohortSession.cohort_role) {
       const academyId = user.active_cohort.academy_id;
       const { version } = user.active_cohort;
       const currentAcademy = user.roles.find((role) => role.academy.id === academyId);

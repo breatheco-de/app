@@ -1,17 +1,15 @@
-import axiosInstance from '../../axios';
-import { isWindow, getCookie, removeURLParameter } from '../../utils';
+import { isWindow, removeURLParameter } from '../../utils';
 import useAuth from '../hooks/useAuth';
 
 export const withGuard = (PassedComponent) => {
   const Auth = (props) => {
     const { isAuthenticated, isLoading } = useAuth();
     const isNotAuthenticated = !isLoading && isWindow && !isAuthenticated;
-    const tokenExists = isWindow && (document.cookie.includes('accessToken') || localStorage.getItem('accessToken'));
+    const tokenExists = isWindow && localStorage.getItem('accessToken');
 
     const query = isWindow && new URLSearchParams(window.location.search || '');
     const queryToken = isWindow && query.get('token')?.split('?')[0];
     const queryTokenExists = isWindow && queryToken !== undefined && queryToken.length > 0;
-    const accessToken = getCookie('accessToken');
     const pathname = isWindow ? window.location.pathname : '';
     const cleanUrl = isWindow && removeURLParameter(window.location.href, 'token');
     const requiresDefaultRedirect = pathname.includes('/cohort/') || pathname.includes('/syllabus/');
@@ -21,8 +19,6 @@ export const withGuard = (PassedComponent) => {
         window.location.href = '/login';
       }, 150);
     };
-
-    axiosInstance.defaults.headers.common.Authorization = `Token ${queryToken || accessToken}`;
 
     if (!isLoading || queryTokenExists) {
       if (isNotAuthenticated) {
@@ -35,7 +31,6 @@ export const withGuard = (PassedComponent) => {
       }
       if (queryTokenExists && isWindow) {
         localStorage.setItem('accessToken', queryToken);
-        document.cookie = `accessToken=${queryToken}; path=/`;
         setTimeout(() => {
           window.location.href = cleanUrl;
         }, 150);
