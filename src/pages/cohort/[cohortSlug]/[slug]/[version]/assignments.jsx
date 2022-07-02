@@ -1,7 +1,6 @@
 /* eslint-disable no-continue */
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
-import { useCookies } from 'react-cookie';
 import {
   Box, Button, useColorModeValue, useToast,
 } from '@chakra-ui/react';
@@ -13,7 +12,7 @@ import Link from '../../../../../common/components/NextChakraLink';
 import Heading from '../../../../../common/components/Heading';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import bc from '../../../../../common/services/breathecode';
-import axios from '../../../../../axios';
+// import axios from '../../../../../axios';
 import Text from '../../../../../common/components/Text';
 import TaskLabel from '../../../../../common/components/taskLabel';
 import Icon from '../../../../../common/components/Icon';
@@ -23,9 +22,7 @@ import useAssignments from '../../../../../common/store/actions/assignmentsActio
 
 const Assignments = () => {
   const { t } = useTranslation('assignments');
-  const [cookies] = useCookies(['accessToken']);
   const router = useRouter();
-  const { accessToken } = cookies;
   const defaultLimiter = 10;
   const toast = useToast();
   const { contextState, setContextState } = useAssignments();
@@ -47,8 +44,6 @@ const Assignments = () => {
   const linkColor = useColorModeValue('blue.default', 'blue.300');
   const borderColor = useColorModeValue('gray.200', 'gray.500');
 
-  axios.defaults.headers.common.Authorization = `Token ${accessToken}`;
-
   const lang = {
     es: '/es/',
     en: '/',
@@ -58,7 +53,7 @@ const Assignments = () => {
     if (cohortSession?.cohort_role && cohortSession?.cohort_role === 'STUDENT') {
       router.push('/choose-program');
     } else {
-      bc.admissions({ token: accessToken || null }).cohorts()
+      bc.admissions().cohorts()
         .then(({ data }) => {
           const dataStruct = data.map((l) => ({
             label: l.name,

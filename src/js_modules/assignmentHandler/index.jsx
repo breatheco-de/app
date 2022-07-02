@@ -162,7 +162,7 @@ const DeliverModal = ({
                     .then(() => {
                       toast({
                         title: t('alert-message:review-assignment-ignored-task'),
-                        status: 'error',
+                        status: 'success',
                         duration: 5000,
                         isClosable: true,
                       });
