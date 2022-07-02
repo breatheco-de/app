@@ -12,7 +12,6 @@ import Link from '../../../../../common/components/NextChakraLink';
 import Heading from '../../../../../common/components/Heading';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import bc from '../../../../../common/services/breathecode';
-// import axios from '../../../../../axios';
 import Text from '../../../../../common/components/Text';
 import TaskLabel from '../../../../../common/components/taskLabel';
 import Icon from '../../../../../common/components/Icon';
