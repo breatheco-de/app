@@ -26,6 +26,7 @@ import StickySideBar from '../../../../../common/components/StickySideBar';
 import Icon from '../../../../../common/components/Icon';
 import AlertMessage from '../../../../../common/components/AlertMessage';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
+import ShareButton from '../../../../../common/components/ShareButton';
 
 const Content = () => {
   const { t } = useTranslation('syllabus');
@@ -450,6 +451,32 @@ const Content = () => {
     return null;
   })[selectedSyllabus.id - 1];
 
+  const pathConnector = {
+    read: `4geeks.com/${router.locale}/lesson`,
+    practice: `4geeks.com/${router.locale}/interactive-exercise`,
+    code: `4geeks.com/${router.locale}/project`,
+    answer: 'https://assessment.4geeks.com/quiz',
+  };
+  const shareLink = currentTask ? `${pathConnector[lesson]}/${currentTask.associated_slug}` : '';
+  const shareSocialMessage = {
+    en: 'I just finished coding at at 4geeks.com',
+    es: 'Acabo de terminar de programar en 4geeks.com',
+  };
+  const socials = [
+    {
+      name: 'twitter',
+      label: 'Twitter',
+      href: `https://twitter.com/share?url=&text=${shareSocialMessage[router.locale]} %23100DaysOfCode%0A%0A${shareLink}`,
+      color: '#1DA1F2',
+    },
+    {
+      name: 'linkedin',
+      label: 'LinkedIn',
+      href: `https://linkedin.com/sharing/share-offsite/?url=${shareLink}`,
+      color: '#0077B5',
+    },
+  ];
+
   return (
     <Flex position="relative">
       <StickySideBar
@@ -725,15 +752,27 @@ const Content = () => {
           ) : GetReadme()}
 
           <Box margin="4rem 0 0 0" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px" alignItems="center" justifyContent="space-between" padding="1.75rem 0 " borderTop="2px solid" borderColor={commonBorderColor} width="100%">
-            <ButtonHandlerByTaskStatus
-              allowText
-              currentTask={currentTask}
-              sendProject={sendProject}
-              changeStatusAssignment={changeStatusAssignment}
-              toggleSettings={toggleSettings}
-              closeSettings={closeSettings}
-              settingsOpen={settingsOpen}
-            />
+            <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px">
+              <ButtonHandlerByTaskStatus
+                allowText
+                currentTask={currentTask}
+                sendProject={sendProject}
+                changeStatusAssignment={changeStatusAssignment}
+                toggleSettings={toggleSettings}
+                closeSettings={closeSettings}
+                settingsOpen={settingsOpen}
+              />
+              {currentTask?.task_status === 'DONE' && (
+                <ShareButton
+                  variant="outline"
+                  title={t('share-certificate.title')}
+                  shareText={t('share-certificate.shareText')}
+                  link={shareLink}
+                  socials={socials}
+                  withParty
+                />
+              )}
+            </Box>
             <Box display="flex" gridGap="3rem">
               {/* showPendingTasks bool to change states */}
               {previousAssignment !== null && (
