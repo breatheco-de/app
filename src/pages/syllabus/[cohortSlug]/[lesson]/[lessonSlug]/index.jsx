@@ -451,9 +451,6 @@ const Content = () => {
     return null;
   })[selectedSyllabus.id - 1];
 
-  // const socials = currentTask ? t('share-certificate.socials',
-  // { link: shareLink }, { returnObjects: true }) : [];
-
   const pathConnector = {
     read: `4geeks.com/${router.locale}/lesson`,
     practice: `4geeks.com/${router.locale}/interactive-exercise`,
