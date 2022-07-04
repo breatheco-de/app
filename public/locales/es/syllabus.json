@@ -17,20 +17,6 @@
   },
   "share-certificate": {
     "title": "Share your progress",
-    "shareText": "Comparte tu progreso a través de:",
-    "socials": [
-      {
-        "name": "twitter",
-        "label": "Twitter",
-        "href": "https://twitter.com/share?url=&text=Acabo de terminar de programar en 4geeks.com %23100DaysOfCode%0A%0A{{link}}",
-        "color": "#1DA1F2"
-      },
-      {
-        "name": "linkedin",
-        "label": "LinkedIn",
-        "href": "https://linkedin.com/sharing/share-offsite/?url={{link}}",
-        "color": "#0077B5"
-      }
-    ]
+    "shareText": "Comparte tu progreso a través de:"
   }
 }
