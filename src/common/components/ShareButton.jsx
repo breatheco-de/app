@@ -5,14 +5,16 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import Confetti from 'react-confetti';
 import Icon from './Icon';
 import Text from './Text';
 import Link from './NextChakraLink';
 
 const ShareButton = ({
-  title, shareText, message, link, socials,
+  variant, title, shareText, message, link, socials, withParty,
 }) => {
   const { t } = useTranslation('profile');
+  const [party, setParty] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const labelColor = useColorModeValue('gray.600', 'gray.200');
   const [copied, setCopied] = useState(false);
@@ -25,6 +27,12 @@ const ShareButton = ({
       }, 3000);
     }
   }, [copied]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setParty(false);
+    }, 12000);
+  }, []);
 
   const onCopy = () => {
     setCopied(true);
@@ -53,13 +61,16 @@ const ShareButton = ({
   ];
 
   return (
-    <Stack flexDirection="row">
-      <Button variant="default" onClick={onOpen} height="auto" textTransform="uppercase">
+    <>
+      <Button variant={variant} onClick={onOpen} textTransform="uppercase">
         {t('share:button-text')}
       </Button>
       <Modal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={() => {
+          onClose();
+          setParty(true);
+        }}
         size="xl"
       >
         <ModalOverlay />
@@ -106,13 +117,27 @@ const ShareButton = ({
               </Link>
             </Text>
           </ModalFooter>
+          {withParty && isOpen && (
+            <Box display="block" position="fixed" top="0" left="0">
+              <Confetti
+                style={{ pointerEvents: 'none' }}
+                numberOfPieces={180}
+                recycle={party}
+                onConfettiComplete={(confetti) => {
+                  // setParty(false);
+                  confetti.reset();
+                }}
+              />
+            </Box>
+          )}
         </ModalContent>
       </Modal>
-    </Stack>
+    </>
   );
 };
 
 ShareButton.propTypes = {
+  variant: PropTypes.string,
   title: PropTypes.string,
   socials: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
@@ -123,13 +148,16 @@ ShareButton.propTypes = {
   link: PropTypes.string.isRequired,
   shareText: PropTypes.string,
   message: PropTypes.string,
+  withParty: PropTypes.bool,
 };
 
 ShareButton.defaultProps = {
+  variant: 'default',
   title: '',
   socials: [],
   shareText: '',
   message: '',
+  withParty: false,
 };
 
 export default memo(ShareButton);

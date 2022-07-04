@@ -7,10 +7,11 @@ const ButtonStyles = {
   sizes: {},
   // styles for different visual variants ("outline", "solid", more...)
   variants: {
-    default: () => ({
+    default: (props) => ({
       bg: 'blue.default',
       color: 'white',
       border: '0',
+      height: props.height || '40px',
       borderRadius: '3px',
       fontSize: '13px',
       letterSpacing: '0.05em',
@@ -63,6 +64,7 @@ const ButtonStyles = {
       bg: props.colorMode === 'dark' ? 'featuredDark' : 'black',
       color: 'white',
       border: '0',
+      height: props.height || '40px',
       borderRadius: '3px',
       fontSize: '13px',
       letterSpacing: '0.05em',
@@ -91,6 +93,7 @@ const ButtonStyles = {
       color: props.colorMode === 'dark' ? 'white' : 'black',
       border: '1px solid',
       borderColor: props.borderColor || props.colorMode === 'dark' ? 'white' : 'black',
+      height: props.height || '40px',
       borderRadius: '3px',
       fontSize: '13px',
       letterSpacing: '0.05em',
@@ -116,9 +119,10 @@ const ButtonStyles = {
       },
     }),
 
-    link: () => ({
+    link: (props) => ({
       bg: 'none',
       color: 'blue.default',
+      height: props.height || '40px',
       border: '0',
       borderRadius: '3px',
       fontSize: '13px',

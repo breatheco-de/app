@@ -14,5 +14,23 @@
     "alert-updated-module-instructions": "Currently viewing instructions from a module that does not correspond to the selected lesson",
     "no-teacher-instructions-found": "No instructions found for the current module",
     "key-concepts": "Key concepts"
+  },
+  "share-certificate": {
+    "title": "Share your progress",
+    "shareText": "Share your progress via:",
+    "socials": [
+      {
+        "name": "twitter",
+        "label": "Twitter",
+        "href": "https://twitter.com/share?url=&text=I just finished coding at at 4geeks.com %23100DaysOfCode%0A%0A{{link}}",
+        "color": "#1DA1F2"
+      },
+      {
+        "name": "linkedin",
+        "label": "LinkedIn",
+        "href": "https://linkedin.com/sharing/share-offsite/?url={{link}}",
+        "color": "#0077B5"
+      }
+    ]
   }
 }

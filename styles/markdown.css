@@ -490,7 +490,7 @@ blockquote > :last-child {
   padding: 0;
   white-space: pre;
   border: none;
-  background: transparent;
+  background: rgb(45, 45, 45);
 }
 
 .highlight {
@@ -512,7 +512,7 @@ blockquote > :last-child {
 }
 
 .markdown-body pre code, pre tt {
-  background-color: transparent;
+  background-color: rgb(45, 45, 45);
   border: none;
 }
 
