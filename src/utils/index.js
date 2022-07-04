@@ -1,5 +1,3 @@
-import { useState, useEffect } from 'react';
-
 /* eslint-disable indent */
 const isWindow = typeof window !== 'undefined';
 
@@ -113,46 +111,6 @@ function removeURLParameter(url, parameter) {
   }
   return url;
 }
-
-export function on(obj, ...args) {
-  if (obj && obj.addEventListener) {
-    obj.addEventListener(...args);
-  }
-}
-export function off(obj, ...args) {
-  if (obj && obj.removeEventListener) {
-    obj.removeEventListener(...args);
-  }
-}
-
-const useWindowSize = (initialWidth = Infinity, initialHeight = Infinity) => {
-  const [state, setState] = useState({
-    width: isWindow ? window.innerWidth : initialWidth,
-    height: isWindow ? window.innerHeight : initialHeight,
-  });
-
-  useEffect(() => {
-    if (isWindow) {
-      const handler = () => {
-        setState({
-          width: window.innerWidth,
-          height: window.innerHeight,
-        });
-      };
-
-      on(window, 'resize', handler);
-
-      return () => {
-        off(window, 'resize', handler);
-      };
-    }
-    return () => {};
-  }, []);
-
-  return state;
-};
-
-export default useWindowSize;
 
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
