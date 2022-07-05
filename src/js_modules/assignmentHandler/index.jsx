@@ -9,8 +9,8 @@ import PropTypes from 'prop-types';
 import {
   memo, useEffect, useState, useRef,
 } from 'react';
-import { useCookies } from 'react-cookie';
 import bc from '../../common/services/breathecode';
+import { getStorageItem } from '../../utils';
 // import Modal from './modal';
 
 const DeliverModal = ({
@@ -19,7 +19,6 @@ const DeliverModal = ({
   const { t } = useTranslation('assignments');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
-  const [cookies] = useCookies();
   const [openIgnoreTask, setOpenIgnoreTask] = useState(false);
   const [deliveryUrl, setDeliveryUrl] = useState('');
   const toast = useToast();
@@ -29,6 +28,7 @@ const DeliverModal = ({
   const fontColor = useColorModeValue('gra.dark', 'gray.250');
   const labelColor = useColorModeValue('gray.600', 'gray.200');
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.500');
+  const accessToken = getStorageItem('accessToken');
 
   useEffect(() => {
     if (copied) {
@@ -47,7 +47,7 @@ const DeliverModal = ({
           setIsLoading(true);
           const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/assignment/task/${currentTask.id}/deliver`, {
             headers: {
-              Authorization: `Token ${cookies.accessToken}`,
+              Authorization: `Token ${accessToken}`,
               academy: cohortSession.academy.id,
             },
           });
