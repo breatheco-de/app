@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import {
-  Box, toast, useColorModeValue, Image,
+  Box, toast, useColorModeValue, Image, Skeleton,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -48,7 +48,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
   const markdown = await markdownResp.text();
 
-  if (resp.status >= 400) {
+  if (resp.status >= 400 || data.asset_type === 'LESSON') {
     return {
       notFound: true,
     };
@@ -128,11 +128,10 @@ export default function HowToSlug({ data, markdown }) {
     const redirectResults = await dataRedirect.json();
 
     const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-    const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults.slug || data?.slug || slug}`;
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || data?.slug || slug}`;
     const pagePath = 'how-to';
 
     const aliasRedirect = aliasList[slug] !== undefined && userPathName;
-    console.log('aliasRedirect:::', aliasRedirect);
     if (aliasRedirect) {
       return router.push(userPathName);
     }
@@ -184,16 +183,24 @@ export default function HowToSlug({ data, markdown }) {
             {t('common:edit-on-github')}
           </Link>
         </Box>
-        <Heading size="l" fontWeight="700">
-          {title}
-        </Heading>
+        {title ? (
+          <Heading size="l" fontWeight="700">
+            {title}
+          </Heading>
+        ) : (
+          <Skeleton height="45px" width="100%" borderRadius="10px" />
+        )}
         <Box margin="24px 0 0 0">
           <Text size="l" fontWeight="900" textTransform="uppercase">
             {t('written-by')}
           </Text>
-          <Text fontSize="l">
-            {`${author.first_name} ${author.last_name}`}
-          </Text>
+          {author ? (
+            <Text fontSize="l">
+              {`${author.first_name} ${author.last_name}`}
+            </Text>
+          ) : (
+            <Skeleton height="20px" width="220px" borderRadius="10px" />
+          )}
         </Box>
 
         <Image src={getImage} alt={title} margin="20px 0 30px 0" width="100%" borderRadius="10px" height="100%" style={{ aspectRatio: '12/6' }} />
