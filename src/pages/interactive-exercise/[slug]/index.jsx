@@ -8,6 +8,7 @@ import {
   useToast,
   useColorMode,
   FormErrorMessage,
+  Skeleton,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -43,7 +44,7 @@ export const getStaticPaths = async ({ locales }) => {
   })));
 
   return {
-    fallback: false,
+    fallback: true,
     paths,
   };
 };
@@ -67,7 +68,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     delete result.translations.us;
   }
 
-  if (resp.status >= 400) {
+  if (resp.status >= 400 || result.asset_type !== 'EXERCISE') {
     return {
       notFound: true,
     };
@@ -261,9 +262,8 @@ const TabletWithForm = ({
 
 const Exercise = ({ exercise, markdown }) => {
   const { t } = useTranslation(['exercises']);
-  const { translations } = exercise;
-  const markdownData = getMarkDownContent(markdown);
-  const [notFound, setNotFound] = useState(false);
+  const translations = exercise?.translations || { es: '', en: '' };
+  const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const router = useRouter();
   const language = router.locale === 'en' ? 'us' : 'es';
   const currentLanguageLabel = languageLabel[language] || language;
@@ -277,30 +277,21 @@ const Exercise = ({ exercise, markdown }) => {
   const toast = useToast();
 
   useEffect(async () => {
+    const alias = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/alias/redirect`);
+    const aliasList = await alias.json();
+    const redirectSlug = aliasList[slug] || slug;
+    const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
+    const redirectResults = await dataRedirect.json();
+
     const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-    const userPathName = `/${router.locale}${pathWithoutSlug}/${exercise.slug || slug}`;
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || exercise?.slug || slug}`;
+    const aliasRedirect = aliasList[slug] !== undefined && userPathName;
     const pagePath = 'interactive-exercise';
 
     await publicRedirectByAsset({
-      router, translations, userPathName, pagePath,
+      router, aliasRedirect, translations, userPathName, pagePath,
     });
   }, [router, router.locale, translations]);
-
-  // const MDecoded = exercise.readme
-  //   && typeof exercise.readme === 'string' ? atob(exercise.readme) : null;
-
-  if (exercise.readme === '' && notFound === false) {
-    setTimeout(() => {
-      setNotFound(true);
-      toast({
-        title: t('alert-message:content-not-found', { lesson: t('common:exercise') }),
-        // description: 'Content not found',
-        status: 'error',
-        duration: 7000,
-        isClosable: true,
-      });
-    }, 4000);
-  }
 
   useEffect(() => {
     axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`)
@@ -318,11 +309,6 @@ const Exercise = ({ exercise, markdown }) => {
           });
       });
   }, [language]);
-
-  // const onImageNotFound = (event) => {
-  //   event.target.setAttribute('src', defaultImage);
-  //   event.target.setAttribute('srcset', `${defaultImage} 1x`);
-  // };
 
   return (
     <Box
@@ -345,39 +331,21 @@ const Exercise = ({ exercise, markdown }) => {
 
       <Flex display={{ base: 'block', lg: 'flex' }} height="100%" gridGap="26px">
         <Box flex="1">
-          <Heading
-            as="h1"
-            size="32px"
-            fontWeight="700"
-            textTransform="capitalize"
-            padding="10px 0 35px 0"
-            transition="color 0.2s ease-in-out"
-            color={useColorModeValue('black', 'white')}
-          >
-            {exercise.title}
-          </Heading>
-
-          {/* <Image
-            width="100%"
-            height={{ base: '190px', md: '400px' }}
-            margin="30px 0"
-            maxWidth="55rem"
-            maxHeight="500px"
-            minHeight={{ base: 'auto', md: '300px' }}
-            priority
-            borderRadius="3px"
-            pos="relative"
-            _groupHover={{
-              _after: {
-                filter: 'blur(50px)',
-              },
-            }}
-            onError={(e) => onImageNotFound(e)}
-            style={{ overflow: 'hidden' }}
-            objectFit="cover"
-            src={getImage}
-            alt={exercise.title}
-          /> */}
+          {exercise?.title ? (
+            <Heading
+              as="h1"
+              size="32px"
+              fontWeight="700"
+              textTransform="capitalize"
+              padding="10px 0 35px 0"
+              transition="color 0.2s ease-in-out"
+              color={useColorModeValue('black', 'white')}
+            >
+              {exercise.title}
+            </Heading>
+          ) : (
+            <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
+          )}
 
           <Box
             display={{ base: 'flex', lg: 'none' }}
@@ -394,12 +362,16 @@ const Exercise = ({ exercise, markdown }) => {
             borderStyle="solid"
             borderColor={commonBorderColor}
           >
-            <TabletWithForm
-              toast={toast}
-              exercise={exercise}
-              commonTextColor={commonTextColor}
-              commonBorderColor={commonBorderColor}
-            />
+            {exercise?.slug ? (
+              <TabletWithForm
+                toast={toast}
+                exercise={exercise}
+                commonTextColor={commonTextColor}
+                commonBorderColor={commonBorderColor}
+              />
+            ) : (
+              <Skeleton height="646px" width="300px" borderRadius="17px" />
+            )}
           </Box>
 
           {/* MARKDOWN SIDE */}
@@ -435,12 +407,16 @@ const Exercise = ({ exercise, markdown }) => {
           borderStyle="solid"
           borderColor={commonBorderColor}
         >
-          <TabletWithForm
-            toast={toast}
-            exercise={exercise}
-            commonTextColor={commonTextColor}
-            commonBorderColor={commonBorderColor}
-          />
+          {exercise?.slug ? (
+            <TabletWithForm
+              toast={toast}
+              exercise={exercise}
+              commonTextColor={commonTextColor}
+              commonBorderColor={commonBorderColor}
+            />
+          ) : (
+            <Skeleton height="646px" width="100%" borderRadius="17px" />
+          )}
         </Box>
       </Flex>
     </Box>
