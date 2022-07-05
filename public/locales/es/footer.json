@@ -1,28 +1,70 @@
 {
   "copyright": "©4Geeks Academy LLC 2019",
   "search":"Buscar en 4Geeks",
-  "privacy": "Política de privacidad",
-  "cookies": "Política de Cookies",
-  "terms": "Términos y condiciones",
+  "privacy": {
+    "label": "Política de privacidad",
+    "href": "#"
+  },
+  "cookies": {
+    "label": "Política de Cookies",
+    "href": "#"
+  },
+  "terms": {
+    "label": "Términos y condiciones",
+    "href": "#"
+  },
   "company":{
-    "title":"COMPAÑÍA",
-    "about":"ACERCA DE",
-    "contact":"CONTACTO",
-    "media":"MEDIA KIT"
+    "title":"COMPANY",
+    "about":{
+      "label": "ACERCA DE",
+      "href": "/about-us"
+    },
+    "contact":{
+      "label":"CONTACTO",
+      "href": "#"
+    },
+    "media":{
+      "label":"MEDIA KIT",
+      "href": "#"
+    }
   },
   "learning":{
     "title":"LIBRERÍA DE APRENDIZAJE",
-    "read":"Leer y observar",
-    "practice":"Practica interactivamente",
-    "build":"Realiza proyectos",
-    "how":"Como hacer..."
+    "read":{
+      "label": "Leer y observar",
+      "href": "#"
+    },
+    "practice":{
+      "label": "Practica interactivamente",
+      "href": "#"
+    },
+    "build":{
+      "label": "Realiza proyectos",
+      "href": "#"
+    },
+    "how":{
+      "label": "Como hacer...",
+      "href": "#"
+    }
   },
   "community":{
     "title":"COMUNIDAD DE 4GEEKS",
-    "work":"Talleres y eventos",
-    "live":"Mentorías en vivo",
-    "build":"Aprendizaje social y en vivo",
-    "conduct":"¿Código de conducta?"
+    "work":{
+      "label": "Talleres y eventos",
+      "href": "#"
+    },
+    "live":{
+      "label": "Mentorías en vivo",
+      "href": "#"
+    },
+    "build":{
+      "label": "Aprendizaje social y en vivo",
+      "href": "#"
+    },
+    "conduct":{
+      "label": "¿Código de conducta?",
+      "href": "#"
+    }
   },
   "social":{
     "title":"APRENDIZAJE SOCIAL Y EN VIVO",
@@ -30,20 +72,24 @@
   },
   "iconogram":{
     "intro":{
-      "title":"Intro to coding",
-      "text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quis libero eget dolor."
+      "title": "Intro al código",
+      "text": "De cero a que te paguen como desarrollador, aprende las habilidades del presente y del futuro. Impulsa tu carrera profesional y sé contratado por una empresa tecnológica.",
+      "href": "#"
     },
     "data":{
-      "title":"Data Sience",
-      "text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quis libero eget dolor."
+      "title": "Siencia de Datos",
+      "text": "Inicie una carrera en ciencia de datos y análisis. Un enfoque práctico con ejercicios interactivos, soporte por chat y acceso a tutorías.",
+      "href": "#"
     },
     "geekcoding":{
-      "title":"30daysofgeekcoding",
-      "text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quis libero eget dolor."
+      "title": "30daysofgeekcoding",
+      "text": "Mantén tu motivación con este desafío de 30 días. Únase a cientos de otros desarrolladores programando un poco todos los días.",
+      "href": "#"
     },
     "machine":{
-      "title":"A.I. & machine learning",
-      "text":"Desarrollar las herramientas necesarias para mejorar las habilidades para el futuro del trabajo de IA."
+      "title": "I.A. y machine learning",
+      "text": "Comience con Python y Data Science, Machine Learning, Deep Learning y mantenga un entorno de producción en A.I.",
+      "href": "#"
     }
   }
   

@@ -1,28 +1,70 @@
 {
   "copyright": "©4Geeks Academy LLC 2019",
   "search":"Search in 4Geeks",
-  "privacy": "Privacy policies",
-  "cookies": "Cookies policies",
-  "terms": "Terms & Conditions",
+  "privacy": {
+    "label": "Privacy policies",
+    "href": "#"
+  },
+  "cookies": {
+    "label": "Cookies policies",
+    "href": "#"
+  },
+  "terms": {
+    "label": "Terms & Conditions",
+    "href": "#"
+  },
   "company":{
     "title":"COMPANY",
-    "about":"ABOUT",
-    "contact":"CONTACT",
-    "media":"MEDIA KIT"
+    "about":{
+      "label": "ABOUT",
+      "href": "/about-us"
+    },
+    "contact":{
+      "label":"CONTACT",
+      "href": "#"
+    },
+    "media":{
+      "label":"MEDIA KIT",
+      "href": "#"
+    }
   },
   "learning":{
     "title":"LEARNING LIBRARY",
-    "read":"Read and watch",
-    "practice":"Practice interactively",
-    "build":"Build projects",
-    "how":"how to’s?"
+    "read":{
+      "label": "Read and watch",
+      "href": "/lessons"
+    },
+    "practice":{
+      "label": "Practice interactively",
+      "href": "/interactive-exercises"
+    },
+    "build":{
+      "label": "Build projects",
+      "href": "/interactive-coding-tutorial"
+    },
+    "how":{
+      "label": "how to’s?",
+      "href": "/how-to"
+    }
   },
   "community":{
     "title":"4GEEKS COMMUNITY",
-    "work":"Workshops and events",
-    "live":"Live Mentorships",
-    "build":"Social & Live Learning",
-    "conduct":"Code of conduct?"
+    "work":{
+      "label": "Workshops and events",
+      "href": "#"
+    },
+    "live":{
+      "label": "Live Mentorships",
+      "href": "#"
+    },
+    "build":{
+      "label": "Social & Live Learning",
+      "href": "#"
+    },
+    "conduct":{
+      "label": "Code of conduct?",
+      "href": "#"
+    }
   },
   "social":{
     "title":"SOCIAL & LIVE LEARNING",
@@ -30,20 +72,24 @@
   },
   "iconogram":{
     "intro":{
-      "title":"Intro to coding",
-      "text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quis libero eget dolor."
+      "title": "Intro to coding",
+      "text": "From zero to getting paid as a developer, learn the skills of the present and future. Boost your professional career and get hired by a tech company.",
+      "href": "#"
     },
     "data":{
-      "title":"Data Sience",
-      "text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quis libero eget dolor."
+      "title": "Data Sience",
+      "text": "Start a career in data science and analytics. A hands-on approach with interactive exercises, chat support, and access to mentorships.",
+      "href": "#"
     },
     "geekcoding":{
-      "title":"30daysofgeekcoding",
-      "text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quis libero eget dolor."
+      "title": "30daysofgeekcoding",
+      "text": "Keep your motivation with this 30 day challenge. Join hundreds of other developers coding a little every day.",
+      "href": "#"
     },
     "machine":{
-      "title":"A.I. & machine learning",
-      "text":"Develop necessary tools to upskill for the future of AI work."
+      "title": "A.I. & machine learning",
+      "text": "Start with Python and Data Science, Machine Learning, Deep Learning and maintaining a production environment in A.I.",
+      "href": "#"
     }
   }
 }

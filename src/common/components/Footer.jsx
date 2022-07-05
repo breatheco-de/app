@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
+import NextChakraLink from './NextChakraLink';
 import Icon from './Icon';
 
 const Footer = () => {
@@ -106,9 +107,15 @@ const Footer = () => {
             <Heading as="h5" size="sm" marginBottom="15px">
               {t('company.title')}
             </Heading>
-            <Text fontSize="sm">{t('company.about').toUpperCase()}</Text>
-            <Text fontSize="sm">{t('company.contact').toUpperCase()}</Text>
-            <Text fontSize="sm">{t('company.media').toUpperCase()}</Text>
+            <NextChakraLink href={t('company.about.href')}>
+              <Text fontSize="sm">{t('company.about.label').toUpperCase()}</Text>
+            </NextChakraLink>
+            <NextChakraLink href={t('company.contact.href')}>
+              <Text fontSize="sm">{t('company.contact.label').toUpperCase()}</Text>
+            </NextChakraLink>
+            <NextChakraLink href={t('company.media.href')}>
+              <Text fontSize="sm">{t('company.media.label').toUpperCase()}</Text>
+            </NextChakraLink>
           </Box>
           {/* ---- RESPONSIVE BOXES ---- */}
           <Box
@@ -125,10 +132,18 @@ const Footer = () => {
             <Heading as="h5" size="sm" marginBottom="15px">
               {t('learning.title')}
             </Heading>
-            <Text fontSize="sm">{t('learning.read').toUpperCase()}</Text>
-            <Text fontSize="sm">{t('learning.practice').toUpperCase()}</Text>
-            <Text fontSize="sm">{t('learning.build').toUpperCase()}</Text>
-            <Text fontSize="sm">{t('learning.how').toUpperCase()}</Text>
+            <NextChakraLink href={t('learning.read.href')}>
+              <Text fontSize="sm">{t('learning.read.label').toUpperCase()}</Text>
+            </NextChakraLink>
+            <NextChakraLink href={t('learning.practice.href')}>
+              <Text fontSize="sm">{t('learning.practice.label').toUpperCase()}</Text>
+            </NextChakraLink>
+            <NextChakraLink href={t('learning.build.href')}>
+              <Text fontSize="sm">{t('learning.build.label').toUpperCase()}</Text>
+            </NextChakraLink>
+            <NextChakraLink href={t('learning.how.href')}>
+              <Text fontSize="sm">{t('learning.how.label').toUpperCase()}</Text>
+            </NextChakraLink>
           </Box>
           <Box
             textAlign="center"
@@ -143,10 +158,18 @@ const Footer = () => {
             <Heading as="h5" size="sm" marginBottom="15px">
               {t('community.title')}
             </Heading>
-            <Text fontSize="sm">{t('community.work').toUpperCase()}</Text>
-            <Text fontSize="sm">{t('community.live').toUpperCase()}</Text>
-            <Text fontSize="sm">{t('community.build').toUpperCase()}</Text>
-            <Text fontSize="sm">{t('community.conduct').toUpperCase()}</Text>
+            <NextChakraLink href={t('community.work.href')}>
+              <Text fontSize="sm">{t('community.work.label').toUpperCase()}</Text>
+            </NextChakraLink>
+            <NextChakraLink href={t('community.live.href')}>
+              <Text fontSize="sm">{t('community.live.label').toUpperCase()}</Text>
+            </NextChakraLink>
+            <NextChakraLink href={t('community.build.href')}>
+              <Text fontSize="sm">{t('community.build.label').toUpperCase()}</Text>
+            </NextChakraLink>
+            <NextChakraLink href={t('community.conduct.href')}>
+              <Text fontSize="sm">{t('community.conduct.label').toUpperCase()}</Text>
+            </NextChakraLink>
           </Box>
           <Box
             textAlign="center"
@@ -161,10 +184,18 @@ const Footer = () => {
             <Heading as="h5" size="sm" marginBottom="15px">
               {t('social.title')}
             </Heading>
-            <Text fontSize="sm">{t('iconogram.intro.title')}</Text>
-            <Text fontSize="sm">{t('iconogram.data.title')}</Text>
-            <Text fontSize="sm">{t('iconogram.geekcoding.title')}</Text>
-            <Text fontSize="sm">{t('iconogram.machine.title')}</Text>
+            <NextChakraLink href={t('iconogram.intro.href')}>
+              <Text fontSize="sm">{t('iconogram.intro.title')}</Text>
+            </NextChakraLink>
+            <NextChakraLink href={t('iconogram.data.href')}>
+              <Text fontSize="sm">{t('iconogram.data.title')}</Text>
+            </NextChakraLink>
+            <NextChakraLink href={t('iconogram.geekcoding.href')}>
+              <Text fontSize="sm">{t('iconogram.geekcoding.title')}</Text>
+            </NextChakraLink>
+            <NextChakraLink href={t('iconogram.machine.href')}>
+              <Text fontSize="sm">{t('iconogram.machine.title')}</Text>
+            </NextChakraLink>
           </Box>
           {/* ---- RESPONSIVE BOXES ---- */}
           <Container
@@ -186,19 +217,35 @@ const Footer = () => {
               <Heading as="h5" size="sm" marginBottom="15px">
                 {t('learning.title')}
               </Heading>
-              <Text fontSize="sm">{t('learning.read').toUpperCase()}</Text>
-              <Text fontSize="sm">{t('learning.practice').toUpperCase()}</Text>
-              <Text fontSize="sm">{t('learning.build').toUpperCase()}</Text>
-              <Text fontSize="sm">{t('learning.how').toUpperCase()}</Text>
+              <NextChakraLink href={t('learning.read.href')}>
+                <Text fontSize="sm">{t('learning.read.label').toUpperCase()}</Text>
+              </NextChakraLink>
+              <NextChakraLink href={t('learning.practice.href')}>
+                <Text fontSize="sm">{t('learning.practice.label').toUpperCase()}</Text>
+              </NextChakraLink>
+              <NextChakraLink href={t('learning.build.href')}>
+                <Text fontSize="sm">{t('learning.build.label').toUpperCase()}</Text>
+              </NextChakraLink>
+              <NextChakraLink href={t('learning.how.href')}>
+                <Text fontSize="sm">{t('learning.how.label').toUpperCase()}</Text>
+              </NextChakraLink>
             </Box>
             <Box width="100%" paddingLeft="15%" borderLeft="2px" borderColor="#e2e8f0">
               <Heading as="h5" size="sm" marginBottom="15px">
                 {t('community.title')}
               </Heading>
-              <Text fontSize="sm">{t('community.work').toUpperCase()}</Text>
-              <Text fontSize="sm">{t('community.live').toUpperCase()}</Text>
-              <Text fontSize="sm">{t('community.build').toUpperCase()}</Text>
-              <Text fontSize="sm">{t('community.conduct').toUpperCase()}</Text>
+              <NextChakraLink href={t('community.work.href')}>
+                <Text fontSize="sm">{t('community.work.label').toUpperCase()}</Text>
+              </NextChakraLink>
+              <NextChakraLink href={t('community.live.href')}>
+                <Text fontSize="sm">{t('community.live.label').toUpperCase()}</Text>
+              </NextChakraLink>
+              <NextChakraLink href={t('community.build.href')}>
+                <Text fontSize="sm">{t('community.build.label').toUpperCase()}</Text>
+              </NextChakraLink>
+              <NextChakraLink href={t('community.conduct.href')}>
+                <Text fontSize="sm">{t('community.conduct.label').toUpperCase()}</Text>
+              </NextChakraLink>
             </Box>
           </Container>
           {/* <Divider
@@ -236,31 +283,40 @@ const Footer = () => {
           ]}
         >
           <Box width="48%" marginRight="2px" marginBottom="5px">
-            <Heading as="h5" fontSize="12px" marginBottom="15px">
-              <Icon style={{ display: 'inline', marginRight: '10px' }} icon="coding" width="40px" height="40px" />
-              {t('iconogram.intro.title').toUpperCase()}
-            </Heading>
+            <NextChakraLink href={t('iconogram.intro.href')}>
+              <Heading as="h5" fontSize="12px" marginBottom="15px">
+                <Icon style={{ display: 'inline', marginRight: '10px' }} icon="coding" width="40px" height="40px" />
+                {t('iconogram.intro.title').toUpperCase()}
+              </Heading>
+            </NextChakraLink>
             <Text fontSize="sm" lineHeight="22px">{t('iconogram.intro.text')}</Text>
           </Box>
           <Box width="48%" marginRight="2px" marginBottom="5px">
-            <Heading as="h5" fontSize="12px" marginBottom="15px">
-              <Icon style={{ display: 'inline', marginRight: '10px' }} icon="data-sience" width="40px" height="40px" />
-              {t('iconogram.data.title').toUpperCase()}
-            </Heading>
+            <NextChakraLink href={t('iconogram.data.href')}>
+              <Heading as="h5" fontSize="12px" marginBottom="15px">
+                <Icon style={{ display: 'inline', marginRight: '10px' }} icon="data-sience" width="40px" height="40px" />
+                {t('iconogram.data.title').toUpperCase()}
+              </Heading>
+            </NextChakraLink>
             <Text fontSize="sm" lineHeight="22px">{t('iconogram.data.text')}</Text>
           </Box>
           <Box width="48%" marginRight="2px" marginBottom="5px">
-            <Heading as="h5" fontSize="12px" marginBottom="15px">
-              <Icon style={{ display: 'inline', marginRight: '10px' }} icon="geekcoding" width="40px" height="40px" />
-              {t('iconogram.geekcoding.title').toUpperCase()}
-            </Heading>
+            <NextChakraLink href={t('iconogram.geekcoding.href')}>
+              <Heading as="h5" fontSize="12px" marginBottom="15px">
+                <Icon style={{ display: 'inline', marginRight: '10px' }} icon="geekcoding" width="40px" height="40px" />
+                {t('iconogram.geekcoding.title').toUpperCase()}
+              </Heading>
+            </NextChakraLink>
             <Text fontSize="sm" lineHeight="22px">{t('iconogram.geekcoding.text')}</Text>
           </Box>
           <Box width="48%" marginRight="2px" marginBottom="5px">
-            <Heading as="h5" fontSize="12px" marginBottom="15px">
-              <Icon style={{ display: 'inline', marginRight: '10px' }} icon="machine-learning" width="40px" height="40px" />
-              {t('iconogram.machine.title').toUpperCase()}
-            </Heading>
+            <NextChakraLink href={t('iconogram.machine.href')}>
+              <Heading as="h5" fontSize="12px" marginBottom="15px">
+                <Icon style={{ display: 'inline', marginRight: '10px' }} icon="machine-learning" width="40px" height="40px" />
+                {t('iconogram.machine.title').toUpperCase()}
+              </Heading>
+            </NextChakraLink>
+
             <Text fontSize="sm" lineHeight="22px">{t('iconogram.machine.text')}</Text>
           </Box>
         </Flex>
@@ -278,10 +334,12 @@ const Footer = () => {
         <Flex
           wrap={['wrap', 'wrap', 'nowrap', 'nowrap']}
           justifyContent="center"
-          width={['100%', '100%', '35%', '35%']}
+          width={['100%', '100%', '35%', '40%']}
           // alignItems="center"
         >
-          <Text fontSize="sm">{t('privacy')}</Text>
+          <NextChakraLink href={t('privacy.href')}>
+            <Text fontSize="sm">{t('privacy.label')}</Text>
+          </NextChakraLink>
           <Divider
             orientation="vertical"
             // borderRightWidth="2px"
@@ -290,7 +348,9 @@ const Footer = () => {
             borderColor="#3A3A3A"
             maxH={['20px', '20px', '50', '50']}
           />
-          <Text fontSize="sm">{t('cookies')}</Text>
+          <NextChakraLink href={t('cookies.href')}>
+            <Text fontSize="sm">{t('cookies.label')}</Text>
+          </NextChakraLink>
           <Divider
             orientation="vertical"
             // borderRightWidth="2px"
@@ -299,7 +359,9 @@ const Footer = () => {
             borderColor="#3A3A3A"
             maxH={['20px', '20px', '50', '50']}
           />
-          <Text fontSize="sm">{t('terms')}</Text>
+          <NextChakraLink href={t('terms.href')}>
+            <Text fontSize="sm">{t('terms.label')}</Text>
+          </NextChakraLink>
         </Flex>
       </Flex>
     </Container>
