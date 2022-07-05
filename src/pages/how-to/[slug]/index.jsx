@@ -48,7 +48,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
   const markdown = await markdownResp.text();
 
-  if (resp.status >= 400 || data.asset_type !== 'LESSON') {
+  if (resp.status >= 400 || data.asset_type !== 'ARTICLE') {
     return {
       notFound: true,
     };
@@ -132,12 +132,9 @@ export default function HowToSlug({ data, markdown }) {
     const pagePath = 'how-to';
 
     const aliasRedirect = aliasList[slug] !== undefined && userPathName;
-    if (aliasRedirect) {
-      return router.push(userPathName);
-    }
 
     publicRedirectByAsset({
-      router, translations, userPathName, pagePath,
+      router, aliasRedirect, translations, userPathName, pagePath,
     });
     return () => {};
   }, [router, router.locale, translations]);
