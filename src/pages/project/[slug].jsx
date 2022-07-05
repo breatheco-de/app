@@ -71,7 +71,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       status: err.response.status,
     }));
 
-  if (response.status >= 400 || result.asset_type === 'PROJECT') {
+  if (response.status >= 400 || result.asset_type !== 'PROJECT') {
     return {
       notFound: true,
     };

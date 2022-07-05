@@ -235,7 +235,7 @@ const ProjectSlug = ({ project, markdown }) => {
             borderStyle="solid"
             borderColor={commonBorderColor}
           >
-            {project?.difficulty ? (
+            {project && project?.difficulty ? (
               <>
                 <Box d="flex" justifyContent="center">
                   <Icon icon="sideSupport" width="300px" height="70px" />
@@ -281,7 +281,7 @@ const ProjectSlug = ({ project, markdown }) => {
           borderStyle="solid"
           borderColor={commonBorderColor}
         >
-          {project?.difficulty ? (
+          {project && project?.difficulty ? (
             <>
               <Box d="flex" justifyContent="center">
                 <Icon icon="sideSupport" width="300px" height="70px" />

@@ -48,7 +48,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
   const markdown = await markdownResp.text();
 
-  if (resp.status >= 400 || data.asset_type === 'LESSON') {
+  if (resp.status >= 400 || data.asset_type !== 'LESSON') {
     return {
       notFound: true,
     };
