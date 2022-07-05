@@ -30,7 +30,7 @@ export const getStaticPaths = async ({ locales }) => {
     locale,
   })));
   return {
-    fallback: false,
+    fallback: true,
     paths,
   };
 };
@@ -79,23 +79,28 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
       // page props
       fallback: false,
-      data,
-      markdown,
+      data: data || {},
+      markdown: markdown || '',
     },
   };
 };
 
 export default function HowToSlug({ data, markdown }) {
   const { t } = useTranslation('how-to');
-  const { title, author, preview } = data;
-  const { translations } = data;
+  // const { title, author, preview } = data;
+  const title = data?.title || '';
+  const author = data?.author || '';
+  const preview = data?.preview || '';
+
+  // const { translations } = data;
+  const translations = data?.translations || { es: '', en: '', us: '' };
   const defaultImage = '/static/images/coding-notebook.png';
   const getImage = preview || defaultImage;
   const router = useRouter();
   const language = router.locale === 'en' ? 'us' : 'es';
   const { slug } = router.query;
   const currentLanguageLabel = languageLabel[language] || language;
-  const markdownData = getMarkDownContent(markdown);
+  const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const linkColor = useColorModeValue('blue.default', 'blue.300');
 
   useEffect(() => {
@@ -115,14 +120,27 @@ export default function HowToSlug({ data, markdown }) {
       });
   }, [language]);
 
-  useEffect(() => {
+  useEffect(async () => {
+    const alias = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/alias/redirect`);
+    const aliasList = await alias.json();
+    const redirectSlug = aliasList[slug] || slug;
+    const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
+    const redirectResults = await dataRedirect.json();
+
     const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-    const userPathName = `/${router.locale}${pathWithoutSlug}/${data.slug || slug}`;
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults.slug || data?.slug || slug}`;
     const pagePath = 'how-to';
+
+    const aliasRedirect = aliasList[slug] !== undefined && userPathName;
+    console.log('aliasRedirect:::', aliasRedirect);
+    if (aliasRedirect) {
+      return router.push(userPathName);
+    }
 
     publicRedirectByAsset({
       router, translations, userPathName, pagePath,
     });
+    return () => {};
   }, [router, router.locale, translations]);
 
   return (
@@ -151,7 +169,7 @@ export default function HowToSlug({ data, markdown }) {
             variant="rounded"
             isLink
             href="/how-to"
-            tags={data.technologies}
+            tags={data?.technologies || ['alias', 'redirect']}
             marginY="8px"
             fontSize="13px"
             style={{
@@ -161,7 +179,7 @@ export default function HowToSlug({ data, markdown }) {
             gap="10px"
             paddingX="0"
           />
-          <Link href={data.readme_url} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+          <Link href={data?.readme_url || '#'} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
             <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
             {t('common:edit-on-github')}
           </Link>
