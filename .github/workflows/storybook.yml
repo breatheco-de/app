@@ -2,7 +2,7 @@ name: Creating Storybook
 on: 
   push:
     branches:
-      - main
+      - development
 jobs:
   storybook:
     name: Starting deployment

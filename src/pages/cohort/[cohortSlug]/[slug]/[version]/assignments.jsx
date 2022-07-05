@@ -1,17 +1,17 @@
 /* eslint-disable no-continue */
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
-import { useCookies } from 'react-cookie';
 import {
-  Box, Button, Select, useColorModeValue, useToast,
+  Box, Button, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { LinkIcon } from '@chakra-ui/icons';
+import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
+import ReactSelect from '../../../../../common/components/ReactSelect';
 import Link from '../../../../../common/components/NextChakraLink';
 import Heading from '../../../../../common/components/Heading';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import bc from '../../../../../common/services/breathecode';
-import axios from '../../../../../axios';
 import Text from '../../../../../common/components/Text';
 import TaskLabel from '../../../../../common/components/taskLabel';
 import Icon from '../../../../../common/components/Icon';
@@ -21,26 +21,20 @@ import useAssignments from '../../../../../common/store/actions/assignmentsActio
 
 const Assignments = () => {
   const { t } = useTranslation('assignments');
-  const [cookies] = useCookies(['accessToken']);
   const router = useRouter();
-  const { accessToken } = cookies;
   const defaultLimiter = 10;
   const toast = useToast();
   const { contextState, setContextState } = useAssignments();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
-  // const [defaultSelected, setDefaultSelected] = useState([]);
-  // const [studentTasks, setStudentTasks] = useState([]);
+  const [studentLabel, setStudentLabel] = useState(null);
+  const [projectLabel, setProjectLabel] = useState(null);
+  const [statusLabel, setStatusLabel] = useState(null);
 
   const [limitList, setLimitList] = useState(defaultLimiter);
-
   const [currentStudentList, setCurrentStudentList] = useState([]);
-  const [selectedStudentValue, setSelectedStudentValue] = useState();
-
-  const [selectedStatus, setSelectedStatus] = useState();
-
+  // const [selectedStatus, setSelectedStatus] = useState();
   const [projects, setProjects] = useState([]);
-  const [selectedProjectValue, setSelectedProjectValue] = useState();
 
   const [selectedCohort, setSelectedCohort] = useState({});
   const [selectedCohortValue, setSelectedCohortValue] = useState(null);
@@ -49,16 +43,16 @@ const Assignments = () => {
   const linkColor = useColorModeValue('blue.default', 'blue.300');
   const borderColor = useColorModeValue('gray.200', 'gray.500');
 
-  axios.defaults.headers.common.Authorization = `Token ${accessToken}`;
-
   const lang = {
     es: '/es/',
     en: '/',
   };
 
   useEffect(() => {
-    if (cohortSession.cohort_role && cohortSession.cohort_role !== 'STUDENT') {
-      bc.admissions({ token: accessToken || null }).cohorts()
+    if (cohortSession?.cohort_role && cohortSession?.cohort_role === 'STUDENT') {
+      router.push('/choose-program');
+    } else {
+      bc.admissions().cohorts()
         .then(({ data }) => {
           const dataStruct = data.map((l) => ({
             label: l.name,
@@ -79,8 +73,6 @@ const Assignments = () => {
           });
           console.error('There was an error fetching the cohorts', error);
         });
-    } else {
-      router.push('/choose-program');
     }
   }, []);
 
@@ -96,7 +88,11 @@ const Assignments = () => {
   useEffect(() => {
     if (selectedCohort) {
       Promise.all([
-        bc.todo({ stu_cohort: selectedCohort.slug }).get(),
+        bc.todo({
+          stu_cohort: selectedCohort.slug,
+          // limit: 100,
+          // type: 'project',
+        }).get(),
         bc.todo({ teacher: cohortSession.bc_id }).get(),
       ])
         .then(([tasks, myTasks]) => {
@@ -108,7 +104,6 @@ const Assignments = () => {
               ...myProjectTasks,
             ],
           });
-          // setStudentTasks([...projectTasks, ...myProjectTasks]);
 
           const projectsList = [];
           const studentsList = [];
@@ -160,12 +155,12 @@ const Assignments = () => {
         rejected: task.revision_status === 'REJECTED',
         undelivered: task.task_status === 'PENDING' && task.revision_status === 'PENDING',
       };
-      if (selectedStatus && !statusConditional[selectedStatus]) return false;
-      if (selectedProjectValue
-        && task.associated_slug !== selectedProjectValue
+      if (router.query.status && !statusConditional[router.query.status]) return false;
+      if (router.query.project
+        && task.associated_slug !== router.query.project
       ) return false;
-      if (selectedStudentValue
-        && fullName !== selectedStudentValue
+      if (router.query.student
+        && fullName !== router.query.student
       ) return false;
       return true;
     },
@@ -190,6 +185,19 @@ const Assignments = () => {
     },
   ];
 
+  const studentDefaultValue = currentStudentList?.filter((l) => {
+    const fullName = `${l.user.first_name}-${l.user.last_name}`.toLowerCase();
+    return fullName === router.query.student;
+  }).map((l) => `${l?.user?.first_name} ${l?.user?.last_name}`)[0];
+
+  const projectDefaultValue = projects.find(
+    (l) => l.associated_slug === router.query.project,
+  )?.title;
+
+  const statusDefaultValue = statusList.find(
+    (l) => l.value === router.query.status,
+  )?.label;
+
   return (
     <>
       <Box display="flex" justifyContent="space-between" margin={{ base: '2% 4% 0 4%', lg: '2% 12% 0 12%' }}>
@@ -209,30 +217,24 @@ const Assignments = () => {
         <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
           {`${t('title')}:`}
         </Heading>
-        {allCohorts.length > 0 && (
-          <Select
+        {selectedCohort.value && allCohorts.length > 0 && (
+          <ReactSelect
+            unstyled
+            color="#0097CD"
+            fontWeight="700"
             id="cohort-select"
-            placeholder="Select cohort"
-            style={{
-              padding: '0 2rem 0 0',
-            }}
-            fontSize="20px"
-            value={selectedCohort.value}
-            onChange={(e) => {
+            fontSize="25px"
+            noOptionsMessage={() => t('common:no-options-message')}
+            defaultInputValue={selectedCohort.label}
+            onChange={({ value }) => {
               setLimitList(defaultLimiter);
-              setSelectedCohortValue(parseInt(e.target.value, 10));
+              setSelectedCohortValue(parseInt(value, 10));
             }}
-            width="auto"
-            color="blue.default"
-            border="0"
-            cursor="pointer"
-          >
-            {allCohorts.map((cohort) => (
-              <option key={`${cohort.value}-${cohort.label}`} id="cohort-option" value={cohort.value}>
-                {`${cohort.academy} - ${cohort.label}`}
-              </option>
-            ))}
-          </Select>
+            options={allCohorts.map((cohort) => ({
+              value: cohort.value,
+              label: cohort.label,
+            }))}
+          />
         )}
       </Box>
       <Box
@@ -241,69 +243,93 @@ const Assignments = () => {
         margin={{ base: '3% 4%', md: '3% auto 4% auto', lg: '3% auto 4% auto' }}
         padding={{ base: '0', md: '0 10px', lg: '0' }}
         p="0 0 30px 0"
-        // borderBottom="1px solid"
-        // borderColor={borderColor}
       >
         <Text size="20px" display="flex" width="auto" fontWeight="400">
           {t('filter.assignments-length', { count: filteredTasks.length || 0 })}
         </Text>
         <Box display="grid" gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(10rem, 1fr))', md: 'repeat(auto-fill, minmax(18rem, 1fr))' }} gridGap="14px" py="20px">
           {projects.length > 0 && (
-            <Select
-              id="cohort-select"
+            <ReactSelect
+              id="project-select"
               placeholder={t('filter.project')}
-              height="50px"
-              fontSize="15px"
-              onChange={(e) => {
+              isClearable
+              value={projectLabel || ''}
+              defaultInputValue={projectDefaultValue}
+              onChange={(selected) => {
                 setLimitList(defaultLimiter);
-                setSelectedProjectValue(e.target.value);
+                setProjectLabel(selected !== null ? {
+                  value: selected?.value,
+                  label: selected?.label,
+                } : null);
+                router.push({
+                  query: {
+                    ...router.query,
+                    project: selected?.value,
+                  },
+                });
               }}
-            >
-              {projects.map((project) => (
-                <option key={`${project.associated_slug}-${project.title}`} id="project-option" value={project.associated_slug}>
-                  {project.title}
-                </option>
-              ))}
-            </Select>
+              options={projects.map((project) => ({
+                value: project.associated_slug,
+                label: project.title,
+              }))}
+            />
           )}
+
           {currentStudentList.length > 0 && (
-            <Select
+            <ReactSelect
               id="student-select"
               placeholder={t('filter.student')}
+              isClearable
+              value={studentLabel || ''}
+              defaultInputValue={studentDefaultValue}
               height="50px"
               fontSize="15px"
-              onChange={(e) => {
+              onChange={(selected) => {
                 setLimitList(defaultLimiter);
-                setSelectedStudentValue(e.target.value);
+                setStudentLabel(selected !== null ? {
+                  value: selected?.value,
+                  label: selected?.label,
+                } : null);
+                router.push({
+                  query: {
+                    ...router.query,
+                    student: selected?.value,
+                  },
+                });
               }}
-            >
-              {currentStudentList.map((student) => {
-                const fullName = `${student.user.first_name}-${student.user.last_name}`.toLowerCase();
-                return (
-                  <option key={fullName} id="student-option" value={fullName}>
-                    {`${student.user.first_name} ${student.user.last_name}`}
-                  </option>
-                );
-              })}
-            </Select>
+              options={currentStudentList.map((student) => ({
+                value: `${student.user.first_name}-${student.user.last_name}`.toLowerCase(),
+                label: `${student.user.first_name} ${student.user.last_name}`,
+              }))}
+            />
           )}
           {statusList.length > 0 && (
-            <Select
+            <ReactSelect
               id="status-select"
               placeholder={t('filter.status')}
+              isClearable
+              value={statusLabel}
               height="50px"
               fontSize="15px"
-              onChange={(e) => {
+              defaultInputValue={statusDefaultValue}
+              onChange={(selected) => {
                 setLimitList(defaultLimiter);
-                setSelectedStatus(e.target.value);
+                setStatusLabel(selected !== null ? {
+                  value: selected?.value,
+                  label: selected?.label,
+                } : null);
+                router.push({
+                  query: {
+                    ...router.query,
+                    status: selected?.value,
+                  },
+                });
               }}
-            >
-              {statusList.map((status) => (
-                <option key={status.value} id="status-option" value={status.value}>
-                  {status.label}
-                </option>
-              ))}
-            </Select>
+              options={statusList.map((status) => ({
+                value: status.value,
+                label: status.label,
+              }))}
+            />
           )}
         </Box>
         <Box
@@ -375,7 +401,6 @@ const Assignments = () => {
                       contextState={contextState}
                       setContextState={setContextState}
                     />
-                    {/* <BasicUsage currentTask={task} /> */}
                   </Box>
                 </Box>
               );
@@ -397,4 +422,4 @@ const Assignments = () => {
   );
 };
 
-export default Assignments;
+export default asPrivate(Assignments);

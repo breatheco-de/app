@@ -11,7 +11,7 @@ import NavbarSession from '../common/components/Navbar';
 import AuthProvider from '../common/context/AuthContext';
 import Footer from '../common/components/Footer';
 import Helmet from '../common/components/Helmet';
-import Loading from '../common/components/Loading';
+import InterceptionLoader from '../common/components/InterceptionLoader';
 import useAuth from '../common/hooks/useAuth';
 import '@fontsource/lato/100.css';
 import '@fontsource/lato/300.css';
@@ -51,7 +51,7 @@ function App({ Component, pageProps }) {
         <AuthProvider>
           <ChakraProvider resetCSS theme={CustomTheme}>
             <Navbar />
-            <Loading />
+            <InterceptionLoader />
             <Component {...pageProps} />
             <Footer />
           </ChakraProvider>

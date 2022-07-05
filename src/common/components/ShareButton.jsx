@@ -5,12 +5,16 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import Confetti from 'react-confetti';
 import Icon from './Icon';
 import Text from './Text';
 import Link from './NextChakraLink';
 
-const ShareButton = ({ socials }) => {
+const ShareButton = ({
+  variant, title, shareText, message, link, socials, withParty,
+}) => {
   const { t } = useTranslation('profile');
+  const [party, setParty] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const labelColor = useColorModeValue('gray.600', 'gray.200');
   const [copied, setCopied] = useState(false);
@@ -24,8 +28,15 @@ const ShareButton = ({ socials }) => {
     }
   }, [copied]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setParty(false);
+    }, 12000);
+  }, []);
+
   const onCopy = () => {
     setCopied(true);
+    navigator.clipboard.writeText(link);
   };
 
   const defaultSocial = [
@@ -50,24 +61,27 @@ const ShareButton = ({ socials }) => {
   ];
 
   return (
-    <Stack flexDirection="row">
-      <Button variant="default" onClick={onOpen} height="auto" textTransform="uppercase">
+    <>
+      <Button variant={variant} onClick={onOpen} textTransform="uppercase">
         {t('share:button-text')}
       </Button>
       <Modal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={() => {
+          onClose();
+          setParty(true);
+        }}
         size="xl"
       >
         <ModalOverlay />
         <ModalContent borderRadius="17px" marginTop="10%">
           <ModalHeader fontSize="15px" color={labelColor} textAlign="center" letterSpacing="0.05em" borderBottom="1px solid" borderColor={commonBorderColor} fontWeight="900" textTransform="uppercase">
-            {t('share:title')}
+            {title || t('share:title')}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={4} px={{ base: '10px', md: '35px' }}>
             <Text size="16px" p="20px 0 35px 0" textAlign="center">
-              {t('share:share-via')}
+              {shareText || t('share:share-via')}
             </Text>
 
             <Stack display="grid" gridTemplateColumns="repeat(auto-fill, minmax(7rem, 1fr))" justifyItems="center">
@@ -87,38 +101,63 @@ const ShareButton = ({ socials }) => {
                     <Icon icon="copy" width="22px" height="22px" />
                   </Box>
                 </Button>
-                <Text color={copied ? 'success' : ''}>
+                <Text display="flex" alignItems="center" gridGap="4px" color={copied ? 'success' : ''}>
                   {copied ? t('common:copied') : t('share:copy-link')}
+                  {copied && (<Icon icon="success" width="12px" height="12px" />)}
                 </Text>
               </Box>
             </Stack>
           </ModalBody>
           <ModalFooter margin="22px 1.5rem" padding="0">
             <Text size="13px" fontWeight="400" lineHeight="24px" textAlign="center" padding="20px 1.4rem" justifyContent="center" borderRadius="5px" letterSpacing="0.05em" backgroundColor="featuredLight">
-              {t('share:message')}
+              {message || t('share:message')}
               {' '}
-              <Link href={t('share:message-link.url')} color="blue.default">
+              <Link href={t('share:message-link.url')} target="_blank" rel="noopener noreferrer" color="blue.default">
                 {t('share:message-link.text')}
               </Link>
             </Text>
           </ModalFooter>
+          {withParty && isOpen && (
+            <Box display="block" position="fixed" top="0" left="0">
+              <Confetti
+                style={{ pointerEvents: 'none' }}
+                numberOfPieces={180}
+                recycle={party}
+                onConfettiComplete={(confetti) => {
+                  // setParty(false);
+                  confetti.reset();
+                }}
+              />
+            </Box>
+          )}
         </ModalContent>
       </Modal>
-    </Stack>
+    </>
   );
 };
 
 ShareButton.propTypes = {
+  variant: PropTypes.string,
+  title: PropTypes.string,
   socials: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
     href: PropTypes.string.isRequired,
     color: PropTypes.string,
   })),
+  link: PropTypes.string.isRequired,
+  shareText: PropTypes.string,
+  message: PropTypes.string,
+  withParty: PropTypes.bool,
 };
 
 ShareButton.defaultProps = {
+  variant: 'default',
+  title: '',
   socials: [],
+  shareText: '',
+  message: '',
+  withParty: false,
 };
 
 export default memo(ShareButton);

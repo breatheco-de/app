@@ -123,7 +123,6 @@ export const ButtonHandlerByTaskStatus = ({
       disabled={taskIsAproved}
       minWidth="26px"
       minHeight="26px"
-      height="fit-content"
       background={allowText ? 'blue.default' : 'none'}
       lineHeight={allowText ? '15px' : '0'}
       padding={allowText ? '12px 24px' : '0'}

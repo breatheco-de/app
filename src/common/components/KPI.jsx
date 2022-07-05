@@ -55,7 +55,7 @@ const KPI = ({
           <Icon icon={icon} color={variationColor || (numberColors || kpiColor || textColor)} width="26px" height="26px" />
         )}
         <Box display="flex" gridGap="6px">
-          <Heading as="p" size="m" color={numberColors}>
+          <Heading as="p" size="m" padding="0" margin="0" color={numberColors}>
             {unit}
             {value}
             {/* {value.toString().length >= 3
@@ -67,7 +67,7 @@ const KPI = ({
               <Heading as="label" size="m" fontWeight="400" color="gray.default">
                 /
               </Heading>
-              <Heading as="p" size="m" fontWeight="400" color="gray.default">
+              <Heading as="p" size="m" fontWeight="400" padding="0" margin="0" color="gray.default">
                 {max}
               </Heading>
             </>
@@ -76,7 +76,7 @@ const KPI = ({
         {variation && (
           <Box display="flex" flexDirection="row" alignItems="center">
             {kpiPosition && (
-              <Box transition="all 0.3s ease-in-out" transform={kpiPosition}>
+              <Box transition="all 0.3s ease-in-out" height="20px" transform={kpiPosition}>
                 <Icon icon="arrowDown" color={kpiColor || defaultColor} width="20px" height="20px" />
               </Box>
             )}

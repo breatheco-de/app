@@ -25,6 +25,16 @@ const buttonColor = (props) => {
   return 'white';
 };
 
+const activeBackgroundColor = (props) => {
+  if (props.outline) {
+    if (props.colorMode === 'light') {
+      return 'gray.light';
+    }
+    return 'gray.700';
+  }
+  return 'blue.default';
+};
+
 const LinkStyles = {
   // style object for base or default style
   baseStyle: {},
@@ -57,7 +67,7 @@ const LinkStyles = {
         },
       },
       _active: {
-        bg: 'blue.default',
+        bg: activeBackgroundColor(props),
       },
       _disabled: {
         bg: '#EBEBEB',
