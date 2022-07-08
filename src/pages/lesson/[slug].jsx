@@ -41,8 +41,14 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
 
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=LESSON`);
   const lesson = await response.json();
+
+  if (response.status >= 400 || response.status_code >= 400 || lesson.asset_type !== 'LESSON') {
+    return {
+      notFound: true,
+    };
+  }
 
   const ogUrl = {
     en: `/lesson/${slug}`,
@@ -63,17 +69,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
   }
 
-  // in "lesson.translations" rename "us" key to "en" key if exists
-  if (lesson.translations.us) {
-    lesson.translations.en = lesson.translations.us;
-    delete lesson.translations.us;
-  }
-
-  if (response.status >= 400 || lesson.asset_type !== 'LESSON') {
-    return {
-      notFound: true,
-    };
-  }
   return {
     props: {
       seo: {
@@ -127,7 +122,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
     const aliasRedirect = aliasList[slug] !== undefined && userPathName;
     const pagePath = 'lesson';
 
-    await publicRedirectByAsset({
+    publicRedirectByAsset({
       router, aliasRedirect, translations, userPathName, pagePath,
     });
 

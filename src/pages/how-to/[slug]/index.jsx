@@ -41,18 +41,18 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`);
   const data = await resp.json();
 
+  if (resp.status >= 400 || data.asset_type !== 'ARTICLE') {
+    return {
+      notFound: true,
+    };
+  }
+
   const {
     title, description, translations, preview,
   } = data;
 
   const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
   const markdown = await markdownResp.text();
-
-  if (resp.status >= 400 || data.asset_type !== 'ARTICLE') {
-    return {
-      notFound: true,
-    };
-  }
 
   const ogUrl = {
     en: `/how-to/${slug}`,
