@@ -46,7 +46,6 @@ function login() {
   const fontColor = useColorModeValue('gray.default', 'gray.400');
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
 
-  // TODO: Redirection to last page not works with token queryString
   useEffect(() => {
     if (user !== null && user !== undefined) {
       if (redirect && redirect.length > 0 && isWindow) {
