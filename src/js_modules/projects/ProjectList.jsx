@@ -10,10 +10,11 @@ import Link from '../../common/components/NextChakraLink';
 import Image from '../../common/components/Image';
 import TagCapsule from '../../common/components/TagCapsule';
 import Text from '../../common/components/Text';
+import { CardSkeleton } from '../../common/components/Skeleton';
 
 const ProjectList = ({
   projects, contextFilter, projectPath, pathWithDifficulty, exampleImage,
-  withoutImage,
+  withoutImage, isLoading,
 }) => {
   const { t } = useTranslation('common');
   // const [limiter, setLimiter] = useState(12);
@@ -222,6 +223,14 @@ const ProjectList = ({
             </Box>
           );
         })}
+        {isLoading && (
+          <CardSkeleton
+            withoutContainer
+            quantity={15}
+            cardWidth="100%"
+            height="100%"
+          />
+        )}
       </Grid>
       {filteredProjects.length === 0 && (
         <Box height="50vh" width="100%">
@@ -246,12 +255,14 @@ ProjectList.propTypes = {
   pathWithDifficulty: PropTypes.bool,
   exampleImage: PropTypes.string,
   withoutImage: PropTypes.bool,
+  isLoading: PropTypes.bool,
 };
 
 ProjectList.defaultProps = {
   pathWithDifficulty: false,
   exampleImage: '',
   withoutImage: false,
+  isLoading: false,
 };
 
 export default ProjectList;

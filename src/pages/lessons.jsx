@@ -111,10 +111,12 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
   const { t } = useTranslation('lesson');
   const { filteredBy, setProjectFilters } = useFilter();
   const [isLoading, setIsLoading] = useState(false);
-  const [offset, setOffset] = useState(50);
+  const [offset, setOffset] = useState(20);
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
+  const router = useRouter();
   const iconColor = useColorModeValue('#FFF', '#283340');
-  const lessonsFiltered = lessons.length > 0 ? lessons.slice(0, offset) : [];
+
+  const lessonsFiltered = lessons.slice(0, offset);
 
   const handleScroll = () => {
     const scrollTop = isWindow && document.documentElement.scrollTop;
@@ -131,8 +133,11 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
 
   useEffect(() => {
     if (!isLoading) return;
-    if (offset >= lessons.length) return;
-    setOffset(offset + 50);
+    if (offset >= lessons.length) setIsLoading(false);
+    setTimeout(() => {
+      setOffset(offset + 20);
+      setIsLoading(false);
+    }, 200);
   }, [isLoading]);
 
   // const currentFilters = technologies.length
@@ -140,8 +145,6 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
   //   + videoTutorials;
 
   const { isOpen, onClose, onOpen } = useDisclosure();
-
-  const router = useRouter();
   const techsQuery = router.query.techs;
   const difficultyQuery = router.query.difficulty;
 
@@ -170,7 +173,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
       >
         <TitleContent title={t('title')} icon="book" color={iconColor} mobile={false} />
 
-        <Search placeholder={t('search')} />
+        <Search placeholder={t('search')} onChange={() => setIsLoading(true)} />
 
         <Button
           variant="outline"
@@ -231,6 +234,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
         <ProjectList
           projects={lessonsFiltered}
           withoutImage
+          isLoading={isLoading}
           contextFilter={filteredBy.projectsOptions}
           projectPath="lesson"
         />

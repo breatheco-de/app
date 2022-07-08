@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Icon from '../../common/components/Icon';
 
-const Search = ({ placeholder }) => {
+const Search = ({ placeholder, onChange }) => {
   const router = useRouter();
   const [value, setValue] = useState('');
 
@@ -40,6 +40,7 @@ const Search = ({ placeholder }) => {
                       onChange={(values) => {
                         // update the path query with search value
                         setTimeout(() => {
+                          onChange();
                           router.push({
                             query: {
                               ...router.query,
@@ -71,10 +72,12 @@ const Search = ({ placeholder }) => {
 
 Search.propTypes = {
   placeholder: PropTypes.string,
+  onChange: PropTypes.func,
 };
 
 Search.defaultProps = {
   placeholder: 'Search',
+  onChange: () => {},
 };
 
 export default Search;
