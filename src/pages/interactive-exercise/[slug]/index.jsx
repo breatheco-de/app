@@ -56,6 +56,12 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`);
   const result = await resp.json();
 
+  if (resp.status >= 400 || result.asset_type !== 'EXERCISE') {
+    return {
+      notFound: true,
+    };
+  }
+
   const {
     title, translations, description, preview,
   } = result;
@@ -66,12 +72,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   if (result?.translations && result.translations.us) {
     result.translations.en = result.translations.us;
     delete result.translations.us;
-  }
-
-  if (resp.status >= 400 || result.asset_type !== 'EXERCISE') {
-    return {
-      notFound: true,
-    };
   }
 
   const ogUrl = {
@@ -288,7 +288,7 @@ const Exercise = ({ exercise, markdown }) => {
     const aliasRedirect = aliasList[slug] !== undefined && userPathName;
     const pagePath = 'interactive-exercise';
 
-    await publicRedirectByAsset({
+    publicRedirectByAsset({
       router, aliasRedirect, translations, userPathName, pagePath,
     });
   }, [router, router.locale, translations]);

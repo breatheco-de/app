@@ -58,17 +58,17 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`);
   const result = await response.json();
 
-  const {
-    title, description, translations, preview,
-  } = result;
-  const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
-  const markdown = await markdownResp.text();
-
   if (response.status > 400 || result.asset_type !== 'PROJECT') {
     return {
       notFound: true,
     };
   }
+
+  const {
+    title, description, translations, preview,
+  } = result;
+  const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+  const markdown = await markdownResp.text();
 
   const difficulty = result.difficulty.toLowerCase();
   const ogUrl = {
