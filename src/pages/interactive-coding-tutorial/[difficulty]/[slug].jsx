@@ -1,5 +1,5 @@
 import {
-  Box, useColorModeValue, Flex, useToast, useColorMode,
+  Box, useColorModeValue, Flex, useToast, useColorMode, Skeleton,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -46,7 +46,7 @@ export const getStaticPaths = async ({ locales }) => {
     locale,
   })));
   return {
-    fallback: false,
+    fallback: true,
     paths,
   };
 };
@@ -64,7 +64,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
   const markdown = await markdownResp.text();
 
-  if (response.status > 400) {
+  if (response.status > 400 || result.asset_type !== 'PROJECT') {
     return {
       notFound: true,
     };
@@ -130,10 +130,8 @@ const TableInfo = ({ t, project, commonTextColor }) => (
 
 const ProjectSlug = ({ project, markdown }) => {
   const { t } = useTranslation('projects');
-  const markdownData = getMarkDownContent(markdown);
-  const { translations } = project;
-  // const defaultImage = '/static/images/code1.png';
-  // const getImage = project.preview !== '' ? project.preview : defaultImage;
+  const markdownData = markdown ? getMarkDownContent(markdown) : '';
+  const translations = project?.translations || { es: '', en: '' };
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
@@ -144,36 +142,31 @@ const ProjectSlug = ({ project, markdown }) => {
 
   const toast = useToast();
 
-  const EventIfNotFound = () => {
-    toast({
-      title: t('alert-message:content-not-found', { lesson: t('common:project') }),
-      // description: 'Content not found',
-      status: 'error',
-      duration: 7000,
-      isClosable: true,
-    });
-  };
+  useEffect(async () => {
+    const alias = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/alias/redirect`);
+    const aliasList = await alias.json();
+    const redirectSlug = aliasList[slug] || slug;
+    const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
+    const redirectResults = await dataRedirect.json();
 
-  useEffect(() => {
-    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-    const userPathName = `/${router.locale}${pathWithoutSlug}/${project.slug || slug}`;
+    // const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+    if (typeof redirectResults.difficulty === 'string') {
+      if (redirectResults.difficulty === 'junior') redirectResults.difficulty = 'easy';
+      else if (redirectResults.difficulty === 'semi-senior') redirectResults.difficulty = 'intermediate';
+      else if (redirectResults.difficulty === 'senior') redirectResults.difficulty = 'hard';
+    }
+
+    const userPathName = `/${router.locale}/interactive-coding-tutorial/${redirectResults?.difficulty?.toLowerCase()}/${redirectResults?.slug || project?.slug || slug}`;
+    const aliasRedirect = aliasList[slug] !== undefined && userPathName;
     const pagePath = `interactive-coding-tutorial/${difficulty}`;
 
     publicRedirectByAsset({
-      router, translations, userPathName, pagePath,
+      router, aliasRedirect, translations, userPathName, pagePath,
     });
   }, [router, router.locale, translations]);
 
   useEffect(() => {
-    if (typeof markdown !== 'string') {
-      setTimeout(() => {
-        EventIfNotFound();
-      }, 4000);
-    }
-  }, [markdown]);
-
-  useEffect(() => {
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`)
+    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
       .then(({ data }) => {
         let currentlocaleLang = data.translations[language];
         if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
@@ -188,10 +181,6 @@ const ProjectSlug = ({ project, markdown }) => {
           });
       });
   }, [language]);
-  // const onImageNotFound = (event) => {
-  //   event.target.setAttribute('src', defaultImage);
-  //   event.target.setAttribute('srcset', `${defaultImage} 1x`);
-  // };
 
   return (
     <Box
@@ -214,39 +203,22 @@ const ProjectSlug = ({ project, markdown }) => {
 
       <Flex height="100%" gridGap="26px">
         <Box flex="1">
-          <Heading
-            as="h1"
-            size="25px"
-            fontWeight="700"
-            padding="10px 0 35px 0"
-            transition="color 0.2s ease-in-out"
-            color={useColorModeValue('black', 'white')}
-            textTransform="capitalize"
-          >
-            {project.title}
-          </Heading>
+          {project?.title ? (
+            <Heading
+              as="h1"
+              size="25px"
+              fontWeight="700"
+              padding="10px 0 35px 0"
+              transition="color 0.2s ease-in-out"
+              color={useColorModeValue('black', 'white')}
+              textTransform="capitalize"
+            >
+              {project.title}
+            </Heading>
+          ) : (
+            <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
+          )}
 
-          {/* <Image
-            width="100%"
-            height={{ base: '190px', md: '400px' }}
-            margin="30px 0"
-            maxWidth="55rem"
-            maxHeight="500px"
-            minHeight={{ base: 'auto', md: '300px' }}
-            priority
-            borderRadius="3px"
-            pos="relative"
-            _groupHover={{
-              _after: {
-                filter: 'blur(50px)',
-              },
-            }}
-            onError={(e) => onImageNotFound(e)}
-            style={{ overflow: 'hidden' }}
-            objectFit="cover"
-            src={getImage}
-            alt={project.title}
-          /> */}
           <Box
             display={{ base: 'flex', lg: 'none' }}
             flexDirection="column"
@@ -263,12 +235,18 @@ const ProjectSlug = ({ project, markdown }) => {
             borderStyle="solid"
             borderColor={commonBorderColor}
           >
-            <Box d="flex" justifyContent="center">
-              <Icon icon="sideSupport" width="300px" height="70px" />
-            </Box>
-            <Box px="22px" pb="30px" pt="20px">
-              <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
-            </Box>
+            {project && project?.difficulty ? (
+              <>
+                <Box d="flex" justifyContent="center">
+                  <Icon icon="sideSupport" width="300px" height="70px" />
+                </Box>
+                <Box px="22px" pb="30px" pt="20px">
+                  <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
+                </Box>
+              </>
+            ) : (
+              <Skeleton height="100%" width="100%" borderRadius="17px" />
+            )}
           </Box>
 
           {/* MARKDOWN SIDE */}
@@ -276,7 +254,6 @@ const ProjectSlug = ({ project, markdown }) => {
             maxWidth="1012px"
             borderRadius="3px"
             background={useColorModeValue('white', 'featuredDark')}
-            // width={{ base: '34rem', md: '54rem' }}
             className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
             transition="background .2s ease"
           >
@@ -304,12 +281,18 @@ const ProjectSlug = ({ project, markdown }) => {
           borderStyle="solid"
           borderColor={commonBorderColor}
         >
-          <Box d="flex" justifyContent="center">
-            <Icon icon="sideSupport" width="300px" height="70px" />
-          </Box>
-          <Box px="22px" pb="30px" pt="20px">
-            <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
-          </Box>
+          {project && project?.difficulty ? (
+            <>
+              <Box d="flex" justifyContent="center">
+                <Icon icon="sideSupport" width="300px" height="70px" />
+              </Box>
+              <Box px="22px" pb="30px" pt="20px">
+                <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
+              </Box>
+            </>
+          ) : (
+            <Skeleton height="646px" width="100%" borderRadius="17px" />
+          )}
         </Box>
       </Flex>
     </Box>

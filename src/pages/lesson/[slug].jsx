@@ -4,7 +4,7 @@ import useTranslation from 'next-translate/useTranslation';
 import axios from 'axios';
 import {
   Box, useColorModeValue, useToast, Modal, Button, Tooltip,
-  ModalOverlay, ModalContent, ModalCloseButton,
+  ModalOverlay, ModalContent, ModalCloseButton, Skeleton,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -17,6 +17,7 @@ import MarkDownParser from '../../common/components/MarkDownParser';
 import TagCapsule from '../../common/components/TagCapsule';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 import { publicRedirectByAsset } from '../../lib/redirectsHandler';
+import { MDSkeleton } from '../../common/components/Skeleton';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson`);
@@ -30,7 +31,7 @@ export const getStaticPaths = async ({ locales }) => {
   })));
 
   return {
-    fallback: false,
+    fallback: true,
     paths,
   };
 };
@@ -68,7 +69,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     delete lesson.translations.us;
   }
 
-  if (response.status >= 400) {
+  if (response.status >= 400 || lesson.asset_type !== 'LESSON') {
     return {
       notFound: true,
     };
@@ -101,11 +102,10 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
 const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
   const { t } = useTranslation('lesson');
-  // const [readme, setReadme] = useState(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
-  // getMarkDownContent(markdown);
-  const markdownData = getMarkDownContent(markdown);
-  const { translations } = lesson;
+  const markdownData = markdown ? getMarkDownContent(markdown) : '';
+
+  const translations = lesson?.transition || { es: '', en: '', us: '' };
 
   const router = useRouter();
   const toast = useToast();
@@ -116,13 +116,22 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
   const currentLanguageLabel = languageLabel[language] || language;
 
   useEffect(async () => {
+    const alias = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/alias/redirect`);
+    const aliasList = await alias.json();
+    const redirectSlug = aliasList[slug] || slug;
+    const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
+    const redirectResults = await dataRedirect.json();
+
     const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-    const userPathName = `/${router.locale}${pathWithoutSlug}/${lesson.slug || slug}`;
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || lesson?.slug || slug}`;
+    const aliasRedirect = aliasList[slug] !== undefined && userPathName;
     const pagePath = 'lesson';
 
     await publicRedirectByAsset({
-      router, translations, userPathName, pagePath,
+      router, aliasRedirect, translations, userPathName, pagePath,
     });
+
+    return () => {};
   }, [router, router.locale, translations]);
 
   useEffect(() => {
@@ -144,24 +153,6 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
     }
   }, [language]);
 
-  const EventIfNotFound = () => {
-    toast({
-      title: t('alert-message:content-not-found2', { lesson: t('common:lesson') }),
-      // description: 'Content not found',
-      status: 'error',
-      duration: 7000,
-      isClosable: true,
-    });
-  };
-
-  useEffect(() => {
-    if (typeof markdown !== 'string') {
-      setTimeout(() => {
-        EventIfNotFound();
-      }, 4000);
-    }
-  }, [markdown]);
-
   return (
     <Box
       height="100%"
@@ -182,38 +173,46 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
       </Link>
       <Box flex="1" margin={{ base: '28px 0', md: '28px 14% 0 14%' }}>
         <Box display="flex" gridGap="10px" justifyContent="space-between">
-          <TagCapsule
-            isLink
-            href="/lessons"
-            variant="rounded"
-            tags={lesson.technologies}
-            marginY="8px"
-            fontSize="13px"
-            style={{
-              padding: '2px 10px',
-              margin: '0',
-            }}
-            gap="10px"
-            paddingX="0"
-          />
-          <Link href={lesson.readme_url} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+          {lesson?.technologies ? (
+            <TagCapsule
+              isLink
+              href="/lessons"
+              variant="rounded"
+              tags={lesson?.technologies || ['']}
+              marginY="8px"
+              fontSize="13px"
+              style={{
+                padding: '2px 10px',
+                margin: '0',
+              }}
+              gap="10px"
+              paddingX="0"
+            />
+          ) : (
+            <Skeleton width="130px" height="26px" borderRadius="10px" />
+          )}
+          <Link href={lesson?.readme_url || '#aliasRedirection'} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
             <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
             {t('common:edit-on-github')}
           </Link>
         </Box>
-        <Heading
-          as="h1"
-          size="30px"
-          fontWeight="700"
-          margin="22px 0 35px 0"
-          transition="color 0.2s ease-in-out"
-          color={useColorModeValue('black', 'white')}
-          textTransform="uppercase"
-        >
-          {lesson.title}
-        </Heading>
+        {lesson?.title ? (
+          <Heading
+            as="h1"
+            size="30px"
+            fontWeight="700"
+            margin="22px 0 35px 0"
+            transition="color 0.2s ease-in-out"
+            color={useColorModeValue('black', 'white')}
+            textTransform="uppercase"
+          >
+            {lesson.title}
+          </Heading>
+        ) : (
+          <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
+        )}
 
-        {markdown && ipynbHtmlUrl === '' && (
+        {markdown && ipynbHtmlUrl === '' ? (
           <Box
             transition="all 0.2s ease-in-out"
             borderRadius="3px"
@@ -230,6 +229,8 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
 
           </Box>
 
+        ) : (
+          <MDSkeleton />
         )}
       </Box>
       {ipynbHtmlUrl && markdown === '' && (

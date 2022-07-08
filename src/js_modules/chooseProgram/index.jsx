@@ -28,7 +28,8 @@ function ChooseProgram({ chooseList, handleChoose }) {
   });
   const finishedCohorts = chooseList.filter((program) => {
     const showCohort = ['ENDED'].includes(program.cohort.stage);
-    const showStudent = ['GRADUATED', 'POSPONED'].includes(
+    // ACTIVE: show be here because the student may not have delivered all the homework
+    const showStudent = ['GRADUATED', 'POSPONED', 'ACTIVE'].includes(
       program.educational_status,
     );
     return showCohort && showStudent;

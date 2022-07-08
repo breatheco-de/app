@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import {
-  Box, toast, useColorModeValue, Image,
+  Box, toast, useColorModeValue, Image, Skeleton,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -30,7 +30,7 @@ export const getStaticPaths = async ({ locales }) => {
     locale,
   })));
   return {
-    fallback: false,
+    fallback: true,
     paths,
   };
 };
@@ -48,7 +48,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
   const markdown = await markdownResp.text();
 
-  if (resp.status >= 400) {
+  if (resp.status >= 400 || data.asset_type !== 'ARTICLE') {
     return {
       notFound: true,
     };
@@ -79,23 +79,28 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
       // page props
       fallback: false,
-      data,
-      markdown,
+      data: data || {},
+      markdown: markdown || '',
     },
   };
 };
 
 export default function HowToSlug({ data, markdown }) {
   const { t } = useTranslation('how-to');
-  const { title, author, preview } = data;
-  const { translations } = data;
+  // const { title, author, preview } = data;
+  const title = data?.title || '';
+  const author = data?.author || '';
+  const preview = data?.preview || '';
+
+  // const { translations } = data;
+  const translations = data?.translations || { es: '', en: '', us: '' };
   const defaultImage = '/static/images/coding-notebook.png';
   const getImage = preview || defaultImage;
   const router = useRouter();
   const language = router.locale === 'en' ? 'us' : 'es';
   const { slug } = router.query;
   const currentLanguageLabel = languageLabel[language] || language;
-  const markdownData = getMarkDownContent(markdown);
+  const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const linkColor = useColorModeValue('blue.default', 'blue.300');
 
   useEffect(() => {
@@ -115,14 +120,23 @@ export default function HowToSlug({ data, markdown }) {
       });
   }, [language]);
 
-  useEffect(() => {
+  useEffect(async () => {
+    const alias = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/alias/redirect`);
+    const aliasList = await alias.json();
+    const redirectSlug = aliasList[slug] || slug;
+    const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
+    const redirectResults = await dataRedirect.json();
+
     const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-    const userPathName = `/${router.locale}${pathWithoutSlug}/${data.slug || slug}`;
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || data?.slug || slug}`;
     const pagePath = 'how-to';
 
+    const aliasRedirect = aliasList[slug] !== undefined && userPathName;
+
     publicRedirectByAsset({
-      router, translations, userPathName, pagePath,
+      router, aliasRedirect, translations, userPathName, pagePath,
     });
+    return () => {};
   }, [router, router.locale, translations]);
 
   return (
@@ -151,7 +165,7 @@ export default function HowToSlug({ data, markdown }) {
             variant="rounded"
             isLink
             href="/how-to"
-            tags={data.technologies}
+            tags={data?.technologies || ['alias', 'redirect']}
             marginY="8px"
             fontSize="13px"
             style={{
@@ -161,21 +175,29 @@ export default function HowToSlug({ data, markdown }) {
             gap="10px"
             paddingX="0"
           />
-          <Link href={data.readme_url} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+          <Link href={data?.readme_url || '#'} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
             <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
             {t('common:edit-on-github')}
           </Link>
         </Box>
-        <Heading size="l" fontWeight="700">
-          {title}
-        </Heading>
+        {title ? (
+          <Heading size="l" fontWeight="700">
+            {title}
+          </Heading>
+        ) : (
+          <Skeleton height="45px" width="100%" borderRadius="10px" />
+        )}
         <Box margin="24px 0 0 0">
           <Text size="l" fontWeight="900" textTransform="uppercase">
             {t('written-by')}
           </Text>
-          <Text fontSize="l">
-            {`${author.first_name} ${author.last_name}`}
-          </Text>
+          {author ? (
+            <Text fontSize="l">
+              {`${author.first_name} ${author.last_name}`}
+            </Text>
+          ) : (
+            <Skeleton height="20px" width="220px" borderRadius="10px" />
+          )}
         </Box>
 
         <Image src={getImage} alt={title} margin="20px 0 30px 0" width="100%" borderRadius="10px" height="100%" style={{ aspectRatio: '12/6' }} />
