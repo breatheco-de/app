@@ -48,6 +48,13 @@ const getStorageItem = (key) => {
   return null;
 };
 
+const setStorageItem = (key, value) => {
+  if (isWindow) {
+    return localStorage.setItem(key, value);
+  }
+  return null;
+};
+
 const removeStorageItem = (key) => {
   if (isWindow) {
     return localStorage.removeItem(key);
@@ -77,19 +84,6 @@ const devLogTable = (msg, array) => { // Relevant table logs with title only in 
   }
 };
 
-const getCookie = (cName) => {
-  let res;
-  if (isWindow) {
-    const name = `${cName}=`;
-    const cDecoded = decodeURIComponent(document.cookie);
-    const cArr = cDecoded.split('; ');
-    cArr.forEach((val) => {
-      if (val.indexOf(name) === 0) res = val.substring(name.length);
-    });
-  }
-  return res || null;
-};
-
 const objectAreNotEqual = (t1, t2) => Object.keys(t1).map((l) => t1[l] === t2[l]).includes(false);
 
 function removeURLParameter(url, parameter) {
@@ -116,5 +110,6 @@ export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
   removeStorageItem, isDevMode, devLogTable, devLog, languageLabel,
-  objectAreNotEqual, cleanQueryStrings, getCookie, removeURLParameter,
+  objectAreNotEqual, cleanQueryStrings, removeURLParameter,
+  setStorageItem,
 };

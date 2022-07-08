@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, Button, useColorModeValue, useToast,
+  Box, Skeleton, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { LinkIcon } from '@chakra-ui/icons';
@@ -18,26 +18,28 @@ import Icon from '../../../../../common/components/Icon';
 import { isGithubUrl } from '../../../../../utils/regex';
 import ButtonHandler from '../../../../../js_modules/assignmentHandler/index';
 import useAssignments from '../../../../../common/store/actions/assignmentsAction';
+import { isWindow } from '../../../../../utils';
 
 const Assignments = () => {
   const { t } = useTranslation('assignments');
   const router = useRouter();
-  const defaultLimiter = 10;
   const toast = useToast();
   const { contextState, setContextState } = useAssignments();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
+  const [paginationProps, setPaginationProps] = useState({});
+  const [tasksLoading, setTasksLoading] = useState(true);
+  const [offset, setOffset] = useState(0);
+  const [isFetching, setIsFetching] = useState(false);
   const [studentLabel, setStudentLabel] = useState(null);
   const [projectLabel, setProjectLabel] = useState(null);
   const [statusLabel, setStatusLabel] = useState(null);
 
-  const [limitList, setLimitList] = useState(defaultLimiter);
   const [currentStudentList, setCurrentStudentList] = useState([]);
-  // const [selectedStatus, setSelectedStatus] = useState();
   const [projects, setProjects] = useState([]);
 
   const [selectedCohort, setSelectedCohort] = useState({});
-  const [selectedCohortValue, setSelectedCohortValue] = useState(null);
+  const [selectedCohortSlug, setSelectedCohortSlug] = useState(null);
 
   const { cohortSlug } = router.query;
   const linkColor = useColorModeValue('blue.default', 'blue.300');
@@ -48,17 +50,90 @@ const Assignments = () => {
     en: '/',
   };
 
+  const getStudents = (slug, academyId) => {
+    bc.cohort().getStudents(slug, academyId)
+      .then(({ data }) => {
+        const activeStudents = data.filter((l) => l.educational_status === 'ACTIVE' && l.role === 'STUDENT');
+        const sortedStudents = activeStudents.sort(
+          (a, b) => a.user.first_name.localeCompare(b.user.first_name),
+        );
+        setCurrentStudentList(sortedStudents);
+      }).catch(() => {
+        toast({
+          title: t('alert-message:error-fetching-students-and-teachers'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
+      });
+  };
+
+  const getAssignments = (cohortId, academyId, offsetValue) => {
+    Promise.all([
+      bc.todo({
+        limit: 50,
+        academy: academyId,
+        offset: offsetValue,
+      }).getAssignments({ id: cohortId }),
+      // bc.todo({ teacher: cohortSession.bc_id }).get(),
+    ])
+      .then(([tasks]) => {
+        setIsFetching(false);
+        setPaginationProps(tasks.data);
+        const taskResults = tasks.data?.results;
+        const projectTasks = taskResults !== undefined ? taskResults.filter((l) => l.task_type === 'PROJECT') : [];
+        // const myProjectTasks = myTasks.data !== undefined ? myTasks.data.filter(
+        //   (l) => l.task_type === 'PROJECT',
+        // ) : [];
+
+        const allTasks = [...projectTasks];
+
+        // Clean repeated task.id in stored contextState.allTasks
+        const cleanedTeacherTask = allTasks !== undefined ? allTasks.filter(
+          (l) => !contextState.allTasks.some((j) => j.id === l.id),
+        ) : [];
+
+        const arrOfProjects = [...contextState.allTasks, ...cleanedTeacherTask];
+        setContextState({
+          allTasks: arrOfProjects,
+        });
+        const projectsList = [];
+
+        for (let i = 0; i < allTasks.length; i += 1) {
+          const isProject = allTasks[i].task_type === 'PROJECT';
+          if (projectsList.find(
+            (p) => allTasks[i] !== 'PROJECT' && allTasks[i].associated_slug === p.associated_slug,
+          )) {
+            continue;
+          }
+          if (isProject) projectsList.push(allTasks[i]);
+        }
+        if (projectsList.length > 0) setProjects(projectsList);
+      })
+      .catch((error) => {
+        setIsFetching(false);
+        toast({
+          title: t('alert-message:error-fetching-tasks'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
+        console.error('There was an error fetching the tasks', error);
+      });
+  };
+
   useEffect(() => {
     if (cohortSession?.cohort_role && cohortSession?.cohort_role === 'STUDENT') {
       router.push('/choose-program');
     } else {
-      bc.admissions().cohorts()
+      bc.admissions().me()
         .then(({ data }) => {
-          const dataStruct = data.map((l) => ({
-            label: l.name,
-            slug: l.slug,
-            value: l.id,
-            academy: l.academy.id,
+          const cohortFiltered = data.cohorts.filter((cohort) => cohort.role !== 'STUDENT');
+          const dataStruct = cohortFiltered.map((l) => ({
+            label: l.cohort.name,
+            slug: l.cohort.slug,
+            value: l.cohort.id,
+            academy: l.cohort.academy.id,
           }));
           setAllCohorts(dataStruct.sort(
             (a, b) => a.label.localeCompare(b.label),
@@ -77,76 +152,23 @@ const Assignments = () => {
   }, []);
 
   useEffect(() => {
-    const findSelectedCohort = allCohorts.find((l) => l.value === selectedCohortValue);
+    const findSelectedCohort = allCohorts.find((l) => l.slug === selectedCohortSlug);
     const defaultCohort = allCohorts.find((l) => l.slug === cohortSlug);
 
-    if (defaultCohort) {
+    const academyId = findSelectedCohort?.academy || defaultCohort?.academy;
+    const slug = findSelectedCohort?.slug || defaultCohort?.slug;
+    const cohortId = findSelectedCohort?.value || defaultCohort?.value;
+
+    if (defaultCohort && cohortId) {
       setSelectedCohort(findSelectedCohort || defaultCohort);
+      getStudents(slug, academyId);
+      getAssignments(cohortId, academyId, offset);
+      // if (offset) {
+      // }
     }
-  }, [allCohorts, cohortSlug, selectedCohortValue]);
+  }, [allCohorts, selectedCohortSlug, offset]);
 
-  useEffect(() => {
-    if (selectedCohort) {
-      Promise.all([
-        bc.todo({
-          stu_cohort: selectedCohort.slug,
-          // limit: 100,
-          // type: 'project',
-        }).get(),
-        bc.todo({ teacher: cohortSession.bc_id }).get(),
-      ])
-        .then(([tasks, myTasks]) => {
-          const projectTasks = tasks.data !== undefined ? tasks.data.filter((l) => l.task_type === 'PROJECT') : [];
-          const myProjectTasks = myTasks.data !== undefined ? myTasks.data.filter((l) => l.task_type === 'PROJECT') : [];
-          setContextState({
-            allTasks: [
-              ...projectTasks,
-              ...myProjectTasks,
-            ],
-          });
-
-          const projectsList = [];
-          const studentsList = [];
-
-          for (let i = 0; i < tasks.data.length; i += 1) {
-            const isProject = tasks.data[i].task_type === 'PROJECT';
-            if (projectsList.find(
-              (p) => tasks.data[i] !== 'PROJECT' && tasks.data[i].associated_slug === p.associated_slug,
-            )) {
-              continue;
-            }
-            if (isProject) projectsList.push(tasks.data[i]);
-          }
-          for (let i = 0; i < tasks.data.length; i += 1) {
-            const firstName = tasks.data[i].user.first_name;
-            const lastName = tasks.data[i].user.last_name;
-            const isProject = tasks.data[i].task_type === 'PROJECT';
-            if (studentsList.find(
-              (p) => isProject && `${firstName}-${lastName}` === `${p.user.first_name}-${p.user.last_name}`,
-            )) {
-              continue;
-            }
-            if (isProject) studentsList.push(tasks.data[i]);
-          }
-          const sortedStudents = studentsList.sort(
-            (a, b) => a.user.first_name.localeCompare(b.user.first_name),
-          );
-          if (projectsList.length > 0) setProjects(projectsList);
-          if (studentsList.length > 0) setCurrentStudentList(sortedStudents);
-        })
-        .catch((error) => {
-          toast({
-            title: t('alert-message:error-fetching-tasks'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
-          console.error('There was an error fetching the tasks', error);
-        });
-    }
-  }, [cohortSlug, selectedCohort]);
-
-  const filteredTasks = contextState.allTasks.length > 0 && contextState.allTasks.filter(
+  const filteredTasks = contextState.allTasks.length > 0 ? contextState.allTasks.filter(
     (task) => {
       const fullName = `${task.user.first_name}-${task.user.last_name}`.toLowerCase();
       const statusConditional = {
@@ -164,7 +186,34 @@ const Assignments = () => {
       ) return false;
       return true;
     },
-  );
+  ) : [];
+
+  useEffect(() => {
+    if (filteredTasks?.length === 0) {
+      setTimeout(() => {
+        setTasksLoading(false);
+      }, 500);
+    }
+  }, [filteredTasks]);
+
+  const handleScroll = () => {
+    const scrollTop = isWindow && document.documentElement.scrollTop;
+    const offsetHeight = isWindow && document.documentElement.offsetHeight;
+    const innerHeight = isWindow && window.innerHeight;
+    if ((innerHeight + scrollTop) !== offsetHeight) return;
+    setIsFetching(true);
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+  useEffect(() => {
+    if (!isFetching) return;
+    if (filteredTasks && paginationProps.next !== null) {
+      setOffset(offset + 50);
+    }
+  }, [isFetching]);
 
   const statusList = [
     {
@@ -226,12 +275,18 @@ const Assignments = () => {
             fontSize="25px"
             noOptionsMessage={() => t('common:no-options-message')}
             defaultInputValue={selectedCohort.label}
-            onChange={({ value }) => {
-              setLimitList(defaultLimiter);
-              setSelectedCohortValue(parseInt(value, 10));
+            onChange={({ slug }) => {
+              if (slug !== selectedCohort.slug) {
+                setCurrentStudentList([]);
+                setContextState({
+                  allTasks: [],
+                });
+              }
+              setSelectedCohortSlug(slug);
             }}
             options={allCohorts.map((cohort) => ({
               value: cohort.value,
+              slug: cohort.slug,
               label: cohort.label,
             }))}
           />
@@ -248,7 +303,7 @@ const Assignments = () => {
           {t('filter.assignments-length', { count: filteredTasks.length || 0 })}
         </Text>
         <Box display="grid" gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(10rem, 1fr))', md: 'repeat(auto-fill, minmax(18rem, 1fr))' }} gridGap="14px" py="20px">
-          {projects.length > 0 && (
+          {projects.length > 0 ? (
             <ReactSelect
               id="project-select"
               placeholder={t('filter.project')}
@@ -256,7 +311,7 @@ const Assignments = () => {
               value={projectLabel || ''}
               defaultInputValue={projectDefaultValue}
               onChange={(selected) => {
-                setLimitList(defaultLimiter);
+                setTasksLoading(true);
                 setProjectLabel(selected !== null ? {
                   value: selected?.value,
                   label: selected?.label,
@@ -273,9 +328,11 @@ const Assignments = () => {
                 label: project.title,
               }))}
             />
+          ) : (
+            <Skeleton width="100%" height="40px" borderRadius="0.375rem" />
           )}
 
-          {currentStudentList.length > 0 && (
+          {currentStudentList.length > 0 ? (
             <ReactSelect
               id="student-select"
               placeholder={t('filter.student')}
@@ -285,8 +342,9 @@ const Assignments = () => {
               height="50px"
               fontSize="15px"
               onChange={(selected) => {
-                setLimitList(defaultLimiter);
+                setTasksLoading(true);
                 setStudentLabel(selected !== null ? {
+                  id: selected?.id,
                   value: selected?.value,
                   label: selected?.label,
                 } : null);
@@ -298,12 +356,15 @@ const Assignments = () => {
                 });
               }}
               options={currentStudentList.map((student) => ({
+                id: student.user.id,
                 value: `${student.user.first_name}-${student.user.last_name}`.toLowerCase(),
                 label: `${student.user.first_name} ${student.user.last_name}`,
               }))}
             />
+          ) : (
+            <Skeleton width="100%" height="40px" borderRadius="0.375rem" />
           )}
-          {statusList.length > 0 && (
+          {projects.length > 0 ? (
             <ReactSelect
               id="status-select"
               placeholder={t('filter.status')}
@@ -313,7 +374,7 @@ const Assignments = () => {
               fontSize="15px"
               defaultInputValue={statusDefaultValue}
               onChange={(selected) => {
-                setLimitList(defaultLimiter);
+                setTasksLoading(true);
                 setStatusLabel(selected !== null ? {
                   value: selected?.value,
                   label: selected?.label,
@@ -330,9 +391,12 @@ const Assignments = () => {
                 label: status.label,
               }))}
             />
+          ) : (
+            <Skeleton width="100%" height="40px" borderRadius="0.375rem" />
           )}
         </Box>
         <Box
+          minHeight="34vh"
           borderRadius="3px"
           margin="0 auto"
           maxWidth="1012px"
@@ -361,14 +425,15 @@ const Assignments = () => {
           </Box>
           <Box display="flex" flexDirection="column" gridGap="18px">
 
-            {filteredTasks.length > 0 ? filteredTasks.slice(0, limitList).map((task) => {
+            {filteredTasks.length > 0 ? filteredTasks.map((task, i) => {
+              const index = i;
               const githubUrl = task?.github_url;
               const haveGithubDomain = githubUrl && !isGithubUrl.test(githubUrl);
               const fullName = `${task.user.first_name} ${task.user.last_name}`;
               const projectLink = `https://4geeks.com${lang[router.locale]}project/${task.associated_slug}`;
 
               return (
-                <Box key={`${task.slug}-${task.title}-${fullName}`} p="18px 28px" display="flex" gridGap="10px" justifyContent="space-between" flexDirection="row" alignItems="center" border="1px solid" borderColor={borderColor} borderRadius="17px">
+                <Box key={`${index}-${task.slug}-${task.title}-${fullName}`} p="18px 28px" display="flex" gridGap="10px" justifyContent="space-between" flexDirection="row" alignItems="center" border="1px solid" borderColor={borderColor} borderRadius="17px">
                   <Box width="auto" minWidth="calc(110px - 0.5vw)">
                     <TaskLabel currentTask={task} t={t} />
                   </Box>
@@ -405,15 +470,32 @@ const Assignments = () => {
                 </Box>
               );
             }) : (
-              <Text size="30px">
-                Loading...
-              </Text>
+              <>
+                {tasksLoading ? (
+                  <Box display="flex" flexDirection="column" gridGap="18px">
+                    {Array(15).fill(['circles']).map((_, i) => {
+                      const index = i;
+                      return (
+                        <Skeleton key={index} width="100%" height="84.5px" borderRadius="17px" />
+                      );
+                    })}
+                  </Box>
+                ) : (
+                  <Text size="25px" pt="3rem" textAlign="center" display="flex" width="auto" margin="0 auto" fontWeight="700">
+                    {t('common:search-not-found')}
+                  </Text>
+                )}
+              </>
             )}
-            {filteredTasks.length > limitList && (
-              <Button variant="link" onClick={() => setLimitList(limitList + 15)} fontSize="16px" _hover={{ textDecoration: 'none' }} width="fit-content" margin="20px auto 0 auto">
-                {t('common:show-more')}
-                <Icon icon="arrowDown" width="24px" height="24px" />
-              </Button>
+            {paginationProps.next !== null && isFetching && (
+              <Box display="flex" flexDirection="column" gridGap="18px">
+                {Array(15).fill(['circles']).map((_, i) => {
+                  const index = i;
+                  return (
+                    <Skeleton key={index} width="100%" height="84.5px" borderRadius="17px" />
+                  );
+                })}
+              </Box>
             )}
           </Box>
         </Box>
