@@ -2,7 +2,7 @@ import axios from '../../axios';
 
 const host = `${process.env.BREATHECODE_HOST}/v1`;
 const breathecode = {
-  fetcher: (url) => axios.get(url).then((res) => res.data),
+  get: (url) => axios.get(url),
   auth: () => {
     const url = `${host}/auth`;
     return {
@@ -44,11 +44,18 @@ const breathecode = {
 
   todo: (query = {}) => {
     const url = `${host}/assignment`;
+    // .map((key) => (query[key] !== null ? `${key}=${query[key]}` : ''))
     const qs = Object.keys(query)
-      .map((key) => `${key}=${query[key]}`)
+      .map((key) => (query[key] !== undefined ? `${key}=${query[key]}` : ''))
       .join('&');
     return {
       get: () => axios.get(`${url}/task/?${qs}`),
+      getAssignments: (args) => axios.get(`${url}/academy/cohort/${args.id}/task?${qs}`),
+      deliver: (args) => axios.get(`${url}/task/${args.id}/deliver`, {
+        headers: {
+          academy: args.academyId,
+        },
+      }),
       // getTaskByStudent: (cohortId) => axios.get(`${url}/user/me/task?cohort=${cohortId}`),
       getTaskByStudent: () => axios.get(`${url}/user/me/task?${qs}`),
       add: (args) => axios.post(`${url}/user/me/task`, args),
@@ -67,7 +74,7 @@ const breathecode = {
     return {
       get: (id) => axios.get(`${url}/cohort/${id}`),
       getFilterStudents: () => axios.get(`${url}/cohort/user?${qs}`),
-      getStudents: (cohortId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}`),
+      getStudents: (cohortId, academyId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}${academyId ? `&academy=${academyId}` : ''}`),
       update: (id, args) => axios.put(`${url}/cohort/${id}`, args),
     };
   },

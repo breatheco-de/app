@@ -13,13 +13,12 @@ import {
 import { Form, Formik, Field } from 'formik';
 import { useRouter } from 'next/router';
 // import Icon from '../Icon';
-import { useCookies } from 'react-cookie';
 import validationSchema from './validationSchemas';
 import bc from '../../services/breathecode';
+import { setStorageItem } from '../../../utils';
 
 function Register() {
   const { t } = useTranslation('login');
-  const [, setCookie] = useCookies(['subscriptionId']);
   // const [showPSW, setShowPSW] = useState(false);
   // const [showRepeatPSW, setShowRepeatPSW] = useState(false);
 
@@ -42,7 +41,7 @@ function Register() {
       }}
       onSubmit={(values, actions) => {
         bc.auth().subscribe(values).then(({ data }) => {
-          setCookie('subscriptionId', data.id, { path: '/' });
+          setStorageItem('subscriptionId', data.id);
           toast({
             title: t('alert-message:added-to-waiting-list'),
             // title: 'Your email has been added to our list!',

@@ -114,7 +114,7 @@ const MobileItem = ({
 
           {subMenu
             && subMenu.map((child) => (child.subMenu ? (
-              <Accordion allowMultiple width="100%">
+              <Accordion key={child.label} allowMultiple width="100%">
                 <AccordionItem border="0">
                   <AccordionButton>
                     <Box flex="1" textAlign="left">

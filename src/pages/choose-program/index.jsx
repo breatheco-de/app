@@ -5,7 +5,6 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import getT from 'next-translate/getT';
-// import { useCookies } from 'react-cookie';
 import ChooseProgram from '../../js_modules/chooseProgram';
 import Text from '../../common/components/Text';
 import bc from '../../common/services/breathecode';
@@ -36,7 +35,6 @@ export const getStaticProps = async ({ locale, locales }) => {
 
 function chooseProgram() {
   const { t } = useTranslation('choose-program');
-  // const [cookies] = useCookies(['accessToken']);
   const [, setProfile] = usePersistent('profile', {});
   const [, setCohortSession] = usePersistent('cohortSession', {});
   const [data, setData] = useState([]);
