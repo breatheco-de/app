@@ -57,7 +57,7 @@ const redirectHandler = async (req, conditionalResult, NextResponse, redirectVal
 const publicRedirectByAsset = async ({
   router, aliasRedirect, translations, userPathName, pagePath,
 }) => {
-  const translationUs = translations.us || translations.en;
+  const translationUs = translations?.us || translations?.en;
 
   if (aliasRedirect) {
     return router.push(userPathName);
