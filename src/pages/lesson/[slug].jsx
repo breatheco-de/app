@@ -105,7 +105,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
 
-  const translations = lesson?.transition || { es: '', en: '', us: '' };
+  const translations = lesson?.translations || { es: '', en: '', us: '' };
 
   const router = useRouter();
   const toast = useToast();
