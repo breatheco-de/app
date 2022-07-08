@@ -6,6 +6,7 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import getT from 'next-translate/getT';
 import { useRouter } from 'next/router';
+import { useState, useEffect } from 'react';
 import Text from '../common/components/Text';
 import Icon from '../common/components/Icon';
 import FilterModal from '../common/components/FilterModal';
@@ -13,6 +14,7 @@ import TitleContent from '../js_modules/projects/TitleContent';
 import ProjectList from '../js_modules/projects/ProjectList';
 import useFilter from '../common/store/actions/filterAction';
 import Search from '../js_modules/projects/Search';
+import { isWindow } from '../utils';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'lesson');
@@ -20,16 +22,16 @@ export const getStaticProps = async ({ locale, locales }) => {
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const currentLang = locale === 'en' ? 'us' : 'es';
   const lessons = []; // filtered lessons after removing repeated
-  let arrProjects = []; // incoming lessons
+  let arrLessons = []; // incoming lessons
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson&limit=1000`);
   const data = await resp.json();
   // .then((res) => res.json())
   // .catch((err) => console.error(err));
 
-  arrProjects = Object.values(data);
+  arrLessons = Object.values(data.results);
   if (resp.status !== undefined && resp.status >= 200 && resp.status < 400) {
-    console.log(`SUCCESS: ${arrProjects.length} Lessons fetched for /lessons`);
+    console.log(`SUCCESS: ${arrLessons.length} Lessons fetched for /lessons`);
   } else {
     console.error(`Error ${resp.status}: fetching Lessons list for /lessons`);
   }
@@ -37,25 +39,25 @@ export const getStaticProps = async ({ locale, locales }) => {
   let technologyTags = [];
   let difficulties = [];
 
-  for (let i = 0; i < arrProjects.length; i += 1) {
+  for (let i = 0; i < arrLessons.length; i += 1) {
     // skip repeated lessons
-    if (lessons.find((p) => arrProjects[i].slug === p.slug)) {
+    if (lessons.find((p) => arrLessons[i].slug === p.slug)) {
       continue;
     }
-    lessons.push(arrProjects[i]);
+    lessons.push(arrLessons[i]);
 
-    if (typeof arrProjects[i].technology === 'string') technologyTags.push(arrProjects[i].technology);
-    if (Array.isArray(arrProjects[i].technologies)) {
-      technologyTags = technologyTags.concat(arrProjects[i].technologies);
+    if (typeof arrLessons[i].technology === 'string') technologyTags.push(arrLessons[i].technology);
+    if (Array.isArray(arrLessons[i].technologies)) {
+      technologyTags = technologyTags.concat(arrLessons[i].technologies);
     }
 
-    if (arrProjects[i].difficulty === null) arrProjects[i].difficulty = 'unknown';
-    if (typeof arrProjects[i].difficulty === 'string' || arrProjects[i].difficulty === null) {
-      if (arrProjects[i].difficulty === 'junior') arrProjects[i].difficulty = 'easy';
-      else if (arrProjects[i].difficulty === 'semi-senior') arrProjects[i].difficulty = 'intermediate';
-      else if (arrProjects[i].difficulty === 'senior') arrProjects[i].difficulty = 'hard';
+    if (arrLessons[i].difficulty === null) arrLessons[i].difficulty = 'unknown';
+    if (typeof arrLessons[i].difficulty === 'string' || arrLessons[i].difficulty === null) {
+      if (arrLessons[i].difficulty === 'junior') arrLessons[i].difficulty = 'easy';
+      else if (arrLessons[i].difficulty === 'semi-senior') arrLessons[i].difficulty = 'intermediate';
+      else if (arrLessons[i].difficulty === 'senior') arrLessons[i].difficulty = 'hard';
 
-      difficulties.push(arrProjects[i].difficulty);
+      difficulties.push(arrLessons[i].difficulty);
     }
   }
 
@@ -108,8 +110,31 @@ export const getStaticProps = async ({ locale, locales }) => {
 const Projects = ({ lessons, technologyTags, difficulties }) => {
   const { t } = useTranslation('lesson');
   const { filteredBy, setProjectFilters } = useFilter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [offset, setOffset] = useState(50);
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const iconColor = useColorModeValue('#FFF', '#283340');
+  const lessonsFiltered = lessons.length > 0 ? lessons.slice(0, offset) : [];
+
+  const handleScroll = () => {
+    const scrollTop = isWindow && document.documentElement.scrollTop;
+    const offsetHeight = isWindow && document.documentElement.offsetHeight;
+    const innerHeight = isWindow && window.innerHeight;
+    if ((innerHeight + scrollTop) !== offsetHeight) return;
+    setIsLoading(true);
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading) return;
+    if (offset >= lessons.length) return;
+    setOffset(offset + 50);
+  }, [isLoading]);
+
   // const currentFilters = technologies.length
   //   + (difficulty === undefined || difficulty.length === 0 ? 0 : 1)
   //   + videoTutorials;
@@ -204,7 +229,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
         </Text>
 
         <ProjectList
-          projects={lessons}
+          projects={lessonsFiltered}
           withoutImage
           contextFilter={filteredBy.projectsOptions}
           projectPath="lesson"
