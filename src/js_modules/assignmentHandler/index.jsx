@@ -7,10 +7,10 @@ import { useRouter } from 'next/router';
 // import { Formik, Form, Field } from 'formik';
 import PropTypes from 'prop-types';
 import {
-  memo, useEffect, useState, useRef,
+  memo, useEffect, useState, useRef, Fragment,
 } from 'react';
 import bc from '../../common/services/breathecode';
-import { getStorageItem } from '../../utils';
+// import { getStorageItem } from '../../utils';
 // import Modal from './modal';
 
 const DeliverModal = ({
@@ -28,7 +28,6 @@ const DeliverModal = ({
   const fontColor = useColorModeValue('gra.dark', 'gray.250');
   const labelColor = useColorModeValue('gray.600', 'gray.200');
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.500');
-  const accessToken = getStorageItem('accessToken');
 
   useEffect(() => {
     if (copied) {
@@ -45,19 +44,23 @@ const DeliverModal = ({
         isLoading={isLoading}
         onClick={async () => {
           setIsLoading(true);
-          const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/assignment/task/${currentTask.id}/deliver`, {
-            headers: {
-              Authorization: `Token ${accessToken}`,
-              academy: cohortSession.academy.id,
-            },
-          });
-          const data = await resp.json();
-          setDeliveryUrl(data.delivery_url);
-
-          if (data) {
-            onOpen();
-            setIsLoading(false);
-          }
+          bc.todo().deliver({
+            id: currentTask.id,
+            academyId: cohortSession.academy.id,
+          })
+            .then(({ data }) => {
+              setDeliveryUrl(data.delivery_url);
+              onOpen();
+              setIsLoading(false);
+            })
+            .catch(() => {
+              toast({
+                title: t('alert-message:review-url-error'),
+                status: 'error',
+                duration: 6000,
+                isClosable: true,
+              });
+            });
         }}
         fontSize="15px"
         padding="0 24px"
@@ -228,9 +231,9 @@ const ReviewModal = ({ currentTask, projectLink, updpateAssignment }) => {
       <Button
         background={buttonColor[type]}
         _hover={{ background: buttonColor[type] }}
-        onClick={async () => {
+        onClick={() => {
           if (revisionStatus[type] !== undefined) {
-            await bc.todo().update({
+            bc.todo().update({
               id: currentTask.id,
               revision_status: revisionStatus[type],
               description: comment,
@@ -305,7 +308,9 @@ const ReviewModal = ({ currentTask, projectLink, updpateAssignment }) => {
             <Textarea onChange={(e) => setComment(e.target.value)} placeholder={t('review-assignment.comment-placeholder')} fontSize="14px" height="128px" />
             <Box pt={6} display="flex" flexDirection="row" justifyContent="space-between">
               {['reject', 'approve'].map((type) => (
-                <ReviewButton type={type} />
+                <Fragment key={type}>
+                  <ReviewButton type={type} />
+                </Fragment>
               ))}
             </Box>
           </ModalBody>

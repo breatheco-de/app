@@ -23,11 +23,12 @@ const TaskLabel = ({ currentTask, t }) => {
           msg: t('status.rejected') || 'Rejected',
         };
       }
+      return {
+        status: 'undelivered',
+        msg: t('status.undelivered') || 'Undelivered',
+      };
     }
-    return {
-      status: 'undelivered',
-      msg: t('status.undelivered') || 'Undelivered',
-    };
+    return {};
   };
 
   const task = getStatus();
