@@ -15,81 +15,91 @@
   },
   "company":{
     "title":"COMPANY",
-    "about":{
-      "label": "ABOUT",
-      "href": "/about-us"
-    },
-    "contact":{
-      "label":"CONTACT",
-      "href": "#"
-    },
-    "media":{
-      "label":"MEDIA KIT",
-      "href": "#"
-    }
+    "items": [
+      {
+        "label": "ABOUT",
+        "href": "/about-us"
+      },
+      {
+        "label":"CONTACT",
+        "href": "#"
+      },
+      {
+        "label":"MEDIA KIT",
+        "href": "#"
+      }
+    ]
   },
   "learning":{
     "title":"LEARNING LIBRARY",
-    "read":{
-      "label": "Read and watch",
-      "href": "/lessons"
-    },
-    "practice":{
-      "label": "Practice interactively",
-      "href": "/interactive-exercises"
-    },
-    "build":{
-      "label": "Build projects",
-      "href": "/interactive-coding-tutorial"
-    },
-    "how":{
-      "label": "how to’s?",
-      "href": "/how-to"
-    }
+    "items": [
+      {
+        "label": "Read and watch",
+        "href": "/lessons"
+      },
+      {
+        "label": "Practice interactively",
+        "href": "/interactive-exercises"
+      },
+      {
+        "label": "Build projects",
+        "href": "/interactive-coding-tutorial"
+      },
+      {
+        "label": "how to’s?",
+        "href": "/how-to"
+      }
+    ]
   },
   "community":{
     "title":"4GEEKS COMMUNITY",
-    "work":{
-      "label": "Workshops and events",
-      "href": "#"
-    },
-    "live":{
-      "label": "Live Mentorships",
-      "href": "#"
-    },
-    "build":{
-      "label": "Social & Live Learning",
-      "href": "#"
-    },
-    "conduct":{
-      "label": "Code of conduct?",
-      "href": "#"
-    }
+    "items":[
+      {
+        "label": "Workshops and events",
+        "href": "#"
+      },
+      {
+        "label": "Live Mentorships",
+        "href": "#"
+      },
+      {
+        "label": "Social & Live Learning",
+        "href": "#"
+      },
+      {
+        "label": "Code of conduct?",
+        "href": "#"
+      }
+    ]
   },
   "social":{
     "title":"SOCIAL & LIVE LEARNING",
     "text":"The most efficient way to learn: Join a cohort with classmates like yourself, live streamings, coding jam sessions, live mentorships with real experts and keep the motivation."
   },
-  "iconogram":{
-    "intro":{
+  "iconogram":[
+    {
       "title": "Intro to coding",
+      "icon": "coding",
       "text": "From zero to getting paid as a developer, learn the skills of the present and future. Boost your professional career and get hired by a tech company.",
       "href": "#"
     },
-    "data":{
+    {
       "title": "Data Sience",
+      "icon": "data-sience",
       "text": "Start a career in data science and analytics. A hands-on approach with interactive exercises, chat support, and access to mentorships.",
       "href": "#"
     },
-    "geekcoding":{
+    {
       "title": "30daysofgeekcoding",
+      "icon": "geekcoding",
       "text": "Keep your motivation with this 30 day challenge. Join hundreds of other developers coding a little every day.",
       "href": "#"
     },
-    "machine":{
+    {
       "title": "A.I. & machine learning",
+      "icon": "machine-learning",
       "text": "Start with Python and Data Science, Machine Learning, Deep Learning and maintaining a production environment in A.I.",
       "href": "#"
     }
-  }
+  ]
 }

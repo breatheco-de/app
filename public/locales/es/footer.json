@@ -15,82 +15,92 @@
   },
   "company":{
     "title":"COMPANY",
-    "about":{
-      "label": "ACERCA DE",
-      "href": "/about-us"
-    },
-    "contact":{
-      "label":"CONTACTO",
-      "href": "#"
-    },
-    "media":{
-      "label":"MEDIA KIT",
-      "href": "#"
-    }
+    "items":[
+      {
+        "label": "ACERCA DE",
+        "href": "/about-us"
+      },
+      {
+        "label":"CONTACTO",
+        "href": "#"
+      },
+      {
+        "label":"MEDIA KIT",
+        "href": "#"
+      }
+    ]
   },
   "learning":{
     "title":"LIBRERÍA DE APRENDIZAJE",
-    "read":{
-      "label": "Leer y observar",
-      "href": "#"
-    },
-    "practice":{
-      "label": "Practica interactivamente",
-      "href": "#"
-    },
-    "build":{
-      "label": "Realiza proyectos",
-      "href": "#"
-    },
-    "how":{
-      "label": "Como hacer...",
-      "href": "#"
-    }
+    "items":[
+      {
+        "label": "Leer y observar",
+        "href": "#"
+      },
+      {
+        "label": "Practica interactivamente",
+        "href": "#"
+      },
+      {
+        "label": "Realiza proyectos",
+        "href": "#"
+      },
+      {
+        "label": "Como hacer...",
+        "href": "#"
+      }
+    ]
   },
   "community":{
     "title":"COMUNIDAD DE 4GEEKS",
-    "work":{
-      "label": "Talleres y eventos",
-      "href": "#"
-    },
-    "live":{
-      "label": "Mentorías en vivo",
-      "href": "#"
-    },
-    "build":{
-      "label": "Aprendizaje social y en vivo",
-      "href": "#"
-    },
-    "conduct":{
-      "label": "¿Código de conducta?",
-      "href": "#"
-    }
+    "items":[
+      {
+        "label": "Talleres y eventos",
+        "href": "#"
+      },
+      {
+        "label": "Mentorías en vivo",
+        "href": "#"
+      },
+      {
+        "label": "Aprendizaje social y en vivo",
+        "href": "#"
+      },
+      {
+        "label": "¿Código de conducta?",
+        "href": "#"
+      }
+    ]
   },
   "social":{
     "title":"APRENDIZAJE SOCIAL Y EN VIVO",
     "text":"La forma más eficiente de aprender: únase a una cohorte con compañeros de clase como usted, transmisiones en vivo, sesiones improvisadas de codificación, tutorías en vivo con expertos reales y mantenga la motivación."
   },
-  "iconogram":{
-    "intro":{
+  "iconogram":[
+    {
       "title": "Intro al código",
+      "icon": "coding",
       "text": "De cero a que te paguen como desarrollador, aprende las habilidades del presente y del futuro. Impulsa tu carrera profesional y sé contratado por una empresa tecnológica.",
       "href": "#"
     },
-    "data":{
+    {
       "title": "Siencia de Datos",
+      "icon": "data-sience",
       "text": "Inicie una carrera en ciencia de datos y análisis. Un enfoque práctico con ejercicios interactivos, soporte por chat y acceso a tutorías.",
       "href": "#"
     },
-    "geekcoding":{
+    {
       "title": "30daysofgeekcoding",
+      "icon": "geekcoding",
       "text": "Mantén tu motivación con este desafío de 30 días. Únase a cientos de otros desarrolladores programando un poco todos los días.",
       "href": "#"
     },
-    "machine":{
+    {
       "title": "I.A. y machine learning",
+      "icon": "machine-learning",
       "text": "Comience con Python y Data Science, Machine Learning, Deep Learning y mantenga un entorno de producción en A.I.",
       "href": "#"
     }
-  }
+  ]
   
 }
