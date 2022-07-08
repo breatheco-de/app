@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Text,
@@ -8,19 +8,23 @@ import {
   Flex,
   Input,
   InputGroup,
+  InputRightElement,
+  Button,
+  IconButton,
   InputLeftElement,
   useColorMode,
   Divider,
   Heading,
   Link,
 } from '@chakra-ui/react';
-import { Search2Icon } from '@chakra-ui/icons';
+import { Search2Icon, CheckIcon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
 import NextChakraLink from './NextChakraLink';
 import Icon from './Icon';
 
 const Footer = () => {
   const { t } = useTranslation('footer');
+  const [email, setEmail] = useState('');
   const { colorMode } = useColorMode();
   return (
     <Container maxW="none" padding="20px">
@@ -71,7 +75,39 @@ const Footer = () => {
           justifyContent="center"
           width={['100%', '50%', '25%', '25%']}
         >
-          <InputGroup>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              alert(`Hi ${email}!`);
+            }}
+          >
+            <Text>{t('subscribe')}</Text>
+            <InputGroup
+              // borderColor={colorMode === 'light' ? '#020203' : '#FFFFFF'}
+              color={colorMode === 'light' ? '#020203' : '#FFFFFF'}
+            >
+              <Input
+                width="100%"
+                // borderRadius="50px"
+                placeholder="Email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <InputRightElement
+                borderColor={colorMode === 'light' ? '#020203' : '#FFFFFF'}
+              >
+                <IconButton
+                  type="submit"
+                  icon={<CheckIcon />}
+                />
+              </InputRightElement>
+
+            </InputGroup>
+
+          </form>
+          {/* <InputGroup>
             <InputLeftElement
               pointerEvents="none"
               color="gray.300"
@@ -86,8 +122,7 @@ const Footer = () => {
               borderRadius="50px"
               placeholder={t('search')}
             />
-            {/* <InputRightElement children={<Search2Icon color='green.500' />} /> */}
-          </InputGroup>
+          </InputGroup> */}
         </Box>
       </Flex>
       <Divider borderBottomWidth="2px" />
@@ -262,7 +297,7 @@ const Footer = () => {
           wrap={['wrap', 'wrap', 'nowrap', 'nowrap']}
           justifyContent="center"
           width={['100%', '100%', '35%', '40%']}
-          // alignItems="center"
+        // alignItems="center"
         >
           <NextChakraLink href={t('privacy.href')}>
             <Text fontSize="sm">{t('privacy.label')}</Text>
