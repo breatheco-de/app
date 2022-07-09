@@ -33,7 +33,7 @@
     "classmates": "Tus compañeros",
     "active-classmates": "{{studentsLength}} Compañeros",
     "active-geeks": "{{studentsLength}} Geeks Activos",
-    "alumni-geeks": "{{studentsLength}} Exalumnos",
+    "alumni-geeks": "{{studentsLength}} Ex-alumnos",
     "show-more": "Más estudiantes",
     "show-less": "Ocultar estudiantes",
     "no-teachers": "Esta cohorte aún no tiene maestros",
@@ -49,7 +49,7 @@
     "actionButtons": [
       {
         "name": "mentoring",
-        "title": "Programar sesion de mentoría",
+        "title": "Programar sesión de mentoría",
         "href": "#",
         "icon": "conversation"
       },
@@ -69,7 +69,7 @@
   "modalInfo": {
     "title": "Estado de revisión",
     "still-reviewing": "Tu profesor todavía está revisando tu entrega, te dará su opinión una vez que esté lista.",
-    "approved": "Tu profesor ha aprobado con éxito tu proyecto!",
+    "approved": "¡Tu profesor ha aprobado con éxito tu proyecto!",
     "rejected": {
       "title": "Tu profesor ha rechazado tu proyecto",
       "teacher-feedback": "Comentario del profesor:",
@@ -79,7 +79,7 @@
     "link-info": "Enlace del proyecto enviado a tu profesor:",
     "remove-delivery": "Quitar entrega",
     "non-github-url": {
-      "title": "No se a detectado URL de Github",
+      "title": "No se ha detectado URL de Github",
       "description": "Por lo general, los proyectos se entregan a través de Github, ¿está seguro de que desea enviar una URL externa a Github?",
       "confirm": "Confirmar",
       "cancel": "Cancelar"
@@ -90,7 +90,7 @@
     "description": "Estas tareas pueden eliminarse y perderse en el futuro. Asegúrate de sincronizarlos si no quieres perderlos.",
     "unsync": "Eliminar",
     "sync": "Sincronizar con la cohorte actual",
-    "reject-unsync-title": "Confirme su acción para rechazar todas las tareas no sincronizadas",
+    "reject-unsync-title": "Confirma tu acción para rechazar todas las tareas no sincronizadas",
     "confirm": "Confirmar",
     "cancel": "Cancelar"
   },
