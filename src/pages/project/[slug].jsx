@@ -1,5 +1,5 @@
 import {
-  Box, useColorModeValue, Flex, useToast, useColorMode,
+  Box, useColorModeValue, Flex, useToast, useColorMode, Skeleton,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -24,6 +24,12 @@ export const getStaticPaths = async ({ locales }) => {
   // .then((res) => res.json())
   // .catch((err) => console.log(err));
 
+  if (response.status >= 400 || data.asset_type !== 'PROJECT') {
+    return {
+      notFound: true,
+    };
+  }
+
   projects = Object.values(data);
   if (response.status >= 200 && response.status <= 400) {
     console.log(`SUCCESS: ${projects.length} Projects fetched for /project/[slug]`);
@@ -47,7 +53,7 @@ export const getStaticPaths = async ({ locales }) => {
     locale,
   })));
   return {
-    fallback: false,
+    fallback: true,
     paths,
   };
 };
@@ -56,11 +62,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'projects');
   const { slug } = params;
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
-  const result = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
-    .then((res) => res.json())
-    .catch((err) => ({
-      status: err.response.status,
-    }));
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`);
+  const result = await response.json();
 
   const {
     title, translations, description, preview,
@@ -74,7 +77,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       status: err.response.status,
     }));
 
-  if (result.status === 404) {
+  if (response.status >= 400 || result.asset_type !== 'PROJECT') {
     return {
       notFound: true,
     };
@@ -128,7 +131,7 @@ const TableInfo = ({ t, project, commonTextColor }) => (
       </Text>
       <SimpleTable
         href="/interactive-coding-tutorial"
-        difficulty={project.difficulty}
+        difficulty={project?.difficulty}
         repository={project.url}
         duration={project.duration}
         videoAvailable={project.solution_video_url}
@@ -141,10 +144,8 @@ const TableInfo = ({ t, project, commonTextColor }) => (
 
 const ProjectSlug = ({ project, markdown }) => {
   const { t } = useTranslation('projects');
-  const markdownData = getMarkDownContent(markdown);
-  // const defaultImage = '/static/images/code1.png';
-  // const getImage = project.preview !== '' ? project.preview : defaultImage;
-  const { translations } = project;
+  const markdownData = markdown ? getMarkDownContent(markdown) : '';
+  const translations = project?.translations || { es: '', en: '' };
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
@@ -154,24 +155,6 @@ const ProjectSlug = ({ project, markdown }) => {
   const currentLanguageLabel = router.language === 'en' ? t('common:english') : t('common:spanish');
 
   const toast = useToast();
-
-  const EventIfNotFound = () => {
-    toast({
-      title: t('alert-message:content-not-found', { lesson: t('common:project') }),
-      // description: 'Content not found',
-      status: 'error',
-      duration: 7000,
-      isClosable: true,
-    });
-  };
-
-  useEffect(() => {
-    if (typeof markdown !== 'string') {
-      setTimeout(() => {
-        EventIfNotFound();
-      }, 4000);
-    }
-  }, [markdown]);
 
   useEffect(() => {
     axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`)
@@ -190,20 +173,22 @@ const ProjectSlug = ({ project, markdown }) => {
       });
   }, [language]);
 
-  useEffect(() => {
+  useEffect(async () => {
+    const alias = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/alias/redirect`);
+    const aliasList = await alias.json();
+    const redirectSlug = aliasList[slug] || slug;
+    const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
+    const redirectResults = await dataRedirect.json();
+
     const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-    const userPathName = `/${router.locale}${pathWithoutSlug}/${project.slug || slug}`;
+    const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || project?.slug || slug}`;
+    const aliasRedirect = aliasList[slug] !== undefined && userPathName;
     const pagePath = 'project';
 
     publicRedirectByAsset({
-      router, translations, userPathName, pagePath,
+      router, aliasRedirect, translations, userPathName, pagePath,
     });
   }, [router, router.locale, translations]);
-
-  // const onImageNotFound = (event) => {
-  //   event.target.setAttribute('src', defaultImage);
-  //   event.target.setAttribute('srcset', `${defaultImage} 1x`);
-  // };
 
   return (
     <Box
@@ -226,52 +211,21 @@ const ProjectSlug = ({ project, markdown }) => {
 
       <Flex height="100%" gridGap="26px">
         <Box flex="1">
-          {/* <TagCapsule
-            variant="rounded"
-            tags={project.technologies}
-            fontSize="13px"
-            marginY="18px"
-            fontWeight="700"
-            style={{
-              padding: '4px 12px',
-              margin: '0',
-            }}
-            gap="10px"
-            paddingX="0"
-          /> */}
-          <Heading
-            as="h1"
-            size="25px"
-            fontWeight="700"
-            padding="10px 0 35px 0"
-            transition="color 0.2s ease-in-out"
-            color={useColorModeValue('black', 'white')}
-            textTransform="uppercase"
-          >
-            {project.title}
-          </Heading>
-
-          {/* <Image
-            width="100%"
-            height={{ base: '190px', md: '400px' }}
-            margin="30px 0"
-            maxWidth="55rem"
-            maxHeight="500px"
-            minHeight={{ base: 'auto', md: '300px' }}
-            priority
-            borderRadius="3px"
-            pos="relative"
-            _groupHover={{
-              _after: {
-                filter: 'blur(50px)',
-              },
-            }}
-            onError={(e) => onImageNotFound(e)}
-            style={{ overflow: 'hidden' }}
-            objectFit="cover"
-            src={getImage}
-            alt={project.title}
-          /> */}
+          {project?.title ? (
+            <Heading
+              as="h1"
+              size="25px"
+              fontWeight="700"
+              padding="10px 0 35px 0"
+              transition="color 0.2s ease-in-out"
+              color={useColorModeValue('black', 'white')}
+              textTransform="uppercase"
+            >
+              {project.title}
+            </Heading>
+          ) : (
+            <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
+          )}
           <Box
             display={{ base: 'flex', lg: 'none' }}
             flexDirection="column"
@@ -292,7 +246,11 @@ const ProjectSlug = ({ project, markdown }) => {
               <Icon icon="sideSupport" width="300px" height="70px" />
             </Box>
             <Box px="22px" pb="30px" pt="20px">
-              <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
+              {project?.difficulty ? (
+                <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
+              ) : (
+                <Skeleton height="646px" width="300px" borderRadius="17px" />
+              )}
             </Box>
           </Box>
 
@@ -314,29 +272,35 @@ const ProjectSlug = ({ project, markdown }) => {
           </Box>
         </Box>
 
-        <Box
-          display={{ base: 'none', lg: 'flex' }}
-          flexDirection="column"
-          backgroundColor={useColorModeValue('white', 'featuredDark')}
-          margin="30px 0"
-          // minWidth={{ base: '100%', md: '250px' }}
-          minWidth={{ base: '100%', md: '300px' }}
-          maxWidth="350px"
-          height="fit-content"
-          borderWidth="0px"
-          borderRadius="17px"
-          overflow="hidden"
-          border={1}
-          borderStyle="solid"
-          borderColor={commonBorderColor}
-        >
-          <Box d="flex" justifyContent="center">
-            <Icon icon="sideSupport" width="300px" height="70px" />
+        {project?.difficulty ? (
+          <Box
+            display={{ base: 'none', lg: 'flex' }}
+            flexDirection="column"
+            backgroundColor={useColorModeValue('white', 'featuredDark')}
+            margin="30px 0"
+            // minWidth={{ base: '100%', md: '250px' }}
+            minWidth={{ base: '100%', md: '300px' }}
+            maxWidth="350px"
+            height="fit-content"
+            borderWidth="0px"
+            borderRadius="17px"
+            overflow="hidden"
+            border={1}
+            borderStyle="solid"
+            borderColor={commonBorderColor}
+          >
+            <Box d="flex" justifyContent="center">
+              <Icon icon="sideSupport" width="300px" height="70px" />
+            </Box>
+            <Box px="22px" pb="30px" pt="20px">
+              <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
+            </Box>
           </Box>
+        ) : (
           <Box px="22px" pb="30px" pt="20px">
-            <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
+            <Skeleton height="646px" width="300px" borderRadius="17px" />
           </Box>
-        </Box>
+        )}
       </Flex>
     </Box>
   );

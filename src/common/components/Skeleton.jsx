@@ -172,6 +172,52 @@ export const ModuleMapSkeleton = () => {
   );
 };
 
+export const CardSkeleton = ({
+  withoutContainer, quantity, templateColumns, gridGap, cardWidth, cardHeight,
+  cardRadius, ...chakraProps
+}) => {
+  const commonStartColor = useColorModeValue('gray.300', 'gray.light');
+  const commonEndColor = useColorModeValue('gray.400', 'gray.400');
+
+  return !withoutContainer ? (
+    <Grid
+      {...chakraProps}
+      gridTemplateColumns={templateColumns}
+      gridGap={gridGap}
+    >
+      {Array(quantity).fill('l').map((_, i) => {
+        const index = i;
+        return (
+          <Skeleton
+            key={index}
+            width={cardWidth}
+            height={cardHeight}
+            borderRadius={cardRadius}
+            startColor={commonStartColor}
+            endColor={commonEndColor}
+          />
+        );
+      })}
+    </Grid>
+  ) : (
+    <>
+      {Array(quantity).fill('l').map((_, i) => {
+        const index = i;
+        return (
+          <Skeleton
+            key={index}
+            width={cardWidth}
+            height={cardHeight}
+            borderRadius={cardRadius}
+            startColor={commonStartColor}
+            endColor={commonEndColor}
+          />
+        );
+      })}
+    </>
+  );
+};
+
 export const AvatarSkeleton = ({
   withText, quantity, templateColumns, gridAutoRows, gridGap, ...chakraProps
 }) => {
@@ -243,6 +289,25 @@ export const SimpleSkeleton = ({ width, height, ...chakraProps }) => {
       endColor={commonEndColor}
     />
   );
+};
+
+CardSkeleton.propTypes = {
+  withoutContainer: PropTypes.bool,
+  quantity: PropTypes.number,
+  templateColumns: PropTypes.string,
+  cardWidth: PropTypes.string,
+  cardHeight: PropTypes.string,
+  gridGap: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  cardRadius: PropTypes.string,
+};
+CardSkeleton.defaultProps = {
+  withoutContainer: false,
+  quantity: 3,
+  templateColumns: 'repeat(auto-fill, minmax(20rem, 1fr))',
+  cardWidth: '100%',
+  cardHeight: '240px',
+  gridGap: '12px',
+  cardRadius: '16px',
 };
 
 SimpleSkeleton.propTypes = {

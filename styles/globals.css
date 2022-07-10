@@ -17,6 +17,12 @@ a {
 a.active {
   color: #0097CD;
 }
+a.link {
+  color: #0097CD;
+}
+a.link:hover {
+  text-decoration: underline;
+}
 
 * {
   box-sizing: border-box;
