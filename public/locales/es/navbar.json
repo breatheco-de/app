@@ -16,7 +16,7 @@
     {
       "label": "Catálogo de contenidos",
       "icon": "book",
-      "description": "Para los geeks autodidactas, este es nuestro extenso catalogo de contenido con todos los materiales y tutoriales que hemos desarrollado hasta el día de hoy.",
+      "description": "Para los geeks autodidactas, este es nuestro extenso catálogo de contenido con todos los materiales y tutoriales que hemos desarrollado hasta el día de hoy.",
       "asPath": "/read",
       "subMenu": [
         {
