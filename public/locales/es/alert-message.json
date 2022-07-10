@@ -32,7 +32,7 @@
   "request-apply-success": "¡Gracias por tu solicitud!",
   "email-will-be-sent": "Un correo electrónico te será enviado pronto",
   "error-fetching-role": "Hubo un error al intentar encontrar el rol \"{{role}}\"",
-  "error-fetching-alumni-geeks": "Error al obtener Ex-Alumnos",
+  "error-fetching-alumni-geeks": "Error al obtener exalumnos",
   "github-account-removed": "Tu cuenta de GitHub ha sido removido con éxito",
   "error-removing-github": "Hubo un error al intentar remover tu cuenta de GitHub",
   "any-removed": "{{any}} removido!",
