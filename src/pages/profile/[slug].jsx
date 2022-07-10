@@ -157,7 +157,7 @@ const Profile = () => {
                         {t('view-certificate')}
                       </Link>
                     </Tooltip>
-                    <ShareButton title={t('share-certificate.title')} shareText={t('share-certificate.shareText')} link={certfLink} socials={socials} />
+                    <ShareButton withParty title={t('share-certificate.title')} shareText={t('share-certificate.shareText')} link={certfLink} socials={socials} />
                   </Box>
                 </Box>
               );

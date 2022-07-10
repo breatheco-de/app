@@ -769,7 +769,7 @@ const Content = () => {
                   shareText={t('share-certificate.shareText')}
                   link={shareLink}
                   socials={socials}
-                  withParty
+                  // withParty
                 />
               )}
             </Box>
