@@ -6,7 +6,7 @@ import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import FilterModal from '../../common/components/FilterModal';
 
 import Icon from '../../common/components/Icon';
@@ -111,6 +111,11 @@ export default function HowTo({ data, technologyTags, difficulties }) {
   const router = useRouter();
   const { filteredBy, setHowToFilters } = useFilter();
   const iconColor = useColorModeValue('#FFF', '#283340');
+  const [isLoading, setIsLoading] = useState(false);
+  const [offset, setOffset] = useState(20);
+
+  const howTosFiltered = data.slice(0, offset);
+
   const { technologies, difficulty, videoTutorials } = filteredBy.howToOptions;
 
   const techsQuery = router.query.techs;
@@ -133,6 +138,15 @@ export default function HowTo({ data, technologyTags, difficulties }) {
   }, [initialSearchValue]);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
+
+  useEffect(() => {
+    if (!isLoading) return;
+    if (offset >= data.length) setIsLoading(false);
+    setTimeout(() => {
+      setOffset(offset + 20);
+      setIsLoading(false);
+    }, 200);
+  }, [isLoading]);
 
   return (
     <>
@@ -205,7 +219,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
           </Text>
         )}
         <ProjectList
-          projects={data}
+          projects={howTosFiltered}
           contextFilter={filteredBy.howToOptions}
           projectPath="how-to"
           exampleImage="/static/images/coding-notebook.png"
