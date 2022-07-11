@@ -2,29 +2,28 @@
 import { useState, useEffect } from 'react';
 import {
   Container,
+  Flex,
   Heading,
   Divider,
   Text,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
+  useColorMode,
+  Button,
 } from '@chakra-ui/react';
+import { ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import styled from 'styled-components';
 import { format } from 'date-fns';
 import bc from '../../common/services/breathecode';
 import Link from '../../common/components/NextChakraLink';
+import Icon from '../../common/components/Icon';
 import asPrivate from '../../common/context/PrivateRouteWrapper';
+import CustomTheme from '../../../styles/theme';
 // import KPI from '../../common/components/KPI';
 
 const Mentorship = () => {
   const { t } = useTranslation('mentorship');
+  const { colorMode } = useColorMode();
   const router = useRouter();
   const [sessions, setSessions] = useState([]);
   // {
@@ -45,6 +44,7 @@ const Mentorship = () => {
         paddingRight="20%"
         paddingLeft="10%"
         paddingTop="20px"
+        paddingBottom="20px"
       >
         <Link
           href="/"
@@ -73,9 +73,9 @@ const Mentorship = () => {
       <StyledContainer>
         <table>
           <tr className="table-head">
-            <th>Mentorship Session</th>
-            <th>Events</th>
-            <th>Billed Time</th>
+            <th>{t('mentorshipSession')}</th>
+            <th>{t('events')}</th>
+            <th>{t('billed')}</th>
           </tr>
           {sessions.map((session) => (
             <tr className="table-rows">
@@ -83,8 +83,16 @@ const Mentorship = () => {
                 style={{
                   borderRight: 'none',
                 }}
+                className="session-date"
               >
-                <Text fontSize="md">{format(new Date(session.started_at.slice(0, -1)), 'MMMM dd, y, h:mm aaa')}</Text>
+                <Text fontSize="md">
+                  {`${format(new Date(session.started_at.slice(0, -1)), 'MMMM dd, y, h:mm aaa')}`}
+                </Text>
+                <Text fontSize="md">
+                  {t('with')}
+                  {' '}
+                  <span style={{ fontWeight: 'bold' }}>{`${session.mentee.first_name} ${session.mentee.last_name}`}</span>
+                </Text>
               </td>
               <td
                 style={{
@@ -92,53 +100,31 @@ const Mentorship = () => {
                   borderRight: 'none',
                 }}
               >
-                millimetres (mm)
+                <Flex alignItems="center">
+                  <Icon style={{ marginRight: '15px' }} icon="dolarSign" width="25px" height="25px" />
+                  <Icon style={{ marginRight: '15px' }} icon="dolarSignBroke" width="25px" height="25px" />
+                  <Icon style={{ marginRight: '15px' }} icon="ghost" width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
+                  <Icon style={{ marginRight: '15px' }} icon="running" width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
+                  <Icon style={{ marginRight: '15px' }} icon="chronometer" width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
+                  <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link">
+                    {t('details')}
+                  </Button>
+                </Flex>
               </td>
               <td
                 style={{
                   borderLeft: 'none',
                 }}
               >
-                25.4
+                <Text color={session.extra_time ? CustomTheme.colors.danger : ''}>
+                  {session.extra_time && <ArrowUpIcon />}
+                  {session.billed_str}
+                </Text>
               </td>
             </tr>
           ))}
         </table>
       </StyledContainer>
-      {/* <TableContainer
-        padding="20px 10%"
-      >
-        <Table
-          variant="unstyled"
-          // border="none"
-          // cellspacing="0"
-          // cellpadding="0"
-        >
-          <Thead>
-            <Tr>
-              <Th>Mentorship Session</Th>
-              <Th>Events</Th>
-              <Th>Billed Time</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {sessions.map((session) => (
-              <Tr
-                // marginTop="20px"
-                borderRadius="25px"
-                border="1px gray solid"
-                style={{
-                  borderSpacing: '10px',
-                }}
-              >
-                <Td>inches</Td>
-                <Td>millimetres (mm)</Td>
-                <Td>25.4</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer> */}
     </Container>
 
   );
@@ -164,6 +150,12 @@ const StyledContainer = styled.div`
     border-spacing: 0 15px;
     .table-head{
       text-align: left;
+      th{
+        padding-left: 20px;
+      }
+    }
+    .session-date{
+      width:35%;
     }
     td{
       border: 1px solid gray;

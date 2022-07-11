@@ -1,3 +1,8 @@
 {
-    "log": "Registro Mentorías"
+    "log": "Registro Mentorías",
+    "with": "con",
+    "mentorshipSession": "Sesión de Mentoría",
+    "events": "Eventos",
+    "billed": "Tiempo Facturado",
+    "details": "Detalles"
 }
