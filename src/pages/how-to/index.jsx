@@ -112,7 +112,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
   const { filteredBy, setHowToFilters } = useFilter();
   const iconColor = useColorModeValue('#FFF', '#283340');
   const [isLoading, setIsLoading] = useState(false);
-  const [offset, setOffset] = useState(20);
+  const [offset, setOffset] = useState(10);
 
   const howTosFiltered = data.slice(0, offset);
 
@@ -143,7 +143,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
     if (!isLoading) return;
     if (offset >= data.length) setIsLoading(false);
     setTimeout(() => {
-      setOffset(offset + 20);
+      setOffset(offset + 10);
       setIsLoading(false);
     }, 200);
   }, [isLoading]);

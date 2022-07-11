@@ -111,7 +111,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
   const { t } = useTranslation('lesson');
   const { filteredBy, setProjectFilters } = useFilter();
   const [isLoading, setIsLoading] = useState(false);
-  const [offset, setOffset] = useState(20);
+  const [offset, setOffset] = useState(10);
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const router = useRouter();
   const iconColor = useColorModeValue('#FFF', '#283340');
@@ -135,7 +135,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
     if (!isLoading) return;
     if (offset >= lessons.length) setIsLoading(false);
     setTimeout(() => {
-      setOffset(offset + 20);
+      setOffset(offset + 10);
       setIsLoading(false);
     }, 200);
   }, [isLoading]);

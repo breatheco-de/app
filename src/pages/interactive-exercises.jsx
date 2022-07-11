@@ -108,7 +108,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
   const { t } = useTranslation('exercises');
   const { filteredBy, setExerciseFilters } = useFilter();
   const [isLoading, setIsLoading] = useState(false);
-  const [offset, setOffset] = useState(20);
+  const [offset, setOffset] = useState(10);
   const router = useRouter();
 
   const { technologies, difficulty, videoTutorials } = filteredBy.exercisesOptions;
@@ -137,7 +137,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
     if (!isLoading) return;
     if (offset >= exercises.length) setIsLoading(false);
     setTimeout(() => {
-      setOffset(offset + 20);
+      setOffset(offset + 10);
       setIsLoading(false);
     }, 200);
   }, [isLoading]);
