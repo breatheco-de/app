@@ -30,7 +30,7 @@ const Footer = () => {
   const [formStatus, setFormStatus] = useState('');
   const { colorMode } = useColorMode();
   return (
-    <Container maxW="none" padding="20px">
+    <Container maxW="none" padding="20px" position="absolute" top="100%">
       <Flex
         direction={['column', 'column', 'row', 'row']}
         justifyContent="space-between"
