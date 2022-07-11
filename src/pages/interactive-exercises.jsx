@@ -4,7 +4,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
 import Text from '../common/components/Text';
@@ -23,14 +23,14 @@ export const getStaticProps = async ({ locale, locales }) => {
   const exercises = []; // filtered exercises after removing repeated
   let arrExercises = []; // incoming exercises
   const resp = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`,
+    `${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&limit=1000`,
     {
       Accept: 'application/json, text/plain, */*',
     },
   );
   const data = await resp.json();
 
-  arrExercises = Object.values(data);
+  arrExercises = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${arrExercises.length} Exercises fetched for /interactive-exercises`);
   } else {
@@ -107,11 +107,14 @@ export const getStaticProps = async ({ locale, locales }) => {
 function Exercices({ exercises, technologyTags, difficulties }) {
   const { t } = useTranslation('exercises');
   const { filteredBy, setExerciseFilters } = useFilter();
-  const { technologies, difficulty, videoTutorials } = filteredBy.exercisesOptions;
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [offset, setOffset] = useState(10);
   const router = useRouter();
+
+  const { technologies, difficulty, videoTutorials } = filteredBy.exercisesOptions;
   const techsQuery = router.query.techs;
   const difficultyQuery = router.query.difficulty;
+  const exercisesFiltered = exercises.slice(0, offset);
 
   const technologiesActived = technologies.length || (techsQuery?.length > 0 ? techsQuery?.split(',')?.length : 0);
   const difficultyIsActive = () => {
@@ -130,6 +133,15 @@ function Exercices({ exercises, technologyTags, difficulties }) {
   }, [initialSearchValue]);
   const { isOpen, onClose, onOpen } = useDisclosure();
 
+  useEffect(() => {
+    if (!isLoading) return;
+    if (offset >= exercises.length) setIsLoading(false);
+    setTimeout(() => {
+      setOffset(offset + 10);
+      setIsLoading(false);
+    }, 200);
+  }, [isLoading]);
+
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
       <TitleContent title={t('title')} mobile />
@@ -144,7 +156,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
       >
         <TitleContent title={t('title')} mobile={false} />
 
-        <Search placeholder={t('search')} />
+        <Search placeholder={t('search')} onChange={() => setIsLoading(true)} />
 
         <Button
           variant="outline"
@@ -202,7 +214,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
           {t('description')}
         </Text>
         <ProjectList
-          projects={exercises}
+          projects={exercisesFiltered}
           contextFilter={filteredBy.exercisesOptions}
           projectPath="interactive-exercise"
         />

@@ -6,7 +6,7 @@ import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import FilterModal from '../../common/components/FilterModal';
 
 import Icon from '../../common/components/Icon';
@@ -22,7 +22,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const howTos = []; // filtered howTos after removing repeated
   let arrHowTos = []; // incoming howTos
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE&limit=1000`);
   const data = await resp.json();
   // .then((res) => res.json())
   // .catch((err) => console.log(err));
@@ -31,7 +31,7 @@ export const getStaticProps = async ({ locale, locales }) => {
     es: 'es',
   };
 
-  arrHowTos = Object.values(data);
+  arrHowTos = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${arrHowTos.length} How To's fetched`);
   } else {
@@ -97,7 +97,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
       // page props
       fallback: false,
-      data: data.filter((l) => l.lang === currentLang[locale]).map(
+      data: arrHowTos.filter((l) => l.lang === currentLang[locale]).map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
       technologyTags,
@@ -111,6 +111,11 @@ export default function HowTo({ data, technologyTags, difficulties }) {
   const router = useRouter();
   const { filteredBy, setHowToFilters } = useFilter();
   const iconColor = useColorModeValue('#FFF', '#283340');
+  const [isLoading, setIsLoading] = useState(false);
+  const [offset, setOffset] = useState(10);
+
+  const howTosFiltered = data.slice(0, offset);
+
   const { technologies, difficulty, videoTutorials } = filteredBy.howToOptions;
 
   const techsQuery = router.query.techs;
@@ -133,6 +138,15 @@ export default function HowTo({ data, technologyTags, difficulties }) {
   }, [initialSearchValue]);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
+
+  useEffect(() => {
+    if (!isLoading) return;
+    if (offset >= data.length) setIsLoading(false);
+    setTimeout(() => {
+      setOffset(offset + 10);
+      setIsLoading(false);
+    }, 200);
+  }, [isLoading]);
 
   return (
     <>
@@ -205,7 +219,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
           </Text>
         )}
         <ProjectList
-          projects={data}
+          projects={howTosFiltered}
           contextFilter={filteredBy.howToOptions}
           projectPath="how-to"
           exampleImage="/static/images/coding-notebook.png"

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-danger */
 import { useState, memo, useEffect } from 'react';
 import {
   Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader,
@@ -29,10 +30,12 @@ const ShareButton = ({
   }, [copied]);
 
   useEffect(() => {
-    setTimeout(() => {
-      setParty(false);
-    }, 12000);
-  }, []);
+    if (isOpen === true) {
+      setTimeout(() => {
+        setParty(false);
+      }, 3000);
+    }
+  }, [isOpen]);
 
   const onCopy = () => {
     setCopied(true);
@@ -59,10 +62,11 @@ const ShareButton = ({
       color: '#0077B5',
     },
   ];
+  const socialList = socials || defaultSocial;
 
   return (
     <>
-      <Button variant={variant} onClick={onOpen} textTransform="uppercase">
+      <Button variant={variant} onClick={onOpen} style={{ height: 'auto' }} textTransform="uppercase">
         {t('share:button-text')}
       </Button>
       <Modal
@@ -84,8 +88,8 @@ const ShareButton = ({
               {shareText || t('share:share-via')}
             </Text>
 
-            <Stack display="grid" gridTemplateColumns="repeat(auto-fill, minmax(7rem, 1fr))" justifyItems="center">
-              {(socials || defaultSocial).map((l) => (
+            <Stack display={socialList.length <= 2 ? 'flex' : 'grid'} gridTemplateColumns="repeat(auto-fill, minmax(7rem, 1fr))" justifyItems="center" justifyContent={socialList.length <= 2 && 'center'} flexDirection={socialList.length <= 2 && 'row'} gridGap={socialList.length <= 2 && '3rem'}>
+              {socialList.map((l) => (
                 <Box style={{ margin: '0px' }} textAlign="center" display="flex" flexDirection="column" gridGap="6px">
                   <Link display="flex" key={l.name} href={l.href} target="_blank" rel="noopener noreferrer" minWidth="68px" minHeight="68px" alignItems="center" justifyContent="center" borderRadius="35px" backgroundColor="featuredLight" style={{ margin: '0px' }}>
                     <Icon icon={l.name} color={l.color} width="36px" height="36px" />
@@ -109,13 +113,18 @@ const ShareButton = ({
             </Stack>
           </ModalBody>
           <ModalFooter margin="22px 1.5rem" padding="0">
-            <Text size="13px" fontWeight="400" lineHeight="24px" textAlign="center" padding="20px 1.4rem" justifyContent="center" borderRadius="5px" letterSpacing="0.05em" backgroundColor="featuredLight">
-              {message || t('share:message')}
-              {' '}
-              <Link href={t('share:message-link.url')} target="_blank" rel="noopener noreferrer" color="blue.default">
-                {t('share:message-link.text')}
-              </Link>
-            </Text>
+            <Text
+              size="13px"
+              fontWeight="400"
+              lineHeight="24px"
+              textAlign="center"
+              padding="20px 1.4rem"
+              justifyContent="center"
+              borderRadius="5px"
+              letterSpacing="0.05em"
+              backgroundColor="featuredLight"
+              dangerouslySetInnerHTML={{ __html: message || t('share:message') }}
+            />
           </ModalFooter>
           {withParty && isOpen && (
             <Box display="block" position="fixed" top="0" left="0">

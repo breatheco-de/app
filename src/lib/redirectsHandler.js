@@ -54,10 +54,14 @@ const redirectHandler = async (req, conditionalResult, NextResponse, redirectVal
   return '';
 };
 
-const publicRedirectByAsset = async ({
-  router, translations, userPathName, pagePath,
+const publicRedirectByAsset = ({
+  router, aliasRedirect, translations, userPathName, pagePath,
 }) => {
-  const translationUs = translations.us || translations.en;
+  const translationUs = translations?.us || translations?.en;
+
+  if (aliasRedirect) {
+    return router.push(userPathName);
+  }
 
   if (translations?.es !== undefined && (
     userPathName === `/default/${pagePath}/${translations.es}`

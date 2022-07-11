@@ -6,6 +6,7 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import getT from 'next-translate/getT';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import FilterModal from '../../common/components/FilterModal';
@@ -22,12 +23,12 @@ export const getStaticProps = async ({ locale, locales }) => {
   const projects = []; // filtered projects after removing repeated
   let arrProjects = []; // incoming projects
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project&limit=1000`);
   const data = await resp.json();
   // .then((res) => res.json())
   // .catch((err) => console.error(err));
 
-  arrProjects = Object.values(data);
+  arrProjects = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${arrProjects.length} Projects fetched`);
   } else {
@@ -108,9 +109,13 @@ export const getStaticProps = async ({ locale, locales }) => {
 const Projects = ({ projects, technologyTags, difficulties }) => {
   const { t } = useTranslation('projects');
   const { filteredBy, setProjectFilters } = useFilter();
-  const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const iconColor = useColorModeValue('#FFF', '#283340');
+  const [isLoading, setIsLoading] = useState(false);
+  const [offset, setOffset] = useState(10);
   const router = useRouter();
+  const projectsFiltered = projects.slice(0, offset);
+
+  const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const techsQuery = router.query.techs;
   const difficultyQuery = router.query.difficulty;
 
@@ -126,6 +131,15 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
     + videoTutorials;
 
   const { isOpen, onClose, onOpen } = useDisclosure();
+
+  useEffect(() => {
+    if (!isLoading) return;
+    if (offset >= projects.length) setIsLoading(false);
+    setTimeout(() => {
+      setOffset(offset + 10);
+      setIsLoading(false);
+    }, 200);
+  }, [isLoading]);
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
@@ -200,7 +214,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         </Text>
 
         <ProjectList
-          projects={projects}
+          projects={projectsFiltered}
           contextFilter={filteredBy.projectsOptions}
           projectPath="interactive-coding-tutorial"
           pathWithDifficulty
