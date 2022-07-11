@@ -21,10 +21,13 @@ import { Search2Icon, CheckIcon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
 import NextChakraLink from './NextChakraLink';
 import Icon from './Icon';
+import AlertMessage from './AlertMessage';
+import bc from '../services/breathecode';
 
 const Footer = () => {
   const { t } = useTranslation('footer');
   const [email, setEmail] = useState('');
+  const [formStatus, setFormStatus] = useState('');
   const { colorMode } = useColorMode();
   return (
     <Container maxW="none" padding="20px">
@@ -75,38 +78,54 @@ const Footer = () => {
           justifyContent="center"
           width={['100%', '50%', '25%', '25%']}
         >
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              alert(`Hi ${email}!`);
-            }}
-          >
-            <Text>{t('subscribe')}</Text>
-            <InputGroup
-              // borderColor={colorMode === 'light' ? '#020203' : '#FFFFFF'}
-              color={colorMode === 'light' ? '#020203' : '#FFFFFF'}
+          {formStatus === '' ? (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                bc.marketing().lead({ email })
+                  .then((success) => {
+                    console.log(success);
+                    if (success === undefined) setFormStatus('error');
+                    else setFormStatus('success');
+                  }).catch((err) => {
+                    setFormStatus('error');
+                    console.log(err);
+                  });
+              }}
             >
-              <Input
-                width="100%"
-                // borderRadius="50px"
-                placeholder="Email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <InputRightElement
-                borderColor={colorMode === 'light' ? '#020203' : '#FFFFFF'}
+              <Text>{t('subscribe')}</Text>
+              <InputGroup
+              // borderColor={colorMode === 'light' ? '#020203' : '#FFFFFF'}
+                color={colorMode === 'light' ? '#020203' : '#FFFFFF'}
               >
-                <IconButton
-                  type="submit"
-                  icon={<CheckIcon />}
+                <Input
+                  width="100%"
+                // borderRadius="50px"
+                  placeholder="Email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
-              </InputRightElement>
+                <InputRightElement
+                  borderColor={colorMode === 'light' ? '#020203' : '#FFFFFF'}
+                >
+                  <IconButton
+                    type="submit"
+                    icon={<CheckIcon />}
+                  />
+                </InputRightElement>
 
-            </InputGroup>
+              </InputGroup>
 
-          </form>
+            </form>
+          ) : (
+            <AlertMessage
+              type={formStatus}
+              message={t(`newsletter.${formStatus}`)}
+            />
+          )}
+          {/* SEARCH BAR */}
           {/* <InputGroup>
             <InputLeftElement
               pointerEvents="none"

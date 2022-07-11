@@ -2,6 +2,11 @@
   "copyright": "©4Geeks Academy LLC 2019",
   "search":"Buscar en 4Geeks",
   "subscribe": "¡Suscríbete para más!",
+  "newsletter": {
+    "success": "¡Genial! Te has unido exitosamente, Mantengase al pendiente para más información pronto 😁",
+    "error": "Algo ha salido mal"
+  },
+  "newsletterSucces": "¡Genial! Te has unido exitosamente, Mantengase al pendiente para más información pronto 😁",
   "privacy": {
     "label": "Política de privacidad",
     "href": "#"
