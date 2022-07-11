@@ -23,12 +23,12 @@ export const getStaticProps = async ({ locale, locales }) => {
   const projects = []; // filtered projects after removing repeated
   let arrProjects = []; // incoming projects
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project&limit=1000`);
   const data = await resp.json();
   // .then((res) => res.json())
   // .catch((err) => console.error(err));
 
-  arrProjects = Object.values(data);
+  arrProjects = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${arrProjects.length} Projects fetched`);
   } else {

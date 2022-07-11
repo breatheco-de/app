@@ -24,12 +24,6 @@ export const getStaticPaths = async ({ locales }) => {
   // .then((res) => res.json())
   // .catch((err) => console.log(err));
 
-  if (response.status >= 400 || data.asset_type !== 'PROJECT') {
-    return {
-      notFound: true,
-    };
-  }
-
   projects = Object.values(data);
   if (response.status >= 200 && response.status <= 400) {
     console.log(`SUCCESS: ${projects.length} Projects fetched for /project/[slug]`);

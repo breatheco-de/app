@@ -30,7 +30,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   );
   const data = await resp.json();
 
-  arrExercises = Object.values(data);
+  arrExercises = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${arrExercises.length} Exercises fetched for /interactive-exercises`);
   } else {
