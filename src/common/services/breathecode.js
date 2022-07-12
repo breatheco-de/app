@@ -94,14 +94,28 @@ const breathecode = {
   },
   mentorship: (query = {}) => {
     const url = `${host}/mentorship/academy`;
+    const urlNoAcademy = `${host}/mentorship`;
     const qs = Object.keys(query)
       .map((key) => `${key}=${query[key]}`)
       .join('&');
     return {
       getService: () => axios.get(`${url}/service?status=ACTIVE`),
       getMentor: () => axios.get(`${url}/mentor?${qs}`),
+      getMySessions: () => axios.get(`${urlNoAcademy}/user/me/session?${qs}`),
     };
   },
+
+  marketing: (query = {}) => {
+    const url = `${host}/marketing`;
+    // eslint-disable-next-line no-unused-vars
+    const qs = Object.keys(query)
+      .map((key) => `${key}=${query[key]}`)
+      .join('&');
+    return {
+      lead: (data) => axios.post(`${url}/lead`, data),
+    };
+  },
+
   lesson: (query = {}) => {
     const url = `${host}/registry/asset`;
     const qs = Object.keys(query)

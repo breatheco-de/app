@@ -2,7 +2,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import { Textarea, Text, useColorModeValue, Container } from '@chakra-ui/react';
+import {
+  Textarea, Text, useColorModeValue, Container,
+} from '@chakra-ui/react';
 import CustomTheme from '../../../styles/theme';
 
 const SmartTextArea = ({ value, maxLength, ...props }) => {
