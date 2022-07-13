@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef } from 'react';
 import {
   Container,
   Flex,
@@ -8,12 +8,17 @@ import {
   Text,
   useColorMode,
   Button,
+  Tooltip,
+  Box,
+  IconButton,
 } from '@chakra-ui/react';
-import { ArrowUpIcon } from '@chakra-ui/icons';
+import { ArrowUpIcon, ChevronDownIcon, CloseIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import styled from 'styled-components';
-import { format } from 'date-fns';
+import { format, endOfMonth } from 'date-fns';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import bc from '../../common/services/breathecode';
 import Link from '../../common/components/NextChakraLink';
 import Icon from '../../common/components/Icon';
@@ -26,15 +31,40 @@ const Mentorship = () => {
   const { colorMode } = useColorMode();
   const router = useRouter();
   const [sessions, setSessions] = useState([]);
+  const [startDate, setStartDate] = useState(null);
   // {
   //   started_after: '2022-05-01',
   //   ended_before: '2022-05-31',
   // }
   useEffect(async () => {
-    const { data } = await bc.mentorship().getMySessions();
+    let filter = {};
+    if (startDate) {
+      filter = {
+        started_after: format(startDate, 'yyyy-MM-dd'),
+        ended_before: format(endOfMonth(startDate), 'yyyy-MM-dd'),
+      };
+    }
+    const { data } = await bc.mentorship(filter).getMySessions();
     console.log(data);
     setSessions(data);
-  }, []);
+  }, [startDate]);
+
+  // eslint-disable-next-line react/prop-types
+  const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => (
+    // eslint-disable-next-line react/button-has-type
+    <Button
+      size="lg"
+      display="inline-block"
+      colorScheme="blue"
+      variant="ghost"
+      onClick={onClick}
+      ref={ref}
+    >
+      {value || t('common:select')}
+      {' '}
+      <ChevronDownIcon />
+    </Button>
+  ));
 
   return (
     <Container maxW="none" padding="0">
@@ -66,6 +96,30 @@ const Mentorship = () => {
         >
           <Heading as="h2" size="xl">
             {`${t('log')}:`}
+            <Box
+              display="inline-block"
+              maxW="100px"
+            >
+              <DatePicker
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+                customInput={<ExampleCustomInput />}
+                dateFormat="MM/yyyy"
+                showMonthYearPicker
+              />
+            </Box>
+            {startDate && (
+            <IconButton
+              marginLeft="30px"
+              // variant="outline"
+              colorScheme="blue"
+              aria-label="Clear"
+              // fontSize="20px"
+              size="xs"
+              icon={<CloseIcon />}
+              onClick={() => setStartDate(null)}
+            />
+            )}
           </Heading>
         </Container>
       </Container>
@@ -101,11 +155,31 @@ const Mentorship = () => {
                 }}
               >
                 <Flex alignItems="center">
-                  <Icon style={{ marginRight: '15px' }} icon="dolarSign" width="25px" height="25px" />
-                  <Icon style={{ marginRight: '15px' }} icon="dolarSignBroke" width="25px" height="25px" />
-                  <Icon style={{ marginRight: '15px' }} icon="ghost" width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
-                  <Icon style={{ marginRight: '15px' }} icon="running" width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
-                  <Icon style={{ marginRight: '15px' }} icon="chronometer" width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
+                  <Tooltip label="Ghost" fontSize="md" placement="top">
+                    <span>
+                      <Icon style={{ marginRight: '15px' }} icon="dolarSign" width="25px" height="25px" />
+                    </span>
+                  </Tooltip>
+                  <Tooltip label="Ghost" fontSize="md" placement="top">
+                    <span>
+                      <Icon style={{ marginRight: '15px' }} icon="dolarSignBroke" width="25px" height="25px" />
+                    </span>
+                  </Tooltip>
+                  <Tooltip label="Ghost" fontSize="md" placement="top">
+                    <span>
+                      <Icon style={{ marginRight: '15px' }} icon="ghost" width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
+                    </span>
+                  </Tooltip>
+                  <Tooltip label="Ghost" fontSize="md" placement="top">
+                    <span>
+                      <Icon style={{ marginRight: '15px' }} icon="running" width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
+                    </span>
+                  </Tooltip>
+                  <Tooltip label="Ghost" fontSize="md" placement="top">
+                    <span>
+                      <Icon style={{ marginRight: '15px' }} icon="chronometer" width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
+                    </span>
+                  </Tooltip>
                   <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link">
                     {t('details')}
                   </Button>
@@ -124,6 +198,17 @@ const Mentorship = () => {
             </tr>
           ))}
         </table>
+        {sessions.length === 0 && (
+          <Container
+            maxW="none"
+            border="1px solid"
+            borderRadius="10px"
+            textAlign="center"
+            padding="10px"
+          >
+            <Text>{t('common:no-elements')}</Text>
+          </Container>
+        )}
       </StyledContainer>
     </Container>
 
