@@ -14,6 +14,7 @@ import TitleContent from '../../js_modules/projects/TitleContent';
 import ProjectList from '../../js_modules/projects/ProjectList';
 import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
+import { isWindow } from '../../utils';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'projects');
@@ -132,6 +133,24 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
+  const handleScroll = () => {
+    const scrollTop = isWindow && document.documentElement.scrollTop;
+    const offsetHeight = isWindow && document.documentElement.offsetHeight;
+    const innerHeight = isWindow && window.innerHeight;
+    if ((innerHeight + scrollTop) <= offsetHeight) return;
+    setIsLoading(true);
+  };
+
+  useEffect(() => {
+    if (offset <= projects.length) {
+      console.log('loading projects...');
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+    console.log('All projects loaded');
+    return () => {};
+  }, [offset]);
+
   useEffect(() => {
     if (!isLoading) return;
     if (offset >= projects.length) setIsLoading(false);
@@ -197,6 +216,8 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
           isModalOpen={isOpen}
           onClose={onClose}
           contextFilter={filteredBy.projectsOptions}
+          cardHeight="348px"
+          isLoading={isLoading}
           setFilter={setProjectFilters}
           technologyTags={technologyTags}
           difficulties={difficulties}
@@ -216,6 +237,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         <ProjectList
           projects={projectsFiltered}
           contextFilter={filteredBy.projectsOptions}
+          isLoading={isLoading}
           projectPath="interactive-coding-tutorial"
           pathWithDifficulty
         />

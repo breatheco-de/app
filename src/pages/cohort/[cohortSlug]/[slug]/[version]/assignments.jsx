@@ -71,9 +71,10 @@ const Assignments = () => {
   const getAssignments = (cohortId, academyId, offsetValue) => {
     Promise.all([
       bc.todo({
-        limit: 50,
+        limit: 20,
         academy: academyId,
         offset: offsetValue,
+        task_type: 'PROJECT',
       }).getAssignments({ id: cohortId }),
       // bc.todo({ teacher: cohortSession.bc_id }).get(),
     ])
@@ -198,20 +199,26 @@ const Assignments = () => {
 
   const handleScroll = () => {
     const scrollTop = isWindow && document.documentElement.scrollTop;
-    const offsetHeight = isWindow && document.documentElement.offsetHeight;
+    const offsetHeight = isWindow && document.documentElement.offsetHeight + 15;
     const innerHeight = isWindow && window.innerHeight;
-    if ((innerHeight + scrollTop) !== offsetHeight) return;
+    if ((innerHeight + scrollTop) <= offsetHeight) return;
     setIsFetching(true);
   };
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    if (paginationProps.next !== null) {
+      console.log('loading assignments...');
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+    console.log('All assignments loaded');
+    return () => {};
+  }, [paginationProps]);
+
   useEffect(() => {
     if (!isFetching) return;
     if (filteredTasks && paginationProps.next !== null) {
-      setOffset(offset + 50);
+      setOffset(offset + 20);
     }
   }, [isFetching]);
 
@@ -302,7 +309,7 @@ const Assignments = () => {
         <Text size="20px" display="flex" width="auto" fontWeight="400">
           {t('filter.assignments-length', { count: filteredTasks.length || 0 })}
         </Text>
-        <Box display="grid" gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(10rem, 1fr))', md: 'repeat(auto-fill, minmax(18rem, 1fr))' }} gridGap="14px" py="20px">
+        <Box display="grid" gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(11rem, 1fr))', md: 'repeat(auto-fill, minmax(18rem, 1fr))' }} gridGap="14px" py="20px">
           {projects.length > 0 ? (
             <ReactSelect
               id="project-select"
@@ -423,7 +430,7 @@ const Assignments = () => {
               {t('label.actions')}
             </Text>
           </Box>
-          <Box display="flex" flexDirection="column" gridGap="18px">
+          <Box display="flex" flexDirection="column" gridGap="18px" overflow={{ base: 'auto', md: 'inherit' }}>
 
             {filteredTasks.length > 0 ? filteredTasks.map((task, i) => {
               const index = i;
@@ -433,7 +440,7 @@ const Assignments = () => {
               const projectLink = `https://4geeks.com${lang[router.locale]}project/${task.associated_slug}`;
 
               return (
-                <Box key={`${index}-${task.slug}-${task.title}-${fullName}`} p="18px 28px" display="flex" gridGap="10px" justifyContent="space-between" flexDirection="row" alignItems="center" border="1px solid" borderColor={borderColor} borderRadius="17px">
+                <Box key={`${index}-${task.slug}-${task.title}-${fullName}`} p="18px 28px" display="flex" width={{ base: 'max-content', md: '100%' }} minWidth={{ base: '620px', md: '100%' }} maxWidth={{ base: '620px', md: '100%' }} gridGap="10px" justifyContent="space-between" flexDirection="row" alignItems="center" border="1px solid" borderColor={borderColor} borderRadius="17px">
                   <Box width="auto" minWidth="calc(110px - 0.5vw)">
                     <TaskLabel currentTask={task} t={t} />
                   </Box>

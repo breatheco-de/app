@@ -15,6 +15,7 @@ import useFilter from '../../common/store/actions/filterAction';
 import ProjectList from '../../js_modules/projects/ProjectList';
 import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
+import { isWindow } from '../../utils';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'how-to');
@@ -139,6 +140,24 @@ export default function HowTo({ data, technologyTags, difficulties }) {
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
+  const handleScroll = () => {
+    const scrollTop = isWindow && document.documentElement.scrollTop;
+    const offsetHeight = isWindow && document.documentElement.offsetHeight;
+    const innerHeight = isWindow && window.innerHeight;
+    if ((innerHeight + scrollTop) <= offsetHeight) return;
+    setIsLoading(true);
+  };
+
+  useEffect(() => {
+    if (offset <= data.length) {
+      console.log('loading how to\'s...');
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+    console.log('All how to\'s loaded');
+    return () => {};
+  }, [offset]);
+
   useEffect(() => {
     if (!isLoading) return;
     if (offset >= data.length) setIsLoading(false);
@@ -221,6 +240,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
         <ProjectList
           projects={howTosFiltered}
           contextFilter={filteredBy.howToOptions}
+          isLoading={isLoading}
           projectPath="how-to"
           exampleImage="/static/images/coding-notebook.png"
         />
