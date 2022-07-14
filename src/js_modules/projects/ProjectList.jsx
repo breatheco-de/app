@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
 import {
-  Box, useColorModeValue, Stack, Grid,
+  Box, useColorModeValue, Stack, Grid, Container,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { unSlugify } from '../../utils/index';
 import Heading from '../../common/components/Heading';
@@ -66,13 +68,14 @@ const ProjectList = ({
   };
   return (
     <>
-      <Grid
+      <StyledContainer>
+        {/* <Grid
         gridTemplateColumns={{
           base: 'repeat(auto-fill, minmax(15rem, 1fr))',
           md: 'repeat(auto-fill, minmax(20rem, 1fr))',
         }}
         gridGap="12px"
-      >
+      > */}
         {filteredProjects.map((ex) => {
           const getImage = ex.preview || defaultImage;
           return (
@@ -89,6 +92,7 @@ const ProjectList = ({
               // }}
               borderRadius="16px"
               padding="22px"
+              style={{ breakInside: 'avoid', marginBottom: '1em', gap: '1em' }}
             >
               <Box
                 display={{ base: 'flex', md: 'inline-block' }}
@@ -99,34 +103,34 @@ const ProjectList = ({
                 borderRadius="10px"
               >
                 {withoutImage && (
-                  <Heading
-                    size="m"
-                    textAlign="left"
-                    wordBreak="break-word"
-                    width="100%"
-                    fontFamily="body"
-                    fontWeight={700}
-                  >
-                    {ex.title || t('no-title')}
-                  </Heading>
+                <Heading
+                  size="m"
+                  textAlign="left"
+                  wordBreak="break-word"
+                  width="100%"
+                  fontFamily="body"
+                  fontWeight={700}
+                >
+                  {ex.title || t('no-title')}
+                </Heading>
                 )}
                 {/* CARD IMAGE */}
                 {!withoutImage && (
-                  <Link
-                    href={`/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`}
-                    display="inline-block"
-                    w={{ base: 'auto', md: 'full' }}
-                    zIndex={1}
+                <Link
+                  href={`/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`}
+                  display="inline-block"
+                  w={{ base: 'auto', md: 'full' }}
+                  zIndex={1}
+                  borderRadius="15px"
+                >
+                  <Image
+                    priority
                     borderRadius="15px"
-                  >
-                    <Image
-                      priority
-                      borderRadius="15px"
-                      classNameImg="centerImageForBlur"
-                      pos="relative"
-                      height={{ base: '60px', sm: '90px', md: '180px' }}
-                      width={{ base: '60px', sm: '90px', md: 'auto' }}
-                      maxWidth={{ base: '300px', sm: '230px', md: 'none' }}
+                    classNameImg="centerImageForBlur"
+                    pos="relative"
+                    height={{ base: '60px', sm: '90px', md: '180px' }}
+                    width={{ base: '60px', sm: '90px', md: 'auto' }}
+                    maxWidth={{ base: '300px', sm: '230px', md: 'none' }}
                       // _after={{
                       //   transition: 'all .8s ease',
                       //   content: '""',
@@ -144,79 +148,79 @@ const ProjectList = ({
                       //     filter: 'blur(50px)',
                       //   },
                       // }}
-                      onError={(e) => onImageNotFound(e)}
-                      style={{ borderRadius: '15px', overflow: 'hidden' }}
-                      objectFit="cover"
-                      src={getImage}
-                      alt={ex.title}
-                    />
-                  </Link>
+                    onError={(e) => onImageNotFound(e)}
+                    style={{ borderRadius: '15px', overflow: 'hidden' }}
+                    objectFit="cover"
+                    src={getImage}
+                    alt={ex.title}
+                  />
+                </Link>
                 )}
                 <Box display="flex" flexDirection="column" paddingTop="4px">
                   {ex.technologies.length >= 1 && (
-                    <TagCapsule
-                      tags={ex.technologies}
-                      variant="rounded"
-                      borderRadius="10px"
-                      marginY="8px"
-                      style={{
-                        padding: '4px 10px',
-                        margin: '0',
-                      }}
-                      gap="10px"
-                      paddingX="0"
-                      key={`${ex.slug}-${ex.difficulty}`}
-                    />
+                  <TagCapsule
+                    tags={ex.technologies}
+                    variant="rounded"
+                    borderRadius="10px"
+                    marginY="8px"
+                    style={{
+                      padding: '4px 10px',
+                      margin: '0',
+                    }}
+                    gap="10px"
+                    paddingX="0"
+                    key={`${ex.slug}-${ex.difficulty}`}
+                  />
                   )}
 
                   {!withoutImage && (
-                    <Stack align="center" padding="18px 0 0 0">
-                      <Link
-                        href={`/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`}
-                        display="inline-block"
-                        w="full"
-                        zIndex={1}
-                        color="blue.default"
+                  <Stack align="center" padding="18px 0 0 0">
+                    <Link
+                      href={`/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`}
+                      display="inline-block"
+                      w="full"
+                      zIndex={1}
+                      color="blue.default"
+                    >
+                      <Heading
+                        size="20px"
+                        textAlign="left"
+                        wordBreak="break-word"
+                        width="100%"
+                        fontFamily="body"
+                        fontWeight={700}
                       >
-                        <Heading
-                          size="20px"
-                          textAlign="left"
-                          wordBreak="break-word"
-                          width="100%"
-                          fontFamily="body"
-                          fontWeight={700}
-                        >
-                          {ex.title || t('no-title')}
-                        </Heading>
-                      </Link>
-                    </Stack>
+                        {ex.title || t('no-title')}
+                      </Heading>
+                    </Link>
+                  </Stack>
                   )}
 
                   {withoutImage && ex?.description && (
-                    <Text
-                      color="gray.500"
-                      textAlign="left"
-                      width="100%"
-                      size="sm"
-                      textTransform="uppercase"
-                    >
-                      {ex.description}
-                    </Text>
+                  <Text
+                    color="gray.500"
+                    textAlign="left"
+                    width="100%"
+                    size="sm"
+                    textTransform="uppercase"
+                  >
+                    {ex.description}
+                  </Text>
                   )}
 
                   {withoutImage && (
-                    <Link
-                      mt="8px"
-                      width="fit-content"
-                      href={`/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`}
-                      display="inline-block"
-                      zIndex={1}
-                      color="blue.default"
-                      fontSize="15px"
-                      letterSpacing="0.05em"
-                    >
-                      {`${t('read-lesson')} >`}
-                    </Link>
+                  <Link
+                    mt="8px"
+                    width="fit-content"
+                    href={`/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`}
+                    display="inline-block"
+                    zIndex={1}
+                    color="blue.default"
+                    fontSize="15px"
+                    letterSpacing="0.05em"
+                  >
+                    {`${t('read-lesson')} >`}
+                  </Link>
                   )}
                 </Box>
               </Box>
@@ -224,14 +228,15 @@ const ProjectList = ({
           );
         })}
         {isLoading && (
-          <CardSkeleton
-            withoutContainer
-            quantity={15}
-            cardWidth="100%"
-            cardHeight="348px"
-          />
+        <CardSkeleton
+          withoutContainer
+          quantity={15}
+          cardWidth="100%"
+          cardHeight="348px"
+        />
         )}
-      </Grid>
+        {/* </Grid> */}
+      </StyledContainer>
       {filteredProjects.length === 0 && (
         <Box height="50vh" width="100%">
           <Text size="20px" padding="30px 0" textAlign="center" fontWeight={500}>
@@ -247,6 +252,17 @@ const ProjectList = ({
     </>
   );
 };
+
+const StyledContainer = styled.div`
+  column-count: 3;
+  grid-auto-flow: dense;
+  @media screen and (max-width: 1000px){
+    column-count: 2;
+  }
+  @media screen and (max-width: 820px){
+    column-count: 1;
+  }
+`;
 
 ProjectList.propTypes = {
   projects: PropTypes.arrayOf(PropTypes.object).isRequired,
