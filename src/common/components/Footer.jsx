@@ -31,14 +31,12 @@ const Footer = () => {
   const { colorMode } = useColorMode();
   return (
     <Container maxW="none" padding="20px" position="absolute" top="100%">
-      {/* <Box as="hr" background="rgb(235, 235, 235)" height="1px" width="100%" m="3rem 0 0 0" /> */}
       <Divider borderBottomWidth="2px" m="3rem 0 0 0" />
 
       <Flex
         direction={['column', 'column', 'row', 'row']}
         justifyContent="space-between"
         my="1rem"
-        // marginTop="4rem"
         alignItems="center"
       >
         <Box
