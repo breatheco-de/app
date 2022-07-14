@@ -122,14 +122,19 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
     const scrollTop = isWindow && document.documentElement.scrollTop;
     const offsetHeight = isWindow && document.documentElement.offsetHeight;
     const innerHeight = isWindow && window.innerHeight;
-    if ((innerHeight + scrollTop) !== offsetHeight) return;
+    if ((innerHeight + scrollTop) <= offsetHeight) return;
     setIsLoading(true);
   };
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    if (offset <= lessons.length) {
+      console.log('loading lessons...');
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+    console.log('All lessons loaded');
+    return () => {};
+  }, [offset]);
 
   useEffect(() => {
     if (!isLoading) return;

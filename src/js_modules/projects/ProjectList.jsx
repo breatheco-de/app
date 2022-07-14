@@ -228,7 +228,7 @@ const ProjectList = ({
             withoutContainer
             quantity={15}
             cardWidth="100%"
-            height="100%"
+            cardHeight="348px"
           />
         )}
       </Grid>
