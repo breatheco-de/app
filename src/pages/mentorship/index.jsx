@@ -72,7 +72,7 @@ const Mentorship = () => {
         key="kpi-container"
         maxW="none"
         paddingRight="20%"
-        paddingLeft="10%"
+        paddingLeft={['5%', '5%', '10%', '10%']}
         paddingTop="20px"
         paddingBottom="20px"
       >
@@ -246,6 +246,10 @@ const StyledContainer = styled.div`
       border: 1px solid gray;
       padding: 20px;
     }
+  }
+
+  @media screen and (max-width: 975px){
+    padding: 20px 5%;
   }
 `;
 
