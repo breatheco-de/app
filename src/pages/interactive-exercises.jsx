@@ -14,6 +14,7 @@ import TitleContent from '../js_modules/projects/TitleContent';
 import ProjectList from '../js_modules/projects/ProjectList';
 import useFilter from '../common/store/actions/filterAction';
 import Search from '../js_modules/projects/Search';
+import { isWindow } from '../utils';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'exercises');
@@ -133,6 +134,24 @@ function Exercices({ exercises, technologyTags, difficulties }) {
   }, [initialSearchValue]);
   const { isOpen, onClose, onOpen } = useDisclosure();
 
+  const handleScroll = () => {
+    const scrollTop = isWindow && document.documentElement.scrollTop;
+    const offsetHeight = isWindow && document.documentElement.offsetHeight;
+    const innerHeight = isWindow && window.innerHeight;
+    if ((innerHeight + scrollTop) <= offsetHeight) return;
+    setIsLoading(true);
+  };
+
+  useEffect(() => {
+    if (offset <= exercises.length) {
+      console.log('loading exercises...');
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+    console.log('All exercises loaded');
+    return () => {};
+  }, [offset]);
+
   useEffect(() => {
     if (!isLoading) return;
     if (offset >= exercises.length) setIsLoading(false);
@@ -216,6 +235,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
         <ProjectList
           projects={exercisesFiltered}
           contextFilter={filteredBy.exercisesOptions}
+          isLoading={isLoading}
           projectPath="interactive-exercise"
         />
       </Box>

@@ -31,10 +31,14 @@ const Footer = () => {
   const { colorMode } = useColorMode();
   return (
     <Container maxW="none" padding="20px" position="absolute" top="100%">
+      {/* <Box as="hr" background="rgb(235, 235, 235)" height="1px" width="100%" m="3rem 0 0 0" /> */}
+      <Divider borderBottomWidth="2px" m="3rem 0 0 0" />
+
       <Flex
         direction={['column', 'column', 'row', 'row']}
         justifyContent="space-between"
-        marginBottom="10px"
+        my="1rem"
+        // marginTop="4rem"
         alignItems="center"
       >
         <Box
@@ -111,6 +115,12 @@ const Footer = () => {
                   borderColor={colorMode === 'light' ? '#020203' : '#FFFFFF'}
                 >
                   <IconButton
+                    style={{
+                      right: '1px',
+                      height: '38px',
+                      borderBottomLeftRadius: '0px',
+                      borderTopLeftRadius: '0px',
+                    }}
                     type="submit"
                     icon={<CheckIcon />}
                   />
@@ -162,7 +172,7 @@ const Footer = () => {
               {t('company.title')}
             </Heading>
             {t('company.items', {}, { returnObjects: true }).map((item) => (
-              <NextChakraLink href={item.href}>
+              <NextChakraLink key={`${item.label}-${item.href}`} href={item.href}>
                 <Text fontSize="sm">{item.label.toUpperCase()}</Text>
               </NextChakraLink>
             ))}
@@ -183,7 +193,7 @@ const Footer = () => {
               {t('learning.title')}
             </Heading>
             {t('learning.items', {}, { returnObjects: true }).map((item) => (
-              <NextChakraLink href={item.href}>
+              <NextChakraLink key={`${item.label}-${item.href}`} href={item.href}>
                 <Text fontSize="sm">{item.label.toUpperCase()}</Text>
               </NextChakraLink>
             ))}
@@ -202,7 +212,7 @@ const Footer = () => {
               {t('community.title')}
             </Heading>
             {t('community.items', {}, { returnObjects: true }).map((item) => (
-              <NextChakraLink href={item.href}>
+              <NextChakraLink key={`${item.label}-${item.href}`} href={item.href}>
                 <Text fontSize="sm">{item.label.toUpperCase()}</Text>
               </NextChakraLink>
             ))}
@@ -221,7 +231,7 @@ const Footer = () => {
               {t('social.title')}
             </Heading>
             {t('iconogram', {}, { returnObjects: true }).map((item) => (
-              <NextChakraLink href={item.href}>
+              <NextChakraLink key={`${item.title}-${item.href}`} href={item.href}>
                 <Text fontSize="sm">{item.title.toUpperCase()}</Text>
               </NextChakraLink>
             ))}
@@ -247,7 +257,7 @@ const Footer = () => {
                 {t('learning.title')}
               </Heading>
               {t('learning.items', {}, { returnObjects: true }).map((item) => (
-                <NextChakraLink href={item.href}>
+                <NextChakraLink key={`${item.label}-${item.href}`} href={item.href}>
                   <Text fontSize="sm">{item.label.toUpperCase()}</Text>
                 </NextChakraLink>
               ))}
@@ -257,7 +267,7 @@ const Footer = () => {
                 {t('community.title')}
               </Heading>
               {t('community.items', {}, { returnObjects: true }).map((item) => (
-                <NextChakraLink href={item.href}>
+                <NextChakraLink key={`${item.label}-${item.href}`} href={item.href}>
                   <Text fontSize="sm">{item.label.toUpperCase()}</Text>
                 </NextChakraLink>
               ))}
@@ -280,6 +290,7 @@ const Footer = () => {
         <Flex
           key="iconogram"
           width="40%"
+          gridRowGap="20px"
           wrap="wrap"
           justifyContent="space-between"
           display={[
@@ -290,7 +301,7 @@ const Footer = () => {
           ]}
         >
           {t('iconogram', {}, { returnObjects: true }).map((item) => (
-            <Box width="48%" marginRight="2px" marginBottom="5px">
+            <Box key={`${item.title}-${item.href}`} width="48%" marginRight="2px" marginBottom="5px">
               <NextChakraLink href={item.href}>
                 <Heading as="h5" fontSize="12px" marginBottom="15px">
                   <Icon icon={item.icon} style={{ display: 'inline', marginRight: '10px' }} width="40px" height="40px" />
