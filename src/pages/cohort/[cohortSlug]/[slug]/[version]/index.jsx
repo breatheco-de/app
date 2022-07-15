@@ -397,7 +397,7 @@ const Dashboard = () => {
         <Box width="100%" minW={{ base: 'auto', md: 'clamp(300px, 60vw, 770px)' }}>
           {(cohortSession?.syllabus_version?.name || cohortProgram.name) ? (
             <Heading as="h1" size="xl">
-              {cohortSession.syllabus_version.name || cohortProgram.name}
+              {cohortSession?.syllabus_version?.name || cohortProgram?.name}
             </Heading>
           ) : (
             <Skeleton
@@ -435,13 +435,15 @@ const Dashboard = () => {
                 width="100%"
               />
             </OnlyFor>
-            <CohortSideBar
-              teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
-              cohort={cohortSession}
-              studentAndTeachers={studentAndTeachers}
-              cohortCity={cohortSession?.name}
-              width="100%"
-            />
+            {cohortSession?.kickoff_date && (
+              <CohortSideBar
+                teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
+                cohort={cohortSession}
+                studentAndTeachers={studentAndTeachers}
+                cohortCity={cohortSession?.name}
+                width="100%"
+              />
+            )}
             {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
               <SupportSidebar
                 title={supportSideBar.title}
@@ -590,13 +592,15 @@ const Dashboard = () => {
               width="100%"
             />
           </OnlyFor>
-          <CohortSideBar
-            teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
-            studentAndTeachers={studentAndTeachers}
-            cohort={cohortSession}
-            cohortCity={cohortSession?.name}
-            width="100%"
-          />
+          {cohortSession?.kickoff_date && (
+            <CohortSideBar
+              teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
+              studentAndTeachers={studentAndTeachers}
+              cohort={cohortSession}
+              cohortCity={cohortSession?.name}
+              width="100%"
+            />
+          )}
           {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
             <SupportSidebar
               title={supportSideBar.title}
