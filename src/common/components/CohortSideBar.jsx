@@ -375,13 +375,14 @@ const CohortSideBar = ({
 };
 
 ProfilesSection.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   paginationProps: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
   setAlumniGeeksList: PropTypes.oneOfType([PropTypes.func, PropTypes.any]),
   profiles: PropTypes.arrayOf(PropTypes.object),
 };
 
 ProfilesSection.defaultProps = {
+  title: '',
   paginationProps: null,
   setAlumniGeeksList: () => {},
   profiles: [],
