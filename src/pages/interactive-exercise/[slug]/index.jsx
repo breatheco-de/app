@@ -23,7 +23,7 @@ import Heading from '../../../common/components/Heading';
 import Link from '../../../common/components/NextChakraLink';
 import Text from '../../../common/components/Text';
 import SimpleTable from '../../../js_modules/projects/SimpleTable';
-// import TagCapsule from '../../common/components/TagCapsule';
+import TagCapsule from '../../../common/components/TagCapsule';
 // import Image from '../../common/components/Image';
 import MarkDownParser from '../../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../../common/components/Skeleton';
@@ -264,6 +264,8 @@ const Exercise = ({ exercise, markdown }) => {
   const { t } = useTranslation(['exercises']);
   const translations = exercise?.translations || { es: '', en: '' };
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
+  console.log(markdownData);
+  console.log('markdownData');
   const router = useRouter();
   const language = router.locale === 'en' ? 'us' : 'es';
   const currentLanguageLabel = languageLabel[language] || language;
@@ -311,50 +313,138 @@ const Exercise = ({ exercise, markdown }) => {
   }, [language]);
 
   return (
-    <Box
-      height="100%"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      margin={{ base: '4% 4% 0 4%', lg: '4% 10% 0 10%' }}
-    >
-      <Link
-        href="/interactive-exercises"
-        color={useColorModeValue('blue.default', 'blue.300')}
-        display="inline-block"
-        letterSpacing="0.05em"
-        fontWeight="700"
-        paddingBottom="10px"
+    <>
+      <Box
+        className="box-heading"
+        background="#EEF9FE"
+        padding={{ base: '4% 4% 0 4%', lg: '4% 10% 0 10%' }}
       >
-        {`← ${t('exercises:backToExercises')}`}
-      </Link>
+        <Link
+          href="/interactive-exercises"
+          color={useColorModeValue('blue.default', 'blue.300')}
+          display="inline-block"
+          letterSpacing="0.05em"
+          fontWeight="700"
+          paddingBottom="10px"
+        >
+          {`← ${t('exercises:backToExercises')}`}
+        </Link>
+        <TagCapsule
+          variant="rounded"
+          tags={[{ name: exercise.difficulty }]}
+          marginY="8px"
+          style={{
+            padding: '2px 10px',
+            margin: '0',
+          }}
+          gap="10px"
+          paddingX="0"
+        />
+        {exercise?.title ? (
+          <Heading
+            as="h1"
+            size="32px"
+            fontWeight="700"
+            textTransform="capitalize"
+            padding="10px 0 35px 0"
+            transition="color 0.2s ease-in-out"
+            color={useColorModeValue('black', 'white')}
+          >
+            {exercise.title}
+          </Heading>
+        ) : (
+          <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
+        )}
+      </Box>
+      <Box
+        height="100%"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        margin={{ base: '4% 4% 0 4%', lg: '4% 10% 0 10%' }}
+      >
+        {/* <Link
+          href="/interactive-exercises"
+          color={useColorModeValue('blue.default', 'blue.300')}
+          display="inline-block"
+          letterSpacing="0.05em"
+          fontWeight="700"
+          paddingBottom="10px"
+        >
+          {`← ${t('exercises:backToExercises')}`}
+        </Link> */}
 
-      <Flex display={{ base: 'block', lg: 'flex' }} height="100%" gridGap="26px">
-        <Box flex="1">
-          {exercise?.title ? (
-            <Heading
-              as="h1"
-              size="32px"
-              fontWeight="700"
-              textTransform="capitalize"
-              padding="10px 0 35px 0"
-              transition="color 0.2s ease-in-out"
-              color={useColorModeValue('black', 'white')}
+        <Flex display={{ base: 'block', lg: 'flex' }} height="100%" gridGap="26px">
+          <Box flex="1">
+            {/* {exercise?.title ? (
+              <Heading
+                as="h1"
+                size="32px"
+                fontWeight="700"
+                textTransform="capitalize"
+                padding="10px 0 35px 0"
+                transition="color 0.2s ease-in-out"
+                color={useColorModeValue('black', 'white')}
+              >
+                {exercise.title}
+              </Heading>
+            ) : (
+              <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
+            )} */}
+
+            <Box
+              display={{ base: 'flex', lg: 'none' }}
+              flexDirection="column"
+              margin="30px 0"
+              backgroundColor={useColorModeValue('white', 'featuredDark')}
+              transition="background 0.2s ease-in-out"
+              width="100%"
+              height="auto"
+              borderWidth="0px"
+              borderRadius="17px"
+              overflow="hidden"
+              border={1}
+              borderStyle="solid"
+              borderColor={commonBorderColor}
             >
-              {exercise.title}
-            </Heading>
-          ) : (
-            <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
-          )}
+              {exercise?.slug ? (
+                <TabletWithForm
+                  toast={toast}
+                  exercise={exercise}
+                  commonTextColor={commonTextColor}
+                  commonBorderColor={commonBorderColor}
+                />
+              ) : (
+                <Skeleton height="646px" width="300px" borderRadius="17px" />
+              )}
+            </Box>
+
+            {/* MARKDOWN SIDE */}
+            <Box
+              borderRadius="3px"
+              maxWidth="1012px"
+              flexGrow={1}
+            // margin="0 8vw 4rem 8vw"
+            // width={{ base: '34rem', md: '54rem' }}
+              className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
+            >
+              {markdown ? (
+                <MarkDownParser content={markdownData.content} />
+              // <MarkDownParser content={removeTitleAndImage(MDecoded)} />
+              ) : (
+                <MDSkeleton />
+              )}
+            </Box>
+          </Box>
 
           <Box
-            display={{ base: 'flex', lg: 'none' }}
+            display={{ base: 'none', lg: 'flex' }}
             flexDirection="column"
-            margin="30px 0"
             backgroundColor={useColorModeValue('white', 'featuredDark')}
             transition="background 0.2s ease-in-out"
-            width="100%"
-            height="auto"
+            width="350px"
+            minWidth="250px"
+            height="fit-content"
             borderWidth="0px"
             borderRadius="17px"
             overflow="hidden"
@@ -370,56 +460,12 @@ const Exercise = ({ exercise, markdown }) => {
                 commonBorderColor={commonBorderColor}
               />
             ) : (
-              <Skeleton height="646px" width="300px" borderRadius="17px" />
+              <Skeleton height="646px" width="100%" borderRadius="17px" />
             )}
           </Box>
-
-          {/* MARKDOWN SIDE */}
-          <Box
-            borderRadius="3px"
-            maxWidth="1012px"
-            flexGrow={1}
-            // margin="0 8vw 4rem 8vw"
-            // width={{ base: '34rem', md: '54rem' }}
-            className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
-          >
-            {markdown ? (
-              <MarkDownParser content={markdownData.content} />
-              // <MarkDownParser content={removeTitleAndImage(MDecoded)} />
-            ) : (
-              <MDSkeleton />
-            )}
-          </Box>
-        </Box>
-
-        <Box
-          display={{ base: 'none', lg: 'flex' }}
-          flexDirection="column"
-          backgroundColor={useColorModeValue('white', 'featuredDark')}
-          transition="background 0.2s ease-in-out"
-          width="350px"
-          minWidth="250px"
-          height="fit-content"
-          borderWidth="0px"
-          borderRadius="17px"
-          overflow="hidden"
-          border={1}
-          borderStyle="solid"
-          borderColor={commonBorderColor}
-        >
-          {exercise?.slug ? (
-            <TabletWithForm
-              toast={toast}
-              exercise={exercise}
-              commonTextColor={commonTextColor}
-              commonBorderColor={commonBorderColor}
-            />
-          ) : (
-            <Skeleton height="646px" width="100%" borderRadius="17px" />
-          )}
-        </Box>
-      </Flex>
-    </Box>
+        </Flex>
+      </Box>
+    </>
   );
 };
 
