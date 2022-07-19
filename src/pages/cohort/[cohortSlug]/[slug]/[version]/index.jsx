@@ -4,7 +4,7 @@ import {
 import {
   Box, Flex, Container, useColorModeValue, Skeleton, useToast,
   Checkbox, Input, InputGroup, InputRightElement, IconButton,
-  keyframes, usePrefersReducedMotion,
+  keyframes, usePrefersReducedMotion, Avatar,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -592,6 +592,26 @@ const Dashboard = () => {
               width="100%"
             />
           </OnlyFor>
+          {cohortSession.academy.white_labeled && (
+            <Box
+              className="white-label"
+              background="#F2F2F2"
+              borderRadius="md"
+              padding="10px"
+              display="flex"
+              justifyContent="space-around"
+            >
+              <Avatar name={cohortSession.academy.name} src={cohortSession.academy.icon_url} />
+              <Box className="white-label-text" width="80%">
+                <Text size="md" fontWeight="700" marginBottom="5px">
+                  {cohortSession.academy.name}
+                </Text>
+                <Text size="sm">
+                  {t('whiteLabeledText')}
+                </Text>
+              </Box>
+            </Box>
+          )}
           {cohortSession?.kickoff_date && (
             <CohortSideBar
               teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
