@@ -64,7 +64,7 @@ export const getStaticProps = async ({ params, locale }) => {
   if (response.status >= 400 || response.status_code >= 400
     || !technologyData || dataFiltered.length === 0) {
     return {
-      notFound: false,
+      notFound: true,
     };
   }
 
