@@ -24,6 +24,7 @@ import Heading from '../../../common/components/Heading';
 import Link from '../../../common/components/NextChakraLink';
 import Text from '../../../common/components/Text';
 import SimpleTable from '../../../js_modules/projects/SimpleTable';
+// eslint-disable-next-line no-unused-vars
 import TagCapsule from '../../../common/components/TagCapsule';
 // import Image from '../../common/components/Image';
 import MarkDownParser from '../../../common/components/MarkDownParser';
@@ -265,6 +266,7 @@ const Exercise = ({ exercise, markdown }) => {
   const { t } = useTranslation(['exercises']);
   const translations = exercise?.translations || { es: '', en: '' };
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
+  // const markdownData = '';
   console.log('markdownData');
   console.log(markdownData);
   console.log('exercise');
@@ -334,9 +336,9 @@ const Exercise = ({ exercise, markdown }) => {
           >
             {`← ${t('exercises:backToExercises')}`}
           </Link>
-          <TagCapsule
+          {/* <TagCapsule
             variant="rounded"
-            tags={[{ name: exercise?.difficulty }]}
+            tags={[{ name: exercise?.difficulty ? exercise.difficulty : '' }]}
             marginY="8px"
             style={{
               padding: '2px 10px',
@@ -344,7 +346,7 @@ const Exercise = ({ exercise, markdown }) => {
             }}
             gap="10px"
             paddingX="0"
-          />
+          /> */}
           {exercise?.title ? (
             <Heading
               as="h1"
