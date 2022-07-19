@@ -14,5 +14,9 @@
   "direct-access-request": "Solicitud de acceso directo",
   "direct-access-request-description": "Ingrese su información y reciba acceso instantáneo",
   "get-instant-access": "Obtener acceso",
-  "average-duration": "Duración promedio"
+  "average-duration": "Duración promedio",
+  "landing-technology": {
+    "title": "{{technology}} Ejercicios y tutoriales interactivos",
+    "subTitle": "Practice {{technology}}"
+  }
 }

@@ -33,7 +33,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   if (resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${arrProjects.length} Projects fetched`);
   } else {
-    console.error(`Error ${resp.status}: fetching Projects list for /interactive-coding-tutorial`);
+    console.error(`Error ${resp.status}: fetching Projects list for /interactive-coding-tutorials`);
   }
 
   let technologyTags = [];
@@ -79,8 +79,8 @@ export const getStaticProps = async ({ locale, locales }) => {
   });
 
   const ogUrl = {
-    en: '/interactive-coding-tutorial',
-    us: '/interactive-coding-tutorial',
+    en: '/interactive-coding-tutorials',
+    us: '/interactive-coding-tutorials',
   };
 
   return {
@@ -92,8 +92,8 @@ export const getStaticProps = async ({ locale, locales }) => {
         keywords,
         locales,
         locale,
-        url: ogUrl.en || `/${locale}/interactive-coding-tutorial`,
-        pathConnector: '/interactive-coding-tutorial',
+        url: ogUrl.en || `/${locale}/interactive-coding-tutorials`,
+        pathConnector: '/interactive-coding-tutorials',
         card: 'default',
       },
 
