@@ -121,6 +121,8 @@ function LogIn() {
                   </FormLabel>
                   <Input
                     {...field}
+                    id="current-password"
+                    autoComplete="current-password"
                     type={showPSW ? 'text' : 'password'}
                     placeholder="***********"
                     height="50px"

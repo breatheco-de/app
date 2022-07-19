@@ -71,7 +71,8 @@ export default function Home() {
 
   return (
     <Box
-      margin="4vw 0 12vw 0"
+      padding="0 0 4vw"
+      margin="4vw 0 0 0"
       height={{ base: '100%', md: '100%' }}
       // minHeight="90vh"
       flexDirection="column"

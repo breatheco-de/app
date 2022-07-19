@@ -134,9 +134,9 @@ MobileNav.propTypes = {
       href: PropTypes.string,
       subMenu: PropTypes.arrayOf(
         PropTypes.shape({
-          label: PropTypes.string.isRequired,
-          subLabel: PropTypes.string,
-          href: PropTypes.string.isRequired,
+          label: PropTypes.string,
+          subLabel: PropTypes,
+          href: PropTypes.string,
         }),
       ),
     }),

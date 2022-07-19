@@ -117,12 +117,13 @@ const breathecode = {
   },
 
   lesson: (query = {}) => {
-    const url = `${host}/registry/asset`;
+    const url = `${host}/registry`;
     const qs = Object.keys(query)
       .map((key) => `${key}=${query[key]}`)
       .join('&');
     return {
-      get: () => axios.get(`${url}?${qs}`),
+      get: () => axios.get(`${url}/asset?${qs}`),
+      techs: () => axios.get(`${url}/academy/technology?${qs}`),
     };
   },
   activity: () => {
