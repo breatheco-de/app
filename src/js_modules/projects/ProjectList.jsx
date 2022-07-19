@@ -227,16 +227,17 @@ const ProjectList = ({
             </Box>
           );
         })}
-        {isLoading && (
-        <CardSkeleton
-          withoutContainer
-          quantity={15}
-          cardWidth="100%"
-          cardHeight="348px"
-        />
-        )}
+
         {/* </Grid> */}
       </StyledContainer>
+      {isLoading && (
+      <CardSkeleton
+        withoutContainer
+        quantity={15}
+        cardWidth="100%"
+        cardHeight="348px"
+      />
+      )}
       {filteredProjects.length === 0 && (
         <Box height="50vh" width="100%">
           <Text size="20px" padding="30px 0" textAlign="center" fontWeight={500}>
