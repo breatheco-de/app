@@ -265,8 +265,10 @@ const Exercise = ({ exercise, markdown }) => {
   const { t } = useTranslation(['exercises']);
   const translations = exercise?.translations || { es: '', en: '' };
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
-  console.log(markdownData);
   console.log('markdownData');
+  console.log(markdownData);
+  console.log('exercise');
+  console.log(exercise);
   const router = useRouter();
   const language = router.locale === 'en' ? 'us' : 'es';
   const currentLanguageLabel = languageLabel[language] || language;
