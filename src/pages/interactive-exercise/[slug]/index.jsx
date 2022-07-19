@@ -334,7 +334,7 @@ const Exercise = ({ exercise, markdown }) => {
           </Link>
           <TagCapsule
             variant="rounded"
-            tags={[{ name: exercise.difficulty }]}
+            tags={[{ name: exercise?.difficulty }]}
             marginY="8px"
             style={{
               padding: '2px 10px',
