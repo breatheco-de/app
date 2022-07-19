@@ -364,9 +364,11 @@ const Exercise = ({ exercise, markdown }) => {
           </Text>
           )}
           <a className="github-button" href={`https://github.com/4GeeksAcademy/${exercise?.slug}`} data-icon="octicon-star" aria-label="Star ntkme/github-buttons on GitHub">Star</a>
+          {exercise?.author && (
           <Text size="md" textAlign="left" my="10px" px="0px">
             {`${t('exercises:created')} ${exercise.author.first_name} ${exercise.author.last_name}`}
           </Text>
+          )}
         </Box>
       </Box>
       <Box
