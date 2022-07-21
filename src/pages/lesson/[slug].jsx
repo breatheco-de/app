@@ -148,9 +148,6 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
     }
   }, [language]);
 
-  console.log('ipynbHtmlUrl:::', ipynbHtmlUrl);
-  console.log('markdown:::', markdown === '');
-
   return (
     <Box
       height="100%"
