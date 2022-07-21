@@ -14,5 +14,9 @@
   "table": {
     "title": "Meta",
     "description": "Tutoriales y ejercicios de 4Geeks Coding Projects para personas que están aprendiendo a codificar o mejorando sus habilidades de codificación"
+  },
+  "landing-technology": {
+    "title": "Practica {{technology}} construyendo proyectos interactivos",
+    "subTitle": "Qué construir con {{technology}}"
   }
 }

@@ -116,7 +116,7 @@ const TableInfo = ({ t, project, commonTextColor }) => (
         {t('table.description')}
       </Text>
       <SimpleTable
-        href="/interactive-coding-tutorial"
+        href="/interactive-coding-tutorials"
         difficulty={project.difficulty !== null && project.difficulty.toLowerCase()}
         repository={project.url}
         duration={project.duration}

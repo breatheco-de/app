@@ -7,14 +7,14 @@ import PropTypes from 'prop-types';
 import getT from 'next-translate/getT';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import Text from '../common/components/Text';
-import Icon from '../common/components/Icon';
-import FilterModal from '../common/components/FilterModal';
-import TitleContent from '../js_modules/projects/TitleContent';
-import ProjectList from '../js_modules/projects/ProjectList';
-import useFilter from '../common/store/actions/filterAction';
-import Search from '../js_modules/projects/Search';
-import { isWindow } from '../utils';
+import Text from '../../common/components/Text';
+import Icon from '../../common/components/Icon';
+import FilterModal from '../../common/components/FilterModal';
+import TitleContent from '../../js_modules/projects/TitleContent';
+import ProjectList from '../../js_modules/projects/ProjectList';
+import useFilter from '../../common/store/actions/filterAction';
+import Search from '../../js_modules/projects/Search';
+import { isWindow } from '../../utils';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'lesson');

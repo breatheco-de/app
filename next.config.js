@@ -35,12 +35,12 @@ module.exports = withBundleAnalyzer(nextTranslate({
       },
       {
         source: '/projects',
-        destination: '/interactive-coding-tutorial',
+        destination: '/interactive-coding-tutorials',
         permanent: true,
       },
       {
         source: '/project',
-        destination: '/interactive-coding-tutorial',
+        destination: '/interactive-coding-tutorials',
         permanent: true,
       },
       {

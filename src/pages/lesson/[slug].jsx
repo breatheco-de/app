@@ -225,7 +225,11 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
           </Box>
 
         ) : (
-          <MDSkeleton />
+          <>
+            {ipynbHtmlUrl === '' && (
+              <MDSkeleton />
+            )}
+          </>
         )}
       </Box>
       {ipynbHtmlUrl && markdown === '' && (

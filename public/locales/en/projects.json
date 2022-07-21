@@ -14,5 +14,9 @@
   "table": {
     "title": "Goal",
     "description": "4Geeks Coding Projects tutorials and exercises for people learning to code or improving their coding skills"
+  },
+  "landing-technology": {
+    "title": "Practice {{technology}} building interactive projects",
+    "subTitle": "What to build with {{technology}}"
   }
 }

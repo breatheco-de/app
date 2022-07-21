@@ -106,10 +106,13 @@ function removeURLParameter(url, parameter) {
   return url;
 }
 
+// convert the input array to camel case
+const toCapitalize = (input) => input.charAt(0).toUpperCase() + input.slice(1);
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
   removeStorageItem, isDevMode, devLogTable, devLog, languageLabel,
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
-  setStorageItem,
+  setStorageItem, toCapitalize,
 };

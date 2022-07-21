@@ -17,9 +17,9 @@ const ProjectList = ({
   withoutImage, isLoading,
 }) => {
   const { t } = useTranslation('common');
-  // const [limiter, setLimiter] = useState(12);
-  const arrOfTechs = contextFilter.technologies;
-  const { difficulty, videoTutorials } = contextFilter;
+  const arrOfTechs = contextFilter?.technologies || [];
+  const difficulty = contextFilter?.difficulty || [];
+  const videoTutorials = contextFilter?.videoTutorials || [];
   const router = useRouter();
   const defaultImage = exampleImage || '/static/images/code1.png';
   const { query } = router;
@@ -93,6 +93,7 @@ const ProjectList = ({
               <Box
                 display={{ base: 'flex', md: 'inline-block' }}
                 gridGap="15px"
+                flexDirection={{ base: withoutImage ? 'column' : 'row', md: 'row' }}
                 role="group"
                 w="full"
                 zIndex={1}
@@ -250,7 +251,7 @@ const ProjectList = ({
 
 ProjectList.propTypes = {
   projects: PropTypes.arrayOf(PropTypes.object).isRequired,
-  contextFilter: PropTypes.objectOf(PropTypes.any).isRequired,
+  contextFilter: PropTypes.objectOf(PropTypes.any),
   projectPath: PropTypes.string.isRequired,
   pathWithDifficulty: PropTypes.bool,
   exampleImage: PropTypes.string,
@@ -263,6 +264,7 @@ ProjectList.defaultProps = {
   exampleImage: '',
   withoutImage: false,
   isLoading: false,
+  contextFilter: {},
 };
 
 export default ProjectList;
