@@ -51,7 +51,7 @@ const getHowTo = () => {
 const getLandingTechnologies = () => {
   const technologies = axios.get(`${BREATHECODE_HOST}/v1/registry/academy/technology`, {
     headers: {
-      Authorization: 'Token ec12d799b6c5a17061f8e8e52490417d99460fb9',
+      Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
       Academy: 4,
     },
   })
