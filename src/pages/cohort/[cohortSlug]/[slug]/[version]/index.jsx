@@ -4,7 +4,7 @@ import {
 import {
   Box, Flex, Container, useColorModeValue, Skeleton, useToast,
   Checkbox, Input, InputGroup, InputRightElement, IconButton,
-  keyframes, usePrefersReducedMotion, Avatar,
+  keyframes, usePrefersReducedMotion, Avatar, useColorMode,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -35,6 +35,7 @@ const Dashboard = () => {
   const { t } = useTranslation('dashboard');
   const toast = useToast();
   const router = useRouter();
+  const { colorMode } = useColorMode();
   const { contextState, setContextState } = useModuleMap();
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const { cohortProgram } = contextState;
@@ -595,11 +596,11 @@ const Dashboard = () => {
           {cohortSession.academy.white_labeled && (
             <Box
               className="white-label"
-              background="#F2F2F2"
               borderRadius="md"
               padding="10px"
               display="flex"
               justifyContent="space-around"
+              bg={colorMode === 'light' ? '#F2F2F2' || 'blue.light' : 'featuredDark'}
             >
               <Avatar name={cohortSession.academy.name} src={cohortSession.academy.icon_url} />
               <Box className="white-label-text" width="80%">

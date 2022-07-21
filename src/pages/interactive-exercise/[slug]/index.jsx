@@ -263,14 +263,10 @@ const TabletWithForm = ({
 };
 
 const Exercise = ({ exercise, markdown }) => {
+  const [tags, setTags] = useState([]);
   const { t } = useTranslation(['exercises']);
   const translations = exercise?.translations || { es: '', en: '' };
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
-  // const markdownData = '';
-  console.log('markdownData');
-  console.log(markdownData);
-  console.log('exercise');
-  console.log(exercise);
   const router = useRouter();
   const language = router.locale === 'en' ? 'us' : 'es';
   const currentLanguageLabel = languageLabel[language] || language;
@@ -300,7 +296,19 @@ const Exercise = ({ exercise, markdown }) => {
     });
   }, [router, router.locale, translations]);
 
+  const tagsArray = (exer) => {
+    const values = [];
+    if (exer) {
+      if (exer.difficulty) values.push({ name: t(`common:${exer.difficulty.toLowerCase()}`) });
+      if (exer.interactive) values.push({ name: t('common:interactive') });
+      if (exer.duration) values.push({ name: `${exer.duration}HRS` });
+    }
+
+    setTags(values);
+  };
+
   useEffect(() => {
+    tagsArray(exercise);
     axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`)
       .then(({ data }) => {
         let currentlocaleLang = data.translations[language];
@@ -336,9 +344,9 @@ const Exercise = ({ exercise, markdown }) => {
           >
             {`← ${t('exercises:backToExercises')}`}
           </Link>
-          {/* <TagCapsule
+          <TagCapsule
             variant="rounded"
-            tags={[{ name: exercise?.difficulty ? exercise.difficulty : '' }]}
+            tags={tags}
             marginY="8px"
             style={{
               padding: '2px 10px',
@@ -346,14 +354,15 @@ const Exercise = ({ exercise, markdown }) => {
             }}
             gap="10px"
             paddingX="0"
-          /> */}
+          />
           {exercise?.title ? (
             <Heading
               as="h1"
               size="40px"
               fontWeight="700"
               textTransform="capitalize"
-              padding="10px 0 5px 0"
+              paddingTop="10px"
+              marginBottom="10px"
               transition="color 0.2s ease-in-out"
               color={useColorModeValue('black', 'white')}
             >
@@ -363,11 +372,11 @@ const Exercise = ({ exercise, markdown }) => {
             <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
           )}
           {exercise?.sub_title && (
-          <Text size="md" color={commonTextColor} textAlign="left" my="10px" px="0px">
+          <Text size="md" color={commonTextColor} textAlign="left" marginBottom="10px" px="0px">
             {exercise.sub_title}
           </Text>
           )}
-          <a className="github-button" href={`https://github.com/4GeeksAcademy/${exercise?.slug}`} data-icon="octicon-star" aria-label="Star ntkme/github-buttons on GitHub">Star</a>
+          <a className="github-button" href={exercise?.url} data-icon="octicon-star" aria-label="Star ntkme/github-buttons on GitHub">Star</a>
           {exercise?.author && (
           <Text size="md" textAlign="left" my="10px" px="0px">
             {`${t('exercises:created')} ${exercise.author.first_name} ${exercise.author.last_name}`}
@@ -460,7 +469,7 @@ const Exercise = ({ exercise, markdown }) => {
           <Box
             display={{ base: 'none', lg: 'flex' }}
             position="absolute"
-            top="9%"
+            top="100px"
             right="9%"
             flexDirection="column"
             backgroundColor={useColorModeValue('white', 'featuredDark')}
