@@ -1,19 +1,12 @@
-/* eslint-disable no-param-reassign */
-// import { useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
-// import axios from 'axios';
 import {
   Box, useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-// import { useRouter } from 'next/router';
 import Text from '../../../common/components/Text';
-// import getT from 'next-translate/getT';
 import { toCapitalize } from '../../../utils';
 import Heading from '../../../common/components/Heading';
-// import Link from '../../../common/components/NextChakraLink';
 import ProjectList from '../../../js_modules/projects/ProjectList';
-// import { publicRedirectByAsset } from '../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology`, {
@@ -38,20 +31,18 @@ export const getStaticPaths = async ({ locales }) => {
   };
 };
 
-export const getStaticProps = async ({ params, locale }) => {
-  // const t = await getT(locale, 'exercises');
+export const getStaticProps = async ({ params, locale, locales }) => {
   const { technology } = params;
   const currentLang = locale === 'en' ? 'us' : 'es';
-  // const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
 
-  const responseTechs = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology`, {
+  const responseTechs = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?slug=${technology}`, {
     method: 'GET',
     headers: {
       Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
       Academy: 4,
     },
   });
-  const techs = await responseTechs.json();
+  const techs = await responseTechs.json(); // array of objects
   const technologyData = techs.find((tech) => tech.slug === technology);
 
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project&limit=1000`);
@@ -68,44 +59,29 @@ export const getStaticProps = async ({ params, locale }) => {
     };
   }
 
-  // if (response.status >= 400 || response.status_code >= 400
-  //   || dataFiltered.length === 0 || !technologyData) {
-  //   return {
-  //     notFound: true,
-  //   };
-  // }
-
-  // const ogUrl = {
-  //   en: `/lesson/${slug}`,
-  //   us: `/lesson/${slug}`,
-  // };
-
-  // const { title, description, translations } = lesson;
-  // const translationsExists = Object.keys(translations).length > 0;
+  const ogUrl = {
+    en: `/interactive-coding-tutorials/technology/${technology}`,
+    us: `/interactive-coding-tutorials/technology/${technology}`,
+  };
 
   return {
     props: {
-      // seo: {
-      //   title,
-      //   description: description || '',
-      //   image: lesson.preview || staticImage,
-      //   pathConnector: translationsExists ? '/lesson' : `/lesson/${slug}`,
-      //   url: ogUrl.en || `/${locale}/lesson/${slug}`,
-      //   type: 'article',
-      //   card: 'large',
-      //   translations,
-      //   locales,
-      //   locale,
-      //   keywords: lesson?.seo_keywords || '',
-      //   publishedTime: lesson?.created_at || '',
-      //   modifiedTime: lesson?.updated_at || '',
-      // },
+      seo: {
+        title: technologyData?.title,
+        description: '',
+        image: technologyData?.icon_url || '',
+        pathConnector: `/interactive-coding-tutorials/technology/${technology}`,
+        url: ogUrl.en,
+        type: 'website',
+        card: 'default',
+        locales,
+        locale,
+      },
       technologyData,
       fallback: false,
       projects: dataFiltered.filter((project) => project.lang === currentLang).map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
-      // translations: lesson.translations,
     },
   };
 };
