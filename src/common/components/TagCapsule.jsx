@@ -39,7 +39,7 @@ const TagCapsule = ({
     >
       {tags.map((tag, i) => (isLink ? (
         <Link
-          href={`${href}?techs=${tag}`}
+          href={`${href}/technology/${tag}`}
           display="flex"
           cursor={isLink ? 'pointer' : 'default'}
           bg={variant === 'rounded' ? background : 'none'}

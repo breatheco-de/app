@@ -58,8 +58,6 @@ const getLandingTechnologies = () => {
     .then((res) => res.data)
     .catch((err) => console.log(err));
 
-  console.log('technologies:::', technologies);
-
   return technologies;
 };
 
