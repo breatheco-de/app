@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
 import { useEffect } from 'react';
 import {
-  Box, useColorModeValue, Stack, Grid, Container,
+  Box, useColorModeValue, Stack, Img,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -13,7 +12,6 @@ import Link from '../../common/components/NextChakraLink';
 import Image from '../../common/components/Image';
 import TagCapsule from '../../common/components/TagCapsule';
 import Text from '../../common/components/Text';
-import { CardSkeleton } from '../../common/components/Skeleton';
 
 const ProjectList = ({
   projects, contextFilter, projectPath, pathWithDifficulty, exampleImage,
@@ -110,7 +108,7 @@ const ProjectList = ({
 
   useEffect(() => {
     resizeAllMasonryItems();
-  });
+  }, [filteredProjects]);
 
   useEffect(() => {
     const masonryEvents = ['resize'];
@@ -285,15 +283,14 @@ const ProjectList = ({
         })}
 
         {/* </Grid> */}
-        {isLoading && (
-        <CardSkeleton
-          withoutContainer
-          quantity={2}
-          cardWidth="100%"
-          cardHeight="100px"
-        />
-        )}
       </StyledContainer>
+
+      {isLoading && (
+        <Box display="flex" justifyContent="center" mt="2rem" mb="10rem">
+          <Img src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
+          <Box className="loader" />
+        </Box>
+      )}
 
       {filteredProjects.length === 0 && (
         <Box height="50vh" width="100%">
