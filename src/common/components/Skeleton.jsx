@@ -205,6 +205,7 @@ export const CardSkeleton = ({
         const index = i;
         return (
           <Skeleton
+            {...chakraProps}
             key={index}
             width={cardWidth}
             height={cardHeight}

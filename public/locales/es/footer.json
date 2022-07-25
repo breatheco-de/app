@@ -41,19 +41,19 @@
     "items":[
       {
         "label": "Leer y observar",
-        "href": "#"
+        "href": "/lessons"
       },
       {
         "label": "Practica interactivamente",
-        "href": "#"
+        "href": "/interactive-exercises"
       },
       {
         "label": "Realiza proyectos",
-        "href": "#"
+        "href": "/interactive-coding-tutorial"
       },
       {
         "label": "Como hacer...",
-        "href": "#"
+        "href": "/how-to"
       }
     ]
   },
