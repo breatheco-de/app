@@ -6,6 +6,7 @@
   "moduleMap": "Mapa de módulos",
   "backToChooseProgram": "Volver a elegir programa",
   "progressText": "progreso en el programa",
+  "whiteLabeledText": "Este curso es traído a ti gracias a nuestra alianza con esta universidad.",
   "modules": {
     "search-not-found": "No se encontraron coincidencias para esta búsqueda",
     "show-pending-tasks": "Mostrar Tareas Pendientes",

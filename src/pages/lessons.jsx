@@ -226,7 +226,16 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
         />
       </Flex>
 
-      <Box flex="1" margin={{ base: '0 4% 0 4%', md: '0 10% 0 10%' }}>
+      <Box
+        flex="1"
+        margin={[
+          '0 5% 0 5%', // 0-30em
+          '0 5% 0 5%', // 30em-48em
+          '0 5% 0 5%', // 48em-62em
+          '0 10% 0 10%', // 62em+
+        ]}
+        // margin={{ base: '0 4% 0 4%', md: '0 10% 0 10%' }}
+      >
         <Text
           size="md"
           display="flex"
