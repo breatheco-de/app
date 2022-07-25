@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
 import { useEffect } from 'react';
 import {
-  Box, useColorModeValue, Stack, Grid, Container,
+  Box, useColorModeValue, Stack, Img,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -13,16 +12,15 @@ import Link from '../../common/components/NextChakraLink';
 import Image from '../../common/components/Image';
 import TagCapsule from '../../common/components/TagCapsule';
 import Text from '../../common/components/Text';
-import { CardSkeleton } from '../../common/components/Skeleton';
 
 const ProjectList = ({
   projects, contextFilter, projectPath, pathWithDifficulty, exampleImage,
   withoutImage, isLoading,
 }) => {
   const { t } = useTranslation('common');
-  // const [limiter, setLimiter] = useState(12);
-  const arrOfTechs = contextFilter.technologies;
-  const { difficulty, videoTutorials } = contextFilter;
+  const arrOfTechs = contextFilter?.technologies || [];
+  const difficulty = contextFilter?.difficulty || [];
+  const videoTutorials = contextFilter?.videoTutorials || [];
   const router = useRouter();
   const defaultImage = exampleImage || '/static/images/code1.png';
   const { query } = router;
@@ -110,7 +108,7 @@ const ProjectList = ({
 
   useEffect(() => {
     resizeAllMasonryItems();
-  });
+  }, [filteredProjects]);
 
   useEffect(() => {
     const masonryEvents = ['resize'];
@@ -150,6 +148,7 @@ const ProjectList = ({
               <Box
                 display={{ base: 'flex', md: 'inline-block' }}
                 gridGap="15px"
+                flexDirection={{ base: withoutImage ? 'column' : 'row', md: 'row' }}
                 role="group"
                 w="full"
                 zIndex={1}
@@ -284,15 +283,14 @@ const ProjectList = ({
         })}
 
         {/* </Grid> */}
-        {isLoading && (
-        <CardSkeleton
-          withoutContainer
-          quantity={2}
-          cardWidth="100%"
-          cardHeight="100px"
-        />
-        )}
       </StyledContainer>
+
+      {isLoading && (
+        <Box display="flex" justifyContent="center" mt="2rem" mb="10rem">
+          <Img src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
+          <Box className="loader" />
+        </Box>
+      )}
 
       {filteredProjects.length === 0 && (
         <Box height="50vh" width="100%">
@@ -339,7 +337,7 @@ const StyledContainer = styled.div`
 
 ProjectList.propTypes = {
   projects: PropTypes.arrayOf(PropTypes.object).isRequired,
-  contextFilter: PropTypes.objectOf(PropTypes.any).isRequired,
+  contextFilter: PropTypes.objectOf(PropTypes.any),
   projectPath: PropTypes.string.isRequired,
   pathWithDifficulty: PropTypes.bool,
   exampleImage: PropTypes.string,
@@ -352,6 +350,7 @@ ProjectList.defaultProps = {
   exampleImage: '',
   withoutImage: false,
   isLoading: false,
+  contextFilter: {},
 };
 
 export default ProjectList;
