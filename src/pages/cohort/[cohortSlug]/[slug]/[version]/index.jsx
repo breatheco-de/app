@@ -625,25 +625,25 @@ const Dashboard = () => {
                 width="100%"
               />
             </OnlyFor>
-            {cohortSession.academy.white_labeled && (
-            <Box
-              className="white-label"
-              borderRadius="md"
-              padding="10px"
-              display="flex"
-              justifyContent="space-around"
-              bg={colorMode === 'light' ? '#F2F2F2' || 'blue.light' : 'featuredDark'}
-            >
-              <Avatar name={cohortSession.academy.name} src={cohortSession.academy.icon_url} />
-              <Box className="white-label-text" width="80%">
-                <Text size="md" fontWeight="700" marginBottom="5px">
-                  {cohortSession.academy.name}
-                </Text>
-                <Text size="sm">
-                  {t('whiteLabeledText')}
-                </Text>
+            {cohortSession?.academy?.white_labeled && (
+              <Box
+                className="white-label"
+                borderRadius="md"
+                padding="10px"
+                display="flex"
+                justifyContent="space-around"
+                bg={colorMode === 'light' ? '#F2F2F2' || 'blue.light' : 'featuredDark'}
+              >
+                <Avatar name={cohortSession.academy.name} src={cohortSession.academy.icon_url} />
+                <Box className="white-label-text" width="80%">
+                  <Text size="md" fontWeight="700" marginBottom="5px">
+                    {cohortSession.academy.name}
+                  </Text>
+                  <Text size="sm">
+                    {t('whiteLabeledText')}
+                  </Text>
+                </Box>
               </Box>
-            </Box>
             )}
             {cohortSession?.kickoff_date && (
             <CohortSideBar
