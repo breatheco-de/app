@@ -22,10 +22,11 @@ function ChooseProgram({ chooseList, handleChoose }) {
       'ACTIVE',
       'FINAL_PROJECT',
     ].includes(program.cohort.stage);
-    const showStudent = ['ACTIVE'].includes(program.educational_status)
-        && program.role === 'STUDENT';
+    const showStudent = ['ACTIVE'].includes(program.educational_status) && visibleForTeacher;
+
     return visibleForTeacher || showCohort || showStudent;
   });
+
   const finishedCohorts = chooseList.filter((program) => {
     const showCohort = ['ENDED'].includes(program.cohort.stage);
     // ACTIVE: show be here because the student may not have delivered all the homework
