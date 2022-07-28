@@ -51,9 +51,6 @@ const ProjectList = ({
       (techTagsQuery || selectedTechs).some((tech) => project.technologies.includes(tech))
     ) : true;
     return res;
-    // const res = selectedTechs.map((techs) => project.technologies.includes(techs));
-    // if response not match with current checked technologies return false
-    // return !res.includes(false);
   };
 
   // const [filteredProjects, setFilteredProjects] = useState([]);
@@ -298,29 +295,9 @@ const ProjectList = ({
           </Text>
         </Box>
       )}
-      {/* {projects.length >= limiter && (
-        <Button variant="default" onClick={() => setLimiter(limiter + 12)}>
-          load more
-        </Button>
-      )} */}
     </>
   );
 };
-
-// const StyledContainer = styled.div`
-//   /* column-count: 3; */
-//   columns: 3;
-//   grid-auto-flow: dense;
-//   @media screen and (max-width: 1000px){
-//     column-count: 2;
-//   }
-//   @media screen and (max-width: 820px){
-//     column-count: 1;
-//   }
-// `;
-
-// base: 'repeat(auto-fill, minmax(15rem, 1fr))',
-// md: 'repeat(auto-fill, minmax(20rem, 1fr))',
 
 ProjectList.propTypes = {
   projects: PropTypes.arrayOf(PropTypes.object).isRequired,
