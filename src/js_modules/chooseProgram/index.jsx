@@ -22,7 +22,10 @@ function ChooseProgram({ chooseList, handleChoose }) {
       'ACTIVE',
       'FINAL_PROJECT',
     ].includes(program.cohort.stage);
-    const showStudent = ['ACTIVE'].includes(program.educational_status) && visibleForTeacher;
+
+    const showStudent = ['ACTIVE'].includes(program.educational_status)
+      && visibleForTeacher
+      && program.role === 'STUDENT';
 
     return visibleForTeacher || showCohort || showStudent;
   });
