@@ -120,6 +120,7 @@ const ProjectList = ({
         gridTemplateColumns={{
           base: 'repeat(auto-fill, minmax(15rem, 1fr))',
           md: 'repeat(auto-fill, minmax(20rem, 1fr))',
+          lg: 'repeat(3, 1fr)',
         }}
         gridGap="1em"
         gridAutoRows="0"
