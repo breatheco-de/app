@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import {
-  Box, useColorModeValue, Stack, Img,
+  Box, useColorModeValue, Stack, Img, Grid,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { unSlugify } from '../../utils/index';
 import Heading from '../../common/components/Heading';
@@ -119,14 +118,15 @@ const ProjectList = ({
 
   return (
     <>
-      <StyledContainer className="masonry">
-        {/* <Grid
+      <Grid
+        className="masonry"
         gridTemplateColumns={{
           base: 'repeat(auto-fill, minmax(15rem, 1fr))',
           md: 'repeat(auto-fill, minmax(20rem, 1fr))',
         }}
-        gridGap="12px"
-      > */}
+        gridGap="1em"
+        gridAutoRows="0"
+      >
         {filteredProjects.map((ex) => {
           const getImage = ex.preview || defaultImage;
           return (
@@ -282,8 +282,7 @@ const ProjectList = ({
           );
         })}
 
-        {/* </Grid> */}
-      </StyledContainer>
+      </Grid>
 
       {isLoading && (
         <Box display="flex" justifyContent="center" mt="2rem" mb="10rem">
@@ -320,20 +319,8 @@ const ProjectList = ({
 //   }
 // `;
 
-const StyledContainer = styled.div`
-  display: grid;
-  grid-gap: 1em;
-  grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
-  grid-auto-rows: 0;
-  
-  @media screen and (max-width: 700px){
-    display: block;
-    .masonry-brick{
-      margin-bottom: 1em;
-    }
-  }
-
-`;
+// base: 'repeat(auto-fill, minmax(15rem, 1fr))',
+// md: 'repeat(auto-fill, minmax(20rem, 1fr))',
 
 ProjectList.propTypes = {
   projects: PropTypes.arrayOf(PropTypes.object).isRequired,
