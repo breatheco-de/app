@@ -5,7 +5,7 @@
   "title": "Tus noticias",
   "moduleMap": "Mapa de módulos",
   "backToChooseProgram": "Volver a elegir programa",
-  "progressText": "progreso en el programa",
+  "progressText": "Progreso en el programa",
   "whiteLabeledText": "Este curso es traído a ti gracias a nuestra alianza con esta universidad.",
   "modules": {
     "search-not-found": "No se encontraron coincidencias para esta búsqueda",
@@ -13,14 +13,14 @@
     "activitiesLength": "{{count}} Actividades",
     "newActivities": {
       "title": "¡Oye! Hay {{tasksLength}} nuevas actividades en este día",
-      "handler-text": "sincronizar ahora"
+      "handler-text": "Sincronizar ahora"
     },
     "start-message": "No has iniciado este módulo",
     "no-activities": "No hay actividades para este módulo",
     "start-module": "Iniciar módulo"
   },
   "callToAction": {
-    "title": "Clase de hoy!",
+    "title": "¡Clase de hoy!",
     "description": "Tu clase de hoy es ",
     "buttonText": "Comenzar módulo de hoy"
   },
@@ -50,7 +50,7 @@
     "actionButtons": [
       {
         "name": "mentoring",
-        "title": "Programar sesion de mentoría",
+        "title": "Programar sesión de mentoría",
         "href": "#",
         "icon": "conversation"
       },
@@ -70,7 +70,7 @@
   "modalInfo": {
     "title": "Estado de revisión",
     "still-reviewing": "Tu profesor todavía está revisando tu entrega, te dará su opinión una vez que esté lista.",
-    "approved": "Tu profesor ha aprobado con éxito tu proyecto!",
+    "approved": "¡Tu profesor ha aprobado con éxito tu proyecto!",
     "rejected": {
       "title": "Tu profesor ha rechazado tu proyecto",
       "teacher-feedback": "Comentario del profesor:",
@@ -80,7 +80,7 @@
     "link-info": "Enlace del proyecto enviado a tu profesor:",
     "remove-delivery": "Quitar entrega",
     "non-github-url": {
-      "title": "No se a detectado URL de Github",
+      "title": "No se ha detectado URL de Github",
       "description": "Por lo general, los proyectos se entregan a través de Github, ¿está seguro de que desea enviar una URL externa a Github?",
       "confirm": "Confirmar",
       "cancel": "Cancelar"
@@ -91,7 +91,7 @@
     "description": "Estas tareas pueden eliminarse y perderse en el futuro. Asegúrate de sincronizarlos si no quieres perderlos.",
     "unsync": "Eliminar",
     "sync": "Sincronizar con la cohorte actual",
-    "reject-unsync-title": "Confirme su acción para rechazar todas las tareas no sincronizadas",
+    "reject-unsync-title": "Confirma tu acción para rechazar todas las tareas no sincronizadas",
     "confirm": "Confirmar",
     "cancel": "Cancelar"
   },
