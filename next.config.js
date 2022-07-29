@@ -95,6 +95,7 @@ module.exports = withBundleAnalyzer(nextTranslate({
   webpack: (config, { isServer }) => {
     if (isServer) {
       require('./scripts/sitemap-generator');
+      require('./scripts/syllabus');
     }
     if (process.env.NODE_ENV === 'development') {
       config.optimization.minimizer = [];
