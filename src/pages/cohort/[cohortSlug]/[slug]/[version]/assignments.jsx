@@ -307,7 +307,7 @@ const Assignments = () => {
         p="0 0 30px 0"
       >
         <Text size="20px" display="flex" width="auto" fontWeight="400">
-          {t('filter.assignments-length', { count: filteredTasks.length || 0 })}
+          {t('filter.assignments-length', { count: filteredTasks.length || 0, total: contextState.allTasks.length || 0 })}
         </Text>
         <Box display="grid" gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(11rem, 1fr))', md: 'repeat(auto-fill, minmax(18rem, 1fr))' }} gridGap="14px" py="20px">
           {projects.length > 0 ? (
