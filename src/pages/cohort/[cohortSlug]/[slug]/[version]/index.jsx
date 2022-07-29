@@ -228,6 +228,7 @@ const Dashboard = () => {
         setCohortSession({
           ...cohortSession,
           main_technologies: technologiesArray,
+          academy_owner: programData.data.academy_owner,
           bc_id: user.id,
           user_capabilities: userRoles.data.capabilities,
         });
@@ -625,7 +626,7 @@ const Dashboard = () => {
                 width="100%"
               />
             </OnlyFor>
-            {cohortSession?.academy?.white_labeled && (
+            {cohortSession?.academy_owner?.white_labeled && (
               <Box
                 className="white-label"
                 borderRadius="md"
@@ -634,10 +635,13 @@ const Dashboard = () => {
                 justifyContent="space-around"
                 bg={colorMode === 'light' ? '#F2F2F2' || 'blue.light' : 'featuredDark'}
               >
-                <Avatar name={cohortSession.academy.name} src={cohortSession.academy.icon_url} />
+                <Avatar
+                  name={cohortSession.academy_owner.name}
+                  src={cohortSession.academy_owner.icon_url}
+                />
                 <Box className="white-label-text" width="80%">
                   <Text size="md" fontWeight="700" marginBottom="5px">
-                    {cohortSession.academy.name}
+                    {cohortSession.academy_owner.name}
                   </Text>
                   <Text size="sm">
                     {t('whiteLabeledText')}

@@ -32,11 +32,13 @@ const Mentorship = () => {
   const router = useRouter();
   const [sessions, setSessions] = useState([]);
   const [startDate, setStartDate] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   // {
   //   started_after: '2022-05-01',
   //   ended_before: '2022-05-31',
   // }
   useEffect(async () => {
+    setIsLoading(true);
     let filter = {};
     if (startDate) {
       filter = {
@@ -45,7 +47,7 @@ const Mentorship = () => {
       };
     }
     const { data } = await bc.mentorship(filter).getMySessions();
-    console.log(data);
+    setIsLoading(false);
     setSessions(data);
   }, [startDate]);
 
@@ -198,7 +200,7 @@ const Mentorship = () => {
             </tr>
           ))}
         </table>
-        {sessions.length === 0 && (
+        {!isLoading && sessions.length === 0 && (
           <Container
             maxW="none"
             border="1px solid"
