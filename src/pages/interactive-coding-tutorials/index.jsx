@@ -5,43 +5,46 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import getT from 'next-translate/getT';
-import Text from '../common/components/Text';
-import Icon from '../common/components/Icon';
-import FilterModal from '../common/components/FilterModal';
-import TitleContent from '../js_modules/projects/TitleContent';
-import ProjectList from '../js_modules/projects/ProjectList';
-import useFilter from '../common/store/actions/filterAction';
-import Search from '../js_modules/projects/Search';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import Text from '../../common/components/Text';
+import Icon from '../../common/components/Icon';
+import FilterModal from '../../common/components/FilterModal';
+import TitleContent from '../../js_modules/projects/TitleContent';
+import ProjectList from '../../js_modules/projects/ProjectList';
+import useFilter from '../../common/store/actions/filterAction';
+import Search from '../../js_modules/projects/Search';
+import { isWindow } from '../../utils';
 
 export const getStaticProps = async ({ locale, locales }) => {
-  const t = await getT(locale, 'lesson');
+  const t = await getT(locale, 'projects');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const currentLang = locale === 'en' ? 'us' : 'es';
-  const lessons = []; // filtered lessons after removing repeated
-  let arrProjects = []; // incoming lessons
+  const projects = []; // filtered projects after removing repeated
+  let arrProjects = []; // incoming projects
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project&limit=1000`);
   const data = await resp.json();
   // .then((res) => res.json())
   // .catch((err) => console.error(err));
 
-  arrProjects = Object.values(data);
-  if (resp.status !== undefined && resp.status >= 200 && resp.status < 400) {
-    console.log(`SUCCESS: ${arrProjects.length} Lessons fetched for /lessons`);
+  arrProjects = Object.values(data.results);
+  if (resp.status >= 200 && resp.status < 400) {
+    console.log(`SUCCESS: ${arrProjects.length} Projects fetched`);
   } else {
-    console.error(`Error ${resp.status}: fetching Lessons list for /lessons`);
+    console.error(`Error ${resp.status}: fetching Projects list for /interactive-coding-tutorials`);
   }
 
   let technologyTags = [];
   let difficulties = [];
 
   for (let i = 0; i < arrProjects.length; i += 1) {
-    // skip repeated lessons
-    if (lessons.find((p) => arrProjects[i].slug === p.slug)) {
+    // skip repeated projects
+    if (projects.find((p) => arrProjects[i].slug === p.slug)) {
       continue;
     }
-    lessons.push(arrProjects[i]);
+    projects.push(arrProjects[i]);
 
     if (typeof arrProjects[i].technology === 'string') technologyTags.push(arrProjects[i].technology);
     if (Array.isArray(arrProjects[i].technologies)) {
@@ -76,8 +79,8 @@ export const getStaticProps = async ({ locale, locales }) => {
   });
 
   const ogUrl = {
-    en: '/lessons',
-    us: '/lessons',
+    en: '/interactive-coding-tutorials',
+    us: '/interactive-coding-tutorials',
   };
 
   return {
@@ -89,13 +92,13 @@ export const getStaticProps = async ({ locale, locales }) => {
         keywords,
         locales,
         locale,
-        url: ogUrl.en || `/${locale}/lessons`,
-        pathConnector: '/lessons',
+        url: ogUrl.en || `/${locale}/interactive-coding-tutorials`,
+        pathConnector: '/interactive-coding-tutorials',
         card: 'default',
       },
 
       fallback: false,
-      lessons: lessons.filter((project) => project.lang === currentLang).map(
+      projects: projects.filter((project) => project.lang === currentLang).map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
       technologyTags,
@@ -104,20 +107,62 @@ export const getStaticProps = async ({ locale, locales }) => {
   };
 };
 
-const Projects = ({ lessons, technologyTags, difficulties }) => {
-  const { t } = useTranslation('lesson');
+const Projects = ({ projects, technologyTags, difficulties }) => {
+  const { t } = useTranslation('projects');
   const { filteredBy, setProjectFilters } = useFilter();
-  const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const iconColor = useColorModeValue('#FFF', '#283340');
-  const currentFilters = technologies.length
-    + (difficulty === undefined || difficulty.length === 0 ? 0 : 1)
+  const [isLoading, setIsLoading] = useState(false);
+  const [offset, setOffset] = useState(10);
+  const router = useRouter();
+  const projectsFiltered = projects.slice(0, offset);
+
+  const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
+  const techsQuery = router.query.techs;
+  const difficultyQuery = router.query.difficulty;
+
+  const technologiesActived = technologies.length || techsQuery?.split(',')?.length || 0;
+  const difficultyIsActive = () => {
+    if (difficultyQuery?.length > 0) return 1;
+    if (difficulty !== undefined && difficulty?.length > 0) return 1;
+    return 0;
+  };
+
+  const currentFilters = technologiesActived
+    + difficultyIsActive()
     + videoTutorials;
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
+  const handleScroll = () => {
+    const scrollTop = isWindow && document.documentElement.scrollTop;
+    const offsetHeight = isWindow && document.documentElement.offsetHeight;
+    const innerHeight = isWindow && window.innerHeight;
+    if ((innerHeight + scrollTop) <= offsetHeight) return;
+    setIsLoading(true);
+  };
+
+  useEffect(() => {
+    if (offset <= projects.length) {
+      console.log('loading projects...');
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+    console.log('All projects loaded');
+    return () => {};
+  }, [offset]);
+
+  useEffect(() => {
+    if (!isLoading) return;
+    if (offset >= projects.length) setIsLoading(false);
+    setTimeout(() => {
+      setOffset(offset + 10);
+      setIsLoading(false);
+    }, 200);
+  }, [isLoading]);
+
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-      <TitleContent title={t('title')} icon="book" mobile color={iconColor} />
+      <TitleContent title={t('title')} mobile color={iconColor} />
       <Flex
         justifyContent="space-between"
         flex="1"
@@ -127,7 +172,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.900')}
       >
-        <TitleContent title={t('title')} icon="book" color={iconColor} mobile={false} />
+        <TitleContent title={t('title')} mobile={false} color={iconColor} />
 
         <Search placeholder={t('search')} />
 
@@ -146,7 +191,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
         >
           <Icon icon="setting" width="20px" height="20px" style={{ minWidth: '20px' }} />
           <Text textTransform="uppercase" pl="10px">
-            {currentFilters >= 2 ? t('common:filters') : t('common:filter')}
+            {currentFilters >= 2 ? t('filters') : t('filter')}
           </Text>
           {currentFilters >= 1 && (
             <Text
@@ -171,6 +216,8 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
           isModalOpen={isOpen}
           onClose={onClose}
           contextFilter={filteredBy.projectsOptions}
+          cardHeight="348px"
+          isLoading={isLoading}
           setFilter={setProjectFilters}
           technologyTags={technologyTags}
           difficulties={difficulties}
@@ -188,10 +235,11 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
         </Text>
 
         <ProjectList
-          projects={lessons}
-          withoutImage
+          projects={projectsFiltered}
           contextFilter={filteredBy.projectsOptions}
-          projectPath="lesson"
+          isLoading={isLoading}
+          projectPath="interactive-coding-tutorial"
+          pathWithDifficulty
         />
       </Box>
     </Box>
@@ -200,7 +248,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
 
 Projects.propTypes = {
   technologyTags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  lessons: PropTypes.arrayOf(PropTypes.object).isRequired,
+  projects: PropTypes.arrayOf(PropTypes.object).isRequired,
   difficulties: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 

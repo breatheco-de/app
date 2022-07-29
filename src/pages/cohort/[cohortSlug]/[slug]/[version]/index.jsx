@@ -4,8 +4,9 @@ import {
 import {
   Box, Flex, Container, useColorModeValue, Skeleton, useToast,
   Checkbox, Input, InputGroup, InputRightElement, IconButton,
-  keyframes, usePrefersReducedMotion,
+  keyframes, usePrefersReducedMotion, Avatar, useColorMode,
 } from '@chakra-ui/react';
+import { WarningTwoIcon, CloseIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
@@ -35,8 +36,10 @@ const Dashboard = () => {
   const { t } = useTranslation('dashboard');
   const toast = useToast();
   const router = useRouter();
+  const { colorMode } = useColorMode();
   const { contextState, setContextState } = useModuleMap();
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
+  const [showWarning, setShowWarning] = useState(true);
   const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [taskCohortNull, setTaskCohortNull] = useState([]);
@@ -46,7 +49,7 @@ const Dashboard = () => {
   const [searchValue, setSearchValue] = useState(router.query.search || '');
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
-  const { user, choose } = useAuth();
+  const { user, choose, isLoading } = useAuth();
   const [, setSyllabus] = usePersistent('syllabus', []);
   const teacherAndAssistants = studentAndTeachers.filter((st) => st.role === 'TEACHER' || st.role === 'ASSISTANT');
 
@@ -205,7 +208,7 @@ const Dashboard = () => {
 
   // Fetch cohort assignments (lesson, exercise, project, quiz)
   useEffect(() => {
-    if (user && user.active_cohort && cohortSession.cohort_role) {
+    if (!isLoading && user && user.active_cohort && cohortSession.cohort_role) {
       const academyId = user.active_cohort.academy_id;
       const { version } = user.active_cohort;
       const currentAcademy = user.roles.find((role) => role.academy.id === academyId);
@@ -344,105 +347,137 @@ const Dashboard = () => {
   }) : sortedAssignments;
 
   return (
-    <Container maxW="container.xl">
-      <Box width="fit-content" marginTop="18px" marginBottom="48px">
-        <NextChakraLink
-          href="/choose-program"
-          display="flex"
-          flexDirection="row"
-          alignItems="center"
-          onClick={() => {
-            setSortedAssignments([]);
-            setSyllabus([]);
-          }}
-          fontWeight="700"
-          gridGap="12px"
-          color="#0097CF"
-          _focus={{ boxShadow: 'none', color: '#0097CF' }}
+    <>
+      {!user.github && showWarning && (
+        <Container
+          width="100%"
+          background="#FFB718"
+          maxW="none"
+          textAlign="center"
+          padding="5px"
+          position="relative"
         >
-          <Icon
-            icon="arrowLeft"
-            width="20px"
-            height="20px"
-            style={{ marginBottom: '-4px', marginRight: '7px' }}
-            color="#0097CF"
-          />
-          {t('backToChooseProgram')}
-        </NextChakraLink>
-      </Box>
-
-      <ModalInfo
-        isOpen={modalIsOpen}
-        onClose={() => setModalIsOpen(false)}
-        title={t('unsynced.title', { taskLength: taskCohortNull.length })}
-        description={t('unsynced.description')}
-        handlerColorButton="blue"
-        rejectHandler={() => removeUnsyncedTasks()}
-        forceHandler
-        rejectData={{
-          title: t('unsynced.reject-unsync-title'),
-          closeText: t('unsynced.cancel'),
-          handlerText: t('unsynced.confirm'),
-        }}
-        closeText={t('unsynced.unsync')}
-        actionHandler={() => syncTaskWithCohort()}
-        handlerText={t('unsynced.sync')}
-      />
-      <Flex
-        justifyContent="space-between"
-        flexDirection={{
-          base: 'column', sm: 'column', md: 'row', lg: 'row',
-        }}
-      >
-        <Box width="100%" minW={{ base: 'auto', md: 'clamp(300px, 60vw, 770px)' }}>
-          {(cohortSession?.syllabus_version?.name || cohortProgram.name) ? (
-            <Heading as="h1" size="xl">
-              {cohortSession.syllabus_version.name || cohortProgram.name}
-            </Heading>
-          ) : (
-            <Skeleton
-              startColor={skeletonStartColor}
-              endColor={skeletonEndColor}
-              height="60px"
-              width="100%"
-              borderRadius="10px"
-            />
-          )}
-
-          {cohortSession?.main_technologies ? (
-            <TagCapsule containerStyle={{ padding: '6px 18px 6px 18px' }} tags={cohortSession.main_technologies} separator="/" />
-          ) : (
-            <SimpleSkeleton
-              height="34px"
-              width="290px"
-              padding="6px 18px 6px 18px"
-              margin="18px 0"
-              borderRadius="30px"
-            />
-          )}
+          <Text color="#3A3A3A" fontWeight="700" maxW={['80%', '80%', '60%', '60%']} margin="auto">
+            <WarningTwoIcon verticalAlign="middle" />
+            {'  '}
+            {t('common:github-warning')}
+          </Text>
           <Box
-            display={{ base: 'flex', md: 'none' }}
+            position="absolute"
+            top="0"
+            bottom="0"
+            right="10px"
+            _hover={{ cursor: 'pointer' }}
+            onClick={() => setShowWarning(false)}
+            aria-label={t('common:close')}
+            display="flex"
             flexDirection="column"
-            gridGap="30px"
-            // minWidth={{ base: 'auto', md: 'clamp(250px, 30vw, 380px)' }}
+            justifyContent="center"
           >
-            <OnlyFor onlyMember cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
-              <TeacherSidebar
-                title={t('teacher-sidebar.actions')}
-                user={user}
-                students={onlyStudentsActive}
-                sortedAssignments={sortedAssignments}
+            <CloseIcon />
+          </Box>
+        </Container>
+      )}
+      <Container maxW="container.xl">
+        <Box width="fit-content" marginTop="18px" marginBottom="48px">
+          <NextChakraLink
+            href="/choose-program"
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            onClick={() => {
+              setSortedAssignments([]);
+              setSyllabus([]);
+            }}
+            fontWeight="700"
+            gridGap="12px"
+            color="#0097CF"
+            _focus={{ boxShadow: 'none', color: '#0097CF' }}
+          >
+            <Icon
+              icon="arrowLeft"
+              width="20px"
+              height="20px"
+              style={{ marginBottom: '-4px', marginRight: '7px' }}
+              color="#0097CF"
+            />
+            {t('backToChooseProgram')}
+          </NextChakraLink>
+        </Box>
+
+        <ModalInfo
+          isOpen={modalIsOpen}
+          onClose={() => setModalIsOpen(false)}
+          title={t('unsynced.title', { taskLength: taskCohortNull.length })}
+          description={t('unsynced.description')}
+          handlerColorButton="blue"
+          rejectHandler={() => removeUnsyncedTasks()}
+          forceHandler
+          rejectData={{
+            title: t('unsynced.reject-unsync-title'),
+            closeText: t('unsynced.cancel'),
+            handlerText: t('unsynced.confirm'),
+          }}
+          closeText={t('unsynced.unsync')}
+          actionHandler={() => syncTaskWithCohort()}
+          handlerText={t('unsynced.sync')}
+        />
+        <Flex
+          justifyContent="space-between"
+          flexDirection={{
+            base: 'column', sm: 'column', md: 'row', lg: 'row',
+          }}
+        >
+          <Box width="100%" minW={{ base: 'auto', md: 'clamp(300px, 60vw, 770px)' }}>
+            {(cohortSession?.syllabus_version?.name || cohortProgram.name) ? (
+              <Heading as="h1" size="xl">
+                {cohortSession?.syllabus_version?.name || cohortProgram?.name}
+              </Heading>
+            ) : (
+              <Skeleton
+                startColor={skeletonStartColor}
+                endColor={skeletonEndColor}
+                height="60px"
+                width="100%"
+                borderRadius="10px"
+              />
+            )}
+
+            {cohortSession?.main_technologies ? (
+              <TagCapsule containerStyle={{ padding: '6px 18px 6px 18px' }} tags={cohortSession.main_technologies} separator="/" />
+            ) : (
+              <SimpleSkeleton
+                height="34px"
+                width="290px"
+                padding="6px 18px 6px 18px"
+                margin="18px 0"
+                borderRadius="30px"
+              />
+            )}
+            <Box
+              display={{ base: 'flex', md: 'none' }}
+              flexDirection="column"
+              gridGap="30px"
+            >
+              <OnlyFor onlyMember cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
+                <TeacherSidebar
+                  title={t('teacher-sidebar.actions')}
+                  user={user}
+                  students={onlyStudentsActive}
+                  sortedAssignments={sortedAssignments}
+                  width="100%"
+                />
+              </OnlyFor>
+              {cohortSession?.kickoff_date && (
+              <CohortSideBar
+                teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
+                cohort={cohortSession}
+                studentAndTeachers={studentAndTeachers}
+                cohortCity={cohortSession?.name}
                 width="100%"
               />
-            </OnlyFor>
-            <CohortSideBar
-              teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
-              cohort={cohortSession}
-              studentAndTeachers={studentAndTeachers}
-              cohortCity={cohortSession?.name}
-              width="100%"
-            />
-            {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
+              )}
+              {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
               <SupportSidebar
                 title={supportSideBar.title}
                 subtitle={supportSideBar.description}
@@ -450,9 +485,9 @@ const Dashboard = () => {
                 actionButtons={supportSideBar.actionButtons}
                 width="100%"
               />
-            )}
-          </Box>
-          {
+              )}
+            </Box>
+            {
             cohortSession.current_module && dailyModuleData && (
               <CallToAction
                 background="blue.default"
@@ -466,138 +501,160 @@ const Dashboard = () => {
             )
           }
 
-          <Box marginTop="36px">
-            <ProgressBar
-              taskTodo={taskTodo}
-              progressText={t('progressText')}
-              width="100%"
-            />
-          </Box>
+            <Box marginTop="36px">
+              <ProgressBar
+                taskTodo={taskTodo}
+                progressText={t('progressText')}
+                width="100%"
+              />
+            </Box>
 
-          <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="32px" />
+            <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="32px" />
 
-          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} justifyContent="space-between" gridGap="18px">
-            <Heading as="h2" fontWeight="900" size="15px" textTransform="uppercase">{t('moduleMap')}</Heading>
+            <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} justifyContent="space-between" gridGap="18px">
+              <Heading as="h2" fontWeight="900" size="15px" textTransform="uppercase">{t('moduleMap')}</Heading>
 
-            <Box display="flex" alignItems="center">
-              <InputGroup>
-                <Input
-                  borderRadius="25px"
-                  type="text"
-                  value={searchValue}
-                  backgroundColor={commonBackground}
-                  style={{
-                    cursor: 'default',
-                    opacity: showSearch ? 1 : 0,
-                  }}
-                  disabled={!showSearch}
-                  animation={showSearch ? slideLeftAnimation : ''}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                  color={commonInputColor}
-                  _focus={{
-                    color: commonInputActiveColor,
-                    backgroundColor: commonActiveBackground,
-                  }}
-                  _hover={{
-                    color: commonInputActiveColor,
-                    backgroundColor: commonActiveBackground,
-                  }}
-                />
-                <InputRightElement>
-                  <IconButton onClick={() => setShowSearch(!showSearch)} pr="8px" background="transparent" _hover={{ background: 'transparent' }} _active={{ background: 'transparent' }} aria-label="Search in modules" icon={<Icon icon="search" color={showSearch ? iconColor : ''} width="18px" height="18px" />} />
-                </InputRightElement>
-              </InputGroup>
-              {modulesExists && (
+              <Box display="flex" alignItems="center">
+                <InputGroup>
+                  <Input
+                    borderRadius="25px"
+                    type="text"
+                    value={searchValue}
+                    backgroundColor={commonBackground}
+                    style={{
+                      cursor: 'default',
+                      opacity: showSearch ? 1 : 0,
+                    }}
+                    disabled={!showSearch}
+                    animation={showSearch ? slideLeftAnimation : ''}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    color={commonInputColor}
+                    _focus={{
+                      color: commonInputActiveColor,
+                      backgroundColor: commonActiveBackground,
+                    }}
+                    _hover={{
+                      color: commonInputActiveColor,
+                      backgroundColor: commonActiveBackground,
+                    }}
+                  />
+                  <InputRightElement>
+                    <IconButton onClick={() => setShowSearch(!showSearch)} pr="8px" background="transparent" _hover={{ background: 'transparent' }} _active={{ background: 'transparent' }} aria-label="Search in modules" icon={<Icon icon="search" color={showSearch ? iconColor : ''} width="18px" height="18px" />} />
+                  </InputRightElement>
+                </InputGroup>
+                {modulesExists && (
                 <Checkbox onChange={(e) => setShowPendingTasks(e.target.checked)} textAlign="right" gridGap="10px" display="flex" flexDirection="row-reverse" color={commonFontColor}>
                   {t('modules.show-pending-tasks')}
                 </Checkbox>
-              )}
+                )}
+              </Box>
             </Box>
-          </Box>
-          <Box
-            id="module-map"
-            marginTop="30px"
-            gridGap="24px"
-            display="flex"
-            flexDirection="column"
-          >
-            {sortedAssignments.length >= 1 ? (
-              <>
-                {sortedAssignmentsSearched.map((assignment, i) => {
-                  const {
-                    label, description, filteredModules, modules, filteredModulesByPending,
-                  } = assignment;
+            <Box
+              id="module-map"
+              marginTop="30px"
+              gridGap="24px"
+              display="flex"
+              flexDirection="column"
+            >
+              {sortedAssignments.length >= 1 ? (
+                <>
+                  {sortedAssignmentsSearched.map((assignment, i) => {
+                    const {
+                      label, description, filteredModules, modules, filteredModulesByPending,
+                    } = assignment;
 
-                  const filteredModulesSearched = searchValue.length > 0
-                    ? filteredModules.filter(
-                      (l) => includesToLowerCase(l.title, searchValue),
-                    )
-                    : filteredModules;
+                    const filteredModulesSearched = searchValue.length > 0
+                      ? filteredModules.filter(
+                        (l) => includesToLowerCase(l.title, searchValue),
+                      )
+                      : filteredModules;
 
-                  const filteredModulesByPendingSearched = searchValue.length > 0
-                    ? filteredModulesByPending.filter(
-                      (l) => includesToLowerCase(l.title, searchValue),
-                    )
-                    : filteredModulesByPending;
+                    const filteredModulesByPendingSearched = searchValue.length > 0
+                      ? filteredModulesByPending.filter(
+                        (l) => includesToLowerCase(l.title, searchValue),
+                      )
+                      : filteredModulesByPending;
 
-                  const index = i;
-                  return (
-                    <ModuleMap
-                      key={index}
-                      userId={user.id}
-                      cohortSession={cohortSession}
-                      taskCohortNull={taskCohortNull}
-                      contextState={contextState}
-                      setContextState={setContextState}
-                      index={index}
-                      title={label}
-                      slug={slugify(label)}
-                      searchValue={searchValue}
-                      description={description}
-                      taskTodo={taskTodo}
-                      modules={modules}
-                      filteredModules={filteredModulesSearched}
-                      showPendingTasks={showPendingTasks}
-                      filteredModulesByPending={filteredModulesByPendingSearched}
-                    />
-                  );
-                })}
-                {sortedAssignmentsSearched.length <= 0 && (
+                    const index = i;
+                    return (
+                      <ModuleMap
+                        key={index}
+                        userId={user.id}
+                        cohortSession={cohortSession}
+                        taskCohortNull={taskCohortNull}
+                        contextState={contextState}
+                        setContextState={setContextState}
+                        index={index}
+                        title={label}
+                        slug={slugify(label)}
+                        searchValue={searchValue}
+                        description={description}
+                        taskTodo={taskTodo}
+                        modules={modules}
+                        filteredModules={filteredModulesSearched}
+                        showPendingTasks={showPendingTasks}
+                        filteredModulesByPending={filteredModulesByPendingSearched}
+                      />
+                    );
+                  })}
+                  {sortedAssignmentsSearched.length <= 0 && (
                   <Text size="l">
                     {t('modules.search-not-found')}
                   </Text>
-                )}
-              </>
-            ) : <ModuleMapSkeleton />}
+                  )}
+                </>
+              ) : <ModuleMapSkeleton />}
+
+            </Box>
 
           </Box>
-
-        </Box>
-        <Box width="5rem" />
-        <Box
-          display={{ base: 'none', md: 'flex' }}
-          flexDirection="column"
-          gridGap="30px"
-          maxWidth="380px"
-          minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
-        >
-          <OnlyFor onlyMember cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
-            <TeacherSidebar
-              title={t('teacher-sidebar.actions')}
-              user={user}
-              students={onlyStudentsActive}
-              sortedAssignments={sortedAssignments}
+          <Box width="5rem" />
+          <Box
+            display={{ base: 'none', md: 'flex' }}
+            flexDirection="column"
+            gridGap="30px"
+            maxWidth="380px"
+            minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
+          >
+            <OnlyFor onlyMember cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
+              <TeacherSidebar
+                title={t('teacher-sidebar.actions')}
+                user={user}
+                students={onlyStudentsActive}
+                sortedAssignments={sortedAssignments}
+                width="100%"
+              />
+            </OnlyFor>
+            {cohortSession?.academy?.white_labeled && (
+              <Box
+                className="white-label"
+                borderRadius="md"
+                padding="10px"
+                display="flex"
+                justifyContent="space-around"
+                bg={colorMode === 'light' ? '#F2F2F2' || 'blue.light' : 'featuredDark'}
+              >
+                <Avatar name={cohortSession.academy.name} src={cohortSession.academy.icon_url} />
+                <Box className="white-label-text" width="80%">
+                  <Text size="md" fontWeight="700" marginBottom="5px">
+                    {cohortSession.academy.name}
+                  </Text>
+                  <Text size="sm">
+                    {t('whiteLabeledText')}
+                  </Text>
+                </Box>
+              </Box>
+            )}
+            {cohortSession?.kickoff_date && (
+            <CohortSideBar
+              teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
+              studentAndTeachers={studentAndTeachers}
+              cohort={cohortSession}
+              cohortCity={cohortSession?.name}
               width="100%"
             />
-          </OnlyFor>
-          <CohortSideBar
-            teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
-            studentAndTeachers={studentAndTeachers}
-            cohort={cohortSession}
-            cohortCity={cohortSession?.name}
-            width="100%"
-          />
-          {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
+            )}
+            {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
             <SupportSidebar
               title={supportSideBar.title}
               subtitle={supportSideBar.description}
@@ -605,10 +662,11 @@ const Dashboard = () => {
               actionButtons={supportSideBar.actionButtons}
               width="100%"
             />
-          )}
-        </Box>
-      </Flex>
-    </Container>
+            )}
+          </Box>
+        </Flex>
+      </Container>
+    </>
   );
 };
 

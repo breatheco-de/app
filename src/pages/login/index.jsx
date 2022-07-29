@@ -11,6 +11,7 @@ import Login from '../../common/components/Forms/LogIn';
 import Register from '../../common/components/Forms/Register';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
+import { isWindow } from '../../utils';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'login');
@@ -40,19 +41,26 @@ export const getStaticProps = async ({ locale, locales }) => {
 function login() {
   const { t } = useTranslation('login');
   const { user } = useAuth();
+  const redirect = isWindow && localStorage.getItem('redirect');
   const router = useRouter();
   const fontColor = useColorModeValue('gray.default', 'gray.400');
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
 
   useEffect(() => {
     if (user !== null && user !== undefined) {
-      router.push('/choose-program');
+      if (redirect && redirect.length > 0 && isWindow) {
+        router.push(redirect);
+        localStorage.removeItem('redirect');
+      } else {
+        router.push('/choose-program');
+      }
+      // router.back();
     }
   }, [user]);
 
   return (
-    <Stack minH={{ base: 'auto', md: '100vh' }} direction={{ md: 'row' }}>
-      <Flex p={{ base: '20px 0', sm: 8 }} flex={1} align="center" justify="center">
+    <Stack minH={{ base: 'auto', md: '93vh' }} direction={{ md: 'row' }}>
+      <Flex p="5vw 0 20px 0" flex={1} justify="center">
         <Stack spacing={4} w="full" maxW="md">
           <Box display={{ base: 'none', md: 'block' }} align="center" justify="center">
             <Icon icon="logoModern" width="200px" height="100px" />

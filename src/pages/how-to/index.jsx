@@ -6,7 +6,7 @@ import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import FilterModal from '../../common/components/FilterModal';
 
 import Icon from '../../common/components/Icon';
@@ -15,6 +15,7 @@ import useFilter from '../../common/store/actions/filterAction';
 import ProjectList from '../../js_modules/projects/ProjectList';
 import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
+import { isWindow } from '../../utils';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'how-to');
@@ -22,7 +23,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const howTos = []; // filtered howTos after removing repeated
   let arrHowTos = []; // incoming howTos
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE&limit=1000`);
   const data = await resp.json();
   // .then((res) => res.json())
   // .catch((err) => console.log(err));
@@ -31,7 +32,7 @@ export const getStaticProps = async ({ locale, locales }) => {
     es: 'es',
   };
 
-  arrHowTos = Object.values(data);
+  arrHowTos = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${arrHowTos.length} How To's fetched`);
   } else {
@@ -97,7 +98,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
       // page props
       fallback: false,
-      data: data.filter((l) => l.lang === currentLang[locale]).map(
+      data: arrHowTos.filter((l) => l.lang === currentLang[locale]).map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
       technologyTags,
@@ -111,11 +112,26 @@ export default function HowTo({ data, technologyTags, difficulties }) {
   const router = useRouter();
   const { filteredBy, setHowToFilters } = useFilter();
   const iconColor = useColorModeValue('#FFF', '#283340');
+  const [isLoading, setIsLoading] = useState(false);
+  const [offset, setOffset] = useState(10);
+
+  const howTosFiltered = data.slice(0, offset);
+
   const { technologies, difficulty, videoTutorials } = filteredBy.howToOptions;
 
-  const currentFilters = technologies.length
-  + (difficulty === undefined || difficulty.length === 0 ? 0 : 1)
-  + videoTutorials;
+  const techsQuery = router.query.techs;
+  const difficultyQuery = router.query.difficulty;
+
+  const technologiesActived = technologies.length || techsQuery?.split(',')?.length || 0;
+  const difficultyIsActive = () => {
+    if (difficultyQuery?.length > 0) return 1;
+    if (difficulty !== undefined && difficulty?.length > 0) return 1;
+    return 0;
+  };
+
+  const currentFilters = technologiesActived
+    + difficultyIsActive()
+    + videoTutorials;
 
   let initialSearchValue;
   useEffect(() => {
@@ -123,6 +139,33 @@ export default function HowTo({ data, technologyTags, difficulties }) {
   }, [initialSearchValue]);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
+
+  const handleScroll = () => {
+    const scrollTop = isWindow && document.documentElement.scrollTop;
+    const offsetHeight = isWindow && document.documentElement.offsetHeight;
+    const innerHeight = isWindow && window.innerHeight;
+    if ((innerHeight + scrollTop) <= offsetHeight) return;
+    setIsLoading(true);
+  };
+
+  useEffect(() => {
+    if (offset <= data.length) {
+      console.log('loading how to\'s...');
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+    console.log('All how to\'s loaded');
+    return () => {};
+  }, [offset]);
+
+  useEffect(() => {
+    if (!isLoading) return;
+    if (offset >= data.length) setIsLoading(false);
+    setTimeout(() => {
+      setOffset(offset + 10);
+      setIsLoading(false);
+    }, 200);
+  }, [isLoading]);
 
   return (
     <>
@@ -195,8 +238,9 @@ export default function HowTo({ data, technologyTags, difficulties }) {
           </Text>
         )}
         <ProjectList
-          projects={data}
+          projects={howTosFiltered}
           contextFilter={filteredBy.howToOptions}
+          isLoading={isLoading}
           projectPath="how-to"
           exampleImage="/static/images/coding-notebook.png"
         />

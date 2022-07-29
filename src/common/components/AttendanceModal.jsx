@@ -45,7 +45,7 @@ const AttendanceModal = ({
   useEffect(() => {
     setDefaultDay(currentCohortDay);
   }, [currentCohortDay]);
-  // err.response.status
+
   const saveCohortAttendancy = () => {
     const cohortSlug = cohortSession.slug;
     bc.activity()

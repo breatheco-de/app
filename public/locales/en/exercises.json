@@ -9,10 +9,15 @@
   "search": "Search Exercises",
   "filter": "Filter",
   "filters": "Filters",
+  "created": "Created by:",
   "description": "The following exercises explain different programming concepts and have been published by members of BreatheCode, now 4Geeks, search for an exercise using the filters",
   "backToExercises": "Back to Exercises",
   "direct-access-request": "Direct access request",
   "direct-access-request-description": "Enter your information and receive instant access",
   "get-instant-access": "Get instant access",
-  "average-duration": "Average Duration"
+  "average-duration": "Average Duration",
+  "landing-technology": {
+    "title": "{{technology}} Interactive tutorial exercises",
+    "subTitle": "Practicar {{technology}}"
+  }
 }

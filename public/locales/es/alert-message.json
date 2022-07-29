@@ -32,10 +32,18 @@
   "request-apply-success": "¡Gracias por tu solicitud!",
   "email-will-be-sent": "Un correo electrónico te será enviado pronto",
   "error-fetching-role": "Hubo un error al intentar encontrar el rol \"{{role}}\"",
+  "error-fetching-cohorts": "Se ha producido un error al obtener las cohortes",
+  "error-fetching-tasks": "Se ha producido un error al obtener las tareas",
   "error-fetching-alumni-geeks": "Error al obtener exalumnos",
   "github-account-removed": "Tu cuenta de GitHub ha sido removido con éxito",
   "error-removing-github": "Hubo un error al intentar remover tu cuenta de GitHub",
   "any-removed": "{{any}} removido!",
   "something-went-wrong": "Algo salió mal",
-  "something-went-wrong-with": "Algo salió mal con {{property}}"
+  "something-went-wrong-with": "Algo salió mal con {{property}}",
+  "review-url-error": "Algo salió mal al obtener el URL de tarea",
+  "review-assignment-error": "Algo salió mal al modificar la tarea",
+  "review-assignment-approve": "La tarea ha sido aprovada con éxito",
+  "review-assignment-updated": "Tarea modificada exitosamente",
+  "review-assignment-reject": "La tarea ha sido rechazada con éxito",
+  "review-assignment-ignored-task": "Se ha ignorado la tarea con éxito"
 }

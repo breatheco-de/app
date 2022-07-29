@@ -7,10 +7,11 @@ const ButtonStyles = {
   sizes: {},
   // styles for different visual variants ("outline", "solid", more...)
   variants: {
-    default: () => ({
+    default: (props) => ({
       bg: 'blue.default',
       color: 'white',
       border: '0',
+      height: props.height || '40px',
       borderRadius: '3px',
       fontSize: '13px',
       letterSpacing: '0.05em',
@@ -63,6 +64,7 @@ const ButtonStyles = {
       bg: props.colorMode === 'dark' ? 'featuredDark' : 'black',
       color: 'white',
       border: '0',
+      height: props.height || '40px',
       borderRadius: '3px',
       fontSize: '13px',
       letterSpacing: '0.05em',
@@ -91,29 +93,49 @@ const ButtonStyles = {
       color: props.colorMode === 'dark' ? 'white' : 'black',
       border: '1px solid',
       borderColor: props.borderColor || props.colorMode === 'dark' ? 'white' : 'black',
+      height: props.height || '40px',
       borderRadius: '3px',
       fontSize: '13px',
       letterSpacing: '0.05em',
       _hover: {
-        bg: 'none',
-        // border: '1px solid black',
+        bg: props.colorMode === 'light' ? 'gray.light' : 'gray.700',
         opacity: 1,
         _disabled: {
           bg: '#EBEBEB',
-          border: 0,
         },
       },
-      // _active: {
-      //   bg: 'blue',
-      // },
       _disabled: {
         bg: '#EBEBEB',
-        border: 0,
+        border: '1px solid',
+        borderColor: props.borderColor || props.colorMode === 'dark' ? 'white' : 'black',
         color: 'gray.dark',
         opacity: 1,
         _hover: {
           opacity: 0.7,
         },
+      },
+      _active: {
+        bg: props.colorMode === 'light' ? 'gray.light' : 'gray.700',
+      },
+    }),
+
+    link: (props) => ({
+      bg: 'none',
+      color: 'blue.default',
+      height: props.height || '40px',
+      border: '0',
+      borderRadius: '3px',
+      fontSize: '13px',
+      letterSpacing: '0.05em',
+      _hover: {
+        bg: 'none',
+        textDecoration: 'underline',
+        _disabled: {
+          bgColor: 'none',
+        },
+      },
+      _active: {
+        color: 'blue.default',
       },
     }),
   },

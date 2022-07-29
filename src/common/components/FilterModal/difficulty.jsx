@@ -3,6 +3,8 @@ import {
   Box, Flex, Tooltip, useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import Text from '../Text';
 
 const DifficultySection = ({
@@ -15,15 +17,26 @@ const DifficultySection = ({
   setDifficulty,
   setFilter,
 }) => {
+  const router = useRouter();
+  const [queryPosition, setQueryPosition] = useState(null);
+  const defaultDifficulties = ['beginner', 'easy', 'intermediate', 'hard'];
+  const difficultyExists = defaultDifficulties.some((l) => difficulties.includes(l));
+
+  useEffect(() => {
+    const difficultyQuery = router.query.difficulty;
+    if (difficultyQuery !== null) {
+      const difficultyQueryIndex = defaultDifficulties.findIndex((difficulty) => difficulty === difficultyQuery);
+      if (difficultyQueryIndex !== -1) setQueryPosition(difficultyQueryIndex);
+    }
+  }, [router.query.difficulty]);
+
   const verifyDifficultyisAvailable = (index, position, difficulty, difficultiesArray) => {
-    if (index === position && difficultiesArray[index] === difficulty) {
+    if ((position !== null ? index === position : index === queryPosition)
+        && difficultiesArray[index] === difficulty) {
       return true;
     }
     return false;
   };
-
-  const defaultDifficulties = ['beginner', 'easy', 'intermediate', 'hard'];
-  const difficultyExists = defaultDifficulties.some((l) => difficulties.includes(l));
 
   const getBackgroundColor = (difficultyIsMatch, isSelected) => {
     if (difficultyIsMatch && isSelected) return 'blue.default';
@@ -88,7 +101,7 @@ const DifficultySection = ({
           );
         })}
       </Box>
-      {typeof difficultyPosition === 'number' && difficultyPosition !== null && (
+      {(difficultyPosition !== null || queryPosition !== null) && (
         <Flex width="100%" justifyContent="right">
           <Box
             as="button"
@@ -98,6 +111,13 @@ const DifficultySection = ({
             fontSize="14px"
             onClick={() => {
               setDifficulty(null);
+              setQueryPosition(null);
+              router.push({
+                query: {
+                  ...router.query,
+                  difficulty: null,
+                },
+              });
               setFilter({
                 ...contextFilter,
                 difficulty: [],

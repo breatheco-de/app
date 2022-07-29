@@ -166,6 +166,7 @@ const DesktopItem = ({ item }) => {
                       } = child;
                       return (
                         <Tab
+                          key={`${label}-${href}`}
                           _selected={{ borderLeft: '4px solid', borderColor: 'blue.default', opacity: 1 }}
                           // my="2px"
                           opacity={0.7}
@@ -202,7 +203,7 @@ const DesktopItem = ({ item }) => {
                     } = child;
 
                     return (
-                      <TabPanel padding={0}>
+                      <TabPanel key={description} padding={0}>
                         {description && (
                           <CustomText fontSize="14px" pb="15px">
                             {description}
@@ -211,6 +212,7 @@ const DesktopItem = ({ item }) => {
                         {subMenu.length > 0 && subMenu.map((l) => (
                           <NextChakraLink
                             href={l.href}
+                            key={l.href}
                             // role="group"
                             display="block"
                             p={2}

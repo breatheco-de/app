@@ -20,6 +20,7 @@ import Heading from '../Heading';
 import Text from '../Text';
 import useAuth from '../../hooks/useAuth';
 import LanguageSelector from '../LanguageSelector';
+import { isWindow } from '../../../utils';
 
 const NavbarWithSubNavigation = ({ haveSession, translations }) => {
   const { t } = useTranslation('navbar');
@@ -41,7 +42,14 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
   const linkColor = useColorModeValue('gray.600', 'gray.200');
   const fontColor = useColorModeValue('black', 'gray.200');
 
+  const query = isWindow && new URLSearchParams(window.location.search || '');
+  const queryToken = isWindow && query.get('token')?.split('?')[0];
+  const queryTokenExists = isWindow && queryToken !== undefined && queryToken;
+  const sessionExists = haveSession || queryTokenExists;
+
   const { selectedProgramSlug } = cohortSession;
+
+  const programSlug = cohortSession?.selectedProgramSlug || '/choose-program';
 
   useEffect(() => {
     setITEMS(t('ITEMS', {
@@ -135,18 +143,18 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
             height="auto"
             aria-label="Toggle Navigation"
           />
-          <NextChakraLink href={haveSession ? cohortSession.selectedProgramSlug : '/'} alignSelf="center" display="flex">
+          <NextChakraLink href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
             <Icon icon="logoModern" width="90px" height="20px" />
           </NextChakraLink>
         </Flex>
 
         <Flex flex={{ base: 1 }} display={{ base: 'none', md: 'flex' }} justify={{ base: 'center', md: 'start' }}>
-          <NextChakraLink href={haveSession ? cohortSession.selectedProgramSlug : '/'} alignSelf="center" display="flex">
+          <NextChakraLink href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
             <Icon icon="logoModern" width="90px" height="20px" />
           </NextChakraLink>
 
           <Flex display="flex" ml={10}>
-            <DesktopNav NAV_ITEMS={ITEMS} haveSession={haveSession} readSyllabus={readSyllabus} />
+            <DesktopNav NAV_ITEMS={ITEMS} haveSession={sessionExists} readSyllabus={readSyllabus} />
           </Flex>
         </Flex>
 
@@ -175,7 +183,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
             }
           />
 
-          {haveSession ? (
+          {sessionExists ? (
             <Popover
               id="Avatar-Hover"
               isOpen={settingsOpen}
@@ -331,7 +339,9 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                         gridGap="10px"
                         onClick={() => {
                           setSettingsOpen(false);
-                          logout();
+                          setTimeout(() => {
+                            logout();
+                          }, 150);
                         }}
                       >
                         <Icon icon="logout" width="20px" height="20px" />
@@ -380,7 +390,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
       <Collapse in={isOpen} animateOpacity>
         <MobileNav
           NAV_ITEMS={ITEMS}
-          haveSession={haveSession}
+          haveSession={sessionExists}
           translations={translations}
           readSyllabus={readSyllabus}
         />

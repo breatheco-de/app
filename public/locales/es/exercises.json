@@ -9,10 +9,15 @@
   "search": "Buscar Ejercicios",
   "filter": "Filtro",
   "filters": "Filtros",
+  "created": "Creado por:",
   "description": "Los siguientes ejercicios explican conceptos diferentes de programación y han sido publicados por miembros de BreatheCode, ahora 4Geeks, busca un ejercicio usando los filtros",
   "backToExercises": "Volver a ejercicios",
   "direct-access-request": "Solicitud de acceso directo",
   "direct-access-request-description": "Ingresa tu información y recibirás acceso instantáneo",
   "get-instant-access": "Obtener acceso",
-  "average-duration": "Duración promedio"
+  "average-duration": "Duración promedio",
+  "landing-technology": {
+    "title": "{{technology}} Ejercicios y tutoriales interactivos",
+    "subTitle": "Practice {{technology}}"
+  }
 }

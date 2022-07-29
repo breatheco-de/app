@@ -2,7 +2,7 @@ import axios from '../../axios';
 
 const host = `${process.env.BREATHECODE_HOST}/v1`;
 const breathecode = {
-  fetcher: (url) => axios.get(url).then((res) => res.data),
+  get: (url) => axios.get(url),
   auth: () => {
     const url = `${host}/auth`;
     return {
@@ -21,10 +21,14 @@ const breathecode = {
     };
   },
 
-  admissions: () => {
+  admissions: (query = {}) => {
     const url = `${host}/admissions`;
+    const qs = Object.keys(query)
+      .map((key) => `${key}=${query[key]}`)
+      .join('&');
     return {
       me: () => axios.get(`${url}/user/me`),
+      cohorts: () => axios.get(`${url}/cohort/all?${qs}`),
     };
   },
 
@@ -40,10 +44,18 @@ const breathecode = {
 
   todo: (query = {}) => {
     const url = `${host}/assignment`;
+    // .map((key) => (query[key] !== null ? `${key}=${query[key]}` : ''))
     const qs = Object.keys(query)
-      .map((key) => `${key}=${query[key]}`)
+      .map((key) => (query[key] !== undefined ? `${key}=${query[key]}` : ''))
       .join('&');
     return {
+      get: () => axios.get(`${url}/task/?${qs}`),
+      getAssignments: (args) => axios.get(`${url}/academy/cohort/${args.id}/task?${qs}`),
+      deliver: (args) => axios.get(`${url}/task/${args.id}/deliver`, {
+        headers: {
+          academy: args.academyId,
+        },
+      }),
       // getTaskByStudent: (cohortId) => axios.get(`${url}/user/me/task?cohort=${cohortId}`),
       getTaskByStudent: () => axios.get(`${url}/user/me/task?${qs}`),
       add: (args) => axios.post(`${url}/user/me/task`, args),
@@ -62,7 +74,7 @@ const breathecode = {
     return {
       get: (id) => axios.get(`${url}/cohort/${id}`),
       getFilterStudents: () => axios.get(`${url}/cohort/user?${qs}`),
-      getStudents: (cohortId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}`),
+      getStudents: (cohortId, academyId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}${academyId ? `&academy=${academyId}` : ''}`),
       update: (id, args) => axios.put(`${url}/cohort/${id}`, args),
     };
   },
@@ -73,23 +85,45 @@ const breathecode = {
       get: () => axios.get(`${url}/user/me/task`),
     };
   },
+  feedback: () => {
+    const url = `${host}/feedback`;
+    return {
+      getSurvey: (id) => axios.get(`${url}/user/me/survey/${id}/questions`),
+      sendVote: (arg) => axios.put(`${url}/user/me/answer/${arg.entity_id}`, { ...arg }),
+    };
+  },
   mentorship: (query = {}) => {
     const url = `${host}/mentorship/academy`;
+    const urlNoAcademy = `${host}/mentorship`;
     const qs = Object.keys(query)
       .map((key) => `${key}=${query[key]}`)
       .join('&');
     return {
       getService: () => axios.get(`${url}/service?status=ACTIVE`),
       getMentor: () => axios.get(`${url}/mentor?${qs}`),
+      getMySessions: () => axios.get(`${urlNoAcademy}/user/me/session?${qs}`),
     };
   },
-  lesson: (query) => {
-    const url = `${host}/registry/asset`;
+
+  marketing: (query = {}) => {
+    const url = `${host}/marketing`;
+    // eslint-disable-next-line no-unused-vars
     const qs = Object.keys(query)
       .map((key) => `${key}=${query[key]}`)
       .join('&');
     return {
-      get: () => axios.get(`${url}?${qs}`),
+      lead: (data) => axios.post(`${url}/lead`, data),
+    };
+  },
+
+  lesson: (query = {}) => {
+    const url = `${host}/registry`;
+    const qs = Object.keys(query)
+      .map((key) => `${key}=${query[key]}`)
+      .join('&');
+    return {
+      get: () => axios.get(`${url}/asset?${qs}`),
+      techs: () => axios.get(`${url}/academy/technology?${qs}`),
     };
   },
   activity: () => {

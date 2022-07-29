@@ -8,10 +8,9 @@ import { Field, Form, Formik } from 'formik';
 // import Icon from '../../common/components/Icon';
 import PropTypes from 'prop-types';
 import { memo, useEffect, useState } from 'react';
-import { useCookies } from 'react-cookie';
 import { useRouter } from 'next/router';
 import validationSchemas from './Forms/validationSchemas';
-import { objectAreNotEqual } from '../../utils';
+import { getStorageItem, objectAreNotEqual } from '../../utils';
 import bc from '../services/breathecode';
 import { usePersistent } from '../hooks/usePersistent';
 import Icon from './Icon';
@@ -22,7 +21,6 @@ const ProfileForm = ({ profile }) => {
   const router = useRouter();
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [, setProfile] = usePersistent('profile', {});
-  const [cookies] = useCookies(['accessToken']);
   const inputColor = useColorModeValue('gray.600', 'gray.200');
   const bgColor = useColorModeValue('white', 'darkTheme');
   const inputDisabledColor = useColorModeValue('gray.600', 'gray.350');
@@ -30,6 +28,7 @@ const ProfileForm = ({ profile }) => {
   const backgroundDisabledColor = useColorModeValue('gray.250', 'gray.600');
   const [userInfo, setUserInfo] = useState(null);
   const [defaultUserInfo, setDefaultUserInfo] = useState(null);
+  const accessToken = getStorageItem('accessToken');
 
   const hasGithub = profile.github && profile.github.username !== '';
   useEffect(() => {
@@ -282,7 +281,7 @@ const ProfileForm = ({ profile }) => {
                     // href="#"
                     onClick={(e) => {
                       e.preventDefault();
-                      window.location.href = `${process.env.BREATHECODE_HOST}/v1/auth/github/${cookies.accessToken}?url=${window.location.href}`;
+                      window.location.href = `${process.env.BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
                     }}
                   >
                     {t('connect-github')}

@@ -1,0 +1,41 @@
+{
+  "back-to": "Back to Dashboard",
+  "title": "Asignaciones",
+  "status": {
+    "delivered": "Delivered",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "undelivered": "Undelivered"
+  },
+  "label": {
+    "status": "Status",
+    "student-and-assignments": "Student and Assignments",
+    "link": "Link",
+    "actions": "Actions"
+  },
+  "filter": {
+    "project": "Filter by Project",
+    "student": "Filter by Student",
+    "status": "Filter by Status",
+    "assignments-length": "Current list of {{count}} assignments"
+  },
+  "task-handler": {
+    "review": "Review",
+    "deliver": "Deliver",
+    "undo-approval": "Undo Approval"
+  },
+  "deliver-assignment": {
+    "title": "Deliver assignment",
+    "label": "Unique Delivery URL",
+    "hint": "Share the link with the student",
+    "button": "Ignore task",
+    "copy": "Copy link",
+    "copied": "Copied!"
+  },
+  "review-assignment": {
+    "title": "Assignment Review",
+    "reject": "Mark as rejected",
+    "approve": "Mark as approved",
+    "comment-placeholder": "Comment or feedback for the student (optional)"
+  }
+}

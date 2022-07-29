@@ -1,0 +1,16 @@
+{
+    "usefull":"How usefull was this coding session for you?",
+    "comments":"Additional Comments",
+    "confirm":"Are you sure?",
+    "expired": "This survey has already expired",
+    "valdiation": "Please choose one score between 1 and 10",
+    "yes":"YES",
+    "no":"NO",
+    "thoughts":"Put your thoughts here...",
+    "thanks":"😁 Thank you for your feedback!",
+    "send":"Send answer",
+    "select": "Select an option",
+    "score":"Please choose one score between 1 and 10",
+    "previous": "Previous",
+    "next": "Next"
+  }

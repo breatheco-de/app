@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable global-require */
 // const nextRuntimeDotenv = require('next-runtime-dotenv');
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
@@ -34,12 +35,12 @@ module.exports = withBundleAnalyzer(nextTranslate({
       },
       {
         source: '/projects',
-        destination: '/interactive-coding-tutorial',
+        destination: '/interactive-coding-tutorials',
         permanent: true,
       },
       {
         source: '/project',
-        destination: '/interactive-coding-tutorial',
+        destination: '/interactive-coding-tutorials',
         permanent: true,
       },
       {
@@ -82,14 +83,22 @@ module.exports = withBundleAnalyzer(nextTranslate({
         source: '/interactive-coding-tutorial/HARD/:slug',
         destination: '/interactive-coding-tutorial/hard/:slug',
       },
+      {
+        source: '/profile',
+        destination: '/profile/info',
+      },
     ];
   },
-  swcMinify: false,
+  // swcMinify: false,
   reactStrictMode: true,
   trailingSlash: false,
   webpack: (config, { isServer }) => {
     if (isServer) {
       require('./scripts/sitemap-generator');
+    }
+    if (process.env.NODE_ENV === 'development') {
+      config.optimization.minimizer = [];
+      config.optimization.minimize = false; // Disable minification in development
     }
     return config;
   },

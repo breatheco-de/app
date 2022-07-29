@@ -1,24 +1,36 @@
 import React, { useState, useEffect } from 'react';
-// import PropTypes from 'prop-types';
 import { Progress } from '@chakra-ui/react';
 import axiosInstance from '../../axios';
+import useAuth from '../hooks/useAuth';
 
-const Loading = () => {
+const InterceptionLoader = () => {
+  const { logout } = useAuth();
   const [loading, setLoading] = useState(false);
+
+  const handleLogout = () => logout();
   useEffect(() => {
     axiosInstance.interceptors.request.use((req) => {
       setLoading(true);
       return req;
     }, (error) => {
       Promise.reject(error);
+      const statusError = error.response.status;
+      console.log('error_request:', error);
       setLoading(false);
+      if (statusError === 401) {
+        handleLogout();
+      }
     });
     axiosInstance.interceptors.response.use((res) => {
       setLoading(false);
       return res;
     }, (error) => {
+      const statusError = error.response.status;
       Promise.reject(error);
       setLoading(false);
+      if (statusError === 401) {
+        handleLogout();
+      }
     });
     return () => {
       setLoading(false);
@@ -39,4 +51,4 @@ const Loading = () => {
   );
 };
 
-export default Loading;
+export default InterceptionLoader;

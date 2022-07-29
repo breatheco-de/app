@@ -15,6 +15,13 @@ const NextChakraLink = ({
   ...chakraProps
 }) => {
   const router = useRouter();
+  // const { pathname } = router;
+  // const isActive = pathname.startsWith(href);
+
+  // if (isActive) {
+  //   // eslint-disable-next-line no-param-reassign
+  //   chakraProps.className += ' active';
+  // }
   return (
     <NextLink
       passHref

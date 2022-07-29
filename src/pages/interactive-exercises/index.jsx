@@ -4,16 +4,17 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
-import Text from '../common/components/Text';
-import Icon from '../common/components/Icon';
-import FilterModal from '../common/components/FilterModal';
-import TitleContent from '../js_modules/projects/TitleContent';
-import ProjectList from '../js_modules/projects/ProjectList';
-import useFilter from '../common/store/actions/filterAction';
-import Search from '../js_modules/projects/Search';
+import Text from '../../common/components/Text';
+import Icon from '../../common/components/Icon';
+import FilterModal from '../../common/components/FilterModal';
+import TitleContent from '../../js_modules/projects/TitleContent';
+import ProjectList from '../../js_modules/projects/ProjectList';
+import useFilter from '../../common/store/actions/filterAction';
+import Search from '../../js_modules/projects/Search';
+import { isWindow } from '../../utils';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'exercises');
@@ -23,14 +24,14 @@ export const getStaticProps = async ({ locale, locales }) => {
   const exercises = []; // filtered exercises after removing repeated
   let arrExercises = []; // incoming exercises
   const resp = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`,
+    `${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&limit=1000`,
     {
       Accept: 'application/json, text/plain, */*',
     },
   );
   const data = await resp.json();
 
-  arrExercises = Object.values(data);
+  arrExercises = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${arrExercises.length} Exercises fetched for /interactive-exercises`);
   } else {
@@ -107,17 +108,58 @@ export const getStaticProps = async ({ locale, locales }) => {
 function Exercices({ exercises, technologyTags, difficulties }) {
   const { t } = useTranslation('exercises');
   const { filteredBy, setExerciseFilters } = useFilter();
-  const { technologies, difficulty, videoTutorials } = filteredBy.exercisesOptions;
-
-  const currentFilters = technologies.length
-    + (difficulty === undefined || difficulty.length === 0 ? 0 : 1)
-    + videoTutorials;
+  const [isLoading, setIsLoading] = useState(false);
+  const [offset, setOffset] = useState(10);
   const router = useRouter();
+
+  const { technologies, difficulty, videoTutorials } = filteredBy.exercisesOptions;
+  const techsQuery = router.query.techs;
+  const difficultyQuery = router.query.difficulty;
+  const exercisesFiltered = exercises.slice(0, offset);
+
+  const technologiesActived = technologies.length || (techsQuery?.length > 0 ? techsQuery?.split(',')?.length : 0);
+  const difficultyIsActive = () => {
+    if (difficultyQuery?.length > 0) return 1;
+    if (difficulty !== undefined && difficulty?.length > 0) return 1;
+    return 0;
+  };
+
+  const currentFilters = technologiesActived
+    + difficultyIsActive()
+    + videoTutorials;
+
   let initialSearchValue;
   useEffect(() => {
     initialSearchValue = router.query && router.query.search;
   }, [initialSearchValue]);
   const { isOpen, onClose, onOpen } = useDisclosure();
+
+  const handleScroll = () => {
+    const scrollTop = isWindow && document.documentElement.scrollTop;
+    const offsetHeight = isWindow && document.documentElement.offsetHeight;
+    const innerHeight = isWindow && window.innerHeight;
+    if ((innerHeight + scrollTop) <= offsetHeight) return;
+    setIsLoading(true);
+  };
+
+  useEffect(() => {
+    if (offset <= exercises.length) {
+      console.log('loading exercises...');
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+    console.log('All exercises loaded');
+    return () => {};
+  }, [offset]);
+
+  useEffect(() => {
+    if (!isLoading) return;
+    if (offset >= exercises.length) setIsLoading(false);
+    setTimeout(() => {
+      setOffset(offset + 10);
+      setIsLoading(false);
+    }, 200);
+  }, [isLoading]);
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
@@ -133,7 +175,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
       >
         <TitleContent title={t('title')} mobile={false} />
 
-        <Search placeholder={t('search')} />
+        <Search placeholder={t('search')} onChange={() => setIsLoading(true)} />
 
         <Button
           variant="outline"
@@ -191,8 +233,9 @@ function Exercices({ exercises, technologyTags, difficulties }) {
           {t('description')}
         </Text>
         <ProjectList
-          projects={exercises}
+          projects={exercisesFiltered}
           contextFilter={filteredBy.exercisesOptions}
+          isLoading={isLoading}
           projectPath="interactive-exercise"
         />
       </Box>

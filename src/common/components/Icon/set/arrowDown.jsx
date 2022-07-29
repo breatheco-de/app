@@ -2,9 +2,9 @@ const arrowDown = ({
   width, height, style, color, className,
 }) => (
   <svg
+    style={style}
     width={width || '20px'}
     height={height || '19px'}
-    style={style}
     viewBox="0 0 24 24"
     focusable="false"
     className={className || 'arrow-down-icon-rounded'}

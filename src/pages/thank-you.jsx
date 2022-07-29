@@ -2,11 +2,11 @@ import {
   Box, HStack, Link, PinInput, PinInputField,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import { useCookies } from 'react-cookie';
 import getT from 'next-translate/getT';
 import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
 import Icon from '../common/components/Icon';
+import { getStorageItem } from '../utils';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'projects');
@@ -26,7 +26,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
 const ThankYou = () => {
   const { t } = useTranslation('thank-you');
-  const [cookies] = useCookies(['subscriptionId']);
+  const subscriptionId = getStorageItem('subscriptionId');
 
   const social = t('share-social', {}, { returnObjects: true });
   return (
@@ -39,8 +39,8 @@ const ThankYou = () => {
           {t('you-are-in-waiting-list')}
         </Text>
         <HStack justifyContent="center" p="30px 0 20px 0">
-          <PinInput defaultValue="00000" value={cookies.subscriptionId} size="lg" isDisabled placeholder="0">
-            {Array(cookies?.subscriptionId?.length || 5).fill(0).map((_, i) => {
+          <PinInput defaultValue="00000" value={subscriptionId} size="lg" isDisabled placeholder="0">
+            {Array(subscriptionId?.length || 5).fill(0).map((_, i) => {
               const index = i;
               return (
                 <PinInputField

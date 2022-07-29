@@ -40,14 +40,21 @@ const Helmet = ({
       {/* <---------------- Single web pages (ex: /projects) ----------------> */}
       {locales.length > 0
       && !translationsExists
-      && locales.map((lang) => (['default', 'en'].includes(lang) ? (
-        <React.Fragment key={`${lang} - ${pathConnector}`}>
-          <link rel="alternate" hrefLang="x-default" href={`https://4geeks.com${pathConnector}`} />
-          <link rel="alternate" hrefLang={lang} href={`https://4geeks.com${pathConnector}`} />
-        </React.Fragment>
-      ) : (
-        <link key={`${lang} - ${pathConnector} alternate`} rel="alternate" hrefLang={lang} href={`https://4geeks.com/${lang}${pathConnector}`} />
-      )))}
+      && locales.map((lang) => {
+        const locationLang = {
+          us: 'en-us',
+          en: 'en-us',
+          es: 'es-es',
+        };
+        return (['default', 'en'].includes(lang) ? (
+          <React.Fragment key={`${lang} - ${pathConnector}`}>
+            <link rel="alternate" hrefLang="x-default" href={`https://4geeks.com${pathConnector}`} />
+            <link rel="alternate" hrefLang={locationLang[lang]} href={`https://4geeks.com${pathConnector}`} />
+          </React.Fragment>
+        ) : (
+          <link key={`${lang} - ${pathConnector} alternate`} rel="alternate" hrefLang={locationLang[lang]} href={`https://4geeks.com/${lang}${pathConnector}`} />
+        ));
+      })}
 
       {/* {locales.length > 0
       && !translationsExists
@@ -64,16 +71,21 @@ const Helmet = ({
 
       {translationsExists && Object.keys(translations).map((lang) => {
         const language = lang === 'us' ? 'en' : lang;
+        const locationLang = {
+          us: 'en-us',
+          en: 'en-us',
+          es: 'es-es',
+        };
         const urlAlternate = `https://4geeks.com/${language}${pathConnector}/${translations[lang]}`;
         const defaultUrl = `https://4geeks.com${pathConnector}/${translations.us || translations.en}`;
 
         return ['default', 'us', 'en'].includes(lang) ? (
           <React.Fragment key={`${language} - ${defaultUrl}`}>
             <link rel="alternate" hrefLang="x-default" href={defaultUrl} />
-            <link rel="alternate" hrefLang={language} href={defaultUrl} />
+            <link rel="alternate" hrefLang={locationLang[lang] || 'en-us'} href={defaultUrl} />
           </React.Fragment>
         ) : (
-          <link key={`${language} - ${urlAlternate}`} rel="alternate" hrefLang={language} href={urlAlternate} />
+          <link key={`${language} - ${urlAlternate}`} rel="alternate" hrefLang={locationLang[lang]} href={urlAlternate} />
         );
       })}
 
