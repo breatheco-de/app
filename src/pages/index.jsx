@@ -1,6 +1,5 @@
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Image,
   Box,
   Grid,
   FormControl,
@@ -16,6 +15,7 @@ import { Formik, Form, Field } from 'formik';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import getT from 'next-translate/getT';
+import Image from 'next/image';
 import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
 import Icon from '../common/components/Icon';
@@ -50,6 +50,7 @@ export default function Home() {
 
   const { colorMode } = useColorMode();
   const commonColor = useColorModeValue('gray.600', 'gray.300');
+  const commonBackground = useColorModeValue('white', 'darkTheme');
   const socials = t('social:content', {}, { returnObjects: true });
   const socialsFiltered = socials.filter((social) => social.available.includes('home'));
 
@@ -83,7 +84,7 @@ export default function Home() {
         <Box position="absolute" top="25" right="0" zIndex="-1" opacity={{ base: '0.6', md: '1' }}>
           <BubblesSvg />
         </Box>
-        <Box flex="1" margin={{ base: '14% 8% 0 8%', md: '14% 14% 0 14%' }}>
+        <Box flex="1" margin={{ base: '14% 8% 0 8%', md: '14% 14% 0 14%' }} width={{ base: 'auto', md: 'max-content', lg: 'inherit' }} zIndex={1}>
           <Heading
             as="h1"
             size="14px"
@@ -93,7 +94,7 @@ export default function Home() {
           >
             {t('title')}
           </Heading>
-          <Heading as="h2" size="xxl" style={{ wordWrap: 'normal' }}>
+          <Heading as="h2" size="xxl" style={{ wordWrap: 'normal' }} background={{ base: 'transparent', md: commonBackground, lg: 'transparent' }} pr={{ base: 0, md: '8px', lg: 0 }} borderRadius="15px">
             {t('welcome')}
             <Icon icon="logoModern" width="15rem" height="auto" />
           </Heading>
@@ -232,15 +233,15 @@ export default function Home() {
           flexDirection="row"
           justifyContent="center"
           gridGap="10px"
-          pt="6%"
+          p={{ md: '6% 15px 0 0', lg: '6% 0 0 0' }}
         >
           <Box display="flex" width="auto" flexDirection="column" gridGap="10px">
-            <Image src="/static/images/person-smile1.png" />
-            <Image src="/static/images/person-smile3.png" borderRadius="15px" />
+            <Image src="/static/images/person-smile1.png" alt="person1" width="233px" height="215px" />
+            <Image src="/static/images/person-smile3.png" alt="person2" style={{ borderRadius: '15px' }} width="233px" height="247px" />
           </Box>
           <Box display="flex" width="auto" flexDirection="column" gridGap="10px">
-            <Image src="/static/images/person-smile2.png" />
-            <Image src="/static/images/person-smile4.png" />
+            <Image src="/static/images/person-smile2.png" alt="person3" width="233px" height="247px" />
+            <Image src="/static/images/person-smile4.png" alt="person4" width="233px" height="215px" />
           </Box>
         </Box>
       </Grid>
