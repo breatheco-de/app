@@ -4,5 +4,10 @@
     "mentorshipSession": "Sesión de Mentoría",
     "events": "Eventos",
     "billed": "Tiempo Facturado",
-    "details": "Detalles"
+    "details": "Detalles",
+    "ghostLabel": "El estudiante nunca se unió",
+    "mentorLate": "El mentor se unió tarde",
+    "extraTime": "Tiempo extra de ",
+    "expectedTime": ", la duración esperada es ",
+    "rate": "Puntuación:"
 }

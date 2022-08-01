@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
 import { useState, useEffect, forwardRef } from 'react';
 import {
@@ -67,6 +68,39 @@ const Mentorship = () => {
       <ChevronDownIcon />
     </Button>
   ));
+
+  const getExtraTime = (str) => str.substr(0, str.indexOf(', the expected duration')).replace('Extra time of ', '');
+
+  const getExpectedTime = (str) => str.substr(str.indexOf(', the expected duration')).replace(', the expected duration was ', '');
+
+  const tooltipsGenerator = (session) => {
+    const tooltips = [];
+    if (session.mente_joined !== null) {
+      tooltips.push({
+        icon: 'ghost',
+        label: t('ghostLabel'),
+      });
+    }
+    if (session.mentor_late) {
+      tooltips.push({
+        icon: 'running',
+        label: t('mentorLate'),
+      });
+    }
+    if (session.extra_time) {
+      tooltips.push({
+        icon: 'chronometer',
+        label: `${t('extraTime')} ${getExtraTime(session.extra_time)}${t('expectedTime')}${getExpectedTime(session.extra_time)}`,
+      });
+    }
+    if (session.rating) {
+      tooltips.push({
+        icon: session.rating > 7 ? 'dolarSign' : 'dolarSignBroke',
+        label: `${t('rate')} ${session.rating}`,
+      });
+    }
+    return tooltips;
+  };
 
   return (
     <Container maxW="none" padding="0">
@@ -157,7 +191,15 @@ const Mentorship = () => {
                 }}
               >
                 <Flex alignItems="center">
-                  <Tooltip label="Ghost" fontSize="md" placement="top">
+                  {/* {tooltipsGenerator(session)} */}
+                  {tooltipsGenerator(session).map((tooltip) => (
+                    <Tooltip label={tooltip.label} fontSize="md" placement="top">
+                      <span>
+                        <Icon style={{ marginRight: '15px' }} icon={tooltip.icon} width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
+                      </span>
+                    </Tooltip>
+                  ))}
+                  {/* <Tooltip label="Ghost" fontSize="md" placement="top">
                     <span>
                       <Icon style={{ marginRight: '15px' }} icon="dolarSign" width="25px" height="25px" />
                     </span>
@@ -181,7 +223,7 @@ const Mentorship = () => {
                     <span>
                       <Icon style={{ marginRight: '15px' }} icon="chronometer" width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
                     </span>
-                  </Tooltip>
+                  </Tooltip> */}
                   <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link">
                     {t('details')}
                   </Button>

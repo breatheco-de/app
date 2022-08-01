@@ -4,5 +4,10 @@
     "mentorshipSession": "Mentorship Session",
     "events": "Events",
     "billed": "Billed Time",
-    "details": "Details"
+    "details": "Details",
+    "ghostLabel": "Mentee never joined",
+    "mentorLate": "Mentor joined late",
+    "extraTime": "Mentor joined late",
+    "expectedTime": ", the expected duration was ",
+    "rate": "Rating:"
 }
