@@ -1,7 +1,7 @@
 import {
   Box, Flex, IconButton, Avatar, Stack, Collapse, useColorModeValue,
   useBreakpointValue, useDisclosure, useColorMode, Popover, PopoverTrigger,
-  PopoverContent, PopoverArrow, Button,
+  PopoverContent, PopoverArrow, Button, useMediaQuery,
 } from '@chakra-ui/react';
 import {
   useState, memo, useEffect, Fragment,
@@ -27,6 +27,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
   const router = useRouter();
   const [readSyllabus, setReadSyllabus] = useState([]);
   const [ITEMS, setITEMS] = useState([]);
+  const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const locale = router.locale === 'default' ? 'en' : router.locale;
 
   const { isOpen, onToggle } = useDisclosure();
@@ -58,12 +59,17 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
   }, [selectedProgramSlug]);
 
   useEffect(async () => {
-    const resp = await fetch(
-      `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`,
-    )
-      .then((res) => res.json())
-      .catch(() => []);
-    setReadSyllabus(resp);
+    const syllabus = await import('../../../../public/syllabus.json');
+    const syllabusPaths = JSON.parse(syllabus.default);
+
+    // const resp = await fetch(
+    //   `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?
+    // slug=${process.env.SYLLABUS}`,
+    // );
+    // const data = await resp.json();
+    // .then((res) => res.json())
+    // .catch(() => []);
+    setReadSyllabus(syllabusPaths);
   }, []);
 
   // Verify if teacher acces is with current cohort role
@@ -388,12 +394,14 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
-        <MobileNav
-          NAV_ITEMS={ITEMS}
-          haveSession={sessionExists}
-          translations={translations}
-          readSyllabus={readSyllabus}
-        />
+        {isBelowTablet && (
+          <MobileNav
+            NAV_ITEMS={ITEMS}
+            haveSession={sessionExists}
+            translations={translations}
+            readSyllabus={readSyllabus}
+          />
+        )}
       </Collapse>
     </Box>
   );

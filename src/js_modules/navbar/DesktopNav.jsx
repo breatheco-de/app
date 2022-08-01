@@ -18,10 +18,7 @@ const DesktopNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
     if (publicItem.asPath === '/read' && readSyllabus.length > 0) {
       publicItem.subMenu.map((l) => {
         if (l.asPath === '/read-and-watch') {
-          const courseFetched = readSyllabus?.map((el) => ({
-            label: el.name,
-            href: `/read/${el.slug}`,
-          }));
+          const courseFetched = readSyllabus;
           const menus = [...courseFetched, ...l.subMenuContent];
 
           // eslint-disable-next-line no-param-reassign
