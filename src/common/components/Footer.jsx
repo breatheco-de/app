@@ -167,14 +167,18 @@ const Footer = () => {
             width={['47%', '40%', 'auto', 'auto']}
             marginRight={['0', '0', '5%', '5%']}
           >
-            <Heading as="h5" size="sm" marginBottom="15px">
+            <Heading as="h5" textAlign={{ base: 'left', md: 'center' }} size="sm" marginBottom="15px">
               {t('company.title')}
             </Heading>
-            {t('company.items', {}, { returnObjects: true }).map((item) => (
-              <NextChakraLink key={`${item.label}-${item.href}`} href={item.href}>
-                <Text fontSize="sm">{item.label.toUpperCase()}</Text>
-              </NextChakraLink>
-            ))}
+            <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
+              {t('company.items', {}, { returnObjects: true }).map((item) => (
+                <Box as="li" key={`${item.label}-${item.href}`} role="presentation" display="flex">
+                  <NextChakraLink href={item.href} fontSize="0.875rem">
+                    {item.label.toUpperCase()}
+                  </NextChakraLink>
+                </Box>
+              ))}
+            </Box>
           </Box>
           {/* ---- RESPONSIVE BOXES ---- */}
           <Box
@@ -188,14 +192,18 @@ const Footer = () => {
               'none', // 62em+
             ]}
           >
-            <Heading as="h5" size="sm" marginBottom="15px">
+            <Heading as="h5" textAlign="left" size="sm" marginBottom="15px">
               {t('learning.title')}
             </Heading>
-            {t('learning.items', {}, { returnObjects: true }).map((item) => (
-              <NextChakraLink key={`${item.label}-${item.href}`} href={item.href}>
-                <Text fontSize="sm">{item.label.toUpperCase()}</Text>
-              </NextChakraLink>
-            ))}
+            <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
+              {t('learning.items', {}, { returnObjects: true }).map((item) => (
+                <Box as="li" key={`${item.label}-${item.href}`} role="presentation" display="flex">
+                  <NextChakraLink href={item.href} fontSize="0.875rem">
+                    {item.label.toUpperCase()}
+                  </NextChakraLink>
+                </Box>
+              ))}
+            </Box>
           </Box>
           <Box
             textAlign="center"
@@ -207,14 +215,18 @@ const Footer = () => {
               'none', // 62em+
             ]}
           >
-            <Heading as="h5" size="sm" marginBottom="15px">
+            <Heading as="h5" textAlign="left" size="sm" marginBottom="15px">
               {t('community.title')}
             </Heading>
-            {t('community.items', {}, { returnObjects: true }).map((item) => (
-              <NextChakraLink key={`${item.label}-${item.href}`} href={item.href}>
-                <Text fontSize="sm">{item.label.toUpperCase()}</Text>
-              </NextChakraLink>
-            ))}
+            <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
+              {t('community.items', {}, { returnObjects: true }).map((item) => (
+                <Box as="li" key={`${item.label}-${item.href}`} role="presentation" display="flex">
+                  <NextChakraLink href={item.href} fontSize="0.875rem">
+                    {item.label.toUpperCase()}
+                  </NextChakraLink>
+                </Box>
+              ))}
+            </Box>
           </Box>
           <Box
             textAlign="center"
@@ -226,14 +238,18 @@ const Footer = () => {
               'none', // 62em+
             ]}
           >
-            <Heading as="h5" size="sm" marginBottom="15px">
+            <Heading as="h5" textAlign="left" size="sm" marginBottom="15px">
               {t('social.title')}
             </Heading>
-            {t('iconogram', {}, { returnObjects: true }).map((item) => (
-              <NextChakraLink key={`${item.title}-${item.href}`} href={item.href}>
-                <Text fontSize="sm">{item.title.toUpperCase()}</Text>
-              </NextChakraLink>
-            ))}
+            <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
+              {t('iconogram', {}, { returnObjects: true }).map((item) => (
+                <Box key={`${item.title}-${item.href}`} as="li" role="presentation" display="flex">
+                  <NextChakraLink href={item.href} fontSize="0.875rem">
+                    {item.title.toUpperCase()}
+                  </NextChakraLink>
+                </Box>
+              ))}
+            </Box>
           </Box>
           {/* ---- RESPONSIVE BOXES ---- */}
           <Container
@@ -255,21 +271,29 @@ const Footer = () => {
               <Heading as="h5" size="sm" marginBottom="15px">
                 {t('learning.title')}
               </Heading>
-              {t('learning.items', {}, { returnObjects: true }).map((item) => (
-                <NextChakraLink key={`${item.label}-${item.href}`} href={item.href}>
-                  <Text fontSize="sm">{item.label.toUpperCase()}</Text>
-                </NextChakraLink>
-              ))}
+              <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
+                {t('learning.items', {}, { returnObjects: true }).map((item) => (
+                  <Box key={`${item.label}-${item.href}`} as="li" role="presentation" display="flex">
+                    <NextChakraLink href={item.href} fontSize="0.875rem">
+                      {item.label.toUpperCase()}
+                    </NextChakraLink>
+                  </Box>
+                ))}
+              </Box>
             </Box>
             <Box width="100%" paddingLeft="15%" borderLeft="2px" borderColor="#e2e8f0">
               <Heading as="h5" size="sm" marginBottom="15px">
                 {t('community.title')}
               </Heading>
-              {t('community.items', {}, { returnObjects: true }).map((item) => (
-                <NextChakraLink key={`${item.label}-${item.href}`} href={item.href}>
-                  <Text fontSize="sm">{item.label.toUpperCase()}</Text>
-                </NextChakraLink>
-              ))}
+              <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
+                {t('community.items', {}, { returnObjects: true }).map((item) => (
+                  <Box key={`${item.label}-${item.href}`} as="li" role="presentation" display="flex">
+                    <NextChakraLink href={item.href} fontSize="0.875rem">
+                      {item.label.toUpperCase()}
+                    </NextChakraLink>
+                  </Box>
+                ))}
+              </Box>
             </Box>
           </Container>
           <Box
