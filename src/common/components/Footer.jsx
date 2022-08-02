@@ -30,7 +30,7 @@ const Footer = () => {
   const [formStatus, setFormStatus] = useState('');
   const { colorMode } = useColorMode();
   return (
-    <Container maxW="none" padding="20px" position="absolute" top="100%">
+    <Container as="footer" maxW="none" padding="20px" position="absolute" top="100%">
       <Divider borderBottomWidth="2px" m="3rem 0 0 0" />
 
       <Flex
@@ -167,7 +167,7 @@ const Footer = () => {
             width={['47%', '40%', 'auto', 'auto']}
             marginRight={['0', '0', '5%', '5%']}
           >
-            <Heading as="h5" textAlign={{ base: 'left', md: 'center' }} size="sm" marginBottom="15px">
+            <Heading as="h3" textAlign={{ base: 'left', md: 'center' }} size="sm" marginBottom="15px">
               {t('company.title')}
             </Heading>
             <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
@@ -192,7 +192,7 @@ const Footer = () => {
               'none', // 62em+
             ]}
           >
-            <Heading as="h5" textAlign="left" size="sm" marginBottom="15px">
+            <Heading as="h3" textAlign="left" size="sm" marginBottom="15px">
               {t('learning.title')}
             </Heading>
             <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
@@ -215,7 +215,7 @@ const Footer = () => {
               'none', // 62em+
             ]}
           >
-            <Heading as="h5" textAlign="left" size="sm" marginBottom="15px">
+            <Heading as="h3" textAlign="left" size="sm" marginBottom="15px">
               {t('community.title')}
             </Heading>
             <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
@@ -238,7 +238,7 @@ const Footer = () => {
               'none', // 62em+
             ]}
           >
-            <Heading as="h5" textAlign="left" size="sm" marginBottom="15px">
+            <Heading as="h3" textAlign="left" size="sm" marginBottom="15px">
               {t('social.title')}
             </Heading>
             <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
@@ -268,7 +268,7 @@ const Footer = () => {
             ]}
           >
             <Box width="100%" paddingLeft="15%" marginBottom="20px" borderLeft="2px" borderColor="#e2e8f0">
-              <Heading as="h5" size="sm" marginBottom="15px">
+              <Heading as="h3" size="sm" marginBottom="15px">
                 {t('learning.title')}
               </Heading>
               <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
@@ -282,7 +282,7 @@ const Footer = () => {
               </Box>
             </Box>
             <Box width="100%" paddingLeft="15%" borderLeft="2px" borderColor="#e2e8f0">
-              <Heading as="h5" size="sm" marginBottom="15px">
+              <Heading as="h3" size="sm" marginBottom="15px">
                 {t('community.title')}
               </Heading>
               <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
@@ -304,7 +304,7 @@ const Footer = () => {
               'block', // 62em+
             ]}
           >
-            <Heading as="h5" size="sm" marginBottom="15px">
+            <Heading as="h3" size="sm" marginBottom="15px">
               {t('social.title')}
             </Heading>
             <Text fontSize="sm">{t('social.text')}</Text>
@@ -326,7 +326,7 @@ const Footer = () => {
           {t('iconogram', {}, { returnObjects: true }).map((item) => (
             <Box key={`${item.title}-${item.href}`} width="48%" marginRight="2px" marginBottom="5px">
               <NextChakraLink href={item.href}>
-                <Heading as="h5" fontSize="12px" marginBottom="15px">
+                <Heading as="h3" fontSize="12px" marginBottom="15px">
                   <Icon icon={item.icon} style={{ display: 'inline', marginRight: '10px' }} width="40px" height="40px" />
                   {item.title.toUpperCase()}
                 </Heading>
