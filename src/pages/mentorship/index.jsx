@@ -56,12 +56,13 @@ const Mentorship = () => {
   const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => (
     // eslint-disable-next-line react/button-has-type
     <Button
-      size="lg"
+      size={['md', 'md', 'lg', 'lg']}
       display="inline-block"
       colorScheme="blue"
       variant="ghost"
       onClick={onClick}
       ref={ref}
+      marginLeft={['5px', '5px', '10px', '10px']}
     >
       {value || t('common:select')}
       {' '}
@@ -105,9 +106,9 @@ const Mentorship = () => {
   return (
     <Container maxW="none" padding="0">
       <Container
-        key="kpi-container"
+        className="kpi-container"
         maxW="none"
-        paddingRight="20%"
+        // paddingRight="20%"
         paddingLeft={['5%', '5%', '10%', '10%']}
         paddingTop="20px"
         paddingBottom="20px"
@@ -128,9 +129,14 @@ const Mentorship = () => {
         </Link>
         <Container
           maxW="none"
-          padding="none"
+          padding="0"
         >
-          <Heading as="h2" size="xl">
+          <Heading
+            as="h2"
+            // size="lg"
+            size={['lg', 'lg', 'xl', 'xl']}
+            fontSize={['16px', '16px', '34px', '34px']}
+          >
             {`${t('log')}:`}
             <Box
               display="inline-block"
@@ -146,7 +152,7 @@ const Mentorship = () => {
             </Box>
             {startDate && (
             <IconButton
-              marginLeft="30px"
+              marginLeft={['5px', '5px', '90px', '90px']}
               // variant="outline"
               colorScheme="blue"
               aria-label="Clear"
@@ -164,7 +170,7 @@ const Mentorship = () => {
         <table>
           <tr className="table-head">
             <th>{t('mentorshipSession')}</th>
-            <th>{t('events')}</th>
+            <th className="icons-row-head">{t('events')}</th>
             <th>{t('billed')}</th>
           </tr>
           {sessions.map((session) => (
@@ -183,15 +189,52 @@ const Mentorship = () => {
                   {' '}
                   <span style={{ fontWeight: 'bold' }}>{`${session.mentee.first_name} ${session.mentee.last_name}`}</span>
                 </Text>
+                <Flex wrap="wrap" maxWith="250px" className="icons-row-responsive" alignItems="center" marginTop="15px">
+                  {tooltipsGenerator(session).map((tooltip) => (
+                    <Tooltip label={tooltip.label} fontSize="md" placement="top">
+                      <span>
+                        <Icon style={{ marginRight: '15px', marginTop: '5px' }} icon={tooltip.icon} width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
+                      </span>
+                    </Tooltip>
+                  ))}
+                  {/* <Tooltip label="Ghost" fontSize="md" placement="top">
+                    <span>
+                      <Icon style={{ marginRight: '15px', marginTop: '5px' }} icon="dolarSign" width="25px" height="25px" />
+                    </span>
+                  </Tooltip>
+                  <Tooltip label="Ghost" fontSize="md" placement="top">
+                    <span>
+                      <Icon style={{ marginRight: '15px', marginTop: '5px' }} icon="dolarSignBroke" width="25px" height="25px" />
+                    </span>
+                  </Tooltip>
+                  <Tooltip label="Ghost" fontSize="md" placement="top">
+                    <span>
+                      <Icon style={{ marginRight: '15px', marginTop: '5px' }} icon="ghost" width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
+                    </span>
+                  </Tooltip>
+                  <Tooltip label="Ghost" fontSize="md" placement="top">
+                    <span>
+                      <Icon style={{ marginRight: '15px', marginTop: '5px' }} icon="running" width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
+                    </span>
+                  </Tooltip>
+                  <Tooltip label="Ghost" fontSize="md" placement="top">
+                    <span>
+                      <Icon style={{ marginRight: '15px', marginTop: '5px' }} icon="chronometer" width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
+                    </span>
+                  </Tooltip> */}
+                  <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link">
+                    {t('details')}
+                  </Button>
+                </Flex>
               </td>
               <td
+                className="icons-row"
                 style={{
                   borderLeft: 'none',
                   borderRight: 'none',
                 }}
               >
                 <Flex alignItems="center">
-                  {/* {tooltipsGenerator(session)} */}
                   {tooltipsGenerator(session).map((tooltip) => (
                     <Tooltip label={tooltip.label} fontSize="md" placement="top">
                       <span>
@@ -285,6 +328,9 @@ const StyledContainer = styled.div`
     }
     .session-date{
       width:35%;
+      .icons-row-responsive{
+        display: none;
+      }
     }
     td{
       border: 1px solid gray;
@@ -294,6 +340,33 @@ const StyledContainer = styled.div`
 
   @media screen and (max-width: 975px){
     padding: 20px 5%;
+    table{
+      .icons-row{
+        width: 300px;
+      }
+    }
+  }
+
+  @media screen and (max-width: 910px){
+    table{
+      .session-date{
+        width:30%;
+      }
+    }
+  }
+
+  @media screen and (max-width: 810px){
+    table{
+      .session-date{
+        width:auto;
+        .icons-row-responsive{
+          display: flex;
+        }
+      }
+      .icons-row, .icons-row-head{
+        display: none;
+      }
+    }
   }
 `;
 
