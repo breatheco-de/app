@@ -1,4 +1,4 @@
-import { useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 import {
   Box, useColorModeValue, Stack, Img, Grid,
 } from '@chakra-ui/react';
@@ -102,11 +102,11 @@ const ProjectList = ({
     event.target.setAttribute('srcset', `${defaultImage} 1x`);
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     resizeAllMasonryItems();
   }, [filteredProjects]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const masonryEvents = ['resize'];
     masonryEvents.forEach((event) => {
       if (window !== undefined) window.addEventListener(event, resizeAllMasonryItems);

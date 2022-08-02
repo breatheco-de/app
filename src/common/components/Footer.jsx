@@ -113,6 +113,7 @@ const Footer = () => {
                   borderColor={colorMode === 'light' ? '#020203' : '#FFFFFF'}
                 >
                   <IconButton
+                    aria-label="Submit form"
                     style={{
                       right: '1px',
                       height: '38px',
