@@ -61,7 +61,7 @@ const DesktopItem = ({ item }) => {
               flexDirection="row"
               textTransform="uppercase"
               fontWeight={700}
-              color="gray.600"
+              color={linkColor}
               fontSize="0.875rem"
               _hover={{
                 textDecoration: 'none',
