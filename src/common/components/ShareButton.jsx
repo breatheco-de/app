@@ -2,7 +2,7 @@
 import { useState, memo, useEffect } from 'react';
 import {
   Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader,
-  ModalOverlay, Stack, useColorModeValue, useDisclosure,
+  ModalOverlay, Stack, useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -12,11 +12,11 @@ import Text from './Text';
 import Link from './NextChakraLink';
 
 const ShareButton = ({
-  variant, title, shareText, message, link, socials, withParty,
+  variant, title, shareText, message, link, socials, withParty, onlyModal,
 }) => {
   const { t } = useTranslation('profile');
   const [party, setParty] = useState(true);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(onlyModal || false);
   const labelColor = useColorModeValue('gray.600', 'gray.200');
   const [copied, setCopied] = useState(false);
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.500');
@@ -66,13 +66,13 @@ const ShareButton = ({
 
   return (
     <>
-      <Button variant={variant} onClick={onOpen} style={{ height: 'auto' }} textTransform="uppercase">
+      <Button display={onlyModal ? 'none' : 'block'} variant={variant} onClick={() => setIsOpen(true)} style={{ height: 'auto' }} textTransform="uppercase">
         {t('share:button-text')}
       </Button>
       <Modal
         isOpen={isOpen}
         onClose={() => {
-          onClose();
+          setIsOpen(false);
           setParty(true);
         }}
         size="xl"
@@ -147,6 +147,7 @@ const ShareButton = ({
 
 ShareButton.propTypes = {
   variant: PropTypes.string,
+  onlyModal: PropTypes.bool,
   title: PropTypes.string,
   socials: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
@@ -161,6 +162,7 @@ ShareButton.propTypes = {
 };
 
 ShareButton.defaultProps = {
+  onlyModal: false,
   variant: 'default',
   title: '',
   socials: [],

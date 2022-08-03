@@ -35,7 +35,6 @@
     "prepare": "husky install",
     "make:sitemap": "node ./scripts/sitemap-generator.js",
     "make:syllabus": "node ./scripts/syllabus.js"
-
   },
   "dependencies": {
     "@chakra-ui/icons": "1.0.15",
