@@ -17,7 +17,7 @@
     "project": "Filtrar por proyecto",
     "student": "Filtrar por Estudiante",
     "status": "Filtrar por Estado",
-    "assignments-length": "Lista actual {{count}} de {{total}} asignaciones"
+    "assignments-length": "Lista actual de {{total}} asignaciones"
   },
   "task-handler": {
     "review": "Revisar",
