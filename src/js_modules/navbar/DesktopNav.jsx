@@ -35,7 +35,7 @@ const DesktopNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
       {privateItems.length > 0 && privateItems.map((privateItem) => (
         <DesktopItem key={privateItem.label} item={privateItem} />
       ))}
-      {customPublicItems.map((publicItem) => (
+      {customPublicItems.length > 0 && customPublicItems.map((publicItem) => (
         <DesktopItem key={publicItem.label} item={publicItem} />
       ))}
     </Stack>
