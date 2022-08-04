@@ -18,5 +18,9 @@
   "landing-technology": {
     "title": "Practice {{technology}} building interactive projects",
     "subTitle": "What to build with {{technology}}"
+  },
+  "share-certificate": {
+    "title": "Share your progress",
+    "share-via": "You have finished the project {{project}}, every project you finish is worth celebrating, share your progress via:"
   }
 }

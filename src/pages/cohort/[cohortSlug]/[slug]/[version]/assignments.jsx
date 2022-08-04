@@ -19,6 +19,7 @@ import { isGithubUrl } from '../../../../../utils/regex';
 import ButtonHandler from '../../../../../js_modules/assignmentHandler/index';
 import useAssignments from '../../../../../common/store/actions/assignmentsAction';
 import { isWindow } from '../../../../../utils';
+import Image from '../../../../../common/components/Image';
 
 const Assignments = () => {
   const { t } = useTranslation('assignments');
@@ -307,7 +308,7 @@ const Assignments = () => {
         p="0 0 30px 0"
       >
         <Text size="20px" display="flex" width="auto" fontWeight="400">
-          {t('filter.assignments-length', { count: filteredTasks.length || 0, total: contextState.allTasks.length || 0 })}
+          {t('filter.assignments-length', { total: paginationProps?.count || 0 })}
         </Text>
         <Box display="grid" gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(11rem, 1fr))', md: 'repeat(auto-fill, minmax(18rem, 1fr))' }} gridGap="14px" py="20px">
           {projects.length > 0 ? (
@@ -479,13 +480,9 @@ const Assignments = () => {
             }) : (
               <>
                 {tasksLoading ? (
-                  <Box display="flex" flexDirection="column" gridGap="18px">
-                    {Array(15).fill(['circles']).map((_, i) => {
-                      const index = i;
-                      return (
-                        <Skeleton key={index} width="100%" height="84.5px" borderRadius="17px" />
-                      );
-                    })}
+                  <Box display="flex" justifyContent="center" mt="2rem" mb="5rem">
+                    <Image src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
+                    <Box className="loader" />
                   </Box>
                 ) : (
                   <Text size="25px" pt="3rem" textAlign="center" display="flex" width="auto" margin="0 auto" fontWeight="700">
@@ -495,13 +492,9 @@ const Assignments = () => {
               </>
             )}
             {paginationProps.next !== null && isFetching && (
-              <Box display="flex" flexDirection="column" gridGap="18px">
-                {Array(15).fill(['circles']).map((_, i) => {
-                  const index = i;
-                  return (
-                    <Skeleton key={index} width="100%" height="84.5px" borderRadius="17px" />
-                  );
-                })}
+              <Box display="flex" justifyContent="center" mt="2rem" mb="5rem">
+                <Image src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
+                <Box className="loader" />
               </Box>
             )}
           </Box>
