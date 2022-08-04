@@ -116,6 +116,10 @@ function Exercices({ exercises, technologyTags, difficulties }) {
   const techsQuery = router.query.techs;
   const difficultyQuery = router.query.difficulty;
   const exercisesFiltered = exercises.slice(0, offset);
+  const exercisesSearched = exercises.filter(
+    (exercise) => exercise.title.toLowerCase()
+      .includes(router?.query?.search?.toLocaleLowerCase() || false),
+  );
 
   const technologiesActived = technologies.length || (techsQuery?.length > 0 ? techsQuery?.split(',')?.length : 0);
   const difficultyIsActive = () => {
@@ -143,6 +147,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
   };
 
   useEffect(() => {
+    if (exercisesSearched.length > 0) return () => {};
     if (offset <= exercises.length) {
       console.log('loading exercises...');
       window.addEventListener('scroll', handleScroll);
@@ -159,7 +164,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
       setOffset(offset + 10);
       setIsLoading(false);
     }, 200);
-  }, [isLoading]);
+  }, [isLoading, exercisesSearched]);
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
@@ -233,7 +238,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
           {t('description')}
         </Text>
         <ProjectList
-          projects={exercisesFiltered}
+          projects={exercisesSearched.length > 0 ? exercisesSearched : exercisesFiltered}
           contextFilter={filteredBy.exercisesOptions}
           isLoading={isLoading}
           projectPath="interactive-exercise"

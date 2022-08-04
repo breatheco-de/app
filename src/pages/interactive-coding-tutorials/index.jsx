@@ -115,6 +115,10 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
   const [offset, setOffset] = useState(10);
   const router = useRouter();
   const projectsFiltered = projects.slice(0, offset);
+  const projectsSearched = projects.filter(
+    (project) => project.title.toLowerCase()
+      .includes(router?.query?.search?.toLocaleLowerCase() || false),
+  );
 
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const techsQuery = router.query.techs;
@@ -142,6 +146,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
   };
 
   useEffect(() => {
+    if (projectsSearched.length > 0) return () => {};
     if (offset <= projects.length) {
       console.log('loading projects...');
       window.addEventListener('scroll', handleScroll);
@@ -149,7 +154,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
     }
     console.log('All projects loaded');
     return () => {};
-  }, [offset]);
+  }, [offset, projectsSearched]);
 
   useEffect(() => {
     if (!isLoading) return;
@@ -235,7 +240,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         </Text>
 
         <ProjectList
-          projects={projectsFiltered}
+          projects={projectsSearched.length > 0 ? projectsSearched : projectsFiltered}
           contextFilter={filteredBy.projectsOptions}
           isLoading={isLoading}
           projectPath="interactive-coding-tutorial"
