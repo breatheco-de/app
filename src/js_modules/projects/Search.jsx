@@ -47,7 +47,7 @@ const Search = ({ placeholder, onChange }) => {
                               search: values.target.value.toLowerCase(),
                             },
                           });
-                        }, 200);
+                        }, 300);
                       }}
                       id="search"
                       width="100%"

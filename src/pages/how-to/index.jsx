@@ -116,6 +116,10 @@ export default function HowTo({ data, technologyTags, difficulties }) {
   const [offset, setOffset] = useState(10);
 
   const howTosFiltered = data.slice(0, offset);
+  const howTosSearched = data.filter(
+    (howTo) => howTo.title.toLowerCase()
+      .includes(router?.query?.search?.toLocaleLowerCase() || false),
+  );
 
   const { technologies, difficulty, videoTutorials } = filteredBy.howToOptions;
 
@@ -149,6 +153,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
   };
 
   useEffect(() => {
+    if (howTosSearched.length > 0) return () => {};
     if (offset <= data.length) {
       console.log('loading how to\'s...');
       window.addEventListener('scroll', handleScroll);
@@ -156,7 +161,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
     }
     console.log('All how to\'s loaded');
     return () => {};
-  }, [offset]);
+  }, [offset, howTosSearched]);
 
   useEffect(() => {
     if (!isLoading) return;
@@ -238,7 +243,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
           </Text>
         )}
         <ProjectList
-          projects={howTosFiltered}
+          projects={howTosSearched.length > 0 ? howTosSearched : howTosFiltered}
           contextFilter={filteredBy.howToOptions}
           isLoading={isLoading}
           projectPath="how-to"
