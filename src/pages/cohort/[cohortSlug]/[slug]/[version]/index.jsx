@@ -5,6 +5,8 @@ import {
   Box, Flex, Container, useColorModeValue, Skeleton, useToast,
   Checkbox, Input, InputGroup, InputRightElement, IconButton,
   keyframes, usePrefersReducedMotion, Avatar, useColorMode,
+  Modal, ModalBody, ModalCloseButton, ModalContent,
+  ModalHeader, ModalOverlay, Button,
 } from '@chakra-ui/react';
 import { WarningTwoIcon, CloseIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
@@ -40,6 +42,7 @@ const Dashboard = () => {
   const { contextState, setContextState } = useModuleMap();
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const [showWarning, setShowWarning] = useState(true);
+  const [showWarningModal, setShowWarningModal] = useState(true);
   const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [taskCohortNull, setTaskCohortNull] = useState([]);
@@ -78,6 +81,8 @@ const Dashboard = () => {
   const commonFontColor = useColorModeValue('gray.600', 'gray.200');
   const commonActiveBackground = useColorModeValue('gray.light', 'rgba(255, 255, 255, 0.22)');
   const iconColor = useColorModeValue('#000000', '#FFFFFF');
+  const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
+  const commonModalColor = useColorModeValue('gray.dark', 'gray.light');
 
   const supportSideBar = t('supportSideBar', {}, { returnObjects: true });
 
@@ -349,16 +354,22 @@ const Dashboard = () => {
 
   return (
     <>
-      {!user.github && showWarning && (
+      {user && !user.github && showWarning && (
         <Container
           width="100%"
           background="#FFB718"
           maxW="none"
           textAlign="center"
-          padding="5px"
+          padding="7px"
           position="relative"
         >
-          <Text color="#3A3A3A" fontWeight="700" maxW={['80%', '80%', '60%', '60%']} margin="auto">
+          <Text
+            color="#3A3A3A"
+            fontWeight="700"
+            maxW={['80%', '80%', '90%', '90%']}
+            margin="auto"
+            fontSize="15px"
+          >
             <WarningTwoIcon verticalAlign="middle" />
             {'  '}
             {t('common:github-warning')}
@@ -375,7 +386,7 @@ const Dashboard = () => {
             flexDirection="column"
             justifyContent="center"
           >
-            <CloseIcon />
+            <CloseIcon color="#3A3A3A" />
           </Box>
         </Container>
       )}
@@ -670,6 +681,66 @@ const Dashboard = () => {
           </Box>
         </Flex>
       </Container>
+      <Modal
+        isOpen={showWarningModal}
+        size="md"
+        margin="0 10px"
+        onClose={() => {
+          setShowWarningModal(false);
+          localStorage.setItem('showGithubWarning', 'false');
+        }}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader color={commonModalColor} borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
+            {t('warningModal.title')}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody padding={{ base: '15px 22px' }}>
+            <Text textAlign="center" fontSize="14px" lineHeight="24px" marginBottom="15px" fontWeight="400">
+              {t('warningModal.sub-title')}
+            </Text>
+            <Text marginBottom="25px" color={commonFontColor} textAlign="center" fontSize="12px" lineHeight="24px">
+              {t('warningModal.text')}
+            </Text>
+            <Button
+              textAlign="center"
+              variant="outline"
+              margin="auto"
+              fontSize="13px"
+              fontWeight="700"
+              display="flex"
+              width="100%"
+              marginBottom="15px"
+            >
+              <Icon
+                icon="github"
+                width="16px"
+                height="16px"
+                style={{ marginRight: '5px' }}
+              />
+              {' '}
+              {t('warningModal.connect')}
+            </Button>
+            <Button
+              textAlign="center"
+              variant="link"
+              margin="auto"
+              fontSize="15px"
+              lineHeight="22px"
+              fontWeight="700"
+              display="block"
+              color={commonModalColor}
+              onClick={() => {
+                setShowWarningModal(false);
+                localStorage.setItem('showGithubWarning', 'false');
+              }}
+            >
+              {t('warningModal.skip')}
+            </Button>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 };

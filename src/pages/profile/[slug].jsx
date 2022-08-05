@@ -72,16 +72,22 @@ const Profile = () => {
   const hasAvatar = profile.github && profile.github.avatar_url && profile.github.avatar_url !== '';
   return (
     <>
-      {!user.github && showWarning && (
+      {user && !user.github && showWarning && (
         <Container
           width="100%"
           background="#FFB718"
           maxW="none"
           textAlign="center"
-          padding="5px"
+          padding="px"
           position="relative"
         >
-          <Text color="#3A3A3A" fontWeight="700" maxW={['80%', '80%', '60%', '60%']} margin="auto">
+          <Text
+            color="#3A3A3A"
+            fontWeight="700"
+            maxW={['80%', '80%', '90%', '90%']}
+            margin="auto"
+            fontSize="15px"
+          >
             <WarningTwoIcon verticalAlign="middle" />
             {'  '}
             {t('common:github-warning')}
@@ -98,7 +104,7 @@ const Profile = () => {
             flexDirection="column"
             justifyContent="center"
           >
-            <CloseIcon />
+            <CloseIcon color="#3A3A3A" />
           </Box>
         </Container>
       )}
