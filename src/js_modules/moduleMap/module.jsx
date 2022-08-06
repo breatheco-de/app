@@ -118,7 +118,7 @@ const Module = ({
           link={shareLink}
           socials={socials}
           onlyModal
-          // withParty
+          withParty
         />
       )}
     </>

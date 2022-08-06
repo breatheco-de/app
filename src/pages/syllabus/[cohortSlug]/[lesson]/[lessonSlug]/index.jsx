@@ -441,9 +441,9 @@ const Content = () => {
   })[selectedSyllabus.id - 1];
 
   const pathConnector = {
-    read: `4geeks.com/${router.locale}/lesson`,
-    practice: `4geeks.com/${router.locale}/interactive-exercise`,
-    code: `4geeks.com/${router.locale}/project`,
+    read: `${router.locale === 'en' ? '4geeks.com/lesson' : `4geeks.com/${router.locale}/lesson`}`,
+    practice: `${router.locale === 'en' ? '4geeks.com/interactive-exercise' : `4geeks.com/${router.locale}/interactive-exercise`}`,
+    code: `${router.locale === 'en' ? '4geeks.com/project' : `4geeks.com/${router.locale}/project`}`,
     answer: 'https://assessment.4geeks.com/quiz',
   };
   const shareLink = currentTask ? `${pathConnector[lesson]}/${currentTask.associated_slug}` : '';
@@ -763,7 +763,7 @@ const Content = () => {
                   link={shareLink}
                   socials={socials}
                   onlyModal
-                  // withParty
+                  withParty
                 />
               )}
             </Box>
