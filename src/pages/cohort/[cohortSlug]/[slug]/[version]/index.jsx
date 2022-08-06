@@ -272,7 +272,6 @@ const Dashboard = () => {
   useMemo(() => {
     const cohortDays = cohortProgram.json ? cohortProgram.json.days : [];
     const assignmentsRecopilated = [];
-    console.log('cohortDays:::', cohortDays);
     if (contextState.cohortProgram.json && contextState.taskTodo) {
       setTaskTodo(contextState.taskTodo);
       cohortDays.map((assignment) => {
