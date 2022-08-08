@@ -65,7 +65,8 @@
   "deliverProject": {
     "title": "URL de repositorio Github",
     "how-to-deliver": "Cómo entregar proyectos",
-    "handler-text": "Entregar proyecto"
+    "handler-text": "Entregar proyecto",
+    "mandatory-message": "Tienes {{count}} proyectos obligatorios para completar antes de graduarte"
   },
   "modalInfo": {
     "title": "Estado de revisión",

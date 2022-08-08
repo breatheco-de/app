@@ -30,7 +30,7 @@ import ShareButton from '../../../../../common/components/ShareButton';
 
 const Content = () => {
   const { t } = useTranslation('syllabus');
-  const { user, choose } = useAuth();
+  const { choose } = useAuth();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [sortedAssignments] = usePersistent('sortedAssignments', []);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
@@ -465,8 +465,6 @@ const Content = () => {
       color: '#0077B5',
     },
   ];
-
-  console.log('user.active_cohort:::', user.active_cohort);
 
   return (
     <Flex position="relative">
