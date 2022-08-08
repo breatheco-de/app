@@ -87,11 +87,12 @@ const Module = ({
 
   const isDone = currentTask?.task_status === 'DONE' || currentTask?.revision_status === 'APPROVED';
   const projectIsMandatory = data?.task_type === 'PROJECT' && data?.task_status !== 'DONE' && data?.mandatory === true;
+  const isTimeOut = data?.task_type === 'PROJECT' && data?.task_status === 'PENDING' && data?.daysDiff >= 14; // exceeds 2 weeks
 
   return (
     <>
       <ModuleComponent
-        mandatory={projectIsMandatory}
+        mandatory={isTimeOut || projectIsMandatory}
         currIndex={currIndex}
         textWithLink
         link={`/syllabus/${cohortSession.slug}/${data.type.toLowerCase()}/${currentTask?.associated_slug}`}

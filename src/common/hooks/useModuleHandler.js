@@ -1,3 +1,4 @@
+import { differenceInDays } from 'date-fns';
 import bc from '../services/breathecode';
 
 export const updateAssignment = ({
@@ -134,6 +135,7 @@ export const nestAssignments = ({
   const getTaskProps = (slug) => taskTodo.find(
     (task) => task.associated_slug === slug,
   );
+  const currentDate = new Date();
 
   const updatedRead = read.map((el) => ({
     ...el,
@@ -141,40 +143,48 @@ export const nestAssignments = ({
     label,
     task_status: getTaskProps(el.slug)?.task_status || '',
     revision_status: getTaskProps(el.slug)?.revision_status || '',
+    created_at: getTaskProps(el.slug)?.created_at || '',
     position: el.position,
     type: 'Read',
     icon: 'book',
     task_type: 'LESSON',
   })).sort((a, b) => a.position - b.position);
+
   const updatedPractice = practice.map((el) => ({
     ...el,
     id,
     label,
     task_status: getTaskProps(el.slug)?.task_status || '',
     revision_status: getTaskProps(el.slug)?.revision_status || '',
+    created_at: getTaskProps(el.slug)?.created_at || '',
     position: el.position,
     type: 'Practice',
     icon: 'strength',
     task_type: 'EXERCISE',
   })).sort((a, b) => a.position - b.position);
+
   const updatedCode = code.map((el) => ({
     ...el,
     id,
     label,
     task_status: getTaskProps(el.slug)?.task_status || '',
     revision_status: getTaskProps(el.slug)?.revision_status || '',
+    created_at: getTaskProps(el.slug)?.created_at || '',
+    daysDiff: getTaskProps(el.slug)?.created_at ? differenceInDays(currentDate, new Date(getTaskProps(el.slug)?.created_at)) : '',
     position: el.position,
     mandatory: el.mandatory,
     type: 'Code',
     icon: 'code',
     task_type: 'PROJECT',
   })).sort((a, b) => a.position - b.position);
+
   const updatedAnswer = answer.map((el) => ({
     ...el,
     id,
     label,
     task_status: getTaskProps(el.slug)?.task_status || '',
     revision_status: getTaskProps(el.slug)?.revision_status || '',
+    created_at: getTaskProps(el.slug)?.created_at || '',
     position: el.position,
     type: 'Answer',
     icon: 'answer',

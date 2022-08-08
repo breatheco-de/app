@@ -41,7 +41,7 @@ const Module = ({
         {currIndex !== null && (
           <>
             {mandatory ? (
-              <Icon icon="warning" color="yellow.default" width="28px" height="28px" />
+              <Icon icon="warning" color="yellow.default" width="28px" height="28px" style={{ marginRight: '15px' }} />
             ) : (
               <Box
                 width="30px"

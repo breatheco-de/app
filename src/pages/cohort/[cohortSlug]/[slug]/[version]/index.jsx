@@ -332,7 +332,12 @@ const Dashboard = () => {
   const getMandatoryProjects = () => {
     const mandatoryProjects = sortedAssignments.flatMap(
       (assignment) => assignment.filteredModules.filter(
-        (l) => l.task_type === 'PROJECT' && l.task_status === 'PENDING' && l.mandatory === true,
+        (l) => {
+          const isMandatory = l.task_type === 'PROJECT' && l.task_status === 'PENDING' && l.mandatory === true;
+          const isTimeOut = l.task_type === 'PROJECT' && l.task_status === 'PENDING' && l.daysDiff >= 14; // exceeds 2 weeks
+
+          return isTimeOut || isMandatory;
+        },
       ),
     );
     return mandatoryProjects;
@@ -599,7 +604,7 @@ const Dashboard = () => {
                     return (
                       <ModuleMap
                         key={index}
-                        userId={user.id}
+                        userId={user?.id}
                         cohortSession={cohortSession}
                         taskCohortNull={taskCohortNull}
                         contextState={contextState}

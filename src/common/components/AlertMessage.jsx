@@ -21,11 +21,12 @@ const AlertMessage = ({
       backgroundColor={full ? alertColors[type] : 'transparent'}
       border="2px solid"
       borderColor={alertColors[type]}
+      alignItems="center"
       padding="16px"
       borderRadius="16px"
       gridGap="16px"
     >
-      <Icon icon={type} color={full ? '#000' : ''} props={{ full: true }} width="23px" height="23px" />
+      <Icon icon={type} color={full ? '#000' : ''} props={{ full: true }} style={{ minWidth: '18px' }} width="18px" height="18px" />
       <Text fontSize="15px" color={full ? 'black' : 'white'} fontWeight="700" style={{ ...textStyle, margin: '0' }}>
         {message}
       </Text>
