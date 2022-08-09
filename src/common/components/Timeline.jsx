@@ -76,12 +76,6 @@ const Timeline = ({
           const mapIndex = index;
           const assignmentPath = `/syllabus/${cohortSlug}/${item.type.toLowerCase()}/${item.slug}`;
           const muted = assignmentPath !== router.asPath;
-
-          const isMandatory = item?.task_type === 'PROJECT' && item?.task_status === 'PENDING' && item?.mandatory === true;
-          const isTimeOut = item?.task_type === 'PROJECT' && item?.task_status === 'PENDING' && item?.daysDiff >= 14; // exceeds 2 weeks
-
-          const mandatory = isMandatory || isTimeOut;
-
           return (
             <Box
               key={`${item?.id}-${mapIndex}`}
@@ -99,7 +93,7 @@ const Timeline = ({
                   </Box>
                 </Box>
               </Box>
-              <Flex border={mandatory ? '2px solid #FFB718' : '0'} cursor="pointer" onClick={(e) => onClickAssignment(e, item)} width="100%" borderRadius="17px" bg={!muted ? color[colorMode] : 'none'} marginY={mandatory ? '5.5px' : '0'} paddingY={mandatory ? '5.5px' : '10.5px'} paddingX="12px">
+              <Flex cursor="pointer" onClick={(e) => onClickAssignment(e, item)} width="100%" borderRadius="17px" bg={!muted ? color[colorMode] : 'none'} paddingY="10.5px" paddingX="12px">
                 <Box padding="8px" bg={!muted ? 'blue.default' : 'none'} borderRadius="50px" height="36px" margin="0">
                   <Icon width="20px" height="20px" icon={item && item?.icon} color={muted ? 'gray' : 'white'} />
                 </Box>

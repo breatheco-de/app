@@ -333,10 +333,10 @@ const Dashboard = () => {
     const mandatoryProjects = sortedAssignments.flatMap(
       (assignment) => assignment.filteredModules.filter(
         (l) => {
-          const isMandatory = l.task_type === 'PROJECT' && l.task_status === 'PENDING' && l.mandatory === true;
-          const isTimeOut = l.task_type === 'PROJECT' && l.task_status === 'PENDING' && l.daysDiff >= 14; // exceeds 2 weeks
+          const isMandatoryTimeOut = l.task_type === 'PROJECT' && l.task_status === 'PENDING'
+            && l.mandatory === true && l.daysDiff >= 14; // exceeds 2 weeks
 
-          return isTimeOut || isMandatory;
+          return isMandatoryTimeOut;
         },
       ),
     );
@@ -400,7 +400,7 @@ const Dashboard = () => {
           type="warning"
           message={t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
           style={{ borderRadius: '0px', justifyContent: 'center' }}
-          textStyle={{ textTransform: 'uppercase' }}
+          textStyle={{ textTransform: 'uppercase', fontSize: '14px' }}
         />
       )}
       <Container maxW="container.xl">
