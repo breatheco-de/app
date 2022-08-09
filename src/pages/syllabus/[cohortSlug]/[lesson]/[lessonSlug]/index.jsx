@@ -30,7 +30,7 @@ import ShareButton from '../../../../../common/components/ShareButton';
 
 const Content = () => {
   const { t } = useTranslation('syllabus');
-  const { user, choose } = useAuth();
+  const { choose } = useAuth();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [sortedAssignments] = usePersistent('sortedAssignments', []);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
@@ -441,9 +441,9 @@ const Content = () => {
   })[selectedSyllabus.id - 1];
 
   const pathConnector = {
-    read: `4geeks.com/${router.locale}/lesson`,
-    practice: `4geeks.com/${router.locale}/interactive-exercise`,
-    code: `4geeks.com/${router.locale}/project`,
+    read: `${router.locale === 'en' ? '4geeks.com/lesson' : `4geeks.com/${router.locale}/lesson`}`,
+    practice: `${router.locale === 'en' ? '4geeks.com/interactive-exercise' : `4geeks.com/${router.locale}/interactive-exercise`}`,
+    code: `${router.locale === 'en' ? '4geeks.com/project' : `4geeks.com/${router.locale}/project`}`,
     answer: 'https://assessment.4geeks.com/quiz',
   };
   const shareLink = currentTask ? `${pathConnector[lesson]}/${currentTask.associated_slug}` : '';
@@ -466,7 +466,19 @@ const Content = () => {
     },
   ];
 
-  console.log('user.active_cohort:::', user.active_cohort);
+  const getMandatoryProjects = () => {
+    const mandatoryProjects = sortedAssignments.flatMap(
+      (assignment) => assignment.filteredModules.filter(
+        (l) => {
+          const isMandatory = l.task_type === 'PROJECT' && l.task_status === 'PENDING' && l.mandatory === true;
+          const isTimeOut = l.task_type === 'PROJECT' && l.task_status === 'PENDING' && l.daysDiff >= 14; // exceeds 2 weeks
+
+          return isTimeOut || isMandatory;
+        },
+      ),
+    );
+    return mandatoryProjects;
+  };
 
   return (
     <Flex position="relative">
@@ -548,6 +560,17 @@ const Content = () => {
               {t('dashboard:modules.show-pending-tasks')}
             </Checkbox>
           </Box>
+          {getMandatoryProjects().length > 0 && (
+            <AlertMessage
+              full
+              type="warning"
+              message={t('dashboard:deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
+              style={{
+                borderRadius: '0px', justifyContent: 'center', alignItems: 'center', padding: '8px 16px',
+              }}
+              textStyle={{ textTransform: 'uppercase', fontSize: '14px' }}
+            />
+          )}
 
           <IconButton
             style={{ zIndex: 20 }}
@@ -585,6 +608,7 @@ const Content = () => {
               const currentAssignments = showPendingTasks
                 ? section.filteredModulesByPending
                 : section.filteredModules;
+
               return (
                 <Box
                   key={`${section.title}-${section.id}`}
@@ -763,7 +787,7 @@ const Content = () => {
                   link={shareLink}
                   socials={socials}
                   onlyModal
-                  // withParty
+                  withParty
                 />
               )}
             </Box>

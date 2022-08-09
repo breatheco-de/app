@@ -33,6 +33,7 @@ import { slugify, includesToLowerCase } from '../../../../../utils/index';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
+import AlertMessage from '../../../../../common/components/AlertMessage';
 
 const Dashboard = () => {
   const { t } = useTranslation('dashboard');
@@ -333,6 +334,21 @@ const Dashboard = () => {
     );
     return dailyModule;
   };
+
+  const getMandatoryProjects = () => {
+    const mandatoryProjects = sortedAssignments.flatMap(
+      (assignment) => assignment.filteredModules.filter(
+        (l) => {
+          const isMandatory = l.task_type === 'PROJECT' && l.task_status === 'PENDING' && l.mandatory === true;
+          const isTimeOut = l.task_type === 'PROJECT' && l.task_status === 'PENDING' && l.daysDiff >= 14; // exceeds 2 weeks
+
+          return isTimeOut || isMandatory;
+        },
+      ),
+    );
+    return mandatoryProjects;
+  };
+
   const dailyModuleData = getDailyModuleData() || '';
 
   const onlyStudentsActive = studentAndTeachers.filter(
@@ -389,6 +405,15 @@ const Dashboard = () => {
             <CloseIcon color="#3A3A3A" />
           </Box>
         </Container>
+      )}
+      {getMandatoryProjects().length > 0 && (
+        <AlertMessage
+          full
+          type="warning"
+          message={t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
+          style={{ borderRadius: '0px', justifyContent: 'center' }}
+          textStyle={{ textTransform: 'uppercase' }}
+        />
       )}
       <Container maxW="container.xl">
         <Box width="fit-content" marginTop="18px" marginBottom="48px">
@@ -591,7 +616,7 @@ const Dashboard = () => {
                     return (
                       <ModuleMap
                         key={index}
-                        userId={user.id}
+                        userId={user?.id}
                         cohortSession={cohortSession}
                         taskCohortNull={taskCohortNull}
                         contextState={contextState}

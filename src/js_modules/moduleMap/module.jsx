@@ -27,12 +27,12 @@ const Module = ({
   const router = useRouter();
 
   const pathConnector = {
-    read: `4geeks.com/${router.locale}/lesson`,
-    practice: `4geeks.com/${router.locale}/interactive-exercise`,
-    code: `4geeks.com/${router.locale}/project`,
-    answer: 'https://assessment.4geeks.com/quiz',
+    lesson: `${router.locale === 'en' ? '4geeks.com/lesson' : `4geeks.com/${router.locale}/lesson`}`,
+    exercise: `${router.locale === 'en' ? '4geeks.com/interactive-exercise' : `4geeks.com/${router.locale}/interactive-exercise`}`,
+    project: `${router.locale === 'en' ? '4geeks.com/project' : `4geeks.com/${router.locale}/project`}`,
+    quiz: 'https://assessment.4geeks.com/quiz',
   };
-  const shareLink = currentTask ? `${pathConnector.read}/${currentTask.associated_slug}` : '';
+  const shareLink = currentTask ? `${pathConnector[currentTask?.task_type?.toLowerCase()]}/${currentTask.associated_slug}` : '';
   const shareSocialMessage = {
     en: `I just finished coding ${currentTask?.title} at 4geeks.com`,
     es: `Acabo de terminar de programar ${currentTask?.title} en 4geeks.com`,
@@ -86,10 +86,13 @@ const Module = ({
   };
 
   const isDone = currentTask?.task_status === 'DONE' || currentTask?.revision_status === 'APPROVED';
+  const projectIsMandatory = data?.task_type === 'PROJECT' && data?.task_status !== 'DONE' && data?.mandatory === true;
+  const isTimeOut = data?.task_type === 'PROJECT' && data?.task_status === 'PENDING' && data?.daysDiff >= 14; // exceeds 2 weeks
 
   return (
     <>
       <ModuleComponent
+        mandatory={isTimeOut || projectIsMandatory}
         currIndex={currIndex}
         textWithLink
         link={`/syllabus/${cohortSession.slug}/${data.type.toLowerCase()}/${currentTask?.associated_slug}`}
@@ -118,7 +121,7 @@ const Module = ({
           link={shareLink}
           socials={socials}
           onlyModal
-          // withParty
+          withParty
         />
       )}
     </>

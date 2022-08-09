@@ -20,6 +20,9 @@ const ShareButton = ({
   const labelColor = useColorModeValue('gray.600', 'gray.200');
   const [copied, setCopied] = useState(false);
   const commonBorderColor = useColorModeValue('#DADADA', 'gray.500');
+  const bgColor = useColorModeValue('white', 'featuredDark');
+  const bgHoverBg = useColorModeValue('featuredLight', 'gray.700');
+  const bgFooterColor = useColorModeValue('featuredLight', 'gray.900');
 
   useEffect(() => {
     if (copied) {
@@ -78,7 +81,7 @@ const ShareButton = ({
         size="xl"
       >
         <ModalOverlay />
-        <ModalContent borderRadius="17px" marginTop="10%">
+        <ModalContent borderRadius="17px" marginTop="10%" backgroundColor={bgColor}>
           <ModalHeader fontSize="15px" color={labelColor} textAlign="center" letterSpacing="0.05em" borderBottom="1px solid" borderColor={commonBorderColor} fontWeight="900" textTransform="uppercase">
             {title || t('share:title')}
           </ModalHeader>
@@ -91,7 +94,7 @@ const ShareButton = ({
             <Stack display={socialList.length <= 2 ? 'flex' : 'grid'} gridTemplateColumns="repeat(auto-fill, minmax(7rem, 1fr))" justifyItems="center" justifyContent={socialList.length <= 2 && 'center'} flexDirection={socialList.length <= 2 && 'row'} gridGap={socialList.length <= 2 && '3rem'}>
               {socialList.map((l) => (
                 <Box style={{ margin: '0px' }} textAlign="center" display="flex" flexDirection="column" gridGap="6px">
-                  <Link display="flex" key={l.name} href={l.href} target="_blank" rel="noopener noreferrer" minWidth="68px" minHeight="68px" alignItems="center" justifyContent="center" borderRadius="35px" backgroundColor="featuredLight" style={{ margin: '0px' }}>
+                  <Link display="flex" key={l.name} href={l.href} target="_blank" rel="noopener noreferrer" minWidth="68px" minHeight="68px" alignItems="center" justifyContent="center" borderRadius="35px" backgroundColor={bgFooterColor} style={{ margin: '0px' }}>
                     <Icon icon={l.name} color={l.color} width="36px" height="36px" />
                   </Link>
                   <Text size="12px">
@@ -100,7 +103,7 @@ const ShareButton = ({
                 </Box>
               ))}
               <Box style={{ margin: '0px' }} textAlign="center" alignItems="center" display="flex" flexDirection="column" gridGap="6px">
-                <Button onClick={() => onCopy()} backgroundColor="featuredLight" width="68px" height="68px" style={{ margin: '0', padding: '0' }} _hover={{ backgroundColor: 'featuredLight' }} _active={{ backgroundColor: 'featuredLight' }} borderRadius="35px" margin="0">
+                <Button onClick={() => onCopy()} backgroundColor={bgFooterColor} width="68px" height="68px" style={{ margin: '0', padding: '0' }} _hover={{ backgroundColor: bgHoverBg }} _active={{ backgroundColor: bgHoverBg }} borderRadius="35px" margin="0">
                   <Box padding="10px" backgroundColor="blue.default" borderRadius="35px">
                     <Icon icon="copy" width="22px" height="22px" />
                   </Box>
@@ -122,7 +125,7 @@ const ShareButton = ({
               justifyContent="center"
               borderRadius="5px"
               letterSpacing="0.05em"
-              backgroundColor="featuredLight"
+              backgroundColor={bgFooterColor}
               dangerouslySetInnerHTML={{ __html: message || t('share:message') }}
             />
           </ModalFooter>

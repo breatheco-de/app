@@ -8,10 +8,16 @@ import Link from './NextChakraLink';
 
 const Module = ({
   onClickHandler, data, containerStyle, leftContentStyle, containerPX, width, currIndex,
-  isDone, rightItemHandler, link, textWithLink,
+  isDone, rightItemHandler, link, textWithLink, mandatory,
 }) => {
   const containerBackground = isDone ? useColorModeValue('featuredLight', 'featuredDark') : useColorModeValue('#FFFFFF', 'primary');
   const commonFontColor = useColorModeValue('gray.600', 'gray.200');
+
+  const borderColor = () => {
+    if (mandatory) return 'yellow.default';
+    if (isDone) return 'transparent';
+    return useColorModeValue('#C4C4C4', 'gray.700');
+  };
 
   return (
     <Stack
@@ -20,8 +26,8 @@ const Module = ({
       gridGap="12px"
       direction="row"
       backgroundColor={containerBackground}
-      border={`${useColorModeValue('1px', '2px')} solid`}
-      borderColor={isDone ? 'transparent' : useColorModeValue('#C4C4C4', 'gray.700')}
+      border={mandatory ? '2px solid' : `${useColorModeValue('1px', '2px')} solid`}
+      borderColor={borderColor()}
       height="auto"
       py="10px"
       px={containerPX || '15px'}
@@ -33,23 +39,29 @@ const Module = ({
     >
       <Flex width="100%">
         {currIndex !== null && (
-          <Box
-            width="30px"
-            minWidth="30px"
-            alignSelf="center"
-            mr="15px"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            height="30px"
-            rounded="full"
-            align="center"
-            background={isDone ? '#0097CF' : '#BFBFBF'}
-          >
-            <Text fontWeight="bold" margin="0" size="sm" color="#FFFFFF">
-              {currIndex + 1}
-            </Text>
-          </Box>
+          <>
+            {mandatory ? (
+              <Icon icon="warning" color="yellow.default" width="28px" height="28px" style={{ marginRight: '15px' }} />
+            ) : (
+              <Box
+                width="30px"
+                minWidth="30px"
+                alignSelf="center"
+                mr="15px"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height="30px"
+                rounded="full"
+                align="center"
+                background={isDone ? '#0097CF' : '#BFBFBF'}
+              >
+                <Text fontWeight="bold" margin="0" size="sm" color="#FFFFFF">
+                  {currIndex + 1}
+                </Text>
+              </Box>
+            )}
+          </>
         )}
         {data.icon && (
           <Box display={{ base: 'none', sm: 'flex' }} mr="20px" ml="20px" minWidth="22px" width="22px">
@@ -148,6 +160,7 @@ Module.propTypes = {
   rightItemHandler: PropTypes.element,
   isDone: PropTypes.bool,
   currIndex: PropTypes.number,
+  mandatory: PropTypes.bool,
 };
 Module.defaultProps = {
   onClickHandler: () => {},
@@ -161,6 +174,7 @@ Module.defaultProps = {
   rightItemHandler: null,
   isDone: false,
   currIndex: null,
+  mandatory: false,
 };
 
 export default Module;
