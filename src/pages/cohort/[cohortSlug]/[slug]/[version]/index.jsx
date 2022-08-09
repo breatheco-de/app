@@ -345,10 +345,10 @@ const Dashboard = () => {
     const mandatoryProjects = sortedAssignments.flatMap(
       (assignment) => assignment.filteredModules.filter(
         (l) => {
-          const isMandatory = l.task_type === 'PROJECT' && l.task_status === 'PENDING' && l.mandatory === true;
-          const isTimeOut = l.task_type === 'PROJECT' && l.task_status === 'PENDING' && l.daysDiff >= 14; // exceeds 2 weeks
+          const isMandatoryTimeOut = l.task_type === 'PROJECT' && l.task_status === 'PENDING'
+            && l.mandatory === true && l.daysDiff >= 14; // exceeds 2 weeks
 
-          return isTimeOut || isMandatory;
+          return isMandatoryTimeOut;
         },
       ),
     );
