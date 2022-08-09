@@ -8,7 +8,6 @@ import {
   Modal, ModalBody, ModalCloseButton, ModalContent,
   ModalHeader, ModalOverlay, Button,
 } from '@chakra-ui/react';
-import { WarningTwoIcon, CloseIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
@@ -42,7 +41,6 @@ const Dashboard = () => {
   const { colorMode } = useColorMode();
   const { contextState, setContextState } = useModuleMap();
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
-  const [showWarning, setShowWarning] = useState(true);
   const [showWarningModal, setShowWarningModal] = useState(false);
   const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
@@ -378,49 +376,12 @@ const Dashboard = () => {
 
   return (
     <>
-      {user && !user.github && showWarning && (
-        <Container
-          width="100%"
-          background="#FFB718"
-          maxW="none"
-          textAlign="center"
-          padding="7px"
-          position="relative"
-        >
-          <Text
-            color="#3A3A3A"
-            fontWeight="700"
-            maxW={['80%', '80%', '90%', '90%']}
-            margin="auto"
-            fontSize="15px"
-          >
-            <WarningTwoIcon verticalAlign="text-bottom" />
-            {'  '}
-            {t('common:github-warning')}
-          </Text>
-          <Box
-            position="absolute"
-            top="0"
-            bottom="0"
-            right="10px"
-            _hover={{ cursor: 'pointer' }}
-            onClick={() => setShowWarning(false)}
-            aria-label={t('common:close')}
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
-          >
-            <CloseIcon color="#3A3A3A" />
-          </Box>
-        </Container>
-      )}
       {getMandatoryProjects().length > 0 && (
         <AlertMessage
           full
           type="warning"
           message={t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
           style={{ borderRadius: '0px', justifyContent: 'center' }}
-          textStyle={{ textTransform: 'uppercase' }}
         />
       )}
       <Container maxW="container.xl">

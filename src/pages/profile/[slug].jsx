@@ -3,7 +3,7 @@ import {
   Container,
   Box, Link, Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip, useColorModeValue, useToast,
 } from '@chakra-ui/react';
-import { WarningTwoIcon, CloseIcon } from '@chakra-ui/icons';
+import { CloseIcon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
 import { memo, useEffect, useState } from 'react';
 import { formatRelative } from 'date-fns';
@@ -11,6 +11,7 @@ import { es } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
+import CustomTheme from '../../../styles/theme';
 import useAuth from '../../common/hooks/useAuth';
 import asPrivate from '../../common/context/PrivateRouteWrapper';
 import { usePersistent } from '../../common/hooks/usePersistent';
@@ -75,10 +76,10 @@ const Profile = () => {
       {user && !user.github && showWarning && (
         <Container
           width="100%"
-          background="#FFB718"
+          background={CustomTheme.colors.yellow.default}
           maxW="none"
           textAlign="center"
-          padding="px"
+          padding="7px"
           position="relative"
         >
           <Text
@@ -88,7 +89,9 @@ const Profile = () => {
             margin="auto"
             fontSize="15px"
           >
-            <WarningTwoIcon verticalAlign="text-bottom" />
+            <span>
+              <Icon style={{ display: 'inline', minWidth: '18px' }} icon="warning" color="#000" props={{ full: true }} width="18px" height="18px" />
+            </span>
             {'  '}
             {t('common:github-warning')}
           </Text>
