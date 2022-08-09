@@ -29,7 +29,7 @@ import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
-import { slugify, includesToLowerCase } from '../../../../../utils/index';
+import { slugify, includesToLowerCase, getStorageItem } from '../../../../../utils/index';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
@@ -43,7 +43,7 @@ const Dashboard = () => {
   const { contextState, setContextState } = useModuleMap();
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const [showWarning, setShowWarning] = useState(true);
-  const [showWarningModal, setShowWarningModal] = useState(true);
+  const [showWarningModal, setShowWarningModal] = useState(false);
   const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [taskCohortNull, setTaskCohortNull] = useState([]);
@@ -84,6 +84,8 @@ const Dashboard = () => {
   const iconColor = useColorModeValue('#000000', '#FFFFFF');
   const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
   const commonModalColor = useColorModeValue('gray.dark', 'gray.light');
+  const accessToken = getStorageItem('accessToken');
+  const showGithubWarning = getStorageItem('showGithubWarning');
 
   const supportSideBar = t('supportSideBar', {}, { returnObjects: true });
 
@@ -149,6 +151,12 @@ const Dashboard = () => {
         });
       });
   };
+
+  useEffect(() => {
+    if (showGithubWarning === 'active') {
+      setShowWarningModal(true);
+    }
+  }, []);
 
   // Fetch cohort data with pathName structure
   useEffect(() => {
@@ -386,7 +394,7 @@ const Dashboard = () => {
             margin="auto"
             fontSize="15px"
           >
-            <WarningTwoIcon verticalAlign="middle" />
+            <WarningTwoIcon verticalAlign="text-bottom" />
             {'  '}
             {t('common:github-warning')}
           </Text>
@@ -706,13 +714,14 @@ const Dashboard = () => {
           </Box>
         </Flex>
       </Container>
+      {showGithubWarning === 'active' && (
       <Modal
         isOpen={showWarningModal}
         size="md"
         margin="0 10px"
         onClose={() => {
           setShowWarningModal(false);
-          localStorage.setItem('showGithubWarning', 'false');
+          localStorage.setItem('showGithubWarning', 'postponed');
         }}
       >
         <ModalOverlay />
@@ -737,6 +746,10 @@ const Dashboard = () => {
               display="flex"
               width="100%"
               marginBottom="15px"
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.href = `${process.env.BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
+              }}
             >
               <Icon
                 icon="github"
@@ -758,7 +771,7 @@ const Dashboard = () => {
               color={commonModalColor}
               onClick={() => {
                 setShowWarningModal(false);
-                localStorage.setItem('showGithubWarning', 'false');
+                localStorage.setItem('showGithubWarning', 'postponed');
               }}
             >
               {t('warningModal.skip')}
@@ -766,6 +779,7 @@ const Dashboard = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
+      )}
     </>
   );
 };

@@ -88,7 +88,7 @@ const Profile = () => {
             margin="auto"
             fontSize="15px"
           >
-            <WarningTwoIcon verticalAlign="middle" />
+            <WarningTwoIcon verticalAlign="text-bottom" />
             {'  '}
             {t('common:github-warning')}
           </Text>
