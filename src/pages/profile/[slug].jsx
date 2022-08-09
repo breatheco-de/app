@@ -3,7 +3,7 @@ import {
   Container,
   Box, Link, Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip, useColorModeValue, useToast,
 } from '@chakra-ui/react';
-import { WarningTwoIcon, CloseIcon } from '@chakra-ui/icons';
+import { CloseIcon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
 import { memo, useEffect, useState } from 'react';
 import { formatRelative } from 'date-fns';
@@ -11,6 +11,7 @@ import { es } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
+import CustomTheme from '../../../styles/theme';
 import useAuth from '../../common/hooks/useAuth';
 import asPrivate from '../../common/context/PrivateRouteWrapper';
 import { usePersistent } from '../../common/hooks/usePersistent';
@@ -72,17 +73,25 @@ const Profile = () => {
   const hasAvatar = profile.github && profile.github.avatar_url && profile.github.avatar_url !== '';
   return (
     <>
-      {!user.github && showWarning && (
+      {user && !user.github && showWarning && (
         <Container
           width="100%"
-          background="#FFB718"
+          background={CustomTheme.colors.yellow.default}
           maxW="none"
           textAlign="center"
-          padding="5px"
+          padding="7px"
           position="relative"
         >
-          <Text color="#3A3A3A" fontWeight="700" maxW={['80%', '80%', '60%', '60%']} margin="auto">
-            <WarningTwoIcon verticalAlign="middle" />
+          <Text
+            color="#3A3A3A"
+            fontWeight="700"
+            maxW={['80%', '80%', '90%', '90%']}
+            margin="auto"
+            fontSize="15px"
+          >
+            <span>
+              <Icon style={{ display: 'inline', minWidth: '18px' }} icon="warning" color="#000" props={{ full: true }} width="18px" height="18px" />
+            </span>
             {'  '}
             {t('common:github-warning')}
           </Text>
@@ -98,7 +107,7 @@ const Profile = () => {
             flexDirection="column"
             justifyContent="center"
           >
-            <CloseIcon />
+            <CloseIcon color="#3A3A3A" />
           </Box>
         </Container>
       )}

@@ -87,6 +87,13 @@
       "cancel": "Cancel"
     }
   },
+  "warningModal" : {
+    "title": "sincronize with github",
+    "sub-title": "Your Github account is not connected",
+    "text": "Only by conecting your Github account you will be able to get unlimited Gitpod hours",
+    "connect": "CONNECT WITH GITHUB",
+    "skip": "Skip for now"
+  },
   "unsynced": {
     "title": "There are {{taskLength}} unsynced cohort tasks",
     "description": "These tasks may be deleted and lost in the future. Make sure to synch them if you don't want to lose them.",

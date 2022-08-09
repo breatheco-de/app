@@ -87,6 +87,13 @@
       "cancel": "Cancelar"
     }
   },
+  "warningModal" : {
+    "title": "Sincronizar con github",
+    "sub-title": "Tu cuenta de Github no está conectada",
+    "text": "Sólo conectando tu cuenta de Github podrás acceder a horas ilimitadas de Gitpod",
+    "connect": "CONECTAR CON GITHUB",
+    "skip": "Saltar por ahora"
+  },
   "unsynced": {
     "title": "Hay {{taskLength}} tareas de cohorte no sincronizadas",
     "description": "Estas tareas pueden eliminarse y perderse en el futuro. Asegúrate de sincronizarlos si no quieres perderlos.",

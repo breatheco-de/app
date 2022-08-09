@@ -5,8 +5,9 @@ import {
   Box, Flex, Container, useColorModeValue, Skeleton, useToast,
   Checkbox, Input, InputGroup, InputRightElement, IconButton,
   keyframes, usePrefersReducedMotion, Avatar, useColorMode,
+  Modal, ModalBody, ModalCloseButton, ModalContent,
+  ModalHeader, ModalOverlay, Button,
 } from '@chakra-ui/react';
-import { WarningTwoIcon, CloseIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
@@ -27,7 +28,7 @@ import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
-import { slugify, includesToLowerCase } from '../../../../../utils/index';
+import { slugify, includesToLowerCase, getStorageItem } from '../../../../../utils/index';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
@@ -40,7 +41,7 @@ const Dashboard = () => {
   const { colorMode } = useColorMode();
   const { contextState, setContextState } = useModuleMap();
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
-  const [showWarning, setShowWarning] = useState(true);
+  const [showWarningModal, setShowWarningModal] = useState(false);
   const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [taskCohortNull, setTaskCohortNull] = useState([]);
@@ -79,6 +80,10 @@ const Dashboard = () => {
   const commonFontColor = useColorModeValue('gray.600', 'gray.200');
   const commonActiveBackground = useColorModeValue('gray.light', 'rgba(255, 255, 255, 0.22)');
   const iconColor = useColorModeValue('#000000', '#FFFFFF');
+  const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
+  const commonModalColor = useColorModeValue('gray.dark', 'gray.light');
+  const accessToken = getStorageItem('accessToken');
+  const showGithubWarning = getStorageItem('showGithubWarning');
 
   const supportSideBar = t('supportSideBar', {}, { returnObjects: true });
 
@@ -144,6 +149,12 @@ const Dashboard = () => {
         });
       });
   };
+
+  useEffect(() => {
+    if (showGithubWarning === 'active') {
+      setShowWarningModal(true);
+    }
+  }, []);
 
   // Fetch cohort data with pathName structure
   useEffect(() => {
@@ -229,6 +240,7 @@ const Dashboard = () => {
         setCohortSession({
           ...cohortSession,
           main_technologies: technologiesArray,
+          academy_owner: programData.data.academy_owner,
           bc_id: user.id,
           user_capabilities: userRoles.data.capabilities,
         });
@@ -364,43 +376,12 @@ const Dashboard = () => {
 
   return (
     <>
-      {!user?.github && showWarning && (
-        <Container
-          width="100%"
-          background="#FFB718"
-          maxW="none"
-          textAlign="center"
-          padding="5px"
-          position="relative"
-        >
-          <Text color="#3A3A3A" fontWeight="700" maxW={['80%', '80%', '60%', '60%']} margin="auto">
-            <WarningTwoIcon verticalAlign="middle" />
-            {'  '}
-            {t('common:github-warning')}
-          </Text>
-          <Box
-            position="absolute"
-            top="0"
-            bottom="0"
-            right="10px"
-            _hover={{ cursor: 'pointer' }}
-            onClick={() => setShowWarning(false)}
-            aria-label={t('common:close')}
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
-          >
-            <CloseIcon />
-          </Box>
-        </Container>
-      )}
       {getMandatoryProjects().length > 0 && (
         <AlertMessage
           full
           type="warning"
           message={t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
           style={{ borderRadius: '0px', justifyContent: 'center' }}
-          textStyle={{ textTransform: 'uppercase', fontSize: '14px' }}
         />
       )}
       <Container maxW="container.xl">
@@ -650,7 +631,7 @@ const Dashboard = () => {
                 width="100%"
               />
             </OnlyFor>
-            {cohortSession?.academy?.white_labeled && (
+            {cohortSession?.academy_owner?.white_labeled && (
               <Box
                 className="white-label"
                 borderRadius="md"
@@ -659,10 +640,13 @@ const Dashboard = () => {
                 justifyContent="space-around"
                 bg={colorMode === 'light' ? '#F2F2F2' || 'blue.light' : 'featuredDark'}
               >
-                <Avatar name={cohortSession.academy.name} src={cohortSession.academy.icon_url} />
+                <Avatar
+                  name={cohortSession.academy_owner.name}
+                  src={cohortSession.academy_owner.icon_url}
+                />
                 <Box className="white-label-text" width="80%">
                   <Text size="md" fontWeight="700" marginBottom="5px">
-                    {cohortSession.academy.name}
+                    {cohortSession.academy_owner.name}
                   </Text>
                   <Text size="sm">
                     {t('whiteLabeledText')}
@@ -691,6 +675,72 @@ const Dashboard = () => {
           </Box>
         </Flex>
       </Container>
+      {showGithubWarning === 'active' && (
+      <Modal
+        isOpen={showWarningModal}
+        size="md"
+        margin="0 10px"
+        onClose={() => {
+          setShowWarningModal(false);
+          localStorage.setItem('showGithubWarning', 'postponed');
+        }}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader color={commonModalColor} borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
+            {t('warningModal.title')}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody padding={{ base: '15px 22px' }}>
+            <Text textAlign="center" fontSize="14px" lineHeight="24px" marginBottom="15px" fontWeight="400">
+              {t('warningModal.sub-title')}
+            </Text>
+            <Text marginBottom="25px" color={commonFontColor} textAlign="center" fontSize="12px" lineHeight="24px">
+              {t('warningModal.text')}
+            </Text>
+            <Button
+              textAlign="center"
+              variant="outline"
+              margin="auto"
+              fontSize="13px"
+              fontWeight="700"
+              display="flex"
+              width="100%"
+              marginBottom="15px"
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.href = `${process.env.BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
+              }}
+            >
+              <Icon
+                icon="github"
+                width="16px"
+                height="16px"
+                style={{ marginRight: '5px' }}
+              />
+              {' '}
+              {t('warningModal.connect')}
+            </Button>
+            <Button
+              textAlign="center"
+              variant="link"
+              margin="auto"
+              fontSize="15px"
+              lineHeight="22px"
+              fontWeight="700"
+              display="block"
+              color={commonModalColor}
+              onClick={() => {
+                setShowWarningModal(false);
+                localStorage.setItem('showGithubWarning', 'postponed');
+              }}
+            >
+              {t('warningModal.skip')}
+            </Button>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      )}
     </>
   );
 };
