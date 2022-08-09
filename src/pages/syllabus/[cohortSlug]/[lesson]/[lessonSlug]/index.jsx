@@ -466,20 +466,6 @@ const Content = () => {
     },
   ];
 
-  const getMandatoryProjects = () => {
-    const mandatoryProjects = sortedAssignments.flatMap(
-      (assignment) => assignment.filteredModules.filter(
-        (l) => {
-          const isMandatory = l.task_type === 'PROJECT' && l.task_status === 'PENDING' && l.mandatory === true;
-          const isTimeOut = l.task_type === 'PROJECT' && l.task_status === 'PENDING' && l.daysDiff >= 14; // exceeds 2 weeks
-
-          return isTimeOut || isMandatory;
-        },
-      ),
-    );
-    return mandatoryProjects;
-  };
-
   return (
     <Flex position="relative">
       <StickySideBar
@@ -560,17 +546,6 @@ const Content = () => {
               {t('dashboard:modules.show-pending-tasks')}
             </Checkbox>
           </Box>
-          {getMandatoryProjects().length > 0 && (
-            <AlertMessage
-              full
-              type="warning"
-              message={t('dashboard:deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
-              style={{
-                borderRadius: '0px', justifyContent: 'center', alignItems: 'center', padding: '8px 16px',
-              }}
-              textStyle={{ textTransform: 'uppercase', fontSize: '14px' }}
-            />
-          )}
 
           <IconButton
             style={{ zIndex: 20 }}
@@ -608,7 +583,6 @@ const Content = () => {
               const currentAssignments = showPendingTasks
                 ? section.filteredModulesByPending
                 : section.filteredModules;
-
               return (
                 <Box
                   key={`${section.title}-${section.id}`}
