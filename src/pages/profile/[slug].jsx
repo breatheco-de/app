@@ -1,9 +1,7 @@
 import {
   Avatar,
-  Container,
   Box, Link, Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip, useColorModeValue, useToast,
 } from '@chakra-ui/react';
-import { CloseIcon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
 import { memo, useEffect, useState } from 'react';
 import { formatRelative } from 'date-fns';
@@ -11,7 +9,6 @@ import { es } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
-import CustomTheme from '../../../styles/theme';
 import useAuth from '../../common/hooks/useAuth';
 import asPrivate from '../../common/context/PrivateRouteWrapper';
 import { usePersistent } from '../../common/hooks/usePersistent';
@@ -20,6 +17,7 @@ import bc from '../../common/services/breathecode';
 import Icon from '../../common/components/Icon';
 import { cleanQueryStrings } from '../../utils';
 import ShareButton from '../../common/components/ShareButton';
+import AlertMessage from '../../common/components/AlertMessage';
 
 const Profile = () => {
   const { t } = useTranslation('profile');
@@ -30,7 +28,6 @@ const Profile = () => {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [profile, setProfile] = usePersistent('profile', {});
   const [certificates, setCertificates] = useState([]);
-  const [showWarning, setShowWarning] = useState(true);
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const tabListMenu = t('tabList', {}, { returnObjects: true });
 
@@ -73,43 +70,13 @@ const Profile = () => {
   const hasAvatar = profile.github && profile.github.avatar_url && profile.github.avatar_url !== '';
   return (
     <>
-      {user && !user.github && showWarning && (
-        <Container
-          width="100%"
-          background={CustomTheme.colors.yellow.default}
-          maxW="none"
-          textAlign="center"
-          padding="7px"
-          position="relative"
-        >
-          <Text
-            color="#3A3A3A"
-            fontWeight="700"
-            maxW={['80%', '80%', '90%', '90%']}
-            margin="auto"
-            fontSize="15px"
-          >
-            <span>
-              <Icon style={{ display: 'inline', minWidth: '18px' }} icon="warning" color="#000" props={{ full: true }} width="18px" height="18px" />
-            </span>
-            {'  '}
-            {t('common:github-warning')}
-          </Text>
-          <Box
-            position="absolute"
-            top="0"
-            bottom="0"
-            right="10px"
-            _hover={{ cursor: 'pointer' }}
-            onClick={() => setShowWarning(false)}
-            aria-label={t('common:close')}
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
-          >
-            <CloseIcon color="#3A3A3A" />
-          </Box>
-        </Container>
+      {user && !user.github && (
+        <AlertMessage
+          full
+          type="warning"
+          message={t('common:github-warning')}
+          style={{ borderRadius: '0px', justifyContent: 'center' }}
+        />
       )}
       <Box margin={{ base: '3% 4% 0px', md: '3% 10% 0px' }} minH="65vh">
         <Heading as="h1" size="m" margin="45px 0">{t('navbar:my-profile')}</Heading>
