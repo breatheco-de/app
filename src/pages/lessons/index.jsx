@@ -117,6 +117,10 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
   const iconColor = useColorModeValue('#FFF', '#283340');
 
   const lessonsFiltered = lessons.slice(0, offset);
+  const lessonsSearched = lessons.filter(
+    (lesson) => lesson.title.toLowerCase()
+      .includes(router?.query?.search?.toLocaleLowerCase() || false),
+  );
 
   const handleScroll = () => {
     const scrollTop = isWindow && document.documentElement.scrollTop;
@@ -127,6 +131,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
   };
 
   useEffect(() => {
+    if (lessonsSearched.length > 0) return () => {};
     if (offset <= lessons.length) {
       console.log('loading lessons...');
       window.addEventListener('scroll', handleScroll);
@@ -134,7 +139,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
     }
     console.log('All lessons loaded');
     return () => {};
-  }, [offset]);
+  }, [offset, lessonsSearched]);
 
   useEffect(() => {
     if (!isLoading) return;
@@ -246,7 +251,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
         </Text>
 
         <ProjectList
-          projects={lessonsFiltered}
+          projects={lessonsSearched.length > 0 ? lessonsSearched : lessonsFiltered}
           withoutImage
           isLoading={isLoading}
           contextFilter={filteredBy.projectsOptions}

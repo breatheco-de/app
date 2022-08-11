@@ -178,6 +178,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
             _active={{
               background: commonColors,
             }}
+            aria-label="Dark mode switch"
             background={commonColors}
             onClick={toggleColorMode}
             icon={

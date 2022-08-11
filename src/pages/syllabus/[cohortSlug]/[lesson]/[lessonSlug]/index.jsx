@@ -30,10 +30,9 @@ import ShareButton from '../../../../../common/components/ShareButton';
 
 const Content = () => {
   const { t } = useTranslation('syllabus');
-  const { user, choose } = useAuth();
+  const { choose } = useAuth();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [sortedAssignments] = usePersistent('sortedAssignments', []);
-  const [, setUpdatedTask] = useState(null);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);
@@ -53,6 +52,7 @@ const Content = () => {
   const [selectedSyllabus, setSelectedSyllabus] = useState({});
   const [defaultSelectedSyllabus, setDefaultSelectedSyllabus] = useState({});
   const [callToActionProps, setCallToActionProps] = useState({});
+  const [showModal, setShowModal] = useState(false);
   const [readmeUrlPathname, setReadmeUrlPathname] = useState(null);
   const [currentData, setCurrentData] = useState({});
   const toast = useToast();
@@ -148,16 +148,7 @@ const Content = () => {
       } else {
         setShowScrollToTop(false);
       }
-      /*
-        // visible when scrolls to top and hide when scrolls down
 
-        if (prevScrollY.current < currentScrollY && showScrollToTop) {
-          setShowScrollToTop(false);
-        }
-        if (prevScrollY.current > currentScrollY === 400 && !showScrollToTop) {
-          setShowScrollToTop(true);
-        }
-      */
       prevScrollY.current = currentScrollY;
     };
     if (isWindow) {
@@ -180,15 +171,13 @@ const Content = () => {
 
   const changeStatusAssignment = (event, task, taskStatus) => {
     event.preventDefault();
-    setUpdatedTask({
-      ...task,
-    });
     updateAssignment({
       t, task, taskStatus, closeSettings, toast, contextState, setContextState,
     });
   };
 
   const sendProject = (task, githubUrl, taskStatus) => {
+    setShowModal(true);
     updateAssignment({
       t, task, closeSettings, toast, githubUrl, taskStatus, contextState, setContextState,
     });
@@ -452,15 +441,15 @@ const Content = () => {
   })[selectedSyllabus.id - 1];
 
   const pathConnector = {
-    read: `4geeks.com/${router.locale}/lesson`,
-    practice: `4geeks.com/${router.locale}/interactive-exercise`,
-    code: `4geeks.com/${router.locale}/project`,
+    read: `${router.locale === 'en' ? '4geeks.com/lesson' : `4geeks.com/${router.locale}/lesson`}`,
+    practice: `${router.locale === 'en' ? '4geeks.com/interactive-exercise' : `4geeks.com/${router.locale}/interactive-exercise`}`,
+    code: `${router.locale === 'en' ? '4geeks.com/project' : `4geeks.com/${router.locale}/project`}`,
     answer: 'https://assessment.4geeks.com/quiz',
   };
   const shareLink = currentTask ? `${pathConnector[lesson]}/${currentTask.associated_slug}` : '';
   const shareSocialMessage = {
-    en: 'I just finished coding at at 4geeks.com',
-    es: 'Acabo de terminar de programar en 4geeks.com',
+    en: `I just finished coding ${currentTask?.title} at 4geeks.com`,
+    es: `Acabo de terminar de programar ${currentTask?.title} en 4geeks.com`,
   };
   const socials = [
     {
@@ -550,7 +539,9 @@ const Content = () => {
             borderStyle="solid"
             borderColor={commonBorderColor}
           >
-            <Heading size="xsm">{user.active_cohort && user.active_cohort.syllabus_name}</Heading>
+            {cohortSession?.syllabus_version && (
+              <Heading size="xsm">{cohortSession?.syllabus_version?.name}</Heading>
+            )}
             <Checkbox mb="-14px" onChange={(e) => setShowPendingTasks(e.target.checked)} color="gray.600">
               {t('dashboard:modules.show-pending-tasks')}
             </Checkbox>
@@ -762,14 +753,15 @@ const Content = () => {
                 closeSettings={closeSettings}
                 settingsOpen={settingsOpen}
               />
-              {currentTask?.task_status === 'DONE' && (
+              {currentTask?.task_status === 'DONE' && showModal && (
                 <ShareButton
                   variant="outline"
-                  title={t('share-certificate.title')}
-                  shareText={t('share-certificate.shareText')}
+                  title={t('projects:share-certificate.title')}
+                  shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
                   link={shareLink}
                   socials={socials}
-                  // withParty
+                  onlyModal
+                  withParty
                 />
               )}
             </Box>
@@ -859,6 +851,7 @@ const Content = () => {
                         closeSettings={closeSettings}
                         settingsOpen={modalSettingsOpen}
                         onClickHandler={() => {
+                          setShowModal(false);
                           setTimeout(() => {
                             router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
                           }, 1200);

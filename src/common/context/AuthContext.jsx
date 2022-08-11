@@ -142,6 +142,11 @@ const AuthProvider = ({ children }) => {
               ...profile,
               ...data,
             });
+            if (data.github) {
+              localStorage.setItem('showGithubWarning', 'closed');
+            } else if (!localStorage.getItem('showGithubWarning') || localStorage.getItem('showGithubWarning') !== 'postponed') {
+              localStorage.setItem('showGithubWarning', 'active');
+            }
           })
           .catch(() => {
             handleSession(null);
@@ -223,6 +228,7 @@ const AuthProvider = ({ children }) => {
     }
     handleSession(null);
     setProfile({});
+    localStorage.removeItem('showGithubWarning');
     dispatch({ type: 'LOGOUT' });
   };
 

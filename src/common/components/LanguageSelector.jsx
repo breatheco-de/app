@@ -39,6 +39,7 @@ const LanguageSelector = ({ display, translations }) => {
         <Button
           padding="0"
           display={display}
+          aria-label="Language Selector"
           textAlign="-webkit-center"
           height="auto"
           backgroundColor="transparent"

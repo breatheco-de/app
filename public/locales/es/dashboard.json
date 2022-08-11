@@ -65,7 +65,8 @@
   "deliverProject": {
     "title": "URL de repositorio Github",
     "how-to-deliver": "Cómo entregar proyectos",
-    "handler-text": "Entregar proyecto"
+    "handler-text": "Entregar proyecto",
+    "mandatory-message": "Tienes {{count}} proyectos obligatorios para completar antes de graduarte"
   },
   "modalInfo": {
     "title": "Estado de revisión",
@@ -85,6 +86,13 @@
       "confirm": "Confirmar",
       "cancel": "Cancelar"
     }
+  },
+  "warningModal" : {
+    "title": "Sincronizar con github",
+    "sub-title": "Tu cuenta de Github no está conectada",
+    "text": "Sólo conectando tu cuenta de Github podrás acceder a horas ilimitadas de Gitpod",
+    "connect": "CONECTAR CON GITHUB",
+    "skip": "Saltar por ahora"
   },
   "unsynced": {
     "title": "Hay {{taskLength}} tareas de cohorte no sincronizadas",
