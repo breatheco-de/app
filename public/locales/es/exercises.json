@@ -17,9 +17,13 @@
   "thanks": "¡Gracias!",
   "download": "Ya puedes descargar o clonar el material interactivo.",
   "open-tutorial": "Abrir tutorial online",
+  "open-gitpod": "Abrir en Gitpod",
   "clone": "Clonar localmente",
   "clone-tooltip": "Clonar repositorio",
   "how-to-clone": "¿Cómo clonar?",
+  "modal-title": "¿Cómo clonar un proyecto?",
+  "modal-text": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. ",
+  "powered": "Desarrollado por ",
   "get-instant-access": "Obtener acceso",
   "average-duration": "Duración promedio",
   "landing-technology": {

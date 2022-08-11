@@ -9,6 +9,12 @@ import {
   useColorMode,
   FormErrorMessage,
   Skeleton,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -20,6 +26,7 @@ import { useRouter } from 'next/router';
 import Script from 'next/script';
 import getT from 'next-translate/getT';
 import { languageLabel } from '../../../utils';
+import useAuth from '../../../common/hooks/useAuth';
 import Heading from '../../../common/components/Heading';
 import Link from '../../../common/components/NextChakraLink';
 import Text from '../../../common/components/Text';
@@ -125,7 +132,9 @@ const TabletWithForm = ({
   commonBorderColor,
 }) => {
   const { t } = useTranslation('exercises');
+  const { user } = useAuth();
   const [formSended, setFormSended] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [formStatus, setFormStatus] = useState({ status: 'idle', msg: '' });
   return (
     <>
@@ -137,8 +146,80 @@ const TabletWithForm = ({
         borderStyle="solid"
         borderColor={commonBorderColor}
       >
-        {!formSended
-          ? (
+        {user && (
+          <>
+            <Heading
+              size="15px"
+              textAlign="center"
+              textTransform="uppercase"
+              width="100%"
+              fontWeight="900"
+              // mt="30px"
+              mb="0px"
+            >
+              {t('download')}
+            </Heading>
+            <Button
+              marginTop="20px"
+              borderRadius="3px"
+              width="100%"
+              padding="0"
+              whiteSpace="normal"
+              variant="default"
+              textTransform="uppercase"
+            >
+              {t('clone')}
+            </Button>
+            <Button
+              marginTop="20px"
+              borderRadius="3px"
+              width="100%"
+              padding="0"
+              whiteSpace="normal"
+              variant="outline"
+              borderColor={CustomTheme.colors.blue.default}
+              color={CustomTheme.colors.blue.default}
+              alignItems="center"
+            >
+              {'  '}
+              <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color={CustomTheme.colors.blue.default} />
+              {t('open-gitpod')}
+            </Button>
+            <Text
+              color={CustomTheme.colors.blue.default}
+              fontSize="13px"
+              textAlign="center"
+              marginTop="10px"
+            >
+              {t('powered')}
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+              <Link
+                href="#"
+                // color={useColorModeValue('blue.default', 'blue.300')}
+                display="inline-block"
+                letterSpacing="0.05em"
+                fontFamily="Lato, Sans-serif"
+              >
+                Learnpack
+              </Link>
+            </Text>
+            <Text display="flex" alignItems="center" marginTop="15px">
+              <HelpComponent text={t('clone-tooltip')} />
+              <Button
+                marginLeft="5px"
+                fontSize="15px"
+                display="inline-block"
+                letterSpacing="0.05em"
+                variant="link"
+                onClick={() => setShowModal(true)}
+              >
+                {t('how-to-clone')}
+              </Button>
+            </Text>
+          </>
+        )}
+        {!user && !formSended
+          && (
             <>
               <Heading
                 size="15px"
@@ -254,38 +335,90 @@ const TabletWithForm = ({
                 }}
               </Formik>
             </>
-          ) : (
-            <>
-              <Icon style={{ margin: 'auto' }} width="104px" height="104px" icon="circle-check" />
-              <Heading
-                size="15px"
-                textAlign="center"
-                textTransform="uppercase"
-                width="100%"
-                fontWeight="900"
-                mt="30px"
-                mb="0px"
-              >
-                {t('thanks')}
-              </Heading>
-              <Text size="md" color={commonTextColor} textAlign="center" marginTop="10px" px="0px">
-                {t('download')}
+          )}
+        {formSended && (
+        <>
+          <Icon style={{ margin: 'auto' }} width="104px" height="104px" icon="circle-check" />
+          <Heading
+            size="15px"
+            textAlign="center"
+            textTransform="uppercase"
+            width="100%"
+            fontWeight="900"
+            mt="30px"
+            mb="0px"
+          >
+            {t('thanks')}
+          </Heading>
+          <Text size="md" color={commonTextColor} textAlign="center" marginTop="10px" px="0px">
+            {t('download')}
+          </Text>
+          <Button
+            marginTop="20px"
+            borderRadius="3px"
+            width="100%"
+            padding="0"
+            whiteSpace="normal"
+            variant="default"
+            textTransform="uppercase"
+          >
+            {t('open-tutorial')}
+          </Button>
+          <Button
+            marginTop="20px"
+            borderRadius="3px"
+            width="100%"
+            padding="0"
+            whiteSpace="normal"
+            variant="outline"
+            textTransform="uppercase"
+            borderColor={CustomTheme.colors.blue.default}
+            color={CustomTheme.colors.blue.default}
+            alignItems="center"
+          >
+            {t('clone')}
+            {'  '}
+            <Icon style={{ marginLeft: '5px' }} width="12px" height="14px" icon="download" color={CustomTheme.colors.blue.default} />
+          </Button>
+          <Text display="flex" alignItems="center" marginTop="15px">
+            <HelpComponent text={t('clone-tooltip')} />
+            <Button
+              marginLeft="5px"
+              fontSize="15px"
+              display="inline-block"
+              letterSpacing="0.05em"
+              variant="link"
+              onClick={() => setShowModal(true)}
+            >
+              {t('how-to-clone')}
+            </Button>
+          </Text>
+        </>
+        )}
+        <Modal
+          isOpen={showModal}
+          size="md"
+          margin="0 10px"
+          onClose={() => {
+            setShowModal(false);
+          }}
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
+              {t('modal-title')}
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody padding={{ base: '15px 30px' }}>
+              <Text marginBottom="25px" fontSize="14px" lineHeight="24px">
+                {t('modal-text')}
               </Text>
               <Button
+                margin="auto"
                 marginTop="20px"
                 borderRadius="3px"
-                width="100%"
-                padding="0"
-                whiteSpace="normal"
-                variant="default"
-                textTransform="uppercase"
-              >
-                {t('open-tutorial')}
-              </Button>
-              <Button
-                marginTop="20px"
-                borderRadius="3px"
-                width="100%"
+                display="block"
+                width="70%"
                 padding="0"
                 whiteSpace="normal"
                 variant="outline"
@@ -296,27 +429,11 @@ const TabletWithForm = ({
               >
                 {t('clone')}
                 {'  '}
-                <Icon style={{ marginLeft: '5px' }} width="12px" height="14px" icon="download" color={CustomTheme.colors.blue.default} />
+                <Icon style={{ marginLeft: '5px', display: 'inline-block' }} width="12px" height="14px" icon="download" color={CustomTheme.colors.blue.default} />
               </Button>
-              <Text display="flex" alignItems="center" marginTop="15px">
-                <HelpComponent text={t('clone-tooltip')} />
-                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                <Link
-                  href="#"
-                  color={useColorModeValue('blue.default', 'blue.300')}
-                  display="inline-block"
-                  letterSpacing="0.05em"
-                  fontWeight="700"
-                  fontFamily="Lato, Sans-serif"
-                  marginLeft="5px"
-                  fontSize="15px"
-                >
-                  {t('how-to-clone')}
-                </Link>
-              </Text>
-            </>
-          )}
-
+            </ModalBody>
+          </ModalContent>
+        </Modal>
       </Box>
       <Box px="22px" pb="30px" pt="24px">
         <SimpleTable
@@ -581,6 +698,8 @@ Exercise.propTypes = {
 TabletWithForm.propTypes = {
   isSubmitting: PropTypes.bool,
   toast: PropTypes.func.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  user: PropTypes.object.isRequired,
   commonTextColor: PropTypes.string.isRequired,
   commonBorderColor: PropTypes.string.isRequired,
   exercise: PropTypes.objectOf(PropTypes.any).isRequired,
