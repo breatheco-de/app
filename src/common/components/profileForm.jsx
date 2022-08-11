@@ -24,7 +24,7 @@ const ProfileForm = ({ profile }) => {
   const inputColor = useColorModeValue('gray.600', 'gray.200');
   const bgColor = useColorModeValue('white', 'darkTheme');
   const inputDisabledColor = useColorModeValue('gray.600', 'gray.350');
-  const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
+  const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const backgroundDisabledColor = useColorModeValue('gray.250', 'gray.600');
   const [userInfo, setUserInfo] = useState(null);
   const [defaultUserInfo, setDefaultUserInfo] = useState(null);

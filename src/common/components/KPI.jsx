@@ -28,7 +28,7 @@ const KPI = ({
     default: '#0097CF',
   };
 
-  const textColor = useColorModeValue('#1A202C', '#FFFFFF');
+  const textColor = useColorModeValue('gray.900', 'white');
   const labelColor = useColorModeValue('gray.dark', 'gray.light');
   const bgColor = useColorModeValue('white', 'featuredDark');
 

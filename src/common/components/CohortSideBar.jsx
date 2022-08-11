@@ -277,7 +277,7 @@ const CohortSideBar = ({
         })}
         {teacher.length === 0 && t('cohortSideBar.no-teachers')}
       </Box>
-      <Divider margin={0} style={{ borderColor: useColorModeValue('#DADADA', 'gray.700') }} />
+      <Divider margin={0} style={{ borderColor: useColorModeValue('gray.250', 'gray.700') }} />
       <Box id="cohort-students" display="flex" flexDirection="column" gridGap="20px" padding="18px 26px">
         {teacherAssistants.length > 0 && (
           <ProfilesSection
