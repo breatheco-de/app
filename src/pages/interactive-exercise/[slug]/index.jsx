@@ -192,9 +192,8 @@ const TabletWithForm = ({
               marginTop="10px"
             >
               {t('powered')}
-              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <Link
-                href="#"
+                href="learnpack.co"
                 // color={useColorModeValue('blue.default', 'blue.300')}
                 display="inline-block"
                 letterSpacing="0.05em"
