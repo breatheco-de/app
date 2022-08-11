@@ -23,6 +23,8 @@ import { languageLabel } from '../../../utils';
 import Heading from '../../../common/components/Heading';
 import Link from '../../../common/components/NextChakraLink';
 import Text from '../../../common/components/Text';
+import Icon from '../../../common/components/Icon';
+import HelpComponent from '../../../common/components/HelpComponent';
 import SimpleTable from '../../../js_modules/projects/SimpleTable';
 // eslint-disable-next-line no-unused-vars
 import TagCapsule from '../../../common/components/TagCapsule';
@@ -32,6 +34,7 @@ import { MDSkeleton } from '../../../common/components/Skeleton';
 import validationSchema from '../../../common/components/Forms/validationSchemas';
 import { processFormEntry } from '../../../common/components/Forms/actions';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
+import CustomTheme from '../../../../styles/theme';
 import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
@@ -122,6 +125,7 @@ const TabletWithForm = ({
   commonBorderColor,
 }) => {
   const { t } = useTranslation('exercises');
+  const [formSended, setFormSended] = useState(false);
   const [formStatus, setFormStatus] = useState({ status: 'idle', msg: '' });
   return (
     <>
@@ -133,119 +137,186 @@ const TabletWithForm = ({
         borderStyle="solid"
         borderColor={commonBorderColor}
       >
-        <Heading
-          size="15px"
-          textAlign="left"
-          textTransform="uppercase"
-          justify="center"
-          width="100%"
-          mt="0px"
-          mb="0px"
-        >
-          {t('direct-access-request')}
-        </Heading>
+        {!formSended
+          ? (
+            <>
+              <Heading
+                size="15px"
+                textAlign="left"
+                textTransform="uppercase"
+                justify="center"
+                width="100%"
+                mt="0px"
+                mb="0px"
+              >
+                {t('direct-access-request')}
+              </Heading>
 
-        <Text size="md" color={commonTextColor} textAlign="left" my="10px" px="0px">
-          {t('direct-access-request-description')}
-        </Text>
+              <Text size="md" color={commonTextColor} textAlign="left" my="10px" px="0px">
+                {t('direct-access-request-description')}
+              </Text>
+              <Formik
+                initialValues={{ full_name: '', email: '', current_download: exercise.slug }}
+                onSubmit={(values, actions) => {
+                  processFormEntry(values).then((data) => {
+                    actions.setSubmitting(false);
+                    if (data && data.error !== false && data.error !== undefined) {
+                      setFormStatus({ status: 'error', msg: data.error });
+                    } else {
+                      setFormStatus({ status: 'thank-you', msg: 'Thank you for your request!' });
+                      toast({
+                        title: t('alert-message:request-apply-success'),
+                        description: t('alert-message:email-will-be-sent'),
+                        status: 'success',
+                        duration: 7000,
+                        isClosable: true,
+                      });
+                      setFormSended(true);
+                    }
+                  })
+                    .catch((error) => {
+                      console.error('error', error);
+                      actions.setSubmitting(false);
+                      setFormStatus({ status: 'error', msg: error.message || error });
+                    });
+                }}
+                validationSchema={validationSchema.leadForm}
+              >
+                {(props) => {
+                  const { isSubmitting } = props;
+                  return (
+                    <Form>
+                      <Box py="0" flexDirection="column" display="flex" alignItems="center">
+                        <Field id="field912" name="full_name">
+                          {({ field, form }) => (
+                            <FormControl
+                              padding="6px 0"
+                              isInvalid={form.errors.full_name && form.touched.full_name}
+                            >
+                              <Input
+                                {...field}
+                                id="full_name"
+                                placeholder={t('common:full-name')}
+                                type="name"
+                                style={{
+                                  borderRadius: '3px',
+                                  backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
+                                  transition: 'background 0.2s ease-in-out',
+                                }}
+                              />
+                              <FormErrorMessage>{fields.full_name.error}</FormErrorMessage>
+                            </FormControl>
+                          )}
+                        </Field>
 
-        <Formik
-          initialValues={{ full_name: '', email: '', current_download: exercise.slug }}
-          onSubmit={(values, actions) => {
-            processFormEntry(values).then((data) => {
-              actions.setSubmitting(false);
-              if (data && data.error !== false && data.error !== undefined) {
-                setFormStatus({ status: 'error', msg: data.error });
-              } else {
-                setFormStatus({ status: 'thank-you', msg: 'Thank you for your request!' });
-                toast({
-                  title: t('alert-message:request-apply-success'),
-                  description: t('alert-message:email-will-be-sent'),
-                  status: 'success',
-                  duration: 7000,
-                  isClosable: true,
-                });
-              }
-            })
-              .catch((error) => {
-                console.error('error', error);
-                actions.setSubmitting(false);
-                setFormStatus({ status: 'error', msg: error.message || error });
-              });
-          }}
-          validationSchema={validationSchema.leadForm}
-        >
-          {(props) => {
-            const { isSubmitting } = props;
-            return (
-              <Form>
-                <Box py="0" flexDirection="column" display="flex" alignItems="center">
-                  <Field id="field912" name="full_name">
-                    {({ field, form }) => (
-                      <FormControl
-                        padding="6px 0"
-                        isInvalid={form.errors.full_name && form.touched.full_name}
-                      >
-                        <Input
-                          {...field}
-                          id="full_name"
-                          placeholder={t('common:full-name')}
-                          type="name"
-                          style={{
-                            borderRadius: '3px',
-                            backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
-                            transition: 'background 0.2s ease-in-out',
-                          }}
-                        />
-                        <FormErrorMessage>{fields.full_name.error}</FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
+                        <Field id="field923" name="email">
+                          {({ field, form }) => (
+                            <FormControl
+                              padding="6px 0"
+                              isInvalid={form.errors.email && form.touched.email}
+                            >
+                              <Input
+                                {...field}
+                                id="email"
+                                placeholder={t('common:email')}
+                                type="email"
+                                style={{
+                                  borderRadius: '3px',
+                                  backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
+                                  transition: 'background 0.2s ease-in-out',
+                                }}
+                              />
+                              <FormErrorMessage>{fields.email.error}</FormErrorMessage>
+                            </FormControl>
+                          )}
+                        </Field>
 
-                  <Field id="field923" name="email">
-                    {({ field, form }) => (
-                      <FormControl
-                        padding="6px 0"
-                        isInvalid={form.errors.email && form.touched.email}
-                      >
-                        <Input
-                          {...field}
-                          id="email"
-                          placeholder={t('common:email')}
-                          type="email"
-                          style={{
-                            borderRadius: '3px',
-                            backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
-                            transition: 'background 0.2s ease-in-out',
-                          }}
-                        />
-                        <FormErrorMessage>{fields.email.error}</FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
+                        {formStatus.status === 'error' && (
+                        <FormErrorMessage>{formStatus.msg}</FormErrorMessage>
+                        )}
+                        <Button
+                          marginTop="30px"
+                          borderRadius="3px"
+                          width="100%"
+                          padding="0"
+                          disabled={formStatus.status === 'thank-you'}
+                          whiteSpace="normal"
+                          isLoading={isSubmitting}
+                          type="submit"
+                          variant="default"
+                          textTransform="uppercase"
+                        >
+                          {t('get-instant-access')}
+                        </Button>
+                      </Box>
+                    </Form>
+                  );
+                }}
+              </Formik>
+            </>
+          ) : (
+            <>
+              <Icon style={{ margin: 'auto' }} width="104px" height="104px" icon="circle-check" />
+              <Heading
+                size="15px"
+                textAlign="center"
+                textTransform="uppercase"
+                width="100%"
+                fontWeight="900"
+                mt="30px"
+                mb="0px"
+              >
+                {t('thanks')}
+              </Heading>
+              <Text size="md" color={commonTextColor} textAlign="center" marginTop="10px" px="0px">
+                {t('download')}
+              </Text>
+              <Button
+                marginTop="20px"
+                borderRadius="3px"
+                width="100%"
+                padding="0"
+                whiteSpace="normal"
+                variant="default"
+                textTransform="uppercase"
+              >
+                {t('open-tutorial')}
+              </Button>
+              <Button
+                marginTop="20px"
+                borderRadius="3px"
+                width="100%"
+                padding="0"
+                whiteSpace="normal"
+                variant="outline"
+                textTransform="uppercase"
+                borderColor={CustomTheme.colors.blue.default}
+                color={CustomTheme.colors.blue.default}
+                alignItems="center"
+              >
+                {t('clone')}
+                {'  '}
+                <Icon style={{ marginLeft: '5px' }} width="12px" height="14px" icon="download" color={CustomTheme.colors.blue.default} />
+              </Button>
+              <Text display="flex" alignItems="center" marginTop="15px">
+                <HelpComponent text={t('clone-tooltip')} />
+                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                <Link
+                  href="#"
+                  color={useColorModeValue('blue.default', 'blue.300')}
+                  display="inline-block"
+                  letterSpacing="0.05em"
+                  fontWeight="700"
+                  fontFamily="Lato, Sans-serif"
+                  marginLeft="5px"
+                  fontSize="15px"
+                >
+                  {t('how-to-clone')}
+                </Link>
+              </Text>
+            </>
+          )}
 
-                  {formStatus.status === 'error' && (
-                    <FormErrorMessage>{formStatus.msg}</FormErrorMessage>
-                  )}
-                  <Button
-                    marginTop="30px"
-                    borderRadius="3px"
-                    width="100%"
-                    padding="0"
-                    disabled={formStatus.status === 'thank-you'}
-                    whiteSpace="normal"
-                    isLoading={isSubmitting}
-                    type="submit"
-                    variant="default"
-                    textTransform="uppercase"
-                  >
-                    {t('get-instant-access')}
-                  </Button>
-                </Box>
-              </Form>
-            );
-          }}
-        </Formik>
       </Box>
       <Box px="22px" pb="30px" pt="24px">
         <SimpleTable
@@ -330,7 +401,8 @@ const Exercise = ({ exercise, markdown }) => {
       <Script async defer src="https://buttons.github.io/buttons.js" />
       <Box
         className="box-heading"
-        background="#EEF9FE"
+        // background={"#EEF9FE"}
+        background={useColorModeValue('featuredLight', 'featuredDark')}
         padding={{ base: '4%', lg: '2% 10%' }}
       >
         <Box width={{ base: '100% ', lg: '60%' }}>

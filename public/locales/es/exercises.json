@@ -14,6 +14,12 @@
   "backToExercises": "Volver a ejercicios",
   "direct-access-request": "Solicitud de acceso directo",
   "direct-access-request-description": "Ingresa tu información y recibirás acceso instantáneo",
+  "thanks": "¡Gracias!",
+  "download": "Ya puedes descargar o clonar el material interactivo.",
+  "open-tutorial": "Abrir tutorial online",
+  "clone": "Clonar localmente",
+  "clone-tooltip": "Clonar repositorio",
+  "how-to-clone": "¿Cómo clonar?",
   "get-instant-access": "Obtener acceso",
   "average-duration": "Duración promedio",
   "landing-technology": {
