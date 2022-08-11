@@ -27,7 +27,7 @@ const DeliverModal = ({
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
   const fontColor = useColorModeValue('gra.dark', 'gray.250');
   const labelColor = useColorModeValue('gray.600', 'gray.200');
-  const commonBorderColor = useColorModeValue('#DADADA', 'gray.500');
+  const commonBorderColor = useColorModeValue('gray.250', 'gray.500');
 
   useEffect(() => {
     if (copied) {
@@ -204,7 +204,7 @@ const ReviewModal = ({ currentTask, projectLink, updpateAssignment }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [comment, setComment] = useState('');
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
-  const commonBorderColor = useColorModeValue('#DADADA', 'gray.500');
+  const commonBorderColor = useColorModeValue('gray.250', 'gray.500');
 
   const ReviewButton = ({ type }) => {
     const statusColor = {

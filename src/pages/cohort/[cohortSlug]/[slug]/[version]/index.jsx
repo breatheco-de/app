@@ -80,7 +80,7 @@ const Dashboard = () => {
   const commonFontColor = useColorModeValue('gray.600', 'gray.200');
   const commonActiveBackground = useColorModeValue('gray.light', 'rgba(255, 255, 255, 0.22)');
   const iconColor = useColorModeValue('#000000', '#FFFFFF');
-  const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
+  const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const commonModalColor = useColorModeValue('gray.dark', 'gray.light');
   const accessToken = getStorageItem('accessToken');
   const showGithubWarning = getStorageItem('showGithubWarning');
@@ -285,6 +285,7 @@ const Dashboard = () => {
   useMemo(() => {
     const cohortDays = cohortProgram.json ? cohortProgram.json.days : [];
     const assignmentsRecopilated = [];
+
     if (contextState.cohortProgram.json && contextState.taskTodo) {
       setTaskTodo(contextState.taskTodo);
       cohortDays.map((assignment) => {

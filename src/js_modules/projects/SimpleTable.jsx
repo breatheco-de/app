@@ -16,7 +16,7 @@ const SimpleTable = ({
 }) => {
   const { t } = useTranslation('exercises');
   const verifyIfNotNull = (value) => value !== null && value;
-  const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
+  const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
 
   return (
