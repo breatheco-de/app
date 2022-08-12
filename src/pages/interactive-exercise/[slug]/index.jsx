@@ -133,7 +133,7 @@ const TabletWithForm = ({
 }) => {
   const { t } = useTranslation('exercises');
   const { user } = useAuth();
-  const [formSended, setFormSended] = useState(false);
+  const [formSended, setFormSended] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [formStatus, setFormStatus] = useState({ status: 'idle', msg: '' });
   return (
@@ -412,24 +412,24 @@ const TabletWithForm = ({
               <Text marginBottom="25px" fontSize="14px" lineHeight="24px">
                 {t('modal-text')}
               </Text>
-              <Button
-                margin="auto"
-                marginTop="20px"
-                borderRadius="3px"
-                display="block"
-                width="70%"
-                padding="0"
-                whiteSpace="normal"
-                variant="outline"
-                textTransform="uppercase"
-                borderColor={CustomTheme.colors.blue.default}
-                color={CustomTheme.colors.blue.default}
-                alignItems="center"
-              >
-                {t('clone')}
-                {'  '}
-                <Icon style={{ marginLeft: '5px', display: 'inline-block' }} width="12px" height="14px" icon="download" color={CustomTheme.colors.blue.default} />
-              </Button>
+              <Text display="flex" alignItems="center" marginTop="15px">
+                <span>
+                  <Icon width="19px" height="19px" style={{ display: 'inline-block' }} icon="help" />
+                </span>
+                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                <Link
+                  href="#"
+                  fontSize="15px"
+                  fontWeight="700"
+                  color={useColorModeValue('blue.default', 'blue.300')}
+                  display="inline-block"
+                  letterSpacing="0.05em"
+                  fontFamily="Lato, Sans-serif"
+                  marginLeft="10px"
+                >
+                  {t('how-to-clone')}
+                </Link>
+              </Text>
             </ModalBody>
           </ModalContent>
         </Modal>
