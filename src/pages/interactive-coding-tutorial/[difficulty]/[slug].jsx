@@ -132,7 +132,7 @@ const ProjectSlug = ({ project, markdown }) => {
   const { t } = useTranslation('projects');
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const translations = project?.translations || { es: '', en: '' };
-  const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
+  const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
   const router = useRouter();

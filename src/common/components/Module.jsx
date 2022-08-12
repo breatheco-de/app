@@ -10,13 +10,13 @@ const Module = ({
   onClickHandler, data, containerStyle, leftContentStyle, containerPX, width, currIndex,
   isDone, rightItemHandler, link, textWithLink, mandatory,
 }) => {
-  const containerBackground = isDone ? useColorModeValue('featuredLight', 'featuredDark') : useColorModeValue('#FFFFFF', 'primary');
+  const containerBackground = isDone ? useColorModeValue('featuredLight', 'featuredDark') : useColorModeValue('white', 'primary');
   const commonFontColor = useColorModeValue('gray.600', 'gray.200');
 
   const borderColor = () => {
     if (mandatory) return 'yellow.default';
     if (isDone) return 'transparent';
-    return useColorModeValue('#C4C4C4', 'gray.700');
+    return useColorModeValue('gray.350', 'gray.700');
   };
 
   return (

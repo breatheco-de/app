@@ -193,7 +193,7 @@ const TabletWithForm = ({
                           type="name"
                           style={{
                             borderRadius: '3px',
-                            backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
+                            backgroundColor: useColorModeValue('white', 'darkTheme'),
                             transition: 'background 0.2s ease-in-out',
                           }}
                         />
@@ -215,7 +215,7 @@ const TabletWithForm = ({
                           type="email"
                           style={{
                             borderRadius: '3px',
-                            backgroundColor: useColorModeValue('#FFFFFF', '#17202A'),
+                            backgroundColor: useColorModeValue('white', 'darkTheme'),
                             transition: 'background 0.2s ease-in-out',
                           }}
                         />
@@ -273,7 +273,7 @@ const Exercise = ({ exercise, markdown }) => {
   const { slug } = router.query;
   // const defaultImage = '/static/images/code1.png';
   // const getImage = exercise.preview !== '' ? exercise.preview : defaultImage;
-  const commonBorderColor = useColorModeValue('#DADADA', 'gray.900');
+  const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
 

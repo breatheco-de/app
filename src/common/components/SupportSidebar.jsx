@@ -43,7 +43,13 @@ const SupportSidebar = ({
           }).getMentor({ serviceSlug: service.slug });
           allMentorsArray.push(mentors.data);
         })).then(() => {
-          const mentorsArray = allMentorsArray.reduce((acc, curr) => acc.concat(curr), []);
+          // const mentorsArray = allMentorsArray.reduce((acc, curr) => acc.concat(curr), []);
+          const mentorsArray = allMentorsArray.filter(
+            (value, index, self) => index === self.findIndex(
+              (c) => c.place === value.place && c.slug === value.slug,
+            ),
+          )[0];
+
           setProgramMentors(mentorsArray);
         });
       }
@@ -180,7 +186,8 @@ const SupportSidebar = ({
                   {programServices && programServices.map((service) => {
                     const programMentorsFiltered = programMentors.length > 0
                       && programMentors.filter(
-                        (mentor) => mentor.service.status === 'ACTIVE' && mentor.service.slug === service.slug,
+                        (mentor) => mentor.services.some((sv) => sv.status === 'ACTIVE'
+                          && sv.slug === service.slug),
                       );
                     return (
                       <Accordion
