@@ -127,7 +127,13 @@ module.exports = withBundleAnalyzer(nextTranslate({
   },
   images: {
     // Whitelist for image providers
-    domains: ['assets.vercel.com', 'github.com', 'raw.githubusercontent.com'],
+    domains: [
+      'assets.vercel.com',
+      'github.com',
+      'raw.githubusercontent.com',
+      'breathecode.herokuapp.com',
+      'avatars.githubusercontent.com',
+    ],
     // formats: ['image/avif', 'image/webp'],
   },
   env: {

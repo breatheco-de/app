@@ -253,7 +253,7 @@ const ProjectSlug = ({ project, markdown }) => {
           <Box
             maxWidth="1012px"
             borderRadius="3px"
-            background={useColorModeValue('white', 'featuredDark')}
+            background={useColorModeValue('white', 'darkTheme')}
             className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
             transition="background .2s ease"
           >

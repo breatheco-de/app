@@ -73,7 +73,7 @@ const DesktopItem = ({ item }) => {
               {item.subMenu && (
                 <Icon
                   icon="arrowDown"
-                  color={getColorIcon(item.href || item.asPath)}
+                  color="currentColor"
                   width="22px"
                   height="22px"
                 />
