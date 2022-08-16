@@ -21,8 +21,16 @@
   "clone": "Clonar localmente",
   "clone-tooltip": "Clonar repositorio",
   "how-to-clone": "Leer más sobre cómo clonar un proyecto",
-  "modal-title": "¿Cómo clonar un proyecto?",
-  "modal-text": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. ",
+  "modal" : {
+    "title": "¿Como clonar un proyecto?",
+    "text": "No lo recomendamos, pero algunos ejercicios se pueden descargar y ejecutar localmente usando VSCode y el plugin Learnpack. Si quieres hacerlo, debes comenzar por clonar el proyecto en tu computadora escribiendo el siguiente comando en tu terminal:",
+    "command": "git clone https://github.com/miproyecto",
+    "note": "Nota: Esto creará una nueva carpeta “miproyecto” en su computadora con el código del proyecto dentro.",
+    "steps": [
+      "Abre esta carpeta en VSCode.",
+      "Lee el archivo README.md y sigue el resto de las instrucciones."
+    ]
+  },
   "powered": "Desarrollado por ",
   "get-instant-access": "Obtener acceso",
   "average-duration": "Duración promedio",
