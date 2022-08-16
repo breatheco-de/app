@@ -193,7 +193,7 @@ const TabletWithForm = ({
                           type="name"
                           style={{
                             borderRadius: '3px',
-                            backgroundColor: useColorModeValue('white', 'darkTheme'),
+                            backgroundColor: useColorModeValue('white', '#17202A'),
                             transition: 'background 0.2s ease-in-out',
                           }}
                         />
@@ -215,7 +215,7 @@ const TabletWithForm = ({
                           type="email"
                           style={{
                             borderRadius: '3px',
-                            backgroundColor: useColorModeValue('white', 'darkTheme'),
+                            backgroundColor: useColorModeValue('white', '#17202A'),
                             transition: 'background 0.2s ease-in-out',
                           }}
                         />
@@ -330,7 +330,7 @@ const Exercise = ({ exercise, markdown }) => {
       <Script async defer src="https://buttons.github.io/buttons.js" />
       <Box
         className="box-heading"
-        background="#EEF9FE"
+        background={useColorModeValue('featuredLight', 'featuredDark')}
         padding={{ base: '4%', lg: '2% 10%' }}
       >
         <Box width={{ base: '100% ', lg: '60%' }}>

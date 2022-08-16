@@ -14,14 +14,15 @@ a {
   text-decoration: none;
 }
 
-a.active {
+*.active {
   color: #0097CD;
 }
-a.link {
+*.link {
   color: #0097CD;
 }
-a.link:hover {
+*.link:hover {
   text-decoration: underline;
+  cursor: pointer;
 }
 
 * {
@@ -87,7 +88,6 @@ body.chakra-ui-dark .chakra-popover__arrow {
   border-radius: 10px;
   background: #0096cc; 
 }
-
 
 .loader {
   width: 50px;
