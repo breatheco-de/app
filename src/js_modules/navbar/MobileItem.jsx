@@ -75,9 +75,10 @@ const MobileItem = ({
             display="flex"
             onClick={(e) => e.preventDefault()}
             transition="all .25s ease-in-out"
+            color={getColorLink(href || asPath)}
             transform={isOpen ? 'rotate(90deg)' : 'rotate(0deg)'}
           >
-            <Icon icon="arrowRight" color={isOpen ? '#0097CD' : 'gray'} width="12px" height="12px" />
+            <Icon icon="arrowRight" color="currentColor" width="12px" height="12px" />
           </Box>
         </Flex>
       )}

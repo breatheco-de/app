@@ -4,12 +4,13 @@ import PropTypes from 'prop-types';
 
 const ChakraNextImage = (props) => {
   const {
-    src, alt, objectFit, layout, quality, priority, classNameImg, ...rest
+    src, alt, objectFit, layout, quality, priority, classNameImg, styleImg, ...rest
   } = props;
   return (
     <Box position="relative" {...rest}>
       <NextImage
         className={classNameImg}
+        style={styleImg}
         objectFit={objectFit}
         layout={layout}
         quality={quality}
@@ -28,6 +29,7 @@ ChakraNextImage.propTypes = {
   priority: PropTypes.bool,
   objectFit: PropTypes.string,
   classNameImg: PropTypes.string,
+  styleImg: PropTypes.objectOf(PropTypes.any),
 };
 ChakraNextImage.defaultProps = {
   src: '/static/images/code1.png',
@@ -36,6 +38,7 @@ ChakraNextImage.defaultProps = {
   priority: false,
   objectFit: 'cover',
   classNameImg: '',
+  styleImg: {},
 };
 
 export default ChakraNextImage;
