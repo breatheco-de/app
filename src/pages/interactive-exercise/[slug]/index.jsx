@@ -218,7 +218,6 @@ const TabletWithForm = ({
                           )}
                         </Field>
 
-<<<<<<< HEAD
                         <Field id="field923" name="email">
                           {({ field, form }) => (
                             <FormControl
@@ -284,96 +283,6 @@ const TabletWithForm = ({
                   <Heading
                     size="15px"
                     textAlign="center"
-=======
-        <Formik
-          initialValues={{ full_name: '', email: '', current_download: exercise.slug }}
-          onSubmit={(values, actions) => {
-            processFormEntry(values).then((data) => {
-              actions.setSubmitting(false);
-              if (data && data.error !== false && data.error !== undefined) {
-                setFormStatus({ status: 'error', msg: data.error });
-              } else {
-                setFormStatus({ status: 'thank-you', msg: 'Thank you for your request!' });
-                toast({
-                  title: t('alert-message:request-apply-success'),
-                  description: t('alert-message:email-will-be-sent'),
-                  status: 'success',
-                  duration: 7000,
-                  isClosable: true,
-                });
-              }
-            })
-              .catch((error) => {
-                console.error('error', error);
-                actions.setSubmitting(false);
-                setFormStatus({ status: 'error', msg: error.message || error });
-              });
-          }}
-          validationSchema={validationSchema.leadForm}
-        >
-          {(props) => {
-            const { isSubmitting } = props;
-            return (
-              <Form>
-                <Box py="0" flexDirection="column" display="flex" alignItems="center">
-                  <Field id="field912" name="full_name">
-                    {({ field, form }) => (
-                      <FormControl
-                        padding="6px 0"
-                        isInvalid={form.errors.full_name && form.touched.full_name}
-                      >
-                        <Input
-                          {...field}
-                          id="full_name"
-                          placeholder={t('common:full-name')}
-                          type="name"
-                          style={{
-                            borderRadius: '3px',
-                            backgroundColor: useColorModeValue('white', '#17202A'),
-                            transition: 'background 0.2s ease-in-out',
-                          }}
-                        />
-                        <FormErrorMessage>{fields.full_name.error}</FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
-
-                  <Field id="field923" name="email">
-                    {({ field, form }) => (
-                      <FormControl
-                        padding="6px 0"
-                        isInvalid={form.errors.email && form.touched.email}
-                      >
-                        <Input
-                          {...field}
-                          id="email"
-                          placeholder={t('common:email')}
-                          type="email"
-                          style={{
-                            borderRadius: '3px',
-                            backgroundColor: useColorModeValue('white', '#17202A'),
-                            transition: 'background 0.2s ease-in-out',
-                          }}
-                        />
-                        <FormErrorMessage>{fields.email.error}</FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
-
-                  {formStatus.status === 'error' && (
-                    <FormErrorMessage>{formStatus.msg}</FormErrorMessage>
-                  )}
-                  <Button
-                    marginTop="30px"
-                    borderRadius="3px"
-                    width="100%"
-                    padding="0"
-                    disabled={formStatus.status === 'thank-you'}
-                    whiteSpace="normal"
-                    isLoading={isSubmitting}
-                    type="submit"
-                    variant="default"
->>>>>>> 6b68ce318128445458a5a437d34b282a381988aa
                     textTransform="uppercase"
                     width="100%"
                     fontWeight="900"
@@ -575,10 +484,6 @@ const Exercise = ({ exercise, markdown }) => {
       <Script async defer src="https://buttons.github.io/buttons.js" />
       <Box
         className="box-heading"
-<<<<<<< HEAD
-        // background={"#EEF9FE"}
-=======
->>>>>>> 6b68ce318128445458a5a437d34b282a381988aa
         background={useColorModeValue('featuredLight', 'featuredDark')}
         padding={{ base: '4%', lg: '2% 10%' }}
       >
