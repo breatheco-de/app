@@ -32,8 +32,14 @@ a.link:hover {
   box-shadow: none !important;
 }
 
-.chakra-popover__arrow-positioner {
+body.chakra-ui-light .chakra-popover__arrow {
   z-index: 99!important;
+  background: var(--popper-arrow-bg)
+}
+
+body.chakra-ui-dark .chakra-popover__arrow {
+  z-index: 99!important;
+  background: var(--chakra-colors-gray-800) !important;
 }
 
 .react-player {

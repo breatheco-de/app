@@ -542,7 +542,7 @@ const Content = () => {
             {cohortSession?.syllabus_version && (
               <Heading size="xsm">{cohortSession?.syllabus_version?.name}</Heading>
             )}
-            <Checkbox mb="-14px" onChange={(e) => setShowPendingTasks(e.target.checked)} color="gray.600">
+            <Checkbox mb="-14px" onChange={(e) => setShowPendingTasks(e.target.checked)} color={useColorModeValue('gray.600', 'gray.350')}>
               {t('dashboard:modules.show-pending-tasks')}
             </Checkbox>
           </Box>
