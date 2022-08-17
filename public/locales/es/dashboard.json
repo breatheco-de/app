@@ -54,7 +54,7 @@
     "select-type": "Seleccione un tipo de tutoría",
     "mentoring-available": "Tutorías disponibles",
     "no-mentoring-available": "No tienes tutorías disponibles.",
-    "create-session-text": "Crear sesión con {{name}}",
+    "create-session-text": "Agendar ahora",
     "actionButtons": [
       {
         "name": "mentoring",
