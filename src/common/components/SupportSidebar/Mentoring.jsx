@@ -1,21 +1,24 @@
-/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+/* eslint-disable max-len */
 import {
   memo, useState, forwardRef, useEffect,
 } from 'react';
 import {
-  Box, Heading, useColorMode, useColorModeValue, Input, InputRightElement, InputGroup, Button,
+  Box, useColorMode, useColorModeValue, Input, InputRightElement, InputGroup, Button,
 } from '@chakra-ui/react';
-import getDay from 'date-fns/getDay';
+// import getDay from 'date-fns/getDay';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import ReactDatePicker from 'react-datepicker';
-import { ChevronDownIcon } from '@chakra-ui/icons';
+// import ReactDatePicker from 'react-datepicker';
+// import { ChevronDownIcon } from '@chakra-ui/icons';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import Icon from '../Icon';
 import Text from '../Text';
 import Image from '../Image';
+import Link from '../NextChakraLink';
+import Heading from '../Heading';
 
 const Mentoring = ({
   width, programServices, mentoryProps, setMentoryProps, programMentors,
@@ -48,21 +51,21 @@ const Mentoring = ({
     },
   );
 
-  const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => (
-    <Button
-      size={['md', 'md', 'lg', 'lg']}
-      display="inline-block"
-      colorScheme="blue"
-      variant="ghost"
-      onClick={onClick}
-      ref={ref}
-      marginLeft={['5px', '5px', '10px', '10px']}
-    >
-      {value || t('common:select')}
-      {' '}
-      <ChevronDownIcon />
-    </Button>
-  ));
+  // const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => (
+  //   <Button
+  //     size={['md', 'md', 'lg', 'lg']}
+  //     display="inline-block"
+  //     colorScheme="blue"
+  //     variant="ghost"
+  //     onClick={onClick}
+  //     ref={ref}
+  //     marginLeft={['5px', '5px', '10px', '10px']}
+  //   >
+  //     {value || t('common:select')}
+  //     {' '}
+  //     <ChevronDownIcon />
+  //   </Button>
+  // ));
 
   const dateFormated = {
     en: mentoryProps?.date && format(new Date(mentoryProps.date), 'MMMM dd'),
@@ -74,10 +77,10 @@ const Mentoring = ({
     es: mentoryProps?.date && format(new Date(mentoryProps.date), "dd 'de' MMMM, yyyy", { locale: es }),
   };
 
-  const isWeekday = (date) => {
-    const day = getDay(date);
-    return day !== 0 && day !== 6;
-  };
+  // const isWeekday = (date) => {
+  //   const day = getDay(date);
+  //   return day !== 0 && day !== 6;
+  // };
 
   useEffect(() => {
     if (mentoryProps?.time) {
@@ -95,14 +98,14 @@ const Mentoring = ({
   const mentoryFormStarted = mentoryProps?.service || mentoryProps?.mentor || mentoryProps?.date;
   const step1 = !mentoryProps?.service;
   const step2 = mentoryProps?.service && !mentoryProps?.date;
-  const step3 = mentoryProps?.service
-    && mentoryProps?.mentor
-    && mentoryProps?.date
-    && !mentoryProps.time;
-  const mentoryFormCompleted = mentoryProps?.service
-    && mentoryProps?.mentor
-    && mentoryProps?.date
-    && mentoryProps?.time;
+  // const step3 = mentoryProps?.service
+  //   && mentoryProps?.mentor
+  //   && mentoryProps?.date
+  //   && !mentoryProps.time;
+  // const mentoryFormCompleted = mentoryProps?.service
+  //   && mentoryProps?.mentor
+  //   && mentoryProps?.date
+  //   && mentoryProps?.time;
 
   return (
     <Box
@@ -113,20 +116,25 @@ const Mentoring = ({
       borderRadius="lg"
       overflow="hidden"
     >
-      <Box position="absolute" margin="18px 0px 0px 340px" onClick={() => setOpenMentors(false)} cursor="pointer">
-        <Icon icon="close" width="13px" height="13px" />
-      </Box>
       <Box d="flex" justifyContent="center" alignItems="center" width="85px" height="50px" margin="0 auto" borderBottomRadius="10px" backgroundColor="yellow.default">
         <Icon icon="idea" width="36px" height="36px" />
       </Box>
       <Box display="flex" flexDirection="column" p="4" pb={mentoryFormStarted ? '0px' : '30px'} pt="20px" alignItems="center">
+        {mentoryProps?.service && (
+          <Box position="absolute" margin="4px 300px 0px 0" onClick={() => setMentoryProps({})} cursor="pointer">
+            <Icon icon="arrowLeft" width="25px" height="25px" />
+          </Box>
+        )}
+        <Box position="absolute" margin="4px 40px 0px 340px" onClick={() => setOpenMentors(false)} cursor="pointer">
+          <Icon icon="close" width="15px" height="15px" />
+        </Box>
         <Box d="flex" flexDirection="column" alignItems="center" justifyContent="center">
-          <Heading fontSize="xsm" textAlign="center" justify="center" mt="0px" mb="0px">
-            Mentoring
+          <Heading size="sm" textAlign="center" justify="center" mt="0px" mb="0px">
+            {t('supportSideBar.mentoring')}
           </Heading>
           {!mentoryProps?.service && (
-            <Heading fontSize="18px" textAlign="center" justify="center" mt="10px" mb="0px">
-              {programServices.length > 0 ? `${programServices.length} Avalible mentorships` : 'You have no mentorships available.'}
+            <Heading size="16px" textAlign="center" justify="center" mt="10px" mb="0px">
+              {programServices.length > 0 ? `${programServices.length} ${t('supportSideBar.mentoring-available')}` : t('supportSideBar.no-mentoring-available')}
             </Heading>
           )}
         </Box>
@@ -143,7 +151,7 @@ const Mentoring = ({
                       mt="10px"
                       px="0px"
                     >
-                      To get started, select a mentorship type
+                      {t('supportSideBar.start-mentorship')}
                     </Text>
                   )}
                 </>
@@ -192,7 +200,7 @@ const Mentoring = ({
             {!mentoryProps?.service && programServices.length > 0 && (
               <>
                 <InputGroup mt="24px">
-                  <Input onChange={(e) => setSearchProps({ ...searchProps, serviceSearch: e.target.value })} background={commonBackground} borderBottomRadius="0" border="0" placeholder="Select a type of mentoring" />
+                  <Input onChange={(e) => setSearchProps({ ...searchProps, serviceSearch: e.target.value?.toLocaleLowerCase() })} background={commonBackground} borderBottomRadius="0" border="0" placeholder={t('supportSideBar.select-type')} />
                   <InputRightElement>
                     <Icon icon="arrowDown" color="#606060" width="35px" height="30px" ml="10px" />
                   </InputRightElement>
@@ -216,7 +224,7 @@ const Mentoring = ({
               && (
                 <>
                   <InputGroup mt="24px" borderBottom="1px solid" borderColor={commonBorderColor}>
-                    <Input onChange={(e) => setSearchProps({ ...searchProps, mentorSearch: e.target.value })} background={commonBackground} borderBottomRadius="0" border="0" placeholder="Select a type of mentoring" />
+                    <Input onChange={(e) => setSearchProps({ ...searchProps, mentorSearch: e.target.value?.toLowerCase() })} background={commonBackground} borderBottomRadius="0" border="0" placeholder={t('supportSideBar.search-mentor')} />
                     <InputRightElement>
                       <Icon icon="arrowDown" color="#606060" width="35px" height="30px" ml="10px" />
                     </InputRightElement>
@@ -227,7 +235,8 @@ const Mentoring = ({
                         {i !== 0 && (
                           <Box as="hr" borderColor="gray.300" margin="0 18px" />
                         )}
-                        <Box display="flex" gridGap="18px" flexDirection="row" cursor="pointer" onClick={() => { setMentoryProps({ ...mentoryProps, mentor }); setSavedChanges({ ...savedChanges, mentor }); }} py="14px" width="100%" px="18px" _hover={{ background: useColorModeValue('featuredLight', 'gray.700') }}>
+                        <Box display="flex" gridGap="18px" flexDirection="row" py="14px" width="100%" px="18px" _hover={{ background: useColorModeValue('featuredLight', 'gray.700') }}>
+                          {/* onClick={() => { setMentoryProps({ ...mentoryProps, mentor }); setSavedChanges({ ...savedChanges, mentor }); }} */}
                           <Image
                             src={mentor?.user.profile?.avatar_url}
                             alt={`${mentor?.user?.first_name} ${mentor?.user?.last_name}`}
@@ -242,9 +251,18 @@ const Mentoring = ({
                               {`${mentor.user.first_name} ${mentor.user.last_name}`}
                             </Box>
                             <Box as="hr" borderColor={commonBorderColor} my="5px" />
-                            <Box color={useColorModeValue('gray.600', 'gray.200')}>
+                            {/* <Box color={useColorModeValue('gray.600', 'gray.200')}>
                               Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                            </Box>
+                            </Box> */}
+                            {mentor?.booking_url ? (
+                              <Link variant="default" href={mentor?.booking_url} target="_blank" rel="noopener noreferrer">
+                                {t('supportSideBar.create-session-text', { name: mentor.user.first_name })}
+                              </Link>
+                            ) : (
+                              <Box fontSize="15px">
+                                {t('supportSideBar.no-mentor-link')}
+                              </Box>
+                            )}
                           </Box>
                         </Box>
                       </>
@@ -256,7 +274,7 @@ const Mentoring = ({
                   </Box>
                 </>
               )}
-            {mentoryProps?.mentor && !mentoryProps?.date && (
+            {/* {mentoryProps?.mentor && !mentoryProps?.date && (
               <Box width="100%" textAlign="center" mt="10px" background={commonBackground} borderRadius="0.375rem">
                 <Box width="100%" textAlign="center" color={useColorModeValue('gray.600', 'gray.200')} py="14px" borderBottom="1px solid" borderColor={commonBorderColor} mb="10px">
                   Select a day
@@ -307,7 +325,7 @@ const Mentoring = ({
               <Box className="link" onClick={() => setOpenMentors(false)} pt="26px">
                 Go back
               </Box>
-            )}
+            )} */}
           </>
         ) : (
           <>
@@ -370,7 +388,7 @@ const Mentoring = ({
           >
             <Icon icon="dot" color={step2 ? '#0097CD' : '#DADADA'} width="10px" height="10px" />
           </Box>
-          <Box
+          {/* <Box
             onClick={() => {
               setMentoryProps({
                 ...savedChanges, time: null,
@@ -387,7 +405,7 @@ const Mentoring = ({
             cursor="pointer"
           >
             <Icon icon="dot" color={mentoryFormCompleted ? '#0097CD' : '#DADADA'} width="10px" height="10px" />
-          </Box>
+          </Box> */}
         </Box>
 
       </Box>

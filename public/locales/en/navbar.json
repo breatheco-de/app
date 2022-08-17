@@ -70,6 +70,7 @@
     {
       "label": "Social & live learning",
       "icon": "onlinePeople",
+      "disabled": true,
       "description": "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.",
       "asPath": "/read",
       "subMenu": [
