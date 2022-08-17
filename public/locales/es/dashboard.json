@@ -47,6 +47,14 @@
     "title": "No te quedes atascado",
     "description": "¿Sabías que puedes programar sesiones de mentoría en cualquier momento o preguntar en el Chat de soporte?",
     "no-mentors": "No hay mentores disponibles",
+    "no-mentor-link": "No hay enlace para crear sesión con este mentor",
+    "search-mentor": "Buscar mentor",
+    "start-mentorship": "Para comenzar, seleccione un tipo de tutoría",
+    "mentoring": "Tutoría",
+    "select-type": "Seleccione un tipo de tutoría",
+    "mentoring-available": "Tutorías disponibles",
+    "no-mentoring-available": "No tienes tutorías disponibles.",
+    "create-session-text": "Crear sesión con {{name}}",
     "actionButtons": [
       {
         "name": "mentoring",
