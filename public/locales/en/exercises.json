@@ -24,8 +24,8 @@
   "modal" : {
     "title": "How to clone a project?",
     "text": "We don’t recomend it, but some excerises can be downloaded and runned locally using VSCode and the Learnpack Plugin. If you want to do so, you must start by cloning the project into your computer by typing the following command on your terminal:",
-    "command": "git clone https://github.com/myproject",
-    "note": "Note: This will create a new folder “myproject” in your computer with the project code inside.",
+    "note": "Note: This will create a new folder “{{folder}}” in your computer with the project code inside.",
+    "copy-command": "Command has been copied to the clipboard!",
     "steps": [
       "Open this folder in VSCode.",
       "Read the README.md file and follow the rest of the instructions."

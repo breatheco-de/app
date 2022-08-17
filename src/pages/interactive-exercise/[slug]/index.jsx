@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import {
   Box,
   useColorModeValue,
@@ -134,8 +136,19 @@ const TabletWithForm = ({
   const { t } = useTranslation('exercises');
   const { user } = useAuth();
   const [formSended, setFormSended] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(true);
   const [formStatus, setFormStatus] = useState({ status: 'idle', msg: '' });
+
+  const selectText = () => {
+    navigator.clipboard.writeText(`git clone ${exercise.url}`);
+    toast({
+      title: t('modal.copy-command'),
+      // description: t('alert-message:email-will-be-sent'),
+      status: 'success',
+      duration: 7000,
+      isClosable: true,
+    });
+  };
   return (
     <>
       <Box
@@ -364,15 +377,33 @@ const TabletWithForm = ({
               {t('modal.title')}
             </ModalHeader>
             <ModalCloseButton />
-            <ModalBody padding={{ base: '15px 30px' }}>
+            <ModalBody padding={{ base: '30px' }}>
               <Text marginBottom="15px" fontSize="14px" lineHeight="24px">
                 {t('modal.text')}
               </Text>
-              <Text padding="9px" background="#D9D9D9" fontWeight="400" marginBottom="5px" fontSize="14px" lineHeight="24px">
-                {t('modal.command')}
+              <Text
+                cursor="pointer"
+                id="command-container"
+                padding="9px"
+                background="#D9D9D9"
+                fontWeight="400"
+                marginBottom="5px"
+                fontSize="14px"
+                lineHeight="24px"
+                onClick={() => {
+                  selectText('clone-command');
+                }}
+              >
+                {'git clone '}
+                <span
+                  id="clone-command"
+                  // style={{ cursor: 'pointer' }}
+                >
+                  {exercise.url}
+                </span>
               </Text>
               <Text marginBottom="15px" fontSize="12px" fontWeight="700" lineHeight="24px">
-                {t('modal.note')}
+                {t('modal.note', { folder: exercise.url.substr(exercise.url.lastIndexOf('/') + 1, exercise.url.lenght) })}
               </Text>
               <OrderedList>
                 {t('modal.steps', {}, { returnObjects: true }).map((step) => (
