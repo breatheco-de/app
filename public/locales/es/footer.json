@@ -49,7 +49,7 @@
       },
       {
         "label": "Realiza proyectos",
-        "href": "/interactive-coding-tutorial"
+        "href": "/interactive-coding-tutorials"
       },
       {
         "label": "Como hacer...",
@@ -90,7 +90,7 @@
       "href": "#"
     },
     {
-      "title": "Siencia de Datos",
+      "title": "Ciencia de Datos",
       "icon": "data-science",
       "text": "Inicie una carrera en ciencia de datos y análisis. Un enfoque práctico con ejercicios interactivos, soporte por chat y acceso a tutorías.",
       "href": "#"
