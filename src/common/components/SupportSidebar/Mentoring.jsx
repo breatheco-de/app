@@ -255,15 +255,18 @@ const Mentoring = ({
                             {/* <Box color={useColorModeValue('gray.600', 'gray.200')}>
                               Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
                             </Box> */}
-                            {mentor?.booking_url ? (
-                              <Link variant="default" href={mentor?.booking_url} target="_blank" rel="noopener noreferrer">
-                                {t('supportSideBar.create-session-text', { name: mentor.user.first_name })}
-                              </Link>
-                            ) : (
-                              <Box fontSize="15px">
-                                {t('supportSideBar.no-mentor-link')}
-                              </Box>
-                            )}
+                            <Box textTransform="capitalize">
+                              {(mentor.one_line_bio && mentor.one_line_bio !== '') ? `${mentor.one_line_bio} ` : ''}
+                              {mentor?.booking_url ? (
+                                <Link variant="default" href={mentor?.booking_url} target="_blank" rel="noopener noreferrer">
+                                  {t('supportSideBar.create-session-text', { name: mentor.user.first_name })}
+                                </Link>
+                              ) : (
+                                <Box fontSize="15px">
+                                  {t('supportSideBar.no-mentor-link')}
+                                </Box>
+                              )}
+                            </Box>
                           </Box>
                         </Box>
                       </>

@@ -56,7 +56,7 @@
     "select-type": "Select a type of mentorship",
     "mentoring-available": "Avalible mentorships",
     "no-mentoring-available": "You have no mentorships available.",
-    "create-session-text": "Create session with {{name}}",
+    "create-session-text": "Book now",
     "actionButtons": [
       {
         "name": "mentoring",

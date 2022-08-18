@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useColorMode } from '@chakra-ui/react';
 
-const DataSience = ({
+const DataScience = ({
   width, height, style,
 }) => {
   const { colorMode } = useColorMode();
@@ -41,4 +41,4 @@ const DataSience = ({
   );
 };
 
-export default DataSience;
+export default DataScience;

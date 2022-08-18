@@ -191,7 +191,7 @@ const ProjectSlug = ({ project, markdown }) => {
       margin={{ base: '2% 4% 0 4%', lg: '2% 10% 0 10%' }}
     >
       <Link
-        href="/interactive-coding-tutorial"
+        href="/interactive-coding-tutorials"
         color={useColorModeValue('blue.default', 'blue.300')}
         display="inline-block"
         letterSpacing="0.05em"
