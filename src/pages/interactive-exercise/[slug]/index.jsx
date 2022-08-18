@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import {
   Box,
   useColorModeValue,
@@ -149,16 +147,6 @@ const TabletWithForm = ({
     }
   `;
 
-  const selectText = () => {
-    navigator.clipboard.writeText(exercise.url);
-    toast({
-      title: t('modal.copy-command'),
-      // description: t('alert-message:email-will-be-sent'),
-      status: 'success',
-      duration: 7000,
-      isClosable: true,
-    });
-  };
   return (
     <>
       <Box
@@ -401,23 +389,22 @@ const TabletWithForm = ({
                 fontSize="14px"
                 lineHeight="24px"
               >
-                {'git clone '}
                 <UrlInput
                   id="clone-command"
-                  value={exercise.url}
+                  value={`git clone ${exercise.url}`}
                   type="text"
                   readOnly
                   onClick={(e) => {
                     e.target.select();
-                    selectText('clone-command');
+                    navigator.clipboard.writeText(`git clone ${exercise.url}`);
+                    toast({
+                      title: t('modal.copy-command'),
+                      status: 'success',
+                      duration: 7000,
+                      isClosable: true,
+                    });
                   }}
                 />
-                {/* <span
-                  id="clone-command"
-                  // style={{ cursor: 'pointer' }}
-                >
-                  {exercise.url}
-                </span> */}
               </Text>
               <Text marginBottom="15px" fontSize="12px" fontWeight="700" lineHeight="24px">
                 {t('modal.note', { folder: exercise.url.substr(exercise.url.lastIndexOf('/') + 1, exercise.url.lenght) })}
