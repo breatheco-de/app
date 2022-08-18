@@ -71,5 +71,7 @@
     "continue-exercise": "Continuar ejercicio"
   },
   "average-duration": "Duración promedio",
-  "load-more": "Cargar más"
+  "load-more": "Cargar más",
+  "teacher": "Profesor",
+  "student": "Alumno"
 }
