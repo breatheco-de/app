@@ -13,7 +13,7 @@ import validationSchema from '../../common/components/Forms/validationSchemas';
 const ModalInfo = ({
   isOpen, onClose, actionHandler, rejectHandler, forceHandler, disableHandler, title, description,
   teacherFeedback, linkInfo, linkText, link, handlerText, closeText, cancelColorButton,
-  handlerColorButton, rejectData, sendProject, currentTask, type,
+  handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
 }) => {
   const { t } = useTranslation('dashboard');
   const [githubUrl, setGithubUrl] = useState(link);
@@ -155,12 +155,12 @@ const ModalInfo = ({
           </ModalBody>
 
           {!disableHandler && (
-            <ModalFooter>
+            <ModalFooter justifyContent="space-evenly">
               {type === 'taskHandler' ? (
                 <Box width="100%" display="flex" justifyContent="space-between">
                   <Button
                     fontSize="13px"
-                    variant="danger"
+                    variant={closeButtonVariant}
                     onClick={actionHandler}
                     textTransform="uppercase"
                   >
@@ -183,6 +183,7 @@ const ModalInfo = ({
                 <>
                   <Button
                     fontSize="13px"
+                    variant={closeButtonVariant}
                     colorScheme={cancelColorButton}
                     mr={3}
                     onClick={() => rejectFunction()}
@@ -272,6 +273,7 @@ ModalInfo.propTypes = {
   sendProject: PropTypes.func,
   currentTask: PropTypes.objectOf(PropTypes.any),
   type: PropTypes.string,
+  closeButtonVariant: PropTypes.string,
 };
 
 ModalInfo.defaultProps = {
@@ -293,6 +295,7 @@ ModalInfo.defaultProps = {
   sendProject: () => {},
   currentTask: {},
   type: 'default',
+  closeButtonVariant: 'danger',
 };
 
 export default ModalInfo;

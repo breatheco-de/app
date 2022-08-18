@@ -8,6 +8,8 @@
   "progressText": "progress in the program",
   "whiteLabeledText": "This course is brought to you thanks to our parnership with this university",
   "modules": {
+    "target-blank-title": "Open in new window",
+    "target-blank-msg": "\"{{title}}\" will open the following URL on a new window",
     "search-not-found": "No matches found for this search",
     "show-pending-tasks": "Show only Pending Tasks",
     "activitiesLength": "{{count}} Activities",
