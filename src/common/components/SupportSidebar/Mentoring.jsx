@@ -134,8 +134,8 @@ const Mentoring = ({
           </Heading>
           {!mentoryProps?.service && programServices.length <= 0 && (
             <Heading size="16px" textAlign="center" justify="center" mt="10px" mb="0px">
-              {/* {programServices.length > 0 ? `${programServices.length} ${t('supportSideBar.mentoring-available')}` : t('supportSideBar.no-mentoring-available')} */}
-              {t('supportSideBar.no-mentoring-available')}
+              {programServices.length > 0 ? `${programServices.length} ${t('supportSideBar.mentoring-available')}` : t('supportSideBar.no-mentoring-available')}
+              {/* {t('supportSideBar.no-mentoring-available')} */}
             </Heading>
           )}
         </Box>
