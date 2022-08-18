@@ -29,6 +29,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Script from 'next/script';
 import getT from 'next-translate/getT';
+import styled from 'styled-components';
 import { languageLabel } from '../../../utils';
 import useAuth from '../../../common/hooks/useAuth';
 import Heading from '../../../common/components/Heading';
@@ -136,11 +137,20 @@ const TabletWithForm = ({
   const { t } = useTranslation('exercises');
   const { user } = useAuth();
   const [formSended, setFormSended] = useState(false);
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const [formStatus, setFormStatus] = useState({ status: 'idle', msg: '' });
 
+  const UrlInput = styled.input`
+    cursor: pointer;
+    background: none;
+    width: 100%;
+    &:focus {
+      outline: none;
+    }
+  `;
+
   const selectText = () => {
-    navigator.clipboard.writeText(`git clone ${exercise.url}`);
+    navigator.clipboard.writeText(exercise.url);
     toast({
       title: t('modal.copy-command'),
       // description: t('alert-message:email-will-be-sent'),
@@ -382,7 +392,7 @@ const TabletWithForm = ({
                 {t('modal.text')}
               </Text>
               <Text
-                cursor="pointer"
+                // cursor="pointer"
                 id="command-container"
                 padding="9px"
                 background="#D9D9D9"
@@ -390,17 +400,24 @@ const TabletWithForm = ({
                 marginBottom="5px"
                 fontSize="14px"
                 lineHeight="24px"
-                onClick={() => {
-                  selectText('clone-command');
-                }}
               >
                 {'git clone '}
-                <span
+                <UrlInput
+                  id="clone-command"
+                  value={exercise.url}
+                  type="text"
+                  readOnly
+                  onClick={(e) => {
+                    e.target.select();
+                    selectText('clone-command');
+                  }}
+                />
+                {/* <span
                   id="clone-command"
                   // style={{ cursor: 'pointer' }}
                 >
                   {exercise.url}
-                </span>
+                </span> */}
               </Text>
               <Text marginBottom="15px" fontSize="12px" fontWeight="700" lineHeight="24px">
                 {t('modal.note', { folder: exercise.url.substr(exercise.url.lastIndexOf('/') + 1, exercise.url.lenght) })}
