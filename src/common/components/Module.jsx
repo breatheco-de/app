@@ -2,16 +2,21 @@ import {
   Box, Heading, Stack, Flex, useColorModeValue, HStack,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
+import useTranslation from 'next-translate/useTranslation';
 import Text from './Text';
 import Icon from './Icon';
 import Link from './NextChakraLink';
+import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 
 const Module = ({
   onClickHandler, data, containerStyle, leftContentStyle, containerPX, width, currIndex,
   isDone, rightItemHandler, link, textWithLink, mandatory,
 }) => {
+  const { t } = useTranslation('dashboard');
   const containerBackground = isDone ? useColorModeValue('featuredLight', 'featuredDark') : useColorModeValue('white', 'primary');
   const commonFontColor = useColorModeValue('gray.600', 'gray.200');
+  const [openModal, setOpenModal] = useState(false);
 
   const borderColor = () => {
     if (mandatory) return 'yellow.default';
@@ -37,6 +42,23 @@ const Module = ({
       key={`${data.title}-${currIndex}`}
       _hover={{ bg: useColorModeValue('blue.light', 'featuredDark') }}
     >
+      <ModalInfo
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+        title={t('modules.target-blank-title')}
+        isReadonly
+        description={t('modules.target-blank-msg', { title: data.title })}
+        link={`https://4geeks.com${link}`}
+        handlerText={t('common:open')}
+        closeText={t('common:close')}
+        closeButtonVariant="outline"
+        actionHandler={() => {
+          if (window !== undefined) {
+            setOpenModal(false);
+            window.open(link, '_blank');
+          }
+        }}
+      />
       <Flex width="100%">
         {currIndex !== null && (
           <>
@@ -72,7 +94,18 @@ const Module = ({
           </Box>
         )}
         {textWithLink ? (
-          <Link href={link} style={leftContentStyle} width="auto">
+          <Link
+            href={data.target === 'blank' ? '#_blank' : link}
+            onClick={(e) => {
+              if (data.target === 'blank') {
+                e.preventDefault();
+                e.stopPropagation();
+                setOpenModal(true);
+              }
+            }}
+            style={leftContentStyle}
+            width="auto"
+          >
             {data.type && (
               <Heading
                 as="h3"

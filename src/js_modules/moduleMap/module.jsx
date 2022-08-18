@@ -26,6 +26,10 @@ const Module = ({
   const toast = useToast();
   const router = useRouter();
 
+  const {
+    type, title, icon, target,
+  } = data;
+
   const pathConnector = {
     lesson: `${router.locale === 'en' ? '4geeks.com/lesson' : `4geeks.com/${router.locale}/lesson`}`,
     exercise: `${router.locale === 'en' ? '4geeks.com/interactive-exercise' : `4geeks.com/${router.locale}/interactive-exercise`}`,
@@ -96,9 +100,10 @@ const Module = ({
         link={`/syllabus/${cohortSession.slug}/${data.type.toLowerCase()}/${currentTask?.associated_slug}`}
         isDone={isDone}
         data={{
-          type: data.type || 'Read',
-          title: data.title,
-          icon: data.icon,
+          type,
+          title,
+          icon,
+          target,
         }}
         rightItemHandler={(
           <ButtonHandlerByTaskStatus
