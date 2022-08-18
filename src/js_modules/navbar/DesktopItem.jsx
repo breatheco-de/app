@@ -73,7 +73,7 @@ const DesktopItem = ({ item }) => {
               {item.subMenu && (
                 <Icon
                   icon="arrowDown"
-                  color={getColorIcon(item.href || item.asPath)}
+                  color="currentColor"
                   width="22px"
                   height="22px"
                 />
@@ -87,7 +87,7 @@ const DesktopItem = ({ item }) => {
               rounded="md"
               width="100%"
               // minW="lg"
-              maxW="38rem"
+              maxW="40rem"
             >
               <PopoverArrow />
               <Stack
@@ -100,9 +100,9 @@ const DesktopItem = ({ item }) => {
                 <Flex
                   flexDirection="row"
                   padding="0 0 16px 0"
-                  borderBottom={1}
+                  borderBottom={useColorModeValue(1, 2)}
                   borderStyle="solid"
-                  borderColor={useColorModeValue('gray.200', 'gray.900')}
+                  borderColor={useColorModeValue('gray.200', 'gray.700')}
                   alignItems="center"
                   color={linkColor}
                   mb="10px"
@@ -122,30 +122,34 @@ const DesktopItem = ({ item }) => {
                   defaultIndex={0}
                   display="flex"
                   flexDirection={{ base: 'column', md: 'row' }}
-                  gridGap="8px"
+                  // gridGap="8px"
                   variant="unstyled"
                 >
                   <TabList display="flex" gridGap="12px" flexDirection={{ base: 'row', md: 'column' }} width={{ base: '100%', md: 'auto' }}>
                     {
                       item.subMenu.map((child) => {
                         const {
-                          label, subLabel, href,
+                          icon, label, subLabel, href,
                         } = child;
                         return (
                           <Tab
                             key={`${label}-${href}`}
+                            borderLeft="4px solid transparent"
                             _selected={{ borderLeft: '4px solid', borderColor: 'blue.default', opacity: 1 }}
                             // my="2px"
                             opacity={0.7}
                             _hover={{ borderLeft: '4px solid', borderColor: 'blue.default', opacity: 1 }}
                             borderRadius="2px"
+                            justifyContent="flex-start"
                             style={{
                               transition: 'all 0.15s ease-in-out',
+                              padding: '0.5rem 0.8rem',
                             }}
+                            gridGap="14px"
                             // p={2}
                             textAlign="left"
                           >
-
+                            {icon && <Icon icon={icon} width="33px" height="30px" color={useColorModeValue('#1A202C', '#ffffff')} />}
                             <Text
                               // width="100%"
                               minWidth="130px"
@@ -157,12 +161,13 @@ const DesktopItem = ({ item }) => {
                               {label}
                             </Text>
                             {/* optional short description */}
-                            <Text fontSize="sm">{subLabel}</Text>
+                            {subLabel && <Text fontSize="sm">{subLabel}</Text>}
                           </Tab>
                         );
                       })
                     }
                   </TabList>
+                  <Box width="3px" background={useColorModeValue('gray.300', 'gray.700')} margin="0 15px" />
                   <TabPanels>
                     {item.subMenu.map((child) => {
                       const {

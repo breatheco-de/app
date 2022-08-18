@@ -9,7 +9,7 @@ import Heading from '../../../common/components/Heading';
 import ProjectList from '../../../js_modules/projects/ProjectList';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology`, {
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000`, {
     method: 'GET',
     headers: {
       Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
@@ -18,7 +18,7 @@ export const getStaticPaths = async ({ locales }) => {
   });
   const data = await resp.json();
 
-  const paths = data.flatMap((res) => locales.map((locale) => ({
+  const paths = data.results.flatMap((res) => locales.map((locale) => ({
     params: {
       technology: res.slug,
     },
@@ -35,7 +35,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { technology } = params;
   const currentLang = locale === 'en' ? 'us' : 'es';
 
-  const responseTechs = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?slug=${technology}`, {
+  const responseTechs = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?slug=${technology}&limit=1000`, {
     method: 'GET',
     headers: {
       Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
@@ -43,7 +43,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     },
   });
   const techs = await responseTechs.json(); // array of objects
-  const technologyData = techs.find((tech) => tech.slug === technology);
+  const technologyData = techs.results.find((tech) => tech.slug === technology);
 
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project&limit=1000`);
   const projects = await response.json();

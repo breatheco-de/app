@@ -53,9 +53,10 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
   const programSlug = cohortSession?.selectedProgramSlug || '/choose-program';
 
   useEffect(() => {
-    setITEMS(t('ITEMS', {
+    const items = t('ITEMS', {
       selectedProgramSlug: selectedProgramSlug || '/choose-program',
-    }, { returnObjects: true }));
+    }, { returnObjects: true });
+    setITEMS(items.filter((item) => item.disabled !== true));
   }, [selectedProgramSlug]);
 
   useEffect(async () => {

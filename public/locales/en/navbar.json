@@ -68,6 +68,63 @@
       ]
     },
     {
+      "label": "Social & live learning",
+      "icon": "onlinePeople",
+      "disabled": true,
+      "description": "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.",
+      "asPath": "/read",
+      "subMenu": [
+        {
+          "label": "Intro to coding",
+          "asPath": "#intro-to-coding",
+          "icon": "coding",
+          "description": "Curated section of projects to build while learning with simple instructions, videos, solutions and more.",
+          "subMenu": [
+            {
+              "href": "#start-coding",
+              "label": "Start Coding"
+            }
+          ]
+        },
+        {
+          "label": "Data Science",
+          "asPath": "#data-science",
+          "icon": "data-science",
+          "description": "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.",
+          "subMenu": [
+            {
+              "href": "#science",
+              "label": "Browse articles"
+            }
+          ]
+        },
+        {
+          "label": "#30DaysOfGeekCoding",
+          "asPath": "#30DaysOfGeekCoding",
+          "icon": "socialMedia",
+          "description": "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.",
+          "subMenu": [
+            {
+              "href": "#start",
+              "label": "Start building"
+            }
+          ]
+        },
+        {
+          "label": "A.I. & Machine Learning",
+          "asPath": "#machine-learning",
+          "icon": "brain",
+          "description": "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.",
+          "subMenu": [
+            {
+              "href": "#start",
+              "label": "Start learning"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "label": "Coding Bootcamp",
       "href": "https://4geeksacademy.com"
     }

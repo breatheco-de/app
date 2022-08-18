@@ -8,6 +8,8 @@
   "progressText": "progress in the program",
   "whiteLabeledText": "This course is brought to you thanks to our parnership with this university",
   "modules": {
+    "target-blank-title": "Open in new window",
+    "target-blank-msg": "\"{{title}}\" will open the following URL on a new window",
     "search-not-found": "No matches found for this search",
     "show-pending-tasks": "Show only Pending Tasks",
     "activitiesLength": "{{count}} Activities",
@@ -47,6 +49,14 @@
     "title": "Don't Get Stuck",
     "description": "Did you know you can schedule mentoring sessions any time or ask in the Support Chat?",
     "no-mentors": "No mentors available",
+    "no-mentor-link": "No link to create session with this mentor",
+    "search-mentor": "Search mentor by name",
+    "start-mentorship": "To get started, select a mentorship type",
+    "mentoring": "Mentoring",
+    "select-type": "Select a type of mentorship",
+    "mentoring-available": "Avalible mentorships",
+    "no-mentoring-available": "You have no mentorships available.",
+    "create-session-text": "Book now",
     "actionButtons": [
       {
         "name": "mentoring",
