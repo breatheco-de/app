@@ -377,7 +377,19 @@ const TabletWithForm = ({
             <ModalCloseButton />
             <ModalBody padding={{ base: '30px' }}>
               <Text marginBottom="15px" fontSize="14px" lineHeight="24px">
-                {t('modal.text')}
+                {t('modal.text-part-one')}
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode"
+                  color={useColorModeValue('blue.default', 'blue.300')}
+                  display="inline-block"
+                  letterSpacing="0.05em"
+                  fontFamily="Lato, Sans-serif"
+                >
+                  Learnpack Plugin
+                </Link>
+                {t('modal.text-part-two')}
               </Text>
               <Text
                 // cursor="pointer"
@@ -418,9 +430,9 @@ const TabletWithForm = ({
                 <span>
                   <Icon width="19px" height="19px" style={{ display: 'inline-block' }} icon="help" />
                 </span>
-                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 <Link
-                  href="#"
+                  href="/how-to/github-clone-repository"
+                  target="_blank"
                   fontSize="15px"
                   fontWeight="700"
                   color={useColorModeValue('blue.default', 'blue.300')}
