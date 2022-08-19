@@ -27,7 +27,7 @@ const Module = ({
   const router = useRouter();
 
   const {
-    type, title, icon, target,
+    type, title, icon, target, url,
   } = data;
 
   const pathConnector = {
@@ -69,7 +69,7 @@ const Module = ({
   const currentSlug = data.slug ? data.slug : '';
   useEffect(() => {
     setCurrentTask(taskTodo.find((el) => el.task_type === data.task_type
-    && el.associated_slug === currentSlug));
+      && el.associated_slug === currentSlug));
   }, [taskTodo, data.task_type, currentSlug]);
 
   const changeStatusAssignment = (event, task, taskStatus) => {
@@ -104,6 +104,7 @@ const Module = ({
           title,
           icon,
           target,
+          url,
         }}
         rightItemHandler={(
           <ButtonHandlerByTaskStatus
