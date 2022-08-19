@@ -1,4 +1,29 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
+
+// This function is used to convert base64 encoding to mime type (blob)
+function base64ToBlob(base64, mime) {
+  mime = mime || '';
+  const sliceSize = 1024;
+  const byteChars = window.atob(base64);
+  const byteArrays = [];
+
+  for (let offset = 0, len = byteChars.length; offset < len; offset += sliceSize) {
+    const slice = byteChars.slice(offset, offset + sliceSize);
+
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i += 1) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+
+    byteArrays.push(byteArray);
+  }
+
+  return new Blob(byteArrays, { type: mime });
+}
+
 export const createImage = (url) => new Promise((resolve, reject) => {
   const image = new Image();
   image.addEventListener('load', () => resolve(image));
@@ -70,12 +95,18 @@ export default async function getCroppedImg(
   ctx.putImageData(data, 0, 0);
 
   // As Base64 string
-  // return canvas.toDataURL('image/jpeg');
+  const imgURI = canvas.toDataURL('image/png');
+  const imgFile64 = imgURI.replace(/^data:image\/(png|jpeg);base64,/, '');
+  const pngBlob = base64ToBlob(imgFile64, 'image/png');
+  return {
+    imgURI,
+    blob: pngBlob,
+  };
 
   // As a blob
-  return new Promise((resolve, reject) => {
-    canvas.toBlob((file) => {
-      resolve(URL.createObjectURL(file));
-    }, 'image/jpeg');
-  });
+  // return new Promise((resolve, reject) => {
+  //   canvas.toBlob((file) => {
+  //     resolve(URL.createObjectURL(file));
+  //   }, 'image/jpeg');
+  // });
 }

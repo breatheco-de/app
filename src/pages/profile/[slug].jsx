@@ -62,13 +62,12 @@ const Profile = () => {
         imageUrls[0],
         croppedAreaPixels,
       );
-      setCroppedImage(croppedImg);
+      setCroppedImage(croppedImg.imgURI);
 
       const filename = images[0].name;
       const imgType = images[0].type;
       // ------------------------------------------------------------
 
-      // TODO: try with this
       // const blob = new Blob([croppedImg], {
       //   lastModified: Date.now(),
       //   lastModifiedDate: new Date(),
@@ -81,7 +80,7 @@ const Profile = () => {
       //   lastModified: Date.now(),
       //   lastModifiedDate: new Date(),
       // });
-      const imgFile = new File([croppedImg], filename, {
+      const imgFile = new File([croppedImg.blob], filename, {
         type: imgType,
         lastModified: Date.now(),
         lastModifiedDate: new Date(),
@@ -96,13 +95,20 @@ const Profile = () => {
       //   console.log(`${pair[0]}: ${pair[1]}`);
       // }
 
-      console.log('imgFile:::', imgFile);
-      console.log('images[0]:::', images[0]);
+      console.log('_START_:Image uploaded before prepare:::', images[0]);
+      console.log('_PREVIEW_:cropedImg for preview:::', croppedImg);
+      console.log('_FINAL_:Prepared and edited image for endpoint:::', imgFile);
 
       // Endpoint that will receive the file
+      // NOTE: Endpoint updates the image in the second try
       bc.auth().updatePicture(formdata)
         .then((res) => {
-          console.log('profile_picture:', res);
+          console.log('profile_picture_src:', res.data.avatar_url);
+          toast({
+            title: 'Profile picture updated',
+            status: 'success',
+            duration: 5000,
+          });
         })
         .catch((err) => {
           console.log('err_profile:', err);
@@ -228,7 +234,7 @@ const Profile = () => {
                       <ModalHeader>Upload your profile image</ModalHeader>
                       <ModalCloseButton />
                       <ModalBody>
-                        <Input type="file" name="file" onChange={(e) => setImages([...e.target.files])} accept=".png,.jpg,.jpeg" placeholder="Upload your profile image" />
+                        <Input type="file" name="file" onChange={(e) => setImages([...e.target.files])} accept=".png" placeholder="Upload your profile image" />
                         <Box width="500px" height="500px" position="relative">
                           {images.length > 0 && (
                             <Cropper
