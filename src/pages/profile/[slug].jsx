@@ -87,8 +87,8 @@ const Profile = () => {
       });
 
       const formdata = new FormData();
+      formdata.append('file', imgFile);
       formdata.append('name', filename);
-      formdata.append('image', imgFile);
       formdata.append('upload_preset', 'breathecode');
 
       // for (const pair of formdata.entries()) {
@@ -96,15 +96,13 @@ const Profile = () => {
       // }
 
       console.log('imgFile:::', imgFile);
-      console.log('images[0]:::', images[0]);
-
       // Endpoint that will receive the file
       bc.auth().updatePicture(formdata)
         .then((res) => {
-          console.log('profile_picture:::', res);
+          console.log('profile_picture:', res);
         })
         .catch((err) => {
-          console.log('err_profile:::', err);
+          console.log('err_profile:', err);
         });
     } catch (e) {
       console.error(e);

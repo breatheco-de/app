@@ -9,7 +9,7 @@ const breathecode = {
       login: (payload) => axios.post(`${url}/login/`, { ...payload, user_agent: 'bc/student' }),
       me: () => axios.get(`${url}/user/me`),
       updateProfile: (arg) => axios.put(`${url}/user/me`, { ...arg }),
-      updatePicture: (args) => axios.put(`${url}/profile/me/picture`, { ...args }),
+      updatePicture: (args) => axios.put(`${url}/profile/me/picture`, args),
       invites: () => ({
         get: () => axios.get(`${url}/user/me/invite?status=PENDING`),
         accept: (id) => axios.put(`${url}/user/me/invite/accepted?id=${id}`),
