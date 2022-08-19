@@ -68,6 +68,7 @@ const Profile = () => {
       const imgType = images[0].type;
       // ------------------------------------------------------------
 
+      // TODO: try with this
       // const blob = new Blob([croppedImg], {
       //   lastModified: Date.now(),
       //   lastModifiedDate: new Date(),
@@ -88,14 +89,16 @@ const Profile = () => {
 
       const formdata = new FormData();
       formdata.append('file', imgFile);
-      formdata.append('name', filename);
-      formdata.append('upload_preset', 'breathecode');
+      // formdata.append('name', filename);
+      // formdata.append('upload_preset', 'breathecode');
 
       // for (const pair of formdata.entries()) {
       //   console.log(`${pair[0]}: ${pair[1]}`);
       // }
 
       console.log('imgFile:::', imgFile);
+      console.log('images[0]:::', images[0]);
+
       // Endpoint that will receive the file
       bc.auth().updatePicture(formdata)
         .then((res) => {
@@ -145,7 +148,8 @@ const Profile = () => {
     }
   }, [user]);
 
-  const hasAvatar = profile.github && profile.github.avatar_url && profile.github.avatar_url !== '';
+  const hasAvatar = (profile.github && profile.github.avatar_url && profile.github.avatar_url)
+    || profile.profile.avatar_url;
   return (
     <>
       {user && !user.github && (
@@ -203,7 +207,7 @@ const Profile = () => {
                   width="140px"
                   margin="0"
                   height="140px"
-                  src={hasAvatar ? profile?.github?.avatar_url : ''}
+                  src={hasAvatar ? (profile?.github?.avatar_url || profile?.profile?.avatar_url) : ''}
                 >
                   <Popover trigger="hover" width="fit-content" placement="bottom-start">
                     <PopoverTrigger>
