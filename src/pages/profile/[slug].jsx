@@ -250,7 +250,7 @@ const Profile = () => {
                       <ModalCloseButton />
                       <ModalBody display="flex" flexDirection="column" gridGap="15px" pt="0" pb="1.5rem">
                         {!images.length > 0 && (
-                          <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} width={{ base: '300px', md: '33rem'}} height={{ base: '300px', md: '33rem'}} position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px">
+                          <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} width={{ base: '300px', md: '33rem' }} height={{ base: '300px', md: '33rem' }} position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px">
                             <Box width="100%" height="100%" position="absolute" display="flex" justifyContent="center" alignItems="center" border="1px dashed currentColor" cursor="pointer" borderWidth="4px" borderRadius="12px">
                               <Box className="icon-bounce">
                                 <Icon icon="uploadImage" color="currentColor" width="220px" height="220px" />
