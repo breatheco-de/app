@@ -681,7 +681,8 @@ const Content = () => {
 
                 <Box display="flex" flexDirection="column" background={commonFeaturedColors} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
                   <Heading as="h2" size="sm" style={{ margin: '0' }}>
-                    {label}
+                    {`${label} - `}
+                    {t('teacherSidebar.module-duration', { duration: module.duration_in_days || 1 })}
                   </Heading>
                   <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
                     {teacherInstructions}
