@@ -55,6 +55,26 @@ body.chakra-ui-dark .arrow-blue-color {
   aspect-ratio: 16/9;
 }
 
+@keyframes bounce {
+  0% {
+     opacity: 1;
+     transform: translateY(0px);
+  }
+  50% {
+     opacity: 0.7;
+     transform: translateY(-10px);
+  }
+  100% {
+     opacity: 1;
+     transform: translate(0px);
+  }
+}
+
+.upload-wrapper:hover .icon-bounce,
+.upload-wrapper.dragOver .icon-bounce {
+  animation: bounce 1s ease-in-out infinite;
+}
+
 /* .centerImageForBlur {
   max-width: 90%!important;
   min-width: 90%!important;

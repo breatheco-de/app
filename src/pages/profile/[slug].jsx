@@ -1,5 +1,5 @@
 import {
-  Avatar, Box, Button, Image, Input, Link, Modal, ModalBody, ModalCloseButton, ModalContent,
+  Avatar, Box, Button, Input, Link, Modal, ModalBody, ModalCloseButton, ModalContent,
   ModalHeader, ModalOverlay, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger,
   Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip, useColorModeValue, useToast,
 } from '@chakra-ui/react';
@@ -27,7 +27,7 @@ import getCroppedImg from '../../utils/cropImage';
 const Profile = () => {
   const { t } = useTranslation('profile');
   const toast = useToast();
-  const { user } = useAuth();
+  const { user, updateProfilePicture } = useAuth();
   const router = useRouter();
   const { locale, asPath } = router;
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
@@ -37,10 +37,12 @@ const Profile = () => {
   const tabListMenu = t('tabList', {}, { returnObjects: true });
   const borderColor = useColorModeValue('white', 'darkTheme');
   const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  const [croppedImage, setCroppedImage] = useState(null);
+  const [dragOver, setDragOver] = useState(false);
+  // const [croppedImage, setCroppedImage] = useState(null);
   const [images, setImages] = useState([]); // file images
   const [imageUrls, setImageUrls] = useState([]); // preview of the image
 
@@ -52,34 +54,35 @@ const Profile = () => {
   };
   const currentPathCleaned = cleanQueryStrings(asPath);
 
+  const handleFileUpload = (e) => {
+    e.preventDefault();
+    const file = e.target.files[0];
+
+    // Validate file is of type Image
+    // const fileType = file.type.split('/')[0];
+    if (file && file.type !== 'image/png') {
+      console.log('Not an image file');
+      return null;
+    }
+    return setImages([...e.target.files]);
+  };
+
   const onCropComplete = useCallback((croppedArea, croppedAreaPixel) => {
     setCroppedAreaPixels(croppedAreaPixel);
   }, []);
 
   const submitImage = useCallback(async () => {
+    setIsLoading(true);
     try {
       const croppedImg = await getCroppedImg(
         imageUrls[0],
         croppedAreaPixels,
       );
-      setCroppedImage(croppedImg.imgURI);
+      // setCroppedImage(croppedImg.imgURI); // preview of the image
 
       const filename = images[0].name;
       const imgType = images[0].type;
-      // ------------------------------------------------------------
 
-      // const blob = new Blob([croppedImg], {
-      //   lastModified: Date.now(),
-      //   lastModifiedDate: new Date(),
-      //   name: filename,
-      //   type: imgType,
-      // });
-
-      // const imgFile = new File([blob], filename, {
-      //   type: imgType,
-      //   lastModified: Date.now(),
-      //   lastModifiedDate: new Date(),
-      // });
       const imgFile = new File([croppedImg.blob], filename, {
         type: imgType,
         lastModified: Date.now(),
@@ -91,27 +94,38 @@ const Profile = () => {
       // formdata.append('name', filename);
       // formdata.append('upload_preset', 'breathecode');
 
-      // for (const pair of formdata.entries()) {
-      //   console.log(`${pair[0]}: ${pair[1]}`);
-      // }
+      // console.log('_START_:Image uploaded before prepare:', images[0]);
+      // console.log('_PREVIEW_:cropedImg for preview:', croppedImg);
+      // console.log('_FINAL_:Prepared and edited image for endpoint:', imgFile);
 
-      console.log('_START_:Image uploaded before prepare:::', images[0]);
-      console.log('_PREVIEW_:cropedImg for preview:::', croppedImg);
-      console.log('_FINAL_:Prepared and edited image for endpoint:::', imgFile);
-
-      // Endpoint that will receive the file
-      // NOTE: Endpoint updates the image in the second try
+      // NOTE: Endpoint updates the image on the second try
       bc.auth().updatePicture(formdata)
         .then((res) => {
-          console.log('profile_picture_src:', res.data.avatar_url);
+          if (res.data) {
+            bc.auth().updatePicture(formdata).then((res2) => {
+              setIsLoading(false);
+              updateProfilePicture({
+                ...user,
+                profile: {
+                  ...user.profile,
+                  avatar_url: res2.data.avatar_url,
+                },
+              });
+              setShowModal(false);
+              toast({
+                title: t('alert-message:submitting-picture-success'),
+                status: 'success',
+                duration: 5000,
+              });
+            });
+          }
+        })
+        .catch(() => {
           toast({
-            title: 'Profile picture updated',
-            status: 'success',
+            title: t('alert-message:error-submitting-picture'),
+            status: 'error',
             duration: 5000,
           });
-        })
-        .catch((err) => {
-          console.log('err_profile:', err);
         });
     } catch (e) {
       console.error(e);
@@ -155,7 +169,7 @@ const Profile = () => {
   }, [user]);
 
   const hasAvatar = (profile.github && profile.github.avatar_url && profile.github.avatar_url)
-    || profile.profile.avatar_url;
+    || profile?.profile?.avatar_url;
   return (
     <>
       {user && !user.github && (
@@ -224,45 +238,62 @@ const Profile = () => {
                     <PopoverContent width="fit-content" border="1px solid" borderColor="blue.default">
                       <PopoverArrow className="arrow-blue-color" border="1px solid" background="blue.light" borderColor="blue.default" zIndex={9} />
                       <PopoverBody className="popover-bgColor" fontSize="12px" textTransform="none" borderRadius="5px" background="blue.light" color="blue.default">
-                        Upload your profile image
+                        {t('update-profile-image.tooltip-label')}
                       </PopoverBody>
                     </PopoverContent>
                   </Popover>
                   <Modal isOpen={showModal} size="xl" onClose={() => setShowModal(false)}>
                     <ModalOverlay />
                     <ModalContent>
-                      <ModalHeader>Upload your profile image</ModalHeader>
+                      <ModalHeader>{t('update-profile-image.title')}</ModalHeader>
                       <ModalCloseButton />
-                      <ModalBody>
-                        <Input type="file" name="file" onChange={(e) => setImages([...e.target.files])} accept=".png" placeholder="Upload your profile image" />
-                        <Box width="500px" height="500px" position="relative">
-                          {images.length > 0 && (
-                            <Cropper
-                              image={imageUrls[0]}
-                              crop={crop}
-                              zoom={zoom}
-                              aspect={1}
-                              cropShape="round"
-                              // showGrid={false}
-                              onCropChange={setCrop}
-                              onCropComplete={onCropComplete}
-                              onZoomChange={setZoom}
-                            />
-                          )}
-                        </Box>
-                        {images.length > 0 && (
-                          <>
-                            <Button
-                              variant="default"
-                              onClick={submitImage}
-                            >
-                              Update picture
-                            </Button>
-
-                            <Box display="flex" justifyContent="center" alignItems="center" position="relative" flex="1" padding="16px">
-                              <Image src={croppedImage} maxWidth="100%" borderRadius="100%" maxHeight="100%" />
+                      <ModalBody display="flex" flexDirection="column" gridGap="15px" pt="0" pb="1.5rem">
+                        {!images.length > 0 && (
+                          <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} width="33rem" height="33rem" position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px">
+                            <Box width="100%" height="100%" position="absolute" display="flex" justifyContent="center" alignItems="center" border="1px dashed currentColor" cursor="pointer" borderWidth="4px" borderRadius="12px">
+                              <Box className="icon-bounce">
+                                <Icon icon="uploadImage" color="currentColor" width="220px" height="220px" />
+                              </Box>
                             </Box>
-                          </>
+                            <Input type="file" name="file" onChange={handleFileUpload} accept=".png" placeholder="Upload profile image" position="absolute" width="100%" height="100%" cursor="pointer" opacity="0" padding="0" onDragOver={() => setDragOver(true)} onDragLeave={() => setDragOver(false)} />
+                          </Box>
+                        )}
+                        {images.length > 0 && (
+                          <Box position="relative" width="100%" height="100%">
+                            <Box position="absolute" onClick={() => { setImages([]); setDragOver(false); }} zIndex={99} top="15px" left="15px" background="gray.200" borderRadius="50px" p="10px" cursor="pointer">
+                              <Icon icon="arrowLeft2" width="25px" height="25px" />
+                            </Box>
+                            <Box width={{ base: '300px', md: '33rem' }} height={{ base: '300px', md: '33rem' }} position="relative">
+                              <Cropper
+                                restrictPosition={false}
+                                image={imageUrls[0]}
+                                crop={crop}
+                                zoom={zoom}
+                                style={{
+                                  containerStyle: {
+                                    borderRadius: '12px',
+                                  },
+                                }}
+                                aspect={1}
+                                cropShape="round"
+                                // showGrid={false}
+                                onCropChange={setCrop}
+                                onCropComplete={onCropComplete}
+                                onZoomChange={setZoom}
+                              />
+                            </Box>
+                          </Box>
+                        )}
+                        {images.length > 0 && (
+                          <Button
+                            isLoading={isLoading}
+                            loadingText={t('common:uploading')}
+                            spinnerPlacement="end"
+                            variant="default"
+                            onClick={submitImage}
+                          >
+                            {t('update-profile-image.submit-button')}
+                          </Button>
                         )}
                       </ModalBody>
                     </ModalContent>

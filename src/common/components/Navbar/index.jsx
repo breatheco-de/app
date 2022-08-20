@@ -95,18 +95,19 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
     setSettingsOpen(false);
   };
 
-  const getImage = () => {
-    if (user && user.github) {
-      return user.github.avatar_url;
-    }
-    return '';
-  };
+  const userImg = user?.profile?.avatar_url || user?.github?.avatar_url;
+  // const getImage = () => {
+  //   if (user && user.github) {
+  //     return user.github.avatar_url;
+  //   }
+  //   return '';
+  // };
 
   const getName = () => {
     if (user && user?.first_name) {
       return `${user?.first_name} ${user?.last_name}`;
     }
-    return user?.github.name;
+    return user?.github?.name;
   };
 
   return (
@@ -215,7 +216,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                     width="30px"
                     marginY="auto"
                     height="30px"
-                    src={getImage()}
+                    src={userImg}
                   />
                 </Button>
               </PopoverTrigger>
@@ -294,7 +295,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
                         width="62px"
                         marginY="auto"
                         height="62px"
-                        src={getImage()}
+                        src={userImg}
                       />
                       <Flex flexDirection="column" alignItems="flex-start" gridGap="6px">
                         <Heading as="p" size="20px" fontWeight="700">
