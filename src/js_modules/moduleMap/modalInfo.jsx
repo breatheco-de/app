@@ -6,7 +6,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { Formik, Form, Field } from 'formik';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import Text from '../../common/components/Text';
 import validationSchema from '../../common/components/Forms/validationSchemas';
 
@@ -298,4 +298,4 @@ ModalInfo.defaultProps = {
   closeButtonVariant: 'danger',
 };
 
-export default ModalInfo;
+export default memo(ModalInfo);
