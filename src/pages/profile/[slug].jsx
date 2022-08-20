@@ -1,12 +1,17 @@
 import {
-  Avatar,
-  Box, Link, Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip, useColorModeValue, useToast,
+  Avatar, Box, Button, Input, Link, Modal, ModalBody, ModalCloseButton, ModalContent,
+  ModalHeader, ModalOverlay, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger,
+  Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip, useColorModeValue, useToast, Slider,
+  SliderTrack, SliderFilledTrack, SliderThumb,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import { memo, useEffect, useState } from 'react';
+import {
+  memo, useCallback, useEffect, useState,
+} from 'react';
 import { formatRelative } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useRouter } from 'next/router';
+import Cropper from 'react-easy-crop';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import useAuth from '../../common/hooks/useAuth';
@@ -18,11 +23,12 @@ import Icon from '../../common/components/Icon';
 import { cleanQueryStrings } from '../../utils';
 import ShareButton from '../../common/components/ShareButton';
 import AlertMessage from '../../common/components/AlertMessage';
+import getCroppedImg from '../../utils/cropImage';
 
 const Profile = () => {
   const { t } = useTranslation('profile');
   const toast = useToast();
-  const { user } = useAuth();
+  const { user, updateProfilePicture } = useAuth();
   const router = useRouter();
   const { locale, asPath } = router;
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
@@ -30,6 +36,16 @@ const Profile = () => {
   const [certificates, setCertificates] = useState([]);
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const tabListMenu = t('tabList', {}, { returnObjects: true });
+  const borderColor = useColorModeValue('white', 'darkTheme');
+  const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [dragOver, setDragOver] = useState(false);
+  // const [croppedImage, setCroppedImage] = useState(null);
+  const [images, setImages] = useState([]); // file images
+  const [imageUrls, setImageUrls] = useState([]); // preview of the image
 
   const tabPosition = {
     '/profile/info': 0,
@@ -38,6 +54,84 @@ const Profile = () => {
     '/profile/certificates#': 1,
   };
   const currentPathCleaned = cleanQueryStrings(asPath);
+
+  const handleFileUpload = (e) => {
+    e.preventDefault();
+    const file = e.target.files[0];
+
+    // Validate file is of type Image
+    // const fileType = file.type.split('/')[0];
+    if (file && file.type !== 'image/png') {
+      console.log('Not an image file');
+      return null;
+    }
+    return setImages([...e.target.files]);
+  };
+
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixel) => {
+    setCroppedAreaPixels(croppedAreaPixel);
+  }, []);
+
+  const submitImage = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const croppedImg = await getCroppedImg(
+        imageUrls[0],
+        croppedAreaPixels,
+      );
+      // setCroppedImage(croppedImg.imgURI); // preview of the image
+
+      const filename = images[0].name;
+      const imgType = images[0].type;
+
+      const imgFile = new File([croppedImg.blob], filename, {
+        type: imgType,
+        lastModified: Date.now(),
+        lastModifiedDate: new Date(),
+      });
+
+      const formdata = new FormData();
+      formdata.append('file', imgFile);
+      // formdata.append('name', filename);
+      // formdata.append('upload_preset', 'breathecode');
+
+      // console.log('_START_:Image uploaded before prepare:', images[0]);
+      // console.log('_PREVIEW_:cropedImg for preview:', croppedImg);
+      // console.log('_FINAL_:Prepared and edited image for endpoint:', imgFile);
+
+      // NOTE: Endpoint updates the image on the second try
+      bc.auth().updatePicture(formdata)
+        .then((res) => {
+          if (res.data) {
+            bc.auth().updatePicture(formdata).then((res2) => {
+              setIsLoading(false);
+              updateProfilePicture({
+                ...user,
+                profile: {
+                  ...user.profile,
+                  avatar_url: res2.data.avatar_url,
+                },
+              });
+              setShowModal(false);
+              toast({
+                title: t('alert-message:submitting-picture-success'),
+                status: 'success',
+                duration: 5000,
+              });
+            });
+          }
+        })
+        .catch(() => {
+          toast({
+            title: t('alert-message:error-submitting-picture'),
+            status: 'error',
+            duration: 5000,
+          });
+        });
+    } catch (e) {
+      console.error(e);
+    }
+  }, [croppedAreaPixels]);
 
   useEffect(() => {
     setCurrentTabIndex(tabPosition[currentPathCleaned]);
@@ -59,6 +153,14 @@ const Profile = () => {
   }, []);
 
   useEffect(() => {
+    if (images.length < 1) return;
+    const newImageUrls = [];
+
+    images?.map((image) => newImageUrls.push(URL.createObjectURL(image)));
+    setImageUrls(newImageUrls);
+  }, [images]);
+
+  useEffect(() => {
     if (user) {
       setProfile({
         ...profile,
@@ -67,7 +169,8 @@ const Profile = () => {
     }
   }, [user]);
 
-  const hasAvatar = profile.github && profile.github.avatar_url && profile.github.avatar_url !== '';
+  const hasAvatar = (profile.github && profile.github.avatar_url && profile.github.avatar_url)
+    || profile?.profile?.avatar_url;
   return (
     <>
       {user && !user.github && (
@@ -121,12 +224,95 @@ const Profile = () => {
               </Text>
               <Box display="flex" flexDirection={{ base: 'column', lg: 'row' }} alignItems={{ base: 'center', lg: 'start' }} gridGap="38px" width="100%" height="auto" borderRadius="17px" border="1px solid" borderColor={commonBorderColor} p="30px">
                 <Avatar
-                // name={user?.first_name}
+                  // name={user?.first_name}
                   width="140px"
                   margin="0"
                   height="140px"
-                  src={hasAvatar ? profile?.github?.avatar_url : ''}
-                />
+                  src={hasAvatar ? (profile?.github?.avatar_url || profile?.profile?.avatar_url) : ''}
+                >
+                  <Popover trigger="hover" width="fit-content" placement="bottom-start">
+                    <PopoverTrigger>
+                      <Box position="absolute" onClick={() => setShowModal(true)} display="flex" right="-5px" bottom="-2px" p="6px" background="blue.default" border="0.2em solid" borderColor={borderColor} borderRadius="full" cursor="pointer">
+                        <Icon icon="pencilFull" color="#fff" width="15px" height="15px" />
+                      </Box>
+                    </PopoverTrigger>
+                    <PopoverContent width="fit-content" border="1px solid" borderColor="blue.default">
+                      <PopoverArrow className="arrow-blue-color" border="1px solid" background="blue.light" borderColor="blue.default" zIndex={9} />
+                      <PopoverBody className="popover-bgColor" fontSize="12px" textTransform="none" borderRadius="5px" background="blue.light" color="blue.default">
+                        {t('update-profile-image.tooltip-label')}
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                  <Modal isOpen={showModal} size="xl" onClose={() => setShowModal(false)}>
+                    <ModalOverlay />
+                    <ModalContent>
+                      <ModalHeader>{t('update-profile-image.title')}</ModalHeader>
+                      <ModalCloseButton />
+                      <ModalBody display="flex" flexDirection="column" gridGap="15px" pt="0" pb="1.5rem">
+                        {!images.length > 0 && (
+                          <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} width="33rem" height="33rem" position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px">
+                            <Box width="100%" height="100%" position="absolute" display="flex" justifyContent="center" alignItems="center" border="1px dashed currentColor" cursor="pointer" borderWidth="4px" borderRadius="12px">
+                              <Box className="icon-bounce">
+                                <Icon icon="uploadImage" color="currentColor" width="220px" height="220px" />
+                              </Box>
+                            </Box>
+                            <Input type="file" name="file" onChange={handleFileUpload} accept=".png" placeholder="Upload profile image" position="absolute" width="100%" height="100%" cursor="pointer" opacity="0" padding="0" onDragOver={() => setDragOver(true)} onDragLeave={() => setDragOver(false)} />
+                          </Box>
+                        )}
+                        {images.length > 0 && (
+                          <Box position="relative" width="100%" height="100%">
+                            <Box position="absolute" onClick={() => { setImages([]); setDragOver(false); }} zIndex={99} top="15px" left="15px" background="gray.200" borderRadius="50px" p="10px" cursor="pointer">
+                              <Icon icon="arrowLeft2" width="25px" height="25px" />
+                            </Box>
+                            {/* Focus butotn not changes to center position */}
+                            <Box position="absolute" onClick={() => setCrop({ x: 0, y: 0 })} zIndex={99} bottom="15px" left="15px" background="gray.200" borderRadius="50px" p="10px" cursor="pointer">
+                              <Icon icon="focus" color="#0097CD" width="25px" height="25px" />
+                            </Box>
+                            <Box width={{ base: '300px', md: '33rem' }} height={{ base: '300px', md: '33rem' }} position="relative">
+                              <Cropper
+                                restrictPosition={false}
+                                image={imageUrls[0]}
+                                crop={crop}
+                                zoom={zoom}
+                                // onCropComplete={onCropComplete}
+                                onCropAreaChange={onCropComplete}
+                                style={{
+                                  containerStyle: {
+                                    borderRadius: '12px',
+                                  },
+                                }}
+                                aspect={1}
+                                cropShape="round"
+                                // showGrid={false}
+                                onCropChange={setCrop}
+                                onZoomChange={setZoom}
+                              />
+                            </Box>
+                          </Box>
+                        )}
+                        {images.length > 0 && (
+                          <>
+                            <Slider aria-label="slider-zoom" onChange={(value) => setZoom(value)} step={0.08} value={zoom} min={1} max={3}>
+                              <SliderTrack>
+                                <SliderFilledTrack />
+                              </SliderTrack>
+                              <SliderThumb style={{ border: '1px solid #0097CD' }} />
+                            </Slider>
+                            <Button
+                              isLoading={isLoading}
+                              loadingText={t('common:uploading')}
+                              spinnerPlacement="end"
+                              variant="default"
+                              onClick={submitImage}
+                            >
+                              {t('update-profile-image.submit-button')}
+                            </Button>
+                          </>
+                        )}
+                      </ModalBody>
+                    </ModalContent>
+                  </Modal>
+                </Avatar>
                 <ProfileForm profile={profile} />
               </Box>
             </TabPanel>
