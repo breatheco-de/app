@@ -1,7 +1,8 @@
 import {
   Avatar, Box, Button, Input, Link, Modal, ModalBody, ModalCloseButton, ModalContent,
   ModalHeader, ModalOverlay, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger,
-  Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip, useColorModeValue, useToast,
+  Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip, useColorModeValue, useToast, Slider,
+  SliderTrack, SliderFilledTrack, SliderThumb,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import {
@@ -263,12 +264,18 @@ const Profile = () => {
                             <Box position="absolute" onClick={() => { setImages([]); setDragOver(false); }} zIndex={99} top="15px" left="15px" background="gray.200" borderRadius="50px" p="10px" cursor="pointer">
                               <Icon icon="arrowLeft2" width="25px" height="25px" />
                             </Box>
+                            {/* Focus butotn not changes to center position */}
+                            <Box position="absolute" onClick={() => setCrop({ x: 0, y: 0 })} zIndex={99} bottom="15px" left="15px" background="gray.200" borderRadius="50px" p="10px" cursor="pointer">
+                              <Icon icon="focus" color="#0097CD" width="25px" height="25px" />
+                            </Box>
                             <Box width={{ base: '300px', md: '33rem' }} height={{ base: '300px', md: '33rem' }} position="relative">
                               <Cropper
                                 restrictPosition={false}
                                 image={imageUrls[0]}
                                 crop={crop}
                                 zoom={zoom}
+                                // onCropComplete={onCropComplete}
+                                onCropAreaChange={onCropComplete}
                                 style={{
                                   containerStyle: {
                                     borderRadius: '12px',
@@ -278,22 +285,29 @@ const Profile = () => {
                                 cropShape="round"
                                 // showGrid={false}
                                 onCropChange={setCrop}
-                                onCropComplete={onCropComplete}
                                 onZoomChange={setZoom}
                               />
                             </Box>
                           </Box>
                         )}
                         {images.length > 0 && (
-                          <Button
-                            isLoading={isLoading}
-                            loadingText={t('common:uploading')}
-                            spinnerPlacement="end"
-                            variant="default"
-                            onClick={submitImage}
-                          >
-                            {t('update-profile-image.submit-button')}
-                          </Button>
+                          <>
+                            <Slider aria-label="slider-zoom" onChange={(value) => setZoom(value)} step={0.08} value={zoom} min={1} max={3}>
+                              <SliderTrack>
+                                <SliderFilledTrack />
+                              </SliderTrack>
+                              <SliderThumb style={{ border: '1px solid #0097CD' }} />
+                            </Slider>
+                            <Button
+                              isLoading={isLoading}
+                              loadingText={t('common:uploading')}
+                              spinnerPlacement="end"
+                              variant="default"
+                              onClick={submitImage}
+                            >
+                              {t('update-profile-image.submit-button')}
+                            </Button>
+                          </>
                         )}
                       </ModalBody>
                     </ModalContent>
