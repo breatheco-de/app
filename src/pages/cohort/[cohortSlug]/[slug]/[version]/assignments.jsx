@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-continue */
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
@@ -51,6 +52,11 @@ const Assignments = () => {
     en: '/',
   };
 
+  // const studentId = router.query.student && Number(router.query.student);
+  const studentDefaultValue = currentStudentList?.filter(
+    (l) => l.user.id === Number(router.query.student),
+  ).map((l) => l?.user?.id)[0];
+
   const getStudents = (slug, academyId) => {
     bc.cohort().getStudents(slug, academyId)
       .then(({ data }) => {
@@ -69,7 +75,7 @@ const Assignments = () => {
       });
   };
 
-  const getAssignments = (cohortId, academyId, offsetValue) => {
+  const getAssignments = (cohortId, academyId, offsetValue, studentId) => {
     Promise.all([
       bc.todo({
         limit: 20,
@@ -77,12 +83,17 @@ const Assignments = () => {
         offset: offsetValue,
         task_type: 'PROJECT',
       }).getAssignments({ id: cohortId }),
+      bc.todo({
+        limit: 1000,
+        academy: academyId,
+        task_type: 'PROJECT',
+      }).getAssignments({ id: cohortId }),
       // bc.todo({ teacher: cohortSession.bc_id }).get(),
     ])
-      .then(([tasks]) => {
+      .then(([tasks, projectList]) => {
         setIsFetching(false);
         setPaginationProps(tasks.data);
-        const taskResults = tasks.data?.results;
+        const taskResults = projectList.data?.results;
         const projectTasks = taskResults !== undefined ? taskResults.filter((l) => l.task_type === 'PROJECT') : [];
         // const myProjectTasks = myTasks.data !== undefined ? myTasks.data.filter(
         //   (l) => l.task_type === 'PROJECT',
@@ -156,6 +167,10 @@ const Assignments = () => {
   useEffect(() => {
     const findSelectedCohort = allCohorts.find((l) => l.slug === selectedCohortSlug);
     const defaultCohort = allCohorts.find((l) => l.slug === cohortSlug);
+    // const defaultStudent = currentStudentList.find(
+    //   (s) => s?.user?.id === studentId,
+    // );
+    console.log('studentDefaultValue:::', studentDefaultValue);
 
     const academyId = findSelectedCohort?.academy || defaultCohort?.academy;
     const slug = findSelectedCohort?.slug || defaultCohort?.slug;
@@ -168,7 +183,7 @@ const Assignments = () => {
       // if (offset) {
       // }
     }
-  }, [allCohorts, selectedCohortSlug, offset]);
+  }, [allCohorts, selectedCohortSlug, offset, studentDefaultValue]);
 
   const filteredTasks = contextState.allTasks.length > 0 ? contextState.allTasks.filter(
     (task) => {
@@ -242,10 +257,9 @@ const Assignments = () => {
     },
   ];
 
-  const studentDefaultValue = currentStudentList?.filter((l) => {
-    const fullName = `${l.user.first_name}-${l.user.last_name}`.toLowerCase();
-    return fullName === router.query.student;
-  }).map((l) => `${l?.user?.first_name} ${l?.user?.last_name}`)[0];
+  const defaultStudentLabel = currentStudentList?.filter(
+    (l) => l.user.id === Number(router.query.student),
+  ).map((l) => `${l.user.first_name} ${l.user.last_name}`)[0];
 
   const projectDefaultValue = projects.find(
     (l) => l.associated_slug === router.query.project,
@@ -346,7 +360,7 @@ const Assignments = () => {
               placeholder={t('filter.student')}
               isClearable
               value={studentLabel || ''}
-              defaultInputValue={studentDefaultValue}
+              defaultInputValue={defaultStudentLabel}
               height="50px"
               fontSize="15px"
               onChange={(selected) => {
@@ -359,7 +373,7 @@ const Assignments = () => {
                 router.push({
                   query: {
                     ...router.query,
-                    student: selected?.value,
+                    student: selected?.id,
                   },
                 });
               }}
