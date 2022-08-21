@@ -2,7 +2,7 @@ import {
   Avatar, Box, Button, Input, Link, Modal, ModalBody, ModalCloseButton, ModalContent,
   ModalHeader, ModalOverlay, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger,
   Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip, useColorModeValue, useToast, Slider,
-  SliderTrack, SliderFilledTrack, SliderThumb,
+  SliderTrack, SliderFilledTrack, SliderThumb, useMediaQuery,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import {
@@ -46,6 +46,8 @@ const Profile = () => {
   // const [croppedImage, setCroppedImage] = useState(null);
   const [images, setImages] = useState([]); // file images
   const [imageUrls, setImageUrls] = useState([]); // preview of the image
+
+  const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
 
   const tabPosition = {
     '/profile/info': 0,
@@ -243,20 +245,20 @@ const Profile = () => {
                       </PopoverBody>
                     </PopoverContent>
                   </Popover>
-                  <Modal isOpen={showModal} size="xl" onClose={() => setShowModal(false)}>
+                  <Modal isOpen={showModal} size="xl" onClose={() => setShowModal(false)} isCentered={!!isBelowTablet}>
                     <ModalOverlay />
                     <ModalContent>
                       <ModalHeader>{t('update-profile-image.title')}</ModalHeader>
                       <ModalCloseButton />
                       <ModalBody display="flex" flexDirection="column" gridGap="15px" pt="0" pb="1.5rem">
                         {!images.length > 0 && (
-                          <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} width={{ base: '300px', md: '33rem' }} height={{ base: '300px', md: '33rem' }} position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px">
+                          <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} width={{ base: 'auto', md: '33rem' }} height={{ base: '300px', md: '33rem' }} position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px">
                             <Box width="100%" height="100%" position="absolute" display="flex" justifyContent="center" alignItems="center" border="1px dashed currentColor" cursor="pointer" borderWidth="4px" borderRadius="12px">
                               <Box className="icon-bounce">
                                 <Icon icon="uploadImage" color="currentColor" width="220px" height="220px" />
                               </Box>
                             </Box>
-                            <Input type="file" name="file" onChange={handleFileUpload} accept=".png" placeholder="Upload profile image" position="absolute" width="100%" height="100%" cursor="pointer" opacity="0" padding="0" onDragOver={() => setDragOver(true)} onDragLeave={() => setDragOver(false)} />
+                            <Input type="file" name="file" title="" onChange={handleFileUpload} accept=".png" placeholder="Upload profile image" position="absolute" width="100%" height="100%" cursor="pointer" opacity="0" padding="0" onDragOver={() => setDragOver(true)} onDragLeave={() => setDragOver(false)} />
                           </Box>
                         )}
                         {images.length > 0 && (
