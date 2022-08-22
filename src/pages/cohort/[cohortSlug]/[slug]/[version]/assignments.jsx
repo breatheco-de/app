@@ -30,9 +30,12 @@ const Assignments = () => {
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
   const [paginationProps, setPaginationProps] = useState({});
+  const [allTasksPaginationProps, setAllTasksPaginationProps] = useState({});
   const [tasksLoading, setTasksLoading] = useState(true);
   const [offset, setOffset] = useState(0);
+  const [allTasksOffset, setAllTasksOffset] = useState(10);
   const [isFetching, setIsFetching] = useState(false);
+  const [isFetchingAllTasks, setIsFetchingAllTasks] = useState(false);
   const [studentLabel, setStudentLabel] = useState(null);
   const [projectLabel, setProjectLabel] = useState(null);
   const [statusLabel, setStatusLabel] = useState(null);
@@ -51,6 +54,8 @@ const Assignments = () => {
     es: '/es/',
     en: '/',
   };
+
+  console.log('currentStudentList:::', currentStudentList);
 
   // const studentId = router.query.student && Number(router.query.student);
   const studentDefaultValue = currentStudentList?.filter(
@@ -75,24 +80,28 @@ const Assignments = () => {
       });
   };
 
-  const getAssignments = (cohortId, academyId, offsetValue, studentId) => {
-    Promise.all([
-      bc.todo({
-        limit: 20,
-        academy: academyId,
-        offset: offsetValue,
-        task_type: 'PROJECT',
-      }).getAssignments({ id: cohortId }),
-      bc.todo({
-        limit: 1000,
-        academy: academyId,
-        task_type: 'PROJECT',
-      }).getAssignments({ id: cohortId }),
-      // bc.todo({ teacher: cohortSession.bc_id }).get(),
-    ])
-      .then(([tasks, projectList]) => {
+  const getAllAssignments = (cohortId, academyId, offsetValue, studentId) => {
+    bc.todo({
+      limit: 20,
+      academy: academyId,
+      offset: allTasksOffset,
+      task_type: 'PROJECT',
+    }).getAssignments({ id: cohortId })
+      .then((res) => {
+        setIsFetchingAllTasks(false);
+        setAllTasksPaginationProps(res.data);
+      });
+  };
+
+  const getFilterAssignments = (cohortId, academyId, offsetValue, studentId) => {
+    bc.todo({
+      limit: 1000,
+      academy: academyId,
+      task_type: 'PROJECT',
+      student: studentId || undefined,
+    }).getAssignments({ id: cohortId })
+      .then((projectList) => {
         setIsFetching(false);
-        setPaginationProps(tasks.data);
         const taskResults = projectList.data?.results;
         const projectTasks = taskResults !== undefined ? taskResults.filter((l) => l.task_type === 'PROJECT') : [];
         // const myProjectTasks = myTasks.data !== undefined ? myTasks.data.filter(
@@ -179,11 +188,11 @@ const Assignments = () => {
     if (defaultCohort && cohortId) {
       setSelectedCohort(findSelectedCohort || defaultCohort);
       getStudents(slug, academyId);
-      getAssignments(cohortId, academyId, offset);
+      getFilterAssignments(cohortId, academyId, offset, router.query.student);
       // if (offset) {
       // }
     }
-  }, [allCohorts, selectedCohortSlug, offset, studentDefaultValue]);
+  }, [allCohorts, selectedCohortSlug, offset, studentDefaultValue, router.query.student]);
 
   const filteredTasks = contextState.allTasks.length > 0 ? contextState.allTasks.filter(
     (task) => {
@@ -199,11 +208,13 @@ const Assignments = () => {
         && task.associated_slug !== router.query.project
       ) return false;
       if (router.query.student
-        && fullName !== router.query.student
+        && task.user.id !== Number(router.query.student)
       ) return false;
       return true;
     },
   ) : [];
+
+  console.log('projects:::', projects);
 
   useEffect(() => {
     if (filteredTasks?.length === 0) {
