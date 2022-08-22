@@ -42,9 +42,37 @@ body.chakra-ui-dark .chakra-popover__arrow {
   z-index: 99!important;
   background: var(--chakra-colors-gray-800) !important;
 }
+body.chakra-ui-dark .popover-bgColor {
+  background: var(--chakra-colors-gray-800) !important;
+  color: #00ABE9;
+}
+body.chakra-ui-dark .arrow-blue-color {
+  border: 1px solid #0097CD;
+  background: var(--chakra-colors-gray-800) !important;
+}
 
 .react-player {
   aspect-ratio: 16/9;
+}
+
+@keyframes bounce {
+  0% {
+     opacity: 1;
+     transform: translateY(0px);
+  }
+  50% {
+     opacity: 0.7;
+     transform: translateY(-10px);
+  }
+  100% {
+     opacity: 1;
+     transform: translate(0px);
+  }
+}
+
+.upload-wrapper:hover .icon-bounce,
+.upload-wrapper.dragOver .icon-bounce {
+  animation: bounce 1s ease-in-out infinite;
 }
 
 /* .centerImageForBlur {

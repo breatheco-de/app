@@ -51,5 +51,10 @@
         "color": "#0077B5"
       }
     ]
+  },
+  "update-profile-image": {
+    "tooltip-label": "Sube tu imagen de perfil",
+    "title": "Sube tu imagen de perfil",
+    "submit-button": "Actualizar imagen de perfil"
   }
 }

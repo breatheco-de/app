@@ -71,5 +71,8 @@
     "continue-exercise": "Continue exercise"
   },
   "average-duration": "Average duration",
-  "load-more": "Load more"
+  "load-more": "Load more",
+  "teacher": "Teacher",
+  "student": "Student",
+  "uploading": "Uploading"
 }

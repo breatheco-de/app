@@ -58,6 +58,13 @@ const reducer = (state, action) => {
         user,
       };
     }
+    case 'UPDATE_PROFILE_PICTURE': {
+      return {
+        ...state,
+        isLoading: false,
+        user: action.payload,
+      };
+    }
     default: {
       return { ...state };
     }
@@ -232,6 +239,13 @@ const AuthProvider = ({ children }) => {
     dispatch({ type: 'LOGOUT' });
   };
 
+  const updateProfilePicture = async (payload) => {
+    dispatch({
+      type: 'UPDATE_PROFILE_PICTURE',
+      payload,
+    });
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -241,6 +255,7 @@ const AuthProvider = ({ children }) => {
         logout,
         register,
         choose,
+        updateProfilePicture,
       }}
     >
       {children}

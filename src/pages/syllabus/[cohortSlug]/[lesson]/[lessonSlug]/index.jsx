@@ -27,6 +27,7 @@ import Icon from '../../../../../common/components/Icon';
 import AlertMessage from '../../../../../common/components/AlertMessage';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import ShareButton from '../../../../../common/components/ShareButton';
+import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 
 const Content = () => {
   const { t } = useTranslation('syllabus');
@@ -54,6 +55,8 @@ const Content = () => {
   const [callToActionProps, setCallToActionProps] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [readmeUrlPathname, setReadmeUrlPathname] = useState(null);
+  const [openTargetBlankModal, setOpenTargetBlankModal] = useState(null);
+  const [clickedPage, setClickedPage] = useState({});
   const [currentData, setCurrentData] = useState({});
   const toast = useToast();
   const router = useRouter();
@@ -184,7 +187,12 @@ const Content = () => {
   };
 
   const onClickAssignment = (e, item) => {
-    router.push(`/syllabus/${cohortSlug}/${item.type.toLowerCase()}/${item.slug}`);
+    const link = `/syllabus/${cohortSlug}/${item.type.toLowerCase()}/${item.slug}`;
+    if (item.target === 'blank') {
+      window.open(link, '_blank');
+    } else {
+      router.push(link);
+    }
     setCurrentData({});
     setCurrentSelectedModule(null);
     setCallToActionProps({});
@@ -468,6 +476,21 @@ const Content = () => {
 
   return (
     <Flex position="relative">
+      <ModalInfo
+        isOpen={openTargetBlankModal}
+        onClose={() => setOpenTargetBlankModal(false)}
+        title={t('dashboard:modules.target-blank-title')}
+        isReadonly
+        description={t('dashboard:modules.target-blank-msg', { title: clickedPage?.title })}
+        link={`https://4geeks.com/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`}
+        handlerText={t('common:open')}
+        closeText={t('common:close')}
+        closeButtonVariant="outline"
+        actionHandler={() => {
+          setOpenTargetBlankModal(false);
+          window.open(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`, '_blank');
+        }}
+      />
       <StickySideBar
         width="auto"
         menu={[
@@ -779,7 +802,12 @@ const Content = () => {
                   letterSpacing="0.05em"
                   fontWeight="700"
                   onClick={() => {
-                    router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
+                    setClickedPage(previousAssignment);
+                    if (previousAssignment?.target === 'blank') {
+                      setOpenTargetBlankModal(true);
+                    } else {
+                      router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
+                    }
                   }}
                 >
                   <Box
@@ -802,10 +830,16 @@ const Content = () => {
                   letterSpacing="0.05em"
                   fontWeight="700"
                   onClick={() => {
+                    setClickedPage(nextAssignment);
                     if (taskIsNotDone) {
                       setOpenNextPageModal(true);
-                    } else {
-                      router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                    }
+                    if (!taskIsNotDone) {
+                      if (nextAssignment?.target === 'blank') {
+                        setOpenTargetBlankModal(true);
+                      } else {
+                        router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                      }
                     }
                   }}
                 >
@@ -853,9 +887,15 @@ const Content = () => {
                         settingsOpen={modalSettingsOpen}
                         onClickHandler={() => {
                           setShowModal(false);
-                          setTimeout(() => {
-                            router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
-                          }, 1200);
+                          if (nextAssignment?.target === 'blank') {
+                            setTimeout(() => {
+                              setOpenTargetBlankModal(true);
+                            }, 1200);
+                          } else {
+                            setTimeout(() => {
+                              router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                            }, 1200);
+                          }
                           setOpenNextPageModal(false);
                         }}
                       />

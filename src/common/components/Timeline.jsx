@@ -1,4 +1,6 @@
-import React, { useEffect, memo } from 'react';
+import React, {
+  useEffect, memo, useState,
+} from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import {
@@ -7,6 +9,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import Text from './Text';
+import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 
 const color = {
   light: 'blue.light',
@@ -22,6 +25,8 @@ const Timeline = ({
   const { cohortSlug, lessonSlug } = router.query;
   const fontColor1 = useColorModeValue('gray.dark', 'white');
   const fontColor2 = useColorModeValue('gray.dark', 'gray.light');
+  const [openTargetBlankModal, setOpenTargetBlankModal] = useState(false);
+  const [clickedState, setClickedState] = useState(null);
 
   // scroll scrollIntoView for id when lessonSlug changes
   const scrollIntoView = (id) => {
@@ -37,9 +42,36 @@ const Timeline = ({
   useEffect(() => {
     scrollIntoView(lessonSlug);
   }, []);
+  const handleClick = (e, item) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (item.target === 'blank') {
+      setClickedState(item);
+      setOpenTargetBlankModal(true);
+    } else {
+      onClickAssignment(e, item);
+    }
+  };
+
+  const clickedPath = `/syllabus/${cohortSlug}/${clickedState?.type?.toLowerCase()}/${clickedState?.slug}`;
 
   return (
     <>
+      <ModalInfo
+        isOpen={openTargetBlankModal}
+        onClose={() => setOpenTargetBlankModal(false)}
+        title={t('dashboard:modules.target-blank-title')}
+        isReadonly
+        description={t('dashboard:modules.target-blank-msg', { title: clickedState?.title })}
+        link={`https://4geeks.com${clickedPath}`}
+        handlerText={t('common:open')}
+        closeText={t('common:close')}
+        closeButtonVariant="outline"
+        actionHandler={(e) => {
+          onClickAssignment(e, clickedState);
+          setOpenTargetBlankModal(false);
+        }}
+      />
       <Flex width={width} marginBottom="1.5rem">
         <Text size="l" fontWeight="900" color={fontColor1}>{title && title.toUpperCase()}</Text>
         {technologies.length >= 1 && (
@@ -93,7 +125,7 @@ const Timeline = ({
                   </Box>
                 </Box>
               </Box>
-              <Flex cursor="pointer" onClick={(e) => onClickAssignment(e, item)} width="100%" borderRadius="17px" bg={!muted ? color[colorMode] : 'none'} paddingY="10.5px" paddingX="12px">
+              <Flex cursor="pointer" onClick={(e) => handleClick(e, item)} width="100%" borderRadius="17px" bg={!muted ? color[colorMode] : 'none'} paddingY="10.5px" paddingX="12px">
                 <Box padding="8px" bg={!muted ? 'blue.default' : 'none'} borderRadius="50px" height="36px" margin="0">
                   <Icon width="20px" height="20px" icon={item && item?.icon} color={muted ? 'gray' : 'white'} />
                 </Box>

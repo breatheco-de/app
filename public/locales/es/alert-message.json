@@ -45,5 +45,7 @@
   "review-assignment-approve": "La tarea ha sido aprovada con éxito",
   "review-assignment-updated": "Tarea modificada exitosamente",
   "review-assignment-reject": "La tarea ha sido rechazada con éxito",
-  "review-assignment-ignored-task": "Se ha ignorado la tarea con éxito"
+  "review-assignment-ignored-task": "Se ha ignorado la tarea con éxito",
+  "error-submitting-picture": "Hubo un error al intentar subir la imagen",
+  "submitting-picture-success": "¡Imagen de perfil actualizada!"
 }

@@ -45,5 +45,7 @@
   "review-assignment-approve": "Task approved successfully",
   "review-assignment-updated": "Task updated successfully",
   "review-assignment-reject": "Task rejected successfully",
-  "review-assignment-ignored-task": "Task ignored successfully"
+  "review-assignment-ignored-task": "Task ignored successfully",
+  "error-submitting-picture": "There was an error trying to upload the image",
+  "submitting-picture-success": "Profile picture updated!"
 }
