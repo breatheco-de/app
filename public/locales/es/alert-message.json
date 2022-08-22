@@ -47,5 +47,6 @@
   "review-assignment-reject": "La tarea ha sido rechazada con éxito",
   "review-assignment-ignored-task": "Se ha ignorado la tarea con éxito",
   "error-submitting-picture": "Hubo un error al intentar subir la imagen",
-  "submitting-picture-success": "¡Imagen de perfil actualizada!"
+  "submitting-picture-success": "¡Imagen de perfil actualizada!",
+  "file-type-error": "No se permite cargar el tipo de archivo {{type}}"
 }
