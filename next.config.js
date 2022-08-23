@@ -13,9 +13,24 @@ const nextTranslate = require('next-translate');
 //   server: ['GITHUB_TOKEN'],
 // });
 
+const securityHeaders = [
+  {
+    key: 'X-Frame-Options',
+    value: 'SAMEORIGIN',
+  },
+];
+
 module.exports = withBundleAnalyzer(nextTranslate({
   // rest of config here
   // i18n,
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: securityHeaders,
+      },
+    ];
+  },
   async redirects() {
     return [
       // {
