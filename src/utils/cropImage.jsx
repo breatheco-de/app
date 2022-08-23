@@ -96,7 +96,7 @@ export default async function getCroppedImg(
 
   // As Base64 string
   const imgURI = canvas.toDataURL('image/png');
-  const imgFile64 = imgURI.replace(/^data:image\/(png|jpeg);base64,/, '');
+  const imgFile64 = imgURI.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
   const pngBlob = base64ToBlob(imgFile64, 'image/png');
   return {
     imgURI,

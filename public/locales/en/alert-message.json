@@ -47,5 +47,6 @@
   "review-assignment-reject": "Task rejected successfully",
   "review-assignment-ignored-task": "Task ignored successfully",
   "error-submitting-picture": "There was an error trying to upload the image",
-  "submitting-picture-success": "Profile picture updated!"
+  "submitting-picture-success": "Profile picture updated!",
+  "file-type-error": "File type {{type}} is not allowed to be uploaded"
 }
