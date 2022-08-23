@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-continue */
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
@@ -29,13 +28,11 @@ const Assignments = () => {
   const { contextState, setContextState } = useAssignments();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
-  const [paginationProps, setPaginationProps] = useState({});
+  // const [paginationProps, setPaginationProps] = useState({});
   const [allTasksPaginationProps, setAllTasksPaginationProps] = useState({});
   const [tasksLoading, setTasksLoading] = useState(true);
-  const [offset, setOffset] = useState(0);
-  const [allTasksOffset, setAllTasksOffset] = useState(10);
+  const [allTasksOffset, setAllTasksOffset] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
-  const [isFetchingAllTasks, setIsFetchingAllTasks] = useState(false);
   const [studentLabel, setStudentLabel] = useState(null);
   const [projectLabel, setProjectLabel] = useState(null);
   const [statusLabel, setStatusLabel] = useState(null);
@@ -46,7 +43,8 @@ const Assignments = () => {
   const [selectedCohort, setSelectedCohort] = useState({});
   const [selectedCohortSlug, setSelectedCohortSlug] = useState(null);
 
-  const { cohortSlug } = router.query;
+  const { query } = router;
+  const { cohortSlug } = query;
   const linkColor = useColorModeValue('blue.default', 'blue.300');
   const borderColor = useColorModeValue('gray.200', 'gray.500');
 
@@ -55,7 +53,9 @@ const Assignments = () => {
     en: '/',
   };
 
-  console.log('currentStudentList:::', currentStudentList);
+  const queryStudentExists = query.student !== undefined && query.student?.length > 0;
+  const queryStatusExists = query.status !== undefined && query.status?.length > 0;
+  const queryProjectExists = query.project !== undefined && query.project?.length > 0;
 
   // const studentId = router.query.student && Number(router.query.student);
   const studentDefaultValue = currentStudentList?.filter(
@@ -80,20 +80,31 @@ const Assignments = () => {
       });
   };
 
-  const getAllAssignments = (cohortId, academyId, offsetValue, studentId) => {
+  const getAllAssignments = (cohortId, academyId, offsetValue) => {
     bc.todo({
       limit: 20,
       academy: academyId,
-      offset: allTasksOffset,
+      offset: offsetValue,
       task_type: 'PROJECT',
     }).getAssignments({ id: cohortId })
       .then((res) => {
-        setIsFetchingAllTasks(false);
+        setIsFetching(false);
         setAllTasksPaginationProps(res.data);
+
+        const tasks = res.data?.results;
+        const cleanedTeacherTask = tasks !== undefined ? tasks.filter(
+          (l) => !contextState.allTasks.some((j) => j.id === l.id),
+        ) : [];
+
+        const arrOfProjects = [...contextState.allTasks, ...cleanedTeacherTask];
+
+        setContextState({
+          allTasks: arrOfProjects,
+        });
       });
   };
 
-  const getFilterAssignments = (cohortId, academyId, offsetValue, studentId) => {
+  const getFilterAssignments = (cohortId, academyId, studentId) => {
     bc.todo({
       limit: 1000,
       academy: academyId,
@@ -102,13 +113,7 @@ const Assignments = () => {
     }).getAssignments({ id: cohortId })
       .then((projectList) => {
         setIsFetching(false);
-        const taskResults = projectList.data?.results;
-        const projectTasks = taskResults !== undefined ? taskResults.filter((l) => l.task_type === 'PROJECT') : [];
-        // const myProjectTasks = myTasks.data !== undefined ? myTasks.data.filter(
-        //   (l) => l.task_type === 'PROJECT',
-        // ) : [];
-
-        const allTasks = [...projectTasks];
+        const allTasks = [...projectList.data?.results];
 
         // Clean repeated task.id in stored contextState.allTasks
         const cleanedTeacherTask = allTasks !== undefined ? allTasks.filter(
@@ -116,9 +121,11 @@ const Assignments = () => {
         ) : [];
 
         const arrOfProjects = [...contextState.allTasks, ...cleanedTeacherTask];
-        setContextState({
-          allTasks: arrOfProjects,
-        });
+        if (queryStudentExists) {
+          setContextState({
+            allTasks: arrOfProjects,
+          });
+        }
         const projectsList = [];
 
         for (let i = 0; i < allTasks.length; i += 1) {
@@ -179,7 +186,6 @@ const Assignments = () => {
     // const defaultStudent = currentStudentList.find(
     //   (s) => s?.user?.id === studentId,
     // );
-    console.log('studentDefaultValue:::', studentDefaultValue);
 
     const academyId = findSelectedCohort?.academy || defaultCohort?.academy;
     const slug = findSelectedCohort?.slug || defaultCohort?.slug;
@@ -188,33 +194,33 @@ const Assignments = () => {
     if (defaultCohort && cohortId) {
       setSelectedCohort(findSelectedCohort || defaultCohort);
       getStudents(slug, academyId);
-      getFilterAssignments(cohortId, academyId, offset, router.query.student);
-      // if (offset) {
-      // }
+      if (!queryStudentExists) {
+        getAllAssignments(cohortId, academyId, allTasksOffset);
+      }
+      getFilterAssignments(cohortId, academyId, router.query.student);
     }
-  }, [allCohorts, selectedCohortSlug, offset, studentDefaultValue, router.query.student]);
+  }, [allCohorts, selectedCohortSlug, studentDefaultValue, router.query.student, allTasksOffset]);
 
   const filteredTasks = contextState.allTasks.length > 0 ? contextState.allTasks.filter(
     (task) => {
-      const fullName = `${task.user.first_name}-${task.user.last_name}`.toLowerCase();
+      // const fullName = `${task.user.first_name}-${task.user.last_name}`.toLowerCase();
       const statusConditional = {
         delivered: task.task_status === 'DONE' && task.revision_status === 'PENDING',
         approved: task.revision_status === 'APPROVED',
         rejected: task.revision_status === 'REJECTED',
         undelivered: task.task_status === 'PENDING' && task.revision_status === 'PENDING',
       };
-      if (router.query.status && !statusConditional[router.query.status]) return false;
-      if (router.query.project
+
+      if (queryStatusExists && !statusConditional[router.query.status]) return false;
+      if (queryProjectExists
         && task.associated_slug !== router.query.project
       ) return false;
-      if (router.query.student
+      if (queryStudentExists
         && task.user.id !== Number(router.query.student)
       ) return false;
       return true;
     },
   ) : [];
-
-  console.log('projects:::', projects);
 
   useEffect(() => {
     if (filteredTasks?.length === 0) {
@@ -228,24 +234,29 @@ const Assignments = () => {
     const scrollTop = isWindow && document.documentElement.scrollTop;
     const offsetHeight = isWindow && document.documentElement.offsetHeight + 15;
     const innerHeight = isWindow && window.innerHeight;
-    if ((innerHeight + scrollTop) <= offsetHeight) return;
+    if ((innerHeight + scrollTop) <= offsetHeight && !queryStudentExists) return;
+    // if (queryStudentExists) return;
     setIsFetching(true);
   };
 
   useEffect(() => {
-    if (paginationProps.next !== null) {
+    if (allTasksPaginationProps.next !== null && !queryStudentExists) {
       console.log('loading assignments...');
       window.addEventListener('scroll', handleScroll);
       return () => window.removeEventListener('scroll', handleScroll);
     }
     console.log('All assignments loaded');
     return () => {};
-  }, [paginationProps]);
+  }, [allTasksPaginationProps]);
 
   useEffect(() => {
     if (!isFetching) return;
-    if (filteredTasks && paginationProps.next !== null) {
-      setOffset(offset + 20);
+    if (queryStudentExists) return;
+
+    if (filteredTasks && allTasksPaginationProps.next !== null) {
+      if (!queryStudentExists) {
+        setAllTasksOffset(allTasksOffset + 20);
+      }
     }
   }, [isFetching]);
 
@@ -333,7 +344,7 @@ const Assignments = () => {
         p="0 0 30px 0"
       >
         <Text size="20px" display="flex" width="auto" fontWeight="400">
-          {t('filter.assignments-length', { total: paginationProps?.count || 0 })}
+          {t('filter.assignments-length', { total: allTasksPaginationProps?.count || 0 })}
         </Text>
         <Box display="grid" gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(11rem, 1fr))', md: 'repeat(auto-fill, minmax(18rem, 1fr))' }} gridGap="14px" py="20px">
           {projects.length > 0 ? (
@@ -516,7 +527,7 @@ const Assignments = () => {
                 )}
               </>
             )}
-            {paginationProps.next !== null && isFetching && (
+            {allTasksPaginationProps.next !== null && isFetching && (
               <Box display="flex" justifyContent="center" mt="2rem" mb="5rem">
                 <Image src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
                 <Box className="loader" />
