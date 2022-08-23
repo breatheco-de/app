@@ -26,7 +26,7 @@ module.exports = withBundleAnalyzer(nextTranslate({
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: '/:path*',
         headers: securityHeaders,
       },
     ];
