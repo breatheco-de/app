@@ -28,7 +28,6 @@ const Assignments = () => {
   const { contextState, setContextState } = useAssignments();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
-  // const [paginationProps, setPaginationProps] = useState({});
   const [allTasksPaginationProps, setAllTasksPaginationProps] = useState({});
   const [tasksLoading, setTasksLoading] = useState(true);
   const [allTasksOffset, setAllTasksOffset] = useState(0);
@@ -57,7 +56,6 @@ const Assignments = () => {
   const queryStatusExists = query.status !== undefined && query.status?.length > 0;
   const queryProjectExists = query.project !== undefined && query.project?.length > 0;
 
-  // const studentId = router.query.student && Number(router.query.student);
   const studentDefaultValue = currentStudentList?.filter(
     (l) => l.user.id === Number(router.query.student),
   ).map((l) => l?.user?.id)[0];
@@ -183,9 +181,6 @@ const Assignments = () => {
   useEffect(() => {
     const findSelectedCohort = allCohorts.find((l) => l.slug === selectedCohortSlug);
     const defaultCohort = allCohorts.find((l) => l.slug === cohortSlug);
-    // const defaultStudent = currentStudentList.find(
-    //   (s) => s?.user?.id === studentId,
-    // );
 
     const academyId = findSelectedCohort?.academy || defaultCohort?.academy;
     const slug = findSelectedCohort?.slug || defaultCohort?.slug;
@@ -203,7 +198,6 @@ const Assignments = () => {
 
   const filteredTasks = contextState.allTasks.length > 0 ? contextState.allTasks.filter(
     (task) => {
-      // const fullName = `${task.user.first_name}-${task.user.last_name}`.toLowerCase();
       const statusConditional = {
         delivered: task.task_status === 'DONE' && task.revision_status === 'PENDING',
         approved: task.revision_status === 'APPROVED',
@@ -235,7 +229,6 @@ const Assignments = () => {
     const offsetHeight = isWindow && document.documentElement.offsetHeight + 15;
     const innerHeight = isWindow && window.innerHeight;
     if ((innerHeight + scrollTop) <= offsetHeight && !queryStudentExists) return;
-    // if (queryStudentExists) return;
     setIsFetching(true);
   };
 
