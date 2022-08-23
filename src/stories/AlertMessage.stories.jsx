@@ -30,6 +30,7 @@ export default {
   export const Default = Component.bind({});
   Default.args = {
     type: 'warning',
+    message: 'Example Alert Message',
     style: {},
     textStyle: {},
     full: false,
