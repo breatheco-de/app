@@ -127,6 +127,7 @@ const Profile = () => {
           }
         })
         .catch(() => {
+          setIsLoading(false);
           toast({
             title: t('alert-message:error-submitting-picture'),
             status: 'error',
@@ -255,7 +256,7 @@ const Profile = () => {
                       <ModalCloseButton />
                       <ModalBody display="flex" flexDirection="column" gridGap="15px" pt="0" pb="1.5rem">
                         {!images.length > 0 && (
-                          <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} width={{ base: 'auto', md: '33rem' }} height={{ base: '300px', md: '33rem' }} position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px">
+                          <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} width={{ base: 'auto', md: '33rem' }} height={{ base: '300px', md: '26rem' }} position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px">
                             <Box width="100%" height="100%" position="absolute" display="flex" justifyContent="center" alignItems="center" border="1px dashed currentColor" cursor="pointer" borderWidth="4px" borderRadius="12px">
                               <Box className="icon-bounce">
                                 <Icon icon="uploadImage" color="currentColor" width="220px" height="220px" />
@@ -273,7 +274,7 @@ const Profile = () => {
                             <Box position="absolute" onClick={() => setCrop({ x: 0, y: 0 })} zIndex={99} bottom="15px" left="15px" background="gray.200" borderRadius="50px" p="10px" cursor="pointer">
                               <Icon icon="focus" color="#0097CD" width="25px" height="25px" />
                             </Box>
-                            <Box width={{ base: 'auto', md: '33rem' }} height={{ base: '300px', md: '33rem' }} position="relative">
+                            <Box width={{ base: 'auto', md: '33rem' }} height={{ base: '300px', md: '26rem' }} position="relative">
                               <Cropper
                                 restrictPosition={false}
                                 image={imageUrls[0]}
@@ -289,8 +290,8 @@ const Profile = () => {
                                 aspect={1}
                                 cropShape="round"
                                 cropSize={{
-                                  width: isBelowTablet ? 250 : 450,
-                                  height: isBelowTablet ? 250 : 450,
+                                  width: isBelowTablet ? 250 : 380,
+                                  height: isBelowTablet ? 250 : 380,
                                 }}
                                 // showGrid={false}
                                 onCropChange={setCrop}
