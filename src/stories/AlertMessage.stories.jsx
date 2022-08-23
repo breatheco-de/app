@@ -6,7 +6,9 @@ export default {
     component: AlertMessage,
     argTypes: {
       message: {
-        control: 'string'
+        control: {
+          type: 'text'
+        }
       },
       type: {
         options: ['warning', 'success', 'error', 'info'],
@@ -33,4 +35,5 @@ export default {
     style: {},
     textStyle: {},
     full: false,
+    textColor: '#000'
   };
