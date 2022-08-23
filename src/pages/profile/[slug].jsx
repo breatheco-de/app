@@ -2,7 +2,7 @@ import {
   Avatar, Box, Button, Input, Link, Modal, ModalBody, ModalCloseButton, ModalContent,
   ModalHeader, ModalOverlay, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger,
   Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip, useColorModeValue, useToast, Slider,
-  SliderTrack, SliderFilledTrack, SliderThumb,
+  SliderTrack, SliderFilledTrack, SliderThumb, useMediaQuery,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import {
@@ -47,6 +47,9 @@ const Profile = () => {
   const [images, setImages] = useState([]); // file images
   const [imageUrls, setImageUrls] = useState([]); // preview of the image
 
+  const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
+  const fileTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+
   const tabPosition = {
     '/profile/info': 0,
     '/profile/info#': 0,
@@ -60,10 +63,12 @@ const Profile = () => {
     const file = e.target.files[0];
 
     // Validate file is of type Image
-    // const fileType = file.type.split('/')[0];
-    if (file && file.type !== 'image/png') {
-      console.log('Not an image file');
-      return null;
+    if (file && !fileTypes.includes(file.type)) {
+      toast({
+        title: t('alert-message:file-type-error', { type: file.type.split('/')[1] }),
+        status: 'warning',
+        duration: 3000,
+      });
     }
     return setImages([...e.target.files]);
   };
@@ -82,10 +87,10 @@ const Profile = () => {
       // setCroppedImage(croppedImg.imgURI); // preview of the image
 
       const filename = images[0].name;
-      const imgType = images[0].type;
+      // const imgType = images[0].type;
 
       const imgFile = new File([croppedImg.blob], filename, {
-        type: imgType,
+        type: 'image/png',
         lastModified: Date.now(),
         lastModifiedDate: new Date(),
       });
@@ -169,8 +174,8 @@ const Profile = () => {
     }
   }, [user]);
 
-  const hasAvatar = (profile.github && profile.github.avatar_url && profile.github.avatar_url)
-    || profile?.profile?.avatar_url;
+  const hasAvatar = profile?.profile?.avatar_url
+    || (profile.github && profile.github.avatar_url && profile.github.avatar_url);
   return (
     <>
       {user && !user.github && (
@@ -243,20 +248,20 @@ const Profile = () => {
                       </PopoverBody>
                     </PopoverContent>
                   </Popover>
-                  <Modal isOpen={showModal} size="xl" onClose={() => setShowModal(false)}>
+                  <Modal isOpen={showModal} size="xl" onClose={() => setShowModal(false)} isCentered={!!isBelowTablet}>
                     <ModalOverlay />
                     <ModalContent>
                       <ModalHeader>{t('update-profile-image.title')}</ModalHeader>
                       <ModalCloseButton />
                       <ModalBody display="flex" flexDirection="column" gridGap="15px" pt="0" pb="1.5rem">
                         {!images.length > 0 && (
-                          <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} width="33rem" height="33rem" position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px">
+                          <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} width={{ base: 'auto', md: '33rem' }} height={{ base: '300px', md: '33rem' }} position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px">
                             <Box width="100%" height="100%" position="absolute" display="flex" justifyContent="center" alignItems="center" border="1px dashed currentColor" cursor="pointer" borderWidth="4px" borderRadius="12px">
                               <Box className="icon-bounce">
                                 <Icon icon="uploadImage" color="currentColor" width="220px" height="220px" />
                               </Box>
                             </Box>
-                            <Input type="file" name="file" onChange={handleFileUpload} accept=".png" placeholder="Upload profile image" position="absolute" width="100%" height="100%" cursor="pointer" opacity="0" padding="0" onDragOver={() => setDragOver(true)} onDragLeave={() => setDragOver(false)} />
+                            <Input type="file" name="file" title="" onChange={handleFileUpload} accept="image/x-png,image/jpg,image/jpeg" placeholder="Upload profile image" position="absolute" width="100%" height="100%" cursor="pointer" opacity="0" padding="0" onDragOver={() => setDragOver(true)} onDragLeave={() => setDragOver(false)} />
                           </Box>
                         )}
                         {images.length > 0 && (
@@ -268,7 +273,7 @@ const Profile = () => {
                             <Box position="absolute" onClick={() => setCrop({ x: 0, y: 0 })} zIndex={99} bottom="15px" left="15px" background="gray.200" borderRadius="50px" p="10px" cursor="pointer">
                               <Icon icon="focus" color="#0097CD" width="25px" height="25px" />
                             </Box>
-                            <Box width={{ base: '300px', md: '33rem' }} height={{ base: '300px', md: '33rem' }} position="relative">
+                            <Box width={{ base: 'auto', md: '33rem' }} height={{ base: '300px', md: '33rem' }} position="relative">
                               <Cropper
                                 restrictPosition={false}
                                 image={imageUrls[0]}
@@ -283,6 +288,10 @@ const Profile = () => {
                                 }}
                                 aspect={1}
                                 cropShape="round"
+                                cropSize={{
+                                  width: isBelowTablet ? 250 : 450,
+                                  height: isBelowTablet ? 250 : 450,
+                                }}
                                 // showGrid={false}
                                 onCropChange={setCrop}
                                 onZoomChange={setZoom}
@@ -292,7 +301,7 @@ const Profile = () => {
                         )}
                         {images.length > 0 && (
                           <>
-                            <Slider aria-label="slider-zoom" onChange={(value) => setZoom(value)} step={0.08} value={zoom} min={1} max={3}>
+                            <Slider aria-label="slider-zoom" onChange={(value) => setZoom(value)} step={0.01} value={zoom} min={0.85} max={3}>
                               <SliderTrack>
                                 <SliderFilledTrack />
                               </SliderTrack>
