@@ -174,8 +174,8 @@ const Profile = () => {
     }
   }, [user]);
 
-  const hasAvatar = profile?.profile?.avatar_url ||
-        (profile.github && profile.github.avatar_url && profile.github.avatar_url);
+  const hasAvatar = profile?.profile?.avatar_url
+    || (profile.github && profile.github.avatar_url && profile.github.avatar_url);
   return (
     <>
       {user && !user.github && (
