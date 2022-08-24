@@ -123,7 +123,7 @@
     "day": "Day",
     "module": "Module",
     "attendance-taken-table-message": "This information is displayed based on the last assistance issued on the selected day, with the date issued in UTC time.",
-    "list-attendance-title": "Attendance list taken"
+    "list-attendance-title": "Attendance list taken ({{count}} results)"
   },
   "teacher-sidebar": {
     "actions": "Actions",
