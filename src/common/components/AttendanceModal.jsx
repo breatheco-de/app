@@ -9,7 +9,8 @@ import {
   useColorMode, useToast, Select, useColorModeValue, ModalCloseButton, TableContainer, Table,
   TableCaption, Thead, Tr, Th, Tbody, Td,
 } from '@chakra-ui/react';
-import { format } from 'date-fns';
+import { format, formatDistanceStrict } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import Icon from './Icon';
 import Text from './Text';
@@ -57,7 +58,7 @@ const AttendanceModal = ({
             user_id: user.id,
             user_agent: 'bc/teacher',
             cohort: cohortSlug,
-            day: day.toString(),
+            day: Number(day),
             slug: typeof attended === 'undefined' || !attended ? 'classroom_unattendance' : 'classroom_attendance',
             data: `{ "cohort": "${cohortSlug}", "day": "${cohortSession.current_day}"}`,
           };
@@ -86,7 +87,7 @@ const AttendanceModal = ({
   const updateCohortDay = () => new Promise((resolve, reject) => {
     setIsLoading(true);
     bc.cohort()
-      .update(cohortSession.id, { current_day: day, current_module: currentModule })
+      .update(cohortSession.id, { current_day: Number(day), current_module: currentModule })
       .then(({ data }) => {
         setCohortSession({
           ...cohortSession,
@@ -95,9 +96,11 @@ const AttendanceModal = ({
         bc.activity().getAttendance(cohortSession.id)
           .then((res) => {
             const studentsForDay = res.data.filter(
-              (st) => students.find((student) => student.user.id === st.user_id),
-            ).filter((l) => l.day === day.toString());
+              (st) => students.find((student) => student.user.id === st.user_id)
+                && Number(st.day) === Number(day),
+            );
             setAttendanceTaken(studentsForDay);
+
             if (studentsForDay.length === 0) {
               setCohortSession({ ...cohortSession, ...data });
               saveCohortAttendancy();
@@ -131,6 +134,10 @@ const AttendanceModal = ({
         reject(error);
       });
   });
+
+  const sortOldStudentList = attendanceTaken.sort(
+    (a, b) => new Date(b.created_at) - new Date(a.created_at),
+  );
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -241,46 +248,62 @@ const AttendanceModal = ({
         <ModalOverlay />
         <ModalContent style={{ maxWidth: '52rem' }}>
           <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
-            {t('attendance-modal.list-attendance-title')}
+            {t('attendance-modal.list-attendance-title', { count: sortOldStudentList.length })}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <TableContainer>
-              {attendanceTaken.length > 0 && (
+              {sortOldStudentList.length > 0 && (
                 <Table variant="simple">
                   <Thead>
                     <Tr>
                       <Th>{t('common:user-id')}</Th>
-                      <Th>{t('common:email')}</Th>
+                      <Th>{t('common:full-name')}</Th>
                       <Th isNumeric>{t('common:day')}</Th>
                       <Th>{t('common:taken-by')}</Th>
                       <Th>{t('common:attended')}</Th>
                       <Th>{t('common:modification-date')}</Th>
+                      <Th>{t('common:time-elapsed')}</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {attendanceTaken.sort((a, b) => a.user_id - b.user_id).map((l) => (
-                      <Tr key={l.user_id}>
-                        <Td>{l.user_id}</Td>
-                        <Td>{l.email}</Td>
-                        <Td isNumeric>{l.day}</Td>
-                        <Td>{l.user_agent}</Td>
-                        <Td textAlign="-webkit-center">
-                          {l.slug === 'classroom_attendance'
-                            ? (<Icon icon="success" width="16px" height="16px" />)
-                            : (<Icon icon="error" width="16px" height="16px" />)}
-                        </Td>
-                        <Td>
-                          {router.locale === 'es'
-                            ? format(
-                              new Date(l.created_at), 'dd/MM/yyyy',
-                            )
-                            : format(
-                              new Date(l.created_at), 'yyyy/MM/dd',
-                            )}
-                        </Td>
-                      </Tr>
-                    ))}
+                    {sortOldStudentList.map((l) => {
+                      const currentUser = students.find((st) => st.user.id === l.user_id);
+                      const fullName = `${currentUser.user.first_name} ${currentUser.user.last_name}`;
+                      const dateElapsed = router.locale === 'es'
+                        ? formatDistanceStrict(
+                          new Date(l.created_at),
+                          new Date(),
+                          { addSuffix: true, locale: es },
+                        ) : formatDistanceStrict(
+                          new Date(l.created_at),
+                          new Date(),
+                          { addSuffix: true },
+                        );
+                      return (
+                        <Tr key={`${l.user_id} - ${l.created_at}`}>
+                          <Td>{l.user_id}</Td>
+                          <Td>{fullName}</Td>
+                          <Td isNumeric>{l.day}</Td>
+                          <Td>{l.user_agent}</Td>
+                          <Td textAlign="-webkit-center">
+                            {l.slug === 'classroom_attendance'
+                              ? (<Icon icon="success" width="16px" height="16px" />)
+                              : (<Icon icon="error" width="16px" height="16px" />)}
+                          </Td>
+                          <Td>
+                            {router.locale === 'es'
+                              ? format(
+                                new Date(l.created_at), 'dd/MM/yyyy',
+                              )
+                              : format(
+                                new Date(l.created_at), 'yyyy/MM/dd',
+                              )}
+                          </Td>
+                          <Td>{dateElapsed}</Td>
+                        </Tr>
+                      );
+                    })}
                   </Tbody>
                 </Table>
               )}
