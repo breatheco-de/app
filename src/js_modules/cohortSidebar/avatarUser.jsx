@@ -34,6 +34,7 @@ const AvatarUser = ({ data, fullName }) => {
 
   const roles = {
     teacher: t('common:teacher'),
+    assistant: t('common:assistant'),
     student: t('common:student'),
   };
   const infoText = {
