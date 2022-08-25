@@ -405,8 +405,8 @@ const Dashboard = () => {
               icon="arrowLeft"
               width="20px"
               height="20px"
-              style={{ marginBottom: '-4px', marginRight: '7px' }}
-              color="#0097CF"
+              style={{ marginRight: '7px' }}
+              color="currentColor"
             />
             {t('backToChooseProgram')}
           </NextChakraLink>
