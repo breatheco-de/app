@@ -17,6 +17,7 @@
     "show": "click here to display them",
     "hide": "click here to hide them"
   },
+  "roles-info": "Roles are only displayed in development mode",
   "launch-program": "Launch this program",
   "description": "These are the courses and cohorts that we found you are currently taking, please choose the course you want to take today:"
 }
