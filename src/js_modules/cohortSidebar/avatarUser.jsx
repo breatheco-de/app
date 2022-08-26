@@ -20,7 +20,9 @@ import { format } from 'date-fns';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 
-const AvatarUser = ({ data, fullName, containerStyle }) => {
+const AvatarUser = ({
+  data, fullName, containerStyle, width, height, badge,
+}) => {
   const { user } = data;
   const { t } = useTranslation('dashboard');
   const fullNameLabel = fullName || `${user.first_name} ${user.last_name}`;
@@ -46,14 +48,15 @@ const AvatarUser = ({ data, fullName, containerStyle }) => {
   return (
     <Popover trigger="hover" key={fullNameLabel} placement={placementCard}>
       <PopoverTrigger>
-        <WrapItem as="span" justifyContent="center" alignItems="center" style={containerStyle}>
+        <WrapItem as="div" justifyContent="center" alignItems="center" style={containerStyle}>
           <Avatar
             id={fullNameLabel}
-            width="41px"
-            height="41px"
+            width={width}
+            height={height}
             style={{ userSelect: 'none' }}
             src={user.profile?.avatar_url}
           >
+            {badge && (badge)}
             {/*
             //ONLINE/OFFLINE BADGE icon
             <AvatarBadge
@@ -108,10 +111,16 @@ AvatarUser.propTypes = {
   data: PropTypes.objectOf(PropTypes.any).isRequired,
   fullName: PropTypes.string,
   containerStyle: PropTypes.objectOf(PropTypes.any),
+  width: PropTypes.string,
+  height: PropTypes.string,
+  badge: PropTypes.elementType,
 };
 AvatarUser.defaultProps = {
   fullName: '',
   containerStyle: {},
+  width: '39px',
+  height: '39px',
+  badge: null,
 };
 
 export default memo(AvatarUser);

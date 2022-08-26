@@ -51,9 +51,16 @@ const ProfilesSection = ({
             const fullName = `${d.user.first_name} ${d.user.last_name}`;
             return (
               <AvatarUser
+                width="48px"
+                height="48px"
                 key={`${d.id} - ${d.user.first_name}`}
                 fullName={fullName}
                 data={d}
+                badge={(
+                  <Box position="absolute" bottom="-8px" right="-12px" background="blue.default" borderRadius="50px" p="6px" border="2px solid white">
+                    <Icon icon="teacher1" width="16px" height="16px" color="#FFFFFF" />
+                  </Box>
+                )}
               />
             );
           })}
@@ -63,9 +70,11 @@ const ProfilesSection = ({
                 const fullName = `${c.user.first_name} ${c.user.last_name}`;
                 return (
                   <AvatarUser
+                    width="48px"
+                    height="48px"
                     key={`${c.id} - ${c.user.first_name}`}
                     containerStyle={{
-                      marginInlineEnd: studentsToShow.length - 2 === i ? '+0.25em' : '-0.45em',
+                      marginInlineEnd: studentsToShow.length - 2 === i ? '+0.25em' : '-0.8em',
                     }}
                     fullName={fullName}
                     data={c}
