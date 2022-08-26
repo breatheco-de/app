@@ -48,7 +48,7 @@ const AvatarUser = ({
   return (
     <Popover trigger="hover" key={fullNameLabel} placement={placementCard}>
       <PopoverTrigger>
-        <WrapItem as="div" justifyContent="center" alignItems="center" style={containerStyle}>
+        <WrapItem as="div" aria-expanded={false} justifyContent="center" alignItems="center" style={containerStyle}>
           <Avatar
             id={fullNameLabel}
             width={width}
