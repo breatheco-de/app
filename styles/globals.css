@@ -75,6 +75,10 @@ body.chakra-ui-dark .arrow-blue-color {
   animation: bounce 1s ease-in-out infinite;
 }
 
+.chakra-avatar__excess {
+  width: 41px!important;
+  height: 41px!important;
+}
 /* .centerImageForBlur {
   max-width: 90%!important;
   min-width: 90%!important;

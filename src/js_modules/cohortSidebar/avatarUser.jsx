@@ -20,7 +20,7 @@ import { format } from 'date-fns';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 
-const AvatarUser = ({ data, fullName }) => {
+const AvatarUser = ({ data, fullName, containerStyle }) => {
   const { user } = data;
   const { t } = useTranslation('dashboard');
   const fullNameLabel = fullName || `${user.first_name} ${user.last_name}`;
@@ -46,11 +46,11 @@ const AvatarUser = ({ data, fullName }) => {
   return (
     <Popover trigger="hover" key={fullNameLabel} placement={placementCard}>
       <PopoverTrigger>
-        <WrapItem justifyContent="center" alignItems="center">
+        <WrapItem as="span" justifyContent="center" alignItems="center" style={containerStyle}>
           <Avatar
             id={fullNameLabel}
-            width="39px"
-            height="39px"
+            width="41px"
+            height="41px"
             style={{ userSelect: 'none' }}
             src={user.profile?.avatar_url}
           >
@@ -107,9 +107,11 @@ const AvatarUser = ({ data, fullName }) => {
 AvatarUser.propTypes = {
   data: PropTypes.objectOf(PropTypes.any).isRequired,
   fullName: PropTypes.string,
+  containerStyle: PropTypes.objectOf(PropTypes.any),
 };
 AvatarUser.defaultProps = {
   fullName: '',
+  containerStyle: {},
 };
 
 export default memo(AvatarUser);
