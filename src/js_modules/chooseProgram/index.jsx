@@ -25,7 +25,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
 
     const showStudent = ['ACTIVE'].includes(program.educational_status)
       && visibleForTeacher
-      && program.role === 'STUDENT';
+      && program.role.toUpperCase() === 'STUDENT';
 
     return visibleForTeacher || showCohort || showStudent;
   });
