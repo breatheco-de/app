@@ -16,6 +16,7 @@ import Icon from './Icon';
 import Text from './Text';
 import bc from '../services/breathecode';
 import { usePersistent } from '../hooks/usePersistent';
+import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 
 const AttendanceModal = ({
   title, message, isOpen, onClose, sortedAssignments, students,
@@ -29,6 +30,7 @@ const AttendanceModal = ({
   const [defaultDay, setDefaultDay] = useState(0);
   const [checked, setChecked] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [openWarn, setOpenWarn] = useState(false);
   const { colorMode } = useColorMode();
   const router = useRouter();
   const toast = useToast();
@@ -39,7 +41,7 @@ const AttendanceModal = ({
   const { getCheckboxProps } = useCheckboxGroup({
     onChange: setChecked,
   });
-  const durationInDays = cohortSession.syllabus_version.duration_in_days;
+  const cohortDurationInDays = cohortSession.syllabus_version.duration_in_days;
 
   const currentCohortDay = cohortSession.current_day;
 
@@ -84,7 +86,19 @@ const AttendanceModal = ({
       });
   };
 
-  const updateCohortDay = () => new Promise((resolve, reject) => {
+  const getDailyModuleData = () => {
+    if (sortedAssignments.length > 0) {
+      const dailyModule = sortedAssignments.find(
+        (assignment) => assignment.id === currentModule,
+      );
+      return dailyModule;
+    }
+    return null;
+  };
+
+  const durationInDays = getDailyModuleData()?.duration_in_days || null;
+
+  const updateCohortDay = () => {
     setIsLoading(true);
     bc.cohort()
       .update(cohortSession.id, { current_day: Number(day), current_module: currentModule })
@@ -123,17 +137,18 @@ const AttendanceModal = ({
               isClosable: true,
             });
             console.log('getAttendance_error:', error);
-            reject(error);
           })
-          .finally(() => setIsLoading(false));
-        resolve(data);
+          .finally(() => {
+            setOpenWarn(false);
+            setIsLoading(false);
+          });
         return data;
       })
-      .catch((error) => {
+      .catch(() => {
+        setOpenWarn(false);
         setIsLoading(false);
-        reject(error);
       });
-  });
+  };
 
   const sortOldStudentList = attendanceTaken.sort(
     (a, b) => new Date(b.created_at) - new Date(a.created_at),
@@ -155,7 +170,7 @@ const AttendanceModal = ({
               <FormLabel htmlFor="day" color={commonFontColor} fontSize="12px">{t('attendance-modal.day')}</FormLabel>
               <NumberInput
                 defaultValue={defaultDay}
-                max={durationInDays}
+                max={cohortDurationInDays}
                 min={defaultDay}
                 onChange={(newDay) => setDay(parseInt(newDay, 10))}
               >
@@ -236,11 +251,31 @@ const AttendanceModal = ({
             fontSize="13px"
             disabled={checked.length < 1 || isLoading}
             variant="default"
-            onClick={() => updateCohortDay()}
+            onClick={() => {
+              if (day < durationInDays) {
+                setOpenWarn(true);
+              } else {
+                updateCohortDay();
+              }
+            }}
             rightIcon={<Icon icon="longArrowRight" width="15px" color={checked.length < 1 ? 'black' : 'white'} />}
           >
             {t('attendance-modal.apply-changes')}
           </Button>
+
+          <ModalInfo
+            isOpen={openWarn}
+            onClose={() => setOpenWarn(false)}
+            htmlDescription={t('attendance-modal.warn-premature-teaching.description', { module: getDailyModuleData()?.label, durationInDays, day })}
+            actionHandler={() => {
+              setOpenWarn(false);
+              updateCohortDay();
+            }}
+            closeButtonVariant="outline"
+            title={t('attendance-modal.warn-premature-teaching.title')}
+            handlerText={t('common:confirm')}
+
+          />
         </ModalFooter>
       </ModalContent>
 
