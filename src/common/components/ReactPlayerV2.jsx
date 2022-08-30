@@ -4,14 +4,22 @@ import ReactPlayer from 'react-player';
 const ReactPlayerV2 = ({
   url, controls, className,
 }) => {
-  const isLoomVideo = url.includes('loom.com/embed/');
+  const isLoomVideo = url.includes('loom.com');
+  const getVideo = () => {
+    if (isLoomVideo) {
+      return url.replace('/share/', '/embed/');
+    }
+    return url;
+  };
+
+  const videoUrl = getVideo();
 
   return (
     <>
       {url && !isLoomVideo && (
         <ReactPlayer
           className={`react-player ${className}`}
-          url={url}
+          url={videoUrl}
           controls={controls}
           width="100%"
           height="-webkit-fill-available"
@@ -27,7 +35,7 @@ const ReactPlayerV2 = ({
         >
           <iframe
             title="Loom video"
-            src={url}
+            src={videoUrl}
             style={{
               position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
             }}
