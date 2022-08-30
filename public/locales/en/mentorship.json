@@ -2,12 +2,16 @@
     "log": "Mentorship Log",
     "with": "with",
     "mentorshipSession": "Mentorship Session",
+    "invalidDate": "Invalid Date",
     "events": "Events",
     "billed": "Billed Time",
     "details": "Details",
     "ghostLabel": "Mentee never joined",
-    "mentorLate": "Mentor joined late",
-    "extraTime": "Mentor joined late",
-    "expectedTime": ", the expected duration was ",
-    "rate": "Rating:"
+    "mentorLate": "Mentor joined {{time}} late",
+    "extraTime": "Extra time of {{extra}}, the expected duration was {{expected}}",
+    "manyDays": "Many days of extra time, probably it was never closed",
+    "rate": "Rating:",
+    "modal": {
+        "title": "Mentorship Details"
+    }
 }
