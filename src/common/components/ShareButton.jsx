@@ -57,12 +57,14 @@ const ShareButton = ({
       label: 'Facebook',
       href: 'https://www.facebook.com',
       color: '#4267B2',
+      target: 'popup',
     },
     {
       name: 'linkedin',
       label: 'LinkedIn',
       href: 'https://www.linkedin.com',
       color: '#0077B5',
+      target: 'popup',
     },
   ];
   const socialList = socials || defaultSocial;
@@ -94,7 +96,7 @@ const ShareButton = ({
             <Stack display={socialList.length <= 2 ? 'flex' : 'grid'} gridTemplateColumns="repeat(auto-fill, minmax(7rem, 1fr))" justifyItems="center" justifyContent={socialList.length <= 2 && 'center'} flexDirection={socialList.length <= 2 && 'row'} gridGap={socialList.length <= 2 && '3rem'}>
               {socialList.map((l) => (
                 <Box style={{ margin: '0px' }} textAlign="center" display="flex" flexDirection="column" gridGap="6px">
-                  <Link display="flex" key={l.name} href={l.href} target="_blank" rel="noopener noreferrer" minWidth="68px" minHeight="68px" alignItems="center" justifyContent="center" borderRadius="35px" backgroundColor={bgFooterColor} style={{ margin: '0px' }}>
+                  <Link display="flex" key={l.name} href={l.href} onClick={() => l.target === 'popup' && window.open(l.href, 'popup', 'width=600,height=600,scrollbars=no,resizable=no')} target={l.target === 'popup' ? 'popup' : '_blank'} rel="noopener noreferrer" minWidth="68px" minHeight="68px" alignItems="center" justifyContent="center" borderRadius="35px" backgroundColor={bgFooterColor} style={{ margin: '0px' }}>
                     <Icon icon={l.name} color={l.color} width="36px" height="36px" />
                   </Link>
                   <Text size="12px">

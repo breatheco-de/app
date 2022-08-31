@@ -56,6 +56,7 @@ const Content = () => {
   const [showModal, setShowModal] = useState(false);
   const [readmeUrlPathname, setReadmeUrlPathname] = useState(null);
   const [openTargetBlankModal, setOpenTargetBlankModal] = useState(null);
+  const [currentBlankProps, setCurrentBlankProps] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
   const [currentData, setCurrentData] = useState({});
   const toast = useToast();
@@ -471,8 +472,11 @@ const Content = () => {
       label: 'LinkedIn',
       href: `https://linkedin.com/sharing/share-offsite/?url=${shareLink}`,
       color: '#0077B5',
+      target: 'popup',
     },
   ];
+
+  const inputModalLink = currentBlankProps && currentBlankProps.target === 'blank' ? currentBlankProps.url : `https://4geeks.com/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`;
 
   return (
     <Flex position="relative">
@@ -482,13 +486,17 @@ const Content = () => {
         title={t('dashboard:modules.target-blank-title')}
         isReadonly
         description={t('dashboard:modules.target-blank-msg', { title: clickedPage?.title })}
-        link={`https://4geeks.com/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`}
+        link={inputModalLink}
         handlerText={t('common:open')}
         closeText={t('common:close')}
         closeButtonVariant="outline"
         actionHandler={() => {
           setOpenTargetBlankModal(false);
-          window.open(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`, '_blank');
+          if (currentBlankProps && currentBlankProps.target === 'blank') {
+            window.open(currentBlankProps.url, '_blank');
+          } else {
+            window.open(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`, '_blank');
+          }
         }}
       />
       <StickySideBar
@@ -796,6 +804,7 @@ const Content = () => {
                   onClick={() => {
                     setClickedPage(previousAssignment);
                     if (previousAssignment?.target === 'blank') {
+                      setCurrentBlankProps(previousAssignment);
                       setOpenTargetBlankModal(true);
                     } else {
                       router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
@@ -828,6 +837,7 @@ const Content = () => {
                     }
                     if (!taskIsNotDone) {
                       if (nextAssignment?.target === 'blank') {
+                        setCurrentBlankProps(nextAssignment);
                         setOpenTargetBlankModal(true);
                       } else {
                         router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
@@ -881,6 +891,7 @@ const Content = () => {
                           setShowModal(false);
                           if (nextAssignment?.target === 'blank') {
                             setTimeout(() => {
+                              setCurrentBlankProps(nextAssignment);
                               setOpenTargetBlankModal(true);
                             }, 1200);
                           } else {
