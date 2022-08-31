@@ -463,7 +463,7 @@ const Content = () => {
     {
       name: 'twitter',
       label: 'Twitter',
-      href: `https://twitter.com/share?url=&text=${shareSocialMessage[router.locale]} %23100DaysOfCode%0A%0A${shareLink}`,
+      href: `https://twitter.com/share?url=&text=${encodeURIComponent(shareSocialMessage[router.locale])} %23100DaysOfCode%0A%0A${shareLink}`,
       color: '#1DA1F2',
     },
     {

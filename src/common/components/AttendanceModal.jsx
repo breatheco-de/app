@@ -154,10 +154,6 @@ const AttendanceModal = ({
     (a, b) => new Date(b.created_at) - new Date(a.created_at),
   );
 
-  const sortOldStudentList = attendanceTaken.sort(
-    (a, b) => new Date(b.created_at) - new Date(a.created_at),
-  );
-
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
