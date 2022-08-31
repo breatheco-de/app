@@ -12,6 +12,8 @@ import {
   TabPanels,
   TabPanel,
   useToast,
+  AvatarGroup,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
@@ -26,10 +28,14 @@ import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 import { AvatarSkeleton } from './Skeleton';
 
 const ProfilesSection = ({
-  title, paginationProps, setAlumniGeeksList, profiles,
+  title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher,
 }) => {
   const { t } = useTranslation('dashboard');
   const [showMoreStudents, setShowMoreStudents] = useState(false);
+  const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
+
+  const assistantMaxLimit = isBelowTablet ? 3 : 5;
+
   // limit the student list to 15 and when "showMoreStudents" is true, show all
   const studentsToShow = showMoreStudents ? profiles : profiles?.slice(0, 15);
   return (
@@ -39,21 +45,62 @@ const ProfilesSection = ({
           {title}
         </Heading>
       )}
-      <Grid
-        gridAutoRows="3.4rem"
-        templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
-        gap={0}
-        minH={showMoreStudents ? '395px' : 'auto'}
-      >
-        {
-          studentsToShow?.map((c) => {
-            const fullName = `${c.user.first_name} ${c.user.last_name}`;
+      {wrapped ? (
+        <Box display="flex" justifyContent="space-between">
+          {teacher.map((d) => {
+            const fullName = `${d.user.first_name} ${d.user.last_name}`;
             return (
-              <AvatarUser key={`${c.id} - ${c.user.first_name}`} fullName={fullName} data={c} />
+              <AvatarUser
+                width="48px"
+                height="48px"
+                key={`${d.id} - ${d.user.first_name}`}
+                fullName={fullName}
+                data={d}
+                badge={(
+                  <Box position="absolute" bottom="-8px" right="-12px" background="blue.default" borderRadius="50px" p="6px" border="2px solid white">
+                    <Icon icon="teacher1" width="16px" height="16px" color="#FFFFFF" />
+                  </Box>
+                )}
+              />
             );
-          })
-        }
-      </Grid>
+          })}
+          <AvatarGroup max={assistantMaxLimit}>
+            {
+              studentsToShow?.map((c, i) => {
+                const fullName = `${c.user.first_name} ${c.user.last_name}`;
+                return (
+                  <AvatarUser
+                    width="48px"
+                    height="48px"
+                    key={`${c.id} - ${c.user.first_name}`}
+                    containerStyle={{
+                      marginInlineEnd: studentsToShow.length - 2 === i ? '+0.25em' : '-0.8em',
+                    }}
+                    fullName={fullName}
+                    data={c}
+                  />
+                );
+              })
+            }
+          </AvatarGroup>
+        </Box>
+      ) : (
+        <Grid
+          gridAutoRows="3.4rem"
+          templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
+          gap={0}
+          minH={showMoreStudents ? '395px' : 'auto'}
+        >
+          {
+            studentsToShow?.map((c) => {
+              const fullName = `${c.user.first_name} ${c.user.last_name}`;
+              return (
+                <AvatarUser key={`${c.id} - ${c.user.first_name}`} fullName={fullName} data={c} />
+              );
+            })
+          }
+        </Grid>
+      )}
 
       {paginationProps && (
         <Box display={profiles.length <= 15 || showMoreStudents ? 'flex' : 'none'} justifyContent="center" gridGap="10px">
@@ -216,7 +263,7 @@ const CohortSideBar = ({
       overflow="hidden"
       bg={colorMode === 'light' ? background || 'blue.light' : 'featuredDark'}
     >
-      <Box padding={26}>
+      <Box padding="22px 26px">
         <Heading
           as="h4"
           fontSize={15}
@@ -229,8 +276,8 @@ const CohortSideBar = ({
         >
           {t('cohortSideBar.title')}
         </Heading>
-        <Box d="flex" alignItems="center" marginBottom={18}>
-          <Icon icon="group" width="39px" height="39px" />
+        <Box d="flex" alignItems="center">
+          <Icon icon="group" width="41px" height="41px" />
           <Box id="cohort-dates" marginLeft={13}>
             <Heading as="h4" color={commonTextColor} fontSize={15} fontWeight="700" lineHeight="18px" margin={0}>
               {(`${t('cohortSideBar.cohort')} ${teacherVersionActive ? ` | ${router.locale === 'en' ? 'Day' : 'Día'} ${cohort.current_day}` : ''}`) || title}
@@ -258,30 +305,14 @@ const CohortSideBar = ({
             )}
           </Box>
         </Box>
-        {!teacherVersionActive && teacher.map((el) => {
-          const { user } = el;
-          const fullName = `${user.first_name} ${user.last_name}`;
-          return (
-            <Box id="cohort-teachers" key={fullName} d="flex" alignItems="center">
-              <AvatarUser data={el} />
-              <Box marginLeft={13}>
-                <Heading as="h4" fontSize={15} fontWeight="700" lineHeight="tight" margin={0}>
-                  {t('cohortSideBar.mainTeacher')}
-                </Heading>
-                <Text size="l" fontWeight="400" lineHeight="18px" margin={0}>
-                  {fullName}
-                </Text>
-              </Box>
-            </Box>
-          );
-        })}
-        {teacher.length === 0 && t('cohortSideBar.no-teachers')}
       </Box>
       <Divider margin={0} style={{ borderColor: useColorModeValue('gray.250', 'gray.700') }} />
       <Box id="cohort-students" display="flex" flexDirection="column" gridGap="20px" padding="18px 26px">
         {teacherAssistants.length > 0 && (
           <ProfilesSection
-            title={t('cohortSideBar.assistant')}
+            wrapped
+            title={t('common:teachers')}
+            teacher={teacher}
             profiles={teacherAssistants}
           />
         )}
@@ -379,6 +410,8 @@ ProfilesSection.propTypes = {
   paginationProps: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
   setAlumniGeeksList: PropTypes.oneOfType([PropTypes.func, PropTypes.any]),
   profiles: PropTypes.arrayOf(PropTypes.object),
+  wrapped: PropTypes.bool,
+  teacher: PropTypes.arrayOf(PropTypes.object),
 };
 
 ProfilesSection.defaultProps = {
@@ -386,6 +419,8 @@ ProfilesSection.defaultProps = {
   paginationProps: null,
   setAlumniGeeksList: () => {},
   profiles: [],
+  wrapped: false,
+  teacher: [],
 };
 
 CohortSideBar.propTypes = {

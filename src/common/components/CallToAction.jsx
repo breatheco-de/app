@@ -86,6 +86,7 @@ const CallToAction = ({
             textTransform="uppercase"
             borderColor="white"
             color="white"
+            withoutBg
             variant="outline"
           >
             {element.text}

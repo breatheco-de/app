@@ -90,7 +90,8 @@ const Read = ({ data }) => {
 
   const filteredBySearch = () => {
     if (data === null) return [];
-    return data.json.days.filter(containsQueryString);
+    const moduleData = data.json?.days || data.json?.modules;
+    return moduleData.filter(containsQueryString);
   };
   const datafiltered = filteredBySearch();
 

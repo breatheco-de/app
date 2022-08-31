@@ -19,7 +19,18 @@ function CohortProgram({ item, handleChoose }) {
 
   const { cohort } = item;
   const { version, slug, name } = cohort.syllabus_version;
-  // const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
+
+  const roleIcon = {
+    teacher: 'teacher1',
+    assistant: 'idea',
+    student: 'student',
+  };
+  const roleLabel = {
+    teacher: t('common:teacher'),
+    assistant: t('common:assistant'),
+    student: t('common:student'),
+    reviewer: t('common:reviewer'),
+  };
 
   const onClickHandler = () => {
     handleChoose({
@@ -45,6 +56,16 @@ function CohortProgram({ item, handleChoose }) {
       onClickHandler={onClickHandler}
       containerPX="24px"
       data={{
+        iconProp: {
+          tooltip: roleLabel[item.role.toLowerCase()],
+          icon: roleIcon[item.role.toLowerCase() || 'user'],
+          color: '#0097CF',
+          width: '26px',
+          height: '26px',
+          style: {
+            marginRight: '20px',
+          },
+        },
         type: name,
         title: `Cohort: ${cohort.name}`,
       }}

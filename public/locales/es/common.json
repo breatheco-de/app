@@ -28,7 +28,8 @@
   "modification-date": "Fecha de modificación",
   "first-name": "Nombre",
   "last-name": "Apellido",
-  "full-name": "Nombre completo",
+  "full-name": "Nombre y Apellido",
+  "time-elapsed": "Tiempo transcurrido",
   "email": "Correo electrónico",
   "phone": "Teléfono",
   "password": "Contraseña",
@@ -72,7 +73,10 @@
   },
   "average-duration": "Duración promedio",
   "load-more": "Cargar más",
+  "teachers": "Profesores",
   "teacher": "Profesor",
   "student": "Alumno",
+  "reviewer": "Revisor",
+  "assistant": "Asistente",
   "uploading": "Subiendo"
 }

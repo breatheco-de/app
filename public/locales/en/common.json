@@ -29,6 +29,7 @@
   "first-name": "First name",
   "last-name": "Last name",
   "full-name": "Full name",
+  "time-elapsed": "Time elapsed",
   "email": "Email",
   "phone": "Phone",
   "password": "Password",
@@ -72,7 +73,10 @@
   },
   "average-duration": "Average duration",
   "load-more": "Load more",
+  "teachers": "Teachers",
   "teacher": "Teacher",
   "student": "Student",
+  "reviewer": "Reviewer",
+  "assistant": "Assistant",
   "uploading": "Uploading"
 }

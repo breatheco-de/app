@@ -8,7 +8,6 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
-import ReactPlayer from 'react-player';
 import { isWindow, assetTypeValues, getExtensionName } from '../../../../../utils';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
@@ -28,6 +27,7 @@ import AlertMessage from '../../../../../common/components/AlertMessage';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import ShareButton from '../../../../../common/components/ShareButton';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
+import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 
 const Content = () => {
   const { t } = useTranslation('syllabus');
@@ -630,12 +630,8 @@ const Content = () => {
       </Box>
       <Box width="100%" height="auto">
         {!isQuiz && currentData.intro_video_url && (
-          <ReactPlayer
-            className="react-player"
+          <ReactPlayerV2
             url={currentData.intro_video_url}
-            controls
-            width="100%"
-            height="-webkit-fill-available"
           />
         )}
         <Box
@@ -722,12 +718,8 @@ const Content = () => {
               <Heading as="h2" size="16">
                 Video Tutorial
               </Heading>
-              <ReactPlayer
-                className="react-player"
+              <ReactPlayerV2
                 url={currentData.solution_video_url}
-                controls
-                width="100%"
-                height="-webkit-fill-available"
               />
             </Box>
           )}
