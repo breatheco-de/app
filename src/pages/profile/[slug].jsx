@@ -175,8 +175,6 @@ const Profile = () => {
     }
   }, [user]);
 
-  const hasAvatar = profile?.profile?.avatar_url
-    || (profile.github && profile.github.avatar_url && profile.github.avatar_url);
   return (
     <>
       {user && !user.github && (
@@ -234,7 +232,7 @@ const Profile = () => {
                   width="140px"
                   margin="0"
                   height="140px"
-                  src={hasAvatar ? (profile?.github?.avatar_url || profile?.profile?.avatar_url) : ''}
+                  src={profile?.profile?.avatar_url || profile?.github?.avatar_url || ''}
                 >
                   <Popover trigger="hover" width="fit-content" placement="bottom-start">
                     <PopoverTrigger>
