@@ -1,5 +1,5 @@
 import {
-  Box, Heading, Stack, Flex, useColorModeValue, HStack,
+  Box, Heading, Stack, Flex, useColorModeValue, HStack, Tooltip,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
@@ -59,7 +59,7 @@ const Module = ({
           }
         }}
       />
-      <Flex width="100%">
+      <Flex width="100%" alignItems="center">
         {currIndex !== null && (
           <>
             {mandatory ? (
@@ -92,6 +92,18 @@ const Module = ({
               color={isDone ? '#0097CF' : '#A4A4A4'}
             />
           </Box>
+        )}
+        {process.env.NODE_ENV === 'development' && data.iconProp && (
+          <Tooltip label={data.iconProp.tooltip} placement="top">
+            <Box display={{ base: 'none', sm: 'flex' }} style={data.iconProp.style} minWidth={data.iconProp.width || '22px'} width={data.iconProp.width || '22px'}>
+              <Icon
+                icon={data.iconProp.icon || 'book'}
+                color={data.iconProp.color || isDone ? '#0097CF' : '#A4A4A4'}
+                width={data.iconProp.width}
+                height={data.iconProp.height}
+              />
+            </Box>
+          </Tooltip>
         )}
         {textWithLink ? (
           <Link

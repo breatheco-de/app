@@ -17,6 +17,7 @@
     "show": "Haga clic aquí para mostrarlas",
     "hide": "Haga clic aquí para ocultarlas"
   },
+  "roles-info": "Los Roles solo se muestran en el modo de desarrollo",
   "launch-program": "Elegir este programa",
   "description": "Estos son los programas en los que estás participando actualmente, selecciona el curso en el que quieras entrar:"
 }

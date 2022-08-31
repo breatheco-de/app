@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-dupe-keys */
 // For more info https://chakra-ui.com/docs/features/style-props
 const ButtonStyles = {
@@ -98,7 +99,7 @@ const ButtonStyles = {
       fontSize: '13px',
       letterSpacing: '0.05em',
       _hover: {
-        bg: props.colorMode === 'light' ? 'gray.light' : 'gray.700',
+        bg: props.withoutBg ? (props.colorMode === 'light' ? 'gray.light' : 'gray.700') : 'transparent',
         opacity: 1,
         _disabled: {
           bg: '#EBEBEB',

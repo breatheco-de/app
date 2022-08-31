@@ -233,6 +233,7 @@ const Dashboard = () => {
       ]).then((
         [taskTodoData, programData, userRoles],
       ) => {
+        const moduleData = programData.data.json?.days || programData.data.json?.modules;
         const technologiesArray = programData.data.main_technologies
           ? programData.data.main_technologies.split(',').map((el) => el.trim())
           : [];
@@ -244,7 +245,7 @@ const Dashboard = () => {
           bc_id: user.id,
           user_capabilities: userRoles.data.capabilities,
         });
-        setSyllabus(programData.data.json.days);
+        setSyllabus(moduleData);
         setContextState({
           taskTodo: taskTodoData.data,
           cohortProgram: programData.data,
@@ -283,12 +284,13 @@ const Dashboard = () => {
 
   // Sort all data fetched in order of taskTodo
   useMemo(() => {
-    const cohortDays = cohortProgram.json ? cohortProgram.json.days : [];
+    const moduleData = cohortProgram.json?.days || cohortProgram.json?.modules;
+    const cohort = cohortProgram.json ? moduleData : [];
     const assignmentsRecopilated = [];
 
     if (contextState.cohortProgram.json && contextState.taskTodo) {
       setTaskTodo(contextState.taskTodo);
-      cohortDays.map((assignment) => {
+      cohort.map((assignment) => {
         const {
           id, label, description, lessons, replits, assignments, quizzes,
         } = assignment;
@@ -310,6 +312,7 @@ const Dashboard = () => {
           modules,
           filteredModules,
           filteredModulesByPending,
+          duration_in_days: assignment?.duration_in_days || null,
           teacherInstructions: assignment.teacher_instructions,
           extendedInstructions: assignment.extended_instructions,
           keyConcepts: assignment['key-concepts'],
@@ -405,8 +408,8 @@ const Dashboard = () => {
               icon="arrowLeft"
               width="20px"
               height="20px"
-              style={{ marginBottom: '-4px', marginRight: '7px' }}
-              color="#0097CF"
+              style={{ marginRight: '7px' }}
+              color="currentColor"
             />
             {t('backToChooseProgram')}
           </NextChakraLink>

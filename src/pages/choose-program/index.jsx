@@ -15,6 +15,7 @@ import Module from '../../common/components/Module';
 import { isPlural } from '../../utils';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
+import AlertMessage from '../../common/components/AlertMessage';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -103,6 +104,18 @@ function chooseProgram() {
 
   return (
     <Flex alignItems="center" flexDirection="column">
+      {process.env.NODE_ENV === 'development' && (
+        <Box margin="25px 0 0 0" display="flex" alignItems="center" justifyContent="space-between" width={['70%', '68%', '70%', '50%']}>
+          <AlertMessage
+            message={t('roles-info')}
+            type="info"
+            textColor={useColorModeValue('black', 'white')}
+            style={{
+              width: '100%',
+            }}
+          />
+        </Box>
+      )}
       <Heading
         fontWeight={800}
         size="xl"
