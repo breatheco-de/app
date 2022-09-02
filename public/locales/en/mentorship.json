@@ -10,6 +10,7 @@
     "mentorLate": "Mentor joined {{time}} late",
     "extraTime": "Extra time of {{extra}}, the expected duration was {{expected}}",
     "manyDays": "Many days of extra time, probably it was never closed",
+    "setUpService": "Please setup service for this session",
     "rate": "Rating:",
     "modal": {
         "title": "Mentorship Details"

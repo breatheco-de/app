@@ -10,6 +10,7 @@
     "mentorLate": "El mentor se unió tarde",
     "extraTime": "Tiempo extra de {{extra}}, el esperado era {{expected}}",
     "manyDays": "Muchos días de tiempo extra, probablemente nunca se cerró",
+    "setUpService": "Por favor selecciona un servicio para esta sección",
     "rate": "Puntuación:",
     "modal": {
         "title": "Detalles de las Mentorías"

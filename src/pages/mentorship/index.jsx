@@ -22,7 +22,7 @@ import { ArrowUpIcon, ChevronDownIcon, CloseIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import styled from 'styled-components';
-import { format, endOfMonth } from 'date-fns';
+import { format, startOfMonth, endOfMonth } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import bc from '../../common/services/breathecode';
@@ -39,7 +39,7 @@ const Mentorship = () => {
   const { colorMode } = useColorMode();
   const router = useRouter();
   const [sessions, setSessions] = useState([]);
-  const [startDate, setStartDate] = useState(null);
+  const [startDate, setStartDate] = useState(startOfMonth(new Date()));
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState({ show: false, session: null });
   const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
@@ -108,7 +108,9 @@ const Mentorship = () => {
     if (session.extra_time) {
       let label;
       if (session.extra_time.includes('Many days of extra time')) label = t('manyDays');
-      else label = t('extraTime', { extra: getExtraTime(session.extra_time), expected: getExpectedTime(session.extra_time) });
+      else if (session.extra_time.includes('Extra time of')) label = t('extraTime', { extra: getExtraTime(session.extra_time), expected: getExpectedTime(session.extra_time) });
+      else if (session.extra_time.includes('Please setup')) label = t('setUpService');
+      else label = session.extra_time;
       tooltips.push({
         icon: 'chronometer',
         label,
@@ -159,7 +161,7 @@ const Mentorship = () => {
           <Heading
             as="h2"
             size="m"
-            maxW={['90%', '90%', 'none', 'none']}
+            maxW="90%"
             // size={['lg', 'lg', 'xl', 'xl']}
             // fontSize={['16px', '16px', '34px', '34px']}
           >
@@ -220,31 +222,6 @@ const Mentorship = () => {
                       </span>
                     </Tooltip>
                   ))}
-                  {/* <Tooltip label="Ghost" fontSize="md" placement="top">
-                    <span>
-                      <Icon style={{ marginRight: '15px' }} icon="dolarSign" width="25px" height="25px" />
-                    </span>
-                  </Tooltip>
-                  <Tooltip label="Ghost" fontSize="md" placement="top">
-                    <span>
-                      <Icon style={{ marginRight: '15px' }} icon="dolarSignBroke" width="25px" height="25px" />
-                    </span>
-                  </Tooltip>
-                  <Tooltip label="Ghost" fontSize="md" placement="top">
-                    <span>
-                      <Icon style={{ marginRight: '15px' }} icon="ghost" width="25px" height="25px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
-                    </span>
-                  </Tooltip>
-                  <Tooltip label="Ghost" fontSize="md" placement="top">
-                    <span>
-                      <Icon style={{ marginRight: '15px' }} icon="running" width="25px" height="25px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
-                    </span>
-                  </Tooltip>
-                  <Tooltip label="Ghost" fontSize="md" placement="top">
-                    <span>
-                      <Icon style={{ marginRight: '15px' }} icon="chronometer" width="25px" height="25px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
-                    </span>
-                  </Tooltip> */}
                   <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link" onClick={() => setShowModal({ show: true, session })}>
                     {t('details')}
                   </Button>
