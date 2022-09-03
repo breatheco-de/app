@@ -34,7 +34,8 @@
     "lint:fix:components": "eslint --fix src/common/components/**/*.{js,jsx}",
     "prepare": "husky install",
     "make:sitemap": "node ./scripts/sitemap-generator.js",
-    "make:syllabus": "node ./scripts/syllabus.js"
+    "make:syllabus": "node ./scripts/syllabus.js",
+    "landing:paths": "node ./src/utils/file.js"
   },
   "dependencies": {
     "@chakra-ui/icons": "1.0.15",
