@@ -153,9 +153,9 @@ const CodingIntroduction = ({ data }) => {
           )}
           {data?.awards?.images && (
             <Box display="grid" gridRowGap="20px" alignItems="center" justifyItems="center" gridTemplateColumns="repeat(auto-fill, minmax(13rem, 1fr))">
-              {data.awards.images.map((img) => (
-                <Box width="auto" height="auto">
-                  <Image key={img.src} src={img.src} width={img.width} height={img.height} />
+              {data.awards.images.map((img, i) => (
+                <Box key={img.src} width="auto" height="auto">
+                  <Image key={img.src} src={img.src} width={img.width} height={img.height} alt={`image ${i}`} />
                 </Box>
               ))}
             </Box>
@@ -166,10 +166,10 @@ const CodingIntroduction = ({ data }) => {
             <Heading as="h2" size="14px" letterSpacing="0.05em" color="blue.default">
               Meet students from all over the world
             </Heading>
-            <Text fontSize="26px" fontWeight="700" lineHeight="24px">
+            <Text fontSize="26px" fontWeight="700" lineHeight="30px">
               120 people took this course and 63 are online right now
             </Text>
-            <Text fontSize="14px" fontWeight="400" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')}>
+            <Text fontSize="14px" fontWeight="400" lineHeight="24px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')}>
               Some of our students are open to speak with others any time, by pressing
               this buttom you will be able to schedule a meeting with one of them
             </Text>
@@ -205,30 +205,80 @@ const CodingIntroduction = ({ data }) => {
         </Box>
       </Container>
       <Box display="flex" p="8px 53px 0 53px" gridGap={51} background="linear-gradient(360deg, #EEF9FE 54.09%, rgba(238, 249, 254, 0) 100%)" alignItems="center" justifyContent={{ base: 'center', md: 'start' }}>
-        <Box position="relative" flex={0.5} height="562px">
+        <Box position="relative" flex={0.52} height="562px">
           <Avatar src={avatars[6].picture} width="147px" height="147px" position="absolute" left="0" top="85px" style={{ userSelect: 'none' }} alt={`${avatars[6].firstName}-${avatars[6].lastName}`} bg="transparent" />
           <Avatar src={avatars[3].picture} width="89px" height="89px" position="absolute" left="50px" bottom="136px" style={{ userSelect: 'none' }} alt={`${avatars[3].firstName}-${avatars[3].lastName}`} bg="transparent" />
           <Avatar src={avatars[10].picture} width="158px" height="158px" position="absolute" left="214px" top="142px" style={{ userSelect: 'none' }} alt={`${avatars[10].firstName}-${avatars[10].lastName}`} bg="transparent" />
-          <Avatar src={avatars[5].picture} width="129px" height="129px" position="absolute" right="67px" top="59px" style={{ userSelect: 'none' }} alt={`${avatars[5].firstName}-${avatars[5].lastName}`} bg="transparent" />
-          <Avatar src={avatars[8].picture} width="137px" height="137px" position="absolute" right="28px" bottom="127px" style={{ userSelect: 'none' }} alt={`${avatars[8].firstName}-${avatars[8].lastName}`} bg="transparent" />
+          <Avatar src={avatars[5].picture} width="129px" height="129px" position="absolute" right="90px" top="59px" style={{ userSelect: 'none' }} alt={`${avatars[5].firstName}-${avatars[5].lastName}`} bg="transparent" />
+          <Avatar src={avatars[8].picture} width="137px" height="137px" position="absolute" right="51px" bottom="127px" style={{ userSelect: 'none' }} alt={`${avatars[8].firstName}-${avatars[8].lastName}`} bg="transparent" />
           <Avatar src={avatars[7].picture} width="109px" height="109px" position="absolute" right="0" top="172px" style={{ userSelect: 'none' }} alt={`${avatars[7].firstName}-${avatars[7].lastName}`} bg="transparent" />
         </Box>
         <Box display="flex" flexDirection="column" gridGap="10px" flex={{ base: 0.6, md: 0.32 }} textAlign={{ base: 'center', md: 'left' }}>
           <Heading as="h2" size="14px" letterSpacing="0.05em" color="blue.default">
             We support you in your journey, wherever you are
           </Heading>
-          <Text fontSize="26px" fontWeight="700" lineHeight="24px">
+          <Text fontSize="26px" fontWeight="700" lineHeight="30px">
             There are +6 mentors online and available right now.
           </Text>
-          <Text fontSize="14px" fontWeight="400" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')}>
+          <Text fontSize="14px" fontWeight="400" lineHeight="24px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')}>
             Some of our students are open to speak with others any time, by pressing
             this buttom you will be able to schedule a meeting with one of them
           </Text>
           <Button variant="default" width="fit-content" mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
             Schedule a mentoring session
           </Button>
+          <Text fontSize="14px" fontWeight="700" letterSpacing="0.05em" mt="17px">
+            Clic any mentor for more information
+          </Text>
+          <Box display={{ base: 'none', sm: 'flex' }} position="relative" bottom="4px" left="-110px">
+            <Icon icon="leftArrow" width="200px" height="39px" />
+          </Box>
         </Box>
       </Box>
+
+      <Container maxW="container.xl" display="flex" py="24px" height="458px" alignItems="center" gridGap={51}>
+        <Box display="flex" flexDirection="column" gridGap="10px" flex={{ base: 0.6, md: 0.38 }} textAlign={{ base: 'center', md: 'left' }}>
+          <Heading as="h2" size="14px" letterSpacing="0.05em" mb="8px" color="blue.default">
+            We take online education to another level.
+          </Heading>
+          <Text fontSize="26px" fontWeight="700" lineHeight="30px">
+            Live clases, coding sessions, workshops and hangouts every few hours
+          </Text>
+          <Text fontSize="14px" fontWeight="400" lineHeight="24px" mt="10px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')}>
+            During the pre-work you learn some basic CSS and HTML, and hopefully how to use
+            the flex-box to create simple layouts.
+          </Text>
+          <Button variant="default" width="fit-content" mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
+            Join the next event
+          </Button>
+        </Box>
+        <Box flex={0.5} width="592px" bg="blue.light" height="100%">
+          content
+        </Box>
+      </Container>
+
+      <Container maxW="container.xl" display="flex" py="24px" height="458px" alignItems="center" gridGap={51}>
+        <Box flex={0.5} width="592px" bg="blue.light" height="100%">
+          content
+        </Box>
+        <Box display="flex" flexDirection="column" gridGap="20px" flex={{ base: 0.6, md: 0.45 }} textAlign={{ base: 'center', md: 'left' }}>
+          <Heading as="h2" size="14px" letterSpacing="0.05em" color="blue.default">
+            Take a look at the most relevant modules of our coding bootcamp
+          </Heading>
+          <Text fontSize="26px" fontWeight="700" lineHeight="30px">
+            HTML/CSS
+          </Text>
+          <Text fontSize="14px" fontWeight="400" lineHeight="24px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')}>
+            {`During the pre-work you learn some basic CSS and HTML, and hopefully how to use the
+            flex-box to create simple layouts. The first day we will review the pre-work completion
+            and introduce a more evolved CSS that enables amazing layouts and the amazing Bootstrap
+            framework that will make you life so much easier with the "component oriented" approach.`}
+          </Text>
+          <Button variant="default" width="fit-content" alignSelf={{ base: 'center', md: 'start' }}>
+            Enroll now
+          </Button>
+        </Box>
+      </Container>
 
       <Box bg="black" width="100%" height="300px">
         rest of content
