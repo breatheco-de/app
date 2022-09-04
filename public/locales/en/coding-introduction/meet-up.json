@@ -1,63 +1,61 @@
 {
-  "data" : {
-    "title": "Meet up",
-    "description": "Learning to code with a group of people that meets every other day",
-    "callToAction": {
-      "title": "Join the next cohort",
-      "href": "/#"
+  "title": "Meet up",
+  "description": "Learning to code with a group of people that meets every other day",
+  "callToAction": {
+    "title": "Join the next cohort",
+    "href": "/#"
+  },
+  "bullets": [
+    {
+      "text": "Follow a structured syllabus & plan with.",
+      "icon": "book"
     },
-    "bullets": [
-      {
-        "text": "Follow a structured syllabus & plan with.",
-        "icon": "book"
-      },
-      {
-        "text": "Collaborate with students all over the world in real time.",
-        "icon": "book"
-      },
-      {
-        "text": "Personalized mentoring.",
-        "icon": "book"
-      },
-      {
-        "text": "Immediate work exit.",
-        "icon": "book"
-      }
-    ],
-    "awards": {
-      "title": "Why trust us?",
-      "images": [
-        {
-          "src": "/static/images/awards/exelencia-educativa.png",
-          "width": "153px",
-          "height": "63px"
-        },
-        {
-          "src": "/static/images/awards/switchup.png",
-          "width": "88px",
-          "height": "70px"
-        },
-        {
-          "src": "/static/images/awards/fldoe.png",
-          "width": "155px",
-          "height": "63px"
-        },
-        {
-          "src": "/static/images/awards/newsweek.png",
-          "width": "155px",
-          "height": "63px"
-        },
-        {
-          "src": "/static/images/awards/reviews.png",
-          "width": "155px",
-          "height": "63px"
-        },
-        {
-          "src": "/static/images/awards/winning-syllabus.png",
-          "width": "155px",
-          "height": "63px"
-        }
-      ]
+    {
+      "text": "Collaborate with students all over the world in real time.",
+      "icon": "book"
+    },
+    {
+      "text": "Personalized mentoring.",
+      "icon": "book"
+    },
+    {
+      "text": "Immediate work exit.",
+      "icon": "book"
     }
+  ],
+  "awards": {
+    "title": "Why trust us?",
+    "images": [
+      {
+        "src": "/static/images/awards/exelencia-educativa.png",
+        "width": "153px",
+        "height": "63px"
+      },
+      {
+        "src": "/static/images/awards/switchup.png",
+        "width": "88px",
+        "height": "70px"
+      },
+      {
+        "src": "/static/images/awards/fldoe.png",
+        "width": "155px",
+        "height": "63px"
+      },
+      {
+        "src": "/static/images/awards/newsweek.png",
+        "width": "155px",
+        "height": "63px"
+      },
+      {
+        "src": "/static/images/awards/reviews.png",
+        "width": "155px",
+        "height": "63px"
+      },
+      {
+        "src": "/static/images/awards/winning-syllabus.png",
+        "width": "155px",
+        "height": "63px"
+      }
+    ]
   }
 }

@@ -19,7 +19,7 @@ function getDataContentProps(dirFiles, slug) {
 
   return {
     slug,
-    ...JSON.parse(fileContents).data,
+    ...JSON.parse(fileContents),
   };
 }
 
