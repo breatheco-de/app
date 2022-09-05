@@ -1,16 +1,20 @@
+/* eslint-disable max-len */
 import {
-  Avatar, Box, Button, Container, Text, useColorModeValue, useMediaQuery,
+  Avatar, Box, Button, Container, Tab, TabList, TabPanel, TabPanels, Tabs,
+  Text, useColorModeValue, useMediaQuery,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import Plx from 'react-plx';
-import Heading from '../../../common/components/Heading';
-import Icon from '../../../common/components/Icon';
-import { getDataContentSlugs, getDataContentProps } from '../../../utils/file';
+import Heading from '../../common/components/Heading';
+import Icon from '../../common/components/Icon';
+import { getDataContentSlugs, getDataContentProps } from '../../utils/file';
 
 export const getStaticPaths = async ({ locales }) => {
-  const paths = getDataContentSlugs('public/locales/en/coding-introduction', locales);
+  const paths = getDataContentSlugs('public/locales/en/learn-to-code', locales);
 
   return {
     paths,
@@ -23,11 +27,10 @@ export const getStaticProps = async ({ params, locale }) => {
   console.log('locale');
 
   const data = getDataContentProps(
-    `public/locales/${locale}/coding-introduction`,
+    `public/locales/${locale}/learn-to-code`,
     slug,
   );
 
-  // console.log('data:::', data);
   return {
     props: {
       data,
@@ -98,10 +101,28 @@ const avatars = [
   },
 ];
 
-const parallaxData = [
+const parallax1 = [
   {
     start: 0,
     end: 300,
+    properties: [
+      {
+        startValue: 0.8,
+        endValue: 1,
+        property: 'scale',
+      },
+      {
+        startValue: 0,
+        endValue: 1,
+        property: 'opacity',
+      },
+    ],
+  },
+];
+const parallax2 = [
+  {
+    start: 400,
+    end: 800,
     properties: [
       {
         startValue: 0.8,
@@ -134,23 +155,55 @@ const parallaxAvatars = [
       },
     ],
   },
-
+];
+const parallaxAvatars2 = [
+  {
+    start: 300,
+    end: 800,
+    properties: [
+      {
+        startValue: 0.3,
+        endValue: 1,
+        property: 'scale',
+      },
+      {
+        startValue: 0,
+        endValue: 1,
+        property: 'opacity',
+      },
+    ],
+  },
 ];
 
 const MotionBox = motion(Box);
 const MotionButton = motion(Button);
+const MotionAvatar = motion(Avatar);
 
 const AnimatedButton = ({
-  children, toUppercase, rest,
+  children, onClick, toUppercase, rest,
 }) => (
-  <MotionButton whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.9 }} variant="default" {...rest} fontSize="13px" m="25px 0" width="fit-content" letterSpacing="0.05em" textTransform={toUppercase ? 'uppercase' : ''}>
+  <MotionButton whileHover={{ scale: 1.05 }} whileTap={{ scale: 1 }} variant="default" onClick={onClick} {...rest} fontSize="13px" m="25px 0" width="fit-content" letterSpacing="0.05em" textTransform={toUppercase ? 'uppercase' : ''}>
     {children}
   </MotionButton>
 );
+const AnimatedAvatar = ({
+  src, width, height, top, bottom, left, right, style,
+}) => (
+  <MotionAvatar whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} src={src} width={width} height={height} style={{ ...style, userSelect: 'none' }} left={left} right={right} top={top} bottom={bottom} position="absolute" bg="transparent" />
+);
+
+const CustomTab = ({
+  children, onClick, top, bottom, left, right, style,
+}) => (
+  <Tab _selected={{ backgroundColor: 'blue.default', color: 'white' }} style={style} p="20px 0" width="178px" fontSize="15px" background="blue.light" color="blue.default" onClick={onClick} textTransform="uppercase" position="absolute" left={left} right={right} top={top} bottom={bottom} borderRadius="22px" fontWeight="700">
+    {children}
+  </Tab>
+);
 
 const CodingIntroduction = ({ data }) => {
-  console.log('codingIntroduction props', data);
+  const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
+  const router = useRouter();
 
   return (
     <Box pt="3rem">
@@ -158,7 +211,7 @@ const CodingIntroduction = ({ data }) => {
       <Container maxW="container.xl">
         <Box display="flex">
           <Box flex={1}>
-            <Heading as="h1" size="xl" fontWeight="700" shine>
+            <Heading as="h1" size="xl" fontWeight="700">
               Coding Introduction
               <MotionBox
                 as="strong"
@@ -218,7 +271,7 @@ const CodingIntroduction = ({ data }) => {
         </Box>
         <Box p="30px 0">
           {data?.awards?.title && (
-            <Heading as="h2" size="18px" pb="28px">
+            <Heading as="h2" size="18px" mb="28px">
               {data.awards.title}
             </Heading>
           )}
@@ -233,20 +286,17 @@ const CodingIntroduction = ({ data }) => {
           )}
         </Box>
         <Box display="flex" py="20px" alignItems="center" justifyContent={{ base: 'center', md: 'start' }}>
-          <Box display="flex" flexDirection="column" gridGap="10px" flex={{ base: 0.6, md: 0.52 }} textAlign={{ base: 'center', md: 'left' }}>
-            <Plx parallaxData={parallaxData}>
-              <Heading as="h2" size="14px" letterSpacing="0.05em" color="blue.default">
-                Meet students from all over the world
+          <Box display="flex" flexDirection="column" flex={{ base: 0.6, md: 0.52 }} textAlign={{ base: 'center', md: 'left' }}>
+            <Plx parallaxData={parallax1}>
+              <Heading as="h2" size="14px" letterSpacing="0.05em" mb="10px" color="blue.default">
+                {data.students.title}
               </Heading>
-              <Text fontSize="26px" fontWeight="700" lineHeight="30px">
-                120 people took this course and 63 are online right now
+              <Text fontSize="26px" fontWeight="700" mb="10px" lineHeight="30px">
+                {data.students.subTitle}
               </Text>
-              <Text fontSize="14px" fontWeight="400" lineHeight="24px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')}>
-                Some of our students are open to speak with others any time, by pressing
-                this buttom you will be able to schedule a meeting with one of them
-              </Text>
-              <AnimatedButton mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
-                Meet developers in the making
+              <Text dangerouslySetInnerHTML={{ __html: data.students.description }} fontSize="14px" fontWeight="400" lineHeight="24px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')} />
+              <AnimatedButton onClick={() => router.push(data.students.button.link)} mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
+                {data.students.button.title}
               </AnimatedButton>
             </Plx>
           </Box>
@@ -310,64 +360,84 @@ const CodingIntroduction = ({ data }) => {
       </Container>
       <Box display="flex" p="8px 53px 0 53px" gridGap={51} background="linear-gradient(360deg, #EEF9FE 54.09%, rgba(238, 249, 254, 0) 100%)" alignItems="center" justifyContent={{ base: 'center', md: 'start' }}>
         <Box position="relative" flex={0.52} height="562px">
-          <Avatar src={avatars[6].picture} width="147px" height="147px" position="absolute" left="0" top="85px" style={{ userSelect: 'none' }} alt={`${avatars[6].firstName}-${avatars[6].lastName}`} bg="transparent" />
-          <Avatar src={avatars[3].picture} width="89px" height="89px" position="absolute" left="50px" bottom="136px" style={{ userSelect: 'none' }} alt={`${avatars[3].firstName}-${avatars[3].lastName}`} bg="transparent" />
-          <Avatar src={avatars[10].picture} width="158px" height="158px" position="absolute" left="214px" top="142px" style={{ userSelect: 'none' }} alt={`${avatars[10].firstName}-${avatars[10].lastName}`} bg="transparent" />
-          <Plx style={{ position: 'absolute', right: 0, top: 0 }} parallaxData={parallaxAvatars}>
-            <Avatar src={avatars[5].picture} width="129px" height="129px" position="absolute" right="90px" top="59px" style={{ userSelect: 'none' }} alt={`${avatars[5].firstName}-${avatars[5].lastName}`} bg="transparent" />
+          <Plx style={{ position: 'absolute', left: 0, top: 0 }} parallaxData={parallaxAvatars2}>
+            <AnimatedAvatar src={avatars[6].picture} width="147px" height="147px" position="absolute" left="0" top="85px" alt={`${avatars[6].firstName}-${avatars[6].lastName}`} />
+            <AnimatedAvatar src={avatars[10].picture} style={{ border: '4px solid #0097CF' }} width="158px" height="158px" position="absolute" left="214px" top="142px" alt={`${avatars[10].firstName}-${avatars[10].lastName}`} />
           </Plx>
-          <Avatar src={avatars[8].picture} width="137px" height="137px" position="absolute" right="51px" bottom="127px" style={{ userSelect: 'none' }} alt={`${avatars[8].firstName}-${avatars[8].lastName}`} bg="transparent" />
-          <Avatar src={avatars[7].picture} width="109px" height="109px" position="absolute" right="0" top="172px" style={{ userSelect: 'none' }} alt={`${avatars[7].firstName}-${avatars[7].lastName}`} bg="transparent" />
+          <AnimatedAvatar src={avatars[3].picture} width="89px" height="89px" position="absolute" left="50px" bottom="136px" alt={`${avatars[3].firstName}-${avatars[3].lastName}`} />
+          <Plx style={{ position: 'absolute', right: 0, top: 0 }} parallaxData={parallaxAvatars2}>
+            <AnimatedAvatar src={avatars[5].picture} width="129px" height="129px" position="absolute" right="90px" top="59px" alt={`${avatars[5].firstName}-${avatars[5].lastName}`} />
+            <AnimatedAvatar src={avatars[7].picture} width="109px" height="109px" position="absolute" right="0" top="172px" alt={`${avatars[7].firstName}-${avatars[7].lastName}`} />
+          </Plx>
+          <AnimatedAvatar src={avatars[8].picture} width="137px" height="137px" position="absolute" right="51px" bottom="127px" alt={`${avatars[8].firstName}-${avatars[8].lastName}`} />
         </Box>
 
-        <Box display="flex" flexDirection="column" gridGap="10px" flex={{ base: 0.6, md: 0.32 }} textAlign={{ base: 'center', md: 'left' }}>
-          <Heading as="h2" size="14px" letterSpacing="0.05em" color="blue.default">
-            We support you in your journey, wherever you are
-          </Heading>
-          <Text fontSize="26px" fontWeight="700" lineHeight="30px">
-            There are +6 mentors online and available right now.
-          </Text>
-          <Text fontSize="14px" fontWeight="400" lineHeight="24px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')}>
-            Some of our students are open to speak with others any time, by pressing
-            this buttom you will be able to schedule a meeting with one of them
-          </Text>
-          <AnimatedButton mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
-            Schedule a mentoring session
-          </AnimatedButton>
-          <Text fontSize="14px" fontWeight="700" letterSpacing="0.05em" mt="17px">
-            Clic any mentor for more information
-          </Text>
-          <Box display={{ base: 'none', sm: 'flex' }} position="relative" bottom="4px" left="-110px">
-            <Icon icon="leftArrow" width="200px" height="39px" />
-          </Box>
+        <Box display="flex" flexDirection="column" flex={{ base: 0.6, md: 0.32 }} textAlign={{ base: 'center', md: 'left' }}>
+          <Plx parallaxData={parallax2}>
+            <Heading as="h2" size="14px" mb="10px" letterSpacing="0.05em" color="blue.default">
+              {data.mentors.title}
+            </Heading>
+            <Text fontSize="26px" fontWeight="700" lineHeight="30px" mb="10px">
+              {data.mentors.subTitle}
+            </Text>
+            <Text dangerouslySetInnerHTML={{ __html: data.mentors.description }} fontSize="14px" fontWeight="400" lineHeight="24px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')} />
+            <AnimatedButton onClick={() => router.push(data.mentors.button.link)} mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
+              {data.mentors.button.title}
+            </AnimatedButton>
+            <Text fontSize="14px" fontWeight="700" letterSpacing="0.05em" mt="17px">
+              {data.mentors.hint}
+            </Text>
+            <Box display={{ base: 'none', sm: 'flex' }} position="relative" bottom="0" left="-110px">
+              <Icon icon="leftArrow" width="200px" height="39px" />
+            </Box>
+          </Plx>
         </Box>
       </Box>
 
       <Container maxW="container.xl" display="flex" py="24px" height="458px" alignItems="center" gridGap={51}>
         <Box display="flex" flexDirection="column" gridGap="10px" flex={{ base: 0.6, md: 0.38 }} textAlign={{ base: 'center', md: 'left' }}>
           <Heading as="h2" size="14px" letterSpacing="0.05em" mb="8px" color="blue.default">
-            We take online education to another level.
+            {data.events.title}
           </Heading>
           <Text fontSize="26px" fontWeight="700" lineHeight="30px">
-            Live clases, coding sessions, workshops and hangouts every few hours
+            {data.events.subTitle}
           </Text>
-          <Text fontSize="14px" fontWeight="400" lineHeight="24px" mt="10px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')}>
-            During the pre-work you learn some basic CSS and HTML, and hopefully how to use
-            the flex-box to create simple layouts.
-          </Text>
-          <AnimatedButton mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
-            Join the next event
+          <Text dangerouslySetInnerHTML={{ __html: data.events.description }} fontSize="14px" fontWeight="400" lineHeight="24px" mt="10px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')} />
+          <AnimatedButton onClick={() => router.push(data.events.button.link)} mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
+            {data.events.button.title}
           </AnimatedButton>
         </Box>
 
-        <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" gridGap="40px" flex={0.5} width="592px" bg="blue.light" height="100%">
-          <Box display="flex" p="10px" w="236px" alignItems="center" gridGap="8.5px" borderRadius="50px" background="blue.light" border="2px solid" borderColor="blue.default">
-            <Box background="#eb3422" p="8px" borderRadius="50px" alignSelf="center">
-              <Icon icon="youtube" width="30px" color="#000" height="30px" />
+        <Box display="flex" position="relative" flexDirection="column" justifyContent="center" alignItems="center" gridGap="40px" flex={0.5} width="592px" height="100%">
+          <Box position="absolute" className="pulse-yellow" top="140px" left="0" background="yellow.default" p="14px" borderRadius="50px">
+            <Icon icon="code" width="47px" height="47px" color="#fff" />
+          </Box>
+          <Box position="absolute" className="pulse-green" top="100px" left="120px" background="success" p="8px" borderRadius="50px">
+            <Icon icon="people" width="17px" height="17px" color="#fff" />
+          </Box>
+          <Box position="absolute" className="pulse-green2" bottom="0px" left="90px" background="success" p="14px" borderRadius="50px">
+            <Icon icon="people" width="47px" height="47px" color="#fff" />
+          </Box>
+
+          <Box position="absolute" className="pulse-green2" top="0px" right="90px" background="success" p="14px" borderRadius="50px">
+            <Icon icon="people" width="47px" height="47px" color="#fff" />
+          </Box>
+          <Box position="absolute" className="pulse-green2" top="120px" right="40px" background="success" p="10px" borderRadius="50px">
+            <Icon icon="people" width="27px" height="27px" color="#fff" />
+          </Box>
+          <Box position="absolute" className="pulse-yellow" top="160px" right="150px" background="yellow.default" p="6px" borderRadius="50px">
+            <Icon icon="code" width="22px" height="22px" color="#fff" />
+          </Box>
+          <Box position="absolute" className="pulse-yellow" bottom="40px" right="80px" background="yellow.default" p="14px" borderRadius="50px">
+            <Icon icon="code" width="47px" height="47px" color="#fff" />
+          </Box>
+          <Box display="flex" p="10px" w="236px" alignItems="center" gridGap="8.5px" borderRadius="50px" background="blue.light" border="2px solid" borderColor="blue.default" zIndex={5}>
+            <Box className="pulse-red" background="#eb3422" p="8px" borderRadius="50px" alignSelf="center">
+              <Icon icon="youtube" width="30px" color="#FFF" height="30px" />
             </Box>
             <Box display="flex" flexDirection="column">
               <Box fontSize="11px" letterSpacing="0.05em" fontWeight="900">
-                Today’s live class
+                {data?.events?.live?.title}
               </Box>
               <Box fontSize="10px" letterSpacing="0.05em" fontWeight="700">
                 Started 40 mins ago
@@ -375,13 +445,13 @@ const CodingIntroduction = ({ data }) => {
             </Box>
           </Box>
 
-          <Box display="flex" p="10px" w="190px" alignItems="center" gridGap="8.5px" borderRadius="50px" background="blue.light" border="2px solid" borderColor="blue.default">
+          <Box display="flex" className="pulse-blue" p="10px" w="190px" alignItems="center" gridGap="8.5px" borderRadius="50px" background="blue.light" border="2px solid" borderColor="blue.default" zIndex={5}>
             <Box background="#FFB718" p="7px" borderRadius="50px" alignSelf="center">
               <Icon icon="code" width="30px" color="#fff" height="30px" />
             </Box>
             <Box display="flex" flexDirection="column">
               <Box fontSize="11px" letterSpacing="0.05em" fontWeight="900">
-                Coding Jamming
+                {data?.events?.coding?.title}
               </Box>
               <Box fontSize="10px" letterSpacing="0.05em" fontWeight="700">
                 Starts in 40 mins
@@ -389,13 +459,13 @@ const CodingIntroduction = ({ data }) => {
             </Box>
           </Box>
 
-          <Box display="flex" p="10px" w="190px" alignItems="center" gridGap="8.5px" borderRadius="50px" background="blue.light" border="2px solid" borderColor="blue.default">
+          <Box display="flex" className="pulse-blue" p="10px" w="190px" alignItems="center" gridGap="8.5px" borderRadius="50px" background="blue.light" border="2px solid" borderColor="blue.default" zIndex={5}>
             <Box background="#25BF6C" p="7px" borderRadius="50px" alignSelf="center">
-              <Icon icon="people" width="30px" color="#000" height="30px" />
+              <Icon icon="people" width="30px" color="#FFf" height="30px" />
             </Box>
             <Box display="flex" flexDirection="column">
               <Box fontSize="11px" letterSpacing="0.05em" fontWeight="900">
-                Coding Worshop
+                {data?.events?.workshop?.title}
               </Box>
               <Box fontSize="10px" letterSpacing="0.05em" fontWeight="700">
                 Starts in 40 mins
@@ -405,8 +475,70 @@ const CodingIntroduction = ({ data }) => {
         </Box>
       </Container>
 
-      <Container maxW="container.xl" display="flex" py="24px" height="458px" alignItems="center" gridGap={51}>
-        <Box flex={0.5} width="592px" bg="blue.light" height="100%">
+      <Box maxW="container.xl" m="3rem 0 3rem 0" height="auto" position="relative" alignItems="center" gridGap={51}>
+        <Box position="absolute" top="-90px" left="340px">
+          <Icon icon="curvedLine" width="80px" height="654px" />
+        </Box>
+        <Tabs index={currentTabIndex} variant="unstyled" display="flex" height="528px" alignItems="center">
+          <TabList position="relative" w="400px" flex={0.6} width="592px" height="100%">
+            {data?.previewModules?.list[0]?.title && (
+              <CustomTab onClick={() => setCurrentTabIndex(0)} top="20px" left="250px">
+                {data?.previewModules?.list[0]?.title}
+              </CustomTab>
+            )}
+
+            {data?.previewModules?.list[1]?.title && (
+              <CustomTab onClick={() => setCurrentTabIndex(1)} top="107px" left="290px">
+                {data?.previewModules?.list[1]?.title}
+              </CustomTab>
+            )}
+            {data?.previewModules?.list[2]?.title && (
+              <CustomTab onClick={() => setCurrentTabIndex(2)} top="204px" left="330px">
+                {data?.previewModules?.list[2]?.title}
+              </CustomTab>
+            )}
+            {data?.previewModules?.list[3]?.title && (
+              <CustomTab onClick={() => setCurrentTabIndex(3)} bottom="164px" left="310px">
+                {data?.previewModules?.list[3]?.title}
+              </CustomTab>
+            )}
+
+            <CustomTab onClick={() => router.push('#more-content')} style={{ border: '3px solid #0097CD' }} bottom="57px" left="280px">
+              {data?.previewModules?.moreContent}
+            </CustomTab>
+
+          </TabList>
+          <TabPanels flex={{ base: 0.6, md: 0.45 }}>
+            {/* flex={{ base: 0.6, md: 0.45 }} */}
+            {data?.previewModules?.list?.map((module) => (
+              <TabPanel key={module.title} display="flex" flexDirection="column" gridGap="20px" style={{ flex: 0.5 }} textAlign={{ base: 'center', md: 'left' }}>
+                <Heading as="h2" size="14px" letterSpacing="0.05em" color="blue.default">
+                  {data?.previewModules.title}
+                </Heading>
+                <Text fontSize="26px" fontWeight="700" lineHeight="30px">
+                  {module.title}
+                </Text>
+                <Text
+                  fontSize="14px"
+                  fontWeight="400"
+                  lineHeight="24px"
+                  letterSpacing="0.05em"
+                  color={useColorModeValue('gray.700', 'gray.300')}
+                  dangerouslySetInnerHTML={{ __html: module.description }}
+                />
+                <AnimatedButton onClick={() => router.push('#apply')} alignSelf={{ base: 'center', md: 'start' }}>
+                  {data?.previewModules.button.title}
+                </AnimatedButton>
+              </TabPanel>
+            ))}
+          </TabPanels>
+        </Tabs>
+      </Box>
+      {/* <Container maxW="container.xl" display="flex" p="3rem 0 3rem 0" height="528px" alignItems="center" gridGap={51}>
+        <Box position="relative" flex={0.5} width="592px" bg="blue.light" height="100%">
+          <Box position="absolute" top="-110px" left="240px">
+            <Icon icon="curvedLine" width="80px" height="654px" />
+          </Box>
           content
         </Box>
         <Box display="flex" flexDirection="column" gridGap="20px" flex={{ base: 0.6, md: 0.45 }} textAlign={{ base: 'center', md: 'left' }}>
@@ -426,7 +558,7 @@ const CodingIntroduction = ({ data }) => {
             Enroll now
           </AnimatedButton>
         </Box>
-      </Container>
+      </Container> */}
 
       <Box bg="black" width="100%" height="300px">
         rest of content
@@ -446,11 +578,54 @@ AnimatedButton.propTypes = {
   key: PropTypes.string,
   toUppercase: PropTypes.bool,
   rest: PropTypes.arrayOf(PropTypes.any),
+  onClick: PropTypes.func,
+};
+AnimatedAvatar.propTypes = {
+  src: PropTypes.string,
+  height: PropTypes.string,
+  width: PropTypes.string,
+  left: PropTypes.string,
+  right: PropTypes.string,
+  top: PropTypes.string,
+  bottom: PropTypes.string,
+  style: PropTypes.objectOf(PropTypes.any),
+};
+CustomTab.propTypes = {
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]).isRequired,
+  left: PropTypes.string,
+  right: PropTypes.string,
+  top: PropTypes.string,
+  bottom: PropTypes.string,
+  onClick: PropTypes.func,
+  style: PropTypes.objectOf(PropTypes.any),
+};
+
+CustomTab.defaultProps = {
+  left: '',
+  right: '',
+  top: '',
+  bottom: '',
+  onClick: () => {},
+  style: {},
 };
 AnimatedButton.defaultProps = {
   key: '1',
   toUppercase: false,
   rest: [],
+  onClick: () => {},
+};
+AnimatedAvatar.defaultProps = {
+  src: '',
+  width: '',
+  height: '',
+  left: '',
+  right: '',
+  top: '',
+  bottom: '',
+  style: {},
 };
 
 export default CodingIntroduction;
