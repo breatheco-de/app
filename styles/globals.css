@@ -152,6 +152,10 @@ body.chakra-ui-dark .arrow-blue-color {
   font-style: italic;
 }
 
+.chakra-avatar img {
+  -webkit-user-drag: none;
+}
+
 .shine {
   color: #000;
   letter-spacing: 0px;
