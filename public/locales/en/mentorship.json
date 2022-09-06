@@ -4,6 +4,7 @@
     "mentorshipSession": "Mentorship Session",
     "invalidDate": "Invalid Date",
     "events": "Events",
+    "noEvents": "No events in this session",
     "billed": "Billed Time",
     "details": "Details",
     "ghostLabel": "Mentee never joined",

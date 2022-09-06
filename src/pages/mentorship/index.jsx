@@ -279,7 +279,7 @@ const Mentorship = () => {
             <Text color={commonFontColor} size="l" fontWeight="700" marginBottom="15px">
               {t('events')}
             </Text>
-            {showModal.session && tooltipsGenerator(showModal.session).map((elem, index, arr) => (
+            {showModal.session && tooltipsGenerator(showModal.session).length > 0 ? tooltipsGenerator(showModal.session).map((elem, index, arr) => (
               <>
                 <Text alignItems="center" my="5px" display="flex" color={commonFontColor} size="l" fontWeight="400">
                   <Icon style={{ marginRight: '15px' }} icon={elem.icon} width="25px" height="25px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
@@ -295,7 +295,12 @@ const Mentorship = () => {
                   />
                 )}
               </>
-            ))}
+            ))
+              : (
+                <Text color={commonFontColor} size="l" marginBottom="15px">
+                  {t('noEvents')}
+                </Text>
+              )}
           </ModalBody>
           <ModalFooter>
             <Button variant="default" textTransform="uppercase" background={CustomTheme.colors.blue.default} mr={3} onClick={() => setShowModal({ show: false, session: null })}>
