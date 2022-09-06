@@ -142,6 +142,10 @@
               "title": "Access to module 1 of the cohort."
             }
           ]
+        },
+        "button": {
+          "title": "Start trial",
+          "link": "#start"
         }
       },
       {
@@ -162,6 +166,10 @@
               "title": "Unlimited access to course content"
             }
           ]
+        },
+        "button": {
+          "title": "Enroll now",
+          "link": "#enroll"
         }
       }
     ]

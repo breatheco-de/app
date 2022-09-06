@@ -130,7 +130,7 @@
         "type": "basic",
         "title": "Básico",
         "subTitle": "Prueba gratis",
-        "description": "No se necesita tarjeta de crédito",
+        "description": "No necesitas tarjeta de crédito",
         "bullets": {
           "title": "Lo que obtendrás",
           "list": [
@@ -144,6 +144,10 @@
               "title": "Acceso al módulo 1 de la cohorte."
             }
           ]
+        },
+        "button": {
+          "title": "Iniciar prueba",
+          "link": "#start"
         }
       },
       {
@@ -164,6 +168,10 @@
               "title": "Acceso ilimitado al contenido del curso."
             }
           ]
+        },
+        "button": {
+          "title": "Inscribete ahora",
+          "link": "#enroll"
         }
       }
     ]
