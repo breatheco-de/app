@@ -54,7 +54,7 @@ const AvatarUser = ({
             width={width}
             height={height}
             style={{ userSelect: 'none' }}
-            src={user.profile?.avatar_url}
+            src={user?.profile?.avatar_url || user?.github?.avatar_url}
           >
             {badge && (badge)}
             {/*
@@ -90,7 +90,7 @@ const AvatarUser = ({
             width="95px"
             height="95px"
             style={{ userSelect: 'none' }}
-            src={user.profile?.avatar_url}
+            src={user?.profile?.avatar_url || user?.github?.avatar_url}
           />
           <Box display="flex" flexDirection="column" justifyContent="center" gridGap="10px" height="auto">
             <Heading size="15px">

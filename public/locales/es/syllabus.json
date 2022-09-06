@@ -11,6 +11,7 @@
   "teacherSidebar": {
     "instructions": "Instrucciones",
     "back-to-student-mode": "Volver a modo estudiante",
+    "module-duration": "⏰ Duración: \"{{duration}}\" dias.",
     "alert-updated-module-instructions": "Actualmente viendo instrucciones de un módulo que no corresponde a la lección seleccionada",
     "no-teacher-instructions-found": "No se encontraron instrucciones para el módulo actual",
     "key-concepts": "Conceptos clave"

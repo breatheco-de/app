@@ -59,23 +59,20 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`);
   const result = await response.json();
 
-  const {
-    title, translations, description, preview,
-  } = result;
-  const difficulty = result.difficulty?.toLowerCase();
-  const defaultSlug = translations.us || translations.en;
-
-  const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
-    .then((res) => res.text())
-    .catch((err) => ({
-      status: err.response.status,
-    }));
-
-  if (response.status >= 400 || result.asset_type !== 'PROJECT') {
+  if (response.status >= 400 || response.status_code >= 400 || result.asset_type !== 'PROJECT') {
     return {
       notFound: true,
     };
   }
+
+  const {
+    title, translations, description, preview,
+  } = result;
+  const difficulty = result.difficulty?.toLowerCase();
+  const defaultSlug = translations?.us || translations?.en;
+
+  const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
+    .then((res) => res.text());
 
   const ogUrl = {
     en: `/interactive-coding-tutorial/${difficulty}/${defaultSlug}`,
@@ -151,11 +148,11 @@ const ProjectSlug = ({ project, markdown }) => {
   const toast = useToast();
 
   useEffect(() => {
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`)
+    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
       .then(({ data }) => {
         let currentlocaleLang = data.translations[language];
         if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
-        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=EXERCISE`)
+        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?type=project`)
           .catch(() => {
             toast({
               title: t('alert-message:language-not-found', { currentLanguageLabel }),
@@ -171,7 +168,12 @@ const ProjectSlug = ({ project, markdown }) => {
     const alias = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/alias/redirect`);
     const aliasList = await alias.json();
     const redirectSlug = aliasList[slug] || slug;
-    const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
+    const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}?type=project`);
+
+    if (dataRedirect.status >= 400) {
+      router.push('/404');
+    }
+
     const redirectResults = await dataRedirect.json();
 
     const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));

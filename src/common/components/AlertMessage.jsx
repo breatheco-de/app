@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, useColorModeValue } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Text from './Text';
 import Icon from './Icon';
@@ -27,7 +27,7 @@ const AlertMessage = ({
       gridGap="16px"
     >
       <Icon icon={type} color={full ? '#000' : ''} props={{ full: true }} style={{ minWidth: '18px' }} width="18px" height="18px" />
-      <Text fontSize="15px" color={full ? 'black' : textColor} fontWeight="700" style={{ ...textStyle, margin: '0' }}>
+      <Text fontSize="15px" color={full ? 'black' : (textColor || useColorModeValue('black', 'white'))} fontWeight="700" style={{ ...textStyle, margin: '0' }}>
         {message}
       </Text>
     </Box>
@@ -49,7 +49,7 @@ AlertMessage.defaultProps = {
   style: {},
   full: false,
   textStyle: {},
-  textColor: 'white',
+  textColor: '',
 };
 
 export default AlertMessage;
