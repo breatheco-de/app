@@ -11,27 +11,15 @@ import { useState } from 'react';
 import Plx from 'react-plx';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
-import { getDataContentSlugs, getDataContentProps } from '../../utils/file';
+import { getDataContentProps } from '../../utils/file';
 import {
   avatars, parallax1, parallax2, parallax3, parallax4, parallax5, parallaxAvatars, parallaxAvatars2,
 } from '../../lib/landing-props';
 
-export const getStaticPaths = async ({ locales }) => {
-  const paths = getDataContentSlugs('public/locales/en/learn-to-code', locales);
-
-  return {
-    paths,
-    fallback: false,
-  };
-};
-
-export const getStaticProps = async ({ params, locale }) => {
-  const { slug } = params;
-  console.log('locale');
-
+export const getStaticProps = async ({ locale }) => {
   const data = getDataContentProps(
-    `public/locales/${locale}/learn-to-code`,
-    slug,
+    `public/locales/${locale}`,
+    'learn-to-code',
   );
 
   return {
@@ -67,7 +55,7 @@ const CustomTab = ({
 );
 
 const ShadowCard = ({ data, style, ...rest }) => (
-  <Box position="absolute" boxShadow="lg" {...rest} style={style} display="flex" flexDirection="column" borderRadius="8px" background="white" zIndex={0}>
+  <MotionBox position="absolute" boxShadow="lg" {...rest} style={style} display="flex" flexDirection="column" borderRadius="8px" background="white" zIndex={0} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} exit={{ opacity: 0 }}>
     <Box color="black" fontSize="15px" fontWeight="900" textAlign="center">
       {`${data.firstName} ${data.lastName}`}
     </Box>
@@ -77,12 +65,12 @@ const ShadowCard = ({ data, style, ...rest }) => (
     <Link href="#schedule" variant="default" fontSize="15px" fontWeight="700" letterSpacing="0.05em" textAlign="center">
       Schedule a mentoring session
     </Link>
-  </Box>
+  </MotionBox>
 );
 
 const CodingIntroduction = ({ data }) => {
   const featuredColors = useColorModeValue('featuredLight', 'featuredDark');
-  const fadeOutBackground = useColorModeValue('#EEF9FE', '#718096');
+  const fadeOutBackground = useColorModeValue('#EEF9FE', '#2D3748');
   const colors = useColorModeValue('#000', '#fff');
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [avatarIndex, setAvatarIndex] = useState(1);
@@ -170,7 +158,7 @@ const CodingIntroduction = ({ data }) => {
           )}
         </Box>
         <Box display="flex" py="20px" alignItems="center" justifyContent={{ base: 'center', md: 'start' }}>
-          <Box display="flex" flexDirection="column" flex={{ base: 0.6, md: 0.52 }} textAlign={{ base: 'center', md: 'left' }}>
+          <Box display="flex" flexDirection="column" flex={{ base: 1, md: 0.52 }} textAlign={{ base: 'center', md: 'left' }}>
             <Plx parallaxData={parallax1}>
               <Heading as="h2" size="14px" letterSpacing="0.05em" mb="10px" color="blue.default">
                 {data.students.title}
@@ -243,38 +231,40 @@ const CodingIntroduction = ({ data }) => {
           )}
         </Box>
       </Container>
-      <Box display="flex" p="8px 53px 0 53px" gridGap={51} background={`linear-gradient(360deg, ${fadeOutBackground} 54.09%, rgba(238, 249, 254, 0) 100%)`} alignItems="center" justifyContent={{ base: 'center', md: 'start' }}>
-        <Box position="relative" flex={0.52} height="562px">
-          <Plx
-            style={{
-              position: 'absolute', left: 0, top: 0, zIndex: 1,
-            }}
-            parallaxData={parallaxAvatars2}
-          >
-            <AnimatedAvatar src={avatars[6].picture} onClick={() => setAvatarIndex(0)} width="147px" height="147px" position="absolute" left="0" top="85px" alt={`${avatars[6].firstName}-${avatars[6].lastName}`} />
-            <AnimatedAvatar src={avatars[10].picture} onClick={() => setAvatarIndex(1)} style={{ border: '4px solid #0097CF' }} width="158px" height="158px" position="absolute" left="214px" top="142px" alt={`${avatars[10].firstName}-${avatars[10].lastName}`} zIndex={2} />
-          </Plx>
-          {/* <AnimatePresence></AnimatePresence> */}
-          {avatarIndex === 0 && (<ShadowCard index={0} data={avatars[6]} left="-40px" top="205px" width="228px" p="30px 10px 2px 10px" gridGap="2px" height="138px" style={{ scale: '0.9 !important' }} />)}
-          {avatarIndex === 1 && (<ShadowCard index={1} data={avatars[10]} left="168px" top="252px" width="258px" pt="60px" gridGap="10px" height="168px" />)}
-          <AnimatedAvatar src={avatars[3].picture} onClick={() => setAvatarIndex(2)} width="89px" height="89px" position="absolute" left="50px" bottom="136px" alt={`${avatars[3].firstName}-${avatars[3].lastName}`} />
-          {avatarIndex === 2 && (<ShadowCard index={2} data={avatars[3]} left="-10px" bottom="15px" width="218px" p="35px 10px 10px 10px" gridGap="2px" height="142px" />)}
-          <Plx
-            style={{
-              position: 'absolute', right: 0, top: 0, zIndex: 1,
-            }}
-            parallaxData={parallaxAvatars2}
-          >
-            <AnimatedAvatar src={avatars[5].picture} onClick={() => setAvatarIndex(3)} width="129px" height="129px" position="absolute" right="90px" top="59px" alt={`${avatars[5].firstName}-${avatars[5].lastName}`} />
-          </Plx>
-          <AnimatedAvatar src={avatars[7].picture} onClick={() => setAvatarIndex(4)} width="109px" height="109px" position="absolute" right="0" top="172px" alt={`${avatars[7].firstName}-${avatars[7].lastName}`} style={{ zIndex: avatarIndex === 3 ? 0 : 2 }} />
-          {avatarIndex === 3 && (<ShadowCard index={3} data={avatars[5]} right="48px" top="158px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" />)}
-          {avatarIndex === 4 && (<ShadowCard index={4} data={avatars[7]} right="-50px" top="252px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 1 }} />)}
-          <AnimatedAvatar src={avatars[8].picture} onClick={() => setAvatarIndex(5)} width="137px" height="137px" position="absolute" right="51px" bottom="127px" alt={`${avatars[8].firstName}-${avatars[8].lastName}`} style={{ zIndex: avatarIndex === 4 ? 0 : 1 }} />
-          {avatarIndex === 5 && (<ShadowCard index={5} data={avatars[8]} right="10px" bottom="15px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 0 }} />)}
-        </Box>
+      <Box display="flex" p={{ base: '8px 23px 0 23px', md: '8px 53px 0 53px' }} height="100%" gridGap={51} background={`linear-gradient(360deg, ${fadeOutBackground} 54.09%, rgba(238, 249, 254, 0) 100%)`} alignItems="center" justifyContent={{ base: 'center', md: 'start' }}>
+        {!isBelowTablet && (
+          <Box position="relative" flex={{ base: 1, md: 0.52 }} height={{ base: '350px', md: '562px' }}>
+            <Plx
+              style={{
+                position: 'absolute', left: 0, top: 0, zIndex: 1,
+              }}
+              parallaxData={parallaxAvatars2}
+            >
+              <AnimatedAvatar src={avatars[6].picture} onClick={() => setAvatarIndex(0)} width="147px" height="147px" position="absolute" left="0" top="85px" alt={`${avatars[6].firstName}-${avatars[6].lastName}`} />
+              <AnimatedAvatar src={avatars[10].picture} onClick={() => setAvatarIndex(1)} style={{ border: '4px solid #0097CF' }} width="158px" height="158px" position="absolute" left="214px" top="142px" alt={`${avatars[10].firstName}-${avatars[10].lastName}`} zIndex={2} />
+            </Plx>
+            {/* <AnimatePresence></AnimatePresence> */}
+            {avatarIndex === 0 && (<ShadowCard index={0} data={avatars[6]} left="-40px" top="205px" width="228px" p="30px 10px 2px 10px" gridGap="2px" height="138px" style={{ scale: '0.9 !important' }} />)}
+            {avatarIndex === 1 && (<ShadowCard index={1} data={avatars[10]} left="168px" top="252px" width="258px" pt="60px" gridGap="10px" height="168px" />)}
+            <AnimatedAvatar src={avatars[3].picture} onClick={() => setAvatarIndex(2)} width="89px" height="89px" position="absolute" left="50px" bottom="136px" alt={`${avatars[3].firstName}-${avatars[3].lastName}`} />
+            {avatarIndex === 2 && (<ShadowCard index={2} data={avatars[3]} left="-10px" bottom="15px" width="218px" p="35px 10px 10px 10px" gridGap="2px" height="142px" />)}
+            <Plx
+              style={{
+                position: 'absolute', right: 0, top: 0, zIndex: 1,
+              }}
+              parallaxData={parallaxAvatars2}
+            >
+              <AnimatedAvatar src={avatars[5].picture} onClick={() => setAvatarIndex(3)} width="129px" height="129px" position="absolute" right="90px" top="59px" alt={`${avatars[5].firstName}-${avatars[5].lastName}`} />
+            </Plx>
+            <AnimatedAvatar src={avatars[7].picture} onClick={() => setAvatarIndex(4)} width="109px" height="109px" position="absolute" right="0" top="172px" alt={`${avatars[7].firstName}-${avatars[7].lastName}`} style={{ zIndex: avatarIndex === 3 ? 0 : 2 }} />
+            {avatarIndex === 3 && (<ShadowCard index={3} data={avatars[5]} right="48px" top="158px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" />)}
+            {avatarIndex === 4 && (<ShadowCard index={4} data={avatars[7]} right="-50px" top="252px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 1 }} />)}
+            <AnimatedAvatar src={avatars[8].picture} onClick={() => setAvatarIndex(5)} width="137px" height="137px" position="absolute" right="51px" bottom="127px" alt={`${avatars[8].firstName}-${avatars[8].lastName}`} style={{ zIndex: avatarIndex === 4 ? 0 : 1 }} />
+            {avatarIndex === 5 && (<ShadowCard index={5} data={avatars[8]} right="10px" bottom="15px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 0 }} />)}
+          </Box>
+        )}
 
-        <Box display="flex" flexDirection="column" flex={{ base: 0.6, md: 0.32 }} textAlign={{ base: 'center', md: 'left' }}>
+        <Box display="flex" flexDirection="column" flex={{ base: 1, md: 0.32 }} textAlign={{ base: 'center', md: 'left' }}>
           <Plx parallaxData={parallax2}>
             <Heading as="h2" size="14px" mb="10px" letterSpacing="0.05em" color="blue.default">
               {data.mentors.title}
@@ -286,18 +276,20 @@ const CodingIntroduction = ({ data }) => {
             <AnimatedButton onClick={() => router.push(data.mentors.button.link)} mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
               {data.mentors.button.title}
             </AnimatedButton>
-            <Text fontSize="14px" fontWeight="700" letterSpacing="0.05em" mt="17px">
+            <Text display={{ base: 'none', md: 'inherit' }} fontSize="14px" fontWeight="700" letterSpacing="0.05em" mt="17px">
               {data.mentors.hint}
             </Text>
-            <Box display={{ base: 'none', sm: 'flex' }} position="relative" bottom="0" left="-110px">
-              <Icon icon="leftArrow" width="200px" height="39px" />
-            </Box>
+            {!isBelowTablet && (
+              <Box display={{ base: 'none', sm: 'flex' }} position="relative" bottom="0" left="-110px">
+                <Icon icon="leftArrow" width="200px" height="39px" />
+              </Box>
+            )}
           </Plx>
         </Box>
       </Box>
 
-      <Container maxW="container.xl" display="flex" py="24px" height="458px" alignItems="center" gridGap={51}>
-        <Box display="flex" flexDirection="column" gridGap="10px" flex={{ base: 0.6, md: 0.38 }} textAlign={{ base: 'center', md: 'left' }}>
+      <Container maxW="container.xl" height={{ base: '100%', md: '458px' }} display="flex" flexDirection={{ base: 'column', md: 'row' }} mt={{ base: '40px', md: 0 }} py="24px" alignItems="center" gridGap={51}>
+        <Box display="flex" flexDirection="column" gridGap="10px" flex={{ base: 1, md: 0.38 }} textAlign={{ base: 'center', md: 'left' }}>
           <Plx parallaxData={parallax3}>
             <Heading as="h2" size="14px" letterSpacing="0.05em" mb="8px" color="blue.default">
               {data.events.title}
@@ -312,27 +304,27 @@ const CodingIntroduction = ({ data }) => {
           </Plx>
         </Box>
 
-        <Box display="flex" position="relative" flexDirection="column" justifyContent="center" alignItems="center" gridGap="40px" flex={0.5} width="592px" height="100%">
-          <Box position="absolute" className="pulse-yellow" top="140px" left="0" background="yellow.default" p="14px" borderRadius="50px">
+        <Box display="flex" position="relative" flexDirection="column" justifyContent="center" alignItems="center" gridGap="40px" flex={0.5} width={{ base: '100%', md: '592px' }} height="100%">
+          <Box position="absolute" className="pulse-yellow" top="140px" left="0" background="yellow.default" p="14px" borderRadius="50px" filter={{ base: 'blur(4px)', md: 'blur(0px)' }}>
             <Icon icon="code" width="47px" height="47px" color="#fff" />
           </Box>
-          <Box position="absolute" className="pulse-green" top="100px" left="120px" background="success" p="8px" borderRadius="50px">
+          <Box position="absolute" className="pulse-green" top="100px" left="120px" background="success" p="8px" borderRadius="50px" filter={{ base: 'blur(4px)', md: 'blur(0px)' }}>
             <Icon icon="community" width="17px" height="17px" color="#fff" />
           </Box>
-          <Box position="absolute" className="pulse-green2" bottom="0px" left="90px" background="success" p="14px" borderRadius="50px">
+          <Box position="absolute" className="pulse-green2" bottom="0px" left="90px" background="success" p="14px" borderRadius="50px" filter={{ base: 'blur(4px)', md: 'blur(0px)' }}>
             <Icon icon="community" width="47px" height="47px" color="#fff" />
           </Box>
 
-          <Box position="absolute" className="pulse-green2" top="0px" right="90px" background="success" p="14px" borderRadius="50px">
+          <Box position="absolute" className="pulse-green2" top="0px" right="90px" background="success" p="14px" borderRadius="50px" filter={{ base: 'blur(4px)', md: 'blur(0px)' }}>
             <Icon icon="community" width="47px" height="47px" color="#fff" />
           </Box>
-          <Box position="absolute" className="pulse-green2" top="120px" right="40px" background="success" p="10px" borderRadius="50px">
+          <Box position="absolute" className="pulse-green2" top="120px" right="40px" background="success" p="10px" borderRadius="50px" filter={{ base: 'blur(4px)', md: 'blur(0px)' }}>
             <Icon icon="community" width="27px" height="27px" color="#fff" />
           </Box>
-          <Box position="absolute" className="pulse-yellow" top="160px" right="150px" background="yellow.default" p="6px" borderRadius="50px">
+          <Box position="absolute" className="pulse-yellow" top="160px" right="150px" background="yellow.default" p="6px" borderRadius="50px" filter={{ base: 'blur(4px)', md: 'blur(0px)' }}>
             <Icon icon="code" width="22px" height="22px" color="#fff" />
           </Box>
-          <Box position="absolute" className="pulse-yellow" bottom="40px" right="80px" background="yellow.default" p="14px" borderRadius="50px">
+          <Box position="absolute" className="pulse-yellow" bottom="40px" right="80px" background="yellow.default" p="14px" borderRadius="50px" filter={{ base: 'blur(4px)', md: 'blur(0px)' }}>
             <Icon icon="code" width="47px" height="47px" color="#fff" />
           </Box>
           <Box display="flex" p="10px" w="236px" alignItems="center" gridGap="8.5px" borderRadius="50px" background={featuredColors} border="2px solid" borderColor="blue.default" zIndex={5}>
@@ -379,14 +371,13 @@ const CodingIntroduction = ({ data }) => {
         </Box>
       </Container>
 
-      <Box maxW="container.xl" m="3rem 0 3rem 0" height="auto" position="relative" alignItems="center" gridGap={51}>
-        <Box position="absolute" top="-90px" left="340px">
+      <Box maxW="container.xl" m="3rem 0 3rem 0" display="flex" flexDirection={{ base: 'column', md: 'row' }} height="auto" position="relative" alignItems="center" gridGap={51}>
+        <Box display={{ base: 'none', md: 'inherit' }} position="absolute" top="-90px" left="340px">
           <Icon icon="curvedLine" width="80px" height="654px" />
         </Box>
         <Plx parallaxData={parallax4}>
-
-          <Tabs index={currentTabIndex} variant="unstyled" display="flex" height="528px" alignItems="center">
-            <TabList position="relative" w="400px" flex={0.6} width="592px" height="100%">
+          <Tabs index={currentTabIndex} variant="unstyled" display="flex" flexDirection={{ base: 'column', md: 'row' }} height={{ base: '100%', md: '528px' }} mt={{ base: '40px', md: 0 }} alignItems="center">
+            <TabList position="relative" w="400px" flex={0.6} display={{ base: 'none', md: 'inherit' }} width="592px" height="100%">
               {data?.previewModules?.list[0]?.title && (
                 <CustomTab onClick={() => setCurrentTabIndex(0)} top="20px" left="250px">
                   {data?.previewModules?.list[0]?.title}
@@ -417,7 +408,7 @@ const CodingIntroduction = ({ data }) => {
             <TabPanels flex={{ base: 0.6, md: 0.45 }}>
               {/* flex={{ base: 0.6, md: 0.45 }} */}
               {data?.previewModules?.list?.map((module) => (
-                <TabPanel key={module.title} display="flex" flexDirection="column" gridGap="20px" style={{ flex: 0.5 }} textAlign={{ base: 'center', md: 'left' }}>
+                <TabPanel key={module.title} display="flex" flexDirection="column" alignItems={{ base: 'center', md: 'inherit' }} gridGap="20px" style={{ flex: 0.5 }} textAlign={{ base: 'center', md: 'left' }}>
                   <Heading as="h2" size="14px" letterSpacing="0.05em" color="blue.default">
                     {data?.previewModules.title}
                   </Heading>
@@ -447,7 +438,7 @@ const CodingIntroduction = ({ data }) => {
         </Heading>
         <Plx parallaxData={parallax5}>
 
-          <Box display="flex" flexDirection="row" gridGap="21px">
+          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="21px">
             {data?.pricing?.list.map((item) => (
               <Box key={item.title} display="flex" flexDirection="column" justifyContent="space-between" background={item.type === 'pro' ? 'blue.default' : 'blue.light'} color={item.type === 'pro' ? 'white' : 'black'} border="1px solid" borderColor="#0097CD" p="23px" borderRadius="16px" w="300px">
                 <Box width="100%">
