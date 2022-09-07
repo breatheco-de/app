@@ -2,7 +2,7 @@
     "log": "Registro Mentorías",
     "with": "con",
     "mentorshipSession": "Sesión de Mentoría",
-    "invalidDate": "Fecha inválida",
+    "invalidDate": "La sesión nunca inició",
     "events": "Eventos",
     "noEvents": "No hay eventos en esta sesión",
     "billed": "Tiempo Facturado",

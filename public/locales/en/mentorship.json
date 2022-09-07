@@ -2,7 +2,7 @@
     "log": "Mentorship Log",
     "with": "with",
     "mentorshipSession": "Mentorship Session",
-    "invalidDate": "Invalid Date",
+    "invalidDate": "Session never started",
     "events": "Events",
     "noEvents": "No events in this session",
     "billed": "Billed Time",
