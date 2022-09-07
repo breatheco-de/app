@@ -1,5 +1,7 @@
 {
-  "title": "Meet up",
+  "title": "Coding introduction",
+  "highlight": "Meet up",
+  "__highlight-options__": "Meet up / Gathering / Party / Collect / Chapter",
   "description": "Learning to code with a group of people that meets every other day",
   "callToAction": {
     "title": "Join the next cohort",

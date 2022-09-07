@@ -3,17 +3,18 @@ import {
   Avatar, Box, Button, Container, Link, Tab, TabList, TabPanel, TabPanels, Tabs,
   Text, useColorModeValue, useMediaQuery,
 } from '@chakra-ui/react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Plx from 'react-plx';
+import axios from 'axios';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import { getDataContentProps } from '../../utils/file';
 import {
-  avatars, parallax1, parallax2, parallax3, parallax4, parallax5, parallaxAvatars, parallaxAvatars2,
+  avatars, parallax4, parallax5, parallaxAvatars, parallaxAvatars2,
 } from '../../lib/landing-props';
 
 export const getStaticProps = async ({ locale }) => {
@@ -36,7 +37,7 @@ const MotionAvatar = motion(Avatar);
 const AnimatedButton = ({
   children, onClick, toUppercase, rest,
 }) => (
-  <MotionButton whileHover={{ scale: 1.05 }} whileTap={{ scale: 1 }} variant="default" onClick={onClick} {...rest} fontSize="13px" m="25px 0" width="fit-content" letterSpacing="0.05em" textTransform={toUppercase ? 'uppercase' : ''}>
+  <MotionButton whileHover={{ scale: 1.05 }} whileTap={{ scale: 1 }} variant="default" onClick={onClick} {...rest} fontSize="13px" m="20px 0" width="fit-content" letterSpacing="0.05em" textTransform={toUppercase ? 'uppercase' : ''}>
     {children}
   </MotionButton>
 );
@@ -54,13 +55,13 @@ const CustomTab = ({
   </Tab>
 );
 
-const ShadowCard = ({ data, style, ...rest }) => (
-  <MotionBox position="absolute" boxShadow="lg" {...rest} style={style} display="flex" flexDirection="column" borderRadius="8px" background="white" zIndex={0} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} exit={{ opacity: 0 }}>
-    <Box color="black" fontSize="15px" fontWeight="900" textAlign="center">
-      {`${data.firstName} ${data.lastName}`}
-    </Box>
+const ShadowCard = ({ data, style, index, ...rest }) => (
+  <MotionBox position="absolute" boxShadow="lg" {...rest} style={style} display="flex" flexDirection="column" borderRadius="8px" background="white" zIndex={0} initial="hidden" animate="visible" exit="hidden" layoutId={`${index}-${data.fullNameSlug}`} transition={{ duration: 0.4 }}>
+    <MotionBox color="black" fontSize="15px" fontWeight="900" textAlign="center">
+      {data.fullName}
+    </MotionBox>
     <Box color="black" fontSize="15px" fontWeight="400" textAlign="center" letterSpacing="0.05em">
-      {data.workPosition || 'Ceo @ Globant'}
+      {data?.workPosition || 'Ceo @ Globant'}
     </Box>
     <Link href="#schedule" variant="default" fontSize="15px" fontWeight="700" letterSpacing="0.05em" textAlign="center">
       Schedule a mentoring session
@@ -73,9 +74,29 @@ const CodingIntroduction = ({ data }) => {
   const fadeOutBackground = useColorModeValue('#EEF9FE', '#2D3748');
   const colors = useColorModeValue('#000', '#fff');
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
+  const [users, setUsers] = useState(null);
   const [avatarIndex, setAvatarIndex] = useState(1);
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const router = useRouter();
+
+  useEffect(() => {
+    axios.get(`${process.env.BREATHECODE_HOST}/v1/admissions/public/cohort/user?syllabus=coding-introduction&roles=TEACHER,ASSISTANT`)
+      .then((res) => {
+        const filterWithImages = res.data.filter(
+          (l) => l.user.profile && l.user.profile?.avatar_url,
+        );
+        return setUsers(filterWithImages);
+      })
+      .catch(() => {});
+  }, []);
+
+  const getUser = (user) => {
+    const fullName = `${user?.first_name} ${user?.last_name}`;
+    const fullNameSlug = `${user?.first_name}-${user?.last_name}`;
+    const avatarUrl = user?.profile?.avatar_url;
+
+    return { fullName, fullNameSlug, avatarUrl };
+  };
 
   return (
     <Box pt="3rem">
@@ -84,19 +105,21 @@ const CodingIntroduction = ({ data }) => {
         <Box display="flex">
           <Box flex={1}>
             <Heading as="h1" size="xl" fontWeight="700">
-              Coding Introduction
-              <MotionBox
-                as="strong"
-                className="highlighted box"
-                transition={{ duration: 3 }}
-                animate={{
-                  color: [colors, '#0097CD', colors, '#0097CD', colors, colors],
-                }}
-                margin="0 0 0 10px"
-                display={{ base: 'none', sm: 'initial' }}
-              >
-                {data.title}
-              </MotionBox>
+              {data?.title}
+              {data?.highlight && (
+                <MotionBox
+                  as="strong"
+                  className="highlighted box"
+                  transition={{ duration: 3 }}
+                  animate={{
+                    color: [colors, '#0097CD', colors, '#0097CD', colors, colors],
+                  }}
+                  margin="0 0 0 10px"
+                  display={{ base: 'none', sm: 'initial' }}
+                >
+                  {data.highlight}
+                </MotionBox>
+              )}
             </Heading>
             <Box as="strong" className="highlighted" fontSize="35px" display={{ base: 'initial', sm: 'none' }}>
               {data.title}
@@ -125,20 +148,22 @@ const CodingIntroduction = ({ data }) => {
             display={{ base: 'none', md: 'initial' }}
             flex={0.5}
           >
-            <MotionBox
-              whileHover={{ scale: 1.3 }}
-              position="absolute"
-              left="85px"
-              top="85px"
-              borderRadius="50px"
-            >
-              <Avatar
-                width="82px"
-                height="82px"
-                style={{ userSelect: 'none' }}
-                src={avatars[3].picture}
-              />
-            </MotionBox>
+            {users && (
+              <MotionBox
+                whileHover={{ scale: 1.3 }}
+                position="absolute"
+                left="85px"
+                top="85px"
+                borderRadius="50px"
+              >
+                <Avatar
+                  width="82px"
+                  height="82px"
+                  style={{ userSelect: 'none' }}
+                  src={getUser(users[6]?.user).avatarUrl}
+                />
+              </MotionBox>
+            )}
           </Box>
         </Box>
         <Box p="30px 0">
@@ -159,18 +184,16 @@ const CodingIntroduction = ({ data }) => {
         </Box>
         <Box display="flex" py="20px" alignItems="center" justifyContent={{ base: 'center', md: 'start' }}>
           <Box display="flex" flexDirection="column" flex={{ base: 1, md: 0.52 }} textAlign={{ base: 'center', md: 'left' }}>
-            <Plx parallaxData={parallax1}>
-              <Heading as="h2" size="14px" letterSpacing="0.05em" mb="10px" color="blue.default">
-                {data.students.title}
-              </Heading>
-              <Text fontSize="26px" fontWeight="700" mb="10px" lineHeight="30px">
-                {data.students.subTitle}
-              </Text>
-              <Text dangerouslySetInnerHTML={{ __html: data.students.description }} fontSize="14px" fontWeight="400" lineHeight="24px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')} />
-              <AnimatedButton onClick={() => router.push(data.students.button.link)} mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
-                {data.students.button.title}
-              </AnimatedButton>
-            </Plx>
+            <Heading as="h2" size="14px" letterSpacing="0.05em" mb="10px" color="blue.default">
+              {data.students.title}
+            </Heading>
+            <Text fontSize="26px" fontWeight="700" mb="10px" lineHeight="30px">
+              {data.students.subTitle}
+            </Text>
+            <Text dangerouslySetInnerHTML={{ __html: data.students.description }} fontSize="14px" fontWeight="400" lineHeight="24px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')} />
+            <AnimatedButton onClick={() => router.push(data.students.button.link)} mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
+              {data.students.button.title}
+            </AnimatedButton>
           </Box>
           {/* List of images */}
           {!isBelowTablet && (
@@ -232,7 +255,7 @@ const CodingIntroduction = ({ data }) => {
         </Box>
       </Container>
       <Box display="flex" p={{ base: '8px 23px 0 23px', md: '8px 53px 0 53px' }} height="100%" gridGap={51} background={`linear-gradient(360deg, ${fadeOutBackground} 54.09%, rgba(238, 249, 254, 0) 100%)`} alignItems="center" justifyContent={{ base: 'center', md: 'start' }}>
-        {!isBelowTablet && (
+        {!isBelowTablet && users && (
           <Box position="relative" flex={{ base: 1, md: 0.52 }} height={{ base: '350px', md: '562px' }}>
             <Plx
               style={{
@@ -240,68 +263,66 @@ const CodingIntroduction = ({ data }) => {
               }}
               parallaxData={parallaxAvatars2}
             >
-              <AnimatedAvatar src={avatars[6].picture} onClick={() => setAvatarIndex(0)} width="147px" height="147px" position="absolute" left="0" top="85px" alt={`${avatars[6].firstName}-${avatars[6].lastName}`} />
-              <AnimatedAvatar src={avatars[10].picture} onClick={() => setAvatarIndex(1)} style={{ border: '4px solid #0097CF' }} width="158px" height="158px" position="absolute" left="214px" top="142px" alt={`${avatars[10].firstName}-${avatars[10].lastName}`} zIndex={2} />
+              <AnimatedAvatar src={getUser(users[9]?.user).avatarUrl} onClick={() => setAvatarIndex(0)} width="147px" height="147px" position="absolute" left="0" top="85px" alt={getUser(users[9]?.user).fullNameSlug} />
+              <AnimatedAvatar src={getUser(users[10]?.user).avatarUrl} onClick={() => setAvatarIndex(1)} style={{ border: '4px solid #0097CF' }} width="158px" height="158px" position="absolute" left="214px" top="142px" alt={getUser(users[10]?.user).fullNameSlug} zIndex={2} />
             </Plx>
-            {/* <AnimatePresence></AnimatePresence> */}
-            {avatarIndex === 0 && (<ShadowCard index={0} data={avatars[6]} left="-40px" top="205px" width="228px" p="30px 10px 2px 10px" gridGap="2px" height="138px" style={{ scale: '0.9 !important' }} />)}
-            {avatarIndex === 1 && (<ShadowCard index={1} data={avatars[10]} left="168px" top="252px" width="258px" pt="60px" gridGap="10px" height="168px" />)}
-            <AnimatedAvatar src={avatars[3].picture} onClick={() => setAvatarIndex(2)} width="89px" height="89px" position="absolute" left="50px" bottom="136px" alt={`${avatars[3].firstName}-${avatars[3].lastName}`} />
-            {avatarIndex === 2 && (<ShadowCard index={2} data={avatars[3]} left="-10px" bottom="15px" width="218px" p="35px 10px 10px 10px" gridGap="2px" height="142px" />)}
+            <AnimatedAvatar src={getUser(users[3]?.user).avatarUrl} onClick={() => setAvatarIndex(2)} width="89px" height="89px" position="absolute" left="50px" bottom="136px" alt={getUser(users[3]?.user).fullNameSlug} />
             <Plx
               style={{
                 position: 'absolute', right: 0, top: 0, zIndex: 1,
               }}
               parallaxData={parallaxAvatars2}
             >
-              <AnimatedAvatar src={avatars[5].picture} onClick={() => setAvatarIndex(3)} width="129px" height="129px" position="absolute" right="90px" top="59px" alt={`${avatars[5].firstName}-${avatars[5].lastName}`} />
+              <AnimatedAvatar src={getUser(users[5]?.user).avatarUrl} onClick={() => setAvatarIndex(3)} width="129px" height="129px" position="absolute" right="90px" top="59px" alt={getUser(users[5]?.user).fullNameSlug} />
             </Plx>
-            <AnimatedAvatar src={avatars[7].picture} onClick={() => setAvatarIndex(4)} width="109px" height="109px" position="absolute" right="0" top="172px" alt={`${avatars[7].firstName}-${avatars[7].lastName}`} style={{ zIndex: avatarIndex === 3 ? 0 : 2 }} />
-            {avatarIndex === 3 && (<ShadowCard index={3} data={avatars[5]} right="48px" top="158px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" />)}
-            {avatarIndex === 4 && (<ShadowCard index={4} data={avatars[7]} right="-50px" top="252px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 1 }} />)}
-            <AnimatedAvatar src={avatars[8].picture} onClick={() => setAvatarIndex(5)} width="137px" height="137px" position="absolute" right="51px" bottom="127px" alt={`${avatars[8].firstName}-${avatars[8].lastName}`} style={{ zIndex: avatarIndex === 4 ? 0 : 1 }} />
-            {avatarIndex === 5 && (<ShadowCard index={5} data={avatars[8]} right="10px" bottom="15px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 0 }} />)}
+            <AnimatedAvatar src={getUser(users[7]?.user).avatarUrl} onClick={() => setAvatarIndex(4)} width="109px" height="109px" position="absolute" right="0" top="172px" alt={getUser(users[7]?.user).fullNameSlug} style={{ zIndex: avatarIndex === 3 ? 0 : 2 }} />
+            <AnimatedAvatar src={getUser(users[8]?.user).avatarUrl} onClick={() => setAvatarIndex(5)} width="137px" height="137px" position="absolute" right="51px" bottom="127px" alt={getUser(users[8]?.user).fullNameSlug} style={{ zIndex: avatarIndex === 4 ? 0 : 1 }} />
+
+            <AnimatePresence>
+              {avatarIndex === 0 && (<ShadowCard index={1} data={getUser(users[9]?.user)} left="-40px" top="205px" width="228px" p="30px 10px 2px 10px" gridGap="2px" height="138px" />)}
+              {avatarIndex === 1 && (<ShadowCard index={2} data={getUser(users[10]?.user)} left="168px" top="252px" width="258px" pt="60px" gridGap="10px" height="168px" />)}
+              {avatarIndex === 2 && (<ShadowCard index={3} data={getUser(users[3]?.user)} left="-10px" bottom="15px" width="218px" p="35px 10px 10px 10px" gridGap="2px" height="142px" />)}
+              {avatarIndex === 3 && (<ShadowCard index={4} data={getUser(users[5]?.user)} right="48px" top="158px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" />)}
+              {avatarIndex === 4 && (<ShadowCard index={5} data={getUser(users[7]?.user)} right="-50px" top="252px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 1 }} />)}
+              {avatarIndex === 5 && (<ShadowCard index={6} data={getUser(users[8]?.user)} right="10px" bottom="15px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 0 }} />)}
+            </AnimatePresence>
           </Box>
         )}
 
         <Box display="flex" flexDirection="column" flex={{ base: 1, md: 0.32 }} textAlign={{ base: 'center', md: 'left' }}>
-          <Plx parallaxData={parallax2}>
-            <Heading as="h2" size="14px" mb="10px" letterSpacing="0.05em" color="blue.default">
-              {data.mentors.title}
-            </Heading>
-            <Text fontSize="26px" fontWeight="700" lineHeight="30px" mb="10px">
-              {data.mentors.subTitle}
-            </Text>
-            <Text dangerouslySetInnerHTML={{ __html: data.mentors.description }} fontSize="14px" fontWeight="400" lineHeight="24px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')} />
-            <AnimatedButton onClick={() => router.push(data.mentors.button.link)} mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
-              {data.mentors.button.title}
-            </AnimatedButton>
-            <Text display={{ base: 'none', md: 'inherit' }} fontSize="14px" fontWeight="700" letterSpacing="0.05em" mt="17px">
-              {data.mentors.hint}
-            </Text>
-            {!isBelowTablet && (
-              <Box display={{ base: 'none', sm: 'flex' }} position="relative" bottom="0" left="-110px">
-                <Icon icon="leftArrow" width="200px" height="39px" />
-              </Box>
-            )}
-          </Plx>
+          <Heading as="h2" size="14px" mb="10px" letterSpacing="0.05em" color="blue.default">
+            {data.mentors.title}
+          </Heading>
+          <Text fontSize="26px" fontWeight="700" lineHeight="30px" mb="10px">
+            {data.mentors.subTitle}
+          </Text>
+          <Text dangerouslySetInnerHTML={{ __html: data.mentors.description }} fontSize="14px" fontWeight="400" lineHeight="24px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')} />
+          <AnimatedButton onClick={() => router.push(data.mentors.button.link)} mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
+            {data.mentors.button.title}
+          </AnimatedButton>
+          <Text display={{ base: 'none', md: 'inherit' }} fontSize="14px" fontWeight="700" letterSpacing="0.05em" mt="17px">
+            {data.mentors.hint}
+          </Text>
+          {!isBelowTablet && (
+            <Box display={{ base: 'none', sm: 'flex' }} position="relative" bottom="0" left="-110px">
+              <Icon icon="leftArrow" width="200px" height="39px" />
+            </Box>
+          )}
         </Box>
       </Box>
 
       <Container maxW="container.xl" height={{ base: '100%', md: '458px' }} display="flex" flexDirection={{ base: 'column', md: 'row' }} mt={{ base: '40px', md: 0 }} py="24px" alignItems="center" gridGap={51}>
         <Box display="flex" flexDirection="column" gridGap="10px" flex={{ base: 1, md: 0.38 }} textAlign={{ base: 'center', md: 'left' }}>
-          <Plx parallaxData={parallax3}>
-            <Heading as="h2" size="14px" letterSpacing="0.05em" mb="8px" color="blue.default">
-              {data.events.title}
-            </Heading>
-            <Text fontSize="26px" fontWeight="700" lineHeight="30px">
-              {data.events.subTitle}
-            </Text>
-            <Text dangerouslySetInnerHTML={{ __html: data.events.description }} fontSize="14px" fontWeight="400" lineHeight="24px" mt="10px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')} />
-            <AnimatedButton onClick={() => router.push(data.events.button.link)} mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
-              {data.events.button.title}
-            </AnimatedButton>
-          </Plx>
+          <Heading as="h2" size="14px" letterSpacing="0.05em" mb="8px" color="blue.default">
+            {data.events.title}
+          </Heading>
+          <Text fontSize="26px" fontWeight="700" lineHeight="30px">
+            {data.events.subTitle}
+          </Text>
+          <Text dangerouslySetInnerHTML={{ __html: data.events.description }} fontSize="14px" fontWeight="400" lineHeight="24px" mt="10px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')} />
+          <AnimatedButton onClick={() => router.push(data.events.button.link)} alignSelf={{ base: 'center', md: 'start' }}>
+            {data.events.button.title}
+          </AnimatedButton>
         </Box>
 
         <Box display="flex" position="relative" flexDirection="column" justifyContent="center" alignItems="center" gridGap="40px" flex={0.5} width={{ base: '100%', md: '592px' }} height="100%">
@@ -529,6 +550,7 @@ CustomTab.propTypes = {
 ShadowCard.propTypes = {
   data: PropTypes.objectOf(PropTypes.any),
   style: PropTypes.objectOf(PropTypes.any),
+  index: PropTypes.number,
 };
 
 CustomTab.defaultProps = {
@@ -559,6 +581,7 @@ AnimatedAvatar.defaultProps = {
 ShadowCard.defaultProps = {
   data: {},
   style: {},
+  index: 0,
 };
 
 export default CodingIntroduction;

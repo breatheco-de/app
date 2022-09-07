@@ -1,5 +1,7 @@
 {
-  "title": "Reunete",
+  "title": "Introducción a la codificación",
+  "highlight": "en vivo",
+  "__highlight-options__": "con los demás | colaborando | en vivo",
   "description": "Aprendiendo a programar con un grupo de personas que se reúnen cada dos días",
   "callToAction": {
     "title": "Únete a la proxima cohorte",
