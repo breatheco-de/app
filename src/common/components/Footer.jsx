@@ -172,7 +172,7 @@ const Footer = () => {
             </Heading>
             <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
               {t('company.items', {}, { returnObjects: true }).map((item) => (
-                <Box as="li" key={`${item.label}-${item.href}`} role="presentation" display="flex">
+                <Box as="li" key={`${item.label}-${item.href}`} pb="6px" role="presentation" display="flex">
                   <NextChakraLink href={item.href} fontSize="0.875rem">
                     {item.label.toUpperCase()}
                   </NextChakraLink>
@@ -197,7 +197,7 @@ const Footer = () => {
             </Heading>
             <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
               {t('learning.items', {}, { returnObjects: true }).map((item) => (
-                <Box as="li" key={`${item.label}-${item.href}`} role="presentation" display="flex">
+                <Box as="li" key={`${item.label}-${item.href}`} pb="6px" role="presentation" display="flex">
                   <NextChakraLink href={item.href} fontSize="0.875rem">
                     {item.label.toUpperCase()}
                   </NextChakraLink>
@@ -220,7 +220,7 @@ const Footer = () => {
             </Heading>
             <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
               {t('community.items', {}, { returnObjects: true }).map((item) => (
-                <Box as="li" key={`${item.label}-${item.href}`} role="presentation" display="flex">
+                <Box as="li" key={`${item.label}-${item.href}`} pb="6px" role="presentation" display="flex">
                   <NextChakraLink href={item.href} fontSize="0.875rem">
                     {item.label.toUpperCase()}
                   </NextChakraLink>
@@ -243,7 +243,7 @@ const Footer = () => {
             </Heading>
             <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
               {t('iconogram', {}, { returnObjects: true }).map((item) => (
-                <Box key={`${item.title}-${item.href}`} as="li" role="presentation" display="flex">
+                <Box key={`${item.title}-${item.href}`} as="li" pb="6px" role="presentation" display="flex">
                   <NextChakraLink href={item.href} fontSize="0.875rem">
                     {item.title.toUpperCase()}
                   </NextChakraLink>
@@ -273,7 +273,7 @@ const Footer = () => {
               </Heading>
               <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
                 {t('learning.items', {}, { returnObjects: true }).map((item) => (
-                  <Box key={`${item.label}-${item.href}`} as="li" role="presentation" display="flex">
+                  <Box key={`${item.label}-${item.href}`} as="li" pb="6px" role="presentation" display="flex">
                     <NextChakraLink href={item.href} fontSize="0.875rem">
                       {item.label.toUpperCase()}
                     </NextChakraLink>
@@ -287,7 +287,7 @@ const Footer = () => {
               </Heading>
               <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
                 {t('community.items', {}, { returnObjects: true }).map((item) => (
-                  <Box key={`${item.label}-${item.href}`} as="li" role="presentation" display="flex">
+                  <Box key={`${item.label}-${item.href}`} as="li" pb="6px" role="presentation" display="flex">
                     <NextChakraLink href={item.href} fontSize="0.875rem">
                       {item.label.toUpperCase()}
                     </NextChakraLink>
