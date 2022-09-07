@@ -3,7 +3,7 @@
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { compiler } from 'markdown-to-jsx';
-import { Box, Link } from '@chakra-ui/react';
+import { Box, Checkbox, Link } from '@chakra-ui/react';
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
 import jsx from 'react-syntax-highlighter/dist/cjs/languages/prism/jsx';
 import js from 'react-syntax-highlighter/dist/cjs/languages/prism/javascript';
@@ -127,6 +127,15 @@ const MDHeading = ({ children, id, tagType }) => {
     >
       {children}
     </Heading>
+  );
+};
+
+const MDCheckbox = ({ children }) => {
+  const stringg = 'checked';
+  return (
+    <Checkbox>
+      {`${children} - ${stringg}`}
+    </Checkbox>
   );
 };
 
@@ -354,6 +363,10 @@ BeforeAfter.propTypes = {
 };
 
 MDTable.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+MDCheckbox.propTypes = {
   children: PropTypes.node.isRequired,
 };
 

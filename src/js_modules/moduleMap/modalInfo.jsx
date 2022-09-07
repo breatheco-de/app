@@ -14,6 +14,7 @@ const ModalInfo = ({
   isOpen, onClose, actionHandler, rejectHandler, forceHandler, disableHandler, title, description,
   teacherFeedback, linkInfo, linkText, link, handlerText, closeText, cancelColorButton,
   handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
+  htmlDescription,
 }) => {
   const { t } = useTranslation('dashboard');
   const [githubUrl, setGithubUrl] = useState(link);
@@ -58,14 +59,27 @@ const ModalInfo = ({
 
           {!forceHandler && <ModalCloseButton />}
           <ModalBody>
-            <Text
-              size="l"
-              fontWeight="400"
-              color={commonTextColor}
-              margin="10px 0 0 0"
-            >
-              {description}
-            </Text>
+            {description && (
+              <Text
+                size="l"
+                fontWeight="400"
+                color={commonTextColor}
+                margin="10px 0 0 0"
+              >
+                {description}
+              </Text>
+            )}
+            {htmlDescription && (
+              <Text
+                size="l"
+                fontWeight="400"
+                color={commonTextColor}
+                margin="10px 0 0 0"
+                dangerouslySetInnerHTML={{
+                  __html: htmlDescription,
+                }}
+              />
+            )}
             {teacherFeedback && (
               <Box margin="15px 0 0 0" padding="12px 16px" background={commonHighlightColor} display="flex" flexDirection="column" gridGap="0px">
                 <Text size="l" fontWeight="700" color={useColorModeValue('gray.800', 'gray.light')}>
@@ -140,13 +154,11 @@ const ModalInfo = ({
                 </Formik>
 
               </Box>
-            ) : (
+            ) : linkInfo && (
               <Box padding="20px 0">
-                {linkInfo && (
-                  <Text size="l" fontWeight="bold" color={commonTextColor}>
-                    {linkInfo}
-                  </Text>
-                )}
+                <Text size="l" fontWeight="bold" color={commonTextColor}>
+                  {linkInfo}
+                </Text>
                 <Link href={link} color={useColorModeValue('blue.default', 'blue.300')} target="_blank" rel="noopener noreferrer">
                   {linkText || link}
                 </Link>
@@ -164,7 +176,7 @@ const ModalInfo = ({
                     onClick={actionHandler}
                     textTransform="uppercase"
                   >
-                    {closeText}
+                    {closeText || t('common:close')}
                   </Button>
                   {!disableHandler && (
                     <Button
@@ -189,7 +201,7 @@ const ModalInfo = ({
                     onClick={() => rejectFunction()}
                     textTransform="uppercase"
                   >
-                    {closeText}
+                    {closeText || t('common:close')}
                   </Button>
                   {!disableHandler && (
                     <Button
@@ -274,6 +286,7 @@ ModalInfo.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.any),
   type: PropTypes.string,
   closeButtonVariant: PropTypes.string,
+  htmlDescription: PropTypes.string,
 };
 
 ModalInfo.defaultProps = {
@@ -288,7 +301,7 @@ ModalInfo.defaultProps = {
   linkText: '',
   link: '',
   handlerText: 'Remove delivery',
-  closeText: 'Close',
+  closeText: '',
   handlerColorButton: 'blue',
   cancelColorButton: 'red',
   rejectData: {},
@@ -296,6 +309,7 @@ ModalInfo.defaultProps = {
   currentTask: {},
   type: 'default',
   closeButtonVariant: 'danger',
+  htmlDescription: '',
 };
 
 export default memo(ModalInfo);

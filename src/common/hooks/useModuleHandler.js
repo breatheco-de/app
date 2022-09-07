@@ -137,7 +137,7 @@ export const nestAssignments = ({
   );
   const currentDate = new Date();
 
-  const updatedRead = read.map((el) => ({
+  const updatedRead = read?.map((el) => ({
     ...el,
     id,
     label,
@@ -150,7 +150,7 @@ export const nestAssignments = ({
     task_type: 'LESSON',
   })).sort((a, b) => a.position - b.position);
 
-  const updatedPractice = practice.map((el) => ({
+  const updatedPractice = practice?.map((el) => ({
     ...el,
     id,
     label,
@@ -163,7 +163,7 @@ export const nestAssignments = ({
     task_type: 'EXERCISE',
   })).sort((a, b) => a.position - b.position);
 
-  const updatedCode = code.map((el) => ({
+  const updatedCode = code?.map((el) => ({
     ...el,
     id,
     label,
@@ -178,7 +178,7 @@ export const nestAssignments = ({
     task_type: 'PROJECT',
   })).sort((a, b) => a.position - b.position);
 
-  const updatedAnswer = answer.map((el) => ({
+  const updatedAnswer = answer?.map((el) => ({
     ...el,
     id,
     label,

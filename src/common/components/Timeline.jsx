@@ -53,7 +53,7 @@ const Timeline = ({
     }
   };
 
-  const clickedPath = `/syllabus/${cohortSlug}/${clickedState?.type?.toLowerCase()}/${clickedState?.slug}`;
+  const clickedPath = clickedState?.target === 'blank' ? clickedState?.url : `https://4geeks.com/syllabus/${cohortSlug}/${clickedState?.type?.toLowerCase()}/${clickedState?.slug}`;
 
   return (
     <>
@@ -63,12 +63,16 @@ const Timeline = ({
         title={t('dashboard:modules.target-blank-title')}
         isReadonly
         description={t('dashboard:modules.target-blank-msg', { title: clickedState?.title })}
-        link={`https://4geeks.com${clickedPath}`}
+        link={clickedPath}
         handlerText={t('common:open')}
         closeText={t('common:close')}
         closeButtonVariant="outline"
         actionHandler={(e) => {
-          onClickAssignment(e, clickedState);
+          if (clickedState.target === 'blank') {
+            window.open(clickedState.url, '_blank');
+          } else {
+            onClickAssignment(e, clickedState);
+          }
           setOpenTargetBlankModal(false);
         }}
       />

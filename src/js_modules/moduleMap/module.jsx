@@ -27,7 +27,7 @@ const Module = ({
   const router = useRouter();
 
   const {
-    type, title, icon, target,
+    type, title, icon, target, url,
   } = data;
 
   const pathConnector = {
@@ -36,7 +36,17 @@ const Module = ({
     project: `${router.locale === 'en' ? '4geeks.com/project' : `4geeks.com/${router.locale}/project`}`,
     quiz: 'https://assessment.4geeks.com/quiz',
   };
-  const shareLink = currentTask ? `${pathConnector[currentTask?.task_type?.toLowerCase()]}/${currentTask.associated_slug}` : '';
+
+  const shareLink = () => {
+    if (currentTask) {
+      if (target?.toLowerCase() === 'blank') {
+        return url;
+      }
+      return `${pathConnector[currentTask?.task_type?.toLowerCase()]}/${currentTask.associated_slug}`;
+    }
+    return '';
+  };
+
   const shareSocialMessage = {
     en: `I just finished coding ${currentTask?.title} at 4geeks.com`,
     es: `Acabo de terminar de programar ${currentTask?.title} en 4geeks.com`,
@@ -46,14 +56,15 @@ const Module = ({
     {
       name: 'twitter',
       label: 'Twitter',
-      href: `https://twitter.com/share?url=&text=${shareSocialMessage[router.locale]} %23100DaysOfCode%0A%0A${shareLink}`,
+      href: `https://twitter.com/share?url=&text=${encodeURIComponent(shareSocialMessage[router.locale])} %23100DaysOfCode%0A%0A${shareLink()}`,
       color: '#1DA1F2',
     },
     {
       name: 'linkedin',
       label: 'LinkedIn',
-      href: `https://linkedin.com/sharing/share-offsite/?url=${shareLink}`,
+      href: `https://linkedin.com/sharing/share-offsite/?url=${shareLink()}`,
       color: '#0077B5',
+      target: 'popup',
     },
   ];
 
@@ -69,7 +80,7 @@ const Module = ({
   const currentSlug = data.slug ? data.slug : '';
   useEffect(() => {
     setCurrentTask(taskTodo.find((el) => el.task_type === data.task_type
-    && el.associated_slug === currentSlug));
+      && el.associated_slug === currentSlug));
   }, [taskTodo, data.task_type, currentSlug]);
 
   const changeStatusAssignment = (event, task, taskStatus) => {
@@ -104,6 +115,7 @@ const Module = ({
           title,
           icon,
           target,
+          url,
         }}
         rightItemHandler={(
           <ButtonHandlerByTaskStatus
@@ -121,7 +133,7 @@ const Module = ({
           variant="outline"
           title={t('projects:share-certificate.title')}
           shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
-          link={shareLink}
+          link={shareLink()}
           socials={socials}
           onlyModal
           withParty

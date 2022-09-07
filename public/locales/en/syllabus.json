@@ -11,6 +11,7 @@
   "teacherSidebar": {
     "instructions": "Instructions",
     "back-to-student-mode": "Back to stundent mode",
+    "module-duration": "⏰ Duration: {{duration}} days.",
     "alert-updated-module-instructions": "Currently viewing instructions from a module that does not correspond to the selected lesson",
     "no-teacher-instructions-found": "No instructions found for the current module",
     "key-concepts": "Key concepts"

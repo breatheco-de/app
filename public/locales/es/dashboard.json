@@ -123,7 +123,11 @@
     "day": "Día",
     "module": "Módulo",
     "attendance-taken-table-message": "Esta información se muestra en base a la última asistencia emitida del día seleccionado, con fecha emitida en horario UTC",
-    "list-attendance-title": "Lista de asistencia tomada ({{count}} resultados)"
+    "list-attendance-title": "Lista de asistencia tomada ({{count}} resultados)",
+    "warn-premature-teaching": {
+      "title": "Inicio prematuro del módulo",
+      "description": "¿Estás seguro de que quieres comenzar a enseñar <strong>{{module}}</strong>? La duración sugerida para el módulo seleccionado es de {{durationInDays}} días y <strong>solo ha cubierto {{day}} días.</strong>"
+    }
   },
   "teacher-sidebar": {
     "actions": "Acciones",

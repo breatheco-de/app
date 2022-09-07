@@ -70,22 +70,24 @@
     {
       "label": "Aprendizaje social y en vivo",
       "icon": "book",
-      "disabled": true,
-      "description": "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.",
+      "disabled": false,
+      "description": "La forma más eficiente de aprender: únase a una cohorte con compañeros, transmisiones en vivo, sesiones improvisadas de codificación, tutorías en vivo con expertos reales y mantenga la motivación.",
       "asPath": "/read",
       "subMenu": [
         {
           "label": "Intro to coding",
-          "asPath": "#intro-to-coding",
+          "asPath": "/learn-to-code",
           "icon": "coding",
-          "description": "Curated section of projects to build while learning with simple instructions, videos, solutions and more.",
+          "description": "De cero a que te paguen como desarrollador, aprende las habilidades del presente y del futuro. Impulsa tu carrera profesional y sé contratado por una empresa tecnológica.",
           "subMenu": [
             {
-              "href": "#start-coding",
-              "label": "Start Coding"
+              "href": "/learn-to-code",
+              "label": "Empezar a codificar"
             }
           ]
-        },
+        }
+      ],
+      "__comment_submenus__": [
         {
           "label": "Data Science",
           "asPath": "#data-science",

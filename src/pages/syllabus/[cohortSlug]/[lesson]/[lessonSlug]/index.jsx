@@ -8,7 +8,6 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
-import ReactPlayer from 'react-player';
 import { isWindow, assetTypeValues, getExtensionName } from '../../../../../utils';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
@@ -28,6 +27,7 @@ import AlertMessage from '../../../../../common/components/AlertMessage';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import ShareButton from '../../../../../common/components/ShareButton';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
+import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 
 const Content = () => {
   const { t } = useTranslation('syllabus');
@@ -56,6 +56,7 @@ const Content = () => {
   const [showModal, setShowModal] = useState(false);
   const [readmeUrlPathname, setReadmeUrlPathname] = useState(null);
   const [openTargetBlankModal, setOpenTargetBlankModal] = useState(null);
+  const [currentBlankProps, setCurrentBlankProps] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
   const [currentData, setCurrentData] = useState({});
   const toast = useToast();
@@ -463,7 +464,7 @@ const Content = () => {
     {
       name: 'twitter',
       label: 'Twitter',
-      href: `https://twitter.com/share?url=&text=${shareSocialMessage[router.locale]} %23100DaysOfCode%0A%0A${shareLink}`,
+      href: `https://twitter.com/share?url=&text=${encodeURIComponent(shareSocialMessage[router.locale])} %23100DaysOfCode%0A%0A${shareLink}`,
       color: '#1DA1F2',
     },
     {
@@ -471,8 +472,11 @@ const Content = () => {
       label: 'LinkedIn',
       href: `https://linkedin.com/sharing/share-offsite/?url=${shareLink}`,
       color: '#0077B5',
+      target: 'popup',
     },
   ];
+
+  const inputModalLink = currentBlankProps && currentBlankProps.target === 'blank' ? currentBlankProps.url : `https://4geeks.com/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`;
 
   return (
     <Flex position="relative">
@@ -482,13 +486,17 @@ const Content = () => {
         title={t('dashboard:modules.target-blank-title')}
         isReadonly
         description={t('dashboard:modules.target-blank-msg', { title: clickedPage?.title })}
-        link={`https://4geeks.com/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`}
+        link={inputModalLink}
         handlerText={t('common:open')}
         closeText={t('common:close')}
         closeButtonVariant="outline"
         actionHandler={() => {
           setOpenTargetBlankModal(false);
-          window.open(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`, '_blank');
+          if (currentBlankProps && currentBlankProps.target === 'blank') {
+            window.open(currentBlankProps.url, '_blank');
+          } else {
+            window.open(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`, '_blank');
+          }
         }}
       />
       <StickySideBar
@@ -630,12 +638,8 @@ const Content = () => {
       </Box>
       <Box width="100%" height="auto">
         {!isQuiz && currentData.intro_video_url && (
-          <ReactPlayer
-            className="react-player"
+          <ReactPlayerV2
             url={currentData.intro_video_url}
-            controls
-            width="100%"
-            height="-webkit-fill-available"
           />
         )}
         <Box
@@ -704,7 +708,8 @@ const Content = () => {
 
                 <Box display="flex" flexDirection="column" background={commonFeaturedColors} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
                   <Heading as="h2" size="sm" style={{ margin: '0' }}>
-                    {label}
+                    {`${label} - `}
+                    {t('teacherSidebar.module-duration', { duration: module.duration_in_days || 1 })}
                   </Heading>
                   <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
                     {teacherInstructions}
@@ -721,12 +726,8 @@ const Content = () => {
               <Heading as="h2" size="16">
                 Video Tutorial
               </Heading>
-              <ReactPlayer
-                className="react-player"
+              <ReactPlayerV2
                 url={currentData.solution_video_url}
-                controls
-                width="100%"
-                height="-webkit-fill-available"
               />
             </Box>
           )}
@@ -803,6 +804,7 @@ const Content = () => {
                   onClick={() => {
                     setClickedPage(previousAssignment);
                     if (previousAssignment?.target === 'blank') {
+                      setCurrentBlankProps(previousAssignment);
                       setOpenTargetBlankModal(true);
                     } else {
                       router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
@@ -835,6 +837,7 @@ const Content = () => {
                     }
                     if (!taskIsNotDone) {
                       if (nextAssignment?.target === 'blank') {
+                        setCurrentBlankProps(nextAssignment);
                         setOpenTargetBlankModal(true);
                       } else {
                         router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
@@ -888,6 +891,7 @@ const Content = () => {
                           setShowModal(false);
                           if (nextAssignment?.target === 'blank') {
                             setTimeout(() => {
+                              setCurrentBlankProps(nextAssignment);
                               setOpenTargetBlankModal(true);
                             }, 1200);
                           } else {

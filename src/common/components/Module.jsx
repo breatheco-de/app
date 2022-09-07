@@ -48,14 +48,14 @@ const Module = ({
         title={t('modules.target-blank-title')}
         isReadonly
         description={t('modules.target-blank-msg', { title: data.title })}
-        link={`https://4geeks.com${link}`}
+        link={data.url}
         handlerText={t('common:open')}
         closeText={t('common:close')}
         closeButtonVariant="outline"
         actionHandler={() => {
           if (window !== undefined) {
             setOpenModal(false);
-            window.open(link, '_blank');
+            window.open(data.url, '_blank');
           }
         }}
       />
