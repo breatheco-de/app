@@ -2,12 +2,18 @@
     "log": "Registro Mentorías",
     "with": "con",
     "mentorshipSession": "Sesión de Mentoría",
+    "invalidDate": "Fecha inválida",
     "events": "Eventos",
+    "noEvents": "No hay eventos en esta sesión",
     "billed": "Tiempo Facturado",
     "details": "Detalles",
     "ghostLabel": "El estudiante nunca se unió",
     "mentorLate": "El mentor se unió tarde",
-    "extraTime": "Tiempo extra de ",
-    "expectedTime": ", la duración esperada es ",
-    "rate": "Puntuación:"
+    "extraTime": "Tiempo extra de {{extra}}, el esperado era {{expected}}",
+    "manyDays": "Muchos días de tiempo extra, probablemente nunca se cerró",
+    "setUpService": "Por favor selecciona un servicio para esta sección",
+    "rate": "Puntuación:",
+    "modal": {
+        "title": "Detalles de las Mentorías"
+    }
 }
