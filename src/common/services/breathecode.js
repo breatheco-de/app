@@ -140,6 +140,12 @@ const breathecode = {
       get: () => axios.get(`${url}/me`),
     };
   },
+  public: () => {
+    const url = `${host}/admissions/public`;
+    return {
+      mentors: () => axios.get(`${url}/cohort/user?syllabus=coding-introduction&roles=TEACHER,ASSISTANT`),
+    };
+  },
 };
 
 export default breathecode;

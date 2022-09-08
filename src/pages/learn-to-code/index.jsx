@@ -9,7 +9,7 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import Plx from 'react-plx';
-import axios from 'axios';
+import bc from '../../common/services/breathecode';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import { getDataContentProps } from '../../utils/file';
@@ -80,7 +80,7 @@ const CodingIntroduction = ({ data }) => {
   const router = useRouter();
 
   useEffect(() => {
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/admissions/public/cohort/user?syllabus=coding-introduction&roles=TEACHER,ASSISTANT`)
+    bc.public().mentors()
       .then((res) => {
         const filterWithImages = res.data.filter(
           (l) => l.user.profile && l.user.profile?.avatar_url,
@@ -148,22 +148,7 @@ const CodingIntroduction = ({ data }) => {
             display={{ base: 'none', md: 'initial' }}
             flex={0.5}
           >
-            {users && (
-              <MotionBox
-                whileHover={{ scale: 1.3 }}
-                position="absolute"
-                left="85px"
-                top="85px"
-                borderRadius="50px"
-              >
-                <Avatar
-                  width="82px"
-                  height="82px"
-                  style={{ userSelect: 'none' }}
-                  src={getUser(users[6]?.user).avatarUrl}
-                />
-              </MotionBox>
-            )}
+            <Icon icon="landing-avatars" width="354px" height="369px" />
           </Box>
         </Box>
         <Box p="30px 0">
@@ -254,64 +239,66 @@ const CodingIntroduction = ({ data }) => {
           )}
         </Box>
       </Container>
-      <Box display="flex" p={{ base: '8px 23px 0 23px', md: '8px 53px 0 53px' }} height="100%" gridGap={51} background={`linear-gradient(360deg, ${fadeOutBackground} 54.09%, rgba(238, 249, 254, 0) 100%)`} alignItems="center" justifyContent={{ base: 'center', md: 'start' }}>
-        {!isBelowTablet && users && (
-          <Box position="relative" flex={{ base: 1, md: 0.52 }} height={{ base: '350px', md: '562px' }}>
-            <Plx
-              style={{
-                position: 'absolute', left: 0, top: 0, zIndex: 1,
-              }}
-              parallaxData={parallaxAvatars2}
-            >
-              <AnimatedAvatar src={getUser(users[9]?.user).avatarUrl} onClick={() => setAvatarIndex(0)} width="147px" height="147px" position="absolute" left="0" top="85px" alt={getUser(users[9]?.user).fullNameSlug} />
-              <AnimatedAvatar src={getUser(users[10]?.user).avatarUrl} onClick={() => setAvatarIndex(1)} style={{ border: '4px solid #0097CF' }} width="158px" height="158px" position="absolute" left="214px" top="142px" alt={getUser(users[10]?.user).fullNameSlug} zIndex={2} />
-            </Plx>
-            <AnimatedAvatar src={getUser(users[3]?.user).avatarUrl} onClick={() => setAvatarIndex(2)} width="89px" height="89px" position="absolute" left="50px" bottom="136px" alt={getUser(users[3]?.user).fullNameSlug} />
-            <Plx
-              style={{
-                position: 'absolute', right: 0, top: 0, zIndex: 1,
-              }}
-              parallaxData={parallaxAvatars2}
-            >
-              <AnimatedAvatar src={getUser(users[5]?.user).avatarUrl} onClick={() => setAvatarIndex(3)} width="129px" height="129px" position="absolute" right="90px" top="59px" alt={getUser(users[5]?.user).fullNameSlug} />
-            </Plx>
-            <AnimatedAvatar src={getUser(users[7]?.user).avatarUrl} onClick={() => setAvatarIndex(4)} width="109px" height="109px" position="absolute" right="0" top="172px" alt={getUser(users[7]?.user).fullNameSlug} style={{ zIndex: avatarIndex === 3 ? 0 : 2 }} />
-            <AnimatedAvatar src={getUser(users[8]?.user).avatarUrl} onClick={() => setAvatarIndex(5)} width="137px" height="137px" position="absolute" right="51px" bottom="127px" alt={getUser(users[8]?.user).fullNameSlug} style={{ zIndex: avatarIndex === 4 ? 0 : 1 }} />
+      <Box height="100%" background={`linear-gradient(360deg, ${fadeOutBackground} 54.09%, rgba(238, 249, 254, 0) 100%)`}>
+        <Container display="flex" maxW="container.xl" justifyContent="center" gridGap={51} p={{ base: '8px 23px 0 23px', md: '8px 53px 0 53px' }} alignItems="center">
+          {!isBelowTablet && users && (
+            <Box position="relative" flex={{ base: 1, md: 1 }} height={{ base: '350px', md: '562px' }}>
+              <Plx
+                style={{
+                  position: 'absolute', left: '-80px', top: 0, zIndex: 1,
+                }}
+                parallaxData={parallaxAvatars2}
+              >
+                <AnimatedAvatar src={getUser(users[9]?.user).avatarUrl} onClick={() => setAvatarIndex(0)} width="147px" height="147px" position="absolute" left="0" top="85px" alt={getUser(users[9]?.user).fullNameSlug} />
+                <AnimatedAvatar src={getUser(users[10]?.user).avatarUrl} onClick={() => setAvatarIndex(1)} style={{ border: '4px solid #0097CF' }} width="158px" height="158px" position="absolute" left="214px" top="142px" alt={getUser(users[10]?.user).fullNameSlug} zIndex={2} />
+              </Plx>
+              <AnimatedAvatar src={getUser(users[3]?.user).avatarUrl} onClick={() => setAvatarIndex(2)} width="89px" height="89px" position="absolute" left="0px" bottom="136px" alt={getUser(users[3]?.user).fullNameSlug} />
+              <Plx
+                style={{
+                  position: 'absolute', right: 0, top: 0, zIndex: 1,
+                }}
+                parallaxData={parallaxAvatars2}
+              >
+                <AnimatedAvatar src={getUser(users[5]?.user).avatarUrl} onClick={() => setAvatarIndex(3)} width="129px" height="129px" position="absolute" right="90px" top="59px" alt={getUser(users[5]?.user).fullNameSlug} />
+              </Plx>
+              <AnimatedAvatar src={getUser(users[7]?.user).avatarUrl} onClick={() => setAvatarIndex(4)} width="109px" height="109px" position="absolute" right="0" top="172px" alt={getUser(users[7]?.user).fullNameSlug} style={{ zIndex: avatarIndex === 3 ? 0 : 2 }} />
+              <AnimatedAvatar src={getUser(users[8]?.user).avatarUrl} onClick={() => setAvatarIndex(5)} width="137px" height="137px" position="absolute" right="51px" bottom="127px" alt={getUser(users[8]?.user).fullNameSlug} style={{ zIndex: avatarIndex === 4 ? 0 : 1 }} />
 
-            <AnimatePresence>
-              {avatarIndex === 0 && (<ShadowCard index={1} data={getUser(users[9]?.user)} left="-40px" top="205px" width="228px" p="30px 10px 2px 10px" gridGap="2px" height="138px" />)}
-              {avatarIndex === 1 && (<ShadowCard index={2} data={getUser(users[10]?.user)} left="168px" top="252px" width="258px" pt="60px" gridGap="10px" height="168px" />)}
-              {avatarIndex === 2 && (<ShadowCard index={3} data={getUser(users[3]?.user)} left="-10px" bottom="15px" width="218px" p="35px 10px 10px 10px" gridGap="2px" height="142px" />)}
-              {avatarIndex === 3 && (<ShadowCard index={4} data={getUser(users[5]?.user)} right="48px" top="158px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" />)}
-              {avatarIndex === 4 && (<ShadowCard index={5} data={getUser(users[7]?.user)} right="-50px" top="252px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 1 }} />)}
-              {avatarIndex === 5 && (<ShadowCard index={6} data={getUser(users[8]?.user)} right="10px" bottom="15px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 0 }} />)}
-            </AnimatePresence>
-          </Box>
-        )}
-
-        <Box display="flex" flexDirection="column" flex={{ base: 1, md: 0.32 }} textAlign={{ base: 'center', md: 'left' }}>
-          <Heading as="h2" size="14px" mb="10px" letterSpacing="0.05em" color="blue.default">
-            {data.mentors.title}
-          </Heading>
-          <Text fontSize="26px" fontWeight="700" lineHeight="30px" mb="10px">
-            {data.mentors.subTitle}
-          </Text>
-          <Text dangerouslySetInnerHTML={{ __html: data.mentors.description }} fontSize="14px" fontWeight="400" lineHeight="24px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')} />
-          <AnimatedButton onClick={() => router.push(data.mentors.button.link)} mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
-            {data.mentors.button.title}
-          </AnimatedButton>
-          <Text display={{ base: 'none', md: 'inherit' }} fontSize="14px" fontWeight="700" letterSpacing="0.05em" mt="17px">
-            {data.mentors.hint}
-          </Text>
-          {!isBelowTablet && (
-            <Box display={{ base: 'none', sm: 'flex' }} position="relative" bottom="0" left="-110px">
-              <Icon icon="leftArrow" width="200px" height="39px" />
+              <AnimatePresence>
+                {avatarIndex === 0 && (<ShadowCard index={1} data={getUser(users[9]?.user)} left="-125px" top="205px" width="228px" p="30px 10px 2px 10px" gridGap="2px" height="138px" />)}
+                {avatarIndex === 1 && (<ShadowCard index={2} data={getUser(users[10]?.user)} left="80px" top="252px" width="258px" pt="60px" gridGap="10px" height="168px" />)}
+                {avatarIndex === 2 && (<ShadowCard index={3} data={getUser(users[3]?.user)} left="-70px" bottom="15px" width="218px" p="35px 10px 10px 10px" gridGap="2px" height="142px" />)}
+                {avatarIndex === 3 && (<ShadowCard index={4} data={getUser(users[5]?.user)} right="48px" top="158px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" />)}
+                {avatarIndex === 4 && (<ShadowCard index={5} data={getUser(users[7]?.user)} right="-50px" top="252px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 1 }} />)}
+                {avatarIndex === 5 && (<ShadowCard index={6} data={getUser(users[8]?.user)} right="10px" bottom="15px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 0 }} />)}
+              </AnimatePresence>
             </Box>
           )}
-        </Box>
+
+          <Box display="flex" flexDirection="column" flex={{ base: 1, md: 0.9 }} textAlign={{ base: 'center', md: 'left' }}>
+            <Heading as="h2" size="14px" mb="10px" letterSpacing="0.05em" color="blue.default">
+              {data.mentors.title}
+            </Heading>
+            <Text fontSize="26px" fontWeight="700" lineHeight="30px" mb="10px">
+              {data.mentors.subTitle}
+            </Text>
+            <Text dangerouslySetInnerHTML={{ __html: data.mentors.description }} fontSize="14px" fontWeight="400" lineHeight="24px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')} />
+            <AnimatedButton onClick={() => router.push(data.mentors.button.link)} mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
+              {data.mentors.button.title}
+            </AnimatedButton>
+            <Text display={{ base: 'none', md: 'inherit' }} fontSize="14px" fontWeight="700" letterSpacing="0.05em" mt="17px">
+              {data.mentors.hint}
+            </Text>
+            {!isBelowTablet && (
+              <Box display={{ base: 'none', sm: 'flex' }} position="relative" bottom="0" left="-110px">
+                <Icon icon="leftArrow" width="200px" height="39px" />
+              </Box>
+            )}
+          </Box>
+        </Container>
       </Box>
 
-      <Container maxW="container.xl" height={{ base: '100%', md: '458px' }} display="flex" flexDirection={{ base: 'column', md: 'row' }} mt={{ base: '40px', md: 0 }} py="24px" alignItems="center" gridGap={51}>
+      <Container maxW="container.xl" height={{ base: '100%', md: '458px' }} display="flex" flexDirection={{ base: 'column', md: 'row' }} justifyContent="center" mt={{ base: '40px', md: 0 }} py="24px" alignItems="center" gridGap={51}>
         <Box display="flex" flexDirection="column" gridGap="10px" flex={{ base: 1, md: 0.38 }} textAlign={{ base: 'center', md: 'left' }}>
           <Heading as="h2" size="14px" letterSpacing="0.05em" mb="8px" color="blue.default">
             {data.events.title}
@@ -392,7 +379,7 @@ const CodingIntroduction = ({ data }) => {
         </Box>
       </Container>
 
-      <Box maxW="container.xl" m="3rem 0 3rem 0" display="flex" flexDirection={{ base: 'column', md: 'row' }} height="auto" position="relative" alignItems="center" gridGap={51}>
+      <Box maxW="container.xl" m="3rem auto 3rem auto" display="flex" flexDirection={{ base: 'column', md: 'row' }} height="auto" position="relative" alignItems="center" gridGap={51}>
         <Box display={{ base: 'none', md: 'inherit' }} position="absolute" top="-90px" left="340px">
           <Icon icon="curvedLine" width="80px" height="654px" />
         </Box>
