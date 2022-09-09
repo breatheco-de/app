@@ -186,7 +186,7 @@ const CohortSideBar = ({
   const [graduatedStudentsLoading, setGraduatedStudentsLoading] = useState(true);
   const teacher = studentAndTeachers.filter((st) => st.role === 'TEACHER');
   const activeStudents = studentAndTeachers.filter(
-    (st) => st.role === 'STUDENT' && st.educational_status === 'ACTIVE',
+    (st) => st.role === 'STUDENT' && ['ACTIVE', 'GRADUATED'].includes(st.educational_status),
   );
   const studentsJoined = alumniGeeksList.results?.filter(
     (st) => st.role === 'STUDENT' && st.educational_status !== 'ACTIVE',
