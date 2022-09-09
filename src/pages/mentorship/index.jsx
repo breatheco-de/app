@@ -1,23 +1,28 @@
 /* eslint-disable max-len */
-/* eslint-disable no-unused-vars */
 import { useState, useEffect, forwardRef } from 'react';
 import {
   Container,
   Flex,
-  // Heading,
   Divider,
-  // Text,
   useColorMode,
+  useColorModeValue,
   Button,
   Tooltip,
   Box,
   IconButton,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  ModalFooter,
 } from '@chakra-ui/react';
 import { ArrowUpIcon, ChevronDownIcon, CloseIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import styled from 'styled-components';
-import { format, endOfMonth } from 'date-fns';
+import { format, startOfMonth, endOfMonth } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import bc from '../../common/services/breathecode';
@@ -34,8 +39,11 @@ const Mentorship = () => {
   const { colorMode } = useColorMode();
   const router = useRouter();
   const [sessions, setSessions] = useState([]);
-  const [startDate, setStartDate] = useState(null);
+  const [startDate, setStartDate] = useState(startOfMonth(new Date()));
   const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState({ show: false, session: null });
+  const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
+  const commonFontColor = useColorModeValue('gray.dark', 'gray.light');
 
   // {
   //   started_after: '2022-05-01',
@@ -79,12 +87,13 @@ const Mentorship = () => {
   ));
 
   const getExtraTime = (str) => str.substr(0, str.indexOf(', the expected duration')).replace('Extra time of ', '');
-
   const getExpectedTime = (str) => str.substr(str.indexOf(', the expected duration')).replace(', the expected duration was ', '');
+
+  const getLateTime = (str) => str.substr(0, str.indexOf(' after.')).replace('The mentor joined ', '');
 
   const tooltipsGenerator = (session) => {
     const tooltips = [];
-    if (session.mente_joined !== null) {
+    if (!session.mente_joined) {
       tooltips.push({
         icon: 'ghost',
         label: t('ghostLabel'),
@@ -93,19 +102,29 @@ const Mentorship = () => {
     if (session.mentor_late) {
       tooltips.push({
         icon: 'running',
-        label: t('mentorLate'),
+        label: t('mentorLate', { time: getLateTime(session.mentor_late) }),
       });
     }
     if (session.extra_time) {
+      let label;
+      if (session.extra_time.includes('Many days of extra time')) label = t('manyDays');
+      else if (session.extra_time.includes('Extra time of')) label = t('extraTime', { extra: getExtraTime(session.extra_time), expected: getExpectedTime(session.extra_time) });
+      else if (session.extra_time.includes('Please setup')) label = t('setUpService');
+      else label = session.extra_time;
       tooltips.push({
         icon: 'chronometer',
-        label: `${t('extraTime')} ${getExtraTime(session.extra_time)}${t('expectedTime')}${getExpectedTime(session.extra_time)}`,
+        label,
       });
     }
-    if (session.rating) {
+    if (session.rating?.score) {
+      let ratingIcon;
+      if (session.rating.score >= 8) ratingIcon = 'smile';
+      else if (session.rating.score > 7) ratingIcon = 'regularFace';
+      else ratingIcon = 'sad';
+
       tooltips.push({
-        icon: session.rating > 7 ? 'dolarSign' : 'dolarSignBroke',
-        label: `${t('rate')} ${session.rating}`,
+        icon: ratingIcon,
+        label: `${t('rate')} ${session.rating.score}`,
       });
     }
     return tooltips;
@@ -142,6 +161,7 @@ const Mentorship = () => {
           <Heading
             as="h2"
             size="m"
+            maxW="90%"
             // size={['lg', 'lg', 'xl', 'xl']}
             // fontSize={['16px', '16px', '34px', '34px']}
           >
@@ -185,7 +205,7 @@ const Mentorship = () => {
             <tr className="table-rows">
               <td className="session-date">
                 <Text fontSize="md">
-                  {`${format(new Date(session.started_at?.slice(0, -1)), 'MMMM dd, y, h:mm aaa')}`}
+                  {session.started_at ? `${format(new Date(session.started_at.slice(0, -1)), 'MMMM dd, y, h:mm aaa')}` : t('invalidDate')}
                 </Text>
                 <Text fontSize="md">
                   {t('with')}
@@ -195,39 +215,14 @@ const Mentorship = () => {
               </td>
               <td className="icons-row">
                 <Flex alignItems="center">
-                  {/* {tooltipsGenerator(session).map((tooltip) => (
+                  {tooltipsGenerator(session).map((tooltip) => (
                     <Tooltip label={tooltip.label} fontSize="md" placement="top">
                       <span>
-                        <Icon style={{ marginRight: '15px' }} icon={tooltip.icon} width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
+                        <Icon style={{ marginRight: '15px' }} icon={tooltip.icon} width="25px" height="25px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
                       </span>
                     </Tooltip>
-                  ))} */}
-                  <Tooltip label="Ghost" fontSize="md" placement="top">
-                    <span>
-                      <Icon style={{ marginRight: '15px' }} icon="dolarSign" width="25px" height="25px" />
-                    </span>
-                  </Tooltip>
-                  <Tooltip label="Ghost" fontSize="md" placement="top">
-                    <span>
-                      <Icon style={{ marginRight: '15px' }} icon="dolarSignBroke" width="25px" height="25px" />
-                    </span>
-                  </Tooltip>
-                  <Tooltip label="Ghost" fontSize="md" placement="top">
-                    <span>
-                      <Icon style={{ marginRight: '15px' }} icon="ghost" width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
-                    </span>
-                  </Tooltip>
-                  <Tooltip label="Ghost" fontSize="md" placement="top">
-                    <span>
-                      <Icon style={{ marginRight: '15px' }} icon="running" width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
-                    </span>
-                  </Tooltip>
-                  <Tooltip label="Ghost" fontSize="md" placement="top">
-                    <span>
-                      <Icon style={{ marginRight: '15px' }} icon="chronometer" width="25px" height="25px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
-                    </span>
-                  </Tooltip>
-                  <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link">
+                  ))}
+                  <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link" onClick={() => setShowModal({ show: true, session })}>
                     {t('details')}
                   </Button>
                 </Flex>
@@ -238,42 +233,14 @@ const Mentorship = () => {
                   {session.billed_str}
                 </Text>
                 <Flex wrap="wrap" maxWith="250px" className="icons-row-responsive" alignItems="center">
-                  {/* {tooltipsGenerator(session).map((tooltip) => (
+                  {tooltipsGenerator(session).map((tooltip) => (
                     <Tooltip label={tooltip.label} fontSize="md" placement="top">
                       <span>
-                        <Icon style={{ marginRight: '15px', marginTop: '5px' }} icon={tooltip.icon} width="20px" height="20px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
+                        <Icon style={{ marginRight: '15px', marginTop: '5px' }} icon={tooltip.icon} width="20px" height="20px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
                       </span>
                     </Tooltip>
                   ))}
-                  <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link">
-                    {t('details')}
-                  </Button> */}
-                  <Tooltip label="Ghost" fontSize="md" placement="top">
-                    <span>
-                      <Icon style={{ marginRight: '15px' }} icon="dolarSign" width="20px" height="20px" />
-                    </span>
-                  </Tooltip>
-                  <Tooltip label="Ghost" fontSize="md" placement="top">
-                    <span>
-                      <Icon style={{ marginRight: '15px' }} icon="dolarSignBroke" width="20px" height="20px" />
-                    </span>
-                  </Tooltip>
-                  <Tooltip label="Ghost" fontSize="md" placement="top">
-                    <span>
-                      <Icon style={{ marginRight: '15px' }} icon="ghost" width="20px" height="20px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
-                    </span>
-                  </Tooltip>
-                  <Tooltip label="Ghost" fontSize="md" placement="top">
-                    <span>
-                      <Icon style={{ marginRight: '15px' }} icon="running" width="20px" height="20px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
-                    </span>
-                  </Tooltip>
-                  <Tooltip label="Ghost" fontSize="md" placement="top">
-                    <span>
-                      <Icon style={{ marginRight: '15px' }} icon="chronometer" width="20px" height="20px" color={colorMode === 'light' ? '#3A3A3A' : '#FFFFFF'} />
-                    </span>
-                  </Tooltip>
-                  <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link">
+                  <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link" onClick={() => setShowModal({ show: true, session })}>
                     {t('details')}
                   </Button>
                 </Flex>
@@ -294,6 +261,54 @@ const Mentorship = () => {
           </Container>
         )}
       </StyledContainer>
+      <Modal
+        isOpen={showModal.show}
+        size="md"
+        margin="0 10px"
+        onClose={() => {
+          setShowModal({ show: false, session: null });
+        }}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader color={commonFontColor} borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
+            {t('modal.title')}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody padding={{ base: '30px' }}>
+            <Text color={commonFontColor} size="l" fontWeight="700" marginBottom="15px">
+              {t('events')}
+            </Text>
+            {showModal.session && tooltipsGenerator(showModal.session).length > 0 ? tooltipsGenerator(showModal.session).map((elem, index, arr) => (
+              <>
+                <Text alignItems="center" my="5px" display="flex" color={commonFontColor} size="l" fontWeight="400">
+                  <Icon style={{ marginRight: '15px' }} icon={elem.icon} width="25px" height="25px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
+                  {elem.label}
+                </Text>
+                {index !== (arr.length - 1) && (
+                  <Divider
+                    orientation="vertical"
+                    marginLeft="12px"
+                    borderColor={CustomTheme.colors.blue.default}
+                    height="26px"
+                    maxH="26px"
+                  />
+                )}
+              </>
+            ))
+              : (
+                <Text color={commonFontColor} size="l" marginBottom="15px">
+                  {t('noEvents')}
+                </Text>
+              )}
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="default" textTransform="uppercase" background={CustomTheme.colors.blue.default} mr={3} onClick={() => setShowModal({ show: false, session: null })}>
+              {t('common:close')}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Container>
 
   );
