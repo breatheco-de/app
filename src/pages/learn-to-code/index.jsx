@@ -1,10 +1,9 @@
 /* eslint-disable object-curly-newline */
 import {
   Avatar, Box, Button, Container, Link, Tab, TabList, TabPanel, TabPanels, Tabs,
-  Text, useColorModeValue, useMediaQuery,
+  Text, useColorModeValue, useMediaQuery, Image,
 } from '@chakra-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
@@ -122,7 +121,7 @@ const CodingIntroduction = ({ data }) => {
               )}
             </Heading>
             <Box as="strong" className="highlighted" fontSize="35px" display={{ base: 'initial', sm: 'none' }}>
-              {data.title}
+              {data.highlight}
             </Box>
             <Text fontSize="18px" fontWeight={700} pt="16px">
               {data.description}
@@ -160,7 +159,7 @@ const CodingIntroduction = ({ data }) => {
           {data?.awards?.images && (
             <Box display="grid" gridRowGap="20px" alignItems="center" justifyItems="center" gridTemplateColumns="repeat(auto-fill, minmax(13rem, 1fr))">
               {data.awards.images.map((img, i) => (
-                <Box key={img.src} width="auto" height="auto">
+                <Box display="flex" key={img.src} width="auto" height="auto" background="white" borderRadius="4px" p="2px">
                   <Image key={img.src} src={img.src} width={img.width} height={img.height} alt={`image ${i}`} />
                 </Box>
               ))}
@@ -168,7 +167,7 @@ const CodingIntroduction = ({ data }) => {
           )}
         </Box>
         <Box display="flex" py="20px" alignItems="center" justifyContent={{ base: 'center', md: 'start' }}>
-          <Box display="flex" flexDirection="column" flex={{ base: 1, md: 0.52 }} textAlign={{ base: 'center', md: 'left' }}>
+          <Box display="flex" flexDirection="column" alignItems={{ base: 'center', md: 'start' }} flex={{ base: 1, md: 0.52 }} textAlign={{ base: 'center', md: 'left' }}>
             <Heading as="h2" size="14px" letterSpacing="0.05em" mb="10px" color="blue.default">
               {data.students.title}
             </Heading>
@@ -275,7 +274,7 @@ const CodingIntroduction = ({ data }) => {
             </Box>
           )}
 
-          <Box display="flex" flexDirection="column" flex={{ base: 1, md: 0.9 }} textAlign={{ base: 'center', md: 'left' }}>
+          <Box display="flex" flexDirection="column" alignItems={{ base: 'center', md: 'start' }} flex={{ base: 1, md: 0.9 }} textAlign={{ base: 'center', md: 'left' }}>
             <Heading as="h2" size="14px" mb="10px" letterSpacing="0.05em" color="blue.default">
               {data.mentors.title}
             </Heading>
@@ -290,7 +289,7 @@ const CodingIntroduction = ({ data }) => {
               {data.mentors.hint}
             </Text>
             {!isBelowTablet && (
-              <Box display={{ base: 'none', sm: 'flex' }} position="relative" bottom="0" left="-110px">
+              <Box display={{ base: 'none', sm: 'flex' }} position="relative" bottom="-6px" left="-110px">
                 <Icon icon="leftArrow" width="200px" height="39px" />
               </Box>
             )}
@@ -299,7 +298,7 @@ const CodingIntroduction = ({ data }) => {
       </Box>
 
       <Container maxW="container.xl" height={{ base: '100%', md: '458px' }} display="flex" flexDirection={{ base: 'column', md: 'row' }} justifyContent="center" mt={{ base: '40px', md: 0 }} py="24px" alignItems="center" gridGap={51}>
-        <Box display="flex" flexDirection="column" gridGap="10px" flex={{ base: 1, md: 0.38 }} textAlign={{ base: 'center', md: 'left' }}>
+        <Box display="flex" flexDirection="column" alignItems={{ base: 'center', md: 'start' }} gridGap="10px" flex={{ base: 1, md: 0.38 }} textAlign={{ base: 'center', md: 'left' }}>
           <Heading as="h2" size="14px" letterSpacing="0.05em" mb="8px" color="blue.default">
             {data.events.title}
           </Heading>
@@ -440,53 +439,98 @@ const CodingIntroduction = ({ data }) => {
           </Tabs>
         </Plx>
       </Box>
-      <Box display="flex" flexDirection="column" justifyContent="center" py="20px" height="100%" alignItems="center" gridGap={51}>
+      <Box background="blue.light" p="4rem 0 2.2rem">
+        <Container maxW="1100px" margin="0 auto" display="flex" gridGap="3.5rem" flexDirection={{ base: 'column', md: 'row' }}>
+          <Box flex={1} aspecRatio="12/8" position="relative" width={{ base: '100%', md: '100%' }} height="100%">
+            <Image src={data?.certificate?.image} layout="fill" objectFit="contain" alt="certificate preview" />
+          </Box>
+          <Box display="flex" flexDirection="column" flex={0.7} gridGap="10px">
+            <Heading as="span" size="14px" color="blue.default">
+              {data?.certificate?.label}
+            </Heading>
+            <Heading as="h2" fontWeight="700" size="sm">
+              {data?.certificate?.title}
+            </Heading>
+            <Box as="ul" style={{ listStyle: 'none' }} display="flex" flexDirection="column" gridGap="6px">
+              {data?.certificate?.bullet.list.map((l) => (
+                <Box as="li" key={l?.title} display="flex" flexDirection="row" lineHeight="24px" gridGap="6px">
+                  <Icon icon="checked2" color="#38A56A" width="12px" height="9px" style={{ margin: '8px 0 0 0' }} />
+                  <Box
+                    fontSize="14px"
+                    fontWeight="600"
+                    letterSpacing="0.05em"
+                    dangerouslySetInnerHTML={{ __html: l?.title }}
+                  />
+                </Box>
+              ))}
+            </Box>
+            <Button variant="default" onClick={() => router.push(data?.certificate?.button.link)} width="fit-content" mt="16px">
+              {data?.certificate?.button.title}
+            </Button>
+          </Box>
+        </Container>
+      </Box>
+      <Box display="flex" flexDirection="column" justifyContent="center" py="20px" height="100%" alignItems="center" gridGap={51} mt="16px">
         <Heading>
           {data?.pricing?.title}
         </Heading>
         <Plx parallaxData={parallax5}>
-
-          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="21px">
-            {data?.pricing?.list.map((item) => (
-              <Box key={item.title} display="flex" flexDirection="column" justifyContent="space-between" background={item.type === 'pro' ? 'blue.default' : 'blue.light'} color={item.type === 'pro' ? 'white' : 'black'} border="1px solid" borderColor="#0097CD" p="23px" borderRadius="16px" w="300px">
-                <Box width="100%">
-                  <Box fontSize="26px" fontWeight="700" mb="6px">
-                    {item.title}
+          <Box maxW="container.xl" display="flex" flexDirection="column" alignItems={{ base: 'center', md: 'start' }} gridGap="21px">
+            {data?.pricing?.list.filter((l) => l.show === true).map((item) => (
+              <Box key={item.title} display="flex" flexDirection={{ base: 'column', md: 'row' }} width={{ base: '100%', md: '700px' }} justifyContent="space-between" p="23px" borderRadius="16px" gridGap="24px">
+                <Box display="flex" flexDirection="column" minWidth={{ base: '100%', md: '288px' }} p="16px 25px" height="fit-content" fontWeight="400" background="featuredLight" borderRadius="16px">
+                  <Box fontSize="18px" fontWeight="700" mb="6px">
+                    {data?.title}
                   </Box>
-                  <Box display="flex" fontWeight="400">
-                    <Box fontSize="36px">
-                      {item.subTitle}
-                    </Box>
-                    {item.type === 'pro' && (
-                      <Box fontSize="18px" mt="10px" pt="10px">
-                        / month
-                      </Box>
+                  <Box display="flex" alignItems="flex-end" gridGap="10px">
+                    <Heading as="span" size={item?.type === 'basic' ? 'm' : 'xl'} lineHeight="1" color={item?.type === 'basic' ? '' : 'green.500'}>
+                      {item?.price}
+                    </Heading>
+                    {item?.type !== 'basic' && (
+                      <Heading as="span" size="sm" mb="8px" dangerouslySetInnerHTML={{ __html: item?.lastPrice }} />
                     )}
                   </Box>
-                  {item?.description && (
-                    <Text fontSize={item.type === 'pro' ? '16px' : '13px'} fontWeight="700" textTransform="uppercase" dangerouslySetInnerHTML={{ __html: item?.description }} />
+                  {item?.offerTitle && (
+                    <Box fontSize="12px" color="white" fontWeight="500" textTransform="uppercase" background="green.500" p="6px 12px" borderRadius="12px" width="fit-content" m="22px 0 0 0">
+                      {item?.offerTitle}
+                    </Box>
                   )}
-                  <Box as="hr" my="11px" background="currentColor" height="1.2px" />
-                  <Box display="flex" flexDirection="column" gridGap="10px">
-                    <Box fontSize="13px" textTransform="uppercase" fontWeight="700">
-                      {item?.bullets?.title}
+
+                  {item?.description && (
+                    <Box fontSize="13px" textTransform="uppercase" fontWeight="700" mt="16px">
+                      {item.description}
                     </Box>
-                    <Box as="ul" style={{ listStyle: 'none' }} display="flex" flexDirection="column" gridGap="12px">
-                      {item?.bullets?.list.map((bullet) => (
-                        <Box as="li" key={bullet?.title} display="flex" flexDirection="row" lineHeight="24px" gridGap="6px">
-                          <Icon icon="checked2" color={item.type === 'pro' ? '#FFFFFF' : '#0097CD'} width="12px" height="9px" style={{ margin: '8px 0 0 0' }} />
-                          <Box fontSize="14px" fontWeight="600" letterSpacing="0.05em">
-                            {bullet?.title}
-                          </Box>
-                        </Box>
-                      ))}
-                    </Box>
+                  )}
+                  <Box mt="14px">
+                    <Button variant="default" onClick={() => router.push(item?.button?.link)}>
+                      {item?.button?.title}
+                    </Button>
                   </Box>
                 </Box>
-                <Box w="100%" display="flex" justifyContent="center" mt="16px">
-                  <Button background={item.type === 'pro' ? '#FFFFFF' : '#0097CD'} color={item.type === 'pro' ? '#0097CD' : '#FFFFFF'} _active={{ opacity: 0.8 }} _hover={{ opacity: 0.9 }} onClick={() => router.push(item?.button?.link)}>
-                    {item?.button?.title}
-                  </Button>
+                <Box display="flex" flexDirection="column" w="100%" gridGap="10px">
+                  {item?.bullets?.description && (
+                    <Box
+                      fontSize="14px"
+                      fontWeight="500"
+                      dangerouslySetInnerHTML={{ __html: item?.bullets?.description }}
+                    />
+                  )}
+                  <Box fontSize="13px" textTransform="uppercase" fontWeight="700" color="blue.default">
+                    {item?.bullets?.title}
+                  </Box>
+                  <Box as="ul" style={{ listStyle: 'none' }} display="flex" flexDirection="column" gridGap="12px">
+                    {item?.bullets?.list.map((bullet) => (
+                      <Box as="li" key={bullet?.title} display="flex" flexDirection="row" lineHeight="24px" gridGap="6px">
+                        <Icon icon="checked2" color="#38A56A" width="12px" height="9px" style={{ margin: '8px 0 0 0' }} />
+                        <Box
+                          fontSize="14px"
+                          fontWeight="600"
+                          letterSpacing="0.05em"
+                          dangerouslySetInnerHTML={{ __html: bullet?.title }}
+                        />
+                      </Box>
+                    ))}
+                  </Box>
                 </Box>
               </Box>
             ))}

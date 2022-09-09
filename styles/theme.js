@@ -47,6 +47,7 @@ const CustomTheme = extendTheme({
 
     blue: {
       default: '#0097CD',
+      default2: '#0097CF',
       light: '#EEF9FE',
       50: '#E3F2FF',
       100: '#BEE3F8',
@@ -57,6 +58,10 @@ const CustomTheme = extendTheme({
       600: '#0083B3',
       700: '#2B6CB0',
       800: '#2C5282',
+    },
+
+    green: {
+      500: '#38A56A',
     },
 
     gray: {
