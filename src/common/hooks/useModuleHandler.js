@@ -101,6 +101,7 @@ export const updateAssignment = ({
 export const startDay = ({
   t, newTasks, label, contextState, setContextState, toast,
 }) => {
+  console.log('newTasks:::', newTasks);
   bc.todo({}).add(newTasks).then(({ data }) => {
     toast({
       title: label
