@@ -64,7 +64,7 @@ const ProfilesSection = ({
               />
             );
           })}
-          <AvatarGroup max={assistantMaxLimit}>
+          <AvatarGroup max={assistantMaxLimit} marginRight="18px">
             {
               studentsToShow?.map((c) => {
                 const fullName = `${c.user.first_name} ${c.user.last_name}`;
