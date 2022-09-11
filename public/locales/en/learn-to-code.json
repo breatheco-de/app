@@ -123,14 +123,41 @@
       "link": "#apply"
     }
   },
+
+  "certificate": {
+    "label": "What you will get",
+    "title": "Certificate of excellence",
+    "image": "/static/images/certf-preview.png",
+    "bullet": {
+      "list": [
+        {
+          "title": "Endorsed by industry leaders"
+        },
+        {
+          "title": "Immediate work exit"
+        },
+        {
+          "title": "It has no expiration date"
+        }
+      ]
+    },
+    "button": {
+      "title": "Enroll now",
+      "link": "#apply"
+    }
+  },
+
   "pricing": {
-    "title": "Plans and prices",
+    "title": "Pricing",
     "list": [
       {
         "type": "basic",
+        "show": false,
         "title": "Basic",
-        "subTitle": "Free trial",
+        "price": "Free trial",
+        "lastPrice": "",
         "description": "No credit card needed",
+        "offerTitle": "",
         "bullets": {
           "title": "What you will get",
           "list": [
@@ -152,12 +179,19 @@
       },
       {
         "type": "pro",
+        "show": true,
         "title": "Pro",
-        "subTitle": "$199",
-        "description": "<s>$245</s>",
+        "price": "$199",
+        "lastPrice": "<s>$399</s>",
+        "offerTitle": "Limited offer",
+        "description": "Offer expires in 60 days",
         "bullets": {
+          "description": "<strong>Coding introduction</strong> is the course that Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
           "title": "What you will get",
           "list": [
+            {
+              "title": "One time payment"
+            },
             {
               "title": "Unlimited access to group masterclasses"
             },
@@ -170,7 +204,7 @@
           ]
         },
         "button": {
-          "title": "Enroll now",
+          "title": "Start your free trial",
           "link": "#enroll"
         }
       }

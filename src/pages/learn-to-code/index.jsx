@@ -1,15 +1,14 @@
 /* eslint-disable object-curly-newline */
 import {
   Avatar, Box, Button, Container, Link, Tab, TabList, TabPanel, TabPanels, Tabs,
-  Text, useColorModeValue, useMediaQuery,
+  Text, useColorModeValue, useMediaQuery, Image,
 } from '@chakra-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import Plx from 'react-plx';
-import axios from 'axios';
+import bc from '../../common/services/breathecode';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import { getDataContentProps } from '../../utils/file';
@@ -80,7 +79,7 @@ const CodingIntroduction = ({ data }) => {
   const router = useRouter();
 
   useEffect(() => {
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/admissions/public/cohort/user?syllabus=coding-introduction&roles=TEACHER,ASSISTANT`)
+    bc.public().mentors()
       .then((res) => {
         const filterWithImages = res.data.filter(
           (l) => l.user.profile && l.user.profile?.avatar_url,
@@ -122,7 +121,7 @@ const CodingIntroduction = ({ data }) => {
               )}
             </Heading>
             <Box as="strong" className="highlighted" fontSize="35px" display={{ base: 'initial', sm: 'none' }}>
-              {data.title}
+              {data.highlight}
             </Box>
             <Text fontSize="18px" fontWeight={700} pt="16px">
               {data.description}
@@ -148,22 +147,7 @@ const CodingIntroduction = ({ data }) => {
             display={{ base: 'none', md: 'initial' }}
             flex={0.5}
           >
-            {users && (
-              <MotionBox
-                whileHover={{ scale: 1.3 }}
-                position="absolute"
-                left="85px"
-                top="85px"
-                borderRadius="50px"
-              >
-                <Avatar
-                  width="82px"
-                  height="82px"
-                  style={{ userSelect: 'none' }}
-                  src={getUser(users[6]?.user).avatarUrl}
-                />
-              </MotionBox>
-            )}
+            <Icon icon="landing-avatars" width="354px" height="369px" />
           </Box>
         </Box>
         <Box p="30px 0">
@@ -175,7 +159,7 @@ const CodingIntroduction = ({ data }) => {
           {data?.awards?.images && (
             <Box display="grid" gridRowGap="20px" alignItems="center" justifyItems="center" gridTemplateColumns="repeat(auto-fill, minmax(13rem, 1fr))">
               {data.awards.images.map((img, i) => (
-                <Box key={img.src} width="auto" height="auto">
+                <Box display="flex" key={img.src} width="auto" height="auto" background="white" borderRadius="4px" p="2px">
                   <Image key={img.src} src={img.src} width={img.width} height={img.height} alt={`image ${i}`} />
                 </Box>
               ))}
@@ -183,7 +167,7 @@ const CodingIntroduction = ({ data }) => {
           )}
         </Box>
         <Box display="flex" py="20px" alignItems="center" justifyContent={{ base: 'center', md: 'start' }}>
-          <Box display="flex" flexDirection="column" flex={{ base: 1, md: 0.52 }} textAlign={{ base: 'center', md: 'left' }}>
+          <Box display="flex" flexDirection="column" alignItems={{ base: 'center', md: 'start' }} flex={{ base: 1, md: 0.52 }} textAlign={{ base: 'center', md: 'left' }}>
             <Heading as="h2" size="14px" letterSpacing="0.05em" mb="10px" color="blue.default">
               {data.students.title}
             </Heading>
@@ -254,65 +238,67 @@ const CodingIntroduction = ({ data }) => {
           )}
         </Box>
       </Container>
-      <Box display="flex" p={{ base: '8px 23px 0 23px', md: '8px 53px 0 53px' }} height="100%" gridGap={51} background={`linear-gradient(360deg, ${fadeOutBackground} 54.09%, rgba(238, 249, 254, 0) 100%)`} alignItems="center" justifyContent={{ base: 'center', md: 'start' }}>
-        {!isBelowTablet && users && (
-          <Box position="relative" flex={{ base: 1, md: 0.52 }} height={{ base: '350px', md: '562px' }}>
-            <Plx
-              style={{
-                position: 'absolute', left: 0, top: 0, zIndex: 1,
-              }}
-              parallaxData={parallaxAvatars2}
-            >
-              <AnimatedAvatar src={getUser(users[9]?.user).avatarUrl} onClick={() => setAvatarIndex(0)} width="147px" height="147px" position="absolute" left="0" top="85px" alt={getUser(users[9]?.user).fullNameSlug} />
-              <AnimatedAvatar src={getUser(users[10]?.user).avatarUrl} onClick={() => setAvatarIndex(1)} style={{ border: '4px solid #0097CF' }} width="158px" height="158px" position="absolute" left="214px" top="142px" alt={getUser(users[10]?.user).fullNameSlug} zIndex={2} />
-            </Plx>
-            <AnimatedAvatar src={getUser(users[3]?.user).avatarUrl} onClick={() => setAvatarIndex(2)} width="89px" height="89px" position="absolute" left="50px" bottom="136px" alt={getUser(users[3]?.user).fullNameSlug} />
-            <Plx
-              style={{
-                position: 'absolute', right: 0, top: 0, zIndex: 1,
-              }}
-              parallaxData={parallaxAvatars2}
-            >
-              <AnimatedAvatar src={getUser(users[5]?.user).avatarUrl} onClick={() => setAvatarIndex(3)} width="129px" height="129px" position="absolute" right="90px" top="59px" alt={getUser(users[5]?.user).fullNameSlug} />
-            </Plx>
-            <AnimatedAvatar src={getUser(users[7]?.user).avatarUrl} onClick={() => setAvatarIndex(4)} width="109px" height="109px" position="absolute" right="0" top="172px" alt={getUser(users[7]?.user).fullNameSlug} style={{ zIndex: avatarIndex === 3 ? 0 : 2 }} />
-            <AnimatedAvatar src={getUser(users[8]?.user).avatarUrl} onClick={() => setAvatarIndex(5)} width="137px" height="137px" position="absolute" right="51px" bottom="127px" alt={getUser(users[8]?.user).fullNameSlug} style={{ zIndex: avatarIndex === 4 ? 0 : 1 }} />
+      <Box height="100%" background={`linear-gradient(360deg, ${fadeOutBackground} 54.09%, rgba(238, 249, 254, 0) 100%)`}>
+        <Container display="flex" maxW="container.xl" justifyContent="center" gridGap={51} p={{ base: '8px 23px 0 23px', md: '8px 53px 0 53px' }} alignItems="center">
+          {!isBelowTablet && users && (
+            <Box position="relative" flex={{ base: 1, md: 1 }} height={{ base: '350px', md: '562px' }}>
+              <Plx
+                style={{
+                  position: 'absolute', left: '-80px', top: 0, zIndex: 1,
+                }}
+                parallaxData={parallaxAvatars2}
+              >
+                <AnimatedAvatar src={getUser(users[9]?.user).avatarUrl} onClick={() => setAvatarIndex(0)} width="147px" height="147px" position="absolute" left="0" top="85px" alt={getUser(users[9]?.user).fullNameSlug} />
+                <AnimatedAvatar src={getUser(users[10]?.user).avatarUrl} onClick={() => setAvatarIndex(1)} style={{ border: '4px solid #0097CF' }} width="158px" height="158px" position="absolute" left="214px" top="142px" alt={getUser(users[10]?.user).fullNameSlug} zIndex={2} />
+              </Plx>
+              <AnimatedAvatar src={getUser(users[3]?.user).avatarUrl} onClick={() => setAvatarIndex(2)} width="89px" height="89px" position="absolute" left="0px" bottom="136px" alt={getUser(users[3]?.user).fullNameSlug} />
+              <Plx
+                style={{
+                  position: 'absolute', right: 0, top: 0, zIndex: 1,
+                }}
+                parallaxData={parallaxAvatars2}
+              >
+                <AnimatedAvatar src={getUser(users[5]?.user).avatarUrl} onClick={() => setAvatarIndex(3)} width="129px" height="129px" position="absolute" right="90px" top="59px" alt={getUser(users[5]?.user).fullNameSlug} />
+              </Plx>
+              <AnimatedAvatar src={getUser(users[7]?.user).avatarUrl} onClick={() => setAvatarIndex(4)} width="109px" height="109px" position="absolute" right="0" top="172px" alt={getUser(users[7]?.user).fullNameSlug} style={{ zIndex: avatarIndex === 3 ? 0 : 2 }} />
+              <AnimatedAvatar src={getUser(users[8]?.user).avatarUrl} onClick={() => setAvatarIndex(5)} width="137px" height="137px" position="absolute" right="51px" bottom="127px" alt={getUser(users[8]?.user).fullNameSlug} style={{ zIndex: avatarIndex === 4 ? 0 : 1 }} />
 
-            <AnimatePresence>
-              {avatarIndex === 0 && (<ShadowCard index={1} data={getUser(users[9]?.user)} left="-40px" top="205px" width="228px" p="30px 10px 2px 10px" gridGap="2px" height="138px" />)}
-              {avatarIndex === 1 && (<ShadowCard index={2} data={getUser(users[10]?.user)} left="168px" top="252px" width="258px" pt="60px" gridGap="10px" height="168px" />)}
-              {avatarIndex === 2 && (<ShadowCard index={3} data={getUser(users[3]?.user)} left="-10px" bottom="15px" width="218px" p="35px 10px 10px 10px" gridGap="2px" height="142px" />)}
-              {avatarIndex === 3 && (<ShadowCard index={4} data={getUser(users[5]?.user)} right="48px" top="158px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" />)}
-              {avatarIndex === 4 && (<ShadowCard index={5} data={getUser(users[7]?.user)} right="-50px" top="252px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 1 }} />)}
-              {avatarIndex === 5 && (<ShadowCard index={6} data={getUser(users[8]?.user)} right="10px" bottom="15px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 0 }} />)}
-            </AnimatePresence>
-          </Box>
-        )}
-
-        <Box display="flex" flexDirection="column" flex={{ base: 1, md: 0.32 }} textAlign={{ base: 'center', md: 'left' }}>
-          <Heading as="h2" size="14px" mb="10px" letterSpacing="0.05em" color="blue.default">
-            {data.mentors.title}
-          </Heading>
-          <Text fontSize="26px" fontWeight="700" lineHeight="30px" mb="10px">
-            {data.mentors.subTitle}
-          </Text>
-          <Text dangerouslySetInnerHTML={{ __html: data.mentors.description }} fontSize="14px" fontWeight="400" lineHeight="24px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')} />
-          <AnimatedButton onClick={() => router.push(data.mentors.button.link)} mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
-            {data.mentors.button.title}
-          </AnimatedButton>
-          <Text display={{ base: 'none', md: 'inherit' }} fontSize="14px" fontWeight="700" letterSpacing="0.05em" mt="17px">
-            {data.mentors.hint}
-          </Text>
-          {!isBelowTablet && (
-            <Box display={{ base: 'none', sm: 'flex' }} position="relative" bottom="0" left="-110px">
-              <Icon icon="leftArrow" width="200px" height="39px" />
+              <AnimatePresence>
+                {avatarIndex === 0 && (<ShadowCard index={1} data={getUser(users[9]?.user)} left="-125px" top="205px" width="228px" p="30px 10px 2px 10px" gridGap="2px" height="138px" />)}
+                {avatarIndex === 1 && (<ShadowCard index={2} data={getUser(users[10]?.user)} left="80px" top="252px" width="258px" pt="60px" gridGap="10px" height="168px" />)}
+                {avatarIndex === 2 && (<ShadowCard index={3} data={getUser(users[3]?.user)} left="-70px" bottom="15px" width="218px" p="35px 10px 10px 10px" gridGap="2px" height="142px" />)}
+                {avatarIndex === 3 && (<ShadowCard index={4} data={getUser(users[5]?.user)} right="48px" top="158px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" />)}
+                {avatarIndex === 4 && (<ShadowCard index={5} data={getUser(users[7]?.user)} right="-50px" top="252px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 1 }} />)}
+                {avatarIndex === 5 && (<ShadowCard index={6} data={getUser(users[8]?.user)} right="10px" bottom="15px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 0 }} />)}
+              </AnimatePresence>
             </Box>
           )}
-        </Box>
+
+          <Box display="flex" flexDirection="column" alignItems={{ base: 'center', md: 'start' }} flex={{ base: 1, md: 0.9 }} textAlign={{ base: 'center', md: 'left' }}>
+            <Heading as="h2" size="14px" mb="10px" letterSpacing="0.05em" color="blue.default">
+              {data.mentors.title}
+            </Heading>
+            <Text fontSize="26px" fontWeight="700" lineHeight="30px" mb="10px">
+              {data.mentors.subTitle}
+            </Text>
+            <Text dangerouslySetInnerHTML={{ __html: data.mentors.description }} fontSize="14px" fontWeight="400" lineHeight="24px" letterSpacing="0.05em" color={useColorModeValue('gray.700', 'gray.300')} />
+            <AnimatedButton onClick={() => router.push(data.mentors.button.link)} mt="9px" alignSelf={{ base: 'center', md: 'start' }}>
+              {data.mentors.button.title}
+            </AnimatedButton>
+            <Text display={{ base: 'none', md: 'inherit' }} fontSize="14px" fontWeight="700" letterSpacing="0.05em" mt="17px">
+              {data.mentors.hint}
+            </Text>
+            {!isBelowTablet && (
+              <Box display={{ base: 'none', sm: 'flex' }} position="relative" bottom="-6px" left="-110px">
+                <Icon icon="leftArrow" width="200px" height="39px" />
+              </Box>
+            )}
+          </Box>
+        </Container>
       </Box>
 
-      <Container maxW="container.xl" height={{ base: '100%', md: '458px' }} display="flex" flexDirection={{ base: 'column', md: 'row' }} mt={{ base: '40px', md: 0 }} py="24px" alignItems="center" gridGap={51}>
-        <Box display="flex" flexDirection="column" gridGap="10px" flex={{ base: 1, md: 0.38 }} textAlign={{ base: 'center', md: 'left' }}>
+      <Container maxW="container.xl" height={{ base: '100%', md: '458px' }} display="flex" flexDirection={{ base: 'column', md: 'row' }} justifyContent="center" mt={{ base: '40px', md: 0 }} py="24px" alignItems="center" gridGap={51}>
+        <Box display="flex" flexDirection="column" alignItems={{ base: 'center', md: 'start' }} gridGap="10px" flex={{ base: 1, md: 0.38 }} textAlign={{ base: 'center', md: 'left' }}>
           <Heading as="h2" size="14px" letterSpacing="0.05em" mb="8px" color="blue.default">
             {data.events.title}
           </Heading>
@@ -392,7 +378,7 @@ const CodingIntroduction = ({ data }) => {
         </Box>
       </Container>
 
-      <Box maxW="container.xl" m="3rem 0 3rem 0" display="flex" flexDirection={{ base: 'column', md: 'row' }} height="auto" position="relative" alignItems="center" gridGap={51}>
+      <Box maxW="container.xl" m="3rem auto 3rem auto" display="flex" flexDirection={{ base: 'column', md: 'row' }} height="auto" position="relative" alignItems="center" gridGap={51}>
         <Box display={{ base: 'none', md: 'inherit' }} position="absolute" top="-90px" left="340px">
           <Icon icon="curvedLine" width="80px" height="654px" />
         </Box>
@@ -453,53 +439,98 @@ const CodingIntroduction = ({ data }) => {
           </Tabs>
         </Plx>
       </Box>
-      <Box display="flex" flexDirection="column" justifyContent="center" py="20px" height="100%" alignItems="center" gridGap={51}>
+      <Box background="blue.light" p="4rem 0 2.2rem">
+        <Container maxW="1100px" margin="0 auto" display="flex" gridGap="3.5rem" flexDirection={{ base: 'column', md: 'row' }}>
+          <Box flex={1} aspecRatio="12/8" position="relative" width={{ base: '100%', md: '100%' }} height="100%">
+            <Image src={data?.certificate?.image} layout="fill" objectFit="contain" alt="certificate preview" />
+          </Box>
+          <Box display="flex" flexDirection="column" flex={0.7} gridGap="10px">
+            <Heading as="span" size="14px" color="blue.default">
+              {data?.certificate?.label}
+            </Heading>
+            <Heading as="h2" fontWeight="700" size="sm">
+              {data?.certificate?.title}
+            </Heading>
+            <Box as="ul" style={{ listStyle: 'none' }} display="flex" flexDirection="column" gridGap="6px">
+              {data?.certificate?.bullet.list.map((l) => (
+                <Box as="li" key={l?.title} display="flex" flexDirection="row" lineHeight="24px" gridGap="6px">
+                  <Icon icon="checked2" color="#38A56A" width="12px" height="9px" style={{ margin: '8px 0 0 0' }} />
+                  <Box
+                    fontSize="14px"
+                    fontWeight="600"
+                    letterSpacing="0.05em"
+                    dangerouslySetInnerHTML={{ __html: l?.title }}
+                  />
+                </Box>
+              ))}
+            </Box>
+            <Button variant="default" onClick={() => router.push(data?.certificate?.button.link)} width="fit-content" mt="16px">
+              {data?.certificate?.button.title}
+            </Button>
+          </Box>
+        </Container>
+      </Box>
+      <Box display="flex" flexDirection="column" justifyContent="center" py="20px" height="100%" alignItems="center" gridGap={51} mt="16px">
         <Heading>
           {data?.pricing?.title}
         </Heading>
         <Plx parallaxData={parallax5}>
-
-          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="21px">
-            {data?.pricing?.list.map((item) => (
-              <Box key={item.title} display="flex" flexDirection="column" justifyContent="space-between" background={item.type === 'pro' ? 'blue.default' : 'blue.light'} color={item.type === 'pro' ? 'white' : 'black'} border="1px solid" borderColor="#0097CD" p="23px" borderRadius="16px" w="300px">
-                <Box width="100%">
-                  <Box fontSize="26px" fontWeight="700" mb="6px">
-                    {item.title}
+          <Box maxW="container.xl" display="flex" flexDirection="column" alignItems={{ base: 'center', md: 'start' }} gridGap="21px">
+            {data?.pricing?.list.filter((l) => l.show === true).map((item) => (
+              <Box key={item.title} display="flex" flexDirection={{ base: 'column', md: 'row' }} width={{ base: '100%', md: '700px' }} justifyContent="space-between" p="23px" borderRadius="16px" gridGap="24px">
+                <Box display="flex" flexDirection="column" minWidth={{ base: '100%', md: '288px' }} p="16px 25px" height="fit-content" fontWeight="400" background="featuredLight" borderRadius="16px">
+                  <Box fontSize="18px" fontWeight="700" mb="6px">
+                    {data?.title}
                   </Box>
-                  <Box display="flex" fontWeight="400">
-                    <Box fontSize="36px">
-                      {item.subTitle}
-                    </Box>
-                    {item.type === 'pro' && (
-                      <Box fontSize="18px" mt="10px" pt="10px">
-                        / month
-                      </Box>
+                  <Box display="flex" alignItems="flex-end" gridGap="10px">
+                    <Heading as="span" size={item?.type === 'basic' ? 'm' : 'xl'} lineHeight="1" color={item?.type === 'basic' ? '' : 'green.500'}>
+                      {item?.price}
+                    </Heading>
+                    {item?.type !== 'basic' && (
+                      <Heading as="span" size="sm" mb="8px" dangerouslySetInnerHTML={{ __html: item?.lastPrice }} />
                     )}
                   </Box>
-                  {item?.description && (
-                    <Text fontSize={item.type === 'pro' ? '16px' : '13px'} fontWeight="700" textTransform="uppercase" dangerouslySetInnerHTML={{ __html: item?.description }} />
+                  {item?.offerTitle && (
+                    <Box fontSize="12px" color="white" fontWeight="500" textTransform="uppercase" background="green.500" p="6px 12px" borderRadius="12px" width="fit-content" m="22px 0 0 0">
+                      {item?.offerTitle}
+                    </Box>
                   )}
-                  <Box as="hr" my="11px" background="currentColor" height="1.2px" />
-                  <Box display="flex" flexDirection="column" gridGap="10px">
-                    <Box fontSize="13px" textTransform="uppercase" fontWeight="700">
-                      {item?.bullets?.title}
+
+                  {item?.description && (
+                    <Box fontSize="13px" textTransform="uppercase" fontWeight="700" mt="16px">
+                      {item.description}
                     </Box>
-                    <Box as="ul" style={{ listStyle: 'none' }} display="flex" flexDirection="column" gridGap="12px">
-                      {item?.bullets?.list.map((bullet) => (
-                        <Box as="li" key={bullet?.title} display="flex" flexDirection="row" lineHeight="24px" gridGap="6px">
-                          <Icon icon="checked2" color={item.type === 'pro' ? '#FFFFFF' : '#0097CD'} width="12px" height="9px" style={{ margin: '8px 0 0 0' }} />
-                          <Box fontSize="14px" fontWeight="600" letterSpacing="0.05em">
-                            {bullet?.title}
-                          </Box>
-                        </Box>
-                      ))}
-                    </Box>
+                  )}
+                  <Box mt="14px">
+                    <Button variant="default" onClick={() => router.push(item?.button?.link)}>
+                      {item?.button?.title}
+                    </Button>
                   </Box>
                 </Box>
-                <Box w="100%" display="flex" justifyContent="center" mt="16px">
-                  <Button background={item.type === 'pro' ? '#FFFFFF' : '#0097CD'} color={item.type === 'pro' ? '#0097CD' : '#FFFFFF'} _active={{ opacity: 0.8 }} _hover={{ opacity: 0.9 }} onClick={() => router.push(item?.button?.link)}>
-                    {item?.button?.title}
-                  </Button>
+                <Box display="flex" flexDirection="column" w="100%" gridGap="10px">
+                  {item?.bullets?.description && (
+                    <Box
+                      fontSize="14px"
+                      fontWeight="500"
+                      dangerouslySetInnerHTML={{ __html: item?.bullets?.description }}
+                    />
+                  )}
+                  <Box fontSize="13px" textTransform="uppercase" fontWeight="700" color="blue.default">
+                    {item?.bullets?.title}
+                  </Box>
+                  <Box as="ul" style={{ listStyle: 'none' }} display="flex" flexDirection="column" gridGap="12px">
+                    {item?.bullets?.list.map((bullet) => (
+                      <Box as="li" key={bullet?.title} display="flex" flexDirection="row" lineHeight="24px" gridGap="6px">
+                        <Icon icon="checked2" color="#38A56A" width="12px" height="9px" style={{ margin: '8px 0 0 0' }} />
+                        <Box
+                          fontSize="14px"
+                          fontWeight="600"
+                          letterSpacing="0.05em"
+                          dangerouslySetInnerHTML={{ __html: bullet?.title }}
+                        />
+                      </Box>
+                    ))}
+                  </Box>
                 </Box>
               </Box>
             ))}

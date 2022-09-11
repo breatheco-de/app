@@ -125,14 +125,40 @@
     }
   },
 
+  "certificate": {
+    "label": "Lo que obtendrás",
+    "title": "Certificado de Excelencia",
+    "image": "/static/images/certf-preview.png",
+    "bullet": {
+      "list": [
+        {
+          "title": "Respaldado por líderes de la industria"
+        },
+        {
+          "title": "Salida laboral inmediata"
+        },
+        {
+          "title": "No tiene fecha de vencimiento"
+        }
+      ]
+    },
+    "button": {
+      "title": "Enlístate ahora",
+      "link": "#apply"
+    }
+  },
+
   "pricing": {
-    "title": "Planes y Precios",
+    "title": "Precios",
     "list": [
       {
         "type": "basic",
+        "show": false,
         "title": "Básico",
-        "subTitle": "Prueba gratis",
+        "price": "Prueba gratis",
+        "lastPrice": "",
         "description": "No necesitas tarjeta de crédito",
+        "offerTitle": "",
         "bullets": {
           "title": "Lo que obtendrás",
           "list": [
@@ -154,12 +180,19 @@
       },
       {
         "type": "pro",
+        "show": true,
         "title": "Pro",
-        "subTitle": "$199",
-        "description": "<s>$245</s>",
+        "price": "$199",
+        "lastPrice": "<s>$399</s>",
+        "offerTitle": "Oferta límite",
+        "description": "La oferta vence en 60 días",
         "bullets": {
+          "description": "<strong>Introducción a la codificación</strong> es el curso que Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. masa aeneana.",
           "title": "Lo que obtendrás",
           "list": [
+            {
+              "title": "Pago único"
+            },
             {
               "title": "Acceso ilimitado a clases magistrales grupales"
             },
@@ -172,7 +205,7 @@
           ]
         },
         "button": {
-          "title": "Inscribete ahora",
+          "title": "Comienza tu prueba gratuita",
           "link": "#enroll"
         }
       }
