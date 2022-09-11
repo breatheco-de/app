@@ -57,8 +57,8 @@ const ProfilesSection = ({
                 fullName={fullName}
                 data={d}
                 badge={(
-                  <Box position="absolute" bottom="-8px" right="-12px" background="blue.default" borderRadius="50px" p="6px" border="2px solid white">
-                    <Icon icon="teacher1" width="16px" height="16px" color="#FFFFFF" />
+                  <Box position="absolute" bottom="-6px" right="-8px" background="blue.default" borderRadius="50px" p="5px" border="2px solid white">
+                    <Icon icon="teacher1" width="12px" height="12px" color="#FFFFFF" />
                   </Box>
                 )}
               />
@@ -66,7 +66,7 @@ const ProfilesSection = ({
           })}
           <AvatarGroup max={assistantMaxLimit}>
             {
-              studentsToShow?.map((c, i) => {
+              studentsToShow?.map((c) => {
                 const fullName = `${c.user.first_name} ${c.user.last_name}`;
                 return (
                   <AvatarUser
@@ -74,7 +74,8 @@ const ProfilesSection = ({
                     height="48px"
                     key={`${c.id} - ${c.user.first_name}`}
                     containerStyle={{
-                      marginInlineEnd: studentsToShow.length - 2 === i ? '+0.25em' : '-0.8em',
+                      marginInlineEnd: '-0.8em',
+                      // marginInlineEnd: studentsToShow.length - 2 === i ? '+0.25em' : '-0.8em',
                     }}
                     fullName={fullName}
                     data={c}

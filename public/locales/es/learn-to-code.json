@@ -94,7 +94,7 @@
     },
     "button": {
       "title": "Únete al próximo evento",
-      "link": "#event"
+      "link": "https://4geeksacademy.com/es/proximas-fechas#upcoming-events"
     }
   },
 
@@ -186,13 +186,11 @@
         "lastPrice": "<s>$399</s>",
         "offerTitle": "Oferta límite",
         "description": "La oferta vence en 60 días",
+        "highlightText": "Pago único",
         "bullets": {
           "description": "<strong>Introducción a la codificación</strong> es el curso que Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. masa aeneana.",
           "title": "Lo que obtendrás",
           "list": [
-            {
-              "title": "Pago único"
-            },
             {
               "title": "Acceso ilimitado a clases magistrales grupales"
             },
