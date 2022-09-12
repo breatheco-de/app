@@ -36,6 +36,7 @@ const Code = ({
 
   return !inline && match ? (
     <SyntaxHighlighter
+      showLineNumbers
       style={tomorrow}
       language={match[1]}
       PreTag="div"

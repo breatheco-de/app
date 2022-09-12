@@ -99,7 +99,7 @@ export const updateAssignment = ({
 };
 
 export const startDay = ({
-  t, newTasks, label, contextState, setContextState, toast,
+  t, newTasks, label, contextState, setContextState, toast, customHandler,
 }) => {
   bc.todo({}).add(newTasks).then(({ data }) => {
     toast({
@@ -118,6 +118,7 @@ export const startDay = ({
         ...data,
       ],
     });
+    customHandler();
   }).catch((err) => {
     console.log('error_ADD_TASK 🔴 ', err);
     toast({
