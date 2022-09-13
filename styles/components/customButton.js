@@ -142,5 +142,29 @@ const ButtonStyles = {
   },
   // default values for `size`, and `variant`
   defaultProps: {},
+  // const AnimatedButton2 = ({
+  //   children, onClick, toUppercase, rest,
+  // }) => (
+  //   <MotionBox
+  //     as="button"
+  //     whileHover={{ scale: 1.05 }}
+  //     whileTap={{ scale: 1 }}
+  //     background="blue.default"
+  //     onClick={onClick}
+  //     {...rest}
+  //     fontSize="13px"
+  //     m="20px 0"
+  //     width="fit-content"
+  //     letterSpacing="0.05em"
+  //     textTransform={toUppercase ? 'uppercase' : ''}
+  //     color="white"
+  //     p="10px 16px"
+  //     border="0"
+  //     borderRadius="3px"
+  //   >
+  //     {children}
+  //   </MotionBox>
+  // );
+
 };
 export default ButtonStyles;

@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import { isWindow, assetTypeValues, getExtensionName } from '../../../../../utils';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
-import { updateAssignment } from '../../../../../common/hooks/useModuleHandler';
+import { updateAssignment, startDay, nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import { ButtonHandlerByTaskStatus } from '../../../../../js_modules/moduleMap/taskHandler';
 import Timeline from '../../../../../common/components/Timeline';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
@@ -31,9 +31,9 @@ import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 
 const Content = () => {
   const { t } = useTranslation('syllabus');
-  const { choose } = useAuth();
-  const [cohortSession] = usePersistent('cohortSession', {});
-  const [sortedAssignments] = usePersistent('sortedAssignments', []);
+  const { isLoading, user, choose } = useAuth();
+  const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
+  const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);
@@ -48,6 +48,9 @@ const Content = () => {
   const [extendedIsEnabled, setExtendedIsEnabled] = useState(false);
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [currentSelectedModule, setCurrentSelectedModule] = useState(null);
+  const [nextModule, setNextModule] = useState(null);
+  const [prevModule, setPrevModule] = useState(null);
+  const [openNextModuleModal, setOpenNextModuleModal] = useState(false);
   const [quizSlug, setQuizSlug] = useState(null);
   const [showSolutionVideo, setShowSolutionVideo] = useState(false);
   const [selectedSyllabus, setSelectedSyllabus] = useState({});
@@ -82,6 +85,9 @@ const Content = () => {
 
   const currentTheme = useColorModeValue('light', 'dark');
 
+  const firstTask = nextModule?.modules[0];
+  const lastPrevTask = prevModule?.modules[prevModule?.modules.length - 1];
+
   const slide = {
     minWidth: '290px',
     zIndex: 1200,
@@ -109,7 +115,10 @@ const Content = () => {
     transitionDelay: Open ? '0ms' : '0ms',
   };
 
-  const { cohortSlug, lesson, lessonSlug } = router.query;
+  // const { cohortSlug, lesson, lessonSlug } = router.query;
+  const cohortSlug = router?.query?.cohortSlug;
+  const lesson = router?.query?.lesson;
+  const lessonSlug = router?.query?.lessonSlug;
 
   const language = router.locale === 'en' ? 'us' : 'es';
   const currentLanguageLabel = router.language === 'en' ? t('common:english') : t('common:spanish');
@@ -118,6 +127,30 @@ const Content = () => {
 
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleStartDay = () => {
+    const updatedTasks = (nextModule.modules || [])?.map((l) => ({
+      ...l,
+      associated_slug: l.slug,
+      cohort: cohortSession.id,
+    }));
+    const customHandler = () => {
+      if (nextModule && cohortSlug && firstTask) {
+        router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
+      }
+    };
+    if (user?.id) {
+      startDay({
+        t,
+        id: user.id,
+        newTasks: updatedTasks,
+        contextState,
+        setContextState,
+        toast,
+        customHandler,
+      });
+    }
   };
 
   useEffect(() => {
@@ -345,12 +378,20 @@ const Content = () => {
       });
     }
     const findSelectedSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
+    const currentModuleIndex = sortedAssignments.findIndex(
+      (l) => l.modules.some((m) => m.slug === lessonSlug),
+    );
+    const nextModuleData = sortedAssignments[currentModuleIndex + 1];
+    const prevModuleData = sortedAssignments[currentModuleIndex - 1];
+
     const defaultSyllabus = sortedAssignments.filter(
       (l) => l.modules.find((m) => m.slug === lessonSlug),
     )[0];
 
     if (defaultSyllabus) {
       setSelectedSyllabus(findSelectedSyllabus || defaultSyllabus);
+      setNextModule(nextModuleData);
+      setPrevModule(prevModuleData);
       setDefaultSelectedSyllabus(defaultSyllabus);
     }
   }, [sortedAssignments, lessonSlug, currentSelectedModule]);
@@ -362,6 +403,110 @@ const Content = () => {
       setExtendedInstructions(markdown);
     }
   }, [selectedSyllabus]);
+
+  useEffect(() => {
+    if (!isLoading && user && user.active_cohort && cohortSession.cohort_role) {
+      const academyId = user.active_cohort.academy_id;
+      const { version, slug } = user.active_cohort;
+      const currentAcademy = user.roles.find((role) => role.academy.id === academyId);
+
+      // Fetch cohortProgram and TaskTodo then apply to contextState (useModuleMap - action)
+      if (cohortSession.slug) {
+        Promise.all([
+          bc.todo({ cohort: cohortSession.id }).getTaskByStudent(), // Tasks with cohort id
+          bc.syllabus().get(
+            academyId,
+            slug,
+            version,
+          ), // cohortProgram
+          bc.auth().getRoles(currentAcademy?.role), // Roles
+        ]).then((
+          [taskTodoData, programData, userRoles],
+        ) => {
+          const technologiesArray = programData.data.main_technologies
+            ? programData.data.main_technologies.split(',').map((el) => el.trim())
+            : [];
+
+          setCohortSession({
+            ...cohortSession,
+            main_technologies: technologiesArray,
+            academy_owner: programData.data.academy_owner,
+            bc_id: user.id,
+            user_capabilities: userRoles.data.capabilities,
+          });
+          setContextState({
+            taskTodo: taskTodoData.data,
+            cohortProgram: programData.data,
+          });
+        }).catch((err) => {
+          toast({
+            title: t('alert-message:error-fetching-role', { role: currentAcademy?.role }),
+            description: err.message,
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
+          router.push('/choose-program');
+        });
+      }
+    }
+  }, [user]);
+
+  useEffect(() => {
+    const cohortProgram = contextState?.cohortProgram;
+    const moduleData = cohortProgram.json?.days || cohortProgram.json?.modules;
+    const cohort = cohortProgram.json ? moduleData : [];
+    const assignmentsRecopilated = [];
+
+    if (contextState.cohortProgram.json && contextState.taskTodo) {
+      setTaskTodo(contextState.taskTodo);
+      cohort.map((assignment) => {
+        const {
+          id, description, lessons, replits, assignments, quizzes,
+        } = assignment;
+        const nestedAssignments = nestAssignments({
+          id,
+          read: lessons,
+          practice: replits,
+          code: assignments,
+          answer: quizzes,
+          taskTodo: contextState.taskTodo,
+        });
+        const { modules, filteredModules, filteredModulesByPending } = nestedAssignments;
+
+        // Data to be sent to [sortedAssignments] = state
+        const assignmentsStruct = {
+          id,
+          label: assignment.label,
+          description,
+          modules,
+          filteredModules,
+          filteredModulesByPending,
+          duration_in_days: assignment?.duration_in_days || null,
+          teacherInstructions: assignment.teacher_instructions,
+          extendedInstructions: assignment.extended_instructions,
+          keyConcepts: assignment['key-concepts'],
+        };
+
+        // prevent duplicates when a new module has been started (added to sortedAssignments array)
+        const keyIndex = assignmentsRecopilated.findIndex((x) => x.id === id);
+        if (keyIndex > -1) {
+          assignmentsRecopilated.splice(keyIndex, 1, {
+            ...assignmentsStruct,
+          });
+        } else {
+          assignmentsRecopilated.push({
+            ...assignmentsStruct,
+          });
+        }
+
+        const emptyModulesFiltered = assignmentsRecopilated.filter(
+          (l) => l.modules.length > 0,
+        );
+        return setSortedAssignments(emptyModulesFiltered);
+      });
+    }
+  }, [contextState.cohortProgram, contextState.taskTodo, router]);
 
   const GetReadme = () => {
     if (ipynbHtmlUrl === null && readme === null && quizSlug !== lessonSlug) {
@@ -431,6 +576,11 @@ const Content = () => {
     return currentAssignments;
   });
 
+  const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => {
+    const currIndex = s?.some((l) => l.slug === lessonSlug);
+    return currIndex;
+  });
+
   const previousAssignment = filteredCurrentAssignments.map((section) => {
     const currentIndex = section.findIndex((l) => l.slug === lessonSlug);
     const prevIndex = currentIndex - 1;
@@ -438,16 +588,60 @@ const Content = () => {
       return section[prevIndex];
     }
     return null;
-  })[selectedSyllabus.id - 1];
+  })[currentModuleIndex];
 
   const nextAssignment = filteredCurrentAssignments.map((section) => {
     const currentIndex = section.findIndex((l) => l.slug === lessonSlug);
     const nextIndex = currentIndex + 1;
+
     if (nextIndex < section.length) {
       return section[nextIndex];
     }
     return null;
-  })[selectedSyllabus.id - 1];
+  })[currentModuleIndex];
+
+  const handleNextPage = () => {
+    if (nextAssignment !== null) {
+      if (nextAssignment?.target === 'blank') {
+        setCurrentBlankProps(nextAssignment);
+        setOpenTargetBlankModal(true);
+      } else {
+        router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+      }
+      // eslint-disable-next-line no-extra-boolean-cast
+    } else if (!!(nextModule)) {
+      if (firstTask.target !== 'blank') {
+        if (cohortSlug && !!firstTask && !!nextModule?.filteredModules[0]) {
+          router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
+        } else {
+          setOpenNextModuleModal(true);
+        }
+      } else {
+        setCurrentBlankProps(firstTask);
+        setOpenTargetBlankModal(true);
+      }
+    }
+  };
+  const handlePrevPage = () => {
+    if (previousAssignment !== null) {
+      if (previousAssignment?.target === 'blank') {
+        setCurrentBlankProps(previousAssignment);
+        setOpenTargetBlankModal(true);
+      } else {
+        router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
+      }
+      // eslint-disable-next-line no-extra-boolean-cast
+    } else if (!!(prevModule)) {
+      if (lastPrevTask.target !== 'blank') {
+        if (cohortSlug && !!lastPrevTask && !!prevModule?.filteredModules[0]) {
+          router.push(router.push(`/syllabus/${cohortSlug}/${lastPrevTask?.type?.toLowerCase()}/${lastPrevTask?.slug}`));
+        }
+      } else {
+        setCurrentBlankProps(lastPrevTask);
+        setOpenTargetBlankModal(true);
+      }
+    }
+  };
 
   const pathConnector = {
     read: `${router.locale === 'en' ? '4geeks.com/lesson' : `4geeks.com/${router.locale}/lesson`}`,
@@ -485,7 +679,7 @@ const Content = () => {
         onClose={() => setOpenTargetBlankModal(false)}
         title={t('dashboard:modules.target-blank-title')}
         isReadonly
-        description={t('dashboard:modules.target-blank-msg', { title: clickedPage?.title })}
+        description={t('dashboard:modules.target-blank-msg', { title: clickedPage?.title || currentBlankProps?.title })}
         link={inputModalLink}
         handlerText={t('common:open')}
         closeText={t('common:close')}
@@ -494,8 +688,6 @@ const Content = () => {
           setOpenTargetBlankModal(false);
           if (currentBlankProps && currentBlankProps.target === 'blank') {
             window.open(currentBlankProps.url, '_blank');
-          } else {
-            window.open(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`, '_blank');
           }
         }}
       />
@@ -791,7 +983,7 @@ const Content = () => {
             </Box>
             <Box display="flex" gridGap="3rem">
               {/* showPendingTasks bool to change states */}
-              {previousAssignment !== null && (
+              {(previousAssignment || !!prevModule) && (
                 <Box
                   color="blue.default"
                   cursor="pointer"
@@ -807,7 +999,7 @@ const Content = () => {
                       setCurrentBlankProps(previousAssignment);
                       setOpenTargetBlankModal(true);
                     } else {
-                      router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
+                      handlePrevPage();
                     }
                   }}
                 >
@@ -820,7 +1012,8 @@ const Content = () => {
                   {t('previous-page')}
                 </Box>
               )}
-              {nextAssignment !== null && (
+
+              {(nextAssignment || !!nextModule) && (
                 <Box
                   color="blue.default"
                   cursor="pointer"
@@ -831,17 +1024,25 @@ const Content = () => {
                   letterSpacing="0.05em"
                   fontWeight="700"
                   onClick={() => {
-                    setClickedPage(nextAssignment);
+                    console.log(nextModule && cohortSlug && !!firstTask);
                     if (taskIsNotDone) {
                       setOpenNextPageModal(true);
-                    }
-                    if (!taskIsNotDone) {
-                      if (nextAssignment?.target === 'blank') {
-                        setCurrentBlankProps(nextAssignment);
-                        setOpenTargetBlankModal(true);
-                      } else {
-                        router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                    } else if (nextAssignment !== null || !!firstTask) {
+                      setClickedPage(nextAssignment);
+                      if (!taskIsNotDone) {
+                        if (nextAssignment?.target === 'blank') {
+                          setCurrentBlankProps(nextAssignment);
+                          setOpenTargetBlankModal(true);
+                        } else {
+                          handleNextPage();
+                          // router.push(`/syllabus/${cohortSlug}/${nextAssignment
+                          // ?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                        }
                       }
+                    } else if (nextModule && cohortSlug && !!firstTask) {
+                      router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
+                    } else {
+                      setOpenNextModuleModal(true);
                     }
                   }}
                 >
@@ -871,7 +1072,7 @@ const Content = () => {
                       <Button
                         variant="outline"
                         onClick={() => {
-                          router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                          handleNextPage();
                           setOpenNextPageModal(false);
                         }}
                         textTransform="uppercase"
@@ -896,12 +1097,47 @@ const Content = () => {
                             }, 1200);
                           } else {
                             setTimeout(() => {
-                              router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                              handleNextPage();
                             }, 1200);
                           }
                           setOpenNextPageModal(false);
                         }}
                       />
+                    </Box>
+                  </ModalBody>
+                </ModalContent>
+              </Modal>
+
+              <Modal isOpen={openNextModuleModal} size="xl" margin="0 10px" onClose={() => setOpenNextModuleModal(false)}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalCloseButton />
+                  <ModalBody padding={{ base: '26px 18px', md: '42px 36px' }}>
+                    <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
+                      {`You have reached the end of the current module "${label}" but you can start the next module "${nextModule?.label}" right way.`}
+                    </Heading>
+                    <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="12px" justifyContent="space-around">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setOpenNextModuleModal(false);
+                        }}
+                        textTransform="uppercase"
+                        fontSize="13px"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="default"
+                        onClick={() => {
+                          handleStartDay();
+                          setOpenNextModuleModal(false);
+                        }}
+                        textTransform="uppercase"
+                        fontSize="13px"
+                      >
+                        Yes, let&apos;s start the next module
+                      </Button>
                     </Box>
                   </ModalBody>
                 </ModalContent>
