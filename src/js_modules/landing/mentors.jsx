@@ -45,13 +45,13 @@ const Mentors = ({ data, users }) => {
               }}
               parallaxData={parallaxAvatars2}
             >
-              <AnimatedAvatar src={getUser(users[9]?.user).avatarUrl} onClick={() => setAvatarIndex(0)} width="147px" height="147px" position="absolute" left="0" top="85px" alt={getUser(users[9]?.user).fullNameSlug} />
-              <AnimatedAvatar src={getUser(users[10]?.user).avatarUrl} onClick={() => setAvatarIndex(1)} style={{ border: '4px solid #0097CF' }} width="158px" height="158px" position="absolute" left="214px" top="142px" alt={getUser(users[10]?.user).fullNameSlug} zIndex={2} />
+              <AnimatedAvatar src={getUser(users[9]?.user).avatarUrl} onClick={() => setAvatarIndex(0)} width="147px" height="147px" position="absolute" left="0" top="85px" alt={getUser(users[9]?.user).fullNameSlug} style={{ zIndex: avatarIndex === 3 ? 0 : 2 }} />
+              <AnimatedAvatar src={getUser(users[10]?.user).avatarUrl} onClick={() => setAvatarIndex(1)} style={{ border: '4px solid #0097CF', zIndex: avatarIndex === 3 ? 0 : 2 }} width="158px" height="158px" position="absolute" left="214px" top="142px" alt={getUser(users[10]?.user).fullNameSlug} zIndex={2} />
             </Plx>
-            <AnimatedAvatar src={getUser(users[3]?.user).avatarUrl} onClick={() => setAvatarIndex(2)} width="89px" height="89px" position="absolute" left="0px" bottom="136px" alt={getUser(users[3]?.user).fullNameSlug} />
+            <AnimatedAvatar src={getUser(users[3]?.user).avatarUrl} onClick={() => setAvatarIndex(2)} width="89px" height="89px" position="absolute" left="0px" bottom="136px" alt={getUser(users[3]?.user).fullNameSlug} style={{ zIndex: avatarIndex === 3 ? 0 : 2 }} />
             <Plx
               style={{
-                position: 'absolute', right: 0, top: 0, zIndex: 1,
+                position: 'absolute', right: 0, top: 0, zIndex: 5,
               }}
               parallaxData={parallaxAvatars2}
             >
@@ -64,7 +64,7 @@ const Mentors = ({ data, users }) => {
               {avatarIndex === 0 && (<ShadowCard index={1} data={getUser(users[9]?.user)} onMouseLeave={() => handleMouseLeave()} left="-125px" top="205px" width="228px" p="30px 10px 2px 10px" gridGap="2px" height="138px" />)}
               {avatarIndex === 1 && (<ShadowCard index={2} data={getUser(users[10]?.user)} left="80px" top="252px" width="258px" pt="60px" gridGap="10px" height="168px" />)}
               {avatarIndex === 2 && (<ShadowCard index={3} data={getUser(users[3]?.user)} onMouseLeave={() => handleMouseLeave()} left="-70px" bottom="15px" width="218px" p="35px 10px 10px 10px" gridGap="2px" height="142px" />)}
-              {avatarIndex === 3 && (<ShadowCard index={4} data={getUser(users[5]?.user)} onMouseLeave={() => handleMouseLeave()} right="48px" top="158px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" />)}
+              {avatarIndex === 3 && (<ShadowCard index={4} data={getUser(users[5]?.user)} onMouseLeave={() => handleMouseLeave()} right="48px" top="158px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 2 }} />)}
               {avatarIndex === 4 && (<ShadowCard index={5} data={getUser(users[7]?.user)} onMouseLeave={() => handleMouseLeave()} right="-50px" top="252px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 1 }} />)}
               {avatarIndex === 5 && (<ShadowCard index={6} data={getUser(users[8]?.user)} onMouseLeave={() => handleMouseLeave()} right="10px" bottom="15px" width="218px" p="38px 10px 10px 10px" gridGap="2px" height="142px" style={{ zIndex: 0 }} />)}
             </AnimatePresence>

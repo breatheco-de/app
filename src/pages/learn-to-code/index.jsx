@@ -1,6 +1,6 @@
 /* eslint-disable object-curly-newline */
 import {
-  Box, Button, Container, Image,
+  Box, Button, Container, Image, useColorModeValue,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -33,6 +33,7 @@ const CodingIntroduction = ({ data }) => {
   const [users, setUsers] = useState(null);
   const [events, setEvents] = useState(null);
   const router = useRouter();
+  const featuredBg = useColorModeValue('featuredLight', 'featuredDark');
 
   useEffect(() => {
     bc.public({
@@ -81,7 +82,7 @@ const CodingIntroduction = ({ data }) => {
       <Events data={data} events={events} />
       <PreviewModules data={data} />
 
-      <Box background="blue.light" p="4rem 0 2.2rem">
+      <Box background={featuredBg} p="4rem 0 2.2rem">
         <Container maxW="1100px" margin="0 auto" display="flex" gridGap="3.5rem" flexDirection={{ base: 'column', md: 'row' }}>
           <Box flex={1} position="relative" width={{ base: '100%', md: '100%' }} height="100%">
             <Image src={data?.certificate?.image} layout="fill" objectFit="contain" style={{ aspectRatio: '12/8' }} alt="certificate preview" />

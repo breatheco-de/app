@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, useColorModeValue } from '@chakra-ui/react';
 import Plx from 'react-plx';
 import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
@@ -8,6 +8,7 @@ import { parallax5 } from '../../lib/landing-props';
 
 const Pricing = ({ data }) => {
   const router = useRouter();
+  const featuredBg = useColorModeValue('featuredLight', 'featuredDark');
 
   return (
     <Box display="flex" flexDirection="column" justifyContent="center" py="20px" height="100%" alignItems="center" gridGap={51} mt="16px">
@@ -18,7 +19,7 @@ const Pricing = ({ data }) => {
         <Box maxW="container.xl" display="flex" flexDirection="column" alignItems={{ base: 'center', md: 'start' }} gridGap="21px">
           {data?.pricing?.list.filter((l) => l.show === true).map((item) => (
             <Box key={item.title} display="flex" flexDirection={{ base: 'column', md: 'row' }} width={{ base: '100%', md: '700px' }} justifyContent="space-between" p="23px" borderRadius="16px" gridGap="24px">
-              <Box display="flex" flexDirection="column" minWidth={{ base: '100%', md: '288px' }} p="16px 25px" height="fit-content" fontWeight="400" background="featuredLight" borderRadius="16px">
+              <Box display="flex" flexDirection="column" minWidth={{ base: '100%', md: '288px' }} p="16px 25px" height="fit-content" fontWeight="400" background={featuredBg} borderRadius="16px">
                 <Box fontSize="18px" fontWeight="700" mb="6px">
                   {data?.title}
                 </Box>
