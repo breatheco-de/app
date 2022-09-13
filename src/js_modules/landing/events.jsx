@@ -41,7 +41,7 @@ const Events = ({ data, events }) => {
   };
 
   return (
-    <Container maxW="container.xl" height={{ base: '100%', md: '458px' }} display="flex" flexDirection={{ base: 'column', md: 'row' }} justifyContent="center" mt={{ base: '40px', md: '3rem' }} py="24px" alignItems="center" gridGap={51}>
+    <Container maxW="container.xl" height={{ base: '100%', md: '458px' }} display="flex" flexDirection={{ base: 'column', md: 'row' }} justifyContent="center" mt={{ base: '40px', md: '2rem' }} py="24px" alignItems="center" gridGap={51}>
       <Box display="flex" flexDirection="column" alignItems={{ base: 'center', md: 'start' }} gridGap="10px" flex={{ base: 1, md: 0.38 }} textAlign={{ base: 'center', md: 'left' }}>
         <Heading as="h2" size="14px" letterSpacing="0.05em" mb="8px" color="blue.default">
           {data.events.title}
