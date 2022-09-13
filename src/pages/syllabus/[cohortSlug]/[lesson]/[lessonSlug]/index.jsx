@@ -1012,48 +1012,50 @@ const Content = () => {
                   {t('previous-page')}
                 </Box>
               )}
-              {/* TODO: ADD Conditional */}
-              <Box
-                color="blue.default"
-                cursor="pointer"
-                fontSize="15px"
-                display="flex"
-                alignItems="center"
-                gridGap="10px"
-                letterSpacing="0.05em"
-                fontWeight="700"
-                onClick={() => {
-                  console.log(nextModule && cohortSlug && !!firstTask);
-                  if (taskIsNotDone) {
-                    setOpenNextPageModal(true);
-                  } else if (nextAssignment !== null || !!firstTask) {
-                    setClickedPage(nextAssignment);
-                    if (!taskIsNotDone) {
-                      if (nextAssignment?.target === 'blank') {
-                        setCurrentBlankProps(nextAssignment);
-                        setOpenTargetBlankModal(true);
-                      } else {
-                        handleNextPage();
-                        // router.push(`/syllabus/${cohortSlug}/${nextAssignment
-                        // ?.type?.toLowerCase()}/${nextAssignment?.slug}`);
-                      }
-                    }
-                  } else if (nextModule && cohortSlug && !!firstTask) {
-                    router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
-                  } else {
-                    setOpenNextModuleModal(true);
-                  }
-                }}
-              >
-                {t('next-page')}
+
+              {(nextAssignment || !!nextModule) && (
                 <Box
-                  as="span"
-                  display="block"
-                  transform="rotate(180deg)"
+                  color="blue.default"
+                  cursor="pointer"
+                  fontSize="15px"
+                  display="flex"
+                  alignItems="center"
+                  gridGap="10px"
+                  letterSpacing="0.05em"
+                  fontWeight="700"
+                  onClick={() => {
+                    console.log(nextModule && cohortSlug && !!firstTask);
+                    if (taskIsNotDone) {
+                      setOpenNextPageModal(true);
+                    } else if (nextAssignment !== null || !!firstTask) {
+                      setClickedPage(nextAssignment);
+                      if (!taskIsNotDone) {
+                        if (nextAssignment?.target === 'blank') {
+                          setCurrentBlankProps(nextAssignment);
+                          setOpenTargetBlankModal(true);
+                        } else {
+                          handleNextPage();
+                          // router.push(`/syllabus/${cohortSlug}/${nextAssignment
+                          // ?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                        }
+                      }
+                    } else if (nextModule && cohortSlug && !!firstTask) {
+                      router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
+                    } else {
+                      setOpenNextModuleModal(true);
+                    }
+                  }}
                 >
-                  <Icon icon="arrowLeft2" width="18px" height="10px" />
+                  {t('next-page')}
+                  <Box
+                    as="span"
+                    display="block"
+                    transform="rotate(180deg)"
+                  >
+                    <Icon icon="arrowLeft2" width="18px" height="10px" />
+                  </Box>
                 </Box>
-              </Box>
+              )}
 
               <Modal isOpen={openNextPageModal} size="xl" margin="0 10px" onClose={() => setOpenNextPageModal(false)}>
                 <ModalOverlay />
