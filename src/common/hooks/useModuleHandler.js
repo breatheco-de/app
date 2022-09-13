@@ -98,28 +98,31 @@ export const updateAssignment = ({
   }
 };
 
-export const startDay = ({
-  t, newTasks, label, contextState, setContextState, toast, customHandler,
+export const startDay = async ({
+  t, newTasks, label, contextState, setContextState, toast, customHandler = () => {},
 }) => {
-  bc.todo({}).add(newTasks).then(({ data }) => {
-    toast({
-      title: label
-        ? t('alert-message:module-started', { title: label })
-        : t('alert-message:module-sync-success'),
-      // title: `Module ${label ? `${label}started` : 'synchronized'} successfully`,
-      status: 'success',
-      duration: 6000,
-      isClosable: true,
-    });
-    setContextState({
-      ...contextState,
-      taskTodo: [
-        ...contextState.taskTodo,
-        ...data,
-      ],
-    });
-    customHandler();
-  }).catch((err) => {
+  try {
+    const response = await bc.todo({}).add(newTasks);
+    if (response.status < 400) {
+      toast({
+        title: label
+          ? t('alert-message:module-started', { title: label })
+          : t('alert-message:module-sync-success'),
+        // title: `Module ${label ? `${label}started` : 'synchronized'} successfully`,
+        status: 'success',
+        duration: 6000,
+        isClosable: true,
+      });
+      setContextState({
+        ...contextState,
+        taskTodo: [
+          ...contextState.taskTodo,
+          ...response.data,
+        ],
+      });
+      customHandler();
+    }
+  } catch (err) {
     console.log('error_ADD_TASK 🔴 ', err);
     toast({
       title: t('alert-message:module-start-error'),
@@ -127,7 +130,7 @@ export const startDay = ({
       duration: 6000,
       isClosable: true,
     });
-  });
+  }
 };
 
 export const nestAssignments = ({

@@ -49,6 +49,7 @@ const Content = () => {
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [currentSelectedModule, setCurrentSelectedModule] = useState(null);
   const [nextModule, setNextModule] = useState(null);
+  const [prevModule, setPrevModule] = useState(null);
   const [openNextModuleModal, setOpenNextModuleModal] = useState(false);
   const [quizSlug, setQuizSlug] = useState(null);
   const [showSolutionVideo, setShowSolutionVideo] = useState(false);
@@ -85,6 +86,7 @@ const Content = () => {
   const currentTheme = useColorModeValue('light', 'dark');
 
   const firstTask = nextModule?.modules[0];
+  const lastPrevTask = prevModule?.modules[prevModule?.modules.length - 1];
 
   const slide = {
     minWidth: '290px',
@@ -380,6 +382,7 @@ const Content = () => {
       (l) => l.modules.some((m) => m.slug === lessonSlug),
     );
     const nextModuleData = sortedAssignments[currentModuleIndex + 1];
+    const prevModuleData = sortedAssignments[currentModuleIndex - 1];
 
     const defaultSyllabus = sortedAssignments.filter(
       (l) => l.modules.find((m) => m.slug === lessonSlug),
@@ -388,6 +391,7 @@ const Content = () => {
     if (defaultSyllabus) {
       setSelectedSyllabus(findSelectedSyllabus || defaultSyllabus);
       setNextModule(nextModuleData);
+      setPrevModule(prevModuleData);
       setDefaultSelectedSyllabus(defaultSyllabus);
     }
   }, [sortedAssignments, lessonSlug, currentSelectedModule]);
@@ -598,21 +602,46 @@ const Content = () => {
 
   const handleNextPage = () => {
     if (nextAssignment !== null) {
-      router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+      if (nextAssignment?.target === 'blank') {
+        setCurrentBlankProps(nextAssignment);
+        setOpenTargetBlankModal(true);
+      } else {
+        router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+      }
       // eslint-disable-next-line no-extra-boolean-cast
     } else if (!!(nextModule)) {
-      if (cohortSlug && !!firstTask && !!nextModule?.filteredModules[0]) {
-        router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
+      if (firstTask.target !== 'blank') {
+        if (cohortSlug && !!firstTask && !!nextModule?.filteredModules[0]) {
+          router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
+        } else {
+          setOpenNextModuleModal(true);
+        }
       } else {
-        setOpenNextModuleModal(true);
+        setCurrentBlankProps(firstTask);
+        setOpenTargetBlankModal(true);
       }
     }
   };
-
-  // console.log('nextModule:::', nextModule);
-
-  // console.log('filteredCurrentAssignments:::', filteredCurrentAssignments);
-  // console.log('currentModuleIndex:::', currentModuleIndex);
+  const handlePrevPage = () => {
+    if (previousAssignment !== null) {
+      if (previousAssignment?.target === 'blank') {
+        setCurrentBlankProps(previousAssignment);
+        setOpenTargetBlankModal(true);
+      } else {
+        router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
+      }
+      // eslint-disable-next-line no-extra-boolean-cast
+    } else if (!!(prevModule)) {
+      if (lastPrevTask.target !== 'blank') {
+        if (cohortSlug && !!lastPrevTask && !!prevModule?.filteredModules[0]) {
+          router.push(router.push(`/syllabus/${cohortSlug}/${lastPrevTask?.type?.toLowerCase()}/${lastPrevTask?.slug}`));
+        }
+      } else {
+        setCurrentBlankProps(lastPrevTask);
+        setOpenTargetBlankModal(true);
+      }
+    }
+  };
 
   const pathConnector = {
     read: `${router.locale === 'en' ? '4geeks.com/lesson' : `4geeks.com/${router.locale}/lesson`}`,
@@ -650,7 +679,7 @@ const Content = () => {
         onClose={() => setOpenTargetBlankModal(false)}
         title={t('dashboard:modules.target-blank-title')}
         isReadonly
-        description={t('dashboard:modules.target-blank-msg', { title: clickedPage?.title })}
+        description={t('dashboard:modules.target-blank-msg', { title: clickedPage?.title || currentBlankProps?.title })}
         link={inputModalLink}
         handlerText={t('common:open')}
         closeText={t('common:close')}
@@ -659,8 +688,6 @@ const Content = () => {
           setOpenTargetBlankModal(false);
           if (currentBlankProps && currentBlankProps.target === 'blank') {
             window.open(currentBlankProps.url, '_blank');
-          } else {
-            window.open(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`, '_blank');
           }
         }}
       />
@@ -956,7 +983,7 @@ const Content = () => {
             </Box>
             <Box display="flex" gridGap="3rem">
               {/* showPendingTasks bool to change states */}
-              {previousAssignment !== null && (
+              {(previousAssignment || !!prevModule) && (
                 <Box
                   color="blue.default"
                   cursor="pointer"
@@ -972,7 +999,7 @@ const Content = () => {
                       setCurrentBlankProps(previousAssignment);
                       setOpenTargetBlankModal(true);
                     } else {
-                      router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
+                      handlePrevPage();
                     }
                   }}
                 >
@@ -985,6 +1012,7 @@ const Content = () => {
                   {t('previous-page')}
                 </Box>
               )}
+              {/* TODO: ADD Conditional */}
               <Box
                 color="blue.default"
                 cursor="pointer"
