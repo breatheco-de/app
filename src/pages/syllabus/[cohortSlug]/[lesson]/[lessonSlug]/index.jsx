@@ -232,6 +232,7 @@ const Content = () => {
     setCallToActionProps({});
     setReadme(null);
     setIpynbHtmlUrl(null);
+    setCurrentBlankProps(null);
   };
 
   const EventIfNotFound = () => {
@@ -246,43 +247,45 @@ const Content = () => {
   };
 
   const defaultDataFetch = async () => {
-    Promise.all([
-      axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.md`),
-      axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`),
-    ])
-      .then(([respMarkdown, respData]) => {
-        const currData = respData.data;
-        const markdownData = respMarkdown.data;
-        toast({
-          title: t('alert-message:language-not-found', { currentLanguageLabel }),
-          // not found, showing the english version`,
-          status: 'warning',
-          duration: 5500,
-          isClosable: true,
-        });
-        const exensionName = getExtensionName(currData.readme_url);
+    if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
+      Promise.all([
+        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.md`),
+        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`),
+      ])
+        .then(([respMarkdown, respData]) => {
+          const currData = respData.data;
+          const markdownData = respMarkdown.data;
+          toast({
+            title: t('alert-message:language-not-found', { currentLanguageLabel }),
+            // not found, showing the english version`,
+            status: 'warning',
+            duration: 5500,
+            isClosable: true,
+          });
+          const exensionName = getExtensionName(currData.readme_url);
 
-        if (lesson === 'answer') setQuizSlug(lessonSlug);
-        else setQuizSlug(null);
+          if (lesson === 'answer') setQuizSlug(lessonSlug);
+          else setQuizSlug(null);
 
-        if (currData !== undefined && typeof markdownData === 'string') {
-          // Binary base64 decoding ⇢ UTF-8
-          const markdown = getMarkDownContent(markdownData);
-          setReadme(markdown);
-          setCurrentData(currData);
-        }
-        if (exensionName === 'ipynb') setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentTheme}&plain=true`);
-        else setIpynbHtmlUrl(null);
-      })
-      .catch(() => {
-        toast({
-          title: t('alert-message:default-version-not-found', { lesson }),
-          // description: 'Content not found',
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
+          if (currData !== undefined && typeof markdownData === 'string') {
+            // Binary base64 decoding ⇢ UTF-8
+            const markdown = getMarkDownContent(markdownData);
+            setReadme(markdown);
+            setCurrentData(currData);
+          }
+          if (exensionName === 'ipynb') setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentTheme}&plain=true`);
+          else setIpynbHtmlUrl(null);
+        })
+        .catch(() => {
+          toast({
+            title: t('alert-message:default-version-not-found', { lesson }),
+            // description: 'Content not found',
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
         });
-      });
+    }
   };
 
   useEffect(() => {
@@ -318,53 +321,56 @@ const Content = () => {
   }, []);
 
   useEffect(() => {
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
-      .then(({ data }) => {
-        const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
-        setCallToActionProps({
-          token: accessToken,
-          assetSlug: lessonSlug,
-          gitpod: data.gitpod,
-          assetType: assetTypeValues[lesson],
-        });
-        setReadmeUrlPathname(urlPathname);
-        let currentlocaleLang = data.translations[language];
-        const exensionName = getExtensionName(data.readme_url);
-        if (exensionName === 'ipynb') {
-          setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentTheme}&plain=true`);
-          setCurrentData(data);
-        } else {
-          setIpynbHtmlUrl(null);
-          if (currentlocaleLang === undefined) {
-            currentlocaleLang = `${lessonSlug}-${language}`;
-          }
-          Promise.all([
-            axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}.md`),
-            axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=${assetTypeValues[lesson]}`),
-          ])
-            .then(([respMarkdown, respData]) => {
-              const currData = respData.data;
-              const markdownData = respMarkdown.data;
+    if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
+      axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
+        .then(({ data }) => {
+          const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
+          setCallToActionProps({
+            token: accessToken,
+            assetSlug: lessonSlug,
+            gitpod: data.gitpod,
+            assetType: assetTypeValues[lesson],
+          });
+          setReadmeUrlPathname(urlPathname);
+          let currentlocaleLang = data.translations[language];
+          const exensionName = getExtensionName(data.readme_url);
+          if (exensionName === 'ipynb') {
+            setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentTheme}&plain=true`);
+            setCurrentData(data);
+          } else {
+            setIpynbHtmlUrl(null);
+            if (currentlocaleLang === undefined) {
+              currentlocaleLang = `${lessonSlug}-${language}`;
+            }
+            Promise.all([
+              axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}.md`),
+              axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=${assetTypeValues[lesson]}`),
+            ])
+              .then(([respMarkdown, respData]) => {
+                const currData = respData.data;
+                const markdownData = respMarkdown.data;
 
-              if (lesson === 'answer') {
-                setQuizSlug(currentlocaleLang);
-              } else {
-                setQuizSlug(null);
-              }
-              if (currData !== undefined && typeof markdownData === 'string') {
-                // Binary base64 decoding ⇢ UTF-8
-                const markdown = getMarkDownContent(markdownData);
-                setReadme(markdown);
-                setCurrentData(currData);
-              }
-            })
-            .catch(() => {
-              defaultDataFetch();
-            });
-        }
-      }).catch(() => {
-        EventIfNotFound();
-      });
+                if (lesson === 'answer') {
+                  setQuizSlug(currentlocaleLang);
+                } else {
+                  setQuizSlug(null);
+                }
+                if (currData !== undefined && typeof markdownData === 'string') {
+                  // Binary base64 decoding ⇢ UTF-8
+                  const markdown = getMarkDownContent(markdownData);
+                  setReadme(markdown);
+                  setCurrentData(currData);
+                }
+              })
+              .catch(() => {
+                defaultDataFetch();
+              });
+          }
+        }).catch(() => {
+          // TODO: If asset not exists return markdown with props of syllabus like currentBlankProps
+          EventIfNotFound();
+        });
+    }
   }, [router, lessonSlug]);
 
   useEffect(() => {
@@ -512,7 +518,7 @@ const Content = () => {
     if (ipynbHtmlUrl === null && readme === null && quizSlug !== lessonSlug) {
       return <MDSkeleton />;
     }
-    if (ipynbHtmlUrl === null && readme) {
+    if (ipynbHtmlUrl === null && readme && currentBlankProps?.target !== 'blank') {
       return (
         <MarkdownParser
           content={readme.content}
@@ -528,6 +534,26 @@ const Content = () => {
             title: currentData.title,
             // subtitle: currentData.description,
             assetType: currentData.asset_type,
+          }}
+        />
+      );
+    }
+    if (currentBlankProps?.target === 'blank') {
+      return (
+        <MarkdownParser
+          content="# This Asset must open in external page"
+          callToActionProps={callToActionProps}
+          titleRightSide={currentBlankProps?.url && (
+            <Link href={`${currentBlankProps?.url}`} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+              <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+              {t('edit-page')}
+            </Link>
+          )}
+          withToc={lesson.toLowerCase() === 'read'}
+          frontMatter={{
+            title: currentBlankProps?.title,
+            // subtitle: currentBlankProps.description,
+            assetType: currentBlankProps?.asset_type,
           }}
         />
       );
@@ -604,8 +630,10 @@ const Content = () => {
     if (nextAssignment !== null) {
       if (nextAssignment?.target === 'blank') {
         setCurrentBlankProps(nextAssignment);
-        setOpenTargetBlankModal(true);
+        // setOpenTargetBlankModal(true);
+        router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
       } else {
+        setCurrentBlankProps(null);
         router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
       }
       // eslint-disable-next-line no-extra-boolean-cast
@@ -628,6 +656,7 @@ const Content = () => {
         setCurrentBlankProps(previousAssignment);
         setOpenTargetBlankModal(true);
       } else {
+        setCurrentBlankProps(null);
         router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
       }
       // eslint-disable-next-line no-extra-boolean-cast
@@ -1032,7 +1061,8 @@ const Content = () => {
                       if (!taskIsNotDone) {
                         if (nextAssignment?.target === 'blank') {
                           setCurrentBlankProps(nextAssignment);
-                          setOpenTargetBlankModal(true);
+                          router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                          // setOpenTargetBlankModal(true);
                         } else {
                           handleNextPage();
                           // router.push(`/syllabus/${cohortSlug}/${nextAssignment
