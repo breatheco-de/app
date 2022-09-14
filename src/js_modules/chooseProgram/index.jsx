@@ -16,10 +16,8 @@ function ChooseProgram({ chooseList, handleChoose }) {
     const programRole = program.role.toUpperCase();
     const programCohortStage = program.cohort.stage.toUpperCase();
 
-    const visibleForTeacher = [
-      'PREWORK',
-    ].includes(programCohortStage)
-      && programRole !== 'STUDENT';
+    const includesPrework = ['PREWORK'].includes(programCohortStage);
+    const visibleForTeacher = includesPrework && programRole !== 'STUDENT';
 
     const showCohort = [
       'STARTED',
@@ -28,6 +26,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
     ].includes(programCohortStage);
 
     const showStudent = ['ACTIVE'].includes(educationalStatus)
+      && !includesPrework
       && programRole === 'STUDENT';
 
     const show = visibleForTeacher || showCohort || showStudent;
