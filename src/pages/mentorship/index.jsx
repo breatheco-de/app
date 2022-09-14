@@ -39,7 +39,19 @@ const Mentorship = () => {
   const { colorMode } = useColorMode();
   const router = useRouter();
   const [sessions, setSessions] = useState([]);
-  const [startDate, setStartDate] = useState(startOfMonth(new Date()));
+
+  const setInitialDate = () => {
+    const { month } = router.query;
+    if (month) {
+      if (month === 'all') {
+        return null;
+      }
+      return new Date(month);
+    }
+    return startOfMonth(new Date());
+  };
+
+  const [startDate, setStartDate] = useState(setInitialDate());
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState({ show: false, session: null });
   const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
@@ -172,7 +184,10 @@ const Mentorship = () => {
             >
               <DatePicker
                 selected={startDate}
-                onChange={(date) => setStartDate(date)}
+                onChange={(date) => {
+                  router.push(`?month=${date}`);
+                  setStartDate(date);
+                }}
                 customInput={<ExampleCustomInput />}
                 dateFormat="MM/yyyy"
                 showMonthYearPicker
@@ -187,7 +202,10 @@ const Mentorship = () => {
               // fontSize="20px"
               size="xs"
               icon={<CloseIcon />}
-              onClick={() => setStartDate(null)}
+              onClick={() => {
+                router.push('?month=all');
+                setStartDate(null);
+              }}
             />
             )}
           </Heading>
@@ -207,11 +225,20 @@ const Mentorship = () => {
                 <Text fontSize="md">
                   {session.started_at ? `${format(new Date(session.started_at.slice(0, -1)), 'MMMM dd, y, h:mm aaa')}` : t('invalidDate')}
                 </Text>
-                <Text fontSize="md">
-                  {t('with')}
-                  {' '}
-                  <span style={{ fontWeight: 'bold' }}>{`${session.mentee?.first_name} ${session.mentee?.last_name}`}</span>
-                </Text>
+                {session.mentee ? (
+                  <Text fontSize="md">
+                    {t('with')}
+                    {' '}
+                    <span style={{ fontWeight: 'bold' }}>{`${session.mentee.first_name ? session.mentee.first_name : ''} ${session.mentee.last_name ? session.mentee.last_name : ''}`}</span>
+                  </Text>
+                )
+                  : (
+                    <Text fontSize="md">
+                      <span style={{ fontWeight: 'bold' }}>
+                        {t('ghostLabel')}
+                      </span>
+                    </Text>
+                  )}
               </td>
               <td className="icons-row">
                 <Flex alignItems="center">

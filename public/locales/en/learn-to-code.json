@@ -94,7 +94,7 @@
     },
     "button": {
       "title": "Join the next event",
-      "link": "#event"
+      "link": "https://4geeksacademy.com/us/next-dates#upcoming-events"
     }
   },
   "previewModules": {
@@ -185,13 +185,11 @@
         "lastPrice": "<s>$399</s>",
         "offerTitle": "Limited offer",
         "description": "Offer expires in 60 days",
+        "highlightText": "One time payment",
         "bullets": {
           "description": "<strong>Coding introduction</strong> is the course that Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
           "title": "What you will get",
           "list": [
-            {
-              "title": "One time payment"
-            },
             {
               "title": "Unlimited access to group masterclasses"
             },

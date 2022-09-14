@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heading } from '@chakra-ui/react';
+import { Heading as THeading } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
 const sizes = {
@@ -11,21 +11,21 @@ const sizes = {
   xsm: 'clamp(1rem, 0.6rem + 1.42vw, 1.375rem)', // min 16px ---- max 22px
 };
 
-const ThemeHeading = ({ children, size, ...rest }) => (
+const Heading = ({ children, size, ...rest }) => (
   // size per default => in case of Heading need a size less than 20px (xxsm)
-  <Heading fontSize={sizes[size] || size} {...rest}>
+  <THeading fontSize={sizes[size] || size} {...rest}>
     {children}
-  </Heading>
+  </THeading>
 );
 
-ThemeHeading.propTypes = {
+Heading.propTypes = {
   size: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   children: PropTypes.node,
 };
 
-ThemeHeading.defaultProps = {
+Heading.defaultProps = {
   size: 'l',
   children: null,
 };
 
-export default ThemeHeading;
+export default Heading;
