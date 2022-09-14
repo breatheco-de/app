@@ -12,9 +12,9 @@ function ChooseProgram({ chooseList, handleChoose }) {
   const [showFinished, setShowFinished] = useState(false);
 
   const activeCohorts = chooseList.filter((program) => {
-    const educationalStatus = program.educational_status.toUpperCase();
-    const programRole = program.role.toUpperCase();
-    const programCohortStage = program.cohort.stage.toUpperCase();
+    const educationalStatus = program?.educational_status?.toUpperCase();
+    const programRole = program?.role?.toUpperCase();
+    const programCohortStage = program?.cohort?.stage?.toUpperCase();
 
     const includesPrework = ['PREWORK'].includes(programCohortStage);
     const visibleForTeacher = includesPrework && programRole !== 'STUDENT';
@@ -35,8 +35,8 @@ function ChooseProgram({ chooseList, handleChoose }) {
   });
 
   const finishedCohorts = chooseList.filter((program) => {
-    const educationalStatus = program.educational_status.toUpperCase();
-    const programCohortStage = program.cohort.stage.toUpperCase();
+    const educationalStatus = program?.educational_status?.toUpperCase();
+    const programCohortStage = program?.cohort?.stage?.toUpperCase();
 
     const showCohort = ['ENDED'].includes(programCohortStage);
     // ACTIVE: show be here because the student may not have delivered all the homework
