@@ -1,26 +1,22 @@
 /* eslint-disable no-extra-boolean-cast */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
-  Box, Flex, useDisclosure, IconButton, Link, useToast,
-  useColorModeValue, Checkbox, Select, Modal, ModalOverlay,
+  Box, Flex, useDisclosure, Link, useToast,
+  useColorModeValue, Select, Modal, ModalOverlay,
   ModalContent, ModalHeader, ModalCloseButton, ModalBody, Button,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import { isWindow, assetTypeValues, getExtensionName } from '../../../../../utils';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
-import { updateAssignment, startDay, nestAssignments } from '../../../../../common/hooks/useModuleHandler';
+import { updateAssignment, startDay } from '../../../../../common/hooks/useModuleHandler';
 import { ButtonHandlerByTaskStatus } from '../../../../../js_modules/moduleMap/taskHandler';
-import Timeline from '../../../../../common/components/Timeline';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkdownParser from '../../../../../common/components/MarkDownParser';
 import Text from '../../../../../common/components/Text';
-import bc from '../../../../../common/services/breathecode';
 import useAuth from '../../../../../common/hooks/useAuth';
-import { MDSkeleton } from '../../../../../common/components/Skeleton';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import StickySideBar from '../../../../../common/components/StickySideBar';
 import Icon from '../../../../../common/components/Icon';
@@ -29,7 +25,12 @@ import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import ShareButton from '../../../../../common/components/ShareButton';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
-import { getSlideProps } from '../../../../../js_modules/syllabus/config';
+import ScrollTop from '../../../../../common/components/scrollTop';
+import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar';
+import {
+  defaultDataFetch, getCurrentCohort, prepareCohortContext, prepareTaskModules,
+} from '../../../../../js_modules/syllabus/dataFetch';
+import getReadme from '../../../../../js_modules/syllabus/getReadme';
 
 const Content = () => {
   const { t } = useTranslation('syllabus');
@@ -43,7 +44,6 @@ const Content = () => {
   const [modalSettingsOpen, setModalSettingsOpen] = useState(false);
   const { isOpen, onToggle } = useDisclosure();
   const [openNextPageModal, setOpenNextPageModal] = useState(false);
-  const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [readme, setReadme] = useState(null);
   const [ipynbHtmlUrl, setIpynbHtmlUrl] = useState(null);
   const [extendedInstructions, setExtendedInstructions] = useState(null);
@@ -66,7 +66,6 @@ const Content = () => {
   const [currentData, setCurrentData] = useState({});
   const toast = useToast();
   const router = useRouter();
-  const prevScrollY = useRef(0);
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
 
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
@@ -88,15 +87,12 @@ const Content = () => {
   const firstTask = nextModule?.modules[0];
   const lastPrevTask = prevModule?.modules[prevModule?.modules.length - 1];
 
-  const slide = getSlideProps(Open);
-
   // const { cohortSlug, lesson, lessonSlug } = router.query;
   const cohortSlug = router?.query?.cohortSlug;
   const lesson = router?.query?.lesson;
   const lessonSlug = router?.query?.lessonSlug;
 
   const language = router.locale === 'en' ? 'us' : 'es';
-  const currentLanguageLabel = router.language === 'en' ? t('common:english') : t('common:spanish');
 
   const isQuiz = lesson === 'answer';
 
@@ -141,13 +137,11 @@ const Content = () => {
   };
 
   useEffect(() => {
-    Promise.all([
-      bc.todo({ cohort: cohortSession.id }).getTaskByStudent(), // Tasks with cohort id
-    ]).then(([taskTodoData]) => {
-      setContextState({
-        ...contextState,
-        taskTodo: taskTodoData.data,
-      });
+    getCurrentCohort({
+      cohortSlug,
+      choose,
+      router,
+      t,
     });
   }, []);
 
@@ -163,23 +157,6 @@ const Content = () => {
       && el.associated_slug === lessonSlug));
     }
   }, [taskTodo, lessonSlug, lesson]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = isWindow && window.scrollY;
-      if (prevScrollY.current > 400) {
-        setShowScrollToTop(true);
-      } else {
-        setShowScrollToTop(false);
-      }
-
-      prevScrollY.current = currentScrollY;
-    };
-    if (isWindow) {
-      window.addEventListener('scroll', handleScroll, { passive: true });
-    }
-    return () => isWindow && window.removeEventListener('scroll', handleScroll);
-  }, [showScrollToTop]);
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -233,86 +210,11 @@ const Content = () => {
     });
   };
 
-  const defaultDataFetch = async () => {
-    if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
-      Promise.all([
-        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.md`),
-        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`),
-      ])
-        .then(([respMarkdown, respData]) => {
-          const currData = respData.data;
-          const markdownData = respMarkdown.data;
-          toast({
-            title: t('alert-message:language-not-found', { currentLanguageLabel }),
-            // not found, showing the english version`,
-            status: 'warning',
-            duration: 5500,
-            isClosable: true,
-          });
-          const exensionName = getExtensionName(currData.readme_url);
-
-          if (lesson === 'answer') setQuizSlug(lessonSlug);
-          else setQuizSlug(null);
-
-          if (currData !== undefined && typeof markdownData === 'string') {
-            // Binary base64 decoding ⇢ UTF-8
-            const markdown = getMarkDownContent(markdownData);
-            setReadme(markdown);
-            setCurrentData(currData);
-          }
-          if (exensionName === 'ipynb') setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentTheme}&plain=true`);
-          else setIpynbHtmlUrl(null);
-        })
-        .catch(() => {
-          toast({
-            title: t('alert-message:default-version-not-found', { lesson }),
-            // description: 'Content not found',
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
-        });
-    }
-  };
-
-  useEffect(() => {
-    bc.admissions().me()
-      .then(({ data }) => {
-        const { cohorts } = data;
-        // find cohort with current slug
-        const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
-        const currentCohort = findCohort?.cohort;
-        const { version, name } = currentCohort?.syllabus_version;
-        choose({
-          cohort_slug: cohortSlug,
-          date_joined: data.date_joined,
-          cohort_role: findCohort.role,
-          version,
-          slug: currentCohort?.syllabus_version.slug,
-          cohort_name: currentCohort.name,
-          cohort_id: currentCohort.id,
-          syllabus_name: name,
-          academy_id: currentCohort.academy.id,
-        });
-      })
-      .catch((err) => {
-        router.push('/choose-program');
-        toast({
-          title: t('alert-message:invalid-cohort-slug'),
-          description: err,
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-      });
-  }, []);
-
   // TODO: Now try with prev
   useEffect(() => {
     const currTask = filterEmptyModules[currentModuleIndex].modules.find((l) => l.slug === lessonSlug);
 
     if (currTask.target === 'blank') {
-      console.log('IS BLANK');
       setCurrentBlankProps(currTask);
     } else if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
       axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
@@ -356,11 +258,21 @@ const Content = () => {
                 }
               })
               .catch(() => {
-                defaultDataFetch();
+                defaultDataFetch({
+                  currentBlankProps,
+                  lessonSlug,
+                  assetTypeValues,
+                  lesson,
+                  setQuizSlug,
+                  setReadme,
+                  setCurrentData,
+                  setIpynbHtmlUrl,
+                  router,
+                  t,
+                });
               });
           }
         }).catch(() => {
-          // TODO: If asset not exists return markdown with props of syllabus like currentBlankProps
           EventIfNotFound();
         });
     }
@@ -404,50 +316,10 @@ const Content = () => {
   }, [selectedSyllabus]);
 
   useEffect(() => {
-    if (!isLoading && user && user.active_cohort && cohortSession.cohort_role) {
-      const academyId = user.active_cohort.academy_id;
-      const { version, slug } = user.active_cohort;
-      const currentAcademy = user.roles.find((role) => role.academy.id === academyId);
-
-      // Fetch cohortProgram and TaskTodo then apply to contextState (useModuleMap - action)
-      if (cohortSession.slug) {
-        Promise.all([
-          bc.todo({ cohort: cohortSession.id }).getTaskByStudent(), // Tasks with cohort id
-          bc.syllabus().get(
-            academyId,
-            slug,
-            version,
-          ), // cohortProgram
-          bc.auth().getRoles(currentAcademy?.role), // Roles
-        ]).then((
-          [taskTodoData, programData, userRoles],
-        ) => {
-          const technologiesArray = programData.data.main_technologies
-            ? programData.data.main_technologies.split(',').map((el) => el.trim())
-            : [];
-
-          setCohortSession({
-            ...cohortSession,
-            main_technologies: technologiesArray,
-            academy_owner: programData.data.academy_owner,
-            bc_id: user.id,
-            user_capabilities: userRoles.data.capabilities,
-          });
-          setContextState({
-            taskTodo: taskTodoData.data,
-            cohortProgram: programData.data,
-          });
-        }).catch((err) => {
-          toast({
-            title: t('alert-message:error-fetching-role', { role: currentAcademy?.role }),
-            description: err.message,
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
-          router.push('/choose-program');
-        });
-      }
+    if (!isLoading && user && user?.active_cohort && cohortSession?.cohort_role) {
+      prepareCohortContext({
+        user, cohortSession, setCohortSession, setContextState, router, t,
+      });
     }
   }, [user]);
 
@@ -455,104 +327,25 @@ const Content = () => {
     const cohortProgram = contextState?.cohortProgram;
     const moduleData = cohortProgram.json?.days || cohortProgram.json?.modules;
     const cohort = cohortProgram.json ? moduleData : [];
-    const assignmentsRecopilated = [];
 
     if (contextState.cohortProgram.json && contextState.taskTodo) {
       setTaskTodo(contextState.taskTodo);
-      cohort.map((assignment) => {
-        const {
-          id, description, lessons, replits, assignments, quizzes,
-        } = assignment;
-        const nestedAssignments = nestAssignments({
-          id,
-          read: lessons,
-          practice: replits,
-          code: assignments,
-          answer: quizzes,
-          taskTodo: contextState.taskTodo,
-        });
-        const { modules, filteredModules, filteredModulesByPending } = nestedAssignments;
-
-        // Data to be sent to [sortedAssignments] = state
-        const assignmentsStruct = {
-          id,
-          label: assignment.label,
-          description,
-          modules,
-          filteredModules,
-          filteredModulesByPending,
-          duration_in_days: assignment?.duration_in_days || null,
-          teacherInstructions: assignment.teacher_instructions,
-          extendedInstructions: assignment.extended_instructions,
-          keyConcepts: assignment['key-concepts'],
-        };
-
-        // prevent duplicates when a new module has been started (added to sortedAssignments array)
-        const keyIndex = assignmentsRecopilated.findIndex((x) => x.id === id);
-        if (keyIndex > -1) {
-          assignmentsRecopilated.splice(keyIndex, 1, {
-            ...assignmentsStruct,
-          });
-        } else {
-          assignmentsRecopilated.push({
-            ...assignmentsStruct,
-          });
-        }
-
-        const emptyModulesFiltered = assignmentsRecopilated.filter(
-          (l) => l.modules.length > 0,
-        );
-        return setSortedAssignments(emptyModulesFiltered);
+      prepareTaskModules({
+        contextState, cohort, setSortedAssignments,
       });
     }
   }, [contextState.cohortProgram, contextState.taskTodo, router]);
 
-  const GetReadme = () => {
-    if (ipynbHtmlUrl === null && readme && currentBlankProps?.target !== 'blank') {
-      return (
-        <MarkdownParser
-          content={readme.content}
-          callToActionProps={callToActionProps}
-          titleRightSide={!ipynbHtmlUrl && currentData.url && (
-            <Link href={`${currentData.url}`} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
-              <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-              {t('edit-page')}
-            </Link>
-          )}
-          withToc={lesson.toLowerCase() === 'read'}
-          frontMatter={{
-            title: currentData.title,
-            // subtitle: currentData.description,
-            assetType: currentData.asset_type,
-          }}
-        />
-      );
-    }
-    if (currentBlankProps?.target === 'blank') {
-      return (
-        <MarkdownParser
-          content="# This Asset must open in external page"
-          callToActionProps={callToActionProps}
-          titleRightSide={currentBlankProps?.url && (
-            <Link href={`${currentBlankProps?.url}`} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
-              <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-              {t('edit-page')}
-            </Link>
-          )}
-          withToc={lesson.toLowerCase() === 'read'}
-          frontMatter={{
-            title: currentBlankProps?.title,
-            // subtitle: currentBlankProps.description,
-            assetType: currentBlankProps?.asset_type,
-          }}
-        />
-      );
-    }
-    if (ipynbHtmlUrl === null && readme === null && quizSlug !== lessonSlug) {
-      return <MDSkeleton />;
-    }
-    return false;
-  };
+  const GetReadme = () => getReadme({
+    ipynbHtmlUrl,
+    readme,
+    currentBlankProps,
+    callToActionProps,
+    currentData,
+    lesson,
+    quizSlug,
+    lessonSlug,
+  });
 
   const teacherActions = profesionalRoles.includes(cohortSession.cohort_role)
     ? [
@@ -715,128 +508,18 @@ const Content = () => {
         ]}
       />
 
-      <IconButton
-        style={{ zIndex: 20 }}
-        variant="default"
-        display={Open ? 'none' : 'initial'}
-        onClick={onToggle}
-        width="17px"
-        height="36px"
-        minW={0}
-        position="fixed"
-        top="50%"
-        left="0"
-        padding={0}
-        icon={(
-          <ChevronRightIcon
-            width="17px"
-            height="36px"
-          />
-        )}
+      <ScrollTop />
+
+      <TimelineSidebar
+        cohortSession={cohortSession}
+        filterEmptyModules={filterEmptyModules}
+        onClickAssignment={onClickAssignment}
+        showPendingTasks={showPendingTasks}
+        setShowPendingTasks={setShowPendingTasks}
+        isOpen={isOpen}
+        onToggle={onToggle}
       />
-      <Box
-        bottom="20px"
-        position="fixed"
-        right="30px"
-        // left="95%"
-      >
-        <IconButton
-          icon={<ArrowUpIcon />}
-          onClick={scrollTop}
-          borderRadius="full"
-          style={{ height: 40, display: showScrollToTop ? 'flex' : 'none' }}
-          animation="fadeIn 0.3s"
-          justifyContent="center"
-          height="20px"
-          variant="default"
-          transition="opacity 0.4s"
-          opacity="0.5"
-          _hover={{
-            opacity: 1,
-          }}
-        />
-      </Box>
-      <Box position={{ base: 'fixed', lg: Open ? 'initial' : 'fixed' }} display={Open ? 'initial' : 'none'} flex="0 0 auto" minWidth="290px" width={{ base: '74.6vw', md: '46.6vw', lg: '26.6vw' }} zIndex={Open ? 99 : 0}>
-        <Box style={slide}>
-          <Box
-            padding="1.5rem"
-            // position="sticky"
-            display="flex"
-            flexDirection="column"
-            gridGap="6px"
-            top={0}
-            zIndex={200}
-            bg={useColorModeValue('white', 'darkTheme')}
-            borderBottom={1}
-            borderStyle="solid"
-            borderColor={commonBorderColor}
-          >
-            {cohortSession?.syllabus_version && (
-              <Heading size="xsm">{cohortSession?.syllabus_version?.name}</Heading>
-            )}
-            <Checkbox mb="-14px" onChange={(e) => setShowPendingTasks(e.target.checked)} color={useColorModeValue('gray.600', 'gray.350')}>
-              {t('dashboard:modules.show-pending-tasks')}
-            </Checkbox>
-          </Box>
 
-          <IconButton
-            style={{ zIndex: 20 }}
-            variant="default"
-            onClick={onToggle}
-            width="17px"
-            height="36px"
-            minW={0}
-            position="absolute"
-            transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
-            transitionProperty="margin"
-            transitionDuration={Open ? '225ms' : '195ms'}
-            transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
-            top="50%"
-            right="-20px"
-            padding={0}
-            icon={(
-              <ChevronLeftIcon
-                width="17px"
-                height="36px"
-              />
-            )}
-            marginBottom="1rem"
-          />
-
-          <Box
-            className={`horizontal-sroll ${currentTheme}`}
-            height="100%"
-            style={{
-              overflowX: 'hidden',
-              overflowY: 'auto',
-            }}
-          >
-            {filterEmptyModules.map((section) => {
-              const currentAssignments = showPendingTasks
-                ? section.filteredModulesByPending
-                : section.filteredModules;
-              return (
-                <Box
-                  key={`${section.title}-${section.id}`}
-                  padding={{ base: '1rem', md: '1.5rem' }}
-                  borderBottom={1}
-                  borderStyle="solid"
-                  borderColor={commonBorderColor}
-                >
-                  <Timeline
-                    key={section.id}
-                    showPendingTasks={showPendingTasks}
-                    assignments={currentAssignments}
-                    technologies={section.technologies || []}
-                    title={section.label}
-                    onClickAssignment={onClickAssignment}
-                  />
-                </Box>
-              );
-            })}
-          </Box>
-        </Box>
-      </Box>
       <Box width="100%" height="auto">
         {!isQuiz && currentData.intro_video_url && (
           <ReactPlayerV2
