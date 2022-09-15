@@ -1,8 +1,9 @@
+/* eslint-disable no-extra-boolean-cast */
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import {
   Box, Flex, useDisclosure, IconButton, Link, useToast,
-  useColorModeValue, useMediaQuery, Checkbox, Select, Modal, ModalOverlay,
+  useColorModeValue, Checkbox, Select, Modal, ModalOverlay,
   ModalContent, ModalHeader, ModalCloseButton, ModalBody, Button,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
@@ -28,6 +29,7 @@ import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import ShareButton from '../../../../../common/components/ShareButton';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
+import { getSlideProps } from '../../../../../js_modules/syllabus/config';
 
 const Content = () => {
   const { t } = useTranslation('syllabus');
@@ -67,15 +69,13 @@ const Content = () => {
   const prevScrollY = useRef(0);
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
 
-  const [isBelowLaptop] = useMediaQuery('(max-width: 996px)');
-  const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
 
   //                                          gray.200    gray.500
   const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
   const commonFeaturedColors = useColorModeValue('featuredLight', 'featuredDark');
-  const bgColor = useColorModeValue('#FFFFFF', '#17202A');
+
   const Open = !isOpen;
   const { label, teacherInstructions, keyConcepts } = selectedSyllabus;
 
@@ -88,32 +88,7 @@ const Content = () => {
   const firstTask = nextModule?.modules[0];
   const lastPrevTask = prevModule?.modules[prevModule?.modules.length - 1];
 
-  const slide = {
-    minWidth: '290px',
-    zIndex: 1200,
-    position: isBelowLaptop ? 'inherit' : 'sticky',
-    backgroundColor: bgColor,
-    top: 0,
-    left: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    flex: '1 0 auto',
-    width: 'inherit',
-    transform: Open ? 'translateX(0rem)' : 'translateX(-30rem)',
-    visibility: Open ? 'visible' : 'hidden',
-    height: isBelowTablet ? '100%' : '100vh',
-    outline: 0,
-    borderRight: 1,
-    borderStyle: 'solid',
-    // overflowX: 'hidden',
-    // overflowY: 'auto',
-    borderColor: commonBorderColor,
-    transition: Open ? 'transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-    transitionProperty: Open ? 'transform' : 'box-shadow',
-    transitionDuration: Open ? '225ms' : '300ms',
-    transitionTimingFunction: Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.2, 1)',
-    transitionDelay: Open ? '0ms' : '0ms',
-  };
+  const slide = getSlideProps(Open);
 
   // const { cohortSlug, lesson, lessonSlug } = router.query;
   const cohortSlug = router?.query?.cohortSlug;
@@ -124,6 +99,18 @@ const Content = () => {
   const currentLanguageLabel = router.language === 'en' ? t('common:english') : t('common:spanish');
 
   const isQuiz = lesson === 'answer';
+
+  const filteredCurrentAssignments = filterEmptyModules.map((section) => {
+    const currentAssignments = showPendingTasks
+      ? section.filteredModulesByPending
+      : section.filteredModules;
+    return currentAssignments;
+  });
+
+  const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => {
+    const currIndex = s?.some((l) => l.slug === lessonSlug);
+    return currIndex;
+  });
 
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -320,8 +307,14 @@ const Content = () => {
       });
   }, []);
 
+  // TODO: Now try with prev
   useEffect(() => {
-    if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
+    const currTask = filterEmptyModules[currentModuleIndex].modules.find((l) => l.slug === lessonSlug);
+
+    if (currTask.target === 'blank') {
+      console.log('IS BLANK');
+      setCurrentBlankProps(currTask);
+    } else if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
       axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
         .then(({ data }) => {
           const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
@@ -384,11 +377,11 @@ const Content = () => {
       });
     }
     const findSelectedSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
-    const currentModuleIndex = sortedAssignments.findIndex(
+    const currModuleIndex = sortedAssignments.findIndex(
       (l) => l.modules.some((m) => m.slug === lessonSlug),
     );
-    const nextModuleData = sortedAssignments[currentModuleIndex + 1];
-    const prevModuleData = sortedAssignments[currentModuleIndex - 1];
+    const nextModuleData = sortedAssignments[currModuleIndex + 1];
+    const prevModuleData = sortedAssignments[currModuleIndex - 1];
 
     const defaultSyllabus = sortedAssignments.filter(
       (l) => l.modules.find((m) => m.slug === lessonSlug),
@@ -515,9 +508,6 @@ const Content = () => {
   }, [contextState.cohortProgram, contextState.taskTodo, router]);
 
   const GetReadme = () => {
-    if (ipynbHtmlUrl === null && readme === null && quizSlug !== lessonSlug) {
-      return <MDSkeleton />;
-    }
     if (ipynbHtmlUrl === null && readme && currentBlankProps?.target !== 'blank') {
       return (
         <MarkdownParser
@@ -558,6 +548,9 @@ const Content = () => {
         />
       );
     }
+    if (ipynbHtmlUrl === null && readme === null && quizSlug !== lessonSlug) {
+      return <MDSkeleton />;
+    }
     return false;
   };
 
@@ -595,18 +588,6 @@ const Content = () => {
     id: 3,
   }] : [];
 
-  const filteredCurrentAssignments = filterEmptyModules.map((section) => {
-    const currentAssignments = showPendingTasks
-      ? section.filteredModulesByPending
-      : section.filteredModules;
-    return currentAssignments;
-  });
-
-  const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => {
-    const currIndex = s?.some((l) => l.slug === lessonSlug);
-    return currIndex;
-  });
-
   const previousAssignment = filteredCurrentAssignments.map((section) => {
     const currentIndex = section.findIndex((l) => l.slug === lessonSlug);
     const prevIndex = currentIndex - 1;
@@ -628,6 +609,7 @@ const Content = () => {
 
   const handleNextPage = () => {
     if (nextAssignment !== null) {
+      // router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
       if (nextAssignment?.target === 'blank') {
         setCurrentBlankProps(nextAssignment);
         // setOpenTargetBlankModal(true);
@@ -636,7 +618,6 @@ const Content = () => {
         setCurrentBlankProps(null);
         router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
       }
-      // eslint-disable-next-line no-extra-boolean-cast
     } else if (!!(nextModule)) {
       if (firstTask.target !== 'blank') {
         if (cohortSlug && !!firstTask && !!nextModule?.filteredModules[0]) {
@@ -654,12 +635,11 @@ const Content = () => {
     if (previousAssignment !== null) {
       if (previousAssignment?.target === 'blank') {
         setCurrentBlankProps(previousAssignment);
-        setOpenTargetBlankModal(true);
+        // setOpenTargetBlankModal(true);
       } else {
         setCurrentBlankProps(null);
         router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
       }
-      // eslint-disable-next-line no-extra-boolean-cast
     } else if (!!(prevModule)) {
       if (lastPrevTask.target !== 'blank') {
         if (cohortSlug && !!lastPrevTask && !!prevModule?.filteredModules[0]) {
@@ -1064,6 +1044,7 @@ const Content = () => {
                           router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
                           // setOpenTargetBlankModal(true);
                         } else {
+                          setCurrentBlankProps(null);
                           handleNextPage();
                           // router.push(`/syllabus/${cohortSlug}/${nextAssignment
                           // ?.type?.toLowerCase()}/${nextAssignment?.slug}`);
