@@ -152,7 +152,7 @@ export const nestAssignments = ({
     type: 'Read',
     icon: 'book',
     task_type: 'LESSON',
-  })).sort((a, b) => a.position - b.position);
+  })).sort((a, b) => b.position - a.position);
 
   const updatedPractice = practice?.map((el) => ({
     ...el,
@@ -165,7 +165,7 @@ export const nestAssignments = ({
     type: 'Practice',
     icon: 'strength',
     task_type: 'EXERCISE',
-  })).sort((a, b) => a.position - b.position);
+  })).sort((a, b) => b.position - a.position);
 
   const updatedCode = code?.map((el) => ({
     ...el,
@@ -180,7 +180,7 @@ export const nestAssignments = ({
     type: 'Code',
     icon: 'code',
     task_type: 'PROJECT',
-  })).sort((a, b) => a.position - b.position);
+  })).sort((a, b) => b.position - a.position);
 
   const updatedAnswer = answer?.map((el) => ({
     ...el,
@@ -193,7 +193,7 @@ export const nestAssignments = ({
     type: 'Answer',
     icon: 'answer',
     task_type: 'QUIZ',
-  })).sort((a, b) => a.position - b.position);
+  })).sort((a, b) => b.position - a.position);
 
   const modules = [...updatedRead, ...updatedPractice, ...updatedCode, ...updatedAnswer];
 
