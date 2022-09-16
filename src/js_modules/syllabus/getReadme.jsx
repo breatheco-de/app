@@ -1,13 +1,15 @@
-import { Icon, Link } from '@chakra-ui/react';
+import { Link } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../common/components/Skeleton';
+import Icon from '../../common/components/Icon';
 
 const getReadme = ({
   ipynbHtmlUrl, readme, currentBlankProps, callToActionProps, currentData, lesson,
   quizSlug, lessonSlug,
 }) => {
   const { t } = useTranslation('syllabus');
+  const blankText = t('blank-page', { url: currentBlankProps?.url });
 
   if (ipynbHtmlUrl === null && readme && currentBlankProps?.target !== 'blank') {
     return (
@@ -32,7 +34,7 @@ const getReadme = ({
   if (currentBlankProps?.target === 'blank') {
     return (
       <MarkDownParser
-        content={`## This asset should open in an external page. <a href='${currentBlankProps?.url}' target='_blank' rel='noopener noreferrer'>Click here</a>`}
+        content={blankText}
         callToActionProps={callToActionProps}
         titleRightSide={currentBlankProps?.url && (
           <Link href={`${currentBlankProps?.url}`} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
