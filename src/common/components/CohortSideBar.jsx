@@ -34,7 +34,7 @@ const ProfilesSection = ({
   const [showMoreStudents, setShowMoreStudents] = useState(false);
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
 
-  const assistantMaxLimit = isBelowTablet ? 3 : 5;
+  const assistantMaxLimit = isBelowTablet ? 3 : 4;
 
   // limit the student list to 15 and when "showMoreStudents" is true, show all
   const studentsToShow = showMoreStudents ? profiles : profiles?.slice(0, 15);
@@ -329,6 +329,7 @@ const CohortSideBar = ({
               fontSize="13px"
               letterSpacing="0.05em"
               width="100%"
+              borderBottom="4px solid #C4C4C4"
               // height="100%"
               _selected={{
                 color: 'blue.default',
@@ -354,6 +355,7 @@ const CohortSideBar = ({
               fontSize="13px"
               letterSpacing="0.05em"
               width="100%"
+              borderBottom="4px solid #C4C4C4"
               // height="100%"
               _selected={{
                 color: 'blue.default',
