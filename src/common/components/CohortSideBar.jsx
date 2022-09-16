@@ -90,7 +90,7 @@ const ProfilesSection = ({
                     height="48px"
                     key={`${c.id} - ${c.user.first_name}`}
                     containerStyle={{
-                      marginInlineEnd: '-0.8em',
+                      // marginInlineEnd: '-0.8em',
                       // marginInlineEnd: studentsToShow.length - 2 === i ? '+0.25em' : '-0.8em',
                     }}
                     fullName={fullName}
