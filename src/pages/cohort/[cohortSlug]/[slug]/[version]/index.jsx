@@ -289,7 +289,7 @@ const Dashboard = () => {
     const moduleData = cohortProgram.json?.days || cohortProgram.json?.modules;
     const cohort = cohortProgram.json ? moduleData : [];
     const assignmentsRecopilated = [];
-    devLog('moduleData:', moduleData);
+    devLog('json.days:', moduleData);
 
     if (contextState.cohortProgram.json && contextState.taskTodo) {
       setTaskTodo(contextState.taskTodo);
