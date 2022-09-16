@@ -34,10 +34,12 @@ const ProfilesSection = ({
   const [showMoreStudents, setShowMoreStudents] = useState(false);
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
 
-  const assistantMaxLimit = isBelowTablet ? 3 : 5;
+  const assistantMaxLimit = isBelowTablet ? 3 : 4;
 
   // limit the student list to 15 and when "showMoreStudents" is true, show all
   const studentsToShow = showMoreStudents ? profiles : profiles?.slice(0, 15);
+  const singleTeacher = teacher[0];
+  const teacherfullName = `${singleTeacher?.user?.first_name} ${singleTeacher?.user.last_name}`;
   return (
     <Box display="block">
       {title && (
@@ -47,7 +49,7 @@ const ProfilesSection = ({
       )}
       {wrapped ? (
         <Box display="flex" justifyContent="space-between">
-          {teacher.map((d) => {
+          {/* {teacher.map((d) => {
             const fullName = `${d.user.first_name} ${d.user.last_name}`;
             return (
               <AvatarUser
@@ -63,8 +65,22 @@ const ProfilesSection = ({
                 )}
               />
             );
-          })}
-          <AvatarGroup max={assistantMaxLimit} marginRight="18px">
+          })} */}
+          {!!singleTeacher && (
+            <AvatarUser
+              width="48px"
+              height="48px"
+              key={`${singleTeacher.id} - ${singleTeacher.user.first_name}`}
+              fullName={teacherfullName}
+              data={singleTeacher}
+              badge={(
+                <Box position="absolute" bottom="-6px" right="-8px" background="blue.default" borderRadius="50px" p="5px" border="2px solid white">
+                  <Icon icon="teacher1" width="12px" height="12px" color="#FFFFFF" />
+                </Box>
+              )}
+            />
+          )}
+          <AvatarGroup max={assistantMaxLimit}>
             {
               studentsToShow?.map((c) => {
                 const fullName = `${c.user.first_name} ${c.user.last_name}`;
@@ -74,7 +90,7 @@ const ProfilesSection = ({
                     height="48px"
                     key={`${c.id} - ${c.user.first_name}`}
                     containerStyle={{
-                      marginInlineEnd: '-0.8em',
+                      // marginInlineEnd: '-0.8em',
                       // marginInlineEnd: studentsToShow.length - 2 === i ? '+0.25em' : '-0.8em',
                     }}
                     fullName={fullName}
@@ -329,6 +345,7 @@ const CohortSideBar = ({
               fontSize="13px"
               letterSpacing="0.05em"
               width="100%"
+              borderBottom="4px solid #C4C4C4"
               // height="100%"
               _selected={{
                 color: 'blue.default',
@@ -354,6 +371,7 @@ const CohortSideBar = ({
               fontSize="13px"
               letterSpacing="0.05em"
               width="100%"
+              borderBottom="4px solid #C4C4C4"
               // height="100%"
               _selected={{
                 color: 'blue.default',

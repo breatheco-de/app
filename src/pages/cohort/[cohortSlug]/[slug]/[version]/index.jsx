@@ -28,7 +28,9 @@ import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
-import { slugify, includesToLowerCase, getStorageItem } from '../../../../../utils/index';
+import {
+  slugify, includesToLowerCase, getStorageItem, devLog,
+} from '../../../../../utils/index';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
@@ -287,6 +289,7 @@ const Dashboard = () => {
     const moduleData = cohortProgram.json?.days || cohortProgram.json?.modules;
     const cohort = cohortProgram.json ? moduleData : [];
     const assignmentsRecopilated = [];
+    devLog('json.days:', moduleData);
 
     if (contextState.cohortProgram.json && contextState.taskTodo) {
       setTaskTodo(contextState.taskTodo);

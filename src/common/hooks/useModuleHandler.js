@@ -103,6 +103,7 @@ export const startDay = async ({
 }) => {
   try {
     const response = await bc.todo({}).add(newTasks);
+
     if (response.status < 400) {
       toast({
         title: label
@@ -167,20 +168,25 @@ export const nestAssignments = ({
     task_type: 'EXERCISE',
   })).sort((a, b) => b.position - a.position);
 
-  const updatedCode = code?.map((el) => ({
-    ...el,
-    id,
-    label,
-    task_status: getTaskProps(el.slug)?.task_status || '',
-    revision_status: getTaskProps(el.slug)?.revision_status || '',
-    created_at: getTaskProps(el.slug)?.created_at || '',
-    daysDiff: getTaskProps(el.slug)?.created_at ? differenceInDays(currentDate, new Date(getTaskProps(el.slug)?.created_at)) : '',
-    position: el.position,
-    mandatory: el.mandatory,
-    type: 'Code',
-    icon: 'code',
-    task_type: 'PROJECT',
-  })).sort((a, b) => b.position - a.position);
+  const updatedCode = code?.map((el) => {
+    const taskProps = getTaskProps(el?.slug?.slug || el?.slug);
+
+    return ({
+      ...el,
+      id,
+      label,
+      slug: el?.slug?.slug || el?.slug,
+      task_status: taskProps?.task_status || '',
+      revision_status: taskProps?.revision_status || '',
+      created_at: taskProps?.created_at || '',
+      daysDiff: taskProps?.created_at ? differenceInDays(currentDate, new Date(taskProps?.created_at)) : '',
+      position: el.position,
+      mandatory: el.mandatory,
+      type: 'Code',
+      icon: 'code',
+      task_type: 'PROJECT',
+    });
+  }).sort((a, b) => b.position - a.position);
 
   const updatedAnswer = answer?.map((el) => ({
     ...el,
