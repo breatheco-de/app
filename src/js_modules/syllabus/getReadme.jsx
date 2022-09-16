@@ -14,7 +14,7 @@ const getReadme = ({
       <MarkDownParser
         content={readme.content}
         callToActionProps={callToActionProps}
-        titleRightSide={!ipynbHtmlUrl && currentData.url && (
+        titleRightSide={!ipynbHtmlUrl && currentData?.url && (
           <Link href={`${currentData.url}`} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
             <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
             {t('edit-page')}
@@ -32,7 +32,7 @@ const getReadme = ({
   if (currentBlankProps?.target === 'blank') {
     return (
       <MarkDownParser
-        content="# This Asset must open in external page"
+        content={`## This asset should open in an external page. <a href='${currentBlankProps?.url}' target='_blank' rel='noopener noreferrer'>Click here</a>`}
         callToActionProps={callToActionProps}
         titleRightSide={currentBlankProps?.url && (
           <Link href={`${currentBlankProps?.url}`} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">

@@ -210,9 +210,8 @@ const Content = () => {
     });
   };
 
-  // TODO: Now try with prev
   useEffect(() => {
-    const currTask = filterEmptyModules[currentModuleIndex].modules.find((l) => l.slug === lessonSlug);
+    const currTask = filterEmptyModules[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
 
     if (currTask.target === 'blank') {
       setCurrentBlankProps(currTask);
@@ -401,17 +400,17 @@ const Content = () => {
   })[currentModuleIndex];
 
   const handleNextPage = () => {
+    setCurrentData({});
     if (nextAssignment !== null) {
       // router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
       if (nextAssignment?.target === 'blank') {
         setCurrentBlankProps(nextAssignment);
-        // setOpenTargetBlankModal(true);
         router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
       } else {
         setCurrentBlankProps(null);
         router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
       }
-    } else if (!!(nextModule)) {
+    } else if (!!nextModule) {
       if (firstTask.target !== 'blank') {
         if (cohortSlug && !!firstTask && !!nextModule?.filteredModules[0]) {
           router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
@@ -419,28 +418,31 @@ const Content = () => {
           setOpenNextModuleModal(true);
         }
       } else {
+        router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
         setCurrentBlankProps(firstTask);
-        setOpenTargetBlankModal(true);
       }
     }
   };
+
   const handlePrevPage = () => {
+    setCurrentData({});
     if (previousAssignment !== null) {
       if (previousAssignment?.target === 'blank') {
         setCurrentBlankProps(previousAssignment);
-        // setOpenTargetBlankModal(true);
+        router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
       } else {
         setCurrentBlankProps(null);
         router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
       }
-    } else if (!!(prevModule)) {
+    } else if (!!prevModule) {
       if (lastPrevTask.target !== 'blank') {
-        if (cohortSlug && !!lastPrevTask && !!prevModule?.filteredModules[0]) {
+        if (cohortSlug && !!lastPrevTask) {
           router.push(router.push(`/syllabus/${cohortSlug}/${lastPrevTask?.type?.toLowerCase()}/${lastPrevTask?.slug}`));
         }
       } else {
         setCurrentBlankProps(lastPrevTask);
-        setOpenTargetBlankModal(true);
+        setCurrentData(lastPrevTask);
+        router.push(router.push(`/syllabus/${cohortSlug}/${lastPrevTask?.type?.toLowerCase()}/${lastPrevTask?.slug}`));
       }
     }
   };
@@ -521,9 +523,9 @@ const Content = () => {
       />
 
       <Box width="100%" height="auto">
-        {!isQuiz && currentData.intro_video_url && (
+        {!isQuiz && currentData?.intro_video_url && (
           <ReactPlayerV2
-            url={currentData.intro_video_url}
+            url={currentData?.intro_video_url}
           />
         )}
         <Box
@@ -605,13 +607,13 @@ const Content = () => {
             </>
           )}
 
-          {!isQuiz && currentData.solution_video_url && showSolutionVideo && (
+          {!isQuiz && currentData?.solution_video_url && showSolutionVideo && (
             <Box padding="1.2rem 2rem 2rem 2rem" borderRadius="3px" background={useColorModeValue('featuredLight', 'featuredDark')}>
               <Heading as="h2" size="16">
                 Video Tutorial
               </Heading>
               <ReactPlayerV2
-                url={currentData.solution_video_url}
+                url={currentData?.solution_video_url}
               />
             </Box>
           )}
@@ -689,7 +691,7 @@ const Content = () => {
                     setClickedPage(previousAssignment);
                     if (previousAssignment?.target === 'blank') {
                       setCurrentBlankProps(previousAssignment);
-                      setOpenTargetBlankModal(true);
+                      router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
                     } else {
                       handlePrevPage();
                     }
@@ -716,7 +718,6 @@ const Content = () => {
                   letterSpacing="0.05em"
                   fontWeight="700"
                   onClick={() => {
-                    console.log(nextModule && cohortSlug && !!firstTask);
                     if (taskIsNotDone) {
                       setOpenNextPageModal(true);
                     } else if (nextAssignment !== null || !!firstTask) {
