@@ -8,10 +8,14 @@ const ScrollSpy = ({
   offsetLeft,
   duration,
   children,
+  isCustomElement,
+  containerClass,
 }) => {
   let currentChild = 0;
   let scrollSpyNavContainer;
   let viewportWidth;
+  const contentElement = typeof document !== 'undefined' && document.querySelector(containerClass);
+  const scrollContent = isCustomElement ? contentElement : window;
 
   useEffect(() => {
     viewportWidth = window.innerWidth;
@@ -58,17 +62,17 @@ const ScrollSpy = ({
     };
 
     const onScrollHandler = throttle(() => {
-      const scrollElement = document.scrollingElement || document.documentElement;
+      const scrollElement = isCustomElement ? scrollContent : (document.scrollingElement || document.documentElement);
 
       const center = {
-        x: scrollElement.scrollLeft + window.innerWidth / 2,
+        x: scrollElement.scrollLeft + scrollContent.innerWidth / 2,
         y: scrollElement.scrollTop + offsetTop,
       };
 
       sourceElements.map((source, i) => {
         const target = targetElements[i];
 
-        const visibleHorizontal = target.offsetLeft >= 0
+        const visibleHorizontal = isCustomElement ? target.offsetLeft >= 0 : target.offsetLeft >= 0
           && center.x >= target.offsetLeft
           && center.x < target.offsetLeft + target.offsetWidth;
 
@@ -99,8 +103,9 @@ const ScrollSpy = ({
 
       self.addEventListener('click', () => {
         if (targetElement !== undefined || targetElement !== null) {
-          window.scrollTo({
+          scrollContent.scrollTo({
             top: targetElement?.offsetTop + autoScrollOffsetTop,
+            behavior: 'smooth',
           });
         }
         return null;
@@ -116,12 +121,12 @@ const ScrollSpy = ({
 
     if (targetElements.length) {
       const ScrollEvent = new Event('scroll');
-      window.addEventListener('scroll', onScrollHandler, { passive: true });
-      window.dispatchEvent(ScrollEvent);
+      scrollContent.addEventListener('scroll', onScrollHandler, { passive: true });
+      scrollContent.dispatchEvent(ScrollEvent);
     }
 
     return () => {
-      window.removeEventListener('scroll', onScrollHandler);
+      scrollContent.removeEventListener('scroll', onScrollHandler);
     };
   }, [
     children, className, duration, offsetTop, autoScrollOffsetTop, offsetLeft, handleAutoNavScroll,
@@ -139,6 +144,8 @@ ScrollSpy.propTypes = {
   offsetLeft: PropTypes.number,
   duration: PropTypes.number,
   children: PropTypes.node.isRequired,
+  isCustomElement: PropTypes.bool,
+  containerClass: PropTypes.string,
 };
 ScrollSpy.defaultProps = {
   className: 'active',
@@ -146,4 +153,6 @@ ScrollSpy.defaultProps = {
   autoScrollOffsetTop: 0,
   offsetLeft: 0,
   duration: 1000,
+  isCustomElement: false,
+  containerClass: '.scroll-container',
 };

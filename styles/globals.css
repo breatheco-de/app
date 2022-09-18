@@ -264,3 +264,18 @@ featured {
 		box-shadow: 0 0 0 0px rgba(255, 82, 82, 0), 0 0 0 22px rgba(255, 82, 82, 0), 0 0 0 25px rgba(255, 82, 82, 0);
 	}
 }
+
+.scroll-container {
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  -webkit-font-smoothing: antialiased;
+
+}
+.scroll-area {
+  scroll-snap-align: center;
+}
+
+button.active {
+  border-bottom: 4px solid #0097cd;
+  color: #0097ce;
+}
