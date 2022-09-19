@@ -65,7 +65,7 @@ const ScrollSpy = ({
       const scrollElement = isCustomElement ? scrollContent : (document.scrollingElement || document.documentElement);
 
       const center = {
-        x: scrollElement.scrollLeft + scrollContent.innerWidth / 2,
+        x: scrollElement.scrollLeft + scrollContent?.innerWidth / 2,
         y: scrollElement.scrollTop + offsetTop,
       };
 
@@ -101,9 +101,9 @@ const ScrollSpy = ({
         return false;
       }
 
-      self.addEventListener('click', () => {
+      self?.addEventListener('click', () => {
         if (targetElement !== undefined || targetElement !== null) {
-          scrollContent.scrollTo({
+          scrollContent?.scrollTo({
             top: targetElement?.offsetTop + autoScrollOffsetTop,
             behavior: 'smooth',
           });
@@ -121,12 +121,12 @@ const ScrollSpy = ({
 
     if (targetElements.length) {
       const ScrollEvent = new Event('scroll');
-      scrollContent.addEventListener('scroll', onScrollHandler, { passive: true });
-      scrollContent.dispatchEvent(ScrollEvent);
+      scrollContent?.addEventListener('scroll', onScrollHandler, { passive: true });
+      scrollContent?.dispatchEvent(ScrollEvent);
     }
 
     return () => {
-      scrollContent.removeEventListener('scroll', onScrollHandler);
+      scrollContent?.removeEventListener('scroll', onScrollHandler);
     };
   }, [
     children, className, duration, offsetTop, autoScrollOffsetTop, offsetLeft, handleAutoNavScroll,
