@@ -140,6 +140,18 @@ const breathecode = {
       get: () => axios.get(`${url}/me`),
     };
   },
+
+  public: (query = {}) => {
+    const url = `${host}/admissions/public`;
+
+    const qs = Object.keys(query)
+      .map((key) => (query[key] !== undefined ? `${key}=${query[key]}` : ''))
+      .join('&');
+    return {
+      mentors: () => axios.get(`${url}/cohort/user?${qs}`),
+      events: () => axios.get(`${host}/events/all?${qs}`),
+    };
+  },
 };
 
 export default breathecode;

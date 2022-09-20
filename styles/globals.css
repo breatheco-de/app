@@ -51,6 +51,11 @@ body.chakra-ui-dark .arrow-blue-color {
   background: var(--chakra-colors-gray-800) !important;
 }
 
+featured {
+  color: #0097CD;
+}
+
+
 .react-player {
   aspect-ratio: 16/9;
   border-radius: 3px;

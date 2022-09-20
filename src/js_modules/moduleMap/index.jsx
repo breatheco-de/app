@@ -20,6 +20,7 @@ const ModuleMap = ({
   const currentModules = showPendingTasks ? filteredModulesByPending : filteredModules;
   const handleStartDay = () => {
     const updatedTasks = (modules || [])?.map((l) => ({
+      ...l,
       title: l.title,
       associated_slug: l?.slug?.slug || l.slug,
       description: '',

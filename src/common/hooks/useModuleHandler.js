@@ -98,27 +98,32 @@ export const updateAssignment = ({
   }
 };
 
-export const startDay = ({
-  t, newTasks, label, contextState, setContextState, toast,
+export const startDay = async ({
+  t, newTasks, label, contextState, setContextState, toast, customHandler = () => {},
 }) => {
-  bc.todo({}).add(newTasks).then(({ data }) => {
-    toast({
-      title: label
-        ? t('alert-message:module-started', { title: label })
-        : t('alert-message:module-sync-success'),
-      // title: `Module ${label ? `${label}started` : 'synchronized'} successfully`,
-      status: 'success',
-      duration: 6000,
-      isClosable: true,
-    });
-    setContextState({
-      ...contextState,
-      taskTodo: [
-        ...contextState.taskTodo,
-        ...data,
-      ],
-    });
-  }).catch((err) => {
+  try {
+    const response = await bc.todo({}).add(newTasks);
+
+    if (response.status < 400) {
+      toast({
+        title: label
+          ? t('alert-message:module-started', { title: label })
+          : t('alert-message:module-sync-success'),
+        // title: `Module ${label ? `${label}started` : 'synchronized'} successfully`,
+        status: 'success',
+        duration: 6000,
+        isClosable: true,
+      });
+      setContextState({
+        ...contextState,
+        taskTodo: [
+          ...contextState.taskTodo,
+          ...response.data,
+        ],
+      });
+      customHandler();
+    }
+  } catch (err) {
     console.log('error_ADD_TASK 🔴 ', err);
     toast({
       title: t('alert-message:module-start-error'),
@@ -126,7 +131,7 @@ export const startDay = ({
       duration: 6000,
       isClosable: true,
     });
-  });
+  }
 };
 
 export const nestAssignments = ({
@@ -163,20 +168,25 @@ export const nestAssignments = ({
     task_type: 'EXERCISE',
   })).sort((a, b) => b.position - a.position);
 
-  const updatedCode = code?.map((el) => ({
-    ...el,
-    id,
-    label,
-    task_status: getTaskProps(el.slug)?.task_status || '',
-    revision_status: getTaskProps(el.slug)?.revision_status || '',
-    created_at: getTaskProps(el.slug)?.created_at || '',
-    daysDiff: getTaskProps(el.slug)?.created_at ? differenceInDays(currentDate, new Date(getTaskProps(el.slug)?.created_at)) : '',
-    position: el.position,
-    mandatory: el.mandatory,
-    type: 'Code',
-    icon: 'code',
-    task_type: 'PROJECT',
-  })).sort((a, b) => b.position - a.position);
+  const updatedCode = code?.map((el) => {
+    const taskProps = getTaskProps(el?.slug?.slug || el?.slug);
+
+    return ({
+      ...el,
+      id,
+      label,
+      slug: el?.slug?.slug || el?.slug,
+      task_status: taskProps?.task_status || '',
+      revision_status: taskProps?.revision_status || '',
+      created_at: taskProps?.created_at || '',
+      daysDiff: taskProps?.created_at ? differenceInDays(currentDate, new Date(taskProps?.created_at)) : '',
+      position: el.position,
+      mandatory: el.mandatory,
+      type: 'Code',
+      icon: 'code',
+      task_type: 'PROJECT',
+    });
+  }).sort((a, b) => b.position - a.position);
 
   const updatedAnswer = answer?.map((el) => ({
     ...el,

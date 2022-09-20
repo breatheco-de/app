@@ -66,7 +66,7 @@ const Toc = ({ content }) => {
     return Math.trunc(count / 3);
   };
  */
-  return (
+  return getHierarchy().length > 0 && (
     <Box
       bg={colorMode === 'light' ? 'blue.light' : 'featuredDark'}
       w="100%"

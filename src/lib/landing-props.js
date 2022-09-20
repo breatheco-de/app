@@ -172,8 +172,8 @@ const parallax4 = [
 ];
 const parallax5 = [
   {
-    start: 1800,
-    end: 2400,
+    start: 2400,
+    end: 2800,
     properties: [
       {
         startValue: 0.6,

@@ -6,7 +6,7 @@ const HAVE_SESSION = isWindow ? localStorage.getItem('accessToken') !== null : f
  * principal use for dibuging for another issues and prevent
  * to create unused console.logs in production
 */
-const isDevMode = isWindow && window.location.hostname === 'localhost';
+const isDevMode = isWindow && (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'preview' || window.location.hostname === 'localhost');
 
 const languageLabel = {
   es: 'spanish',

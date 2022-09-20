@@ -1,25 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
+/* eslint-disable no-extra-boolean-cast */
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
-  Box, Flex, useDisclosure, IconButton, Link, useToast,
-  useColorModeValue, useMediaQuery, Checkbox, Select, Modal, ModalOverlay,
+  Box, Flex, useDisclosure, Link, useToast,
+  useColorModeValue, Select, Modal, ModalOverlay,
   ModalContent, ModalHeader, ModalCloseButton, ModalBody, Button,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import { ChevronRightIcon, ChevronLeftIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import { isWindow, assetTypeValues, getExtensionName } from '../../../../../utils';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
-import { updateAssignment } from '../../../../../common/hooks/useModuleHandler';
+import { updateAssignment, startDay } from '../../../../../common/hooks/useModuleHandler';
 import { ButtonHandlerByTaskStatus } from '../../../../../js_modules/moduleMap/taskHandler';
-import Timeline from '../../../../../common/components/Timeline';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkdownParser from '../../../../../common/components/MarkDownParser';
 import Text from '../../../../../common/components/Text';
-import bc from '../../../../../common/services/breathecode';
 import useAuth from '../../../../../common/hooks/useAuth';
-import { MDSkeleton } from '../../../../../common/components/Skeleton';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import StickySideBar from '../../../../../common/components/StickySideBar';
 import Icon from '../../../../../common/components/Icon';
@@ -28,12 +25,18 @@ import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import ShareButton from '../../../../../common/components/ShareButton';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
+import ScrollTop from '../../../../../common/components/scrollTop';
+import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar';
+import {
+  defaultDataFetch, getCurrentCohort, prepareCohortContext, prepareTaskModules,
+} from '../../../../../js_modules/syllabus/dataFetch';
+import getReadme from '../../../../../js_modules/syllabus/getReadme';
 
 const Content = () => {
   const { t } = useTranslation('syllabus');
-  const { choose } = useAuth();
-  const [cohortSession] = usePersistent('cohortSession', {});
-  const [sortedAssignments] = usePersistent('sortedAssignments', []);
+  const { isLoading, user, choose } = useAuth();
+  const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
+  const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);
@@ -41,13 +44,15 @@ const Content = () => {
   const [modalSettingsOpen, setModalSettingsOpen] = useState(false);
   const { isOpen, onToggle } = useDisclosure();
   const [openNextPageModal, setOpenNextPageModal] = useState(false);
-  const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [readme, setReadme] = useState(null);
   const [ipynbHtmlUrl, setIpynbHtmlUrl] = useState(null);
   const [extendedInstructions, setExtendedInstructions] = useState(null);
   const [extendedIsEnabled, setExtendedIsEnabled] = useState(false);
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [currentSelectedModule, setCurrentSelectedModule] = useState(null);
+  const [nextModule, setNextModule] = useState(null);
+  const [prevModule, setPrevModule] = useState(null);
+  const [openNextModuleModal, setOpenNextModuleModal] = useState(false);
   const [quizSlug, setQuizSlug] = useState(null);
   const [showSolutionVideo, setShowSolutionVideo] = useState(false);
   const [selectedSyllabus, setSelectedSyllabus] = useState({});
@@ -61,18 +66,15 @@ const Content = () => {
   const [currentData, setCurrentData] = useState({});
   const toast = useToast();
   const router = useRouter();
-  const prevScrollY = useRef(0);
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
 
-  const [isBelowLaptop] = useMediaQuery('(max-width: 996px)');
-  const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
 
   //                                          gray.200    gray.500
   const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
   const commonFeaturedColors = useColorModeValue('featuredLight', 'featuredDark');
-  const bgColor = useColorModeValue('#FFFFFF', '#17202A');
+
   const Open = !isOpen;
   const { label, teacherInstructions, keyConcepts } = selectedSyllabus;
 
@@ -82,52 +84,64 @@ const Content = () => {
 
   const currentTheme = useColorModeValue('light', 'dark');
 
-  const slide = {
-    minWidth: '290px',
-    zIndex: 1200,
-    position: isBelowLaptop ? 'inherit' : 'sticky',
-    backgroundColor: bgColor,
-    top: 0,
-    left: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    flex: '1 0 auto',
-    width: 'inherit',
-    transform: Open ? 'translateX(0rem)' : 'translateX(-30rem)',
-    visibility: Open ? 'visible' : 'hidden',
-    height: isBelowTablet ? '100%' : '100vh',
-    outline: 0,
-    borderRight: 1,
-    borderStyle: 'solid',
-    // overflowX: 'hidden',
-    // overflowY: 'auto',
-    borderColor: commonBorderColor,
-    transition: Open ? 'transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-    transitionProperty: Open ? 'transform' : 'box-shadow',
-    transitionDuration: Open ? '225ms' : '300ms',
-    transitionTimingFunction: Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.2, 1)',
-    transitionDelay: Open ? '0ms' : '0ms',
-  };
+  const firstTask = nextModule?.modules[0];
+  const lastPrevTask = prevModule?.modules[prevModule?.modules.length - 1];
 
-  const { cohortSlug, lesson, lessonSlug } = router.query;
+  // const { cohortSlug, lesson, lessonSlug } = router.query;
+  const cohortSlug = router?.query?.cohortSlug;
+  const lesson = router?.query?.lesson;
+  const lessonSlug = router?.query?.lessonSlug;
 
   const language = router.locale === 'en' ? 'us' : 'es';
-  const currentLanguageLabel = router.language === 'en' ? t('common:english') : t('common:spanish');
 
   const isQuiz = lesson === 'answer';
+
+  const filteredCurrentAssignments = filterEmptyModules.map((section) => {
+    const currentAssignments = showPendingTasks
+      ? section.filteredModulesByPending
+      : section.filteredModules;
+    return currentAssignments;
+  });
+
+  const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => {
+    const currIndex = s?.some((l) => l.slug === lessonSlug);
+    return currIndex;
+  });
 
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  useEffect(() => {
-    Promise.all([
-      bc.todo({ cohort: cohortSession.id }).getTaskByStudent(), // Tasks with cohort id
-    ]).then(([taskTodoData]) => {
-      setContextState({
-        ...contextState,
-        taskTodo: taskTodoData.data,
+  const handleStartDay = () => {
+    const updatedTasks = (nextModule.modules || [])?.map((l) => ({
+      ...l,
+      associated_slug: l.slug,
+      cohort: cohortSession.id,
+    }));
+    const customHandler = () => {
+      if (nextModule && cohortSlug && firstTask) {
+        router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
+      }
+    };
+    if (user?.id) {
+      startDay({
+        t,
+        id: user.id,
+        newTasks: updatedTasks,
+        contextState,
+        setContextState,
+        toast,
+        customHandler,
       });
+    }
+  };
+
+  useEffect(() => {
+    getCurrentCohort({
+      cohortSlug,
+      choose,
+      router,
+      t,
     });
   }, []);
 
@@ -143,23 +157,6 @@ const Content = () => {
       && el.associated_slug === lessonSlug));
     }
   }, [taskTodo, lessonSlug, lesson]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = isWindow && window.scrollY;
-      if (prevScrollY.current > 400) {
-        setShowScrollToTop(true);
-      } else {
-        setShowScrollToTop(false);
-      }
-
-      prevScrollY.current = currentScrollY;
-    };
-    if (isWindow) {
-      window.addEventListener('scroll', handleScroll, { passive: true });
-    }
-    return () => isWindow && window.removeEventListener('scroll', handleScroll);
-  }, [showScrollToTop]);
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -199,6 +196,7 @@ const Content = () => {
     setCallToActionProps({});
     setReadme(null);
     setIpynbHtmlUrl(null);
+    setCurrentBlankProps(null);
   };
 
   const EventIfNotFound = () => {
@@ -212,126 +210,71 @@ const Content = () => {
     });
   };
 
-  const defaultDataFetch = async () => {
-    Promise.all([
-      axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.md`),
-      axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`),
-    ])
-      .then(([respMarkdown, respData]) => {
-        const currData = respData.data;
-        const markdownData = respMarkdown.data;
-        toast({
-          title: t('alert-message:language-not-found', { currentLanguageLabel }),
-          // not found, showing the english version`,
-          status: 'warning',
-          duration: 5500,
-          isClosable: true,
-        });
-        const exensionName = getExtensionName(currData.readme_url);
-
-        if (lesson === 'answer') setQuizSlug(lessonSlug);
-        else setQuizSlug(null);
-
-        if (currData !== undefined && typeof markdownData === 'string') {
-          // Binary base64 decoding ⇢ UTF-8
-          const markdown = getMarkDownContent(markdownData);
-          setReadme(markdown);
-          setCurrentData(currData);
-        }
-        if (exensionName === 'ipynb') setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentTheme}&plain=true`);
-        else setIpynbHtmlUrl(null);
-      })
-      .catch(() => {
-        toast({
-          title: t('alert-message:default-version-not-found', { lesson }),
-          // description: 'Content not found',
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-      });
-  };
-
   useEffect(() => {
-    bc.admissions().me()
-      .then(({ data }) => {
-        const { cohorts } = data;
-        // find cohort with current slug
-        const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
-        const currentCohort = findCohort?.cohort;
-        const { version, name } = currentCohort?.syllabus_version;
-        choose({
-          cohort_slug: cohortSlug,
-          date_joined: data.date_joined,
-          cohort_role: findCohort.role,
-          version,
-          slug: currentCohort?.syllabus_version.slug,
-          cohort_name: currentCohort.name,
-          cohort_id: currentCohort.id,
-          syllabus_name: name,
-          academy_id: currentCohort.academy.id,
-        });
-      })
-      .catch((err) => {
-        router.push('/choose-program');
-        toast({
-          title: t('alert-message:invalid-cohort-slug'),
-          description: err,
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-      });
-  }, []);
+    const currTask = filterEmptyModules[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
 
-  useEffect(() => {
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
-      .then(({ data }) => {
-        const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
-        setCallToActionProps({
-          token: accessToken,
-          assetSlug: lessonSlug,
-          gitpod: data.gitpod,
-          assetType: assetTypeValues[lesson],
-        });
-        setReadmeUrlPathname(urlPathname);
-        let currentlocaleLang = data.translations[language];
-        const exensionName = getExtensionName(data.readme_url);
-        if (exensionName === 'ipynb') {
-          setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentTheme}&plain=true`);
-          setCurrentData(data);
-        } else {
-          setIpynbHtmlUrl(null);
-          if (currentlocaleLang === undefined) {
-            currentlocaleLang = `${lessonSlug}-${language}`;
+    if (currTask.target === 'blank') {
+      setCurrentBlankProps(currTask);
+    } else if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
+      axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
+        .then(({ data }) => {
+          const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
+          setCallToActionProps({
+            token: accessToken,
+            assetSlug: lessonSlug,
+            gitpod: data.gitpod,
+            assetType: assetTypeValues[lesson],
+          });
+          setReadmeUrlPathname(urlPathname);
+          let currentlocaleLang = data.translations[language];
+          const exensionName = getExtensionName(data.readme_url);
+          if (exensionName === 'ipynb') {
+            setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentTheme}&plain=true`);
+            setCurrentData(data);
+          } else {
+            setIpynbHtmlUrl(null);
+            if (currentlocaleLang === undefined) {
+              currentlocaleLang = `${lessonSlug}-${language}`;
+            }
+            Promise.all([
+              axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}.md`),
+              axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=${assetTypeValues[lesson]}`),
+            ])
+              .then(([respMarkdown, respData]) => {
+                const currData = respData.data;
+                const markdownData = respMarkdown.data;
+
+                if (lesson === 'answer') {
+                  setQuizSlug(currentlocaleLang);
+                } else {
+                  setQuizSlug(null);
+                }
+                if (currData !== undefined && typeof markdownData === 'string') {
+                  // Binary base64 decoding ⇢ UTF-8
+                  const markdown = getMarkDownContent(markdownData);
+                  setReadme(markdown);
+                  setCurrentData(currData);
+                }
+              })
+              .catch(() => {
+                defaultDataFetch({
+                  currentBlankProps,
+                  lessonSlug,
+                  assetTypeValues,
+                  lesson,
+                  setQuizSlug,
+                  setReadme,
+                  setCurrentData,
+                  setIpynbHtmlUrl,
+                  router,
+                  t,
+                });
+              });
           }
-          Promise.all([
-            axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}.md`),
-            axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=${assetTypeValues[lesson]}`),
-          ])
-            .then(([respMarkdown, respData]) => {
-              const currData = respData.data;
-              const markdownData = respMarkdown.data;
-
-              if (lesson === 'answer') {
-                setQuizSlug(currentlocaleLang);
-              } else {
-                setQuizSlug(null);
-              }
-              if (currData !== undefined && typeof markdownData === 'string') {
-                // Binary base64 decoding ⇢ UTF-8
-                const markdown = getMarkDownContent(markdownData);
-                setReadme(markdown);
-                setCurrentData(currData);
-              }
-            })
-            .catch(() => {
-              defaultDataFetch();
-            });
-        }
-      }).catch(() => {
-        EventIfNotFound();
-      });
+        }).catch(() => {
+          EventIfNotFound();
+        });
+    }
   }, [router, lessonSlug]);
 
   useEffect(() => {
@@ -345,12 +288,20 @@ const Content = () => {
       });
     }
     const findSelectedSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
+    const currModuleIndex = sortedAssignments.findIndex(
+      (l) => l.modules.some((m) => m.slug === lessonSlug),
+    );
+    const nextModuleData = sortedAssignments[currModuleIndex + 1];
+    const prevModuleData = sortedAssignments[currModuleIndex - 1];
+
     const defaultSyllabus = sortedAssignments.filter(
       (l) => l.modules.find((m) => m.slug === lessonSlug),
     )[0];
 
     if (defaultSyllabus) {
       setSelectedSyllabus(findSelectedSyllabus || defaultSyllabus);
+      setNextModule(nextModuleData);
+      setPrevModule(prevModuleData);
       setDefaultSelectedSyllabus(defaultSyllabus);
     }
   }, [sortedAssignments, lessonSlug, currentSelectedModule]);
@@ -363,32 +314,37 @@ const Content = () => {
     }
   }, [selectedSyllabus]);
 
-  const GetReadme = () => {
-    if (ipynbHtmlUrl === null && readme === null && quizSlug !== lessonSlug) {
-      return <MDSkeleton />;
+  useEffect(() => {
+    if (!isLoading && user && user?.active_cohort && cohortSession?.cohort_role) {
+      prepareCohortContext({
+        user, cohortSession, setCohortSession, setContextState, router, t,
+      });
     }
-    if (ipynbHtmlUrl === null && readme) {
-      return (
-        <MarkdownParser
-          content={readme.content}
-          callToActionProps={callToActionProps}
-          titleRightSide={!ipynbHtmlUrl && currentData.url && (
-            <Link href={`${currentData.url}`} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
-              <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-              {t('edit-page')}
-            </Link>
-          )}
-          withToc={lesson.toLowerCase() === 'read'}
-          frontMatter={{
-            title: currentData.title,
-            // subtitle: currentData.description,
-            assetType: currentData.asset_type,
-          }}
-        />
-      );
+  }, [user]);
+
+  useEffect(() => {
+    const cohortProgram = contextState?.cohortProgram;
+    const moduleData = cohortProgram.json?.days || cohortProgram.json?.modules;
+    const cohort = cohortProgram.json ? moduleData : [];
+
+    if (contextState.cohortProgram.json && contextState.taskTodo) {
+      setTaskTodo(contextState.taskTodo);
+      prepareTaskModules({
+        contextState, cohort, setSortedAssignments,
+      });
     }
-    return false;
-  };
+  }, [contextState.cohortProgram, contextState.taskTodo, router]);
+
+  const GetReadme = () => getReadme({
+    ipynbHtmlUrl,
+    readme,
+    currentBlankProps,
+    callToActionProps,
+    currentData,
+    lesson,
+    quizSlug,
+    lessonSlug,
+  });
 
   const teacherActions = profesionalRoles.includes(cohortSession.cohort_role)
     ? [
@@ -424,13 +380,6 @@ const Content = () => {
     id: 3,
   }] : [];
 
-  const filteredCurrentAssignments = filterEmptyModules.map((section) => {
-    const currentAssignments = showPendingTasks
-      ? section.filteredModulesByPending
-      : section.filteredModules;
-    return currentAssignments;
-  });
-
   const previousAssignment = filteredCurrentAssignments.map((section) => {
     const currentIndex = section.findIndex((l) => l.slug === lessonSlug);
     const prevIndex = currentIndex - 1;
@@ -438,16 +387,65 @@ const Content = () => {
       return section[prevIndex];
     }
     return null;
-  })[selectedSyllabus.id - 1];
+  })[currentModuleIndex];
 
   const nextAssignment = filteredCurrentAssignments.map((section) => {
     const currentIndex = section.findIndex((l) => l.slug === lessonSlug);
     const nextIndex = currentIndex + 1;
+
     if (nextIndex < section.length) {
       return section[nextIndex];
     }
     return null;
-  })[selectedSyllabus.id - 1];
+  })[currentModuleIndex];
+
+  const handleNextPage = () => {
+    setCurrentData({});
+    if (nextAssignment !== null) {
+      // router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+      if (nextAssignment?.target === 'blank') {
+        setCurrentBlankProps(nextAssignment);
+        router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+      } else {
+        setCurrentBlankProps(null);
+        router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+      }
+    } else if (!!nextModule) {
+      if (firstTask.target !== 'blank') {
+        if (cohortSlug && !!firstTask && !!nextModule?.filteredModules[0]) {
+          router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
+        } else {
+          setOpenNextModuleModal(true);
+        }
+      } else {
+        router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
+        setCurrentBlankProps(firstTask);
+      }
+    }
+  };
+
+  const handlePrevPage = () => {
+    setCurrentData({});
+    if (previousAssignment !== null) {
+      if (previousAssignment?.target === 'blank') {
+        setCurrentBlankProps(previousAssignment);
+        router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
+      } else {
+        setCurrentBlankProps(null);
+        router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
+      }
+    } else if (!!prevModule) {
+      if (lastPrevTask.target !== 'blank') {
+        if (cohortSlug && !!lastPrevTask) {
+          router.push(router.push(`/syllabus/${cohortSlug}/${lastPrevTask?.type?.toLowerCase()}/${lastPrevTask?.slug}`));
+        }
+      } else {
+        setCurrentBlankProps(lastPrevTask);
+        setCurrentData(lastPrevTask);
+        router.push(router.push(`/syllabus/${cohortSlug}/${lastPrevTask?.type?.toLowerCase()}/${lastPrevTask?.slug}`));
+      }
+    }
+  };
 
   const pathConnector = {
     read: `${router.locale === 'en' ? '4geeks.com/lesson' : `4geeks.com/${router.locale}/lesson`}`,
@@ -485,7 +483,7 @@ const Content = () => {
         onClose={() => setOpenTargetBlankModal(false)}
         title={t('dashboard:modules.target-blank-title')}
         isReadonly
-        description={t('dashboard:modules.target-blank-msg', { title: clickedPage?.title })}
+        description={t('dashboard:modules.target-blank-msg', { title: clickedPage?.title || currentBlankProps?.title })}
         link={inputModalLink}
         handlerText={t('common:open')}
         closeText={t('common:close')}
@@ -494,8 +492,6 @@ const Content = () => {
           setOpenTargetBlankModal(false);
           if (currentBlankProps && currentBlankProps.target === 'blank') {
             window.open(currentBlankProps.url, '_blank');
-          } else {
-            window.open(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`, '_blank');
           }
         }}
       />
@@ -514,132 +510,22 @@ const Content = () => {
         ]}
       />
 
-      <IconButton
-        style={{ zIndex: 20 }}
-        variant="default"
-        display={Open ? 'none' : 'initial'}
-        onClick={onToggle}
-        width="17px"
-        height="36px"
-        minW={0}
-        position="fixed"
-        top="50%"
-        left="0"
-        padding={0}
-        icon={(
-          <ChevronRightIcon
-            width="17px"
-            height="36px"
-          />
-        )}
+      <ScrollTop />
+
+      <TimelineSidebar
+        cohortSession={cohortSession}
+        filterEmptyModules={filterEmptyModules}
+        onClickAssignment={onClickAssignment}
+        showPendingTasks={showPendingTasks}
+        setShowPendingTasks={setShowPendingTasks}
+        isOpen={isOpen}
+        onToggle={onToggle}
       />
-      <Box
-        bottom="20px"
-        position="fixed"
-        right="30px"
-        // left="95%"
-      >
-        <IconButton
-          icon={<ArrowUpIcon />}
-          onClick={scrollTop}
-          borderRadius="full"
-          style={{ height: 40, display: showScrollToTop ? 'flex' : 'none' }}
-          animation="fadeIn 0.3s"
-          justifyContent="center"
-          height="20px"
-          variant="default"
-          transition="opacity 0.4s"
-          opacity="0.5"
-          _hover={{
-            opacity: 1,
-          }}
-        />
-      </Box>
-      <Box position={{ base: 'fixed', lg: Open ? 'initial' : 'fixed' }} display={Open ? 'initial' : 'none'} flex="0 0 auto" minWidth="290px" width={{ base: '74.6vw', md: '46.6vw', lg: '26.6vw' }} zIndex={Open ? 99 : 0}>
-        <Box style={slide}>
-          <Box
-            padding="1.5rem"
-            // position="sticky"
-            display="flex"
-            flexDirection="column"
-            gridGap="6px"
-            top={0}
-            zIndex={200}
-            bg={useColorModeValue('white', 'darkTheme')}
-            borderBottom={1}
-            borderStyle="solid"
-            borderColor={commonBorderColor}
-          >
-            {cohortSession?.syllabus_version && (
-              <Heading size="xsm">{cohortSession?.syllabus_version?.name}</Heading>
-            )}
-            <Checkbox mb="-14px" onChange={(e) => setShowPendingTasks(e.target.checked)} color={useColorModeValue('gray.600', 'gray.350')}>
-              {t('dashboard:modules.show-pending-tasks')}
-            </Checkbox>
-          </Box>
 
-          <IconButton
-            style={{ zIndex: 20 }}
-            variant="default"
-            onClick={onToggle}
-            width="17px"
-            height="36px"
-            minW={0}
-            position="absolute"
-            transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
-            transitionProperty="margin"
-            transitionDuration={Open ? '225ms' : '195ms'}
-            transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
-            top="50%"
-            right="-20px"
-            padding={0}
-            icon={(
-              <ChevronLeftIcon
-                width="17px"
-                height="36px"
-              />
-            )}
-            marginBottom="1rem"
-          />
-
-          <Box
-            className={`horizontal-sroll ${currentTheme}`}
-            height="100%"
-            style={{
-              overflowX: 'hidden',
-              overflowY: 'auto',
-            }}
-          >
-            {filterEmptyModules.map((section) => {
-              const currentAssignments = showPendingTasks
-                ? section.filteredModulesByPending
-                : section.filteredModules;
-              return (
-                <Box
-                  key={`${section.title}-${section.id}`}
-                  padding={{ base: '1rem', md: '1.5rem' }}
-                  borderBottom={1}
-                  borderStyle="solid"
-                  borderColor={commonBorderColor}
-                >
-                  <Timeline
-                    key={section.id}
-                    showPendingTasks={showPendingTasks}
-                    assignments={currentAssignments}
-                    technologies={section.technologies || []}
-                    title={section.label}
-                    onClickAssignment={onClickAssignment}
-                  />
-                </Box>
-              );
-            })}
-          </Box>
-        </Box>
-      </Box>
       <Box width="100%" height="auto">
-        {!isQuiz && currentData.intro_video_url && (
+        {!isQuiz && currentData?.intro_video_url && (
           <ReactPlayerV2
-            url={currentData.intro_video_url}
+            url={currentData?.intro_video_url}
           />
         )}
         <Box
@@ -721,13 +607,13 @@ const Content = () => {
             </>
           )}
 
-          {!isQuiz && currentData.solution_video_url && showSolutionVideo && (
+          {!isQuiz && currentData?.solution_video_url && showSolutionVideo && (
             <Box padding="1.2rem 2rem 2rem 2rem" borderRadius="3px" background={useColorModeValue('featuredLight', 'featuredDark')}>
               <Heading as="h2" size="16">
                 Video Tutorial
               </Heading>
               <ReactPlayerV2
-                url={currentData.solution_video_url}
+                url={currentData?.solution_video_url}
               />
             </Box>
           )}
@@ -791,7 +677,7 @@ const Content = () => {
             </Box>
             <Box display="flex" gridGap="3rem">
               {/* showPendingTasks bool to change states */}
-              {previousAssignment !== null && (
+              {(previousAssignment || !!prevModule) && (
                 <Box
                   color="blue.default"
                   cursor="pointer"
@@ -805,9 +691,9 @@ const Content = () => {
                     setClickedPage(previousAssignment);
                     if (previousAssignment?.target === 'blank') {
                       setCurrentBlankProps(previousAssignment);
-                      setOpenTargetBlankModal(true);
-                    } else {
                       router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
+                    } else {
+                      handlePrevPage();
                     }
                   }}
                 >
@@ -820,7 +706,8 @@ const Content = () => {
                   {t('previous-page')}
                 </Box>
               )}
-              {nextAssignment !== null && (
+
+              {(nextAssignment || !!nextModule) && (
                 <Box
                   color="blue.default"
                   cursor="pointer"
@@ -831,17 +718,26 @@ const Content = () => {
                   letterSpacing="0.05em"
                   fontWeight="700"
                   onClick={() => {
-                    setClickedPage(nextAssignment);
                     if (taskIsNotDone) {
                       setOpenNextPageModal(true);
-                    }
-                    if (!taskIsNotDone) {
-                      if (nextAssignment?.target === 'blank') {
-                        setCurrentBlankProps(nextAssignment);
-                        setOpenTargetBlankModal(true);
-                      } else {
-                        router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                    } else if (nextAssignment !== null || !!firstTask) {
+                      setClickedPage(nextAssignment);
+                      if (!taskIsNotDone) {
+                        if (nextAssignment?.target === 'blank') {
+                          setCurrentBlankProps(nextAssignment);
+                          router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                          // setOpenTargetBlankModal(true);
+                        } else {
+                          setCurrentBlankProps(null);
+                          handleNextPage();
+                          // router.push(`/syllabus/${cohortSlug}/${nextAssignment
+                          // ?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                        }
                       }
+                    } else if (nextModule && cohortSlug && !!firstTask) {
+                      router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
+                    } else {
+                      setOpenNextModuleModal(true);
                     }
                   }}
                 >
@@ -871,7 +767,7 @@ const Content = () => {
                       <Button
                         variant="outline"
                         onClick={() => {
-                          router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                          handleNextPage();
                           setOpenNextPageModal(false);
                         }}
                         textTransform="uppercase"
@@ -896,12 +792,47 @@ const Content = () => {
                             }, 1200);
                           } else {
                             setTimeout(() => {
-                              router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                              handleNextPage();
                             }, 1200);
                           }
                           setOpenNextPageModal(false);
                         }}
                       />
+                    </Box>
+                  </ModalBody>
+                </ModalContent>
+              </Modal>
+
+              <Modal isOpen={openNextModuleModal} size="xl" margin="0 10px" onClose={() => setOpenNextModuleModal(false)}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalCloseButton />
+                  <ModalBody padding={{ base: '26px 18px', md: '42px 36px' }}>
+                    <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
+                      {`You have reached the end of the current module "${label}" but you can start the next module "${nextModule?.label}" right way.`}
+                    </Heading>
+                    <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="12px" justifyContent="space-around">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setOpenNextModuleModal(false);
+                        }}
+                        textTransform="uppercase"
+                        fontSize="13px"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="default"
+                        onClick={() => {
+                          handleStartDay();
+                          setOpenNextModuleModal(false);
+                        }}
+                        textTransform="uppercase"
+                        fontSize="13px"
+                      >
+                        Yes, let&apos;s start the next module
+                      </Button>
                     </Box>
                   </ModalBody>
                 </ModalContent>

@@ -28,7 +28,9 @@ import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
-import { slugify, includesToLowerCase, getStorageItem } from '../../../../../utils/index';
+import {
+  slugify, includesToLowerCase, getStorageItem, devLog,
+} from '../../../../../utils/index';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
@@ -287,6 +289,7 @@ const Dashboard = () => {
     const moduleData = cohortProgram.json?.days || cohortProgram.json?.modules;
     const cohort = cohortProgram.json ? moduleData : [];
     const assignmentsRecopilated = [];
+    devLog('json.days:', moduleData);
 
     if (contextState.cohortProgram.json && contextState.taskTodo) {
       setTaskTodo(contextState.taskTodo);
@@ -294,46 +297,49 @@ const Dashboard = () => {
         const {
           id, label, description, lessons, replits, assignments, quizzes,
         } = assignment;
-        const nestedAssignments = nestAssignments({
-          id,
-          read: lessons,
-          practice: replits,
-          code: assignments,
-          answer: quizzes,
-          taskTodo: contextState.taskTodo,
-        });
-        const { modules, filteredModules, filteredModulesByPending } = nestedAssignments;
-
-        // Data to be sent to [sortedAssignments] = state
-        const assignmentsStruct = {
-          id,
-          label,
-          description,
-          modules,
-          filteredModules,
-          filteredModulesByPending,
-          duration_in_days: assignment?.duration_in_days || null,
-          teacherInstructions: assignment.teacher_instructions,
-          extendedInstructions: assignment.extended_instructions,
-          keyConcepts: assignment['key-concepts'],
-        };
-
-        // prevent duplicates when a new module has been started (added to sortedAssignments array)
-        const keyIndex = assignmentsRecopilated.findIndex((x) => x.id === id);
-        if (keyIndex > -1) {
-          assignmentsRecopilated.splice(keyIndex, 1, {
-            ...assignmentsStruct,
+        if (lessons && replits && assignments && quizzes) {
+          const nestedAssignments = nestAssignments({
+            id,
+            read: lessons,
+            practice: replits,
+            code: assignments,
+            answer: quizzes,
+            taskTodo: contextState.taskTodo,
           });
-        } else {
-          assignmentsRecopilated.push({
-            ...assignmentsStruct,
-          });
+          const { modules, filteredModules, filteredModulesByPending } = nestedAssignments;
+
+          // Data to be sent to [sortedAssignments] = state
+          const assignmentsStruct = {
+            id,
+            label,
+            description,
+            modules,
+            filteredModules,
+            filteredModulesByPending,
+            duration_in_days: assignment?.duration_in_days || null,
+            teacherInstructions: assignment.teacher_instructions,
+            extendedInstructions: assignment.extended_instructions,
+            keyConcepts: assignment['key-concepts'],
+          };
+
+          // prevent duplicates when a new module has been started (added to sortedAssignments array)
+          const keyIndex = assignmentsRecopilated.findIndex((x) => x.id === id);
+          if (keyIndex > -1) {
+            assignmentsRecopilated.splice(keyIndex, 1, {
+              ...assignmentsStruct,
+            });
+          } else {
+            assignmentsRecopilated.push({
+              ...assignmentsStruct,
+            });
+          }
+
+          const filterEmptyModules = assignmentsRecopilated.filter(
+            (l) => l.modules.length > 0,
+          );
+          return setSortedAssignments(filterEmptyModules);
         }
-
-        const filterEmptyModules = assignmentsRecopilated.filter(
-          (l) => l.modules.length > 0,
-        );
-        return setSortedAssignments(filterEmptyModules);
+        return null;
       });
     }
   }, [contextState.cohortProgram, contextState.taskTodo, router]);
