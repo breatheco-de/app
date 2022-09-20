@@ -83,7 +83,7 @@ const PreviewModules = ({ data }) => {
           <Text fontSize="26px" fontWeight="700" lineHeight="30px">
             {data?.previewModules?.list[currentTabIndex]?.title}
           </Text>
-          <Box className="scroll-container" display="flex" flexDirection="column" height="12rem" overflowX="auto">
+          <Box className="scroll-container" display="flex" flexDirection="column" gridGap="4rem" height="12rem" overflowX="auto">
             {data?.previewModules?.list[currentTabIndex]?.steps.map((step) => (
               <Text
                 key={slugify(step.title)}
@@ -91,7 +91,7 @@ const PreviewModules = ({ data }) => {
                 id={`${slugify(step.title)}`}
                 minHeight="12rem"
                 fontSize="14px"
-                mb="4rem"
+                // mb="4rem"
                 fontWeight="400"
                 lineHeight="24px"
                 letterSpacing="0.05em"

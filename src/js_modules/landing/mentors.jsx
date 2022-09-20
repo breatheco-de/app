@@ -45,20 +45,20 @@ const Mentors = ({ data, users }) => {
               }}
               parallaxData={parallaxAvatars2}
             >
-              <AnimatedAvatar src={getUser(users[9]?.user).avatarUrl} onClick={() => setAvatarIndex(0)} width="147px" height="147px" position="absolute" left="0" top="85px" alt={getUser(users[9]?.user).fullNameSlug} style={{ zIndex: avatarIndex === 3 ? 0 : 2 }} />
-              <AnimatedAvatar src={getUser(users[10]?.user).avatarUrl} onClick={() => setAvatarIndex(1)} style={{ border: '4px solid #0097CF', zIndex: avatarIndex === 3 ? 0 : 2 }} width="158px" height="158px" position="absolute" left="214px" top="142px" alt={getUser(users[10]?.user).fullNameSlug} zIndex={2} />
+              <AnimatedAvatar src={getUser(users[9]?.user).avatarUrl} onClick={() => setAvatarIndex(0)} style={{ border: avatarIndex === 0 && '4px solid #0097CF', zIndex: avatarIndex === 3 ? 0 : 2 }} width="147px" height="147px" position="absolute" left="0" top="85px" alt={getUser(users[9]?.user).fullNameSlug} />
+              <AnimatedAvatar src={getUser(users[10]?.user).avatarUrl} onClick={() => setAvatarIndex(1)} style={{ border: avatarIndex === 1 && '4px solid #0097CF', zIndex: avatarIndex === 3 ? 0 : 2 }} width="158px" height="158px" position="absolute" left="214px" top="142px" alt={getUser(users[10]?.user).fullNameSlug} zIndex={2} />
             </Plx>
-            <AnimatedAvatar src={getUser(users[3]?.user).avatarUrl} onClick={() => setAvatarIndex(2)} width="89px" height="89px" position="absolute" left="0px" bottom="136px" alt={getUser(users[3]?.user).fullNameSlug} style={{ zIndex: avatarIndex === 3 ? 0 : 2 }} />
+            <AnimatedAvatar src={getUser(users[3]?.user).avatarUrl} onClick={() => setAvatarIndex(2)} style={{ border: avatarIndex === 2 && '4px solid #0097CF', zIndex: avatarIndex === 3 ? 0 : 2 }} width="89px" height="89px" position="absolute" left="0px" bottom="136px" alt={getUser(users[3]?.user).fullNameSlug} />
             <Plx
               style={{
                 position: 'absolute', right: 0, top: 0, zIndex: 5,
               }}
               parallaxData={parallaxAvatars2}
             >
-              <AnimatedAvatar src={getUser(users[5]?.user).avatarUrl} onClick={() => setAvatarIndex(3)} width="129px" height="129px" position="absolute" right="90px" top="59px" alt={getUser(users[5]?.user).fullNameSlug} />
+              <AnimatedAvatar src={getUser(users[5]?.user).avatarUrl} onClick={() => setAvatarIndex(3)} style={{ border: avatarIndex === 3 && '4px solid #0097CF' }} width="129px" height="129px" position="absolute" right="90px" top="59px" alt={getUser(users[5]?.user).fullNameSlug} />
             </Plx>
-            <AnimatedAvatar src={getUser(users[7]?.user).avatarUrl} onClick={() => setAvatarIndex(4)} width="109px" height="109px" position="absolute" right="0" top="172px" alt={getUser(users[7]?.user).fullNameSlug} style={{ zIndex: avatarIndex === 3 ? 0 : 2 }} />
-            <AnimatedAvatar src={getUser(users[8]?.user).avatarUrl} onClick={() => setAvatarIndex(5)} width="137px" height="137px" position="absolute" right="51px" bottom="127px" alt={getUser(users[8]?.user).fullNameSlug} style={{ zIndex: avatarIndex === 4 ? 0 : 1 }} />
+            <AnimatedAvatar src={getUser(users[7]?.user).avatarUrl} onClick={() => setAvatarIndex(4)} style={{ border: avatarIndex === 4 && '4px solid #0097CF', zIndex: avatarIndex === 3 ? 0 : 2 }} width="109px" height="109px" position="absolute" right="0" top="172px" alt={getUser(users[7]?.user).fullNameSlug} />
+            <AnimatedAvatar src={getUser(users[8]?.user).avatarUrl} onClick={() => setAvatarIndex(5)} style={{ border: avatarIndex === 5 && '4px solid #0097CF', zIndex: avatarIndex === 4 ? 0 : 1 }} width="137px" height="137px" position="absolute" right="51px" bottom="127px" alt={getUser(users[8]?.user).fullNameSlug} />
 
             <AnimatePresence>
               {avatarIndex === 0 && (<ShadowCard index={1} data={getUser(users[9]?.user)} onMouseLeave={() => handleMouseLeave()} left="-125px" top="205px" width="228px" p="30px 10px 2px 10px" gridGap="2px" height="138px" />)}

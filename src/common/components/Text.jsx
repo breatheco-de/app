@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from '@chakra-ui/react';
+import { Text as ChakraText } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
 const sizes = {
@@ -9,22 +9,22 @@ const sizes = {
   xs: '10px',
 };
 
-const ThemeText = ({
+const Text = ({
   children, size, letterSpacing, ...rest
 }) => (
-  <Text letterSpacing={letterSpacing} fontSize={sizes[size] || size} {...rest}>
+  <ChakraText letterSpacing={letterSpacing} fontSize={sizes[size] || size} {...rest}>
     {children}
-  </Text>
+  </ChakraText>
 );
 
-ThemeText.propTypes = {
+Text.propTypes = {
   size: PropTypes.string,
   letterSpacing: PropTypes.string,
   children: PropTypes.node.isRequired,
 };
-ThemeText.defaultProps = {
+Text.defaultProps = {
   letterSpacing: '0.05em',
   size: 'sm',
 };
 
-export default ThemeText;
+export default Text;

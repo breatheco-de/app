@@ -211,6 +211,12 @@
         },
         {
           "title": "No tiene fecha de vencimiento"
+        },
+        {
+          "title": "Válido para solicitar prácticas en la UE para no residentes"
+        },
+        {
+          "title": "Avalado por el Departamento de Educación de EE.UU"
         }
       ]
     },
@@ -222,14 +228,47 @@
 
   "pricing": {
     "title": "Precios",
+    "description": "<strong>Coding introduction</strong> is the course that Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
     "list": [
+      {
+        "type": "pro",
+        "show": true,
+        "title": "Pago único",
+        "price": "$199",
+        "lastPrice": "<s>$399</s>",
+        "offerTitle": "Oferta límite",
+        "description": "Acceso completo a todas las funciones durante la duración del curso",
+        "highlightText": "",
+        "bullets": {
+          "title": "Lo que obtendrás",
+          "list": [
+            {
+              "title": "Acceso ilimitado a clases magistrales grupales"
+            },
+            {
+              "title": "Acceso ilimitado a los talleres."
+            },
+            {
+              "title": "Acceso ilimitado al contenido del curso."
+            },
+            {
+              "title": "Certificado avalado por líderes de la industria"
+            }
+          ]
+        },
+        "button": {
+          "title": "Comienza tu prueba gratuita",
+          "link": "#enroll"
+        }
+      },
       {
         "type": "basic",
         "show": false,
-        "title": "Básico",
-        "price": "Prueba gratis",
+        "title": "Prueba gratis",
+        "price": "Prueba gratis de 7 días",
         "lastPrice": "",
-        "description": "No necesitas tarjeta de crédito",
+        "description": "No se necesita tarjeta. Acceso completo a todas las funciones durante 7 días",
+        "highlightText": "",
         "offerTitle": "",
         "bullets": {
           "title": "Lo que obtendrás",
@@ -249,33 +288,97 @@
           "title": "Iniciar prueba",
           "link": "#start"
         }
-      },
+      }
+    ],
+
+    "finance": [
       {
-        "type": "pro",
+        "type": "schoolarship",
         "show": true,
-        "title": "Pro",
-        "price": "$199",
-        "lastPrice": "<s>$399</s>",
-        "offerTitle": "Oferta límite",
-        "description": "La oferta vence en 60 días",
-        "highlightText": "Pago único",
+        "title": "Beca nivel 1",
+        "price": "$70",
+        "months": "3 meses",
+        "highlightText": "",
+        "description": "Acceso completo a todas las funciones durante la duración del curso.",
         "bullets": {
-          "description": "<strong>Introducción a la codificación</strong> es el curso que Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. masa aeneana.",
           "title": "Lo que obtendrás",
           "list": [
             {
-              "title": "Acceso ilimitado a clases magistrales grupales"
+              "title": "Beca nivel 1 - Item destacado 1"
             },
             {
-              "title": "Acceso ilimitado a los talleres."
+              "title": "Beca nivel 1 - Item destacado 2"
             },
             {
-              "title": "Acceso ilimitado al contenido del curso."
+              "title": "Beca nivel 1 - Item destacado 3"
+            },
+            {
+              "title": "Beca nivel 1 - Item destacado 4"
             }
           ]
         },
         "button": {
-          "title": "Comienza tu prueba gratuita",
+          "title": "Enlístate ahora",
+          "link": "#enroll"
+        }
+      },
+      {
+        "type": "schoolarship",
+        "show": true,
+        "title": "Beca nivel 2",
+        "price": "$50",
+        "months": "5 meses",
+        "highlightText": "",
+        "description": "Acceso completo a todas las funciones durante la duración del curso.",
+        "bullets": {
+          "title": "Lo que obtendrás",
+          "list": [
+            {
+              "title": "Beca nivel 2 - Item destacado 1"
+            },
+            {
+              "title": "Beca nivel 2 - Item destacado 2"
+            },
+            {
+              "title": "Beca nivel 2 - Item destacado 3"
+            },
+            {
+              "title": "Beca nivel 2 - Item destacado 4"
+            }
+          ]
+        },
+        "button": {
+          "title": "Enlístate ahora",
+          "link": "#enroll"
+        }
+      },
+      {
+        "type": "schoolarship",
+        "show": true,
+        "title": "Prueba gratis",
+        "price": "Prueba de 7 días",
+        "months": "",
+        "highlightText": "",
+        "description": "No se necesita tarjeta. Acceso completo a todas las funciones durante 7 días",
+        "bullets": {
+          "title": "Lo que obtendrás",
+          "list": [
+            {
+              "title": "Prueba gratis - Item destacado 1"
+            },
+            {
+              "title": "Prueba gratis - Item destacado 2"
+            },
+            {
+              "title": "Prueba gratis - Item destacado 3"
+            },
+            {
+              "title": "Prueba gratis - Item destacado 4"
+            }
+          ]
+        },
+        "button": {
+          "title": "Enlístate ahora",
           "link": "#enroll"
         }
       }

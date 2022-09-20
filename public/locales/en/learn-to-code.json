@@ -210,6 +210,12 @@
         },
         {
           "title": "It has no expiration date"
+        },
+        {
+          "title": "Valid to apply for internships on EU for none UE residents"
+        },
+        {
+          "title": "Endorsed by the US Department of Education"
         }
       ]
     },
@@ -220,15 +226,48 @@
   },
 
   "pricing": {
-    "title": "Pricing",
+    "title": "Our Pricing",
+    "description": "<strong>Coding introduction</strong> is the course that Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
     "list": [
       {
+        "type": "pro",
+        "show": true,
+        "title": "One time payment",
+        "price": "$199",
+        "lastPrice": "<s>$399</s>",
+        "offerTitle": "Limited offer",
+        "description": "Full access to all features for the duration of the course",
+        "highlightText": "",
+        "bullets": {
+          "title": "What you will get",
+          "list": [
+            {
+              "title": "Unlimited access to group masterclasses"
+            },
+            {
+              "title": "Unlimited access to workshops"
+            },
+            {
+              "title": "Unlimited access to course content"
+            },
+            {
+              "title": "Certificate endorsed by industry leaders"
+            }
+          ]
+        },
+        "button": {
+          "title": "Start your free trial",
+          "link": "#enroll"
+        }
+      },
+      {
         "type": "basic",
-        "show": false,
-        "title": "Basic",
-        "price": "Free trial",
+        "show": true,
+        "title": "Free trial",
+        "price": "7 Days trial",
         "lastPrice": "",
-        "description": "No credit card needed",
+        "description": "No card needed. Full access to all features for 7 days",
+        "highlightText": "",
         "offerTitle": "",
         "bullets": {
           "title": "What you will get",
@@ -248,33 +287,97 @@
           "title": "Start trial",
           "link": "#start"
         }
-      },
+      }
+    ],
+
+    "finance": [
       {
-        "type": "pro",
+        "type": "schoolarship",
         "show": true,
-        "title": "Pro",
-        "price": "$199",
-        "lastPrice": "<s>$399</s>",
-        "offerTitle": "Limited offer",
-        "description": "Offer expires in 60 days",
-        "highlightText": "One time payment",
+        "title": "scholarship level 1",
+        "price": "$70",
+        "months": "3 months",
+        "highlightText": "",
+        "description": "Full access to all features for the duration of the course.",
         "bullets": {
-          "description": "<strong>Coding introduction</strong> is the course that Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
           "title": "What you will get",
           "list": [
             {
-              "title": "Unlimited access to group masterclasses"
+              "title": "scholarship level 1 - featured 1"
             },
             {
-              "title": "Unlimited access to workshops"
+              "title": "scholarship level 1 - featured 2"
             },
             {
-              "title": "Unlimited access to course content"
+              "title": "scholarship level 1 - featured 3"
+            },
+            {
+              "title": "scholarship level 1 - featured 4"
             }
           ]
         },
         "button": {
-          "title": "Start your free trial",
+          "title": "Enroll now",
+          "link": "#enroll"
+        }
+      },
+      {
+        "type": "schoolarship",
+        "show": true,
+        "title": "scholarship level 2",
+        "price": "$50",
+        "months": "5 months",
+        "highlightText": "",
+        "description": "Full access to all features for the duration of the course.",
+        "bullets": {
+          "title": "What you will get",
+          "list": [
+            {
+              "title": "scholarship level 2 - featured 1"
+            },
+            {
+              "title": "scholarship level 2 - featured 2"
+            },
+            {
+              "title": "scholarship level 2 - featured 3"
+            },
+            {
+              "title": "scholarship level 2 - featured 4"
+            }
+          ]
+        },
+        "button": {
+          "title": "Enroll now",
+          "link": "#enroll"
+        }
+      },
+      {
+        "type": "schoolarship",
+        "show": true,
+        "title": "Free trial",
+        "price": "7 days trial",
+        "months": "",
+        "highlightText": "",
+        "description": "No card needed. Full access to all features for 7 days",
+        "bullets": {
+          "title": "What you will get",
+          "list": [
+            {
+              "title": "Free trial - featured 1"
+            },
+            {
+              "title": "Free trial - featured 2"
+            },
+            {
+              "title": "Free trial - featured 3"
+            },
+            {
+              "title": "Free trial - featured 4"
+            }
+          ]
+        },
+        "button": {
+          "title": "Enroll now",
           "link": "#enroll"
         }
       }
