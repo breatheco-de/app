@@ -31,6 +31,7 @@
   "full-name": "Nombre y Apellido",
   "time-elapsed": "Tiempo transcurrido",
   "email": "Correo electrónico",
+  "confirm-email": "Confirmar correo electrónico",
   "phone": "Teléfono",
   "password": "Contraseña",
   "confirm-password": "Confirmar contraseña",

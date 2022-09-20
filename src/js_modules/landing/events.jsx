@@ -119,7 +119,7 @@ const Events = ({ data, events }) => {
           };
 
           return (
-            <Box display="flex" onClick={() => handleOpenLink(l?.url)} cursor="pointer" className={`${startingLiveColor} ${startedColor}`} p="10px 20px 10px 14px" w={widthSizes[i] || '220px'} alignItems="center" gridGap="8.5px" borderRadius="50px" background={featuredColors} border="2px solid" borderColor="blue.default" zIndex={5}>
+            <Box key={l?.title} display="flex" onClick={() => handleOpenLink(l?.url)} cursor="pointer" className={`${startingLiveColor} ${startedColor}`} p="10px 20px 10px 14px" w={widthSizes[i] || '220px'} alignItems="center" gridGap="8.5px" borderRadius="50px" background={featuredColors} border="2px solid" borderColor="blue.default" zIndex={5}>
               <Avatar
                 width="30px"
                 marginY="auto"
