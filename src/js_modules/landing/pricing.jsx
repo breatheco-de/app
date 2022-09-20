@@ -3,7 +3,7 @@ import {
   Box, Button, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, useColorModeValue,
 } from '@chakra-ui/react';
 // import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
@@ -16,8 +16,9 @@ const Pricing = ({ data }) => {
   const [selectedFinanceIndex, setSelectedFinanceIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedProps, setSelectedProps] = useState(data?.pricing?.list[0] || {});
-  const [fromProps, setFormProps] = useState({});
+  const [formProps, setFormProps] = useState({});
   const [stepIndex, setStepIndex] = useState(0);
+  const [dateProps, setDateProps] = useState();
   const featuredBg = useColorModeValue('featuredLight', 'featuredDark');
   const inputBorderColor = useColorModeValue('gray.default', 'gray.250');
 
@@ -29,7 +30,7 @@ const Pricing = ({ data }) => {
   const selectedItem = data?.pricing[financeValue][selectedIndex];
 
   console.log('selectedProps:', selectedProps);
-  console.log('fromProps:', fromProps);
+  console.log('formProps:', formProps);
 
   const handleSelect = (dataProps, index) => {
     setSelectedProps(dataProps);
@@ -49,9 +50,12 @@ const Pricing = ({ data }) => {
   }, [selectedFinanceIndex]);
 
   const handleChangeForm = (e) => {
-    console.log('e.target:::', e.target.value);
     const { name, value } = e.target;
-    setFormProps({ ...fromProps, [name]: value });
+    setFormProps({ ...formProps, [name]: value });
+  };
+  const handleChooseDate = (date) => {
+    setDateProps(date);
+    setStepIndex(2);
   };
 
   const dates = [
@@ -125,7 +129,7 @@ const Pricing = ({ data }) => {
           </Box>
         </Box>
         {data?.pricing[financeValue].filter((l) => l.show === true).map((item, i) => (
-          <>
+          <Fragment key={`${item.title} ${item?.price}`}>
             {data?.pricing[financeValue]?.length - 1 === i && (
               <Box display="flex" alignItems="center">
                 <Box as="hr" color="gray.500" width="100%" />
@@ -153,7 +157,7 @@ const Pricing = ({ data }) => {
                 </Heading>
               </Box>
             </Box>
-          </>
+          </Fragment>
         ))}
         <Box mt="38px">
           <Button variant="default" onClick={() => setIsOpen(true)}>
@@ -265,7 +269,7 @@ const Pricing = ({ data }) => {
                               {date.formatTime}
                             </Text>
                           </Box>
-                          <Button variant="outline" onClick={() => setStepIndex(2)} borderColor="currentColor" color="blue.default" flex={0.15}>
+                          <Button variant="outline" onClick={() => handleChooseDate(date)} borderColor="currentColor" color="blue.default" flex={0.15}>
                             Choose date
                           </Button>
                         </Box>
@@ -275,10 +279,113 @@ const Pricing = ({ data }) => {
                   <Box as="hr" width="100%" margin="10px 0" />
                 </>
               )}
-              {stepIndex === 1 && (
-                <Heading size="18px">
-                  Cohort Details
-                </Heading>
+              {/* dateProps */}
+              {stepIndex === 2 && (
+                <Box display="flex" gridGap="30px" mb="1rem">
+                  <Box display="flex" flexDirection="column" flex={0.3} gridGap="3rem">
+                    <Box display="flex" flexDirection="column" gridGap="10px">
+                      <Heading size="18px" textTransform="uppercase">
+                        Cohort Details
+                      </Heading>
+                      <Box as="hr" width="30%" margin="0 0 10px 0" h="1px" background="black" />
+                      <Box display="flex" flexDirection="column" gridGap="10px">
+                        <Text size="md" fontWeight="700">
+                          Cohort Name
+                        </Text>
+                        <Text size="md" fontWeight="400" color="gray.600">
+                          {dateProps?.title}
+                        </Text>
+                      </Box>
+
+                      <Box as="hr" width="100%" margin="0 0" h="1px" borderColor="gray.default" />
+
+                      <Box display="flex" flexDirection="column" gridGap="10px">
+                        <Text size="md" fontWeight="700">
+                          Start Date
+                        </Text>
+                        <Text size="md" fontWeight="400" color="gray.600">
+                          {`${dateProps?.date} 2022`}
+                        </Text>
+                      </Box>
+
+                      <Box as="hr" width="100%" margin="0 0" h="1px" borderColor="gray.default" />
+
+                      <Box display="flex" flexDirection="column" gridGap="10px">
+                        <Text size="md" fontWeight="700">
+                          Days and hours
+                        </Text>
+                        <Text size="md" fontWeight="400" color="gray.600">
+                          {dateProps?.availableDate}
+                        </Text>
+                        <Text size="md" fontWeight="400" color="gray.600">
+                          {dateProps?.time}
+                        </Text>
+                        <Text size="md" fontWeight="400" color="gray.600">
+                          {dateProps?.formatTime}
+                        </Text>
+                      </Box>
+                    </Box>
+
+                    <Box display="flex" flexDirection="column" gridGap="10px">
+                      <Heading size="18px" textTransform="uppercase">
+                        Profile Details
+                      </Heading>
+                      <Box as="hr" width="30%" margin="0 0 10px 0" h="1px" background="black" />
+                      <Box display="flex" flexDirection="column" gridGap="10px">
+                        <Text size="md" fontWeight="700">
+                          Your name
+                        </Text>
+                        <Text size="md" fontWeight="400" color="gray.600">
+                          {`${formProps?.firstName} ${formProps?.lastName}`}
+                        </Text>
+                      </Box>
+                      <Box as="hr" width="100%" margin="0 0" h="1px" borderColor="gray.default" />
+                      <Box display="flex" flexDirection="row" gridGap="10px">
+                        <Box display="flex" flexDirection="column" gridGap="10px">
+                          <Text size="md" fontWeight="700">
+                            Phone number
+                          </Text>
+                          <Text size="md" fontWeight="400" color="gray.600">
+                            {formProps?.phone}
+                          </Text>
+                        </Box>
+                        <Box display="flex" flexDirection="column" gridGap="10px">
+                          <Text size="md" fontWeight="700">
+                            Mail
+                          </Text>
+                          <Text size="md" fontWeight="400" color="gray.600">
+                            {formProps?.email}
+                          </Text>
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Box>
+                  <Box display="flex" flexDirection="column" flex={0.7} background="blue.light" w="100%" p="11px 14px" gridGap="12px" borderRadius="12px">
+                    <Heading size="15px" color="blue.default">
+                      You are signing up for
+                    </Heading>
+                    <Box display="flex" gridGap="12px">
+                      <Box display="flex" flexDirection="column">
+                        <Box p="14px 12px" background="blue.default" borderRadius="7px" width="fit-content">
+                          <Icon icon="code" width="38px" height="38px" color="#fff" />
+                        </Box>
+                      </Box>
+                      <Box display="flex" flexDirection="column" gridGap="7px">
+                        <Heading size="18px">
+                          {data.title}
+                        </Heading>
+                        <Heading size="15px" textTransform="uppercase" color="gray.600">
+                          {selectedProps.title}
+                        </Heading>
+                      </Box>
+                      <Heading size="sm" color="blue.default" textTransform="uppercase">
+                        {selectedProps.price}
+                      </Heading>
+
+                    </Box>
+                  </Box>
+
+                </Box>
               )}
 
               <Box display="flex" justifyContent="space-between" mt="auto">
@@ -294,16 +401,18 @@ const Pricing = ({ data }) => {
                 >
                   Go Back
                 </Button>
-                <Button
-                  variant="default"
-                  onClick={() => {
-                    if (stepIndex !== 2) {
-                      setStepIndex(stepIndex + 1);
-                    }
-                  }}
-                >
-                  Next Step
-                </Button>
+                {stepIndex !== 2 && (
+                  <Button
+                    variant="default"
+                    onClick={() => {
+                      if (stepIndex !== 2) {
+                        setStepIndex(stepIndex + 1);
+                      }
+                    }}
+                  >
+                    Next Step
+                  </Button>
+                )}
               </Box>
             </Box>
           </ModalBody>
