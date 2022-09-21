@@ -13,18 +13,19 @@ const Text = ({
   children, size, letterSpacing, ...rest
 }) => (
   <ChakraText letterSpacing={letterSpacing} fontSize={sizes[size] || size} {...rest}>
-    {children}
+    {children && children}
   </ChakraText>
 );
 
 Text.propTypes = {
   size: PropTypes.string,
   letterSpacing: PropTypes.string,
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
 };
 Text.defaultProps = {
   letterSpacing: '0.05em',
   size: 'sm',
+  children: null,
 };
 
 export default Text;

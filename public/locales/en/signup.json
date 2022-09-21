@@ -1,0 +1,8 @@
+{
+  "seo": {
+    "title": "Sign up",
+    "description": "Sign up for a free account to get started with programming with 4Geeks",
+    "keywords": ["4Geeks signup", "Signup"],
+    "image": "{{domain}}/static/images/4geeks.png"
+  }
+}

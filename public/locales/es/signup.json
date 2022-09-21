@@ -1,0 +1,8 @@
+{
+  "seo": {
+    "title": "Inscripción",
+    "description": "Regístrate para obtener una cuenta gratuita y comenzar a programar con 4Geeks",
+    "keywords": ["4Geeks registro", "Inscripción"],
+    "image": "{{domain}}/static/images/4geeks.png"
+  }
+}
