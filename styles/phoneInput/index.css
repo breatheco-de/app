@@ -21,7 +21,7 @@
 }
 
 .react-tel-input {
-  margin: 5px 0;
+  margin: 0 0 5px 0;
 }
 
 .react-tel-input .form-control {
@@ -34,21 +34,21 @@
   padding-left: 64px;
   margin-left: 0;
   background: #ffffff;
-  border: 1px solid #cacaca;
-  border-radius: 5px;
+  border: 1px solid #A4A4A4;
+  border-radius: 3px;
   line-height: 25px;
   height: 40px;
   width: 100%;
   outline: none;
-  opacity: 0.7;
+  opacity: 1;
 }
 .react-tel-input .form-control:focus {
-  opacity: 1;
-  border: 1px solid black;
+  /* opacity: 1; */
+  border: 1px solid #0097CD;
 }
 
 .react-tel-input .form-control.invalid {
-  opacity: 0.7;
+  opacity: 1;
   border: 1px solid #d79f9f;
   background-color: #faf0f0;
 }
@@ -159,6 +159,51 @@
   overflow-y: scroll;
   border-radius: 0 0 3px 3px;
 }
+
+
+body.chakra-ui-dark .arrow {
+  border-top-color: #CBD5E0 !important;
+  border-bottom-color: #CBD5E0 !important;
+}
+body.chakra-ui-dark .selected-flag.open {
+  background-color: #283340 !important;
+}
+body.chakra-ui-dark .react-tel-input .flag-dropdown,
+body.chakra-ui-dark .react-tel-input .selected-flag:hover {
+  background-color: #283340;
+}
+body.chakra-ui-dark .flag-dropdown.open {
+  background-color: #283340;
+}
+
+body.chakra-ui-dark .react-tel-input .form-control.invalid {
+  background-color: #17202A;
+  color: white;
+}
+body.chakra-ui-dark .react-tel-input .form-control {
+  background-color: #17202A;
+  border: 1px solid #cacaca;
+  /* border-color: #0097CD; */
+  color: white;
+}
+
+body.chakra-ui-dark .search-box {
+  background-color: #17202A;
+
+}
+body.chakra-ui-dark .react-tel-input .country-list .country:hover {
+  background-color: #17202A;
+}
+
+body.chakra-ui-dark .react-tel-input .country-list .search {
+  background-color: #283340;
+  color: #EBEBEB;
+}
+body.chakra-ui-dark .country-list {
+  background-color: #283340;
+  color: #EBEBEB;
+}
+
 @media (min-width: 768px) {
   .react-tel-input .country-list {
     width: 300px;

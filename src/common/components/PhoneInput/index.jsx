@@ -14,10 +14,11 @@ import countriesList from './countriesList';
 
 const Msg = styled.span`
   position: absolute;
-  top: -18px;
+  top: -34px;
   left: 0px;
-  padding: 3px;
+  padding: 3px 6px;
   font-size: 12px;
+  border-radius: 3px;
   background-color: #F7615D;
 `;
 
@@ -44,6 +45,7 @@ const PhoneInput = ({
   campusDial,
   setShowPhoneWarning,
   errorMsg,
+  placeholder,
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [searchValue, setSearchValue] = useState('');
@@ -266,6 +268,7 @@ const PhoneInput = ({
         data-cy="phone"
         className={`form-control ${!validStatus.valid ? 'invalid' : ''}`}
         style={inputStyle}
+        placeholder={placeholder}
         onChange={(e) => handlePhoneInput(e)}
         value={phoneNumber}
         type="phone"
@@ -382,6 +385,7 @@ PhoneInput.propTypes = {
   campusDial: PropTypes.objectOf(PropTypes.any),
   setShowPhoneWarning: PropTypes.func,
   errorMsg: PropTypes.string,
+  placeholder: PropTypes.string,
 };
 PhoneInput.defaultProps = {
   defaultMask: '',
@@ -406,6 +410,7 @@ PhoneInput.defaultProps = {
   campusDial: {},
   setShowPhoneWarning: () => {},
   errorMsg: 'Please specify a valid phone number',
+  placeholder: 'Phone',
 };
 
 export default PhoneInput;

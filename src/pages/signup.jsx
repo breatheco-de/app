@@ -1,13 +1,16 @@
 import {
-  Box, Button, Input, useColorModeValue,
+  Box, Button, Input,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
+import { Form, Formik } from 'formik';
 import Heading from '../common/components/Heading';
 import Icon from '../common/components/Icon';
 import Text from '../common/components/Text';
 import PhoneInput from '../common/components/PhoneInput';
+import validationSchemas from '../common/components/Forms/validationSchemas';
+import FieldForm from '../common/components/Forms/FieldForm';
 
 const dates = [
   {
@@ -73,19 +76,12 @@ const SignUp = () => {
     confirmEmail: '',
   });
 
-  const inputBorderColor = useColorModeValue('gray.default', 'gray.250');
-
-  const handleChangeForm = (e) => {
-    const { name, value } = e.target;
-    setFormProps({ ...formProps, [name]: value });
-  };
-
   const handleChooseDate = (date) => {
     setDateProps(date);
     setStepIndex(2);
   };
 
-  console.log('formProps:::', formProps);
+  // console.log('formProps:::', formProps);
 
   return (
     <Box p="2.5rem 2rem">
@@ -117,41 +113,95 @@ const SignUp = () => {
         </Box>
       </Box>
       {/* Form */}
-      <Box display="flex" flexDirection="column" gridGap="20px" minHeight="320px" maxWidth={{ base: '100%', md: '700px' }} margin="3.5rem auto 0 auto">
+      <Box display="flex" flexDirection="column" gridGap="20px" minHeight="320px" maxWidth={{ base: '100%', md: '740px' }} margin="3.5rem auto 0 auto">
         {stepIndex === 0 && (
           <>
             <Heading size="18px">
               About you
             </Heading>
-            <Box as="form" display="flex" flexDirection="column" gridGap="22px">
-              <Box display="flex" gridGap="18px">
-                <Box display="flex" gridGap="18px" flex={0.5}>
-                  <Input type="text" name="firstName" onChange={(e) => handleChangeForm(e)} placeholder={t('common:first-name')} isRequired borderColor={inputBorderColor} borderRadius="3px" height="50px" />
-                  <Input type="text" name="lastName" onChange={(e) => handleChangeForm(e)} placeholder={t('common:last-name')} borderColor={inputBorderColor} borderRadius="3px" height="50px" />
-                </Box>
-                <Box display="flex" flex={0.5} flexDirection="column" fontSize="12px" color="blue.default2" lineHeight="24px">
-                  <PhoneInput
-                    setVal={setFormProps}
-                    formData={formProps}
-                    // phoneFormValues={formProps.phone}
-                    errorMsg="Please specify a valid phone number"
-                    // sessionContextLocation={locationContext}
-                    // campusDial={formData?.location.value}
 
-                    // setShowPhoneWarning={setShowPhoneWarning}
-                  />
-                  {/* <Input type="tel" name="phone" onChange={(e) => handleChangeForm(e)} color="black" placeholder={t('common:phone')} borderColor={inputBorderColor} borderRadius="3px" height="50px" /> */}
-                  We will contact you via phone call only if necessary.
-                </Box>
-              </Box>
-              <Box display="flex" gridGap="18px">
-                <Box display="flex" flex={0.5} flexDirection="column" fontSize="12px" color="blue.default2" lineHeight="24px">
-                  <Input type="email" name="email" onChange={(e) => handleChangeForm(e)} color="black" placeholder={t('common:email')} borderColor={inputBorderColor} borderRadius="3px" height="50px" />
-                  We will use it to give you access to your account.
-                </Box>
-                <Input type="text" name="confirmEmail" onChange={(e) => handleChangeForm(e)} flex={0.5} placeholder={t('common:confirm-email')} borderColor={inputBorderColor} borderRadius="3px" height="50px" />
-              </Box>
-            </Box>
+            <Formik
+              initialValues={{
+                firstName: '',
+                lastName: '',
+                phone: '',
+                email: '',
+                confirmEmail: '',
+              }}
+              onSubmit={(values, actions) => {
+                if (stepIndex !== 2) {
+                  setTimeout(() => {
+                    actions.setSubmitting(false);
+                    setStepIndex(stepIndex + 1);
+                  }, 300);
+                }
+              }}
+              validationSchema={validationSchemas.signup}
+            >
+              {({ isSubmitting }) => (
+                <Form style={{ display: 'flex', flexDirection: 'column', gridGap: '22px' }}>
+                  <Box display="flex" gridGap="18px">
+                    <Box display="flex" gridGap="18px" flex={0.5}>
+                      <FieldForm
+                        type="text"
+                        name="firstName"
+                        label={t('common:first-name')}
+                        formProps={formProps}
+                        setFormProps={setFormProps}
+                      />
+                      <FieldForm
+                        type="text"
+                        name="lastName"
+                        label={t('common:last-name')}
+                        formProps={formProps}
+                        setFormProps={setFormProps}
+                      />
+                    </Box>
+                    <Box display="flex" flex={0.5} flexDirection="column" fontSize="12px" color="blue.default2" lineHeight="24px">
+                      <PhoneInput
+                        inputStyle={{ height: '50px' }}
+                        setVal={setFormProps}
+                        placeholder={t('common:phone')}
+                        formData={formProps}
+                        errorMsg="Please specify a valid phone number"
+                      />
+                      We will contact you via phone call only if necessary.
+                    </Box>
+                  </Box>
+                  <Box display="flex" gridGap="18px">
+                    <Box display="flex" flex={0.5} flexDirection="column" fontSize="12px" color="blue.default2" lineHeight="24px">
+                      <FieldForm
+                        type="email"
+                        name="email"
+                        label={t('common:email')}
+                        formProps={formProps}
+                        setFormProps={setFormProps}
+                      />
+
+                      We will use it to give you access to your account.
+                    </Box>
+
+                    <FieldForm
+                      style={{ flex: 0.5 }}
+                      type="email"
+                      name="confirmEmail"
+                      label={t('common:confirm-email')}
+                      formProps={formProps}
+                      setFormProps={setFormProps}
+                    />
+                  </Box>
+                  <Button
+                    width="fit-content"
+                    type="submit"
+                    variant="default"
+                    isLoading={isSubmitting}
+                    alignSelf="flex-end"
+                  >
+                    Next Step
+                  </Button>
+                </Form>
+              )}
+            </Formik>
           </>
         )}
         {stepIndex === 1 && (
@@ -316,19 +366,22 @@ const SignUp = () => {
         )}
 
         <Box display="flex" justifyContent="space-between" mt="auto">
-          <Button
-            variant="outline"
-            borderColor="currentColor"
-            color="blue.default"
-            onClick={() => {
-              if (stepIndex > 0) {
-                setStepIndex(stepIndex - 1);
-              }
-            }}
-          >
-            Go Back
-          </Button>
-          {stepIndex !== 2 && (
+          {stepIndex !== 0 && (
+            <Button
+              variant="outline"
+              borderColor="currentColor"
+              color="blue.default"
+              onClick={() => {
+                if (stepIndex > 0) {
+                  setStepIndex(stepIndex - 1);
+                }
+              }}
+            >
+              Go Back
+            </Button>
+
+          )}
+          {stepIndex !== 0 && stepIndex !== 2 && (
             <Button
               variant="default"
               onClick={() => {
