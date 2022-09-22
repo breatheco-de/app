@@ -7,6 +7,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Heading from '../common/components/Heading';
 import Icon from '../common/components/Icon';
 import Text from '../common/components/Text';
+import PhoneInput from '../common/components/PhoneInput';
 
 const dates = [
   {
@@ -84,6 +85,8 @@ const SignUp = () => {
     setStepIndex(2);
   };
 
+  console.log('formProps:::', formProps);
+
   return (
     <Box p="2.5rem 2rem">
       {/* Stepper */}
@@ -127,7 +130,17 @@ const SignUp = () => {
                   <Input type="text" name="lastName" onChange={(e) => handleChangeForm(e)} placeholder={t('common:last-name')} borderColor={inputBorderColor} borderRadius="3px" height="50px" />
                 </Box>
                 <Box display="flex" flex={0.5} flexDirection="column" fontSize="12px" color="blue.default2" lineHeight="24px">
-                  <Input type="tel" name="phone" onChange={(e) => handleChangeForm(e)} color="black" placeholder={t('common:phone')} borderColor={inputBorderColor} borderRadius="3px" height="50px" />
+                  <PhoneInput
+                    setVal={setFormProps}
+                    formData={formProps}
+                    // phoneFormValues={formProps.phone}
+                    errorMsg="Please specify a valid phone number"
+                    // sessionContextLocation={locationContext}
+                    // campusDial={formData?.location.value}
+
+                    // setShowPhoneWarning={setShowPhoneWarning}
+                  />
+                  {/* <Input type="tel" name="phone" onChange={(e) => handleChangeForm(e)} color="black" placeholder={t('common:phone')} borderColor={inputBorderColor} borderRadius="3px" height="50px" /> */}
                   We will contact you via phone call only if necessary.
                 </Box>
               </Box>
