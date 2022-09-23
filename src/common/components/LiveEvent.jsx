@@ -2,10 +2,11 @@
 /* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import {
-  Box, Stack, useColorModeValue,
+  Box, Stack, useColorModeValue, Image,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import CustomTheme from '../../../styles/theme';
 import Link from './NextChakraLink';
 import Heading from './Heading';
 import Text from './Text';
@@ -45,7 +46,23 @@ const LiveEvent = () => {
           {t('learn-more')}
         </Link>
       </Text>
-      <Icon style={{ marginRight: '15px' }} icon="live-event" width="25px" height="25px" />
+      <Box
+        display="flex"
+        background={CustomTheme.colors.blue.light}
+      >
+        <Image
+          src="/static/images/live-event.png"
+        />
+        <Text
+          fontSize="md"
+          lineHeight="18px"
+          fontWeight="900"
+          color={textColor}
+          textAlign="center"
+        >
+          {t('live-class')}
+        </Text>
+      </Box>
     </Box>
   );
 };
