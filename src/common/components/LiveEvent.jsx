@@ -55,8 +55,10 @@ const LiveEvent = ({ isLive, time, otherEvents }) => {
         background={bgColor2}
         border={isLive && '2px solid'}
         borderColor={CustomTheme.colors.blue.default2}
-        padding="10px"
+        padding="5px"
         borderRadius="50px"
+        width="90%"
+        margin="auto"
       >
         <Image
           className={isLive ? 'pulse-red' : ''}
