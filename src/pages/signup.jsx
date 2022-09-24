@@ -1,7 +1,9 @@
+/* eslint-disable no-shadow */
+/* eslint-disable no-undef */
 import {
-  Box, Button, Input, useColorModeValue,
+  Box, Button, Img, Input, useColorModeValue, useToast,
 } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { Form, Formik } from 'formik';
@@ -15,6 +17,7 @@ import validationSchemas from '../common/components/Forms/validationSchemas';
 import FieldForm from '../common/components/Forms/FieldForm';
 import { getDataContentProps } from '../utils/file';
 import bc from '../common/services/breathecode';
+import useScript from '../common/hooks/useScript';
 
 const dates = [
   {
@@ -79,6 +82,11 @@ const SignUp = ({ finance }) => {
   const [dateProps, setDateProps] = useState(null);
   const [coords, setCoords] = useState(null);
   const [availableDates, setAvailableDates] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const autoCompleteRef = useRef();
+  const inputRef = useRef();
+  const toast = useToast();
+
   const GOOGLE_KEY = 'AIzaSyB6NEbEyhDU_U1z_XoyRwEu0Rc1XXeZK6c';
 
   const fontColor = useColorModeValue('gray.800', 'gray.300');
@@ -104,43 +112,56 @@ const SignUp = ({ finance }) => {
     setStepIndex(2);
   };
 
-  useEffect(async () => {
-    console.log('Calculating nearest location...');
-    const response = await fetch(
-      `https://www.googleapis.com/geolocation/v1/geolocate?key=${GOOGLE_KEY}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-      },
-    );
-    const data = (await response.json()) || null;
-    if (data && data.location) {
-      setCoords({
-        latitude: data.location.lat,
-        longitude: data.location.lng,
+  const isFirstStep = stepIndex === 0;
+  const isSecondStep = stepIndex === 1;
+  const isThirdStep = stepIndex === 2;
+
+  const gmapApiStatus = useScript(`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=${GOOGLE_KEY}`);
+
+  useEffect(() => {
+    // Google api script
+    if (isSecondStep && gmapApiStatus === 'ready') {
+      // initialize;
+      autoCompleteRef.current = new window.google.maps.places.Autocomplete(
+        inputRef.current,
+      );
+      autoCompleteRef.current.addListener('place_changed', async () => {
+        const place = await autoCompleteRef.current.getPlace();
+        setCoords({
+          latitude: place.geometry.location.lat(),
+          longitude: place.geometry.location.lng(),
+        });
       });
     }
-  }, []);
+  }, [gmapApiStatus, isSecondStep]);
 
   useEffect(() => {
     if (coords !== null) {
-      // coordinates=<latitude>,<longitude>&saas=true&course=<course_slug>&upcoming=true
+      setIsLoading(true);
+
       bc.public({
         coordinates: `${coords.latitude}, ${coords.longitude}`,
         saas: true,
         course: courseChoosed,
         upcoming: true,
       }).cohorts()
-        .then(({ data }) => setAvailableDates({ data }))
-        .catch((error) => console.log('Cohorts error:', error));
+        .then(({ data }) => {
+          setAvailableDates({ data });
+        })
+        .catch((error) => {
+          toast({
+            title: t('something-went-wrong-fetching-cohorts'),
+            description: error.message,
+            status: 'error',
+            duration: 8000,
+            isClosable: true,
+          });
+        })
+        .finally(() => setIsLoading(false));
     }
-  }, []);
+  }, [coords]);
 
-  const isFirstStep = stepIndex === 0;
-  const isSecondStep = stepIndex === 1;
-  const isThirdStep = stepIndex === 2;
+  console.log('Address coords:', coords);
 
   return (
     <Box p="2.5rem 2rem">
@@ -179,7 +200,7 @@ const SignUp = ({ finance }) => {
           </Heading>
         </Box>
       </Box>
-      {/* Form */}
+
       <Box display="flex" flexDirection="column" gridGap="20px" minHeight="320px" maxWidth={{ base: '100%', md: '800px' }} margin="3.5rem auto 0 auto">
         {isFirstStep && (
           <>
@@ -277,7 +298,9 @@ const SignUp = ({ finance }) => {
               {t('your-address')}
             </Heading>
             <Box display="flex" gridGap="18px" alignItems="center" mt="10px">
-              <Input type="text" placeholder="Where do you live?" height="50px" />
+              {/* <input ref={inputRef} id="address-input" className="controls" type="text" placeholder="Where do you live?" height="50px" /> */}
+              <Input ref={inputRef} id="address-input" className="controls" type="text" placeholder="Where do you live?" height="50px" />
+
               <Button variant="default">
                 {t('search-dates')}
               </Button>
@@ -289,9 +312,8 @@ const SignUp = ({ finance }) => {
               {t('available-dates')}
             </Heading>
             <Box display="flex" flexDirection="column" mb="2rem" gridGap="40px" p="0 1rem">
-              {(availableDates || dates).map((date, i) => {
+              {!isLoading ? (availableDates || dates).map((date, i) => {
                 const dateIndex = i;
-
                 return (
                   <Box display="flex" gridGap="30px" key={dateIndex}>
                     <Text size="18px" flex={0.35}>
@@ -318,7 +340,12 @@ const SignUp = ({ finance }) => {
                     </Button>
                   </Box>
                 );
-              })}
+              }) : (
+                <Box display="flex" justifyContent="center" mt="2rem" mb="10rem">
+                  <Img src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
+                  <Box className="loader" />
+                </Box>
+              )}
             </Box>
             <Box as="hr" width="100%" margin="10px 0" />
           </>
