@@ -3,5 +3,6 @@
     "learn-more": "Learn more",
     "live-class": "Today’s live class",
     "started": "Started {{time}} ago",
-    "will-start": "Will start in {{time}}"
+    "will-start": "Will start in {{time}}",
+    "upcoming": "Other upcoming live events"
 }
