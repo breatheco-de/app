@@ -3,6 +3,7 @@
   "highlight": "en vivo",
   "__highlight-options__": "con los demás | colaborando | en vivo",
   "description": "Aprendiendo a programar con un grupo de personas que se reúnen cada dos días",
+  "course": "coding-introduction",
   "callToAction": {
     "title": "Únete a la proxima cohorte",
     "href": "#"
@@ -262,8 +263,8 @@
         }
       },
       {
-        "type": "basic",
-        "show": false,
+        "type": "trial",
+        "show": true,
         "title": "Prueba gratis",
         "price": "Prueba gratis de 7 días",
         "lastPrice": "",
@@ -293,7 +294,7 @@
 
     "finance": [
       {
-        "type": "schoolarship",
+        "type": "schoolarship-t1",
         "show": true,
         "title": "Beca nivel 1",
         "price": "$70",
@@ -323,7 +324,7 @@
         }
       },
       {
-        "type": "schoolarship",
+        "type": "schoolarship-t2",
         "show": true,
         "title": "Beca nivel 2",
         "price": "$50",
@@ -353,7 +354,7 @@
         }
       },
       {
-        "type": "schoolarship",
+        "type": "schoolarship-trial",
         "show": true,
         "title": "Prueba gratis",
         "price": "Prueba de 7 días",

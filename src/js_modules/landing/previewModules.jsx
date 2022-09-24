@@ -12,7 +12,6 @@ import { slugify } from '../../utils';
 
 const PreviewModules = ({ data }) => {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
-
   const router = useRouter();
   const color = useColorModeValue('gray.700', 'gray.300');
 

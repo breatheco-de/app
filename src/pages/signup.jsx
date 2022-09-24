@@ -1,16 +1,20 @@
 import {
-  Box, Button, Input,
+  Box, Button, Input, useColorModeValue,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { Form, Formik } from 'formik';
+import { useRouter } from 'next/router';
+import PropTypes from 'prop-types';
 import Heading from '../common/components/Heading';
 import Icon from '../common/components/Icon';
 import Text from '../common/components/Text';
 import PhoneInput from '../common/components/PhoneInput';
 import validationSchemas from '../common/components/Forms/validationSchemas';
 import FieldForm from '../common/components/Forms/FieldForm';
+import { getDataContentProps } from '../utils/file';
+import bc from '../common/services/breathecode';
 
 const dates = [
   {
@@ -39,6 +43,10 @@ const dates = [
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
+  const finance = getDataContentProps(
+    `public/locales/${locale}`,
+    'finance',
+  );
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const ogUrl = {
     en: '/signup',
@@ -58,15 +66,30 @@ export const getStaticProps = async ({ locale, locales }) => {
         keywords,
       },
       fallback: false,
+      finance,
       // data: content,
     },
   };
 };
 
-const SignUp = () => {
+const SignUp = ({ finance }) => {
   const { t } = useTranslation('signup');
+  const router = useRouter();
   const [stepIndex, setStepIndex] = useState(0);
   const [dateProps, setDateProps] = useState(null);
+  const [coords, setCoords] = useState(null);
+  const [availableDates, setAvailableDates] = useState(null);
+  const GOOGLE_KEY = 'AIzaSyB6NEbEyhDU_U1z_XoyRwEu0Rc1XXeZK6c';
+
+  const fontColor = useColorModeValue('gray.800', 'gray.300');
+  const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
+  const borderColor = useColorModeValue('black', 'white');
+
+  const { course, plan } = router.query;
+  const planChoosed = plan || 'trial';
+  const courseChoosed = course || 'coding-introduction';
+  const courseTitle = finance[courseChoosed];
+  const planProps = finance.plans.find((l) => l.type === planChoosed);
 
   const [formProps, setFormProps] = useState({
     firstName: '',
@@ -81,43 +104,87 @@ const SignUp = () => {
     setStepIndex(2);
   };
 
-  // console.log('formProps:::', formProps);
+  useEffect(async () => {
+    console.log('Calculating nearest location...');
+    const response = await fetch(
+      `https://www.googleapis.com/geolocation/v1/geolocate?key=${GOOGLE_KEY}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+      },
+    );
+    const data = (await response.json()) || null;
+    if (data && data.location) {
+      setCoords({
+        latitude: data.location.lat,
+        longitude: data.location.lng,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (coords !== null) {
+      // coordinates=<latitude>,<longitude>&saas=true&course=<course_slug>&upcoming=true
+      bc.public({
+        coordinates: `${coords.latitude}, ${coords.longitude}`,
+        saas: true,
+        course: courseChoosed,
+        upcoming: true,
+      }).cohorts()
+        .then(({ data }) => setAvailableDates({ data }))
+        .catch((error) => console.log('Cohorts error:', error));
+    }
+  }, []);
+
+  const isFirstStep = stepIndex === 0;
+  const isSecondStep = stepIndex === 1;
+  const isThirdStep = stepIndex === 2;
 
   return (
     <Box p="2.5rem 2rem">
       {/* Stepper */}
       <Box display="flex" gridGap="38px" justifyContent="center">
         <Box display="flex" gridGap="8px" alignItems="center" color={stepIndex !== 0 && 'gray.350'}>
-          <Heading as="span" size="sm" p={stepIndex === 0 ? '3px 8px' : '2px 5px'} mr={stepIndex === 0 && '4px'} background={stepIndex === 0 && 'blue.default'} color={stepIndex === 0 && 'white'} borderRadius="3px" fontWeight="700">
-            1.
-          </Heading>
-          <Heading size="sm" fontWeight={stepIndex === 0 ? '700' : '500'}>
-            Contact information
+          {(isSecondStep || isThirdStep) ? (
+            <Icon icon="verified" width="30px" height="30px" />
+          ) : (
+            <Heading as="span" size="sm" p={isFirstStep ? '3px 8px' : '2px 5px'} mr={isFirstStep && '4px'} background={isFirstStep && 'blue.default'} color={isFirstStep && 'white'} borderRadius="3px" fontWeight="700">
+              1.
+            </Heading>
+          )}
+          <Heading size="sm" fontWeight={isFirstStep ? '700' : '500'} color={(isSecondStep || isThirdStep) && 'success'}>
+            {t('contact-information')}
           </Heading>
         </Box>
         <Box display="flex" gridGap="8px" alignItems="center" color={stepIndex !== 1 && 'gray.350'}>
-          <Heading as="span" size="sm" p={stepIndex === 1 ? '3px 8px' : '2px 5px'} mr={stepIndex === 1 && '4px'} background={stepIndex === 1 && 'blue.default'} color={stepIndex === 1 && 'white'} borderRadius="3px" fontWeight="500">
-            2.
-          </Heading>
-          <Heading size="sm" fontWeight={stepIndex === 1 ? '700' : '500'}>
-            Choose your class
+          {(isThirdStep) ? (
+            <Icon icon="verified" width="30px" height="30px" />
+          ) : (
+            <Heading as="span" size="sm" p={isSecondStep ? '3px 8px' : '2px 5px'} mr={isSecondStep && '4px'} background={isSecondStep && 'blue.default'} color={isSecondStep && 'white'} borderRadius="3px" fontWeight="500">
+              2.
+            </Heading>
+          )}
+          <Heading size="sm" fontWeight={isSecondStep ? '700' : '500'} color={isThirdStep && 'success'}>
+            {t('choose-your-class')}
           </Heading>
         </Box>
         <Box display="flex" gridGap="8px" alignItems="center" color={stepIndex !== 2 && 'gray.350'}>
-          <Heading as="span" size="sm" p={stepIndex === 2 ? '3px 8px' : '2px 5px'} mr={stepIndex === 2 && '4px'} background={stepIndex === 2 && 'blue.default'} color={stepIndex === 2 && 'white'} borderRadius="3px" fontWeight="500">
+          <Heading as="span" size="sm" p={isThirdStep ? '3px 8px' : '2px 5px'} mr={isThirdStep && '4px'} background={isThirdStep && 'blue.default'} color={isThirdStep && 'white'} borderRadius="3px" fontWeight="500">
             3.
           </Heading>
-          <Heading size="sm" fontWeight={stepIndex === 2 ? '700' : '500'}>
-            Summary
+          <Heading size="sm" fontWeight={isThirdStep ? '700' : '500'}>
+            {t('summary')}
           </Heading>
         </Box>
       </Box>
       {/* Form */}
-      <Box display="flex" flexDirection="column" gridGap="20px" minHeight="320px" maxWidth={{ base: '100%', md: '740px' }} margin="3.5rem auto 0 auto">
-        {stepIndex === 0 && (
+      <Box display="flex" flexDirection="column" gridGap="20px" minHeight="320px" maxWidth={{ base: '100%', md: '800px' }} margin="3.5rem auto 0 auto">
+        {isFirstStep && (
           <>
             <Heading size="18px">
-              About you
+              {t('about-you')}
             </Heading>
 
             <Formik
@@ -157,7 +224,7 @@ const SignUp = () => {
                         setFormProps={setFormProps}
                       />
                     </Box>
-                    <Box display="flex" flex={0.5} flexDirection="column" fontSize="12px" color="blue.default2" lineHeight="24px">
+                    <Box display="flex" flex={0.5} flexDirection="column" fontSize="12px" color="blue.default2" gridGap="4px">
                       <PhoneInput
                         inputStyle={{ height: '50px' }}
                         setVal={setFormProps}
@@ -165,11 +232,11 @@ const SignUp = () => {
                         formData={formProps}
                         errorMsg="Please specify a valid phone number"
                       />
-                      We will contact you via phone call only if necessary.
+                      {t('phone-info')}
                     </Box>
                   </Box>
                   <Box display="flex" gridGap="18px">
-                    <Box display="flex" flex={0.5} flexDirection="column" fontSize="12px" color="blue.default2" lineHeight="24px">
+                    <Box display="flex" flex={0.5} flexDirection="column" fontSize="12px" color="blue.default2" gridGap="4px">
                       <FieldForm
                         type="email"
                         name="email"
@@ -178,7 +245,7 @@ const SignUp = () => {
                         setFormProps={setFormProps}
                       />
 
-                      We will use it to give you access to your account.
+                      {t('email-info')}
                     </Box>
 
                     <FieldForm
@@ -197,32 +264,32 @@ const SignUp = () => {
                     isLoading={isSubmitting}
                     alignSelf="flex-end"
                   >
-                    Next Step
+                    {t('next-step')}
                   </Button>
                 </Form>
               )}
             </Formik>
           </>
         )}
-        {stepIndex === 1 && (
+        {isSecondStep && (
           <>
             <Heading size="18px">
-              Give us your address to find your new class
+              {t('your-address')}
             </Heading>
             <Box display="flex" gridGap="18px" alignItems="center" mt="10px">
               <Input type="text" placeholder="Where do you live?" height="50px" />
               <Button variant="default">
-                Search dates
+                {t('search-dates')}
               </Button>
             </Box>
-            <Box display="flex" flex={1} flexDirection="column" fontSize="12px" color="blue.default2" lineHeight="24px" mt="-15px" w="80%">
-              We are not storing your address, but we will use this information to offer the best possible dates and schedules to study.
+            <Box display="flex" flex={1} flexDirection="column" fontSize="12px" color="blue.default2" mt="-12px" w="80%">
+              {t('addres-info')}
             </Box>
             <Heading size="18px" m="1rem 0 1rem 0">
-              Available Dates
+              {t('available-dates')}
             </Heading>
             <Box display="flex" flexDirection="column" mb="2rem" gridGap="40px" p="0 1rem">
-              {dates.map((date, i) => {
+              {(availableDates || dates).map((date, i) => {
                 const dateIndex = i;
 
                 return (
@@ -247,7 +314,7 @@ const SignUp = () => {
                       </Text>
                     </Box>
                     <Button variant="outline" onClick={() => handleChooseDate(date)} borderColor="currentColor" color="blue.default" flex={0.15}>
-                      Choose date
+                      {t('choose-date')}
                     </Button>
                   </Box>
                 );
@@ -257,19 +324,19 @@ const SignUp = () => {
           </>
         )}
         {/* dateProps */}
-        {stepIndex === 2 && (
-          <Box display="flex" gridGap="30px" mb="1rem">
-            <Box display="flex" flexDirection="column" flex={0.3} gridGap="3rem">
+        {isThirdStep && (
+          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="30px" mb="1rem">
+            <Box display="flex" flexDirection="column" flex={0.5} gridGap="3rem">
               <Box display="flex" flexDirection="column" gridGap="10px">
                 <Heading size="18px" textTransform="uppercase">
-                  Cohort Details
+                  {t('cohort-details')}
                 </Heading>
-                <Box as="hr" width="30%" margin="0 0 10px 0" h="1px" background="black" />
+                <Box as="hr" width="30%" margin="0 0 10px 0" h="1px" borderColor={borderColor} />
                 <Box display="flex" flexDirection="column" gridGap="10px">
                   <Text size="md" fontWeight="700">
-                    Cohort Name
+                    {t('cohort-name')}
                   </Text>
-                  <Text size="md" fontWeight="400" color="gray.600">
+                  <Text size="md" fontWeight="400" color={fontColor}>
                     {dateProps?.title}
                   </Text>
                 </Box>
@@ -278,9 +345,9 @@ const SignUp = () => {
 
                 <Box display="flex" flexDirection="column" gridGap="10px">
                   <Text size="md" fontWeight="700">
-                    Start Date
+                    {t('start-date')}
                   </Text>
-                  <Text size="md" fontWeight="400" color="gray.600">
+                  <Text size="md" fontWeight="400" color={fontColor}>
                     {`${dateProps?.date} 2022`}
                   </Text>
                 </Box>
@@ -289,15 +356,15 @@ const SignUp = () => {
 
                 <Box display="flex" flexDirection="column" gridGap="10px">
                   <Text size="md" fontWeight="700">
-                    Days and hours
+                    {t('days-and-hours')}
                   </Text>
-                  <Text size="md" fontWeight="400" color="gray.600">
+                  <Text size="md" fontWeight="400" color={fontColor}>
                     {dateProps?.availableDate}
                   </Text>
-                  <Text size="md" fontWeight="400" color="gray.600">
+                  <Text size="md" fontWeight="400" color={fontColor}>
                     {dateProps?.time}
                   </Text>
-                  <Text size="md" fontWeight="400" color="gray.600">
+                  <Text size="md" fontWeight="400" color={fontColor}>
                     {dateProps?.formatTime}
                   </Text>
                 </Box>
@@ -305,14 +372,14 @@ const SignUp = () => {
 
               <Box display="flex" flexDirection="column" gridGap="10px">
                 <Heading size="18px" textTransform="uppercase">
-                  Profile Details
+                  {t('profile-details')}
                 </Heading>
-                <Box as="hr" width="30%" margin="0 0 10px 0" h="1px" background="black" />
+                <Box as="hr" width="30%" margin="0 0 10px 0" h="1px" borderColor={borderColor} />
                 <Box display="flex" flexDirection="column" gridGap="10px">
                   <Text size="md" fontWeight="700">
-                    Your name
+                    {t('your-name')}
                   </Text>
-                  <Text size="md" fontWeight="400" color="gray.600">
+                  <Text size="md" fontWeight="400" color={fontColor}>
                     {`${formProps?.firstName} ${formProps?.lastName}`}
                   </Text>
                 </Box>
@@ -320,48 +387,82 @@ const SignUp = () => {
                 <Box display="flex" flexDirection="row" gridGap="10px">
                   <Box display="flex" flexDirection="column" gridGap="10px">
                     <Text size="md" fontWeight="700">
-                      Phone number
+                      {t('phone-number')}
                     </Text>
-                    <Text size="md" fontWeight="400" color="gray.600">
+                    <Text size="md" fontWeight="400" color={fontColor}>
                       {formProps?.phone}
                     </Text>
                   </Box>
                   <Box display="flex" flexDirection="column" gridGap="10px">
                     <Text size="md" fontWeight="700">
-                      Mail
+                      {t('email')}
                     </Text>
-                    <Text size="md" fontWeight="400" color="gray.600">
+                    <Text size="md" fontWeight="400" color={fontColor}>
                       {formProps?.email}
                     </Text>
                   </Box>
                 </Box>
               </Box>
             </Box>
-            <Box display="flex" flexDirection="column" flex={0.7} background="blue.light" w="100%" p="11px 14px" gridGap="12px" borderRadius="12px">
-              <Heading size="15px" color="blue.default">
-                You are signing up for
-              </Heading>
-              <Box display="flex" gridGap="12px">
-                <Box display="flex" flexDirection="column">
-                  <Box p="14px 12px" background="blue.default" borderRadius="7px" width="fit-content">
-                    <Icon icon="code" width="38px" height="38px" color="#fff" />
-                  </Box>
-                </Box>
-                <Box display="flex" flexDirection="column" gridGap="7px">
-                  <Heading size="18px">
-                    data title
-                  </Heading>
-                  <Heading size="15px" textTransform="uppercase" color="gray.600">
-                    selected props title
-                  </Heading>
-                </Box>
-                <Heading size="sm" color="blue.default" textTransform="uppercase">
-                  selected props price
+            <Box display="flex" flexDirection="column" flex={0.6}>
+              <Box display="flex" flexDirection="column" background={featuredBackground} w="100%" height="fit-content" p="11px 14px" gridGap="12px" borderRadius="14px">
+                <Heading size="15px" color="blue.default" textTransform="uppercase">
+                  {t('signing-for')}
                 </Heading>
+                <Box display="flex" gridGap="12px">
+                  <Box display="flex" flexDirection="column">
+                    <Box p="16px" background="blue.default" borderRadius="7px" width="fit-content">
+                      <Icon icon="coding" width="48px" height="48px" color="#fff" />
+                    </Box>
+                  </Box>
+                  <Box display="flex" flexDirection="column" gridGap="7px">
+                    <Heading size="18px">
+                      {courseTitle}
+                    </Heading>
+                    {planProps?.payment && (
+                      <Heading size="15px" textTransform="uppercase" color={useColorModeValue('gray.500', 'gray.400')}>
+                        {planProps?.payment}
+                      </Heading>
+                    )}
+                  </Box>
+                  {planProps?.price && (
+                    <Heading size="sm" color="blue.default" textTransform="uppercase" textAlign="end">
+                      {planProps?.price}
+                    </Heading>
+                  )}
 
+                </Box>
+                <Box as="hr" width="100%" margin="0" h="1px" borderColor={borderColor} />
+                {planProps?.bullets?.title && (
+                  <Box fontSize="14px" fontWeight="700" color="blue.default">
+                    {planProps?.bullets?.title}
+                  </Box>
+                )}
+                <Box as="ul" style={{ listStyle: 'none' }} display="flex" flexDirection="column" gridGap="12px">
+                  {planProps?.bullets?.list?.map((bullet) => (
+                    <Box as="li" key={bullet?.title} display="flex" flexDirection="row" lineHeight="24px" gridGap="8px">
+                      <Icon icon="checked2" color="#38A56A" width="13px" height="10px" style={{ margin: '8px 0 0 0' }} />
+                      <Box
+                        fontSize="14px"
+                        fontWeight="600"
+                        letterSpacing="0.05em"
+                        dangerouslySetInnerHTML={{ __html: bullet?.title }}
+                      />
+                    </Box>
+                  ))}
+                </Box>
               </Box>
+              {!planProps.type.includes('trial') && (
+                <Button variant="default" height="45px" mt="12px">
+                  Proceed to payment
+                </Button>
+              )}
+              {planProps.type.includes('trial') && (
+                <Button variant="outline" borderColor="blue.200" background={featuredBackground} _hover={{ background: featuredBackground, opacity: 0.8 }} _active={{ background: featuredBackground, opacity: 1 }} color="blue.default" height="45px" mt="12px">
+                  Start free trial
+                </Button>
+              )}
             </Box>
-
           </Box>
         )}
 
@@ -377,26 +478,35 @@ const SignUp = () => {
                 }
               }}
             >
-              Go Back
+              {t('go-back')}
             </Button>
 
           )}
           {stepIndex !== 0 && stepIndex !== 2 && (
             <Button
               variant="default"
+              disabled={dateProps === null}
               onClick={() => {
                 if (stepIndex !== 2) {
                   setStepIndex(stepIndex + 1);
                 }
               }}
             >
-              Next Step
+              {t('next-step')}
             </Button>
           )}
         </Box>
       </Box>
     </Box>
   );
+};
+
+SignUp.propTypes = {
+  finance: PropTypes.objectOf(PropTypes.any),
+};
+
+SignUp.defaultProps = {
+  finance: {},
 };
 
 export default SignUp;
