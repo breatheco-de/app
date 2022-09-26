@@ -26,5 +26,17 @@
   "your-name": "Tu nombre",
   "phone-number": "Teléfono",
   "email": "Correo electrónico",
-  "signing-for": "Te estás registrando en"
+  "signing-for": "Te estás registrando en",
+  "validators": {
+    "short-input": "¡Demasiado corto!",
+    "long-input": "Demasiado largo!",
+    "first-name-required": "El nombre es requerido",
+    "last-name-required": "El apellido es requerido",
+    "phone-required": "El teléfono es requerido",
+    "invalid-phone": "Por favor, especifique un número de teléfono válido",
+    "invalid-email": "Correo electrónico inválido",
+    "email-required": "Correo electronico es requerido",
+    "confirm-email-required": "Confirmar Correo electronico es requerido",
+    "confirm-email-not-match": "Los correos electrónicos no coinciden"
+  }
 }

@@ -26,5 +26,17 @@
   "your-name": "Your name",
   "phone-number": "Phone number",
   "email": "Email",
-  "signing-for": "You are signing up for"
+  "signing-for": "You are signing up for",
+  "validators": {
+    "short-input": "Too Short!",
+    "long-input": "Too Long!",
+    "first-name-required": "First name is required",
+    "last-name-required": "Last name is required",
+    "phone-required": "Phone number is required",
+    "invalid-phone": "Please specify a valid phone number",
+    "invalid-email": "Invalid email",
+    "email-required": "Email is required",
+    "confirm-email-required": "Confirm Email is required",
+    "confirm-email-not-match": "Emails don't match"
+  }
 }

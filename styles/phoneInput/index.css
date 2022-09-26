@@ -45,14 +45,16 @@
 
 .react-tel-input .form-control.invalid {
   opacity: 1;
-  border: 1px solid #d79f9f;
-  background-color: #faf0f0;
+  box-shadow: 0 0 0 1px #e53e3e;
+  outline-offset: 2px;
+  border: 1px solid #E53E3E;
+  transition: all 200ms ease-in-out;
 }
 .react-tel-input .form-control.invalid:focus {
   opacity: 1;
-  border: 1px solid #d79f9f;
-  background-color: #faf0f0;
+  border: 1px solid #3182CE;
 }
+
 .react-tel-input .form-control.open {
   z-index: 2;
 }
@@ -62,6 +64,7 @@
   top: 0;
   bottom: 0;
   padding: 0;
+  height: 48px;
   margin: 1px 0px 1px 1px;
   background-color: #f5f5f5;
   /* border: 1px solid #CACACA; */

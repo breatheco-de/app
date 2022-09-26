@@ -9,15 +9,17 @@ import useTranslation from 'next-translate/useTranslation';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
+import * as Yup from 'yup';
 import Heading from '../common/components/Heading';
 import Icon from '../common/components/Icon';
 import Text from '../common/components/Text';
 import PhoneInput from '../common/components/PhoneInput';
-import validationSchemas from '../common/components/Forms/validationSchemas';
+// import validationSchemas from '../common/components/Forms/validationSchemas';
 import FieldForm from '../common/components/Forms/FieldForm';
 import { getDataContentProps } from '../utils/file';
 import bc from '../common/services/breathecode';
 import useScript from '../common/hooks/useScript';
+import { phone } from '../utils/regex';
 
 const dates = [
   {
@@ -118,6 +120,14 @@ const SignUp = ({ finance }) => {
 
   const gmapApiStatus = useScript(`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=${GOOGLE_KEY}`);
 
+  const signupValidation = Yup.object().shape({
+    firstName: Yup.string().min(2, t('validators.short-input')).max(50, t('validators.long-input')).required(t('validators.first-name-required')),
+    lastName: Yup.string().min(2, t('validators.short-input')).max(50, t('validators.long-input')).required(t('validators.last-name-required')),
+    email: Yup.string().email(t('validators.invalid-email')).required(t('validators.email-required')),
+    phone: Yup.string().matches(phone, t('validators.invalid-phone')).required(t('validators.phone-required')),
+    confirmEmail: Yup.string().oneOf([Yup.ref('email'), null], t('validators.confirm-email-not-match')).required(t('validators.confirm-email-required')),
+  });
+
   useEffect(() => {
     // Google api script
     if (isSecondStep && gmapApiStatus === 'ready') {
@@ -162,6 +172,7 @@ const SignUp = ({ finance }) => {
   }, [coords]);
 
   console.log('Address coords:', coords);
+  console.log('formProps:', formProps);
 
   return (
     <Box p="2.5rem 2rem">
@@ -224,7 +235,7 @@ const SignUp = ({ finance }) => {
                   }, 300);
                 }
               }}
-              validationSchema={validationSchemas.signup}
+              validationSchema={signupValidation}
             >
               {({ isSubmitting }) => (
                 <Form style={{ display: 'flex', flexDirection: 'column', gridGap: '22px' }}>
@@ -251,13 +262,12 @@ const SignUp = ({ finance }) => {
                         setVal={setFormProps}
                         placeholder={t('common:phone')}
                         formData={formProps}
-                        errorMsg="Please specify a valid phone number"
                       />
                       {t('phone-info')}
                     </Box>
                   </Box>
                   <Box display="flex" gridGap="18px">
-                    <Box display="flex" flex={0.5} flexDirection="column" fontSize="12px" color="blue.default2" gridGap="4px">
+                    <Box display="flex" flex={0.5} flexDirection="column" fontSize="12px" gridGap="4px">
                       <FieldForm
                         type="email"
                         name="email"
@@ -265,8 +275,9 @@ const SignUp = ({ finance }) => {
                         formProps={formProps}
                         setFormProps={setFormProps}
                       />
-
-                      {t('email-info')}
+                      <Box color="blue.default2">
+                        {t('email-info')}
+                      </Box>
                     </Box>
 
                     <FieldForm

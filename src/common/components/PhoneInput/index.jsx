@@ -8,19 +8,10 @@ import React, { useState, useRef } from 'react';
 import InputMask from 'react-input-mask';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
-import { Box } from '@chakra-ui/react';
+import { Box, FormControl, FormErrorMessage } from '@chakra-ui/react';
+import { Field } from 'formik';
 import countriesList from './countriesList';
 // import { Colors } from '../../Styling';
-
-const Msg = styled.span`
-  position: absolute;
-  top: -34px;
-  left: 0px;
-  padding: 3px 6px;
-  font-size: 12px;
-  border-radius: 3px;
-  background-color: #F7615D;
-`;
 
 const PhoneInput = ({
   defaultMask,
@@ -262,103 +253,111 @@ const PhoneInput = ({
   });
 
   return (
-    <Box className="react-tel-input" color="black" style={style || containerStyle}>
-      {!validStatus.valid && <Msg>{errorMsg}</Msg>}
-      <InputMask
-        data-cy="phone"
-        className={`form-control ${!validStatus.valid ? 'invalid' : ''}`}
-        style={inputStyle}
-        placeholder={placeholder}
-        onChange={(e) => handlePhoneInput(e)}
-        value={phoneNumber}
-        type="phone"
-        id={id || 'phone'}
-        // mask="+1\(999) 999-9999"/
-        mask={getCountryPhoneMask()}
-        maskChar=""
-        // formatChars={{
-        //   "9": "[0-9]",
-        //   "a": "[A-Za-z]",
-        //   "*": "[A-Za-z0-9]"
-        // }}
-      />
-      {/* <input
-        className="form-control "
-        style={inputStyle}
-        onChange={(e) => handlePhoneInput(e)}
-        value={phoneNumber}
-        type="tel"
-      /> */}
+    <>
+      <Box className="react-tel-input" color="black" style={style || containerStyle}>
+        <Field name="phone" onChange={(e) => console.log('event.target.value', e.target.value)}>
+          {({ field, form }) => (
+            <FormControl style={style} isInvalid={form.errors.phone && form.touched.phone}>
+              <InputMask
+                {...field}
+                data-cy="phone"
+                className={`form-control ${!validStatus.valid ? 'invalid' : ''}`}
+                style={inputStyle}
+                placeholder={placeholder}
+                onChange={(e) => {
+                  const cleanedPhoneInput = `+${(e.target.value)?.match(/\d+/g)?.join('')}`;
+                  e.target.value = cleanedPhoneInput || e.target.value;
 
-      <div
-        ref={dropdownMenuRef}
-        className={`flag-dropdown ${showDropdown ? 'open' : ''} ${
-          !validStatus.valid ? 'invalid' : ''
-        }`}
-        style={buttonStyle}
-      >
+                  handlePhoneInput(e);
+                  field.onChange(e);
+                }}
+                value={phoneNumber}
+                type="phone"
+                id={id || 'phone'}
+                // mask="+1\(999) 999-9999"/
+                mask={getCountryPhoneMask()}
+                maskChar=""
+                // formatChars={{
+                //   "9": "[0-9]",
+                //   "a": "[A-Za-z]",
+                //   "*": "[A-Za-z0-9]"
+                // }}
+              />
+              <FormErrorMessage>{form.errors.phone}</FormErrorMessage>
+            </FormControl>
+          )}
+        </Field>
+
         <div
-          onClick={(e) => handleFlagDropdownClick(e)}
-          className={`selected-flag ${showDropdown ? 'open' : ''}`}
-          title={
-            selectedCountry
-              ? `${selectedCountry.name}: + ${selectedCountry.dialCode}`
-              : ''
-          }
-          role="button"
-          aria-haspopup="listbox"
-          aria-expanded={showDropdown ? true : undefined}
+          ref={dropdownMenuRef}
+          className={`flag-dropdown ${showDropdown ? 'open' : ''} ${
+            !validStatus.valid ? 'invalid' : ''
+          }`}
+          style={buttonStyle}
         >
-          <div className={`flag ${selectedCountry.iso2}`}>
-            <div className={`arrow ${showDropdown ? 'up' : ''}`} />
-          </div>
-        </div>
-        {showDropdown && (
-          <ul
-            className={`country-list ${showDropdown ? 'hide' : ''}`}
-            style={dropdownStyle}
-            role="listbox"
-            tabIndex="0"
+          <div
+            onClick={(e) => handleFlagDropdownClick(e)}
+            className={`selected-flag ${showDropdown ? 'open' : ''}`}
+            title={
+              selectedCountry
+                ? `${selectedCountry.name}: + ${selectedCountry.dialCode}`
+                : ''
+            }
+            role="button"
+            aria-haspopup="listbox"
+            aria-expanded={showDropdown ? true : undefined}
           >
-            {enableSearch && (
-              <li className={`search ${searchClass}`}>
-                {!disableSearchIcon && (
-                  <span
-                    className={`search-emoji ${
-                      searchClass ? `${searchClass}-emoji` : ''
+            <div className={`flag ${selectedCountry.iso2}`}>
+              <div className={`arrow ${showDropdown ? 'up' : ''}`} />
+            </div>
+          </div>
+          {showDropdown && (
+            <ul
+              className={`country-list ${showDropdown ? 'hide' : ''}`}
+              style={dropdownStyle}
+              role="listbox"
+              tabIndex="0"
+            >
+              {enableSearch && (
+                <li className={`search ${searchClass}`}>
+                  {!disableSearchIcon && (
+                    <span
+                      className={`search-emoji ${
+                        searchClass ? `${searchClass}-emoji` : ''
+                      }`}
+                      role="img"
+                      aria-label="Magnifying glass"
+                    >
+                      &#128270;
+                    </span>
+                  )}
+                  <input
+                    className={`search-box ${
+                      searchClass ? `${searchClass}-box` : ''
                     }`}
-                    role="img"
-                    aria-label="Magnifying glass"
-                  >
-                    &#128270;
-                  </span>
-                )}
-                <input
-                  className={`search-box ${
-                    searchClass ? `${searchClass}-box` : ''
-                  }`}
-                  style={searchStyle}
-                  type="search"
-                  placeholder={searchPlaceholder}
-                  // eslint-disable-next-line jsx-a11y/no-autofocus
-                  autoFocus
-                  autoComplete={autocompleteSearch ? 'on' : 'off'}
-                  value={searchValue}
-                  onChange={(e) => handleSearchChange(e)}
-                />
-              </li>
-            )}
-            {countryDropdownList.length > 0 ? (
-              countryDropdownList
-            ) : (
-              <li className="no-entries-message">
-                <span>{searchNotFound}</span>
-              </li>
-            )}
-          </ul>
-        )}
-      </div>
-    </Box>
+                    style={searchStyle}
+                    type="search"
+                    placeholder={searchPlaceholder}
+                    // eslint-disable-next-line jsx-a11y/no-autofocus
+                    autoFocus
+                    autoComplete={autocompleteSearch ? 'on' : 'off'}
+                    value={searchValue}
+                    onChange={(e) => handleSearchChange(e)}
+                  />
+                </li>
+              )}
+              {countryDropdownList.length > 0 ? (
+                countryDropdownList
+              ) : (
+                <li className="no-entries-message">
+                  <span>{searchNotFound}</span>
+                </li>
+              )}
+            </ul>
+          )}
+        </div>
+      </Box>
+    </>
   );
 };
 
