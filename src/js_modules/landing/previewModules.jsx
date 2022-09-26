@@ -20,7 +20,7 @@ const PreviewModules = ({ data }) => {
       <Box display={{ base: 'none', md: 'inherit' }} position="absolute" top="-90px" left="410px">
         <Icon icon="curvedLine" width="80px" height="654px" />
       </Box>
-      <Box display="flex">
+      <Box display="flex" width="100%">
         <Tabs index={currentTabIndex} variant="unstyled" display="flex" flex={1} flexDirection={{ base: 'column', md: 'row' }} height={{ base: '100%', md: '528px' }} mt={{ base: '40px', md: 0 }} alignItems="center">
           <TabList position="relative" display={{ base: 'none', md: 'inherit' }} width="48rem" height="100%" zIndex={99}>
             {data?.previewModules?.list[0]?.title && (
@@ -52,7 +52,7 @@ const PreviewModules = ({ data }) => {
           </TabList>
           <TabPanels position="absolute" style={{ width: 'inherit', zIndex: 99, top: '60px' }}>
             {data?.previewModules?.list?.map((module) => (
-              <TabPanel className="scroll-spy-container" key={module.title} display="flex" flexDirection="column" alignItems={{ base: 'center', md: 'inherit' }} gridGap="10px" textAlign={{ base: 'center', md: 'left' }}>
+              <TabPanel className="scroll-spy-container" px="0" key={module.title} display="flex" flexDirection="column" alignItems={{ base: 'center', md: 'inherit' }} gridGap="10px" textAlign={{ base: 'center', md: 'left' }}>
                 <ScrollSpy offsetTop={220} autoScrollOffsetTop={-150} isCustomElement>
                   {module?.steps.map((step) => (
                     <Button

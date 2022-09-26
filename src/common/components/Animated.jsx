@@ -1,12 +1,27 @@
 import { motion } from 'framer-motion';
 import {
-  Avatar, Box, Button, Link, Tab,
+  Avatar, Box, Button, Link, Tab, keyframes,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
 export const MotionBox = motion(Box);
 export const MotionButton = motion(Button);
 export const MotionAvatar = motion(Avatar);
+
+const pulseBlue = keyframes`
+  0% {
+    box-shadow: 0 0 0 0 rgba(64, 166, 250, 0.5), 0 0 0 0 rgba(77, 225, 241, 0.2), 0 0 0 0 rgba(6, 197, 255, 0.14);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 82, 82, 0), 0 0 0 18px rgba(255, 82, 82, 0), 0 0 0 22px rgba(255, 82, 82, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0), 0 0 0 25px rgba(255, 82, 82, 0), 0 0 0 25px rgba(255, 82, 82, 0);
+  }
+`;
+const pulseAnimation = `${pulseBlue} infinite 2s ease-in-out`;
 
 export const AnimatedButton = ({
   children, onClick, toUppercase, rest,
@@ -24,7 +39,7 @@ export const AnimatedAvatar = ({
 export const CustomTab = ({
   children, onClick, top, bottom, left, right, style,
 }) => (
-  <Tab _selected={{ backgroundColor: 'blue.default', color: 'white' }} style={style} p="20px 0" width="178px" fontSize="15px" background="blue.light" color="blue.default" onClick={onClick} textTransform="uppercase" position="absolute" left={left} right={right} top={top} bottom={bottom} borderRadius="22px" fontWeight="700">
+  <Tab className="pulse-blue" animation={pulseAnimation} _selected={{ backgroundColor: 'blue.default', color: 'white', animation: 'none' }} style={style} p="20px 0" width="178px" fontSize="15px" background="blue.light" color="blue.default" onClick={onClick} textTransform="uppercase" position="absolute" left={left} right={right} top={top} bottom={bottom} borderRadius="22px" fontWeight="700">
     {children}
   </Tab>
 );

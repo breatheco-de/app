@@ -55,7 +55,7 @@ const CodingIntroduction = ({ data }) => {
 
   return (
     <Box pt="3rem">
-      <Container maxW="container.xl">
+      <Container maxW="container.xl" px="0">
         <IntroductionSection data={data} />
 
         <Box p="30px 0">
