@@ -9,6 +9,7 @@ import jsx from 'react-syntax-highlighter/dist/cjs/languages/prism/jsx';
 import js from 'react-syntax-highlighter/dist/cjs/languages/prism/javascript';
 import css from 'react-syntax-highlighter/dist/cjs/languages/prism/css';
 import python from 'react-syntax-highlighter/dist/cjs/languages/prism/python';
+import bash from 'react-syntax-highlighter/dist/cjs/languages/prism/bash';
 
 import emoji from 'emoji-dictionary';
 import { useEffect, useState } from 'react';
@@ -30,6 +31,7 @@ SyntaxHighlighter.registerLanguage('js', js);
 SyntaxHighlighter.registerLanguage('html', jsx);
 SyntaxHighlighter.registerLanguage('css', css);
 SyntaxHighlighter.registerLanguage('python', python);
+SyntaxHighlighter.registerLanguage('bash', bash);
 
 const Code = ({
   inline, className, children, ...props
@@ -228,6 +230,7 @@ const MarkDownParser = ({
   } = callToActionProps;
 
   const codeBlockBackticks = /\n``[^` ]*`/gm;
+  const simpleCodeblockBackticks = /```/gm;
   const onlyforTag = /<onlyfor/gm;
 
   useEffect(() => {
@@ -250,7 +253,8 @@ const MarkDownParser = ({
   const emojiSupport = (text) => text.replace(/:\w+:/gi, (name) => emoji.getUnicode(name));
   const formatForCodeBlocks = content
     .replace(codeBlockBackticks, '\n$&') // new line for codeBlocks and content
-    .replace(onlyforTag, '\n$&');
+    .replace(onlyforTag, '\n$&')
+    .replace(simpleCodeblockBackticks, '\n$&');
 
   const contentFormated = emojiSupport(formatForCodeBlocks);
 
