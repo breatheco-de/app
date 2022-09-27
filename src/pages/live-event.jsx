@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { Box, Flex } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
+import { addMinutes, subMinutes } from 'date-fns';
 import styles from '../../styles/Home.module.css';
 import LiveEvent from '../common/components/LiveEvent';
 import { H1 } from '../common/styledComponents/Head';
@@ -11,31 +12,23 @@ export default function Example() {
 
   const otherEvents = [{
     title: 'My Wonderful HTML Email Workflow',
-    isLive: false,
-    isStarting: false,
-    time: '40 min',
+    starts_at: addMinutes(new Date(), 40),
     icon: 'group',
     fill: CustomTheme.colors.success,
   }, {
     title: 'Coding Jamming',
-    isLive: false,
-    isStarting: false,
-    time: '6 min',
+    starts_at: addMinutes(new Date(), 90),
     icon: 'codeBg',
   }];
 
   const otherEvents2 = [{
     title: 'My Wonderful HTML Email Workflow',
-    isLive: true,
-    isStarting: false,
-    time: '40 min',
+    starts_at: subMinutes(new Date(), 40),
     icon: 'group',
     fill: CustomTheme.colors.success,
   }, {
     title: 'Coding Jamming',
-    isLive: false,
-    isStarting: false,
-    time: '6 min',
+    starts_at: addMinutes(new Date(), 15),
     icon: 'codeBg',
   }];
 
@@ -47,19 +40,19 @@ export default function Example() {
 
       <Flex direction="column" justifyContent="center">
         <Box marginBottom="20px">
-          <LiveEvent isLive otherEvents={otherEvents} time="40 min" />
+          <LiveEvent startsAt={subMinutes(new Date(), 40)} otherEvents={otherEvents} />
         </Box>
 
         <Box marginBottom="20px">
-          <LiveEvent otherEvents={otherEvents} time="30 min" />
+          <LiveEvent startsAt={addMinutes(new Date(), 30)} otherEvents={otherEvents} />
         </Box>
 
         <Box marginBottom="20px">
-          <LiveEvent isLive otherEvents={otherEvents2} time="10 min" />
+          <LiveEvent startsAt={subMinutes(new Date(), 10)} otherEvents={otherEvents2} />
         </Box>
 
         <Box marginBottom="20px">
-          <LiveEvent time="20 min" />
+          <LiveEvent startsAt={addMinutes(new Date(), 20)} />
         </Box>
       </Flex>
 
