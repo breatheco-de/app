@@ -1,8 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import {
-  Box, useColorModeValue, Image, Button,
+  Box, useColorModeValue, Button,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
@@ -87,15 +86,14 @@ const LiveEvent = ({ startsAt, otherEvents }) => {
           borderRadius="full"
           width="50px"
           height="50px"
-          className={startsAt - new Date() <= 30 ? 'pulse-red' : ''}
+          className={startsAt - new Date() <= 0 ? 'pulse-red' : ''}
         >
-          <Icon width="50px" height="50px" icon="youtube" color={startsAt - new Date() >= 30 && CustomTheme.colors.gray[350]} />
+          <Icon
+            width="50px"
+            height="50px"
+            icon={startsAt - new Date() <= 0 ? 'live-event' : 'live-event-opaque'}
+          />
         </Box>
-        {/* <Image
-          className={startsAt - new Date() <= 30 ? 'pulse-red' : ''}
-          borderRadius="full"
-          src={startsAt - new Date() <= 30 ? '/static/images/live-event.png' : '/static/images/non-live-event.png'}
-        /> */}
         <Box
           display="flex"
           justifyContent="center"
