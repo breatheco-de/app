@@ -205,6 +205,7 @@ const OnlyForBanner = ({ children, permission, cohortSession }) => {
   const capabilities = permission.split(',');
   console.log('md_permissions:', capabilities);
   if (cohortSession.bc_id) {
+    // TODO: remove this param reassign
     // eslint-disable-next-line no-param-reassign
     cohortSession.user_capabilities = ['read_private_lesson', 'read_lesson', 'student'];
   }

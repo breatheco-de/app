@@ -152,7 +152,7 @@ const SignUp = ({ finance }) => {
       bc.public({
         coordinates: `${coords.latitude}, ${coords.longitude}`,
         saas: true,
-        course: courseChoosed,
+        syllabus_slug: courseChoosed,
         upcoming: true,
       }).cohorts()
         .then(({ data }) => {
