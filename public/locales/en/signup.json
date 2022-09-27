@@ -1,0 +1,42 @@
+{
+  "seo": {
+    "title": "Sign up",
+    "description": "Sign up for a free account to get started with programming with 4Geeks",
+    "keywords": ["4Geeks signup", "Signup"],
+    "image": "{{domain}}/static/images/4geeks.png"
+  },
+  "go-back": "Go back",
+  "next-step": "Next step",
+  "contact-information": "Contact information",
+  "choose-your-class": "Choose your class",
+  "summary": "Summary",
+  "about-you": "About you",
+  "your-address": "Give us your address to find your new class",
+  "available-dates": "Available dates",
+  "search-dates": "Search dates",
+  "addres-info": "We are not storing your address, but we will use this information to offer the best possible dates and schedules to study.",
+  "email-info": "We will use it to give you access to your account.",
+  "phone-info": "We will contact you via phone call only if necessary.",
+  "choose-date": "Choose date",
+  "cohort-details": "Cohort Details",
+  "cohort-name": "Cohort Name",
+  "start-date": "Start date",
+  "days-and-hours": "Days and hours",
+  "profile-details": "Profile Details",
+  "your-name": "Your name",
+  "phone-number": "Phone number",
+  "email": "Email",
+  "signing-for": "You are signing up for",
+  "validators": {
+    "short-input": "Too Short!",
+    "long-input": "Too Long!",
+    "first-name-required": "First name is required",
+    "last-name-required": "Last name is required",
+    "phone-required": "Phone number is required",
+    "invalid-phone": "Please specify a valid phone number",
+    "invalid-email": "Invalid email",
+    "email-required": "Email is required",
+    "confirm-email-required": "Confirm Email is required",
+    "confirm-email-not-match": "Emails don't match"
+  }
+}

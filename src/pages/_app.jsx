@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/globals.css';
 import '../../styles/markdown.css';
+import '../../styles/phoneInput/index.css';
 import TagManager from 'react-gtm-module';
 import PropTypes from 'prop-types';
 import { ChakraProvider } from '@chakra-ui/react';

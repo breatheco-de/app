@@ -9,9 +9,11 @@ import jsx from 'react-syntax-highlighter/dist/cjs/languages/prism/jsx';
 import js from 'react-syntax-highlighter/dist/cjs/languages/prism/javascript';
 import css from 'react-syntax-highlighter/dist/cjs/languages/prism/css';
 import python from 'react-syntax-highlighter/dist/cjs/languages/prism/python';
+import bash from 'react-syntax-highlighter/dist/cjs/languages/prism/bash';
 
 import emoji from 'emoji-dictionary';
 import { useEffect, useState } from 'react';
+import { usePersistent } from '../../hooks/usePersistent';
 import tomorrow from './syntaxHighlighter/tomorrow';
 import BeforeAfterSlider from '../BeforeAfterSlider';
 import CallToAction from '../CallToAction';
@@ -21,6 +23,7 @@ import Heading from '../Heading';
 // import ChakraHeading from '../Heading';
 import Text from '../Text';
 import ContentHeading from './ContentHeading';
+import OnlyFor from '../OnlyFor';
 
 // okaidia-tomorrow
 SyntaxHighlighter.registerLanguage('jsx', jsx);
@@ -28,6 +31,7 @@ SyntaxHighlighter.registerLanguage('js', js);
 SyntaxHighlighter.registerLanguage('html', jsx);
 SyntaxHighlighter.registerLanguage('css', css);
 SyntaxHighlighter.registerLanguage('python', python);
+SyntaxHighlighter.registerLanguage('bash', bash);
 
 const Code = ({
   inline, className, children, ...props
@@ -197,11 +201,29 @@ const MDTable = ({ children }) => (
 
 const MDHr = () => (<Box d="inherit" />);
 
+const OnlyForBanner = ({ children, permission, cohortSession }) => {
+  const capabilities = permission.split(',');
+  console.log('md_permissions:', capabilities);
+  if (cohortSession.bc_id) {
+    // TODO: remove this param reassign
+    // eslint-disable-next-line no-param-reassign
+    cohortSession.user_capabilities = ['read_private_lesson', 'read_lesson', 'student'];
+  }
+
+  return (
+    <OnlyFor onlyMember withBanner cohortSession={cohortSession} capabilities={capabilities}>
+      {children}
+    </OnlyFor>
+  );
+};
+
 const MarkDownParser = ({
   content, callToActionProps, withToc, frontMatter, titleRightSide,
 }) => {
   const { t } = useTranslation('common');
   const [learnpackActions, setLearnpackActions] = useState([]);
+  const [cohortSession] = usePersistent('cohortSession', {});
+
   const newExerciseText = t('learnpack.new-exercise');
   const continueExerciseText = t('learnpack.continue-exercise');
   const {
@@ -209,6 +231,9 @@ const MarkDownParser = ({
   } = callToActionProps;
 
   const codeBlockBackticks = /\n``[^` ]*`/gm;
+  const simpleCodeblockBackticks = /```/gm;
+  const onlyforTag = /<onlyfor/gm;
+
   useEffect(() => {
     setLearnpackActions([
       {
@@ -227,7 +252,11 @@ const MarkDownParser = ({
   // support for emoji shortcodes
   // exapmle: :heart_eyes: -> 😍
   const emojiSupport = (text) => text.replace(/:\w+:/gi, (name) => emoji.getUnicode(name));
-  const formatForCodeBlocks = content.replace(codeBlockBackticks, '\n$&'); // new line for codeBlocks and content
+  const formatForCodeBlocks = content
+    .replace(codeBlockBackticks, '\n$&') // new line for codeBlocks and content
+    .replace(onlyforTag, '\n$&')
+    .replace(simpleCodeblockBackticks, '\n$&');
+
   const contentFormated = emojiSupport(formatForCodeBlocks);
 
   return (
@@ -303,6 +332,12 @@ const MarkDownParser = ({
           table: {
             component: MDTable,
           },
+          onlyfor: {
+            component: OnlyForBanner,
+            props: {
+              cohortSession,
+            },
+          },
         },
         slugify: (str) => str.split(' ').join('-').toLowerCase(),
       })}
@@ -369,6 +404,16 @@ MDTable.propTypes = {
 
 MDCheckbox.propTypes = {
   children: PropTypes.node.isRequired,
+};
+
+OnlyForBanner.propTypes = {
+  children: PropTypes.node.isRequired,
+  permission: PropTypes.string,
+  cohortSession: PropTypes.objectOf(PropTypes.any),
+};
+OnlyForBanner.defaultProps = {
+  permission: '',
+  cohortSession: {},
 };
 
 export default MarkDownParser;

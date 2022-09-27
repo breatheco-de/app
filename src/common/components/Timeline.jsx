@@ -1,5 +1,5 @@
 import React, {
-  useEffect, memo, useState,
+  useEffect, memo,
 } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -9,7 +9,6 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import Text from './Text';
-import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 
 const color = {
   light: 'blue.light',
@@ -25,8 +24,6 @@ const Timeline = ({
   const { cohortSlug, lessonSlug } = router.query;
   const fontColor1 = useColorModeValue('gray.dark', 'white');
   const fontColor2 = useColorModeValue('gray.dark', 'gray.light');
-  const [openTargetBlankModal, setOpenTargetBlankModal] = useState(false);
-  const [clickedState, setClickedState] = useState(null);
 
   // scroll scrollIntoView for id when lessonSlug changes
   const scrollIntoView = (id) => {
@@ -45,37 +42,11 @@ const Timeline = ({
   const handleClick = (e, item) => {
     e.preventDefault();
     e.stopPropagation();
-    if (item.target === 'blank') {
-      setClickedState(item);
-      setOpenTargetBlankModal(true);
-    } else {
-      onClickAssignment(e, item);
-    }
+    onClickAssignment(e, item);
   };
-
-  const clickedPath = clickedState?.target === 'blank' ? clickedState?.url : `https://4geeks.com/syllabus/${cohortSlug}/${clickedState?.type?.toLowerCase()}/${clickedState?.slug}`;
 
   return (
     <>
-      <ModalInfo
-        isOpen={openTargetBlankModal}
-        onClose={() => setOpenTargetBlankModal(false)}
-        title={t('dashboard:modules.target-blank-title')}
-        isReadonly
-        description={t('dashboard:modules.target-blank-msg', { title: clickedState?.title })}
-        link={clickedPath}
-        handlerText={t('common:open')}
-        closeText={t('common:close')}
-        closeButtonVariant="outline"
-        actionHandler={(e) => {
-          if (clickedState.target === 'blank') {
-            window.open(clickedState.url, '_blank');
-          } else {
-            onClickAssignment(e, clickedState);
-          }
-          setOpenTargetBlankModal(false);
-        }}
-      />
       <Flex width={width} marginBottom="1.5rem">
         <Text size="l" fontWeight="900" color={fontColor1}>{title && title.toUpperCase()}</Text>
         {technologies.length >= 1 && (

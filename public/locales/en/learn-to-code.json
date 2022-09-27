@@ -3,6 +3,7 @@
   "highlight": "Meet up",
   "__highlight-options__": "Meet up / Gathering / Party / Collect / Chapter",
   "description": "Learning to code with a group of people that meets every other day",
+  "course": "coding-introduction",
   "callToAction": {
     "title": "Join the next cohort",
     "href": "#"
@@ -261,7 +262,7 @@
         }
       },
       {
-        "type": "basic",
+        "type": "trial",
         "show": true,
         "title": "Free trial",
         "price": "7 Days trial",
@@ -292,7 +293,7 @@
 
     "finance": [
       {
-        "type": "schoolarship",
+        "type": "schoolarship-t1",
         "show": true,
         "title": "scholarship level 1",
         "price": "$70",
@@ -322,7 +323,7 @@
         }
       },
       {
-        "type": "schoolarship",
+        "type": "schoolarship-t2",
         "show": true,
         "title": "scholarship level 2",
         "price": "$50",
@@ -352,7 +353,7 @@
         }
       },
       {
-        "type": "schoolarship",
+        "type": "schoolarship-trial",
         "show": true,
         "title": "Free trial",
         "price": "7 days trial",

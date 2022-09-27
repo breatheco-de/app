@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
-import { Box, useColorModeValue, Text } from '@chakra-ui/react';
-import { MotionBox, MotionButton } from '../../common/components/Animated';
+import {
+  Box, useColorModeValue, Text, Button,
+} from '@chakra-ui/react';
+import { MotionBox } from '../../common/components/Animated';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 
@@ -35,9 +37,9 @@ const IntroductionSection = ({
           {data.description}
         </Text>
         {data?.callToAction?.title && (
-          <MotionButton whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.9 }} variant="default" fontSize="13px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase">
+          <Button variant="default" fontSize="13px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase">
             {data.callToAction.title}
-          </MotionButton>
+          </Button>
         )}
         {data?.bullets && (
           <Box as="ul" display="flex" flexDirection="column" gridGap="4px" width="fit-content">
