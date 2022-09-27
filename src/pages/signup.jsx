@@ -89,7 +89,7 @@ const SignUp = ({ finance }) => {
   const inputRef = useRef();
   const toast = useToast();
 
-  const GOOGLE_KEY = 'AIzaSyB6NEbEyhDU_U1z_XoyRwEu0Rc1XXeZK6c';
+  const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
 
   const fontColor = useColorModeValue('gray.800', 'gray.300');
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
