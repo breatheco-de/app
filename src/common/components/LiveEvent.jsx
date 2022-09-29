@@ -13,7 +13,7 @@ import Text from './Text';
 import Icon from './Icon';
 
 const LiveEvent = ({
-  startsAt, otherEvents, timeDelta, stTranslation,
+  startsAt, otherEvents, startingSoonDelta, stTranslation,
 }) => {
   const { t, lang } = useTranslation('live-event');
   const [isOpen, setIsOpen] = useState(false);
@@ -41,11 +41,11 @@ const LiveEvent = ({
       days, months, hours, years, minutes,
     } = interval;
     const totalTime = days + months + hours + years + minutes;
-    return start - new Date() <= 0 || (totalTime === minutes && minutes <= timeDelta);
+    return start - new Date() <= 0 || (totalTime === minutes && minutes <= startingSoonDelta);
   };
 
   const textStarted = (start) => {
-    const started = start - new Date() <= timeDelta;
+    const started = start - new Date() <= startingSoonDelta;
     if (started) {
       return stTranslation ? stTranslation[lang]['live-event'].started.replace('{{time}}', formatTimeString(start)) : t('started', { time: formatTimeString(start) });
     }
@@ -88,7 +88,7 @@ const LiveEvent = ({
         display="flex"
         alignItems="center"
         background={bgColor2}
-        border={startsAt - new Date() <= timeDelta && '2px solid'}
+        border={startsAt - new Date() <= startingSoonDelta && '2px solid'}
         borderColor={CustomTheme.colors.blue.default2}
         padding="10px"
         borderRadius="50px"
@@ -211,13 +211,13 @@ LiveEvent.propTypes = {
   startsAt: PropTypes.instanceOf(Date).isRequired,
   otherEvents: PropTypes.arrayOf(PropTypes.any),
   stTranslation: PropTypes.objectOf(PropTypes.any),
-  timeDelta: PropTypes.number,
+  startingSoonDelta: PropTypes.number,
 };
 
 LiveEvent.defaultProps = {
   otherEvents: [],
   stTranslation: null,
-  timeDelta: 30,
+  startingSoonDelta: 30,
 };
 
 export default LiveEvent;

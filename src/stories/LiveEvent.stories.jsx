@@ -15,7 +15,12 @@ export default {
       control: {
         type: 'object'
       }
-    }
+    },
+    startingSoonDelta: {
+      control: {
+        type: 'number'
+      }
+    },
   }
 };
 
@@ -25,6 +30,7 @@ const Component = (args, context) => {
 export const Default = Component.bind({});
 Default.args = {
   startsAt: subMinutes(new Date(), 40),
+  startingSoonDelta: 30,
   otherEvents: [{
     title: 'My Wonderful HTML Email Workflow',
     starts_at: subMinutes(new Date(), 0),
