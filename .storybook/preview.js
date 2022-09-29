@@ -2,6 +2,9 @@ import React from 'react';
 import {addDecorator} from '@storybook/react';
 import {ChakraProvider} from '@chakra-ui/react';
 import { Provider } from 'react-redux';
+import I18nProvider from 'next-translate/I18nProvider'
+import { useGlobals } from '@storybook/client-api';
+import i18n from './i18next.js';
 import { initStore } from '../src/store';
 import CustomTheme from '../styles/theme';
 import '../styles/globals.css';
@@ -21,7 +24,23 @@ export const parameters = {
       date: /Date$/,
     },
   },
+  i18n,
+  locale: 'en',
+  locales: {
+    en: 'English',
+    es: 'Spanish',  
+  },
 }
+
+const myDecorator = (story, context, ...props) => {
+  const [{ locale }] = useGlobals();
+  console.log('HOLA');
+  console.log(locale);
+  return (
+    <I18nProvider lang={locale || 'en'} >
+      {story()}
+    </I18nProvider>);
+};
 
 addDecorator((storyFn) => (
   <ChakraProvider resetCSS={false} theme={CustomTheme}>
@@ -44,3 +63,13 @@ const withProvider = (Story) => (
 )
 
 addDecorator(withProvider);
+
+addDecorator(myDecorator);
+
+import {addons} from '@storybook/addons'
+
+addons.getChannel().on('LOCALE_CHANGED', (newLocale) => {
+  console.log('newLocale');
+  console.log(newLocale);
+  //  changeMyI18nConfig(newLocale)
+});

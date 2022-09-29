@@ -13,12 +13,15 @@ import Text from './Text';
 import Icon from './Icon';
 
 const LiveEvent = ({ startsAt, otherEvents }) => {
-  const { t } = useTranslation('live-event');
+  const { t, lang } = useTranslation('live-event');
   const [isOpen, setIsOpen] = useState(false);
   const bgColor = useColorModeValue('white', 'gray.900');
   const bgColor2 = useColorModeValue('featuredLight', 'featuredDark');
   const textColor = useColorModeValue('black', 'white');
   const textGrayColor = useColorModeValue('gray.600', 'gray.350');
+
+  console.log('lang__component');
+  console.log(lang);
 
   const formatTimeString = (start) => {
     const duration = intervalToDuration({

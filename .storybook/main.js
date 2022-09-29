@@ -8,6 +8,7 @@ module.exports = {
     '@storybook/addon-essentials', 
     '@storybook/addon-actions',
     "@storybook/addon-knobs",
+    'storybook-react-i18next',
   ],
   webpackFinal: async (config) => ({
     ...config,
