@@ -6,14 +6,9 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 const ns = ['common', 'live-event'];
 const supportedLngs = ['en', 'es'];
 const resources = ns.reduce((acc, n) => {
-  console.log('acc');
-  console.log(acc);
-  console.log('n');
-  console.log(n);
   supportedLngs.forEach((lng) => {
     
     if (!acc[lng]) acc[lng] = {};
-    console.log(`../public/locales/${lng}/${n}.json`);
     acc[lng] = {
       ...acc[lng],
       [n]: require(`../public/locales/${lng}/${n}.json`),
@@ -21,9 +16,6 @@ const resources = ns.reduce((acc, n) => {
   });
   return acc;
 }, {});
-
-console.log('resources');
-console.log(resources);
 
 i18n.use(initReactI18next)
   .use(LanguageDetector)

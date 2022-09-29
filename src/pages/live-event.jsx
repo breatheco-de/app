@@ -12,7 +12,8 @@ export default function Example() {
 
   const otherEvents = [{
     title: 'My Wonderful HTML Email Workflow',
-    starts_at: addMinutes(new Date(), 40),
+    // starts_at: addMinutes(new Date(), 40),
+    starts_at: new Date(),
     icon: 'group',
     fill: CustomTheme.colors.success,
   }, {
@@ -48,7 +49,7 @@ export default function Example() {
         </Box>
 
         <Box marginBottom="20px">
-          <LiveEvent startsAt={subMinutes(new Date(), 10)} otherEvents={otherEvents2} />
+          <LiveEvent startsAt={addMinutes(new Date(), 40)} otherEvents={otherEvents2} />
         </Box>
 
         <Box marginBottom="20px">

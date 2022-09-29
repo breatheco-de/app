@@ -19,20 +19,20 @@ export default {
   }
 };
 
-const Component = (args) => (
-  <LiveEvent {...args} />
-);
+const Component = (args, context) => {
+  return <LiveEvent stTranslation={context.parameters.i18n.store.data} {...args} />
+};
 export const Default = Component.bind({});
 Default.args = {
   startsAt: subMinutes(new Date(), 40),
-  // otherEvents: [{
-  //   title: 'My Wonderful HTML Email Workflow',
-  //   starts_at: subMinutes(new Date(), 40),
-  //   icon: 'group',
-  //   fill: CustomTheme.colors.success,
-  // }, {
-  //   title: 'Coding Jamming',
-  //   starts_at: addMinutes(new Date(), 15),
-  //   icon: 'codeBg',
-  // }],
+  otherEvents: [{
+    title: 'My Wonderful HTML Email Workflow',
+    starts_at: subMinutes(new Date(), 0),
+    icon: 'group',
+    fill: '#25BF6C',
+  }, {
+    title: 'Coding Jamming',
+    starts_at: addMinutes(new Date(), 15),
+    icon: 'codeBg',
+  }],
 };

@@ -12,7 +12,9 @@ import Link from './NextChakraLink';
 import Text from './Text';
 import Icon from './Icon';
 
-const LiveEvent = ({ startsAt, otherEvents }) => {
+const LiveEvent = ({
+  startsAt, otherEvents, timeDelta, stTranslation,
+}) => {
   const { t, lang } = useTranslation('live-event');
   const [isOpen, setIsOpen] = useState(false);
   const bgColor = useColorModeValue('white', 'gray.900');
@@ -20,17 +22,17 @@ const LiveEvent = ({ startsAt, otherEvents }) => {
   const textColor = useColorModeValue('black', 'white');
   const textGrayColor = useColorModeValue('gray.600', 'gray.350');
 
-  console.log('lang__component');
-  console.log(lang);
-
   const formatTimeString = (start) => {
     const duration = intervalToDuration({
       end: new Date(),
       start,
     });
 
-    return formatDuration(duration,
+    const formated = formatDuration(duration,
       { format: ['months', 'weeks', 'days', 'hours', 'minutes'], delimiter: ', ' });
+
+    if (formated === '') return stTranslation ? stTranslation[lang]['live-event']['few-seconds'] : t('few-seconds');
+    return formated;
   };
 
   const isStartedOrStarting = (start) => {
@@ -39,7 +41,15 @@ const LiveEvent = ({ startsAt, otherEvents }) => {
       days, months, hours, years, minutes,
     } = interval;
     const totalTime = days + months + hours + years + minutes;
-    return start - new Date() <= 0 || (totalTime === minutes && minutes <= 30);
+    return start - new Date() <= 0 || (totalTime === minutes && minutes <= timeDelta);
+  };
+
+  const textStarted = (start) => {
+    const started = start - new Date() <= timeDelta;
+    if (started) {
+      return stTranslation ? stTranslation[lang]['live-event'].started.replace('{{time}}', formatTimeString(start)) : t('started', { time: formatTimeString(start) });
+    }
+    return stTranslation ? stTranslation[lang]['live-event']['will-start'].replace('{{time}}', formatTimeString(start)) : t('will-start', { time: formatTimeString(start) });
   };
 
   return (
@@ -59,10 +69,10 @@ const LiveEvent = ({ startsAt, otherEvents }) => {
         textAlign="center"
         marginBottom="15px"
       >
-        {t('title')}
+        { stTranslation ? stTranslation[lang]['live-event'].title : t('title')}
         {' '}
         <Link
-          // target="_blank"
+          target="_blank"
           rel="noopener noreferrer"
           href="#"
           color={useColorModeValue('blue.default', 'blue.300')}
@@ -71,16 +81,16 @@ const LiveEvent = ({ startsAt, otherEvents }) => {
           locale="en"
           fontFamily="Lato, Sans-serif"
         >
-          {t('learn-more')}
+          {stTranslation ? stTranslation[lang]['live-event']['learn-more'] : t('learn-more')}
         </Link>
       </Text>
       <Box
         display="flex"
         alignItems="center"
         background={bgColor2}
-        border={startsAt - new Date() <= 30 && '2px solid'}
+        border={startsAt - new Date() <= timeDelta && '2px solid'}
         borderColor={CustomTheme.colors.blue.default2}
-        padding="5px"
+        padding="10px"
         borderRadius="50px"
         width="90%"
         margin="auto"
@@ -89,12 +99,12 @@ const LiveEvent = ({ startsAt, otherEvents }) => {
           borderRadius="full"
           width="50px"
           height="50px"
-          className={startsAt - new Date() <= 0 ? 'pulse-red' : ''}
+          className={isStartedOrStarting(startsAt) ? 'pulse-red' : ''}
         >
           <Icon
             width="50px"
             height="50px"
-            icon={startsAt - new Date() <= 0 ? 'live-event' : 'live-event-opaque'}
+            icon={isStartedOrStarting(startsAt) ? 'live-event' : 'live-event-opaque'}
           />
         </Box>
         <Box
@@ -109,16 +119,18 @@ const LiveEvent = ({ startsAt, otherEvents }) => {
             fontWeight="900"
             color={textColor}
             marginBottom="5px"
+            marginTop="0"
           >
-            {t('live-class')}
+            {stTranslation ? stTranslation[lang]['live-event']['live-class'] : t('live-class')}
           </Text>
           <Text
             fontSize="md"
             lineHeight="18px"
             fontWeight="700"
             color={textGrayColor}
+            margin="0"
           >
-            {startsAt - new Date() <= 30 ? t('started', { time: formatTimeString(startsAt) }) : t('will-start', { time: formatTimeString(startsAt) })}
+            {textStarted(startsAt)}
           </Text>
         </Box>
       </Box>
@@ -148,6 +160,7 @@ const LiveEvent = ({ startsAt, otherEvents }) => {
                   fontWeight="700"
                   color={textColor}
                   marginBottom="5px"
+                  marginTop="0"
                 >
                   {event.title}
                 </Text>
@@ -156,8 +169,10 @@ const LiveEvent = ({ startsAt, otherEvents }) => {
                   lineHeight="18px"
                   fontWeight="500"
                   color={textGrayColor}
+                  marginBottom="0"
+                  marginTop="0"
                 >
-                  {event.starts_at - new Date() <= 0 ? t('started', { time: formatTimeString(event.starts_at) }) : t('will-start', { time: formatTimeString(event.starts_at) })}
+                  {textStarted(event.starts_at)}
                 </Text>
               </Box>
             </Box>
@@ -174,6 +189,9 @@ const LiveEvent = ({ startsAt, otherEvents }) => {
           display="flex"
           alignItems="center"
           fontWeight="500"
+          border="none"
+          background="none"
+          cursor="pointer"
           onClick={() => {
             setIsOpen(!isOpen);
           }}
@@ -181,7 +199,7 @@ const LiveEvent = ({ startsAt, otherEvents }) => {
           {otherEvents.filter((e) => isStartedOrStarting(e.starts_at)).length !== 0 && (
             <Icon width="16px" height="16px" icon="on-live" style={{ display: 'inline-block', marginRight: '5px' }} />
           )}
-          {t('upcoming')}
+          {stTranslation ? stTranslation[lang]['live-event'].upcoming : t('upcoming')}
           {isOpen ? (<ChevronUpIcon w={6} h={7} />) : (<ChevronDownIcon w={6} h={7} />)}
         </Button>
       )}
@@ -192,10 +210,14 @@ const LiveEvent = ({ startsAt, otherEvents }) => {
 LiveEvent.propTypes = {
   startsAt: PropTypes.instanceOf(Date).isRequired,
   otherEvents: PropTypes.arrayOf(PropTypes.any),
+  stTranslation: PropTypes.objectOf(PropTypes.any),
+  timeDelta: PropTypes.number,
 };
 
 LiveEvent.defaultProps = {
   otherEvents: [],
+  stTranslation: null,
+  timeDelta: 30,
 };
 
 export default LiveEvent;

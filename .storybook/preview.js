@@ -34,11 +34,11 @@ export const parameters = {
 
 const myDecorator = (story, context, ...props) => {
   const [{ locale }] = useGlobals();
-  console.log('HOLA');
-  console.log(locale);
+  const Story =  story;
   return (
     <I18nProvider lang={locale || 'en'} >
-      {story()}
+      {/* {story({stTranslation: context.parameters.i18n.store.data})} */}
+      <Story stTranslation={context.parameters.i18n.store.data} />
     </I18nProvider>);
 };
 
@@ -65,11 +65,3 @@ const withProvider = (Story) => (
 addDecorator(withProvider);
 
 addDecorator(myDecorator);
-
-import {addons} from '@storybook/addons'
-
-addons.getChannel().on('LOCALE_CHANGED', (newLocale) => {
-  console.log('newLocale');
-  console.log(newLocale);
-  //  changeMyI18nConfig(newLocale)
-});
