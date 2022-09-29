@@ -493,14 +493,15 @@ blockquote > :last-child {
   background: rgb(45, 45, 45);
 }
 
-.highlight {
-  font-size: .85em !important;
-  line-height: 2.0 !important;
+/* .highlight {
+  font-size: .85em;
+  line-height: 2.0;
   overflow: auto;
   width: fit-content;
-  display: initial !important;
-  padding: 0.2em 0.5em !important;
-}
+  display: initial;
+  padding: 0.2em 0.5em;
+} */
+
 .text-highlight{
   display: block;
   overflow: auto;

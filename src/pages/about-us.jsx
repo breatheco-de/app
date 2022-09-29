@@ -47,6 +47,32 @@ const AboutUs = ({ data }) => {
   const { colorMode } = useColorMode();
   const { t } = useTranslation(['common']);
 
+  const markdownText = `
+  # About 4Geeks
+  Our goal is to empower talent with code by providing flexible educational experiences, we want to be the most relevant career-boosting community for future and present coders.
+
+  ## Why coding?
+
+  Embracing the world of coding opens a new world of opportunities for talents, from Web Development to Blockchain, Robotics or AI/Machine Learning.
+
+  <onlyfor permission="read_private_lesson">
+    # Hello World
+    This content was blocked
+
+    - \`read_private_lesson\`
+    - user account
+    - role access
+  </onlyfor>
+
+  ## Cornerstones
+
+  - Content
+  - Community
+  - Collaboration
+  - Support
+  # About 4Geeks
+  `;
+
   return (
     <Box
       height="100%"
@@ -82,7 +108,7 @@ const AboutUs = ({ data }) => {
           className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
           transition="background .2s ease"
         >
-          <MarkDownParser content={data} />
+          <MarkDownParser content={markdownText || data} />
         </Box>
       </Box>
     </Box>

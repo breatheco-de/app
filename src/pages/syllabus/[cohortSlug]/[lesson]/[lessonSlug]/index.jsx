@@ -186,11 +186,8 @@ const Content = () => {
 
   const onClickAssignment = (e, item) => {
     const link = `/syllabus/${cohortSlug}/${item.type.toLowerCase()}/${item.slug}`;
-    if (item.target === 'blank') {
-      window.open(link, '_blank');
-    } else {
-      router.push(link);
-    }
+
+    router.push(link);
     setCurrentData({});
     setCurrentSelectedModule(null);
     setCallToActionProps({});

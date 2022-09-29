@@ -72,6 +72,10 @@
     "new-exercise": "Start new exercise",
     "continue-exercise": "Continue exercise"
   },
+  "upgrade-plan": {
+    "title": "We are sorry, you don't have enough privileges to access this block of content, please signup or upgrade your plan to access it.",
+    "button": "Upgrade plan"
+  },
   "average-duration": "Average duration",
   "load-more": "Load more",
   "teachers": "Teachers",

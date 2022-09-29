@@ -14,6 +14,7 @@ module.exports = {
     '/lessons': ['lesson'],
     '/lessons/technology/[technology]': ['lesson'],
     '/project/[slug]': ['projects'],
+    '/signup': ['signup'],
     '/interactive-coding-tutorial/[difficulty]/[slug]': ['projects'],
     '/interactive-coding-tutorials': ['projects'],
     '/interactive-coding-tutorials/technology/[technology]': ['projects'],
