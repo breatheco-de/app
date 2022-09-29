@@ -278,6 +278,7 @@ featured {
 .sidebarButton {
   opacity: 0.5;
   transition: border 0.4s ease-in-out;
+  border-bottom: 4px solid transparent;
 }
 .sidebarButton:hover {
   opacity: 1;

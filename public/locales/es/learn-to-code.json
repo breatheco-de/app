@@ -234,6 +234,10 @@
   "pricing": {
     "title": "Precios",
     "description": "<strong>Coding introduction</strong> is the course that Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
+    "choose-plan": "Elige tu plan",
+    "one-payment": "Pago unico",
+    "finance-text": "Financiar",
+    "not-ready": "¿No estás listo para comprometerte?",
     "list": [
       {
         "type": "pro",

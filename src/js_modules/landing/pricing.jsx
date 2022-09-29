@@ -4,14 +4,12 @@ import {
 } from '@chakra-ui/react';
 // import { useRouter } from 'next/router';
 import { useState, useEffect, Fragment } from 'react';
-// import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 
 const Pricing = ({ data }) => {
-  // const { t } = useTranslation('common');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedFinanceIndex, setSelectedFinanceIndex] = useState(0);
   const [selectedProps, setSelectedProps] = useState(data?.pricing?.list[0] || {});
@@ -79,14 +77,14 @@ const Pricing = ({ data }) => {
       <Box display="flex" flex={0.5} flexDirection="column" gridGap="20px">
         <Box width="100%" display="flex" justifyContent="space-between" alignItems="center" mb="6px">
           <Heading as="h2" size="sm">
-            Choose yout plan
+            {data?.pricing['choose-plan']}
           </Heading>
           <Box display="flex">
-            <Box p="15px 10px" onClick={() => handleSelectFinance(0)} borderBottom="4px solid" borderColor={selectedFinanceIndex === 0 ? 'blue.default' : 'gray.400'} color={selectedFinanceIndex === 0 ? 'blue.default' : 'black'} cursor="pointer">
-              One payment
+            <Box p="15px 10px" onClick={() => handleSelectFinance(0)} borderBottom="4px solid" borderColor={selectedFinanceIndex === 0 ? 'blue.default' : 'gray.400'} color={selectedFinanceIndex === 0 ? 'blue.default' : 'black'} cursor="pointer" fontWeight={selectedFinanceIndex === 0 ? '700' : '400'}>
+              {data?.pricing['one-payment']}
             </Box>
-            <Box p="15px 10px" onClick={() => handleSelectFinance(1)} borderBottom="4px solid" borderColor={selectedFinanceIndex === 1 ? 'blue.default' : 'gray.400'} color={selectedFinanceIndex === 1 ? 'blue.default' : 'black'} cursor="pointer">
-              Finance
+            <Box p="15px 10px" onClick={() => handleSelectFinance(1)} borderBottom="4px solid" borderColor={selectedFinanceIndex === 1 ? 'blue.default' : 'gray.400'} color={selectedFinanceIndex === 1 ? 'blue.default' : 'black'} cursor="pointer" fontWeight={selectedFinanceIndex === 1 ? '700' : '400'}>
+              {data?.pricing['finance-text']}
             </Box>
           </Box>
         </Box>
@@ -96,7 +94,7 @@ const Pricing = ({ data }) => {
               <Box display="flex" alignItems="center">
                 <Box as="hr" color="gray.500" width="100%" />
                 <Text size="md" textAlign="center" width="100%" margin="0">
-                  Not ready to commit?
+                  {data?.pricing['not-ready']}
                 </Text>
                 <Box as="hr" color="gray.500" width="100%" />
               </Box>
