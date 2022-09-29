@@ -81,11 +81,11 @@ const Pricing = ({ data }) => {
           <Heading as="h2" size="sm">
             Choose yout plan
           </Heading>
-          <Box display="flex" gridGap="12px">
-            <Box p="15px 33px" onClick={() => handleSelectFinance(0)} borderRadius="32px" background={selectedFinanceIndex === 0 ? 'blue.default' : 'transparent'} color={selectedFinanceIndex === 0 ? 'white' : 'blue.default'} cursor="pointer">
+          <Box display="flex">
+            <Box p="15px 10px" onClick={() => handleSelectFinance(0)} borderBottom="4px solid" borderColor={selectedFinanceIndex === 0 ? 'blue.default' : 'gray.400'} color={selectedFinanceIndex === 0 ? 'blue.default' : 'black'} cursor="pointer">
               One payment
             </Box>
-            <Box p="15px 33px" onClick={() => handleSelectFinance(1)} borderRadius="32px" background={selectedFinanceIndex === 1 ? 'blue.default' : 'transparent'} color={selectedFinanceIndex === 1 ? 'white' : 'blue.default'} cursor="pointer">
+            <Box p="15px 10px" onClick={() => handleSelectFinance(1)} borderBottom="4px solid" borderColor={selectedFinanceIndex === 1 ? 'blue.default' : 'gray.400'} color={selectedFinanceIndex === 1 ? 'blue.default' : 'black'} cursor="pointer">
               Finance
             </Box>
           </Box>

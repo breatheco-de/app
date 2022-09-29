@@ -24,23 +24,27 @@ const PreviewModules = ({ data }) => {
         <Tabs index={currentTabIndex} variant="unstyled" display="flex" flex={1} flexDirection={{ base: 'column', md: 'row' }} height={{ base: '100%', md: '528px' }} mt={{ base: '40px', md: 0 }} alignItems="center">
           <TabList position="relative" display={{ base: 'none', md: 'inherit' }} width="48rem" height="100%" zIndex={99}>
             {data?.previewModules?.list[0]?.title && (
-              <CustomTab onClick={() => setCurrentTabIndex(0)} top="20px" left="320px">
+              <CustomTab onClick={() => setCurrentTabIndex(0)} top="20px" left="320px" p="1rem 12px">
+                <Icon icon={data?.previewModules?.list[0]?.icon} width="35px" height="35px" style={{ marginRight: '10px' }} />
                 {data?.previewModules?.list[0]?.title}
               </CustomTab>
             )}
 
             {data?.previewModules?.list[1]?.title && (
-              <CustomTab onClick={() => setCurrentTabIndex(1)} top="107px" left="350px">
+              <CustomTab onClick={() => setCurrentTabIndex(1)} top="107px" left="350px" p="1rem 12px">
+                <Icon icon={data?.previewModules?.list[1]?.icon} width="35px" height="35px" style={{ marginRight: '10px' }} />
                 {data?.previewModules?.list[1]?.title}
               </CustomTab>
             )}
             {data?.previewModules?.list[2]?.title && (
-              <CustomTab onClick={() => setCurrentTabIndex(2)} top="204px" left="400px">
+              <CustomTab onClick={() => setCurrentTabIndex(2)} top="204px" left="400px" p="1rem 12px">
+                <Icon icon={data?.previewModules?.list[2]?.icon} width="35px" height="35px" style={{ marginRight: '10px' }} />
                 {data?.previewModules?.list[2]?.title}
               </CustomTab>
             )}
             {data?.previewModules?.list[3]?.title && (
-              <CustomTab onClick={() => setCurrentTabIndex(3)} bottom="164px" left="380px">
+              <CustomTab onClick={() => setCurrentTabIndex(3)} bottom="164px" left="380px" p="1rem 12px">
+                <Icon icon={data?.previewModules?.list[3]?.icon} width="35px" height="35px" style={{ marginRight: '10px' }} />
                 {data?.previewModules?.list[3]?.title}
               </CustomTab>
             )}

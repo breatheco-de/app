@@ -103,6 +103,7 @@
     "list": [
       {
         "title": "HTML/CSS",
+        "icon": "html",
         "description": "During the pre-work you learn some basic <strong>CSS</strong> and <strong>HTML</strong>, and hopefully how to use the <strong>flex-box</strong> to create simple layouts. The first day we will review the pre-work completion and introduce a more evolved CSS that enables amazing layouts and the amazing Bootstrap framework that will make you life so much easier with the \"component oriented\" approach.",
         "steps": [
           {
@@ -125,6 +126,7 @@
       },
       {
         "title": "Bootstrap",
+        "icon": "bootstrap",
         "description": "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing",
         "steps": [
           {
@@ -147,6 +149,7 @@
       },
       {
         "title": "Github",
+        "icon": "github",
         "description": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution",
         "steps": [
           {
@@ -169,6 +172,7 @@
       },
       {
         "title": "Git & Gitflow",
+        "icon": "git",
         "description": "classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular",
         "steps": [
           {
