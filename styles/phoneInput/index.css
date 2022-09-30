@@ -37,10 +37,17 @@
   width: 100%;
   outline: none;
   opacity: 1;
+
+  transition-property: var(--chakra-transition-property-common);
+  transition-duration: var(--chakra-transition-duration-normal);
 }
+
+.react-tel-input:hover .form-control {
+  border: 1px solid var(--chakra-colors-gray-300);
+}
+
 .react-tel-input .form-control:focus {
-  /* opacity: 1; */
-  border: 1px solid #0097CD;
+  border: 1px solid #3182CE;
 }
 
 .react-tel-input .form-control.invalid {

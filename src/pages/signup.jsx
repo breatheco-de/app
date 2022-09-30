@@ -1,5 +1,3 @@
-/* eslint-disable no-shadow */
-/* eslint-disable no-undef */
 import {
   Box, Button, Img, Input, useColorModeValue, useToast,
 } from '@chakra-ui/react';
@@ -14,12 +12,11 @@ import Heading from '../common/components/Heading';
 import Icon from '../common/components/Icon';
 import Text from '../common/components/Text';
 import PhoneInput from '../common/components/PhoneInput';
-// import validationSchemas from '../common/components/Forms/validationSchemas';
 import FieldForm from '../common/components/Forms/FieldForm';
 import { getDataContentProps } from '../utils/file';
 import bc from '../common/services/breathecode';
-import useScript from '../common/hooks/useScript';
 import { phone } from '../utils/regex';
+import useGoogleMaps from '../common/hooks/useGoogleMaps';
 
 const dates = [
   {
@@ -85,11 +82,13 @@ const SignUp = ({ finance }) => {
   const [coords, setCoords] = useState(null);
   const [availableDates, setAvailableDates] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [location, setLocation] = useState(null);
   const autoCompleteRef = useRef();
   const inputRef = useRef();
   const toast = useToast();
-
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
+
+  const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(GOOGLE_KEY, 'places');
 
   const fontColor = useColorModeValue('gray.800', 'gray.300');
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
@@ -102,11 +101,11 @@ const SignUp = ({ finance }) => {
   const planProps = finance.plans.find((l) => l.type === planChoosed);
 
   const [formProps, setFormProps] = useState({
-    firstName: '',
-    lastName: '',
+    first_name: '',
+    last_name: '',
     phone: '',
     email: '',
-    confirmEmail: '',
+    confirm_email: '',
   });
 
   const handleChooseDate = (date) => {
@@ -118,19 +117,17 @@ const SignUp = ({ finance }) => {
   const isSecondStep = stepIndex === 1;
   const isThirdStep = stepIndex === 2;
 
-  const gmapApiStatus = useScript(`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=${GOOGLE_KEY}`);
-
   const signupValidation = Yup.object().shape({
-    firstName: Yup.string().min(2, t('validators.short-input')).max(50, t('validators.long-input')).required(t('validators.first-name-required')),
-    lastName: Yup.string().min(2, t('validators.short-input')).max(50, t('validators.long-input')).required(t('validators.last-name-required')),
+    first_name: Yup.string().min(2, t('validators.short-input')).max(50, t('validators.long-input')).required(t('validators.first-name-required')),
+    last_name: Yup.string().min(2, t('validators.short-input')).max(50, t('validators.long-input')).required(t('validators.last-name-required')),
     email: Yup.string().email(t('validators.invalid-email')).required(t('validators.email-required')),
     phone: Yup.string().matches(phone, t('validators.invalid-phone')).required(t('validators.phone-required')),
-    confirmEmail: Yup.string().oneOf([Yup.ref('email'), null], t('validators.confirm-email-not-match')).required(t('validators.confirm-email-required')),
+    confirm_email: Yup.string().oneOf([Yup.ref('email'), null], t('validators.confirm-email-not-match')).required(t('validators.confirm-email-required')),
   });
 
   useEffect(() => {
-    // Google api script
-    if (isSecondStep && gmapApiStatus === 'ready') {
+    // autocomplete values for input
+    if (isSecondStep && gmapStatus.loaded) {
       // initialize;
       autoCompleteRef.current = new window.google.maps.places.Autocomplete(
         inputRef.current,
@@ -143,7 +140,7 @@ const SignUp = ({ finance }) => {
         });
       });
     }
-  }, [gmapApiStatus, isSecondStep]);
+  }, [isSecondStep, gmapStatus]);
 
   useEffect(() => {
     if (coords !== null) {
@@ -171,8 +168,20 @@ const SignUp = ({ finance }) => {
     }
   }, [coords]);
 
+  useEffect(() => {
+    if (gmapStatus.loaded) {
+      getNearestLocation(GOOGLE_KEY)
+        .then(({ data }) => {
+          geocode({ location: data.location })
+            .then((result) => {
+              setLocation(result[0]);
+            });
+        });
+    }
+  }, [gmapStatus]);
+
+  console.log('location:::', location);
   console.log('Address coords:', coords);
-  console.log('formProps:', formProps);
 
   return (
     <Box p="2.5rem 2rem">
@@ -221,18 +230,24 @@ const SignUp = ({ finance }) => {
 
             <Formik
               initialValues={{
-                firstName: '',
-                lastName: '',
+                first_name: '',
+                last_name: '',
                 phone: '',
                 email: '',
-                confirmEmail: '',
+                confirm_email: '',
               }}
               onSubmit={(values, actions) => {
                 if (stepIndex !== 2) {
-                  setTimeout(() => {
-                    actions.setSubmitting(false);
-                    setStepIndex(stepIndex + 1);
-                  }, 300);
+                  const allValues = {
+                    ...values,
+                    course: courseChoosed,
+                  };
+                  bc.marketing().lead(allValues)
+                    .then((res) => {
+                      console.log('response:::', res);
+                      setStepIndex(stepIndex + 1);
+                    })
+                    .finally(() => actions.setSubmitting(false));
                 }
               }}
               validationSchema={signupValidation}
@@ -243,14 +258,14 @@ const SignUp = ({ finance }) => {
                     <Box display="flex" gridGap="18px" flex={0.5}>
                       <FieldForm
                         type="text"
-                        name="firstName"
+                        name="first_name"
                         label={t('common:first-name')}
                         formProps={formProps}
                         setFormProps={setFormProps}
                       />
                       <FieldForm
                         type="text"
-                        name="lastName"
+                        name="last_name"
                         label={t('common:last-name')}
                         formProps={formProps}
                         setFormProps={setFormProps}
@@ -283,7 +298,7 @@ const SignUp = ({ finance }) => {
                     <FieldForm
                       style={{ flex: 0.5 }}
                       type="email"
-                      name="confirmEmail"
+                      name="confirm_email"
                       label={t('common:confirm-email')}
                       formProps={formProps}
                       setFormProps={setFormProps}
@@ -418,7 +433,7 @@ const SignUp = ({ finance }) => {
                     {t('your-name')}
                   </Text>
                   <Text size="md" fontWeight="400" color={fontColor}>
-                    {`${formProps?.firstName} ${formProps?.lastName}`}
+                    {`${formProps?.first_name} ${formProps?.last_name}`}
                   </Text>
                 </Box>
                 <Box as="hr" width="100%" margin="0 0" h="1px" borderColor="gray.default" />

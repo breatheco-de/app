@@ -108,12 +108,11 @@ const breathecode = {
 
   marketing: (query = {}) => {
     const url = `${host}/marketing`;
-    // eslint-disable-next-line no-unused-vars
     const qs = Object.keys(query)
       .map((key) => `${key}=${query[key]}`)
       .join('&');
     return {
-      lead: (data) => axios.post(`${url}/lead`, data),
+      lead: (data) => axios.post(`${url}/lead?${qs}`, data),
     };
   },
 
