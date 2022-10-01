@@ -83,8 +83,11 @@ const SignUp = ({ finance }) => {
   const [availableDates, setAvailableDates] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [location, setLocation] = useState(null);
+  const [addressValue, setAddressValue] = useState('');
+
   const autoCompleteRef = useRef();
   const inputRef = useRef();
+  const buttonRef = useRef();
   const toast = useToast();
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
 
@@ -139,6 +142,29 @@ const SignUp = ({ finance }) => {
           longitude: place.geometry.location.lng(),
         });
       });
+
+      // search button handler
+      buttonRef.current.addEventListener(
+        'click',
+        () => {
+          setIsLoading(true);
+          geocode({ address: addressValue })
+            .then((results) => {
+              setCoords({
+                latitude: results.geometry.location.lat(),
+                longitude: results.geometry.location.lng(),
+              });
+            })
+            .catch(() => {
+              toast({
+                title: 'No coincidence found',
+                status: 'error',
+                duration: 5000,
+              });
+            })
+            .finally(() => setIsLoading(false));
+        },
+      );
     }
   }, [isSecondStep, gmapStatus]);
 
@@ -174,14 +200,16 @@ const SignUp = ({ finance }) => {
         .then(({ data }) => {
           geocode({ location: data.location })
             .then((result) => {
-              setLocation(result[0]);
+              setLocation({
+                country: result[0]?.address_components[6]?.long_name,
+                city: result[0]?.address_components[5]?.long_name,
+              });
             });
         });
     }
   }, [gmapStatus]);
 
-  console.log('location:::', location);
-  console.log('Address coords:', coords);
+  console.log('Nearest coords:', coords);
 
   return (
     <Box p="2.5rem 2rem">
@@ -241,10 +269,12 @@ const SignUp = ({ finance }) => {
                   const allValues = {
                     ...values,
                     course: courseChoosed,
+                    country: location?.country,
+                    city: location?.city,
+                    language: router.locale,
                   };
                   bc.marketing().lead(allValues)
-                    .then((res) => {
-                      console.log('response:::', res);
+                    .then(() => {
                       setStepIndex(stepIndex + 1);
                     })
                     .finally(() => actions.setSubmitting(false));
@@ -277,6 +307,7 @@ const SignUp = ({ finance }) => {
                         setVal={setFormProps}
                         placeholder={t('common:phone')}
                         formData={formProps}
+                        sessionContextLocation={location}
                       />
                       {t('phone-info')}
                     </Box>
@@ -324,10 +355,9 @@ const SignUp = ({ finance }) => {
               {t('your-address')}
             </Heading>
             <Box display="flex" gridGap="18px" alignItems="center" mt="10px">
-              {/* <input ref={inputRef} id="address-input" className="controls" type="text" placeholder="Where do you live?" height="50px" /> */}
-              <Input ref={inputRef} id="address-input" className="controls" type="text" placeholder="Where do you live?" height="50px" />
+              <Input ref={inputRef} id="address-input" onChange={(e) => setAddressValue(e.target.value)} className="controls" type="text" placeholder="Where do you live?" height="50px" />
 
-              <Button variant="default">
+              <Button type="button" ref={buttonRef} isLoading={isLoading} value="Geocode" variant="default">
                 {t('search-dates')}
               </Button>
             </Box>

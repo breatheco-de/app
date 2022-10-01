@@ -36,12 +36,12 @@ const useGoogleMaps = (apiKey, libraries = 'places') => {
   }, [apiKey, libraries]);
 
   // geocode expects location: { lat: 123, lng: 321 }
-  const geocode = (req) => {
+  const geocode = (request) => {
     if (isWindow && gmapStatus.loaded) {
       const { google } = window;
       const geocoder = new google.maps.Geocoder();
       return new Promise((resolve, reject) => {
-        geocoder.geocode(req, (result, geocodeStatus) => {
+        geocoder.geocode(request, (result, geocodeStatus) => {
           if (geocodeStatus === google.maps.GeocoderStatus.OK) {
             resolve(result);
           } else {
