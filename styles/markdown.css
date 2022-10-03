@@ -477,8 +477,6 @@ blockquote > :last-child {
 }
 
 .markdown-body.dark code, tt {
-  margin: 0 2px;
-  padding: 2px 5px;
   white-space: nowrap;
   background-color: #28292A;
   color: #ccc;

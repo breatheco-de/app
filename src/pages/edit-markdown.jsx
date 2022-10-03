@@ -1,3 +1,4 @@
+/* eslint-disable no-tabs */
 import {
   Box, Checkbox, Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, useColorMode, useColorModeValue,
 } from '@chakra-ui/react';
@@ -7,7 +8,7 @@ import getT from 'next-translate/getT';
 import { useState } from 'react';
 import Link from '../common/components/NextChakraLink';
 import getMarkDownContent from '../common/components/MarkDownParser/markdown';
-import MarkDownParser from '../common/components/MarkDownParser';
+import MarkDownParser from '../common/components/MarkDownParser/ReactMarkdown';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'about-us');
@@ -52,30 +53,55 @@ const MarkdownEditor = ({ data }) => {
   });
 
   const markdownText = mdInput || `
-  # About 4Geeks
-  Our goal is to empower talent with code by providing flexible educational experiences, we want to be the most relevant career-boosting community for future and present coders.
+# About 4Geeks
+Our goal is to empower talent with code by providing flexible educational experiences, we want to be the most relevant career-boosting community for future and present coders.
 
-  ## Why coding?
+## Why coding?
 
-  Embracing the world of coding opens a new world of opportunities for talents, from Web Development to Blockchain, Robotics or AI/Machine Learning.
+Embracing the world of coding opens a new world of opportunities for talents, from Web Development to Blockchain, Robotics or AI/Machine Learning.
 
-  <onlyfor permission="read_private_lesson">
-    # Hello World
-    This content was blocked
+<onlyfor permission="read_private_lesson">
+  
+# Hello World
+This content was blocked
 
-    - \`read_private_lesson\`
-    - user account
-    - role access
-  </onlyfor>
+  - \`read_private_lesson\`
+  - user account
+  - role access
+</onlyfor>
 
-  ## Cornerstones
+## Cornerstones :+1:
 
-  - Content
-  - Community
-  - Collaboration
-  - Support
-  # About 4Geeks
-  `;
+- Content
+- Community
+- Collaboration
+- Support
+
+# Loooooong code block
+\`\`\`py
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+
+class Client(db.Model):
+	client_id = db.Column(db.Integer, primary_key=True)
+	name = db.Column(db.String(50))
+	phone = db.Column(db.Integer)
+
+class Order(db.Model):
+	order_id = db.Column(db.Integer, primary_key=True)
+	client_id = db.Column(db.String(50), db.ForeignKey('clients.client_id'), db.Column(db.String(50), db.ForeignKey('clients.client_id'), db.Column(db.String(50), db.ForeignKey('clients.client_id'), db.Column(db.String(50), db.ForeignKey('clients.client_id'), db.Column(db.String(50), db.ForeignKey('clients.client_id'), db.Column(db.String(50), db.ForeignKey('clients.client_id')
+	invoice = db.Column(db.Integer)
+
+results = db.session.query(Order, Client).outerjoin(Client, full=True).all()
+
+#Printing the results:
+for client, order in results:
+	print(client.name, order.order_id)
+\`\`\`
+
+`;
 
   return (
     <Box display="flex">
@@ -143,7 +169,8 @@ const MarkdownEditor = ({ data }) => {
         justifyContent="center"
         alignItems="center"
         padding="35px 0 0 0"
-        margin={{ base: '0', md: '0 10% 0 10%' }}
+        mx="auto"
+        // margin={{ base: '0', md: '0 10% 0 10%' }}
       >
         <Box display="flex" justifyContent="space-between">
           <Link
@@ -166,8 +193,13 @@ const MarkdownEditor = ({ data }) => {
           flexDirection="column"
           alignItems="center"
           flex="1"
-          margin={{ base: '0', md: '4% 10% 0 10%' }}
-          // position="relative"
+          mt="4%"
+          maxW="1012px"
+          mx="auto"
+          // margin={{ base: '0', md: '4% 10% 0 10%' }}
+          // position="absolute"
+          // left="30%"
+          // right="0%"
         >
           <Box
             padding="28px 32px"
