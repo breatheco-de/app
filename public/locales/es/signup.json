@@ -26,6 +26,7 @@
   "your-name": "Tu nombre",
   "phone-number": "Teléfono",
   "email": "Correo electrónico",
+  "address": "¿Dónde vives?",
   "signing-for": "Te estás registrando en",
   "validators": {
     "short-input": "¡Demasiado corto!",
@@ -38,5 +39,6 @@
     "email-required": "Correo electronico es requerido",
     "confirm-email-required": "Confirmar Correo electronico es requerido",
     "confirm-email-not-match": "Los correos electrónicos no coinciden"
-  }
+  },
+  "no-date-available": "Actualmente no tenemos fechas disponibles para la ubicación ingresada"
 }
