@@ -1,5 +1,3 @@
-/* eslint-disable no-shadow */
-/* eslint-disable no-undef */
 import {
   Box, Button, Img, Input, useColorModeValue, useToast,
 } from '@chakra-ui/react';
@@ -10,40 +8,18 @@ import { Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
+import { es } from 'date-fns/locale';
+import { format } from 'date-fns';
 import Heading from '../common/components/Heading';
 import Icon from '../common/components/Icon';
 import Text from '../common/components/Text';
 import PhoneInput from '../common/components/PhoneInput';
-// import validationSchemas from '../common/components/Forms/validationSchemas';
 import FieldForm from '../common/components/Forms/FieldForm';
 import { getDataContentProps } from '../utils/file';
 import bc from '../common/services/breathecode';
-import useScript from '../common/hooks/useScript';
 import { phone } from '../utils/regex';
-
-const dates = [
-  {
-    title: 'Coding introduction',
-    date: 'Sept 19th',
-    availableDate: 'Mon/Tue/Fri',
-    time: '20:00 - 22:00',
-    formatTime: '(UTC-05:00) Eastern Time (US & Canada)',
-  },
-  {
-    title: 'Coding introduction',
-    date: 'Sept 19th',
-    availableDate: 'Mon/Tue/Fri',
-    time: '20:00 - 22:00',
-    formatTime: '(UTC-05:00) Eastern Time (US & Canada)',
-  },
-  {
-    title: 'Coding introduction',
-    date: 'Sept 19th',
-    availableDate: 'Mon/Tue/Fri',
-    time: '20:00 - 22:00',
-    formatTime: '(UTC-05:00) Eastern Time (US & Canada)',
-  },
-];
+import useGoogleMaps from '../common/hooks/useGoogleMaps';
+import AlertMessage from '../common/components/AlertMessage';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -85,11 +61,17 @@ const SignUp = ({ finance }) => {
   const [coords, setCoords] = useState(null);
   const [availableDates, setAvailableDates] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [cohortIsLoading, setCohortIsLoading] = useState(true);
+  const [location, setLocation] = useState(null);
+  const [addressValue, setAddressValue] = useState('');
+
   const autoCompleteRef = useRef();
   const inputRef = useRef();
+  const buttonRef = useRef();
   const toast = useToast();
-
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
+
+  const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(GOOGLE_KEY, 'places');
 
   const fontColor = useColorModeValue('gray.800', 'gray.300');
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
@@ -102,15 +84,20 @@ const SignUp = ({ finance }) => {
   const planProps = finance.plans.find((l) => l.type === planChoosed);
 
   const [formProps, setFormProps] = useState({
-    firstName: '',
-    lastName: '',
+    first_name: '',
+    last_name: '',
     phone: '',
     email: '',
-    confirmEmail: '',
+    confirm_email: '',
   });
 
   const handleChooseDate = (date) => {
-    setDateProps(date);
+    const kickoffDate = {
+      en: date?.kickoff_date && format(new Date(date.kickoff_date), 'MMMM do'),
+      es: date?.kickoff_date && format(new Date(date.kickoff_date), 'MMMM d', { locale: es }),
+    };
+
+    setDateProps({ ...date, kickoffDate });
     setStepIndex(2);
   };
 
@@ -118,61 +105,123 @@ const SignUp = ({ finance }) => {
   const isSecondStep = stepIndex === 1;
   const isThirdStep = stepIndex === 2;
 
-  const gmapApiStatus = useScript(`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=${GOOGLE_KEY}`);
-
   const signupValidation = Yup.object().shape({
-    firstName: Yup.string().min(2, t('validators.short-input')).max(50, t('validators.long-input')).required(t('validators.first-name-required')),
-    lastName: Yup.string().min(2, t('validators.short-input')).max(50, t('validators.long-input')).required(t('validators.last-name-required')),
+    first_name: Yup.string().min(2, t('validators.short-input')).max(50, t('validators.long-input')).required(t('validators.first-name-required')),
+    last_name: Yup.string().min(2, t('validators.short-input')).max(50, t('validators.long-input')).required(t('validators.last-name-required')),
     email: Yup.string().email(t('validators.invalid-email')).required(t('validators.email-required')),
     phone: Yup.string().matches(phone, t('validators.invalid-phone')).required(t('validators.phone-required')),
-    confirmEmail: Yup.string().oneOf([Yup.ref('email'), null], t('validators.confirm-email-not-match')).required(t('validators.confirm-email-required')),
+    confirm_email: Yup.string().oneOf([Yup.ref('email'), null], t('validators.confirm-email-not-match')).required(t('validators.confirm-email-required')),
   });
 
   useEffect(() => {
-    // Google api script
-    if (isSecondStep && gmapApiStatus === 'ready') {
+    // autocomplete values for input
+    if (isSecondStep && gmapStatus.loaded) {
       // initialize;
       autoCompleteRef.current = new window.google.maps.places.Autocomplete(
         inputRef.current,
       );
       autoCompleteRef.current.addListener('place_changed', async () => {
         const place = await autoCompleteRef.current.getPlace();
-        setCoords({
-          latitude: place.geometry.location.lat(),
-          longitude: place.geometry.location.lng(),
-        });
+        if (place?.geometry) {
+          setCoords({
+            latitude: place?.geometry?.location?.lat(),
+            longitude: place?.geometry?.location?.lng(),
+          });
+        }
       });
+
+      // search button handler
+      buttonRef.current.addEventListener(
+        'click',
+        () => {
+          setIsLoading(true);
+          geocode({ address: addressValue })
+            .then((results) => {
+              setCoords({
+                latitude: results.geometry.location.lat(),
+                longitude: results.geometry.location.lng(),
+              });
+            })
+            .catch(() => {
+              toast({
+                title: t('alert-message:google-maps-no-coincidences'),
+                status: 'warning',
+                duration: 5000,
+              });
+            })
+            .finally(() => setIsLoading(false));
+        },
+      );
     }
-  }, [gmapApiStatus, isSecondStep]);
+  }, [isSecondStep, gmapStatus]);
 
   useEffect(() => {
-    if (coords !== null) {
-      setIsLoading(true);
+    if (coords !== null && isSecondStep) {
+      setCohortIsLoading(true);
+      // setIsLoading(true);
 
       bc.public({
-        coordinates: `${coords.latitude}, ${coords.longitude}`,
+        coordinates: `${coords.latitude},${coords.longitude}`,
         saas: true,
         syllabus_slug: courseChoosed,
         upcoming: true,
       }).cohorts()
         .then(({ data }) => {
-          setAvailableDates({ data });
+          setAvailableDates(data);
+          if (data.length < 1) {
+            toast({
+              title: t('alert-message:no-cohorts-found'),
+              status: 'info',
+              duration: 5000,
+            });
+          }
         })
         .catch((error) => {
           toast({
-            title: t('something-went-wrong-fetching-cohorts'),
+            title: t('alert-message:something-went-wrong-fetching-cohorts'),
             description: error.message,
             status: 'error',
             duration: 8000,
             isClosable: true,
           });
         })
-        .finally(() => setIsLoading(false));
+        .finally(() => setCohortIsLoading(false));
     }
-  }, [coords]);
+  }, [coords, isSecondStep]);
 
-  console.log('Address coords:', coords);
-  console.log('formProps:', formProps);
+  useEffect(() => {
+    if (gmapStatus.loaded) {
+      getNearestLocation(GOOGLE_KEY)
+        .then(({ data }) => {
+          if (data) {
+            setCoords({
+              latitude: data.location.lat,
+              longitude: data.location.lng,
+            });
+          }
+
+          geocode({ location: data.location })
+            .then((result) => {
+              setLocation({
+                country: result[0]?.address_components[6]?.long_name,
+                city: result[0]?.address_components[5]?.long_name,
+              });
+            });
+        });
+    }
+  }, [gmapStatus]);
+
+  const LoaderContent = () => (cohortIsLoading ? (
+    <Box display="flex" justifyContent="center" mt="2rem" mb="10rem">
+      <Img src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
+      <Box className="loader" />
+    </Box>
+  ) : (
+    <AlertMessage type="info" message={t('no-date-available')} />
+  ));
+
+  console.log('Nearest coords:', coords);
+  console.log('Available dates:', availableDates);
 
   return (
     <Box p="2.5rem 2rem">
@@ -221,18 +270,26 @@ const SignUp = ({ finance }) => {
 
             <Formik
               initialValues={{
-                firstName: '',
-                lastName: '',
+                first_name: '',
+                last_name: '',
                 phone: '',
                 email: '',
-                confirmEmail: '',
+                confirm_email: '',
               }}
               onSubmit={(values, actions) => {
                 if (stepIndex !== 2) {
-                  setTimeout(() => {
-                    actions.setSubmitting(false);
-                    setStepIndex(stepIndex + 1);
-                  }, 300);
+                  const allValues = {
+                    ...values,
+                    course: courseChoosed,
+                    country: location?.country,
+                    city: location?.city,
+                    language: router.locale,
+                  };
+                  bc.marketing().lead(allValues)
+                    .then(() => {
+                      setStepIndex(stepIndex + 1);
+                    })
+                    .finally(() => actions.setSubmitting(false));
                 }
               }}
               validationSchema={signupValidation}
@@ -243,14 +300,14 @@ const SignUp = ({ finance }) => {
                     <Box display="flex" gridGap="18px" flex={0.5}>
                       <FieldForm
                         type="text"
-                        name="firstName"
+                        name="first_name"
                         label={t('common:first-name')}
                         formProps={formProps}
                         setFormProps={setFormProps}
                       />
                       <FieldForm
                         type="text"
-                        name="lastName"
+                        name="last_name"
                         label={t('common:last-name')}
                         formProps={formProps}
                         setFormProps={setFormProps}
@@ -262,6 +319,7 @@ const SignUp = ({ finance }) => {
                         setVal={setFormProps}
                         placeholder={t('common:phone')}
                         formData={formProps}
+                        sessionContextLocation={location}
                       />
                       {t('phone-info')}
                     </Box>
@@ -283,7 +341,7 @@ const SignUp = ({ finance }) => {
                     <FieldForm
                       style={{ flex: 0.5 }}
                       type="email"
-                      name="confirmEmail"
+                      name="confirm_email"
                       label={t('common:confirm-email')}
                       formProps={formProps}
                       setFormProps={setFormProps}
@@ -309,10 +367,9 @@ const SignUp = ({ finance }) => {
               {t('your-address')}
             </Heading>
             <Box display="flex" gridGap="18px" alignItems="center" mt="10px">
-              {/* <input ref={inputRef} id="address-input" className="controls" type="text" placeholder="Where do you live?" height="50px" /> */}
-              <Input ref={inputRef} id="address-input" className="controls" type="text" placeholder="Where do you live?" height="50px" />
+              <Input ref={inputRef} id="address-input" onChange={(e) => setAddressValue(e.target.value)} className="controls" type="text" placeholder={t('address')} height="50px" />
 
-              <Button variant="default">
+              <Button type="button" ref={buttonRef} isLoading={isLoading} value="Geocode" variant="default">
                 {t('search-dates')}
               </Button>
             </Box>
@@ -323,27 +380,36 @@ const SignUp = ({ finance }) => {
               {t('available-dates')}
             </Heading>
             <Box display="flex" flexDirection="column" mb="2rem" gridGap="40px" p="0 1rem">
-              {!isLoading ? (availableDates || dates).map((date, i) => {
+              {(availableDates?.length > 0 && !cohortIsLoading) ? availableDates.map((date, i) => {
+                const kickoffDate = {
+                  en: date?.kickoff_date && format(new Date(date.kickoff_date), 'MMM do'),
+                  es: date?.kickoff_date && format(new Date(date.kickoff_date), 'MMM d', { locale: es }),
+                };
+
                 const dateIndex = i;
                 return (
                   <Box display="flex" gridGap="30px" key={dateIndex}>
                     <Text size="18px" flex={0.35}>
-                      {date.title}
+                      {/* {date.title} */}
+                      {date.syllabus_version.name}
                     </Text>
                     <Box display="flex" flexDirection="column" gridGap="5px" flex={0.2}>
                       <Text size="18px">
-                        {date.date}
+                        {/* {date.date} */}
+                        {kickoffDate[router.locale]}
                       </Text>
                       <Text size="14px" color="gray.default">
-                        {date.availableDate}
+                        {date?.schedule?.name}
                       </Text>
                     </Box>
                     <Box display="flex" flexDirection="column" gridGap="5px" flex={0.3}>
                       <Text size="18px">
-                        {date.time}
+                        {date?.schedule?.name}
                       </Text>
                       <Text size="14px" color="gray.default">
-                        {date.formatTime}
+                        {/* {date.formatTime} */}
+                        {`(UTC-05:00) Eastern Time
+                        (US & Canada)`}
                       </Text>
                     </Box>
                     <Button variant="outline" onClick={() => handleChooseDate(date)} borderColor="currentColor" color="blue.default" flex={0.15}>
@@ -352,10 +418,7 @@ const SignUp = ({ finance }) => {
                   </Box>
                 );
               }) : (
-                <Box display="flex" justifyContent="center" mt="2rem" mb="10rem">
-                  <Img src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
-                  <Box className="loader" />
-                </Box>
+                <LoaderContent />
               )}
             </Box>
             <Box as="hr" width="100%" margin="10px 0" />
@@ -375,7 +438,7 @@ const SignUp = ({ finance }) => {
                     {t('cohort-name')}
                   </Text>
                   <Text size="md" fontWeight="400" color={fontColor}>
-                    {dateProps?.title}
+                    {dateProps?.syllabus_version?.name}
                   </Text>
                 </Box>
 
@@ -386,7 +449,7 @@ const SignUp = ({ finance }) => {
                     {t('start-date')}
                   </Text>
                   <Text size="md" fontWeight="400" color={fontColor}>
-                    {`${dateProps?.date} 2022`}
+                    {`${dateProps?.kickoffDate[router.locale]} 2022`}
                   </Text>
                 </Box>
 
@@ -397,13 +460,15 @@ const SignUp = ({ finance }) => {
                     {t('days-and-hours')}
                   </Text>
                   <Text size="md" fontWeight="400" color={fontColor}>
-                    {dateProps?.availableDate}
+                    {dateProps?.schedule?.name}
                   </Text>
                   <Text size="md" fontWeight="400" color={fontColor}>
-                    {dateProps?.time}
+                    {dateProps?.schedule?.name}
                   </Text>
                   <Text size="md" fontWeight="400" color={fontColor}>
-                    {dateProps?.formatTime}
+                    {/* {dateProps?.formatTime} */}
+                    {`(UTC-05:00) Eastern Time
+                        (US & Canada)`}
                   </Text>
                 </Box>
               </Box>
@@ -418,7 +483,7 @@ const SignUp = ({ finance }) => {
                     {t('your-name')}
                   </Text>
                   <Text size="md" fontWeight="400" color={fontColor}>
-                    {`${formProps?.firstName} ${formProps?.lastName}`}
+                    {`${formProps?.first_name} ${formProps?.last_name}`}
                   </Text>
                 </Box>
                 <Box as="hr" width="100%" margin="0 0" h="1px" borderColor="gray.default" />

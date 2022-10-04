@@ -2,14 +2,17 @@
 import React from 'react';
 import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
+import iconDic from '../../utils/iconDict.json';
+// const iconDict = require('../common/utils/iconDict.json');
 
 const Icon = ({
   icon, width, height, style, color, fill, className, props,
 }) => {
   if (typeof window === 'undefined' || !window) return '';
+  const iconExists = iconDic.includes(icon);
 
   // eslint-disable-next-line no-console
-  const Comp = loadable(() => import(`./set/${icon}`).catch((err) => console.error(err)));
+  const Comp = loadable(() => import(`./set/${iconExists ? icon : 'info'}`).catch((err) => console.error(err)));
   return (
     <Comp
       className={className}

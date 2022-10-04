@@ -108,12 +108,11 @@ const breathecode = {
 
   marketing: (query = {}) => {
     const url = `${host}/marketing`;
-    // eslint-disable-next-line no-unused-vars
     const qs = Object.keys(query)
       .map((key) => `${key}=${query[key]}`)
       .join('&');
     return {
-      lead: (data) => axios.post(`${url}/lead`, data),
+      lead: (data) => axios.post(`${url}/lead?${qs}`, data),
     };
   },
 
@@ -150,7 +149,7 @@ const breathecode = {
     return {
       mentors: () => axios.get(`${url}/cohort/user?${qs}`),
       events: () => axios.get(`${host}/events/all?${qs}`),
-      cohorts: () => axios.get(`${host}/cohort/all?${qs}`),
+      cohorts: () => axios.get(`${host}/admissions/cohort/all?${qs}`),
     };
   },
 };

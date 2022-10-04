@@ -275,7 +275,18 @@ featured {
   scroll-snap-align: center;
 }
 
-button.active {
+.sidebarButton {
+  opacity: 0.5;
+  transition: border 0.4s ease-in-out;
+  border-bottom: 4px solid transparent;
+}
+.sidebarButton:hover {
+  opacity: 1;
+  color: #0097ce;
+}
+
+.sidebarButton.active {
+  opacity: 1;
   border-bottom: 4px solid #0097cd;
   color: #0097ce;
 }

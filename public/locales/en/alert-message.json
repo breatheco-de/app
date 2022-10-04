@@ -49,5 +49,7 @@
   "review-assignment-ignored-task": "Task ignored successfully",
   "error-submitting-picture": "There was an error trying to upload the image",
   "submitting-picture-success": "Profile picture updated!",
-  "file-type-error": "File type {{type}} is not allowed to be uploaded"
+  "file-type-error": "File type {{type}} is not allowed to be uploaded",
+  "no-cohorts-found": "No cohorts found",
+  "google-maps-no-coincidences": "Google Maps: No matches found for the address entered"
 }

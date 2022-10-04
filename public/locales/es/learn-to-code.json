@@ -104,6 +104,7 @@
     "list": [
       {
         "title": "HTML/CSS",
+        "icon": "html",
         "description": "Durante el pre-work, aprenderás algo básico de <strong>CSS</strong> y <strong>HTML</strong>,y con suerte aprenderás cómo usar <strong>flex-box</strong> para crear diseños simples. El primer día revisaremos la finalización del trabajo previo e introduciremos un CSS más evolucionado que permite diseños sorprendentes y el increíble marco Bootstrap que hará su vida mucho más fácil con el enfoque \"orientado a componentes\".",
         "steps": [
           {
@@ -126,6 +127,7 @@
       },
       {
         "title": "Bootstrap",
+        "icon": "bootstrap",
         "description": "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing",
         "steps": [
           {
@@ -148,6 +150,7 @@
       },
       {
         "title": "Github",
+        "icon": "github",
         "description": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution",
         "steps": [
           {
@@ -170,6 +173,7 @@
       },
       {
         "title": "Git & Gitflow",
+        "icon": "git",
         "description": "classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular",
         "steps": [
           {
@@ -230,6 +234,10 @@
   "pricing": {
     "title": "Precios",
     "description": "<strong>Coding introduction</strong> is the course that Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
+    "choose-plan": "Elige tu plan",
+    "one-payment": "Pago unico",
+    "finance-text": "Financiar",
+    "not-ready": "¿No estás listo para comprometerte?",
     "list": [
       {
         "type": "pro",

@@ -49,5 +49,7 @@
   "review-assignment-ignored-task": "Se ha ignorado la tarea con éxito",
   "error-submitting-picture": "Hubo un error al intentar subir la imagen",
   "submitting-picture-success": "¡Imagen de perfil actualizada!",
-  "file-type-error": "No se permite cargar el tipo de archivo {{type}}"
+  "file-type-error": "No se permite cargar el tipo de archivo {{type}}",
+  "no-cohorts-found": "No se encontraron cohortes",
+  "google-maps-no-coincidences": "Google Maps: No se encontraron coincidencias para la dirección ingresada"
 }
