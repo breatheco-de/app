@@ -1,19 +1,9 @@
+/* eslint-disable brace-style */
 import { memo, useState, useEffect } from 'react';
+import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import {
-  Box,
-  Heading,
-  Divider,
-  Grid,
-  useColorMode,
-  useColorModeValue,
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
-  useToast,
-  AvatarGroup,
-  useMediaQuery,
+  Box, Heading, Divider, Grid, useColorMode, useColorModeValue, Tabs,
+  TabList, Tab, TabPanels, TabPanel, useToast, AvatarGroup, useMediaQuery,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
@@ -26,12 +16,16 @@ import Icon from './Icon';
 import Text from './Text';
 import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 import { AvatarSkeleton } from './Skeleton';
+import { usePersistent } from '../hooks/usePersistent';
 
 const ProfilesSection = ({
   title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher,
 }) => {
   const { t } = useTranslation('dashboard');
   const [showMoreStudents, setShowMoreStudents] = useState(false);
+  const [cohortSession] = usePersistent('cohortSession', {});
+  const [temporalToken, setTemporalToken] = useState(null);
+  const [usersConnected, setUsersConnected] = useState([]);
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
 
   const assistantMaxLimit = isBelowTablet ? 3 : 4;
@@ -40,6 +34,37 @@ const ProfilesSection = ({
   const studentsToShow = showMoreStudents ? profiles : profiles?.slice(0, 15);
   const singleTeacher = teacher[0];
   const teacherfullName = `${singleTeacher?.user?.first_name} ${singleTeacher?.user.last_name}`;
+
+  useEffect(() => {
+    bc.auth().temporalToken()
+      .then((res) => {
+        setTemporalToken(res.data);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (temporalToken !== null && temporalToken?.token) {
+      console.log('temporal_token:', temporalToken);
+      const client = new W3CWebSocket(`wss://breathecode-test.herokuapp.com/ws/online?token=${temporalToken.token}`);
+      client.onopen = () => {
+        console.log('WebSocket Client Connected');
+      };
+
+      client.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.status === 'connected')
+        {
+          if (usersConnected?.includes(data?.id)) return;
+          setUsersConnected((prev) => [...prev, data?.id]);
+        } else if (data.status === 'disconnected')
+        {
+          const filteredUsers = usersConnected.filter((user) => user !== data?.id);
+          setUsersConnected(filteredUsers);
+        }
+      };
+    }
+  }, [temporalToken]);
+
   return (
     <Box display="block">
       {title && (
@@ -73,7 +98,9 @@ const ProfilesSection = ({
               key={`${singleTeacher.id} - ${singleTeacher.user.first_name}`}
               fullName={teacherfullName}
               data={singleTeacher}
-              badge={(
+              isOnline={singleTeacher.user.id === cohortSession.bc_id || usersConnected?.includes(singleTeacher.user.id)}
+              badge
+              customBadge={(
                 <Box position="absolute" bottom="-6px" right="-8px" background="blue.default" borderRadius="50px" p="5px" border="2px solid white">
                   <Icon icon="teacher1" width="12px" height="12px" color="#FFFFFF" />
                 </Box>
@@ -82,19 +109,25 @@ const ProfilesSection = ({
           )}
           <AvatarGroup max={assistantMaxLimit}>
             {
-              studentsToShow?.map((c) => {
+              studentsToShow?.map((c, i) => {
                 const fullName = `${c.user.first_name} ${c.user.last_name}`;
+                const isOnline = c.user.id === cohortSession.bc_id || usersConnected?.includes(c.user.id);
                 return (
                   <AvatarUser
                     width="48px"
                     height="48px"
+                    index={i}
                     key={`${c.id} - ${c.user.first_name}`}
+                    isMentor
+                    isWrapped
                     containerStyle={{
                       // marginInlineEnd: '-0.8em',
                       // marginInlineEnd: studentsToShow.length - 2 === i ? '+0.25em' : '-0.8em',
                     }}
                     fullName={fullName}
                     data={c}
+                    isOnline={isOnline}
+                    badge
                   />
                 );
               })
@@ -111,8 +144,15 @@ const ProfilesSection = ({
           {
             studentsToShow?.map((c) => {
               const fullName = `${c.user.first_name} ${c.user.last_name}`;
+              const isOnline = c.user.id === cohortSession.bc_id || usersConnected?.includes(c.user.id);
               return (
-                <AvatarUser key={`${c.id} - ${c.user.first_name}`} fullName={fullName} data={c} />
+                <AvatarUser
+                  key={`${c.id} - ${c.user.first_name}`}
+                  fullName={fullName}
+                  data={c}
+                  isOnline={isOnline}
+                  badge
+                />
               );
             })
           }

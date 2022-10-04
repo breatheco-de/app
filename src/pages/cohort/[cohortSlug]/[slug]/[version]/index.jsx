@@ -11,7 +11,6 @@ import {
 // import io from 'socket.io-client';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
 import ModuleMap from '../../../../../js_modules/moduleMap/index';
@@ -57,7 +56,6 @@ const Dashboard = () => {
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const { user, choose, isLoading } = useAuth();
   const [, setSyllabus] = usePersistent('syllabus', []);
-  const [temporalToken, setTemporalToken] = useState(null);
   const teacherAndAssistants = studentAndTeachers.filter((st) => st.role === 'TEACHER' || st.role === 'ASSISTANT');
 
   const { cohortSlug, slug } = router.query;
@@ -156,29 +154,10 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    bc.auth().temporalToken()
-      .then((res) => {
-        setTemporalToken(res.data);
-      });
-
     if (showGithubWarning === 'active') {
       setShowWarningModal(true);
     }
   }, []);
-
-  useEffect(() => {
-    if (temporalToken !== null && temporalToken?.token) {
-      console.log('temporal_token:', temporalToken);
-      const client = new W3CWebSocket(`ws://breathecode-test.herokuapp.com/ws/online?token=${temporalToken.token}`);
-      client.onopen = (event) => {
-        console.log('WebSocket Client Connected:', event.data);
-      };
-
-      client.onmessage = (message) => {
-        console.log('message:', message);
-      };
-    }
-  }, [temporalToken]);
 
   // Fetch cohort data with pathName structure
   useEffect(() => {
