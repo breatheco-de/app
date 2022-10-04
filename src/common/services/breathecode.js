@@ -19,6 +19,14 @@ const breathecode = {
       register: (payload) => axios.post(`${url}/user/register`, payload),
       subscribe: (payload) => axios.post(`${url}/subscribe/`, { ...payload }),
       removeGithub: () => axios.delete(`${url}/github/me`),
+      temporalToken: () => axios({
+        method: 'post',
+        url: `${url}/token/me`,
+        // headers: {},
+        data: {
+          token_type: 'one_time',
+        },
+      }),
     };
   },
 
