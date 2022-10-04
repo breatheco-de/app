@@ -16,14 +16,12 @@ import Icon from './Icon';
 import Text from './Text';
 import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 import { AvatarSkeleton } from './Skeleton';
-import { usePersistent } from '../hooks/usePersistent';
 
 const ProfilesSection = ({
-  title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher,
+  title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher, cohortSession,
 }) => {
   const { t } = useTranslation('dashboard');
   const [showMoreStudents, setShowMoreStudents] = useState(false);
-  const [cohortSession] = usePersistent('cohortSession', {});
   const [temporalToken, setTemporalToken] = useState(null);
   const [usersConnected, setUsersConnected] = useState([]);
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
@@ -231,7 +229,7 @@ const ProfilesSection = ({
 
 const CohortSideBar = ({
   title, teacherVersionActive, cohort, cohortCity, background, width, containerStyle,
-  studentAndTeachers,
+  studentAndTeachers, cohortSession,
 }) => {
   const { t } = useTranslation('dashboard');
   const router = useRouter();
@@ -367,6 +365,7 @@ const CohortSideBar = ({
       <Box id="cohort-students" display="flex" flexDirection="column" gridGap="20px" padding="18px 26px">
         {teacherAssistants.length > 0 && (
           <ProfilesSection
+            cohortSession={cohortSession}
             wrapped
             title={t('common:teachers')}
             teacher={teacher}
@@ -431,6 +430,7 @@ const CohortSideBar = ({
               {activeStudents.length !== 0
                 ? (
                   <ProfilesSection
+                    cohortSession={cohortSession}
                     profiles={activeStudents}
                   />
                 ) : (
@@ -445,6 +445,7 @@ const CohortSideBar = ({
               {studentsJoined?.length !== 0
                 ? (
                   <ProfilesSection
+                    cohortSession={cohortSession}
                     profiles={studentsJoined}
                     setAlumniGeeksList={setAlumniGeeksList}
                     paginationProps={alumniGeeksList}
@@ -471,6 +472,7 @@ ProfilesSection.propTypes = {
   profiles: PropTypes.arrayOf(PropTypes.object),
   wrapped: PropTypes.bool,
   teacher: PropTypes.arrayOf(PropTypes.object),
+  cohortSession: PropTypes.objectOf(PropTypes.any),
 };
 
 ProfilesSection.defaultProps = {
@@ -480,6 +482,7 @@ ProfilesSection.defaultProps = {
   profiles: [],
   wrapped: false,
   teacher: [],
+  cohortSession: {},
 };
 
 CohortSideBar.propTypes = {
@@ -487,6 +490,7 @@ CohortSideBar.propTypes = {
   title: PropTypes.string,
   teacherVersionActive: PropTypes.bool,
   containerStyle: PropTypes.objectOf(PropTypes.any),
+  cohortSession: PropTypes.objectOf(PropTypes.any),
   studentAndTeachers: PropTypes.arrayOf(PropTypes.object),
   cohortCity: PropTypes.string,
   cohort: PropTypes.objectOf(PropTypes.any),
@@ -498,6 +502,7 @@ CohortSideBar.defaultProps = {
   title: '',
   teacherVersionActive: false,
   containerStyle: {},
+  cohortSession: {},
   studentAndTeachers: [
     {
       id: 688,

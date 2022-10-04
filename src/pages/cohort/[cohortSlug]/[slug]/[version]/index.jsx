@@ -487,6 +487,7 @@ const Dashboard = () => {
               </OnlyFor>
               {cohortSession?.kickoff_date && (
               <CohortSideBar
+                cohortSession={cohortSession}
                 teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
                 cohort={cohortSession}
                 studentAndTeachers={studentAndTeachers}
@@ -667,6 +668,7 @@ const Dashboard = () => {
             )}
             {cohortSession?.kickoff_date && (
             <CohortSideBar
+              cohortSession={cohortSession}
               teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
               studentAndTeachers={studentAndTeachers}
               cohort={cohortSession}
