@@ -107,7 +107,9 @@ const PhoneInput = ({
   );
 
   const getLocationCoincidence = (country, sessionLocation) => {
-    if (country.name === sessionLocation.name) { return setSelectedCountry(country); }
+    if (country.name === sessionLocation.country || country.name === sessionLocation.name) {
+      return setSelectedCountry(country);
+    }
     if (
       country.locations.some(
         (loc) => loc === sessionLocation.active_campaign_location_slug,

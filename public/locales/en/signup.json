@@ -26,6 +26,7 @@
   "your-name": "Your name",
   "phone-number": "Phone number",
   "email": "Email",
+  "address": "Where do you live?",
   "signing-for": "You are signing up for",
   "validators": {
     "short-input": "Too Short!",
@@ -38,5 +39,6 @@
     "email-required": "Email is required",
     "confirm-email-required": "Confirm Email is required",
     "confirm-email-not-match": "Emails don't match"
-  }
+  },
+  "no-date-available": "We currently have no dates available for the location entered"
 }
