@@ -10,6 +10,8 @@ import {
   PopoverBody,
   Box,
   useMediaQuery,
+  AvatarBadge,
+  useColorModeValue,
   // AvatarBadge,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
@@ -21,7 +23,7 @@ import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 
 const AvatarUser = ({
-  data, fullName, containerStyle, width, height, badge,
+  data, fullName, containerStyle, width, height, badge, customBadge, isOnline, isWrapped, index,
 }) => {
   const { user } = data;
   const { t } = useTranslation('dashboard');
@@ -33,6 +35,8 @@ const AvatarUser = ({
     en: data?.created_at && format(new Date(data?.created_at), 'MMMM dd, yyyy'),
     es: data?.created_at && format(new Date(data?.created_at), "dd 'de' MMMM, yyyy", { locale: es }),
   };
+
+  const borderColor = useColorModeValue('white', 'featuredDark');
 
   const roles = {
     teacher: t('common:teacher'),
@@ -54,17 +58,22 @@ const AvatarUser = ({
             width={width}
             height={height}
             style={{ userSelect: 'none' }}
+            title={fullNameLabel}
             src={user?.profile?.avatar_url || user?.github?.avatar_url}
+            marginLeft={isWrapped ? '-10px' : '0px'}
+            zIndex={index}
           >
-            {badge && (badge)}
-            {/*
-            //ONLINE/OFFLINE BADGE icon
-            <AvatarBadge
-              boxSize="9px"
-              bg={user?.active ? 'success' : 'danger'}
-              top="0"
-              border="1px solid"
-            /> */}
+            {customBadge && (customBadge)}
+            {badge && (
+              <AvatarBadge
+                boxSize="11px"
+                bg={isOnline ? 'success' : 'danger'}
+                top="-4px"
+                right={isWrapped ? '6px' : '4px'}
+                border="2px solid"
+                borderColor={borderColor}
+              />
+            )}
           </Avatar>
         </WrapItem>
       </PopoverTrigger>
@@ -114,6 +123,10 @@ AvatarUser.propTypes = {
   width: PropTypes.string,
   height: PropTypes.string,
   badge: PropTypes.elementType,
+  customBadge: PropTypes.elementType,
+  isOnline: PropTypes.bool,
+  isWrapped: PropTypes.bool,
+  index: PropTypes.number,
 };
 AvatarUser.defaultProps = {
   fullName: '',
@@ -121,6 +134,10 @@ AvatarUser.defaultProps = {
   width: '39px',
   height: '39px',
   badge: null,
+  customBadge: null,
+  isOnline: false,
+  isWrapped: false,
+  index: 0,
 };
 
 export default memo(AvatarUser);
