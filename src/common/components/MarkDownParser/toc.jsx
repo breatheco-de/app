@@ -6,6 +6,7 @@ import {
 } from '@chakra-ui/react';
 import React, { Fragment } from 'react';
 import Anchor from './Anchor';
+import { slugify } from '../../../utils';
 
 const Toc = ({ content }) => {
   const { colorMode } = useColorMode();
@@ -33,7 +34,9 @@ const Toc = ({ content }) => {
           },
         },
       },
-      slugify: (str) => str.split(' ').join('-').toLowerCase(),
+      slugify: (str) => slugify(String(str)),
+      // slugify: (str) => str.split(' ').join('-').toLowerCase(),
+
     }).filter((item) => item && item.props !== null && item.props?.className);
     /* Hierarchy, h1 or h2 being parents and h3 being its inmediate childs, childs become a list. */
     let lastParent = 0;

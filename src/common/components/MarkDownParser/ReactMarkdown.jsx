@@ -17,7 +17,6 @@ import ContentHeading from './ContentHeading';
 import CallToAction from '../CallToAction';
 
 const MarkDownParser = ({
-  // eslint-disable-next-line no-unused-vars
   content, callToActionProps, withToc, frontMatter, titleRightSide,
 }) => {
   const { t } = useTranslation('common');

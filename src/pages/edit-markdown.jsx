@@ -42,6 +42,14 @@ const EditMarkdown = () => {
   const currentTheme = useColorModeValue('light', 'dark');
 
   useEffect(() => {
+    if (currentTheme === 'light') {
+      document.documentElement.setAttribute('data-color-mode', 'light');
+    } else {
+      document.documentElement.setAttribute('data-color-mode', 'dark');
+    }
+  }, [currentTheme]);
+
+  useEffect(() => {
     setTimeout(() => {
       setIsLoaded(true);
     }, 1200);

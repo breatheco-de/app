@@ -10,6 +10,7 @@ import BeforeAfterSlider from '../../BeforeAfterSlider';
 import Heading from '../../Heading';
 import OnlyFor from '../../OnlyFor';
 import tomorrow from '../syntaxHighlighter/tomorrow';
+import { slugify } from '../../../../utils';
 
 export const MDLink = ({ children, href }) => (
   <Link
@@ -148,12 +149,13 @@ export const MDTable = ({ children }) => (
   </Box>
 );
 
-export const MDHeading = ({ children, id, tagType }) => {
+export const MDHeading = ({ children, tagType }) => {
   const variantsStyle = {
     h1: 'sm',
     h2: 'sm',
     h3: '18px',
   };
+  const id = slugify(String(children));
 
   return (
     <Heading
@@ -180,11 +182,10 @@ export const MDCheckbox = ({ children }) => {
 export const OnlyForBanner = ({ children, permission, cohortSession }) => {
   const capabilities = permission.split(',');
   console.log('md_permissions:', capabilities);
-  if (cohortSession.bc_id) {
-    // TODO: remove this param reassign
-    // eslint-disable-next-line no-param-reassign
-    cohortSession.user_capabilities = ['read_private_lesson', 'read_lesson', 'student'];
-  }
+  // if (cohortSession.bc_id) {
+  //   // eslint-disable-next-line no-param-reassign
+  //   cohortSession.user_capabilities = ['read_private_lesson', 'read_lesson', 'student'];
+  // }
 
   return (
     <OnlyFor onlyMember withBanner cohortSession={cohortSession} capabilities={capabilities}>
@@ -215,12 +216,10 @@ BeforeAfter.propTypes = {
 
 MDHeading.propTypes = {
   children: PropTypes.node.isRequired,
-  id: PropTypes.string,
   tagType: PropTypes.string,
 };
 
 MDHeading.defaultProps = {
-  id: '',
   tagType: 'h2',
 };
 

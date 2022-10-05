@@ -296,3 +296,20 @@ featured {
   display: flex !important;
   flex-direction: column;
 }
+
+.chakra-ui-dark .md-editor-preview {
+  /* background-color: var(--color-canvas-default); */
+  background-color: #17202A;
+}
+.chakra-ui-light .md-editor-preview {
+  /* background-color: var(--color-canvas-default); */
+  background-color: #FFFFFF;
+}
+
+.chakra-ui-dark .ͼ1k {
+  color: var(--chakra-colors-white)
+}
+
+.ͼ1n {
+  color: var(--chakra-colors-blue-default2);
+}

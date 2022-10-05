@@ -183,11 +183,11 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
             aria-label="Dark mode switch"
             background={commonColors}
             onClick={() => {
-              if (colorMode === 'light') {
-                document.documentElement.setAttribute('data-color-mode', 'dark');
-              } else {
-                document.documentElement.setAttribute('data-color-mode', 'light');
-              }
+              // if (colorMode === 'light') {
+              //   document.documentElement.setAttribute('data-color-mode', 'dark');
+              // } else {
+              //   document.documentElement.setAttribute('data-color-mode', 'light');
+              // }
               toggleColorMode();
             }}
             icon={

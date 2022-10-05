@@ -42,7 +42,8 @@
   line-height: 19px;
   overflow: auto;
   display: block;
-  width: 53vw;
+  /* NOTE: Testing */
+  /* width: 53vw; */
   font-size: 85%;
   line-height: 1.45;
   border-radius: 6px;
@@ -503,7 +504,8 @@ blockquote > :last-child {
 .text-highlight{
   display: block;
   overflow: auto;
-  width: 53vw;
+  /* NOTE: Testing */
+  /* width: 53vw; */
   margin-block-start: 1em;
   margin-block-end: 1em;
   margin-inline-start: 0px;
@@ -538,13 +540,14 @@ blockquote > :last-child {
 
 @media screen and (max-width: 995px) {
   .text-highlight {
-    width: 84vw;
+    /* NOTE: Testing */
+    /* width: 84vw; */
   }
   .markdown-body pre {
-    width: 84vw;
+    /* width: 84vw; */
   }
   .markdown-body table {
-    max-width: 84vw;
+    /* max-width: 84vw; */
     width: 100%;
     overflow: auto;
     /* display: grid; */
@@ -552,7 +555,7 @@ blockquote > :last-child {
 
   .markdown-body table tr td {
     /* display: block; */
-    width: 94vw;
+    /* width: 94vw; */
   }
 }
 
