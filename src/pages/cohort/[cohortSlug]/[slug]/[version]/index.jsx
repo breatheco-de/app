@@ -8,6 +8,7 @@ import {
   Modal, ModalBody, ModalCloseButton, ModalContent,
   ModalHeader, ModalOverlay, Button,
 } from '@chakra-ui/react';
+// import io from 'socket.io-client';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
@@ -486,6 +487,7 @@ const Dashboard = () => {
               </OnlyFor>
               {cohortSession?.kickoff_date && (
               <CohortSideBar
+                cohortSession={cohortSession}
                 teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
                 cohort={cohortSession}
                 studentAndTeachers={studentAndTeachers}
@@ -666,6 +668,7 @@ const Dashboard = () => {
             )}
             {cohortSession?.kickoff_date && (
             <CohortSideBar
+              cohortSession={cohortSession}
               teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
               studentAndTeachers={studentAndTeachers}
               cohort={cohortSession}

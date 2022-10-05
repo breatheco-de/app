@@ -19,6 +19,14 @@ const breathecode = {
       register: (payload) => axios.post(`${url}/user/register`, payload),
       subscribe: (payload) => axios.post(`${url}/subscribe/`, { ...payload }),
       removeGithub: () => axios.delete(`${url}/github/me`),
+      temporalToken: () => axios({
+        method: 'post',
+        url: `${url}/token/me`,
+        // headers: {},
+        data: {
+          token_type: 'one_time',
+        },
+      }),
     };
   },
 
@@ -149,7 +157,7 @@ const breathecode = {
     return {
       mentors: () => axios.get(`${url}/cohort/user?${qs}`),
       events: () => axios.get(`${host}/events/all?${qs}`),
-      cohorts: () => axios.get(`${host}/cohort/all?${qs}`),
+      cohorts: () => axios.get(`${host}/admissions/cohort/all?${qs}`),
     };
   },
 };
