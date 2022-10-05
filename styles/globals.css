@@ -289,3 +289,10 @@ featured {
 .chakra-avatar__excess {
   z-index: 5;
 }
+.cm-editor {
+  position: relative !important;
+  box-sizing: border-box;
+  height: 100%;
+  display: flex !important;
+  flex-direction: column;
+}

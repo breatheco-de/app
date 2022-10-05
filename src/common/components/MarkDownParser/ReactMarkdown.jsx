@@ -16,8 +16,6 @@ import Toc from './toc';
 import ContentHeading from './ContentHeading';
 import CallToAction from '../CallToAction';
 
-// Did you know you can use tildes instead of backticks for code in markdown? ✨
-// const markdown = `Here is some JavaScript code:
 const MarkDownParser = ({
   // eslint-disable-next-line no-unused-vars
   content, callToActionProps, withToc, frontMatter, titleRightSide,
@@ -32,6 +30,10 @@ const MarkDownParser = ({
   const {
     token, assetSlug, assetType, gitpod,
   } = callToActionProps;
+
+  const newLineBeforeCloseTag = /<\//gm;
+
+  const formatedContent = content.replace(newLineBeforeCloseTag, '\n$&');
 
   useEffect(() => {
     setLearnpackActions([
@@ -90,18 +92,13 @@ const MarkDownParser = ({
           BeforeAfter,
           'before-after': BeforeAfter,
           iframe: ({ ...props }) => <iframe title={props.title || 'iframe-content'} className="MDIframe" {...props} />,
-          // iframe: {
-          //   props: {
-          //     className: 'MDIframe',
-          //   },
-          // },
           // table: {
           //   component: MDTable,
           // },
           onlyfor: ({ ...props }) => <OnlyForBanner cohortSession={cohortSession} {...props} />,
         }}
       >
-        {content}
+        {formatedContent}
       </ReactMarkdown>
     </>
   );
