@@ -9,7 +9,7 @@ import { Img } from '@chakra-ui/react';
 
 import useTranslation from 'next-translate/useTranslation';
 import {
-  BeforeAfter, Code, MDHeading, MDLink, OnlyForBanner,
+  BeforeAfter, Code, MDHeading, MDHr, MDLink, MDText, OnlyForBanner,
 } from './MDComponents';
 import { usePersistent } from '../../hooks/usePersistent';
 import Toc from './toc';
@@ -88,6 +88,8 @@ const MarkDownParser = ({
           ul: ({ ...props }) => <ul className="md-bullet" {...props} />,
           ol: ({ ...props }) => <ol className="md-bullet" {...props} />,
           img: ({ ...props }) => <Img className="MDImg" {...props} />,
+          p: ({ ...props }) => <MDText {...props} />,
+          hr: ({ ...props }) => <MDHr {...props} />,
           BeforeAfter,
           'before-after': BeforeAfter,
           iframe: ({ ...props }) => <iframe title={props.title || 'iframe-content'} className="MDIframe" {...props} />,

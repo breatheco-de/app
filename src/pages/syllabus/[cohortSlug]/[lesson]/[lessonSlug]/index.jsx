@@ -14,7 +14,7 @@ import Heading from '../../../../../common/components/Heading';
 import { updateAssignment, startDay } from '../../../../../common/hooks/useModuleHandler';
 import { ButtonHandlerByTaskStatus } from '../../../../../js_modules/moduleMap/taskHandler';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
-import MarkdownParser from '../../../../../common/components/MarkDownParser';
+import ReactMarkdown from '../../../../../common/components/MarkDownParser/ReactMarkdown';
 import Text from '../../../../../common/components/Text';
 import useAuth from '../../../../../common/hooks/useAuth';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
@@ -601,7 +601,7 @@ const Content = () => {
                     {teacherInstructions}
                   </Text>
                 </Box>
-                <MarkdownParser content={extendedInstructions.content} />
+                <ReactMarkdown content={extendedInstructions.content} />
               </Box>
               <Box margin="4rem 0" height="4px" width="100%" background={commonBorderColor} />
             </>

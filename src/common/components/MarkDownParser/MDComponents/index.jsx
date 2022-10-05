@@ -11,6 +11,7 @@ import Heading from '../../Heading';
 import OnlyFor from '../../OnlyFor';
 import tomorrow from '../syntaxHighlighter/tomorrow';
 import { slugify } from '../../../../utils';
+import Text from '../../Text';
 
 export const MDLink = ({ children, href }) => (
   <Link
@@ -107,28 +108,13 @@ export const BeforeAfter = ({ before, after }) => {
     />
   );
 };
+export const MDHr = () => (<Box d="inherit" />);
 
-// const MDText = ({ children }) => {
-//   const [haveHighlight, setHaveHighlight] = useState(false);
-//   useEffect(() => {
-//     if (children) {
-//       // eslint-disable-next-line array-callback-return
-//       children.map((child) => {
-//         if (child && child.type && child.type.name === 'Code') {
-//           setHaveHighlight(true);
-//         }
-//       });
-//     } else {
-//       console.log('something was wrong');
-//     }
-//   }, [children]);
-
-//   return (
-//     <Text size="l" className={haveHighlight ? 'text-highlight' : ''} overflow="auto !important" letterSpacing="0.05em" marginBottom="16px" fontWeight="400" lineHeight="24px">
-//       {children}
-//     </Text>
-//   );
-// };
+export const MDText = ({ children }) => (
+  <Text size="l" letterSpacing="0.05em" marginBottom="16px" fontWeight="400" lineHeight="24px">
+    {children}
+  </Text>
+);
 
 export const MDTable = ({ children }) => (
   <Box
@@ -235,6 +221,9 @@ MDCheckbox.propTypes = {
 // };
 
 MDTable.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+MDText.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
