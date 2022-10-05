@@ -31,6 +31,7 @@
   "full-name": "Full name",
   "time-elapsed": "Time elapsed",
   "email": "Email",
+  "confirm-email": "Confirm email",
   "phone": "Phone",
   "password": "Password",
   "confirm-password": "Confirm password",
@@ -70,6 +71,10 @@
     "description": "This practice will run outside of 4Geeks.com thought LearnPack. An interactive learning tool that runs integrated with VSCode and Gitpod.",
     "new-exercise": "Start new exercise",
     "continue-exercise": "Continue exercise"
+  },
+  "upgrade-plan": {
+    "title": "We are sorry, you don't have enough privileges to access this block of content, please signup or upgrade your plan to access it.",
+    "button": "Upgrade plan"
   },
   "average-duration": "Average duration",
   "load-more": "Load more",

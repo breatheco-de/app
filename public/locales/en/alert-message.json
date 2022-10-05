@@ -40,6 +40,7 @@
   "any-removed": "{{any}} removed!",
   "something-went-wrong": "Something went wrong",
   "something-went-wrong-with": "Something went wrong with {{property}}",
+  "something-went-wrong-fetching-cohorts": "Something went wrong fetching available Cohorts",
   "review-url-error": "Something went wrong getting the task URL",
   "review-assignment-error": "Something went wrong when modifying the task",
   "review-assignment-approve": "Task approved successfully",
@@ -48,5 +49,7 @@
   "review-assignment-ignored-task": "Task ignored successfully",
   "error-submitting-picture": "There was an error trying to upload the image",
   "submitting-picture-success": "Profile picture updated!",
-  "file-type-error": "File type {{type}} is not allowed to be uploaded"
+  "file-type-error": "File type {{type}} is not allowed to be uploaded",
+  "no-cohorts-found": "No cohorts found",
+  "google-maps-no-coincidences": "Google Maps: No matches found for the address entered"
 }

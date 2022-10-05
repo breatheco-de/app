@@ -35,6 +35,14 @@ const projectUrlValidation = Yup.object().shape({
   githubUrl: Yup.string().matches(url, 'Invalid Url').required('Url is required'),
 });
 
+const signup = Yup.object().shape({
+  firstName: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('First name is required'),
+  lastName: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Last name is required'),
+  // phone: Yup.string().matches(phone, 'Invalid phone number').required('Phone number is required'),
+  email: Yup.string().email('Invalid email').required('Email is required'),
+  confirmEmail: Yup.string().oneOf([Yup.ref('email'), null], "Emails don't match").required('Confirm Email is required'),
+});
+
 export default {
   register,
   handleProfile,
@@ -42,4 +50,5 @@ export default {
   leadForm,
   subscribe,
   projectUrlValidation,
+  signup,
 };

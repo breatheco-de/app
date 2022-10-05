@@ -1,7 +1,7 @@
 module.exports = {
   pages: {
     // Enable translations for the following pages
-    '*': ['common', 'navbar', 'footer', 'alert-message', 'share'],
+    '*': ['common', 'navbar', 'footer', 'alert-message', 'share', 'live-event'],
     '/': ['home', 'social'],
     '/login': ['login'],
     '/example': ['counter'],
@@ -14,6 +14,7 @@ module.exports = {
     '/lessons': ['lesson'],
     '/lessons/technology/[technology]': ['lesson'],
     '/project/[slug]': ['projects'],
+    '/signup': ['signup'],
     '/interactive-coding-tutorial/[difficulty]/[slug]': ['projects'],
     '/interactive-coding-tutorials': ['projects'],
     '/interactive-coding-tutorials/technology/[technology]': ['projects'],

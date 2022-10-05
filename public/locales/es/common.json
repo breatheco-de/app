@@ -31,6 +31,7 @@
   "full-name": "Nombre y Apellido",
   "time-elapsed": "Tiempo transcurrido",
   "email": "Correo electrónico",
+  "confirm-email": "Confirmar correo electrónico",
   "phone": "Teléfono",
   "password": "Contraseña",
   "confirm-password": "Confirmar contraseña",
@@ -70,6 +71,10 @@
     "description": "Esta práctica se ejecutará fuera de 4Geeks.com a través de LearnPack. Una herramienta de aprendizaje interactivo que se ejecuta integrado con VSCode y Gitpod.",
     "new-exercise": "Nuevo ejercicio",
     "continue-exercise": "Continuar ejercicio"
+  },
+  "upgrade-plan": {
+    "title": "Lo sentimos, no tiene suficientes privilegios para acceder a este bloque de contenido, regístrese o actualice su plan para acceder al contenido.",
+    "button": "Mejorar plan"
   },
   "average-duration": "Duración promedio",
   "load-more": "Cargar más",

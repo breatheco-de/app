@@ -139,6 +139,7 @@ async function generateSitemap() {
     '!src/pages/**/[slug]{.js,.jsx}',
     '!src/pages/**/[technology]*{.js,.jsx}',
     '!src/pages/**/[technology]/*{.js,.jsx}',
+    '!src/pages/edit-markdown.jsx',
     ...privateRoutes,
     '!src/pages/**/_*{.js,.jsx}',
     '!src/pages/api',

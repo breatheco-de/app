@@ -55,7 +55,7 @@ const CodingIntroduction = ({ data }) => {
 
   return (
     <Box pt="3rem">
-      <Container maxW="container.xl">
+      <Container maxW="container.xl" px="0">
         <IntroductionSection data={data} />
 
         <Box p="30px 0">
@@ -100,7 +100,7 @@ const CodingIntroduction = ({ data }) => {
                   <Icon icon="checked2" color="#38A56A" width="12px" height="9px" style={{ margin: '8px 0 0 0' }} />
                   <Box
                     fontSize="14px"
-                    fontWeight="600"
+                    fontWeight="500"
                     letterSpacing="0.05em"
                     dangerouslySetInnerHTML={{ __html: l?.title }}
                   />

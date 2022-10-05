@@ -99,7 +99,7 @@ const ButtonStyles = {
       fontSize: '13px',
       letterSpacing: '0.05em',
       _hover: {
-        bg: props.withoutBg ? (props.colorMode === 'light' ? 'gray.light' : 'gray.700') : 'transparent',
+        // bg: props.background || props.withoutBg ? (props.colorMode === 'light' ? 'gray.light' : 'gray.700') : 'transparent',
         opacity: 1,
         _disabled: {
           bg: '#EBEBEB',
@@ -116,7 +116,6 @@ const ButtonStyles = {
         },
       },
       _active: {
-        bg: props.colorMode === 'light' ? 'gray.light' : 'gray.700',
       },
     }),
 

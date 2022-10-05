@@ -3,6 +3,7 @@
   "highlight": "en vivo",
   "__highlight-options__": "con los demás | colaborando | en vivo",
   "description": "Aprendiendo a programar con un grupo de personas que se reúnen cada dos días",
+  "course": "coding-introduction",
   "callToAction": {
     "title": "Únete a la proxima cohorte",
     "href": "#"
@@ -103,19 +104,95 @@
     "list": [
       {
         "title": "HTML/CSS",
-        "description": "Durante el pre-work, aprenderás algo básico de <strong>CSS</strong> y <strong>HTML</strong>,y con suerte aprenderás cómo usar <strong>flex-box</strong> para crear diseños simples. El primer día revisaremos la finalización del trabajo previo e introduciremos un CSS más evolucionado que permite diseños sorprendentes y el increíble marco Bootstrap que hará su vida mucho más fácil con el enfoque \"orientado a componentes\"."
+        "icon": "html",
+        "description": "Durante el pre-work, aprenderás algo básico de <strong>CSS</strong> y <strong>HTML</strong>,y con suerte aprenderás cómo usar <strong>flex-box</strong> para crear diseños simples. El primer día revisaremos la finalización del trabajo previo e introduciremos un CSS más evolucionado que permite diseños sorprendentes y el increíble marco Bootstrap que hará su vida mucho más fácil con el enfoque \"orientado a componentes\".",
+        "steps": [
+          {
+            "title": "Start with the basics",
+            "text": "Durante el trabajo previo, aprenderá algunos CSS y HTML básicos y, con suerte, cómo usar el cuadro flexible para crear diseños simples. El primer día revisaremos la finalización del trabajo previo e introduciremos un CSS más evolucionado que permite diseños sorprendentes y el increíble marco Bootstrap que te hará la vida mucho más fácil con el enfoque \"orientado a componentes\"."
+          },
+          {
+            "title": "Welcome to the mid level",
+            "text": "Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
+          },
+          {
+            "title": "Your'e almost there",
+            "text": "Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)."
+          },
+          {
+            "title": "Congrats! you got this",
+            "text": "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form"
+          }
+        ]
       },
       {
         "title": "Bootstrap",
-        "description": "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing"
+        "icon": "bootstrap",
+        "description": "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing",
+        "steps": [
+          {
+            "title": "STEP Bootstrap 1",
+            "text": "STEP 1 Bootstrap descripción"
+          },
+          {
+            "title": "STEP Bootstrap 2",
+            "text": "STEP 2 Bootstrap descripción"
+          },
+          {
+            "title": "STEP Bootstrap 3",
+            "text": "STEP 3 Bootstrap descripción"
+          },
+          {
+            "title": "STEP Bootstrap 4",
+            "text": "STEP 4 Bootstrap descripción"
+          }
+        ]
       },
       {
         "title": "Github",
-        "description": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution"
+        "icon": "github",
+        "description": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution",
+        "steps": [
+          {
+            "title": "STEP Github 1",
+            "text": "STEP 1 Github descripción"
+          },
+          {
+            "title": "STEP Github 2",
+            "text": "STEP 2 Github descripción"
+          },
+          {
+            "title": "STEP Github 3",
+            "text": "STEP 3 Github descripción"
+          },
+          {
+            "title": "STEP Github 4",
+            "text": "STEP 4 Github descripción"
+          }
+        ]
       },
       {
-        "title": "Git",
-        "description": "classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular"
+        "title": "Git & Gitflow",
+        "icon": "git",
+        "description": "classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular",
+        "steps": [
+          {
+            "title": "STEP Git & Gitflow 1",
+            "text": "STEP 1 Git descripción"
+          },
+          {
+            "title": "STEP Git & Gitflow 2",
+            "text": "STEP 2 Git descripción"
+          },
+          {
+            "title": "STEP Git & Gitflow 3",
+            "text": "STEP 3 Git descripción"
+          },
+          {
+            "title": "STEP Git & Gitflow 4",
+            "text": "STEP 4 Git descripción"
+          }
+        ]
       }
     ],
     "moreContent": "Ver todo el contenido",
@@ -139,6 +216,12 @@
         },
         {
           "title": "No tiene fecha de vencimiento"
+        },
+        {
+          "title": "Válido para solicitar prácticas en la UE para no residentes"
+        },
+        {
+          "title": "Avalado por el Departamento de Educación de EE.UU"
         }
       ]
     },
@@ -150,14 +233,51 @@
 
   "pricing": {
     "title": "Precios",
+    "description": "<strong>Coding introduction</strong> is the course that Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
+    "choose-plan": "Elige tu plan",
+    "one-payment": "Pago unico",
+    "finance-text": "Financiar",
+    "not-ready": "¿No estás listo para comprometerte?",
     "list": [
       {
-        "type": "basic",
-        "show": false,
-        "title": "Básico",
-        "price": "Prueba gratis",
+        "type": "pro",
+        "show": true,
+        "title": "Pago único",
+        "price": "$199",
+        "lastPrice": "<s>$399</s>",
+        "offerTitle": "Oferta límite",
+        "description": "Acceso completo a todas las funciones durante la duración del curso",
+        "highlightText": "",
+        "bullets": {
+          "title": "Lo que obtendrás",
+          "list": [
+            {
+              "title": "Acceso ilimitado a clases magistrales grupales"
+            },
+            {
+              "title": "Acceso ilimitado a los talleres."
+            },
+            {
+              "title": "Acceso ilimitado al contenido del curso."
+            },
+            {
+              "title": "Certificado avalado por líderes de la industria"
+            }
+          ]
+        },
+        "button": {
+          "title": "Comienza tu prueba gratuita",
+          "link": "#enroll"
+        }
+      },
+      {
+        "type": "trial",
+        "show": true,
+        "title": "Prueba gratis",
+        "price": "Prueba gratis de 7 días",
         "lastPrice": "",
-        "description": "No necesitas tarjeta de crédito",
+        "description": "No se necesita tarjeta. Acceso completo a todas las funciones durante 7 días",
+        "highlightText": "",
         "offerTitle": "",
         "bullets": {
           "title": "Lo que obtendrás",
@@ -177,33 +297,97 @@
           "title": "Iniciar prueba",
           "link": "#start"
         }
-      },
+      }
+    ],
+
+    "finance": [
       {
-        "type": "pro",
+        "type": "schoolarship-t1",
         "show": true,
-        "title": "Pro",
-        "price": "$199",
-        "lastPrice": "<s>$399</s>",
-        "offerTitle": "Oferta límite",
-        "description": "La oferta vence en 60 días",
-        "highlightText": "Pago único",
+        "title": "Beca nivel 1",
+        "price": "$70",
+        "months": "3 meses",
+        "highlightText": "",
+        "description": "Acceso completo a todas las funciones durante la duración del curso.",
         "bullets": {
-          "description": "<strong>Introducción a la codificación</strong> es el curso que Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. masa aeneana.",
           "title": "Lo que obtendrás",
           "list": [
             {
-              "title": "Acceso ilimitado a clases magistrales grupales"
+              "title": "Beca nivel 1 - Item destacado 1"
             },
             {
-              "title": "Acceso ilimitado a los talleres."
+              "title": "Beca nivel 1 - Item destacado 2"
             },
             {
-              "title": "Acceso ilimitado al contenido del curso."
+              "title": "Beca nivel 1 - Item destacado 3"
+            },
+            {
+              "title": "Beca nivel 1 - Item destacado 4"
             }
           ]
         },
         "button": {
-          "title": "Comienza tu prueba gratuita",
+          "title": "Enlístate ahora",
+          "link": "#enroll"
+        }
+      },
+      {
+        "type": "schoolarship-t2",
+        "show": true,
+        "title": "Beca nivel 2",
+        "price": "$50",
+        "months": "5 meses",
+        "highlightText": "",
+        "description": "Acceso completo a todas las funciones durante la duración del curso.",
+        "bullets": {
+          "title": "Lo que obtendrás",
+          "list": [
+            {
+              "title": "Beca nivel 2 - Item destacado 1"
+            },
+            {
+              "title": "Beca nivel 2 - Item destacado 2"
+            },
+            {
+              "title": "Beca nivel 2 - Item destacado 3"
+            },
+            {
+              "title": "Beca nivel 2 - Item destacado 4"
+            }
+          ]
+        },
+        "button": {
+          "title": "Enlístate ahora",
+          "link": "#enroll"
+        }
+      },
+      {
+        "type": "schoolarship-trial",
+        "show": true,
+        "title": "Prueba gratis",
+        "price": "Prueba de 7 días",
+        "months": "",
+        "highlightText": "",
+        "description": "No se necesita tarjeta. Acceso completo a todas las funciones durante 7 días",
+        "bullets": {
+          "title": "Lo que obtendrás",
+          "list": [
+            {
+              "title": "Prueba gratis - Item destacado 1"
+            },
+            {
+              "title": "Prueba gratis - Item destacado 2"
+            },
+            {
+              "title": "Prueba gratis - Item destacado 3"
+            },
+            {
+              "title": "Prueba gratis - Item destacado 4"
+            }
+          ]
+        },
+        "button": {
+          "title": "Enlístate ahora",
           "link": "#enroll"
         }
       }

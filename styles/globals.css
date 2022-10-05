@@ -264,3 +264,33 @@ featured {
 		box-shadow: 0 0 0 0px rgba(255, 82, 82, 0), 0 0 0 22px rgba(255, 82, 82, 0), 0 0 0 25px rgba(255, 82, 82, 0);
 	}
 }
+
+.scroll-container {
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  -webkit-font-smoothing: antialiased;
+
+}
+.scroll-area {
+  scroll-snap-align: center;
+}
+
+.sidebarButton {
+  opacity: 0.5;
+  transition: border 0.4s ease-in-out;
+  border-bottom: 4px solid transparent;
+}
+.sidebarButton:hover {
+  opacity: 1;
+  color: #0097ce;
+}
+
+.sidebarButton.active {
+  opacity: 1;
+  border-bottom: 4px solid #0097cd;
+  color: #0097ce;
+}
+
+.chakra-avatar__excess {
+  z-index: 5;
+}
