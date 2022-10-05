@@ -39,6 +39,7 @@ const EditMarkdown = () => {
   const [markdown, setMarkdown] = usePersistent('markdown', markdownDefaultText);
   const [isLoaded, setIsLoaded] = useState(false);
   const bgColor = useColorModeValue('white', 'darkTheme');
+  const currentTheme = useColorModeValue('light', 'dark');
 
   useEffect(() => {
     setTimeout(() => {
@@ -61,7 +62,9 @@ const EditMarkdown = () => {
         onChange={(value) => setMarkdown(value)}
         enableScroll
         renderPreview={({ source }, visible) => visible && (
-          <MarkDownParser content={source} />
+          <Box className={`markdown-body ${currentTheme}`}>
+            <MarkDownParser content={source} />
+          </Box>
         )}
         toolbars={[
           'undo', 'redo', 'bold', 'italic', 'header', 'strike', 'underline', 'quote', 'olist', 'ulist', 'todo',
