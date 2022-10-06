@@ -80,9 +80,10 @@ const EditMarkdown = () => {
           // setMarkdownSaved(value);
         }}
         enableScroll
+        // eslint-disable-next-line no-unused-vars
         renderPreview={({ source }, visible) => visible && (
           <Box className={`markdown-body ${currentTheme}`}>
-            <MarkDownParser content={source} />
+            <MarkDownParser content={markdownSaved} />
           </Box>
         )}
         toolbars={[
