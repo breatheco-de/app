@@ -166,12 +166,14 @@ export const MDCheckbox = ({ children }) => {
 };
 
 export const OnlyForBanner = ({ children, permission, cohortSession }) => {
-  const capabilities = permission.split(',');
+  const capabilities = (permission || '')?.split(',');
   console.log('md_permissions:', capabilities);
-  // if (cohortSession.bc_id) {
-  //   // eslint-disable-next-line no-param-reassign
-  //   cohortSession.user_capabilities = ['read_private_lesson', 'read_lesson', 'student'];
-  // }
+
+  if (cohortSession.bc_id && !cohortSession?.user_capabilities) {
+    // eslint-disable-next-line no-param-reassign
+    cohortSession.user_capabilities = [''];
+    //   cohortSession.user_capabilities = ['read_private_lesson', 'read_lesson', 'student'];
+  }
 
   return (
     <OnlyFor onlyMember withBanner cohortSession={cohortSession} capabilities={capabilities}>
