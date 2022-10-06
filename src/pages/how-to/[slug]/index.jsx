@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import getT from 'next-translate/getT';
 import { languageLabel } from '../../../utils';
 import Link from '../../../common/components/NextChakraLink';
-import MarkDownParser from '../../../common/components/MarkDownParser/ReactMarkdown';
+import MarkDownParser from '../../../common/components/MarkDownParser';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import Heading from '../../../common/components/Heading';

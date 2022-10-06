@@ -1,7 +1,7 @@
 import { Link } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 // import MarkDownParser from '../../common/components/MarkDownParser';
-import MarkDownParser from '../../common/components/MarkDownParser/ReactMarkdown';
+import MarkDownParser from '../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../common/components/Skeleton';
 import Icon from '../../common/components/Icon';
 

@@ -5,7 +5,7 @@ import {
 import dynamic from 'next/dynamic';
 import getT from 'next-translate/getT';
 import { useState, useEffect } from 'react';
-import MarkDownParser from '../common/components/MarkDownParser/ReactMarkdown';
+import MarkDownParser from '../common/components/MarkDownParser';
 import { usePersistent } from '../common/hooks/usePersistent';
 import '@uiw/react-markdown-editor/markdown-editor.css';
 // eslint-disable-next-line import/no-extraneous-dependencies

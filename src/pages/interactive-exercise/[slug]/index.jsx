@@ -37,7 +37,7 @@ import Icon from '../../../common/components/Icon';
 import SimpleTable from '../../../js_modules/projects/SimpleTable';
 import TagCapsule from '../../../common/components/TagCapsule';
 // import Image from '../../common/components/Image';
-import MarkDownParser from '../../../common/components/MarkDownParser/ReactMarkdown';
+import MarkDownParser from '../../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import validationSchema from '../../../common/components/Forms/validationSchemas';
 import { processFormEntry } from '../../../common/components/Forms/actions';
