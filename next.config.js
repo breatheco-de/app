@@ -20,7 +20,9 @@ const securityHeaders = [
   },
 ];
 
-module.exports = withBundleAnalyzer(nextTranslate({
+const removeImports = require('next-remove-imports')();
+
+module.exports = removeImports(nextTranslate(withBundleAnalyzer({
   // rest of config here
   // i18n,
   async headers() {
@@ -161,4 +163,4 @@ module.exports = withBundleAnalyzer(nextTranslate({
     STONLY_ID: process.env.STONLY_ID,
     GOOGLE_GEO_KEY: process.env.GOOGLE_GEO_KEY,
   },
-}));
+})));
