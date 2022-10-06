@@ -6,9 +6,19 @@ export default {
   title: 'Components/LiveEvent',
   component: LiveEvent,
   argTypes: {
-    startsAt: {
+    liveStartsAt: {
       control: {
         type: 'date'
+      }
+    },
+    featureLabel: {
+      control: {
+        type: 'text'
+      }
+    },
+    liveUrl: {
+      control: {
+        type: 'text'
       }
     },
     otherEvents: {
@@ -29,7 +39,10 @@ const Component = (args, context) => {
 };
 export const Default = Component.bind({});
 Default.args = {
-  startsAt: subMinutes(new Date(), 40),
+  liveStartsAt: subMinutes(new Date(), 40),
+  liveUrl: 'https://www.google.co.ve/',
+  featureLabel: 'Live clases, coding sessions, workshops and hangouts every few hours.',
+  featureReadMoreUrl: 'https://www.google.co.ve/',
   startingSoonDelta: 30,
   otherEvents: [{
     title: 'My Wonderful HTML Email Workflow',

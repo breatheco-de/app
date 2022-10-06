@@ -6,6 +6,7 @@ import {
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
 import { formatDuration, intervalToDuration } from 'date-fns';
+import { es, en } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import CustomTheme from '../../../styles/theme';
 import Link from './NextChakraLink';
@@ -13,7 +14,7 @@ import Text from './Text';
 import Icon from './Icon';
 
 const LiveEvent = ({
-  startsAt, otherEvents, startingSoonDelta, stTranslation,
+  liveUrl, liveStartsAt, otherEvents, startingSoonDelta, stTranslation, featureLabel, featureReadMoreUrl,
 }) => {
   const { t, lang } = useTranslation('live-event');
   const [isOpen, setIsOpen] = useState(false);
@@ -22,6 +23,11 @@ const LiveEvent = ({
   const textColor = useColorModeValue('black', 'white');
   const textGrayColor = useColorModeValue('gray.600', 'gray.350');
 
+  const availableLanguages = {
+    es,
+    en,
+  };
+
   const formatTimeString = (start) => {
     const duration = intervalToDuration({
       end: new Date(),
@@ -29,7 +35,11 @@ const LiveEvent = ({
     });
 
     const formated = formatDuration(duration,
-      { format: ['months', 'weeks', 'days', 'hours', 'minutes'], delimiter: ', ' });
+      {
+        format: ['months', 'weeks', 'days', 'hours', 'minutes'],
+        delimiter: ', ',
+        locale: availableLanguages[lang],
+      });
 
     if (formated === '') return stTranslation ? stTranslation[lang]['live-event']['few-seconds'] : t('few-seconds');
     return formated;
@@ -46,10 +56,11 @@ const LiveEvent = ({
 
   const textStarted = (start) => {
     const started = start - new Date() <= startingSoonDelta;
+    const formatedTime = formatTimeString(start);
     if (started) {
-      return stTranslation ? stTranslation[lang]['live-event'].started.replace('{{time}}', formatTimeString(start)) : t('started', { time: formatTimeString(start) });
+      return stTranslation ? stTranslation[lang]['live-event'].started.replace('{{time}}', formatedTime) : t('started', { time: formatedTime });
     }
-    return stTranslation ? stTranslation[lang]['live-event']['will-start'].replace('{{time}}', formatTimeString(start)) : t('will-start', { time: formatTimeString(start) });
+    return stTranslation ? stTranslation[lang]['live-event']['will-start'].replace('{{time}}', formatedTime) : t('will-start', { time: formatedTime });
   };
 
   return (
@@ -61,6 +72,7 @@ const LiveEvent = ({
       borderRadius="11px"
       maxWidth="345px"
     >
+      {(featureLabel || featureReadMoreUrl) && (
       <Text
         fontSize="md"
         lineHeight="19px"
@@ -68,13 +80,15 @@ const LiveEvent = ({
         color={textColor}
         textAlign="center"
         marginBottom="15px"
+        marginTop="0"
       >
-        { stTranslation ? stTranslation[lang]['live-event'].title : t('title')}
+        {featureLabel}
         {' '}
+        {featureReadMoreUrl && (
         <Link
           target="_blank"
           rel="noopener noreferrer"
-          href="#"
+          href={featureReadMoreUrl}
           color={useColorModeValue('blue.default', 'blue.300')}
           display="inline-block"
           letterSpacing="0.05em"
@@ -83,28 +97,34 @@ const LiveEvent = ({
         >
           {stTranslation ? stTranslation[lang]['live-event']['learn-more'] : t('learn-more')}
         </Link>
+        )}
       </Text>
+      )}
       <Box
         display="flex"
         alignItems="center"
         background={bgColor2}
-        border={startsAt - new Date() <= startingSoonDelta && '2px solid'}
+        border={isStartedOrStarting(liveStartsAt) && '2px solid'}
         borderColor={CustomTheme.colors.blue.default2}
         padding="10px"
         borderRadius="50px"
         width="90%"
         margin="auto"
+        cursor={isStartedOrStarting(liveStartsAt) && 'pointer'}
+        onClick={() => {
+          if (isStartedOrStarting(liveStartsAt)) window.open(liveUrl);
+        }}
       >
         <Box
           borderRadius="full"
           width="50px"
           height="50px"
-          className={isStartedOrStarting(startsAt) ? 'pulse-red' : ''}
+          className={isStartedOrStarting(liveStartsAt) ? 'pulse-red' : ''}
         >
           <Icon
             width="50px"
             height="50px"
-            icon={isStartedOrStarting(startsAt) ? 'live-event' : 'live-event-opaque'}
+            icon={isStartedOrStarting(liveStartsAt) ? 'live-event' : 'live-event-opaque'}
           />
         </Box>
         <Box
@@ -130,7 +150,7 @@ const LiveEvent = ({
             color={textGrayColor}
             margin="0"
           >
-            {textStarted(startsAt)}
+            {textStarted(liveStartsAt)}
           </Text>
         </Box>
       </Box>
@@ -208,16 +228,21 @@ const LiveEvent = ({
 };
 
 LiveEvent.propTypes = {
-  startsAt: PropTypes.instanceOf(Date).isRequired,
+  liveStartsAt: PropTypes.instanceOf(Date).isRequired,
   otherEvents: PropTypes.arrayOf(PropTypes.any),
   stTranslation: PropTypes.objectOf(PropTypes.any),
   startingSoonDelta: PropTypes.number,
+  liveUrl: PropTypes.string.isRequired,
+  featureLabel: PropTypes.string,
+  featureReadMoreUrl: PropTypes.string,
 };
 
 LiveEvent.defaultProps = {
   otherEvents: [],
   stTranslation: null,
   startingSoonDelta: 30,
+  featureLabel: null,
+  featureReadMoreUrl: null,
 };
 
 export default LiveEvent;
