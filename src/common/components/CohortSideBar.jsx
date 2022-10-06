@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable brace-style */
 import { memo, useState, useEffect } from 'react';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
@@ -18,7 +19,7 @@ import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 import { AvatarSkeleton } from './Skeleton';
 
 const ProfilesSection = ({
-  title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher, cohortSession,
+  title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher, cohortSession, withoutPopover,
 }) => {
   const { t } = useTranslation('dashboard');
   const [showMoreStudents, setShowMoreStudents] = useState(false);
@@ -62,6 +63,8 @@ const ProfilesSection = ({
       };
     }
   }, [temporalToken]);
+
+  const alumniGeeksContainer = document.querySelector('.alumni-geeks-container');
 
   return (
     <Box display="block">
@@ -134,10 +137,13 @@ const ProfilesSection = ({
         </Box>
       ) : (
         <Grid
+          className={paginationProps && 'alumni-geeks-container'}
           gridAutoRows="3.4rem"
           templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
           gap={0}
           minH={showMoreStudents ? '395px' : 'auto'}
+          height={showMoreStudents ? '395px' : 'auto'}
+          overflowY="auto"
         >
           {
             studentsToShow?.map((c) => {
@@ -150,6 +156,7 @@ const ProfilesSection = ({
                   data={c}
                   isOnline={isOnline}
                   badge
+                  withoutPopover={withoutPopover}
                 />
               );
             })
@@ -158,20 +165,22 @@ const ProfilesSection = ({
       )}
 
       {paginationProps && (
-        <Box display={profiles.length <= 15 || showMoreStudents ? 'flex' : 'none'} justifyContent="center" gridGap="10px">
+        <Box display={profiles.length <= 15} justifyContent="center" gridGap="10px">
           <Box
             color="blue.default"
-            cursor={paginationProps.next ? 'pointer' : 'not-allowed'}
-            opacity={paginationProps.next ? 1 : 0.6}
+            cursor="pointer"
+            opacity={1}
             fontSize="15px"
             display="flex"
             alignItems="center"
             gridGap="10px"
             letterSpacing="0.05em"
+            justifyContent="center"
             padding="14px 0 0 0"
             fontWeight="700"
             onClick={() => {
               if (paginationProps.next) {
+                setShowMoreStudents(true);
                 axios.get(paginationProps.next)
                   .then(({ data }) => {
                     const cleanedData = [...profiles, ...data.results];
@@ -181,15 +190,23 @@ const ProfilesSection = ({
                         (a, b) => a.user.first_name.localeCompare(b.user.first_name),
                       ),
                     });
+                    setTimeout(() => {
+                      alumniGeeksContainer.scrollTo({
+                        top: alumniGeeksContainer.scrollHeight,
+                        behavior: 'smooth',
+                      });
+                    }, [600]);
                   });
+              } else {
+                setShowMoreStudents(!showMoreStudents);
               }
             }}
           >
-            {t('common:load-more')}
+            {paginationProps.next ? t('common:load-more') : showMoreStudents ? t('cohortSideBar.show-less') : t('cohortSideBar.show-more')}
             <Box
               as="span"
               display="block"
-              transform="rotate(-90deg)"
+              transform={paginationProps.next ? 'rotate(-90deg)' : (showMoreStudents ? 'rotate(90deg)' : 'rotate(-90deg)')}
             >
               <Icon icon="arrowLeft2" width="18px" height="10px" />
             </Box>
@@ -197,7 +214,7 @@ const ProfilesSection = ({
         </Box>
       )}
 
-      {profiles?.length > 15 && (
+      {/* {profiles?.length > 15 && (
         <Text
           display="flex"
           cursor="pointer"
@@ -222,7 +239,7 @@ const ProfilesSection = ({
             <Icon icon="arrowRight" color="#0097CD" width="12px" height="12px" />
           </Box>
         </Text>
-      )}
+      )} */}
     </Box>
   );
 };
@@ -449,6 +466,7 @@ const CohortSideBar = ({
                     profiles={studentsJoined}
                     setAlumniGeeksList={setAlumniGeeksList}
                     paginationProps={alumniGeeksList}
+                    withoutPopover
                   />
                 ) : (
                   <>
@@ -473,6 +491,7 @@ ProfilesSection.propTypes = {
   wrapped: PropTypes.bool,
   teacher: PropTypes.arrayOf(PropTypes.object),
   cohortSession: PropTypes.objectOf(PropTypes.any),
+  withoutPopover: PropTypes.bool,
 };
 
 ProfilesSection.defaultProps = {
@@ -483,6 +502,7 @@ ProfilesSection.defaultProps = {
   wrapped: false,
   teacher: [],
   cohortSession: {},
+  withoutPopover: false,
 };
 
 CohortSideBar.propTypes = {
