@@ -49,9 +49,11 @@ Default.args = {
     starts_at: subMinutes(new Date(), 0),
     icon: 'group',
     fill: '#25BF6C',
+    liveUrl: 'https://www.google.co.ve/'
   }, {
     title: 'Coding Jamming',
     starts_at: addMinutes(new Date(), 15),
     icon: 'codeBg',
+    liveUrl: 'https://www.google.co.ve/'
   }],
 };

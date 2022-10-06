@@ -174,16 +174,26 @@ const LiveEvent = ({
                 flexDirection="column"
                 marginLeft="10px"
               >
-                <Text
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={featureReadMoreUrl}
+                  color={textColor}
                   fontSize="md"
                   lineHeight="18px"
                   fontWeight="700"
-                  color={textColor}
+                  letterSpacing="0.05em"
                   marginBottom="5px"
                   marginTop="0"
+                  locale="en"
+                  fontFamily="Lato, Sans-serif"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.open(event.liveUrl);
+                  }}
                 >
                   {event.title}
-                </Text>
+                </Link>
                 <Text
                   fontSize="md"
                   lineHeight="18px"
@@ -217,7 +227,9 @@ const LiveEvent = ({
           }}
         >
           {otherEvents.filter((e) => isStartedOrStarting(e.starts_at)).length !== 0 && (
-            <Icon width="16px" height="16px" icon="on-live" style={{ display: 'inline-block', marginRight: '5px' }} />
+            <Box borderRadius="full" background="none" className="pulse-red" width="16px" height="16px" display="inline-block" marginRight="5px">
+              <Icon width="16px" height="16px" icon="on-live" />
+            </Box>
           )}
           {stTranslation ? stTranslation[lang]['live-event'].upcoming : t('upcoming')}
           {isOpen ? (<ChevronUpIcon w={6} h={7} />) : (<ChevronDownIcon w={6} h={7} />)}
