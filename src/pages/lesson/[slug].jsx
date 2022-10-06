@@ -13,7 +13,7 @@ import Icon from '../../common/components/Icon';
 import { languageLabel, getExtensionName } from '../../utils';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
-import MarkDownParser from '../../common/components/MarkDownParser';
+import MarkDownParser from '../../common/components/MarkDownParser/ReactMarkdown';
 import TagCapsule from '../../common/components/TagCapsule';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 import { publicRedirectByAsset } from '../../lib/redirectsHandler';

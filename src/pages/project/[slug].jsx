@@ -12,7 +12,7 @@ import Link from '../../common/components/NextChakraLink';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import SimpleTable from '../../js_modules/projects/SimpleTable';
-import MarkDownParser from '../../common/components/MarkDownParser';
+import MarkDownParser from '../../common/components/MarkDownParser/ReactMarkdown';
 import { MDSkeleton } from '../../common/components/Skeleton';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 import { publicRedirectByAsset } from '../../lib/redirectsHandler';

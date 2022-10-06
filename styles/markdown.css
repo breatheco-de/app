@@ -42,8 +42,6 @@
   line-height: 19px;
   overflow: auto;
   display: block;
-  /* NOTE: Testing */
-  /* width: 53vw; */
   font-size: 85%;
   line-height: 1.45;
   border-radius: 6px;
@@ -293,6 +291,10 @@ blockquote > :last-child {
   margin-bottom: 0;
 } */
 
+.markdown-body .linenumber.react-syntax-highlighter-line-number {
+  min-width: 3.25em !important;
+}
+
 .markdown-body table {
   padding: 0;
   border-collapse:collapse;
@@ -300,9 +302,6 @@ blockquote > :last-child {
   overflow: auto;
   width: 100%;
   display: block;
-  /* width: 52vw;
-  display: table-caption;
-  */
 }
 
 .markdown-body.light thead {
@@ -496,6 +495,9 @@ blockquote > :last-child {
   border: none;
   background: rgb(45, 45, 45);
 }
+.linenumber.react-syntax-highlighter-line-number {
+  padding: 0 0 0 16px;
+}
 
 /* .highlight {
   font-size: .85em;
@@ -509,8 +511,6 @@ blockquote > :last-child {
 .text-highlight{
   display: block;
   overflow: auto;
-  /* NOTE: Testing */
-  /* width: 53vw; */
   margin-block-start: 1em;
   margin-block-end: 1em;
   margin-inline-start: 0px;
@@ -544,24 +544,12 @@ blockquote > :last-child {
 } */
 
 @media screen and (max-width: 995px) {
-  .text-highlight {
-    /* NOTE: Testing */
-    /* width: 84vw; */
-  }
-  .markdown-body pre {
-    /* width: 84vw; */
-  }
   .markdown-body table {
-    /* max-width: 84vw; */
     width: 100%;
     overflow: auto;
     /* display: grid; */
   }
 
-  .markdown-body table tr td {
-    /* display: block; */
-    /* width: 94vw; */
-  }
 }
 
 .md-bullet {

@@ -34,7 +34,7 @@ export const Code = ({
 
   return !inline && match ? (
     <SyntaxHighlighter
-      // showLineNumbers
+      showLineNumbers
       style={tomorrow}
       language={match[1]}
       PreTag="div"

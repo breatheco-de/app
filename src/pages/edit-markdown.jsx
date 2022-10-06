@@ -11,6 +11,7 @@ import '@uiw/react-markdown-editor/markdown-editor.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import '@uiw/react-markdown-preview/markdown.css';
 import markdownDefaultText from '../lib/markdown-example';
+import useDebounce from '../common/hooks/useDebounce';
 
 const MarkdownEditor = dynamic(
   () => import('@uiw/react-markdown-editor').then((mod) => mod.default),
@@ -36,10 +37,17 @@ export const getStaticProps = async ({ locale, locales }) => {
 };
 
 const EditMarkdown = () => {
-  const [markdown, setMarkdown] = usePersistent('markdown', markdownDefaultText);
+  const [markdownSaved, setMarkdownSaved] = usePersistent('markdown', markdownDefaultText);
+  const [markdownValue, setMarkdownValue] = useState(markdownSaved);
   const [isLoaded, setIsLoaded] = useState(false);
   const bgColor = useColorModeValue('white', 'darkTheme');
   const currentTheme = useColorModeValue('light', 'dark');
+
+  const debouncedValue = useDebounce(markdownValue, 800);
+
+  useEffect(() => {
+    if (debouncedValue) setMarkdownSaved(debouncedValue);
+  }, [debouncedValue]);
 
   useEffect(() => {
     if (currentTheme === 'light') {
@@ -64,10 +72,13 @@ const EditMarkdown = () => {
         </Box>
       )}
       <MarkdownEditor
-        value={markdown}
+        value={markdownValue}
         style={{ height: '93vh', minWidth: '100%' }}
         visible
-        onChange={(value) => setMarkdown(value)}
+        onChange={(value) => {
+          setMarkdownValue(value);
+          // setMarkdownSaved(value);
+        }}
         enableScroll
         renderPreview={({ source }, visible) => visible && (
           <Box className={`markdown-body ${currentTheme}`}>

@@ -37,7 +37,7 @@ import Icon from '../../../common/components/Icon';
 import SimpleTable from '../../../js_modules/projects/SimpleTable';
 import TagCapsule from '../../../common/components/TagCapsule';
 // import Image from '../../common/components/Image';
-import MarkDownParser from '../../../common/components/MarkDownParser';
+import MarkDownParser from '../../../common/components/MarkDownParser/ReactMarkdown';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import validationSchema from '../../../common/components/Forms/validationSchemas';
 import { processFormEntry } from '../../../common/components/Forms/actions';
@@ -395,9 +395,10 @@ const TabletWithForm = ({
                 // cursor="pointer"
                 id="command-container"
                 padding="9px"
-                background="#D9D9D9"
+                background={useColorModeValue('featuredLight', 'darkTheme')}
                 fontWeight="400"
                 marginBottom="5px"
+                style={{ borderRadius: '5px' }}
                 fontSize="14px"
                 lineHeight="24px"
               >
@@ -534,7 +535,7 @@ const Exercise = ({ exercise, markdown }) => {
         background={useColorModeValue('featuredLight', 'featuredDark')}
         padding={{ base: '4%', lg: '2% 10%' }}
       >
-        <Box width={{ base: '100% ', lg: '60%' }}>
+        <Box maxWidth={{ base: '100% ', lg: '68%' }}>
           <Link
             href="/interactive-exercises"
             color={useColorModeValue('blue.default', 'blue.300')}

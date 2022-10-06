@@ -4,7 +4,7 @@ import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
 import Link from '../common/components/NextChakraLink';
 import getMarkDownContent from '../common/components/MarkDownParser/markdown';
-import MarkDownParser from '../common/components/MarkDownParser';
+import MarkDownParser from '../common/components/MarkDownParser/ReactMarkdown';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'about-us');
