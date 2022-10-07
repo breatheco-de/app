@@ -45,7 +45,7 @@ const Component = (args, context) => {
 export const Default = Component.bind({});
 Default.args = {
   liveStartsAt: new Date(subMinutes(new Date(), 40)),
-  liveEndsAt: new Date(addMinutes(new Date(), 2)),
+  liveEndsAt: new Date(addHours(new Date(), 1)),
   // liveStartsAt: new Date(subHours(new Date(), 3)),
   // liveEndsAt: new Date(subMinutes(new Date(), 10)),
   liveUrl: 'https://www.google.co.ve/',
@@ -61,8 +61,8 @@ Default.args = {
     liveUrl: 'https://www.google.co.ve/'
   }, {
     title: 'Coding Jamming',
-    // starts_at: addMinutes(new Date(), 15),
-    // ends_at: addMinutes(new Date(), 180),
+    // starts_at: subHours(new Date(), 2),
+    // ends_at: subMinutes(new Date(), 15),
     starts_at: new Date(addMinutes(new Date(), 15)),
     ends_at: new Date(addHours(new Date(), 2)),
     icon: 'codeBg',
