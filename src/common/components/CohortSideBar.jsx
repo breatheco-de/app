@@ -17,14 +17,14 @@ import Icon from './Icon';
 import Text from './Text';
 import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 import { AvatarSkeleton } from './Skeleton';
-import useConnect from '../hooks/useConnect';
+import useOnline from '../hooks/useOnline';
 
 const ProfilesSection = ({
   title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher, withoutPopover,
 }) => {
   const { t } = useTranslation('dashboard');
   const [showMoreStudents, setShowMoreStudents] = useState(false);
-  const { usersConnected } = useConnect();
+  const { usersConnected } = useOnline();
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
 
   const assistantMaxLimit = isBelowTablet ? 3 : 4;

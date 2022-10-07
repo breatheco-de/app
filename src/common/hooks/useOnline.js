@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { ConnectionContext } from '../context/ConnectionContext';
 
-const useConnect = () => useContext(ConnectionContext);
+const useOnline = () => useContext(ConnectionContext);
 
-export default useConnect;
+export default useOnline;
