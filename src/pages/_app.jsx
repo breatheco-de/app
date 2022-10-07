@@ -10,6 +10,7 @@ import wrapper from '../store';
 import CustomTheme from '../../styles/theme';
 import NavbarSession from '../common/components/Navbar';
 import AuthProvider from '../common/context/AuthContext';
+import ConnectionProvider from '../common/context/ConnectionContext';
 import Footer from '../common/components/Footer';
 import Helmet from '../common/components/Helmet';
 import InterceptionLoader from '../common/components/InterceptionLoader';
@@ -51,12 +52,14 @@ function App({ Component, pageProps }) {
       />
       <CookiesProvider>
         <AuthProvider>
-          <ChakraProvider resetCSS theme={CustomTheme}>
-            <Navbar />
-            <InterceptionLoader />
-            <Component {...pageProps} />
-            <Footer />
-          </ChakraProvider>
+          <ConnectionProvider>
+            <ChakraProvider resetCSS theme={CustomTheme}>
+              <Navbar />
+              <InterceptionLoader />
+              <Component {...pageProps} />
+              <Footer />
+            </ChakraProvider>
+          </ConnectionProvider>
         </AuthProvider>
       </CookiesProvider>
     </>
