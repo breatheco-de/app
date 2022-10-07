@@ -1,5 +1,5 @@
 import React from 'react';
-import { addMinutes, subMinutes } from 'date-fns';
+import { addMinutes, subMinutes, subHours, addHours } from 'date-fns';
 import LiveEvent from '../common/components/LiveEvent';
 
 export default {
@@ -7,6 +7,11 @@ export default {
   component: LiveEvent,
   argTypes: {
     liveStartsAt: {
+      control: {
+        type: 'date'
+      }
+    },
+    liveEndsAt: {
       control: {
         type: 'date'
       }
@@ -39,7 +44,10 @@ const Component = (args, context) => {
 };
 export const Default = Component.bind({});
 Default.args = {
-  liveStartsAt: subMinutes(new Date(), 40),
+  liveStartsAt: new Date(subMinutes(new Date(), 40)),
+  liveEndsAt: new Date(addMinutes(new Date(), 2)),
+  // liveStartsAt: new Date(subHours(new Date(), 3)),
+  // liveEndsAt: new Date(subMinutes(new Date(), 10)),
   liveUrl: 'https://www.google.co.ve/',
   featureLabel: 'Live clases, coding sessions, workshops and hangouts every few hours.',
   featureReadMoreUrl: 'https://www.google.co.ve/',
@@ -47,12 +55,16 @@ Default.args = {
   otherEvents: [{
     title: 'My Wonderful HTML Email Workflow',
     starts_at: subMinutes(new Date(), 0),
+    ends_at: addMinutes(new Date(), 180),
     icon: 'group',
     fill: '#25BF6C',
     liveUrl: 'https://www.google.co.ve/'
   }, {
     title: 'Coding Jamming',
-    starts_at: addMinutes(new Date(), 15),
+    // starts_at: addMinutes(new Date(), 15),
+    // ends_at: addMinutes(new Date(), 180),
+    starts_at: new Date(addMinutes(new Date(), 15)),
+    ends_at: new Date(addHours(new Date(), 2)),
     icon: 'codeBg',
     liveUrl: 'https://www.google.co.ve/'
   }],

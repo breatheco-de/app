@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box, useColorModeValue, Button,
 } from '@chakra-ui/react';
@@ -13,20 +13,22 @@ import Link from './NextChakraLink';
 import Text from './Text';
 import Icon from './Icon';
 
+const availableLanguages = {
+  es,
+  en,
+};
+
 const LiveEvent = ({
-  liveUrl, liveStartsAt, otherEvents, startingSoonDelta, stTranslation, featureLabel, featureReadMoreUrl,
+  liveUrl,
+  liveStartsAt,
+  liveEndsAt,
+  otherEvents,
+  startingSoonDelta,
+  stTranslation,
+  featureLabel,
+  featureReadMoreUrl,
 }) => {
   const { t, lang } = useTranslation('live-event');
-  const [isOpen, setIsOpen] = useState(false);
-  const bgColor = useColorModeValue('white', 'gray.900');
-  const bgColor2 = useColorModeValue('featuredLight', 'featuredDark');
-  const textColor = useColorModeValue('black', 'white');
-  const textGrayColor = useColorModeValue('gray.600', 'gray.350');
-
-  const availableLanguages = {
-    es,
-    en,
-  };
 
   const formatTimeString = (start) => {
     const duration = intervalToDuration({
@@ -45,22 +47,45 @@ const LiveEvent = ({
     return formated;
   };
 
-  const isStartedOrStarting = (start) => {
+  const textTime = (start, end) => {
+    const started = start - new Date() <= startingSoonDelta;
+    const ended = end - new Date() <= 0;
+    let formatedTime;
+    if (ended) {
+      formatedTime = formatTimeString(end);
+      return stTranslation ? stTranslation[lang]['live-event'].ended.replace('{{time}}', formatedTime) : t('ended', { time: formatedTime });
+    }
+    formatedTime = formatTimeString(start);
+    if (started) {
+      return stTranslation ? stTranslation[lang]['live-event'].started.replace('{{time}}', formatedTime) : t('started', { time: formatedTime });
+    }
+    return stTranslation ? stTranslation[lang]['live-event']['will-start'].replace('{{time}}', formatedTime) : t('will-start', { time: formatedTime });
+  };
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [timeAgo, setTimeAgo] = useState(textTime(liveStartsAt, liveEndsAt));
+  const bgColor = useColorModeValue('white', 'gray.900');
+  const bgColor2 = useColorModeValue('featuredLight', 'featuredDark');
+  const textColor = useColorModeValue('black', 'white');
+  const textGrayColor = useColorModeValue('gray.600', 'gray.350');
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeAgo(textTime(liveStartsAt, liveEndsAt));
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const isLiveOrStarting = (start, end) => {
+    const ended = end - new Date() <= 0;
+    if (ended) return false;
+
     const interval = intervalToDuration({ end: new Date(), start });
     const {
       days, months, hours, years, minutes,
     } = interval;
     const totalTime = days + months + hours + years + minutes;
     return start - new Date() <= 0 || (totalTime === minutes && minutes <= startingSoonDelta);
-  };
-
-  const textStarted = (start) => {
-    const started = start - new Date() <= startingSoonDelta;
-    const formatedTime = formatTimeString(start);
-    if (started) {
-      return stTranslation ? stTranslation[lang]['live-event'].started.replace('{{time}}', formatedTime) : t('started', { time: formatedTime });
-    }
-    return stTranslation ? stTranslation[lang]['live-event']['will-start'].replace('{{time}}', formatedTime) : t('will-start', { time: formatedTime });
   };
 
   return (
@@ -104,27 +129,27 @@ const LiveEvent = ({
         display="flex"
         alignItems="center"
         background={bgColor2}
-        border={isStartedOrStarting(liveStartsAt) && '2px solid'}
+        border={isLiveOrStarting(liveStartsAt, liveEndsAt) && '2px solid'}
         borderColor={CustomTheme.colors.blue.default2}
         padding="10px"
         borderRadius="50px"
         width="90%"
         margin="auto"
-        cursor={isStartedOrStarting(liveStartsAt) && 'pointer'}
+        cursor={isLiveOrStarting(liveStartsAt, liveEndsAt) && 'pointer'}
         onClick={() => {
-          if (isStartedOrStarting(liveStartsAt)) window.open(liveUrl);
+          if (isLiveOrStarting(liveStartsAt, liveEndsAt)) window.open(liveUrl);
         }}
       >
         <Box
           borderRadius="full"
           width="50px"
           height="50px"
-          className={isStartedOrStarting(liveStartsAt) ? 'pulse-red' : ''}
+          className={isLiveOrStarting(liveStartsAt, liveEndsAt) ? 'pulse-red' : ''}
         >
           <Icon
             width="50px"
             height="50px"
-            icon={isStartedOrStarting(liveStartsAt) ? 'live-event' : 'live-event-opaque'}
+            icon={isLiveOrStarting(liveStartsAt, liveEndsAt) ? 'live-event' : 'live-event-opaque'}
           />
         </Box>
         <Box
@@ -150,7 +175,7 @@ const LiveEvent = ({
             color={textGrayColor}
             margin="0"
           >
-            {textStarted(liveStartsAt)}
+            {timeAgo}
           </Text>
         </Box>
       </Box>
@@ -165,7 +190,7 @@ const LiveEvent = ({
               margin="auto"
               borderColor="#DADADA"
             >
-              <Box width="37px" height="37px" className={isStartedOrStarting(event.starts_at) ? 'pulse-blue' : ''} borderRadius="full">
+              <Box width="37px" height="37px" className={isLiveOrStarting(event.starts_at, event.ends_at) ? 'pulse-blue' : ''} borderRadius="full">
                 <Icon fill={event.fill} color={event.color} style={{ flexShrink: 0 }} width="37px" height="37px" icon={event.icon} />
               </Box>
               <Box
@@ -202,7 +227,7 @@ const LiveEvent = ({
                   marginBottom="0"
                   marginTop="0"
                 >
-                  {textStarted(event.starts_at)}
+                  {textTime(event.starts_at, event.ends_at)}
                 </Text>
               </Box>
             </Box>
@@ -226,7 +251,7 @@ const LiveEvent = ({
             setIsOpen(!isOpen);
           }}
         >
-          {otherEvents.filter((e) => isStartedOrStarting(e.starts_at)).length !== 0 && (
+          {otherEvents.filter((e) => isLiveOrStarting(e.starts_at, e.ends_at)).length !== 0 && (
             <Box borderRadius="full" background="none" className="pulse-red" width="16px" height="16px" display="inline-block" marginRight="5px">
               <Icon width="16px" height="16px" icon="on-live" />
             </Box>
@@ -241,6 +266,7 @@ const LiveEvent = ({
 
 LiveEvent.propTypes = {
   liveStartsAt: PropTypes.instanceOf(Date).isRequired,
+  liveEndsAt: PropTypes.instanceOf(Date).isRequired,
   otherEvents: PropTypes.arrayOf(PropTypes.any),
   stTranslation: PropTypes.objectOf(PropTypes.any),
   startingSoonDelta: PropTypes.number,
