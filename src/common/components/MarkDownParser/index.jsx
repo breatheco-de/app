@@ -9,7 +9,7 @@ import { Img } from '@chakra-ui/react';
 
 import useTranslation from 'next-translate/useTranslation';
 import {
-  BeforeAfter, Code, MDHeading, MDHr, MDLink, MDText, OnlyForBanner,
+  BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner,
 } from './MDComponents';
 import { usePersistent } from '../../hooks/usePersistent';
 import Toc from './toc';
@@ -85,8 +85,8 @@ const MarkDownParser = ({
           h1: ({ ...props }) => <MDHeading tagType="h2" {...props} />,
           h2: ({ ...props }) => <MDHeading tagType="h2" {...props} />,
           h3: ({ ...props }) => <MDHeading tagType="h3" {...props} />,
-          ul: ({ ...props }) => <ul className="md-bullet" {...props} />,
-          ol: ({ ...props }) => <ol className="md-bullet" {...props} />,
+          ul: ({ ...props }) => <ul className="md-bullet">{props.children}</ul>,
+          ol: ({ ...props }) => <ol className="md-bullet">{props.children}</ol>,
           img: ({ ...props }) => <Img className="MDImg" {...props} />,
           p: ({ ...props }) => <MDText {...props} />,
           hr: ({ ...props }) => <MDHr {...props} />,
@@ -97,6 +97,18 @@ const MarkDownParser = ({
           //   component: MDTable,
           // },
           onlyfor: ({ ...props }) => <OnlyForBanner cohortSession={cohortSession} {...props} />,
+          // Component for list of checkbox
+          // children[1].props.node.children[0].properties.type
+          li: ({ ...props }) => {
+            // eslint-disable-next-line prefer-destructuring
+            const type = props?.children[0]?.props && props.children[0].props.type;
+            const type2 = props?.children[1]?.props && props.children[1]?.props.node.children[0].properties?.type;
+            return (type === 'checkbox' || type2 === 'checkbox') ? (
+              <MDCheckbox className="MDCheckbox" {...props} />
+            ) : (
+              <li>{props.children}</li>
+            );
+          },
         }}
       >
         {formatedContent}

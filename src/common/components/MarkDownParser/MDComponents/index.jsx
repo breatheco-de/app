@@ -1,9 +1,13 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable no-loop-func */
 /* eslint-disable no-await-in-loop */
 import {
   Prism as SyntaxHighlighter,
 } from 'react-syntax-highlighter';
-import { Box, Checkbox, Link } from '@chakra-ui/react';
+import {
+  Box, Checkbox, Link, useColorModeValue,
+} from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import BeforeAfterSlider from '../../BeforeAfterSlider';
@@ -108,7 +112,7 @@ export const BeforeAfter = ({ before, after }) => {
     />
   );
 };
-export const MDHr = () => (<Box d="inherit" />);
+export const MDHr = () => (<Box as="hr" backgroundColor={useColorModeValue('gray.400', 'gray.500')} mb="20px" />);
 
 export const MDText = ({ children }) => (
   <Text size="l" letterSpacing="0.05em" marginBottom="16px" fontWeight="400" lineHeight="24px">
@@ -156,12 +160,17 @@ export const MDHeading = ({ children, tagType }) => {
   );
 };
 
-export const MDCheckbox = ({ children }) => {
-  const stringg = 'checked';
+export const MDCheckbox = (props) => {
+  const text = props?.children[1] || props?.children[1]?.props?.children[1];
+  const checked = props?.checked || props?.children[1]?.props?.children[0]?.props?.checked;
+  const [isChecked, setIsChecked] = useState(checked);
+
   return (
-    <Checkbox>
-      {`${children} - ${stringg}`}
-    </Checkbox>
+    <Box as="li" display="block">
+      <Checkbox isChecked={isChecked} onChange={() => setIsChecked(!isChecked)}>
+        {text}
+      </Checkbox>
+    </Box>
   );
 };
 
