@@ -38,7 +38,8 @@ const DifficultySection = ({
     return false;
   };
 
-  const getBackgroundColor = (difficultyIsMatch, isSelected) => {
+  const getBackgroundColor = (difficultyIsMatch, isSelected, index) => {
+    if (difficultyPosition > index) return 'blue.default';
     if (difficultyIsMatch && isSelected) return 'blue.default';
     if (difficultyIsMatch) return useColorModeValue('gray.default', 'gray.400');
     return useColorModeValue('gray.350', 'gray.default');
@@ -87,7 +88,7 @@ const DifficultySection = ({
                 width={isSelected ? '20px' : '15px'}
                 height={isSelected ? '20px' : '15px'}
                 borderRadius="50%"
-                background={getBackgroundColor(difficultyIsMatch, isSelected)}
+                background={getBackgroundColor(difficultyIsMatch, isSelected, index)}
                 border={isSelected ? '4px solid' : 'none'}
                 borderColor={isSelected ? 'blue.200' : 'none'}
                 // isSelected ? 'blue.default' : 'gray.default'
