@@ -186,6 +186,8 @@ const SignUp = ({ finance }) => {
           });
         })
         .finally(() => setCohortIsLoading(false));
+    } else {
+      setCohortIsLoading(false);
     }
   }, [coords, isSecondStep]);
 
@@ -220,8 +222,8 @@ const SignUp = ({ finance }) => {
     <AlertMessage type="info" message={t('no-date-available')} />
   ));
 
-  console.log('Nearest coords:', coords);
-  console.log('Available dates:', availableDates);
+  // console.log('Nearest coords:', coords);
+  // console.log('Available dates:', availableDates);
 
   return (
     <Box p="2.5rem 2rem">
@@ -369,7 +371,7 @@ const SignUp = ({ finance }) => {
             <Box display="flex" gridGap="18px" alignItems="center" mt="10px">
               <Input ref={inputRef} id="address-input" onChange={(e) => setAddressValue(e.target.value)} className="controls" type="text" placeholder={t('address')} height="50px" />
 
-              <Button type="button" ref={buttonRef} isLoading={isLoading} value="Geocode" variant="default">
+              <Button type="button" height="50px" ref={buttonRef} isLoading={isLoading} value="Geocode" variant="default">
                 {t('search-dates')}
               </Button>
             </Box>

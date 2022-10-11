@@ -230,7 +230,7 @@ export default function BeforeAfterSlider({
       onTouchMove={onTouchMoveHandler}
     >
       <img
-        src={firstImage}
+        src={secondImage}
         alt="width_calc"
         className={styles['before-after-slider__size-fix-img']}
         onLoad={updateContainerWidth}
@@ -243,7 +243,7 @@ export default function BeforeAfterSlider({
         <>
           <Box className={styles['before-after-slider__first-photo-container']}>
             <img
-              src={firstImage}
+              src={secondImage}
               style={imgStyles}
               onLoad={onImageLoad}
               draggable={false}
@@ -252,7 +252,7 @@ export default function BeforeAfterSlider({
           </Box>
           <Box className={styles['before-after-slider__second-photo-container']} style={secondImgContainerStyle}>
             <img
-              src={secondImage}
+              src={firstImage}
               style={imgStyles}
               onLoad={onImageLoad}
               draggable={false}

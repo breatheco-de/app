@@ -9,11 +9,6 @@ body {
   scroll-padding: 14px;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
 *.active {
   color: #0097CD;
 }
@@ -293,4 +288,28 @@ featured {
 
 .chakra-avatar__excess {
   z-index: 5;
+}
+.cm-editor {
+  position: relative !important;
+  box-sizing: border-box;
+  height: 100%;
+  display: flex !important;
+  flex-direction: column;
+}
+
+.chakra-ui-dark .md-editor-preview {
+  /* background-color: var(--color-canvas-default); */
+  background-color: #17202A;
+}
+.chakra-ui-light .md-editor-preview {
+  /* background-color: var(--color-canvas-default); */
+  background-color: #FFFFFF;
+}
+
+.chakra-ui-dark .ͼ1k {
+  color: var(--chakra-colors-white)
+}
+
+.ͼ1n {
+  color: var(--chakra-colors-blue-default2);
 }

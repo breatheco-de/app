@@ -23,7 +23,7 @@ import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 
 const AvatarUser = ({
-  data, fullName, containerStyle, width, height, badge, customBadge, isOnline, isWrapped, index,
+  data, fullName, containerStyle, width, height, badge, customBadge, isOnline, isWrapped, index, withoutPopover,
 }) => {
   const { user } = data;
   const { t } = useTranslation('dashboard');
@@ -49,7 +49,7 @@ const AvatarUser = ({
   };
   const placementCard = isBelowTablet ? 'auto' : 'left-end';
 
-  return (
+  return !withoutPopover ? (
     <Popover trigger="hover" key={fullNameLabel} placement={placementCard}>
       <PopoverTrigger>
         <WrapItem as="div" aria-expanded={false} justifyContent="center" alignItems="center" style={containerStyle}>
@@ -113,6 +113,31 @@ const AvatarUser = ({
         </PopoverBody>
       </PopoverContent>
     </Popover>
+  ) : (
+    <WrapItem as="div" aria-expanded={false} justifyContent="center" alignItems="center" style={containerStyle}>
+      <Avatar
+        id={fullNameLabel}
+        width={width}
+        height={height}
+        style={{ userSelect: 'none' }}
+        title={fullNameLabel}
+        src={user?.profile?.avatar_url || user?.github?.avatar_url}
+        marginLeft={isWrapped ? '-10px' : '0px'}
+        zIndex={index}
+      >
+        {customBadge && (customBadge)}
+        {badge && (
+          <AvatarBadge
+            boxSize="11px"
+            bg={isOnline ? 'success' : 'danger'}
+            top="-4px"
+            right={isWrapped ? '6px' : '4px'}
+            border="2px solid"
+            borderColor={borderColor}
+          />
+        )}
+      </Avatar>
+    </WrapItem>
   );
 };
 
@@ -127,6 +152,7 @@ AvatarUser.propTypes = {
   isOnline: PropTypes.bool,
   isWrapped: PropTypes.bool,
   index: PropTypes.number,
+  withoutPopover: PropTypes.bool,
 };
 AvatarUser.defaultProps = {
   fullName: '',
@@ -138,6 +164,7 @@ AvatarUser.defaultProps = {
   isOnline: false,
   isWrapped: false,
   index: 0,
+  withoutPopover: false,
 };
 
 export default memo(AvatarUser);
