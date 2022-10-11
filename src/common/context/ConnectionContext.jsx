@@ -17,6 +17,8 @@ const OnlineContext = ({ children }) => {
   const [temporalToken, setTemporalToken] = useState(null);
   const hasLoaded = !isLoading;
 
+  const BREATHECODE_WS = String(process.env.BREATHECODE_HOST).replace('https://', '');
+
   useEffect(() => {
     if (hasLoaded && accessToken) {
       axiosInstance.defaults.headers.common.Authorization = `Token ${accessToken}`;
@@ -40,7 +42,7 @@ const OnlineContext = ({ children }) => {
   useEffect(() => {
     if (hasLoaded && temporalToken !== null && temporalToken?.token) {
       console.log('temporal_token:', temporalToken);
-      const client = new W3CWebSocket(`wss://breathecode-test.herokuapp.com/ws/online?token=${temporalToken.token}`);
+      const client = new W3CWebSocket(`wss://${BREATHECODE_WS}/ws/online?token=${temporalToken.token}`);
 
       client.onopen = () => {
         console.log('WebSocket Client Connected');
