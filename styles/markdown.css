@@ -169,9 +169,9 @@
   padding: 15px 0 0 0;
 }
 
-.markdown-body ul {
+/* .markdown-body ul {
   padding: 0 0 20px 27px;
-}
+} */
 
 .markdown-body hr {
   border: 0 none;
@@ -222,14 +222,6 @@
 .markdown-body li * {
   /* display: initial; */
   /* margin; */
-}
-
-.markdown-body ul, ol {
-  padding-left: 25px;
-  display: flex;
-  gap: 4px;
-  margin: 0px;
-  flex-direction: column;
 }
 
 .markdown-body ul :first-child, ol :first-child {
@@ -553,5 +545,10 @@ blockquote > :last-child {
 }
 
 .md-bullet {
-  margin-left: 1rem !important;
+  /* padding-left: 25px; */
+  display: flex;
+  gap: 4px;
+  margin-left: 2rem !important;
+  padding-bottom: 15px;
+  flex-direction: column;
 }
