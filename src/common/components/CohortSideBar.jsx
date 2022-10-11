@@ -105,8 +105,8 @@ const ProfilesSection = ({
           gridAutoRows="3.4rem"
           templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
           gap={0}
-          minH={showMoreStudents ? '395px' : 'auto'}
-          height={showMoreStudents ? '395px' : 'auto'}
+          maxH={showMoreStudents ? '270px' : 'auto'}
+          height={showMoreStudents ? '100%' : 'auto'}
           overflowY="auto"
         >
           {

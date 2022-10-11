@@ -22,7 +22,7 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import axios from 'axios';
 import { Formik, Form, Field } from 'formik';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // import atob from 'atob';
 import { useRouter } from 'next/router';
 import Script from 'next/script';
@@ -424,7 +424,7 @@ const TabletWithForm = ({
               </Text>
               <OrderedList>
                 {t('modal.steps', {}, { returnObjects: true }).map((step) => (
-                  <ListItem fontSize="14px">{step}</ListItem>
+                  <ListItem key={step} fontSize="14px">{step}</ListItem>
                 ))}
               </OrderedList>
               <Text display="flex" alignItems="center" marginTop="15px">
@@ -712,13 +712,14 @@ TabletWithForm.propTypes = {
   isSubmitting: PropTypes.bool,
   toast: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
-  user: PropTypes.object.isRequired,
+  user: PropTypes.objectOf(PropTypes.any),
   commonTextColor: PropTypes.string.isRequired,
   commonBorderColor: PropTypes.string.isRequired,
   exercise: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 TabletWithForm.defaultProps = {
   isSubmitting: false,
+  user: {},
 };
 
 export default Exercise;

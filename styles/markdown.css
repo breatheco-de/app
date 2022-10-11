@@ -175,8 +175,8 @@
 
 .markdown-body hr {
   border: 0 none;
-  color: #cccccc;
-  height: 4px;
+  /* color: #cccccc; */
+  height: 2px;
   padding: 0;
 }
 
@@ -227,7 +227,7 @@
 .markdown-body ul, ol {
   padding-left: 25px;
   display: flex;
-  gap: 14px;
+  gap: 4px;
   margin: 0px;
   flex-direction: column;
 }
