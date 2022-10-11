@@ -169,10 +169,6 @@
   padding: 15px 0 0 0;
 }
 
-/* .markdown-body ul {
-  padding: 0 0 20px 27px;
-} */
-
 .markdown-body hr {
   border: 0 none;
   /* color: #cccccc; */
@@ -545,7 +541,6 @@ blockquote > :last-child {
 }
 
 .md-bullet {
-  /* padding-left: 25px; */
   display: flex;
   gap: 4px;
   margin-left: 2rem !important;
