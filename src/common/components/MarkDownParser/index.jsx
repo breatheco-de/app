@@ -101,12 +101,13 @@ const MarkDownParser = ({
           // children[1].props.node.children[0].properties.type
           li: ({ ...props }) => {
             // eslint-disable-next-line prefer-destructuring
-            const type = props?.children[0]?.props && props.children[0].props.type;
-            const type2 = props?.children[1]?.props && props.children[1]?.props.node?.children[0]?.properties?.type;
+            const childrenExists = props?.children?.length >= 0;
+            const type = childrenExists && props?.children[0]?.props && props.children[0].props.type;
+            const type2 = childrenExists && props?.children[1]?.props && props.children[1]?.props.node?.children[0]?.properties?.type;
             return (type === 'checkbox' || type2 === 'checkbox') ? (
               <MDCheckbox className="MDCheckbox" {...props} />
             ) : (
-              <li>{props.children}</li>
+              <li>{props?.children}</li>
             );
           },
         }}

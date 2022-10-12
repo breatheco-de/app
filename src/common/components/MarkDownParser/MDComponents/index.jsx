@@ -162,6 +162,7 @@ export const MDHeading = ({ children, tagType }) => {
 
 export const MDCheckbox = (props) => {
   const text = props?.children[1] || props?.children[1]?.props?.children[1];
+  const child = props?.children[2] || props?.children[2]?.props?.children[2];
   const checked = props?.checked || props?.children[1]?.props?.children[0]?.props?.checked;
   const [isChecked, setIsChecked] = useState(checked);
 
@@ -170,6 +171,7 @@ export const MDCheckbox = (props) => {
       <Checkbox isChecked={isChecked} onChange={() => setIsChecked(!isChecked)}>
         {text}
       </Checkbox>
+      {child && child}
     </Box>
   );
 };
