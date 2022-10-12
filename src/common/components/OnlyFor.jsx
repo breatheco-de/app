@@ -1,9 +1,10 @@
 import { memo } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button, useColorModeValue } from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
+import useStyle from '../hooks/useStyle';
 
 const OnlyFor = ({
   cohortSession, academy, capabilities, children, onlyMember, withBanner,
@@ -15,8 +16,7 @@ const OnlyFor = ({
   const userCapabilities = cohortSession.user_capabilities || [];
   const commonUser = ['STUDENT', 'REVIEWER'];
   const cohortRole = cohortSession.cohort_role?.toUpperCase() || 'NONE';
-  const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
-  const backgroundColor = useColorModeValue('white', 'darkTheme');
+  const { featuredColor, backgroundColor } = useStyle();
 
   const isCapableAcademy = cohortSession && cohortSession.academy?.id === academyNumber;
   const isCapableRole = capabilities.map(
@@ -33,8 +33,8 @@ const OnlyFor = ({
   };
 
   const Component = () => (withBanner ? (
-    <Box display="flex" background={backgroundColor} minHeight="auto" border="5px solid" borderColor={featuredBackground} borderRadius="14px" p="0" gridGap="26px">
-      <Box display="flex" justifyContent="center" alignItems="center" style={{ aspectRatio: '1' }} width="auto" minHeight="160px" height="auto" background={featuredBackground} borderRadius="7px" m="4px">
+    <Box display="flex" background={backgroundColor} minHeight="auto" border="5px solid" borderColor={featuredColor} borderRadius="14px" p="0" gridGap="26px">
+      <Box display="flex" justifyContent="center" alignItems="center" style={{ aspectRatio: '1' }} width="auto" minHeight="160px" height="auto" background={featuredColor} borderRadius="7px" m="4px">
         <Icon icon="padlock" width="60px" height="65px" />
       </Box>
       <Box my="1rem" display="flex" flexDirection="column" gridGap="24px" width="100%">

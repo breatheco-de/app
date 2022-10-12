@@ -2,7 +2,7 @@ import useTranslation from 'next-translate/useTranslation';
 import {
   Box, Button, FormControl, FormErrorMessage, FormLabel, Heading, Input,
   InputGroup, InputLeftAddon, Modal, ModalBody, ModalCloseButton, ModalContent,
-  ModalHeader, ModalOverlay, Stack, Text, useColorModeValue, useToast,
+  ModalHeader, ModalOverlay, Stack, Text, useToast,
 } from '@chakra-ui/react';
 import { Field, Form, Formik } from 'formik';
 // import Icon from '../../common/components/Icon';
@@ -14,6 +14,7 @@ import { getStorageItem, objectAreNotEqual } from '../../utils';
 import bc from '../services/breathecode';
 import { usePersistent } from '../hooks/usePersistent';
 import Icon from './Icon';
+import useStyle from '../hooks/useStyle';
 
 const ProfileForm = ({ profile }) => {
   const { t } = useTranslation('profile');
@@ -21,14 +22,14 @@ const ProfileForm = ({ profile }) => {
   const router = useRouter();
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [, setProfile] = usePersistent('profile', {});
-  const inputColor = useColorModeValue('gray.600', 'gray.200');
-  const bgColor = useColorModeValue('white', 'darkTheme');
-  const inputDisabledColor = useColorModeValue('gray.600', 'gray.350');
-  const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
-  const backgroundDisabledColor = useColorModeValue('gray.250', 'gray.600');
   const [userInfo, setUserInfo] = useState(null);
   const [defaultUserInfo, setDefaultUserInfo] = useState(null);
   const accessToken = getStorageItem('accessToken');
+  const { disabledBackgroundColor } = useStyle();
+
+  const {
+    borderColor, backgroundColor, lightColor, disabledColor, modal,
+  } = useStyle();
 
   const hasGithub = profile.github && profile.github.username !== '';
   useEffect(() => {
@@ -105,7 +106,7 @@ const ProfileForm = ({ profile }) => {
                     </FormLabel>
                     <Input
                       name="first_name"
-                      color={inputColor}
+                      color={lightColor}
                       onChange={(e) => {
                         setUserInfo({ ...userInfo, first_name: e.target.value });
                         form.handleChange(e);
@@ -133,7 +134,7 @@ const ProfileForm = ({ profile }) => {
                     </FormLabel>
                     <Input
                       name="last_name"
-                      color={inputColor}
+                      color={lightColor}
                       onChange={(e) => {
                         setUserInfo({
                           ...userInfo, last_name: e.target.value,
@@ -174,9 +175,9 @@ const ProfileForm = ({ profile }) => {
                       defaultValue={profile?.email || ''}
                       disabled
                       _disabled={{
-                        backgroundColor: backgroundDisabledColor,
+                        backgroundColor: disabledBackgroundColor,
                         cursor: 'not-allowed',
-                        color: inputDisabledColor,
+                        color: disabledColor,
                         border: '0',
                         // opacity: '0.5',
                       }}
@@ -204,7 +205,7 @@ const ProfileForm = ({ profile }) => {
                     </FormLabel>
                     <Input
                       name="phone"
-                      color={inputColor}
+                      color={lightColor}
                       onChange={(e) => {
                         setUserInfo({
                           ...userInfo, phone: e.target.value,
@@ -214,9 +215,9 @@ const ProfileForm = ({ profile }) => {
                       defaultValue={profile.profile?.phone || ''}
                       disabled
                       _disabled={{
-                        backgroundColor: backgroundDisabledColor,
+                        backgroundColor: disabledBackgroundColor,
                         cursor: 'not-allowed',
-                        color: inputDisabledColor,
+                        color: disabledColor,
                         border: '0',
                         // opacity: '0.5',
                       }}
@@ -232,7 +233,7 @@ const ProfileForm = ({ profile }) => {
               </Field> */}
             </Box>
             <InputGroup>
-              <InputLeftAddon background={bgColor} border="1px solid" borderRadius="3px" borderColor="gray.default" height="3.125rem">
+              <InputLeftAddon background={backgroundColor} border="1px solid" borderRadius="3px" borderColor="gray.default" height="3.125rem">
                 <Icon icon="github" width="24px" height="24px" />
               </InputLeftAddon>
               <Box
@@ -295,8 +296,8 @@ const ProfileForm = ({ profile }) => {
           </Stack>
           <Modal isOpen={modalIsOpen} size="xl" margin="0 10px" onClose={() => setModalIsOpen(false)}>
             <ModalOverlay />
-            <ModalContent>
-              <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
+            <ModalContent background={modal.background}>
+              <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={borderColor} textAlign="center">
                 {t('remove-github-modal.title')}
               </ModalHeader>
               <ModalCloseButton />

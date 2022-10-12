@@ -3,7 +3,7 @@
 import { memo, useState, useEffect } from 'react';
 // import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import {
-  Box, Heading, Divider, Grid, useColorMode, useColorModeValue, Tabs,
+  Box, Heading, Divider, Grid, useColorMode, Tabs,
   TabList, Tab, TabPanels, TabPanel, useToast, AvatarGroup, useMediaQuery,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
@@ -18,6 +18,7 @@ import Text from './Text';
 import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 import { AvatarSkeleton } from './Skeleton';
 import useOnline from '../hooks/useOnline';
+import useStyle from '../hooks/useStyle';
 
 const ProfilesSection = ({
   title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher, withoutPopover,
@@ -229,7 +230,7 @@ const CohortSideBar = ({
   );
 
   const teacherAssistants = studentAndTeachers.filter((st) => st.role === 'ASSISTANT');
-  const commonTextColor = useColorModeValue('gray.600', 'gray.200');
+  const { lightColor, borderColor } = useStyle();
 
   const kickoffDate = {
     en: format(new Date(cohort.kickoff_date), 'MMM do'),
@@ -315,25 +316,25 @@ const CohortSideBar = ({
         <Box d="flex" alignItems="center">
           <Icon icon="group" width="41px" height="41px" />
           <Box id="cohort-dates" marginLeft={13}>
-            <Heading as="h4" color={commonTextColor} fontSize={15} fontWeight="700" lineHeight="18px" margin={0}>
+            <Heading as="h4" color={lightColor} fontSize={15} fontWeight="700" lineHeight="18px" margin={0}>
               {(`${t('cohortSideBar.cohort')} ${teacherVersionActive ? ` | ${router.locale === 'en' ? 'Day' : 'Día'} ${cohort.current_day}` : ''}`) || title}
             </Heading>
-            <Text size="l" color={commonTextColor} fontWeight="400" lineHeight="18px" margin={0}>
+            <Text size="l" color={lightColor} fontWeight="400" lineHeight="18px" margin={0}>
               {cohortCity}
             </Text>
             {cohort.ending_date !== null && (
               <>
-                <Text pt="4px" size="sm" color={commonTextColor} fontWeight="700" lineHeight="18px" margin={0}>
+                <Text pt="4px" size="sm" color={lightColor} fontWeight="700" lineHeight="18px" margin={0}>
                   {t('cohortSideBar.last-date')}
                   {' '}
-                  <Text as="span" size="sm" color={commonTextColor} fontWeight="400" lineHeight="18px" margin={0}>
+                  <Text as="span" size="sm" color={lightColor} fontWeight="400" lineHeight="18px" margin={0}>
                     {endingDate[router.locale]}
                   </Text>
                 </Text>
-                <Text size="sm" color={commonTextColor} fontWeight="700" lineHeight="18px" margin={0}>
+                <Text size="sm" color={lightColor} fontWeight="700" lineHeight="18px" margin={0}>
                   {t('cohortSideBar.start-date')}
                   {' '}
-                  <Text as="span" size="sm" color={commonTextColor} fontWeight="400" lineHeight="18px" margin={0}>
+                  <Text as="span" size="sm" color={lightColor} fontWeight="400" lineHeight="18px" margin={0}>
                     {kickoffDate[router.locale]}
                   </Text>
                 </Text>
@@ -342,7 +343,7 @@ const CohortSideBar = ({
           </Box>
         </Box>
       </Box>
-      <Divider margin={0} style={{ borderColor: useColorModeValue('gray.250', 'gray.700') }} />
+      <Divider margin={0} style={{ borderColor }} />
       <Box id="cohort-students" display="flex" flexDirection="column" gridGap="20px" padding="18px 26px">
         {teacherAssistants.length > 0 && (
           <ProfilesSection

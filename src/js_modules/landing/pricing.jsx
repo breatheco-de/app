@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import {
-  Box, Button, useColorModeValue,
+  Box, Button,
 } from '@chakra-ui/react';
 // import { useRouter } from 'next/router';
 import { useState, useEffect, Fragment } from 'react';
@@ -8,12 +8,13 @@ import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
+import useStyle from '../../common/hooks/useStyle';
 
 const Pricing = ({ data }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedFinanceIndex, setSelectedFinanceIndex] = useState(0);
   const [selectedProps, setSelectedProps] = useState(data?.pricing?.list[0] || {});
-  const featuredBg = useColorModeValue('featuredLight', 'featuredDark');
+  const { fontColor, featuredColor } = useStyle();
   const router = useRouter();
 
   const financeSelected = {
@@ -80,10 +81,10 @@ const Pricing = ({ data }) => {
             {data?.pricing['choose-plan']}
           </Heading>
           <Box display="flex">
-            <Box p="15px 10px" onClick={() => handleSelectFinance(0)} borderBottom="4px solid" borderColor={selectedFinanceIndex === 0 ? 'blue.default' : 'gray.400'} color={selectedFinanceIndex === 0 ? 'blue.default' : 'black'} cursor="pointer" fontWeight={selectedFinanceIndex === 0 ? '700' : '400'}>
+            <Box p="15px 10px" onClick={() => handleSelectFinance(0)} borderBottom="4px solid" borderColor={selectedFinanceIndex === 0 ? 'blue.default' : 'gray.400'} color={selectedFinanceIndex === 0 ? 'blue.default' : fontColor} cursor="pointer" fontWeight={selectedFinanceIndex === 0 ? '700' : '400'}>
               {data?.pricing['one-payment']}
             </Box>
-            <Box p="15px 10px" onClick={() => handleSelectFinance(1)} borderBottom="4px solid" borderColor={selectedFinanceIndex === 1 ? 'blue.default' : 'gray.400'} color={selectedFinanceIndex === 1 ? 'blue.default' : 'black'} cursor="pointer" fontWeight={selectedFinanceIndex === 1 ? '700' : '400'}>
+            <Box p="15px 10px" onClick={() => handleSelectFinance(1)} borderBottom="4px solid" borderColor={selectedFinanceIndex === 1 ? 'blue.default' : 'gray.400'} color={selectedFinanceIndex === 1 ? 'blue.default' : fontColor} cursor="pointer" fontWeight={selectedFinanceIndex === 1 ? '700' : '400'}>
               {data?.pricing['finance-text']}
             </Box>
           </Box>
@@ -99,7 +100,7 @@ const Pricing = ({ data }) => {
                 <Box as="hr" color="gray.500" width="100%" />
               </Box>
             )}
-            <Box key={item.title} display="flex" onClick={() => handleSelect(item, i)} flexDirection={{ base: 'column', md: 'row' }} width="100%" justifyContent="space-between" p={selectedIndex === i ? '22px 18px' : '26px 22px'} gridGap="24px" cursor="pointer" background={selectedIndex !== i && featuredBg} border={selectedIndex === i && '4px solid #0097CD'} borderRadius="8px">
+            <Box key={item.title} display="flex" onClick={() => handleSelect(item, i)} flexDirection={{ base: 'column', md: 'row' }} width="100%" justifyContent="space-between" p={selectedIndex === i ? '22px 18px' : '26px 22px'} gridGap="24px" cursor="pointer" background={selectedIndex !== i && featuredColor} border={selectedIndex === i && '4px solid #0097CD'} borderRadius="8px">
               <Box display="flex" flex={1} flexDirection="column" gridGap="12px" minWidth={{ base: '100%', md: '288px' }} height="fit-content" fontWeight="400">
                 <Box fontSize="18px" fontWeight="700">
                   {item?.title}
