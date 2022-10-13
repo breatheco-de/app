@@ -14,7 +14,7 @@ import Heading from '../../../../../common/components/Heading';
 import { updateAssignment, startDay } from '../../../../../common/hooks/useModuleHandler';
 import { ButtonHandlerByTaskStatus } from '../../../../../js_modules/moduleMap/taskHandler';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
-import MarkdownParser from '../../../../../common/components/MarkDownParser';
+import MarkDownParser from '../../../../../common/components/MarkDownParser';
 import Text from '../../../../../common/components/Text';
 import useAuth from '../../../../../common/hooks/useAuth';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
@@ -530,12 +530,15 @@ const Content = () => {
           // id={lessonSlug}
           flexGrow={1}
           marginLeft={0}
-          margin={{ base: '0', lg: Open ? '0' : '0 auto' }}
-          padding={{
-            base: GetReadme() !== false ? '0 5vw 4rem 5vw' : '4rem 4vw',
-            md: GetReadme() !== false ? '25px 8vw 4rem 8vw' : '4rem 4vw',
+          margin={{ base: '0 auto', xl: Open ? '0 auto 0 8vw' : '0 auto' }}
+          padding="25px 0 0 0"
+          // padding={{
+          //   base: GetReadme() !== false ? '0 5vw 4rem 5vw' : '4rem 4vw',
+          //   md: GetReadme() !== false ? '25px 8vw 4rem 8vw' : '4rem 4vw',
+          // }}
+          maxWidth={{
+            base: '94vw', sm: '86vw', md: '70vh', lg: '82vh',
           }}
-          maxWidth="1012px"
           // marginRight="10rem"
           transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
           transitionProperty="margin"
@@ -598,7 +601,7 @@ const Content = () => {
                     {teacherInstructions}
                   </Text>
                 </Box>
-                <MarkdownParser content={extendedInstructions.content} />
+                <MarkDownParser content={extendedInstructions.content} />
               </Box>
               <Box margin="4rem 0" height="4px" width="100%" background={commonBorderColor} />
             </>

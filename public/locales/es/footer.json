@@ -20,10 +20,10 @@
     "href": "#"
   },
   "company":{
-    "title":"COMPANY",
+    "title":"EMPRESA",
     "items":[
       {
-        "label": "ACERCA DE",
+        "label": "NOSOTROS",
         "href": "/about-us"
       },
       {
@@ -40,11 +40,11 @@
     "title":"LIBRERÍA DE APRENDIZAJE",
     "items":[
       {
-        "label": "Leer y observar",
+        "label": "Lecturas",
         "href": "/lessons"
       },
       {
-        "label": "Practica interactivamente",
+        "label": "Ejercicios de práctica",
         "href": "/interactive-exercises"
       },
       {
@@ -52,7 +52,7 @@
         "href": "/interactive-coding-tutorials"
       },
       {
-        "label": "Como hacer...",
+        "label": "Preguntas frecuentes",
         "href": "/how-to"
       }
     ]

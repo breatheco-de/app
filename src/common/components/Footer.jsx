@@ -22,6 +22,7 @@ import useTranslation from 'next-translate/useTranslation';
 import NextChakraLink from './NextChakraLink';
 import Icon from './Icon';
 import AlertMessage from './AlertMessage';
+import CustomTheme from '../../../styles/theme';
 import bc from '../services/breathecode';
 
 const Footer = () => {
@@ -29,6 +30,7 @@ const Footer = () => {
   const [email, setEmail] = useState('');
   const [formStatus, setFormStatus] = useState('');
   const { colorMode } = useColorMode();
+
   return (
     <Container as="footer" maxW="none" padding="20px" position="absolute" top="100%">
       <Divider borderBottomWidth="2px" m="3rem 0 0 0" />
@@ -327,7 +329,7 @@ const Footer = () => {
             <Box key={`${item.title}-${item.href}`} width="48%" marginRight="2px" marginBottom="5px">
               <NextChakraLink href={item.href}>
                 <Heading as="h3" fontSize="12px" marginBottom="15px">
-                  <Icon icon={item.icon} style={{ display: 'inline', marginRight: '10px' }} width="40px" height="40px" />
+                  <Icon color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} icon={item.icon} style={{ display: 'inline', marginRight: '10px' }} width="40px" height="40px" />
                   {item.title.toUpperCase()}
                 </Heading>
               </NextChakraLink>

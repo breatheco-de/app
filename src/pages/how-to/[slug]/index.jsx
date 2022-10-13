@@ -1,5 +1,5 @@
 /* eslint-disable no-continue */
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import {
@@ -88,6 +88,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 export default function HowToSlug({ data, markdown }) {
   const { t } = useTranslation('how-to');
   // const { title, author, preview } = data;
+  const [neverLoaded, setNeverLoaded] = useState(false);
   const title = data?.title || '';
   const author = data?.author || '';
   const preview = data?.preview || '';
@@ -138,6 +139,12 @@ export default function HowToSlug({ data, markdown }) {
     });
     return () => {};
   }, [router, router.locale, translations]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setNeverLoaded(true);
+    }, 1200);
+  }, []);
 
   return (
     <>
@@ -196,7 +203,15 @@ export default function HowToSlug({ data, markdown }) {
               {`${author.first_name} ${author.last_name}`}
             </Text>
           ) : (
-            <Skeleton height="20px" width="220px" borderRadius="10px" />
+            <>
+              {neverLoaded ? (
+                <Text fontSize="l">
+                  @4GeeksAcademy
+                </Text>
+              ) : (
+                <Skeleton height="20px" width="220px" borderRadius="10px" />
+              )}
+            </>
           )}
         </Box>
 

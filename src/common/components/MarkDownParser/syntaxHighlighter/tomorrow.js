@@ -37,7 +37,8 @@ export default {
     MozHyphens: 'none',
     msHyphens: 'none',
     hyphens: 'none',
-    padding: '1em',
+    // NOTE: Change to '1em' if lineNumber is disabled
+    padding: '1em 0',
     margin: '4px 0 10px 0',
     overflow: 'auto',
   },
