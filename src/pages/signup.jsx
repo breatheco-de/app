@@ -21,6 +21,7 @@ import bc from '../common/services/breathecode';
 import { phone } from '../utils/regex';
 import useGoogleMaps from '../common/hooks/useGoogleMaps';
 import AlertMessage from '../common/components/AlertMessage';
+import useStyle from '../common/hooks/useStyle';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -70,13 +71,14 @@ const SignUp = ({ finance }) => {
   const inputRef = useRef();
   const buttonRef = useRef();
   const toast = useToast();
+  const { borderColor } = useStyle();
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
 
   const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(GOOGLE_KEY, 'places');
 
   const fontColor = useColorModeValue('gray.800', 'gray.300');
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
-  const borderColor = useColorModeValue('black', 'white');
+  const borderColor2 = useColorModeValue('black', 'white');
 
   const {
     course, plan, user_id, cohort_id, plan_id,
@@ -117,7 +119,6 @@ const SignUp = ({ finance }) => {
   });
 
   useEffect(async () => {
-    console.log(router.query);
     if (!!user_id && !!cohort_id) {
       const resp = await bc.cohort().user({ cohortId: cohort_id, userId: user_id });
       if (resp?.status < 400) {
@@ -458,7 +459,7 @@ const SignUp = ({ finance }) => {
                 <Heading size="18px" textTransform="uppercase">
                   {t('cohort-details')}
                 </Heading>
-                <Box as="hr" width="30%" margin="0 0 10px 0" h="1px" borderColor={borderColor} />
+                <Box as="hr" width="30%" margin="0 0 10px 0" h="1px" borderColor={borderColor2} />
                 <Box display="flex" flexDirection="column" gridGap="10px">
                   <Text size="md" fontWeight="700">
                     {t('cohort-name')}
@@ -468,7 +469,7 @@ const SignUp = ({ finance }) => {
                   </Text>
                 </Box>
 
-                <Box as="hr" width="100%" margin="0 0" h="1px" borderColor="gray.default" />
+                <Box as="hr" width="100%" margin="0 0" h="1px" borderColor={borderColor} />
 
                 <Box display="flex" flexDirection="column" gridGap="10px">
                   <Text size="md" fontWeight="700">
@@ -479,7 +480,7 @@ const SignUp = ({ finance }) => {
                   </Text>
                 </Box>
 
-                <Box as="hr" width="100%" margin="0 0" h="1px" borderColor="gray.default" />
+                <Box as="hr" width="100%" margin="0 0" h="1px" borderColor={borderColor} />
 
                 <Box display="flex" flexDirection="column" gridGap="10px">
                   <Text size="md" fontWeight="700">
@@ -503,7 +504,7 @@ const SignUp = ({ finance }) => {
                 <Heading size="18px" textTransform="uppercase">
                   {t('profile-details')}
                 </Heading>
-                <Box as="hr" width="30%" margin="0 0 10px 0" h="1px" borderColor={borderColor} />
+                <Box as="hr" width="30%" margin="0 0 10px 0" h="1px" borderColor={borderColor2} />
                 <Box display="flex" flexDirection="column" gridGap="10px">
                   <Text size="md" fontWeight="700">
                     {t('your-name')}
@@ -512,7 +513,7 @@ const SignUp = ({ finance }) => {
                     {`${formProps?.first_name} ${formProps?.last_name}`}
                   </Text>
                 </Box>
-                <Box as="hr" width="100%" margin="0 0" h="1px" borderColor="gray.default" />
+                <Box as="hr" width="100%" margin="0 0" h="1px" borderColor={borderColor} />
                 <Box display="flex" flexDirection="row" gridGap="10px">
                   <Box display="flex" flexDirection="column" gridGap="10px">
                     <Text size="md" fontWeight="700">
