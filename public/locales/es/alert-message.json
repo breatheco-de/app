@@ -51,5 +51,6 @@
   "submitting-picture-success": "¡Imagen de perfil actualizada!",
   "file-type-error": "No se permite cargar el tipo de archivo {{type}}",
   "no-cohorts-found": "No se encontraron cohortes",
-  "google-maps-no-coincidences": "Google Maps: No se encontraron coincidencias para la dirección ingresada"
+  "google-maps-no-coincidences": "Google Maps: No se encontraron coincidencias para la dirección ingresada",
+  "cohort-or-user-not-found": "No se encontró cohorte o usuario"
 }

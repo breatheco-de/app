@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import {
   Box, Button, Img, Input, useColorModeValue, useToast,
 } from '@chakra-ui/react';
@@ -77,9 +78,11 @@ const SignUp = ({ finance }) => {
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const borderColor = useColorModeValue('black', 'white');
 
-  const { course, plan } = router.query;
+  const {
+    course, plan, user_id, cohort_id, plan_id,
+  } = router.query;
   const planChoosed = plan || 'trial';
-  const courseChoosed = course || 'coding-introduction';
+  const courseChoosed = course || plan_id || 'coding-introduction';
   const courseTitle = finance[courseChoosed];
   const planProps = finance.plans.find((l) => l.type === planChoosed);
 
@@ -112,6 +115,27 @@ const SignUp = ({ finance }) => {
     phone: Yup.string().matches(phone, t('validators.invalid-phone')).required(t('validators.phone-required')),
     confirm_email: Yup.string().oneOf([Yup.ref('email'), null], t('validators.confirm-email-not-match')).required(t('validators.confirm-email-required')),
   });
+
+  useEffect(async () => {
+    console.log(router.query);
+    if (!!user_id && !!cohort_id) {
+      const resp = await bc.cohort().user({ cohortId: cohort_id, userId: user_id });
+      if (resp?.status < 400) {
+        setStepIndex(1);
+        setFormProps({
+          ...resp.data.profile_academy,
+          phone: `+${resp.data.profile_academy.phone}`,
+        });
+      } else {
+        toast({
+          title: t('alert-message:cohort-or-user-not-found'),
+          status: 'warning',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    }
+  }, [router.query]);
 
   useEffect(() => {
     // autocomplete values for input
@@ -577,6 +601,7 @@ const SignUp = ({ finance }) => {
               variant="outline"
               borderColor="currentColor"
               color="blue.default"
+              disabled={formProps.email.length > 0 && isSecondStep}
               onClick={() => {
                 if (stepIndex > 0) {
                   setStepIndex(stepIndex - 1);
