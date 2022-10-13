@@ -118,7 +118,7 @@ const TableInfo = ({ t, project, commonTextColor }) => (
       <SimpleTable
         href="/interactive-coding-tutorials"
         difficulty={project.difficulty !== null && project.difficulty.toLowerCase()}
-        repository={project.url}
+        repository={project?.url}
         duration={project.duration}
         videoAvailable={project.solution_video_url}
         technologies={project.technologies}

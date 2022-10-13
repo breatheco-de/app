@@ -58,15 +58,21 @@ const SimpleTable = ({
         <Text size="l" color={commonTextColor}>
           {t('common:repository')}
         </Text>
-        <Link
-          href={repository}
-          color="blue.default"
-          fontSize="15px"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {t('common:click-to-open')}
-        </Link>
+        {repository ? (
+          <Link
+            href={repository || ''}
+            color="blue.default"
+            fontSize="15px"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t('common:click-to-open')}
+          </Link>
+        ) : (
+          <Text size="l" color={commonTextColor}>
+            {t('common:not-available')}
+          </Text>
+        )}
       </Flex>
       <Flex
         width="100%"
