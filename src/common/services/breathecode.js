@@ -27,6 +27,14 @@ const breathecode = {
           token_type: 'one_time',
         },
       }),
+      getUser: ({ userId }) => axios({
+        method: 'get',
+        url: `${url}/academy/member/${userId}`,
+        headers: {
+          Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
+          academy: 4,
+        },
+      }),
     };
   },
 

@@ -22,6 +22,7 @@ import { phone } from '../utils/regex';
 import useGoogleMaps from '../common/hooks/useGoogleMaps';
 import AlertMessage from '../common/components/AlertMessage';
 import useStyle from '../common/hooks/useStyle';
+import useAuth from '../common/hooks/useAuth';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -66,6 +67,7 @@ const SignUp = ({ finance }) => {
   const [cohortIsLoading, setCohortIsLoading] = useState(true);
   const [location, setLocation] = useState(null);
   const [addressValue, setAddressValue] = useState('');
+  const userData = useAuth();
 
   const autoCompleteRef = useRef();
   const inputRef = useRef();
@@ -81,7 +83,7 @@ const SignUp = ({ finance }) => {
   const borderColor2 = useColorModeValue('black', 'white');
 
   const {
-    course, plan, user_id, cohort_id, plan_id,
+    course, plan, plan_id,
   } = router.query;
   const planChoosed = plan || 'trial';
   const courseChoosed = course || plan_id || 'coding-introduction';
@@ -118,25 +120,17 @@ const SignUp = ({ finance }) => {
     confirm_email: Yup.string().oneOf([Yup.ref('email'), null], t('validators.confirm-email-not-match')).required(t('validators.confirm-email-required')),
   });
 
-  useEffect(async () => {
-    if (!!user_id && !!cohort_id) {
-      const resp = await bc.cohort().user({ cohortId: cohort_id, userId: user_id });
-      if (resp?.status < 400) {
-        setStepIndex(1);
-        setFormProps({
-          ...resp.data.profile_academy,
-          phone: `+${resp.data.profile_academy.phone}`,
-        });
-      } else {
-        toast({
-          title: t('alert-message:cohort-or-user-not-found'),
-          status: 'warning',
-          duration: 5000,
-          isClosable: true,
-        });
-      }
+  useEffect(() => {
+    if (userData.user && !userData.isLoading) {
+      setStepIndex(1);
+      setFormProps({
+        first_name: userData.user.first_name,
+        last_name: userData.user.last_name,
+        email: userData.user.email,
+        phone: '',
+      });
     }
-  }, [router.query]);
+  }, [userData.isLoading]);
 
   useEffect(() => {
     // autocomplete values for input
