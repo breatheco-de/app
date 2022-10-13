@@ -22,6 +22,7 @@ const MarkDownParser = ({
   const { t } = useTranslation('common');
   const [learnpackActions, setLearnpackActions] = useState([]);
   const [cohortSession] = usePersistent('cohortSession', {});
+  const [profile] = usePersistent('profile', {});
 
   const newExerciseText = t('learnpack.new-exercise');
   const continueExerciseText = t('learnpack.continue-exercise');
@@ -96,7 +97,7 @@ const MarkDownParser = ({
           // table: {
           //   component: MDTable,
           // },
-          onlyfor: ({ ...props }) => <OnlyForBanner cohortSession={cohortSession} {...props} />,
+          onlyfor: ({ ...props }) => <OnlyForBanner cohortSession={cohortSession} profile={profile} {...props} />,
           // Component for list of checkbox
           // children[1].props.node.children[0].properties.type
           li: ({ ...props }) => {
