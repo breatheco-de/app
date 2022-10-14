@@ -1,6 +1,11 @@
 /* eslint-disable camelcase */
 import {
-  Box, Button, Img, Input, useColorModeValue, useToast,
+  Box,
+  Button,
+  Img,
+  Input,
+  useColorModeValue,
+  useToast,
 } from '@chakra-ui/react';
 import { useState, useEffect, useRef } from 'react';
 import getT from 'next-translate/getT';
@@ -27,11 +32,10 @@ import useAuth from '../common/hooks/useAuth';
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
-  const finance = getDataContentProps(
-    `public/locales/${locale}`,
-    'finance',
-  );
-  const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
+  const finance = getDataContentProps(`public/locales/${locale}`, 'finance');
+  const image = t('seo.image', {
+    domain: process.env.WEBSITE_URL || 'https://4geeks.com',
+  });
   const ogUrl = {
     en: '/signup',
     us: '/signup',
@@ -76,14 +80,17 @@ const SignUp = ({ finance }) => {
   const { borderColor } = useStyle();
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
 
-  const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(GOOGLE_KEY, 'places');
+  const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(
+    GOOGLE_KEY,
+    'places',
+  );
 
   const fontColor = useColorModeValue('gray.800', 'gray.300');
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const borderColor2 = useColorModeValue('black', 'white');
 
   const {
-    course, plan, plan_id,
+    course, plan, plan_id, cohort_id,
   } = router.query;
   const planChoosed = plan || 'trial';
   const courseChoosed = course || plan_id || 'coding-introduction';
@@ -98,31 +105,69 @@ const SignUp = ({ finance }) => {
     confirm_email: '',
   });
 
-  const handleChooseDate = (date) => {
-    const kickoffDate = {
-      en: date?.kickoff_date && format(new Date(date.kickoff_date), 'MMMM do'),
-      es: date?.kickoff_date && format(new Date(date.kickoff_date), 'MMMM d', { locale: es }),
-    };
-
-    setDateProps({ ...date, kickoffDate });
-    setStepIndex(2);
-  };
-
   const isFirstStep = stepIndex === 0;
   const isSecondStep = stepIndex === 1;
   const isThirdStep = stepIndex === 2;
 
   const signupValidation = Yup.object().shape({
-    first_name: Yup.string().min(2, t('validators.short-input')).max(50, t('validators.long-input')).required(t('validators.first-name-required')),
-    last_name: Yup.string().min(2, t('validators.short-input')).max(50, t('validators.long-input')).required(t('validators.last-name-required')),
-    email: Yup.string().email(t('validators.invalid-email')).required(t('validators.email-required')),
-    phone: Yup.string().matches(phone, t('validators.invalid-phone')).required(t('validators.phone-required')),
-    confirm_email: Yup.string().oneOf([Yup.ref('email'), null], t('validators.confirm-email-not-match')).required(t('validators.confirm-email-required')),
+    first_name: Yup.string()
+      .min(2, t('validators.short-input'))
+      .max(50, t('validators.long-input'))
+      .required(t('validators.first-name-required')),
+    last_name: Yup.string()
+      .min(2, t('validators.short-input'))
+      .max(50, t('validators.long-input'))
+      .required(t('validators.last-name-required')),
+    email: Yup.string()
+      .email(t('validators.invalid-email'))
+      .required(t('validators.email-required')),
+    phone: Yup.string()
+      .matches(phone, t('validators.invalid-phone'))
+      .required(t('validators.phone-required')),
+    confirm_email: Yup.string()
+      .oneOf([Yup.ref('email'), null], t('validators.confirm-email-not-match'))
+      .required(t('validators.confirm-email-required')),
   });
+
+  const handleChooseDate = (date, skip = true) => {
+    const kickoffDate = {
+      en: date?.kickoff_date && format(new Date(date.kickoff_date), 'MMMM do'),
+      es:
+        date?.kickoff_date
+        && format(new Date(date.kickoff_date), 'MMMM d', { locale: es }),
+    };
+
+    setDateProps({ ...date, kickoffDate });
+    if (skip) {
+      setStepIndex(2);
+    }
+  };
+
+  useEffect(async () => {
+    if (cohort_id) {
+      const resp = await bc.cohort().getPublic(cohort_id);
+
+      if (resp.status >= 400) {
+        toast({
+          title: t('alert-message:cohort-not-found'),
+          type: 'warning',
+          duration: 4000,
+          isClosable: true,
+        });
+      } else {
+        handleChooseDate(resp.data, false);
+        if (userData.user && !userData.isLoading) {
+          setStepIndex(2);
+        }
+        // setAvailableDates(resp.data);
+        // setStepIndex(2);
+      }
+    }
+  }, [cohort_id, userData]);
 
   useEffect(() => {
     if (userData.user && !userData.isLoading) {
-      setStepIndex(1);
+      if (!cohort_id) setStepIndex(1);
       setFormProps({
         first_name: userData.user.first_name,
         last_name: userData.user.last_name,
@@ -130,7 +175,7 @@ const SignUp = ({ finance }) => {
         phone: '',
       });
     }
-  }, [userData.isLoading]);
+  }, [userData.isLoading, cohort_id]);
 
   useEffect(() => {
     // autocomplete values for input
@@ -150,27 +195,24 @@ const SignUp = ({ finance }) => {
       });
 
       // search button handler
-      buttonRef.current.addEventListener(
-        'click',
-        () => {
-          setIsLoading(true);
-          geocode({ address: addressValue })
-            .then((results) => {
-              setCoords({
-                latitude: results.geometry.location.lat(),
-                longitude: results.geometry.location.lng(),
-              });
-            })
-            .catch(() => {
-              toast({
-                title: t('alert-message:google-maps-no-coincidences'),
-                status: 'warning',
-                duration: 5000,
-              });
-            })
-            .finally(() => setIsLoading(false));
-        },
-      );
+      buttonRef.current.addEventListener('click', () => {
+        setIsLoading(true);
+        geocode({ address: addressValue })
+          .then((results) => {
+            setCoords({
+              latitude: results.geometry.location.lat(),
+              longitude: results.geometry.location.lng(),
+            });
+          })
+          .catch(() => {
+            toast({
+              title: t('alert-message:google-maps-no-coincidences'),
+              status: 'warning',
+              duration: 5000,
+            });
+          })
+          .finally(() => setIsLoading(false));
+      });
     }
   }, [isSecondStep, gmapStatus]);
 
@@ -184,7 +226,8 @@ const SignUp = ({ finance }) => {
         saas: true,
         syllabus_slug: courseChoosed,
         upcoming: true,
-      }).cohorts()
+      })
+        .cohorts()
         .then(({ data }) => {
           setAvailableDates(data);
           if (data.length < 1) {
@@ -212,29 +255,36 @@ const SignUp = ({ finance }) => {
 
   useEffect(() => {
     if (gmapStatus.loaded) {
-      getNearestLocation(GOOGLE_KEY)
-        .then(({ data }) => {
-          if (data) {
-            setCoords({
-              latitude: data.location.lat,
-              longitude: data.location.lng,
-            });
-          }
+      getNearestLocation(GOOGLE_KEY).then(({ data }) => {
+        if (data) {
+          setCoords({
+            latitude: data.location.lat,
+            longitude: data.location.lng,
+          });
+        }
 
-          geocode({ location: data.location })
-            .then((result) => {
-              setLocation({
-                country: result[0]?.address_components[6]?.long_name,
-                city: result[0]?.address_components[5]?.long_name,
-              });
-            });
+        geocode({ location: data.location }).then((result) => {
+          setLocation({
+            country: result[0]?.address_components[6]?.long_name,
+            city: result[0]?.address_components[5]?.long_name,
+          });
         });
+      });
     }
   }, [gmapStatus]);
 
   const LoaderContent = () => (cohortIsLoading ? (
     <Box display="flex" justifyContent="center" mt="2rem" mb="10rem">
-      <Img src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
+      <Img
+        src="/4Geeks.ico"
+        width="35px"
+        height="35px"
+        position="absolute"
+        mt="6px"
+        zIndex="40"
+        boxShadow="0px 0px 16px 0px #0097cd"
+        borderRadius="40px"
+      />
       <Box className="loader" />
     </Box>
   ) : (
@@ -248,32 +298,82 @@ const SignUp = ({ finance }) => {
     <Box p="2.5rem 2rem">
       {/* Stepper */}
       <Box display="flex" gridGap="38px" justifyContent="center">
-        <Box display="flex" gridGap="8px" alignItems="center" color={stepIndex !== 0 && 'gray.350'}>
-          {(isSecondStep || isThirdStep) ? (
+        <Box
+          display="flex"
+          gridGap="8px"
+          alignItems="center"
+          color={stepIndex !== 0 && 'gray.350'}
+        >
+          {isSecondStep || isThirdStep ? (
             <Icon icon="verified" width="30px" height="30px" />
           ) : (
-            <Heading as="span" size="sm" p={isFirstStep ? '3px 8px' : '2px 5px'} mr={isFirstStep && '4px'} background={isFirstStep && 'blue.default'} color={isFirstStep && 'white'} borderRadius="3px" fontWeight="700">
+            <Heading
+              as="span"
+              size="sm"
+              p={isFirstStep ? '3px 8px' : '2px 5px'}
+              mr={isFirstStep && '4px'}
+              background={isFirstStep && 'blue.default'}
+              color={isFirstStep && 'white'}
+              borderRadius="3px"
+              fontWeight="700"
+            >
               1.
             </Heading>
           )}
-          <Heading size="sm" fontWeight={isFirstStep ? '700' : '500'} color={(isSecondStep || isThirdStep) && 'success'}>
+          <Heading
+            size="sm"
+            fontWeight={isFirstStep ? '700' : '500'}
+            color={(isSecondStep || isThirdStep) && 'success'}
+          >
             {t('contact-information')}
           </Heading>
         </Box>
-        <Box display="flex" gridGap="8px" alignItems="center" color={stepIndex !== 1 && 'gray.350'}>
-          {(isThirdStep) ? (
+        <Box
+          display="flex"
+          gridGap="8px"
+          alignItems="center"
+          color={stepIndex !== 1 && 'gray.350'}
+        >
+          {isThirdStep ? (
             <Icon icon="verified" width="30px" height="30px" />
           ) : (
-            <Heading as="span" size="sm" p={isSecondStep ? '3px 8px' : '2px 5px'} mr={isSecondStep && '4px'} background={isSecondStep && 'blue.default'} color={isSecondStep && 'white'} borderRadius="3px" fontWeight="500">
+            <Heading
+              as="span"
+              size="sm"
+              p={isSecondStep ? '3px 8px' : '2px 5px'}
+              mr={isSecondStep && '4px'}
+              background={isSecondStep && 'blue.default'}
+              color={isSecondStep && 'white'}
+              borderRadius="3px"
+              fontWeight="500"
+            >
               2.
             </Heading>
           )}
-          <Heading size="sm" fontWeight={isSecondStep ? '700' : '500'} color={isThirdStep && 'success'}>
+          <Heading
+            size="sm"
+            fontWeight={isSecondStep ? '700' : '500'}
+            color={isThirdStep && 'success'}
+          >
             {t('choose-your-class')}
           </Heading>
         </Box>
-        <Box display="flex" gridGap="8px" alignItems="center" color={stepIndex !== 2 && 'gray.350'}>
-          <Heading as="span" size="sm" p={isThirdStep ? '3px 8px' : '2px 5px'} mr={isThirdStep && '4px'} background={isThirdStep && 'blue.default'} color={isThirdStep && 'white'} borderRadius="3px" fontWeight="500">
+        <Box
+          display="flex"
+          gridGap="8px"
+          alignItems="center"
+          color={stepIndex !== 2 && 'gray.350'}
+        >
+          <Heading
+            as="span"
+            size="sm"
+            p={isThirdStep ? '3px 8px' : '2px 5px'}
+            mr={isThirdStep && '4px'}
+            background={isThirdStep && 'blue.default'}
+            color={isThirdStep && 'white'}
+            borderRadius="3px"
+            fontWeight="500"
+          >
             3.
           </Heading>
           <Heading size="sm" fontWeight={isThirdStep ? '700' : '500'}>
@@ -282,12 +382,17 @@ const SignUp = ({ finance }) => {
         </Box>
       </Box>
 
-      <Box display="flex" flexDirection="column" gridGap="20px" minHeight="320px" maxWidth={{ base: '100%', md: '800px' }} margin="3.5rem auto 0 auto">
+      <Box
+        display="flex"
+        flexDirection="column"
+        gridGap="20px"
+        minHeight="320px"
+        maxWidth={{ base: '100%', md: '800px' }}
+        margin="3.5rem auto 0 auto"
+      >
         {isFirstStep && (
           <>
-            <Heading size="18px">
-              {t('about-you')}
-            </Heading>
+            <Heading size="18px">{t('about-you')}</Heading>
 
             <Formik
               initialValues={{
@@ -306,9 +411,14 @@ const SignUp = ({ finance }) => {
                     city: location?.city,
                     language: router.locale,
                   };
-                  bc.marketing().lead(allValues)
+                  bc.marketing()
+                    .lead(allValues)
                     .then(() => {
-                      setStepIndex(stepIndex + 1);
+                      if (cohort_id && dateProps) {
+                        setStepIndex(2);
+                      } else {
+                        setStepIndex(stepIndex + 1);
+                      }
                     })
                     .finally(() => actions.setSubmitting(false));
                 }
@@ -316,7 +426,13 @@ const SignUp = ({ finance }) => {
               validationSchema={signupValidation}
             >
               {({ isSubmitting }) => (
-                <Form style={{ display: 'flex', flexDirection: 'column', gridGap: '22px' }}>
+                <Form
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gridGap: '22px',
+                  }}
+                >
                   <Box display="flex" gridGap="18px">
                     <Box display="flex" gridGap="18px" flex={0.5}>
                       <FieldForm
@@ -334,7 +450,14 @@ const SignUp = ({ finance }) => {
                         setFormProps={setFormProps}
                       />
                     </Box>
-                    <Box display="flex" flex={0.5} flexDirection="column" fontSize="12px" color="blue.default2" gridGap="4px">
+                    <Box
+                      display="flex"
+                      flex={0.5}
+                      flexDirection="column"
+                      fontSize="12px"
+                      color="blue.default2"
+                      gridGap="4px"
+                    >
                       <PhoneInput
                         inputStyle={{ height: '50px' }}
                         setVal={setFormProps}
@@ -346,7 +469,13 @@ const SignUp = ({ finance }) => {
                     </Box>
                   </Box>
                   <Box display="flex" gridGap="18px">
-                    <Box display="flex" flex={0.5} flexDirection="column" fontSize="12px" gridGap="4px">
+                    <Box
+                      display="flex"
+                      flex={0.5}
+                      flexDirection="column"
+                      fontSize="12px"
+                      gridGap="4px"
+                    >
                       <FieldForm
                         type="email"
                         name="email"
@@ -354,9 +483,7 @@ const SignUp = ({ finance }) => {
                         formProps={formProps}
                         setFormProps={setFormProps}
                       />
-                      <Box color="blue.default2">
-                        {t('email-info')}
-                      </Box>
+                      <Box color="blue.default2">{t('email-info')}</Box>
                     </Box>
 
                     <FieldForm
@@ -384,61 +511,108 @@ const SignUp = ({ finance }) => {
         )}
         {isSecondStep && (
           <>
-            <Heading size="18px">
-              {t('your-address')}
-            </Heading>
+            <Heading size="18px">{t('your-address')}</Heading>
             <Box display="flex" gridGap="18px" alignItems="center" mt="10px">
-              <Input ref={inputRef} id="address-input" onChange={(e) => setAddressValue(e.target.value)} className="controls" type="text" placeholder={t('address')} height="50px" />
+              <Input
+                ref={inputRef}
+                id="address-input"
+                onChange={(e) => setAddressValue(e.target.value)}
+                className="controls"
+                type="text"
+                placeholder={t('address')}
+                height="50px"
+              />
 
-              <Button type="button" height="50px" ref={buttonRef} isLoading={isLoading} value="Geocode" variant="default">
+              <Button
+                type="button"
+                height="50px"
+                ref={buttonRef}
+                isLoading={isLoading}
+                value="Geocode"
+                variant="default"
+              >
                 {t('search-dates')}
               </Button>
             </Box>
-            <Box display="flex" flex={1} flexDirection="column" fontSize="12px" color="blue.default2" mt="-12px" w="80%">
+            <Box
+              display="flex"
+              flex={1}
+              flexDirection="column"
+              fontSize="12px"
+              color="blue.default2"
+              mt="-12px"
+              w="80%"
+            >
               {t('addres-info')}
             </Box>
             <Heading size="18px" m="1rem 0 1rem 0">
               {t('available-dates')}
             </Heading>
-            <Box display="flex" flexDirection="column" mb="2rem" gridGap="40px" p="0 1rem">
-              {(availableDates?.length > 0 && !cohortIsLoading) ? availableDates.map((date, i) => {
-                const kickoffDate = {
-                  en: date?.kickoff_date && format(new Date(date.kickoff_date), 'MMM do'),
-                  es: date?.kickoff_date && format(new Date(date.kickoff_date), 'MMM d', { locale: es }),
-                };
+            <Box
+              display="flex"
+              flexDirection="column"
+              mb="2rem"
+              gridGap="40px"
+              p="0 1rem"
+            >
+              {availableDates?.length > 0 && !cohortIsLoading ? (
+                availableDates.map((date, i) => {
+                  const kickoffDate = {
+                    en:
+                      date?.kickoff_date
+                      && format(new Date(date.kickoff_date), 'MMM do'),
+                    es:
+                      date?.kickoff_date
+                      && format(new Date(date.kickoff_date), 'MMM d', {
+                        locale: es,
+                      }),
+                  };
 
-                const dateIndex = i;
-                return (
-                  <Box display="flex" gridGap="30px" key={dateIndex}>
-                    <Text size="18px" flex={0.35}>
-                      {/* {date.title} */}
-                      {date.syllabus_version.name}
-                    </Text>
-                    <Box display="flex" flexDirection="column" gridGap="5px" flex={0.2}>
-                      <Text size="18px">
-                        {/* {date.date} */}
-                        {kickoffDate[router.locale]}
+                  const dateIndex = i;
+                  return (
+                    <Box display="flex" gridGap="30px" key={dateIndex}>
+                      <Text size="18px" flex={0.35}>
+                        {/* {date.title} */}
+                        {date.syllabus_version.name}
                       </Text>
-                      <Text size="14px" color="gray.default">
-                        {date?.schedule?.name}
-                      </Text>
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        gridGap="5px"
+                        flex={0.2}
+                      >
+                        <Text size="18px">
+                          {/* {date.date} */}
+                          {kickoffDate[router.locale]}
+                        </Text>
+                        <Text size="14px" color="gray.default">
+                          {date?.schedule?.name}
+                        </Text>
+                      </Box>
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        gridGap="5px"
+                        flex={0.3}
+                      >
+                        <Text size="18px">{date?.schedule?.name}</Text>
+                        <Text size="14px" color="gray.default">
+                          {date?.timezone}
+                        </Text>
+                      </Box>
+                      <Button
+                        variant="outline"
+                        onClick={() => handleChooseDate(date)}
+                        borderColor="currentColor"
+                        color="blue.default"
+                        flex={0.15}
+                      >
+                        {t('choose-date')}
+                      </Button>
                     </Box>
-                    <Box display="flex" flexDirection="column" gridGap="5px" flex={0.3}>
-                      <Text size="18px">
-                        {date?.schedule?.name}
-                      </Text>
-                      <Text size="14px" color="gray.default">
-                        {/* {date.formatTime} */}
-                        {`(UTC-05:00) Eastern Time
-                        (US & Canada)`}
-                      </Text>
-                    </Box>
-                    <Button variant="outline" onClick={() => handleChooseDate(date)} borderColor="currentColor" color="blue.default" flex={0.15}>
-                      {t('choose-date')}
-                    </Button>
-                  </Box>
-                );
-              }) : (
+                  );
+                })
+              ) : (
                 <LoaderContent />
               )}
             </Box>
@@ -447,13 +621,29 @@ const SignUp = ({ finance }) => {
         )}
         {/* dateProps */}
         {isThirdStep && (
-          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="30px" mb="1rem">
-            <Box display="flex" flexDirection="column" flex={0.5} gridGap="3rem">
+          <Box
+            display="flex"
+            flexDirection={{ base: 'column', md: 'row' }}
+            gridGap="30px"
+            mb="1rem"
+          >
+            <Box
+              display="flex"
+              flexDirection="column"
+              flex={0.5}
+              gridGap="3rem"
+            >
               <Box display="flex" flexDirection="column" gridGap="10px">
                 <Heading size="18px" textTransform="uppercase">
                   {t('cohort-details')}
                 </Heading>
-                <Box as="hr" width="30%" margin="0 0 10px 0" h="1px" borderColor={borderColor2} />
+                <Box
+                  as="hr"
+                  width="30%"
+                  margin="0 0 10px 0"
+                  h="1px"
+                  borderColor={borderColor2}
+                />
                 <Box display="flex" flexDirection="column" gridGap="10px">
                   <Text size="md" fontWeight="700">
                     {t('cohort-name')}
@@ -463,7 +653,13 @@ const SignUp = ({ finance }) => {
                   </Text>
                 </Box>
 
-                <Box as="hr" width="100%" margin="0 0" h="1px" borderColor={borderColor} />
+                <Box
+                  as="hr"
+                  width="100%"
+                  margin="0 0"
+                  h="1px"
+                  borderColor={borderColor}
+                />
 
                 <Box display="flex" flexDirection="column" gridGap="10px">
                   <Text size="md" fontWeight="700">
@@ -474,7 +670,13 @@ const SignUp = ({ finance }) => {
                   </Text>
                 </Box>
 
-                <Box as="hr" width="100%" margin="0 0" h="1px" borderColor={borderColor} />
+                <Box
+                  as="hr"
+                  width="100%"
+                  margin="0 0"
+                  h="1px"
+                  borderColor={borderColor}
+                />
 
                 <Box display="flex" flexDirection="column" gridGap="10px">
                   <Text size="md" fontWeight="700">
@@ -488,8 +690,7 @@ const SignUp = ({ finance }) => {
                   </Text>
                   <Text size="md" fontWeight="400" color={fontColor}>
                     {/* {dateProps?.formatTime} */}
-                    {`(UTC-05:00) Eastern Time
-                        (US & Canada)`}
+                    {dateProps?.timezone}
                   </Text>
                 </Box>
               </Box>
@@ -498,7 +699,13 @@ const SignUp = ({ finance }) => {
                 <Heading size="18px" textTransform="uppercase">
                   {t('profile-details')}
                 </Heading>
-                <Box as="hr" width="30%" margin="0 0 10px 0" h="1px" borderColor={borderColor2} />
+                <Box
+                  as="hr"
+                  width="30%"
+                  margin="0 0 10px 0"
+                  h="1px"
+                  borderColor={borderColor2}
+                />
                 <Box display="flex" flexDirection="column" gridGap="10px">
                   <Text size="md" fontWeight="700">
                     {t('your-name')}
@@ -507,16 +714,24 @@ const SignUp = ({ finance }) => {
                     {`${formProps?.first_name} ${formProps?.last_name}`}
                   </Text>
                 </Box>
-                <Box as="hr" width="100%" margin="0 0" h="1px" borderColor={borderColor} />
+                <Box
+                  as="hr"
+                  width="100%"
+                  margin="0 0"
+                  h="1px"
+                  borderColor={borderColor}
+                />
                 <Box display="flex" flexDirection="row" gridGap="10px">
-                  <Box display="flex" flexDirection="column" gridGap="10px">
-                    <Text size="md" fontWeight="700">
-                      {t('phone-number')}
-                    </Text>
-                    <Text size="md" fontWeight="400" color={fontColor}>
-                      {formProps?.phone}
-                    </Text>
-                  </Box>
+                  {formProps?.phone && (
+                    <Box display="flex" flexDirection="column" gridGap="10px">
+                      <Text size="md" fontWeight="700">
+                        {t('phone-number')}
+                      </Text>
+                      <Text size="md" fontWeight="400" color={fontColor}>
+                        {formProps?.phone}
+                      </Text>
+                    </Box>
+                  )}
                   <Box display="flex" flexDirection="column" gridGap="10px">
                     <Text size="md" fontWeight="700">
                       {t('email')}
@@ -529,43 +744,97 @@ const SignUp = ({ finance }) => {
               </Box>
             </Box>
             <Box display="flex" flexDirection="column" flex={0.6}>
-              <Box display="flex" flexDirection="column" background={featuredBackground} w="100%" height="fit-content" p="11px 14px" gridGap="12px" borderRadius="14px">
-                <Heading size="15px" color="blue.default" textTransform="uppercase">
+              <Box
+                display="flex"
+                flexDirection="column"
+                background={featuredBackground}
+                w="100%"
+                height="fit-content"
+                p="11px 14px"
+                gridGap="12px"
+                borderRadius="14px"
+              >
+                <Heading
+                  size="15px"
+                  color="blue.default"
+                  textTransform="uppercase"
+                >
                   {t('signing-for')}
                 </Heading>
                 <Box display="flex" gridGap="12px">
                   <Box display="flex" flexDirection="column">
-                    <Box p="16px" background="blue.default" borderRadius="7px" width="fit-content">
-                      <Icon icon="coding" width="48px" height="48px" color="#fff" />
+                    <Box
+                      p="16px"
+                      background="blue.default"
+                      borderRadius="7px"
+                      width="fit-content"
+                    >
+                      <Icon
+                        icon="coding"
+                        width="48px"
+                        height="48px"
+                        color="#fff"
+                      />
                     </Box>
                   </Box>
                   <Box display="flex" flexDirection="column" gridGap="7px">
-                    <Heading size="18px">
-                      {courseTitle}
-                    </Heading>
+                    <Heading size="18px">{courseTitle}</Heading>
                     {planProps?.payment && (
-                      <Heading size="15px" textTransform="uppercase" color={useColorModeValue('gray.500', 'gray.400')}>
+                      <Heading
+                        size="15px"
+                        textTransform="uppercase"
+                        color={useColorModeValue('gray.500', 'gray.400')}
+                      >
                         {planProps?.payment}
                       </Heading>
                     )}
                   </Box>
                   {planProps?.price && (
-                    <Heading size="sm" color="blue.default" textTransform="uppercase" textAlign="end">
+                    <Heading
+                      size="sm"
+                      color="blue.default"
+                      textTransform="uppercase"
+                      textAlign="end"
+                    >
                       {planProps?.price}
                     </Heading>
                   )}
-
                 </Box>
-                <Box as="hr" width="100%" margin="0" h="1px" borderColor={borderColor} />
+                <Box
+                  as="hr"
+                  width="100%"
+                  margin="0"
+                  h="1px"
+                  borderColor={borderColor}
+                />
                 {planProps?.bullets?.title && (
                   <Box fontSize="14px" fontWeight="700" color="blue.default">
                     {planProps?.bullets?.title}
                   </Box>
                 )}
-                <Box as="ul" style={{ listStyle: 'none' }} display="flex" flexDirection="column" gridGap="12px">
+                <Box
+                  as="ul"
+                  style={{ listStyle: 'none' }}
+                  display="flex"
+                  flexDirection="column"
+                  gridGap="12px"
+                >
                   {planProps?.bullets?.list?.map((bullet) => (
-                    <Box as="li" key={bullet?.title} display="flex" flexDirection="row" lineHeight="24px" gridGap="8px">
-                      <Icon icon="checked2" color="#38A56A" width="13px" height="10px" style={{ margin: '8px 0 0 0' }} />
+                    <Box
+                      as="li"
+                      key={bullet?.title}
+                      display="flex"
+                      flexDirection="row"
+                      lineHeight="24px"
+                      gridGap="8px"
+                    >
+                      <Icon
+                        icon="checked2"
+                        color="#38A56A"
+                        width="13px"
+                        height="10px"
+                        style={{ margin: '8px 0 0 0' }}
+                      />
                       <Box
                         fontSize="14px"
                         fontWeight="600"
@@ -582,7 +851,16 @@ const SignUp = ({ finance }) => {
                 </Button>
               )}
               {planProps.type.includes('trial') && (
-                <Button variant="outline" borderColor="blue.200" background={featuredBackground} _hover={{ background: featuredBackground, opacity: 0.8 }} _active={{ background: featuredBackground, opacity: 1 }} color="blue.default" height="45px" mt="12px">
+                <Button
+                  variant="outline"
+                  borderColor="blue.200"
+                  background={featuredBackground}
+                  _hover={{ background: featuredBackground, opacity: 0.8 }}
+                  _active={{ background: featuredBackground, opacity: 1 }}
+                  color="blue.default"
+                  height="45px"
+                  mt="12px"
+                >
                   Start free trial
                 </Button>
               )}
@@ -596,7 +874,7 @@ const SignUp = ({ finance }) => {
               variant="outline"
               borderColor="currentColor"
               color="blue.default"
-              disabled={formProps.email.length > 0 && isSecondStep}
+              disabled={cohort_id || formProps.email.length > 0 || isSecondStep}
               onClick={() => {
                 if (stepIndex > 0) {
                   setStepIndex(stepIndex - 1);
@@ -605,7 +883,6 @@ const SignUp = ({ finance }) => {
             >
               {t('go-back')}
             </Button>
-
           )}
           {stepIndex !== 0 && stepIndex !== 2 && (
             <Button
