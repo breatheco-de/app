@@ -6,7 +6,7 @@ import {
   Checkbox, Input, InputGroup, InputRightElement, IconButton,
   keyframes, usePrefersReducedMotion, Avatar, useColorMode,
   Modal, ModalBody, ModalCloseButton, ModalContent,
-  ModalHeader, ModalOverlay, Button,
+  ModalHeader, ModalOverlay, Button, useMediaQuery,
 } from '@chakra-ui/react';
 // import io from 'socket.io-client';
 import { useRouter } from 'next/router';
@@ -56,6 +56,8 @@ const Dashboard = () => {
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const { user, choose, isLoading } = useAuth();
   const [, setSyllabus] = usePersistent('syllabus', []);
+  const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
+
   const teacherAndAssistants = studentAndTeachers.filter((st) => st.role === 'TEACHER' || st.role === 'ASSISTANT');
 
   const { cohortSlug, slug } = router.query;
@@ -471,40 +473,42 @@ const Dashboard = () => {
                 borderRadius="30px"
               />
             )}
-            <Box
-              display={{ base: 'flex', md: 'none' }}
-              flexDirection="column"
-              gridGap="30px"
-            >
-              <OnlyFor onlyMember cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
-                <TeacherSidebar
-                  title={t('teacher-sidebar.actions')}
-                  user={user}
-                  students={onlyStudentsActive}
-                  sortedAssignments={sortedAssignments}
+            {isBelowTablet && (
+              <Box
+                display={{ base: 'flex', md: 'none' }}
+                flexDirection="column"
+                gridGap="30px"
+              >
+                <OnlyFor onlyMember cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
+                  <TeacherSidebar
+                    title={t('teacher-sidebar.actions')}
+                    user={user}
+                    students={onlyStudentsActive}
+                    sortedAssignments={sortedAssignments}
+                    width="100%"
+                  />
+                </OnlyFor>
+                {cohortSession?.kickoff_date && (
+                <CohortSideBar
+                  cohortSession={cohortSession}
+                  teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
+                  cohort={cohortSession}
+                  studentAndTeachers={studentAndTeachers}
+                  cohortCity={cohortSession?.name}
                   width="100%"
                 />
-              </OnlyFor>
-              {cohortSession?.kickoff_date && (
-              <CohortSideBar
-                cohortSession={cohortSession}
-                teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
-                cohort={cohortSession}
-                studentAndTeachers={studentAndTeachers}
-                cohortCity={cohortSession?.name}
-                width="100%"
-              />
-              )}
-              {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
-              <SupportSidebar
-                title={supportSideBar.title}
-                subtitle={supportSideBar.description}
-                teacherAndAssistants={teacherAndAssistants}
-                actionButtons={supportSideBar.actionButtons}
-                width="100%"
-              />
-              )}
-            </Box>
+                )}
+                {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
+                <SupportSidebar
+                  title={supportSideBar.title}
+                  subtitle={supportSideBar.description}
+                  teacherAndAssistants={teacherAndAssistants}
+                  actionButtons={supportSideBar.actionButtons}
+                  width="100%"
+                />
+                )}
+              </Box>
+            )}
             {
             cohortSession.current_module && dailyModuleData && (
               <CallToAction
@@ -627,65 +631,68 @@ const Dashboard = () => {
 
           </Box>
           <Box width="5rem" />
-          <Box
-            display={{ base: 'none', md: 'flex' }}
-            flexDirection="column"
-            gridGap="30px"
-            maxWidth="380px"
-            minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
-          >
-            <OnlyFor onlyMember cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
-              <TeacherSidebar
-                title={t('teacher-sidebar.actions')}
-                user={user}
-                students={onlyStudentsActive}
-                sortedAssignments={sortedAssignments}
+
+          {!isBelowTablet && (
+            <Box
+              display={{ base: 'none', md: 'flex' }}
+              flexDirection="column"
+              gridGap="30px"
+              maxWidth="380px"
+              minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
+            >
+              <OnlyFor onlyMember cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
+                <TeacherSidebar
+                  title={t('teacher-sidebar.actions')}
+                  user={user}
+                  students={onlyStudentsActive}
+                  sortedAssignments={sortedAssignments}
+                  width="100%"
+                />
+              </OnlyFor>
+              {cohortSession?.academy_owner?.white_labeled && (
+                <Box
+                  className="white-label"
+                  borderRadius="md"
+                  padding="10px"
+                  display="flex"
+                  justifyContent="space-around"
+                  bg={colorMode === 'light' ? '#F2F2F2' || 'blue.light' : 'featuredDark'}
+                >
+                  <Avatar
+                    name={cohortSession.academy_owner.name}
+                    src={cohortSession.academy_owner.icon_url}
+                  />
+                  <Box className="white-label-text" width="80%">
+                    <Text size="md" fontWeight="700" marginBottom="5px">
+                      {cohortSession.academy_owner.name}
+                    </Text>
+                    <Text size="sm">
+                      {t('whiteLabeledText')}
+                    </Text>
+                  </Box>
+                </Box>
+              )}
+              {cohortSession?.kickoff_date && (
+              <CohortSideBar
+                cohortSession={cohortSession}
+                teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
+                studentAndTeachers={studentAndTeachers}
+                cohort={cohortSession}
+                cohortCity={cohortSession?.name}
                 width="100%"
               />
-            </OnlyFor>
-            {cohortSession?.academy_owner?.white_labeled && (
-              <Box
-                className="white-label"
-                borderRadius="md"
-                padding="10px"
-                display="flex"
-                justifyContent="space-around"
-                bg={colorMode === 'light' ? '#F2F2F2' || 'blue.light' : 'featuredDark'}
-              >
-                <Avatar
-                  name={cohortSession.academy_owner.name}
-                  src={cohortSession.academy_owner.icon_url}
-                />
-                <Box className="white-label-text" width="80%">
-                  <Text size="md" fontWeight="700" marginBottom="5px">
-                    {cohortSession.academy_owner.name}
-                  </Text>
-                  <Text size="sm">
-                    {t('whiteLabeledText')}
-                  </Text>
-                </Box>
-              </Box>
-            )}
-            {cohortSession?.kickoff_date && (
-            <CohortSideBar
-              cohortSession={cohortSession}
-              teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
-              studentAndTeachers={studentAndTeachers}
-              cohort={cohortSession}
-              cohortCity={cohortSession?.name}
-              width="100%"
-            />
-            )}
-            {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
-            <SupportSidebar
-              title={supportSideBar.title}
-              subtitle={supportSideBar.description}
-              teacherAndAssistants={teacherAndAssistants}
-              actionButtons={supportSideBar.actionButtons}
-              width="100%"
-            />
-            )}
-          </Box>
+              )}
+              {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
+              <SupportSidebar
+                title={supportSideBar.title}
+                subtitle={supportSideBar.description}
+                teacherAndAssistants={teacherAndAssistants}
+                actionButtons={supportSideBar.actionButtons}
+                width="100%"
+              />
+              )}
+            </Box>
+          )}
         </Flex>
       </Container>
       {showGithubWarning === 'active' && (

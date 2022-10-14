@@ -58,6 +58,7 @@ const FilterModal = ({
   const handleSubmit = () => {
     const difficulty = difficulties[difficultyPosition] || '';
     const techs = checkedTechnologies.join(',') || '';
+    onClose();
     router.push({
       query: {
         ...router.query,

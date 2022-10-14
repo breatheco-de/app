@@ -110,7 +110,7 @@ export default function Home() {
               fontWeight="bold"
               color={commonColor}
             >
-              Join
+              {t('join')}
             </Text>
             <Text
               size="36px"

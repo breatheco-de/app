@@ -1,6 +1,7 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable brace-style */
 import { memo, useState, useEffect } from 'react';
-import { w3cwebsocket as W3CWebSocket } from 'websocket';
+// import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import {
   Box, Heading, Divider, Grid, useColorMode, useColorModeValue, Tabs,
   TabList, Tab, TabPanels, TabPanel, useToast, AvatarGroup, useMediaQuery,
@@ -16,52 +17,23 @@ import Icon from './Icon';
 import Text from './Text';
 import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 import { AvatarSkeleton } from './Skeleton';
+import useOnline from '../hooks/useOnline';
 
 const ProfilesSection = ({
-  title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher, cohortSession,
+  title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher, withoutPopover,
 }) => {
   const { t } = useTranslation('dashboard');
   const [showMoreStudents, setShowMoreStudents] = useState(false);
-  const [temporalToken, setTemporalToken] = useState(null);
-  const [usersConnected, setUsersConnected] = useState([]);
+  const { usersConnected } = useOnline();
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
 
   const assistantMaxLimit = isBelowTablet ? 3 : 4;
 
-  // limit the student list to 15 and when "showMoreStudents" is true, show all
   const studentsToShow = showMoreStudents ? profiles : profiles?.slice(0, 15);
   const singleTeacher = teacher[0];
   const teacherfullName = `${singleTeacher?.user?.first_name} ${singleTeacher?.user.last_name}`;
 
-  useEffect(() => {
-    bc.auth().temporalToken()
-      .then((res) => {
-        setTemporalToken(res.data);
-      });
-  }, []);
-
-  useEffect(() => {
-    if (temporalToken !== null && temporalToken?.token) {
-      console.log('temporal_token:', temporalToken);
-      const client = new W3CWebSocket(`wss://breathecode-test.herokuapp.com/ws/online?token=${temporalToken.token}`);
-      client.onopen = () => {
-        console.log('WebSocket Client Connected');
-      };
-
-      client.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.status === 'connected')
-        {
-          if (usersConnected?.includes(data?.id)) return;
-          setUsersConnected((prev) => [...prev, data?.id]);
-        } else if (data.status === 'disconnected')
-        {
-          const filteredUsers = usersConnected.filter((user) => user !== data?.id);
-          setUsersConnected(filteredUsers);
-        }
-      };
-    }
-  }, [temporalToken]);
+  const alumniGeeksContainer = document.querySelector('.alumni-geeks-container');
 
   return (
     <Box display="block">
@@ -96,7 +68,7 @@ const ProfilesSection = ({
               key={`${singleTeacher.id} - ${singleTeacher.user.first_name}`}
               fullName={teacherfullName}
               data={singleTeacher}
-              isOnline={singleTeacher.user.id === cohortSession.bc_id || usersConnected?.includes(singleTeacher.user.id)}
+              isOnline={usersConnected?.includes(singleTeacher.user.id)}
               badge
               customBadge={(
                 <Box position="absolute" bottom="-6px" right="-8px" background="blue.default" borderRadius="50px" p="5px" border="2px solid white">
@@ -109,19 +81,14 @@ const ProfilesSection = ({
             {
               studentsToShow?.map((c, i) => {
                 const fullName = `${c.user.first_name} ${c.user.last_name}`;
-                const isOnline = c.user.id === cohortSession.bc_id || usersConnected?.includes(c.user.id);
+                const isOnline = usersConnected?.includes(c.user.id);
                 return (
                   <AvatarUser
                     width="48px"
                     height="48px"
                     index={i}
                     key={`${c.id} - ${c.user.first_name}`}
-                    isMentor
                     isWrapped
-                    containerStyle={{
-                      // marginInlineEnd: '-0.8em',
-                      // marginInlineEnd: studentsToShow.length - 2 === i ? '+0.25em' : '-0.8em',
-                    }}
                     fullName={fullName}
                     data={c}
                     isOnline={isOnline}
@@ -134,15 +101,18 @@ const ProfilesSection = ({
         </Box>
       ) : (
         <Grid
+          className={paginationProps && 'alumni-geeks-container'}
           gridAutoRows="3.4rem"
           templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
           gap={0}
-          minH={showMoreStudents ? '395px' : 'auto'}
+          maxH={showMoreStudents ? '270px' : 'auto'}
+          height={showMoreStudents ? '100%' : 'auto'}
+          overflowY="auto"
         >
           {
             studentsToShow?.map((c) => {
               const fullName = `${c.user.first_name} ${c.user.last_name}`;
-              const isOnline = c.user.id === cohortSession.bc_id || usersConnected?.includes(c.user.id);
+              const isOnline = usersConnected?.includes(c.user.id);
               return (
                 <AvatarUser
                   key={`${c.id} - ${c.user.first_name}`}
@@ -150,6 +120,7 @@ const ProfilesSection = ({
                   data={c}
                   isOnline={isOnline}
                   badge
+                  withoutPopover={withoutPopover}
                 />
               );
             })
@@ -158,20 +129,22 @@ const ProfilesSection = ({
       )}
 
       {paginationProps && (
-        <Box display={profiles.length <= 15 || showMoreStudents ? 'flex' : 'none'} justifyContent="center" gridGap="10px">
+        <Box display={profiles.length <= 15} justifyContent="center" gridGap="10px">
           <Box
             color="blue.default"
-            cursor={paginationProps.next ? 'pointer' : 'not-allowed'}
-            opacity={paginationProps.next ? 1 : 0.6}
+            cursor="pointer"
+            opacity={1}
             fontSize="15px"
             display="flex"
             alignItems="center"
             gridGap="10px"
             letterSpacing="0.05em"
+            justifyContent="center"
             padding="14px 0 0 0"
             fontWeight="700"
             onClick={() => {
               if (paginationProps.next) {
+                setShowMoreStudents(true);
                 axios.get(paginationProps.next)
                   .then(({ data }) => {
                     const cleanedData = [...profiles, ...data.results];
@@ -181,15 +154,23 @@ const ProfilesSection = ({
                         (a, b) => a.user.first_name.localeCompare(b.user.first_name),
                       ),
                     });
+                    setTimeout(() => {
+                      alumniGeeksContainer.scrollTo({
+                        top: alumniGeeksContainer.scrollHeight,
+                        behavior: 'smooth',
+                      });
+                    }, [600]);
                   });
+              } else {
+                setShowMoreStudents(!showMoreStudents);
               }
             }}
           >
-            {t('common:load-more')}
+            {paginationProps.next ? t('common:load-more') : showMoreStudents ? t('cohortSideBar.show-less') : t('cohortSideBar.show-more')}
             <Box
               as="span"
               display="block"
-              transform="rotate(-90deg)"
+              transform={paginationProps.next ? 'rotate(-90deg)' : (showMoreStudents ? 'rotate(90deg)' : 'rotate(-90deg)')}
             >
               <Icon icon="arrowLeft2" width="18px" height="10px" />
             </Box>
@@ -197,7 +178,7 @@ const ProfilesSection = ({
         </Box>
       )}
 
-      {profiles?.length > 15 && (
+      {/* {profiles?.length > 15 && (
         <Text
           display="flex"
           cursor="pointer"
@@ -222,14 +203,14 @@ const ProfilesSection = ({
             <Icon icon="arrowRight" color="#0097CD" width="12px" height="12px" />
           </Box>
         </Text>
-      )}
+      )} */}
     </Box>
   );
 };
 
 const CohortSideBar = ({
   title, teacherVersionActive, cohort, cohortCity, background, width, containerStyle,
-  studentAndTeachers, cohortSession,
+  studentAndTeachers,
 }) => {
   const { t } = useTranslation('dashboard');
   const router = useRouter();
@@ -365,7 +346,6 @@ const CohortSideBar = ({
       <Box id="cohort-students" display="flex" flexDirection="column" gridGap="20px" padding="18px 26px">
         {teacherAssistants.length > 0 && (
           <ProfilesSection
-            cohortSession={cohortSession}
             wrapped
             title={t('common:teachers')}
             teacher={teacher}
@@ -430,7 +410,6 @@ const CohortSideBar = ({
               {activeStudents.length !== 0
                 ? (
                   <ProfilesSection
-                    cohortSession={cohortSession}
                     profiles={activeStudents}
                   />
                 ) : (
@@ -445,10 +424,10 @@ const CohortSideBar = ({
               {studentsJoined?.length !== 0
                 ? (
                   <ProfilesSection
-                    cohortSession={cohortSession}
                     profiles={studentsJoined}
                     setAlumniGeeksList={setAlumniGeeksList}
                     paginationProps={alumniGeeksList}
+                    withoutPopover
                   />
                 ) : (
                   <>
@@ -472,7 +451,7 @@ ProfilesSection.propTypes = {
   profiles: PropTypes.arrayOf(PropTypes.object),
   wrapped: PropTypes.bool,
   teacher: PropTypes.arrayOf(PropTypes.object),
-  cohortSession: PropTypes.objectOf(PropTypes.any),
+  withoutPopover: PropTypes.bool,
 };
 
 ProfilesSection.defaultProps = {
@@ -482,7 +461,7 @@ ProfilesSection.defaultProps = {
   profiles: [],
   wrapped: false,
   teacher: [],
-  cohortSession: {},
+  withoutPopover: false,
 };
 
 CohortSideBar.propTypes = {
@@ -490,7 +469,6 @@ CohortSideBar.propTypes = {
   title: PropTypes.string,
   teacherVersionActive: PropTypes.bool,
   containerStyle: PropTypes.objectOf(PropTypes.any),
-  cohortSession: PropTypes.objectOf(PropTypes.any),
   studentAndTeachers: PropTypes.arrayOf(PropTypes.object),
   cohortCity: PropTypes.string,
   cohort: PropTypes.objectOf(PropTypes.any),
@@ -502,7 +480,6 @@ CohortSideBar.defaultProps = {
   title: '',
   teacherVersionActive: false,
   containerStyle: {},
-  cohortSession: {},
   studentAndTeachers: [
     {
       id: 688,

@@ -28,9 +28,9 @@ const Assignments = () => {
   const { contextState, setContextState } = useAssignments();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
-  const [allTasksPaginationProps, setAllTasksPaginationProps] = useState({});
+  // const [allTasksPaginationProps, setAllTasksPaginationProps] = useState({});
   const [tasksLoading, setTasksLoading] = useState(true);
-  const [allTasksOffset, setAllTasksOffset] = useState(0);
+  const [allTasksOffset, setAllTasksOffset] = useState(20);
   const [isFetching, setIsFetching] = useState(false);
   const [studentLabel, setStudentLabel] = useState(null);
   const [projectLabel, setProjectLabel] = useState(null);
@@ -78,30 +78,6 @@ const Assignments = () => {
       });
   };
 
-  const getAllAssignments = (cohortId, academyId, offsetValue) => {
-    bc.todo({
-      limit: 20,
-      academy: academyId,
-      offset: offsetValue,
-      task_type: 'PROJECT',
-    }).getAssignments({ id: cohortId })
-      .then((res) => {
-        setIsFetching(false);
-        setAllTasksPaginationProps(res.data);
-
-        const tasks = res.data?.results;
-        const cleanedTeacherTask = tasks !== undefined ? tasks.filter(
-          (l) => !contextState.allTasks.some((j) => j.id === l.id),
-        ) : [];
-
-        const arrOfProjects = [...contextState.allTasks, ...cleanedTeacherTask];
-
-        setContextState({
-          allTasks: arrOfProjects,
-        });
-      });
-  };
-
   const getFilterAssignments = (cohortId, academyId, studentId) => {
     bc.todo({
       limit: 1000,
@@ -111,21 +87,19 @@ const Assignments = () => {
     }).getAssignments({ id: cohortId })
       .then((projectList) => {
         setIsFetching(false);
-        const allTasks = [...projectList.data?.results];
+        const allTasks = projectList.data?.results;
 
         // Clean repeated task.id in stored contextState.allTasks
-        const cleanedTeacherTask = allTasks !== undefined ? allTasks.filter(
+        const cleanedTeacherTask = allTasks.filter(
           (l) => !contextState.allTasks.some((j) => j.id === l.id),
-        ) : [];
+        );
 
         const arrOfProjects = [...contextState.allTasks, ...cleanedTeacherTask];
-        if (queryStudentExists) {
-          setContextState({
-            allTasks: arrOfProjects,
-          });
-        }
-        const projectsList = [];
+        setContextState({
+          allTasks: arrOfProjects,
+        });
 
+        const projectsList = [];
         for (let i = 0; i < allTasks.length; i += 1) {
           const isProject = allTasks[i].task_type === 'PROJECT';
           if (projectsList.find(
@@ -189,12 +163,9 @@ const Assignments = () => {
     if (defaultCohort && cohortId) {
       setSelectedCohort(findSelectedCohort || defaultCohort);
       getStudents(slug, academyId);
-      if (!queryStudentExists) {
-        getAllAssignments(cohortId, academyId, allTasksOffset);
-      }
       getFilterAssignments(cohortId, academyId, router.query.student);
     }
-  }, [allCohorts, selectedCohortSlug, studentDefaultValue, router.query.student, allTasksOffset]);
+  }, [allCohorts, selectedCohortSlug, studentDefaultValue, router.query.student]);
 
   const filteredTasks = contextState.allTasks.length > 0 ? contextState.allTasks.filter(
     (task) => {
@@ -214,7 +185,7 @@ const Assignments = () => {
       ) return false;
       return true;
     },
-  ) : [];
+  ).filter((_, i) => i < allTasksOffset) : [];
 
   useEffect(() => {
     if (filteredTasks?.length === 0) {
@@ -233,25 +204,30 @@ const Assignments = () => {
   };
 
   useEffect(() => {
-    if (allTasksPaginationProps.next !== null && !queryStudentExists) {
-      console.log('loading assignments...');
+    if (allTasksOffset < contextState.allTasks.length) {
       window.addEventListener('scroll', handleScroll);
       return () => window.removeEventListener('scroll', handleScroll);
     }
-    console.log('All assignments loaded');
+
     return () => {};
-  }, [allTasksPaginationProps]);
+  }, [allTasksOffset, contextState]);
 
   useEffect(() => {
     if (!isFetching) return;
-    if (queryStudentExists) return;
+    if (queryStudentExists || queryProjectExists || queryStatusExists) {
+      setAllTasksOffset(contextState.allTasks.length);
+      setIsFetching(false);
+    }
 
-    if (filteredTasks && allTasksPaginationProps.next !== null) {
+    if (filteredTasks && allTasksOffset < contextState.allTasks.length) {
       if (!queryStudentExists) {
         setAllTasksOffset(allTasksOffset + 20);
+        setIsFetching(false);
       }
+    } else {
+      setIsFetching(false);
     }
-  }, [isFetching]);
+  }, [isFetching, queryStatusExists, queryProjectExists, queryStudentExists]);
 
   const statusList = [
     {
@@ -337,7 +313,7 @@ const Assignments = () => {
         p="0 0 30px 0"
       >
         <Text size="20px" display="flex" width="auto" fontWeight="400">
-          {t('filter.assignments-length', { total: allTasksPaginationProps?.count || 0 })}
+          {t('filter.assignments-length', { total: contextState.allTasks.length || 0 })}
         </Text>
         <Box display="grid" gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(11rem, 1fr))', md: 'repeat(auto-fill, minmax(18rem, 1fr))' }} gridGap="14px" py="20px">
           {projects.length > 0 ? (
@@ -520,7 +496,7 @@ const Assignments = () => {
                 )}
               </>
             )}
-            {allTasksPaginationProps.next !== null && isFetching && (
+            {allTasksOffset < contextState.allTasks.length !== null && isFetching && (
               <Box display="flex" justifyContent="center" mt="2rem" mb="5rem">
                 <Image src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
                 <Box className="loader" />

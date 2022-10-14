@@ -38,11 +38,22 @@ const DifficultySection = ({
     return false;
   };
 
-  const getBackgroundColor = (difficultyIsMatch, isSelected) => {
+  const getBackgroundColor = (difficultyIsMatch, isSelected, index) => {
+    if (difficultyPosition > index) return 'blue.default';
     if (difficultyIsMatch && isSelected) return 'blue.default';
     if (difficultyIsMatch) return useColorModeValue('gray.default', 'gray.400');
     return useColorModeValue('gray.350', 'gray.default');
   };
+
+  // difficultyPosition
+  const positionConnector = {
+    0: 'linear-gradient(90deg, #0097CD 0%, #A4A4A4 0%)',
+    1: 'linear-gradient(90deg, #0097CD 33%, #A4A4A4 0%)',
+    2: 'linear-gradient(90deg, #0097CD 66%, #A4A4A4 0%)',
+    3: 'linear-gradient(90deg, #0097CD 100%, #A4A4A4 0%)',
+  };
+
+  const lineColor = positionConnector[difficultyPosition] || 'gray.default';
 
   return difficultyExists && (
     <Flex
@@ -65,7 +76,7 @@ const DifficultySection = ({
         alignItems="center"
       >
         {/* Conector */}
-        <Box position="absolute" top="auto" height="3px" width="100%" background="gray.default" />
+        <Box position="absolute" top="auto" height="3px" width="100%" background={lineColor} />
         {/* Circle of difficulties  */}
         {defaultDifficulties.map((difficulty, index) => {
           const isSelected = verifyDifficultyisAvailable(index, difficultyPosition, difficulty, difficulties);
@@ -77,7 +88,7 @@ const DifficultySection = ({
                 width={isSelected ? '20px' : '15px'}
                 height={isSelected ? '20px' : '15px'}
                 borderRadius="50%"
-                background={getBackgroundColor(difficultyIsMatch, isSelected)}
+                background={getBackgroundColor(difficultyIsMatch, isSelected, index)}
                 border={isSelected ? '4px solid' : 'none'}
                 borderColor={isSelected ? 'blue.200' : 'none'}
                 // isSelected ? 'blue.default' : 'gray.default'
