@@ -105,6 +105,7 @@ const SignUp = ({ finance }) => {
     confirm_email: '',
   });
 
+  const queryCohortIdExists = cohort_id !== undefined && cohort_id?.length > 0;
   const isFirstStep = stepIndex === 0;
   const isSecondStep = stepIndex === 1;
   const isThirdStep = stepIndex === 2;
@@ -144,7 +145,7 @@ const SignUp = ({ finance }) => {
   };
 
   useEffect(async () => {
-    if (cohort_id) {
+    if (queryCohortIdExists) {
       const resp = await bc.cohort().getPublic(cohort_id);
 
       if (resp.status >= 400) {
@@ -167,7 +168,7 @@ const SignUp = ({ finance }) => {
 
   useEffect(() => {
     if (userData.user && !userData.isLoading) {
-      if (!cohort_id) setStepIndex(1);
+      if (!queryCohortIdExists) setStepIndex(1);
       setFormProps({
         first_name: userData.user.first_name,
         last_name: userData.user.last_name,
@@ -414,7 +415,7 @@ const SignUp = ({ finance }) => {
                   bc.marketing()
                     .lead(allValues)
                     .then(() => {
-                      if (cohort_id && dateProps) {
+                      if (queryCohortIdExists && dateProps) {
                         setStepIndex(2);
                       } else {
                         setStepIndex(stepIndex + 1);
@@ -874,7 +875,7 @@ const SignUp = ({ finance }) => {
               variant="outline"
               borderColor="currentColor"
               color="blue.default"
-              disabled={cohort_id || formProps.email.length > 0 || isSecondStep}
+              disabled={queryCohortIdExists || formProps.email.length > 0 || isSecondStep}
               onClick={() => {
                 if (stepIndex > 0) {
                   setStepIndex(stepIndex - 1);
