@@ -210,7 +210,7 @@ const Content = () => {
   useEffect(() => {
     const currTask = filterEmptyModules[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
 
-    if (currTask.target === 'blank') {
+    if (currTask?.target === 'blank') {
       setCurrentBlankProps(currTask);
     } else if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
       axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)

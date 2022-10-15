@@ -75,6 +75,7 @@
   background-color: #283340;
   color: #cbd5e0;
   border-left: 0.25em solid #0097cd;
+  padding: 12px;
 }
 .markdown-body blockquote p {
   padding: 10px 0 10px 14px;
@@ -156,16 +157,17 @@
   margin: 15px 0;
 }
 
+.markdown-body blockquote p {
+  padding: 0;
+  margin: 0;
+}
+
 .markdown-body.light blockquote table * {
   color: black;
 }
 
 .markdown-body.dark blockquote table * {
   color: #cbd5e0;
-}
-
-.markdown-body blockquote table {
-  padding: 15px 0 0 0;
 }
 
 .markdown-body hr {
