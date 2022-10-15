@@ -241,7 +241,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
           />
         </Flex>
       </Box>
-      <GridContainer margin="30px 0 0 0">
+      <GridContainer margin="30px auto 0 auto">
         {t('description') && (
           <Text
             size="md"

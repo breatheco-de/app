@@ -172,20 +172,20 @@ function Exercices({ exercises, technologyTags, difficulties }) {
       <TitleContent title={t('title')} mobile />
       <Box
         display="grid"
-        gridTemplateColumns={{
-          base: '.5fr repeat(12, 1fr) .5fr',
-          md: '1.5fr repeat(12, 1fr) 1.5fr',
-        }}
+        gridTemplateColumns="0fr repeat(12, 1fr) 0fr"
         borderBottom={1}
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.700')}
       >
         <Flex
           gridColumn="2 / span 12"
+          width="100%"
+          margin="0 auto"
+          maxWidth="1280px"
           justifyContent="space-between"
           flex="1"
           gridGap="20px"
-          padding={{ base: '3% 4% 4% 4%', md: '1.5% 10% 1.5% 10%' }}
+          padding={{ base: '3% 15px 4% 15px', md: '1.5% 0 1.5% 0' }}
         >
           <TitleContent title={t('title')} mobile={false} />
 

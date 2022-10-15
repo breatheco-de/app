@@ -18,6 +18,7 @@ import TagCapsule from '../../common/components/TagCapsule';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 import { publicRedirectByAsset } from '../../lib/redirectsHandler';
 import { MDSkeleton } from '../../common/components/Skeleton';
+import GridContainer from '../../common/components/GridContainer';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson`);
@@ -149,12 +150,10 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
   }, [language]);
 
   return (
-    <Box
+    <GridContainer
       height="100%"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      margin={{ base: '4rem 4% 0 4%', md: '4% 14% 0 14%' }}
+      gridTemplateColumns="0.5fr repeat(12, 1fr) 0.5fr"
+      margin="4rem auto 0 auto"
     >
       <Link
         href="/lessons"
@@ -293,7 +292,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
           </Modal>
         </Box>
       )}
-    </Box>
+    </GridContainer>
   );
 };
 

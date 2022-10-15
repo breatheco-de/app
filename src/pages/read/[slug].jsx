@@ -111,10 +111,13 @@ const Read = ({ data }) => {
       >
         <Flex
           gridColumn="2 / span 12"
+          width="100%"
+          margin="0 auto"
+          maxWidth="1280px"
           justifyContent="space-between"
           flex="1"
           gridGap="20px"
-          padding={{ base: '3% 0 4% 0', md: '1.5% 0 1.5% 0' }}
+          padding={{ base: '3% 15px 4% 15px', md: '1.5% 0 1.5% 0' }}
         >
           <TitleContent title={t('title')} mobile={false} />
 
@@ -161,7 +164,7 @@ const Read = ({ data }) => {
           {t('description')}
         </Text>
       </Flex>
-      <GridContainer flex="1" gridTemplateColumns={{ base: '.5fr repeat(12, 1fr) .5fr', md: '4.8fr repeat(12, 1fr) 4.8fr' }}>
+      <GridContainer flex="1" gridTemplateColumns={{ base: '.5fr repeat(12, 1fr) .5fr', md: '3.8fr repeat(12, 1fr) 3.8fr' }}>
         {datafiltered.map(
           (element) => element.label !== '' && (
           <Box key={`${element.id} - ${element.position}`} margin="50px 0 0 0">
