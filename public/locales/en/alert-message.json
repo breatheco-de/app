@@ -51,5 +51,6 @@
   "submitting-picture-success": "Profile picture updated!",
   "file-type-error": "File type {{type}} is not allowed to be uploaded",
   "no-cohorts-found": "No cohorts found",
-  "google-maps-no-coincidences": "Google Maps: No matches found for the address entered"
+  "google-maps-no-coincidences": "Google Maps: No matches found for the address entered",
+  "cohort-not-found": "The specified cohort was not found"
 }

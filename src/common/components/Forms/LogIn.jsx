@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
   Button, FormControl, Stack, Text, Box, Input, FormErrorMessage,
-  FormLabel, useToast, Link, Spacer, Flex, InputRightElement, useColorModeValue,
+  FormLabel, useToast, Link, Spacer, Flex, InputRightElement,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 // import { useRouter } from 'next/router';
 import Icon from '../Icon/index';
 import validationSchema from './validationSchemas';
 import useAuth from '../../hooks/useAuth';
+import useStyle from '../../hooks/useStyle';
 
 function LogIn() {
   const { t } = useTranslation('login');
@@ -18,7 +19,7 @@ function LogIn() {
   // const router = useRouter();
   const [curUrl, setUrl] = useState('');
   useEffect(() => setUrl(typeof window !== 'undefined' ? window.location.href : ''), []);
-  const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
+  const { borderColor } = useStyle();
 
   const githubLoginUrl = (typeof window !== 'undefined')
     ? `${process.env.BREATHECODE_HOST}/v1/auth/github?url=${curUrl}`
@@ -69,7 +70,7 @@ function LogIn() {
             <Box display="flex" justifyContent="center" width="100%">
               <Box
                 borderBottom="solid 1px"
-                borderColor={commonBorderColor}
+                borderColor={borderColor}
                 width="100%"
                 marginRight="13px"
                 marginBottom="9px"
@@ -77,7 +78,7 @@ function LogIn() {
               <Box color="gray.default">{t('or')}</Box>
               <Box
                 borderBottom="solid 1px"
-                borderColor={commonBorderColor}
+                borderColor={borderColor}
                 width="100%"
                 marginLeft="14px"
                 marginBottom="9px"

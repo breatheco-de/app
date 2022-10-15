@@ -162,6 +162,7 @@ export const MDHeading = ({ children, tagType }) => {
 
 export const MDCheckbox = (props) => {
   const text = props?.children[1] || props?.children[1]?.props?.children[1];
+  const child = props?.children[2] || props?.children[2]?.props?.children[2];
   const checked = props?.checked || props?.children[1]?.props?.children[0]?.props?.checked;
   const [isChecked, setIsChecked] = useState(checked);
 
@@ -170,22 +171,19 @@ export const MDCheckbox = (props) => {
       <Checkbox isChecked={isChecked} onChange={() => setIsChecked(!isChecked)}>
         {text}
       </Checkbox>
+      {child && child}
     </Box>
   );
 };
 
-export const OnlyForBanner = ({ children, permission, cohortSession }) => {
+export const OnlyForBanner = ({
+  children, permission, cohortSession, profile,
+}) => {
   const capabilities = (permission || '')?.split(',');
   console.log('md_permissions:', capabilities);
 
-  if (cohortSession.bc_id && !cohortSession?.user_capabilities) {
-    // eslint-disable-next-line no-param-reassign
-    cohortSession.user_capabilities = [''];
-    //   cohortSession.user_capabilities = ['read_private_lesson', 'read_lesson', 'student'];
-  }
-
   return (
-    <OnlyFor onlyMember withBanner cohortSession={cohortSession} capabilities={capabilities}>
+    <OnlyFor onlyMember withBanner profile={profile} cohortSession={cohortSession} capabilities={capabilities}>
       {children}
     </OnlyFor>
   );
@@ -242,8 +240,10 @@ OnlyForBanner.propTypes = {
   children: PropTypes.node.isRequired,
   permission: PropTypes.string,
   cohortSession: PropTypes.objectOf(PropTypes.any),
+  profile: PropTypes.objectOf(PropTypes.any),
 };
 OnlyForBanner.defaultProps = {
   permission: '',
   cohortSession: {},
+  profile: {},
 };

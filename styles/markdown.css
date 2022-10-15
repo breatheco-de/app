@@ -152,7 +152,6 @@
 }
 
 .markdown-body p, .markdown-body blockquote,
-.markdown-body ul, .markdown-body ol,
 .markdown-body dl, .markdown-body table {
   margin: 15px 0;
 }
@@ -544,6 +543,7 @@ blockquote > :last-child {
   display: flex;
   gap: 4px;
   margin-left: 2rem !important;
-  padding-bottom: 15px;
+  margin: 5px 0 0 0;
+  /* padding-bottom: 15px; */
   flex-direction: column;
 }

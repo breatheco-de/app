@@ -44,6 +44,7 @@ import { processFormEntry } from '../../../common/components/Forms/actions';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import CustomTheme from '../../../../styles/theme';
 import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
+import GridContainer from '../../../common/components/GridContainer';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`);
@@ -531,67 +532,73 @@ const Exercise = ({ exercise, markdown }) => {
     <>
       <Script async defer src="https://buttons.github.io/buttons.js" />
       <Box
-        className="box-heading"
         background={useColorModeValue('featuredLight', 'featuredDark')}
-        padding={{ base: '4%', lg: '2% 10%' }}
+        // padding={{ base: '4%', lg: '2% 10%' }}
       >
-        <Box maxWidth={{ base: '100% ', lg: '68%' }}>
-          <Link
-            href="/interactive-exercises"
-            color={useColorModeValue('blue.default', 'blue.300')}
-            display="inline-block"
-            letterSpacing="0.05em"
-            fontWeight="700"
-            paddingBottom="10px"
-          >
-            {`← ${t('exercises:backToExercises')}`}
-          </Link>
-          <TagCapsule
-            variant="rounded"
-            tags={tags}
-            marginY="8px"
-            style={{
-              padding: '2px 10px',
-              margin: '0',
-            }}
-            gap="10px"
-            paddingX="0"
-          />
-          {exercise?.title ? (
-            <Heading
-              as="h1"
-              size="40px"
+        <Box
+          className="box-heading"
+          maxWidth="1280px"
+          padding={{ base: '2rem 15px 2rem 15px', md: '2rem 0 2rem 0' }}
+          margin="0 auto"
+        >
+          <Box maxWidth={{ base: '100% ', lg: '68%' }}>
+            <Link
+              href="/interactive-exercises"
+              color={useColorModeValue('blue.default', 'blue.300')}
+              display="inline-block"
+              letterSpacing="0.05em"
               fontWeight="700"
-              textTransform="capitalize"
-              paddingTop="10px"
-              marginBottom="10px"
-              transition="color 0.2s ease-in-out"
-              color={useColorModeValue('black', 'white')}
+              paddingBottom="10px"
             >
-              {exercise.title}
-            </Heading>
-          ) : (
-            <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
-          )}
-          {exercise?.sub_title && (
-          <Text size="md" color={commonTextColor} textAlign="left" marginBottom="10px" px="0px">
-            {exercise.sub_title}
-          </Text>
-          )}
-          <a className="github-button" href={exercise?.url} data-icon="octicon-star" aria-label="Star ntkme/github-buttons on GitHub">Star</a>
-          {exercise?.author && (
-          <Text size="md" textAlign="left" my="10px" px="0px">
-            {`${t('exercises:created')} ${exercise.author.first_name} ${exercise.author.last_name}`}
-          </Text>
-          )}
+              {`← ${t('exercises:backToExercises')}`}
+            </Link>
+            <TagCapsule
+              variant="rounded"
+              tags={tags}
+              marginY="8px"
+              style={{
+                padding: '2px 10px',
+                margin: '0',
+              }}
+              gap="10px"
+              paddingX="0"
+            />
+            {exercise?.title ? (
+              <Heading
+                as="h1"
+                size="40px"
+                fontWeight="700"
+                textTransform="capitalize"
+                paddingTop="10px"
+                marginBottom="10px"
+                transition="color 0.2s ease-in-out"
+                color={useColorModeValue('black', 'white')}
+              >
+                {exercise.title}
+              </Heading>
+            ) : (
+              <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
+            )}
+            {exercise?.sub_title && (
+            <Text size="md" color={commonTextColor} textAlign="left" marginBottom="10px" px="0px">
+              {exercise.sub_title}
+            </Text>
+            )}
+            <a className="github-button" href={exercise?.url} data-icon="octicon-star" aria-label="Star ntkme/github-buttons on GitHub">Star</a>
+            {exercise?.author && (
+            <Text size="md" textAlign="left" my="10px" px="0px">
+              {`${t('exercises:created')} ${exercise.author.first_name} ${exercise.author.last_name}`}
+            </Text>
+            )}
+          </Box>
         </Box>
       </Box>
-      <Box
+      <GridContainer
         height="100%"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        margin={{ base: '4% 4% 0 4%', lg: '4% 10% 0 10%' }}
+        // flexDirection="column"
+        // justifyContent="center"
+        // alignItems="center"
+        // margin={{ base: '4% 4% 0 4%', lg: '4% 10% 0 10%' }}
       >
         {/* <Link
           href="/interactive-exercises"
@@ -604,7 +611,7 @@ const Exercise = ({ exercise, markdown }) => {
           {`← ${t('exercises:backToExercises')}`}
         </Link> */}
 
-        <Flex display={{ base: 'block', lg: 'flex' }} height="100%" gridGap="26px">
+        <Flex display={{ base: 'block', lg: 'flex' }} height="100%" gridGap="26px" position="relative">
           <Box flex="1">
             {/* {exercise?.title ? (
               <Heading
@@ -671,7 +678,8 @@ const Exercise = ({ exercise, markdown }) => {
           <Box
             display={{ base: 'none', lg: 'flex' }}
             position="absolute"
-            top="100px"
+            top="-240px"
+            // top="100px"
             right="9%"
             flexDirection="column"
             backgroundColor={useColorModeValue('white', 'featuredDark')}
@@ -698,7 +706,7 @@ const Exercise = ({ exercise, markdown }) => {
             )}
           </Box>
         </Flex>
-      </Box>
+      </GridContainer>
     </>
   );
 };

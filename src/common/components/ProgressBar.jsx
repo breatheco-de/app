@@ -1,7 +1,8 @@
 import {
-  Progress, Box, Flex, Heading, useColorModeValue,
+  Progress, Box, Flex, Heading,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import useStyle from '../hooks/useStyle';
 import Icon from './Icon';
 import Text from './Text';
 
@@ -12,6 +13,7 @@ const ProgressBar = ({
   const allExercises = taskTodo.filter((e) => e.task_type === 'EXERCISE');
   const allProjects = taskTodo.filter((p) => p.task_type === 'PROJECT');
   const allQuiz = taskTodo.filter((q) => q.task_type === 'QUIZ');
+  const { fontColor } = useStyle();
 
   const allTasks = [
     {
@@ -68,7 +70,7 @@ const ProgressBar = ({
               icon={program.icon || 'book'}
               width="18px"
               height="18px"
-              color={useColorModeValue('black', '#FFFFFF')}
+              color={fontColor}
               style={{ marginTop: '2px' }}
             />
             <Text marginLeft="11px" size="l" marginY="0">

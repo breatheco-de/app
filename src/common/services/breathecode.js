@@ -27,6 +27,14 @@ const breathecode = {
           token_type: 'one_time',
         },
       }),
+      getUser: ({ userId }) => axios({
+        method: 'get',
+        url: `${url}/academy/member/${userId}`,
+        headers: {
+          Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
+          academy: 4,
+        },
+      }),
     };
   },
 
@@ -82,9 +90,23 @@ const breathecode = {
       .join('&');
     return {
       get: (id) => axios.get(`${url}/cohort/${id}`),
+      getPublic: (id) => axios.get(`${url}/cohort/${id}`, {
+        headers: {
+          Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
+          academy: 4,
+        },
+      }),
       getFilterStudents: () => axios.get(`${url}/cohort/user?${qs}`),
       getStudents: (cohortId, academyId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}${academyId ? `&academy=${academyId}` : ''}`),
       update: (id, args) => axios.put(`${url}/cohort/${id}`, args),
+      user: ({ cohortId, userId }) => axios({
+        method: 'get',
+        url: `${url}/cohort/${cohortId}/user/${userId}`,
+        headers: {
+          Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
+          academy: 4,
+        },
+      }),
     };
   },
 
