@@ -10,6 +10,7 @@ import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
 import Link from '../../common/components/NextChakraLink';
 import { devLog } from '../../utils';
+import GridContainer from '../../common/components/GridContainer';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`);
@@ -98,21 +99,30 @@ const Read = ({ data }) => {
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
       <TitleContent title={t('title')} mobile />
-      <Flex
-        justifyContent="space-between"
-        flex="1"
-        gridGap="20px"
-        padding={{ base: '3% 4% 4% 4%', md: '1.5% 10% 1.5% 10%' }}
+      <Box
+        display="grid"
+        gridTemplateColumns={{
+          base: '.5fr repeat(12, 1fr) .5fr',
+          md: '1.5fr repeat(12, 1fr) 1.5fr',
+        }}
         borderBottom={1}
         borderStyle="solid"
-        borderColor={useColorModeValue('gray.200', 'gray.900')}
+        borderColor={useColorModeValue('gray.200', 'gray.700')}
       >
-        <TitleContent title={t('title')} mobile={false} />
+        <Flex
+          gridColumn="2 / span 12"
+          justifyContent="space-between"
+          flex="1"
+          gridGap="20px"
+          padding={{ base: '3% 0 4% 0', md: '1.5% 0 1.5% 0' }}
+        >
+          <TitleContent title={t('title')} mobile={false} />
 
-        <Search placeholder={t('search')} />
+          <Search placeholder={t('search')} />
 
-        <Box width="0" height="0" display={{ base: 'none', md: 'block' }} />
-      </Flex>
+          <Box width="0" height="0" display={{ base: 'none', md: 'block' }} />
+        </Flex>
+      </Box>
       <Flex
         flex="1"
         flexDirection="column"
@@ -151,7 +161,7 @@ const Read = ({ data }) => {
           {t('description')}
         </Text>
       </Flex>
-      <Box flex="1" margin={{ base: '0 4% 0 4%', md: '0 22% 0 22%' }}>
+      <GridContainer flex="1" gridTemplateColumns={{ base: '.5fr repeat(12, 1fr) .5fr', md: '4.8fr repeat(12, 1fr) 4.8fr' }}>
         {datafiltered.map(
           (element) => element.label !== '' && (
           <Box key={`${element.id} - ${element.position}`} margin="50px 0 0 0">
@@ -218,7 +228,7 @@ const Read = ({ data }) => {
           </Box>
           ),
         )}
-      </Box>
+      </GridContainer>
     </Box>
   );
 };
