@@ -8,6 +8,7 @@ import rehypeRaw from 'rehype-raw';
 import { Img } from '@chakra-ui/react';
 
 import useTranslation from 'next-translate/useTranslation';
+// import { useRouter } from 'next/router';
 import {
   BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner,
 } from './MDComponents';
@@ -15,9 +16,10 @@ import { usePersistent } from '../../hooks/usePersistent';
 import Toc from './toc';
 import ContentHeading from './ContentHeading';
 import CallToAction from '../CallToAction';
+import SubTasks from './SubTasks';
 
 const MarkDownParser = ({
-  content, callToActionProps, withToc, frontMatter, titleRightSide,
+  content, callToActionProps, withToc, frontMatter, titleRightSide, subTasks,
 }) => {
   const { t } = useTranslation('common');
   const [learnpackActions, setLearnpackActions] = useState([]);
@@ -75,6 +77,10 @@ const MarkDownParser = ({
         {withToc && (
           <Toc content={content} />
         )}
+
+        { subTasks?.length > 0 && (
+          <SubTasks subTasks={subTasks} />
+        )}
       </ContentHeading>
       <ReactMarkdown
       // gemoji plugin
@@ -125,6 +131,7 @@ MarkDownParser.propTypes = {
   withToc: PropTypes.bool,
   frontMatter: PropTypes.objectOf(PropTypes.any),
   titleRightSide: PropTypes.node,
+  subTasks: PropTypes.arrayOf(PropTypes.any),
 };
 MarkDownParser.defaultProps = {
   content: '',
@@ -132,6 +139,7 @@ MarkDownParser.defaultProps = {
   withToc: false,
   frontMatter: {},
   titleRightSide: null,
+  subTasks: [],
 };
 
 export default MarkDownParser;

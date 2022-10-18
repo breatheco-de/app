@@ -73,6 +73,10 @@ const breathecode = {
           academy: args.academyId,
         },
       }),
+      subtask: () => ({
+        get: (id) => axios.get(`${url}/user/me/task/${id}/subtasks`),
+        update: (id, args) => axios.get(`${url}/user/me/task/${id}/subtasks`, args),
+      }),
       // getTaskByStudent: (cohortId) => axios.get(`${url}/user/me/task?cohort=${cohortId}`),
       getTaskByStudent: () => axios.get(`${url}/user/me/task?${qs}`),
       add: (args) => axios.post(`${url}/user/me/task`, args),

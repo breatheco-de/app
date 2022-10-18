@@ -93,7 +93,7 @@ const Timeline = ({
               gridGap={{ base: '2.4rem', md: '2.8rem' }}
               width="100%"
             >
-              <Box position="relative" background={index === assignments.length - 1 ? 'white' : 'gray'} left="14px" top="12px">
+              <Box position="relative" background={index === assignments.length - 1 ? useColorModeValue('white', 'darkTheme') : 'gray'} left="14px" top="12px">
                 <Box position="relative" right="14px">
                   <Box width="30px" height="30px" bg={!muted ? 'blue.default' : 'gray.default'} borderRadius="50px">
                     <Text size="sm" margin={0} color="white" textAlign="center" position="relative" top="5px">{index + 1}</Text>
