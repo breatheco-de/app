@@ -40,6 +40,7 @@ const DifficultySection = ({
 
   const getBackgroundColor = (difficultyIsMatch, isSelected, index) => {
     if (difficultyPosition > index) return 'blue.default';
+    if (queryPosition > index) return 'blue.default';
     if (difficultyIsMatch && isSelected) return 'blue.default';
     if (difficultyIsMatch) return useColorModeValue('gray.default', 'gray.400');
     return useColorModeValue('gray.350', 'gray.default');
@@ -53,7 +54,7 @@ const DifficultySection = ({
     3: 'linear-gradient(90deg, #0097CD 100%, #A4A4A4 0%)',
   };
 
-  const lineColor = positionConnector[difficultyPosition] || 'gray.default';
+  const lineColor = positionConnector[difficultyPosition] || positionConnector[queryPosition] || 'gray.default';
 
   return difficultyExists && (
     <Flex
