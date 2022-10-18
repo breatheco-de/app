@@ -26,6 +26,7 @@ import ShareButton from '../../../../../common/components/ShareButton';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import ScrollTop from '../../../../../common/components/scrollTop';
+import bc from '../../../../../common/services/breathecode';
 import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar';
 import {
   defaultDataFetch, getCurrentCohort, prepareCohortContext, prepareTaskModules,
@@ -64,6 +65,7 @@ const Content = () => {
   const [currentBlankProps, setCurrentBlankProps] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
   const [currentData, setCurrentData] = useState({});
+  const [subTasks, setSubTasks] = useState([]);
   const toast = useToast();
   const router = useRouter();
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
@@ -208,6 +210,15 @@ const Content = () => {
   };
 
   useEffect(() => {
+    if (currentTask?.id) {
+      bc.todo().subtask().get(currentTask?.id)
+        .then((resp) => {
+          setSubTasks(resp.data);
+        });
+    }
+  }, [currentTask]);
+
+  useEffect(() => {
     const currTask = filterEmptyModules[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
 
     if (currTask?.target === 'blank') {
@@ -312,12 +323,12 @@ const Content = () => {
   }, [selectedSyllabus]);
 
   useEffect(() => {
-    if (!isLoading && user && user?.active_cohort && cohortSession?.cohort_role) {
+    if (!isLoading && user?.active_cohort && cohortSession?.cohort_role) {
       prepareCohortContext({
         user, cohortSession, setCohortSession, setContextState, router, t,
       });
     }
-  }, [user]);
+  }, [isLoading]);
 
   useEffect(() => {
     const cohortProgram = contextState?.cohortProgram;
@@ -341,6 +352,7 @@ const Content = () => {
     lesson,
     quizSlug,
     lessonSlug,
+    subTasks,
   });
 
   const teacherActions = profesionalRoles.includes(cohortSession.cohort_role)
@@ -472,6 +484,8 @@ const Content = () => {
   ];
 
   const inputModalLink = currentBlankProps && currentBlankProps.target === 'blank' ? currentBlankProps.url : `https://4geeks.com/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`;
+
+  console.log('currentTask:::', currentTask);
 
   return (
     <Flex position="relative">
