@@ -485,8 +485,6 @@ const Content = () => {
 
   const inputModalLink = currentBlankProps && currentBlankProps.target === 'blank' ? currentBlankProps.url : `https://4geeks.com/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`;
 
-  console.log('currentTask:::', currentTask);
-
   return (
     <Flex position="relative">
       <ModalInfo
