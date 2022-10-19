@@ -12,7 +12,6 @@ import {
   Box,
   Flex,
   useCheckboxGroup,
-  useColorModeValue,
   ModalCloseButton,
   Switch,
 } from '@chakra-ui/react';
@@ -21,6 +20,7 @@ import Icon from '../Icon';
 import Text from '../Text';
 import TechnologiesSection from './technologies';
 import DifficultySection from './difficulty';
+import useStyle from '../../hooks/useStyle';
 
 const FilterModal = ({
   title, isModalOpen, onClose, setFilter, contextFilter, technologyTags, difficulties,
@@ -31,6 +31,8 @@ const FilterModal = ({
   const [show, setShow] = useState(false);
   const [difficultyPosition, setDifficulty] = useState(null);
   const router = useRouter();
+  const { lightColor, modal, borderColor } = useStyle();
+
   const { getCheckboxProps } = useCheckboxGroup({
     onChange: setCheckedTechnologies,
   });
@@ -48,9 +50,6 @@ const FilterModal = ({
       setWithVideo(withVideoQuery === 'true');
     }
   }, [router.query.withVideo]);
-
-  const commonTextColor = useColorModeValue('gray.600', 'gray.200');
-  const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
 
   const handleToggle = () => setShow(!show);
 
@@ -99,7 +98,7 @@ const FilterModal = ({
         maxWidth="100%"
         borderRadius="17px"
         padding="10px"
-        bg={useColorModeValue('white', 'featuredDark')}
+        bg={modal.background}
         margin={{ base: '3% 4% 0 4%', md: '3% 22% 0 22%' }}
       >
         <ModalHeader
@@ -107,11 +106,11 @@ const FilterModal = ({
           padding="18px 0"
           textTransform="uppercase"
           textAlign="center"
-          color={commonTextColor}
+          color={lightColor}
           paddingBottom={0}
           borderBottom={1}
           borderStyle="solid"
-          borderColor={commonBorderColor}
+          borderColor={borderColor}
         >
           {title || t('filter')}
         </ModalHeader>
@@ -130,9 +129,9 @@ const FilterModal = ({
               t={t}
               handleToggle={handleToggle}
               technologyTags={technologyTags}
-              commonTextColor={commonTextColor}
+              commonTextColor={lightColor}
               getCheckboxProps={getCheckboxProps}
-              commonBorderColor={commonBorderColor}
+              commonBorderColor={borderColor}
               checkedTechnologies={checkedTechnologies}
             />
 
@@ -143,13 +142,13 @@ const FilterModal = ({
               contextFilter={contextFilter}
               setDifficulty={setDifficulty}
               difficulties={difficulties}
-              commonTextColor={commonTextColor}
+              commonTextColor={lightColor}
               difficultyPosition={difficultyPosition}
-              commonBorderColor={commonBorderColor}
+              commonBorderColor={borderColor}
             />
 
             <Flex flexDirection="row" justifyContent="space-between">
-              <Text fontSize="1rem" fontWeight="bold" textTransform="uppercase" color={commonTextColor} padding="20px 0">
+              <Text fontSize="1rem" fontWeight="bold" textTransform="uppercase" color={lightColor} padding="20px 0">
                 {t('only-video-tutorials')}
               </Text>
 
@@ -178,7 +177,7 @@ const FilterModal = ({
           borderStyle="solid"
           justifyContent="space-between"
           padding="0 1rem"
-          borderColor={commonBorderColor}
+          borderColor={borderColor}
         >
           <Box
             as="button"

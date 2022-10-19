@@ -1,14 +1,16 @@
 import PropTypes from 'prop-types';
 import { Field } from 'formik';
 import {
-  FormControl, FormErrorMessage, FormLabel, Input, useColorModeValue,
+  FormControl, FormErrorMessage, FormLabel, Input,
 } from '@chakra-ui/react';
+import useStyle from '../../hooks/useStyle';
 
 const FieldForm = ({
   // eslint-disable-next-line no-unused-vars
   type, name, label, placeholder, formProps, setFormProps, style, withLabel,
 }) => {
-  const inputBorderColor = useColorModeValue('gray.default', '#cacaca');
+  const { input } = useStyle();
+  const inputBorderColor = input.borderColor;
 
   return (
     <Field name={name}>

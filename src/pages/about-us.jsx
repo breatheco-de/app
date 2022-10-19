@@ -5,6 +5,7 @@ import getT from 'next-translate/getT';
 import Link from '../common/components/NextChakraLink';
 import getMarkDownContent from '../common/components/MarkDownParser/markdown';
 import MarkDownParser from '../common/components/MarkDownParser';
+import GridContainer from '../common/components/GridContainer';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'about-us');
@@ -74,13 +75,13 @@ const AboutUs = ({ data }) => {
   `;
 
   return (
-    <Box
+    <GridContainer
       height="100%"
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
       padding="35px 0 0 0"
-      margin={{ base: '0', md: '0 10% 0 10%' }}
+      // margin={{ base: '0', md: '0 10% 0 10%' }}
     >
       <Link
         href="/"
@@ -94,13 +95,20 @@ const AboutUs = ({ data }) => {
       </Link>
 
       <Box
-        display="flex"
+        display="grid"
         flexDirection="column"
         alignItems="center"
+        gridTemplateColumns={{
+          base: '.5fr repeat(12, 1fr) .5fr',
+          md: '1.5fr repeat(12, 1fr) 1.5fr',
+        }}
         flex="1"
-        margin={{ base: '0', md: '4% 10% 0 10%' }}
+        margin="4% 0 0 0"
+        // margin={{ base: '0', md: '4% 10% 0 10%' }}
       >
         <Box
+          display="grid"
+          gridColumn="2 / span 12"
           padding="28px 32px"
           borderRadius="3px"
           background={useColorModeValue('#F2F6FA', 'featuredDark')}
@@ -111,7 +119,7 @@ const AboutUs = ({ data }) => {
           <MarkDownParser content={markdownText || data} />
         </Box>
       </Box>
-    </Box>
+    </GridContainer>
   );
 };
 

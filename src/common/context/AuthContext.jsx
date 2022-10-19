@@ -145,9 +145,11 @@ const AuthProvider = ({ children }) => {
               type: 'INIT',
               payload: { user: data, isAuthenticated: true, isLoading: false },
             });
+            const permissionsSlug = data.permissions.map((l) => l.codename);
             setProfile({
               ...profile,
               ...data,
+              permissionsSlug,
             });
             if (data.github) {
               localStorage.setItem('showGithubWarning', 'closed');

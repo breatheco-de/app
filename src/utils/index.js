@@ -47,6 +47,7 @@ const getStorageItem = (key) => {
   }
   return null;
 };
+const tokenExists = String(getStorageItem('accessToken')).length > 5;
 
 const setStorageItem = (key, value) => {
   if (isWindow) {
@@ -114,5 +115,5 @@ export {
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
   removeStorageItem, isDevMode, devLogTable, devLog, languageLabel,
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
-  setStorageItem, toCapitalize,
+  setStorageItem, toCapitalize, tokenExists,
 };

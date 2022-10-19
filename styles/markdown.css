@@ -75,6 +75,7 @@
   background-color: #283340;
   color: #cbd5e0;
   border-left: 0.25em solid #0097cd;
+  padding: 12px;
 }
 .markdown-body blockquote p {
   padding: 10px 0 10px 14px;
@@ -152,9 +153,13 @@
 }
 
 .markdown-body p, .markdown-body blockquote,
-.markdown-body ul, .markdown-body ol,
 .markdown-body dl, .markdown-body table {
   margin: 15px 0;
+}
+
+.markdown-body blockquote p {
+  padding: 0;
+  margin: 0;
 }
 
 .markdown-body.light blockquote table * {
@@ -163,10 +168,6 @@
 
 .markdown-body.dark blockquote table * {
   color: #cbd5e0;
-}
-
-.markdown-body blockquote table {
-  padding: 15px 0 0 0;
 }
 
 .markdown-body hr {
@@ -544,6 +545,7 @@ blockquote > :last-child {
   display: flex;
   gap: 4px;
   margin-left: 2rem !important;
-  padding-bottom: 15px;
+  margin: 5px 0 0 0;
+  /* padding-bottom: 15px; */
   flex-direction: column;
 }

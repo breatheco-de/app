@@ -64,10 +64,11 @@ const AvatarUser = ({
             zIndex={index}
           >
             {customBadge && (customBadge)}
-            {badge && (
+            {badge && isOnline && (
               <AvatarBadge
                 boxSize="11px"
-                bg={isOnline ? 'success' : 'danger'}
+                // bg={isOnline ? 'success' : 'danger'}
+                bg="success"
                 top="-4px"
                 right={isWrapped ? '6px' : '4px'}
                 border="2px solid"
@@ -126,10 +127,11 @@ const AvatarUser = ({
         zIndex={index}
       >
         {customBadge && (customBadge)}
-        {badge && (
+        {badge && isOnline && (
           <AvatarBadge
             boxSize="11px"
-            bg={isOnline ? 'success' : 'danger'}
+            // bg={isOnline ? 'success' : 'danger'}
+            bg="success"
             top="-4px"
             right={isWrapped ? '6px' : '4px'}
             border="2px solid"
