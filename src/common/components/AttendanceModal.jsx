@@ -314,10 +314,10 @@ const AttendanceModal = ({
             {t('attendance-modal.list-attendance-title', { count: sortOldStudentList.length })}
           </ModalHeader>
           <ModalCloseButton />
-          <ModalBody padding="0.5rem 0 0.5rem 1.5rem">
+          <ModalBody padding="0.5rem 0 0.5rem 0">
             <TableContainer>
               {sortOldStudentList.length > 0 && (
-                <Table variant="simple" margin="0 0.5rem 0 0">
+                <Table variant="simple" style={{ margin: '0 1.5rem 0 1.5rem' }}>
                   <Thead>
                     <Tr>
                       <Th>{t('common:user-id')}</Th>
