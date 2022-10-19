@@ -21,7 +21,7 @@ const OnlyFor = ({
 
   const isCapableAcademy = cohortSession && cohortSession.academy?.id === academyNumber;
   const isMember = commonUser.includes(cohortRole);
-  const capabilitiesNotExists = capabilities.length > 0 && capabilities.includes('');
+  const capabilitiesNotExists = capabilities.length <= 0 || capabilities.includes('');
   const isCapableRole = capabilities.map(
     (capability) => userCapabilities.includes(capability),
   ).includes(true);
