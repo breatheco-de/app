@@ -32,6 +32,7 @@ import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import asPrivate from '../../common/context/PrivateRouteWrapper';
 import CustomTheme from '../../../styles/theme';
+import GridContainer from '../../common/components/GridContainer';
 // import KPI from '../../common/components/KPI';
 
 const Mentorship = () => {
@@ -144,11 +145,11 @@ const Mentorship = () => {
 
   return (
     <Container maxW="none" padding="0">
-      <Container
+      <GridContainer
         className="kpi-container"
         maxW="none"
         // paddingRight="20%"
-        paddingLeft={['5%', '5%', '10%', '10%']}
+        // paddingLeft={['5%', '5%', '10%', '10%']}
         paddingTop="20px"
         paddingBottom="20px"
       >
@@ -210,84 +211,92 @@ const Mentorship = () => {
             )}
           </Heading>
         </Container>
-      </Container>
+      </GridContainer>
       <Divider borderBottomWidth="2px" />
-      <StyledContainer>
-        <table>
-          <tr className="table-head">
-            <th className="session-date-head">{t('mentorshipSession')}</th>
-            <th className="icons-row-head">{t('events')}</th>
-            <th className="session-time-head">{t('billed')}</th>
-          </tr>
-          {sessions.map((session) => (
-            <tr className="table-rows">
-              <td className="session-date">
-                <Text fontSize="md">
-                  {session.started_at ? `${format(new Date(session.started_at.slice(0, -1)), 'MMMM dd, y, h:mm aaa')}` : t('invalidDate')}
-                </Text>
-                {session.mentee ? (
-                  <Text fontSize="md">
-                    {t('with')}
-                    {' '}
-                    <span style={{ fontWeight: 'bold' }}>{`${session.mentee.first_name ? session.mentee.first_name : ''} ${session.mentee.last_name ? session.mentee.last_name : ''}`}</span>
-                  </Text>
-                )
-                  : (
-                    <Text fontSize="md">
-                      <span style={{ fontWeight: 'bold' }}>
-                        {t('ghostLabel')}
-                      </span>
-                    </Text>
-                  )}
-              </td>
-              <td className="icons-row">
-                <Flex alignItems="center">
-                  {tooltipsGenerator(session).map((tooltip) => (
-                    <Tooltip label={tooltip.label} fontSize="md" placement="top">
-                      <span>
-                        <Icon style={{ marginRight: '15px' }} icon={tooltip.icon} width="25px" height="25px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
-                      </span>
-                    </Tooltip>
-                  ))}
-                  <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link" onClick={() => setShowModal({ show: true, session })}>
-                    {t('details')}
-                  </Button>
-                </Flex>
-              </td>
-              <td className="session-time">
-                <Text marginBottom={['10px', '0', '0', '0']} fontSize="md" color={session.extra_time ? CustomTheme.colors.danger : ''}>
-                  {session.extra_time && <ArrowUpIcon />}
-                  {session.billed_str}
-                </Text>
-                <Flex wrap="wrap" maxWith="250px" className="icons-row-responsive" alignItems="center">
-                  {tooltipsGenerator(session).map((tooltip) => (
-                    <Tooltip label={tooltip.label} fontSize="md" placement="top">
-                      <span>
-                        <Icon style={{ marginRight: '15px', marginTop: '5px' }} icon={tooltip.icon} width="20px" height="20px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
-                      </span>
-                    </Tooltip>
-                  ))}
-                  <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link" onClick={() => setShowModal({ show: true, session })}>
-                    {t('details')}
-                  </Button>
-                </Flex>
-              </td>
+      <Box
+        display="grid"
+        gridTemplateColumns={{
+          base: '.5fr repeat(12, 1fr) .5fr',
+          md: '1.8fr repeat(12, 1fr) 1.8fr',
+        }}
+      >
+        <StyledContainer>
+          <table>
+            <tr className="table-head">
+              <th className="session-date-head">{t('mentorshipSession')}</th>
+              <th className="icons-row-head">{t('events')}</th>
+              <th className="session-time-head">{t('billed')}</th>
             </tr>
-          ))}
-        </table>
-        {!isLoading && sessions.length === 0 && (
-          <Container
-            maxW="none"
-            border="1px solid"
-            borderRadius="10px"
-            textAlign="center"
-            padding="10px"
-            borderColor="#DADADA"
-          >
-            <Text fontSize="md">{t('common:no-elements')}</Text>
-          </Container>
-        )}
-      </StyledContainer>
+            {sessions.map((session) => (
+              <tr className="table-rows">
+                <td className="session-date">
+                  <Text fontSize="md">
+                    {session.started_at ? `${format(new Date(session.started_at.slice(0, -1)), 'MMMM dd, y, h:mm aaa')}` : t('invalidDate')}
+                  </Text>
+                  {session.mentee ? (
+                    <Text fontSize="md">
+                      {t('with')}
+                      {' '}
+                      <span style={{ fontWeight: 'bold' }}>{`${session.mentee.first_name ? session.mentee.first_name : ''} ${session.mentee.last_name ? session.mentee.last_name : ''}`}</span>
+                    </Text>
+                  )
+                    : (
+                      <Text fontSize="md">
+                        <span style={{ fontWeight: 'bold' }}>
+                          {t('ghostLabel')}
+                        </span>
+                      </Text>
+                    )}
+                </td>
+                <td className="icons-row">
+                  <Flex alignItems="center">
+                    {tooltipsGenerator(session).map((tooltip) => (
+                      <Tooltip label={tooltip.label} fontSize="md" placement="top">
+                        <span>
+                          <Icon style={{ marginRight: '15px' }} icon={tooltip.icon} width="25px" height="25px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
+                        </span>
+                      </Tooltip>
+                    ))}
+                    <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link" onClick={() => setShowModal({ show: true, session })}>
+                      {t('details')}
+                    </Button>
+                  </Flex>
+                </td>
+                <td className="session-time">
+                  <Text marginBottom={['10px', '0', '0', '0']} fontSize="md" color={session.extra_time ? CustomTheme.colors.danger : ''}>
+                    {session.extra_time && <ArrowUpIcon />}
+                    {session.billed_str}
+                  </Text>
+                  <Flex wrap="wrap" maxWith="250px" className="icons-row-responsive" alignItems="center">
+                    {tooltipsGenerator(session).map((tooltip) => (
+                      <Tooltip label={tooltip.label} fontSize="md" placement="top">
+                        <span>
+                          <Icon style={{ marginRight: '15px', marginTop: '5px' }} icon={tooltip.icon} width="20px" height="20px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
+                        </span>
+                      </Tooltip>
+                    ))}
+                    <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link" onClick={() => setShowModal({ show: true, session })}>
+                      {t('details')}
+                    </Button>
+                  </Flex>
+                </td>
+              </tr>
+            ))}
+          </table>
+          {!isLoading && sessions.length === 0 && (
+            <Container
+              maxW="none"
+              border="1px solid"
+              borderRadius="10px"
+              textAlign="center"
+              padding="10px"
+              borderColor="#DADADA"
+            >
+              <Text fontSize="md">{t('common:no-elements')}</Text>
+            </Container>
+          )}
+        </StyledContainer>
+      </Box>
       <Modal
         isOpen={showModal.show}
         size="md"
@@ -343,7 +352,8 @@ const Mentorship = () => {
 
 const StyledContainer = styled.div`
   width: 100%;
-  padding: 20px 10%;
+  // padding: 20px 10%;
+  grid-column: 2 / span 12;
 
   td:first-child,
   th:first-child {

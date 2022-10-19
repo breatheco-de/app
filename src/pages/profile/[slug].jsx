@@ -24,6 +24,7 @@ import { cleanQueryStrings } from '../../utils';
 import ShareButton from '../../common/components/ShareButton';
 import AlertMessage from '../../common/components/AlertMessage';
 import getCroppedImg from '../../utils/cropImage';
+import GridContainer from '../../common/components/GridContainer';
 
 const Profile = () => {
   const { t } = useTranslation('profile');
@@ -185,7 +186,7 @@ const Profile = () => {
           style={{ borderRadius: '0px', justifyContent: 'center' }}
         />
       )}
-      <Box margin={{ base: '3% 4% 0px', md: '3% 10% 0px' }} minH="65vh">
+      <GridContainer minH="480px">
         <Heading as="h1" size="m" margin="45px 0">{t('navbar:my-profile')}</Heading>
         <Tabs index={currentTabIndex} display="flex" flexDirection={{ base: 'column', md: 'row' }} variant="unstyled" gridGap="40px">
           <TabList display="flex" flexDirection={{ base: 'row', md: 'column' }} width={{ base: '100%', md: '300px' }}>
@@ -374,7 +375,7 @@ const Profile = () => {
             </TabPanel>
           </TabPanels>
         </Tabs>
-      </Box>
+      </GridContainer>
     </>
   );
 };

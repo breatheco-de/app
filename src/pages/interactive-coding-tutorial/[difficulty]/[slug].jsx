@@ -16,6 +16,7 @@ import MarkDownParser from '../../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
+import GridContainer from '../../../common/components/GridContainer';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
@@ -183,12 +184,12 @@ const ProjectSlug = ({ project, markdown }) => {
   }, [language]);
 
   return (
-    <Box
+    <GridContainer
       height="100%"
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      margin={{ base: '2% 4% 0 4%', lg: '2% 10% 0 10%' }}
+      margin="2rem auto"
     >
       <Link
         href="/interactive-coding-tutorials"
@@ -295,7 +296,7 @@ const ProjectSlug = ({ project, markdown }) => {
           )}
         </Box>
       </Flex>
-    </Box>
+    </GridContainer>
   );
 };
 

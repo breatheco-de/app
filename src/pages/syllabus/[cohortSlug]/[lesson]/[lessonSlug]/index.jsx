@@ -26,6 +26,7 @@ import ShareButton from '../../../../../common/components/ShareButton';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import ScrollTop from '../../../../../common/components/scrollTop';
+import bc from '../../../../../common/services/breathecode';
 import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar';
 import {
   defaultDataFetch, getCurrentCohort, prepareCohortContext, prepareTaskModules,
@@ -64,6 +65,7 @@ const Content = () => {
   const [currentBlankProps, setCurrentBlankProps] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
   const [currentData, setCurrentData] = useState({});
+  const [subTasks, setSubTasks] = useState([]);
   const toast = useToast();
   const router = useRouter();
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
@@ -208,9 +210,18 @@ const Content = () => {
   };
 
   useEffect(() => {
+    if (currentTask?.id) {
+      bc.todo().subtask().get(currentTask?.id)
+        .then((resp) => {
+          setSubTasks(resp.data);
+        });
+    }
+  }, [currentTask]);
+
+  useEffect(() => {
     const currTask = filterEmptyModules[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
 
-    if (currTask.target === 'blank') {
+    if (currTask?.target === 'blank') {
       setCurrentBlankProps(currTask);
     } else if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
       axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
@@ -312,12 +323,12 @@ const Content = () => {
   }, [selectedSyllabus]);
 
   useEffect(() => {
-    if (!isLoading && user && user?.active_cohort && cohortSession?.cohort_role) {
+    if (!isLoading && user?.active_cohort && cohortSession?.cohort_role) {
       prepareCohortContext({
         user, cohortSession, setCohortSession, setContextState, router, t,
       });
     }
-  }, [user]);
+  }, [isLoading]);
 
   useEffect(() => {
     const cohortProgram = contextState?.cohortProgram;
@@ -341,6 +352,7 @@ const Content = () => {
     lesson,
     quizSlug,
     lessonSlug,
+    subTasks,
   });
 
   const teacherActions = profesionalRoles.includes(cohortSession.cohort_role)
@@ -519,7 +531,7 @@ const Content = () => {
         onToggle={onToggle}
       />
 
-      <Box width="100%" height="auto">
+      <Box width={{ base: '100%', md: '100%', lg: 'calc(100% - 26.6vw)' }} margin="0 auto" height="auto">
         {!isQuiz && currentData?.intro_video_url && (
           <ReactPlayerV2
             url={currentData?.intro_video_url}
@@ -530,15 +542,18 @@ const Content = () => {
           // id={lessonSlug}
           flexGrow={1}
           marginLeft={0}
-          margin={{ base: '0 auto', xl: Open ? '0 auto 0 8vw' : '0 auto' }}
-          padding="25px 0 0 0"
+          margin="0 auto"
+          // margin={{ base: '0 auto', xl: Open ? '0 auto 0 8vw' : '0 auto' }}
+          padding={{ base: '25px 10px 0 10px', md: '25px 2rem 0 2rem' }}
           // padding={{
           //   base: GetReadme() !== false ? '0 5vw 4rem 5vw' : '4rem 4vw',
           //   md: GetReadme() !== false ? '25px 8vw 4rem 8vw' : '4rem 4vw',
           // }}
-          maxWidth={{
-            base: '94vw', sm: '86vw', md: '70vh', lg: '82vh',
-          }}
+          width="100%"
+          maxWidth="1024px"
+          // maxWidth={{
+          //   base: '94vw', sm: '86vw', md: '70vh', lg: '82vh',
+          // }}
           // marginRight="10rem"
           transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
           transitionProperty="margin"

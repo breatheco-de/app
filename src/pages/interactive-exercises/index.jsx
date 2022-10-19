@@ -15,6 +15,7 @@ import ProjectList from '../../js_modules/projects/ProjectList';
 import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 import { isWindow } from '../../utils';
+import GridContainer from '../../common/components/GridContainer';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'exercises');
@@ -169,66 +170,76 @@ function Exercices({ exercises, technologyTags, difficulties }) {
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
       <TitleContent title={t('title')} mobile />
-      <Flex
-        justifyContent="space-between"
-        flex="1"
-        gridGap="20px"
-        padding={{ base: '3% 4% 4% 4%', md: '1.5% 10% 1.5% 10%' }}
+      <Box
+        display="grid"
+        gridTemplateColumns="0fr repeat(12, 1fr) 0fr"
         borderBottom={1}
         borderStyle="solid"
-        borderColor={useColorModeValue('gray.200', 'gray.900')}
+        borderColor={useColorModeValue('gray.200', 'gray.700')}
       >
-        <TitleContent title={t('title')} mobile={false} />
-
-        <Search placeholder={t('search')} onChange={() => setIsLoading(true)} />
-
-        <Button
-          variant="outline"
-          backgroundColor={useColorModeValue('', 'gray.800')}
-          _hover={{ backgroundColor: useColorModeValue('', 'gray.700') }}
-          border={currentFilters >= 1 ? 2 : 1}
-          onClick={onOpen}
-          borderStyle="solid"
-          minWidth="125px"
-          borderColor={useColorModeValue(
-            `${currentFilters >= 1 ? 'blue.default' : '#DADADA'}`,
-            'gray.800',
-          )}
+        <Flex
+          gridColumn="2 / span 12"
+          width="100%"
+          margin="0 auto"
+          maxWidth="1280px"
+          justifyContent="space-between"
+          flex="1"
+          gridGap="20px"
+          padding={{ base: '3% 15px 4% 15px', md: '1.5% 0 1.5% 0' }}
         >
-          <Icon icon="setting" width="20px" height="20px" style={{ minWidth: '20px' }} />
-          <Text textTransform="uppercase" pl="10px">
-            {currentFilters >= 2 ? t('filters') : t('filter')}
-          </Text>
-          {currentFilters >= 1 && (
-            <Text
-              as="span"
-              margin="0 10px"
-              textTransform="uppercase"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              backgroundColor="blue.default"
-              color="white"
-              borderRadius="30px"
-              minWidth="20px"
-              height="20px"
-            >
-              {currentFilters}
+          <TitleContent title={t('title')} mobile={false} />
+
+          <Search placeholder={t('search')} onChange={() => setIsLoading(true)} />
+
+          <Button
+            variant="outline"
+            backgroundColor={useColorModeValue('', 'gray.800')}
+            _hover={{ backgroundColor: useColorModeValue('', 'gray.700') }}
+            border={currentFilters >= 1 ? 2 : 1}
+            onClick={onOpen}
+            borderStyle="solid"
+            minWidth="125px"
+            borderColor={useColorModeValue(
+              `${currentFilters >= 1 ? 'blue.default' : '#DADADA'}`,
+              'gray.800',
+            )}
+          >
+            <Icon icon="setting" width="20px" height="20px" style={{ minWidth: '20px' }} />
+            <Text textTransform="uppercase" pl="10px">
+              {currentFilters >= 2 ? t('filters') : t('filter')}
             </Text>
-          )}
-        </Button>
+            {currentFilters >= 1 && (
+              <Text
+                as="span"
+                margin="0 10px"
+                textTransform="uppercase"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                backgroundColor="blue.default"
+                color="white"
+                borderRadius="30px"
+                minWidth="20px"
+                height="20px"
+              >
+                {currentFilters}
+              </Text>
+            )}
+          </Button>
 
-        <FilterModal
-          isModalOpen={isOpen}
-          onClose={onClose}
-          contextFilter={filteredBy.exercisesOptions}
-          setFilter={setExerciseFilters}
-          technologyTags={technologyTags}
-          difficulties={difficulties}
-        />
-      </Flex>
+          <FilterModal
+            isModalOpen={isOpen}
+            onClose={onClose}
+            contextFilter={filteredBy.exercisesOptions}
+            setFilter={setExerciseFilters}
+            technologyTags={technologyTags}
+            difficulties={difficulties}
+          />
+        </Flex>
+      </Box>
 
-      <Box flex="1" margin={{ base: '0 4% 0 4%', md: '0 10% 0 10%' }}>
+      {/* margin={{ base: '0 4% 0 4%', md: '0 10% 0 10%' }} */}
+      <GridContainer>
         <Text
           size="md"
           display="flex"
@@ -243,7 +254,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
           isLoading={isLoading}
           projectPath="interactive-exercise"
         />
-      </Box>
+      </GridContainer>
     </Box>
   );
 }

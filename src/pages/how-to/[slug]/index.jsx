@@ -148,9 +148,10 @@ export default function HowToSlug({ data, markdown }) {
 
   return (
     <>
-      <Box display="flex" justifyContent="space-between" margin={{ base: '2% 4% 0 4%', lg: '2% 10% 0 10%' }}>
+      <Box display="grid" gridTemplateColumns="0fr repeat(12, 1fr) 0fr" maxWidth="1280px" margin="2rem auto">
         <Link
           href="/how-to"
+          gridColumn="2 / span 12"
           color={linkColor}
           display="inline-block"
           letterSpacing="0.05em"
@@ -161,8 +162,9 @@ export default function HowToSlug({ data, markdown }) {
       </Box>
       <Box
         gridGap="20px"
-        maxWidth="1012px"
-        margin={{ base: '3% 4%', md: '3% 10% 4% 10%', lg: '3% 24% 4% 24%' }}
+        maxWidth="1020px"
+        margin="3rem auto"
+        padding={{ base: '0 15px', md: '0' }}
         borderBottom={1}
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.900')}
@@ -182,7 +184,7 @@ export default function HowToSlug({ data, markdown }) {
             gap="10px"
             paddingX="0"
           />
-          <Link href={data?.readme_url || '#'} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+          <Link href={data?.readme_url || '#'} width="fit-content" color="gray.400" margin="0 0 0 auto" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
             <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
             {t('common:edit-on-github')}
           </Link>
@@ -219,7 +221,6 @@ export default function HowToSlug({ data, markdown }) {
         <Box
           borderRadius="3px"
           margin="0 auto"
-          maxWidth="1012px"
           flexGrow={1}
           className={`markdown-body ${useColorModeValue('light', 'dark')}`}
         >

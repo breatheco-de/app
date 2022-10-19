@@ -19,6 +19,7 @@ import Text from '../Text';
 import Image from '../Image';
 import Link from '../NextChakraLink';
 import Heading from '../Heading';
+import useStyle from '../../hooks/useStyle';
 
 const Mentoring = ({
   width, programServices, mentoryProps, setMentoryProps, programMentors,
@@ -34,9 +35,8 @@ const Mentoring = ({
     mentorSearch: '',
   });
 
-  const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
-  const labelColor = useColorModeValue('gray.600', 'gray.300');
+  const { borderColor, lightColor } = useStyle();
 
   const servicesFiltered = programServices.filter(
     (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
@@ -172,7 +172,7 @@ const Mentoring = ({
               </Box>
             )}
             {mentoryProps?.mentor && (
-              <Box background={commonBackground} display="flex" gridGap="14px" justifyContent="center" alignItems="center" py="15px" w="100%" borderTop="1px solid" borderColor={commonBorderColor} borderBottomRadius={!mentoryProps?.date ? '0.375rem' : '0'}>
+              <Box background={commonBackground} display="flex" gridGap="14px" justifyContent="center" alignItems="center" py="15px" w="100%" borderTop="1px solid" borderColor={borderColor} borderBottomRadius={!mentoryProps?.date ? '0.375rem' : '0'}>
                 <Image
                   src={mentoryProps.mentor?.user.profile?.avatar_url}
                   alt={`selected ${mentoryProps.mentor?.user?.first_name} ${mentoryProps.mentor?.user?.last_name}`}
@@ -193,7 +193,7 @@ const Mentoring = ({
               </Box>
             )}
             {mentoryProps?.date && (
-              <Box background={commonBackground} py="15px" textAlign="center" borderTop="1px solid" borderColor={commonBorderColor} w="100%" borderBottomRadius="0.375rem">
+              <Box background={commonBackground} py="15px" textAlign="center" borderTop="1px solid" borderColor={borderColor} w="100%" borderBottomRadius="0.375rem">
                 {dateFormated[router.locale]}
               </Box>
             )}
@@ -208,11 +208,11 @@ const Mentoring = ({
                 </InputGroup>
                 <Box maxHeight="10rem" width="100%" overflow="auto" borderBottomRadius="0.375rem">
                   {servicesFiltered.length > 0 ? servicesFiltered.map((service) => (
-                    <Box borderTop="1px solid" cursor="pointer" onClick={() => { setMentoryProps({ ...mentoryProps, service }); setSavedChanges({ ...savedChanges, service }); }} borderColor={commonBorderColor} py="14px" background={commonBackground} width="100%" px="22px" _hover={{ background: useColorModeValue('featuredLight', 'gray.700') }}>
+                    <Box borderTop="1px solid" cursor="pointer" onClick={() => { setMentoryProps({ ...mentoryProps, service }); setSavedChanges({ ...savedChanges, service }); }} borderColor={borderColor} py="14px" background={commonBackground} width="100%" px="22px" _hover={{ background: useColorModeValue('featuredLight', 'gray.700') }}>
                       {service.name}
                     </Box>
                   )) : (
-                    <Box borderTop="1px solid" borderColor={commonBorderColor} py="14px" background={commonBackground} width="100%" px="22px">
+                    <Box borderTop="1px solid" borderColor={borderColor} py="14px" background={commonBackground} width="100%" px="22px">
                       {t('common:search-not-found')}
                     </Box>
                   )}
@@ -224,7 +224,7 @@ const Mentoring = ({
             {mentoryProps?.service && !mentoryProps?.mentor
               && (
                 <>
-                  <InputGroup mt="24px" borderBottom="1px solid" borderColor={commonBorderColor}>
+                  <InputGroup mt="24px" borderBottom="1px solid" borderColor={borderColor}>
                     <Input onChange={(e) => setSearchProps({ ...searchProps, mentorSearch: e.target.value?.toLowerCase() })} background={commonBackground} borderBottomRadius="0" border="0" placeholder={t('supportSideBar.search-mentor')} />
                     <InputRightElement>
                       <Icon icon="arrowDown" color="#606060" width="35px" height="30px" ml="10px" />
@@ -251,7 +251,7 @@ const Mentoring = ({
                             <Box fontSize="15px" fontWeight="600">
                               {`${mentor.user.first_name} ${mentor.user.last_name}`}
                             </Box>
-                            <Box as="hr" borderColor={commonBorderColor} my="5px" />
+                            <Box as="hr" borderColor={borderColor} my="5px" />
                             {/* <Box color={useColorModeValue('gray.600', 'gray.200')}>
                               Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
                             </Box> */}
@@ -271,7 +271,7 @@ const Mentoring = ({
                         </Box>
                       </>
                     )) : (
-                      <Box borderTop="1px solid" borderColor={commonBorderColor} py="14px" background={commonBackground} width="100%" px="22px">
+                      <Box borderTop="1px solid" borderColor={borderColor} py="14px" background={commonBackground} width="100%" px="22px">
                         {t('supportSideBar.no-mentors')}
                       </Box>
                     )}
@@ -280,7 +280,7 @@ const Mentoring = ({
               )}
             {/* {mentoryProps?.mentor && !mentoryProps?.date && (
               <Box width="100%" textAlign="center" mt="10px" background={commonBackground} borderRadius="0.375rem">
-                <Box width="100%" textAlign="center" color={useColorModeValue('gray.600', 'gray.200')} py="14px" borderBottom="1px solid" borderColor={commonBorderColor} mb="10px">
+                <Box width="100%" textAlign="center" color={useColorModeValue('gray.600', 'gray.200')} py="14px" borderBottom="1px solid" borderColor={borderColor} mb="10px">
                   Select a day
                 </Box>
                 <Box>
@@ -301,7 +301,7 @@ const Mentoring = ({
             )}
             {mentoryProps?.date && !mentoryProps?.time && (
               <Box width="100%" textAlign="center" mt="10px" background={commonBackground} borderRadius="0.375rem">
-                <Box width="100%" textAlign="center" color={useColorModeValue('gray.600', 'gray.200')} py="14px" borderBottom="1px solid" borderColor={commonBorderColor}>
+                <Box width="100%" textAlign="center" color={useColorModeValue('gray.600', 'gray.200')} py="14px" borderBottom="1px solid" borderColor={borderColor}>
                   Select a time
                 </Box>
                 <Box p="15px 0 8px 0">
@@ -352,10 +352,10 @@ const Mentoring = ({
                   <Box fontWeight="700" textAlign="center" fontSize="15px" color={useColorModeValue('gray.900', 'white')} letterSpacing="0.05em">
                     {`${mentoryProps.mentor.user.first_name} ${mentoryProps.mentor.user.last_name} - ${mentoryProps?.service?.name}`}
                   </Box>
-                  <Box fontWeight="400" fontSize="15px" color={labelColor} textAlign="center" letterSpacing="0.05em">
+                  <Box fontWeight="400" fontSize="15px" color={lightColor} textAlign="center" letterSpacing="0.05em">
                     {dateFormated2[router.locale]}
                   </Box>
-                  <Box fontWeight="400" fontSize="15px" color={labelColor} textAlign="center" letterSpacing="0.05em">
+                  <Box fontWeight="400" fontSize="15px" color={lightColor} textAlign="center" letterSpacing="0.05em">
                     {`${mentoryProps.time} hs.`}
                   </Box>
 

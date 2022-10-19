@@ -8,6 +8,7 @@ import rehypeRaw from 'rehype-raw';
 import { Img } from '@chakra-ui/react';
 
 import useTranslation from 'next-translate/useTranslation';
+// import { useRouter } from 'next/router';
 import {
   BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner,
 } from './MDComponents';
@@ -15,13 +16,15 @@ import { usePersistent } from '../../hooks/usePersistent';
 import Toc from './toc';
 import ContentHeading from './ContentHeading';
 import CallToAction from '../CallToAction';
+import SubTasks from './SubTasks';
 
 const MarkDownParser = ({
-  content, callToActionProps, withToc, frontMatter, titleRightSide,
+  content, callToActionProps, withToc, frontMatter, titleRightSide, subTasks,
 }) => {
   const { t } = useTranslation('common');
   const [learnpackActions, setLearnpackActions] = useState([]);
   const [cohortSession] = usePersistent('cohortSession', {});
+  const [profile] = usePersistent('profile', {});
 
   const newExerciseText = t('learnpack.new-exercise');
   const continueExerciseText = t('learnpack.continue-exercise');
@@ -74,6 +77,10 @@ const MarkDownParser = ({
         {withToc && (
           <Toc content={content} />
         )}
+
+        { subTasks?.length > 0 && (
+          <SubTasks subTasks={subTasks} />
+        )}
       </ContentHeading>
       <ReactMarkdown
       // gemoji plugin
@@ -96,17 +103,18 @@ const MarkDownParser = ({
           // table: {
           //   component: MDTable,
           // },
-          onlyfor: ({ ...props }) => <OnlyForBanner cohortSession={cohortSession} {...props} />,
+          onlyfor: ({ ...props }) => <OnlyForBanner cohortSession={cohortSession} profile={profile} {...props} />,
           // Component for list of checkbox
           // children[1].props.node.children[0].properties.type
           li: ({ ...props }) => {
             // eslint-disable-next-line prefer-destructuring
-            const type = props?.children[0]?.props && props.children[0].props.type;
-            const type2 = props?.children[1]?.props && props.children[1]?.props.node?.children[0]?.properties?.type;
+            const childrenExists = props?.children?.length >= 0;
+            const type = childrenExists && props?.children[0]?.props && props.children[0].props.type;
+            const type2 = childrenExists && props?.children[1]?.props && props.children[1]?.props.node?.children[0]?.properties?.type;
             return (type === 'checkbox' || type2 === 'checkbox') ? (
               <MDCheckbox className="MDCheckbox" {...props} />
             ) : (
-              <li>{props.children}</li>
+              <li>{props?.children}</li>
             );
           },
         }}
@@ -123,6 +131,7 @@ MarkDownParser.propTypes = {
   withToc: PropTypes.bool,
   frontMatter: PropTypes.objectOf(PropTypes.any),
   titleRightSide: PropTypes.node,
+  subTasks: PropTypes.arrayOf(PropTypes.any),
 };
 MarkDownParser.defaultProps = {
   content: '',
@@ -130,6 +139,7 @@ MarkDownParser.defaultProps = {
   withToc: false,
   frontMatter: {},
   titleRightSide: null,
+  subTasks: [],
 };
 
 export default MarkDownParser;

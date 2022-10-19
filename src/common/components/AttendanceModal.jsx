@@ -6,7 +6,7 @@ import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, Button, Box,
   NumberInput, NumberInputStepper, NumberDecrementStepper, NumberIncrementStepper, NumberInputField,
   FormControl, FormLabel, Flex, Grid, useCheckbox, useCheckboxGroup, Avatar,
-  useColorMode, useToast, Select, useColorModeValue, ModalCloseButton, TableContainer, Table,
+  useColorMode, useToast, Select, ModalCloseButton, TableContainer, Table,
   TableCaption, Thead, Tr, Th, Tbody, Td,
 } from '@chakra-ui/react';
 import { format, formatDistanceStrict } from 'date-fns';
@@ -17,6 +17,7 @@ import Text from './Text';
 import bc from '../services/breathecode';
 import { usePersistent } from '../hooks/usePersistent';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import useStyle from '../hooks/useStyle';
 
 const AttendanceModal = ({
   title, message, isOpen, onClose, sortedAssignments, students,
@@ -35,8 +36,7 @@ const AttendanceModal = ({
   const router = useRouter();
   const toast = useToast();
 
-  const commonFontColor = useColorModeValue('gray.600', 'gray.200');
-  const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
+  const { lightColor, borderColor } = useStyle();
 
   const { getCheckboxProps } = useCheckboxGroup({
     onChange: setChecked,
@@ -167,7 +167,7 @@ const AttendanceModal = ({
           </Text>
           <Box display="flex" gridGap="25px" padding="20px 0 0 0">
             <FormControl id="days">
-              <FormLabel htmlFor="day" color={commonFontColor} fontSize="12px">{t('attendance-modal.day')}</FormLabel>
+              <FormLabel htmlFor="day" color={lightColor} fontSize="12px">{t('attendance-modal.day')}</FormLabel>
               <NumberInput
                 defaultValue={defaultDay}
                 max={cohortDurationInDays}
@@ -183,7 +183,7 @@ const AttendanceModal = ({
             </FormControl>
 
             <FormControl>
-              <FormLabel htmlFor="current_module" color={commonFontColor} fontSize="12px">{t('attendance-modal.module')}</FormLabel>
+              <FormLabel htmlFor="current_module" color={lightColor} fontSize="12px">{t('attendance-modal.module')}</FormLabel>
               {sortedAssignments.length > 0 && (
                 <Select defaultValue={currentModule} onChange={(e) => setCurrentModule(parseInt(e.target.value, 10))} id="module" placeholder="Select module">
                   {sortedAssignments.map((module) => (
@@ -195,7 +195,7 @@ const AttendanceModal = ({
               )}
             </FormControl>
           </Box>
-          <Box height="1px" bg={commonBorderColor} marginTop="32px" marginBottom="15px" />
+          <Box height="1px" bg={borderColor} marginTop="32px" marginBottom="15px" />
           <Box>
             <Flex justifyContent="space-between" padding="6px 0 16px 0">
               <Text size="l" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
@@ -238,7 +238,7 @@ const AttendanceModal = ({
         </ModalBody>
         <ModalFooter justifyContent="space-between">
           <Text
-            color={commonFontColor}
+            color={lightColor}
             size="sm"
           >
             {t('attendance-modal.showing-students-with-active-educational-status')}
@@ -282,7 +282,7 @@ const AttendanceModal = ({
       <Modal isOpen={attendanceWasTaken} margin="0 10px" onClose={() => setAttendanceWasTaken(false)}>
         <ModalOverlay />
         <ModalContent style={{ maxWidth: '52rem' }}>
-          <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
+          <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={borderColor} textAlign="center">
             {t('attendance-modal.list-attendance-title', { count: sortOldStudentList.length })}
           </ModalHeader>
           <ModalCloseButton />
@@ -358,10 +358,10 @@ const AttendanceModal = ({
 export const CheckboxCard = (props) => {
   const { children } = props;
   const { getInputProps, getCheckboxProps } = useCheckbox(props);
-  const commonBorderColor = useColorModeValue('gray.300', 'gray.500');
   const input = getInputProps();
   const checkbox = getCheckboxProps();
-  const { colorMode } = useColorMode();
+  const { fontColor, borderColor, featuredColor } = useStyle();
+
   return (
     <Box as="label">
       <input {...input} />
@@ -371,10 +371,10 @@ export const CheckboxCard = (props) => {
         // borderWidth="2px"
         borderRadius="md"
         border="2px solid"
-        borderColor={commonBorderColor}
+        borderColor={borderColor}
         _checked={{
-          bg: colorMode === 'light' ? 'blue.light' : 'featuredDark',
-          color: colorMode === 'light' ? 'dark' : 'white',
+          bg: featuredColor,
+          color: fontColor,
           borderColor: 'blue.default',
         }}
         _focus={{
