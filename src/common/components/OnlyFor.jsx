@@ -10,15 +10,18 @@ const OnlyFor = ({
   cohortSession, academy, capabilities, children, onlyMember, onlyTeachers, withBanner, profile,
 }) => {
   const { t } = useTranslation('common');
-
   const academyNumber = Math.floor(academy);
+  const { featuredColor, backgroundColor } = useStyle();
   const router = useRouter();
-  const userCapabilities = profile.permissionsSlug || [];
   const teachers = ['TEACHER', 'ASSISTANT'];
   const commonUser = ['TEACHER', 'ASSISTANT', 'STUDENT', 'REVIEWER'];
+
+  const cohortCapabilities = cohortSession?.user_capabilities || [];
+  const profileCapabilities = profile?.permissionsSlug || [];
+
+  const userCapabilities = onlyTeachers ? cohortCapabilities : profileCapabilities;
   const profileRole = profile?.roles?.length > 0 && profile?.roles[0]?.role?.toUpperCase();
   const cohortRole = cohortSession?.cohort_role?.toUpperCase() || profileRole || 'NONE';
-  const { featuredColor, backgroundColor } = useStyle();
 
   const isCapableAcademy = cohortSession && cohortSession.academy?.id === academyNumber;
   const isMember = commonUser.includes(cohortRole);
