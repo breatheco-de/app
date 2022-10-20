@@ -180,7 +180,9 @@ export const MDCheckbox = (props) => {
       label: text,
       status: taskStatus[!isChecked],
     };
-    await props.updateSubTask(taskProps);
+    if (props.subTasks?.length > 0) {
+      await props.updateSubTask(taskProps);
+    }
   };
 
   return (
