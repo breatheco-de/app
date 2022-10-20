@@ -313,3 +313,7 @@ featured {
 .ͼ1n {
   color: var(--chakra-colors-blue-default2);
 }
+
+.chakra-checkbox__control {
+  margin-top: 5px;
+}
