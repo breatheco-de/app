@@ -68,7 +68,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const {
     title, translations, description, preview,
   } = result;
-  const difficulty = result.difficulty?.toLowerCase();
+  const difficulty = typeof result.difficulty === 'string' ? result.difficulty?.toLowerCase() : 'unknown';
   const defaultSlug = translations?.us || translations?.en;
 
   const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
