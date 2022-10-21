@@ -135,7 +135,7 @@ export const startDay = async ({
 };
 
 export const nestAssignments = ({
-  id, label = '', read, practice, code, answer, taskTodo = [],
+  id, label = '', read, practice, project, answer, taskTodo = [],
 }) => {
   const getTaskProps = (slug) => taskTodo.find(
     (task) => task.associated_slug === slug,
@@ -168,7 +168,7 @@ export const nestAssignments = ({
     task_type: 'EXERCISE',
   })).sort((a, b) => b.position - a.position);
 
-  const updatedCode = code?.map((el) => {
+  const updatedProject = project?.map((el) => {
     const taskProps = getTaskProps(el?.slug?.slug || el?.slug);
 
     return ({
@@ -182,7 +182,7 @@ export const nestAssignments = ({
       daysDiff: taskProps?.created_at ? differenceInDays(currentDate, new Date(taskProps?.created_at)) : '',
       position: el.position,
       mandatory: el.mandatory,
-      type: 'Code',
+      type: 'Project',
       icon: 'code',
       task_type: 'PROJECT',
     });
@@ -201,7 +201,7 @@ export const nestAssignments = ({
     task_type: 'QUIZ',
   })).sort((a, b) => b.position - a.position);
 
-  const modules = [...updatedRead, ...updatedPractice, ...updatedCode, ...updatedAnswer];
+  const modules = [...updatedRead, ...updatedPractice, ...updatedProject, ...updatedAnswer];
 
   const includesDailyTask = (module) => {
     const getModules = taskTodo.some((task) => task.associated_slug === module.slug);

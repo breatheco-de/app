@@ -16,7 +16,7 @@ const languageLabel = {
 const assetTypeValues = {
   read: 'LESSON',
   practice: 'EXERCISE',
-  code: 'PROJECT',
+  project: 'PROJECT',
   answer: 'QUIZ',
 };
 
