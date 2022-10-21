@@ -181,7 +181,7 @@ const Content = () => {
   };
 
   const onClickAssignment = (e, item) => {
-    const link = `/syllabus/${cohortSlug}/${item.type.toLowerCase()}/${item.slug}`;
+    const link = `/syllabus/${cohortSlug}/${item.type?.toLowerCase()}/${item.slug}`;
 
     router.push(link);
     setCurrentData({});
