@@ -78,7 +78,7 @@ const MarkDownParser = ({
           <Toc content={content} />
         )}
 
-        {subTasks?.length > 0 && (
+        {Array.isArray(subTasks) && subTasks?.length > 0 && (
           <SubTasks subTasks={subTasks} />
         )}
       </ContentHeading>
@@ -131,7 +131,7 @@ MarkDownParser.propTypes = {
   withToc: PropTypes.bool,
   frontMatter: PropTypes.objectOf(PropTypes.any),
   titleRightSide: PropTypes.node,
-  subTasks: PropTypes.arrayOf(PropTypes.any),
+  subTasks: PropTypes.oneOfType([PropTypes.array, PropTypes.any]),
   updateSubTask: PropTypes.func,
 };
 MarkDownParser.defaultProps = {

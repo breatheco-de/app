@@ -23,7 +23,7 @@ const getReadme = ({
             {t('edit-page')}
           </Link>
         )}
-        withToc={lesson.toLowerCase() === 'read'}
+        withToc={lesson?.toLowerCase() === 'read'}
         frontMatter={{
           title: currentData.title,
           // subtitle: currentData.description,
@@ -45,7 +45,7 @@ const getReadme = ({
             {t('edit-page')}
           </Link>
         )}
-        withToc={lesson.toLowerCase() === 'read'}
+        withToc={lesson?.toLowerCase() === 'read'}
         frontMatter={{
           title: currentBlankProps?.title,
           // subtitle: currentBlankProps.description,
