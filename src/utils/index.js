@@ -20,17 +20,19 @@ const assetTypeValues = {
   answer: 'QUIZ',
 };
 
-const slugify = (str) => str
+const slugify = (str) => (typeof str === 'string' ? str
   .toLowerCase()
   .trim()
   .replace(/[^\w\s-]/g, '')
   .replace(/[\s_-]+/g, '-')
-  .replace(/^-+|-+$/g, '');
+  .replace(/^-+|-+$/g, '')
+  : '');
 
-const unSlugify = (str) => str
+const unSlugify = (str) => (typeof str === 'string' ? str
   .replace(/-/g, ' ')
   .replace(/\w\S*/g,
-  (txt) => txt.charAt(0) + txt.substr(1).toLowerCase());
+  (txt) => txt.charAt(0) + txt.substr(1).toLowerCase())
+  : '');
 
 const cleanQueryStrings = (url) => url.split('?')[0];
 

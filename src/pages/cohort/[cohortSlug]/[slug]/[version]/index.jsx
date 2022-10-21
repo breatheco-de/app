@@ -479,7 +479,7 @@ const Dashboard = () => {
                 flexDirection="column"
                 gridGap="30px"
               >
-                <OnlyFor onlyMember cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
+                <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
                   <TeacherSidebar
                     title={t('teacher-sidebar.actions')}
                     user={user}
@@ -640,7 +640,7 @@ const Dashboard = () => {
               maxWidth="380px"
               minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
             >
-              <OnlyFor onlyMember cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
+              <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
                 <TeacherSidebar
                   title={t('teacher-sidebar.actions')}
                   user={user}

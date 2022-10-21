@@ -148,12 +148,6 @@ const Content = () => {
   }, []);
 
   useEffect(() => {
-    if (contextState.taskTodo !== undefined) {
-      setTaskTodo(contextState.taskTodo);
-    }
-  }, [contextState.taskTodo]);
-
-  useEffect(() => {
     if (taskTodo.length > 0) {
       setCurrentTask(taskTodo.find((el) => el.task_type === assetTypeValues[lesson]
       && el.associated_slug === lessonSlug));
@@ -187,7 +181,7 @@ const Content = () => {
   };
 
   const onClickAssignment = (e, item) => {
-    const link = `/syllabus/${cohortSlug}/${item.type.toLowerCase()}/${item.slug}`;
+    const link = `/syllabus/${cohortSlug}/${item.type?.toLowerCase()}/${item.slug}`;
 
     router.push(link);
     setCurrentData({});
@@ -207,6 +201,23 @@ const Content = () => {
       duration: 7000,
       isClosable: true,
     });
+  };
+
+  const updateSubTask = async (taskProps) => {
+    const cleanedSubTasks = subTasks.filter((task) => task.id !== taskProps.id);
+    if (currentTask?.id) {
+      const resp = await bc.todo().subtask().update(
+        currentTask?.id,
+        [
+          ...cleanedSubTasks,
+          taskProps,
+        ],
+      );
+      if (resp.status >= 200 && resp.status < 400) {
+        const respData = await resp.data;
+        setSubTasks(respData);
+      }
+    }
   };
 
   useEffect(() => {
@@ -353,6 +364,7 @@ const Content = () => {
     quizSlug,
     lessonSlug,
     subTasks,
+    updateSubTask,
   });
 
   const teacherActions = profesionalRoles.includes(cohortSession.cohort_role)

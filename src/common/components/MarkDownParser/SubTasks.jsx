@@ -18,7 +18,7 @@ const SubTasks = ({
 
   return subTasks.length > 0 && (
     <Box display="flex" border="2px solid" borderColor="blue.default" borderRadius="18px" p="16px 22px" mt="18px" gridGap="19px" alignItems="center">
-      <ProgressCircle size={74} percents={taskPercent} counterString={`${tasksDone.length} / ${subTasks.length}`} />
+      <ProgressCircle size={74} duration={1} delay={0.3} percents={taskPercent} counterString={`${tasksDone.length} / ${subTasks.length}`} />
       <Box display="flex" flexDirection="column" gridGap="6px">
         <Heading as="p" size="18px" style={{ margin: 0 }}>
           {title || stTitle || t('subtasks.title', { count: subTasks.length })}

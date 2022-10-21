@@ -75,7 +75,7 @@ const breathecode = {
       }),
       subtask: () => ({
         get: (id) => axios.get(`${url}/user/me/task/${id}/subtasks`),
-        update: (id, args) => axios.get(`${url}/user/me/task/${id}/subtasks`, args),
+        update: (id, args) => axios.put(`${url}/user/me/task/${id}/subtasks`, args),
       }),
       // getTaskByStudent: (cohortId) => axios.get(`${url}/user/me/task?cohort=${cohortId}`),
       getTaskByStudent: () => axios.get(`${url}/user/me/task?${qs}`),

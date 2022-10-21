@@ -265,7 +265,7 @@ const ModalInfo = ({
 };
 
 ModalInfo.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
+  isOpen: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
   actionHandler: PropTypes.func,
   rejectHandler: PropTypes.func,
@@ -290,6 +290,7 @@ ModalInfo.propTypes = {
 };
 
 ModalInfo.defaultProps = {
+  isOpen: false,
   actionHandler: () => {},
   rejectHandler: () => {},
   forceHandler: false,

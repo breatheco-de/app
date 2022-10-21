@@ -19,7 +19,7 @@ import CallToAction from '../CallToAction';
 import SubTasks from './SubTasks';
 
 const MarkDownParser = ({
-  content, callToActionProps, withToc, frontMatter, titleRightSide, subTasks,
+  content, callToActionProps, withToc, frontMatter, titleRightSide, subTasks, updateSubTask,
 }) => {
   const { t } = useTranslation('common');
   const [learnpackActions, setLearnpackActions] = useState([]);
@@ -78,7 +78,7 @@ const MarkDownParser = ({
           <Toc content={content} />
         )}
 
-        { subTasks?.length > 0 && (
+        {Array.isArray(subTasks) && subTasks?.length > 0 && (
           <SubTasks subTasks={subTasks} />
         )}
       </ContentHeading>
@@ -112,7 +112,7 @@ const MarkDownParser = ({
             const type = childrenExists && props?.children[0]?.props && props.children[0].props.type;
             const type2 = childrenExists && props?.children[1]?.props && props.children[1]?.props.node?.children[0]?.properties?.type;
             return (type === 'checkbox' || type2 === 'checkbox') ? (
-              <MDCheckbox className="MDCheckbox" {...props} />
+              <MDCheckbox className="MDCheckbox" {...props} subTasks={subTasks} updateSubTask={updateSubTask} />
             ) : (
               <li>{props?.children}</li>
             );
@@ -131,7 +131,8 @@ MarkDownParser.propTypes = {
   withToc: PropTypes.bool,
   frontMatter: PropTypes.objectOf(PropTypes.any),
   titleRightSide: PropTypes.node,
-  subTasks: PropTypes.arrayOf(PropTypes.any),
+  subTasks: PropTypes.oneOfType([PropTypes.array, PropTypes.any]),
+  updateSubTask: PropTypes.func,
 };
 MarkDownParser.defaultProps = {
   content: '',
@@ -140,6 +141,7 @@ MarkDownParser.defaultProps = {
   frontMatter: {},
   titleRightSide: null,
   subTasks: [],
+  updateSubTask: () => {},
 };
 
 export default MarkDownParser;

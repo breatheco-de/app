@@ -126,7 +126,7 @@
     "list-attendance-title": "Attendance list taken ({{count}} results)",
     "warn-premature-teaching": {
       "title": "Premature module start",
-      "description": "Are you sure you want to start teaching <strong>{{module}}</strong>? The suggested duration for the selected module is in {{durationInDays}} days and you have <strong>only covered for {{day}} days.</strong>"
+      "description": "Are you sure you want to start teaching <strong>{{module}}</strong>? The suggested duration for the previous module is in {{durationInDays}} days and you have <strong>only covered for {{day}} days.</strong>"
     }
   },
   "teacher-sidebar": {

@@ -92,8 +92,10 @@ const ProgressCircle = ({
               position: 'absolute',
               transform: 'rotate(90deg)',
               overflow: 'visible',
-              top: '1px',
-              left: '-1px',
+              // top: '1px',
+              // left: '-1px',
+              top: '0px',
+              left: '0px',
             }}
           >
             <motion.circle

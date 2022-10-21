@@ -161,14 +161,33 @@ export const MDHeading = ({ children, tagType }) => {
 };
 
 export const MDCheckbox = (props) => {
-  const text = props?.children[1] || props?.children[1]?.props?.children[1];
-  const child = props?.children[2] || props?.children[2]?.props?.children[2];
-  const checked = props?.checked || props?.children[1]?.props?.children[0]?.props?.checked;
-  const [isChecked, setIsChecked] = useState(checked);
+  const text = props?.children[1]?.props?.children[1] || props?.children[1];
+  const child = props?.children[2]?.props?.children[2] || props?.children[2];
+  // const checked = props?.checked || props?.children[1]?.props?.children[0]?.props?.checked;
+  const slug = typeof text === 'string' && slugify(text);
+  const taskChecked = props.subTasks && props?.subTasks.filter((task) => task.id === slug && task.status !== 'PENDING').length > 0;
+  const [isChecked, setIsChecked] = useState(taskChecked || false);
+
+  const taskStatus = {
+    true: 'DONE',
+    false: 'PENDING',
+  };
+
+  const handleChecked = async () => {
+    setIsChecked(!isChecked);
+    const taskProps = {
+      id: slug,
+      label: text,
+      status: taskStatus[!isChecked],
+    };
+    if (props.subTasks?.length > 0) {
+      await props.updateSubTask(taskProps);
+    }
+  };
 
   return (
     <Box as="li" display="block">
-      <Checkbox isChecked={isChecked} onChange={() => setIsChecked(!isChecked)}>
+      <Checkbox id={`${props.index}`} alignItems="flex-start" isChecked={isChecked} onChange={() => handleChecked()}>
         {text}
       </Checkbox>
       {child && child}

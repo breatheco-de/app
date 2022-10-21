@@ -7,27 +7,34 @@ import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 
 const OnlyFor = ({
-  cohortSession, academy, capabilities, children, onlyMember, withBanner, profile,
+  cohortSession, academy, capabilities, children, onlyMember, onlyTeachers, withBanner, profile,
 }) => {
   const { t } = useTranslation('common');
-
   const academyNumber = Math.floor(academy);
+  const { featuredColor, backgroundColor } = useStyle();
   const router = useRouter();
-  const userCapabilities = profile.permissionsSlug || [];
+  const teachers = ['TEACHER', 'ASSISTANT'];
   const commonUser = ['TEACHER', 'ASSISTANT', 'STUDENT', 'REVIEWER'];
+
+  const cohortCapabilities = cohortSession?.user_capabilities || [];
+  const profileCapabilities = profile?.permissionsSlug || [];
+
+  const userCapabilities = onlyTeachers ? cohortCapabilities : profileCapabilities;
   const profileRole = profile?.roles?.length > 0 && profile?.roles[0]?.role?.toUpperCase();
   const cohortRole = cohortSession?.cohort_role?.toUpperCase() || profileRole || 'NONE';
-  const { featuredColor, backgroundColor } = useStyle();
 
   const isCapableAcademy = cohortSession && cohortSession.academy?.id === academyNumber;
   const isMember = commonUser.includes(cohortRole);
-  const capabilitiesNotExists = capabilities.length > 0 && capabilities.includes('');
+  const isTeacher = teachers.includes(cohortRole);
+  const capabilitiesNotExists = capabilities.length <= 0 || capabilities.includes('');
   const isCapableRole = capabilities.map(
     (capability) => userCapabilities.includes(capability),
   ).includes(true);
 
   const haveRequiredCapabilities = () => {
     if (!cohortSession) return false;
+    if (onlyTeachers && isTeacher && isCapableRole) return true;
+    if (onlyTeachers && isTeacher && capabilitiesNotExists) return true;
     if (onlyMember && isMember && isCapableRole) return true;
     if (onlyMember && isMember && capabilitiesNotExists) return true;
     if (!academy && isCapableRole) return true;
@@ -61,6 +68,7 @@ OnlyFor.propTypes = {
   capabilities: PropTypes.arrayOf(PropTypes.string),
   children: PropTypes.node.isRequired,
   onlyMember: PropTypes.bool,
+  onlyTeachers: PropTypes.bool,
   withBanner: PropTypes.bool,
   profile: PropTypes.objectOf(PropTypes.any),
 };
@@ -69,6 +77,7 @@ OnlyFor.defaultProps = {
   academy: '',
   capabilities: [],
   onlyMember: false,
+  onlyTeachers: false,
   withBanner: false,
   profile: {},
 };

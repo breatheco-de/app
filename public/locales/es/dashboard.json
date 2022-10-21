@@ -126,7 +126,7 @@
     "list-attendance-title": "Lista de asistencia tomada ({{count}} resultados)",
     "warn-premature-teaching": {
       "title": "Inicio prematuro del módulo",
-      "description": "¿Estás seguro de que quieres comenzar a enseñar <strong>{{module}}</strong>? La duración sugerida para el módulo seleccionado es de {{durationInDays}} días y <strong>solo ha cubierto {{day}} días.</strong>"
+      "description": "¿Estás seguro de que quieres comenzar a enseñar <strong>{{module}}</strong>? La duración sugerida para el módulo anterior es de {{durationInDays}} días y <strong>solo ha cubierto {{day}} días.</strong>"
     }
   },
   "teacher-sidebar": {

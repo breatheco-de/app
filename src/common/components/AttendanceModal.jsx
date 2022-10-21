@@ -24,6 +24,7 @@ const AttendanceModal = ({
 }) => {
   const { t } = useTranslation('dashboard');
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
+  const [daysHistoryLog, setDaysHistoryLog] = usePersistent('days_history_log', {});
   const [day, setDay] = useState(cohortSession.current_day);
   const [attendanceWasTaken, setAttendanceWasTaken] = useState(false);
   const [attendanceTaken, setAttendanceTaken] = useState([]);
@@ -45,12 +46,37 @@ const AttendanceModal = ({
 
   const currentCohortDay = cohortSession.current_day;
 
+  const getDailyModuleData = () => {
+    if (sortedAssignments.length > 0) {
+      const dailyModule = sortedAssignments.find(
+        (assignment) => assignment.id === currentModule,
+      );
+      const prevDailyModule = sortedAssignments.find(
+        (assignment) => assignment.id === (currentModule - 1),
+      );
+      return {
+        dailyModule,
+        prevDailyModule,
+      };
+    }
+    return null;
+  };
+
+  const currModuleData = getDailyModuleData()?.dailyModule;
+  const prevSumOfDays = sortedAssignments.reduce(
+    (accumulator, object) => {
+      if (object.id >= currModuleData?.id) return accumulator;
+      return accumulator + object.duration_in_days;
+    }, 0,
+  );
+
   useEffect(() => {
     setDefaultDay(currentCohortDay);
   }, [currentCohortDay]);
 
   const saveCohortAttendancy = () => {
     const cohortSlug = cohortSession.slug;
+    const userAgent = `bc/${cohortSession?.cohort_role?.toLowerCase() || 'teacher'}`;
     bc.activity()
       .addBulk(
         cohortSlug,
@@ -58,7 +84,8 @@ const AttendanceModal = ({
           const attended = checked.find((id) => parseInt(id, 10) === user.id);
           return {
             user_id: user.id,
-            user_agent: 'bc/teacher',
+            user_agent: userAgent,
+            // user_agent: 'bc/teacher',
             cohort: cohortSlug,
             day: Number(day),
             slug: typeof attended === 'undefined' || !attended ? 'classroom_unattendance' : 'classroom_attendance',
@@ -86,17 +113,14 @@ const AttendanceModal = ({
       });
   };
 
-  const getDailyModuleData = () => {
-    if (sortedAssignments.length > 0) {
-      const dailyModule = sortedAssignments.find(
-        (assignment) => assignment.id === currentModule,
-      );
-      return dailyModule;
+  useEffect(() => {
+    if (!daysHistoryLog.currSumOfDays && currModuleData) {
+      setDaysHistoryLog({
+        prevSumOfDays,
+        currSumOfDays: prevSumOfDays + currModuleData?.duration_in_days,
+      });
     }
-    return null;
-  };
-
-  const durationInDays = getDailyModuleData()?.duration_in_days || null;
+  }, [cohortSession, currModuleData]);
 
   const updateCohortDay = () => {
     setIsLoading(true);
@@ -106,6 +130,10 @@ const AttendanceModal = ({
         setCohortSession({
           ...cohortSession,
           current_module: data.current_module,
+        });
+        setDaysHistoryLog({
+          prevSumOfDays,
+          currSumOfDays: prevSumOfDays + currModuleData?.duration_in_days,
         });
         bc.activity().getAttendance(cohortSession.id)
           .then((res) => {
@@ -252,7 +280,7 @@ const AttendanceModal = ({
             disabled={checked.length < 1 || isLoading}
             variant="default"
             onClick={() => {
-              if (day < durationInDays) {
+              if (daysHistoryLog.prevSumOfDays >= day) {
                 setOpenWarn(true);
               } else {
                 updateCohortDay();
@@ -266,7 +294,7 @@ const AttendanceModal = ({
           <ModalInfo
             isOpen={openWarn}
             onClose={() => setOpenWarn(false)}
-            htmlDescription={t('attendance-modal.warn-premature-teaching.description', { module: getDailyModuleData()?.label, durationInDays, day })}
+            htmlDescription={t('attendance-modal.warn-premature-teaching.description', { module: getDailyModuleData()?.dailyModule?.label, durationInDays: daysHistoryLog.prevSumOfDays, day })}
             actionHandler={() => {
               setOpenWarn(false);
               updateCohortDay();
@@ -286,10 +314,10 @@ const AttendanceModal = ({
             {t('attendance-modal.list-attendance-title', { count: sortOldStudentList.length })}
           </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
+          <ModalBody padding="0.5rem 0 0.5rem 0">
             <TableContainer>
               {sortOldStudentList.length > 0 && (
-                <Table variant="simple">
+                <Table variant="simple" style={{ margin: '0 1.5rem 0 1.5rem' }}>
                   <Thead>
                     <Tr>
                       <Th>{t('common:user-id')}</Th>
