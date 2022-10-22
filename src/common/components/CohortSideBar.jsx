@@ -34,7 +34,7 @@ const ProfilesSection = ({
   const singleTeacher = teacher[0];
   const teacherfullName = `${singleTeacher?.user?.first_name} ${singleTeacher?.user.last_name}`;
 
-  // const alumniGeeksContainer = document !== undefined && document.querySelector('.alumni-geeks-container');
+  const alumniGeeksContainer = document !== undefined && document.querySelector('.alumni-geeks-container');
 
   return (
     <Box display="block">
@@ -155,12 +155,12 @@ const ProfilesSection = ({
                         (a, b) => a.user.first_name.localeCompare(b.user.first_name),
                       ),
                     });
-                    // setTimeout(() => {
-                    //   alumniGeeksContainer.scrollTo({
-                    //     top: alumniGeeksContainer.scrollHeight,
-                    //     behavior: 'smooth',
-                    //   });
-                    // }, [600]);
+                    setTimeout(() => {
+                      alumniGeeksContainer.scrollTo({
+                        top: alumniGeeksContainer.scrollHeight,
+                        behavior: 'smooth',
+                      });
+                    }, [600]);
                   });
               } else {
                 setShowMoreStudents(!showMoreStudents);
