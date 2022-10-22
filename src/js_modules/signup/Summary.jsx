@@ -1,7 +1,7 @@
-/* eslint-disable react/prop-types */
 import { Box, Button, useColorModeValue } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import PropTypes from 'prop-types';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
@@ -80,15 +80,19 @@ const Summary = ({
           />
 
           <Box display="flex" flexDirection="column" gridGap="10px">
-            <Text size="md" fontWeight="700">
-              {t('days-and-hours')}
-            </Text>
-            <Text size="md" fontWeight="400" color={fontColor}>
-              {dateProps?.weekDays[router.locale].map(
-                // eslint-disable-next-line no-nested-ternary
-                (day, i) => `${i !== 0 ? i < dateProps?.weekDays[router.locale].length - 1 ? ',' : ` ${t('common:and')}` : ''} ${day}`,
-              )}
-            </Text>
+            {dateProps?.weekDays[router.locale].length > 0 && (
+              <>
+                <Text size="md" fontWeight="700">
+                  {t('days-and-hours')}
+                </Text>
+                <Text size="md" fontWeight="400" color={fontColor}>
+                  {dateProps?.weekDays[router.locale].map(
+                    // eslint-disable-next-line no-nested-ternary
+                    (day, i) => `${i !== 0 ? i < dateProps?.weekDays[router.locale].length - 1 ? ',' : ` ${t('common:and')}` : ''} ${day}`,
+                  )}
+                </Text>
+              </>
+            )}
             <Text size="md" fontWeight="400" color={fontColor}>
               {dateProps?.availableTime}
             </Text>
@@ -271,6 +275,13 @@ const Summary = ({
       </Box>
     </Box>
   );
+};
+
+Summary.propTypes = {
+  dateProps: PropTypes.objectOf(PropTypes.any).isRequired,
+  formProps: PropTypes.objectOf(PropTypes.any).isRequired,
+  planProps: PropTypes.objectOf(PropTypes.any).isRequired,
+  courseTitle: PropTypes.string.isRequired,
 };
 
 export default Summary;

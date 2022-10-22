@@ -1,8 +1,8 @@
-/* eslint-disable react/prop-types */
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import PropTypes from 'prop-types';
 import { Box, Button, useToast } from '@chakra-ui/react';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
@@ -168,6 +168,23 @@ const ContactInformation = ({
       </Formik>
     </>
   );
+};
+
+ContactInformation.propTypes = {
+  stepIndex: PropTypes.number.isRequired,
+  setStepIndex: PropTypes.func,
+  courseChoosed: PropTypes.string.isRequired,
+  location: PropTypes.objectOf(PropTypes.any).isRequired,
+  queryCohortIdExists: PropTypes.bool,
+  dateProps: PropTypes.objectOf(PropTypes.any).isRequired,
+  formProps: PropTypes.objectOf(PropTypes.any).isRequired,
+  setFormProps: PropTypes.func,
+};
+
+ContactInformation.defaultProps = {
+  setStepIndex: () => {},
+  queryCohortIdExists: false,
+  setFormProps: () => {},
 };
 
 export default ContactInformation;
