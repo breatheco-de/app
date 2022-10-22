@@ -161,9 +161,11 @@ export const MDHeading = ({ children, tagType }) => {
 };
 
 export const MDCheckbox = (props) => {
+  const children = props?.children[1]?.props?.children || props?.children;
   const text = props?.children[1]?.props?.children[1] || props?.children[1];
-  const child = props?.children[2]?.props?.children[2] || props?.children[2];
+  const cleanedChildren = children.length > 0 && children.filter((l) => l.type !== 'input');
   // const checked = props?.checked || props?.children[1]?.props?.children[0]?.props?.checked;
+
   const slug = typeof text === 'string' && slugify(text);
   const taskChecked = props.subTasks && props?.subTasks.filter((task) => task.id === slug && task.status !== 'PENDING').length > 0;
   const [isChecked, setIsChecked] = useState(taskChecked || false);
@@ -186,11 +188,10 @@ export const MDCheckbox = (props) => {
   };
 
   return (
-    <Box as="li" display="block">
+    <Box as="li" id={slug} display="block" marginLeft="-1.5rem">
       <Checkbox id={`${props.index}`} alignItems="flex-start" isChecked={isChecked} onChange={() => handleChecked()}>
-        {text}
+        {cleanedChildren}
       </Checkbox>
-      {child && child}
     </Box>
   );
 };
