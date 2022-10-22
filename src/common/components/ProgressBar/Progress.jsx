@@ -1,6 +1,6 @@
 import React, { useState, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Box } from '@chakra-ui/react';
+import { Box, useColorModeValue } from '@chakra-ui/react';
 import MotionBox from '../MotionBox';
 
 const Progress = ({
@@ -11,6 +11,7 @@ const Progress = ({
   barHeight,
   progressColor,
   baseColor,
+  borderRadius,
 }) => {
   const [barWidth, setBarWidth] = useState(0);
   const [initialized, setInitialized] = useState(false);
@@ -43,8 +44,11 @@ const Progress = ({
     },
   };
 
+  const progressColorDefault = useColorModeValue('blue.default', 'blue.200');
+  const baseColorDefault = useColorModeValue('gray.100', 'whiteAlpha.300');
+
   return (
-    <Box className="progress-bar" width="100%" overflow="hidden" position="relative" borderRadius="2px" height={barHeight} bg={baseColor}>
+    <Box className="progress-bar" width="100%" overflow="hidden" position="relative" borderRadius={borderRadius} height={barHeight} bg={baseColor || baseColorDefault}>
       <MotionBox
         variants={variants}
         initial="enter"
@@ -54,9 +58,8 @@ const Progress = ({
         width="100%"
         height="100%"
         animate={initialized ? 'animate' : 'enter'}
-        // animate="animate"
         exit="enter"
-        bg={progressColor}
+        bg={progressColor || progressColorDefault}
       />
     </Box>
   );
@@ -70,6 +73,7 @@ Progress.propTypes = {
   barHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   progressColor: PropTypes.string,
   baseColor: PropTypes.string,
+  borderRadius: PropTypes.string,
 };
 Progress.defaultProps = {
   percents: 0,
@@ -77,8 +81,9 @@ Progress.defaultProps = {
   delay: 0.5,
   easing: 'easeInOut',
   barHeight: '4px',
-  progressColor: 'blue.200',
-  baseColor: 'var(--chakra-colors-whiteAlpha-300)',
+  progressColor: '',
+  baseColor: '',
+  borderRadius: '2px',
 };
 
 export default Progress;
