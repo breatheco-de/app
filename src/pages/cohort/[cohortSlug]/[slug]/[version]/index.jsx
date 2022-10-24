@@ -30,12 +30,13 @@ import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import {
-  slugify, includesToLowerCase, getStorageItem, devLog,
+  slugify, includesToLowerCase, getStorageItem,
 } from '../../../../../utils/index';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
 import AlertMessage from '../../../../../common/components/AlertMessage';
+import useHandler from '../../../../../common/hooks/useCohortHandler';
 
 const Dashboard = () => {
   const { t } = useTranslation('dashboard');
@@ -43,20 +44,21 @@ const Dashboard = () => {
   const router = useRouter();
   const { colorMode } = useColorMode();
   const { contextState, setContextState } = useModuleMap();
-  const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const [showWarningModal, setShowWarningModal] = useState(false);
   const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
-  const [taskCohortNull, setTaskCohortNull] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
-  const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
+  const [, setSortedAssignments] = usePersistent('sortedAssignments', []);
   const [searchValue, setSearchValue] = useState(router.query.search || '');
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const { user, choose, isLoading } = useAuth();
-  const [, setSyllabus] = usePersistent('syllabus', []);
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
+  const {
+    cohortSession, sortedAssignments, setSyllabus, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
+    getMandatoryProjects, getTasksWithoutCohort,
+  } = useHandler();
 
   const teacherAndAssistants = studentAndTeachers.filter((st) => st.role === 'TEACHER' || st.role === 'ASSISTANT');
 
@@ -163,45 +165,8 @@ const Dashboard = () => {
 
   // Fetch cohort data with pathName structure
   useEffect(() => {
-    bc.admissions().me().then(({ data }) => {
-      const { cohorts } = data;
-      // find cohort with current slug
-      const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
-      const currentCohort = findCohort.cohort;
-      const { version, name } = currentCohort.syllabus_version;
-      if (!cohortSession.academy.id) {
-        router.push('/choose-program');
-      }
-
-      setCohortSession({
-        ...cohortSession,
-        ...currentCohort,
-        date_joined: data.date_joined,
-        cohort_role: findCohort.role,
-      });
-      choose({
-        cohort_slug: cohortSlug,
-        date_joined: data.date_joined,
-        cohort_role: findCohort.role,
-        version,
-        slug: currentCohort?.syllabus_version.slug,
-        cohort_name: currentCohort.name,
-        cohort_id: currentCohort.id,
-        syllabus_name: name,
-        academy_id: currentCohort.academy.id,
-      });
-    }).catch(() => {
-      router.push('/choose-program');
-      toast({
-        title: t('alert-message:invalid-cohort-slug'),
-        // title: 'Invalid cohort slug',
-        status: 'error',
-        duration: 7000,
-        isClosable: true,
-      });
-      setTimeout(() => {
-        localStorage.removeItem('cohortSession');
-      }, 4000);
+    getCohortData({
+      choose, cohortSlug,
     });
   }, [cohortSlug]);
 
@@ -225,148 +190,23 @@ const Dashboard = () => {
 
   // Fetch cohort assignments (lesson, exercise, project, quiz)
   useEffect(() => {
-    if (!isLoading && user && user.active_cohort && cohortSession.cohort_role) {
-      const academyId = user.active_cohort.academy_id;
-      const { version } = user.active_cohort;
-      const currentAcademy = user.roles.find((role) => role.academy.id === academyId);
-
-      // Fetch cohortProgram and TaskTodo then apply to contextState (useModuleMap - action)
-      Promise.all([
-        bc.todo({ cohort: cohortSession.id }).getTaskByStudent(), // Tasks with cohort id
-        bc.syllabus().get(academyId, slug, version), // cohortProgram
-        bc.auth().getRoles(currentAcademy?.role), // Roles
-      ]).then((
-        [taskTodoData, programData, userRoles],
-      ) => {
-        const moduleData = programData.data.json?.days || programData.data.json?.modules;
-        const technologiesArray = programData.data.main_technologies
-          ? programData.data.main_technologies.split(',').map((el) => el.trim())
-          : [];
-
-        setCohortSession({
-          ...cohortSession,
-          main_technologies: technologiesArray,
-          academy_owner: programData.data.academy_owner,
-          bc_id: user.id,
-          user_capabilities: userRoles.data.capabilities,
-        });
-        setSyllabus(moduleData);
-        setContextState({
-          taskTodo: taskTodoData.data,
-          cohortProgram: programData.data,
-        });
-      }).catch((err) => {
-        toast({
-          title: t('alert-message:error-fetching-role', { role: currentAcademy?.role }),
-          description: err.message,
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-        router.push('/choose-program');
+    if (!isLoading) {
+      getCohortAssignments({
+        user, setContextState, slug,
       });
     }
   }, [user]);
 
   useEffect(() => {
-    // Tasks with cohort null
-    if (router.asPath === cohortSession.selectedProgramSlug) {
-      bc.todo({ cohort: null }).getTaskByStudent()
-        .then(({ data }) => {
-          const filteredUnsyncedCohortTasks = sortedAssignments.flatMap(
-            (assignment) => data.filter(
-              (task) => assignment.modules.some(
-                (module) => task.associated_slug === module.slug,
-              ),
-            ),
-          );
-
-          setModalIsOpen(filteredUnsyncedCohortTasks.length !== 0);
-          setTaskCohortNull(filteredUnsyncedCohortTasks);
-        });
-    }
+    getTasksWithoutCohort({ setModalIsOpen });
   }, [sortedAssignments]);
 
   // Sort all data fetched in order of taskTodo
   useMemo(() => {
-    const moduleData = cohortProgram.json?.days || cohortProgram.json?.modules;
-    const cohort = cohortProgram.json ? moduleData : [];
-    const assignmentsRecopilated = [];
-    devLog('json.days:', moduleData);
-
-    if (contextState.cohortProgram.json && contextState.taskTodo) {
-      setTaskTodo(contextState.taskTodo);
-      cohort.map((assignment) => {
-        const {
-          id, label, description, lessons, replits, assignments, quizzes,
-        } = assignment;
-        if (lessons && replits && assignments && quizzes) {
-          const nestedAssignments = nestAssignments({
-            id,
-            read: lessons,
-            practice: replits,
-            code: assignments,
-            answer: quizzes,
-            taskTodo: contextState.taskTodo,
-          });
-          const { modules, filteredModules, filteredModulesByPending } = nestedAssignments;
-
-          // Data to be sent to [sortedAssignments] = state
-          const assignmentsStruct = {
-            id,
-            label,
-            description,
-            modules,
-            filteredModules,
-            filteredModulesByPending,
-            duration_in_days: assignment?.duration_in_days || null,
-            teacherInstructions: assignment.teacher_instructions,
-            extendedInstructions: assignment.extended_instructions,
-            keyConcepts: assignment['key-concepts'],
-          };
-
-          // prevent duplicates when a new module has been started (added to sortedAssignments array)
-          const keyIndex = assignmentsRecopilated.findIndex((x) => x.id === id);
-          if (keyIndex > -1) {
-            assignmentsRecopilated.splice(keyIndex, 1, {
-              ...assignmentsStruct,
-            });
-          } else {
-            assignmentsRecopilated.push({
-              ...assignmentsStruct,
-            });
-          }
-
-          const filterEmptyModules = assignmentsRecopilated.filter(
-            (l) => l.modules.length > 0,
-          );
-          return setSortedAssignments(filterEmptyModules);
-        }
-        return null;
-      });
-    }
+    prepareTasks({
+      cohortProgram, contextState, setTaskTodo, nestAssignments,
+    });
   }, [contextState.cohortProgram, contextState.taskTodo, router]);
-
-  const getDailyModuleData = () => {
-    const dailyModule = sortedAssignments.find(
-      (assignment) => assignment.id === cohortSession?.current_module,
-    );
-    return dailyModule;
-  };
-
-  const getMandatoryProjects = () => {
-    const mandatoryProjects = sortedAssignments.flatMap(
-      (assignment) => assignment.filteredModules.filter(
-        (l) => {
-          const isMandatoryTimeOut = l.task_type === 'PROJECT' && l.task_status === 'PENDING'
-            && l.mandatory === true && l.daysDiff >= 14; // exceeds 2 weeks
-
-          return isMandatoryTimeOut;
-        },
-      ),
-    );
-    return mandatoryProjects;
-  };
 
   const dailyModuleData = getDailyModuleData() || '';
 
