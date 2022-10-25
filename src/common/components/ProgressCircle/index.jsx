@@ -134,7 +134,7 @@ ProgressCircle.propTypes = {
 ProgressCircle.defaultProps = {
   percents: 0,
   counterString: '',
-  counter: false,
+  counter: true,
   stroke: '#0097CD',
   emptyStroke: '#0097CD',
   emptyStrokeOpacity: 0.25,

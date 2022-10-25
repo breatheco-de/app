@@ -26,7 +26,6 @@ import ShareButton from '../../../../../common/components/ShareButton';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import ScrollTop from '../../../../../common/components/scrollTop';
-import bc from '../../../../../common/services/breathecode';
 import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar';
 import {
   defaultDataFetch, getCurrentCohort, prepareCohortContext, prepareTaskModules,
@@ -65,7 +64,6 @@ const Content = () => {
   const [currentBlankProps, setCurrentBlankProps] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
   const [currentData, setCurrentData] = useState({});
-  const [subTasks, setSubTasks] = useState([]);
   const toast = useToast();
   const router = useRouter();
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
@@ -203,32 +201,6 @@ const Content = () => {
     });
   };
 
-  const updateSubTask = async (taskProps) => {
-    const cleanedSubTasks = subTasks.filter((task) => task.id !== taskProps.id);
-    if (currentTask?.id) {
-      const resp = await bc.todo().subtask().update(
-        currentTask?.id,
-        [
-          ...cleanedSubTasks,
-          taskProps,
-        ],
-      );
-      if (resp.status >= 200 && resp.status < 400) {
-        const respData = await resp.data;
-        setSubTasks(respData);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (currentTask?.id) {
-      bc.todo().subtask().get(currentTask?.id)
-        .then((resp) => {
-          setSubTasks(resp.data);
-        });
-    }
-  }, [currentTask]);
-
   useEffect(() => {
     const currTask = filterEmptyModules[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
 
@@ -363,8 +335,7 @@ const Content = () => {
     lesson,
     quizSlug,
     lessonSlug,
-    subTasks,
-    updateSubTask,
+    currentTask,
   });
 
   const teacherActions = profesionalRoles.includes(cohortSession.cohort_role)
