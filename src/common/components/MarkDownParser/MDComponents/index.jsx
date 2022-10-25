@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable no-loop-func */
@@ -9,7 +10,7 @@ import {
   Box, Checkbox, Link, useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BeforeAfterSlider from '../../BeforeAfterSlider';
 import Heading from '../../Heading';
 import OnlyFor from '../../OnlyFor';
@@ -167,6 +168,7 @@ export const MDCheckbox = (props) => {
   // const checked = props?.checked || props?.children[1]?.props?.children[0]?.props?.checked;
 
   const slug = typeof text === 'string' && slugify(text);
+  const currentSubTask = props.subTasks.length > 0 && props?.subTasks.filter((task) => task.id === slug);
   const taskChecked = props.subTasks && props?.subTasks.filter((task) => task.id === slug && task.status !== 'PENDING').length > 0;
   const [isChecked, setIsChecked] = useState(taskChecked || false);
 
@@ -174,6 +176,41 @@ export const MDCheckbox = (props) => {
     true: 'DONE',
     false: 'PENDING',
   };
+
+  useEffect(() => {
+    if (props.subTasksLoaded) {
+      if (props.subTasksProps?.length > 0 && props.subTasksProps.find((l) => l.id === slug)) return () => {};
+
+      if (currentSubTask) {
+        props.setSubTasksProps((prev) => {
+          if (prev.length > 0) {
+            return [...prev, currentSubTask[0]];
+          }
+          return [currentSubTask[0]];
+        });
+      } else {
+        props.setSubTasksProps((prev) => {
+          if (prev?.length > 0) {
+            return [
+              ...prev,
+              {
+                id: slug,
+                status: 'PENDING',
+                label: text,
+              },
+            ];
+          }
+          return [
+            {
+              id: slug,
+              status: 'PENDING',
+              label: text,
+            },
+          ];
+        });
+      }
+    }
+  }, [props.subTasksLoaded]);
 
   const handleChecked = async () => {
     setIsChecked(!isChecked);
