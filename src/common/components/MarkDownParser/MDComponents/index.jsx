@@ -1,6 +1,3 @@
-/* eslint-disable consistent-return */
-/* eslint-disable react/prop-types */
-/* eslint-disable react/destructuring-assignment */
 /* eslint-disable no-loop-func */
 /* eslint-disable no-await-in-loop */
 import {
@@ -161,15 +158,17 @@ export const MDHeading = ({ children, tagType }) => {
   );
 };
 
-export const MDCheckbox = (props) => {
-  const children = props?.children[1]?.props?.children || props?.children;
-  const text = props?.children[1]?.props?.children[1] || props?.children[1];
-  const cleanedChildren = children.length > 0 && children.filter((l) => l.type !== 'input');
+export const MDCheckbox = ({
+  index, children, subTasks, subTasksLoaded, subTasksProps, setSubTasksProps, updateSubTask,
+}) => {
+  const childrenData = children[1]?.props?.children || children;
+  const text = children[1]?.props?.children[1] || children[1];
+  const cleanedChildren = childrenData.length > 0 && childrenData.filter((l) => l.type !== 'input');
   // const checked = props?.checked || props?.children[1]?.props?.children[0]?.props?.checked;
 
   const slug = typeof text === 'string' && slugify(text);
-  const currentSubTask = props.subTasks.length > 0 && props?.subTasks.filter((task) => task.id === slug);
-  const taskChecked = props.subTasks && props?.subTasks.filter((task) => task.id === slug && task.status !== 'PENDING').length > 0;
+  const currentSubTask = subTasks.length > 0 && subTasks.filter((task) => task.id === slug);
+  const taskChecked = subTasks && subTasks.filter((task) => task.id === slug && task.status !== 'PENDING').length > 0;
   const [isChecked, setIsChecked] = useState(taskChecked || false);
 
   const taskStatus = {
@@ -178,18 +177,18 @@ export const MDCheckbox = (props) => {
   };
 
   useEffect(() => {
-    if (props.subTasksLoaded) {
-      if (props.subTasksProps?.length > 0 && props.subTasksProps.find((l) => l.id === slug)) return () => {};
+    if (subTasksLoaded) {
+      if (subTasksProps?.length > 0 && subTasksProps.find((l) => l.id === slug)) return () => {};
 
       if (currentSubTask) {
-        props.setSubTasksProps((prev) => {
+        setSubTasksProps((prev) => {
           if (prev.length > 0) {
             return [...prev, currentSubTask[0]];
           }
           return [currentSubTask[0]];
         });
       } else {
-        props.setSubTasksProps((prev) => {
+        setSubTasksProps((prev) => {
           if (prev?.length > 0) {
             return [
               ...prev,
@@ -210,7 +209,8 @@ export const MDCheckbox = (props) => {
         });
       }
     }
-  }, [props.subTasksLoaded]);
+    return () => {};
+  }, [subTasksLoaded]);
 
   const handleChecked = async () => {
     setIsChecked(!isChecked);
@@ -219,14 +219,14 @@ export const MDCheckbox = (props) => {
       label: text,
       status: taskStatus[!isChecked],
     };
-    if (props.subTasks?.length > 0) {
-      await props.updateSubTask(taskProps);
+    if (subTasks?.length > 0) {
+      await updateSubTask(taskProps);
     }
   };
 
   return (
     <Box as="li" id={slug} display="block" marginLeft="-1.5rem">
-      <Checkbox id={`${props.index}`} alignItems="flex-start" isChecked={isChecked} onChange={() => handleChecked()}>
+      <Checkbox id={`${index}`} alignItems="flex-start" isChecked={isChecked} onChange={() => handleChecked()}>
         {cleanedChildren}
       </Checkbox>
     </Box>
@@ -277,6 +277,20 @@ MDHeading.defaultProps = {
 
 MDCheckbox.propTypes = {
   children: PropTypes.node.isRequired,
+  index: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  subTasks: PropTypes.arrayOf(PropTypes.object),
+  subTasksLoaded: PropTypes.bool,
+  subTasksProps: PropTypes.arrayOf(PropTypes.object),
+  setSubTasksProps: PropTypes.func,
+  updateSubTask: PropTypes.func,
+};
+MDCheckbox.defaultProps = {
+  index: 0,
+  subTasks: [],
+  subTasksLoaded: false,
+  subTasksProps: [],
+  setSubTasksProps: () => {},
+  updateSubTask: () => {},
 };
 
 // MDText.propTypes = {
