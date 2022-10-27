@@ -11,6 +11,7 @@ import Icon from '../../common/components/Icon';
 import ModalInfo from './modalInfo';
 import validationSchema from '../../common/components/Forms/validationSchemas';
 import { isGithubUrl } from '../../utils/regex';
+import Text from '../../common/components/Text';
 
 export const TextByTaskStatus = ({ currentTask, t }) => {
   const taskIsAproved = currentTask?.revision_status === 'APPROVED';
@@ -101,12 +102,13 @@ IconByTaskStatus.defaultProps = {
 
 export const ButtonHandlerByTaskStatus = ({
   currentTask, sendProject, changeStatusAssignment, toggleSettings, closeSettings,
-  settingsOpen, allowText, onClickHandler,
+  settingsOpen, allowText, onClickHandler, currentAssetData,
 }) => {
   const { t } = useTranslation('dashboard');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [showUrlWarn, setShowUrlWarn] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
   const [githubUrl, setGithubUrl] = useState('');
   const commonInputColor = useColorModeValue('gray.600', 'gray.200');
   const commonInputActiveColor = useColorModeValue('gray.800', 'gray.350');
@@ -257,7 +259,7 @@ export const ButtonHandlerByTaskStatus = ({
             borderRadius={allowText ? '3px' : '30px'}
             textTransform={allowText ? 'uppercase' : 'none'}
             gridGap={allowText ? '12px' : '0'}
-            onClick={() => toggleSettings()}
+            onClick={() => toggleSettings(currentTask.associated_slug)}
           >
             {allowText ? (
               <TextByTaskStatus currentTask={currentTask} t={t} />
@@ -272,64 +274,101 @@ export const ButtonHandlerByTaskStatus = ({
           <PopoverHeader>{t('deliverProject.title')}</PopoverHeader>
           <PopoverCloseButton />
           <PopoverBody>
-            <Formik
-              initialValues={{ githubUrl: '' }}
-              onSubmit={() => {
-                setIsSubmitting(true);
-                if (githubUrl !== '') {
-                  const getUrlResult = !isGithubUrl.test(githubUrl);
-                  const haveGithubDomain = getUrlResult;
-                  if (haveGithubDomain) {
-                    setShowUrlWarn(haveGithubDomain);
-                  } else {
-                    sendProject(currentTask, githubUrl);
-                    setIsSubmitting(false);
-                    onClickHandler();
+            {typeof currentAssetData === 'object' && currentAssetData?.delivery_formats === 'url' && (
+              <Formik
+                initialValues={{ githubUrl: '' }}
+                onSubmit={() => {
+                  setIsSubmitting(true);
+                  if (githubUrl !== '') {
+                    const getUrlResult = !isGithubUrl.test(githubUrl);
+                    const haveGithubDomain = getUrlResult;
+                    if (haveGithubDomain) {
+                      setShowUrlWarn(haveGithubDomain);
+                    } else {
+                      sendProject(currentTask, githubUrl);
+                      setIsSubmitting(false);
+                      onClickHandler();
+                    }
                   }
-                }
-              }}
-              validationSchema={validationSchema.projectUrlValidation}
-            >
-              {() => (
-                <Form>
-                  <Field name="githubUrl">
-                    {({ field, form }) => {
-                      setGithubUrl(form.values.githubUrl);
-                      return (
-                        <FormControl isInvalid={form.errors.githubUrl && form.touched.githubUrl}>
-                          <Input
-                            {...field}
-                            type="text"
-                            id="githubUrl"
-                            color={commonInputColor}
-                            _focus={{
-                              color: commonInputActiveColor,
-                            }}
-                            placeholder="https://github.com/..."
-                          />
-                          <FormErrorMessage marginTop="10px">
-                            {form.errors.githubUrl}
-                          </FormErrorMessage>
-                        </FormControl>
-                      );
-                    }}
-                  </Field>
-                  <Box padding="6px 0 0 0">
-                    <Link href={howToSendProjectUrl} color="blue.default" target="_blank" rel="noopener noreferrer">
-                      {t('deliverProject.how-to-deliver')}
-                    </Link>
+                }}
+                validationSchema={validationSchema.projectUrlValidation}
+              >
+                {() => (
+                  <Form>
+                    <Field name="githubUrl">
+                      {({ field, form }) => {
+                        setGithubUrl(form.values.githubUrl);
+                        return (
+                          <FormControl isInvalid={form.errors.githubUrl && form.touched.githubUrl}>
+                            <Input
+                              {...field}
+                              type="text"
+                              id="githubUrl"
+                              color={commonInputColor}
+                              _focus={{
+                                color: commonInputActiveColor,
+                              }}
+                              placeholder="https://github.com/..."
+                            />
+                            <FormErrorMessage marginTop="10px">
+                              {form.errors.githubUrl}
+                            </FormErrorMessage>
+                          </FormControl>
+                        );
+                      }}
+                    </Field>
+                    <Box padding="6px 0 0 0">
+                      <Link href={howToSendProjectUrl} color="blue.default" target="_blank" rel="noopener noreferrer">
+                        {t('deliverProject.how-to-deliver')}
+                      </Link>
+                    </Box>
+                    <Button
+                      mt={4}
+                      colorScheme="blue"
+                      isLoading={isSubmitting}
+                      type="submit"
+                    >
+                      {t('deliverProject.handler-text')}
+                    </Button>
+                  </Form>
+                )}
+              </Formik>
+            )}
+
+            {typeof currentAssetData === 'object' && currentAssetData?.delivery_formats === 'file' && (
+              <Box>
+                <Text size="md">
+                  {t('deliverProject.file-upload')}
+                </Text>
+
+                <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} width={{ base: 'auto', md: '100%' }} height="86px" position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px" background="featuredLight">
+                  <Box width="100%" height="100%" position="absolute" display="flex" justifyContent="center" alignItems="center" border="1px solid currentColor" cursor="pointer" borderWidth="2px" borderRadius="7px">
+                    <Box className="icon-bounce">
+                      <Icon icon="upload" color="currentColor" width="24" height="24" />
+                    </Box>
                   </Box>
-                  <Button
-                    mt={4}
-                    colorScheme="blue"
-                    isLoading={isSubmitting}
-                    type="submit"
-                  >
-                    {t('deliverProject.handler-text')}
-                  </Button>
-                </Form>
-              )}
-            </Formik>
+                  <Input
+                    type="file"
+                    name="Upload file"
+                    title=""
+                    // onChange={handleFileUpload}
+                    onChange={(event) => {
+                      console.log('file:', event.currentTarget.files[0]);
+                    }}
+                    accept="image/x-png,image/jpg,image/jpeg"
+                    placeholder="Upload profile image"
+                    position="absolute"
+                    width="100%"
+                    height="100%"
+                    cursor="pointer"
+                    opacity="0"
+                    padding="0"
+                    onDragOver={() => setDragOver(true)}
+                    onDragLeave={() => setDragOver(false)}
+                  />
+                </Box>
+              </Box>
+            )}
 
             <ModalInfo
               isOpen={showUrlWarn}
@@ -364,14 +403,17 @@ ButtonHandlerByTaskStatus.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.any),
   sendProject: PropTypes.func.isRequired,
   changeStatusAssignment: PropTypes.func.isRequired,
-  toggleSettings: PropTypes.func.isRequired,
+  toggleSettings: PropTypes.func,
   closeSettings: PropTypes.func.isRequired,
   settingsOpen: PropTypes.bool.isRequired,
   allowText: PropTypes.bool,
   onClickHandler: PropTypes.func,
+  currentAssetData: PropTypes.objectOf(PropTypes.any),
 };
 ButtonHandlerByTaskStatus.defaultProps = {
   currentTask: null,
   allowText: false,
   onClickHandler: () => {},
+  currentAssetData: {},
+  toggleSettings: () => {},
 };

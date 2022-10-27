@@ -157,6 +157,7 @@ const breathecode = {
       .join('&');
     return {
       get: () => axios.get(`${url}/asset?${qs}`),
+      getAsset: (slug) => axios.get(`${url}/asset/${slug}`),
       techs: () => axios.get(`${url}/academy/technology?${qs}`),
     };
   },

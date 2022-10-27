@@ -76,7 +76,8 @@
     "title": "URL de repositorio Github",
     "how-to-deliver": "Cómo entregar proyectos",
     "handler-text": "Entregar proyecto",
-    "mandatory-message": "Tienes {{count}} proyectos obligatorios para completar antes de graduarte"
+    "mandatory-message": "Tienes {{count}} proyectos obligatorios para completar antes de graduarte",
+    "file-upload": "El archivo no debe tener más de 10 MB. Solo se permiten los tipos de archivo PDF, SCV"
   },
   "modalInfo": {
     "title": "Estado de revisión",
