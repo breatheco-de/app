@@ -56,6 +56,16 @@
   /* padding: 16px; */
 }
 
+.markdown-body img {
+  max-width: 600px !important;
+  max-height: 700px !important;
+}
+.markdown-body #beforeAfterSliderContainer {
+  max-width: 600px;
+  max-height: 700px;
+  margin: 0 auto;
+}
+
 .markdown-body blockquote {
   border-radius: 3px;
   margin: 0;
@@ -80,11 +90,6 @@
 .markdown-body blockquote p {
   padding: 10px 0 10px 14px;
 }
-
-.markdown-body p img {
-  display: initial;
-}
-
 
 .markdown-body h1, .markdown-body h2, .markdown-body h3,
 .markdown-body h4, .markdown-body h5, .markdown-body h6 {
@@ -368,10 +373,6 @@ blockquote > :last-child {
 
 .markdown-body table tr th :last-child, .markdown-body table tr td :last-child {
   margin-bottom: 0;
-}
-
-.markdown-body img {
-  max-width: 100%;
 }
 
 .markdown-body span.frame {
