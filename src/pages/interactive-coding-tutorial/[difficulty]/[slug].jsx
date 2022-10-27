@@ -42,7 +42,7 @@ export const getStaticPaths = async ({ locales }) => {
   const paths = projects.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
-      difficulty: res.difficulty?.toLowerCase(),
+      difficulty: res.difficulty?.toLowerCase() || 'unknown',
     },
     locale,
   })));
@@ -71,7 +71,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
   const markdown = await markdownResp.text();
 
-  const difficulty = result.difficulty.toLowerCase();
+  const difficulty = result.difficulty?.toLowerCase() || 'unknown';
   const ogUrl = {
     en: `/interactive-coding-tutorial/${difficulty}/${slug}`,
     us: `/interactive-coding-tutorial/${difficulty}/${slug}`,
@@ -118,7 +118,7 @@ const TableInfo = ({ t, project, commonTextColor }) => (
       </Text>
       <SimpleTable
         href="/interactive-coding-tutorials"
-        difficulty={project.difficulty !== null && project.difficulty.toLowerCase()}
+        difficulty={project.difficulty !== null && project.difficulty?.toLowerCase()}
         repository={project?.url}
         duration={project.duration}
         videoAvailable={project.solution_video_url}
