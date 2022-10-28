@@ -57,7 +57,7 @@
 }
 
 .markdown-body img {
-  max-width: 600px !important;
+  max-width: auto;
   max-height: 700px !important;
 }
 .markdown-body #beforeAfterSliderContainer {
@@ -69,7 +69,7 @@
 .markdown-body blockquote {
   border-radius: 3px;
   margin: 0;
-  padding: 0 1em;
+  padding: 0.7em;
 }
 
 .markdown-body code {

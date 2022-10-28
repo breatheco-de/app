@@ -150,70 +150,84 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
   }, [language]);
 
   return (
-    <GridContainer
-      height="100%"
-      gridTemplateColumns="0.5fr repeat(12, 1fr) 0.5fr"
-      margin="4rem auto 0 auto"
-    >
-      <Link
-        href="/lessons"
-        color={useColorModeValue('blue.default', 'blue.300')}
-        display="inline-block"
-        letterSpacing="0.05em"
-        fontWeight="700"
-        paddingBottom="10px"
+    <>
+      <GridContainer
+        height="100%"
+        gridTemplateColumns={{ base: 'repeat(1, 1fr)', md: '0.5fr repeat(12, 1fr) 0.5fr' }}
+        margin="4rem auto 0 auto"
       >
-        {`← ${t('backToLessons')}`}
-      </Link>
-      <Box flex="1" margin={{ base: '28px 0', md: '28px 14% 0 14%' }}>
-        <Box display="flex" gridGap="10px" justifyContent="space-between">
-          {lesson?.technologies ? (
-            <TagCapsule
-              isLink
-              href="/lessons"
-              variant="rounded"
-              tags={lesson?.technologies || ['']}
-              marginY="8px"
-              fontSize="13px"
-              style={{
-                padding: '2px 10px',
-                margin: '0',
-              }}
-              gap="10px"
-              paddingX="0"
-            />
+        <Link
+          href="/lessons"
+          color={useColorModeValue('blue.default', 'blue.300')}
+          display="inline-block"
+          letterSpacing="0.05em"
+          fontWeight="700"
+          paddingBottom="10px"
+        >
+          {`← ${t('backToLessons')}`}
+        </Link>
+      </GridContainer>
+      <Box
+        display="grid"
+        maxWidth="1280px"
+        margin="28px auto 0 auto"
+        padding={{ base: '0 15px', md: '0' }}
+        height="100%"
+        gridTemplateColumns={{ base: 'repeat(1, 1fr)', md: '3fr repeat(12, 1fr) 3fr' }}
+      >
+        <Box display="grid" gridColumn="2 / span 12">
+          <Box display="flex" gridGap="10px" justifyContent="space-between">
+            {lesson?.technologies ? (
+              <TagCapsule
+                isLink
+                href="/lessons"
+                variant="rounded"
+                tags={lesson?.technologies || ['']}
+                marginY="8px"
+                fontSize="13px"
+                style={{
+                  padding: '2px 10px',
+                  margin: '0',
+                }}
+                gap="10px"
+                paddingX="0"
+              />
+            ) : (
+              <Skeleton width="130px" height="26px" borderRadius="10px" />
+            )}
+            <Link href={lesson?.readme_url || '#aliasRedirection'} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+              <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+              {t('common:edit-on-github')}
+            </Link>
+          </Box>
+          {lesson?.title ? (
+            <Heading
+              as="h1"
+              size="30px"
+              fontWeight="700"
+              margin="22px 0 35px 0"
+              transition="color 0.2s ease-in-out"
+              color={useColorModeValue('black', 'white')}
+              textTransform="uppercase"
+            >
+              {lesson.title}
+            </Heading>
           ) : (
-            <Skeleton width="130px" height="26px" borderRadius="10px" />
+            <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
           )}
-          <Link href={lesson?.readme_url || '#aliasRedirection'} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
-            <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-            {t('common:edit-on-github')}
-          </Link>
         </Box>
-        {lesson?.title ? (
-          <Heading
-            as="h1"
-            size="30px"
-            fontWeight="700"
-            margin="22px 0 35px 0"
-            transition="color 0.2s ease-in-out"
-            color={useColorModeValue('black', 'white')}
-            textTransform="uppercase"
-          >
-            {lesson.title}
-          </Heading>
-        ) : (
-          <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
-        )}
 
         {markdown && ipynbHtmlUrl === '' ? (
           <Box
-            transition="all 0.2s ease-in-out"
+            height="100%"
+            margin="0 rem auto 0 auto"
+            display="grid"
+            gridColumn="2 / span 12"
+            transition="background 0.2s ease-in-out"
             borderRadius="3px"
+            maxWidth="1280px"
             background={useColorModeValue('white', 'dark')}
             width={{ base: '100%', md: 'auto' }}
-            // useColorModeValue('blue.default', 'blue.300')
-            // colorMode === 'light' ? 'light' : 'dark'
             className={`markdown-body ${useColorModeValue('light', 'dark')}`}
           >
             <MarkDownParser content={markdownData.content} />
@@ -230,69 +244,61 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
             )}
           </>
         )}
-      </Box>
-      {ipynbHtmlUrl && markdown === '' && (
-        <Box width="100%" height="100%">
-          <Button
-            background={currentTheme}
-            position="absolute"
-            margin="1rem 0 0 2rem"
-            padding="5px"
-            height="auto"
-            // _hover={{
-            //   background: 'transparent',
-            // }}
-            onClick={() => setIsFullScreen(true)}
-          >
-            <Tooltip label={t('common:full-screen')} placement="top">
-              <Box>
-                <Icon icon="screen" color={iconColorTheme} width="22px" height="22px" />
-              </Box>
-            </Tooltip>
-          </Button>
-          <iframe
-            id="iframe"
-            src={`${ipynbHtmlUrl}?theme=${currentTheme}&plain=true`}
-            // scrolling="no"
-            seamless
-            style={{
-              width: '100%',
-              // height: '6200rem',
-              height: '80vh',
-              maxHeight: '100%',
-              // borderRadius: '14px',
-            }}
-            title={`${lesson.title} IPython Notebook`}
-          />
+        {ipynbHtmlUrl && markdown === '' && (
+          <Box width="100%" height="100%">
+            <Button
+              background={currentTheme}
+              position="absolute"
+              margin="1rem 0 0 2rem"
+              padding="5px"
+              height="auto"
+              onClick={() => setIsFullScreen(true)}
+            >
+              <Tooltip label={t('common:full-screen')} placement="top">
+                <Box>
+                  <Icon icon="screen" color={iconColorTheme} width="22px" height="22px" />
+                </Box>
+              </Tooltip>
+            </Button>
+            <iframe
+              id="iframe"
+              src={`${ipynbHtmlUrl}?theme=${currentTheme}&plain=true`}
+              seamless
+              style={{
+                width: '100%',
+                height: '80vh',
+                maxHeight: '100%',
+              }}
+              title={`${lesson.title} IPython Notebook`}
+            />
 
-          <Modal isOpen={isFullScreen} closeOnOverlayClick onClose={() => setIsFullScreen(false)} isCentered size="5xl" borderRadius="0">
-            <ModalOverlay />
-            <ModalContent>
-              <ModalCloseButton
-                style={{
-                  top: '9px',
-                  right: '18px',
-                  zIndex: '99',
-                }}
-              />
-              <iframe
-                id="iframe"
-                src={`${ipynbHtmlUrl}?theme=${currentTheme}&plain=true`}
-                seamless
-                style={{
-                  width: '100%',
-                  // height: '6200rem',
-                  height: '100vh',
-                  maxHeight: '100%',
-                  // borderRadius: '14px',
-                }}
-                title={`${lesson.title} IPython Notebook`}
-              />
-            </ModalContent>
-          </Modal>
-        </Box>
-      )}
-    </GridContainer>
+            <Modal isOpen={isFullScreen} closeOnOverlayClick onClose={() => setIsFullScreen(false)} isCentered size="5xl" borderRadius="0">
+              <ModalOverlay />
+              <ModalContent>
+                <ModalCloseButton
+                  style={{
+                    top: '9px',
+                    right: '18px',
+                    zIndex: '99',
+                  }}
+                />
+                <iframe
+                  id="iframe"
+                  src={`${ipynbHtmlUrl}?theme=${currentTheme}&plain=true`}
+                  seamless
+                  style={{
+                    width: '100%',
+                    height: '100vh',
+                    maxHeight: '100%',
+                  }}
+                  title={`${lesson.title} IPython Notebook`}
+                />
+              </ModalContent>
+            </Modal>
+          </Box>
+        )}
+      </Box>
+    </>
   );
 };
 
