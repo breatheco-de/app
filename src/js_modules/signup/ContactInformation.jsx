@@ -176,12 +176,13 @@ ContactInformation.propTypes = {
   courseChoosed: PropTypes.string.isRequired,
   location: PropTypes.objectOf(PropTypes.any).isRequired,
   queryCohortIdExists: PropTypes.bool,
-  dateProps: PropTypes.objectOf(PropTypes.any).isRequired,
+  dateProps: PropTypes.objectOf(PropTypes.any),
   formProps: PropTypes.objectOf(PropTypes.any).isRequired,
   setFormProps: PropTypes.func,
 };
 
 ContactInformation.defaultProps = {
+  dateProps: {},
   setStepIndex: () => {},
   queryCohortIdExists: false,
   setFormProps: () => {},
