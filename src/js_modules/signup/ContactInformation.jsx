@@ -174,9 +174,9 @@ ContactInformation.propTypes = {
   stepIndex: PropTypes.number.isRequired,
   setStepIndex: PropTypes.func,
   courseChoosed: PropTypes.string.isRequired,
-  location: PropTypes.objectOf(PropTypes.any).isRequired,
+  location: PropTypes.objectOf(PropTypes.any),
   queryCohortIdExists: PropTypes.bool,
-  dateProps: PropTypes.objectOf(PropTypes.any).isRequired,
+  dateProps: PropTypes.objectOf(PropTypes.any),
   formProps: PropTypes.objectOf(PropTypes.any).isRequired,
   setFormProps: PropTypes.func,
 };
@@ -185,6 +185,8 @@ ContactInformation.defaultProps = {
   setStepIndex: () => {},
   queryCohortIdExists: false,
   setFormProps: () => {},
+  location: {},
+  dateProps: {},
 };
 
 export default ContactInformation;
