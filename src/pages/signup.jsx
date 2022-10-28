@@ -61,7 +61,7 @@ const SignUp = ({ finance }) => {
   const toast = useToast();
 
   const {
-    course, plan, plan_id, cohort_id,
+    course, plan, plan_id, cohort,
   } = router.query;
   const planChoosed = plan || 'trial';
   const courseChoosed = course || plan_id || 'coding-introduction';
@@ -76,7 +76,7 @@ const SignUp = ({ finance }) => {
     confirm_email: '',
   });
 
-  const queryCohortIdExists = cohort_id !== undefined && cohort_id?.length > 0;
+  const queryCohortIdExists = cohort !== undefined && cohort?.length > 0;
   const isFirstStep = stepIndex === 0;
   const isSecondStep = stepIndex === 1;
   const isThirdStep = stepIndex === 2;
@@ -96,7 +96,7 @@ const SignUp = ({ finance }) => {
 
   useEffect(async () => {
     if (queryCohortIdExists) {
-      const resp = await bc.cohort().getPublic(cohort_id);
+      const resp = await bc.cohort().getPublic(cohort);
 
       if (resp.status >= 400) {
         toast({
@@ -112,7 +112,7 @@ const SignUp = ({ finance }) => {
         }
       }
     }
-  }, [cohort_id, userData]);
+  }, [cohort, userData]);
 
   useEffect(() => {
     if (userData.user && !userData.isLoading) {
@@ -124,7 +124,7 @@ const SignUp = ({ finance }) => {
         phone: '',
       });
     }
-  }, [userData.isLoading, cohort_id]);
+  }, [userData.isLoading, cohort]);
 
   return (
     <Box p="2.5rem 2rem">

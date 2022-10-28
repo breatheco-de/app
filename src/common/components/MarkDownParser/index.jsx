@@ -83,9 +83,9 @@ const MarkDownParser = ({
     token, assetSlug, assetType, gitpod,
   } = callToActionProps;
 
-  const newLineBeforeCloseTag = /<\//gm;
+  // const newLineBeforeCloseTag = /<\//gm;
 
-  const formatedContent = content.replace(newLineBeforeCloseTag, '\n$&');
+  // const formatedContent = content.replace(newLineBeforeCloseTag, '\n$&');
 
   useEffect(() => {
     setLearnpackActions([
@@ -169,7 +169,7 @@ const MarkDownParser = ({
           },
         }}
       >
-        {formatedContent}
+        {content}
       </ReactMarkdown>
     </>
   );
