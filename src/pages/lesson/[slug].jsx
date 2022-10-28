@@ -205,7 +205,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
               as="h1"
               size="30px"
               fontWeight="700"
-              margin="22px 0 35px 0"
+              margin="22px 0 20px 0"
               transition="color 0.2s ease-in-out"
               color={useColorModeValue('black', 'white')}
               textTransform="uppercase"
@@ -221,7 +221,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
           <Box
             height="100%"
             margin="0 rem auto 0 auto"
-            display="grid"
+            // display="grid"
             gridColumn="2 / span 12"
             transition="background 0.2s ease-in-out"
             borderRadius="3px"
