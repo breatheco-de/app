@@ -21,7 +21,7 @@ import useOnline from '../hooks/useOnline';
 import useStyle from '../hooks/useStyle';
 
 const ProfilesSection = ({
-  title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher, withoutPopover,
+  title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher, withoutPopover, showButton,
 }) => {
   const { t } = useTranslation('dashboard');
   const [showMoreStudents, setShowMoreStudents] = useState(false);
@@ -179,7 +179,7 @@ const ProfilesSection = ({
         </Box>
       )}
 
-      {/* {profiles?.length > 15 && (
+      {showButton && profiles?.length > 15 && (
         <Text
           display="flex"
           cursor="pointer"
@@ -192,6 +192,7 @@ const ProfilesSection = ({
           gridGap="10px"
           size="md"
           onClick={() => setShowMoreStudents(!showMoreStudents)}
+          trigger={showMoreStudents ? 'click' : 'hover'}
         >
           {showMoreStudents ? t('cohortSideBar.show-less') : t('cohortSideBar.show-more')}
           <Box
@@ -204,7 +205,7 @@ const ProfilesSection = ({
             <Icon icon="arrowRight" color="#0097CD" width="12px" height="12px" />
           </Box>
         </Text>
-      )} */}
+      )}
     </Box>
   );
 };
@@ -411,7 +412,9 @@ const CohortSideBar = ({
               {activeStudents.length !== 0
                 ? (
                   <ProfilesSection
+                    showButton
                     profiles={activeStudents}
+                    withoutPopover={activeStudents?.length >= 16}
                   />
                 ) : (
                   <>
@@ -428,7 +431,7 @@ const CohortSideBar = ({
                     profiles={studentsJoined}
                     setAlumniGeeksList={setAlumniGeeksList}
                     paginationProps={alumniGeeksList}
-                    withoutPopover
+                    withoutPopover={studentsJoined?.length >= 16}
                   />
                 ) : (
                   <>
@@ -453,6 +456,7 @@ ProfilesSection.propTypes = {
   wrapped: PropTypes.bool,
   teacher: PropTypes.arrayOf(PropTypes.object),
   withoutPopover: PropTypes.bool,
+  showButton: PropTypes.bool,
 };
 
 ProfilesSection.defaultProps = {
@@ -463,6 +467,7 @@ ProfilesSection.defaultProps = {
   wrapped: false,
   teacher: [],
   withoutPopover: false,
+  showButton: false,
 };
 
 CohortSideBar.propTypes = {
