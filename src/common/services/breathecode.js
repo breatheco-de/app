@@ -73,6 +73,8 @@ const breathecode = {
           academy: args.academyId,
         },
       }),
+      uploadFile: (id, args) => axios.put(`${url}/task/${id}/attachment`, args),
+      getFile: (args) => axios.get(`${url}/task/${args.id}/attachment`),
       subtask: () => ({
         get: (id) => axios.get(`${url}/user/me/task/${id}/subtasks`),
         update: (id, args) => axios.put(`${url}/user/me/task/${id}/subtasks`, args),
@@ -157,6 +159,7 @@ const breathecode = {
       .join('&');
     return {
       get: () => axios.get(`${url}/asset?${qs}`),
+      getAsset: (slug) => axios.get(`${url}/asset/${slug}`),
       techs: () => axios.get(`${url}/academy/technology?${qs}`),
     };
   },

@@ -10,6 +10,7 @@ import useModuleMap from '../../common/store/actions/moduleMapAction';
 import { ButtonHandlerByTaskStatus } from './taskHandler';
 import ModuleComponent from '../../common/components/Module';
 import { isWindow } from '../../utils/index';
+import bc from '../../common/services/breathecode';
 import ShareButton from '../../common/components/ShareButton';
 // import { usePersistent } from '../../common/hooks/usePersistent';
 
@@ -21,6 +22,7 @@ const Module = ({
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);
+  const [currentAssetData, setCurrentAssetData] = useState(null);
   const [, setUpdatedTask] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const toast = useToast();
@@ -73,8 +75,13 @@ const Module = ({
   const closeSettings = () => {
     setSettingsOpen(false);
   };
-  const toggleSettings = () => {
-    setSettingsOpen(!settingsOpen);
+  const toggleSettings = async (assetSlug) => {
+    const assetResp = await bc.lesson().getAsset(assetSlug);
+    if (assetResp.status < 400) {
+      const assetData = await assetResp.data;
+      setCurrentAssetData(assetData);
+      setSettingsOpen(!settingsOpen);
+    }
   };
 
   const currentSlug = data.slug ? data.slug : '';
@@ -93,7 +100,9 @@ const Module = ({
     });
   };
 
-  const sendProject = (task, githubUrl, taskStatus) => {
+  const sendProject = ({
+    task, githubUrl, taskStatus,
+  }) => {
     setShowModal(true);
     updateAssignment({
       t, task, closeSettings, toast, githubUrl, taskStatus, contextState, setContextState,
@@ -123,6 +132,7 @@ const Module = ({
             sendProject={sendProject}
             changeStatusAssignment={changeStatusAssignment}
             toggleSettings={toggleSettings}
+            currentAssetData={currentAssetData}
             closeSettings={closeSettings}
             settingsOpen={settingsOpen}
           />

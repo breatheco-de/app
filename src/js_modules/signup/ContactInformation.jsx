@@ -182,6 +182,7 @@ ContactInformation.propTypes = {
 };
 
 ContactInformation.defaultProps = {
+  dateProps: {},
   setStepIndex: () => {},
   queryCohortIdExists: false,
   setFormProps: () => {},
