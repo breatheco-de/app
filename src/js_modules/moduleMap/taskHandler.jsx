@@ -348,7 +348,7 @@ export const ButtonHandlerByTaskStatus = ({
           <PopoverHeader>{t('deliverProject.title')}</PopoverHeader>
           <PopoverCloseButton />
           <PopoverBody>
-            {typeof currentAssetData === 'object' && currentAssetData?.delivery_formats !== 'url' && (
+            {typeof currentAssetData === 'object' && currentAssetData?.delivery_formats === 'url' && (
               <Formik
                 initialValues={{ githubUrl: '' }}
                 onSubmit={() => {
@@ -409,7 +409,7 @@ export const ButtonHandlerByTaskStatus = ({
               </Formik>
             )}
 
-            {typeof currentAssetData === 'object' && currentAssetData?.delivery_formats === 'url' && (
+            {typeof currentAssetData === 'object' && currentAssetData?.delivery_formats === 'file' && (
               <Box>
                 <Text size="md">
                   {t('deliverProject.file-upload')}
