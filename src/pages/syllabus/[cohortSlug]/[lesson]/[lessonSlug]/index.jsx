@@ -11,13 +11,12 @@ import { useRouter } from 'next/router';
 import { isWindow, assetTypeValues, getExtensionName } from '../../../../../utils';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
-import { updateAssignment, startDay } from '../../../../../common/hooks/useModuleHandler';
+import { updateAssignment, startDay, nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import { ButtonHandlerByTaskStatus } from '../../../../../js_modules/moduleMap/taskHandler';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkDownParser from '../../../../../common/components/MarkDownParser';
 import Text from '../../../../../common/components/Text';
 import useAuth from '../../../../../common/hooks/useAuth';
-import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import StickySideBar from '../../../../../common/components/StickySideBar';
 import Icon from '../../../../../common/components/Icon';
 import AlertMessage from '../../../../../common/components/AlertMessage';
@@ -27,17 +26,17 @@ import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import ScrollTop from '../../../../../common/components/scrollTop';
 import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar';
-import {
-  defaultDataFetch, getCurrentCohort, prepareCohortContext, prepareTaskModules,
-} from '../../../../../js_modules/syllabus/dataFetch';
+import bc from '../../../../../common/services/breathecode';
+import { defaultDataFetch } from '../../../../../js_modules/syllabus/dataFetch';
 import getReadme from '../../../../../js_modules/syllabus/getReadme';
+import useHandler from '../../../../../common/hooks/useCohortHandler';
 
 const Content = () => {
   const { t } = useTranslation('syllabus');
   const { isLoading, user, choose } = useAuth();
-  const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
-  const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
-  const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
+  // const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
+  // const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
+  // const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -61,12 +60,17 @@ const Content = () => {
   const [showModal, setShowModal] = useState(false);
   const [readmeUrlPathname, setReadmeUrlPathname] = useState(null);
   const [openTargetBlankModal, setOpenTargetBlankModal] = useState(null);
+  const [currentAssetData, setCurrentAssetData] = useState(null);
   const [currentBlankProps, setCurrentBlankProps] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
   const [currentData, setCurrentData] = useState({});
   const toast = useToast();
   const router = useRouter();
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
+  const {
+    cohortSession, sortedAssignments, getCohortAssignments, getCohortData, prepareTasks,
+    taskTodo,
+  } = useHandler();
 
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
@@ -137,11 +141,9 @@ const Content = () => {
   };
 
   useEffect(() => {
-    getCurrentCohort({
+    getCohortData({
       cohortSlug,
       choose,
-      router,
-      t,
     });
   }, []);
 
@@ -156,11 +158,25 @@ const Content = () => {
     setSettingsOpen(false);
     setModalSettingsOpen(false);
   };
-  const toggleSettings = () => {
-    if (openNextPageModal) {
-      setModalSettingsOpen(!modalSettingsOpen);
-    } else {
-      setSettingsOpen(!settingsOpen);
+
+  // const toggleSettings = () => {
+  //   if (openNextPageModal) {
+  //     setModalSettingsOpen(!modalSettingsOpen);
+  //   } else {
+  //     setSettingsOpen(!settingsOpen);
+  //   }
+  // };
+
+  const toggleSettings = async (assetSlug) => {
+    const assetResp = await bc.lesson().getAsset(assetSlug);
+    if (assetResp.status < 400) {
+      const assetData = await assetResp.data;
+      setCurrentAssetData(assetData);
+      if (openNextPageModal) {
+        setModalSettingsOpen(!modalSettingsOpen);
+      } else {
+        setSettingsOpen(!settingsOpen);
+      }
     }
   };
 
@@ -307,23 +323,17 @@ const Content = () => {
 
   useEffect(() => {
     if (!isLoading && user?.active_cohort && cohortSession?.cohort_role) {
-      prepareCohortContext({
-        user, cohortSession, setCohortSession, setContextState, router, t,
+      getCohortAssignments({
+        user, setContextState,
       });
     }
-  }, [isLoading]);
+  }, [user]);
 
   useEffect(() => {
     const cohortProgram = contextState?.cohortProgram;
-    const moduleData = cohortProgram.json?.days || cohortProgram.json?.modules;
-    const cohort = cohortProgram.json ? moduleData : [];
-
-    if (contextState.cohortProgram.json && contextState.taskTodo) {
-      setTaskTodo(contextState.taskTodo);
-      prepareTaskModules({
-        contextState, cohort, setSortedAssignments,
-      });
-    }
+    prepareTasks({
+      cohortProgram, contextState, nestAssignments,
+    });
   }, [contextState.cohortProgram, contextState.taskTodo, router]);
 
   const GetReadme = () => getReadme({
@@ -657,6 +667,7 @@ const Content = () => {
                 currentTask={currentTask}
                 sendProject={sendProject}
                 changeStatusAssignment={changeStatusAssignment}
+                currentAssetData={currentAssetData}
                 toggleSettings={toggleSettings}
                 closeSettings={closeSettings}
                 settingsOpen={settingsOpen}
@@ -780,6 +791,7 @@ const Content = () => {
                         changeStatusAssignment={changeStatusAssignment}
                         toggleSettings={toggleSettings}
                         closeSettings={closeSettings}
+                        currentAssetData={currentAssetData}
                         settingsOpen={modalSettingsOpen}
                         onClickHandler={() => {
                           setShowModal(false);

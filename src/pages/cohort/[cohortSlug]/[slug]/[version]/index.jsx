@@ -52,12 +52,11 @@ const Dashboard = () => {
   const [, setSortedAssignments] = usePersistent('sortedAssignments', []);
   const [searchValue, setSearchValue] = useState(router.query.search || '');
   const [showPendingTasks, setShowPendingTasks] = useState(false);
-  const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const { user, choose, isLoading } = useAuth();
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const {
     cohortSession, sortedAssignments, setSyllabus, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
-    getMandatoryProjects, getTasksWithoutCohort,
+    getMandatoryProjects, getTasksWithoutCohort, taskTodo,
   } = useHandler();
 
   const teacherAndAssistants = studentAndTeachers.filter((st) => st.role === 'TEACHER' || st.role === 'ASSISTANT');
@@ -204,7 +203,7 @@ const Dashboard = () => {
   // Sort all data fetched in order of taskTodo
   useMemo(() => {
     prepareTasks({
-      cohortProgram, contextState, setTaskTodo, nestAssignments,
+      cohortProgram, contextState, nestAssignments,
     });
   }, [contextState.cohortProgram, contextState.taskTodo, router]);
 

@@ -354,7 +354,7 @@ export const ButtonHandlerByTaskStatus = ({
                 onSubmit={() => {
                   setIsSubmitting(true);
                   if (githubUrl !== '') {
-                    const getUrlResult = !isGithubUrl.test(githubUrl);
+                    const getUrlResult = assetData?.validate_regex_url ? !githubUrl.includes(assetData?.validate_regex_url) : !isGithubUrl.test(githubUrl);
                     const haveGithubDomain = getUrlResult;
                     if (haveGithubDomain) {
                       setShowUrlWarn(haveGithubDomain);
@@ -420,10 +420,10 @@ export const ButtonHandlerByTaskStatus = ({
                     <Box display="flex" gridGap="9px">
                       <Icon icon="pdf" color={hexColor.black} width="32px" height="41px" />
                       <Box position="relative">
-                        <Text size="14px" withLimit>
+                        <Text size="14px" style={{ margin: '0px' }} withLimit>
                           {fileProps.name}
                         </Text>
-                        <Text size="14px" color={fileErrorExists && hexColor.danger} display="flex" gridGap="6px">
+                        <Text size="14px" style={{ margin: '0px' }} color={fileErrorExists && hexColor.danger} display="flex" gridGap="6px">
                           {fileErrorExists ? (
                             <>
                               <Icon icon="warning" width="13px" height="13px" style={{ marginTop: '5px' }} color="currentColor" full secondColor={hexColor.white2} />
