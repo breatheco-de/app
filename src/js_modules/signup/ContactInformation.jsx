@@ -3,13 +3,17 @@ import * as Yup from 'yup';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import { Box, Button, useToast } from '@chakra-ui/react';
+import {
+  Box, Button, Flex, useToast,
+} from '@chakra-ui/react';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import { phone } from '../../utils/regex';
 import FieldForm from '../../common/components/Forms/FieldForm';
 import PhoneInput from '../../common/components/PhoneInput';
 import { setStorageItem } from '../../utils';
+import NextChakraLink from '../../common/components/NextChakraLink';
+import useStyle from '../../common/hooks/useStyle';
 
 const ContactInformation = ({
   stepIndex, setStepIndex, courseChoosed, location, queryCohortIdExists, dateProps,
@@ -19,6 +23,7 @@ const ContactInformation = ({
   const { t } = useTranslation('signup');
   const router = useRouter();
   const toast = useToast();
+  const { featuredColor } = useStyle();
 
   const signupValidation = Yup.object().shape({
     first_name: Yup.string()
@@ -42,7 +47,14 @@ const ContactInformation = ({
 
   return (
     <>
-      <Heading size="18px">{t('about-you')}</Heading>
+      <Box display="flex">
+        <Heading size="18px">{t('about-you')}</Heading>
+        <Flex fontSize="14px" ml="1rem" p="2px 8px" backgroundColor={featuredColor} alignItems="center" borderRadius="10px" gridGap="6px">
+          {t('already-have-account')}
+          {' '}
+          <NextChakraLink href="/login" fontSize="12px" variant="default">{t('login-here')}</NextChakraLink>
+        </Flex>
+      </Box>
 
       <Formik
         initialValues={{
@@ -187,7 +199,6 @@ ContactInformation.defaultProps = {
   queryCohortIdExists: false,
   setFormProps: () => {},
   location: {},
-  dateProps: {},
 };
 
 export default ContactInformation;
