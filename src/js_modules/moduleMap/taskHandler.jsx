@@ -113,7 +113,8 @@ export const ButtonHandlerByTaskStatus = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [githubUrl, setGithubUrl] = useState('');
-  // const [fileData, setFileData] = useState(null);
+  const [assetData, setAssetData] = useState(null);
+  const [fileData, setFileData] = useState(null);
   const defaultProps = {
     sizeError: false,
     formatError: false,
@@ -157,26 +158,30 @@ export const ButtonHandlerByTaskStatus = ({
     </Button>
   );
 
-  // const handleOpen = async () => {
-  //   if (currentTask && currentTask?.task_type === 'PROJECT' && currentTask.task_status === 'DONE') {
-  //     const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
-  //     if (assetResp && assetResp.status < 400) {
-  //       const data = await assetResp.data;
-  //       if (data?.delivery_formats === 'url') {
-  //         const fileResp = await bc.todo().getFile({ id: currentTask.id });
-  //         const respData = await fileResp.data;
-  //         setFileData(respData[0]);
-  //         onOpen();
-  //       }
-  //     } else {
-  //       onOpen();
-  //     }
-  //   }
-  // };
+  const handleOpen = async () => {
+    if (currentTask && currentTask?.task_type === 'PROJECT' && currentTask.task_status === 'DONE') {
+      const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
+      if (assetResp && assetResp.status < 400) {
+        const data = await assetResp.data;
+
+        if (data?.delivery_formats === 'file') {
+          const fileResp = await bc.todo().getFile({ id: currentTask.id });
+          const respData = await fileResp.data;
+          setFileData(respData[0]);
+          onOpen();
+        } else {
+          setAssetData(data);
+          onOpen();
+        }
+      } else {
+        onOpen();
+      }
+    }
+  };
 
   const OpenModalButton = () => (
     <Button
-      onClick={onOpen}
+      onClick={() => handleOpen()}
       disabled={taskIsAproved}
       display="flex"
       minWidth="26px"
@@ -212,7 +217,8 @@ export const ButtonHandlerByTaskStatus = ({
             description={t('modalInfo.still-reviewing')}
             teacherFeedback={currentTask.description}
             linkInfo={t('modalInfo.link-info')}
-            link={currentTask.github_url}
+            link={fileData?.url || currentTask.github_url}
+            markdownDescription={assetData?.delivery_instructions}
             type="taskHandler"
             handlerText={t('modalInfo.rejected.resubmit-assignment')}
             actionHandler={(event) => {
@@ -235,9 +241,10 @@ export const ButtonHandlerByTaskStatus = ({
             onClose={onClose}
             title={t('modalInfo.title')}
             description={t('modalInfo.approved')}
+            markdownDescription={assetData?.delivery_instructions}
             teacherFeedback={currentTask.description}
             linkInfo={t('modalInfo.link-info')}
-            link={currentTask.github_url}
+            link={fileData?.url || currentTask.github_url}
             disableHandler
           />
         </>
@@ -253,13 +260,14 @@ export const ButtonHandlerByTaskStatus = ({
             onClose={onClose}
             title={t('modalInfo.title')}
             description={t('modalInfo.rejected.title')}
+            markdownDescription={assetData?.delivery_instructions}
             type="taskHandler"
             sendProject={sendProject}
             currentTask={currentTask}
             closeText={t('modalInfo.rejected.remove-delivery')}
             teacherFeedback={currentTask.description}
             linkInfo={t('modalInfo.link-info')}
-            link={currentTask.github_url}
+            link={fileData?.url || currentTask.github_url}
             handlerText={t('modalInfo.rejected.resubmit-assignment')}
             actionHandler={(event) => {
               changeStatusAssignment(event, currentTask, 'PENDING');

@@ -9,12 +9,13 @@ import PropTypes from 'prop-types';
 import { useState, memo } from 'react';
 import Text from '../../common/components/Text';
 import validationSchema from '../../common/components/Forms/validationSchemas';
+import MarkDownParser from '../../common/components/MarkDownParser';
 
 const ModalInfo = ({
   isOpen, onClose, actionHandler, rejectHandler, forceHandler, disableHandler, title, description,
   teacherFeedback, linkInfo, linkText, link, handlerText, closeText, cancelColorButton,
   handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
-  htmlDescription,
+  htmlDescription, markdownDescription,
 }) => {
   const { t } = useTranslation('dashboard');
   const [githubUrl, setGithubUrl] = useState(link);
@@ -72,6 +73,24 @@ const ModalInfo = ({
               >
                 {description}
               </Text>
+            )}
+            {markdownDescription && (
+              <Box
+                height="100%"
+                margin="0 rem auto 0 auto"
+                transition="background 0.2s ease-in-out"
+                borderRadius="3px"
+                maxWidth="1280px"
+                background={useColorModeValue('white', 'dark')}
+                width={{ base: '100%', md: 'auto' }}
+                className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+              >
+                <MarkDownParser content={markdownDescription} />
+                {/* {(markdown && ipynbHtmlUrl === '')
+                  ? <MarkDownParser content={markdownData.content} />
+                  : <MDSkeleton />} */}
+
+              </Box>
             )}
             {htmlDescription && (
               <Text
@@ -295,6 +314,7 @@ ModalInfo.propTypes = {
   type: PropTypes.string,
   closeButtonVariant: PropTypes.string,
   htmlDescription: PropTypes.string,
+  markdownDescription: PropTypes.string,
 };
 
 ModalInfo.defaultProps = {
@@ -319,6 +339,7 @@ ModalInfo.defaultProps = {
   type: 'default',
   closeButtonVariant: 'danger',
   htmlDescription: '',
+  markdownDescription: '',
 };
 
 export default memo(ModalInfo);
