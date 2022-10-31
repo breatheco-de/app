@@ -1,7 +1,7 @@
 import {
   FormControl, Input, Button, Popover, PopoverTrigger, PopoverContent,
   PopoverArrow, PopoverHeader, PopoverCloseButton, PopoverBody, useDisclosure,
-  FormErrorMessage, Box, Link, useColorModeValue,
+  FormErrorMessage, Box, Link, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { Formik, Form, Field } from 'formik';
@@ -12,6 +12,9 @@ import ModalInfo from './modalInfo';
 import validationSchema from '../../common/components/Forms/validationSchemas';
 import { isGithubUrl } from '../../utils/regex';
 import Text from '../../common/components/Text';
+import bc from '../../common/services/breathecode';
+import useStyle from '../../common/hooks/useStyle';
+import { formatBytes } from '../../utils';
 
 export const TextByTaskStatus = ({ currentTask, t }) => {
   const taskIsAproved = currentTask?.revision_status === 'APPROVED';
@@ -110,9 +113,21 @@ export const ButtonHandlerByTaskStatus = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [githubUrl, setGithubUrl] = useState('');
+  const defaultProps = {
+    sizeError: false,
+    formatError: false,
+  };
+  const [fileProps, setFileProps] = useState(defaultProps);
   const commonInputColor = useColorModeValue('gray.600', 'gray.200');
   const commonInputActiveColor = useColorModeValue('gray.800', 'gray.350');
   const taskIsAproved = allowText && currentTask?.revision_status === 'APPROVED';
+
+  const maxFileSize = 1048576 * 10; // 10mb
+  const formatTypes = 'application/pdf,application/csv';
+  const formatFileArr = formatTypes.split(',');
+  const fileErrorExists = fileProps.formatError || fileProps.sizeError;
+  const { featuredColor, modal, hexColor } = useStyle();
+  const toast = useToast();
 
   const howToSendProjectUrl = 'https://4geeksacademy.notion.site/How-to-deliver-a-project-e1db0a8b1e2e4fbda361fc2f5457c0de';
   const TaskButton = () => (
@@ -237,6 +252,35 @@ export const ButtonHandlerByTaskStatus = ({
       );
     }
 
+    const handleCloseFile = () => {
+      setFileProps(defaultProps);
+      closeSettings();
+    };
+
+    const handleUpload = async () => {
+      const formdata = new FormData();
+      formdata.append('file', fileProps.file);
+      const resp = await bc.todo().uploadFile(currentTask.id, formdata);
+
+      if (resp?.status < 400) {
+        const respData = resp.data[0];
+        toast({
+          title: t('alert-message:file-name-uploaded', { filename: `"${respData.name}"` }),
+          status: 'success',
+          duration: 4000,
+          isClosable: true,
+        });
+        closeSettings();
+      } else {
+        toast({
+          title: t('alert-message:something-went-wrong-with', { property: `"${fileProps.name}"` }),
+          status: 'error',
+          duration: 4000,
+          isClosable: true,
+        });
+      }
+    };
+
     return (
       <Popover
         id="task-status"
@@ -274,7 +318,7 @@ export const ButtonHandlerByTaskStatus = ({
           <PopoverHeader>{t('deliverProject.title')}</PopoverHeader>
           <PopoverCloseButton />
           <PopoverBody>
-            {typeof currentAssetData === 'object' && currentAssetData?.delivery_formats === 'url' && (
+            {typeof currentAssetData === 'object' && currentAssetData?.delivery_formats !== 'url' && (
               <Formik
                 initialValues={{ githubUrl: '' }}
                 onSubmit={() => {
@@ -335,37 +379,86 @@ export const ButtonHandlerByTaskStatus = ({
               </Formik>
             )}
 
-            {typeof currentAssetData === 'object' && currentAssetData?.delivery_formats === 'file' && (
+            {typeof currentAssetData === 'object' && currentAssetData?.delivery_formats === 'url' && (
               <Box>
                 <Text size="md">
                   {t('deliverProject.file-upload')}
                 </Text>
 
-                <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} width={{ base: 'auto', md: '100%' }} height="86px" position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px" background="featuredLight">
-                  <Box width="100%" height="100%" position="absolute" display="flex" justifyContent="center" alignItems="center" border="1px solid currentColor" cursor="pointer" borderWidth="2px" borderRadius="7px">
-                    <Box className="icon-bounce">
-                      <Icon icon="upload" color="currentColor" width="24" height="24" />
+                {typeof fileProps?.type === 'string' ? (
+                  <Box display="flex" my="15px" p="8px" border="1px solid" borderColor={featuredColor} background={modal.background} justifyContent="space-between" alignItems="center" borderRadius="7px">
+                    <Box display="flex" gridGap="9px">
+                      <Icon icon="pdf" color={hexColor.black} width="32px" height="41px" />
+                      <Box position="relative">
+                        <Text size="14px" withLimit>
+                          {fileProps.name}
+                        </Text>
+                        <Text size="14px" color={fileErrorExists && hexColor.danger} display="flex" gridGap="6px">
+                          {fileErrorExists ? (
+                            <>
+                              <Icon icon="warning" width="13px" height="13px" style={{ marginTop: '5px' }} color="currentColor" full secondColor={hexColor.white2} />
+                              {fileProps.formatError
+                                ? t('deliverProject.error-file-format')
+                                : fileProps.sizeError && t('deliverProject.error-file-size')}
+                              {/* {fileProps.sizeError
+                                ? 'File size must be less than 10mb.'
+                                : fileProps.formatError && 'File format is not available.'} */}
+                            </>
+                          ) : formatBytes(fileProps.size)}
+                        </Text>
+                      </Box>
+                    </Box>
+                    <Box borderRadius="20px" p="7px" backgroundColor="gray.500" onClick={() => setFileProps(defaultProps)} cursor="pointer">
+                      <Icon icon="close" width="10px" height="10px" color="#ffffff" />
                     </Box>
                   </Box>
-                  <Input
-                    type="file"
-                    name="Upload file"
-                    title=""
-                    // onChange={handleFileUpload}
-                    onChange={(event) => {
-                      console.log('file:', event.currentTarget.files[0]);
-                    }}
-                    accept="image/x-png,image/jpg,image/jpeg"
-                    placeholder="Upload profile image"
-                    position="absolute"
-                    width="100%"
-                    height="100%"
-                    cursor="pointer"
-                    opacity="0"
-                    padding="0"
-                    onDragOver={() => setDragOver(true)}
-                    onDragLeave={() => setDragOver(false)}
-                  />
+                ) : (
+                  <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} m="10px 0" width={{ base: 'auto', md: '100%' }} height="86px" position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px" background={featuredColor}>
+                    <Box width="100%" height="100%" position="absolute" display="flex" justifyContent="center" alignItems="center" border="1px solid currentColor" cursor="pointer" borderWidth="2px" borderRadius="7px">
+                      <Box className="icon-bounce">
+                        <Icon icon="upload" color="currentColor" width="24" height="24" />
+                      </Box>
+                    </Box>
+                    <Input
+                      type="file"
+                      name="Upload file"
+                      title=""
+                      // onChange={handleFileUpload}
+                      onChange={(event) => {
+                        const fileProp = event.currentTarget.files[0];
+                        const { type, name, size } = fileProp;
+                        setFileProps((prev) => ({
+                          ...prev, name, type, size, file: fileProp,
+                        }));
+
+                        if (fileProp.size > maxFileSize) {
+                          setFileProps((prev) => ({ ...prev, sizeError: true }));
+                        }
+                        if (!formatFileArr.includes(fileProp.type)) {
+                          setFileProps((prev) => ({ ...prev, formatError: true }));
+                        }
+                      }}
+                      accept={formatTypes}
+                      // accept=".pdf,.csv"
+                      placeholder="Upload profile image"
+                      position="absolute"
+                      width="100%"
+                      height="100%"
+                      cursor="pointer"
+                      opacity="0"
+                      padding="0"
+                      onDragOver={() => setDragOver(true)}
+                      onDragLeave={() => setDragOver(false)}
+                    />
+                  </Box>
+                )}
+                <Box display="flex" justifyContent="space-evenly" mb="6px">
+                  <Button variant="default" onClick={() => handleUpload()} disabled={typeof fileProps?.type !== 'string' || fileErrorExists} textTransform="uppercase">
+                    {t('common:upload')}
+                  </Button>
+                  <Button variant="link" textTransform="uppercase" onClick={() => handleCloseFile()}>
+                    {t('common:cancel')}
+                  </Button>
                 </Box>
               </Box>
             )}

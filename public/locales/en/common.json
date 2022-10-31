@@ -87,6 +87,8 @@
   "student": "Student",
   "reviewer": "Reviewer",
   "assistant": "Assistant",
+  "upload": "Upload",
+  "cancel": "Cancel",
   "uploading": "Uploading",
   "and": "and"
 }

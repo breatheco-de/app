@@ -87,6 +87,8 @@
   "student": "Alumno",
   "reviewer": "Revisor",
   "assistant": "Asistente",
+  "upload": "Subir",
+  "cancel": "Cancelar",
   "uploading": "Subiendo",
   "and": "y"
 }
