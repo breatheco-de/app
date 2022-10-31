@@ -36,7 +36,11 @@ const ModalInfo = ({
   const resubmitHandler = () => {
     setIsSubmitting(true);
     if (githubUrl !== '') {
-      sendProject(currentTask, githubUrl, 'DONE');
+      sendProject({
+        task: currentTask,
+        githubUrl,
+        taskStatus: 'DONE',
+      });
       setIsSubmitting(false);
       onClose();
     } else {
@@ -113,7 +117,11 @@ const ModalInfo = ({
                   onSubmit={() => {
                     setIsSubmitting(true);
                     if (githubUrl !== '') {
-                      sendProject(currentTask, githubUrl, 'DONE');
+                      sendProject({
+                        task: currentTask,
+                        githubUrl,
+                        taskStatus: 'DONE',
+                      });
                       setIsSubmitting(false);
                       onClose();
                     }

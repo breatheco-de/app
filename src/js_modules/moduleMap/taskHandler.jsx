@@ -113,6 +113,7 @@ export const ButtonHandlerByTaskStatus = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [githubUrl, setGithubUrl] = useState('');
+  // const [fileData, setFileData] = useState(null);
   const defaultProps = {
     sizeError: false,
     formatError: false,
@@ -155,6 +156,23 @@ export const ButtonHandlerByTaskStatus = ({
       )}
     </Button>
   );
+
+  // const handleOpen = async () => {
+  //   if (currentTask && currentTask?.task_type === 'PROJECT' && currentTask.task_status === 'DONE') {
+  //     const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
+  //     if (assetResp && assetResp.status < 400) {
+  //       const data = await assetResp.data;
+  //       if (data?.delivery_formats === 'url') {
+  //         const fileResp = await bc.todo().getFile({ id: currentTask.id });
+  //         const respData = await fileResp.data;
+  //         setFileData(respData[0]);
+  //         onOpen();
+  //       }
+  //     } else {
+  //       onOpen();
+  //     }
+  //   }
+  // };
 
   const OpenModalButton = () => (
     <Button
@@ -264,6 +282,10 @@ export const ButtonHandlerByTaskStatus = ({
 
       if (resp?.status < 400) {
         const respData = resp.data[0];
+        sendProject({
+          task: currentTask,
+          githubUrl: respData?.url,
+        });
         toast({
           title: t('alert-message:file-name-uploaded', { filename: `"${respData.name}"` }),
           status: 'success',
@@ -318,7 +340,7 @@ export const ButtonHandlerByTaskStatus = ({
           <PopoverHeader>{t('deliverProject.title')}</PopoverHeader>
           <PopoverCloseButton />
           <PopoverBody>
-            {typeof currentAssetData === 'object' && currentAssetData?.delivery_formats === 'url' && (
+            {typeof currentAssetData === 'object' && currentAssetData?.delivery_formats !== 'url' && (
               <Formik
                 initialValues={{ githubUrl: '' }}
                 onSubmit={() => {
@@ -329,7 +351,7 @@ export const ButtonHandlerByTaskStatus = ({
                     if (haveGithubDomain) {
                       setShowUrlWarn(haveGithubDomain);
                     } else {
-                      sendProject(currentTask, githubUrl);
+                      sendProject({ task: currentTask, githubUrl });
                       setIsSubmitting(false);
                       onClickHandler();
                     }
@@ -379,7 +401,7 @@ export const ButtonHandlerByTaskStatus = ({
               </Formik>
             )}
 
-            {typeof currentAssetData === 'object' && currentAssetData?.delivery_formats === 'file' && (
+            {typeof currentAssetData === 'object' && currentAssetData?.delivery_formats === 'url' && (
               <Box>
                 <Text size="md">
                   {t('deliverProject.file-upload')}
@@ -476,7 +498,7 @@ export const ButtonHandlerByTaskStatus = ({
               actionHandler={() => {
                 setShowUrlWarn(false);
                 setIsSubmitting(false);
-                sendProject(currentTask, githubUrl);
+                sendProject({ task: currentTask, githubUrl });
                 onClickHandler();
               }}
               linkText={t('deliverProject.how-to-deliver')}

@@ -171,7 +171,7 @@ const Content = () => {
     });
   };
 
-  const sendProject = (task, githubUrl, taskStatus) => {
+  const sendProject = ({ task, githubUrl, taskStatus }) => {
     setShowModal(true);
     updateAssignment({
       t, task, closeSettings, toast, githubUrl, taskStatus, contextState, setContextState,
