@@ -168,12 +168,12 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
         </Link>
       </GridContainer>
       <Box
-        display="grid"
+        display={{ base: 'block', md: 'grid' }}
         maxWidth="1280px"
         margin="28px auto 0 auto"
         padding={{ base: '0 15px', md: '0' }}
         height="100%"
-        gridTemplateColumns={{ base: 'repeat(1, 1fr)', md: '3fr repeat(12, 1fr) 3fr' }}
+        gridTemplateColumns={{ base: '', md: '3fr repeat(12, 1fr) 3fr' }}
       >
         <Box display="grid" gridColumn="2 / span 12">
           <Box display="flex" gridGap="10px" justifyContent="space-between">
@@ -244,59 +244,67 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
             )}
           </>
         )}
-        {ipynbHtmlUrl && markdown === '' && (
-          <Box width="100%" height="100%">
-            <Button
-              background={currentTheme}
-              position="absolute"
-              margin="1rem 0 0 2rem"
-              padding="5px"
-              height="auto"
-              onClick={() => setIsFullScreen(true)}
-            >
-              <Tooltip label={t('common:full-screen')} placement="top">
-                <Box>
-                  <Icon icon="screen" color={iconColorTheme} width="22px" height="22px" />
-                </Box>
-              </Tooltip>
-            </Button>
-            <iframe
-              id="iframe"
-              src={`${ipynbHtmlUrl}?theme=${currentTheme}&plain=true`}
-              seamless
-              style={{
-                width: '100%',
-                height: '80vh',
-                maxHeight: '100%',
-              }}
-              title={`${lesson.title} IPython Notebook`}
-            />
+        <Box
+          height="100%"
+          gridColumn="2 / span 12"
+          borderRadius="3px"
+          maxWidth="1280px"
+          width={{ base: '100%', md: 'auto' }}
+        >
+          {ipynbHtmlUrl && markdown === '' && (
+            <Box width="100%" height="100%">
+              <Button
+                background={currentTheme}
+                position="absolute"
+                margin="1rem 0 0 2rem"
+                padding="5px"
+                height="auto"
+                onClick={() => setIsFullScreen(true)}
+              >
+                <Tooltip label={t('common:full-screen')} placement="top">
+                  <Box>
+                    <Icon icon="screen" color={iconColorTheme} width="22px" height="22px" />
+                  </Box>
+                </Tooltip>
+              </Button>
+              <iframe
+                id="iframe"
+                src={`${ipynbHtmlUrl}?theme=${currentTheme}&plain=true`}
+                seamless
+                style={{
+                  width: '100%',
+                  height: '80vh',
+                  maxHeight: '100%',
+                }}
+                title={`${lesson.title} IPython Notebook`}
+              />
 
-            <Modal isOpen={isFullScreen} closeOnOverlayClick onClose={() => setIsFullScreen(false)} isCentered size="5xl" borderRadius="0">
-              <ModalOverlay />
-              <ModalContent>
-                <ModalCloseButton
-                  style={{
-                    top: '9px',
-                    right: '18px',
-                    zIndex: '99',
-                  }}
-                />
-                <iframe
-                  id="iframe"
-                  src={`${ipynbHtmlUrl}?theme=${currentTheme}&plain=true`}
-                  seamless
-                  style={{
-                    width: '100%',
-                    height: '100vh',
-                    maxHeight: '100%',
-                  }}
-                  title={`${lesson.title} IPython Notebook`}
-                />
-              </ModalContent>
-            </Modal>
-          </Box>
-        )}
+              <Modal isOpen={isFullScreen} closeOnOverlayClick onClose={() => setIsFullScreen(false)} isCentered size="5xl" borderRadius="0">
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalCloseButton
+                    style={{
+                      top: '9px',
+                      right: '18px',
+                      zIndex: '99',
+                    }}
+                  />
+                  <iframe
+                    id="iframe"
+                    src={`${ipynbHtmlUrl}?theme=${currentTheme}&plain=true`}
+                    seamless
+                    style={{
+                      width: '100%',
+                      height: '100vh',
+                      maxHeight: '100%',
+                    }}
+                    title={`${lesson.title} IPython Notebook`}
+                  />
+                </ModalContent>
+              </Modal>
+            </Box>
+          )}
+        </Box>
       </Box>
     </>
   );

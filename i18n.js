@@ -25,6 +25,7 @@ module.exports = {
     '/mentorship': ['mentorship'],
     '/how-to': ['how-to'],
     '/how-to/[slug]': ['how-to'],
+    '/how-to/technology/[technology]': ['how-to'],
     '/profile': ['profile'],
     '/profile/[slug]': ['profile'],
     '/thank-you': ['thank-you'],
