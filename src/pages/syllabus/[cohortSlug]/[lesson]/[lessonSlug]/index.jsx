@@ -34,9 +34,6 @@ import useHandler from '../../../../../common/hooks/useCohortHandler';
 const Content = () => {
   const { t } = useTranslation('syllabus');
   const { isLoading, user, choose } = useAuth();
-  // const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
-  // const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
-  // const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -91,7 +88,6 @@ const Content = () => {
   const firstTask = nextModule?.modules[0];
   const lastPrevTask = prevModule?.modules[prevModule?.modules.length - 1];
 
-  // const { cohortSlug, lesson, lessonSlug } = router.query;
   const cohortSlug = router?.query?.cohortSlug;
   const lesson = router?.query?.lesson;
   const lessonSlug = router?.query?.lessonSlug;
@@ -159,14 +155,6 @@ const Content = () => {
     setModalSettingsOpen(false);
   };
 
-  // const toggleSettings = () => {
-  //   if (openNextPageModal) {
-  //     setModalSettingsOpen(!modalSettingsOpen);
-  //   } else {
-  //     setSettingsOpen(!settingsOpen);
-  //   }
-  // };
-
   const toggleSettings = async (assetSlug) => {
     const assetResp = await bc.lesson().getAsset(assetSlug);
     if (assetResp.status < 400) {
@@ -210,7 +198,6 @@ const Content = () => {
     setCurrentData({});
     toast({
       title: t('alert-message:content-not-found', { lesson }),
-      // description: 'Content not found',
       status: 'error',
       duration: 7000,
       isClosable: true,
@@ -404,7 +391,6 @@ const Content = () => {
   const handleNextPage = () => {
     setCurrentData({});
     if (nextAssignment !== null) {
-      // router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
       if (nextAssignment?.target === 'blank') {
         setCurrentBlankProps(nextAssignment);
         router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
