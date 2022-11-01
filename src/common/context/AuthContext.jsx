@@ -84,6 +84,7 @@ const setSession = (token) => {
     localStorage.removeItem('taskTodo');
     localStorage.removeItem('profile');
     localStorage.removeItem('sortedAssignments');
+    localStorage.removeItem('days_history_log');
     delete axiosInstance.defaults.headers.common.Authorization;
   }
 };

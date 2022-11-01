@@ -124,7 +124,7 @@ const SignUp = ({ finance }) => {
         phone: '',
       });
     }
-  }, [userData.isLoading, cohort]);
+  }, [userData.user, cohort]);
 
   return (
     <Box p="2.5rem 2rem">

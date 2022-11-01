@@ -49,10 +49,10 @@ const ContactInformation = ({
     <>
       <Box display="flex">
         <Heading size="18px">{t('about-you')}</Heading>
-        <Flex fontSize="14px" ml="1rem" p="2px 8px" backgroundColor={featuredColor} alignItems="center" borderRadius="10px" gridGap="6px">
+        <Flex fontSize="13px" ml="1rem" p="2px 8px" backgroundColor={featuredColor} alignItems="center" borderRadius="4px" gridGap="6px">
           {t('already-have-account')}
           {' '}
-          <NextChakraLink href="/login" fontSize="12px" variant="default">{t('login-here')}</NextChakraLink>
+          <NextChakraLink href="/login" redirectAfterLogin fontSize="12px" variant="default">{t('login-here')}</NextChakraLink>
         </Flex>
       </Box>
 
