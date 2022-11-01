@@ -91,7 +91,7 @@ const ButtonStyles = {
 
     outline: (props) => ({
       bg: 'none',
-      color: props.colorMode === 'dark' ? 'white' : 'black',
+      color: props.color || props.colorMode === 'dark' ? 'white' : 'black',
       border: '1px solid',
       borderColor: props.borderColor || props.colorMode === 'dark' ? 'white' : 'black',
       height: props.height || '40px',
