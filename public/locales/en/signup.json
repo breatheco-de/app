@@ -28,6 +28,8 @@
   "email": "Email",
   "address": "Where do you live?",
   "signing-for": "You are signing up for",
+  "already-have-account": "Already have an account?",
+  "login-here": "Login here.",
   "validators": {
     "short-input": "Too Short!",
     "long-input": "Too Long!",

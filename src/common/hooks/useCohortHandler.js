@@ -14,6 +14,7 @@ function useHandler() {
   const [, setSyllabus] = usePersistent('syllabus', []);
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
+  const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const [taskCohortNull, setTaskCohortNull] = useState([]);
   const toast = useToast();
 
@@ -24,12 +25,13 @@ function useHandler() {
     if (user && user.active_cohort && cohortSession.cohort_role) {
       const academyId = user.active_cohort.academy_id;
       const { version } = user.active_cohort;
+      const cohortSlug = user?.active_cohort?.slug || slug;
       const currentAcademy = user.roles.find((role) => role.academy.id === academyId);
 
       // Fetch cohortProgram and TaskTodo then apply to contextState (useModuleMap - action)
       Promise.all([
         bc.todo({ cohort: cohortSession.id }).getTaskByStudent(), // Tasks with cohort id
-        bc.syllabus().get(academyId, slug, version), // cohortProgram
+        bc.syllabus().get(academyId, cohortSlug, version), // cohortProgram
         bc.auth().getRoles(currentAcademy?.role), // Roles
       ]).then((
         [taskTodoData, programData, userRoles],
@@ -114,7 +116,7 @@ function useHandler() {
 
   // Sort all data fetched in order of taskTodo
   const prepareTasks = ({
-    cohortProgram, contextState, setTaskTodo, nestAssignments,
+    cohortProgram, contextState, nestAssignments,
   }) => {
     const moduleData = cohortProgram.json?.days || cohortProgram.json?.modules;
     const cohort = cohortProgram.json ? moduleData : [];
@@ -225,6 +227,7 @@ function useHandler() {
     setSyllabus,
     getMandatoryProjects,
     getTasksWithoutCohort,
+    taskTodo,
   };
 }
 

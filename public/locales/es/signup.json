@@ -28,6 +28,8 @@
   "email": "Correo electrónico",
   "address": "¿Dónde vives?",
   "signing-for": "Te estás registrando en",
+  "already-have-account": "¿Ya tienes una cuenta?",
+  "login-here": "Inicia sesión aquí.",
   "validators": {
     "short-input": "¡Demasiado corto!",
     "long-input": "Demasiado largo!",

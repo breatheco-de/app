@@ -52,6 +52,8 @@ const Assignments = () => {
     en: '/',
   };
 
+  const fileUrl = 'https://storage.googleapis.com/';
+
   const queryStudentExists = query.student !== undefined && query.student?.length > 0;
   const queryStatusExists = query.status !== undefined && query.status?.length > 0;
   const queryProjectExists = query.project !== undefined && query.project?.length > 0;
@@ -441,7 +443,7 @@ const Assignments = () => {
             {filteredTasks.length > 0 ? filteredTasks.map((task, i) => {
               const index = i;
               const githubUrl = task?.github_url;
-              const haveGithubDomain = githubUrl && !isGithubUrl.test(githubUrl);
+              const haveGithubDomain = githubUrl && isGithubUrl.test(githubUrl);
               const fullName = `${task.user.first_name} ${task.user.last_name}`;
               const projectLink = `https://4geeks.com${lang[router.locale]}project/${task.associated_slug}`;
 
@@ -461,15 +463,21 @@ const Assignments = () => {
                   </Box>
 
                   <Box width={githubUrl ? 'auto' : '4%'}>
-                    {githubUrl && (!haveGithubDomain ? (
+                    {githubUrl && haveGithubDomain && (
                       <Link variant="default" width="26px" href={githubUrl || '#'} target="_blank" rel="noopener noreferrer">
                         <Icon icon="github" width="26px" height="26px" />
                       </Link>
-                    ) : (
+                    )}
+                    {githubUrl && !haveGithubDomain && !githubUrl.includes(fileUrl) && (
                       <Link variant="default" width="26px" href={githubUrl || '#'} target="_blank" rel="noopener noreferrer">
                         <LinkIcon width="26px" height="26px" />
                       </Link>
-                    ))}
+                    )}
+                    {githubUrl && !haveGithubDomain && githubUrl.includes(fileUrl) && (
+                      <Link variant="default" width="26px" href={githubUrl || '#'} target="_blank" rel="noopener noreferrer">
+                        <Icon icon="file" width="26px" height="26px" />
+                      </Link>
+                    )}
                   </Box>
 
                   <Box width="auto" minWidth="160px" textAlign="end">
