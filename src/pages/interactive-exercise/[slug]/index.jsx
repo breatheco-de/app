@@ -45,6 +45,7 @@ import getMarkDownContent from '../../../common/components/MarkDownParser/markdo
 import CustomTheme from '../../../../styles/theme';
 import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 import GridContainer from '../../../common/components/GridContainer';
+import useStyle from '../../../common/hooks/useStyle';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`);
@@ -138,6 +139,7 @@ const TabletWithForm = ({
   const [formSended, setFormSended] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [formStatus, setFormStatus] = useState({ status: 'idle', msg: '' });
+  const { fontColor } = useStyle();
 
   const UrlInput = styled.input`
     cursor: pointer;
@@ -316,20 +318,8 @@ const TabletWithForm = ({
                 padding="0"
                 whiteSpace="normal"
                 variant="default"
-                textTransform="uppercase"
-                onClick={() => setShowModal(true)}
-              >
-                {t('clone')}
-              </Button>
-              <Button
-                marginTop="20px"
-                borderRadius="3px"
-                width="100%"
-                padding="0"
-                whiteSpace="normal"
-                variant="outline"
-                borderColor={CustomTheme.colors.blue.default}
-                color={CustomTheme.colors.blue.default}
+                color={fontColor}
+                fontSize="14px"
                 alignItems="center"
                 onClick={() => {
                   if (typeof window !== 'undefined') {
@@ -338,7 +328,7 @@ const TabletWithForm = ({
                 }}
               >
                 {'  '}
-                <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color={CustomTheme.colors.blue.default} />
+                <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color={fontColor} />
                 {t('open-gitpod')}
               </Button>
               <Text
@@ -360,6 +350,22 @@ const TabletWithForm = ({
                   Learnpack
                 </Link>
               </Text>
+              <Button
+                marginTop="20px"
+                borderRadius="3px"
+                width="100%"
+                fontSize="14px"
+                padding="0"
+                whiteSpace="normal"
+                variant="otuline"
+                border="1px solid"
+                textTransform="uppercase"
+                borderColor="blue.default"
+                color="blue.default"
+                onClick={() => setShowModal(true)}
+              >
+                {t('clone')}
+              </Button>
             </>
           )}
         <Modal
