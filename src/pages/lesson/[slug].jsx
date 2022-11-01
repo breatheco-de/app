@@ -168,12 +168,12 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
         </Link>
       </GridContainer>
       <Box
-        display="grid"
+        display={{ base: 'block', md: 'grid' }}
         maxWidth="1280px"
         margin="28px auto 0 auto"
         padding={{ base: '0 15px', md: '0' }}
         height="100%"
-        gridTemplateColumns={{ base: 'repeat(1, 1fr)', md: '3fr repeat(12, 1fr) 3fr' }}
+        gridTemplateColumns={{ base: '', md: '3fr repeat(12, 1fr) 3fr' }}
       >
         <Box display="grid" gridColumn="2 / span 12">
           <Box display="flex" gridGap="10px" justifyContent="space-between">
