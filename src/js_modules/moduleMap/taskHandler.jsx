@@ -115,21 +115,21 @@ export const ButtonHandlerByTaskStatus = ({
   const [githubUrl, setGithubUrl] = useState('');
   const [assetData, setAssetData] = useState(null);
   const [fileData, setFileData] = useState(null);
-  const defaultProps = {
-    sizeError: false,
-    formatError: false,
-  };
-  const [fileProps, setFileProps] = useState(defaultProps);
+  const [fileProps, setFileProps] = useState([]);
   const commonInputColor = useColorModeValue('gray.600', 'gray.200');
   const commonInputActiveColor = useColorModeValue('gray.800', 'gray.350');
   const taskIsAproved = allowText && currentTask?.revision_status === 'APPROVED';
 
+  const mimeTypes = 'application/pdf,image/png,image/jpeg,image/jpg,image/gif';
+  // const mimeTypes = assetData?.delivery_formats.replace('url', '');
   const maxFileSize = 1048576 * 10; // 10mb
-  const formatTypes = 'application/pdf,application/csv';
-  const formatFileArr = formatTypes.split(',');
-  const fileErrorExists = fileProps.formatError || fileProps.sizeError;
+  const fileErrorExists = fileProps.some((file) => file.formatError) || fileProps.some((file) => file.sizeError);
+
   const { featuredColor, modal, hexColor } = useStyle();
   const toast = useToast();
+  const formats = ['image/', 'application/', 'text/'];
+  const deliveryFormatExists = formats.some((res) => currentAssetData?.delivery_formats.includes(res));
+  // const formatExists = currentAssetData?.delivery_formats?.includes('application') || currentAssetData?.delivery_formats?.includes('image');
 
   const howToSendProjectUrl = 'https://4geeksacademy.notion.site/How-to-deliver-a-project-e1db0a8b1e2e4fbda361fc2f5457c0de';
   const TaskButton = () => (
@@ -279,13 +279,16 @@ export const ButtonHandlerByTaskStatus = ({
     }
 
     const handleCloseFile = () => {
-      setFileProps(defaultProps);
+      setFileProps([]);
       closeSettings();
     };
 
     const handleUpload = async () => {
       const formdata = new FormData();
-      formdata.append('file', fileProps.file);
+      // formdata.append('file', fileProps.file);
+      Array.from(fileProps).forEach(({ file }) => {
+        formdata.append('file', file);
+      });
       const resp = await bc.todo().uploadFile(currentTask.id, formdata);
 
       if (resp?.status < 400) {
@@ -303,13 +306,15 @@ export const ButtonHandlerByTaskStatus = ({
         closeSettings();
       } else {
         toast({
-          title: t('alert-message:something-went-wrong-with', { property: `"${fileProps.name}"` }),
+          title: t('alert-message:something-went-wrong-with', { property: 'Files' }),
           status: 'error',
           duration: 4000,
           isClosable: true,
         });
       }
     };
+
+    console.log('fileProps:::', fileProps);
 
     return (
       <Popover
@@ -348,7 +353,7 @@ export const ButtonHandlerByTaskStatus = ({
           <PopoverHeader>{t('deliverProject.title')}</PopoverHeader>
           <PopoverCloseButton />
           <PopoverBody>
-            {typeof currentAssetData === 'object' && currentAssetData?.delivery_formats === 'url' && (
+            {typeof currentAssetData === 'object' && currentAssetData?.delivery_formats.includes('urlqwd') && (
               <Formik
                 initialValues={{ githubUrl: '' }}
                 onSubmit={() => {
@@ -409,39 +414,44 @@ export const ButtonHandlerByTaskStatus = ({
               </Formik>
             )}
 
-            {typeof currentAssetData === 'object' && currentAssetData?.delivery_formats === 'file' && (
+            {typeof currentAssetData === 'object' && !deliveryFormatExists && (
               <Box>
                 <Text size="md">
                   {t('deliverProject.file-upload')}
                 </Text>
 
-                {typeof fileProps?.type === 'string' ? (
-                  <Box display="flex" my="15px" p="8px" border="1px solid" borderColor={featuredColor} background={modal.background} justifyContent="space-between" alignItems="center" borderRadius="7px">
-                    <Box display="flex" gridGap="9px">
-                      <Icon icon="pdf" color={hexColor.black} width="32px" height="41px" />
-                      <Box position="relative">
-                        <Text size="14px" style={{ margin: '0px' }} withLimit>
-                          {fileProps.name}
-                        </Text>
-                        <Text size="14px" style={{ margin: '0px' }} color={fileErrorExists && hexColor.danger} display="flex" gridGap="6px">
-                          {fileErrorExists ? (
-                            <>
-                              <Icon icon="warning" width="13px" height="13px" style={{ marginTop: '5px' }} color="currentColor" full secondColor={hexColor.white2} />
-                              {fileProps.formatError
-                                ? t('deliverProject.error-file-format')
-                                : fileProps.sizeError && t('deliverProject.error-file-size')}
-                              {/* {fileProps.sizeError
-                                ? 'File size must be less than 10mb.'
-                                : fileProps.formatError && 'File format is not available.'} */}
-                            </>
-                          ) : formatBytes(fileProps.size)}
-                        </Text>
-                      </Box>
-                    </Box>
-                    <Box borderRadius="20px" p="7px" backgroundColor="gray.500" onClick={() => setFileProps(defaultProps)} cursor="pointer">
-                      <Icon icon="close" width="10px" height="10px" color="#ffffff" />
-                    </Box>
-                  </Box>
+                {/* typeof fileProps?.type === 'string' */}
+                {fileProps.some((file) => typeof file?.type === 'string') ? (
+                  <>
+                    {fileProps.map((file) => {
+                      const errorExists = file.formatError || file.sizeError;
+                      return (
+                        <Box key={file.name} display="flex" my="15px" p="8px" border="1px solid" borderColor={featuredColor} background={modal.background} justifyContent="space-between" alignItems="center" borderRadius="7px">
+                          <Box display="flex" gridGap="9px">
+                            <Icon icon="pdf" color={hexColor.black} width="32px" height="41px" />
+                            <Box position="relative">
+                              <Text size="14px" style={{ margin: '0px' }} withLimit>
+                                {file.name}
+                              </Text>
+                              <Text size="14px" style={{ margin: '0px' }} color={errorExists && hexColor.danger} display="flex" gridGap="6px">
+                                {errorExists ? (
+                                  <>
+                                    <Icon icon="warning" width="13px" height="13px" style={{ marginTop: '5px' }} color="currentColor" full secondColor={hexColor.white2} />
+                                    {file.formatError
+                                      ? t('deliverProject.error-file-format')
+                                      : file.sizeError && t('deliverProject.error-file-size')}
+                                  </>
+                                ) : formatBytes(file.size)}
+                              </Text>
+                            </Box>
+                          </Box>
+                          <Box borderRadius="20px" p="7px" backgroundColor="gray.500" onClick={() => setFileProps([])} cursor="pointer">
+                            <Icon icon="close" width="10px" height="10px" color="#ffffff" />
+                          </Box>
+                        </Box>
+                      );
+                    })}
+                  </>
                 ) : (
                   <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} m="10px 0" width={{ base: 'auto', md: '100%' }} height="86px" position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px" background={featuredColor}>
                     <Box width="100%" height="100%" position="absolute" display="flex" justifyContent="center" alignItems="center" border="1px solid currentColor" cursor="pointer" borderWidth="2px" borderRadius="7px">
@@ -455,22 +465,32 @@ export const ButtonHandlerByTaskStatus = ({
                       title=""
                       // onChange={handleFileUpload}
                       onChange={(event) => {
-                        const fileProp = event.currentTarget.files[0];
-                        const { type, name, size } = fileProp;
-                        setFileProps((prev) => ({
-                          ...prev, name, type, size, file: fileProp,
-                        }));
+                        const fileProp = event.currentTarget.files;
+                        const formatFileArr = mimeTypes.split(',');
 
-                        if (fileProp.size > maxFileSize) {
-                          setFileProps((prev) => ({ ...prev, sizeError: true }));
+                        if (fileProp.length > 0) {
+                          Array.from(fileProp).forEach((file) => {
+                            const { type, name, size } = file;
+                            const formatError = !formatFileArr.includes(type);
+                            const sizeError = size > maxFileSize;
+                            console.log('fileNames:::', name);
+                            setFileProps((prev) => [...prev, {
+                              name, type, size, file, formatError, sizeError,
+                            }]);
+                          });
                         }
-                        if (!formatFileArr.includes(fileProp.type)) {
-                          setFileProps((prev) => ({ ...prev, formatError: true }));
-                        }
+
+                        // if (fileProp.size > maxFileSize) {
+                        //   setFileProps((prev) => ({ ...prev, sizeError: true }));
+                        // }
+                        // if (!formatFileArr.includes(fileProp.type)) {
+                        //   setFileProps((prev) => ({ ...prev, formatError: true }));
+                        // }
                       }}
-                      accept={formatTypes}
+                      // accept={assetData?.delivery_formats}
                       // accept=".pdf,.csv"
                       placeholder="Upload profile image"
+                      multiple="multiple"
                       position="absolute"
                       width="100%"
                       height="100%"
@@ -483,7 +503,7 @@ export const ButtonHandlerByTaskStatus = ({
                   </Box>
                 )}
                 <Box display="flex" justifyContent="space-evenly" mb="6px">
-                  <Button variant="default" onClick={() => handleUpload()} disabled={typeof fileProps?.type !== 'string' || fileErrorExists} textTransform="uppercase">
+                  <Button variant="default" onClick={() => handleUpload()} disabled={fileProps.some((file) => typeof file?.type !== 'string') || fileErrorExists} textTransform="uppercase">
                     {t('common:upload')}
                   </Button>
                   <Button variant="link" textTransform="uppercase" onClick={() => handleCloseFile()}>
