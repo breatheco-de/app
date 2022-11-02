@@ -202,7 +202,7 @@ const ProjectSlug = ({ project, markdown }) => {
         {`← ${t('projects:backToProjects')}`}
       </Link>
 
-      <Flex height="100%" gridGap="26px">
+      <Flex display={{ base: 'block', md: 'flex' }} height="100%" gridGap="26px">
         <Box flex="1">
           {project?.title ? (
             <Heading

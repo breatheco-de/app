@@ -57,7 +57,7 @@
 }
 
 .markdown-body img {
-  max-width: 600px !important;
+  max-width: auto;
   max-height: 700px !important;
 }
 .markdown-body #beforeAfterSliderContainer {
@@ -159,6 +159,7 @@
 .markdown-body p, .markdown-body blockquote,
 .markdown-body dl, .markdown-body table {
   margin: 15px 0;
+  overflow: auto;
 }
 
 .markdown-body blockquote p {
@@ -218,11 +219,6 @@
 
 .markdown-body li p.first {
   display: inline-block;
-}
-
-.markdown-body li * {
-  /* display: initial; */
-  /* margin; */
 }
 
 .markdown-body ul :first-child, ol :first-child {
