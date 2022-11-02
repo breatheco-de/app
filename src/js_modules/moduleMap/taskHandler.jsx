@@ -279,7 +279,7 @@ export const ButtonHandlerByTaskStatus = ({
     }
 
     const handleCloseFile = () => {
-      setFileProps([]);
+      // setFileProps([]);
       closeSettings();
     };
 
@@ -314,13 +314,11 @@ export const ButtonHandlerByTaskStatus = ({
       }
     };
 
-    console.log('fileProps:::', fileProps);
-
     return (
       <Popover
         id="task-status"
         isOpen={settingsOpen}
-        onClose={closeSettings}
+        onClose={handleCloseFile}
         trigger="click"
       >
 
@@ -419,9 +417,48 @@ export const ButtonHandlerByTaskStatus = ({
                 <Text size="md">
                   {t('deliverProject.file-upload')}
                 </Text>
+                <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} m="10px 0" width={{ base: 'auto', md: '100%' }} height="86px" position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px" background={featuredColor}>
+                  <Box width="100%" height="100%" position="absolute" display="flex" justifyContent="center" alignItems="center" border="1px solid currentColor" cursor="pointer" borderWidth="2px" borderRadius="7px">
+                    <Box className="icon-bounce">
+                      <Icon icon="upload" color="currentColor" width="24" height="24" />
+                    </Box>
+                  </Box>
+                  <Input
+                    type="file"
+                    name="Upload file"
+                    title=""
+                    onChange={(event) => {
+                      const fileProp = event.currentTarget.files;
+                      const formatFileArr = mimeTypes.split(',');
+
+                      if (fileProp.length > 0) {
+                        Array.from(fileProp).forEach((file) => {
+                          const { type, name, size } = file;
+                          const formatError = !formatFileArr.includes(type);
+                          const sizeError = size > maxFileSize;
+                          if (fileProps.some((item) => item.name === name)) return;
+                          setFileProps((prev) => [...prev, {
+                            name, type, size, file, formatError, sizeError,
+                          }]);
+                        });
+                      }
+                    }}
+                    accept={assetData?.delivery_formats}
+                    placeholder="Upload profile image"
+                    multiple="multiple"
+                    position="absolute"
+                    width="100%"
+                    height="100%"
+                    cursor="pointer"
+                    opacity="0"
+                    padding="0"
+                    onDragOver={() => setDragOver(true)}
+                    onDragLeave={() => setDragOver(false)}
+                  />
+                </Box>
 
                 {/* typeof fileProps?.type === 'string' */}
-                {fileProps.some((file) => typeof file?.type === 'string') ? (
+                {fileProps.some((file) => typeof file?.type === 'string') && (
                   <>
                     {fileProps.map((file) => {
                       const errorExists = file.formatError || file.sizeError;
@@ -445,62 +482,21 @@ export const ButtonHandlerByTaskStatus = ({
                               </Text>
                             </Box>
                           </Box>
-                          <Box borderRadius="20px" p="7px" backgroundColor="gray.500" onClick={() => setFileProps([])} cursor="pointer">
+                          <Box
+                            borderRadius="20px"
+                            p="7px"
+                            backgroundColor="gray.500"
+                            onClick={() => {
+                              setFileProps((prev) => prev.filter((item) => item.name !== file.name));
+                            }}
+                            cursor="pointer"
+                          >
                             <Icon icon="close" width="10px" height="10px" color="#ffffff" />
                           </Box>
                         </Box>
                       );
                     })}
                   </>
-                ) : (
-                  <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} m="10px 0" width={{ base: 'auto', md: '100%' }} height="86px" position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px" background={featuredColor}>
-                    <Box width="100%" height="100%" position="absolute" display="flex" justifyContent="center" alignItems="center" border="1px solid currentColor" cursor="pointer" borderWidth="2px" borderRadius="7px">
-                      <Box className="icon-bounce">
-                        <Icon icon="upload" color="currentColor" width="24" height="24" />
-                      </Box>
-                    </Box>
-                    <Input
-                      type="file"
-                      name="Upload file"
-                      title=""
-                      // onChange={handleFileUpload}
-                      onChange={(event) => {
-                        const fileProp = event.currentTarget.files;
-                        const formatFileArr = mimeTypes.split(',');
-
-                        if (fileProp.length > 0) {
-                          Array.from(fileProp).forEach((file) => {
-                            const { type, name, size } = file;
-                            const formatError = !formatFileArr.includes(type);
-                            const sizeError = size > maxFileSize;
-                            console.log('fileNames:::', name);
-                            setFileProps((prev) => [...prev, {
-                              name, type, size, file, formatError, sizeError,
-                            }]);
-                          });
-                        }
-
-                        // if (fileProp.size > maxFileSize) {
-                        //   setFileProps((prev) => ({ ...prev, sizeError: true }));
-                        // }
-                        // if (!formatFileArr.includes(fileProp.type)) {
-                        //   setFileProps((prev) => ({ ...prev, formatError: true }));
-                        // }
-                      }}
-                      // accept={assetData?.delivery_formats}
-                      // accept=".pdf,.csv"
-                      placeholder="Upload profile image"
-                      multiple="multiple"
-                      position="absolute"
-                      width="100%"
-                      height="100%"
-                      cursor="pointer"
-                      opacity="0"
-                      padding="0"
-                      onDragOver={() => setDragOver(true)}
-                      onDragLeave={() => setDragOver(false)}
-                    />
-                  </Box>
                 )}
                 <Box display="flex" justifyContent="space-evenly" mb="6px">
                   <Button variant="default" onClick={() => handleUpload()} disabled={fileProps.some((file) => typeof file?.type !== 'string') || fileErrorExists} textTransform="uppercase">
