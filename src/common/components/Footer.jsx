@@ -245,7 +245,7 @@ const Footer = () => {
             </Heading>
             <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
               {t('iconogram', {}, { returnObjects: true }).map((item) => (
-                <Box key={`${item.title}-${item.href}`} as="li" pb="6px" role="presentation" display="flex">
+                <Box key={`${item.title}-${item.href}`} as="li" pb="6px" overflow="auto" role="presentation" display="flex">
                   <NextChakraLink href={item.href} fontSize="0.875rem">
                     {item.title.toUpperCase()}
                   </NextChakraLink>

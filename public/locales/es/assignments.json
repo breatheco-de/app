@@ -10,8 +10,10 @@
   "label": {
     "status": "Estado",
     "student-and-assignments": "Alumno y asignaciones",
-    "link": "Enlace",
-    "actions": "Acciones"
+    "link": "Enlace/Archivos",
+    "actions": "Acciones",
+    "files-received": "{{files}} Archivos recibidos de su Alumno",
+    "link-received": "Enlace recibido de su Alumno"
   },
   "filter": {
     "project": "Filtrar por proyecto",
