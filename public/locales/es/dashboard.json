@@ -73,7 +73,7 @@
     ]
   },
   "deliverProject": {
-    "title": "URL de repositorio Github",
+    "title": "Entregar tarea",
     "how-to-deliver": "Cómo entregar proyectos",
     "handler-text": "Entregar proyecto",
     "mandatory-message": "Tienes {{count}} proyectos obligatorios para completar antes de graduarte",
