@@ -73,7 +73,7 @@
     ]
   },
   "deliverProject": {
-    "title": "Github repository url",
+    "title": "Deliver assignment",
     "how-to-deliver": "How to deliver projects",
     "handler-text": "Deliver assignment",
     "mandatory-message": "You have {{count}} mandatory projects to complete before graduation",
