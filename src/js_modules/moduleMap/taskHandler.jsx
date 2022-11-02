@@ -330,7 +330,7 @@ export const ButtonHandlerByTaskStatus = ({
           githubUrl: respData?.url,
         });
         toast({
-          title: t('alert-message:file-name-uploaded', { filename: `"${respData.name}"` }),
+          title: t('alert-message:files-uploaded'),
           status: 'success',
           duration: 4000,
           isClosable: true,

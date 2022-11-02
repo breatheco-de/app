@@ -53,6 +53,6 @@
   "no-cohorts-found": "No cohorts found",
   "google-maps-no-coincidences": "Google Maps: No matches found for the address entered",
   "cohort-not-found": "The specified cohort was not found",
-  "file-name-uploaded": "File {{filename}} uploaded successfully",
+  "files-uploaded": "Files succesfully uploaded",
   "current-task-no-files": "The current task does not have any files"
 }
