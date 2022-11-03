@@ -3,6 +3,7 @@ import NextLink from 'next/link';
 import { Link as ChakraLink } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
+import { setStorageItem } from '../../utils';
 
 const NextChakraLink = ({
   href,
@@ -12,6 +13,8 @@ const NextChakraLink = ({
   shallow,
   children,
   locale,
+  redirectAfterLogin,
+  onClick,
   ...chakraProps
 }) => {
   const router = useRouter();
@@ -32,7 +35,17 @@ const NextChakraLink = ({
       scroll={scroll}
       shallow={shallow}
     >
-      <ChakraLink {...chakraProps}>{children}</ChakraLink>
+      <ChakraLink
+        onClick={() => {
+          if (redirectAfterLogin && typeof href === 'string' && href.includes('/login')) {
+            setStorageItem('redirect', router?.asPath);
+          }
+          onClick();
+        }}
+        {...chakraProps}
+      >
+        {children}
+      </ChakraLink>
     </NextLink>
   );
 };
@@ -45,6 +58,8 @@ NextChakraLink.propTypes = {
   scroll: PropTypes.bool,
   shallow: PropTypes.bool,
   children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
+  redirectAfterLogin: PropTypes.bool,
+  onClick: PropTypes.func,
 };
 NextChakraLink.defaultProps = {
   locale: '',
@@ -53,6 +68,8 @@ NextChakraLink.defaultProps = {
   replace: false,
   scroll: false,
   shallow: false,
+  redirectAfterLogin: false,
+  onClick: () => {},
 };
 
 export default NextChakraLink;

@@ -9,5 +9,10 @@
   "search": "Buscar publicación",
   "description": "",
   "written-by": "Escrito por:",
-  "back-to": "Volver a Cómo hacerlo"
+  "back-to": "Volver a Cómo hacerlo",
+  "landing-technology": {
+    "title": "Aprende que hacer con {{tecnología}}",
+    "subTitle": "Que hacer con {{tecnología}}",
+    "description": "Las siguientes lecciones explican diferentes conceptos de programación y han sido publicadas por miembros de BreatheCode, ahora 4Geeks"
+  }
 }

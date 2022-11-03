@@ -8,6 +8,11 @@ const useStyle = () => {
   const featuredColor = useColorModeValue('featuredLight', 'featuredDark');
   const fontColor = useColorModeValue('black', 'white');
   const lightColor = useColorModeValue('gray.600', 'gray.200');
+  const hexColor = {
+    black: useColorModeValue('#000000', '#ffffff'),
+    white2: useColorModeValue('#ffffff', '#283340'),
+    danger: useColorModeValue('#CD0000', '#e26161'),
+  };
   const input = {
     borderColor: useColorModeValue('gray.default', '#CACACA'),
   };
@@ -27,6 +32,7 @@ const useStyle = () => {
     lightColor,
     modal,
     input,
+    hexColor,
   };
 };
 

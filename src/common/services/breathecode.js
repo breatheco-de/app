@@ -73,6 +73,8 @@ const breathecode = {
           academy: args.academyId,
         },
       }),
+      uploadFile: (id, args) => axios.put(`${url}/task/${id}/attachment`, args),
+      getFile: (args) => axios.get(`${url}/task/${args.id}/attachment`),
       subtask: () => ({
         get: (id) => axios.get(`${url}/user/me/task/${id}/subtasks`),
         update: (id, args) => axios.put(`${url}/user/me/task/${id}/subtasks`, args),
@@ -94,6 +96,7 @@ const breathecode = {
       .join('&');
     return {
       get: (id) => axios.get(`${url}/cohort/${id}`),
+      log: (id, activities) => axios.post(`${url}/cohort/${id}/log?${qs}`, activities),
       getPublic: (id) => axios.get(`${url}/cohort/${id}`, {
         headers: {
           Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
@@ -157,6 +160,7 @@ const breathecode = {
       .join('&');
     return {
       get: () => axios.get(`${url}/asset?${qs}`),
+      getAsset: (slug) => axios.get(`${url}/asset/${slug}`),
       techs: () => axios.get(`${url}/academy/technology?${qs}`),
     };
   },

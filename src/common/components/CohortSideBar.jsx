@@ -21,7 +21,7 @@ import useOnline from '../hooks/useOnline';
 import useStyle from '../hooks/useStyle';
 
 const ProfilesSection = ({
-  title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher, withoutPopover,
+  title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher, withoutPopover, showButton,
 }) => {
   const { t } = useTranslation('dashboard');
   const [showMoreStudents, setShowMoreStudents] = useState(false);
@@ -34,7 +34,7 @@ const ProfilesSection = ({
   const singleTeacher = teacher[0];
   const teacherfullName = `${singleTeacher?.user?.first_name} ${singleTeacher?.user.last_name}`;
 
-  const alumniGeeksContainer = document.querySelector('.alumni-geeks-container');
+  const alumniGeeksContainer = document !== undefined && document.querySelector('.alumni-geeks-container');
 
   return (
     <Box display="block">
@@ -179,7 +179,7 @@ const ProfilesSection = ({
         </Box>
       )}
 
-      {/* {profiles?.length > 15 && (
+      {showButton && profiles?.length > 15 && (
         <Text
           display="flex"
           cursor="pointer"
@@ -192,6 +192,7 @@ const ProfilesSection = ({
           gridGap="10px"
           size="md"
           onClick={() => setShowMoreStudents(!showMoreStudents)}
+          trigger={showMoreStudents ? 'click' : 'hover'}
         >
           {showMoreStudents ? t('cohortSideBar.show-less') : t('cohortSideBar.show-more')}
           <Box
@@ -204,7 +205,7 @@ const ProfilesSection = ({
             <Icon icon="arrowRight" color="#0097CD" width="12px" height="12px" />
           </Box>
         </Text>
-      )} */}
+      )}
     </Box>
   );
 };
@@ -244,37 +245,39 @@ const CohortSideBar = ({
 
   // Alumni Geeks data
   useEffect(() => {
-    bc.cohort({
-      limit: 60,
-      roles: 'STUDENT',
-      syllabus: slug,
-      distinct: true,
-    }).getFilterStudents()
-      .then(({ data }) => {
-        // const uniqueIds = new Set();
-        // const cleanedData = data.results.filter((l) => {
-        //   const isDuplicate = uniqueIds.has(l.id);
-        //   uniqueIds.add(l.id);
-        //   if (!isDuplicate) {
-        //     return true;
-        //   }
-        //   return false;
-        // });
+    if (slug) {
+      bc.cohort({
+        limit: 60,
+        roles: 'STUDENT',
+        syllabus: slug,
+        distinct: true,
+      }).getFilterStudents()
+        .then(({ data }) => {
+          // const uniqueIds = new Set();
+          // const cleanedData = data.results.filter((l) => {
+          //   const isDuplicate = uniqueIds.has(l.id);
+          //   uniqueIds.add(l.id);
+          //   if (!isDuplicate) {
+          //     return true;
+          //   }
+          //   return false;
+          // });
 
-        setAlumniGeeksList({
-          ...data,
-          results: data.results.sort(
-            (a, b) => a.user.first_name.localeCompare(b.user.first_name),
-          ),
+          setAlumniGeeksList({
+            ...data,
+            results: data.results.sort(
+              (a, b) => a.user.first_name.localeCompare(b.user.first_name),
+            ),
+          });
+        }).catch(() => {
+          toast({
+            title: t('alert-message:error-fetching-alumni-geeks'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
         });
-      }).catch(() => {
-        toast({
-          title: t('alert-message:error-fetching-alumni-geeks'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-      });
+    }
   }, [slug]);
 
   useEffect(() => {
@@ -411,7 +414,9 @@ const CohortSideBar = ({
               {activeStudents.length !== 0
                 ? (
                   <ProfilesSection
+                    showButton
                     profiles={activeStudents}
+                    withoutPopover={activeStudents?.length >= 16}
                   />
                 ) : (
                   <>
@@ -428,7 +433,7 @@ const CohortSideBar = ({
                     profiles={studentsJoined}
                     setAlumniGeeksList={setAlumniGeeksList}
                     paginationProps={alumniGeeksList}
-                    withoutPopover
+                    withoutPopover={studentsJoined?.length >= 16}
                   />
                 ) : (
                   <>
@@ -453,6 +458,7 @@ ProfilesSection.propTypes = {
   wrapped: PropTypes.bool,
   teacher: PropTypes.arrayOf(PropTypes.object),
   withoutPopover: PropTypes.bool,
+  showButton: PropTypes.bool,
 };
 
 ProfilesSection.defaultProps = {
@@ -463,6 +469,7 @@ ProfilesSection.defaultProps = {
   wrapped: false,
   teacher: [],
   withoutPopover: false,
+  showButton: false,
 };
 
 CohortSideBar.propTypes = {
