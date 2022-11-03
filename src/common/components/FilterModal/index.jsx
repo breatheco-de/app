@@ -92,20 +92,21 @@ const FilterModal = ({
     + withVideo;
 
   return (
-    <Modal isOpen={isModalOpen} onClose={onClose}>
+    <Modal isOpen={isModalOpen} onClose={onClose} size="xl">
       <ModalOverlay />
       <ModalContent
-        maxWidth="100%"
+        maxWidth="700px"
         borderRadius="17px"
         padding="10px"
         bg={modal.background}
         margin={{ base: '3% 4% 0 4%', md: '3% 22% 0 22%' }}
       >
         <ModalHeader
-          fontSize="xl"
+          fontSize="1rem"
           padding="18px 0"
           textTransform="uppercase"
           textAlign="center"
+          p="6px 0 10px 0"
           color={lightColor}
           paddingBottom={0}
           borderBottom={1}
@@ -116,7 +117,7 @@ const FilterModal = ({
         </ModalHeader>
         <ModalCloseButton
           style={{
-            top: '27px',
+            top: '14px',
             right: '30px',
           }}
         />
