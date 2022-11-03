@@ -2,13 +2,13 @@
   "content": [
     {
       "name": "Github",
-      "link": "https://github.com/breatheco-de",
+      "link": "https://github.com/4geeksAcademy",
       "icon": "github",
       "available": ["all", "home"]
     },
     {
       "name": "Youtube",
-      "link": "https://www.youtube.com/user/alesanchezr",
+      "link": "https://www.youtube.com/c/4GeeksAcademy",
       "icon": "youtube",
       "available": ["all", "home"]
     }

@@ -148,7 +148,7 @@ export const prepareTaskModules = ({
       id,
       read: lessons,
       practice: replits,
-      project: assignments,
+      code: assignments,
       answer: quizzes,
       taskTodo: contextState.taskTodo,
     });
