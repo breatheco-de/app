@@ -50,11 +50,20 @@ const Footer = () => {
           marginBottom={['20px', '20px', '0', '0']}
         >
           <Flex justifyContent="space-around">
-            <Link key="github" href="https://github.com/breatheco-de" target="_blank" rel="noopener noreferrer">
-              <Icon icon="github" width="23px" height="23px" />
+            <Link key="twitter" href="https://twitter.com/4geeksacademy" target="_blank" rel="noopener noreferrer">
+              <Icon icon="twitter" width="23px" height="23px" />
             </Link>
-            <Link key="youtube" href="https://www.youtube.com/user/alesanchezr" target="_blank" rel="noopener noreferrer">
+            <Link key="facebook" href="https://www.facebook.com/4geeksacademy" target="_blank" rel="noopener noreferrer">
+              <Icon icon="facebook" width="23px" height="23px" />
+            </Link>
+            <Link key="instagram" href="https://www.instagram.com/4geeksacademy/" target="_blank" rel="noopener noreferrer">
+              <Icon icon="instagram" width="23px" height="23px" />
+            </Link>
+            <Link key="youtube" href="https://www.youtube.com/c/4GeeksAcademy" target="_blank" rel="noopener noreferrer">
               <Icon icon="youtube" width="23px" height="23px" color={colorMode === 'light' ? '#020203' : '#FFFFFF'} />
+            </Link>
+            <Link key="github" href="https://github.com/4geeksAcademy" target="_blank" rel="noopener noreferrer">
+              <Icon icon="github" width="23px" height="23px" />
             </Link>
           </Flex>
         </Box>
