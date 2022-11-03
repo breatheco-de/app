@@ -202,62 +202,6 @@ const Dashboard = () => {
 
   // Sort all data fetched in order of taskTodo
   useMemo(() => {
-    const moduleData = cohortProgram.json?.days || cohortProgram.json?.modules;
-    const cohort = cohortProgram.json ? moduleData : [];
-    const assignmentsRecopilated = [];
-    devLog('json.days:', moduleData);
-
-    if (contextState.cohortProgram.json && contextState.taskTodo) {
-      setTaskTodo(contextState.taskTodo);
-      cohort.map((assignment) => {
-        const {
-          id, label, description, lessons, replits, assignments, quizzes,
-        } = assignment;
-        if (lessons && replits && assignments && quizzes) {
-          const nestedAssignments = nestAssignments({
-            id,
-            read: lessons,
-            practice: replits,
-            project: assignments,
-            answer: quizzes,
-            taskTodo: contextState.taskTodo,
-          });
-          const { modules, filteredModules, filteredModulesByPending } = nestedAssignments;
-
-          // Data to be sent to [sortedAssignments] = state
-          const assignmentsStruct = {
-            id,
-            label,
-            description,
-            modules,
-            filteredModules,
-            filteredModulesByPending,
-            duration_in_days: assignment?.duration_in_days || null,
-            teacherInstructions: assignment.teacher_instructions,
-            extendedInstructions: assignment.extended_instructions,
-            keyConcepts: assignment['key-concepts'],
-          };
-
-          // prevent duplicates when a new module has been started (added to sortedAssignments array)
-          const keyIndex = assignmentsRecopilated.findIndex((x) => x.id === id);
-          if (keyIndex > -1) {
-            assignmentsRecopilated.splice(keyIndex, 1, {
-              ...assignmentsStruct,
-            });
-          } else {
-            assignmentsRecopilated.push({
-              ...assignmentsStruct,
-            });
-          }
-
-          const filterEmptyModules = assignmentsRecopilated.filter(
-            (l) => l.modules.length > 0,
-          );
-          return setSortedAssignments(filterEmptyModules);
-        }
-        return null;
-      });
-    }
     prepareTasks({
       cohortProgram, contextState, nestAssignments,
     });
