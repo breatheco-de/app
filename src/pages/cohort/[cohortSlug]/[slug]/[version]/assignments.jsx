@@ -5,7 +5,6 @@ import {
   Box, Skeleton, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { LinkIcon } from '@chakra-ui/icons';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import ReactSelect from '../../../../../common/components/ReactSelect';
 import Link from '../../../../../common/components/NextChakraLink';
@@ -14,12 +13,12 @@ import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import bc from '../../../../../common/services/breathecode';
 import Text from '../../../../../common/components/Text';
 import TaskLabel from '../../../../../common/components/taskLabel';
-import Icon from '../../../../../common/components/Icon';
 import { isGithubUrl } from '../../../../../utils/regex';
 import ButtonHandler from '../../../../../js_modules/assignmentHandler/index';
 import useAssignments from '../../../../../common/store/actions/assignmentsAction';
 import { isWindow } from '../../../../../utils';
 import Image from '../../../../../common/components/Image';
+import PopoverHandler from '../../../../../js_modules/assignmentHandler/PopoverHandler';
 
 const Assignments = () => {
   const { t } = useTranslation('assignments');
@@ -441,7 +440,7 @@ const Assignments = () => {
             {filteredTasks.length > 0 ? filteredTasks.map((task, i) => {
               const index = i;
               const githubUrl = task?.github_url;
-              const haveGithubDomain = githubUrl && !isGithubUrl.test(githubUrl);
+              const haveGithubDomain = githubUrl && isGithubUrl.test(githubUrl);
               const fullName = `${task.user.first_name} ${task.user.last_name}`;
               const projectLink = `https://4geeks.com${lang[router.locale]}project/${task.associated_slug}`;
 
@@ -460,17 +459,7 @@ const Assignments = () => {
                     </Link>
                   </Box>
 
-                  <Box width={githubUrl ? 'auto' : '4%'}>
-                    {githubUrl && (!haveGithubDomain ? (
-                      <Link variant="default" width="26px" href={githubUrl || '#'} target="_blank" rel="noopener noreferrer">
-                        <Icon icon="github" width="26px" height="26px" />
-                      </Link>
-                    ) : (
-                      <Link variant="default" width="26px" href={githubUrl || '#'} target="_blank" rel="noopener noreferrer">
-                        <LinkIcon width="26px" height="26px" />
-                      </Link>
-                    ))}
-                  </Box>
+                  <PopoverHandler task={task} haveGithubDomain={haveGithubDomain} githubUrl={githubUrl} />
 
                   <Box width="auto" minWidth="160px" textAlign="end">
                     <ButtonHandler

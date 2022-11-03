@@ -13,7 +13,6 @@ const OnlyFor = ({
   const academyNumber = Math.floor(academy);
   const { featuredColor, backgroundColor } = useStyle();
   const router = useRouter();
-
   const teachers = ['TEACHER', 'ASSISTANT'];
   const commonUser = ['TEACHER', 'ASSISTANT', 'STUDENT', 'REVIEWER'];
 

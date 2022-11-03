@@ -1,19 +1,18 @@
-/* eslint-disable react/prop-types */
-import React from 'react';
 import { motion } from 'framer-motion';
+import PropTypes from 'prop-types';
 import { Box, Flex } from '@chakra-ui/react';
 import Counter from './Counter';
 
 const ProgressCircle = ({
   percents,
   counterString,
-  counter = true,
-  stroke = '#0097CD',
-  emptyStroke = stroke,
-  emptyStrokeOpacity = 0.25,
-  duration = 3,
-  delay = 0.5,
-  size = 100,
+  counter,
+  stroke,
+  emptyStroke,
+  emptyStrokeOpacity,
+  duration,
+  delay,
+  size,
   strokeWidth = 6,
   caption,
 }) => {
@@ -46,12 +45,8 @@ const ProgressCircle = ({
         {counter && (
           <Box
             position="absolute"
-            // size="20px"
             size={`${Math.round(0.25 * size)}px`}
-            // fontSize={size >= 100 ? 6 : 3}
-            // fontWeight={2}
             fontWeight="700"
-            // color="gray.250"
           >
             {counterString ? (
               <>
@@ -92,8 +87,10 @@ const ProgressCircle = ({
               position: 'absolute',
               transform: 'rotate(90deg)',
               overflow: 'visible',
-              top: '1px',
-              left: '-1px',
+              // top: '1px',
+              // left: '-1px',
+              top: '0px',
+              left: '0px',
             }}
           >
             <motion.circle
@@ -119,6 +116,33 @@ const ProgressCircle = ({
       )}
     </>
   );
+};
+
+ProgressCircle.propTypes = {
+  percents: PropTypes.number,
+  counterString: PropTypes.string,
+  counter: PropTypes.bool,
+  stroke: PropTypes.string,
+  emptyStroke: PropTypes.string,
+  emptyStrokeOpacity: PropTypes.number,
+  duration: PropTypes.number,
+  delay: PropTypes.number,
+  size: PropTypes.number,
+  strokeWidth: PropTypes.number,
+  caption: PropTypes.string,
+};
+ProgressCircle.defaultProps = {
+  percents: 0,
+  counterString: '',
+  counter: true,
+  stroke: '#0097CD',
+  emptyStroke: '#0097CD',
+  emptyStrokeOpacity: 0.25,
+  duration: 3,
+  delay: 0.5,
+  size: 100,
+  strokeWidth: 6,
+  caption: '',
 };
 
 export default ProgressCircle;

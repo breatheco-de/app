@@ -1,4 +1,7 @@
 /* eslint-disable indent */
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+
 const isWindow = typeof window !== 'undefined';
 
 const HAVE_SESSION = isWindow ? localStorage.getItem('accessToken') !== null : false;
@@ -20,17 +23,19 @@ const assetTypeValues = {
   answer: 'QUIZ',
 };
 
-const slugify = (str) => str
+const slugify = (str) => (typeof str === 'string' ? str
   .toLowerCase()
   .trim()
   .replace(/[^\w\s-]/g, '')
   .replace(/[\s_-]+/g, '-')
-  .replace(/^-+|-+$/g, '');
+  .replace(/^-+|-+$/g, '')
+  : '');
 
-const unSlugify = (str) => str
+const unSlugify = (str) => (typeof str === 'string' ? str
   .replace(/-/g, ' ')
   .replace(/\w\S*/g,
-  (txt) => txt.charAt(0) + txt.substr(1).toLowerCase());
+  (txt) => txt.charAt(0) + txt.substr(1).toLowerCase())
+  : '');
 
 const cleanQueryStrings = (url) => url.split('?')[0];
 
@@ -107,13 +112,51 @@ function removeURLParameter(url, parameter) {
   return url;
 }
 
+const getTimeProps = (date) => {
+  const kickoffDate = {
+    en: date?.kickoff_date && format(new Date(date.kickoff_date), 'MMMM do YYY'),
+    es:
+      date?.kickoff_date
+      && format(new Date(date.kickoff_date), "d 'de' MMMM YYY", { locale: es }),
+  };
+  const weekDays = {
+    en: date.timeslots.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE'))),
+    es: date.timeslots.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE', { locale: es }))),
+  };
+  const shortWeekDays = {
+    en: date.timeslots.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE'))),
+    es: date.timeslots.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE', { locale: es }))),
+  };
+  const getHours = (time) => new Date(time).toLocaleTimeString([], { timeZone: 'UTC', hour: '2-digit', minute: '2-digit' });
+  const availableTime = date.timeslots.length > 0 && `${getHours(date.timeslots[0].starting_at)} - ${getHours(date.timeslots[0].ending_at)}`;
+
+  return {
+    kickoffDate,
+    weekDays,
+    shortWeekDays,
+    availableTime,
+  };
+};
+
 // convert the input array to camel case
 const toCapitalize = (input) => input.charAt(0).toUpperCase() + input.slice(1);
+
+function formatBytes(bytes, decimals = 2) {
+  if (!+bytes) return '0 Bytes';
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
+}
 
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
   removeStorageItem, isDevMode, devLogTable, devLog, languageLabel,
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
-  setStorageItem, toCapitalize, tokenExists,
+  setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
 };

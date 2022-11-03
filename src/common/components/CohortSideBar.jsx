@@ -34,7 +34,7 @@ const ProfilesSection = ({
   const singleTeacher = teacher[0];
   const teacherfullName = `${singleTeacher?.user?.first_name} ${singleTeacher?.user.last_name}`;
 
-  const alumniGeeksContainer = document.querySelector('.alumni-geeks-container');
+  const alumniGeeksContainer = document !== undefined && document.querySelector('.alumni-geeks-container');
 
   return (
     <Box display="block">
@@ -245,37 +245,39 @@ const CohortSideBar = ({
 
   // Alumni Geeks data
   useEffect(() => {
-    bc.cohort({
-      limit: 60,
-      roles: 'STUDENT',
-      syllabus: slug,
-      distinct: true,
-    }).getFilterStudents()
-      .then(({ data }) => {
-        // const uniqueIds = new Set();
-        // const cleanedData = data.results.filter((l) => {
-        //   const isDuplicate = uniqueIds.has(l.id);
-        //   uniqueIds.add(l.id);
-        //   if (!isDuplicate) {
-        //     return true;
-        //   }
-        //   return false;
-        // });
+    if (slug) {
+      bc.cohort({
+        limit: 60,
+        roles: 'STUDENT',
+        syllabus: slug,
+        distinct: true,
+      }).getFilterStudents()
+        .then(({ data }) => {
+          // const uniqueIds = new Set();
+          // const cleanedData = data.results.filter((l) => {
+          //   const isDuplicate = uniqueIds.has(l.id);
+          //   uniqueIds.add(l.id);
+          //   if (!isDuplicate) {
+          //     return true;
+          //   }
+          //   return false;
+          // });
 
-        setAlumniGeeksList({
-          ...data,
-          results: data.results.sort(
-            (a, b) => a.user.first_name.localeCompare(b.user.first_name),
-          ),
+          setAlumniGeeksList({
+            ...data,
+            results: data.results.sort(
+              (a, b) => a.user.first_name.localeCompare(b.user.first_name),
+            ),
+          });
+        }).catch(() => {
+          toast({
+            title: t('alert-message:error-fetching-alumni-geeks'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
         });
-      }).catch(() => {
-        toast({
-          title: t('alert-message:error-fetching-alumni-geeks'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-      });
+    }
   }, [slug]);
 
   useEffect(() => {

@@ -1,7 +1,9 @@
 import {
-  Box, Flex, Grid, Checkbox, useMediaQuery, Collapse,
+  Box, Flex, Checkbox, useMediaQuery, Collapse,
+  // Input, InputGroup, InputLeftElement,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+// import Icon from '../Icon';
 import Text from '../Text';
 
 // eslint-disable-next-line react/prop-types
@@ -19,17 +21,30 @@ const TechnologiesSection = ({
   const [isMobile] = useMediaQuery('(min-width: 1082px)');
   return (
     <Flex flexDirection="column" padding="0 0 12px 0" borderBottom={1} borderStyle="solid" borderColor={commonBorderColor}>
-      <Text fontSize="1rem" textTransform="uppercase" fontWeight="bold" color={commonTextColor} padding="25px 0 18px 0">
-        {title}
-      </Text>
+      <Box display="flex" gridGap="8px" justifyContent="space-between" padding="18px 0 18px 0" alignItems="center">
+        <Text fontSize="1rem" textTransform="uppercase" fontWeight="bold" color={commonTextColor}>
+          {title}
+        </Text>
+        {/* <InputGroup>
+          <InputLeftElement
+            height="29px"
+            pointerEvents="none"
+          >
+            <Icon icon="search" width="14px" height="14px" />
+          </InputLeftElement>
+          <Input type="tel" placeholder="Phone number" height="29px" />
+        </InputGroup> */}
+
+      </Box>
       <Collapse in={show} startingHeight={technologyTags.length > 4 ? 170 : 38} animateOpacity>
-        <Grid
-          gridTemplateColumns={{
-            base: 'repeat(auto-fill, minmax(6rem, 1fr))',
-            md: 'repeat(auto-fill, minmax(10rem, 1fr))',
-          }}
+        <Flex
+          // gridTemplateColumns={{
+          //   base: 'repeat(auto-fill, minmax(6rem, 1fr))',
+          //   md: 'repeat(auto-fill, minmax(10rem, 1fr))',
+          // }}
+          flexFlow="row wrap"
           padding="5px"
-          gap={6}
+          gridGap="20px"
         >
           {technologyTags.map((technology) => {
             const checkbox = getCheckboxProps({
@@ -39,9 +54,15 @@ const TechnologiesSection = ({
                 : checkedTechnologies.includes(technology),
               isChecked: false,
             });
+            // console.log('checkbox:::', checkbox);
             return (
               <Box
                 key={technology}
+                border="1px solid"
+                borderColor={checkbox.checked ? 'blue.default' : 'black'}
+                backgroundColor={checkbox.checked ? 'blue.default' : 'white'}
+                borderRadius="15px"
+                p="4px 9px"
                 as="label"
                 cursor="pointer"
                 _focus={{
@@ -49,13 +70,13 @@ const TechnologiesSection = ({
                 }}
               >
                 <Flex gridGap="10px">
-                  <Checkbox {...checkbox} borderColor="gray.default" isChecked={checkbox.checked} />
-                  <Text size="l">{technology}</Text>
+                  <Checkbox display="none" {...checkbox} borderColor="gray.default" isChecked={checkbox.checked} />
+                  <Text size="l" color={checkbox.checked ? 'white' : 'black'}>{technology}</Text>
                 </Flex>
               </Box>
             );
           })}
-        </Grid>
+        </Flex>
       </Collapse>
       {(technologyTags.length >= 17 || !isMobile) && (
       <Flex width="100%" justifyContent="right">

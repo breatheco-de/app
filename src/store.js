@@ -6,7 +6,6 @@ import counterReducer from './common/store/reducers/counterReducer';
 import todosReducer from './common/store/reducers/todoReducer';
 import moduleMapReducer from './common/store/reducers/moduleMapReducer';
 import filterReducer from './common/store/reducers/filterReducer';
-import syllabusReducer from './common/store/reducers/syllabusReducer';
 import assignmentsReducer from './common/store/reducers/assignmentsReducer';
 
 const bindMiddleware = (middleware) => {
@@ -21,7 +20,6 @@ const combinedReducer = combineReducers({
   todosReducer,
   moduleMapReducer,
   filterReducer,
-  syllabusReducer,
   assignmentsReducer,
 });
 

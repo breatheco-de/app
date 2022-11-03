@@ -6,8 +6,9 @@ import remarkGemoji from 'remark-gemoji';
 import PropTypes from 'prop-types';
 import rehypeRaw from 'rehype-raw';
 import { Img } from '@chakra-ui/react';
-
 import useTranslation from 'next-translate/useTranslation';
+import bc from '../../services/breathecode';
+
 // import { useRouter } from 'next/router';
 import {
   BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner,
@@ -19,12 +20,61 @@ import CallToAction from '../CallToAction';
 import SubTasks from './SubTasks';
 
 const MarkDownParser = ({
-  content, callToActionProps, withToc, frontMatter, titleRightSide, subTasks,
+  content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask,
 }) => {
   const { t } = useTranslation('common');
+  const [subTasks, setSubTasks] = useState([]);
+  const [subTasksLoaded, setSubTasksLoaded] = useState(false);
+  const [subTasksProps, setSubTasksProps] = useState([]);
   const [learnpackActions, setLearnpackActions] = useState([]);
   const [cohortSession] = usePersistent('cohortSession', {});
   const [profile] = usePersistent('profile', {});
+
+  const updateSubTask = async (taskProps) => {
+    const cleanedSubTasks = subTasks.filter((task) => task.id !== taskProps.id);
+    if (currentTask?.id) {
+      const resp = await bc.todo().subtask().update(
+        currentTask?.id,
+        [
+          ...cleanedSubTasks,
+          taskProps,
+        ],
+      );
+      if (resp.status >= 200 && resp.status < 400) {
+        const respData = await resp.data;
+        setSubTasks(respData);
+      }
+    }
+  };
+
+  // Prefetch subtasks
+  useEffect(() => {
+    if (currentTask?.id) {
+      bc.todo().subtask().get(currentTask?.id)
+        .then((resp) => {
+          setSubTasks(resp.data);
+          setSubTasksLoaded(true);
+        });
+    }
+  }, [currentTask]);
+
+  // Create subTasks if not exists
+  useEffect(async () => {
+    // const cleanedSubTasks = subTasks.filter((task) => task.id !== currentTask.id);
+    if (currentTask?.id && subTasksProps.length > 0) {
+      const resp = await bc.todo().subtask().update(
+        currentTask?.id,
+        [
+          // ...cleanedSubTasks,
+          ...subTasksProps,
+        ],
+      );
+      if (resp.status >= 200 && resp.status < 400) {
+        const respData = await resp.data;
+        setSubTasks(respData);
+      }
+    }
+  }, [subTasksProps]);
 
   const newExerciseText = t('learnpack.new-exercise');
   const continueExerciseText = t('learnpack.continue-exercise');
@@ -78,7 +128,7 @@ const MarkDownParser = ({
           <Toc content={content} />
         )}
 
-        { subTasks?.length > 0 && (
+        {Array.isArray(subTasks) && subTasks?.length > 0 && (
           <SubTasks subTasks={subTasks} />
         )}
       </ContentHeading>
@@ -112,7 +162,7 @@ const MarkDownParser = ({
             const type = childrenExists && props?.children[0]?.props && props.children[0].props.type;
             const type2 = childrenExists && props?.children[1]?.props && props.children[1]?.props.node?.children[0]?.properties?.type;
             return (type === 'checkbox' || type2 === 'checkbox') ? (
-              <MDCheckbox className="MDCheckbox" {...props} />
+              <MDCheckbox className="MDCheckbox" {...props} subTasksLoaded={subTasksLoaded} subTasksProps={subTasksProps} setSubTasksProps={setSubTasksProps} subTasks={subTasks} updateSubTask={updateSubTask} />
             ) : (
               <li>{props?.children}</li>
             );
@@ -131,7 +181,7 @@ MarkDownParser.propTypes = {
   withToc: PropTypes.bool,
   frontMatter: PropTypes.objectOf(PropTypes.any),
   titleRightSide: PropTypes.node,
-  subTasks: PropTypes.arrayOf(PropTypes.any),
+  currentTask: PropTypes.objectOf(PropTypes.any),
 };
 MarkDownParser.defaultProps = {
   content: '',
@@ -139,7 +189,7 @@ MarkDownParser.defaultProps = {
   withToc: false,
   frontMatter: {},
   titleRightSide: null,
-  subTasks: [],
+  currentTask: {},
 };
 
 export default MarkDownParser;

@@ -1,10 +1,11 @@
 import {
-  Progress, Box, Flex, Heading,
+  Box, Flex, Heading,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import useStyle from '../hooks/useStyle';
-import Icon from './Icon';
-import Text from './Text';
+import useStyle from '../../hooks/useStyle';
+import Icon from '../Icon';
+import Text from '../Text';
+import Progress from './Progress';
 
 const ProgressBar = ({
   progressText, taskTodo, width,
@@ -62,7 +63,7 @@ const ProgressBar = ({
           {progressText}
         </Text>
       </Flex>
-      <Progress value={calculatePercentage()} borderRadius="2px" height="4px" />
+      <Progress percents={calculatePercentage()} />
       <Flex justifyContent="space-around" marginTop="18px" flexWrap="wrap" gridGap="6px">
         {allTasks.map((program) => (
           <Box key={program.title} display="flex">

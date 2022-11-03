@@ -73,15 +73,21 @@
     ]
   },
   "deliverProject": {
-    "title": "URL de repositorio Github",
+    "title": "Entregar tarea",
     "how-to-deliver": "Cómo entregar proyectos",
+    "how-to-deliver-text": "Envíe una URL de Github que apunte a su proyecto como un repositorio de Github. <a class='link' target='blank' href='{{link}}'>Cómo entregar proyectos</a>",
     "handler-text": "Entregar proyecto",
-    "mandatory-message": "Tienes {{count}} proyectos obligatorios para completar antes de graduarte"
+    "mandatory-message": "Tienes {{count}} proyectos obligatorios para completar antes de graduarte",
+    "file-upload": "El archivo no debe tener más de 10 MB. Solo se permiten los tipos de archivo PDF, SCV",
+    "error-file-format": "El formato de archivo es incorrecto.",
+    "error-file-size": "El tamaño del archivo debe ser inferior a 10mb.",
+    "total-size": "Tamaño total de {{size}}"
   },
   "modalInfo": {
     "title": "Estado de revisión",
     "still-reviewing": "Tu profesor todavía está revisando tu entrega, te dará su opinión una vez que esté lista.",
     "approved": "¡Tu profesor ha aprobado con éxito tu proyecto!",
+    "files-sended-to-teacher": "Archivos enviados a tu profesor:",
     "rejected": {
       "title": "Tu profesor ha rechazado tu proyecto",
       "teacher-feedback": "Comentario del profesor:",
@@ -126,7 +132,7 @@
     "list-attendance-title": "Lista de asistencia tomada ({{count}} resultados)",
     "warn-premature-teaching": {
       "title": "Inicio prematuro del módulo",
-      "description": "¿Estás seguro de que quieres comenzar a enseñar <strong>{{module}}</strong>? La duración sugerida para el módulo seleccionado es de {{durationInDays}} días y <strong>solo ha cubierto {{day}} días.</strong>"
+      "description": "¿Estás seguro de que quieres comenzar a enseñar <strong>{{module}}</strong>? La duración sugerida para el módulo anterior es de {{durationInDays}} días y <strong>solo ha cubierto {{day}} días.</strong>"
     }
   },
   "teacher-sidebar": {

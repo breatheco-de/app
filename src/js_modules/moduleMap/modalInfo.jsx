@@ -9,12 +9,15 @@ import PropTypes from 'prop-types';
 import { useState, memo } from 'react';
 import Text from '../../common/components/Text';
 import validationSchema from '../../common/components/Forms/validationSchemas';
+import MarkDownParser from '../../common/components/MarkDownParser';
+import Icon from '../../common/components/Icon';
+import iconDict from '../../common/utils/iconDict.json';
 
 const ModalInfo = ({
   isOpen, onClose, actionHandler, rejectHandler, forceHandler, disableHandler, title, description,
   teacherFeedback, linkInfo, linkText, link, handlerText, closeText, cancelColorButton,
   handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
-  htmlDescription,
+  htmlDescription, markdownDescription, attachment,
 }) => {
   const { t } = useTranslation('dashboard');
   const [githubUrl, setGithubUrl] = useState(link);
@@ -25,6 +28,7 @@ const ModalInfo = ({
   const commonInputColor = useColorModeValue('gray.default', 'gray.300');
   const commonInputActiveColor = useColorModeValue('gray.800', 'gray.100');
   const commonHighlightColor = useColorModeValue('gray.250', 'darkTheme');
+
   const rejectFunction = () => {
     if (forceHandler) {
       setConfirmRejection(true);
@@ -36,7 +40,11 @@ const ModalInfo = ({
   const resubmitHandler = () => {
     setIsSubmitting(true);
     if (githubUrl !== '') {
-      sendProject(currentTask, githubUrl, 'DONE');
+      sendProject({
+        task: currentTask,
+        githubUrl,
+        taskStatus: 'DONE',
+      });
       setIsSubmitting(false);
       onClose();
     } else {
@@ -68,6 +76,24 @@ const ModalInfo = ({
               >
                 {description}
               </Text>
+            )}
+            {markdownDescription && (
+              <Box
+                height="100%"
+                margin="0 rem auto 0 auto"
+                transition="background 0.2s ease-in-out"
+                borderRadius="3px"
+                maxWidth="1280px"
+                background={useColorModeValue('white', 'dark')}
+                width={{ base: '100%', md: 'auto' }}
+                className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+              >
+                <MarkDownParser content={markdownDescription} />
+                {/* {(markdown && ipynbHtmlUrl === '')
+                  ? <MarkDownParser content={markdownData.content} />
+                  : <MDSkeleton />} */}
+
+              </Box>
             )}
             {htmlDescription && (
               <Text
@@ -106,63 +132,100 @@ const ModalInfo = ({
               </Box>
             )}
 
-            {!disableHandler && link && !linkText ? (
-              <Box padding="18px 0 0 0">
-                <Formik
-                  initialValues={{ githubUrl: link }}
-                  onSubmit={() => {
-                    setIsSubmitting(true);
-                    if (githubUrl !== '') {
-                      sendProject(currentTask, githubUrl, 'DONE');
-                      setIsSubmitting(false);
-                      onClose();
-                    }
-                  }}
-                  validationSchema={validationSchema.projectUrlValidation}
-                >
-                  {() => (
-                    <Form>
-                      <Field name="githubUrl">
-                        {({ field, form }) => {
-                          setGithubUrl(form.values.githubUrl);
-                          return (
-                            <FormControl
-                              isInvalid={form.errors.githubUrl && form.touched.githubUrl}
-                            >
-                              <Input
-                                {...field}
-                                type="text"
-                                color={commonInputColor}
-                                _focus={{
-                                  color: commonInputActiveColor,
-                                }}
-                                _hover={{
-                                  color: commonInputActiveColor,
-                                }}
-                                id="githubUrl"
-                                placeholder="https://github.com/..."
-                              />
-                              <FormErrorMessage marginTop="10px">
-                                {form.errors.githubUrl}
-                              </FormErrorMessage>
-                            </FormControl>
-                          );
-                        }}
-                      </Field>
-                    </Form>
-                  )}
-                </Formik>
-
-              </Box>
-            ) : linkInfo && (
-              <Box padding="20px 0">
-                <Text size="l" fontWeight="bold" color={commonTextColor}>
-                  {linkInfo}
+            {Array.isArray(attachment) && attachment.length > 0 ? (
+              <Box mt="10px">
+                <Text size="l" mb="8px">
+                  {t('modalInfo.files-sended-to-teacher')}
                 </Text>
-                <Link href={link} color={useColorModeValue('blue.default', 'blue.300')} target="_blank" rel="noopener noreferrer">
-                  {linkText || link}
-                </Link>
+                <Box display="flex" flexDirection="column" gridGap="8px" maxHeight="135px" overflowY="auto">
+                  {attachment.map((file) => {
+                    const extension = file.name.split('.').pop();
+                    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
+                    const isImage = imageExtensions.includes(extension);
+                    const icon = iconDict.includes(extension) ? extension : 'file';
+                    return (
+                      <Box display="flex">
+                        <Icon icon={isImage ? 'image' : icon} width="22px" height="22px" />
+                        <Link
+                          key={file.id}
+                          href={file.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          color="blue.500"
+                          margin="0 0 0 10px"
+                        >
+                          {file.name}
+                        </Link>
+                      </Box>
+                    );
+                  })}
+                </Box>
               </Box>
+            ) : (
+              <>
+                {!disableHandler && link && !linkText ? (
+                  <Box padding="18px 0 0 0">
+                    <Formik
+                      initialValues={{ githubUrl: link }}
+                      onSubmit={() => {
+                        setIsSubmitting(true);
+                        if (githubUrl !== '') {
+                          sendProject({
+                            task: currentTask,
+                            githubUrl,
+                            taskStatus: 'DONE',
+                          });
+                          setIsSubmitting(false);
+                          onClose();
+                        }
+                      }}
+                      validationSchema={validationSchema.projectUrlValidation}
+                    >
+                      {() => (
+                        <Form>
+                          <Field name="githubUrl">
+                            {({ field, form }) => {
+                              setGithubUrl(form.values.githubUrl);
+                              return (
+                                <FormControl
+                                  isInvalid={form.errors.githubUrl && form.touched.githubUrl}
+                                >
+                                  <Input
+                                    {...field}
+                                    type="text"
+                                    color={commonInputColor}
+                                    _focus={{
+                                      color: commonInputActiveColor,
+                                    }}
+                                    _hover={{
+                                      color: commonInputActiveColor,
+                                    }}
+                                    id="githubUrl"
+                                    placeholder="https://github.com/..."
+                                  />
+                                  <FormErrorMessage marginTop="10px">
+                                    {form.errors.githubUrl}
+                                  </FormErrorMessage>
+                                </FormControl>
+                              );
+                            }}
+                          </Field>
+                        </Form>
+                      )}
+                    </Formik>
+
+                  </Box>
+                ) : linkInfo && (
+                  <Box padding="20px 0">
+                    <Text size="l" fontWeight="bold" color={commonTextColor}>
+                      {linkInfo}
+                    </Text>
+                    <Link href={link} color={useColorModeValue('blue.default', 'blue.300')} target="_blank" rel="noopener noreferrer">
+                      {linkText || link}
+                    </Link>
+                  </Box>
+                )}
+              </>
             )}
           </ModalBody>
 
@@ -181,6 +244,7 @@ const ModalInfo = ({
                   {!disableHandler && (
                     <Button
                       fontSize="13px"
+                      disabled={(Array.isArray(attachment) && attachment.length > 0) || isSubmitting}
                       isLoading={isSubmitting}
                       onClick={() => resubmitHandler()}
                       variant="default"
@@ -265,7 +329,7 @@ const ModalInfo = ({
 };
 
 ModalInfo.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
+  isOpen: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
   actionHandler: PropTypes.func,
   rejectHandler: PropTypes.func,
@@ -287,9 +351,12 @@ ModalInfo.propTypes = {
   type: PropTypes.string,
   closeButtonVariant: PropTypes.string,
   htmlDescription: PropTypes.string,
+  markdownDescription: PropTypes.string,
+  attachment: PropTypes.arrayOf(PropTypes.object),
 };
 
 ModalInfo.defaultProps = {
+  isOpen: false,
   actionHandler: () => {},
   rejectHandler: () => {},
   forceHandler: false,
@@ -310,6 +377,8 @@ ModalInfo.defaultProps = {
   type: 'default',
   closeButtonVariant: 'danger',
   htmlDescription: '',
+  markdownDescription: '',
+  attachment: [],
 };
 
 export default memo(ModalInfo);

@@ -7,7 +7,7 @@ import Icon from '../../common/components/Icon';
 
 const getReadme = ({
   ipynbHtmlUrl, readme, currentBlankProps, callToActionProps, currentData, lesson,
-  quizSlug, lessonSlug, subTasks,
+  quizSlug, lessonSlug, currentTask,
 }) => {
   const { t } = useTranslation('syllabus');
   const blankText = t('blank-page', { url: currentBlankProps?.url });
@@ -23,13 +23,13 @@ const getReadme = ({
             {t('edit-page')}
           </Link>
         )}
-        withToc={lesson.toLowerCase() === 'read'}
+        withToc={lesson?.toLowerCase() === 'read'}
         frontMatter={{
           title: currentData.title,
           // subtitle: currentData.description,
           assetType: currentData.asset_type,
         }}
-        subTasks={subTasks}
+        currentTask={currentTask}
       />
     );
   }
@@ -44,13 +44,12 @@ const getReadme = ({
             {t('edit-page')}
           </Link>
         )}
-        withToc={lesson.toLowerCase() === 'read'}
+        withToc={lesson?.toLowerCase() === 'read'}
         frontMatter={{
           title: currentBlankProps?.title,
           // subtitle: currentBlankProps.description,
           assetType: currentBlankProps?.asset_type,
         }}
-        subTasks={subTasks}
       />
     );
   }

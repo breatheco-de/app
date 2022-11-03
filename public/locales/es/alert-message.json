@@ -52,5 +52,7 @@
   "file-type-error": "No se permite cargar el tipo de archivo {{type}}",
   "no-cohorts-found": "No se encontraron cohortes",
   "google-maps-no-coincidences": "Google Maps: No se encontraron coincidencias para la dirección ingresada",
-  "cohort-not-found": "No se encontró la cohorte especificada"
+  "cohort-not-found": "No se encontró la cohorte especificada",
+  "files-uploaded": "Archivos enviados con éxito",
+  "current-task-no-files": "La tarea actual no tiene ningún archivo."
 }

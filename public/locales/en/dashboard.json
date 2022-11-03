@@ -73,15 +73,21 @@
     ]
   },
   "deliverProject": {
-    "title": "Github repository url",
+    "title": "Deliver assignment",
     "how-to-deliver": "How to deliver projects",
+    "how-to-deliver-text": "Please submit a Github URL that points to your project as a Github repository. <a class='link' target='blank' href='{{link}}'>How to deliver projects</a>",
     "handler-text": "Deliver assignment",
-    "mandatory-message": "You have {{count}} mandatory projects to complete before graduation"
+    "mandatory-message": "You have {{count}} mandatory projects to complete before graduation",
+    "file-upload": "Single upload file should not be more than 10 MB. Only the PDF, SCV file types are allowed",
+    "error-file-format": "File format is not correct.",
+    "error-file-size": "File size must be less than 10mb.",
+    "total-size": "Total size {{size}}"
   },
   "modalInfo": {
     "title": "Review status",
     "still-reviewing": "Your teacher is still reviewing your deliver and will provide feedback once it's done",
     "approved": "Your teacher has successfully approved your project!",
+    "files-sended-to-teacher": "Files sended to your teacher:",
     "rejected": {
       "title": "Your teacher has rejected your project",
       "teacher-feedback": "Teacher feedback:",
@@ -126,7 +132,7 @@
     "list-attendance-title": "Attendance list taken ({{count}} results)",
     "warn-premature-teaching": {
       "title": "Premature module start",
-      "description": "Are you sure you want to start teaching <strong>{{module}}</strong>? The suggested duration for the selected module is in {{durationInDays}} days and you have <strong>only covered for {{day}} days.</strong>"
+      "description": "Are you sure you want to start teaching <strong>{{module}}</strong>? The suggested duration for the previous module is in {{durationInDays}} days and you have <strong>only covered for {{day}} days.</strong>"
     }
   },
   "teacher-sidebar": {
