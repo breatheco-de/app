@@ -1,8 +1,9 @@
 import {
-  Box, Flex, Checkbox, useMediaQuery, Collapse, Input, InputGroup, InputLeftElement,
+  Box, Flex, Checkbox, useMediaQuery, Collapse,
+  // Input, InputGroup, InputLeftElement,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import Icon from '../Icon';
+// import Icon from '../Icon';
 import Text from '../Text';
 
 // eslint-disable-next-line react/prop-types
@@ -24,7 +25,7 @@ const TechnologiesSection = ({
         <Text fontSize="1rem" textTransform="uppercase" fontWeight="bold" color={commonTextColor}>
           {title}
         </Text>
-        <InputGroup>
+        {/* <InputGroup>
           <InputLeftElement
             height="29px"
             pointerEvents="none"
@@ -32,7 +33,7 @@ const TechnologiesSection = ({
             <Icon icon="search" width="14px" height="14px" />
           </InputLeftElement>
           <Input type="tel" placeholder="Phone number" height="29px" />
-        </InputGroup>
+        </InputGroup> */}
 
       </Box>
       <Collapse in={show} startingHeight={technologyTags.length > 4 ? 170 : 38} animateOpacity>
@@ -53,7 +54,7 @@ const TechnologiesSection = ({
                 : checkedTechnologies.includes(technology),
               isChecked: false,
             });
-            console.log('checkbox:::', checkbox);
+            // console.log('checkbox:::', checkbox);
             return (
               <Box
                 key={technology}

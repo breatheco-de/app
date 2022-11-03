@@ -1,7 +1,7 @@
 import {
   FormControl, Input, Button, Popover, PopoverTrigger, PopoverContent,
   PopoverArrow, PopoverHeader, PopoverCloseButton, PopoverBody, useDisclosure,
-  FormErrorMessage, Box, Link, useColorModeValue, useToast,
+  FormErrorMessage, Box, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { Formik, Form, Field } from 'formik';
@@ -444,9 +444,7 @@ export const ButtonHandlerByTaskStatus = ({
                           <MarkDownParser content={assetData?.delivery_instructions} />
                         </Box>
                       ) : (
-                        <Link href={howToSendProjectUrl} color="blue.default" target="_blank" rel="noopener noreferrer">
-                          {t('deliverProject.how-to-deliver')}
-                        </Link>
+                        <Box dangerouslySetInnerHTML={{ __html: t('deliverProject.how-to-deliver-text', { link: howToSendProjectUrl }) }} />
                       )}
                     </Box>
                     <Button

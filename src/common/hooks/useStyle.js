@@ -12,6 +12,7 @@ const useStyle = () => {
     black: useColorModeValue('#000000', '#ffffff'),
     white2: useColorModeValue('#ffffff', '#283340'),
     danger: useColorModeValue('#CD0000', '#e26161'),
+    blueDefault: '#0097CD',
   };
   const input = {
     borderColor: useColorModeValue('gray.default', '#CACACA'),
