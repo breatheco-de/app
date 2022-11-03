@@ -78,13 +78,17 @@ const AttendanceModal = ({
     const cohortSlug = cohortSession.slug;
     const userAgent = `bc/${cohortSession?.cohort_role?.toLowerCase() || 'teacher'}`;
 
-    // const attendanceIds = students.filter(({ user }) => {
-    //   const attended = checked.some((id) => parseInt(id, 10) === user.id);
-    //   return {
-    //     attended,
-    //     unattended: !attended,
-    //   };
-    // });
+    // const attendanceIds = students.reduce(
+    //   (accumulator, { user }) => {
+    //     const attended = checked.some((id) => parseInt(id, 10) === user.id);
+    //     if (attended) {
+    //       accumulator.attended.push(user.id);
+    //     } else {
+    //       accumulator.unattended.push(user.id);
+    //     }
+    //     return accumulator;
+    //   }, { attended: [], unattended: [] },
+    // );
 
     // const dataStruct = {
     //   current_module: currentModule,

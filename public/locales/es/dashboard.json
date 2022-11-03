@@ -75,6 +75,7 @@
   "deliverProject": {
     "title": "Entregar tarea",
     "how-to-deliver": "Cómo entregar proyectos",
+    "how-to-deliver-text": "Envíe una URL de Github que apunte a su proyecto como un repositorio de Github. <a class='link' target='blank' href='{{link}}'>Cómo entregar proyectos</a>",
     "handler-text": "Entregar proyecto",
     "mandatory-message": "Tienes {{count}} proyectos obligatorios para completar antes de graduarte",
     "file-upload": "El archivo no debe tener más de 10 MB. Solo se permiten los tipos de archivo PDF, SCV",

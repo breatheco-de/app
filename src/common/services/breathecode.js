@@ -96,7 +96,7 @@ const breathecode = {
       .join('&');
     return {
       get: (id) => axios.get(`${url}/cohort/${id}`),
-      log: (id, activities) => axios.post(`${url}/cohort/${id}/log?${qs}`, activities),
+      log: (id, activities) => axios.put(`${url}/cohort/${id}/log?${qs}`, activities),
       getPublic: (id) => axios.get(`${url}/cohort/${id}`, {
         headers: {
           Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
