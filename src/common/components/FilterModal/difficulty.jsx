@@ -19,8 +19,19 @@ const DifficultySection = ({
 }) => {
   const router = useRouter();
   const [queryPosition, setQueryPosition] = useState(null);
-  const defaultDifficulties = ['beginner', 'easy', 'intermediate', 'hard'];
-  const difficultyExists = defaultDifficulties.some((l) => difficulties.includes(l));
+  const defaultDifficulties = ['junior', 'mid-level', 'senior'];
+  const difficultyIndex = {
+    beginner: 0,
+    easy: 0,
+    intermediate: 2,
+    hard: 3,
+  };
+  // const defaultDifficultiesIndex = {
+  //   0: 'junior',
+  //   1: 'mid-level',
+  //   2: 'senior',
+  // };
+  const difficultyExists = defaultDifficulties.some((l) => difficulties.map((d) => defaultDifficulties[difficultyIndex[d]]).includes(l));
 
   useEffect(() => {
     const difficultyQuery = router.query.difficulty;
@@ -56,6 +67,8 @@ const DifficultySection = ({
 
   const lineColor = positionConnector[difficultyPosition] || positionConnector[queryPosition] || 'gray.default';
 
+  console.log('difficultyPosition:::', difficultyPosition);
+
   return difficultyExists && (
     <Flex
       flexDirection="column"
@@ -81,7 +94,9 @@ const DifficultySection = ({
         {/* Circle of difficulties  */}
         {defaultDifficulties.map((difficulty, index) => {
           const isSelected = verifyDifficultyisAvailable(index, difficultyPosition, difficulty, difficulties);
-          const difficultyIsMatch = difficulties[index] === difficulty || false;
+          const difficultyIsMatch = defaultDifficulties[index] === difficulty;
+          // const difficultyIsMatch = difficulties[index] === difficulty || false;
+
           return (
             <Tooltip key={`${difficulty}`} label={difficultyIsMatch ? difficulty : `${difficulty} (not available)`} placement="top">
               <Box
