@@ -11,9 +11,9 @@
   "lesson": "Lección",
   "exercise": "Ejercicio",
   "project": "Proyecto",
+  "quiz": "Cuestionario",
   "filter": "Filtro",
   "filters": "Filtros",
-  "quiz": "Cuestionario",
   "close": "Cerrar",
   "confirm": "Confirmar",
   "user-id": "ID de usuario",
@@ -76,8 +76,14 @@
     "title": "Lo sentimos, no tiene suficientes privilegios para acceder a este bloque de contenido, regístrese o actualice su plan para acceder al contenido.",
     "button": "Mejorar plan"
   },
+  "asset-type-pronouns" : {
+    "lesson": "Esta lección",
+    "exercise": "Este ejercicio",
+    "project": "Este proyecto",
+    "quiz": "Este cuestionario"
+  },
   "subtasks": {
-    "title": "Esta lección tiene {{count}} tareas",
+    "title": "{{asset_type}} tiene {{count}} tareas",
     "description": "Para aprovechar mejor esta lección, busca las casillas de verificación y márcalas como completadas a medida que avances."
   },
   "average-duration": "Duración promedio",
