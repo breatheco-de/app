@@ -407,7 +407,7 @@ export const ButtonHandlerByTaskStatus = ({
                       }}
                     </Field>
                     <Box padding="6px 0 0 0">
-                      {currentAssetData?.delivery_instructions.length > 2 ? (
+                      {currentAssetData?.delivery_instructions?.length > 2 ? (
                         <Box
                           height="100%"
                           margin="0 rem auto 0 auto"
@@ -437,7 +437,7 @@ export const ButtonHandlerByTaskStatus = ({
               </Formik>
             ) : (
               <Box>
-                {currentAssetData?.delivery_instructions.length > 2 ? (
+                {currentAssetData?.delivery_instructions?.length > 2 ? (
                   <Box
                     height="100%"
                     margin="0 rem auto 0 auto"
