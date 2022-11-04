@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import rehypeRaw from 'rehype-raw';
 import { Img } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import { useRouter } from 'next/router';
 import bc from '../../services/breathecode';
 
 // import { useRouter } from 'next/router';
@@ -30,7 +29,6 @@ const MarkDownParser = ({
   const [learnpackActions, setLearnpackActions] = useState([]);
   const [cohortSession] = usePersistent('cohortSession', {});
   const [profile] = usePersistent('profile', {});
-  const router = useRouter();
 
   const updateSubTask = async (taskProps) => {
     const cleanedSubTasks = subTasks.filter((task) => task.id !== taskProps.id);
@@ -59,9 +57,6 @@ const MarkDownParser = ({
         });
     }
   }, [currentTask]);
-  useEffect(() => {
-    setSubTasksProps([]);
-  }, [router]);
 
   // Create subTasks if not exists
   useEffect(async () => {
