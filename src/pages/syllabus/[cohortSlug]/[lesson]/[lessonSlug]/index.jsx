@@ -59,6 +59,7 @@ const Content = () => {
   const [openTargetBlankModal, setOpenTargetBlankModal] = useState(null);
   const [currentAssetData, setCurrentAssetData] = useState(null);
   const [currentBlankProps, setCurrentBlankProps] = useState(null);
+  const [fileData, setFileData] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
   const [currentData, setCurrentData] = useState({});
   const toast = useToast();
@@ -155,8 +156,8 @@ const Content = () => {
     setModalSettingsOpen(false);
   };
 
-  const toggleSettings = async (assetSlug) => {
-    const assetResp = await bc.lesson().getAsset(assetSlug);
+  const toggleSettings = async () => {
+    const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
     if (assetResp.status < 400) {
       const assetData = await assetResp.data;
       setCurrentAssetData(assetData);
@@ -164,6 +165,27 @@ const Content = () => {
         setModalSettingsOpen(!modalSettingsOpen);
       } else {
         setSettingsOpen(!settingsOpen);
+      }
+    }
+  };
+
+  const handleOpen = async (onOpen = () => {}) => {
+    if (currentTask && currentTask?.task_type === 'PROJECT' && currentTask.task_status === 'DONE') {
+      const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
+      if (assetResp?.status < 400) {
+        const assetData = await assetResp.data;
+        setCurrentAssetData(assetData);
+
+        if (!assetData?.delivery_formats.includes('url')) {
+          const fileResp = await bc.todo().getFile({ id: currentTask.id });
+          const respData = await fileResp.data;
+          setFileData(respData);
+          onOpen();
+        } else {
+          onOpen();
+        }
+      } else {
+        onOpen();
       }
     }
   };
@@ -657,6 +679,8 @@ const Content = () => {
                 toggleSettings={toggleSettings}
                 closeSettings={closeSettings}
                 settingsOpen={settingsOpen}
+                handleOpen={handleOpen}
+                fileData={fileData}
               />
               {currentTask?.task_status === 'DONE' && showModal && (
                 <ShareButton
@@ -779,6 +803,8 @@ const Content = () => {
                         closeSettings={closeSettings}
                         currentAssetData={currentAssetData}
                         settingsOpen={modalSettingsOpen}
+                        handleOpen={handleOpen}
+                        fileData={fileData}
                         onClickHandler={() => {
                           setShowModal(false);
                           if (nextAssignment?.target === 'blank') {
