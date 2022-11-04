@@ -170,7 +170,7 @@ export const MDCheckbox = ({
         if (children[1]?.props?.children[1].length > 2) {
           return children[1]?.props?.children[1];
         }
-        // text inside stron tag
+        // text inside strong tag
         if (children[1]?.props?.node?.children[i]?.tagName === 'strong') {
           return children[1]?.props?.node.children[i].children[0].value;
         }
