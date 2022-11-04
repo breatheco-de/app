@@ -369,10 +369,10 @@ export const ButtonHandlerByTaskStatus = ({
                 onSubmit={() => {
                   setIsSubmitting(true);
                   if (githubUrl !== '') {
-                    const getUrlResult = currentAssetData?.validate_regex_url ? !githubUrl.includes(currentAssetData?.validate_regex_url) : !isGithubUrl.test(githubUrl);
+                    const getUrlResult = currentAssetData?.validate_regex_url ? githubUrl.includes(currentAssetData?.validate_regex_url) : isGithubUrl.test(githubUrl);
                     const haveGithubDomain = getUrlResult;
-                    if (haveGithubDomain) {
-                      setShowUrlWarn(haveGithubDomain);
+                    if (!haveGithubDomain) {
+                      setShowUrlWarn(true);
                     } else {
                       sendProject({ task: currentTask, githubUrl });
                       setIsSubmitting(false);
@@ -397,7 +397,7 @@ export const ButtonHandlerByTaskStatus = ({
                               _focus={{
                                 color: commonInputActiveColor,
                               }}
-                              placeholder="https://github.com/..."
+                              placeholder="https://..."
                             />
                             <FormErrorMessage marginTop="10px">
                               {form.errors.githubUrl}
