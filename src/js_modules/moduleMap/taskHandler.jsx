@@ -369,8 +369,12 @@ export const ButtonHandlerByTaskStatus = ({
                 onSubmit={() => {
                   setIsSubmitting(true);
                   if (githubUrl !== '') {
-                    const getUrlResult = currentAssetData?.validate_regex_url ? githubUrl.includes(currentAssetData?.validate_regex_url) : isGithubUrl.test(githubUrl);
-                    const haveGithubDomain = getUrlResult;
+                    const regex = new RegExp(currentAssetData?.validate_regex_url, 'g');
+                    const isValidUrl = regex.test(githubUrl);
+                    const haveGithubDomain = typeof currentAssetData?.validate_regex_url === 'string' ? isValidUrl : isGithubUrl.test(githubUrl);
+                    // const haveGithubDomain = currentAssetData?.validate_regex_url ? githubUrl.includes(currentAssetData?.validate_regex_url) : isGithubUrl.test(githubUrl);
+                    // const haveGithubDomain = getUrlResult;
+
                     if (!haveGithubDomain) {
                       setShowUrlWarn(true);
                     } else {
