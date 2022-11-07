@@ -134,7 +134,7 @@ function useHandler() {
             id,
             read: lessons,
             practice: replits,
-            code: assignments,
+            project: assignments,
             answer: quizzes,
             taskTodo: contextState.taskTodo,
           });

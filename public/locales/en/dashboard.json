@@ -87,14 +87,14 @@
     "title": "Review status",
     "still-reviewing": "Your teacher is still reviewing your deliver and will provide feedback once it's done",
     "approved": "Your teacher has successfully approved your project!",
-    "files-sended-to-teacher": "Files sended to your teacher:",
+    "files-sended-to-teacher": "",
     "rejected": {
       "title": "Your teacher has rejected your project",
       "teacher-feedback": "Teacher feedback:",
       "remove-delivery": "Remove delivery",
       "resubmit-assignment": "Resubmit assignment"
     },
-    "link-info": "Link of project sended to your teacher:",
+    "link-info": "",
     "remove-delivery": "Remove delivery",
     "non-github-url": {
       "title": "non-github URL detected",
