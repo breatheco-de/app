@@ -43,7 +43,7 @@ const myDecorator = (story, context, ...props) => {
 };
 
 addDecorator((storyFn) => (
-  <ChakraProvider resetCSS={false} theme={CustomTheme}>
+  <ChakraProvider resetCSS theme={CustomTheme}>
     {storyFn()}
   </ChakraProvider>
 ))
