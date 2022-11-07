@@ -1,12 +1,12 @@
 import {
-  Box, Heading, Stack, Flex, useColorModeValue, HStack, Tooltip,
+  Box, Heading, Stack, Flex, useColorModeValue, HStack, Tooltip, Link,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import Text from './Text';
 import Icon from './Icon';
-import Link from './NextChakraLink';
+// import Link from './NextChakraLink';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 
 const Module = ({
