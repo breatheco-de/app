@@ -387,7 +387,13 @@ export const ButtonHandlerByTaskStatus = ({
                 validationSchema={validationSchema.projectUrlValidation}
               >
                 {() => (
-                  <Form>
+                  <Form
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gridGap: currentAssetData?.delivery_instructions?.length ? '0px' : '14px',
+                    }}
+                  >
                     <Field name="githubUrl">
                       {({ field, form }) => {
                         setGithubUrl(form.values.githubUrl);
@@ -410,7 +416,7 @@ export const ButtonHandlerByTaskStatus = ({
                         );
                       }}
                     </Field>
-                    <Box padding="6px 0 0 0">
+                    <Box>
                       {currentAssetData?.delivery_instructions?.length > 2 ? (
                         <Box
                           height="100%"
@@ -429,7 +435,8 @@ export const ButtonHandlerByTaskStatus = ({
                       )}
                     </Box>
                     <Button
-                      mt={4}
+                      // mt={4}
+                      width="fit-content"
                       colorScheme="blue"
                       isLoading={isSubmitting}
                       type="submit"
