@@ -139,7 +139,7 @@ const getTimeProps = (date) => {
 };
 
 // convert the input array to camel case
-const toCapitalize = (input) => input.charAt(0).toUpperCase() + input.slice(1);
+const toCapitalize = (input) => input.charAt(0).toUpperCase() + input.toLowerCase().slice(1);
 
 function formatBytes(bytes, decimals = 2) {
   if (!+bytes) return '0 Bytes';

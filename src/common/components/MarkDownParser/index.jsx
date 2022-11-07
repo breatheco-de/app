@@ -129,7 +129,7 @@ const MarkDownParser = ({
         )}
 
         {Array.isArray(subTasks) && subTasks?.length > 0 && (
-          <SubTasks subTasks={subTasks} />
+          <SubTasks subTasks={subTasks} assetType={assetType} />
         )}
       </ContentHeading>
       <ReactMarkdown

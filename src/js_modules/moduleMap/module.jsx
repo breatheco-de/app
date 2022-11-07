@@ -23,6 +23,7 @@ const Module = ({
   const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);
   const [currentAssetData, setCurrentAssetData] = useState(null);
+  const [fileData, setFileData] = useState(null);
   const [, setUpdatedTask] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const toast = useToast();
@@ -75,12 +76,33 @@ const Module = ({
   const closeSettings = () => {
     setSettingsOpen(false);
   };
-  const toggleSettings = async (assetSlug) => {
-    const assetResp = await bc.lesson().getAsset(assetSlug);
-    if (assetResp.status < 400) {
+  const toggleSettings = async () => {
+    const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
+    if (assetResp?.status < 400) {
       const assetData = await assetResp.data;
       setCurrentAssetData(assetData);
       setSettingsOpen(!settingsOpen);
+    }
+  };
+
+  const handleOpen = async (onOpen = () => {}) => {
+    if (currentTask && currentTask?.task_type === 'PROJECT' && currentTask.task_status === 'DONE') {
+      const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
+      if (assetResp?.status < 400) {
+        const assetData = await assetResp.data;
+        setCurrentAssetData(assetData);
+
+        if (!assetData?.delivery_formats.includes('url')) {
+          const fileResp = await bc.todo().getFile({ id: currentTask.id });
+          const respData = await fileResp.data;
+          setFileData(respData);
+          onOpen();
+        } else {
+          onOpen();
+        }
+      } else {
+        onOpen();
+      }
     }
   };
 
@@ -111,6 +133,7 @@ const Module = ({
 
   const isDone = currentTask?.task_status === 'DONE' || currentTask?.revision_status === 'APPROVED';
   const isMandatoryTimeOut = data?.task_type === 'PROJECT' && data?.task_status === 'PENDING' && data?.mandatory === true && data?.daysDiff >= 14; // exceeds 2 weeks
+
   return (
     <>
       <ModuleComponent
@@ -132,9 +155,11 @@ const Module = ({
             sendProject={sendProject}
             changeStatusAssignment={changeStatusAssignment}
             toggleSettings={toggleSettings}
-            currentAssetData={currentAssetData}
             closeSettings={closeSettings}
             settingsOpen={settingsOpen}
+            handleOpen={handleOpen}
+            currentAssetData={currentAssetData}
+            fileData={fileData}
           />
         )}
       />

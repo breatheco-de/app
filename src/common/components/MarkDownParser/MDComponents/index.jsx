@@ -18,7 +18,7 @@ import Text from '../../Text';
 export const MDLink = ({ children, href }) => (
   <Link
     href={href}
-    fontSize="15px"
+    fontSize="inherit"
     color="blue.400"
     fontWeight="700"
     overflowWrap="anywhere"
@@ -113,7 +113,7 @@ export const BeforeAfter = ({ before, after }) => {
 export const MDHr = () => (<Box as="hr" backgroundColor={useColorModeValue('gray.400', 'gray.500')} mb="20px" />);
 
 export const MDText = ({ children }) => (
-  <Text size="l" letterSpacing="0.05em" marginBottom="16px" fontWeight="400" lineHeight="24px">
+  <Text size="l" fontWeight="400" lineHeight="24px">
     {children}
   </Text>
 );
@@ -162,13 +162,33 @@ export const MDCheckbox = ({
   index, children, subTasks, subTasksLoaded, subTasksProps, setSubTasksProps, updateSubTask,
 }) => {
   const childrenData = children[1]?.props?.children || children;
-  const text = children[1]?.props?.children[1] || children[1];
+
+  const getText = () => {
+    if (children[1]?.props?.node.children.length > 0) {
+      for (let i = 0; i < children[1]?.props?.node.children.length; i += 1) {
+        // default
+        if (children[1]?.props?.children[1].length > 2) {
+          return children[1]?.props?.children[1];
+        }
+        // text inside strong tag
+        if (children[1]?.props?.node?.children[i]?.tagName === 'strong') {
+          return children[1]?.props?.node.children[i].children[0].value;
+        }
+      }
+    }
+    if (children[1]) {
+      return children[1];
+    }
+    return '';
+  };
+
+  const text = getText();
   const cleanedChildren = childrenData.length > 0 && childrenData.filter((l) => l.type !== 'input');
   // const checked = props?.checked || props?.children[1]?.props?.children[0]?.props?.checked;
 
   const slug = typeof text === 'string' && slugify(text);
-  const currentSubTask = subTasks.length > 0 && subTasks.filter((task) => task.id === slug);
-  const taskChecked = subTasks && subTasks.filter((task) => task.id === slug && task.status !== 'PENDING').length > 0;
+  const currentSubTask = subTasks.length > 0 && subTasks.filter((task) => task?.id === slug);
+  const taskChecked = subTasks && subTasks.filter((task) => task?.id === slug && task?.status !== 'PENDING').length > 0;
   const [isChecked, setIsChecked] = useState(taskChecked || false);
 
   const taskStatus = {
@@ -178,9 +198,9 @@ export const MDCheckbox = ({
 
   useEffect(() => {
     if (subTasksLoaded) {
-      if (subTasksProps?.length > 0 && subTasksProps.find((l) => l.id === slug)) return () => {};
+      if (subTasksProps?.length > 0 && subTasksProps.find((l) => l?.id === slug)) return () => {};
 
-      if (currentSubTask) {
+      if (currentSubTask.length > 0) {
         setSubTasksProps((prev) => {
           if (prev.length > 0) {
             return [...prev, currentSubTask[0]];

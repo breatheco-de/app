@@ -11,9 +11,9 @@
   "lesson": "Lesson",
   "exercise": "Exercise",
   "project": "Project",
+  "quiz": "Quiz",
   "filter": "Filter",
   "filters": "Filters",
-  "quiz": "Quiz",
   "close": "Close",
   "confirm": "Confirm",
   "user-id": "User ID",
@@ -78,8 +78,14 @@
     "title": "We are sorry, you don't have enough privileges to access this block of content, please signup or upgrade your plan to access it.",
     "button": "Upgrade plan"
   },
+  "asset-type-pronouns" : {
+    "lesson": "This lesson",
+    "exercise": "This exercise",
+    "project": "This project",
+    "quiz": "This quiz"
+  },
   "subtasks": {
-    "title": "This lesson has {{count}} tasks",
+    "title": "{{asset_type}} has {{count}} tasks",
     "description": "To better take advantage of this lesson, look for the checkboxes and mark them as completed as you make progress."
   },
   "average-duration": "Average duration",
