@@ -3,6 +3,7 @@ import {
   PopoverArrow, PopoverHeader, PopoverCloseButton, PopoverBody, useDisclosure,
   FormErrorMessage, Box, useColorModeValue, useToast,
 } from '@chakra-ui/react';
+import * as Yup from 'yup';
 import useTranslation from 'next-translate/useTranslation';
 import { Formik, Form, Field } from 'formik';
 import PropTypes from 'prop-types';
@@ -122,6 +123,7 @@ export const ButtonHandlerByTaskStatus = ({
   const commonInputActiveColor = useColorModeValue('gray.800', 'gray.350');
   const taskIsAproved = allowText && currentTask?.revision_status === 'APPROVED';
 
+  const regexUrlExists = typeof currentAssetData?.validate_regex_url === 'string';
   const mimeTypes = currentAssetData?.delivery_formats || 'application/pdf,image/png,image/jpeg,image/jpg,image/gif';
   const maxFileSize = 1048576 * 10; // 10mb
   const fileErrorExists = fileProps.some((file) => file.formatError) || fileProps.some((file) => file.sizeError);
@@ -326,6 +328,13 @@ export const ButtonHandlerByTaskStatus = ({
 
     const fileSumSize = fileProps.reduce((acc, { file }) => acc + file.size, 0);
 
+    const customUrlValidation = Yup.object().shape({
+      githubUrl: Yup.string().matches(
+        currentAssetData?.validate_regex_url,
+        t('deliverProject.invalid-url', { url: currentAssetData?.validate_regex_url }),
+      ).required(t('deliverProject.url-is-required')),
+    });
+
     return (
       <Popover
         id="task-status"
@@ -369,13 +378,9 @@ export const ButtonHandlerByTaskStatus = ({
                 onSubmit={() => {
                   setIsSubmitting(true);
                   if (githubUrl !== '') {
-                    // const regex = new RegExp(currentAssetData?.validate_regex_url, 'g');
-                    // const isValidUrl = regex.test(githubUrl);
-                    // const haveGithubDomain = typeof currentAssetData?.validate_regex_url === 'string' ? isValidUrl : isGithubUrl.test(githubUrl);
-                    const haveGithubDomain = typeof currentAssetData?.validate_regex_url === 'string' ? githubUrl.includes(currentAssetData?.validate_regex_url) : isGithubUrl.test(githubUrl);
-                    // const haveGithubDomain = getUrlResult;
+                    const haveGithubDomain = isGithubUrl.test(githubUrl);
 
-                    if (!haveGithubDomain) {
+                    if (!haveGithubDomain && !regexUrlExists) {
                       setShowUrlWarn(true);
                     } else {
                       sendProject({ task: currentTask, githubUrl });
@@ -384,7 +389,7 @@ export const ButtonHandlerByTaskStatus = ({
                     }
                   }
                 }}
-                validationSchema={validationSchema.projectUrlValidation}
+                validationSchema={regexUrlExists ? customUrlValidation : validationSchema.projectUrlValidation}
               >
                 {() => (
                   <Form

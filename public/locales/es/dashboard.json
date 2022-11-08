@@ -81,7 +81,9 @@
     "file-upload": "El archivo no debe tener más de 10 MB. Solo se permiten los tipos de archivo PDF, SCV",
     "error-file-format": "El formato de archivo es incorrecto.",
     "error-file-size": "El tamaño del archivo debe ser inferior a 10mb.",
-    "total-size": "Tamaño total de {{size}}"
+    "total-size": "Tamaño total de {{size}}",
+    "invalid-url": "URL no válida, el enlace esperado debe contener: {{url}}",
+    "url-is-required": "La URL es obligatoria"
   },
   "modalInfo": {
     "title": "Estado de revisión",
