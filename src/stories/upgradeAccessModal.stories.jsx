@@ -17,4 +17,5 @@ const Component = (args) => <UpgradeAccessModal storySettings={{...args}} />;
 export const Default = Component.bind({});
 Default.args = {
   isOpen: true,
+  image: '/app/static/images/meeting.png'
 };
