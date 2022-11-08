@@ -6,7 +6,6 @@ import Link from '../common/components/NextChakraLink';
 import getMarkDownContent from '../common/components/MarkDownParser/markdown';
 import MarkDownParser from '../common/components/MarkDownParser';
 import GridContainer from '../common/components/GridContainer';
-import UpgradeAccessModal from '../common/components/UpgradeAccessModal';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'about-us');
@@ -94,7 +93,6 @@ const AboutUs = ({ data }) => {
           <MarkDownParser content={data} />
         </Box>
       </Box>
-      <UpgradeAccessModal open />
     </GridContainer>
   );
 };
