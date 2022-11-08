@@ -378,7 +378,7 @@ export const ButtonHandlerByTaskStatus = ({
                 onSubmit={() => {
                   setIsSubmitting(true);
                   if (githubUrl !== '') {
-                    const haveGithubDomain = regexUrlExists ? githubUrl.includes(currentAssetData?.validate_regex_url) : isGithubUrl.test(githubUrl);
+                    const haveGithubDomain = isGithubUrl.test(githubUrl);
 
                     if (!haveGithubDomain && !regexUrlExists) {
                       setShowUrlWarn(true);
