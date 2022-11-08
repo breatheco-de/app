@@ -6,6 +6,7 @@ import Link from '../common/components/NextChakraLink';
 import getMarkDownContent from '../common/components/MarkDownParser/markdown';
 import MarkDownParser from '../common/components/MarkDownParser';
 import GridContainer from '../common/components/GridContainer';
+import UpgradeAccessModal from '../common/components/UpgradeAccessModal';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'about-us');
@@ -47,32 +48,6 @@ export const getStaticProps = async ({ locale, locales }) => {
 const AboutUs = ({ data }) => {
   const { colorMode } = useColorMode();
   const { t } = useTranslation(['common']);
-
-  const markdownText = `
-  # About 4Geeks
-  Our goal is to empower talent with code by providing flexible educational experiences, we want to be the most relevant career-boosting community for future and present coders.
-
-  ## Why coding?
-
-  Embracing the world of coding opens a new world of opportunities for talents, from Web Development to Blockchain, Robotics or AI/Machine Learning.
-
-  <onlyfor permission="read_private_lesson">
-    # Hello World
-    This content was blocked
-
-    - \`read_private_lesson\`
-    - user account
-    - role access
-  </onlyfor>
-
-  ## Cornerstones
-
-  - Content
-  - Community
-  - Collaboration
-  - Support
-  # About 4Geeks
-  `;
 
   return (
     <GridContainer
@@ -116,9 +91,10 @@ const AboutUs = ({ data }) => {
           className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
           transition="background .2s ease"
         >
-          <MarkDownParser content={markdownText || data} />
+          <MarkDownParser content={data} />
         </Box>
       </Box>
+      <UpgradeAccessModal open />
     </GridContainer>
   );
 };

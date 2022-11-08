@@ -12,6 +12,7 @@ module.exports = {
   ],
   webpackFinal: async (config) => ({
     ...config,
+    node: { ...config.node, fs: 'empty' },
     resolve: {
       ...config.resolve,
       alias: {
