@@ -72,7 +72,7 @@ const UpgradeAccessModal = ({
               <Text size="18px" color="blue.default" textAlign="center" fontWeight={700}>
                 {finance?.description}
               </Text>
-              <Box as="ul" style={{ listStyle: 'none' }} display="flex" flexDirection="column" gridGap="12px" mt="18px">
+              <Box as="ul" style={{ listStyle: 'none' }} display="flex" flexDirection="column" gridGap="12px" margin="18px 0 0 2.6rem">
                 {selectedItem?.bullets?.list?.map((bullet) => (
                   <Box as="li" key={bullet?.title} display="flex" flexDirection="row" lineHeight="24px" gridGap="14px">
                     <Icon icon="checked2" color="#38A56A" width="16px" height="13px" style={{ margin: '6px 0 0 0' }} />
