@@ -81,7 +81,9 @@
     "file-upload": "Single upload file should not be more than 10 MB. Only the PDF, SCV file types are allowed",
     "error-file-format": "File format is not correct.",
     "error-file-size": "File size must be less than 10mb.",
-    "total-size": "Total size {{size}}"
+    "total-size": "Total size {{size}}",
+    "invalid-url": "Invalid URL, expected link must contain: {{url}}",
+    "url-is-required": "URL is required"
   },
   "modalInfo": {
     "title": "Review status",
