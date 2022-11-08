@@ -1,0 +1,147 @@
+{
+  "seo": {
+    "title": "Dashboard"
+  },
+  "title": "Tus noticias",
+  "moduleMap": "Mapa de módulos",
+  "backToChooseProgram": "Volver a elegir programa",
+  "progressText": "Progreso en el programa",
+  "whiteLabeledText": "Este curso es traído a ti gracias a nuestra alianza con esta universidad.",
+  "modules": {
+    "target-blank-title": "Abrir en nueva ventana",
+    "target-blank-msg": "\"{{title}}\" abrirá la siguiente URL en una nueva ventana",
+    "search-not-found": "No se encontraron coincidencias para esta búsqueda",
+    "show-pending-tasks": "Mostrar Tareas Pendientes",
+    "activitiesLength": "{{count}} Actividades",
+    "newActivities": {
+      "title": "¡Oye! Hay {{tasksLength}} nuevas actividades en este día",
+      "handler-text": "Sincronizar ahora"
+    },
+    "start-message": "No has iniciado este módulo",
+    "no-activities": "No hay actividades para este módulo",
+    "start-module": "Iniciar módulo"
+  },
+  "callToAction": {
+    "title": "¡Clase de hoy!",
+    "description": "Tu clase de hoy es ",
+    "buttonText": "Comenzar módulo de hoy"
+  },
+  "cohortSideBar": {
+    "title": "Acerca de tu cohorte",
+    "cohort": "Tu Cohorte",
+    "last-date": "Última fecha:",
+    "start-date": "Fecha de inicio:",
+    "mainTeacher": "Profesor principal",
+    "assistant": "Profesores asistentes",
+    "classmates": "Tus compañeros",
+    "active-classmates": "{{studentsLength}} Compañeros",
+    "active-geeks": "{{studentsLength}} Geeks Activos",
+    "alumni-geeks": "{{studentsLength}} Exalumnos",
+    "show-more": "Más estudiantes",
+    "show-less": "Ocultar estudiantes",
+    "no-teachers": "Esta cohorte aún no tiene maestros",
+    "no-assistant": "Esta cohorte aún no tiene profesores asistentes",
+    "no-students": "Esta cohorte aún no tiene estudiantes",
+    "no-active-students": "Esta cohorte aún no tiene estudiantes activos",
+    "no-graduated-students": "Esta cohorte aún no tiene estudiantes graduados"
+  },
+  "supportSideBar": {
+    "title": "No te quedes atascado",
+    "description": "¿Sabías que puedes programar sesiones de mentoría en cualquier momento o preguntar en el Chat de soporte?",
+    "no-mentors": "No hay mentores disponibles",
+    "no-mentor-link": "No hay enlace para crear sesión con este mentor",
+    "search-mentor": "Buscar mentor por nombre",
+    "start-mentorship": "Para comenzar, seleccione un tipo de tutoría",
+    "mentoring": "Tutoría",
+    "select-type": "Seleccione un tipo de tutoría",
+    "mentoring-available": "Tutorías disponibles",
+    "no-mentoring-available": "No tienes tutorías disponibles.",
+    "create-session-text": "Agendar ahora",
+    "actionButtons": [
+      {
+        "name": "mentoring",
+        "title": "Programar sesión de mentoría",
+        "href": "#",
+        "icon": "conversation"
+      },
+      {
+        "name": "support",
+        "title": "Preguntar en el chat de soporte",
+        "href": "https://4geeksacademy.slack.com",
+        "icon": "slack"
+      }
+    ]
+  },
+  "deliverProject": {
+    "title": "Entregar tarea",
+    "how-to-deliver": "Cómo entregar proyectos",
+    "how-to-deliver-text": "Envíe una URL de Github que apunte a su proyecto como un repositorio de Github. <a class='link' target='blank' href='{{link}}'>Cómo entregar proyectos</a>",
+    "handler-text": "Entregar proyecto",
+    "mandatory-message": "Tienes {{count}} proyectos obligatorios para completar antes de graduarte",
+    "file-upload": "El archivo no debe tener más de 10 MB. Solo se permiten los tipos de archivo PDF, SCV",
+    "error-file-format": "El formato de archivo es incorrecto.",
+    "error-file-size": "El tamaño del archivo debe ser inferior a 10mb.",
+    "total-size": "Tamaño total de {{size}}",
+    "invalid-url": "URL no válida, el enlace esperado debe contener: {{url}}",
+    "url-is-required": "La URL es obligatoria"
+  },
+  "modalInfo": {
+    "title": "Estado de revisión",
+    "still-reviewing": "Tu profesor todavía está revisando tu entrega, te dará su opinión una vez que esté lista.",
+    "approved": "¡Tu profesor ha aprobado con éxito tu proyecto!",
+    "files-sended-to-teacher": "",
+    "rejected": {
+      "title": "Tu profesor ha rechazado tu proyecto",
+      "teacher-feedback": "Comentario del profesor:",
+      "remove-delivery": "Eliminar entrega",
+      "resubmit-assignment": "Reenviar proyecto"
+    },
+    "link-info": "",
+    "remove-delivery": "Quitar entrega",
+    "non-github-url": {
+      "title": "No se ha detectado URL de Github",
+      "description": "Por lo general, los proyectos se entregan a través de Github, ¿está seguro de que desea enviar una URL externa a Github?",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar"
+    }
+  },
+  "warningModal" : {
+    "title": "Sincronizar con github",
+    "sub-title": "Tu cuenta de Github no está conectada",
+    "text": "Sólo conectando tu cuenta de Github podrás acceder a horas ilimitadas de Gitpod",
+    "connect": "CONECTAR CON GITHUB",
+    "skip": "Saltar por ahora"
+  },
+  "unsynced": {
+    "title": "Hay {{taskLength}} tareas de cohorte no sincronizadas",
+    "description": "Estas tareas pueden eliminarse y perderse en el futuro. Asegúrate de sincronizarlos si no quieres perderlos.",
+    "unsync": "Eliminar",
+    "sync": "Sincronizar con la cohorte actual",
+    "reject-unsync-title": "Confirma tu acción para rechazar todas las tareas no sincronizadas",
+    "confirm": "Confirmar",
+    "cancel": "Cancelar"
+  },
+  "attendance-modal": {
+    "start-today-class": "Empezar la clase de hoy",
+    "select-students": "Selecciona los alumnos presentes en la clase",
+    "showing-students-with-active-educational-status": "Solo se muestran alumnos con estatus educativo activo",
+    "apply-changes": "Aplicar cambios",
+    "students-selected": "{{count}} alumnos seleccionados",
+    "student-selected": "{{count}} alumno seleccionado",
+    "day": "Día",
+    "module": "Módulo",
+    "attendance-taken-table-message": "Esta información se muestra en base a la última asistencia emitida del día seleccionado, con fecha emitida en horario UTC",
+    "list-attendance-title": "Lista de asistencia tomada ({{count}} resultados)",
+    "warn-premature-teaching": {
+      "title": "Inicio prematuro del módulo",
+      "description": "¿Estás seguro de que quieres comenzar a enseñar <strong>{{module}}</strong>? La duración sugerida para el módulo anterior es de {{durationInDays}} días y <strong>solo ha cubierto {{day}} días.</strong>"
+    }
+  },
+  "teacher-sidebar": {
+    "actions": "Acciones",
+    "take-attendancy": "Tomar asistencia",
+    "review-attendancy": "Revisar asistencia",
+    "assignments": "Tareas",
+    "teacher-tutorial": "Tutorial de profesor"
+  }
+}

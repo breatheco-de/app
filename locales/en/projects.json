@@ -1,0 +1,26 @@
+{
+  "seo": {
+    "title": "Projects",
+    "description": "A place to work new projects and improve your knowledge about coding programming.",
+    "keywords": ["interactive coding projects", "projects"],
+    "image": "{{domain}}/static/images/4geeks.png"
+  },
+  "title": "Projects",
+  "search": "Search Projects",
+  "filter": "Filter",
+  "filters": "Filters",
+  "description": "Practice and develop your coding skills by building real live interactive autograded projects with solutions and video tutorials",
+  "backToProjects": "Back to Projects",
+  "table": {
+    "title": "Goal",
+    "description": "4Geeks Coding Projects tutorials and exercises for people learning to code or improving their coding skills"
+  },
+  "landing-technology": {
+    "title": "Practice {{technology}} building interactive projects",
+    "subTitle": "What to build with {{technology}}"
+  },
+  "share-certificate": {
+    "title": "Share your progress",
+    "share-via": "You have finished the project {{project}}, every project you finish is worth celebrating, share your progress via:"
+  }
+}

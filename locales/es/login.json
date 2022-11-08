@@ -1,0 +1,12 @@
+{
+  "seo": {
+    "title": "Iniciar sesión en 4Geeks",
+    "description": "Inicia sesión en 4Geeks y disfruta de todas las funcionalidades que ofrecemos.",
+    "keywords": ["inicia sesion en 4Geeks", "inicio de sesion", "registrar", "crear cuenta"]
+  },
+  "login-with-github": "Iniciar sesión con Github",
+  "or": "o",
+  "forgot-password": "¿Has olvidado tu contraseña?",
+  "login": "Ingresar",
+  "register": "Registrarse"
+}

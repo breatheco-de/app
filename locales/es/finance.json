@@ -1,0 +1,141 @@
+{
+  "coding-introduction": "Introducción a la codificación",
+  "full-stack": "Full Stack",
+  "software-engineering": "Ingeniería de software",
+  "description": "Actualice su membresía para acceder a todos los beneficios de la comunidad 4Geeks",
+  "button": {
+    "title": "Actualizar plan",
+    "link": "#upgrade-plan"
+  },
+  "plans": [
+    {
+      "type": "pro",
+      "show": true,
+      "title": "Pago único",
+      "price": "$199",
+      "payment": "Pago único",
+      "lastPrice": "<s>$399</s>",
+      "offerTitle": "Oferta limitada",
+      "description": "Acceso completo a todas las funciones durante la duración del curso.",
+      "bullets": {
+        "title": "Lo que obtendrás",
+        "list": [
+          {
+            "title": "Acceso ilimitado a clases magistrales grupales"
+          },
+          {
+            "title": "Unlimited access to workshops"
+          },
+          {
+            "title": "Acceso ilimitado al contenido del curso"
+          },
+          {
+            "title": "Certificado avalado por líderes de la industria"
+          }
+        ]
+      }
+    },
+    {
+      "type": "trial",
+      "show": true,
+      "title": "Prueba gratis",
+      "price": "Prueba Gratis",
+      "payment": "Expira en 7 días",
+      "lastPrice": "",
+      "description": "No se necesita tarjeta. Acceso completo a todas las funciones durante 7 días",
+      "bullets": {
+        "title": "Lo que obtendrás",
+        "list": [
+          {
+            "title": "1 sesión de mentoría al mes."
+          },
+          {
+            "title": "Acceso limitado a los talleres."
+          },
+          {
+            "title": "Acceso al módulo 1 de la cohorte."
+          }
+        ]
+      }
+    },
+  
+    {
+      "type": "schoolarship-t1",
+      "show": true,
+      "title": "scholarship level 1",
+      "price": "$70",
+      "payment": "3 meses",
+      "highlightText": "",
+      "description": "Acceso completo a todas las funciones durante la duración del curso.",
+      "bullets": {
+        "title": "Lo que obtendrás",
+        "list": [
+          {
+            "title": "scholarship level 1 - featured 1"
+          },
+          {
+            "title": "scholarship level 1 - featured 2"
+          },
+          {
+            "title": "scholarship level 1 - featured 3"
+          },
+          {
+            "title": "scholarship level 1 - featured 4"
+          }
+        ]
+      }
+    },
+    {
+      "type": "schoolarship-t2",
+      "show": true,
+      "title": "scholarship level 2",
+      "price": "$50",
+      "payment": "5 meses",
+      "highlightText": "",
+      "description": "Acceso completo a todas las funciones durante la duración del curso.",
+      "bullets": {
+        "title": "Lo que obtendrás",
+        "list": [
+          {
+            "title": "scholarship level 2 - featured 1"
+          },
+          {
+            "title": "scholarship level 2 - featured 2"
+          },
+          {
+            "title": "scholarship level 2 - featured 3"
+          },
+          {
+            "title": "scholarship level 2 - featured 4"
+          }
+        ]
+      }
+    },
+    {
+      "type": "schoolarship-trial",
+      "show": true,
+      "title": "Prueba gratis",
+      "price": "7 días de prueba",
+      "payment": "Expira en 7 días",
+      "highlightText": "",
+      "description": "No se necesita tarjeta. Acceso completo a todas las funciones durante 7 días",
+      "bullets": {
+        "title": "Lo que obtendrás",
+        "list": [
+          {
+            "title": "Free trial - featured 1"
+          },
+          {
+            "title": "Free trial - featured 2"
+          },
+          {
+            "title": "Free trial - featured 3"
+          },
+          {
+            "title": "Free trial - featured 4"
+          }
+        ]
+      }
+    }
+  ]
+}

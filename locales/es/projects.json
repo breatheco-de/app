@@ -1,0 +1,26 @@
+{
+  "seo": {
+    "title": "Proyectos",
+    "description": "Un lugar para trabajar con nuevos proyectos y mejorar tus conocimientos sobre la programación.",
+    "keywords": ["codificación de proyectos interactiva", "proyectos"],
+    "image": "{{domain}}/static/images/4geeks.png"
+  },
+  "title": "Proyectos",
+  "search": "Buscar Proyectos",
+  "filter": "Filtro",
+  "filters": "Filtros",
+  "description": "Practica y desarrolla tus habilidades de codificación mediante la creación de proyectos autograduados interactivos reales en vivo con soluciones y video tutoriales",
+  "backToProjects": "Volver a Proyectos",
+  "table": {
+    "title": "Meta",
+    "description": "Tutoriales y ejercicios de 4Geeks Coding Projects para personas que están aprendiendo a codificar o mejorando sus habilidades de codificación"
+  },
+  "landing-technology": {
+    "title": "Practica {{technology}} construyendo proyectos interactivos",
+    "subTitle": "Qué construir con {{technology}}"
+  },
+  "share-certificate": {
+    "title": "Comparte tu progreso",
+    "share-via": "Has terminado el proyecto de {{project}}, vale la pena celebrar cada proyecto que termines, comparte tu progreso a través de:"
+  }
+}

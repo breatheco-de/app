@@ -1,0 +1,111 @@
+{
+  "copyright": "©4Geeks Academy LLC 2019",
+  "search":"Search in 4Geeks",
+  "subscribe": "Subscribe for more!",
+  "newsletter": {
+    "success": "Amazing! You have successfully joined, stay tuned for upcoming information soon 😁",
+    "error": "Something went wrong"
+  },
+  "newsletterSucces": "Amazing! You have successfully joined, stay tuned for upcoming information soon 😁",
+  "privacy": {
+    "label": "Privacy policies",
+    "href": "#"
+  },
+  "cookies": {
+    "label": "Cookies policies",
+    "href": "#"
+  },
+  "terms": {
+    "label": "Terms & Conditions",
+    "href": "#"
+  },
+  "company":{
+    "title":"COMPANY",
+    "items": [
+      {
+        "label": "ABOUT US",
+        "href": "/about-us"
+      },
+      {
+        "label":"CONTACT",
+        "href": "#"
+      },
+      {
+        "label":"MEDIA KIT",
+        "href": "#"
+      }
+    ]
+  },
+  "learning":{
+    "title":"LEARNING LIBRARY",
+    "items": [
+      {
+        "label": "Read and watch",
+        "href": "/lessons"
+      },
+      {
+        "label": "Practice interactively",
+        "href": "/interactive-exercises"
+      },
+      {
+        "label": "Build projects",
+        "href": "/interactive-coding-tutorials"
+      },
+      {
+        "label": "how to’s?",
+        "href": "/how-to"
+      }
+    ]
+  },
+  "community":{
+    "title":"4GEEKS COMMUNITY",
+    "items":[
+      {
+        "label": "Workshops and events",
+        "href": "#"
+      },
+      {
+        "label": "Live Mentorships",
+        "href": "#"
+      },
+      {
+        "label": "Social & Live Learning",
+        "href": "#"
+      },
+      {
+        "label": "Code of conduct?",
+        "href": "#"
+      }
+    ]
+  },
+  "social":{
+    "title":"SOCIAL & LIVE LEARNING",
+    "text":"The most efficient way to learn: Join a cohort with classmates like yourself, live streamings, coding jam sessions, live mentorships with real experts and keep the motivation."
+  },
+  "iconogram":[
+    {
+      "title": "Intro to coding",
+      "icon": "coding",
+      "text": "From zero to getting paid as a developer, learn the skills of the present and future. Boost your professional career and get hired by a tech company.",
+      "href": "/learn-to-code"
+    },
+    {
+      "title": "Data Science",
+      "icon": "data-science",
+      "text": "Start a career in data science and analytics. A hands-on approach with interactive exercises, chat support, and access to mentorships.",
+      "href": "#"
+    },
+    {
+      "title": "30daysofgeekcoding",
+      "icon": "geekcoding",
+      "text": "Keep your motivation with this 30 day challenge. Join hundreds of other developers coding a little every day.",
+      "href": "#"
+    },
+    {
+      "title": "A.I. & machine learning",
+      "icon": "machine-learning",
+      "text": "Start with Python and Data Science, Machine Learning, Deep Learning and maintaining a production environment in A.I.",
+      "href": "#"
+    }
+  ]
+}

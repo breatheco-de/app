@@ -1,0 +1,43 @@
+{
+  "back-to": "Volver al Dashboard",
+  "title": "Asignaciones",
+  "status": {
+    "delivered": "Entregado",
+    "approved": "Aprobado",
+    "rejected": "Rechazado",
+    "undelivered": "No entregado"
+  },
+  "label": {
+    "status": "Estado",
+    "student-and-assignments": "Alumno y asignaciones",
+    "link": "Enlace/Archivos",
+    "actions": "Acciones",
+    "files-received": "{{files}} Archivos entregados",
+    "link-received": "Enlace entregado"
+  },
+  "filter": {
+    "project": "Filtrar por proyecto",
+    "student": "Filtrar por Estudiante",
+    "status": "Filtrar por Estado",
+    "assignments-length": "Lista actual de {{total}} asignaciones"
+  },
+  "task-handler": {
+    "review": "Revisar",
+    "deliver": "Entregar",
+    "undo-approval": "Deshacer acción"
+  },
+  "deliver-assignment": {
+    "title": "Entregar tarea",
+    "label": "URL de entrega única",
+    "hint": "Comparte el enlace con el estudiante",
+    "button": "Ignorar tarea",
+    "copy": "Copiar enlace",
+    "copied": "¡Copiado!"
+  },
+  "review-assignment": {
+    "title": "Revisión de asignación",
+    "reject": "Rechazar",
+    "approve": "Aprobar",
+    "comment-placeholder": "Comentario o retroalimentación para el estudiante (opcional)"
+  }
+}

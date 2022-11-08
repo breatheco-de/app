@@ -1,0 +1,18 @@
+{
+  "seo": {
+    "title": "4Geeks - How to",
+    "description": "Section where you can see guides on various topics related to programming",
+    "keywords": ["programming bootcamp", "programming course", "professional mentoring"],
+    "image": "{{domain}}/static/images/coding-notebook.png"
+  },
+  "title": "How To's",
+  "search": "Search publication",
+  "description": "",
+  "written-by": "Written by:",
+  "back-to": "Back to How to's",
+  "landing-technology": {
+    "title": "Learn How to do with {{technology}}",
+    "subTitle": "How to's about {{technology}}",
+    "description": "The following lessons explain different programming concepts and have been published by members of BreatheCode, now 4Geeks"
+  }
+}

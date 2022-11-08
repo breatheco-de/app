@@ -1,0 +1,18 @@
+{
+  "seo": {
+    "title": "4Geeks - Cómo hacerlo",
+    "description": "Sección donde podrás ver guias sobre diversos temas relacionados a la programación",
+    "keywords": ["bootcamp de programación", "curso de programación", "tutoría profesional"],
+    "image": "{{domain}}/static/images/coding-notebook.png"
+  },
+  "title": "Cómo hacerlo",
+  "search": "Buscar publicación",
+  "description": "",
+  "written-by": "Escrito por:",
+  "back-to": "Volver a Cómo hacerlo",
+  "landing-technology": {
+    "title": "Aprende que hacer con {{tecnología}}",
+    "subTitle": "Que hacer con {{tecnología}}",
+    "description": "Las siguientes lecciones explican diferentes conceptos de programación y han sido publicadas por miembros de BreatheCode, ahora 4Geeks"
+  }
+}

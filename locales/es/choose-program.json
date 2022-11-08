@@ -1,0 +1,23 @@
+{
+  "seo": {
+    "title": "Elegir programa"
+  },
+  "title": "Tus Programas",
+  "invite": {
+    "notify": "¡Oye! Hay {{cohortInvitationWord}} para ti.",
+    "plural-word": "{{invitesLength}} nuevas invitaciones de cohorte",
+    "singular-word": "{{invitesLength}} nueva invitacion de cohorte",
+    "show": "mostrar invitaciones",
+    "hide": "ocultar invitaciones",
+    "accept": "Aceptar"
+  },
+  "finished": {
+    "plural": "Hay {{finishedCohorts}} programas que ya has terminado.",
+    "singular": "Hay {{finishedCohorts}} programa que ya has terminado.",
+    "show": "Haga clic aquí para mostrarlas",
+    "hide": "Haga clic aquí para ocultarlas"
+  },
+  "roles-info": "Los Roles solo se muestran en el modo de desarrollo",
+  "launch-program": "Elegir este programa",
+  "description": "Estos son los programas en los que estás participando actualmente, selecciona el curso en el que quieras entrar:"
+}

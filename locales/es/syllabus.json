@@ -1,0 +1,20 @@
+{
+  "title": "Lessons",
+  "module-not-started": "Aún no has iniciado este módulo",
+  "edit-page": "Editar en Github",
+  "no-modules-to-show": "No hay módulos para mostrar",
+  "open-google-collab": "Abrir en Google Collab",
+  "next-page": "Siguiente página",
+  "previous-page": "Anterior página",
+  "ask-to-done": "¿Te gustaría marcar este \"{{taskType}}\" como completado antes de continuar?",
+  "mark-later": "Marcar luego",
+  "blank-page": "Este contenido no se puede visualizar dentro de <a href='/'>4Geeks.com</a>, please <a href='{{url}}' target='_blank' rel='noopener noreferrer'>Haga clic aquí</a> para abrirlo en una nueva ventana",
+  "teacherSidebar": {
+    "instructions": "Instrucciones",
+    "back-to-student-mode": "Volver a modo estudiante",
+    "module-duration": "⏰ Duración: \"{{duration}}\" dias.",
+    "alert-updated-module-instructions": "Actualmente viendo instrucciones de un módulo que no corresponde a la lección seleccionada",
+    "no-teacher-instructions-found": "No se encontraron instrucciones para el módulo actual",
+    "key-concepts": "Conceptos clave"
+  }
+}

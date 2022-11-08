@@ -1,0 +1,14 @@
+{
+  "seo": {
+    "title": "Sign in to 4Geeks",
+    "description": "Sign in to 4Geeks and enjoy all the features we offer.",
+    "keywords": ["login to 4Geeks", "login", "register", "create account"]
+  },
+  "login-with-github": "Log in with Github",
+  "or": "or",
+  "password": "Contraseña",
+  "confirm-password": "Confirm Password",
+  "forgot-password": "Forgot password?",
+  "login": "Login",
+  "register": "Register"
+}

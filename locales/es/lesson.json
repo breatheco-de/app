@@ -1,0 +1,16 @@
+{
+  "seo": {
+    "title": "Lección | 4Geeks",
+    "keywords": ["Lesson"],
+    "description": "La misión de 4geeks es acelerar la forma en que los desarrolladores de software aprenden y evolucionan.",
+    "image": "{{domain}}/static/images/image1.png"
+  },
+  "backToLessons": "Regresar a lecciones",
+  "title": "Lecciones",
+  "search": "Buscar lección",
+  "description": "Las siguientes lecciones explican diferentes conceptos de programación y han sido publicadas por miembros de BreatheCode, ahora 4Geeks, busca una lección en particular usando los filtros",
+  "landing-technology": {
+    "title": "Lecturas y lecciones sobre {{technology}}",
+    "subTitle": "Lecturas sobre {{technology}}"
+  }
+}

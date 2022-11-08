@@ -1,0 +1,15 @@
+{
+  "seo": {
+    "title": "4Geeks",
+    "description": "4Geeks's mission is to accelerate the way software developers learn and evolve.",
+    "keywords": ["programming bootcamp", "programming course", "learn and evolve"],
+    "image": "{{domain}}/static/images/4geeks.png"
+  },
+  "welcome": "Welcome to",
+  "title": "Meet. Learn. Network",
+  "sub_title": "Join 24/7",
+  "join": "Join",
+  "description": "Junior and senior developers in the coding revolution",
+  "sendButton": "Join the waiting list",
+  "followUs": "Follow us"
+}

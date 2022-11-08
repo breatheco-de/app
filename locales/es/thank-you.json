@@ -1,0 +1,28 @@
+{
+  "seo": {
+    "title": "Gracias"
+  },
+  "title": "¡Felicidades!",
+  "you-are-in-waiting-list": "Estás en la lista de espera.",
+  "get-ready-to-learn": "Prepárate para la nueva forma de aprender.",
+  "share-on-social-media": "¡Comparte tu posición en la lista en las redes sociales!",
+  "motivation-phrase": "Quién sabe, ¿tal vez te lleve a las primeras posiciones?",
+  "share-social": [
+    {
+      "icon": "twitter",
+      "link": "https://twitter.com/share?url=&text=Me acabo de unir a la lista de espera de 4Geeks.com, una nueva forma de aprender en comunidad y en vivo."
+    },
+    {
+      "icon": "facebook",
+      "link": "https://facebook.com/sharer?u=https://4geeks.com"
+    },
+    {
+      "icon": "instagram",
+      "link": "https://instagram.com/4geeksacademy"
+    },
+    {
+      "icon": "linkedin",
+      "link": "https://linkedin.com/sharing/share-offsite/?url=https://4geeks.com"
+    }
+  ]
+}

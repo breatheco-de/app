@@ -1,0 +1,15 @@
+{
+  "seo": {
+    "title": "4Geeks",
+    "description": "La misión de 4geeks es acelerar la forma en que los desarrolladores de software aprenden y evolucionan.",
+    "keywords": ["bootcamp de programación", "curso de programación", "aprender y evolucionar"],
+    "image": "{{domain}}/static/images/4geeks.png"
+  },
+  "welcome": "Bienvenido a",
+  "title": "Conoce nuestra red de aprendizaje",
+  "sub_title": "Disponibilidad 24/7",
+  "join": "Únete a",
+  "description": "Desarrolladores Junior y senior en la revolución de la codificación",
+  "sendButton": "Enviar solicitud",
+  "followUs": "Síguenos"
+}

@@ -1,0 +1,28 @@
+{
+  "seo": {
+    "title": "Thank you"
+  },
+  "title": "Congratulations!",
+  "you-are-in-waiting-list": "You are on the waiting list.",
+  "get-ready-to-learn": "Get ready for the new way to learn.",
+  "share-on-social-media": "Share your list position on social media!",
+  "motivation-phrase": "Who knows, maybe it will move you to the first positions?",
+  "share-social": [
+    {
+      "icon": "twitter",
+      "link": "https://twitter.com/share?url=&text=I just joined the 4Geeks.com waiting list, a new way to learn in community and live."
+    },
+    {
+      "icon": "facebook",
+      "link": "https://facebook.com/sharer?u=https://4geeks.com"
+    },
+    {
+      "icon": "instagram",
+      "link": "https://instagram.com/4geeksacademy"
+    },
+    {
+      "icon": "linkedin",
+      "link": "https://linkedin.com/sharing/share-offsite/?url=https://4geeks.com"
+    }
+  ]
+}

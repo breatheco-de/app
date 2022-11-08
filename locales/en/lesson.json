@@ -1,0 +1,16 @@
+{
+  "seo": {
+    "title": "Lessons | 4Geeks",
+    "keywords": ["Lesson"],
+    "description": "4Geeks's mission is to accelerate the way software developers learn and evolve.",
+    "image": "{{domain}}/static/images/image1.png"
+  },
+  "backToLessons": "Back to Lessons",
+  "title": "Lesson",
+  "search": "Search lesson",
+  "description": "The following lessons explain different programming concepts and have been published by members of BreatheCode, now 4Geeks, search for a particular lesson using the filters",
+  "landing-technology": {
+    "title": "Readings and lessons about {{technology}}",
+    "subTitle": "Readings about {{technology}}"
+  }
+}

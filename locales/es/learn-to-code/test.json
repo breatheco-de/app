@@ -1,0 +1,171 @@
+{
+  "title": "Prueba",
+  "description": "Learning to code with a group of people that meets every other day",
+  "callToAction": {
+    "title": "Join the next cohort",
+    "href": "/#"
+  },
+  "bullets": [
+    {
+      "text": "Siga un programa estructurado y planifique con.",
+      "icon": "book"
+    },
+    {
+      "text": "Colabora con estudiantes de todo el mundo en tiempo real.",
+      "icon": "book"
+    },
+    {
+      "text": "Tutoría personalizada.",
+      "icon": "book"
+    },
+    {
+      "text": "Salida laboral inmediata.",
+      "icon": "book"
+    }
+  ],
+  "awards": {
+    "title": "¿Por qué confiar en nosotros?",
+    "images": [
+      {
+        "src": "/static/images/awards/exelencia-educativa.png",
+        "width": "153px",
+        "height": "63px"
+      },
+      {
+        "src": "/static/images/awards/switchup.png",
+        "width": "88px",
+        "height": "70px"
+      },
+      {
+        "src": "/static/images/awards/fldoe.png",
+        "width": "155px",
+        "height": "63px"
+      },
+      {
+        "src": "/static/images/awards/newsweek.png",
+        "width": "155px",
+        "height": "63px"
+      },
+      {
+        "src": "/static/images/awards/reviews.png",
+        "width": "155px",
+        "height": "63px"
+      },
+      {
+        "src": "/static/images/awards/winning-syllabus.png",
+        "width": "155px",
+        "height": "63px"
+      }
+    ]
+  },
+  "students": {
+    "title": "Conoce a estudiantes de todo el mundo.",
+    "subTitle": "120 personas tomaron este curso y 63 están en línea ahora mismo",
+    "description": "Algunos de nuestros estudiantes están abiertos a hablar con otros en cualquier momento, al presionar este botón podrá programar una reunión con uno de ellos.",
+    "button": {
+      "title": "Conoce a los desarrolladores en proceso",
+      "link": "#students"
+    }
+  },
+  "mentors": {
+    "title": "Te apoyamos en tu viaje, estés donde estés",
+    "subTitle": "Hay +6 mentores en línea y disponibles en este momento.",
+    "description": "Algunos de nuestros estudiantes están abiertos a hablar con otros en cualquier momento, al presionar este botón podrá programar una reunión con uno de ellos.",
+    "button": {
+      "title": "Programe una sesión de tutoría",
+      "link": "#mentors"
+    },
+    "hint": "Haz clic en cualquier mentor para obtener más información"
+  },
+  "events": {
+    "title": "Llevamos la educación en línea a otro nivel.",
+    "subTitle": "Clases en vivo, sesiones de codificación, talleres y reuniones cada pocas horas",
+    "description": "Durante el trabajo previo, aprenderá algunos CSS y HTML básicos y, con suerte, cómo usar el cuadro flexible para crear diseños simples.",
+    "live": {
+      "title": "Clase en vivo de hoy"
+    },
+    "coding": {
+      "title": "Coding jamming"
+    },
+    "workshop": {
+      "title": "Coding workshop"
+    },
+    "button": {
+      "title": "Únete al próximo evento",
+      "link": "#event"
+    }
+  },
+
+  "previewModules": {
+    "title": "Echa un vistazo a los módulos más relevantes de nuestro bootcamp de programación",
+    "list": [
+      {
+        "title": "HTML/CSS",
+        "description": "Durante el pre-work, aprenderás algo básico de <strong>CSS</strong> y <strong>HTML</strong>,y con suerte aprenderás cómo usar <strong>flex-box</strong> para crear diseños simples. El primer día revisaremos la finalización del trabajo previo e introduciremos un CSS más evolucionado que permite diseños sorprendentes y el increíble marco Bootstrap que hará su vida mucho más fácil con el enfoque \"orientado a componentes\"."
+      },
+      {
+        "title": "Bootstrap",
+        "description": "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing"
+      },
+      {
+        "title": "Github",
+        "description": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution"
+      },
+      {
+        "title": "Git",
+        "description": "classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular"
+      }
+    ],
+    "moreContent": "Ver todo el contenido",
+    "button": {
+      "title": "Inscribete ahora",
+      "link": "#apply"
+    }
+  },
+
+  "pricing": {
+    "title": "Planes y Precios",
+    "list": [
+      {
+        "type": "basic",
+        "title": "Básico",
+        "subTitle": "Prueba gratis",
+        "description": "No se necesita tarjeta de crédito",
+        "bullets": {
+          "title": "Lo que obtendrás",
+          "list": [
+            {
+              "title": "1 sesión de mentoría al mes."
+            },
+            {
+              "title": "Acceso limitado a los talleres."
+            },
+            {
+              "title": "Acceso al módulo 1 de la cohorte."
+            }
+          ]
+        }
+      },
+      {
+        "type": "pro",
+        "title": "Pro",
+        "subTitle": "$199",
+        "description": "<s>$245</s>",
+        "bullets": {
+          "title": "Lo que obtendrás",
+          "list": [
+            {
+              "title": "Acceso ilimitado a clases magistrales grupales"
+            },
+            {
+              "title": "Acceso ilimitado a los talleres."
+            },
+            {
+              "title": "Acceso ilimitado al contenido del curso."
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

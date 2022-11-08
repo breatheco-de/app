@@ -1,0 +1,60 @@
+{
+  "seo": {
+    "title": "Profile"
+  },
+  "basic-profile-info": "Basic Profile Information",
+  "my-certificates": "My Certificates",
+  "view-certificate": "View certificate",
+  "no-certificates": "There are no certificates to show yet, finish your final project and get it immediately",
+  "remove": "Remove",
+  "profile-updated": "Profile Updated",
+  "update-failed": "Something went wrong updating your profile",
+  "connect-github": "Connect with GitHub",
+  "save-changes": "Save changes",
+  "certificate-preview-not-available": "Certificate Preview Not Available",
+  "tabList": [
+    {
+      "title": "Basic Profile Info",
+      "value": "info",
+      "disabled": false
+    },
+    {
+      "title": "My certificates",
+      "value": "certificates",
+      "disabled": false
+    }
+  ],
+  "remove-github-modal": {
+    "title": "Remove Github account",
+    "description": "By removing your Github account, any github login will be unlinked; however, you will be able to sync it again, if you wish"
+  },
+  "share-certificate": {
+    "title": "Share your new career title",
+    "shareText": "Share your new certificate via:",
+    "socials": [
+      {
+        "name": "twitter",
+        "label": "Twitter",
+        "href": "https://twitter.com/share?url=&text=I have successfully finished the {{profession}} certification at 4Geeks.com {{certfLink}}",
+        "color": "#1DA1F2"
+      },
+      {
+        "name": "facebook",
+        "label": "Facebook",
+        "href": "https://facebook.com/sharer?u={{certfLink}}",
+        "color": "#4267B2"
+      },
+      {
+        "name": "linkedin",
+        "label": "LinkedIn",
+        "href": "https://linkedin.com/sharing/share-offsite/?url={{certfLink}}",
+        "color": "#0077B5"
+      }
+    ]
+  },
+  "update-profile-image": {
+    "tooltip-label": "Upload your profile image",
+    "title": "Upload your profile image",
+    "submit-button": "Update profile picture"
+  }
+}

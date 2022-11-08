@@ -1,0 +1,144 @@
+{
+  "login": "Login",
+  "logout": "Logout",
+  "language": "Language",
+  "my-profile": "My Profile",
+  "ITEMS": [
+    {
+      "label": "Dashboard",
+      "private": true,
+      "href": "{{selectedProgramSlug}}"
+    },
+    {
+      "label": "About us",
+      "href": "/about-us"
+    },
+    {
+      "label": "Learning library",
+      "icon": "book",
+      "description": "For all the self-taught geeks out there, here our content library with most of the learning materials we have produces throughout the years.",
+      "asPath": "/read",
+      "subMenu": [
+        {
+          "label": "Read and watch",
+          "asPath": "/read-and-watch",
+          "description": "It makes sense to start learning by reading and watching videos about fundamentals and how things work.",
+          "subMenu": [],
+          "subMenuContent": [
+            {
+              "href": "/lessons",
+              "label": "Search from all Lessons"
+            }
+          ]
+        },
+        {
+          "label": "Practice interactively",
+          "subLabel": "",
+          "description": "Curated list of small interactive and incremental exercises you can take to get better at any coding skill.",
+          "href": "/interactive-exercises",
+          "subMenu": [
+            {
+              "href": "/interactive-exercises",
+              "label": "Start practicing"
+            }
+          ]
+        },
+        {
+          "label": "Build projects",
+          "href": "/interactive-coding-tutorials",
+          "description": "Curated section of projects to build while learning with simple instructions, videos, solutions and more.",
+          "subMenu": [
+            {
+              "href": "/interactive-coding-tutorials",
+              "label": "Start building"
+            }
+          ]
+        },
+        {
+          "label": "How to's?",
+          "href": "/how-to",
+          "description": "Guides on different topics related to the technologies that we teach in our courses",
+          "subMenu": [
+            {
+              "href": "/how-to",
+              "label": "Browse questions"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Social & live learning",
+      "icon": "onlinePeople",
+      "disabled": false,
+      "description": "The most efficient way to learn: Join a cohort with classmates just like you, live streams, impromptu coding sessions, live tutorials with real experts, and stay motivated.",
+      "asPath": "/read",
+      "subMenu": [
+        {
+          "label": "Intro to coding",
+          "asPath": "/learn-to-code",
+          "icon": "coding",
+          "description": "From zero to getting paid as a developer, learn the skills of today and tomorrow. Boost your professional career and be hired by a technology company.",
+          "subMenu": [
+            {
+              "href": "/learn-to-code",
+              "label": "Start Coding"
+            }
+          ]
+        }
+      ],
+      "__comment_submenus__": [
+        {
+          "label": "Data Science",
+          "asPath": "#data-science",
+          "icon": "data-science",
+          "description": "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.",
+          "subMenu": [
+            {
+              "href": "#science",
+              "label": "Browse articles"
+            }
+          ]
+        },
+        {
+          "label": "#30DaysOfGeekCoding",
+          "asPath": "#30DaysOfGeekCoding",
+          "icon": "socialMedia",
+          "description": "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.",
+          "subMenu": [
+            {
+              "href": "#start",
+              "label": "Start building"
+            }
+          ]
+        },
+        {
+          "label": "A.I. & Machine Learning",
+          "asPath": "#machine-learning",
+          "icon": "brain",
+          "description": "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.",
+          "subMenu": [
+            {
+              "href": "#start",
+              "label": "Start learning"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Coding Bootcamp",
+      "href": "https://4geeksacademy.com"
+    }
+  ],
+  "languages": [
+    {
+      "label": "English",
+      "value": "en"
+    },
+    {
+      "label": "Spanish",
+      "value": "es"
+    }
+  ]
+}

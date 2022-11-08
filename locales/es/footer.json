@@ -1,0 +1,112 @@
+{
+  "copyright": "©4Geeks Academy LLC 2019",
+  "search":"Buscar en 4Geeks",
+  "subscribe": "¡Suscríbete para más!",
+  "newsletter": {
+    "success": "¡Genial! Te has unido exitosamente, Mantengase al pendiente para más información pronto 😁",
+    "error": "Algo ha salido mal"
+  },
+  "newsletterSucces": "¡Genial! Te has unido exitosamente, Mantengase al pendiente para más información pronto 😁",
+  "privacy": {
+    "label": "Política de privacidad",
+    "href": "#"
+  },
+  "cookies": {
+    "label": "Política de Cookies",
+    "href": "#"
+  },
+  "terms": {
+    "label": "Términos y condiciones",
+    "href": "#"
+  },
+  "company":{
+    "title":"EMPRESA",
+    "items":[
+      {
+        "label": "NOSOTROS",
+        "href": "/about-us"
+      },
+      {
+        "label":"CONTACTO",
+        "href": "#"
+      },
+      {
+        "label":"MEDIA KIT",
+        "href": "#"
+      }
+    ]
+  },
+  "learning":{
+    "title":"LIBRERÍA DE APRENDIZAJE",
+    "items":[
+      {
+        "label": "Lecturas",
+        "href": "/lessons"
+      },
+      {
+        "label": "Ejercicios de práctica",
+        "href": "/interactive-exercises"
+      },
+      {
+        "label": "Realiza proyectos",
+        "href": "/interactive-coding-tutorials"
+      },
+      {
+        "label": "Preguntas frecuentes",
+        "href": "/how-to"
+      }
+    ]
+  },
+  "community":{
+    "title":"COMUNIDAD DE 4GEEKS",
+    "items":[
+      {
+        "label": "Talleres y eventos",
+        "href": "#"
+      },
+      {
+        "label": "Mentorías en vivo",
+        "href": "#"
+      },
+      {
+        "label": "Aprendizaje social y en vivo",
+        "href": "#"
+      },
+      {
+        "label": "¿Código de conducta?",
+        "href": "#"
+      }
+    ]
+  },
+  "social":{
+    "title":"APRENDIZAJE SOCIAL Y EN VIVO",
+    "text":"La forma más eficiente de aprender: únase a una cohorte con compañeros de clase como usted, transmisiones en vivo, sesiones improvisadas de codificación, tutorías en vivo con expertos reales y mantenga la motivación."
+  },
+  "iconogram":[
+    {
+      "title": "Intro al código",
+      "icon": "coding",
+      "text": "De cero a que te paguen como desarrollador, aprende las habilidades del presente y del futuro. Impulsa tu carrera profesional y sé contratado por una empresa tecnológica.",
+      "href": "/learn-to-code"
+    },
+    {
+      "title": "Ciencia de Datos",
+      "icon": "data-science",
+      "text": "Inicie una carrera en ciencia de datos y análisis. Un enfoque práctico con ejercicios interactivos, soporte por chat y acceso a tutorías.",
+      "href": "#"
+    },
+    {
+      "title": "30daysofgeekcoding",
+      "icon": "geekcoding",
+      "text": "Mantén tu motivación con este desafío de 30 días. Únase a cientos de otros desarrolladores programando un poco todos los días.",
+      "href": "#"
+    },
+    {
+      "title": "I.A. y machine learning",
+      "icon": "machine-learning",
+      "text": "Comience con Python y Data Science, Machine Learning, Deep Learning y mantenga un entorno de producción en A.I.",
+      "href": "#"
+    }
+  ]
+  
+}

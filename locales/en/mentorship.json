@@ -1,0 +1,19 @@
+{
+    "log": "Mentorship Log",
+    "with": "with",
+    "mentorshipSession": "Mentorship Session",
+    "invalidDate": "Session never started",
+    "events": "Events",
+    "noEvents": "No events in this session",
+    "billed": "Billed Time",
+    "details": "Details",
+    "ghostLabel": "Mentee never joined",
+    "mentorLate": "Mentor joined {{time}} late",
+    "extraTime": "Extra time of {{extra}}, the expected duration was {{expected}}",
+    "manyDays": "Many days of extra time, probably it was never closed",
+    "setUpService": "Please setup service for this session",
+    "rate": "Rating:",
+    "modal": {
+        "title": "Mentorship Details"
+    }
+}

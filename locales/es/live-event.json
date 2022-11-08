@@ -1,0 +1,10 @@
+{
+    "title": "Clases en vivo, sesiones de programación, talleres y charlas cada pocas horas.",
+    "learn-more": "Leer más",
+    "live-class": "Clase en vivo de hoy",
+    "started": "Empezó hace {{time}}",
+    "ended": "Terminó hace {{time}}",
+    "few-seconds": "unos instantes",
+    "will-start": "Empezará en {{time}}",
+    "upcoming": "Otros eventos en vivo"
+}

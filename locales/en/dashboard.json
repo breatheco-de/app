@@ -1,0 +1,147 @@
+{
+  "seo": {
+    "title": "Dashboard"
+  },
+  "title": "Your News",
+  "backToChooseProgram": "Back to choose program",
+  "moduleMap": "Module map",
+  "progressText": "progress in the program",
+  "whiteLabeledText": "This course is brought to you thanks to our parnership with this university",
+  "modules": {
+    "target-blank-title": "Open in new window",
+    "target-blank-msg": "\"{{title}}\" will open the following URL on a new window",
+    "search-not-found": "No matches found for this search",
+    "show-pending-tasks": "Show only Pending Tasks",
+    "activitiesLength": "{{count}} Activities",
+    "newActivities": {
+      "title": "Ey! There are {{tasksLength}} new activities on this day",
+      "handler-text": "Sync now"
+    },
+    "start-message": "You have not started this module",
+    "no-activities": "No activities for this modules",
+    "start-module": "Start module"
+  },
+  "callToAction": {
+    "title": "Today's lessons!",
+    "description": "Your lesson today is ",
+    "buttonText": "Start today's module"
+  },
+  "cohortSideBar": {
+    "title": "About your cohort",
+    "cohort": "Your Cohort",
+    "last-date": "Last Date:",
+    "start-date": "Start Date:",
+    "mainTeacher": "Main teacher",
+    "assistant": "Assistant Teachers",
+    "classmates": "Your classmates",
+    "active-classmates": "{{studentsLength}} Classmates",
+    "active-geeks": "{{studentsLength}} Active Geeks",
+    "alumni-geeks": "{{studentsLength}} Alumni Geeks",
+    "show-more": "More students",
+    "show-less": "Hide students",
+    "no-teachers": "This cohort does not have any teachers yet",
+    "no-assistant": "This cohort does not have any assistants yet",
+    "no-students": "This cohort does not have any students yet",
+    "no-active-students": "This cohort does not have any active students yet",
+    "no-graduated-students": "This cohort does not have any graduated students yet"
+  },
+  "supportSideBar": {
+    "title": "Don't Get Stuck",
+    "description": "Did you know you can schedule mentoring sessions any time or ask in the Support Chat?",
+    "no-mentors": "No mentors available",
+    "no-mentor-link": "No link to create session with this mentor",
+    "search-mentor": "Search mentor by name",
+    "start-mentorship": "To get started, select a mentorship type",
+    "mentoring": "Mentoring",
+    "select-type": "Select a type of mentorship",
+    "mentoring-available": "Avalible mentorships",
+    "no-mentoring-available": "You have no mentorships available.",
+    "create-session-text": "Book now",
+    "actionButtons": [
+      {
+        "name": "mentoring",
+        "title": "Schedule mentoring",
+        "href": "#",
+        "icon": "conversation"
+      },
+      {
+        "name": "support",
+        "title": "Ask in support chat",
+        "href": "https://4geeksacademy.slack.com",
+        "icon": "slack"
+      }
+    ]
+  },
+  "deliverProject": {
+    "title": "Deliver assignment",
+    "how-to-deliver": "How to deliver projects",
+    "how-to-deliver-text": "Please submit a Github URL that points to your project as a Github repository. <a class='link' target='blank' href='{{link}}'>How to deliver projects</a>",
+    "handler-text": "Deliver assignment",
+    "mandatory-message": "You have {{count}} mandatory projects to complete before graduation",
+    "file-upload": "Single upload file should not be more than 10 MB. Only the PDF, SCV file types are allowed",
+    "error-file-format": "File format is not correct.",
+    "error-file-size": "File size must be less than 10mb.",
+    "total-size": "Total size {{size}}",
+    "invalid-url": "Invalid URL, expected link must contain: {{url}}",
+    "url-is-required": "URL is required"
+  },
+  "modalInfo": {
+    "title": "Review status",
+    "still-reviewing": "Your teacher is still reviewing your deliver and will provide feedback once it's done",
+    "approved": "Your teacher has successfully approved your project!",
+    "files-sended-to-teacher": "",
+    "rejected": {
+      "title": "Your teacher has rejected your project",
+      "teacher-feedback": "Teacher feedback:",
+      "remove-delivery": "Remove delivery",
+      "resubmit-assignment": "Resubmit assignment"
+    },
+    "link-info": "",
+    "remove-delivery": "Remove delivery",
+    "non-github-url": {
+      "title": "non-github URL detected",
+      "description": "Usually projects are delivered through Github, are you sure you want to submit a non-github URL?",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    }
+  },
+  "warningModal" : {
+    "title": "sincronize with github",
+    "sub-title": "Your Github account is not connected",
+    "text": "Only by conecting your Github account you will be able to get unlimited Gitpod hours",
+    "connect": "CONNECT WITH GITHUB",
+    "skip": "Skip for now"
+  },
+  "unsynced": {
+    "title": "There are {{taskLength}} unsynced cohort tasks",
+    "description": "These tasks may be deleted and lost in the future. Make sure to synch them if you don't want to lose them.",
+    "unsync": "Remove unsynced",
+    "sync": "Sync with current cohort",
+    "reject-unsync-title": "Please confirm your action to reject all unsynced tasks",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
+  "attendance-modal": {
+    "start-today-class": "Start today's class",
+    "select-students": "Select the students in the class",
+    "showing-students-with-active-educational-status": "Only showing students with active educational status",
+    "apply-changes": "Apply changes",
+    "students-selected": "{{count}} students selected",
+    "student-selected": "{{count}} student selected",
+    "day": "Day",
+    "module": "Module",
+    "attendance-taken-table-message": "This information is displayed based on the last assistance issued on the selected day, with the date issued in UTC time.",
+    "list-attendance-title": "Attendance list taken ({{count}} results)",
+    "warn-premature-teaching": {
+      "title": "Premature module start",
+      "description": "Are you sure you want to start teaching <strong>{{module}}</strong>? The suggested duration for the previous module is in {{durationInDays}} days and you have <strong>only covered for {{day}} days.</strong>"
+    }
+  },
+  "teacher-sidebar": {
+    "actions": "Actions",
+    "take-attendancy": "Take attendancy",
+    "review-attendancy": "Review attendancy",
+    "assignments": "Assignments",
+    "teacher-tutorial": "Teacher tutorial"
+  }
+}

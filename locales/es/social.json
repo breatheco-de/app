@@ -1,0 +1,16 @@
+{
+  "content": [
+    {
+      "name": "Github",
+      "link": "https://github.com/breatheco-de",
+      "icon": "github",
+      "available": ["all", "home"]
+    },
+    {
+      "name": "Youtube",
+      "link": "https://www.youtube.com/user/alesanchezr",
+      "icon": "youtube",
+      "available": ["all", "home"]
+    }
+  ]
+}
