@@ -3,6 +3,7 @@ import {
   PopoverArrow, PopoverHeader, PopoverCloseButton, PopoverBody, useDisclosure,
   FormErrorMessage, Box, useColorModeValue, useToast,
 } from '@chakra-ui/react';
+import * as Yup from 'yup';
 import useTranslation from 'next-translate/useTranslation';
 import { Formik, Form, Field } from 'formik';
 import PropTypes from 'prop-types';
@@ -107,7 +108,7 @@ IconByTaskStatus.defaultProps = {
 
 export const ButtonHandlerByTaskStatus = ({
   currentTask, sendProject, changeStatusAssignment, toggleSettings, closeSettings,
-  settingsOpen, allowText, onClickHandler, currentAssetData,
+  settingsOpen, allowText, onClickHandler, currentAssetData, fileData, handleOpen,
 }) => {
   const { t } = useTranslation('dashboard');
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -115,8 +116,6 @@ export const ButtonHandlerByTaskStatus = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [githubUrl, setGithubUrl] = useState('');
-  const [assetData, setAssetData] = useState(null);
-  const [fileData, setFileData] = useState(null);
   const [fileProps, setFileProps] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const fileContainerRef = useRef(null);
@@ -124,7 +123,8 @@ export const ButtonHandlerByTaskStatus = ({
   const commonInputActiveColor = useColorModeValue('gray.800', 'gray.350');
   const taskIsAproved = allowText && currentTask?.revision_status === 'APPROVED';
 
-  const mimeTypes = assetData?.delivery_formats || 'application/pdf,image/png,image/jpeg,image/jpg,image/gif';
+  const regexUrlExists = typeof currentAssetData?.validate_regex_url === 'string';
+  const mimeTypes = currentAssetData?.delivery_formats || 'application/pdf,image/png,image/jpeg,image/jpg,image/gif';
   const maxFileSize = 1048576 * 10; // 10mb
   const fileErrorExists = fileProps.some((file) => file.formatError) || fileProps.some((file) => file.sizeError);
 
@@ -160,30 +160,9 @@ export const ButtonHandlerByTaskStatus = ({
     </Button>
   );
 
-  const handleOpen = async () => {
-    if (currentTask && currentTask?.task_type === 'PROJECT' && currentTask.task_status === 'DONE') {
-      const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
-      if (assetResp && assetResp.status < 400) {
-        const data = await assetResp.data;
-
-        if (!data?.delivery_formats.includes('url')) {
-          const fileResp = await bc.todo().getFile({ id: currentTask.id });
-          const respData = await fileResp.data;
-          setFileData(respData);
-          onOpen();
-        } else {
-          setAssetData(data);
-          onOpen();
-        }
-      } else {
-        onOpen();
-      }
-    }
-  };
-
   const OpenModalButton = () => (
     <Button
-      onClick={() => handleOpen()}
+      onClick={() => handleOpen(() => onOpen())}
       disabled={taskIsAproved}
       display="flex"
       minWidth="26px"
@@ -349,6 +328,13 @@ export const ButtonHandlerByTaskStatus = ({
 
     const fileSumSize = fileProps.reduce((acc, { file }) => acc + file.size, 0);
 
+    const customUrlValidation = Yup.object().shape({
+      githubUrl: Yup.string().matches(
+        currentAssetData?.validate_regex_url,
+        t('deliverProject.invalid-url', { url: currentAssetData?.validate_regex_url }),
+      ).required(t('deliverProject.url-is-required')),
+    });
+
     return (
       <Popover
         id="task-status"
@@ -371,7 +357,7 @@ export const ButtonHandlerByTaskStatus = ({
             borderRadius={allowText ? '3px' : '30px'}
             textTransform={allowText ? 'uppercase' : 'none'}
             gridGap={allowText ? '12px' : '0'}
-            onClick={() => toggleSettings(currentTask.associated_slug)}
+            onClick={() => toggleSettings()}
           >
             {allowText ? (
               <TextByTaskStatus currentTask={currentTask} t={t} />
@@ -392,10 +378,10 @@ export const ButtonHandlerByTaskStatus = ({
                 onSubmit={() => {
                   setIsSubmitting(true);
                   if (githubUrl !== '') {
-                    const getUrlResult = assetData?.validate_regex_url ? !githubUrl.includes(assetData?.validate_regex_url) : !isGithubUrl.test(githubUrl);
-                    const haveGithubDomain = getUrlResult;
-                    if (haveGithubDomain) {
-                      setShowUrlWarn(haveGithubDomain);
+                    const haveGithubDomain = isGithubUrl.test(githubUrl);
+
+                    if (!haveGithubDomain && !regexUrlExists) {
+                      setShowUrlWarn(true);
                     } else {
                       sendProject({ task: currentTask, githubUrl });
                       setIsSubmitting(false);
@@ -403,10 +389,16 @@ export const ButtonHandlerByTaskStatus = ({
                     }
                   }
                 }}
-                validationSchema={validationSchema.projectUrlValidation}
+                validationSchema={regexUrlExists ? customUrlValidation : validationSchema.projectUrlValidation}
               >
                 {() => (
-                  <Form>
+                  <Form
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gridGap: currentAssetData?.delivery_instructions?.length ? '0px' : '14px',
+                    }}
+                  >
                     <Field name="githubUrl">
                       {({ field, form }) => {
                         setGithubUrl(form.values.githubUrl);
@@ -420,7 +412,7 @@ export const ButtonHandlerByTaskStatus = ({
                               _focus={{
                                 color: commonInputActiveColor,
                               }}
-                              placeholder="https://github.com/..."
+                              placeholder="https://..."
                             />
                             <FormErrorMessage marginTop="10px">
                               {form.errors.githubUrl}
@@ -429,8 +421,8 @@ export const ButtonHandlerByTaskStatus = ({
                         );
                       }}
                     </Field>
-                    <Box padding="6px 0 0 0">
-                      {assetData?.delivery_instructions ? (
+                    <Box>
+                      {currentAssetData?.delivery_instructions?.length > 2 ? (
                         <Box
                           height="100%"
                           margin="0 rem auto 0 auto"
@@ -441,14 +433,15 @@ export const ButtonHandlerByTaskStatus = ({
                           width={{ base: '100%', md: 'auto' }}
                           className={`markdown-body ${useColorModeValue('light', 'dark')}`}
                         >
-                          <MarkDownParser content={assetData?.delivery_instructions} />
+                          <MarkDownParser content={currentAssetData?.delivery_instructions} />
                         </Box>
                       ) : (
                         <Box dangerouslySetInnerHTML={{ __html: t('deliverProject.how-to-deliver-text', { link: howToSendProjectUrl }) }} />
                       )}
                     </Box>
                     <Button
-                      mt={4}
+                      // mt={4}
+                      width="fit-content"
                       colorScheme="blue"
                       isLoading={isSubmitting}
                       type="submit"
@@ -460,9 +453,25 @@ export const ButtonHandlerByTaskStatus = ({
               </Formik>
             ) : (
               <Box>
-                <Text size="md">
-                  {t('deliverProject.file-upload')}
-                </Text>
+                {currentAssetData?.delivery_instructions?.length > 2 ? (
+                  <Box
+                    height="100%"
+                    margin="0 rem auto 0 auto"
+                    transition="background 0.2s ease-in-out"
+                    borderRadius="3px"
+                    maxWidth="1280px"
+                    background={useColorModeValue('white', 'dark')}
+                    width={{ base: '100%', md: 'auto' }}
+                    className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+                  >
+                    <MarkDownParser content={currentAssetData?.delivery_instructions} />
+                  </Box>
+                ) : (
+                  <Text size="md">
+                    {t('deliverProject.file-upload')}
+                  </Text>
+                )}
+
                 <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} m="10px 0" width={{ base: 'auto', md: '100%' }} height="86px" position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px" background={featuredColor}>
                   <Box width="100%" height="100%" position="absolute" display="flex" justifyContent="center" alignItems="center" border="1px solid currentColor" cursor="pointer" borderWidth="2px" borderRadius="7px">
                     <Box className="icon-bounce">
@@ -474,7 +483,7 @@ export const ButtonHandlerByTaskStatus = ({
                     name="Upload file"
                     title=""
                     onChange={(event) => handleChangeFile(event)}
-                    accept={assetData?.delivery_formats}
+                    accept={currentAssetData?.delivery_formats}
                     placeholder="Upload profile image"
                     multiple="multiple"
                     position="absolute"
@@ -592,12 +601,16 @@ ButtonHandlerByTaskStatus.propTypes = {
   settingsOpen: PropTypes.bool.isRequired,
   allowText: PropTypes.bool,
   onClickHandler: PropTypes.func,
+  handleOpen: PropTypes.func,
   currentAssetData: PropTypes.objectOf(PropTypes.any),
+  fileData: PropTypes.objectOf(PropTypes.any),
 };
 ButtonHandlerByTaskStatus.defaultProps = {
   currentTask: null,
   allowText: false,
   onClickHandler: () => {},
   currentAssetData: {},
+  fileData: {},
   toggleSettings: () => {},
+  handleOpen: () => {},
 };
