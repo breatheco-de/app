@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import { useState, useRef } from 'react';
 import Icon from '../../common/components/Icon';
 import ModalInfo from './modalInfo';
-import validationSchema from '../../common/components/Forms/validationSchemas';
 import { isGithubUrl } from '../../utils/regex';
 import Text from '../../common/components/Text';
 import bc from '../../common/services/breathecode';
@@ -112,7 +111,6 @@ export const ButtonHandlerByTaskStatus = ({
 }) => {
   const { t } = useTranslation('dashboard');
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [showUrlWarn, setShowUrlWarn] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [githubUrl, setGithubUrl] = useState('');
@@ -123,7 +121,7 @@ export const ButtonHandlerByTaskStatus = ({
   const commonInputActiveColor = useColorModeValue('gray.800', 'gray.350');
   const taskIsAproved = allowText && currentTask?.revision_status === 'APPROVED';
 
-  const regexUrlExists = typeof currentAssetData?.validate_regex_url === 'string';
+  const regexUrlExists = typeof currentAssetData?.delivery_regex_url === 'string';
   const mimeTypes = currentAssetData?.delivery_formats || 'application/pdf,image/png,image/jpeg,image/jpg,image/gif';
   const maxFileSize = 1048576 * 10; // 10mb
   const fileErrorExists = fileProps.some((file) => file.formatError) || fileProps.some((file) => file.sizeError);
@@ -266,12 +264,12 @@ export const ButtonHandlerByTaskStatus = ({
     const handleChangeFile = (event) => {
       setDragOver(false);
       const fileProp = event.currentTarget.files;
-      const formatFileArr = mimeTypes.split(',');
-
+      const formatFileArr = mimeTypes.replaceAll('.', '').split(',');
       if (fileProp.length > 0) {
         Array.from(fileProp).forEach((file) => {
           const { type, name, size } = file;
-          const formatError = !formatFileArr.includes(type);
+          const formatExists = formatFileArr.some((l) => String(type).includes(l));
+          const formatError = !formatExists;
           const sizeError = size > maxFileSize;
           if (fileProps.some((item) => item.name === name)) return;
           setFileProps((prev) => [...prev, {
@@ -330,8 +328,15 @@ export const ButtonHandlerByTaskStatus = ({
 
     const customUrlValidation = Yup.object().shape({
       githubUrl: Yup.string().matches(
-        currentAssetData?.validate_regex_url,
-        t('deliverProject.invalid-url', { url: currentAssetData?.validate_regex_url }),
+        currentAssetData?.delivery_regex_url,
+        t('deliverProject.invalid-url', { url: currentAssetData?.delivery_regex_url }),
+      ).required(t('deliverProject.url-is-required')),
+    });
+
+    const githubUrlValidation = Yup.object().shape({
+      githubUrl: Yup.string().matches(
+        isGithubUrl,
+        t('deliverProject.invalid-url', { url: 'https://github.com/' }),
       ).required(t('deliverProject.url-is-required')),
     });
 
@@ -378,18 +383,12 @@ export const ButtonHandlerByTaskStatus = ({
                 onSubmit={() => {
                   setIsSubmitting(true);
                   if (githubUrl !== '') {
-                    const haveGithubDomain = isGithubUrl.test(githubUrl);
-
-                    if (!haveGithubDomain && !regexUrlExists) {
-                      setShowUrlWarn(true);
-                    } else {
-                      sendProject({ task: currentTask, githubUrl });
-                      setIsSubmitting(false);
-                      onClickHandler();
-                    }
+                    sendProject({ task: currentTask, githubUrl });
+                    setIsSubmitting(false);
+                    onClickHandler();
                   }
                 }}
-                validationSchema={regexUrlExists ? customUrlValidation : validationSchema.projectUrlValidation}
+                validationSchema={regexUrlExists ? customUrlValidation : githubUrlValidation}
               >
                 {() => (
                   <Form
@@ -469,6 +468,7 @@ export const ButtonHandlerByTaskStatus = ({
                 ) : (
                   <Text size="md">
                     {t('deliverProject.file-upload')}
+                    <strong>{currentAssetData?.delivery_formats?.replaceAll(',', ', ').replaceAll('.', '').toUpperCase()}</strong>
                   </Text>
                 )}
 
@@ -562,26 +562,6 @@ export const ButtonHandlerByTaskStatus = ({
                 </Box>
               </Box>
             )}
-
-            <ModalInfo
-              isOpen={showUrlWarn}
-              closeText={t('modalInfo.non-github-url.cancel')}
-              onClose={() => {
-                setShowUrlWarn(false);
-                setIsSubmitting(false);
-              }}
-              title={t('modalInfo.non-github-url.title')}
-              description={t('modalInfo.non-github-url.description')}
-              handlerText={t('modalInfo.non-github-url.confirm')}
-              actionHandler={() => {
-                setShowUrlWarn(false);
-                setIsSubmitting(false);
-                sendProject({ task: currentTask, githubUrl });
-                onClickHandler();
-              }}
-              linkText={t('deliverProject.how-to-deliver')}
-              link={howToSendProjectUrl}
-            />
           </PopoverBody>
         </PopoverContent>
       </Popover>

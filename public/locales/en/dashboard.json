@@ -78,7 +78,7 @@
     "how-to-deliver-text": "Please submit a Github URL that points to your project as a Github repository. <a class='link' target='blank' href='{{link}}'>How to deliver projects</a>",
     "handler-text": "Deliver assignment",
     "mandatory-message": "You have {{count}} mandatory projects to complete before graduation",
-    "file-upload": "Single upload file should not be more than 10 MB. Only the PDF, SCV file types are allowed",
+    "file-upload": "Upload one or more files with no more than 10MB in the following formats: ",
     "error-file-format": "File format is not correct.",
     "error-file-size": "File size must be less than 10mb.",
     "total-size": "Total size {{size}}",
