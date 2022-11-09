@@ -65,8 +65,11 @@ const PopoverHandler = ({ task, githubUrl, haveGithubDomain }) => {
           trigger="click"
         >
           <PopoverTrigger>
-            <Button onClick={() => handleOpen(task)} isLoading={isFetching} width="40px" padding="0" background={backgroundColor}>
-              <Icon icon="arrowDown" width="26px" height="26px" color={hexColor.blueDefault} />
+            <Button onClick={() => handleOpen(task)} isLoading={isFetching} padding="0 2px 0 10px" background={backgroundColor}>
+              <Box display="flex" alignItems="center">
+                <Icon icon="documentVerified" width="24px" height="30px" color={hexColor.blueDefault} />
+                <Icon icon="arrowDown" width="26px" height="26px" color={hexColor.blueDefault} />
+              </Box>
             </Button>
           </PopoverTrigger>
           {assetData && assetData?.delivery_formats && (
