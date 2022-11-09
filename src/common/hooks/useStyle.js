@@ -2,6 +2,7 @@ import { useColorModeValue } from '@chakra-ui/react';
 
 const useStyle = () => {
   const backgroundColor = useColorModeValue('white', 'darkTheme');
+  const backgroundColor2 = useColorModeValue('white', 'gray.700');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const disabledBackgroundColor = useColorModeValue('gray.250', 'gray.600');
   const disabledColor = useColorModeValue('gray.600', 'gray.350');
@@ -13,6 +14,8 @@ const useStyle = () => {
     white2: useColorModeValue('#ffffff', '#283340'),
     danger: useColorModeValue('#CD0000', '#e26161'),
     blueDefault: '#0097CD',
+    yellowDefault: '#FFB718',
+    green: '#38A56A',
   };
   const input = {
     borderColor: useColorModeValue('gray.default', '#CACACA'),
@@ -25,6 +28,7 @@ const useStyle = () => {
 
   return {
     backgroundColor,
+    backgroundColor2,
     borderColor,
     disabledBackgroundColor,
     disabledColor,

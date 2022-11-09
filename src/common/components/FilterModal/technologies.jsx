@@ -1,9 +1,10 @@
 import {
-  Box, Flex, Checkbox, useMediaQuery, Collapse,
-  // Input, InputGroup, InputLeftElement,
+  Box, Flex, Checkbox, useMediaQuery, Collapse, Input, InputGroup, InputLeftElement,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-// import Icon from '../Icon';
+import { useState } from 'react';
+import useStyle from '../../hooks/useStyle';
+import Icon from '../Icon';
 import Text from '../Text';
 
 // eslint-disable-next-line react/prop-types
@@ -18,35 +19,38 @@ const TechnologiesSection = ({
   handleToggle,
   getCheckboxProps,
 }) => {
+  const [technologySearched, setTechnologySearched] = useState('');
+  const { hexColor } = useStyle();
   const [isMobile] = useMediaQuery('(min-width: 1082px)');
+
+  const filteredTechnologies = technologyTags.filter(
+    (technology) => technology.toLowerCase().includes(technologySearched.toLowerCase()),
+  );
+
   return (
     <Flex flexDirection="column" padding="0 0 12px 0" borderBottom={1} borderStyle="solid" borderColor={commonBorderColor}>
-      <Box display="flex" gridGap="8px" justifyContent="space-between" padding="18px 0 18px 0" alignItems="center">
+      <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px" justifyContent="space-between" padding="18px 0" alignItems="center">
         <Text fontSize="1rem" textTransform="uppercase" fontWeight="bold" color={commonTextColor}>
           {title}
         </Text>
-        {/* <InputGroup>
+        <InputGroup w="auto">
           <InputLeftElement
             height="29px"
             pointerEvents="none"
           >
-            <Icon icon="search" width="14px" height="14px" />
+            <Icon icon="search" color={hexColor.black} width="14px" height="14px" />
           </InputLeftElement>
-          <Input type="tel" placeholder="Phone number" height="29px" />
-        </InputGroup> */}
+          <Input type="text" onChange={(e) => setTechnologySearched(e.target.value)} placeholder={t('seach-technology')} style={{ border: `1px solid ${hexColor.black}` }} height="29px" w="290px" borderRadius="48px" />
+        </InputGroup>
 
       </Box>
       <Collapse in={show} startingHeight={technologyTags.length > 4 ? 170 : 38} animateOpacity>
         <Flex
-          // gridTemplateColumns={{
-          //   base: 'repeat(auto-fill, minmax(6rem, 1fr))',
-          //   md: 'repeat(auto-fill, minmax(10rem, 1fr))',
-          // }}
           flexFlow="row wrap"
           padding="5px"
           gridGap="20px"
         >
-          {technologyTags.map((technology) => {
+          {filteredTechnologies.map((technology) => {
             const checkbox = getCheckboxProps({
               value: technology,
               checked: checkedTechnologies.length === 0
@@ -54,7 +58,6 @@ const TechnologiesSection = ({
                 : checkedTechnologies.includes(technology),
               isChecked: false,
             });
-            // console.log('checkbox:::', checkbox);
             return (
               <Box
                 key={technology}
@@ -88,7 +91,7 @@ const TechnologiesSection = ({
           fontSize="14px"
           onClick={handleToggle}
         >
-          {show ? t('common:show-less') : t('common:show-more')}
+          {show ? t('show-less') : t('show-more')}
         </Box>
       </Flex>
       )}
