@@ -12,8 +12,8 @@
     "student-and-assignments": "Student and Assignments",
     "link": "Link/File",
     "actions": "Actions",
-    "files-received": "{{files}} Files received from your Student",
-    "link-received": "Link received from your Student"
+    "files-received": "{{files}} Files delivered",
+    "link-received": "Link delivered"
   },
   "filter": {
     "project": "Filter by Project",
