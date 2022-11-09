@@ -413,6 +413,7 @@ const Assignments = () => {
           margin="0 auto"
           maxWidth="1012px"
           flexGrow={1}
+          overflow="auto"
         >
           <Box
             display="flex"
@@ -421,21 +422,22 @@ const Assignments = () => {
             justifyContent="space-between"
             flexDirection="row"
             alignItems="center"
+            width={{ base: 'max-content', md: 'auto' }}
           >
-            <Text size="15px" display="flex" width="39.6%" fontWeight="700">
+            <Text size="15px" display="flex" width={{ base: '6.8rem', md: '37%' }} fontWeight="700">
               {t('label.status')}
             </Text>
-            <Text size="15px" display="flex" width="100%" fontWeight="700">
+            <Text size="15px" display="flex" width={{ base: '13rem', md: '100%' }} fontWeight="700">
               {t('label.student-and-assignments')}
             </Text>
-            <Text size="15px" display="flex" width="34%" fontWeight="700">
+            <Text size="15px" display="flex" width={{ base: '8.3rem', md: '40%' }} fontWeight="700">
               {t('label.link')}
             </Text>
-            <Text size="15px" display="flex" width="25%" minWidth="115px" fontWeight="700">
+            <Text size="15px" display="flex" width={{ base: '25%', md: '25%' }} minWidth="115px" fontWeight="700">
               {t('label.actions')}
             </Text>
           </Box>
-          <Box display="flex" flexDirection="column" gridGap="18px" overflow={{ base: 'auto', md: 'inherit' }}>
+          <Box display="flex" flexDirection="column" gridGap="18px">
 
             {filteredTasks.length > 0 ? filteredTasks.map((task, i) => {
               const index = i;
