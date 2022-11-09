@@ -103,7 +103,7 @@ const PreviewModules = ({ data }) => {
               />
             ))}
           </Box>
-          <AnimatedButton onClick={() => router.push('#apply')} alignSelf={{ base: 'center', md: 'start' }}>
+          <AnimatedButton onClick={() => router.push(data?.previewModules.button.link)} alignSelf={{ base: 'center', md: 'start' }}>
             {data?.previewModules.button.title}
           </AnimatedButton>
         </Box>
