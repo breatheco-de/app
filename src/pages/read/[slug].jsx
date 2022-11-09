@@ -9,7 +9,6 @@ import Text from '../../common/components/Text';
 import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
 import Link from '../../common/components/NextChakraLink';
-import { devLog } from '../../utils';
 import GridContainer from '../../common/components/GridContainer';
 
 export const getStaticPaths = async ({ locales }) => {
@@ -80,11 +79,11 @@ const Read = ({ data }) => {
   const router = useRouter();
   const { t } = useTranslation('read');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
-  devLog('data:', data);
 
   const containsQueryString = (lesson) => {
-    const lessonTitle = lesson.label.toLowerCase();
-    if (typeof router.query.search === 'string' && !lessonTitle.includes(router.query.search)) return false;
+    if (typeof router.query.search === 'string' && !lesson.lessons.some(
+      (l) => l?.title && l.title?.toLowerCase().includes(router.query.search),
+    )) return false;
     if (lesson?.lessons?.length <= 0) return false;
     return true;
   };

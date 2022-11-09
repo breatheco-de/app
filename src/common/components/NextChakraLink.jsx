@@ -18,13 +18,7 @@ const NextChakraLink = ({
   ...chakraProps
 }) => {
   const router = useRouter();
-  // const { pathname } = router;
-  // const isActive = pathname.startsWith(href);
 
-  // if (isActive) {
-  //   // eslint-disable-next-line no-param-reassign
-  //   chakraProps.className += ' active';
-  // }
   return (
     <NextLink
       passHref
@@ -62,14 +56,14 @@ NextChakraLink.propTypes = {
   onClick: PropTypes.func,
 };
 NextChakraLink.defaultProps = {
-  locale: '',
-  href: '',
-  as: '',
-  replace: false,
-  scroll: false,
-  shallow: false,
-  redirectAfterLogin: false,
-  onClick: () => {},
+  locale: '', // The active locale is automatically prepended. allows for providing a different locale.
+  href: '', // The path to navigate to.
+  as: '', // Optional decorator for the path that will be shown in the browser URL bar.
+  replace: false, // Replace the current state instead of adding a new url into the stack. Defaults to `history` `false`
+  scroll: true, // scroll to top when changing routes. Defaults to `true`
+  shallow: false, // Update the path of the current page without rerunning getStaticProps, getServerSideProps or getInitialProps. Defaults to false
+  redirectAfterLogin: false, // Redirect to the last clicked page after login
+  onClick: () => {}, // Callback function to be executed when the link is clicked
 };
 
 export default NextChakraLink;
