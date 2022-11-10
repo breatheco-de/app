@@ -96,7 +96,8 @@ const breathecode = {
       .join('&');
     return {
       get: (id) => axios.get(`${url}/cohort/${id}`),
-      log: (id, activities) => axios.put(`${url}/cohort/${id}/log?${qs}`, activities),
+      takeAttendance: (id, activities) => axios.put(`${url}/cohort/${id}/log?${qs}`, activities),
+      getAttendance: (id) => axios.get(`${url}/cohort/${id}/log?${qs}`),
       getPublic: (id) => axios.get(`${url}/cohort/${id}`, {
         headers: {
           Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
@@ -164,13 +165,7 @@ const breathecode = {
       techs: () => axios.get(`${url}/academy/technology?${qs}`),
     };
   },
-  activity: () => {
-    const url = `${host}/activity`;
-    return {
-      addBulk: (cohortId, activities) => axios.post(`${url}/academy/cohort/${cohortId}`, activities),
-      getAttendance: (cohortId) => axios.get(`${url}/cohort/${cohortId}?slug=classroom_attendance,classroom_unattendance`),
-    };
-  },
+
   certificate: () => {
     const url = `${host}/certificate`;
     return {
