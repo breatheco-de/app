@@ -8,6 +8,7 @@ const TagCapsule = ({
   tags,
   separator,
   background,
+  color,
   variant,
   paddingX,
   marginY,
@@ -89,7 +90,7 @@ const TagCapsule = ({
             textAlign="center"
             size={fontSize}
             fontWeight={fontWeight}
-            color="black"
+            color={color}
             textTransform="uppercase"
           >
             {tag.name || tag}
@@ -121,6 +122,7 @@ TagCapsule.propTypes = {
   isLink: PropTypes.bool,
   href: PropTypes.string,
   borderRadius: PropTypes.string,
+  color: PropTypes.string,
 };
 TagCapsule.defaultProps = {
   separator: '/',
@@ -138,6 +140,7 @@ TagCapsule.defaultProps = {
   isLink: false,
   href: '#',
   borderRadius: '15px',
+  color: 'black',
 };
 
 export default memo(TagCapsule);
