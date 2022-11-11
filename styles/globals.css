@@ -94,6 +94,19 @@ featured {
   width: 6px;
 }
 
+.with-shadow::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  right: -2px;
+  width: 2px;
+  height: 16px;
+  box-shadow: -5px 0 19px 6px rgb(0 0 0 / 58%);
+  z-index: 1;
+  border-radius: 0;
+  background: #000000;
+}
+
 .chakra-popover__popper {
   z-index: 99 !important;
 }

@@ -17,6 +17,8 @@ import useAssignments from '../../../../../common/store/actions/assignmentsActio
 import useStyle from '../../../../../common/hooks/useStyle';
 import Icon from '../../../../../common/components/Icon';
 import DottedTimeline from '../../../../../common/components/DottedTimeline';
+import GridContainer from '../../../../../common/components/GridContainer';
+import mockData from '../../../../../common/utils/mockData/DashboardView';
 
 const Attendance = () => {
   const { t } = useTranslation('assignments');
@@ -96,7 +98,7 @@ const Attendance = () => {
 
   return (
     <>
-      <Box display="flex" justifyContent="space-between" margin={{ base: '2% 4% 0 4%', lg: '2% 12% 0 12%' }}>
+      <GridContainer maxW="1080px" mt="18px">
         {cohortSession?.selectedProgramSlug && (
           <Link
             href={cohortSession?.selectedProgramSlug}
@@ -108,8 +110,8 @@ const Attendance = () => {
             {`← ${t('back-to')}`}
           </Link>
         )}
-      </Box>
-      <Box display="flex" borderBottom="1px solid" borderColor={borderColor} flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} p={{ base: '50px 4% 30px 4%', md: '50px 10% 30px 10%', lg: '50px 12% 30px 12%' }} alignItems={{ base: 'start', md: 'center' }}>
+      </GridContainer>
+      <Box display="flex" maxW="1080px" m="0 auto" padding="45px 0 28px 0" borderBottom="1px solid" borderColor={borderColor} flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
         <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
           {`${t('title')}:`}
         </Heading>
@@ -139,15 +141,15 @@ const Attendance = () => {
           />
         )}
       </Box>
-      <Flex
+      <GridContainer
         flexDirection="column"
-        gridGap="20px"
-        maxWidth="1012px"
-        margin={{ base: '3% 4%', md: '3% auto 4% auto', lg: '3% auto 4% auto' }}
-        padding={{ base: '0', md: '0 10px', lg: '0' }}
+        maxW="1080px"
+        // gridGap="20px"
+        // margin={{ base: '3% 4%', md: '3% auto 4% auto', lg: '3% auto 4% auto' }}
+        // padding={{ base: '0', md: '0 10px', lg: '0' }}
         // p="0 0 30px 0"
       >
-        <Flex gridGap="45px" justifyContent="flex-end">
+        <Flex gridGap="45px" justifyContent="flex-end" padding="34px 0">
           <Box>
             <Icon icon="search" width="18px" heigh="18px" color={hexColor.blueDefault} />
           </Box>
@@ -163,68 +165,13 @@ const Attendance = () => {
           minHeight="34vh"
           borderRadius="3px"
           margin="0 auto"
-          maxWidth="1012px"
+          // maxWidth="1012px"
           flexGrow={1}
           overflow="auto"
         >
           <Flex flexDirection="column" gridGap="18px">
 
-            {[
-              {
-                id: 1,
-                name: 'Juan Perez',
-                status: 'pending',
-                days: [
-                  {
-                    label: 'Day 1 - 4 Mar',
-                    color: '#25BF6C',
-                  },
-                  {
-                    label: 'Day 2 - 5 Mar',
-                    color: '#25BF6C',
-                  },
-                  {
-                    label: 'Day 3 - 6 Mar',
-                    color: '#FFB718',
-                  },
-                  {
-                    label: 'Day 4 - 7 Mar',
-                    color: '#CD0000',
-                  },
-                ],
-              },
-              {
-                id: 2,
-                name: 'Fernando Fuentes',
-                status: 'pending',
-                days: [
-                  {
-                    label: 'Day 1 - 4 Mar',
-                    color: '#FFB718',
-                  },
-                  {
-                    label: 'Day 2 - 5 Mar',
-                    color: '#25BF6C',
-                  },
-                  {
-                    label: 'Day 3 - 6 Mar',
-                    color: '#25BF6C',
-                  },
-                  {
-                    label: 'Day 4 - 7 Mar',
-                    color: '#CD0000',
-                  },
-                  {
-                    label: 'Day 5 - 8 Mar',
-                    color: '#25BF6C',
-                  },
-                  {
-                    label: 'Day 6 - 9 Mar',
-                    color: '#25BF6C',
-                  },
-                ],
-              },
-            ].map((student) => {
+            {mockData.attendanceDots.map((student) => {
               const calcDaysAverage = (days) => {
                 const totalDays = days.length;
                 const totalDaysCompleted = days.filter((day) => day.color === '#25BF6C').length;
@@ -243,7 +190,7 @@ const Attendance = () => {
             })}
           </Flex>
         </Box>
-      </Flex>
+      </GridContainer>
     </>
   );
 };
