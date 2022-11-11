@@ -21,6 +21,7 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'no-console': 'off',
     'max-len': 'off',
+    'object-curly-newline': 'off',
     'linebreak-style': ['error', process.platform === 'win32' ? 'windows' : 'unix'],
   },
   ignorePatterns: [

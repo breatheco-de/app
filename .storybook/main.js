@@ -2,6 +2,7 @@ const path = require('path');
 
 const toPath = (_path) => path.join(process.cwd(), _path);
 module.exports = {
+  staticDirs: ['../public'],
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
   addons: [
     '@storybook/addon-links', 
@@ -12,6 +13,7 @@ module.exports = {
   ],
   webpackFinal: async (config) => ({
     ...config,
+    node: { ...config.node, fs: 'empty' },
     resolve: {
       ...config.resolve,
       alias: {

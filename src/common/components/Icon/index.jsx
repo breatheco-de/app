@@ -6,7 +6,7 @@ import iconDic from '../../utils/iconDict.json';
 // const iconDict = require('../common/utils/iconDict.json');
 
 const Icon = ({
-  icon, width, height, style, color, secondColor, fill, className, props, full,
+  icon, width, height, style, color, secondColor, fill, className, props, full, text,
 }) => {
   if (typeof window === 'undefined' || !window) return '';
   const iconExists = iconDic.includes(icon);
@@ -18,11 +18,12 @@ const Icon = ({
       className={className}
       width={width}
       height={height}
-      style={{ ...style, minWidth: width }}
+      style={{ ...style, minWidth: width, height }}
       color={color}
       secondColor={secondColor}
       fill={fill}
       full={full}
+      text={text}
       {...props}
     />
   );
@@ -41,6 +42,7 @@ Icon.propTypes = {
     transform: PropTypes.string,
     transition: PropTypes.string,
   }),
+  text: PropTypes.string,
 };
 Icon.defaultProps = {
   style: {},
@@ -52,5 +54,6 @@ Icon.defaultProps = {
   full: false,
   className: '',
   props: {},
+  text: '',
 };
 export default Icon;

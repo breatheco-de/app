@@ -35,15 +35,19 @@ export const parameters = {
 const myDecorator = (story, context, ...props) => {
   const [{ locale }] = useGlobals();
   const Story =  story;
+  const args = {
+    ...context.args,
+    locale: locale || 'en',
+  }
   return (
     <I18nProvider lang={locale || 'en'} >
       {/* {story({stTranslation: context.parameters.i18n.store.data})} */}
-      <Story stTranslation={context.parameters.i18n.store.data} />
+      <Story args={args} stTranslation={context.parameters.i18n.store.data} />
     </I18nProvider>);
 };
 
 addDecorator((storyFn) => (
-  <ChakraProvider resetCSS={false} theme={CustomTheme}>
+  <ChakraProvider resetCSS theme={CustomTheme}>
     {storyFn()}
   </ChakraProvider>
 ))
