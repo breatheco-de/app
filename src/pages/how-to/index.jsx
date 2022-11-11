@@ -99,7 +99,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
       // page props
       fallback: false,
-      data: arrHowTos.filter((l) => l.lang === currentLang[locale]).map(
+      data: arrHowTos.filter((l) => l.lang === currentLang[locale] && (l?.category?.slug === 'how-to' || l?.category?.slug === 'como')).map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
       technologyTags,
