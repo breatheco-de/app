@@ -2,6 +2,7 @@ const search = ({
   width, height, style, color,
 }) => (
   <svg
+    id="icon-search"
     style={style}
     width={width || '20px'}
     height={height || '20px'}
