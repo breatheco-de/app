@@ -153,10 +153,50 @@ function formatBytes(bytes, decimals = 2) {
   return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
 }
 
+const resizeMasonryItem = (item) => {
+  /* Get the grid object, its row-gap, and the size of its implicit rows */
+  const grid = document.getElementsByClassName('masonry')[0];
+  // eslint-disable-next-line radix
+  const rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-row-gap'));
+  // eslint-disable-next-line radix
+  const rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-auto-rows'));
+
+  /*
+   * Spanning for any brick = S
+   * Grid's row-gap = G
+   * Size of grid's implicitly create row-track = R
+   * Height of item content = H
+   * Net height of the item = H1 = H + G
+   * Net height of the implicit row-track = T = G + R
+   * S = H1 / T
+   */
+
+  // We add the 2 to include the height od the 'Read Lesson' link
+  const rowSpan = Math.ceil((item.querySelector('.masonry-content').getBoundingClientRect().height + rowGap) / (rowHeight + rowGap)) + 3;
+
+  /* Set the spanning as calculated above (S) */
+  // eslint-disable-next-line no-param-reassign
+  item.style.gridRowEnd = `span ${rowSpan}`;
+};
+
+const resizeAllMasonryItems = () => {
+  // Get all item class objects in one list
+  const allItems = document.getElementsByClassName('masonry-brick');
+
+  /*
+   * Loop through the above list and execute the spanning function to
+   * each list-item (i.e. each masonry item)
+   */
+  for (let i = 0; i < allItems.length; i += 1) {
+    resizeMasonryItem(allItems[i]);
+  }
+};
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
   removeStorageItem, isDevMode, devLogTable, devLog, languageLabel,
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
+  resizeAllMasonryItems,
 };

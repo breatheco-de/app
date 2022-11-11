@@ -8,6 +8,7 @@ const TagCapsule = ({
   tags,
   separator,
   background,
+  color,
   variant,
   paddingX,
   marginY,
@@ -47,7 +48,7 @@ const TagCapsule = ({
           padding={variant === 'rounded' ? '0 10px' : '0'}
           style={style}
           rounded={variant === 'rounded' ? borderRadius : 'none'}
-          key={tag.name || `${tag}-${i}`}
+          key={tag?.name || `${tag}-${i}`}
           lineHeight="22px"
           color={colorMode === 'light' ? 'black' : 'black'}
         >
@@ -61,7 +62,7 @@ const TagCapsule = ({
             color="black"
             textTransform="uppercase"
           >
-            {tag.name || tag}
+            {tag?.name || tag}
           </Text>
           {variant === 'slash' && i < tags.length - 1 && (
             <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
@@ -78,7 +79,7 @@ const TagCapsule = ({
           padding={variant === 'rounded' ? '0 10px' : '0'}
           style={style}
           rounded={variant === 'rounded' ? borderRadius : 'none'}
-          key={tag.name || `${tag}-${i}`}
+          key={tag?.name || `${tag}-${i}`}
           lineHeight="22px"
           color={colorMode === 'light' ? 'black' : 'black'}
         >
@@ -89,10 +90,10 @@ const TagCapsule = ({
             textAlign="center"
             size={fontSize}
             fontWeight={fontWeight}
-            color="black"
+            color={color}
             textTransform="uppercase"
           >
-            {tag.name || tag}
+            {tag?.name || tag}
           </Text>
           {variant === 'slash' && i < tags.length - 1 && (
             <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
@@ -121,6 +122,7 @@ TagCapsule.propTypes = {
   isLink: PropTypes.bool,
   href: PropTypes.string,
   borderRadius: PropTypes.string,
+  color: PropTypes.string,
 };
 TagCapsule.defaultProps = {
   separator: '/',
@@ -138,6 +140,7 @@ TagCapsule.defaultProps = {
   isLink: false,
   href: '#',
   borderRadius: '15px',
+  color: 'black',
 };
 
 export default memo(TagCapsule);

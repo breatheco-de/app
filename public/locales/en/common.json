@@ -60,6 +60,12 @@
   "seach-technology": "Search technology",
   "remove-difficulty": "Remove difficulty",
   "read-lesson": "Read lesson",
+  "asset-button": {
+    "lesson": "Read lesson",
+    "exercise": "Start exercise",
+    "project": "Start project",
+    "article": "Read article"
+  },
   "copied": "Copied!",
   "no-options-message": "No options available",
   "taskStatus": {
