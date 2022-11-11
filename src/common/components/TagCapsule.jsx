@@ -48,7 +48,7 @@ const TagCapsule = ({
           padding={variant === 'rounded' ? '0 10px' : '0'}
           style={style}
           rounded={variant === 'rounded' ? borderRadius : 'none'}
-          key={tag.name || `${tag}-${i}`}
+          key={tag?.name || `${tag}-${i}`}
           lineHeight="22px"
           color={colorMode === 'light' ? 'black' : 'black'}
         >
@@ -62,7 +62,7 @@ const TagCapsule = ({
             color="black"
             textTransform="uppercase"
           >
-            {tag.name || tag}
+            {tag?.name || tag}
           </Text>
           {variant === 'slash' && i < tags.length - 1 && (
             <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
@@ -79,7 +79,7 @@ const TagCapsule = ({
           padding={variant === 'rounded' ? '0 10px' : '0'}
           style={style}
           rounded={variant === 'rounded' ? borderRadius : 'none'}
-          key={tag.name || `${tag}-${i}`}
+          key={tag?.name || `${tag}-${i}`}
           lineHeight="22px"
           color={colorMode === 'light' ? 'black' : 'black'}
         >
@@ -93,7 +93,7 @@ const TagCapsule = ({
             color={color}
             textTransform="uppercase"
           >
-            {tag.name || tag}
+            {tag?.name || tag}
           </Text>
           {variant === 'slash' && i < tags.length - 1 && (
             <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">

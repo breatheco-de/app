@@ -5,7 +5,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { resizeAllMasonryItems, unSlugify } from '../../utils/index';
+import { resizeAllMasonryItems, toCapitalize, unSlugify } from '../../utils/index';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 // import Image from '../../common/components/Image';
@@ -16,7 +16,7 @@ import useStyle from '../../common/hooks/useStyle';
 
 const ProjectList = ({
   projects, contextFilter, projectPath, pathWithDifficulty,
-  withoutImage, isLoading,
+  withoutImage, isLoading, withoutDifficulty,
 }) => {
   const { t } = useTranslation('common');
   const arrOfTechs = contextFilter?.technologies || [];
@@ -150,22 +150,23 @@ const ProjectList = ({
                 >
                   {ex.title || t('no-title')}
                 </Heading>
-
-                <Flex alignItems="center" justifyContent="space-between">
-                  <Box>
-                    <TagCapsule
-                      tags={[ex.difficulty]}
-                      background={getDifficultyColors(ex.difficulty).bg}
-                      color={getDifficultyColors(ex.difficulty).color}
-                      fontWeight={700}
-                    />
-                  </Box>
-                  {ex.solution_video_url && (
-                    <Box background={featuredColor} borderRadius="15px" padding="6px 12px">
-                      <Icon icon="camera" width="22px" height="22px" />
+                {!withoutDifficulty && (
+                  <Flex alignItems="center" justifyContent="space-between">
+                    <Box>
+                      <TagCapsule
+                        tags={[ex.difficulty]}
+                        background={getDifficultyColors(ex.difficulty).bg}
+                        color={getDifficultyColors(ex.difficulty).color}
+                        fontWeight={700}
+                      />
                     </Box>
-                  )}
-                </Flex>
+                    {ex.solution_video_url && (
+                      <Box background={featuredColor} borderRadius="15px" padding="6px 12px">
+                        <Icon icon="camera" width="22px" height="22px" />
+                      </Box>
+                    )}
+                  </Flex>
+                )}
 
                 {ex?.description && (
                   <Text
@@ -191,7 +192,7 @@ const ProjectList = ({
                   fontSize="15px"
                   letterSpacing="0.05em"
                 >
-                  {t('read-lesson')}
+                  {toCapitalize(t(`asset-button.${ex.asset_type.toLowerCase()}`))}
                 </Link>
               </Box>
             </Box>
@@ -224,6 +225,7 @@ ProjectList.propTypes = {
   pathWithDifficulty: PropTypes.bool,
   withoutImage: PropTypes.bool,
   isLoading: PropTypes.bool,
+  withoutDifficulty: PropTypes.bool,
 };
 
 ProjectList.defaultProps = {
@@ -231,6 +233,7 @@ ProjectList.defaultProps = {
   withoutImage: false,
   isLoading: false,
   contextFilter: {},
+  withoutDifficulty: false,
 };
 
 export default ProjectList;

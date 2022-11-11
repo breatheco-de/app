@@ -263,7 +263,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
 
         <ProjectList
           projects={lessonsSearched.length > 0 ? lessonsSearched : lessonsFiltered}
-          withoutImage
+          withoutDifficulty
           isLoading={isLoading}
           contextFilter={filteredBy.projectsOptions}
           projectPath="lesson"
