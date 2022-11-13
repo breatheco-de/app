@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, Flex, useToast,
+  Avatar, Box, Flex, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import bc from '../../../../../common/services/breathecode';
@@ -182,7 +182,17 @@ const Attendance = () => {
               return (
                 <DottedTimeline
                   key={student.id}
-                  label={(<p>{student.name}</p>)}
+                  label={(
+                    <Flex gridGap="10px" alignItems="center">
+                      <Avatar
+                        src={student.avatar}
+                        width="25px"
+                        height="25px"
+                        style={{ userSelect: 'none' }}
+                      />
+                      <p>{student.name}</p>
+                    </Flex>
+                  )}
                   dots={student.days}
                   helpText={`${calcDaysAverage(student.days)}% attendance`}
                 />

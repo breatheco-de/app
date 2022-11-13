@@ -101,7 +101,7 @@ featured {
   right: -2px;
   width: 2px;
   height: 16px;
-  box-shadow: -5px 0 19px 6px rgb(0 0 0 / 58%);
+  box-shadow: 0 0 80px 34px rgb(0 0 0 / 75%);
   z-index: 1;
   border-radius: 0;
   background: #000000;

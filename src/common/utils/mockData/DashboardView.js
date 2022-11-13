@@ -199,6 +199,7 @@ const attendanceDots = [
   {
     id: 1,
     name: 'Juan Perez',
+    avatar: 'static/images/p1.png',
     status: 'pending',
     days: [
       {
@@ -486,6 +487,7 @@ const attendanceDots = [
   {
     id: 2,
     name: 'Fernando Fuentes',
+    avatar: 'static/images/person-smile4.png',
     status: 'pending',
     days: [
       {
@@ -603,170 +605,6 @@ const attendanceDots = [
       {
         label: 'Day 29 - 1 Apr',
         color: '#25BF6C',
-      },
-      {
-        label: 'Day 30 - 2 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 31 - 3 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 32 - 4 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 33 - 5 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 34 - 6 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 35 - 7 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 36 - 8 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 37 - 9 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 38 - 10 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 39 - 11 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 40 - 12 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 41 - 13 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 42 - 14 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 43 - 15 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 44 - 16 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 45 - 17 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 46 - 18 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 47 - 19 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 48 - 20 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 49 - 21 Apr',
-        color: '#25BF6C',
-      },
-      {
-        label: 'Day 50 - 22 Apr',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 51 - 23 Apr',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 52 - 23 Apr',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 53 - 24 Apr',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 54 - 25 Apr',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 55 - 26 Apr',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 56 - 27 Apr',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 57 - 28 Apr',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 58 - 29 Apr',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 59 - 30 Apr',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 60 - 1 May',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 61 - 2 May',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 62 - 3 May',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 63 - 4 May',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 64 - 5 May',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 65 - 6 May',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 66 - 7 May',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 67 - 8 May',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 68 - 9 May',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 69 - 10 May',
-        color: '#C4C4C4',
-      },
-      {
-        label: 'Day 70 - 11 May',
-        color: '#C4C4C4',
       },
     ],
   },
