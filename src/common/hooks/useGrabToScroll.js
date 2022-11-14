@@ -11,13 +11,9 @@ const useGrabToScroll = ({ ref, vertical, horizontal }) => {
 
   // Detect if ref is scrollable
   useEffect(() => {
-    if (isVerticalScrollable || isHorizontalScrollable) {
-      setIsScrollable(true);
-      setIsContentScrollable(true);
-    } else {
-      setIsScrollable(false);
-      setIsContentScrollable(false);
-    }
+    const scrollable = isVerticalScrollable || isHorizontalScrollable;
+    setIsScrollable(scrollable);
+    setIsContentScrollable(scrollable);
   }, [container?.scrollWidth]);
 
   if (typeof document !== 'undefined') {
@@ -39,10 +35,10 @@ const useGrabToScroll = ({ ref, vertical, horizontal }) => {
       // If horizontal scroll has reached the end
       if (horizontal && isHorizontalScrollable) {
         container.scrollLeft = position.left - dx;
-        if (container.scrollLeft >= (container.scrollWidth - (rect.width + 1))) {
-          setIsScrollable(false);
-        } else {
+        if (container.scrollLeft <= (container?.scrollWidth - (rect.width + 1))) {
           setIsScrollable(true);
+        } else {
+          setIsScrollable(false);
         }
       }
     };
@@ -50,27 +46,32 @@ const useGrabToScroll = ({ ref, vertical, horizontal }) => {
       document.removeEventListener('mousemove', mouseMoveHandler);
       document.removeEventListener('mouseup', mouseUpHandler);
 
-      container.style.cursor = 'grab';
-      container.style.removeProperty('user-select');
+      if (container.style) {
+        container.style.cursor = 'grab';
+        container.style.removeProperty('user-select');
+      }
     };
     const grabToScroll = (e) => {
-      if (isContentScrollable) {
-        container.style.cursor = 'grabbing';
-        container.style.userSelect = 'none';
-        position = {
-          // The current scroll
-          left: container.scrollLeft,
-          top: container.scrollTop,
-          // Get the current mouse position
-          x: e.clientX,
-          y: e.clientY,
-        };
+      if (container?.style) {
+        if (isContentScrollable) {
+          container.style.cursor = 'grabbing';
+          container.style.userSelect = 'none';
+          position = {
+            // The current scroll
+            left: container.scrollLeft,
+            top: container.scrollTop,
+            // Get the current mouse position
+            x: e.clientX,
+            y: e.clientY,
+          };
 
-        document.addEventListener('mousemove', mouseMoveHandler);
-        document.addEventListener('mouseup', mouseUpHandler);
-      } else {
-        container.style.cursor = 'default';
-        container.style.userSelect = 'none';
+          document.addEventListener('mousemove', mouseMoveHandler);
+          document.addEventListener('mouseup', mouseUpHandler);
+          document.addEventListener('mouseleave', mouseUpHandler);
+        } else {
+          container.style.cursor = 'default';
+          container.style.userSelect = 'none';
+        }
       }
     };
     return { grabToScroll, isScrollable };

@@ -198,9 +198,14 @@ const progressBar = {
 const attendanceDots = [
   {
     id: 1,
-    name: 'Juan Perez',
-    avatar: 'static/images/p1.png',
-    status: 'pending',
+    user: {
+      first_name: 'Juan',
+      last_name: 'Perez',
+      profile: {
+        avatar_url: '/static/images/p1.png',
+      },
+      status: 'pending',
+    },
     days: [
       {
         label: 'Day 1 - 4 Mar',
@@ -486,9 +491,14 @@ const attendanceDots = [
   },
   {
     id: 2,
-    name: 'Fernando Fuentes',
-    avatar: 'static/images/person-smile4.png',
-    status: 'pending',
+    user: {
+      first_name: 'Fernando',
+      last_name: 'Fuentes',
+      profile: {
+        avatar_url: '/static/images/person-smile4.png',
+      },
+      status: 'pending',
+    },
     days: [
       {
         label: 'Day 1 - 4 Mar',
