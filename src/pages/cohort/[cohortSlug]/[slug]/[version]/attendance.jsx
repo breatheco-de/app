@@ -1,7 +1,8 @@
-/* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
-import { useEffect, useRef, useState } from 'react';
+/* eslint-disable no-nested-ternary */
+import { useEffect, useMemo, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
+import { format } from 'date-fns';
 import {
   Avatar, Box, Flex, IconButton, Input, InputGroup, InputRightElement, usePrefersReducedMotion, useToast,
   keyframes,
@@ -10,7 +11,6 @@ import {
   PopoverContent,
   PopoverArrow,
   PopoverCloseButton,
-  PopoverHeader,
   PopoverBody,
   Button,
 } from '@chakra-ui/react';
@@ -22,25 +22,26 @@ import Link from '../../../../../common/components/NextChakraLink';
 import Heading from '../../../../../common/components/Heading';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import Text from '../../../../../common/components/Text';
-import useAssignments from '../../../../../common/store/actions/assignmentsAction';
-// import Image from '../../../../../common/components/Image';
 import useStyle from '../../../../../common/hooks/useStyle';
 import Icon from '../../../../../common/components/Icon';
 import DottedTimeline from '../../../../../common/components/DottedTimeline';
 import GridContainer from '../../../../../common/components/GridContainer';
 import mockData from '../../../../../common/utils/mockData/DashboardView';
+import handlers from '../../../../../common/handlers';
 
 const Attendance = () => {
   const { t } = useTranslation('assignments');
   const router = useRouter();
   const toast = useToast();
-  const { contextState, setContextState } = useAssignments();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
   const [selectedCohort, setSelectedCohort] = useState({});
   const [selectedCohortSlug, setSelectedCohortSlug] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
   const [currentStudentList, setCurrentStudentList] = useState([]);
+  const [allStudentsWithDays, setAllStudentsWithDays] = useState([]);
+  const [currentDaysLog, setCurrentDaysLog] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [sortSettings, setSortSettings] = useState({
     name: null,
     percentage: true,
@@ -72,24 +73,6 @@ const Attendance = () => {
   const slideLeftAnimation = prefersReducedMotion
     ? undefined
     : `${slideLeft} 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both`;
-
-  // const getStudents = (slug, academyId) => {
-  //   bc.cohort().getStudents(slug, academyId)
-  //     .then(({ data }) => {
-  //       const activeStudents = data.filter((l) => l.educational_status === 'ACTIVE' && l.role === 'STUDENT');
-  //       const sortedStudents = activeStudents.sort(
-  //         (a, b) => a.user.first_name.localeCompare(b.user.first_name),
-  //       );
-  //       setCurrentStudentList(sortedStudents);
-  //     }).catch(() => {
-  //       toast({
-  //         title: t('alert-message:error-fetching-students-and-teachers'),
-  //         status: 'error',
-  //         duration: 7000,
-  //         isClosable: true,
-  //       });
-  //     });
-  // };
 
   useEffect(() => {
     if (cohortSession?.cohort_role && cohortSession?.cohort_role === 'STUDENT') {
@@ -130,10 +113,89 @@ const Attendance = () => {
 
     if (defaultCohort && cohortId) {
       setSelectedCohort(findSelectedCohort || defaultCohort);
-      // getStudents(slug, academyId);
+
+      handlers.getActivities(slug)
+        .then((daysLog) => {
+          setCurrentDaysLog(daysLog);
+        })
+        .catch((error) => {
+          console.error('activities_error:', error);
+        });
+
+      handlers.getStudents(slug, academyId)
+        .then((students) => {
+          setCurrentStudentList(students);
+        })
+        .catch(() => {
+          toast({
+            title: t('alert-message:error-fetching-students-and-teachers'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
+        });
       // getFilterAssignments(cohortId, academyId, router.query.student);
     }
   }, [allCohorts, selectedCohortSlug, router.query.student]);
+
+  // const studentsWithDays = useMemo(async () => {
+  //   setIsLoaded(false);
+  //   const list = currentStudentList.map((student) => {
+  //     const days60 = Array.from(Array(60).keys()).map((i) => {
+  //       const day = i + 1;
+  //       const dayData = currentDaysLog[day];
+  //       const dayLabel = `Day ${day}`;
+  //       const dayColor = dayData?.attendance_ids?.includes(student.user.id)
+  //         ? '#25BF6C'
+  //         : dayData?.unattendance_ids?.includes(student.user.id)
+  //           ? '#FF5B5B'
+  //           : '#FFB718';
+  //       return {
+  //         label: currentDaysLog[day] ? `${dayLabel} - ${format(new Date(currentDaysLog[day].updated_at), 'd MMM')}` : dayLabel,
+  //         color: currentDaysLog[day] ? dayColor : '#C4C4C4',
+  //         updated_at: currentDaysLog[day] ? dayData?.updated_at : null, // 86400000 = 24 hours in milliseconds
+  //       };
+  //     });
+  //     return {
+  //       user: student.user,
+  //       days: days60,
+  //     };
+  //   });
+  //   return list;
+  // }, [currentStudentList, currentDaysLog]);
+
+  useEffect(() => {
+    setIsLoaded(false);
+    if (currentStudentList.length > 0) {
+      const studentsWithDays = currentStudentList.map((student) => {
+        const days60 = Array.from(Array(60).keys()).map((i) => {
+          const day = i + 1;
+          const dayData = currentDaysLog[day];
+          const dayLabel = `Day ${day}`;
+          const dayColor = dayData?.attendance_ids?.includes(student.user.id)
+            ? '#25BF6C'
+            : dayData?.unattendance_ids?.includes(student.user.id)
+              ? '#FF5B5B'
+              : '#FFB718';
+          return {
+            label: currentDaysLog[day] ? `${dayLabel} - ${format(new Date(currentDaysLog[day].updated_at), 'd MMM')}` : dayLabel,
+            color: currentDaysLog[day] ? dayColor : '#C4C4C4',
+            updated_at: currentDaysLog[day] ? dayData?.updated_at : null, // 86400000 = 24 hours in milliseconds
+          };
+        });
+        return {
+          user: student.user,
+          days: days60,
+        };
+      });
+      setAllStudentsWithDays(studentsWithDays);
+      setTimeout(() => {
+        setIsLoaded(true);
+      }, 3000);
+    }
+  }, [currentStudentList, currentDaysLog]);
+
+  console.log('allStudentsWithDays:::', allStudentsWithDays);
 
   const handleSearch = (e) => {
     const { value } = e.target;
@@ -193,9 +255,9 @@ const Attendance = () => {
             onChange={({ slug }) => {
               if (slug !== selectedCohort.slug) {
                 setCurrentStudentList([]);
-                setContextState({
-                  allTasks: [],
-                });
+                // setStudentAttendance({
+                //   allTasks: [],
+                // });
               }
               setSelectedCohortSlug(slug);
             }}
@@ -274,7 +336,7 @@ const Attendance = () => {
         >
           <Flex flexDirection="column" gridGap="18px">
 
-            {sortedByNameAndAttendance.map((student) => {
+            {isLoaded && allStudentsWithDays.map((student) => {
               const fullName = `${student.user.first_name} ${student.user.last_name}`;
               const percentAttendance = `${calcDaysAverage(student.days)}% attendance`;
 
@@ -284,7 +346,7 @@ const Attendance = () => {
                   label={(
                     <Flex gridGap="10px" alignItems="center">
                       <Avatar
-                        src={student.user.profile.avatar_url}
+                        src={student.user.profile?.avatar_url}
                         width="25px"
                         height="25px"
                         style={{ userSelect: 'none' }}
