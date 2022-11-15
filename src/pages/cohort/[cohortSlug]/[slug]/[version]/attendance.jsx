@@ -130,12 +130,17 @@ const Attendance = () => {
     if (defaultCohort && cohortId) {
       setSelectedCohort(findSelectedCohort || defaultCohort);
 
-      handlers.getActivities(slug)
+      handlers.getActivities(slug, academyId)
         .then((daysLog) => {
           setCurrentDaysLog(daysLog);
         })
-        .catch((error) => {
-          console.error('activities_error:', error);
+        .catch(() => {
+          toast({
+            title: t('alert-message:error-fetching-activities'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
         });
 
       handlers.getStudents(slug, academyId)

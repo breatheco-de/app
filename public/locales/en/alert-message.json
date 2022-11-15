@@ -54,5 +54,6 @@
   "google-maps-no-coincidences": "Google Maps: No matches found for the address entered",
   "cohort-not-found": "The specified cohort was not found",
   "files-uploaded": "Files succesfully uploaded",
-  "current-task-no-files": "The current task does not have any files"
+  "current-task-no-files": "The current task does not have any files",
+  "error-fetching-activities": "There was an error fetching activities"
 }
