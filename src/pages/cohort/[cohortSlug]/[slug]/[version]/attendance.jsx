@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-nested-ternary */
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { format } from 'date-fns';
 import {
@@ -26,8 +25,9 @@ import useStyle from '../../../../../common/hooks/useStyle';
 import Icon from '../../../../../common/components/Icon';
 import DottedTimeline from '../../../../../common/components/DottedTimeline';
 import GridContainer from '../../../../../common/components/GridContainer';
-import mockData from '../../../../../common/utils/mockData/DashboardView';
 import handlers from '../../../../../common/handlers';
+import { DottedTimelineSkeleton } from '../../../../../common/components/Skeleton';
+import Sparkline from '../../../../../common/components/Sparkline';
 
 const Attendance = () => {
   const { t } = useTranslation('assignments');
@@ -39,6 +39,7 @@ const Attendance = () => {
   const [selectedCohortSlug, setSelectedCohortSlug] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
   const [currentStudentList, setCurrentStudentList] = useState([]);
+  const [searchedStudents, setSearchedStudents] = useState([]);
   const [allStudentsWithDays, setAllStudentsWithDays] = useState([]);
   const [currentDaysLog, setCurrentDaysLog] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -47,7 +48,6 @@ const Attendance = () => {
     percentage: true,
   });
 
-  // const [searchValue, setSearchValue] = useState('');
   const { borderColor, hexColor } = useStyle();
 
   const { cohortSlug } = router?.query;
@@ -57,6 +57,20 @@ const Attendance = () => {
     const totalDaysCompleted = days.filter((day) => day.color === '#25BF6C').length;
     const average = parseInt((totalDaysCompleted / totalDays) * 100, 10);
     return average;
+  };
+
+  const calcPercentage = (number, total) => {
+    const percentage = (number / total) * 100;
+    return Number(percentage.toFixed(2));
+  };
+
+  const calcStudentDaysAverage = () => {
+    let finalPercentage = 0;
+
+    allStudentsWithDays.forEach((student) => {
+      finalPercentage += student.percentage;
+    });
+    return calcPercentage((finalPercentage / 100), allStudentsWithDays.length);
   };
 
   const slideLeft = keyframes`
@@ -86,6 +100,7 @@ const Attendance = () => {
             slug: l.cohort.slug,
             value: l.cohort.id,
             academy: l.cohort.academy.id,
+            durationInDays: l.cohort.syllabus_version.duration_in_days,
           }));
           setAllCohorts(dataStruct.sort(
             (a, b) => a.label.localeCompare(b.label),
@@ -134,41 +149,14 @@ const Attendance = () => {
             isClosable: true,
           });
         });
-      // getFilterAssignments(cohortId, academyId, router.query.student);
     }
   }, [allCohorts, selectedCohortSlug, router.query.student]);
 
-  // const studentsWithDays = useMemo(async () => {
-  //   setIsLoaded(false);
-  //   const list = currentStudentList.map((student) => {
-  //     const days60 = Array.from(Array(60).keys()).map((i) => {
-  //       const day = i + 1;
-  //       const dayData = currentDaysLog[day];
-  //       const dayLabel = `Day ${day}`;
-  //       const dayColor = dayData?.attendance_ids?.includes(student.user.id)
-  //         ? '#25BF6C'
-  //         : dayData?.unattendance_ids?.includes(student.user.id)
-  //           ? '#FF5B5B'
-  //           : '#FFB718';
-  //       return {
-  //         label: currentDaysLog[day] ? `${dayLabel} - ${format(new Date(currentDaysLog[day].updated_at), 'd MMM')}` : dayLabel,
-  //         color: currentDaysLog[day] ? dayColor : '#C4C4C4',
-  //         updated_at: currentDaysLog[day] ? dayData?.updated_at : null, // 86400000 = 24 hours in milliseconds
-  //       };
-  //     });
-  //     return {
-  //       user: student.user,
-  //       days: days60,
-  //     };
-  //   });
-  //   return list;
-  // }, [currentStudentList, currentDaysLog]);
-
   useEffect(() => {
     setIsLoaded(false);
-    if (currentStudentList.length > 0) {
+    if (currentStudentList.length > 0 && selectedCohort?.durationInDays) {
       const studentsWithDays = currentStudentList.map((student) => {
-        const days60 = Array.from(Array(60).keys()).map((i) => {
+        const days = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
           const day = i + 1;
           const dayData = currentDaysLog[day];
           const dayLabel = `Day ${day}`;
@@ -185,31 +173,32 @@ const Attendance = () => {
         });
         return {
           user: student.user,
-          days: days60,
+          days,
+          percentage: calcDaysAverage(days),
         };
       });
       setAllStudentsWithDays(studentsWithDays);
+      setSearchedStudents(studentsWithDays);
+      setIsLoaded(true);
       setTimeout(() => {
-        setIsLoaded(true);
-      }, 3000);
+        setShowSearch(true);
+      }, 300);
     }
-  }, [currentStudentList, currentDaysLog]);
-
-  console.log('allStudentsWithDays:::', allStudentsWithDays);
+  }, [currentStudentList, currentDaysLog, selectedCohort.durationInDays]);
 
   const handleSearch = (e) => {
     const { value } = e.target;
 
-    const filteredStudents = mockData.attendanceDots.filter((l) => {
+    const filteredStudents = allStudentsWithDays.filter((l) => {
       const fullName = `${l.user.first_name} ${l.user.last_name}`;
 
       return fullName.toLowerCase().includes(value.toLowerCase());
     });
 
-    setCurrentStudentList(filteredStudents);
+    setSearchedStudents(filteredStudents);
   };
 
-  const sortedByNameAndAttendance = mockData?.attendanceDots.sort((a, b) => {
+  const sortedByNameAndAttendance = searchedStudents.sort((a, b) => {
     const fullNameA = `${a.user.first_name} ${a.user.last_name}`;
     const fullNameB = `${b.user.first_name} ${b.user.last_name}`;
     const aAverage = calcDaysAverage(a.days);
@@ -239,33 +228,42 @@ const Attendance = () => {
           </Link>
         )}
       </GridContainer>
-      <Box display="flex" maxW="1080px" m="0 auto" padding="45px 0 28px 0" borderBottom="1px solid" borderColor={borderColor} flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
-        <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
-          {`${t('title')}:`}
-        </Heading>
-        {selectedCohort.value && allCohorts.length > 0 && (
-          <ReactSelect
-            unstyled
-            color="#0097CD"
-            fontWeight="700"
-            id="cohort-select"
-            fontSize="25px"
-            noOptionsMessage={() => t('common:no-options-message')}
-            defaultInputValue={selectedCohort.label}
-            onChange={({ slug }) => {
-              if (slug !== selectedCohort.slug) {
-                setCurrentStudentList([]);
-                // setStudentAttendance({
-                //   allTasks: [],
-                // });
-              }
-              setSelectedCohortSlug(slug);
-            }}
-            options={allCohorts.map((cohort) => ({
-              value: cohort.value,
-              slug: cohort.slug,
-              label: cohort.label,
-            }))}
+      <Box display="flex" maxW="1080px" m="0 auto" justifyContent="space-between" padding="45px 0 28px 0" borderBottom="1px solid" borderColor={borderColor} flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
+        <Box>
+          <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
+            {`${t('title')}:`}
+          </Heading>
+          {selectedCohort.value && allCohorts.length > 0 && (
+            <ReactSelect
+              unstyled
+              color="#0097CD"
+              fontWeight="700"
+              id="cohort-select"
+              fontSize="25px"
+              noOptionsMessage={() => t('common:no-options-message')}
+              defaultInputValue={selectedCohort.label}
+              onChange={({ slug }) => {
+                if (slug !== selectedCohort.slug) {
+                  setCurrentStudentList([]);
+                  // setStudentAttendance({
+                  //   allTasks: [],
+                  // });
+                }
+                setSelectedCohortSlug(slug);
+              }}
+              options={allCohorts.map((cohort) => ({
+                value: cohort.value,
+                slug: cohort.slug,
+                label: cohort.label,
+              }))}
+            />
+          )}
+        </Box>
+        {isLoaded && (
+          <Sparkline
+            width="200"
+            percentage={calcStudentDaysAverage()}
+            // values={allStudentsWithDays}
           />
         )}
       </Box>
@@ -330,15 +328,14 @@ const Attendance = () => {
           minHeight="34vh"
           borderRadius="3px"
           margin="0 auto"
-          // maxWidth="1012px"
           flexGrow={1}
           overflow="auto"
         >
           <Flex flexDirection="column" gridGap="18px">
 
-            {isLoaded && allStudentsWithDays.map((student) => {
+            {isLoaded ? sortedByNameAndAttendance.map((student) => {
               const fullName = `${student.user.first_name} ${student.user.last_name}`;
-              const percentAttendance = `${calcDaysAverage(student.days)}% attendance`;
+              const percentAttendance = `${student.percentage}% attendance`;
 
               return (
                 <DottedTimeline
@@ -358,7 +355,7 @@ const Attendance = () => {
                   helpText={percentAttendance}
                 />
               );
-            })}
+            }) : (<DottedTimelineSkeleton />)}
           </Flex>
         </Box>
       </GridContainer>

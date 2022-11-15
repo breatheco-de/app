@@ -11,7 +11,7 @@ import Text from './Text';
 
 const Sparkline = ({
   values, label, backgroundColor, fillColor, strokeColor, interactive, lineWidth, percentage,
-  width, height, strokeWidth, strokeDasharray, strokeDashoffset, circleWidth,
+  width, height, strokeWidth, strokeDasharray, strokeDashoffset, circleWidth, containerWidth,
 }) => {
   const sparklineRef = useRef(null);
   const { fontColor2 } = useStyle();
@@ -94,7 +94,7 @@ const Sparkline = ({
   };
 
   return (
-    <Box position="relative">
+    <Box position="relative" width={containerWidth}>
       <Flex flexDirection="column" color={fontColor2}>
         {label && (
           <Text fontWeight={700} size="15px">
@@ -152,6 +152,7 @@ Sparkline.propTypes = {
   fillColor: PropTypes.string,
   strokeColor: PropTypes.string,
   width: PropTypes.string,
+  containerWidth: PropTypes.string,
   height: PropTypes.string,
   strokeWidth: PropTypes.string,
   strokeDasharray: PropTypes.string,
@@ -203,6 +204,7 @@ Sparkline.defaultProps = {
   fillColor: 'none',
   strokeColor: '#3d85de',
   width: '300',
+  containerWidth: '300px',
   height: '50',
   strokeWidth: '3',
   strokeDasharray: '0',

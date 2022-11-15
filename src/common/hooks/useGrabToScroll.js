@@ -14,7 +14,7 @@ const useGrabToScroll = ({ ref, vertical, horizontal }) => {
     const scrollable = isVerticalScrollable || isHorizontalScrollable;
     setIsScrollable(scrollable);
     setIsContentScrollable(scrollable);
-  }, [container?.scrollWidth]);
+  }, [isVerticalScrollable, isHorizontalScrollable]);
 
   if (typeof document !== 'undefined') {
     const mouseMoveHandler = (e) => {
