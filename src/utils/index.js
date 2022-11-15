@@ -192,11 +192,24 @@ const resizeAllMasonryItems = () => {
   }
 };
 
+const calcSVGViewBox = (pathId) => {
+  if (typeof document !== 'undefined') {
+    const svg = document.querySelector(pathId);
+    if (svg) {
+      const clientRect = svg?.getBBox();
+
+      const viewBox = `${clientRect.x} ${clientRect.y} ${clientRect.width} ${clientRect.height}`;
+      return viewBox;
+    }
+  }
+  return '';
+};
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
   removeStorageItem, isDevMode, devLogTable, devLog, languageLabel,
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
-  resizeAllMasonryItems,
+  resizeAllMasonryItems, calcSVGViewBox,
 };

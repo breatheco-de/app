@@ -8,7 +8,10 @@ const useStyle = () => {
   const disabledColor = useColorModeValue('gray.600', 'gray.350');
   const featuredColor = useColorModeValue('featuredLight', 'featuredDark');
   const fontColor = useColorModeValue('black', 'white');
+  const fontColor2 = useColorModeValue('gray.dark', 'gray.250');
   const lightColor = useColorModeValue('gray.600', 'gray.200');
+  const tooltipBackground = useColorModeValue('gray.dark', 'gray.dark');
+
   const hexColor = {
     black: useColorModeValue('#000000', '#ffffff'),
     white2: useColorModeValue('#ffffff', '#283340'),
@@ -34,10 +37,12 @@ const useStyle = () => {
     disabledColor,
     featuredColor,
     fontColor,
+    fontColor2,
+    hexColor,
+    input,
     lightColor,
     modal,
-    input,
-    hexColor,
+    tooltipBackground,
   };
 };
 

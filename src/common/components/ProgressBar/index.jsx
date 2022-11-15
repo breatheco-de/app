@@ -4,6 +4,7 @@ import {
 import PropTypes from 'prop-types';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
+import Counter from '../ProgressCircle/Counter';
 import Text from '../Text';
 import Progress from './Progress';
 
@@ -57,7 +58,8 @@ const ProgressBar = ({
     <Box width={width || '100%'}>
       <Flex marginBottom="15px" gridGap="10px" align="center">
         <Heading fontSize="22px" marginY="0">
-          {`${calculatePercentage() || 0}%`}
+          <Counter valueTo={calculatePercentage() || 0} totalDuration={2} />
+          %
         </Heading>
         <Text size="l" marginY="0">
           {progressText}

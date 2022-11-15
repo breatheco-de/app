@@ -11,7 +11,7 @@ import Icon from './Icon';
 import Text from './Text';
 import AttendanceModal from './AttendanceModal';
 import { usePersistent } from '../hooks/usePersistent';
-import { isWindow, getStorageItem } from '../../utils';
+import { isWindow } from '../../utils';
 
 const ItemText = ({ text }) => (
   <Text display="flex" whiteSpace="pre-wrap" textAlign="left" textTransform="uppercase" size="12px" color={useColorModeValue('black', 'white')}>
@@ -54,10 +54,10 @@ const TeacherSidebar = ({
   const { colorMode } = useColorMode();
   const [openAttendance, setOpenAttendance] = useState(false);
   const [cohortSession] = usePersistent('cohortSession', {});
-  const accessToken = getStorageItem('accessToken');
+  // const accessToken = getStorageItem('accessToken');
   const router = useRouter();
 
-  const { slug, academy } = cohortSession;
+  // const { slug, academy } = cohortSession;
 
   const todayIs = {
     en: format(new Date(), "'Today is' do 'of' MMMM"),
@@ -105,8 +105,11 @@ const TeacherSidebar = ({
             <ItemButton
               actionHandler={() => {
                 if (cohortSession.bc_id && isWindow) {
-                  window.open(`https://attendance.breatheco.de/?cohort_slug=${slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${academy.id}`, '_blank');
+                  window.open(`${window.location.pathname}/attendance`, '_blank');
                 }
+                // if (cohortSession.bc_id && isWindow) {
+                //   window.open(`https://attendance.breatheco.de/?cohort_slug=${slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${academy.id}`, '_blank');
+                // }
               }}
             >
               <ItemText text={t('teacher-sidebar.review-attendancy')} />

@@ -1,12 +1,41 @@
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   Avatar, Box, Button, Link, Tab, keyframes,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import Icon from './Icon';
 
 export const MotionBox = motion(Box);
 export const MotionButton = motion(Button);
 export const MotionAvatar = motion(Avatar);
+
+// Animate shadow in right direction
+const animateShadow = keyframes`
+  0% {
+    box-shadow: 0 0 40px 14px rgb(0 0 0 / 25%);
+  }
+  70% {
+    box-shadow: 0 0 80px 24px rgb(0 0 0 / 40%);
+  }
+  100% {
+    box-shadow: 0 0 40px 14px rgb(0 0 0 / 25%);
+  }
+`;
+
+const animateBreathing = keyframes`
+  0% {
+    right: 0;
+    transform: scale(1);
+  }
+  50% {
+    right: 10px;
+    transform: scale(1.1);
+  }
+  100% {
+    right: 0%;
+    transform: scale(1);
+  }
+`;
 
 const pulseBlue = keyframes`
   0% {
@@ -22,6 +51,34 @@ const pulseBlue = keyframes`
   }
 `;
 const pulseAnimation = `${pulseBlue} infinite 2s ease-in-out`;
+
+const breathAnimation = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      delayChildren: 0.5,
+    },
+  },
+};
+
+export const AnimatedContainer = ({ children, isScrollable, ...rest }) => (
+  <Box
+    {...rest}
+  >
+    {children}
+    <AnimatePresence>
+      {isScrollable && (
+        <>
+          <MotionBox position="absolute" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} animation={`${animateShadow} 2s infinite`} top="0px" right="0px" width="0px" height="25px" boxShadow="0 0 80px 34px rgb(0 0 0 / 75%)" zIndex="1" background="#000000" />
+          <MotionBox initial="hidden" animate="show" exit="hidden" variants={breathAnimation} animation={`${animateBreathing} 2s infinite`} style={{ position: 'absolute', top: '4.4px', right: '0px' }} zIndex="1">
+            <Icon icon="arrowRight" width="15px" height="15px" />
+          </MotionBox>
+        </>
+      )}
+    </AnimatePresence>
+  </Box>
+);
 
 export const AnimatedButton = ({
   children, onClick, toUppercase, rest,
@@ -70,6 +127,14 @@ AnimatedButton.propTypes = {
   rest: PropTypes.arrayOf(PropTypes.any),
   onClick: PropTypes.func,
 };
+AnimatedContainer.propTypes = {
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]).isRequired,
+  rest: PropTypes.arrayOf(PropTypes.any),
+  isScrollable: PropTypes.bool,
+};
 AnimatedAvatar.propTypes = {
   src: PropTypes.string,
   height: PropTypes.string,
@@ -113,6 +178,10 @@ AnimatedButton.defaultProps = {
   toUppercase: false,
   rest: [],
   onClick: () => {},
+};
+AnimatedContainer.defaultProps = {
+  rest: [],
+  isScrollable: false,
 };
 AnimatedAvatar.defaultProps = {
   src: '',

@@ -127,7 +127,7 @@ const ProjectList = ({
               <Box display="flex" flexDirection="column">
                 {ex.technologies.length >= 1 && (
                   <TagCapsule
-                    tags={ex.technologies}
+                    tags={ex.technologies.slice(0, 3)}
                     variant="rounded"
                     borderRadius="10px"
                     marginY="8px"
