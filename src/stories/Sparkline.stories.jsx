@@ -39,6 +39,12 @@ export default {
         category: 'SVG Properties',
       },
     },
+    containerWidth: {
+      control: 'text',
+      table: {
+        category: 'SVG Properties',
+      },
+    },
     width: {
       table: {
         category: 'SVG Properties',
@@ -114,6 +120,8 @@ Default.args = {
     {name: "Ethereum", date: "2017-10-01", value: 303.56},
     {name: "Ethereum", date: "2017-11-01", value: 298.21},
   ],
+  tooltipContent: '{date}: {value}',
+  label: 'Custom label',
   circleWidth: 3,
   interactive: true,
   width: 300,
@@ -123,7 +131,8 @@ Default.args = {
   strokeDashoffset: 0,
   backgroundColor: 'inherit',
   fillColor: 'none',
-  strokeColor: '#3d85de',
+  strokeColor: '#0097CD',
   lineWidth: 2,
+  containerWidth: '300px',
   percentage: getTotalAttendanceByDay[0].average,
 };

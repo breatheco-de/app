@@ -30,7 +30,7 @@ import { DottedTimelineSkeleton } from '../../../../../common/components/Skeleto
 import Sparkline from '../../../../../common/components/Sparkline';
 
 const Attendance = () => {
-  const { t } = useTranslation('assignments');
+  const { t } = useTranslation('attendance');
   const router = useRouter();
   const toast = useToast();
   const [cohortSession] = usePersistent('cohortSession', {});
@@ -40,7 +40,7 @@ const Attendance = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [currentStudentList, setCurrentStudentList] = useState([]);
   const [searchedStudents, setSearchedStudents] = useState([]);
-  const [allStudentsWithDays, setAllStudentsWithDays] = useState([]);
+  const [allStudentsWithDays, setAllStudentsWithDays] = useState({});
   const [currentDaysLog, setCurrentDaysLog] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [sortSettings, setSortSettings] = useState({
@@ -67,10 +67,10 @@ const Attendance = () => {
   const calcStudentDaysAverage = () => {
     let finalPercentage = 0;
 
-    allStudentsWithDays.forEach((student) => {
+    allStudentsWithDays.studentList.forEach((student) => {
       finalPercentage += student.percentage;
     });
-    return calcPercentage((finalPercentage / 100), allStudentsWithDays.length);
+    return calcPercentage((finalPercentage / 100), allStudentsWithDays.studentList.length);
   };
 
   const slideLeft = keyframes`
@@ -159,16 +159,17 @@ const Attendance = () => {
         const days = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
           const day = i + 1;
           const dayData = currentDaysLog[day];
-          const dayLabel = `Day ${day}`;
+          const dayLabel = `${t('common:day')} ${day}`;
           const dayColor = dayData?.attendance_ids?.includes(student.user.id)
             ? '#25BF6C'
             : dayData?.unattendance_ids?.includes(student.user.id)
               ? '#FF5B5B'
               : '#FFB718';
           return {
-            label: currentDaysLog[day] ? `${dayLabel} - ${format(new Date(currentDaysLog[day].updated_at), 'd MMM')}` : dayLabel,
-            color: currentDaysLog[day] ? dayColor : '#C4C4C4',
-            updated_at: currentDaysLog[day] ? dayData?.updated_at : null, // 86400000 = 24 hours in milliseconds
+            label: dayData ? `${dayLabel} - ${format(new Date(dayData.updated_at), 'd MMM')}` : dayLabel,
+            day,
+            color: dayData ? dayColor : '#C4C4C4',
+            updated_at: dayData ? dayData?.updated_at : null,
           };
         });
         return {
@@ -177,7 +178,22 @@ const Attendance = () => {
           percentage: calcDaysAverage(days),
         };
       });
-      setAllStudentsWithDays(studentsWithDays);
+
+      const averageEachDay = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
+        const day = i + 1;
+        const total = studentsWithDays.length;
+        const attended = studentsWithDays.filter((l) => l.days[day - 1].color === '#25BF6C').length;
+        const percentage = Math.round((attended / total) * 100);
+        return {
+          day,
+          value: percentage,
+          date: studentsWithDays[0]?.days[day - 1]?.updated_at,
+        };
+      }).filter((l) => l.date !== null);
+      setAllStudentsWithDays({
+        studentList: studentsWithDays,
+        averageEachDay,
+      });
       setSearchedStudents(studentsWithDays);
       setIsLoaded(true);
       setTimeout(() => {
@@ -189,7 +205,7 @@ const Attendance = () => {
   const handleSearch = (e) => {
     const { value } = e.target;
 
-    const filteredStudents = allStudentsWithDays.filter((l) => {
+    const filteredStudents = allStudentsWithDays.studentList.filter((l) => {
       const fullName = `${l.user.first_name} ${l.user.last_name}`;
 
       return fullName.toLowerCase().includes(value.toLowerCase());
@@ -203,14 +219,21 @@ const Attendance = () => {
     const fullNameB = `${b.user.first_name} ${b.user.last_name}`;
     const aAverage = calcDaysAverage(a.days);
     const bAverage = calcDaysAverage(b.days);
-    if (sortSettings.name === true) {
-      return fullNameA.localeCompare(fullNameB);
+
+    if (sortSettings.percentage === undefined) {
+      if (sortSettings.name === true) {
+        return fullNameA.localeCompare(fullNameB);
+      }
+      return fullNameB.localeCompare(fullNameA);
     }
-    if (sortSettings.percentage === true) {
-      return bAverage - aAverage;
+    if (sortSettings.name === undefined) {
+      if (sortSettings.percentage === true) {
+        return bAverage - aAverage;
+      }
+      return aAverage - bAverage;
     }
 
-    return fullNameB.localeCompare(fullNameA);
+    return bAverage - aAverage;
   });
 
   return (
@@ -229,7 +252,7 @@ const Attendance = () => {
         )}
       </GridContainer>
       <Box display="flex" maxW="1080px" m="0 auto" justifyContent="space-between" padding="45px 0 28px 0" borderBottom="1px solid" borderColor={borderColor} flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
-        <Box>
+        <Box display="flex" alignItems="center" gridGap="8px">
           <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
             {`${t('title')}:`}
           </Heading>
@@ -239,15 +262,12 @@ const Attendance = () => {
               color="#0097CD"
               fontWeight="700"
               id="cohort-select"
-              fontSize="25px"
+              fontSize="28px"
               noOptionsMessage={() => t('common:no-options-message')}
               defaultInputValue={selectedCohort.label}
               onChange={({ slug }) => {
                 if (slug !== selectedCohort.slug) {
                   setCurrentStudentList([]);
-                  // setStudentAttendance({
-                  //   allTasks: [],
-                  // });
                 }
                 setSelectedCohortSlug(slug);
               }}
@@ -262,8 +282,11 @@ const Attendance = () => {
         {isLoaded && (
           <Sparkline
             width="200"
+            label={t('title')}
+            height="60"
             percentage={calcStudentDaysAverage()}
-            // values={allStudentsWithDays}
+            values={allStudentsWithDays.averageEachDay}
+            tooltipContent="{value}% - {date}"
           />
         )}
       </Box>
@@ -305,7 +328,7 @@ const Attendance = () => {
               <Button variant="unstyled" display="flex" gridGap="6px" color={hexColor.blueDefault} alignItems="center">
                 <Icon icon="sort" width="18px" heigh="11px" color="currentColor" />
                 <Text textTransform="uppercase" size="14px" fontWeight={700}>
-                  Sort by
+                  {t('filter.sort-by')}
                 </Text>
               </Button>
             </PopoverTrigger>
@@ -314,10 +337,10 @@ const Attendance = () => {
               <PopoverCloseButton />
               <PopoverBody display="flex" flexDirection="column" alignItems="flex-start" pl={4}>
                 <Button variant="unstyled" onClick={() => setSortSettings({ name: !sortSettings.name })}>
-                  {`Sort by name ${typeof sortSettings.name === 'boolean' ? sortSettings.name ? '▼' : '▲' : ''}`}
+                  {`${t('filter.sort-by-name')} ${typeof sortSettings.name === 'boolean' ? sortSettings.name ? '▼' : '▲' : ''}`}
                 </Button>
                 <Button variant="unstyled" onClick={() => setSortSettings({ percentage: !sortSettings.percentage })}>
-                  {`Sort by percentage ${typeof sortSettings.percentage === 'boolean' ? sortSettings.percentage ? '▼' : '▲' : ''}`}
+                  {`${t('filter.sort-by-percentage')} ${typeof sortSettings.percentage === 'boolean' ? sortSettings.percentage ? '▼' : '▲' : ''}`}
                 </Button>
               </PopoverBody>
             </PopoverContent>
@@ -335,7 +358,7 @@ const Attendance = () => {
 
             {isLoaded ? sortedByNameAndAttendance.map((student) => {
               const fullName = `${student.user.first_name} ${student.user.last_name}`;
-              const percentAttendance = `${student.percentage}% attendance`;
+              const percentAttendance = `${student.percentage}% ${t('attendance')}`;
 
               return (
                 <DottedTimeline

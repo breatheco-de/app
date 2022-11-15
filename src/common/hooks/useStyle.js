@@ -10,7 +10,7 @@ const useStyle = () => {
   const fontColor = useColorModeValue('black', 'white');
   const fontColor2 = useColorModeValue('gray.dark', 'gray.250');
   const lightColor = useColorModeValue('gray.600', 'gray.200');
-  const tooltipBackground = useColorModeValue('gray.dark', 'gray.700');
+  const tooltipBackground = useColorModeValue('gray.dark', 'gray.dark');
 
   const hexColor = {
     black: useColorModeValue('#000000', '#ffffff'),

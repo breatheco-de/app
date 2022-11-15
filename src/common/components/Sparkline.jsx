@@ -11,7 +11,7 @@ import Text from './Text';
 
 const Sparkline = ({
   values, label, backgroundColor, fillColor, strokeColor, interactive, lineWidth, percentage,
-  width, height, strokeWidth, strokeDasharray, strokeDashoffset, circleWidth, containerWidth,
+  width, height, strokeWidth, strokeDasharray, strokeDashoffset, circleWidth, containerWidth, tooltipContent,
 }) => {
   const sparklineRef = useRef(null);
   const { fontColor2 } = useStyle();
@@ -42,9 +42,12 @@ const Sparkline = ({
           setCurrentDatapoint(datapoint);
         }
 
+        const modifiedTooltipContent = tooltipContent.replace('{date}', date).replace('{value}', datapoint.value.toFixed(2));
+
         if (tooltip) {
           tooltip.hidden = false;
-          tooltip.textContent = `${date}: ${datapoint.value.toFixed(2)}`;
+          tooltip.textContent = modifiedTooltipContent;
+          // tooltip.textContent = `${date}: ${datapoint.value.toFixed(2)}`;
           tooltip.style.top = `${event.offsetY}px`;
           tooltip.style.left = `${event.offsetX + 20}px`;
         }
@@ -71,14 +74,6 @@ const Sparkline = ({
     // initialize sparkline on mount after the element has rendered
     sparkline(sparklineRef.current, values, options);
   }, []);
-
-  // const getText = (datapoint) => {
-  //   const dateString = new Date(datapoint.value).toLocaleString('en-US', {
-  //     month: 'short',
-  //     day: 'numeric',
-  //   });
-  //   return `${dateString}: ${datapoint.value}`;
-  // };
 
   // motion sparklineVariants
   const sparklineVariants = {
@@ -148,6 +143,7 @@ Sparkline.propTypes = {
     }),
   ),
   backgroundColor: PropTypes.string,
+  tooltipContent: PropTypes.string,
   label: PropTypes.string,
   fillColor: PropTypes.string,
   strokeColor: PropTypes.string,
@@ -166,43 +162,44 @@ Sparkline.propTypes = {
 Sparkline.defaultProps = {
   values: [
     {
-      name: 'Ethereum', date: '2017-01-01', value: 8.3,
+      name: 'Day 1', date: '2017-01-01', value: 8.3,
     },
     {
-      name: 'Ethereum', date: '2017-02-01', value: 10.57,
+      name: 'Day 2', date: '2017-02-01', value: 10.57,
     },
     {
-      name: 'Ethereum', date: '2017-03-01', value: 15.73,
+      name: 'Day 3', date: '2017-03-01', value: 15.73,
     },
     {
-      name: 'Ethereum', date: '2017-04-01', value: 49.51,
+      name: 'Day 4', date: '2017-04-01', value: 49.51,
     },
     {
-      name: 'Ethereum', date: '2017-05-01', value: 85.69,
+      name: 'Day 5', date: '2017-05-01', value: 85.69,
     },
     {
-      name: 'Ethereum', date: '2017-06-01', value: 226.51,
+      name: 'Day 6', date: '2017-06-01', value: 226.51,
     },
     {
-      name: 'Ethereum', date: '2017-07-01', value: 246.65,
+      name: 'Day 7', date: '2017-07-01', value: 246.65,
     },
     {
-      name: 'Ethereum', date: '2017-08-01', value: 213.87,
+      name: 'Day 8', date: '2017-08-01', value: 213.87,
     },
     {
-      name: 'Ethereum', date: '2017-09-01', value: 386.61,
+      name: 'Day 9', date: '2017-09-01', value: 386.61,
     },
     {
-      name: 'Ethereum', date: '2017-10-01', value: 303.56,
+      name: 'Day 10', date: '2017-10-01', value: 303.56,
     },
     {
-      name: 'Ethereum', date: '2017-11-01', value: 298.21,
+      name: 'Day 11', date: '2017-11-01', value: 298.21,
     },
   ],
+  tooltipContent: '{value}%: {date}',
   backgroundColor: 'inherit',
-  label: 'Attendance',
+  label: '',
   fillColor: 'none',
-  strokeColor: '#3d85de',
+  strokeColor: '#0097CD',
   width: '300',
   containerWidth: '300px',
   height: '50',
