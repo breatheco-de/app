@@ -127,7 +127,7 @@ const Attendance = () => {
     const slug = findSelectedCohort?.slug || defaultCohort?.slug;
     const cohortId = findSelectedCohort?.value || defaultCohort?.value;
 
-    if (defaultCohort && cohortId) {
+    if (defaultCohort && cohortId && academyId) {
       setSelectedCohort(findSelectedCohort || defaultCohort);
 
       handlers.getActivities(slug, academyId)
