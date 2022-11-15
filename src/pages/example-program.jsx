@@ -80,9 +80,12 @@ export default function Example() {
             startsIn={new Date(addDays(addHours(new Date(), 2), 3))}
             icon="data-science-bg"
             syllabusContent={{
-              lessons: 30,
-              projects: 15,
-              exercises: 15,
+              totalLessons: 30,
+              totalProjects: 15,
+              totalExercises: 15,
+              completedLessons: 3,
+              completedProjects: 10,
+              completedExercises: 5,
             }}
             mentorsAvailable={mentors}
             haveFreeTrial
@@ -95,9 +98,12 @@ export default function Example() {
             startsIn={new Date(addDays(addHours(new Date(), 2), 3))}
             icon="data-science-bg"
             syllabusContent={{
-              lessons: 30,
-              projects: 15,
-              exercises: 15,
+              totalLessons: 30,
+              totalProjects: 15,
+              totalExercises: 15,
+              completedLessons: 3,
+              completedProjects: 10,
+              completedExercises: 5,
             }}
             mentorsAvailable={mentors}
             isFreeTrial
@@ -106,6 +112,7 @@ export default function Example() {
             freeTrialExpireDate={new Date(subHours(new Date(), 5))}
             // freeTrialExpireDate={new Date(addHours(new Date(), 2))}
             courseProgress={7}
+            lessonLink="https://www.google.com"
           />
         </Box>
         <Box marginBottom="50px">
@@ -115,10 +122,15 @@ export default function Example() {
             startsIn={new Date(addDays(addHours(new Date(), 2), 3))}
             icon="data-science-bg"
             syllabusContent={{
-              lessons: 30,
-              projects: 15,
-              exercises: 15,
+              totalLessons: 30,
+              totalProjects: 15,
+              totalExercises: 15,
+              completedLessons: 3,
+              completedProjects: 10,
+              completedExercises: 5,
             }}
+            lessonLink="https://www.google.com"
+            lessonNumber={1.2}
             mentorsAvailable={mentors}
             isBought
             courseProgress={7}

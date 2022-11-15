@@ -107,7 +107,7 @@ const AvatarUser = ({
               {fullNameLabel}
             </Heading>
             <Text size="sm" fontWeight="400">
-              {`${infoText[router.locale]} ${dateFormated[router.locale]}`}
+              {`${infoText[router?.locale]} ${dateFormated[router?.locale]}`}
             </Text>
 
           </Box>

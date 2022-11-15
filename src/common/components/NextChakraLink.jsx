@@ -25,7 +25,7 @@ const NextChakraLink = ({
       href={href}
       as={as}
       replace={replace}
-      locale={locale || router.locale}
+      locale={locale || router?.locale}
       scroll={scroll}
       shallow={shallow}
     >

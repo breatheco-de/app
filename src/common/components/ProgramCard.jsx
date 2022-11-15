@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-closing-tag-location */
-/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -14,8 +12,8 @@ import { formatDuration, intervalToDuration } from 'date-fns';
 import { es, en } from 'date-fns/locale';
 import CustomTheme from '../../../styles/theme';
 import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
+import Link from './NextChakraLink';
 import Text from './Text';
-import Heading from './Heading';
 import Icon from './Icon';
 
 const availableLanguages = {
@@ -36,14 +34,18 @@ const ProgramCard = ({
   isFreeTrial,
   freeTrialExpireDate,
   courseProgress,
+  lessonNumber,
+  lessonLink,
 }) => {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
   const bgColor = useColorModeValue('featuredLight', 'featuredDark');
+  const now = new Date();
+  const isExpired = isFreeTrial && freeTrialExpireDate < now;
 
   const formatTimeString = (start) => {
     const duration = intervalToDuration({
-      end: new Date(),
+      end: now,
       start,
     });
 
@@ -60,15 +62,33 @@ const ProgramCard = ({
 
   const syllabusArray = () => {
     const contentArray = [];
-    if (syllabusContent?.lessons) contentArray.push(`${syllabusContent.lessons} ${t('lessons')}`);
-    if (syllabusContent?.projects) contentArray.push(`${syllabusContent.projects} ${t('projects')}`);
-    if (syllabusContent?.exercises) contentArray.push(`${syllabusContent.exercises} ${t('exercises')}`);
+    if (syllabusContent?.totalLessons) {
+      contentArray.push({
+        name: 'lessons',
+        total: syllabusContent.totalLessons,
+        completed: syllabusContent.completedLessons,
+      });
+    }
+    if (syllabusContent?.totalProjects) {
+      contentArray.push({
+        name: 'projects',
+        total: syllabusContent.totalProjects,
+        completed: syllabusContent.completedProjects,
+      });
+    }
+    if (syllabusContent?.totalExercises) {
+      contentArray.push({
+        name: 'exercises',
+        total: syllabusContent.totalExercises,
+        completed: syllabusContent.completedExercises,
+      });
+    }
     return contentArray;
   };
 
-  const ProjectsSection = () => (syllabusArray().length > 0 || mentorsAvailable.length > 0) && (
+  const ProjectsSection = () => (syllabusArray()?.length > 0 || mentorsAvailable?.length > 0) && (
     <Flex justifyContent="space-between" marginTop="10px" padding="10px" borderRadius="5px" background={bgColor}>
-      {syllabusArray().length > 0 && (
+      {syllabusArray()?.length > 0 && (
         <Box>
           {syllabusArray().map((elem) => (
             <Text
@@ -86,7 +106,13 @@ const ProgramCard = ({
                 style={{ marginRight: '5px' }}
                 icon="book"
               />
-              {elem}
+              {isBought && (
+              <>
+                <span style={{ color: CustomTheme.colors.blue.default2 }}>{elem.completed || 0}</span>
+                /
+              </>
+              )}
+              {`${elem.total} ${t(elem.name)}`}
             </Text>
           ))}
         </Box>
@@ -129,8 +155,6 @@ const ProgramCard = ({
 
   const FreeTagCapsule = () => {
     let timeString = '';
-    let expired = false;
-    const now = new Date();
     const duration = intervalToDuration({
       end: now,
       start: freeTrialExpireDate,
@@ -142,26 +166,24 @@ const ProgramCard = ({
         locale: availableLanguages[lang],
       });
 
-    if (duration.days > 0) timeString = `${formated} ${stTranslation ? stTranslation[lang]['program-card'].left : t('left')}`;
-    else if (formated === '' && freeTrialExpireDate > now) timeString = stTranslation ? stTranslation[lang]['program-card'].today : t('today');
-    else {
-      timeString = stTranslation ? stTranslation[lang]['program-card']['non-left'] : t('non-left');
-      expired = true;
-    }
+    if (isExpired) timeString = stTranslation ? stTranslation[lang]['program-card']['non-left'] : t('non-left');
+    else if (duration.days > 0) timeString = `${formated} ${stTranslation ? stTranslation[lang]['program-card'].left : t('left')}`;
+    else timeString = stTranslation ? stTranslation[lang]['program-card'].today : t('today');
 
     return (
       <Flex
         borderRadius="15px"
-        background={expired ? '#FFE7E9' : CustomTheme.colors.yellow.light}
+        background={isExpired ? '#FFE7E9' : CustomTheme.colors.yellow.light}
         padding="5px"
         height="21px"
+        alignItems="center"
       >
-        <Icon icon="free" width="29px" height="14px" style={{ marginRight: '10px' }} />
+        <Icon icon="free" width="29px" height="14px" style={{ marginRight: '5px' }} />
         <Text
           fontSize="xs"
           lineHeight="14px"
           fontWeight="400"
-          color={expired ? '#EB5757' : '#01455E'}
+          color={isExpired ? '#EB5757' : '#01455E'}
         >
           {timeString}
         </Text>
@@ -202,7 +224,7 @@ const ProgramCard = ({
                 fontWeight="600"
                 color={textColor}
               >
-                {t('starts-in')}
+                {stTranslation ? stTranslation[lang]['program-card']['starts-in'] : t('starts-in')}
               </Text>
               <Text
                 fontSize="9px"
@@ -286,6 +308,46 @@ const ProgramCard = ({
               {`${courseProgress}%`}
             </Text>
           </Box>
+          {!isExpired && (
+            <>
+              <ProjectsSection />
+              <Text
+                marginTop="20px"
+                color={CustomTheme.colors.blue.default}
+                textAlign="center"
+                fontSize="xs"
+                lineHeight="14px"
+                fontWeight="700"
+              >
+                <Link
+                  rel="noopener noreferrer"
+                  href={lessonLink}
+                  display="inline-block"
+                  letterSpacing="0.05em"
+                  fontFamily="Lato, Sans-serif"
+                >
+                  {`${t('continue')} ${lessonNumber}  →`}
+                </Link>
+              </Text>
+            </>
+
+          )}
+          {isFreeTrial && (
+            <Button
+              marginTop="25px"
+              borderRadius="3px"
+              width="100%"
+              padding="0"
+              whiteSpace="normal"
+              variant="outline"
+              alignItems="center"
+              borderColor="blue.default"
+              color="blue.default"
+            >
+              <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color={CustomTheme.colors.blue.default} />
+              Upgrade experience
+            </Button>
+          )}
         </Box>
       )}
     </Box>
@@ -305,6 +367,8 @@ ProgramCard.propTypes = {
   mentorsAvailable: PropTypes.arrayOf(PropTypes.any),
   courseProgress: PropTypes.number,
   stTranslation: PropTypes.objectOf(PropTypes.any),
+  lessonNumber: PropTypes.number,
+  lessonLink: PropTypes.string,
 };
 
 ProgramCard.defaultProps = {
@@ -318,6 +382,8 @@ ProgramCard.defaultProps = {
   syllabusContent: null,
   courseProgress: null,
   freeTrialExpireDate: null,
+  lessonNumber: null,
+  lessonLink: null,
 };
 
 export default ProgramCard;
