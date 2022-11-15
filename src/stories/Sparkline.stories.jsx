@@ -53,6 +53,14 @@ export default {
         type: 'number',
       },
     },
+    chartStyle: {
+      table: {
+        category: 'SVG Properties',
+      },
+      control: {
+        type: 'object',
+      },
+    },
     height: {
       table: {
         category: 'SVG Properties',
@@ -121,11 +129,14 @@ Default.args = {
     {name: "Ethereum", date: "2017-11-01", value: 298.21},
   ],
   tooltipContent: '{date}: {value}',
-  label: 'Custom label',
   circleWidth: 3,
   interactive: true,
   width: 300,
   height: 60,
+  chartStyle: {
+    top: '0px',
+    left: '0px',
+  },
   strokeWidth: 3,
   strokeDasharray: 0,
   strokeDashoffset: 0,
@@ -134,5 +145,4 @@ Default.args = {
   strokeColor: '#0097CD',
   lineWidth: 2,
   containerWidth: '300px',
-  percentage: getTotalAttendanceByDay[0].average,
 };

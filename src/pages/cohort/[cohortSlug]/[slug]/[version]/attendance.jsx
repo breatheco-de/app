@@ -28,6 +28,7 @@ import GridContainer from '../../../../../common/components/GridContainer';
 import handlers from '../../../../../common/handlers';
 import { DottedTimelineSkeleton } from '../../../../../common/components/Skeleton';
 import Sparkline from '../../../../../common/components/Sparkline';
+import KPI from '../../../../../common/components/KPI';
 
 const Attendance = () => {
   const { t } = useTranslation('attendance');
@@ -280,13 +281,26 @@ const Attendance = () => {
           )}
         </Box>
         {isLoaded && (
-          <Sparkline
-            width="200"
+          <KPI
             label={t('title')}
-            height="60"
-            percentage={calcStudentDaysAverage()}
-            values={allStudentsWithDays.averageEachDay}
-            tooltipContent="{value}% - {date}"
+            value={calcStudentDaysAverage()}
+            valueUnit="%"
+            delta={null}
+            deltaLabel={null}
+            chart={(
+              <Sparkline
+                width="200"
+                chartStyle={{
+                  top: '-35px',
+                  left: '5px',
+                }}
+                containerWidth="200px"
+                height="60"
+                values={allStudentsWithDays.averageEachDay}
+                tooltipContent="{value}% - {date}"
+              />
+            )}
+            unstyled
           />
         )}
       </Box>
