@@ -5,16 +5,13 @@ import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import sparkline from '@fnando/sparkline';
 import { Box, Flex } from '@chakra-ui/react';
-import Counter from './ProgressCircle/Counter';
-import useStyle from '../hooks/useStyle';
-import Text from './Text';
 
 const Sparkline = ({
-  values, label, backgroundColor, fillColor, strokeColor, interactive, lineWidth, percentage,
+  values, backgroundColor, fillColor, strokeColor, interactive, lineWidth,
   width, height, strokeWidth, strokeDasharray, strokeDashoffset, circleWidth, containerWidth, tooltipContent,
+  chartStyle,
 }) => {
   const sparklineRef = useRef(null);
-  const { fontColor2 } = useStyle();
   const [currentDatapoint, setCurrentDatapoint] = useState(values[0]);
 
   const findClosest = (target, tagName) => {
@@ -90,18 +87,7 @@ const Sparkline = ({
 
   return (
     <Box position="relative" width={containerWidth}>
-      <Flex flexDirection="column" color={fontColor2}>
-        {label && (
-          <Text fontWeight={700} size="15px">
-            {label}
-          </Text>
-        )}
-        <Text fontWeight={700} size="30px">
-          <Counter valueTo={percentage} totalDuration={2} />
-          %
-        </Text>
-      </Flex>
-      <Flex flexDirection="column" position="absolute" top="0px" left="100px">
+      <Flex flexDirection="column" position="absolute" style={chartStyle}>
         <motion.svg
           ref={sparklineRef}
           style={{ backgroundColor }}
@@ -144,7 +130,6 @@ Sparkline.propTypes = {
   ),
   backgroundColor: PropTypes.string,
   tooltipContent: PropTypes.string,
-  label: PropTypes.string,
   fillColor: PropTypes.string,
   strokeColor: PropTypes.string,
   width: PropTypes.string,
@@ -156,7 +141,7 @@ Sparkline.propTypes = {
   interactive: PropTypes.bool,
   circleWidth: PropTypes.number,
   lineWidth: PropTypes.number,
-  percentage: PropTypes.number,
+  chartStyle: PropTypes.objectOf(PropTypes.any),
 };
 
 Sparkline.defaultProps = {
@@ -197,7 +182,6 @@ Sparkline.defaultProps = {
   ],
   tooltipContent: '{value}%: {date}',
   backgroundColor: 'inherit',
-  label: '',
   fillColor: 'none',
   strokeColor: '#0097CD',
   width: '300',
@@ -209,7 +193,10 @@ Sparkline.defaultProps = {
   interactive: true,
   circleWidth: 3,
   lineWidth: 2,
-  percentage: 0,
+  chartStyle: {
+    top: '0px',
+    left: '0px',
+  },
 };
 
 export default Sparkline;
