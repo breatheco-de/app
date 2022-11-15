@@ -104,7 +104,6 @@ const breathecode = {
           academy: 4,
         },
       }),
-      // getActivities: (cohortSlug) => axios.get(`/v1/admissions/cohort/user?cohorts=${cohortSlug}&roles=STUDENT`),
       getFilterStudents: () => axios.get(`${url}/cohort/user?${qs}`),
       getStudents: (cohortId, academyId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}${academyId ? `&academy=${academyId}` : ''}`),
       update: (id, args) => axios.put(`${url}/cohort/${id}`, args),
