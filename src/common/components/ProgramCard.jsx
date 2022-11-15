@@ -86,9 +86,6 @@ const ProgramCard = ({
     return contentArray;
   };
 
-  // changes
-  console.log('changes, delete');
-
   const ProjectsSection = () => (syllabusArray()?.length > 0 || mentorsAvailable?.length > 0) && (
     <Flex justifyContent="space-between" marginTop="10px" padding="10px" borderRadius="5px" background={bgColor}>
       {syllabusArray()?.length > 0 && (
