@@ -49,7 +49,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const exercises = await response.json();
 
   const dataFiltered = exercises.results.filter(
-    (l) => technologyData.assets.some((a) => a === l.slug),
+    (l) => technologyData.assets.some((a) => a === l.slug) && (l?.category?.slug === 'how-to' || l?.category?.slug === 'como'),
   );
 
   if (response.status >= 400 || response.status_code >= 400
@@ -132,7 +132,7 @@ const ExercisesByTechnology = ({ exercises, technologyData }) => {
         // withoutImage
         // isLoading={isLoading}
         // contextFilter={}
-        projectPath="interactive-exercise"
+        projectPath="how-to"
       />
     </Box>
   );
