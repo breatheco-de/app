@@ -200,10 +200,9 @@ export const ButtonHandlerByTaskStatus = ({
             attachment={fileData}
             type="taskHandler"
             handlerText={t('modalInfo.rejected.resubmit-assignment')}
-            actionHandler={(event) => {
-              changeStatusAssignment(event, currentTask, 'PENDING');
-              onClose();
-            }}
+            linkText={currentTask.github_url}
+            disableInput
+            disableHandler
             sendProject={sendProject}
             currentTask={currentTask}
             closeText={t('modalInfo.rejected.remove-delivery')}
