@@ -20,7 +20,7 @@ const TechnologiesSection = ({
   getCheckboxProps,
 }) => {
   const [technologySearched, setTechnologySearched] = useState('');
-  const { hexColor } = useStyle();
+  const { fontColor, hexColor, modal, borderColorStrong } = useStyle();
   const [isMobile] = useMediaQuery('(min-width: 1082px)');
 
   const filteredTechnologies = technologyTags.filter(
@@ -40,7 +40,7 @@ const TechnologiesSection = ({
           >
             <Icon icon="search" color={hexColor.black} width="14px" height="14px" />
           </InputLeftElement>
-          <Input type="text" onChange={(e) => setTechnologySearched(e.target.value)} placeholder={t('seach-technology')} style={{ border: `1px solid ${hexColor.black}` }} height="29px" w="290px" borderRadius="48px" />
+          <Input type="text" onChange={(e) => setTechnologySearched(e.target.value)} placeholder={t('seach-technology')} border="1px solid" borderColor={borderColorStrong} height="29px" w="290px" borderRadius="48px" />
         </InputGroup>
 
       </Box>
@@ -62,8 +62,8 @@ const TechnologiesSection = ({
               <Box
                 key={technology}
                 border="1px solid"
-                borderColor={checkbox.checked ? 'blue.default' : 'black'}
-                backgroundColor={checkbox.checked ? 'blue.default' : 'white'}
+                borderColor={checkbox.checked ? 'blue.default' : borderColorStrong}
+                backgroundColor={checkbox.checked ? 'blue.default' : modal.background}
                 borderRadius="15px"
                 p="4px 9px"
                 as="label"
@@ -74,7 +74,7 @@ const TechnologiesSection = ({
               >
                 <Flex gridGap="10px">
                   <Checkbox display="none" {...checkbox} borderColor="gray.default" isChecked={checkbox.checked} />
-                  <Text size="l" color={checkbox.checked ? 'white' : 'black'}>{technology}</Text>
+                  <Text size="l" color={checkbox.checked ? 'white' : fontColor}>{technology}</Text>
                 </Flex>
               </Box>
             );

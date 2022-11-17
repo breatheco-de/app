@@ -132,7 +132,7 @@ const ExercisesByTechnology = ({ exercises, technologyData }) => {
         // withoutImage
         // isLoading={isLoading}
         // contextFilter={}
-        projectPath="interactive-exercise"
+        projectPath="how-to"
       />
     </Box>
   );

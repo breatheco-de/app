@@ -116,6 +116,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
   const [offset, setOffset] = useState(10);
   const router = useRouter();
   const projectsFiltered = projects.slice(0, offset);
+  const queryExists = Object.keys(router.query).length > 0;
   const projectsSearched = projects.filter(
     (project) => project.title.toLowerCase()
       .includes(router?.query?.search?.toLocaleLowerCase() || false),
@@ -147,15 +148,17 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
   };
 
   useEffect(() => {
-    if (projectsSearched.length > 0) return () => {};
-    if (offset <= projects.length) {
-      console.log('loading projects...');
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
+    if (!queryExists) {
+      if (projectsSearched.length > 0) return () => {};
+      if (offset <= projects.length) {
+        console.log('loading projects...');
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }
+      console.log('All projects loaded');
     }
-    console.log('All projects loaded');
     return () => {};
-  }, [offset, projectsSearched]);
+  }, [offset, queryExists]);
 
   useEffect(() => {
     if (!isLoading) return;
@@ -165,6 +168,16 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
       setIsLoading(false);
     }, 200);
   }, [isLoading]);
+
+  const getProjects = () => {
+    if (queryExists) {
+      return projects;
+    }
+    if (projectsSearched.length > 0) {
+      return projectsSearched;
+    }
+    return projectsFiltered;
+  };
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
@@ -250,7 +263,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         </Text>
 
         <ProjectList
-          projects={projectsSearched.length > 0 ? projectsSearched : projectsFiltered}
+          projects={getProjects()}
           contextFilter={filteredBy.projectsOptions}
           isLoading={isLoading}
           projectPath="interactive-coding-tutorial"
