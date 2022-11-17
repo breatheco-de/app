@@ -11,7 +11,7 @@ const IntroductionSection = ({
 }) => {
   const colors = useColorModeValue('#000', '#fff');
   return (
-    <Box display="flex" gridGap={{ base: '0', md: '10rem' }}>
+    <Box display="flex">
       <Box flex={1}>
         <Heading as="h1" size="xl" fontWeight="700">
           {data?.title}
@@ -53,7 +53,7 @@ const IntroductionSection = ({
         )}
       </Box>
       {/* autoplay and loop static/videos/landing-avatars.mp4 video inside a canva and lazy loading */}
-      <Box flex={1} display={{ base: 'none', lg: 'initial' }}>
+      <Box flex={0.5} display={{ base: 'none', lg: 'initial' }}>
         <video
           autoPlay
           loop
@@ -65,14 +65,10 @@ const IntroductionSection = ({
             objectFit: 'cover',
           }}
         >
-          <source src="/static/videos/landing-avatars.mp4" type="video/mp4" />
+          <source src="static/videos/landing-avatars.mp4" type="video/mp4" />
         </video>
       </Box>
 
-      {/* <video id="video" controls="true">
-        <source src="static/videos/landing-avatars.mp4" type="video/mp4" />
-        <track kind="captions" />
-      </video> */}
       {/* <Box
         position="relative"
         display={{ base: 'none', md: 'initial' }}
