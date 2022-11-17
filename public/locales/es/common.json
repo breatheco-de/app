@@ -57,7 +57,15 @@
   "remaining":"Restantes",
   "show-more": "Mostrar más",
   "show-less": "Mostrar menos",
+  "seach-technology": "Buscar tecnología",
+  "remove-difficulty": "Remover dificultad",
   "read-lesson": "Leer lección",
+  "asset-button": {
+    "lesson": "Leer lección",
+    "exercise": "Iniciar ejercicio",
+    "project": "Iniciar proyecto",
+    "article": "Leer articulo"
+  },
   "copied": "Copiado!",
   "no-options-message": "No hay mas opciones",
   "taskStatus": {

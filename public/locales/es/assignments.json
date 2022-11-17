@@ -12,8 +12,8 @@
     "student-and-assignments": "Alumno y asignaciones",
     "link": "Enlace/Archivos",
     "actions": "Acciones",
-    "files-received": "{{files}} Archivos recibidos de su Alumno",
-    "link-received": "Enlace recibido de su Alumno"
+    "files-received": "{{files}} Archivos entregados",
+    "link-received": "Enlace entregado"
   },
   "filter": {
     "project": "Filtrar por proyecto",

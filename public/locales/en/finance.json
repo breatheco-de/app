@@ -2,6 +2,11 @@
   "coding-introduction": "Coding introduction",
   "full-stack": "Full Stack",
   "software-engineering": "Software Engineering",
+  "description": "Upgrade your membership to access all the benefits of the 4Geeks community",
+  "button": {
+    "title": "Upgrade plan",
+    "link": "#upgrade-plan"
+  },
   "plans" : [
     {
       "type": "pro",
@@ -85,7 +90,7 @@
       "show": true,
       "title": "scholarship level 2",
       "price": "$50",
-      "monpaymentths": "5 months",
+      "payment": "5 months",
       "highlightText": "",
       "description": "Full access to all features for the duration of the course.",
       "bullets": {

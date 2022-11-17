@@ -20,10 +20,11 @@ import TagCapsule from '../../../common/components/TagCapsule';
 import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE&limit=1000`);
   const data = await resp.json();
+  const howToData = data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como');
 
-  const paths = data.flatMap((res) => locales.map((locale) => ({
+  const paths = howToData.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },
@@ -41,7 +42,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`);
   const data = await resp.json();
 
-  if (resp.status >= 400 || data.asset_type !== 'ARTICLE') {
+  if (resp.status >= 400) {
     return {
       notFound: true,
     };

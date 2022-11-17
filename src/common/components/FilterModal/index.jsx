@@ -29,7 +29,7 @@ const FilterModal = ({
   const [checkedTechnologies, setCheckedTechnologies] = useState([]);
   const [withVideo, setWithVideo] = useState(false);
   const [show, setShow] = useState(false);
-  const [difficultyPosition, setDifficulty] = useState(null);
+  const [difficultyPosition, setDifficultyPosition] = useState(null);
   const router = useRouter();
   const { lightColor, modal, borderColor } = useStyle();
 
@@ -78,7 +78,7 @@ const FilterModal = ({
       query: null,
     });
     setCheckedTechnologies([]);
-    setDifficulty(null);
+    setDifficultyPosition(null);
     setWithVideo(null);
     setFilter({
       technologies: [],
@@ -138,10 +138,11 @@ const FilterModal = ({
 
             {/* <------------------- Difficulty section -------------------> */}
             <DifficultySection
+              t={t}
               title={t('difficulties')}
               setFilter={setFilter}
               contextFilter={contextFilter}
-              setDifficulty={setDifficulty}
+              setDifficultyPosition={setDifficultyPosition}
               difficulties={difficulties}
               commonTextColor={lightColor}
               difficultyPosition={difficultyPosition}

@@ -8,13 +8,14 @@ import { useEffect, useState } from 'react';
 import Text from '../Text';
 
 const DifficultySection = ({
+  t,
   title,
   commonTextColor,
   commonBorderColor,
   difficulties,
   difficultyPosition,
   contextFilter,
-  setDifficulty,
+  setDifficultyPosition,
   setFilter,
 }) => {
   const router = useRouter();
@@ -100,7 +101,7 @@ const DifficultySection = ({
           return (
             <Tooltip key={`${difficulty}`} label={difficultyIsMatch ? difficulty : `${difficulty} (not available)`} placement="top">
               <Box
-                onClick={() => (difficultyIsMatch && setDifficulty(index)) || null}
+                onClick={() => (difficultyIsMatch && setDifficultyPosition(index)) || null}
                 width={isSelected ? '20px' : '15px'}
                 height={isSelected ? '20px' : '15px'}
                 borderRadius="50%"
@@ -137,7 +138,7 @@ const DifficultySection = ({
             cursor="pointer"
             fontSize="14px"
             onClick={() => {
-              setDifficulty(null);
+              setDifficultyPosition(null);
               setQueryPosition(null);
               router.push({
                 query: {
@@ -151,7 +152,7 @@ const DifficultySection = ({
               });
             }}
           >
-            Remove difficulty
+            {t('remove-difficulty')}
           </Box>
         </Flex>
       )}
@@ -159,17 +160,19 @@ const DifficultySection = ({
   );
 };
 DifficultySection.propTypes = {
+  t: PropTypes.func,
   title: PropTypes.string,
   difficulties: PropTypes.arrayOf(PropTypes.string),
   commonBorderColor: PropTypes.string.isRequired,
   commonTextColor: PropTypes.string.isRequired,
   difficultyPosition: PropTypes.number,
   contextFilter: PropTypes.objectOf(PropTypes.any).isRequired,
-  setDifficulty: PropTypes.func.isRequired,
+  setDifficultyPosition: PropTypes.func.isRequired,
   setFilter: PropTypes.func.isRequired,
 };
 
 DifficultySection.defaultProps = {
+  t: () => {},
   title: 'DIFFICULTIES',
   difficulties: [],
   difficultyPosition: null,

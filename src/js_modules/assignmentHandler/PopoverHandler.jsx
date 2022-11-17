@@ -7,7 +7,8 @@ import useTranslation from 'next-translate/useTranslation';
 import { LinkIcon } from '@chakra-ui/icons';
 import Icon from '../../common/components/Icon';
 import bc from '../../common/services/breathecode';
-import iconDict from '../../common/utils/iconDict.json';
+// import iconDict from '../../common/utils/iconDict.json';
+import Text from '../../common/components/Text';
 import Link from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
 
@@ -64,12 +65,15 @@ const PopoverHandler = ({ task, githubUrl, haveGithubDomain }) => {
           trigger="click"
         >
           <PopoverTrigger>
-            <Button onClick={() => handleOpen(task)} isLoading={isFetching} width="40px" padding="0" background={backgroundColor}>
-              <Icon icon="arrowDown" width="26px" height="26px" color={hexColor.blueDefault} />
+            <Button onClick={() => handleOpen(task)} isLoading={isFetching} padding="0 2px 0 10px" background={backgroundColor}>
+              <Box display="flex" alignItems="center">
+                <Icon icon="documentVerified" width="24px" height="30px" color={hexColor.blueDefault} />
+                <Icon icon="arrowDown" width="26px" height="26px" color={hexColor.blueDefault} />
+              </Box>
             </Button>
           </PopoverTrigger>
           {assetData && assetData?.delivery_formats && (
-            <PopoverContent>
+            <PopoverContent maxW="280px">
               <PopoverArrow />
               <PopoverCloseButton />
               <PopoverHeader>
@@ -89,31 +93,40 @@ const PopoverHandler = ({ task, githubUrl, haveGithubDomain }) => {
                     {githubUrl && !haveGithubDomain && githubUrl.includes(fileUrl) && (
                       <Icon icon="file" width="20px" height="20px" style={{ minWidth: '20px' }} color={hexColor.black} />
                     )}
-                    <Box fontSize="16px">
+                    <Text size="l" withLimit={assetData.title.length > 28}>
                       {assetData.title}
-                    </Box>
+                    </Text>
+                    {githubUrl.includes(fileUrl) && (
+                      <Icon icon="download" width="22px" height="22px" color={hexColor.blueDefault} />
+                    )}
                   </Link>
                 ) : (
                   <Box display="flex" flexDirection="column" gridGap="8px" maxHeight="135px" overflowY="auto">
                     {fileData.length > 0 && fileData?.map((file) => {
                       const extension = file.name.split('.').pop();
-                      const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
-                      const isImage = imageExtensions.includes(extension);
-                      const icon = iconDict.includes(extension) ? extension : 'file';
+                      // const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
+                      // const isImage = imageExtensions.includes(extension);
+                      // const icon = iconDict.includes(extension) ? extension : 'file';
                       return (
-                        <Box display="flex">
-                          <Icon icon={isImage ? 'image' : icon} width="22px" height="22px" />
-                          <Link
-                            key={file.id}
-                            href={file.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            color="blue.500"
-                            margin="0 0 0 10px"
-                          >
+                        <Link
+                          variant="default"
+                          width="100%"
+                          justifyContent="space-between"
+                          key={file.id}
+                          href={file.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          // margin="0 0 0 10px"
+                          display="flex"
+                          gridGap="8px"
+                        >
+                          <Text size="l" withLimit={file.name.length > 28}>
                             {file.name}
-                          </Link>
-                        </Box>
+                          </Text>
+                          {extension && (
+                          <Icon icon="download" width="16px" height="16px" color={hexColor.blueDefault} />
+                          )}
+                        </Link>
                       );
                     })}
                   </Box>

@@ -18,7 +18,7 @@ import Text from '../../Text';
 export const MDLink = ({ children, href }) => (
   <Link
     href={href}
-    fontSize="15px"
+    fontSize="inherit"
     color="blue.400"
     fontWeight="700"
     overflowWrap="anywhere"
@@ -113,7 +113,7 @@ export const BeforeAfter = ({ before, after }) => {
 export const MDHr = () => (<Box as="hr" backgroundColor={useColorModeValue('gray.400', 'gray.500')} mb="20px" />);
 
 export const MDText = ({ children }) => (
-  <Text size="l" letterSpacing="0.05em" marginBottom="16px" fontWeight="400" lineHeight="24px">
+  <Text size="l" fontWeight="400" lineHeight="24px">
     {children}
   </Text>
 );

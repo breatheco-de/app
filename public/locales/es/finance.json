@@ -2,6 +2,11 @@
   "coding-introduction": "Introducción a la codificación",
   "full-stack": "Full Stack",
   "software-engineering": "Ingeniería de software",
+  "description": "Actualice su membresía para acceder a todos los beneficios de la comunidad 4Geeks",
+  "button": {
+    "title": "Actualizar plan",
+    "link": "#upgrade-plan"
+  },
   "plans": [
     {
       "type": "pro",

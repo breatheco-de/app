@@ -78,23 +78,25 @@
     "how-to-deliver-text": "Envíe una URL de Github que apunte a su proyecto como un repositorio de Github. <a class='link' target='blank' href='{{link}}'>Cómo entregar proyectos</a>",
     "handler-text": "Entregar proyecto",
     "mandatory-message": "Tienes {{count}} proyectos obligatorios para completar antes de graduarte",
-    "file-upload": "El archivo no debe tener más de 10 MB. Solo se permiten los tipos de archivo PDF, SCV",
+    "file-upload": "Sube uno o más archivos con un máximo de 10 MB en los siguientes formatos: ",
     "error-file-format": "El formato de archivo es incorrecto.",
     "error-file-size": "El tamaño del archivo debe ser inferior a 10mb.",
-    "total-size": "Tamaño total de {{size}}"
+    "total-size": "Tamaño total de {{size}}",
+    "invalid-url": "URL no válida, el enlace esperado debe contener: {{url}}",
+    "url-is-required": "La URL es obligatoria"
   },
   "modalInfo": {
     "title": "Estado de revisión",
     "still-reviewing": "Tu profesor todavía está revisando tu entrega, te dará su opinión una vez que esté lista.",
     "approved": "¡Tu profesor ha aprobado con éxito tu proyecto!",
-    "files-sended-to-teacher": "Archivos enviados a tu profesor:",
+    "files-sended-to-teacher": "",
     "rejected": {
       "title": "Tu profesor ha rechazado tu proyecto",
       "teacher-feedback": "Comentario del profesor:",
       "remove-delivery": "Eliminar entrega",
       "resubmit-assignment": "Reenviar proyecto"
     },
-    "link-info": "Enlace del proyecto enviado a tu profesor:",
+    "link-info": "Enviado a tu profesor:",
     "remove-delivery": "Quitar entrega",
     "non-github-url": {
       "title": "No se ha detectado URL de Github",
