@@ -116,6 +116,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
   const { technologies, difficulty, videoTutorials } = filteredBy.exercisesOptions;
   const techsQuery = router.query.techs;
   const difficultyQuery = router.query.difficulty;
+  const queryExists = Object.keys(router.query).length > 0;
   const exercisesFiltered = exercises.slice(0, offset);
   const exercisesSearched = exercises.filter(
     (exercise) => exercise.title.toLowerCase()
@@ -148,15 +149,17 @@ function Exercices({ exercises, technologyTags, difficulties }) {
   };
 
   useEffect(() => {
-    if (exercisesSearched.length > 0) return () => {};
-    if (offset <= exercises.length) {
-      console.log('loading exercises...');
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
+    if (!queryExists) {
+      if (exercisesSearched.length > 0) return () => {};
+      if (offset <= exercises.length) {
+        console.log('loading exercises...');
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }
+      console.log('All exercises loaded');
     }
-    console.log('All exercises loaded');
     return () => {};
-  }, [offset]);
+  }, [offset, queryExists]);
 
   useEffect(() => {
     if (!isLoading) return;
@@ -165,7 +168,17 @@ function Exercices({ exercises, technologyTags, difficulties }) {
       setOffset(offset + 10);
       setIsLoading(false);
     }, 200);
-  }, [isLoading, exercisesSearched]);
+  }, [isLoading]);
+
+  const getExercises = () => {
+    if (queryExists) {
+      return exercises;
+    }
+    if (exercisesSearched.length > 0) {
+      return exercisesSearched;
+    }
+    return exercisesFiltered;
+  };
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
@@ -249,7 +262,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
           {t('description')}
         </Text>
         <ProjectList
-          projects={exercisesSearched.length > 0 ? exercisesSearched : exercisesFiltered}
+          projects={getExercises()}
           contextFilter={filteredBy.exercisesOptions}
           isLoading={isLoading}
           projectPath="interactive-exercise"

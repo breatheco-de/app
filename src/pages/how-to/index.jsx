@@ -115,6 +115,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
   const iconColor = useColorModeValue('#FFF', '#283340');
   const [isLoading, setIsLoading] = useState(false);
   const [offset, setOffset] = useState(10);
+  const queryExists = Object.keys(router.query).length > 0;
 
   const howTosFiltered = data.slice(0, offset);
   const howTosSearched = data.filter(
@@ -154,15 +155,17 @@ export default function HowTo({ data, technologyTags, difficulties }) {
   };
 
   useEffect(() => {
-    if (howTosSearched.length > 0) return () => {};
-    if (offset <= data.length) {
-      console.log('loading how to\'s...');
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
+    if (!queryExists) {
+      if (howTosSearched.length > 0) return () => {};
+      if (offset <= data.length) {
+        console.log('loading how to\'s...');
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }
+      console.log('All how to\'s loaded');
     }
-    console.log('All how to\'s loaded');
     return () => {};
-  }, [offset, howTosSearched]);
+  }, [offset, queryExists]);
 
   useEffect(() => {
     if (!isLoading) return;
@@ -172,6 +175,16 @@ export default function HowTo({ data, technologyTags, difficulties }) {
       setIsLoading(false);
     }, 200);
   }, [isLoading]);
+
+  const getHowToList = () => {
+    if (queryExists) {
+      return data;
+    }
+    if (howTosSearched.length > 0) {
+      return howTosSearched;
+    }
+    return howTosFiltered;
+  };
 
   return (
     <>
@@ -253,7 +266,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
           </Text>
         )}
         <ProjectList
-          projects={howTosSearched.length > 0 ? howTosSearched : howTosFiltered}
+          projects={getHowToList()}
           contextFilter={filteredBy.howToOptions}
           isLoading={isLoading}
           projectPath="how-to"

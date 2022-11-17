@@ -51,11 +51,26 @@ const FilterModal = ({
     }
   }, [router.query.withVideo]);
 
+  // const getDifficultyPosition = (difficulty) => {
+  //   if (difficulty === 'beginner' || difficulty === 'easy') {
+  //     return 0;
+  //   }
+  //   if (difficulty === 'intermediate') {
+  //     return 1;
+  //   }
+  //   if (difficulty === 'hard') {
+  //     return 2;
+  //   }
+  //   return 0;
+  // };
+
   const handleToggle = () => setShow(!show);
 
+  const newDifficulties = ['junior', 'mid-level', 'senior'];
   const currentDifficultyPosition = router.query.difficulty || difficultyPosition;
+
   const handleSubmit = () => {
-    const difficulty = difficulties[difficultyPosition] || '';
+    const difficulty = newDifficulties[difficultyPosition] || '';
     const techs = checkedTechnologies.join(',') || '';
     onClose();
     router.push({

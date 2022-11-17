@@ -20,7 +20,7 @@ const ProjectList = ({
 }) => {
   const { t } = useTranslation('common');
   const arrOfTechs = contextFilter?.technologies || [];
-  const difficulty = contextFilter?.difficulty || [];
+  // const difficulty = contextFilter?.difficulty || [];
   const videoTutorials = contextFilter?.videoTutorials || [];
   const router = useRouter();
   const { featuredColor } = useStyle();
@@ -36,9 +36,29 @@ const ProjectList = ({
 
   const checkIsPathDifficulty = (thisDifficulty) => (pathWithDifficulty ? `/${thisDifficulty}` : '');
 
+  const getDifficultyPosition = (currDifficulty) => {
+    if (currDifficulty === 'beginner' || currDifficulty === 'easy') {
+      return 'junior';
+    }
+    if (currDifficulty === 'intermediate') {
+      return 'mid-level';
+    }
+    if (currDifficulty === 'hard') {
+      return 'senior';
+    }
+    return 'junior';
+  };
+
+  const isOldDifficulty = () => {
+    if (difficultyQuery === 'beginner' || difficultyQuery === 'easy' || difficultyQuery === 'intermediate' || difficultyQuery === 'hard') {
+      return true;
+    }
+    return false;
+  };
+
   const contains = (project, selectedTechs) => {
     // search with title and slug
-    const projectDifficulty = project.difficulty?.toLowerCase();
+    const projectDifficulty = isOldDifficulty() ? project.difficulty?.toLowerCase() : getDifficultyPosition(project.difficulty?.toLowerCase());
     const projectTitle = project.title?.toLowerCase() || unSlugify(project.slug);
     if (
       typeof videoTutorials === 'boolean'
@@ -46,9 +66,7 @@ const ProjectList = ({
       && !project.solution_video_url === true
     ) return false;
     if (typeof query.search === 'string' && !projectTitle.includes(query.search)) return false;
-    if ((typeof difficulty === 'string'
-      && projectDifficulty !== difficulty)
-      || (difficultyQuery && projectDifficulty !== difficultyQuery)) return false;
+    if (difficultyQuery && projectDifficulty !== difficultyQuery) return false;
     // Match checked technologies
     const res = (techTagsQuery || selectedTechs.length > 0) ? (
       (techTagsQuery || selectedTechs).some((tech) => project.technologies.includes(tech))
