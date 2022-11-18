@@ -54,6 +54,7 @@ const Dashboard = () => {
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const { user, choose, isLoading } = useAuth();
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
+  const [currentCohortProps, setCurrentCohortProps] = useState({});
   const {
     cohortSession, sortedAssignments, setSyllabus, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, taskTodo,
@@ -166,6 +167,8 @@ const Dashboard = () => {
   useEffect(() => {
     getCohortData({
       choose, cohortSlug,
+    }).then((cohort) => {
+      setCurrentCohortProps(cohort);
     });
   }, [cohortSlug]);
 
@@ -324,6 +327,8 @@ const Dashboard = () => {
                     user={user}
                     students={onlyStudentsActive}
                     sortedAssignments={sortedAssignments}
+                    currentCohortProps={currentCohortProps}
+                    setCurrentCohortProps={setCurrentCohortProps}
                     width="100%"
                   />
                 </OnlyFor>
@@ -485,6 +490,8 @@ const Dashboard = () => {
                   user={user}
                   students={onlyStudentsActive}
                   sortedAssignments={sortedAssignments}
+                  currentCohortProps={currentCohortProps}
+                  setCurrentCohortProps={setCurrentCohortProps}
                   width="100%"
                 />
               </OnlyFor>

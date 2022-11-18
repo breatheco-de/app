@@ -20,16 +20,19 @@ import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import useStyle from '../hooks/useStyle';
 
 const AttendanceModal = ({
-  title, message, isOpen, onClose, sortedAssignments, students,
+  title, message, isOpen, onClose, sortedAssignments, students, currentCohortProps, setCurrentCohortProps,
 }) => {
   const { t } = useTranslation('dashboard');
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const [daysHistoryLog, setDaysHistoryLog] = usePersistent('days_history_log', {});
-  const [day, setDay] = useState(cohortSession.current_day);
   const [attendanceWasTaken, setAttendanceWasTaken] = useState(false);
   const [attendanceTaken, setAttendanceTaken] = useState([]);
-  const [currentModule, setCurrentModule] = useState(cohortSession.current_module);
-  const [defaultDay, setDefaultDay] = useState(0);
+  const [day, setDay] = useState(currentCohortProps.current_day);
+  const [currentModule, setCurrentModule] = useState(currentCohortProps.current_module);
+  const [defaultProps, setDefaultProps] = useState({
+    current_day: 0,
+    current_module: 0,
+  });
   const [checked, setChecked] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [openWarn, setOpenWarn] = useState(false);
@@ -44,7 +47,8 @@ const AttendanceModal = ({
   });
   const cohortDurationInDays = cohortSession.syllabus_version.duration_in_days;
 
-  const currentCohortDay = cohortSession.current_day;
+  const currentCohortDay = currentCohortProps.current_day;
+  const currentCohortModule = currentCohortProps.current_module;
 
   const getDailyModuleData = () => {
     if (sortedAssignments.length > 0) {
@@ -71,8 +75,14 @@ const AttendanceModal = ({
   );
 
   useEffect(() => {
-    setDefaultDay(currentCohortDay);
-  }, [currentCohortDay]);
+    setDefaultProps({
+      current_day: currentCohortDay,
+      current_module: currentCohortModule,
+    });
+    // setDefaultDay(currentCohortProps.current_day);
+  }, [currentCohortDay, currentCohortModule]);
+
+  console.log('currentCohortProps_modal:::', currentCohortProps);
 
   const saveCohortAttendancy = () => {
     const cohortSlug = cohortSession.slug;
@@ -125,6 +135,11 @@ const AttendanceModal = ({
           isClosable: true,
         });
         setIsLoading(false);
+        setCurrentCohortProps({
+          ...currentCohortProps,
+          current_day: day,
+          current_module: currentModule,
+        });
       })
       .catch(() => {
         toast({
@@ -221,9 +236,9 @@ const AttendanceModal = ({
             <FormControl id="days">
               <FormLabel htmlFor="day" color={lightColor} fontSize="12px">{t('attendance-modal.day')}</FormLabel>
               <NumberInput
-                defaultValue={defaultDay}
+                defaultValue={defaultProps.current_day}
                 max={cohortDurationInDays}
-                min={defaultDay}
+                min={defaultProps.current_day}
                 onChange={(newDay) => setDay(parseInt(newDay, 10))}
               >
                 <NumberInputField color={colorMode === 'light' ? 'black' : 'white'} />
@@ -237,7 +252,7 @@ const AttendanceModal = ({
             <FormControl>
               <FormLabel htmlFor="current_module" color={lightColor} fontSize="12px">{t('attendance-modal.module')}</FormLabel>
               {sortedAssignments.length > 0 && (
-                <Select defaultValue={currentModule} onChange={(e) => setCurrentModule(parseInt(e.target.value, 10))} id="module" placeholder="Select module">
+                <Select defaultValue={defaultProps.current_module} onChange={(e) => setCurrentModule(parseInt(e.target.value, 10))} id="module" placeholder="Select module">
                   {sortedAssignments.map((module) => (
                     <option key={module.id} value={module.id}>
                       {`#${module.id} - ${module.label}`}
@@ -453,12 +468,16 @@ AttendanceModal.propTypes = {
   students: PropTypes.arrayOf(PropTypes.object).isRequired,
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
+  currentCohortProps: PropTypes.objectOf(PropTypes.any),
+  setCurrentCohortProps: PropTypes.func,
 };
 AttendanceModal.defaultProps = {
   title: '',
   message: '',
   isOpen: true,
-  onClose: () => { },
+  onClose: () => {},
+  currentCohortProps: {},
+  setCurrentCohortProps: () => {},
 };
 
 export default AttendanceModal;
