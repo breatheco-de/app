@@ -82,8 +82,6 @@ const AttendanceModal = ({
     // setDefaultDay(currentCohortProps.current_day);
   }, [currentCohortDay, currentCohortModule]);
 
-  console.log('currentCohortProps_modal:::', currentCohortProps);
-
   const saveCohortAttendancy = () => {
     const cohortSlug = cohortSession.slug;
     const userAgent = `bc/${cohortSession?.cohort_role?.toLowerCase() || 'teacher'}`;
