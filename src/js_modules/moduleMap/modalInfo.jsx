@@ -17,7 +17,7 @@ const ModalInfo = ({
   isOpen, onClose, actionHandler, rejectHandler, forceHandler, disableHandler, title, description,
   teacherFeedback, linkInfo, linkText, link, handlerText, closeText, cancelColorButton,
   handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
-  htmlDescription, markdownDescription, attachment,
+  htmlDescription, markdownDescription, attachment, disableInput,
 }) => {
   const { t } = useTranslation('dashboard');
   const [githubUrl, setGithubUrl] = useState(link);
@@ -163,7 +163,7 @@ const ModalInfo = ({
               </Box>
             ) : (
               <>
-                {!disableHandler && link && !linkText ? (
+                {!disableInput && !disableHandler && link && (
                   <Box padding="18px 0 0 0">
                     <Formik
                       initialValues={{ githubUrl: link }}
@@ -215,12 +215,19 @@ const ModalInfo = ({
                     </Formik>
 
                   </Box>
-                ) : linkInfo && (
-                  <Box padding="20px 0">
+                )}
+
+                {disableInput && (
+                  <Box padding="18px 0 0 0">
                     <Text size="l" fontWeight="bold" color={commonTextColor}>
                       {linkInfo}
                     </Text>
-                    <Link href={link} color={useColorModeValue('blue.default', 'blue.300')} target="_blank" rel="noopener noreferrer">
+                    <Link
+                      href={link}
+                      color={useColorModeValue('blue.default', 'blue.300')}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       {linkText || link}
                     </Link>
                   </Box>
@@ -229,58 +236,54 @@ const ModalInfo = ({
             )}
           </ModalBody>
 
-          {!disableHandler && (
-            <ModalFooter justifyContent="space-evenly">
-              {type === 'taskHandler' ? (
-                <Box width="100%" display="flex" justifyContent="space-between">
+          <ModalFooter justifyContent="space-evenly">
+            {type === 'taskHandler' ? (
+              <Box width="100%" display="flex" justifyContent="space-between">
+                <Button
+                  fontSize="13px"
+                  variant={closeButtonVariant}
+                  onClick={actionHandler}
+                  textTransform="uppercase"
+                >
+                  {closeText || t('common:close')}
+                </Button>
+                <Button
+                  fontSize="13px"
+                  disabled={(Array.isArray(attachment) && attachment.length > 0) || isSubmitting || disableHandler}
+                  isLoading={isSubmitting}
+                  onClick={() => resubmitHandler()}
+                  variant="default"
+                  // colorScheme="blue"
+                  textTransform="uppercase"
+                >
+                  {handlerText}
+                </Button>
+              </Box>
+            ) : (
+              <>
+                <Button
+                  fontSize="13px"
+                  variant={closeButtonVariant}
+                  colorScheme={cancelColorButton}
+                  mr={3}
+                  onClick={() => rejectFunction()}
+                  textTransform="uppercase"
+                >
+                  {closeText || t('common:close')}
+                </Button>
+                {!disableHandler && (
                   <Button
                     fontSize="13px"
-                    variant={closeButtonVariant}
                     onClick={actionHandler}
+                    colorScheme={handlerColorButton}
                     textTransform="uppercase"
                   >
-                    {closeText || t('common:close')}
+                    {handlerText}
                   </Button>
-                  {!disableHandler && (
-                    <Button
-                      fontSize="13px"
-                      disabled={(Array.isArray(attachment) && attachment.length > 0) || isSubmitting}
-                      isLoading={isSubmitting}
-                      onClick={() => resubmitHandler()}
-                      variant="default"
-                      // colorScheme="blue"
-                      textTransform="uppercase"
-                    >
-                      {handlerText}
-                    </Button>
-                  )}
-                </Box>
-              ) : (
-                <>
-                  <Button
-                    fontSize="13px"
-                    variant={closeButtonVariant}
-                    colorScheme={cancelColorButton}
-                    mr={3}
-                    onClick={() => rejectFunction()}
-                    textTransform="uppercase"
-                  >
-                    {closeText || t('common:close')}
-                  </Button>
-                  {!disableHandler && (
-                    <Button
-                      fontSize="13px"
-                      onClick={actionHandler}
-                      colorScheme={handlerColorButton}
-                      textTransform="uppercase"
-                    >
-                      {handlerText}
-                    </Button>
-                  )}
-                </>
-              )}
-            </ModalFooter>
-          )}
+                )}
+              </>
+            )}
+          </ModalFooter>
         </ModalContent>
       </Modal>
 
@@ -335,6 +338,7 @@ ModalInfo.propTypes = {
   rejectHandler: PropTypes.func,
   forceHandler: PropTypes.bool,
   disableHandler: PropTypes.bool,
+  disableInput: PropTypes.bool,
   title: PropTypes.string,
   description: PropTypes.string,
   teacherFeedback: PropTypes.string,
@@ -365,6 +369,7 @@ ModalInfo.defaultProps = {
   description: '',
   teacherFeedback: '',
   linkInfo: '',
+  disableInput: false,
   linkText: '',
   link: '',
   handlerText: 'Remove delivery',

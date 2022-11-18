@@ -4,6 +4,7 @@ const useStyle = () => {
   const backgroundColor = useColorModeValue('white', 'darkTheme');
   const backgroundColor2 = useColorModeValue('white', 'gray.700');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const borderColorStrong = useColorModeValue('gray.400', 'gray.500');
   const disabledBackgroundColor = useColorModeValue('gray.250', 'gray.600');
   const disabledColor = useColorModeValue('gray.600', 'gray.350');
   const featuredColor = useColorModeValue('featuredLight', 'featuredDark');
@@ -43,6 +44,7 @@ const useStyle = () => {
     lightColor,
     modal,
     tooltipBackground,
+    borderColorStrong,
   };
 };
 
