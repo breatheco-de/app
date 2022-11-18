@@ -12,7 +12,7 @@ import Text from '../../common/components/Text';
 import Link from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
 
-const PopoverHandler = ({ task, githubUrl, haveGithubDomain }) => {
+const PopoverHandler = ({ task, githubUrl, haveGithubDomain, selectedCohort }) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [assetData, setAssetData] = useState(null);
@@ -20,6 +20,8 @@ const PopoverHandler = ({ task, githubUrl, haveGithubDomain }) => {
   const { t } = useTranslation('assignments');
   const { backgroundColor, hexColor } = useStyle();
   const toast = useToast();
+
+  console.log('selectedCohortL:::', selectedCohort);
 
   const isUrl = assetData?.delivery_formats.includes('url');
   const fileUrl = 'https://storage.googleapis.com/';
@@ -34,7 +36,7 @@ const PopoverHandler = ({ task, githubUrl, haveGithubDomain }) => {
         setAssetData(data);
 
         if (!data?.delivery_formats.includes('url')) {
-          const fileResp = await bc.todo().getFile({ id: currentTask.id });
+          const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: selectedCohort.academy });
           if (fileResp && fileResp.status < 400) {
             const respData = await fileResp.data;
             setFileData(respData);
@@ -141,10 +143,12 @@ PopoverHandler.propTypes = {
   task: PropTypes.objectOf(PropTypes.any),
   githubUrl: PropTypes.string.isRequired,
   haveGithubDomain: PropTypes.bool,
+  selectedCohort: PropTypes.objectOf(PropTypes.any),
 };
 PopoverHandler.defaultProps = {
   task: {},
   haveGithubDomain: false,
+  selectedCohort: {},
 };
 
 export default PopoverHandler;

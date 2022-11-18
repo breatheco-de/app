@@ -459,7 +459,7 @@ const Assignments = () => {
                     </Link>
                   </Box>
 
-                  <PopoverHandler task={task} haveGithubDomain={haveGithubDomain} githubUrl={githubUrl} />
+                  <PopoverHandler task={task} haveGithubDomain={haveGithubDomain} githubUrl={githubUrl} selectedCohort={selectedCohort} />
 
                   <Box width="auto" minWidth="160px" textAlign="end">
                     <ButtonHandler

@@ -17,6 +17,7 @@ import useStyle from '../../common/hooks/useStyle';
 import { formatBytes } from '../../utils';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import iconDict from '../../common/utils/iconDict.json';
+import { usePersistent } from '../../common/hooks/usePersistent';
 
 export const TextByTaskStatus = ({ currentTask, t }) => {
   const taskIsAproved = currentTask?.revision_status === 'APPROVED';
@@ -111,6 +112,7 @@ export const ButtonHandlerByTaskStatus = ({
 }) => {
   const { t } = useTranslation('dashboard');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [cohortSession] = usePersistent('cohortSession', {});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [githubUrl, setGithubUrl] = useState('');
@@ -290,13 +292,16 @@ export const ButtonHandlerByTaskStatus = ({
       }
     };
 
+    // console.log('cohortSession:::', cohortSession);
+    // console.log('cohortSession:::', cohortSession);
+
     const handleUploadFile = async () => {
       setIsUploading(true);
       const formdata = new FormData();
       Array.from(fileProps).forEach(({ file }) => {
         formdata.append('file', file);
       });
-      const resp = await bc.todo().uploadFile(currentTask.id, formdata);
+      const resp = await bc.todo({ academy: cohortSession.academy.id }).uploadFile(currentTask.id, formdata);
 
       if (resp?.status < 400) {
         const respData = resp.data[0];

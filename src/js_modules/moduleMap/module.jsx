@@ -18,7 +18,6 @@ const Module = ({
   data, taskTodo, currIndex,
 }) => {
   const { t } = useTranslation('dashboard');
-  // const [cohortSession] = usePersistent('cohortSession', {});
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);
@@ -93,7 +92,7 @@ const Module = ({
         setCurrentAssetData(assetData);
 
         if (!assetData?.delivery_formats.includes('url')) {
-          const fileResp = await bc.todo().getFile({ id: currentTask.id });
+          const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession.academy.id });
           const respData = await fileResp.data;
           setFileData(respData);
           onOpen();

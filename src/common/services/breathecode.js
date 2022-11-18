@@ -73,8 +73,12 @@ const breathecode = {
           academy: args.academyId,
         },
       }),
-      uploadFile: (id, args) => axios.put(`${url}/task/${id}/attachment`, args),
-      getFile: (args) => axios.get(`${url}/task/${args.id}/attachment`),
+      uploadFile: (id, args) => axios.put(`${url}/task/${id}/attachment?${qs}`, args),
+      getFile: (args) => axios.get(`${url}/task/${args.id}/attachment`, {
+        headers: {
+          academy: args.academyId,
+        },
+      }),
       subtask: () => ({
         get: (id) => axios.get(`${url}/user/me/task/${id}/subtasks`),
         update: (id, args) => axios.put(`${url}/user/me/task/${id}/subtasks`, args),
