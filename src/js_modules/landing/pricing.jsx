@@ -42,7 +42,7 @@ const Pricing = ({ data }) => {
   }, [selectedFinanceIndex]);
 
   return (
-    <Box maxW="container.xl" display="flex" width="100%" flexDirection="row" alignItems={{ base: 'center', md: 'start' }} gridGap="21px" m="36px auto 20px auto" justifyContent="center" height="100%">
+    <Box maxW="container.xl" display="flex" width="100%" flexDirection="row" id="pricing" alignItems={{ base: 'center', md: 'start' }} gridGap="21px" m="36px auto 20px auto" justifyContent="center" height="100%">
 
       <Box display="flex" flex={0.5} flexDirection="column" w="100%" gridGap="10px">
         <Heading size="l" mb="32px">

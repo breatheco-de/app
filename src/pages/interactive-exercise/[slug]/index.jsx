@@ -601,6 +601,7 @@ const Exercise = ({ exercise, markdown }) => {
       </Box>
       <GridContainer
         height="100%"
+        minHeight="500px"
         // flexDirection="column"
         // justifyContent="center"
         // alignItems="center"
