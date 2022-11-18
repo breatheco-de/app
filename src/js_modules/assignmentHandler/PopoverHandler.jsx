@@ -21,8 +21,6 @@ const PopoverHandler = ({ task, githubUrl, haveGithubDomain, selectedCohort }) =
   const { backgroundColor, hexColor } = useStyle();
   const toast = useToast();
 
-  console.log('selectedCohortL:::', selectedCohort);
-
   const isUrl = assetData?.delivery_formats.includes('url');
   const fileUrl = 'https://storage.googleapis.com/';
 
