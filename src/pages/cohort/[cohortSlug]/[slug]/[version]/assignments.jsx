@@ -19,6 +19,7 @@ import useAssignments from '../../../../../common/store/actions/assignmentsActio
 import { isWindow } from '../../../../../utils';
 import Image from '../../../../../common/components/Image';
 import PopoverHandler from '../../../../../js_modules/assignmentHandler/PopoverHandler';
+import axiosInstance from '../../../../../axios';
 
 const Assignments = () => {
   const { t } = useTranslation('assignments');
@@ -158,9 +159,11 @@ const Assignments = () => {
     const academyId = findSelectedCohort?.academy || defaultCohort?.academy;
     const slug = findSelectedCohort?.slug || defaultCohort?.slug;
     const cohortId = findSelectedCohort?.value || defaultCohort?.value;
+    const currentCohort = findSelectedCohort || defaultCohort;
 
     if (defaultCohort && cohortId) {
-      setSelectedCohort(findSelectedCohort || defaultCohort);
+      axiosInstance.defaults.headers.common.Academy = currentCohort.academy;
+      setSelectedCohort(currentCohort);
       getStudents(slug, academyId);
       getFilterAssignments(cohortId, academyId, router.query.student);
     }
@@ -459,7 +462,7 @@ const Assignments = () => {
                     </Link>
                   </Box>
 
-                  <PopoverHandler task={task} haveGithubDomain={haveGithubDomain} githubUrl={githubUrl} selectedCohort={selectedCohort} />
+                  <PopoverHandler task={task} haveGithubDomain={haveGithubDomain} githubUrl={githubUrl} />
 
                   <Box width="auto" minWidth="160px" textAlign="end">
                     <ButtonHandler
