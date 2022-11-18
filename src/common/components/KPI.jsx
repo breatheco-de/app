@@ -58,7 +58,7 @@ const KPI = ({
               {label}
             </ChakraText>
           )}
-          <ChakraText fontWeight={700} size="30px" color={numberColors}>
+          <ChakraText fontWeight={700} size={label ? '30px' : '46px'} color={numberColors}>
             <Counter valueTo={value} totalDuration={2} />
             {valueUnit}
           </ChakraText>

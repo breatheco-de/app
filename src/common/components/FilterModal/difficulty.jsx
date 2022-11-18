@@ -1,11 +1,13 @@
 /* eslint-disable max-len */
 import {
-  Box, Flex, Tooltip, useColorModeValue,
+  Box, Flex, Tooltip,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Text from '../Text';
+import Icon from '../Icon';
+import useStyle from '../../hooks/useStyle';
 
 const DifficultySection = ({
   t,
@@ -20,8 +22,23 @@ const DifficultySection = ({
 }) => {
   const router = useRouter();
   const [queryPosition, setQueryPosition] = useState(null);
-  const defaultDifficulties = ['beginner', 'easy', 'intermediate', 'hard'];
-  const difficultyExists = defaultDifficulties.some((l) => difficulties.includes(l));
+  const defaultDifficulties = ['junior', 'mid-level', 'senior'];
+  const { lightColor } = useStyle();
+
+  const getDifficultyPosition = (difficulty) => {
+    if (difficulty === 'beginner' || difficulty === 'easy') {
+      return 0;
+    }
+    if (difficulty === 'intermediate') {
+      return 1;
+    }
+    if (difficulty === 'hard') {
+      return 2;
+    }
+    return 0;
+  };
+
+  const difficultyExists = defaultDifficulties.some((l) => difficulties.map((d) => defaultDifficulties[getDifficultyPosition(d)]).includes(l));
 
   useEffect(() => {
     const difficultyQuery = router.query.difficulty;
@@ -31,31 +48,57 @@ const DifficultySection = ({
     }
   }, [router.query.difficulty]);
 
-  const verifyDifficultyisAvailable = (index, position, difficulty, difficultiesArray) => {
-    if ((position !== null ? index === position : index === queryPosition)
-        && difficultiesArray[index] === difficulty) {
-      return true;
+  const verifyIfDifficultyIsSelected = (difficulty) => {
+    const difficultyIndex = defaultDifficulties.findIndex((d) => d === difficulty);
+    // DifficultyPosition
+    if (difficultyPosition !== null) {
+      return difficultyIndex === difficultyPosition;
+    }
+    // QueryPosition
+    if (queryPosition !== null) {
+      return difficultyIndex === queryPosition;
+    }
+    if (difficultyPosition !== null) {
+      return difficultyIndex === difficultyPosition;
     }
     return false;
   };
 
-  const getBackgroundColor = (difficultyIsMatch, isSelected, index) => {
-    if (difficultyPosition > index) return 'blue.default';
-    if (queryPosition > index) return 'blue.default';
-    if (difficultyIsMatch && isSelected) return 'blue.default';
-    if (difficultyIsMatch) return useColorModeValue('gray.default', 'gray.400');
-    return useColorModeValue('gray.350', 'gray.default');
+  const getBackgroundColor = (difficulty) => {
+    if (difficulty === 'junior') {
+      return {
+        backgroundColor: '#F0FFF4',
+        borderColor: '#25BF6C',
+      };
+    }
+    if (difficulty === 'mid-level') {
+      return {
+        backgroundColor: '#FFF4DC',
+        borderColor: '#FFB718',
+      };
+    }
+    if (difficulty === 'senior') {
+      return {
+        backgroundColor: '#FFE0E0',
+        borderColor: '#CD0000',
+      };
+    }
+    return {};
   };
 
-  // difficultyPosition
-  const positionConnector = {
-    0: 'linear-gradient(90deg, #0097CD 0%, #A4A4A4 0%)',
-    1: 'linear-gradient(90deg, #0097CD 33%, #A4A4A4 0%)',
-    2: 'linear-gradient(90deg, #0097CD 66%, #A4A4A4 0%)',
-    3: 'linear-gradient(90deg, #0097CD 100%, #A4A4A4 0%)',
+  const iconDifficultyCount = {
+    0: [1],
+    1: [1, 2],
+    2: [1, 2, 3],
   };
 
-  const lineColor = positionConnector[difficultyPosition] || positionConnector[queryPosition] || 'gray.default';
+  const handlePosition = (index) => {
+    if (difficultyPosition === index) {
+      setDifficultyPosition(null);
+    } else {
+      setDifficultyPosition(index);
+    }
+  };
 
   return difficultyExists && (
     <Flex
@@ -77,39 +120,47 @@ const DifficultySection = ({
         position="relative"
         alignItems="center"
       >
-        {/* Conector */}
-        <Box position="absolute" top="auto" height="3px" width="100%" background={lineColor} />
-        {/* Circle of difficulties  */}
         {defaultDifficulties.map((difficulty, index) => {
-          const isSelected = verifyDifficultyisAvailable(index, difficultyPosition, difficulty, difficulties);
-          const difficultyIsMatch = difficulties[index] === difficulty || false;
+          const isSelected = verifyIfDifficultyIsSelected(difficulty);
+          const difficultyIsMatch = defaultDifficulties[index] === difficulty;
+          const label = t(`common:${difficulty}`);
+          const borderColor = isSelected ? getBackgroundColor(difficulty).borderColor : 'transparent';
+          const background = isSelected ? getBackgroundColor(difficulty).backgroundColor : '';
+
           return (
-            <Tooltip key={`${difficulty}`} label={difficultyIsMatch ? difficulty : `${difficulty} (not available)`} placement="top">
-              <Box
-                onClick={() => (difficultyIsMatch && setDifficultyPosition(index)) || null}
-                width={isSelected ? '20px' : '15px'}
-                height={isSelected ? '20px' : '15px'}
-                borderRadius="50%"
-                background={getBackgroundColor(difficultyIsMatch, isSelected, index)}
-                border={isSelected ? '4px solid' : 'none'}
-                borderColor={isSelected ? 'blue.200' : 'none'}
-                // isSelected ? 'blue.default' : 'gray.default'
+            <Tooltip key={`${difficulty}`} label={difficultyIsMatch ? label : `${label} (not available)`} placement="top">
+              <Flex
+                onClick={() => (difficultyIsMatch && handlePosition(index))}
+                width="auto"
+                minWidth="85px"
+                height="auto"
+                padding="11px"
+                flexDirection="column"
+                borderRadius="3px"
+                gridGap="19"
+                justifyContent="center"
+                alignItems="center"
+                background={background}
+                border="1px solid"
+                borderColor={borderColor}
                 cursor="pointer"
                 position="relative"
+                color={isSelected ? getBackgroundColor(difficulty).borderColor : lightColor}
                 zIndex={1}
               >
-                <Box
-                  padding="8px 0"
-                  display={{ base: isSelected ? 'block' : 'none', md: 'none' }}
-                  color="black"
-                  width="100px"
-                  fontSize=" 12px"
-                  position="absolute"
-                  top="20px"
+                <Flex gridGap="5px">
+                  {iconDifficultyCount[index] && iconDifficultyCount[index].map((iconIndex) => (
+                    <Icon key={iconIndex} icon="flash" color="currentColor" width="16px" height="22px" />
+                  ))}
+                </Flex>
+                <Text
+                  fontWeight={900}
+                  color="currentColor"
+                  fontSize="16px"
                 >
-                  {difficultyIsMatch ? difficulty : `${difficulty} (not available)`}
-                </Box>
-              </Box>
+                  {label}
+                </Text>
+              </Flex>
             </Tooltip>
           );
         })}
