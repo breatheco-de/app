@@ -75,7 +75,7 @@ const breathecode = {
       }),
       uploadFile: (id, args) => axios.put(`${url}/task/${id}/attachment?${qs}`, args),
       getFile: (args) => axios.get(`${url}/task/${args.id}/attachment`, {
-        headers: {
+        headers: args.academyId && {
           academy: args.academyId,
         },
       }),
