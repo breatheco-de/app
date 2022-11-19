@@ -23,6 +23,7 @@ const AttendanceModal = ({
   const { t } = useTranslation('dashboard');
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const [daysHistoryLog, setDaysHistoryLog] = usePersistent('days_history_log', {});
+  const [historyLog, setHistoryLog] = useState();
   const [day, setDay] = useState(cohortSession.current_day);
   const [attendanceWasTaken, setAttendanceWasTaken] = useState(false);
   const [attendanceTaken, setAttendanceTaken] = useState({});
@@ -206,6 +207,25 @@ const AttendanceModal = ({
         setIsLoading(false);
       });
   };
+
+  useEffect(() => {
+    if (currModuleData) {
+      const currSumOfDays = prevSumOfDays + currModuleData?.duration_in_days;
+      const calcDaysDiff = () => {
+        if (currSumOfDays > day) {
+          return currSumOfDays - day;
+        }
+        return day - currSumOfDays;
+      };
+      setHistoryLog({
+        prevSumOfDays,
+        currSumOfDays,
+        daysDiff: calcDaysDiff(),
+      });
+    }
+  }, [currentModule]);
+
+  console.log('historyLog:::', historyLog);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
