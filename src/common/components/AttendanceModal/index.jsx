@@ -38,10 +38,21 @@ const AttendanceModal = ({
 
   const { getCheckboxProps } = useCheckboxGroup({
     onChange: setChecked,
+    value: checked,
   });
   const cohortDurationInDays = cohortSession.syllabus_version.duration_in_days;
 
   const currentCohortDay = cohortSession.current_day;
+
+  useEffect(() => {
+  // if {}.attendanceStudents[] is not empty check the checkboxes with attendanceStudents {user.id}
+    if (attendanceTaken?.attendanceStudents?.length > 0) {
+      const checkedStudents = attendanceTaken?.attendanceStudents.map((student) => String(student.user.id));
+
+      setChecked(checkedStudents);
+    }
+    return () => {};
+  }, [attendanceTaken.attendanceStudents]);
 
   const getDailyModuleData = () => {
     if (sortedAssignments.length > 0) {
@@ -252,6 +263,7 @@ const AttendanceModal = ({
             <Grid templateColumns={{ md: 'repeat(4, 4fr)', sm: 'repeat(1, 1fr)' }} gap={6}>
               {students.map((item) => {
                 const checkbox = getCheckboxProps({ value: item.user.id.toString() });
+
                 return (
                   <CheckboxCard key={`${item.user.id}-${item.user.first_name}`} {...checkbox}>
                     <Flex justifyContent="space-between">
