@@ -253,12 +253,12 @@ const Summary = ({
             ))}
           </Box>
         </Box>
-        {!planProps.type.includes('trial') && (
+        {!planProps.type?.includes('trial') && (
           <Button variant="default" height="45px" mt="12px">
             Proceed to payment
           </Button>
         )}
-        {planProps.type.includes('trial') && (
+        {planProps.type?.includes('trial') && (
           <Button
             variant="outline"
             borderColor="blue.200"

@@ -66,7 +66,7 @@ const SignUp = ({ finance }) => {
   const planChoosed = plan || plan_id || 'trial';
   const courseChoosed = course || 'coding-introduction';
   const courseTitle = finance[courseChoosed];
-  const planProps = finance.plans.find((l) => l.type === planChoosed);
+  const planProps = finance.plans.find((l) => l.type === planChoosed || l.type === 'trial');
 
   const [formProps, setFormProps] = useState({
     first_name: '',
