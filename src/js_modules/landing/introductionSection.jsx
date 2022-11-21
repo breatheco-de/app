@@ -67,17 +67,9 @@ const IntroductionSection = ({
             objectFit: 'cover',
           }}
         >
-          <source src="static/videos/landing-avatars.mp4" type="video/mp4" />
+          <source src="static/videos/landing-avatars.webm" type="video/webm" />
         </video>
       </Box>
-
-      {/* <Box
-        position="relative"
-        display={{ base: 'none', md: 'initial' }}
-        flex={0.5}
-      >
-        <Icon icon="landing-avatars" width="354px" height="369px" />
-      </Box> */}
     </Box>
   );
 };
