@@ -1,6 +1,8 @@
 import axios from '../../axios';
 
 const host = `${process.env.BREATHECODE_HOST}/v1`;
+// const paymentHost = `${process.env.BREATHECODE_PAYMENT}/v1`;
+
 const breathecode = {
   get: (url) => axios.get(url),
   auth: () => {

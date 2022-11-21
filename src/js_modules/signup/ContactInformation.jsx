@@ -77,10 +77,22 @@ const ContactInformation = ({
               .subscribe(allValues)
               .then(({ data }) => {
                 setStorageItem('subscriptionId', data.id);
-                if (queryCohortIdExists && dateProps) {
-                  setStepIndex(2);
+
+                // login user if email already exists
+                if (data?.access_token) {
+                  router.push({
+                    query: {
+                      token: data.access_token,
+                    },
+                  });
+
+                  if (queryCohortIdExists && dateProps) {
+                    setStepIndex(2);
+                  } else {
+                    setStepIndex(stepIndex + 1);
+                  }
                 } else {
-                  setStepIndex(stepIndex + 1);
+                  router.push('/thank-you');
                 }
               })
               .catch(() => {
