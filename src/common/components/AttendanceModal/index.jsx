@@ -22,7 +22,7 @@ const AttendanceModal = ({
 }) => {
   const { t } = useTranslation('dashboard');
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
-  const [daysHistoryLog, setDaysHistoryLog] = usePersistent('days_history_log', {});
+  const [historyLog, setHistoryLog] = useState();
   const [day, setDay] = useState(cohortSession.current_day);
   const [attendanceWasTaken, setAttendanceWasTaken] = useState(false);
   const [attendanceTaken, setAttendanceTaken] = useState({});
@@ -38,10 +38,21 @@ const AttendanceModal = ({
 
   const { getCheckboxProps } = useCheckboxGroup({
     onChange: setChecked,
+    value: checked,
   });
   const cohortDurationInDays = cohortSession.syllabus_version.duration_in_days;
 
   const currentCohortDay = cohortSession.current_day;
+
+  useEffect(() => {
+  // if {}.attendanceStudents[] is not empty check the checkboxes with attendanceStudents {user.id}
+    if (attendanceTaken?.attendanceStudents?.length > 0) {
+      const checkedStudents = attendanceTaken?.attendanceStudents.map((student) => String(student.user.id));
+
+      setChecked(checkedStudents);
+    }
+    return () => {};
+  }, [attendanceTaken.attendanceStudents]);
 
   const getDailyModuleData = () => {
     if (sortedAssignments.length > 0) {
@@ -118,15 +129,6 @@ const AttendanceModal = ({
       });
   };
 
-  useEffect(() => {
-    if (!daysHistoryLog.currSumOfDays && currModuleData) {
-      setDaysHistoryLog({
-        prevSumOfDays,
-        currSumOfDays: prevSumOfDays + currModuleData?.duration_in_days,
-      });
-    }
-  }, [cohortSession, currModuleData]);
-
   const updateCohortDay = () => {
     setIsLoading(true);
     bc.cohort()
@@ -135,10 +137,6 @@ const AttendanceModal = ({
         setCohortSession({
           ...cohortSession,
           current_module: data.current_module,
-        });
-        setDaysHistoryLog({
-          prevSumOfDays,
-          currSumOfDays: prevSumOfDays + currModuleData?.duration_in_days,
         });
         bc.cohort().getAttendance(cohortSession.slug)
           .then((res) => {
@@ -196,6 +194,34 @@ const AttendanceModal = ({
       });
   };
 
+  useEffect(() => {
+    if (currModuleData) {
+      const currSumOfDays = prevSumOfDays + currModuleData?.duration_in_days;
+      const prevDayDiff = (prevSumOfDays - day) < 0 ? 0 : (prevSumOfDays - day);
+      const currDayDiff = (currSumOfDays - day) < 0 ? 0 : (currSumOfDays - day);
+      const calcDaysDiff = () => {
+        if (currSumOfDays > day) {
+          return {
+            type: 'early',
+            diff: currSumOfDays - day,
+          };
+        }
+        return {
+          type: 'late',
+          diff: day - currSumOfDays,
+        };
+      };
+      setHistoryLog({
+        prevSumOfDays,
+        moduleDayDiff: currSumOfDays - prevSumOfDays,
+        currSumOfDays,
+        daysDiff: calcDaysDiff(),
+        prevDayDiff,
+        currDayDiff,
+      });
+    }
+  }, [currModuleData, day]);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -252,6 +278,7 @@ const AttendanceModal = ({
             <Grid templateColumns={{ md: 'repeat(4, 4fr)', sm: 'repeat(1, 1fr)' }} gap={6}>
               {students.map((item) => {
                 const checkbox = getCheckboxProps({ value: item.user.id.toString() });
+
                 return (
                   <CheckboxCard key={`${item.user.id}-${item.user.first_name}`} {...checkbox}>
                     <Flex justifyContent="space-between">
@@ -294,7 +321,7 @@ const AttendanceModal = ({
             disabled={checked.length < 1 || isLoading}
             variant="default"
             onClick={() => {
-              if (daysHistoryLog.prevSumOfDays >= day) {
+              if (historyLog.daysDiff.type === 'late' && historyLog.daysDiff.diff !== 0) {
                 setOpenWarn(true);
               } else {
                 updateCohortDay();
@@ -308,13 +335,17 @@ const AttendanceModal = ({
           <ModalInfo
             isOpen={openWarn}
             onClose={() => setOpenWarn(false)}
-            htmlDescription={t('attendance-modal.warn-premature-teaching.description', { module: getDailyModuleData()?.dailyModule?.label, durationInDays: daysHistoryLog.prevSumOfDays, day })}
+            htmlDescription={t('attendance-modal.warn-slower-teaching.description', {
+              module: getDailyModuleData()?.dailyModule?.label,
+              currDayDiff: historyLog?.daysDiff.diff,
+              moduleDayDiff: historyLog?.moduleDayDiff,
+            })}
             actionHandler={() => {
               setOpenWarn(false);
               updateCohortDay();
             }}
             closeButtonVariant="outline"
-            title={t('attendance-modal.warn-premature-teaching.title')}
+            title={t('attendance-modal.warn-slower-teaching.title')}
             handlerText={t('common:confirm')}
 
           />

@@ -144,10 +144,9 @@ const ModalInfo = ({
                     const isImage = imageExtensions.includes(extension);
                     const icon = iconDict.includes(extension) ? extension : 'file';
                     return (
-                      <Box display="flex">
+                      <Box key={`${file.id}-${file.name}`} display="flex">
                         <Icon icon={isImage ? 'image' : icon} width="22px" height="22px" />
                         <Link
-                          key={file.id}
                           href={file.url}
                           target="_blank"
                           rel="noopener noreferrer"

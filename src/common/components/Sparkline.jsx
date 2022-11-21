@@ -69,8 +69,10 @@ const Sparkline = ({
 
   useEffect(() => {
     // initialize sparkline on mount after the element has rendered
-    sparkline(sparklineRef.current, values, options);
-  }, []);
+    if (sparklineRef.current) {
+      sparkline(sparklineRef.current, values, options);
+    }
+  }, [sparklineRef.current]);
 
   // motion sparklineVariants
   const sparklineVariants = {

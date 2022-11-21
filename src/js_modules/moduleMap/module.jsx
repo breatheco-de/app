@@ -18,7 +18,6 @@ const Module = ({
   data, taskTodo, currIndex,
 }) => {
   const { t } = useTranslation('dashboard');
-  // const [cohortSession] = usePersistent('cohortSession', {});
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);

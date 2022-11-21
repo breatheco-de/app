@@ -6,7 +6,7 @@
   "course": "coding-introduction",
   "callToAction": {
     "title": "Join the next cohort",
-    "href": "#"
+    "href": "#pricing"
   },
   "bullets": [
     {
@@ -67,7 +67,7 @@
     "description": "Some of our students are open to speak with others any time, by pressing this button you will be able to schedule a meeting with one of them",
     "button": {
       "title": "Meet developers in the making",
-      "link": "#students"
+      "link": "#pricing"
     }
   },
   "mentors": {
@@ -197,7 +197,7 @@
     "moreContent": "View all content",
     "button": {
       "title": "Enroll now",
-      "link": "#apply"
+      "link": "#pricing"
     }
   },
 
@@ -226,7 +226,7 @@
     },
     "button": {
       "title": "Enroll now",
-      "link": "#apply"
+      "link": "#pricing"
     }
   },
 

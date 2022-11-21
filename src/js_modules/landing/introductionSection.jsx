@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import {
   Box, useColorModeValue, Text, Button,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import { MotionBox } from '../../common/components/Animated';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
@@ -9,6 +10,7 @@ import Icon from '../../common/components/Icon';
 const IntroductionSection = ({
   data,
 }) => {
+  const router = useRouter();
   const colors = useColorModeValue('#000', '#fff');
   return (
     <Box display="flex">
@@ -37,7 +39,7 @@ const IntroductionSection = ({
           {data.description}
         </Text>
         {data?.callToAction?.title && (
-          <Button variant="default" fontSize="13px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase">
+          <Button variant="default" fontSize="13px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router.push(data.callToAction.href)}>
             {data.callToAction.title}
           </Button>
         )}
@@ -65,17 +67,9 @@ const IntroductionSection = ({
             objectFit: 'cover',
           }}
         >
-          <source src="static/videos/landing-avatars.mp4" type="video/mp4" />
+          <source src="static/videos/landing-avatars.webm" type="video/webm" />
         </video>
       </Box>
-
-      {/* <Box
-        position="relative"
-        display={{ base: 'none', md: 'initial' }}
-        flex={0.5}
-      >
-        <Icon icon="landing-avatars" width="354px" height="369px" />
-      </Box> */}
     </Box>
   );
 };
