@@ -6,6 +6,7 @@ import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
+import bc from '../../common/services/breathecode';
 
 const Summary = ({
   dateProps, formProps, courseTitle, planProps,
@@ -18,6 +19,21 @@ const Summary = ({
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const borderColor2 = useColorModeValue('black', 'white');
 
+  const handlePayment = () => {
+    bc.payment().checking({
+      type: 'PREVIEW',
+      cohort: dateProps.slug,
+      academy: dateProps?.academy.id,
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          console.log('Payment_response:', response);
+        }
+      })
+      .catch((error) => {
+        console.log('Payment_error:', error);
+      });
+  };
   return (
     <Box
       display="flex"
@@ -254,7 +270,7 @@ const Summary = ({
           </Box>
         </Box>
         {!planProps.type?.includes('trial') && (
-          <Button variant="default" height="45px" mt="12px">
+          <Button variant="default" onClick={handlePayment} height="45px" mt="12px">
             Proceed to payment
           </Button>
         )}
