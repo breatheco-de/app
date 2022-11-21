@@ -291,9 +291,6 @@ export const ButtonHandlerByTaskStatus = ({
       }
     };
 
-    // console.log('cohortSession:::', cohortSession);
-    // console.log('cohortSession:::', cohortSession);
-
     const handleUploadFile = async () => {
       setIsUploading(true);
       const formdata = new FormData();
