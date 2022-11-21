@@ -49,14 +49,17 @@ const ProgramCard = ({
       start,
     });
 
+    if (duration.days > 0) duration.hours = 0;
+
     const formated = formatDuration(duration,
       {
-        format: ['months', 'weeks', 'days', 'hours', 'minutes'],
+        format: ['months', 'weeks', 'days', 'hours'],
         delimiter: ', ',
         locale: availableLanguages[lang],
       });
 
-    if (formated === '') return stTranslation ? stTranslation[lang]['program-card']['few-seconds'] : t('few-seconds');
+    if (formated === '') return stTranslation ? stTranslation[lang]['program-card']['starting-today'] : t('starting-today');
+    if (start < now) return stTranslation ? stTranslation[lang]['program-card'].started : t('started');
     return formated;
   };
 
