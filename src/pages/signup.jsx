@@ -56,7 +56,7 @@ const SignUp = ({ finance }) => {
   const [stepIndex, setStepIndex] = useState(0);
   const [dateProps, setDateProps] = useState(null);
   const [location, setLocation] = useState(null);
-  const userData = useAuth();
+  const { user, isLoading } = useAuth();
 
   const toast = useToast();
 
@@ -66,7 +66,7 @@ const SignUp = ({ finance }) => {
   const planChoosed = plan || plan_id || 'trial';
   const courseChoosed = course || 'coding-introduction';
   const courseTitle = finance[courseChoosed];
-  const planProps = finance.plans.find((l) => l.type === planChoosed);
+  const planProps = finance.plans.find((l) => l.type === planChoosed || l.type === 'trial');
 
   const [formProps, setFormProps] = useState({
     first_name: '',
@@ -107,24 +107,28 @@ const SignUp = ({ finance }) => {
         });
       } else {
         handleChooseDate(resp.data, false);
-        if (userData.user && !userData.isLoading) {
+        if (user && !isLoading) {
           setStepIndex(2);
         }
       }
     }
-  }, [cohort, userData]);
+  }, [cohort, user]);
 
   useEffect(() => {
-    if (userData.user && !userData.isLoading) {
+    if (user && !isLoading) {
+    // if queryString token exists remove it from the url
+      if (router.query.token) {
+        router.replace(router.pathname, router.pathname, { shallow: true });
+      }
       if (!queryCohortIdExists) setStepIndex(1);
       setFormProps({
-        first_name: userData.user.first_name,
-        last_name: userData.user.last_name,
-        email: userData.user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
         phone: '',
       });
     }
-  }, [userData.user, cohort]);
+  }, [user, cohort]);
 
   return (
     <Box p="2.5rem 2rem">
