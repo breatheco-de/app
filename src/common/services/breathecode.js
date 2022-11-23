@@ -2,7 +2,6 @@ import axios from '../../axios';
 import { parseQuerys } from '../../utils/url';
 
 const host = `${process.env.BREATHECODE_HOST}/v1`;
-const paymentHost = `${process.env.BREATHECODE_PAYMENT}/v1`;
 
 const breathecode = {
   get: (url) => axios.get(url),
@@ -179,7 +178,7 @@ const breathecode = {
     };
   },
   payment: (query = {}) => {
-    const url = `${paymentHost}/payments`;
+    const url = `${host}/payments`;
     const qs = parseQuerys(query);
     return {
       checking: (data) => axios.put(`${url}/checking?${qs}`, data),
