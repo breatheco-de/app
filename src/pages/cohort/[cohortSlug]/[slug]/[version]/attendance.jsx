@@ -196,9 +196,11 @@ const Attendance = () => {
           date: studentsWithDays[0]?.days[day - 1]?.updated_at,
         };
       }).filter((l) => l.date !== null);
+      const sortedByAscDate = averageEachDay.sort((a, b) => new Date(a.date) - new Date(b.date));
+
       setAllStudentsWithDays({
         studentList: studentsWithDays,
-        averageEachDay,
+        averageEachDay: sortedByAscDate,
       });
       setSearchedStudents(studentsWithDays);
       setIsLoaded(true);
