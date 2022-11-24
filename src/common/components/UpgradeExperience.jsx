@@ -7,7 +7,7 @@ import Icon from './Icon';
 const UpgradeExperience = ({ data }) => {
   // const { colorMode, toggleColorMode } = useColorMode();
   const [isOpen, setIsOpen] = useState(false);
-  console.log('data:::', data);
+  // console.log('data:::', data);
 
   return (
     <Popover
