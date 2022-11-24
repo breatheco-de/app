@@ -55,5 +55,6 @@
   "cohort-not-found": "No se encontró la cohorte especificada",
   "files-uploaded": "Archivos enviados con éxito",
   "current-task-no-files": "La tarea actual no tiene ningún archivo.",
-  "error-fetching-activities": "Hubo un error al obtener las actividades"
+  "error-fetching-activities": "Hubo un error al obtener las actividades",
+  "error-updating-day-and-modules": "Hubo un error al actualizar el día y el módulo seleccionado"
 }
