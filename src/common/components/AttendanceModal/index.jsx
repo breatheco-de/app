@@ -290,10 +290,10 @@ const AttendanceModal = ({
             disabled={checked.length < 1 || isLoading}
             variant="default"
             onClick={() => {
-              if (attendanceWasTaken()) {
-                setOpenAttendanceTakenWarn(true);
-              } else if (historyLog?.daysDiff?.type === 'late' && historyLog?.daysDiff?.diff !== 0) {
+              if (historyLog?.daysDiff?.type === 'late' && historyLog?.daysDiff?.diff !== 0) {
                 setOpenWarn(true);
+              } else if (attendanceWasTaken()) {
+                setOpenAttendanceTakenWarn(true);
               } else {
                 updateCohortDay();
               }
@@ -312,8 +312,12 @@ const AttendanceModal = ({
               moduleDayDiff: historyLog?.moduleDayDiff,
             })}
             actionHandler={() => {
+              if (attendanceWasTaken()) {
+                setOpenAttendanceTakenWarn(true);
+              } else {
+                updateCohortDay();
+              }
               setOpenWarn(false);
-              updateCohortDay();
             }}
             closeButtonVariant="outline"
             title={t('attendance-modal.warn-slower-teaching.title')}
