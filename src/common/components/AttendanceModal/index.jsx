@@ -206,7 +206,7 @@ const AttendanceModal = ({
               <NumberInput
                 defaultValue={defaultDay}
                 max={cohortDurationInDays}
-                min={0}
+                min={1}
                 onChange={(newDay) => {
                   setDay(parseInt(newDay, 10));
                 }}
