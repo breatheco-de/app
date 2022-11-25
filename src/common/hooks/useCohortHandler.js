@@ -36,7 +36,6 @@ function useHandler() {
       ]).then((
         [taskTodoData, programData, userRoles],
       ) => {
-        // const moduleData = programData.data.json?.days || programData.data.json?.modules;
         const technologiesArray = programData.data.main_technologies
           ? programData.data.main_technologies.split(',').map((el) => el.trim())
           : [];
