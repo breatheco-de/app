@@ -11,10 +11,10 @@ import { usePersistent } from './usePersistent';
 function useHandler() {
   const router = useRouter();
   const { t } = useTranslation('dashboard');
-  const [, setSyllabus] = usePersistent('syllabus', []);
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
+  const [taskTodoState, setTaskTodoState] = useState([]);
   const [taskCohortNull, setTaskCohortNull] = useState([]);
   const toast = useToast();
 
@@ -36,7 +36,7 @@ function useHandler() {
       ]).then((
         [taskTodoData, programData, userRoles],
       ) => {
-        const moduleData = programData.data.json?.days || programData.data.json?.modules;
+        // const moduleData = programData.data.json?.days || programData.data.json?.modules;
         const technologiesArray = programData.data.main_technologies
           ? programData.data.main_technologies.split(',').map((el) => el.trim())
           : [];
@@ -48,7 +48,6 @@ function useHandler() {
           bc_id: user.id,
           user_capabilities: userRoles.data.capabilities,
         });
-        setSyllabus(moduleData);
         setContextState({
           taskTodo: taskTodoData.data,
           cohortProgram: programData.data,
@@ -125,6 +124,7 @@ function useHandler() {
 
     if (contextState.cohortProgram.json && contextState.taskTodo) {
       setTaskTodo(contextState.taskTodo);
+      setTaskTodoState(contextState.taskTodo);
       cohort.map((assignment) => {
         const {
           id, label, description, lessons, replits, assignments, quizzes,
@@ -224,10 +224,10 @@ function useHandler() {
     getCohortData,
     prepareTasks,
     getDailyModuleData,
-    setSyllabus,
     getMandatoryProjects,
     getTasksWithoutCohort,
     taskTodo,
+    taskTodoState,
   };
 }
 
