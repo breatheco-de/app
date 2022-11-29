@@ -12,6 +12,7 @@ const KPI = ({
   label, icon, value, unit, max,
   variation, variationColor, style,
   changeWithColor, valueUnit, unstyled, chart,
+  fontSize, iconSize, labelSize,
 }) => {
   const verifiVariation = () => {
     if (variation.includes('+')) return 'up';
@@ -55,14 +56,14 @@ const KPI = ({
       {chart !== null ? (
         <Flex flexDirection="column" color={fontColor2}>
           {label && (
-            <ChakraText fontWeight={700} size="15px">
+            <ChakraText fontWeight={700} size={labelSize}>
               {label}
             </ChakraText>
           )}
-          <ChakraText fontWeight={700} size={label ? '30px' : '46px'} color={numberColors}>
+          <Heading fontWeight={700} size={fontSize} color={numberColors}>
             <Counter valueTo={value} totalDuration={2} />
             {valueUnit}
-          </ChakraText>
+          </Heading>
         </Flex>
       ) : (
         <Heading as="label" color={fontColor2} textTransform="capitalize" fontSize="14px">
@@ -71,11 +72,11 @@ const KPI = ({
       )}
       <Box display="flex" alignItems="center" style={{ margin: '6px 0 0 0' }} gridGap="10px" position="relative">
         {icon && (
-          <Icon icon={icon} color={variationColor || (numberColors || kpiColor || textColorIcon)} width={label ? '26px' : '32px'} height={label ? '26px' : '32px'} />
+          <Icon icon={icon} color={variationColor || (numberColors || kpiColor || textColorIcon)} width={iconSize} height={iconSize} />
         )}
         <Box display="flex" gridGap="6px">
           {chart === null && (
-            <Heading as="p" size={label ? 'm' : 'l'} padding="0" margin="0" color={numberColors}>
+            <Heading as="p" size={fontSize} padding="0" margin="0" color={numberColors}>
               {unit}
               {value}
               {/* {value.toString().length >= 3
@@ -85,10 +86,10 @@ const KPI = ({
           )}
           {max && (
             <>
-              <Heading as="label" size={label ? 'm' : 'l'} fontWeight="400" color="gray.default">
+              <Heading as="label" size={fontSize} fontWeight="400" color="gray.default">
                 /
               </Heading>
-              <Heading as="p" size={label ? 'm' : 'l'} fontWeight="400" padding="0" margin="0" color="gray.default">
+              <Heading as="p" size={fontSize} fontWeight="400" padding="0" margin="0" color="gray.default">
                 {max}
               </Heading>
             </>
@@ -126,6 +127,9 @@ KPI.propTypes = {
   valueUnit: PropTypes.string,
   unstyled: PropTypes.bool,
   chart: PropTypes.node,
+  fontSize: PropTypes.string,
+  iconSize: PropTypes.string,
+  labelSize: PropTypes.string,
   // variationUnit: PropTypes.string.isRequired,
 };
 
@@ -141,6 +145,9 @@ KPI.defaultProps = {
   valueUnit: '',
   unstyled: false,
   chart: null,
+  fontSize: 'l',
+  iconSize: '26px',
+  labelSize: '15px',
   // variationUnit: '',
 };
 
