@@ -32,6 +32,7 @@ const ContactInformation = ({
     status: 'info',
     title: 'Already have an account?',
     content: (
+      // TODO: add translations
       <Box>
         It seems that you already have an account, please check your email inbox for any messages from
         {' '}

@@ -18,7 +18,7 @@ import ContactInformation from '../js_modules/signup/ContactInformation';
 import ChooseYourClass from '../js_modules/signup/ChooseYourClass';
 import { getTimeProps } from '../utils';
 import Summary from '../js_modules/signup/Summary';
-import mockData from '../common/utils/mockData/DashboardView';
+// import mockData from '../common/utils/mockData/DashboardView';
 import PaymentInfo from '../js_modules/signup/PaymentInfo';
 
 export const getStaticProps = async ({ locale, locales }) => {
@@ -122,8 +122,8 @@ const SignUp = ({ finance }) => {
     });
 
     // TODO: REMOVE WHEN FINISH
-    setCheckoutData(mockData.checkoutProps);
-    setStepIndex(2);
+    // setCheckoutData(mockData.checkoutProps);
+    // setStepIndex(2);
   };
 
   useEffect(async () => {
