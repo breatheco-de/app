@@ -290,13 +290,19 @@ const AttendanceModal = ({
             disabled={checked.length < 1 || isLoading}
             variant="default"
             onClick={() => {
-              if (historyLog?.daysDiff?.type === 'late' && historyLog?.daysDiff?.diff !== 0) {
-                setOpenWarn(true);
-              } else if (attendanceWasTaken()) {
+              if (attendanceWasTaken()) {
                 setOpenAttendanceTakenWarn(true);
               } else {
                 updateCohortDay();
               }
+              // TODO: Handle with current module in log list
+              // if (historyLog?.daysDiff?.type === 'late' && historyLog?.daysDiff?.diff !== 0) {
+              //   setOpenWarn(true);
+              // } else if (attendanceWasTaken()) {
+              //   setOpenAttendanceTakenWarn(true);
+              // } else {
+              //   updateCohortDay();
+              // }
             }}
             rightIcon={<Icon icon="longArrowRight" width="15px" color={checked.length < 1 ? 'black' : 'white'} />}
           >
