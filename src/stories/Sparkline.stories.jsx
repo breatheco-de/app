@@ -1,21 +1,6 @@
 import React from 'react';
 
 import Sparkline from '../common/components/Sparkline';
-import mockData from '../common/utils/mockData/DashboardView';
-
-const calcDaysAverage = (days) => {
-  const totalDays = days.length;
-  const totalDaysCompleted = days.filter((day) => day.color === '#25BF6C').length;
-  const average = parseInt((totalDaysCompleted / totalDays) * 100, 10);
-  return average;
-};
-
-const getTotalAttendanceByDay = mockData.attendanceDots.map((dot) => ({
-  // calc average of attendance of color #25BF6C
-  average: calcDaysAverage(dot.days),
-  date: dot.days,
-  value: dot.value,
-}));
 
 export default {
   title: 'Components/Sparkline',

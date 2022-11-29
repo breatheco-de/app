@@ -18,6 +18,8 @@ import ContactInformation from '../js_modules/signup/ContactInformation';
 import ChooseYourClass from '../js_modules/signup/ChooseYourClass';
 import { getTimeProps } from '../utils';
 import Summary from '../js_modules/signup/Summary';
+import mockData from '../common/utils/mockData/DashboardView';
+import PaymentInfo from '../js_modules/signup/PaymentInfo';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -55,7 +57,12 @@ const SignUp = ({ finance }) => {
   const router = useRouter();
   const [stepIndex, setStepIndex] = useState(0);
   const [dateProps, setDateProps] = useState(null);
+  const [checkoutData, setCheckoutData] = useState(null);
   const [location, setLocation] = useState(null);
+  const [paymentInfo, setPaymentInfo] = useState({});
+  const [loader, setLoader] = useState({
+    date: false,
+  });
   const { user, isLoading } = useAuth();
 
   const toast = useToast();
@@ -77,21 +84,46 @@ const SignUp = ({ finance }) => {
   });
 
   const queryCohortIdExists = cohort !== undefined && cohort?.length > 0;
-  const isFirstStep = stepIndex === 0;
-  const isSecondStep = stepIndex === 1;
-  const isThirdStep = stepIndex === 2;
+  const isFirstStep = stepIndex === 0; // Contact
+  const isSecondStep = stepIndex === 1; // Choose your class
+  const isThirdStep = stepIndex === 2; // Payment info
+  const isFourthStep = stepIndex === 3; // Summary
 
-  const handleChooseDate = (date, skip = true) => {
-    const { kickoffDate, weekDays, availableTime } = getTimeProps(date);
+  const handleChooseDate = (cohortData) => {
+    setLoader((prev) => ({ ...prev, date: true }));
+    const { kickoffDate, weekDays, availableTime } = getTimeProps(cohortData);
+
+    bc.payment().checking({
+      type: 'PREVIEW',
+      cohort: cohortData.slug,
+      academy: cohortData?.academy.id,
+    })
+      .then((response) => {
+        if (response.status < 400) {
+          setCheckoutData(response.data);
+          setStepIndex(2);
+        }
+      })
+      .catch(() => {
+        toast({
+          title: t('alert-message:something-went-wrong-choosing-date'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
+      })
+      .finally(() => setLoader((prev) => ({ ...prev, date: false })));
+
     setDateProps({
-      ...date,
+      ...cohortData,
       kickoffDate,
       weekDays,
       availableTime,
     });
-    if (skip) {
-      setStepIndex(2);
-    }
+
+    // TODO: REMOVE WHEN FINISH
+    setCheckoutData(mockData.checkoutProps);
+    setStepIndex(2);
   };
 
   useEffect(async () => {
@@ -106,7 +138,7 @@ const SignUp = ({ finance }) => {
           isClosable: true,
         });
       } else {
-        handleChooseDate(resp.data, false);
+        handleChooseDate(resp.data);
         if (user && !isLoading) {
           setStepIndex(2);
         }
@@ -140,7 +172,7 @@ const SignUp = ({ finance }) => {
           alignItems="center"
           color={stepIndex !== 0 && 'gray.350'}
         >
-          {isSecondStep || isThirdStep ? (
+          {(isSecondStep || isThirdStep || isFourthStep) ? (
             <Icon icon="verified" width="30px" height="30px" />
           ) : (
             <Heading
@@ -159,7 +191,7 @@ const SignUp = ({ finance }) => {
           <Heading
             size="sm"
             fontWeight={isFirstStep ? '700' : '500'}
-            color={(isSecondStep || isThirdStep) && 'success'}
+            color={(isSecondStep || isThirdStep || isFourthStep) && 'success'}
           >
             {t('contact-information')}
           </Heading>
@@ -170,7 +202,7 @@ const SignUp = ({ finance }) => {
           alignItems="center"
           color={stepIndex !== 1 && 'gray.350'}
         >
-          {isThirdStep ? (
+          {(isThirdStep || isFourthStep) ? (
             <Icon icon="verified" width="30px" height="30px" />
           ) : (
             <Heading
@@ -189,7 +221,7 @@ const SignUp = ({ finance }) => {
           <Heading
             size="sm"
             fontWeight={isSecondStep ? '700' : '500'}
-            color={isThirdStep && 'success'}
+            color={(isThirdStep || isFourthStep) && 'success'}
           >
             {t('choose-your-class')}
           </Heading>
@@ -200,19 +232,45 @@ const SignUp = ({ finance }) => {
           alignItems="center"
           color={stepIndex !== 2 && 'gray.350'}
         >
+          {isFourthStep ? (
+            <Icon icon="verified" width="30px" height="30px" />
+          ) : (
+            <Heading
+              as="span"
+              size="sm"
+              p={isThirdStep ? '3px 8px' : '2px 5px'}
+              mr={isThirdStep && '4px'}
+              background={isThirdStep && 'blue.default'}
+              color={isThirdStep && 'white'}
+              borderRadius="3px"
+              fontWeight="500"
+            >
+              3.
+            </Heading>
+          )}
+          <Heading size="sm" fontWeight={isThirdStep ? '700' : '500'}>
+            {t('payment-info')}
+          </Heading>
+        </Box>
+        <Box
+          display="flex"
+          gridGap="8px"
+          alignItems="center"
+          color={stepIndex !== 3 && 'gray.350'}
+        >
           <Heading
             as="span"
             size="sm"
-            p={isThirdStep ? '3px 8px' : '2px 5px'}
-            mr={isThirdStep && '4px'}
-            background={isThirdStep && 'blue.default'}
-            color={isThirdStep && 'white'}
+            p={isFourthStep ? '3px 8px' : '2px 5px'}
+            mr={isFourthStep && '4px'}
+            background={isFourthStep && 'blue.default'}
+            color={isFourthStep && 'white'}
             borderRadius="3px"
             fontWeight="500"
           >
-            3.
+            4.
           </Heading>
-          <Heading size="sm" fontWeight={isThirdStep ? '700' : '500'}>
+          <Heading size="sm" fontWeight={isFourthStep ? '700' : '500'}>
             {t('summary')}
           </Heading>
         </Box>
@@ -243,11 +301,21 @@ const SignUp = ({ finance }) => {
           courseChoosed={courseChoosed}
           handleChooseDate={handleChooseDate}
           setLocation={setLocation}
+          loader={loader}
         />
-        {/* dateProps */}
         {isThirdStep && (
+          <PaymentInfo
+            paymentInfo={paymentInfo}
+            setPaymentInfo={setPaymentInfo}
+            stepIndex={stepIndex}
+            setStepIndex={setStepIndex}
+          />
+        )}
+        {/* dateProps */}
+        {isFourthStep && (
           <Summary
             dateProps={dateProps}
+            checkoutData={checkoutData}
             formProps={formProps}
             courseTitle={courseTitle}
             planProps={planProps}
@@ -260,7 +328,7 @@ const SignUp = ({ finance }) => {
               variant="outline"
               borderColor="currentColor"
               color="blue.default"
-              disabled={queryCohortIdExists || formProps.email.length > 0 || isSecondStep}
+              disabled={queryCohortIdExists || isSecondStep}
               onClick={() => {
                 if (stepIndex > 0) {
                   setStepIndex(stepIndex - 1);
@@ -270,14 +338,12 @@ const SignUp = ({ finance }) => {
               {t('go-back')}
             </Button>
           )}
-          {stepIndex !== 0 && stepIndex !== 2 && (
+          {stepIndex !== 0 && !isThirdStep && !isFourthStep && (
             <Button
               variant="default"
               disabled={dateProps === null}
               onClick={() => {
-                if (stepIndex !== 2) {
-                  setStepIndex(stepIndex + 1);
-                }
+                setStepIndex(stepIndex + 1);
               }}
             >
               {t('next-step')}

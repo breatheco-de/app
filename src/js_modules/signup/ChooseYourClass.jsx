@@ -15,7 +15,7 @@ import { getTimeProps } from '../../utils';
 import useGoogleMaps from '../../common/hooks/useGoogleMaps';
 
 const ChooseYourClass = ({
-  isSecondStep, courseChoosed, handleChooseDate, setLocation,
+  isSecondStep, courseChoosed, handleChooseDate, setLocation, loader,
 }) => {
   const { t } = useTranslation('signup');
   const [cohortIsLoading, setCohortIsLoading] = useState(true);
@@ -253,6 +253,7 @@ const ChooseYourClass = ({
                 </Box>
                 <Button
                   variant="outline"
+                  isLoading={loader.date}
                   onClick={() => handleChooseDate(date)}
                   borderColor="currentColor"
                   color="blue.default"
