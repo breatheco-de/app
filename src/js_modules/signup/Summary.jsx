@@ -1,4 +1,4 @@
-import { Box, Button, useColorModeValue } from '@chakra-ui/react';
+import { Box, Button, useColorModeValue, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -9,29 +9,34 @@ import useStyle from '../../common/hooks/useStyle';
 import bc from '../../common/services/breathecode';
 
 const Summary = ({
-  dateProps, formProps, courseTitle, planProps,
+  dateProps, formProps, courseTitle, planProps, checkoutData,
 }) => {
   const { t } = useTranslation('signup');
   const { borderColor } = useStyle();
   const router = useRouter();
+  const toast = useToast();
 
+  console.log('checkoutData:::', checkoutData);
   const fontColor = useColorModeValue('gray.800', 'gray.300');
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const borderColor2 = useColorModeValue('black', 'white');
 
   const handlePayment = () => {
-    bc.payment().checking({
-      type: 'PREVIEW',
-      cohort: dateProps.slug,
-      academy: dateProps?.academy.id,
+    bc.payment().pay({
+      type: checkoutData.type,
+      token: checkoutData.token,
+      chosen_period: 'HALF',
     })
       .then((response) => {
-        if (response.status === 200) {
-          console.log('Payment_response:', response);
-        }
+        console.log('Payment_response:', response);
       })
-      .catch((error) => {
-        console.log('Payment_error:', error);
+      .catch(() => {
+        toast({
+          title: t('alert-message:payment-error'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
       });
   };
   return (
@@ -271,7 +276,7 @@ const Summary = ({
         </Box>
         {!planProps.type?.includes('trial') && (
           <Button variant="default" onClick={handlePayment} height="45px" mt="12px">
-            Proceed to payment
+            {t('common:proceed-to-payment')}
           </Button>
         )}
         {planProps.type?.includes('trial') && (
@@ -285,7 +290,7 @@ const Summary = ({
             height="45px"
             mt="12px"
           >
-            Start free trial
+            {t('common:start-free-trial')}
           </Button>
         )}
       </Box>
@@ -298,6 +303,7 @@ Summary.propTypes = {
   formProps: PropTypes.objectOf(PropTypes.any).isRequired,
   planProps: PropTypes.objectOf(PropTypes.any).isRequired,
   courseTitle: PropTypes.string.isRequired,
+  checkoutData: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 export default Summary;

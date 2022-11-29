@@ -67,6 +67,7 @@ const CustomTheme = extendTheme({
     },
     red: {
       light: '#FFBEBE',
+      light2: '#FFE7DC',
     },
 
     gray: {

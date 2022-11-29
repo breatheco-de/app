@@ -31,10 +31,11 @@ const KPI = ({
     default: '#0097CF',
   };
 
-  const textColor = useColorModeValue('gray.900', 'white');
+  // const textColor = useColorModeValue('gray.900', 'white');
+  const textColorIcon = useColorModeValue('#1A202C', 'white');
   // const labelColor = useColorModeValue('gray.dark', 'gray.light');
   const bgColor = useColorModeValue('white', 'featuredDark');
-  const { fontColor2 } = useStyle();
+  const { hexColor, fontColor2 } = useStyle();
 
   const kpiColor = kpiColors[verifiVariation()];
   const defaultColor = kpiColors.default;
@@ -44,13 +45,13 @@ const KPI = ({
     && kpiColors.up; // value is greather than 80% of max
 
   const getNumberColor = () => {
-    if (max === null) return changeWithColor ? kpiColor : fontColor2;
+    if (max === null) return changeWithColor ? kpiColor : hexColor.fontColor2;
     return isPositiveColor || kpiColor;
   };
   const numberColors = getNumberColor();
 
   return (
-    <Stack style={style} width="fit-content" background={!unstyled && bgColor} display="flex" flexDirection={chart === null ? 'column' : 'row'} padding={!unstyled && '17px 22px'} border={!unstyled && '2px solid'} borderColor={!unstyled && 'blue.200'} borderRadius="10px">
+    <Stack style={style} width="fit-content" background={!unstyled && bgColor} display="flex" flexDirection={chart === null ? 'column' : 'row'} padding={!unstyled && (label ? '17px 22px' : '10px 20px')} border={!unstyled && '2px solid'} borderColor={!unstyled && 'blue.200'} borderRadius="10px">
       {chart !== null ? (
         <Flex flexDirection="column" color={fontColor2}>
           {label && (
@@ -70,11 +71,11 @@ const KPI = ({
       )}
       <Box display="flex" alignItems="center" style={{ margin: '6px 0 0 0' }} gridGap="10px" position="relative">
         {icon && (
-          <Icon icon={icon} color={variationColor || (numberColors || kpiColor || textColor)} width="26px" height="26px" />
+          <Icon icon={icon} color={variationColor || (numberColors || kpiColor || textColorIcon)} width={label ? '26px' : '32px'} height={label ? '26px' : '32px'} />
         )}
         <Box display="flex" gridGap="6px">
           {chart === null && (
-            <Heading as="p" size="m" padding="0" margin="0" color={numberColors}>
+            <Heading as="p" size={label ? 'm' : 'l'} padding="0" margin="0" color={numberColors}>
               {unit}
               {value}
               {/* {value.toString().length >= 3
@@ -84,10 +85,10 @@ const KPI = ({
           )}
           {max && (
             <>
-              <Heading as="label" size="m" fontWeight="400" color="gray.default">
+              <Heading as="label" size={label ? 'm' : 'l'} fontWeight="400" color="gray.default">
                 /
               </Heading>
-              <Heading as="p" size="m" fontWeight="400" padding="0" margin="0" color="gray.default">
+              <Heading as="p" size={label ? 'm' : 'l'} fontWeight="400" padding="0" margin="0" color="gray.default">
                 {max}
               </Heading>
             </>
@@ -100,7 +101,7 @@ const KPI = ({
                 <Icon icon="arrowDown" color={kpiColor || defaultColor} width="20px" height="20px" />
               </Box>
             )}
-            <Text as="label" color={kpiColor || defaultColor} fontSize="15px" fontWeight="700">
+            <Text as="label" color={kpiColor || defaultColor} fontSize={label ? '15px' : '18px'} fontWeight="700">
               {`${variation.replace('+', '').replace('-', '')}%`}
             </Text>
           </Box>
