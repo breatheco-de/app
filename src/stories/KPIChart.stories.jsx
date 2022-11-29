@@ -42,6 +42,7 @@ const Component = (args) => {
         />
       )}
       unstyled
+      {...args}
     />
   );
 };
@@ -1103,6 +1104,8 @@ Default.args = {
       }
     ]
   },
+  fontSize: 'l',
+  labelSize: '15px',
   sparklineConfig: {
     tooltipContent: "{value}% - {date}",
     circleWidth: 3,
