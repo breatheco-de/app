@@ -48,7 +48,7 @@ const ItemButton = ({
 };
 
 const TeacherSidebar = ({
-  title, user, students, width, sortedAssignments,
+  title, user, students, width, sortedAssignments, currentCohortProps, setCurrentCohortProps,
 }) => {
   const { t } = useTranslation('dashboard');
   const { colorMode } = useColorMode();
@@ -165,6 +165,8 @@ const TeacherSidebar = ({
           onClose={() => setOpenAttendance(false)}
           title={t('attendance-modal.start-today-class')}
           // title="Start your today's class"
+          currentCohortProps={currentCohortProps}
+          setCurrentCohortProps={setCurrentCohortProps}
           message={greetings[router.locale]}
           width="100%"
         />
@@ -179,6 +181,8 @@ TeacherSidebar.propTypes = {
   students: PropTypes.arrayOf(PropTypes.any),
   width: PropTypes.string,
   sortedAssignments: PropTypes.arrayOf(PropTypes.object),
+  currentCohortProps: PropTypes.objectOf(PropTypes.any),
+  setCurrentCohortProps: PropTypes.func,
 };
 
 TeacherSidebar.defaultProps = {
@@ -187,6 +191,8 @@ TeacherSidebar.defaultProps = {
   students: [],
   width: '100%',
   sortedAssignments: [],
+  currentCohortProps: {},
+  setCurrentCohortProps: () => {},
 };
 
 ItemText.propTypes = {

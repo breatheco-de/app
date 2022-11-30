@@ -70,7 +70,7 @@ const Assignments = () => {
         setCurrentStudentList(sortedStudents);
       }).catch(() => {
         toast({
-          title: t('alert-message:error-fetching-students-and-teachers'),
+          title: t('alert-message:error-fetching-students'),
           status: 'error',
           duration: 7000,
           isClosable: true,
