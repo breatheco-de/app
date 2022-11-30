@@ -24,8 +24,6 @@ const Pricing = ({ data }) => {
   const financeValue = `${financeSelected[selectedFinanceIndex]}`;
   const selectedItem = data?.pricing[financeValue][selectedIndex];
 
-  console.log('selectedProps:', selectedProps);
-
   const handleSelect = (dataProps, index) => {
     setSelectedProps(dataProps);
     setSelectedIndex(index);

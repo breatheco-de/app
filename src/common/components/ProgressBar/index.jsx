@@ -4,6 +4,7 @@ import {
 import PropTypes from 'prop-types';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
+import Counter from '../ProgressCircle/Counter';
 import Text from '../Text';
 import Progress from './Progress';
 
@@ -52,18 +53,20 @@ const ProgressBar = ({
     }
     return Math.trunc((sumTaskCompleted / sumTaskLength) * 100);
   };
+  const percentage = calculatePercentage() || 0;
 
   return (
     <Box width={width || '100%'}>
       <Flex marginBottom="15px" gridGap="10px" align="center">
         <Heading fontSize="22px" marginY="0">
-          {`${calculatePercentage() || 0}%`}
+          <Counter valueTo={percentage} totalDuration={2} />
+          %
         </Heading>
         <Text size="l" marginY="0">
           {progressText}
         </Text>
       </Flex>
-      <Progress percents={calculatePercentage()} />
+      <Progress percents={percentage} />
       <Flex justifyContent="space-around" marginTop="18px" flexWrap="wrap" gridGap="6px">
         {allTasks.map((program) => (
           <Box key={program.title} display="flex">

@@ -6,14 +6,16 @@ import PropTypes from 'prop-types';
 import {
   Box, Button, Flex, useToast,
 } from '@chakra-ui/react';
+import { useRef } from 'react';
 import Heading from '../../common/components/Heading';
-import bc from '../../common/services/breathecode';
+// import bc from '../../common/services/breathecode';
 import { phone } from '../../utils/regex';
 import FieldForm from '../../common/components/Forms/FieldForm';
 import PhoneInput from '../../common/components/PhoneInput';
 import { setStorageItem } from '../../utils';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
 const ContactInformation = ({
   stepIndex, setStepIndex, courseChoosed, location, queryCohortIdExists, dateProps,
@@ -23,7 +25,31 @@ const ContactInformation = ({
   const { t } = useTranslation('signup');
   const router = useRouter();
   const toast = useToast();
+  const toastIdRef = useRef();
   const { featuredColor } = useStyle();
+  const { createToast } = useCustomToast({
+    toastIdRef,
+    status: 'info',
+    title: 'Already have an account?',
+    content: (
+      // TODO: add translations
+      <Box>
+        It seems that you already have an account, please check your email inbox for any messages from
+        {' '}
+        <NextChakraLink variant="default" color="blue.200" href="/">4Geeks.com</NextChakraLink>
+        .
+        <br />
+        If you know your password
+        {' '}
+        <NextChakraLink variant="default" color="blue.200" href="/login" redirectAfterLogin>click here to login now</NextChakraLink>
+        {' '}
+        or click here on
+        {' '}
+        <NextChakraLink variant="default" color="blue.200" href="#">forgot password to get a new one</NextChakraLink>
+        .
+      </Box>
+    ),
+  });
 
   const signupValidation = Yup.object().shape({
     first_name: Yup.string()
@@ -44,6 +70,49 @@ const ContactInformation = ({
       .oneOf([Yup.ref('email'), null], t('validators.confirm-email-not-match'))
       .required(t('validators.confirm-email-required')),
   });
+
+  const handleSubmit = async (actions, allValues) => {
+    const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/auth/subscribe/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(allValues),
+    });
+
+    const data = await resp.json();
+    if (resp.status < 400) {
+      setStorageItem('subscriptionId', data.id);
+      setStepIndex(1);
+
+      if (data?.access_token) {
+        router.push({
+          query: {
+            token: data.access_token,
+          },
+        });
+        if (queryCohortIdExists && dateProps) {
+          setStepIndex(2);
+        } else {
+          setStepIndex(stepIndex + 1);
+        }
+      } else {
+        router.push('/thank-you');
+      }
+    }
+    if (resp.status >= 400) {
+      toast({
+        title: t('alert-message:email-already-subscribed'),
+        status: 'warning',
+        duration: 6000,
+        isClosable: true,
+      });
+    }
+    if (resp.status === 409) {
+      createToast();
+    }
+    actions.setSubmitting(false);
+  };
 
   return (
     <>
@@ -73,25 +142,7 @@ const ContactInformation = ({
               city: location?.city,
               language: router.locale,
             };
-            bc.auth()
-              .subscribe(allValues)
-              .then(({ data }) => {
-                setStorageItem('subscriptionId', data.id);
-                if (queryCohortIdExists && dateProps) {
-                  setStepIndex(2);
-                } else {
-                  setStepIndex(stepIndex + 1);
-                }
-              })
-              .catch(() => {
-                toast({
-                  title: t('alert-message:email-already-subscribed'),
-                  status: 'warning',
-                  duration: 6000,
-                  isClosable: true,
-                });
-              })
-              .finally(() => actions.setSubmitting(false));
+            handleSubmit(actions, allValues);
           }
         }}
         validationSchema={signupValidation}

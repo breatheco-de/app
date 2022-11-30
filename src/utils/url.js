@@ -13,8 +13,13 @@ const urlExists = (url, callback) => {
   xhr.send();
 };
 
+const parseQuerys = (query) => Object.keys(query)
+  .map((key) => (query[key] !== undefined ? `${key}=${query[key]}` : ''))
+  .join('&');
+
 export {
   isAbsoluteUrl,
   getUrlProps,
   urlExists,
+  parseQuerys,
 };

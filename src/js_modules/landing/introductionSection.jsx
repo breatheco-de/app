@@ -54,12 +54,21 @@ const IntroductionSection = ({
           </Box>
         )}
       </Box>
-      <Box
-        position="relative"
-        display={{ base: 'none', md: 'initial' }}
-        flex={0.5}
-      >
-        <Icon icon="landing-avatars" width="354px" height="369px" />
+      {/* autoplay and loop static/videos/landing-avatars.mp4 video inside a canva and lazy loading */}
+      <Box flex={0.5} display={{ base: 'none', lg: 'initial' }}>
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          style={{
+            width: '400px',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        >
+          <source src="static/videos/landing-avatars.webm" type="video/webm" />
+        </video>
       </Box>
     </Box>
   );

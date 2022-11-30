@@ -107,7 +107,7 @@ const AvatarUser = ({
               {fullNameLabel}
             </Heading>
             <Text size="sm" fontWeight="400">
-              {`${infoText[router.locale]} ${dateFormated[router.locale]}`}
+              {`${infoText[router?.locale]} ${dateFormated[router?.locale]}`}
             </Text>
 
           </Box>
@@ -149,8 +149,8 @@ AvatarUser.propTypes = {
   containerStyle: PropTypes.objectOf(PropTypes.any),
   width: PropTypes.string,
   height: PropTypes.string,
-  badge: PropTypes.elementType,
-  customBadge: PropTypes.elementType,
+  badge: PropTypes.bool,
+  customBadge: PropTypes.node,
   isOnline: PropTypes.bool,
   isWrapped: PropTypes.bool,
   index: PropTypes.number,
@@ -161,7 +161,7 @@ AvatarUser.defaultProps = {
   containerStyle: {},
   width: '39px',
   height: '39px',
-  badge: null,
+  badge: false,
   customBadge: null,
   isOnline: false,
   isWrapped: false,

@@ -143,6 +143,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     TAG_MANAGER_KEY: process.env.TAG_MANAGER_KEY,
     STONLY_ID: process.env.STONLY_ID,
     GOOGLE_GEO_KEY: process.env.GOOGLE_GEO_KEY,
+    BREATHECODE_PAYMENT: process.env.BREATHECODE_PAYMENT,
   },
   images: {
     // Whitelist for image providers
@@ -163,5 +164,6 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     TAG_MANAGER_KEY: process.env.TAG_MANAGER_KEY,
     STONLY_ID: process.env.STONLY_ID,
     GOOGLE_GEO_KEY: process.env.GOOGLE_GEO_KEY,
+    BREATHECODE_PAYMENT: process.env.BREATHECODE_PAYMENT,
   },
 })));

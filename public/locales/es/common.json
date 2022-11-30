@@ -60,6 +60,12 @@
   "seach-technology": "Buscar tecnología",
   "remove-difficulty": "Remover dificultad",
   "read-lesson": "Leer lección",
+  "asset-button": {
+    "lesson": "Leer lección",
+    "exercise": "Iniciar ejercicio",
+    "project": "Iniciar proyecto",
+    "article": "Leer articulo"
+  },
   "copied": "Copiado!",
   "no-options-message": "No hay mas opciones",
   "taskStatus": {
@@ -98,5 +104,10 @@
   "upload": "Subir",
   "cancel": "Cancelar",
   "uploading": "Subiendo",
-  "and": "y"
+  "and": "y",
+  "junior": "Junior",
+  "mid-level": "Mid level",
+  "senior": "Senior",
+  "start-free-trial": "Iniciar prueba gratuita",
+  "proceed-to-payment": "Proceder al pago"
 }

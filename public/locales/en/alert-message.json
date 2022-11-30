@@ -55,5 +55,11 @@
   "google-maps-no-coincidences": "Google Maps: No matches found for the address entered",
   "cohort-not-found": "The specified cohort was not found",
   "files-uploaded": "Files succesfully uploaded",
-  "current-task-no-files": "The current task does not have any files"
+  "current-task-no-files": "The current task does not have any files",
+  "error-fetching-activities": "There was an error fetching activities",
+  "error-updating-day-and-modules": "There was an error updating the selected day and module",
+  "card-error": "There was an error processing your card",
+  "card-error-description": "Please check your card information and try again",
+  "something-went-wrong-choosing-date": "Something went wrong choosing the date",
+  "payment-error": "There was an error processing your payment"
 }

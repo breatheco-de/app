@@ -116,6 +116,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const router = useRouter();
   const iconColor = useColorModeValue('#FFF', '#283340');
+  const queryExists = Object.keys(router.query).length > 0;
 
   const lessonsFiltered = lessons.slice(0, offset);
   const lessonsSearched = lessons.filter(
@@ -132,15 +133,17 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
   };
 
   useEffect(() => {
-    if (lessonsSearched.length > 0) return () => {};
-    if (offset <= lessons.length) {
-      console.log('loading lessons...');
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
+    if (!queryExists) {
+      if (lessonsSearched.length > 0) return () => {};
+      if (offset <= lessons.length) {
+        console.log('loading lessons...');
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }
+      console.log('All lessons loaded');
     }
-    console.log('All lessons loaded');
     return () => {};
-  }, [offset, lessonsSearched]);
+  }, [offset, queryExists]);
 
   useEffect(() => {
     if (!isLoading) return;
@@ -150,6 +153,16 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
       setIsLoading(false);
     }, 200);
   }, [isLoading]);
+
+  const getLessons = () => {
+    if (queryExists) {
+      return lessons;
+    }
+    if (lessonsSearched.length > 0) {
+      return lessonsSearched;
+    }
+    return lessonsFiltered;
+  };
 
   // const currentFilters = technologies.length
   //   + (difficulty === undefined || difficulty.length === 0 ? 0 : 1)
@@ -262,8 +275,8 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
         </Text>
 
         <ProjectList
-          projects={lessonsSearched.length > 0 ? lessonsSearched : lessonsFiltered}
-          withoutImage
+          projects={getLessons()}
+          withoutDifficulty
           isLoading={isLoading}
           contextFilter={filteredBy.projectsOptions}
           projectPath="lesson"

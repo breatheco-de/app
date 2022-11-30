@@ -41,7 +41,7 @@ const OnlineContext = ({ children }) => {
 
   useEffect(() => {
     if (hasLoaded && temporalToken !== null && temporalToken?.token) {
-      console.log('temporal_token:', temporalToken);
+      // console.log('temporal_token:', temporalToken);
       const client = new W3CWebSocket(`wss://${BREATHECODE_WS}/ws/online?token=${temporalToken.token}`);
 
       client.onopen = () => {

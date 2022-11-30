@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -6,49 +5,74 @@ import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, Button, Box,
   NumberInput, NumberInputStepper, NumberDecrementStepper, NumberIncrementStepper, NumberInputField,
   FormControl, FormLabel, Flex, Grid, useCheckbox, useCheckboxGroup, Avatar,
-  useColorMode, useToast, Select, ModalCloseButton, TableContainer, Table,
-  TableCaption, Thead, Tr, Th, Tbody, Td,
+  useColorMode, useToast, Select, ModalCloseButton,
 } from '@chakra-ui/react';
-import { format, formatDistanceStrict } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { useRouter } from 'next/router';
-import Icon from './Icon';
-import Text from './Text';
-import bc from '../services/breathecode';
-import { usePersistent } from '../hooks/usePersistent';
-import ModalInfo from '../../js_modules/moduleMap/modalInfo';
-import useStyle from '../hooks/useStyle';
+import Icon from '../Icon';
+import Text from '../Text';
+import bc from '../../services/breathecode';
+import { usePersistent } from '../../hooks/usePersistent';
+import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
+import useStyle from '../../hooks/useStyle';
+import handlers from '../../handlers';
 
 const AttendanceModal = ({
-  title, message, isOpen, onClose, sortedAssignments, students, currentCohortProps, setCurrentCohortProps,
+  title, message, isOpen, onClose, sortedAssignments, students, currentCohortProps,
 }) => {
   const { t } = useTranslation('dashboard');
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
-  const [daysHistoryLog, setDaysHistoryLog] = usePersistent('days_history_log', {});
-  const [attendanceWasTaken, setAttendanceWasTaken] = useState(false);
-  const [attendanceTaken, setAttendanceTaken] = useState([]);
-  const [day, setDay] = useState(currentCohortProps.current_day);
-  const [currentModule, setCurrentModule] = useState(currentCohortProps.current_module);
+  const [historyLog, setHistoryLog] = useState();
+  const [day, setDay] = useState(cohortSession.current_day);
+  const [attendanceTaken, setAttendanceTaken] = useState({});
+  const [currentModule, setCurrentModule] = useState(cohortSession.current_module);
+  // const [defaultDay, setDefaultDay] = useState(0);
+  const [checked, setChecked] = useState([]);
   const [defaultProps, setDefaultProps] = useState({
     current_day: 0,
     current_module: 0,
   });
-  const [checked, setChecked] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [openWarn, setOpenWarn] = useState(false);
+  const [openAttendanceTakenWarn, setOpenAttendanceTakenWarn] = useState(false);
+  const [attendanceList, setAttendanceList] = useState({});
   const { colorMode } = useColorMode();
-  const router = useRouter();
   const toast = useToast();
 
   const { lightColor, borderColor } = useStyle();
 
   const { getCheckboxProps } = useCheckboxGroup({
     onChange: setChecked,
+    value: checked,
   });
   const cohortDurationInDays = cohortSession.syllabus_version.duration_in_days;
 
   const currentCohortDay = currentCohortProps.current_day;
   const currentCohortModule = currentCohortProps.current_module;
+
+  useEffect(() => {
+    setIsLoading(true);
+    handlers.getAttendanceList({ cohortSlug: cohortSession.slug })
+      .then((data) => {
+        setAttendanceList(data);
+      })
+      .catch(() => {
+        toast({
+          title: t('alert-message:error-getting-previous-attendance'),
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  useEffect(() => {
+  // Mark checkboxes with attendanceStudents {user.id}
+    if (attendanceTaken?.attendanceStudents) {
+      const checkedStudents = attendanceTaken?.attendanceStudents.map((student) => String(student.user.id));
+
+      setChecked(checkedStudents);
+    }
+  }, [attendanceTaken.attendanceStudents]);
 
   const getDailyModuleData = () => {
     if (sortedAssignments.length > 0) {
@@ -82,61 +106,24 @@ const AttendanceModal = ({
     // setDefaultDay(currentCohortProps.current_day);
   }, [currentCohortDay, currentCohortModule]);
 
+  // function that checks if the attendance has been taken for the current day
+  const attendanceWasTaken = () => {
+    const attendance = attendanceList[day];
+    if (attendance && attendance?.attendance_ids?.length > 0) {
+      return true;
+    }
+    return false;
+  };
+
   const saveCohortAttendancy = () => {
-    const cohortSlug = cohortSession.slug;
-    const userAgent = `bc/${cohortSession?.cohort_role?.toLowerCase() || 'teacher'}`;
-
-    // const attendanceIds = students.reduce(
-    //   (accumulator, { user }) => {
-    //     const attended = checked.some((id) => parseInt(id, 10) === user.id);
-    //     if (attended) {
-    //       accumulator.attended.push(user.id);
-    //     } else {
-    //       accumulator.unattended.push(user.id);
-    //     }
-    //     return accumulator;
-    //   }, { attended: [], unattended: [] },
-    // );
-
-    // const dataStruct = {
-    //   current_module: currentModule,
-    //   teacher_comments: '',
-    //   attendance_ids: attendanceIds.attended,
-    //   unattendance_ids: attendanceIds.unattended,
-    // };
-    // bc.cohort().log(
-    //   cohortSlug,
-    //   dataStruct,
-    // )
-
-    bc.activity()
-      .addBulk(
-        cohortSlug,
-        students.map(({ user }) => {
-          const attended = checked.find((id) => parseInt(id, 10) === user.id);
-          return {
-            user_id: user.id,
-            user_agent: userAgent,
-            // user_agent: 'bc/teacher',
-            cohort: cohortSlug,
-            day: Number(day),
-            slug: typeof attended === 'undefined' || !attended ? 'classroom_unattendance' : 'classroom_attendance',
-            data: `{ "cohort": "${cohortSlug}", "day": "${cohortSession.current_day}"}`,
-          };
-        }),
-      )
-      .then(() => {
+    handlers.saveCohortAttendancy({ cohortSlug: cohortSession.slug, students, checked, currentModule })
+      .then((data) => {
+        setAttendanceList(data);
         toast({
           title: t('alert-message:attendancy-reported'),
           status: 'success',
           duration: 9000,
           isClosable: true,
-        });
-        setIsLoading(false);
-        setCurrentCohortProps({
-          ...currentCohortProps,
-          current_day: day,
-          current_module: currentModule,
         });
       })
       .catch(() => {
@@ -146,78 +133,69 @@ const AttendanceModal = ({
           duration: 9000,
           isClosable: true,
         });
-        setIsLoading(false);
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
-
-  useEffect(() => {
-    if (!daysHistoryLog.currSumOfDays && currModuleData) {
-      setDaysHistoryLog({
-        prevSumOfDays,
-        currSumOfDays: prevSumOfDays + currModuleData?.duration_in_days,
-      });
-    }
-  }, [cohortSession, currModuleData]);
 
   const updateCohortDay = () => {
     setIsLoading(true);
     bc.cohort()
       .update(cohortSession.id, { current_day: Number(day), current_module: currentModule })
       .then(({ data }) => {
+        saveCohortAttendancy();
         setCohortSession({
           ...cohortSession,
           current_module: data.current_module,
+          current_day: data.current_day,
+          ...data,
         });
-        setDaysHistoryLog({
-          prevSumOfDays,
-          currSumOfDays: prevSumOfDays + currModuleData?.duration_in_days,
-        });
-        bc.activity().getAttendance(cohortSession.id)
-          .then((res) => {
-            const studentsForDay = res.data.filter(
-              (st) => students.find((student) => student.user.id === st.user_id)
-                && Number(st.day) === Number(day),
-            );
-            setAttendanceTaken(studentsForDay);
-
-            if (studentsForDay.length === 0) {
-              setCohortSession({ ...cohortSession, ...data });
-              saveCohortAttendancy();
-            } else {
-              setAttendanceWasTaken(true);
-              toast({
-                title: t('alert-message:attenadance-already-taken', { count: day }),
-                // title: `Attendance for day ${day} has already been taken`,
-                status: 'warning',
-                duration: 9000,
-                isClosable: true,
-              });
-            }
-          })
-          .catch((error) => {
-            toast({
-              title: t('alert-message:error-getting-previous-attendance'),
-              status: 'error',
-              duration: 9000,
-              isClosable: true,
-            });
-            console.log('getAttendance_error:', error);
-          })
-          .finally(() => {
-            setOpenWarn(false);
-            setIsLoading(false);
-          });
-        return data;
       })
       .catch(() => {
+        toast({
+          title: t('alert-message:error-updating-day-and-modules'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
         setOpenWarn(false);
         setIsLoading(false);
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
 
-  const sortOldStudentList = attendanceTaken.sort(
-    (a, b) => new Date(b.created_at) - new Date(a.created_at),
-  );
+  useEffect(() => {
+    if (currModuleData) {
+      const currSumOfDays = prevSumOfDays + currModuleData?.duration_in_days;
+      const prevDayDiff = (prevSumOfDays - day) < 0 ? 0 : (prevSumOfDays - day);
+      const currDayDiff = (currSumOfDays - day) < 0 ? 0 : (currSumOfDays - day);
+      const calcDaysDiff = () => {
+        if (currSumOfDays > day) {
+          return {
+            type: 'early',
+            diff: currSumOfDays - day,
+          };
+        }
+        return {
+          type: 'late',
+          diff: day - currSumOfDays,
+        };
+      };
+      setHistoryLog({
+        prevSumOfDays,
+        moduleDayDiff: currSumOfDays - prevSumOfDays,
+        currSumOfDays,
+        daysDiff: calcDaysDiff(),
+        prevDayDiff,
+        currDayDiff,
+      });
+    }
+
+    handlers.getAttendance({ attendanceList, students, day })
+      .then((data) => {
+        setAttendanceTaken(data);
+      })
+      .finally(() => setIsLoading(false));
+  }, [currModuleData, day]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -226,6 +204,7 @@ const AttendanceModal = ({
         <ModalHeader fontSize="30px" paddingBottom={0}>
           {title}
         </ModalHeader>
+        <ModalCloseButton />
         <ModalBody>
           <Text size="l" color={colorMode === 'light' ? 'gray.dark' : 'white'}>
             {message}
@@ -236,8 +215,10 @@ const AttendanceModal = ({
               <NumberInput
                 defaultValue={defaultProps.current_day}
                 max={cohortDurationInDays}
-                min={defaultProps.current_day}
-                onChange={(newDay) => setDay(parseInt(newDay, 10))}
+                min={1}
+                onChange={(newDay) => {
+                  setDay(parseInt(newDay, 10));
+                }}
               >
                 <NumberInputField color={colorMode === 'light' ? 'black' : 'white'} />
                 <NumberInputStepper>
@@ -275,8 +256,9 @@ const AttendanceModal = ({
             <Grid templateColumns={{ md: 'repeat(4, 4fr)', sm: 'repeat(1, 1fr)' }} gap={6}>
               {students.map((item) => {
                 const checkbox = getCheckboxProps({ value: item.user.id.toString() });
+
                 return (
-                  <CheckboxCard key={item.user.first_name} {...checkbox}>
+                  <CheckboxCard key={`${item.user.id}-${item.user.first_name}`} {...checkbox}>
                     <Flex justifyContent="space-between">
                       <Flex marginRight="12px" alignItems="center">
                         <Avatar
@@ -317,11 +299,19 @@ const AttendanceModal = ({
             disabled={checked.length < 1 || isLoading}
             variant="default"
             onClick={() => {
-              if (daysHistoryLog.prevSumOfDays >= day) {
-                setOpenWarn(true);
+              if (attendanceWasTaken()) {
+                setOpenAttendanceTakenWarn(true);
               } else {
                 updateCohortDay();
               }
+              // TODO: Handle with current module in log list
+              // if (historyLog?.daysDiff?.type === 'late' && historyLog?.daysDiff?.diff !== 0) {
+              //   setOpenWarn(true);
+              // } else if (attendanceWasTaken()) {
+              //   setOpenAttendanceTakenWarn(true);
+              // } else {
+              //   updateCohortDay();
+              // }
             }}
             rightIcon={<Icon icon="longArrowRight" width="15px" color={checked.length < 1 ? 'black' : 'white'} />}
           >
@@ -331,91 +321,62 @@ const AttendanceModal = ({
           <ModalInfo
             isOpen={openWarn}
             onClose={() => setOpenWarn(false)}
-            htmlDescription={t('attendance-modal.warn-premature-teaching.description', { module: getDailyModuleData()?.dailyModule?.label, durationInDays: daysHistoryLog.prevSumOfDays, day })}
+            htmlDescription={t('attendance-modal.warn-slower-teaching.description', {
+              module: getDailyModuleData()?.dailyModule?.label,
+              currDayDiff: historyLog?.daysDiff.diff,
+              moduleDayDiff: historyLog?.moduleDayDiff,
+            })}
             actionHandler={() => {
+              if (attendanceWasTaken()) {
+                setOpenAttendanceTakenWarn(true);
+              } else {
+                updateCohortDay();
+              }
               setOpenWarn(false);
-              updateCohortDay();
             }}
             closeButtonVariant="outline"
-            title={t('attendance-modal.warn-premature-teaching.title')}
+            title={t('attendance-modal.warn-slower-teaching.title')}
             handlerText={t('common:confirm')}
 
           />
         </ModalFooter>
-      </ModalContent>
+        <Modal isOpen={openAttendanceTakenWarn} margin="0 10px" onClose={() => setOpenAttendanceTakenWarn(false)}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={borderColor} textAlign="center">
+              {t('attendance-modal.attendance-already-taken.title')}
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              {t('attendance-modal.attendance-already-taken.description')}
+            </ModalBody>
+            <ModalFooter display="flex" justifyContent="space-between">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setOpenAttendanceTakenWarn(false);
+                }}
+              >
+                {t('common:cancel')}
+              </Button>
+              <Button
+                minWidth="173.4px"
+                textTransform="uppercase"
+                fontSize="13px"
+                variant="default"
+                onClick={() => {
+                  setOpenAttendanceTakenWarn(false);
+                  updateCohortDay();
+                }}
+                rightIcon={<Icon icon="longArrowRight" width="15px" color={checked.length < 1 ? 'black' : 'white'} />}
+              >
+                {t('attendance-modal.apply-changes')}
+              </Button>
 
-      <Modal isOpen={attendanceWasTaken} margin="0 10px" onClose={() => setAttendanceWasTaken(false)}>
-        <ModalOverlay />
-        <ModalContent style={{ maxWidth: '52rem' }}>
-          <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={borderColor} textAlign="center">
-            {t('attendance-modal.list-attendance-title', { count: sortOldStudentList.length })}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody padding="0.5rem 0 0.5rem 0">
-            <TableContainer>
-              {sortOldStudentList.length > 0 && (
-                <Table variant="simple" style={{ margin: '0 1.5rem 0 1.5rem' }}>
-                  <Thead>
-                    <Tr>
-                      <Th>{t('common:user-id')}</Th>
-                      <Th>{t('common:full-name')}</Th>
-                      <Th isNumeric>{t('common:day')}</Th>
-                      <Th>{t('common:taken-by')}</Th>
-                      <Th>{t('common:attended')}</Th>
-                      <Th>{t('common:modification-date')}</Th>
-                      <Th>{t('common:time-elapsed')}</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {sortOldStudentList.map((l) => {
-                      const currentUser = students.find((st) => st.user.id === l.user_id);
-                      const fullName = `${currentUser.user.first_name} ${currentUser.user.last_name}`;
-                      const dateElapsed = router.locale === 'es'
-                        ? formatDistanceStrict(
-                          new Date(l.created_at),
-                          new Date(),
-                          { addSuffix: true, locale: es },
-                        ) : formatDistanceStrict(
-                          new Date(l.created_at),
-                          new Date(),
-                          { addSuffix: true },
-                        );
-                      return (
-                        <Tr key={`${l.user_id} - ${l.created_at}`}>
-                          <Td>{l.user_id}</Td>
-                          <Td>{fullName}</Td>
-                          <Td isNumeric>{l.day}</Td>
-                          <Td>{l.user_agent}</Td>
-                          <Td textAlign="-webkit-center">
-                            {l.slug === 'classroom_attendance'
-                              ? (<Icon icon="success" width="16px" height="16px" />)
-                              : (<Icon icon="error" width="16px" height="16px" />)}
-                          </Td>
-                          <Td>
-                            {router.locale === 'es'
-                              ? format(
-                                new Date(l.created_at), 'dd/MM/yyyy',
-                              )
-                              : format(
-                                new Date(l.created_at), 'yyyy/MM/dd',
-                              )}
-                          </Td>
-                          <Td>{dateElapsed}</Td>
-                        </Tr>
-                      );
-                    })}
-                  </Tbody>
-                </Table>
-              )}
-            </TableContainer>
-          </ModalBody>
-          <ModalFooter>
-            <TableCaption padding="0 8%">
-              {t('attendance-modal.attendance-taken-table-message')}
-            </TableCaption>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </ModalContent>
     </Modal>
   );
 };
@@ -433,7 +394,6 @@ export const CheckboxCard = (props) => {
       <Box
         {...checkbox}
         cursor="pointer"
-        // borderWidth="2px"
         borderRadius="md"
         border="2px solid"
         borderColor={borderColor}

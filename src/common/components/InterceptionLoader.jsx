@@ -15,7 +15,7 @@ const InterceptionLoader = () => {
     }, (error) => {
       Promise.reject(error);
       const statusError = error.response.status;
-      console.log('error_request:', error);
+      console.error('Error_request:', error);
       setLoading(false);
       if (statusError === 401) {
         handleLogout();

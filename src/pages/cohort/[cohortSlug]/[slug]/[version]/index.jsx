@@ -56,8 +56,8 @@ const Dashboard = () => {
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const [currentCohortProps, setCurrentCohortProps] = useState({});
   const {
-    cohortSession, sortedAssignments, setSyllabus, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
-    getMandatoryProjects, getTasksWithoutCohort, taskTodo,
+    cohortSession, sortedAssignments, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
+    getMandatoryProjects, getTasksWithoutCohort, taskTodo, taskTodoState,
   } = useHandler();
 
   const teacherAndAssistants = studentAndTeachers.filter((st) => st.role === 'TEACHER' || st.role === 'ASSISTANT');
@@ -248,7 +248,6 @@ const Dashboard = () => {
             alignItems="center"
             onClick={() => {
               setSortedAssignments([]);
-              setSyllabus([]);
             }}
             fontWeight="700"
             gridGap="12px"
@@ -369,7 +368,7 @@ const Dashboard = () => {
 
             <Box marginTop="36px">
               <ProgressBar
-                taskTodo={taskTodo}
+                taskTodo={taskTodoState}
                 progressText={t('progressText')}
                 width="100%"
               />

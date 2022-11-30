@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Box, useColorModeValue } from '@chakra-ui/react';
 import MotionBox from '../MotionBox';
@@ -15,14 +15,16 @@ const Progress = ({
 }) => {
   const [barWidth, setBarWidth] = useState(0);
   const [initialized, setInitialized] = useState(false);
+  const progressClass = typeof document !== 'undefined' && document.querySelector('.progress-bar');
 
-  useLayoutEffect(() => {
-    const progressClass = document.querySelector('.progress-bar');
-    setBarWidth(progressClass.scrollWidth);
-    setTimeout(() => {
-      setInitialized(true);
-    }, 600);
-  }, []);
+  useEffect(() => {
+    if (progressClass) {
+      setBarWidth(progressClass.scrollWidth);
+      setTimeout(() => {
+        setInitialized(true);
+      }, 600);
+    }
+  }, [progressClass]);
 
   const percentsOffset = (percents - 100) * (barWidth / 100);
 

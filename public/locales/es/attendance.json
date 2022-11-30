@@ -1,0 +1,22 @@
+{
+  "back-to": "Volver a Dashboard",
+  "title": "Asistencia",
+  "attendance": "asistencia",
+  "label": {
+    "status": "Status",
+    "student-and-assignments": "Student and Assignments",
+    "link": "Link/File",
+    "actions": "Actions",
+    "files-received": "{{files}} Files delivered",
+    "link-received": "Link delivered"
+  },
+  "filter": {
+    "sort-by": "Ordenar por",
+    "sort-by-name": "Ordenar por nombre",
+    "sort-by-percentage": "Ordenar por porcentaje",
+    "project": "Filter by Project",
+    "student": "Filter by Student",
+    "status": "Filter by Status",
+    "assignments-length": "Current list of {{total}} assignments"
+  }
+}

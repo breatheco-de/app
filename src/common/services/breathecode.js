@@ -1,6 +1,8 @@
 import axios from '../../axios';
+import { parseQuerys } from '../../utils/url';
 
 const host = `${process.env.BREATHECODE_HOST}/v1`;
+
 const breathecode = {
   get: (url) => axios.get(url),
   auth: () => {
@@ -40,9 +42,7 @@ const breathecode = {
 
   admissions: (query = {}) => {
     const url = `${host}/admissions`;
-    const qs = Object.keys(query)
-      .map((key) => `${key}=${query[key]}`)
-      .join('&');
+    const qs = parseQuerys(query);
     return {
       me: () => axios.get(`${url}/user/me`),
       cohorts: () => axios.get(`${url}/cohort/all?${qs}`),
@@ -62,9 +62,7 @@ const breathecode = {
   todo: (query = {}) => {
     const url = `${host}/assignment`;
     // .map((key) => (query[key] !== null ? `${key}=${query[key]}` : ''))
-    const qs = Object.keys(query)
-      .map((key) => (query[key] !== undefined ? `${key}=${query[key]}` : ''))
-      .join('&');
+    const qs = parseQuerys(query);
     return {
       get: () => axios.get(`${url}/task/?${qs}`),
       getAssignments: (args) => axios.get(`${url}/academy/cohort/${args.id}/task?${qs}`),
@@ -95,12 +93,11 @@ const breathecode = {
 
   cohort: (query = {}) => {
     const url = `${host}/admissions/academy`;
-    const qs = Object.keys(query)
-      .map((key) => `${key}=${query[key]}`)
-      .join('&');
+    const qs = parseQuerys(query);
     return {
       get: (id) => axios.get(`${url}/cohort/${id}`),
-      log: (id, activities) => axios.put(`${url}/cohort/${id}/log?${qs}`, activities),
+      takeAttendance: (id, activities) => axios.put(`${url}/cohort/${id}/log?${qs}`, activities),
+      getAttendance: (id) => axios.get(`${url}/cohort/${id}/log?${qs}`),
       getPublic: (id) => axios.get(`${url}/cohort/${id}`, {
         headers: {
           Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
@@ -137,9 +134,7 @@ const breathecode = {
   mentorship: (query = {}) => {
     const url = `${host}/mentorship/academy`;
     const urlNoAcademy = `${host}/mentorship`;
-    const qs = Object.keys(query)
-      .map((key) => `${key}=${query[key]}`)
-      .join('&');
+    const qs = parseQuerys(query);
     return {
       getService: () => axios.get(`${url}/service?status=ACTIVE`),
       getMentor: () => axios.get(`${url}/mentor?${qs}`),
@@ -149,9 +144,7 @@ const breathecode = {
 
   marketing: (query = {}) => {
     const url = `${host}/marketing`;
-    const qs = Object.keys(query)
-      .map((key) => `${key}=${query[key]}`)
-      .join('&');
+    const qs = parseQuerys(query);
     return {
       lead: (data) => axios.post(`${url}/lead?${qs}`, data),
     };
@@ -159,22 +152,14 @@ const breathecode = {
 
   lesson: (query = {}) => {
     const url = `${host}/registry`;
-    const qs = Object.keys(query)
-      .map((key) => `${key}=${query[key]}`)
-      .join('&');
+    const qs = parseQuerys(query);
     return {
       get: () => axios.get(`${url}/asset?${qs}`),
       getAsset: (slug) => axios.get(`${url}/asset/${slug}`),
       techs: () => axios.get(`${url}/academy/technology?${qs}`),
     };
   },
-  activity: () => {
-    const url = `${host}/activity`;
-    return {
-      addBulk: (cohortId, activities) => axios.post(`${url}/academy/cohort/${cohortId}`, activities),
-      getAttendance: (cohortId) => axios.get(`${url}/cohort/${cohortId}?slug=classroom_attendance,classroom_unattendance`),
-    };
-  },
+
   certificate: () => {
     const url = `${host}/certificate`;
     return {
@@ -185,13 +170,20 @@ const breathecode = {
   public: (query = {}) => {
     const url = `${host}/admissions/public`;
 
-    const qs = Object.keys(query)
-      .map((key) => (query[key] !== undefined ? `${key}=${query[key]}` : ''))
-      .join('&');
+    const qs = parseQuerys(query);
     return {
       mentors: () => axios.get(`${url}/cohort/user?${qs}`),
       events: () => axios.get(`${host}/events/all?${qs}`),
       cohorts: () => axios.get(`${host}/admissions/cohort/all?${qs}`),
+    };
+  },
+  payment: (query = {}) => {
+    const url = `${host}/payments`;
+    const qs = parseQuerys(query);
+    return {
+      checking: (data) => axios.put(`${url}/checking?${qs}`, data),
+      pay: (data) => axios.post(`${url}/pay?${qs}`, data),
+      addCard: (data) => axios.put(`${url}/card?${qs}`, data),
     };
   },
 };

@@ -6,8 +6,7 @@ import {
 import useStyle from '../../hooks/useStyle';
 
 const FieldForm = ({
-  // eslint-disable-next-line no-unused-vars
-  type, name, label, placeholder, formProps, setFormProps, style, withLabel,
+  type, name, label, placeholder, formProps, setFormProps, style, withLabel, pattern, handleOnChange, externValue,
 }) => {
   const { input } = useStyle();
   const inputBorderColor = input.borderColor;
@@ -29,11 +28,15 @@ const FieldForm = ({
           )}
           <Input
             {...field}
+            value={externValue || field.value}
+            // defaultValue={defaultValue}
             type={type}
             onChange={(e) => {
               setFormProps({ ...formProps, [name]: e.target.value });
+              handleOnChange(e);
               field.onChange(e);
             }}
+            pattern={pattern > 0 ? pattern : null}
             placeholder={withLabel ? placeholder : label}
             height="50px"
             borderColor={inputBorderColor}
@@ -56,6 +59,10 @@ FieldForm.propTypes = {
   setFormProps: PropTypes.func,
   style: PropTypes.objectOf(PropTypes.any),
   withLabel: PropTypes.bool,
+  pattern: PropTypes.string,
+  handleOnChange: PropTypes.func,
+  maxLength: PropTypes.number,
+  externValue: PropTypes.string,
 };
 
 FieldForm.defaultProps = {
@@ -67,6 +74,10 @@ FieldForm.defaultProps = {
   setFormProps: () => {},
   style: {},
   withLabel: false,
+  pattern: '',
+  handleOnChange: () => {},
+  maxLength: 0,
+  externValue: '',
 };
 
 export default FieldForm;
