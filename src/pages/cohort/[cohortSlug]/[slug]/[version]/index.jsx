@@ -37,8 +37,10 @@ import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
 import AlertMessage from '../../../../../common/components/AlertMessage';
 import useHandler from '../../../../../common/hooks/useCohortHandler';
+import modifyEnv from '../../../../../../modifyEnv';
 
 const Dashboard = () => {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('dashboard');
   const toast = useToast();
   const router = useRouter();
@@ -567,7 +569,7 @@ const Dashboard = () => {
               marginBottom="15px"
               onClick={(e) => {
                 e.preventDefault();
-                window.location.href = `${process.env.BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
+                window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
               }}
             >
               <Icon

@@ -1,7 +1,9 @@
 import axios from '../../axios';
 import { parseQuerys } from '../../utils/url';
+import modifyEnv from '../../../modifyEnv';
 
-const host = `${process.env.BREATHECODE_HOST}/v1`;
+const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+const host = `${BREATHECODE_HOST}/v1`;
 
 const breathecode = {
   get: (url) => axios.get(url),
