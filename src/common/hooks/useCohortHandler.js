@@ -66,7 +66,7 @@ function useHandler() {
 
   const getCohortData = ({
     choose, cohortSlug,
-  }) => {
+  }) => new Promise((resolve, reject) => {
     // Fetch cohort data with pathName structure
     if (cohortSlug) {
       bc.admissions().me().then(({ data }) => {
@@ -96,7 +96,8 @@ function useHandler() {
           syllabus_name: name,
           academy_id: currentCohort.academy.id,
         });
-      }).catch(() => {
+        resolve(currentCohort);
+      }).catch((error) => {
         router.push('/choose-program');
         toast({
           title: t('alert-message:invalid-cohort-slug'),
@@ -105,12 +106,13 @@ function useHandler() {
           duration: 7000,
           isClosable: true,
         });
+        reject(error);
         setTimeout(() => {
           localStorage.removeItem('cohortSession');
         }, 4000);
       });
     }
-  };
+  });
 
   // Sort all data fetched in order of taskTodo
   const prepareTasks = ({

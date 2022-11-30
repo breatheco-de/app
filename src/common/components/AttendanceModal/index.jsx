@@ -16,7 +16,7 @@ import useStyle from '../../hooks/useStyle';
 import handlers from '../../handlers';
 
 const AttendanceModal = ({
-  title, message, isOpen, onClose, sortedAssignments, students,
+  title, message, isOpen, onClose, sortedAssignments, students, currentCohortProps,
 }) => {
   const { t } = useTranslation('dashboard');
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
@@ -24,8 +24,12 @@ const AttendanceModal = ({
   const [day, setDay] = useState(cohortSession.current_day);
   const [attendanceTaken, setAttendanceTaken] = useState({});
   const [currentModule, setCurrentModule] = useState(cohortSession.current_module);
-  const [defaultDay, setDefaultDay] = useState(0);
+  // const [defaultDay, setDefaultDay] = useState(0);
   const [checked, setChecked] = useState([]);
+  const [defaultProps, setDefaultProps] = useState({
+    current_day: 0,
+    current_module: 0,
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [openWarn, setOpenWarn] = useState(false);
   const [openAttendanceTakenWarn, setOpenAttendanceTakenWarn] = useState(false);
@@ -41,7 +45,8 @@ const AttendanceModal = ({
   });
   const cohortDurationInDays = cohortSession.syllabus_version.duration_in_days;
 
-  const currentCohortDay = cohortSession.current_day;
+  const currentCohortDay = currentCohortProps.current_day;
+  const currentCohortModule = currentCohortProps.current_module;
 
   useEffect(() => {
     setIsLoading(true);
@@ -94,8 +99,12 @@ const AttendanceModal = ({
   );
 
   useEffect(() => {
-    setDefaultDay(currentCohortDay);
-  }, [currentCohortDay]);
+    setDefaultProps({
+      current_day: currentCohortDay,
+      current_module: currentCohortModule,
+    });
+    // setDefaultDay(currentCohortProps.current_day);
+  }, [currentCohortDay, currentCohortModule]);
 
   // function that checks if the attendance has been taken for the current day
   const attendanceWasTaken = () => {
@@ -204,7 +213,7 @@ const AttendanceModal = ({
             <FormControl id="days">
               <FormLabel htmlFor="day" color={lightColor} fontSize="12px">{t('attendance-modal.day')}</FormLabel>
               <NumberInput
-                defaultValue={defaultDay}
+                defaultValue={defaultProps.current_day}
                 max={cohortDurationInDays}
                 min={1}
                 onChange={(newDay) => {
@@ -222,7 +231,7 @@ const AttendanceModal = ({
             <FormControl>
               <FormLabel htmlFor="current_module" color={lightColor} fontSize="12px">{t('attendance-modal.module')}</FormLabel>
               {sortedAssignments.length > 0 && (
-                <Select defaultValue={currentModule} onChange={(e) => setCurrentModule(parseInt(e.target.value, 10))} id="module" placeholder="Select module">
+                <Select defaultValue={defaultProps.current_module} onChange={(e) => setCurrentModule(parseInt(e.target.value, 10))} id="module" placeholder="Select module">
                   {sortedAssignments.map((module) => (
                     <option key={module.id} value={module.id}>
                       {`#${module.id} - ${module.label}`}
@@ -417,12 +426,16 @@ AttendanceModal.propTypes = {
   students: PropTypes.arrayOf(PropTypes.object).isRequired,
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
+  currentCohortProps: PropTypes.objectOf(PropTypes.any),
+  setCurrentCohortProps: PropTypes.func,
 };
 AttendanceModal.defaultProps = {
   title: '',
   message: '',
   isOpen: true,
-  onClose: () => { },
+  onClose: () => {},
+  currentCohortProps: {},
+  setCurrentCohortProps: () => {},
 };
 
 export default AttendanceModal;
