@@ -5,21 +5,21 @@ import {
   Box, Skeleton, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
-import ReactSelect from '../../../../../common/components/ReactSelect';
-import Link from '../../../../../common/components/NextChakraLink';
-import Heading from '../../../../../common/components/Heading';
-import { usePersistent } from '../../../../../common/hooks/usePersistent';
-import bc from '../../../../../common/services/breathecode';
-import Text from '../../../../../common/components/Text';
-import TaskLabel from '../../../../../common/components/taskLabel';
-import { isGithubUrl } from '../../../../../utils/regex';
-import ButtonHandler from '../../../../../js_modules/assignmentHandler/index';
-import useAssignments from '../../../../../common/store/actions/assignmentsAction';
-import { isWindow } from '../../../../../utils';
-import Image from '../../../../../common/components/Image';
-import PopoverHandler from '../../../../../js_modules/assignmentHandler/PopoverHandler';
-import axiosInstance from '../../../../../axios';
+import asPrivate from '../../../common/context/PrivateRouteWrapper';
+import ReactSelect from '../../../common/components/ReactSelect';
+import Link from '../../../common/components/NextChakraLink';
+import Heading from '../../../common/components/Heading';
+import { usePersistent } from '../../../common/hooks/usePersistent';
+import bc from '../../../common/services/breathecode';
+import Text from '../../../common/components/Text';
+import TaskLabel from '../../../common/components/taskLabel';
+import { isGithubUrl } from '../../../utils/regex';
+import ButtonHandler from '../../../js_modules/assignmentHandler/index';
+import useAssignments from '../../../common/store/actions/assignmentsAction';
+import { isWindow } from '../../../utils';
+import Image from '../../../common/components/Image';
+import PopoverHandler from '../../../js_modules/assignmentHandler/PopoverHandler';
+import axiosInstance from '../../../axios';
 
 const Assignments = () => {
   const { t } = useTranslation('assignments');
