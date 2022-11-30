@@ -1,4 +1,4 @@
-import { isWindow, removeURLParameter } from '../../utils';
+import { isWindow, removeURLParameter, setStorageItem } from '../../utils';
 import useAuth from '../hooks/useAuth';
 
 export const withGuard = (PassedComponent) => {
@@ -16,6 +16,9 @@ export const withGuard = (PassedComponent) => {
 
     const redirectToLogin = () => {
       setTimeout(() => {
+        if (typeof window !== 'undefined') {
+          setStorageItem('redirect', window.location.pathname);
+        }
         window.location.href = '/login';
       }, 150);
     };
