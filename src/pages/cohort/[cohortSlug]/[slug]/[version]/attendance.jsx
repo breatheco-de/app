@@ -49,14 +49,21 @@ const Attendance = () => {
     percentage: true,
   });
 
+  const status = {
+    attended: '#25BF6C',
+    absent: '#FF5B5B',
+    not_taken: '#FFB718',
+    remain: '#C4C4C4',
+  };
+
   const { borderColor, hexColor } = useStyle();
 
   const { cohortSlug } = router?.query;
 
   const calcDaysAverage = (days) => {
-    const totalDays = days.length;
-    const totalDaysCompleted = days.filter((day) => day.color === '#25BF6C').length;
-    const average = parseInt((totalDaysCompleted / totalDays) * 100, 10);
+    const currentTotalDays = days.filter((day) => day.color === status.remain).length;
+    const totalDaysCompleted = days.filter((day) => day.color === status.attended).length;
+    const average = parseInt((totalDaysCompleted / currentTotalDays) * 100, 10);
     return average;
   };
 
@@ -167,14 +174,14 @@ const Attendance = () => {
           const dayData = currentDaysLog[day];
           const dayLabel = `${t('common:day')} ${day}`;
           const dayColor = dayData?.attendance_ids?.includes(student.user.id)
-            ? '#25BF6C'
+            ? status.attended
             : dayData?.unattendance_ids?.includes(student.user.id)
-              ? '#FF5B5B'
-              : '#FFB718';
+              ? status.absent
+              : status.not_taken;
           return {
             label: dayData ? `${dayLabel} - ${format(new Date(dayData.updated_at), 'd MMM')}` : dayLabel,
             day,
-            color: dayData ? dayColor : '#C4C4C4',
+            color: dayData ? dayColor : status.remain,
             updated_at: dayData ? dayData?.updated_at : null,
           };
         });
@@ -188,7 +195,7 @@ const Attendance = () => {
       const averageEachDay = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
         const day = i + 1;
         const total = studentsWithDays.length;
-        const attended = studentsWithDays.filter((l) => l.days[day - 1].color === '#25BF6C').length;
+        const attended = studentsWithDays.filter((l) => l.days[day - 1].color === status.attended).length;
         const percentage = Math.round((attended / total) * 100);
         return {
           day,
