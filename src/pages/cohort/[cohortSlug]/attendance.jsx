@@ -14,21 +14,21 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import bc from '../../../../../common/services/breathecode';
-import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
-import ReactSelect from '../../../../../common/components/ReactSelect';
-import Link from '../../../../../common/components/NextChakraLink';
-import Heading from '../../../../../common/components/Heading';
-import { usePersistent } from '../../../../../common/hooks/usePersistent';
-import Text from '../../../../../common/components/Text';
-import useStyle from '../../../../../common/hooks/useStyle';
-import Icon from '../../../../../common/components/Icon';
-import DottedTimeline from '../../../../../common/components/DottedTimeline';
-import GridContainer from '../../../../../common/components/GridContainer';
-import handlers from '../../../../../common/handlers';
-import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
-import Sparkline from '../../../../../common/components/Sparkline';
-import KPI from '../../../../../common/components/KPI';
+import bc from '../../../common/services/breathecode';
+import asPrivate from '../../../common/context/PrivateRouteWrapper';
+import ReactSelect from '../../../common/components/ReactSelect';
+import Link from '../../../common/components/NextChakraLink';
+import Heading from '../../../common/components/Heading';
+import { usePersistent } from '../../../common/hooks/usePersistent';
+import Text from '../../../common/components/Text';
+import useStyle from '../../../common/hooks/useStyle';
+import Icon from '../../../common/components/Icon';
+import DottedTimeline from '../../../common/components/DottedTimeline';
+import GridContainer from '../../../common/components/GridContainer';
+import handlers from '../../../common/handlers';
+import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../common/components/Skeleton';
+import Sparkline from '../../../common/components/Sparkline';
+import KPI from '../../../common/components/KPI';
 
 const Attendance = () => {
   const { t } = useTranslation('attendance');
