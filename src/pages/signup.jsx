@@ -16,7 +16,7 @@ import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
 import ContactInformation from '../js_modules/signup/ContactInformation';
 import ChooseYourClass from '../js_modules/signup/ChooseYourClass';
-import { getTimeProps } from '../utils';
+import { getStorageItem, getTimeProps } from '../utils';
 import Summary from '../js_modules/signup/Summary';
 // import mockData from '../common/utils/mockData/DashboardView';
 import PaymentInfo from '../js_modules/signup/PaymentInfo';
@@ -63,6 +63,7 @@ const SignUp = ({ finance }) => {
   const [loader, setLoader] = useState({
     date: false,
   });
+  const tokenExists = getStorageItem('accessToken');
   const { user, isLoading } = useAuth();
 
   const toast = useToast();
@@ -130,21 +131,23 @@ const SignUp = ({ finance }) => {
     if (queryCohortIdExists) {
       const resp = await bc.cohort().getPublic(cohort);
 
-      if (resp.status >= 400) {
+      if (resp && resp.status >= 400) {
         toast({
           title: t('alert-message:cohort-not-found'),
           type: 'warning',
           duration: 4000,
           isClosable: true,
         });
-      } else {
+      }
+      // TODO: testing this
+      if (resp && resp.status < 400 && tokenExists) {
         handleChooseDate(resp.data);
         if (user && !isLoading) {
           setStepIndex(2);
         }
       }
     }
-  }, [cohort, user]);
+  }, [cohort, user, tokenExists]);
 
   useEffect(() => {
     if (user && !isLoading) {

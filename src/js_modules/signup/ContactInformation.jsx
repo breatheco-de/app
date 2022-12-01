@@ -27,6 +27,7 @@ const ContactInformation = ({
   const toast = useToast();
   const toastIdRef = useRef();
   const { featuredColor } = useStyle();
+  console.log('dateProps:::', dateProps);
   const { createToast } = useCustomToast({
     toastIdRef,
     status: 'info',
@@ -83,7 +84,6 @@ const ContactInformation = ({
     const data = await resp.json();
     if (resp.status < 400) {
       setStorageItem('subscriptionId', data.id);
-      setStepIndex(1);
 
       if (data?.access_token) {
         router.push({
@@ -139,6 +139,7 @@ const ContactInformation = ({
               ...values,
               course: courseChoosed,
               country: location?.country,
+              cohort: dateProps.id,
               city: location?.city,
               language: router.locale,
             };
