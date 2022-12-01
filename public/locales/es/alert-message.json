@@ -60,5 +60,6 @@
   "error-updating-day-and-modules": "Hubo un error al actualizar el día y el módulo seleccionado",
   "card-error": "Hubo un error al intentar procesar tu tarjeta",
   "card-error-description": "Por favor, verifica que los datos de tu tarjeta sean correctos",
-  "something-went-wrong-choosing-date": "Algo salió mal al intentar elegir la fecha"
+  "something-went-wrong-choosing-date": "Algo salió mal al intentar elegir la fecha",
+  "no-access-to-cohort": "No perteneces o no tienes acceso para ver las asistencias de esta cohorte"
 }
