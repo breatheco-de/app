@@ -29,7 +29,6 @@ const Assignments = () => {
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
   // const [allTasksPaginationProps, setAllTasksPaginationProps] = useState({});
-  const [tasksLoading, setTasksLoading] = useState(true);
   const [allTasksOffset, setAllTasksOffset] = useState(20);
   const [isFetching, setIsFetching] = useState(false);
   const [studentLabel, setStudentLabel] = useState(null);
@@ -41,6 +40,10 @@ const Assignments = () => {
 
   const [selectedCohort, setSelectedCohort] = useState({});
   const [selectedCohortSlug, setSelectedCohortSlug] = useState(null);
+  const [loadStatus, setLoadStatus] = useState({
+    loading: true,
+    status: 'loading',
+  });
 
   const { query } = router;
   const { cohortSlug } = query;
@@ -79,6 +82,7 @@ const Assignments = () => {
   };
 
   const getFilterAssignments = (cohortId, academyId, studentId) => {
+    setLoadStatus({ loading: true, status: 'loading' });
     bc.todo({
       limit: 1000,
       academy: academyId,
@@ -120,7 +124,8 @@ const Assignments = () => {
           isClosable: true,
         });
         console.error('There was an error fetching the tasks', error);
-      });
+      })
+      .finally(() => setLoadStatus({ loading: false, status: 'idle' }));
   };
 
   useEffect(() => {
@@ -161,11 +166,14 @@ const Assignments = () => {
     const cohortId = findSelectedCohort?.value || defaultCohort?.value;
     const currentCohort = findSelectedCohort || defaultCohort;
 
-    if (defaultCohort && cohortId) {
+    if (cohortId) {
       axiosInstance.defaults.headers.common.Academy = currentCohort.academy;
       setSelectedCohort(currentCohort);
       getStudents(slug, academyId);
       getFilterAssignments(cohortId, academyId, router.query.student);
+    }
+    if (!cohortId && allCohorts.length > 0) {
+      setLoadStatus({ loading: false, status: 'idle' });
     }
   }, [allCohorts, selectedCohortSlug, studentDefaultValue, router.query.student]);
 
@@ -188,14 +196,6 @@ const Assignments = () => {
       return true;
     },
   ).filter((_, i) => i < allTasksOffset) : [];
-
-  useEffect(() => {
-    if (filteredTasks?.length === 0) {
-      setTimeout(() => {
-        setTasksLoading(false);
-      }, 500);
-    }
-  }, [filteredTasks]);
 
   const handleScroll = () => {
     const scrollTop = isWindow && document.documentElement.scrollTop;
@@ -265,31 +265,30 @@ const Assignments = () => {
   return (
     <>
       <Box display="flex" justifyContent="space-between" margin={{ base: '2% 4% 0 4%', lg: '2% 12% 0 12%' }}>
-        {cohortSession?.selectedProgramSlug && (
-          <Link
-            href={cohortSession?.selectedProgramSlug}
-            color={linkColor}
-            display="inline-block"
-            letterSpacing="0.05em"
-            fontWeight="700"
-          >
-            {`← ${t('back-to')}`}
-          </Link>
-        )}
+        <Link
+          href={cohortSession?.selectedProgramSlug || '/choose-program'}
+          color={linkColor}
+          display="inline-block"
+          letterSpacing="0.05em"
+          fontWeight="700"
+        >
+          {`← ${t('back-to')}`}
+        </Link>
       </Box>
       <Box display="flex" borderBottom="1px solid" borderColor={borderColor} flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} p={{ base: '50px 4% 30px 4%', md: '50px 10% 30px 10%', lg: '50px 12% 30px 12%' }} alignItems={{ base: 'start', md: 'center' }}>
         <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
           {`${t('title')}:`}
         </Heading>
-        {selectedCohort.value && allCohorts.length > 0 && (
+        {allCohorts.length > 0 && (
           <ReactSelect
             unstyled
             color="#0097CD"
             fontWeight="700"
             id="cohort-select"
             fontSize="25px"
+            placeholder={t('common:select-cohort')}
             noOptionsMessage={() => t('common:no-options-message')}
-            defaultInputValue={selectedCohort.label}
+            defaultInputValue={selectedCohort?.label}
             onChange={({ slug }) => {
               if (slug !== selectedCohort.slug) {
                 setCurrentStudentList([]);
@@ -318,7 +317,8 @@ const Assignments = () => {
           {t('filter.assignments-length', { total: contextState.allTasks.length || 0 })}
         </Text>
         <Box display="grid" gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(11rem, 1fr))', md: 'repeat(auto-fill, minmax(18rem, 1fr))' }} gridGap="14px" py="20px">
-          {projects.length > 0 ? (
+          {loadStatus.status === 'loading' && <Skeleton width="100%" height="40px" borderRadius="0.375rem" />}
+          {loadStatus.loading === false && (
             <ReactSelect
               id="project-select"
               placeholder={t('filter.project')}
@@ -326,7 +326,6 @@ const Assignments = () => {
               value={projectLabel || ''}
               defaultInputValue={projectDefaultValue}
               onChange={(selected) => {
-                setTasksLoading(true);
                 setProjectLabel(selected !== null ? {
                   value: selected?.value,
                   label: selected?.label,
@@ -343,11 +342,10 @@ const Assignments = () => {
                 label: project.title,
               }))}
             />
-          ) : (
-            <Skeleton width="100%" height="40px" borderRadius="0.375rem" />
           )}
 
-          {currentStudentList.length > 0 ? (
+          {loadStatus.status === 'loading' && <Skeleton width="100%" height="40px" borderRadius="0.375rem" />}
+          {loadStatus.loading === false && (
             <ReactSelect
               id="student-select"
               placeholder={t('filter.student')}
@@ -357,7 +355,6 @@ const Assignments = () => {
               height="50px"
               fontSize="15px"
               onChange={(selected) => {
-                setTasksLoading(true);
                 setStudentLabel(selected !== null ? {
                   id: selected?.id,
                   value: selected?.value,
@@ -376,10 +373,10 @@ const Assignments = () => {
                 label: `${student.user.first_name} ${student.user.last_name}`,
               }))}
             />
-          ) : (
-            <Skeleton width="100%" height="40px" borderRadius="0.375rem" />
           )}
-          {projects.length > 0 ? (
+
+          {loadStatus.status === 'loading' && <Skeleton width="100%" height="40px" borderRadius="0.375rem" />}
+          {loadStatus.loading === false && (
             <ReactSelect
               id="status-select"
               placeholder={t('filter.status')}
@@ -389,7 +386,6 @@ const Assignments = () => {
               fontSize="15px"
               defaultInputValue={statusDefaultValue}
               onChange={(selected) => {
-                setTasksLoading(true);
                 setStatusLabel(selected !== null ? {
                   value: selected?.value,
                   label: selected?.label,
@@ -406,9 +402,8 @@ const Assignments = () => {
                 label: status.label,
               }))}
             />
-          ) : (
-            <Skeleton width="100%" height="40px" borderRadius="0.375rem" />
           )}
+
         </Box>
         <Box
           minHeight="34vh"
@@ -478,7 +473,18 @@ const Assignments = () => {
               );
             }) : (
               <>
-                {tasksLoading ? (
+                {loadStatus.status === 'loading' && (
+                  <Box display="flex" justifyContent="center" mt="2rem" mb="5rem">
+                    <Image src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
+                    <Box className="loader" />
+                  </Box>
+                )}
+                {loadStatus.loading === false && (
+                  <Text size="25px" pt="3rem" textAlign="center" display="flex" width="auto" margin="0 auto" fontWeight="700">
+                    {t('common:search-not-found')}
+                  </Text>
+                )}
+                {/* {tasksLoading ? (
                   <Box display="flex" justifyContent="center" mt="2rem" mb="5rem">
                     <Image src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
                     <Box className="loader" />
@@ -487,7 +493,7 @@ const Assignments = () => {
                   <Text size="25px" pt="3rem" textAlign="center" display="flex" width="auto" margin="0 auto" fontWeight="700">
                     {t('common:search-not-found')}
                   </Text>
-                )}
+                )} */}
               </>
             )}
             {allTasksOffset < contextState.allTasks.length !== null && isFetching && (

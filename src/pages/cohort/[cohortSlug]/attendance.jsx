@@ -168,7 +168,9 @@ const Attendance = () => {
           });
         })
         .finally(() => setLoadingStudents(false));
-    } else {
+    }
+
+    if (!cohortId && allCohorts.length > 0) {
       toast({
         title: t('alert-message:no-access-to-cohort'),
         status: 'error',
@@ -177,7 +179,7 @@ const Attendance = () => {
       });
       setLoadingStudents(false);
     }
-  }, [selectedCohortSlug, router.query.student]);
+  }, [selectedCohortSlug, router.query.student, allCohorts]);
 
   useEffect(() => {
     setLoadStatus({
@@ -307,7 +309,7 @@ const Attendance = () => {
               fontWeight="700"
               id="cohort-select"
               fontSize="28px"
-              placeholder={t('filter.select-cohort')}
+              placeholder={t('common:select-cohort')}
               noOptionsMessage={() => t('common:no-options-message')}
               defaultInputValue={selectedCohort?.label}
               onChange={({ slug }) => {
