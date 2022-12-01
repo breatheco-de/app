@@ -43,7 +43,11 @@ const Attendance = () => {
   const [searchedStudents, setSearchedStudents] = useState([]);
   const [allStudentsWithDays, setAllStudentsWithDays] = useState({});
   const [currentDaysLog, setCurrentDaysLog] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [loadStatus, setLoadStatus] = useState({
+    loading: false,
+    status: 'idle',
+  });
+  const [loadingStudents, setLoadingStudents] = useState(false);
   const [sortSettings, setSortSettings] = useState({
     name: null,
     percentage: true,
@@ -127,6 +131,7 @@ const Attendance = () => {
   }, []);
 
   useEffect(() => {
+    setLoadingStudents(true);
     const findSelectedCohort = allCohorts.find((l) => l.slug === selectedCohortSlug);
     const defaultCohort = allCohorts.find((l) => l.slug === cohortSlug);
 
@@ -134,7 +139,7 @@ const Attendance = () => {
     const slug = findSelectedCohort?.slug || defaultCohort?.slug;
     const cohortId = findSelectedCohort?.value || defaultCohort?.value;
 
-    if (defaultCohort && cohortId && academyId) {
+    if (cohortId && academyId) {
       setSelectedCohort(findSelectedCohort || defaultCohort);
 
       handlers.getActivities(slug, academyId)
@@ -156,66 +161,89 @@ const Attendance = () => {
         })
         .catch(() => {
           toast({
-            title: t('alert-message:error-fetching-students-and-teachers'),
+            title: t('alert-message:error-fetching-students'),
             status: 'error',
             duration: 7000,
             isClosable: true,
           });
-        });
+        })
+        .finally(() => setLoadingStudents(false));
+    } else {
+      toast({
+        title: t('alert-message:no-access-to-cohort'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+      setLoadingStudents(false);
     }
-  }, [allCohorts, selectedCohortSlug, router.query.student]);
+  }, [selectedCohortSlug, router.query.student]);
 
   useEffect(() => {
-    setIsLoaded(false);
-    if (currentStudentList.length > 0 && selectedCohort?.durationInDays) {
-      const studentsWithDays = currentStudentList.map((student) => {
-        const days = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
-          const day = i + 1;
-          const dayData = currentDaysLog[day];
-          const dayLabel = `${t('common:day')} ${day}`;
-          const dayColor = dayData?.attendance_ids?.includes(student.user.id)
-            ? status.attended
-            : dayData?.unattendance_ids?.includes(student.user.id)
-              ? status.absent
-              : status.not_taken;
+    setLoadStatus({
+      loading: true,
+      status: 'loading',
+    });
+    if (loadingStudents === false) {
+      if (currentStudentList.length > 0 && selectedCohort?.durationInDays) {
+        const studentsWithDays = currentStudentList.map((student) => {
+          const days = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
+            const day = i + 1;
+            const dayData = currentDaysLog[day];
+            const dayLabel = `${t('common:day')} ${day}`;
+            const dayColor = dayData?.attendance_ids?.includes(student.user.id)
+              ? status.attended
+              : dayData?.unattendance_ids?.includes(student.user.id)
+                ? status.absent
+                : status.not_taken;
+            return {
+              label: dayData ? `${dayLabel} - ${format(new Date(dayData.updated_at), 'd MMM')}` : dayLabel,
+              day,
+              color: dayData ? dayColor : status.remain,
+              updated_at: dayData ? dayData?.updated_at : null,
+            };
+          });
           return {
-            label: dayData ? `${dayLabel} - ${format(new Date(dayData.updated_at), 'd MMM')}` : dayLabel,
-            day,
-            color: dayData ? dayColor : status.remain,
-            updated_at: dayData ? dayData?.updated_at : null,
+            user: student.user,
+            days,
+            percentage: calcDaysAverage(days),
           };
         });
-        return {
-          user: student.user,
-          days,
-          percentage: calcDaysAverage(days),
-        };
-      });
 
-      const averageEachDay = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
-        const day = i + 1;
-        const total = studentsWithDays.length;
-        const attended = studentsWithDays.filter((l) => l.days[day - 1].color === status.attended).length;
-        const percentage = Math.round((attended / total) * 100);
-        return {
-          day,
-          value: percentage,
-          date: studentsWithDays[0]?.days[day - 1]?.updated_at,
-        };
-      }).filter((l) => l.date !== null);
-      const sortedByAscDate = averageEachDay.sort((a, b) => new Date(a.date) - new Date(b.date));
+        const averageEachDay = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
+          const day = i + 1;
+          const total = studentsWithDays.length;
+          const attended = studentsWithDays.filter((l) => l.days[day - 1].color === status.attended).length;
+          const percentage = Math.round((attended / total) * 100);
+          return {
+            day,
+            value: percentage,
+            date: studentsWithDays[0]?.days[day - 1]?.updated_at,
+          };
+        }).filter((l) => l.date !== null);
+        const sortedByAscDate = averageEachDay.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-      setAllStudentsWithDays({
-        studentList: studentsWithDays,
-        averageEachDay: sortedByAscDate,
-      });
-      setSearchedStudents(studentsWithDays);
-      setIsLoaded(true);
-      setTimeout(() => {
-        setShowSearch(true);
-      }, 300);
+        setAllStudentsWithDays({
+          studentList: studentsWithDays,
+          averageEachDay: sortedByAscDate,
+        });
+        setSearchedStudents(studentsWithDays);
+        setLoadStatus({
+          loading: false,
+          status: 'success',
+        });
+        setTimeout(() => {
+          setShowSearch(true);
+        }, 300);
+      }
+      if (currentStudentList.length <= 0) {
+        setLoadStatus({
+          loading: false,
+          status: 'no-data',
+        });
+      }
     }
-  }, [currentStudentList, currentDaysLog, selectedCohort.durationInDays]);
+  }, [currentStudentList, currentDaysLog, selectedCohort.durationInDays, loadingStudents]);
 
   const handleSearch = (e) => {
     const { value } = e.target;
@@ -254,35 +282,38 @@ const Attendance = () => {
   return (
     <>
       <GridContainer maxW="1080px" mt="18px">
-        {cohortSession?.selectedProgramSlug && (
-          <Link
-            href={cohortSession?.selectedProgramSlug}
-            color="blue.default"
-            display="inline-block"
-            letterSpacing="0.05em"
-            fontWeight="700"
-          >
-            {`← ${t('back-to')}`}
-          </Link>
-        )}
+        <Link
+          href={cohortSession?.selectedProgramSlug || '/choose-program'}
+          color="blue.default"
+          display="inline-block"
+          letterSpacing="0.05em"
+          fontWeight="700"
+        >
+          {`← ${t('back-to')}`}
+        </Link>
       </GridContainer>
       <Box display="flex" maxW="1080px" m="0 auto" justifyContent="space-between" padding="45px 0 28px 0" borderBottom="1px solid" borderColor={borderColor} flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
         <Box display="flex" alignItems="center" gridGap="8px">
           <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
             {`${t('title')}:`}
           </Heading>
-          {selectedCohort.value && allCohorts.length > 0 && (
+          {allCohorts.length > 0 && (
             <ReactSelect
               unstyled
               color="#0097CD"
               fontWeight="700"
               id="cohort-select"
               fontSize="28px"
+              placeholder={t('filter.select-cohort')}
               noOptionsMessage={() => t('common:no-options-message')}
-              defaultInputValue={selectedCohort.label}
+              defaultInputValue={selectedCohort?.label}
               onChange={({ slug }) => {
                 if (slug !== selectedCohort.slug) {
                   setCurrentStudentList([]);
+                  setLoadStatus({
+                    loading: true,
+                    status: 'loading',
+                  });
                 }
                 setSelectedCohortSlug(slug);
               }}
@@ -294,7 +325,7 @@ const Attendance = () => {
             />
           )}
         </Box>
-        {isLoaded ? (
+        {(loadStatus.loading === false && loadStatus.status === 'success') && (
           <KPI
             label={t('title')}
             value={calcStudentDaysAverage()}
@@ -316,7 +347,9 @@ const Attendance = () => {
             )}
             unstyled
           />
-        ) : (
+        )}
+
+        {loadStatus.status === 'loading' && (
           <SimpleSkeleton height="67.5px" width="280px" />
         )}
       </Box>
@@ -386,7 +419,7 @@ const Attendance = () => {
         >
           <Flex flexDirection="column" gridGap="18px">
 
-            {isLoaded ? sortedByNameAndAttendance.map((student) => {
+            {loadStatus.loading === false && loadStatus.status === 'success' && sortedByNameAndAttendance.map((student) => {
               const fullName = `${student.user.first_name} ${student.user.last_name}`;
               const percentAttendance = `${student.percentage}% ${t('attendance')}`;
 
@@ -408,7 +441,17 @@ const Attendance = () => {
                   helpText={percentAttendance}
                 />
               );
-            }) : (<DottedTimelineSkeleton />)}
+            })}
+
+            {loadStatus.status === 'loading' && <DottedTimelineSkeleton />}
+
+            {loadStatus.loading === false && loadStatus.status === 'no-data' && (
+              <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+                <Text color={hexColor.grayDefault} size="18px" fontWeight={700}>
+                  {t('no-content-to-show')}
+                </Text>
+              </Box>
+            )}
           </Flex>
         </Box>
       </GridContainer>
