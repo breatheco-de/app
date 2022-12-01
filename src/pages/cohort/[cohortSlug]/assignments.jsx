@@ -484,16 +484,6 @@ const Assignments = () => {
                     {t('common:search-not-found')}
                   </Text>
                 )}
-                {/* {tasksLoading ? (
-                  <Box display="flex" justifyContent="center" mt="2rem" mb="5rem">
-                    <Image src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
-                    <Box className="loader" />
-                  </Box>
-                ) : (
-                  <Text size="25px" pt="3rem" textAlign="center" display="flex" width="auto" margin="0 auto" fontWeight="700">
-                    {t('common:search-not-found')}
-                  </Text>
-                )} */}
               </>
             )}
             {allTasksOffset < contextState.allTasks.length !== null && isFetching && (
