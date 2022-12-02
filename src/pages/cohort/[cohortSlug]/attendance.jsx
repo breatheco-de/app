@@ -284,6 +284,7 @@ const Attendance = () => {
     return bAverage - aAverage;
   });
 
+  console.log('loadStatus:::', loadStatus);
   return (
     <>
       <GridContainer maxW="1080px" mt="18px">
