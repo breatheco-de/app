@@ -1,3 +1,5 @@
+import modifyEnv from '../../../modifyEnv';
+
 /**
  *
  * @param {Information to send to the backend} formData
@@ -6,11 +8,12 @@
  * @param {session information object} session
  */
 const saveForm = async (formData = null, tags = [], automations = []) => {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   if (!Array.isArray(tags)) throw Error('Tags must be an array');
   if (typeof (formData) !== 'object') throw Error('Missing formData');
 
   console.log('formData', formData);
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/marketing/lead`, {
+  const resp = await fetch(`${BREATHECODE_HOST}/v1/marketing/lead`, {
     headers: new Headers({ 'content-type': 'application/json' }),
     method: 'POST',
     body: JSON.stringify({
