@@ -179,7 +179,7 @@ const Attendance = () => {
       });
       setLoadingStudents(false);
     }
-  }, [selectedCohortSlug, router.query.student, allCohorts]);
+  }, [selectedCohortSlug, cohortSlug, router.query.student, allCohorts]);
 
   useEffect(() => {
     setLoadStatus({
