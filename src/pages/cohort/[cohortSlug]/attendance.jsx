@@ -184,65 +184,68 @@ const Attendance = () => {
       loading: true,
       status: 'loading',
     });
-    if (loadingStudents === false) {
-      if (currentStudentList.length > 0 && selectedCohort?.durationInDays) {
-        const studentsWithDays = currentStudentList.map((student) => {
-          const days = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
-            const day = i + 1;
-            const dayData = currentDaysLog[day];
-            const dayLabel = `${t('common:day')} ${day}`;
-            const dayColor = dayData?.attendance_ids?.includes(student.user.id)
-              ? status.attended
-              : dayData?.unattendance_ids?.includes(student.user.id)
-                ? status.absent
-                : status.not_taken;
-            return {
-              label: dayData ? `${dayLabel} - ${format(new Date(dayData.updated_at), 'd MMM')}` : dayLabel,
-              day,
-              color: dayData ? dayColor : status.remain,
-              updated_at: dayData ? dayData?.updated_at : null,
-            };
-          });
-          return {
-            user: student.user,
-            days,
-            percentage: calcDaysAverage(days),
-          };
-        });
 
-        const averageEachDay = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
+    if (loadingStudents) return () => {};
+
+    if (currentStudentList.length > 0 && selectedCohort?.durationInDays) {
+      const studentsWithDays = currentStudentList.map((student) => {
+        const days = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
           const day = i + 1;
-          const total = studentsWithDays.length;
-          const attended = studentsWithDays.filter((l) => l.days[day - 1].color === status.attended).length;
-          const percentage = Math.round((attended / total) * 100);
+          const dayData = currentDaysLog[day];
+          const dayLabel = `${t('common:day')} ${day}`;
+          const dayColor = dayData?.attendance_ids?.includes(student.user.id)
+            ? status.attended
+            : dayData?.unattendance_ids?.includes(student.user.id)
+              ? status.absent
+              : status.not_taken;
           return {
+            label: dayData ? `${dayLabel} - ${format(new Date(dayData.updated_at), 'd MMM')}` : dayLabel,
             day,
-            value: percentage,
-            date: studentsWithDays[0]?.days[day - 1]?.updated_at,
+            color: dayData ? dayColor : status.remain,
+            updated_at: dayData ? dayData?.updated_at : null,
           };
-        }).filter((l) => l.date !== null);
-        const sortedByAscDate = averageEachDay.sort((a, b) => new Date(a.date) - new Date(b.date));
+        });
+        return {
+          user: student.user,
+          days,
+          percentage: calcDaysAverage(days),
+        };
+      });
 
-        setAllStudentsWithDays({
-          studentList: studentsWithDays,
-          averageEachDay: sortedByAscDate,
-        });
-        setSearchedStudents(studentsWithDays);
-        setLoadStatus({
-          loading: false,
-          status: 'success',
-        });
-        setTimeout(() => {
-          setShowSearch(true);
-        }, 300);
-      }
-      if (currentStudentList.length <= 0) {
-        setLoadStatus({
-          loading: false,
-          status: 'no-data',
-        });
-      }
+      const averageEachDay = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
+        const day = i + 1;
+        const total = studentsWithDays.length;
+        const attended = studentsWithDays.filter((l) => l.days[day - 1].color === status.attended).length;
+        const percentage = Math.round((attended / total) * 100);
+        return {
+          day,
+          value: percentage,
+          date: studentsWithDays[0]?.days[day - 1]?.updated_at,
+        };
+      }).filter((l) => l.date !== null);
+      const sortedByAscDate = averageEachDay.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      setAllStudentsWithDays({
+        studentList: studentsWithDays,
+        averageEachDay: sortedByAscDate,
+      });
+      setSearchedStudents(studentsWithDays);
+      setLoadStatus({
+        loading: false,
+        status: 'success',
+      });
+      setTimeout(() => {
+        setShowSearch(true);
+      }, 300);
     }
+    if (currentStudentList.length <= 0) {
+      setLoadStatus({
+        loading: false,
+        status: 'no-data',
+      });
+    }
+
+    return () => {};
   }, [currentStudentList, currentDaysLog, selectedCohort.durationInDays, loadingStudents]);
 
   const handleSearch = (e) => {
