@@ -12,8 +12,6 @@ const UpgradeExperience = ({ storySettings, data }) => {
   const [isOpen, setIsOpen] = useState(storySettings?.open || false);
   const router = useRouter();
   const locale = storySettings?.locale || router?.locale;
-  // console.log('data:::', data);
-  console.log('storySettings:::', storySettings);
 
   const iconBg = {
     0: 'blue.default',

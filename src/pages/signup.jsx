@@ -16,9 +16,8 @@ import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
 import ContactInformation from '../js_modules/signup/ContactInformation';
 import ChooseYourClass from '../js_modules/signup/ChooseYourClass';
-import { getTimeProps } from '../utils';
+import { isWindow, getStorageItem, getTimeProps, removeURLParameter } from '../utils';
 import Summary from '../js_modules/signup/Summary';
-// import mockData from '../common/utils/mockData/DashboardView';
 import PaymentInfo from '../js_modules/signup/PaymentInfo';
 
 export const getStaticProps = async ({ locale, locales }) => {
@@ -63,6 +62,7 @@ const SignUp = ({ finance }) => {
   const [loader, setLoader] = useState({
     date: false,
   });
+  const tokenExists = getStorageItem('accessToken');
   const { user, isLoading } = useAuth();
 
   const toast = useToast();
@@ -91,11 +91,18 @@ const SignUp = ({ finance }) => {
 
   const handleChooseDate = (cohortData) => {
     setLoader((prev) => ({ ...prev, date: true }));
+
     const { kickoffDate, weekDays, availableTime } = getTimeProps(cohortData);
+    setDateProps({
+      ...cohortData,
+      kickoffDate,
+      weekDays,
+      availableTime,
+    });
 
     bc.payment().checking({
       type: 'PREVIEW',
-      cohort: cohortData.slug,
+      cohort: cohortData.id,
       academy: cohortData?.academy.id,
     })
       .then((response) => {
@@ -113,44 +120,48 @@ const SignUp = ({ finance }) => {
         });
       })
       .finally(() => setLoader((prev) => ({ ...prev, date: false })));
-
-    setDateProps({
-      ...cohortData,
-      kickoffDate,
-      weekDays,
-      availableTime,
-    });
-
-    // TODO: REMOVE WHEN FINISH
-    // setCheckoutData(mockData.checkoutProps);
-    // setStepIndex(2);
   };
 
   useEffect(async () => {
-    if (queryCohortIdExists) {
+    if (!dateProps?.id && queryCohortIdExists) {
       const resp = await bc.cohort().getPublic(cohort);
 
-      if (resp.status >= 400) {
+      if (resp && resp.status >= 400) {
         toast({
           title: t('alert-message:cohort-not-found'),
           type: 'warning',
           duration: 4000,
           isClosable: true,
         });
-      } else {
-        handleChooseDate(resp.data);
-        if (user && !isLoading) {
-          setStepIndex(2);
-        }
+      }
+
+      if (resp.status < 400) {
+        const { kickoffDate, weekDays, availableTime } = getTimeProps(resp.data);
+        setDateProps({
+          ...resp.data,
+          kickoffDate,
+          weekDays,
+          availableTime,
+        });
       }
     }
-  }, [cohort, user]);
+    if (user?.id && !isLoading && queryCohortIdExists) {
+      setStepIndex(2);
+    }
+  }, [cohort, user?.id, tokenExists]);
+
+  useEffect(() => {
+    if (dateProps?.id && tokenExists) {
+      handleChooseDate(dateProps);
+    }
+  }, [dateProps?.id, tokenExists]);
 
   useEffect(() => {
     if (user && !isLoading) {
     // if queryString token exists remove it from the url
       if (router.query.token) {
-        router.replace(router.pathname, router.pathname, { shallow: true });
+        const cleanTokenQuery = isWindow && removeURLParameter(window.location.href, 'token');
+        router.push(cleanTokenQuery);
       }
       if (!queryCohortIdExists) setStepIndex(1);
       setFormProps({

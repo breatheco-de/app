@@ -16,7 +16,7 @@ const Summary = ({
   const router = useRouter();
   const toast = useToast();
 
-  console.log('checkoutData:::', checkoutData);
+  // console.log('checkoutData:::', checkoutData);
   const fontColor = useColorModeValue('gray.800', 'gray.300');
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const borderColor2 = useColorModeValue('black', 'white');

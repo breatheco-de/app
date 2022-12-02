@@ -14,21 +14,21 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import bc from '../../../../../common/services/breathecode';
-import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
-import ReactSelect from '../../../../../common/components/ReactSelect';
-import Link from '../../../../../common/components/NextChakraLink';
-import Heading from '../../../../../common/components/Heading';
-import { usePersistent } from '../../../../../common/hooks/usePersistent';
-import Text from '../../../../../common/components/Text';
-import useStyle from '../../../../../common/hooks/useStyle';
-import Icon from '../../../../../common/components/Icon';
-import DottedTimeline from '../../../../../common/components/DottedTimeline';
-import GridContainer from '../../../../../common/components/GridContainer';
-import handlers from '../../../../../common/handlers';
-import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
-import Sparkline from '../../../../../common/components/Sparkline';
-import KPI from '../../../../../common/components/KPI';
+import bc from '../../../common/services/breathecode';
+import asPrivate from '../../../common/context/PrivateRouteWrapper';
+import ReactSelect from '../../../common/components/ReactSelect';
+import Link from '../../../common/components/NextChakraLink';
+import Heading from '../../../common/components/Heading';
+import { usePersistent } from '../../../common/hooks/usePersistent';
+import Text from '../../../common/components/Text';
+import useStyle from '../../../common/hooks/useStyle';
+import Icon from '../../../common/components/Icon';
+import DottedTimeline from '../../../common/components/DottedTimeline';
+import GridContainer from '../../../common/components/GridContainer';
+import handlers from '../../../common/handlers';
+import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../common/components/Skeleton';
+import Sparkline from '../../../common/components/Sparkline';
+import KPI from '../../../common/components/KPI';
 
 const Attendance = () => {
   const { t } = useTranslation('attendance');
@@ -43,20 +43,31 @@ const Attendance = () => {
   const [searchedStudents, setSearchedStudents] = useState([]);
   const [allStudentsWithDays, setAllStudentsWithDays] = useState({});
   const [currentDaysLog, setCurrentDaysLog] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [loadStatus, setLoadStatus] = useState({
+    loading: false,
+    status: 'idle',
+  });
+  const [loadingStudents, setLoadingStudents] = useState(false);
   const [sortSettings, setSortSettings] = useState({
     name: null,
     percentage: true,
   });
+
+  const status = {
+    attended: '#25BF6C',
+    absent: '#FF5B5B',
+    not_taken: '#FFB718',
+    remain: '#C4C4C4',
+  };
 
   const { borderColor, hexColor } = useStyle();
 
   const { cohortSlug } = router?.query;
 
   const calcDaysAverage = (days) => {
-    const totalDays = days.length;
-    const totalDaysCompleted = days.filter((day) => day.color === '#25BF6C').length;
-    const average = parseInt((totalDaysCompleted / totalDays) * 100, 10);
+    const currentTotalDays = days.filter((day) => day.color === status.remain).length;
+    const totalDaysCompleted = days.filter((day) => day.color === status.attended).length;
+    const average = parseInt((totalDaysCompleted / currentTotalDays) * 100, 10);
     return average;
   };
 
@@ -120,6 +131,7 @@ const Attendance = () => {
   }, []);
 
   useEffect(() => {
+    setLoadingStudents(true);
     const findSelectedCohort = allCohorts.find((l) => l.slug === selectedCohortSlug);
     const defaultCohort = allCohorts.find((l) => l.slug === cohortSlug);
 
@@ -127,7 +139,7 @@ const Attendance = () => {
     const slug = findSelectedCohort?.slug || defaultCohort?.slug;
     const cohortId = findSelectedCohort?.value || defaultCohort?.value;
 
-    if (defaultCohort && cohortId && academyId) {
+    if (cohortId && academyId) {
       setSelectedCohort(findSelectedCohort || defaultCohort);
 
       handlers.getActivities(slug, academyId)
@@ -149,17 +161,32 @@ const Attendance = () => {
         })
         .catch(() => {
           toast({
-            title: t('alert-message:error-fetching-students-and-teachers'),
+            title: t('alert-message:error-fetching-students'),
             status: 'error',
             duration: 7000,
             isClosable: true,
           });
-        });
+        })
+        .finally(() => setLoadingStudents(false));
+    } else {
+      toast({
+        title: t('alert-message:no-access-to-cohort'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+      setLoadingStudents(false);
     }
-  }, [allCohorts, selectedCohortSlug, router.query.student]);
+  }, [selectedCohortSlug, router.query.student]);
 
   useEffect(() => {
-    setIsLoaded(false);
+    setLoadStatus({
+      loading: true,
+      status: 'loading',
+    });
+
+    if (loadingStudents) return () => {};
+
     if (currentStudentList.length > 0 && selectedCohort?.durationInDays) {
       const studentsWithDays = currentStudentList.map((student) => {
         const days = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
@@ -167,14 +194,14 @@ const Attendance = () => {
           const dayData = currentDaysLog[day];
           const dayLabel = `${t('common:day')} ${day}`;
           const dayColor = dayData?.attendance_ids?.includes(student.user.id)
-            ? '#25BF6C'
+            ? status.attended
             : dayData?.unattendance_ids?.includes(student.user.id)
-              ? '#FF5B5B'
-              : '#FFB718';
+              ? status.absent
+              : status.not_taken;
           return {
             label: dayData ? `${dayLabel} - ${format(new Date(dayData.updated_at), 'd MMM')}` : dayLabel,
             day,
-            color: dayData ? dayColor : '#C4C4C4',
+            color: dayData ? dayColor : status.remain,
             updated_at: dayData ? dayData?.updated_at : null,
           };
         });
@@ -188,7 +215,7 @@ const Attendance = () => {
       const averageEachDay = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
         const day = i + 1;
         const total = studentsWithDays.length;
-        const attended = studentsWithDays.filter((l) => l.days[day - 1].color === '#25BF6C').length;
+        const attended = studentsWithDays.filter((l) => l.days[day - 1].color === status.attended).length;
         const percentage = Math.round((attended / total) * 100);
         return {
           day,
@@ -203,12 +230,23 @@ const Attendance = () => {
         averageEachDay: sortedByAscDate,
       });
       setSearchedStudents(studentsWithDays);
-      setIsLoaded(true);
+      setLoadStatus({
+        loading: false,
+        status: 'success',
+      });
       setTimeout(() => {
         setShowSearch(true);
       }, 300);
     }
-  }, [currentStudentList, currentDaysLog, selectedCohort.durationInDays]);
+    if (currentStudentList.length <= 0) {
+      setLoadStatus({
+        loading: false,
+        status: 'no-data',
+      });
+    }
+
+    return () => {};
+  }, [currentStudentList, currentDaysLog, selectedCohort.durationInDays, loadingStudents]);
 
   const handleSearch = (e) => {
     const { value } = e.target;
@@ -247,35 +285,38 @@ const Attendance = () => {
   return (
     <>
       <GridContainer maxW="1080px" mt="18px">
-        {cohortSession?.selectedProgramSlug && (
-          <Link
-            href={cohortSession?.selectedProgramSlug}
-            color="blue.default"
-            display="inline-block"
-            letterSpacing="0.05em"
-            fontWeight="700"
-          >
-            {`← ${t('back-to')}`}
-          </Link>
-        )}
+        <Link
+          href={cohortSession?.selectedProgramSlug || '/choose-program'}
+          color="blue.default"
+          display="inline-block"
+          letterSpacing="0.05em"
+          fontWeight="700"
+        >
+          {`← ${t('back-to')}`}
+        </Link>
       </GridContainer>
       <Box display="flex" maxW="1080px" m="0 auto" justifyContent="space-between" padding="45px 0 28px 0" borderBottom="1px solid" borderColor={borderColor} flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
         <Box display="flex" alignItems="center" gridGap="8px">
           <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
             {`${t('title')}:`}
           </Heading>
-          {selectedCohort.value && allCohorts.length > 0 && (
+          {allCohorts.length > 0 && (
             <ReactSelect
               unstyled
               color="#0097CD"
               fontWeight="700"
               id="cohort-select"
               fontSize="28px"
+              placeholder={t('filter.select-cohort')}
               noOptionsMessage={() => t('common:no-options-message')}
-              defaultInputValue={selectedCohort.label}
+              defaultInputValue={selectedCohort?.label}
               onChange={({ slug }) => {
                 if (slug !== selectedCohort.slug) {
                   setCurrentStudentList([]);
+                  setLoadStatus({
+                    loading: true,
+                    status: 'loading',
+                  });
                 }
                 setSelectedCohortSlug(slug);
               }}
@@ -287,7 +328,7 @@ const Attendance = () => {
             />
           )}
         </Box>
-        {isLoaded ? (
+        {(loadStatus.loading === false && loadStatus.status === 'success') && (
           <KPI
             label={t('title')}
             value={calcStudentDaysAverage()}
@@ -309,7 +350,9 @@ const Attendance = () => {
             )}
             unstyled
           />
-        ) : (
+        )}
+
+        {loadStatus.status === 'loading' && (
           <SimpleSkeleton height="67.5px" width="280px" />
         )}
       </Box>
@@ -379,7 +422,7 @@ const Attendance = () => {
         >
           <Flex flexDirection="column" gridGap="18px">
 
-            {isLoaded ? sortedByNameAndAttendance.map((student) => {
+            {loadStatus.loading === false && loadStatus.status === 'success' && sortedByNameAndAttendance.map((student) => {
               const fullName = `${student.user.first_name} ${student.user.last_name}`;
               const percentAttendance = `${student.percentage}% ${t('attendance')}`;
 
@@ -401,7 +444,17 @@ const Attendance = () => {
                   helpText={percentAttendance}
                 />
               );
-            }) : (<DottedTimelineSkeleton />)}
+            })}
+
+            {loadStatus.status === 'loading' && <DottedTimelineSkeleton />}
+
+            {loadStatus.loading === false && loadStatus.status === 'no-data' && (
+              <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+                <Text color={hexColor.grayDefault} size="18px" fontWeight={700}>
+                  {t('no-content-to-show')}
+                </Text>
+              </Box>
+            )}
           </Flex>
         </Box>
       </GridContainer>

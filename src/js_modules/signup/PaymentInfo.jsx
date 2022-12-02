@@ -55,10 +55,6 @@ const PaymentInfo = ({ paymentInfo, setPaymentInfo, stepIndex, setStepIndex }) =
         });
       })
       .finally(() => actions.setSubmitting(false));
-
-    // TODO: REMOVE WHEN FINISH
-    // setStepIndex(stepIndex + 1);
-    // actions.setSubmitting(false);
   };
 
   return (

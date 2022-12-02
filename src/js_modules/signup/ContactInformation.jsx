@@ -85,11 +85,11 @@ const ContactInformation = ({
     const data = await resp.json();
     if (resp.status < 400) {
       setStorageItem('subscriptionId', data.id);
-      setStepIndex(1);
 
       if (data?.access_token) {
         router.push({
           query: {
+            ...router.query,
             token: data.access_token,
           },
         });
@@ -136,14 +136,17 @@ const ContactInformation = ({
           confirm_email: '',
         }}
         onSubmit={(values, actions) => {
+          const allValues = {
+            ...values,
+            course: courseChoosed,
+            country: location?.country,
+            cohort: dateProps?.id,
+            city: location?.city,
+            language: router.locale,
+          };
+
+          console.log('allValues:::', allValues);
           if (stepIndex !== 2) {
-            const allValues = {
-              ...values,
-              course: courseChoosed,
-              country: location?.country,
-              city: location?.city,
-              language: router.locale,
-            };
             handleSubmit(actions, allValues);
           }
         }}
