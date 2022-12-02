@@ -101,13 +101,13 @@ const SignUp = ({ finance }) => {
       availableTime,
     });
 
-    bc.payment().getCard()
-      .then((res) => {
-        console.log('getCard:::', res);
-      })
-      .catch((err) => {
-        console.log('getCard_ERR:::', err);
-      });
+    // bc.payment().getCard()
+    //   .then((res) => {
+    //     console.log('getCard:::', res);
+    //   })
+    //   .catch((err) => {
+    //     console.log('getCard_ERR:::', err);
+    //   });
 
     bc.payment().checking({
       type: 'PREVIEW',
