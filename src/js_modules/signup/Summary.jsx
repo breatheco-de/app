@@ -22,7 +22,7 @@ const Summary = ({
   const borderColor2 = useColorModeValue('black', 'white');
 
   const handlePayment = () => {
-    bc.payment().pay({
+    bc.payment().pay2({
       type: checkoutData.type,
       token: checkoutData.token,
       chosen_period: 'HALF',

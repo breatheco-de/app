@@ -184,8 +184,16 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       checking: (data) => axios.put(`${url}/checking?${qs}`, data),
+      pay2: (data) => axios({
+        method: 'post',
+        url: `${url}/pay?${qs}`,
+        data,
+        headers: {
+          AcceptLanguage: 'en',
+        },
+      }),
       pay: (data) => axios.post(`${url}/pay?${qs}`, data),
-      addCard: (data) => axios.put(`${url}/card?${qs}`, data),
+      addCard: (data) => axios.post(`${url}/card?${qs}`, data),
     };
   },
 };
