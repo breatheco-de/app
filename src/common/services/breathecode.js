@@ -189,11 +189,19 @@ const breathecode = {
         url: `${url}/pay?${qs}`,
         data,
         headers: {
-          AcceptLanguage: 'en',
+          'Accept-Language': 'en',
         },
       }),
       pay: (data) => axios.post(`${url}/pay?${qs}`, data),
       addCard: (data) => axios.post(`${url}/card?${qs}`, data),
+      addCard2: (data) => axios({
+        method: 'post',
+        url: `${url}/card?${qs}`,
+        data,
+        headers: {
+          'Accept-Language': 'en',
+        },
+      }),
     };
   },
 };

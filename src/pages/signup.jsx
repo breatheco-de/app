@@ -74,7 +74,7 @@ const SignUp = ({ finance }) => {
   const courseChoosed = course || 'coding-introduction';
   const courseTitle = finance[courseChoosed];
   const planProps = finance.plans.find((l) => l.type === planChoosed || l.type === 'trial');
-  const isPreview = checkoutData?.type === 'PREVIEW';
+  // const isPreview = checkoutData?.type === 'PREVIEW';
 
   const [formProps, setFormProps] = useState({
     first_name: '',
@@ -109,11 +109,12 @@ const SignUp = ({ finance }) => {
       .then((response) => {
         if (response.status < 400) {
           setCheckoutData(response.data);
-          if (response.data.type === 'PREVIEW') {
-            setStepIndex(3);
-          } else {
-            setStepIndex(2);
-          }
+          // if (response.data.type === 'PREVIEW') {
+          //   setStepIndex(3);
+          // } else {
+          //   setStepIndex(2);
+          // }
+          setStepIndex(2);
         }
       })
       .catch(() => {
@@ -151,11 +152,12 @@ const SignUp = ({ finance }) => {
       }
     }
     if (user?.id && !isLoading && queryCohortIdExists && checkoutData?.type) {
-      if (isPreview) {
-        setStepIndex(3);
-      } else {
-        setStepIndex(2);
-      }
+      // if (isPreview) {
+      //   setStepIndex(3);
+      // } else {
+      //   setStepIndex(2);
+      // }
+      setStepIndex(2);
     }
   }, [cohort, user?.id, tokenExists]);
 
@@ -247,34 +249,34 @@ const SignUp = ({ finance }) => {
           </Heading>
         </Box>
 
-        {!isPreview && (
-          <Box
-            display="flex"
-            gridGap="8px"
-            alignItems="center"
-            color={stepIndex !== 2 && 'gray.350'}
-          >
-            {isFourthStep ? (
-              <Icon icon="verified" width="30px" height="30px" />
-            ) : (
-              <Heading
-                as="span"
-                size="sm"
-                p={isThirdStep ? '3px 8px' : '2px 5px'}
-                mr={isThirdStep && '4px'}
-                background={isThirdStep && 'blue.default'}
-                color={isThirdStep && 'white'}
-                borderRadius="3px"
-                fontWeight="500"
-              >
-                3.
-              </Heading>
-            )}
-            <Heading size="sm" fontWeight={isThirdStep ? '700' : '500'}>
-              {t('payment-info')}
+        {/* {!isPreview && (
+        )} */}
+        <Box
+          display="flex"
+          gridGap="8px"
+          alignItems="center"
+          color={stepIndex !== 2 && 'gray.350'}
+        >
+          {isFourthStep ? (
+            <Icon icon="verified" width="30px" height="30px" />
+          ) : (
+            <Heading
+              as="span"
+              size="sm"
+              p={isThirdStep ? '3px 8px' : '2px 5px'}
+              mr={isThirdStep && '4px'}
+              background={isThirdStep && 'blue.default'}
+              color={isThirdStep && 'white'}
+              borderRadius="3px"
+              fontWeight="500"
+            >
+              3.
             </Heading>
-          </Box>
-        )}
+          )}
+          <Heading size="sm" fontWeight={isThirdStep ? '700' : '500'}>
+            {t('payment-info')}
+          </Heading>
+        </Box>
         <Box
           display="flex"
           gridGap="8px"
@@ -291,7 +293,8 @@ const SignUp = ({ finance }) => {
             borderRadius="3px"
             fontWeight="500"
           >
-            {!isPreview ? '4.' : '3.'}
+            {/* {!isPreview ? '4.' : '3.'} */}
+            4.
           </Heading>
           <Heading size="sm" fontWeight={isFourthStep ? '700' : '500'}>
             {t('summary')}
