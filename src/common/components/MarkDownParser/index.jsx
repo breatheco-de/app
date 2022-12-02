@@ -18,6 +18,7 @@ import Toc from './toc';
 import ContentHeading from './ContentHeading';
 import CallToAction from '../CallToAction';
 import SubTasks from './SubTasks';
+import modifyEnv from '../../../../modifyEnv';
 
 const MarkDownParser = ({
   content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask,
@@ -29,6 +30,7 @@ const MarkDownParser = ({
   const [learnpackActions, setLearnpackActions] = useState([]);
   const [cohortSession] = usePersistent('cohortSession', {});
   const [profile] = usePersistent('profile', {});
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const updateSubTask = async (taskProps) => {
     const cleanedSubTasks = subTasks.filter((task) => task.id !== taskProps.id);
@@ -91,7 +93,7 @@ const MarkDownParser = ({
     setLearnpackActions([
       {
         text: newExerciseText,
-        href: `${process.env.BREATHECODE_HOST}/asset/${assetSlug}?token=${token}`,
+        href: `${BREATHECODE_HOST}/asset/${assetSlug}?token=${token}`,
         isExternalLink: true,
       },
       {

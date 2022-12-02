@@ -5,6 +5,7 @@ import bc from '../services/breathecode';
 import { isWindow, removeURLParameter } from '../../utils';
 import axiosInstance from '../../axios';
 import { usePersistent } from '../hooks/usePersistent';
+import modifyEnv from '../../../modifyEnv';
 
 const initialState = {
   isLoading: true,
@@ -118,9 +119,10 @@ const AuthProvider = ({ children }) => {
 
   useEffect(async () => {
     const token = getToken();
+    const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
     if (token !== undefined && token !== null) {
-      const requestToken = await fetch(`${process.env.BREATHECODE_HOST}/v1/auth/token/${token}`, {
+      const requestToken = await fetch(`${BREATHECODE_HOST}/v1/auth/token/${token}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

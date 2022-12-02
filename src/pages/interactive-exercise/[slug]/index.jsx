@@ -46,6 +46,7 @@ import CustomTheme from '../../../../styles/theme';
 import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 import GridContainer from '../../../common/components/GridContainer';
 import useStyle from '../../../common/hooks/useStyle';
+import modifyEnv from '../../../../modifyEnv';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`);
@@ -473,6 +474,7 @@ const TabletWithForm = ({
 
 const Exercise = ({ exercise, markdown }) => {
   const [tags, setTags] = useState([]);
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation(['exercises']);
   const translations = exercise?.translations || { es: '', en: '' };
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
@@ -489,10 +491,10 @@ const Exercise = ({ exercise, markdown }) => {
   const toast = useToast();
 
   useEffect(async () => {
-    const alias = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/alias/redirect`);
+    const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
     const aliasList = await alias.json();
     const redirectSlug = aliasList[slug] || slug;
-    const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
+    const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
     const redirectResults = await dataRedirect.json();
 
     const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
@@ -518,11 +520,11 @@ const Exercise = ({ exercise, markdown }) => {
 
   useEffect(() => {
     tagsArray(exercise);
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`)
+    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`)
       .then(({ data }) => {
         let currentlocaleLang = data.translations[language];
         if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
-        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=EXERCISE`)
+        axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=EXERCISE`)
           .catch(() => {
             toast({
               title: t('alert-message:language-not-found', { currentLanguageLabel }),

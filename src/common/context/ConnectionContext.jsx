@@ -7,17 +7,19 @@ import { getStorageItem } from '../../utils';
 import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import axiosInstance from '../../axios';
+import modifyEnv from '../../../modifyEnv';
 
 export const ConnectionContext = createContext({ usersConnected: [] });
 
 const OnlineContext = ({ children }) => {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [usersConnected, setUsersConnected] = useState([]);
   const accessToken = getStorageItem('accessToken');
   const { isLoading } = useAuth();
   const [temporalToken, setTemporalToken] = useState(null);
   const hasLoaded = !isLoading;
 
-  const BREATHECODE_WS = String(process.env.BREATHECODE_HOST).replace('https://', '');
+  const BREATHECODE_WS = String(BREATHECODE_HOST).replace('https://', '');
 
   useEffect(() => {
     if (hasLoaded && accessToken) {

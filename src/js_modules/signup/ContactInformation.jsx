@@ -16,12 +16,14 @@ import { setStorageItem } from '../../utils';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
 import useCustomToast from '../../common/hooks/useCustomToast';
+import modifyEnv from '../../../modifyEnv';
 
 const ContactInformation = ({
   stepIndex, setStepIndex, courseChoosed, location, queryCohortIdExists, dateProps,
   formProps, setFormProps,
 
 }) => {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
   const router = useRouter();
   const toast = useToast();
@@ -73,7 +75,7 @@ const ContactInformation = ({
   });
 
   const handleSubmit = async (actions, allValues) => {
-    const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/auth/subscribe/`, {
+    const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
