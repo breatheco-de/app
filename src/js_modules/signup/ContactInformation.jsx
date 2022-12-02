@@ -29,7 +29,6 @@ const ContactInformation = ({
   const toast = useToast();
   const toastIdRef = useRef();
   const { featuredColor } = useStyle();
-  console.log('dateProps:::', dateProps);
   const { createToast } = useCustomToast({
     toastIdRef,
     status: 'info',
