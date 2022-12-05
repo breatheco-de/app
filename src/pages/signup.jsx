@@ -62,7 +62,7 @@ const SignUp = ({ finance }) => {
   const [loader, setLoader] = useState({
     date: false,
   });
-  const tokenExists = getStorageItem('accessToken');
+  const accessToken = getStorageItem('accessToken');
   const { user, isLoading } = useAuth();
 
   const toast = useToast();
@@ -74,6 +74,7 @@ const SignUp = ({ finance }) => {
   const courseChoosed = course || 'coding-introduction';
   const courseTitle = finance[courseChoosed];
   const planProps = finance.plans.find((l) => l.type === planChoosed || l.type === 'trial');
+  // const isPreview = checkoutData?.type === 'PREVIEW';
 
   const [formProps, setFormProps] = useState({
     first_name: '',
@@ -100,6 +101,14 @@ const SignUp = ({ finance }) => {
       availableTime,
     });
 
+    // bc.payment().getCard()
+    //   .then((res) => {
+    //     console.log('getCard:::', res);
+    //   })
+    //   .catch((err) => {
+    //     console.log('getCard_ERR:::', err);
+    //   });
+
     bc.payment().checking({
       type: 'PREVIEW',
       cohort: cohortData.id,
@@ -108,6 +117,11 @@ const SignUp = ({ finance }) => {
       .then((response) => {
         if (response.status < 400) {
           setCheckoutData(response.data);
+          // if (response.data.type === 'PREVIEW') {
+          //   setStepIndex(3);
+          // } else {
+          //   setStepIndex(2);
+          // }
           setStepIndex(2);
         }
       })
@@ -145,23 +159,36 @@ const SignUp = ({ finance }) => {
         });
       }
     }
-    if (user?.id && !isLoading && queryCohortIdExists) {
+    if (user?.id && !isLoading && queryCohortIdExists && checkoutData?.type) {
+      // if (isPreview) {
+      //   setStepIndex(3);
+      // } else {
+      //   setStepIndex(2);
+      // }
       setStepIndex(2);
     }
-  }, [cohort, user?.id, tokenExists]);
+  }, [cohort, user?.id, accessToken]);
 
   useEffect(() => {
-    if (dateProps?.id && tokenExists) {
+    if (dateProps?.id && accessToken) {
       handleChooseDate(dateProps);
     }
-  }, [dateProps?.id, tokenExists]);
+  }, [dateProps?.id, accessToken]);
 
   useEffect(() => {
-    if (user && !isLoading) {
-    // if queryString token exists remove it from the url
+    if (user?.id && !isLoading) {
+      // if queryString token exists remove it from the url
       if (router.query.token) {
         const cleanTokenQuery = isWindow && removeURLParameter(window.location.href, 'token');
         router.push(cleanTokenQuery);
+
+        // bc.auth().subscribeToken(accessToken)
+        //   .then((res) => {
+        //     console.log('subscribeToken:::', res);
+        //   })
+        //   .finally(() => {
+        //     router.push(cleanTokenQuery);
+        //   });
       }
       if (!queryCohortIdExists) setStepIndex(1);
       setFormProps({
@@ -171,7 +198,7 @@ const SignUp = ({ finance }) => {
         phone: '',
       });
     }
-  }, [user, cohort]);
+  }, [user?.id, cohort]);
 
   return (
     <Box p="2.5rem 2rem">
@@ -237,6 +264,9 @@ const SignUp = ({ finance }) => {
             {t('choose-your-class')}
           </Heading>
         </Box>
+
+        {/* {!isPreview && (
+        )} */}
         <Box
           display="flex"
           gridGap="8px"
@@ -279,6 +309,7 @@ const SignUp = ({ finance }) => {
             borderRadius="3px"
             fontWeight="500"
           >
+            {/* {!isPreview ? '4.' : '3.'} */}
             4.
           </Heading>
           <Heading size="sm" fontWeight={isFourthStep ? '700' : '500'}>

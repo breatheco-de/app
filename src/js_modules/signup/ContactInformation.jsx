@@ -145,7 +145,6 @@ const ContactInformation = ({
             language: router.locale,
           };
 
-          console.log('allValues:::', allValues);
           if (stepIndex !== 2) {
             handleSubmit(actions, allValues);
           }
