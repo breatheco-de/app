@@ -62,7 +62,7 @@ const SignUp = ({ finance }) => {
   const [loader, setLoader] = useState({
     date: false,
   });
-  const tokenExists = getStorageItem('accessToken');
+  const accessToken = getStorageItem('accessToken');
   const { user, isLoading } = useAuth();
 
   const toast = useToast();
@@ -167,20 +167,28 @@ const SignUp = ({ finance }) => {
       // }
       setStepIndex(2);
     }
-  }, [cohort, user?.id, tokenExists]);
+  }, [cohort, user?.id, accessToken]);
 
   useEffect(() => {
-    if (dateProps?.id && tokenExists) {
+    if (dateProps?.id && accessToken) {
       handleChooseDate(dateProps);
     }
-  }, [dateProps?.id, tokenExists]);
+  }, [dateProps?.id, accessToken]);
 
   useEffect(() => {
-    if (user && !isLoading) {
-    // if queryString token exists remove it from the url
+    if (user?.id && !isLoading) {
+      // if queryString token exists remove it from the url
       if (router.query.token) {
         const cleanTokenQuery = isWindow && removeURLParameter(window.location.href, 'token');
         router.push(cleanTokenQuery);
+
+        // bc.auth().subscribeToken(accessToken)
+        //   .then((res) => {
+        //     console.log('subscribeToken:::', res);
+        //   })
+        //   .finally(() => {
+        //     router.push(cleanTokenQuery);
+        //   });
       }
       if (!queryCohortIdExists) setStepIndex(1);
       setFormProps({
@@ -190,7 +198,7 @@ const SignUp = ({ finance }) => {
         phone: '',
       });
     }
-  }, [user, cohort]);
+  }, [user?.id, cohort]);
 
   return (
     <Box p="2.5rem 2rem">

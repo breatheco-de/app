@@ -28,6 +28,9 @@ const Summary = ({
       chosen_period: 'HALF',
     })
       .then((response) => {
+        if (response.data.status === 'FULFILLED') {
+          router.push('/choose-program');
+        }
         console.log('Payment_response:', response);
       })
       .catch(() => {
