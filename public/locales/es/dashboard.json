@@ -137,7 +137,7 @@
     },
     "warn-slower-teaching": {
       "title": "Inicio atrasado del módulo",
-      "description": "¿Estás seguro de que quieres comenzar a enseñar <strong>{{module}}</strong>? llevas {{repeated}} días enseñando el módulo actual y la duración sugerida es de {{moduleDayDiff}} días."
+      "description": "¿Estás seguro de que quieres comenzar a enseñar <strong>{{module}}</strong>? llevas {{repeated}} días enseñando el módulo actual y la duración sugerida es de {{expected}} días."
     }
   },
   "teacher-sidebar": {
