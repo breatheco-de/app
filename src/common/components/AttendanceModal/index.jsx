@@ -209,7 +209,6 @@ const AttendanceModal = ({
     }
   }, [attendanceList, students, currModuleData, day]);
 
-  console.log('students.map((l) => l?.user?.id):::', students.map((l) => l?.user?.id));
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
