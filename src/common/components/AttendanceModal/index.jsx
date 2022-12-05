@@ -24,6 +24,7 @@ const AttendanceModal = ({
   const [day, setDay] = useState(cohortSession.current_day);
   const [attendanceTaken, setAttendanceTaken] = useState({});
   const [currentModule, setCurrentModule] = useState(cohortSession.current_module);
+  const [autoSelect, setAutoSelect] = useState(false);
   // const [defaultDay, setDefaultDay] = useState(0);
   const [checked, setChecked] = useState([]);
   const [defaultProps, setDefaultProps] = useState({
@@ -66,11 +67,16 @@ const AttendanceModal = ({
   }, []);
 
   useEffect(() => {
-  // Mark checkboxes with attendanceStudents {user.id}
+    // Mark checkboxes with attendanceStudents {user.id}
     if (attendanceTaken?.attendanceStudents) {
       const checkedStudents = attendanceTaken?.attendanceStudents.map((student) => String(student.user.id));
 
       setChecked(checkedStudents);
+      if (autoSelect) {
+        setCurrentModule(attendanceTaken?.current_module || -1);
+      } else {
+        setCurrentModule(currentModule);
+      }
     }
   }, [attendanceTaken.attendanceStudents]);
 
@@ -91,12 +97,6 @@ const AttendanceModal = ({
   };
 
   const currModuleData = getDailyModuleData()?.dailyModule;
-  const prevSumOfDays = sortedAssignments.reduce(
-    (accumulator, object) => {
-      if (object.id >= currModuleData?.id) return accumulator;
-      return accumulator + object.duration_in_days;
-    }, 0,
-  );
 
   useEffect(() => {
     setDefaultProps({
@@ -139,63 +139,75 @@ const AttendanceModal = ({
 
   const updateCohortDay = () => {
     setIsLoading(true);
-    bc.cohort()
-      .update(cohortSession.id, { current_day: Number(day), current_module: currentModule })
-      .then(({ data }) => {
-        saveCohortAttendancy();
-        setCohortSession({
-          ...cohortSession,
-          current_module: data.current_module,
-          current_day: data.current_day,
-          ...data,
-        });
-      })
-      .catch(() => {
-        toast({
-          title: t('alert-message:error-updating-day-and-modules'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-        setOpenWarn(false);
-        setIsLoading(false);
-      })
-      .finally(() => setIsLoading(false));
+    if (currentModule > 0) {
+      bc.cohort()
+        .update(cohortSession.id, { current_day: Number(day), current_module: currentModule })
+        .then(({ data }) => {
+          saveCohortAttendancy();
+          setCohortSession({
+            ...cohortSession,
+            current_module: data.current_module,
+            current_day: data.current_day,
+            ...data,
+          });
+        })
+        .catch(() => {
+          toast({
+            title: t('alert-message:error-updating-day-and-modules'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
+          setOpenWarn(false);
+          setIsLoading(false);
+        })
+        .finally(() => setIsLoading(false));
+    } else {
+      toast({
+        title: t('alert-message:error-updating-day-and-modules'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
-    if (currModuleData) {
-      const currSumOfDays = prevSumOfDays + currModuleData?.duration_in_days;
-      const prevDayDiff = (prevSumOfDays - day) < 0 ? 0 : (prevSumOfDays - day);
-      const currDayDiff = (currSumOfDays - day) < 0 ? 0 : (currSumOfDays - day);
-      const calcDaysDiff = () => {
-        if (currSumOfDays > day) {
-          return {
-            type: 'early',
-            diff: currSumOfDays - day,
-          };
-        }
-        return {
-          type: 'late',
-          diff: day - currSumOfDays,
-        };
-      };
-      setHistoryLog({
-        prevSumOfDays,
-        moduleDayDiff: currSumOfDays - prevSumOfDays,
-        currSumOfDays,
-        daysDiff: calcDaysDiff(),
-        prevDayDiff,
-        currDayDiff,
-      });
-    }
+    const arrayOfDays = Object.keys(attendanceList);
+    const modulesRepeated = arrayOfDays.map((l) => {
+      if (attendanceList[l].current_module === currentModule) {
+        return attendanceList[l];
+      }
+      return null;
+    }).filter((l) => l !== null);
+    const expecteFinish = modulesRepeated.filter((_, i) => i === currModuleData?.duration_in_days);
 
-    handlers.getAttendance({ attendanceList, students, day })
-      .then((data) => {
-        setAttendanceTaken(data);
-      })
-      .finally(() => setIsLoading(false));
-  }, [currModuleData, day]);
+    setHistoryLog({
+      repeated: modulesRepeated.length,
+      expected: currModuleData?.duration_in_days,
+      expecteFinish,
+    });
+  }, [currentModule]);
+
+  const handleAttendance = () => {
+    if (historyLog?.repeated > historyLog?.expected) {
+      setOpenWarn(true);
+    } else if (attendanceWasTaken()) {
+      setOpenAttendanceTakenWarn(true);
+    } else {
+      updateCohortDay();
+    }
+  };
+  useEffect(() => {
+    if (attendanceList[1] && students.length > 0) {
+      handlers.getAttendance({ attendanceList, students, day })
+        .then((data) => {
+          setAttendanceTaken(data);
+        })
+        .finally(() => setIsLoading(false));
+    }
+  }, [attendanceList, students, currModuleData, day]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -218,6 +230,7 @@ const AttendanceModal = ({
                 min={1}
                 onChange={(newDay) => {
                   setDay(parseInt(newDay, 10));
+                  setAutoSelect(true);
                 }}
               >
                 <NumberInputField color={colorMode === 'light' ? 'black' : 'white'} />
@@ -231,7 +244,16 @@ const AttendanceModal = ({
             <FormControl>
               <FormLabel htmlFor="current_module" color={lightColor} fontSize="12px">{t('attendance-modal.module')}</FormLabel>
               {sortedAssignments.length > 0 && (
-                <Select defaultValue={defaultProps.current_module} onChange={(e) => setCurrentModule(parseInt(e.target.value, 10))} id="module" placeholder="Select module">
+                <Select
+                  defaultValue={defaultProps.current_module}
+                  value={currentModule}
+                  onChange={(e) => {
+                    setCurrentModule(parseInt(e.target.value, 10));
+                    setAutoSelect(false);
+                  }}
+                  id="module"
+                  placeholder="Select module"
+                >
                   {sortedAssignments.map((module) => (
                     <option key={module.id} value={module.id}>
                       {`#${module.id} - ${module.label}`}
@@ -282,6 +304,9 @@ const AttendanceModal = ({
               })}
             </Grid>
           </Box>
+          <Button variant="link" fontSize="13px" fontWeight={400} onClick={() => setChecked(students.map((l) => String(l?.user?.id)))}>
+            {t('common:select-all')}
+          </Button>
         </ModalBody>
         <ModalFooter justifyContent="space-between">
           <Text
@@ -298,21 +323,7 @@ const AttendanceModal = ({
             fontSize="13px"
             disabled={checked.length < 1 || isLoading}
             variant="default"
-            onClick={() => {
-              if (attendanceWasTaken()) {
-                setOpenAttendanceTakenWarn(true);
-              } else {
-                updateCohortDay();
-              }
-              // TODO: Handle with current module in log list
-              // if (historyLog?.daysDiff?.type === 'late' && historyLog?.daysDiff?.diff !== 0) {
-              //   setOpenWarn(true);
-              // } else if (attendanceWasTaken()) {
-              //   setOpenAttendanceTakenWarn(true);
-              // } else {
-              //   updateCohortDay();
-              // }
-            }}
+            onClick={handleAttendance}
             rightIcon={<Icon icon="longArrowRight" width="15px" color={checked.length < 1 ? 'black' : 'white'} />}
           >
             {t('attendance-modal.apply-changes')}
@@ -323,9 +334,10 @@ const AttendanceModal = ({
             onClose={() => setOpenWarn(false)}
             htmlDescription={t('attendance-modal.warn-slower-teaching.description', {
               module: getDailyModuleData()?.dailyModule?.label,
-              currDayDiff: historyLog?.daysDiff.diff,
-              moduleDayDiff: historyLog?.moduleDayDiff,
+              repeated: historyLog?.repeated,
+              expected: historyLog?.expected,
             })}
+            // historyLog?.repeated > historyLog?.expected
             actionHandler={() => {
               if (attendanceWasTaken()) {
                 setOpenAttendanceTakenWarn(true);
