@@ -24,6 +24,7 @@ const AttendanceModal = ({
   const [day, setDay] = useState(cohortSession.current_day);
   const [attendanceTaken, setAttendanceTaken] = useState({});
   const [currentModule, setCurrentModule] = useState(cohortSession.current_module);
+  const [autoSelect, setAutoSelect] = useState(false);
   // const [defaultDay, setDefaultDay] = useState(0);
   const [checked, setChecked] = useState([]);
   const [defaultProps, setDefaultProps] = useState({
@@ -71,7 +72,11 @@ const AttendanceModal = ({
       const checkedStudents = attendanceTaken?.attendanceStudents.map((student) => String(student.user.id));
 
       setChecked(checkedStudents);
-      setCurrentModule(attendanceTaken?.current_module || -1);
+      if (autoSelect) {
+        setCurrentModule(attendanceTaken?.current_module || -1);
+      } else {
+        setCurrentModule(currentModule);
+      }
     }
   }, [attendanceTaken.attendanceStudents]);
 
@@ -134,28 +139,38 @@ const AttendanceModal = ({
 
   const updateCohortDay = () => {
     setIsLoading(true);
-    bc.cohort()
-      .update(cohortSession.id, { current_day: Number(day), current_module: currentModule })
-      .then(({ data }) => {
-        saveCohortAttendancy();
-        setCohortSession({
-          ...cohortSession,
-          current_module: data.current_module,
-          current_day: data.current_day,
-          ...data,
-        });
-      })
-      .catch(() => {
-        toast({
-          title: t('alert-message:error-updating-day-and-modules'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-        setOpenWarn(false);
-        setIsLoading(false);
-      })
-      .finally(() => setIsLoading(false));
+    if (currentModule > 0) {
+      bc.cohort()
+        .update(cohortSession.id, { current_day: Number(day), current_module: currentModule })
+        .then(({ data }) => {
+          saveCohortAttendancy();
+          setCohortSession({
+            ...cohortSession,
+            current_module: data.current_module,
+            current_day: data.current_day,
+            ...data,
+          });
+        })
+        .catch(() => {
+          toast({
+            title: t('alert-message:error-updating-day-and-modules'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
+          setOpenWarn(false);
+          setIsLoading(false);
+        })
+        .finally(() => setIsLoading(false));
+    } else {
+      toast({
+        title: t('alert-message:error-updating-day-and-modules'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -194,6 +209,7 @@ const AttendanceModal = ({
     }
   }, [attendanceList, students, currModuleData, day]);
 
+  console.log('students.map((l) => l?.user?.id):::', students.map((l) => l?.user?.id));
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -215,6 +231,7 @@ const AttendanceModal = ({
                 min={1}
                 onChange={(newDay) => {
                   setDay(parseInt(newDay, 10));
+                  setAutoSelect(true);
                 }}
               >
                 <NumberInputField color={colorMode === 'light' ? 'black' : 'white'} />
@@ -228,7 +245,16 @@ const AttendanceModal = ({
             <FormControl>
               <FormLabel htmlFor="current_module" color={lightColor} fontSize="12px">{t('attendance-modal.module')}</FormLabel>
               {sortedAssignments.length > 0 && (
-                <Select defaultValue={defaultProps.current_module} value={currentModule} onChange={(e) => setCurrentModule(parseInt(e.target.value, 10))} id="module" placeholder="Select module">
+                <Select
+                  defaultValue={defaultProps.current_module}
+                  value={currentModule}
+                  onChange={(e) => {
+                    setCurrentModule(parseInt(e.target.value, 10));
+                    setAutoSelect(false);
+                  }}
+                  id="module"
+                  placeholder="Select module"
+                >
                   {sortedAssignments.map((module) => (
                     <option key={module.id} value={module.id}>
                       {`#${module.id} - ${module.label}`}
@@ -279,6 +305,9 @@ const AttendanceModal = ({
               })}
             </Grid>
           </Box>
+          <Button variant="link" fontSize="13px" fontWeight={400} onClick={() => setChecked(students.map((l) => String(l?.user?.id)))}>
+            {t('common:select-all')}
+          </Button>
         </ModalBody>
         <ModalFooter justifyContent="space-between">
           <Text
