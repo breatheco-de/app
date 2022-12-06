@@ -8,7 +8,6 @@ import NextChakraLink from './NextChakraLink';
 import Icon from './Icon';
 
 const UpgradeExperience = ({ storySettings, data }) => {
-  // const { colorMode, toggleColorMode } = useColorMode();
   const [isOpen, setIsOpen] = useState(storySettings?.open || false);
   const router = useRouter();
   const locale = storySettings?.locale || router?.locale;

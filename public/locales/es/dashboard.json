@@ -131,17 +131,13 @@
     "day": "Día",
     "module": "Módulo",
     "attendance-taken-table-message": "Esta información se muestra en base a la última asistencia emitida del día seleccionado, con fecha emitida en horario UTC",
-    "warn-premature-teaching": {
-      "title": "Inicio prematuro del módulo",
-      "description": "¿Estás seguro de que quieres comenzar a enseñar <strong>{{module}}</strong>? La duración sugerida para el módulo anterior es de {{currDayDiff}} días y <strong>solo ha cubierto {{prevDayDiff}} días.</strong>"
-    },
     "attendance-already-taken": {
       "title": "¿Modificar la asistencia?",
       "description": "La asistencia para este día ya ha sido tomada. ¿Estás seguro de que quieres modificarlo?"
     },
     "warn-slower-teaching": {
       "title": "Inicio atrasado del módulo",
-      "description": "¿Estás seguro de que quieres comenzar a enseñar <strong>{{module}}</strong>? llevas {{currDayDiff}} días enseñando el módulo actual y la duración sugerida es de {{moduleDayDiff}} días."
+      "description": "¿Estás seguro de que quieres comenzar a enseñar <strong>{{module}}</strong>? llevas {{repeated}} días enseñando el módulo actual y la duración sugerida es de {{expected}} días."
     }
   },
   "teacher-sidebar": {

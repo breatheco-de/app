@@ -65,7 +65,7 @@ const Attendance = () => {
   const { cohortSlug } = router?.query;
 
   const calcDaysAverage = (days) => {
-    const currentTotalDays = days.filter((day) => day.color === status.remain).length;
+    const currentTotalDays = days.filter((day) => day.color !== status.remain).length;
     const totalDaysCompleted = days.filter((day) => day.color === status.attended).length;
     const average = parseInt((totalDaysCompleted / currentTotalDays) * 100, 10);
     return average;
@@ -168,7 +168,9 @@ const Attendance = () => {
           });
         })
         .finally(() => setLoadingStudents(false));
-    } else {
+    }
+
+    if (!cohortId && allCohorts.length > 0) {
       toast({
         title: t('alert-message:no-access-to-cohort'),
         status: 'error',
@@ -177,7 +179,7 @@ const Attendance = () => {
       });
       setLoadingStudents(false);
     }
-  }, [selectedCohortSlug, router.query.student]);
+  }, [selectedCohortSlug, cohortSlug, router.query.student, allCohorts]);
 
   useEffect(() => {
     setLoadStatus({
@@ -307,7 +309,7 @@ const Attendance = () => {
               fontWeight="700"
               id="cohort-select"
               fontSize="28px"
-              placeholder={t('filter.select-cohort')}
+              placeholder={t('common:select-cohort')}
               noOptionsMessage={() => t('common:no-options-message')}
               defaultInputValue={selectedCohort?.label}
               onChange={({ slug }) => {
