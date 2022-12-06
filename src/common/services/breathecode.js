@@ -3,6 +3,7 @@ import { parseQuerys } from '../../utils/url';
 import modifyEnv from '../../../modifyEnv';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
 const host = `${BREATHECODE_HOST}/v1`;
 
 const breathecode = {
@@ -36,7 +37,7 @@ const breathecode = {
         method: 'get',
         url: `${url}/academy/member/${userId}`,
         headers: {
-          Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
+          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
           academy: 4,
         },
       }),
@@ -103,7 +104,7 @@ const breathecode = {
       getAttendance: (id) => axios.get(`${url}/cohort/${id}/log?${qs}`),
       getPublic: (id) => axios.get(`${url}/cohort/${id}`, {
         headers: {
-          Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
+          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
           academy: 4,
         },
       }),
@@ -114,7 +115,7 @@ const breathecode = {
         method: 'get',
         url: `${url}/cohort/${cohortId}/user/${userId}`,
         headers: {
-          Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
+          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
           academy: 4,
         },
       }),
