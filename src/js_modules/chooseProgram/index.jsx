@@ -55,7 +55,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
           flexDirection="column"
           borderRadius="25px"
           height="100%"
-          width={['70%', '68%', '70%', '50%']}
+          // width={['70%', '68%', '70%', '50%']}
           gridGap="2px"
         >
           {activeCohorts.map((item, i) => {

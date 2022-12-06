@@ -20,6 +20,7 @@ const useStyle = () => {
     blueDefault: '#0097CD',
     yellowDefault: '#FFB718',
     green: '#38A56A',
+    greenLight: '#25BF6C',
     fontColor2: useColorModeValue('#3A3A3A', '#EBEBEB'),
   };
   const input = {
