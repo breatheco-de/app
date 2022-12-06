@@ -105,12 +105,7 @@ const TeacherSidebar = ({
           {cohortSession.ending_date && (
             <ItemButton
               actionHandler={() => {
-                if (cohortSession.bc_id && isWindow) {
-                  window.open(`/cohort/${cohortSlug}/attendance`, '_blank');
-                }
-                // if (cohortSession.bc_id && isWindow) {
-                //   window.open(`https://attendance.breatheco.de/?cohort_slug=${slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${academy.id}`, '_blank');
-                // }
+                window.open(`/cohort/${cohortSlug}/attendance`, '_blank');
               }}
             >
               <ItemText text={t('teacher-sidebar.review-attendancy')} />
@@ -123,9 +118,7 @@ const TeacherSidebar = ({
           {/* Assignments */}
           <ItemButton
             actionHandler={() => {
-              if (cohortSession.bc_id && isWindow) {
-                window.open(`/cohort/${cohortSlug}/assignments`, '_blank');
-              }
+              window.open(`/cohort/${cohortSlug}/assignments`, '_blank');
             }}
           >
             <ItemText text={t('teacher-sidebar.assignments')} />

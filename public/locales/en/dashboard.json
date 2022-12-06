@@ -131,17 +131,13 @@
     "day": "Day",
     "module": "Module",
     "attendance-taken-table-message": "This information is displayed based on the last assistance issued on the selected day, with the date issued in UTC time.",
-    "warn-premature-teaching": {
-      "title": "Premature module start",
-      "description": "Are you sure you want to start teaching <strong>{{module}}</strong>? The suggested duration for the previous module is in {{currDayDiff}} days and you have <strong>only covered for {{prevDayDiff}} days.</strong>"
-    },
     "attendance-already-taken": {
       "title": "Modify attendance?",
       "description": "The attendance for this day has already been taken. Are you sure you want to modify it?"
     },
     "warn-slower-teaching": {
       "title": "Delayed module start",
-      "description": "Are you sure you want to start teaching <strong>{{module}}</strong>? You have been teaching the current module for {{currDayDiff}} days and the suggested duration is {{moduleDayDiff}} days."
+      "description": "Are you sure you want to start teaching <strong>{{module}}</strong>? You have been teaching the current module for {{repeated}} days and the suggested duration is {{expected}} days."
     }
   },
   "teacher-sidebar": {
