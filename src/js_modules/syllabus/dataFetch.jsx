@@ -1,5 +1,6 @@
 import { toast } from '@chakra-ui/react';
 import axios from 'axios';
+import modifyEnv from '../../../modifyEnv';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 import { nestAssignments } from '../../common/hooks/useModuleHandler';
 import bc from '../../common/services/breathecode';
@@ -44,13 +45,14 @@ export const defaultDataFetch = async ({
   currentBlankProps, lessonSlug, assetTypeValues, lesson, setQuizSlug, setReadme,
   setCurrentData, setIpynbHtmlUrl, router, t,
 }) => {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const currentLanguageLabel = router.language === 'en' ? t('common:english') : t('common:spanish');
   const { currentThemeValue } = Config();
 
   if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
     Promise.all([
-      axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.md`),
-      axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`),
+      axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}.md`),
+      axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`),
     ])
       .then(([respMarkdown, respData]) => {
         const currData = respData.data;
@@ -73,7 +75,7 @@ export const defaultDataFetch = async ({
           setReadme(markdown);
           setCurrentData(currData);
         }
-        if (exensionName === 'ipynb') setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentThemeValue}&plain=true`);
+        if (exensionName === 'ipynb') setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentThemeValue}&plain=true`);
         else setIpynbHtmlUrl(null);
       })
       .catch(() => {

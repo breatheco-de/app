@@ -16,9 +16,8 @@ import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
 import ContactInformation from '../js_modules/signup/ContactInformation';
 import ChooseYourClass from '../js_modules/signup/ChooseYourClass';
-import { getTimeProps } from '../utils';
+import { isWindow, getStorageItem, getTimeProps, removeURLParameter } from '../utils';
 import Summary from '../js_modules/signup/Summary';
-// import mockData from '../common/utils/mockData/DashboardView';
 import PaymentInfo from '../js_modules/signup/PaymentInfo';
 
 export const getStaticProps = async ({ locale, locales }) => {
@@ -63,6 +62,7 @@ const SignUp = ({ finance }) => {
   const [loader, setLoader] = useState({
     date: false,
   });
+  const accessToken = getStorageItem('accessToken');
   const { user, isLoading } = useAuth();
 
   const toast = useToast();
@@ -74,6 +74,7 @@ const SignUp = ({ finance }) => {
   const courseChoosed = course || 'coding-introduction';
   const courseTitle = finance[courseChoosed];
   const planProps = finance.plans.find((l) => l.type === planChoosed || l.type === 'trial');
+  // const isPreview = checkoutData?.type === 'PREVIEW';
 
   const [formProps, setFormProps] = useState({
     first_name: '',
@@ -91,16 +92,36 @@ const SignUp = ({ finance }) => {
 
   const handleChooseDate = (cohortData) => {
     setLoader((prev) => ({ ...prev, date: true }));
+
     const { kickoffDate, weekDays, availableTime } = getTimeProps(cohortData);
+    setDateProps({
+      ...cohortData,
+      kickoffDate,
+      weekDays,
+      availableTime,
+    });
+
+    // bc.payment().getCard()
+    //   .then((res) => {
+    //     console.log('getCard:::', res);
+    //   })
+    //   .catch((err) => {
+    //     console.log('getCard_ERR:::', err);
+    //   });
 
     bc.payment().checking({
       type: 'PREVIEW',
-      cohort: cohortData.slug,
+      cohort: cohortData.id,
       academy: cohortData?.academy.id,
     })
       .then((response) => {
         if (response.status < 400) {
           setCheckoutData(response.data);
+          // if (response.data.type === 'PREVIEW') {
+          //   setStepIndex(3);
+          // } else {
+          //   setStepIndex(2);
+          // }
           setStepIndex(2);
         }
       })
@@ -113,44 +134,61 @@ const SignUp = ({ finance }) => {
         });
       })
       .finally(() => setLoader((prev) => ({ ...prev, date: false })));
-
-    setDateProps({
-      ...cohortData,
-      kickoffDate,
-      weekDays,
-      availableTime,
-    });
-
-    // TODO: REMOVE WHEN FINISH
-    // setCheckoutData(mockData.checkoutProps);
-    // setStepIndex(2);
   };
 
   useEffect(async () => {
-    if (queryCohortIdExists) {
+    if (!dateProps?.id && queryCohortIdExists) {
       const resp = await bc.cohort().getPublic(cohort);
 
-      if (resp.status >= 400) {
+      if (resp && resp.status >= 400) {
         toast({
           title: t('alert-message:cohort-not-found'),
           type: 'warning',
           duration: 4000,
           isClosable: true,
         });
-      } else {
-        handleChooseDate(resp.data);
-        if (user && !isLoading) {
-          setStepIndex(2);
-        }
+      }
+
+      if (resp.status < 400) {
+        const { kickoffDate, weekDays, availableTime } = getTimeProps(resp.data);
+        setDateProps({
+          ...resp.data,
+          kickoffDate,
+          weekDays,
+          availableTime,
+        });
       }
     }
-  }, [cohort, user]);
+    if (user?.id && !isLoading && queryCohortIdExists && checkoutData?.type) {
+      // if (isPreview) {
+      //   setStepIndex(3);
+      // } else {
+      //   setStepIndex(2);
+      // }
+      setStepIndex(2);
+    }
+  }, [cohort, user?.id, accessToken]);
 
   useEffect(() => {
-    if (user && !isLoading) {
-    // if queryString token exists remove it from the url
+    if (dateProps?.id && accessToken) {
+      handleChooseDate(dateProps);
+    }
+  }, [dateProps?.id, accessToken]);
+
+  useEffect(() => {
+    if (user?.id && !isLoading) {
+      // if queryString token exists remove it from the url
       if (router.query.token) {
-        router.replace(router.pathname, router.pathname, { shallow: true });
+        const cleanTokenQuery = isWindow && removeURLParameter(window.location.href, 'token');
+        router.push(cleanTokenQuery);
+
+        // bc.auth().subscribeToken(accessToken)
+        //   .then((res) => {
+        //     console.log('subscribeToken:::', res);
+        //   })
+        //   .finally(() => {
+        //     router.push(cleanTokenQuery);
+        //   });
       }
       if (!queryCohortIdExists) setStepIndex(1);
       setFormProps({
@@ -160,7 +198,7 @@ const SignUp = ({ finance }) => {
         phone: '',
       });
     }
-  }, [user, cohort]);
+  }, [user?.id, cohort]);
 
   return (
     <Box p="2.5rem 2rem">
@@ -226,6 +264,9 @@ const SignUp = ({ finance }) => {
             {t('choose-your-class')}
           </Heading>
         </Box>
+
+        {/* {!isPreview && (
+        )} */}
         <Box
           display="flex"
           gridGap="8px"
@@ -268,6 +309,7 @@ const SignUp = ({ finance }) => {
             borderRadius="3px"
             fontWeight="500"
           >
+            {/* {!isPreview ? '4.' : '3.'} */}
             4.
           </Heading>
           <Heading size="sm" fontWeight={isFourthStep ? '700' : '500'}>

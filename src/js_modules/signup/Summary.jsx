@@ -16,18 +16,21 @@ const Summary = ({
   const router = useRouter();
   const toast = useToast();
 
-  console.log('checkoutData:::', checkoutData);
+  // console.log('checkoutData:::', checkoutData);
   const fontColor = useColorModeValue('gray.800', 'gray.300');
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const borderColor2 = useColorModeValue('black', 'white');
 
   const handlePayment = () => {
-    bc.payment().pay({
+    bc.payment().pay2({
       type: checkoutData.type,
       token: checkoutData.token,
       chosen_period: 'HALF',
     })
       .then((response) => {
+        if (response.data.status === 'FULFILLED') {
+          router.push('/choose-program');
+        }
         console.log('Payment_response:', response);
       })
       .catch(() => {

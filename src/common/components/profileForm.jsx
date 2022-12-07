@@ -15,6 +15,7 @@ import bc from '../services/breathecode';
 import { usePersistent } from '../hooks/usePersistent';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
+import modifyEnv from '../../../modifyEnv';
 
 const ProfileForm = ({ profile }) => {
   const { t } = useTranslation('profile');
@@ -26,6 +27,8 @@ const ProfileForm = ({ profile }) => {
   const [defaultUserInfo, setDefaultUserInfo] = useState(null);
   const accessToken = getStorageItem('accessToken');
   const { disabledBackgroundColor } = useStyle();
+
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const {
     borderColor, backgroundColor, lightColor, disabledColor, modal,
@@ -282,7 +285,7 @@ const ProfileForm = ({ profile }) => {
                     // href="#"
                     onClick={(e) => {
                       e.preventDefault();
-                      window.location.href = `${process.env.BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
+                      window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
                     }}
                   >
                     {t('connect-github')}

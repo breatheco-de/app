@@ -16,12 +16,14 @@ import { setStorageItem } from '../../utils';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
 import useCustomToast from '../../common/hooks/useCustomToast';
+import modifyEnv from '../../../modifyEnv';
 
 const ContactInformation = ({
   stepIndex, setStepIndex, courseChoosed, location, queryCohortIdExists, dateProps,
   formProps, setFormProps,
 
 }) => {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
   const router = useRouter();
   const toast = useToast();
@@ -72,7 +74,7 @@ const ContactInformation = ({
   });
 
   const handleSubmit = async (actions, allValues) => {
-    const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/auth/subscribe/`, {
+    const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -83,11 +85,11 @@ const ContactInformation = ({
     const data = await resp.json();
     if (resp.status < 400) {
       setStorageItem('subscriptionId', data.id);
-      setStepIndex(1);
 
       if (data?.access_token) {
         router.push({
           query: {
+            ...router.query,
             token: data.access_token,
           },
         });
@@ -134,14 +136,16 @@ const ContactInformation = ({
           confirm_email: '',
         }}
         onSubmit={(values, actions) => {
+          const allValues = {
+            ...values,
+            course: courseChoosed,
+            country: location?.country,
+            cohort: dateProps?.id,
+            city: location?.city,
+            language: router.locale,
+          };
+
           if (stepIndex !== 2) {
-            const allValues = {
-              ...values,
-              course: courseChoosed,
-              country: location?.country,
-              city: location?.city,
-              language: router.locale,
-            };
             handleSubmit(actions, allValues);
           }
         }}

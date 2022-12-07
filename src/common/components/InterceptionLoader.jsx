@@ -25,7 +25,7 @@ const InterceptionLoader = () => {
       setLoading(false);
       return res;
     }, (error) => {
-      const statusError = error.response.status;
+      const statusError = error.response?.status;
       Promise.reject(error);
       setLoading(false);
       if (statusError === 401) {
