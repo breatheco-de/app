@@ -8,7 +8,7 @@ import Icon from '../Icon';
 import Text from '../Text';
 
 // eslint-disable-next-line react/prop-types
-const TechnologiesSection = ({
+const TechnologiesSection = async ({
   t,
   title,
   show,
@@ -23,8 +23,23 @@ const TechnologiesSection = ({
   const { fontColor, hexColor, modal, borderColorStrong } = useStyle();
   const [isMobile] = useMediaQuery('(min-width: 1082px)');
 
-  const filteredTechnologies = technologyTags.filter(
-    (technology) => technology.toLowerCase().includes(technologySearched.toLowerCase()),
+  const technologiesResponse = await fetch(
+    `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=exercise&limit=1000`,
+    {
+      Accept: 'application/json, text/plain, */*',
+    },
+  );
+
+  if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
+    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /interactive-exercises`);
+  } else {
+    console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-exercises`);
+  }
+
+  const technologies = await technologiesResponse.json();
+
+  const filteredTechnologies = technologies.filter((technology) => technologyTags.includes(technology.slug.toLowerCase())).filter(
+    (technology) => technology.title.toLowerCase().includes(technologySearched.toLowerCase()),
   );
 
   return (
@@ -44,7 +59,7 @@ const TechnologiesSection = ({
         </InputGroup>
 
       </Box>
-      <Collapse in={show} startingHeight={technologyTags.length > 4 ? 170 : 38} animateOpacity>
+      <Collapse in={show} startingHeight={filteredTechnologies.length > 4 ? 170 : 38} animateOpacity>
         <Flex
           flexFlow="row wrap"
           padding="5px"
@@ -52,15 +67,16 @@ const TechnologiesSection = ({
         >
           {filteredTechnologies.map((technology) => {
             const checkbox = getCheckboxProps({
-              value: technology,
+              value: technology.slug,
               checked: checkedTechnologies.length === 0
                 ? false
-                : checkedTechnologies.includes(technology),
+                : checkedTechnologies.includes(technology.slug),
               isChecked: false,
             });
+
             return (
               <Box
-                key={technology}
+                key={technology.slug}
                 border="1px solid"
                 borderColor={checkbox.checked ? 'blue.default' : borderColorStrong}
                 backgroundColor={checkbox.checked ? 'blue.default' : modal.background}
@@ -74,14 +90,14 @@ const TechnologiesSection = ({
               >
                 <Flex gridGap="10px">
                   <Checkbox display="none" {...checkbox} borderColor="gray.default" isChecked={checkbox.checked} />
-                  <Text size="l" color={checkbox.checked ? 'white' : fontColor}>{technology}</Text>
+                  <Text size="l" color={checkbox.checked ? 'white' : fontColor}>{technology.title}</Text>
                 </Flex>
               </Box>
             );
           })}
         </Flex>
       </Collapse>
-      {(technologyTags.length >= 17 || !isMobile) && (
+      {(filteredTechnologies.length >= 17 || !isMobile) && (
       <Flex width="100%" justifyContent="right">
         <Box
           as="button"
@@ -112,7 +128,7 @@ TechnologiesSection.propTypes = {
 };
 
 TechnologiesSection.defaultProps = {
-  t: () => {},
+  t: () => { },
   title: 'TECHNOLOGIES',
 };
 
