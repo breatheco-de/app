@@ -39,7 +39,7 @@ const PaymentInfo = ({ paymentInfo, setPaymentInfo, stepIndex, setStepIndex }) =
   });
 
   const handleSubmit = (actions, values) => {
-    bc.payment().addCard(values)
+    bc.payment().addCard2(values)
       .then((resp) => {
         if (resp) {
           setStepIndex(stepIndex + 1);
@@ -55,10 +55,6 @@ const PaymentInfo = ({ paymentInfo, setPaymentInfo, stepIndex, setStepIndex }) =
         });
       })
       .finally(() => actions.setSubmitting(false));
-
-    // TODO: REMOVE WHEN FINISH
-    // setStepIndex(stepIndex + 1);
-    // actions.setSubmitting(false);
   };
 
   return (

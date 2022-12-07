@@ -18,5 +18,6 @@
     "student": "Filter by Student",
     "status": "Filter by Status",
     "assignments-length": "Current list of {{total}} assignments"
-  }
+  },
+  "no-content-to-show": "Nothing to see here, please select another cohort"
 }

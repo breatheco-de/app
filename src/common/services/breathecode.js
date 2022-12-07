@@ -1,7 +1,10 @@
 import axios from '../../axios';
 import { parseQuerys } from '../../utils/url';
+import modifyEnv from '../../../modifyEnv';
 
-const host = `${process.env.BREATHECODE_HOST}/v1`;
+const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
+const host = `${BREATHECODE_HOST}/v1`;
 
 const breathecode = {
   get: (url) => axios.get(url),
@@ -20,6 +23,7 @@ const breathecode = {
       isValidToken: (token) => axios.get(`${url}/token/${token}`),
       register: (payload) => axios.post(`${url}/user/register`, payload),
       subscribe: (payload) => axios.post(`${url}/subscribe/`, { ...payload }),
+      subscribeToken: (token) => axios.post(`${url}/subscribe/${token}`),
       removeGithub: () => axios.delete(`${url}/github/me`),
       temporalToken: () => axios({
         method: 'post',
@@ -33,7 +37,7 @@ const breathecode = {
         method: 'get',
         url: `${url}/academy/member/${userId}`,
         headers: {
-          Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
+          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
           academy: 4,
         },
       }),
@@ -100,7 +104,7 @@ const breathecode = {
       getAttendance: (id) => axios.get(`${url}/cohort/${id}/log?${qs}`),
       getPublic: (id) => axios.get(`${url}/cohort/${id}`, {
         headers: {
-          Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
+          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
           academy: 4,
         },
       }),
@@ -111,7 +115,7 @@ const breathecode = {
         method: 'get',
         url: `${url}/cohort/${cohortId}/user/${userId}`,
         headers: {
-          Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
+          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
           academy: 4,
         },
       }),
@@ -183,7 +187,31 @@ const breathecode = {
     return {
       checking: (data) => axios.put(`${url}/checking?${qs}`, data),
       pay: (data) => axios.post(`${url}/pay?${qs}`, data),
-      addCard: (data) => axios.put(`${url}/card?${qs}`, data),
+      pay2: (data) => axios({
+        method: 'post',
+        url: `${url}/pay?${qs}`,
+        data,
+        headers: {
+          'Accept-Language': 'en',
+        },
+      }),
+      addCard: (data) => axios.post(`${url}/card?${qs}`, data),
+      addCard2: (data) => axios({
+        method: 'post',
+        url: `${url}/card?${qs}`,
+        data,
+        headers: {
+          'Accept-Language': 'en',
+        },
+      }),
+      getCard: (data) => axios({
+        method: 'get',
+        url: `${url}/card?${qs}`,
+        data,
+        headers: {
+          'Accept-Language': 'en',
+        },
+      }),
     };
   },
 };
