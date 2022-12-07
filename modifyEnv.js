@@ -6,7 +6,7 @@ const handleEnv = ({ queryString, env }) => {
     const urlHost = new URLSearchParams(window.location.search).get(queryString);
 
     if (urlHost && urlHost[urlHost.length - 1] === '/') urlHost.slice(0, -1);
-    if (urlHost) localStorage.setItem('host', urlHost);
+    if (urlHost) localStorage.setItem(queryString, urlHost);
     if (localStorage.getItem('host')) host = localStorage.getItem(queryString);
     if (host === 'reset') host = env;
   }
