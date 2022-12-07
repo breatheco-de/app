@@ -101,33 +101,29 @@ const Attendance = () => {
     : `${slideLeft} 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both`;
 
   useEffect(() => {
-    if (cohortSession?.cohort_role && cohortSession?.cohort_role === 'STUDENT') {
-      router.push('/choose-program');
-    } else {
-      bc.admissions().me()
-        .then(({ data }) => {
-          const cohortFiltered = data.cohorts.filter((cohort) => cohort.role !== 'STUDENT');
-          const dataStruct = cohortFiltered.map((l) => ({
-            label: l.cohort.name,
-            slug: l.cohort.slug,
-            value: l.cohort.id,
-            academy: l.cohort.academy.id,
-            durationInDays: l.cohort.syllabus_version.duration_in_days,
-          }));
-          setAllCohorts(dataStruct.sort(
-            (a, b) => a.label.localeCompare(b.label),
-          ));
-        })
-        .catch((error) => {
-          toast({
-            title: t('alert-message:error-fetching-cohorts'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
-          console.error('There was an error fetching the cohorts', error);
+    bc.admissions().me()
+      .then(({ data }) => {
+        const cohortFiltered = data.cohorts.filter((cohort) => cohort.role !== 'STUDENT');
+        const dataStruct = cohortFiltered.map((l) => ({
+          label: l.cohort.name,
+          slug: l.cohort.slug,
+          value: l.cohort.id,
+          academy: l.cohort.academy.id,
+          durationInDays: l.cohort.syllabus_version.duration_in_days,
+        }));
+        setAllCohorts(dataStruct.sort(
+          (a, b) => a.label.localeCompare(b.label),
+        ));
+      })
+      .catch((error) => {
+        toast({
+          title: t('alert-message:error-fetching-cohorts'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
         });
-    }
+        console.error('There was an error fetching the cohorts', error);
+      });
   }, []);
 
   useEffect(() => {
