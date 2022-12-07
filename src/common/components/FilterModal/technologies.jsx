@@ -8,7 +8,7 @@ import Icon from '../Icon';
 import Text from '../Text';
 
 // eslint-disable-next-line react/prop-types
-const TechnologiesSection = async ({
+const TechnologiesSection = ({
   t,
   title,
   show,
@@ -23,24 +23,7 @@ const TechnologiesSection = async ({
   const { fontColor, hexColor, modal, borderColorStrong } = useStyle();
   const [isMobile] = useMediaQuery('(min-width: 1082px)');
 
-  const technologiesResponse = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=exercise&limit=1000`,
-    {
-      Accept: 'application/json, text/plain, */*',
-    },
-  );
-
-  if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /interactive-exercises`);
-  } else {
-    console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-exercises`);
-  }
-
-  const technologies = await technologiesResponse.json();
-
-  const filteredTechnologies = technologies.filter((technology) => technologyTags.includes(technology.slug.toLowerCase())).filter(
-    (technology) => technology.title.toLowerCase().includes(technologySearched.toLowerCase()),
-  );
+  const filteredTechnologies = technologyTags.filter((technology) => technology.slug.toLowerCase().includes(technologySearched.toLowerCase()));
 
   return (
     <Flex flexDirection="column" padding="0 0 12px 0" borderBottom={1} borderStyle="solid" borderColor={commonBorderColor}>
@@ -128,7 +111,7 @@ TechnologiesSection.propTypes = {
 };
 
 TechnologiesSection.defaultProps = {
-  t: () => { },
+  t: () => {},
   title: 'TECHNOLOGIES',
 };
 
