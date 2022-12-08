@@ -141,7 +141,7 @@ const Attendance = () => {
           if (Object.keys(daysLog).length <= 0) {
             setCurrentDaysLog({});
             toast({
-              title: t('alert-message:no-activities-found'),
+              title: t('alert-message:no-attendance-list-found'),
               status: 'error',
               duration: 7000,
               isClosable: true,
