@@ -207,6 +207,10 @@ export const ButtonHandlerByTaskStatus = ({
             disableHandler
             sendProject={sendProject}
             currentTask={currentTask}
+            actionHandler={(event) => {
+              changeStatusAssignment(event, currentTask, 'PENDING');
+              onClose();
+            }}
             closeText={t('modalInfo.rejected.remove-delivery')}
           />
         </>
