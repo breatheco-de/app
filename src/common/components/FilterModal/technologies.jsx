@@ -44,7 +44,7 @@ const TechnologiesSection = ({
         </InputGroup>
 
       </Box>
-      <Collapse in={show} startingHeight={technologyTags.length > 4 ? 170 : 38} animateOpacity>
+      <Collapse className="force-overflow" in={show} startingHeight={technologyTags.length > 4 ? 170 : 38}>
         <Flex
           flexFlow="row wrap"
           padding="5px"
