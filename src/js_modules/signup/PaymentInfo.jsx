@@ -1,22 +1,23 @@
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import useTranslation from 'next-translate/useTranslation';
-// import { useRouter } from 'next/router';
-import PropTypes from 'prop-types';
 import {
   Box, Button, useToast,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
-// import { phone } from '../../utils/regex';
 import FieldForm from '../../common/components/Forms/FieldForm';
-// import NextChakraLink from '../../common/components/NextChakraLink';
-// import useStyle from '../../common/hooks/useStyle';
+import useSignup from '../../common/store/actions/signupAction';
 
-const PaymentInfo = ({ paymentInfo, setPaymentInfo, handlePayment }) => {
+const PaymentInfo = () => {
   const { t } = useTranslation('signup');
   const toast = useToast();
+
+  const {
+    state, setPaymentInfo, handlePayment,
+  } = useSignup();
+  const { paymentInfo } = state;
   const [stateCard, setStateCard] = useState({
     card_number: 0,
     exp_month: 0,
@@ -99,10 +100,7 @@ const PaymentInfo = ({ paymentInfo, setPaymentInfo, handlePayment }) => {
                   const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
                   const newValue = value.replace(/(.{4})/g, '$1 ').trim();
                   e.target.value = newValue.slice(0, 19);
-                  setPaymentInfo((prevState) => ({
-                    ...prevState,
-                    card_number: e.target.value,
-                  }));
+                  setPaymentInfo('card_number', e.target.value);
                   setStateCard({ ...stateCard, card_number: newValue.replaceAll(' ', '').slice(0, 16) });
                 }}
                 pattern="[0-9]*"
@@ -123,10 +121,7 @@ const PaymentInfo = ({ paymentInfo, setPaymentInfo, handlePayment }) => {
                       e.target.value += '/';
                     }
 
-                    setPaymentInfo((prevState) => ({
-                      ...prevState,
-                      exp: e.target.value,
-                    }));
+                    setPaymentInfo('exp', e.target.value);
                   }}
                   pattern="\d{2}/\d{2}"
                   label={t('expiration-date')}
@@ -140,10 +135,8 @@ const PaymentInfo = ({ paymentInfo, setPaymentInfo, handlePayment }) => {
                     const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
                     const newValue = value.replace(/(.{3})/g, '$1 ').trim();
                     e.target.value = newValue.slice(0, 3);
-                    setPaymentInfo((prevState) => ({
-                      ...prevState,
-                      cvc: e.target.value,
-                    }));
+
+                    setPaymentInfo('cvc', e.target.value);
                   }}
                   pattern="[0-9]*"
                   label={t('cvc')}
@@ -166,25 +159,6 @@ const PaymentInfo = ({ paymentInfo, setPaymentInfo, handlePayment }) => {
       </Formik>
     </>
   );
-};
-
-PaymentInfo.propTypes = {
-  paymentInfo: PropTypes.shape({
-    card_number: PropTypes.string,
-    exp: PropTypes.string,
-    cvc: PropTypes.string,
-  }),
-  setPaymentInfo: PropTypes.func,
-  handlePayment: PropTypes.func.isRequired,
-};
-
-PaymentInfo.defaultProps = {
-  setPaymentInfo: () => {},
-  paymentInfo: {
-    card_number: '',
-    exp: '',
-    cvc: '',
-  },
 };
 
 export default PaymentInfo;

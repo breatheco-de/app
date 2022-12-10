@@ -17,18 +17,24 @@ import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
 import useCustomToast from '../../common/hooks/useCustomToast';
 import modifyEnv from '../../../modifyEnv';
+import useSignup from '../../common/store/actions/signupAction';
 
 const ContactInformation = ({
-  stepIndex, setStepIndex, courseChoosed, location, queryCohortIdExists, dateProps,
+  courseChoosed, queryCohortIdExists,
   formProps, setFormProps,
 
 }) => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
+  const {
+    state, nextStep, handleStep,
+  } = useSignup();
+  const { stepIndex, dateProps, location } = state;
   const router = useRouter();
   const toast = useToast();
   const toastIdRef = useRef();
   const { featuredColor } = useStyle();
+
   const { createToast } = useCustomToast({
     toastIdRef,
     status: 'info',
@@ -94,9 +100,9 @@ const ContactInformation = ({
           },
         });
         if (queryCohortIdExists && dateProps) {
-          setStepIndex(2);
+          handleStep(2);
         } else {
-          setStepIndex(stepIndex + 1);
+          nextStep();
         }
       } else {
         router.push('/thank-you');
@@ -238,22 +244,15 @@ const ContactInformation = ({
 };
 
 ContactInformation.propTypes = {
-  stepIndex: PropTypes.number.isRequired,
-  setStepIndex: PropTypes.func,
   courseChoosed: PropTypes.string.isRequired,
-  location: PropTypes.objectOf(PropTypes.any),
   queryCohortIdExists: PropTypes.bool,
-  dateProps: PropTypes.objectOf(PropTypes.any),
   formProps: PropTypes.objectOf(PropTypes.any).isRequired,
   setFormProps: PropTypes.func,
 };
 
 ContactInformation.defaultProps = {
-  dateProps: {},
-  setStepIndex: () => {},
   queryCohortIdExists: false,
   setFormProps: () => {},
-  location: {},
 };
 
 export default ContactInformation;
