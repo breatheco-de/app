@@ -163,28 +163,31 @@ export const MDCheckbox = ({
 }) => {
   const childrenData = children[1]?.props?.children || children;
 
-  const getText = () => {
-    if (children[1]?.props?.node.children.length > 0) {
-      for (let i = 0; i < children[1]?.props?.node.children.length; i += 1) {
-        // default
-        if (children[1]?.props?.children[1].length > 2) {
-          return children[1]?.props?.children[1];
-        }
-        // text inside strong tag
-        if (children[1]?.props?.node?.children[i]?.tagName === 'strong') {
-          return children[1]?.props?.node.children[i].children[0].value;
+  const getNodeText = (node) => {
+    // text inside strong tag
+    if (node?.props?.node?.children?.length > 0) {
+      for (let i = 0; i < node?.props?.node?.children?.length; i += 1) {
+        if (node?.props?.node?.children[i]?.tagName === 'strong') {
+          return node?.props?.node?.children[i]?.children[0]?.value;
         }
       }
     }
-    if (children[1]) {
-      return children[1];
+    if (typeof node === 'string') {
+      return node;
+    }
+    if (node?.props?.children) {
+      return node?.props?.children[0];
+    }
+    if (node?.props?.node?.children) {
+      return node?.props?.node?.children[0]?.value;
     }
     return '';
   };
 
-  const text = getText();
+  const textChilds = children.map((_, i) => getNodeText(children[i]));
+  const text = textChilds.join('');
+
   const cleanedChildren = childrenData.length > 0 && childrenData.filter((l) => l.type !== 'input');
-  // const checked = props?.checked || props?.children[1]?.props?.children[0]?.props?.checked;
 
   const slug = typeof text === 'string' && slugify(text);
   const currentSubTask = subTasks.length > 0 && subTasks.filter((task) => task?.id === slug);
