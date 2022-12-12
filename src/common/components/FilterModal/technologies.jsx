@@ -23,9 +23,7 @@ const TechnologiesSection = ({
   const { fontColor, hexColor, modal, borderColorStrong } = useStyle();
   const [isMobile] = useMediaQuery('(min-width: 1082px)');
 
-  const filteredTechnologies = technologyTags.filter(
-    (technology) => technology.toLowerCase().includes(technologySearched.toLowerCase()),
-  );
+  const filteredTechnologies = technologyTags.filter((technology) => technology.slug.toLowerCase().includes(technologySearched.toLowerCase()));
 
   return (
     <Flex flexDirection="column" padding="0 0 12px 0" borderBottom={1} borderStyle="solid" borderColor={commonBorderColor}>
@@ -44,7 +42,7 @@ const TechnologiesSection = ({
         </InputGroup>
 
       </Box>
-      <Collapse in={show} startingHeight={technologyTags.length > 4 ? 170 : 38} animateOpacity>
+      <Collapse in={show} startingHeight={filteredTechnologies.length > 4 ? 170 : 38} animateOpacity>
         <Flex
           flexFlow="row wrap"
           padding="5px"
@@ -52,15 +50,16 @@ const TechnologiesSection = ({
         >
           {filteredTechnologies.map((technology) => {
             const checkbox = getCheckboxProps({
-              value: technology,
+              value: technology.slug,
               checked: checkedTechnologies.length === 0
                 ? false
-                : checkedTechnologies.includes(technology),
+                : checkedTechnologies.includes(technology.slug),
               isChecked: false,
             });
+
             return (
               <Box
-                key={technology}
+                key={technology.slug}
                 border="1px solid"
                 borderColor={checkbox.checked ? 'blue.default' : borderColorStrong}
                 backgroundColor={checkbox.checked ? 'blue.default' : modal.background}
@@ -74,14 +73,14 @@ const TechnologiesSection = ({
               >
                 <Flex gridGap="10px">
                   <Checkbox display="none" {...checkbox} borderColor="gray.default" isChecked={checkbox.checked} />
-                  <Text size="l" color={checkbox.checked ? 'white' : fontColor}>{technology}</Text>
+                  <Text size="l" color={checkbox.checked ? 'white' : fontColor}>{technology.title}</Text>
                 </Flex>
               </Box>
             );
           })}
         </Flex>
       </Collapse>
-      {(technologyTags.length >= 17 || !isMobile) && (
+      {(filteredTechnologies.length >= 17 || !isMobile) && (
       <Flex width="100%" justifyContent="right">
         <Box
           as="button"
