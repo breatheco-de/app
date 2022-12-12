@@ -42,7 +42,7 @@ const Attendance = () => {
   const [currentStudentList, setCurrentStudentList] = useState([]);
   const [searchedStudents, setSearchedStudents] = useState([]);
   const [allStudentsWithDays, setAllStudentsWithDays] = useState({});
-  const [currentDaysLog, setCurrentDaysLog] = useState([]);
+  const [currentDaysLog, setCurrentDaysLog] = useState({});
   const [loadStatus, setLoadStatus] = useState({
     loading: false,
     status: 'idle',
@@ -101,33 +101,29 @@ const Attendance = () => {
     : `${slideLeft} 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both`;
 
   useEffect(() => {
-    if (cohortSession?.cohort_role && cohortSession?.cohort_role === 'STUDENT') {
-      router.push('/choose-program');
-    } else {
-      bc.admissions().me()
-        .then(({ data }) => {
-          const cohortFiltered = data.cohorts.filter((cohort) => cohort.role !== 'STUDENT');
-          const dataStruct = cohortFiltered.map((l) => ({
-            label: l.cohort.name,
-            slug: l.cohort.slug,
-            value: l.cohort.id,
-            academy: l.cohort.academy.id,
-            durationInDays: l.cohort.syllabus_version.duration_in_days,
-          }));
-          setAllCohorts(dataStruct.sort(
-            (a, b) => a.label.localeCompare(b.label),
-          ));
-        })
-        .catch((error) => {
-          toast({
-            title: t('alert-message:error-fetching-cohorts'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
-          console.error('There was an error fetching the cohorts', error);
+    bc.admissions().me()
+      .then(({ data }) => {
+        const cohortFiltered = data.cohorts.filter((cohort) => cohort.role !== 'STUDENT');
+        const dataStruct = cohortFiltered.map((l) => ({
+          label: l.cohort.name,
+          slug: l.cohort.slug,
+          value: l.cohort.id,
+          academy: l.cohort.academy.id,
+          durationInDays: l.cohort.syllabus_version.duration_in_days,
+        }));
+        setAllCohorts(dataStruct.sort(
+          (a, b) => a.label.localeCompare(b.label),
+        ));
+      })
+      .catch((error) => {
+        toast({
+          title: t('alert-message:error-fetching-cohorts'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
         });
-    }
+        console.error('There was an error fetching the cohorts', error);
+      });
   }, []);
 
   useEffect(() => {
@@ -137,14 +133,22 @@ const Attendance = () => {
 
     const academyId = findSelectedCohort?.academy || defaultCohort?.academy;
     const slug = findSelectedCohort?.slug || defaultCohort?.slug;
-    const cohortId = findSelectedCohort?.value || defaultCohort?.value;
 
-    if (cohortId && academyId) {
+    if (allCohorts.length > 0) {
       setSelectedCohort(findSelectedCohort || defaultCohort);
-
       handlers.getActivities(slug, academyId)
         .then((daysLog) => {
-          setCurrentDaysLog(daysLog);
+          if (Object.keys(daysLog).length <= 0) {
+            setCurrentDaysLog({});
+            toast({
+              title: t('alert-message:no-attendance-list-found'),
+              status: 'error',
+              duration: 7000,
+              isClosable: true,
+            });
+          } else {
+            setCurrentDaysLog(daysLog);
+          }
         })
         .catch(() => {
           toast({
@@ -154,7 +158,6 @@ const Attendance = () => {
             isClosable: true,
           });
         });
-
       handlers.getStudents(slug, academyId)
         .then((students) => {
           setCurrentStudentList(students);
@@ -169,16 +172,6 @@ const Attendance = () => {
         })
         .finally(() => setLoadingStudents(false));
     }
-
-    if (!cohortId && allCohorts.length > 0) {
-      toast({
-        title: t('alert-message:no-access-to-cohort'),
-        status: 'error',
-        duration: 7000,
-        isClosable: true,
-      });
-      setLoadingStudents(false);
-    }
   }, [selectedCohortSlug, cohortSlug, router.query.student, allCohorts]);
 
   useEffect(() => {
@@ -189,6 +182,7 @@ const Attendance = () => {
 
     if (loadingStudents) return () => {};
 
+    const currentDaysLogExists = Object.keys(currentDaysLog).length > 0;
     if (currentStudentList.length > 0 && selectedCohort?.durationInDays) {
       const studentsWithDays = currentStudentList.map((student) => {
         const days = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
@@ -203,7 +197,7 @@ const Attendance = () => {
           return {
             label: dayData ? `${dayLabel} - ${format(new Date(dayData.updated_at), 'd MMM')}` : dayLabel,
             day,
-            color: dayData ? dayColor : status.remain,
+            color: currentDaysLogExists ? dayColor : status.remain,
             updated_at: dayData ? dayData?.updated_at : null,
           };
         });
@@ -248,7 +242,7 @@ const Attendance = () => {
     }
 
     return () => {};
-  }, [currentStudentList, currentDaysLog, selectedCohort.durationInDays, loadingStudents]);
+  }, [currentStudentList, currentDaysLog, selectedCohort?.durationInDays, loadingStudents]);
 
   const handleSearch = (e) => {
     const { value } = e.target;

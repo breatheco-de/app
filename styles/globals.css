@@ -331,3 +331,6 @@ featured {
 .chakra-checkbox__control {
   margin-top: 5px;
 }
+.force-overflow {
+  overflow: auto !important;
+}

@@ -8,6 +8,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import ReactDOMServer from 'react-dom/server';
 import BeforeAfterSlider from '../../BeforeAfterSlider';
 import Heading from '../../Heading';
 import OnlyFor from '../../OnlyFor';
@@ -158,38 +159,40 @@ export const MDHeading = ({ children, tagType }) => {
   );
 };
 
+export const DOMComponent = ({ children }) => <Box>{children}</Box>;
+
 export const MDCheckbox = ({
   index, children, subTasks, subTasksLoaded, subTasksProps, setSubTasksProps, updateSubTask,
 }) => {
   const childrenData = children[1]?.props?.children || children;
+  const [isChecked, setIsChecked] = useState(false);
 
-  const getText = () => {
-    if (children[1]?.props?.node.children.length > 0) {
-      for (let i = 0; i < children[1]?.props?.node.children.length; i += 1) {
-        // default
-        if (children[1]?.props?.children[1].length > 2) {
-          return children[1]?.props?.children[1];
-        }
-        // text inside strong tag
-        if (children[1]?.props?.node?.children[i]?.tagName === 'strong') {
-          return children[1]?.props?.node.children[i].children[0].value;
-        }
-      }
-    }
-    if (children[1]) {
-      return children[1];
+  const cleanedChildren = childrenData.length > 0 && childrenData.filter((l) => l.type !== 'input');
+  const domElement = <DOMComponent>{cleanedChildren}</DOMComponent>;
+
+  const renderToStringClient = () => {
+    if (typeof window !== 'undefined') {
+      const html = ReactDOMServer.renderToString(domElement);
+      const parser = new DOMParser();
+      const doc = parser ? parser.parseFromString(html, 'text/html') : null;
+      const textContent = doc?.body?.textContent || '';
+      return textContent;
     }
     return '';
   };
 
-  const text = getText();
-  const cleanedChildren = childrenData.length > 0 && childrenData.filter((l) => l.type !== 'input');
-  // const checked = props?.checked || props?.children[1]?.props?.children[0]?.props?.checked;
+  const text = renderToStringClient();
 
   const slug = typeof text === 'string' && slugify(text);
   const currentSubTask = subTasks.length > 0 && subTasks.filter((task) => task?.id === slug);
   const taskChecked = subTasks && subTasks.filter((task) => task?.id === slug && task?.status !== 'PENDING').length > 0;
-  const [isChecked, setIsChecked] = useState(taskChecked || false);
+
+  useEffect(() => {
+    // load checked tasks
+    if (taskChecked) {
+      setIsChecked(true);
+    }
+  }, [taskChecked]);
 
   const taskStatus = {
     true: 'DONE',
@@ -337,4 +340,7 @@ OnlyForBanner.defaultProps = {
   permission: '',
   cohortSession: {},
   profile: {},
+};
+DOMComponent.propTypes = {
+  children: PropTypes.node.isRequired,
 };
