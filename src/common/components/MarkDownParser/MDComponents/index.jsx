@@ -169,18 +169,17 @@ export const MDCheckbox = ({
   const domElement = <Component />;
 
   const renderToStringClient = () => {
-    // const html = ReactDOMServer.renderToString(domElement);
-    const html = ReactDOMServer.renderToStaticMarkup(domElement);
-    const parser = typeof DOMParser !== 'undefined' && new DOMParser();
-    // const parser = new DOMParser();
-    const doc = parser ? parser.parseFromString(html, 'text/html') : null;
-    const textContent = doc?.body?.textContent || '';
-    return textContent;
+    if (typeof window !== 'undefined') {
+      const html = ReactDOMServer.renderToString(domElement);
+      const parser = typeof DOMParser !== 'undefined' && new DOMParser();
+      const doc = parser ? parser.parseFromString(html, 'text/html') : null;
+      const textContent = doc?.body?.textContent || '';
+      return textContent;
+    }
+    return '';
   };
 
   const text = renderToStringClient();
-
-  console.log('text:::', text);
 
   const slug = typeof text === 'string' && slugify(text);
   const currentSubTask = subTasks.length > 0 && subTasks.filter((task) => task?.id === slug);
