@@ -159,19 +159,21 @@ export const MDHeading = ({ children, tagType }) => {
   );
 };
 
+export const DOMComponent = ({ children }) => <Box>{children}</Box>;
+
 export const MDCheckbox = ({
   index, children, subTasks, subTasksLoaded, subTasksProps, setSubTasksProps, updateSubTask,
 }) => {
   const childrenData = children[1]?.props?.children || children;
+  const [isChecked, setIsChecked] = useState(false);
 
   const cleanedChildren = childrenData.length > 0 && childrenData.filter((l) => l.type !== 'input');
-  const Component = () => <Box>{cleanedChildren}</Box>;
-  const domElement = <Component />;
+  const domElement = <DOMComponent>{cleanedChildren}</DOMComponent>;
 
   const renderToStringClient = () => {
     if (typeof window !== 'undefined') {
       const html = ReactDOMServer.renderToString(domElement);
-      const parser = typeof DOMParser !== 'undefined' && new DOMParser();
+      const parser = new DOMParser();
       const doc = parser ? parser.parseFromString(html, 'text/html') : null;
       const textContent = doc?.body?.textContent || '';
       return textContent;
@@ -184,7 +186,13 @@ export const MDCheckbox = ({
   const slug = typeof text === 'string' && slugify(text);
   const currentSubTask = subTasks.length > 0 && subTasks.filter((task) => task?.id === slug);
   const taskChecked = subTasks && subTasks.filter((task) => task?.id === slug && task?.status !== 'PENDING').length > 0;
-  const [isChecked, setIsChecked] = useState(taskChecked || false);
+
+  useEffect(() => {
+    // load checked tasks
+    if (taskChecked) {
+      setIsChecked(true);
+    }
+  }, [taskChecked]);
 
   const taskStatus = {
     true: 'DONE',
@@ -332,4 +340,7 @@ OnlyForBanner.defaultProps = {
   permission: '',
   cohortSession: {},
   profile: {},
+};
+DOMComponent.propTypes = {
+  children: PropTypes.node.isRequired,
 };
