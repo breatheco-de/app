@@ -27,15 +27,16 @@ const Module = ({
   const [showModal, setShowModal] = useState(false);
   const toast = useToast();
   const router = useRouter();
+  const { locale } = router;
 
   const {
     type, title, icon, target, url,
   } = data;
 
   const pathConnector = {
-    lesson: `${router.locale === 'en' ? '4geeks.com/lesson' : `4geeks.com/${router.locale}/lesson`}`,
-    exercise: `${router.locale === 'en' ? '4geeks.com/interactive-exercise' : `4geeks.com/${router.locale}/interactive-exercise`}`,
-    project: `${router.locale === 'en' ? '4geeks.com/project' : `4geeks.com/${router.locale}/project`}`,
+    lesson: `${locale === 'en' ? '4geeks.com/lesson' : `4geeks.com/${locale}/lesson`}`,
+    exercise: `${locale === 'en' ? '4geeks.com/interactive-exercise' : `4geeks.com/${locale}/interactive-exercise`}`,
+    project: `${locale === 'en' ? '4geeks.com/project' : `4geeks.com/${locale}/project`}`,
     quiz: 'https://assessment.4geeks.com/quiz',
   };
 
@@ -58,7 +59,7 @@ const Module = ({
     {
       name: 'twitter',
       label: 'Twitter',
-      href: `https://twitter.com/share?url=&text=${encodeURIComponent(shareSocialMessage[router.locale])} %23100DaysOfCode%0A%0A${shareLink()}`,
+      href: `https://twitter.com/share?url=&text=${encodeURIComponent(shareSocialMessage[locale])} %23100DaysOfCode%0A%0A${shareLink()}`,
       color: '#1DA1F2',
     },
     {
@@ -79,8 +80,25 @@ const Module = ({
     const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
     if (assetResp?.status < 400) {
       const assetData = await assetResp.data;
-      setCurrentAssetData(assetData);
+      if (assetData?.translations[locale]) {
+        const localeResp = await bc.lesson().getAsset(assetResp?.data?.translations[locale]);
+        const localeData = await localeResp.data;
+        if (localeResp?.status < 400) {
+          setCurrentAssetData(localeData);
+        } else {
+          setCurrentAssetData(assetData);
+        }
+      } else {
+        setCurrentAssetData(assetData);
+      }
       setSettingsOpen(!settingsOpen);
+    } else {
+      toast({
+        title: t('alert-message:something-went-wrong'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
     }
   };
 

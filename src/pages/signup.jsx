@@ -256,7 +256,7 @@ const SignUp = ({ finance }) => {
             4.
           </Heading>
           <Heading size="sm" fontWeight={isFourthStep ? '700' : '500'}>
-            {t('payment-info')}
+            {t('payment')}
           </Heading>
         </Box>
       </Box>

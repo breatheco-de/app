@@ -20,6 +20,7 @@ import { isWindow } from '../../../utils';
 import Image from '../../../common/components/Image';
 import PopoverHandler from '../../../js_modules/assignmentHandler/PopoverHandler';
 import axiosInstance from '../../../axios';
+import handlers from '../../../common/handlers';
 
 const Assignments = () => {
   const { t } = useTranslation('assignments');
@@ -62,24 +63,6 @@ const Assignments = () => {
   const studentDefaultValue = currentStudentList?.filter(
     (l) => l.user.id === Number(router.query.student),
   ).map((l) => l?.user?.id)[0];
-
-  const getStudents = (slug, academyId) => {
-    bc.cohort().getStudents(slug, academyId)
-      .then(({ data }) => {
-        const activeStudents = data.filter((l) => l.educational_status === 'ACTIVE' && l.role === 'STUDENT');
-        const sortedStudents = activeStudents.sort(
-          (a, b) => a.user.first_name.localeCompare(b.user.first_name),
-        );
-        setCurrentStudentList(sortedStudents);
-      }).catch(() => {
-        toast({
-          title: t('alert-message:error-fetching-students'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-      });
-  };
 
   const getFilterAssignments = (cohortId, academyId, studentId) => {
     setLoadStatus({ loading: true, status: 'loading' });
@@ -129,32 +112,28 @@ const Assignments = () => {
   };
 
   useEffect(() => {
-    if (cohortSession?.cohort_role && cohortSession?.cohort_role === 'STUDENT') {
-      router.push('/choose-program');
-    } else {
-      bc.admissions().me()
-        .then(({ data }) => {
-          const cohortFiltered = data.cohorts.filter((cohort) => cohort.role !== 'STUDENT');
-          const dataStruct = cohortFiltered.map((l) => ({
-            label: l.cohort.name,
-            slug: l.cohort.slug,
-            value: l.cohort.id,
-            academy: l.cohort.academy.id,
-          }));
-          setAllCohorts(dataStruct.sort(
-            (a, b) => a.label.localeCompare(b.label),
-          ));
-        })
-        .catch((error) => {
-          toast({
-            title: t('alert-message:error-fetching-cohorts'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
-          console.error('There was an error fetching the cohorts', error);
+    bc.admissions().me()
+      .then(({ data }) => {
+        const cohortFiltered = data.cohorts.filter((cohort) => cohort.role !== 'STUDENT');
+        const dataStruct = cohortFiltered.map((l) => ({
+          label: l.cohort.name,
+          slug: l.cohort.slug,
+          value: l.cohort.id,
+          academy: l.cohort.academy.id,
+        }));
+        setAllCohorts(dataStruct.sort(
+          (a, b) => a.label.localeCompare(b.label),
+        ));
+      })
+      .catch((error) => {
+        toast({
+          title: t('alert-message:error-fetching-cohorts'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
         });
-    }
+        console.error('There was an error fetching the cohorts', error);
+      });
   }, []);
 
   useEffect(() => {
@@ -169,7 +148,18 @@ const Assignments = () => {
     if (cohortId) {
       axiosInstance.defaults.headers.common.Academy = currentCohort.academy;
       setSelectedCohort(currentCohort);
-      getStudents(slug, academyId);
+      handlers.getStudents(slug, academyId)
+        .then((students) => {
+          setCurrentStudentList(students);
+        })
+        .catch(() => {
+          toast({
+            title: t('alert-message:error-fetching-students'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
+        });
       getFilterAssignments(cohortId, academyId, router.query.student);
     }
     if (!cohortId && allCohorts.length > 0) {

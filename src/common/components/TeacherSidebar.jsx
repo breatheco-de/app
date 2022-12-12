@@ -152,18 +152,20 @@ const TeacherSidebar = ({
           </ItemButton> */}
         </Box>
 
-        <AttendanceModal
-          isOpen={openAttendance}
-          students={students}
-          sortedAssignments={sortedAssignments}
-          onClose={() => setOpenAttendance(false)}
-          title={t('attendance-modal.start-today-class')}
-          // title="Start your today's class"
-          currentCohortProps={currentCohortProps}
-          setCurrentCohortProps={setCurrentCohortProps}
-          message={greetings[router.locale]}
-          width="100%"
-        />
+        {openAttendance && (
+          <AttendanceModal
+            isOpen={openAttendance}
+            students={students}
+            sortedAssignments={sortedAssignments}
+            onClose={() => setOpenAttendance(false)}
+            title={t('attendance-modal.start-today-class')}
+            // title="Start your today's class"
+            currentCohortProps={currentCohortProps}
+            setCurrentCohortProps={setCurrentCohortProps}
+            message={greetings[router.locale]}
+            width="100%"
+          />
+        )}
       </Box>
     </Box>
   );
