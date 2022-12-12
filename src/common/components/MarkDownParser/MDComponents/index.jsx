@@ -8,6 +8,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import ReactDOMServer from 'react-dom/server';
 import BeforeAfterSlider from '../../BeforeAfterSlider';
 import Heading from '../../Heading';
 import OnlyFor from '../../OnlyFor';
@@ -163,31 +164,22 @@ export const MDCheckbox = ({
 }) => {
   const childrenData = children[1]?.props?.children || children;
 
-  const getNodeText = (node) => {
-    // text inside strong tag
-    if (node?.props?.node?.children?.length > 0) {
-      for (let i = 0; i < node?.props?.node?.children?.length; i += 1) {
-        if (node?.props?.node?.children[i]?.tagName === 'strong') {
-          return node?.props?.node?.children[i]?.children[0]?.value;
-        }
-      }
-    }
-    if (typeof node === 'string') {
-      return node;
-    }
-    if (node?.props?.children) {
-      return node?.props?.children[0];
-    }
-    if (node?.props?.node?.children) {
-      return node?.props?.node?.children[0]?.value;
+  const cleanedChildren = childrenData.length > 0 && childrenData.filter((l) => l.type !== 'input');
+  const Component = () => <Box>{cleanedChildren}</Box>;
+  const domElement = <Component />;
+
+  const renderToStringClient = () => {
+    if (typeof window !== 'undefined') {
+      const html = ReactDOMServer.renderToString(domElement);
+      const parser = typeof DOMParser !== 'undefined' && new DOMParser();
+      const doc = parser ? parser.parseFromString(html, 'text/html') : null;
+      const textContent = doc?.body?.textContent || '';
+      return textContent;
     }
     return '';
   };
 
-  const textChilds = children.map((_, i) => getNodeText(children[i]));
-  const text = textChilds.join('');
-
-  const cleanedChildren = childrenData.length > 0 && childrenData.filter((l) => l.type !== 'input');
+  const text = renderToStringClient();
 
   const slug = typeof text === 'string' && slugify(text);
   const currentSubTask = subTasks.length > 0 && subTasks.filter((task) => task?.id === slug);
