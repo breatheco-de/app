@@ -127,17 +127,21 @@ export default function HowToSlug({ data, markdown }) {
     const aliasList = await alias.json();
     const redirectSlug = aliasList[slug] || slug;
     const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
-    const redirectResults = await dataRedirect.json();
 
-    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-    const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || data?.slug || slug}`;
-    const pagePath = 'how-to';
+    if (dataRedirect && dataRedirect?.status >= 400) {
+      router.push('/404');
+    } else {
+      const redirectResults = await dataRedirect.json();
+      const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+      const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || data?.slug || slug}`;
+      const pagePath = 'how-to';
 
-    const aliasRedirect = aliasList[slug] !== undefined && userPathName;
+      const aliasRedirect = aliasList[slug] !== undefined && userPathName;
 
-    publicRedirectByAsset({
-      router, aliasRedirect, translations, userPathName, pagePath,
-    });
+      publicRedirectByAsset({
+        router, aliasRedirect, translations, userPathName, pagePath,
+      });
+    }
     return () => {};
   }, [router, router.locale, translations]);
 
