@@ -27,7 +27,7 @@ const PaymentInfo = () => {
     cvc: 0,
   });
 
-  const { borderColor } = useStyle();
+  const { borderColor, fontColor } = useStyle();
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
 
   const infoValidation = Yup.object().shape({
@@ -69,137 +69,144 @@ const PaymentInfo = () => {
 
   return (
     <>
-      <Box display="flex">
-        <Heading size="18px">{t('payment')}</Heading>
-      </Box>
-
       <Box display="flex" gridGap="35px" flexDirection={{ base: 'column-reverse', md: 'row' }} position="relative">
-        <Formik
-          initialValues={{
-            owner_name: '',
-            card_number: '',
-            exp: '',
-            cvc: '',
-          }}
-          onSubmit={(values, actions) => {
-            const expMonth = values.exp.split('/')[0];
-            const expYear = values.exp.split('/')[1];
-            const allValues = {
-              card_number: stateCard.card_number,
-              exp_month: expMonth,
-              exp_year: expYear,
-              cvc: values.cvc,
-            };
-            handleSubmit(actions, allValues);
-          }}
-          validationSchema={infoValidation}
-        >
-          {({ isSubmitting }) => (
-            <Form
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gridGap: '22px',
-                flex: 0.5,
-              }}
-            >
-              <Box display="flex" gridGap="18px">
-                <FieldForm
-                  type="text"
-                  name="owner_name"
-                  externValue={paymentInfo.owner_name}
-                  handleOnChange={(e) => {
-                    setPaymentInfo('owner_name', e.target.value);
-                    setStateCard({ ...stateCard, owner_name: e.target.value });
-                  }}
-                  pattern="[A-Za-z ]*"
-                  label={t('owner-name')}
-                />
-              </Box>
-              <Box display="flex" gridGap="18px">
-                <FieldForm
-                  type="text"
-                  name="card_number"
-                  externValue={paymentInfo.card_number}
-                  handleOnChange={(e) => {
-                    const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
-                    const newValue = value.replace(/(.{4})/g, '$1 ').trim();
-                    e.target.value = newValue.slice(0, 19);
-                    setPaymentInfo('card_number', e.target.value);
-                    setStateCard({ ...stateCard, card_number: newValue.replaceAll(' ', '').slice(0, 16) });
-                  }}
-                  pattern="[0-9]*"
-                  label={t('card-number')}
-                />
-              </Box>
-              <Box display="flex" gridGap="18px">
-                <Box display="flex" gridGap="18px" flex={1}>
+        <Box display="flex" flexDirection="column" flex={0.5}>
+          <Heading size="18px">{t('payment-info')}</Heading>
+          <Box
+            as="hr"
+            width="20%"
+            margin="12px 0 18px 0"
+            border="0px"
+            h="1px"
+            background={fontColor}
+          />
+
+          <Formik
+            initialValues={{
+              owner_name: '',
+              card_number: '',
+              exp: '',
+              cvc: '',
+            }}
+            onSubmit={(values, actions) => {
+              const expMonth = values.exp.split('/')[0];
+              const expYear = values.exp.split('/')[1];
+              const allValues = {
+                card_number: stateCard.card_number,
+                exp_month: expMonth,
+                exp_year: expYear,
+                cvc: values.cvc,
+              };
+              handleSubmit(actions, allValues);
+            }}
+            validationSchema={infoValidation}
+          >
+            {({ isSubmitting }) => (
+              <Form
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gridGap: '22px',
+                }}
+              >
+                <Box display="flex" gridGap="18px">
                   <FieldForm
                     type="text"
-                    name="exp"
-                    externValue={paymentInfo.exp}
+                    name="owner_name"
+                    externValue={paymentInfo.owner_name}
                     handleOnChange={(e) => {
-                      const value = e.target.value.replace(/\s/g, '').replace(/[^0-9 /]/g, '');
-                      e.target.value = value.slice(0, 5);
-
-                      if (e.target.value.length === 2) {
-                        e.target.value += '/';
-                      }
-
-                      setPaymentInfo('exp', e.target.value);
+                      setPaymentInfo('owner_name', e.target.value);
+                      setStateCard({ ...stateCard, owner_name: e.target.value });
                     }}
-                    pattern="\d{2}/\d{2}"
-                    label={t('expiration-date')}
-                  />
-                  <FieldForm
-                    type="text"
-                    name="cvc"
-                    externValue={paymentInfo.cvc}
-                    maxLength={3}
-                    handleOnChange={(e) => {
-                      const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
-                      const newValue = value.replace(/(.{3})/g, '$1 ').trim();
-                      e.target.value = newValue.slice(0, 3);
-
-                      setPaymentInfo('cvc', e.target.value);
-                    }}
-                    pattern="[0-9]*"
-                    label={t('cvc')}
+                    pattern="[A-Za-z ]*"
+                    label={t('owner-name')}
                   />
                 </Box>
-              </Box>
-              <Box position="absolute" bottom="-60px" right="0">
-                {!planData?.type?.includes('trial') && (
-                  <Button
-                    type="submit"
-                    variant="default"
-                    isLoading={isSubmitting}
-                    height="45px"
-                    mt="12px"
-                  >
-                    {t('common:proceed-to-payment')}
-                  </Button>
-                )}
-                {planData?.type?.includes('trial') && (
-                  <Button
-                    type="submit"
-                    variant="outline"
-                    borderColor="blue.200"
-                    isLoading={isSubmitting}
-                    background={featuredBackground}
-                    _hover={{ background: featuredBackground, opacity: 0.8 }}
-                    _active={{ background: featuredBackground, opacity: 1 }}
-                    color="blue.default"
-                    height="45px"
-                    mt="12px"
-                  >
-                    {t('common:start-free-trial')}
-                  </Button>
-                )}
-              </Box>
-            </Form>
-          )}
-        </Formik>
+                <Box display="flex" gridGap="18px">
+                  <FieldForm
+                    type="text"
+                    name="card_number"
+                    externValue={paymentInfo.card_number}
+                    handleOnChange={(e) => {
+                      const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
+                      const newValue = value.replace(/(.{4})/g, '$1 ').trim();
+                      e.target.value = newValue.slice(0, 19);
+                      setPaymentInfo('card_number', e.target.value);
+                      setStateCard({ ...stateCard, card_number: newValue.replaceAll(' ', '').slice(0, 16) });
+                    }}
+                    pattern="[0-9]*"
+                    label={t('card-number')}
+                  />
+                </Box>
+                <Box display="flex" gridGap="18px">
+                  <Box display="flex" gridGap="18px" flex={1}>
+                    <FieldForm
+                      type="text"
+                      name="exp"
+                      externValue={paymentInfo.exp}
+                      handleOnChange={(e) => {
+                        const value = e.target.value.replace(/\s/g, '').replace(/[^0-9 /]/g, '');
+                        e.target.value = value.slice(0, 5);
+
+                        if (e.target.value.length === 2) {
+                          e.target.value += '/';
+                        }
+
+                        setPaymentInfo('exp', e.target.value);
+                      }}
+                      pattern="\d{2}/\d{2}"
+                      label={t('expiration-date')}
+                    />
+                    <FieldForm
+                      type="text"
+                      name="cvc"
+                      externValue={paymentInfo.cvc}
+                      maxLength={3}
+                      handleOnChange={(e) => {
+                        const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
+                        const newValue = value.replace(/(.{3})/g, '$1 ').trim();
+                        e.target.value = newValue.slice(0, 3);
+
+                        setPaymentInfo('cvc', e.target.value);
+                      }}
+                      pattern="[0-9]*"
+                      label={t('cvc')}
+                    />
+                  </Box>
+                </Box>
+                <Box position="absolute" bottom="-100px" right="0">
+                  {!planData?.type?.includes('trial') && (
+                    <Button
+                      type="submit"
+                      variant="default"
+                      isLoading={isSubmitting}
+                      height="40px"
+                      mt="0"
+                    >
+                      {t('common:proceed-to-payment')}
+                    </Button>
+                  )}
+                  {planData?.type?.includes('trial') && (
+                    <Button
+                      type="submit"
+                      variant="outline"
+                      borderColor="blue.200"
+                      isLoading={isSubmitting}
+                      background={featuredBackground}
+                      _hover={{ background: featuredBackground, opacity: 0.8 }}
+                      _active={{ background: featuredBackground, opacity: 1 }}
+                      color="blue.default"
+                      height="40px"
+                      mt="0"
+                    >
+                      {t('common:start-free-trial')}
+                    </Button>
+                  )}
+                </Box>
+              </Form>
+            )}
+          </Formik>
+        </Box>
         <Box
           display="flex"
           flexDirection="column"

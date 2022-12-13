@@ -395,8 +395,8 @@ const Summary = ({
                     width="100%"
                     justifyContent="space-between"
                     // p={selectedIndex === i ? '22px 18px' : '26px 22px'}
-                    p="22px 18px"
-                    gridGap="12px"
+                    p={{ base: '8px 14px', md: '22px 18px' }}
+                    gridGap={{ base: '0', md: '12px' }}
                     cursor="pointer"
                     // background={selectedIndex !== i && featuredColor}
                     border={selectedIndex === i ? '2px solid #0097CD' : '2px solid transparent'}
@@ -406,7 +406,7 @@ const Summary = ({
                       display="flex"
                       flex={1}
                       flexDirection="column"
-                      gridGap="4px"
+                      gridGap={{ base: '0', md: '4px' }}
                       minWidth={{ base: '100%', md: '288px' }}
                       height="fit-content"
                       fontWeight="400"

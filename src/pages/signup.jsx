@@ -140,9 +140,9 @@ const SignUp = ({ finance }) => {
   }, [user?.id, cohort]);
 
   return (
-    <Box p="2.5rem 2rem">
+    <Box p={{ base: '"2.5rem 1rem"', md: '2.5rem 2rem' }}>
       {/* Stepper */}
-      <Box display="flex" gridGap="38px" justifyContent="center">
+      <Box display="flex" gridGap="38px" justifyContent="center" overflow="auto">
         <Box
           display="flex"
           gridGap="8px"
@@ -264,10 +264,11 @@ const SignUp = ({ finance }) => {
       <Box
         display="flex"
         flexDirection="column"
-        gridGap="20px"
+        gridGap={{ base: '60px', md: '20px' }}
         minHeight="320px"
         maxWidth={{ base: '100%', md: '800px' }}
         margin="3.5rem auto 0 auto"
+        padding="0 10px"
       >
         {isFirstStep && (
           <ContactInformation
