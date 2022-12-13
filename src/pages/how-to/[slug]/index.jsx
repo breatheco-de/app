@@ -108,7 +108,13 @@ export default function HowToSlug({ data, markdown }) {
   const linkColor = useColorModeValue('blue.default', 'blue.300');
 
   useEffect(() => {
-    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`)
+    if (data?.category?.slug !== 'how-to' || data?.category?.slug !== 'como') {
+      router.push('/404');
+    }
+  }, [data]);
+
+  useEffect(() => {
+    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`)
       .then((res) => {
         let currentlocaleLang = res.data.translations[language];
         if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
@@ -128,9 +134,9 @@ export default function HowToSlug({ data, markdown }) {
     const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
     const aliasList = await alias.json();
     const redirectSlug = aliasList[slug] || slug;
-    const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
-    const redirectResults = await dataRedirect.json();
+    const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
 
+    const redirectResults = await dataRedirect.json();
     const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
     const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || data?.slug || slug}`;
     const pagePath = 'how-to';
