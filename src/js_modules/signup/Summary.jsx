@@ -13,10 +13,9 @@ import useSignup from '../../common/store/actions/signupAction';
 const Summary = ({
   formProps,
   courseTitle,
-  planProps,
+  // planProps,
 }) => {
   const { t } = useTranslation('signup');
-  const { borderColor } = useStyle();
   const router = useRouter();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const {
@@ -120,7 +119,7 @@ const Summary = ({
   const fontColor = useColorModeValue('gray.800', 'gray.300');
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const borderColor2 = useColorModeValue('black', 'white');
-  const { backgroundColor } = useStyle();
+  const { backgroundColor, borderColor } = useStyle();
 
   useEffect(() => {
     if (typeof selectedIndex === 'number') {
@@ -129,9 +128,9 @@ const Summary = ({
   }, []);
 
   const handleSubmit = () => {
-    if (planData.type) {
+    if (planData?.type) {
+      // TODO: Maybe we need to update checking when selects another plan
       nextStep();
-      console.log('planData:::', planData);
     }
   };
   return (
@@ -305,24 +304,25 @@ const Summary = ({
             </Box>
             <Box display="flex" flexDirection="column" gridGap="7px">
               <Heading size="18px">{courseTitle}</Heading>
-              {planProps?.payment && (
+              {planData?.description && (
                 <Heading
                   size="15px"
                   textTransform="uppercase"
                   color={useColorModeValue('gray.500', 'gray.400')}
                 >
-                  {planProps?.payment}
+                  {planData?.description}
                 </Heading>
               )}
             </Box>
-            {planProps?.price && (
+            {planData?.price && (
               <Heading
-                size="sm"
+                size="m"
+                margin="0 26px 0 auto"
                 color="blue.default"
                 textTransform="uppercase"
                 textAlign="end"
               >
-                {planProps?.price}
+                {planData?.price}
               </Heading>
             )}
           </Box>
@@ -333,9 +333,9 @@ const Summary = ({
             h="1px"
             borderColor={borderColor}
           />
-          {planProps?.bullets?.title && (
+          {planData?.bullets?.title && (
             <Box fontSize="14px" fontWeight="700" color="blue.default">
-              {planProps?.bullets?.title}
+              {planData?.bullets?.title}
             </Box>
           )}
           <Box
@@ -345,7 +345,7 @@ const Summary = ({
             flexDirection="column"
             gridGap="12px"
           >
-            {planProps?.bullets?.list?.map((bullet) => (
+            {planData?.bullets?.list?.map((bullet) => (
               <Box
                 as="li"
                 key={bullet?.title}
@@ -439,7 +439,7 @@ const Summary = ({
               ))}
           </Box>
         </Box>
-        {!planProps.type?.includes('trial') && (
+        {!planData?.type?.includes('trial') && (
           <Button
             variant="default"
             onClick={handleSubmit}
@@ -449,7 +449,7 @@ const Summary = ({
             {t('common:proceed-to-payment')}
           </Button>
         )}
-        {planProps.type?.includes('trial') && (
+        {planData?.type?.includes('trial') && (
           <Button
             variant="outline"
             borderColor="blue.200"
@@ -470,7 +470,7 @@ const Summary = ({
 
 Summary.propTypes = {
   formProps: PropTypes.objectOf(PropTypes.any).isRequired,
-  planProps: PropTypes.objectOf(PropTypes.any).isRequired,
+  // planProps: PropTypes.objectOf(PropTypes.any).isRequired,
   courseTitle: PropTypes.string.isRequired,
 };
 

@@ -65,7 +65,7 @@ const SignUp = ({ finance }) => {
   const accessToken = getStorageItem('accessToken');
   const { user, isLoading } = useAuth();
 
-  console.log('state:::', state);
+  console.log('redux state:', state);
 
   const toast = useToast();
 

@@ -12,6 +12,7 @@
   "summary": "Resumen",
   "payment": "Completar pago",
   "card-number": "Número de tarjeta",
+  "owner-name": "Nombre del propietario",
   "expiration-date": "Fecha de expiración",
   "cvc": "CVC",
   "about-you": "Acerca de ti",
@@ -35,6 +36,10 @@
   "already-have-account": "¿Ya tienes una cuenta?",
   "login-here": "Inicia sesión aquí.",
   "validators": {
+    "owner_name-required": "El nombre del propietario es requerido",
+    "card_number-required": "El número de tarjeta es requerido",
+    "exp-required": "La fecha de expiración es requerida",
+    "cvc-required": "El CVC es requerido",
     "short-input": "¡Demasiado corto!",
     "long-input": "Demasiado largo!",
     "first-name-required": "El nombre es requerido",
