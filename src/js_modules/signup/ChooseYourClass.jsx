@@ -13,9 +13,10 @@ import Text from '../../common/components/Text';
 import AlertMessage from '../../common/components/AlertMessage';
 import { getTimeProps } from '../../utils';
 import useGoogleMaps from '../../common/hooks/useGoogleMaps';
+import useSignup from '../../common/store/actions/signupAction';
 
 const ChooseYourClass = ({
-  isSecondStep, courseChoosed, handleChooseDate, setLocation, loader,
+  courseChoosed,
 }) => {
   const { t } = useTranslation('signup');
   const [cohortIsLoading, setCohortIsLoading] = useState(true);
@@ -29,6 +30,8 @@ const ChooseYourClass = ({
   const inputRef = useRef();
   const buttonRef = useRef();
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
+  const { state, isSecondStep, setLocation, handleChooseDate } = useSignup();
+  const { loader } = state;
 
   const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(
     GOOGLE_KEY,

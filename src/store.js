@@ -7,6 +7,7 @@ import todosReducer from './common/store/reducers/todoReducer';
 import moduleMapReducer from './common/store/reducers/moduleMapReducer';
 import filterReducer from './common/store/reducers/filterReducer';
 import assignmentsReducer from './common/store/reducers/assignmentsReducer';
+import signupReducer from './common/store/reducers/signupReducer';
 
 const bindMiddleware = (middleware) => {
   if (process.env.NODE_ENV !== 'production') {
@@ -21,6 +22,7 @@ const combinedReducer = combineReducers({
   moduleMapReducer,
   filterReducer,
   assignmentsReducer,
+  signupReducer,
 });
 
 const reducer = (state, action) => {

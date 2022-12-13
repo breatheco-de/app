@@ -19,6 +19,7 @@ import ChooseYourClass from '../js_modules/signup/ChooseYourClass';
 import { isWindow, getStorageItem, getTimeProps, removeURLParameter } from '../utils';
 import Summary from '../js_modules/signup/Summary';
 import PaymentInfo from '../js_modules/signup/PaymentInfo';
+import useSignup from '../common/store/actions/signupAction';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -54,16 +55,17 @@ export const getStaticProps = async ({ locale, locales }) => {
 const SignUp = ({ finance }) => {
   const { t } = useTranslation('signup');
   const router = useRouter();
-  const [stepIndex, setStepIndex] = useState(0);
-  const [dateProps, setDateProps] = useState(null);
-  const [checkoutData, setCheckoutData] = useState(null);
-  const [location, setLocation] = useState(null);
-  const [paymentInfo, setPaymentInfo] = useState({});
-  const [loader, setLoader] = useState({
-    date: false,
-  });
+  const {
+    state, nextStep, prevStep, handleStep, setDateProps, handleChooseDate,
+    isFirstStep, isSecondStep, isThirdStep, isFourthStep,
+  } = useSignup();
+
+  const { stepIndex, dateProps, checkoutData } = state;
+
   const accessToken = getStorageItem('accessToken');
   const { user, isLoading } = useAuth();
+
+  console.log('Redux state:', state);
 
   const toast = useToast();
 
@@ -85,78 +87,6 @@ const SignUp = ({ finance }) => {
   });
 
   const queryCohortIdExists = cohort !== undefined && cohort?.length > 0;
-  const isFirstStep = stepIndex === 0; // Contact
-  const isSecondStep = stepIndex === 1; // Choose your class
-  const isThirdStep = stepIndex === 2; // Payment info
-  const isFourthStep = stepIndex === 3; // Summary
-
-  const handlePayment = () => {
-    bc.payment().pay2({
-      type: checkoutData.type,
-      token: checkoutData.token,
-      chosen_period: 'HALF',
-    })
-      .then((response) => {
-        if (response.data.status === 'FULFILLED') {
-          router.push('/choose-program');
-        }
-        console.log('Payment_response:', response);
-      })
-      .catch(() => {
-        toast({
-          title: t('alert-message:payment-error'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-      });
-  };
-
-  const handleChooseDate = (cohortData) => {
-    setLoader((prev) => ({ ...prev, date: true }));
-
-    const { kickoffDate, weekDays, availableTime } = getTimeProps(cohortData);
-    setDateProps({
-      ...cohortData,
-      kickoffDate,
-      weekDays,
-      availableTime,
-    });
-
-    // bc.payment().getCard()
-    //   .then((res) => {
-    //     console.log('getCard:::', res);
-    //   })
-    //   .catch((err) => {
-    //     console.log('getCard_ERR:::', err);
-    //   });
-
-    bc.payment().checking({
-      type: 'PREVIEW',
-      cohort: cohortData.id,
-      academy: cohortData?.academy.id,
-    })
-      .then((response) => {
-        if (response.status < 400) {
-          setCheckoutData(response.data);
-          // if (response.data.type === 'PREVIEW') {
-          //   setStepIndex(3);
-          // } else {
-          //   setStepIndex(2);
-          // }
-          setStepIndex(2);
-        }
-      })
-      .catch(() => {
-        toast({
-          title: t('alert-message:something-went-wrong-choosing-date'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-      })
-      .finally(() => setLoader((prev) => ({ ...prev, date: false })));
-  };
 
   useEffect(async () => {
     if (!dateProps?.id && queryCohortIdExists) {
@@ -182,12 +112,7 @@ const SignUp = ({ finance }) => {
       }
     }
     if (user?.id && !isLoading && queryCohortIdExists && checkoutData?.type) {
-      // if (isPreview) {
-      //   setStepIndex(3);
-      // } else {
-      //   setStepIndex(2);
-      // }
-      setStepIndex(2);
+      handleStep(2);
     }
   }, [cohort, user?.id, accessToken]);
 
@@ -195,24 +120,16 @@ const SignUp = ({ finance }) => {
     if (dateProps?.id && accessToken) {
       handleChooseDate(dateProps);
     }
-  }, [dateProps?.id, accessToken]);
+  }, [dateProps?.id, accessToken, router?.locale]);
 
   useEffect(() => {
     if (user?.id && !isLoading) {
-      // if queryString token exists remove it from the url
+      // if queryString token exists clean it from the url
       if (router.query.token) {
         const cleanTokenQuery = isWindow && removeURLParameter(window.location.href, 'token');
         router.push(cleanTokenQuery);
-
-        // bc.auth().subscribeToken(accessToken)
-        //   .then((res) => {
-        //     console.log('subscribeToken:::', res);
-        //   })
-        //   .finally(() => {
-        //     router.push(cleanTokenQuery);
-        //   });
       }
-      if (!queryCohortIdExists) setStepIndex(1);
+      if (!queryCohortIdExists) handleStep(1);
       setFormProps({
         first_name: user.first_name,
         last_name: user.last_name,
@@ -223,9 +140,9 @@ const SignUp = ({ finance }) => {
   }, [user?.id, cohort]);
 
   return (
-    <Box p="2.5rem 2rem">
+    <Box p={{ base: '"2.5rem 1rem"', md: '2.5rem 2rem' }}>
       {/* Stepper */}
-      <Box display="flex" gridGap="38px" justifyContent="center">
+      <Box display="flex" gridGap="38px" justifyContent="center" overflow="auto">
         <Box
           display="flex"
           gridGap="8px"
@@ -311,8 +228,12 @@ const SignUp = ({ finance }) => {
               3.
             </Heading>
           )}
-          <Heading size="sm" fontWeight={isThirdStep ? '700' : '500'}>
-            {t('payment-info')}
+          <Heading
+            size="sm"
+            fontWeight={isThirdStep ? '700' : '500'}
+            color={(isFourthStep) && 'success'}
+          >
+            {t('summary')}
           </Heading>
         </Box>
         <Box
@@ -335,7 +256,7 @@ const SignUp = ({ finance }) => {
             4.
           </Heading>
           <Heading size="sm" fontWeight={isFourthStep ? '700' : '500'}>
-            {t('summary')}
+            {t('payment')}
           </Heading>
         </Box>
       </Box>
@@ -343,50 +264,30 @@ const SignUp = ({ finance }) => {
       <Box
         display="flex"
         flexDirection="column"
-        gridGap="20px"
+        gridGap={{ base: '60px', md: '20px' }}
         minHeight="320px"
         maxWidth={{ base: '100%', md: '800px' }}
         margin="3.5rem auto 0 auto"
+        padding="0 10px"
       >
         {isFirstStep && (
           <ContactInformation
-            stepIndex={stepIndex}
-            setStepIndex={setStepIndex}
             courseChoosed={courseChoosed}
-            location={location}
             queryCohortIdExists={queryCohortIdExists}
-            dateProps={dateProps}
             formProps={formProps}
             setFormProps={setFormProps}
           />
         )}
-        <ChooseYourClass
-          isSecondStep={isSecondStep}
-          courseChoosed={courseChoosed}
-          handleChooseDate={handleChooseDate}
-          setLocation={setLocation}
-          loader={loader}
-        />
+        <ChooseYourClass courseChoosed={courseChoosed} />
         {isThirdStep && (
           <Summary
-            dateProps={dateProps}
-            checkoutData={checkoutData}
             formProps={formProps}
             courseTitle={courseTitle}
             planProps={planProps}
-            setStepIndex={setStepIndex}
           />
         )}
-        {/* dateProps */}
         {isFourthStep && (
-          <PaymentInfo
-            checkoutData={checkoutData}
-            paymentInfo={paymentInfo}
-            setPaymentInfo={setPaymentInfo}
-            stepIndex={stepIndex}
-            setStepIndex={setStepIndex}
-            handlePayment={handlePayment}
-          />
+          <PaymentInfo />
         )}
 
         <Box display="flex" justifyContent="space-between" mt="auto">
@@ -398,7 +299,7 @@ const SignUp = ({ finance }) => {
               disabled={(queryCohortIdExists && !isFourthStep) || isSecondStep}
               onClick={() => {
                 if (stepIndex > 0) {
-                  setStepIndex(stepIndex - 1);
+                  prevStep();
                 }
               }}
             >
@@ -410,7 +311,7 @@ const SignUp = ({ finance }) => {
               variant="default"
               disabled={dateProps === null}
               onClick={() => {
-                setStepIndex(stepIndex + 1);
+                nextStep();
               }}
             >
               {t('next-step')}
