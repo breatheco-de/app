@@ -14,7 +14,7 @@ import FieldForm from '../../common/components/Forms/FieldForm';
 // import NextChakraLink from '../../common/components/NextChakraLink';
 // import useStyle from '../../common/hooks/useStyle';
 
-const PaymentInfo = ({ paymentInfo, setPaymentInfo, stepIndex, setStepIndex }) => {
+const PaymentInfo = ({ paymentInfo, setPaymentInfo, handlePayment }) => {
   const { t } = useTranslation('signup');
   const toast = useToast();
   const [stateCard, setStateCard] = useState({
@@ -42,7 +42,7 @@ const PaymentInfo = ({ paymentInfo, setPaymentInfo, stepIndex, setStepIndex }) =
     bc.payment().addCard2(values)
       .then((resp) => {
         if (resp) {
-          setStepIndex(stepIndex + 1);
+          handlePayment();
         }
       })
       .catch(() => {
@@ -169,18 +169,16 @@ const PaymentInfo = ({ paymentInfo, setPaymentInfo, stepIndex, setStepIndex }) =
 };
 
 PaymentInfo.propTypes = {
-  stepIndex: PropTypes.number.isRequired,
-  setStepIndex: PropTypes.func,
   paymentInfo: PropTypes.shape({
     card_number: PropTypes.string,
     exp: PropTypes.string,
     cvc: PropTypes.string,
   }),
   setPaymentInfo: PropTypes.func,
+  handlePayment: PropTypes.func.isRequired,
 };
 
 PaymentInfo.defaultProps = {
-  setStepIndex: () => {},
   setPaymentInfo: () => {},
   paymentInfo: {
     card_number: '',

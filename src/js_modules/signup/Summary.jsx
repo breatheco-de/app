@@ -1,4 +1,4 @@
-import { Box, Button, useColorModeValue, useToast } from '@chakra-ui/react';
+import { Box, Button, useColorModeValue } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -6,41 +6,42 @@ import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
-import bc from '../../common/services/breathecode';
+// import bc from '../../common/services/breathecode';
 
 const Summary = ({
-  dateProps, formProps, courseTitle, planProps, checkoutData,
+  dateProps, formProps, courseTitle, planProps, setStepIndex,
 }) => {
   const { t } = useTranslation('signup');
   const { borderColor } = useStyle();
   const router = useRouter();
-  const toast = useToast();
+  // const toast = useToast();
 
   // console.log('checkoutData:::', checkoutData);
   const fontColor = useColorModeValue('gray.800', 'gray.300');
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const borderColor2 = useColorModeValue('black', 'white');
 
-  const handlePayment = () => {
-    bc.payment().pay2({
-      type: checkoutData.type,
-      token: checkoutData.token,
-      chosen_period: 'HALF',
-    })
-      .then((response) => {
-        if (response.data.status === 'FULFILLED') {
-          router.push('/choose-program');
-        }
-        console.log('Payment_response:', response);
-      })
-      .catch(() => {
-        toast({
-          title: t('alert-message:payment-error'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-      });
+  const handleSubmit = () => {
+    setStepIndex((prev) => prev + 1);
+    // bc.payment().pay2({
+    //   type: checkoutData.type,
+    //   token: checkoutData.token,
+    //   chosen_period: 'HALF',
+    // })
+    //   .then((response) => {
+    //     if (response.data.status === 'FULFILLED') {
+    //       router.push('/choose-program');
+    //     }
+    //     console.log('Payment_response:', response);
+    //   })
+    //   .catch(() => {
+    //     toast({
+    //       title: t('alert-message:payment-error'),
+    //       status: 'error',
+    //       duration: 7000,
+    //       isClosable: true,
+    //     });
+    //   });
   };
   return (
     <Box
@@ -278,7 +279,7 @@ const Summary = ({
           </Box>
         </Box>
         {!planProps.type?.includes('trial') && (
-          <Button variant="default" onClick={handlePayment} height="45px" mt="12px">
+          <Button variant="default" onClick={handleSubmit} height="45px" mt="12px">
             {t('common:proceed-to-payment')}
           </Button>
         )}
@@ -306,7 +307,7 @@ Summary.propTypes = {
   formProps: PropTypes.objectOf(PropTypes.any).isRequired,
   planProps: PropTypes.objectOf(PropTypes.any).isRequired,
   courseTitle: PropTypes.string.isRequired,
-  checkoutData: PropTypes.objectOf(PropTypes.any).isRequired,
+  setStepIndex: PropTypes.func.isRequired,
 };
 
 export default Summary;

@@ -90,6 +90,28 @@ const SignUp = ({ finance }) => {
   const isThirdStep = stepIndex === 2; // Payment info
   const isFourthStep = stepIndex === 3; // Summary
 
+  const handlePayment = () => {
+    bc.payment().pay2({
+      type: checkoutData.type,
+      token: checkoutData.token,
+      chosen_period: 'HALF',
+    })
+      .then((response) => {
+        if (response.data.status === 'FULFILLED') {
+          router.push('/choose-program');
+        }
+        console.log('Payment_response:', response);
+      })
+      .catch(() => {
+        toast({
+          title: t('alert-message:payment-error'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
+      });
+  };
+
   const handleChooseDate = (cohortData) => {
     setLoader((prev) => ({ ...prev, date: true }));
 
@@ -346,21 +368,24 @@ const SignUp = ({ finance }) => {
           loader={loader}
         />
         {isThirdStep && (
-          <PaymentInfo
-            paymentInfo={paymentInfo}
-            setPaymentInfo={setPaymentInfo}
-            stepIndex={stepIndex}
-            setStepIndex={setStepIndex}
-          />
-        )}
-        {/* dateProps */}
-        {isFourthStep && (
           <Summary
             dateProps={dateProps}
             checkoutData={checkoutData}
             formProps={formProps}
             courseTitle={courseTitle}
             planProps={planProps}
+            setStepIndex={setStepIndex}
+          />
+        )}
+        {/* dateProps */}
+        {isFourthStep && (
+          <PaymentInfo
+            checkoutData={checkoutData}
+            paymentInfo={paymentInfo}
+            setPaymentInfo={setPaymentInfo}
+            stepIndex={stepIndex}
+            setStepIndex={setStepIndex}
+            handlePayment={handlePayment}
           />
         )}
 
@@ -370,7 +395,7 @@ const SignUp = ({ finance }) => {
               variant="outline"
               borderColor="currentColor"
               color="blue.default"
-              disabled={queryCohortIdExists || isSecondStep}
+              disabled={(queryCohortIdExists && !isFourthStep) || isSecondStep}
               onClick={() => {
                 if (stepIndex > 0) {
                   setStepIndex(stepIndex - 1);
