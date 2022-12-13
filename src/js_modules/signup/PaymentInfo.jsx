@@ -19,7 +19,7 @@ const PaymentInfo = () => {
   const {
     state, setPaymentInfo, handlePayment,
   } = useSignup();
-  const { paymentInfo, planData, dateProps } = state;
+  const { paymentInfo, planData, dateProps, selectedPlanCheckoutData } = state;
   const [stateCard, setStateCard] = useState({
     card_number: 0,
     exp_month: 0,
@@ -234,17 +234,17 @@ const PaymentInfo = () => {
             </Box>
             <Box display="flex" flexDirection="column" gridGap="7px">
               <Heading size="18px">{dateProps?.syllabus_version?.name}</Heading>
-              {planData?.description && (
+              {selectedPlanCheckoutData?.description && (
                 <Heading
                   size="15px"
                   textTransform="uppercase"
                   color={useColorModeValue('gray.500', 'gray.400')}
                 >
-                  {planData?.description}
+                  {selectedPlanCheckoutData?.description}
                 </Heading>
               )}
             </Box>
-            {planData?.price && (
+            {selectedPlanCheckoutData?.price && (
               <Heading
                 size="m"
                 margin="0 26px 0 auto"
@@ -252,7 +252,7 @@ const PaymentInfo = () => {
                 textTransform="uppercase"
                 textAlign="end"
               >
-                {planData?.price}
+                {`$${selectedPlanCheckoutData?.price}`}
               </Heading>
             )}
           </Box>
@@ -265,7 +265,7 @@ const PaymentInfo = () => {
           />
           {planData?.bullets?.title && (
             <Box fontSize="14px" fontWeight="700" color="blue.default">
-              {planData?.bullets?.title}
+              {t('what-you-will-get')}
             </Box>
           )}
           <Box

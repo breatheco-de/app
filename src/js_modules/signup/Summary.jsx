@@ -1,4 +1,4 @@
-import { Box, Button, useColorModeValue } from '@chakra-ui/react';
+import { Box, Button, useColorModeValue, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -12,16 +12,17 @@ import useSignup from '../../common/store/actions/signupAction';
 
 const Summary = ({
   formProps,
-  courseTitle,
+  // courseTitle,
   // planProps,
 }) => {
   const { t } = useTranslation('signup');
   const router = useRouter();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const {
-    state, nextStep, setPlanData,
+    state, nextStep, setPlanData, setSelectedPlanCheckoutData, handleChecking,
   } = useSignup();
-  const { dateProps, planData } = state;
+  const { dateProps, planData, checkoutData, selectedPlanCheckoutData } = state;
+  const toast = useToast();
   const data = [
     {
       type: 'pro',
@@ -124,15 +125,35 @@ const Summary = ({
   useEffect(() => {
     if (typeof selectedIndex === 'number') {
       setPlanData(data[selectedIndex]);
+      setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
     }
-  }, []);
+  }, [checkoutData?.plan]);
 
   const handleSubmit = () => {
     if (planData?.type) {
       // TODO: Maybe we need to update checking when selects another plan
-      nextStep();
+      handleChecking()
+        .then(() => {
+          nextStep();
+        })
+        .catch(() => {
+          toast({
+            title: 'Something went wrong choosing plan',
+            status: 'error',
+            duration: 6000,
+            isClosable: true,
+          });
+        });
     }
   };
+
+  const existsAmountPerHalf = checkoutData?.amount_per_half > 0;
+  const existsAmountPerMonth = checkoutData?.amount_per_month > 0;
+  const existsAmountPerQuarter = checkoutData?.amount_per_quarter > 0;
+  const existsAmountPerYear = checkoutData?.amount_per_year > 0;
+
+  const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
+
   return (
     <Box
       display="flex"
@@ -277,7 +298,7 @@ const Summary = ({
           </Box>
         </Box>
       </Box>
-      <Box display="flex" flexDirection="column" flex={0.6}>
+      <Box display="flex" flexDirection="column" flex={0.5}>
         <Box
           display="flex"
           flexDirection="column"
@@ -303,18 +324,24 @@ const Summary = ({
               </Box>
             </Box>
             <Box display="flex" flexDirection="column" gridGap="7px">
-              <Heading size="18px">{courseTitle}</Heading>
+              <Heading size="18px">
+                {/* {courseTitle} */}
+                {dateProps?.syllabus_version?.name}
+              </Heading>
+
               {planData?.description && (
                 <Heading
                   size="15px"
                   textTransform="uppercase"
                   color={useColorModeValue('gray.500', 'gray.400')}
                 >
-                  {planData?.description}
+                  {selectedPlanCheckoutData?.description}
+                  {/* {planData?.description} */}
                 </Heading>
               )}
             </Box>
-            {planData?.price && (
+            {/* {planData?.price && (...) */}
+            {selectedPlanCheckoutData?.price && (
               <Heading
                 size="m"
                 margin="0 26px 0 auto"
@@ -322,7 +349,7 @@ const Summary = ({
                 textTransform="uppercase"
                 textAlign="end"
               >
-                {planData?.price}
+                {`$${selectedPlanCheckoutData?.price}`}
               </Heading>
             )}
           </Box>
@@ -375,21 +402,21 @@ const Summary = ({
           <Heading
             size="xsm"
             p="0 0 12px 0"
-            // color="blue.default"
           >
-            Select your payment plan:
+            {t('select-payment-plan')}
           </Heading>
           <Box display="flex" flexDirection="column" gridGap="10px">
-            {data
-              .filter((l) => l.show === true)
+            {/* {data */}
+            {checkoutData?.plans
+              .filter((l) => l.status === 'ACTIVE')
               .map((item, i) => (
-                <Fragment key={`${item.title} ${item?.price}`}>
+                <Fragment key={`${item.slug}`}>
                   <Box
-                    key={item.title}
                     display="flex"
                     onClick={() => {
                       setSelectedIndex(i);
-                      setPlanData(item);
+                      // setPlanData(item);
+                      setSelectedPlanCheckoutData(item);
                     }}
                     flexDirection={{ base: 'column', md: 'row' }}
                     width="100%"
@@ -404,7 +431,6 @@ const Summary = ({
                   >
                     <Box
                       display="flex"
-                      flex={1}
                       flexDirection="column"
                       gridGap={{ base: '0', md: '4px' }}
                       minWidth={{ base: '100%', md: '288px' }}
@@ -418,6 +444,9 @@ const Summary = ({
                         size="md"
                         fontWeight="500"
                         mb="6px"
+                        // dangerouslySetInnerHTML={{
+                        //   __html: item?.description,
+                        // }}
                         dangerouslySetInnerHTML={{
                           __html: item?.description,
                         }}
@@ -431,7 +460,7 @@ const Summary = ({
                         textTransform="uppercase"
                         color="blue.default"
                       >
-                        {item?.price}
+                        {`$${item?.price}`}
                       </Heading>
                     </Box>
                   </Box>
@@ -439,7 +468,30 @@ const Summary = ({
               ))}
           </Box>
         </Box>
-        {!planData?.type?.includes('trial') && (
+        {isNotTrial ? (
+          <Button
+            variant="default"
+            onClick={handleSubmit}
+            height="45px"
+            mt="12px"
+          >
+            {t('common:proceed-to-payment')}
+          </Button>
+        ) : (
+          <Button
+            variant="outline"
+            borderColor="blue.200"
+            background={featuredBackground}
+            _hover={{ background: featuredBackground, opacity: 0.8 }}
+            _active={{ background: featuredBackground, opacity: 1 }}
+            color="blue.default"
+            height="45px"
+            mt="12px"
+          >
+            {t('common:start-free-trial')}
+          </Button>
+        )}
+        {/* {!planData?.type?.includes('trial') && (
           <Button
             variant="default"
             onClick={handleSubmit}
@@ -462,7 +514,7 @@ const Summary = ({
           >
             {t('common:start-free-trial')}
           </Button>
-        )}
+        )} */}
       </Box>
     </Box>
   );
@@ -471,7 +523,7 @@ const Summary = ({
 Summary.propTypes = {
   formProps: PropTypes.objectOf(PropTypes.any).isRequired,
   // planProps: PropTypes.objectOf(PropTypes.any).isRequired,
-  courseTitle: PropTypes.string.isRequired,
+  // courseTitle: PropTypes.string.isRequired,
 };
 
 export default Summary;

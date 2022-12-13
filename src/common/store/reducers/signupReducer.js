@@ -6,7 +6,7 @@
 // const [planData, setPlanData] = useState(null);
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION,
-  SET_PAYMENT_INFO, SET_PLAN_DATA, SET_LOADER,
+  SET_PAYMENT_INFO, SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA,
 } from '../types';
 
 const initialState = {
@@ -20,6 +20,7 @@ const initialState = {
     cvc: '',
   },
   planData: null,
+  selectedPlanCheckoutData: null,
   loader: {
     date: false,
   },
@@ -84,6 +85,12 @@ const signupReducer = (state = initialState, action) => {
       return {
         ...state,
         planData: action.payload,
+      };
+    }
+    case SET_PLAN_CHECKOUT_DATA: {
+      return {
+        ...state,
+        selectedPlanCheckoutData: action.payload,
       };
     }
 

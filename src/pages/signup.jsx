@@ -65,7 +65,7 @@ const SignUp = ({ finance }) => {
   const accessToken = getStorageItem('accessToken');
   const { user, isLoading } = useAuth();
 
-  console.log('redux state:', state);
+  console.log('Redux state:', state);
 
   const toast = useToast();
 
@@ -120,7 +120,7 @@ const SignUp = ({ finance }) => {
     if (dateProps?.id && accessToken) {
       handleChooseDate(dateProps);
     }
-  }, [dateProps?.id, accessToken]);
+  }, [dateProps?.id, accessToken, router?.locale]);
 
   useEffect(() => {
     if (user?.id && !isLoading) {
