@@ -50,13 +50,14 @@ function ChooseProgram({ chooseList, handleChoose }) {
     <>
       {activeCohorts.length > 0 && (
         <Box
-          display="flex"
-          justifyContent="space-between"
-          flexDirection="column"
-          borderRadius="25px"
+          display="grid"
+          // justifyContent="space-between"
+          gridTemplateColumns="repeat(auto-fill, minmax(14rem, 1fr))"
+          // flexDirection="column"
+          // borderRadius="25px"
           height="100%"
           // width={['70%', '68%', '70%', '50%']}
-          gridGap="2px"
+          gridGap="5rem"
         >
           {activeCohorts.map((item, i) => {
             const index = i;
@@ -112,13 +113,14 @@ function ChooseProgram({ chooseList, handleChoose }) {
               </Text>
             </Box>
             <Box
-              display="flex"
-              justifyContent="space-between"
-              flexDirection="column"
-              borderRadius="25px"
+              display="grid"
+              // justifyContent="space-between"
+              gridTemplateColumns="repeat(auto-fill, minmax(10rem, 1fr))"
+              // flexDirection="column"
+              // borderRadius="25px"
               height="100%"
-              width={['70%', '68%', '70%', '50%']}
-              gridGap="2px"
+              // width={['70%', '68%', '70%', '50%']}
+              gridGap="5rem"
             >
               {showFinished && finishedCohorts.map((item, i) => {
                 const index = i;

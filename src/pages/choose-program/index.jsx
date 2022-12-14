@@ -227,7 +227,6 @@ function chooseProgram() {
                 otherEvents={events.slice(1)}
                 // featureLabel,
               />
-
             )}
           </Box>
         </Flex>
