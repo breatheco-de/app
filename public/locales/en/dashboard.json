@@ -137,7 +137,7 @@
     },
     "warn-slower-teaching": {
       "title": "Delayed module start",
-      "description": "Are you sure you want to start teaching <strong>{{module}}</strong>? You have been teaching the current module for {{repeated}} days and the suggested duration is {{expected}} days."
+      "description": "Are you sure you want to start teaching <strong>{{module}}</strong>? You are about to teach the current module for {{repeated}} days and the suggested duration is {{expected}} days."
     }
   },
   "teacher-sidebar": {
