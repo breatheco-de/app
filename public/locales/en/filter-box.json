@@ -1,6 +1,11 @@
 {
     "filters": "filters",
     "technologies": "technologies",
+    "dificulties": "dificulties",
     "search": "Type here to search technologies",
-    "see-all": "see all"
+    "see-all": "see all",
+    "see-less": "see less",
+    "tutorials": "only video tutorials",
+    "clear": "Clear All",
+    "apply": "Apply filter"
 }

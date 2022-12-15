@@ -1,6 +1,11 @@
 {
     "filters": "Filtros",
     "technologies": "Tecnologías",
+    "dificulties": "dificultad",
     "search": "Escribe aquí para ver todas",
-    "see-all": "ver todas"
+    "see-all": "ver todas",
+    "see-less": "ver menos",
+    "tutorials": "solo video tutoriales",
+    "clear": "Despejar todo",
+    "apply": "Aplicar filtro"
 }
