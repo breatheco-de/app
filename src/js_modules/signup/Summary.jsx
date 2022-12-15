@@ -19,6 +19,7 @@ const Summary = ({
   const router = useRouter();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [disableHandler, setDisableHandler] = useState(false);
+  const [planProps, setPlanProps] = useState([]);
   const {
     state, nextStep, setPlanData, setSelectedPlanCheckoutData, handleChecking,
   } = useSignup();
@@ -124,11 +125,14 @@ const Summary = ({
   const { backgroundColor, borderColor } = useStyle();
 
   const getPlanProps = (plan) => {
-    bc.payment().getPlanProps(plan.slug)
+    bc.payment().getPlanProps(encodeURIComponent(plan.slug))
       .then((resp) => {
         console.log('payment_resp:', resp);
         if (!resp) {
           setDisableHandler(true);
+        } else {
+          setDisableHandler(false);
+          setPlanProps(resp.data);
         }
       })
       .catch(() => {
@@ -145,7 +149,6 @@ const Summary = ({
 
   const handleSubmit = () => {
     if (planData?.type) {
-      // TODO: Maybe we need to update checking when selects another plan
       handleChecking()
         .then(() => {
           nextStep();
@@ -160,6 +163,8 @@ const Summary = ({
         });
     }
   };
+
+  // console.log('planProps:::', planProps);
 
   const existsAmountPerHalf = checkoutData?.amount_per_half > 0;
   const existsAmountPerMonth = checkoutData?.amount_per_month > 0;
@@ -374,9 +379,9 @@ const Summary = ({
             h="1px"
             borderColor={borderColor}
           />
-          {planData?.bullets?.title && (
+          {planProps?.length > 0 && (
             <Box fontSize="14px" fontWeight="700" color="blue.default">
-              {planData?.bullets?.title}
+              {t('what-you-will-get')}
             </Box>
           )}
           <Box
@@ -386,29 +391,32 @@ const Summary = ({
             flexDirection="column"
             gridGap="12px"
           >
-            {planData?.bullets?.list?.map((bullet) => (
-              <Box
-                as="li"
-                key={bullet?.title}
-                display="flex"
-                flexDirection="row"
-                lineHeight="24px"
-                gridGap="8px"
-              >
-                <Icon
-                  icon="checked2"
-                  color="#38A56A"
-                  width="13px"
-                  height="10px"
-                  style={{ margin: '8px 0 0 0' }}
-                />
+            {planProps?.length > 0 && planProps?.map((bullet) => (
+              <>
                 <Box
-                  fontSize="14px"
-                  fontWeight="600"
-                  letterSpacing="0.05em"
-                  dangerouslySetInnerHTML={{ __html: bullet?.title }}
-                />
-              </Box>
+                  as="li"
+                  key={bullet?.features[0]?.description}
+                  display="flex"
+                  flexDirection="row"
+                  lineHeight="24px"
+                  gridGap="8px"
+                >
+                  <Icon
+                    icon="checked2"
+                    color="#38A56A"
+                    width="13px"
+                    height="10px"
+                    style={{ margin: '8px 0 0 0' }}
+                  />
+                  <Box
+                    fontSize="14px"
+                    fontWeight="600"
+                    letterSpacing="0.05em"
+                    dangerouslySetInnerHTML={{ __html: bullet?.description }}
+                  />
+                  {bullet?.features[0]?.description}
+                </Box>
+              </>
             ))}
           </Box>
         </Box>
