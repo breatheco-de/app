@@ -212,6 +212,14 @@ const breathecode = {
           'Accept-Language': 'en',
         },
       }),
+      // getPlanProps: (id) => axios.get(`${url}/serviceitem?plan=${id}`),
+      getPlanProps: (id) => axios({
+        method: 'get',
+        url: `${url}/serviceitem?plan=${id}`,
+        headers: {
+          'Accept-Language': 'en',
+        },
+      }),
     };
   },
 };

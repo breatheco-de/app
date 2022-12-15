@@ -8,7 +8,7 @@ import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 import useSignup from '../../common/store/actions/signupAction';
-// import bc from '../../common/services/breathecode';
+import bc from '../../common/services/breathecode';
 
 const Summary = ({
   formProps,
@@ -18,6 +18,8 @@ const Summary = ({
   const { t } = useTranslation('signup');
   const router = useRouter();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [disableHandler, setDisableHandler] = useState(false);
+  const [planProps, setPlanProps] = useState([]);
   const {
     state, nextStep, setPlanData, setSelectedPlanCheckoutData, handleChecking,
   } = useSignup();
@@ -122,16 +124,31 @@ const Summary = ({
   const borderColor2 = useColorModeValue('black', 'white');
   const { backgroundColor, borderColor } = useStyle();
 
+  const getPlanProps = (plan) => {
+    bc.payment().getPlanProps(encodeURIComponent(plan.slug))
+      .then((resp) => {
+        console.log('payment_resp:', resp);
+        if (!resp) {
+          setDisableHandler(true);
+        } else {
+          setDisableHandler(false);
+          setPlanProps(resp.data);
+        }
+      })
+      .catch(() => {
+        setDisableHandler(true);
+      });
+  };
   useEffect(() => {
-    if (typeof selectedIndex === 'number') {
+    if (typeof selectedIndex === 'number' && checkoutData?.plans[selectedIndex]) {
       setPlanData(data[selectedIndex]);
       setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
+      getPlanProps(checkoutData?.plans[selectedIndex]);
     }
-  }, [checkoutData?.plan]);
+  }, [checkoutData?.plans]);
 
   const handleSubmit = () => {
     if (planData?.type) {
-      // TODO: Maybe we need to update checking when selects another plan
       handleChecking()
         .then(() => {
           nextStep();
@@ -146,6 +163,8 @@ const Summary = ({
         });
     }
   };
+
+  // console.log('planProps:::', planProps);
 
   const existsAmountPerHalf = checkoutData?.amount_per_half > 0;
   const existsAmountPerMonth = checkoutData?.amount_per_month > 0;
@@ -360,9 +379,9 @@ const Summary = ({
             h="1px"
             borderColor={borderColor}
           />
-          {planData?.bullets?.title && (
+          {planProps?.length > 0 && (
             <Box fontSize="14px" fontWeight="700" color="blue.default">
-              {planData?.bullets?.title}
+              {t('what-you-will-get')}
             </Box>
           )}
           <Box
@@ -372,29 +391,32 @@ const Summary = ({
             flexDirection="column"
             gridGap="12px"
           >
-            {planData?.bullets?.list?.map((bullet) => (
-              <Box
-                as="li"
-                key={bullet?.title}
-                display="flex"
-                flexDirection="row"
-                lineHeight="24px"
-                gridGap="8px"
-              >
-                <Icon
-                  icon="checked2"
-                  color="#38A56A"
-                  width="13px"
-                  height="10px"
-                  style={{ margin: '8px 0 0 0' }}
-                />
+            {planProps?.length > 0 && planProps?.map((bullet) => (
+              <>
                 <Box
-                  fontSize="14px"
-                  fontWeight="600"
-                  letterSpacing="0.05em"
-                  dangerouslySetInnerHTML={{ __html: bullet?.title }}
-                />
-              </Box>
+                  as="li"
+                  key={bullet?.features[0]?.description}
+                  display="flex"
+                  flexDirection="row"
+                  lineHeight="24px"
+                  gridGap="8px"
+                >
+                  <Icon
+                    icon="checked2"
+                    color="#38A56A"
+                    width="13px"
+                    height="10px"
+                    style={{ margin: '8px 0 0 0' }}
+                  />
+                  <Box
+                    fontSize="14px"
+                    fontWeight="600"
+                    letterSpacing="0.05em"
+                    dangerouslySetInnerHTML={{ __html: bullet?.description }}
+                  />
+                  {bullet?.features[0]?.description}
+                </Box>
+              </>
             ))}
           </Box>
         </Box>
@@ -416,6 +438,7 @@ const Summary = ({
                     onClick={() => {
                       setSelectedIndex(i);
                       // setPlanData(item);
+                      getPlanProps(item);
                       setSelectedPlanCheckoutData(item);
                     }}
                     flexDirection={{ base: 'column', md: 'row' }}
@@ -472,6 +495,7 @@ const Summary = ({
           <Button
             variant="default"
             onClick={handleSubmit}
+            isDisabled={disableHandler}
             height="45px"
             mt="12px"
           >
@@ -481,6 +505,7 @@ const Summary = ({
           <Button
             variant="outline"
             borderColor="blue.200"
+            isDisabled={disableHandler}
             background={featuredBackground}
             _hover={{ background: featuredBackground, opacity: 0.8 }}
             _active={{ background: featuredBackground, opacity: 1 }}
