@@ -8,7 +8,7 @@ import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 import useSignup from '../../common/store/actions/signupAction';
-// import bc from '../../common/services/breathecode';
+import bc from '../../common/services/breathecode';
 
 const Summary = ({
   formProps,
@@ -18,6 +18,7 @@ const Summary = ({
   const { t } = useTranslation('signup');
   const router = useRouter();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [disableHandler, setDisableHandler] = useState(false);
   const {
     state, nextStep, setPlanData, setSelectedPlanCheckoutData, handleChecking,
   } = useSignup();
@@ -122,12 +123,25 @@ const Summary = ({
   const borderColor2 = useColorModeValue('black', 'white');
   const { backgroundColor, borderColor } = useStyle();
 
+  const getPlanProps = (plan) => {
+    bc.payment().getPlanProps(plan.slug)
+      .then((resp) => {
+        console.log('payment_resp:', resp);
+        if (!resp) {
+          setDisableHandler(true);
+        }
+      })
+      .catch(() => {
+        setDisableHandler(true);
+      });
+  };
   useEffect(() => {
-    if (typeof selectedIndex === 'number') {
+    if (typeof selectedIndex === 'number' && checkoutData?.plans[selectedIndex]) {
       setPlanData(data[selectedIndex]);
       setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
+      getPlanProps(checkoutData?.plans[selectedIndex]);
     }
-  }, [checkoutData?.plan]);
+  }, [checkoutData?.plans]);
 
   const handleSubmit = () => {
     if (planData?.type) {
@@ -416,6 +430,7 @@ const Summary = ({
                     onClick={() => {
                       setSelectedIndex(i);
                       // setPlanData(item);
+                      getPlanProps(item);
                       setSelectedPlanCheckoutData(item);
                     }}
                     flexDirection={{ base: 'column', md: 'row' }}
@@ -472,6 +487,7 @@ const Summary = ({
           <Button
             variant="default"
             onClick={handleSubmit}
+            isDisabled={disableHandler}
             height="45px"
             mt="12px"
           >
@@ -481,6 +497,7 @@ const Summary = ({
           <Button
             variant="outline"
             borderColor="blue.200"
+            isDisabled={disableHandler}
             background={featuredBackground}
             _hover={{ background: featuredBackground, opacity: 0.8 }}
             _active={{ background: featuredBackground, opacity: 1 }}
