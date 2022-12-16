@@ -20,12 +20,13 @@ import Heading from '../Heading';
 import Text from '../Text';
 import useAuth from '../../hooks/useAuth';
 import LanguageSelector from '../LanguageSelector';
+import syllabusList from '../../../../public/syllabus.json';
 import { isWindow } from '../../../utils';
 
 const NavbarWithSubNavigation = ({ haveSession, translations }) => {
   const { t } = useTranslation('navbar');
   const router = useRouter();
-  const [readSyllabus, setReadSyllabus] = useState([]);
+  // const [readSyllabus, setReadSyllabus] = useState([]);
   const [ITEMS, setITEMS] = useState([]);
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const locale = router.locale === 'default' ? 'en' : router.locale;
@@ -52,26 +53,17 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
 
   const programSlug = cohortSession?.selectedProgramSlug || '/choose-program';
 
+  const noscriptItems = t('ITEMS', {
+    selectedProgramSlug: selectedProgramSlug || '/choose-program',
+  }, { returnObjects: true });
+  const readSyllabus = JSON.parse(syllabusList);
+
   useEffect(() => {
     const items = t('ITEMS', {
       selectedProgramSlug: selectedProgramSlug || '/choose-program',
     }, { returnObjects: true });
     setITEMS(items.filter((item) => item.disabled !== true));
   }, [selectedProgramSlug]);
-
-  useEffect(async () => {
-    const syllabus = await import('../../../../public/syllabus.json');
-    const syllabusPaths = JSON.parse(syllabus.default);
-
-    // const resp = await fetch(
-    //   `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?
-    // slug=${process.env.SYLLABUS}`,
-    // );
-    // const data = await resp.json();
-    // .then((res) => res.json())
-    // .catch(() => []);
-    setReadSyllabus(syllabusPaths);
-  }, []);
 
   // Verify if teacher acces is with current cohort role
   const getDateJoined = user?.active_cohort?.date_joined
@@ -162,7 +154,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
           </NextChakraLink>
 
           <Flex display="flex" ml={10}>
-            <DesktopNav NAV_ITEMS={ITEMS} haveSession={sessionExists} readSyllabus={readSyllabus} />
+            <DesktopNav NAV_ITEMS={ITEMS.length > 0 ? ITEMS : noscriptItems} haveSession={sessionExists} readSyllabus={readSyllabus} />
           </Flex>
         </Flex>
 
