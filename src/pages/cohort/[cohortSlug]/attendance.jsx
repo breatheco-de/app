@@ -65,8 +65,9 @@ const Attendance = () => {
   const { cohortSlug } = router?.query;
 
   const calcDaysAverage = (days) => {
-    const currentTotalDays = days.filter((day) => day.color !== status.remain).length;
-    const totalDaysCompleted = days.filter((day) => day.color === status.attended).length;
+    const currentTotalDays = days.filter((day) => day.status === 'attended' || day.status === 'absent').length;
+
+    const totalDaysCompleted = days.filter((day) => day.status === 'attended').length;
     const average = parseInt((totalDaysCompleted / currentTotalDays) * 100, 10);
     return average;
   };
@@ -189,15 +190,28 @@ const Attendance = () => {
           const day = i + 1;
           const dayData = currentDaysLog[day];
           const dayLabel = `${t('common:day')} ${day}`;
-          const dayColor = dayData?.attendance_ids?.includes(student.user.id)
-            ? status.attended
+          const dayProps = dayData?.attendance_ids?.includes(student.user.id)
+            ? {
+              status: 'attended',
+              color: status.attended,
+            }
             : dayData?.unattendance_ids?.includes(student.user.id)
-              ? status.absent
-              : status.not_taken;
+              ? {
+                status: 'absent',
+                color: status.absent,
+              }
+              : {
+                status: 'not_taken',
+                color: status.not_taken,
+              };
+
+          const color = currentDaysLogExists ? dayProps.color : status.remain;
+          const label = currentDaysLogExists ? dayProps.status : 'not_taken';
           return {
             label: dayData ? `${dayLabel} - ${format(new Date(dayData.updated_at), 'd MMM')}` : dayLabel,
             day,
-            color: currentDaysLogExists ? dayColor : status.remain,
+            color,
+            status: label,
             updated_at: dayData ? dayData?.updated_at : null,
           };
         });
