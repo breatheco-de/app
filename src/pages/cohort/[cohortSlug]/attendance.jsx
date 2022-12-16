@@ -65,7 +65,6 @@ const Attendance = () => {
   const { cohortSlug } = router?.query;
 
   const calcDaysAverage = (days) => {
-    console.log('days:::', days);
     const currentTotalDays = days.filter((day) => day.status === 'attended' || day.status === 'absent').length;
 
     const totalDaysCompleted = days.filter((day) => day.status === 'attended').length;
