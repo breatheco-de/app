@@ -48,7 +48,7 @@ const PaymentInfo = () => {
   });
 
   const handleSubmit = (actions, values) => {
-    bc.payment().addCard2(values)
+    bc.payment().addCard(values)
       .then((resp) => {
         if (resp) {
           handlePayment()

@@ -82,7 +82,7 @@ const useSignup = () => {
   });
 
   const handlePayment = () => new Promise((resolve, reject) => {
-    bc.payment().pay2({
+    bc.payment().pay({
       type: checkoutData.type,
       token: checkoutData.token,
       // chosen_period: selectedPlanCheckoutData.chosen_period,
