@@ -329,8 +329,6 @@ const Attendance = () => {
               noOptionsMessage={() => t('common:no-options-message')}
               defaultInputValue={selectedCohort?.label}
               onChange={({ slug }) => {
-                // if (slug === selectedCohort.slug || slug === undefined) {
-                // }
                 setSelectedCohortSlug(slug);
                 setCurrentStudentList([]);
                 setLoadStatus({
