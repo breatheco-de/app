@@ -105,11 +105,13 @@ export default function HowToSlug({ data, markdown }) {
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const linkColor = useColorModeValue('blue.default', 'blue.300');
 
+  const isHowTo = data?.category?.slug === 'how-to' || data?.category?.slug === 'como';
+
   useEffect(() => {
-    if (data?.category?.slug !== 'how-to' || data?.category?.slug !== 'como') {
+    if (!isHowTo) {
       router.push('/404');
     }
-  }, [data]);
+  }, [isHowTo]);
 
   useEffect(() => {
     axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`)
