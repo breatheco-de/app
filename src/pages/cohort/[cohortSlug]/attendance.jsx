@@ -299,7 +299,6 @@ const Attendance = () => {
     return bAverage - aAverage;
   });
 
-  console.log(selectedCohort);
   return (
     <>
       <GridContainer maxW="1080px" mt="18px">
@@ -329,8 +328,6 @@ const Attendance = () => {
               noOptionsMessage={() => t('common:no-options-message')}
               defaultInputValue={selectedCohort?.label}
               onChange={({ slug }) => {
-                // if (slug === selectedCohort.slug || slug === undefined) {
-                // }
                 setSelectedCohortSlug(slug);
                 setCurrentStudentList([]);
                 setLoadStatus({
