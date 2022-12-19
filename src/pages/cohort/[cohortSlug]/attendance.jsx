@@ -62,7 +62,7 @@ const Attendance = () => {
 
   const { borderColor, hexColor } = useStyle();
 
-  const { cohortSlug } = router?.query;
+  const { cohortSlug, academy } = router?.query;
 
   const calcDaysAverage = (days) => {
     const currentTotalDays = days.filter((day) => day.status === 'attended' || day.status === 'absent').length;
@@ -132,8 +132,8 @@ const Attendance = () => {
     const findSelectedCohort = allCohorts.find((l) => l.slug === selectedCohortSlug);
     const defaultCohort = allCohorts.find((l) => l.slug === cohortSlug);
 
-    const academyId = findSelectedCohort?.academy || defaultCohort?.academy;
-    const slug = findSelectedCohort?.slug || defaultCohort?.slug;
+    const academyId = findSelectedCohort?.academy || academy || defaultCohort?.academy;
+    const slug = findSelectedCohort?.slug || cohortSlug || defaultCohort?.slug;
 
     if (allCohorts.length > 0) {
       setSelectedCohort(findSelectedCohort || defaultCohort);
@@ -143,7 +143,7 @@ const Attendance = () => {
             setCurrentDaysLog({});
             toast({
               title: t('alert-message:no-attendance-list-found'),
-              status: 'error',
+              status: 'warning',
               duration: 7000,
               isClosable: true,
             });
@@ -175,6 +175,7 @@ const Attendance = () => {
     }
   }, [selectedCohortSlug, cohortSlug, router.query.student, allCohorts]);
 
+  console.log(loadStatus);
   useEffect(() => {
     setLoadStatus({
       loading: true,
@@ -254,6 +255,12 @@ const Attendance = () => {
         status: 'no-data',
       });
     }
+    if (currentDaysLogExists <= 0) {
+      setLoadStatus({
+        loading: false,
+        status: 'no-attendance-list-found',
+      });
+    }
 
     return () => {};
   }, [currentStudentList, currentDaysLog, selectedCohort?.durationInDays, loadingStudents]);
@@ -261,7 +268,7 @@ const Attendance = () => {
   const handleSearch = (e) => {
     const { value } = e.target;
 
-    const filteredStudents = allStudentsWithDays.studentList.filter((l) => {
+    const filteredStudents = allStudentsWithDays?.studentList?.filter((l) => {
       const fullName = `${l.user.first_name} ${l.user.last_name}`;
 
       return fullName.toLowerCase().includes(value.toLowerCase());
@@ -270,7 +277,7 @@ const Attendance = () => {
     setSearchedStudents(filteredStudents);
   };
 
-  const sortedByNameAndAttendance = searchedStudents.sort((a, b) => {
+  const sortedByNameAndAttendance = searchedStudents?.sort((a, b) => {
     const fullNameA = `${a.user.first_name} ${a.user.last_name}`;
     const fullNameB = `${b.user.first_name} ${b.user.last_name}`;
     const aAverage = calcDaysAverage(a.days);
@@ -292,6 +299,7 @@ const Attendance = () => {
     return bAverage - aAverage;
   });
 
+  console.log(selectedCohort);
   return (
     <>
       <GridContainer maxW="1080px" mt="18px">
@@ -321,14 +329,14 @@ const Attendance = () => {
               noOptionsMessage={() => t('common:no-options-message')}
               defaultInputValue={selectedCohort?.label}
               onChange={({ slug }) => {
-                if (slug !== selectedCohort.slug) {
-                  setCurrentStudentList([]);
-                  setLoadStatus({
-                    loading: true,
-                    status: 'loading',
-                  });
-                }
+                // if (slug === selectedCohort.slug || slug === undefined) {
+                // }
                 setSelectedCohortSlug(slug);
+                setCurrentStudentList([]);
+                setLoadStatus({
+                  loading: true,
+                  status: 'loading',
+                });
               }}
               options={allCohorts.map((cohort) => ({
                 value: cohort.value,
@@ -457,6 +465,20 @@ const Attendance = () => {
             })}
 
             {loadStatus.status === 'loading' && <DottedTimelineSkeleton />}
+
+            {loadStatus.loading === false && loadStatus.status === 'no-attendance-list-found' && (
+              <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+                <Text
+                  color={hexColor.grayDefault}
+                  size="18px"
+                  fontWeight={700}
+                  textAlign="center"
+                  dangerouslySetInnerHTML={{ __html: t('no-attendance-list-found') }}
+                />
+                  {/* {t('no-attendance-list-found')}
+                </Text> */}
+              </Box>
+            )}
 
             {loadStatus.loading === false && loadStatus.status === 'no-data' && (
               <Box display="flex" justifyContent="center" alignItems="center" height="100%">
