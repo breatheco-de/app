@@ -475,8 +475,6 @@ const Attendance = () => {
                   textAlign="center"
                   dangerouslySetInnerHTML={{ __html: t('no-attendance-list-found') }}
                 />
-                  {/* {t('no-attendance-list-found')}
-                </Text> */}
               </Box>
             )}
 
