@@ -299,7 +299,6 @@ const Attendance = () => {
     return bAverage - aAverage;
   });
 
-  console.log(selectedCohort);
   return (
     <>
       <GridContainer maxW="1080px" mt="18px">
