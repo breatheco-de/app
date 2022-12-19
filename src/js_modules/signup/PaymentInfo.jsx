@@ -19,7 +19,7 @@ const PaymentInfo = () => {
   const {
     state, setPaymentInfo, handlePayment,
   } = useSignup();
-  const { paymentInfo, planData, dateProps, selectedPlanCheckoutData } = state;
+  const { paymentInfo, planData, planProps, dateProps, selectedPlanCheckoutData } = state;
   const [stateCard, setStateCard] = useState({
     card_number: 0,
     exp_month: 0,
@@ -263,7 +263,7 @@ const PaymentInfo = () => {
             h="1px"
             borderColor={borderColor}
           />
-          {planData?.bullets?.title && (
+          {planProps?.length > 0 && (
             <Box fontSize="14px" fontWeight="700" color="blue.default">
               {t('what-you-will-get')}
             </Box>
@@ -275,29 +275,32 @@ const PaymentInfo = () => {
             flexDirection="column"
             gridGap="12px"
           >
-            {planData?.bullets?.list?.map((bullet) => (
-              <Box
-                as="li"
-                key={bullet?.title}
-                display="flex"
-                flexDirection="row"
-                lineHeight="24px"
-                gridGap="8px"
-              >
-                <Icon
-                  icon="checked2"
-                  color="#38A56A"
-                  width="13px"
-                  height="10px"
-                  style={{ margin: '8px 0 0 0' }}
-                />
+            {planProps?.length > 0 && planProps?.map((bullet) => (
+              <>
                 <Box
-                  fontSize="14px"
-                  fontWeight="600"
-                  letterSpacing="0.05em"
-                  dangerouslySetInnerHTML={{ __html: bullet?.title }}
-                />
-              </Box>
+                  as="li"
+                  key={bullet?.features[0]?.description}
+                  display="flex"
+                  flexDirection="row"
+                  lineHeight="24px"
+                  gridGap="8px"
+                >
+                  <Icon
+                    icon="checked2"
+                    color="#38A56A"
+                    width="13px"
+                    height="10px"
+                    style={{ margin: '8px 0 0 0' }}
+                  />
+                  <Box
+                    fontSize="14px"
+                    fontWeight="600"
+                    letterSpacing="0.05em"
+                    dangerouslySetInnerHTML={{ __html: bullet?.description }}
+                  />
+                  {bullet?.features[0]?.description}
+                </Box>
+              </>
             ))}
           </Box>
         </Box>

@@ -19,11 +19,11 @@ const Summary = ({
   const router = useRouter();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [disableHandler, setDisableHandler] = useState(false);
-  const [planProps, setPlanProps] = useState([]);
+  // const [planProps, setPlanProps] = useState([]);
   const {
-    state, nextStep, setPlanData, setSelectedPlanCheckoutData, handleChecking,
+    state, nextStep, setPlanData, setSelectedPlanCheckoutData, handleChecking, setPlanProps,
   } = useSignup();
-  const { dateProps, planData, checkoutData, selectedPlanCheckoutData } = state;
+  const { dateProps, planData, checkoutData, selectedPlanCheckoutData, planProps } = state;
   const toast = useToast();
   const data = [
     {
@@ -163,8 +163,6 @@ const Summary = ({
         });
     }
   };
-
-  // console.log('planProps:::', planProps);
 
   const existsAmountPerHalf = checkoutData?.amount_per_half > 0;
   const existsAmountPerMonth = checkoutData?.amount_per_month > 0;
