@@ -245,6 +245,8 @@ const useSignup = () => {
       });
   });
 
+  // const setPlanProps = (plan) => {};
+
   return {
     state,
     isFirstStep,

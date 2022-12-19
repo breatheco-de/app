@@ -35,6 +35,8 @@ const ContactInformation = ({
   const toastIdRef = useRef();
   const { featuredColor } = useStyle();
 
+  const { syllabus } = router.query;
+
   const { createToast } = useCustomToast({
     toastIdRef,
     status: 'info',
@@ -138,6 +140,7 @@ const ContactInformation = ({
             course: courseChoosed,
             country: location?.country,
             cohort: dateProps?.id,
+            syllabus,
             city: location?.city,
             language: router.locale,
           };
