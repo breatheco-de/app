@@ -20,6 +20,7 @@ import { isWindow, getStorageItem, getTimeProps, removeURLParameter } from '../u
 import Summary from '../js_modules/signup/Summary';
 import PaymentInfo from '../js_modules/signup/PaymentInfo';
 import useSignup from '../common/store/actions/signupAction';
+import axiosInstance from '../axios';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -60,12 +61,14 @@ const SignUp = ({ finance }) => {
     isFirstStep, isSecondStep, isThirdStep, isFourthStep,
   } = useSignup();
 
+  axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
+
   const { stepIndex, dateProps, checkoutData } = state;
 
   const accessToken = getStorageItem('accessToken');
   const { user, isLoading } = useAuth();
 
-  console.log('Redux state:', state);
+  // console.log('Redux state:', state);
 
   const toast = useToast();
 

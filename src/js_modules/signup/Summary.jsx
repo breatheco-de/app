@@ -19,105 +19,12 @@ const Summary = ({
   const router = useRouter();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [disableHandler, setDisableHandler] = useState(false);
-  const [planProps, setPlanProps] = useState([]);
+
   const {
-    state, nextStep, setPlanData, setSelectedPlanCheckoutData, handleChecking,
+    state, nextStep, setSelectedPlanCheckoutData, handleChecking, setPlanProps,
   } = useSignup();
-  const { dateProps, planData, checkoutData, selectedPlanCheckoutData } = state;
+  const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
   const toast = useToast();
-  const data = [
-    {
-      type: 'pro',
-      show: true,
-      title: 'One time payment',
-      price: '$199',
-      lastPrice: '<s>$399</s>',
-      offerTitle: 'Limited offer',
-      description: 'One time payment',
-      highlightText: '',
-      bullets: {
-        title: 'What you will get',
-        list: [
-          {
-            title: 'Unlimited access to group masterclasses',
-          },
-          {
-            title: 'Unlimited access to workshops',
-          },
-          {
-            title: 'Unlimited access to course content',
-          },
-          {
-            title: 'Certificate endorsed by industry leaders',
-          },
-        ],
-      },
-      button: {
-        title: 'Start your free trial',
-        link: '#enroll',
-      },
-    },
-    {
-      type: 'schoolarship-t1',
-      show: true,
-      title: 'scholarship level 1',
-      price: '$70',
-      months: '3 months',
-      highlightText: '',
-      description: '3 payment, each every month',
-      bullets: {
-        title: 'What you will get',
-        list: [
-          {
-            title: 'scholarship level 1 - featured 1',
-          },
-          {
-            title: 'scholarship level 1 - featured 2',
-          },
-          {
-            title: 'scholarship level 1 - featured 3',
-          },
-          {
-            title: 'scholarship level 1 - featured 4',
-          },
-        ],
-      },
-      button: {
-        title: 'Enroll now',
-        link: '#enroll',
-      },
-    },
-    {
-      type: 'schoolarship-t2',
-      show: true,
-      title: 'scholarship level 2',
-      price: '$50',
-      months: '5 months',
-      highlightText: '',
-      description: '5 payments, each every month',
-      bullets: {
-        title: 'What you will get',
-        list: [
-          {
-            title: 'scholarship level 2 - featured 1',
-          },
-          {
-            title: 'scholarship level 2 - featured 2',
-          },
-          {
-            title: 'scholarship level 2 - featured 3',
-          },
-          {
-            title: 'scholarship level 2 - featured 4',
-          },
-        ],
-      },
-      button: {
-        title: 'Enroll now',
-        link: '#enroll',
-      },
-    },
-  ];
 
   const fontColor = useColorModeValue('gray.800', 'gray.300');
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
@@ -139,16 +46,17 @@ const Summary = ({
         setDisableHandler(true);
       });
   };
+
   useEffect(() => {
     if (typeof selectedIndex === 'number' && checkoutData?.plans[selectedIndex]) {
-      setPlanData(data[selectedIndex]);
+      // setPlanData(data[selectedIndex]);
       setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
       getPlanProps(checkoutData?.plans[selectedIndex]);
     }
   }, [checkoutData?.plans]);
 
   const handleSubmit = () => {
-    if (planData?.type) {
+    if (planProps?.length > 0) {
       handleChecking()
         .then(() => {
           nextStep();
@@ -163,8 +71,6 @@ const Summary = ({
         });
     }
   };
-
-  // console.log('planProps:::', planProps);
 
   const existsAmountPerHalf = checkoutData?.amount_per_half > 0;
   const existsAmountPerMonth = checkoutData?.amount_per_month > 0;
@@ -348,18 +254,16 @@ const Summary = ({
                 {dateProps?.syllabus_version?.name}
               </Heading>
 
-              {planData?.description && (
+              {selectedPlanCheckoutData?.description && (
                 <Heading
                   size="15px"
                   textTransform="uppercase"
                   color={useColorModeValue('gray.500', 'gray.400')}
                 >
                   {selectedPlanCheckoutData?.description}
-                  {/* {planData?.description} */}
                 </Heading>
               )}
             </Box>
-            {/* {planData?.price && (...) */}
             {selectedPlanCheckoutData?.price && (
               <Heading
                 size="m"
@@ -516,30 +420,6 @@ const Summary = ({
             {t('common:start-free-trial')}
           </Button>
         )}
-        {/* {!planData?.type?.includes('trial') && (
-          <Button
-            variant="default"
-            onClick={handleSubmit}
-            height="45px"
-            mt="12px"
-          >
-            {t('common:proceed-to-payment')}
-          </Button>
-        )}
-        {planData?.type?.includes('trial') && (
-          <Button
-            variant="outline"
-            borderColor="blue.200"
-            background={featuredBackground}
-            _hover={{ background: featuredBackground, opacity: 0.8 }}
-            _active={{ background: featuredBackground, opacity: 1 }}
-            color="blue.default"
-            height="45px"
-            mt="12px"
-          >
-            {t('common:start-free-trial')}
-          </Button>
-        )} */}
       </Box>
     </Box>
   );

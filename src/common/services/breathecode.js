@@ -187,39 +187,9 @@ const breathecode = {
     return {
       checking: (data) => axios.put(`${url}/checking?${qs}`, data),
       pay: (data) => axios.post(`${url}/pay?${qs}`, data),
-      pay2: (data) => axios({
-        method: 'post',
-        url: `${url}/pay?${qs}`,
-        data,
-        headers: {
-          'Accept-Language': 'en',
-        },
-      }),
       addCard: (data) => axios.post(`${url}/card?${qs}`, data),
-      addCard2: (data) => axios({
-        method: 'post',
-        url: `${url}/card?${qs}`,
-        data,
-        headers: {
-          'Accept-Language': 'en',
-        },
-      }),
-      getCard: (data) => axios({
-        method: 'get',
-        url: `${url}/card?${qs}`,
-        data,
-        headers: {
-          'Accept-Language': 'en',
-        },
-      }),
-      // getPlanProps: (id) => axios.get(`${url}/serviceitem?plan=${id}`),
-      getPlanProps: (id) => axios({
-        method: 'get',
-        url: `${url}/serviceitem?plan=${id}`,
-        headers: {
-          'Accept-Language': 'en',
-        },
-      }),
+      // getCard: () => axios.post(`${url}/card?${qs}`),
+      getPlanProps: (id) => axios.get(`${url}/serviceitem?plan=${id}`),
     };
   },
 };

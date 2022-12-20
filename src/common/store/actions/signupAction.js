@@ -4,7 +4,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
-  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA,
+  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS,
 } from '../types';
 import { getTimeProps, toCapitalize, unSlugify } from '../../../utils';
 import bc from '../../services/breathecode';
@@ -76,8 +76,13 @@ const useSignup = () => {
     value,
   });
 
+  const setPlanProps = (payload) => dispatch({
+    type: SET_PLAN_PROPS,
+    payload,
+  });
+
   const handlePayment = () => new Promise((resolve, reject) => {
-    bc.payment().pay2({
+    bc.payment().pay({
       type: checkoutData.type,
       token: checkoutData.token,
       // chosen_period: selectedPlanCheckoutData.chosen_period,
@@ -264,6 +269,7 @@ const useSignup = () => {
     setSelectedPlanCheckoutData,
     handleChooseDate,
     handleChecking,
+    setPlanProps,
   };
 };
 

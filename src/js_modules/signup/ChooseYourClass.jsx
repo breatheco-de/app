@@ -38,6 +38,8 @@ const ChooseYourClass = ({
     'places',
   );
 
+  const { syllabus } = router.query;
+
   useEffect(() => {
     if (coords !== null && isSecondStep) {
       setCohortIsLoading(true);
@@ -45,7 +47,7 @@ const ChooseYourClass = ({
       bc.public({
         coordinates: `${coords.latitude},${coords.longitude}`,
         saas: true,
-        syllabus_slug: courseChoosed,
+        syllabus_slug: syllabus || courseChoosed,
         upcoming: true,
       })
         .cohorts()

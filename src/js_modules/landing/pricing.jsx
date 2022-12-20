@@ -126,6 +126,7 @@ const Pricing = ({ data }) => {
               query: {
                 course: data?.course,
                 plan: selectedProps?.type,
+                syllabus: 'coding-introduction',
               },
             })}
           >
