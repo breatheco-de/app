@@ -19,6 +19,7 @@ import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 import { AvatarSkeleton } from './Skeleton';
 import useOnline from '../hooks/useOnline';
 import useStyle from '../hooks/useStyle';
+import useProgramList from '../store/actions/programListAction';
 
 const ProfilesSection = ({
   title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher, withoutPopover, showButton,
@@ -222,6 +223,7 @@ const CohortSideBar = ({
   const [alumniGeeksList, setAlumniGeeksList] = useState({});
   const [activeStudentsLoading, setActiveStudentsLoading] = useState(true);
   const [graduatedStudentsLoading, setGraduatedStudentsLoading] = useState(true);
+  const { addTeacherProgramList } = useProgramList();
   const teacher = studentAndTeachers.filter((st) => st.role === 'TEACHER');
   const activeStudents = studentAndTeachers.filter(
     (st) => st.role === 'STUDENT' && ['ACTIVE', 'GRADUATED'].includes(st.educational_status),
@@ -292,6 +294,12 @@ const CohortSideBar = ({
       }, 4000);
     }
   }, [studentsJoined]);
+
+  useEffect(() => {
+    if (studentAndTeachers.length > 0) {
+      addTeacherProgramList({ teacher, assistant: teacherAssistants });
+    }
+  }, [router?.query?.cohortSlug, studentAndTeachers?.length]);
 
   return (
     <Box

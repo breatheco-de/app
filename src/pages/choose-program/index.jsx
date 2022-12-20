@@ -19,6 +19,8 @@ import { usePersistent } from '../../common/hooks/usePersistent';
 import useStyle from '../../common/hooks/useStyle';
 import GridContainer from '../../common/components/GridContainer';
 import LiveEvent from '../../common/components/LiveEvent';
+import NextChakraLink from '../../common/components/NextChakraLink';
+import useProgramList from '../../common/store/actions/programListAction';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -45,6 +47,7 @@ function chooseProgram() {
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
   const [events, setEvents] = useState(null);
+  const { state, programsList, updateProgramList } = useProgramList();
   const [loader, setLoader] = useState({
     addmission: true,
   });
@@ -77,6 +80,16 @@ function chooseProgram() {
     ]).then((
       [respAdmissions, respInvites],
     ) => {
+      updateProgramList(respAdmissions.data.cohorts.reduce((acc, value) => {
+        acc[value.cohort.slug] = {
+          ...state[value.cohort.slug],
+          ...programsList[value.cohort.slug],
+          name: value.cohort.name,
+          slug: value.cohort.slug,
+        };
+        return acc;
+      }, {}));
+
       setData(respAdmissions?.data?.cohorts);
       setProfile(respAdmissions.data);
       setInvites(respInvites.data);
@@ -126,11 +139,11 @@ function chooseProgram() {
               fontWeight={800}
               size="xl"
             >
-              {t('title')}
+              {t('welcome-back', { name: user?.first_name })}
             </Heading>
 
-            <Text size="18px" color={lightColor} fontWeight={500} letterSpacing="0.02em" p="12px 0 20px 0">
-              Ready to start learning?
+            <Text size="18px" color={lightColor} fontWeight={500} letterSpacing="0.02em" p="12px 0 30px 0">
+              {t('read-to-start-learning')}
             </Text>
 
             {invites.length > 0 && (
@@ -207,15 +220,18 @@ function chooseProgram() {
             {!loader.addmission && data.length <= 0 ? (
               <Flex flexDirection="column" gridGap="12px" background={featuredColor} padding="14px 20px 14px 20px" borderRadius="9px" border="1px solid" borderColor={borderColor}>
                 <Heading size="sm" lineHeight="31px">
-                  You are not enrolled in any cohort
+                  {t('not-enrolled')}
                 </Heading>
                 <Text size="md" fontWeight={600}>
-                  Enroll in one of our programs!
+                  {t('enroll-programs')}
                 </Text>
                 <Button variant="default" textransform="uppercase" width="fit-content">Enroll now</Button>
               </Flex>
             ) : (
-              <Button variant="default">Join our community</Button>
+              <NextChakraLink variant="buttonDefault" href="https://4geeksacademy.slack.com/" target="blank" rel="noopener noreferrer" display="flex" gridGap="10px" width="fit-content" padding="0.5rem 6px 0.5rem 8px">
+                {t('join-our-community')}
+                <Icon icon="slack" width="20px" height="20px" color="currentColor" />
+              </NextChakraLink>
             )}
           </Box>
           <Box flex={{ base: 1, md: 0.3 }} zIndex={2} position={{ base: 'inherit', md: 'absolute' }} right={0} top={0}>
@@ -231,7 +247,13 @@ function chooseProgram() {
           </Box>
         </Flex>
 
-        <Box pt="2rem">
+        <Box>
+          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="2rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '10px' }}>
+            <Heading size="sm" width={{ base: '100%', md: '22rem' }}>
+              {t('your-active-programs')}
+            </Heading>
+            <Box as="hr" width="100%" margin="0.5rem 0 0 0" />
+          </Box>
           {!loader.addmission && data.length > 0 && (
             <ChooseProgram chooseList={data} handleChoose={handleChoose} />
           )}
