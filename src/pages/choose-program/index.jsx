@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Flex, Box, useColorModeValue, Button, useToast,
+  Flex, Box, Button, useToast,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -15,7 +15,12 @@ import Module from '../../common/components/Module';
 import { isPlural } from '../../utils';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
-import AlertMessage from '../../common/components/AlertMessage';
+// import AlertMessage from '../../common/components/AlertMessage';
+import useStyle from '../../common/hooks/useStyle';
+import GridContainer from '../../common/components/GridContainer';
+import LiveEvent from '../../common/components/LiveEvent';
+import NextChakraLink from '../../common/components/NextChakraLink';
+import useProgramList from '../../common/store/actions/programListAction';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -41,10 +46,22 @@ function chooseProgram() {
   const [data, setData] = useState([]);
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
+  const [events, setEvents] = useState(null);
+  const { state, programsList, updateProgramList } = useProgramList();
+  const [loader, setLoader] = useState({
+    addmission: true,
+  });
   const { user, choose } = useAuth();
+  const { featuredColor, borderColor, lightColor } = useStyle();
   const router = useRouter();
   const toast = useToast();
   const userID = user?.id;
+
+  useEffect(() => {
+    bc.public().events()
+      .then((res) => setEvents(res.data))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (userID !== undefined) {
@@ -56,12 +73,23 @@ function chooseProgram() {
   }, [userID]);
 
   useEffect(() => {
+    setLoader((prev) => ({ ...prev, addmission: true }));
     Promise.all([
       bc.admissions().me(),
       bc.auth().invites().get(),
     ]).then((
       [respAdmissions, respInvites],
     ) => {
+      updateProgramList(respAdmissions.data.cohorts.reduce((acc, value) => {
+        acc[value.cohort.slug] = {
+          ...state[value.cohort.slug],
+          ...programsList[value.cohort.slug],
+          name: value.cohort.name,
+          slug: value.cohort.slug,
+        };
+        return acc;
+      }, {}));
+
       setData(respAdmissions?.data?.cohorts);
       setProfile(respAdmissions.data);
       setInvites(respInvites.data);
@@ -72,7 +100,7 @@ function chooseProgram() {
         duration: 5000,
         isClosable: true,
       });
-    });
+    }).finally(() => setLoader((prev) => ({ ...prev, addmission: false })));
   }, []);
 
   const acceptInvite = ({ id }) => {
@@ -103,101 +131,140 @@ function chooseProgram() {
   };
 
   return (
-    <Flex alignItems="center" flexDirection="column">
-      {process.env.NODE_ENV === 'development' && (
-        <Box margin="25px 0 0 0" display="flex" alignItems="center" justifyContent="space-between" width={['70%', '68%', '70%', '50%']}>
-          <AlertMessage
-            message={t('roles-info')}
-            type="info"
-            textColor={useColorModeValue('black', 'white')}
-            style={{
-              width: '100%',
-            }}
-          />
-        </Box>
-      )}
-      <Heading
-        fontWeight={800}
-        size="xl"
-        width={['70%', '68%', '70%', '50%']}
-        // fontSize="50px"
-        marginTop="40px"
-      >
-        {t('title')}
-      </Heading>
-
-      {invites.length > 0 && (
-        <Box margin="25px 0 0 0" display="flex" alignItems="center" justifyContent="space-between" padding="16px 20px" borderRadius="18px" width={['70%', '68%', '70%', '50%']} background="yellow.light">
-          <Text
-            color="black"
-            display="flex"
-            flexDirection="row"
-            gridGap="15px"
-            width="100%"
-            justifyContent="space-between"
-            size="md"
-          >
-            {t('invite.notify', { cohortInvitationWord: inviteWord() })}
-            {/* {`Ey! There are ${inviteWord()} for you to accept.`} */}
-            <Text
-              as="button"
-              size="md"
-              fontWeight="bold"
-              textAlign="left"
-              gridGap="5px"
-              _focus={{
-                boxShadow: '0 0 0 3px rgb(66 153 225 / 60%)',
-              }}
-              color="blue.default"
-              display="flex"
-              alignItems="center"
-              onClick={() => setShowInvites(!showInvites)}
+    <Flex alignItems="center" flexDirection="row" mt="40px">
+      <GridContainer width="100%" margin="0 auto" fraction="1fr">
+        <Flex flexDirection={{ base: 'column-reverse', md: 'row' }} gridGap={{ base: '1rem', md: '3.5rem' }} position="relative">
+          <Box width="100%" flex={{ base: 1, md: 0.7 }}>
+            <Heading
+              fontWeight={800}
+              size="xl"
             >
-              {showInvites ? t('invite.hide') : t('invite.show')}
-              <Icon
-                icon="arrowDown"
-                width="20px"
-                height="20px"
-                style={{ transform: showInvites ? 'rotate(180deg)' : 'rotate(0deg)' }}
-              />
+              {t('welcome-back', { name: user?.first_name })}
+            </Heading>
+
+            <Text size="18px" color={lightColor} fontWeight={500} letterSpacing="0.02em" p="12px 0 30px 0">
+              {t('read-to-start-learning')}
             </Text>
-          </Text>
-        </Box>
-      )}
 
-      {showInvites && invites.map((item, i) => {
-        const { id } = item;
-        const index = i;
-        return (
-          <Module
-            key={index}
-            data={{
-              title: item.cohort.name,
-            }}
-            containerStyle={{
-              background: '#FFF4DC',
-            }}
-            width={['70%', '68%', '70%', '50%']}
-            rightItemHandler={(
-              <Button
-                color="blue.default"
-                borderColor="blue.default"
-                textTransform="uppercase"
-                onClick={() => {
-                  acceptInvite({ id });
-                }}
-                gridGap="8px"
-              >
-                <Text color="blue.default" size="15px">
-                  {t('invite.accept')}
+            {invites.length > 0 && (
+              <Box margin="25px 0 0 0" display="flex" alignItems="center" justifyContent="space-between" padding="16px 20px" borderRadius="18px" width={['70%', '68%', '70%', '50%']} background="yellow.light">
+                <Text
+                  color="black"
+                  display="flex"
+                  flexDirection="row"
+                  gridGap="15px"
+                  width="100%"
+                  justifyContent="space-between"
+                  size="md"
+                >
+                  {t('invite.notify', { cohortInvitationWord: inviteWord() })}
+                  {/* {`Ey! There are ${inviteWord()} for you to accept.`} */}
+                  <Text
+                    as="button"
+                    size="md"
+                    fontWeight="bold"
+                    textAlign="left"
+                    gridGap="5px"
+                    _focus={{
+                      boxShadow: '0 0 0 3px rgb(66 153 225 / 60%)',
+                    }}
+                    color="blue.default"
+                    display="flex"
+                    alignItems="center"
+                    onClick={() => setShowInvites(!showInvites)}
+                  >
+                    {showInvites ? t('invite.hide') : t('invite.show')}
+                    <Icon
+                      icon="arrowDown"
+                      width="20px"
+                      height="20px"
+                      style={{ transform: showInvites ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                    />
+                  </Text>
                 </Text>
-              </Button>
+              </Box>
             )}
-          />
-        );
-      })}
 
-      <Box
+            {showInvites && invites.map((item, i) => {
+              const { id } = item;
+              const index = i;
+              return (
+                <Module
+                  key={index}
+                  data={{
+                    title: item.cohort.name,
+                  }}
+                  containerStyle={{
+                    background: '#FFF4DC',
+                  }}
+                  width={['70%', '68%', '70%', '50%']}
+                  rightItemHandler={(
+                    <Button
+                      color="blue.default"
+                      borderColor="blue.default"
+                      textTransform="uppercase"
+                      onClick={() => {
+                        acceptInvite({ id });
+                      }}
+                      gridGap="8px"
+                    >
+                      <Text color="blue.default" size="15px">
+                        {t('invite.accept')}
+                      </Text>
+                    </Button>
+                  )}
+                />
+              );
+            })}
+
+            {!loader.addmission && data.length <= 0 ? (
+              <Flex flexDirection="column" gridGap="12px" background={featuredColor} padding="14px 20px 14px 20px" borderRadius="9px" border="1px solid" borderColor={borderColor}>
+                <Heading size="sm" lineHeight="31px">
+                  {t('not-enrolled')}
+                </Heading>
+                <Text size="md" fontWeight={600}>
+                  {t('enroll-programs')}
+                </Text>
+                <Button variant="default" textransform="uppercase" width="fit-content">Enroll now</Button>
+              </Flex>
+            ) : (
+              <NextChakraLink variant="buttonDefault" href="https://4geeksacademy.slack.com/" target="blank" rel="noopener noreferrer" display="flex" gridGap="10px" width="fit-content" padding="0.5rem 6px 0.5rem 8px">
+                {t('join-our-community')}
+                <Icon icon="slack" width="20px" height="20px" color="currentColor" />
+              </NextChakraLink>
+            )}
+          </Box>
+          <Box flex={{ base: 1, md: 0.3 }} zIndex={2} position={{ base: 'inherit', md: 'absolute' }} right={0} top={0}>
+            {events?.length > 0 && (
+              <LiveEvent
+                liveUrl={events[0].url}
+                liveStartsAt={new Date(events[0].starting_at)}
+                liveEndsAt={new Date(events[0].ending_at)}
+                otherEvents={events.slice(1)}
+                // featureLabel,
+              />
+            )}
+          </Box>
+        </Flex>
+
+        <Box>
+          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="2rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '10px' }}>
+            <Heading size="sm" width={{ base: '100%', md: '22rem' }}>
+              {t('your-active-programs')}
+            </Heading>
+            <Box as="hr" width="100%" margin="0.5rem 0 0 0" />
+          </Box>
+          {!loader.addmission && data.length > 0 && (
+            <ChooseProgram chooseList={data} handleChoose={handleChoose} />
+          )}
+        </Box>
+        {loader.addmission && (
+          <Box>
+            Loading...
+          </Box>
+        )}
+      </GridContainer>
+      {/* <Box
         fontWeight={400}
         width={['70%', '68%', '70%', '50%']}
         fontSize="14px"
@@ -208,7 +275,21 @@ function chooseProgram() {
       >
         {t('description')}
       </Box>
-      <ChooseProgram chooseList={data} handleChoose={handleChoose} />
+      {!loader.addmission && data.length > 0 && (
+        <ChooseProgram chooseList={data} handleChoose={handleChoose} />
+      )}
+      {!loader.addmission && data.length <= 0 && (
+        <Box background={featuredColor} padding="14 20px 14px 20px">
+          <Heading size="sm" lineHeight="31px">
+            You are not enrolled in any cohort
+          </Heading>
+        </Box>
+      )}
+      {loader.addmission && (
+        <Box>
+          Loading...
+        </Box>
+      )} */}
     </Flex>
   );
 }

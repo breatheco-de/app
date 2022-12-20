@@ -6,9 +6,11 @@ import Icon from '../../common/components/Icon';
 import { isPlural } from '../../utils';
 import Text from '../../common/components/Text';
 import ProgramList from './programList';
+import useOnline from '../../common/hooks/useOnline';
 
 function ChooseProgram({ chooseList, handleChoose }) {
   const { t } = useTranslation('choose-program');
+  const { usersConnected } = useOnline();
   const [showFinished, setShowFinished] = useState(false);
 
   const activeCohorts = chooseList.filter((program) => {
@@ -50,13 +52,14 @@ function ChooseProgram({ chooseList, handleChoose }) {
     <>
       {activeCohorts.length > 0 && (
         <Box
-          display="flex"
-          justifyContent="space-between"
-          flexDirection="column"
-          borderRadius="25px"
-          height="100%"
-          width={['70%', '68%', '70%', '50%']}
-          gridGap="2px"
+          display="grid"
+          // justifyContent="space-between"
+          gridTemplateColumns="repeat(auto-fill, minmax(14rem, 1fr))"
+          // flexDirection="column"
+          // borderRadius="25px"
+          height="auto"
+          // width={['70%', '68%', '70%', '50%']}
+          gridGap="5rem"
         >
           {activeCohorts.map((item, i) => {
             const index = i;
@@ -75,11 +78,13 @@ function ChooseProgram({ chooseList, handleChoose }) {
         finishedCohorts.length > 0 && (
           <>
             <Box
-              width={['70%', '68%', '70%', '50%']}
+              // width={['100%', '78%', '70%', '80%']}
               display="flex"
-              padding="25px 0"
+              margin="2rem auto"
+              // padding="25px 0"
               flexDirection={{ base: 'column', md: 'row' }}
-              gridGap="6px"
+              gridGap={{ base: '0', md: '6px' }}
+              justifyContent="center"
             >
               <Text
                 size="md"
@@ -90,6 +95,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
               </Text>
               <Text
                 as="button"
+                alignSelf="center"
                 size="md"
                 fontWeight="bold"
                 textAlign="left"
@@ -112,18 +118,17 @@ function ChooseProgram({ chooseList, handleChoose }) {
               </Text>
             </Box>
             <Box
-              display="flex"
-              justifyContent="space-between"
-              flexDirection="column"
-              borderRadius="25px"
-              height="100%"
-              width={['70%', '68%', '70%', '50%']}
-              gridGap="2px"
+              display="grid"
+              mt="1rem"
+              gridTemplateColumns="repeat(auto-fill, minmax(14rem, 1fr))"
+              gridGap="5rem"
+              height="auto"
             >
               {showFinished && finishedCohorts.map((item, i) => {
                 const index = i;
                 return (
                   <ProgramList
+                    usersConnected={usersConnected}
                     key={index}
                     item={item}
                     handleChoose={handleChoose}
