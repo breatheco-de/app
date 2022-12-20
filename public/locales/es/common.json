@@ -111,5 +111,12 @@
   "start-free-trial": "Iniciar prueba gratuita",
   "proceed-to-payment": "Proceder al pago",
   "select-cohort": "Selecciona una cohorte",
-  "select-all": "Seleccionar todo"
+  "select-all": "Seleccionar todo",
+  "each": "cada {{value}}",
+  "payment": {
+    "pay-per-year": "Pagar {{value}} año",
+    "pay-per-quarter": "Pagar {{value}} trimestre",
+    "pay-per-month": "Pay {{value}} mes",
+    "pay-per-half": "Pay {{value}} medio año"
+  }
 }

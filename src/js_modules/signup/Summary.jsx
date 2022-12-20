@@ -2,46 +2,83 @@ import { Box, Button, useColorModeValue, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
+import { Fragment, useState, useEffect } from 'react';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
+import useSignup from '../../common/store/actions/signupAction';
 import bc from '../../common/services/breathecode';
 
 const Summary = ({
-  dateProps, formProps, courseTitle, planProps, checkoutData,
+  formProps,
+  // courseTitle,
+  // planProps,
 }) => {
   const { t } = useTranslation('signup');
-  const { borderColor } = useStyle();
   const router = useRouter();
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [disableHandler, setDisableHandler] = useState(false);
+
+  const {
+    state, nextStep, setSelectedPlanCheckoutData, handleChecking, setPlanProps,
+  } = useSignup();
+  const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
   const toast = useToast();
 
-  // console.log('checkoutData:::', checkoutData);
   const fontColor = useColorModeValue('gray.800', 'gray.300');
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const borderColor2 = useColorModeValue('black', 'white');
+  const { backgroundColor, borderColor } = useStyle();
 
-  const handlePayment = () => {
-    bc.payment().pay2({
-      type: checkoutData.type,
-      token: checkoutData.token,
-      chosen_period: 'HALF',
-    })
-      .then((response) => {
-        if (response.data.status === 'FULFILLED') {
-          router.push('/choose-program');
+  const getPlanProps = (plan) => {
+    bc.payment().getPlanProps(encodeURIComponent(plan.slug))
+      .then((resp) => {
+        console.log('payment_resp:', resp);
+        if (!resp) {
+          setDisableHandler(true);
+        } else {
+          setDisableHandler(false);
+          setPlanProps(resp.data);
         }
-        console.log('Payment_response:', response);
       })
       .catch(() => {
-        toast({
-          title: t('alert-message:payment-error'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
+        setDisableHandler(true);
       });
   };
+
+  useEffect(() => {
+    if (typeof selectedIndex === 'number' && checkoutData?.plans[selectedIndex]) {
+      // setPlanData(data[selectedIndex]);
+      setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
+      getPlanProps(checkoutData?.plans[selectedIndex]);
+    }
+  }, [checkoutData?.plans]);
+
+  const handleSubmit = () => {
+    if (planProps?.length > 0) {
+      handleChecking()
+        .then(() => {
+          nextStep();
+        })
+        .catch(() => {
+          toast({
+            title: 'Something went wrong choosing plan',
+            status: 'error',
+            duration: 6000,
+            isClosable: true,
+          });
+        });
+    }
+  };
+
+  const existsAmountPerHalf = checkoutData?.amount_per_half > 0;
+  const existsAmountPerMonth = checkoutData?.amount_per_month > 0;
+  const existsAmountPerQuarter = checkoutData?.amount_per_quarter > 0;
+  const existsAmountPerYear = checkoutData?.amount_per_year > 0;
+
+  const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
+
   return (
     <Box
       display="flex"
@@ -49,12 +86,7 @@ const Summary = ({
       gridGap="30px"
       mb="1rem"
     >
-      <Box
-        display="flex"
-        flexDirection="column"
-        flex={0.5}
-        gridGap="3rem"
-      >
+      <Box display="flex" flexDirection="column" flex={0.5} gridGap="3rem">
         <Box display="flex" flexDirection="column" gridGap="10px">
           <Heading size="18px" textTransform="uppercase">
             {t('cohort-details')}
@@ -70,9 +102,19 @@ const Summary = ({
             <Text size="md" fontWeight="700">
               {t('cohort-name')}
             </Text>
-            <Text size="md" fontWeight="400" color={fontColor} textTransform="capitalize">
+            <Text
+              size="md"
+              fontWeight="400"
+              color={fontColor}
+              textTransform="capitalize"
+            >
               {dateProps?.name}
-              <Text size="sm" fontWeight="700" textTransform="capitalize" color={fontColor}>
+              <Text
+                size="sm"
+                fontWeight="700"
+                textTransform="capitalize"
+                color={fontColor}
+              >
                 {dateProps?.syllabus_version?.name}
               </Text>
             </Text>
@@ -111,8 +153,14 @@ const Summary = ({
                 </Text>
                 <Text size="md" fontWeight="400" color={fontColor}>
                   {dateProps?.weekDays[router.locale].map(
-                    // eslint-disable-next-line no-nested-ternary
-                    (day, i) => `${i !== 0 ? i < dateProps?.weekDays[router.locale].length - 1 ? ',' : ` ${t('common:and')}` : ''} ${day}`,
+                    (day, i) => `${
+                      // eslint-disable-next-line no-nested-ternary
+                      i !== 0
+                        ? i < dateProps?.weekDays[router.locale].length - 1
+                          ? ','
+                          : ` ${t('common:and')}`
+                        : ''
+                    } ${day}`,
                   )}
                 </Text>
               </>
@@ -175,7 +223,7 @@ const Summary = ({
           </Box>
         </Box>
       </Box>
-      <Box display="flex" flexDirection="column" flex={0.6}>
+      <Box display="flex" flexDirection="column" flex={0.5}>
         <Box
           display="flex"
           flexDirection="column"
@@ -186,11 +234,7 @@ const Summary = ({
           gridGap="12px"
           borderRadius="14px"
         >
-          <Heading
-            size="15px"
-            color="blue.default"
-            textTransform="uppercase"
-          >
+          <Heading size="15px" color="blue.default" textTransform="uppercase">
             {t('signing-for')}
           </Heading>
           <Box display="flex" gridGap="12px">
@@ -201,34 +245,34 @@ const Summary = ({
                 borderRadius="7px"
                 width="fit-content"
               >
-                <Icon
-                  icon="coding"
-                  width="48px"
-                  height="48px"
-                  color="#fff"
-                />
+                <Icon icon="coding" width="48px" height="48px" color="#fff" />
               </Box>
             </Box>
             <Box display="flex" flexDirection="column" gridGap="7px">
-              <Heading size="18px">{courseTitle}</Heading>
-              {planProps?.payment && (
+              <Heading size="18px">
+                {/* {courseTitle} */}
+                {dateProps?.syllabus_version?.name}
+              </Heading>
+
+              {selectedPlanCheckoutData?.description && (
                 <Heading
                   size="15px"
                   textTransform="uppercase"
                   color={useColorModeValue('gray.500', 'gray.400')}
                 >
-                  {planProps?.payment}
+                  {selectedPlanCheckoutData?.description}
                 </Heading>
               )}
             </Box>
-            {planProps?.price && (
+            {selectedPlanCheckoutData?.price && (
               <Heading
-                size="sm"
+                size="m"
+                margin="0 26px 0 auto"
                 color="blue.default"
                 textTransform="uppercase"
                 textAlign="end"
               >
-                {planProps?.price}
+                {`$${selectedPlanCheckoutData?.price}`}
               </Heading>
             )}
           </Box>
@@ -239,9 +283,9 @@ const Summary = ({
             h="1px"
             borderColor={borderColor}
           />
-          {planProps?.bullets?.title && (
+          {planProps?.length > 0 && (
             <Box fontSize="14px" fontWeight="700" color="blue.default">
-              {planProps?.bullets?.title}
+              {t('what-you-will-get')}
             </Box>
           )}
           <Box
@@ -251,41 +295,121 @@ const Summary = ({
             flexDirection="column"
             gridGap="12px"
           >
-            {planProps?.bullets?.list?.map((bullet) => (
-              <Box
-                as="li"
-                key={bullet?.title}
-                display="flex"
-                flexDirection="row"
-                lineHeight="24px"
-                gridGap="8px"
-              >
-                <Icon
-                  icon="checked2"
-                  color="#38A56A"
-                  width="13px"
-                  height="10px"
-                  style={{ margin: '8px 0 0 0' }}
-                />
+            {planProps?.length > 0 && planProps?.map((bullet) => (
+              <>
                 <Box
-                  fontSize="14px"
-                  fontWeight="600"
-                  letterSpacing="0.05em"
-                  dangerouslySetInnerHTML={{ __html: bullet?.title }}
-                />
-              </Box>
+                  as="li"
+                  key={bullet?.features[0]?.description}
+                  display="flex"
+                  flexDirection="row"
+                  lineHeight="24px"
+                  gridGap="8px"
+                >
+                  <Icon
+                    icon="checked2"
+                    color="#38A56A"
+                    width="13px"
+                    height="10px"
+                    style={{ margin: '8px 0 0 0' }}
+                  />
+                  <Box
+                    fontSize="14px"
+                    fontWeight="600"
+                    letterSpacing="0.05em"
+                    dangerouslySetInnerHTML={{ __html: bullet?.description }}
+                  />
+                  {bullet?.features[0]?.description}
+                </Box>
+              </>
             ))}
           </Box>
         </Box>
-        {!planProps.type?.includes('trial') && (
-          <Button variant="default" onClick={handlePayment} height="45px" mt="12px">
+        <Box background={backgroundColor} pt="22px">
+          <Heading
+            size="xsm"
+            p="0 0 12px 0"
+          >
+            {t('select-payment-plan')}
+          </Heading>
+          <Box display="flex" flexDirection="column" gridGap="10px">
+            {/* {data */}
+            {checkoutData?.plans
+              .filter((l) => l.status === 'ACTIVE')
+              .map((item, i) => (
+                <Fragment key={`${item.slug}`}>
+                  <Box
+                    display="flex"
+                    onClick={() => {
+                      setSelectedIndex(i);
+                      // setPlanData(item);
+                      getPlanProps(item);
+                      setSelectedPlanCheckoutData(item);
+                    }}
+                    flexDirection={{ base: 'column', md: 'row' }}
+                    width="100%"
+                    justifyContent="space-between"
+                    // p={selectedIndex === i ? '22px 18px' : '26px 22px'}
+                    p={{ base: '8px 14px', md: '22px 18px' }}
+                    gridGap={{ base: '0', md: '12px' }}
+                    cursor="pointer"
+                    // background={selectedIndex !== i && featuredColor}
+                    border={selectedIndex === i ? '2px solid #0097CD' : '2px solid transparent'}
+                    borderRadius="13px"
+                  >
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      gridGap={{ base: '0', md: '4px' }}
+                      minWidth={{ base: '100%', md: '288px' }}
+                      height="fit-content"
+                      fontWeight="400"
+                    >
+                      <Box fontSize="18px" fontWeight="700">
+                        {item?.title}
+                      </Box>
+                      <Text
+                        size="md"
+                        fontWeight="500"
+                        mb="6px"
+                        // dangerouslySetInnerHTML={{
+                        //   __html: item?.description,
+                        // }}
+                        dangerouslySetInnerHTML={{
+                          __html: item?.description,
+                        }}
+                      />
+                    </Box>
+                    <Box display="flex" alignItems="center" gridGap="10px">
+                      <Heading
+                        as="span"
+                        size="m"
+                        lineHeight="1"
+                        textTransform="uppercase"
+                        color="blue.default"
+                      >
+                        {`$${item?.price}`}
+                      </Heading>
+                    </Box>
+                  </Box>
+                </Fragment>
+              ))}
+          </Box>
+        </Box>
+        {isNotTrial ? (
+          <Button
+            variant="default"
+            onClick={handleSubmit}
+            isDisabled={disableHandler}
+            height="45px"
+            mt="12px"
+          >
             {t('common:proceed-to-payment')}
           </Button>
-        )}
-        {planProps.type?.includes('trial') && (
+        ) : (
           <Button
             variant="outline"
             borderColor="blue.200"
+            isDisabled={disableHandler}
             background={featuredBackground}
             _hover={{ background: featuredBackground, opacity: 0.8 }}
             _active={{ background: featuredBackground, opacity: 1 }}
@@ -302,11 +426,9 @@ const Summary = ({
 };
 
 Summary.propTypes = {
-  dateProps: PropTypes.objectOf(PropTypes.any).isRequired,
   formProps: PropTypes.objectOf(PropTypes.any).isRequired,
-  planProps: PropTypes.objectOf(PropTypes.any).isRequired,
-  courseTitle: PropTypes.string.isRequired,
-  checkoutData: PropTypes.objectOf(PropTypes.any).isRequired,
+  // planProps: PropTypes.objectOf(PropTypes.any).isRequired,
+  // courseTitle: PropTypes.string.isRequired,
 };
 
 export default Summary;

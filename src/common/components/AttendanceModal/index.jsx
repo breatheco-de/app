@@ -191,7 +191,7 @@ const AttendanceModal = ({
   }, [currentModule]);
 
   const handleAttendance = () => {
-    if (historyLog?.repeated > historyLog?.expected) {
+    if (historyLog?.repeated >= historyLog?.expected) {
       setOpenWarn(true);
     } else if (attendanceWasTaken()) {
       setOpenAttendanceTakenWarn(true);

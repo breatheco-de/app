@@ -13,9 +13,10 @@ import Text from '../../common/components/Text';
 import AlertMessage from '../../common/components/AlertMessage';
 import { getTimeProps } from '../../utils';
 import useGoogleMaps from '../../common/hooks/useGoogleMaps';
+import useSignup from '../../common/store/actions/signupAction';
 
 const ChooseYourClass = ({
-  isSecondStep, courseChoosed, handleChooseDate, setLocation, loader,
+  courseChoosed,
 }) => {
   const { t } = useTranslation('signup');
   const [cohortIsLoading, setCohortIsLoading] = useState(true);
@@ -29,11 +30,15 @@ const ChooseYourClass = ({
   const inputRef = useRef();
   const buttonRef = useRef();
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
+  const { state, isSecondStep, setLocation, handleChooseDate } = useSignup();
+  const { loader } = state;
 
   const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(
     GOOGLE_KEY,
     'places',
   );
+
+  const { syllabus } = router.query;
 
   useEffect(() => {
     if (coords !== null && isSecondStep) {
@@ -42,7 +47,7 @@ const ChooseYourClass = ({
       bc.public({
         coordinates: `${coords.latitude},${coords.longitude}`,
         saas: true,
-        syllabus_slug: courseChoosed,
+        syllabus_slug: syllabus || courseChoosed,
         upcoming: true,
       })
         .cohorts()

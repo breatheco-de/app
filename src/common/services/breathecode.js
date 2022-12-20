@@ -3,6 +3,7 @@ import { parseQuerys } from '../../utils/url';
 import modifyEnv from '../../../modifyEnv';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
 const host = `${BREATHECODE_HOST}/v1`;
 
 const breathecode = {
@@ -36,7 +37,7 @@ const breathecode = {
         method: 'get',
         url: `${url}/academy/member/${userId}`,
         headers: {
-          Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
+          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
           academy: 4,
         },
       }),
@@ -103,7 +104,7 @@ const breathecode = {
       getAttendance: (id) => axios.get(`${url}/cohort/${id}/log?${qs}`),
       getPublic: (id) => axios.get(`${url}/cohort/${id}`, {
         headers: {
-          Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
+          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
           academy: 4,
         },
       }),
@@ -114,7 +115,7 @@ const breathecode = {
         method: 'get',
         url: `${url}/cohort/${cohortId}/user/${userId}`,
         headers: {
-          Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
+          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
           academy: 4,
         },
       }),
@@ -186,31 +187,9 @@ const breathecode = {
     return {
       checking: (data) => axios.put(`${url}/checking?${qs}`, data),
       pay: (data) => axios.post(`${url}/pay?${qs}`, data),
-      pay2: (data) => axios({
-        method: 'post',
-        url: `${url}/pay?${qs}`,
-        data,
-        headers: {
-          'Accept-Language': 'en',
-        },
-      }),
       addCard: (data) => axios.post(`${url}/card?${qs}`, data),
-      addCard2: (data) => axios({
-        method: 'post',
-        url: `${url}/card?${qs}`,
-        data,
-        headers: {
-          'Accept-Language': 'en',
-        },
-      }),
-      getCard: (data) => axios({
-        method: 'get',
-        url: `${url}/card?${qs}`,
-        data,
-        headers: {
-          'Accept-Language': 'en',
-        },
-      }),
+      // getCard: () => axios.post(`${url}/card?${qs}`),
+      getPlanProps: (id) => axios.get(`${url}/serviceitem?plan=${id}`),
     };
   },
 };

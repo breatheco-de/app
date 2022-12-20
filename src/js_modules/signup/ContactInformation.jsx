@@ -17,18 +17,26 @@ import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
 import useCustomToast from '../../common/hooks/useCustomToast';
 import modifyEnv from '../../../modifyEnv';
+import useSignup from '../../common/store/actions/signupAction';
 
 const ContactInformation = ({
-  stepIndex, setStepIndex, courseChoosed, location, queryCohortIdExists, dateProps,
+  courseChoosed, queryCohortIdExists,
   formProps, setFormProps,
 
 }) => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
+  const {
+    state, nextStep, handleStep,
+  } = useSignup();
+  const { stepIndex, dateProps, location } = state;
   const router = useRouter();
   const toast = useToast();
   const toastIdRef = useRef();
   const { featuredColor } = useStyle();
+
+  const { syllabus } = router.query;
+
   const { createToast } = useCustomToast({
     toastIdRef,
     status: 'info',
@@ -94,9 +102,9 @@ const ContactInformation = ({
           },
         });
         if (queryCohortIdExists && dateProps) {
-          setStepIndex(2);
+          handleStep(2);
         } else {
-          setStepIndex(stepIndex + 1);
+          nextStep();
         }
       } else {
         router.push('/thank-you');
@@ -118,15 +126,6 @@ const ContactInformation = ({
 
   return (
     <>
-      <Box display="flex">
-        <Heading size="18px">{t('about-you')}</Heading>
-        <Flex fontSize="13px" ml="1rem" p="2px 8px" backgroundColor={featuredColor} alignItems="center" borderRadius="4px" gridGap="6px">
-          {t('already-have-account')}
-          {' '}
-          <NextChakraLink href="/login" redirectAfterLogin fontSize="12px" variant="default">{t('login-here')}</NextChakraLink>
-        </Flex>
-      </Box>
-
       <Formik
         initialValues={{
           first_name: '',
@@ -141,6 +140,7 @@ const ContactInformation = ({
             course: courseChoosed,
             country: location?.country,
             cohort: dateProps?.id,
+            syllabus,
             city: location?.city,
             language: router.locale,
           };
@@ -151,6 +151,7 @@ const ContactInformation = ({
         }}
         validationSchema={signupValidation}
       >
+
         {({ isSubmitting }) => (
           <Form
             style={{
@@ -159,7 +160,15 @@ const ContactInformation = ({
               gridGap: '22px',
             }}
           >
-            <Box display="flex" gridGap="18px">
+            <Box display="flex" flexDirection={{ base: 'column', md: 'row' }}>
+              <Heading size="18px">{t('about-you')}</Heading>
+              <Flex fontSize="13px" ml={{ base: '0', md: '1rem' }} mt={{ base: '8px', md: '0' }} p="2px 8px" backgroundColor={featuredColor} alignItems="center" borderRadius="4px" gridGap="6px">
+                {t('already-have-account')}
+                {' '}
+                <NextChakraLink href="/login" redirectAfterLogin fontSize="12px" variant="default">{t('login-here')}</NextChakraLink>
+              </Flex>
+            </Box>
+            <Box display="flex" gridGap="18px" flexDirection={{ base: 'column', md: 'row' }}>
               <Box display="flex" gridGap="18px" flex={0.5}>
                 <FieldForm
                   type="text"
@@ -238,22 +247,15 @@ const ContactInformation = ({
 };
 
 ContactInformation.propTypes = {
-  stepIndex: PropTypes.number.isRequired,
-  setStepIndex: PropTypes.func,
   courseChoosed: PropTypes.string.isRequired,
-  location: PropTypes.objectOf(PropTypes.any),
   queryCohortIdExists: PropTypes.bool,
-  dateProps: PropTypes.objectOf(PropTypes.any),
   formProps: PropTypes.objectOf(PropTypes.any).isRequired,
   setFormProps: PropTypes.func,
 };
 
 ContactInformation.defaultProps = {
-  dateProps: {},
-  setStepIndex: () => {},
   queryCohortIdExists: false,
   setFormProps: () => {},
-  location: {},
 };
 
 export default ContactInformation;
