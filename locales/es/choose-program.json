@@ -3,6 +3,12 @@
     "title": "Elegir programa"
   },
   "title": "Tus Programas",
+  "welcome-back": "Bienvenido de vuelta, {{name}}",
+  "your-active-programs": "Tus programas activos",
+  "join-our-community": "Únete a nuestra comunidad",
+  "enroll-programs": "¡Inscríbete en uno de nuestros programas!",
+  "not-enrolled": "No estás inscrito en ninguna cohorte",
+  "read-to-start-learning": "Listo para comenzar a aprender?",
   "invite": {
     "notify": "¡Oye! Hay {{cohortInvitationWord}} para ti.",
     "plural-word": "{{invitesLength}} nuevas invitaciones de cohorte",
@@ -16,6 +22,11 @@
     "singular": "Hay {{finishedCohorts}} programa que ya has terminado.",
     "show": "Haga clic aquí para mostrarlas",
     "hide": "Haga clic aquí para ocultarlas"
+  },
+  "program-list": {
+    "mentors-available": "{{count}} Mentores disponibles",
+    "start-course": "Iniciar curso",
+    "continue-course": "Continuar curso"
   },
   "roles-info": "Los Roles solo se muestran en el modo de desarrollo",
   "launch-program": "Elegir este programa",
