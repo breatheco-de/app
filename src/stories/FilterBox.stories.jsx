@@ -19,29 +19,102 @@ export default {
 };
 
 const technologies = [
-  'python',
-  'javascript',
-  'java',
-  'html',
-  'css',
-  'javascript',
-  'javascript',
-  'java',
-  'python',
-  'html',
-  'java',
-  'javascript',
-  'html',
-  'css',
-  'javascript',
-  'java',
-  'python',
-  'html',
-  'css',
-  'java',
-  'html',
-  'css',
-  'javascript',
+  {
+    id: 1,
+    label: 'python',
+  },
+  {
+    id: 2,
+    label: 'javascript',
+  },
+  {
+    id: 3,
+    label: 'java',
+  },
+  {
+    id: 4,
+    label: 'html',
+  },
+  {
+    id: 5,
+    label: 'css',
+  },
+  {
+    id: 6,
+    label: 'javascript',
+  },
+  {
+    id: 7,
+    label: 'java',
+  },
+  {
+    id: 8,
+    label: 'html',
+  },
+  {
+    id: 9,
+    label: 'css',
+  },
+  {
+    id: 10,
+    label: 'python',
+  },
+  {
+    id: 11,
+    label: 'javascript',
+  },
+  {
+    id: 12,
+    label: 'html',
+  },
+  {
+    id: 13,
+    label: 'java',
+  },
+  {
+    id: 14,
+    label: 'python',
+  },
+  {
+    id: 15,
+    label: 'html',
+  },
+  {
+    id: 16,
+    label: 'javascript',
+  },
+  {
+    id: 17,
+    label: 'java',
+  },
+  {
+    id: 18,
+    label: 'html',
+  },
+  {
+    id: 19,
+    label: 'css',
+  },
+  {
+    id: 20,
+    label: 'python',
+  },
+  {
+    id: 21,
+    label: 'javascript',
+  },
+  {
+    id: 22,
+    label: 'html',
+  },
+  {
+    id: 23,
+    label: 'java',
+  },
+  {
+    id: 24,
+    label: 'python',
+  },
 ];
 
 const Component = (args, context) => {
