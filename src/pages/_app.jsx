@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import {
+  QueryClient,
+  QueryClientProvider,
+} from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import '../../styles/globals.css';
 import '../../styles/markdown.css';
 import '../../styles/phoneInput/index.css';
@@ -21,14 +26,30 @@ import '@fontsource/lato/300.css';
 import '@fontsource/lato/400.css';
 import '@fontsource/lato/700.css';
 import '@fontsource/lato/900.css';
+import { isWindow } from '../utils';
 
 function App({ Component, pageProps }) {
   const { isAuthenticated } = useAuth();
   const [haveSession, setHaveSession] = useState(false);
   const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
+  const dayInMilliseconds = 24 * 60 * 60 * 1000;
+
+  const queryClient = new QueryClient();
 
   useEffect(() => {
     TagManager.initialize({ gtmId: process.env.TAG_MANAGER_KEY });
+    const lastCleanupTimestamp = isWindow && localStorage.getItem('lastCleanupTimestamp');
+
+    if (lastCleanupTimestamp) {
+      const elapsedTime = Date.now() - lastCleanupTimestamp;
+      const oneWeekInMilliseconds = 7 * dayInMilliseconds;
+      if (elapsedTime > oneWeekInMilliseconds) {
+        localStorage.removeItem('queryCache');
+        localStorage.setItem('lastCleanupTimestamp', Date.now());
+      }
+    } else {
+      localStorage.setItem('lastCleanupTimestamp', Date.now());
+    }
   }, []);
 
   useEffect(() => {
@@ -46,7 +67,7 @@ function App({ Component, pageProps }) {
   };
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <Helmet
         {...pageProps.seo}
       />
@@ -62,7 +83,8 @@ function App({ Component, pageProps }) {
           </ConnectionProvider>
         </AuthProvider>
       </CookiesProvider>
-    </>
+      <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+    </QueryClientProvider>
   );
 }
 

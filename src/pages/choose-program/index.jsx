@@ -16,6 +16,7 @@ import { isPlural } from '../../utils';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import AlertMessage from '../../common/components/AlertMessage';
+import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -44,6 +45,39 @@ function chooseProgram() {
   const { user, choose } = useAuth();
   const router = useRouter();
   const toast = useToast();
+
+  const fetchAdmissions = () => bc.admissions().me();
+
+  const { isLoading, error, isFetching, data: dataQuery } = useLocalStorageQuery(
+    'admissions',
+    fetchAdmissions,
+    {
+      // cache 1 hour
+      cacheTime: 1000 * 60 * 60,
+      refetchOnWindowFocus: false,
+    },
+    true,
+    // ''
+  );
+
+  useEffect(() => {
+    console.log('loading: ', isLoading, 'isFetching:::', isFetching);
+    console.log(dataQuery);
+
+    if (error) console.log('Error fetching data: ', error);
+    if (dataQuery) {
+      setData(dataQuery?.cohorts);
+      setProfile(dataQuery);
+    }
+    // if (isLoading) console.log('Loading data...');
+    // if (error) console.log('Error fetching data: ', error);
+    // if (dataQuery?.data && !isLoading) {
+    //   console.log('dataQuery: ', dataQuery);
+    //   setData(dataQuery?.data?.cohorts);
+    //   setProfile(dataQuery.data);
+    // }
+  }, [dataQuery, isLoading]);
+
   const userID = user?.id;
 
   useEffect(() => {
@@ -56,14 +90,15 @@ function chooseProgram() {
   }, [userID]);
 
   useEffect(() => {
+    // getAdmissions();
     Promise.all([
-      bc.admissions().me(),
+      // bc.admissions().me(),
       bc.auth().invites().get(),
     ]).then((
-      [respAdmissions, respInvites],
+      [respInvites],
     ) => {
-      setData(respAdmissions?.data?.cohorts);
-      setProfile(respAdmissions.data);
+      // setData(respAdmissions?.data?.cohorts);
+      // setProfile(respAdmissions.data);
       setInvites(respInvites.data);
     }).catch(() => {
       toast({
