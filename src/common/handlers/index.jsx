@@ -1,4 +1,12 @@
+import { formatDuration, intervalToDuration } from 'date-fns';
+import { es, en } from 'date-fns/locale';
+import useTranslation from 'next-translate/useTranslation';
 import bc from '../services/breathecode';
+
+const availableLanguages = {
+  es,
+  en,
+};
 
 const handlers = {
   getActivities: (cohortSlug, academyId = 4) => new Promise((resolve, reject) => {
@@ -84,6 +92,43 @@ const handlers = {
         reject();
       });
   }),
+
+  formatTimeString: (start) => {
+    const { t, lang } = useTranslation('live-event');
+    const duration = intervalToDuration({
+      end: new Date(),
+      start,
+    });
+    const formated = formatDuration(duration,
+      {
+        format: ['months', 'weeks', 'days', 'hours', 'minutes'],
+        delimiter: ', ',
+        locale: availableLanguages[lang],
+      });
+
+    if (formated === '') return t('few-seconds');
+    return {
+      formated,
+      duration,
+    };
+  },
+  checkIfExpired: ({ date, year = 'numeric', month = 'long', day = 'numeric', hour, minute }) => {
+    const { lang } = useTranslation('live-event');
+    const localeLang = {
+      es: 'es-ES',
+      en: 'en-US',
+    };
+
+    const now = new Date();
+    const expirationDate = new Date(date);
+    const value = now > expirationDate;
+    //                                                    'numeric' 'long' 'numeric' 'numeric' 'numeric'
+    const formatedDate = expirationDate.toLocaleDateString(localeLang[lang], { year, month, day, hour, minute });
+    return {
+      value,
+      date: formatedDate,
+    };
+  },
 };
 
 export default handlers;

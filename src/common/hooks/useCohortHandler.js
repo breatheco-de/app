@@ -167,10 +167,10 @@ function useHandler() {
             });
           }
 
-          const filterEmptyModules = assignmentsRecopilated.filter(
+          const filterNotEmptyModules = assignmentsRecopilated.filter(
             (l) => l.modules.length > 0,
           );
-          return setSortedAssignments(filterEmptyModules);
+          return setSortedAssignments(filterNotEmptyModules);
         }
         return null;
       });

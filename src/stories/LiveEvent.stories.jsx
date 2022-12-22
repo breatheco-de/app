@@ -54,17 +54,17 @@ Default.args = {
   startingSoonDelta: 30,
   otherEvents: [{
     title: 'My Wonderful HTML Email Workflow',
-    starts_at: subMinutes(new Date(), 0),
-    ends_at: addMinutes(new Date(), 180),
+    starting_at: subMinutes(new Date(), 0),
+    ending_at: addMinutes(new Date(), 180),
     icon: 'group',
     fill: '#25BF6C',
     liveUrl: 'https://www.google.co.ve/'
   }, {
     title: 'Coding Jamming',
-    // starts_at: subHours(new Date(), 2),
-    // ends_at: subMinutes(new Date(), 15),
-    starts_at: new Date(addMinutes(new Date(), 15)),
-    ends_at: new Date(addHours(new Date(), 2)),
+    // starting_at: subHours(new Date(), 2),
+    // ending_at: subMinutes(new Date(), 15),
+    starting_at: new Date(addMinutes(new Date(), 15)),
+    ending_at: new Date(addHours(new Date(), 2)),
     icon: 'codeBg',
     liveUrl: 'https://www.google.co.ve/'
   }],
