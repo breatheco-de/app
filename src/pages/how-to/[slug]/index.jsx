@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import {
-  Box, toast, useColorModeValue, Image, Skeleton,
+  Box, toast, useColorModeValue, Skeleton,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -92,12 +92,12 @@ export default function HowToSlug({ data, markdown }) {
   const [neverLoaded, setNeverLoaded] = useState(false);
   const title = data?.title || '';
   const author = data?.author || '';
-  const preview = data?.preview || '';
+  // const preview = data?.preview || '';
 
   // const { translations } = data;
   const translations = data?.translations || { es: '', en: '', us: '' };
-  const defaultImage = '/static/images/coding-notebook.png';
-  const getImage = preview || defaultImage;
+  // const defaultImage = '/static/images/coding-notebook.png';
+  // const getImage = preview || defaultImage;
   const router = useRouter();
   const language = router.locale === 'en' ? 'us' : 'es';
   const { slug } = router.query;
@@ -205,7 +205,7 @@ export default function HowToSlug({ data, markdown }) {
         ) : (
           <Skeleton height="45px" width="100%" borderRadius="10px" />
         )}
-        <Box margin="24px 0 0 0">
+        <Box margin="24px 0 1.5rem 0">
           <Text size="l" fontWeight="900" textTransform="uppercase">
             {t('written-by')}
           </Text>
@@ -226,7 +226,7 @@ export default function HowToSlug({ data, markdown }) {
           )}
         </Box>
 
-        <Image src={getImage} alt={title} margin="20px 0 30px 0" width="100%" borderRadius="10px" height="100%" style={{ aspectRatio: '12/6' }} />
+        {/* <Image src={getImage} alt={title} margin="20px 0 30px 0" width="100%" borderRadius="10px" height="100%" style={{ aspectRatio: '12/6' }} /> */}
         <Box
           borderRadius="3px"
           margin="0 auto"
