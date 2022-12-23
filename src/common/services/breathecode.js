@@ -66,11 +66,7 @@ const breathecode = {
     return {
       get: () => axios.get(`${url}/task/?${qs}`),
       getAssignments: (args) => axios.get(`${url}/academy/cohort/${args.id}/task?${qs}`),
-      deliver: (args) => axios.get(`${url}/task/${args.id}/deliver`, {
-        headers: {
-          academy: args.academyId,
-        },
-      }),
+      deliver: (args) => axios.get(`${url}/task/${args.id}/deliver`),
       uploadFile: (id, args) => axios.put(`${url}/task/${id}/attachment?${qs}`, args),
       getFile: (args) => axios.get(`${url}/task/${args.id}/attachment`, {
         headers: args.academyId && {

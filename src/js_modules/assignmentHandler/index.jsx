@@ -14,7 +14,7 @@ import bc from '../../common/services/breathecode';
 // import Modal from './modal';
 
 const DeliverModal = ({
-  currentTask, projectLink, cohortSession, updpateAssignment,
+  currentTask, projectLink, updpateAssignment,
 }) => {
   const { t } = useTranslation('assignments');
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -46,7 +46,6 @@ const DeliverModal = ({
           setIsLoading(true);
           bc.todo().deliver({
             id: currentTask.id,
-            academyId: cohortSession.academy.id,
           })
             .then(({ data }) => {
               setDeliveryUrl(data.delivery_url);
@@ -430,7 +429,6 @@ ButtonHandler.defaultProps = {
 DeliverModal.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.any).isRequired,
   projectLink: PropTypes.string.isRequired,
-  cohortSession: PropTypes.objectOf(PropTypes.any).isRequired,
   updpateAssignment: PropTypes.func.isRequired,
 };
 ReviewModal.propTypes = {
