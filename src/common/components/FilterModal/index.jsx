@@ -19,11 +19,10 @@ import { useRouter } from 'next/router';
 import Icon from '../Icon';
 import Text from '../Text';
 import TechnologiesSection from './technologies';
-import DifficultySection from './difficulty';
 import useStyle from '../../hooks/useStyle';
 
 const FilterModal = ({
-  title, isModalOpen, onClose, setFilter, contextFilter, technologyTags, difficulties,
+  title, isModalOpen, onClose, setFilter, technologyTags,
 }) => {
   const { t } = useTranslation('common');
   const [checkedTechnologies, setCheckedTechnologies] = useState([]);
@@ -151,19 +150,6 @@ const FilterModal = ({
               checkedTechnologies={checkedTechnologies}
             />
 
-            {/* <------------------- Difficulty section -------------------> */}
-            <DifficultySection
-              t={t}
-              title={t('difficulties')}
-              setFilter={setFilter}
-              contextFilter={contextFilter}
-              setDifficultyPosition={setDifficultyPosition}
-              difficulties={difficulties}
-              commonTextColor={lightColor}
-              difficultyPosition={difficultyPosition}
-              commonBorderColor={borderColor}
-            />
-
             <Flex flexDirection="row" justifyContent="space-between">
               <Text fontSize="1rem" fontWeight="bold" textTransform="uppercase" color={lightColor} padding="20px 0">
                 {t('only-video-tutorials')}
@@ -225,16 +211,13 @@ const FilterModal = ({
 FilterModal.propTypes = {
   title: PropTypes.string,
   setFilter: PropTypes.func.isRequired,
-  contextFilter: PropTypes.objectOf(PropTypes.any).isRequired,
   technologyTags: PropTypes.arrayOf(PropTypes.string),
-  difficulties: PropTypes.arrayOf(PropTypes.string),
   isModalOpen: PropTypes.bool,
   onClose: PropTypes.func,
 };
 FilterModal.defaultProps = {
   title: '',
   technologyTags: [],
-  difficulties: [],
   isModalOpen: true,
   onClose: () => {},
 };
