@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import {
   AvatarGroup,
   Box, Button,
@@ -94,7 +94,7 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
             <Box display="flex" gridGap="10px" margin="0 0 20px 0" background={backgroundColor3} padding="12px 12px" borderRadius="6px">
               <Box display="flex" flexDirection="column" flex={0.5} gridGap="4px">
                 {currentCohortProps?.allTasks?.map((task) => task.taskLength > 0 && (
-                  <Box display="flex" gridGap="10px" alignItems="center">
+                  <Box key={`${task.id}-${task.title}`} display="flex" gridGap="10px" alignItems="center">
                     <Icon icon={taskIcons[task.task_type]} width="16px" height="16px" color={hexColor.blueDefault} />
                     <Box display="flex" gridGap="5px" fontWeight={700}>
                       <Text size="sm">
@@ -135,17 +135,19 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
                           const fullName = `${c.user.first_name} ${c.user.last_name}`;
                           const isOnline = usersConnected?.includes(c.user.id);
                           return (
-                            <AvatarUser
-                              width="42px"
-                              height="42px"
-                              index={i}
-                              key={`${c.id} - ${c.user.first_name}`}
-                              isWrapped
-                              fullName={fullName}
-                              data={c}
-                              isOnline={isOnline}
-                              badge
-                            />
+                            <Fragment key={`${c.id} - ${c.user.first_name}`}>
+                              <AvatarUser
+                                width="42px"
+                                height="42px"
+                                index={i}
+                                // key={`${c.id} - ${c.user.first_name}`}
+                                isWrapped
+                                fullName={fullName}
+                                data={c}
+                                isOnline={isOnline}
+                                badge
+                              />
+                            </Fragment>
                           );
                         })}
                       </AvatarGroup>
@@ -187,11 +189,12 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
 CohortProgram.propTypes = {
   item: PropTypes.objectOf(PropTypes.any),
   handleChoose: PropTypes.func,
-  usersConnected: PropTypes.arrayOf(PropTypes.any).isRequired,
+  usersConnected: PropTypes.arrayOf(PropTypes.any),
 };
 CohortProgram.defaultProps = {
   item: {},
   handleChoose: () => {},
+  usersConnected: [],
 };
 
 export default CohortProgram;

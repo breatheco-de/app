@@ -90,7 +90,8 @@ function ChooseProgram({ chooseList, handleChoose }) {
               display="grid"
               mt="1rem"
               gridTemplateColumns="repeat(auto-fill, minmax(14rem, 1fr))"
-              gridGap="5rem"
+              gridColumnGap="5rem"
+              gridRowGap="3rem"
               height="auto"
             >
               {showFinished && finishedCohorts.map((item, i) => {
