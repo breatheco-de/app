@@ -262,7 +262,7 @@ function chooseProgram() {
               );
             })}
 
-            {!loader.addmission && data.length <= 0 ? (
+            {!loader.addmission && dataQuery?.cohorts <= 0 ? (
               <Flex flexDirection="column" gridGap="12px" background={featuredColor} padding="14px 20px 14px 20px" borderRadius="9px" border="1px solid" borderColor={borderColor}>
                 <Heading size="sm" lineHeight="31px">
                   {t('not-enrolled')}
