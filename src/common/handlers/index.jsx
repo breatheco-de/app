@@ -9,6 +9,15 @@ const availableLanguages = {
 };
 
 const handlers = {
+  getSyllabus: (academyId, slug, version) => new Promise((resolve, reject) => {
+    bc.syllabus().get(academyId, slug, version)
+      .then(({ data }) => {
+        resolve(data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  }),
   getActivities: (cohortSlug, academyId = 4) => new Promise((resolve, reject) => {
     bc.cohort({ academy: academyId }).getAttendance(cohortSlug)
       .then(({ data }) => {
@@ -127,6 +136,93 @@ const handlers = {
     return {
       value,
       date: formatedDate,
+    };
+  },
+  getCohortsFinished: (cohorts) => cohorts.filter((program) => {
+    const educationalStatus = program?.educational_status?.toUpperCase();
+    const programCohortStage = program?.cohort?.stage?.toUpperCase();
+
+    const showCohort = ['ENDED'].includes(programCohortStage);
+    // ACTIVE: show be here because the student may not have delivered all the homework
+    const showStudent = ['GRADUATED', 'POSTPONED', 'ACTIVE'].includes(
+      educationalStatus,
+    );
+    return showCohort && showStudent;
+  }),
+  getActiveCohorts: (cohorts) => cohorts.filter((program) => {
+    const educationalStatus = program?.educational_status?.toUpperCase();
+    const programRole = program?.role?.toUpperCase();
+    const programCohortStage = program?.cohort?.stage?.toUpperCase();
+
+    const includesPrework = ['PREWORK'].includes(programCohortStage);
+    const visibleForTeacher = includesPrework && programRole !== 'STUDENT';
+
+    const showCohort = [
+      'STARTED',
+      'ACTIVE',
+      'FINAL_PROJECT',
+    ].includes(programCohortStage);
+
+    const showStudent = ['ACTIVE'].includes(educationalStatus)
+      && !includesPrework
+      && programRole === 'STUDENT';
+
+    const show = visibleForTeacher || showCohort || showStudent;
+
+    return show;
+  }),
+  handleTasks: (tasks, onlyExistent = false) => {
+    const allLessons = tasks.filter((l) => l.task_type === 'LESSON');
+    const allExercises = tasks.filter((e) => e.task_type === 'EXERCISE');
+    const allProjects = tasks.filter((p) => p.task_type === 'PROJECT');
+    const allQuiz = tasks.filter((q) => q.task_type === 'QUIZ');
+
+    const allTasks = [
+      {
+        title: 'Lesson',
+        icon: 'book',
+        task_type: 'LESSON',
+        taskLength: allLessons.length,
+        completed: allLessons.filter((l) => l.task_status === 'DONE').length,
+      },
+      {
+        title: 'Exercise',
+        icon: 'strength',
+        task_type: 'EXERCISE',
+        taskLength: allExercises.length,
+        completed: allExercises.filter((e) => e.task_status === 'DONE').length,
+      },
+      {
+        title: 'Project',
+        icon: 'code',
+        task_type: 'PROJECT',
+        taskLength: allProjects.length,
+        completed: allProjects.filter((p) => p.task_status === 'DONE').length,
+      },
+      {
+        title: 'Quiz',
+        icon: 'answer',
+        task_type: 'QUIZ',
+        taskLength: allQuiz.length,
+        completed: allQuiz.filter((q) => q.task_status === 'DONE').length,
+      },
+    ];
+
+    const allExistentTasks = onlyExistent ? allTasks.filter((t) => t.taskLength > 0) : allTasks;
+
+    const calculateTaskPercentage = () => {
+      let sumTaskCompleted = 0;
+      let sumTaskLength = 0;
+      for (let i = 0; i < allExistentTasks.length; i += 1) {
+        sumTaskCompleted += allExistentTasks[i].completed;
+        sumTaskLength += allExistentTasks[i].taskLength;
+      }
+      return Math.trunc((sumTaskCompleted / sumTaskLength) * 100);
+    };
+    const percentage = calculateTaskPercentage() || 0;
+    return {
+      allTasks: allExistentTasks,
+      percentage,
     };
   },
 };

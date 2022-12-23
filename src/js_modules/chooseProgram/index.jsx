@@ -7,46 +7,15 @@ import { isPlural } from '../../utils';
 import Text from '../../common/components/Text';
 import ProgramList from './programList';
 import useOnline from '../../common/hooks/useOnline';
+import handlers from '../../common/handlers';
 
 function ChooseProgram({ chooseList, handleChoose }) {
   const { t } = useTranslation('choose-program');
   const { usersConnected } = useOnline();
   const [showFinished, setShowFinished] = useState(false);
 
-  const activeCohorts = chooseList.filter((program) => {
-    const educationalStatus = program?.educational_status?.toUpperCase();
-    const programRole = program?.role?.toUpperCase();
-    const programCohortStage = program?.cohort?.stage?.toUpperCase();
-
-    const includesPrework = ['PREWORK'].includes(programCohortStage);
-    const visibleForTeacher = includesPrework && programRole !== 'STUDENT';
-
-    const showCohort = [
-      'STARTED',
-      'ACTIVE',
-      'FINAL_PROJECT',
-    ].includes(programCohortStage);
-
-    const showStudent = ['ACTIVE'].includes(educationalStatus)
-      && !includesPrework
-      && programRole === 'STUDENT';
-
-    const show = visibleForTeacher || showCohort || showStudent;
-
-    return show;
-  });
-
-  const finishedCohorts = chooseList.filter((program) => {
-    const educationalStatus = program?.educational_status?.toUpperCase();
-    const programCohortStage = program?.cohort?.stage?.toUpperCase();
-
-    const showCohort = ['ENDED'].includes(programCohortStage);
-    // ACTIVE: show be here because the student may not have delivered all the homework
-    const showStudent = ['GRADUATED', 'POSTPONED', 'ACTIVE'].includes(
-      educationalStatus,
-    );
-    return showCohort && showStudent;
-  });
+  const activeCohorts = handlers.getActiveCohorts(chooseList);
+  const finishedCohorts = handlers.getCohortsFinished(chooseList);
 
   return (
     <>

@@ -21,6 +21,7 @@ import GridContainer from '../../common/components/GridContainer';
 import LiveEvent from '../../common/components/LiveEvent';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useProgramList from '../../common/store/actions/programListAction';
+import handlers from '../../common/handlers';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -48,6 +49,7 @@ function chooseProgram() {
   const [showInvites, setShowInvites] = useState(false);
   const [events, setEvents] = useState(null);
   const { state, programsList, updateProgramList } = useProgramList();
+  const [cohortTasks, setCohortTasks] = useState({});
   const [loader, setLoader] = useState({
     addmission: true,
   });
@@ -58,28 +60,21 @@ function chooseProgram() {
 
   const fetchAdmissions = () => bc.admissions().me();
 
-  const { isLoading, error, isFetching, data: dataQuery } = useLocalStorageQuery(
-    'admissions',
-    fetchAdmissions,
-    {
-      // cache 1 hour
-      cacheTime: 1000 * 60 * 60,
-      refetchOnWindowFocus: false,
-    },
-    true,
-    // ''
-  );
+  const options = {
+    // cache 1 hour
+    cacheTime: 1000 * 60 * 60,
+    refetchOnWindowFocus: false,
+  };
+
+  const { data: dataQuery } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options }, true);
 
   useEffect(() => {
-    console.log('loading: ', isLoading, 'isFetching:::', isFetching);
-    console.log(dataQuery);
-
-    if (error) console.log('Error fetching data: ', error);
-    if (dataQuery) {
-      updateProgramList(dataQuery?.cohorts.reduce((acc, value) => {
+    if (dataQuery && Object.values(cohortTasks).length > 0) {
+      updateProgramList(dataQuery?.cohorts?.reduce((acc, value) => {
         acc[value.cohort.slug] = {
           ...state[value.cohort.slug],
           ...programsList[value.cohort.slug],
+          ...cohortTasks[value.cohort.slug],
           name: value.cohort.name,
           slug: value.cohort.slug,
         };
@@ -88,14 +83,31 @@ function chooseProgram() {
       setData(dataQuery?.cohorts);
       setProfile(dataQuery);
     }
-    // if (isLoading) console.log('Loading data...');
-    // if (error) console.log('Error fetching data: ', error);
-    // if (dataQuery?.data && !isLoading) {
-    //   console.log('dataQuery: ', dataQuery);
-    //   setData(dataQuery?.data?.cohorts);
-    //   setProfile(dataQuery.data);
-    // }
-  }, [dataQuery, isLoading]);
+  }, [dataQuery, cohortTasks]);
+
+  useEffect(() => {
+    if (dataQuery?.id) {
+      // const activeCohorts = handlers.getActiveCohorts(dataQuery?.cohorts);
+      dataQuery?.cohorts.map(async (item) => {
+        if (item?.cohort?.slug) {
+          const tasks = await bc.todo({ cohort: item?.cohort?.id }).getTaskByStudent();
+          const studentAndTeachers = await bc.cohort().getStudents(item?.cohort.slug, item?.cohort?.academy?.id);
+          const teacher = studentAndTeachers?.data.filter((st) => st.role === 'TEACHER');
+          const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT');
+
+          setCohortTasks((prev) => ({
+            ...prev,
+            [item?.cohort.slug]: {
+              ...handlers.handleTasks(tasks.data, true),
+              teacher,
+              assistant,
+            },
+          }));
+        }
+        return null;
+      });
+    }
+  }, [dataQuery?.id]);
 
   const userID = user?.id;
 
