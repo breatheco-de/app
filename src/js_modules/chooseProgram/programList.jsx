@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { Fragment, useEffect } from 'react';
 import {
   AvatarGroup,
   Box, Button,
@@ -21,7 +21,6 @@ import AvatarUser from '../cohortSidebar/avatarUser';
 
 function CohortProgram({ item, handleChoose, usersConnected }) {
   const { t } = useTranslation('choose-program');
-  // const [isMobile] = useMediaQuery('(min-width: 600px)');
   const { programsList } = useProgramList();
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const { borderColorStrong, hexColor, backgroundColor3 } = useStyle();
@@ -29,15 +28,8 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
 
   const { cohort } = item;
   const currentCohortProps = programsList[cohort.slug];
-  const hasStartedCourse = currentCohortProps?.tasks?.list?.length > 0;
+  const hasStartedCourse = currentCohortProps?.allTasks?.length > 0;
   const { version, slug, name } = cohort.syllabus_version;
-
-  // const roleLabel = {
-  //   teacher: t('common:teacher'),
-  //   assistant: t('common:assistant'),
-  //   student: t('common:student'),
-  //   reviewer: t('common:reviewer'),
-  // };
 
   const onClickHandler = () => {
     handleChoose({
@@ -97,16 +89,16 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
           {cohort.name}
         </Heading>
 
-        {currentCohortProps?.tasks?.percentage > 0 && (
+        {currentCohortProps?.percentage > 0 && (
           <>
             <Box display="flex" gridGap="10px" margin="0 0 20px 0" background={backgroundColor3} padding="12px 12px" borderRadius="6px">
               <Box display="flex" flexDirection="column" flex={0.5} gridGap="4px">
-                {currentCohortProps?.tasks?.list.map((task) => task.taskLength > 0 && (
-                  <Box display="flex" gridGap="10px" alignItems="center">
+                {currentCohortProps?.allTasks?.map((task) => task.taskLength > 0 && (
+                  <Box key={`${task.id}-${task.title}`} display="flex" gridGap="10px" alignItems="center">
                     <Icon icon={taskIcons[task.task_type]} width="16px" height="16px" color={hexColor.blueDefault} />
                     <Box display="flex" gridGap="5px" fontWeight={700}>
                       <Text size="sm">
-                        {task.taskLength}
+                        {`${task.completed}/${task.taskLength}`}
                       </Text>
                       <Text size="sm">
                         {task.title}
@@ -115,11 +107,11 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
                   </Box>
                 ))}
               </Box>
-              {(currentCohortProps.assistant.length > 0 || currentCohortProps.teacher.length) && (
+              {(currentCohortProps?.assistant?.length > 0 || currentCohortProps?.teacher?.length > 0) && (
                 <Box flex={0.5}>
                   <Box>
                     <Text size="sm" fontWeight={700}>
-                      {t('program-list.mentors-available', { count: currentCohortProps.assistant.length + currentCohortProps.teacher.length })}
+                      {t('program-list.mentors-available', { count: currentCohortProps?.assistant?.length + currentCohortProps?.teacher?.length })}
                     </Text>
                     <Box display="flex" justifyContent="space-between" mt="10px">
                       {!!singleTeacher && (
@@ -143,17 +135,19 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
                           const fullName = `${c.user.first_name} ${c.user.last_name}`;
                           const isOnline = usersConnected?.includes(c.user.id);
                           return (
-                            <AvatarUser
-                              width="42px"
-                              height="42px"
-                              index={i}
-                              key={`${c.id} - ${c.user.first_name}`}
-                              isWrapped
-                              fullName={fullName}
-                              data={c}
-                              isOnline={isOnline}
-                              badge
-                            />
+                            <Fragment key={`${c.id} - ${c.user.first_name}`}>
+                              <AvatarUser
+                                width="42px"
+                                height="42px"
+                                index={i}
+                                // key={`${c.id} - ${c.user.first_name}`}
+                                isWrapped
+                                fullName={fullName}
+                                data={c}
+                                isOnline={isOnline}
+                                badge
+                              />
+                            </Fragment>
                           );
                         })}
                       </AvatarGroup>
@@ -165,13 +159,15 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
 
           </>
         )}
-        <Box display="flex" flexDirection="column" gridGap="6px">
-          <Progress percents={currentCohortProps?.tasks?.percentage || 0} barHeight="10px" borderRadius="20px" />
-          <Text size="xs" color="blue.default">
-            <Counter valueTo={currentCohortProps?.tasks?.percentage || 0} totalDuration={2} />
-            %
-          </Text>
-        </Box>
+        {hasStartedCourse && (
+          <Box display="flex" flexDirection="column" gridGap="6px">
+            <Progress percents={currentCohortProps?.percentage || 0} barHeight="10px" borderRadius="20px" />
+            <Text size="xs" color="blue.default">
+              <Counter valueTo={currentCohortProps?.percentage || 0} totalDuration={2} />
+              %
+            </Text>
+          </Box>
+        )}
 
         <Box width="100%" display="flex" justifyContent="center">
           {hasStartedCourse ? (
@@ -193,11 +189,12 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
 CohortProgram.propTypes = {
   item: PropTypes.objectOf(PropTypes.any),
   handleChoose: PropTypes.func,
-  usersConnected: PropTypes.arrayOf(PropTypes.any).isRequired,
+  usersConnected: PropTypes.arrayOf(PropTypes.any),
 };
 CohortProgram.defaultProps = {
   item: {},
   handleChoose: () => {},
+  usersConnected: [],
 };
 
 export default CohortProgram;

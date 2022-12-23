@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import {
+  QueryClient,
+  QueryClientProvider,
+} from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import '../../styles/globals.css';
 import '../../styles/markdown.css';
 import '../../styles/phoneInput/index.css';
@@ -27,6 +32,8 @@ function App({ Component, pageProps }) {
   const [haveSession, setHaveSession] = useState(false);
   const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
 
+  const queryClient = new QueryClient();
+
   useEffect(() => {
     TagManager.initialize({ gtmId: process.env.TAG_MANAGER_KEY });
   }, []);
@@ -46,7 +53,7 @@ function App({ Component, pageProps }) {
   };
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <Helmet
         {...pageProps.seo}
       />
@@ -62,7 +69,8 @@ function App({ Component, pageProps }) {
           </ConnectionProvider>
         </AuthProvider>
       </CookiesProvider>
-    </>
+      <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+    </QueryClientProvider>
   );
 }
 

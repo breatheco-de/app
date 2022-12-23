@@ -77,6 +77,7 @@
     "react-markdown": "^8.0.3",
     "react-player": "^2.10.1",
     "react-plx": "^2.0.1",
+    "react-query": "^3.39.2",
     "react-redux": "7.2.4",
     "react-select": "^5.4.0",
     "react-syntax-highlighter": "15.4.5",
@@ -97,7 +98,6 @@
     "remark-variables": "1.4.9",
     "socket.io-client": "^4.5.2",
     "styled-components": "5.3.0",
-    "swr": "^1.3.0",
     "websocket": "^1.0.34",
     "yup": "0.32.11"
   },

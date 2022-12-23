@@ -86,6 +86,7 @@ const setSession = (token) => {
     localStorage.removeItem('profile');
     localStorage.removeItem('sortedAssignments');
     localStorage.removeItem('days_history_log');
+    localStorage.removeItem('queryCache');
     delete axiosInstance.defaults.headers.common.Authorization;
   }
 };

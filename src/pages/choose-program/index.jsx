@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Flex, Box, Button, useToast,
+  Flex, Box, Button, useToast, Skeleton, useColorModeValue,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -15,12 +15,13 @@ import Module from '../../common/components/Module';
 import { isPlural } from '../../utils';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
-// import AlertMessage from '../../common/components/AlertMessage';
+import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
 import useStyle from '../../common/hooks/useStyle';
 import GridContainer from '../../common/components/GridContainer';
 import LiveEvent from '../../common/components/LiveEvent';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useProgramList from '../../common/store/actions/programListAction';
+import handlers from '../../common/handlers';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -43,18 +44,73 @@ function chooseProgram() {
   const { t } = useTranslation('choose-program');
   const [, setProfile] = usePersistent('profile', {});
   const [, setCohortSession] = usePersistent('cohortSession', {});
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
   const [events, setEvents] = useState(null);
   const { state, programsList, updateProgramList } = useProgramList();
-  const [loader, setLoader] = useState({
-    addmission: true,
-  });
+  const [cohortTasks, setCohortTasks] = useState({});
+  // const [loader, setLoader] = useState({
+  //   addmission: true,
+  // });
   const { user, choose } = useAuth();
   const { featuredColor, borderColor, lightColor } = useStyle();
   const router = useRouter();
   const toast = useToast();
+  const commonStartColor = useColorModeValue('gray.300', 'gray.light');
+  const commonEndColor = useColorModeValue('gray.400', 'gray.400');
+
+  const fetchAdmissions = () => bc.admissions().me();
+
+  const options = {
+    // cache 1 hour
+    cacheTime: 1000 * 60 * 60,
+    refetchOnWindowFocus: false,
+  };
+
+  const { isLoading, data: dataQuery } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options }, true);
+
+  useEffect(() => {
+    if (dataQuery && Object.values(cohortTasks).length > 0) {
+      updateProgramList(dataQuery?.cohorts?.reduce((acc, value) => {
+        acc[value.cohort.slug] = {
+          ...state[value.cohort.slug],
+          ...programsList[value.cohort.slug],
+          ...cohortTasks[value.cohort.slug],
+          name: value.cohort.name,
+          slug: value.cohort.slug,
+        };
+        return acc;
+      }, {}));
+      // setData(dataQuery?.cohorts);
+      setProfile(dataQuery);
+    }
+  }, [dataQuery, cohortTasks]);
+
+  useEffect(() => {
+    if (dataQuery?.id) {
+      // const activeCohorts = handlers.getActiveCohorts(dataQuery?.cohorts);
+      dataQuery?.cohorts.map(async (item) => {
+        if (item?.cohort?.slug) {
+          const tasks = await bc.todo({ cohort: item?.cohort?.id }).getTaskByStudent();
+          const studentAndTeachers = await bc.cohort().getStudents(item?.cohort.slug, item?.cohort?.academy?.id);
+          const teacher = studentAndTeachers?.data.filter((st) => st.role === 'TEACHER');
+          const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT');
+
+          setCohortTasks((prev) => ({
+            ...prev,
+            [item?.cohort.slug]: {
+              ...handlers.handleTasks(tasks.data, true),
+              teacher,
+              assistant,
+            },
+          }));
+        }
+        return null;
+      });
+    }
+  }, [dataQuery?.id]);
+
   const userID = user?.id;
 
   useEffect(() => {
@@ -73,25 +129,16 @@ function chooseProgram() {
   }, [userID]);
 
   useEffect(() => {
-    setLoader((prev) => ({ ...prev, addmission: true }));
+    // getAdmissions();
+    // setLoader((prev) => ({ ...prev, addmission: true }));
     Promise.all([
-      bc.admissions().me(),
+      // bc.admissions().me(),
       bc.auth().invites().get(),
     ]).then((
-      [respAdmissions, respInvites],
+      [respInvites],
     ) => {
-      updateProgramList(respAdmissions.data.cohorts.reduce((acc, value) => {
-        acc[value.cohort.slug] = {
-          ...state[value.cohort.slug],
-          ...programsList[value.cohort.slug],
-          name: value.cohort.name,
-          slug: value.cohort.slug,
-        };
-        return acc;
-      }, {}));
-
-      setData(respAdmissions?.data?.cohorts);
-      setProfile(respAdmissions.data);
+      // setData(respAdmissions?.data?.cohorts);
+      // setProfile(respAdmissions.data);
       setInvites(respInvites.data);
     }).catch(() => {
       toast({
@@ -100,7 +147,8 @@ function chooseProgram() {
         duration: 5000,
         isClosable: true,
       });
-    }).finally(() => setLoader((prev) => ({ ...prev, addmission: false })));
+    });
+    // .finally(() => setLoader((prev) => ({ ...prev, addmission: false })));
   }, []);
 
   const acceptInvite = ({ id }) => {
@@ -139,7 +187,7 @@ function chooseProgram() {
               fontWeight={800}
               size="xl"
             >
-              {t('welcome-back', { name: user?.first_name })}
+              {user?.first_name ? t('welcome-back-user', { name: user?.first_name }) : t('welcome')}
             </Heading>
 
             <Text size="18px" color={lightColor} fontWeight={500} letterSpacing="0.02em" p="12px 0 30px 0">
@@ -217,7 +265,7 @@ function chooseProgram() {
               );
             })}
 
-            {!loader.addmission && data.length <= 0 ? (
+            {!isLoading && dataQuery?.cohorts <= 0 ? (
               <Flex flexDirection="column" gridGap="12px" background={featuredColor} padding="14px 20px 14px 20px" borderRadius="9px" border="1px solid" borderColor={borderColor}>
                 <Heading size="sm" lineHeight="31px">
                   {t('not-enrolled')}
@@ -254,13 +302,31 @@ function chooseProgram() {
             </Heading>
             <Box as="hr" width="100%" margin="0.5rem 0 0 0" />
           </Box>
-          {!loader.addmission && data.length > 0 && (
-            <ChooseProgram chooseList={data} handleChoose={handleChoose} />
+          {!isLoading && dataQuery.cohorts.length > 0 && (
+            <ChooseProgram chooseList={dataQuery.cohorts} handleChoose={handleChoose} />
           )}
         </Box>
-        {loader.addmission && (
-          <Box>
-            Loading...
+        {isLoading && dataQuery?.cohorts?.length > 0 && (
+          <Box
+            display="grid"
+            mt="1rem"
+            gridTemplateColumns="repeat(auto-fill, minmax(14rem, 1fr))"
+            gridColumnGap="5rem"
+            gridRowGap="3rem"
+            height="auto"
+          >
+            {Array(3).fill(0).map((_, i) => (
+              <Skeleton
+                // eslint-disable-next-line react/no-array-index-key
+                key={i}
+                startColor={commonStartColor}
+                endColor={commonEndColor}
+                width="100%"
+                height="286px"
+                color="white"
+                borderRadius="17px"
+              />
+            ))}
           </Box>
         )}
       </GridContainer>
