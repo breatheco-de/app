@@ -120,12 +120,12 @@ const getTimeProps = (date) => {
       && format(new Date(date.kickoff_date), "d 'de' MMMM YYY", { locale: es }),
   };
   const weekDays = {
-    en: date.timeslots.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE'))),
-    es: date.timeslots.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE', { locale: es }))),
+    en: date.timeslots?.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE'))),
+    es: date.timeslots?.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE', { locale: es }))),
   };
   const shortWeekDays = {
-    en: date.timeslots.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE'))),
-    es: date.timeslots.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE', { locale: es }))),
+    en: date.timeslots?.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE'))),
+    es: date.timeslots?.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE', { locale: es }))),
   };
   const getHours = (time) => new Date(time).toLocaleTimeString([], { timeZone: 'UTC', hour: '2-digit', minute: '2-digit' });
   const availableTime = date.timeslots.length > 0 && `${getHours(date.timeslots[0].starting_at)} - ${getHours(date.timeslots[0].ending_at)}`;

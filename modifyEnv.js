@@ -1,17 +1,17 @@
 import { isWindow } from './src/utils';
 
 const handleEnv = ({ queryString, env }) => {
-  let host = env;
+  let modifiedEnv = env;
   if (isWindow) {
     const urlHost = new URLSearchParams(window.location.search).get(queryString);
 
     if (urlHost && urlHost[urlHost.length - 1] === '/') urlHost.slice(0, -1);
     if (urlHost) localStorage.setItem(queryString, urlHost);
-    if (localStorage.getItem('host')) host = localStorage.getItem(queryString);
-    if (host === 'reset') host = env;
+    if (localStorage.getItem(queryString)) modifiedEnv = localStorage.getItem(queryString);
+    if (modifiedEnv === 'reset') modifiedEnv = env;
   }
 
-  return host;
+  return modifiedEnv;
 };
 
 const modifyEnv = ({ queryString = 'host', env = process.env.BREATHECODE_HOST }) => {

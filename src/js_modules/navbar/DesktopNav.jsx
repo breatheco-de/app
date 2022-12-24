@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { Stack } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
@@ -15,14 +16,15 @@ const DesktopNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
   const publicItems = NAV_ITEMS.filter((item) => item.private !== true);
 
   const customPublicItems = publicItems.map((publicItem) => {
-    if (publicItem.asPath === '/read' && readSyllabus.length > 0) {
+    if (publicItem.asPath === '/read' && readSyllabus.length > 0 && Array.isArray(publicItem.subMenu)) {
       publicItem.subMenu.map((l) => {
-        if (l.asPath === '/read-and-watch') {
+        if (typeof l.asPath === 'string' && l.asPath === '/read-and-watch' && Array.isArray(l.subMenuContent)) {
           const courseFetched = readSyllabus;
-          const menus = [...courseFetched, ...l.subMenuContent];
 
-          // eslint-disable-next-line no-param-reassign
-          l.subMenu = menus;
+          l.subMenu = l?.subMenu || [];
+          l.subMenu = [...courseFetched, ...l.subMenuContent];
+
+          return l;
         }
         return l;
       });

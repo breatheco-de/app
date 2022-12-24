@@ -62,11 +62,12 @@ const Attendance = () => {
 
   const { borderColor, hexColor } = useStyle();
 
-  const { cohortSlug } = router?.query;
+  const { cohortSlug, academy } = router?.query;
 
   const calcDaysAverage = (days) => {
-    const currentTotalDays = days.filter((day) => day.color !== status.remain).length;
-    const totalDaysCompleted = days.filter((day) => day.color === status.attended).length;
+    const currentTotalDays = days.filter((day) => day.status === 'attended' || day.status === 'absent').length;
+
+    const totalDaysCompleted = days.filter((day) => day.status === 'attended').length;
     const average = parseInt((totalDaysCompleted / currentTotalDays) * 100, 10);
     return average;
   };
@@ -131,8 +132,8 @@ const Attendance = () => {
     const findSelectedCohort = allCohorts.find((l) => l.slug === selectedCohortSlug);
     const defaultCohort = allCohorts.find((l) => l.slug === cohortSlug);
 
-    const academyId = findSelectedCohort?.academy || defaultCohort?.academy;
-    const slug = findSelectedCohort?.slug || defaultCohort?.slug;
+    const academyId = findSelectedCohort?.academy || academy || defaultCohort?.academy;
+    const slug = findSelectedCohort?.slug || cohortSlug || defaultCohort?.slug;
 
     if (allCohorts.length > 0) {
       setSelectedCohort(findSelectedCohort || defaultCohort);
@@ -142,7 +143,7 @@ const Attendance = () => {
             setCurrentDaysLog({});
             toast({
               title: t('alert-message:no-attendance-list-found'),
-              status: 'error',
+              status: 'warning',
               duration: 7000,
               isClosable: true,
             });
@@ -174,6 +175,7 @@ const Attendance = () => {
     }
   }, [selectedCohortSlug, cohortSlug, router.query.student, allCohorts]);
 
+  console.log(loadStatus);
   useEffect(() => {
     setLoadStatus({
       loading: true,
@@ -189,15 +191,28 @@ const Attendance = () => {
           const day = i + 1;
           const dayData = currentDaysLog[day];
           const dayLabel = `${t('common:day')} ${day}`;
-          const dayColor = dayData?.attendance_ids?.includes(student.user.id)
-            ? status.attended
+          const dayProps = dayData?.attendance_ids?.includes(student.user.id)
+            ? {
+              status: 'attended',
+              color: status.attended,
+            }
             : dayData?.unattendance_ids?.includes(student.user.id)
-              ? status.absent
-              : status.not_taken;
+              ? {
+                status: 'absent',
+                color: status.absent,
+              }
+              : {
+                status: 'not_taken',
+                color: status.not_taken,
+              };
+
+          const color = currentDaysLogExists ? dayProps.color : status.remain;
+          const label = currentDaysLogExists ? dayProps.status : 'not_taken';
           return {
             label: dayData ? `${dayLabel} - ${format(new Date(dayData.updated_at), 'd MMM')}` : dayLabel,
             day,
-            color: currentDaysLogExists ? dayColor : status.remain,
+            color,
+            status: label,
             updated_at: dayData ? dayData?.updated_at : null,
           };
         });
@@ -240,6 +255,12 @@ const Attendance = () => {
         status: 'no-data',
       });
     }
+    if (currentDaysLogExists <= 0) {
+      setLoadStatus({
+        loading: false,
+        status: 'no-attendance-list-found',
+      });
+    }
 
     return () => {};
   }, [currentStudentList, currentDaysLog, selectedCohort?.durationInDays, loadingStudents]);
@@ -247,7 +268,7 @@ const Attendance = () => {
   const handleSearch = (e) => {
     const { value } = e.target;
 
-    const filteredStudents = allStudentsWithDays.studentList.filter((l) => {
+    const filteredStudents = allStudentsWithDays?.studentList?.filter((l) => {
       const fullName = `${l.user.first_name} ${l.user.last_name}`;
 
       return fullName.toLowerCase().includes(value.toLowerCase());
@@ -256,7 +277,7 @@ const Attendance = () => {
     setSearchedStudents(filteredStudents);
   };
 
-  const sortedByNameAndAttendance = searchedStudents.sort((a, b) => {
+  const sortedByNameAndAttendance = searchedStudents?.sort((a, b) => {
     const fullNameA = `${a.user.first_name} ${a.user.last_name}`;
     const fullNameB = `${b.user.first_name} ${b.user.last_name}`;
     const aAverage = calcDaysAverage(a.days);
@@ -307,14 +328,12 @@ const Attendance = () => {
               noOptionsMessage={() => t('common:no-options-message')}
               defaultInputValue={selectedCohort?.label}
               onChange={({ slug }) => {
-                if (slug !== selectedCohort.slug) {
-                  setCurrentStudentList([]);
-                  setLoadStatus({
-                    loading: true,
-                    status: 'loading',
-                  });
-                }
                 setSelectedCohortSlug(slug);
+                setCurrentStudentList([]);
+                setLoadStatus({
+                  loading: true,
+                  status: 'loading',
+                });
               }}
               options={allCohorts.map((cohort) => ({
                 value: cohort.value,
@@ -443,6 +462,18 @@ const Attendance = () => {
             })}
 
             {loadStatus.status === 'loading' && <DottedTimelineSkeleton />}
+
+            {loadStatus.loading === false && loadStatus.status === 'no-attendance-list-found' && (
+              <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+                <Text
+                  color={hexColor.grayDefault}
+                  size="18px"
+                  fontWeight={700}
+                  textAlign="center"
+                  dangerouslySetInnerHTML={{ __html: t('no-attendance-list-found') }}
+                />
+              </Box>
+            )}
 
             {loadStatus.loading === false && loadStatus.status === 'no-data' && (
               <Box display="flex" justifyContent="center" alignItems="center" height="100%">
