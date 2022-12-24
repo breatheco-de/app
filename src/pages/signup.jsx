@@ -93,7 +93,8 @@ const SignUp = ({ finance }) => {
 
   useEffect(async () => {
     if (!dateProps?.id && queryCohortIdExists) {
-      const resp = await bc.cohort().getPublic(cohort);
+      // const resp = await bc.cohort().getPublic(cohort); // returns object
+      const resp = await bc.public({ id: cohort }).cohorts(); // returns array of objects
 
       if (resp && resp.status >= 400) {
         toast({
@@ -105,9 +106,9 @@ const SignUp = ({ finance }) => {
       }
 
       if (resp.status < 400) {
-        const { kickoffDate, weekDays, availableTime } = getTimeProps(resp.data);
+        const { kickoffDate, weekDays, availableTime } = getTimeProps(resp.data[0]);
         setDateProps({
-          ...resp.data,
+          ...resp.data[0],
           kickoffDate,
           weekDays,
           availableTime,

@@ -34,7 +34,6 @@ const Summary = ({
   const getPlanProps = (plan) => {
     bc.payment().getPlanProps(encodeURIComponent(plan.slug))
       .then((resp) => {
-        console.log('payment_resp:', resp);
         if (!resp) {
           setDisableHandler(true);
         } else {
@@ -237,7 +236,7 @@ const Summary = ({
           <Heading size="15px" color="blue.default" textTransform="uppercase">
             {t('signing-for')}
           </Heading>
-          <Box display="flex" gridGap="12px">
+          <Box display="flex" gridGap="12px" alignItems="center">
             <Box display="flex" flexDirection="column">
               <Box
                 p="16px"
@@ -264,17 +263,16 @@ const Summary = ({
                 </Heading>
               )}
             </Box>
-            {selectedPlanCheckoutData?.price && (
-              <Heading
-                size="m"
-                margin="0 26px 0 auto"
-                color="blue.default"
-                textTransform="uppercase"
-                textAlign="end"
-              >
-                {`$${selectedPlanCheckoutData?.price}`}
-              </Heading>
-            )}
+            <Heading
+              size={selectedPlanCheckoutData?.price > 0 ? 'm' : 'xsm'}
+              margin="0 26px 0 auto"
+              color="blue.default"
+              textTransform="uppercase"
+              textAlign="end"
+            >
+              {/* {`$${selectedPlanCheckoutData?.price}`} */}
+              {selectedPlanCheckoutData?.price > 0 ? `$${selectedPlanCheckoutData?.price}` : t('free-trial')}
+            </Heading>
           </Box>
           <Box
             as="hr"
