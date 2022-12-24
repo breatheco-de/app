@@ -62,5 +62,5 @@
   "card-error-description": "Por favor, verifica que los datos de tu tarjeta sean correctos",
   "something-went-wrong-choosing-date": "Algo salió mal al intentar elegir la fecha",
   "no-access-to-cohort": "No perteneces o no tienes acceso para ver las asistencias de esta cohorte",
-  "no-attendance-list-found": "No se encontraro lista de asistencia"
+  "no-attendance-list-found": "No se encontró lista de asistencia"
 }

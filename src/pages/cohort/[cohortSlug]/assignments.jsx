@@ -47,7 +47,7 @@ const Assignments = () => {
   });
 
   const { query } = router;
-  const { cohortSlug } = query;
+  const { cohortSlug, academy } = query;
   const linkColor = useColorModeValue('blue.default', 'blue.300');
   const borderColor = useColorModeValue('gray.200', 'gray.500');
 
@@ -140,8 +140,8 @@ const Assignments = () => {
     const findSelectedCohort = allCohorts.find((l) => l.slug === selectedCohortSlug);
     const defaultCohort = allCohorts.find((l) => l.slug === cohortSlug);
 
-    const academyId = findSelectedCohort?.academy || defaultCohort?.academy;
-    const slug = findSelectedCohort?.slug || defaultCohort?.slug;
+    const academyId = findSelectedCohort?.academy || academy || defaultCohort?.academy;
+    const slug = findSelectedCohort?.slug || cohortSlug || defaultCohort?.slug;
     const cohortId = findSelectedCohort?.value || defaultCohort?.value;
     const currentCohort = findSelectedCohort || defaultCohort;
 

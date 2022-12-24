@@ -334,7 +334,7 @@ const AttendanceModal = ({
             onClose={() => setOpenWarn(false)}
             htmlDescription={t('attendance-modal.warn-slower-teaching.description', {
               module: getDailyModuleData()?.dailyModule?.label,
-              repeated: historyLog?.repeated,
+              repeated: historyLog?.repeated + 1,
               expected: historyLog?.expected,
             })}
             // historyLog?.repeated > historyLog?.expected
