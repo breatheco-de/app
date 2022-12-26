@@ -242,7 +242,7 @@ const SignUp = ({ finance }) => {
             {t('payment')}
           </Heading>
         </Box>
-        {cohort?.length <= 0 && (
+        {!cohort?.length && (
           <Box
             display="flex"
             gridGap="8px"

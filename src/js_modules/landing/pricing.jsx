@@ -124,9 +124,9 @@ const Pricing = ({ data }) => {
             onClick={() => router.push({
               pathname: '/signup',
               query: {
-                course: data?.course,
                 plan: selectedProps?.type,
                 syllabus: 'coding-introduction',
+                academy: 4,
               },
             })}
           >

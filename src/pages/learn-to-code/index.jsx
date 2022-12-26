@@ -16,7 +16,7 @@ import Events from '../../js_modules/landing/events';
 import PreviewModules from '../../js_modules/landing/previewModules';
 import Pricing from '../../js_modules/landing/pricing';
 
-export const getStaticProps = async ({ locale }) => {
+export const getStaticProps = async ({ locale, locales }) => {
   const data = getDataContentProps(
     `public/locales/${locale}`,
     'learn-to-code',
@@ -25,6 +25,16 @@ export const getStaticProps = async ({ locale }) => {
   return {
     props: {
       data,
+      seo: {
+        title: data.title,
+        description: data?.description || '',
+        pathConnector: '/lear-to-code',
+        url: '/lear-to-code',
+        type: 'article',
+        card: 'large',
+        locales,
+        locale,
+      },
     },
   };
 };

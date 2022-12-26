@@ -1,6 +1,6 @@
 import { Box, Button, useColorModeValue, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-// import { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { Fragment, useState, useEffect } from 'react';
 import Heading from '../../common/components/Heading';
@@ -27,9 +27,11 @@ const Summary = ({
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const borderColor2 = useColorModeValue('black', 'white');
   const { backgroundColor, borderColor } = useStyle();
+  const router = useRouter();
+  const { plan } = router.query;
 
-  const getPlanProps = (plan) => {
-    bc.payment().getPlanProps(encodeURIComponent(plan.slug))
+  const getPlanProps = (selectedPlan) => {
+    bc.payment().getPlanProps(encodeURIComponent(selectedPlan.slug))
       .then((resp) => {
         if (!resp) {
           setDisableHandler(true);
@@ -44,10 +46,12 @@ const Summary = ({
   };
 
   useEffect(() => {
-    if (typeof selectedIndex === 'number' && checkoutData?.plans[selectedIndex]) {
+    const planFindedByQuery = checkoutData?.plans?.find((p) => p.slug === plan);
+    if (planFindedByQuery || checkoutData?.plans[selectedIndex]) {
       // setPlanData(data[selectedIndex]);
-      setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
-      getPlanProps(checkoutData?.plans[selectedIndex]);
+      setSelectedPlanCheckoutData(planFindedByQuery || checkoutData?.plans[selectedIndex]);
+
+      getPlanProps(planFindedByQuery || checkoutData?.plans[selectedIndex]);
     }
   }, [checkoutData?.plans]);
 
@@ -263,7 +267,7 @@ const Summary = ({
                     gridGap={{ base: '0', md: '12px' }}
                     cursor="pointer"
                     // background={selectedIndex !== i && featuredColor}
-                    border={selectedIndex === i ? '2px solid #0097CD' : '2px solid transparent'}
+                    border={selectedPlanCheckoutData?.slug === item.slug ? '2px solid #0097CD' : '2px solid transparent'}
                     borderRadius="13px"
                   >
                     <Box
