@@ -6,7 +6,7 @@ import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
   SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS,
 } from '../types';
-import { getTimeProps, toCapitalize, unSlugify } from '../../../utils';
+import { toCapitalize, unSlugify } from '../../../utils';
 import bc from '../../services/breathecode';
 
 const useSignup = () => {
@@ -15,6 +15,8 @@ const useSignup = () => {
   const toast = useToast();
   const router = useRouter();
   const dispatch = useDispatch();
+
+  const { syllabus, academy, cohort } = router.query;
 
   const {
     stepIndex,
@@ -89,9 +91,13 @@ const useSignup = () => {
       chosen_period: 'HALF',
     })
       .then((response) => {
-        console.log('Payment_response:', response);
         if (response?.data?.status === 'FULFILLED') {
-          router.push('/choose-program');
+          // router.push('/choose-program');
+          if (cohort?.length > 0) {
+            router.push('/choose-program');
+          } else {
+            nextStep();
+          }
         }
         resolve(response);
       })
@@ -178,12 +184,13 @@ const useSignup = () => {
     };
   };
 
-  const handleChecking = (cohortData) => new Promise((resolve, reject) => {
+  const getChecking = (cohortData) => new Promise((resolve, reject) => {
     const selectedPlan = selectedPlanCheckoutData?.slug ? selectedPlanCheckoutData.slug : null;
     bc.payment().checking({
       type: 'PREVIEW',
-      cohort: dateProps?.id || cohortData.id,
-      academy: dateProps?.academy?.id || cohortData?.academy.id,
+      cohort: dateProps?.id || cohortData?.id,
+      academy: dateProps?.academy?.id || cohortData?.academy.id || Number(academy),
+      syllabus,
       plans: selectedPlan,
     })
       .then((response) => {
@@ -224,20 +231,20 @@ const useSignup = () => {
       });
   });
 
-  const handleChooseDate = (cohortData) => new Promise((resolve, reject) => {
+  const handleChecking = (cohortData) => new Promise((resolve, reject) => {
     setLoader('date', true);
-    const { kickoffDate, weekDays, availableTime } = getTimeProps(cohortData);
-    setDateProps({
-      ...cohortData,
-      kickoffDate,
-      weekDays,
-      availableTime,
-    });
+    // const { kickoffDate, weekDays, availableTime } = getTimeProps(cohortData);
+    // setDateProps({
+    //   ...cohortData,
+    //   kickoffDate,
+    //   weekDays,
+    //   availableTime,
+    // });
 
-    handleChecking(cohortData)
+    getChecking(cohortData)
       .then(() => {
         resolve();
-        handleStep(2);
+        // handleStep(1);
       })
       .catch(() => {
         reject();
@@ -267,7 +274,6 @@ const useSignup = () => {
     handlePayment,
     setPlanData,
     setSelectedPlanCheckoutData,
-    handleChooseDate,
     handleChecking,
     setPlanProps,
   };

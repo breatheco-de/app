@@ -57,13 +57,13 @@ const SignUp = ({ finance }) => {
   const { t } = useTranslation('signup');
   const router = useRouter();
   const {
-    state, nextStep, prevStep, handleStep, setDateProps, handleChooseDate,
+    state, nextStep, prevStep, handleStep, setDateProps, handleChecking,
     isFirstStep, isSecondStep, isThirdStep, isFourthStep,
   } = useSignup();
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
 
-  const { stepIndex, dateProps, checkoutData } = state;
+  const { stepIndex, dateProps } = state;
 
   const accessToken = getStorageItem('accessToken');
   const { user, isLoading } = useAuth();
@@ -73,7 +73,7 @@ const SignUp = ({ finance }) => {
   const toast = useToast();
 
   const {
-    course, plan, plan_id, cohort,
+    course, plan, plan_id, cohort, syllabus,
   } = router.query;
   const planChoosed = plan || plan_id || 'trial';
   const courseChoosed = course || 'coding-introduction';
@@ -115,16 +115,16 @@ const SignUp = ({ finance }) => {
         });
       }
     }
-    if (user?.id && !isLoading && queryCohortIdExists && checkoutData?.type) {
-      handleStep(2);
-    }
   }, [cohort, user?.id, accessToken]);
 
   useEffect(() => {
-    if (dateProps?.id && accessToken) {
-      handleChooseDate(dateProps);
+    if ((syllabus && user?.id)) {
+      handleChecking()
+        .then(() => {
+          handleStep(1);
+        });
     }
-  }, [dateProps?.id, accessToken, router?.locale]);
+  }, [user?.id, router?.locale, syllabus]);
 
   useEffect(() => {
     if (user?.id && !isLoading) {
@@ -204,7 +204,8 @@ const SignUp = ({ finance }) => {
             fontWeight={isSecondStep ? '700' : '500'}
             color={(isThirdStep || isFourthStep) && 'success'}
           >
-            {t('choose-your-class')}
+            {/* {t('choose-your-class')} */}
+            {t('summary')}
           </Heading>
         </Box>
 
@@ -237,32 +238,36 @@ const SignUp = ({ finance }) => {
             fontWeight={isThirdStep ? '700' : '500'}
             color={(isFourthStep) && 'success'}
           >
-            {t('summary')}
-          </Heading>
-        </Box>
-        <Box
-          display="flex"
-          gridGap="8px"
-          alignItems="center"
-          color={stepIndex !== 3 && 'gray.350'}
-        >
-          <Heading
-            as="span"
-            size="sm"
-            p={isFourthStep ? '3px 8px' : '2px 5px'}
-            mr={isFourthStep && '4px'}
-            background={isFourthStep && 'blue.default'}
-            color={isFourthStep && 'white'}
-            borderRadius="3px"
-            fontWeight="500"
-          >
-            {/* {!isPreview ? '4.' : '3.'} */}
-            4.
-          </Heading>
-          <Heading size="sm" fontWeight={isFourthStep ? '700' : '500'}>
+            {/* {t('summary')} */}
             {t('payment')}
           </Heading>
         </Box>
+        {cohort?.length <= 0 && (
+          <Box
+            display="flex"
+            gridGap="8px"
+            alignItems="center"
+            color={stepIndex !== 3 && 'gray.350'}
+          >
+            <Heading
+              as="span"
+              size="sm"
+              p={isFourthStep ? '3px 8px' : '2px 5px'}
+              mr={isFourthStep && '4px'}
+              background={isFourthStep && 'blue.default'}
+              color={isFourthStep && 'white'}
+              borderRadius="3px"
+              fontWeight="500"
+            >
+              {/* {!isPreview ? '4.' : '3.'} */}
+              4.
+            </Heading>
+            <Heading size="sm" fontWeight={isFourthStep ? '700' : '500'}>
+              {/* {t('payment')} */}
+              {t('choose-your-class')}
+            </Heading>
+          </Box>
+        )}
       </Box>
 
       <Box
@@ -277,22 +282,24 @@ const SignUp = ({ finance }) => {
         {isFirstStep && (
           <ContactInformation
             courseChoosed={courseChoosed}
-            queryCohortIdExists={queryCohortIdExists}
             formProps={formProps}
             setFormProps={setFormProps}
           />
         )}
-        <ChooseYourClass courseChoosed={courseChoosed} />
-        {isThirdStep && (
+        {/* Second step */}
+        {/* <ChooseYourClass courseChoosed={courseChoosed} /> */}
+        {isSecondStep && (
           <Summary
             formProps={formProps}
             courseTitle={courseTitle}
             planProps={planProps}
           />
         )}
-        {isFourthStep && (
+        {isThirdStep && (
           <PaymentInfo />
         )}
+        {/* Fourth step */}
+        <ChooseYourClass courseChoosed={courseChoosed} />
 
         <Box display="flex" justifyContent="space-between" mt="auto">
           {stepIndex !== 0 && (
@@ -310,7 +317,7 @@ const SignUp = ({ finance }) => {
               {t('go-back')}
             </Button>
           )}
-          {stepIndex !== 0 && !isThirdStep && !isFourthStep && (
+          {stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep && (
             <Button
               variant="default"
               disabled={dateProps === null}

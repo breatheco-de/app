@@ -30,7 +30,7 @@ const ChooseYourClass = ({
   const inputRef = useRef();
   const buttonRef = useRef();
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
-  const { state, isSecondStep, setLocation, handleChooseDate } = useSignup();
+  const { state, isFourthStep, setLocation, handleChecking } = useSignup();
   const { loader } = state;
 
   const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(
@@ -41,7 +41,7 @@ const ChooseYourClass = ({
   const { syllabus } = router.query;
 
   useEffect(() => {
-    if (coords !== null && isSecondStep) {
+    if (coords !== null && isFourthStep) {
       setCohortIsLoading(true);
 
       bc.public({
@@ -83,11 +83,11 @@ const ChooseYourClass = ({
     } else {
       setCohortIsLoading(false);
     }
-  }, [coords, isSecondStep]);
+  }, [coords, isFourthStep]);
 
   useEffect(() => {
     // autocomplete values for input
-    if (isSecondStep && gmapStatus.loaded) {
+    if (isFourthStep && gmapStatus.loaded) {
       // initialize;
       autoCompleteRef.current = new window.google.maps.places.Autocomplete(
         inputRef.current,
@@ -122,7 +122,7 @@ const ChooseYourClass = ({
           .finally(() => setIsLoading(false));
       });
     }
-  }, [isSecondStep, gmapStatus]);
+  }, [isFourthStep, gmapStatus]);
 
   useEffect(() => {
     if (gmapStatus.loaded) {
@@ -162,7 +162,7 @@ const ChooseYourClass = ({
     <AlertMessage type="info" message={t('no-date-available')} />
   ));
 
-  return isSecondStep && (
+  return isFourthStep && (
     <>
       <Heading size="18px">{t('your-address')}</Heading>
       <Box display="flex" gridGap="18px" alignItems="center" mt="10px">
@@ -259,7 +259,12 @@ const ChooseYourClass = ({
                 <Button
                   variant="outline"
                   isLoading={loader.date}
-                  onClick={() => handleChooseDate(date)}
+                  onClick={() => {
+                    handleChecking(date)
+                      .then(() => {
+                        router.push('/choose-program');
+                      });
+                  }}
                   borderColor="currentColor"
                   color="blue.default"
                   flex={0.15}
