@@ -28,7 +28,8 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
 
   const { cohort } = item;
   const currentCohortProps = programsList[cohort.slug];
-  const hasStartedCourse = currentCohortProps?.allTasks?.length > 0;
+
+  const hasStartedCourse = currentCohortProps?.allTasks?.length > 0 && currentCohortProps?.allTasks?.some((task) => task?.completed >= 0);
   const { version, slug, name } = cohort.syllabus_version;
 
   const onClickHandler = () => {
@@ -98,10 +99,10 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
                     <Icon icon={taskIcons[task.task_type]} width="16px" height="16px" color={hexColor.blueDefault} />
                     <Box display="flex" gridGap="5px" fontWeight={700}>
                       <Text size="sm">
-                        {`${task.completed}/${task.taskLength}`}
+                        {task?.completed ? `${task.completed}/${task.taskLength}` : task.taskLength}
                       </Text>
                       <Text size="sm">
-                        {task.title}
+                        {t(`common:${task?.task_type?.toLowerCase()}`)}
                       </Text>
                     </Box>
                   </Box>

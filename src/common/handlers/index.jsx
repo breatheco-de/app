@@ -1,11 +1,19 @@
 import { formatDuration, intervalToDuration } from 'date-fns';
 import { es, en } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
+import { toCapitalize } from '../../utils';
 import bc from '../services/breathecode';
 
 const availableLanguages = {
   es,
   en,
+};
+
+const taskIcons = {
+  EXERCISE: 'assignment',
+  LESSON: 'book',
+  PROJECT: 'code',
+  QUIZ: 'answer',
 };
 
 const handlers = {
@@ -225,6 +233,67 @@ const handlers = {
       percentage,
     };
   },
+
+  getAssignmentsCount: ({
+    cohortProgram,
+  }) => new Promise((resolve) => {
+    const modules = cohortProgram.json?.days || cohortProgram.json?.modules;
+    const assignmentsRecopilated = [];
+
+    modules.forEach((module) => {
+      const {
+        assignments = [],
+        lessons = [],
+        project = [],
+        quizzes = [],
+      } = module;
+
+      const assignmentsCount = assignments.length;
+      const lessonsCount = lessons.length;
+      const projectCount = project.title ? 1 : (project?.length || 0);
+      const quizzesCount = quizzes.length;
+
+      const assignmentsRecopilatedObj = {
+        assignmentsCount,
+        lessonsCount,
+        projectCount,
+        quizzesCount,
+      };
+
+      assignmentsRecopilated.push(assignmentsRecopilatedObj);
+    });
+
+    const assignmentsRecopilatedObj = {
+      exercise: 0,
+      lesson: 0,
+      project: 0,
+      quiz: 0,
+    };
+
+    assignmentsRecopilated.forEach((assignment) => {
+      assignmentsRecopilatedObj.exercise += assignment.assignmentsCount;
+      assignmentsRecopilatedObj.lesson += assignment.lessonsCount;
+      assignmentsRecopilatedObj.project += assignment.projectCount;
+      assignmentsRecopilatedObj.quiz += assignment.quizzesCount;
+    });
+
+    const arrayOfObjects = Object.keys(assignmentsRecopilatedObj).map((key) => {
+      const taskLength = assignmentsRecopilatedObj[key];
+      const taskType = key.toUpperCase();
+      const icon = taskIcons[taskType];
+
+      return {
+        icon,
+        taskLength,
+        task_type: taskType,
+        title: toCapitalize(taskType),
+      };
+    });
+
+    resolve({ allTasks: arrayOfObjects });
+
+    // resolve(assignmentsRecopilatedObj);
+  }),
 };
 
 export default handlers;
