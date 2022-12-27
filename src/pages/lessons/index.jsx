@@ -40,6 +40,21 @@ export const getStaticProps = async ({ locale, locales }) => {
   let technologyTags = [];
   let difficulties = [];
 
+  const technologiesResponse = await fetch(
+    `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=exercise&limit=1000`,
+    {
+      Accept: 'application/json, text/plain, */*',
+    },
+  );
+
+  if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
+    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /interactive-exercises`);
+  } else {
+    console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-exercises`);
+  }
+
+  const technologies = await technologiesResponse.json();
+
   for (let i = 0; i < arrLessons.length; i += 1) {
     // skip repeated lessons
     if (lessons.find((p) => arrLessons[i].slug === p.slug)) {
@@ -64,6 +79,8 @@ export const getStaticProps = async ({ locale, locales }) => {
 
   technologyTags = [...new Set(technologyTags)];
   difficulties = [...new Set(difficulties)];
+
+  technologyTags = technologies.filter((technology) => technologyTags.includes(technology.slug.toLowerCase()));
 
   // Verify if difficulty exist in expected position, else fill void array with 'nullString'
   const verifyDifficultyExists = (difficultiesArray, difficulty) => {
