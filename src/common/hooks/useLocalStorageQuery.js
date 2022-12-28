@@ -21,10 +21,10 @@ function useLocalStorageQuery(queryKey, queryFn, options) {
     {
       ...options,
       onSuccess: (dataFetched) => {
-        setData(dataFetched.data);
+        setData(dataFetched?.data);
         setIsLoading(false);
         const cachedData = JSON.parse(localStorage.getItem('queryCache')) || {};
-        cachedData[queryKey] = dataFetched.data;
+        cachedData[queryKey] = dataFetched?.data;
         localStorage.setItem('queryCache', JSON.stringify(cachedData));
       },
       onError: (errorFetched) => {
