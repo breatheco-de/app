@@ -48,7 +48,6 @@ export const getStaticProps = async ({ locale, locales }) => {
       },
       fallback: false,
       finance,
-      // data: content,
     },
   };
 };
@@ -68,8 +67,6 @@ const SignUp = ({ finance }) => {
   const accessToken = getStorageItem('accessToken');
   const { user, isLoading } = useAuth();
 
-  // console.log('Redux state:', state);
-
   const toast = useToast();
 
   const {
@@ -79,7 +76,6 @@ const SignUp = ({ finance }) => {
   const courseChoosed = course || 'coding-introduction';
   const courseTitle = finance[courseChoosed];
   const planProps = finance.plans.find((l) => l.type === planChoosed || l.type === 'trial');
-  // const isPreview = checkoutData?.type === 'PREVIEW';
 
   const [formProps, setFormProps] = useState({
     first_name: '',
@@ -117,18 +113,7 @@ const SignUp = ({ finance }) => {
     }
   }, [cohort, user?.id, accessToken]);
 
-  // useEffect(() => {
-  //   if (dateProps?.id && accessToken) {
-  //     handleChooseDate(dateProps);
-  //   }
-  // }, [dateProps?.id, accessToken, router?.locale]);
   useEffect(() => {
-    // if ((syllabus && user?.id)) {
-    //   handleChecking()
-    //     .then(() => {
-    //       handleStep(1);
-    //     });
-    // }
     if (dateProps?.id && accessToken && queryCohortIdExists) {
       handleChecking(dateProps)
         .then(() => {
