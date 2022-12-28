@@ -63,7 +63,7 @@ const SignUp = ({ finance }) => {
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
 
-  const { stepIndex, dateProps } = state;
+  const { stepIndex, dateProps, checkoutData } = state;
 
   const accessToken = getStorageItem('accessToken');
   const { user, isLoading } = useAuth();
@@ -252,10 +252,9 @@ const SignUp = ({ finance }) => {
             {/* {t('payment')} */}
           </Heading>
         </Box>
-        {/* {!cohort?.length && (
-        )} */}
+
         <Box
-          display="flex"
+          display={checkoutData?.isTrial ? 'none' : 'flex'}
           gridGap="8px"
           alignItems="center"
           color={stepIndex !== 3 && 'gray.350'}

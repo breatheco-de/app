@@ -65,11 +65,11 @@ const Summary = ({
   const handleSubmit = () => {
     if (planProps?.length > 0) {
       handleChecking()
-        .then(() => {
+        .then((data) => {
           if (isNotTrial) {
             nextStep();
           } else {
-            handlePayment();
+            handlePayment(data);
           }
         })
         .catch(() => {

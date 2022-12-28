@@ -16,7 +16,7 @@ const useSignup = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const { syllabus, academy, cohort } = router.query;
+  const { syllabus, academy } = router.query;
 
   const {
     stepIndex,
@@ -83,21 +83,16 @@ const useSignup = () => {
     payload,
   });
 
-  const handlePayment = () => new Promise((resolve, reject) => {
+  const handlePayment = (data) => new Promise((resolve, reject) => {
     bc.payment().pay({
-      type: checkoutData.type,
-      token: checkoutData.token,
+      type: data?.type || checkoutData.type,
+      token: data?.token || checkoutData.token,
       // chosen_period: selectedPlanCheckoutData.chosen_period,
       chosen_period: 'HALF',
     })
       .then((response) => {
         if (response?.data?.status === 'FULFILLED') {
-          // router.push('/choose-program');
-          if (cohort?.length > 0) {
-            router.push('/choose-program');
-          } else {
-            nextStep();
-          }
+          router.push('/choose-program');
         }
         resolve(response);
       })
@@ -215,13 +210,13 @@ const useSignup = () => {
           };
         });
         const finalData = {
-          ...response.data,
+          ...data,
           isTrial: !isNotTrial,
           plans,
         };
         if (response.status < 400) {
           setCheckoutData(finalData);
-          resolve();
+          resolve(finalData);
         }
       })
       .catch(() => {
@@ -245,8 +240,8 @@ const useSignup = () => {
     }
 
     getChecking(cohortData)
-      .then(() => {
-        resolve();
+      .then((data) => {
+        resolve(data);
         // handleStep(1);
       })
       .catch(() => {
