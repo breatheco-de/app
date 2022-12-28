@@ -18,7 +18,7 @@ const Summary = ({
   const [disableHandler, setDisableHandler] = useState(false);
 
   const {
-    state, nextStep, setSelectedPlanCheckoutData, handleChecking, setPlanProps,
+    state, nextStep, setSelectedPlanCheckoutData, handleChecking, setPlanProps, handlePayment,
   } = useSignup();
   const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
   const toast = useToast();
@@ -29,6 +29,13 @@ const Summary = ({
   const { backgroundColor, borderColor } = useStyle();
   const router = useRouter();
   const { plan } = router.query;
+
+  const existsAmountPerHalf = checkoutData?.amount_per_half > 0;
+  const existsAmountPerMonth = checkoutData?.amount_per_month > 0;
+  const existsAmountPerQuarter = checkoutData?.amount_per_quarter > 0;
+  const existsAmountPerYear = checkoutData?.amount_per_year > 0;
+
+  const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
 
   const getPlanProps = (selectedPlan) => {
     bc.payment().getPlanProps(encodeURIComponent(selectedPlan.slug))
@@ -59,7 +66,11 @@ const Summary = ({
     if (planProps?.length > 0) {
       handleChecking()
         .then(() => {
-          nextStep();
+          if (isNotTrial) {
+            nextStep();
+          } else {
+            handlePayment();
+          }
         })
         .catch(() => {
           toast({
@@ -71,13 +82,6 @@ const Summary = ({
         });
     }
   };
-
-  const existsAmountPerHalf = checkoutData?.amount_per_half > 0;
-  const existsAmountPerMonth = checkoutData?.amount_per_month > 0;
-  const existsAmountPerQuarter = checkoutData?.amount_per_quarter > 0;
-  const existsAmountPerYear = checkoutData?.amount_per_year > 0;
-
-  const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
 
   return (
     <Box

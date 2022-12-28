@@ -30,7 +30,7 @@ const ChooseYourClass = ({
   const inputRef = useRef();
   const buttonRef = useRef();
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
-  const { state, isFourthStep, setLocation, handleChecking } = useSignup();
+  const { state, isSecondStep, setLocation, handleChecking, nextStep } = useSignup();
   const { loader } = state;
 
   const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(
@@ -41,11 +41,11 @@ const ChooseYourClass = ({
   const { syllabus } = router.query;
 
   useEffect(() => {
-    if (coords !== null && isFourthStep) {
+    if (isSecondStep) {
       setCohortIsLoading(true);
 
       bc.public({
-        coordinates: `${coords.latitude},${coords.longitude}`,
+        coordinates: coords?.latitude && `${coords.latitude},${coords.longitude}`,
         saas: true,
         syllabus_slug: syllabus || courseChoosed,
         upcoming: true,
@@ -83,11 +83,11 @@ const ChooseYourClass = ({
     } else {
       setCohortIsLoading(false);
     }
-  }, [coords, isFourthStep]);
+  }, [coords, isSecondStep]);
 
   useEffect(() => {
     // autocomplete values for input
-    if (isFourthStep && gmapStatus.loaded) {
+    if (isSecondStep && gmapStatus.loaded) {
       // initialize;
       autoCompleteRef.current = new window.google.maps.places.Autocomplete(
         inputRef.current,
@@ -122,7 +122,7 @@ const ChooseYourClass = ({
           .finally(() => setIsLoading(false));
       });
     }
-  }, [isFourthStep, gmapStatus]);
+  }, [isSecondStep, gmapStatus]);
 
   useEffect(() => {
     if (gmapStatus.loaded) {
@@ -162,7 +162,7 @@ const ChooseYourClass = ({
     <AlertMessage type="info" message={t('no-date-available')} />
   ));
 
-  return isFourthStep && (
+  return isSecondStep && (
     <>
       <Heading size="18px">{t('your-address')}</Heading>
       <Box display="flex" gridGap="18px" alignItems="center" mt="10px">
@@ -262,7 +262,7 @@ const ChooseYourClass = ({
                   onClick={() => {
                     handleChecking(date)
                       .then(() => {
-                        router.push('/choose-program');
+                        nextStep();
                       });
                   }}
                   borderColor="currentColor"

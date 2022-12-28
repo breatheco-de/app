@@ -6,7 +6,7 @@ import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
   SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS,
 } from '../types';
-import { toCapitalize, unSlugify } from '../../../utils';
+import { getTimeProps, toCapitalize, unSlugify } from '../../../utils';
 import bc from '../../services/breathecode';
 
 const useSignup = () => {
@@ -186,6 +186,7 @@ const useSignup = () => {
 
   const getChecking = (cohortData) => new Promise((resolve, reject) => {
     const selectedPlan = selectedPlanCheckoutData?.slug ? selectedPlanCheckoutData.slug : null;
+
     bc.payment().checking({
       type: 'PREVIEW',
       cohort: dateProps?.id || cohortData?.id,
@@ -233,13 +234,15 @@ const useSignup = () => {
 
   const handleChecking = (cohortData) => new Promise((resolve, reject) => {
     setLoader('date', true);
-    // const { kickoffDate, weekDays, availableTime } = getTimeProps(cohortData);
-    // setDateProps({
-    //   ...cohortData,
-    //   kickoffDate,
-    //   weekDays,
-    //   availableTime,
-    // });
+    if (cohortData?.id) {
+      const { kickoffDate, weekDays, availableTime } = getTimeProps(cohortData);
+      setDateProps({
+        ...cohortData,
+        kickoffDate,
+        weekDays,
+        availableTime,
+      });
+    }
 
     getChecking(cohortData)
       .then(() => {

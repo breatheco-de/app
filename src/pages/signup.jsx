@@ -73,7 +73,7 @@ const SignUp = ({ finance }) => {
   const toast = useToast();
 
   const {
-    course, plan, plan_id, cohort, syllabus,
+    course, plan, plan_id, cohort,
   } = router.query;
   const planChoosed = plan || plan_id || 'trial';
   const courseChoosed = course || 'coding-introduction';
@@ -117,14 +117,25 @@ const SignUp = ({ finance }) => {
     }
   }, [cohort, user?.id, accessToken]);
 
+  // useEffect(() => {
+  //   if (dateProps?.id && accessToken) {
+  //     handleChooseDate(dateProps);
+  //   }
+  // }, [dateProps?.id, accessToken, router?.locale]);
   useEffect(() => {
-    if ((syllabus && user?.id)) {
-      handleChecking()
+    // if ((syllabus && user?.id)) {
+    //   handleChecking()
+    //     .then(() => {
+    //       handleStep(1);
+    //     });
+    // }
+    if (dateProps?.id && accessToken && queryCohortIdExists) {
+      handleChecking(dateProps)
         .then(() => {
-          handleStep(1);
+          handleStep(2);
         });
     }
-  }, [user?.id, router?.locale, syllabus]);
+  }, [dateProps?.id, accessToken, router?.locale]);
 
   useEffect(() => {
     if (user?.id && !isLoading) {
@@ -204,8 +215,7 @@ const SignUp = ({ finance }) => {
             fontWeight={isSecondStep ? '700' : '500'}
             color={(isThirdStep || isFourthStep) && 'success'}
           >
-            {/* {t('choose-your-class')} */}
-            {t('summary')}
+            {t('choose-your-class')}
           </Heading>
         </Box>
 
@@ -238,36 +248,35 @@ const SignUp = ({ finance }) => {
             fontWeight={isThirdStep ? '700' : '500'}
             color={(isFourthStep) && 'success'}
           >
-            {/* {t('summary')} */}
+            {t('summary')}
+            {/* {t('payment')} */}
+          </Heading>
+        </Box>
+        {/* {!cohort?.length && (
+        )} */}
+        <Box
+          display="flex"
+          gridGap="8px"
+          alignItems="center"
+          color={stepIndex !== 3 && 'gray.350'}
+        >
+          <Heading
+            as="span"
+            size="sm"
+            p={isFourthStep ? '3px 8px' : '2px 5px'}
+            mr={isFourthStep && '4px'}
+            background={isFourthStep && 'blue.default'}
+            color={isFourthStep && 'white'}
+            borderRadius="3px"
+            fontWeight="500"
+          >
+            {/* {!isPreview ? '4.' : '3.'} */}
+            4.
+          </Heading>
+          <Heading size="sm" fontWeight={isFourthStep ? '700' : '500'}>
             {t('payment')}
           </Heading>
         </Box>
-        {!cohort?.length && (
-          <Box
-            display="flex"
-            gridGap="8px"
-            alignItems="center"
-            color={stepIndex !== 3 && 'gray.350'}
-          >
-            <Heading
-              as="span"
-              size="sm"
-              p={isFourthStep ? '3px 8px' : '2px 5px'}
-              mr={isFourthStep && '4px'}
-              background={isFourthStep && 'blue.default'}
-              color={isFourthStep && 'white'}
-              borderRadius="3px"
-              fontWeight="500"
-            >
-              {/* {!isPreview ? '4.' : '3.'} */}
-              4.
-            </Heading>
-            <Heading size="sm" fontWeight={isFourthStep ? '700' : '500'}>
-              {/* {t('payment')} */}
-              {t('choose-your-class')}
-            </Heading>
-          </Box>
-        )}
       </Box>
 
       <Box
@@ -286,20 +295,21 @@ const SignUp = ({ finance }) => {
             setFormProps={setFormProps}
           />
         )}
+
         {/* Second step */}
-        {/* <ChooseYourClass courseChoosed={courseChoosed} /> */}
-        {isSecondStep && (
+        <ChooseYourClass courseChoosed={courseChoosed} />
+
+        {isThirdStep && (
           <Summary
             formProps={formProps}
             courseTitle={courseTitle}
             planProps={planProps}
           />
         )}
-        {isThirdStep && (
+        {/* Fourth step */}
+        {isFourthStep && (
           <PaymentInfo />
         )}
-        {/* Fourth step */}
-        <ChooseYourClass courseChoosed={courseChoosed} />
 
         <Box display="flex" justifyContent="space-between" mt="auto">
           {stepIndex !== 0 && (
