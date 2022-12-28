@@ -243,13 +243,11 @@ const ContactInformation = ({
 
 ContactInformation.propTypes = {
   courseChoosed: PropTypes.string.isRequired,
-  // queryCohortIdExists: PropTypes.bool,
   formProps: PropTypes.objectOf(PropTypes.any).isRequired,
   setFormProps: PropTypes.func,
 };
 
 ContactInformation.defaultProps = {
-  // queryCohortIdExists: false,
   setFormProps: () => {},
 };
 
