@@ -20,14 +20,14 @@ import modifyEnv from '../../../modifyEnv';
 import useSignup from '../../common/store/actions/signupAction';
 
 const ContactInformation = ({
-  courseChoosed, queryCohortIdExists,
+  courseChoosed,
   formProps, setFormProps,
 
 }) => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
   const {
-    state, nextStep, handleStep,
+    state, nextStep,
   } = useSignup();
   const { stepIndex, dateProps, location } = state;
   const router = useRouter();
@@ -40,22 +40,21 @@ const ContactInformation = ({
   const { createToast } = useCustomToast({
     toastIdRef,
     status: 'info',
-    title: 'Already have an account?',
+    title: t('alert-message.title'),
     content: (
-      // TODO: add translations
       <Box>
-        It seems that you already have an account, please check your email inbox for any messages from
+        {t('alert-message.message1')}
         {' '}
         <NextChakraLink variant="default" color="blue.200" href="/">4Geeks.com</NextChakraLink>
         .
         <br />
-        If you know your password
+        {t('alert-message.message2')}
         {' '}
-        <NextChakraLink variant="default" color="blue.200" href="/login" redirectAfterLogin>click here to login now</NextChakraLink>
+        <NextChakraLink variant="default" color="blue.200" href="/login" redirectAfterLogin>{t('alert-message.click-here-to-login')}</NextChakraLink>
         {' '}
-        or click here on
+        {t('alert-message.or-click-here')}
         {' '}
-        <NextChakraLink variant="default" color="blue.200" href="#">forgot password to get a new one</NextChakraLink>
+        <NextChakraLink variant="default" color="blue.200" href="#">{t('alert-message.message3')}</NextChakraLink>
         .
       </Box>
     ),
@@ -101,11 +100,7 @@ const ContactInformation = ({
             token: data.access_token,
           },
         });
-        if (queryCohortIdExists && dateProps) {
-          handleStep(2);
-        } else {
-          nextStep();
-        }
+        nextStep();
       } else {
         router.push('/thank-you');
       }
@@ -248,13 +243,11 @@ const ContactInformation = ({
 
 ContactInformation.propTypes = {
   courseChoosed: PropTypes.string.isRequired,
-  queryCohortIdExists: PropTypes.bool,
   formProps: PropTypes.objectOf(PropTypes.any).isRequired,
   setFormProps: PropTypes.func,
 };
 
 ContactInformation.defaultProps = {
-  queryCohortIdExists: false,
   setFormProps: () => {},
 };
 

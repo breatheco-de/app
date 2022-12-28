@@ -95,7 +95,11 @@ function chooseProgram() {
           const { academy, syllabus_version: syllabusVersion } = item?.cohort;
 
           const tasks = await bc.todo({ cohort: item?.cohort?.id }).getTaskByStudent();
-          const studentAndTeachers = await bc.cohort().getStudents(item?.cohort.slug, item?.cohort?.academy?.id);
+          const studentAndTeachers = await bc.cohort({
+            role: 'TEACHER,ASSISTANT',
+            cohorts: item?.cohort?.slug,
+            academy: item?.cohort?.academy?.id,
+          }).getMembers();
           const teacher = studentAndTeachers?.data.filter((st) => st.role === 'TEACHER');
           const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT');
           if (tasks?.data?.length > 0) {

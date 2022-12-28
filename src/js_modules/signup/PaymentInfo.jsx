@@ -233,7 +233,7 @@ const PaymentInfo = () => {
               </Box>
             </Box>
             <Box display="flex" flexDirection="column" gridGap="7px">
-              <Heading size="18px">{dateProps?.syllabus_version?.name}</Heading>
+              <Heading size="18px">{dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}</Heading>
               {selectedPlanCheckoutData?.description && (
                 <Heading
                   size="15px"
@@ -244,17 +244,15 @@ const PaymentInfo = () => {
                 </Heading>
               )}
             </Box>
-            {selectedPlanCheckoutData?.price && (
-              <Heading
-                size="m"
-                margin="0 26px 0 auto"
-                color="blue.default"
-                textTransform="uppercase"
-                textAlign="end"
-              >
-                {`$${selectedPlanCheckoutData?.price}`}
-              </Heading>
-            )}
+            <Heading
+              size={selectedPlanCheckoutData?.price > 0 ? 'm' : 'xsm'}
+              margin="0 26px 0 auto"
+              color="blue.default"
+              textTransform="uppercase"
+              textAlign="end"
+            >
+              {selectedPlanCheckoutData?.price > 0 ? `$${selectedPlanCheckoutData?.price}` : t('free-trial')}
+            </Heading>
           </Box>
           <Box
             as="hr"

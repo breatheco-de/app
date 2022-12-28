@@ -106,6 +106,7 @@ const breathecode = {
       }),
       getFilterStudents: () => axios.get(`${url}/cohort/user?${qs}`),
       getStudents: (cohortId, academyId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}${academyId ? `&academy=${academyId}` : ''}`),
+      getMembers: () => axios.get(`${url}/cohort/user?${qs}`),
       update: (id, args) => axios.put(`${url}/cohort/${id}`, args),
       user: ({ cohortId, userId }) => axios({
         method: 'get',

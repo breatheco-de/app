@@ -12,16 +12,13 @@ import bc from '../../common/services/breathecode';
 
 const Summary = ({
   formProps,
-  // courseTitle,
-  // planProps,
 }) => {
   const { t } = useTranslation('signup');
-  const router = useRouter();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [disableHandler, setDisableHandler] = useState(false);
 
   const {
-    state, nextStep, setSelectedPlanCheckoutData, handleChecking, setPlanProps,
+    state, nextStep, setSelectedPlanCheckoutData, handleChecking, setPlanProps, handlePayment,
   } = useSignup();
   const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
   const toast = useToast();
@@ -30,9 +27,18 @@ const Summary = ({
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const borderColor2 = useColorModeValue('black', 'white');
   const { backgroundColor, borderColor } = useStyle();
+  const router = useRouter();
+  const { plan } = router.query;
 
-  const getPlanProps = (plan) => {
-    bc.payment().getPlanProps(encodeURIComponent(plan.slug))
+  const existsAmountPerHalf = checkoutData?.amount_per_half > 0;
+  const existsAmountPerMonth = checkoutData?.amount_per_month > 0;
+  const existsAmountPerQuarter = checkoutData?.amount_per_quarter > 0;
+  const existsAmountPerYear = checkoutData?.amount_per_year > 0;
+
+  const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
+
+  const getPlanProps = (selectedPlan) => {
+    bc.payment().getPlanProps(encodeURIComponent(selectedPlan.slug))
       .then((resp) => {
         if (!resp) {
           setDisableHandler(true);
@@ -47,18 +53,24 @@ const Summary = ({
   };
 
   useEffect(() => {
-    if (typeof selectedIndex === 'number' && checkoutData?.plans[selectedIndex]) {
+    const planFindedByQuery = checkoutData?.plans?.find((p) => p.slug === plan);
+    if (planFindedByQuery || checkoutData?.plans[selectedIndex]) {
       // setPlanData(data[selectedIndex]);
-      setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
-      getPlanProps(checkoutData?.plans[selectedIndex]);
+      setSelectedPlanCheckoutData(planFindedByQuery || checkoutData?.plans[selectedIndex]);
+
+      getPlanProps(planFindedByQuery || checkoutData?.plans[selectedIndex]);
     }
   }, [checkoutData?.plans]);
 
   const handleSubmit = () => {
     if (planProps?.length > 0) {
       handleChecking()
-        .then(() => {
-          nextStep();
+        .then((data) => {
+          if (isNotTrial) {
+            nextStep();
+          } else {
+            handlePayment(data);
+          }
         })
         .catch(() => {
           toast({
@@ -71,13 +83,6 @@ const Summary = ({
     }
   };
 
-  const existsAmountPerHalf = checkoutData?.amount_per_half > 0;
-  const existsAmountPerMonth = checkoutData?.amount_per_month > 0;
-  const existsAmountPerQuarter = checkoutData?.amount_per_quarter > 0;
-  const existsAmountPerYear = checkoutData?.amount_per_year > 0;
-
-  const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
-
   return (
     <Box
       display="flex"
@@ -86,93 +91,6 @@ const Summary = ({
       mb="1rem"
     >
       <Box display="flex" flexDirection="column" flex={0.5} gridGap="3rem">
-        <Box display="flex" flexDirection="column" gridGap="10px">
-          <Heading size="18px" textTransform="uppercase">
-            {t('cohort-details')}
-          </Heading>
-          <Box
-            as="hr"
-            width="30%"
-            margin="0 0 10px 0"
-            h="1px"
-            borderColor={borderColor2}
-          />
-          <Box display="flex" flexDirection="column" gridGap="10px">
-            <Text size="md" fontWeight="700">
-              {t('cohort-name')}
-            </Text>
-            <Text
-              size="md"
-              fontWeight="400"
-              color={fontColor}
-              textTransform="capitalize"
-            >
-              {dateProps?.name}
-              <Text
-                size="sm"
-                fontWeight="700"
-                textTransform="capitalize"
-                color={fontColor}
-              >
-                {dateProps?.syllabus_version?.name}
-              </Text>
-            </Text>
-          </Box>
-
-          <Box
-            as="hr"
-            width="100%"
-            margin="0 0"
-            h="1px"
-            borderColor={borderColor}
-          />
-
-          <Box display="flex" flexDirection="column" gridGap="10px">
-            <Text size="md" fontWeight="700">
-              {t('start-date')}
-            </Text>
-            <Text size="md" fontWeight="400" color={fontColor}>
-              {dateProps?.kickoffDate[router.locale]}
-            </Text>
-          </Box>
-
-          <Box
-            as="hr"
-            width="100%"
-            margin="0 0"
-            h="1px"
-            borderColor={borderColor}
-          />
-
-          <Box display="flex" flexDirection="column" gridGap="10px">
-            {dateProps?.weekDays[router.locale].length > 0 && (
-              <>
-                <Text size="md" fontWeight="700">
-                  {t('days-and-hours')}
-                </Text>
-                <Text size="md" fontWeight="400" color={fontColor}>
-                  {dateProps?.weekDays[router.locale].map(
-                    (day, i) => `${
-                      // eslint-disable-next-line no-nested-ternary
-                      i !== 0
-                        ? i < dateProps?.weekDays[router.locale].length - 1
-                          ? ','
-                          : ` ${t('common:and')}`
-                        : ''
-                    } ${day}`,
-                  )}
-                </Text>
-              </>
-            )}
-            <Text size="md" fontWeight="400" color={fontColor}>
-              {dateProps?.availableTime}
-            </Text>
-            <Text size="md" fontWeight="400" color={fontColor}>
-              {/* {dateProps?.formatTime} */}
-              {dateProps?.timezone}
-            </Text>
-          </Box>
-        </Box>
 
         <Box display="flex" flexDirection="column" gridGap="10px">
           <Heading size="18px" textTransform="uppercase">
@@ -247,32 +165,34 @@ const Summary = ({
                 <Icon icon="coding" width="48px" height="48px" color="#fff" />
               </Box>
             </Box>
-            <Box display="flex" flexDirection="column" gridGap="7px">
-              <Heading size="18px">
-                {/* {courseTitle} */}
-                {dateProps?.syllabus_version?.name}
-              </Heading>
-
-              {selectedPlanCheckoutData?.description && (
-                <Heading
-                  size="15px"
-                  textTransform="uppercase"
-                  color={useColorModeValue('gray.500', 'gray.400')}
-                >
-                  {selectedPlanCheckoutData?.description}
+            <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="0px">
+              <Box display="flex" flexDirection="column" gridGap="7px">
+                <Heading size="18px">
+                  {/* {courseTitle} */}
+                  {dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}
                 </Heading>
-              )}
+
+                {selectedPlanCheckoutData?.description && (
+                  <Heading
+                    size="15px"
+                    textTransform="uppercase"
+                    color={useColorModeValue('gray.500', 'gray.400')}
+                  >
+                    {selectedPlanCheckoutData?.description}
+                  </Heading>
+                )}
+              </Box>
+              <Heading
+                size={selectedPlanCheckoutData?.price > 0 ? 'm' : 'xsm'}
+                margin={{ base: '0', md: '0 26px 0 auto' }}
+                color="blue.default"
+                textTransform="uppercase"
+                textAlign={{ base: 'start', md: 'end' }}
+              >
+                {/* {`$${selectedPlanCheckoutData?.price}`} */}
+                {selectedPlanCheckoutData?.price > 0 ? `$${selectedPlanCheckoutData?.price}` : t('free-trial')}
+              </Heading>
             </Box>
-            <Heading
-              size={selectedPlanCheckoutData?.price > 0 ? 'm' : 'xsm'}
-              margin="0 26px 0 auto"
-              color="blue.default"
-              textTransform="uppercase"
-              textAlign="end"
-            >
-              {/* {`$${selectedPlanCheckoutData?.price}`} */}
-              {selectedPlanCheckoutData?.price > 0 ? `$${selectedPlanCheckoutData?.price}` : t('free-trial')}
-            </Heading>
           </Box>
           <Box
             as="hr"
@@ -351,7 +271,7 @@ const Summary = ({
                     gridGap={{ base: '0', md: '12px' }}
                     cursor="pointer"
                     // background={selectedIndex !== i && featuredColor}
-                    border={selectedIndex === i ? '2px solid #0097CD' : '2px solid transparent'}
+                    border={selectedPlanCheckoutData?.slug === item.slug ? '2px solid #0097CD' : '2px solid transparent'}
                     borderRadius="13px"
                   >
                     <Box
@@ -380,12 +300,12 @@ const Summary = ({
                     <Box display="flex" alignItems="center" gridGap="10px">
                       <Heading
                         as="span"
-                        size="m"
+                        size={item?.price > 0 ? 'm' : 'xsm'}
                         lineHeight="1"
                         textTransform="uppercase"
                         color="blue.default"
                       >
-                        {`$${item?.price}`}
+                        {item?.price > 0 ? `$${item?.price}` : t('free-trial')}
                       </Heading>
                     </Box>
                   </Box>
@@ -407,6 +327,7 @@ const Summary = ({
           <Button
             variant="outline"
             borderColor="blue.200"
+            onClick={handleSubmit}
             isDisabled={disableHandler}
             background={featuredBackground}
             _hover={{ background: featuredBackground, opacity: 0.8 }}
@@ -425,8 +346,6 @@ const Summary = ({
 
 Summary.propTypes = {
   formProps: PropTypes.objectOf(PropTypes.any).isRequired,
-  // planProps: PropTypes.objectOf(PropTypes.any).isRequired,
-  // courseTitle: PropTypes.string.isRequired,
 };
 
 export default Summary;

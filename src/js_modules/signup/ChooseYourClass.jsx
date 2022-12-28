@@ -30,7 +30,7 @@ const ChooseYourClass = ({
   const inputRef = useRef();
   const buttonRef = useRef();
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
-  const { state, isSecondStep, setLocation, handleChooseDate } = useSignup();
+  const { state, isSecondStep, setLocation, handleChecking, nextStep } = useSignup();
   const { loader } = state;
 
   const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(
@@ -41,11 +41,11 @@ const ChooseYourClass = ({
   const { syllabus } = router.query;
 
   useEffect(() => {
-    if (coords !== null && isSecondStep) {
+    if (isSecondStep) {
       setCohortIsLoading(true);
 
       bc.public({
-        coordinates: `${coords.latitude},${coords.longitude}`,
+        coordinates: coords?.latitude && `${coords.latitude},${coords.longitude}`,
         saas: true,
         syllabus_slug: syllabus || courseChoosed,
         upcoming: true,
@@ -259,7 +259,12 @@ const ChooseYourClass = ({
                 <Button
                   variant="outline"
                   isLoading={loader.date}
-                  onClick={() => handleChooseDate(date)}
+                  onClick={() => {
+                    handleChecking(date)
+                      .then(() => {
+                        nextStep();
+                      });
+                  }}
                   borderColor="currentColor"
                   color="blue.default"
                   flex={0.15}

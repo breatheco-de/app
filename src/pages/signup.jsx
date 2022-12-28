@@ -48,7 +48,6 @@ export const getStaticProps = async ({ locale, locales }) => {
       },
       fallback: false,
       finance,
-      // data: content,
     },
   };
 };
@@ -57,7 +56,7 @@ const SignUp = ({ finance }) => {
   const { t } = useTranslation('signup');
   const router = useRouter();
   const {
-    state, nextStep, prevStep, handleStep, setDateProps, handleChooseDate,
+    state, nextStep, prevStep, handleStep, setDateProps, handleChecking,
     isFirstStep, isSecondStep, isThirdStep, isFourthStep,
   } = useSignup();
 
@@ -68,8 +67,6 @@ const SignUp = ({ finance }) => {
   const accessToken = getStorageItem('accessToken');
   const { user, isLoading } = useAuth();
 
-  // console.log('Redux state:', state);
-
   const toast = useToast();
 
   const {
@@ -79,7 +76,6 @@ const SignUp = ({ finance }) => {
   const courseChoosed = course || 'coding-introduction';
   const courseTitle = finance[courseChoosed];
   const planProps = finance.plans.find((l) => l.type === planChoosed || l.type === 'trial');
-  // const isPreview = checkoutData?.type === 'PREVIEW';
 
   const [formProps, setFormProps] = useState({
     first_name: '',
@@ -115,14 +111,14 @@ const SignUp = ({ finance }) => {
         });
       }
     }
-    if (user?.id && !isLoading && queryCohortIdExists && checkoutData?.type) {
-      handleStep(2);
-    }
   }, [cohort, user?.id, accessToken]);
 
   useEffect(() => {
-    if (dateProps?.id && accessToken) {
-      handleChooseDate(dateProps);
+    if (dateProps?.id && accessToken && queryCohortIdExists) {
+      handleChecking(dateProps)
+        .then(() => {
+          handleStep(2);
+        });
     }
   }, [dateProps?.id, accessToken, router?.locale]);
 
@@ -238,10 +234,12 @@ const SignUp = ({ finance }) => {
             color={(isFourthStep) && 'success'}
           >
             {t('summary')}
+            {/* {t('payment')} */}
           </Heading>
         </Box>
+
         <Box
-          display="flex"
+          display={checkoutData?.isTrial ? 'none' : 'flex'}
           gridGap="8px"
           alignItems="center"
           color={stepIndex !== 3 && 'gray.350'}
@@ -277,12 +275,14 @@ const SignUp = ({ finance }) => {
         {isFirstStep && (
           <ContactInformation
             courseChoosed={courseChoosed}
-            queryCohortIdExists={queryCohortIdExists}
             formProps={formProps}
             setFormProps={setFormProps}
           />
         )}
+
+        {/* Second step */}
         <ChooseYourClass courseChoosed={courseChoosed} />
+
         {isThirdStep && (
           <Summary
             formProps={formProps}
@@ -290,6 +290,7 @@ const SignUp = ({ finance }) => {
             planProps={planProps}
           />
         )}
+        {/* Fourth step */}
         {isFourthStep && (
           <PaymentInfo />
         )}
@@ -310,7 +311,7 @@ const SignUp = ({ finance }) => {
               {t('go-back')}
             </Button>
           )}
-          {stepIndex !== 0 && !isThirdStep && !isFourthStep && (
+          {stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep && (
             <Button
               variant="default"
               disabled={dateProps === null}

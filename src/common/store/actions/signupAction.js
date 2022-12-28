@@ -16,6 +16,8 @@ const useSignup = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const { syllabus, academy } = router.query;
+
   const {
     stepIndex,
     checkoutData,
@@ -81,15 +83,14 @@ const useSignup = () => {
     payload,
   });
 
-  const handlePayment = () => new Promise((resolve, reject) => {
+  const handlePayment = (data) => new Promise((resolve, reject) => {
     bc.payment().pay({
-      type: checkoutData.type,
-      token: checkoutData.token,
+      type: data?.type || checkoutData.type,
+      token: data?.token || checkoutData.token,
       // chosen_period: selectedPlanCheckoutData.chosen_period,
       chosen_period: 'HALF',
     })
       .then((response) => {
-        console.log('Payment_response:', response);
         if (response?.data?.status === 'FULFILLED') {
           router.push('/choose-program');
         }
@@ -178,12 +179,14 @@ const useSignup = () => {
     };
   };
 
-  const handleChecking = (cohortData) => new Promise((resolve, reject) => {
+  const getChecking = (cohortData) => new Promise((resolve, reject) => {
     const selectedPlan = selectedPlanCheckoutData?.slug ? selectedPlanCheckoutData.slug : null;
+
     bc.payment().checking({
       type: 'PREVIEW',
-      cohort: dateProps?.id || cohortData.id,
-      academy: dateProps?.academy?.id || cohortData?.academy.id,
+      cohort: dateProps?.id || cohortData?.id,
+      academy: dateProps?.academy?.id || cohortData?.academy.id || Number(academy),
+      syllabus,
       plans: selectedPlan,
     })
       .then((response) => {
@@ -207,13 +210,13 @@ const useSignup = () => {
           };
         });
         const finalData = {
-          ...response.data,
+          ...data,
           isTrial: !isNotTrial,
           plans,
         };
         if (response.status < 400) {
           setCheckoutData(finalData);
-          resolve();
+          resolve(finalData);
         }
       })
       .catch(() => {
@@ -224,20 +227,22 @@ const useSignup = () => {
       });
   });
 
-  const handleChooseDate = (cohortData) => new Promise((resolve, reject) => {
+  const handleChecking = (cohortData) => new Promise((resolve, reject) => {
     setLoader('date', true);
-    const { kickoffDate, weekDays, availableTime } = getTimeProps(cohortData);
-    setDateProps({
-      ...cohortData,
-      kickoffDate,
-      weekDays,
-      availableTime,
-    });
+    if (cohortData?.id) {
+      const { kickoffDate, weekDays, availableTime } = getTimeProps(cohortData);
+      setDateProps({
+        ...cohortData,
+        kickoffDate,
+        weekDays,
+        availableTime,
+      });
+    }
 
-    handleChecking(cohortData)
-      .then(() => {
-        resolve();
-        handleStep(2);
+    getChecking(cohortData)
+      .then((data) => {
+        resolve(data);
+        // handleStep(1);
       })
       .catch(() => {
         reject();
@@ -267,7 +272,6 @@ const useSignup = () => {
     handlePayment,
     setPlanData,
     setSelectedPlanCheckoutData,
-    handleChooseDate,
     handleChecking,
     setPlanProps,
   };
