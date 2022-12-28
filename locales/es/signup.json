@@ -55,5 +55,13 @@
     "confirm-email-required": "Confirmar Correo electronico es requerido",
     "confirm-email-not-match": "Los correos electrónicos no coinciden"
   },
-  "no-date-available": "Actualmente no tenemos fechas disponibles para la ubicación ingresada"
+  "no-date-available": "Actualmente no tenemos fechas disponibles para la ubicación ingresada",
+  "alert-message": {
+    "title": "¿Ya tienes una cuenta?",
+    "message1": "Parece que ya tiene una cuenta, revise su bandeja de entrada de correo electrónico para ver si hay mensajes de",
+    "message2": "Si sabes tu contraseña",
+    "click-here-to-login": "haga clic aquí para iniciar sesión ahora",
+    "or-click-here": "o haga clic aquí en",
+    "message3": "olvidé la contraseña"
+  }
 }
