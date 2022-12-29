@@ -31,12 +31,8 @@ const Summary = ({
   const router = useRouter();
   const { plan } = router.query;
 
-  const existsAmountPerHalf = checkoutData?.amount_per_half > 0;
-  const existsAmountPerMonth = checkoutData?.amount_per_month > 0;
-  const existsAmountPerQuarter = checkoutData?.amount_per_quarter > 0;
-  const existsAmountPerYear = checkoutData?.amount_per_year > 0;
-
-  const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
+  // const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
+  const isNotTrial = !checkoutData?.isTrial;
 
   const getPlanProps = (selectedPlan) => {
     bc.payment().getPlanProps(encodeURIComponent(selectedPlan.slug))
