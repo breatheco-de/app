@@ -92,7 +92,77 @@ const Summary = ({
       mb="1rem"
     >
       <Box display="flex" flexDirection="column" flex={0.5} gridGap="3rem">
+        <Box display="flex" flexDirection="column" gridGap="10px">
+          <Heading size="18px" textTransform="uppercase">
+            {t('cohort-details')}
+          </Heading>
+          <Box
+            as="hr"
+            width="30%"
+            margin="0 0 10px 0"
+            h="1px"
+            borderColor={borderColor2}
+          />
+          <Box display="flex" flexDirection="column" gridGap="10px">
+            <Text size="md" fontWeight="700">
+              {t('cohort-name')}
+            </Text>
+            <Text size="md" fontWeight="400" color={fontColor} textTransform="capitalize">
+              {dateProps?.name}
+              <Text size="sm" fontWeight="700" textTransform="capitalize" color={fontColor}>
+                {dateProps?.syllabus_version?.name}
+              </Text>
+            </Text>
+          </Box>
 
+          <Box
+            as="hr"
+            width="100%"
+            margin="0 0"
+            h="1px"
+            borderColor={borderColor}
+          />
+
+          <Box display="flex" flexDirection="column" gridGap="10px">
+            <Text size="md" fontWeight="700">
+              {t('start-date')}
+            </Text>
+            <Text size="md" fontWeight="400" color={fontColor}>
+              {dateProps?.kickoffDate[router.locale]}
+            </Text>
+          </Box>
+
+          <Box
+            as="hr"
+            width="100%"
+            margin="0 0"
+            h="1px"
+            borderColor={borderColor}
+          />
+
+          <Box display="flex" flexDirection="column" gridGap="10px">
+            {dateProps?.weekDays[router.locale].length > 0 && (
+              <>
+                <Text size="md" fontWeight="700">
+                  {t('days-and-hours')}
+                </Text>
+                <Text size="md" fontWeight="400" color={fontColor}>
+                  {dateProps?.weekDays[router.locale].map(
+                    // eslint-disable-next-line no-nested-ternary
+                    (day, i) => `${i !== 0 ? i < dateProps?.weekDays[router.locale].length - 1 ? ',' : ` ${t('common:and')}` : ''} ${day}`,
+                  )}
+                </Text>
+              </>
+            )}
+            <Text size="md" fontWeight="400" color={fontColor}>
+              {dateProps?.availableTime}
+            </Text>
+            <Text size="md" fontWeight="400" color={fontColor}>
+              {/* {dateProps?.formatTime} */}
+              {dateProps?.timezone}
+            </Text>
+          </Box>
+        </Box>
         <Box display="flex" flexDirection="column" gridGap="10px">
           <Heading size="18px" textTransform="uppercase">
             {t('profile-details')}
@@ -215,31 +285,29 @@ const Summary = ({
             gridGap="12px"
           >
             {planProps?.length > 0 && planProps?.map((bullet) => (
-              <>
+              <Box
+                as="li"
+                key={bullet?.features[0]?.description}
+                display="flex"
+                flexDirection="row"
+                lineHeight="24px"
+                gridGap="8px"
+              >
+                <Icon
+                  icon="checked2"
+                  color="#38A56A"
+                  width="13px"
+                  height="10px"
+                  style={{ margin: '8px 0 0 0' }}
+                />
                 <Box
-                  as="li"
-                  key={bullet?.features[0]?.description}
-                  display="flex"
-                  flexDirection="row"
-                  lineHeight="24px"
-                  gridGap="8px"
-                >
-                  <Icon
-                    icon="checked2"
-                    color="#38A56A"
-                    width="13px"
-                    height="10px"
-                    style={{ margin: '8px 0 0 0' }}
-                  />
-                  <Box
-                    fontSize="14px"
-                    fontWeight="600"
-                    letterSpacing="0.05em"
-                    dangerouslySetInnerHTML={{ __html: bullet?.description }}
-                  />
-                  {bullet?.features[0]?.description}
-                </Box>
-              </>
+                  fontSize="14px"
+                  fontWeight="600"
+                  letterSpacing="0.05em"
+                  dangerouslySetInnerHTML={{ __html: bullet?.description }}
+                />
+                {bullet?.features[0]?.description}
+              </Box>
             ))}
           </Box>
         </Box>

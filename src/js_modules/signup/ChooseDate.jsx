@@ -28,8 +28,14 @@ const ChooseDate = ({ cohort, index }) => {
 
   return (
     <Box display="flex" gridGap="30px">
-      <Text size="18px" flex={0.35}>
+      {/* <Text size="18px" flex={0.35}>
         {cohort.syllabus_version.name}
+      </Text> */}
+      <Text size="18px" fontWeight="400" flex={0.35} textTransform="capitalize">
+        {cohort?.name}
+        <Text size="13px" fontWeight="700" textTransform="capitalize">
+          {cohort?.syllabus_version?.name}
+        </Text>
       </Text>
       <Box
         display="flex"

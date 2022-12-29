@@ -187,27 +187,33 @@ const useSignup = () => {
 
   const getChecking = (cohortData) => new Promise((resolve, reject) => {
     const selectedPlan = selectedPlanCheckoutData?.slug ? selectedPlanCheckoutData.slug : undefined;
+    const cohortPlan = cohortPlans[cohortData?.index || 0];
 
     bc.payment().checking({
       type: 'PREVIEW',
       cohort: cohortData?.id || dateProps?.id,
       academy: cohortData?.academy.id || dateProps?.academy?.id || Number(academy),
       syllabus,
-      plans: selectedPlan || cohortPlans?.length > 0 ? cohortPlans[cohortData.index]?.slug : null,
+      plans: selectedPlan || cohortPlans?.length > 0 ? cohortPlan?.slug : null,
       // plans: selectedPlan || Number.isNaN(queryPlan) ? queryPlan : Number(queryPlan),
 
       // plans: selectedPlan || queryPlans.map((plan) => (Number.isNaN(plan) ? plan : Number(plan))),
     })
       .then((response) => {
-        const { data } = response;
-        const existsAmountPerHalf = data?.amount_per_half > 0;
-        const existsAmountPerMonth = data?.amount_per_month > 0;
-        const existsAmountPerQuarter = data?.amount_per_quarter > 0;
-        const existsAmountPerYear = data?.amount_per_year > 0;
+        // const { data } = response;
+        const { token } = response?.data;
+        const data = response?.data.plans.length > 0
+          ? response?.data
+          : { ...cohortPlan, token };
+
+        const existsAmountPerHalf = data?.amount_per_half > 0 || data?.price_per_half > 0;
+        const existsAmountPerMonth = data?.amount_per_month > 0 || data?.price_per_month > 0;
+        const existsAmountPerQuarter = data?.amount_per_quarter > 0 || data?.price_per_quarter > 0;
+        const existsAmountPerYear = data?.amount_per_year > 0 || data?.price_per_year > 0;
 
         const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
 
-        const plans = data?.plans.map((plan) => {
+        const plans = data?.plans?.length > 0 ? data?.plans.map((plan) => {
           const { price, period, description } = getPaymentProps({ plan, isNotTrial, data });
           const title = plan?.title ? plan?.title : toCapitalize(unSlugify(String(plan?.slug)));
           return {
@@ -217,7 +223,7 @@ const useSignup = () => {
             title,
             description,
           };
-        });
+        }) : [data];
         const finalData = {
           ...data,
           isTrial: !isNotTrial,
@@ -228,7 +234,8 @@ const useSignup = () => {
           resolve(finalData);
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         reject();
       })
       .finally(() => {
