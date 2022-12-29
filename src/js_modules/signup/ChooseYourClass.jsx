@@ -5,15 +5,13 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
-import { es } from 'date-fns/locale';
-import { format } from 'date-fns';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
-import Text from '../../common/components/Text';
 import AlertMessage from '../../common/components/AlertMessage';
 import { getTimeProps } from '../../utils';
 import useGoogleMaps from '../../common/hooks/useGoogleMaps';
 import useSignup from '../../common/store/actions/signupAction';
+import ChooseDate from './ChooseDate';
 
 const ChooseYourClass = ({
   courseChoosed,
@@ -30,8 +28,7 @@ const ChooseYourClass = ({
   const inputRef = useRef();
   const buttonRef = useRef();
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
-  const { state, isSecondStep, setLocation, handleChecking, nextStep } = useSignup();
-  const { loader } = state;
+  const { isSecondStep, setLocation } = useSignup();
 
   const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(
     GOOGLE_KEY,
@@ -209,71 +206,9 @@ const ChooseYourClass = ({
         p="0 1rem"
       >
         {availableDates?.length > 0 && !cohortIsLoading ? (
-          availableDates.map((date, i) => {
-            const kickoffDate = {
-              en:
-                date?.kickoff_date
-                && format(new Date(date.kickoff_date), 'MMM do'),
-              es:
-                date?.kickoff_date
-                && format(new Date(date.kickoff_date), 'MMM d', {
-                  locale: es,
-                }),
-            };
-
-            const dateIndex = i;
-            return (
-              <Box display="flex" gridGap="30px" key={dateIndex}>
-                <Text size="18px" flex={0.35}>
-                  {date.syllabus_version.name}
-                </Text>
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  gridGap="5px"
-                  flex={0.2}
-                  textTransform="capitalize"
-                >
-                  <Text size="18px">
-                    {kickoffDate[router.locale]}
-                  </Text>
-                  {date?.shortWeekDays[router.locale].length > 0 && (
-                    <Text size="14px" color="gray.default">
-                      {date?.shortWeekDays[router.locale].map(
-                        (day, index) => `${day}${index < date?.shortWeekDays[router.locale].length - 1 ? '/' : ''}`,
-                      )}
-                    </Text>
-                  )}
-                </Box>
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  gridGap="5px"
-                  flex={0.3}
-                >
-                  <Text size="18px">{date?.availableTime}</Text>
-                  <Text size="14px" color="gray.default">
-                    {date?.timezone}
-                  </Text>
-                </Box>
-                <Button
-                  variant="outline"
-                  isLoading={loader.date}
-                  onClick={() => {
-                    handleChecking(date)
-                      .then(() => {
-                        nextStep();
-                      });
-                  }}
-                  borderColor="currentColor"
-                  color="blue.default"
-                  flex={0.15}
-                >
-                  {t('choose-date')}
-                </Button>
-              </Box>
-            );
-          })
+          availableDates.map((date) => (
+            <ChooseDate key={date?.id} date={date} />
+          ))
         ) : (
           <LoaderContent />
         )}

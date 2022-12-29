@@ -16,7 +16,7 @@ const useSignup = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const { syllabus, academy } = router.query;
+  const { syllabus, academy, plan: queryPlan } = router.query;
 
   const {
     stepIndex,
@@ -180,14 +180,14 @@ const useSignup = () => {
   };
 
   const getChecking = (cohortData) => new Promise((resolve, reject) => {
-    const selectedPlan = selectedPlanCheckoutData?.slug ? selectedPlanCheckoutData.slug : null;
+    const selectedPlan = selectedPlanCheckoutData?.slug ? selectedPlanCheckoutData.slug : undefined;
 
     bc.payment().checking({
       type: 'PREVIEW',
-      cohort: dateProps?.id || cohortData?.id,
-      academy: dateProps?.academy?.id || cohortData?.academy.id || Number(academy),
+      cohort: cohortData?.id || dateProps?.id,
+      academy: cohortData?.academy.id || dateProps?.academy?.id || Number(academy),
       syllabus,
-      plans: selectedPlan,
+      plans: selectedPlan || queryPlan,
     })
       .then((response) => {
         const { data } = response;
@@ -228,7 +228,6 @@ const useSignup = () => {
   });
 
   const handleChecking = (cohortData) => new Promise((resolve, reject) => {
-    setLoader('date', true);
     if (cohortData?.id) {
       const { kickoffDate, weekDays, availableTime } = getTimeProps(cohortData);
       setDateProps({
