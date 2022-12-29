@@ -1,12 +1,6 @@
-// const [stepIndex, setStepIndex] = useState(0);
-// const [dateProps, setDateProps] = useState(null);
-// const [checkoutData, setCheckoutData] = useState(null);
-// const [location, setLocation] = useState(null);
-// const [paymentInfo, setPaymentInfo] = useState({});
-// const [planData, setPlanData] = useState(null);
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION,
-  SET_PAYMENT_INFO, SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS,
+  SET_PAYMENT_INFO, SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS,
 } from '../types';
 
 const initialState = {
@@ -25,6 +19,7 @@ const initialState = {
   loader: {
     date: false,
   },
+  cohortPlans: null,
 };
 const signupReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -82,6 +77,12 @@ const signupReducer = (state = initialState, action) => {
     }
 
     // planData
+    case SET_COHORT_PLANS: {
+      return {
+        ...state,
+        cohortPlans: action.payload,
+      };
+    }
     case SET_PLAN_DATA: {
       return {
         ...state,

@@ -28,7 +28,7 @@ const ChooseYourClass = ({
   const inputRef = useRef();
   const buttonRef = useRef();
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
-  const { isSecondStep, setLocation } = useSignup();
+  const { isSecondStep, setLocation, setCohortPlans } = useSignup();
 
   const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(
     GOOGLE_KEY,
@@ -36,6 +36,17 @@ const ChooseYourClass = ({
   );
 
   const { syllabus } = router.query;
+
+  useEffect(() => {
+    if (availableDates?.length > 0) {
+      bc.payment({
+        cohort: availableDates[0].id,
+      }).getCohortPlans()
+        .then(({ data }) => {
+          setCohortPlans(data);
+        });
+    }
+  }, [availableDates]);
 
   useEffect(() => {
     if (isSecondStep) {
@@ -206,8 +217,8 @@ const ChooseYourClass = ({
         p="0 1rem"
       >
         {availableDates?.length > 0 && !cohortIsLoading ? (
-          availableDates.map((date) => (
-            <ChooseDate key={date?.id} date={date} />
+          availableDates.map((cohort, index) => (
+            <ChooseDate key={cohort?.id} index={index} cohort={cohort} />
           ))
         ) : (
           <LoaderContent />

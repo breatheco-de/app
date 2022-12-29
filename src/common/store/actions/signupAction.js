@@ -4,7 +4,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
-  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS,
+  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS,
 } from '../types';
 import { getTimeProps, toCapitalize, unSlugify } from '../../../utils';
 import bc from '../../services/breathecode';
@@ -16,6 +16,7 @@ const useSignup = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  // eslint-disable-next-line no-unused-vars
   const { syllabus, academy, plan: queryPlan } = router.query;
 
   const {
@@ -23,6 +24,7 @@ const useSignup = () => {
     checkoutData,
     selectedPlanCheckoutData,
     dateProps,
+    cohortPlans,
   } = state;
   // const isSecondStep = stepIndex === 1; // Choose your class
   // const isThirdStep = stepIndex === 2; // Payment info
@@ -76,6 +78,10 @@ const useSignup = () => {
     type: SET_LOADER,
     payload,
     value,
+  });
+  const setCohortPlans = (payload) => dispatch({
+    type: SET_COHORT_PLANS,
+    payload,
   });
 
   const setPlanProps = (payload) => dispatch({
@@ -187,7 +193,10 @@ const useSignup = () => {
       cohort: cohortData?.id || dateProps?.id,
       academy: cohortData?.academy.id || dateProps?.academy?.id || Number(academy),
       syllabus,
-      plans: selectedPlan || queryPlan,
+      plans: selectedPlan || cohortPlans?.length > 0 ? cohortPlans[cohortData.index]?.slug : null,
+      // plans: selectedPlan || Number.isNaN(queryPlan) ? queryPlan : Number(queryPlan),
+
+      // plans: selectedPlan || queryPlans.map((plan) => (Number.isNaN(plan) ? plan : Number(plan))),
     })
       .then((response) => {
         const { data } = response;
@@ -273,6 +282,7 @@ const useSignup = () => {
     setSelectedPlanCheckoutData,
     handleChecking,
     setPlanProps,
+    setCohortPlans,
   };
 };
 

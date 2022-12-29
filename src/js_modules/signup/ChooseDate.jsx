@@ -7,8 +7,9 @@ import { useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import Text from '../../common/components/Text';
 import useSignup from '../../common/store/actions/signupAction';
+// import bc from '../../common/services/breathecode';
 
-const ChooseDate = ({ date }) => {
+const ChooseDate = ({ cohort, index }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { handleChecking, nextStep } = useSignup();
@@ -16,11 +17,11 @@ const ChooseDate = ({ date }) => {
 
   const kickoffDate = {
     en:
-      date?.kickoff_date
-      && format(new Date(date.kickoff_date), 'MMM do'),
+      cohort?.kickoff_date
+      && format(new Date(cohort.kickoff_date), 'MMM do'),
     es:
-      date?.kickoff_date
-      && format(new Date(date.kickoff_date), 'MMM d', {
+      cohort?.kickoff_date
+      && format(new Date(cohort.kickoff_date), 'MMM d', {
         locale: es,
       }),
   };
@@ -28,7 +29,7 @@ const ChooseDate = ({ date }) => {
   return (
     <Box display="flex" gridGap="30px">
       <Text size="18px" flex={0.35}>
-        {date.syllabus_version.name}
+        {cohort.syllabus_version.name}
       </Text>
       <Box
         display="flex"
@@ -40,10 +41,10 @@ const ChooseDate = ({ date }) => {
         <Text size="18px">
           {kickoffDate[router.locale]}
         </Text>
-        {date?.shortWeekDays[router.locale].length > 0 && (
+        {cohort?.shortWeekDays[router.locale].length > 0 && (
           <Text size="14px" color="gray.default">
-            {date?.shortWeekDays[router.locale].map(
-              (day, index) => `${day}${index < date?.shortWeekDays[router.locale].length - 1 ? '/' : ''}`,
+            {cohort?.shortWeekDays[router.locale].map(
+              (day, i) => `${day}${i < cohort?.shortWeekDays[router.locale].length - 1 ? '/' : ''}`,
             )}
           </Text>
         )}
@@ -54,9 +55,9 @@ const ChooseDate = ({ date }) => {
         gridGap="5px"
         flex={0.3}
       >
-        <Text size="18px">{date?.availableTime}</Text>
+        <Text size="18px">{cohort?.availableTime}</Text>
         <Text size="14px" color="gray.default">
-          {date?.timezone}
+          {cohort?.timezone}
         </Text>
       </Box>
       <Button
@@ -64,7 +65,13 @@ const ChooseDate = ({ date }) => {
         isLoading={isLoading}
         onClick={() => {
           setIsLoading(true);
-          handleChecking(date)
+          // bc.payment({
+          //   cohort: cohort.id,
+          // }).getCohortPlans()
+          //   .then(({ data }) => {
+          //     setCohortPlans(data);
+          //   });
+          handleChecking({ ...cohort, index })
             .then(() => {
               setIsLoading(false);
               nextStep();
@@ -81,11 +88,13 @@ const ChooseDate = ({ date }) => {
 };
 
 ChooseDate.propTypes = {
-  date: PropTypes.objectOf(PropTypes.any),
+  cohort: PropTypes.objectOf(PropTypes.any),
+  index: PropTypes.number,
 };
 
 ChooseDate.defaultProps = {
-  date: {},
+  cohort: {},
+  index: 0,
 };
 
 export default ChooseDate;

@@ -9,6 +9,7 @@ import Text from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 import useSignup from '../../common/store/actions/signupAction';
 import bc from '../../common/services/breathecode';
+import { toCapitalize, unSlugify } from '../../utils';
 
 const Summary = ({
   formProps,
@@ -250,67 +251,70 @@ const Summary = ({
             {t('select-payment-plan')}
           </Heading>
           <Box display="flex" flexDirection="column" gridGap="10px">
-            {/* {data */}
+            {/* {cohortPlans */}
             {checkoutData?.plans
               .filter((l) => l.status === 'ACTIVE')
-              .map((item, i) => (
-                <Fragment key={`${item.slug}`}>
-                  <Box
-                    display="flex"
-                    onClick={() => {
-                      setSelectedIndex(i);
-                      // setPlanData(item);
-                      getPlanProps(item);
-                      setSelectedPlanCheckoutData(item);
-                    }}
-                    flexDirection={{ base: 'column', md: 'row' }}
-                    width="100%"
-                    justifyContent="space-between"
-                    // p={selectedIndex === i ? '22px 18px' : '26px 22px'}
-                    p={{ base: '8px 14px', md: '22px 18px' }}
-                    gridGap={{ base: '0', md: '12px' }}
-                    cursor="pointer"
-                    // background={selectedIndex !== i && featuredColor}
-                    border={selectedPlanCheckoutData?.slug === item.slug ? '2px solid #0097CD' : '2px solid transparent'}
-                    borderRadius="13px"
-                  >
+              .map((item, i) => {
+                const title = item?.title ? item?.title : toCapitalize(unSlugify(String(item?.slug)));
+                return (
+                  <Fragment key={`${item.slug}`}>
                     <Box
                       display="flex"
-                      flexDirection="column"
-                      gridGap={{ base: '0', md: '4px' }}
-                      minWidth={{ base: '100%', md: '288px' }}
-                      height="fit-content"
-                      fontWeight="400"
+                      onClick={() => {
+                        setSelectedIndex(i);
+                        // setPlanData(item);
+                        getPlanProps(item);
+                        setSelectedPlanCheckoutData(item);
+                      }}
+                      flexDirection={{ base: 'column', md: 'row' }}
+                      width="100%"
+                      justifyContent="space-between"
+                      // p={selectedIndex === i ? '22px 18px' : '26px 22px'}
+                      p={{ base: '8px 14px', md: '22px 18px' }}
+                      gridGap={{ base: '0', md: '12px' }}
+                      cursor="pointer"
+                      // background={selectedIndex !== i && featuredColor}
+                      border={selectedPlanCheckoutData?.slug === item.slug ? '2px solid #0097CD' : '2px solid transparent'}
+                      borderRadius="13px"
                     >
-                      <Box fontSize="18px" fontWeight="700">
-                        {item?.title}
-                      </Box>
-                      <Text
-                        size="md"
-                        fontWeight="500"
-                        mb="6px"
-                        // dangerouslySetInnerHTML={{
-                        //   __html: item?.description,
-                        // }}
-                        dangerouslySetInnerHTML={{
-                          __html: item?.description,
-                        }}
-                      />
-                    </Box>
-                    <Box display="flex" alignItems="center" gridGap="10px">
-                      <Heading
-                        as="span"
-                        size={item?.price > 0 ? 'm' : 'xsm'}
-                        lineHeight="1"
-                        textTransform="uppercase"
-                        color="blue.default"
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        gridGap={{ base: '0', md: '4px' }}
+                        minWidth={{ base: '100%', md: '288px' }}
+                        height="fit-content"
+                        fontWeight="400"
                       >
-                        {item?.price > 0 ? `$${item?.price}` : t('free-trial')}
-                      </Heading>
+                        <Box fontSize="18px" fontWeight="700">
+                          {title}
+                        </Box>
+                        <Text
+                          size="md"
+                          fontWeight="500"
+                          mb="6px"
+                          // dangerouslySetInnerHTML={{
+                          //   __html: item?.description,
+                          // }}
+                          dangerouslySetInnerHTML={{
+                            __html: item?.description,
+                          }}
+                        />
+                      </Box>
+                      <Box display="flex" alignItems="center" gridGap="10px">
+                        <Heading
+                          as="span"
+                          size={item?.price > 0 ? 'm' : 'xsm'}
+                          lineHeight="1"
+                          textTransform="uppercase"
+                          color="blue.default"
+                        >
+                          {item?.price > 0 ? `$${item?.price}` : t('free-trial')}
+                        </Heading>
+                      </Box>
                     </Box>
-                  </Box>
-                </Fragment>
-              ))}
+                  </Fragment>
+                );
+              })}
           </Box>
         </Box>
         {isNotTrial ? (
