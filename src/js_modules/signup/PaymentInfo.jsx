@@ -283,7 +283,9 @@ const PaymentInfo = () => {
               textTransform="uppercase"
               textAlign="end"
             >
-              {getPrice(selectedPlanCheckoutData)}
+              {Number.isNaN(getPrice(selectedPlanCheckoutData))
+                ? getPrice(selectedPlanCheckoutData)
+                : `$${getPrice(selectedPlanCheckoutData)} x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}`}
               {/* {selectedPlanCheckoutData?.price > 0 ? `$${selectedPlanCheckoutData?.price}` : t('free-trial')} */}
             </Heading>
           </Box>
