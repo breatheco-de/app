@@ -188,6 +188,9 @@ const breathecode = {
       // getCard: () => axios.post(`${url}/card?${qs}`),
       getPlanProps: (id) => axios.get(`${url}/serviceitem?plan=${id}`),
       getCohortPlans: () => axios.get(`${url}/plan?${qs}`),
+      service: () => ({
+        consumable: () => axios.get(`${url}/me/service/consumable?${qs}`),
+      }),
     };
   },
 };

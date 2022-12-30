@@ -72,6 +72,10 @@
       }
     ]
   },
+  "mentorship": {
+    "no-mentorship": "No te quedan más mentorías para programar",
+    "get-unlimited-mentorship": "y obtén tutoría ilimitada"
+  },
   "deliverProject": {
     "title": "Entregar tarea",
     "how-to-deliver": "Cómo entregar proyectos",
