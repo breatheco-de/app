@@ -35,18 +35,18 @@ const ChooseYourClass = ({
     'places',
   );
 
-  const { syllabus } = router.query;
+  const { syllabus, cohort: cohortQuery, plan } = router.query;
 
   useEffect(() => {
-    if (availableDates?.length > 0) {
+    if (cohortQuery || availableDates?.length > 0) {
       bc.payment({
-        cohort: availableDates[0].id,
+        cohort: cohortQuery || availableDates[0]?.id,
       }).getCohortPlans()
         .then(({ data }) => {
           setCohortPlans(data);
         });
     }
-  }, [availableDates]);
+  }, [cohortQuery, availableDates]);
 
   useEffect(() => {
     if (isSecondStep) {
@@ -57,6 +57,7 @@ const ChooseYourClass = ({
         saas: true,
         syllabus_slug: syllabus || courseChoosed,
         upcoming: true,
+        plan: (plan?.length > 0) ? plan : undefined,
       })
         .cohorts()
         .then(({ data }) => {

@@ -17,13 +17,14 @@ const useSignup = () => {
   const dispatch = useDispatch();
 
   // eslint-disable-next-line no-unused-vars
-  const { syllabus, academy, plan: queryPlan } = router.query;
+  const { syllabus, academy, plan: queryPlan, installments } = router.query;
 
   const {
     stepIndex,
     checkoutData,
     dateProps,
     cohortPlans,
+    // selectedPlanCheckoutData,
   } = state;
   // const isSecondStep = stepIndex === 1; // Choose your class
   // const isThirdStep = stepIndex === 2; // Payment info
@@ -92,6 +93,7 @@ const useSignup = () => {
     bc.payment().pay({
       type: data?.type || checkoutData.type,
       token: data?.token || checkoutData.token,
+      how_many_installments: installments || undefined,
       // chosen_period: selectedPlanCheckoutData.chosen_period,
       chosen_period: 'HALF',
     })
