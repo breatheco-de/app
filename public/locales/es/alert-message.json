@@ -34,6 +34,7 @@
   "email-will-be-sent": "Un correo electrónico te será enviado pronto",
   "error-fetching-role": "Hubo un error al intentar encontrar el rol \"{{role}}\"",
   "error-fetching-cohorts": "Se ha producido un error al obtener las cohortes",
+  "error-fetching-personal-cohorts": "Se ha producido un error al obtener tus cohortes",
   "error-fetching-tasks": "Se ha producido un error al obtener las tareas",
   "error-fetching-alumni-geeks": "Error al obtener exalumnos",
   "github-account-removed": "Tu cuenta de GitHub ha sido removido con éxito",
