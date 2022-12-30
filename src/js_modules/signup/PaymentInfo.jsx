@@ -61,6 +61,27 @@ const PaymentInfo = () => {
     return t('free-trial');
   };
 
+  const getPaymentText = () => {
+    if (checkoutData?.amount_per_half > 0
+      || checkoutData?.amount_per_month > 0
+      || checkoutData?.amount_per_quarter > 0
+      || checkoutData?.amount_per_year > 0) return `You will subscribe and pay ${getPrice(selectedPlanCheckoutData)} dollars every year`;
+
+    if (
+      selectedPlanCheckoutData?.financing_options?.length > 0
+      && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
+      && selectedPlanCheckoutData?.financing_options[0]?.how_many_months > 0
+    ) return `You will pay ${selectedPlanCheckoutData?.financing_options[0]?.monthly_price} dollars ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months} times, for a total of ${selectedPlanCheckoutData?.financing_options[0]?.monthly_price * selectedPlanCheckoutData?.financing_options[0]?.how_many_months}. The first payment will be today and the next one on Oct 23th, 2023.`;
+
+    if (
+      selectedPlanCheckoutData?.financing_options?.length > 0
+      && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
+      && selectedPlanCheckoutData?.financing_options[0]?.how_many_months === 0
+    ) return `You will pay ${selectedPlanCheckoutData?.financing_options[0]?.monthly_price} right now, no other charges apply in the future.`;
+
+    return '';
+  };
+
   const { borderColor, fontColor } = useStyle();
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
 
@@ -280,7 +301,8 @@ const PaymentInfo = () => {
               size={selectedPlanCheckoutData?.price > 0 ? 'm' : 'xsm'}
               margin="0 26px 0 auto"
               color="blue.default"
-              textTransform="uppercase"
+              // textTransform="uppercase"
+              width="100%"
               textAlign="end"
             >
               {Number.isNaN(getPrice(selectedPlanCheckoutData))
@@ -288,6 +310,9 @@ const PaymentInfo = () => {
                 : `$${getPrice(selectedPlanCheckoutData)} x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}`}
               {/* {selectedPlanCheckoutData?.price > 0 ? `$${selectedPlanCheckoutData?.price}` : t('free-trial')} */}
             </Heading>
+          </Box>
+          <Box fontSize="14px">
+            {getPaymentText()}
           </Box>
           <Box
             as="hr"
