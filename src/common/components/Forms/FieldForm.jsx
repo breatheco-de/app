@@ -6,7 +6,7 @@ import {
 import useStyle from '../../hooks/useStyle';
 
 const FieldForm = ({
-  type, name, label, placeholder, formProps, setFormProps, style, withLabel, pattern, handleOnChange, externValue,
+  type, name, label, placeholder, formProps, setFormProps, style, withLabel, pattern, handleOnChange, externValue, onClick,
 }) => {
   const { input } = useStyle();
   const inputBorderColor = input.borderColor;
@@ -31,6 +31,7 @@ const FieldForm = ({
             value={externValue || field.value}
             // defaultValue={defaultValue}
             type={type}
+            onClick={onClick}
             onChange={(e) => {
               setFormProps({ ...formProps, [name]: e.target.value });
               handleOnChange(e);
@@ -63,6 +64,7 @@ FieldForm.propTypes = {
   handleOnChange: PropTypes.func,
   maxLength: PropTypes.number,
   externValue: PropTypes.string,
+  onClick: PropTypes.func,
 };
 
 FieldForm.defaultProps = {
@@ -78,6 +80,7 @@ FieldForm.defaultProps = {
   handleOnChange: () => {},
   maxLength: 0,
   externValue: '',
+  onClick: () => {},
 };
 
 export default FieldForm;

@@ -205,11 +205,13 @@ const calcSVGViewBox = (pathId) => {
   return '';
 };
 
+const number2DIgits = (number) => number.toString().padStart(2, '0');
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
   removeStorageItem, isDevMode, devLogTable, devLog, languageLabel,
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
-  resizeAllMasonryItems, calcSVGViewBox,
+  resizeAllMasonryItems, calcSVGViewBox, number2DIgits,
 };

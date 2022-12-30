@@ -2,15 +2,38 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, Button, useColorModeValue, useToast,
+  Box, Button, Input, useColorModeValue, useToast,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
+import PropTypes from 'prop-types';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import FieldForm from '../../common/components/Forms/FieldForm';
 import useSignup from '../../common/store/actions/signupAction';
 import Icon from '../../common/components/Icon';
+import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
+import DatePickerField from '../../common/components/Forms/DateForm';
+import { number2DIgits } from '../../utils';
+
+const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
+  const { t } = useTranslation('signup');
+  const { input } = useStyle();
+  const inputBorderColor = input.borderColor;
+
+  return (
+    <Input
+      {...rest}
+      placeholder={t('expiration-date')}
+      onClick={onClick}
+      height="50px"
+      borderRadius="3px"
+      borderColor={inputBorderColor}
+      ref={ref}
+      value={value}
+    />
+  );
+});
 
 const PaymentInfo = () => {
   const { t } = useTranslation('signup');
@@ -19,13 +42,15 @@ const PaymentInfo = () => {
   const {
     state, setPaymentInfo, handlePayment,
   } = useSignup();
-  const { paymentInfo, planData, planProps, dateProps, selectedPlanCheckoutData } = state;
+  const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData } = state;
   const [stateCard, setStateCard] = useState({
     card_number: 0,
     exp_month: 0,
     exp_year: 0,
     cvc: 0,
   });
+
+  const isNotTrial = !checkoutData?.isTrial;
 
   const { borderColor, fontColor } = useStyle();
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
@@ -89,8 +114,9 @@ const PaymentInfo = () => {
               cvc: '',
             }}
             onSubmit={(values, actions) => {
-              const expMonth = values.exp.split('/')[0];
-              const expYear = values.exp.split('/')[1];
+              const expMonth = number2DIgits(values.exp?.getMonth() + 1);
+              const expYear = number2DIgits(values.exp?.getFullYear() - 2000);
+
               const allValues = {
                 card_number: stateCard.card_number,
                 exp_month: expMonth,
@@ -140,24 +166,21 @@ const PaymentInfo = () => {
                 </Box>
                 <Box display="flex" gridGap="18px">
                   <Box display="flex" gridGap="18px" flex={1}>
+                    <Box display="flex" flexDirection="column" flex={0.5}>
+                      <DatePickerField
+                        type="text"
+                        name="exp"
+                        wrapperClassName="datePicker"
+                        onChange={(date) => {
+                          setPaymentInfo('exp', date);
+                        }}
+                        customInput={<CustomDateInput />}
+                        dateFormat="MM/yy"
+                        showMonthYearPicker
+                      />
+                    </Box>
                     <FieldForm
-                      type="text"
-                      name="exp"
-                      externValue={paymentInfo.exp}
-                      handleOnChange={(e) => {
-                        const value = e.target.value.replace(/\s/g, '').replace(/[^0-9 /]/g, '');
-                        e.target.value = value.slice(0, 5);
-
-                        if (e.target.value.length === 2) {
-                          e.target.value += '/';
-                        }
-
-                        setPaymentInfo('exp', e.target.value);
-                      }}
-                      pattern="\d{2}/\d{2}"
-                      label={t('expiration-date')}
-                    />
-                    <FieldForm
+                      style={{ flex: 0.5 }}
                       type="text"
                       name="cvc"
                       externValue={paymentInfo.cvc}
@@ -175,7 +198,7 @@ const PaymentInfo = () => {
                   </Box>
                 </Box>
                 <Box position="absolute" bottom="-100px" right="0">
-                  {!planData?.type?.includes('trial') && (
+                  {isNotTrial && (
                     <Button
                       type="submit"
                       variant="default"
@@ -186,7 +209,7 @@ const PaymentInfo = () => {
                       {t('common:proceed-to-payment')}
                     </Button>
                   )}
-                  {planData?.type?.includes('trial') && (
+                  {!isNotTrial && (
                     <Button
                       type="submit"
                       variant="outline"
@@ -305,6 +328,15 @@ const PaymentInfo = () => {
       </Box>
     </>
   );
+};
+
+CustomDateInput.propTypes = {
+  value: PropTypes.string,
+  onClick: PropTypes.func,
+};
+CustomDateInput.defaultProps = {
+  value: '',
+  onClick: () => {},
 };
 
 export default PaymentInfo;

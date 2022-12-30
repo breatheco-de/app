@@ -310,6 +310,9 @@ featured {
   display: flex !important;
   flex-direction: column;
 }
+.react-datepicker-popper {
+  min-width: 250px;
+}
 
 .chakra-ui-dark .md-editor-preview {
   /* background-color: var(--color-canvas-default); */
