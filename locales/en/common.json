@@ -118,5 +118,7 @@
     "pay-per-quarter": "Pay {{value}} quarter",
     "pay-per-month": "Pay {{value}} month",
     "pay-per-half": "Pay {{value}} half"
-  }
+  },
+  "upgrade": "upgrade",
+  "go-back": "Go back"
 }
