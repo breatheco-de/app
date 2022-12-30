@@ -13,7 +13,7 @@ import useSignup from '../../common/store/actions/signupAction';
 import Icon from '../../common/components/Icon';
 import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
-import DatePickerField from '../../common/components/Forms/DateForm';
+import DatePickerField from '../../common/components/Forms/DateField';
 import { number2DIgits } from '../../utils';
 
 const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
