@@ -9,6 +9,7 @@ import Text from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 import useSignup from '../../common/store/actions/signupAction';
 import bc from '../../common/services/breathecode';
+import { toCapitalize, unSlugify } from '../../utils';
 
 const Summary = ({
   formProps,
@@ -30,12 +31,8 @@ const Summary = ({
   const router = useRouter();
   const { plan } = router.query;
 
-  const existsAmountPerHalf = checkoutData?.amount_per_half > 0;
-  const existsAmountPerMonth = checkoutData?.amount_per_month > 0;
-  const existsAmountPerQuarter = checkoutData?.amount_per_quarter > 0;
-  const existsAmountPerYear = checkoutData?.amount_per_year > 0;
-
-  const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
+  // const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
+  const isNotTrial = !checkoutData?.isTrial;
 
   const getPlanProps = (selectedPlan) => {
     bc.payment().getPlanProps(encodeURIComponent(selectedPlan.slug))
@@ -64,7 +61,9 @@ const Summary = ({
 
   const handleSubmit = () => {
     if (planProps?.length > 0) {
-      handleChecking()
+      handleChecking({
+        plan: selectedPlanCheckoutData?.slug,
+      })
         .then((data) => {
           if (isNotTrial) {
             nextStep();
@@ -72,7 +71,8 @@ const Summary = ({
             handlePayment(data);
           }
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err);
           toast({
             title: 'Something went wrong choosing plan',
             status: 'error',
@@ -91,7 +91,77 @@ const Summary = ({
       mb="1rem"
     >
       <Box display="flex" flexDirection="column" flex={0.5} gridGap="3rem">
+        <Box display="flex" flexDirection="column" gridGap="10px">
+          <Heading size="18px" textTransform="uppercase">
+            {t('cohort-details')}
+          </Heading>
+          <Box
+            as="hr"
+            width="30%"
+            margin="0 0 10px 0"
+            h="1px"
+            borderColor={borderColor2}
+          />
+          <Box display="flex" flexDirection="column" gridGap="10px">
+            <Text size="md" fontWeight="700">
+              {t('cohort-name')}
+            </Text>
+            <Text size="md" fontWeight="400" color={fontColor} textTransform="capitalize">
+              {dateProps?.name}
+              <Text size="sm" fontWeight="700" textTransform="capitalize" color={fontColor}>
+                {dateProps?.syllabus_version?.name}
+              </Text>
+            </Text>
+          </Box>
 
+          <Box
+            as="hr"
+            width="100%"
+            margin="0 0"
+            h="1px"
+            borderColor={borderColor}
+          />
+
+          <Box display="flex" flexDirection="column" gridGap="10px">
+            <Text size="md" fontWeight="700">
+              {t('start-date')}
+            </Text>
+            <Text size="md" fontWeight="400" color={fontColor}>
+              {dateProps?.kickoffDate[router.locale]}
+            </Text>
+          </Box>
+
+          <Box
+            as="hr"
+            width="100%"
+            margin="0 0"
+            h="1px"
+            borderColor={borderColor}
+          />
+
+          <Box display="flex" flexDirection="column" gridGap="10px">
+            {dateProps?.weekDays[router.locale].length > 0 && (
+              <>
+                <Text size="md" fontWeight="700">
+                  {t('days-and-hours')}
+                </Text>
+                <Text size="md" fontWeight="400" color={fontColor}>
+                  {dateProps?.weekDays[router.locale].map(
+                    // eslint-disable-next-line no-nested-ternary
+                    (day, i) => `${i !== 0 ? i < dateProps?.weekDays[router.locale].length - 1 ? ',' : ` ${t('common:and')}` : ''} ${day}`,
+                  )}
+                </Text>
+              </>
+            )}
+            <Text size="md" fontWeight="400" color={fontColor}>
+              {dateProps?.availableTime}
+            </Text>
+            <Text size="md" fontWeight="400" color={fontColor}>
+              {/* {dateProps?.formatTime} */}
+              {dateProps?.timezone}
+            </Text>
+          </Box>
+        </Box>
         <Box display="flex" flexDirection="column" gridGap="10px">
           <Heading size="18px" textTransform="uppercase">
             {t('profile-details')}
@@ -214,31 +284,29 @@ const Summary = ({
             gridGap="12px"
           >
             {planProps?.length > 0 && planProps?.map((bullet) => (
-              <>
+              <Box
+                as="li"
+                key={bullet?.features[0]?.description}
+                display="flex"
+                flexDirection="row"
+                lineHeight="24px"
+                gridGap="8px"
+              >
+                <Icon
+                  icon="checked2"
+                  color="#38A56A"
+                  width="13px"
+                  height="10px"
+                  style={{ margin: '8px 0 0 0' }}
+                />
                 <Box
-                  as="li"
-                  key={bullet?.features[0]?.description}
-                  display="flex"
-                  flexDirection="row"
-                  lineHeight="24px"
-                  gridGap="8px"
-                >
-                  <Icon
-                    icon="checked2"
-                    color="#38A56A"
-                    width="13px"
-                    height="10px"
-                    style={{ margin: '8px 0 0 0' }}
-                  />
-                  <Box
-                    fontSize="14px"
-                    fontWeight="600"
-                    letterSpacing="0.05em"
-                    dangerouslySetInnerHTML={{ __html: bullet?.description }}
-                  />
-                  {bullet?.features[0]?.description}
-                </Box>
-              </>
+                  fontSize="14px"
+                  fontWeight="600"
+                  letterSpacing="0.05em"
+                  dangerouslySetInnerHTML={{ __html: bullet?.description }}
+                />
+                {bullet?.features[0]?.description}
+              </Box>
             ))}
           </Box>
         </Box>
@@ -250,67 +318,70 @@ const Summary = ({
             {t('select-payment-plan')}
           </Heading>
           <Box display="flex" flexDirection="column" gridGap="10px">
-            {/* {data */}
+            {/* {cohortPlans */}
             {checkoutData?.plans
               .filter((l) => l.status === 'ACTIVE')
-              .map((item, i) => (
-                <Fragment key={`${item.slug}`}>
-                  <Box
-                    display="flex"
-                    onClick={() => {
-                      setSelectedIndex(i);
-                      // setPlanData(item);
-                      getPlanProps(item);
-                      setSelectedPlanCheckoutData(item);
-                    }}
-                    flexDirection={{ base: 'column', md: 'row' }}
-                    width="100%"
-                    justifyContent="space-between"
-                    // p={selectedIndex === i ? '22px 18px' : '26px 22px'}
-                    p={{ base: '8px 14px', md: '22px 18px' }}
-                    gridGap={{ base: '0', md: '12px' }}
-                    cursor="pointer"
-                    // background={selectedIndex !== i && featuredColor}
-                    border={selectedPlanCheckoutData?.slug === item.slug ? '2px solid #0097CD' : '2px solid transparent'}
-                    borderRadius="13px"
-                  >
+              .map((item, i) => {
+                const title = item?.title ? item?.title : toCapitalize(unSlugify(String(item?.slug)));
+                return (
+                  <Fragment key={`${item.slug}`}>
                     <Box
                       display="flex"
-                      flexDirection="column"
-                      gridGap={{ base: '0', md: '4px' }}
-                      minWidth={{ base: '100%', md: '288px' }}
-                      height="fit-content"
-                      fontWeight="400"
+                      onClick={() => {
+                        setSelectedIndex(i);
+                        // setPlanData(item);
+                        getPlanProps(item);
+                        setSelectedPlanCheckoutData(item);
+                      }}
+                      flexDirection={{ base: 'column', md: 'row' }}
+                      width="100%"
+                      justifyContent="space-between"
+                      // p={selectedIndex === i ? '22px 18px' : '26px 22px'}
+                      p={{ base: '8px 14px', md: '22px 18px' }}
+                      gridGap={{ base: '0', md: '12px' }}
+                      cursor="pointer"
+                      // background={selectedIndex !== i && featuredColor}
+                      border={selectedPlanCheckoutData?.slug === item.slug ? '2px solid #0097CD' : '2px solid transparent'}
+                      borderRadius="13px"
                     >
-                      <Box fontSize="18px" fontWeight="700">
-                        {item?.title}
-                      </Box>
-                      <Text
-                        size="md"
-                        fontWeight="500"
-                        mb="6px"
-                        // dangerouslySetInnerHTML={{
-                        //   __html: item?.description,
-                        // }}
-                        dangerouslySetInnerHTML={{
-                          __html: item?.description,
-                        }}
-                      />
-                    </Box>
-                    <Box display="flex" alignItems="center" gridGap="10px">
-                      <Heading
-                        as="span"
-                        size={item?.price > 0 ? 'm' : 'xsm'}
-                        lineHeight="1"
-                        textTransform="uppercase"
-                        color="blue.default"
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        gridGap={{ base: '0', md: '4px' }}
+                        minWidth={{ base: '100%', md: '288px' }}
+                        height="fit-content"
+                        fontWeight="400"
                       >
-                        {item?.price > 0 ? `$${item?.price}` : t('free-trial')}
-                      </Heading>
+                        <Box fontSize="18px" fontWeight="700">
+                          {title}
+                        </Box>
+                        <Text
+                          size="md"
+                          fontWeight="500"
+                          mb="6px"
+                          // dangerouslySetInnerHTML={{
+                          //   __html: item?.description,
+                          // }}
+                          dangerouslySetInnerHTML={{
+                            __html: item?.description,
+                          }}
+                        />
+                      </Box>
+                      <Box display="flex" alignItems="center" gridGap="10px">
+                        <Heading
+                          as="span"
+                          size={item?.price > 0 ? 'm' : 'xsm'}
+                          lineHeight="1"
+                          textTransform="uppercase"
+                          color="blue.default"
+                        >
+                          {item?.price > 0 ? `$${item?.price}` : t('free-trial')}
+                        </Heading>
+                      </Box>
                     </Box>
-                  </Box>
-                </Fragment>
-              ))}
+                  </Fragment>
+                );
+              })}
           </Box>
         </Box>
         {isNotTrial ? (

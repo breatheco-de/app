@@ -118,5 +118,7 @@
     "pay-per-quarter": "Pagar {{value}} trimestre",
     "pay-per-month": "Pay {{value}} mes",
     "pay-per-half": "Pay {{value}} medio año"
-  }
+  },
+  "upgrade": "Mejorar",
+  "go-back": "Regresar"
 }

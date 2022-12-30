@@ -4,7 +4,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
-  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS,
+  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS,
 } from '../types';
 import { getTimeProps, toCapitalize, unSlugify } from '../../../utils';
 import bc from '../../services/breathecode';
@@ -16,13 +16,14 @@ const useSignup = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  // eslint-disable-next-line no-unused-vars
   const { syllabus, academy, plan: queryPlan } = router.query;
 
   const {
     stepIndex,
     checkoutData,
-    selectedPlanCheckoutData,
     dateProps,
+    cohortPlans,
   } = state;
   // const isSecondStep = stepIndex === 1; // Choose your class
   // const isThirdStep = stepIndex === 2; // Payment info
@@ -76,6 +77,10 @@ const useSignup = () => {
     type: SET_LOADER,
     payload,
     value,
+  });
+  const setCohortPlans = (payload) => dispatch({
+    type: SET_COHORT_PLANS,
+    payload,
   });
 
   const setPlanProps = (payload) => dispatch({
@@ -180,17 +185,19 @@ const useSignup = () => {
   };
 
   const getChecking = (cohortData) => new Promise((resolve, reject) => {
-    const selectedPlan = selectedPlanCheckoutData?.slug ? selectedPlanCheckoutData.slug : undefined;
+    const selectedPlan = cohortData?.plan ? cohortData?.plan : undefined;
+    const cohortPlan = cohortPlans[cohortData?.index || 0];
 
     bc.payment().checking({
       type: 'PREVIEW',
-      cohort: cohortData?.id || dateProps?.id,
-      academy: cohortData?.academy.id || dateProps?.academy?.id || Number(academy),
+      cohort: [cohortData?.id || dateProps?.id],
+      academy: cohortData?.academy?.id || dateProps?.academy?.id || Number(academy),
       syllabus,
-      plans: selectedPlan || queryPlan,
+      plans: [selectedPlan || (cohortPlans?.length > 0 ? cohortPlan?.slug : null)],
     })
       .then((response) => {
         const { data } = response;
+
         const existsAmountPerHalf = data?.amount_per_half > 0;
         const existsAmountPerMonth = data?.amount_per_month > 0;
         const existsAmountPerQuarter = data?.amount_per_quarter > 0;
@@ -198,7 +205,7 @@ const useSignup = () => {
 
         const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
 
-        const plans = data?.plans.map((plan) => {
+        const plans = data?.plans?.length > 0 ? data?.plans.map((plan) => {
           const { price, period, description } = getPaymentProps({ plan, isNotTrial, data });
           const title = plan?.title ? plan?.title : toCapitalize(unSlugify(String(plan?.slug)));
           return {
@@ -208,7 +215,7 @@ const useSignup = () => {
             title,
             description,
           };
-        });
+        }) : [data];
         const finalData = {
           ...data,
           isTrial: !isNotTrial,
@@ -219,7 +226,8 @@ const useSignup = () => {
           resolve(finalData);
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         reject();
       })
       .finally(() => {
@@ -243,8 +251,8 @@ const useSignup = () => {
         resolve(data);
         // handleStep(1);
       })
-      .catch(() => {
-        reject();
+      .catch((err) => {
+        reject(err);
         toast({
           title: t('alert-message:something-went-wrong-choosing-date'),
           status: 'error',
@@ -273,6 +281,7 @@ const useSignup = () => {
     setSelectedPlanCheckoutData,
     handleChecking,
     setPlanProps,
+    setCohortPlans,
   };
 };
 
