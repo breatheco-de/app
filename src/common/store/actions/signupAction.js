@@ -22,7 +22,6 @@ const useSignup = () => {
   const {
     stepIndex,
     checkoutData,
-    selectedPlanCheckoutData,
     dateProps,
     cohortPlans,
   } = state;
@@ -186,30 +185,23 @@ const useSignup = () => {
   };
 
   const getChecking = (cohortData) => new Promise((resolve, reject) => {
-    const selectedPlan = selectedPlanCheckoutData?.slug ? selectedPlanCheckoutData.slug : undefined;
+    const selectedPlan = cohortData?.plan ? cohortData?.plan : undefined;
     const cohortPlan = cohortPlans[cohortData?.index || 0];
 
     bc.payment().checking({
       type: 'PREVIEW',
-      cohort: cohortData?.id || dateProps?.id,
-      academy: cohortData?.academy.id || dateProps?.academy?.id || Number(academy),
+      cohort: [cohortData?.id || dateProps?.id],
+      academy: cohortData?.academy?.id || dateProps?.academy?.id || Number(academy),
       syllabus,
-      plans: selectedPlan || cohortPlans?.length > 0 ? cohortPlan?.slug : null,
-      // plans: selectedPlan || Number.isNaN(queryPlan) ? queryPlan : Number(queryPlan),
-
-      // plans: selectedPlan || queryPlans.map((plan) => (Number.isNaN(plan) ? plan : Number(plan))),
+      plans: [selectedPlan || (cohortPlans?.length > 0 ? cohortPlan?.slug : null)],
     })
       .then((response) => {
-        // const { data } = response;
-        const { token } = response?.data;
-        const data = response?.data.plans.length > 0
-          ? response?.data
-          : { ...cohortPlan, token };
+        const { data } = response;
 
-        const existsAmountPerHalf = data?.amount_per_half > 0 || data?.price_per_half > 0;
-        const existsAmountPerMonth = data?.amount_per_month > 0 || data?.price_per_month > 0;
-        const existsAmountPerQuarter = data?.amount_per_quarter > 0 || data?.price_per_quarter > 0;
-        const existsAmountPerYear = data?.amount_per_year > 0 || data?.price_per_year > 0;
+        const existsAmountPerHalf = data?.amount_per_half > 0;
+        const existsAmountPerMonth = data?.amount_per_month > 0;
+        const existsAmountPerQuarter = data?.amount_per_quarter > 0;
+        const existsAmountPerYear = data?.amount_per_year > 0;
 
         const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
 
@@ -259,8 +251,8 @@ const useSignup = () => {
         resolve(data);
         // handleStep(1);
       })
-      .catch(() => {
-        reject();
+      .catch((err) => {
+        reject(err);
         toast({
           title: t('alert-message:something-went-wrong-choosing-date'),
           status: 'error',

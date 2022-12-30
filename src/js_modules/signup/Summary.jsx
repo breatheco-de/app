@@ -61,7 +61,9 @@ const Summary = ({
 
   const handleSubmit = () => {
     if (planProps?.length > 0) {
-      handleChecking()
+      handleChecking({
+        plan: selectedPlanCheckoutData?.slug,
+      })
         .then((data) => {
           if (isNotTrial) {
             nextStep();
@@ -69,7 +71,8 @@ const Summary = ({
             handlePayment(data);
           }
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err);
           toast({
             title: 'Something went wrong choosing plan',
             status: 'error',

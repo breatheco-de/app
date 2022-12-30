@@ -159,8 +159,13 @@ const Mentoring = ({
         </Box>
 
         {mentoryProps?.service && !mentoryProps?.mentor && serviceMentoring?.cohorts?.length > 0 && cohortService?.balance?.unit > 0 && (
-          <Box>
-            {`You can Schedule ${cohortService.balance.unit} mentorships`}
+          <Box display="flex" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0">
+            <Box background="yellow.default" padding="2px 10px" width="fit-content" borderRadius="50%">
+              {cohortService?.balance?.unit}
+            </Box>
+            <Box textAlign="center">
+              {t('mentorship.available-sessions')}
+            </Box>
           </Box>
         )}
         {mentoryProps?.service && !mentoryProps?.mentor && (serviceMentoring?.cohorts?.length === 0 || cohortService?.balance?.unit <= 0) ? (

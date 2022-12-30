@@ -74,7 +74,8 @@
   },
   "mentorship": {
     "no-mentorship": "You have no more mentorships left to schedule",
-    "get-unlimited-mentorship": "and get unlimited mentorship"
+    "get-unlimited-mentorship": "and get unlimited mentorship",
+    "available-sessions": "Available sessions to schedule"
   },
   "deliverProject": {
     "title": "Deliver assignment",

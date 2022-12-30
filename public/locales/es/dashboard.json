@@ -74,7 +74,8 @@
   },
   "mentorship": {
     "no-mentorship": "No te quedan más mentorías para programar",
-    "get-unlimited-mentorship": "y obtén tutoría ilimitada"
+    "get-unlimited-mentorship": "y obtén tutoría ilimitada",
+    "available-sessions": "Sesiones disponibles para programar"
   },
   "deliverProject": {
     "title": "Entregar tarea",
