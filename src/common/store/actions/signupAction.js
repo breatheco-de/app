@@ -17,7 +17,7 @@ const useSignup = () => {
   const dispatch = useDispatch();
 
   // eslint-disable-next-line no-unused-vars
-  const { syllabus, academy, plan: queryPlan, installments } = router.query;
+  const { syllabus, academy, plan: queryPlan } = router.query;
 
   const {
     stepIndex,
@@ -93,7 +93,7 @@ const useSignup = () => {
     bc.payment().pay({
       type: data?.type || checkoutData.type,
       token: data?.token || checkoutData.token,
-      how_many_installments: installments || undefined,
+      how_many_installments: data?.installments || undefined,
       // chosen_period: selectedPlanCheckoutData.chosen_period,
       chosen_period: 'HALF',
     })
@@ -199,7 +199,6 @@ const useSignup = () => {
     })
       .then((response) => {
         const { data } = response;
-
         const existsAmountPerHalf = data?.amount_per_half > 0;
         const existsAmountPerMonth = data?.amount_per_month > 0;
         const existsAmountPerQuarter = data?.amount_per_quarter > 0;

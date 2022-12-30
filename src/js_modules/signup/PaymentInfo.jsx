@@ -52,6 +52,15 @@ const PaymentInfo = () => {
 
   const isNotTrial = !checkoutData?.isTrial;
 
+  const getPrice = (planProp) => {
+    if (planProp?.financing_options?.length > 0 && planProp?.financing_options[0]?.monthly_price > 0) return planProp?.financing_options[0]?.monthly_price;
+    if (checkoutData?.amount_per_half > 0) return checkoutData?.amount_per_half;
+    if (checkoutData?.amount_per_month > 0) return checkoutData?.amount_per_month;
+    if (checkoutData?.amount_per_quarter > 0) return checkoutData?.amount_per_quarter;
+    if (checkoutData?.amount_per_year > 0) return checkoutData?.amount_per_year;
+    return t('free-trial');
+  };
+
   const { borderColor, fontColor } = useStyle();
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
 
@@ -198,7 +207,7 @@ const PaymentInfo = () => {
                   </Box>
                 </Box>
                 <Box position="absolute" bottom="-100px" right="0">
-                  {isNotTrial && (
+                  {(isNotTrial || !Number.isNaN(getPrice(selectedPlanCheckoutData))) ? (
                     <Button
                       type="submit"
                       variant="default"
@@ -208,8 +217,7 @@ const PaymentInfo = () => {
                     >
                       {t('common:proceed-to-payment')}
                     </Button>
-                  )}
-                  {!isNotTrial && (
+                  ) : (
                     <Button
                       type="submit"
                       variant="outline"
@@ -224,6 +232,7 @@ const PaymentInfo = () => {
                     >
                       {t('common:start-free-trial')}
                     </Button>
+
                   )}
                 </Box>
               </Form>
@@ -274,7 +283,10 @@ const PaymentInfo = () => {
               textTransform="uppercase"
               textAlign="end"
             >
-              {selectedPlanCheckoutData?.price > 0 ? `$${selectedPlanCheckoutData?.price}` : t('free-trial')}
+              {Number.isNaN(getPrice(selectedPlanCheckoutData))
+                ? getPrice(selectedPlanCheckoutData)
+                : `$${getPrice(selectedPlanCheckoutData)} x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}`}
+              {/* {selectedPlanCheckoutData?.price > 0 ? `$${selectedPlanCheckoutData?.price}` : t('free-trial')} */}
             </Heading>
           </Box>
           <Box
