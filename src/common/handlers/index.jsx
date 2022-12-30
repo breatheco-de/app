@@ -162,7 +162,7 @@ const handlers = {
     const programRole = program?.role?.toUpperCase();
     const programCohortStage = program?.cohort?.stage?.toUpperCase();
 
-    const includesPrework = ['PREWORK'].includes(programCohortStage);
+    const includesPrework = !program?.cohort?.is_hidden_on_prework;
     const visibleForTeacher = includesPrework && programRole !== 'STUDENT';
 
     const showCohort = [
