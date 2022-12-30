@@ -42,13 +42,15 @@ const PaymentInfo = () => {
   const {
     state, setPaymentInfo, handlePayment,
   } = useSignup();
-  const { paymentInfo, planData, planProps, dateProps, selectedPlanCheckoutData } = state;
+  const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData } = state;
   const [stateCard, setStateCard] = useState({
     card_number: 0,
     exp_month: 0,
     exp_year: 0,
     cvc: 0,
   });
+
+  const isNotTrial = !checkoutData?.isTrial;
 
   const { borderColor, fontColor } = useStyle();
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
@@ -196,7 +198,7 @@ const PaymentInfo = () => {
                   </Box>
                 </Box>
                 <Box position="absolute" bottom="-100px" right="0">
-                  {!planData?.type?.includes('trial') && (
+                  {isNotTrial && (
                     <Button
                       type="submit"
                       variant="default"
@@ -207,7 +209,7 @@ const PaymentInfo = () => {
                       {t('common:proceed-to-payment')}
                     </Button>
                   )}
-                  {planData?.type?.includes('trial') && (
+                  {!isNotTrial && (
                     <Button
                       type="submit"
                       variant="outline"
