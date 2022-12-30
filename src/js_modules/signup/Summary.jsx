@@ -48,6 +48,14 @@ const Summary = ({
         setDisableHandler(true);
       });
   };
+  const getPrice = () => {
+    if (selectedPlanCheckoutData?.financing_options?.length > 0 && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0) return selectedPlanCheckoutData?.financing_options[0]?.monthly_price;
+    if (checkoutData?.amount_per_half > 0) return checkoutData?.amount_per_half;
+    if (checkoutData?.amount_per_month > 0) return checkoutData?.amount_per_month;
+    if (checkoutData?.amount_per_quarter > 0) return checkoutData?.amount_per_quarter;
+    if (checkoutData?.amount_per_year > 0) return checkoutData?.amount_per_year;
+    return t('free-trial');
+  };
 
   useEffect(() => {
     const planFindedByQuery = checkoutData?.plans?.find((p) => p.slug === plan);
@@ -65,10 +73,13 @@ const Summary = ({
         plan: selectedPlanCheckoutData?.slug,
       })
         .then((data) => {
-          if (isNotTrial) {
+          if (isNotTrial || !Number.isNaN(getPrice(selectedPlanCheckoutData))) {
             nextStep();
           } else {
-            handlePayment(data);
+            handlePayment({
+              ...data,
+              installments: selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
+            });
           }
         })
         .catch((err) => {
@@ -256,11 +267,11 @@ const Summary = ({
                 size={selectedPlanCheckoutData?.price > 0 ? 'm' : 'xsm'}
                 margin={{ base: '0', md: '0 26px 0 auto' }}
                 color="blue.default"
-                textTransform="uppercase"
+                // textTransform="uppercase"
                 textAlign={{ base: 'start', md: 'end' }}
+                width="100%"
               >
-                {/* {`$${selectedPlanCheckoutData?.price}`} */}
-                {selectedPlanCheckoutData?.price > 0 ? `$${selectedPlanCheckoutData?.price}` : t('free-trial')}
+                {Number.isNaN(getPrice(selectedPlanCheckoutData)) ? getPrice(selectedPlanCheckoutData) : `$${getPrice(selectedPlanCheckoutData)} x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}`}
               </Heading>
             </Box>
           </Box>
@@ -348,7 +359,7 @@ const Summary = ({
                         display="flex"
                         flexDirection="column"
                         gridGap={{ base: '0', md: '4px' }}
-                        minWidth={{ base: '100%', md: '288px' }}
+                        minWidth={{ base: '100%', md: '228px' }}
                         height="fit-content"
                         fontWeight="400"
                       >
@@ -372,10 +383,13 @@ const Summary = ({
                           as="span"
                           size={item?.price > 0 ? 'm' : 'xsm'}
                           lineHeight="1"
-                          textTransform="uppercase"
+                          // textTransform="uppercase"
                           color="blue.default"
+                          width="100%"
                         >
-                          {item?.price > 0 ? `$${item?.price}` : t('free-trial')}
+                          {Number.isNaN(getPrice(selectedPlanCheckoutData))
+                            ? getPrice(selectedPlanCheckoutData)
+                            : `$${getPrice(selectedPlanCheckoutData)} x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}`}
                         </Heading>
                       </Box>
                     </Box>
@@ -384,7 +398,7 @@ const Summary = ({
               })}
           </Box>
         </Box>
-        {isNotTrial ? (
+        {(isNotTrial || !Number.isNaN(getPrice(selectedPlanCheckoutData))) ? (
           <Button
             variant="default"
             onClick={handleSubmit}
