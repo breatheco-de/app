@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 import { Box, Button, useColorModeValue, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -57,6 +58,8 @@ const Summary = ({
     return t('free-trial');
   };
 
+  const priceIsNotNumber = Number.isNaN(Number(getPrice(selectedPlanCheckoutData)));
+
   useEffect(() => {
     const planFindedByQuery = checkoutData?.plans?.find((p) => p.slug === plan);
     if (planFindedByQuery || checkoutData?.plans[selectedIndex]) {
@@ -73,7 +76,7 @@ const Summary = ({
         plan: selectedPlanCheckoutData?.slug,
       })
         .then((data) => {
-          if (isNotTrial || !Number.isNaN(getPrice(selectedPlanCheckoutData))) {
+          if (isNotTrial || !priceIsNotNumber) {
             nextStep();
           } else {
             handlePayment({
@@ -271,7 +274,7 @@ const Summary = ({
                 textAlign={{ base: 'start', md: 'end' }}
                 width="100%"
               >
-                {Number.isNaN(getPrice(selectedPlanCheckoutData)) ? getPrice(selectedPlanCheckoutData) : `$${getPrice(selectedPlanCheckoutData)} x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}`}
+                {priceIsNotNumber ? getPrice(selectedPlanCheckoutData) : `$${getPrice(selectedPlanCheckoutData)} x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}`}
               </Heading>
             </Box>
           </Box>
@@ -387,7 +390,7 @@ const Summary = ({
                           color="blue.default"
                           width="100%"
                         >
-                          {Number.isNaN(getPrice(selectedPlanCheckoutData))
+                          {priceIsNotNumber
                             ? getPrice(selectedPlanCheckoutData)
                             : `$${getPrice(selectedPlanCheckoutData)} x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}`}
                         </Heading>
@@ -398,7 +401,7 @@ const Summary = ({
               })}
           </Box>
         </Box>
-        {(isNotTrial || !Number.isNaN(getPrice(selectedPlanCheckoutData))) ? (
+        {(isNotTrial || !priceIsNotNumber) ? (
           <Button
             variant="default"
             onClick={handleSubmit}

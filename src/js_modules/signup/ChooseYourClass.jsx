@@ -28,25 +28,14 @@ const ChooseYourClass = ({
   const inputRef = useRef();
   const buttonRef = useRef();
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
-  const { isSecondStep, setLocation, setCohortPlans } = useSignup();
+  const { isSecondStep, setLocation } = useSignup();
 
   const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(
     GOOGLE_KEY,
     'places',
   );
 
-  const { syllabus, cohort: cohortQuery, plan } = router.query;
-
-  useEffect(() => {
-    if (cohortQuery || availableDates?.length > 0) {
-      bc.payment({
-        cohort: cohortQuery || availableDates[0]?.id,
-      }).getCohortPlans()
-        .then(({ data }) => {
-          setCohortPlans(data);
-        });
-    }
-  }, [cohortQuery, availableDates]);
+  const { syllabus } = router.query;
 
   useEffect(() => {
     if (isSecondStep) {
@@ -57,7 +46,6 @@ const ChooseYourClass = ({
         saas: true,
         syllabus_slug: syllabus || courseChoosed,
         upcoming: true,
-        plan: (plan?.length > 0) ? plan : undefined,
       })
         .cohorts()
         .then(({ data }) => {

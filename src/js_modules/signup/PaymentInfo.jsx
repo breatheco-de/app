@@ -6,6 +6,7 @@ import {
 } from '@chakra-ui/react';
 import { forwardRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import FieldForm from '../../common/components/Forms/FieldForm';
@@ -14,7 +15,7 @@ import Icon from '../../common/components/Icon';
 import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
 import DatePickerField from '../../common/components/Forms/DateField';
-import { number2DIgits } from '../../utils';
+import { getNextDateInMonths, number2DIgits } from '../../utils';
 
 const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
   const { t } = useTranslation('signup');
@@ -43,6 +44,8 @@ const PaymentInfo = () => {
     state, setPaymentInfo, handlePayment,
   } = useSignup();
   const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData } = state;
+  const router = useRouter();
+  const { locale } = router;
   const [stateCard, setStateCard] = useState({
     card_number: 0,
     exp_month: 0,
@@ -61,23 +64,33 @@ const PaymentInfo = () => {
     return t('free-trial');
   };
 
-  const getPaymentText = () => {
-    if (checkoutData?.amount_per_half > 0
-      || checkoutData?.amount_per_month > 0
-      || checkoutData?.amount_per_quarter > 0
-      || checkoutData?.amount_per_year > 0) return `You will subscribe and pay ${getPrice(selectedPlanCheckoutData)} dollars every year`;
+  const priceIsNotNumber = Number.isNaN(Number(getPrice(selectedPlanCheckoutData)));
+  const nextMonthText = getNextDateInMonths(1).translation[locale];
 
+  const getPaymentText = () => {
     if (
       selectedPlanCheckoutData?.financing_options?.length > 0
       && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
       && selectedPlanCheckoutData?.financing_options[0]?.how_many_months > 0
-    ) return `You will pay ${selectedPlanCheckoutData?.financing_options[0]?.monthly_price} dollars ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months} times, for a total of ${selectedPlanCheckoutData?.financing_options[0]?.monthly_price * selectedPlanCheckoutData?.financing_options[0]?.how_many_months}. The first payment will be today and the next one on Oct 23th, 2023.`;
+    ) {
+      return t('info.will-pay-monthly', {
+        price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price,
+        qty_months: selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
+        total_amount: selectedPlanCheckoutData?.financing_options[0]?.monthly_price * selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
+        next_month: nextMonthText,
+      });
+    }
 
     if (
       selectedPlanCheckoutData?.financing_options?.length > 0
       && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
       && selectedPlanCheckoutData?.financing_options[0]?.how_many_months === 0
-    ) return `You will pay ${selectedPlanCheckoutData?.financing_options[0]?.monthly_price} right now, no other charges apply in the future.`;
+    ) return t('info.will-pay-now', { price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price });
+    if (checkoutData?.amount_per_half > 0
+      || checkoutData?.amount_per_month > 0) return t('info.will-pay-per-month', { price: checkoutData?.amount_per_month || checkoutData?.amount_per_half });
+
+    if (checkoutData?.amount_per_quarter > 0
+      || checkoutData?.amount_per_year > 0) return t('info.will-pay-per-year', { price: checkoutData?.amount_per_year || checkoutData?.amount_per_quarter });
 
     return '';
   };
@@ -228,7 +241,7 @@ const PaymentInfo = () => {
                   </Box>
                 </Box>
                 <Box position="absolute" bottom="-100px" right="0">
-                  {(isNotTrial || !Number.isNaN(getPrice(selectedPlanCheckoutData))) ? (
+                  {(isNotTrial || !priceIsNotNumber) ? (
                     <Button
                       type="submit"
                       variant="default"
@@ -305,10 +318,9 @@ const PaymentInfo = () => {
               width="100%"
               textAlign="end"
             >
-              {Number.isNaN(getPrice(selectedPlanCheckoutData))
+              {priceIsNotNumber
                 ? getPrice(selectedPlanCheckoutData)
                 : `$${getPrice(selectedPlanCheckoutData)} x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}`}
-              {/* {selectedPlanCheckoutData?.price > 0 ? `$${selectedPlanCheckoutData?.price}` : t('free-trial')} */}
             </Heading>
           </Box>
           <Box fontSize="14px">

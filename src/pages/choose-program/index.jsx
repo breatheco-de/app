@@ -135,6 +135,7 @@ function chooseProgram() {
   const userID = user?.id;
 
   useEffect(() => {
+    // TODO: use /v1/events/me
     bc.public().events()
       .then((res) => setEvents(res.data))
       .catch(() => {});

@@ -39,6 +39,12 @@
   "signing-for": "You are signing up for",
   "already-have-account": "Already have an account?",
   "login-here": "Login here.",
+  "info": {
+    "will-pay-monthly": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}. The first payment will be today and the next one on {{next_month}}.",
+    "will-pay-now" : "You will pay ${{price} right now, no other charges apply in the future.",
+    "will-pay-per-month": "You will subscribe and pay ${{price}} dollars every month",
+    "will-pay-per-year": "You will subscribe and pay ${{price}} dollars every year"
+  },
   "validators": {
     "owner_name-required": "Owner name is required",
     "card_number-required": "Card number is required",

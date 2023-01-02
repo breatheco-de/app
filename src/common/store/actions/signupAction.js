@@ -16,8 +16,7 @@ const useSignup = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  // eslint-disable-next-line no-unused-vars
-  const { syllabus, academy, plan: queryPlan } = router.query;
+  const { syllabus, academy } = router.query;
 
   const {
     stepIndex,
@@ -26,9 +25,7 @@ const useSignup = () => {
     cohortPlans,
     // selectedPlanCheckoutData,
   } = state;
-  // const isSecondStep = stepIndex === 1; // Choose your class
-  // const isThirdStep = stepIndex === 2; // Payment info
-  // const isFourthStep = stepIndex === 3; // Summary
+
   const isFirstStep = stepIndex === 0; // Contact
   const isSecondStep = stepIndex === 1; // Choose your class
   const isThirdStep = stepIndex === 2; // Summary
@@ -188,14 +185,14 @@ const useSignup = () => {
 
   const getChecking = (cohortData) => new Promise((resolve, reject) => {
     const selectedPlan = cohortData?.plan ? cohortData?.plan : undefined;
-    const cohortPlan = cohortPlans[cohortData?.index || 0];
+    const cohortPlan = cohortPlans?.length > 0 && cohortPlans[cohortData?.index || 0];
 
     bc.payment().checking({
       type: 'PREVIEW',
       cohort: [cohortData?.id || dateProps?.id],
       academy: cohortData?.academy?.id || dateProps?.academy?.id || Number(academy),
       syllabus,
-      plans: [selectedPlan || (cohortPlans?.length > 0 ? cohortPlan?.slug : null)],
+      plans: [selectedPlan || (cohortPlans?.length > 0 ? cohortPlan?.slug : undefined)],
     })
       .then((response) => {
         const { data } = response;
@@ -254,6 +251,7 @@ const useSignup = () => {
       })
       .catch((err) => {
         reject(err);
+        console.log(err);
         toast({
           title: t('alert-message:something-went-wrong-choosing-date'),
           status: 'error',

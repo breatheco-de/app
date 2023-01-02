@@ -7,12 +7,12 @@ import { useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import Text from '../../common/components/Text';
 import useSignup from '../../common/store/actions/signupAction';
-// import bc from '../../common/services/breathecode';
+import bc from '../../common/services/breathecode';
 
-const ChooseDate = ({ cohort, index }) => {
+const ChooseDate = ({ cohort }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { handleChecking, nextStep } = useSignup();
+  const { handleChecking, nextStep, setCohortPlans } = useSignup();
   const { t } = useTranslation('signup');
 
   const kickoffDate = {
@@ -21,7 +21,7 @@ const ChooseDate = ({ cohort, index }) => {
       && format(new Date(cohort.kickoff_date), 'MMM do'),
     es:
       cohort?.kickoff_date
-      && format(new Date(cohort.kickoff_date), 'MMM d', {
+      && format(new Date(cohort.kickoff_date), "d 'de' MMMM", {
         locale: es,
       }),
   };
@@ -42,7 +42,7 @@ const ChooseDate = ({ cohort, index }) => {
         flexDirection="column"
         gridGap="5px"
         flex={0.2}
-        textTransform="capitalize"
+        // textTransform="capitalize"
       >
         <Text size="18px">
           {kickoffDate[router.locale]}
@@ -71,16 +71,16 @@ const ChooseDate = ({ cohort, index }) => {
         isLoading={isLoading}
         onClick={() => {
           setIsLoading(true);
-          // bc.payment({
-          //   cohort: cohort.id,
-          // }).getCohortPlans()
-          //   .then(({ data }) => {
-          //     setCohortPlans(data);
-          //   });
-          handleChecking({ ...cohort, index })
-            .then(() => {
-              setIsLoading(false);
-              nextStep();
+          bc.payment({
+            cohort: cohort.id,
+          }).getCohortPlans()
+            .then(({ data }) => {
+              setCohortPlans(data);
+              handleChecking({ ...cohort, plan: data[0].slug })
+                .then(() => {
+                  setIsLoading(false);
+                  nextStep();
+                });
             });
         }}
         borderColor="currentColor"
@@ -95,12 +95,10 @@ const ChooseDate = ({ cohort, index }) => {
 
 ChooseDate.propTypes = {
   cohort: PropTypes.objectOf(PropTypes.any),
-  index: PropTypes.number,
 };
 
 ChooseDate.defaultProps = {
   cohort: {},
-  index: 0,
 };
 
 export default ChooseDate;
