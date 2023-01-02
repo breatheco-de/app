@@ -23,7 +23,7 @@ const useSignup = () => {
     checkoutData,
     dateProps,
     cohortPlans,
-    // selectedPlanCheckoutData,
+    selectedPlanCheckoutData,
   } = state;
 
   const isFirstStep = stepIndex === 0; // Contact
@@ -87,12 +87,12 @@ const useSignup = () => {
   });
 
   const handlePayment = (data) => new Promise((resolve, reject) => {
+    const manyInstallmentsExists = selectedPlanCheckoutData?.financing_options.length > 0 && selectedPlanCheckoutData?.financing_options[0]?.how_many_months;
     bc.payment().pay({
       type: data?.type || checkoutData.type,
       token: data?.token || checkoutData.token,
-      how_many_installments: data?.installments || undefined,
-      // chosen_period: selectedPlanCheckoutData.chosen_period,
-      chosen_period: 'HALF',
+      how_many_installments: data?.installments || selectedPlanCheckoutData?.financing_options[0]?.how_many_months || undefined,
+      chosen_period: manyInstallmentsExists ? undefined : (selectedPlanCheckoutData?.period || 'HALF'),
     })
       .then((response) => {
         if (response?.data?.status === 'FULFILLED') {

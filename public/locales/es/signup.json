@@ -47,6 +47,7 @@
   },
   "validators": {
     "owner_name-required": "El nombre del propietario es requerido",
+    "owner_name-min": "El nombre del propietario es demasiado corto",
     "card_number-required": "El número de tarjeta es requerido",
     "exp-required": "La fecha de expiración es requerida",
     "cvc-required": "El CVC es requerido",

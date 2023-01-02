@@ -100,7 +100,7 @@ const PaymentInfo = () => {
 
   const infoValidation = Yup.object().shape({
     owner_name: Yup.string()
-      .min(6)
+      .min(6, t('validators.owner_name-min'))
       .required(t('validators.owner_name-required')),
     card_number: Yup.string()
       .min(16)
