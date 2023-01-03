@@ -134,9 +134,19 @@ function chooseProgram() {
 
   const userID = user?.id;
 
+  // useEffect(() => {
+  //   bc.payment().events()
+  //     .then(({ data }) => {
+  //       console.log('res_events_me:::', data);
+  //       data.map((item) => bc.payment().getEvent(item.slug)
+  //         .then((res) => {
+  //           console.log('singleEvent:::', res?.data);
+  //         }));
+  //     });
+  // }, []);
+
   useEffect(() => {
-    // TODO: use /v1/events/me
-    bc.public().events()
+    bc.payment().events()
       .then((res) => setEvents(res.data))
       .catch(() => {});
   }, []);
@@ -310,7 +320,7 @@ function chooseProgram() {
                 liveUrl={events[0].url}
                 liveStartsAt={new Date(events[0].starting_at)}
                 liveEndsAt={new Date(events[0].ending_at)}
-                otherEvents={events.slice(1)}
+                otherEvents={events}
                 // featureLabel,
               />
             )}
