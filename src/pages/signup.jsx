@@ -129,7 +129,7 @@ const SignUp = ({ finance }) => {
                 handleStep(2);
                 setTimeout(() => {
                   setIsPreloading(false);
-                }, 1000);
+                }, 650);
               });
           } else {
             setIsPreloading(false);
@@ -163,7 +163,7 @@ const SignUp = ({ finance }) => {
   }, [user?.id, cohort]);
 
   return (
-    <Box p={{ base: '2.5rem 1rem', md: '2.5rem 2rem' }} position="relative">
+    <Box p={{ base: '2.5rem 1rem', md: '2.5rem 2rem' }} position="relative" minHeight={isPreloading ? '727px' : null}>
       {isPreloading && (
         <Box display="flex" alignItems="center" position="absolute" background="white" justifyContent="center" width="100%" height="100%" style={{ zIndex: 50 }} top="0px" left="0px">
           <Img
