@@ -114,7 +114,7 @@ function chooseProgram() {
           }
           if (tasks?.data?.length <= 0) {
             const syllabus = await bc.syllabus().get(academy.id, syllabusVersion.slug, syllabusVersion.version);
-            handlers.getAssignmentsCount({ cohortProgram: syllabus.data, taskTodo: tasks.data })
+            handlers.getAssignmentsCount({ cohortProgram: syllabus?.data, taskTodo: tasks?.data })
               .then((assignmentData) => {
                 setCohortTasks((prev) => ({
                   ...prev,
