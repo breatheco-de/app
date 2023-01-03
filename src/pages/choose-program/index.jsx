@@ -320,7 +320,7 @@ function chooseProgram() {
                 liveUrl={events[0].url}
                 liveStartsAt={new Date(events[0].starting_at)}
                 liveEndsAt={new Date(events[0].ending_at)}
-                otherEvents={events.slice(1)}
+                otherEvents={events}
                 // featureLabel,
               />
             )}

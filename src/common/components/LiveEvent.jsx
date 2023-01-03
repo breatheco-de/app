@@ -209,7 +209,7 @@ const LiveEvent = ({
                   <Link
                     target="_blank"
                     rel="noopener noreferrer"
-                    href={featureReadMoreUrl || '#'}
+                    href={featureReadMoreUrl || event?.liveUrl || '#'}
                     color={textColor}
                     fontSize="md"
                     lineHeight="18px"
@@ -219,10 +219,10 @@ const LiveEvent = ({
                     marginTop="0"
                     locale="en"
                     fontFamily="Lato, Sans-serif"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      window.open(event.liveUrl);
-                    }}
+                    // onClick={(e) => {
+                    //   e?.preventDefault();
+                    //   window.open(event.liveUrl);
+                    // }}
                   >
                     {event.title}
                   </Link>
