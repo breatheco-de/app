@@ -18,6 +18,7 @@ import {
 import { useRouter } from 'next/router';
 import Icon from '../Icon';
 import Text from '../Text';
+import { isWindow } from '../../../utils';
 import TechnologiesSection from './technologies';
 import DifficultySection from './difficulty';
 import useStyle from '../../hooks/useStyle';
@@ -152,17 +153,19 @@ const FilterModal = ({
             />
 
             {/* <------------------- Difficulty section -------------------> */}
-            <DifficultySection
-              t={t}
-              title={t('difficulties')}
-              setFilter={setFilter}
-              contextFilter={contextFilter}
-              setDifficultyPosition={setDifficultyPosition}
-              difficulties={difficulties}
-              commonTextColor={lightColor}
-              difficultyPosition={difficultyPosition}
-              commonBorderColor={borderColor}
-            />
+            {isWindow && !window.location.pathname.includes('/lessons') && (
+              <DifficultySection
+                t={t}
+                title={t('difficulties')}
+                setFilter={setFilter}
+                contextFilter={contextFilter}
+                setDifficultyPosition={setDifficultyPosition}
+                difficulties={difficulties}
+                commonTextColor={lightColor}
+                difficultyPosition={difficultyPosition}
+                commonBorderColor={borderColor}
+              />
+            )}
 
             <Flex flexDirection="row" justifyContent="space-between">
               <Text fontSize="1rem" fontWeight="bold" textTransform="uppercase" color={lightColor} padding="20px 0">
