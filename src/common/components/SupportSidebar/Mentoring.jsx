@@ -42,7 +42,8 @@ const Mentoring = ({
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   const { borderColor, lightColor, hexColor } = useStyle();
 
-  const cohortService = serviceMentoring?.cohorts?.find((c) => c.slug === router.query.cohortSlug);
+  // const cohortService = serviceMentoring?.cohort?.find((c) => c.slug === router.query.cohortSlug);
+  const cohortService = serviceMentoring?.mentorship_services?.find((c) => c.slug === savedChanges.service.slug);
 
   const servicesFiltered = programServices.filter(
     (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
@@ -136,12 +137,12 @@ const Mentoring = ({
         <Icon icon="idea" width="36px" height="36px" />
       </Box>
       <Box display="flex" flexDirection="column" p="4" pb={mentoryFormStarted ? '0px' : '30px'} pt="20px" alignItems="center">
-        {mentoryProps?.service && (serviceMentoring?.cohorts?.length !== 0 || cohortService?.balance?.unit >= 0) && (
+        {mentoryProps?.service && (serviceMentoring?.mentorship_services?.length !== 0 || cohortService?.balance?.unit >= 0) && (
           <Box position="absolute" margin="4px 300px 0px 0" onClick={() => setMentoryProps({})} cursor="pointer">
             <Icon icon="arrowLeft" width="25px" height="25px" />
           </Box>
         )}
-        {(!mentoryProps?.service || serviceMentoring?.cohorts?.length !== 0 || cohortService?.balance?.unit >= 0) && (
+        {(!mentoryProps?.service || serviceMentoring?.mentorship_services?.length !== 0 || cohortService?.balance?.unit >= 0) && (
           <Box position="absolute" margin="4px 40px 0px 340px" onClick={() => setOpenMentors(false)} cursor="pointer">
             <Icon icon="close" width="15px" height="15px" />
           </Box>
@@ -158,17 +159,20 @@ const Mentoring = ({
           )}
         </Box>
 
-        {mentoryProps?.service && !mentoryProps?.mentor && serviceMentoring?.cohorts?.length > 0 && cohortService?.balance?.unit > 0 && (
-          <Box display="flex" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0">
-            <Box background="yellow.default" padding="2px 10px" width="fit-content" borderRadius="50%">
-              {cohortService?.balance?.unit}
+        {mentoryProps?.service && !mentoryProps?.mentor && serviceMentoring?.mentorship_services?.length > 0 && cohortService?.balance?.unit !== 0 && (
+          <Box display="flex" alignItems="center" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0">
+            <Box display="flex" alignItems="center" background="yellow.default" padding={cohortService?.balance?.unit === -1 ? '5px 5px' : '5px 10px'} width="fit-content" borderRadius="50%">
+              {cohortService?.balance?.unit > 0 ? cohortService?.balance?.unit : ''}
+              {cohortService?.balance?.unit === -1 ? (
+                <Icon icon="infinite" width="20px" height="20px" />
+              ) : ''}
             </Box>
             <Box textAlign="center">
               {t('mentorship.available-sessions')}
             </Box>
           </Box>
         )}
-        {mentoryProps?.service && !mentoryProps?.mentor && (serviceMentoring?.cohorts?.length === 0 || cohortService?.balance?.unit <= 0) ? (
+        {mentoryProps?.service && !mentoryProps?.mentor && (serviceMentoring?.mentorship_services?.length === 0 || cohortService?.balance?.unit === 0) ? (
           <Box display="flex" flexDirection="column" alignItems="center">
             <Box display="flex" alignItems="center" gridGap="10px" padding="0 10px" margin="8px 0 8px 0">
               <Box fontSize="18px" fontWeight={700}>
@@ -434,7 +438,7 @@ const Mentoring = ({
             )}
           </>
         )}
-        {/* {mentoryProps?.service && !mentoryProps?.mentor && (serviceMentoring?.cohorts?.length > 0 && cohortService?.balance?.unit > 0) ? (
+        {/* {mentoryProps?.service && !mentoryProps?.mentor && (serviceMentoring?.mentorship_services?.length > 0 && cohortService?.balance?.unit > 0) ? (
           <Box>
             {`You can Schedule ${cohortService.balance.unit} mentorships`}
           </Box>
