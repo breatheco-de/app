@@ -4,7 +4,7 @@ import {
   memo, useState, forwardRef, useEffect,
 } from 'react';
 import {
-  Box, useColorMode, useColorModeValue, Input, InputRightElement, InputGroup, Button, Tooltip,
+  Box, useColorMode, useColorModeValue, Input, InputRightElement, InputGroup, Button, Tooltip, toast,
 } from '@chakra-ui/react';
 // import getDay from 'date-fns/getDay';
 import PropTypes from 'prop-types';
@@ -24,15 +24,16 @@ import bc from '../../services/breathecode';
 // import { usePersistent } from '../../hooks/usePersistent';
 
 const Mentoring = ({
-  width, programServices, mentoryProps, setMentoryProps, programMentors,
-  setOpenMentors,
+  width, programServices, setOpenMentors,
 }) => {
   const { t } = useTranslation('dashboard');
   const [savedChanges, setSavedChanges] = useState({});
   const { colorMode } = useColorMode();
   const router = useRouter();
   const [serviceMentoring, setServiceMentoring] = useState({});
-  // const [cohortSession] = usePersistent('cohortSession', {});
+  const [mentoryProps, setMentoryProps] = useState({});
+  const [programMentors, setProgramMentors] = useState([]);
+  const { slug } = router.query;
 
   const [searchProps, setSearchProps] = useState({
     serviceSearch: '',
@@ -42,8 +43,7 @@ const Mentoring = ({
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   const { borderColor, lightColor, hexColor } = useStyle();
 
-  // const cohortService = serviceMentoring?.cohort?.find((c) => c.slug === router.query.cohortSlug);
-  const cohortService = serviceMentoring?.mentorship_services?.find((c) => c.slug === savedChanges.service.slug);
+  const cohortService = serviceMentoring?.mentorship_services?.find((c) => c?.slug === savedChanges?.service?.slug);
 
   const servicesFiltered = programServices.filter(
     (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
@@ -115,14 +115,34 @@ const Mentoring = ({
   //   && mentoryProps?.time;
 
   const handleService = (service) => {
+    bc.mentorship({
+      service: service.slug,
+      status: 'ACTIVE',
+      syllabus: slug,
+    }).getMentor()
+      .then((res) => {
+        setProgramMentors(res.data);
+        setTimeout(() => {
+          setMentoryProps({ ...mentoryProps, service });
+          setSavedChanges({ ...savedChanges, service });
+        }, 50);
+      })
+      .catch(() => {
+        toast({
+          title: 'Error',
+          description: t('alert-message:error-finding-mentors'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
+      });
+
     bc.payment({
       mentorship_service: service.id,
     }).service().consumable()
       .then((res) => {
         setServiceMentoring(res.data);
       });
-    setMentoryProps({ ...mentoryProps, service });
-    setSavedChanges({ ...savedChanges, service });
   };
   return (
     <Box
@@ -487,16 +507,12 @@ const Mentoring = ({
 
 Mentoring.propTypes = {
   programServices: PropTypes.arrayOf(PropTypes.object).isRequired,
-  programMentors: PropTypes.arrayOf(PropTypes.object).isRequired,
-  mentoryProps: PropTypes.objectOf(PropTypes.any),
-  setMentoryProps: PropTypes.func.isRequired,
   width: PropTypes.string,
   setOpenMentors: PropTypes.func.isRequired,
 };
 
 Mentoring.defaultProps = {
   width: '100%',
-  mentoryProps: {},
 };
 
 export default memo(Mentoring);

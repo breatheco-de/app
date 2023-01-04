@@ -1,61 +1,38 @@
 import { useEffect, memo, useState } from 'react';
 import {
-  Box, Heading, Button, useColorMode, useColorModeValue,
+  Box, Heading, Button, useColorMode, useColorModeValue, toast,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
+import useTranslation from 'next-translate/useTranslation';
 import Icon from '../Icon';
 import Text from '../Text';
 import bc from '../../services/breathecode';
 import { usePersistent } from '../../hooks/usePersistent';
 import Mentoring from './Mentoring';
 
-// const isWindow = typeof window !== 'undefined';
-// const cohortSession = isWindow ? JSON.parse(localStorage.getItem('cohortSession') || '{}') : {};
-// const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
-
-// const academySlug = cohortSession && cohortSession.academy?.slug;
-
 const SupportSidebar = ({
   title, subtitle, actionButtons, width,
 }) => {
   const { colorMode } = useColorMode();
-  const router = useRouter();
-  const { slug } = router.query;
+  const { t } = useTranslation();
   const [programServices, setProgramServices] = usePersistent('programServices', []);
   const [openMentors, setOpenMentors] = useState(false);
-  const [mentoryProps, setMentoryProps] = useState({});
 
-  const [programMentors, setProgramMentors] = useState([]);
-  // const fontColor = useColorModeValue('gray.600', 'gray.300');
-  // const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
 
   useEffect(() => {
     bc.mentorship().getService().then(({ data }) => {
       if (data !== undefined && data.length > 0) {
         setProgramServices(data);
-        const allMentorsArray = [];
-        Promise.all(data.map(async (service) => {
-          const mentors = await bc.mentorship({
-            service: service.slug,
-            status: 'ACTIVE',
-            syllabus: slug,
-          }).getMentor({ serviceSlug: service.slug });
-          allMentorsArray.push(mentors.data);
-        })).then(() => {
-          // const mentorsArray = allMentorsArray.reduce((acc, curr) => acc.concat(curr), []);
-          const mentorsArray = allMentorsArray.filter(
-            (value, index, self) => index === self.findIndex(
-              (c) => c.place === value.place && c.slug === value.slug,
-            ),
-          )[0];
-
-          setProgramMentors(mentorsArray);
-        });
       }
-    }).catch((err) => {
-      console.error('err_mentorship:', err);
+    }).catch(() => {
+      toast({
+        title: 'Error',
+        description: t('alert-message:error-mentorship-service'),
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
     });
   }, []);
 
@@ -175,9 +152,6 @@ const SupportSidebar = ({
   ) : (
     <Mentoring
       programServices={programServices}
-      setMentoryProps={setMentoryProps}
-      mentoryProps={mentoryProps}
-      programMentors={programMentors}
       setOpenMentors={setOpenMentors}
     />
   );
