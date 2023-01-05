@@ -179,7 +179,7 @@ const Mentoring = ({
           )}
         </Box>
 
-        {mentoryProps?.service && !mentoryProps?.mentor && serviceMentoring?.mentorship_services?.length > 0 && cohortService?.balance?.unit !== 0 && (
+        {/* {mentoryProps?.service && !mentoryProps?.mentor && serviceMentoring?.mentorship_services?.length > 0 && cohortService?.balance?.unit !== 0 && (
           <Box display="flex" alignItems="center" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0">
             <Box display="flex" alignItems="center" background="yellow.default" padding={cohortService?.balance?.unit === -1 ? '5px 5px' : '5px 10px'} width="fit-content" borderRadius="50%">
               {cohortService?.balance?.unit > 0 ? cohortService?.balance?.unit : ''}
@@ -191,7 +191,7 @@ const Mentoring = ({
               {t('mentorship.available-sessions')}
             </Box>
           </Box>
-        )}
+        )} */}
         {mentoryProps?.service && !mentoryProps?.mentor && (serviceMentoring?.mentorship_services?.length === 0 || cohortService?.balance?.unit === 0) ? (
           <Box display="flex" flexDirection="column" alignItems="center">
             <Box display="flex" alignItems="center" gridGap="10px" padding="0 10px" margin="8px 0 8px 0">
@@ -234,15 +234,14 @@ const Mentoring = ({
                         </Text>
                       )}
                     </>
-                  ) : (
-                    <Text
-                      size="md"
-                      textAlign="center"
-                      mt="10px"
-                      px="0px"
-                      dangerouslySetInnerHTML={{ __html: '<a class="link" href="#" style="font-size: 14px">Upgrade your membership</a> to have unlimited mentorships.<br/><br/> Available mentorships until october the 3rd' }}
-                    />
-                  )}
+                  ) : ''}
+                  {/* <Text
+                    size="md"
+                    textAlign="center"
+                    mt="10px"
+                    px="0px"
+                    dangerouslySetInnerHTML={{ __html: '<a class="link" href="#" style="font-size: 14px">Upgrade your membership</a> to have unlimited mentorships.<br/><br/> Available mentorships until october the 3rd' }}
+                  /> */}
                 </Box>
                 {mentoryProps?.service && (
                   <Box background={commonBackground} mt="20px" py="15px" textAlign="center" w="100%" borderTopRadius="0.375rem">
@@ -329,9 +328,6 @@ const Mentoring = ({
                                   {`${mentor.user.first_name} ${mentor.user.last_name}`}
                                 </Box>
                                 <Box as="hr" borderColor={borderColor} my="5px" />
-                                {/* <Box color={useColorModeValue('gray.600', 'gray.200')}>
-                                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                                </Box> */}
                                 <Box textTransform="capitalize">
                                   {(mentor.one_line_bio && mentor.one_line_bio !== '') ? `${mentor.one_line_bio} ` : ''}
                                   {mentor?.booking_url ? (

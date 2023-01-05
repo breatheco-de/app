@@ -18,7 +18,7 @@ import { usePersistent } from '../../common/hooks/usePersistent';
 import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
 import useStyle from '../../common/hooks/useStyle';
 import GridContainer from '../../common/components/GridContainer';
-import LiveEvent from '../../common/components/LiveEvent';
+// import LiveEvent from '../../common/components/LiveEvent';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useProgramList from '../../common/store/actions/programListAction';
 import handlers from '../../common/handlers';
@@ -44,15 +44,11 @@ function chooseProgram() {
   const { t } = useTranslation('choose-program');
   const [, setProfile] = usePersistent('profile', {});
   const [, setCohortSession] = usePersistent('cohortSession', {});
-  // const [data, setData] = useState([]);
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
-  const [events, setEvents] = useState(null);
+  // const [events, setEvents] = useState(null);
   const { state, programsList, updateProgramList } = useProgramList();
   const [cohortTasks, setCohortTasks] = useState({});
-  // const [loader, setLoader] = useState({
-  //   addmission: true,
-  // });
   const { user, choose } = useAuth();
   const { featuredColor, borderColor, lightColor } = useStyle();
   const router = useRouter();
@@ -82,14 +78,12 @@ function chooseProgram() {
         };
         return acc;
       }, {}));
-      // setData(dataQuery?.cohorts);
       setProfile(dataQuery);
     }
   }, [dataQuery, cohortTasks]);
 
   useEffect(() => {
     if (dataQuery?.id) {
-      // const activeCohorts = handlers.getActiveCohorts(dataQuery?.cohorts);
       dataQuery?.cohorts.map(async (item) => {
         if (item?.cohort?.slug) {
           const { academy, syllabus_version: syllabusVersion } = item?.cohort;
@@ -145,11 +139,11 @@ function chooseProgram() {
   //     });
   // }, []);
 
-  useEffect(() => {
-    bc.payment().events()
-      .then((res) => setEvents(res.data))
-      .catch(() => {});
-  }, []);
+  // useEffect(() => {
+  //   bc.payment().events()
+  //     .then((res) => setEvents(res.data))
+  //     .catch(() => {});
+  // }, []);
 
   useEffect(() => {
     if (userID !== undefined) {
@@ -161,16 +155,11 @@ function chooseProgram() {
   }, [userID]);
 
   useEffect(() => {
-    // getAdmissions();
-    // setLoader((prev) => ({ ...prev, addmission: true }));
     Promise.all([
-      // bc.admissions().me(),
       bc.auth().invites().get(),
     ]).then((
       [respInvites],
     ) => {
-      // setData(respAdmissions?.data?.cohorts);
-      // setProfile(respAdmissions.data);
       setInvites(respInvites.data);
     }).catch(() => {
       toast({
@@ -180,7 +169,6 @@ function chooseProgram() {
         isClosable: true,
       });
     });
-    // .finally(() => setLoader((prev) => ({ ...prev, addmission: false })));
   }, []);
 
   const acceptInvite = ({ id }) => {
@@ -314,7 +302,7 @@ function chooseProgram() {
               </NextChakraLink>
             )}
           </Box>
-          <Box flex={{ base: 1, md: 0.3 }} zIndex={2} position={{ base: 'inherit', md: 'absolute' }} right={0} top={0}>
+          {/* <Box flex={{ base: 1, md: 0.3 }} zIndex={2} position={{ base: 'inherit', md: 'absolute' }} right={0} top={0}>
             {events?.length > 0 && (
               <LiveEvent
                 liveUrl={events[0].url}
@@ -324,7 +312,7 @@ function chooseProgram() {
                 // featureLabel,
               />
             )}
-          </Box>
+          </Box> */}
         </Flex>
 
         <Box>
@@ -362,32 +350,6 @@ function chooseProgram() {
           </Box>
         )}
       </GridContainer>
-      {/* <Box
-        fontWeight={400}
-        width={['70%', '68%', '70%', '50%']}
-        fontSize="14px"
-        color={useColorModeValue('gray.600', 'gray.200')}
-        letterSpacing="0.05em"
-        marginBottom="49px"
-        marginTop="36px"
-      >
-        {t('description')}
-      </Box>
-      {!loader.addmission && data.length > 0 && (
-        <ChooseProgram chooseList={data} handleChoose={handleChoose} />
-      )}
-      {!loader.addmission && data.length <= 0 && (
-        <Box background={featuredColor} padding="14 20px 14px 20px">
-          <Heading size="sm" lineHeight="31px">
-            You are not enrolled in any cohort
-          </Heading>
-        </Box>
-      )}
-      {loader.addmission && (
-        <Box>
-          Loading...
-        </Box>
-      )} */}
     </Flex>
   );
 }
