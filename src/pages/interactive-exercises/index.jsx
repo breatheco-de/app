@@ -202,7 +202,10 @@ function Exercices({ exercises, technologyTags, difficulties }) {
       <TitleContent title={t('title')} mobile />
       <Box
         display="grid"
-        gridTemplateColumns="0fr repeat(12, 1fr) 0fr"
+        gridTemplateColumns={{
+          base: '.5fr repeat(12, 1fr) .5fr',
+          md: '1.5fr repeat(12, 1fr) 1.5fr',
+        }}
         borderBottom={1}
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.700')}
