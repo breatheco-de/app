@@ -109,9 +109,7 @@ const SupportSidebar = ({
             );
           })}
 
-          {programServices
-          && programServices.length > 0
-          && actionButtons.filter((el) => el.name === 'mentoring').map((button) => (
+          {actionButtons.filter((el) => el.name === 'mentoring').map((button) => (
             <Button
               size="lg"
               gridGap="10px"
