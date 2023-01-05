@@ -120,5 +120,6 @@
     "pay-per-half": "Pay {{value}} medio año"
   },
   "upgrade": "Mejorar",
-  "go-back": "Regresar"
+  "go-back": "Regresar",
+  "coming-soon": "Próximamente"
 }

@@ -120,5 +120,6 @@
     "pay-per-half": "Pay {{value}} half"
   },
   "upgrade": "upgrade",
-  "go-back": "Go back"
+  "go-back": "Go back",
+  "coming-soon": "Coming soon"
 }
