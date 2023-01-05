@@ -20,7 +20,7 @@ const Summary = ({
   const [disableHandler, setDisableHandler] = useState(false);
 
   const {
-    state, nextStep, setSelectedPlanCheckoutData, handleChecking, setPlanProps, handlePayment,
+    state, nextStep, setSelectedPlanCheckoutData, handleChecking, setPlanProps, handlePayment, getPaymentText,
   } = useSignup();
   const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
   const toast = useToast();
@@ -238,7 +238,7 @@ const Summary = ({
           <Heading size="15px" color="blue.default" textTransform="uppercase">
             {t('signing-for')}
           </Heading>
-          <Box display="flex" gridGap="12px" alignItems="center">
+          <Box display="flex" gridGap="12px">
             <Box display="flex" flexDirection="column">
               <Box
                 p="16px"
@@ -249,33 +249,31 @@ const Summary = ({
                 <Icon icon="coding" width="48px" height="48px" color="#fff" />
               </Box>
             </Box>
-            <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="0px">
-              <Box display="flex" flexDirection="column" gridGap="7px">
-                <Heading size="18px">
-                  {/* {courseTitle} */}
-                  {dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}
-                </Heading>
-
-                {selectedPlanCheckoutData?.description && (
-                  <Heading
-                    size="15px"
-                    textTransform="uppercase"
-                    color={useColorModeValue('gray.500', 'gray.400')}
-                  >
-                    {selectedPlanCheckoutData?.description}
+            <Box display="flex" flexDirection="column" gridGap="7px">
+              <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="0px" alignItems="center">
+                <Box display="flex" flexDirection="column" gridGap="7px">
+                  <Heading size="18px">
+                    {dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}
                   </Heading>
-                )}
+                </Box>
+                <Heading
+                  size={selectedPlanCheckoutData?.price > 0 ? 'm' : 'xsm'}
+                  margin={{ base: '0', md: '0 26px 0 auto' }}
+                  color="blue.default"
+                  textAlign={{ base: 'start', md: 'end' }}
+                  width="100%"
+                >
+                  {priceIsNotNumber ? getPrice(selectedPlanCheckoutData) : `$${getPrice(selectedPlanCheckoutData)} x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}`}
+                </Heading>
               </Box>
-              <Heading
-                size={selectedPlanCheckoutData?.price > 0 ? 'm' : 'xsm'}
-                margin={{ base: '0', md: '0 26px 0 auto' }}
-                color="blue.default"
-                // textTransform="uppercase"
-                textAlign={{ base: 'start', md: 'end' }}
-                width="100%"
-              >
-                {priceIsNotNumber ? getPrice(selectedPlanCheckoutData) : `$${getPrice(selectedPlanCheckoutData)} x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}`}
-              </Heading>
+              {getPaymentText()?.length > 0 && (
+                <Text
+                  size="14px"
+                  color={useColorModeValue('gray.700', 'gray.400')}
+                >
+                  {getPaymentText()}
+                </Text>
+              )}
             </Box>
           </Box>
           <Box
@@ -369,24 +367,12 @@ const Summary = ({
                         <Box fontSize="18px" fontWeight="700">
                           {title}
                         </Box>
-                        <Text
-                          size="md"
-                          fontWeight="500"
-                          mb="6px"
-                          // dangerouslySetInnerHTML={{
-                          //   __html: item?.description,
-                          // }}
-                          dangerouslySetInnerHTML={{
-                            __html: item?.description,
-                          }}
-                        />
                       </Box>
                       <Box display="flex" alignItems="center" gridGap="10px">
                         <Heading
                           as="span"
                           size={item?.price > 0 ? 'm' : 'xsm'}
                           lineHeight="1"
-                          // textTransform="uppercase"
                           color="blue.default"
                           width="100%"
                         >

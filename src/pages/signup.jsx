@@ -124,7 +124,7 @@ const SignUp = ({ finance }) => {
         .then(({ data }) => {
           if (data.length > 0) {
             setCohortPlans(data);
-            handleChecking({ ...dateProps, plan: data[0].slug })
+            handleChecking({ ...dateProps, plan: data[0] })
               .then(() => {
                 handleStep(2);
                 setTimeout(() => {
@@ -277,7 +277,7 @@ const SignUp = ({ finance }) => {
         </Box>
 
         <Box
-          display={checkoutData?.isTrial ? 'none' : 'flex'}
+          display={(typeof checkoutData?.isTrial === 'boolean' && !checkoutData?.isTrial) ? 'flex' : 'none'}
           gridGap="8px"
           alignItems="center"
           color={stepIndex !== 3 && 'gray.350'}
@@ -308,7 +308,7 @@ const SignUp = ({ finance }) => {
         minHeight="320px"
         maxWidth={{ base: '100%', md: '800px' }}
         margin="3.5rem auto 0 auto"
-        padding="0 10px"
+        padding={{ base: '0 10px', md: '0' }}
       >
         {isFirstStep && (
           <ContactInformation
