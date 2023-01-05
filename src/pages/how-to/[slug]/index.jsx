@@ -158,92 +158,89 @@ export default function HowToSlug({ data, markdown }) {
   }, []);
 
   return (
-    <>
-      <Box display="grid" gridTemplateColumns="0fr repeat(12, 1fr) 0fr" maxWidth="1280px" margin="2rem auto">
-        <Link
+    <Box
+      gridGap="20px"
+      maxWidth="1020px"
+      margin="3rem auto"
+      padding="0 15px"
+      borderBottom={1}
+      borderStyle="solid"
+      borderColor={useColorModeValue('gray.200', 'gray.900')}
+    >
+      <Link
+        href="/how-to"
+        gridColumn="2 / span 12"
+        color={linkColor}
+        display="inline-block"
+        letterSpacing="0.05em"
+        fontWeight="700"
+        marginBottom="1rem"
+      >
+        {`← ${t('back-to')}`}
+      </Link>
+      <Box display="flex" gridGap="10px" justifyContent="space-between" mb="12px">
+        <TagCapsule
+          variant="rounded"
+          isLink
           href="/how-to"
-          gridColumn="2 / span 12"
-          color={linkColor}
-          display="inline-block"
-          letterSpacing="0.05em"
-          fontWeight="700"
-        >
-          {`← ${t('back-to')}`}
+          tags={data?.technologies || ['alias', 'redirect']}
+          marginY="8px"
+          fontSize="13px"
+          style={{
+            padding: '2px 10px',
+            margin: '0',
+          }}
+          gap="10px"
+          paddingX="0"
+        />
+        <Link href={data?.readme_url || '#'} width="fit-content" color="gray.400" margin="0 0 0 auto" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+          <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+          {t('common:edit-on-github')}
         </Link>
       </Box>
-      <Box
-        gridGap="20px"
-        maxWidth="1020px"
-        margin="3rem auto"
-        padding={{ base: '0 15px', md: '0' }}
-        borderBottom={1}
-        borderStyle="solid"
-        borderColor={useColorModeValue('gray.200', 'gray.900')}
-      >
-        <Box display="flex" gridGap="10px" justifyContent="space-between" mb="12px">
-          <TagCapsule
-            variant="rounded"
-            isLink
-            href="/how-to"
-            tags={data?.technologies || ['alias', 'redirect']}
-            marginY="8px"
-            fontSize="13px"
-            style={{
-              padding: '2px 10px',
-              margin: '0',
-            }}
-            gap="10px"
-            paddingX="0"
-          />
-          <Link href={data?.readme_url || '#'} width="fit-content" color="gray.400" margin="0 0 0 auto" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
-            <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-            {t('common:edit-on-github')}
-          </Link>
-        </Box>
-        {title ? (
-          <Heading size="l" fontWeight="700">
-            {title}
-          </Heading>
-        ) : (
-          <Skeleton height="45px" width="100%" borderRadius="10px" />
-        )}
-        <Box margin="24px 0 1.5rem 0">
-          <Text size="l" fontWeight="900" textTransform="uppercase">
-            {t('written-by')}
+      {title ? (
+        <Heading size="l" fontWeight="700">
+          {title}
+        </Heading>
+      ) : (
+        <Skeleton height="45px" width="100%" borderRadius="10px" />
+      )}
+      <Box margin="24px 0 1.5rem 0">
+        <Text size="l" fontWeight="900" textTransform="uppercase">
+          {t('written-by')}
+        </Text>
+        {author ? (
+          <Text fontSize="l">
+            {`${author.first_name} ${author.last_name}`}
           </Text>
-          {author ? (
-            <Text fontSize="l">
-              {`${author.first_name} ${author.last_name}`}
-            </Text>
-          ) : (
-            <>
-              {neverLoaded ? (
-                <Text fontSize="l">
-                  @4GeeksAcademy
-                </Text>
-              ) : (
-                <Skeleton height="20px" width="220px" borderRadius="10px" />
-              )}
-            </>
-          )}
-        </Box>
-
-        {/* <Image src={getImage} alt={title} margin="20px 0 30px 0" width="100%" borderRadius="10px" height="100%" style={{ aspectRatio: '12/6' }} /> */}
-        <Box
-          borderRadius="3px"
-          margin="0 auto"
-          flexGrow={1}
-          className={`markdown-body ${useColorModeValue('light', 'dark')}`}
-        >
-          {markdown ? (
-            <MarkDownParser content={markdownData.content} />
-          ) : (
-            <MDSkeleton />
-          )}
-        </Box>
-
+        ) : (
+          <>
+            {neverLoaded ? (
+              <Text fontSize="l">
+                @4GeeksAcademy
+              </Text>
+            ) : (
+              <Skeleton height="20px" width="220px" borderRadius="10px" />
+            )}
+          </>
+        )}
       </Box>
-    </>
+
+      {/* <Image src={getImage} alt={title} margin="20px 0 30px 0" width="100%" borderRadius="10px" height="100%" style={{ aspectRatio: '12/6' }} /> */}
+      <Box
+        borderRadius="3px"
+        margin="0 auto"
+        flexGrow={1}
+        className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+      >
+        {markdown ? (
+          <MarkDownParser content={markdownData.content} />
+        ) : (
+          <MDSkeleton />
+        )}
+      </Box>
+
+    </Box>
   );
 }
 

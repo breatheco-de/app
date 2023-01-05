@@ -45,7 +45,6 @@ import getMarkDownContent from '../../../common/components/MarkDownParser/markdo
 import CustomTheme from '../../../../styles/theme';
 import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 import GridContainer from '../../../common/components/GridContainer';
-import useStyle from '../../../common/hooks/useStyle';
 import modifyEnv from '../../../../modifyEnv';
 
 export const getStaticPaths = async ({ locales }) => {
@@ -140,7 +139,6 @@ const TabletWithForm = ({
   const [formSended, setFormSended] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [formStatus, setFormStatus] = useState({ status: 'idle', msg: '' });
-  const { fontColor } = useStyle();
 
   const UrlInput = styled.input`
     cursor: pointer;
@@ -319,7 +317,8 @@ const TabletWithForm = ({
                 padding="0"
                 whiteSpace="normal"
                 variant="default"
-                color={fontColor}
+                color="white"
+                // color={fontColor}
                 fontSize="14px"
                 alignItems="center"
                 onClick={() => {
@@ -329,7 +328,7 @@ const TabletWithForm = ({
                 }}
               >
                 {'  '}
-                <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color={fontColor} />
+                <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color="currentColor" />
                 {t('open-gitpod')}
               </Button>
               <Text

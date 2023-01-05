@@ -192,6 +192,7 @@ const ProjectSlug = ({ project, markdown }) => {
       justifyContent="center"
       alignItems="center"
       margin="2rem auto"
+      padding="0 15px"
     >
       <Link
         href="/interactive-coding-tutorials"
