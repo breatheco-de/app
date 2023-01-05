@@ -34,6 +34,7 @@
   "email-will-be-sent": "An email will be sent to you shortly",
   "error-fetching-role": "There was an error trying to find the role \"{{role}}\"",
   "error-fetching-cohorts": "There was an error fetching the cohorts",
+  "error-fetching-personal-cohorts": "There was an error fetching your personal cohorts",
   "error-fetching-tasks": "There was an error fetching tasks",
   "error-fetching-alumni-geeks": "Error fetching Alumni Geeks",
   "github-account-removed": "Your Github account has been successfully removed",
