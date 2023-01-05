@@ -28,9 +28,6 @@ const ChooseDate = ({ cohort }) => {
 
   return (
     <Box display="flex" gridGap="30px">
-      {/* <Text size="18px" flex={0.35}>
-        {cohort.syllabus_version.name}
-      </Text> */}
       <Text size="18px" fontWeight="400" flex={0.35} textTransform="capitalize">
         {cohort?.name}
         <Text size="13px" fontWeight="700" textTransform="capitalize">
@@ -42,7 +39,6 @@ const ChooseDate = ({ cohort }) => {
         flexDirection="column"
         gridGap="5px"
         flex={0.2}
-        // textTransform="capitalize"
       >
         <Text size="18px">
           {kickoffDate[router.locale]}
@@ -76,7 +72,7 @@ const ChooseDate = ({ cohort }) => {
           }).getCohortPlans()
             .then(({ data }) => {
               setCohortPlans(data);
-              handleChecking({ ...cohort, plan: data[0].slug })
+              handleChecking({ ...cohort, plan: data[0] })
                 .then(() => {
                   setIsLoading(false);
                   nextStep();

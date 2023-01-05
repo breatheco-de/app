@@ -6,7 +6,6 @@ import {
 } from '@chakra-ui/react';
 import { forwardRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import FieldForm from '../../common/components/Forms/FieldForm';
@@ -15,7 +14,8 @@ import Icon from '../../common/components/Icon';
 import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
 import DatePickerField from '../../common/components/Forms/DateField';
-import { getNextDateInMonths, number2DIgits } from '../../utils';
+import { number2DIgits } from '../../utils';
+import Text from '../../common/components/Text';
 
 const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
   const { t } = useTranslation('signup');
@@ -41,11 +41,9 @@ const PaymentInfo = () => {
   const toast = useToast();
 
   const {
-    state, setPaymentInfo, handlePayment,
+    state, setPaymentInfo, handlePayment, getPaymentText,
   } = useSignup();
   const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData } = state;
-  const router = useRouter();
-  const { locale } = router;
   const [stateCard, setStateCard] = useState({
     card_number: 0,
     exp_month: 0,
@@ -65,35 +63,6 @@ const PaymentInfo = () => {
   };
 
   const priceIsNotNumber = Number.isNaN(Number(getPrice(selectedPlanCheckoutData)));
-  const nextMonthText = getNextDateInMonths(1).translation[locale];
-
-  const getPaymentText = () => {
-    if (
-      selectedPlanCheckoutData?.financing_options?.length > 0
-      && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
-      && selectedPlanCheckoutData?.financing_options[0]?.how_many_months > 0
-    ) {
-      return t('info.will-pay-monthly', {
-        price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price,
-        qty_months: selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
-        total_amount: selectedPlanCheckoutData?.financing_options[0]?.monthly_price * selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
-        next_month: nextMonthText,
-      });
-    }
-
-    if (
-      selectedPlanCheckoutData?.financing_options?.length > 0
-      && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
-      && selectedPlanCheckoutData?.financing_options[0]?.how_many_months === 0
-    ) return t('info.will-pay-now', { price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price });
-    if (checkoutData?.amount_per_half > 0
-      || checkoutData?.amount_per_month > 0) return t('info.will-pay-per-month', { price: checkoutData?.amount_per_month || checkoutData?.amount_per_half });
-
-    if (checkoutData?.amount_per_quarter > 0
-      || checkoutData?.amount_per_year > 0) return t('info.will-pay-per-year', { price: checkoutData?.amount_per_year || checkoutData?.amount_per_quarter });
-
-    return '';
-  };
 
   const { borderColor, fontColor } = useStyle();
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
@@ -137,8 +106,8 @@ const PaymentInfo = () => {
 
   return (
     <>
-      <Box display="flex" gridGap="35px" flexDirection={{ base: 'column-reverse', md: 'row' }} position="relative">
-        <Box display="flex" flexDirection="column" flex={0.5}>
+      <Box display="flex" gridGap="30px" flexDirection={{ base: 'column-reverse', md: 'row' }} position="relative">
+        <Box display="flex" flexDirection="column" flex={0.5} minWidth={{ base: 'auto', md: '385px' }}>
           <Heading size="18px">{t('payment-info')}</Heading>
           <Box
             as="hr"
@@ -240,7 +209,7 @@ const PaymentInfo = () => {
                     />
                   </Box>
                 </Box>
-                <Box position="absolute" bottom="-100px" right="0">
+                <Box position="absolute" bottom="-60px" right="0">
                   {(isNotTrial || !priceIsNotNumber) ? (
                     <Button
                       type="submit"
@@ -299,32 +268,36 @@ const PaymentInfo = () => {
               </Box>
             </Box>
             <Box display="flex" flexDirection="column" gridGap="7px">
-              <Heading size="18px">{dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}</Heading>
-              {selectedPlanCheckoutData?.description && (
+              <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="0px" alignItems="center">
+                <Box display="flex" flexDirection="column" gridGap="7px">
+                  <Heading size="18px">{dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}</Heading>
+                  {selectedPlanCheckoutData?.description && (
+                    <Heading
+                      size="15px"
+                      textTransform="uppercase"
+                      color={useColorModeValue('gray.500', 'gray.400')}
+                    >
+                      {selectedPlanCheckoutData?.description}
+                    </Heading>
+                  )}
+                </Box>
                 <Heading
-                  size="15px"
-                  textTransform="uppercase"
-                  color={useColorModeValue('gray.500', 'gray.400')}
+                  size={selectedPlanCheckoutData?.price > 0 ? 'm' : 'xsm'}
+                  margin="0 26px 0 auto"
+                  color="blue.default"
+                  width="100%"
+                  textAlign="end"
                 >
-                  {selectedPlanCheckoutData?.description}
+                  {priceIsNotNumber
+                    ? getPrice(selectedPlanCheckoutData)
+                    : `$${getPrice(selectedPlanCheckoutData)} x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}`}
                 </Heading>
-              )}
+              </Box>
+
+              <Text fontSize="14px" color={useColorModeValue('gray.700', 'gray.400')}>
+                {getPaymentText()}
+              </Text>
             </Box>
-            <Heading
-              size={selectedPlanCheckoutData?.price > 0 ? 'm' : 'xsm'}
-              margin="0 26px 0 auto"
-              color="blue.default"
-              // textTransform="uppercase"
-              width="100%"
-              textAlign="end"
-            >
-              {priceIsNotNumber
-                ? getPrice(selectedPlanCheckoutData)
-                : `$${getPrice(selectedPlanCheckoutData)} x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}`}
-            </Heading>
-          </Box>
-          <Box fontSize="14px">
-            {getPaymentText()}
           </Box>
           <Box
             as="hr"
