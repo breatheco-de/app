@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
   Box,
   Flex,
@@ -18,6 +19,7 @@ import {
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import styled from 'styled-components';
 import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
 import NextChakraLink from '../../common/components/NextChakraLink';
@@ -43,15 +45,35 @@ const DesktopItem = ({ item }) => {
     return 'gray';
   };
 
+  const StyledBox = styled(Box)`
+    :hover div {
+      visibility: visible !important;
+      section {
+        visibility: visible !important; 
+        opacity: 1 !important;
+      }
+    }
+  `;
+
+  const StyledPopover = styled(Popover)`
+    /* :hover {
+      visibility: visible !important;
+      div {
+        visibility: visible !important; 
+      }
+    } */
+  `;
+
   return (
-    <Box key={item.label}>
+    <StyledBox key={item.label}>
       {item.subMenu ? (
         <Popover
           id={item.href ?? 'trigger-64'}
-          isOpen={popoverOpen}
+          // isOpen={popoverOpen}
           onClose={() => setPopoverOpen(false)}
-          trigger="click"
+          trigger="hover"
           placement="bottom-start"
+          className="custom-popover"
         >
           <PopoverTrigger>
             {/* Box is important for popover content trigger */}
@@ -88,6 +110,7 @@ const DesktopItem = ({ item }) => {
               width="100%"
               // minW="lg"
               maxW="40rem"
+              className="custom-popover"
             >
               <PopoverArrow />
               <Stack
@@ -259,7 +282,7 @@ const DesktopItem = ({ item }) => {
           )}
         </NextChakraLink>
       )}
-    </Box>
+    </StyledBox>
   );
 };
 
