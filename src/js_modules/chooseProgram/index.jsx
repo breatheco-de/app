@@ -17,8 +17,6 @@ function ChooseProgram({ chooseList, handleChoose }) {
   const activeCohorts = handlers.getActiveCohorts(chooseList);
   const finishedCohorts = handlers.getCohortsFinished(chooseList);
 
-  console.log('activeCohorts', activeCohorts);
-
   return (
     <>
       {activeCohorts.length > 0 && (
