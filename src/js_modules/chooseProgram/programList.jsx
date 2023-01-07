@@ -32,6 +32,8 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
   const hasStartedCourse = currentCohortProps?.allTasks?.length > 0 && currentCohortProps?.allTasks?.some((task) => task?.completed > 0);
   const { version, slug, name } = cohort.syllabus_version;
 
+  const isHiddenOnPrework = cohort?.is_hidden_on_prework === null ? cohort?.academy?.is_hidden_on_prework : cohort?.is_hidden_on_prework;
+
   const onClickHandler = () => {
     handleChoose({
       version,
@@ -166,7 +168,7 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
         )}
 
         <Box width="100%" display="flex" justifyContent="center">
-          {hasStartedCourse ? (
+          {!isHiddenOnPrework && !cohort.stage.includes('PREWORK') && (hasStartedCourse ? (
             <Button variant="link" onClick={onClickHandler} gridGap="6px" fontWeight={700}>
               {t('program-list.continue-course')}
               <Icon icon="longArrowRight" width="18px" height="18px" color={hexColor.blueDefault} />
@@ -175,7 +177,7 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
             <Button variant="default" onClick={onClickHandler}>
               {t('program-list.start-course')}
             </Button>
-          )}
+          ))}
         </Box>
       </Box>
     </Box>
