@@ -106,7 +106,6 @@ const privateRoutes = [
 ];
 
 async function generateSitemap() {
-  console.log('Generating sitemap.xml...');
   if (process.env.NODE_ENV === 'development') return;
 
   const readPages = await getReadPages();
