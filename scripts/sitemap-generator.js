@@ -163,8 +163,6 @@ async function generateSitemap() {
     ...howTosRoute,
   ].map(addPage).join('\n')}
 </urlset>`;
-
-  console.log('sitemap.xml generated!');
   fs.writeFileSync('public/sitemap.xml', sitemap);
 }
 generateSitemap();
