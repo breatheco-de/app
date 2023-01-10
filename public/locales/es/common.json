@@ -122,8 +122,8 @@
   },
   "upgrade": "Mejora",
   "go-back": "Regresar",
-  "modal-tech-title": "{{technology}} para principiantes",
-  "modal-tech-description": "Al ingresar tus datos estarías accediendo a todo el contenido de {{technology}} para principiantes",
+  "modal-tech-title": "{{technology}}",
+  "modal-tech-description": "Al ingresar tus datos estarías accediendo a todo el contenido de {{technology}}",
   "coming-soon": "Próximamente",
   "validators": {
     "owner_name-required": "El nombre del propietario es requerido",
