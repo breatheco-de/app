@@ -7,6 +7,9 @@ export default {
   argTypes: {
     modalIsOpen: {
       control: 'boolean',
+    },  
+    title: {
+      control: 'text',
     },
   },
 };
@@ -20,4 +23,5 @@ const Template = (args, etc) => {
 export const Default = Template.bind({});
 Default.args = {
   modalIsOpen: true,
+  title: 'Python for beginners',
 };
