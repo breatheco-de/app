@@ -99,10 +99,12 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       seo: {
         type: 'article',
         title,
+        slug,
         image: preview || staticImage,
         description: description || '',
         translations,
         pathConnector: '/interactive-exercise',
+        canonicalPathConector: `${locale === 'en' ? '' : `/${locale}`}/interactive-exercise`,
         url: ogUrl.en || `/${locale}/interactive-exercise/${slug}`,
         keywords: result?.seo_keywords || '',
         card: 'large',
