@@ -1,14 +1,8 @@
-/* eslint-disable react/jsx-indent */
-/* eslint-disable no-unused-vars */
 import {
   Box,
   Flex,
   Text,
   Stack,
-  Popover,
-  PopoverArrow,
-  PopoverTrigger,
-  PopoverContent,
   useColorModeValue,
   TabList,
   Tab,
@@ -30,6 +24,7 @@ const DesktopItem = ({ item }) => {
   const router = useRouter();
   const [popoverOpen, setPopoverOpen] = useState(false);
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
+  const popoverBorderColor = useColorModeValue('gray.250', 'gray.dark');
   const linkColor = useColorModeValue('gray.600', 'gray.200');
 
   const getColorLink = (link) => {
@@ -50,20 +45,12 @@ const DesktopItem = ({ item }) => {
     .custom-popover {
       display: none;
       top:50px;
-      width:fit-content;
     }
 
     :hover .custom-popover {
       display: block;
     }
 
-    /* .triangle {
-      display:none;
-    }
-
-    :hover .triangle {
-      display: block;
-    } */
   `;
 
   const Triangle = styled(Box)`
@@ -101,7 +88,6 @@ const DesktopItem = ({ item }) => {
               color: 'blue.default',
             }}
             onClick={() => setPopoverOpen(!popoverOpen)}
-            // style={{ height: '40px', minHeight: '40px' }}
           >
             {item.label}
             {item.subMenu && (
@@ -116,21 +102,26 @@ const DesktopItem = ({ item }) => {
           <Box
             bg={popoverContentBgColor}
             rounded="md"
-            width="fit-content"
             // minW="lg"
             maxW="40rem"
             position="absolute"
             className="custom-popover"
             display="none"
             zIndex="100"
+            border="1px solid"
+            borderColor={popoverBorderColor}
+            width="640px"
           >
-            <div style={{ width: '100%', position: 'absolute', top: '-20px' }}>
+            <div style={{ width: '100%', position: 'absolute', top: '-10px' }}>
               <Triangle
                 className="triangle"
-                background="black"
+                background={popoverContentBgColor}
+                borderTop="1px solid"
+                borderLeft="1px solid"
+                borderColor={popoverBorderColor}
                 zIndex="101"
-                width="30px"
-                height="30px"
+                width="20px"
+                height="20px"
                 transform="rotate(45deg)"
                 left="50%"
                 marginLeft="30px"
