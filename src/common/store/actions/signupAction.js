@@ -165,7 +165,7 @@ const useSignup = () => {
 
     bc.payment().checking({
       type: 'PREVIEW',
-      cohort: [cohortData?.id || dateProps?.id],
+      cohort: cohortData?.id || dateProps?.id,
       academy: cohortData?.academy?.id || dateProps?.academy?.id || Number(academy),
       syllabus,
       plans: [selectedPlan?.slug || (cohortPlans?.length > 0 ? cohortPlan?.slug : undefined)],
