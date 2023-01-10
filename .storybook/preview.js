@@ -37,6 +37,7 @@ const myDecorator = (story, context, ...props) => {
   const Story =  story;
   const args = {
     ...context.args,
+    translation: context.parameters.i18n.store.data,
     locale: locale || 'en',
   }
   return (

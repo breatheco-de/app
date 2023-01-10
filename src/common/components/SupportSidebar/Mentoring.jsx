@@ -144,8 +144,10 @@ const Mentoring = ({
         setServiceMentoring(res.data);
       });
   };
+
   return (
     <Box
+      position="relative"
       backgroundColor={colorMode === 'light' ? 'yellow.light' : 'featuredDark'}
       width={width}
       height="auto"
@@ -153,20 +155,20 @@ const Mentoring = ({
       borderRadius="lg"
       overflow="hidden"
     >
-      <Box d="flex" justifyContent="center" alignItems="center" width="85px" height="50px" margin="0 auto" borderBottomRadius="10px" backgroundColor="yellow.default">
+      <Box display="flex" justifyContent="center" alignItems="center" width="85px" height="50px" margin="0 auto" borderBottomRadius="10px" backgroundColor="yellow.default">
         <Icon icon="idea" width="36px" height="36px" />
       </Box>
+      {mentoryProps?.service && (serviceMentoring?.mentorship_services?.length !== 0 && cohortService?.balance?.unit !== 0) && (
+        <Box position="absolute" top="16px" left="18px" onClick={() => setMentoryProps({})} cursor="pointer">
+          <Icon icon="arrowLeft" width="25px" height="25px" color="#606060" />
+        </Box>
+      )}
+      {(!mentoryProps?.service || serviceMentoring?.mentorship_services?.length !== 0 || cohortService?.balance?.unit >= 0) && (
+        <Box position="absolute" top="16px" right="18px" onClick={() => setOpenMentors(false)} cursor="pointer">
+          <Icon icon="close" width="15px" height="15px" color="#606060" />
+        </Box>
+      )}
       <Box display="flex" flexDirection="column" p="4" pb={mentoryFormStarted ? '0px' : '30px'} pt="20px" alignItems="center">
-        {mentoryProps?.service && (serviceMentoring?.mentorship_services?.length !== 0 || cohortService?.balance?.unit >= 0) && (
-          <Box position="absolute" margin="4px 300px 0px 0" onClick={() => setMentoryProps({})} cursor="pointer">
-            <Icon icon="arrowLeft" width="25px" height="25px" />
-          </Box>
-        )}
-        {(!mentoryProps?.service || serviceMentoring?.mentorship_services?.length !== 0 || cohortService?.balance?.unit >= 0) && (
-          <Box position="absolute" margin="4px 40px 0px 340px" onClick={() => setOpenMentors(false)} cursor="pointer">
-            <Icon icon="close" width="15px" height="15px" />
-          </Box>
-        )}
         <Box d="flex" flexDirection="column" alignItems="center" justifyContent="center">
           <Heading size="sm" textAlign="center" justify="center" mt="0px" mb="0px">
             {t('supportSideBar.mentoring')}
@@ -179,9 +181,12 @@ const Mentoring = ({
           )}
         </Box>
 
-        {/* {mentoryProps?.service && !mentoryProps?.mentor && serviceMentoring?.mentorship_services?.length > 0 && cohortService?.balance?.unit !== 0 && (
+        {mentoryProps?.service && !mentoryProps?.mentor && serviceMentoring?.mentorship_services?.length > 0 && cohortService?.balance?.unit !== 0 && (
           <Box display="flex" alignItems="center" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0">
-            <Box display="flex" alignItems="center" background="yellow.default" padding={cohortService?.balance?.unit === -1 ? '5px 5px' : '5px 10px'} width="fit-content" borderRadius="50%">
+            <Box>
+              {t('mentorship.you-have')}
+            </Box>
+            <Box display="flex" color="white" justifyContent="center" alignItems="center" background="green.400" width="30px" height="30px" borderRadius="50%">
               {cohortService?.balance?.unit > 0 ? cohortService?.balance?.unit : ''}
               {cohortService?.balance?.unit === -1 ? (
                 <Icon icon="infinite" width="20px" height="20px" />
@@ -191,20 +196,21 @@ const Mentoring = ({
               {t('mentorship.available-sessions')}
             </Box>
           </Box>
-        )} */}
+        )}
         {mentoryProps?.service && !mentoryProps?.mentor && (serviceMentoring?.mentorship_services?.length === 0 || cohortService?.balance?.unit === 0) ? (
           <Box display="flex" flexDirection="column" alignItems="center">
-            <Box display="flex" alignItems="center" gridGap="10px" padding="0 10px" margin="8px 0 8px 0">
-              <Box fontSize="18px" fontWeight={700}>
-                {t('mentorship.no-mentorship')}
-              </Box>
-              <Tooltip placement="top" hasArrow label="Mentorships reload every week">
+            <Box display="flex" gridGap="10px" padding="0 10px" margin="8px 0 8px 0">
+              <Tooltip placement="top" hasArrow label={t('mentorship.tooltip')}>
                 <Box>
                   <Icon icon="info" width="28px" height="28px" color={hexColor.yellowDefault} />
                 </Box>
               </Tooltip>
+              <Box fontSize="18px" fontWeight={700}>
+                {t('mentorship.no-mentorship')}
+              </Box>
             </Box>
-            <Box fontSize="14px" fontWeight={400} letterSpacing="0.05em" alignSelf="flex-start" padding="0 10px">
+            <Box as="hr" borderColor="yellow.default" borderWidth="0.5px" width="100%" margin="10px 0 20px 0" />
+            <Box fontSize="14px" fontWeight={400} letterSpacing="0.05em" padding="0 10px" color={lightColor}>
               <Link variant="default" href="/signup">
                 {t('common:upgrade')}
               </Link>
@@ -244,8 +250,13 @@ const Mentoring = ({
                   /> */}
                 </Box>
                 {mentoryProps?.service && (
-                  <Box background={commonBackground} mt="20px" py="15px" textAlign="center" w="100%" borderTopRadius="0.375rem">
-                    {mentoryProps.service.name}
+                  <Box display="flex" alignItems="center" justifyContent="flex-start" gridGap="10px" background={commonBackground} mt="20px" px="20px" py="15px" textAlign="center" w="100%" borderTopRadius="0.375rem">
+                    <Box>
+                      <Icon icon="checked2" width="15px" height="15px" color={hexColor.greenLight} />
+                    </Box>
+                    <Box width="auto">
+                      {mentoryProps.service.name}
+                    </Box>
                   </Box>
                 )}
                 {mentoryProps?.mentor && (

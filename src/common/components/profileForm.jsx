@@ -26,12 +26,11 @@ const ProfileForm = ({ profile }) => {
   const [userInfo, setUserInfo] = useState(null);
   const [defaultUserInfo, setDefaultUserInfo] = useState(null);
   const accessToken = getStorageItem('accessToken');
-  const { disabledBackgroundColor } = useStyle();
 
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const {
-    borderColor, backgroundColor, lightColor, disabledColor, modal,
+    borderColor, backgroundColor, lightColor, disabledColor, modal, disabledBackgroundColor,
   } = useStyle();
 
   const hasGithub = profile.github && profile.github.username !== '';
