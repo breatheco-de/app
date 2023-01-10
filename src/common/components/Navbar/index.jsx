@@ -28,7 +28,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
   const router = useRouter();
   // const [readSyllabus, setReadSyllabus] = useState([]);
   const [ITEMS, setITEMS] = useState([]);
-  const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
+  const [isBelowTablet] = useMediaQuery('(max-width: 1000px)');
   const locale = router.locale === 'default' ? 'en' : router.locale;
 
   const { isOpen, onToggle } = useDisclosure();
@@ -120,8 +120,9 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
         <Flex
           flex={{ base: 1, md: 'auto' }}
           ml={{ base: -2 }}
-          display={{ base: 'flex', md: 'none' }}
+          display={isBelowTablet ? 'flex' : 'none'}
           gridGap="12px"
+          className="here-2"
         >
           <IconButton
             onClick={onToggle}
@@ -148,7 +149,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
           </NextChakraLink>
         </Flex>
 
-        <Flex flex={{ base: 1 }} display={{ base: 'none', md: 'flex' }} justify={{ base: 'center', md: 'start' }}>
+        <Flex className="here" flex={{ base: 1 }} display={isBelowTablet ? 'none' : 'flex'} justify={{ base: 'center', md: 'start' }}>
           <NextChakraLink href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
             <Icon icon="logoModern" width="90px" height="20px" />
           </NextChakraLink>
@@ -402,6 +403,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
             haveSession={sessionExists}
             translations={translations}
             readSyllabus={readSyllabus}
+            isBelowTablet
           />
         )}
       </Collapse>

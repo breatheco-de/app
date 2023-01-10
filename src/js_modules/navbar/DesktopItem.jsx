@@ -46,26 +46,46 @@ const DesktopItem = ({ item }) => {
     return 'gray';
   };
 
-  const StyledBox = styled.div`
-    position: relative;
-    height: 40px;
+  const StyledBox = styled(Box)`
     .custom-popover {
-      visibility: visible;
-      position:absolute;
-      background:red;
-      top:20px;
+      display: none;
+      top:50px;
       width:fit-content;
-      z-index: 100;
-      min-height:500px;
     }
 
     :hover .custom-popover {
-      visibility: visible !important;
+      display: block;
     }
+
+    /* .triangle {
+      display:none;
+    }
+
+    :hover .triangle {
+      display: block;
+    } */
+  `;
+
+  const Triangle = styled(Box)`
+    display: none;
   `;
 
   return (
-    <StyledBox key={item.label} style={{ height: '40px', minHeight: '40px' }}>
+    <StyledBox
+      key={item.label}
+      position="relative"
+      className="styled-box"
+      css={{
+        '&:hover': {
+          '.custom-popover': {
+            display: 'block',
+          },
+          '.triangle': {
+            display: 'block',
+          },
+        },
+      }}
+    >
       {item.subMenu ? (
         <>
           <Button
@@ -81,7 +101,7 @@ const DesktopItem = ({ item }) => {
               color: 'blue.default',
             }}
             onClick={() => setPopoverOpen(!popoverOpen)}
-            style={{ height: '40px', minHeight: '40px' }}
+            // style={{ height: '40px', minHeight: '40px' }}
           >
             {item.label}
             {item.subMenu && (
@@ -97,25 +117,31 @@ const DesktopItem = ({ item }) => {
             bg={popoverContentBgColor}
             rounded="md"
             width="fit-content"
-            height="500px"
             // minW="lg"
             maxW="40rem"
+            position="absolute"
             className="custom-popover"
-            style={{
-              height: 'fit-content',
-              minHeight: 'fit-content',
-            }}
+            display="none"
+            zIndex="100"
           >
+            <div style={{ width: '100%', position: 'absolute', top: '-20px' }}>
+              <Triangle
+                className="triangle"
+                background="black"
+                zIndex="101"
+                width="30px"
+                height="30px"
+                transform="rotate(45deg)"
+                left="50%"
+                marginLeft="30px"
+              />
+            </div>
             <Stack
               border={0}
               boxShadow="2xl"
               p={4}
               rounded="md"
               minW="md"
-              style={{
-                height: 'fit-content',
-                minHeight: 'fit-content',
-              }}
             >
               <Flex
                 flexDirection="row"
@@ -162,7 +188,7 @@ const DesktopItem = ({ item }) => {
                           borderRadius="2px"
                           justifyContent="flex-start"
                           style={{
-                            transition: 'all 0.15s ease-in-out',
+                            // transition: 'all 0.15s ease-in-out',
                             padding: '0.5rem 0.8rem',
                           }}
                           gridGap="14px"
@@ -173,7 +199,7 @@ const DesktopItem = ({ item }) => {
                           <Text
                             // width="100%"
                             minWidth="130px"
-                            transition="all .3s ease"
+                            // transition="all .3s ease"
                             color={getColorLink(href)}
                             _groupHover={{ color: useColorModeValue('gray.900', 'featuredLight') }}
                             fontWeight={500}
@@ -214,7 +240,7 @@ const DesktopItem = ({ item }) => {
                             <Stack direction="row" align="center">
                               <Box>
                                 <Text
-                                  transition="all .3s ease"
+                                  // transition="all .3s ease"
                                   color={getColorLink(l.href)}
                                   _groupHover={{ color: useColorModeValue('gray.900', 'featuredLight') }}
                                   fontWeight={500}
@@ -223,7 +249,7 @@ const DesktopItem = ({ item }) => {
                                 </Text>
                               </Box>
                               <Flex
-                                transition="all .3s ease"
+                                // transition="all .3s ease"
                                 opacity={1}
                                 justify="flex-start"
                                 align="center"
