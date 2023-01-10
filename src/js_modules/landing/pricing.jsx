@@ -16,7 +16,6 @@ const Pricing = ({ data }) => {
   const { t } = useTranslation('');
   const { fontColor, featuredColor } = useStyle();
   const router = useRouter();
-  const { devmode } = router.query;
 
   const financeSelected = {
     0: 'list',
@@ -111,10 +110,10 @@ const Pricing = ({ data }) => {
           </Fragment>
         ))}
         <Box mt="38px">
-          {devmode !== 'true' ? (
+          {process.env.VERCEL_ENV === 'production' ? (
             <Button
               variant="default"
-              disabled={devmode !== 'true'}
+              disabled
             >
               {t('common:coming-soon')}
             </Button>
