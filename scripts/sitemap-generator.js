@@ -1,6 +1,9 @@
 const { default: axios } = require('axios');
 const fs = require('fs');
 const globby = require('globby');
+require('dotenv').config({
+  path: '.env.development',
+});
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
@@ -21,29 +24,29 @@ const getReadPages = () => {
 };
 
 const getLessons = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=lesson`)
-    .then((res) => res.data)
+  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=lesson&limit=1000`)
+    .then((res) => res.data.results)
     .catch((err) => console.log(err));
   return data;
 };
 
 const getExercises = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`)
-    .then((res) => res.data)
+  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=exercise&limit=1000`)
+    .then((res) => res.data.results)
     .catch((err) => console.log(err));
   return data;
 };
 
 const getProjects = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=project`)
-    .then((res) => res.data)
+  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=projec&limit=1000`)
+    .then((res) => res.data.results)
     .catch((err) => console.log(err));
   return data;
 };
 
 const getHowTo = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE`)
-    .then((res) => res.data)
+  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE&limit=1000`)
+    .then((res) => res.data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como'))
     .catch((err) => console.log(err));
   return data;
 };
