@@ -127,6 +127,8 @@ const SignUp = ({ finance }) => {
             handleChecking({ ...dateProps, plan: data[0] })
               .then(() => {
                 handleStep(2);
+              })
+              .finally(() => {
                 setTimeout(() => {
                   setIsPreloading(false);
                 }, 650);

@@ -34,6 +34,7 @@ const Mentoring = ({
   const [mentoryProps, setMentoryProps] = useState({});
   const [programMentors, setProgramMentors] = useState([]);
   const { slug } = router.query;
+  const isNotProduction = process.env.VERCEL_ENV !== 'production';
 
   const [searchProps, setSearchProps] = useState({
     serviceSearch: '',
@@ -181,7 +182,7 @@ const Mentoring = ({
           )}
         </Box>
 
-        {mentoryProps?.service && !mentoryProps?.mentor && serviceMentoring?.mentorship_services?.length > 0 && cohortService?.balance?.unit !== 0 && (
+        {isNotProduction && mentoryProps?.service && !mentoryProps?.mentor && serviceMentoring?.mentorship_services?.length > 0 && cohortService?.balance?.unit !== 0 && (
           <Box display="flex" alignItems="center" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0">
             <Box>
               {t('mentorship.you-have')}
@@ -465,15 +466,6 @@ const Mentoring = ({
             )}
           </>
         )}
-        {/* {mentoryProps?.service && !mentoryProps?.mentor && (serviceMentoring?.mentorship_services?.length > 0 && cohortService?.balance?.unit > 0) ? (
-          <Box>
-            {`You can Schedule ${cohortService.balance.unit} mentorships`}
-          </Box>
-        ) : (
-          <Box>
-            You have no more mentorships left to schedule until Oct 3rd.
-          </Box>
-        )} */}
 
         <Box display="flex" gridGap="8px" position="relative" py="20px">
           <Box onClick={() => setMentoryProps({})} cursor="pointer">
