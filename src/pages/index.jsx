@@ -54,6 +54,7 @@ export default function Home() {
   const socials = t('social:content', {}, { returnObjects: true });
   const socialsFiltered = socials.filter((social) => social.available.includes('home'));
 
+  console.log('VERCEL_ENV:', process.env.VERCEL_ENV);
   const BubblesSvg = () => (
     <svg
       width="785"
