@@ -54,12 +54,6 @@ export default function Home() {
   const socials = t('social:content', {}, { returnObjects: true });
   const socialsFiltered = socials.filter((social) => social.available.includes('home'));
 
-  console.log('ENV:', process.env);
-  console.log('process:', process);
-  console.log('VERCEL_ENV:', process.env.VERCEL_ENV);
-  console.log('BREATHECODE_HOST:', process.env.BREATHECODE_HOST);
-  console.log('BC_ACADEMY_TOKEN:', process.env.BC_ACADEMY_TOKEN);
-  console.log('SYLLABUS:', process.env.SYLLABUS);
   const BubblesSvg = () => (
     <svg
       width="785"
