@@ -36,7 +36,6 @@ const Attendance = () => {
   const toast = useToast();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
-  const [allUserCohorts, setAllUserCohorts] = useState([]);
   const [selectedCohort, setSelectedCohort] = useState({});
   const [selectedCohortSlug, setSelectedCohortSlug] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
@@ -113,29 +112,6 @@ const Attendance = () => {
           academy: l.cohort.academy.id,
           durationInDays: l.cohort?.syllabus_version?.duration_in_days,
         }));
-        setAllUserCohorts(dataStruct.sort(
-          (a, b) => a.label.localeCompare(b.label),
-        ));
-      })
-      .catch((error) => {
-        toast({
-          title: t('alert-message:error-fetching-cohorts'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-        console.error('There was an error fetching the cohorts', error);
-      });
-
-    bc.admissions().cohorts()
-      .then(({ data }) => {
-        const dataStruct = data.map((l) => ({
-          label: l?.name,
-          slug: l?.slug,
-          value: l?.id,
-          academy: l?.academy?.id,
-          durationInDays: l?.syllabus_version?.duration_in_days,
-        }));
         setAllCohorts(dataStruct.sort(
           (a, b) => a.label.localeCompare(b.label),
         ));
@@ -199,17 +175,17 @@ const Attendance = () => {
   }, [selectedCohortSlug, cohortSlug, router.query.student, allCohorts]);
 
   useEffect(() => {
+    const durationInDays = selectedCohort?.durationInDays || 48;
     setLoadStatus({
       loading: true,
       status: 'loading',
     });
-
     if (loadingStudents) return () => {};
 
     const currentDaysLogExists = Object.keys(currentDaysLog).length > 0;
-    if (currentStudentList.length > 0 && selectedCohort?.durationInDays) {
+    if (currentStudentList?.length > 0) {
       const studentsWithDays = currentStudentList.map((student) => {
-        const days = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
+        const days = Array.from(Array(durationInDays).keys()).map((i) => {
           const day = i + 1;
           const dayData = currentDaysLog[day];
           const dayLabel = `${t('common:day')} ${day}`;
@@ -245,7 +221,7 @@ const Attendance = () => {
         };
       });
 
-      const averageEachDay = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
+      const averageEachDay = Array.from(Array(durationInDays).keys()).map((i) => {
         const day = i + 1;
         const total = studentsWithDays.length;
         const attended = studentsWithDays.filter((l) => l.days[day - 1].color === status.attended).length;
@@ -339,7 +315,7 @@ const Attendance = () => {
           <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
             {`${t('title')}:`}
           </Heading>
-          {allUserCohorts.length > 0 && (
+          {allCohorts.length > 0 && (
             <ReactSelect
               unstyled
               color="#0097CD"
@@ -357,7 +333,7 @@ const Attendance = () => {
                   status: 'loading',
                 });
               }}
-              options={allUserCohorts.map((cohort) => ({
+              options={allCohorts.map((cohort) => ({
                 value: cohort.value,
                 slug: cohort.slug,
                 label: cohort.label,

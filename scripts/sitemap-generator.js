@@ -8,12 +8,6 @@ require('dotenv').config({
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
 
-// const languages = {
-//   us: 'en',
-//   en: 'en',
-//   es: 'es',
-// };
-
 const getReadPages = () => {
   const resp = axios.get(
     `${BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${SYLLABUS}`,
@@ -38,7 +32,7 @@ const getExercises = () => {
 };
 
 const getProjects = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=projec&limit=1000`)
+  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=project&limit=1000`)
     .then((res) => res.data.results)
     .catch((err) => console.log(err));
   return data;
@@ -84,17 +78,37 @@ const getFrequently = (route) => {
   return 'yearly';
 };
 
-function addPage(page) {
+function addPage(page, index) {
   const path = page.replace('src/pages', '').replace('/index', '').replace('.jsx', '').replace('.js', '');
   const route = path === '/index' ? '' : path;
   const websiteUrl = process.env.WEBSITE_URL || 'https://4geeks.com';
-  return `  <url>
+  return `${index === 0 ? '<url>' : '  <url>'}
     <loc>${`${websiteUrl}${route}`}</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
     <changefreq>${getFrequently(route)}</changefreq>
     <priority>0.9</priority>
   </url>`;
 }
+function addSitemap(page, index) {
+  const websiteUrl = process.env.WEBSITE_URL || 'https://4geeks.com';
+  return `${index === 0 ? '<sitemap>' : '  <sitemap>'}
+    <loc>${websiteUrl}/${page}</loc>
+    <lastmod>${new Date().toISOString()}</lastmod>
+  </sitemap>`;
+}
+
+const sitemapTemplate = (pages = []) => `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  ${[
+    ...pages,
+  ].map(addPage).join('\n')}
+</urlset>`;
+const listOfSitemapsTemplate = (pages = []) => `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  ${[
+    ...pages,
+  ].map(addSitemap).join('\n')}
+</sitemapindex>`;
 
 const privateRoutes = [
   '!src/pages/**/[cohortSlug]/[slug]/[version]/*{.js,.jsx}',
@@ -106,7 +120,7 @@ const privateRoutes = [
 ];
 
 async function generateSitemap() {
-  if (process.env.NODE_ENV === 'development') return;
+  console.log('Generating sitemaps...');
 
   const readPages = await getReadPages();
   const lessonsPages = await getLessons();
@@ -118,8 +132,8 @@ async function generateSitemap() {
   const generateSlugByLang = (data, conector, withDifficulty) => data.filter(
     (f) => f.lang === 'us', // canonical pages
   ).map((l) => (withDifficulty
-    ? `/${conector}/${l.difficulty.toLowerCase()}/${l.slug}`
-    : `/${conector}/${l.slug}`));
+    ? `/${conector}/${l?.difficulty ? l?.difficulty?.toLowerCase() : 'unknown'}/${l?.slug}`
+    : `/${conector}/${l?.slug}`));
 
   const generateTechnologySlug = (data, conector) => data.map(
     (l) => (`/${conector}/${l.slug}`),
@@ -147,21 +161,32 @@ async function generateSitemap() {
     '!src/pages/**/_*{.js,.jsx}',
     '!src/pages/api',
   ]);
-  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  ${[
-    ...pages,
-    ...readRoute,
-    ...lessonsRoute,
-    ...technologyLessonsRoute,
-    ...exercisesRoute,
-    ...technologyExercisesRoute,
-    // ...projectsRoute,
-    ...projectsCodingRoute,
-    ...technologyProjectsRoute,
-    ...howTosRoute,
-  ].map(addPage).join('\n')}
-</urlset>`;
+
+  const pagesSitemap = sitemapTemplate([...pages, ...readRoute]);
+  const howToSitemap = sitemapTemplate(howTosRoute);
+  const lessonsSitemap = sitemapTemplate(lessonsRoute);
+  const projectsSitemap = sitemapTemplate(projectsCodingRoute);
+  const exercisesSitemap = sitemapTemplate(exercisesRoute);
+  const technologiesSitemap = sitemapTemplate([...technologyLessonsRoute, ...technologyExercisesRoute, ...technologyProjectsRoute]);
+
+  const sitemap = listOfSitemapsTemplate([
+    'pages-sitemap.xml',
+    'howto-sitemap.xml',
+    'lessons-sitemap.xml',
+    'projects-sitemap.xml',
+    'exercises-sitemap.xml',
+    'technologies-sitemap.xml',
+  ]);
+
+  fs.writeFileSync('public/pages-sitemap.xml', pagesSitemap);
+  fs.writeFileSync('public/howto-sitemap.xml', howToSitemap);
+  fs.writeFileSync('public/lessons-sitemap.xml', lessonsSitemap);
+  fs.writeFileSync('public/projects-sitemap.xml', projectsSitemap);
+  fs.writeFileSync('public/exercises-sitemap.xml', exercisesSitemap);
+  fs.writeFileSync('public/technologies-sitemap.xml', technologiesSitemap);
+
   fs.writeFileSync('public/sitemap.xml', sitemap);
+
+  console.log('Sitemaps generated!');
 }
 generateSitemap();
