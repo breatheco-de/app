@@ -4,9 +4,4 @@ Disallow: /example
 User-agent: *
 Allow: /
 
-Sitemap: https://4geeks.com/pages-sitemap.xml
-Sitemap: https://4geeks.com/howto-sitemap.xml
-Sitemap: https://4geeks.com/lessons-sitemap.xml
-Sitemap: https://4geeks.com/projects-sitemap.xml
-Sitemap: https://4geeks.com/exercises-sitemap.xml
-Sitemap: https://4geeks.com/technologies-stiemap.xml
+Sitemap: https://4geeks.com/sitemap.xml
