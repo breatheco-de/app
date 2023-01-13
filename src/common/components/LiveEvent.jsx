@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useState, useEffect } from 'react';
 import {
-  Box, useColorModeValue, Button,
+  Box, useColorModeValue, Button, useToast,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
@@ -9,6 +9,7 @@ import { formatDuration, intervalToDuration } from 'date-fns';
 import { es, en } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import CustomTheme from '../../../styles/theme';
+import bc from '../services/breathecode';
 import Link from './NextChakraLink';
 import Text from './Text';
 import Icon from './Icon';
@@ -33,6 +34,8 @@ const LiveEvent = ({
   const liveStartsAtDate = new Date(liveStartsAt);
   const liveEndsAtDate = new Date(liveEndsAt);
   const { hexColor } = useStyle();
+
+  const toast = useToast();
 
   const formatTimeString = (start) => {
     const duration = intervalToDuration({
@@ -142,6 +145,27 @@ const LiveEvent = ({
         cursor={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && 'pointer'}
         onClick={() => {
           if (isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) window.open(liveUrl);
+          // bc.payment({ academy: event?.academy }).getEvent(event.id)
+          //   .then(({ data }) => {
+          //     if (data?.live_stream_url) {
+          //       window.open(data?.live_stream_url);
+          //     } else {
+          //       toast({
+          //         title: t('inactive-event'),
+          //         status: 'info',
+          //         duration: 5000,
+          //         isClosable: true,
+          //       });
+          //     }
+          //   })
+          //   .catch(() => {
+          //     toast({
+          //       title: t('no-access'),
+          //       status: 'warning',
+          //       duration: 5000,
+          //       isClosable: true,
+          //     });
+          //   });
         }}
       >
         <Box
@@ -207,9 +231,10 @@ const LiveEvent = ({
                   marginLeft="10px"
                 >
                   <Link
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={featureReadMoreUrl || event?.liveUrl || '#'}
+                    // target="_blank"
+                    // rel="noopener noreferrer"
+                    // href={featureReadMoreUrl || event?.liveUrl || '#'}
+                    href={featureReadMoreUrl || '#'}
                     color={textColor}
                     fontSize="md"
                     lineHeight="18px"
@@ -219,10 +244,31 @@ const LiveEvent = ({
                     marginTop="0"
                     locale="en"
                     fontFamily="Lato, Sans-serif"
-                    // onClick={(e) => {
-                    //   e?.preventDefault();
-                    //   window.open(event.liveUrl);
-                    // }}
+                    onClick={(e) => {
+                      e?.preventDefault();
+
+                      bc.payment({ academy: event?.academy }).getEvent(event.id)
+                        .then(({ data }) => {
+                          if (data?.live_stream_url) {
+                            window.open(data?.live_stream_url);
+                          } else {
+                            toast({
+                              title: t('inactive-event'),
+                              status: 'info',
+                              duration: 5000,
+                              isClosable: true,
+                            });
+                          }
+                        })
+                        .catch(() => {
+                          toast({
+                            title: t('no-access'),
+                            status: 'error',
+                            duration: 5000,
+                            isClosable: true,
+                          });
+                        });
+                    }}
                   >
                     {event.title}
                   </Link>

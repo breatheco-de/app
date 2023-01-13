@@ -110,20 +110,19 @@ const Attendance = () => {
           slug: l.cohort.slug,
           value: l.cohort.id,
           academy: l.cohort.academy.id,
-          durationInDays: l.cohort.syllabus_version.duration_in_days,
+          durationInDays: l.cohort?.syllabus_version?.duration_in_days,
         }));
         setAllCohorts(dataStruct.sort(
           (a, b) => a.label.localeCompare(b.label),
         ));
       })
-      .catch((error) => {
+      .catch(() => {
         toast({
           title: t('alert-message:error-fetching-cohorts'),
           status: 'error',
           duration: 7000,
           isClosable: true,
         });
-        console.error('There was an error fetching the cohorts', error);
       });
   }, []);
 
@@ -175,19 +174,18 @@ const Attendance = () => {
     }
   }, [selectedCohortSlug, cohortSlug, router.query.student, allCohorts]);
 
-  console.log(loadStatus);
   useEffect(() => {
+    const durationInDays = selectedCohort?.durationInDays || 48;
     setLoadStatus({
       loading: true,
       status: 'loading',
     });
-
     if (loadingStudents) return () => {};
 
     const currentDaysLogExists = Object.keys(currentDaysLog).length > 0;
-    if (currentStudentList.length > 0 && selectedCohort?.durationInDays) {
+    if (currentStudentList?.length > 0) {
       const studentsWithDays = currentStudentList.map((student) => {
-        const days = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
+        const days = Array.from(Array(durationInDays).keys()).map((i) => {
           const day = i + 1;
           const dayData = currentDaysLog[day];
           const dayLabel = `${t('common:day')} ${day}`;
@@ -223,7 +221,7 @@ const Attendance = () => {
         };
       });
 
-      const averageEachDay = Array.from(Array(selectedCohort.durationInDays).keys()).map((i) => {
+      const averageEachDay = Array.from(Array(durationInDays).keys()).map((i) => {
         const day = i + 1;
         const total = studentsWithDays.length;
         const attended = studentsWithDays.filter((l) => l.days[day - 1].color === status.attended).length;

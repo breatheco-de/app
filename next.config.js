@@ -114,7 +114,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
       require('./scripts/sitemap-generator');
       require('./scripts/syllabus');
     }
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.VERCEL_ENV === 'development') {
       config.optimization.minimizer = [];
       config.optimization.minimize = false; // Disable minification in development
     }
