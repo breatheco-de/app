@@ -29,6 +29,7 @@ const Assignments = () => {
   const { contextState, setContextState } = useAssignments();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
+  const [personalCohorts, setPersonalCohorts] = useState([]);
   // const [allTasksPaginationProps, setAllTasksPaginationProps] = useState({});
   const [allTasksOffset, setAllTasksOffset] = useState(20);
   const [isFetching, setIsFetching] = useState(false);
@@ -120,6 +121,27 @@ const Assignments = () => {
           slug: l.cohort.slug,
           value: l.cohort.id,
           academy: l.cohort.academy.id,
+        }));
+
+        setPersonalCohorts(dataStruct.sort(
+          (a, b) => a.label.localeCompare(b.label),
+        ));
+      })
+      .catch(() => {
+        toast({
+          title: t('alert-message:error-fetching-personal-cohorts'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
+      });
+    bc.admissions().cohorts()
+      .then(({ data }) => {
+        const dataStruct = data.map((l) => ({
+          label: l.name,
+          slug: l.slug,
+          value: l.id,
+          academy: l.academy.id,
         }));
         setAllCohorts(dataStruct.sort(
           (a, b) => a.label.localeCompare(b.label),
@@ -269,7 +291,7 @@ const Assignments = () => {
         <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
           {`${t('title')}:`}
         </Heading>
-        {allCohorts.length > 0 && (
+        {personalCohorts.length > 0 && (
           <ReactSelect
             unstyled
             color="#0097CD"
@@ -288,7 +310,7 @@ const Assignments = () => {
               }
               setSelectedCohortSlug(slug);
             }}
-            options={allCohorts.map((cohort) => ({
+            options={personalCohorts.map((cohort) => ({
               value: cohort.value,
               slug: cohort.slug,
               label: cohort.label,
