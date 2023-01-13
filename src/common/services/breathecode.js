@@ -191,7 +191,8 @@ const breathecode = {
       service: () => ({
         consumable: () => axios.get(`${url}/me/service/consumable?${qs}`),
       }),
-      getEvent: (eventId) => axios.get(`${host}/events/me/join/${eventId}?${qs}`),
+      getEvent: (eventId) => axios.get(`${host}/events/academy/event/${eventId}?${qs}`),
+      // getEvent: (eventId) => axios.get(`${host}/events/me/join/${eventId}?${qs}`),
       events: () => axios.get(`${host}/events/me?${qs}`),
     };
   },

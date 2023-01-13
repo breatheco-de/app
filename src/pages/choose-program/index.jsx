@@ -18,7 +18,7 @@ import { usePersistent } from '../../common/hooks/usePersistent';
 import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
 import useStyle from '../../common/hooks/useStyle';
 import GridContainer from '../../common/components/GridContainer';
-// import LiveEvent from '../../common/components/LiveEvent';
+import LiveEvent from '../../common/components/LiveEvent';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useProgramList from '../../common/store/actions/programListAction';
 import handlers from '../../common/handlers';
@@ -46,7 +46,7 @@ function chooseProgram() {
   const [, setCohortSession] = usePersistent('cohortSession', {});
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
-  // const [events, setEvents] = useState(null);
+  const [events, setEvents] = useState(null);
   const { state, programsList, updateProgramList } = useProgramList();
   const [cohortTasks, setCohortTasks] = useState({});
   const { user, choose } = useAuth();
@@ -128,22 +128,13 @@ function chooseProgram() {
 
   const userID = user?.id;
 
-  // useEffect(() => {
-  //   bc.payment().events()
-  //     .then(({ data }) => {
-  //       console.log('res_events_me:::', data);
-  //       data.map((item) => bc.payment().getEvent(item.slug)
-  //         .then((res) => {
-  //           console.log('singleEvent:::', res?.data);
-  //         }));
-  //     });
-  // }, []);
-
-  // useEffect(() => {
-  //   bc.payment().events()
-  //     .then((res) => setEvents(res.data))
-  //     .catch(() => {});
-  // }, []);
+  useEffect(() => {
+    bc.payment().events()
+      .then(({ data }) => {
+        const eventsRemain = data.filter((l) => new Date(l.ending_at) - new Date() > 0);
+        setEvents(eventsRemain);
+      });
+  }, []);
 
   useEffect(() => {
     if (userID !== undefined) {
@@ -302,7 +293,7 @@ function chooseProgram() {
               </NextChakraLink>
             )}
           </Box>
-          {/* <Box flex={{ base: 1, md: 0.3 }} zIndex={2} position={{ base: 'inherit', md: 'absolute' }} right={0} top={0}>
+          <Box flex={{ base: 1, md: 0.3 }} zIndex={2} position={{ base: 'inherit', md: 'absolute' }} right={0} top={0}>
             {events?.length > 0 && (
               <LiveEvent
                 liveUrl={events[0].url}
@@ -312,7 +303,7 @@ function chooseProgram() {
                 // featureLabel,
               />
             )}
-          </Box> */}
+          </Box>
         </Flex>
 
         <Box>
