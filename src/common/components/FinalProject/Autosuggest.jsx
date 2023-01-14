@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 import PropTypes from 'prop-types';
 
@@ -11,8 +11,7 @@ const getSuggestions = (value, students) => {
   );
 };
 
-const AutosuggestInput = ({ handleChange, addTag, value: externalValue, ...props }) => {
-  // const [inputValue, setInputValue] = useState('');
+const AutosuggestInput = forwardRef(({ handleChange, addTag, value: externalValue, ...props }, ref) => {
   const [suggestions, setSuggestions] = useState([]);
 
   const students = [
@@ -39,21 +38,13 @@ const AutosuggestInput = ({ handleChange, addTag, value: externalValue, ...props
 
   const onChange = (event, { newValue }) => {
     event.target.value = newValue || event.target.outerText;
-    // setInputValue(newValue);
     handleChange(event);
   };
 
   const onSuggestionSelected = (event) => {
-    // setSuggestions(getSuggestions(value));
-    console.log('props:::', event);
     handleChange(event);
     addTag(event.target.value);
-    // setInputValue('');
   };
-
-  // onSuggestionsClearRequested = () => {
-  //   setSuggestions([]);
-  // };
 
   const getSuggestionValue = (student) => `${student?.user?.full_name}`;
 
@@ -66,21 +57,22 @@ const AutosuggestInput = ({ handleChange, addTag, value: externalValue, ...props
       getSuggestionValue={getSuggestionValue}
       renderSuggestion={renderSuggestion}
       inputProps={{
+        ref,
         value: externalValue,
         onChange,
         ...props,
         placeholder: 'Add member',
       }}
-      // onSuggestionSelected={handleSelect}
     />
   );
-};
+});
 
 AutosuggestInput.propTypes = {
   props: PropTypes.objectOf(PropTypes.any),
   handleChange: PropTypes.func.isRequired,
   value: PropTypes.string.isRequired,
   addTag: PropTypes.func.isRequired,
+  ref: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 AutosuggestInput.defaultProps = {
   props: {},

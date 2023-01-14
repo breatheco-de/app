@@ -3,13 +3,12 @@
 import { useField } from 'formik';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import TagsInput from 'react-tagsinput';
+import TagsInput, { focus } from 'react-tagsinput';
 import { Box } from '@chakra-ui/react';
 import AutosuggestInput from './Autosuggest';
 
 const AddMember = ({ students, errors }) => {
   const [field, meta, helpers] = useField('geeks_members');
-  const [openList, setOpenList] = useState(false);
 
   console.log('students:::', students);
   const handleAddTag = (tag) => {
@@ -21,39 +20,22 @@ const AddMember = ({ students, errors }) => {
   const handleRemoveTag = (index) => {
     helpers?.remove(index);
   };
-  // const handleKeyPress = (event) => {
-  //   if (event.key === 'Enter') {
-  //     setMembers([...tags, event.target.value]);
-  //     event.target.value = '';
-  //   }
-  // };
-  // const handleChange = (event) => {
-  //   setMembers(event.target.value.split(','));
-  // };
 
   return (
     <Box>
       <div htmlFor="members">Friends:</div>
-      {/* <TagsInput value={members} onChange={handleAddTag} onRemove={handleRemoveTag} /> */}
       <TagsInput
         value={field.value.map((f) => f)}
         onChange={handleAddTag}
         onRemove={handleRemoveTag}
-        renderInput={({ addTag, onChange, value, ...props }) => (
-          <AutosuggestInput value={value} addTag={addTag} handleChange={onChange} {...props} />
-          // <input
-          //   value={value}
-          //   width="100%"
-          //   onChange={(e) => {
-          //     if (e.target.value?.length > 2) {
-          //       setOpenList(true);
-          //     }
-
-          //     onChange(e);
-          //   }}
-          //   {...props}
-          //   placeholder="Add a member"
-          // />
+        renderInput={({ addTag, ref, onChange, value, ...props }) => (
+          <AutosuggestInput
+            ref={ref}
+            value={value}
+            addTag={addTag}
+            handleChange={onChange}
+            {...props}
+          />
         )}
         renderTag={({ tag, key, onRemove }) => (
           <span key={key} className="react-tagsinput-tag">
