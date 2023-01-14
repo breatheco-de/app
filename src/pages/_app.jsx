@@ -5,6 +5,7 @@ import {
 } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import '../../styles/globals.css';
+import '../../styles/react-tags-input.css';
 import '../../styles/markdown.css';
 import '../../styles/phoneInput/index.css';
 import TagManager from 'react-gtm-module';

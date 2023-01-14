@@ -1,14 +1,19 @@
-import { Button, toast } from '@chakra-ui/react';
+import { Button, Flex, toast } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import useTranslation from 'next-translate/useTranslation';
-import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import bc from '../../services/breathecode';
 import FieldForm from '../Forms/FieldForm';
+import Heading from '../Heading';
 import AddMember from './AddMember';
 
 const FinalProjectForm = () => {
   const { t } = useTranslation('final-project');
+  const [students, setStudents] = useState([]);
+  const router = useRouter();
+  const { cohortSlug } = router.query;
   const [formProps, setFormProps] = useState({
     title: '',
     one_line_description: '',
@@ -49,8 +54,7 @@ const FinalProjectForm = () => {
     // is not required
     geeks_members: Yup.array()
       .of(Yup.string())
-      .min(2, t('common:validators.geeks-members-min', { min: 1 }))
-      .max(8, t('common:validators.geeks-members-max', { max: 8 })),
+      .max(8, t('common:validators.geeks-members-max', { value: 8 })),
   });
 
   const handleSubmit = async (actions, allValues) => {
@@ -74,6 +78,21 @@ const FinalProjectForm = () => {
 
     actions.setSubmitting(false);
   };
+
+  useEffect(() => {
+    bc.cohort().getStudents(cohortSlug, 4)
+      .then((res) => {
+        const studentsFiltered = res?.data.filter((student) => student?.role === 'STUDENT')
+          .map((student) => ({
+            ...student,
+            user: {
+              ...student?.user,
+              full_name: `${student?.user?.first_name} ${student?.user?.last_name}`,
+            },
+          }));
+        setStudents(studentsFiltered);
+      });
+  }, []);
   return (
     <Formik
       initialValues={{
@@ -101,8 +120,11 @@ const FinalProjectForm = () => {
       }}
       validationSchema={finalProjectValidation}
     >
-      {({ isSubmitting }) => (
-        <>
+      {({ errors, isSubmitting }) => (
+        <Flex flexDirection="column" padding="20px" gridGap="30px">
+          <Heading size="xsm">
+            {t('modal-form.title')}
+          </Heading>
           <Form
             style={{
               display: 'flex',
@@ -165,12 +187,12 @@ const FinalProjectForm = () => {
               formProps={formProps}
               setFormProps={setFormProps}
             /> */}
-            <AddMember />
+            <AddMember students={students} errors={errors} />
           </Form>
           <Button variant="default" isLoading={isSubmitting}>
             Submit project
           </Button>
-        </>
+        </Flex>
       )}
     </Formik>
   );
