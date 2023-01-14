@@ -140,6 +140,7 @@
     "invalid-email": "Correo electrónico inválido",
     "email-required": "Correo electronico es requerido",
     "confirm-email-required": "Confirmar Correo electronico es requerido",
-    "confirm-email-not-match": "Los correos electrónicos no coinciden"
+    "confirm-email-not-match": "Los correos electrónicos no coinciden",
+    "geeks-members-max": "El número máximo de miembros es de {{value}}"
   }
 }

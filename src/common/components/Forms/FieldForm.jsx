@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Field } from 'formik';
 import {
-  FormControl, FormErrorMessage, FormLabel, Input,
+  FormControl, FormErrorMessage, FormLabel, Input, Textarea,
 } from '@chakra-ui/react';
 import useStyle from '../../hooks/useStyle';
 
@@ -26,24 +26,45 @@ const FieldForm = ({
               {label}
             </FormLabel>
           )}
-          <Input
-            {...field}
-            value={externValue || field.value}
-            // defaultValue={defaultValue}
-            type={type}
-            onClick={onClick}
-            onChange={(e) => {
-              setFormProps({ ...formProps, [name]: e.target.value });
-              handleOnChange(e);
-              field.onChange(e);
-            }}
-            pattern={pattern > 0 ? pattern : null}
-            placeholder={withLabel ? placeholder : label}
-            height="50px"
-            borderColor={inputBorderColor}
-            borderRadius="3px"
-            flex={0.5}
-          />
+          {type === 'textarea' ? (
+            <Textarea
+              {...field}
+              value={externValue || field.value}
+              // defaultValue={defaultValue}
+              type={type}
+              onClick={onClick}
+              onChange={(e) => {
+                setFormProps({ ...formProps, [name]: e.target.value });
+                handleOnChange(e);
+                field.onChange(e);
+              }}
+              pattern={pattern > 0 ? pattern : null}
+              placeholder={withLabel ? placeholder : label}
+              height="50px"
+              borderColor={inputBorderColor}
+              borderRadius="3px"
+              flex={0.5}
+            />
+          ) : (
+            <Input
+              {...field}
+              value={externValue || field.value}
+              // defaultValue={defaultValue}
+              type={type}
+              onClick={onClick}
+              onChange={(e) => {
+                setFormProps({ ...formProps, [name]: e.target.value });
+                handleOnChange(e);
+                field.onChange(e);
+              }}
+              pattern={pattern > 0 ? pattern : null}
+              placeholder={withLabel ? placeholder : label}
+              height="50px"
+              borderColor={inputBorderColor}
+              borderRadius="3px"
+              flex={0.5}
+            />
+          )}
           <FormErrorMessage>{form.errors[name]}</FormErrorMessage>
         </FormControl>
       )}

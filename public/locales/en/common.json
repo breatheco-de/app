@@ -140,6 +140,7 @@
     "invalid-email": "Invalid email",
     "email-required": "Email is required",
     "confirm-email-required": "Confirm Email is required",
-    "confirm-email-not-match": "Emails don't match"
+    "confirm-email-not-match": "Emails don't match",
+    "geeks-members-max": "The maximum number of members is {{value}}"
   }
 }
