@@ -133,6 +133,8 @@
     "cvc-required": "CVC is required",
     "short-input": "Too Short!",
     "long-input": "Too Long!",
+    "long-file": "File is too large",
+    "unsupported-image-file": "Unsupported image file",
     "first-name-required": "First name is required",
     "last-name-required": "Last name is required",
     "phone-required": "Phone number is required",
@@ -140,6 +142,17 @@
     "invalid-email": "Invalid email",
     "email-required": "Email is required",
     "confirm-email-required": "Confirm Email is required",
-    "confirm-email-not-match": "Emails don't match"
-  }
+    "confirm-email-not-match": "Emails don't match",
+    "geeks-members-max": "The maximum number of members is {{value}}",
+    "geeks-members-min": "The minimum number of members is {{value}}",
+    "geeks-members-required": "There must be at least one member",
+    "description-required": "Description is required",
+    "one-line-description-required": "Provide a one line description.",
+    "project-name-error": "Please provide a project name.",
+    "invalid-url": "Invalid URL, expected link must contain: {{url}}",
+    "repo-url-required": "Repository URL is required",
+    "github-url-required": "Github URL is required"
+  },
+  "submit-project": "Submit project",
+  "uploadScreenshot": "Upload screenshot"
 }
