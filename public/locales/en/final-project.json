@@ -21,7 +21,6 @@
     "screenshot-hint": "Your home page or animated gif using the project.",
     "add-participants": "Add participants",
     "participants-hint": "Each student taking part on this project.",
-    "button":"Submit final project",
-    "project-name-error": "Please provide a project name."
+    "button":"Submit final project"
   }
 }

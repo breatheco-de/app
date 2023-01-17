@@ -1,29 +1,64 @@
 
 .react-tagsinput {
   background-color: #fff;
-  border: 1px solid #ccc;
-  /* overflow: inherit; */
-  padding-left: 5px;
-  padding-top: 5px;
+  border: 1px solid var(--chakra-colors-gray-default);
+  padding-left: 10px;
+  padding-top: 10px;
   cursor: text;
+  border-radius: 3px;
+  transition-property: var(--chakra-transition-property-common);
+  transition-duration: var(--chakra-transition-duration-normal);
 }
 
+ .react-tagsinput.error {
+  border-color:red;
+  box-shadow: 0 0 0 1px #e53e3e;
+}
+ .react-tagsinput.error:hover {
+  border-color:red;
+  box-shadow: 0 0 0 1px #e53e3e;
+}
+.react-tagsinput.error:active {
+ border-color: #3182CE;
+ box-shadow: none;
+}
+.react-tagsinput--focused.error {
+ border-color: #3182CE;
+ box-shadow: none;
+}
+ .react-tagsinput--focused.error:hover {
+  border-color: #3182CE;
+  box-shadow: none;
+}
+.react-tagsinput:hover {
+  border-color: var(--chakra-colors-gray-300);
+}
+.react-tagsinput:active {
+  border-color: #3182CE;
+}
+.react-tagsinput:focus-visible {
+  border-color: #3182CE;
+}
+.react-tagsinput:active {
+  border-color: #3182CE;
+}
 .react-tagsinput--focused {
-  border-color: #a5d24a;
+  border-color: #3182CE;
+}
+.react-tagsinput--focused:hover {
+  border-color: #3182CE;
 }
 
 .react-tagsinput-tag {
-  background-color: #cde69c;
   border-radius: 2px;
-  border: 1px solid #a5d24a;
-  color: #638421;
   display: inline-block;
   font-family: sans-serif;
   font-size: 13px;
   font-weight: 400;
-  margin-bottom: 5px;
-  margin-right: 5px;
-  padding: 5px;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  padding: 5px 8px;
+  border-radius: 8px;
 }
 
 .react-tagsinput-remove {
@@ -31,32 +66,18 @@
   font-weight: bold;
 }
 
-.react-tagsinput-tag a::before {
-  content: " x";
-}
-
 .react-tagsinput-input {
   background: transparent;
   border: 0;
-  color: #777;
   font-family: sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
-  margin-bottom: 6px;
+  margin-bottom: 11px;
   margin-top: 1px;
   outline: none;
   padding: 5px;
   width: 120px;
 }
-
-/* .react-autowhatever-1 {
-  background-color: #fff;
-  position: absolute;
-  top: 2rem;
-  left: 0;
-  z-index: 12;
-} */
-
 
 .react-autosuggest__container {
   position: relative;
@@ -90,7 +111,7 @@
 .react-autosuggest__suggestions-container--open {
   display: block;
   position: absolute;
-  top: 30px;
+  top: 38px;
   left: 0;
   width: 280px;
   border: 1px solid #aaa;
@@ -98,9 +119,15 @@
   font-family: Helvetica, sans-serif;
   font-weight: 300;
   font-size: 16px;
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
   z-index: 12;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+body.chakra-ui-dark .react-autosuggest__suggestions-container--open {
+  background-color: var(--chakra-colors-gray-800);
 }
 
 .react-autosuggest__suggestions-list {
@@ -116,5 +143,9 @@
 
 .react-autosuggest__suggestion--highlighted {
   background-color: #ddd;
+}
+
+body.chakra-ui-dark .react-autosuggest__suggestion--highlighted {
+  background-color: var(--chakra-colors-gray-700);
 }
 

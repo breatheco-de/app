@@ -10,17 +10,17 @@
     "button": "Subir proyecto final"
   },
   "modal-form": {
-    "title": "Final project",
-    "project-name": "Project name",
-    "one-line-description": "One line description",
-    "description": "Description",
+    "title": "Proyecto final",
+    "project-name": "Nombre del proyecto",
+    "one-line-description": "Descripción en una línea",
+    "description": "Descripción",
     "github-url": "Github URL",
     "slides-url": "Slides URL",
-    "github-hint": "Please provide the Github repository URL for this project.",
-    "upload-screenshot": "Upload screenshot",
-    "screenshot-hint": "Your home page or animated gif using the project.",
-    "add-participants": "Add participants",
-    "participants-hint": "Each student taking part on this project.",
+    "github-hint": "Proporcione la URL del repositorio de Github para este proyecto.",
+    "upload-screenshot": "Subir captura de pantalla",
+    "screenshot-hint": "Tu página de inicio o gif animado usando el proyecto.",
+    "add-participants": "Añadir participantes",
+    "participants-hint": "Cada estudiante que participa en este proyecto.",
     "button": "Subir proyecto final"
   }
 }

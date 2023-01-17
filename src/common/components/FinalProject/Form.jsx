@@ -1,60 +1,73 @@
 import { Button, Flex, toast } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
+import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import bc from '../../services/breathecode';
 import FieldForm from '../Forms/FieldForm';
+import { isGithubUrl, url } from '../../../utils/regex';
 import Heading from '../Heading';
 import AddMember from './AddMember';
 
-const FinalProjectForm = () => {
+const FinalProjectForm = ({ storyConfig, cohortData, studentsData }) => {
   const { t } = useTranslation('final-project');
-  const [students, setStudents] = useState([]);
-  const router = useRouter();
-  const { cohortSlug } = router.query;
+  const [students, setStudents] = useState(studentsData);
+  const [fileProps, setFileProps] = useState([]);
+  const cohortSlug = cohortData?.slug;
   const [formProps, setFormProps] = useState({
-    title: '',
-    one_line_description: '',
+    name: '',
+    one_line_desc: '',
     description: '',
-    github_url: '',
+    url: '',
     slides_url: '',
     screenshot: null,
-    geeks_members: [],
+    members: [],
   });
+  const commonTranslation = storyConfig?.translation[storyConfig?.locale]?.common;
+  const finalProjectTranslation = storyConfig?.translation[storyConfig?.locale]['final-project'];
+  console.log('students2', students);
 
   const megaByte = 1000000;
-  // const ensureNumber = (val) => (Number.isFinite(Number(val)) ? Number(val) : undefined);
+  const maxFileSize = 2 * megaByte;
 
   const finalProjectValidation = Yup.object().shape({
-    title: Yup.string()
-      .required(t('modal-form.project-name-error')),
-    one_line_description: Yup.string()
-      .max(50, t('common:validators.long-input')),
+    name: Yup.string()
+      .required(commonTranslation?.validators['project-name-error'] || t('common:validators.project-name-error')),
+    one_line_desc: Yup.string()
+      .max(50, t(commonTranslation?.validators['long-input'] || 'common:validators.long-input'))
+      .required(t(commonTranslation?.validators['one-line-description-required'] || 'common:validators.one-line-description-required')),
     description: Yup.string()
-      .max(50, t('common:validators.long-input')),
-    github_url: Yup.string()
-      .url(t('common:validators.invalid-url')),
-    slides_url: Yup.string()
-      .url(t('common:validators.invalid-url')),
+      .max(600, t(commonTranslation?.validators['long-input'] || 'common:validators.long-input'))
+      .required(t(commonTranslation?.validators['description-required'] || 'common:validators.description-required')),
+    url: Yup.string().matches(
+      isGithubUrl,
+      t(commonTranslation?.validators?.['invalid-url']?.replace('{{url}}', 'https://github.com/') || 'common:validators.invalid-url', { url: 'https://github.com/' }),
+    )
+      .required(commonTranslation?.validators['github-url-required'] || t('common:validators.github-url-required')),
+    slides_url: Yup.string().matches(
+      url,
+      t(commonTranslation?.validators['invalid-url'] || 'common:validators.invalid-url'),
+    ),
     screenshot: Yup.mixed()
-      .test('fileSize', 'The file is too large', (value) => {
-        if (value) {
-          return value.size <= (megaByte * 2); // 2MB
-        }
-        return true;
-      })
-      .test('fileFormat', 'Unsupported Format', (value) => {
+      .test('fileFormat', t(commonTranslation?.validators['unsupported-image-file'] || 'common:validators.unsupported-image-file'), (value) => {
         if (value) {
           return ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'].includes(value.type);
         }
         return true;
+      })
+      .test('fileSize', commonTranslation?.validators['long-file'] || t('common:validators.long-file'), (value) => {
+        if (value) {
+          return value.size <= maxFileSize;
+        }
+        return true;
       }),
     // is not required
-    geeks_members: Yup.array()
+    members: Yup.array()
       .of(Yup.string())
-      .max(8, t('common:validators.geeks-members-max', { value: 8 })),
+      .max(8, t(commonTranslation?.validators['geeks-members-max']?.replace('{{value}}', 8) || 'common:validators.geeks-members-max', { value: 8 }))
+      .min(1, t(commonTranslation?.validators['geeks-members-min']?.replace('{{value}}', 1) || 'common:validators.geeks-members-min', { value: 1 }))
+      .required(commonTranslation?.validators['geeks-members-required'] || t('common:validators.geeks-members-required')),
   });
 
   const handleSubmit = async (actions, allValues) => {
@@ -93,37 +106,40 @@ const FinalProjectForm = () => {
         setStudents(studentsFiltered);
       });
   }, []);
+
   return (
     <Formik
       initialValues={{
-        title: '', // required
-        one_line_description: '', // max 50 characters, required
+        name: '', // required
+        one_line_desc: '', // max 50 characters, required
         description: '', // max 600 characters, required
-        github_url: '',
+        url: '',
         slides_url: '', // info: Online slides like Google Sliders, Prezi, etc
         screenshot: null,
-        geeks_members: [],
+        members: [],
       }}
       onSubmit={(values, actions) => {
-        console.log('values:::', values);
+        const userIds = values?.members?.map((member) => {
+          const tagId = member?.match(/\(([^)]+)\)/) !== null ? member?.match(/\(([^)]+)\)/)[1] : member;
+          const replaceTag = tagId?.replace(/\(([^)]+)\)/, '')?.trim();
+          const userData = students?.find((student) => student?.user?.id === Number(tagId));
+          return userData?.user?.id || replaceTag;
+        });
+
         const allValues = {
           ...values,
-          // course: courseChoosed,
-          // country: location?.country,
-          // cohort: dateProps?.id,
-          // syllabus,
-          // city: location?.city,
-          // language: router.locale,
+          cohort: 157,
+          members: userIds,
         };
-
+        actions.setSubmitting(false);
         handleSubmit(actions, allValues);
       }}
       validationSchema={finalProjectValidation}
     >
-      {({ errors, isSubmitting }) => (
+      {({ errors, isSubmitting, setFieldValue }) => (
         <Flex flexDirection="column" padding="20px" gridGap="30px">
           <Heading size="xsm">
-            {t('modal-form.title')}
+            {finalProjectTranslation['modal-form']?.title || t('modal-form.title')}
           </Heading>
           <Form
             style={{
@@ -134,16 +150,16 @@ const FinalProjectForm = () => {
           >
             <FieldForm
               type="text"
-              name="title"
-              label={t('modal-form.project-name')}
+              name="name"
+              label={finalProjectTranslation['modal-form']['project-name'] || t('modal-form.project-name')}
               formProps={formProps}
               setFormProps={setFormProps}
             />
 
             <FieldForm
               type="text"
-              name="one_line_description"
-              label={t('modal-form.one-line-description')}
+              name="one_line_desc"
+              label={finalProjectTranslation['modal-form']['one-line-description'] || t('modal-form.one-line-description')}
               formProps={formProps}
               setFormProps={setFormProps}
             />
@@ -151,15 +167,15 @@ const FinalProjectForm = () => {
             <FieldForm
               type="textarea"
               name="description"
-              label={t('modal-form.description')}
+              label={finalProjectTranslation['modal-form']?.description || t('modal-form.description')}
               formProps={formProps}
               setFormProps={setFormProps}
             />
 
             <FieldForm
-              type="url"
-              name="github_url"
-              label={t('modal-form.github-url')}
+              type="text"
+              name="url"
+              label={finalProjectTranslation['modal-form']['github-url'] || t('modal-form.github-url')}
               formProps={formProps}
               setFormProps={setFormProps}
             />
@@ -171,31 +187,41 @@ const FinalProjectForm = () => {
               formProps={formProps}
               setFormProps={setFormProps}
             /> */}
-
             <FieldForm
               type="file"
               name="screenshot"
-              // label={t('modal-form.slides-url')}
+              translation={{
+                finalProjectTranslation,
+                commonTranslation,
+              }}
               formProps={formProps}
+              fileProps={fileProps}
+              setFileProps={setFileProps}
               setFormProps={setFormProps}
+              setFieldValue={setFieldValue}
+              maxFileSize={maxFileSize}
+              acceptedFiles="image/jpg, image/jpeg, image/gif, image/png"
             />
-
-            {/* <FieldForm
-              type="text"
-              name="geeks_members"
-              // label={t('modal-form.slides-url')}
-              formProps={formProps}
-              setFormProps={setFormProps}
-            /> */}
-            <AddMember students={students} errors={errors} />
+            <AddMember translation={{ finalProjectTranslation, commonTranslation }} students={students} errors={errors} />
+            <Button type="submit" variant="default" isLoading={isSubmitting}>
+              {commonTranslation['submit-project'] || t('common:submit-project')}
+            </Button>
           </Form>
-          <Button variant="default" isLoading={isSubmitting}>
-            Submit project
-          </Button>
         </Flex>
       )}
     </Formik>
   );
+};
+
+FinalProjectForm.propTypes = {
+  cohortData: PropTypes.objectOf(PropTypes.any),
+  studentsData: PropTypes.objectOf(PropTypes.any),
+  storyConfig: PropTypes.objectOf(PropTypes.any),
+};
+FinalProjectForm.defaultProps = {
+  cohortData: {},
+  studentsData: {},
+  storyConfig: {},
 };
 
 export default FinalProjectForm;

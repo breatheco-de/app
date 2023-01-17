@@ -129,10 +129,12 @@
     "owner_name-required": "El nombre del propietario es requerido",
     "owner_name-min": "El nombre del propietario es demasiado corto",
     "card_number-required": "El número de tarjeta es requerido",
-    "exp-required": "La fecha de expiración es requerida",
+    "exp-required": "La fecha de expiración es necesaria",
     "cvc-required": "El CVC es requerido",
     "short-input": "¡Demasiado corto!",
     "long-input": "Demasiado largo!",
+    "long-file": "El archivo es demasiado grande",
+    "unsupported-image-file": "El archivo debe ser una imagen",
     "first-name-required": "El nombre es requerido",
     "last-name-required": "El apellido es requerido",
     "phone-required": "El teléfono es requerido",
@@ -141,6 +143,15 @@
     "email-required": "Correo electronico es requerido",
     "confirm-email-required": "Confirmar Correo electronico es requerido",
     "confirm-email-not-match": "Los correos electrónicos no coinciden",
-    "geeks-members-max": "El número máximo de miembros es de {{value}}"
-  }
+    "geeks-members-max": "El número máximo de miembros es {{value}}",
+    "geeks-members-min": "El número minimo de miembros es {{value}}",
+    "geeks-members-required": "Debe haber al menos un miembro",
+    "description-required": "La descripción es necesaria",
+    "one-line-description-required": "Proporcione una descripción de una línea.",
+    "project-name-error": "Proporcione un nombre de proyecto.",
+    "invalid-url": "URL no válida, el enlace esperado debe contener: {{url}}",
+    "github-url-required": "La URL de GitHub es necesaria"
+  },
+  "submit-project": "Enviar proyecto",
+  "uploadScreenshot": "Subir captura de pantalla"
 }
