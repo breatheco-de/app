@@ -45,6 +45,7 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       me: () => axios.get(`${url}/user/me`),
+      cohort: (id) => axios.get(`${url}/academy/cohort/${id}?${qs}`),
       cohorts: () => axios.get(`${url}/cohort/all?${qs}`),
     };
   },

@@ -135,26 +135,24 @@ const Assignments = () => {
           isClosable: true,
         });
       });
-    bc.admissions().cohorts()
+    bc.admissions({
+      academy,
+    }).cohort(cohortSlug)
       .then(({ data }) => {
-        const dataStruct = data.map((l) => ({
-          label: l.name,
-          slug: l.slug,
-          value: l.id,
-          academy: l.academy.id,
-        }));
-        setAllCohorts(dataStruct.sort(
-          (a, b) => a.label.localeCompare(b.label),
-        ));
+        setAllCohorts([{
+          label: data.name,
+          slug: data.slug,
+          value: data.id,
+          academy: data.academy.id,
+        }]);
       })
-      .catch((error) => {
+      .catch(() => {
         toast({
           title: t('alert-message:error-fetching-cohorts'),
           status: 'error',
           duration: 7000,
           isClosable: true,
         });
-        console.error('There was an error fetching the cohorts', error);
       });
   }, []);
 
@@ -168,7 +166,7 @@ const Assignments = () => {
     const currentCohort = findSelectedCohort || defaultCohort;
 
     if (cohortId) {
-      axiosInstance.defaults.headers.common.Academy = currentCohort.academy;
+      axiosInstance.defaults.headers.common.Academy = academyId;
       setSelectedCohort(currentCohort);
       handlers.getStudents(slug, academyId)
         .then((students) => {
