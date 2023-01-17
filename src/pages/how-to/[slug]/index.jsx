@@ -65,11 +65,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     props: {
       seo: {
         title,
+        slug,
         description: description || '',
         image: preview || staticImage,
         type: 'article',
         translations,
         pathConnector: '/how-to',
+        canonicalPathConector: `${locale === 'en' ? '' : `/${locale}`}/how-to`,
         url: ogUrl.en || `/${locale}/how-to/${slug}`,
         keywords: data?.seo_keywords || '',
         card: 'default',
