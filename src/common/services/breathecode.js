@@ -70,7 +70,11 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       get: () => axios.get(`${url}/task/?${qs}`),
-      getAssignments: (args) => axios.get(`${url}/academy/cohort/${args.id}/task?${qs}`),
+      getAssignments: (args) => axios.get(`${url}/academy/cohort/${args.id}/task?${qs}`, {
+        headers: args?.academy && {
+          academy: args?.academy,
+        },
+      }),
       deliver: (args) => axios.get(`${url}/task/${args.id}/deliver`),
       uploadFile: (id, args) => axios.put(`${url}/task/${id}/attachment?${qs}`, args),
       getFile: (args) => axios.get(`${url}/task/${args.id}/attachment`, {
@@ -106,7 +110,11 @@ const breathecode = {
         },
       }),
       getFilterStudents: () => axios.get(`${url}/cohort/user?${qs}`),
-      getStudents: (cohortId, academyId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}${academyId ? `&academy=${academyId}` : ''}`),
+      getStudents: (cohortId, academyId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}`, {
+        headers: academyId && {
+          academy: academyId,
+        },
+      }),
       update: (id, args) => axios.put(`${url}/cohort/${id}`, args),
       user: ({ cohortId, userId }) => axios({
         method: 'get',

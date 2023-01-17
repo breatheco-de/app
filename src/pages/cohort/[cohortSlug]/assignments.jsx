@@ -19,7 +19,6 @@ import useAssignments from '../../../common/store/actions/assignmentsAction';
 import { isWindow } from '../../../utils';
 import Image from '../../../common/components/Image';
 import PopoverHandler from '../../../js_modules/assignmentHandler/PopoverHandler';
-import axiosInstance from '../../../axios';
 import handlers from '../../../common/handlers';
 
 const Assignments = () => {
@@ -69,10 +68,9 @@ const Assignments = () => {
     setLoadStatus({ loading: true, status: 'loading' });
     bc.todo({
       limit: 1000,
-      academy: academyId,
       task_type: 'PROJECT',
       student: studentId || undefined,
-    }).getAssignments({ id: cohortId })
+    }).getAssignments({ id: cohortId, academy: academyId })
       .then((projectList) => {
         setIsFetching(false);
         const allTasks = projectList.data?.results;
@@ -164,7 +162,6 @@ const Assignments = () => {
     const currentCohort = findSelectedCohort || defaultCohort;
 
     if (cohortId) {
-      axiosInstance.defaults.headers.common.Academy = academyId;
       setSelectedCohort(currentCohort);
       handlers.getStudents(slug, academyId)
         .then((students) => {
