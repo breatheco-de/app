@@ -5,13 +5,15 @@ import { useField } from 'formik';
 import PropTypes from 'prop-types';
 import TagsInput from 'react-tagsinput';
 import { Avatar, Box, Flex } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import AutosuggestInput from './Autosuggest';
 import Icon from '../Icon';
 import useStyle from '../../hooks/useStyle';
 
-const AddMember = ({ translation, students, errors }) => {
+const AddMember = ({ translation, students, errors, required, hint }) => {
   const [field, meta, helpers] = useField('members');
   const { featuredColor, disabledColor } = useStyle();
+  const { t } = useTranslation('final-project');
 
   const handleAddTag = (tag) => {
     helpers?.setValue(tag);
@@ -36,7 +38,7 @@ const AddMember = ({ translation, students, errors }) => {
             students={students}
             handleChange={onChange}
             {...props}
-            placeholder={translation?.finalProjectTranslation?.['modal-form']?.['add-participants']}
+            placeholder={`${translation?.finalProjectTranslation?.['modal-form']?.['add-participants'] || t('modal-form.add-participants')}${required ? '*' : ''}`}
             className={`${props.className} ${errors?.members ? 'error' : ''}`}
           />
         )}
@@ -75,6 +77,9 @@ const AddMember = ({ translation, students, errors }) => {
           );
         }}
       />
+      {hint && !errors?.members && (
+        <Box fontSize="sm" mt={2}>{hint}</Box>
+      )}
       {errors?.members && <Box className="error-message">{errors?.members}</Box>}
     </Box>
   );
@@ -86,11 +91,15 @@ AddMember.propTypes = {
   }),
   students: PropTypes.arrayOf(PropTypes.object).isRequired,
   translation: PropTypes.objectOf(PropTypes.any),
+  required: PropTypes.bool,
+  hint: PropTypes.string,
 };
 
 AddMember.defaultProps = {
   errors: {},
   translation: {},
+  required: false,
+  hint: '',
 };
 
 export default AddMember;

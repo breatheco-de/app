@@ -11,8 +11,8 @@ const FinalProjectModal = ({ storyConfig, isOpen, cohortData, studentsData }) =>
   const { t } = useTranslation('final-project');
   const [isModalOpen, setIsModalOpen] = useState(isOpen || false);
   const [openForm, setOpenForm] = useState(false);
-  const finalProjectTranslation = storyConfig?.translation[storyConfig?.locale]['final-project'];
-  const bullets = finalProjectTranslation.modal.bullets || t('modal.bullets', {}, { returnObjects: true });
+  const finalProjectTranslation = storyConfig?.translation?.[storyConfig?.locale]['final-project'];
+  const bullets = finalProjectTranslation?.modal?.bullets || t('modal.bullets', {}, { returnObjects: true });
   const { lightColor } = useStyle();
 
   return (
@@ -49,7 +49,7 @@ const FinalProjectModal = ({ storyConfig, isOpen, cohortData, studentsData }) =>
       {openForm && (
         <Modal size="lg" isOpen={isOpen} onClose={setOpenForm}>
           <ModalOverlay />
-          <ModalContent margin="6rem 0 0 0" borderRadius="13px">
+          <ModalContent margin="5rem 0 4rem 0" borderRadius="13px">
             <ModalCloseButton />
             <FinalProjectForm storyConfig={storyConfig} cohortData={cohortData} studentsData={studentsData} />
           </ModalContent>

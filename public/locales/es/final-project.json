@@ -15,12 +15,13 @@
     "one-line-description": "Descripción en una línea",
     "description": "Descripción",
     "github-url": "Github URL",
+    "repository-url": "URL de repositorio",
     "slides-url": "Slides URL",
-    "github-hint": "Proporcione la URL del repositorio de Github para este proyecto.",
+    "repository-hint": "Proporcione la URL del repositorio para este proyecto.",
     "upload-screenshot": "Subir captura de pantalla",
     "screenshot-hint": "Tu página de inicio o gif animado usando el proyecto.",
-    "add-participants": "Añadir participantes",
-    "participants-hint": "Cada estudiante que participa en este proyecto.",
+    "add-participants": "Añadir miembros",
+    "participants-hint": "Estudiantes que participaron en este proyecto.",
     "button": "Subir proyecto final"
   }
 }

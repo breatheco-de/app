@@ -150,6 +150,7 @@
     "one-line-description-required": "Proporcione una descripción de una línea.",
     "project-name-error": "Proporcione un nombre de proyecto.",
     "invalid-url": "URL no válida, el enlace esperado debe contener: {{url}}",
+    "repo-url-required": "La URL del repositorio es necesaria",
     "github-url-required": "La URL de GitHub es necesaria"
   },
   "submit-project": "Enviar proyecto",
