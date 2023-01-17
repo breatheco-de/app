@@ -67,7 +67,7 @@ FinalProjectModal.propTypes = {
 };
 FinalProjectModal.defaultProps = {
   storyConfig: {},
-  isOpen: true,
+  isOpen: false,
   cohortData: {},
   studentsData: {},
 };

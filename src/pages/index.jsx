@@ -22,7 +22,6 @@ import Icon from '../common/components/Icon';
 import validationSchema from '../common/components/Forms/validationSchemas';
 import bc from '../common/services/breathecode';
 import { setStorageItem } from '../utils';
-import FinalProjectModal from '../common/components/FinalProject/Modal';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'home');
@@ -81,7 +80,6 @@ export default function Home() {
       justifyContent="center"
       alignItems="center"
     >
-      <FinalProjectModal />
       <Grid gridTemplateColumns={{ base: 'repeat(1,1fr)', md: 'repeat(2,1fr)' }} height="100%">
         <Box position="absolute" top="25" right="0" zIndex="-1" opacity={{ base: '0.6', md: '1' }}>
           <BubblesSvg />
