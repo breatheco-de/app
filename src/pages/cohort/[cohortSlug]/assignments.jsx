@@ -135,9 +135,7 @@ const Assignments = () => {
           isClosable: true,
         });
       });
-    bc.admissions({
-      academy,
-    }).cohort(cohortSlug)
+    bc.admissions().cohort(cohortSlug, academy)
       .then(({ data }) => {
         setAllCohorts([{
           label: data.name,
