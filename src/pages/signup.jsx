@@ -2,6 +2,7 @@
 import {
   Box,
   Button,
+  Img,
   useToast,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
@@ -55,8 +56,9 @@ export const getStaticProps = async ({ locale, locales }) => {
 const SignUp = ({ finance }) => {
   const { t } = useTranslation('signup');
   const router = useRouter();
+  const [isPreloading, setIsPreloading] = useState(false);
   const {
-    state, nextStep, prevStep, handleStep, setDateProps, handleChecking,
+    state, nextStep, prevStep, handleStep, setDateProps, handleChecking, setCohortPlans,
     isFirstStep, isSecondStep, isThirdStep, isFourthStep,
   } = useSignup();
 
@@ -115,9 +117,32 @@ const SignUp = ({ finance }) => {
 
   useEffect(() => {
     if (dateProps?.id && accessToken && queryCohortIdExists) {
-      handleChecking(dateProps)
-        .then(() => {
-          handleStep(2);
+      setIsPreloading(true);
+      bc.payment({
+        cohort,
+      }).getCohortPlans()
+        .then(({ data }) => {
+          if (data.length > 0) {
+            setCohortPlans(data);
+            handleChecking({ ...dateProps, plan: data[0] })
+              .then(() => {
+                handleStep(2);
+              })
+              .finally(() => {
+                setTimeout(() => {
+                  setIsPreloading(false);
+                }, 650);
+              });
+          } else {
+            setIsPreloading(false);
+            handleStep(1);
+            toast({
+              title: t('alert-message:cohort-not-found'),
+              type: 'warning',
+              duration: 4000,
+              isClosable: true,
+            });
+          }
         });
     }
   }, [dateProps?.id, accessToken, router?.locale]);
@@ -140,7 +165,22 @@ const SignUp = ({ finance }) => {
   }, [user?.id, cohort]);
 
   return (
-    <Box p={{ base: '"2.5rem 1rem"', md: '2.5rem 2rem' }}>
+    <Box p={{ base: '2.5rem 1rem', md: '2.5rem 2rem' }} position="relative" minHeight={isPreloading ? '727px' : null}>
+      {isPreloading && (
+        <Box display="flex" alignItems="center" position="absolute" background="white" justifyContent="center" width="100%" height="100%" style={{ zIndex: 50 }} top="0px" left="0px">
+          <Img
+            src="/4Geeks.ico"
+            width="35px"
+            height="35px"
+            position="absolute"
+            mt="6px"
+            zIndex="40"
+            boxShadow="0px 0px 16px 0px #0097cd"
+            borderRadius="40px"
+          />
+          <Box className="loader" />
+        </Box>
+      )}
       {/* Stepper */}
       <Box display="flex" gridGap="38px" justifyContent="center" overflow="auto">
         <Box
@@ -239,7 +279,7 @@ const SignUp = ({ finance }) => {
         </Box>
 
         <Box
-          display={checkoutData?.isTrial ? 'none' : 'flex'}
+          display={(typeof checkoutData?.isTrial === 'boolean' && !checkoutData?.isTrial) ? 'flex' : 'none'}
           gridGap="8px"
           alignItems="center"
           color={stepIndex !== 3 && 'gray.350'}
@@ -270,7 +310,7 @@ const SignUp = ({ finance }) => {
         minHeight="320px"
         maxWidth={{ base: '100%', md: '800px' }}
         margin="3.5rem auto 0 auto"
-        padding="0 10px"
+        padding={{ base: '0 10px', md: '0' }}
       >
         {isFirstStep && (
           <ContactInformation

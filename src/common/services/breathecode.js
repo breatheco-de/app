@@ -71,6 +71,7 @@ const breathecode = {
       get: () => axios.get(`${url}/task/?${qs}`),
       getAssignments: (args) => axios.get(`${url}/academy/cohort/${args.id}/task?${qs}`),
       deliver: (args) => axios.get(`${url}/task/${args.id}/deliver`),
+      createFinalProject: (args) => axios.post(`${url}/user/me/final_project`, args),
       uploadFile: (id, args) => axios.put(`${url}/task/${id}/attachment?${qs}`, args),
       getFile: (args) => axios.get(`${url}/task/${args.id}/attachment`, {
         headers: args.academyId && {
@@ -187,6 +188,13 @@ const breathecode = {
       addCard: (data) => axios.post(`${url}/card?${qs}`, data),
       // getCard: () => axios.post(`${url}/card?${qs}`),
       getPlanProps: (id) => axios.get(`${url}/serviceitem?plan=${id}`),
+      getCohortPlans: () => axios.get(`${url}/plan?${qs}`),
+      service: () => ({
+        consumable: () => axios.get(`${url}/me/service/consumable?${qs}`),
+      }),
+      getEvent: (eventId) => axios.get(`${host}/events/academy/event/${eventId}?${qs}`),
+      // getEvent: (eventId) => axios.get(`${host}/events/me/join/${eventId}?${qs}`),
+      events: () => axios.get(`${host}/events/me?${qs}`),
     };
   },
 };

@@ -6,5 +6,7 @@
     "ended": "Terminó hace {{time}}",
     "few-seconds": "unos instantes",
     "will-start": "Empezará en {{time}}",
-    "upcoming": "Otros eventos en vivo"
+    "upcoming": "Otros eventos en vivo",
+    "inactive-event": "Este evento aún no está activo",
+    "no-access": "No tienes acceso a este evento"
 }

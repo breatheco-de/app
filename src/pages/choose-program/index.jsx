@@ -44,15 +44,11 @@ function chooseProgram() {
   const { t } = useTranslation('choose-program');
   const [, setProfile] = usePersistent('profile', {});
   const [, setCohortSession] = usePersistent('cohortSession', {});
-  // const [data, setData] = useState([]);
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
   const [events, setEvents] = useState(null);
   const { state, programsList, updateProgramList } = useProgramList();
   const [cohortTasks, setCohortTasks] = useState({});
-  // const [loader, setLoader] = useState({
-  //   addmission: true,
-  // });
   const { user, choose } = useAuth();
   const { featuredColor, borderColor, lightColor } = useStyle();
   const router = useRouter();
@@ -82,14 +78,12 @@ function chooseProgram() {
         };
         return acc;
       }, {}));
-      // setData(dataQuery?.cohorts);
       setProfile(dataQuery);
     }
   }, [dataQuery, cohortTasks]);
 
   useEffect(() => {
     if (dataQuery?.id) {
-      // const activeCohorts = handlers.getActiveCohorts(dataQuery?.cohorts);
       dataQuery?.cohorts.map(async (item) => {
         if (item?.cohort?.slug) {
           const { academy, syllabus_version: syllabusVersion } = item?.cohort;
@@ -114,7 +108,7 @@ function chooseProgram() {
           }
           if (tasks?.data?.length <= 0) {
             const syllabus = await bc.syllabus().get(academy.id, syllabusVersion.slug, syllabusVersion.version);
-            handlers.getAssignmentsCount({ cohortProgram: syllabus.data, taskTodo: tasks.data })
+            handlers.getAssignmentsCount({ cohortProgram: syllabus?.data, taskTodo: tasks?.data })
               .then((assignmentData) => {
                 setCohortTasks((prev) => ({
                   ...prev,
@@ -135,9 +129,11 @@ function chooseProgram() {
   const userID = user?.id;
 
   useEffect(() => {
-    bc.public().events()
-      .then((res) => setEvents(res.data))
-      .catch(() => {});
+    bc.payment().events()
+      .then(({ data }) => {
+        const eventsRemain = data.filter((l) => new Date(l.ending_at) - new Date() > 0);
+        setEvents(eventsRemain);
+      });
   }, []);
 
   useEffect(() => {
@@ -150,16 +146,11 @@ function chooseProgram() {
   }, [userID]);
 
   useEffect(() => {
-    // getAdmissions();
-    // setLoader((prev) => ({ ...prev, addmission: true }));
     Promise.all([
-      // bc.admissions().me(),
       bc.auth().invites().get(),
     ]).then((
       [respInvites],
     ) => {
-      // setData(respAdmissions?.data?.cohorts);
-      // setProfile(respAdmissions.data);
       setInvites(respInvites.data);
     }).catch(() => {
       toast({
@@ -169,7 +160,6 @@ function chooseProgram() {
         isClosable: true,
       });
     });
-    // .finally(() => setLoader((prev) => ({ ...prev, addmission: false })));
   }, []);
 
   const acceptInvite = ({ id }) => {
@@ -309,7 +299,7 @@ function chooseProgram() {
                 liveUrl={events[0].url}
                 liveStartsAt={new Date(events[0].starting_at)}
                 liveEndsAt={new Date(events[0].ending_at)}
-                otherEvents={events.slice(1)}
+                otherEvents={events}
                 // featureLabel,
               />
             )}
@@ -351,32 +341,6 @@ function chooseProgram() {
           </Box>
         )}
       </GridContainer>
-      {/* <Box
-        fontWeight={400}
-        width={['70%', '68%', '70%', '50%']}
-        fontSize="14px"
-        color={useColorModeValue('gray.600', 'gray.200')}
-        letterSpacing="0.05em"
-        marginBottom="49px"
-        marginTop="36px"
-      >
-        {t('description')}
-      </Box>
-      {!loader.addmission && data.length > 0 && (
-        <ChooseProgram chooseList={data} handleChoose={handleChoose} />
-      )}
-      {!loader.addmission && data.length <= 0 && (
-        <Box background={featuredColor} padding="14 20px 14px 20px">
-          <Heading size="sm" lineHeight="31px">
-            You are not enrolled in any cohort
-          </Heading>
-        </Box>
-      )}
-      {loader.addmission && (
-        <Box>
-          Loading...
-        </Box>
-      )} */}
     </Flex>
   );
 }

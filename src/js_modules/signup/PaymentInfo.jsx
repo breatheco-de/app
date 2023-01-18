@@ -2,24 +2,48 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, Button, useColorModeValue, useToast,
+  Box, Button, Input, useColorModeValue, useToast,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
+import PropTypes from 'prop-types';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import FieldForm from '../../common/components/Forms/FieldForm';
 import useSignup from '../../common/store/actions/signupAction';
 import Icon from '../../common/components/Icon';
+import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
+import DatePickerField from '../../common/components/Forms/DateField';
+import { number2DIgits } from '../../utils';
+import Text from '../../common/components/Text';
+
+const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
+  const { t } = useTranslation('signup');
+  const { input } = useStyle();
+  const inputBorderColor = input.borderColor;
+
+  return (
+    <Input
+      {...rest}
+      placeholder={t('expiration-date')}
+      onClick={onClick}
+      height="50px"
+      borderRadius="3px"
+      borderColor={inputBorderColor}
+      ref={ref}
+      value={value}
+    />
+  );
+});
 
 const PaymentInfo = () => {
   const { t } = useTranslation('signup');
   const toast = useToast();
 
   const {
-    state, setPaymentInfo, handlePayment,
+    state, setPaymentInfo, handlePayment, getPaymentText,
   } = useSignup();
-  const { paymentInfo, planData, planProps, dateProps, selectedPlanCheckoutData } = state;
+  const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData } = state;
   const [stateCard, setStateCard] = useState({
     card_number: 0,
     exp_month: 0,
@@ -27,12 +51,25 @@ const PaymentInfo = () => {
     cvc: 0,
   });
 
+  const isNotTrial = !checkoutData?.isTrial;
+
+  const getPrice = (planProp) => {
+    if (planProp?.financing_options?.length > 0 && planProp?.financing_options[0]?.monthly_price > 0) return planProp?.financing_options[0]?.monthly_price;
+    if (checkoutData?.amount_per_half > 0) return checkoutData?.amount_per_half;
+    if (checkoutData?.amount_per_month > 0) return checkoutData?.amount_per_month;
+    if (checkoutData?.amount_per_quarter > 0) return checkoutData?.amount_per_quarter;
+    if (checkoutData?.amount_per_year > 0) return checkoutData?.amount_per_year;
+    return t('free-trial');
+  };
+
+  const priceIsNotNumber = Number.isNaN(Number(getPrice(selectedPlanCheckoutData)));
+
   const { borderColor, fontColor } = useStyle();
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
 
   const infoValidation = Yup.object().shape({
     owner_name: Yup.string()
-      .min(6)
+      .min(6, t('validators.owner_name-min'))
       .required(t('validators.owner_name-required')),
     card_number: Yup.string()
       .min(16)
@@ -69,8 +106,8 @@ const PaymentInfo = () => {
 
   return (
     <>
-      <Box display="flex" gridGap="35px" flexDirection={{ base: 'column-reverse', md: 'row' }} position="relative">
-        <Box display="flex" flexDirection="column" flex={0.5}>
+      <Box display="flex" gridGap="30px" flexDirection={{ base: 'column-reverse', md: 'row' }} position="relative">
+        <Box display="flex" flexDirection="column" flex={0.5} minWidth={{ base: 'auto', md: '385px' }}>
           <Heading size="18px">{t('payment-info')}</Heading>
           <Box
             as="hr"
@@ -89,8 +126,9 @@ const PaymentInfo = () => {
               cvc: '',
             }}
             onSubmit={(values, actions) => {
-              const expMonth = values.exp.split('/')[0];
-              const expYear = values.exp.split('/')[1];
+              const expMonth = number2DIgits(values.exp?.getMonth() + 1);
+              const expYear = number2DIgits(values.exp?.getFullYear() - 2000);
+
               const allValues = {
                 card_number: stateCard.card_number,
                 exp_month: expMonth,
@@ -140,24 +178,21 @@ const PaymentInfo = () => {
                 </Box>
                 <Box display="flex" gridGap="18px">
                   <Box display="flex" gridGap="18px" flex={1}>
+                    <Box display="flex" flexDirection="column" flex={0.5}>
+                      <DatePickerField
+                        type="text"
+                        name="exp"
+                        wrapperClassName="datePicker"
+                        onChange={(date) => {
+                          setPaymentInfo('exp', date);
+                        }}
+                        customInput={<CustomDateInput />}
+                        dateFormat="MM/yy"
+                        showMonthYearPicker
+                      />
+                    </Box>
                     <FieldForm
-                      type="text"
-                      name="exp"
-                      externValue={paymentInfo.exp}
-                      handleOnChange={(e) => {
-                        const value = e.target.value.replace(/\s/g, '').replace(/[^0-9 /]/g, '');
-                        e.target.value = value.slice(0, 5);
-
-                        if (e.target.value.length === 2) {
-                          e.target.value += '/';
-                        }
-
-                        setPaymentInfo('exp', e.target.value);
-                      }}
-                      pattern="\d{2}/\d{2}"
-                      label={t('expiration-date')}
-                    />
-                    <FieldForm
+                      style={{ flex: 0.5 }}
                       type="text"
                       name="cvc"
                       externValue={paymentInfo.cvc}
@@ -174,8 +209,8 @@ const PaymentInfo = () => {
                     />
                   </Box>
                 </Box>
-                <Box position="absolute" bottom="-100px" right="0">
-                  {!planData?.type?.includes('trial') && (
+                <Box position="absolute" bottom="-60px" right="0">
+                  {(isNotTrial || !priceIsNotNumber) ? (
                     <Button
                       type="submit"
                       variant="default"
@@ -185,8 +220,7 @@ const PaymentInfo = () => {
                     >
                       {t('common:proceed-to-payment')}
                     </Button>
-                  )}
-                  {planData?.type?.includes('trial') && (
+                  ) : (
                     <Button
                       type="submit"
                       variant="outline"
@@ -201,6 +235,7 @@ const PaymentInfo = () => {
                     >
                       {t('common:start-free-trial')}
                     </Button>
+
                   )}
                 </Box>
               </Form>
@@ -233,26 +268,36 @@ const PaymentInfo = () => {
               </Box>
             </Box>
             <Box display="flex" flexDirection="column" gridGap="7px">
-              <Heading size="18px">{dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}</Heading>
-              {selectedPlanCheckoutData?.description && (
+              <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="0px" alignItems="center">
+                <Box display="flex" flexDirection="column" gridGap="7px">
+                  <Heading size="18px">{dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}</Heading>
+                  {selectedPlanCheckoutData?.description && (
+                    <Heading
+                      size="15px"
+                      textTransform="uppercase"
+                      color={useColorModeValue('gray.500', 'gray.400')}
+                    >
+                      {selectedPlanCheckoutData?.description}
+                    </Heading>
+                  )}
+                </Box>
                 <Heading
-                  size="15px"
-                  textTransform="uppercase"
-                  color={useColorModeValue('gray.500', 'gray.400')}
+                  size={selectedPlanCheckoutData?.price > 0 ? 'm' : 'xsm'}
+                  margin="0 26px 0 auto"
+                  color="blue.default"
+                  width="100%"
+                  textAlign="end"
                 >
-                  {selectedPlanCheckoutData?.description}
+                  {priceIsNotNumber
+                    ? getPrice(selectedPlanCheckoutData)
+                    : `$${getPrice(selectedPlanCheckoutData)} x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}`}
                 </Heading>
-              )}
+              </Box>
+
+              <Text fontSize="14px" color={useColorModeValue('gray.700', 'gray.400')}>
+                {getPaymentText()}
+              </Text>
             </Box>
-            <Heading
-              size={selectedPlanCheckoutData?.price > 0 ? 'm' : 'xsm'}
-              margin="0 26px 0 auto"
-              color="blue.default"
-              textTransform="uppercase"
-              textAlign="end"
-            >
-              {selectedPlanCheckoutData?.price > 0 ? `$${selectedPlanCheckoutData?.price}` : t('free-trial')}
-            </Heading>
           </Box>
           <Box
             as="hr"
@@ -305,6 +350,15 @@ const PaymentInfo = () => {
       </Box>
     </>
   );
+};
+
+CustomDateInput.propTypes = {
+  value: PropTypes.string,
+  onClick: PropTypes.func,
+};
+CustomDateInput.defaultProps = {
+  value: '',
+  onClick: () => {},
 };
 
 export default PaymentInfo;

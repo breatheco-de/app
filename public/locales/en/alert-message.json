@@ -34,6 +34,7 @@
   "email-will-be-sent": "An email will be sent to you shortly",
   "error-fetching-role": "There was an error trying to find the role \"{{role}}\"",
   "error-fetching-cohorts": "There was an error fetching the cohorts",
+  "error-fetching-personal-cohorts": "There was an error fetching your personal cohorts",
   "error-fetching-tasks": "There was an error fetching tasks",
   "error-fetching-alumni-geeks": "Error fetching Alumni Geeks",
   "github-account-removed": "Your Github account has been successfully removed",
@@ -63,5 +64,7 @@
   "something-went-wrong-choosing-date": "Something went wrong choosing the date",
   "payment-error": "There was an error processing your payment",
   "no-access-to-cohort": "You do not belong or do not have access to see the attendances of this cohort",
-  "no-attendance-list-found": "No attendance list found"
+  "no-attendance-list-found": "No attendance list found",
+  "error-mentorship-service": "There was an error loading the mentorship services",
+  "error-finding-mentors": "Something went wrong while looking for mentors for this service"
 }

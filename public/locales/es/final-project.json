@@ -1,0 +1,27 @@
+{
+  "modal": {
+    "title": "Es hora del proyecto final!",
+    "subtitle": "Felicitaciones por llegar a esta fase del programa.",
+    "description": "Todavía estamos aprendiendo mucho, pero este último proyecto se convertirá en algo para mostrar a amigos y posibles empleadores.",
+    "bullets": [
+      "<a class='link' href='/#' target='blank' rel='noopener noreferrer'>¿Por qué construir un proyecto final?</a>",
+      "<a class='link' href='/#' target='blank' rel='noopener noreferrer'>¿Cómo elegir el tema de tu proyecto final?</a>"
+    ],
+    "button": "Subir proyecto final"
+  },
+  "modal-form": {
+    "title": "Proyecto final",
+    "project-name": "Nombre del proyecto",
+    "one-line-description": "Descripción en una línea",
+    "description": "Descripción",
+    "github-url": "Github URL",
+    "repository-url": "URL de repositorio",
+    "slides-url": "Slides URL",
+    "repository-hint": "Proporcione la URL del repositorio para este proyecto.",
+    "upload-screenshot": "Subir captura de pantalla",
+    "screenshot-hint": "Tu página de inicio o gif animado usando el proyecto.",
+    "add-participants": "Añadir miembros",
+    "participants-hint": "Estudiantes que participaron en este proyecto.",
+    "button": "Subir proyecto final"
+  }
+}

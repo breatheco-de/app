@@ -121,6 +121,7 @@ const ProjectList = ({
         }}
         gridGap="1em"
         gridAutoRows="0"
+        padding="0 15px"
       >
         {filteredProjects.map((ex) => (
           <Box

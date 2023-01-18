@@ -9,6 +9,7 @@ import { initStore } from '../src/store';
 import CustomTheme from '../styles/theme';
 import '../styles/globals.css';
 import '../styles/markdown.css';
+import '../styles/react-tags-input.css';
 
 import "@fontsource/lato/100.css"
 import "@fontsource/lato/300.css"
@@ -37,6 +38,7 @@ const myDecorator = (story, context, ...props) => {
   const Story =  story;
   const args = {
     ...context.args,
+    translation: context.parameters.i18n.store.data,
     locale: locale || 'en',
   }
   return (

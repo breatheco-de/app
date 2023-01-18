@@ -39,8 +39,15 @@
   "signing-for": "Te estás registrando en",
   "already-have-account": "¿Ya tienes una cuenta?",
   "login-here": "Inicia sesión aquí.",
+  "info": {
+    "will-pay-monthly": "Pagará ${{price}} dólares {{qty_months}} veces, por un total de ${{total_amount}}. El primer pago será hoy y el próximo el {{next_month}}.",
+    "will-pay-now": "Pagará ${{price} ahora mismo, no se aplicarán otros cargos en el futuro.",
+    "will-pay-per-month": "Te suscribirás y pagarás ${{price}} dólares cada mes",
+    "will-pay-per-year": "Te suscribirás y pagarás ${{price}} dólares cada año"
+  },
   "validators": {
     "owner_name-required": "El nombre del propietario es requerido",
+    "owner_name-min": "El nombre del propietario es demasiado corto",
     "card_number-required": "El número de tarjeta es requerido",
     "exp-required": "La fecha de expiración es requerida",
     "cvc-required": "El CVC es requerido",

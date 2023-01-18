@@ -34,6 +34,7 @@
   "email-will-be-sent": "Un correo electrónico te será enviado pronto",
   "error-fetching-role": "Hubo un error al intentar encontrar el rol \"{{role}}\"",
   "error-fetching-cohorts": "Se ha producido un error al obtener las cohortes",
+  "error-fetching-personal-cohorts": "Se ha producido un error al obtener tus cohortes",
   "error-fetching-tasks": "Se ha producido un error al obtener las tareas",
   "error-fetching-alumni-geeks": "Error al obtener exalumnos",
   "github-account-removed": "Tu cuenta de GitHub ha sido removido con éxito",
@@ -62,5 +63,7 @@
   "card-error-description": "Por favor, verifica que los datos de tu tarjeta sean correctos",
   "something-went-wrong-choosing-date": "Algo salió mal al intentar elegir la fecha",
   "no-access-to-cohort": "No perteneces o no tienes acceso para ver las asistencias de esta cohorte",
-  "no-attendance-list-found": "No se encontró lista de asistencia"
+  "no-attendance-list-found": "No se encontró lista de asistencia",
+  "error-mentorship-service": "Hubo un error al cargar los servicios de tutoría.",
+  "error-finding-mentors": "Algo salió mal al buscar mentores para este servicio"
 }

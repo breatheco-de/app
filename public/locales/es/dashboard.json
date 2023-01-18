@@ -72,6 +72,13 @@
       }
     ]
   },
+  "mentorship": {
+    "no-mentorship": "No te quedan más mentorías para programar",
+    "get-unlimited-mentorship": "y obtén tutoría ilimitada",
+    "you-have": "Tienes",
+    "available-sessions": "sesiones disponibles",
+    "tooltip": "Las tutorías se recargan cada semana"
+  },
   "deliverProject": {
     "title": "Entregar tarea",
     "how-to-deliver": "Cómo entregar proyectos",
@@ -83,7 +90,8 @@
     "error-file-size": "El tamaño del archivo debe ser inferior a 10mb.",
     "total-size": "Tamaño total de {{size}}",
     "invalid-url": "URL no válida, el enlace esperado debe contener: {{url}}",
-    "url-is-required": "La URL es obligatoria"
+    "url-is-required": "La URL es obligatoria",
+    "no-delivery-needed": "Para entregar este proyecto no necesitas subir ningún archivo o especificar nada, simplemente puedes apretar el botón \"Entregar proyecto\" que se encuentra debajo y lo consideraremos como entregado."
   },
   "modalInfo": {
     "title": "Estado de revisión",

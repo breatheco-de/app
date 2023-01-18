@@ -114,7 +114,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
       require('./scripts/sitemap-generator');
       require('./scripts/syllabus');
     }
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.VERCEL_ENV === 'development') {
       config.optimization.minimizer = [];
       config.optimization.minimize = false; // Disable minification in development
     }
@@ -165,5 +165,6 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     STONLY_ID: process.env.STONLY_ID,
     GOOGLE_GEO_KEY: process.env.GOOGLE_GEO_KEY,
     BREATHECODE_PAYMENT: process.env.BREATHECODE_PAYMENT,
+    VERCEL_ENV: process.env.VERCEL_ENV,
   },
 })));

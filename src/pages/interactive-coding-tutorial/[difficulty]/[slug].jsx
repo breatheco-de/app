@@ -82,11 +82,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     props: {
       seo: {
         title,
+        slug,
         url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${difficulty}/${slug}`,
         description: description || '',
         image: preview || staticImage,
         translations,
         pathConnector: `/interactive-coding-tutorial/${difficulty}`,
+        canonicalPathConector: `${locale === 'en' ? '' : `/${locale}`}/interactive-coding-tutorial/${difficulty}`,
         type: 'article',
         keywords: result?.seo_keywords || '',
         card: 'large',
@@ -192,6 +194,7 @@ const ProjectSlug = ({ project, markdown }) => {
       justifyContent="center"
       alignItems="center"
       margin="2rem auto"
+      padding="0 15px"
     >
       <Link
         href="/interactive-coding-tutorials"

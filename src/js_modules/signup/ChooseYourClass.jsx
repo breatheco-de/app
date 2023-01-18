@@ -206,8 +206,8 @@ const ChooseYourClass = ({
         p="0 1rem"
       >
         {availableDates?.length > 0 && !cohortIsLoading ? (
-          availableDates.map((date) => (
-            <ChooseDate key={date?.id} date={date} />
+          availableDates.map((cohort, index) => (
+            <ChooseDate key={cohort?.id} index={index} cohort={cohort} />
           ))
         ) : (
           <LoaderContent />

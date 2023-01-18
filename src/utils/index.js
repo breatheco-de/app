@@ -112,6 +112,21 @@ function removeURLParameter(url, parameter) {
   return url;
 }
 
+const getNextDateInMonths = (months = 1) => {
+  const today = new Date();
+  const nextMonth = new Date();
+  nextMonth.setMonth(today.getMonth() + months);
+
+  const shortWeekDays = {
+    en: format(new Date(nextMonth), 'MMM do, YYY'),
+    es: format(new Date(nextMonth), "dd 'de' MMMM, YYY", { locale: es }),
+  };
+  return {
+    date: nextMonth,
+    translation: shortWeekDays,
+  };
+};
+
 const getTimeProps = (date) => {
   const kickoffDate = {
     en: date?.kickoff_date && format(new Date(date.kickoff_date), 'MMMM do YYY'),
@@ -205,11 +220,13 @@ const calcSVGViewBox = (pathId) => {
   return '';
 };
 
+const number2DIgits = (number) => number.toString().padStart(2, '0');
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
   removeStorageItem, isDevMode, devLogTable, devLog, languageLabel,
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
-  resizeAllMasonryItems, calcSVGViewBox,
+  resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
 };
