@@ -134,44 +134,42 @@ const Attendance = () => {
     const academyId = findSelectedCohort?.academy || academy || defaultCohort?.academy;
     const slug = findSelectedCohort?.slug || cohortSlug || defaultCohort?.slug;
 
-    if (allCohorts.length > 0) {
-      setSelectedCohort(findSelectedCohort || defaultCohort);
-      handlers.getActivities(slug, academyId)
-        .then((daysLog) => {
-          if (Object.keys(daysLog).length <= 0) {
-            setCurrentDaysLog({});
-            toast({
-              title: t('alert-message:no-attendance-list-found'),
-              status: 'warning',
-              duration: 7000,
-              isClosable: true,
-            });
-          } else {
-            setCurrentDaysLog(daysLog);
-          }
-        })
-        .catch(() => {
+    setSelectedCohort(findSelectedCohort || defaultCohort);
+    handlers.getActivities(slug, academyId)
+      .then((daysLog) => {
+        if (Object.keys(daysLog).length <= 0) {
+          setCurrentDaysLog({});
           toast({
-            title: t('alert-message:error-fetching-activities'),
-            status: 'error',
+            title: t('alert-message:no-attendance-list-found'),
+            status: 'warning',
             duration: 7000,
             isClosable: true,
           });
+        } else {
+          setCurrentDaysLog(daysLog);
+        }
+      })
+      .catch(() => {
+        toast({
+          title: t('alert-message:error-fetching-activities'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
         });
-      handlers.getStudents(slug, academyId)
-        .then((students) => {
-          setCurrentStudentList(students);
-        })
-        .catch(() => {
-          toast({
-            title: t('alert-message:error-fetching-students'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
-        })
-        .finally(() => setLoadingStudents(false));
-    }
+      });
+    handlers.getStudents(slug, academyId)
+      .then((students) => {
+        setCurrentStudentList(students);
+      })
+      .catch(() => {
+        toast({
+          title: t('alert-message:error-fetching-students'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
+      })
+      .finally(() => setLoadingStudents(false));
   }, [selectedCohortSlug, cohortSlug, router.query.student, allCohorts]);
 
   useEffect(() => {
