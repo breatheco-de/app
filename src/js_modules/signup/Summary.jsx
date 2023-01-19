@@ -97,6 +97,8 @@ const Summary = ({
     }
   };
 
+  console.log('selectedPlanCheckoutData:::', selectedPlanCheckoutData);
+
   return (
     <Box
       display="flex"
@@ -263,9 +265,10 @@ const Summary = ({
                   textAlign={{ base: 'start', md: 'end' }}
                   width="100%"
                 >
-                  {priceIsNotNumber
+                  {`$${selectedPlanCheckoutData?.price}`}
+                  {/* {priceIsNotNumber
                     ? getPrice(selectedPlanCheckoutData)
-                    : `$${getPrice(selectedPlanCheckoutData)}${selectedPlanCheckoutData?.financing_options[0]?.how_many_months ? ` x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}` : ''}`}
+                    : `$${getPrice(selectedPlanCheckoutData)}${selectedPlanCheckoutData?.financing_options[0]?.how_many_months ? ` x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}` : ''}`} */}
                 </Heading>
               </Box>
               {getPaymentText()?.length > 0 && (
@@ -355,7 +358,7 @@ const Summary = ({
                       gridGap={{ base: '0', md: '12px' }}
                       cursor="pointer"
                       // background={selectedIndex !== i && featuredColor}
-                      border={selectedPlanCheckoutData?.slug === item.slug ? '2px solid #0097CD' : '2px solid transparent'}
+                      border={selectedPlanCheckoutData?.period === item.period ? '2px solid #0097CD' : '2px solid transparent'}
                       borderRadius="13px"
                     >
                       <Box
@@ -378,9 +381,10 @@ const Summary = ({
                           color="blue.default"
                           width="100%"
                         >
-                          {priceIsNotNumber
+                          {item?.priceText}
+                          {/* {priceIsNotNumber
                             ? getPrice(selectedPlanCheckoutData)
-                            : `$${getPrice(selectedPlanCheckoutData)}${selectedPlanCheckoutData?.financing_options[0]?.how_many_months ? ` x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}` : ''}`}
+                            : `$${getPrice(selectedPlanCheckoutData)}${selectedPlanCheckoutData?.financing_options[0]?.how_many_months ? ` x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}` : ''}`} */}
                         </Heading>
                       </Box>
                     </Box>

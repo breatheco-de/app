@@ -113,52 +113,6 @@ const useSignup = () => {
       });
   });
 
-  const getUnitPrice = ({ plan, data }) => {
-    const financingOptionsExists = plan?.financing_options.length > 0 && plan?.financing_options[0]?.monthly_price > 0;
-    if (financingOptionsExists) {
-      return 'FINANCING';
-    }
-    if (!financingOptionsExists) {
-      if (data?.amount_per_half > 0) {
-        return {
-          amount: data.amount_per_half,
-          period: 'HALF',
-        };
-      }
-      if (data?.amount_per_month > 0) {
-        return {
-          amount: data.amount_per_month,
-          period: 'MONTH',
-        };
-      }
-      if (data?.amount_per_quarter > 0) {
-        return {
-          amount: data.amount_per_quarter,
-          period: 'QUARTER',
-        };
-      }
-      if (data?.amount_per_year > 0) {
-        return {
-          amount: data.amount_per_year,
-          period: 'YEAR',
-        };
-      }
-    }
-    return {
-      amount: data?.amount_per_month,
-      period: 'MONTH',
-    };
-  };
-  const getPaymentProps = ({ plan, data }) => {
-    const { amount, period } = getUnitPrice({ plan, data });
-    const price = amount;
-
-    return {
-      price,
-      period,
-    };
-  };
-
   const getChecking = (cohortData) => new Promise((resolve, reject) => {
     const selectedPlan = cohortData?.plan ? cohortData?.plan : undefined;
     const cohortPlan = cohortPlans?.length > 0 ? cohortPlans[cohortData?.index || 0] : selectedPlan;
@@ -180,20 +134,38 @@ const useSignup = () => {
         const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
         const financingOptionsExists = cohortPlan?.financing_options.length > 0 && cohortPlan?.financing_options[0]?.monthly_price > 0;
 
-        const plans = data?.plans?.length > 0 ? data?.plans.map((plan) => {
-          const { price, period } = getPaymentProps({ plan, data });
-          const title = plan?.title ? plan?.title : toCapitalize(unSlugify(String(plan?.slug)));
-          return {
-            ...plan,
-            price,
-            period,
-            title,
-          };
-        }) : [data];
+        const singlePlan = data?.plans?.length > 0 ? data?.plans[0] : data;
+        // structure like plans but only for month
+        const monthPlan = existsAmountPerMonth ? {
+          ...singlePlan,
+          title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
+          price: data?.amount_per_month,
+          priceText: `$${data?.amount_per_month}`,
+          period: 'MONTH',
+        } : {};
+        // structure like plans but only for year
+        const yearPlan = existsAmountPerYear ? {
+          ...singlePlan,
+          title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
+          price: data?.amount_per_year,
+          priceText: `$${data?.amount_per_year}`,
+          period: 'YEAR',
+        } : {};
+        const financingOption = financingOptionsExists ? {
+          ...singlePlan,
+          title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
+          price: cohortPlan?.financing_options[0]?.monthly_price,
+          priceText: `$${cohortPlan?.financing_options[0]?.monthly_price} x ${cohortPlan?.financing_options[0]?.how_many_months}`,
+          period: 'FINANCING',
+          how_many_months: cohortPlan?.financing_options[0]?.how_many_months,
+        } : {};
+
+        const planList = [monthPlan, yearPlan, financingOption];
+
         const finalData = {
           ...data,
           isTrial: !isNotTrial && !financingOptionsExists,
-          plans,
+          plans: planList,
         };
         if (response.status < 400) {
           setCheckoutData(finalData);
@@ -256,11 +228,13 @@ const useSignup = () => {
       && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
       && selectedPlanCheckoutData?.financing_options[0]?.how_many_months === 0
     ) return t('info.will-pay-now', { price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price });
-    if (checkoutData?.amount_per_half > 0
-      || checkoutData?.amount_per_month > 0) return t('info.will-pay-per-month', { price: checkoutData?.amount_per_month || checkoutData?.amount_per_half });
 
-    if (checkoutData?.amount_per_quarter > 0
-      || checkoutData?.amount_per_year > 0) return t('info.will-pay-per-year', { price: checkoutData?.amount_per_year || checkoutData?.amount_per_quarter });
+    if (selectedPlanCheckoutData?.period === 'MONTH') {
+      return t('info.will-pay-per-month', { price: selectedPlanCheckoutData?.price });
+    }
+    if (selectedPlanCheckoutData?.period === 'YEAR') {
+      return t('info.will-pay-per-year', { price: selectedPlanCheckoutData?.price });
+    }
 
     return '';
   };
