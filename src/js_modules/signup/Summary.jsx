@@ -263,7 +263,9 @@ const Summary = ({
                   textAlign={{ base: 'start', md: 'end' }}
                   width="100%"
                 >
-                  {priceIsNotNumber ? getPrice(selectedPlanCheckoutData) : `$${getPrice(selectedPlanCheckoutData)} x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}`}
+                  {priceIsNotNumber
+                    ? getPrice(selectedPlanCheckoutData)
+                    : `$${getPrice(selectedPlanCheckoutData)}${selectedPlanCheckoutData?.financing_options[0]?.how_many_months ? ` x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}` : ''}`}
                 </Heading>
               </Box>
               {getPaymentText()?.length > 0 && (
@@ -336,7 +338,7 @@ const Summary = ({
               .map((item, i) => {
                 const title = item?.title ? item?.title : toCapitalize(unSlugify(String(item?.slug)));
                 return (
-                  <Fragment key={`${item.slug}`}>
+                  <Fragment key={`${item?.slug}-${item?.title}`}>
                     <Box
                       display="flex"
                       onClick={() => {
@@ -378,7 +380,7 @@ const Summary = ({
                         >
                           {priceIsNotNumber
                             ? getPrice(selectedPlanCheckoutData)
-                            : `$${getPrice(selectedPlanCheckoutData)} x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}`}
+                            : `$${getPrice(selectedPlanCheckoutData)}${selectedPlanCheckoutData?.financing_options[0]?.how_many_months ? ` x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}` : ''}`}
                         </Heading>
                       </Box>
                     </Box>
