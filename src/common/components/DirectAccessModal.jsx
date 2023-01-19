@@ -19,7 +19,7 @@ const DirectAccessModal = ({ storySettings, title, modalIsOpen }) => {
   const router = useRouter();
   const locale = router?.locale || storySettings?.locale;
   const stTranslation = storySettings?.translation[locale] || {};
-  const technology = router?.query?.technology || 'Python';
+  // const technology = router?.query?.technology || 'Python';
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const toast = useToast();
 
@@ -80,7 +80,7 @@ const DirectAccessModal = ({ storySettings, title, modalIsOpen }) => {
             </Heading>
           )}
           <Text fontSize="14px" px={{ base: '10px', md: '2rem' }} mt="10px" mb="2rem" textAlign="center">
-            {stTranslation?.common?.['modal-tech-description']?.replaceAll('{{technology}}', technology) || t('common:modal-tech-description', { technology: toCapitalize(technology) })}
+            {stTranslation?.common?.['modal-tech-description']?.replaceAll('{{title}}', title) || t('common:modal-tech-description', { title: toCapitalize(title) })}
           </Text>
           <Formik
             initialValues={{
