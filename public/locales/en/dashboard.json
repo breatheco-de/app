@@ -83,7 +83,8 @@
     "error-file-size": "File size must be less than 10mb.",
     "total-size": "Total size {{size}}",
     "invalid-url": "Invalid URL, expected link must contain: {{url}}",
-    "url-is-required": "URL is required"
+    "url-is-required": "URL is required",
+    "no-delivery-needed": "To deliver this assignment you are not required to upload or specify anything, just click on the button below \"Deliver assignment\" and it will be considered done."
   },
   "modalInfo": {
     "title": "Review status",

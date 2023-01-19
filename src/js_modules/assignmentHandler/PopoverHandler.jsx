@@ -22,6 +22,7 @@ const PopoverHandler = ({ task, githubUrl, haveGithubDomain }) => {
   const toast = useToast();
 
   const isUrl = assetData?.delivery_formats.includes('url');
+  const noDeliveryFormat = assetData?.delivery_formats.includes('no_delivery');
   const fileUrl = 'https://storage.googleapis.com/';
 
   const handleOpen = async (currentTask) => {
@@ -82,54 +83,62 @@ const PopoverHandler = ({ task, githubUrl, haveGithubDomain }) => {
                   : t('label.link-received')}
               </PopoverHeader>
               <PopoverBody>
-                {isUrl ? (
-                  <Link variant="default" display="flex" gridGap="6px" href={githubUrl || '#'} target="_blank" rel="noopener noreferrer">
-                    {githubUrl && haveGithubDomain && (
-                      <Icon icon="github" width="20px" height="20px" style={{ minWidth: '20px' }} color={hexColor.black} />
-                    )}
-                    {githubUrl && !haveGithubDomain && !githubUrl.includes(fileUrl) && (
-                      <LinkIcon width="20px" height="20px" style={{ minWidth: '20px' }} />
-                    )}
-                    {githubUrl && !haveGithubDomain && githubUrl.includes(fileUrl) && (
-                      <Icon icon="file" width="20px" height="20px" style={{ minWidth: '20px' }} color={hexColor.black} />
-                    )}
-                    <Text size="l" withLimit={assetData.title.length > 28}>
-                      {assetData.title}
-                    </Text>
-                    {githubUrl.includes(fileUrl) && (
-                      <Icon icon="download" width="22px" height="22px" color={hexColor.blueDefault} />
-                    )}
-                  </Link>
+                {noDeliveryFormat ? (
+                  <Text size="l">
+                    {t('review-assignment.no-review-required')}
+                  </Text>
                 ) : (
-                  <Box display="flex" flexDirection="column" gridGap="8px" maxHeight="135px" overflowY="auto">
-                    {fileData.length > 0 && fileData?.map((file) => {
-                      const extension = file.name.split('.').pop();
-                      // const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
-                      // const isImage = imageExtensions.includes(extension);
-                      // const icon = iconDict.includes(extension) ? extension : 'file';
-                      return (
-                        <Link
-                          variant="default"
-                          width="100%"
-                          justifyContent="space-between"
-                          key={file.id}
-                          href={file.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          // margin="0 0 0 10px"
-                          display="flex"
-                          gridGap="8px"
-                        >
-                          <Text size="l" withLimit={file.name.length > 28}>
-                            {file.name}
-                          </Text>
-                          {extension && (
-                          <Icon icon="download" width="16px" height="16px" color={hexColor.blueDefault} />
-                          )}
-                        </Link>
-                      );
-                    })}
-                  </Box>
+                  <>
+                    {isUrl ? (
+                      <Link variant="default" display="flex" gridGap="6px" href={githubUrl || '#'} target="_blank" rel="noopener noreferrer">
+                        {githubUrl && haveGithubDomain && (
+                          <Icon icon="github" width="20px" height="20px" style={{ minWidth: '20px' }} color={hexColor.black} />
+                        )}
+                        {githubUrl && !haveGithubDomain && !githubUrl.includes(fileUrl) && (
+                          <LinkIcon width="20px" height="20px" style={{ minWidth: '20px' }} />
+                        )}
+                        {githubUrl && !haveGithubDomain && githubUrl.includes(fileUrl) && (
+                          <Icon icon="file" width="20px" height="20px" style={{ minWidth: '20px' }} color={hexColor.black} />
+                        )}
+                        <Text size="l" withLimit={assetData.title.length > 28}>
+                          {assetData.title}
+                        </Text>
+                        {githubUrl.includes(fileUrl) && (
+                          <Icon icon="download" width="22px" height="22px" color={hexColor.blueDefault} />
+                        )}
+                      </Link>
+                    ) : (
+                      <Box display="flex" flexDirection="column" gridGap="8px" maxHeight="135px" overflowY="auto">
+                        {fileData.length > 0 && fileData?.map((file) => {
+                          const extension = file.name.split('.').pop();
+                          // const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
+                          // const isImage = imageExtensions.includes(extension);
+                          // const icon = iconDict.includes(extension) ? extension : 'file';
+                          return (
+                            <Link
+                              variant="default"
+                              width="100%"
+                              justifyContent="space-between"
+                              key={file.id}
+                              href={file.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              // margin="0 0 0 10px"
+                              display="flex"
+                              gridGap="8px"
+                            >
+                              <Text size="l" withLimit={file.name.length > 28}>
+                                {file.name}
+                              </Text>
+                              {extension && (
+                              <Icon icon="download" width="16px" height="16px" color={hexColor.blueDefault} />
+                              )}
+                            </Link>
+                          );
+                        })}
+                      </Box>
+                    )}
+                  </>
                 )}
               </PopoverBody>
             </PopoverContent>

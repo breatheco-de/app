@@ -38,6 +38,7 @@
     "title": "Revisión de asignación",
     "reject": "Rechazar",
     "approve": "Aprobar",
-    "comment-placeholder": "Comentario o retroalimentación para el estudiante (opcional)"
+    "comment-placeholder": "Comentario o retroalimentación para el estudiante (opcional)",
+    "no-review-required": "Este proyecto puede ser aprobado sin requerir revisión, ya que no fue necesario enviar ningún archivo ni url"
   }
 }

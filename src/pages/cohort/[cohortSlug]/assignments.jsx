@@ -19,7 +19,6 @@ import useAssignments from '../../../common/store/actions/assignmentsAction';
 import { isWindow } from '../../../utils';
 import Image from '../../../common/components/Image';
 import PopoverHandler from '../../../js_modules/assignmentHandler/PopoverHandler';
-import axiosInstance from '../../../axios';
 import handlers from '../../../common/handlers';
 
 const Assignments = () => {
@@ -29,6 +28,7 @@ const Assignments = () => {
   const { contextState, setContextState } = useAssignments();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
+  const [personalCohorts, setPersonalCohorts] = useState([]);
   // const [allTasksPaginationProps, setAllTasksPaginationProps] = useState({});
   const [allTasksOffset, setAllTasksOffset] = useState(20);
   const [isFetching, setIsFetching] = useState(false);
@@ -68,10 +68,9 @@ const Assignments = () => {
     setLoadStatus({ loading: true, status: 'loading' });
     bc.todo({
       limit: 1000,
-      academy: academyId,
       task_type: 'PROJECT',
       student: studentId || undefined,
-    }).getAssignments({ id: cohortId })
+    }).getAssignments({ id: cohortId, academy: academyId })
       .then((projectList) => {
         setIsFetching(false);
         const allTasks = projectList.data?.results;
@@ -121,18 +120,35 @@ const Assignments = () => {
           value: l.cohort.id,
           academy: l.cohort.academy.id,
         }));
-        setAllCohorts(dataStruct.sort(
+
+        setPersonalCohorts(dataStruct.sort(
           (a, b) => a.label.localeCompare(b.label),
         ));
       })
-      .catch((error) => {
+      .catch(() => {
+        toast({
+          title: t('alert-message:error-fetching-personal-cohorts'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
+      });
+    bc.admissions().cohort(cohortSlug, academy)
+      .then(({ data }) => {
+        setAllCohorts([{
+          label: data.name,
+          slug: data.slug,
+          value: data.id,
+          academy: data.academy.id,
+        }]);
+      })
+      .catch(() => {
         toast({
           title: t('alert-message:error-fetching-cohorts'),
           status: 'error',
           duration: 7000,
           isClosable: true,
         });
-        console.error('There was an error fetching the cohorts', error);
       });
   }, []);
 
@@ -146,7 +162,6 @@ const Assignments = () => {
     const currentCohort = findSelectedCohort || defaultCohort;
 
     if (cohortId) {
-      axiosInstance.defaults.headers.common.Academy = currentCohort.academy;
       setSelectedCohort(currentCohort);
       handlers.getStudents(slug, academyId)
         .then((students) => {
@@ -269,7 +284,7 @@ const Assignments = () => {
         <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
           {`${t('title')}:`}
         </Heading>
-        {allCohorts.length > 0 && (
+        {personalCohorts.length > 0 && (
           <ReactSelect
             unstyled
             color="#0097CD"
@@ -288,7 +303,7 @@ const Assignments = () => {
               }
               setSelectedCohortSlug(slug);
             }}
-            options={allCohorts.map((cohort) => ({
+            options={personalCohorts.map((cohort) => ({
               value: cohort.value,
               slug: cohort.slug,
               label: cohort.label,

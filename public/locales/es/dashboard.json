@@ -83,7 +83,8 @@
     "error-file-size": "El tamaño del archivo debe ser inferior a 10mb.",
     "total-size": "Tamaño total de {{size}}",
     "invalid-url": "URL no válida, el enlace esperado debe contener: {{url}}",
-    "url-is-required": "La URL es obligatoria"
+    "url-is-required": "La URL es obligatoria",
+    "no-delivery-needed": "Para entregar este proyecto no necesitas subir ningún archivo o especificar nada, simplemente puedes apretar el botón \"Entregar proyecto\" que se encuentra debajo y lo consideraremos como entregado."
   },
   "modalInfo": {
     "title": "Estado de revisión",

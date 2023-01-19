@@ -171,7 +171,7 @@ const ProjectSlug = ({ project, markdown }) => {
       .then(({ data }) => {
         let currentlocaleLang = data.translations[language];
         if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
-        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=EXERCISE`)
+        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=project`)
           .catch(() => {
             toast({
               title: t('alert-message:language-not-found', { currentLanguageLabel }),
@@ -181,7 +181,7 @@ const ProjectSlug = ({ project, markdown }) => {
             });
           });
       });
-  }, [language]);
+  }, [router?.locale]);
 
   return (
     <GridContainer
