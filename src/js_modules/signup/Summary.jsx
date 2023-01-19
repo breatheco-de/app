@@ -61,12 +61,13 @@ const Summary = ({
   const priceIsNotNumber = Number.isNaN(Number(getPrice(selectedPlanCheckoutData)));
 
   useEffect(() => {
-    const planFindedByQuery = checkoutData?.plans?.find((p) => p.slug === plan);
-    if (planFindedByQuery || checkoutData?.plans[selectedIndex]) {
-      // setPlanData(data[selectedIndex]);
-      setSelectedPlanCheckoutData(planFindedByQuery || checkoutData?.plans[selectedIndex]);
+    const planFindedByQuery = checkoutData?.plans?.find((p) => p?.slug === plan) || {};
+    const planFinded = Object?.values(planFindedByQuery)?.length > 0 && planFindedByQuery;
 
-      getPlanProps(planFindedByQuery || checkoutData?.plans[selectedIndex]);
+    if (planFinded || checkoutData?.plans[selectedIndex]) {
+      setSelectedPlanCheckoutData(planFinded || checkoutData?.plans[selectedIndex]);
+
+      getPlanProps(planFinded || checkoutData?.plans[selectedIndex]);
     }
   }, [checkoutData?.plans]);
 
@@ -81,8 +82,16 @@ const Summary = ({
           } else {
             handlePayment({
               ...data,
-              installments: selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
-            });
+              installments: selectedPlanCheckoutData?.how_many_months || selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
+            })
+              .catch(() => {
+                toast({
+                  title: t('alert-message:payment-error'),
+                  status: 'error',
+                  duration: 7000,
+                  isClosable: true,
+                });
+              });
           }
         })
         .catch((err) => {
@@ -96,8 +105,6 @@ const Summary = ({
         });
     }
   };
-
-  console.log('selectedPlanCheckoutData:::', selectedPlanCheckoutData);
 
   return (
     <Box
@@ -266,9 +273,6 @@ const Summary = ({
                   width="100%"
                 >
                   {`$${selectedPlanCheckoutData?.price}`}
-                  {/* {priceIsNotNumber
-                    ? getPrice(selectedPlanCheckoutData)
-                    : `$${getPrice(selectedPlanCheckoutData)}${selectedPlanCheckoutData?.financing_options[0]?.how_many_months ? ` x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}` : ''}`} */}
                 </Heading>
               </Box>
               {getPaymentText()?.length > 0 && (
@@ -376,15 +380,12 @@ const Summary = ({
                       <Box display="flex" alignItems="center" gridGap="10px">
                         <Heading
                           as="span"
-                          size={item?.price > 0 ? 'm' : 'xsm'}
+                          size={item?.period !== 'FINANCING' ? 'm' : 'xsm'}
                           lineHeight="1"
                           color="blue.default"
                           width="100%"
                         >
                           {item?.priceText}
-                          {/* {priceIsNotNumber
-                            ? getPrice(selectedPlanCheckoutData)
-                            : `$${getPrice(selectedPlanCheckoutData)}${selectedPlanCheckoutData?.financing_options[0]?.how_many_months ? ` x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}` : ''}`} */}
                         </Heading>
                       </Box>
                     </Box>

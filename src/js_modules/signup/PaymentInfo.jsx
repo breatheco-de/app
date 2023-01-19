@@ -289,9 +289,6 @@ const PaymentInfo = () => {
                   textAlign="end"
                 >
                   {`$${selectedPlanCheckoutData?.price}`}
-                  {/* {priceIsNotNumber
-                    ? getPrice(selectedPlanCheckoutData)
-                    : `$${getPrice(selectedPlanCheckoutData)}${selectedPlanCheckoutData?.financing_options[0]?.how_many_months ? ` x ${selectedPlanCheckoutData?.financing_options[0]?.how_many_months}` : ''}`} */}
                 </Heading>
               </Box>
 

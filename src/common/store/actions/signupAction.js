@@ -89,7 +89,7 @@ const useSignup = () => {
   });
 
   const handlePayment = (data) => new Promise((resolve, reject) => {
-    const manyInstallmentsExists = selectedPlanCheckoutData?.financing_options.length > 0 && selectedPlanCheckoutData?.financing_options[0]?.how_many_months;
+    const manyInstallmentsExists = selectedPlanCheckoutData?.financing_options?.length > 0 && selectedPlanCheckoutData?.financing_options[0]?.how_many_months;
     bc.payment().pay({
       type: data?.type || checkoutData.type,
       token: data?.token || checkoutData.token,
@@ -103,12 +103,6 @@ const useSignup = () => {
         resolve(response);
       })
       .catch(() => {
-        toast({
-          title: t('alert-message:payment-error'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
         reject();
       });
   });
@@ -135,6 +129,7 @@ const useSignup = () => {
         const financingOptionsExists = cohortPlan?.financing_options.length > 0 && cohortPlan?.financing_options[0]?.monthly_price > 0;
 
         const singlePlan = data?.plans?.length > 0 ? data?.plans[0] : data;
+
         // structure like plans but only for month
         const monthPlan = existsAmountPerMonth ? {
           ...singlePlan,
@@ -160,8 +155,7 @@ const useSignup = () => {
           how_many_months: cohortPlan?.financing_options[0]?.how_many_months,
         } : {};
 
-        const planList = [monthPlan, yearPlan, financingOption];
-
+        const planList = [monthPlan, yearPlan, financingOption].filter((plan) => Object.keys(plan).length > 0);
         const finalData = {
           ...data,
           isTrial: !isNotTrial && !financingOptionsExists,
@@ -191,7 +185,6 @@ const useSignup = () => {
         availableTime,
       });
     }
-
     getChecking(cohortData)
       .then((data) => {
         resolve(data);
@@ -210,6 +203,17 @@ const useSignup = () => {
   });
 
   const getPaymentText = () => {
+    if (
+      selectedPlanCheckoutData?.financing_options?.length > 0
+      && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
+      && selectedPlanCheckoutData?.financing_options[0]?.how_many_months === 1
+    ) {
+      return t('info.will-pay-month', {
+        price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price,
+        qty_months: selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
+        total_amount: selectedPlanCheckoutData?.financing_options[0]?.monthly_price * selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
+      });
+    }
     if (
       selectedPlanCheckoutData?.financing_options?.length > 0
       && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
