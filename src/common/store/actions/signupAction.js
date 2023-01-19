@@ -119,16 +119,10 @@ const useSignup = () => {
       return 'FINANCING';
     }
     if (!financingOptionsExists) {
-      if (data?.amount_per_year > 0) {
+      if (data?.amount_per_half > 0) {
         return {
-          amount: data.amount_per_year,
-          period: 'YEAR',
-        };
-      }
-      if (data?.amount_per_quarter > 0) {
-        return {
-          amount: data.amount_per_quarter,
-          period: 'QUARTER',
+          amount: data.amount_per_half,
+          period: 'HALF',
         };
       }
       if (data?.amount_per_month > 0) {
@@ -137,10 +131,16 @@ const useSignup = () => {
           period: 'MONTH',
         };
       }
-      if (data?.amount_per_half > 0) {
+      if (data?.amount_per_quarter > 0) {
         return {
-          amount: data.amount_per_half,
-          period: 'HALF',
+          amount: data.amount_per_quarter,
+          period: 'QUARTER',
+        };
+      }
+      if (data?.amount_per_year > 0) {
+        return {
+          amount: data.amount_per_year,
+          period: 'YEAR',
         };
       }
     }

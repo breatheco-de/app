@@ -123,7 +123,7 @@
   "upgrade": "Mejora",
   "go-back": "Regresar",
   "modal-tech-title": "{{technology}}",
-  "modal-tech-description": "Al ingresar tus datos estarías accediendo a todo el contenido de {{technology}}",
+  "modal-tech-description": "Al ingresar tus datos desbloquearás el contenido interactivo de \"{{title}}\" y muchos más",
   "coming-soon": "Próximamente",
   "validators": {
     "owner_name-required": "El nombre del propietario es requerido",
