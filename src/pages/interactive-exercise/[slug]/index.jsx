@@ -448,7 +448,7 @@ const TabletWithForm = ({
                 />
               </Text>
               <Text marginBottom="15px" fontSize="12px" fontWeight="700" lineHeight="24px">
-                {t('modal.note', { folder: exercise.url.substr(exercise.url.lastIndexOf('/') + 1, exercise.url.lenght) })}
+                {t('modal.note', { folder: exercise?.url?.substr(exercise?.url?.lastIndexOf('/') + 1, exercise?.url?.lenght) })}
               </Text>
               <OrderedList>
                 {t('modal.steps', {}, { returnObjects: true }).map((step) => (

@@ -250,7 +250,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
             width={{ base: '100%', md: 'auto' }}
             className={`markdown-body ${useColorModeValue('light', 'dark')}`}
           >
-            <MarkDownParser content={markdownData.content} />
+            <MarkDownParser content={markdownData.content} withToc isPublic />
             {/* {(markdown && ipynbHtmlUrl === '')
               ? <MarkDownParser content={markdownData.content} />
               : <MDSkeleton />} */}
