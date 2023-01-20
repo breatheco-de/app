@@ -94,6 +94,27 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     us: `/interactive-exercise/${slug}`,
   };
 
+  const translationArray = [
+    {
+      value: 'us',
+      lang: 'en',
+      slug: translations?.us,
+      link: `/interactive-exercise/${translations?.us}`,
+    },
+    {
+      value: 'en',
+      lang: 'en',
+      slug: translations?.en,
+      link: `/interactive-exercise/${translations?.en}`,
+    },
+    {
+      value: 'es',
+      lang: 'es',
+      slug: translations?.es,
+      link: `/es/interactive-exercise/${translations?.es}`,
+    },
+  ].filter((item) => translations?.[item?.value] !== undefined);
+
   return {
     props: {
       seo: {
@@ -113,8 +134,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       },
       fallback: false,
       exercise: result,
+      translations: translationArray,
       markdown,
-      // translations: result.translations,
     },
   };
 };
@@ -501,7 +522,7 @@ const Exercise = ({ exercise, markdown }) => {
     const pagePath = 'interactive-exercise';
 
     publicRedirectByAsset({
-      router, aliasRedirect, translations, userPathName, pagePath,
+      router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
     });
   }, [router, router.locale, translations]);
 

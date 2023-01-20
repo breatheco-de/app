@@ -157,7 +157,7 @@ const Module = ({
         mandatory={isMandatoryTimeOut}
         currIndex={currIndex}
         textWithLink
-        link={`/syllabus/${cohortSession.slug}/${data.type.toLowerCase()}/${currentTask?.associated_slug}`}
+        link={`${locale !== 'en' ? `/${locale}` : ''}/syllabus/${cohortSession.slug}/${data.type.toLowerCase()}/${currentTask?.associated_slug}`}
         isDone={isDone}
         data={{
           type,

@@ -60,6 +60,27 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     us: `/how-to/${slug}`,
   };
 
+  const translationArray = [
+    {
+      value: 'us',
+      lang: 'en',
+      slug: translations?.us,
+      link: `/how-to/${translations?.us}`,
+    },
+    {
+      value: 'en',
+      lang: 'en',
+      slug: translations?.en,
+      link: `/how-to/${translations?.en}`,
+    },
+    {
+      value: 'es',
+      lang: 'es',
+      slug: translations?.es,
+      link: `/es/how-to/${translations?.es}`,
+    },
+  ].filter((item) => translations?.[item?.value] !== undefined);
+
   return {
     props: {
       seo: {
@@ -77,7 +98,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         publishedTime: data?.created_at || '',
         modifiedTime: data?.updated_at || '',
       },
-
+      translations: translationArray,
       // page props
       fallback: false,
       data: data || {},
@@ -144,7 +165,7 @@ export default function HowToSlug({ data, markdown }) {
     const aliasRedirect = aliasList[slug] !== undefined && userPathName;
 
     publicRedirectByAsset({
-      router, aliasRedirect, translations, userPathName, pagePath,
+      router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
     });
     return () => {};
   }, [router, router.locale, translations]);

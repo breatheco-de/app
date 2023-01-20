@@ -69,6 +69,26 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   } else {
     ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
   }
+  const translationArray = [
+    {
+      value: 'us',
+      lang: 'en',
+      slug: translations?.us,
+      link: `/lesson/${translations?.us}`,
+    },
+    {
+      value: 'en',
+      lang: 'en',
+      slug: translations?.en,
+      link: `/lesson/${translations?.en}`,
+    },
+    {
+      value: 'es',
+      lang: 'es',
+      slug: translations?.es,
+      link: `/es/lesson/${translations?.es}`,
+    },
+  ].filter((item) => translations?.[item?.value] !== undefined);
 
   return {
     props: {
@@ -89,9 +109,9 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       },
       fallback: false,
       lesson,
+      translations: translationArray,
       markdown,
       ipynbHtmlUrl,
-      // translations: lesson.translations,
     },
   };
 };
@@ -124,7 +144,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
     const pagePath = 'lesson';
 
     publicRedirectByAsset({
-      router, aliasRedirect, translations, userPathName, pagePath,
+      router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
     });
 
     return () => {};

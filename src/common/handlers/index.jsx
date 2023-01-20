@@ -84,6 +84,15 @@ const handlers = {
         reject();
       });
   }),
+  getAssetData: (slug) => new Promise((resolve, reject) => {
+    bc.lesson().getAsset(slug)
+      .then(({ data }) => {
+        resolve(data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  }),
 };
 
 export default handlers;
