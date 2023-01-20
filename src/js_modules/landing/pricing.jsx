@@ -121,7 +121,7 @@ const Pricing = ({ data }) => {
             <Button
               variant="default"
               onClick={() => {
-                router.push(`/signup?plan=trial&syllabus=coding-introduction${selectedItem?.type.includes('trial') ? '&cohort=495' : ''}`);
+                router.push(`/signup?syllabus=coding-introduction${selectedItem?.type.includes('trial') ? '&cohort=495' : ''}`);
               }}
             >
               {selectedItem?.button?.title}
