@@ -104,7 +104,7 @@ const SignUp = ({ finance }) => {
       }
 
       if (resp.status < 400) {
-        const { kickoffDate, weekDays, availableTime } = getTimeProps(resp.data[0]);
+        const { kickoffDate, weekDays, availableTime } = resp?.data?.[0] ? getTimeProps(resp.data[0]) : {};
         setDateProps({
           ...resp.data[0],
           kickoffDate,
@@ -145,7 +145,11 @@ const SignUp = ({ finance }) => {
           }
         });
     }
-  }, [dateProps?.id, accessToken, router?.locale]);
+    if (queryCohortIdExists && accessToken && !dateProps?.id) {
+      setIsPreloading(false);
+      handleStep(1);
+    }
+  }, [queryCohortIdExists, accessToken, router?.locale]);
 
   useEffect(() => {
     if (user?.id && !isLoading) {
@@ -341,7 +345,7 @@ const SignUp = ({ finance }) => {
               variant="outline"
               borderColor="currentColor"
               color="blue.default"
-              disabled={(queryCohortIdExists && !isFourthStep) || isSecondStep}
+              disabled={(queryCohortIdExists && !isFourthStep && !dateProps?.id) || isSecondStep}
               onClick={() => {
                 if (stepIndex > 0) {
                   prevStep();

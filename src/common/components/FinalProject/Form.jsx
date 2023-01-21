@@ -72,7 +72,6 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData }) => {
   });
 
   const handleSubmit = async (actions, allValues) => {
-    console.log('allValues:::', allValues);
     bc.todo().createFinalProject(allValues)
       .then(() => {
         toast({
