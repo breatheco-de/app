@@ -120,14 +120,14 @@ const useSignup = () => {
     })
       .then((response) => {
         const { data } = response;
-        const existsAmountPerHalf = cohortPlan?.price_per_half > 0 || data?.amount_per_half > 0;
-        const existsAmountPerMonth = cohortPlan?.price_per_half > 0 || data?.amount_per_month > 0;
-        const existsAmountPerQuarter = cohortPlan?.price_per_quarter > 0 || data?.amount_per_quarter > 0;
-        const existsAmountPerYear = cohortPlan?.price_per_year > 0 || data?.amount_per_year > 0;
+        const existsAmountPerHalf = data?.amount_per_half > 0;
+        const existsAmountPerMonth = data?.amount_per_month > 0;
+        const existsAmountPerQuarter = data?.amount_per_quarter > 0;
+        const existsAmountPerYear = data?.amount_per_year > 0;
+        const currentPlan = data?.plans?.[0];
 
         const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
-        const financingOptionsExists = cohortPlan?.financing_options.length > 0 && cohortPlan?.financing_options[0]?.monthly_price > 0;
-
+        const financingOptionsExists = currentPlan?.financing_options?.length > 0 && currentPlan?.financing_options[0]?.monthly_price > 0;
         const singlePlan = data?.plans?.length > 0 ? data?.plans[0] : data;
 
         // structure like plans but only for month
@@ -149,10 +149,10 @@ const useSignup = () => {
         const financingOption = financingOptionsExists ? {
           ...singlePlan,
           title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
-          price: cohortPlan?.financing_options[0]?.monthly_price,
-          priceText: `$${cohortPlan?.financing_options[0]?.monthly_price} x ${cohortPlan?.financing_options[0]?.how_many_months}`,
+          price: currentPlan?.financing_options[0]?.monthly_price,
+          priceText: `$${currentPlan?.financing_options[0]?.monthly_price} x ${currentPlan?.financing_options[0]?.how_many_months}`,
           period: 'FINANCING',
-          how_many_months: cohortPlan?.financing_options[0]?.how_many_months,
+          how_many_months: currentPlan?.financing_options[0]?.how_many_months,
         } : {};
 
         const planList = [monthPlan, yearPlan, financingOption].filter((plan) => Object.keys(plan).length > 0);
@@ -161,6 +161,7 @@ const useSignup = () => {
           isTrial: !isNotTrial && !financingOptionsExists,
           plans: planList,
         };
+
         if (response.status < 400) {
           setCheckoutData(finalData);
           resolve(finalData);
