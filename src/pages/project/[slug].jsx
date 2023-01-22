@@ -75,9 +75,30 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     .then((res) => res.text());
 
   const ogUrl = {
-    en: `/interactive-coding-tutorial/${difficulty}/${defaultSlug}`,
-    us: `/interactive-coding-tutorial/${difficulty}/${defaultSlug}`,
+    en: `/project/${defaultSlug}`,
+    us: `/project/${defaultSlug}`,
   };
+
+  const translationArray = [
+    {
+      value: 'us',
+      lang: 'en',
+      slug: translations?.us,
+      link: `/project/${translations?.us}`,
+    },
+    {
+      value: 'en',
+      lang: 'en',
+      slug: translations?.en,
+      link: `/project/${translations?.en}`,
+    },
+    {
+      value: 'es',
+      lang: 'es',
+      slug: translations?.es,
+      link: `/es/project/${translations?.es}`,
+    },
+  ].filter((item) => translations?.[item?.value] !== undefined);
 
   return {
     props: {
@@ -87,7 +108,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         image: preview || staticImage,
         description: description || '',
         url: ogUrl.en,
-        canonicalPathConector: `/interactive-coding-tutorial/${difficulty}`,
         pathConnector: '/project',
         translations,
         keywords: result?.seo_keywords || '',
@@ -103,7 +123,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         difficulty,
       },
       markdown,
-      // translations: result.translations,
+      translations: translationArray,
     },
   };
 };
