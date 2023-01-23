@@ -196,6 +196,7 @@ const Assignments = () => {
         approved: task.revision_status === 'APPROVED',
         rejected: task.revision_status === 'REJECTED',
         undelivered: task.task_status === 'PENDING' && task.revision_status === 'PENDING',
+        ignored: task.revision_status === 'IGNORED',
       };
 
       if (queryStatusExists && !statusConditional[router.query.status]) return false;
@@ -259,6 +260,10 @@ const Assignments = () => {
     {
       label: t('status.undelivered'),
       value: 'undelivered',
+    },
+    {
+      label: t('status.ignored'),
+      value: 'ignored',
     },
   ];
 
