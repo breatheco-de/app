@@ -25,7 +25,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   const exercises = []; // filtered exercises after removing repeated
   let arrExercises = []; // incoming exercises
   const resp = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&limit=1000`,
+    `${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&limit=1000`,
     {
       Accept: 'application/json, text/plain, */*',
     },

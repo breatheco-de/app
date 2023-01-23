@@ -19,7 +19,7 @@ import { publicRedirectByAsset } from '../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=project`);
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`);
   const data = await response.json();
   // .then((res) => res.json())
   // .catch((err) => console.log(err));
