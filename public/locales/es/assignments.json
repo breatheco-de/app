@@ -5,7 +5,8 @@
     "delivered": "Entregado",
     "approved": "Aprobado",
     "rejected": "Rechazado",
-    "undelivered": "No entregado"
+    "undelivered": "No entregado",
+    "ignored": "Ignorado"
   },
   "label": {
     "status": "Estado",
@@ -31,6 +32,8 @@
     "label": "URL de entrega única",
     "hint": "Comparte el enlace con el estudiante",
     "button": "Ignorar tarea",
+    "ignore-task": "Ignorar tarea",
+    "mark-as-pending": "Marcar como pendiente",
     "copy": "Copiar enlace",
     "copied": "¡Copiado!"
   },

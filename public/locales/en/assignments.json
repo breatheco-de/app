@@ -5,7 +5,8 @@
     "delivered": "Delivered",
     "approved": "Approved",
     "rejected": "Rejected",
-    "undelivered": "Undelivered"
+    "undelivered": "Undelivered",
+    "ignored": "Ignored"
   },
   "label": {
     "status": "Status",
@@ -31,6 +32,8 @@
     "label": "Unique Delivery URL",
     "hint": "Share the link with the student",
     "button": "Ignore task",
+    "ignore-task": "Ignore task",
+    "mark-as-pending": "Mark as pending",
     "copy": "Copy link",
     "copied": "Copied!"
   },

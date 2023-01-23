@@ -23,6 +23,12 @@ const TaskLabel = ({ currentTask, t }) => {
           msg: t('status.rejected') || 'Rejected',
         };
       }
+      if (currentTask.revision_status === 'IGNORED') {
+        return {
+          status: 'ignored',
+          msg: t('status.ignored') || 'Ignored',
+        };
+      }
       return {
         status: 'undelivered',
         msg: t('status.undelivered') || 'Undelivered',
@@ -38,11 +44,13 @@ const TaskLabel = ({ currentTask, t }) => {
     approved: 'success',
     rejected: 'danger',
     undelivered: 'yellow.default',
+    ignored: 'transparent',
   };
 
   const backgroundColor = {
     approved: 'success',
     rejected: 'danger',
+    ignored: 'gray.700',
   };
 
   const fontColor = {
@@ -50,13 +58,14 @@ const TaskLabel = ({ currentTask, t }) => {
     approved: 'white',
     rejected: 'white',
     undelivered: 'yellow.default',
+    ignored: 'white',
   };
 
   return (
     <Text
       border="1px solid"
-      borderColor={borderColor[status]}
-      backgroundColor={backgroundColor[status] || 'transparent'}
+      borderColor={borderColor[status] || 'none'}
+      backgroundColor={backgroundColor[status]}
       color={fontColor[status]}
       borderRadius="14.5px"
       as="label"
