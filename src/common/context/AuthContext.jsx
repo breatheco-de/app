@@ -112,8 +112,8 @@ const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const ldClient = useLDClient();
   const [profile, setProfile] = usePersistent('profile', {});
+  const [cohortSession] = usePersistent('cohortSession', {});
   // const [, setSession] = usePersistent('session', {});
-  // const [cohortSession] = usePersistent('cohortSession', {});
   // const { browser } = router.query;
 
   const query = isWindow && new URLSearchParams(window.location.search || '');
@@ -138,6 +138,30 @@ const AuthProvider = ({ children }) => {
   //     screenHeight: window?.screen?.height,
   //   });
   // }, [router?.locale, state?.user, cohortSession]);
+  useEffect(() => {
+    const user = state?.user;
+    if (state.isLoading && user?.id === undefined) return;
+
+    ldClient?.identify({
+      key: user?.id,
+      firstName: user?.first_name,
+      lastName: user?.last_name,
+      name: `${user?.first_name} ${user?.last_name}`,
+      email: user?.email,
+      id: user?.id,
+      custom: {
+        language: router?.locale,
+        screenWidth: window?.screen?.width,
+        screenHeight: window?.screen?.height,
+        device: navigator?.userAgent,
+        version: packageJson.version,
+        cohort: cohortSession?.name,
+        cohortSlug: cohortSession?.slug,
+        cohortRole: cohortSession?.cohort_role,
+        academy: cohortSession?.academy?.id,
+      },
+    });
+  }, [state?.user, router?.locale, cohortSession?.slug]);
 
   useEffect(async () => {
     const token = getToken();
@@ -166,21 +190,6 @@ const AuthProvider = ({ children }) => {
         handleSession(token);
         bc.auth().me()
           .then(({ data }) => {
-            ldClient?.identify({
-              key: data.id,
-              firstName: data?.first_name,
-              lastName: data?.last_name,
-              name: `${data?.first_name} ${data?.last_name}`,
-              email: data.email,
-              id: data.id,
-              custom: {
-                language: router?.locale,
-                screenWidth: window?.screen?.width,
-                screenHeight: window?.screen?.height,
-                device: navigator.userAgent,
-                version: packageJson.version,
-              },
-            });
             dispatch({
               type: 'INIT',
               payload: { user: data, isAuthenticated: true, isLoading: false },
