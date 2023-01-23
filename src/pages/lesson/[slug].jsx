@@ -43,7 +43,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
 
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=LESSON`);
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON`);
   const lesson = await response.json();
 
   if (response.status >= 400 || response.status_code >= 400 || lesson.asset_type !== 'LESSON') {
@@ -95,12 +95,12 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     props: {
       seo: {
         title,
-        slug,
         description: description || '',
         image: lesson.preview || staticImage,
         pathConnector: translationsExists ? '/lesson' : `/lesson/${slug}`,
         canonicalPathConector: `${locale === 'en' ? '' : `/${locale}`}/lesson`,
         url: ogUrl.en || `/${locale}/lesson/${slug}`,
+        slug,
         type: 'article',
         card: 'large',
         translations,
