@@ -57,7 +57,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'projects');
   const { slug } = params;
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`);
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`);
   const result = await response.json();
 
   if (response.status >= 400 || response.status_code >= 400 || result.asset_type !== 'PROJECT') {
@@ -76,9 +76,30 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     .then((res) => res.text());
 
   const ogUrl = {
-    en: `/interactive-coding-tutorial/${difficulty}/${defaultSlug}`,
-    us: `/interactive-coding-tutorial/${difficulty}/${defaultSlug}`,
+    en: `/project/${defaultSlug}`,
+    us: `/project/${defaultSlug}`,
   };
+
+  const translationArray = [
+    {
+      value: 'us',
+      lang: 'en',
+      slug: translations?.us,
+      link: `/project/${translations?.us}`,
+    },
+    {
+      value: 'en',
+      lang: 'en',
+      slug: translations?.en,
+      link: `/project/${translations?.en}`,
+    },
+    {
+      value: 'es',
+      lang: 'es',
+      slug: translations?.es,
+      link: `/es/project/${translations?.es}`,
+    },
+  ].filter((item) => translations?.[item?.value] !== undefined);
 
   return {
     props: {
@@ -88,7 +109,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         image: preview || staticImage,
         description: description || '',
         url: ogUrl.en,
-        canonicalPathConector: `/interactive-coding-tutorial/${difficulty}`,
+        slug,
         pathConnector: '/project',
         translations,
         keywords: result?.seo_keywords || '',
@@ -104,7 +125,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         difficulty,
       },
       markdown,
-      // translations: result.translations,
+      translations: translationArray,
     },
   };
 };
@@ -150,11 +171,11 @@ const ProjectSlug = ({ project, markdown }) => {
   const toast = useToast();
 
   useEffect(() => {
-    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
+    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`)
       .then(({ data }) => {
         let currentlocaleLang = data.translations[language];
         if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
-        axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?type=project`)
+        axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=project`)
           .catch(() => {
             toast({
               title: t('alert-message:language-not-found', { currentLanguageLabel }),
@@ -170,7 +191,7 @@ const ProjectSlug = ({ project, markdown }) => {
     const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
     const aliasList = await alias.json();
     const redirectSlug = aliasList[slug] || slug;
-    const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}?type=project`);
+    const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}?asset_type=project`);
 
     if (dataRedirect.status >= 400) {
       router.push('/404');

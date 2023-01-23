@@ -21,7 +21,7 @@ import SubTasks from './SubTasks';
 import modifyEnv from '../../../../modifyEnv';
 
 const MarkDownParser = ({
-  content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask,
+  content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask, isPublic,
 }) => {
   const { t } = useTranslation('common');
   const [subTasks, setSubTasks] = useState([]);
@@ -134,6 +134,11 @@ const MarkDownParser = ({
           <SubTasks subTasks={subTasks} assetType={assetType} />
         )}
       </ContentHeading>
+
+      {isPublic && withToc && (
+        <Toc content={content} />
+      )}
+
       <ReactMarkdown
       // gemoji plugin
         remarkPlugins={[remarkGfm, remarkGemoji]}
@@ -184,6 +189,7 @@ MarkDownParser.propTypes = {
   frontMatter: PropTypes.objectOf(PropTypes.any),
   titleRightSide: PropTypes.node,
   currentTask: PropTypes.objectOf(PropTypes.any),
+  isPublic: PropTypes.bool,
 };
 MarkDownParser.defaultProps = {
   content: '',
@@ -192,6 +198,7 @@ MarkDownParser.defaultProps = {
   frontMatter: {},
   titleRightSide: null,
   currentTask: {},
+  isPublic: false,
 };
 
 export default MarkDownParser;

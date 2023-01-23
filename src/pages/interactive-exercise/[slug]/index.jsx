@@ -68,7 +68,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
   const t = await getT(locale, 'how-to');
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=exercise`);
   const result = await resp.json();
 
   if (resp.status >= 400 || result.asset_type !== 'EXERCISE') {
@@ -94,18 +94,39 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     us: `/interactive-exercise/${slug}`,
   };
 
+  const translationArray = [
+    {
+      value: 'us',
+      lang: 'en',
+      slug: translations?.us,
+      link: `/interactive-exercise/${translations?.us}`,
+    },
+    {
+      value: 'en',
+      lang: 'en',
+      slug: translations?.en,
+      link: `/interactive-exercise/${translations?.en}`,
+    },
+    {
+      value: 'es',
+      lang: 'es',
+      slug: translations?.es,
+      link: `/es/interactive-exercise/${translations?.es}`,
+    },
+  ].filter((item) => translations?.[item?.value] !== undefined);
+
   return {
     props: {
       seo: {
         type: 'article',
         title,
-        slug,
         image: preview || staticImage,
         description: description || '',
         translations,
         pathConnector: '/interactive-exercise',
         canonicalPathConector: `${locale === 'en' ? '' : `/${locale}`}/interactive-exercise`,
         url: ogUrl.en || `/${locale}/interactive-exercise/${slug}`,
+        slug,
         keywords: result?.seo_keywords || '',
         card: 'large',
         locales,
@@ -115,8 +136,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       },
       fallback: false,
       exercise: result,
+      translations: translationArray,
       markdown,
-      // translations: result.translations,
     },
   };
 };
@@ -429,7 +450,7 @@ const TabletWithForm = ({
                 />
               </Text>
               <Text marginBottom="15px" fontSize="12px" fontWeight="700" lineHeight="24px">
-                {t('modal.note', { folder: exercise.url.substr(exercise.url.lastIndexOf('/') + 1, exercise.url.lenght) })}
+                {t('modal.note', { folder: exercise?.url ? exercise?.url?.substr(exercise?.url?.lastIndexOf('/') + 1, exercise?.url?.lenght) : '' })}
               </Text>
               <OrderedList>
                 {t('modal.steps', {}, { returnObjects: true }).map((step) => (
@@ -504,7 +525,7 @@ const Exercise = ({ exercise, markdown }) => {
     const pagePath = 'interactive-exercise';
 
     publicRedirectByAsset({
-      router, aliasRedirect, translations, userPathName, pagePath,
+      router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
     });
   }, [router, router.locale, translations]);
 
@@ -521,7 +542,7 @@ const Exercise = ({ exercise, markdown }) => {
 
   useEffect(() => {
     tagsArray(exercise);
-    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`)
+    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=exercise`)
       .then(({ data }) => {
         let currentlocaleLang = data.translations[language];
         if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;

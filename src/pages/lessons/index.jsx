@@ -38,7 +38,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   }
 
   const technologiesResponse = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=exercise&limit=1000`,
+    `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=exercise&limit=1000`,
     {
       Accept: 'application/json, text/plain, */*',
     },
@@ -116,7 +116,7 @@ export const getStaticProps = async ({ locale, locales }) => {
       },
 
       fallback: false,
-      lessons: lessons.filter((project) => project.lang === currentLang).map(
+      lessons: lessons.filter((lesson) => lesson?.lang === currentLang && lesson?.asset_type === 'LESSON').map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
       technologyTags,

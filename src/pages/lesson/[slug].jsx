@@ -43,7 +43,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
 
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=LESSON`);
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON`);
   const lesson = await response.json();
 
   if (response.status >= 400 || response.status_code >= 400 || lesson.asset_type !== 'LESSON') {
@@ -70,17 +70,37 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   } else {
     ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
   }
+  const translationArray = [
+    {
+      value: 'us',
+      lang: 'en',
+      slug: translations?.us,
+      link: `/lesson/${translations?.us}`,
+    },
+    {
+      value: 'en',
+      lang: 'en',
+      slug: translations?.en,
+      link: `/lesson/${translations?.en}`,
+    },
+    {
+      value: 'es',
+      lang: 'es',
+      slug: translations?.es,
+      link: `/es/lesson/${translations?.es}`,
+    },
+  ].filter((item) => translations?.[item?.value] !== undefined);
 
   return {
     props: {
       seo: {
         title,
-        slug,
         description: description || '',
         image: lesson.preview || staticImage,
         pathConnector: translationsExists ? '/lesson' : `/lesson/${slug}`,
         canonicalPathConector: `${locale === 'en' ? '' : `/${locale}`}/lesson`,
         url: ogUrl.en || `/${locale}/lesson/${slug}`,
+        slug,
         type: 'article',
         card: 'large',
         translations,
@@ -92,9 +112,9 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       },
       fallback: false,
       lesson,
+      translations: translationArray,
       markdown,
       ipynbHtmlUrl,
-      // translations: lesson.translations,
     },
   };
 };
@@ -128,7 +148,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
     const pagePath = 'lesson';
 
     publicRedirectByAsset({
-      router, aliasRedirect, translations, userPathName, pagePath,
+      router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
     });
 
     return () => {};
@@ -136,7 +156,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
 
   useEffect(() => {
     if (ipynbHtmlUrl === '') {
-      axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?type=lesson`)
+      axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=lesson`)
         .then(({ data }) => {
           let currentlocaleLang = data.translations[language];
           if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
@@ -234,7 +254,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
             width={{ base: '100%', md: 'auto' }}
             className={`markdown-body ${useColorModeValue('light', 'dark')}`}
           >
-            <MarkDownParser content={markdownData.content} />
+            <MarkDownParser content={markdownData.content} withToc isPublic />
             {/* {(markdown && ipynbHtmlUrl === '')
               ? <MarkDownParser content={markdownData.content} />
               : <MDSkeleton />} */}

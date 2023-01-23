@@ -40,7 +40,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'how-to');
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const { slug } = params;
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=ARTICLE`);
   const data = await resp.json();
 
   if (resp.status >= 400) {
@@ -61,11 +61,31 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     us: `/how-to/${slug}`,
   };
 
+  const translationArray = [
+    {
+      value: 'us',
+      lang: 'en',
+      slug: translations?.us,
+      link: `/how-to/${translations?.us}`,
+    },
+    {
+      value: 'en',
+      lang: 'en',
+      slug: translations?.en,
+      link: `/how-to/${translations?.en}`,
+    },
+    {
+      value: 'es',
+      lang: 'es',
+      slug: translations?.es,
+      link: `/es/how-to/${translations?.es}`,
+    },
+  ].filter((item) => translations?.[item?.value] !== undefined);
+
   return {
     props: {
       seo: {
         title,
-        slug,
         description: description || '',
         image: preview || staticImage,
         type: 'article',
@@ -73,6 +93,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         pathConnector: '/how-to',
         canonicalPathConector: `${locale === 'en' ? '' : `/${locale}`}/how-to`,
         url: ogUrl.en || `/${locale}/how-to/${slug}`,
+        slug,
         keywords: data?.seo_keywords || '',
         card: 'default',
         locales,
@@ -80,7 +101,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         publishedTime: data?.created_at || '',
         modifiedTime: data?.updated_at || '',
       },
-
+      translations: translationArray,
       // page props
       fallback: false,
       data: data || {},
@@ -118,7 +139,7 @@ export default function HowToSlug({ data, markdown }) {
   }, [isHowTo]);
 
   useEffect(() => {
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`)
+    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=ARTICLE`)
       .then((res) => {
         let currentlocaleLang = res.data.translations[language];
         if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
@@ -148,7 +169,7 @@ export default function HowToSlug({ data, markdown }) {
     const aliasRedirect = aliasList[slug] !== undefined && userPathName;
 
     publicRedirectByAsset({
-      router, aliasRedirect, translations, userPathName, pagePath,
+      router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
     });
     return () => {};
   }, [router, router.locale, translations]);

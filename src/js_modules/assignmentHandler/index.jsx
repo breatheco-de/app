@@ -38,8 +38,6 @@ const DeliverModal = ({
     }
   }, [copied]);
 
-  console.log('currentTask:::', currentTask);
-
   return (
     <Box width="auto" height="auto">
       <Button

@@ -57,7 +57,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'projects');
   const { slug } = params;
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`);
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`);
   const result = await response.json();
 
   if (response.status > 400 || result.asset_type !== 'PROJECT') {
@@ -78,12 +78,33 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     us: `/interactive-coding-tutorial/${difficulty}/${slug}`,
   };
 
+  const translationArray = [
+    {
+      value: 'us',
+      lang: 'en',
+      slug: translations?.us,
+      link: `/interactive-coding-tutorial/${difficulty}/${translations?.us}`,
+    },
+    {
+      value: 'en',
+      lang: 'en',
+      slug: translations?.en,
+      link: `/interactive-coding-tutorial/${difficulty}/${translations?.en}`,
+    },
+    {
+      value: 'es',
+      lang: 'es',
+      slug: translations?.es,
+      link: `/es/interactive-coding-tutorial/${difficulty}/${translations?.es}`,
+    },
+  ].filter((item) => translations?.[item?.value] !== undefined);
+
   return {
     props: {
       seo: {
         title,
-        slug,
         url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${difficulty}/${slug}`,
+        slug,
         description: description || '',
         image: preview || staticImage,
         translations,
@@ -102,7 +123,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         difficulty,
       },
       markdown,
-      // translations: result?.translations || false,
+      translations: translationArray,
     },
   };
 };
@@ -166,16 +187,16 @@ const ProjectSlug = ({ project, markdown }) => {
     const pagePath = `interactive-coding-tutorial/${difficulty}`;
 
     publicRedirectByAsset({
-      router, aliasRedirect, translations, userPathName, pagePath,
+      router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
     });
   }, [router, router.locale, translations]);
 
   useEffect(() => {
-    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
+    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`)
       .then(({ data }) => {
         let currentlocaleLang = data.translations[language];
         if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
-        axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=EXERCISE`)
+        axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=project`)
           .catch(() => {
             toast({
               title: t('alert-message:language-not-found', { currentLanguageLabel }),
@@ -185,7 +206,7 @@ const ProjectSlug = ({ project, markdown }) => {
             });
           });
       });
-  }, [language]);
+  }, [router?.locale]);
 
   return (
     <GridContainer

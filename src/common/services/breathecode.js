@@ -49,6 +49,11 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       me: () => axios.get(`${url}/user/me`),
+      cohort: (id, academy) => axios.get(`${url}/academy/cohort/${id}?${qs}`, {
+        headers: academy && {
+          academy,
+        },
+      }),
       cohorts: () => axios.get(`${url}/cohort/all?${qs}`),
     };
   },
@@ -69,7 +74,11 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       get: () => axios.get(`${url}/task/?${qs}`),
-      getAssignments: (args) => axios.get(`${url}/academy/cohort/${args.id}/task?${qs}`),
+      getAssignments: (args) => axios.get(`${url}/academy/cohort/${args.id}/task?${qs}`, {
+        headers: args?.academy && {
+          academy: args?.academy,
+        },
+      }),
       deliver: (args) => axios.get(`${url}/task/${args.id}/deliver`),
       createFinalProject: (args) => axios.post(`${url}/user/me/final_project`, args),
       uploadFile: (id, args) => axios.put(`${url}/task/${id}/attachment?${qs}`, args),
@@ -106,8 +115,12 @@ const breathecode = {
         },
       }),
       getFilterStudents: () => axios.get(`${url}/cohort/user?${qs}`),
-      getStudents: (cohortId, academyId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}${academyId ? `&academy=${academyId}` : ''}`),
       getMembers: () => axios.get(`${url}/cohort/user?${qs}`),
+      getStudents: (cohortId, academyId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}`, {
+        headers: academyId && {
+          academy: academyId,
+        },
+      }),
       update: (id, args) => axios.put(`${url}/cohort/${id}`, args),
       user: ({ cohortId, userId }) => axios({
         method: 'get',

@@ -18,7 +18,11 @@
 
 .markdown-body a {
   color: #0097CD;
-  text-decoration: none;
+  text-decoration: inherit;
+}
+.markdown-body a:hover {
+  color: #0097CD;
+  text-decoration: underline;
 }
 
 .markdown-body a.absent {
