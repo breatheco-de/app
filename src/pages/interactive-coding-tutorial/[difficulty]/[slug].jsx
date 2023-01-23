@@ -192,7 +192,7 @@ const ProjectSlug = ({ project, markdown }) => {
   }, [router, router.locale, translations]);
 
   useEffect(() => {
-    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
+    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`)
       .then(({ data }) => {
         let currentlocaleLang = data.translations[language];
         if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;

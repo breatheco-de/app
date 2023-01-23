@@ -156,7 +156,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
 
   useEffect(() => {
     if (ipynbHtmlUrl === '') {
-      axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?type=lesson`)
+      axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=lesson`)
         .then(({ data }) => {
           let currentlocaleLang = data.translations[language];
           if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;

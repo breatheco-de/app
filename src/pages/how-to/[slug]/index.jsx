@@ -40,7 +40,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'how-to');
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const { slug } = params;
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=ARTICLE`);
   const data = await resp.json();
 
   if (resp.status >= 400) {
@@ -139,7 +139,7 @@ export default function HowToSlug({ data, markdown }) {
   }, [isHowTo]);
 
   useEffect(() => {
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`)
+    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=ARTICLE`)
       .then((res) => {
         let currentlocaleLang = res.data.translations[language];
         if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;

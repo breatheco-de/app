@@ -68,7 +68,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
   const t = await getT(locale, 'how-to');
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=exercise`);
   const result = await resp.json();
 
   if (resp.status >= 400 || result.asset_type !== 'EXERCISE') {
@@ -542,7 +542,7 @@ const Exercise = ({ exercise, markdown }) => {
 
   useEffect(() => {
     tagsArray(exercise);
-    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`)
+    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=exercise`)
       .then(({ data }) => {
         let currentlocaleLang = data.translations[language];
         if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
