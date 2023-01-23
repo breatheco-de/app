@@ -13,6 +13,7 @@ import {
 import styles from '../../../styles/flags.module.css';
 import navbarTR from '../translations/navbar';
 import NextChakraLink from './NextChakraLink';
+import { isWindow } from '../../utils';
 
 const LanguageSelector = ({ display, translations }) => {
   const router = useRouter();
@@ -24,8 +25,10 @@ const LanguageSelector = ({ display, translations }) => {
   } = navbarTR[locale];
   const [languagesOpen, setLanguagesOpen] = useState(false);
   const currentLanguage = languagesTR.filter((l) => l.value === locale)[0];
-
-  const translationsPropsExists = Object.keys(translations).length > 0;
+  const translationsPropsExists = translations?.length > 0;
+  const currentTranslationLanguage = isWindow
+    && translationsPropsExists
+    && translations?.find((l) => l?.slug === window.location.pathname?.split('/')?.pop());
 
   return (
     <Popover
@@ -54,7 +57,7 @@ const LanguageSelector = ({ display, translations }) => {
           onClick={() => setLanguagesOpen(!languagesOpen)}
         >
           <Box
-            className={`${styles.flag} ${styles[currentLanguage.value]}`}
+            className={`${styles.flag} ${styles[currentTranslationLanguage?.lang || currentLanguage?.value]}`}
             width="25px"
             height="25px"
           />
@@ -78,12 +81,12 @@ const LanguageSelector = ({ display, translations }) => {
           padding="12px"
         >
           {((translationsPropsExists
-            && Object.keys(translations))
+            && translations)
             || languagesTR).map((l) => {
-            const lang = languagesTR.filter((language) => language.value === l)[0];
-            const value = translationsPropsExists ? lang.value : l.value;
-            const label = translationsPropsExists ? lang.label : l.label;
-            const path = translationsPropsExists ? translations[value] : router.asPath;
+            const lang = languagesTR.filter((language) => language?.value === l?.lang)[0];
+            const value = translationsPropsExists ? lang?.value : l.value;
+            const label = translationsPropsExists ? lang?.label : l.label;
+            const path = translationsPropsExists ? l?.link : router.asPath;
             return (
               <NextChakraLink
                 width="100%"
@@ -96,7 +99,7 @@ const LanguageSelector = ({ display, translations }) => {
                 gridGap="5px"
                 fontWeight="bold"
                 textDecoration="none"
-                opacity={locale === (value) ? 1 : 0.75}
+                opacity={locale === value ? 1 : 0.75}
                 _hover={{
                   opacity: 1,
                 }}

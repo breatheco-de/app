@@ -116,7 +116,7 @@ export const getStaticProps = async ({ locale, locales }) => {
       },
 
       fallback: false,
-      lessons: lessons.filter((project) => project.lang === currentLang).map(
+      lessons: lessons.filter((lesson) => lesson?.lang === currentLang && lesson?.asset_type === 'LESSON').map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
       technologyTags,

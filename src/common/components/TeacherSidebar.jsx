@@ -118,7 +118,7 @@ const TeacherSidebar = ({
           {/* Assignments */}
           <ItemButton
             actionHandler={() => {
-              window.open(`/cohort/${cohortSlug}/assignments`, '_blank');
+              window.open(`/cohort/${cohortSlug}/assignments?academy=${cohortSession?.academy?.id}`, '_blank');
             }}
           >
             <ItemText text={t('teacher-sidebar.assignments')} />

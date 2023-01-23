@@ -78,6 +78,27 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     us: `/interactive-coding-tutorial/${difficulty}/${slug}`,
   };
 
+  const translationArray = [
+    {
+      value: 'us',
+      lang: 'en',
+      slug: translations?.us,
+      link: `/interactive-coding-tutorial/${difficulty}/${translations?.us}`,
+    },
+    {
+      value: 'en',
+      lang: 'en',
+      slug: translations?.en,
+      link: `/interactive-coding-tutorial/${difficulty}/${translations?.en}`,
+    },
+    {
+      value: 'es',
+      lang: 'es',
+      slug: translations?.es,
+      link: `/es/interactive-coding-tutorial/${difficulty}/${translations?.es}`,
+    },
+  ].filter((item) => translations?.[item?.value] !== undefined);
+
   return {
     props: {
       seo: {
@@ -102,7 +123,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         difficulty,
       },
       markdown,
-      // translations: result?.translations || false,
+      translations: translationArray,
     },
   };
 };
@@ -166,7 +187,7 @@ const ProjectSlug = ({ project, markdown }) => {
     const pagePath = `interactive-coding-tutorial/${difficulty}`;
 
     publicRedirectByAsset({
-      router, aliasRedirect, translations, userPathName, pagePath,
+      router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
     });
   }, [router, router.locale, translations]);
 
@@ -175,7 +196,7 @@ const ProjectSlug = ({ project, markdown }) => {
       .then(({ data }) => {
         let currentlocaleLang = data.translations[language];
         if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
-        axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=EXERCISE`)
+        axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=project`)
           .catch(() => {
             toast({
               title: t('alert-message:language-not-found', { currentLanguageLabel }),
@@ -185,7 +206,7 @@ const ProjectSlug = ({ project, markdown }) => {
             });
           });
       });
-  }, [language]);
+  }, [router?.locale]);
 
   return (
     <GridContainer

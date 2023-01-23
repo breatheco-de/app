@@ -74,46 +74,48 @@ const Toc = ({ content }) => {
       bg={colorMode === 'light' ? 'blue.light' : 'featuredDark'}
       w="100%"
       mx="auto"
-      sx={{ columnCount: [1, 2, 3], columnGap: '8px' }}
+      // sx={{ columnCount: [1, 2, 3], columnGap: '8px' }}
       paddingX="28px"
       paddingY={22}
       borderRadius="17px"
     >
       {getHierarchy().map((item, index) => {
         const mapIndex = index;
+        const isLastItem = index === getHierarchy().length - 1;
         return (
           <Fragment key={mapIndex}>
             {Array.isArray(item.childs) && item.childs.length > 0 ? (
-              <Box>
-                <Box display="inline-flex" flexDirection="column">
-                  {item.h}
-                  <UnorderedList
-                    display="flex"
-                    flexDirection="column"
-                    position="relative"
-                    _before={item.childs.length > 0 && {
-                      content: '""',
-                      position: 'absolute',
-                      left: 0,
-                      top: 0,
-                      width: '2px',
-                      height: '90%',
-                      bg: colorMode === 'light' ? '#DADADA' : '#3E526A',
-                      borderRadius: '2px',
-                      transform: 'translate(0, 5%)',
-                    }}
-                    listStyleType="none"
-                    style={{ margin: 0, padding: 0 }}
-                  >
-                    {item.childs.map((c, i) => (
-                      <ListItem key={i} style={{ margin: 0 }}>
-                        {c.h}
-                      </ListItem>
-                    ))}
-                  </UnorderedList>
-                </Box>
+              <Box display="inline-flex" flexDirection="column" mb={!isLastItem ? '8px' : '0'}>
+                {item.h}
+                <UnorderedList
+                  display="flex"
+                  flexDirection="column"
+                  margin="6px 0 0 10px"
+                  padding="0 0 0 6px"
+                  gridGap="4px"
+                  position="relative"
+                  _before={item.childs.length > 0 && {
+                    content: '""',
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    width: '2px',
+                    height: '92%',
+                    bg: colorMode === 'light' ? '#DADADA' : '#3E526A',
+                    borderRadius: '2px',
+                    transform: 'translate(0, 5%)',
+                  }}
+                  listStyleType="none"
+                  // style={{ padding: 0 }}
+                >
+                  {item.childs.map((c, i) => (
+                    <ListItem key={i} style={{ margin: 0 }}>
+                      {c.h}
+                    </ListItem>
+                  ))}
+                </UnorderedList>
               </Box>
-            ) : <Box>{item.h}</Box>}
+            ) : <Box color="black" mb={!isLastItem ? '8px' : '0'}>{item.h}</Box>}
           </Fragment>
         );
       })}

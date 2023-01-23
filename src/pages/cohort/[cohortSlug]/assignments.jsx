@@ -19,7 +19,6 @@ import useAssignments from '../../../common/store/actions/assignmentsAction';
 import { isWindow } from '../../../utils';
 import Image from '../../../common/components/Image';
 import PopoverHandler from '../../../js_modules/assignmentHandler/PopoverHandler';
-import axiosInstance from '../../../axios';
 import handlers from '../../../common/handlers';
 
 const Assignments = () => {
@@ -69,10 +68,9 @@ const Assignments = () => {
     setLoadStatus({ loading: true, status: 'loading' });
     bc.todo({
       limit: 1000,
-      academy: academyId,
       task_type: 'PROJECT',
       student: studentId || undefined,
-    }).getAssignments({ id: cohortId })
+    }).getAssignments({ id: cohortId, academy: academyId })
       .then((projectList) => {
         setIsFetching(false);
         const allTasks = projectList.data?.results;
@@ -135,26 +133,22 @@ const Assignments = () => {
           isClosable: true,
         });
       });
-    bc.admissions().cohorts()
+    bc.admissions().cohort(cohortSlug, academy)
       .then(({ data }) => {
-        const dataStruct = data.map((l) => ({
-          label: l.name,
-          slug: l.slug,
-          value: l.id,
-          academy: l.academy.id,
-        }));
-        setAllCohorts(dataStruct.sort(
-          (a, b) => a.label.localeCompare(b.label),
-        ));
+        setAllCohorts([{
+          label: data.name,
+          slug: data.slug,
+          value: data.id,
+          academy: data.academy.id,
+        }]);
       })
-      .catch((error) => {
+      .catch(() => {
         toast({
           title: t('alert-message:error-fetching-cohorts'),
           status: 'error',
           duration: 7000,
           isClosable: true,
         });
-        console.error('There was an error fetching the cohorts', error);
       });
   }, []);
 
@@ -168,7 +162,6 @@ const Assignments = () => {
     const currentCohort = findSelectedCohort || defaultCohort;
 
     if (cohortId) {
-      axiosInstance.defaults.headers.common.Academy = currentCohort.academy;
       setSelectedCohort(currentCohort);
       handlers.getStudents(slug, academyId)
         .then((students) => {

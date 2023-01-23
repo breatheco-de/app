@@ -55,29 +55,30 @@ const redirectHandler = async (req, conditionalResult, NextResponse, redirectVal
 };
 
 const publicRedirectByAsset = ({
-  router, aliasRedirect, translations, userPathName, pagePath,
+  router, aliasRedirect, translations, userPathName, pagePath, isPublic = false,
 }) => {
   const translationUs = translations?.us || translations?.en;
 
   if (aliasRedirect) {
     return router.push(userPathName);
   }
+  if (!isPublic) {
+    if (translations?.es !== undefined && (
+      userPathName === `/default/${pagePath}/${translations.es}`
+      || userPathName === `/es/${pagePath}/${translationUs}`)
+    ) {
+      console.log(`Page: redirecting from ${userPathName} → ${`/es/${pagePath}/${translations.es}`}`);
+      return router.push(`/es/${pagePath}/${translations.es}`);
+    }
 
-  if (translations?.es !== undefined && (
-    userPathName === `/default/${pagePath}/${translations.es}`
-    || userPathName === `/es/${pagePath}/${translationUs}`)
-  ) {
-    console.log(`Page: redirecting from ${userPathName} → ${`/es/${pagePath}/${translations.es}`}`);
-    return router.push(`/es/${pagePath}/${translations.es}`);
-  }
-
-  if (
-    translationUs !== undefined && (
-      userPathName === `/default/${pagePath}/${translationUs}`
-      || userPathName === `/en/${pagePath}/${translations.es}`)
-  ) {
-    console.log(`Page: redirecting from ${userPathName} → ${`/${pagePath}/${translationUs}`}`);
-    return router.push(`/en/${pagePath}/${translationUs}`);
+    if (
+      translationUs !== undefined && (
+        userPathName === `/default/${pagePath}/${translationUs}`
+        || userPathName === `/en/${pagePath}/${translations.es}`)
+    ) {
+      console.log(`Page: redirecting from ${userPathName} → ${`/${pagePath}/${translationUs}`}`);
+      return router.push(`/en/${pagePath}/${translationUs}`);
+    }
   }
   return '';
 };
