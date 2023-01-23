@@ -146,7 +146,6 @@ const Mentoring = ({
       });
   };
 
-  // TODO: use flags here
   return (
     <Box
       position="relative"
