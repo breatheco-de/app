@@ -21,7 +21,7 @@ import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 import modifyEnv from '../../../../modifyEnv';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE&limit=1000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=1000`);
   const data = await resp.json();
   const howToData = data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como');
 
