@@ -5,7 +5,6 @@ import '../../styles/phoneInput/index.css';
 import TagManager from 'react-gtm-module';
 import PropTypes from 'prop-types';
 import { ChakraProvider } from '@chakra-ui/react';
-import { CookiesProvider } from 'react-cookie';
 import wrapper from '../store';
 import CustomTheme from '../../styles/theme';
 import NavbarSession from '../common/components/Navbar';
@@ -50,18 +49,16 @@ function App({ Component, pageProps }) {
       <Helmet
         {...pageProps.seo}
       />
-      <CookiesProvider>
-        <AuthProvider>
-          <ConnectionProvider>
-            <ChakraProvider resetCSS theme={CustomTheme}>
-              <Navbar />
-              <InterceptionLoader />
-              <Component {...pageProps} />
-              <Footer />
-            </ChakraProvider>
-          </ConnectionProvider>
-        </AuthProvider>
-      </CookiesProvider>
+      <AuthProvider>
+        <ConnectionProvider>
+          <ChakraProvider resetCSS theme={CustomTheme}>
+            <Navbar />
+            <InterceptionLoader />
+            <Component {...pageProps} />
+            <Footer />
+          </ChakraProvider>
+        </ConnectionProvider>
+      </AuthProvider>
     </>
   );
 }
