@@ -237,7 +237,7 @@ const handlers = {
   getAssignmentsCount: ({
     cohortProgram,
   }) => new Promise((resolve) => {
-    const modules = cohortProgram.json?.days || cohortProgram.json?.modules;
+    const modules = cohortProgram?.json?.days || cohortProgram?.json?.modules;
     const assignmentsRecopilated = [];
 
     modules.forEach((module) => {

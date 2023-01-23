@@ -5,6 +5,7 @@ import {
 import { useState, Fragment } from 'react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import { useFlags } from 'launchdarkly-react-client-sdk';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
@@ -16,6 +17,7 @@ const Pricing = ({ data }) => {
   const { t } = useTranslation('');
   const { fontColor, featuredColor } = useStyle();
   const router = useRouter();
+  const flags = useFlags();
 
   const financeSelected = {
     0: 'list',
@@ -34,7 +36,6 @@ const Pricing = ({ data }) => {
 
   return (
     <Box maxW="container.xl" display="flex" width="100%" flexDirection="row" id="pricing" alignItems={{ base: 'center', md: 'start' }} gridGap="21px" m="36px auto 20px auto" justifyContent="center" height="100%">
-
       <Box display="flex" flex={0.5} flexDirection="column" w="100%" gridGap="10px">
         <Heading size="l" mb="32px">
           {data?.pricing?.title}
@@ -110,14 +111,7 @@ const Pricing = ({ data }) => {
           </Fragment>
         ))}
         <Box mt="38px">
-          {process.env.VERCEL_ENV === 'production' ? (
-            <Button
-              variant="default"
-              disabled
-            >
-              {t('common:coming-soon')}
-            </Button>
-          ) : (
+          {flags?.enableSignup ? (
             <Button
               variant="default"
               onClick={() => {
@@ -125,6 +119,13 @@ const Pricing = ({ data }) => {
               }}
             >
               {selectedItem?.button?.title}
+            </Button>
+          ) : (
+            <Button
+              variant="default"
+              disabled
+            >
+              {t('common:coming-soon')}
             </Button>
           )}
         </Box>

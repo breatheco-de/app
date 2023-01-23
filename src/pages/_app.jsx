@@ -3,6 +3,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from 'react-query';
+import { withLDProvider } from 'launchdarkly-react-client-sdk';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import '../../styles/globals.css';
 import '../../styles/react-tags-input.css';
@@ -11,7 +12,6 @@ import '../../styles/phoneInput/index.css';
 import TagManager from 'react-gtm-module';
 import PropTypes from 'prop-types';
 import { ChakraProvider } from '@chakra-ui/react';
-import { CookiesProvider } from 'react-cookie';
 import wrapper from '../store';
 import CustomTheme from '../../styles/theme';
 import NavbarSession from '../common/components/Navbar';
@@ -58,18 +58,16 @@ function App({ Component, pageProps }) {
       <Helmet
         {...pageProps.seo}
       />
-      <CookiesProvider>
-        <AuthProvider>
-          <ConnectionProvider>
-            <ChakraProvider resetCSS theme={CustomTheme}>
-              <Navbar />
-              <InterceptionLoader />
-              <Component {...pageProps} />
-              <Footer />
-            </ChakraProvider>
-          </ConnectionProvider>
-        </AuthProvider>
-      </CookiesProvider>
+      <AuthProvider>
+        <ConnectionProvider>
+          <ChakraProvider resetCSS theme={CustomTheme}>
+            <Navbar />
+            <InterceptionLoader />
+            <Component {...pageProps} />
+            <Footer />
+          </ChakraProvider>
+        </ConnectionProvider>
+      </AuthProvider>
       <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
     </QueryClientProvider>
   );
@@ -79,4 +77,9 @@ App.propTypes = {
   pageProps: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
   Component: PropTypes.elementType.isRequired,
 };
-export default wrapper.withRedux(App);
+export default withLDProvider({
+  clientSideID: process.env.LD_CLIENT_ID,
+  options: {
+    bootstrap: 'localStorage',
+  },
+})(wrapper.withRedux(App));

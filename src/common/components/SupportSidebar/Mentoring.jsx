@@ -145,7 +145,10 @@ const Mentoring = ({
         setServiceMentoring(res.data);
       });
   };
+  console.log('cohortService:::', cohortService);
+  console.log('serviceMentoring:::', serviceMentoring);
 
+  // TODO: use flags here
   return (
     <Box
       position="relative"

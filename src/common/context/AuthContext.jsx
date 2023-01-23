@@ -1,9 +1,11 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
+import { useLDClient } from 'launchdarkly-react-client-sdk';
 import bc from '../services/breathecode';
 import { isWindow, removeURLParameter } from '../../utils';
 import axiosInstance from '../../axios';
+import packageJson from '../../../package.json';
 import { usePersistent } from '../hooks/usePersistent';
 import modifyEnv from '../../../modifyEnv';
 
@@ -72,7 +74,7 @@ const reducer = (state, action) => {
   }
 };
 
-const setSession = (token) => {
+const setTokenSession = (token) => {
   if (token) {
     localStorage.setItem('accessToken', token);
     axiosInstance.defaults.headers.common.Authorization = `Token ${token}`;
@@ -108,7 +110,11 @@ export const AuthContext = createContext({
 const AuthProvider = ({ children }) => {
   const router = useRouter();
   const [state, dispatch] = useReducer(reducer, initialState);
+  const ldClient = useLDClient();
   const [profile, setProfile] = usePersistent('profile', {});
+  // const [, setSession] = usePersistent('session', {});
+  // const [cohortSession] = usePersistent('cohortSession', {});
+  // const { browser } = router.query;
 
   const query = isWindow && new URLSearchParams(window.location.search || '');
   const queryToken = isWindow && query.get('token')?.split('?')[0];
@@ -116,7 +122,22 @@ const AuthProvider = ({ children }) => {
   const queryTokenExists = isWindow && queryToken !== undefined && queryToken.length > 0;
 
   // Validate and Fetch user token from localstorage when it changes
-  const handleSession = (tokenString) => setSession(tokenString);
+  const handleSession = (tokenString) => setTokenSession(tokenString);
+  // useEffect(() => {
+  //   // setSession
+  //   setSession({
+  //     version: packageJson.version,
+  //     host: process.env.BREATHECODE_HOST,
+  //     environment: process.env.VERCEL_ENV,
+  //     browser: browser || process.env?.BROWSER,
+  //     cohortSession,
+  //     profile: state?.user,
+  //     language: router.locale,
+  //     device: navigator.userAgent,
+  //     screenWidth: window?.screen?.width,
+  //     screenHeight: window?.screen?.height,
+  //   });
+  // }, [router?.locale, state?.user, cohortSession]);
 
   useEffect(async () => {
     const token = getToken();
@@ -145,6 +166,21 @@ const AuthProvider = ({ children }) => {
         handleSession(token);
         bc.auth().me()
           .then(({ data }) => {
+            ldClient?.identify({
+              key: data.id,
+              firstName: data?.first_name,
+              lastName: data?.last_name,
+              name: `${data?.first_name} ${data?.last_name}`,
+              email: data.email,
+              id: data.id,
+              custom: {
+                language: router?.locale,
+                screenWidth: window?.screen?.width,
+                screenHeight: window?.screen?.height,
+                device: navigator.userAgent,
+                version: packageJson.version,
+              },
+            });
             dispatch({
               type: 'INIT',
               payload: { user: data, isAuthenticated: true, isLoading: false },
