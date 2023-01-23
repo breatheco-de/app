@@ -56,7 +56,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'projects');
   const { slug } = params;
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`);
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`);
   const result = await response.json();
 
   if (response.status > 400 || result.asset_type !== 'PROJECT') {
@@ -103,6 +103,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       seo: {
         title,
         url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${difficulty}/${slug}`,
+        slug,
         description: description || '',
         image: preview || staticImage,
         translations,

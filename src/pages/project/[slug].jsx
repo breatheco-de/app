@@ -108,6 +108,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         image: preview || staticImage,
         description: description || '',
         url: ogUrl.en,
+        slug,
         pathConnector: '/project',
         translations,
         keywords: result?.seo_keywords || '',
