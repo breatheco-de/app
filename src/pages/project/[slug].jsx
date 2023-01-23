@@ -19,7 +19,7 @@ import { publicRedirectByAsset } from '../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`);
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=project`);
   const data = await response.json();
   // .then((res) => res.json())
   // .catch((err) => console.log(err));
@@ -108,6 +108,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         image: preview || staticImage,
         description: description || '',
         url: ogUrl.en,
+        slug,
         pathConnector: '/project',
         translations,
         keywords: result?.seo_keywords || '',

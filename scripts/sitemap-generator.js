@@ -18,28 +18,28 @@ const getReadPages = () => {
 };
 
 const getLessons = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=lesson&limit=1000`)
+  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson&limit=1000`)
     .then((res) => res.data.results)
     .catch((err) => console.log(err));
   return data;
 };
 
 const getExercises = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=exercise&limit=1000`)
+  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&limit=1000`)
     .then((res) => res.data.results)
     .catch((err) => console.log(err));
   return data;
 };
 
 const getProjects = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=project&limit=1000`)
+  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=1000`)
     .then((res) => res.data.results)
     .catch((err) => console.log(err));
   return data;
 };
 
 const getHowTo = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE&limit=1000`)
+  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=1000`)
     .then((res) => res.data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como'))
     .catch((err) => console.log(err));
   return data;

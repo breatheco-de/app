@@ -20,7 +20,7 @@ import TagCapsule from '../../../common/components/TagCapsule';
 import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE&limit=1000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=1000`);
   const data = await resp.json();
   const howToData = data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como');
 
@@ -91,6 +91,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         translations,
         pathConnector: '/how-to',
         url: ogUrl.en || `/${locale}/how-to/${slug}`,
+        slug,
         keywords: data?.seo_keywords || '',
         card: 'default',
         locales,

@@ -48,7 +48,7 @@ import GridContainer from '../../../common/components/GridContainer';
 import useStyle from '../../../common/hooks/useStyle';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&big=true`);
   const data = await resp.json();
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
@@ -125,6 +125,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         translations,
         pathConnector: '/interactive-exercise',
         url: ogUrl.en || `/${locale}/interactive-exercise/${slug}`,
+        slug,
         keywords: result?.seo_keywords || '',
         card: 'large',
         locales,
