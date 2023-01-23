@@ -21,7 +21,7 @@ import modifyEnv from '../../../../modifyEnv';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=project`);
   const data = await resp.json();
 
   projects = Object.values(data);
