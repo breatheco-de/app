@@ -157,9 +157,9 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
         </Box>
         {hasStartedCourse && (
           <Box display="flex" flexDirection="column" gridGap="6px">
-            <Progress percents={currentCohortProps?.percentage || 0} barHeight="10px" borderRadius="20px" />
+            <Progress percents={currentCohortProps?.percentage || 0} duration={0.6} barHeight="10px" borderRadius="20px" />
             <Text size="xs" color="blue.default">
-              <Counter valueTo={currentCohortProps?.percentage || 0} totalDuration={2} />
+              <Counter valueTo={currentCohortProps?.percentage || 0} totalDuration={1} />
               %
             </Text>
           </Box>
