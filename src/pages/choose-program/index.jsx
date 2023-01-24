@@ -5,6 +5,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import getT from 'next-translate/getT';
+import { useFlags } from 'launchdarkly-react-client-sdk';
 import ChooseProgram from '../../js_modules/chooseProgram';
 import Text from '../../common/components/Text';
 import bc from '../../common/services/breathecode';
@@ -54,6 +55,7 @@ function chooseProgram() {
   const { featuredColor, borderColor, lightColor } = useStyle();
   const router = useRouter();
   const toast = useToast();
+  const flags = useFlags();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
 
@@ -68,7 +70,7 @@ function chooseProgram() {
   const { isLoading, data: dataQuery } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options }, true);
 
   useEffect(() => {
-    if (dataQuery && Object.values(cohortTasks).length > 0) {
+    if (dataQuery && Object.values(cohortTasks)?.length > 0) {
       updateProgramList(dataQuery?.cohorts?.reduce((acc, value) => {
         acc[value.cohort.slug] = {
           ...state[value.cohort.slug],
@@ -189,9 +191,9 @@ function chooseProgram() {
 
   const inviteWord = () => {
     if (isPlural(invites)) {
-      return t('invite.plural-word', { invitesLength: invites.length });
+      return t('invite.plural-word', { invitesLength: invites?.length });
     }
-    return t('invite.singular-word', { invitesLength: invites.length });
+    return t('invite.singular-word', { invitesLength: invites?.length });
   };
 
   const handleChoose = (cohort) => {
@@ -214,7 +216,7 @@ function chooseProgram() {
               {t('read-to-start-learning')}
             </Text>
 
-            {invites.length > 0 && (
+            {invites?.length > 0 && (
               <Box margin="25px 0 0 0" display="flex" alignItems="center" justifyContent="space-between" padding="16px 20px" borderRadius="18px" width={['70%', '68%', '70%', '50%']} background="yellow.light">
                 <Text
                   color="black"
@@ -303,7 +305,7 @@ function chooseProgram() {
             )}
           </Box>
           <Box flex={{ base: 1, md: 0.3 }} zIndex={2} position={{ base: 'inherit', md: 'absolute' }} right={0} top={0}>
-            {liveClass?.starting_at && (
+            {flags?.appReleaseEnableLiveEvents && liveClass?.starting_at && (
               <LiveEvent
                 // liveUrl={events[0].url}
                 liveClassHash={liveClass?.hash}
@@ -323,7 +325,7 @@ function chooseProgram() {
             </Heading>
             <Box as="hr" width="100%" margin="0.5rem 0 0 0" />
           </Box>
-          {!isLoading && dataQuery.cohorts.length > 0 && (
+          {!isLoading && dataQuery.cohorts?.length > 0 && (
             <ChooseProgram chooseList={dataQuery.cohorts} handleChoose={handleChoose} />
           )}
         </Box>
