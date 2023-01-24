@@ -149,7 +149,7 @@ const LiveEvent = ({
           onClick={() => {
             // if (isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) window.open(liveUrl);
             if (isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
-              bc.events().joinLiveClass2(liveClassHash)
+              bc.events().joinLiveClass(liveClassHash)
                 .then((resp) => {
                   if (resp.data?.url) {
                     window.open(resp.data?.url);
