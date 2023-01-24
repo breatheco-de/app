@@ -240,7 +240,7 @@ const handlers = {
     const modules = cohortProgram?.json?.days || cohortProgram?.json?.modules;
     const assignmentsRecopilated = [];
 
-    modules.forEach((module) => {
+    modules?.forEach((module) => {
       const {
         assignments = [],
         lessons = [],

@@ -222,6 +222,19 @@ const calcSVGViewBox = (pathId) => {
 
 const number2DIgits = (number) => number.toString().padStart(2, '0');
 
+const sortToNearestTodayDate = (data, minutes = 30) => {
+  // sort date to the nearest today date and 30minutes after starting time
+  const currentDate = new Date();
+  currentDate.setMinutes(currentDate.getMinutes() + minutes);
+  if (data === undefined || data?.length === 0) return [];
+
+  const startedDates = data.filter((item) => new Date(item.starting_at) < currentDate);
+  const nextDates = data.filter((item) => new Date(item.starting_at) >= currentDate);
+  const sortedDates = [...startedDates, ...nextDates].sort((a, b) => new Date(a.starting_at) - new Date(b.starting_at));
+
+  return sortedDates;
+};
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
@@ -229,4 +242,5 @@ export {
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
+  sortToNearestTodayDate,
 };

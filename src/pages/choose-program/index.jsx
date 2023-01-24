@@ -12,7 +12,7 @@ import asPrivate from '../../common/context/PrivateRouteWrapper';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
-import { isPlural } from '../../utils';
+import { isPlural, sortToNearestTodayDate } from '../../utils';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
@@ -47,6 +47,7 @@ function chooseProgram() {
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
   const [events, setEvents] = useState(null);
+  const [liveClass, setLiveClass] = useState(null);
   const { state, programsList, updateProgramList } = useProgramList();
   const [cohortTasks, setCohortTasks] = useState({});
   const { user, choose } = useAuth();
@@ -133,6 +134,14 @@ function chooseProgram() {
       .then(({ data }) => {
         const eventsRemain = data.filter((l) => new Date(l.ending_at) - new Date() > 0);
         setEvents(eventsRemain);
+      });
+
+    bc.events({
+      upcoming: true,
+    }).liveClass()
+      .then((res) => {
+        const sortDateToLiveClass = sortToNearestTodayDate(res?.data);
+        setLiveClass(sortDateToLiveClass[0]);
       });
   }, []);
 
@@ -294,11 +303,12 @@ function chooseProgram() {
             )}
           </Box>
           <Box flex={{ base: 1, md: 0.3 }} zIndex={2} position={{ base: 'inherit', md: 'absolute' }} right={0} top={0}>
-            {events?.length > 0 && (
+            {events?.length > 0 && liveClass?.starting_at && (
               <LiveEvent
-                liveUrl={events[0].url}
-                liveStartsAt={new Date(events[0].starting_at)}
-                liveEndsAt={new Date(events[0].ending_at)}
+                // liveUrl={events[0].url}
+                liveClassHash={liveClass?.hash}
+                liveStartsAt={liveClass?.starting_at}
+                liveEndsAt={liveClass?.ending_at}
                 otherEvents={events}
                 // featureLabel,
               />

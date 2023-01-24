@@ -21,7 +21,8 @@ const availableLanguages = {
 };
 
 const LiveEvent = ({
-  liveUrl,
+  // liveUrl,
+  liveClassHash,
   liveStartsAt,
   liveEndsAt,
   otherEvents,
@@ -70,7 +71,7 @@ const LiveEvent = ({
   };
 
   const [isOpen, setIsOpen] = useState(false);
-  const [timeAgo, setTimeAgo] = useState(textTime(liveStartsAtDate, liveEndsAtDate));
+  const [timeAgo, setTimeAgo] = useState(liveStartsAt ? textTime(liveStartsAtDate, liveEndsAtDate) : '');
   const bgColor = useColorModeValue('white', 'gray.900');
   const bgColor2 = useColorModeValue('featuredLight', 'featuredDark');
   const textColor = useColorModeValue('black', 'white');
@@ -78,7 +79,7 @@ const LiveEvent = ({
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimeAgo(textTime(liveStartsAtDate, liveEndsAtDate));
+      setTimeAgo(liveStartsAt ? textTime(liveStartsAtDate, liveEndsAtDate) : '');
     }, 60000);
     return () => clearInterval(interval);
   }, []);
@@ -103,6 +104,7 @@ const LiveEvent = ({
       borderColor="#DADADA"
       borderRadius="11px"
       maxWidth="345px"
+      minWidth="320px"
     >
       {(featureLabel || featureReadMoreUrl) && (
       <Text
@@ -132,81 +134,125 @@ const LiveEvent = ({
         )}
       </Text>
       )}
-      <Box
-        display="flex"
-        alignItems="center"
-        background={bgColor2}
-        border={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && '2px solid'}
-        borderColor={CustomTheme.colors.blue.default2}
-        padding="10px"
-        borderRadius="50px"
-        width="90%"
-        margin="auto"
-        cursor={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && 'pointer'}
-        onClick={() => {
-          if (isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) window.open(liveUrl);
-          // bc.payment({ academy: event?.academy }).getEvent(event.id)
-          //   .then(({ data }) => {
-          //     if (data?.live_stream_url) {
-          //       window.open(data?.live_stream_url);
-          //     } else {
-          //       toast({
-          //         title: t('inactive-event'),
-          //         status: 'info',
-          //         duration: 5000,
-          //         isClosable: true,
-          //       });
-          //     }
-          //   })
-          //   .catch(() => {
-          //     toast({
-          //       title: t('no-access'),
-          //       status: 'warning',
-          //       duration: 5000,
-          //       isClosable: true,
-          //     });
-          //   });
-        }}
-      >
-        <Box
-          borderRadius="full"
-          width="50px"
-          height="50px"
-          className={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 'pulse-red' : ''}
-        >
-          <Icon
-            width="50px"
-            height="50px"
-            icon={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 'live-event' : 'live-event-opaque'}
-          />
-        </Box>
+      {liveStartsAt ? (
         <Box
           display="flex"
-          justifyContent="center"
-          flexDirection="column"
-          marginLeft="10px"
+          alignItems="center"
+          background={bgColor2}
+          border={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && '2px solid'}
+          borderColor={CustomTheme.colors.blue.default2}
+          padding="10px"
+          borderRadius="50px"
+          width="90%"
+          margin="auto"
+          cursor={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && 'pointer'}
+          onClick={() => {
+            // if (isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) window.open(liveUrl);
+            if (isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
+              bc.events().joinLiveClass(liveClassHash)
+                .then((resp) => {
+                  if (resp.data?.url) {
+                    window.open(resp.data?.url);
+                  } else {
+                    toast({
+                      title: t('alert-message:no-link-exist'),
+                      status: 'info',
+                      duration: 4000,
+                      isClosable: true,
+                    });
+                  }
+                })
+                .catch(() => {
+                  toast({
+                    title: t('alert-message:something-went-wrong'),
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true,
+                  });
+                });
+            }
+          }}
         >
-          <Text
-            fontSize="md"
-            lineHeight="18px"
-            fontWeight="900"
-            color={textColor}
-            marginBottom="5px"
-            marginTop="0"
+          <Box
+            borderRadius="full"
+            width="50px"
+            height="50px"
+            className={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 'pulse-red' : ''}
           >
-            {stTranslation ? stTranslation[lang]['live-event']['live-class'] : t('live-class')}
-          </Text>
-          <Text
-            fontSize="md"
-            lineHeight="18px"
-            fontWeight="700"
-            color={textGrayColor}
-            margin="0"
+            <Icon
+              width="50px"
+              height="50px"
+              icon={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 'live-event' : 'live-event-opaque'}
+            />
+          </Box>
+          <Box
+            display="flex"
+            justifyContent="center"
+            flexDirection="column"
+            marginLeft="10px"
           >
-            {timeAgo}
-          </Text>
+            <Text
+              fontSize="md"
+              lineHeight="18px"
+              fontWeight="900"
+              color={textColor}
+              marginBottom="5px"
+              marginTop="0"
+            >
+              {stTranslation ? stTranslation[lang]['live-event']['live-class'] : t('live-class')}
+            </Text>
+            <Text
+              fontSize="md"
+              lineHeight="18px"
+              fontWeight="700"
+              color={textGrayColor}
+              margin="0"
+            >
+              {timeAgo}
+            </Text>
+          </Box>
         </Box>
-      </Box>
+      ) : (
+        <Box
+          display="flex"
+          alignItems="center"
+          background={bgColor2}
+          // border={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && '2px solid'}
+          borderColor=""
+          padding="10px"
+          borderRadius="50px"
+          width="90%"
+          margin="auto"
+          // cursor={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && 'pointer'}
+        >
+          <Box
+            display="flex"
+            justifyContent="center"
+            flexDirection="column"
+            marginLeft="10px"
+          >
+            <Text
+              fontSize="md"
+              lineHeight="18px"
+              fontWeight="900"
+              color={textColor}
+              marginBottom="5px"
+              marginTop="0"
+            >
+              {stTranslation ? stTranslation[lang]['live-event']['live-class'] : t('live-class')}
+            </Text>
+            <Text
+              fontSize="md"
+              lineHeight="18px"
+              fontWeight="700"
+              color={textGrayColor}
+              margin="0"
+            >
+              {stTranslation ? stTranslation[lang]['live-event']['no-live-class'] : t('no-live-class')}
+            </Text>
+          </Box>
+        </Box>
+      )}
       {isOpen && (
         <Box marginTop="10px">
           {otherEvents.map((event) => {
@@ -280,7 +326,7 @@ const LiveEvent = ({
                     marginBottom="0"
                     marginTop="0"
                   >
-                    {textTime(startsAt, endsAt)}
+                    {liveStartsAt ? textTime(startsAt, endsAt) : ''}
                   </Text>
                 </Box>
               </Box>
@@ -324,9 +370,10 @@ LiveEvent.propTypes = {
   otherEvents: PropTypes.arrayOf(PropTypes.any),
   stTranslation: PropTypes.objectOf(PropTypes.any),
   startingSoonDelta: PropTypes.number,
-  liveUrl: PropTypes.string.isRequired,
+  // liveUrl: PropTypes.string.isRequired,
   featureLabel: PropTypes.string,
   featureReadMoreUrl: PropTypes.string,
+  liveClassHash: PropTypes.string,
 };
 
 LiveEvent.defaultProps = {
@@ -335,6 +382,7 @@ LiveEvent.defaultProps = {
   startingSoonDelta: 30,
   featureLabel: null,
   featureReadMoreUrl: null,
+  liveClassHash: null,
 };
 
 export default LiveEvent;
