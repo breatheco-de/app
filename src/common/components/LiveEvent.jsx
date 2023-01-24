@@ -334,7 +334,7 @@ const LiveEvent = ({
           })}
         </Box>
       )}
-      {otherEvents.length !== 0 && (
+      {otherEvents?.length !== 0 && (
         <Button
           variant="ghost"
           height="auto"
@@ -351,7 +351,7 @@ const LiveEvent = ({
             setIsOpen(!isOpen);
           }}
         >
-          {otherEvents.filter((e) => isLiveOrStarting(new Date(e.starting_at), new Date(e.ending_at))).length !== 0 && (
+          {otherEvents.filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ending_at)))?.length !== 0 && (
             <Box borderRadius="full" background="none" className="pulse-red" width="16px" height="16px" display="inline-block" marginRight="5px">
               <Icon width="16px" height="16px" icon="on-live" />
             </Box>
