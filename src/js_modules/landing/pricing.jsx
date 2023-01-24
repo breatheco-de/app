@@ -111,7 +111,7 @@ const Pricing = ({ data }) => {
           </Fragment>
         ))}
         <Box mt="38px">
-          {flags?.enableSignup ? (
+          {flags?.appReleaseEnableCourseSignup ? (
             <Button
               variant="default"
               onClick={() => {
