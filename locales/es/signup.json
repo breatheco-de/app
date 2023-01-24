@@ -44,7 +44,10 @@
     "will-pay-month": "Pagará ${{price}} dólares {{qty_months}} vez, por un total de ${{total_amount}}.",
     "will-pay-now": "Pagará ${{price} ahora mismo, no se aplicarán otros cargos en el futuro.",
     "will-pay-per-month": "Te suscribirás y pagarás ${{price}} dólares cada mes",
-    "will-pay-per-year": "Te suscribirás y pagarás ${{price}} dólares cada año"
+    "will-pay-per-year": "Te suscribirás y pagarás ${{price}} dólares cada año",
+    "monthly": "Mensual",
+    "yearly": "Anual",
+    "financing": "Financiado"
   },
   "validators": {
     "owner_name-required": "El nombre del propietario es requerido",
