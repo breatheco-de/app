@@ -305,15 +305,15 @@ const LiveEvent = ({
                               isClosable: true,
                             });
                           }
-                        })
-                        .catch(() => {
-                          toast({
-                            title: t('no-access'),
-                            status: 'error',
-                            duration: 5000,
-                            isClosable: true,
-                          });
                         });
+                      // .catch(() => {
+                      //   toast({
+                      //     title: t('no-access'),
+                      //     status: 'error',
+                      //     duration: 5000,
+                      //     isClosable: true,
+                      //   });
+                      // });
                     }}
                   >
                     {event.title}
