@@ -12,7 +12,7 @@ import asPrivate from '../../common/context/PrivateRouteWrapper';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
-import { isPlural } from '../../utils';
+import { isPlural, sortToNearestTodayDate } from '../../utils';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
@@ -128,18 +128,6 @@ function chooseProgram() {
   }, [dataQuery?.id]);
 
   const userID = user?.id;
-
-  const sortToNearestTodayDate = (data) => {
-    // sort date to the nearest today date and 30minutes after starting time
-    const currentDate = new Date();
-    currentDate.setMinutes(currentDate.getMinutes() + 30);
-
-    const startedDates = data.filter((item) => new Date(item.starting_at) < currentDate);
-    const nextDates = data.filter((item) => new Date(item.starting_at) >= currentDate);
-    const sortedDates = [...startedDates, ...nextDates].sort((a, b) => new Date(a.starting_at) - new Date(b.starting_at));
-
-    return sortedDates;
-  };
 
   useEffect(() => {
     bc.payment().events()
