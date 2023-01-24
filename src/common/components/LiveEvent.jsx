@@ -103,7 +103,7 @@ const LiveEvent = ({
       border="1px solid"
       borderColor="#DADADA"
       borderRadius="11px"
-      maxWidth="320"
+      maxWidth="320px"
       minWidth="320px"
     >
       {(featureLabel || featureReadMoreUrl) && (
@@ -305,15 +305,15 @@ const LiveEvent = ({
                               isClosable: true,
                             });
                           }
+                        })
+                        .catch(() => {
+                          toast({
+                            title: t('no-access'),
+                            status: 'error',
+                            duration: 5000,
+                            isClosable: true,
+                          });
                         });
-                      // .catch(() => {
-                      //   toast({
-                      //     title: t('no-access'),
-                      //     status: 'error',
-                      //     duration: 5000,
-                      //     isClosable: true,
-                      //   });
-                      // });
                     }}
                   >
                     {event.title}
