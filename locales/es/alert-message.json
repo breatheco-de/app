@@ -65,5 +65,6 @@
   "no-access-to-cohort": "No perteneces o no tienes acceso para ver las asistencias de esta cohorte",
   "no-attendance-list-found": "No se encontró lista de asistencia",
   "error-mentorship-service": "Hubo un error al cargar los servicios de tutoría.",
-  "error-finding-mentors": "Algo salió mal al buscar mentores para este servicio"
+  "error-finding-mentors": "Algo salió mal al buscar mentores para este servicio",
+  "no-link-exist": "Aun no existe un enlace para este evento"
 }
