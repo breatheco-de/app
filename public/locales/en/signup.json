@@ -44,7 +44,10 @@
     "will-pay-month": "You will pay ${{price}} dollars {{qty_months}} time, for a total of ${{total_amount}}.",
     "will-pay-now" : "You will pay ${{price} right now, no other charges apply in the future.",
     "will-pay-per-month": "You will subscribe and pay ${{price}} dollars every month",
-    "will-pay-per-year": "You will subscribe and pay ${{price}} dollars every year"
+    "will-pay-per-year": "You will subscribe and pay ${{price}} dollars every year",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "financing": "Financing"
   },
   "validators": {
     "owner_name-required": "Owner name is required",

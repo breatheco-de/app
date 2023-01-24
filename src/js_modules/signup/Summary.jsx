@@ -28,12 +28,17 @@ const Summary = ({
   const fontColor = useColorModeValue('gray.800', 'gray.300');
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const borderColor2 = useColorModeValue('black', 'white');
-  const { backgroundColor, borderColor } = useStyle();
+  const { backgroundColor, borderColor, lightColor } = useStyle();
   const router = useRouter();
   const { plan } = router.query;
 
   // const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
   const isNotTrial = !checkoutData?.isTrial;
+  const periodText = {
+    MONTH: t('info.monthly'),
+    YEAR: t('info.yearly'),
+    FINANCING: t('info.financing'),
+  };
 
   const getPlanProps = (selectedPlan) => {
     bc.payment().getPlanProps(encodeURIComponent(selectedPlan.slug))
@@ -344,6 +349,7 @@ const Summary = ({
               .filter((l) => l.status === 'ACTIVE')
               .map((item, i) => {
                 const title = item?.title ? item?.title : toCapitalize(unSlugify(String(item?.slug)));
+                const isSelected = selectedPlanCheckoutData?.period === item?.period;
                 return (
                   <Fragment key={`${item?.slug}-${item?.title}`}>
                     <Box
@@ -362,7 +368,7 @@ const Summary = ({
                       gridGap={{ base: '0', md: '12px' }}
                       cursor="pointer"
                       // background={selectedIndex !== i && featuredColor}
-                      border={selectedPlanCheckoutData?.period === item.period ? '2px solid #0097CD' : '2px solid transparent'}
+                      border={isSelected ? '2px solid #0097CD' : '2px solid transparent'}
                       borderRadius="13px"
                     >
                       <Box
@@ -376,6 +382,9 @@ const Summary = ({
                         <Box fontSize="18px" fontWeight="700">
                           {title}
                         </Box>
+                        <Text fontSize="14px" color={isSelected ? 'blue.default' : lightColor} fontWeight={isSelected ? 700 : 400}>
+                          {periodText[item?.period] || ''}
+                        </Text>
                       </Box>
                       <Box display="flex" alignItems="center" gridGap="10px">
                         <Heading
