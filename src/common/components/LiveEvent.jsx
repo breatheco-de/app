@@ -103,7 +103,7 @@ const LiveEvent = ({
       border="1px solid"
       borderColor="#DADADA"
       borderRadius="11px"
-      maxWidth="345px"
+      maxWidth="320"
       minWidth="320px"
     >
       {(featureLabel || featureReadMoreUrl) && (
@@ -202,7 +202,7 @@ const LiveEvent = ({
               {stTranslation ? stTranslation[lang]['live-event']['live-class'] : t('live-class')}
             </Text>
             <Text
-              fontSize="md"
+              fontSize="sm"
               lineHeight="18px"
               fontWeight="700"
               color={textGrayColor}
@@ -319,7 +319,7 @@ const LiveEvent = ({
                     {event.title}
                   </Link>
                   <Text
-                    fontSize="md"
+                    fontSize="sm"
                     lineHeight="18px"
                     fontWeight="500"
                     color={textGrayColor}
