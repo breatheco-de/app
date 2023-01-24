@@ -210,6 +210,15 @@ const breathecode = {
       events: () => axios.get(`${host}/events/me?${qs}`),
     };
   },
+  events: (query = {}) => {
+    const url = `${host}/events/me`;
+    const qs = parseQuerys(query);
+    return {
+      // get: () => axios.get(`${url}/event?${qs}`),
+      liveClass: () => axios.get(`${url}/event/liveclass?${qs}`),
+      joinLiveClass: (liveClassHash) => axios.get(`${url}/event/liveclass/join/${liveClassHash}?${qs}`),
+    };
+  },
 };
 
 export default breathecode;

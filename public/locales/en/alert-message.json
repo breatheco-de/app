@@ -66,5 +66,6 @@
   "no-access-to-cohort": "You do not belong or do not have access to see the attendances of this cohort",
   "no-attendance-list-found": "No attendance list found",
   "error-mentorship-service": "There was an error loading the mentorship services",
-  "error-finding-mentors": "Something went wrong while looking for mentors for this service"
+  "error-finding-mentors": "Something went wrong while looking for mentors for this service",
+  "no-link-exist": "There is no link for this event yet"
 }
