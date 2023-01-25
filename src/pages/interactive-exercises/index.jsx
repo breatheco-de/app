@@ -39,24 +39,15 @@ export const getStaticProps = async ({ locale, locales }) => {
     console.error(`Error ${resp.status}: fetching Exercises list for /interactive-exercises`);
   }
 
-  const technologiesResponse = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=exercise&limit=1000`,
-    {
-      Accept: 'application/json, text/plain, */*',
-    },
-  );
-
-  if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /interactive-exercises`);
-  } else {
-    console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-exercises`);
-  }
-
-  const technologies = await technologiesResponse.json();
-
   let technologyTags = [];
   let difficulties = [];
 
+  // const technologiesResponse = await fetch(
+  //   `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=exercise&limit=1000`,
+  //   {
+  //     Accept: 'application/json, text/plain, */*',
+  //   },
+  // );
   const technologiesResponse = await fetch(
     `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=exercise&limit=1000`,
     {
