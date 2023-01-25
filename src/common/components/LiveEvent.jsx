@@ -258,6 +258,7 @@ const LiveEvent = ({
           {otherEvents.map((event) => {
             const startsAt = event?.starting_at && new Date(event.starting_at);
             const endsAt = event?.ending_at && new Date(event.ending_at);
+            console.log('event:::', event);
             return (
               <Box
                 display="flex"
@@ -277,10 +278,9 @@ const LiveEvent = ({
                   marginLeft="10px"
                 >
                   <Link
-                    // target="_blank"
-                    // rel="noopener noreferrer"
-                    // href={featureReadMoreUrl || event?.liveUrl || '#'}
-                    href={featureReadMoreUrl || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={featureReadMoreUrl || event?.live_url || event?.liveUrl || '#'}
                     color={textColor}
                     fontSize="md"
                     lineHeight="18px"
@@ -290,31 +290,31 @@ const LiveEvent = ({
                     marginTop="0"
                     locale="en"
                     fontFamily="Lato, Sans-serif"
-                    onClick={(e) => {
-                      e?.preventDefault();
+                    // onClick={(e) => {
+                    //   e?.preventDefault();
 
-                      bc.payment({ academy: event?.academy }).getEvent(event.id)
-                        .then(({ data }) => {
-                          if (data?.live_stream_url) {
-                            window.open(data?.live_stream_url);
-                          } else {
-                            toast({
-                              title: t('inactive-event'),
-                              status: 'info',
-                              duration: 5000,
-                              isClosable: true,
-                            });
-                          }
-                        })
-                        .catch(() => {
-                          toast({
-                            title: t('no-access'),
-                            status: 'error',
-                            duration: 5000,
-                            isClosable: true,
-                          });
-                        });
-                    }}
+                    //   bc.payment({ academy: event?.academy }).getEvent(event.id)
+                    //     .then(({ data }) => {
+                    //       if (data?.live_stream_url) {
+                    //         window.open(data?.live_stream_url);
+                    //       } else {
+                    //         toast({
+                    //           title: t('inactive-event'),
+                    //           status: 'info',
+                    //           duration: 5000,
+                    //           isClosable: true,
+                    //         });
+                    //       }
+                    //     })
+                    //     .catch(() => {
+                    //       toast({
+                    //         title: t('no-access'),
+                    //         status: 'error',
+                    //         duration: 5000,
+                    //         isClosable: true,
+                    //       });
+                    //     });
+                    // }}
                   >
                     {event.title}
                   </Link>
