@@ -4,6 +4,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import { useFlags } from 'launchdarkly-react-client-sdk';
 import Icon from '../Icon';
 import Text from '../Text';
 import bc from '../../services/breathecode';
@@ -17,6 +18,7 @@ const SupportSidebar = ({
   const { t } = useTranslation();
   const [programServices, setProgramServices] = usePersistent('programServices', []);
   const [openMentors, setOpenMentors] = useState(false);
+  const flags = useFlags();
 
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
 
@@ -45,17 +47,17 @@ const SupportSidebar = ({
       borderRadius="lg"
       overflow="hidden"
     >
-      <Box d="flex" justifyContent="center">
+      <Box display="flex" justifyContent="center">
         <Icon icon="sideSupport" width="85px" height="50px" />
       </Box>
       <Box p="4" pb="30px" pt="20px">
-        <Box d="flex" alignItems="baseline" justifyContent="center">
+        <Box display="flex" alignItems="baseline" justifyContent="center">
           <Heading fontSize="xsm" textAlign="center" justify="center" mt="0px" mb="0px">
             {title}
           </Heading>
         </Box>
 
-        <Box d="flex" alignItems="baseline" justifyContent="center">
+        <Box display="flex" alignItems="baseline" justifyContent="center">
           <Text size="md" textAlign="center" mt="10px" px="0px">
             {subtitle}
           </Text>
@@ -153,6 +155,7 @@ const SupportSidebar = ({
     <Mentoring
       programServices={programServices}
       setOpenMentors={setOpenMentors}
+      flags={flags}
     />
   );
 };
