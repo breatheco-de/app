@@ -258,7 +258,6 @@ const LiveEvent = ({
           {otherEvents.map((event) => {
             const startsAt = event?.starting_at && new Date(event.starting_at);
             const endsAt = event?.ending_at && new Date(event.ending_at);
-            console.log('event:::', event);
             return (
               <Box
                 display="flex"
