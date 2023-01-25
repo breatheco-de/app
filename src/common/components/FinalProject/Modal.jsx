@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Modal, ModalCloseButton, ModalContent, ModalOverlay } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
@@ -19,15 +19,13 @@ const FinalProjectModal = ({ storyConfig, isOpen, cohortData, studentsData }) =>
     <>
       <Modal isOpen={isModalOpen && !openForm} onClose={setIsModalOpen}>
         <ModalOverlay />
-        <ModalContent maxWidth="960px" margin="6rem 0 4rem 0">
+        <ModalContent maxWidth="1045px" margin="6rem 10px 4rem 10px">
           <ModalCloseButton />
-          <Flex gridGap="22px" padding="30px">
-            <Box flex={0.6} backgroundColor="yellow.default" borderRadius="17px" padding="20px">
-              <Heading size="90px" color="white" textTransform="uppercase">
-                {finalProjectTranslation?.modal?.title || t('modal.title')}
-              </Heading>
+          <Flex flexDirection={{ base: 'column', md: 'row' }} gridGap="22px" padding="30px">
+            <Box display="flex" alignItems="center" flex={0.6} borderRadius="17px">
+              <Image src="static/images/final_project.gif" objectFit="cover" borderRadius="17px" margin="0 auto" w="100%" h="100%" layout="fill" zIndex={10} top="0" left="0" />
             </Box>
-            <Flex flexDirection="column" flex={0.4} width="100%" gridGap="16px" padding="20px">
+            <Flex flexDirection="column" flex={0.4} width="100%" gridGap="16px" padding={{ base: '0', md: '20px' }}>
               <Heading size="sm" color={lightColor} letterSpacing="0.05em">
                 {finalProjectTranslation?.modal?.subtitle || t('modal.subtitle')}
               </Heading>
