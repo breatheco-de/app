@@ -40,35 +40,26 @@ export const getStaticProps = async ({ locale, locales }) => {
     console.error(`Error ${resp.status}: fetching How To's list for /how-to`);
   }
 
-  const technologiesResponse = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=exercise&limit=1000`,
-    {
-      Accept: 'application/json, text/plain, */*',
-    },
-  );
-
-  if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /interactive-exercises`);
-  } else {
-    console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-exercises`);
-  }
-
-  const technologies = await technologiesResponse.json();
-
   let technologyTags = [];
   let difficulties = [];
 
+  // const technologiesResponse = await fetch(
+  //   `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=ARTICLE&limit=1000`,
+  //   {
+  //     Accept: 'application/json, text/plain, */*',
+  //   },
+  // );
   const technologiesResponse = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=exercise&limit=1000`,
+    `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=ARTICLE&limit=1000`,
     {
       Accept: 'application/json, text/plain, */*',
     },
   );
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /interactive-exercises`);
+    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /how-to`);
   } else {
-    console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-exercises`);
+    console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /how-to`);
   }
 
   const technologies = await technologiesResponse.json();
