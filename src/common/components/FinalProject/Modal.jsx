@@ -7,23 +7,27 @@ import Heading from '../Heading';
 import Text from '../Text';
 import FinalProjectForm from './Form';
 
-const FinalProjectModal = ({ storyConfig, isOpen, cohortData, studentsData }) => {
+const FinalProjectModal = ({ storyConfig, isOpen, cohortData, studentsData, closeModal }) => {
   const { t } = useTranslation('final-project');
-  const [isModalOpen, setIsModalOpen] = useState(isOpen || false);
+  // const [isModalOpen, setIsModalOpen] = useState(isOpen || false);
   const [openForm, setOpenForm] = useState(false);
   const finalProjectTranslation = storyConfig?.translation?.[storyConfig?.locale]['final-project'];
   const bullets = finalProjectTranslation?.modal?.bullets || t('modal.bullets', {}, { returnObjects: true });
   const { lightColor } = useStyle();
 
+  const handleClose = () => {
+    closeModal();
+    setOpenForm(false);
+  };
   return (
     <>
-      <Modal isOpen={isModalOpen && !openForm} onClose={setIsModalOpen}>
+      <Modal isOpen={isOpen} onClose={closeModal}>
         <ModalOverlay />
         <ModalContent maxWidth="1045px" margin="6rem 10px 4rem 10px">
           <ModalCloseButton />
           <Flex flexDirection={{ base: 'column', md: 'row' }} gridGap="22px" padding="30px">
             <Box display="flex" alignItems="center" flex={0.6} borderRadius="17px">
-              <Image src="static/images/final_project.gif" objectFit="cover" borderRadius="17px" margin="0 auto" w="100%" h="100%" layout="fill" zIndex={10} top="0" left="0" />
+              <Image src="/static/images/final_project.gif" objectFit="cover" borderRadius="17px" margin="0 auto" w="100%" h="100%" layout="fill" zIndex={10} top="0" left="0" />
             </Box>
             <Flex flexDirection="column" flex={0.4} width="100%" gridGap="16px" padding={{ base: '0', md: '20px' }}>
               <Heading size="sm" color={lightColor} letterSpacing="0.05em">
@@ -45,11 +49,16 @@ const FinalProjectModal = ({ storyConfig, isOpen, cohortData, studentsData }) =>
         </ModalContent>
       </Modal>
       {openForm && (
-        <Modal size="lg" isOpen={isOpen} onClose={setOpenForm}>
+        <Modal size="lg" isOpen={openForm} onClose={setOpenForm}>
           <ModalOverlay />
           <ModalContent margin="5rem 0 4rem 0" borderRadius="13px">
             <ModalCloseButton />
-            <FinalProjectForm storyConfig={storyConfig} cohortData={cohortData} studentsData={studentsData} />
+            <FinalProjectForm
+              storyConfig={storyConfig}
+              cohortData={cohortData}
+              studentsData={studentsData}
+              handleClose={handleClose}
+            />
           </ModalContent>
         </Modal>
       )}
@@ -61,13 +70,15 @@ FinalProjectModal.propTypes = {
   storyConfig: PropTypes.objectOf(PropTypes.any),
   isOpen: PropTypes.bool,
   cohortData: PropTypes.objectOf(PropTypes.any),
-  studentsData: PropTypes.objectOf(PropTypes.any),
+  studentsData: PropTypes.arrayOf(PropTypes.object),
+  closeModal: PropTypes.func,
 };
 FinalProjectModal.defaultProps = {
   storyConfig: {},
   isOpen: false,
   cohortData: {},
-  studentsData: {},
+  studentsData: [],
+  closeModal: () => {},
 };
 
 export default FinalProjectModal;

@@ -514,7 +514,9 @@ const Dashboard = () => {
                 />
               )}
               {cohortSession?.stage === 'FINAL_PROJECT' && (
-                <FinalProject />
+                <FinalProject
+                  studentAndTeachers={studentAndTeachers}
+                />
               )}
               <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
                 <TeacherSidebar
