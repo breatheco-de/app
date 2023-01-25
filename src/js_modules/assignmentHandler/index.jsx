@@ -28,6 +28,8 @@ const DeliverModal = ({
   const fontColor = useColorModeValue('gra.dark', 'gray.250');
   const labelColor = useColorModeValue('gray.600', 'gray.200');
   const commonBorderColor = useColorModeValue('gray.250', 'gray.500');
+  const router = useRouter();
+  const { academy } = router.query;
   const taskIsIgnored = currentTask?.revision_status === 'IGNORED';
 
   useEffect(() => {
@@ -43,10 +45,11 @@ const DeliverModal = ({
       <Button
         variant="outline"
         isLoading={isLoading}
-        onClick={async () => {
+        onClick={() => {
           setIsLoading(true);
           bc.todo().deliver({
             id: currentTask.id,
+            academy,
           })
             .then(({ data }) => {
               setDeliveryUrl(data.delivery_url);
