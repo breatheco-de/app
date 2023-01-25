@@ -73,6 +73,7 @@ const CustomTheme = extendTheme({
     gray: {
       default: '#A4A4A4',
       light: '#F5F5F5',
+      light2: '#FAFAFA',
       dark: '#3A3A3A',
       100: '#EDF2F7',
       200: '#E2E8F0',

@@ -33,7 +33,7 @@ const DesktopNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
   });
 
   return (
-    <Stack className="hideOverflowX__" direction="row" overflow={{ base: 'auto', lg: 'auto' }} width="60vw" spacing={4} alignItems="center">
+    <Stack className="hideOverflowX__" direction="row" width="60vw" spacing={4} alignItems="center">
       {privateItems.length > 0 && privateItems.map((privateItem) => (
         <DesktopItem key={privateItem.label} item={privateItem} />
       ))}

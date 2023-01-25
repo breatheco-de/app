@@ -2,6 +2,7 @@ import {
   Box, Flex, Heading,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import handlers from '../../handlers';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 import Counter from '../ProgressCircle/Counter';
@@ -11,50 +12,9 @@ import Progress from './Progress';
 const ProgressBar = ({
   progressText, taskTodo, width,
 }) => {
-  const allLessons = taskTodo.filter((l) => l.task_type === 'LESSON');
-  const allExercises = taskTodo.filter((e) => e.task_type === 'EXERCISE');
-  const allProjects = taskTodo.filter((p) => p.task_type === 'PROJECT');
-  const allQuiz = taskTodo.filter((q) => q.task_type === 'QUIZ');
   const { fontColor } = useStyle();
 
-  const allTasks = [
-    {
-      title: 'Lesson',
-      icon: 'book',
-      taskLength: allLessons.length,
-      completed: allLessons.filter((l) => l.task_status === 'DONE').length,
-    },
-    {
-      title: 'Exercise',
-      icon: 'strength',
-      taskLength: allExercises.length,
-      completed: allExercises.filter((e) => e.task_status === 'DONE').length,
-    },
-    {
-      title: 'Project',
-      icon: 'code',
-      taskLength: allProjects.length,
-      completed: allProjects.filter((p) => p.task_status === 'DONE').length,
-    },
-    {
-      title: 'Quiz',
-      icon: 'answer',
-      taskLength: allQuiz.length,
-      completed: allQuiz.filter((q) => q.task_status === 'DONE').length,
-    },
-  ];
-
-  const calculatePercentage = () => {
-    let sumTaskCompleted = 0;
-    let sumTaskLength = 0;
-    for (let i = 0; i < allTasks.length; i += 1) {
-      sumTaskCompleted += allTasks[i].completed;
-      sumTaskLength += allTasks[i].taskLength;
-    }
-    return Math.trunc((sumTaskCompleted / sumTaskLength) * 100);
-  };
-  const percentage = calculatePercentage() || 0;
-
+  const { allTasks, percentage } = handlers.handleTasks(taskTodo);
   return (
     <Box width={width || '100%'}>
       <Flex marginBottom="15px" gridGap="10px" align="center">

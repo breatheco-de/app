@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import {
+  QueryClient,
+  QueryClientProvider,
+} from 'react-query';
+import { withLDProvider } from 'launchdarkly-react-client-sdk';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import '../../styles/globals.css';
+import '../../styles/react-tags-input.css';
 import '../../styles/markdown.css';
 import '../../styles/phoneInput/index.css';
 import TagManager from 'react-gtm-module';
@@ -26,6 +33,8 @@ function App({ Component, pageProps }) {
   const [haveSession, setHaveSession] = useState(false);
   const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
 
+  const queryClient = new QueryClient();
+
   useEffect(() => {
     TagManager.initialize({ gtmId: process.env.TAG_MANAGER_KEY });
   }, []);
@@ -45,7 +54,7 @@ function App({ Component, pageProps }) {
   };
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <Helmet
         {...pageProps.seo}
       />
@@ -59,7 +68,8 @@ function App({ Component, pageProps }) {
           </ChakraProvider>
         </ConnectionProvider>
       </AuthProvider>
-    </>
+      <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+    </QueryClientProvider>
   );
 }
 
@@ -67,4 +77,9 @@ App.propTypes = {
   pageProps: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
   Component: PropTypes.elementType.isRequired,
 };
-export default wrapper.withRedux(App);
+export default withLDProvider({
+  clientSideID: process.env.LD_CLIENT_ID,
+  options: {
+    bootstrap: 'localStorage',
+  },
+})(wrapper.withRedux(App));

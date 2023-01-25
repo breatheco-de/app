@@ -16,36 +16,45 @@ import { setStorageItem } from '../../utils';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
 import useCustomToast from '../../common/hooks/useCustomToast';
+import modifyEnv from '../../../modifyEnv';
+import useSignup from '../../common/store/actions/signupAction';
 
 const ContactInformation = ({
-  stepIndex, setStepIndex, courseChoosed, location, queryCohortIdExists, dateProps,
+  courseChoosed,
   formProps, setFormProps,
 
 }) => {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
+  const {
+    state, nextStep,
+  } = useSignup();
+  const { stepIndex, dateProps, location } = state;
   const router = useRouter();
   const toast = useToast();
   const toastIdRef = useRef();
   const { featuredColor } = useStyle();
+
+  const { syllabus } = router.query;
+
   const { createToast } = useCustomToast({
     toastIdRef,
     status: 'info',
-    title: 'Already have an account?',
+    title: t('alert-message.title'),
     content: (
-      // TODO: add translations
       <Box>
-        It seems that you already have an account, please check your email inbox for any messages from
+        {t('alert-message.message1')}
         {' '}
         <NextChakraLink variant="default" color="blue.200" href="/">4Geeks.com</NextChakraLink>
         .
         <br />
-        If you know your password
+        {t('alert-message.message2')}
         {' '}
-        <NextChakraLink variant="default" color="blue.200" href="/login" redirectAfterLogin>click here to login now</NextChakraLink>
+        <NextChakraLink variant="default" color="blue.200" href="/login" redirectAfterLogin>{t('alert-message.click-here-to-login')}</NextChakraLink>
         {' '}
-        or click here on
+        {t('alert-message.or-click-here')}
         {' '}
-        <NextChakraLink variant="default" color="blue.200" href="#">forgot password to get a new one</NextChakraLink>
+        <NextChakraLink variant="default" color="blue.200" href="#">{t('alert-message.message3')}</NextChakraLink>
         .
       </Box>
     ),
@@ -72,7 +81,7 @@ const ContactInformation = ({
   });
 
   const handleSubmit = async (actions, allValues) => {
-    const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/auth/subscribe/`, {
+    const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -83,19 +92,15 @@ const ContactInformation = ({
     const data = await resp.json();
     if (resp.status < 400) {
       setStorageItem('subscriptionId', data.id);
-      setStepIndex(1);
 
       if (data?.access_token) {
         router.push({
           query: {
+            ...router.query,
             token: data.access_token,
           },
         });
-        if (queryCohortIdExists && dateProps) {
-          setStepIndex(2);
-        } else {
-          setStepIndex(stepIndex + 1);
-        }
+        nextStep();
       } else {
         router.push('/thank-you');
       }
@@ -116,15 +121,6 @@ const ContactInformation = ({
 
   return (
     <>
-      <Box display="flex">
-        <Heading size="18px">{t('about-you')}</Heading>
-        <Flex fontSize="13px" ml="1rem" p="2px 8px" backgroundColor={featuredColor} alignItems="center" borderRadius="4px" gridGap="6px">
-          {t('already-have-account')}
-          {' '}
-          <NextChakraLink href="/login" redirectAfterLogin fontSize="12px" variant="default">{t('login-here')}</NextChakraLink>
-        </Flex>
-      </Box>
-
       <Formik
         initialValues={{
           first_name: '',
@@ -134,19 +130,23 @@ const ContactInformation = ({
           confirm_email: '',
         }}
         onSubmit={(values, actions) => {
+          const allValues = {
+            ...values,
+            course: courseChoosed,
+            country: location?.country,
+            cohort: dateProps?.id,
+            syllabus,
+            city: location?.city,
+            language: router.locale,
+          };
+
           if (stepIndex !== 2) {
-            const allValues = {
-              ...values,
-              course: courseChoosed,
-              country: location?.country,
-              city: location?.city,
-              language: router.locale,
-            };
             handleSubmit(actions, allValues);
           }
         }}
         validationSchema={signupValidation}
       >
+
         {({ isSubmitting }) => (
           <Form
             style={{
@@ -155,7 +155,15 @@ const ContactInformation = ({
               gridGap: '22px',
             }}
           >
-            <Box display="flex" gridGap="18px">
+            <Box display="flex" flexDirection={{ base: 'column', md: 'row' }}>
+              <Heading size="18px">{t('about-you')}</Heading>
+              <Flex fontSize="13px" ml={{ base: '0', md: '1rem' }} mt={{ base: '8px', md: '0' }} p="2px 8px" backgroundColor={featuredColor} alignItems="center" borderRadius="4px" gridGap="6px">
+                {t('already-have-account')}
+                {' '}
+                <NextChakraLink href="/login" redirectAfterLogin fontSize="12px" variant="default">{t('login-here')}</NextChakraLink>
+              </Flex>
+            </Box>
+            <Box display="flex" gridGap="18px" flexDirection={{ base: 'column', md: 'row' }}>
               <Box display="flex" gridGap="18px" flex={0.5}>
                 <FieldForm
                   type="text"
@@ -234,22 +242,13 @@ const ContactInformation = ({
 };
 
 ContactInformation.propTypes = {
-  stepIndex: PropTypes.number.isRequired,
-  setStepIndex: PropTypes.func,
   courseChoosed: PropTypes.string.isRequired,
-  location: PropTypes.objectOf(PropTypes.any),
-  queryCohortIdExists: PropTypes.bool,
-  dateProps: PropTypes.objectOf(PropTypes.any),
   formProps: PropTypes.objectOf(PropTypes.any).isRequired,
   setFormProps: PropTypes.func,
 };
 
 ContactInformation.defaultProps = {
-  dateProps: {},
-  setStepIndex: () => {},
-  queryCohortIdExists: false,
   setFormProps: () => {},
-  location: {},
 };
 
 export default ContactInformation;

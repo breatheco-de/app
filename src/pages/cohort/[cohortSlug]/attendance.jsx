@@ -135,41 +135,45 @@ const Attendance = () => {
     const slug = findSelectedCohort?.slug || cohortSlug || defaultCohort?.slug;
 
     setSelectedCohort(findSelectedCohort || defaultCohort);
-    handlers.getActivities(slug, academyId)
-      .then((daysLog) => {
-        if (Object.keys(daysLog).length <= 0) {
-          setCurrentDaysLog({});
+    if (academyId) {
+      handlers.getActivities(slug, academyId)
+        .then((daysLog) => {
+          if (Object.keys(daysLog).length <= 0) {
+            setCurrentDaysLog({});
+            toast({
+              title: t('alert-message:no-attendance-list-found'),
+              status: 'warning',
+              duration: 7000,
+              isClosable: true,
+            });
+          } else {
+            setCurrentDaysLog(daysLog);
+          }
+        })
+        .catch(() => {
           toast({
-            title: t('alert-message:no-attendance-list-found'),
-            status: 'warning',
+            title: t('alert-message:error-fetching-activities'),
+            status: 'error',
             duration: 7000,
             isClosable: true,
           });
-        } else {
-          setCurrentDaysLog(daysLog);
-        }
-      })
-      .catch(() => {
-        toast({
-          title: t('alert-message:error-fetching-activities'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
         });
-      });
-    handlers.getStudents(slug, academyId)
-      .then((students) => {
-        setCurrentStudentList(students);
-      })
-      .catch(() => {
-        toast({
-          title: t('alert-message:error-fetching-students'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-      })
-      .finally(() => setLoadingStudents(false));
+      handlers.getStudents(slug, academyId)
+        .then((students) => {
+          setCurrentStudentList(students);
+        })
+        .catch(() => {
+          toast({
+            title: t('alert-message:error-fetching-students'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
+        })
+        .finally(() => setLoadingStudents(false));
+    } else {
+      setLoadingStudents(false);
+    }
   }, [selectedCohortSlug, cohortSlug, router.query.student, allCohorts]);
 
   useEffect(() => {

@@ -28,6 +28,9 @@ const DeliverModal = ({
   const fontColor = useColorModeValue('gra.dark', 'gray.250');
   const labelColor = useColorModeValue('gray.600', 'gray.200');
   const commonBorderColor = useColorModeValue('gray.250', 'gray.500');
+  const router = useRouter();
+  const { academy } = router.query;
+  const taskIsIgnored = currentTask?.revision_status === 'IGNORED';
 
   useEffect(() => {
     if (copied) {
@@ -42,10 +45,11 @@ const DeliverModal = ({
       <Button
         variant="outline"
         isLoading={isLoading}
-        onClick={async () => {
+        onClick={() => {
           setIsLoading(true);
           bc.todo().deliver({
             id: currentTask.id,
+            academy,
           })
             .then(({ data }) => {
               setDeliveryUrl(data.delivery_url);
@@ -131,8 +135,10 @@ const DeliverModal = ({
             </Text>
           </ModalBody>
           <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={commonBorderColor}>
-            <Button onClick={() => setOpenIgnoreTask(true)} variant="outline" textTransform="uppercase">
-              {t('deliver-assignment.button')}
+            <Button onClick={() => setOpenIgnoreTask(true)} variant={taskIsIgnored ? 'default' : 'outline'} textTransform="uppercase">
+              {taskIsIgnored
+                ? t('deliver-assignment.mark-as-pending')
+                : t('deliver-assignment.ignore-task')}
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -159,7 +165,7 @@ const DeliverModal = ({
                 onClick={() => {
                   bc.todo().update({
                     id: currentTask.id,
-                    revision_status: 'IGNORED',
+                    revision_status: taskIsIgnored ? 'PENDING' : 'IGNORED',
                   })
                     .then(() => {
                       toast({
@@ -171,8 +177,10 @@ const DeliverModal = ({
                       updpateAssignment({
                         ...currentTask,
                         id: currentTask.id,
-                        revision_status: 'IGNORED',
+                        revision_status: taskIsIgnored ? 'PENDING' : 'IGNORED',
                       });
+                      setOpenIgnoreTask(false);
+                      onClose();
                     })
                     .catch(() => {
                       toast({
@@ -183,10 +191,12 @@ const DeliverModal = ({
                       });
                     });
                 }}
-                variant="outline"
+                variant={taskIsIgnored ? 'default' : 'outline'}
                 textTransform="uppercase"
               >
-                {t('deliver-assignment.button')}
+                {taskIsIgnored
+                  ? t('deliver-assignment.mark-as-pending')
+                  : t('deliver-assignment.ignore-task')}
               </Button>
             </ModalFooter>
           </ModalContent>

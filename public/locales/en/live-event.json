@@ -2,9 +2,12 @@
     "title": "Live clases, coding sessions, workshops and hangouts every few hours.",
     "learn-more": "Learn more",
     "live-class": "Today’s live class",
+    "no-live-class": "No live classes scheduled today",
     "started": "Started {{time}} ago",
     "ended": "Ended {{time}} ago",
     "few-seconds": "a few seconds",
     "will-start": "Will start in {{time}}",
-    "upcoming": "Other upcoming live events"
+    "upcoming": "Other upcoming live events",
+    "inactive-event": "This event is not live yet",
+    "no-access": "You do not have access to this event"
 }

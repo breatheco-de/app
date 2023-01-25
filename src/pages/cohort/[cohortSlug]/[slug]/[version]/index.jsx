@@ -30,15 +30,18 @@ import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import {
-  slugify, includesToLowerCase, getStorageItem,
+  slugify, includesToLowerCase, getStorageItem, sortToNearestTodayDate,
 } from '../../../../../utils/index';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
 import AlertMessage from '../../../../../common/components/AlertMessage';
 import useHandler from '../../../../../common/hooks/useCohortHandler';
+import modifyEnv from '../../../../../../modifyEnv';
+import LiveEvent from '../../../../../common/components/LiveEvent';
 
 const Dashboard = () => {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('dashboard');
   const toast = useToast();
   const router = useRouter();
@@ -52,6 +55,8 @@ const Dashboard = () => {
   const [, setSortedAssignments] = usePersistent('sortedAssignments', []);
   const [searchValue, setSearchValue] = useState(router.query.search || '');
   const [showPendingTasks, setShowPendingTasks] = useState(false);
+  const [events, setEvents] = useState(null);
+  const [liveClass, setLiveClass] = useState(null);
   const { user, choose, isLoading } = useAuth();
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const [currentCohortProps, setCurrentCohortProps] = useState({});
@@ -161,6 +166,20 @@ const Dashboard = () => {
     if (showGithubWarning === 'active') {
       setShowWarningModal(true);
     }
+    bc.payment().events()
+      .then(({ data }) => {
+        const eventsRemain = data.filter((l) => new Date(l.ending_at) - new Date() > 0);
+        setEvents(eventsRemain);
+      });
+
+    bc.events({
+      upcoming: true,
+      cohort: cohortSlug,
+    }).liveClass()
+      .then((res) => {
+        const sortDateToLiveClass = sortToNearestTodayDate(res?.data);
+        setLiveClass(sortDateToLiveClass[0]);
+      });
   }, []);
 
   // Fetch cohort data with pathName structure
@@ -483,6 +502,16 @@ const Dashboard = () => {
               maxWidth="380px"
               minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
             >
+              {events?.length > 0 && liveClass?.starting_at && (
+                <LiveEvent
+                  // liveUrl={events[0].url}
+                  liveClassHash={liveClass?.hash}
+                  liveStartsAt={liveClass?.starting_at}
+                  liveEndsAt={liveClass?.ending_at}
+                  otherEvents={events}
+                  // featureLabel,
+                />
+              )}
               <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
                 <TeacherSidebar
                   title={t('teacher-sidebar.actions')}
@@ -574,7 +603,7 @@ const Dashboard = () => {
               marginBottom="15px"
               onClick={(e) => {
                 e.preventDefault();
-                window.location.href = `${process.env.BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
+                window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
               }}
             >
               <Icon

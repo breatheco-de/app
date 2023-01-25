@@ -19,9 +19,10 @@ import getMarkDownContent from '../../common/components/MarkDownParser/markdown'
 import { publicRedirectByAsset } from '../../lib/redirectsHandler';
 import { MDSkeleton } from '../../common/components/Skeleton';
 import GridContainer from '../../common/components/GridContainer';
+import modifyEnv from '../../../modifyEnv';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson`);
   const data = await resp.json();
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
@@ -97,6 +98,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         description: description || '',
         image: lesson.preview || staticImage,
         pathConnector: translationsExists ? '/lesson' : `/lesson/${slug}`,
+        canonicalPathConector: `${locale === 'en' ? '' : `/${locale}`}/lesson`,
         url: ogUrl.en || `/${locale}/lesson/${slug}`,
         slug,
         type: 'article',
@@ -119,6 +121,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
 const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
   const { t } = useTranslation('lesson');
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [isFullScreen, setIsFullScreen] = useState(false);
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
 
@@ -133,10 +136,10 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
   const currentLanguageLabel = languageLabel[language] || language;
 
   useEffect(async () => {
-    const alias = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/alias/redirect`);
+    const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
     const aliasList = await alias.json();
     const redirectSlug = aliasList[slug] || slug;
-    const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
+    const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
     const redirectResults = await dataRedirect.json();
 
     const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
@@ -153,11 +156,11 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
 
   useEffect(() => {
     if (ipynbHtmlUrl === '') {
-      axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=lesson`)
+      axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=lesson`)
         .then(({ data }) => {
           let currentlocaleLang = data.translations[language];
           if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
-          axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=LESSON`)
+          axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=LESSON`)
             .catch(() => {
               toast({
                 title: t('alert-message:language-not-found', { currentLanguageLabel }),

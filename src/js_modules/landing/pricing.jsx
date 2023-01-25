@@ -2,9 +2,10 @@ import PropTypes from 'prop-types';
 import {
   Box, Button,
 } from '@chakra-ui/react';
-// import { useRouter } from 'next/router';
-import { useState, useEffect, Fragment } from 'react';
+import { useState, Fragment } from 'react';
 import { useRouter } from 'next/router';
+import useTranslation from 'next-translate/useTranslation';
+import { useFlags } from 'launchdarkly-react-client-sdk';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
@@ -13,9 +14,10 @@ import useStyle from '../../common/hooks/useStyle';
 const Pricing = ({ data }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedFinanceIndex, setSelectedFinanceIndex] = useState(0);
-  const [selectedProps, setSelectedProps] = useState(data?.pricing?.list[0] || {});
+  const { t } = useTranslation('');
   const { fontColor, featuredColor } = useStyle();
   const router = useRouter();
+  const flags = useFlags();
 
   const financeSelected = {
     0: 'list',
@@ -24,8 +26,7 @@ const Pricing = ({ data }) => {
   const financeValue = `${financeSelected[selectedFinanceIndex]}`;
   const selectedItem = data?.pricing[financeValue][selectedIndex];
 
-  const handleSelect = (dataProps, index) => {
-    setSelectedProps(dataProps);
+  const handleSelect = (index) => {
     setSelectedIndex(index);
   };
   const handleSelectFinance = (index) => {
@@ -33,17 +34,8 @@ const Pricing = ({ data }) => {
     setSelectedIndex(0);
   };
 
-  useEffect(() => {
-    if (selectedFinanceIndex === 0) {
-      setSelectedProps(data?.pricing?.list[0]);
-    } else {
-      setSelectedProps(data?.pricing?.finance[0]);
-    }
-  }, [selectedFinanceIndex]);
-
   return (
     <Box maxW="container.xl" display="flex" width="100%" flexDirection="row" id="pricing" alignItems={{ base: 'center', md: 'start' }} gridGap="21px" m="36px auto 20px auto" justifyContent="center" height="100%">
-
       <Box display="flex" flex={0.5} flexDirection="column" w="100%" gridGap="10px">
         <Heading size="l" mb="32px">
           {data?.pricing?.title}
@@ -98,7 +90,7 @@ const Pricing = ({ data }) => {
                 <Box as="hr" color="gray.500" width="100%" />
               </Box>
             )}
-            <Box key={item.title} display="flex" onClick={() => handleSelect(item, i)} flexDirection={{ base: 'column', md: 'row' }} width="100%" justifyContent="space-between" p={selectedIndex === i ? '22px 18px' : '26px 22px'} gridGap="24px" cursor="pointer" background={selectedIndex !== i && featuredColor} border={selectedIndex === i && '4px solid #0097CD'} borderRadius="8px">
+            <Box key={item.title} display="flex" onClick={() => handleSelect(i)} flexDirection={{ base: 'column', md: 'row' }} width="100%" justifyContent="space-between" p={selectedIndex === i ? '22px 18px' : '26px 22px'} gridGap="24px" cursor="pointer" background={selectedIndex !== i && featuredColor} border={selectedIndex === i && '4px solid #0097CD'} borderRadius="8px">
               <Box display="flex" flex={1} flexDirection="column" gridGap="12px" minWidth={{ base: '100%', md: '288px' }} height="fit-content" fontWeight="400">
                 <Box fontSize="18px" fontWeight="700">
                   {item?.title}
@@ -119,18 +111,23 @@ const Pricing = ({ data }) => {
           </Fragment>
         ))}
         <Box mt="38px">
-          <Button
-            variant="default"
-            onClick={() => router.push({
-              pathname: '/signup',
-              query: {
-                course: data?.course,
-                plan: selectedProps?.type,
-              },
-            })}
-          >
-            {selectedItem?.button?.title}
-          </Button>
+          {flags?.appReleaseEnableCourseSignup ? (
+            <Button
+              variant="default"
+              onClick={() => {
+                router.push(`/signup?syllabus=coding-introduction${selectedItem?.type.includes('trial') ? '&cohort=495' : ''}`);
+              }}
+            >
+              {selectedItem?.button?.title}
+            </Button>
+          ) : (
+            <Button
+              variant="default"
+              disabled
+            >
+              {t('common:coming-soon')}
+            </Button>
+          )}
         </Box>
       </Box>
     </Box>

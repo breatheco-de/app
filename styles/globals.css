@@ -310,6 +310,9 @@ featured {
   display: flex !important;
   flex-direction: column;
 }
+.react-datepicker-popper {
+  min-width: 250px;
+}
 
 .chakra-ui-dark .md-editor-preview {
   /* background-color: var(--color-canvas-default); */
@@ -333,4 +336,42 @@ featured {
 }
 .force-overflow {
   overflow: auto !important;
+}
+
+.dashed-box-animated {
+  background-image: repeating-linear-gradient(0deg, #a3a3a3, #a3a3a3 19px, transparent 19px, transparent 32px, #a3a3a3 32px), repeating-linear-gradient(90deg, #a3a3a3, #a3a3a3 19px, transparent 19px, transparent 32px, #a3a3a3 32px), repeating-linear-gradient(180deg, #a3a3a3, #a3a3a3 19px, transparent 19px, transparent 32px, #a3a3a3 32px), repeating-linear-gradient(270deg, #a3a3a3, #a3a3a3 19px, transparent 19px, transparent 32px, #a3a3a3 32px);
+  background-size: 2px calc(100% + 32px), calc(100% + 32px) 2px, 2px calc(100% + 32px) , calc(100% + 32px) 2px;
+  background-position: 0 0, 0 0, 100% 0, 0 100%;
+  background-repeat: no-repeat;
+  animation: borderAnimation 0.6s infinite linear;
+}
+
+.dashed-box:hover {
+  animation: borderAnimation 0.6s infinite linear;
+}
+  
+@keyframes borderAnimation {
+  from { background-position: 0 0, -33px 0, 100% -33px, 0 100%; }
+  to { background-position: 0 -33px, 0 0, 100% 0, -33px 100%; }
+}
+
+.dashed-box {
+  background-image: repeating-linear-gradient(0deg, #a3a3a3, #a3a3a3 19px, transparent 19px, transparent 32px, #a3a3a3 32px), repeating-linear-gradient(90deg, #a3a3a3, #a3a3a3 19px, transparent 19px, transparent 32px, #a3a3a3 32px), repeating-linear-gradient(180deg, #a3a3a3, #a3a3a3 19px, transparent 19px, transparent 32px, #a3a3a3 32px), repeating-linear-gradient(270deg, #a3a3a3, #a3a3a3 19px, transparent 19px, transparent 32px, #a3a3a3 32px);
+  background-size: 2px calc(100% + 32px), calc(100% + 32px) 2px, 2px calc(100% + 32px) , calc(100% + 32px) 2px;
+  background-position: 0 0, 0 0, 100% 0, 0 100%;
+  background-repeat: no-repeat;
+}
+
+.error-message {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  color: var(--chakra-colors-red-500);
+  margin-top: var(--chakra-space-2);
+  font-size: var(--chakra-fontSizes-sm);
 }

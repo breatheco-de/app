@@ -7,11 +7,16 @@
   },
   "go-back": "Go back",
   "next-step": "Next step",
+  "payment-info": "Payment information",
+  "select-payment-plan": "Select your payment plan:",
+  "what-you-will-get": "What you will get:",
+  "free-trial": "Free trial",
   "contact-information": "Contact information",
   "choose-your-class": "Choose your class",
   "summary": "Summary",
-  "payment-info": "Payment information",
+  "payment": "Complete purchase",
   "card-number": "Card number",
+  "owner-name": "Owner name",
   "expiration-date": "Expiration date",
   "cvc": "CVC",
   "about-you": "About you",
@@ -34,7 +39,22 @@
   "signing-for": "You are signing up for",
   "already-have-account": "Already have an account?",
   "login-here": "Login here.",
+  "info": {
+    "will-pay-monthly": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}. The first payment will be today and the next one on {{next_month}}.",
+    "will-pay-month": "You will pay ${{price}} dollars {{qty_months}} time, for a total of ${{total_amount}}.",
+    "will-pay-now" : "You will pay ${{price} right now, no other charges apply in the future.",
+    "will-pay-per-month": "You will subscribe and pay ${{price}} dollars every month",
+    "will-pay-per-year": "You will subscribe and pay ${{price}} dollars every year",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "financing": "Financing"
+  },
   "validators": {
+    "owner_name-required": "Owner name is required",
+    "owner_name-min": "Owner name is too short",
+    "card_number-required": "Card number is required",
+    "exp-required": "Expiration date is required",
+    "cvc-required": "CVC is required",
     "short-input": "Too Short!",
     "long-input": "Too Long!",
     "first-name-required": "First name is required",
@@ -46,5 +66,13 @@
     "confirm-email-required": "Confirm Email is required",
     "confirm-email-not-match": "Emails don't match"
   },
-  "no-date-available": "We currently have no dates available for the location entered"
+  "no-date-available": "We currently have no dates available for the location entered",
+  "alert-message": {
+    "title": "Already have an account?",
+    "message1": "It seems that you already have an account, please check your email inbox for any messages from",
+    "message2": "If you know your password",
+    "click-here-to-login": "click here to login now",
+    "or-click-here": "or click here on",
+    "message3": "forgot password to get a new one"
+  }
 }

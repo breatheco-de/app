@@ -25,7 +25,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   const lessons = []; // filtered lessons after removing repeated
   let arrLessons = []; // incoming lessons
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson&limit=1000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson&limit=1000`);
   const data = await resp.json();
   // .then((res) => res.json())
   // .catch((err) => console.error(err));
@@ -36,6 +36,21 @@ export const getStaticProps = async ({ locale, locales }) => {
   } else {
     console.error(`Error ${resp.status}: fetching Lessons list for /lessons`);
   }
+
+  const technologiesResponse = await fetch(
+    `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=exercise&limit=1000`,
+    {
+      Accept: 'application/json, text/plain, */*',
+    },
+  );
+
+  if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
+    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /interactive-exercises`);
+  } else {
+    console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-exercises`);
+  }
+
+  const technologies = await technologiesResponse.json();
 
   let technologyTags = [];
   let difficulties = [];
@@ -205,7 +220,10 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
       <TitleContent title={t('title')} icon="book" mobile color={iconColor} />
       <Box
         display="grid"
-        gridTemplateColumns="0fr repeat(12, 1fr) 0fr"
+        gridTemplateColumns={{
+          base: '.5fr repeat(12, 1fr) .5fr',
+          md: '1.5fr repeat(12, 1fr) 1.5fr',
+        }}
         borderBottom={1}
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.700')}

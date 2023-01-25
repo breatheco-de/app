@@ -30,9 +30,11 @@ import bc from '../../../../../common/services/breathecode';
 import { defaultDataFetch } from '../../../../../js_modules/syllabus/dataFetch';
 import getReadme from '../../../../../js_modules/syllabus/getReadme';
 import useHandler from '../../../../../common/hooks/useCohortHandler';
+import modifyEnv from '../../../../../../modifyEnv';
 
 const Content = () => {
   const { t } = useTranslation('syllabus');
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isLoading, user, choose } = useAuth();
   const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);
@@ -234,7 +236,7 @@ const Content = () => {
     if (currTask?.target === 'blank') {
       setCurrentBlankProps(currTask);
     } else if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
-      axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
+      axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
         .then(({ data }) => {
           const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
           setCallToActionProps({
@@ -247,7 +249,7 @@ const Content = () => {
           let currentlocaleLang = data.translations[language];
           const exensionName = getExtensionName(data.readme_url);
           if (exensionName === 'ipynb') {
-            setIpynbHtmlUrl(`${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentTheme}&plain=true`);
+            setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentTheme}&plain=true`);
             setCurrentData(data);
           } else {
             setIpynbHtmlUrl(null);
@@ -255,8 +257,8 @@ const Content = () => {
               currentlocaleLang = `${lessonSlug}-${language}`;
             }
             Promise.all([
-              axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}.md`),
-              axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=${assetTypeValues[lesson]}`),
+              axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}.md`),
+              axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=${assetTypeValues[lesson]}`),
             ])
               .then(([respMarkdown, respData]) => {
                 const currData = respData.data;

@@ -25,7 +25,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   const exercises = []; // filtered exercises after removing repeated
   let arrExercises = []; // incoming exercises
   const resp = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&limit=1000`,
+    `${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&limit=1000`,
     {
       Accept: 'application/json, text/plain, */*',
     },
@@ -38,6 +38,21 @@ export const getStaticProps = async ({ locale, locales }) => {
   } else {
     console.error(`Error ${resp.status}: fetching Exercises list for /interactive-exercises`);
   }
+
+  const technologiesResponse = await fetch(
+    `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=exercise&limit=1000`,
+    {
+      Accept: 'application/json, text/plain, */*',
+    },
+  );
+
+  if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
+    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /interactive-exercises`);
+  } else {
+    console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-exercises`);
+  }
+
+  const technologies = await technologiesResponse.json();
 
   let technologyTags = [];
   let difficulties = [];
@@ -202,7 +217,10 @@ function Exercices({ exercises, technologyTags, difficulties }) {
       <TitleContent title={t('title')} mobile />
       <Box
         display="grid"
-        gridTemplateColumns="0fr repeat(12, 1fr) 0fr"
+        gridTemplateColumns={{
+          base: '.5fr repeat(12, 1fr) .5fr',
+          md: '1.5fr repeat(12, 1fr) 1.5fr',
+        }}
         borderBottom={1}
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.700')}

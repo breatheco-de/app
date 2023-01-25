@@ -17,10 +17,11 @@ import { MDSkeleton } from '../../../common/components/Skeleton';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 import GridContainer from '../../../common/components/GridContainer';
+import modifyEnv from '../../../../modifyEnv';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=project`);
   const data = await resp.json();
 
   projects = Object.values(data);
@@ -108,6 +109,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         image: preview || staticImage,
         translations,
         pathConnector: `/interactive-coding-tutorial/${difficulty}`,
+        canonicalPathConector: `${locale === 'en' ? '' : `/${locale}`}/interactive-coding-tutorial/${difficulty}`,
         type: 'article',
         keywords: result?.seo_keywords || '',
         card: 'large',
@@ -152,6 +154,7 @@ const TableInfo = ({ t, project, commonTextColor }) => (
 );
 
 const ProjectSlug = ({ project, markdown }) => {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('projects');
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const translations = project?.translations || { es: '', en: '' };
@@ -166,10 +169,10 @@ const ProjectSlug = ({ project, markdown }) => {
   const toast = useToast();
 
   useEffect(async () => {
-    const alias = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/alias/redirect`);
+    const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
     const aliasList = await alias.json();
     const redirectSlug = aliasList[slug] || slug;
-    const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
+    const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
     const redirectResults = await dataRedirect.json();
 
     // const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
@@ -189,11 +192,11 @@ const ProjectSlug = ({ project, markdown }) => {
   }, [router, router.locale, translations]);
 
   useEffect(() => {
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=project`)
+    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`)
       .then(({ data }) => {
         let currentlocaleLang = data.translations[language];
         if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
-        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=project`)
+        axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=project`)
           .catch(() => {
             toast({
               title: t('alert-message:language-not-found', { currentLanguageLabel }),
@@ -212,6 +215,7 @@ const ProjectSlug = ({ project, markdown }) => {
       justifyContent="center"
       alignItems="center"
       margin="2rem auto"
+      padding="0 15px"
     >
       <Link
         href="/interactive-coding-tutorials"

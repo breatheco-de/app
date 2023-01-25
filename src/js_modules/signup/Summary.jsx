@@ -1,44 +1,116 @@
+/* eslint-disable no-restricted-globals */
 import { Box, Button, useColorModeValue, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
+import { Fragment, useState, useEffect } from 'react';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
+import useSignup from '../../common/store/actions/signupAction';
 import bc from '../../common/services/breathecode';
+import { toCapitalize, unSlugify } from '../../utils';
 
 const Summary = ({
-  dateProps, formProps, courseTitle, planProps, checkoutData,
+  formProps,
 }) => {
   const { t } = useTranslation('signup');
-  const { borderColor } = useStyle();
-  const router = useRouter();
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [disableHandler, setDisableHandler] = useState(false);
+
+  const {
+    state, nextStep, setSelectedPlanCheckoutData, handleChecking, setPlanProps, handlePayment, getPaymentText,
+  } = useSignup();
+  const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
   const toast = useToast();
 
-  // console.log('checkoutData:::', checkoutData);
   const fontColor = useColorModeValue('gray.800', 'gray.300');
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const borderColor2 = useColorModeValue('black', 'white');
+  const { backgroundColor, borderColor, lightColor } = useStyle();
+  const router = useRouter();
+  const { plan } = router.query;
 
-  const handlePayment = () => {
-    bc.payment().pay({
-      type: checkoutData.type,
-      token: checkoutData.token,
-      chosen_period: 'HALF',
-    })
-      .then((response) => {
-        console.log('Payment_response:', response);
+  // const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
+  const isNotTrial = !checkoutData?.isTrial;
+  const periodText = {
+    MONTH: t('info.monthly'),
+    YEAR: t('info.yearly'),
+    FINANCING: t('info.financing'),
+  };
+
+  const getPlanProps = (selectedPlan) => {
+    bc.payment().getPlanProps(encodeURIComponent(selectedPlan.slug))
+      .then((resp) => {
+        if (!resp) {
+          setDisableHandler(true);
+        } else {
+          setDisableHandler(false);
+          setPlanProps(resp.data);
+        }
       })
       .catch(() => {
-        toast({
-          title: t('alert-message:payment-error'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
+        setDisableHandler(true);
       });
   };
+  const getPrice = () => {
+    if (selectedPlanCheckoutData?.financing_options?.length > 0 && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0) return selectedPlanCheckoutData?.financing_options[0]?.monthly_price;
+    if (checkoutData?.amount_per_half > 0) return checkoutData?.amount_per_half;
+    if (checkoutData?.amount_per_month > 0) return checkoutData?.amount_per_month;
+    if (checkoutData?.amount_per_quarter > 0) return checkoutData?.amount_per_quarter;
+    if (checkoutData?.amount_per_year > 0) return checkoutData?.amount_per_year;
+    return t('free-trial');
+  };
+
+  const priceIsNotNumber = Number.isNaN(Number(getPrice(selectedPlanCheckoutData)));
+
+  useEffect(() => {
+    const planFindedByQuery = checkoutData?.plans?.find((p) => p?.slug === plan) || {};
+    const planFinded = Object?.values(planFindedByQuery)?.length > 0 && planFindedByQuery;
+
+    if (planFinded || checkoutData?.plans[selectedIndex]) {
+      setSelectedPlanCheckoutData(planFinded || checkoutData?.plans[selectedIndex]);
+
+      getPlanProps(planFinded || checkoutData?.plans[selectedIndex]);
+    }
+  }, [checkoutData?.plans]);
+
+  const handleSubmit = () => {
+    if (planProps?.length > 0) {
+      handleChecking({
+        plan: selectedPlanCheckoutData?.slug,
+      })
+        .then((data) => {
+          if (isNotTrial || !priceIsNotNumber) {
+            nextStep();
+          } else {
+            handlePayment({
+              ...data,
+              installments: selectedPlanCheckoutData?.how_many_months || selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
+            })
+              .catch(() => {
+                toast({
+                  title: t('alert-message:payment-error'),
+                  status: 'error',
+                  duration: 7000,
+                  isClosable: true,
+                });
+              });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          toast({
+            title: 'Something went wrong choosing plan',
+            status: 'error',
+            duration: 6000,
+            isClosable: true,
+          });
+        });
+    }
+  };
+
   return (
     <Box
       display="flex"
@@ -46,12 +118,7 @@ const Summary = ({
       gridGap="30px"
       mb="1rem"
     >
-      <Box
-        display="flex"
-        flexDirection="column"
-        flex={0.5}
-        gridGap="3rem"
-      >
+      <Box display="flex" flexDirection="column" flex={0.5} gridGap="3rem">
         <Box display="flex" flexDirection="column" gridGap="10px">
           <Heading size="18px" textTransform="uppercase">
             {t('cohort-details')}
@@ -123,7 +190,6 @@ const Summary = ({
             </Text>
           </Box>
         </Box>
-
         <Box display="flex" flexDirection="column" gridGap="10px">
           <Heading size="18px" textTransform="uppercase">
             {t('profile-details')}
@@ -172,7 +238,7 @@ const Summary = ({
           </Box>
         </Box>
       </Box>
-      <Box display="flex" flexDirection="column" flex={0.6}>
+      <Box display="flex" flexDirection="column" flex={0.5}>
         <Box
           display="flex"
           flexDirection="column"
@@ -183,11 +249,7 @@ const Summary = ({
           gridGap="12px"
           borderRadius="14px"
         >
-          <Heading
-            size="15px"
-            color="blue.default"
-            textTransform="uppercase"
-          >
+          <Heading size="15px" color="blue.default" textTransform="uppercase">
             {t('signing-for')}
           </Heading>
           <Box display="flex" gridGap="12px">
@@ -198,36 +260,35 @@ const Summary = ({
                 borderRadius="7px"
                 width="fit-content"
               >
-                <Icon
-                  icon="coding"
-                  width="48px"
-                  height="48px"
-                  color="#fff"
-                />
+                <Icon icon="coding" width="48px" height="48px" color="#fff" />
               </Box>
             </Box>
             <Box display="flex" flexDirection="column" gridGap="7px">
-              <Heading size="18px">{courseTitle}</Heading>
-              {planProps?.payment && (
+              <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="0px" alignItems="center">
+                <Box display="flex" flexDirection="column" gridGap="7px">
+                  <Heading size="18px">
+                    {dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}
+                  </Heading>
+                </Box>
                 <Heading
-                  size="15px"
-                  textTransform="uppercase"
-                  color={useColorModeValue('gray.500', 'gray.400')}
+                  size={selectedPlanCheckoutData?.price > 0 ? 'm' : 'xsm'}
+                  margin={{ base: '0', md: '0 26px 0 auto' }}
+                  color="blue.default"
+                  textAlign={{ base: 'start', md: 'end' }}
+                  width="100%"
                 >
-                  {planProps?.payment}
+                  {`$${selectedPlanCheckoutData?.price}`}
                 </Heading>
+              </Box>
+              {getPaymentText()?.length > 0 && (
+                <Text
+                  size="14px"
+                  color={useColorModeValue('gray.700', 'gray.400')}
+                >
+                  {getPaymentText()}
+                </Text>
               )}
             </Box>
-            {planProps?.price && (
-              <Heading
-                size="sm"
-                color="blue.default"
-                textTransform="uppercase"
-                textAlign="end"
-              >
-                {planProps?.price}
-              </Heading>
-            )}
           </Box>
           <Box
             as="hr"
@@ -236,9 +297,9 @@ const Summary = ({
             h="1px"
             borderColor={borderColor}
           />
-          {planProps?.bullets?.title && (
+          {planProps?.length > 0 && (
             <Box fontSize="14px" fontWeight="700" color="blue.default">
-              {planProps?.bullets?.title}
+              {t('what-you-will-get')}
             </Box>
           )}
           <Box
@@ -248,10 +309,10 @@ const Summary = ({
             flexDirection="column"
             gridGap="12px"
           >
-            {planProps?.bullets?.list?.map((bullet) => (
+            {planProps?.length > 0 && planProps?.map((bullet) => (
               <Box
                 as="li"
-                key={bullet?.title}
+                key={bullet?.features[0]?.description}
                 display="flex"
                 flexDirection="row"
                 lineHeight="24px"
@@ -268,21 +329,96 @@ const Summary = ({
                   fontSize="14px"
                   fontWeight="600"
                   letterSpacing="0.05em"
-                  dangerouslySetInnerHTML={{ __html: bullet?.title }}
+                  dangerouslySetInnerHTML={{ __html: bullet?.description }}
                 />
+                {bullet?.features[0]?.description}
               </Box>
             ))}
           </Box>
         </Box>
-        {!planProps.type?.includes('trial') && (
-          <Button variant="default" onClick={handlePayment} height="45px" mt="12px">
+        <Box background={backgroundColor} pt="22px">
+          <Heading
+            size="xsm"
+            p="0 0 12px 0"
+          >
+            {t('select-payment-plan')}
+          </Heading>
+          <Box display="flex" flexDirection="column" gridGap="10px">
+            {/* {cohortPlans */}
+            {checkoutData?.plans
+              .filter((l) => l.status === 'ACTIVE')
+              .map((item, i) => {
+                const title = item?.title ? item?.title : toCapitalize(unSlugify(String(item?.slug)));
+                const isSelected = selectedPlanCheckoutData?.period === item?.period;
+                return (
+                  <Fragment key={`${item?.slug}-${item?.title}`}>
+                    <Box
+                      display="flex"
+                      onClick={() => {
+                        setSelectedIndex(i);
+                        // setPlanData(item);
+                        getPlanProps(item);
+                        setSelectedPlanCheckoutData(item);
+                      }}
+                      flexDirection={{ base: 'column', md: 'row' }}
+                      width="100%"
+                      justifyContent="space-between"
+                      // p={selectedIndex === i ? '22px 18px' : '26px 22px'}
+                      p={{ base: '8px 14px', md: '22px 18px' }}
+                      gridGap={{ base: '0', md: '12px' }}
+                      cursor="pointer"
+                      // background={selectedIndex !== i && featuredColor}
+                      border={isSelected ? '2px solid #0097CD' : '2px solid transparent'}
+                      borderRadius="13px"
+                    >
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        gridGap={{ base: '0', md: '4px' }}
+                        minWidth={{ base: '100%', md: '228px' }}
+                        height="fit-content"
+                        fontWeight="400"
+                      >
+                        <Box fontSize="18px" fontWeight="700">
+                          {title}
+                        </Box>
+                        <Text fontSize="14px" color={isSelected ? 'blue.default' : lightColor} fontWeight={isSelected ? 700 : 400}>
+                          {periodText[item?.period] || ''}
+                        </Text>
+                      </Box>
+                      <Box display="flex" alignItems="center" gridGap="10px">
+                        <Heading
+                          as="span"
+                          size={item?.period !== 'FINANCING' ? 'm' : 'xsm'}
+                          lineHeight="1"
+                          color="blue.default"
+                          width="100%"
+                        >
+                          {item?.priceText}
+                        </Heading>
+                      </Box>
+                    </Box>
+                  </Fragment>
+                );
+              })}
+          </Box>
+        </Box>
+        {(isNotTrial || !priceIsNotNumber) ? (
+          <Button
+            variant="default"
+            onClick={handleSubmit}
+            isDisabled={disableHandler}
+            height="45px"
+            mt="12px"
+          >
             {t('common:proceed-to-payment')}
           </Button>
-        )}
-        {planProps.type?.includes('trial') && (
+        ) : (
           <Button
             variant="outline"
             borderColor="blue.200"
+            onClick={handleSubmit}
+            isDisabled={disableHandler}
             background={featuredBackground}
             _hover={{ background: featuredBackground, opacity: 0.8 }}
             _active={{ background: featuredBackground, opacity: 1 }}
@@ -299,11 +435,7 @@ const Summary = ({
 };
 
 Summary.propTypes = {
-  dateProps: PropTypes.objectOf(PropTypes.any).isRequired,
   formProps: PropTypes.objectOf(PropTypes.any).isRequired,
-  planProps: PropTypes.objectOf(PropTypes.any).isRequired,
-  courseTitle: PropTypes.string.isRequired,
-  checkoutData: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 export default Summary;

@@ -1,6 +1,31 @@
+import { formatDuration, intervalToDuration } from 'date-fns';
+import { es, en } from 'date-fns/locale';
+import useTranslation from 'next-translate/useTranslation';
+import { toCapitalize } from '../../utils';
 import bc from '../services/breathecode';
 
+const availableLanguages = {
+  es,
+  en,
+};
+
+const taskIcons = {
+  EXERCISE: 'assignment',
+  LESSON: 'book',
+  PROJECT: 'code',
+  QUIZ: 'answer',
+};
+
 const handlers = {
+  getSyllabus: (academyId, slug, version) => new Promise((resolve, reject) => {
+    bc.syllabus().get(academyId, slug, version)
+      .then(({ data }) => {
+        resolve(data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  }),
   getActivities: (cohortSlug, academyId = 4) => new Promise((resolve, reject) => {
     bc.cohort({ academy: academyId }).getAttendance(cohortSlug)
       .then(({ data }) => {
@@ -84,6 +109,188 @@ const handlers = {
         reject();
       });
   }),
+
+  formatTimeString: (start) => {
+    const { t, lang } = useTranslation('live-event');
+    const duration = intervalToDuration({
+      end: new Date(),
+      start,
+    });
+    const formated = formatDuration(duration,
+      {
+        format: ['months', 'weeks', 'days', 'hours', 'minutes'],
+        delimiter: ', ',
+        locale: availableLanguages[lang],
+      });
+
+    if (formated === '') return t('few-seconds');
+    return {
+      formated,
+      duration,
+    };
+  },
+  checkIfExpired: ({ date, year = 'numeric', month = 'long', day = 'numeric', hour, minute }) => {
+    const { lang } = useTranslation('live-event');
+    const localeLang = {
+      es: 'es-ES',
+      en: 'en-US',
+    };
+
+    const now = new Date();
+    const expirationDate = new Date(date);
+    const value = now > expirationDate;
+    //                                                    'numeric' 'long' 'numeric' 'numeric' 'numeric'
+    const formatedDate = expirationDate.toLocaleDateString(localeLang[lang], { year, month, day, hour, minute });
+    return {
+      value,
+      date: formatedDate,
+    };
+  },
+  getCohortsFinished: (cohorts) => cohorts.filter((program) => {
+    const educationalStatus = program?.educational_status?.toUpperCase();
+    const programCohortStage = program?.cohort?.stage?.toUpperCase();
+
+    const showCohort = ['ENDED'].includes(programCohortStage);
+    // ACTIVE: show be here because the student may not have delivered all the homework
+    const showStudent = ['GRADUATED', 'POSTPONED', 'ACTIVE'].includes(
+      educationalStatus,
+    );
+    return showCohort && showStudent;
+  }),
+  getActiveCohorts: (cohorts) => cohorts.filter((program) => {
+    const educationalStatus = program?.educational_status?.toUpperCase();
+    const programRole = program?.role?.toUpperCase();
+    const programCohortStage = program?.cohort?.stage?.toUpperCase();
+
+    const visibleForTeacher = programRole !== 'STUDENT';
+
+    const showCohort = [
+      'STARTED',
+      'ACTIVE',
+      'FINAL_PROJECT',
+    ].includes(programCohortStage);
+
+    const showStudent = ['ACTIVE'].includes(educationalStatus) && programRole === 'STUDENT';
+
+    const show = visibleForTeacher || showCohort || showStudent;
+
+    return show;
+  }),
+  handleTasks: (tasks, onlyExistent = false) => {
+    const allLessons = tasks.filter((l) => l.task_type === 'LESSON');
+    const allExercises = tasks.filter((e) => e.task_type === 'EXERCISE');
+    const allProjects = tasks.filter((p) => p.task_type === 'PROJECT');
+    const allQuiz = tasks.filter((q) => q.task_type === 'QUIZ');
+
+    const allTasks = [
+      {
+        title: 'Lesson',
+        icon: 'book',
+        task_type: 'LESSON',
+        taskLength: allLessons.length,
+        completed: allLessons.filter((l) => l.task_status === 'DONE').length,
+      },
+      {
+        title: 'Exercise',
+        icon: 'strength',
+        task_type: 'EXERCISE',
+        taskLength: allExercises.length,
+        completed: allExercises.filter((e) => e.task_status === 'DONE').length,
+      },
+      {
+        title: 'Project',
+        icon: 'code',
+        task_type: 'PROJECT',
+        taskLength: allProjects.length,
+        completed: allProjects.filter((p) => p.task_status === 'DONE').length,
+      },
+      {
+        title: 'Quiz',
+        icon: 'answer',
+        task_type: 'QUIZ',
+        taskLength: allQuiz.length,
+        completed: allQuiz.filter((q) => q.task_status === 'DONE').length,
+      },
+    ];
+
+    const allExistentTasks = onlyExistent ? allTasks.filter((t) => t.taskLength > 0) : allTasks;
+
+    const calculateTaskPercentage = () => {
+      let sumTaskCompleted = 0;
+      let sumTaskLength = 0;
+      for (let i = 0; i < allExistentTasks.length; i += 1) {
+        sumTaskCompleted += allExistentTasks[i].completed;
+        sumTaskLength += allExistentTasks[i].taskLength;
+      }
+      return Math.trunc((sumTaskCompleted / sumTaskLength) * 100);
+    };
+    const percentage = calculateTaskPercentage() || 0;
+    return {
+      allTasks: allExistentTasks,
+      percentage,
+    };
+  },
+
+  getAssignmentsCount: ({
+    cohortProgram,
+  }) => new Promise((resolve) => {
+    const modules = cohortProgram?.json?.days || cohortProgram?.json?.modules;
+    const assignmentsRecopilated = [];
+
+    modules?.forEach((module) => {
+      const {
+        assignments = [],
+        lessons = [],
+        project = [],
+        quizzes = [],
+      } = module;
+
+      const assignmentsCount = assignments.length;
+      const lessonsCount = lessons.length;
+      const projectCount = project.title ? 1 : (project?.length || 0);
+      const quizzesCount = quizzes.length;
+
+      const assignmentsRecopilatedObj = {
+        assignmentsCount,
+        lessonsCount,
+        projectCount,
+        quizzesCount,
+      };
+
+      assignmentsRecopilated.push(assignmentsRecopilatedObj);
+    });
+
+    const assignmentsRecopilatedObj = {
+      exercise: 0,
+      lesson: 0,
+      project: 0,
+      quiz: 0,
+    };
+
+    assignmentsRecopilated.forEach((assignment) => {
+      assignmentsRecopilatedObj.exercise += assignment.assignmentsCount;
+      assignmentsRecopilatedObj.lesson += assignment.lessonsCount;
+      assignmentsRecopilatedObj.project += assignment.projectCount;
+      assignmentsRecopilatedObj.quiz += assignment.quizzesCount;
+    });
+
+    const arrayOfObjects = Object.keys(assignmentsRecopilatedObj).map((key) => {
+      const taskLength = assignmentsRecopilatedObj[key];
+      const taskType = key.toUpperCase();
+      const icon = taskIcons[taskType];
+
+      return {
+        icon,
+        taskLength,
+        task_type: taskType,
+        title: toCapitalize(taskType),
+      };
+    });
+
+    resolve({ allTasks: arrayOfObjects });
+
+    // resolve(assignmentsRecopilatedObj);
+  }),
   getAssetData: (slug) => new Promise((resolve, reject) => {
     bc.lesson().getAsset(slug)
       .then(({ data }) => {
@@ -93,55 +300,7 @@ const handlers = {
         reject(error);
       });
   }),
+
 };
 
 export default handlers;
-
-// bc.cohort().getAttendance(cohortSession.slug)
-// .then((res) => {
-//   const currentDayExists = typeof res.data[day] === 'object';
-//   const attendanceLog = currentDayExists ? students.filter(
-//     (student) => res.data[day].attendance_ids.find((userId) => userId === student.user.id),
-//   ) : [];
-//   const unattendanceLog = currentDayExists ? students.filter(
-//     (student) => res.data[day].unattendance_ids.find((userId) => userId === student.user.id),
-//   ) : [];
-
-//   const currentLog = [...attendanceLog, ...unattendanceLog];
-
-//   setAttendanceTaken({
-//     updated_at: currentDayExists ? res.data[day].updated_at : null,
-//     attendanceStudents: attendanceLog,
-//     unattendanceStudents: unattendanceLog,
-//     current_module: currentDayExists ? res.data[day].current_module : null,
-//     teacher_comments: currentDayExists ? res.data[day].teacher_comments : null,
-//     day,
-//   });
-
-//   if (currentLog.length === 0) {
-//     setCohortSession({ ...cohortSession, ...data });
-//     saveCohortAttendancy();
-//   } else {
-//     setAttendanceWasTaken(true);
-//     toast({
-//       title: t('alert-message:attenadance-already-taken', { count: day }),
-//       // title: `Attendance for day ${day} has already been taken`,
-//       status: 'warning',
-//       duration: 9000,
-//       isClosable: true,
-//     });
-//   }
-// })
-// .catch((error) => {
-//   toast({
-//     title: t('alert-message:error-getting-previous-attendance'),
-//     status: 'error',
-//     duration: 9000,
-//     isClosable: true,
-//   });
-//   console.error('getAttendance_error:', error);
-// })
-// .finally(() => {
-//   setOpenWarn(false);
-//   setIsLoading(false);
-// });

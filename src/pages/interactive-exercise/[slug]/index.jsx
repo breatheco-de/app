@@ -45,10 +45,10 @@ import getMarkDownContent from '../../../common/components/MarkDownParser/markdo
 import CustomTheme from '../../../../styles/theme';
 import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 import GridContainer from '../../../common/components/GridContainer';
-import useStyle from '../../../common/hooks/useStyle';
+import modifyEnv from '../../../../modifyEnv';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&big=true`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&big=true`);
   const data = await resp.json();
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
@@ -68,7 +68,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
   const t = await getT(locale, 'how-to');
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=exercise`);
   const result = await resp.json();
 
   if (resp.status >= 400 || result.asset_type !== 'EXERCISE') {
@@ -124,6 +124,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         description: description || '',
         translations,
         pathConnector: '/interactive-exercise',
+        canonicalPathConector: `${locale === 'en' ? '' : `/${locale}`}/interactive-exercise`,
         url: ogUrl.en || `/${locale}/interactive-exercise/${slug}`,
         slug,
         keywords: result?.seo_keywords || '',
@@ -161,7 +162,6 @@ const TabletWithForm = ({
   const [formSended, setFormSended] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [formStatus, setFormStatus] = useState({ status: 'idle', msg: '' });
-  const { fontColor } = useStyle();
 
   const UrlInput = styled.input`
     cursor: pointer;
@@ -340,7 +340,8 @@ const TabletWithForm = ({
                 padding="0"
                 whiteSpace="normal"
                 variant="default"
-                color={fontColor}
+                color="white"
+                // color={fontColor}
                 fontSize="14px"
                 alignItems="center"
                 onClick={() => {
@@ -350,7 +351,7 @@ const TabletWithForm = ({
                 }}
               >
                 {'  '}
-                <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color={fontColor} />
+                <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color="currentColor" />
                 {t('open-gitpod')}
               </Button>
               <Text
@@ -449,7 +450,7 @@ const TabletWithForm = ({
                 />
               </Text>
               <Text marginBottom="15px" fontSize="12px" fontWeight="700" lineHeight="24px">
-                {t('modal.note', { folder: exercise?.url?.substr(exercise?.url?.lastIndexOf('/') + 1, exercise?.url?.lenght) })}
+                {t('modal.note', { folder: exercise?.url ? exercise?.url?.substr(exercise?.url?.lastIndexOf('/') + 1, exercise?.url?.lenght) : '' })}
               </Text>
               <OrderedList>
                 {t('modal.steps', {}, { returnObjects: true }).map((step) => (
@@ -495,6 +496,7 @@ const TabletWithForm = ({
 
 const Exercise = ({ exercise, markdown }) => {
   const [tags, setTags] = useState([]);
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation(['exercises']);
   const translations = exercise?.translations || { es: '', en: '' };
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
@@ -511,10 +513,10 @@ const Exercise = ({ exercise, markdown }) => {
   const toast = useToast();
 
   useEffect(async () => {
-    const alias = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/alias/redirect`);
+    const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
     const aliasList = await alias.json();
     const redirectSlug = aliasList[slug] || slug;
-    const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
+    const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
     const redirectResults = await dataRedirect.json();
 
     const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
@@ -540,11 +542,11 @@ const Exercise = ({ exercise, markdown }) => {
 
   useEffect(() => {
     tagsArray(exercise);
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=exercise`)
+    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=exercise`)
       .then(({ data }) => {
         let currentlocaleLang = data.translations[language];
         if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
-        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=EXERCISE`)
+        axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=EXERCISE`)
           .catch(() => {
             toast({
               title: t('alert-message:language-not-found', { currentLanguageLabel }),

@@ -24,7 +24,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const howTos = []; // filtered howTos after removing repeated
   let arrHowTos = []; // incoming howTos
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE&limit=1000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=1000`);
   const data = await resp.json();
   // .then((res) => res.json())
   // .catch((err) => console.log(err));
@@ -39,6 +39,21 @@ export const getStaticProps = async ({ locale, locales }) => {
   } else {
     console.error(`Error ${resp.status}: fetching How To's list for /how-to`);
   }
+
+  const technologiesResponse = await fetch(
+    `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=exercise&limit=1000`,
+    {
+      Accept: 'application/json, text/plain, */*',
+    },
+  );
+
+  if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
+    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /interactive-exercises`);
+  } else {
+    console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-exercises`);
+  }
+
+  const technologies = await technologiesResponse.json();
 
   let technologyTags = [];
   let difficulties = [];
@@ -173,7 +188,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
 
   useEffect(() => {
     if (!queryExists) {
-      if (howTosSearched.length > 0) return () => {};
+      if (howTosSearched.length > 0) return () => { };
       if (offset <= data.length) {
         console.log('loading how to\'s...');
         window.addEventListener('scroll', handleScroll);
@@ -181,7 +196,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
       }
       console.log('All how to\'s loaded');
     }
-    return () => {};
+    return () => { };
   }, [offset, queryExists]);
 
   useEffect(() => {

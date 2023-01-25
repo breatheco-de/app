@@ -112,6 +112,21 @@ function removeURLParameter(url, parameter) {
   return url;
 }
 
+const getNextDateInMonths = (months = 1) => {
+  const today = new Date();
+  const nextMonth = new Date();
+  nextMonth.setMonth(today.getMonth() + months);
+
+  const shortWeekDays = {
+    en: format(new Date(nextMonth), 'MMM do, YYY'),
+    es: format(new Date(nextMonth), "dd 'de' MMMM, YYY", { locale: es }),
+  };
+  return {
+    date: nextMonth,
+    translation: shortWeekDays,
+  };
+};
+
 const getTimeProps = (date) => {
   const kickoffDate = {
     en: date?.kickoff_date && format(new Date(date.kickoff_date), 'MMMM do YYY'),
@@ -120,12 +135,12 @@ const getTimeProps = (date) => {
       && format(new Date(date.kickoff_date), "d 'de' MMMM YYY", { locale: es }),
   };
   const weekDays = {
-    en: date.timeslots.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE'))),
-    es: date.timeslots.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE', { locale: es }))),
+    en: date.timeslots?.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE'))),
+    es: date.timeslots?.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE', { locale: es }))),
   };
   const shortWeekDays = {
-    en: date.timeslots.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE'))),
-    es: date.timeslots.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE', { locale: es }))),
+    en: date.timeslots?.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE'))),
+    es: date.timeslots?.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE', { locale: es }))),
   };
   const getHours = (time) => new Date(time).toLocaleTimeString([], { timeZone: 'UTC', hour: '2-digit', minute: '2-digit' });
   const availableTime = date.timeslots.length > 0 && `${getHours(date.timeslots[0].starting_at)} - ${getHours(date.timeslots[0].ending_at)}`;
@@ -205,11 +220,26 @@ const calcSVGViewBox = (pathId) => {
   return '';
 };
 
+const number2DIgits = (number) => number.toString().padStart(2, '0');
+
+const sortToNearestTodayDate = (data, minutes = 30) => {
+  // sort date to the nearest today date and 30minutes after starting time
+  const currentDate = new Date();
+  currentDate.setMinutes(currentDate.getMinutes() - minutes);
+  if (data === undefined || data?.length === 0) return [];
+
+  const filteredDates = data.filter((item) => new Date(item.starting_at) >= currentDate);
+  const sortedDates = filteredDates.sort((a, b) => new Date(a.starting_at) - new Date(b.starting_at));
+
+  return sortedDates;
+};
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
   removeStorageItem, isDevMode, devLogTable, devLog, languageLabel,
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
-  resizeAllMasonryItems, calcSVGViewBox,
+  resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
+  sortToNearestTodayDate,
 };

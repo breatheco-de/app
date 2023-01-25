@@ -18,9 +18,10 @@ import Text from '../../../common/components/Text';
 import Icon from '../../../common/components/Icon';
 import TagCapsule from '../../../common/components/TagCapsule';
 import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
+import modifyEnv from '../../../../modifyEnv';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE&limit=1000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=1000`);
   const data = await resp.json();
   const howToData = data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como');
 
@@ -39,7 +40,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'how-to');
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const { slug } = params;
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=ARTICLE`);
   const data = await resp.json();
 
   if (resp.status >= 400) {
@@ -90,6 +91,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         type: 'article',
         translations,
         pathConnector: '/how-to',
+        canonicalPathConector: `${locale === 'en' ? '' : `/${locale}`}/how-to`,
         url: ogUrl.en || `/${locale}/how-to/${slug}`,
         slug,
         keywords: data?.seo_keywords || '',
@@ -110,6 +112,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
 export default function HowToSlug({ data, markdown }) {
   const { t } = useTranslation('how-to');
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   // const { title, author, preview } = data;
   const [neverLoaded, setNeverLoaded] = useState(false);
   const title = data?.title || '';
@@ -136,11 +139,11 @@ export default function HowToSlug({ data, markdown }) {
   }, [isHowTo]);
 
   useEffect(() => {
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=ARTICLE`)
+    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=ARTICLE`)
       .then((res) => {
         let currentlocaleLang = res.data.translations[language];
         if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
-        axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=ARTICLE`)
+        axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=ARTICLE`)
           .catch(() => {
             toast({
               title: t('alert-message:language-not-found', { currentLanguageLabel }),
@@ -153,7 +156,7 @@ export default function HowToSlug({ data, markdown }) {
   }, [language]);
 
   useEffect(async () => {
-    const alias = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/alias/redirect`);
+    const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
     const aliasList = await alias.json();
     const redirectSlug = aliasList[slug] || slug;
     const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
@@ -178,92 +181,89 @@ export default function HowToSlug({ data, markdown }) {
   }, []);
 
   return (
-    <>
-      <Box display="grid" gridTemplateColumns="0fr repeat(12, 1fr) 0fr" maxWidth="1280px" margin="2rem auto">
-        <Link
+    <Box
+      gridGap="20px"
+      maxWidth="1020px"
+      margin="3rem auto"
+      padding="0 15px"
+      borderBottom={1}
+      borderStyle="solid"
+      borderColor={useColorModeValue('gray.200', 'gray.900')}
+    >
+      <Link
+        href="/how-to"
+        gridColumn="2 / span 12"
+        color={linkColor}
+        display="inline-block"
+        letterSpacing="0.05em"
+        fontWeight="700"
+        marginBottom="1rem"
+      >
+        {`← ${t('back-to')}`}
+      </Link>
+      <Box display="flex" gridGap="10px" justifyContent="space-between" mb="12px">
+        <TagCapsule
+          variant="rounded"
+          isLink
           href="/how-to"
-          gridColumn="2 / span 12"
-          color={linkColor}
-          display="inline-block"
-          letterSpacing="0.05em"
-          fontWeight="700"
-        >
-          {`← ${t('back-to')}`}
+          tags={data?.technologies || ['alias', 'redirect']}
+          marginY="8px"
+          fontSize="13px"
+          style={{
+            padding: '2px 10px',
+            margin: '0',
+          }}
+          gap="10px"
+          paddingX="0"
+        />
+        <Link href={data?.readme_url || '#'} width="fit-content" color="gray.400" margin="0 0 0 auto" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+          <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+          {t('common:edit-on-github')}
         </Link>
       </Box>
-      <Box
-        gridGap="20px"
-        maxWidth="1020px"
-        margin="3rem auto"
-        padding={{ base: '0 15px', md: '0' }}
-        borderBottom={1}
-        borderStyle="solid"
-        borderColor={useColorModeValue('gray.200', 'gray.900')}
-      >
-        <Box display="flex" gridGap="10px" justifyContent="space-between" mb="12px">
-          <TagCapsule
-            variant="rounded"
-            isLink
-            href="/how-to"
-            tags={data?.technologies || ['alias', 'redirect']}
-            marginY="8px"
-            fontSize="13px"
-            style={{
-              padding: '2px 10px',
-              margin: '0',
-            }}
-            gap="10px"
-            paddingX="0"
-          />
-          <Link href={data?.readme_url || '#'} width="fit-content" color="gray.400" margin="0 0 0 auto" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
-            <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-            {t('common:edit-on-github')}
-          </Link>
-        </Box>
-        {title ? (
-          <Heading size="l" fontWeight="700">
-            {title}
-          </Heading>
-        ) : (
-          <Skeleton height="45px" width="100%" borderRadius="10px" />
-        )}
-        <Box margin="24px 0 1.5rem 0">
-          <Text size="l" fontWeight="900" textTransform="uppercase">
-            {t('written-by')}
+      {title ? (
+        <Heading size="l" fontWeight="700">
+          {title}
+        </Heading>
+      ) : (
+        <Skeleton height="45px" width="100%" borderRadius="10px" />
+      )}
+      <Box margin="24px 0 1.5rem 0">
+        <Text size="l" fontWeight="900" textTransform="uppercase">
+          {t('written-by')}
+        </Text>
+        {author ? (
+          <Text fontSize="l">
+            {`${author.first_name} ${author.last_name}`}
           </Text>
-          {author ? (
-            <Text fontSize="l">
-              {`${author.first_name} ${author.last_name}`}
-            </Text>
-          ) : (
-            <>
-              {neverLoaded ? (
-                <Text fontSize="l">
-                  @4GeeksAcademy
-                </Text>
-              ) : (
-                <Skeleton height="20px" width="220px" borderRadius="10px" />
-              )}
-            </>
-          )}
-        </Box>
-
-        {/* <Image src={getImage} alt={title} margin="20px 0 30px 0" width="100%" borderRadius="10px" height="100%" style={{ aspectRatio: '12/6' }} /> */}
-        <Box
-          borderRadius="3px"
-          margin="0 auto"
-          flexGrow={1}
-          className={`markdown-body ${useColorModeValue('light', 'dark')}`}
-        >
-          {markdown ? (
-            <MarkDownParser content={markdownData.content} />
-          ) : (
-            <MDSkeleton />
-          )}
-        </Box>
-
+        ) : (
+          <>
+            {neverLoaded ? (
+              <Text fontSize="l">
+                @4GeeksAcademy
+              </Text>
+            ) : (
+              <Skeleton height="20px" width="220px" borderRadius="10px" />
+            )}
+          </>
+        )}
       </Box>
-    </>
+
+      {/* <Image src={getImage} alt={title} margin="20px 0 30px 0" width="100%" borderRadius="10px" height="100%" style={{ aspectRatio: '12/6' }} /> */}
+      <Box
+        borderRadius="3px"
+        margin="0 auto"
+        flexGrow={1}
+        className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+      >
+        {markdown ? (
+          <MarkDownParser content={markdownData.content} />
+        ) : (
+          <MDSkeleton />
+        )}
+      </Box>
+
+    </Box>
   );
 }
 
