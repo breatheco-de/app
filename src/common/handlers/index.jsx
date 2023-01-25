@@ -162,8 +162,7 @@ const handlers = {
     const programRole = program?.role?.toUpperCase();
     const programCohortStage = program?.cohort?.stage?.toUpperCase();
 
-    const includesPrework = ['PREWORK'].includes(programCohortStage);
-    const visibleForTeacher = includesPrework && programRole !== 'STUDENT';
+    const visibleForTeacher = programRole !== 'STUDENT';
 
     const showCohort = [
       'STARTED',
@@ -171,9 +170,7 @@ const handlers = {
       'FINAL_PROJECT',
     ].includes(programCohortStage);
 
-    const showStudent = ['ACTIVE'].includes(educationalStatus)
-      && !includesPrework
-      && programRole === 'STUDENT';
+    const showStudent = ['ACTIVE'].includes(educationalStatus) && programRole === 'STUDENT';
 
     const show = visibleForTeacher || showCohort || showStudent;
 
