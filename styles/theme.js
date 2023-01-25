@@ -58,6 +58,7 @@ const CustomTheme = extendTheme({
       600: '#0083B3',
       700: '#2B6CB0',
       800: '#2C5282',
+      900: '#01455E',
     },
 
     green: {

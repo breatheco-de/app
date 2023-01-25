@@ -39,6 +39,7 @@ import AlertMessage from '../../../../../common/components/AlertMessage';
 import useHandler from '../../../../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../../../../modifyEnv';
 import LiveEvent from '../../../../../common/components/LiveEvent';
+import FinalProject from '../../../../../common/components/FinalProject';
 
 const Dashboard = () => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -511,6 +512,9 @@ const Dashboard = () => {
                   otherEvents={events}
                   // featureLabel,
                 />
+              )}
+              {cohortSession?.stage === 'FINAL_PROJECT' && (
+                <FinalProject />
               )}
               <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
                 <TeacherSidebar
