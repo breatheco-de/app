@@ -77,9 +77,6 @@ export const updateAssignment = ({
           title: isDelivering
             ? t('alert-message:delivery-success')
             : t('alert-message:delivery-removed'),
-          // title: `Your project ${isDelivering ?
-          // 'has been delivered' : 'delivery has been removed'} successfully`,
-          description: isDelivering ? t('alert-message:delivery-link', { url: data.github_url }) : '',
           status: 'success',
           duration: 6000,
           isClosable: true,

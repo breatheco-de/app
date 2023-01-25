@@ -22,8 +22,8 @@ const TechnologiesSection = ({
   const [technologySearched, setTechnologySearched] = useState('');
   const { fontColor, hexColor, modal, borderColorStrong } = useStyle();
   const [isMobile] = useMediaQuery('(min-width: 1082px)');
-
   const filteredTechnologies = technologyTags.filter((technology) => technology.slug.toLowerCase().includes(technologySearched.toLowerCase()));
+
 
   return (
     <Flex flexDirection="column" padding="0 0 12px 0" borderBottom={1} borderStyle="solid" borderColor={commonBorderColor}>
