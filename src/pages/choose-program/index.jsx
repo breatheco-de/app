@@ -305,7 +305,7 @@ function chooseProgram() {
             )}
           </Box>
           <Box flex={{ base: 1, md: 0.3 }} zIndex={2} position={{ base: 'inherit', md: 'absolute' }} right={0} top={0}>
-            {flags?.appReleaseEnableLiveEvents && liveClass?.starting_at && (
+            {flags?.appReleaseEnableLiveEvents && (
               <LiveEvent
                 // liveUrl={events[0].url}
                 liveClassHash={liveClass?.hash}
