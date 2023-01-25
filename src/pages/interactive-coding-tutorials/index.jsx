@@ -40,6 +40,21 @@ export const getStaticProps = async ({ locale, locales }) => {
   let technologyTags = [];
   let difficulties = [];
 
+  const technologiesResponse = await fetch(
+    `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=exercise&limit=1000`,
+    {
+      Accept: 'application/json, text/plain, */*',
+    },
+  );
+
+  if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
+    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /interactive-exercises`);
+  } else {
+    console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-exercises`);
+  }
+
+  const technologies = await technologiesResponse.json();
+
   for (let i = 0; i < arrProjects.length; i += 1) {
     // skip repeated projects
     if (projects.find((p) => arrProjects[i].slug === p.slug)) {
@@ -64,6 +79,8 @@ export const getStaticProps = async ({ locale, locales }) => {
 
   technologyTags = [...new Set(technologyTags)];
   difficulties = [...new Set(difficulties)];
+
+  technologyTags = technologies.filter((technology) => technologyTags.includes(technology.slug.toLowerCase()));
 
   // Verify if difficulty exist in expected position, else fill void array with 'nullString'
   const verifyDifficultyExists = (difficultiesArray, difficulty) => {
@@ -149,7 +166,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
 
   useEffect(() => {
     if (!queryExists) {
-      if (projectsSearched.length > 0) return () => {};
+      if (projectsSearched.length > 0) return () => { };
       if (offset <= projects.length) {
         console.log('loading projects...');
         window.addEventListener('scroll', handleScroll);
@@ -157,7 +174,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
       }
       console.log('All projects loaded');
     }
-    return () => {};
+    return () => { };
   }, [offset, queryExists]);
 
   useEffect(() => {
