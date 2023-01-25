@@ -279,7 +279,7 @@ const LiveEvent = ({
                   <Link
                     target="_blank"
                     rel="noopener noreferrer"
-                    href={featureReadMoreUrl || event?.live_url || event?.liveUrl || '#'}
+                    href={featureReadMoreUrl || event?.live_url || event?.live_stream_url || '#'}
                     color={textColor}
                     fontSize="md"
                     lineHeight="18px"
