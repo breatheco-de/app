@@ -3,6 +3,8 @@ import React, { Fragment, useEffect } from 'react';
 import {
   AvatarGroup,
   Box, Button,
+  useColorMode,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -24,6 +26,7 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
   const { programsList } = useProgramList();
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const { borderColorStrong, hexColor, backgroundColor3 } = useStyle();
+  const commonColor = useColorModeValue('gray.600', 'gray.300');
   const router = useRouter();
 
   const { cohort } = item;
@@ -31,6 +34,8 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
 
   const hasStartedCourse = currentCohortProps?.allTasks?.length > 0 && currentCohortProps?.allTasks?.some((task) => task?.completed > 0);
   const { version, slug, name } = cohort.syllabus_version;
+
+  const isHiddenOnPrework = cohort?.is_hidden_on_prework === null ? cohort?.academy?.is_hidden_on_prework : cohort?.is_hidden_on_prework;
 
   const onClickHandler = () => {
     handleChoose({
@@ -60,6 +65,17 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
 
   const singleTeacher = currentCohortProps?.teacher?.length > 0 && currentCohortProps?.teacher[0];
   const teacherfullName = `${singleTeacher?.user?.first_name} ${singleTeacher?.user?.last_name}`;
+
+  const showHasStartedCourseButton = hasStartedCourse ? (
+    <Button variant="link" onClick={onClickHandler} gridGap="6px" fontWeight={700}>
+      {t('program-list.continue-course')}
+      <Icon icon="longArrowRight" width="18px" height="18px" color={hexColor.blueDefault} />
+    </Button>
+  ) : (
+    <Button variant="default" onClick={onClickHandler}>
+      {t('program-list.start-course')}
+    </Button>
+  );
 
   // const formatToLocale = (date) => {
   //   new Date(date)
@@ -166,16 +182,15 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
         )}
 
         <Box width="100%" display="flex" justifyContent="center">
-          {hasStartedCourse ? (
-            <Button variant="link" onClick={onClickHandler} gridGap="6px" fontWeight={700}>
-              {t('program-list.continue-course')}
-              <Icon icon="longArrowRight" width="18px" height="18px" color={hexColor.blueDefault} />
-            </Button>
-          ) : (
-            <Button variant="default" onClick={onClickHandler}>
-              {t('program-list.start-course')}
-            </Button>
-          )}
+          {!(isHiddenOnPrework && cohort.stage.includes('PREWORK')) ? showHasStartedCourseButton
+            : (
+              <Text
+                size="12px"
+                color={commonColor}
+              >
+                You will have access to this cohort as soon as it starts!
+              </Text>
+            )}
         </Box>
       </Box>
     </Box>

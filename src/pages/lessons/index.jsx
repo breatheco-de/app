@@ -37,23 +37,29 @@ export const getStaticProps = async ({ locale, locales }) => {
     console.error(`Error ${resp.status}: fetching Lessons list for /lessons`);
   }
 
+  let technologyTags = [];
+  let difficulties = [];
+
+  // const technologiesResponse = await fetch(
+  //   `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=lesson&limit=1000`,
+  //   {
+  //     Accept: 'application/json, text/plain, */*',
+  //   },
+  // );
   const technologiesResponse = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=exercise&limit=1000`,
+    `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=lesson&limit=1000`,
     {
       Accept: 'application/json, text/plain, */*',
     },
   );
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /interactive-exercises`);
+    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /lessons`);
   } else {
-    console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-exercises`);
+    console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /lessons`);
   }
 
   const technologies = await technologiesResponse.json();
-
-  let technologyTags = [];
-  let difficulties = [];
 
   for (let i = 0; i < arrLessons.length; i += 1) {
     // skip repeated lessons

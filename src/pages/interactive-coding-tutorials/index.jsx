@@ -37,23 +37,30 @@ export const getStaticProps = async ({ locale, locales }) => {
     console.error(`Error ${resp.status}: fetching Projects list for /interactive-coding-tutorials`);
   }
 
+  let technologyTags = [];
+  let difficulties = [];
+
+  // const technologiesResponse = await fetch(
+  //   `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=project&limit=1000`,
+  //   {
+  //     Accept: 'application/json, text/plain, */*',
+  //   },
+  // );
+
   const technologiesResponse = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=exercise&limit=1000`,
+    `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=project&limit=1000`,
     {
       Accept: 'application/json, text/plain, */*',
     },
   );
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /interactive-exercises`);
+    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /interactive-coding-tutorials`);
   } else {
-    console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-exercises`);
+    console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-coding-tutorials`);
   }
 
   const technologies = await technologiesResponse.json();
-
-  let technologyTags = [];
-  let difficulties = [];
 
   for (let i = 0; i < arrProjects.length; i += 1) {
     // skip repeated projects
@@ -166,7 +173,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
 
   useEffect(() => {
     if (!queryExists) {
-      if (projectsSearched.length > 0) return () => {};
+      if (projectsSearched.length > 0) return () => { };
       if (offset <= projects.length) {
         console.log('loading projects...');
         window.addEventListener('scroll', handleScroll);
@@ -174,7 +181,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
       }
       console.log('All projects loaded');
     }
-    return () => {};
+    return () => { };
   }, [offset, queryExists]);
 
   useEffect(() => {

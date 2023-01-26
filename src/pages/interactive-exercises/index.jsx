@@ -39,8 +39,17 @@ export const getStaticProps = async ({ locale, locales }) => {
     console.error(`Error ${resp.status}: fetching Exercises list for /interactive-exercises`);
   }
 
+  let technologyTags = [];
+  let difficulties = [];
+
+  // const technologiesResponse = await fetch(
+  //   `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=exercise&limit=1000`,
+  //   {
+  //     Accept: 'application/json, text/plain, */*',
+  //   },
+  // );
   const technologiesResponse = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=exercise&limit=1000`,
+    `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=exercise&limit=1000`,
     {
       Accept: 'application/json, text/plain, */*',
     },
@@ -53,9 +62,6 @@ export const getStaticProps = async ({ locale, locales }) => {
   }
 
   const technologies = await technologiesResponse.json();
-
-  let technologyTags = [];
-  let difficulties = [];
 
   for (let i = 0; i < arrExercises.length; i += 1) {
     // skip repeated exercises
