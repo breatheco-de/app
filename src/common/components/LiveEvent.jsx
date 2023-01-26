@@ -333,7 +333,7 @@ const LiveEvent = ({
           })}
         </Box>
       )}
-      {otherEvents?.length !== 0 && (
+      {otherEvents?.length > 0 && otherEvents !== null && (
         <Button
           variant="ghost"
           height="auto"

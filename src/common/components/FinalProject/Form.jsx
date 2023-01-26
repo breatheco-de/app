@@ -10,7 +10,7 @@ import { url } from '../../../utils/regex';
 import Heading from '../Heading';
 import AddMember from './AddMember';
 
-const FinalProjectForm = ({ storyConfig, cohortData, studentsData }) => {
+const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, defaultValues }) => {
   const { t } = useTranslation('final-project');
   const [students, setStudents] = useState(studentsData);
   const [fileProps, setFileProps] = useState([]);
@@ -18,13 +18,13 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData }) => {
   const toast = useToast();
   const cohortAcademy = cohortData?.academy?.id || 4;
   const [formProps, setFormProps] = useState({
-    name: '',
-    one_line_desc: '',
-    description: '',
-    repo_url: '',
+    name: defaultValues?.name || '',
+    one_line_desc: defaultValues?.one_line_desc || '',
+    description: defaultValues?.description || '',
+    repo_url: defaultValues?.repo_url || '',
     slides_url: '',
     screenshot: null,
-    members: [],
+    members: defaultValues?.members || [],
   });
   const commonTranslation = storyConfig?.translation?.[storyConfig?.locale]?.common;
   const finalProjectTranslation = storyConfig?.translation?.[storyConfig?.locale]['final-project'];
@@ -73,13 +73,23 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData }) => {
 
   const handleSubmit = async (actions, allValues) => {
     bc.todo().createFinalProject(allValues)
-      .then(() => {
-        toast({
-          title: 'Success',
-          description: 'Your final project has been sended',
-          status: 'success',
-          duration: 5000,
-        });
+      .then((res) => {
+        if (res) {
+          toast({
+            title: 'Success',
+            description: 'Your final project has been sended',
+            status: 'success',
+            duration: 5000,
+          });
+          handleClose();
+        } else {
+          toast({
+            title: 'Error',
+            description: 'Something went wrong submiting your final project',
+            status: 'error',
+            duration: 5000,
+          });
+        }
       })
       .catch(() => {
         toast({
@@ -94,6 +104,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData }) => {
   };
 
   useEffect(() => {
+    if (studentsData?.length > 0) return;
     bc.cohort().getStudents(cohortSlug, cohortAcademy)
       .then((res) => {
         const studentsFiltered = res?.data.filter((student) => student?.role === 'STUDENT')
@@ -229,13 +240,17 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData }) => {
 
 FinalProjectForm.propTypes = {
   cohortData: PropTypes.objectOf(PropTypes.any),
-  studentsData: PropTypes.objectOf(PropTypes.any),
+  studentsData: PropTypes.arrayOf(PropTypes.object),
   storyConfig: PropTypes.objectOf(PropTypes.any),
+  handleClose: PropTypes.func,
+  defaultValues: PropTypes.objectOf(PropTypes.any),
 };
 FinalProjectForm.defaultProps = {
   cohortData: {},
-  studentsData: {},
+  studentsData: [],
   storyConfig: {},
+  handleClose: () => {},
+  defaultValues: {},
 };
 
 export default FinalProjectForm;
