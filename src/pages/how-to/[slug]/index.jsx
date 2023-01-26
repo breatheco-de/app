@@ -1,14 +1,12 @@
 /* eslint-disable no-continue */
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useRouter } from 'next/router';
 import {
-  Box, toast, useColorModeValue, Skeleton,
+  Box, useColorModeValue, Skeleton,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import getT from 'next-translate/getT';
-import { languageLabel } from '../../../utils';
 import Link from '../../../common/components/NextChakraLink';
 import MarkDownParser from '../../../common/components/MarkDownParser';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
@@ -91,7 +89,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         type: 'article',
         translations,
         pathConnector: '/how-to',
-        canonicalPathConector: `${locale === 'en' ? '' : `/${locale}`}/how-to`,
         url: ogUrl.en || `/${locale}/how-to/${slug}`,
         slug,
         keywords: data?.seo_keywords || '',
@@ -124,9 +121,7 @@ export default function HowToSlug({ data, markdown }) {
   // const defaultImage = '/static/images/coding-notebook.png';
   // const getImage = preview || defaultImage;
   const router = useRouter();
-  const language = router.locale === 'en' ? 'us' : 'es';
   const { slug } = router.query;
-  const currentLanguageLabel = languageLabel[language] || language;
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const linkColor = useColorModeValue('blue.default', 'blue.300');
 
@@ -137,23 +132,6 @@ export default function HowToSlug({ data, markdown }) {
       router.push('/404');
     }
   }, [isHowTo]);
-
-  useEffect(() => {
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=ARTICLE`)
-      .then((res) => {
-        let currentlocaleLang = res.data.translations[language];
-        if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
-        axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=ARTICLE`)
-          .catch(() => {
-            toast({
-              title: t('alert-message:language-not-found', { currentLanguageLabel }),
-              status: 'warning',
-              duration: 5500,
-              isClosable: true,
-            });
-          });
-      });
-  }, [language]);
 
   useEffect(async () => {
     const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);

@@ -1,9 +1,8 @@
 import {
-  Box, useColorModeValue, Flex, useToast, useColorMode, Skeleton,
+  Box, useColorModeValue, Flex, useColorMode, Skeleton,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import axios from 'axios';
 import { useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
@@ -109,7 +108,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         image: preview || staticImage,
         translations,
         pathConnector: `/interactive-coding-tutorial/${difficulty}`,
-        canonicalPathConector: `${locale === 'en' ? '' : `/${locale}`}/interactive-coding-tutorial/${difficulty}`,
         type: 'article',
         keywords: result?.seo_keywords || '',
         card: 'large',
@@ -163,10 +161,6 @@ const ProjectSlug = ({ project, markdown }) => {
   const { colorMode } = useColorMode();
   const router = useRouter();
   const { slug, difficulty } = router.query;
-  const language = router.locale === 'en' ? 'us' : 'es';
-  const currentLanguageLabel = router.language === 'en' ? t('common:english') : t('common:spanish');
-
-  const toast = useToast();
 
   useEffect(async () => {
     const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
@@ -190,23 +184,6 @@ const ProjectSlug = ({ project, markdown }) => {
       router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
     });
   }, [router, router.locale, translations]);
-
-  useEffect(() => {
-    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`)
-      .then(({ data }) => {
-        let currentlocaleLang = data.translations[language];
-        if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
-        axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=project`)
-          .catch(() => {
-            toast({
-              title: t('alert-message:language-not-found', { currentLanguageLabel }),
-              status: 'warning',
-              duration: 5500,
-              isClosable: true,
-            });
-          });
-      });
-  }, [router?.locale]);
 
   return (
     <GridContainer

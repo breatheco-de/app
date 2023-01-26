@@ -20,7 +20,6 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import axios from 'axios';
 import { Formik, Form, Field } from 'formik';
 import React, { useEffect, useState } from 'react';
 // import atob from 'atob';
@@ -28,7 +27,6 @@ import { useRouter } from 'next/router';
 import Script from 'next/script';
 import getT from 'next-translate/getT';
 import styled from 'styled-components';
-import { languageLabel } from '../../../utils';
 import useAuth from '../../../common/hooks/useAuth';
 import Heading from '../../../common/components/Heading';
 import Link from '../../../common/components/NextChakraLink';
@@ -124,7 +122,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         description: description || '',
         translations,
         pathConnector: '/interactive-exercise',
-        canonicalPathConector: `${locale === 'en' ? '' : `/${locale}`}/interactive-exercise`,
         url: ogUrl.en || `/${locale}/interactive-exercise/${slug}`,
         slug,
         keywords: result?.seo_keywords || '',
@@ -502,7 +499,6 @@ const Exercise = ({ exercise, markdown }) => {
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const router = useRouter();
   const language = router.locale === 'en' ? 'us' : 'es';
-  const currentLanguageLabel = languageLabel[language] || language;
   const { slug } = router.query;
   // const defaultImage = '/static/images/code1.png';
   // const getImage = exercise.preview !== '' ? exercise.preview : defaultImage;
@@ -542,20 +538,6 @@ const Exercise = ({ exercise, markdown }) => {
 
   useEffect(() => {
     tagsArray(exercise);
-    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=exercise`)
-      .then(({ data }) => {
-        let currentlocaleLang = data.translations[language];
-        if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
-        axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=EXERCISE`)
-          .catch(() => {
-            toast({
-              title: t('alert-message:language-not-found', { currentLanguageLabel }),
-              status: 'warning',
-              duration: 5500,
-              isClosable: true,
-            });
-          });
-      });
   }, [language]);
 
   return (

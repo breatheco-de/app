@@ -1,16 +1,15 @@
 /* eslint-disable no-param-reassign */
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
-import axios from 'axios';
 import {
-  Box, useColorModeValue, useToast, Modal, Button, Tooltip,
+  Box, useColorModeValue, Modal, Button, Tooltip,
   ModalOverlay, ModalContent, ModalCloseButton, Skeleton,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import getT from 'next-translate/getT';
 import Icon from '../../common/components/Icon';
-import { languageLabel, getExtensionName } from '../../utils';
+import { getExtensionName } from '../../utils';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 import MarkDownParser from '../../common/components/MarkDownParser';
@@ -98,7 +97,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         description: description || '',
         image: lesson.preview || staticImage,
         pathConnector: translationsExists ? '/lesson' : `/lesson/${slug}`,
-        canonicalPathConector: `${locale === 'en' ? '' : `/${locale}`}/lesson`,
         url: ogUrl.en || `/${locale}/lesson/${slug}`,
         slug,
         type: 'article',
@@ -128,12 +126,9 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
   const translations = lesson?.translations || { es: '', en: '', us: '' };
 
   const router = useRouter();
-  const toast = useToast();
   const currentTheme = useColorModeValue('light', 'dark');
   const iconColorTheme = useColorModeValue('#000000', '#ffffff');
-  const language = router.locale === 'en' ? 'us' : 'es';
   const { slug } = router.query;
-  const currentLanguageLabel = languageLabel[language] || language;
 
   useEffect(async () => {
     const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
@@ -153,25 +148,6 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
 
     return () => {};
   }, [router, router.locale, translations]);
-
-  useEffect(() => {
-    if (ipynbHtmlUrl === '') {
-      axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=lesson`)
-        .then(({ data }) => {
-          let currentlocaleLang = data.translations[language];
-          if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
-          axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=LESSON`)
-            .catch(() => {
-              toast({
-                title: t('alert-message:language-not-found', { currentLanguageLabel }),
-                status: 'warning',
-                duration: 5500,
-                isClosable: true,
-              });
-            });
-        });
-    }
-  }, [language]);
 
   return (
     <>
