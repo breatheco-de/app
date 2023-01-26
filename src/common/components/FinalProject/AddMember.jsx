@@ -12,7 +12,7 @@ import useStyle from '../../hooks/useStyle';
 
 const AddMember = ({ translation, students, errors, required, hint }) => {
   const [field, meta, helpers] = useField('members');
-  const { featuredColor, disabledColor } = useStyle();
+  const { featuredColor, disabledColor, lightColor } = useStyle();
   const { t } = useTranslation('final-project');
 
   const handleAddTag = (tag) => {
@@ -78,7 +78,7 @@ const AddMember = ({ translation, students, errors, required, hint }) => {
         }}
       />
       {hint && !errors?.members && (
-        <Box fontSize="sm" mt={2}>{hint}</Box>
+        <Box fontSize="sm" color={lightColor} mt={2}>{hint}</Box>
       )}
       {errors?.members && <Box className="error-message">{errors?.members}</Box>}
     </Box>

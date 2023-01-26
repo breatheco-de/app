@@ -10,7 +10,7 @@ import { url } from '../../../utils/regex';
 import Heading from '../Heading';
 import AddMember from './AddMember';
 
-const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose }) => {
+const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, defaultValues }) => {
   const { t } = useTranslation('final-project');
   const [students, setStudents] = useState(studentsData);
   const [fileProps, setFileProps] = useState([]);
@@ -18,13 +18,13 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose }
   const toast = useToast();
   const cohortAcademy = cohortData?.academy?.id || 4;
   const [formProps, setFormProps] = useState({
-    name: '',
-    one_line_desc: '',
-    description: '',
-    repo_url: '',
+    name: defaultValues?.name || '',
+    one_line_desc: defaultValues?.one_line_desc || '',
+    description: defaultValues?.description || '',
+    repo_url: defaultValues?.repo_url || '',
     slides_url: '',
     screenshot: null,
-    members: [],
+    members: defaultValues?.members || [],
   });
   const commonTranslation = storyConfig?.translation?.[storyConfig?.locale]?.common;
   const finalProjectTranslation = storyConfig?.translation?.[storyConfig?.locale]['final-project'];
@@ -243,12 +243,14 @@ FinalProjectForm.propTypes = {
   studentsData: PropTypes.arrayOf(PropTypes.object),
   storyConfig: PropTypes.objectOf(PropTypes.any),
   handleClose: PropTypes.func,
+  defaultValues: PropTypes.objectOf(PropTypes.any),
 };
 FinalProjectForm.defaultProps = {
   cohortData: {},
   studentsData: [],
   storyConfig: {},
   handleClose: () => {},
+  defaultValues: {},
 };
 
 export default FinalProjectForm;

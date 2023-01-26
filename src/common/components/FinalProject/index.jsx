@@ -1,6 +1,7 @@
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, Modal, ModalCloseButton, ModalContent, ModalOverlay } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
 import { usePersistent } from '../../hooks/usePersistent';
 import Heading from '../Heading';
 import Icon from '../Icon';
@@ -8,14 +9,29 @@ import Progress from '../ProgressBar/Progress';
 import Text from '../Text';
 import FinalProjectModal from './Modal';
 import bc from '../../services/breathecode';
+import FinalProjectForm from './Form';
+import useStyle from '../../hooks/useStyle';
 
 const FinalProject = ({ studentAndTeachers }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
+  const [openForm, setOpenForm] = useState(false);
+  const [finalProject, setFinalProject] = useState({});
   const [cohortSession] = usePersistent('cohortSession', {});
+  const router = useRouter();
+  const { modal } = useStyle();
+  const { cohortSlug } = router.query;
 
-  // filter((student) => student.role === 'STUDENT')
+  // console.log('finalProject:::', finalProject);
+
+  const openModal = () => {
+    if (finalProject?.repo_url) {
+      setOpenForm(true);
+    } else {
+      setIsOpen(true);
+    }
+  };
+  const closeModal = () => setIsOpen(false);
+
   const students = studentAndTeachers.map((student) => ({
     ...student,
     user: {
@@ -29,7 +45,10 @@ const FinalProject = ({ studentAndTeachers }) => {
       visibility_status: 'PRIVATE',
     }).getFinalProject()
       .then((res) => {
-        console.log('final project sended:', res.data);
+        const currentProject = res?.data?.find((project) => project?.cohort?.slug === cohortSlug);
+        if (currentProject !== undefined) {
+          setFinalProject(currentProject);
+        }
       });
   }, []);
 
@@ -60,8 +79,8 @@ const FinalProject = ({ studentAndTeachers }) => {
             color="blue.default"
             padding="0 27px"
           >
-            <Icon icon="add" width="25px" height="25px" />
-            Add final project info
+            <Icon icon={finalProject?.repo_url ? 'underlinedPencil' : 'add'} width="25px" height="25px" />
+            {finalProject?.repo_url ? 'Edit final project info' : 'Add final project info'}
           </Button>
           <Box display="flex" flexDirection="column" gridGap="10px" borderColor="white" border="1px solid" padding="10px 22px" borderRadius="4px">
             <Text size="l">
@@ -82,6 +101,20 @@ const FinalProject = ({ studentAndTeachers }) => {
         studentsData={students}
         cohortData={cohortSession}
       />
+      {openForm && (
+        <Modal size="lg" isOpen={openForm} onClose={setOpenForm}>
+          <ModalOverlay />
+          <ModalContent margin="5rem 0 4rem 0" background={modal.background} borderRadius="13px">
+            <ModalCloseButton />
+            <FinalProjectForm
+              defaultValues={finalProject}
+              cohortData={cohortSession}
+              studentsData={students}
+              handleClose={() => setOpenForm(false)}
+            />
+          </ModalContent>
+        </Modal>
+      )}
     </Box>
   );
 };

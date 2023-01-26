@@ -11,7 +11,7 @@ const FieldForm = ({
   acceptedFiles, maxFileSize, multipleFiles, fileProps, setFileProps, setFieldValue, translation, required, hint, maxLength,
   spellcheck,
 }) => {
-  const { input } = useStyle();
+  const { input, lightColor } = useStyle();
   const inputBorderColor = input.borderColor;
 
   return (
@@ -38,6 +38,7 @@ const FieldForm = ({
                   <Textarea
                     {...field}
                     className="hideOverflowX__"
+                    _placeholder={{ color: 'gray.400' }}
                     spellcheck={spellcheck ? 'true' : 'false'}
                     value={externValue || field.value}
                     type={type}
@@ -87,9 +88,10 @@ const FieldForm = ({
               {type !== 'textarea' && type !== 'file' && (
                 <Input
                   {...field}
-                  value={externValue || field.value}
+                  value={formProps[name] || externValue || field.value}
                   type={type}
                   onClick={onClick}
+                  _placeholder={{ color: 'gray.400' }}
                   onChange={(e) => {
                     setFormProps({ ...formProps, [name]: e.target.value });
                     handleOnChange(e);
@@ -104,7 +106,7 @@ const FieldForm = ({
                 />
               )}
               {hint && !form.errors[name] && (
-                <Box fontSize="sm" mt={2}>{hint}</Box>
+                <Box fontSize="sm" color={lightColor} mt={2}>{hint}</Box>
               )}
               {form.errors[name] && (
                 <Box className="error-message">{form.errors[name]}</Box>

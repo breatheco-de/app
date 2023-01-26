@@ -7,13 +7,12 @@ import Heading from '../Heading';
 import Text from '../Text';
 import FinalProjectForm from './Form';
 
-const FinalProjectModal = ({ storyConfig, isOpen, cohortData, studentsData, closeModal }) => {
+const FinalProjectModal = ({ storyConfig, isOpen, cohortData, studentsData, closeModal, closeOnOverlayClick }) => {
   const { t } = useTranslation('final-project');
-  // const [isModalOpen, setIsModalOpen] = useState(isOpen || false);
   const [openForm, setOpenForm] = useState(false);
   const finalProjectTranslation = storyConfig?.translation?.[storyConfig?.locale]['final-project'];
   const bullets = finalProjectTranslation?.modal?.bullets || t('modal.bullets', {}, { returnObjects: true });
-  const { lightColor } = useStyle();
+  const { lightColor, modal } = useStyle();
 
   const handleClose = () => {
     closeModal();
@@ -22,9 +21,9 @@ const FinalProjectModal = ({ storyConfig, isOpen, cohortData, studentsData, clos
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={closeModal}>
+      <Modal closeOnOverlayClick={closeOnOverlayClick} isOpen={isOpen} onClose={closeModal}>
         <ModalOverlay />
-        <ModalContent maxWidth="1045px" margin="6rem 10px 4rem 10px">
+        <ModalContent maxWidth="1045px" margin="6rem 10px 4rem 10px" background={modal.background}>
           <ModalCloseButton />
           <Flex flexDirection={{ base: 'column', md: 'row' }} gridGap="22px" padding="30px">
             <Box display="flex" alignItems="center" flex={0.6} borderRadius="17px">
@@ -52,7 +51,7 @@ const FinalProjectModal = ({ storyConfig, isOpen, cohortData, studentsData, clos
       {openForm && (
         <Modal size="lg" isOpen={openForm} onClose={setOpenForm}>
           <ModalOverlay />
-          <ModalContent margin="5rem 0 4rem 0" borderRadius="13px">
+          <ModalContent margin="5rem 0 4rem 0" background={modal.background} borderRadius="13px">
             <ModalCloseButton />
             <FinalProjectForm
               storyConfig={storyConfig}
@@ -73,6 +72,7 @@ FinalProjectModal.propTypes = {
   cohortData: PropTypes.objectOf(PropTypes.any),
   studentsData: PropTypes.arrayOf(PropTypes.object),
   closeModal: PropTypes.func,
+  closeOnOverlayClick: PropTypes.bool,
 };
 FinalProjectModal.defaultProps = {
   storyConfig: {},
@@ -80,6 +80,7 @@ FinalProjectModal.defaultProps = {
   cohortData: {},
   studentsData: [],
   closeModal: () => {},
+  closeOnOverlayClick: true,
 };
 
 export default FinalProjectModal;

@@ -40,6 +40,7 @@ import useHandler from '../../../../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../../../../modifyEnv';
 import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
+import FinalProjectModal from '../../../../../common/components/FinalProject/Modal';
 
 const Dashboard = () => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -58,6 +59,8 @@ const Dashboard = () => {
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [events, setEvents] = useState(null);
   const [liveClass, setLiveClass] = useState(null);
+  const [isOpenFinalProject, setIsOpenFinalProject] = useState(false);
+  const [session, setSession] = usePersistent('session', {});
   const { user, choose, isLoading } = useAuth();
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const [currentCohortProps, setCurrentCohortProps] = useState({});
@@ -164,6 +167,10 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    if (cohortSession?.stage === 'FINAL_PROJECT' && session?.closedFinalProjectModal !== true) {
+      setIsOpenFinalProject(true);
+    }
+
     if (showGithubWarning === 'active') {
       setShowWarningModal(true);
     }
@@ -234,7 +241,13 @@ const Dashboard = () => {
 
   const onlyStudentsActive = studentAndTeachers.filter(
     (x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE',
-  );
+  ).map((student) => ({
+    ...student,
+    user: {
+      ...student?.user,
+      full_name: `${student?.user?.first_name} ${student?.user?.last_name}`,
+    },
+  }));
 
   const modulesExists = sortedAssignments.some(
     (assignment) => assignment.filteredModules.length !== 0,
@@ -259,6 +272,16 @@ const Dashboard = () => {
           style={{ borderRadius: '0px', justifyContent: 'center' }}
         />
       )}
+      <FinalProjectModal
+        isOpen={isOpenFinalProject}
+        closeOnOverlayClick={false}
+        closeModal={() => {
+          setIsOpenFinalProject(false);
+          setSession({ ...session, closedFinalProjectModal: true });
+        }}
+        studentsData={onlyStudentsActive}
+        cohortData={cohortSession}
+      />
       <Container maxW="container.xl">
         <Box width="fit-content" marginTop="18px" marginBottom="48px">
           <NextChakraLink
@@ -515,7 +538,7 @@ const Dashboard = () => {
               )}
               {cohortSession?.stage === 'FINAL_PROJECT' && (
                 <FinalProject
-                  studentAndTeachers={studentAndTeachers}
+                  studentAndTeachers={onlyStudentsActive}
                 />
               )}
               <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
