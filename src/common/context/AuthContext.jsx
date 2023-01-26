@@ -125,19 +125,21 @@ const AuthProvider = ({ children }) => {
   const handleSession = (tokenString) => setTokenSession(tokenString);
   useEffect(() => {
     // setSession
-    setSession({
-      ...session,
-      version: packageJson.version,
-      host: process.env.BREATHECODE_HOST,
-      environment: process.env.VERCEL_ENV,
-      browser: browser || process.env?.BROWSER,
-      cohortSession,
-      profile: state?.user,
-      language: router.locale,
-      device: navigator.userAgent,
-      screenWidth: window?.screen?.width,
-      screenHeight: window?.screen?.height,
-    });
+    if (state?.user) {
+      setSession({
+        ...session,
+        version: packageJson.version,
+        host: process.env.BREATHECODE_HOST,
+        environment: process.env.VERCEL_ENV,
+        browser: browser || process.env?.BROWSER,
+        cohortSession,
+        profile: state?.user,
+        language: router.locale,
+        device: navigator.userAgent,
+        screenWidth: window?.screen?.width,
+        screenHeight: window?.screen?.height,
+      });
+    }
   }, [router?.locale, state?.user, cohortSession]);
   useEffect(() => {
     const user = state?.user;
