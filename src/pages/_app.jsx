@@ -3,7 +3,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from 'react-query';
-// import { withLDProvider } from 'launchdarkly-react-client-sdk';
+import { withLDProvider } from 'launchdarkly-react-client-sdk';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import '../../styles/globals.css';
 import '../../styles/react-tags-input.css';
@@ -77,4 +77,9 @@ App.propTypes = {
   pageProps: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
   Component: PropTypes.elementType.isRequired,
 };
-export default wrapper.withRedux(App);
+export default withLDProvider({
+  clientSideID: process.env.LD_CLIENT_ID,
+  options: {
+    bootstrap: 'localStorage',
+  },
+})(wrapper.withRedux(App));
