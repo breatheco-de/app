@@ -1,5 +1,5 @@
 import { Box, Button } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { usePersistent } from '../../hooks/usePersistent';
 import Heading from '../Heading';
@@ -7,19 +7,31 @@ import Icon from '../Icon';
 import Progress from '../ProgressBar/Progress';
 import Text from '../Text';
 import FinalProjectModal from './Modal';
+import bc from '../../services/breathecode';
 
 const FinalProject = ({ studentAndTeachers }) => {
   const [isOpen, setIsOpen] = useState(false);
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
   const [cohortSession] = usePersistent('cohortSession', {});
-  const students = studentAndTeachers.filter((student) => student.role === 'STUDENT').map((student) => ({
+
+  // filter((student) => student.role === 'STUDENT')
+  const students = studentAndTeachers.map((student) => ({
     ...student,
     user: {
       ...student?.user,
       full_name: `${student?.user?.first_name} ${student?.user?.last_name}`,
     },
   }));
+
+  useEffect(() => {
+    bc.todo({
+      visibility_status: 'PRIVATE',
+    }).getFinalProject()
+      .then((res) => {
+        console.log('final project sended:', res.data);
+      });
+  }, []);
 
   return (
     <Box minHeight="300px" background="blue.900" borderRadius="lg" position="relative" color="white" textAlign="center" padding="0 34px 24px 34px">

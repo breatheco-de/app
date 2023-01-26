@@ -19,6 +19,7 @@ const FinalProjectModal = ({ storyConfig, isOpen, cohortData, studentsData, clos
     closeModal();
     setOpenForm(false);
   };
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={closeModal}>

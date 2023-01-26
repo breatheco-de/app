@@ -9,6 +9,7 @@ import FileInput from './FileInput';
 const FieldForm = ({
   type, name, label, placeholder, formProps, setFormProps, style, withLabel, pattern, handleOnChange, externValue, onClick,
   acceptedFiles, maxFileSize, multipleFiles, fileProps, setFileProps, setFieldValue, translation, required, hint, maxLength,
+  spellcheck,
 }) => {
   const { input } = useStyle();
   const inputBorderColor = input.borderColor;
@@ -37,6 +38,7 @@ const FieldForm = ({
                   <Textarea
                     {...field}
                     className="hideOverflowX__"
+                    spellcheck={spellcheck ? 'true' : 'false'}
                     value={externValue || field.value}
                     type={type}
                     onClick={onClick}
@@ -138,6 +140,7 @@ FieldForm.propTypes = {
   translation: PropTypes.objectOf(PropTypes.any),
   required: PropTypes.bool,
   hint: PropTypes.string,
+  spellcheck: PropTypes.bool,
 };
 
 FieldForm.defaultProps = {
@@ -163,6 +166,7 @@ FieldForm.defaultProps = {
   translation: {},
   required: false,
   hint: '',
+  spellcheck: false,
 };
 
 export default FieldForm;
