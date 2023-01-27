@@ -15,16 +15,15 @@ import useStyle from '../../hooks/useStyle';
 const FinalProject = ({ studentAndTeachers }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [openForm, setOpenForm] = useState(false);
-  const [finalProject, setFinalProject] = useState({});
+  const [finalProject, setFinalProjects] = useState([]);
   const [cohortSession] = usePersistent('cohortSession', {});
   const router = useRouter();
   const { modal } = useStyle();
   const { cohortSlug } = router.query;
-
-  // console.log('finalProject:::', finalProject);
+  const repoUrl = finalProject?.currentProject?.repo_url;
 
   const openModal = () => {
-    if (finalProject?.repo_url) {
+    if (repoUrl) {
       setOpenForm(true);
     } else {
       setIsOpen(true);
@@ -47,7 +46,10 @@ const FinalProject = ({ studentAndTeachers }) => {
       .then((res) => {
         const currentProject = res?.data?.find((project) => project?.cohort?.slug === cohortSlug);
         if (currentProject !== undefined) {
-          setFinalProject(currentProject);
+          setFinalProjects({
+            currentProject,
+            allProjects: res?.data,
+          });
         }
       });
   }, []);
@@ -79,8 +81,8 @@ const FinalProject = ({ studentAndTeachers }) => {
             color="blue.default"
             padding="0 27px"
           >
-            <Icon icon={finalProject?.repo_url ? 'underlinedPencil' : 'add'} width="25px" height="25px" />
-            {finalProject?.repo_url ? 'Edit final project info' : 'Add final project info'}
+            <Icon icon={repoUrl ? 'underlinedPencil' : 'add'} width="25px" height="25px" />
+            {repoUrl ? 'Edit final project info' : 'Add final project info'}
           </Button>
           <Box display="flex" flexDirection="column" gridGap="10px" borderColor="white" border="1px solid" padding="10px 22px" borderRadius="4px">
             <Text size="l">
@@ -107,7 +109,8 @@ const FinalProject = ({ studentAndTeachers }) => {
           <ModalContent margin="5rem 0 4rem 0" background={modal.background} borderRadius="13px">
             <ModalCloseButton />
             <FinalProjectForm
-              defaultValues={finalProject}
+              defaultValues={finalProject?.currentProject}
+              allProjects={finalProject?.allProjects}
               cohortData={cohortSession}
               studentsData={students}
               handleClose={() => setOpenForm(false)}
