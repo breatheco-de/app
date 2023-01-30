@@ -1,17 +1,12 @@
+/* eslint-disable import/order */
 /* eslint-disable no-param-reassign */
 /* eslint-disable global-require */
-// const nextRuntimeDotenv = require('next-runtime-dotenv');
+
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
+const redirectsList = require('./public/redirects.json');
 const nextTranslate = require('next-translate');
-// const { i18n } = require('./i18n');
-
-// const withConfig = nextRuntimeDotenv({
-//   // path: '.env',
-//   public: ['MY_API_URL', 'NEXT_PUBLIC_ID'],
-//   server: ['GITHUB_TOKEN'],
-// });
 
 const securityHeaders = [
   {
@@ -40,6 +35,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
       //   destination: '/interactive-exercise',
       //   permanent: true,
       // },
+      ...redirectsList,
       {
         source: '/interactive-exercises/:slug',
         destination: '/interactive-exercise/:slug',
@@ -111,7 +107,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
   trailingSlash: false,
   webpack: (config, { isServer }) => {
     if (isServer) {
-      require('./scripts/sitemap-generator');
+      require('./scripts/redirects-generator');
       require('./scripts/syllabus');
     }
     if (process.env.VERCEL_ENV !== 'production') {
