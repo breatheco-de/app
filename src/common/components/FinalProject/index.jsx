@@ -13,7 +13,6 @@ import bc from '../../services/breathecode';
 import FinalProjectForm from './Form';
 import useStyle from '../../hooks/useStyle';
 import useFinalProjectProps from '../../store/actions/finalProjectAction';
-import { SimpleSkeleton } from '../Skeleton';
 
 const FinalProject = ({ storyConfig, studentAndTeachers, tasks }) => {
   const { t } = useTranslation('final-project');
@@ -130,28 +129,21 @@ const FinalProject = ({ storyConfig, studentAndTeachers, tasks }) => {
                 ? finalProjectTranslation?.['edit-final-project'] || t('edit-final-project')
                 : finalProjectTranslation?.['add-final-project'] || t('add-final-project')}
             </Button>
-            {progressPercent ? (
-              <Box display="flex" flexDirection="column" gridGap="10px" borderColor="white" border="1px solid" padding="10px 22px" borderRadius="4px">
-                <Text size="l" fontWeight={700}>
-                  {progressPercent === 100
-                    ? finalProjectTranslation?.completed || t('completed')
-                    : finalProjectTranslation?.['complete-required-projects'] || t('complete-required-projects')}
-                </Text>
-                <Progress
-                  percents={progressPercent}
-                  duration={0.4}
-                  widthSize={218}
-                  progressColor={progressPercent === 100 ? 'green.400' : ''}
-                  barHeight="5px"
-                  borderRadius="20px"
-                />
-              </Box>
-            ) : (
-              <Box display="flex" alignItems="center" flexDirection="column" gridGap="10px" borderColor="white" border="1px solid" padding="10px 22px" borderRadius="4px">
-                <SimpleSkeleton width="80%" height="18px" />
-                <SimpleSkeleton width="100%" height="5px" />
-              </Box>
-            )}
+            <Box display="flex" flexDirection="column" gridGap="10px" borderColor="white" border="1px solid" padding="10px 22px" borderRadius="4px">
+              <Text size="l" fontWeight={700}>
+                {progressPercent === 100
+                  ? finalProjectTranslation?.completed || t('completed')
+                  : finalProjectTranslation?.['complete-required-projects'] || t('complete-required-projects')}
+              </Text>
+              <Progress
+                percents={progressPercent || 0}
+                duration={0.4}
+                widthSize={218}
+                progressColor={progressPercent === 100 ? 'green.400' : ''}
+                barHeight="5px"
+                borderRadius="20px"
+              />
+            </Box>
           </Box>
         </Box>
       )}
