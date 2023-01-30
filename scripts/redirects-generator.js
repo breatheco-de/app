@@ -7,6 +7,10 @@ require('dotenv').config({
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 
+const redirectConfig = {
+  permanent: true,
+};
+
 const getLessons = () => {
   const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson&limit=1000`)
     .then((res) => res.data.results)
@@ -58,32 +62,28 @@ const redirectByLang = ({ slug, lang, difficulty, assetType }) => {
     return {
       source: `/lesson/${slug}`,
       destination: `/${lang}/lesson/${slug}`,
-      permanent: true,
-      locale: false,
+      ...redirectConfig,
     };
   }
   if (assetTypeValue === 'EXERCISE') {
     return {
       source: `/interactive-exercise/${slug}`,
       destination: `/${lang}/interactive-exercise/${slug}`,
-      permanent: true,
-      locale: false,
+      ...redirectConfig,
     };
   }
   if (assetTypeValue === 'PROJECT' && difficulty) {
     return {
       source: `/interactive-coding-tutorial/${difficulty}/${slug}`,
       destination: `/${lang}/interactive-coding-tutorial/${difficulty}/${slug}`,
-      permanent: true,
-      locale: false,
+      ...redirectConfig,
     };
   }
   if (assetTypeValue === 'ARTICLE') {
     return {
       source: `/how-to/${slug}`,
       destination: `/${lang}/how-to/${slug}`,
-      permanent: true,
-      locale: false,
+      ...redirectConfig,
     };
   }
   return null;
