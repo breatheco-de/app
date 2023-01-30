@@ -97,7 +97,7 @@ const generateAssetRedirect = (pages) => {
       const redirect = redirectByLang({
         slug,
         lang,
-        difficulty: assetType?.toUpperCase() === 'PROJECT' ? page?.difficulty : null,
+        difficulty: assetType?.toUpperCase() === 'PROJECT' ? page?.difficulty?.toLowerCase() : null,
         assetType,
       });
       return redirect;
