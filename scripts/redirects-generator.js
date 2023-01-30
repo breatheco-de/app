@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const { default: axios } = require('axios');
 const fs = require('fs');
 require('dotenv').config({
@@ -12,21 +13,93 @@ const getLessons = () => {
     .catch((err) => console.log(err));
   return data;
 };
+const getExercises = () => {
+  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&limit=1000`)
+    .then((res) => res.data.results)
+    .catch((err) => console.log(err));
+  return data;
+};
 
-const redirectByLang = (slug, lang) => {
-  const redirect = {
-    source: `/lesson/${slug}`,
-    destination: `/${lang}/lesson/${slug}`,
-    permanent: true,
-    // locale: false,
-  };
-  return redirect;
+const getProjects = () => {
+  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=1000`)
+    .then((res) => {
+      //  if res.data.results in map have difficulty === 'junior' change to 'easy' and if difficulty === 'semi-senior' change to 'intermediate' and if difficulty === 'senior' change to 'hard' and if difficulty === null change to 'unknown'
+      const dataCleaned = res.data.results.map((item) => {
+        if (item.difficulty?.toLowerCase() === 'junior') {
+          item.difficulty = 'easy';
+        }
+        if (item.difficulty?.toLowerCase() === 'semi-senior') {
+          item.difficulty = 'intermediate';
+        }
+        if (item.difficulty?.toLowerCase() === 'senior') {
+          item.difficulty = 'hard';
+        }
+        if (item.difficulty === null) {
+          item.difficulty = 'unknown';
+        }
+        return item;
+      });
+      return dataCleaned;
+    })
+    .catch((err) => console.log(err));
+  return data;
+};
+
+const getHowTo = () => {
+  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=1000`)
+    .then((res) => res.data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como'))
+    .catch((err) => console.log(err));
+  return data;
+};
+
+const redirectByLang = ({ slug, lang, difficulty, assetType }) => {
+  const assetTypeValue = assetType?.toUpperCase();
+  if (assetTypeValue === 'LESSON') {
+    return {
+      source: `/lesson/${slug}`,
+      destination: `/${lang}/lesson/${slug}`,
+      permanent: true,
+      locale: false,
+    };
+  }
+  if (assetTypeValue === 'EXERCISE') {
+    return {
+      source: `/interactive-exercise/${slug}`,
+      destination: `/${lang}/interactive-exercise/${slug}`,
+      permanent: true,
+      locale: false,
+    };
+  }
+  if (assetTypeValue === 'PROJECT' && difficulty) {
+    return {
+      source: `/interactive-coding-tutorial/${difficulty}/${slug}`,
+      destination: `/${lang}/interactive-coding-tutorial/${difficulty}/${slug}`,
+      permanent: true,
+      locale: false,
+    };
+  }
+  if (assetTypeValue === 'ARTICLE') {
+    return {
+      source: `/how-to/${slug}`,
+      destination: `/${lang}/how-to/${slug}`,
+      permanent: true,
+      locale: false,
+    };
+  }
+  return null;
 };
 
 const generateAssetRedirect = (pages) => {
-  const redirectList = pages.filter((page) => page.lang !== 'us' && page.lang !== 'en')
+  const redirectList = pages.filter((page) => page.lang !== 'us' && page.lang !== 'en' && page.lang !== null)
     .map((page) => {
-      const redirect = redirectByLang(page?.slug, page?.lang);
+      const { slug, lang, asset_type: assetType } = page;
+
+      const redirect = redirectByLang({
+        slug,
+        lang,
+        difficulty: assetType?.toUpperCase() === 'PROJECT' ? page?.difficulty : null,
+        assetType,
+      });
       return redirect;
     });
   return redirectList;
@@ -36,9 +109,23 @@ async function generateRedirect() {
   console.log('Generating redirects...');
 
   const lessonsList = await getLessons();
-  const lessonRedirectList = generateAssetRedirect(lessonsList);
+  const excersisesList = await getExercises();
+  const projectList = await getProjects();
+  const howToList = await getHowTo();
 
-  fs.writeFileSync('public/redirects.json', JSON.stringify(lessonRedirectList, null, 2));
+  const lessonRedirectList = generateAssetRedirect(lessonsList);
+  const excersisesRedirectList = generateAssetRedirect(excersisesList);
+  const projectRedirectList = generateAssetRedirect(projectList);
+  const howToRedirectList = generateAssetRedirect(howToList);
+
+  const redirectJson = [
+    ...lessonRedirectList,
+    ...excersisesRedirectList,
+    ...projectRedirectList,
+    ...howToRedirectList,
+  ];
+
+  fs.writeFileSync('public/redirects.json', JSON.stringify(redirectJson, null, 2));
 
   console.log('Redirects generated!');
 }

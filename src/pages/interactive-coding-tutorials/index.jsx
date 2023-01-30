@@ -76,9 +76,9 @@ export const getStaticProps = async ({ locale, locales }) => {
 
     if (arrProjects[i].difficulty === null) arrProjects[i].difficulty = 'unknown';
     if (typeof arrProjects[i].difficulty === 'string' || arrProjects[i].difficulty === null) {
-      if (arrProjects[i].difficulty === 'junior') arrProjects[i].difficulty = 'easy';
-      else if (arrProjects[i].difficulty === 'semi-senior') arrProjects[i].difficulty = 'intermediate';
-      else if (arrProjects[i].difficulty === 'senior') arrProjects[i].difficulty = 'hard';
+      if (arrProjects[i].difficulty?.toLowerCase() === 'junior') arrProjects[i].difficulty = 'easy';
+      else if (arrProjects[i].difficulty?.toLowerCase() === 'semi-senior') arrProjects[i].difficulty = 'intermediate';
+      else if (arrProjects[i].difficulty?.toLowerCase() === 'senior') arrProjects[i].difficulty = 'hard';
 
       difficulties.push(arrProjects[i].difficulty);
     }
