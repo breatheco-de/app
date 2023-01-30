@@ -11,6 +11,7 @@ import {
 // import io from 'socket.io-client';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import { useFlags } from 'launchdarkly-react-client-sdk';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
 import ModuleMap from '../../../../../js_modules/moduleMap/index';
@@ -55,6 +56,7 @@ const Dashboard = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [, setSortedAssignments] = usePersistent('sortedAssignments', []);
+  const flags = useFlags();
   const [searchValue, setSearchValue] = useState(router.query.search || '');
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [events, setEvents] = useState(null);
@@ -363,6 +365,20 @@ const Dashboard = () => {
                 flexDirection="column"
                 gridGap="30px"
               >
+                {flags?.appReleaseEnableLiveEvents && (
+                  <LiveEvent
+                    liveClassHash={liveClass?.hash}
+                    liveStartsAt={liveClass?.starting_at}
+                    liveEndsAt={liveClass?.ending_at}
+                    otherEvents={events}
+                  />
+                )}
+                {cohortSession?.stage === 'FINAL_PROJECT' && (
+                  <FinalProject
+                    tasks={taskTodoState}
+                    studentAndTeachers={onlyStudentsActive}
+                  />
+                )}
                 <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
                   <TeacherSidebar
                     title={t('teacher-sidebar.actions')}
@@ -526,7 +542,7 @@ const Dashboard = () => {
               maxWidth="380px"
               minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
             >
-              {events?.length > 0 && liveClass?.starting_at && (
+              {flags?.appReleaseEnableLiveEvents && (
                 <LiveEvent
                   // liveUrl={events[0].url}
                   liveClassHash={liveClass?.hash}
@@ -538,6 +554,7 @@ const Dashboard = () => {
               )}
               {cohortSession?.stage === 'FINAL_PROJECT' && (
                 <FinalProject
+                  tasks={taskTodoState}
                   studentAndTeachers={onlyStudentsActive}
                 />
               )}

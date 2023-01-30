@@ -12,6 +12,7 @@ const Progress = ({
   progressColor,
   baseColor,
   borderRadius,
+  widthSize,
 }) => {
   const [barWidth, setBarWidth] = useState(0);
   const [initialized, setInitialized] = useState(false);
@@ -26,7 +27,9 @@ const Progress = ({
     }
   }, [progressClass]);
 
-  const percentsOffset = (percents - 100) * (barWidth / 100);
+  const barWidthDefault = widthSize || barWidth;
+
+  const percentsOffset = (percents - 100) * (barWidthDefault / 100);
 
   const transition = {
     duration,
@@ -37,7 +40,7 @@ const Progress = ({
   const variants = {
     enter: {
       opacity: 0,
-      x: -barWidth,
+      x: -barWidthDefault,
     },
     animate: {
       opacity: 1,
@@ -76,6 +79,7 @@ Progress.propTypes = {
   progressColor: PropTypes.string,
   baseColor: PropTypes.string,
   borderRadius: PropTypes.string,
+  widthSize: PropTypes.oneOfType([PropTypes.number, PropTypes.any]),
 };
 Progress.defaultProps = {
   percents: 0,
@@ -86,6 +90,7 @@ Progress.defaultProps = {
   progressColor: '',
   baseColor: '',
   borderRadius: '2px',
+  widthSize: null,
 };
 
 export default Progress;

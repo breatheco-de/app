@@ -9,6 +9,7 @@ import useTranslation from 'next-translate/useTranslation';
 import AutosuggestInput from './Autosuggest';
 import Icon from '../Icon';
 import useStyle from '../../hooks/useStyle';
+import { isNumber } from '../../../utils';
 
 const AddMember = ({ translation, students, errors, required, hint }) => {
   const [field, meta, helpers] = useField('members');
@@ -21,6 +22,16 @@ const AddMember = ({ translation, students, errors, required, hint }) => {
 
   const handleRemoveTag = (index) => {
     helpers?.remove(index);
+  };
+
+  const getTag = (tag) => {
+    if (isNumber(tag)) {
+      return `${tag}`;
+    }
+    if (tag?.match(/\(([^)]+)\)/) !== null) {
+      return tag?.match(/\(([^)]+)\)/)[1];
+    }
+    return `${tag}`;
   };
 
   return (
@@ -43,8 +54,8 @@ const AddMember = ({ translation, students, errors, required, hint }) => {
           />
         )}
         renderTag={({ tag, key, onRemove }) => {
-          const tagId = tag?.match(/\(([^)]+)\)/) !== null ? tag?.match(/\(([^)]+)\)/)[1] : tag;
-          const replaceTag = tagId?.replace(/\(([^)]+)\)/, '')?.trim();
+          const tagId = getTag(tag);
+          const replaceTag = typeof tagId === 'string' ? tagId?.replace(/\(([^)]+)\)/, '')?.trim() : tagId;
           const userData = students?.find((student) => student?.user?.id === Number(tagId));
 
           return (

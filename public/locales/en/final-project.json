@@ -1,4 +1,13 @@
 {
+  "congratulations": "Congratulations!",
+  "graduated-as": "You have graduated succesfully as a:",
+  "see-my-certificate": "See my certificate",
+  "what-do-you-need-to-graduate": "What do you need to graduate?",
+  "almost-there": "Almost there! You are on the last sprint before graduation, please make sure to complete the following activities:",
+  "edit-final-project": "Edit final project info",
+  "add-final-project": "Add final project info",
+  "completed": "Completed",
+  "complete-required-projects": "Complete required projects",
   "modal": {
     "title": "It's final project time!!!",
     "subtitle": "Congratulations on reaching to this phase of the program.",
