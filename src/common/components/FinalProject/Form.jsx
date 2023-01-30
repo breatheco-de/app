@@ -10,14 +10,16 @@ import { url } from '../../../utils/regex';
 import Heading from '../Heading';
 import AddMember from './AddMember';
 import { isNumber } from '../../../utils';
+import useFinalProjectProps from '../../store/actions/finalProjectAction';
 
 const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, defaultValues }) => {
   const { t } = useTranslation('final-project');
   const [students, setStudents] = useState(studentsData);
   const [fileProps, setFileProps] = useState([]);
-  const cohortSlug = cohortData?.slug || 'miami-xxix';
+  const cohortSlug = cohortData?.slug || '';
   const toast = useToast();
   const cohortAcademy = cohortData?.academy?.id || 4;
+  const { finalProjectData, setFinalProjectData } = useFinalProjectProps();
   const [formProps, setFormProps] = useState({
     name: '',
     one_line_desc: '',
@@ -77,6 +79,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
     bc.todo().updateFinalProject(allValues)
       .then((res) => {
         if (res) {
+          setFinalProjectData(res.data[0]);
           toast({
             title: 'Success',
             description: 'Your final project has been updated',
@@ -109,6 +112,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
     bc.todo().createFinalProject(allValues)
       .then((res) => {
         if (res) {
+          setFinalProjectData(res.data[0]);
           toast({
             title: 'Success',
             description: 'Your final project has been sended',
@@ -163,18 +167,27 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
     return `${tag}`;
   };
 
+  const getMembers = () => {
+    if (finalProjectData?.members?.length > 0) {
+      return finalProjectData?.members.map((member) => member?.id || member);
+    }
+    if (defaultValues?.members?.length > 0) {
+      return defaultValues?.members.map((member) => member.id);
+    }
+    return [];
+  };
+  const repoUrl = finalProjectData?.repo_url || defaultValues?.repo_url;
+  const projectId = finalProjectData?.id || defaultValues?.id;
   return (
     <Formik
       initialValues={{
-        name: defaultValues?.name || '',
-        one_line_desc: defaultValues?.one_line_desc || '',
-        description: defaultValues?.description || '',
-        repo_url: defaultValues?.repo_url || '',
+        name: finalProjectData?.name || defaultValues?.name || '',
+        one_line_desc: finalProjectData?.one_line_desc || defaultValues?.one_line_desc || '',
+        description: finalProjectData?.description || defaultValues?.description || '',
+        repo_url: repoUrl || '',
         slides_url: '',
         screenshot: null,
-        members: defaultValues?.members?.length > 0
-          ? defaultValues?.members.map((l) => l.id)
-          : [],
+        members: getMembers(),
         // name: '', // required
         // one_line_desc: '', // max 50 characters, required
         // description: '', // max 600 characters, required
@@ -194,10 +207,10 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
           ...values,
           cohort: 157,
           members: userIds,
-          id: defaultValues?.id,
+          id: projectId,
         };
 
-        if (defaultValues?.repo_url) {
+        if (repoUrl) {
           handleUpdate(actions, [allValues]);
         } else {
           handleSubmit(actions, allValues);

@@ -375,6 +375,7 @@ const Dashboard = () => {
                 )}
                 {cohortSession?.stage === 'FINAL_PROJECT' && (
                   <FinalProject
+                    tasks={taskTodoState}
                     studentAndTeachers={onlyStudentsActive}
                   />
                 )}
@@ -553,6 +554,7 @@ const Dashboard = () => {
               )}
               {cohortSession?.stage === 'FINAL_PROJECT' && (
                 <FinalProject
+                  tasks={taskTodoState}
                   studentAndTeachers={onlyStudentsActive}
                 />
               )}
