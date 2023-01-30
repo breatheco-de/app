@@ -107,6 +107,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
   trailingSlash: false,
   webpack: (config, { isServer }) => {
     if (isServer) {
+      require('./scripts/redirects-generator');
       require('./scripts/sitemap-generator');
       require('./scripts/syllabus');
     }
