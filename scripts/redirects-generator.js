@@ -51,7 +51,7 @@ const getProjects = () => {
 
 const getHowTo = () => {
   const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=1000`)
-    .then((res) => (res.data.results > 0 ? res.data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como') : []))
+    .then((res) => (res.data.results?.length > 0 ? res.data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como') : []))
     .catch((err) => console.log(err));
   return data;
 };
