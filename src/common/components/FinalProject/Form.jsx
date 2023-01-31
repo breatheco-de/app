@@ -9,6 +9,7 @@ import FieldForm from '../Forms/FieldForm';
 import { url } from '../../../utils/regex';
 import Heading from '../Heading';
 import AddMember from './AddMember';
+import { usePersistent } from '../../hooks/usePersistent';
 import { isNumber } from '../../../utils';
 import useFinalProjectProps from '../../store/actions/finalProjectAction';
 
@@ -16,6 +17,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
   const { t } = useTranslation('final-project');
   const [students, setStudents] = useState(studentsData);
   const [fileProps, setFileProps] = useState([]);
+  const [cohortSession] = usePersistent('cohortSession', {});
   const cohortSlug = cohortData?.slug || '';
   const toast = useToast();
   const cohortAcademy = cohortData?.academy?.id || 4;
@@ -188,13 +190,6 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
         slides_url: '',
         screenshot: null,
         members: getMembers(),
-        // name: '', // required
-        // one_line_desc: '', // max 50 characters, required
-        // description: '', // max 600 characters, required
-        // repo_url: '',
-        // slides_url: '', // info: Online slides like Google Sliders, Prezi, etc
-        // screenshot: null,
-        // members: [],
       }}
       onSubmit={(values, actions) => {
         const userIds = values?.members?.map((member) => {
@@ -205,7 +200,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
         });
         const allValues = {
           ...values,
-          cohort: 157,
+          cohort: cohortSession?.id,
           members: userIds,
           id: projectId,
         };
