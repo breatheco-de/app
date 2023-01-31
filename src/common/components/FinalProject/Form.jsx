@@ -190,13 +190,6 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
         slides_url: '',
         screenshot: null,
         members: getMembers(),
-        // name: '', // required
-        // one_line_desc: '', // max 50 characters, required
-        // description: '', // max 600 characters, required
-        // repo_url: '',
-        // slides_url: '', // info: Online slides like Google Sliders, Prezi, etc
-        // screenshot: null,
-        // members: [],
       }}
       onSubmit={(values, actions) => {
         const userIds = values?.members?.map((member) => {
