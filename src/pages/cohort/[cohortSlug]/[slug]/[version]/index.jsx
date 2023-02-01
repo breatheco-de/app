@@ -169,7 +169,7 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    if (cohortSession?.stage === 'FINAL_PROJECT' && session?.closedFinalProjectModal !== true) {
+    if (flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && session?.closedFinalProjectModal !== true) {
       setIsOpenFinalProject(true);
     }
 
@@ -373,7 +373,7 @@ const Dashboard = () => {
                     otherEvents={events}
                   />
                 )}
-                {cohortSession?.stage === 'FINAL_PROJECT' && (
+                {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
                   <FinalProject
                     tasks={taskTodoState}
                     studentAndTeachers={onlyStudentsActive}
@@ -552,7 +552,7 @@ const Dashboard = () => {
                   // featureLabel,
                 />
               )}
-              {cohortSession?.stage === 'FINAL_PROJECT' && (
+              {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
                 <FinalProject
                   tasks={taskTodoState}
                   studentAndTeachers={onlyStudentsActive}
