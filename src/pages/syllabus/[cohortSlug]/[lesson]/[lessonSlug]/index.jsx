@@ -595,7 +595,7 @@ const Content = () => {
                     >
                       {sortedAssignments.map((module) => (
                         <option key={module.id} value={module.id}>
-                          {`#${module.id} - ${module.label}`}
+                          {`#${module?.id} - ${module?.label}`}
                         </option>
                       ))}
                     </Select>

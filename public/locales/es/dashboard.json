@@ -153,6 +153,7 @@
     "take-attendancy": "Tomar asistencia",
     "review-attendancy": "Revisar asistencia",
     "assignments": "Tareas",
-    "teacher-tutorial": "Tutorial de profesor"
+    "teacher-tutorial": "Tutorial de profesor",
+    "no-instructions": ">:warning: No se encontró instrucción disponible para este módulo"
   }
 }
