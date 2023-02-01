@@ -1,9 +1,10 @@
 import React from 'react';
 import { addMinutes, subMinutes, subHours, addHours } from 'date-fns';
 import LiveEvent from '../common/components/LiveEvent';
+import { Box } from '@chakra-ui/react';
 
 export default {
-  title: 'Components/LiveEvent',
+  title: 'components/Live Event',
   component: LiveEvent,
   argTypes: {
     liveStartsAt: {
@@ -40,7 +41,11 @@ export default {
 };
 
 const Component = (args, context) => {
-  return <LiveEvent stTranslation={context.parameters.i18n.store.data} {...args} />
+  return (
+    <Box width={args?.width || '360px'}>
+      <LiveEvent stTranslation={context.parameters.i18n.store.data} {...args} />
+    </Box>
+  )
 };
 export const Default = Component.bind({});
 Default.args = {
@@ -68,4 +73,32 @@ Default.args = {
     icon: 'codeBg',
     liveUrl: 'https://www.google.co.ve/'
   }],
+};
+
+export const NoTodayClass = Component.bind({});
+NoTodayClass.args = {
+  startingSoonDelta: 30,
+  otherEvents: [{
+    title: 'My Wonderful HTML Email Workflow',
+    starting_at: subMinutes(new Date(), 0),
+    ending_at: addMinutes(new Date(), 180),
+    icon: 'group',
+    fill: '#25BF6C',
+    liveUrl: 'https://www.google.co.ve/'
+  }, {
+    title: 'Coding Jamming',
+    // starting_at: subHours(new Date(), 2),
+    // ending_at: subMinutes(new Date(), 15),
+    starting_at: new Date(addMinutes(new Date(), 15)),
+    ending_at: new Date(addHours(new Date(), 2)),
+    icon: 'codeBg',
+    liveUrl: 'https://www.google.co.ve/'
+  }],
+};
+
+export const NoClassAndEventsAvailable = Component.bind({});
+NoClassAndEventsAvailable.args = {
+  // liveStartsAt: new Date(subMinutes(new Date(), 40)),
+  // liveEndsAt: new Date(addHours(new Date(), 1)),
+  startingSoonDelta: 30,
 };
