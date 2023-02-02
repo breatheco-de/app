@@ -32,11 +32,30 @@ const LiveEvent = ({
   featureReadMoreUrl,
 }) => {
   const { t, lang } = useTranslation('live-event');
-  const liveStartsAtDate = new Date(liveStartsAt);
-  const liveEndsAtDate = new Date(liveEndsAt);
   const { hexColor } = useStyle();
+  const [isOpen, setIsOpen] = useState(false);
+  const [timeAgo, setTimeAgo] = useState('');
+  const bgColor = useColorModeValue('white', 'gray.900');
+  const bgColor2 = useColorModeValue('featuredLight', 'featuredDark');
+  const textColor = useColorModeValue('black', 'white');
+  const textGrayColor = useColorModeValue('gray.600', 'gray.350');
+
+  const otherEventsSorted = otherEvents?.length > 0 ? otherEvents.sort((a, b) => new Date(a.starting_at) - new Date(b.starting_at)) : [];
+  const nearestEvent = otherEventsSorted[0];
+  const restOfEvents = otherEventsSorted.slice(1);
+  const featuredLiveEventStartsAt = liveStartsAt || nearestEvent?.starting_at;
+  const featuredLiveEventEndsAt = liveEndsAt || nearestEvent?.ending_at;
+
+  const liveStartsAtDate = new Date(featuredLiveEventStartsAt);
+  const liveEndsAtDate = new Date(featuredLiveEventEndsAt);
 
   const toast = useToast();
+  const getOtherEvents = () => {
+    if (!liveStartsAt && nearestEvent) {
+      return restOfEvents;
+    }
+    return otherEventsSorted;
+  };
 
   const formatTimeString = (start) => {
     const duration = intervalToDuration({
@@ -70,19 +89,18 @@ const LiveEvent = ({
     return stTranslation ? stTranslation[lang]['live-event']['will-start'].replace('{{time}}', formatedTime) : t('will-start', { time: formatedTime });
   };
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [timeAgo, setTimeAgo] = useState(liveStartsAt ? textTime(liveStartsAtDate, liveEndsAtDate) : '');
-  const bgColor = useColorModeValue('white', 'gray.900');
-  const bgColor2 = useColorModeValue('featuredLight', 'featuredDark');
-  const textColor = useColorModeValue('black', 'white');
-  const textGrayColor = useColorModeValue('gray.600', 'gray.350');
-
   useEffect(() => {
+    // initial time
+    if (featuredLiveEventStartsAt) {
+      setTimeAgo(textTime(liveStartsAtDate, liveEndsAtDate));
+    }
+    // update time every minute
     const interval = setInterval(() => {
-      setTimeAgo(liveStartsAt ? textTime(liveStartsAtDate, liveEndsAtDate) : '');
+      setTimeAgo(featuredLiveEventStartsAt ? textTime(liveStartsAtDate, liveEndsAtDate) : '');
     }, 60000);
+
     return () => clearInterval(interval);
-  }, []);
+  }, [featuredLiveEventStartsAt]);
 
   const isLiveOrStarting = (start, end) => {
     const ended = end - new Date() <= 0;
@@ -94,6 +112,16 @@ const LiveEvent = ({
     } = interval;
     const totalTime = days + months + hours + years + minutes;
     return start - new Date() <= 0 || (totalTime === minutes && minutes <= startingSoonDelta);
+  };
+
+  const getLiveIcon = () => {
+    if (!liveStartsAt && nearestEvent) {
+      return nearestEvent?.icon || 'group';
+    }
+    if (isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
+      return 'live-event';
+    }
+    return 'live-event-opaque';
   };
 
   return (
@@ -134,7 +162,7 @@ const LiveEvent = ({
         )}
       </Text>
       )}
-      {liveStartsAt ? (
+      {featuredLiveEventStartsAt ? (
         <Box
           display="flex"
           alignItems="center"
@@ -148,7 +176,7 @@ const LiveEvent = ({
           cursor={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && 'pointer'}
           onClick={() => {
             // if (isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) window.open(liveUrl);
-            if (isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
+            if (liveStartsAt && isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
               bc.events().joinLiveClass(liveClassHash)
                 .then((resp) => {
                   if (resp.data?.url) {
@@ -171,6 +199,11 @@ const LiveEvent = ({
                   });
                 });
             }
+            if (!liveStartsAt && isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
+              window.open(nearestEvent?.liveUrl);
+            }
+
+            // href={featureReadMoreUrl || event?.live_url || event?.live_stream_url || '#'}
           }}
         >
           <Box
@@ -178,11 +211,12 @@ const LiveEvent = ({
             width="50px"
             height="50px"
             className={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 'pulse-red' : ''}
+            opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? '1' : '0.5'}
           >
             <Icon
               width="50px"
               height="50px"
-              icon={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 'live-event' : 'live-event-opaque'}
+              icon={getLiveIcon()}
             />
           </Box>
           <Box
@@ -199,10 +233,18 @@ const LiveEvent = ({
               marginBottom="5px"
               marginTop="0"
             >
-              {stTranslation ? stTranslation[lang]['live-event']['live-class'] : t('live-class')}
+              {liveStartsAt ? (
+                <>
+                  {stTranslation ? stTranslation[lang]['live-event']['live-class'] : t('live-class')}
+                </>
+              ) : (
+                <>
+                  {nearestEvent?.title}
+                </>
+              )}
             </Text>
             <Text
-              fontSize="sm"
+              fontSize="12px"
               lineHeight="18px"
               fontWeight="700"
               color={textGrayColor}
@@ -255,7 +297,7 @@ const LiveEvent = ({
       )}
       {isOpen && (
         <Box marginTop="10px">
-          {otherEvents.map((event) => {
+          {(liveStartsAt ? otherEventsSorted : restOfEvents).map((event) => {
             const startsAt = event?.starting_at && new Date(event.starting_at);
             const endsAt = event?.ending_at && new Date(event.ending_at);
             return (
@@ -318,14 +360,14 @@ const LiveEvent = ({
                     {event.title}
                   </Link>
                   <Text
-                    fontSize="sm"
+                    fontSize="12px"
                     lineHeight="18px"
                     fontWeight="500"
                     color={textGrayColor}
                     marginBottom="0"
                     marginTop="0"
                   >
-                    {liveStartsAt ? textTime(startsAt, endsAt) : ''}
+                    {startsAt ? textTime(startsAt, endsAt) : ''}
                   </Text>
                 </Box>
               </Box>
@@ -333,7 +375,7 @@ const LiveEvent = ({
           })}
         </Box>
       )}
-      {otherEvents?.length > 0 && otherEvents !== null && (
+      {getOtherEvents()?.length > 0 && getOtherEvents() !== null && (
         <Button
           variant="ghost"
           height="auto"
@@ -350,7 +392,7 @@ const LiveEvent = ({
             setIsOpen(!isOpen);
           }}
         >
-          {otherEvents.filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ending_at)))?.length !== 0 && (
+          {getOtherEvents().filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ending_at)))?.length !== 0 && (
             <Box borderRadius="full" background="none" className="pulse-red" width="16px" height="16px" display="inline-block" marginRight="5px">
               <Icon width="16px" height="16px" icon="on-live" />
             </Box>
