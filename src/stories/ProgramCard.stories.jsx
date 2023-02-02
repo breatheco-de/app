@@ -162,3 +162,97 @@ Default.args = {
   lessonNumber: 1.2,
   courseProgress: 7,
 };
+
+export const isLoading = Component.bind({});
+isLoading.args = {
+  programName: 'Data Science',
+  programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
+  startsIn: new Date(addDays(new Date(), 3)),
+  icon: 'data-science-bg',
+  isLoading: true,
+};
+export const courseNotStarted = Component.bind({});
+courseNotStarted.args = {
+  programName: 'Data Science',
+  programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
+  startsIn: new Date(addDays(new Date(), 3)),
+  icon: 'data-science-bg',
+  mentorsAvailable: mentors,
+  syllabusContent: {
+    totalLessons: 30,
+    totalProjects: 15,
+    totalExercises: 15,
+    completedLessons: 3,
+    completedProjects: 10,
+    completedExercises: 5,
+  },
+};
+
+export const ongoingPaidCourse = Component.bind({});
+ongoingPaidCourse.args = {
+  programName: 'Data Science',
+  programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
+  startsIn: new Date(addDays(new Date(), 3)),
+  icon: 'data-science-bg',
+  syllabusContent: {
+    totalLessons: 30,
+    totalProjects: 15,
+    totalExercises: 15,
+    completedLessons: 3,
+    completedProjects: 10,
+    completedExercises: 5,
+  },
+  mentorsAvailable: mentors,
+  haveFreeTrial: true,
+  isFreeTrial: false,
+  isBought: true,
+  freeTrialExpireDate: new Date(addDays(new Date(), 5)),
+  lessonNumber: 1.2,
+  courseProgress: 34,
+};
+
+export const ongoingFreeTrial = Component.bind({});
+ongoingFreeTrial.args = {
+  programName: 'Data Science',
+  programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
+  startsIn: new Date(addDays(new Date(), 3)),
+  icon: 'data-science-bg',
+  syllabusContent: {
+    totalLessons: 30,
+    totalProjects: 15,
+    totalExercises: 15,
+    completedLessons: 3,
+    completedProjects: 10,
+    completedExercises: 5,
+  },
+  mentorsAvailable: mentors,
+  haveFreeTrial: false,
+  isFreeTrial: true,
+  isBought: true,
+  freeTrialExpireDate: new Date(addDays(new Date(), 5)),
+  lessonNumber: 1.2,
+  courseProgress: 34,
+};
+
+export const expiredFreeTrial = Component.bind({});
+expiredFreeTrial.args = {
+  programName: 'Data Science',
+  programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
+  startsIn: new Date(addDays(new Date(), 3)),
+  icon: 'data-science-bg',
+  syllabusContent: {
+    totalLessons: 30,
+    totalProjects: 15,
+    totalExercises: 15,
+    completedLessons: 3,
+    completedProjects: 10,
+    completedExercises: 5,
+  },
+  mentorsAvailable: mentors,
+  haveFreeTrial: false,
+  isFreeTrial: true,
+  isBought: true,
+  freeTrialExpireDate: new Date(addDays(new Date(), 0)),
+  lessonNumber: 1.2,
+  courseProgress: 34,
+};

@@ -36,6 +36,7 @@ const ProgramCard = ({
   courseProgress,
   lessonNumber,
   lessonLink,
+  isLoading,
 }) => {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
@@ -90,9 +91,9 @@ const ProgramCard = ({
   };
 
   const ProjectsSection = () => (syllabusArray()?.length > 0 || mentorsAvailable?.length > 0) && (
-    <Flex justifyContent="space-between" marginTop="10px" padding="10px" borderRadius="5px" background={bgColor}>
+    <Flex justifyContent="space-between" alignItems="center" marginTop="10px" padding="10px" borderRadius="5px" background={bgColor}>
       {syllabusArray()?.length > 0 && (
-        <Box>
+        <Box display="flex" flexDirection="column" gridGap="3px">
           {syllabusArray().map((elem) => (
             <Text
               fontSize="xs"
@@ -211,40 +212,46 @@ const ProgramCard = ({
         />
       </Box>
       <Flex height="30px" id="upper-left-section" flexDirection="row-reverse">
-        {!isBought ? (
-          <Flex width="116px">
-            <Box marginRight="10px">
-              <Icon
-                width="14px"
-                height="21px"
-                icon="rocket"
-              />
-            </Box>
-            <Box>
-              <Text
-                fontSize="9px"
-                lineHeight="9.8px"
-                fontWeight="600"
-                color={textColor}
-              >
-                {stTranslation ? stTranslation[lang]['program-card']['starts-in'] : t('starts-in')}
-              </Text>
-              <Text
-                fontSize="9px"
-                lineHeight="9.8px"
-                fontWeight="400"
-                color={textColor}
-              >
-                {formatTimeString(startsIn)}
-              </Text>
-            </Box>
-          </Flex>
+        {isLoading ? (
+          <></>
         ) : (
           <>
-            {isFreeTrial ? (
-              <FreeTagCapsule />
+            {!isBought ? (
+              <Flex width="116px">
+                <Box marginRight="10px">
+                  <Icon
+                    width="14px"
+                    height="21px"
+                    icon="rocket"
+                  />
+                </Box>
+                <Box>
+                  <Text
+                    fontSize="9px"
+                    lineHeight="9.8px"
+                    fontWeight="600"
+                    color={textColor}
+                  >
+                    {stTranslation ? stTranslation[lang]['program-card']['starts-in'] : t('starts-in')}
+                  </Text>
+                  <Text
+                    fontSize="9px"
+                    lineHeight="9.8px"
+                    fontWeight="400"
+                    color={textColor}
+                  >
+                    {formatTimeString(startsIn)}
+                  </Text>
+                </Box>
+              </Flex>
             ) : (
-              <Icon icon="crown" width="22px" height="15px" />
+              <>
+                {isFreeTrial ? (
+                  <FreeTagCapsule />
+                ) : (
+                  <Icon icon="crown" width="22px" height="15px" />
+                )}
+              </>
             )}
           </>
         )}
@@ -260,8 +267,8 @@ const ProgramCard = ({
         {' '}
       </Text>
 
-      {!isBought ? (
-        <Box>
+      {isLoading ? (
+        <>
           <Text
             fontSize="xs"
             lineHeight="14px"
@@ -271,87 +278,106 @@ const ProgramCard = ({
             {programDescription}
             {' '}
           </Text>
-          <ProjectsSection />
-          <Button
-            marginTop="20px"
-            borderRadius="3px"
-            width="100%"
-            padding="0"
-            whiteSpace="normal"
-            variant="default"
-          >
-            Start Course
+          <Button variant="outline" marginTop="20px" color="blue.default" borderColor="currentcolor" w="full" fontSize="12px" letterSpacing="0.05em">
+            Loading...
           </Button>
-          {haveFreeTrial && (
-            <Button
-              marginTop="15px"
-              borderRadius="3px"
-              width="100%"
-              padding="0"
-              whiteSpace="normal"
-              variant="outline"
-              borderColor="blue.default"
-              color="blue.default"
-            >
-              Free Trial
-            </Button>
-          )}
-        </Box>
+        </>
       ) : (
-        <Box marginTop="20px">
-          <Box margin="auto" width="90%">
-            <Progress value={courseProgress} borderRadius="20px" />
-            <Text
-              fontSize="8px"
-              lineHeight="9.8px"
-              fontWeight="500"
-              marginTop="5px"
-              color={CustomTheme.colors.blue.default2}
-            >
-              {`${courseProgress}%`}
-            </Text>
-          </Box>
-          {!isExpired && (
-            <>
-              <ProjectsSection />
+        <>
+          {!isBought ? (
+            <Box>
               <Text
-                marginTop="20px"
-                color={CustomTheme.colors.blue.default}
-                textAlign="center"
                 fontSize="xs"
                 lineHeight="14px"
-                fontWeight="700"
+                fontWeight="500"
+                color={textColor}
               >
-                <Link
-                  rel="noopener noreferrer"
-                  href={lessonLink}
-                  display="inline-block"
-                  letterSpacing="0.05em"
-                  fontFamily="Lato, Sans-serif"
-                >
-                  {`${t('continue')} ${lessonNumber}  →`}
-                </Link>
+                {programDescription}
+                {' '}
               </Text>
-            </>
+              <ProjectsSection />
+              <Button
+                marginTop="20px"
+                borderRadius="3px"
+                width="100%"
+                padding="0"
+                whiteSpace="normal"
+                variant="default"
+              >
+                Start Course
+              </Button>
+              {haveFreeTrial && (
+                <Button
+                  marginTop="15px"
+                  borderRadius="3px"
+                  width="100%"
+                  padding="0"
+                  whiteSpace="normal"
+                  variant="outline"
+                  borderColor="blue.default"
+                  color="blue.default"
+                >
+                  Free Trial
+                </Button>
+              )}
+            </Box>
+          ) : (
+            <Box marginTop="20px">
+              <Box margin="auto" width="90%">
+                <Progress value={courseProgress} colorScheme="blueDefaultScheme" height="10px" borderRadius="20px" />
+                <Text
+                  fontSize="8px"
+                  lineHeight="9.8px"
+                  fontWeight="500"
+                  marginTop="5px"
+                  color={CustomTheme.colors.blue.default2}
+                >
+                  {`${courseProgress}%`}
+                </Text>
+              </Box>
+              {!isExpired && (
+                <>
+                  <ProjectsSection />
+                  <Text
+                    marginTop="20px"
+                    color={CustomTheme.colors.blue.default}
+                    textAlign="center"
+                    fontSize="xs"
+                    lineHeight="14px"
+                    fontWeight="700"
+                  >
+                    <Link
+                      rel="noopener noreferrer"
+                      href={lessonLink || '#'}
+                      display="inline-block"
+                      letterSpacing="0.05em"
+                      fontFamily="Lato, Sans-serif"
+                    >
+                      {`${t('continue')} ${lessonNumber}  →`}
+                    </Link>
+                  </Text>
+                </>
 
+              )}
+              {isFreeTrial && (
+                <Button
+                  marginTop="25px"
+                  borderRadius="3px"
+                  width="100%"
+                  padding="0"
+                  whiteSpace="normal"
+                  variant="default"
+                  alignItems="center"
+                  background="yellow.default"
+                  color="white"
+                >
+                  <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
+                  Upgrade
+                </Button>
+              )}
+            </Box>
           )}
-          {isFreeTrial && (
-            <Button
-              marginTop="25px"
-              borderRadius="3px"
-              width="100%"
-              padding="0"
-              whiteSpace="normal"
-              variant="outline"
-              alignItems="center"
-              borderColor="blue.default"
-              color="blue.default"
-            >
-              <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color={CustomTheme.colors.blue.default} />
-              Upgrade experience
-            </Button>
-          )}
-        </Box>
+        </>
       )}
     </Box>
   );
@@ -372,6 +398,7 @@ ProgramCard.propTypes = {
   stTranslation: PropTypes.objectOf(PropTypes.any),
   lessonNumber: PropTypes.number,
   lessonLink: PropTypes.string,
+  isLoading: PropTypes.bool,
 };
 
 ProgramCard.defaultProps = {
@@ -387,6 +414,7 @@ ProgramCard.defaultProps = {
   freeTrialExpireDate: null,
   lessonNumber: null,
   lessonLink: null,
+  isLoading: false,
 };
 
 export default ProgramCard;
