@@ -24,6 +24,7 @@ import useStyle from '../../hooks/useStyle';
 import bc from '../../services/breathecode';
 import MentoringFree from './MentoringFree';
 import MentoringConsumables from './MentoringConsumables';
+import useAuth from '../../hooks/useAuth';
 // import { usePersistent } from '../../hooks/usePersistent';
 
 const Mentoring = ({
@@ -36,6 +37,7 @@ const Mentoring = ({
   const [serviceMentoring, setServiceMentoring] = useState({});
   const [mentoryProps, setMentoryProps] = useState({});
   const [programMentors, setProgramMentors] = useState([]);
+  const { isLoading, user } = useAuth();
   const { slug } = router.query;
   const isNotProduction = process.env.VERCEL_ENV !== 'production';
 
@@ -149,51 +151,55 @@ const Mentoring = ({
       });
   };
 
-  return flags?.appReleaseShowConsumedMentorships ? (
-    <MentoringConsumables
-      {...{
-        mentoryProps,
-        width,
-        serviceMentoring,
-        cohortService,
-        setMentoryProps,
-        setOpenMentors,
-        programServices,
-        dateFormated,
-        servicesFiltered,
-        searchProps,
-        setSearchProps,
-        setProgramMentors,
-        savedChanges,
-        setSavedChanges,
-        setServiceMentoring,
-        mentorsFiltered,
-        step1,
-        step2,
-        dateFormated2,
-      }}
-    />
-  ) : (
-    <MentoringFree
-      {...{
-        mentoryProps,
-        width,
-        setMentoryProps,
-        setOpenMentors,
-        programServices,
-        dateFormated,
-        servicesFiltered,
-        searchProps,
-        setSearchProps,
-        setProgramMentors,
-        savedChanges,
-        setSavedChanges,
-        mentorsFiltered,
-        step1,
-        step2,
-        dateFormated2,
-      }}
-    />
+  return !isLoading && user?.id && (
+    <>
+      {flags?.appReleaseShowConsumedMentorships ? (
+        <MentoringConsumables
+          {...{
+            mentoryProps,
+            width,
+            serviceMentoring,
+            cohortService,
+            setMentoryProps,
+            setOpenMentors,
+            programServices,
+            dateFormated,
+            servicesFiltered,
+            searchProps,
+            setSearchProps,
+            setProgramMentors,
+            savedChanges,
+            setSavedChanges,
+            setServiceMentoring,
+            mentorsFiltered,
+            step1,
+            step2,
+            dateFormated2,
+          }}
+        />
+      ) : (
+        <MentoringFree
+          {...{
+            mentoryProps,
+            width,
+            setMentoryProps,
+            setOpenMentors,
+            programServices,
+            dateFormated,
+            servicesFiltered,
+            searchProps,
+            setSearchProps,
+            setProgramMentors,
+            savedChanges,
+            setSavedChanges,
+            mentorsFiltered,
+            step1,
+            step2,
+            dateFormated2,
+          }}
+        />
+      )}
+    </>
   );
 };
 

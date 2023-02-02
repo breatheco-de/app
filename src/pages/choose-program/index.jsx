@@ -325,8 +325,8 @@ function chooseProgram() {
             </Heading>
             <Box as="hr" width="100%" margin="0.5rem 0 0 0" />
           </Box>
-          {!isLoading && dataQuery.cohorts?.length > 0 && (
-            <ChooseProgram chooseList={dataQuery.cohorts} handleChoose={handleChoose} />
+          {!isLoading && dataQuery?.cohorts?.length > 0 && (
+            <ChooseProgram chooseList={dataQuery?.cohorts} handleChoose={handleChoose} />
           )}
         </Box>
         {isLoading && dataQuery?.cohorts?.length > 0 && (
