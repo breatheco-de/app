@@ -57,6 +57,7 @@ Default.args = {
   startingSoonDelta: 30,
   otherEvents: [{
     title: 'My Wonderful HTML Email Workflow',
+    icon_url: 'https://cdn.pixabay.com/photo/2017/08/05/11/16/logo-2582748_960_720.png',
     starting_at: subMinutes(new Date(), 0),
     ending_at: addMinutes(new Date(), 180),
     icon: 'group',

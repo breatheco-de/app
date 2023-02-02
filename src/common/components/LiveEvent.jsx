@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useState, useEffect } from 'react';
 import {
-  Box, useColorModeValue, Button, useToast,
+  Box, useColorModeValue, Button, useToast, Avatar,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
@@ -310,7 +310,11 @@ const LiveEvent = ({
                 borderColor="#DADADA"
               >
                 <Box width="37px" height="37px" className={isLiveOrStarting(startsAt, endsAt) ? 'pulse-blue' : ''} borderRadius="full">
-                  <Icon fill={event.fill || hexColor.greenLight} color={event.color} style={{ flexShrink: 0 }} width="37px" height="37px" icon={event.icon || 'group'} />
+                  {event?.icon_url ? (
+                    <Avatar src={event?.icon_url} name="icon url" width="37px" height="37px" />
+                  ) : (
+                    <Icon fill={event.fill || hexColor.greenLight} color={event.color} style={{ flexShrink: 0 }} width="37px" height="37px" icon={event.icon || 'group'} />
+                  )}
                 </Box>
                 <Box
                   display="flex"

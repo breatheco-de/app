@@ -106,9 +106,11 @@ const AvatarUser = ({
             <Heading size="15px">
               {fullNameLabel}
             </Heading>
-            <Text size="sm" fontWeight="400">
-              {`${infoText[router?.locale]} ${dateFormated[router?.locale]}`}
-            </Text>
+            {infoText[router?.locale] && (
+              <Text size="sm" fontWeight="400">
+                {`${infoText[router?.locale]} ${dateFormated[router?.locale]}`}
+              </Text>
+            )}
 
           </Box>
         </PopoverBody>
