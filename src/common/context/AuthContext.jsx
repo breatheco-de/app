@@ -134,17 +134,15 @@ const AuthProvider = ({ children }) => {
       name: `${user?.first_name} ${user?.last_name}`,
       email: user?.email,
       id: user?.id,
-      custom: {
-        language: router?.locale,
-        screenWidth: window?.screen?.width,
-        screenHeight: window?.screen?.height,
-        device: navigator?.userAgent,
-        version: packageJson.version,
-        cohort: cohortSession?.name,
-        cohortSlug: cohortSession?.slug,
-        cohortRole: cohortSession?.cohort_role,
-        academy: cohortSession?.academy?.id,
-      },
+      language: router?.locale,
+      screenWidth: window?.screen?.width,
+      screenHeight: window?.screen?.height,
+      device: navigator?.userAgent,
+      version: packageJson.version,
+      cohort: cohortSession?.name,
+      cohortSlug: cohortSession?.slug,
+      cohortRole: cohortSession?.cohort_role,
+      academy: cohortSession?.academy?.id,
     });
   }, [state?.user, router?.locale, cohortSession?.slug]);
 
