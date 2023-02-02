@@ -181,7 +181,7 @@ const Content = () => {
         setCurrentAssetData(assetData);
 
         if (!assetData?.delivery_formats.includes('url')) {
-          const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession.academy.id });
+          const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
           const respData = await fileResp.data;
           setFileData(respData);
           onOpen();
@@ -595,7 +595,7 @@ const Content = () => {
                     >
                       {sortedAssignments.map((module) => (
                         <option key={module.id} value={module.id}>
-                          {`#${module.id} - ${module.label}`}
+                          {`#${module?.id} - ${module?.label}`}
                         </option>
                       ))}
                     </Select>

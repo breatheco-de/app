@@ -151,7 +151,7 @@ function useHandler() {
             filteredModulesByPending,
             duration_in_days: assignment?.duration_in_days || null,
             teacherInstructions: assignment.teacher_instructions,
-            extendedInstructions: assignment.extended_instructions,
+            extendedInstructions: assignment.extended_instructions || `${t('teacher-sidebar.no-instructions')}`,
             keyConcepts: assignment['key-concepts'],
           };
 
