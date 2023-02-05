@@ -18,10 +18,10 @@ const IntroductionSection = ({
     <Box display="flex">
       <Box flex={1}>
         <Heading as="span" size="xl" fontWeight="700">
-          {slice.primary.title ? (
+          {slice?.primary?.title ? (
             <>
               <PrismicRichText
-                field={slice.primary.title}
+                field={slice?.primary?.title}
                 components={{
                   heading1: ({ children }) => (
                     <Box as="h1" fontSize="48px" fontWeight="700" display="initial">
@@ -30,7 +30,7 @@ const IntroductionSection = ({
                   ),
                 }}
               />
-              {slice.primary.highlight && (
+              {slice?.primary?.highlight && (
                 // <MotionBox
                 //   as="strong"
                 //   className="highlighted box"
@@ -43,7 +43,7 @@ const IntroductionSection = ({
                 // >
                 // </MotionBox>
                 <PrismicRichText
-                  field={slice.primary.highlight}
+                  field={slice?.primary?.highlight}
                   components={{
                     paragraph: ({ children }) => (
                       <MotionBox
@@ -83,9 +83,9 @@ const IntroductionSection = ({
             </>
           )}
         </Heading>
-        {slice.primary.highlight ? (
+        {slice?.primary?.highlight ? (
           <Box as="strong" className="highlighted" fontSize="35px" display={{ base: 'initial', sm: 'none' }}>
-            <PrismicRichText field={slice.primary.highlight} />
+            <PrismicRichText field={slice?.primary?.highlight} />
           </Box>
         ) : (
           <Box as="strong" className="highlighted" fontSize="35px" display={{ base: 'initial', sm: 'none' }}>
@@ -93,9 +93,9 @@ const IntroductionSection = ({
           </Box>
         )}
 
-        {slice.primary.description ? (
+        {slice?.primary?.description ? (
           <Text fontSize="18px" fontWeight={700} pt="16px">
-            <PrismicRichText field={slice.primary.description} />
+            <PrismicRichText field={slice?.primary?.description} />
           </Text>
         ) : (
           <Text fontSize="18px" fontWeight={700} pt="16px">
@@ -103,9 +103,9 @@ const IntroductionSection = ({
           </Text>
         )}
 
-        {slice.primary.buttontext ? (
+        {slice?.primary?.buttontext ? (
           <Button variant="default" fontSize="13px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router?.push(data?.callToAction?.href)}>
-            <PrismicRichText field={slice.primary.buttontext} />
+            <PrismicRichText field={slice?.primary?.buttontext} />
           </Button>
         ) : (
           <>
@@ -117,10 +117,10 @@ const IntroductionSection = ({
           </>
         )}
         <Box as="ul" display="flex" flexDirection="column" gridGap="4px" width="fit-content">
-          {slice.primary.bullets?.length > 0
+          {slice?.primary?.bullets?.length > 0
             ? (
               <PrismicRichText
-                field={slice.primary.bullets}
+                field={slice?.primary?.bullets}
                 components={{
                   listItem: ({ children }, index) => (
                     <MotionBox whileHover={{ scale: 1.05 }} as="li" key={index} display="flex" fontSize="14px" gridGap="10px" alignItems="center">
