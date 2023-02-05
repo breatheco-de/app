@@ -13,10 +13,15 @@ const nextTranslate = require('next-translate');
 //   server: ['GITHUB_TOKEN'],
 // });
 
+const externalDevDomain = process.env.VERCEL_ENV !== 'production' ? 'http://localhost:9999' : '';
 const securityHeaders = [
   {
     key: 'X-Frame-Options',
     value: 'SAMEORIGIN',
+  },
+  {
+    key: 'Content-Security-Policy',
+    value: `frame-ancestors 'self' ${externalDevDomain}`,
   },
 ];
 

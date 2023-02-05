@@ -1,0 +1,63 @@
+{
+  "id": "title_introduction",
+  "type": "SharedSlice",
+  "name": "TitleIntroduction",
+  "description": "TitleIntroduction",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "TitleIntroduction",
+      "primary": {
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "single": "heading1",
+            "label": "Title",
+            "placeholder": "This is where it all begins..."
+          }
+        },
+        "buttontext": {
+          "type": "StructuredText",
+          "config": {
+            "label": "buttonText",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "single": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "highlight": {
+          "type": "StructuredText",
+          "config": {
+            "label": "highlight",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "single": "em"
+          }
+        },
+        "description": {
+          "type": "StructuredText",
+          "config": {
+            "label": "description",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "single": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "bullets": {
+          "type": "StructuredText",
+          "config": {
+            "label": "bullets",
+            "placeholder": "",
+            "allowTargetBlank": false,
+            "single": "list-item"
+          }
+        }
+      },
+      "items": {},
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    }
+  ]
+}
