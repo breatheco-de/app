@@ -66,9 +66,9 @@ export async function getStaticProps({ params, locale, previewData }) {
     props: {
       page,
       seo: {
-        title,
-        description,
-        image: prismicH.asImageSrc(image),
+        title: title || '',
+        description: description || '',
+        image: prismicH.asImageSrc(image) || '',
         pathConnector: translationsExists ? '' : `/${uid}`,
         slug: uid,
         url: `/${uid}`,
@@ -76,7 +76,7 @@ export async function getStaticProps({ params, locale, previewData }) {
         locale,
         publishedTime: page?.first_publication_date || '',
         modifiedTime: page?.last_publication_date || '',
-        type,
+        type: type || null,
         keywords: page?.tags,
         // translations: page?.alternate_languages?.map((lang) => ({
         //   locale: lang.lang.split('-')[0],
