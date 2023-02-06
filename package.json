@@ -18,7 +18,7 @@
   },
   "scripts": {
     "dev": "npm run make:iconDict && next dev -p 3000",
-    "build": "cross-env NODE_ENV=production npm run test && next build",
+    "build": "cross-env NODE_ENV=production npm run test && npm run make:redirect && next build",
     "start": "npm run make:iconDict && next start -p 3080",
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
@@ -34,7 +34,8 @@
     "lint:fix:components": "eslint --fix src/common/components/**/*.{js,jsx}",
     "prepare": "husky install",
     "make:sitemap": "node ./scripts/sitemap-generator.js",
-    "slicemachine": "start-slicemachine"
+    "slicemachine": "start-slicemachine",
+    "make:redirect": "node ./scripts/redirects-generator.js"
   },
   "dependencies": {
     "@chakra-ui/icons": "1.0.15",
