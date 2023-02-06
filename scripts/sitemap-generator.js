@@ -120,6 +120,7 @@ const listOfSitemapsTemplate = (pages = []) => `<?xml version="1.0" encoding="UT
 </sitemapindex>`;
 
 const privateRoutes = [
+  '!src/pages/**/[cohortSlug]/*{.js,.jsx}',
   '!src/pages/**/[cohortSlug]/[slug]/[version]/*{.js,.jsx}',
   '!src/pages/**/[cohortSlug]/[lesson]/[lessonSlug]/*{.js,.jsx}',
   '!src/pages/survey/[surveyId]/*{.js,.jsx}',
@@ -177,6 +178,7 @@ async function generateSitemap() {
     'src/pages/**/*{.js,.jsx}',
     '!src/pages/**/[slug]/*{.js,.jsx}',
     '!src/pages/**/[slug]{.js,.jsx}',
+    '!src/pages/**/[uid]{.js,.jsx}',
     '!src/pages/**/[technology]*{.js,.jsx}',
     '!src/pages/**/[technology]/*{.js,.jsx}',
     '!src/pages/edit-markdown.jsx',
