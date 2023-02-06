@@ -48,6 +48,9 @@
           "choices": {
             "title_introduction": {
               "type": "SharedSlice"
+            },
+            "markdown": {
+              "type": "SharedSlice"
             }
           }
         }

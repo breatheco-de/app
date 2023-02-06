@@ -1,7 +1,6 @@
-/* eslint-disable react/prop-types */
 import { Box, Container } from '@chakra-ui/react';
+import PropTypes from 'prop-types';
 import React from 'react';
-// import { PrismicRichText } from '@prismicio/react';
 import IntroductionSection from '../../src/js_modules/landing/introductionSection';
 
 /**
@@ -17,36 +16,13 @@ const TitleIntroduction = ({ slice }) => (
       />
     </Container>
   </Box>
-  // <section>
-  //   <span className="title">
-  //     {slice.primary.title ? (
-  //       <PrismicRichText field={slice.primary.title} />
-  //     ) : (
-  //       <h2>{slice.primary.title}</h2>
-  //     )}
-  //   </span>
-  //   {slice.primary.body ? (
-  //     <PrismicRichText field={slice.primary.body} />
-  //   ) : (
-  //     <p>start by editing this slice from inside Slice Machine!</p>
-  //   )}
-  //   {slice.primary.backgroundimage.url && (
-  //     // eslint-disable-next-line @next/next/no-img-element
-  //     <img src={slice.primary.backgroundimage.url} alt={slice.primary.backgroundimage.alt} />
-  //   )}
-  //   <style jsx>
-  //     {`
-  //     section {
-  //       max-width: 600px;
-  //       margin: 4em auto;
-  //       text-align: center;
-  //     }
-  //     .title {
-  //       color: #8592e0;
-  //     }
-  //   `}
-  //   </style>
-  // </section>
 );
+TitleIntroduction.propTypes = {
+  slice: PropTypes.objectOf(PropTypes.any),
+};
+
+TitleIntroduction.defaultProps = {
+  slice: {},
+};
 
 export default TitleIntroduction;

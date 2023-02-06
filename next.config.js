@@ -174,5 +174,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     BREATHECODE_PAYMENT: process.env.BREATHECODE_PAYMENT,
     VERCEL_ENV: process.env.VERCEL_ENV,
     LD_CLIENT_ID: process.env.LD_CLIENT_ID,
+    PRISMIC_REF: process.env.PRISMIC_REF,
+    PRISMIC_API: process.env.PRISMIC_API,
   },
 })));

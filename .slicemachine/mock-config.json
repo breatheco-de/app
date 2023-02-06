@@ -8,6 +8,11 @@
       "default": {
         "primary": {}
       }
+    },
+    "Markdown": {
+      "default": {
+        "primary": {}
+      }
     }
   }
 }

@@ -6,30 +6,6 @@ import type * as prismic from "@prismicio/client";
 type Simplify<T> = {
     [KeyType in keyof T]: T[KeyType];
 };
-/** Content for Learn to code documents */
-interface LearnToCodeDocumentData {
-    /**
-     * Title field in *Learn to code*
-     *
-     * - **Field Type**: Title
-     * - **Placeholder**: *None*
-     * - **API ID Path**: learn_to_code.title
-     * - **Tab**: Main
-     * - **Documentation**: https://prismic.io/docs/core-concepts/rich-text-title
-     *
-     */
-    title: prismicT.TitleField;
-}
-/**
- * Learn to code document from Prismic
- *
- * - **API ID**: `learn_to_code`
- * - **Repeatable**: `false`
- * - **Documentation**: https://prismic.io/docs/core-concepts/custom-types
- *
- * @typeParam Lang - Language API ID of the document.
- */
-export type LearnToCodeDocument<Lang extends string = string> = prismicT.PrismicDocumentWithUID<Simplify<LearnToCodeDocumentData>, "learn_to_code", Lang>;
 /** Content for Page documents */
 interface PageDocumentData {
     /**
@@ -92,7 +68,7 @@ interface PageDocumentData {
  * Slice for *Page → Slice Zone*
  *
  */
-type PageDocumentDataSlicesSlice = TitleIntroductionSlice;
+type PageDocumentDataSlicesSlice = TitleIntroductionSlice | MarkdownSlice;
 /**
  * Page document from Prismic
  *
@@ -103,7 +79,77 @@ type PageDocumentDataSlicesSlice = TitleIntroductionSlice;
  * @typeParam Lang - Language API ID of the document.
  */
 export type PageDocument<Lang extends string = string> = prismicT.PrismicDocumentWithUID<Simplify<PageDocumentData>, "page", Lang>;
-export type AllDocumentTypes = LearnToCodeDocument | PageDocument;
+export type AllDocumentTypes = PageDocument;
+/**
+ * Primary content in Markdown → Primary
+ *
+ */
+interface MarkdownSliceDefaultPrimary {
+    /**
+     * Title field in *Markdown → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: markdown.primary.title
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    title: prismicT.KeyTextField;
+    /**
+     * Description field in *Markdown → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: markdown.primary.description
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    description: prismicT.KeyTextField;
+    /**
+     * Markdown field in *Markdown → Primary*
+     *
+     * - **Field Type**: Rich Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: markdown.primary.markdown
+     * - **Documentation**: https://prismic.io/docs/core-concepts/rich-text-title
+     *
+     */
+    markdown: prismicT.RichTextField;
+    /**
+     * Enable Table of Content field in *Markdown → Primary*
+     *
+     * - **Field Type**: Boolean
+     * - **Placeholder**: *None*
+     * - **Default Value**: false
+     * - **API ID Path**: markdown.primary.enable_table_of_content
+     * - **Documentation**: https://prismic.io/docs/core-concepts/boolean
+     *
+     */
+    enable_table_of_content: prismicT.BooleanField;
+}
+/**
+ * Default variation for Markdown Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: `Markdown`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type MarkdownSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<MarkdownSliceDefaultPrimary>, never>;
+/**
+ * Slice variation for *Markdown*
+ *
+ */
+type MarkdownSliceVariation = MarkdownSliceDefault;
+/**
+ * Markdown Shared Slice
+ *
+ * - **API ID**: `markdown`
+ * - **Description**: `Markdown`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type MarkdownSlice = prismicT.SharedSlice<"markdown", MarkdownSliceVariation>;
 /**
  * Primary content in TitleIntroduction → Primary
  *
@@ -198,6 +244,6 @@ declare module "@prismicio/client" {
         (repositoryNameOrEndpoint: string, options?: prismic.ClientConfig): prismic.Client<AllDocumentTypes>;
     }
     namespace Content {
-        export type { LearnToCodeDocumentData, LearnToCodeDocument, PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice };
+        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice };
     }
 }

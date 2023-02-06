@@ -78,10 +78,6 @@ export async function getStaticProps({ params, locale, previewData }) {
         modifiedTime: page?.last_publication_date || '',
         type: type || null,
         keywords: page?.tags,
-        // translations: page?.alternate_languages?.map((lang) => ({
-        //   locale: lang.lang.split('-')[0],
-        //   url: lang.url,
-        // })),
       },
       translations: translationArray,
     },

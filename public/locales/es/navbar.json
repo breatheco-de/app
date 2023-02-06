@@ -10,8 +10,8 @@
       "href": "{{selectedProgramSlug}}"
     },
     {
-      "label": "Nosotros",
-      "href": "/about-us"
+      "label": "Sobre Nosotros",
+      "href": "/sobre-nosotros"
     },
     {
       "label": "Catálogo de contenidos",
