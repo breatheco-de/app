@@ -8,10 +8,15 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const redirectsList = require('./public/redirects.json');
 const nextTranslate = require('next-translate');
 
+const externalDevDomain = process.env.VERCEL_ENV !== 'production' ? 'http://localhost:9999' : '';
 const securityHeaders = [
   {
     key: 'X-Frame-Options',
     value: 'SAMEORIGIN',
+  },
+  {
+    key: 'Content-Security-Policy',
+    value: `frame-ancestors 'self' ${externalDevDomain}`,
   },
 ];
 
@@ -150,6 +155,8 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
       'breathecode.herokuapp.com',
       'avatars.githubusercontent.com',
       'storage.googleapis.com',
+      'images.prismic.io',
+      'images.unsplash.com',
     ],
     // formats: ['image/avif', 'image/webp'],
   },
@@ -163,5 +170,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     BREATHECODE_PAYMENT: process.env.BREATHECODE_PAYMENT,
     VERCEL_ENV: process.env.VERCEL_ENV,
     LD_CLIENT_ID: process.env.LD_CLIENT_ID,
+    PRISMIC_REF: process.env.PRISMIC_REF,
+    PRISMIC_API: process.env.PRISMIC_API,
   },
 })));

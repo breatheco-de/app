@@ -5,13 +5,13 @@ import {
 } from 'react-query';
 import { withLDProvider } from 'launchdarkly-react-client-sdk';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import '../../styles/globals.css';
-import '../../styles/react-tags-input.css';
-import '../../styles/markdown.css';
-import '../../styles/phoneInput/index.css';
 import TagManager from 'react-gtm-module';
 import PropTypes from 'prop-types';
+import Link from 'next/link';
 import { ChakraProvider } from '@chakra-ui/react';
+import { PrismicProvider } from '@prismicio/react';
+import { PrismicPreview } from '@prismicio/next';
+import { repositoryName } from '../../prismicio';
 import wrapper from '../store';
 import CustomTheme from '../../styles/theme';
 import NavbarSession from '../common/components/Navbar';
@@ -21,7 +21,13 @@ import Footer from '../common/components/Footer';
 import Helmet from '../common/components/Helmet';
 import InterceptionLoader from '../common/components/InterceptionLoader';
 import useAuth from '../common/hooks/useAuth';
+
+import '../../styles/globals.css';
+import '../../styles/react-tags-input.css';
+import '../../styles/markdown.css';
+import '../../styles/phoneInput/index.css';
 import '../../styles/datePicker.css';
+
 import '@fontsource/lato/100.css';
 import '@fontsource/lato/300.css';
 import '@fontsource/lato/400.css';
@@ -63,7 +69,13 @@ function App({ Component, pageProps }) {
           <ChakraProvider resetCSS theme={CustomTheme}>
             <Navbar />
             <InterceptionLoader />
-            <Component {...pageProps} />
+
+            <PrismicProvider internalLinkComponent={(props) => <Link {...props} />}>
+              <PrismicPreview repositoryName={repositoryName}>
+                <Component {...pageProps} />
+              </PrismicPreview>
+            </PrismicProvider>
+
             <Footer />
           </ChakraProvider>
         </ConnectionProvider>

@@ -210,7 +210,11 @@ const LiveEvent = ({
             borderRadius="full"
             width="50px"
             height="50px"
-            className={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 'pulse-red' : ''}
+            className={
+              isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)
+                ? `${!liveStartsAt ? 'pulse-blue' : 'pulse-red'}`
+                : ''
+            }
             opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? '1' : '0.5'}
           >
             <Icon

@@ -1,0 +1,8 @@
+{
+  "apiEndpoint": "https://bc-test12918.prismic.io/api/v2",
+  "libraries": [
+    "@/slices"
+  ],
+  "_latest": "0.6.1",
+  "localSliceSimulatorURL": "http://localhost:3000/slice-simulator"
+}

@@ -1,0 +1,188 @@
+{
+  "uid": {
+    "__TYPE__": "UIDContent",
+    "value": "sing"
+  },
+  "title": {
+    "__TYPE__": "FieldContent",
+    "value": "lamp",
+    "type": "Text"
+  },
+  "description": {
+    "__TYPE__": "FieldContent",
+    "value": "local",
+    "type": "Text"
+  },
+  "image": {
+    "__TYPE__": "ImageContent",
+    "origin": {
+      "id": "main",
+      "url": "https://images.unsplash.com/photo-1541807084-5c52b6b3adef",
+      "width": 4000,
+      "height": 6000
+    },
+    "url": "https://images.unsplash.com/photo-1541807084-5c52b6b3adef",
+    "width": 4000,
+    "height": 6000,
+    "edit": {
+      "zoom": 1,
+      "crop": {
+        "x": 0,
+        "y": 0
+      },
+      "background": "transparent"
+    },
+    "thumbnails": {}
+  },
+  "type": {
+    "__TYPE__": "FieldContent",
+    "value": "stay",
+    "type": "Text"
+  },
+  "slices": {
+    "__TYPE__": "SliceContentType",
+    "value": [
+      {
+        "key": "title_introduction$7f2753cc-945c-4f5d-82e0-4b7066469402",
+        "name": "title_introduction",
+        "widget": {
+          "__TYPE__": "SharedSliceContent",
+          "variation": "default",
+          "primary": {
+            "title": {
+              "__TYPE__": "StructuredTextContent",
+              "value": [
+                {
+                  "type": "heading1",
+                  "content": {
+                    "text": "Whether"
+                  }
+                }
+              ]
+            },
+            "buttontext": {
+              "__TYPE__": "StructuredTextContent",
+              "value": [
+                {
+                  "type": "paragraph",
+                  "content": {
+                    "text": "Non incididunt et fugiat."
+                  }
+                }
+              ]
+            },
+            "highlight": {
+              "__TYPE__": "StructuredTextContent",
+              "value": [
+                {
+                  "type": "paragraph",
+                  "content": {
+                    "text": "Anim elit occaecat mollit adipisicing esse elit aliquip ullamco do anim do adipisicing Lorem aute. Lorem magna velit fugiat id adipisicing ad nisi cupidatat velit eiusmod."
+                  }
+                }
+              ]
+            },
+            "description": {
+              "__TYPE__": "StructuredTextContent",
+              "value": [
+                {
+                  "type": "paragraph",
+                  "content": {
+                    "text": "Sint minim sint irure aliquip magna reprehenderit enim velit aute ea sunt deserunt commodo nulla."
+                  }
+                }
+              ]
+            },
+            "bullets": {
+              "__TYPE__": "StructuredTextContent",
+              "value": [
+                {
+                  "type": "paragraph",
+                  "content": {
+                    "text": "Eu culpa nulla irure commodo fugiat cupidatat aute officia dolore. Excepteur laboris nisi quis velit sit qui ipsum aliquip sunt. Dolore velit reprehenderit irure ex adipisicing incididunt occaecat."
+                  }
+                }
+              ]
+            },
+            "image": {
+              "__TYPE__": "ImageContent",
+              "origin": {
+                "id": "main",
+                "url": "https://images.unsplash.com/photo-1579931794097-0ad001e51edb",
+                "width": 3958,
+                "height": 3958
+              },
+              "url": "https://images.unsplash.com/photo-1579931794097-0ad001e51edb?rect=0%2C0%2C3958%2C3958&w=400&h=400",
+              "width": 400,
+              "height": 400,
+              "edit": {
+                "zoom": 1,
+                "crop": {
+                  "x": 0,
+                  "y": 0
+                },
+                "background": "transparent"
+              },
+              "thumbnails": {}
+            }
+          },
+          "items": [
+            {
+              "__TYPE__": "GroupItemContent",
+              "value": []
+            }
+          ]
+        }
+      },
+      {
+        "key": "markdown$71a144fd-f0a0-41b0-87e4-c1bb3ababf16",
+        "name": "markdown",
+        "widget": {
+          "__TYPE__": "SharedSliceContent",
+          "variation": "default",
+          "primary": {
+            "title": {
+              "__TYPE__": "StructuredTextContent",
+              "value": [
+                {
+                  "type": "paragraph",
+                  "content": {
+                    "text": "In do tempor sint. Et quis ullamco duis nisi proident excepteur quis non quis laborum cillum deserunt elit aliquip."
+                  }
+                }
+              ]
+            },
+            "description": {
+              "__TYPE__": "StructuredTextContent",
+              "value": [
+                {
+                  "type": "paragraph",
+                  "content": {
+                    "text": "Velit ad aliquip sit officia incididunt anim commodo non nostrud nisi eu incididunt ut incididunt. Quis incididunt nulla ullamco ex ut ipsum deserunt commodo reprehenderit ut dolor ut adipisicing qui minim. Aute eu aliquip cupidatat consectetur anim anim nisi quis et elit deserunt aute consectetur reprehenderit cupidatat."
+                  }
+                }
+              ]
+            },
+            "markdown": {
+              "__TYPE__": "StructuredTextContent",
+              "value": [
+                {
+                  "type": "paragraph",
+                  "content": {
+                    "text": "Laboris culpa magna ad amet cupidatat in ex. Amet ex tempor incididunt ipsum."
+                  }
+                }
+              ]
+            }
+          },
+          "items": [
+            {
+              "__TYPE__": "GroupItemContent",
+              "value": []
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
