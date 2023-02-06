@@ -54,6 +54,16 @@
             "allowTargetBlank": false,
             "single": "list-item"
           }
+        },
+        "image": {
+          "type": "Image",
+          "config": {
+            "label": "image",
+            "constraint": {
+              "width": 400
+            },
+            "thumbnails": []
+          }
         }
       },
       "items": {},

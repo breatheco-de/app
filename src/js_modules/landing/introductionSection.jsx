@@ -5,6 +5,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { PrismicRichText } from '@prismicio/react';
+import Image from 'next/image';
 import { MotionBox } from '../../common/components/Animated';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
@@ -14,9 +15,10 @@ const IntroductionSection = ({
 }) => {
   const router = useRouter();
   const colors = useColorModeValue('#000', '#fff');
+
   return (
-    <Box display="flex">
-      <Box flex={1}>
+    <Box display="flex" gridGap="10px">
+      <Box flex={0.6}>
         <Heading as="span" size="xl" fontWeight="700">
           {slice?.primary?.title ? (
             <>
@@ -77,7 +79,7 @@ const IntroductionSection = ({
                   margin="0 0 0 10px"
                   display={{ base: 'none', sm: 'initial' }}
                 >
-                  {data.highlight}
+                  {data?.highlight}
                 </MotionBox>
               )}
             </>
@@ -89,7 +91,7 @@ const IntroductionSection = ({
           </Box>
         ) : (
           <Box as="strong" className="highlighted" fontSize="35px" display={{ base: 'initial', sm: 'none' }}>
-            {data.highlight}
+            {data?.highlight}
           </Box>
         )}
 
@@ -99,7 +101,7 @@ const IntroductionSection = ({
           </Text>
         ) : (
           <Text fontSize="18px" fontWeight={700} pt="16px">
-            {data.description}
+            {data?.description}
           </Text>
         )}
 
@@ -110,8 +112,8 @@ const IntroductionSection = ({
         ) : (
           <>
             {data?.callToAction?.title && (
-              <Button variant="default" fontSize="13px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router.push(data.callToAction.href)}>
-                {data.callToAction.title}
+              <Button variant="default" fontSize="13px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router.push(data?.callToAction.href)}>
+                {data?.callToAction.title}
               </Button>
             )}
           </>
@@ -131,7 +133,7 @@ const IntroductionSection = ({
                 }}
               />
             )
-            : data.bullets.map((l) => (
+            : data?.bullets.map((l) => (
               <MotionBox whileHover={{ scale: 1.05 }} as="li" key={l.text} display="flex" fontSize="14px" gridGap="10px" alignItems="center">
                 <Icon icon={l.icon} width="14px" height="14px" />
                 {l.text}
@@ -139,33 +141,46 @@ const IntroductionSection = ({
             ))}
         </Box>
       </Box>
-      {/* autoplay and loop static/videos/landing-avatars.mp4 video inside a canva and lazy loading */}
-      <Box flex={0.5} display={{ base: 'none', lg: 'initial' }}>
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          style={{
-            width: '400px',
-            height: '100%',
-            objectFit: 'cover',
-          }}
-        >
-          <source src="static/videos/landing-avatars.webm" type="video/webm" />
-        </video>
+
+      <Box flex={0.4} display={{ base: 'none', lg: 'initial' }}>
+        {slice?.primary?.image?.url ? (
+          <Box display="flex" justifyContent="end">
+            <Image
+              src={slice.primary.image.url}
+              alt={slice.primary.image.alt}
+              width={slice.primary.image.dimensions?.width}
+              height={slice.primary.image.dimensions?.height}
+              style={{ borderRadius: '7px' }}
+            />
+          </Box>
+        ) : (
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            style={{
+              width: '400px',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          >
+            <source src="/static/videos/landing-avatars.webm" type="video/webm" />
+          </video>
+        )}
       </Box>
     </Box>
   );
 };
 
 IntroductionSection.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any).isRequired,
+  data: PropTypes.objectOf(PropTypes.any),
   slice: PropTypes.objectOf(PropTypes.any),
 };
 
 IntroductionSection.defaultProps = {
   slice: {},
+  data: {},
 };
 
 export default IntroductionSection;

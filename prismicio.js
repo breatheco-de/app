@@ -15,8 +15,8 @@ const routes = [
   //   path: '/',
   // },
   {
-    type: 'landing_page',
-    path: '/learn-to-code',
+    type: 'page',
+    path: '/:uid',
   },
 ];
 

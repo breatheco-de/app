@@ -33,17 +33,66 @@ export type LearnToCodeDocument<Lang extends string = string> = prismicT.Prismic
 /** Content for Page documents */
 interface PageDocumentData {
     /**
-     * Title field in *Page*
+     * TItle field in *Page*
      *
-     * - **Field Type**: Title
+     * - **Field Type**: Text
      * - **Placeholder**: *None*
      * - **API ID Path**: page.title
      * - **Tab**: Main
-     * - **Documentation**: https://prismic.io/docs/core-concepts/rich-text-title
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
      *
      */
-    title: prismicT.TitleField;
+    title: prismicT.KeyTextField;
+    /**
+     * description field in *Page*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: Description for Social Cards
+     * - **API ID Path**: page.description
+     * - **Tab**: Main
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    description: prismicT.KeyTextField;
+    /**
+     * image field in *Page*
+     *
+     * - **Field Type**: Image
+     * - **Placeholder**: *None*
+     * - **API ID Path**: page.image
+     * - **Tab**: Main
+     * - **Documentation**: https://prismic.io/docs/core-concepts/image
+     *
+     */
+    image: prismicT.ImageField<never>;
+    /**
+     * type field in *Page*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: The default type is "website"
+     * - **API ID Path**: page.type
+     * - **Tab**: Main
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    type: prismicT.KeyTextField;
+    /**
+     * Slice Zone field in *Page*
+     *
+     * - **Field Type**: Slice Zone
+     * - **Placeholder**: *None*
+     * - **API ID Path**: page.slices[]
+     * - **Tab**: Main
+     * - **Documentation**: https://prismic.io/docs/core-concepts/slices
+     *
+     */
+    slices: prismicT.SliceZone<PageDocumentDataSlicesSlice>;
 }
+/**
+ * Slice for *Page → Slice Zone*
+ *
+ */
+type PageDocumentDataSlicesSlice = TitleIntroductionSlice;
 /**
  * Page document from Prismic
  *
@@ -110,6 +159,16 @@ interface TitleIntroductionSliceDefaultPrimary {
      *
      */
     bullets: prismicT.RichTextField;
+    /**
+     * image field in *TitleIntroduction → Primary*
+     *
+     * - **Field Type**: Image
+     * - **Placeholder**: *None*
+     * - **API ID Path**: title_introduction.primary.image
+     * - **Documentation**: https://prismic.io/docs/core-concepts/image
+     *
+     */
+    image: prismicT.ImageField<never>;
 }
 /**
  * Default variation for TitleIntroduction Slice
@@ -139,6 +198,6 @@ declare module "@prismicio/client" {
         (repositoryNameOrEndpoint: string, options?: prismic.ClientConfig): prismic.Client<AllDocumentTypes>;
     }
     namespace Content {
-        export type { LearnToCodeDocumentData, LearnToCodeDocument, PageDocumentData, PageDocument, AllDocumentTypes, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice };
+        export type { LearnToCodeDocumentData, LearnToCodeDocument, PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice };
     }
 }

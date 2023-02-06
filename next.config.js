@@ -159,6 +159,8 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
       'breathecode.herokuapp.com',
       'avatars.githubusercontent.com',
       'storage.googleapis.com',
+      'images.prismic.io',
+      'images.unsplash.com',
     ],
     // formats: ['image/avif', 'image/webp'],
   },

@@ -3,9 +3,9 @@
 import TitleIntroduction from './TitleIntroduction';
 
 export {
-  TitleIntroduction,
+	TitleIntroduction,
 };
 
 export const components = {
-  title_introduction: TitleIntroduction,
+	title_introduction: TitleIntroduction,
 };

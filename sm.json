@@ -1,5 +1,5 @@
 {
-  "apiEndpoint": "https://bcbc12test.prismic.io/api/v2",
+  "apiEndpoint": "https://bc-test12918.prismic.io/api/v2",
   "libraries": [
     "@/slices"
   ],
