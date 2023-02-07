@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import {
-  Box, useColorModeValue, Img, Grid, Flex,
+  Box, useColorModeValue, Grid, Flex,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -13,6 +13,7 @@ import TagCapsule from '../../common/components/TagCapsule';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import useStyle from '../../common/hooks/useStyle';
+import LoaderScreen from '../../common/components/LoaderScreen';
 
 const ProjectList = ({
   projects, contextFilter, projectPath, pathWithDifficulty,
@@ -220,9 +221,8 @@ const ProjectList = ({
       </Grid>
 
       {isLoading && (
-        <Box display="flex" justifyContent="center" mt="2rem" mb="10rem">
-          <Img src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
-          <Box className="loader" />
+        <Box display="flex" justifyContent="center" mt="2rem" mb="10rem" position="relative">
+          <LoaderScreen width="80px" height="80px" />
         </Box>
       )}
 

@@ -58,11 +58,12 @@ const SignUp = ({ finance }) => {
   const router = useRouter();
   const [isPreloading, setIsPreloading] = useState(false);
   const {
-    state, nextStep, prevStep, handleStep, setDateProps, handleChecking, setCohortPlans,
+    state, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
     isFirstStep, isSecondStep, isThirdStep, isFourthStep,
   } = useSignup();
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
+  const [defaultCohortQueryProps, setDefaultCohortQueryProps] = useState(null);
 
   const { stepIndex, dateProps, checkoutData } = state;
 
@@ -105,7 +106,7 @@ const SignUp = ({ finance }) => {
 
       if (resp.status < 400) {
         const { kickoffDate, weekDays, availableTime } = resp?.data?.[0] ? getTimeProps(resp.data[0]) : {};
-        setDateProps({
+        setDefaultCohortQueryProps({
           ...resp.data[0],
           kickoffDate,
           weekDays,
@@ -116,15 +117,16 @@ const SignUp = ({ finance }) => {
   }, [cohort, user?.id, accessToken]);
 
   useEffect(() => {
-    if (dateProps?.id && accessToken && queryCohortIdExists) {
+    if (defaultCohortQueryProps?.id && accessToken && queryCohortIdExists) {
       setIsPreloading(true);
       bc.payment({
         cohort,
       }).getCohortPlans()
-        .then(({ data }) => {
-          if (data.length > 0) {
-            setCohortPlans(data);
-            handleChecking({ ...dateProps, plan: data[0] })
+        .then((res) => {
+          const respData = res?.data;
+          if (res?.status < 400 && respData?.length > 0) {
+            setCohortPlans(respData);
+            handleChecking({ ...defaultCohortQueryProps, plan: respData[0] })
               .then(() => {
                 handleStep(2);
               })
@@ -145,11 +147,11 @@ const SignUp = ({ finance }) => {
           }
         });
     }
-    if (queryCohortIdExists && accessToken && !dateProps?.id) {
+    if (queryCohortIdExists && accessToken && !defaultCohortQueryProps?.id) {
       setIsPreloading(false);
       handleStep(1);
     }
-  }, [queryCohortIdExists, accessToken, router?.locale, dateProps?.id]);
+  }, [queryCohortIdExists, accessToken, router?.locale, defaultCohortQueryProps?.id]);
 
   useEffect(() => {
     if (user?.id && !isLoading) {
