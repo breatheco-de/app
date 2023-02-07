@@ -44,7 +44,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   });
   const techs = await responseTechs.json(); // array of objects
   const technologyData = techs.results.find((tech) => tech.slug === slug);
-  const responseAssetsList = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?limit=9000`);
+  const responseAssetsList = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?limit=9000&technologies=${slug}`);
   const allAssetList = await responseAssetsList.json();
 
   if (allAssetList?.status < 400) {
