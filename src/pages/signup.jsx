@@ -149,7 +149,7 @@ const SignUp = ({ finance }) => {
       setIsPreloading(false);
       handleStep(1);
     }
-  }, [queryCohortIdExists, accessToken, router?.locale]);
+  }, [queryCohortIdExists, accessToken, router?.locale, dateProps?.id]);
 
   useEffect(() => {
     if (user?.id && !isLoading) {
@@ -173,6 +173,11 @@ const SignUp = ({ finance }) => {
       {isPreloading && (
         <Box display="flex" alignItems="center" position="absolute" background="white" justifyContent="center" width="100%" height="100%" style={{ zIndex: 50 }} top="0px" left="0px">
           <Img
+            src="/static/images/loader.gif"
+            width="200px"
+            height="200px"
+          />
+          {/* <Img
             src="/4Geeks.ico"
             width="35px"
             height="35px"
@@ -182,7 +187,7 @@ const SignUp = ({ finance }) => {
             boxShadow="0px 0px 16px 0px #0097cd"
             borderRadius="40px"
           />
-          <Box className="loader" />
+          <Box className="loader" /> */}
         </Box>
       )}
       {/* Stepper */}
