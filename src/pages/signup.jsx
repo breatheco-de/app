@@ -2,7 +2,6 @@
 import {
   Box,
   Button,
-  Img,
   useToast,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
@@ -22,6 +21,7 @@ import Summary from '../js_modules/signup/Summary';
 import PaymentInfo from '../js_modules/signup/PaymentInfo';
 import useSignup from '../common/store/actions/signupAction';
 import axiosInstance from '../axios';
+import LoaderScreen from '../common/components/LoaderScreen';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -171,24 +171,7 @@ const SignUp = ({ finance }) => {
   return (
     <Box p={{ base: '2.5rem 1rem', md: '2.5rem 2rem' }} position="relative" minHeight={isPreloading ? '727px' : null}>
       {isPreloading && (
-        <Box display="flex" alignItems="center" position="absolute" background="white" justifyContent="center" width="100%" height="100%" style={{ zIndex: 50 }} top="0px" left="0px">
-          <Img
-            src="/static/images/loader.gif"
-            width="200px"
-            height="200px"
-          />
-          {/* <Img
-            src="/4Geeks.ico"
-            width="35px"
-            height="35px"
-            position="absolute"
-            mt="6px"
-            zIndex="40"
-            boxShadow="0px 0px 16px 0px #0097cd"
-            borderRadius="40px"
-          />
-          <Box className="loader" /> */}
-        </Box>
+        <LoaderScreen />
       )}
       {/* Stepper */}
       <Box display="flex" gridGap="38px" justifyContent="center" overflow="auto">
