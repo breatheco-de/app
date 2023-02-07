@@ -16,7 +16,7 @@ import useStyle from '../../common/hooks/useStyle';
 
 const ProjectList = ({
   projects, contextFilter, projectPath, pathWithDifficulty,
-  withoutImage, isLoading, withoutDifficulty,
+  withoutImage, isLoading, withoutDifficulty, containerPadding,
 }) => {
   const { t } = useTranslation('common');
   const arrOfTechs = contextFilter?.technologies || [];
@@ -121,7 +121,7 @@ const ProjectList = ({
         }}
         gridGap="1em"
         gridAutoRows="0"
-        padding="0 15px"
+        padding={containerPadding}
       >
         {filteredProjects.map((ex) => (
           <Box
@@ -245,6 +245,7 @@ ProjectList.propTypes = {
   withoutImage: PropTypes.bool,
   isLoading: PropTypes.bool,
   withoutDifficulty: PropTypes.bool,
+  containerPadding: PropTypes.string,
 };
 
 ProjectList.defaultProps = {
@@ -253,6 +254,7 @@ ProjectList.defaultProps = {
   isLoading: false,
   contextFilter: {},
   withoutDifficulty: false,
+  containerPadding: '0 15px',
 };
 
 export default ProjectList;
