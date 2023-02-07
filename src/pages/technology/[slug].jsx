@@ -44,41 +44,30 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   });
   const techs = await responseTechs.json(); // array of objects
   const technologyData = techs.results.find((tech) => tech.slug === slug);
+  const responseAssetsList = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?limit=9000`);
+  const allAssetList = await responseAssetsList.json();
 
-  const responseLessonsList = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson&limit=1000`);
-  const responseProjectsList = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=1000`);
-  const responseExercisesList = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&limit=1000`);
-  const responseArticlesList = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=1000`);
-  const lessons = await responseLessonsList.json();
-  const projects = await responseProjectsList.json();
-  const exercises = await responseExercisesList.json();
-  const howTos = await responseArticlesList.json();
-
-  const howToData = howTos.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como');
-
-  const allStatus = [
-    responseLessonsList.status < 400,
-    responseProjectsList.status < 400,
-    responseExercisesList.status < 400,
-    responseArticlesList.status < 400,
-  ];
-  if (allStatus.every((status) => status === false)) {
+  if (allAssetList?.status < 400) {
     return {
       notFound: true,
     };
   }
 
-  const lessonsFiltered = lessons.results.filter(
+  const allAssetsFiltered = allAssetList.results.filter(
     (l) => technologyData.assets.some((a) => a === l.slug),
   );
-  const projectsFiltered = projects.results.filter(
-    (l) => technologyData.assets.some((a) => a === l.slug),
+
+  const lessonsFiltered = allAssetsFiltered.filter(
+    (l) => l?.asset_type.toUpperCase() === 'LESSON',
   );
-  const exercisesFiltered = exercises.results.filter(
-    (l) => technologyData.assets.some((a) => a === l.slug),
+  const projectsFiltered = allAssetsFiltered.filter(
+    (l) => l?.asset_type.toUpperCase() === 'PROJECT',
   );
-  const howTosFiltered = howToData.filter(
-    (l) => technologyData.assets.some((a) => a === l.slug),
+  const exercisesFiltered = allAssetsFiltered.filter(
+    (l) => l?.asset_type.toUpperCase() === 'EXERCISE',
+  );
+  const howTosFiltered = allAssetsFiltered.filter(
+    (l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como',
   );
 
   const ogUrl = {
