@@ -84,7 +84,9 @@ const breathecode = {
           academy: args?.academy,
         },
       }),
+      getFinalProject: () => axios.get(`${url}/user/me/final_project?${qs}`),
       createFinalProject: (args) => axios.post(`${url}/user/me/final_project`, args),
+      updateFinalProject: (args) => axios.put(`${url}/user/me/final_project`, args),
       uploadFile: (id, args) => axios.put(`${url}/task/${id}/attachment?${qs}`, args),
       getFile: (args) => axios.get(`${url}/task/${args.id}/attachment`, {
         headers: args.academyId && {

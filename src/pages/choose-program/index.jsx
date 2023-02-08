@@ -304,7 +304,7 @@ function chooseProgram() {
               </NextChakraLink>
             )}
           </Box>
-          <Box flex={{ base: 1, md: 0.3 }} zIndex={2} position={{ base: 'inherit', md: 'absolute' }} right={0} top={0}>
+          <Box flex={{ base: 1, md: 0.3 }} zIndex={2} position={{ base: 'inherit', md: 'absolute' }} maxWidth="320px" right={0} top={0}>
             {flags?.appReleaseEnableLiveEvents && (
               <LiveEvent
                 // liveUrl={events[0].url}
@@ -325,8 +325,8 @@ function chooseProgram() {
             </Heading>
             <Box as="hr" width="100%" margin="0.5rem 0 0 0" />
           </Box>
-          {!isLoading && dataQuery.cohorts?.length > 0 && (
-            <ChooseProgram chooseList={dataQuery.cohorts} handleChoose={handleChoose} />
+          {!isLoading && dataQuery?.cohorts?.length > 0 && (
+            <ChooseProgram chooseList={dataQuery?.cohorts} handleChoose={handleChoose} />
           )}
         </Box>
         {isLoading && dataQuery?.cohorts?.length > 0 && (

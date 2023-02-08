@@ -5,7 +5,7 @@ import {
 import { useState, Fragment } from 'react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import { useFlags } from 'launchdarkly-react-client-sdk';
+// import { useFlags } from 'launchdarkly-react-client-sdk';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
@@ -17,7 +17,7 @@ const Pricing = ({ data }) => {
   const { t } = useTranslation('');
   const { fontColor, featuredColor } = useStyle();
   const router = useRouter();
-  const flags = useFlags();
+  // const flags = useFlags();
 
   const financeSelected = {
     0: 'list',
@@ -111,7 +111,7 @@ const Pricing = ({ data }) => {
           </Fragment>
         ))}
         <Box mt="38px">
-          {flags?.appReleaseEnableCourseSignup ? (
+          {process.env.VERCEL_ENV !== 'production' ? (
             <Button
               variant="default"
               onClick={() => {

@@ -48,7 +48,7 @@ const FileInput = ({ name, formProps, setFormProps, handleOnChange, acceptedFile
     <>
       {(fileProps.length === 0 || form.errors[name]) && (
         <Box className={`upload-wrapper ${dragOver && 'dragOver'} dashed-box${dragOver ? '-animated' : ''}`} m="10px 0" width={{ base: 'auto', md: '100%' }} height="50px" position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px" background="featuredColor">
-          <Box width="100%" height="100%" position="absolute" display="flex" alignItems="center" cursor="pointer" borderRadius="7px" border="none" gridGap="10px" color="#A9A9A9">
+          <Box width="100%" height="100%" position="absolute" display="flex" alignItems="center" cursor="pointer" borderRadius="7px" border="none" gridGap="10px" color="gray.400">
             <Box className="icon-bounce" marginLeft="15px">
               <Icon icon="upload" color={hexColor.black} width="24px" height="24px" />
             </Box>

@@ -9,8 +9,9 @@ import FileInput from './FileInput';
 const FieldForm = ({
   type, name, label, placeholder, formProps, setFormProps, style, withLabel, pattern, handleOnChange, externValue, onClick,
   acceptedFiles, maxFileSize, multipleFiles, fileProps, setFileProps, setFieldValue, translation, required, hint, maxLength,
+  spellcheck,
 }) => {
-  const { input } = useStyle();
+  const { input, lightColor } = useStyle();
   const inputBorderColor = input.borderColor;
 
   return (
@@ -37,6 +38,8 @@ const FieldForm = ({
                   <Textarea
                     {...field}
                     className="hideOverflowX__"
+                    _placeholder={{ color: 'gray.400' }}
+                    spellcheck={spellcheck ? 'true' : 'false'}
                     value={externValue || field.value}
                     type={type}
                     onClick={onClick}
@@ -85,9 +88,10 @@ const FieldForm = ({
               {type !== 'textarea' && type !== 'file' && (
                 <Input
                   {...field}
-                  value={externValue || field.value}
+                  value={formProps[name] || externValue || field.value}
                   type={type}
                   onClick={onClick}
+                  _placeholder={{ color: 'gray.400' }}
                   onChange={(e) => {
                     setFormProps({ ...formProps, [name]: e.target.value });
                     handleOnChange(e);
@@ -102,7 +106,7 @@ const FieldForm = ({
                 />
               )}
               {hint && !form.errors[name] && (
-                <Box fontSize="sm" mt={2}>{hint}</Box>
+                <Box fontSize="sm" color={lightColor} mt={2}>{hint}</Box>
               )}
               {form.errors[name] && (
                 <Box className="error-message">{form.errors[name]}</Box>
@@ -138,6 +142,7 @@ FieldForm.propTypes = {
   translation: PropTypes.objectOf(PropTypes.any),
   required: PropTypes.bool,
   hint: PropTypes.string,
+  spellcheck: PropTypes.bool,
 };
 
 FieldForm.defaultProps = {
@@ -163,6 +168,7 @@ FieldForm.defaultProps = {
   translation: {},
   required: false,
   hint: '',
+  spellcheck: false,
 };
 
 export default FieldForm;

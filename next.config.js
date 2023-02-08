@@ -1,22 +1,22 @@
+/* eslint-disable import/order */
 /* eslint-disable no-param-reassign */
 /* eslint-disable global-require */
-// const nextRuntimeDotenv = require('next-runtime-dotenv');
+
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
+const redirectsList = require('./public/redirects.json');
 const nextTranslate = require('next-translate');
-// const { i18n } = require('./i18n');
 
-// const withConfig = nextRuntimeDotenv({
-//   // path: '.env',
-//   public: ['MY_API_URL', 'NEXT_PUBLIC_ID'],
-//   server: ['GITHUB_TOKEN'],
-// });
-
+const externalDevDomain = process.env.VERCEL_ENV !== 'production' ? 'http://localhost:9999' : '';
 const securityHeaders = [
   {
     key: 'X-Frame-Options',
     value: 'SAMEORIGIN',
+  },
+  {
+    key: 'Content-Security-Policy',
+    value: `frame-ancestors 'self' ${externalDevDomain}`,
   },
 ];
 
@@ -40,6 +40,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
       //   destination: '/interactive-exercise',
       //   permanent: true,
       // },
+      ...redirectsList,
       {
         source: '/interactive-exercises/:slug',
         destination: '/interactive-exercise/:slug',
@@ -111,7 +112,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
   trailingSlash: false,
   webpack: (config, { isServer }) => {
     if (isServer) {
-      require('./scripts/sitemap-generator');
+      require('./scripts/redirects-generator');
       require('./scripts/syllabus');
     }
     if (process.env.VERCEL_ENV !== 'production') {
@@ -154,6 +155,8 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
       'breathecode.herokuapp.com',
       'avatars.githubusercontent.com',
       'storage.googleapis.com',
+      'images.prismic.io',
+      'images.unsplash.com',
     ],
     // formats: ['image/avif', 'image/webp'],
   },
@@ -167,5 +170,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     BREATHECODE_PAYMENT: process.env.BREATHECODE_PAYMENT,
     VERCEL_ENV: process.env.VERCEL_ENV,
     LD_CLIENT_ID: process.env.LD_CLIENT_ID,
+    PRISMIC_REF: process.env.PRISMIC_REF,
+    PRISMIC_API: process.env.PRISMIC_API,
   },
 })));

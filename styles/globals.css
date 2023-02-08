@@ -375,3 +375,13 @@ featured {
   margin-top: var(--chakra-space-2);
   font-size: var(--chakra-fontSizes-sm);
 }
+.center-absolute-x {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.center-absolute-Y {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}

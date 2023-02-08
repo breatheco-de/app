@@ -1,4 +1,5 @@
 const { default: axios } = require('axios');
+
 const fs = require('fs');
 const globby = require('globby');
 require('dotenv').config({
@@ -7,6 +8,14 @@ require('dotenv').config({
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
+const PRISMIC_API = process.env.PRISMIC_API || 'https://your-prismic-repo.cdn.prismic.io/api/v2';
+const PRISMIC_REF = process.env.PRISMIC_REF || 'Y-EX4MPL3R3F';
+
+const getPrismicPages = () => {
+  const data = axios.get(`${PRISMIC_API}/documents/search?ref=${PRISMIC_REF}&type=page&lang=*`)
+    .then((res) => res.data.results);
+  return data;
+};
 
 const getReadPages = () => {
   const resp = axios.get(
@@ -111,6 +120,7 @@ const listOfSitemapsTemplate = (pages = []) => `<?xml version="1.0" encoding="UT
 </sitemapindex>`;
 
 const privateRoutes = [
+  '!src/pages/**/[cohortSlug]/*{.js,.jsx}',
   '!src/pages/**/[cohortSlug]/[slug]/[version]/*{.js,.jsx}',
   '!src/pages/**/[cohortSlug]/[lesson]/[lessonSlug]/*{.js,.jsx}',
   '!src/pages/survey/[surveyId]/*{.js,.jsx}',
@@ -122,6 +132,7 @@ const privateRoutes = [
 async function generateSitemap() {
   console.log('Generating sitemaps...');
 
+  const prismicPages = await getPrismicPages();
   const readPages = await getReadPages();
   const lessonsPages = await getLessons();
   const exercisesPages = await getExercises();
@@ -132,13 +143,26 @@ async function generateSitemap() {
   const generateSlugByLang = (data, conector, withDifficulty) => data.filter(
     (f) => f.lang === 'us', // canonical pages
   ).map((l) => (withDifficulty
-    ? `/${conector}/${l?.difficulty ? l?.difficulty?.toLowerCase() : 'unknown'}/${l?.slug}`
-    : `/${conector}/${l?.slug}`));
+    ? `${conector ? `/${conector}` : ''}/${l?.difficulty ? l?.difficulty?.toLowerCase() : 'unknown'}/${l?.slug}`
+    : `${conector ? `/${conector}` : ''}/${l?.slug}`));
 
   const generateTechnologySlug = (data, conector) => data.map(
     (l) => (`/${conector}/${l.slug}`),
   );
+  const generatePrismicSlugByLang = (data) => {
+    const typePage = data.filter((p) => p.type === 'page');
 
+    const routesList = typePage.map((l) => {
+      const lang = l.lang.split('-')[0];
+      if (lang !== 'en') {
+        return `/${lang}/${l?.uid}`;
+      }
+      return `/${l?.uid}`;
+    });
+    return routesList;
+  };
+
+  const prismicTypePages = generatePrismicSlugByLang(prismicPages);
   const readRoute = generateSlugByLang(readPages, 'read');
   const lessonsRoute = generateSlugByLang(lessonsPages, 'lesson');
   const exercisesRoute = generateSlugByLang(exercisesPages, 'interactive-exercise');
@@ -154,6 +178,7 @@ async function generateSitemap() {
     'src/pages/**/*{.js,.jsx}',
     '!src/pages/**/[slug]/*{.js,.jsx}',
     '!src/pages/**/[slug]{.js,.jsx}',
+    '!src/pages/**/[uid]{.js,.jsx}',
     '!src/pages/**/[technology]*{.js,.jsx}',
     '!src/pages/**/[technology]/*{.js,.jsx}',
     '!src/pages/edit-markdown.jsx',
@@ -162,7 +187,7 @@ async function generateSitemap() {
     '!src/pages/api',
   ]);
 
-  const pagesSitemap = sitemapTemplate([...pages, ...readRoute]);
+  const pagesSitemap = sitemapTemplate([...pages, ...readRoute, ...prismicTypePages]);
   const howToSitemap = sitemapTemplate(howTosRoute);
   const lessonsSitemap = sitemapTemplate(lessonsRoute);
   const projectsSitemap = sitemapTemplate(projectsCodingRoute);

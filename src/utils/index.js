@@ -234,6 +234,8 @@ const sortToNearestTodayDate = (data, minutes = 30) => {
   return sortedDates;
 };
 
+const isNumber = (value) => Number.isFinite(Number(value)); // number or string with number (without letters)
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
@@ -241,5 +243,5 @@ export {
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
-  sortToNearestTodayDate,
+  sortToNearestTodayDate, isNumber,
 };
