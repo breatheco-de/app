@@ -62,6 +62,7 @@ const Dashboard = () => {
   const [events, setEvents] = useState(null);
   const [liveClass, setLiveClass] = useState(null);
   const [isOpenFinalProject, setIsOpenFinalProject] = useState(false);
+
   const [session, setSession] = usePersistent('session', {});
   const { user, choose, isLoading } = useAuth();
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
