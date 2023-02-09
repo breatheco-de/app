@@ -53,21 +53,24 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     };
   }
 
-  const allAssetsFiltered = allAssetList.results.filter(
-    (l) => technologyData.assets.some((a) => a === l.slug),
-  );
+  const data = allAssetList.results.filter((l) => {
+    if (l?.asset_type.toUpperCase() === 'LESSON') {
+      return true;
+    }
+    if (l?.asset_type.toUpperCase() === 'PROJECT') {
+      return true;
+    }
+    if (l?.asset_type.toUpperCase() === 'EXERCISE') {
+      return true;
+    }
+    if (l?.category) {
+      return l?.category?.slug === 'how-to' || l?.category?.slug === 'como';
+    }
+    return false;
+  });
 
-  const lessonsFiltered = allAssetsFiltered.filter(
-    (l) => l?.asset_type.toUpperCase() === 'LESSON',
-  );
-  const projectsFiltered = allAssetsFiltered.filter(
-    (l) => l?.asset_type.toUpperCase() === 'PROJECT',
-  );
-  const exercisesFiltered = allAssetsFiltered.filter(
-    (l) => l?.asset_type.toUpperCase() === 'EXERCISE',
-  );
-  const howTosFiltered = allAssetsFiltered.filter(
-    (l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como',
+  const allAssetsFiltered = data.filter(
+    (l) => technologyData.assets.some((a) => a === l.slug),
   );
 
   const ogUrl = {
@@ -90,24 +93,22 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       },
       fallback: false,
       technologyData,
-      lessons: lessonsFiltered.filter((project) => project.lang === currentLang).map(
-        (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
-      ),
-      projects: projectsFiltered.filter((project) => project.lang === currentLang).map(
-        (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
-      ),
-      exercises: exercisesFiltered.filter((project) => project.lang === currentLang).map(
-        (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
-      ),
-      howTos: howTosFiltered.filter((project) => project.lang === currentLang).map(
+      data: allAssetsFiltered.filter((project) => project.lang === currentLang).map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
     },
   };
 };
 
-const LessonByTechnology = ({ lessons, projects, exercises, howTos, technologyData }) => {
+const LessonByTechnology = ({ data, technologyData }) => {
   const { t } = useTranslation('technologies');
+  // const getAssetPath = (asset) => {
+  //   if (asset?.asset_type?.toUpperCase() === 'LESSON') return 'lesson';
+  //   if (asset?.asset_type?.toUpperCase() === 'EXERCISE') return 'interactive-exercise';
+  //   if (asset?.asset_type?.toUpperCase() === 'PROJECT') return 'interactive-coding-tutorial';
+  //   if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') return 'how-to';
+  //   return 'lesson';
+  // };
 
   return (
     <Box
@@ -147,14 +148,14 @@ const LessonByTechnology = ({ lessons, projects, exercises, howTos, technologyDa
       </Box>
 
       <Flex flexDirection="column" gridGap="3rem">
-        {lessons.length > 0 && (
+        {data.length > 0 && (
           <>
             <Box display="flex" flexDirection="column" gridGap="18px">
               <Heading size="sm" p="0">
                 {t('lessons-section')}
               </Heading>
               <ProjectList
-                projects={lessons}
+                projects={data}
                 withoutImage
                 projectPath="lesson"
               />
@@ -162,7 +163,7 @@ const LessonByTechnology = ({ lessons, projects, exercises, howTos, technologyDa
             <Box as="hr" borderColor="gray.300" margin="0 18px" />
           </>
         )}
-        {exercises.length > 0 && (
+        {/* {exercises.length > 0 && (
           <>
             <Box display="flex" flexDirection="column" gridGap="18px">
               <Heading size="sm" p="0">
@@ -201,28 +202,28 @@ const LessonByTechnology = ({ lessons, projects, exercises, howTos, technologyDa
             <ProjectList
               projects={howTos}
               withoutImage
-              projectPath="how-to"
+              projectPath={"how-to"}
             />
           </Box>
-        )}
+        )} */}
       </Flex>
     </Box>
   );
 };
 
 LessonByTechnology.propTypes = {
-  lessons: PropTypes.arrayOf(PropTypes.object),
+  data: PropTypes.arrayOf(PropTypes.object),
   technologyData: PropTypes.objectOf(PropTypes.any).isRequired,
-  projects: PropTypes.arrayOf(PropTypes.object),
-  exercises: PropTypes.arrayOf(PropTypes.object),
-  howTos: PropTypes.arrayOf(PropTypes.object),
+  // projects: PropTypes.arrayOf(PropTypes.object),
+  // exercises: PropTypes.arrayOf(PropTypes.object),
+  // howTos: PropTypes.arrayOf(PropTypes.object),
 };
 
 LessonByTechnology.defaultProps = {
-  lessons: [],
-  projects: [],
-  exercises: [],
-  howTos: [],
+  data: [],
+  // projects: [],
+  // exercises: [],
+  // howTos: [],
 };
 
 export default LessonByTechnology;
