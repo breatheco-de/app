@@ -153,6 +153,7 @@
     "take-attendancy": "Take attendancy",
     "review-attendancy": "Review attendancy",
     "assignments": "Assignments",
-    "teacher-tutorial": "Teacher tutorial"
+    "teacher-tutorial": "Teacher tutorial",
+    "no-instructions": ">:warning: No available instruction found for this module"
   }
 }
