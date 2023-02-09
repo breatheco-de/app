@@ -125,7 +125,7 @@ async function generateRedirect() {
     ...howToRedirectList,
   ];
 
-  fs.writeFileSync('public/redirects.json', JSON.stringify(redirectJson, null, 2));
+  fs.writeFileSync('public/redirects-from-api.json', JSON.stringify(redirectJson, null, 2));
 
   console.log('Redirects generated!');
 }
