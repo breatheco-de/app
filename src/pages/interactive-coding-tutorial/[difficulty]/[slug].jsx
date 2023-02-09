@@ -33,9 +33,9 @@ export const getStaticPaths = async ({ locales }) => {
   for (let i = 0; i < projects.length; i += 1) {
     if (projects[i].difficulty === null) projects[i].difficulty = 'unknown';
     if (typeof projects[i].difficulty === 'string') {
-      if (projects[i].difficulty === 'junior') projects[i].difficulty = 'easy';
-      else if (projects[i].difficulty === 'semi-senior') projects[i].difficulty = 'intermediate';
-      else if (projects[i].difficulty === 'senior') projects[i].difficulty = 'hard';
+      if (projects[i].difficulty?.toLowerCase() === 'junior') projects[i].difficulty = 'easy';
+      else if (projects[i].difficulty?.toLowerCase() === 'semi-senior') projects[i].difficulty = 'intermediate';
+      else if (projects[i].difficulty?.toLowerCase() === 'senior') projects[i].difficulty = 'hard';
     }
   }
 

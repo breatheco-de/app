@@ -31,7 +31,7 @@ const UpgradeAccessModal = ({
 
   const currentCourse = courseQuery || 'coding-introduction';
   const { featuredColor, backgroundColor2, hexColor } = useStyle();
-  const selectedItem = finance.plans[selectedIndex];
+  const selectedItem = storySettings?.plans[selectedIndex] || finance.plans[selectedIndex];
 
   const onClose = () => {
     setIsOpen(false);
@@ -42,7 +42,7 @@ const UpgradeAccessModal = ({
     setSelectedIndex(index);
   };
 
-  const financePlans = finance.plans.filter((l) => l.type !== 'trial' && l.type !== 'schoolarship-trial');
+  const financePlans = storySettings?.plans?.length > 0 ? storySettings?.plans.filter((l) => l.type !== 'trial' && l.type !== 'schoolarship-trial') : finance.plans.filter((l) => l.type !== 'trial' && l.type !== 'schoolarship-trial');
 
   return (
     <Modal

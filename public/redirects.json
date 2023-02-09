@@ -1,0 +1,7 @@
+[
+      {
+        "source": "/es/about-us",
+        "destination": "/es/sobre-nosotros",
+        "permanent": true,
+      }
+]

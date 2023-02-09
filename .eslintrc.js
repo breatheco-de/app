@@ -22,6 +22,7 @@ module.exports = {
     'no-console': 'off',
     'max-len': 'off',
     'object-curly-newline': 'off',
+    'spaced-comment': 'off',
     'linebreak-style': ['error', process.platform === 'win32' ? 'windows' : 'unix'],
   },
   ignorePatterns: [

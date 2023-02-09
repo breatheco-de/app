@@ -1,6 +1,6 @@
 
 .react-tagsinput {
-  background-color: #fff;
+  background-color: transparent;
   border: 1px solid var(--chakra-colors-gray-default);
   padding-left: 10px;
   padding-top: 10px;
@@ -8,6 +8,10 @@
   border-radius: 3px;
   transition-property: var(--chakra-transition-property-common);
   transition-duration: var(--chakra-transition-duration-normal);
+}
+.react-tagsinput-input::placeholder {
+  color: var(--chakra-colors-gray-400);
+  letter-spacing: 0.03em;
 }
 
  .react-tagsinput.error {
@@ -76,7 +80,7 @@
   margin-top: 1px;
   outline: none;
   padding: 5px;
-  width: 120px;
+  width: 125px;
 }
 
 .react-autosuggest__container {

@@ -9,22 +9,23 @@ const ButtonStyles = {
   // styles for different visual variants ("outline", "solid", more...)
   variants: {
     default: (props) => ({
-      bg: 'blue.default',
+      bg: props?.background ? props?.background : 'blue.default',
       color: 'white',
       border: '0',
       height: props.height || '40px',
       borderRadius: '3px',
       fontSize: '13px',
       letterSpacing: '0.05em',
+      opacity: 1,
       _hover: {
-        bg: '#00A0DA',
+        bg: props?.background ? props?.background : 'blue.default',
         opacity: 1,
         _disabled: {
           bgColor: '#EBEBEB',
         },
       },
       _active: {
-        bg: 'blue.default',
+        bg: props?.background ? props?.background : 'blue.default',
       },
       _disabled: {
         bg: '#EBEBEB',

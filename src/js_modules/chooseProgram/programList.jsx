@@ -106,71 +106,73 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
           {cohort.name}
         </Heading>
 
-        <Box display="flex" gridGap="10px" margin="0 0 20px 0" background={backgroundColor3} padding="12px 12px" borderRadius="6px">
-          <Box display="flex" flexDirection="column" flex={0.5} gridGap="4px">
-            {currentCohortProps?.allTasks?.map((task) => task.taskLength > 0 && (
-              <Box key={`${task.id}-${task.title}`} display="flex" gridGap="10px" alignItems="center">
-                <Icon icon={taskIcons[task.task_type]} width="16px" height="16px" color={hexColor.blueDefault} />
-                <Box display="flex" gridGap="5px" fontWeight={700}>
-                  <Text size="sm">
-                    {task?.completed ? `${task.completed}/${task.taskLength}` : task.taskLength}
-                  </Text>
-                  <Text size="sm">
-                    {t(`common:${task?.task_type?.toLowerCase()}`)}
-                  </Text>
+        {!(isHiddenOnPrework && cohort.stage.includes('PREWORK')) && (
+          <Box display="flex" gridGap="10px" margin="0 0 20px 0" background={backgroundColor3} padding="12px 12px" borderRadius="6px">
+            <Box display="flex" flexDirection="column" flex={0.5} gridGap="4px">
+              {currentCohortProps?.allTasks?.map((task) => task.taskLength > 0 && (
+                <Box key={`${task.id}-${task.title}`} display="flex" gridGap="10px" alignItems="center">
+                  <Icon icon={taskIcons[task.task_type]} width="16px" height="16px" color={hexColor.blueDefault} />
+                  <Box display="flex" gridGap="5px" fontWeight={700}>
+                    <Text size="sm">
+                      {task?.completed ? `${task.completed}/${task.taskLength}` : task.taskLength}
+                    </Text>
+                    <Text size="sm">
+                      {t(`common:${task?.task_type?.toLowerCase()}`)}
+                    </Text>
+                  </Box>
                 </Box>
-              </Box>
-            ))}
-          </Box>
-          {(currentCohortProps?.assistant?.length > 0 || currentCohortProps?.teacher?.length > 0) && (
-            <Box flex={0.5}>
-              <Box>
-                <Text size="sm" fontWeight={700}>
-                  {t('program-list.mentors-available', { count: currentCohortProps?.assistant?.length + currentCohortProps?.teacher?.length })}
-                </Text>
-                <Box display="flex" justifyContent="space-between" mt="10px">
-                  {!!singleTeacher && (
-                    <AvatarUser
-                      width="42px"
-                      height="42px"
-                      key={`${singleTeacher.id} - ${singleTeacher.user.first_name}`}
-                      fullName={teacherfullName}
-                      data={singleTeacher}
-                      isOnline={usersConnected?.includes(singleTeacher.user.id)}
-                      badge
-                      customBadge={(
-                        <Box position="absolute" bottom="-6px" right="-8px" background="blue.default" borderRadius="50px" p="5px" border="2px solid white">
-                          <Icon icon="teacher1" width="12px" height="12px" color="#FFFFFF" />
-                        </Box>
-                      )}
-                    />
-                  )}
-                  <AvatarGroup max={2} size="md">
-                    {currentCohortProps?.assistant?.map((c, i) => {
-                      const fullName = `${c.user.first_name} ${c.user.last_name}`;
-                      const isOnline = usersConnected?.includes(c.user.id);
-                      return (
-                        <Fragment key={`${c.id} - ${c.user.first_name}`}>
-                          <AvatarUser
-                            width="42px"
-                            height="42px"
-                            index={i}
-                            // key={`${c.id} - ${c.user.first_name}`}
-                            isWrapped
-                            fullName={fullName}
-                            data={c}
-                            isOnline={isOnline}
-                            badge
-                          />
-                        </Fragment>
-                      );
-                    })}
-                  </AvatarGroup>
-                </Box>
-              </Box>
+              ))}
             </Box>
-          )}
-        </Box>
+            {(currentCohortProps?.assistant?.length > 0 || currentCohortProps?.teacher?.length > 0) && (
+              <Box flex={0.5}>
+                <Box>
+                  <Text size="sm" fontWeight={700}>
+                    {t('program-list.mentors-available', { count: currentCohortProps?.assistant?.length + currentCohortProps?.teacher?.length })}
+                  </Text>
+                  <Box display="flex" justifyContent="space-between" mt="10px">
+                    {!!singleTeacher && (
+                      <AvatarUser
+                        width="42px"
+                        height="42px"
+                        key={`${singleTeacher.id} - ${singleTeacher.user.first_name}`}
+                        fullName={teacherfullName}
+                        data={singleTeacher}
+                        isOnline={usersConnected?.includes(singleTeacher.user.id)}
+                        badge
+                        customBadge={(
+                          <Box position="absolute" bottom="-6px" right="-8px" background="blue.default" borderRadius="50px" p="5px" border="2px solid white">
+                            <Icon icon="teacher1" width="12px" height="12px" color="#FFFFFF" />
+                          </Box>
+                        )}
+                      />
+                    )}
+                    <AvatarGroup max={2} size="md">
+                      {currentCohortProps?.assistant?.map((c, i) => {
+                        const fullName = `${c.user.first_name} ${c.user.last_name}`;
+                        const isOnline = usersConnected?.includes(c.user.id);
+                        return (
+                          <Fragment key={`${c.id} - ${c.user.first_name}`}>
+                            <AvatarUser
+                              width="42px"
+                              height="42px"
+                              index={i}
+                              // key={`${c.id} - ${c.user.first_name}`}
+                              isWrapped
+                              fullName={fullName}
+                              data={c}
+                              isOnline={isOnline}
+                              badge
+                            />
+                          </Fragment>
+                        );
+                      })}
+                    </AvatarGroup>
+                  </Box>
+                </Box>
+              </Box>
+            )}
+          </Box>
+        )}
         {hasStartedCourse && (
           <Box display="flex" flexDirection="column" gridGap="6px">
             <Progress percents={currentCohortProps?.percentage || 0} duration={0.6} barHeight="10px" borderRadius="20px" />

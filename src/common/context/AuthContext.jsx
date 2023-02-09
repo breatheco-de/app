@@ -113,8 +113,7 @@ const AuthProvider = ({ children }) => {
   const ldClient = useLDClient();
   const [profile, setProfile] = usePersistent('profile', {});
   const [cohortSession] = usePersistent('cohortSession', {});
-  // const [, setSession] = usePersistent('session', {});
-  // const { browser } = router.query;
+  // const [session, setSession] = usePersistent('session', {});
 
   const query = isWindow && new URLSearchParams(window.location.search || '');
   const queryToken = isWindow && query.get('token')?.split('?')[0];
@@ -123,21 +122,7 @@ const AuthProvider = ({ children }) => {
 
   // Validate and Fetch user token from localstorage when it changes
   const handleSession = (tokenString) => setTokenSession(tokenString);
-  // useEffect(() => {
-  //   // setSession
-  //   setSession({
-  //     version: packageJson.version,
-  //     host: process.env.BREATHECODE_HOST,
-  //     environment: process.env.VERCEL_ENV,
-  //     browser: browser || process.env?.BROWSER,
-  //     cohortSession,
-  //     profile: state?.user,
-  //     language: router.locale,
-  //     device: navigator.userAgent,
-  //     screenWidth: window?.screen?.width,
-  //     screenHeight: window?.screen?.height,
-  //   });
-  // }, [router?.locale, state?.user, cohortSession]);
+
   useEffect(() => {
     const user = state?.user;
     if (state.isLoading && user?.id === undefined) return;
@@ -149,17 +134,15 @@ const AuthProvider = ({ children }) => {
       name: `${user?.first_name} ${user?.last_name}`,
       email: user?.email,
       id: user?.id,
-      custom: {
-        language: router?.locale,
-        screenWidth: window?.screen?.width,
-        screenHeight: window?.screen?.height,
-        device: navigator?.userAgent,
-        version: packageJson.version,
-        cohort: cohortSession?.name,
-        cohortSlug: cohortSession?.slug,
-        cohortRole: cohortSession?.cohort_role,
-        academy: cohortSession?.academy?.id,
-      },
+      language: router?.locale,
+      screenWidth: window?.screen?.width,
+      screenHeight: window?.screen?.height,
+      device: navigator?.userAgent,
+      version: packageJson.version,
+      cohort: cohortSession?.name,
+      cohortSlug: cohortSession?.slug,
+      cohortRole: cohortSession?.cohort_role,
+      academy: cohortSession?.academy?.id,
     });
   }, [state?.user, router?.locale, cohortSession?.slug]);
 
