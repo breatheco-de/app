@@ -11,11 +11,13 @@ import bc from '../../common/services/breathecode';
 import Text from '../../common/components/Text';
 import Link from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
+import { usePersistent } from '../../common/hooks/usePersistent';
 
 const PopoverHandler = ({ task, githubUrl, haveGithubDomain }) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [assetData, setAssetData] = useState(null);
+  const [cohortSession] = usePersistent('cohortSession', {});
   const [fileData, setFileData] = useState([]);
   const { t } = useTranslation('assignments');
   const { backgroundColor, hexColor } = useStyle();
@@ -35,7 +37,7 @@ const PopoverHandler = ({ task, githubUrl, haveGithubDomain }) => {
         setAssetData(data);
 
         if (!data?.delivery_formats.includes('url')) {
-          const fileResp = await bc.todo().getFile({ id: currentTask.id });
+          const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
           if (fileResp && fileResp.status < 400) {
             const respData = await fileResp.data;
             setFileData(respData);
