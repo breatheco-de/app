@@ -6,6 +6,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 const redirectsList = require('./public/redirects.json');
+const redirectsGeneratedList = require('./public/redirects-from-api.json');
 const nextTranslate = require('next-translate');
 
 const externalDevDomain = process.env.VERCEL_ENV !== 'production' ? 'http://localhost:9999' : '';
@@ -41,6 +42,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
       //   permanent: true,
       // },
       ...redirectsList,
+      ...redirectsGeneratedList,
       {
         source: '/interactive-exercises/:slug',
         destination: '/interactive-exercise/:slug',
