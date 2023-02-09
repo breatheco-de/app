@@ -102,13 +102,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
 const LessonByTechnology = ({ data, technologyData }) => {
   const { t } = useTranslation('technologies');
-  // const getAssetPath = (asset) => {
-  //   if (asset?.asset_type?.toUpperCase() === 'LESSON') return 'lesson';
-  //   if (asset?.asset_type?.toUpperCase() === 'EXERCISE') return 'interactive-exercise';
-  //   if (asset?.asset_type?.toUpperCase() === 'PROJECT') return 'interactive-coding-tutorial';
-  //   if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') return 'how-to';
-  //   return 'lesson';
-  // };
 
   return (
     <Box
@@ -118,7 +111,6 @@ const LessonByTechnology = ({ data, technologyData }) => {
       alignItems="center"
       pt="3rem"
       maxWidth="1280px"
-      // margin={{ base: '0 4% 0 4%', md: '0 10% 0 10%' }}
       margin="0 auto"
     >
       <Text
@@ -149,63 +141,16 @@ const LessonByTechnology = ({ data, technologyData }) => {
 
       <Flex flexDirection="column" gridGap="3rem">
         {data.length > 0 && (
-          <>
-            <Box display="flex" flexDirection="column" gridGap="18px">
-              <Heading size="sm" p="0">
-                {t('lessons-section')}
-              </Heading>
-              <ProjectList
-                projects={data}
-                withoutImage
-                projectPath="lesson"
-              />
-            </Box>
-            <Box as="hr" borderColor="gray.300" margin="0 18px" />
-          </>
-        )}
-        {/* {exercises.length > 0 && (
-          <>
-            <Box display="flex" flexDirection="column" gridGap="18px">
-              <Heading size="sm" p="0">
-                {t('exercises-section')}
-              </Heading>
-              <ProjectList
-                projects={exercises}
-                withoutImage
-                projectPath="interactive-exercise"
-              />
-            </Box>
-            <Box as="hr" borderColor="gray.300" margin="0 18px" />
-          </>
-        )}
-        {projects.length > 0 && (
-          <>
-            <Box display="flex" flexDirection="column" gridGap="18px">
-              <Heading size="sm" p="0">
-                {t('projects-section')}
-              </Heading>
-              <ProjectList
-                projects={projects}
-                withoutImage
-                projectPath="interactive-coding-tutorial"
-                pathWithDifficulty
-              />
-            </Box>
-            {howTos.length ? <Box as="hr" borderColor="gray.300" margin="0 18px" /> : null}
-          </>
-        )}
-        {howTos.length > 0 && (
           <Box display="flex" flexDirection="column" gridGap="18px">
-            <Heading size="sm" p="0">
-              {t('howTos-section')}
-            </Heading>
             <ProjectList
-              projects={howTos}
+              projects={data}
               withoutImage
-              projectPath={"how-to"}
+              isDynamic
+              containerPadding="0px"
+              // projectPath="lesson"
             />
           </Box>
-        )} */}
+        )}
       </Flex>
     </Box>
   );
