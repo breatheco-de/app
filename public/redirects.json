@@ -2,6 +2,7 @@
   {
     "source": "/es/about-us",
     "destination": "/es/sobre-nosotros",
+    "locale": false,
     "permanent": true
   }
 ]
