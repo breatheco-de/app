@@ -24,7 +24,7 @@ const ProjectList = ({
   // const difficulty = contextFilter?.difficulty || [];
   const videoTutorials = contextFilter?.videoTutorials || [];
   const router = useRouter();
-  const { featuredColor } = useStyle();
+  const { featuredColor, fontColor2 } = useStyle();
   // const defaultImage = exampleImage || '/static/images/code1.png';
   const { query } = router;
   const techTagsQuery = (query.techs && decodeURI(query.techs?.toLowerCase())?.split(',')) || false;
@@ -138,7 +138,6 @@ const ProjectList = ({
           const isHowTo = isDynamic && getAssetPath(ex) === 'how-to';
 
           const getLink = () => {
-            // /${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}
             if (isLesson) {
               return `/lesson/${ex.slug}`;
             }
@@ -219,7 +218,7 @@ const ProjectList = ({
 
                   {ex?.description && (
                     <Text
-                      color="gray.dark"
+                      color={fontColor2}
                       textAlign="left"
                       width="100%"
                       size="l"
