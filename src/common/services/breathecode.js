@@ -213,7 +213,7 @@ const breathecode = {
       }),
       getEvent: (eventId) => axios.get(`${host}/events/academy/event/${eventId}?${qs}`),
       // getEvent: (eventId) => axios.get(`${host}/events/me/join/${eventId}?${qs}`),
-      events: () => axios.get(`${host}/events/me?${qs}`),
+      events: () => axios.get(`${host}/events/me?online_event=true&${qs}`),
     };
   },
   events: (query = {}) => {
