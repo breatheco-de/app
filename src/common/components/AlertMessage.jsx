@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import Text from './Text';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
+import Heading from './Heading';
 
 const AlertMessage = ({
-  message, type, style, textStyle, full, textColor,
+  message, type, style, textStyle, full, textColor, dangerouslySetInnerHTML, title,
 }) => {
   const { fontColor } = useStyle();
   const alertColors = {
@@ -15,6 +16,7 @@ const AlertMessage = ({
     info: '#00A0E9',
   };
 
+  console.log('message:::', message);
   return message && (
     <Box
       display="flex"
@@ -29,9 +31,27 @@ const AlertMessage = ({
       gridGap="16px"
     >
       <Icon icon={type} color={full ? '#000' : ''} props={{ full: true }} style={{ minWidth: '18px' }} width="18px" height="18px" />
-      <Text fontSize="15px" color={full ? 'black' : (textColor || fontColor)} fontWeight="700" style={{ ...textStyle, margin: '0' }}>
-        {message}
-      </Text>
+      <Box>
+        {title && (
+          <Heading size="20px" letterSpacing="0.02em" mb="10px">
+            {title}
+          </Heading>
+        )}
+        {dangerouslySetInnerHTML ? (
+          <Text
+            fontSize="15px"
+            color={full ? 'black' : (textColor || fontColor)}
+            fontWeight="500"
+            style={{ ...textStyle, margin: '0' }}
+            dangerouslySetInnerHTML={{ __html: message }}
+          />
+        ) : (
+          <Text fontSize="15px" color={full ? 'black' : (textColor || fontColor)} fontWeight="700" style={{ ...textStyle, margin: '0' }}>
+            {message}
+          </Text>
+        )}
+
+      </Box>
     </Box>
   );
 };
@@ -43,6 +63,8 @@ AlertMessage.propTypes = {
   full: PropTypes.bool,
   textStyle: PropTypes.objectOf(PropTypes.any),
   textColor: PropTypes.string,
+  dangerouslySetInnerHTML: PropTypes.bool,
+  title: PropTypes.string,
 };
 
 AlertMessage.defaultProps = {
@@ -52,6 +74,8 @@ AlertMessage.defaultProps = {
   full: false,
   textStyle: {},
   textColor: '',
+  dangerouslySetInnerHTML: false,
+  title: '',
 };
 
 export default AlertMessage;
