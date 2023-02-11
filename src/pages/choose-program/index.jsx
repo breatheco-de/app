@@ -5,7 +5,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import getT from 'next-translate/getT';
-import { useFlags } from 'launchdarkly-react-client-sdk';
+import { useFlags, useLDClient } from 'launchdarkly-react-client-sdk';
 import ChooseProgram from '../../js_modules/chooseProgram';
 import Text from '../../common/components/Text';
 import bc from '../../common/services/breathecode';
@@ -19,6 +19,7 @@ import { usePersistent } from '../../common/hooks/usePersistent';
 import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
 import useStyle from '../../common/hooks/useStyle';
 import GridContainer from '../../common/components/GridContainer';
+import packageJson from '../../../package.json';
 import LiveEvent from '../../common/components/LiveEvent';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useProgramList from '../../common/store/actions/programListAction';
@@ -55,6 +56,7 @@ function chooseProgram() {
   const { featuredColor, borderColor, lightColor } = useStyle();
   const router = useRouter();
   const toast = useToast();
+  const ldClient = useLDClient();
   const flags = useFlags();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
@@ -134,7 +136,7 @@ function chooseProgram() {
   useEffect(() => {
     bc.payment().events()
       .then(({ data }) => {
-        const eventsRemain = data.filter((l) => new Date(l.ending_at) - new Date() > 0);
+        const eventsRemain = data.filter((l) => new Date(l.ending_at) - new Date() > 0).slice(0, 3);
         setEvents(eventsRemain);
       });
 
@@ -198,6 +200,25 @@ function chooseProgram() {
 
   const handleChoose = (cohort) => {
     choose(cohort);
+    ldClient?.identify({
+      kind: 'user',
+      key: user?.id,
+      firstName: user?.first_name,
+      lastName: user?.last_name,
+      name: `${user?.first_name} ${user?.last_name}`,
+      email: user?.email,
+      id: user?.id,
+      language: router?.locale,
+      screenWidth: window?.screen?.width,
+      screenHeight: window?.screen?.height,
+      device: navigator?.userAgent,
+      version: packageJson.version,
+      cohort: cohort?.cohort_name,
+      cohortSlug: cohort?.cohort_slug,
+      cohortId: cohort?.id,
+      cohortStage: cohort?.stage,
+      academy: cohort?.academy_id,
+    });
   };
 
   return (
