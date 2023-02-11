@@ -173,7 +173,7 @@ const LiveEvent = ({
           borderRadius="50px"
           width="90%"
           margin="auto"
-          cursor={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && 'pointer'}
+          cursor={(!liveStartsAt || isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) && 'pointer'}
           onClick={() => {
             // if (isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) window.open(liveUrl);
             if (liveStartsAt && isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
@@ -199,7 +199,7 @@ const LiveEvent = ({
                   });
                 });
             }
-            if (!liveStartsAt && isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
+            if (!liveStartsAt) {
               window.open(nearestEvent?.liveUrl);
             }
 
