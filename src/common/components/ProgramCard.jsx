@@ -10,11 +10,13 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { formatDuration, intervalToDuration } from 'date-fns';
 import { es, en } from 'date-fns/locale';
+import { Fragment } from 'react';
 import CustomTheme from '../../../styles/theme';
 import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
-import Link from './NextChakraLink';
 import Text from './Text';
 import Icon from './Icon';
+import { isNumber, isValidDate } from '../../utils';
+import useStyle from '../hooks/useStyle';
 
 const availableLanguages = {
   es,
@@ -22,27 +24,18 @@ const availableLanguages = {
 };
 
 const ProgramCard = ({
-  programName,
-  programDescription,
-  isBought,
-  haveFreeTrial,
-  startsIn,
-  icon,
-  stTranslation,
-  syllabusContent,
-  mentorsAvailable,
-  isFreeTrial,
-  freeTrialExpireDate,
-  courseProgress,
-  lessonNumber,
-  lessonLink,
-  isLoading,
+  programName, programDescription, isBought, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
+  syllabusContent, isFreeTrial, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
+  width, usersConnected, assistants, teacher, handleChoose, isHiddenOnPrework,
 }) => {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
   const bgColor = useColorModeValue('featuredLight', 'featuredDark');
   const now = new Date();
+  const { lightColor } = useStyle();
   const isExpired = isFreeTrial && freeTrialExpireDate < now;
+
+  const programCardTR = stTranslation?.[lang]?.['program-card'];
 
   const formatTimeString = (start) => {
     const duration = intervalToDuration({
@@ -87,41 +80,52 @@ const ProgramCard = ({
         completed: syllabusContent.completedExercises,
       });
     }
+    if (syllabusContent?.totalQuizes) {
+      contentArray.push({
+        name: 'quizes',
+        total: syllabusContent.totalQuizes,
+        completed: syllabusContent.completedQuizes,
+      });
+    }
     return contentArray;
   };
 
-  const ProjectsSection = () => (syllabusArray()?.length > 0 || mentorsAvailable?.length > 0) && (
+  const existsMentors = assistants?.length > 0 || isNumber(teacher?.id);
+  const countOfMentors = assistants?.length + (teacher?.id ? 1 : 0);
+
+  const ProjectsSection = () => (syllabusArray()?.length > 0 || assistants?.length > 0) && (
     <Flex justifyContent="space-between" alignItems="center" marginTop="10px" padding="10px" borderRadius="5px" background={bgColor}>
       {syllabusArray()?.length > 0 && (
-        <Box display="flex" flexDirection="column" gridGap="3px">
+        <Box display="flex" flexDirection="column" gridGap="8px">
           {syllabusArray().map((elem) => (
             <Text
               fontSize="xs"
               lineHeight="14px"
               fontWeight="700"
               color={textColor}
-              key={elem}
+              key={elem?.name}
               display="flex"
-              marginBottom="5px"
             >
               <Icon
                 width="14px"
                 height="14px"
-                style={{ marginRight: '5px' }}
+                style={{ marginRight: '7px' }}
                 icon="book"
               />
-              {isBought && (
-              <>
-                <span style={{ color: CustomTheme.colors.blue.default2 }}>{elem.completed || 0}</span>
-                /
-              </>
-              )}
-              {`${elem.total} ${t(elem.name)}`}
+              <Box>
+                {isBought && (
+                <>
+                  <span style={{ color: CustomTheme.colors.blue.default2 }}>{elem.completed || 0}</span>
+                  /
+                </>
+                )}
+                {`${elem.total} ${programCardTR?.[elem.name] || t(elem.name)}`}
+              </Box>
             </Text>
           ))}
         </Box>
       )}
-      {mentorsAvailable.length > 0 && (
+      {existsMentors && (
         <Box>
           <Text
             fontSize="xs"
@@ -131,27 +135,50 @@ const ProgramCard = ({
             marginBottom="5px"
             textAlign="center"
           >
-            {`${mentorsAvailable.length} ${t('mentors-available')}`}
+            {`${countOfMentors} ${programCardTR?.['mentors-available'] || t('mentors-available')}`}
           </Text>
-          <AvatarGroup max="3">
-            {mentorsAvailable?.map((c, i) => {
-              const fullName = `${c.user.first_name} ${c.user.last_name}`;
-              const { isOnline } = c;
-              return (
-                <AvatarUser
-                  width="35px"
-                  height="35px"
-                  index={i}
-                  key={`${c.id} - ${c.user.first_name}`}
-                  isWrapped
-                  fullName={fullName}
-                  data={c}
-                  isOnline={isOnline}
-                  badge
-                />
-              );
-            })}
-          </AvatarGroup>
+
+          <Box display="flex" justifyContent="space-between" mt="10px" gridGap="22px">
+            {teacher?.id && (
+              <AvatarUser
+                width="42px"
+                height="42px"
+                key={`${teacher.id} - ${teacher.user.first_name}`}
+                fullName={`${teacher?.user?.first_name} ${teacher?.user?.last_name}`}
+                data={teacher}
+                isOnline={usersConnected?.includes(teacher.user.id)}
+                badge
+                customBadge={(
+                  <Box position="absolute" bottom="-6px" right="-8px" background="blue.default" borderRadius="50px" p="5px" border="2px solid white">
+                    <Icon icon="teacher1" width="12px" height="12px" color="#FFFFFF" />
+                  </Box>
+                )}
+              />
+            )}
+            {assistants?.length > 0 && (
+              <AvatarGroup max={assistants?.length <= 2 ? 2 : 1} size="md">
+                {assistants?.map((c, i) => {
+                  const fullName = `${c.user.first_name} ${c.user.last_name}`;
+                  const isOnline = usersConnected?.includes(c.user.id);
+                  return (
+                    <Fragment key={`${c.id} - ${fullName}`}>
+                      <AvatarUser
+                        width="42px"
+                        height="42px"
+                        index={i}
+                        // key={`${c.id} - ${c.user.first_name}`}
+                        isWrapped
+                        fullName={fullName}
+                        data={c}
+                        isOnline={isOnline}
+                        badge
+                      />
+                    </Fragment>
+                  );
+                })}
+              </AvatarGroup>
+            )}
+          </Box>
         </Box>
       )}
     </Flex>
@@ -200,92 +227,84 @@ const ProgramCard = ({
       border="1px solid"
       borderColor="#DADADA"
       borderRadius="9px"
-      width="292px"
+      width={width}
       padding="15px"
       position="relative"
+      height="min-content"
     >
-      <Box position="absolute" borderRadius="full" top="-30px">
+      <Box position="absolute" borderRadius="full" top="-30px" background={iconBackground} padding="10px">
         <Icon
-          width="54px"
-          height="54px"
+          width="32px"
+          height="32px"
           icon={icon}
         />
       </Box>
-      <Flex height="30px" id="upper-left-section" flexDirection="row-reverse">
-        {isLoading ? (
-          <></>
-        ) : (
-          <>
-            {!isBought ? (
-              <Flex width="116px">
-                <Box marginRight="10px">
-                  <Icon
-                    width="14px"
-                    height="21px"
-                    icon="rocket"
-                  />
-                </Box>
-                <Box>
-                  <Text
-                    fontSize="9px"
-                    lineHeight="9.8px"
-                    fontWeight="600"
-                    color={textColor}
-                  >
-                    {stTranslation ? stTranslation[lang]['program-card']['starts-in'] : t('starts-in')}
-                  </Text>
-                  <Text
-                    fontSize="9px"
-                    lineHeight="9.8px"
-                    fontWeight="400"
-                    color={textColor}
-                  >
-                    {formatTimeString(startsIn)}
-                  </Text>
-                </Box>
-              </Flex>
-            ) : (
-              <>
-                {isFreeTrial ? (
-                  <FreeTagCapsule />
-                ) : (
-                  <Icon icon="crown" width="22px" height="15px" />
-                )}
-              </>
-            )}
-          </>
-        )}
-      </Flex>
+
+      {!isHiddenOnPrework && (
+        <Flex height="30px" id="upper-left-section" flexDirection="row-reverse">
+          {isLoading ? (
+            <></>
+          ) : (
+            <>
+              {!isBought ? (
+                <Flex width="116px" justifyContent="flex-end">
+                  <Box marginRight="10px">
+                    <Icon
+                      width="14px"
+                      height="21px"
+                      icon="rocket"
+                    />
+                  </Box>
+                  <Box>
+                    <Text
+                      fontSize="9px"
+                      lineHeight="9.8px"
+                      fontWeight="600"
+                      color={textColor}
+                    >
+                      {stTranslation ? stTranslation[lang]['program-card']['starts-in'] : t('starts-in')}
+                    </Text>
+                    {isValidDate(startsIn) && (
+                      <Text
+                        fontSize="9px"
+                        lineHeight="9.8px"
+                        fontWeight="400"
+                        color={textColor}
+                      >
+                        {formatTimeString(new Date(startsIn))}
+                      </Text>
+                    )}
+                  </Box>
+                </Flex>
+              ) : (
+                <>
+                  {isFreeTrial ? (
+                    <FreeTagCapsule />
+                  ) : (
+                    <Icon icon="crown" width="22px" height="15px" />
+                  )}
+                </>
+              )}
+            </>
+          )}
+        </Flex>
+      )}
       <Text
         fontSize="md"
         lineHeight="19px"
         fontWeight="700"
         color={textColor}
         marginBottom="10px"
+        marginTop={isHiddenOnPrework && '30px'}
       >
         {programName}
         {' '}
       </Text>
 
-      {isLoading ? (
+      {!isHiddenOnPrework ? (
         <>
-          <Text
-            fontSize="xs"
-            lineHeight="14px"
-            fontWeight="500"
-            color={textColor}
-          >
-            {programDescription}
-            {' '}
-          </Text>
-          <Button variant="outline" marginTop="20px" color="blue.default" borderColor="currentcolor" w="full" fontSize="12px" letterSpacing="0.05em">
-            Loading...
-          </Button>
-        </>
-      ) : (
-        <>
-          {!isBought ? (
-            <Box>
+          {isLoading ? (
+            <>
               <Text
                 fontSize="xs"
                 lineHeight="14px"
@@ -295,89 +314,113 @@ const ProgramCard = ({
                 {programDescription}
                 {' '}
               </Text>
-              <ProjectsSection />
-              <Button
-                marginTop="20px"
-                borderRadius="3px"
-                width="100%"
-                padding="0"
-                whiteSpace="normal"
-                variant="default"
-              >
-                Start Course
+              <Button variant="outline" marginTop="20px" color="blue.default" borderColor="currentcolor" w="full" fontSize="12px" letterSpacing="0.05em">
+                Loading...
               </Button>
-              {haveFreeTrial && (
-                <Button
-                  marginTop="15px"
-                  borderRadius="3px"
-                  width="100%"
-                  padding="0"
-                  whiteSpace="normal"
-                  variant="outline"
-                  borderColor="blue.default"
-                  color="blue.default"
-                >
-                  Free Trial
-                </Button>
-              )}
-            </Box>
+            </>
           ) : (
-            <Box marginTop="20px">
-              <Box margin="auto" width="90%">
-                <Progress value={courseProgress} colorScheme="blueDefaultScheme" height="10px" borderRadius="20px" />
-                <Text
-                  fontSize="8px"
-                  lineHeight="9.8px"
-                  fontWeight="500"
-                  marginTop="5px"
-                  color={CustomTheme.colors.blue.default2}
-                >
-                  {`${courseProgress}%`}
-                </Text>
-              </Box>
-              {!isExpired && (
-                <>
-                  <ProjectsSection />
+            <>
+              {!isBought ? (
+                <Box>
                   <Text
-                    marginTop="20px"
-                    color={CustomTheme.colors.blue.default}
-                    textAlign="center"
                     fontSize="xs"
                     lineHeight="14px"
-                    fontWeight="700"
+                    fontWeight="500"
+                    color={textColor}
                   >
-                    <Link
-                      rel="noopener noreferrer"
-                      href={lessonLink || '#'}
-                      display="inline-block"
-                      letterSpacing="0.05em"
-                      fontFamily="Lato, Sans-serif"
-                    >
-                      {`${t('continue')} ${lessonNumber}  →`}
-                    </Link>
+                    {programDescription}
+                    {' '}
                   </Text>
-                </>
-
+                  <ProjectsSection />
+                  <Button
+                    marginTop="20px"
+                    borderRadius="3px"
+                    width="100%"
+                    padding="0"
+                    whiteSpace="normal"
+                    variant="default"
+                    onClick={handleChoose}
+                  >
+                    {programCardTR?.['start-course'] || t('start-course')}
+                  </Button>
+                  {haveFreeTrial && (
+                    <Button
+                      marginTop="15px"
+                      borderRadius="3px"
+                      width="100%"
+                      padding="0"
+                      whiteSpace="normal"
+                      variant="outline"
+                      borderColor="blue.default"
+                      color="blue.default"
+                    >
+                      {programCardTR?.['free-trial'] || t('free-trial')}
+                    </Button>
+                  )}
+                </Box>
+              ) : (
+                <Box marginTop="20px">
+                  <Box margin="auto" width="90%">
+                    <Progress value={courseProgress} colorScheme="blueDefaultScheme" height="10px" borderRadius="20px" />
+                    <Text
+                      fontSize="8px"
+                      lineHeight="9.8px"
+                      fontWeight="500"
+                      marginTop="5px"
+                      color={CustomTheme.colors.blue.default2}
+                    >
+                      {`${courseProgress}%`}
+                    </Text>
+                  </Box>
+                  {!isExpired && (
+                    <>
+                      <ProjectsSection />
+                      <Text
+                        marginTop="20px"
+                        color={CustomTheme.colors.blue.default}
+                        textAlign="center"
+                        fontSize="xs"
+                        lineHeight="14px"
+                        fontWeight="700"
+                      >
+                        <Button variant="link" onClick={handleChoose} gridGap="6px" fontWeight={700}>
+                          {isNumber(String(lessonNumber))
+                            ? `${programCardTR?.continue || t('continue')} ${lessonNumber} →`
+                            : `${programCardTR?.['continue-course'] || t('continue-course')} →`}
+                        </Button>
+                      </Text>
+                    </>
+                  )}
+                  {isFreeTrial && (
+                    <Button
+                      marginTop="25px"
+                      borderRadius="3px"
+                      width="100%"
+                      padding="0"
+                      whiteSpace="normal"
+                      variant="default"
+                      alignItems="center"
+                      background="yellow.default"
+                      color="white"
+                    >
+                      <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
+                      {programCardTR?.upgrade || t('upgrade')}
+                    </Button>
+                  )}
+                </Box>
               )}
-              {isFreeTrial && (
-                <Button
-                  marginTop="25px"
-                  borderRadius="3px"
-                  width="100%"
-                  padding="0"
-                  whiteSpace="normal"
-                  variant="default"
-                  alignItems="center"
-                  background="yellow.default"
-                  color="white"
-                >
-                  <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
-                  Upgrade
-                </Button>
-              )}
-            </Box>
+            </>
           )}
         </>
+      ) : (
+        <Box width="100%" display="flex" justifyContent="center">
+          <Text
+            size="12px"
+            color={lightColor}
+          >
+            {programCardTR?.['prework-message'] || t('prework-message')}
+          </Text>
+        </Box>
       )}
     </Box>
   );
@@ -393,12 +436,17 @@ ProgramCard.propTypes = {
   isFreeTrial: PropTypes.bool,
   icon: PropTypes.string.isRequired,
   syllabusContent: PropTypes.objectOf(PropTypes.any),
-  mentorsAvailable: PropTypes.arrayOf(PropTypes.any),
   courseProgress: PropTypes.number,
   stTranslation: PropTypes.objectOf(PropTypes.any),
   lessonNumber: PropTypes.number,
-  lessonLink: PropTypes.string,
   isLoading: PropTypes.bool,
+  width: PropTypes.string,
+  usersConnected: PropTypes.arrayOf(PropTypes.number),
+  assistants: PropTypes.arrayOf(PropTypes.any),
+  teacher: PropTypes.objectOf(PropTypes.any),
+  iconBackground: PropTypes.string,
+  handleChoose: PropTypes.func,
+  isHiddenOnPrework: PropTypes.bool,
 };
 
 ProgramCard.defaultProps = {
@@ -408,13 +456,18 @@ ProgramCard.defaultProps = {
   haveFreeTrial: false,
   isBought: false,
   isFreeTrial: false,
-  mentorsAvailable: [],
   syllabusContent: null,
   courseProgress: null,
   freeTrialExpireDate: null,
   lessonNumber: null,
-  lessonLink: null,
   isLoading: false,
+  width: '292px',
+  usersConnected: [],
+  assistants: [],
+  teacher: null,
+  iconBackground: '',
+  handleChoose: () => {},
+  isHiddenOnPrework: false,
 };
 
 export default ProgramCard;

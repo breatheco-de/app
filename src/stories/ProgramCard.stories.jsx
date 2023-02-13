@@ -41,7 +41,7 @@ export default {
         type: 'object'
       }
     },
-    mentorsAvailable: {
+    assistans: {
       control: {
         type: 'object'
       }
@@ -77,6 +77,17 @@ export default {
 const Component = (args, context) => {
   return <ProgramCard stTranslation={context.parameters.i18n.store.data} {...args} />
 };
+
+const teachers = [{
+  isOnline: true,
+  user: {
+    first_name: 'Juan',
+    last_name: 'López',
+    profile: {
+      avatar_url: '/static/images/p1.png',
+    },
+  },
+}]
 
 const mentors = [{
   isOnline: true,
@@ -144,7 +155,8 @@ Default.args = {
   programName: 'Data Science',
   programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
   startsIn: new Date(addDays(new Date(), 3)),
-  icon: 'data-science-bg',
+  icon: "coding",
+  iconBackground: "blue.default",
   syllabusContent: {
     totalLessons: 30,
     totalProjects: 15,
@@ -153,7 +165,8 @@ Default.args = {
     completedProjects: 10,
     completedExercises: 5,
   },
-  mentorsAvailable: mentors,
+  assistans: mentors,
+  teacher: teachers[0],
   haveFreeTrial: true,
   isFreeTrial: false,
   isBought: false,
@@ -168,7 +181,8 @@ isLoading.args = {
   programName: 'Data Science',
   programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
   startsIn: new Date(addDays(new Date(), 3)),
-  icon: 'data-science-bg',
+  icon: "coding",
+  iconBackground: "blue.default",
   isLoading: true,
 };
 export const courseNotStarted = Component.bind({});
@@ -176,8 +190,10 @@ courseNotStarted.args = {
   programName: 'Data Science',
   programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
   startsIn: new Date(addDays(new Date(), 3)),
-  icon: 'data-science-bg',
-  mentorsAvailable: mentors,
+  icon: "coding",
+  iconBackground: "blue.default",
+  assistans: mentors,
+  teacher: teachers[0],
   syllabusContent: {
     totalLessons: 30,
     totalProjects: 15,
@@ -193,7 +209,8 @@ ongoingPaidCourse.args = {
   programName: 'Data Science',
   programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
   startsIn: new Date(addDays(new Date(), 3)),
-  icon: 'data-science-bg',
+  icon: "coding",
+  iconBackground: "blue.default",
   syllabusContent: {
     totalLessons: 30,
     totalProjects: 15,
@@ -202,7 +219,8 @@ ongoingPaidCourse.args = {
     completedProjects: 10,
     completedExercises: 5,
   },
-  mentorsAvailable: mentors,
+  assistans: mentors,
+  teacher: teachers[0],
   haveFreeTrial: true,
   isFreeTrial: false,
   isBought: true,
@@ -216,7 +234,8 @@ ongoingFreeTrial.args = {
   programName: 'Data Science',
   programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
   startsIn: new Date(addDays(new Date(), 3)),
-  icon: 'data-science-bg',
+  icon: "coding",
+  iconBackground: "blue.default",
   syllabusContent: {
     totalLessons: 30,
     totalProjects: 15,
@@ -225,7 +244,8 @@ ongoingFreeTrial.args = {
     completedProjects: 10,
     completedExercises: 5,
   },
-  mentorsAvailable: mentors,
+  assistans: mentors,
+  teacher: teachers[0],
   haveFreeTrial: false,
   isFreeTrial: true,
   isBought: true,
@@ -239,7 +259,8 @@ expiredFreeTrial.args = {
   programName: 'Data Science',
   programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
   startsIn: new Date(addDays(new Date(), 3)),
-  icon: 'data-science-bg',
+  icon: "coding",
+  iconBackground: "blue.default",
   syllabusContent: {
     totalLessons: 30,
     totalProjects: 15,
@@ -248,7 +269,8 @@ expiredFreeTrial.args = {
     completedProjects: 10,
     completedExercises: 5,
   },
-  mentorsAvailable: mentors,
+  assistans: mentors,
+  teacher: teachers[0],
   haveFreeTrial: false,
   isFreeTrial: true,
   isBought: true,

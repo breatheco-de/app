@@ -236,6 +236,8 @@ const sortToNearestTodayDate = (data, minutes = 30) => {
 
 const isNumber = (value) => Number.isFinite(Number(value)); // number or string with number (without letters)
 
+const isValidDate = (dateString) => !Number.isNaN(Date.parse(dateString));
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
@@ -243,5 +245,5 @@ export {
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
-  sortToNearestTodayDate, isNumber,
+  sortToNearestTodayDate, isNumber, isValidDate,
 };
