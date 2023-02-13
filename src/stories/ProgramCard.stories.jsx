@@ -278,3 +278,29 @@ expiredFreeTrial.args = {
   lessonNumber: 1.2,
   courseProgress: 34,
 };
+
+export const isHiddenOnPrework = Component.bind({});
+isHiddenOnPrework.args = {
+  programName: 'Data Science',
+  programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
+  startsIn: new Date(addDays(new Date(), 3)),
+  icon: "coding",
+  iconBackground: "blue.default",
+  syllabusContent: {
+    totalLessons: 30,
+    totalProjects: 15,
+    totalExercises: 15,
+    completedLessons: 3,
+    completedProjects: 10,
+    completedExercises: 5,
+  },
+  assistans: mentors,
+  teacher: teachers[0],
+  haveFreeTrial: false,
+  isFreeTrial: true,
+  isBought: true,
+  freeTrialExpireDate: new Date(addDays(new Date(), 0)),
+  lessonNumber: 1.2,
+  courseProgress: 34,
+  isHiddenOnPrework: true,
+};
