@@ -23,7 +23,7 @@ import LanguageSelector from '../LanguageSelector';
 import syllabusList from '../../../../public/syllabus.json';
 import { isWindow } from '../../../utils';
 
-const NavbarWithSubNavigation = ({ haveSession, translations }) => {
+const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   const { t } = useTranslation('navbar');
   const router = useRouter();
   // const [readSyllabus, setReadSyllabus] = useState([]);
@@ -101,6 +101,8 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
     }
     return user?.github?.name;
   };
+
+  if (pageProps?.previewMode) return null;
 
   return (
     <Box>
@@ -414,10 +416,12 @@ const NavbarWithSubNavigation = ({ haveSession, translations }) => {
 NavbarWithSubNavigation.propTypes = {
   haveSession: PropTypes.bool,
   translations: PropTypes.objectOf(PropTypes.string),
+  pageProps: PropTypes.objectOf(PropTypes.any),
 };
 NavbarWithSubNavigation.defaultProps = {
   haveSession: false,
   translations: undefined,
+  pageProps: undefined,
 };
 
 export default memo(NavbarWithSubNavigation);
