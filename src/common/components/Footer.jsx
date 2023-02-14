@@ -19,17 +19,20 @@ import {
 } from '@chakra-ui/react';
 import { Search2Icon, CheckIcon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
 import NextChakraLink from './NextChakraLink';
 import Icon from './Icon';
 import AlertMessage from './AlertMessage';
 import CustomTheme from '../../../styles/theme';
 import bc from '../services/breathecode';
 
-const Footer = () => {
+const Footer = ({ pageProps }) => {
   const { t } = useTranslation('footer');
   const [email, setEmail] = useState('');
   const [formStatus, setFormStatus] = useState('');
   const { colorMode } = useColorMode();
+
+  if (pageProps?.previewMode) return null;
 
   return (
     <Container as="footer" maxW="none" padding="20px" position="absolute" top="100%">
@@ -386,6 +389,13 @@ const Footer = () => {
     //   </Text>
     // </Box>
   );
+};
+
+Footer.propTypes = {
+  pageProps: PropTypes.objectOf(PropTypes.any),
+};
+Footer.defaultProps = {
+  pageProps: undefined,
 };
 
 export default Footer;
