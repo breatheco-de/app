@@ -328,12 +328,12 @@ function chooseProgram() {
           <Box flex={{ base: 1, md: 0.3 }} zIndex={2} position={{ base: 'inherit', md: 'absolute' }} maxWidth="320px" right={0} top={0}>
             {flags?.appReleaseEnableLiveEvents && (
               <LiveEvent
-                // liveUrl={events[0].url}
+                featureLabel={t('common:live-event.title')}
+                featureReadMoreUrl={t('common:live-event.readMoreUrl')}
                 liveClassHash={liveClass?.hash}
                 liveStartsAt={liveClass?.starting_at}
                 liveEndsAt={liveClass?.ending_at}
                 otherEvents={events}
-                // featureLabel,
               />
             )}
           </Box>

@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import { format } from 'date-fns';
+import { addDays, format, isAfter } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 const isWindow = typeof window !== 'undefined';
@@ -236,6 +236,12 @@ const sortToNearestTodayDate = (data, minutes = 30) => {
 
 const isNumber = (value) => Number.isFinite(Number(value)); // number or string with number (without letters)
 
+const isDateMoreThanAnyDaysAgo = (date, days = 7) => {
+  const now = new Date();
+  const AnyDaysAgo = addDays(now, days);
+  return isAfter(date, AnyDaysAgo);
+};
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
@@ -243,5 +249,5 @@ export {
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
-  sortToNearestTodayDate, isNumber,
+  sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo,
 };

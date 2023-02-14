@@ -14,6 +14,7 @@ import Link from './NextChakraLink';
 import Text from './Text';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
+import { isDateMoreThanAnyDaysAgo } from '../../utils';
 
 const availableLanguages = {
   es,
@@ -57,7 +58,7 @@ const LiveEvent = ({
     return otherEventsSorted;
   };
 
-  const formatTimeString = (start) => {
+  const formatTimeString = (start, isMoreThan2Days = false) => {
     const duration = intervalToDuration({
       end: new Date(),
       start,
@@ -65,7 +66,7 @@ const LiveEvent = ({
 
     const formated = formatDuration(duration,
       {
-        format: ['months', 'weeks', 'days', 'hours', 'minutes'],
+        format: !isMoreThan2Days ? ['months', 'weeks', 'days', 'hours', 'minutes'] : ['months', 'weeks', 'days'],
         delimiter: ', ',
         locale: availableLanguages[lang],
       });
@@ -78,11 +79,13 @@ const LiveEvent = ({
     const started = start - new Date() <= startingSoonDelta;
     const ended = end - new Date() <= 0;
     let formatedTime;
+    const isMoreThan2Days = isDateMoreThanAnyDaysAgo(start, 2);
+
     if (ended) {
       formatedTime = formatTimeString(end);
       return stTranslation ? stTranslation[lang]['live-event'].ended.replace('{{time}}', formatedTime) : t('ended', { time: formatedTime });
     }
-    formatedTime = formatTimeString(start);
+    formatedTime = formatTimeString(start, isMoreThan2Days);
     if (started) {
       return stTranslation ? stTranslation[lang]['live-event'].started.replace('{{time}}', formatedTime) : t('started', { time: formatedTime });
     }
@@ -126,7 +129,7 @@ const LiveEvent = ({
 
   return (
     <Box
-      padding="16px 10px"
+      padding="16px 25px"
       background={bgColor}
       border="1px solid"
       borderColor="#DADADA"
@@ -136,7 +139,7 @@ const LiveEvent = ({
     >
       {(featureLabel || featureReadMoreUrl) && (
       <Text
-        fontSize="md"
+        fontSize="sm"
         lineHeight="19px"
         fontWeight="700"
         color={textColor}
@@ -171,7 +174,7 @@ const LiveEvent = ({
           borderColor={CustomTheme.colors.blue.default2}
           padding="10px"
           borderRadius="50px"
-          width="90%"
+          width="100%"
           margin="auto"
           cursor={(!liveStartsAt || isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) && 'pointer'}
           onClick={() => {
@@ -267,10 +270,23 @@ const LiveEvent = ({
           borderColor=""
           padding="10px"
           borderRadius="50px"
-          width="90%"
+          width="100%"
           margin="auto"
           // cursor={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && 'pointer'}
         >
+          <Box
+            borderRadius="full"
+            background="featuredLigth"
+            opacity="0.5"
+            padding="10px"
+          >
+            <Icon
+              width="34px"
+              height="34px"
+              icon="logoModern"
+              color="currentColor"
+            />
+          </Box>
           <Box
             display="flex"
             justifyContent="center"
@@ -288,7 +304,7 @@ const LiveEvent = ({
               {stTranslation ? stTranslation[lang]['live-event']['live-class'] : t('live-class')}
             </Text>
             <Text
-              fontSize="md"
+              fontSize="12px"
               lineHeight="18px"
               fontWeight="700"
               color={textGrayColor}
@@ -309,7 +325,7 @@ const LiveEvent = ({
                 display="flex"
                 padding="10px"
                 borderBottom="1px solid"
-                width="90%"
+                width="100%"
                 margin="auto"
                 borderColor="#DADADA"
               >
