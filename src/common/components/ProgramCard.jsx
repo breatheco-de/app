@@ -80,11 +80,11 @@ const ProgramCard = ({
         completed: syllabusContent.completedExercises,
       });
     }
-    if (syllabusContent?.totalQuizes) {
+    if (syllabusContent?.totalQuizzes) {
       contentArray.push({
-        name: 'quizes',
-        total: syllabusContent.totalQuizes,
-        completed: syllabusContent.completedQuizes,
+        name: 'quizzes',
+        total: syllabusContent.totalQuizzes,
+        completed: syllabusContent.completedQuizzes,
       });
     }
     return contentArray;

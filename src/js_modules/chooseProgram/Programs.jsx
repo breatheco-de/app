@@ -57,8 +57,8 @@ const Programs = ({ item, handleChoose, usersConnected }) => {
     }
     if (task?.task_type === 'QUIZ') {
       return {
-        totalQuizes: task?.taskLength,
-        completedQuizes: task?.completed,
+        totalQuizzes: task?.taskLength,
+        completedQuizzes: task?.completed,
       };
     }
     return ({});
