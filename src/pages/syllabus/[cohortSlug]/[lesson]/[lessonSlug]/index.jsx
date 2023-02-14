@@ -595,7 +595,7 @@ const Content = () => {
                 )}
               </Box>
 
-              {selectedSyllabus && cohortModule.id !== selectedSyllabus.id && (
+              {selectedSyllabus && cohortModule?.id !== selectedSyllabus?.id && (
                 <AlertMessage
                   type="info"
                   style={{
@@ -606,7 +606,7 @@ const Content = () => {
                   message={t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule?.id} - ${cohortModule?.label}` })}
                 />
               )}
-              {selectedSyllabus && defaultSelectedSyllabus.id !== selectedSyllabus.id && (
+              {selectedSyllabus && defaultSelectedSyllabus?.id !== selectedSyllabus?.id && (
                 <AlertMessage
                   type="warning"
                   style={{
