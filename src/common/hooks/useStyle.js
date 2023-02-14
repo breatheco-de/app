@@ -30,6 +30,7 @@ const useStyle = () => {
   const modal = {
     featuredBackground: useColorModeValue('featuredLight', 'darkTheme'),
     background: useColorModeValue('white', 'featuredDark'),
+    background2: useColorModeValue('white', 'gray.900'),
     hoverBackground: useColorModeValue('featuredLight', 'gray.700'),
   };
 
