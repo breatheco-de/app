@@ -16,7 +16,6 @@ const AlertMessage = ({
     info: '#00A0E9',
   };
 
-  console.log('message:::', message);
   return message && (
     <Box
       display="flex"
