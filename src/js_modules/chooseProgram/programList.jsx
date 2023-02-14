@@ -42,7 +42,9 @@ function CohortProgram({ item, handleChoose, usersConnected }) {
       version,
       slug,
       cohort_name: cohort.name,
+      id: cohort.id,
       cohort_slug: cohort?.slug,
+      stage: cohort?.stage,
       syllabus_name: name,
       academy_id: cohort.academy.id,
     });

@@ -54,9 +54,9 @@ function App({ Component, pageProps }) {
 
   const Navbar = () => {
     if (HAVE_SESSION) {
-      return <NavbarSession translations={pageProps?.translations} haveSession={haveSession} />;
+      return <NavbarSession pageProps={pageProps} translations={pageProps?.translations} haveSession={haveSession} />;
     }
-    return <NavbarSession translations={pageProps?.translations} haveSession={false} />;
+    return <NavbarSession pageProps={pageProps} translations={pageProps?.translations} haveSession={false} />;
   };
 
   return (
@@ -76,7 +76,7 @@ function App({ Component, pageProps }) {
               </PrismicPreview>
             </PrismicProvider>
 
-            <Footer />
+            <Footer pageProps={pageProps} />
           </ChakraProvider>
         </ConnectionProvider>
       </AuthProvider>
