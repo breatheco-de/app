@@ -1,19 +1,21 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useState, useEffect } from 'react';
 import {
-  Box, useColorModeValue, Button, useToast, Avatar,
+  Box, useColorModeValue, Button, useToast,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
 import { formatDuration, intervalToDuration } from 'date-fns';
 import { es, en } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
-import CustomTheme from '../../../styles/theme';
-import bc from '../services/breathecode';
-import Link from './NextChakraLink';
-import Text from './Text';
-import Icon from './Icon';
-import useStyle from '../hooks/useStyle';
+import CustomTheme from '../../../../styles/theme';
+import bc from '../../services/breathecode';
+import Link from '../NextChakraLink';
+import Text from '../Text';
+import Icon from '../Icon';
+import { isDateMoreThanAnyDaysAgo } from '../../../utils';
+import OtherEvents from './OtherEvents';
+import useTruncatedText from '../../hooks/useTruncatedText';
 
 const availableLanguages = {
   es,
@@ -32,7 +34,6 @@ const LiveEvent = ({
   featureReadMoreUrl,
 }) => {
   const { t, lang } = useTranslation('live-event');
-  const { hexColor } = useStyle();
   const [isOpen, setIsOpen] = useState(false);
   const [timeAgo, setTimeAgo] = useState('');
   const bgColor = useColorModeValue('white', 'gray.900');
@@ -48,6 +49,7 @@ const LiveEvent = ({
 
   const liveStartsAtDate = new Date(featuredLiveEventStartsAt);
   const liveEndsAtDate = new Date(featuredLiveEventEndsAt);
+  const [truncatedText, handleMouseOver, handleMouseOut] = useTruncatedText(nearestEvent?.title, 35);
 
   const toast = useToast();
   const getOtherEvents = () => {
@@ -57,7 +59,7 @@ const LiveEvent = ({
     return otherEventsSorted;
   };
 
-  const formatTimeString = (start) => {
+  const formatTimeString = (start, isMoreThan2Days = false) => {
     const duration = intervalToDuration({
       end: new Date(),
       start,
@@ -65,7 +67,7 @@ const LiveEvent = ({
 
     const formated = formatDuration(duration,
       {
-        format: ['months', 'weeks', 'days', 'hours', 'minutes'],
+        format: !isMoreThan2Days ? ['months', 'weeks', 'days', 'hours', 'minutes'] : ['months', 'weeks', 'days'],
         delimiter: ', ',
         locale: availableLanguages[lang],
       });
@@ -78,11 +80,13 @@ const LiveEvent = ({
     const started = start - new Date() <= startingSoonDelta;
     const ended = end - new Date() <= 0;
     let formatedTime;
+    const isMoreThan2Days = isDateMoreThanAnyDaysAgo(start, 2);
+
     if (ended) {
       formatedTime = formatTimeString(end);
       return stTranslation ? stTranslation[lang]['live-event'].ended.replace('{{time}}', formatedTime) : t('ended', { time: formatedTime });
     }
-    formatedTime = formatTimeString(start);
+    formatedTime = formatTimeString(start, isMoreThan2Days);
     if (started) {
       return stTranslation ? stTranslation[lang]['live-event'].started.replace('{{time}}', formatedTime) : t('started', { time: formatedTime });
     }
@@ -124,9 +128,10 @@ const LiveEvent = ({
     return 'live-event-opaque';
   };
 
+  console.log('truncatedText:::', truncatedText);
   return (
     <Box
-      padding="16px 10px"
+      padding="16px 25px"
       background={bgColor}
       border="1px solid"
       borderColor="#DADADA"
@@ -136,7 +141,7 @@ const LiveEvent = ({
     >
       {(featureLabel || featureReadMoreUrl) && (
       <Text
-        fontSize="md"
+        fontSize="sm"
         lineHeight="19px"
         fontWeight="700"
         color={textColor}
@@ -171,7 +176,7 @@ const LiveEvent = ({
           borderColor={CustomTheme.colors.blue.default2}
           padding="10px"
           borderRadius="50px"
-          width="90%"
+          width="100%"
           margin="auto"
           cursor={(!liveStartsAt || isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) && 'pointer'}
           onClick={() => {
@@ -230,12 +235,14 @@ const LiveEvent = ({
             marginLeft="10px"
           >
             <Text
-              fontSize="md"
+              size="15px"
               lineHeight="18px"
               fontWeight="900"
               color={textColor}
               marginBottom="5px"
               marginTop="0"
+              onMouseOver={handleMouseOver}
+              onMouseOut={handleMouseOut}
             >
               {liveStartsAt ? (
                 <>
@@ -243,12 +250,14 @@ const LiveEvent = ({
                 </>
               ) : (
                 <>
-                  {nearestEvent?.title}
+                  {/* {nearestEvent?.title} */}
+                  {truncatedText}
+                  {/* {nearestEvent?.title.length > 40 ? `${nearestEvent?.title.substring(0, 40)}...` : nearestEvent?.title} */}
                 </>
               )}
             </Text>
             <Text
-              fontSize="12px"
+              size="14px"
               lineHeight="18px"
               fontWeight="700"
               color={textGrayColor}
@@ -267,10 +276,23 @@ const LiveEvent = ({
           borderColor=""
           padding="10px"
           borderRadius="50px"
-          width="90%"
+          width="100%"
           margin="auto"
           // cursor={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && 'pointer'}
         >
+          <Box
+            borderRadius="full"
+            background="featuredLigth"
+            opacity="0.5"
+            padding="10px"
+          >
+            <Icon
+              width="34px"
+              height="34px"
+              icon="logoModern"
+              color="currentColor"
+            />
+          </Box>
           <Box
             display="flex"
             justifyContent="center"
@@ -288,7 +310,7 @@ const LiveEvent = ({
               {stTranslation ? stTranslation[lang]['live-event']['live-class'] : t('live-class')}
             </Text>
             <Text
-              fontSize="md"
+              fontSize="12px"
               lineHeight="18px"
               fontWeight="700"
               color={textGrayColor}
@@ -300,87 +322,13 @@ const LiveEvent = ({
         </Box>
       )}
       {isOpen && (
-        <Box marginTop="10px">
-          {(liveStartsAt ? otherEventsSorted : restOfEvents).map((event) => {
-            const startsAt = event?.starting_at && new Date(event.starting_at);
-            const endsAt = event?.ending_at && new Date(event.ending_at);
-            return (
-              <Box
-                display="flex"
-                padding="10px"
-                borderBottom="1px solid"
-                width="90%"
-                margin="auto"
-                borderColor="#DADADA"
-              >
-                <Box width="37px" height="37px" className={isLiveOrStarting(startsAt, endsAt) ? 'pulse-blue' : ''} borderRadius="full">
-                  {event?.icon_url ? (
-                    <Avatar src={event?.icon_url} name="icon url" width="37px" height="37px" />
-                  ) : (
-                    <Icon fill={event.fill || hexColor.greenLight} color={event.color} style={{ flexShrink: 0 }} width="37px" height="37px" icon={event.icon || 'group'} />
-                  )}
-                </Box>
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  flexDirection="column"
-                  marginLeft="10px"
-                >
-                  <Link
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={featureReadMoreUrl || event?.live_url || event?.live_stream_url || '#'}
-                    color={textColor}
-                    fontSize="md"
-                    lineHeight="18px"
-                    fontWeight="700"
-                    letterSpacing="0.05em"
-                    marginBottom="5px"
-                    marginTop="0"
-                    locale="en"
-                    fontFamily="Lato, Sans-serif"
-                    // onClick={(e) => {
-                    //   e?.preventDefault();
-
-                    //   bc.payment({ academy: event?.academy }).getEvent(event.id)
-                    //     .then(({ data }) => {
-                    //       if (data?.live_stream_url) {
-                    //         window.open(data?.live_stream_url);
-                    //       } else {
-                    //         toast({
-                    //           title: t('inactive-event'),
-                    //           status: 'info',
-                    //           duration: 5000,
-                    //           isClosable: true,
-                    //         });
-                    //       }
-                    //     })
-                    //     .catch(() => {
-                    //       toast({
-                    //         title: t('no-access'),
-                    //         status: 'error',
-                    //         duration: 5000,
-                    //         isClosable: true,
-                    //       });
-                    //     });
-                    // }}
-                  >
-                    {event.title}
-                  </Link>
-                  <Text
-                    fontSize="12px"
-                    lineHeight="18px"
-                    fontWeight="500"
-                    color={textGrayColor}
-                    marginBottom="0"
-                    marginTop="0"
-                  >
-                    {startsAt ? textTime(startsAt, endsAt) : ''}
-                  </Text>
-                </Box>
-              </Box>
-            );
-          })}
+        <Box marginTop="10px" maxHeight="450px" overflow="auto">
+          <OtherEvents
+            events={liveStartsAt ? otherEventsSorted : restOfEvents}
+            isLiveOrStarting={isLiveOrStarting}
+            textTime={textTime}
+            featureReadMoreUrl={featureReadMoreUrl}
+          />
         </Box>
       )}
       {getOtherEvents()?.length > 0 && getOtherEvents() !== null && (

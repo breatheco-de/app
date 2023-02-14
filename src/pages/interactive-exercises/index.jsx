@@ -300,7 +300,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
 
 Exercices.propTypes = {
   exercises: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
-  technologyTags: PropTypes.arrayOf(PropTypes.string),
+  technologyTags: PropTypes.arrayOf(PropTypes.any),
   difficulties: PropTypes.arrayOf(PropTypes.string),
 };
 Exercices.defaultProps = {

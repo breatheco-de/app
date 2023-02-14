@@ -1,5 +1,5 @@
 import React from 'react';
-import { addMinutes, subMinutes, subHours, addHours } from 'date-fns';
+import { addMinutes, subMinutes, addDays, addHours } from 'date-fns';
 import LiveEvent from '../common/components/LiveEvent';
 import { Box } from '@chakra-ui/react';
 
@@ -75,6 +75,8 @@ Default.args = {
 export const StartsIn5Hours = Component.bind({});
 StartsIn5Hours.args = {
   width: '320px',
+  featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
+  featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
   liveStartsAt: new Date(addHours(new Date(), 5)),
   liveEndsAt: new Date(addHours(new Date(), 6)),
@@ -96,16 +98,18 @@ StartsIn5Hours.args = {
 
 export const NoTodayClass = Component.bind({});
 NoTodayClass.args = {
+  featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
+  featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
   otherEvents: [{
-    title: 'My Wonderful HTML Email Workflow',
+    title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.',
     starting_at: addMinutes(new Date(), 120),
     ending_at: addMinutes(new Date(), 200),
     icon: 'group',
     fill: '#25BF6C',
     liveUrl: 'https://www.google.co.ve/'
   }, {
-    title: 'Coding Jamming',
+    title: '4Geeks GeeksTALKS Europe - Meet our Web- dev Students',
     starting_at: new Date(addMinutes(new Date(), 32)),
     ending_at: new Date(addHours(new Date(), 2)),
     icon: 'codeBg',
@@ -115,6 +119,8 @@ NoTodayClass.args = {
 
 export const UpcomingEventsTomorrow = Component.bind({});
 UpcomingEventsTomorrow.args = {
+  featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
+  featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
   otherEvents: [{
     title: 'My Wonderful HTML Email Workflow',
@@ -134,16 +140,18 @@ UpcomingEventsTomorrow.args = {
 
 export const UpcomingEventToday = Component.bind({});
 UpcomingEventToday.args = {
+  featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
+  featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
   otherEvents: [{
-    title: 'Login flow with React',
+    title: '4Geeks GeeksTALKS Europe - Meet our Web- dev Students',
     starting_at: addMinutes(new Date(), 27),
     ending_at: addMinutes(new Date(), 73),
     icon: 'codeBg',
     fill: '#25BF6C',
     liveUrl: 'https://www.google.co.ve/#login-flow-with-react'
   }, {
-    title: 'Coding Jamming',
+    title: 'Coding Jamming - ut aliquam massa nisl quis neque. Suspendisse in orci enim.',
     starting_at: new Date(addHours(new Date(), 25)),
     ending_at: new Date(addHours(new Date(), 26)),
     icon: 'codeBg',
@@ -157,7 +165,42 @@ UpcomingEventToday.args = {
   }],
 };
 
+
+export const EventsIn2DaysOrMore = Component.bind({});
+EventsIn2DaysOrMore.args = {
+  featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
+  featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
+  startingSoonDelta: 30,
+  otherEvents: [{
+    title: 'Login flow with React',
+    starting_at: addHours(new Date(), 53),
+    ending_at: addHours(new Date(), 54),
+    icon: 'codeBg',
+    fill: '#25BF6C',
+    liveUrl: 'https://www.google.co.ve/#login-flow-with-react'
+  }, {
+    title: 'Coding Jamming',
+    starting_at: new Date(addHours(new Date(), 98)),
+    ending_at: new Date(addHours(new Date(), 99)),
+    icon: 'codeBg',
+    liveUrl: 'https://www.google.co.ve/#coding-jamming'
+  }, {
+    title: 'Final Project Presentation',
+    starting_at: new Date(addDays(new Date(), 106)),
+    ending_at: new Date(
+      addHours(
+        addDays(new Date(), 106),
+        2
+      )
+    ),
+    icon: 'group',
+    liveUrl: 'https://www.google.co.ve/#final-project-presentation'
+  }],
+};
+
 export const NoClassAndEventsAvailable = Component.bind({});
 NoClassAndEventsAvailable.args = {
+  featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
+  featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
 };
