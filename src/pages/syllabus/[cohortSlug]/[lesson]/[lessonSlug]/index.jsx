@@ -31,7 +31,7 @@ import { defaultDataFetch } from '../../../../../js_modules/syllabus/dataFetch';
 import getReadme from '../../../../../js_modules/syllabus/getReadme';
 import useHandler from '../../../../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../../../../modifyEnv';
-import SimpleModal from '../../../../../common/components/SImpleModal';
+import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';
 
 const Content = () => {
@@ -493,7 +493,7 @@ const Content = () => {
   const inputModalLink = currentBlankProps && currentBlankProps.target === 'blank' ? currentBlankProps.url : `https://4geeks.com/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`;
 
   const cohortModule = sortedAssignments.find((module) => module?.id === cohortSession?.current_module);
-  console.log('cohortModule:::', cohortModule);
+
   return (
     <Flex position="relative">
       <ModalInfo
