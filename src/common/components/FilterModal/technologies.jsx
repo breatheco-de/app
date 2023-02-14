@@ -24,7 +24,6 @@ const TechnologiesSection = ({
   const [isMobile] = useMediaQuery('(min-width: 1082px)');
   const filteredTechnologies = technologyTags.filter((technology) => technology.slug.toLowerCase().includes(technologySearched.toLowerCase()));
 
-
   return (
     <Flex flexDirection="column" padding="0 0 12px 0" borderBottom={1} borderStyle="solid" borderColor={commonBorderColor}>
       <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px" justifyContent="space-between" padding="18px 0" alignItems="center">

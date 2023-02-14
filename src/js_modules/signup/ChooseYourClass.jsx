@@ -1,7 +1,7 @@
-/* eslint-disable react/prop-types */
 import {
-  Box, Button, Input, Img, useToast,
+  Box, Button, Input, useToast,
 } from '@chakra-ui/react';
+import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
@@ -12,6 +12,7 @@ import { getTimeProps } from '../../utils';
 import useGoogleMaps from '../../common/hooks/useGoogleMaps';
 import useSignup from '../../common/store/actions/signupAction';
 import ChooseDate from './ChooseDate';
+import LoaderScreen from '../../common/components/LoaderScreen';
 
 const ChooseYourClass = ({
   courseChoosed,
@@ -142,18 +143,8 @@ const ChooseYourClass = ({
   }, [gmapStatus]);
 
   const LoaderContent = () => (cohortIsLoading ? (
-    <Box display="flex" justifyContent="center" mt="2rem" mb="10rem">
-      <Img
-        src="/4Geeks.ico"
-        width="35px"
-        height="35px"
-        position="absolute"
-        mt="6px"
-        zIndex="40"
-        boxShadow="0px 0px 16px 0px #0097cd"
-        borderRadius="40px"
-      />
-      <Box className="loader" />
+    <Box display="flex" justifyContent="center" mt="4rem" mb="8rem" position="relative">
+      <LoaderScreen width="130px" height="130px" />
     </Box>
   ) : (
     <AlertMessage type="info" message={t('no-date-available')} />
@@ -216,6 +207,13 @@ const ChooseYourClass = ({
       <Box as="hr" width="100%" margin="10px 0" />
     </>
   );
+};
+
+ChooseYourClass.propTypes = {
+  courseChoosed: PropTypes.string,
+};
+ChooseYourClass.defaultProps = {
+  courseChoosed: '',
 };
 
 export default ChooseYourClass;

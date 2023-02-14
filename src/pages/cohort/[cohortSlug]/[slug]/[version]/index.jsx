@@ -368,6 +368,8 @@ const Dashboard = () => {
               >
                 {flags?.appReleaseEnableLiveEvents && (
                   <LiveEvent
+                    featureLabel={t('common:live-event.title')}
+                    featureReadMoreUrl={t('common:live-event.readMoreUrl')}
                     liveClassHash={liveClass?.hash}
                     liveStartsAt={liveClass?.starting_at}
                     liveEndsAt={liveClass?.ending_at}
@@ -545,7 +547,8 @@ const Dashboard = () => {
             >
               {flags?.appReleaseEnableLiveEvents && (
                 <LiveEvent
-                  // liveUrl={events[0].url}
+                  featureLabel={t('common:live-event.title')}
+                  featureReadMoreUrl={t('common:live-event.readMoreUrl')}
                   liveClassHash={liveClass?.hash}
                   liveStartsAt={liveClass?.starting_at}
                   liveEndsAt={liveClass?.ending_at}

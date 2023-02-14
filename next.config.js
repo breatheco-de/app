@@ -36,11 +36,6 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
   },
   async redirects() {
     return [
-      // {
-      //   source: '/interactive-exercises',
-      //   destination: '/interactive-exercise',
-      //   permanent: true,
-      // },
       ...redirectsList,
       ...redirectsGeneratedList,
       {
