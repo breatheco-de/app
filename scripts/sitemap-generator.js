@@ -3,7 +3,7 @@ const { default: axios } = require('axios');
 const fs = require('fs');
 const globby = require('globby');
 require('dotenv').config({
-  path: '.env.development',
+  path: '.env.production',
 });
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
