@@ -153,6 +153,10 @@
     "repo-url-required": "Repository URL is required",
     "github-url-required": "Github URL is required"
   },
+  "live-event": {
+    "title": "Live classes, coding sessions, workshops and hangouts every few hours.",
+    "readMoreUrl": "https://4geeks.com/lesson/live-events-workshops-and-classes"
+  },
   "submit-project": "Submit project",
   "uploadScreenshot": "Upload screenshot"
 }

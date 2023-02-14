@@ -41,7 +41,7 @@ export default {
         type: 'object'
       }
     },
-    assistans: {
+    assistants: {
       control: {
         type: 'object'
       }
@@ -165,7 +165,7 @@ Default.args = {
     completedProjects: 10,
     completedExercises: 5,
   },
-  assistans: mentors,
+  assistants: mentors,
   teacher: teachers[0],
   haveFreeTrial: true,
   isFreeTrial: false,
@@ -192,7 +192,7 @@ courseNotStarted.args = {
   startsIn: new Date(addDays(new Date(), 3)),
   icon: "coding",
   iconBackground: "blue.default",
-  assistans: mentors,
+  assistants: mentors,
   teacher: teachers[0],
   syllabusContent: {
     totalLessons: 30,
@@ -219,7 +219,7 @@ ongoingPaidCourse.args = {
     completedProjects: 10,
     completedExercises: 5,
   },
-  assistans: mentors,
+  assistants: mentors,
   teacher: teachers[0],
   haveFreeTrial: true,
   isFreeTrial: false,
@@ -244,7 +244,7 @@ ongoingFreeTrial.args = {
     completedProjects: 10,
     completedExercises: 5,
   },
-  assistans: mentors,
+  assistants: mentors,
   teacher: teachers[0],
   haveFreeTrial: false,
   isFreeTrial: true,
@@ -269,7 +269,7 @@ expiredFreeTrial.args = {
     completedProjects: 10,
     completedExercises: 5,
   },
-  assistans: mentors,
+  assistants: mentors,
   teacher: teachers[0],
   haveFreeTrial: false,
   isFreeTrial: true,
@@ -294,7 +294,7 @@ isHiddenOnPrework.args = {
     completedProjects: 10,
     completedExercises: 5,
   },
-  assistans: mentors,
+  assistants: mentors,
   teacher: teachers[0],
   haveFreeTrial: false,
   isFreeTrial: true,

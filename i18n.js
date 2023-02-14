@@ -10,6 +10,7 @@ module.exports = {
     '/cohort/[cohortSlug]/attendance': ['attendance'],
     '/interactive-exercises': ['exercises'],
     '/interactive-exercises/technology/[technology]': ['exercises'],
+    '/technology/[slug]': ['technologies'],
     '/read/[slug]': ['read'],
     '/lesson/[slug]': ['lesson'],
     '/lessons': ['lesson'],

@@ -17,9 +17,10 @@ import { isGithubUrl } from '../../../utils/regex';
 import ButtonHandler from '../../../js_modules/assignmentHandler/index';
 import useAssignments from '../../../common/store/actions/assignmentsAction';
 import { isWindow } from '../../../utils';
-import Image from '../../../common/components/Image';
+// import Image from '../../../common/components/Image';
 import PopoverHandler from '../../../js_modules/assignmentHandler/PopoverHandler';
 import handlers from '../../../common/handlers';
+import LoaderScreen from '../../../common/components/LoaderScreen';
 
 const Assignments = () => {
   const { t } = useTranslation('assignments');
@@ -484,9 +485,8 @@ const Assignments = () => {
             }) : (
               <>
                 {loadStatus.status === 'loading' && (
-                  <Box display="flex" justifyContent="center" mt="2rem" mb="5rem">
-                    <Image src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
-                    <Box className="loader" />
+                  <Box display="flex" justifyContent="center" mt="2rem" mb="5rem" position="relative">
+                    <LoaderScreen width="80px" height="80px" />
                   </Box>
                 )}
                 {loadStatus.loading === false && (
@@ -498,8 +498,7 @@ const Assignments = () => {
             )}
             {allTasksOffset < contextState.allTasks.length !== null && isFetching && (
               <Box display="flex" justifyContent="center" mt="2rem" mb="5rem">
-                <Image src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
-                <Box className="loader" />
+                <LoaderScreen width="80px" height="80px" />
               </Box>
             )}
           </Box>

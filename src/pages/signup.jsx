@@ -2,7 +2,6 @@
 import {
   Box,
   Button,
-  Img,
   useToast,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
@@ -22,6 +21,7 @@ import Summary from '../js_modules/signup/Summary';
 import PaymentInfo from '../js_modules/signup/PaymentInfo';
 import useSignup from '../common/store/actions/signupAction';
 import axiosInstance from '../axios';
+import LoaderScreen from '../common/components/LoaderScreen';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -58,11 +58,12 @@ const SignUp = ({ finance }) => {
   const router = useRouter();
   const [isPreloading, setIsPreloading] = useState(false);
   const {
-    state, nextStep, prevStep, handleStep, setDateProps, handleChecking, setCohortPlans,
+    state, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
     isFirstStep, isSecondStep, isThirdStep, isFourthStep,
   } = useSignup();
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
+  const [defaultCohortQueryProps, setDefaultCohortQueryProps] = useState(null);
 
   const { stepIndex, dateProps, checkoutData } = state;
 
@@ -105,7 +106,7 @@ const SignUp = ({ finance }) => {
 
       if (resp.status < 400) {
         const { kickoffDate, weekDays, availableTime } = resp?.data?.[0] ? getTimeProps(resp.data[0]) : {};
-        setDateProps({
+        setDefaultCohortQueryProps({
           ...resp.data[0],
           kickoffDate,
           weekDays,
@@ -116,15 +117,16 @@ const SignUp = ({ finance }) => {
   }, [cohort, user?.id, accessToken]);
 
   useEffect(() => {
-    if (dateProps?.id && accessToken && queryCohortIdExists) {
+    if (defaultCohortQueryProps?.id && accessToken && queryCohortIdExists) {
       setIsPreloading(true);
       bc.payment({
         cohort,
       }).getCohortPlans()
-        .then(({ data }) => {
-          if (data.length > 0) {
-            setCohortPlans(data);
-            handleChecking({ ...dateProps, plan: data[0] })
+        .then((res) => {
+          const respData = res?.data;
+          if (res?.status < 400 && respData?.length > 0) {
+            setCohortPlans(respData);
+            handleChecking({ ...defaultCohortQueryProps, plan: respData[0] })
               .then(() => {
                 handleStep(2);
               })
@@ -145,11 +147,11 @@ const SignUp = ({ finance }) => {
           }
         });
     }
-    if (queryCohortIdExists && accessToken && !dateProps?.id) {
+    if (queryCohortIdExists && accessToken && !defaultCohortQueryProps?.id) {
       setIsPreloading(false);
       handleStep(1);
     }
-  }, [queryCohortIdExists, accessToken, router?.locale]);
+  }, [queryCohortIdExists, accessToken, router?.locale, defaultCohortQueryProps?.id]);
 
   useEffect(() => {
     if (user?.id && !isLoading) {
@@ -171,19 +173,7 @@ const SignUp = ({ finance }) => {
   return (
     <Box p={{ base: '2.5rem 1rem', md: '2.5rem 2rem' }} position="relative" minHeight={isPreloading ? '727px' : null}>
       {isPreloading && (
-        <Box display="flex" alignItems="center" position="absolute" background="white" justifyContent="center" width="100%" height="100%" style={{ zIndex: 50 }} top="0px" left="0px">
-          <Img
-            src="/4Geeks.ico"
-            width="35px"
-            height="35px"
-            position="absolute"
-            mt="6px"
-            zIndex="40"
-            boxShadow="0px 0px 16px 0px #0097cd"
-            borderRadius="40px"
-          />
-          <Box className="loader" />
-        </Box>
+        <LoaderScreen />
       )}
       {/* Stepper */}
       <Box display="flex" gridGap="38px" justifyContent="center" overflow="auto">

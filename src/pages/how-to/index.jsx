@@ -302,7 +302,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
 
 HowTo.propTypes = {
   data: PropTypes.arrayOf(PropTypes.any),
-  technologyTags: PropTypes.arrayOf(PropTypes.string),
+  technologyTags: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.string), PropTypes.objectOf(PropTypes.any)]),
   difficulties: PropTypes.arrayOf(PropTypes.string),
 };
 

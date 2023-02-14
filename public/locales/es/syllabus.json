@@ -15,6 +15,12 @@
     "module-duration": "⏰ Duración: \"{{duration}}\" dias.",
     "alert-updated-module-instructions": "Actualmente viendo instrucciones de un módulo que no corresponde a la lección seleccionada",
     "no-teacher-instructions-found": "No se encontraron instrucciones para el módulo actual",
-    "key-concepts": "Conceptos clave"
-  }
+    "key-concepts": "Conceptos clave",
+    "no-need-to-teach-today": {
+      "title": "Esto no es lo que necesitas enseñar hoy.",
+      "description": "Según el plan de estudios y la información que configuraste en la asistencia, los estudiantes están aprendiendo el módulo <strong>\"{{module_name}}\"</strong> hoy. Vuelva a ese módulo para seguir enseñando la clase o actualice la información del módulo en la asistencia si es necesario."
+    }
+  },
+  "reached-the-end-of-the-module": "Ha llegado al final del módulo actual \"{{label}}\" pero puede iniciar el siguiente módulo \"{{nextModuleLabel}}\" sin problemas.",
+  "start-next-module": "Sí, comencemos el siguiente módulo."
 }
