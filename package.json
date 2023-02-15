@@ -18,7 +18,7 @@
   },
   "scripts": {
     "dev": "npm run make:iconDict && next dev -p 3000",
-    "build": "cross-env NODE_ENV=production npm run test && npm run make:redirect && npm run make:sitemap && next build",
+    "build": "cross-env NODE_ENV=production npm run test && npm run make:redirect && next build",
     "start": "npm run make:iconDict && next start -p 3080",
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
