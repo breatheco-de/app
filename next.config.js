@@ -110,6 +110,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
   webpack: (config, { isServer }) => {
     if (isServer) {
       require('./scripts/redirects-generator');
+      // require('./scripts/sitemap-generator');
       require('./scripts/syllabus');
     }
     if (process.env.VERCEL_ENV !== 'production') {
