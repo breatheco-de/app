@@ -38,46 +38,46 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     return [
       ...redirectsList,
       ...redirectsGeneratedList,
-      {
-        source: '/interactive-exercises/:slug',
-        destination: '/interactive-exercise/:slug',
-        permanent: true,
-      },
-      {
-        source: '/interactive-exercise',
-        destination: '/interactive-exercises',
-        permanent: true,
-      },
-      {
-        source: '/projects',
-        destination: '/interactive-coding-tutorials',
-        permanent: true,
-      },
-      {
-        source: '/project',
-        destination: '/interactive-coding-tutorials',
-        permanent: true,
-      },
-      {
-        source: '/lesson',
-        destination: '/lessons',
-        permanent: true,
-      },
-      {
-        source: '/lessons/:slug',
-        destination: '/lesson/:slug',
-        permanent: true,
-      },
-      {
-        source: '/interactive-exercise',
-        destination: '/interactive-exercises',
-        permanent: true,
-      },
-      {
-        source: '/interactive-exercises/:slug',
-        destination: '/interactive-exercise/:slug',
-        permanent: true,
-      },
+      // {
+      //   source: '/interactive-exercises/:slug',
+      //   destination: '/interactive-exercise/:slug',
+      //   permanent: true,
+      // },
+      // {
+      //   source: '/interactive-exercise',
+      //   destination: '/interactive-exercises',
+      //   permanent: true,
+      // },
+      // {
+      //   source: '/projects',
+      //   destination: '/interactive-coding-tutorials',
+      //   permanent: true,
+      // },
+      // {
+      //   source: '/project',
+      //   destination: '/interactive-coding-tutorials',
+      //   permanent: true,
+      // },
+      // {
+      //   source: '/lesson',
+      //   destination: '/lessons',
+      //   permanent: true,
+      // },
+      // {
+      //   source: '/lessons/:slug',
+      //   destination: '/lesson/:slug',
+      //   permanent: true,
+      // },
+      // {
+      //   source: '/interactive-exercise',
+      //   destination: '/interactive-exercises',
+      //   permanent: true,
+      // },
+      // {
+      //   source: '/interactive-exercises/:slug',
+      //   destination: '/interactive-exercise/:slug',
+      //   permanent: true,
+      // },
     ];
   },
   // async rewrites() {
