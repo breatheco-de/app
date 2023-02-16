@@ -73,7 +73,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
     members: Yup.array()
       .of(Yup.string())
       .max(8, t(commonTranslation?.validators['geeks-members-max']?.replace('{{value}}', 8) || 'common:validators.geeks-members-max', { value: 8 }))
-      .min(1, t(commonTranslation?.validators['geeks-members-min']?.replace('{{value}}', 1) || 'common:validators.geeks-members-min', { value: 1 }))
+      // .min(1, t(commonTranslation?.validators['geeks-members-min']?.replace('{{value}}', 1) || 'common:validators.geeks-members-min', { value: 1 }))
       .required(commonTranslation?.validators['geeks-members-required'] || t('common:validators.geeks-members-required')),
   });
 
@@ -294,7 +294,6 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
                 translation={{ finalProjectTranslation, commonTranslation }}
                 students={students}
                 errors={errorFileds}
-                required
                 hint={finalProjectTranslation?.['modal-form']?.['participants-hint'] || t('modal-form.participants-hint')}
               />
               <Button
