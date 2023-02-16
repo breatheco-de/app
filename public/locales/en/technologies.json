@@ -8,10 +8,10 @@
   "backToLessons": "Back to Lessons",
   "title": "{{technology}}",
   "search": "Search lesson",
-  "description": "The following list explain different programming concepts and have been published by members of BreatheCode, now 4Geeks, search for a particular lesson using the filters",
+  "description": "The following list contains different exercises, lessons, and projects, that explains programming concepts which have been published by members of 4Geeks",
   "landing-technology": {
     "title": "Readings and exercises about {{technology}}",
-    "subTitle": "Readings about {{technology}}"
+    "subTitle": "Learn more about {{technology}}"
   },
   "lessons-section": "Lessons section",
   "exercises-section": "Exercises section",

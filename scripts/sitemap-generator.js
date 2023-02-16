@@ -3,7 +3,7 @@ const { default: axios } = require('axios');
 const fs = require('fs');
 const globby = require('globby');
 require('dotenv').config({
-  path: '.env.development',
+  path: '.env.production',
 });
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
@@ -13,7 +13,10 @@ const PRISMIC_REF = process.env.PRISMIC_REF || 'Y-EX4MPL3R3F';
 
 const getPrismicPages = () => {
   const data = axios.get(`${PRISMIC_API}/documents/search?ref=${PRISMIC_REF}&type=page&lang=*`)
-    .then((res) => res.data.results);
+    .then((res) => res.data.results)
+    .catch(() => {
+      console.error('SITEMAP: Error fetching Prismic pages');
+    });
   return data;
 };
 
@@ -22,35 +25,45 @@ const getReadPages = () => {
     `${BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${SYLLABUS}`,
   )
     .then((res) => res.data)
-    .catch((err) => console.log(err));
+    .catch(() => {
+      console.error('SITEMAP: Error fetching Read pages');
+    });
   return resp;
 };
 
 const getLessons = () => {
   const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson&limit=1000`)
     .then((res) => res.data.results)
-    .catch((err) => console.log(err));
+    .catch(() => {
+      console.error('SITEMAP: Error fetching Lessons pages');
+    });
   return data;
 };
 
 const getExercises = () => {
   const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&limit=1000`)
     .then((res) => res.data.results)
-    .catch((err) => console.log(err));
+    .catch(() => {
+      console.error('SITEMAP: Error fetching Exercises pages');
+    });
   return data;
 };
 
 const getProjects = () => {
   const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=1000`)
     .then((res) => res.data.results)
-    .catch((err) => console.log(err));
+    .catch(() => {
+      console.error('SITEMAP: Error fetching Projects pages');
+    });
   return data;
 };
 
 const getHowTo = () => {
   const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=1000`)
     .then((res) => res.data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como'))
-    .catch((err) => console.log(err));
+    .catch(() => {
+      console.error('SITEMAP: Error HowTo Read pages');
+    });
   return data;
 };
 
@@ -62,7 +75,9 @@ const getLandingTechnologies = () => {
     },
   })
     .then((res) => res.data)
-    .catch((err) => console.log(err));
+    .catch(() => {
+      console.error('SITEMAP: Error fetching Technologies pages');
+    });
 
   return technologies;
 };
@@ -203,12 +218,16 @@ async function generateSitemap() {
     'technologies-sitemap.xml',
   ]);
 
-  fs.writeFileSync('public/pages-sitemap.xml', pagesSitemap);
-  fs.writeFileSync('public/howto-sitemap.xml', howToSitemap);
-  fs.writeFileSync('public/lessons-sitemap.xml', lessonsSitemap);
-  fs.writeFileSync('public/projects-sitemap.xml', projectsSitemap);
-  fs.writeFileSync('public/exercises-sitemap.xml', exercisesSitemap);
-  fs.writeFileSync('public/technologies-sitemap.xml', technologiesSitemap);
+  try {
+    fs.writeFileSync('public/pages-sitemap.xml', pagesSitemap);
+    fs.writeFileSync('public/howto-sitemap.xml', howToSitemap);
+    fs.writeFileSync('public/lessons-sitemap.xml', lessonsSitemap);
+    fs.writeFileSync('public/projects-sitemap.xml', projectsSitemap);
+    fs.writeFileSync('public/exercises-sitemap.xml', exercisesSitemap);
+    fs.writeFileSync('public/technologies-sitemap.xml', technologiesSitemap);
+  } catch (err) {
+    console.error("Couldn't write sitemaps files", err);
+  }
 
   fs.writeFileSync('public/sitemap.xml', sitemap);
 

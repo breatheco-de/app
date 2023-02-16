@@ -102,14 +102,14 @@ NoTodayClass.args = {
   featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
   otherEvents: [{
-    title: 'My Wonderful HTML Email Workflow',
+    title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.',
     starting_at: addMinutes(new Date(), 120),
     ending_at: addMinutes(new Date(), 200),
     icon: 'group',
     fill: '#25BF6C',
     live_stream_url: 'https://www.google.co.ve/'
   }, {
-    title: 'Coding Jamming',
+    title: '4Geeks GeeksTALKS Europe - Meet our Web- dev Students',
     starting_at: new Date(addMinutes(new Date(), 32)),
     ending_at: new Date(addHours(new Date(), 2)),
     icon: 'codeBg',
@@ -144,14 +144,14 @@ UpcomingEventToday.args = {
   featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
   otherEvents: [{
-    title: 'Login flow with React',
+    title: '4Geeks GeeksTALKS Europe - Meet our Web- dev Students',
     starting_at: addMinutes(new Date(), 27),
     ending_at: addMinutes(new Date(), 73),
     icon: 'codeBg',
     fill: '#25BF6C',
     live_stream_url: 'https://www.google.co.ve/#login-flow-with-react'
   }, {
-    title: 'Coding Jamming',
+    title: 'Coding Jamming - ut aliquam massa nisl quis neque. Suspendisse in orci enim.',
     starting_at: new Date(addHours(new Date(), 25)),
     ending_at: new Date(addHours(new Date(), 26)),
     icon: 'codeBg',
