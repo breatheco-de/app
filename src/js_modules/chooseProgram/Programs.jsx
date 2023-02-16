@@ -36,7 +36,7 @@ const Programs = ({ item, handleChoose, usersConnected }) => {
     router.push(`/cohort/${cohort?.slug}/${slug}/v${version}`);
   };
 
-  const syllabusContent = currentCohortProps?.allTasks.map((task) => {
+  const syllabusContent = currentCohortProps?.allTasks?.length > 0 ? currentCohortProps?.allTasks.map((task) => {
     if (task?.task_type === 'LESSON') {
       return {
         totalLessons: task?.taskLength,
@@ -62,7 +62,7 @@ const Programs = ({ item, handleChoose, usersConnected }) => {
       };
     }
     return ({});
-  });
+  }) : [];
 
   return (
     <ProgramCard
