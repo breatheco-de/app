@@ -22,7 +22,7 @@ export default {
         type: 'text'
       }
     },
-    liveUrl: {
+    live_stream_url: {
       control: {
         type: 'text'
       }
@@ -51,7 +51,7 @@ export const Default = Component.bind({});
 Default.args = {
   liveStartsAt: new Date(subMinutes(new Date(), 40)),
   liveEndsAt: new Date(addHours(new Date(), 1)),
-  liveUrl: 'https://www.google.co.ve/',
+  live_stream_url: 'https://www.google.co.ve/',
   featureLabel: 'Live clases, coding sessions, workshops and hangouts every few hours.',
   featureReadMoreUrl: 'https://www.google.co.ve/',
   startingSoonDelta: 30,
@@ -62,13 +62,13 @@ Default.args = {
     ending_at: addMinutes(new Date(), 180),
     icon: 'group',
     fill: '#25BF6C',
-    liveUrl: 'https://www.google.co.ve/'
+    live_stream_url: 'https://www.google.co.ve/'
   }, {
     title: 'Coding Jamming',
     starting_at: new Date(addMinutes(new Date(), 15)),
     ending_at: new Date(addHours(new Date(), 2)),
     icon: 'codeBg',
-    liveUrl: 'https://www.google.co.ve/'
+    live_stream_url: 'https://www.google.co.ve/'
   }],
 };
 
@@ -86,13 +86,13 @@ StartsIn5Hours.args = {
     ending_at: addHours(new Date(), 22),
     icon: 'group',
     fill: '#25BF6C',
-    liveUrl: 'https://www.google.co.ve/'
+    live_stream_url: 'https://www.google.co.ve/'
   }, {
     title: 'Coding Jamming',
     starting_at: addHours(new Date(), 12),
     ending_at: addHours(new Date(), 13),
     icon: 'codeBg',
-    liveUrl: 'https://www.google.co.ve/'
+    live_stream_url: 'https://www.google.co.ve/'
   }],
 };
 
@@ -107,13 +107,13 @@ NoTodayClass.args = {
     ending_at: addMinutes(new Date(), 200),
     icon: 'group',
     fill: '#25BF6C',
-    liveUrl: 'https://www.google.co.ve/'
+    live_stream_url: 'https://www.google.co.ve/'
   }, {
     title: 'Coding Jamming',
     starting_at: new Date(addMinutes(new Date(), 32)),
     ending_at: new Date(addHours(new Date(), 2)),
     icon: 'codeBg',
-    liveUrl: 'https://www.google.co.ve/'
+    live_stream_url: 'https://www.google.co.ve/'
   }],
 };
 
@@ -128,13 +128,13 @@ UpcomingEventsTomorrow.args = {
     ending_at: addHours(new Date(), 24),
     icon: 'group',
     fill: '#25BF6C',
-    liveUrl: 'https://www.google.co.ve/'
+    live_stream_url: 'https://www.google.co.ve/'
   }, {
     title: 'Coding Jamming',
     starting_at: new Date(addHours(new Date(), 25)),
     ending_at: new Date(addHours(new Date(), 26)),
     icon: 'codeBg',
-    liveUrl: 'https://www.google.co.ve/'
+    live_stream_url: 'https://www.google.co.ve/'
   }],
 };
 
@@ -149,19 +149,19 @@ UpcomingEventToday.args = {
     ending_at: addMinutes(new Date(), 73),
     icon: 'codeBg',
     fill: '#25BF6C',
-    liveUrl: 'https://www.google.co.ve/#login-flow-with-react'
+    live_stream_url: 'https://www.google.co.ve/#login-flow-with-react'
   }, {
     title: 'Coding Jamming',
     starting_at: new Date(addHours(new Date(), 25)),
     ending_at: new Date(addHours(new Date(), 26)),
     icon: 'codeBg',
-    liveUrl: 'https://www.google.co.ve/#coding-jamming'
+    live_stream_url: 'https://www.google.co.ve/#coding-jamming'
   }, {
     title: 'Final Project Presentation',
     starting_at: new Date(addHours(new Date(), 52)),
     ending_at: new Date(addHours(new Date(), 54)),
     icon: 'group',
-    liveUrl: 'https://www.google.co.ve/#final-project-presentation'
+    live_stream_url: 'https://www.google.co.ve/#final-project-presentation'
   }],
 };
 
@@ -177,13 +177,13 @@ EventsIn2DaysOrMore.args = {
     ending_at: addHours(new Date(), 54),
     icon: 'codeBg',
     fill: '#25BF6C',
-    liveUrl: 'https://www.google.co.ve/#login-flow-with-react'
+    live_stream_url: 'https://www.google.co.ve/#login-flow-with-react'
   }, {
     title: 'Coding Jamming',
     starting_at: new Date(addHours(new Date(), 98)),
     ending_at: new Date(addHours(new Date(), 99)),
     icon: 'codeBg',
-    liveUrl: 'https://www.google.co.ve/#coding-jamming'
+    live_stream_url: 'https://www.google.co.ve/#coding-jamming'
   }, {
     title: 'Final Project Presentation',
     starting_at: new Date(addDays(new Date(), 106)),
@@ -194,7 +194,7 @@ EventsIn2DaysOrMore.args = {
       )
     ),
     icon: 'group',
-    liveUrl: 'https://www.google.co.ve/#final-project-presentation'
+    live_stream_url: 'https://www.google.co.ve/#final-project-presentation'
   }],
 };
 

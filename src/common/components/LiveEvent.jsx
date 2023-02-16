@@ -203,10 +203,8 @@ const LiveEvent = ({
                 });
             }
             if (!liveStartsAt) {
-              window.open(nearestEvent?.liveUrl);
+              window.open(nearestEvent?.live_stream_url);
             }
-
-            // href={featureReadMoreUrl || event?.live_url || event?.live_stream_url || '#'}
           }}
         >
           <Box
@@ -345,7 +343,7 @@ const LiveEvent = ({
                   <Link
                     target="_blank"
                     rel="noopener noreferrer"
-                    href={featureReadMoreUrl || event?.live_url || event?.live_stream_url || '#'}
+                    href={event?.live_url || event?.live_stream_url || '#'}
                     color={textColor}
                     fontSize="md"
                     lineHeight="18px"
