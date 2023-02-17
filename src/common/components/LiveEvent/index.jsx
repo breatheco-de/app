@@ -49,7 +49,7 @@ const LiveEvent = ({
 
   const liveStartsAtDate = new Date(featuredLiveEventStartsAt);
   const liveEndsAtDate = new Date(featuredLiveEventEndsAt);
-  const textLimit = 40;
+  const textLimit = 35;
 
   const truncatedText = (showText || nearestEvent?.title?.length < textLimit) ? nearestEvent?.title : `${nearestEvent?.title.slice(0, textLimit)}...`;
 

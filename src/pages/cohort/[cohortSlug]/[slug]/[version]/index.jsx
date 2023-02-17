@@ -179,7 +179,7 @@ const Dashboard = () => {
     }
     bc.payment().events()
       .then(({ data }) => {
-        const eventsRemain = data.filter((l) => new Date(l.ending_at) - new Date() > 0);
+        const eventsRemain = data.filter((l) => new Date(l.ending_at) - new Date() > 0).slice(0, 3);
         setEvents(eventsRemain);
       });
 

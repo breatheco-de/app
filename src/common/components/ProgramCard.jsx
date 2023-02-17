@@ -37,6 +37,11 @@ const ProgramCard = ({
 
   const programCardTR = stTranslation?.[lang]?.['program-card'];
 
+  const statusTimeString = (start) => {
+    if (start < now) return 'started';
+    return 'idle';
+  };
+
   const formatTimeString = (start) => {
     const duration = intervalToDuration({
       end: now,
@@ -246,7 +251,7 @@ const ProgramCard = ({
             <></>
           ) : (
             <>
-              {!isBought ? (
+              {!isBought && statusTimeString(startsIn) !== 'started' ? (
                 <Flex width="116px" justifyContent="flex-end">
                   <Box marginRight="10px">
                     <Icon
