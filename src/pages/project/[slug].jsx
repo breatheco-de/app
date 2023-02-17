@@ -21,8 +21,6 @@ export const getStaticPaths = async ({ locales }) => {
   let projects = [];
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=project`);
   const data = await response.json();
-  // .then((res) => res.json())
-  // .catch((err) => console.log(err));
 
   projects = Object.values(data);
   if (response.status >= 200 && response.status <= 400) {
