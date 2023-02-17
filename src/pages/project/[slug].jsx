@@ -16,6 +16,7 @@ import { MDSkeleton } from '../../common/components/Skeleton';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 import { publicRedirectByAsset } from '../../lib/redirectsHandler';
 import modifyEnv from '../../../modifyEnv';
+import redirectsFromApi from '../../../public/redirects-from-api.json';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
@@ -164,27 +165,34 @@ const ProjectSlug = ({ project, markdown }) => {
   const { colorMode } = useColorMode();
   const router = useRouter();
   const { slug } = router.query;
+  const { locale } = router;
 
   useEffect(async () => {
-    const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
-    const aliasList = await alias.json();
-    const redirectSlug = aliasList[slug] || slug;
-    const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}?asset_type=project`);
+    const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/project/${slug}`);
 
-    if (dataRedirect.status >= 400) {
-      router.push('/404');
+    if (redirect) {
+      router.push(redirect?.destination);
+    } else {
+      const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
+      const aliasList = await alias.json();
+      const redirectSlug = aliasList[slug] || slug;
+      const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}?asset_type=project`);
+
+      if (dataRedirect.status >= 400) {
+        router.push('/404');
+      }
+
+      const redirectResults = await dataRedirect.json();
+
+      const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+      const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || project?.slug || slug}`;
+      const aliasRedirect = aliasList[slug] !== undefined && userPathName;
+      const pagePath = 'project';
+
+      publicRedirectByAsset({
+        router, aliasRedirect, translations, userPathName, pagePath,
+      });
     }
-
-    const redirectResults = await dataRedirect.json();
-
-    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-    const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || project?.slug || slug}`;
-    const aliasRedirect = aliasList[slug] !== undefined && userPathName;
-    const pagePath = 'project';
-
-    publicRedirectByAsset({
-      router, aliasRedirect, translations, userPathName, pagePath,
-    });
   }, [router, router.locale, translations]);
 
   return (
