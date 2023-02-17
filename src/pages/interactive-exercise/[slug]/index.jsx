@@ -44,6 +44,7 @@ import CustomTheme from '../../../../styles/theme';
 import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 import GridContainer from '../../../common/components/GridContainer';
 import modifyEnv from '../../../../modifyEnv';
+import redirectsFromApi from '../../../../public/redirects-from-api.json';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&big=true`);
@@ -500,6 +501,7 @@ const Exercise = ({ exercise, markdown }) => {
   const router = useRouter();
   const language = router.locale === 'en' ? 'us' : 'es';
   const { slug } = router.query;
+  const { locale } = router;
   // const defaultImage = '/static/images/code1.png';
   // const getImage = exercise.preview !== '' ? exercise.preview : defaultImage;
   const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
@@ -509,20 +511,26 @@ const Exercise = ({ exercise, markdown }) => {
   const toast = useToast();
 
   useEffect(async () => {
-    const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
-    const aliasList = await alias.json();
-    const redirectSlug = aliasList[slug] || slug;
-    const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
-    const redirectResults = await dataRedirect.json();
+    const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/interactive-exercise/${slug}`);
 
-    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-    const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || exercise?.slug || slug}`;
-    const aliasRedirect = aliasList[slug] !== undefined && userPathName;
-    const pagePath = 'interactive-exercise';
+    if (redirect) {
+      router.push(redirect?.destination);
+    } else {
+      const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
+      const aliasList = await alias.json();
+      const redirectSlug = aliasList[slug] || slug;
+      const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
+      const redirectResults = await dataRedirect.json();
 
-    publicRedirectByAsset({
-      router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
-    });
+      const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+      const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || exercise?.slug || slug}`;
+      const aliasRedirect = aliasList[slug] !== undefined && userPathName;
+      const pagePath = 'interactive-exercise';
+
+      publicRedirectByAsset({
+        router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
+      });
+    }
   }, [router, router.locale, translations]);
 
   const tagsArray = (exer) => {

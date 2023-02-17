@@ -17,6 +17,7 @@ import getMarkDownContent from '../../../common/components/MarkDownParser/markdo
 import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 import GridContainer from '../../../common/components/GridContainer';
 import modifyEnv from '../../../../modifyEnv';
+import redirectsFromApi from '../../../../public/redirects-from-api.json';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
@@ -161,28 +162,35 @@ const ProjectSlug = ({ project, markdown }) => {
   const { colorMode } = useColorMode();
   const router = useRouter();
   const { slug, difficulty } = router.query;
+  const { locale } = router;
 
   useEffect(async () => {
-    const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
-    const aliasList = await alias.json();
-    const redirectSlug = aliasList[slug] || slug;
-    const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
-    const redirectResults = await dataRedirect.json();
+    const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/interactive-coding-tutorial/${difficulty}/${slug}`);
 
-    // const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-    if (typeof redirectResults.difficulty === 'string') {
-      if (redirectResults.difficulty === 'junior') redirectResults.difficulty = 'easy';
-      else if (redirectResults.difficulty === 'semi-senior') redirectResults.difficulty = 'intermediate';
-      else if (redirectResults.difficulty === 'senior') redirectResults.difficulty = 'hard';
+    if (redirect) {
+      router.push(redirect?.destination);
+    } else {
+      const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
+      const aliasList = await alias.json();
+      const redirectSlug = aliasList[slug] || slug;
+      const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
+      const redirectResults = await dataRedirect.json();
+
+      // const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+      if (typeof redirectResults.difficulty === 'string') {
+        if (redirectResults.difficulty === 'junior') redirectResults.difficulty = 'easy';
+        else if (redirectResults.difficulty === 'semi-senior') redirectResults.difficulty = 'intermediate';
+        else if (redirectResults.difficulty === 'senior') redirectResults.difficulty = 'hard';
+      }
+
+      const userPathName = `/${router.locale}/interactive-coding-tutorial/${redirectResults?.difficulty?.toLowerCase()}/${redirectResults?.slug || project?.slug || slug}`;
+      const aliasRedirect = aliasList[slug] !== undefined && userPathName;
+      const pagePath = `interactive-coding-tutorial/${difficulty}`;
+
+      publicRedirectByAsset({
+        router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
+      });
     }
-
-    const userPathName = `/${router.locale}/interactive-coding-tutorial/${redirectResults?.difficulty?.toLowerCase()}/${redirectResults?.slug || project?.slug || slug}`;
-    const aliasRedirect = aliasList[slug] !== undefined && userPathName;
-    const pagePath = `interactive-coding-tutorial/${difficulty}`;
-
-    publicRedirectByAsset({
-      router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
-    });
   }, [router, router.locale, translations]);
 
   return (
