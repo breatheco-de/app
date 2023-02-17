@@ -15,7 +15,7 @@ import Text from '../Text';
 import Icon from '../Icon';
 import { isDateMoreThanAnyDaysAgo } from '../../../utils';
 import OtherEvents from './OtherEvents';
-import useTruncatedText from '../../hooks/useTruncatedText';
+// import useTruncatedText from '../../hooks/useTruncatedText';
 
 const availableLanguages = {
   es,
@@ -49,7 +49,9 @@ const LiveEvent = ({
 
   const liveStartsAtDate = new Date(featuredLiveEventStartsAt);
   const liveEndsAtDate = new Date(featuredLiveEventEndsAt);
-  const [truncatedText, handleMouseOver, handleMouseOut] = useTruncatedText(nearestEvent?.title, 35);
+
+  const [showFeaturedText, setShowFeaturedText] = useState(false);
+  // const [truncatedText, handleMouseOver, handleMouseOut] = useTruncatedText(nearestEvent?.title, 35);
 
   const toast = useToast();
   const getOtherEvents = () => {
@@ -127,6 +129,8 @@ const LiveEvent = ({
     }
     return 'live-event-opaque';
   };
+
+  const truncatedText = showFeaturedText ? nearestEvent?.title : `${nearestEvent?.title.slice(0, 35)}...`;
 
   console.log('truncatedText:::', truncatedText);
   return (
@@ -241,8 +245,8 @@ const LiveEvent = ({
               color={textColor}
               marginBottom="5px"
               marginTop="0"
-              onMouseOver={handleMouseOver}
-              onMouseOut={handleMouseOut}
+              onMouseOver={() => setShowFeaturedText(true)}
+              onMouseOut={() => setShowFeaturedText(false)}
             >
               {liveStartsAt ? (
                 <>
