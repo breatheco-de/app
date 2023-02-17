@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Box, useColorModeValue, Grid, Flex,
 } from '@chakra-ui/react';
@@ -14,6 +14,7 @@ import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import useStyle from '../../common/hooks/useStyle';
 import LoaderScreen from '../../common/components/LoaderScreen';
+import { CardSkeleton } from '../../common/components/Skeleton';
 
 const ProjectList = ({
   projects, contextFilter, projectPath, pathWithDifficulty,
@@ -21,6 +22,7 @@ const ProjectList = ({
 }) => {
   const { t } = useTranslation('common');
   const arrOfTechs = contextFilter?.technologies || [];
+  const [isLoaded, setIsLoaded] = useState(false);
   // const difficulty = contextFilter?.difficulty || [];
   const videoTutorials = contextFilter?.videoTutorials || [];
   const router = useRouter();
@@ -92,6 +94,7 @@ const ProjectList = ({
   }, [filteredProjects]);
 
   useEffect(() => {
+    setIsLoaded(true);
     const masonryEvents = ['resize'];
     masonryEvents.forEach((event) => {
       if (window !== undefined) window.addEventListener(event, resizeAllMasonryItems);
@@ -118,7 +121,7 @@ const ProjectList = ({
     };
   };
 
-  return (
+  return isLoaded ? (
     <>
       <Grid
         className="masonry"
@@ -263,6 +266,8 @@ const ProjectList = ({
         </Box>
       )}
     </>
+  ) : (
+    <CardSkeleton quantity={6} />
   );
 };
 
