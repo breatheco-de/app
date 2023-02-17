@@ -194,7 +194,6 @@ async function generateSitemap() {
   const projectsSitemap = sitemapTemplate(projectsCodingRoute);
   const exercisesSitemap = sitemapTemplate(exercisesRoute);
   const technologiesSitemap = sitemapTemplate([...technologyLessonsRoute, ...technologyExercisesRoute, ...technologyProjectsRoute, ...allTechnologiesRoute]);
-  //forcing changes to
 
   const sitemap = listOfSitemapsTemplate([
     'pages-sitemap.xml',
