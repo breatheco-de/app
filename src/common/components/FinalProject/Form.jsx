@@ -111,6 +111,15 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
   };
 
   const handleSubmit = async (actions, allValues) => {
+    console.log('allValues');
+    console.log(allValues);
+    const formdata = new FormData();
+    formdata.append('file', allValues.screenshot);
+    console.log('formdata');
+    console.log(formdata);
+    const screenshot = await bc.todo().sendScreenshot(formdata);
+    console.log(screenshot);
+
     bc.todo().createFinalProject(allValues)
       .then((res) => {
         if (res) {
