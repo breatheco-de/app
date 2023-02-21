@@ -229,7 +229,7 @@ FilterModal.propTypes = {
   title: PropTypes.string,
   setFilter: PropTypes.func.isRequired,
   contextFilter: PropTypes.objectOf(PropTypes.any).isRequired,
-  technologyTags: PropTypes.arrayOf(PropTypes.string),
+  technologyTags: PropTypes.arrayOf(PropTypes.any),
   difficulties: PropTypes.arrayOf(PropTypes.string),
   isModalOpen: PropTypes.bool,
   onClose: PropTypes.func,

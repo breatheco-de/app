@@ -26,10 +26,11 @@ const ProjectList = ({
   const router = useRouter();
   const { featuredColor, fontColor2 } = useStyle();
   // const defaultImage = exampleImage || '/static/images/code1.png';
-  const { query } = router;
-  const techTagsQuery = (query.techs && decodeURI(query.techs?.toLowerCase())?.split(',')) || false;
-  const withVideoQuery = query.withVideo === 'true';
-  const difficultyQuery = query.difficulty?.toLowerCase() || false;
+  // const { query } = router;
+  const query = router?.query;
+  const techTagsQuery = (query?.techs && decodeURI(query?.techs?.toLowerCase())?.split(',')) || false;
+  const withVideoQuery = query?.withVideo === 'true';
+  const difficultyQuery = query?.difficulty?.toLowerCase() || false;
 
   // const bgBlur = '/static/images/codeBlur.png';
 
@@ -73,7 +74,7 @@ const ProjectList = ({
       && (withVideoQuery || videoTutorials === true)
       && !project.solution_video_url === true
     ) return false;
-    if (typeof query.search === 'string' && !projectTitle.includes(query.search)) return false;
+    if (typeof query?.search === 'string' && !projectTitle.includes(query?.search)) return false;
     if (difficultyQuery && projectDifficulty !== difficultyQuery) return false;
     // Match checked technologies
     const res = (techTagsQuery || selectedTechs.length > 0) ? (

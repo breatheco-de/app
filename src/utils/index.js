@@ -243,6 +243,11 @@ const isDateMoreThanAnyDaysAgo = (date, days = 7) => {
   return isAfter(date, AnyDaysAgo);
 };
 
+const getQueryString = (key, def) => {
+  const urlParams = isWindow && new URLSearchParams(window.location.search);
+  return urlParams && (urlParams.get(key) || def);
+};
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
@@ -250,5 +255,5 @@ export {
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
-  sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, isValidDate,
+  sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
 };
