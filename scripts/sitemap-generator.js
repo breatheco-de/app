@@ -187,6 +187,7 @@ async function generateSitemap() {
   const technologyLessonsRoute = generateTechnologySlug(technologyLandingPages, 'lessons/technology');
   const technologyExercisesRoute = generateTechnologySlug(technologyLandingPages, 'interactive-exercises/technology');
   const technologyProjectsRoute = generateTechnologySlug(technologyLandingPages, 'interactive-coding-tutorials/technology');
+  const allTechnologiesRoute = generateTechnologySlug(technologyLandingPages, 'technology');
 
   // excludes Nextjs files and API routes.
   const pages = await globby([
@@ -207,7 +208,7 @@ async function generateSitemap() {
   const lessonsSitemap = sitemapTemplate(lessonsRoute);
   const projectsSitemap = sitemapTemplate(projectsCodingRoute);
   const exercisesSitemap = sitemapTemplate(exercisesRoute);
-  const technologiesSitemap = sitemapTemplate([...technologyLessonsRoute, ...technologyExercisesRoute, ...technologyProjectsRoute]);
+  const technologiesSitemap = sitemapTemplate([...technologyLessonsRoute, ...technologyExercisesRoute, ...technologyProjectsRoute, ...allTechnologiesRoute]);
 
   const sitemap = listOfSitemapsTemplate([
     'pages-sitemap.xml',
