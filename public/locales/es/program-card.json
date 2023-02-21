@@ -9,6 +9,12 @@
     "lessons": "Lecciones",
     "exercises": "Ejercicios",
     "projects": "Proyectos",
+    "quizzes": "Cuestionarios",
     "mentors-available": "mentores disponibles",
-    "continue": "Continuar a la lección"
+    "continue": "Continuar a la lección",
+    "continue-course": "Continuar curso",
+    "start-course": "Empezar curso",
+    "free-trial": "Prueba gratis",
+    "upgrade": "Mejorar",
+    "prework-message": "¡Tendrá acceso a esta cohorte tan pronto como comience!"
 }
