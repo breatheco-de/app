@@ -15,7 +15,6 @@ import Text from '../Text';
 import Icon from '../Icon';
 import { isDateMoreThanAnyDaysAgo } from '../../../utils';
 import OtherEvents from './OtherEvents';
-// import useTruncatedText from '../../hooks/useTruncatedText';
 
 const availableLanguages = {
   es,
@@ -35,6 +34,7 @@ const LiveEvent = ({
 }) => {
   const { t, lang } = useTranslation('live-event');
   const [isOpen, setIsOpen] = useState(false);
+  const [showText, setShowText] = useState(false);
   const [timeAgo, setTimeAgo] = useState('');
   const bgColor = useColorModeValue('white', 'gray.900');
   const bgColor2 = useColorModeValue('featuredLight', 'featuredDark');
@@ -49,9 +49,9 @@ const LiveEvent = ({
 
   const liveStartsAtDate = new Date(featuredLiveEventStartsAt);
   const liveEndsAtDate = new Date(featuredLiveEventEndsAt);
+  const textLimit = 35;
 
-  const [showFeaturedText, setShowFeaturedText] = useState(false);
-  // const [truncatedText, handleMouseOver, handleMouseOut] = useTruncatedText(nearestEvent?.title, 35);
+  const truncatedText = (showText || nearestEvent?.title?.length < textLimit) ? nearestEvent?.title : `${nearestEvent?.title.slice(0, textLimit)}...`;
 
   const toast = useToast();
   const getOtherEvents = () => {
@@ -130,7 +130,11 @@ const LiveEvent = ({
     return 'live-event-opaque';
   };
 
-  const truncatedText = showFeaturedText ? nearestEvent?.title : `${nearestEvent?.title.slice(0, 35)}...`;
+  const handleShowText = () => {
+    if (nearestEvent?.title?.length > textLimit) {
+      setShowText(true);
+    }
+  };
 
   return (
     <Box
@@ -208,10 +212,8 @@ const LiveEvent = ({
                 });
             }
             if (!liveStartsAt) {
-              window.open(nearestEvent?.liveUrl);
+              window.open(nearestEvent?.live_stream_url);
             }
-
-            // href={featureReadMoreUrl || event?.live_url || event?.live_stream_url || '#'}
           }}
         >
           <Box
@@ -244,8 +246,8 @@ const LiveEvent = ({
               color={textColor}
               marginBottom="5px"
               marginTop="0"
-              onMouseOver={() => setShowFeaturedText(true)}
-              onMouseOut={() => setShowFeaturedText(false)}
+              onMouseOver={handleShowText}
+              onMouseOut={() => setShowText(false)}
             >
               {liveStartsAt ? (
                 <>
@@ -253,9 +255,7 @@ const LiveEvent = ({
                 </>
               ) : (
                 <>
-                  {/* {nearestEvent?.title} */}
                   {truncatedText}
-                  {/* {nearestEvent?.title.length > 40 ? `${nearestEvent?.title.substring(0, 40)}...` : nearestEvent?.title} */}
                 </>
               )}
             </Text>
@@ -330,7 +330,6 @@ const LiveEvent = ({
             events={liveStartsAt ? otherEventsSorted : restOfEvents}
             isLiveOrStarting={isLiveOrStarting}
             textTime={textTime}
-            featureReadMoreUrl={featureReadMoreUrl}
           />
         </Box>
       )}

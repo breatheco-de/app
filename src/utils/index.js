@@ -236,6 +236,7 @@ const sortToNearestTodayDate = (data, minutes = 30) => {
 
 const isNumber = (value) => Number.isFinite(Number(value)); // number or string with number (without letters)
 
+const isValidDate = (dateString) => !Number.isNaN(Date.parse(dateString));
 const isDateMoreThanAnyDaysAgo = (date, days = 7) => {
   const now = new Date();
   const AnyDaysAgo = addDays(now, days);
@@ -254,5 +255,5 @@ export {
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
-  sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString,
+  sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
 };

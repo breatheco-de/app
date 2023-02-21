@@ -340,7 +340,7 @@ function chooseProgram() {
         </Flex>
 
         <Box>
-          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="2rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '10px' }}>
+          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '10px' }}>
             <Heading size="sm" width={{ base: '100%', md: '22rem' }}>
               {t('your-active-programs')}
             </Heading>

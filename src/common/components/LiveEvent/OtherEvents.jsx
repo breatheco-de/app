@@ -7,7 +7,7 @@ import Icon from '../Icon';
 import Link from '../NextChakraLink';
 import Text from '../Text';
 
-const OtherEvents = ({ events, isLiveOrStarting, textTime, featureReadMoreUrl }) => {
+const OtherEvents = ({ events, isLiveOrStarting, textTime }) => {
   const { hexColor, disabledColor, fontColor } = useStyle();
 
   return events.map((event) => {
@@ -40,7 +40,7 @@ const OtherEvents = ({ events, isLiveOrStarting, textTime, featureReadMoreUrl })
           <Link
             target="_blank"
             rel="noopener noreferrer"
-            href={featureReadMoreUrl || event?.live_url || event?.live_stream_url || '#'}
+            href={event?.live_stream_url || '#'}
             color={fontColor}
             fontSize="15px"
             lineHeight="18px"
