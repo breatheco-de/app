@@ -151,7 +151,6 @@ const Dashboard = () => {
       .then(() => {
         toast({
           title: t('alert-message:unsynced-tasks-removed'),
-          // title: 'Unsynced tasks successfully removed!',
           status: 'success',
           duration: 5000,
           isClosable: true,
@@ -161,7 +160,6 @@ const Dashboard = () => {
       .catch(() => {
         toast({
           title: t('alert-message:unsynced-tasks-cant-be-removed'),
-          // title: 'Some Tasks cannot be removed',
           status: 'error',
           duration: 5000,
           isClosable: true,
