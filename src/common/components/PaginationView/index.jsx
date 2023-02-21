@@ -26,6 +26,7 @@ const PaginatedView = ({ storyConfig, renderComponent, handlePageChange, queryFu
     const pages = Math.ceil(respData.count / contentPerPage);
     // Generate an array of pages to be used in the pagination component e.g: `/lessons?page=2`
     const pagesArray = Array.from(Array(pages).keys()).map((item) => `${pagePath}?page=${item + 1}`);
+
     if (page) {
       setPageProps({
         pages,
