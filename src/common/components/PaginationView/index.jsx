@@ -8,12 +8,12 @@ import PageIndexes from './PageIndexes';
 import { getQueryString, isNumber } from '../../../utils';
 import { CardSkeleton } from '../Skeleton';
 
-const PaginatedView = ({ renderComponent, queryFunction, options }) => {
+const PaginatedView = ({ storyConfig, renderComponent, handlePageChange, queryFunction, options }) => {
   const [data, setData] = useState([]);
   const [pageProps, setPageProps] = useState({});
   const router = useRouter();
-  const locale = router?.locale || 'en';
-  const page = getQueryString('page', 1);
+  const locale = storyConfig?.locale || router?.locale || 'en';
+  const page = storyConfig?.page || getQueryString('page', 1);
 
   const contentPerPage = options?.contentPerPage || 20;
   const listToTop = options?.listToTop || true;
@@ -87,6 +87,7 @@ const PaginatedView = ({ renderComponent, queryFunction, options }) => {
         <PageIndexes
           pages={pageProps?.pagesArray}
           currentPage={pageProps?.currentPage}
+          handlePageChange={handlePageChange} // optional
           margin="0 0 3rem 0"
         />
       )}
@@ -107,6 +108,7 @@ const PaginatedView = ({ renderComponent, queryFunction, options }) => {
         <PageIndexes
           pages={pageProps?.pagesArray}
           currentPage={pageProps?.currentPage}
+          handlePageChange={handlePageChange} // optional
           margin="4rem 0 0 0"
         />
       )}
@@ -119,14 +121,18 @@ const PaginatedView = ({ renderComponent, queryFunction, options }) => {
 };
 
 PaginatedView.propTypes = {
+  storyConfig: PropTypes.objectOf(PropTypes.any),
   renderComponent: PropTypes.func,
   queryFunction: PropTypes.func.isRequired,
   options: PropTypes.objectOf(PropTypes.any),
+  handlePageChange: PropTypes.func,
 };
 
 PaginatedView.defaultProps = {
+  storyConfig: {},
   renderComponent: null,
   options: {},
+  handlePageChange: null,
 };
 
 export default PaginatedView;

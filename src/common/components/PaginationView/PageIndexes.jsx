@@ -5,7 +5,7 @@ import NextChakraLink from '../NextChakraLink';
 // import { useEffect } from 'react';
 
 const PageIndexes = ({
-  currentPage, pages, ...rest
+  currentPage, pages, handlePageChange, ...rest
 }) => {
   const totalPages = pages?.length || 0;
   const pageIndices = [1];
@@ -28,20 +28,33 @@ const PageIndexes = ({
   return currentPage && (
     <UnorderedList display="flex" justifyContent="center" gridGap="16px" {...rest}>
       {pageIndices.map((pageIndex) => (pages[pageIndex - 1] && currentPage !== pageIndex ? (
-        <ListItem display="inherit" key={pageIndex}>
-          <NextChakraLink
-            variant="buttonDefault"
-            colorScheme="blue.default"
-            padding="8px 14px"
-            minHeight="auto"
-            _hover={{
-              background: 'blue.600',
-            }}
-            height="auto"
-            href={pages[pageIndex - 1]}
-          >
-            {pageIndex}
-          </NextChakraLink>
+        <ListItem display="inherit" key={`${pageIndex} - ${pages[pageIndex - 1]}`}>
+          {handlePageChange !== null ? (
+            <Button
+              variant="default"
+              // cursor="default"
+              onClick={() => handlePageChange({ path: pages[pageIndex - 1], page: pageIndex })}
+              padding="8px 14px"
+              minHeight="auto"
+              height="auto"
+            >
+              {pageIndex}
+            </Button>
+          ) : (
+            <NextChakraLink
+              variant="buttonDefault"
+              colorScheme="blue.default"
+              padding="8px 14px"
+              minHeight="auto"
+              _hover={{
+                background: 'blue.600',
+              }}
+              height="auto"
+              href={pages[pageIndex - 1]}
+            >
+              {pageIndex}
+            </NextChakraLink>
+          )}
         </ListItem>
       ) : (
         <Button
@@ -62,6 +75,11 @@ const PageIndexes = ({
 PageIndexes.propTypes = {
   currentPage: PropTypes.number.isRequired,
   pages: PropTypes.arrayOf(PropTypes.any).isRequired,
+  handlePageChange: PropTypes.func,
+};
+
+PageIndexes.defaultProps = {
+  handlePageChange: null,
 };
 
 export default PageIndexes;
