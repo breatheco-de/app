@@ -132,7 +132,6 @@ const LiveEvent = ({
 
   const truncatedText = showFeaturedText ? nearestEvent?.title : `${nearestEvent?.title.slice(0, 35)}...`;
 
-  console.log('truncatedText:::', truncatedText);
   return (
     <Box
       padding="16px 25px"
