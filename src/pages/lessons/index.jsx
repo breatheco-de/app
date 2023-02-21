@@ -15,7 +15,7 @@ import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 import GridContainer from '../../common/components/GridContainer';
 import PaginatedView from '../../common/components/PaginationView';
-import modifyEnv from '../../../modifyEnv';
+// import modifyEnv from '../../../modifyEnv';
 import { getQueryString, isWindow } from '../../utils';
 
 export const getStaticProps = async ({ locale, locales }) => {
@@ -126,7 +126,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
 const Projects = ({ lessons, technologyTags, difficulties }) => {
   const { t } = useTranslation('lesson');
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  // const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { filteredBy, setProjectFilters } = useFilter();
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const router = useRouter();
@@ -138,9 +138,13 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
   const startIndex = (page - 1) * contentPerPage;
 
   const queryFunction = async () => {
-    const lessonResp = await fetch(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson&limit=${contentPerPage}&offset=${startIndex}`);
-    const data = await lessonResp.json();
-    return data;
+    const endIndex = startIndex + contentPerPage;
+    const paginatedResults = lessons.slice(startIndex, endIndex);
+
+    return {
+      count: lessons.length,
+      results: paginatedResults,
+    };
   };
 
   const { isOpen, onClose, onOpen } = useDisclosure();

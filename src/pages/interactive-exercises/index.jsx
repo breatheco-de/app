@@ -15,7 +15,6 @@ import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 import { getQueryString, isWindow } from '../../utils';
 import GridContainer from '../../common/components/GridContainer';
-import modifyEnv from '../../../modifyEnv';
 import PaginatedView from '../../common/components/PaginationView';
 
 export const getStaticProps = async ({ locale, locales }) => {
@@ -132,7 +131,6 @@ export const getStaticProps = async ({ locale, locales }) => {
 
 function Exercices({ exercises, technologyTags, difficulties }) {
   const { t } = useTranslation('exercises');
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { filteredBy, setExerciseFilters } = useFilter();
   const router = useRouter();
   const page = getQueryString('page', 1);
@@ -148,9 +146,13 @@ function Exercices({ exercises, technologyTags, difficulties }) {
   const technologiesActived = technologies.length || (techsQuery?.length > 0 ? techsQuery?.split(',')?.length : 0);
 
   const queryFunction = async () => {
-    const exerciseResp = await fetch(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&limit=${contentPerPage}&offset=${startIndex}`);
-    const data = await exerciseResp.json();
-    return data;
+    const endIndex = startIndex + contentPerPage;
+    const paginatedResults = exercises.slice(startIndex, endIndex);
+
+    return {
+      count: exercises.length,
+      results: paginatedResults,
+    };
   };
 
   const difficultyIsActive = () => {

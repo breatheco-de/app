@@ -15,7 +15,6 @@ import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 import GridContainer from '../../common/components/GridContainer';
 import { getQueryString } from '../../utils';
-import modifyEnv from '../../../modifyEnv';
 import PaginatedView from '../../common/components/PaginationView';
 
 export const getStaticProps = async ({ locale, locales }) => {
@@ -128,7 +127,6 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
   const { t } = useTranslation('projects');
   const { filteredBy, setProjectFilters } = useFilter();
   const iconColor = useColorModeValue('#FFF', '#283340');
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -154,9 +152,13 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
     + videoTutorials;
 
   const queryFunction = async () => {
-    const projectResp = await fetch(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=${contentPerPage}&offset=${startIndex}`);
-    const data = await projectResp.json();
-    return data;
+    const endIndex = startIndex + contentPerPage;
+    const paginatedResults = projects.slice(startIndex, endIndex);
+
+    return {
+      count: projects.length,
+      results: paginatedResults,
+    };
   };
 
   return (
