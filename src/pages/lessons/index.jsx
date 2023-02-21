@@ -15,7 +15,6 @@ import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 import GridContainer from '../../common/components/GridContainer';
 import PaginatedView from '../../common/components/PaginationView';
-// import modifyEnv from '../../../modifyEnv';
 import { getQueryString, isWindow } from '../../utils';
 
 export const getStaticProps = async ({ locale, locales }) => {
@@ -126,7 +125,6 @@ export const getStaticProps = async ({ locale, locales }) => {
 
 const Projects = ({ lessons, technologyTags, difficulties }) => {
   const { t } = useTranslation('lesson');
-  // const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { filteredBy, setProjectFilters } = useFilter();
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const router = useRouter();
