@@ -1,8 +1,6 @@
-/* eslint-disable react/no-array-index-key */
 import { Button, ListItem, UnorderedList } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import NextChakraLink from '../NextChakraLink';
-// import { useEffect } from 'react';
 
 const PageIndexes = ({
   currentPage, pages, handlePageChange, ...rest
