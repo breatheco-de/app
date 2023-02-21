@@ -553,7 +553,7 @@ const Dashboard = () => {
                   liveStartsAt={liveClass?.starting_at}
                   liveEndsAt={liveClass?.ending_at}
                   otherEvents={events}
-                  // featureLabel,
+                  //  featureLabel,
                 />
               )}
               {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
