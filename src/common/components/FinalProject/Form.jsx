@@ -113,14 +113,19 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
   const handleSubmit = async (actions, allValues) => {
     console.log('allValues');
     console.log(allValues);
-    const formdata = new FormData();
-    formdata.append('file', allValues.screenshot);
-    console.log('formdata');
-    console.log(formdata);
-    const screenshot = await bc.todo().sendScreenshot(formdata);
+    let result;
+    if (allValues.screenshot) {
+      const formdata = new FormData();
+      formdata.append('file', allValues.screenshot);
+      console.log('formdata');
+      console.log(formdata);
+      result = await bc.todo().sendScreenshot(formdata);
+    }
+    const screenshot = result?.data?.url || null;
     console.log(screenshot);
+    // return
 
-    bc.todo().createFinalProject(allValues)
+    bc.todo().createFinalProject({ ...allValues, screenshot })
       .then((res) => {
         if (res) {
           setFinalProjectData(res.data[0]);
@@ -197,7 +202,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
         description: finalProjectData?.description || defaultValues?.description || '',
         repo_url: repoUrl || '',
         slides_url: '',
-        screenshot: null,
+        screenshot: finalProjectData?.screenshot || defaultValues?.screenshot || null,
         members: getMembers(),
       }}
       onSubmit={(values, actions) => {
