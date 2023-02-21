@@ -54,3 +54,28 @@ Default.args = {
   contentPerPage: 5,
   disableLangFilter: true,
 };
+
+export const ContentPerPage30 = Component.bind({});
+ContentPerPage30.args = {
+  page: 1,
+  projectPath: 'lesson',
+  pagePath: '/',
+  contentPerPage: 30,
+  disableLangFilter: true,
+};
+export const MiddleOfPagination = Component.bind({});
+MiddleOfPagination.args = {
+  page: 5,
+  projectPath: 'lesson',
+  pagePath: '/',
+  contentPerPage: 20,
+  disableLangFilter: true,
+};
+export const FilteredByLang = Component.bind({});
+FilteredByLang.args = {
+  page: 1,
+  projectPath: 'lesson',
+  pagePath: '/',
+  contentPerPage: 20,
+  disableLangFilter: false,
+};
