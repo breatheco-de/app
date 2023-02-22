@@ -38,6 +38,37 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
   const megaByte = 1000000;
   const maxFileSize = 2 * megaByte;
 
+  const toDataURL = (urlFile) => fetch(urlFile)
+    .then((response) => response.blob())
+    .then((blob) => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    }));
+
+  const dataURLtoFile = (dataurl, filename) => {
+    const arr = dataurl.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    // eslint-disable-next-line no-plusplus
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  };
+
+  const getFileFromUrl = async (urlFile) => {
+    const dataUrl = await toDataURL(urlFile);
+
+    console.log('Here is Base64 Url', dataUrl);
+    const fileData = dataURLtoFile(dataUrl, 'imageName.jpg');
+    console.log('Here is JavaScript File Object', fileData);
+    return fileData;
+  };
+
   const finalProjectValidation = Yup.object().shape({
     name: Yup.string()
       .required(commonTranslation?.validators['project-name-error'] || t('common:validators.project-name-error')),
@@ -202,7 +233,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
         description: finalProjectData?.description || defaultValues?.description || '',
         repo_url: repoUrl || '',
         slides_url: '',
-        screenshot: finalProjectData?.screenshot || defaultValues?.screenshot || null,
+        screenshot: (finalProjectData?.screenshot || defaultValues?.screenshot) ? getFileFromUrl(finalProjectData?.screenshot || defaultValues?.screenshot) : null,
         members: getMembers(),
       }}
       onSubmit={(values, actions) => {
@@ -288,6 +319,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
                 formProps={formProps}
                 setFormProps={setFormProps}
               /> */}
+
               <FieldForm
                 type="file"
                 name="screenshot"
