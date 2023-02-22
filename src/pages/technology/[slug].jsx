@@ -135,7 +135,7 @@ const LessonByTechnology = ({ data, technologyData }) => {
           display="flex"
           textAlign="left"
         >
-          {technologyData?.description || t('description')}
+          {technologyData?.description || t('description', { technology: technologyData.title })}
         </Text>
       </Box>
 

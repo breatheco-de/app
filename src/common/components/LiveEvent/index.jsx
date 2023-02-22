@@ -254,9 +254,7 @@ const LiveEvent = ({
                 </>
               ) : (
                 <>
-                  {/* {nearestEvent?.title} */}
                   {truncatedText}
-                  {/* {nearestEvent?.title.length > 40 ? `${nearestEvent?.title.substring(0, 40)}...` : nearestEvent?.title} */}
                 </>
               )}
             </Text>
@@ -331,7 +329,6 @@ const LiveEvent = ({
             events={liveStartsAt ? otherEventsSorted : restOfEvents}
             isLiveOrStarting={isLiveOrStarting}
             textTime={textTime}
-            featureReadMoreUrl={featureReadMoreUrl}
           />
         </Box>
       )}
