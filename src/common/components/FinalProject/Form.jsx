@@ -53,7 +53,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
       .required(t(commonTranslation?.validators['description-required'] || 'common:validators.description-required')),
     repo_url: Yup.string().matches(
       url,
-      t(commonTranslation?.validators?.['invalid-url']?.replace('{{url}}', 'https://github.com/') || 'common:validators.invalid-url', { url: 'https://...' }),
+      t(commonTranslation?.validators?.['invalid-url']?.replace('{{url}}', 'https://github.com/') || 'common:validators.invalid-url', { url: 'https://github.com/' }),
     )
       .required(commonTranslation?.validators['repo-url-required'] || t('common:validators.repo-url-required')),
     // slides_url: Yup.string().matches(
