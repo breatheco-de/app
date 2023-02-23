@@ -187,7 +187,6 @@ const LiveEvent = ({
           margin="auto"
           cursor={(!liveStartsAt || isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) && 'pointer'}
           onClick={() => {
-            // if (isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) window.open(liveUrl);
             if (liveStartsAt && isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
               bc.events().joinLiveClass(liveClassHash)
                 .then((resp) => {

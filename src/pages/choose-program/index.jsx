@@ -52,7 +52,7 @@ function chooseProgram() {
   const [liveClass, setLiveClass] = useState(null);
   const { state, programsList, updateProgramList } = useProgramList();
   const [cohortTasks, setCohortTasks] = useState({});
-  const { user, choose } = useAuth();
+  const { isLoading: userLoading, user, choose } = useAuth();
   const { featuredColor, borderColor, lightColor } = useStyle();
   const router = useRouter();
   const toast = useToast();
@@ -154,6 +154,23 @@ function chooseProgram() {
       setCohortSession({
         selectedProgramSlug: '/choose-program',
         bc_id: userID,
+      });
+    }
+
+    if (user?.id && !userLoading) {
+      ldClient?.identify({
+        kind: 'user',
+        key: user?.id,
+        firstName: user?.first_name,
+        lastName: user?.last_name,
+        name: `${user?.first_name} ${user?.last_name}`,
+        email: user?.email,
+        id: user?.id,
+        language: router?.locale,
+        screenWidth: window?.screen?.width,
+        screenHeight: window?.screen?.height,
+        device: navigator?.userAgent,
+        version: packageJson.version,
       });
     }
   }, [userID]);

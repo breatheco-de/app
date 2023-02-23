@@ -11,9 +11,10 @@ import {
 // import io from 'socket.io-client';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import { useFlags } from 'launchdarkly-react-client-sdk';
+import { useFlags, useLDClient } from 'launchdarkly-react-client-sdk';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
+import packageJson from '../../../../../../package.json';
 import ModuleMap from '../../../../../js_modules/moduleMap/index';
 import CohortSideBar from '../../../../../common/components/CohortSideBar';
 import Icon from '../../../../../common/components/Icon';
@@ -49,6 +50,7 @@ const Dashboard = () => {
   const toast = useToast();
   const router = useRouter();
   const { colorMode } = useColorMode();
+  const ldClient = useLDClient();
   const { contextState, setContextState } = useModuleMap();
   const [showWarningModal, setShowWarningModal] = useState(false);
   const { cohortProgram } = contextState;
@@ -151,7 +153,6 @@ const Dashboard = () => {
       .then(() => {
         toast({
           title: t('alert-message:unsynced-tasks-removed'),
-          // title: 'Unsynced tasks successfully removed!',
           status: 'success',
           duration: 5000,
           isClosable: true,
@@ -161,7 +162,6 @@ const Dashboard = () => {
       .catch(() => {
         toast({
           title: t('alert-message:unsynced-tasks-cant-be-removed'),
-          // title: 'Some Tasks cannot be removed',
           status: 'error',
           duration: 5000,
           isClosable: true,
@@ -222,6 +222,27 @@ const Dashboard = () => {
 
   // Fetch cohort assignments (lesson, exercise, project, quiz)
   useEffect(() => {
+    if (user?.id && !isLoading) {
+      ldClient?.identify({
+        kind: 'user',
+        key: user?.id,
+        firstName: user?.first_name,
+        lastName: user?.last_name,
+        name: `${user?.first_name} ${user?.last_name}`,
+        email: user?.email,
+        id: user?.id,
+        language: router?.locale,
+        screenWidth: window?.screen?.width,
+        screenHeight: window?.screen?.height,
+        device: navigator?.userAgent,
+        version: packageJson.version,
+        cohort: cohortSession?.name,
+        cohortSlug: cohortSession?.slug,
+        cohortId: cohortSession?.id,
+        cohortStage: cohortSession?.stage,
+        academy: cohortSession?.academy?.id,
+      });
+    }
     if (!isLoading) {
       getCohortAssignments({
         user, setContextState, slug,
