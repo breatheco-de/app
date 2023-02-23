@@ -6,17 +6,18 @@ import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+// import modifyEnv from '../../../modifyEnv';
 import FilterModal from '../../common/components/FilterModal';
 import GridContainer from '../../common/components/GridContainer';
 
 import Icon from '../../common/components/Icon';
+import PaginatedView from '../../common/components/PaginationView';
 import Text from '../../common/components/Text';
 import useFilter from '../../common/store/actions/filterAction';
 import ProjectList from '../../js_modules/projects/ProjectList';
 import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
-import { isWindow } from '../../utils';
+import { getQueryString } from '../../utils';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'how-to');
@@ -135,16 +136,13 @@ export default function HowTo({ data, technologyTags, difficulties }) {
   const { t } = useTranslation('how-to');
   const router = useRouter();
   const { filteredBy, setHowToFilters } = useFilter();
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const iconColor = useColorModeValue('#FFF', '#283340');
-  const [isLoading, setIsLoading] = useState(false);
-  const [offset, setOffset] = useState(10);
-  const queryExists = Object.keys(router.query).length > 0;
+  const page = getQueryString('page', 1);
+  const search = getQueryString('search', 1);
 
-  const howTosFiltered = data.slice(0, offset);
-  const howTosSearched = data.filter(
-    (howTo) => howTo.title.toLowerCase()
-      .includes(router?.query?.search?.toLocaleLowerCase() || false),
-  );
+  const contentPerPage = 20;
+  const startIndex = (page - 1) * contentPerPage;
 
   const { technologies, difficulty, videoTutorials } = filteredBy.howToOptions;
 
@@ -162,51 +160,14 @@ export default function HowTo({ data, technologyTags, difficulties }) {
     + difficultyIsActive()
     + videoTutorials;
 
-  let initialSearchValue;
-  useEffect(() => {
-    initialSearchValue = router.query && router.query.search;
-  }, [initialSearchValue]);
+  const queryFunction = async () => {
+    const endIndex = startIndex + contentPerPage;
+    const paginatedResults = data.slice(startIndex, endIndex);
 
-  const { isOpen, onClose, onOpen } = useDisclosure();
-
-  const handleScroll = () => {
-    const scrollTop = isWindow && document.documentElement.scrollTop;
-    const offsetHeight = isWindow && document.documentElement.offsetHeight;
-    const innerHeight = isWindow && window.innerHeight;
-    if ((innerHeight + scrollTop) <= offsetHeight) return;
-    setIsLoading(true);
-  };
-
-  useEffect(() => {
-    if (!queryExists) {
-      if (howTosSearched.length > 0) return () => { };
-      if (offset <= data.length) {
-        console.log('loading how to\'s...');
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-      }
-      console.log('All how to\'s loaded');
-    }
-    return () => { };
-  }, [offset, queryExists]);
-
-  useEffect(() => {
-    if (!isLoading) return;
-    if (offset >= data.length) setIsLoading(false);
-    setTimeout(() => {
-      setOffset(offset + 10);
-      setIsLoading(false);
-    }, 200);
-  }, [isLoading]);
-
-  const getHowToList = () => {
-    if (queryExists) {
-      return data;
-    }
-    if (howTosSearched.length > 0) {
-      return howTosSearched;
-    }
-    return howTosFiltered;
+    return {
+      count: data.length,
+      results: paginatedResults,
+    };
   };
 
   return (
@@ -288,13 +249,25 @@ export default function HowTo({ data, technologyTags, difficulties }) {
             {t('description')}
           </Text>
         )}
-        <ProjectList
-          projects={getHowToList()}
-          contextFilter={filteredBy.howToOptions}
-          isLoading={isLoading}
-          projectPath="how-to"
-          exampleImage="/static/images/coding-notebook.png"
-        />
+        {(search?.length > 0 || currentFilters > 0) ? (
+          <ProjectList
+            projects={data}
+            withoutImage
+            contextFilter={filteredBy.exercisesOptions}
+            projectPath="how-to"
+          />
+        ) : (
+          <PaginatedView
+            queryFunction={queryFunction}
+            options={{
+              projectPath: 'how-to',
+              pagePath: '/how-to',
+              contextFilter: filteredBy.exercisesOptions,
+              contentPerPage,
+              disableLangFilter: true,
+            }}
+          />
+        )}
       </GridContainer>
     </>
   );
@@ -302,7 +275,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
 
 HowTo.propTypes = {
   data: PropTypes.arrayOf(PropTypes.any),
-  technologyTags: PropTypes.arrayOf(PropTypes.string),
+  technologyTags: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.string), PropTypes.objectOf(PropTypes.any)]),
   difficulties: PropTypes.arrayOf(PropTypes.string),
 };
 

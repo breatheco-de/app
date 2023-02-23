@@ -5,9 +5,9 @@ import { Box } from '@chakra-ui/react';
 import Icon from '../../common/components/Icon';
 import { isPlural } from '../../utils';
 import Text from '../../common/components/Text';
-import ProgramList from './programList';
 import useOnline from '../../common/hooks/useOnline';
 import handlers from '../../common/handlers';
+import Programs from './Programs';
 
 function ChooseProgram({ chooseList, handleChoose }) {
   const { t } = useTranslation('choose-program');
@@ -16,30 +16,23 @@ function ChooseProgram({ chooseList, handleChoose }) {
 
   const activeCohorts = handlers.getActiveCohorts(chooseList);
   const finishedCohorts = handlers.getCohortsFinished(chooseList);
-
   return (
     <>
       {activeCohorts.length > 0 && (
         <Box
           display="grid"
-          // justifyContent="space-between"
-          gridTemplateColumns="repeat(auto-fill, minmax(14rem, 1fr))"
-          // flexDirection="column"
-          // borderRadius="25px"
+          gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
           height="auto"
-          // width={['70%', '68%', '70%', '50%']}
-          gridGap="5rem"
+          gridGap="4rem"
         >
-          {activeCohorts.map((item, i) => {
-            const index = i;
-            return (
-              <ProgramList
-                key={index}
-                item={item}
-                handleChoose={handleChoose}
-              />
-            );
-          })}
+          {activeCohorts.map((item) => (
+            <Programs
+              key={item?.cohort?.slug}
+              item={item}
+              handleChoose={handleChoose}
+              usersConnected={usersConnected}
+            />
+          ))}
         </Box>
       )}
 
@@ -47,10 +40,8 @@ function ChooseProgram({ chooseList, handleChoose }) {
         finishedCohorts.length > 0 && (
           <>
             <Box
-              // width={['100%', '78%', '70%', '80%']}
               display="flex"
               margin="2rem auto"
-              // padding="25px 0"
               flexDirection={{ base: 'column', md: 'row' }}
               gridGap={{ base: '0', md: '6px' }}
               justifyContent="center"
@@ -94,17 +85,14 @@ function ChooseProgram({ chooseList, handleChoose }) {
               gridRowGap="3rem"
               height="auto"
             >
-              {showFinished && finishedCohorts.map((item, i) => {
-                const index = i;
-                return (
-                  <ProgramList
-                    usersConnected={usersConnected}
-                    key={index}
-                    item={item}
-                    handleChoose={handleChoose}
-                  />
-                );
-              })}
+              {showFinished && finishedCohorts.map((item) => (
+                <Programs
+                  key={item?.cohort?.slug}
+                  item={item}
+                  handleChoose={handleChoose}
+                  usersConnected={usersConnected}
+                />
+              ))}
             </Box>
           </>
         )

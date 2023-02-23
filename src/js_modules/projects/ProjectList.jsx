@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import {
-  Box, useColorModeValue, Img, Grid, Flex,
+  Box, useColorModeValue, Grid, Flex,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -13,26 +13,35 @@ import TagCapsule from '../../common/components/TagCapsule';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import useStyle from '../../common/hooks/useStyle';
+import LoaderScreen from '../../common/components/LoaderScreen';
 
 const ProjectList = ({
   projects, contextFilter, projectPath, pathWithDifficulty,
-  withoutImage, isLoading, withoutDifficulty,
+  withoutImage, isLoading, withoutDifficulty, containerPadding, isDynamic,
 }) => {
   const { t } = useTranslation('common');
   const arrOfTechs = contextFilter?.technologies || [];
   // const difficulty = contextFilter?.difficulty || [];
   const videoTutorials = contextFilter?.videoTutorials || [];
   const router = useRouter();
-  const { featuredColor } = useStyle();
+  const { featuredColor, fontColor2 } = useStyle();
   // const defaultImage = exampleImage || '/static/images/code1.png';
-  const { query } = router;
-  const techTagsQuery = (query.techs && decodeURI(query.techs?.toLowerCase())?.split(',')) || false;
-  const withVideoQuery = query.withVideo === 'true';
-  const difficultyQuery = query.difficulty?.toLowerCase() || false;
+  // const { query } = router;
+  const query = router?.query;
+  const techTagsQuery = (query?.techs && decodeURI(query?.techs?.toLowerCase())?.split(',')) || false;
+  const withVideoQuery = query?.withVideo === 'true';
+  const difficultyQuery = query?.difficulty?.toLowerCase() || false;
 
   // const bgBlur = '/static/images/codeBlur.png';
 
   // const projectLimited = projects.slice(0, limiter);
+  const getAssetPath = (asset) => {
+    if (asset?.asset_type?.toUpperCase() === 'LESSON') return 'lesson';
+    if (asset?.asset_type?.toUpperCase() === 'EXERCISE') return 'interactive-exercise';
+    if (asset?.asset_type?.toUpperCase() === 'PROJECT') return 'interactive-coding-tutorial';
+    if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') return 'how-to';
+    return 'lesson';
+  };
 
   const checkIsPathDifficulty = (thisDifficulty) => (pathWithDifficulty ? `/${thisDifficulty}` : '');
 
@@ -65,7 +74,7 @@ const ProjectList = ({
       && (withVideoQuery || videoTutorials === true)
       && !project.solution_video_url === true
     ) return false;
-    if (typeof query.search === 'string' && !projectTitle.includes(query.search)) return false;
+    if (typeof query?.search === 'string' && !projectTitle.includes(query?.search)) return false;
     if (difficultyQuery && projectDifficulty !== difficultyQuery) return false;
     // Match checked technologies
     const res = (techTagsQuery || selectedTechs.length > 0) ? (
@@ -121,108 +130,129 @@ const ProjectList = ({
         }}
         gridGap="1em"
         gridAutoRows="0"
-        padding="0 15px"
+        padding={containerPadding}
       >
-        {filteredProjects.map((ex) => (
-          <Box
-            // py={2}
-            key={`${ex.slug}-${ex.difficulty}`}
-            border={useColorModeValue('1px solid #DADADA', 'none')}
-            className="card pointer masonry-brick"
-            bg={useColorModeValue('white', 'gray.800')}
-            borderRadius="16px"
-            padding="21px 22px 22px 22px"
-          >
+        {filteredProjects.map((ex) => {
+          const isLesson = isDynamic && getAssetPath(ex) === 'lesson';
+          const isExercise = isDynamic && getAssetPath(ex) === 'interactive-exercise';
+          const isProject = isDynamic && getAssetPath(ex) === 'interactive-coding-tutorial';
+          const isHowTo = isDynamic && getAssetPath(ex) === 'how-to';
+
+          const getLink = () => {
+            if (isLesson) {
+              return `/lesson/${ex.slug}`;
+            }
+            if (isExercise) {
+              return `/interactive-exercise/${ex.slug}`;
+            }
+            if (isProject) {
+              return `/interactive-coding-tutorial/${ex.difficulty}/${ex.slug}`;
+            }
+            if (isHowTo) {
+              return `/how-to/${ex.slug}`;
+            }
+            return `/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`;
+          };
+          return (
             <Box
-              display={{ base: 'flex', md: 'inline-block' }}
-              gridGap="15px"
-              flexDirection={{ base: withoutImage ? 'column' : 'row', md: 'row' }}
-              role="group"
-              w="full"
-              zIndex={1}
-              borderRadius="10px"
-              className="masonry-content"
+              // py={2}
+              key={`${ex.slug}-${ex.difficulty}`}
+              border={useColorModeValue('1px solid #DADADA', 'none')}
+              className="card pointer masonry-brick"
+              bg={useColorModeValue('white', 'gray.800')}
+              borderRadius="16px"
+              padding="21px 22px 22px 22px"
             >
-              <Box display="flex" flexDirection="column">
-                {ex.technologies.length >= 1 && (
-                  <TagCapsule
-                    tags={ex.technologies.slice(0, 3)}
-                    variant="rounded"
-                    borderRadius="10px"
-                    marginY="8px"
-                    style={{
-                      padding: '4px 10px',
-                      margin: '0',
-                    }}
-                    gap="10px"
-                    paddingX="0"
-                    key={`${ex.slug}-${ex.difficulty}`}
-                  />
-                )}
-                <Heading
-                  size="m"
-                  textAlign="left"
-                  wordBreak="break-word"
-                  width="100%"
-                  fontFamily="body"
-                  fontWeight={700}
-                >
-                  {ex.title || t('no-title')}
-                </Heading>
-                {!withoutDifficulty && (
-                  <Flex alignItems="center" justifyContent="space-between">
-                    <Box>
-                      <TagCapsule
-                        tags={[ex.difficulty]}
-                        background={getDifficultyColors(ex.difficulty).bg}
-                        color={getDifficultyColors(ex.difficulty).color}
-                        fontWeight={700}
-                      />
-                    </Box>
-                    {ex.solution_video_url && (
-                      <Box background={featuredColor} borderRadius="15px" padding="6px 12px">
-                        <Icon icon="camera" width="22px" height="22px" />
-                      </Box>
-                    )}
-                  </Flex>
-                )}
-
-                {ex?.description && (
-                  <Text
-                    color="gray.dark"
+              <Box
+                display={{ base: 'flex', md: 'inline-block' }}
+                gridGap="15px"
+                flexDirection={{ base: withoutImage ? 'column' : 'row', md: 'row' }}
+                role="group"
+                w="full"
+                zIndex={1}
+                borderRadius="10px"
+                className="masonry-content"
+              >
+                <Box display="flex" flexDirection="column">
+                  {ex.technologies.length >= 1 && (
+                    <TagCapsule
+                      tags={ex.technologies.slice(0, 3)}
+                      variant="rounded"
+                      borderRadius="10px"
+                      marginY="8px"
+                      style={{
+                        padding: '4px 10px',
+                        margin: '0',
+                      }}
+                      gap="10px"
+                      paddingX="0"
+                      key={`${ex.slug}-${ex.difficulty}`}
+                    />
+                  )}
+                  <Heading
+                    size="m"
                     textAlign="left"
+                    wordBreak="break-word"
                     width="100%"
-                    size="l"
-                    // textTransform="uppercase"
+                    fontFamily="body"
+                    fontWeight={700}
                   >
-                    {ex.description}
-                  </Text>
-                )}
+                    {ex.title || t('no-title')}
+                  </Heading>
+                  {!withoutDifficulty && (
+                    <Flex alignItems="center" justifyContent="space-between">
+                      <Box>
+                        <TagCapsule
+                          tags={[ex.difficulty]}
+                          background={getDifficultyColors(ex.difficulty).bg}
+                          color={getDifficultyColors(ex.difficulty).color}
+                          fontWeight={700}
+                        />
+                      </Box>
+                      {ex.solution_video_url && (
+                        <Box background={featuredColor} borderRadius="15px" padding="6px 12px">
+                          <Icon icon="camera" width="22px" height="22px" />
+                        </Box>
+                      )}
+                    </Flex>
+                  )}
 
-                <Link
-                  variant="buttonDefault"
-                  mt="13px"
-                  width="fit-content"
-                  href={`/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`}
-                  display="inline-block"
-                  zIndex={1}
-                  // color="blue.default"
-                  padding="6px 15px"
-                  fontSize="15px"
-                  letterSpacing="0.05em"
-                >
-                  {toCapitalize(t(`asset-button.${ex.asset_type.toLowerCase()}`))}
-                </Link>
+                  {ex?.description && (
+                    <Text
+                      color={fontColor2}
+                      textAlign="left"
+                      width="100%"
+                      size="l"
+                      // textTransform="uppercase"
+                    >
+                      {ex.description}
+                    </Text>
+                  )}
+
+                  <Link
+                    variant="buttonDefault"
+                    mt="13px"
+                    width="fit-content"
+                    href={getLink()}
+                    display="inline-block"
+                    zIndex={1}
+                    // color="blue.default"
+                    padding="6px 15px"
+                    fontSize="15px"
+                    letterSpacing="0.05em"
+                  >
+                    {toCapitalize(t(`asset-button.${ex.asset_type.toLowerCase()}`))}
+                  </Link>
+                </Box>
               </Box>
             </Box>
-          </Box>
-        ))}
+          );
+        })}
       </Grid>
 
       {isLoading && (
-        <Box display="flex" justifyContent="center" mt="2rem" mb="10rem">
-          <Img src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
-          <Box className="loader" />
+        <Box display="flex" justifyContent="center" mt="2rem" mb="10rem" position="relative">
+          <LoaderScreen width="80px" height="80px" />
         </Box>
       )}
 
@@ -245,6 +275,8 @@ ProjectList.propTypes = {
   withoutImage: PropTypes.bool,
   isLoading: PropTypes.bool,
   withoutDifficulty: PropTypes.bool,
+  containerPadding: PropTypes.string,
+  isDynamic: PropTypes.bool,
 };
 
 ProjectList.defaultProps = {
@@ -253,6 +285,8 @@ ProjectList.defaultProps = {
   isLoading: false,
   contextFilter: {},
   withoutDifficulty: false,
+  containerPadding: '0 15px',
+  isDynamic: false,
 };
 
 export default ProjectList;

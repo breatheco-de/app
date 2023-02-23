@@ -4,7 +4,6 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
 import Text from '../../common/components/Text';
@@ -14,8 +13,9 @@ import TitleContent from '../../js_modules/projects/TitleContent';
 import ProjectList from '../../js_modules/projects/ProjectList';
 import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
-import { isWindow } from '../../utils';
+import { getQueryString, isWindow } from '../../utils';
 import GridContainer from '../../common/components/GridContainer';
+import PaginatedView from '../../common/components/PaginationView';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'exercises');
@@ -25,7 +25,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   const exercises = []; // filtered exercises after removing repeated
   let arrExercises = []; // incoming exercises
   const resp = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&limit=1000`,
+    `${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&limit=2000`,
     {
       Accept: 'application/json, text/plain, */*',
     },
@@ -132,21 +132,29 @@ export const getStaticProps = async ({ locale, locales }) => {
 function Exercices({ exercises, technologyTags, difficulties }) {
   const { t } = useTranslation('exercises');
   const { filteredBy, setExerciseFilters } = useFilter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [offset, setOffset] = useState(10);
   const router = useRouter();
+  const page = getQueryString('page', 1);
+  const search = getQueryString('search', 1);
+
+  const contentPerPage = 20;
+  const startIndex = (page - 1) * contentPerPage;
 
   const { technologies, difficulty, videoTutorials } = filteredBy.exercisesOptions;
   const techsQuery = router.query.techs;
   const difficultyQuery = router.query.difficulty;
-  const queryExists = Object.keys(router.query).length > 0;
-  const exercisesFiltered = exercises.slice(0, offset);
-  const exercisesSearched = exercises.filter(
-    (exercise) => exercise.title.toLowerCase()
-      .includes(router?.query?.search?.toLocaleLowerCase() || false),
-  );
 
   const technologiesActived = technologies.length || (techsQuery?.length > 0 ? techsQuery?.split(',')?.length : 0);
+
+  const queryFunction = async () => {
+    const endIndex = startIndex + contentPerPage;
+    const paginatedResults = exercises.slice(startIndex, endIndex);
+
+    return {
+      count: exercises.length,
+      results: paginatedResults,
+    };
+  };
+
   const difficultyIsActive = () => {
     if (difficultyQuery?.length > 0) return 1;
     if (difficulty !== undefined && difficulty?.length > 0) return 1;
@@ -157,51 +165,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
     + difficultyIsActive()
     + videoTutorials;
 
-  let initialSearchValue;
-  useEffect(() => {
-    initialSearchValue = router.query && router.query.search;
-  }, [initialSearchValue]);
   const { isOpen, onClose, onOpen } = useDisclosure();
-
-  const handleScroll = () => {
-    const scrollTop = isWindow && document.documentElement.scrollTop;
-    const offsetHeight = isWindow && document.documentElement.offsetHeight;
-    const innerHeight = isWindow && window.innerHeight;
-    if ((innerHeight + scrollTop) <= offsetHeight) return;
-    setIsLoading(true);
-  };
-
-  useEffect(() => {
-    if (!queryExists) {
-      if (exercisesSearched.length > 0) return () => {};
-      if (offset <= exercises.length) {
-        console.log('loading exercises...');
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-      }
-      console.log('All exercises loaded');
-    }
-    return () => {};
-  }, [offset, queryExists]);
-
-  useEffect(() => {
-    if (!isLoading) return;
-    if (offset >= exercises.length) setIsLoading(false);
-    setTimeout(() => {
-      setOffset(offset + 10);
-      setIsLoading(false);
-    }, 200);
-  }, [isLoading]);
-
-  const getExercises = () => {
-    if (queryExists) {
-      return exercises;
-    }
-    if (exercisesSearched.length > 0) {
-      return exercisesSearched;
-    }
-    return exercisesFiltered;
-  };
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
@@ -228,7 +192,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
         >
           <TitleContent title={t('title')} mobile={false} />
 
-          <Search placeholder={t('search')} onChange={() => setIsLoading(true)} />
+          <Search placeholder={t('search')} />
 
           <Button
             variant="outline"
@@ -287,12 +251,33 @@ function Exercices({ exercises, technologyTags, difficulties }) {
         >
           {t('description')}
         </Text>
-        <ProjectList
-          projects={getExercises()}
-          contextFilter={filteredBy.exercisesOptions}
-          isLoading={isLoading}
-          projectPath="interactive-exercise"
-        />
+        {(search?.length > 0 || currentFilters > 0) ? (
+          <>
+            {exercises?.length > 0 && (
+              <ProjectList
+                projects={exercises}
+                withoutImage
+                contextFilter={filteredBy.exercisesOptions}
+                projectPath="interactive-exercise"
+              />
+            )}
+          </>
+        ) : (
+          <>
+            {isWindow && (
+              <PaginatedView
+                queryFunction={queryFunction}
+                options={{
+                  projectPath: 'interactive-exercise',
+                  pagePath: '/interactive-exercises',
+                  contextFilter: filteredBy.exercisesOptions,
+                  contentPerPage,
+                  disableLangFilter: true,
+                }}
+              />
+            )}
+          </>
+        )}
       </GridContainer>
     </Box>
   );
@@ -300,7 +285,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
 
 Exercices.propTypes = {
   exercises: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
-  technologyTags: PropTypes.arrayOf(PropTypes.string),
+  technologyTags: PropTypes.arrayOf(PropTypes.any),
   difficulties: PropTypes.arrayOf(PropTypes.string),
 };
 Exercices.defaultProps = {

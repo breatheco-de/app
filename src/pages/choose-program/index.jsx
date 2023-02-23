@@ -328,19 +328,19 @@ function chooseProgram() {
           <Box flex={{ base: 1, md: 0.3 }} zIndex={2} position={{ base: 'inherit', md: 'absolute' }} maxWidth="320px" right={0} top={0}>
             {flags?.appReleaseEnableLiveEvents && (
               <LiveEvent
-                // liveUrl={events[0].url}
+                featureLabel={t('common:live-event.title')}
+                featureReadMoreUrl={t('common:live-event.readMoreUrl')}
                 liveClassHash={liveClass?.hash}
                 liveStartsAt={liveClass?.starting_at}
                 liveEndsAt={liveClass?.ending_at}
                 otherEvents={events}
-                // featureLabel,
               />
             )}
           </Box>
         </Flex>
 
         <Box>
-          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="2rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '10px' }}>
+          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '10px' }}>
             <Heading size="sm" width={{ base: '100%', md: '22rem' }}>
               {t('your-active-programs')}
             </Heading>
