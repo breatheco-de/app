@@ -1,4 +1,4 @@
-import { Button, Flex, useToast } from '@chakra-ui/react';
+import { Button, Flex, useToast, Box, Image } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -10,8 +10,10 @@ import { url } from '../../../utils/regex';
 import Heading from '../Heading';
 import AddMember from './AddMember';
 import { usePersistent } from '../../hooks/usePersistent';
+import useStyle from '../../hooks/useStyle';
 import { isNumber } from '../../../utils';
 import useFinalProjectProps from '../../store/actions/finalProjectAction';
+import Icon from '../Icon';
 
 const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, defaultValues }) => {
   const { t } = useTranslation('final-project');
@@ -22,6 +24,8 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
   const toast = useToast();
   const cohortAcademy = cohortData?.academy?.id || 4;
   const { finalProjectData, setFinalProjectData } = useFinalProjectProps();
+  const { fontColor, backgroundColor } = useStyle();
+  const [prefillImage, setPrefillImage] = useState(finalProjectData?.screenshot || defaultValues?.screenshot || null);
   const [formProps, setFormProps] = useState({
     name: '',
     one_line_desc: '',
@@ -37,37 +41,6 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
 
   const megaByte = 1000000;
   const maxFileSize = 2 * megaByte;
-
-  const toDataURL = (urlFile) => fetch(urlFile)
-    .then((response) => response.blob())
-    .then((blob) => new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    }));
-
-  const dataURLtoFile = (dataurl, filename) => {
-    const arr = dataurl.split(',');
-    const mime = arr[0].match(/:(.*?);/)[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    // eslint-disable-next-line no-plusplus
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], filename, { type: mime });
-  };
-
-  const getFileFromUrl = async (urlFile) => {
-    const dataUrl = await toDataURL(urlFile);
-
-    console.log('Here is Base64 Url', dataUrl);
-    const fileData = dataURLtoFile(dataUrl, 'imageName.jpg');
-    console.log('Here is JavaScript File Object', fileData);
-    return fileData;
-  };
 
   const finalProjectValidation = Yup.object().shape({
     name: Yup.string()
@@ -108,8 +81,17 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
       .required(commonTranslation?.validators['geeks-members-required'] || t('common:validators.geeks-members-required')),
   });
 
-  const handleUpdate = (actions, allValues) => {
-    bc.todo().updateFinalProject(allValues)
+  const handleUpdate = async (actions, allValues) => {
+    let result;
+    if (allValues[0].screenshot) {
+      const formdata = new FormData();
+      formdata.append('file', allValues[0].screenshot);
+
+      result = await bc.todo().sendScreenshot(formdata);
+    }
+    const screenshot = result?.data?.url || prefillImage || null;
+    const val = [{ ...allValues[0], screenshot }];
+    bc.todo().updateFinalProject(val)
       .then((res) => {
         if (res) {
           setFinalProjectData(res.data[0]);
@@ -142,19 +124,14 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
   };
 
   const handleSubmit = async (actions, allValues) => {
-    console.log('allValues');
-    console.log(allValues);
     let result;
     if (allValues.screenshot) {
       const formdata = new FormData();
       formdata.append('file', allValues.screenshot);
-      console.log('formdata');
-      console.log(formdata);
+
       result = await bc.todo().sendScreenshot(formdata);
     }
     const screenshot = result?.data?.url || null;
-    console.log(screenshot);
-    // return
 
     bc.todo().createFinalProject({ ...allValues, screenshot })
       .then((res) => {
@@ -225,6 +202,10 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
   };
   const repoUrl = finalProjectData?.repo_url || defaultValues?.repo_url;
   const projectId = finalProjectData?.id || defaultValues?.id;
+
+  const handleCloseFile = () => {
+    setPrefillImage(null);
+  };
   return (
     <Formik
       initialValues={{
@@ -233,7 +214,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
         description: finalProjectData?.description || defaultValues?.description || '',
         repo_url: repoUrl || '',
         slides_url: '',
-        screenshot: (finalProjectData?.screenshot || defaultValues?.screenshot) ? getFileFromUrl(finalProjectData?.screenshot || defaultValues?.screenshot) : null,
+        screenshot: null,
         members: getMembers(),
       }}
       onSubmit={(values, actions) => {
@@ -320,22 +301,31 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
                 setFormProps={setFormProps}
               /> */}
 
-              <FieldForm
-                type="file"
-                name="screenshot"
-                translation={{
-                  finalProjectTranslation,
-                  commonTranslation,
-                }}
-                formProps={formProps}
-                fileProps={fileProps}
-                setFileProps={setFileProps}
-                setFormProps={setFormProps}
-                setFieldValue={setFieldValue}
-                maxFileSize={maxFileSize}
-                acceptedFiles="image/jpg, image/jpeg, image/gif, image/png, image/gif"
-                hint={finalProjectTranslation?.['modal-form']?.['screenshot-hint'] || t('modal-form.screenshot-hint')}
-              />
+              {!prefillImage ? (
+                <FieldForm
+                  type="file"
+                  name="screenshot"
+                  translation={{
+                    finalProjectTranslation,
+                    commonTranslation,
+                  }}
+                  formProps={formProps}
+                  fileProps={fileProps}
+                  setFileProps={setFileProps}
+                  setFormProps={setFormProps}
+                  setFieldValue={setFieldValue}
+                  maxFileSize={maxFileSize}
+                  acceptedFiles="image/jpg, image/jpeg, image/gif, image/png, image/gif"
+                  hint={finalProjectTranslation?.['modal-form']?.['screenshot-hint'] || t('modal-form.screenshot-hint')}
+                />
+              ) : (
+                <Box width="100 %" height="100%" position="relative">
+                  <Button display="flex" background={backgroundColor} color={fontColor} variant="unstyled" opacity={0.7} _hover={{ opacity: 0.9 }} onClick={handleCloseFile} position="absolute" right={3} top={2}>
+                    <Icon icon="close" width="14px" height="14px" color="currentColor" />
+                  </Button>
+                  <Image src={prefillImage} width="100%" height="auto" borderRadius="3px" />
+                </Box>
+              )}
               <AddMember
                 translation={{ finalProjectTranslation, commonTranslation }}
                 students={students}

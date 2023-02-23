@@ -553,7 +553,7 @@ const Dashboard = () => {
                   // featureLabel,
                 />
               )}
-              {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
+              {!flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
                 <FinalProject
                   tasks={taskTodoState}
                   studentAndTeachers={onlyStudentsActive}
