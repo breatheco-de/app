@@ -265,11 +265,6 @@
     "permanent": true
   },
   {
-    "source": "/lesson/conditionals-in-programing-python-es",
-    "destination": "/es/lesson/conditionals-in-programing-python-es",
-    "permanent": true
-  },
-  {
     "source": "/lesson/html-input-html-textarea-es",
     "destination": "/es/lesson/html-input-html-textarea-es",
     "permanent": true
@@ -282,6 +277,11 @@
   {
     "source": "/lesson/understanding-rest-apis-es",
     "destination": "/es/lesson/understanding-rest-apis-es",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/conditionals-in-programing-python-es",
+    "destination": "/es/lesson/conditionals-in-programing-python-es",
     "permanent": true
   },
   {
