@@ -34,10 +34,7 @@ function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, optio
         >
           <ProjectList
             projects={hasMore ? currentArticles : articles}
-            withoutImage={options.withoutImage}
-            withoutDifficulty={options.withoutDifficulty}
-            contextFilter={options.exercisesOptions}
-            projectPath={options.projectPath}
+            {...options}
           />
         </InfiniteScroll>
       )}

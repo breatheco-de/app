@@ -101,7 +101,6 @@ const PaginatedView = ({ storyConfig, renderComponent, handlePageChange, queryFu
           projects={resultsFilteredByLang || []}
           withoutDifficulty
           contextFilter={options?.contextFilter}
-          projectPath={options?.projectPath || 'lesson'}
         />
       )}
 

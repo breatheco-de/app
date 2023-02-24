@@ -10,12 +10,12 @@ import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import FilterModal from '../../common/components/FilterModal';
 import TitleContent from '../../js_modules/projects/TitleContent';
-import ProjectList from '../../js_modules/projects/ProjectList';
 import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 import GridContainer from '../../common/components/GridContainer';
 import { getQueryString } from '../../utils';
 import PaginatedView from '../../common/components/PaginationView';
+import ProjectsLoader from '../../common/components/ProjectsLoader';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'projects');
@@ -131,7 +131,8 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const page = getQueryString('page', 1);
-  const search = getQueryString('search', 1);
+  const search = getQueryString('search', '');
+  const pageIsEnabled = getQueryString('page', false);
 
   const contentPerPage = 20;
   const startIndex = (page - 1) * contentPerPage;
@@ -229,7 +230,6 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
             onClose={onClose}
             contextFilter={filteredBy.projectsOptions}
             cardHeight="348px"
-            // isLoading={isLoading}
             setFilter={setProjectFilters}
             technologyTags={technologyTags}
             difficulties={difficulties}
@@ -237,7 +237,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         </Flex>
       </Box>
 
-      <GridContainer>
+      <GridContainer position="relative">
         <Text
           size="md"
           display="flex"
@@ -247,20 +247,22 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
           {t('description')}
         </Text>
 
-        {(search?.length > 0 || currentFilters > 0) ? (
-          <ProjectList
-            projects={projects}
-            withoutImage
-            contextFilter={filteredBy.exercisesOptions}
-            projectPath="how-to"
+        {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
+          <ProjectsLoader
+            articles={projects}
+            itemsPerPage={20}
+            searchQuery={search}
+            options={{
+              withoutImage: true,
+              contextFilter: filteredBy.projectsOptions,
+            }}
           />
         ) : (
           <PaginatedView
             queryFunction={queryFunction}
             options={{
-              projectPath: 'interactive-coding-tutorial',
               pagePath: '/interactive-coding-tutorials',
-              contextFilter: filteredBy.exercisesOptions,
+              contextFilter: filteredBy.projectsOptions,
               contentPerPage,
               disableLangFilter: true,
             }}
