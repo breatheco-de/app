@@ -90,6 +90,7 @@ const useSignup = () => {
 
   const handlePayment = (data) => new Promise((resolve, reject) => {
     const manyInstallmentsExists = selectedPlanCheckoutData?.financing_options?.length > 0 && selectedPlanCheckoutData?.financing_options[0]?.how_many_months;
+
     bc.payment().pay({
       type: data?.type || checkoutData.type,
       token: data?.token || checkoutData.token,
@@ -130,21 +131,31 @@ const useSignup = () => {
         const financingOptionsExists = currentPlan?.financing_options?.length > 0 && currentPlan?.financing_options[0]?.monthly_price > 0;
         const singlePlan = data?.plans?.length > 0 ? data?.plans[0] : data;
 
-        // structure like plans but only for month
+        const trialPlan = !isNotTrial ? {
+          ...singlePlan,
+          title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
+          price: data?.amount_per_month,
+          priceText: t('free-trial'),
+          period: singlePlan?.trial_duration_unit,
+          type: 'TRIAL',
+        } : {};
+
         const monthPlan = existsAmountPerMonth ? {
           ...singlePlan,
           title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
           price: data?.amount_per_month,
           priceText: `$${data?.amount_per_month}`,
           period: 'MONTH',
+          type: 'PAYMENT',
         } : {};
-        // structure like plans but only for year
+
         const yearPlan = existsAmountPerYear ? {
           ...singlePlan,
           title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
           price: data?.amount_per_year,
           priceText: `$${data?.amount_per_year}`,
           period: 'YEAR',
+          type: 'PAYMENT',
         } : {};
         const financingOption = financingOptionsExists ? {
           ...singlePlan,
@@ -153,9 +164,10 @@ const useSignup = () => {
           priceText: `$${currentPlan?.financing_options[0]?.monthly_price} x ${currentPlan?.financing_options[0]?.how_many_months}`,
           period: 'FINANCING',
           how_many_months: currentPlan?.financing_options[0]?.how_many_months,
+          type: 'PAYMENT',
         } : {};
 
-        const planList = [monthPlan, yearPlan, financingOption].filter((plan) => Object.keys(plan).length > 0);
+        const planList = [trialPlan, monthPlan, yearPlan, financingOption].filter((plan) => Object.keys(plan).length > 0);
         const finalData = {
           ...data,
           isTrial: !isNotTrial && !financingOptionsExists,
