@@ -22,6 +22,11 @@
       "title": "My certificates",
       "value": "certificates",
       "disabled": false
+    },
+    {
+      "title": "Subscriptions",
+      "value": "subscriptions",
+      "disabled": false
     }
   ],
   "remove-github-modal": {
