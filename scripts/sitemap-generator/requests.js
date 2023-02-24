@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 const { default: axios } = require('axios');
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
@@ -25,40 +26,31 @@ const getReadPages = () => {
   return resp;
 };
 
-const getLessons = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson&limit=1000`)
+const getAsset = async (type) => {
+  const limit = 100;
+  let offset = 0;
+  let allResults = [];
+
+  let results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&limit=${limit}&offset=${offset}`)
     .then((res) => res.data.results)
     .catch(() => {
-      console.error('SITEMAP: Error fetching Lessons pages');
+      console.error(`SITEMAP: Error fetching ${type.toUpperCase()} pages`);
+      return [];
     });
-  return data;
-};
 
-const getExercises = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&limit=1000`)
-    .then((res) => res.data.results)
-    .catch(() => {
-      console.error('SITEMAP: Error fetching Exercises pages');
-    });
-  return data;
-};
+  while (results.length > 0) {
+    allResults = allResults.concat(results);
+    offset += limit;
 
-const getProjects = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=1000`)
-    .then((res) => res.data.results)
-    .catch(() => {
-      console.error('SITEMAP: Error fetching Projects pages');
-    });
-  return data;
-};
+    results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&limit=${limit}&offset=${offset}`)
+      .then((res) => res.data.results)
+      .catch(() => {
+        console.error(`SITEMAP: Error fetching ${type.toUpperCase()} pages`);
+        return [];
+      });
+  }
 
-const getHowTo = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=1000`)
-    .then((res) => res.data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como'))
-    .catch(() => {
-      console.error('SITEMAP: Error HowTo Read pages');
-    });
-  return data;
+  return allResults;
 };
 
 const getLandingTechnologies = () => {
@@ -77,11 +69,8 @@ const getLandingTechnologies = () => {
 };
 
 module.exports = {
+  getAsset,
   getPrismicPages,
   getReadPages,
-  getLessons,
-  getExercises,
-  getProjects,
-  getHowTo,
   getLandingTechnologies,
 };
