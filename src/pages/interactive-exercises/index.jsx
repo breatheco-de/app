@@ -10,12 +10,12 @@ import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import FilterModal from '../../common/components/FilterModal';
 import TitleContent from '../../js_modules/projects/TitleContent';
-import ProjectList from '../../js_modules/projects/ProjectList';
 import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
-import { getQueryString, isWindow } from '../../utils';
+import { getQueryString } from '../../utils';
 import GridContainer from '../../common/components/GridContainer';
 import PaginatedView from '../../common/components/PaginationView';
+import ProjectsLoader from '../../common/components/ProjectsLoader';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'exercises');
@@ -134,7 +134,8 @@ function Exercices({ exercises, technologyTags, difficulties }) {
   const { filteredBy, setExerciseFilters } = useFilter();
   const router = useRouter();
   const page = getQueryString('page', 1);
-  const search = getQueryString('search', 1);
+  const search = getQueryString('search', '');
+  const pageIsEnabled = getQueryString('page', false);
 
   const contentPerPage = 20;
   const startIndex = (page - 1) * contentPerPage;
@@ -251,32 +252,27 @@ function Exercices({ exercises, technologyTags, difficulties }) {
         >
           {t('description')}
         </Text>
-        {(search?.length > 0 || currentFilters > 0) ? (
-          <>
-            {exercises?.length > 0 && (
-              <ProjectList
-                projects={exercises}
-                withoutImage
-                contextFilter={filteredBy.exercisesOptions}
-                projectPath="interactive-exercise"
-              />
-            )}
-          </>
+        {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
+          <ProjectsLoader
+            articles={exercises}
+            itemsPerPage={20}
+            searchQuery={search}
+            options={{
+              withoutImage: true,
+              contextFilter: filteredBy.exercisesOptions,
+
+            }}
+          />
         ) : (
-          <>
-            {isWindow && (
-              <PaginatedView
-                queryFunction={queryFunction}
-                options={{
-                  projectPath: 'interactive-exercise',
-                  pagePath: '/interactive-exercises',
-                  contextFilter: filteredBy.exercisesOptions,
-                  contentPerPage,
-                  disableLangFilter: true,
-                }}
-              />
-            )}
-          </>
+          <PaginatedView
+            queryFunction={queryFunction}
+            options={{
+              pagePath: '/interactive-exercises',
+              contextFilter: filteredBy.exercisesOptions,
+              contentPerPage,
+              disableLangFilter: true,
+            }}
+          />
         )}
       </GridContainer>
     </Box>

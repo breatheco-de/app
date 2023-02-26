@@ -275,7 +275,7 @@ const ProjectList = ({
 ProjectList.propTypes = {
   projects: PropTypes.arrayOf(PropTypes.object).isRequired,
   contextFilter: PropTypes.objectOf(PropTypes.any),
-  projectPath: PropTypes.string.isRequired,
+  projectPath: PropTypes.string,
   pathWithDifficulty: PropTypes.bool,
   withoutImage: PropTypes.bool,
   isLoading: PropTypes.bool,
@@ -285,13 +285,14 @@ ProjectList.propTypes = {
 };
 
 ProjectList.defaultProps = {
+  projectPath: '',
   pathWithDifficulty: false,
   withoutImage: false,
   isLoading: false,
   contextFilter: {},
   withoutDifficulty: false,
   containerPadding: '0 15px',
-  isDynamic: false,
+  isDynamic: true,
 };
 
 export default ProjectList;
