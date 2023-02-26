@@ -118,7 +118,7 @@ TagCapsule.propTypes = {
   marginY: PropTypes.string,
   gap: PropTypes.string,
   style: PropTypes.shape({}),
-  fontWeight: PropTypes.string,
+  fontWeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   isLink: PropTypes.bool,
   href: PropTypes.string,
   borderRadius: PropTypes.string,
@@ -132,7 +132,7 @@ TagCapsule.defaultProps = {
   variant: 'slash',
   paddingX: '20px',
   marginY: '18px',
-  fontWeight: '500',
+  fontWeight: 500,
   gap: '0',
   style: {
     margin: '0',

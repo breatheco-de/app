@@ -275,7 +275,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
 };
 
 Projects.propTypes = {
-  technologyTags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  technologyTags: PropTypes.arrayOf(PropTypes.any).isRequired,
   projects: PropTypes.arrayOf(PropTypes.object).isRequired,
   difficulties: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
