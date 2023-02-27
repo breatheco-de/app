@@ -3,25 +3,14 @@ import { formatRelative } from 'date-fns';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { es } from 'date-fns/locale';
-import { useEffect } from 'react';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import ShareButton from '../../common/components/ShareButton';
 import useStyle from '../../common/hooks/useStyle';
-import bc from '../../common/services/breathecode';
 
 const Certificates = ({ certificates }) => {
-  console.log('Certificates');
   const { t, lang } = useTranslation('profile');
   const { borderColor2 } = useStyle();
-
-  useEffect(() => {
-    bc.payment().subscriptions()
-      .then((resp) => {
-        const data = resp?.data;
-        console.log('subscription_data:::', data);
-      });
-  }, []);
 
   return (
     <>
