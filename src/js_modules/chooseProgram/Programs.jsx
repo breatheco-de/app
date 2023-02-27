@@ -11,6 +11,10 @@ const Programs = ({ item, handleChoose, usersConnected }) => {
   const { cohort } = item;
   const { version, slug, name } = cohort.syllabus_version;
   const currentCohortProps = programsList[cohort.slug];
+  const subscription = currentCohortProps?.subscription;
+  const isFreeTrial = subscription?.status === 'FREE_TRIAL';
+  const isBought = subscription?.invoices?.amount > 0;
+  // const subscriptionExists = typeof subscription?.id === 'number';
   const moduleStarted = currentCohortProps?.allTasks?.some((task) => task?.completed && task?.completed > 0);
 
   const router = useRouter();
@@ -64,12 +68,18 @@ const Programs = ({ item, handleChoose, usersConnected }) => {
     return ({});
   }) : [];
 
+  // console.log('subscription:::', subscription);
+
   return (
     <ProgramCard
       width="100%"
       syllabusContent={syllabusContent?.length > 0 ? Object.assign({}, ...syllabusContent) : {}}
       programName={cohort?.name}
-      isBought={moduleStarted}
+      isBought={moduleStarted || isBought}
+      isFreeTrial={isFreeTrial}
+      // haveFreeTrial={}
+      // isBought={moduleStarted}
+      // isBought={!isFreeTrial}
       startsIn={item?.cohort?.kickoff_date}
       icon="coding"
       iconBackground="blue.default"
