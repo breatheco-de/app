@@ -62,5 +62,38 @@
     "tooltip-label": "Upload your profile image",
     "title": "Upload your profile image",
     "submit-button": "Update profile picture"
-  }
+  },
+  "subscription": {
+    "next-payment": "Next payment on {{date}}",
+    "last-payment": "Last payment on {{date}}",
+    "duration": "Duration: {{duration}}",
+    "renewal": "Renewal: {{renewal}}",
+    "not-renewable": "Renewal: Not renewable",
+    "payment": "Payment: {{payment}}",
+    "status": {
+      "free_trial": "Free trial",
+      "fully_paid": "Fully paid",
+      "active": "Active",
+      "expired": "Expired",
+      "canceled": "Canceled",
+      "completed": "Completed"
+    },
+    "cancel": "Cancel subscription",
+    "upgrade": "Upgrade subscription",
+    "cancel-modal": {
+      "title": "Cancel subscription",
+      "description": "Are you sure you want to cancel your subscription to {{cohort}}",
+      "closeText": "No, go back",
+      "handlerText": "Yes, confirm"
+    }
+  },
+  "monthly": "Monthly",
+  "half-year": "Half year",
+  "quarterly": "Quarterly",
+  "yearly": "Yearly",
+  "day": "day",
+  "days": "days",
+  "and": "and",
+  "hours": "hours",
+  "months": "months"
 }
