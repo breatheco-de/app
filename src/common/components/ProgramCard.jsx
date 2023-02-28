@@ -26,7 +26,7 @@ const availableLanguages = {
 const ProgramCard = ({
   programName, programDescription, isBought, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
   syllabusContent, isFreeTrial, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
-  width, usersConnected, assistants, teacher, handleChoose, isHiddenOnPrework, onOpenModal,
+  width, usersConnected, assistants, teacher, handleChoose, isHiddenOnPrework, onOpenModal, isAvailableAsSaas,
 }) => {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
@@ -295,7 +295,11 @@ const ProgramCard = ({
                   {isFreeTrial ? (
                     <FreeTagCapsule />
                   ) : (
-                    <Icon icon="crown" width="22px" height="15px" />
+                    <>
+                      {isAvailableAsSaas && (
+                        <Icon icon="crown" width="22px" height="15px" />
+                      )}
+                    </>
                   )}
                 </>
               )}
@@ -463,6 +467,7 @@ ProgramCard.propTypes = {
   handleChoose: PropTypes.func,
   isHiddenOnPrework: PropTypes.bool,
   onOpenModal: PropTypes.func,
+  isAvailableAsSaas: PropTypes.bool,
 };
 
 ProgramCard.defaultProps = {
@@ -485,6 +490,7 @@ ProgramCard.defaultProps = {
   handleChoose: () => {},
   isHiddenOnPrework: false,
   onOpenModal: () => {},
+  isAvailableAsSaas: false,
 };
 
 export default ProgramCard;

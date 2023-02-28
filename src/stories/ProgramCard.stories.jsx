@@ -322,3 +322,21 @@ courseHasStarted.args = {
     completedExercises: 5,
   },
 };
+export const isAvailableForSaas = Component.bind({});
+isAvailableForSaas.args = {
+  programName: 'Data Science',
+  programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
+  startsIn: new Date(subMinutes(new Date(), 128)),
+  icon: "coding",
+  iconBackground: "blue.default",
+  assistants: mentors,
+  teacher: teachers[0],
+  syllabusContent: {
+    totalLessons: 30,
+    totalProjects: 15,
+    totalExercises: 15,
+    completedLessons: 3,
+    completedProjects: 10,
+    completedExercises: 5,
+  },
+};

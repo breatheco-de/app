@@ -79,6 +79,7 @@ const Programs = ({ item, handleChoose, onOpenModal, usersConnected }) => {
       isBought={moduleStarted || isBought}
       isFreeTrial={isFreeTrial}
       freeTrialExpireDate={subscription?.valid_until ? new Date(subscription?.valid_until) : new Date()}
+      isAvailableAsSaas={cohort?.available_as_saas}
       // haveFreeTrial={}
       // isBought={moduleStarted}
       // isBought={!isFreeTrial}
