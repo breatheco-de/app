@@ -98,6 +98,8 @@ function chooseProgram() {
     }
   }, [dataQuery, cohortTasks]);
 
+  // console.log('cohorts', dataQuery?.cohorts);
+  // TOOD: usar available_as_saas
   useEffect(() => {
     if (dataQuery?.id) {
       dataQuery?.cohorts.map(async (item) => {

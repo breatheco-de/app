@@ -5,7 +5,7 @@ import { usePersistent } from '../../common/hooks/usePersistent';
 import axios from '../../axios';
 import useProgramList from '../../common/store/actions/programListAction';
 
-const Programs = ({ item, handleChoose, usersConnected }) => {
+const Programs = ({ item, handleChoose, onOpenModal, usersConnected }) => {
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const { programsList } = useProgramList();
   const { cohort } = item;
@@ -13,7 +13,7 @@ const Programs = ({ item, handleChoose, usersConnected }) => {
   const currentCohortProps = programsList[cohort.slug];
   const subscription = currentCohortProps?.subscription;
   const isFreeTrial = subscription?.status === 'FREE_TRIAL';
-  const isBought = subscription?.invoices?.amount > 0;
+  const isBought = subscription?.invoices[0]?.amount >= 0;
   // const subscriptionExists = typeof subscription?.id === 'number';
   const moduleStarted = currentCohortProps?.allTasks?.some((task) => task?.completed && task?.completed > 0);
 
@@ -21,6 +21,9 @@ const Programs = ({ item, handleChoose, usersConnected }) => {
 
   const isHiddenOnPrework = cohort?.is_hidden_on_prework === null ? cohort?.academy?.is_hidden_on_prework : cohort?.is_hidden_on_prework;
 
+  const onClickUpgrade = () => {
+    onOpenModal();
+  };
   const onClickHandler = () => {
     handleChoose({
       version,
@@ -68,8 +71,6 @@ const Programs = ({ item, handleChoose, usersConnected }) => {
     return ({});
   }) : [];
 
-  // console.log('subscription:::', subscription);
-
   return (
     <ProgramCard
       width="100%"
@@ -77,6 +78,7 @@ const Programs = ({ item, handleChoose, usersConnected }) => {
       programName={cohort?.name}
       isBought={moduleStarted || isBought}
       isFreeTrial={isFreeTrial}
+      freeTrialExpireDate={subscription?.valid_until ? new Date(subscription?.valid_until) : new Date()}
       // haveFreeTrial={}
       // isBought={moduleStarted}
       // isBought={!isFreeTrial}
@@ -85,11 +87,11 @@ const Programs = ({ item, handleChoose, usersConnected }) => {
       iconBackground="blue.default"
       assistants={currentCohortProps?.assistant}
       teacher={currentCohortProps?.teacher?.[0]}
-      freeTrialExpireDate={new Date()}
       usersConnected={usersConnected}
       courseProgress={currentCohortProps?.percentage || 0}
       handleChoose={onClickHandler}
       isHiddenOnPrework={isHiddenOnPrework && cohort.stage.includes('PREWORK')}
+      onOpenModal={onClickUpgrade}
     />
   );
 };
@@ -98,12 +100,14 @@ Programs.propTypes = {
   item: PropTypes.objectOf(PropTypes.any),
   handleChoose: PropTypes.func,
   usersConnected: PropTypes.arrayOf(PropTypes.any),
+  onOpenModal: PropTypes.func,
 };
 
 Programs.defaultProps = {
   item: {},
   handleChoose: () => {},
   usersConnected: [],
+  onOpenModal: () => {},
 };
 
 export default Programs;
