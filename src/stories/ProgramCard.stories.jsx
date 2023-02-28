@@ -1,5 +1,5 @@
 import React from 'react';
-import { addMinutes, addDays, subHours, addHours } from 'date-fns';
+import { addMinutes, addDays, subHours, addHours, subMinutes } from 'date-fns';
 import ProgramCard from '../common/components/ProgramCard';
 
 export default {
@@ -303,4 +303,22 @@ isHiddenOnPrework.args = {
   lessonNumber: 1.2,
   courseProgress: 34,
   isHiddenOnPrework: true,
+};
+export const courseHasStarted = Component.bind({});
+courseHasStarted.args = {
+  programName: 'Data Science',
+  programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
+  startsIn: new Date(subMinutes(new Date(), 128)),
+  icon: "coding",
+  iconBackground: "blue.default",
+  assistants: mentors,
+  teacher: teachers[0],
+  syllabusContent: {
+    totalLessons: 30,
+    totalProjects: 15,
+    totalExercises: 15,
+    completedLessons: 3,
+    completedProjects: 10,
+    completedExercises: 5,
+  },
 };
