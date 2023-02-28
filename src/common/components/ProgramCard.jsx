@@ -26,13 +26,13 @@ const availableLanguages = {
 const ProgramCard = ({
   programName, programDescription, isBought, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
   syllabusContent, isFreeTrial, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
-  width, usersConnected, assistants, teacher, handleChoose, isHiddenOnPrework,
+  width, usersConnected, assistants, teacher, handleChoose, isHiddenOnPrework, onOpenModal, isAvailableAsSaas,
 }) => {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
   const bgColor = useColorModeValue('featuredLight', 'featuredDark');
   const now = new Date();
-  const { lightColor } = useStyle();
+  const { lightColor, hexColor } = useStyle();
   const isExpired = isFreeTrial && freeTrialExpireDate < now;
 
   const programCardTR = stTranslation?.[lang]?.['program-card'];
@@ -58,7 +58,7 @@ const ProgramCard = ({
       });
 
     if (formated === '') return stTranslation ? stTranslation[lang]['program-card']['starting-today'] : t('starting-today');
-    if (start < now) return stTranslation ? stTranslation[lang]['program-card'].started : t('started');
+    // if (start < now) return stTranslation ? stTranslation[lang]['program-card'].started : t('started');
     return formated;
   };
 
@@ -195,7 +195,7 @@ const ProgramCard = ({
       end: now,
       start: freeTrialExpireDate,
     });
-
+    const hours = duration?.hours;
     const formated = formatDuration(duration,
       {
         format: ['days'],
@@ -204,6 +204,7 @@ const ProgramCard = ({
 
     if (isExpired) timeString = stTranslation ? stTranslation[lang]['program-card']['non-left'] : t('non-left');
     else if (duration.days > 0) timeString = `${formated} ${stTranslation ? stTranslation[lang]['program-card'].left : t('left')}`;
+    else if (duration.days === 0 && hours >= 0) timeString = `${hours > 0 ? `${hours}h ${t('common:and')}` : ''} ${duration?.minutes}min`;
     else timeString = stTranslation ? stTranslation[lang]['program-card'].today : t('today');
 
     return (
@@ -226,6 +227,9 @@ const ProgramCard = ({
       </Flex>
     );
   };
+
+  const hasStarted = statusTimeString(new Date(startsIn)) === 'started';
+  // const startsInStatus = statusTimeString(new Date(startsIn));
 
   return (
     <Box
@@ -251,13 +255,15 @@ const ProgramCard = ({
             <></>
           ) : (
             <>
-              {!isBought && statusTimeString(startsIn) !== 'started' ? (
+              {/* !isBought && statusTimeString(startsIn) !== 'started' */}
+              {!isBought ? (
                 <Flex width="116px" justifyContent="flex-end">
                   <Box marginRight="10px">
                     <Icon
                       width="14px"
                       height="21px"
                       icon="rocket"
+                      color={hasStarted ? hexColor.blueDefault : ''}
                     />
                   </Box>
                   <Box>
@@ -267,7 +273,10 @@ const ProgramCard = ({
                       fontWeight="600"
                       color={textColor}
                     >
-                      {stTranslation ? stTranslation[lang]['program-card']['starts-in'] : t('starts-in')}
+                      {hasStarted
+                        ? `${stTranslation ? stTranslation[lang]['program-card']['started-in'] : t('started-in')}`
+                        : `${stTranslation ? stTranslation[lang]['program-card']['starts-in'] : t('starts-in')}`}
+
                     </Text>
                     {isValidDate(startsIn) && (
                       <Text
@@ -286,7 +295,11 @@ const ProgramCard = ({
                   {isFreeTrial ? (
                     <FreeTagCapsule />
                   ) : (
-                    <Icon icon="crown" width="22px" height="15px" />
+                    <>
+                      {isAvailableAsSaas && (
+                        <Icon icon="crown" width="22px" height="15px" />
+                      )}
+                    </>
                   )}
                 </>
               )}
@@ -403,6 +416,7 @@ const ProgramCard = ({
                       width="100%"
                       padding="0"
                       whiteSpace="normal"
+                      onClick={onOpenModal}
                       variant="default"
                       alignItems="center"
                       background="yellow.default"
@@ -452,6 +466,8 @@ ProgramCard.propTypes = {
   iconBackground: PropTypes.string,
   handleChoose: PropTypes.func,
   isHiddenOnPrework: PropTypes.bool,
+  onOpenModal: PropTypes.func,
+  isAvailableAsSaas: PropTypes.bool,
 };
 
 ProgramCard.defaultProps = {
@@ -473,6 +489,8 @@ ProgramCard.defaultProps = {
   iconBackground: '',
   handleChoose: () => {},
   isHiddenOnPrework: false,
+  onOpenModal: () => {},
+  isAvailableAsSaas: false,
 };
 
 export default ProgramCard;

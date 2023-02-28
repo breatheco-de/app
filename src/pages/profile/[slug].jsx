@@ -13,7 +13,7 @@ import bc from '../../common/services/breathecode';
 import { cleanQueryStrings } from '../../utils';
 import AlertMessage from '../../common/components/AlertMessage';
 import GridContainer from '../../common/components/GridContainer';
-import Suscriptions from '../../js_modules/profile/Suscriptions';
+import Subscriptions from '../../js_modules/profile/Subscriptions';
 import Certificates from '../../js_modules/profile/Certificates';
 import Information from '../../js_modules/profile/Information';
 
@@ -110,7 +110,7 @@ const Profile = () => {
               <Certificates certificates={certificates} />
             </TabPanel>
             <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
-              <Suscriptions />
+              <Subscriptions />
             </TabPanel>
           </TabPanels>
         </Tabs>

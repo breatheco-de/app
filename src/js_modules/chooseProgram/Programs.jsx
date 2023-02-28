@@ -5,18 +5,25 @@ import { usePersistent } from '../../common/hooks/usePersistent';
 import axios from '../../axios';
 import useProgramList from '../../common/store/actions/programListAction';
 
-const Programs = ({ item, handleChoose, usersConnected }) => {
+const Programs = ({ item, handleChoose, onOpenModal, usersConnected }) => {
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const { programsList } = useProgramList();
   const { cohort } = item;
   const { version, slug, name } = cohort.syllabus_version;
   const currentCohortProps = programsList[cohort.slug];
+  const subscription = currentCohortProps?.subscription;
+  const isFreeTrial = subscription?.status === 'FREE_TRIAL';
+  const isBought = subscription?.invoices[0]?.amount >= 0;
+  // const subscriptionExists = typeof subscription?.id === 'number';
   const moduleStarted = currentCohortProps?.allTasks?.some((task) => task?.completed && task?.completed > 0);
 
   const router = useRouter();
 
   const isHiddenOnPrework = cohort?.is_hidden_on_prework === null ? cohort?.academy?.is_hidden_on_prework : cohort?.is_hidden_on_prework;
 
+  const onClickUpgrade = () => {
+    onOpenModal();
+  };
   const onClickHandler = () => {
     handleChoose({
       version,
@@ -69,17 +76,23 @@ const Programs = ({ item, handleChoose, usersConnected }) => {
       width="100%"
       syllabusContent={syllabusContent?.length > 0 ? Object.assign({}, ...syllabusContent) : {}}
       programName={cohort?.name}
-      isBought={moduleStarted}
+      isBought={moduleStarted || isBought}
+      isFreeTrial={isFreeTrial}
+      freeTrialExpireDate={subscription?.valid_until ? new Date(subscription?.valid_until) : new Date()}
+      isAvailableAsSaas={cohort?.available_as_saas}
+      // haveFreeTrial={}
+      // isBought={moduleStarted}
+      // isBought={!isFreeTrial}
       startsIn={item?.cohort?.kickoff_date}
       icon="coding"
       iconBackground="blue.default"
       assistants={currentCohortProps?.assistant}
       teacher={currentCohortProps?.teacher?.[0]}
-      freeTrialExpireDate={new Date()}
       usersConnected={usersConnected}
       courseProgress={currentCohortProps?.percentage || 0}
       handleChoose={onClickHandler}
       isHiddenOnPrework={isHiddenOnPrework && cohort.stage.includes('PREWORK')}
+      onOpenModal={onClickUpgrade}
     />
   );
 };
@@ -88,12 +101,14 @@ Programs.propTypes = {
   item: PropTypes.objectOf(PropTypes.any),
   handleChoose: PropTypes.func,
   usersConnected: PropTypes.arrayOf(PropTypes.any),
+  onOpenModal: PropTypes.func,
 };
 
 Programs.defaultProps = {
   item: {},
   handleChoose: () => {},
   usersConnected: [],
+  onOpenModal: () => {},
 };
 
 export default Programs;

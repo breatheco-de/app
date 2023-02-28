@@ -8,16 +8,22 @@ import Text from '../../common/components/Text';
 import useOnline from '../../common/hooks/useOnline';
 import handlers from '../../common/handlers';
 import Programs from './Programs';
+import UpgradeAccessModal from '../../common/components/UpgradeAccessModal';
 
 function ChooseProgram({ chooseList, handleChoose }) {
   const { t } = useTranslation('choose-program');
   const { usersConnected } = useOnline();
   const [showFinished, setShowFinished] = useState(false);
+  const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
 
   const activeCohorts = handlers.getActiveCohorts(chooseList);
   const finishedCohorts = handlers.getCohortsFinished(chooseList);
   return (
     <>
+      <UpgradeAccessModal
+        isOpen={upgradeModalIsOpen}
+        onClose={() => setUpgradeModalIsOpen(false)}
+      />
       {activeCohorts.length > 0 && (
         <Box
           display="grid"
@@ -31,6 +37,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
               item={item}
               handleChoose={handleChoose}
               usersConnected={usersConnected}
+              onOpenModal={() => setUpgradeModalIsOpen(true)}
             />
           ))}
         </Box>
@@ -91,6 +98,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
                   item={item}
                   handleChoose={handleChoose}
                   usersConnected={usersConnected}
+                  onOpenModal={() => setUpgradeModalIsOpen(true)}
                 />
               ))}
             </Box>

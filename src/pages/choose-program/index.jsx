@@ -49,6 +49,7 @@ function chooseProgram() {
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
   const [events, setEvents] = useState(null);
+  const [subscriptionData, setSubscriptionData] = useState([]);
   const [liveClass, setLiveClass] = useState(null);
   const { state, programsList, updateProgramList } = useProgramList();
   const [cohortTasks, setCohortTasks] = useState({});
@@ -72,6 +73,17 @@ function chooseProgram() {
   const { isLoading, data: dataQuery } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options }, true);
 
   useEffect(() => {
+    bc.payment().subscriptions()
+      .then(({ data }) => {
+        setSubscriptionData(data);
+      });
+    // bc.payment().courses()
+    //   .then(({ data }) => {
+    //     console.log('courses_data:', data);
+    //   });
+  }, []);
+
+  useEffect(() => {
     if (dataQuery && Object.values(cohortTasks)?.length > 0) {
       updateProgramList(dataQuery?.cohorts?.reduce((acc, value) => {
         acc[value.cohort.slug] = {
@@ -79,6 +91,9 @@ function chooseProgram() {
           ...programsList[value.cohort.slug],
           ...cohortTasks[value.cohort.slug],
           name: value.cohort.name,
+          subscription: subscriptionData?.subscriptions?.find(
+            (sub) => sub.plans[0].slug === value.cohort.slug,
+          ) || null,
           slug: value.cohort.slug,
         };
         return acc;
@@ -87,6 +102,8 @@ function chooseProgram() {
     }
   }, [dataQuery, cohortTasks]);
 
+  // console.log('cohorts', dataQuery?.cohorts);
+  // TOOD: usar available_as_saas
   useEffect(() => {
     if (dataQuery?.id) {
       dataQuery?.cohorts.map(async (item) => {

@@ -17,7 +17,8 @@ const parseQuerys = (query) => {
   let queryString = '';
   try {
     Object.keys(query).forEach((key) => {
-      if (query[key] !== undefined && query[key] !== null) {
+      // query[key] !== undefined && query[key] !== null
+      if (query[key] !== undefined) {
         queryString += `${queryString ? '&' : '?'}${key}=${query[key]}`;
       }
     });
