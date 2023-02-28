@@ -114,6 +114,8 @@ const handlers = {
     const { t, lang } = useTranslation('live-event');
     const validDate = isValidDate(start);
 
+    const status = new Date(start) < new Date() ? 'expired' : 'active';
+
     if (validDate) {
       const duration = intervalToDuration({
         end: new Date(),
@@ -128,6 +130,7 @@ const handlers = {
 
       if (formated === '') return t('few-seconds');
       return {
+        status,
         formated,
         duration,
       };

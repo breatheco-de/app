@@ -77,6 +77,10 @@ function chooseProgram() {
       .then(({ data }) => {
         setSubscriptionData(data);
       });
+    // bc.payment().courses()
+    //   .then(({ data }) => {
+    //     console.log('courses_data:', data);
+    //   });
   }, []);
 
   useEffect(() => {

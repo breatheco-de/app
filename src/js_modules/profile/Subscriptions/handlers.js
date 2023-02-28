@@ -66,10 +66,11 @@ const profileHandlers = () => {
       const days = duration?.days;
       const hours = duration?.hours;
 
+      if (format.status === 'expired') return t('expired');
       if (duration?.month > 0) return `${duration?.month} ${t('months')}`;
       if (days === 0 && hours > 0) return `${hours}h ${t('and')} ${duration?.minutes}min`;
       if (days > 7) return `${days} ${t('days')}`;
-      if (days <= 7) return `${days} ${days > 1 ? t('days') : t('day')} ${duration?.hours > 0 ? `${t('and')} ${duration?.hours} ${t('hours')}` : ''}`;
+      if (days <= 7 && hours < 0) return `${days} ${days > 1 ? t('days') : t('day')} ${duration?.hours > 0 ? `${t('and')} ${duration?.hours} ${t('hours')}` : ''}`;
       return format?.formated;
     },
     subscriptionHandler: (isRenewable) => {
