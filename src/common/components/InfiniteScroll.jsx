@@ -65,19 +65,20 @@ function InfiniteScroll({ data, renderItem, loadMore, hasMore, currentPage, page
           }
           return <div>{renderItem(item)}</div>;
         }))}
-      <div ref={childrenRef}>
+      <div ref={childrenRef} />
+      <div>
         {currentPage < pageCount && (
           <a
             href={`${pathname}?page=${currentPage + 1}`}
             onClick={(e) => {
               e.preventDefault();
+              // router?.push(`${pathname}?page=${currentPage + 1}`);
             }}
           >
             Load more...
           </a>
         )}
       </div>
-      {/* <div ref={childrenRef} /> */}
     </>
   );
 }
