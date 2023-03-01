@@ -1,3 +1,4 @@
+import { Box, Link } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import React, { useRef, useCallback, useEffect } from 'react';
@@ -66,19 +67,21 @@ function InfiniteScroll({ data, renderItem, loadMore, hasMore, currentPage, page
           return <div>{renderItem(item)}</div>;
         }))}
       <div ref={childrenRef} />
-      <div>
+      <Box textAlign="center" margin="4rem 0 0 0">
         {currentPage < pageCount && (
-          <a
+          <Link
+            variant="default"
             href={`${pathname}?page=${currentPage + 1}`}
             onClick={(e) => {
               e.preventDefault();
+              loadMore();
               // router?.push(`${pathname}?page=${currentPage + 1}`);
             }}
           >
             Load more...
-          </a>
+          </Link>
         )}
-      </div>
+      </Box>
     </>
   );
 }
