@@ -28,16 +28,14 @@ const Subscriptions = ({ storybookConfig }) => {
   const { blueDefault } = hexColor;
 
   useEffect(() => {
-    if (!storybookConfig?.cohorts) {
-      bc.admissions().me()
-        .then(({ data }) => {
-          setCohortsState(data?.cohorts);
-        });
-      bc.payment().subscriptions()
-        .then(({ data }) => {
-          setSubscriptionData(data);
-        });
-    }
+    bc.admissions().me()
+      .then(({ data }) => {
+        setCohortsState(data?.cohorts);
+      });
+    bc.payment().subscriptions()
+      .then(({ data }) => {
+        setSubscriptionData(data);
+      });
   }, []);
 
   const cohorts = storybookConfig?.cohorts || cohortsState;
@@ -73,7 +71,7 @@ const Subscriptions = ({ storybookConfig }) => {
             const isFullyPaid = subscription?.status.toLowerCase() === 'fully_paid';
             const button = subscriptionHandler(isRenewable);
 
-            return (
+            return currentCohort?.name && (
               <Flex key={subscription?.id} position="relative" margin="10px 0 0 0" flexDirection="column" justifyContent="space-between" alignItems="center" border="1px solid" borderColor={borderColor2} p="0 16px 0 16px" borderRadius="9px">
                 <Box borderRadius="50%" bg="green.400" padding="12px" position="absolute" top={-7} left={4}>
                   <Icon icon="data-science" width="30px" height="30px" />
