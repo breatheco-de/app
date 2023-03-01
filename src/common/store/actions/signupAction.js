@@ -136,6 +136,7 @@ const useSignup = () => {
           title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
           price: data?.amount_per_month,
           priceText: t('free-trial'),
+          // NOTE: Free trial period
           period: singlePlan?.trial_duration_unit,
           type: 'TRIAL',
         } : {};

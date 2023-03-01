@@ -1,4 +1,4 @@
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, useToast } from '@chakra-ui/react';
 import { es } from 'date-fns/locale';
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
@@ -12,6 +12,7 @@ import bc from '../../common/services/breathecode';
 const ChooseDate = ({ cohort }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const toast = useToast();
   const { handleChecking, nextStep, setCohortPlans } = useSignup();
   const { t } = useTranslation('signup');
 
@@ -71,6 +72,14 @@ const ChooseDate = ({ cohort }) => {
             cohort: cohort.id,
           }).getCohortPlans()
             .then(({ data }) => {
+              if (data.length === 0) {
+                toast({
+                  title: t('alert-message:no-plan-configuration'),
+                  status: 'error',
+                  duration: 9000,
+                  isClosable: true,
+                });
+              }
               setCohortPlans(data);
               handleChecking({ ...cohort, plan: data[0] })
                 .then(() => {
