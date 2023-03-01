@@ -1,10 +1,16 @@
+import Head from 'next/head';
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import React, { useState, useCallback, useMemo } from 'react';
 import ProjectList from '../../js_modules/projects/ProjectList';
+import { isWindow } from '../../utils';
 import InfiniteScroll from './InfiniteScroll';
 
 function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, options }) {
   const [currentPage, setCurrentPage] = useState(1);
+  const router = useRouter();
+
+  const pathname = router?.pathname || (isWindow ? window?.location?.pathname : '');
 
   const articleChunks = useMemo(() => {
     const newArticleChunks = [];
@@ -17,6 +23,7 @@ function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, optio
   const loadMore = useCallback(() => {
     setCurrentPage((prevPage) => prevPage + 1);
   }, []);
+  const pageCount = Math.ceil(articles.length / itemsPerPage);
 
   const currentArticles = articleChunks.slice(0, currentPage).flat();
   const isSearching = searchQuery.length > 0;
@@ -25,11 +32,21 @@ function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, optio
 
   return (
     <div>
+      <Head>
+        {currentPage - 1 > 0 && (
+          <link rel="prev" href={`${pathname}?page=${currentPage - 1}`} />
+        )}
+        {currentPage < pageCount && (
+          <link rel="next" href={`${pathname}?page=${currentPage + 1}`} />
+        )}
+      </Head>
       {currentArticles.length > 0 && (
         <InfiniteScroll
           data={currentArticles}
           renderItem={renderItem}
           loadMore={loadMore}
+          currentPage={currentPage}
+          pageCount={pageCount}
           hasMore={hasMore}
         >
           <ProjectList
@@ -46,7 +63,7 @@ ProjectsLoader.propTypes = {
   articles: PropTypes.arrayOf(PropTypes.any).isRequired,
   itemsPerPage: PropTypes.number.isRequired,
   renderItem: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
-  searchQuery: PropTypes.string.isRequired,
+  searchQuery: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
   options: PropTypes.objectOf(PropTypes.any),
 };
 
