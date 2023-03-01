@@ -309,6 +309,7 @@ courseHasStarted.args = {
   programName: 'Data Science',
   programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
   startsIn: new Date(subMinutes(new Date(), 128)),
+  // isAvailableAsSaas: true,
   icon: "coding",
   iconBackground: "blue.default",
   assistants: mentors,
@@ -322,15 +323,17 @@ courseHasStarted.args = {
     completedExercises: 5,
   },
 };
-export const isAvailableForSaas = Component.bind({});
-isAvailableForSaas.args = {
+export const isNotAvailableForSaas = Component.bind({});
+isNotAvailableForSaas.args = {
   programName: 'Data Science',
   programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
-  startsIn: new Date(subMinutes(new Date(), 128)),
+  startsIn: new Date(addDays(new Date(), 128)),
+  isAvailableAsSaas: false,
   icon: "coding",
   iconBackground: "blue.default",
   assistants: mentors,
   teacher: teachers[0],
+  courseProgress: 15,
   syllabusContent: {
     totalLessons: 30,
     totalProjects: 15,
@@ -339,4 +342,34 @@ isAvailableForSaas.args = {
     completedProjects: 10,
     completedExercises: 5,
   },
+  // haveFreeTrial: true,
+  // isFreeTrial: false,
+  // isBought: true,
+  // freeTrialExpireDate: new Date(addDays(new Date(), 5)),
+  // lessonNumber: 1.2,
+};
+export const isAvailableForSaas = Component.bind({});
+isAvailableForSaas.args = {
+  programName: 'Data Science',
+  programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
+  startsIn: new Date(addDays(new Date(), 128)),
+  isAvailableAsSaas: true,
+  icon: "coding",
+  iconBackground: "blue.default",
+  assistants: mentors,
+  teacher: teachers[0],
+  courseProgress: 15,
+  syllabusContent: {
+    totalLessons: 30,
+    totalProjects: 15,
+    totalExercises: 15,
+    completedLessons: 3,
+    completedProjects: 10,
+    completedExercises: 5,
+  },
+  // haveFreeTrial: true,
+  isFreeTrial: true,
+  isBought: true,
+  freeTrialExpireDate: new Date(addDays(new Date(), 5)),
+  // lessonNumber: 1.2,
 };
