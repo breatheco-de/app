@@ -118,7 +118,7 @@ const ProgramCard = ({
                 icon="book"
               />
               <Box>
-                {isBought && (
+                {(isBought || !isAvailableAsSaas) && (
                 <>
                   <span style={{ color: CustomTheme.colors.blue.default2 }}>{elem.completed || 0}</span>
                   /
@@ -256,7 +256,7 @@ const ProgramCard = ({
           ) : (
             <>
               {/* !isBought && statusTimeString(startsIn) !== 'started' */}
-              {!isBought ? (
+              {isAvailableAsSaas && !isBought ? (
                 <Flex width="116px" justifyContent="flex-end">
                   <Box marginRight="10px">
                     <Icon
@@ -292,13 +292,13 @@ const ProgramCard = ({
                 </Flex>
               ) : (
                 <>
-                  {isFreeTrial ? (
+                  {isAvailableAsSaas && isFreeTrial ? (
                     <FreeTagCapsule />
                   ) : (
                     <>
-                      {isAvailableAsSaas && (
-                        <Icon icon="crown" width="22px" height="15px" />
-                      )}
+                      <Icon icon="crown" width="22px" height="15px" />
+                      {/* {!isAvailableAsSaas && (
+                      )} */}
                     </>
                   )}
                 </>
@@ -338,7 +338,7 @@ const ProgramCard = ({
             </>
           ) : (
             <>
-              {!isBought ? (
+              {isAvailableAsSaas && !isBought ? (
                 <Box>
                   <Text
                     fontSize="xs"
@@ -409,7 +409,7 @@ const ProgramCard = ({
                       </Text>
                     </>
                   )}
-                  {isFreeTrial && (
+                  {isAvailableAsSaas && isFreeTrial && (
                     <Button
                       marginTop="25px"
                       borderRadius="3px"
@@ -490,7 +490,7 @@ ProgramCard.defaultProps = {
   handleChoose: () => {},
   isHiddenOnPrework: false,
   onOpenModal: () => {},
-  isAvailableAsSaas: false,
+  isAvailableAsSaas: true,
 };
 
 export default ProgramCard;

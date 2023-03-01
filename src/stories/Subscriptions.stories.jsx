@@ -92,6 +92,10 @@ isFreeTrial.args = {
                     "financing_options": []
                 }
             ],
+            "selected_cohort": {
+                "id": 426,
+                "slug": "coding-introduction-2",
+            },
             "invoices": [
                 {
                     "amount": 0,
@@ -190,6 +194,10 @@ isActive.args = {
                     "financing_options": []
                 }
             ],
+            "selected_cohort": {
+                "id": 426,
+                "slug": "coding-introduction-2",
+            },
             "invoices": [
                 {
                     "amount": 200,
@@ -289,6 +297,10 @@ isInactive.args = {
                     "financing_options": []
                 }
             ],
+            "selected_cohort": {
+                "id": 426,
+                "slug": "coding-introduction-2",
+            },
             "invoices": [
                 {
                     "amount": 200,

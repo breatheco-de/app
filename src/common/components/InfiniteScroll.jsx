@@ -1,9 +1,13 @@
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import React, { useRef, useCallback, useEffect } from 'react';
+import { isWindow } from '../../utils';
 
-function InfiniteScroll({ data, renderItem, loadMore, hasMore, children }) {
+function InfiniteScroll({ data, renderItem, loadMore, hasMore, currentPage, pageCount, children }) {
   const observer = useRef();
   const childrenRef = useRef(null);
+  const router = useRouter();
+  const pathname = router?.pathname || (isWindow ? window?.location?.pathname : '');
 
   const lastItemRef = useCallback(
     (node) => {
@@ -62,6 +66,19 @@ function InfiniteScroll({ data, renderItem, loadMore, hasMore, children }) {
           return <div>{renderItem(item)}</div>;
         }))}
       <div ref={childrenRef} />
+      <div>
+        {currentPage < pageCount && (
+          <a
+            href={`${pathname}?page=${currentPage + 1}`}
+            onClick={(e) => {
+              e.preventDefault();
+              // router?.push(`${pathname}?page=${currentPage + 1}`);
+            }}
+          >
+            Load more...
+          </a>
+        )}
+      </div>
     </>
   );
 }
@@ -72,11 +89,15 @@ InfiniteScroll.propTypes = {
   loadMore: PropTypes.func.isRequired,
   hasMore: PropTypes.bool.isRequired,
   children: PropTypes.oneOfType([PropTypes.element, PropTypes.bool]),
+  currentPage: PropTypes.number,
+  pageCount: PropTypes.number,
 };
 
 InfiniteScroll.defaultProps = {
   children: false,
   renderItem: false,
+  currentPage: 1,
+  pageCount: 0,
 };
 
 export default InfiniteScroll;

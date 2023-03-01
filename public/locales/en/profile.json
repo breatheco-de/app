@@ -96,5 +96,6 @@
   "and": "and",
   "hours": "hours",
   "months": "months",
-  "expired": "Expired"
+  "expired": "Expired",
+  "no-subscriptions": "There are no subscriptions to show yet, subscribe to a cohort and get it immediately"
 }

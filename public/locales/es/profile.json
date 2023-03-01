@@ -96,5 +96,6 @@
   "and": "y",
   "hours": "horas",
   "months": "meses",
-  "expired": "Expirado"
+  "expired": "Expirado",
+  "no-subscriptions": "Todavía no hay suscripciones para mostrar, suscríbete a una cohorte y obténgala de inmediato"
 }

@@ -11,9 +11,9 @@ const Programs = ({ item, handleChoose, onOpenModal, usersConnected }) => {
   const { cohort } = item;
   const { version, slug, name } = cohort.syllabus_version;
   const currentCohortProps = programsList[cohort.slug];
-  const subscription = currentCohortProps?.subscription;
+  const subscription = cohort?.available_as_saas && currentCohortProps?.subscription;
   const isFreeTrial = subscription?.status === 'FREE_TRIAL';
-  const isBought = subscription?.invoices[0]?.amount >= 0;
+  const isBought = subscription?.invoices?.[0]?.amount >= 0;
   // const subscriptionExists = typeof subscription?.id === 'number';
   const moduleStarted = currentCohortProps?.allTasks?.some((task) => task?.completed && task?.completed > 0);
 

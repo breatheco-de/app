@@ -92,7 +92,7 @@ function chooseProgram() {
           ...cohortTasks[value.cohort.slug],
           name: value.cohort.name,
           subscription: subscriptionData?.subscriptions?.find(
-            (sub) => sub.plans[0].slug === value.cohort.slug,
+            (sub) => sub.selected_cohort?.slug === value.cohort.slug,
           ) || null,
           slug: value.cohort.slug,
         };

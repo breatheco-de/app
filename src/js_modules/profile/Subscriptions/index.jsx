@@ -62,14 +62,14 @@ const Subscriptions = ({ storybookConfig }) => {
           gridGap="3rem"
         >
           {subscriptionData.subscriptions.map((subscription) => {
-            const currentPlan = subscription?.plans[0];
-            const currentCohort = cohorts.find((l) => l?.cohort.slug === currentPlan?.slug)?.cohort;
+            const currentCohort = cohorts.find((l) => l?.cohort.slug === subscription?.selected_cohort?.slug)?.cohort;
             const status = subscription?.status?.toLowerCase();
             const invoice = subscription?.invoices[0];
             const isRenewable = (getLocaleDate(invoice?.paid_at) !== getLocaleDate(subscription?.next_payment_at) && subscription?.status.toLowerCase() !== 'canceled');
             const validUntil = handlers?.formatTimeString(
               new Date(subscription?.valid_until),
             );
+            const isFreeTrial = subscription?.status.toLowerCase() === 'free_trial';
             const isFullyPaid = subscription?.status.toLowerCase() === 'fully_paid';
             const button = subscriptionHandler(isRenewable);
 
@@ -88,9 +88,11 @@ const Subscriptions = ({ storybookConfig }) => {
                     {currentCohort?.name}
                   </Text>
                   <Flex alignItems="center" gridGap="10px">
-                    <Text fontSize="18px" fontWeight="700">
-                      {`$${invoice?.amount}`}
-                    </Text>
+                    {!isFreeTrial && (
+                      <Text fontSize="18px" fontWeight="700">
+                        {`$${invoice?.amount}`}
+                      </Text>
+                    )}
                     <Text fontSize="12px" fontWeight="400">
                       {isRenewable
                         ? (subscriptionTranslations?.['next-payment']?.replace('{{date}}', getLocaleDate(subscription?.next_payment_at)) || t('subscription.next-payment', { date: getLocaleDate(subscription?.next_payment_at) }))
