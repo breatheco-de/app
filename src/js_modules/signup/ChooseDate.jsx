@@ -76,7 +76,7 @@ const ChooseDate = ({ cohort }) => {
                 toast({
                   title: t('alert-message:no-plan-configuration'),
                   status: 'error',
-                  duration: 9000,
+                  duration: 6000,
                   isClosable: true,
                 });
               }
