@@ -28,7 +28,7 @@ const Subscriptions = ({ storybookConfig }) => {
   const { blueDefault } = hexColor;
 
   useEffect(() => {
-    if (storybookConfig?.cohorts) {
+    if (!storybookConfig?.cohorts) {
       bc.admissions().me()
         .then(({ data }) => {
           setCohortsState(data?.cohorts);
