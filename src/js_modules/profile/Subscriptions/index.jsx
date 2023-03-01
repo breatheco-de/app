@@ -69,6 +69,7 @@ const Subscriptions = ({ storybookConfig }) => {
             const validUntil = handlers?.formatTimeString(
               new Date(subscription?.valid_until),
             );
+            const isFreeTrial = subscription?.status.toLowerCase() === 'free_trial';
             const isFullyPaid = subscription?.status.toLowerCase() === 'fully_paid';
             const button = subscriptionHandler(isRenewable);
 
@@ -87,9 +88,11 @@ const Subscriptions = ({ storybookConfig }) => {
                     {currentCohort?.name}
                   </Text>
                   <Flex alignItems="center" gridGap="10px">
-                    <Text fontSize="18px" fontWeight="700">
-                      {`$${invoice?.amount}`}
-                    </Text>
+                    {!isFreeTrial && (
+                      <Text fontSize="18px" fontWeight="700">
+                        {`$${invoice?.amount}`}
+                      </Text>
+                    )}
                     <Text fontSize="12px" fontWeight="400">
                       {isRenewable
                         ? (subscriptionTranslations?.['next-payment']?.replace('{{date}}', getLocaleDate(subscription?.next_payment_at)) || t('subscription.next-payment', { date: getLocaleDate(subscription?.next_payment_at) }))
