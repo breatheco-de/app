@@ -62,8 +62,7 @@ const Subscriptions = ({ storybookConfig }) => {
           gridGap="3rem"
         >
           {subscriptionData.subscriptions.map((subscription) => {
-            const currentPlan = subscription?.plans[0];
-            const currentCohort = cohorts.find((l) => l?.cohort.slug === currentPlan?.slug)?.cohort;
+            const currentCohort = cohorts.find((l) => l?.cohort.slug === subscription?.selected_cohort?.slug)?.cohort;
             const status = subscription?.status?.toLowerCase();
             const invoice = subscription?.invoices[0];
             const isRenewable = (getLocaleDate(invoice?.paid_at) !== getLocaleDate(subscription?.next_payment_at) && subscription?.status.toLowerCase() !== 'canceled');

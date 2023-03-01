@@ -12,12 +12,12 @@ const profileHandlers = ({ translations }) => {
   const subscriptionTR = translations?.subscription;
 
   const statusLabel = {
-    free_trial: subscriptionTR.status?.free_trial || t('subscription.status.free_trial'),
-    fully_paid: subscriptionTR.status?.fully_paid || t('subscription.status.fully_paid'),
-    active: subscriptionTR.status?.active || t('subscription.status.active'),
-    expired: subscriptionTR.status?.expired || t('subscription.status.expired'),
-    canceled: subscriptionTR.status?.canceled || t('subscription.status.canceled'),
-    completed: subscriptionTR.status?.completed || t('subscription.status.completed'),
+    free_trial: subscriptionTR?.status?.free_trial || t('subscription.status.free_trial'),
+    fully_paid: subscriptionTR?.status?.fully_paid || t('subscription.status.fully_paid'),
+    active: subscriptionTR?.status?.active || t('subscription.status.active'),
+    expired: subscriptionTR?.status?.expired || t('subscription.status.expired'),
+    canceled: subscriptionTR?.status?.canceled || t('subscription.status.canceled'),
+    completed: subscriptionTR?.status?.completed || t('subscription.status.completed'),
   };
   const statusStyles = {
     free_trial: {
