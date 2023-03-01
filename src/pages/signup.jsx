@@ -95,10 +95,10 @@ const SignUp = ({ finance }) => {
       // const resp = await bc.cohort().getPublic(cohort); // returns object
       const resp = await bc.public({ id: cohort }).cohorts(); // returns array of objects
 
-      if (resp && resp.status >= 400) {
+      if ((resp && resp.status >= 400) || resp?.data.length === 0) {
         toast({
-          title: t('alert-message:cohort-not-found'),
-          type: 'warning',
+          title: t('alert-message:no-course-configuration'),
+          status: 'warning',
           duration: 4000,
           isClosable: true,
         });
@@ -124,6 +124,14 @@ const SignUp = ({ finance }) => {
       }).getCohortPlans()
         .then((res) => {
           const respData = res?.data;
+          if (respData?.length === 0) {
+            toast({
+              title: t('alert-message:no-plan-configuration'),
+              status: 'warning',
+              duration: 6000,
+              isClosable: true,
+            });
+          }
           if (res?.status < 400 && respData?.length > 0) {
             setCohortPlans(respData);
             handleChecking({ ...defaultCohortQueryProps, plan: respData[0] })
@@ -135,12 +143,13 @@ const SignUp = ({ finance }) => {
                   setIsPreloading(false);
                 }, 650);
               });
-          } else {
+          }
+          if (res?.status >= 400) {
             setIsPreloading(false);
             handleStep(1);
             toast({
               title: t('alert-message:cohort-not-found'),
-              type: 'warning',
+              status: 'warning',
               duration: 4000,
               isClosable: true,
             });
