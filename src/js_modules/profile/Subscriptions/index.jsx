@@ -108,7 +108,7 @@ const Subscriptions = ({ storybookConfig }) => {
                 </Box>
                 <Flex flexDirection="column" gridGap="8px" height="100%" width="100%">
                   <Text fontSize="16px" fontWeight="700">
-                    {currentCohort?.name}
+                    {subscription?.selected_cohort?.name || currentCohort?.name}
                   </Text>
                   <Flex alignItems="center" gridGap="10px">
                     {!isFreeTrial && (
