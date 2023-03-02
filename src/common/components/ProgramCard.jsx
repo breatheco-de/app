@@ -266,9 +266,6 @@ const ProgramCard = ({
             <></>
           ) : (
             <>
-              {/* !isBought && statusTimeString(startsIn) !== 'started' */}
-              {/* !isAvailableAsSaas && isBought ? */}
-              {/* TODO: Review here */}
               {isAvailableAsSaas && statusActive && subscriptionStatus !== 'FREE_TRIAL' ? (
                 <Flex width="116px" justifyContent="flex-end">
                   <Box marginRight="10px">
