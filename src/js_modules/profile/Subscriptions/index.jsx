@@ -82,7 +82,7 @@ const Subscriptions = ({ storybookConfig }) => {
           gridGap="3rem"
         >
           {subscriptionData.subscriptions.map((subscription) => {
-            const currentCohort = cohorts.find((l) => l?.cohort.slug === subscription?.selected_cohort?.slug)?.cohort;
+            // const currentCohort = cohorts.find((l) => l?.cohort.slug === subscription?.selected_cohort?.slug)?.cohort;
             const status = subscription?.status?.toLowerCase();
             const invoice = subscription?.invoices[0];
             // const isNotCancelled = (getLocaleDate(subscription?.paid_at) !== getLocaleDate(subscription?.next_payment_at) && subscription?.status.toLowerCase() !== 'canceled');
@@ -108,7 +108,7 @@ const Subscriptions = ({ storybookConfig }) => {
                 </Box>
                 <Flex flexDirection="column" gridGap="8px" height="100%" width="100%">
                   <Text fontSize="16px" fontWeight="700">
-                    {subscription?.selected_cohort?.name || currentCohort?.name}
+                    {subscription?.selected_cohort?.name}
                   </Text>
                   <Flex alignItems="center" gridGap="10px">
                     {!isFreeTrial && (
@@ -161,7 +161,7 @@ const Subscriptions = ({ storybookConfig }) => {
                     <Button
                       onClick={() => {
                         button.open();
-                        setCohortProps(currentCohort);
+                        setCohortProps(subscription?.selected_cohort);
                       }}
                       color="blue.default"
                       margin="7px 0 13px 0"
