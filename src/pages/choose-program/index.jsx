@@ -73,7 +73,9 @@ function chooseProgram() {
   const { isLoading, data: dataQuery } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options }, true);
 
   useEffect(() => {
-    bc.payment().subscriptions()
+    bc.payment({
+      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+    }).subscriptions()
       .then(({ data }) => {
         setSubscriptionData(data);
       });

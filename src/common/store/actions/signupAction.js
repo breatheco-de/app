@@ -90,12 +90,25 @@ const useSignup = () => {
 
   const handlePayment = (data) => new Promise((resolve, reject) => {
     const manyInstallmentsExists = selectedPlanCheckoutData?.financing_options?.length > 0 && selectedPlanCheckoutData?.financing_options[0]?.how_many_months;
+    const isTtrial = selectedPlanCheckoutData?.type === 'TRIAL';
 
+    const getRequests = () => {
+      if (!isTtrial) {
+        return {
+          type: data?.type || checkoutData.type,
+          token: data?.token || checkoutData.token,
+          how_many_installments: data?.installments || selectedPlanCheckoutData?.financing_options[0]?.how_many_months || undefined,
+          chosen_period: manyInstallmentsExists ? undefined : (selectedPlanCheckoutData?.period || 'HALF'),
+        };
+      }
+      return {
+        type: data?.type || checkoutData.type,
+        token: data?.token || checkoutData.token,
+      };
+    };
+    const requests = getRequests();
     bc.payment().pay({
-      type: data?.type || checkoutData.type,
-      token: data?.token || checkoutData.token,
-      how_many_installments: data?.installments || selectedPlanCheckoutData?.financing_options[0]?.how_many_months || undefined,
-      chosen_period: manyInstallmentsExists ? undefined : (selectedPlanCheckoutData?.period || 'HALF'),
+      ...requests,
     })
       .then((response) => {
         if (response?.data?.status === 'FULFILLED') {
