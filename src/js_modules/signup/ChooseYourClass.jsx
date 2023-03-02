@@ -37,16 +37,30 @@ const ChooseYourClass = ({
   );
 
   const { syllabus } = router.query;
+  const getCohortRequests = () => {
+    if (syllabus || courseChoosed) {
+      return {
+        coordinates: coords?.latitude && `${coords.latitude},${coords.longitude}`,
+        saas: true,
+        syllabus_slug: syllabus || courseChoosed,
+        upcoming: true,
+      };
+    }
+    return {
+      coordinates: coords?.latitude && `${coords.latitude},${coords.longitude}`,
+      saas: true,
+      upcoming: true,
+    };
+  };
+
+  const cohortRequests = getCohortRequests();
 
   useEffect(() => {
     if (isSecondStep) {
       setCohortIsLoading(true);
 
       bc.public({
-        coordinates: coords?.latitude && `${coords.latitude},${coords.longitude}`,
-        saas: true,
-        syllabus_slug: syllabus || courseChoosed,
-        upcoming: true,
+        ...cohortRequests,
       })
         .cohorts()
         .then(({ data }) => {

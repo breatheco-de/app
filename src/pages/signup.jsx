@@ -76,7 +76,7 @@ const SignUp = ({ finance }) => {
     course, plan, plan_id, cohort,
   } = router.query;
   const planChoosed = plan || plan_id || 'trial';
-  const courseChoosed = course || 'coding-introduction';
+  const courseChoosed = course;
   const courseTitle = finance[courseChoosed];
   const planProps = finance.plans.find((l) => l.type === planChoosed || l.type === 'trial');
 
@@ -125,6 +125,7 @@ const SignUp = ({ finance }) => {
         .then((res) => {
           const respData = res?.data;
           if (respData?.length === 0) {
+            setIsPreloading(false);
             toast({
               title: t('alert-message:no-plan-configuration'),
               status: 'warning',
