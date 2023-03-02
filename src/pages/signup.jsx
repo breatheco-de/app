@@ -125,6 +125,7 @@ const SignUp = ({ finance }) => {
         .then((res) => {
           const respData = res?.data;
           if (respData?.length === 0) {
+            setIsPreloading(false);
             toast({
               title: t('alert-message:no-plan-configuration'),
               status: 'warning',
