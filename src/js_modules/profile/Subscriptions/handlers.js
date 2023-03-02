@@ -1,12 +1,11 @@
 import useTranslation from 'next-translate/useTranslation';
-import { useState } from 'react';
 import PropTypes from 'prop-types';
 import useStyle from '../../../common/hooks/useStyle';
 
-const profileHandlers = ({ translations }) => {
+const profileHandlers = ({
+  translations, onCloseCancelSubscription, onOpenCancelSubscription, onOpenUpgrade, onCloseUpgrade,
+}) => {
   const { t } = useTranslation('profile');
-  const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
-  const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
   const { reverseFontColor, fontColor, lightColor } = useStyle();
 
   const subscriptionTR = translations?.subscription;
@@ -54,17 +53,9 @@ const profileHandlers = ({ translations }) => {
     },
   };
 
-  const onOpenCancelSubscription = () => setCancelModalIsOpen(true);
-  const onCloseCancelSubscription = () => setCancelModalIsOpen(false);
-
-  const onOpenUpgrade = () => setUpgradeModalIsOpen(true);
-  const onCloseUpgrade = () => setUpgradeModalIsOpen(false);
-
   return {
     statusStyles,
     statusLabel,
-    cancelModalIsOpen,
-    upgradeModalIsOpen,
     getLocaleDate: (date) => {
       const newDate = new Date(date);
       return newDate.toLocaleDateString();

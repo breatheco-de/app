@@ -13,16 +13,32 @@ import UpgradeAccessModal from '../../../common/components/UpgradeAccessModal';
 
 const Subscriptions = ({ storybookConfig }) => {
   const { t } = useTranslation('profile');
+  const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
+  const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
+  const [cohortProps, setCohortProps] = useState({});
   const [subscriptionDataState, setSubscriptionData] = useState([]);
   const [cohortsState, setCohortsState] = useState([]);
 
   const profileTranslations = storybookConfig?.translations?.profile;
   const subscriptionTranslations = storybookConfig?.translations?.profile?.subscription;
 
+  const onOpenCancelSubscription = () => setCancelModalIsOpen(true);
+  const onCloseCancelSubscription = () => setCancelModalIsOpen(false);
+
+  const onOpenUpgrade = () => setUpgradeModalIsOpen(true);
+  const onCloseUpgrade = () => setUpgradeModalIsOpen(false);
+
   const {
-    statusStyles, statusLabel, cancelModalIsOpen, upgradeModalIsOpen, getLocaleDate,
+    statusStyles, statusLabel, getLocaleDate,
     durationFormated, subscriptionHandler, payUnitString,
-  } = profileHandlers({ translations: profileTranslations });
+  } = profileHandlers({
+    translations: profileTranslations,
+    onCloseCancelSubscription,
+    onOpenCancelSubscription,
+    onOpenUpgrade,
+    onCloseUpgrade,
+    setCohortProps,
+  });
   const { borderColor2, hexColor, backgroundColor3, fontColor } = useStyle();
 
   const { blueDefault } = hexColor;
@@ -105,7 +121,7 @@ const Subscriptions = ({ storybookConfig }) => {
                         ? (
                           <>
                             {isNextPaimentExpired
-                              ? subscriptionTranslations?.['payment-up-to-date'] || t('payment-up-to-date')
+                              ? subscriptionTranslations?.['payment-up-to-date'] || t('subscription.payment-up-to-date')
                               : subscriptionTranslations?.['next-payment']?.replace('{{date}}', getLocaleDate(subscription?.next_payment_at))
                               || t('subscription.next-payment', { date: getLocaleDate(subscription?.next_payment_at) })}
                           </>
@@ -142,36 +158,44 @@ const Subscriptions = ({ storybookConfig }) => {
                     </Flex>
                   </Flex>
                   {!isFullyPaid ? (
-                    <Button onClick={button.open} color="blue.default" margin="7px 0 13px 0" {...button.style}>
+                    <Button
+                      onClick={() => {
+                        button.open();
+                        setCohortProps(currentCohort);
+                      }}
+                      color="blue.default"
+                      margin="7px 0 13px 0"
+                      {...button.style}
+                    >
                       {button.text}
                     </Button>
                   ) : (
                     <Box padding="6px 0 0 0" />
                   )}
-                  <ModalInfo
-                    isOpen={cancelModalIsOpen}
-                    title={subscriptionTranslations?.['cancel-modal']?.title || t('subscription.cancel-modal.title')}
-                    description={subscriptionTranslations?.['cancel-modal']?.description.replace('{{cohort}}', currentCohort?.name) || t('subscription.cancel-modal.description', { cohort: currentCohort?.name })}
-                    closeText={subscriptionTranslations?.['cancel-modal']?.closeText || t('subscription.cancel-modal.closeText')}
-                    handlerText={subscriptionTranslations?.['cancel-modal']?.handlerText || t('subscription.cancel-modal.handlerText')}
-                    headerStyles={{ textAlign: 'center' }}
-                    descriptionStyle={{ color: fontColor, fontSize: '14px', textAlign: 'center' }}
-                    footerStyle={{ flexDirection: 'row-reverse' }}
-                    closeButtonStyles={{ variant: 'outline', color: 'blue.default', borderColor: 'currentColor' }}
-                    buttonHandlerStyles={{ variant: 'default' }}
-                    actionHandler={() => {
-                      console.log('Cancel subscription triggered!');
-                    }}
-                    onClose={button.close}
-                  />
-                  <UpgradeAccessModal
-                    isOpen={upgradeModalIsOpen}
-                    onClose={button.close}
-                  />
                 </Flex>
               </Flex>
             );
           })}
+          <ModalInfo
+            isOpen={cancelModalIsOpen}
+            title={subscriptionTranslations?.['cancel-modal']?.title || t('subscription.cancel-modal.title')}
+            description={subscriptionTranslations?.['cancel-modal']?.description.replace('{{cohort}}', cohortProps?.name) || t('subscription.cancel-modal.description', { cohort: cohortProps?.name })}
+            closeText={subscriptionTranslations?.['cancel-modal']?.closeText || t('subscription.cancel-modal.closeText')}
+            handlerText={subscriptionTranslations?.['cancel-modal']?.handlerText || t('subscription.cancel-modal.handlerText')}
+            headerStyles={{ textAlign: 'center' }}
+            descriptionStyle={{ color: fontColor, fontSize: '14px', textAlign: 'center' }}
+            footerStyle={{ flexDirection: 'row-reverse' }}
+            closeButtonStyles={{ variant: 'outline', color: 'blue.default', borderColor: 'currentColor' }}
+            buttonHandlerStyles={{ variant: 'default' }}
+            actionHandler={() => {
+              console.log('Cancel subscription triggered!');
+            }}
+            onClose={() => setCancelModalIsOpen(false)}
+          />
+          <UpgradeAccessModal
+            isOpen={upgradeModalIsOpen}
+            onClose={() => setUpgradeModalIsOpen(false)}
+          />
 
         </Grid>
       ) : (
