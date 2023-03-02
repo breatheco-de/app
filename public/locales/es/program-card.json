@@ -17,5 +17,14 @@
     "start-course": "Empezar curso",
     "free-trial": "Prueba gratis",
     "upgrade": "Mejorar",
+    "status": {
+			"free_trial": "Prueba gratuita",
+			"fully_paid": "Totalmente pagado",
+			"payment_issue": "Problema de pago",
+			"active": "Activo",
+			"expired": "Expirado",
+			"cancelled": "Cancelado",
+			"completed": "Completado"
+    },
     "prework-message": "¡Tendrá acceso a esta cohorte tan pronto como comience!"
 }

@@ -8,7 +8,7 @@ import {
   Progress,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import { formatDuration, intervalToDuration } from 'date-fns';
+import { formatDuration, intervalToDuration, subMinutes } from 'date-fns';
 import { es, en } from 'date-fns/locale';
 import { Fragment } from 'react';
 import CustomTheme from '../../../styles/theme';
@@ -24,16 +24,22 @@ const availableLanguages = {
 };
 
 const ProgramCard = ({
-  programName, programDescription, isBought, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
-  syllabusContent, isFreeTrial, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
+  programName, programDescription, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
+  syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
   width, usersConnected, assistants, teacher, handleChoose, isHiddenOnPrework, onOpenModal, isAvailableAsSaas,
+  subscriptionStatus,
 }) => {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
   const bgColor = useColorModeValue('featuredLight', 'featuredDark');
+  const freeTrialExpireDateValue = isValidDate(freeTrialExpireDate) ? new Date(freeTrialExpireDate) : new Date(subMinutes(new Date(), 1));
   const now = new Date();
   const { lightColor, hexColor } = useStyle();
-  const isExpired = isFreeTrial && freeTrialExpireDate < now;
+  const isFreeTrial = subscriptionStatus === 'FREE_TRIAL';
+  const isCancelled = subscriptionStatus === 'CANCELLED' || subscriptionStatus === 'PAYMENT_ISSUE';
+  const isExpired = isFreeTrial && freeTrialExpireDateValue < now;
+  const statusActive = subscriptionStatus === 'ACTIVE' || subscriptionStatus === 'FULLY_PAID';
+  // const statusActive = subscriptionStatus === 'ACTIVE' || isFreeTrial || subscriptionStatus === 'FULLY_PAID';
 
   const programCardTR = stTranslation?.[lang]?.['program-card'];
 
@@ -41,6 +47,7 @@ const ProgramCard = ({
     if (start < now) return 'started';
     return 'idle';
   };
+  const hasStarted = statusTimeString(new Date(startsIn)) === 'started';
 
   const formatTimeString = (start) => {
     const duration = intervalToDuration({
@@ -95,6 +102,13 @@ const ProgramCard = ({
     return contentArray;
   };
 
+  const statusLabel = {
+    active: t('status.active'),
+    fully_paid: t('status.fully-paid'),
+    expired: t('status.expired'),
+    cancelled: t('status.cancelled'),
+    payment_issue: t('status.payment-issue'),
+  };
   const existsMentors = assistants?.length > 0 || isNumber(teacher?.id);
   const countOfMentors = assistants?.length + (teacher?.id ? 1 : 0);
 
@@ -118,7 +132,7 @@ const ProgramCard = ({
                 icon="book"
               />
               <Box>
-                {(isBought || !isAvailableAsSaas) && (
+                {((isAvailableAsSaas === false || statusActive || isFreeTrial) && hasStarted && courseProgress > 0) && (
                 <>
                   <span style={{ color: CustomTheme.colors.blue.default2 }}>{elem.completed || 0}</span>
                   /
@@ -193,7 +207,7 @@ const ProgramCard = ({
     let timeString = '';
     const duration = intervalToDuration({
       end: now,
-      start: freeTrialExpireDate,
+      start: freeTrialExpireDateValue,
     });
     const hours = duration?.hours;
     const formated = formatDuration(duration,
@@ -228,9 +242,6 @@ const ProgramCard = ({
     );
   };
 
-  const hasStarted = statusTimeString(new Date(startsIn)) === 'started';
-  // const startsInStatus = statusTimeString(new Date(startsIn));
-
   return (
     <Box
       border="1px solid"
@@ -256,7 +267,9 @@ const ProgramCard = ({
           ) : (
             <>
               {/* !isBought && statusTimeString(startsIn) !== 'started' */}
-              {isAvailableAsSaas && !isBought ? (
+              {/* !isAvailableAsSaas && isBought ? */}
+              {/* TODO: Review here */}
+              {isAvailableAsSaas && statusActive && subscriptionStatus !== 'FREE_TRIAL' ? (
                 <Flex width="116px" justifyContent="flex-end">
                   <Box marginRight="10px">
                     <Icon
@@ -278,16 +291,14 @@ const ProgramCard = ({
                         : `${stTranslation ? stTranslation[lang]['program-card']['starts-in'] : t('starts-in')}`}
 
                     </Text>
-                    {isValidDate(startsIn) && (
-                      <Text
-                        fontSize="9px"
-                        lineHeight="9.8px"
-                        fontWeight="400"
-                        color={textColor}
-                      >
-                        {formatTimeString(new Date(startsIn))}
-                      </Text>
-                    )}
+                    <Text
+                      fontSize="9px"
+                      lineHeight="9.8px"
+                      fontWeight="400"
+                      color={textColor}
+                    >
+                      {formatTimeString(new Date(startsIn))}
+                    </Text>
                   </Box>
                 </Flex>
               ) : (
@@ -296,7 +307,13 @@ const ProgramCard = ({
                     <FreeTagCapsule />
                   ) : (
                     <>
-                      <Icon icon="crown" width="22px" height="15px" />
+                      {!isCancelled || !isAvailableAsSaas ? (
+                        <Icon icon="crown" width="22px" height="15px" />
+                      ) : (
+                        <Box fontSize="12px" display="flex" alignItems="center" background="red.light" color="danger" height="22px" borderRadius="20px" padding="0 10px">
+                          {statusLabel[subscriptionStatus.toLowerCase()]}
+                        </Box>
+                      )}
                       {/* {!isAvailableAsSaas && (
                       )} */}
                     </>
@@ -338,7 +355,7 @@ const ProgramCard = ({
             </>
           ) : (
             <>
-              {isAvailableAsSaas && !isBought ? (
+              {!hasStarted && statusActive ? (
                 <Box>
                   <Text
                     fontSize="xs"
@@ -377,20 +394,35 @@ const ProgramCard = ({
                   )}
                 </Box>
               ) : (
-                <Box marginTop="20px">
-                  <Box margin="auto" width="90%">
-                    <Progress value={courseProgress} colorScheme="blueDefaultScheme" height="10px" borderRadius="20px" />
+                <Box marginTop={courseProgress > 0}>
+                  {courseProgress <= 0 && (
                     <Text
-                      fontSize="8px"
-                      lineHeight="9.8px"
+                      fontSize="xs"
+                      lineHeight="14px"
                       fontWeight="500"
-                      marginTop="5px"
-                      color={CustomTheme.colors.blue.default2}
+                      color={textColor}
                     >
-                      {`${courseProgress}%`}
+                      {programDescription}
+                      {' '}
                     </Text>
+                  )}
+                  <Box margin="auto" width="90%">
+                    {courseProgress > 0 && (
+                      <Box margin="20px 0 0 0">
+                        <Progress value={courseProgress} colorScheme="blueDefaultScheme" height="10px" borderRadius="20px" />
+                        <Text
+                          fontSize="8px"
+                          lineHeight="9.8px"
+                          fontWeight="500"
+                          marginTop="5px"
+                          color={CustomTheme.colors.blue.default2}
+                        >
+                          {`${courseProgress}%`}
+                        </Text>
+                      </Box>
+                    )}
                   </Box>
-                  {!isExpired && (
+                  {(!isExpired || !isAvailableAsSaas) && (
                     <>
                       <ProjectsSection />
                       <Text
@@ -401,17 +433,36 @@ const ProgramCard = ({
                         lineHeight="14px"
                         fontWeight="700"
                       >
-                        <Button variant="link" onClick={handleChoose} gridGap="6px" fontWeight={700}>
-                          {isNumber(String(lessonNumber))
-                            ? `${programCardTR?.continue || t('continue')} ${lessonNumber} →`
-                            : `${programCardTR?.['continue-course'] || t('continue-course')} →`}
-                        </Button>
+                        {courseProgress > 0 ? (
+                          <Button variant="link" onClick={handleChoose} gridGap="6px" fontWeight={700}>
+                            {isNumber(String(lessonNumber))
+                              ? `${programCardTR?.continue || t('continue')} ${lessonNumber} →`
+                              : `${programCardTR?.['continue-course'] || t('continue-course')} →`}
+                          </Button>
+
+                        ) : (
+                          <>
+                            {(!isAvailableAsSaas || !isCancelled) && (
+                              <Button
+                                borderRadius="3px"
+                                width="100%"
+                                padding="0"
+                                whiteSpace="normal"
+                                variant="default"
+                                onClick={handleChoose}
+                              >
+                                {programCardTR?.['start-course'] || t('start-course')}
+                              </Button>
+                            )}
+                          </>
+                        )}
                       </Text>
                     </>
                   )}
-                  {isAvailableAsSaas && isFreeTrial && (
+                  {/* {isAvailableAsSaas && isFreeTrial && ( */}
+                  {((isAvailableAsSaas && isFreeTrial) || (isAvailableAsSaas && !statusActive)) && (
                     <Button
-                      marginTop="25px"
+                      marginTop={!isCancelled && courseProgress > 0 && '25px'}
                       borderRadius="3px"
                       width="100%"
                       padding="0"
@@ -450,9 +501,7 @@ ProgramCard.propTypes = {
   programDescription: PropTypes.string,
   startsIn: PropTypes.instanceOf(Date),
   freeTrialExpireDate: PropTypes.instanceOf(Date),
-  isBought: PropTypes.bool,
   haveFreeTrial: PropTypes.bool,
-  isFreeTrial: PropTypes.bool,
   icon: PropTypes.string.isRequired,
   syllabusContent: PropTypes.objectOf(PropTypes.any),
   courseProgress: PropTypes.number,
@@ -468,6 +517,7 @@ ProgramCard.propTypes = {
   isHiddenOnPrework: PropTypes.bool,
   onOpenModal: PropTypes.func,
   isAvailableAsSaas: PropTypes.bool,
+  subscriptionStatus: PropTypes.string,
 };
 
 ProgramCard.defaultProps = {
@@ -475,8 +525,6 @@ ProgramCard.defaultProps = {
   programDescription: null,
   startsIn: null,
   haveFreeTrial: false,
-  isBought: false,
-  isFreeTrial: false,
   syllabusContent: null,
   courseProgress: null,
   freeTrialExpireDate: null,
@@ -491,6 +539,7 @@ ProgramCard.defaultProps = {
   isHiddenOnPrework: false,
   onOpenModal: () => {},
   isAvailableAsSaas: true,
+  subscriptionStatus: '',
 };
 
 export default ProgramCard;
