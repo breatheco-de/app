@@ -68,18 +68,23 @@
     "last-payment": "Ultimo pago el {{date}}",
     "duration": "Duración: {{duration}}",
     "renewal": "Renovación: {{renewal}}",
+    "renewable": "Renovación: Renovable",
     "not-renewable": "Renovación: No renovable",
     "payment": "Pago: {{payment}}",
     "status": {
       "free_trial": "Prueba gratuita",
       "fully_paid": "Totalmente pagado",
+      "payment_issue": "Problema de pago",
       "active": "Activo",
       "expired": "Expirado",
-      "canceled": "Cancelado",
+      "cancelled": "Cancelado",
       "completed": "Completado"
     },
     "cancel": "Cancelar suscripción",
     "upgrade": "Actualizar suscripción",
+    "payment-up-to-date": "Los pagos están al día",
+    "reactivate-subscription": "Reactivar suscripción",
+    "duration-cancelled": "Duración: Cancelada",
     "cancel-modal": {
       "title": "Cancelar suscripción",
       "description": "¿Estás seguro de que desea cancelar su suscripción a {{cohort}}?",
@@ -96,6 +101,7 @@
   "and": "y",
   "hours": "horas",
   "months": "meses",
+  "month": "mes",
   "expired": "Expirado",
   "no-subscriptions": "Todavía no hay suscripciones para mostrar, suscríbete a una cohorte y obténgala de inmediato"
 }

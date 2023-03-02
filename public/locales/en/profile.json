@@ -68,18 +68,23 @@
     "last-payment": "Last payment on {{date}}",
     "duration": "Duration: {{duration}}",
     "renewal": "Renewal: {{renewal}}",
+    "renewable": "Renewal: Renewable",
     "not-renewable": "Renewal: Not renewable",
     "payment": "Payment: {{payment}}",
     "status": {
       "free_trial": "Free trial",
       "fully_paid": "Fully paid",
+      "payment_issue": "Payment issue",
       "active": "Active",
       "expired": "Expired",
-      "canceled": "Canceled",
+      "cancelled": "Cancelled",
       "completed": "Completed"
     },
     "cancel": "Cancel subscription",
     "upgrade": "Upgrade subscription",
+    "payment-up-to-date": "Payments are up to date",
+    "reactivate-subscription": "Reactivate subscription",
+    "duration-cancelled": "Duration: Cancelled",
     "cancel-modal": {
       "title": "Cancel subscription",
       "description": "Are you sure you want to cancel your subscription to {{cohort}}",
@@ -96,6 +101,7 @@
   "and": "and",
   "hours": "hours",
   "months": "months",
+  "month": "month",
   "expired": "Expired",
   "no-subscriptions": "There are no subscriptions to show yet, subscribe to a cohort and get it immediately"
 }

@@ -32,7 +32,9 @@ const Subscriptions = ({ storybookConfig }) => {
       .then(({ data }) => {
         setCohortsState(data?.cohorts);
       });
-    bc.payment().subscriptions()
+    bc.payment({
+      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+    }).subscriptions()
       .then(({ data }) => {
         setSubscriptionData(data);
       });
@@ -67,13 +69,16 @@ const Subscriptions = ({ storybookConfig }) => {
             const currentCohort = cohorts.find((l) => l?.cohort.slug === subscription?.selected_cohort?.slug)?.cohort;
             const status = subscription?.status?.toLowerCase();
             const invoice = subscription?.invoices[0];
-            const isRenewable = (getLocaleDate(subscription?.paid_at) !== getLocaleDate(subscription?.next_payment_at) && subscription?.status.toLowerCase() !== 'canceled');
+            // const isNotCancelled = (getLocaleDate(subscription?.paid_at) !== getLocaleDate(subscription?.next_payment_at) && subscription?.status.toLowerCase() !== 'canceled');
+            const isNotCancelled = (subscription?.status !== 'CANCELLED' && subscription?.status !== 'PAYMENT_ISSUE');
             const validUntil = handlers?.formatTimeString(
               new Date(subscription?.valid_until),
             );
             const isFreeTrial = subscription?.status.toLowerCase() === 'free_trial';
             const isFullyPaid = subscription?.status.toLowerCase() === 'fully_paid';
-            const button = subscriptionHandler(isRenewable);
+            // const button = subscriptionHandler(isNotCancelled);
+            const button = subscriptionHandler(subscription?.status);
+            const isNextPaimentExpired = new Date(subscription?.next_payment_at) < new Date();
 
             return (
               <Flex key={subscription?.id} position="relative" margin="10px 0 0 0" flexDirection="column" justifyContent="space-between" alignItems="center" border="1px solid" borderColor={borderColor2} p="0 16px 0 16px" borderRadius="9px">
@@ -96,8 +101,15 @@ const Subscriptions = ({ storybookConfig }) => {
                       </Text>
                     )}
                     <Text fontSize="12px" fontWeight="400">
-                      {isRenewable
-                        ? (subscriptionTranslations?.['next-payment']?.replace('{{date}}', getLocaleDate(subscription?.next_payment_at)) || t('subscription.next-payment', { date: getLocaleDate(subscription?.next_payment_at) }))
+                      {isNotCancelled
+                        ? (
+                          <>
+                            {isNextPaimentExpired
+                              ? subscriptionTranslations?.['payment-up-to-date'] || t('payment-up-to-date')
+                              : subscriptionTranslations?.['next-payment']?.replace('{{date}}', getLocaleDate(subscription?.next_payment_at))
+                              || t('subscription.next-payment', { date: getLocaleDate(subscription?.next_payment_at) })}
+                          </>
+                        )
                         : (subscriptionTranslations?.['last-payment']?.replace('{{date}}', getLocaleDate(invoice?.paid_at)) || t('subscription.last-payment', { date: getLocaleDate(invoice?.paid_at) }))}
                     </Text>
                   </Flex>
@@ -106,15 +118,20 @@ const Subscriptions = ({ storybookConfig }) => {
                     <Flex gridGap="8px">
                       <Icon icon="refresh_time" width="16px" height="16px" color={blueDefault} />
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
-                        {subscriptionTranslations?.duration?.replace('{{duration}}', durationFormated(validUntil)) || t('subscription.duration', { duration: durationFormated(validUntil) })}
+                        {isNotCancelled
+                          ? subscriptionTranslations?.duration?.replace('{{duration}}', durationFormated(validUntil))
+                            || t('subscription.duration', { duration: durationFormated(validUntil) })
+                          : subscriptionTranslations?.['duration-cancelled'] || t('subscription.duration-cancelled')}
+                        {/* {subscriptionTranslations?.duration?.replace('{{duration}}', durationFormated(validUntil)) || t('subscription.duration', { duration: durationFormated(validUntil) })} */}
                       </Text>
                     </Flex>
                     <Flex gridGap="8px">
                       <Icon icon="renewal" width="16px" height="16px" color={blueDefault} />
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
-                        {isRenewable
+                        {subscriptionTranslations?.renewable || t('subscription.renewable')}
+                        {/* {isNotCancelled
                           ? (subscriptionTranslations?.renewal?.replace('{{renewal}}', getLocaleDate(subscription?.next_payment_at)) || t('subscription.renewal', { renewal: getLocaleDate(subscription?.next_payment_at) }))
-                          : (subscriptionTranslations?.['not-renewable'] || t('subscription.not-renewable'))}
+                          : (subscriptionTranslations?.['not-renewable'] || t('subscription.not-renewable'))} */}
                       </Text>
                     </Flex>
                     <Flex gridGap="8px">
