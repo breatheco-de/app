@@ -35,6 +35,7 @@ const Summary = ({
   // const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
   const isNotTrial = !checkoutData?.isTrial;
   const periodText = {
+    WEEK: t('trial-week'),
     MONTH: t('info.monthly'),
     YEAR: t('info.yearly'),
     FINANCING: t('info.financing'),

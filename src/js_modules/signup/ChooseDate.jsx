@@ -83,10 +83,10 @@ const ChooseDate = ({ cohort }) => {
               setCohortPlans(data);
               handleChecking({ ...cohort, plan: data[0] })
                 .then(() => {
-                  setIsLoading(false);
                   nextStep();
                 });
-            });
+            })
+            .finally(() => setIsLoading(false));
         }}
         borderColor="currentColor"
         color="blue.default"
