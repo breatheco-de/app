@@ -17,11 +17,6 @@ const Programs = ({ item, handleChoose, onOpenModal, usersConnected }) => {
   const availableAsSaasButNotBought = cohort?.available_as_saas && !isBought;
   const isFreeTrial = subscription?.status === 'FREE_TRIAL' || availableAsSaasButNotBought;
 
-  // ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE
-
-  // const subscriptionExists = typeof subscription?.id === 'number';
-  // const moduleStarted = currentCohortProps?.allTasks?.some((task) => task?.completed && task?.completed > 0);
-
   const router = useRouter();
 
   const isHiddenOnPrework = cohort?.is_hidden_on_prework === null ? cohort?.academy?.is_hidden_on_prework : cohort?.is_hidden_on_prework;
