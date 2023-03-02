@@ -46,6 +46,7 @@
     "will-pay-per-month": "You will subscribe and pay ${{price}} dollars every month",
     "will-pay-per-year": "You will subscribe and pay ${{price}} dollars every year",
     "trial": "Trial for 1 month",
+    "trial-week": "Trial for 1 week",
     "monthly": "Monthly",
     "yearly": "Yearly",
     "financing": "Financing"

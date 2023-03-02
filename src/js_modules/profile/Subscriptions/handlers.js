@@ -16,7 +16,8 @@ const profileHandlers = ({ translations }) => {
     fully_paid: subscriptionTR?.status?.fully_paid || t('subscription.status.fully_paid'),
     active: subscriptionTR?.status?.active || t('subscription.status.active'),
     expired: subscriptionTR?.status?.expired || t('subscription.status.expired'),
-    canceled: subscriptionTR?.status?.canceled || t('subscription.status.canceled'),
+    payment_issue: subscriptionTR?.status?.payment_issue || t('subscription.status.payment_issue'),
+    cancelled: subscriptionTR?.status?.cancelled || t('subscription.status.cancelled'),
     completed: subscriptionTR?.status?.completed || t('subscription.status.completed'),
   };
   const statusStyles = {
@@ -38,7 +39,11 @@ const profileHandlers = ({ translations }) => {
       background: 'transparent',
       border: '1px solid',
     },
-    canceled: {
+    payment_issue: {
+      color: 'danger',
+      background: 'red.light',
+    },
+    cancelled: {
       color: reverseFontColor,
       background: 'gray.default',
     },
@@ -68,30 +73,63 @@ const profileHandlers = ({ translations }) => {
       const duration = format?.duration;
       const days = duration?.days;
       const hours = duration?.hours;
-      const daysLabel = subscriptionTR?.days || t('days');
-      const dayLabel = subscriptionTR?.day || t('day');
-      const monthsLabel = subscriptionTR?.months || t('months');
-      const andLabel = subscriptionTR?.and || t('and');
-      const hoursLabel = subscriptionTR?.hours || t('hours');
+      const daysLabel = translations?.days || t('days');
+      const dayLabel = translations?.day || t('day');
+      const monthsLabel = translations?.months || t('months');
+      const monthLabel = translations?.month || t('month');
+      const andLabel = translations?.and || t('and');
+      const hoursLabel = translations?.hours || t('hours');
 
-      if (format.status === 'expired') return subscriptionTR?.expired || t('expired');
-      if (duration?.month > 0) return `${duration?.month} ${monthsLabel}`;
+      if (format.status === 'expired') return translations?.expired || t('expired');
+      if (duration?.months > 0) return `${duration?.months} ${duration?.months <= 1 ? monthLabel : monthsLabel}`;
       if (days === 0 && hours > 0) return `${hours}h ${andLabel} ${duration?.minutes}min`;
       if (days > 7) return `${days} ${daysLabel}`;
       if (days <= 7 && hours < 0) return `${days} ${days > 1 ? daysLabel : dayLabel} ${duration?.hours > 0 ? `${andLabel} ${duration?.hours} ${hoursLabel}` : ''}`;
       return format?.formated;
     },
-    subscriptionHandler: (isRenewable) => {
-      if (isRenewable) {
+    subscriptionHandler: (status) => {
+      // ACTIVE, FREE_TRIAL, FULLY_PAID, CANCELLED, PAYMENT_ISSUE
+      if (status === 'ACTIVE' || status === 'FULLY_PAID') {
         return {
           text: subscriptionTR?.cancel || t('subscription.cancel'),
           style: {
             variant: 'link',
           },
+
           open: onOpenCancelSubscription,
           close: onCloseCancelSubscription,
         };
       }
+      if (status === 'FREE_TRIAL') {
+        return {
+          text: subscriptionTR?.cancel || t('subscription.upgrade'),
+          style: {
+            variant: 'outline',
+            color: 'blue.default',
+            borderColor: 'currentColor',
+            fontWeight: 700,
+          },
+
+          open: onOpenUpgrade,
+          close: onCloseUpgrade,
+        };
+      }
+
+      if (status === 'CANCELLED') {
+        return {
+          text: subscriptionTR?.['reactivate-subscription'] || t('subscription.reactivate-subscription'),
+          style: {
+            variant: 'default',
+            color: 'white',
+            fontWeight: 700,
+          },
+
+          open: onOpenUpgrade,
+          close: onCloseUpgrade,
+        };
+      }
+
+      // PAYMENT_ISSUE
       return {
         text: subscriptionTR?.upgrade || t('subscription.upgrade'),
         style: {
@@ -105,10 +143,10 @@ const profileHandlers = ({ translations }) => {
       };
     },
     payUnitString: (payUnit) => {
-      if (payUnit === 'MONTH') return subscriptionTR?.monthly || t('monthly');
-      if (payUnit === 'HALF') return subscriptionTR?.['half-year'] || t('half-year');
-      if (payUnit === 'QUARTER') return subscriptionTR?.quaterly || t('quarterly');
-      if (payUnit === 'YEAR') return subscriptionTR?.yearly || t('yearly');
+      if (payUnit === 'MONTH') return translations?.monthly || t('monthly');
+      if (payUnit === 'HALF') return translations?.['half-year'] || t('half-year');
+      if (payUnit === 'QUARTER') return translations?.quaterly || t('quarterly');
+      if (payUnit === 'YEAR') return translations?.yearly || t('yearly');
       return payUnit;
     },
   };
