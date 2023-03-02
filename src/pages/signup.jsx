@@ -76,7 +76,7 @@ const SignUp = ({ finance }) => {
     course, plan, plan_id, cohort,
   } = router.query;
   const planChoosed = plan || plan_id || 'trial';
-  const courseChoosed = course || 'coding-introduction';
+  const courseChoosed = course;
   const courseTitle = finance[courseChoosed];
   const planProps = finance.plans.find((l) => l.type === planChoosed || l.type === 'trial');
 
