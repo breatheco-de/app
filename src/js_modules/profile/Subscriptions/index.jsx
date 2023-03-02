@@ -67,7 +67,7 @@ const Subscriptions = ({ storybookConfig }) => {
             const currentCohort = cohorts.find((l) => l?.cohort.slug === subscription?.selected_cohort?.slug)?.cohort;
             const status = subscription?.status?.toLowerCase();
             const invoice = subscription?.invoices[0];
-            const isRenewable = (getLocaleDate(invoice?.paid_at) !== getLocaleDate(subscription?.next_payment_at) && subscription?.status.toLowerCase() !== 'canceled');
+            const isRenewable = (getLocaleDate(subscription?.paid_at) !== getLocaleDate(subscription?.next_payment_at) && subscription?.status.toLowerCase() !== 'canceled');
             const validUntil = handlers?.formatTimeString(
               new Date(subscription?.valid_until),
             );
