@@ -71,6 +71,8 @@
     "renewable": "Renewal: Renewable",
     "not-renewable": "Renewal: Not renewable",
     "payment": "Payment: {{payment}}",
+    "renewal-date": "Renewal date: {{date}}",
+    "renewal-date-cancelled": "Renewal date: Cancelled",
     "status": {
       "free_trial": "Free trial",
       "fully_paid": "Fully paid",

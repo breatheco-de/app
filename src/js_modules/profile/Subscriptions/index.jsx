@@ -2,18 +2,19 @@ import { Box, Button, Flex, Grid } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { es } from 'date-fns/locale';
+import { format } from 'date-fns';
 import Icon from '../../../common/components/Icon';
 import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
 import bc from '../../../common/services/breathecode';
-import handlers from '../../../common/handlers';
 import ModalInfo from '../../moduleMap/modalInfo';
 import profileHandlers from './handlers';
 import UpgradeAccessModal from '../../../common/components/UpgradeAccessModal';
 import { toCapitalize, unSlugify } from '../../../utils';
 
 const Subscriptions = ({ storybookConfig }) => {
-  const { t } = useTranslation('profile');
+  const { t, lang } = useTranslation('profile');
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
   const [cohortProps, setCohortProps] = useState({});
@@ -30,8 +31,7 @@ const Subscriptions = ({ storybookConfig }) => {
   const onCloseUpgrade = () => setUpgradeModalIsOpen(false);
 
   const {
-    statusStyles, statusLabel, getLocaleDate,
-    durationFormated, subscriptionHandler, payUnitString,
+    statusStyles, statusLabel, getLocaleDate, subscriptionHandler, payUnitString,
   } = profileHandlers({
     translations: profileTranslations,
     onCloseCancelSubscription,
@@ -88,14 +88,16 @@ const Subscriptions = ({ storybookConfig }) => {
             const invoice = subscription?.invoices[0];
             // const isNotCancelled = (getLocaleDate(subscription?.paid_at) !== getLocaleDate(subscription?.next_payment_at) && subscription?.status.toLowerCase() !== 'canceled');
             const isNotCancelled = (subscription?.status !== 'CANCELLED' && subscription?.status !== 'PAYMENT_ISSUE');
-            const validUntil = handlers?.formatTimeString(
-              new Date(subscription?.valid_until),
-            );
             const isFreeTrial = subscription?.status.toLowerCase() === 'free_trial';
             const isFullyPaid = subscription?.status.toLowerCase() === 'fully_paid';
             // const button = subscriptionHandler(isNotCancelled);
             const button = subscriptionHandler(subscription?.status);
             const isNextPaimentExpired = new Date(subscription?.next_payment_at) < new Date();
+
+            const nextPaymentDate = {
+              en: format(new Date(subscription?.next_payment_at), 'MMM do'),
+              es: format(new Date(subscription?.next_payment_at), 'MMM d', { locale: es }),
+            };
 
             return (
               <Flex key={subscription?.id} position="relative" margin="10px 0 0 0" flexDirection="column" justifyContent="space-between" alignItems="center" border="1px solid" borderColor={borderColor2} p="0 16px 0 16px" borderRadius="9px">
@@ -141,11 +143,14 @@ const Subscriptions = ({ storybookConfig }) => {
                     <Flex gridGap="8px">
                       <Icon icon="refresh_time" width="16px" height="16px" color={blueDefault} />
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
-                        {isNotCancelled
+                        {/* {isNotCancelled
                           ? subscriptionTranslations?.duration?.replace('{{duration}}', durationFormated(validUntil))
                             || t('subscription.duration', { duration: durationFormated(validUntil) })
-                          : subscriptionTranslations?.['duration-cancelled'] || t('subscription.duration-cancelled')}
-                        {/* {subscriptionTranslations?.duration?.replace('{{duration}}', durationFormated(validUntil)) || t('subscription.duration', { duration: durationFormated(validUntil) })} */}
+                          : subscriptionTranslations?.['duration-cancelled'] || t('subscription.duration-cancelled')} */}
+
+                        {isNotCancelled
+                          ? subscriptionTranslations?.['renewal-date'] || t('subscription.renewal-date', { date: nextPaymentDate[lang] })
+                          : subscriptionTranslations?.['renewal-date-cancelled'] || t('subscription.renewal-date-cancelled')}
                       </Text>
                     </Flex>
                     <Flex gridGap="8px">
