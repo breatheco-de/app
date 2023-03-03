@@ -10,6 +10,7 @@ import handlers from '../../../common/handlers';
 import ModalInfo from '../../moduleMap/modalInfo';
 import profileHandlers from './handlers';
 import UpgradeAccessModal from '../../../common/components/UpgradeAccessModal';
+import { toCapitalize, unSlugify } from '../../../utils';
 
 const Subscriptions = ({ storybookConfig }) => {
   const { t } = useTranslation('profile');
@@ -107,9 +108,15 @@ const Subscriptions = ({ storybookConfig }) => {
                   </Text>
                 </Box>
                 <Flex flexDirection="column" gridGap="8px" height="100%" width="100%">
-                  <Text fontSize="16px" fontWeight="700">
-                    {subscription?.selected_cohort?.name}
-                  </Text>
+                  <Flex flexDirection="column" gridGap="2px">
+                    <Text fontSize="11px" fontWeight="700">
+                      {subscription?.plans[0]?.name || toCapitalize(unSlugify(subscription?.plans[0]?.slug))}
+                    </Text>
+                    <Text fontSize="16px" fontWeight="700">
+                      {subscription?.selected_cohort?.name}
+                    </Text>
+                  </Flex>
+
                   <Flex alignItems="center" gridGap="10px">
                     {!isFreeTrial && (
                       <Text fontSize="18px" fontWeight="700">
