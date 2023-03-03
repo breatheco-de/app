@@ -16,7 +16,7 @@ import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
 import ContactInformation from '../js_modules/signup/ContactInformation';
 import ChooseYourClass from '../js_modules/signup/ChooseYourClass';
-import { isWindow, getTimeProps, removeURLParameter, getQueryString } from '../utils';
+import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem } from '../utils';
 import Summary from '../js_modules/signup/Summary';
 import PaymentInfo from '../js_modules/signup/PaymentInfo';
 import useSignup from '../common/store/actions/signupAction';
@@ -68,6 +68,8 @@ const SignUp = ({ finance }) => {
   const { user, isLoading } = useAuth();
   const toast = useToast();
   const plan = getQueryString('plan');
+  const accessToken = getStorageItem('accessToken');
+  const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
 
   const {
     course, plan_id, cohort,
@@ -88,7 +90,7 @@ const SignUp = ({ finance }) => {
   const queryPlanExists = plan !== undefined && plan?.length > 0;
 
   useEffect(() => {
-    if (queryPlanExists) {
+    if (queryPlanExists && tokenExists) {
       if (cohorts && cohorts?.length <= 0) {
         toast({
           title: t('alert-message:no-course-configuration'),
@@ -148,7 +150,7 @@ const SignUp = ({ finance }) => {
           });
       }
     }
-  }, [cohorts?.length]);
+  }, [cohorts?.length, accessToken]);
 
   useEffect(() => {
     if (user?.id && !isLoading) {
@@ -157,7 +159,8 @@ const SignUp = ({ finance }) => {
         const cleanTokenQuery = isWindow && removeURLParameter(window.location.href, 'token');
         router.push(cleanTokenQuery);
       }
-      if (!queryPlanExists) handleStep(1);
+
+      handleStep(1);
       setFormProps({
         first_name: user.first_name,
         last_name: user.last_name,
@@ -312,7 +315,7 @@ const SignUp = ({ finance }) => {
         )}
 
         {/* Second step */}
-        <ChooseYourClass courseChoosed={courseChoosed} setCohorts={setCohorts} />
+        <ChooseYourClass setCohorts={setCohorts} />
 
         {isThirdStep && (
           <Summary
