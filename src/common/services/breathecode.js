@@ -207,14 +207,13 @@ const breathecode = {
       courses: () => axios.get(`${host}/marketing/courses${qs}`),
       pay: (data) => axios.post(`${url}/pay${qs}`, data),
       addCard: (data) => axios.post(`${url}/card${qs}`, data),
-      // getCard: () => axios.post(`${url}/card${qs}`),
+      getPlan: (slug) => axios.get(`${url}/plan/${slug}${qs}`),
       getPlanProps: (id) => axios.get(`${url}/serviceitem?plan=${id}`),
       getCohortPlans: () => axios.get(`${url}/plan${qs}`),
       service: () => ({
         consumable: () => axios.get(`${url}/me/service/consumable${qs}`),
       }),
       getEvent: (eventId) => axios.get(`${host}/events/academy/event/${eventId}${qs}`),
-      // getEvent: (eventId) => axios.get(`${host}/events/me/join/${eventId}${qs}`),
       events: () => axios.get(`${host}/events/me?online_event=true&${qs}`),
     };
   },

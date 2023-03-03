@@ -8,14 +8,14 @@ import { useEffect, useRef, useState } from 'react';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import AlertMessage from '../../common/components/AlertMessage';
-import { getTimeProps } from '../../utils';
+import { getQueryString, getTimeProps } from '../../utils';
 import useGoogleMaps from '../../common/hooks/useGoogleMaps';
 import useSignup from '../../common/store/actions/signupAction';
 import ChooseDate from './ChooseDate';
 import LoaderScreen from '../../common/components/LoaderScreen';
 
 const ChooseYourClass = ({
-  courseChoosed,
+  courseChoosed, setCohorts,
 }) => {
   const { t } = useTranslation('signup');
   const [cohortIsLoading, setCohortIsLoading] = useState(true);
@@ -30,6 +30,8 @@ const ChooseYourClass = ({
   const buttonRef = useRef();
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
   const { isSecondStep, setLocation } = useSignup();
+
+  const plan = getQueryString('plan');
 
   const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(
     GOOGLE_KEY,
@@ -50,51 +52,54 @@ const ChooseYourClass = ({
       coordinates: coords?.latitude && `${coords.latitude},${coords.longitude}`,
       saas: true,
       upcoming: true,
+      plan,
     };
   };
 
   const cohortRequests = getCohortRequests();
 
   useEffect(() => {
-    if (isSecondStep) {
-      setCohortIsLoading(true);
+    // cambiar condicion
+    // if (isSecondStep) {
+    setCohortIsLoading(true);
 
-      bc.public({
-        ...cohortRequests,
-      })
-        .cohorts()
-        .then(({ data }) => {
-          const formatedData = data.map((date) => {
-            const { kickoffDate, shortWeekDays, availableTime } = getTimeProps(date);
-            return {
-              ...date,
-              kickoffDate,
-              shortWeekDays,
-              availableTime,
-            };
-          });
-          setAvailableDates(formatedData);
-          if (data.length < 1) {
-            toast({
-              title: t('alert-message:no-cohorts-found'),
-              status: 'info',
-              duration: 5000,
-            });
-          }
-        })
-        .catch((error) => {
+    bc.public({
+      ...cohortRequests,
+    })
+      .cohorts()
+      .then(({ data }) => {
+        const formatedData = data.map((date) => {
+          const { kickoffDate, shortWeekDays, availableTime } = getTimeProps(date);
+          return {
+            ...date,
+            kickoffDate,
+            shortWeekDays,
+            availableTime,
+          };
+        });
+        setCohorts(formatedData);
+        setAvailableDates(formatedData);
+        if (data.length < 1) {
           toast({
-            title: t('alert-message:something-went-wrong-fetching-cohorts'),
-            description: error.message,
-            status: 'error',
-            duration: 8000,
-            isClosable: true,
+            title: t('alert-message:no-cohorts-found'),
+            status: 'info',
+            duration: 5000,
           });
-        })
-        .finally(() => setCohortIsLoading(false));
-    } else {
-      setCohortIsLoading(false);
-    }
+        }
+      })
+      .catch((error) => {
+        toast({
+          title: t('alert-message:something-went-wrong-fetching-cohorts'),
+          description: error.message,
+          status: 'error',
+          duration: 8000,
+          isClosable: true,
+        });
+      })
+      .finally(() => setCohortIsLoading(false));
+    // } else {
+    //   setCohortIsLoading(false);
+    // }
   }, [coords, isSecondStep]);
 
   useEffect(() => {
@@ -225,9 +230,11 @@ const ChooseYourClass = ({
 
 ChooseYourClass.propTypes = {
   courseChoosed: PropTypes.string,
+  setCohorts: PropTypes.func,
 };
 ChooseYourClass.defaultProps = {
   courseChoosed: '',
+  setCohorts: () => {},
 };
 
 export default ChooseYourClass;

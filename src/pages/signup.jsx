@@ -16,7 +16,7 @@ import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
 import ContactInformation from '../js_modules/signup/ContactInformation';
 import ChooseYourClass from '../js_modules/signup/ChooseYourClass';
-import { isWindow, getStorageItem, getTimeProps, removeURLParameter } from '../utils';
+import { isWindow, getTimeProps, removeURLParameter, getQueryString } from '../utils';
 import Summary from '../js_modules/signup/Summary';
 import PaymentInfo from '../js_modules/signup/PaymentInfo';
 import useSignup from '../common/store/actions/signupAction';
@@ -56,6 +56,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 const SignUp = ({ finance }) => {
   const { t } = useTranslation('signup');
   const router = useRouter();
+  const [cohorts, setCohorts] = useState(null);
   const [isPreloading, setIsPreloading] = useState(false);
   const {
     state, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
@@ -63,17 +64,13 @@ const SignUp = ({ finance }) => {
   } = useSignup();
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
-  const [defaultCohortQueryProps, setDefaultCohortQueryProps] = useState(null);
-
   const { stepIndex, dateProps, checkoutData } = state;
-
-  const accessToken = getStorageItem('accessToken');
   const { user, isLoading } = useAuth();
-
   const toast = useToast();
+  const plan = getQueryString('plan');
 
   const {
-    course, plan, plan_id, cohort,
+    course, plan_id, cohort,
   } = router.query;
   const planChoosed = plan || plan_id || 'trial';
   const courseChoosed = course;
@@ -88,14 +85,11 @@ const SignUp = ({ finance }) => {
     confirm_email: '',
   });
 
-  const queryCohortIdExists = cohort !== undefined && cohort?.length > 0;
+  const queryPlanExists = plan !== undefined && plan?.length > 0;
 
-  useEffect(async () => {
-    if (!dateProps?.id && queryCohortIdExists) {
-      // const resp = await bc.cohort().getPublic(cohort); // returns object
-      const resp = await bc.public({ id: cohort }).cohorts(); // returns array of objects
-
-      if ((resp && resp.status >= 400) || resp?.data.length === 0) {
+  useEffect(() => {
+    if (queryPlanExists) {
+      if (cohorts && cohorts?.length <= 0) {
         toast({
           title: t('alert-message:no-course-configuration'),
           status: 'warning',
@@ -103,65 +97,58 @@ const SignUp = ({ finance }) => {
           isClosable: true,
         });
       }
+      if (cohorts && cohorts?.length > 0) {
+        bc.payment().getPlan(plan)
+          .then((resp) => {
+            const data = resp?.data;
 
-      if (resp.status < 400) {
-        const { kickoffDate, weekDays, availableTime } = resp?.data?.[0] ? getTimeProps(resp.data[0]) : {};
-        setDefaultCohortQueryProps({
-          ...resp.data[0],
-          kickoffDate,
-          weekDays,
-          availableTime,
-        });
-      }
-    }
-  }, [cohort, user?.id, accessToken]);
+            if ((resp && resp?.status >= 400) || resp?.data.length === 0) {
+              toast({
+                title: t('alert-message:no-plan-configuration'),
+                status: 'warning',
+                duration: 4000,
+                isClosable: true,
+              });
+            }
+            if (data?.is_renewable === false || data?.is_renewable === undefined) {
+              setIsPreloading(false);
+              handleStep(1);
+            }
+            if (data?.is_renewable === true) {
+              if (resp.status < 400) {
+                const { kickoffDate, weekDays, availableTime } = cohorts?.[0] ? getTimeProps(cohorts[0]) : {};
+                const defaultQueryPropsAux = {
+                  ...cohorts[0],
+                  kickoffDate,
+                  weekDays,
+                  availableTime,
+                };
 
-  useEffect(() => {
-    if (defaultCohortQueryProps?.id && accessToken && queryCohortIdExists) {
-      setIsPreloading(true);
-      bc.payment({
-        cohort,
-      }).getCohortPlans()
-        .then((res) => {
-          const respData = res?.data;
-          if (respData?.length === 0) {
-            setIsPreloading(false);
+                setCohortPlans([data]);
+                handleChecking({ ...defaultQueryPropsAux, plan: data })
+                  .then(() => {
+                    handleStep(2);
+                  })
+                  .finally(() => {
+                    setTimeout(() => {
+                      setIsPreloading(false);
+                    }, 650);
+                  });
+              }
+            }
+          })
+          .catch(() => {
             toast({
               title: t('alert-message:no-plan-configuration'),
-              status: 'warning',
-              duration: 6000,
-              isClosable: true,
-            });
-          }
-          if (res?.status < 400 && respData?.length > 0) {
-            setCohortPlans(respData);
-            handleChecking({ ...defaultCohortQueryProps, plan: respData[0] })
-              .then(() => {
-                handleStep(2);
-              })
-              .finally(() => {
-                setTimeout(() => {
-                  setIsPreloading(false);
-                }, 650);
-              });
-          }
-          if (res?.status >= 400) {
-            setIsPreloading(false);
-            handleStep(1);
-            toast({
-              title: t('alert-message:cohort-not-found'),
               status: 'warning',
               duration: 4000,
               isClosable: true,
             });
-          }
-        });
+            setIsPreloading(false);
+          });
+      }
     }
-    if (queryCohortIdExists && accessToken && !defaultCohortQueryProps?.id) {
-      setIsPreloading(false);
-      handleStep(1);
-    }
-  }, [queryCohortIdExists, accessToken, router?.locale, defaultCohortQueryProps?.id]);
+  }, [cohorts?.length]);
 
   useEffect(() => {
     if (user?.id && !isLoading) {
@@ -170,7 +157,7 @@ const SignUp = ({ finance }) => {
         const cleanTokenQuery = isWindow && removeURLParameter(window.location.href, 'token');
         router.push(cleanTokenQuery);
       }
-      if (!queryCohortIdExists) handleStep(1);
+      if (!queryPlanExists) handleStep(1);
       setFormProps({
         first_name: user.first_name,
         last_name: user.last_name,
@@ -325,7 +312,7 @@ const SignUp = ({ finance }) => {
         )}
 
         {/* Second step */}
-        <ChooseYourClass courseChoosed={courseChoosed} />
+        <ChooseYourClass courseChoosed={courseChoosed} setCohorts={setCohorts} />
 
         {isThirdStep && (
           <Summary
@@ -345,7 +332,7 @@ const SignUp = ({ finance }) => {
               variant="outline"
               borderColor="currentColor"
               color="blue.default"
-              disabled={(queryCohortIdExists && !isFourthStep && !dateProps?.id) || isSecondStep}
+              disabled={(queryPlanExists && !isFourthStep && !dateProps?.id) || isSecondStep}
               onClick={() => {
                 if (stepIndex > 0) {
                   prevStep();
