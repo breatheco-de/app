@@ -3,7 +3,6 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
@@ -15,7 +14,7 @@ import ChooseDate from './ChooseDate';
 import LoaderScreen from '../../common/components/LoaderScreen';
 
 const ChooseYourClass = ({
-  courseChoosed, setCohorts,
+  setCohorts,
 }) => {
   const { t } = useTranslation('signup');
   const [cohortIsLoading, setCohortIsLoading] = useState(true);
@@ -24,7 +23,6 @@ const ChooseYourClass = ({
   const [coords, setCoords] = useState(null);
   const [addressValue, setAddressValue] = useState('');
   const toast = useToast();
-  const router = useRouter();
   const autoCompleteRef = useRef();
   const inputRef = useRef();
   const buttonRef = useRef();
@@ -38,33 +36,14 @@ const ChooseYourClass = ({
     'places',
   );
 
-  const { syllabus } = router.query;
-  const getCohortRequests = () => {
-    if (syllabus || courseChoosed) {
-      return {
-        coordinates: coords?.latitude && `${coords.latitude},${coords.longitude}`,
-        saas: true,
-        syllabus_slug: syllabus || courseChoosed,
-        upcoming: true,
-      };
-    }
-    return {
+  useEffect(() => {
+    setCohortIsLoading(true);
+
+    bc.public({
       coordinates: coords?.latitude && `${coords.latitude},${coords.longitude}`,
       saas: true,
       upcoming: true,
       plan,
-    };
-  };
-
-  const cohortRequests = getCohortRequests();
-
-  useEffect(() => {
-    // cambiar condicion
-    // if (isSecondStep) {
-    setCohortIsLoading(true);
-
-    bc.public({
-      ...cohortRequests,
     })
       .cohorts()
       .then(({ data }) => {
@@ -97,9 +76,6 @@ const ChooseYourClass = ({
         });
       })
       .finally(() => setCohortIsLoading(false));
-    // } else {
-    //   setCohortIsLoading(false);
-    // }
   }, [coords, isSecondStep]);
 
   useEffect(() => {
@@ -229,11 +205,9 @@ const ChooseYourClass = ({
 };
 
 ChooseYourClass.propTypes = {
-  courseChoosed: PropTypes.string,
   setCohorts: PropTypes.func,
 };
 ChooseYourClass.defaultProps = {
-  courseChoosed: '',
   setCohorts: () => {},
 };
 
