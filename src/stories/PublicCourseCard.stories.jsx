@@ -127,7 +127,7 @@ const mentors = [{
 
 export const Default = Component.bind({});
 Default.args = {
-  programName: 'Data Science',
+  programName: 'A.I & Machine Learning',
   programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
   startsIn: new Date(addDays(new Date(), 3)),
   icon: "coding",
@@ -143,5 +143,16 @@ Default.args = {
   subscriptionStatus: 'ACTIVE',
   assistants: mentors,
   teacher: teachers[0],
+  courseProgress: 7,
+};
+
+export const withDescription = Component.bind({});
+withDescription.args = {
+  programName: 'Data Science',
+  programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
+  startsIn: new Date(addDays(new Date(), 3)),
+  icon: "brain",
+  iconBackground: "#25BF6C",
+  subscriptionStatus: 'ACTIVE',
   courseProgress: 7,
 };

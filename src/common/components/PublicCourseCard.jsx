@@ -1,9 +1,9 @@
-/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
-import { Box, useColorModeValue, Button } from '@chakra-ui/react';
+import { Box, useColorModeValue, Button, Divider } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import Text from './Text';
 import Heading from './Heading';
+import Icon from './Icon';
 import ProjectsSection from './ProjectsSection';
 
 const PublicCourseCard = ({
@@ -14,50 +14,75 @@ const PublicCourseCard = ({
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
 
-  const programCardTR = stTranslation?.[lang]?.['program-card'];
-
   return (
-    <Box
-      border="1px solid"
-      borderColor="#DADADA"
-      borderRadius="9px"
-      width="300px"
-      padding="15px"
-      height="min-content"
-    >
-      <Heading
-        size="lg"
-        as="h3"
-        lineHeight="31px"
-        fontWeight="700"
-        color={textColor}
-        marginBottom="10px"
-        textAlign="center"
+    <Box width="300px">
+      <Box
+        borderRadius="9px 9px 0 0"
+        width="90%"
+        margin="auto"
+        height="140px"
+        background={iconBackground}
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
       >
-        {programName}
-      </Heading>
-      <ProjectsSection
-        startsIn={startsIn}
-        stTranslation={stTranslation}
-        syllabusContent={syllabusContent}
-        courseProgress={courseProgress}
-        usersConnected={usersConnected}
-        assistants={assistants}
-        teacher={teacher}
-        isAvailableAsSaas={isAvailableAsSaas}
-        subscriptionStatus={subscriptionStatus}
-      />
-      <Button
-        margin="10px auto 0 auto"
-        display="block"
-        borderRadius="3px"
-        width="50%"
-        padding="0"
-        whiteSpace="normal"
-        variant="default"
+        <Icon color="#FFF" icon={icon} width="84px" height="74px" style={{ margin: 'auto' }} />
+      </Box>
+      <Box
+        border="1px solid"
+        borderColor="#DADADA"
+        borderRadius="9px"
+        padding="15px"
+        height="min-content"
       >
-        {stTranslation?.[lang]?.common.enroll || t('common:enroll')}
-      </Button>
+        <Heading
+          size="lg"
+          as="h3"
+          lineHeight="31px"
+          fontWeight="700"
+          color={textColor}
+          marginBottom="10px"
+          textAlign="center"
+        >
+          {programName}
+        </Heading>
+        <Divider w="90%" margin="auto" />
+        {(syllabusContent || assistants.lenght > 0) ? (
+          <ProjectsSection
+            startsIn={startsIn}
+            stTranslation={stTranslation}
+            syllabusContent={syllabusContent}
+            courseProgress={courseProgress}
+            usersConnected={usersConnected}
+            assistants={assistants}
+            teacher={teacher}
+            isAvailableAsSaas={isAvailableAsSaas}
+            subscriptionStatus={subscriptionStatus}
+          />
+        ) : (
+          <Text
+            fontSize="xs"
+            lineHeight="14px"
+            fontWeight="700"
+            color={textColor}
+            textAlign="center"
+            marginTop="20px"
+          >
+            {programDescription}
+          </Text>
+        )}
+        <Button
+          margin="10px auto 0 auto"
+          display="block"
+          borderRadius="3px"
+          width="50%"
+          padding="0"
+          whiteSpace="normal"
+          variant="default"
+        >
+          {stTranslation?.[lang]?.common.enroll || t('common:enroll')}
+        </Button>
+      </Box>
     </Box>
   );
 };
@@ -81,7 +106,7 @@ PublicCourseCard.propTypes = {
 PublicCourseCard.defaultProps = {
   programDescription: null,
   iconBackground: '',
-  icon: null,
+  icon: 'coding',
   stTranslation: null,
   startsIn: null,
   syllabusContent: null,
