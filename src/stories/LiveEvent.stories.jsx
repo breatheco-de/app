@@ -7,6 +7,11 @@ export default {
   title: 'components/Live Event',
   component: LiveEvent,
   argTypes: {
+    mainEvents: {
+      control: {
+        type: 'object'
+      }
+    },
     liveStartsAt: {
       control: {
         type: 'date'
@@ -54,6 +59,13 @@ const Component = (args, context) => {
 };
 export const Default = Component.bind({});
 Default.args = {
+  mainEvents: [{
+    liveStartsAt: new Date(subMinutes(new Date(), 40)),
+    liveEndsAt: new Date(addHours(new Date(), 1)),
+    live_stream_url: 'https://www.google.co.ve/',
+    featureLabel: 'Live clases, coding sessions, workshops and hangouts every few hours.',
+    subLabel: 'Master Class',
+  }],
   liveStartsAt: new Date(subMinutes(new Date(), 40)),
   liveEndsAt: new Date(addHours(new Date(), 1)),
   live_stream_url: 'https://www.google.co.ve/',
@@ -63,6 +75,7 @@ Default.args = {
   startingSoonDelta: 30,
   otherEvents: [{
     title: 'My Wonderful HTML Email Workflow',
+    type: 'Workshop',
     icon_url: 'https://cdn.pixabay.com/photo/2017/08/05/11/16/logo-2582748_960_720.png',
     starting_at: subMinutes(new Date(), 0),
     ending_at: addMinutes(new Date(), 180),
@@ -71,6 +84,7 @@ Default.args = {
     live_stream_url: 'https://www.google.co.ve/'
   }, {
     title: 'Coding Jamming',
+    type: 'Workshop',
     starting_at: new Date(addMinutes(new Date(), 15)),
     ending_at: new Date(addHours(new Date(), 2)),
     icon: 'codeBg',
@@ -81,6 +95,14 @@ Default.args = {
 export const StartsIn5Hours = Component.bind({});
 StartsIn5Hours.args = {
   width: '320px',
+  mainEvents: [{
+    featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
+    subLabel: 'Master Class',
+    featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
+    startingSoonDelta: 30,
+    liveStartsAt: new Date(addHours(new Date(), 5)),
+    liveEndsAt: new Date(addHours(new Date(), 6)),
+  }],
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
   subLabel: 'Master Class',
   featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
@@ -89,6 +111,7 @@ StartsIn5Hours.args = {
   liveEndsAt: new Date(addHours(new Date(), 6)),
   otherEvents: [{
     title: 'My Wonderful HTML Email Workflow',
+    type: 'Workshop',
     starting_at: addHours(new Date(), 20),
     ending_at: addHours(new Date(), 22),
     icon: 'group',
@@ -96,6 +119,7 @@ StartsIn5Hours.args = {
     live_stream_url: 'https://www.google.co.ve/'
   }, {
     title: 'Coding Jamming',
+    type: 'Workshop',
     starting_at: addHours(new Date(), 12),
     ending_at: addHours(new Date(), 13),
     icon: 'codeBg',
@@ -111,6 +135,7 @@ NoTodayClass.args = {
   startingSoonDelta: 30,
   otherEvents: [{
     title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.',
+    type: 'Workshop',
     starting_at: addMinutes(new Date(), 120),
     ending_at: addMinutes(new Date(), 200),
     icon: 'group',
@@ -118,6 +143,7 @@ NoTodayClass.args = {
     live_stream_url: 'https://www.google.co.ve/'
   }, {
     title: '4Geeks GeeksTALKS Europe - Meet our Web- dev Students',
+    type: 'Workshop',
     starting_at: new Date(addMinutes(new Date(), 32)),
     ending_at: new Date(addHours(new Date(), 2)),
     icon: 'codeBg',
@@ -133,6 +159,7 @@ UpcomingEventsTomorrow.args = {
   startingSoonDelta: 30,
   otherEvents: [{
     title: 'My Wonderful HTML Email Workflow',
+    type: 'Workshop',
     starting_at: addHours(new Date(), 23),
     ending_at: addHours(new Date(), 24),
     icon: 'group',
@@ -140,6 +167,7 @@ UpcomingEventsTomorrow.args = {
     live_stream_url: 'https://www.google.co.ve/'
   }, {
     title: 'Coding Jamming',
+    type: 'Workshop',
     starting_at: new Date(addHours(new Date(), 25)),
     ending_at: new Date(addHours(new Date(), 26)),
     icon: 'codeBg',
@@ -155,6 +183,7 @@ UpcomingEventToday.args = {
   startingSoonDelta: 30,
   otherEvents: [{
     title: '4Geeks GeeksTALKS Europe - Meet our Web- dev Students',
+    type: 'Workshop',
     starting_at: addMinutes(new Date(), 27),
     ending_at: addMinutes(new Date(), 73),
     icon: 'codeBg',
@@ -162,12 +191,14 @@ UpcomingEventToday.args = {
     live_stream_url: 'https://www.google.co.ve/#login-flow-with-react'
   }, {
     title: 'Coding Jamming - ut aliquam massa nisl quis neque. Suspendisse in orci enim.',
+    type: 'Workshop',
     starting_at: new Date(addHours(new Date(), 25)),
     ending_at: new Date(addHours(new Date(), 26)),
     icon: 'codeBg',
     live_stream_url: 'https://www.google.co.ve/#coding-jamming'
   }, {
     title: 'Final Project Presentation',
+    type: 'Workshop',
     starting_at: new Date(addHours(new Date(), 52)),
     ending_at: new Date(addHours(new Date(), 54)),
     icon: 'group',
@@ -184,6 +215,7 @@ EventsIn2DaysOrMore.args = {
   startingSoonDelta: 30,
   otherEvents: [{
     title: 'Login flow with React',
+    type: 'Workshop',
     starting_at: addHours(new Date(), 53),
     ending_at: addHours(new Date(), 54),
     icon: 'codeBg',
@@ -191,12 +223,14 @@ EventsIn2DaysOrMore.args = {
     live_stream_url: 'https://www.google.co.ve/#login-flow-with-react'
   }, {
     title: 'Coding Jamming',
+    type: 'Workshop',
     starting_at: new Date(addHours(new Date(), 98)),
     ending_at: new Date(addHours(new Date(), 99)),
     icon: 'codeBg',
     live_stream_url: 'https://www.google.co.ve/#coding-jamming'
   }, {
     title: 'Final Project Presentation',
+    type: 'Workshop',
     starting_at: new Date(addDays(new Date(), 106)),
     ending_at: new Date(
       addHours(

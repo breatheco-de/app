@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props */
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useState, useEffect } from 'react';
@@ -17,6 +18,7 @@ import Icon from '../Icon';
 import { isDateMoreThanAnyDaysAgo } from '../../../utils';
 import OtherEvents from './OtherEvents';
 import useStyle from '../../hooks/useStyle';
+import useTruncatedText from '../../hooks/useTruncatedText';
 
 const availableLanguages = {
   es,
@@ -25,6 +27,7 @@ const availableLanguages = {
 
 const LiveEvent = ({
   // liveUrl,
+  mainEvents,
   liveClassHash,
   liveStartsAt,
   liveEndsAt,
@@ -424,6 +427,7 @@ const LiveEvent = ({
 };
 
 LiveEvent.propTypes = {
+  mainEvents: PropTypes.arrayOf(PropTypes.any),
   liveStartsAt: PropTypes.instanceOf(Date).isRequired,
   liveEndsAt: PropTypes.instanceOf(Date).isRequired,
   otherEvents: PropTypes.arrayOf(PropTypes.any),

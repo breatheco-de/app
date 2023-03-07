@@ -1,12 +1,12 @@
 [
   {
-    "source": "/lesson/intro-to-machine-learning-prework-es",
-    "destination": "/es/lesson/intro-to-machine-learning-prework-es",
+    "source": "/lesson/trazar-func-con-python-es",
+    "destination": "/es/lesson/trazar-func-con-python-es",
     "permanent": true
   },
   {
-    "source": "/lesson/backend-developer-es",
-    "destination": "/es/lesson/backend-developer-es",
+    "source": "/lesson/intro-to-machine-learning-prework-es",
+    "destination": "/es/lesson/intro-to-machine-learning-prework-es",
     "permanent": true
   },
   {
@@ -345,13 +345,23 @@
     "permanent": true
   },
   {
+    "source": "/lesson/what-is-data-science",
+    "destination": "/es/lesson/what-is-data-science",
+    "permanent": true
+  },
+  {
     "source": "/lesson/introduccion-a-node-js",
     "destination": "/es/lesson/introduccion-a-node-js",
     "permanent": true
   },
   {
-    "source": "/lesson/trazar-func-con-python-es",
-    "destination": "/es/lesson/trazar-func-con-python-es",
+    "source": "/lesson/building-your-developer-personal-portfolio",
+    "destination": "/es/lesson/building-your-developer-personal-portfolio",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/backend-developer-es",
+    "destination": "/es/lesson/backend-developer-es",
     "permanent": true
   },
   {
