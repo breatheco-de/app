@@ -49,10 +49,11 @@ function chooseProgram() {
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
   const [events, setEvents] = useState(null);
+  const [subscriptionData, setSubscriptionData] = useState([]);
   const [liveClass, setLiveClass] = useState(null);
   const { state, programsList, updateProgramList } = useProgramList();
   const [cohortTasks, setCohortTasks] = useState({});
-  const { user, choose } = useAuth();
+  const { isLoading: userLoading, user, choose } = useAuth();
   const { featuredColor, borderColor, lightColor } = useStyle();
   const router = useRouter();
   const toast = useToast();
@@ -72,6 +73,19 @@ function chooseProgram() {
   const { isLoading, data: dataQuery } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options }, true);
 
   useEffect(() => {
+    bc.payment({
+      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+    }).subscriptions()
+      .then(({ data }) => {
+        setSubscriptionData(data);
+      });
+    // bc.payment().courses()
+    //   .then(({ data }) => {
+    //     console.log('courses_data:', data);
+    //   });
+  }, []);
+
+  useEffect(() => {
     if (dataQuery && Object.values(cohortTasks)?.length > 0) {
       updateProgramList(dataQuery?.cohorts?.reduce((acc, value) => {
         acc[value.cohort.slug] = {
@@ -79,6 +93,9 @@ function chooseProgram() {
           ...programsList[value.cohort.slug],
           ...cohortTasks[value.cohort.slug],
           name: value.cohort.name,
+          subscription: subscriptionData?.subscriptions?.find(
+            (sub) => sub.selected_cohort?.slug === value.cohort.slug,
+          ) || null,
           slug: value.cohort.slug,
         };
         return acc;
@@ -87,6 +104,8 @@ function chooseProgram() {
     }
   }, [dataQuery, cohortTasks]);
 
+  // console.log('cohorts', dataQuery?.cohorts);
+  // TOOD: usar available_as_saas
   useEffect(() => {
     if (dataQuery?.id) {
       dataQuery?.cohorts.map(async (item) => {
@@ -154,6 +173,23 @@ function chooseProgram() {
       setCohortSession({
         selectedProgramSlug: '/choose-program',
         bc_id: userID,
+      });
+    }
+
+    if (user?.id && !userLoading) {
+      ldClient?.identify({
+        kind: 'user',
+        key: user?.id,
+        firstName: user?.first_name,
+        lastName: user?.last_name,
+        name: `${user?.first_name} ${user?.last_name}`,
+        email: user?.email,
+        id: user?.id,
+        language: router?.locale,
+        screenWidth: window?.screen?.width,
+        screenHeight: window?.screen?.height,
+        device: navigator?.userAgent,
+        version: packageJson.version,
       });
     }
   }, [userID]);

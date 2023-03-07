@@ -182,9 +182,9 @@ export const CardSkeleton = ({
 
   return !withoutContainer ? (
     <Grid
-      {...chakraProps}
       gridTemplateColumns={templateColumns}
       gridGap={gridGap}
+      {...chakraProps}
     >
       {Array(quantity).fill('l').map((_, i) => {
         const index = i;
@@ -196,6 +196,8 @@ export const CardSkeleton = ({
             borderRadius={cardRadius}
             startColor={commonStartColor}
             endColor={commonEndColor}
+            opacity={1}
+            zIndex={2}
           />
         );
       })}

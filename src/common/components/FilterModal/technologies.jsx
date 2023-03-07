@@ -104,7 +104,7 @@ TechnologiesSection.propTypes = {
   commonBorderColor: PropTypes.string.isRequired,
   commonTextColor: PropTypes.string.isRequired,
   checkedTechnologies: PropTypes.arrayOf(PropTypes.string).isRequired,
-  technologyTags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  technologyTags: PropTypes.arrayOf(PropTypes.any).isRequired,
   handleToggle: PropTypes.func.isRequired,
   getCheckboxProps: PropTypes.func.isRequired,
 };

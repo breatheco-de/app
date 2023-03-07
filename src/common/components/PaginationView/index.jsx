@@ -16,7 +16,7 @@ const PaginatedView = ({ storyConfig, renderComponent, handlePageChange, queryFu
   const page = storyConfig?.page || getQueryString('page', 1);
 
   const contentPerPage = options?.contentPerPage || 20;
-  const listToTop = options?.listToTop || true;
+  const listToTop = options?.listToTop || false;
   const listToBottom = options?.listToBottom || true;
   const pagePath = options?.pagePath || '/';
   const disableLangFilter = options?.disableLangFilter || false;
@@ -101,7 +101,6 @@ const PaginatedView = ({ storyConfig, renderComponent, handlePageChange, queryFu
           projects={resultsFilteredByLang || []}
           withoutDifficulty
           contextFilter={options?.contextFilter}
-          projectPath={options?.projectPath || 'lesson'}
         />
       )}
 

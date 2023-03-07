@@ -35,6 +35,7 @@ const Summary = ({
   // const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
   const isNotTrial = !checkoutData?.isTrial;
   const periodText = {
+    WEEK: t('info.trial-week'),
     MONTH: t('info.monthly'),
     YEAR: t('info.yearly'),
     FINANCING: t('info.financing'),
@@ -277,7 +278,9 @@ const Summary = ({
                   textAlign={{ base: 'start', md: 'end' }}
                   width="100%"
                 >
-                  {`$${selectedPlanCheckoutData?.price}`}
+                  {selectedPlanCheckoutData?.price <= 0
+                    ? t('free-trial')
+                    : `$${selectedPlanCheckoutData?.price}`}
                 </Heading>
               </Box>
               {getPaymentText()?.length > 0 && (
@@ -383,13 +386,13 @@ const Summary = ({
                           {title}
                         </Box>
                         <Text fontSize="14px" color={isSelected ? 'blue.default' : lightColor} fontWeight={isSelected ? 700 : 400}>
-                          {periodText[item?.period] || ''}
+                          {periodText[item?.period] || t('info.trial')}
                         </Text>
                       </Box>
                       <Box display="flex" alignItems="center" gridGap="10px">
                         <Heading
                           as="span"
-                          size={item?.period !== 'FINANCING' ? 'm' : 'xsm'}
+                          size={(item?.period !== 'FINANCING' && item?.type !== 'TRIAL') ? 'm' : 'xsm'}
                           lineHeight="1"
                           color="blue.default"
                           width="100%"

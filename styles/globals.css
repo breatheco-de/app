@@ -385,3 +385,21 @@ featured {
   top: 50%;
   transform: translateY(-50%);
 }
+
+.masonry-grid {
+  display: -webkit-box; /* Not needed if autoprefixing */
+  display: -ms-flexbox; /* Not needed if autoprefixing */
+  display: flex;
+  margin-left: -1em; /* gutter size offset */
+  width: auto;
+}
+.masonry-grid_column {
+  padding-left: 1em; /* gutter size */
+  background-clip: padding-box;
+}
+
+/* Style your items */
+.masonry-grid_column > div { /* change div to reference your elements you put in <Masonry> */
+  /* background: grey; */
+  margin-bottom: 1em;
+}

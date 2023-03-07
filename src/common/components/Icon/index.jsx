@@ -29,7 +29,7 @@ const Icon = ({
   );
 };
 Icon.propTypes = {
-  icon: PropTypes.string.isRequired,
+  icon: PropTypes.string,
   width: PropTypes.string,
   height: PropTypes.string,
   color: PropTypes.string,
@@ -45,6 +45,7 @@ Icon.propTypes = {
   text: PropTypes.string,
 };
 Icon.defaultProps = {
+  icon: '',
   style: {},
   width: '100%',
   height: '100%',
