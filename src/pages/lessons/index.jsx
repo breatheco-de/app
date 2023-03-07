@@ -6,7 +6,6 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import getT from 'next-translate/getT';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import FilterModal from '../../common/components/FilterModal';
@@ -14,8 +13,9 @@ import TitleContent from '../../js_modules/projects/TitleContent';
 import ProjectList from '../../js_modules/projects/ProjectList';
 import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
-import { isWindow } from '../../utils';
 import GridContainer from '../../common/components/GridContainer';
+import PaginatedView from '../../common/components/PaginationView';
+import { getQueryString, isWindow } from '../../utils';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'lesson');
@@ -25,10 +25,8 @@ export const getStaticProps = async ({ locale, locales }) => {
   const lessons = []; // filtered lessons after removing repeated
   let arrLessons = []; // incoming lessons
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson&limit=1000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson&limit=2000`);
   const data = await resp.json();
-  // .then((res) => res.json())
-  // .catch((err) => console.error(err));
 
   arrLessons = Object.values(data.results);
   if (resp.status !== undefined && resp.status >= 200 && resp.status < 400) {
@@ -40,12 +38,6 @@ export const getStaticProps = async ({ locale, locales }) => {
   let technologyTags = [];
   let difficulties = [];
 
-  // const technologiesResponse = await fetch(
-  //   `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=lesson&limit=1000`,
-  //   {
-  //     Accept: 'application/json, text/plain, */*',
-  //   },
-  // );
   const technologiesResponse = await fetch(
     `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=lesson&limit=1000`,
     {
@@ -134,62 +126,24 @@ export const getStaticProps = async ({ locale, locales }) => {
 const Projects = ({ lessons, technologyTags, difficulties }) => {
   const { t } = useTranslation('lesson');
   const { filteredBy, setProjectFilters } = useFilter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [offset, setOffset] = useState(10);
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const router = useRouter();
   const iconColor = useColorModeValue('#FFF', '#283340');
-  const queryExists = Object.keys(router.query).length > 0;
+  const page = getQueryString('page', 1);
+  const search = getQueryString('search', 1);
 
-  const lessonsFiltered = lessons.slice(0, offset);
-  const lessonsSearched = lessons.filter(
-    (lesson) => lesson.title.toLowerCase()
-      .includes(router?.query?.search?.toLocaleLowerCase() || false),
-  );
+  const contentPerPage = 20;
+  const startIndex = (page - 1) * contentPerPage;
 
-  const handleScroll = () => {
-    const scrollTop = isWindow && document.documentElement.scrollTop;
-    const offsetHeight = isWindow && document.documentElement.offsetHeight;
-    const innerHeight = isWindow && window.innerHeight;
-    if ((innerHeight + scrollTop) <= offsetHeight) return;
-    setIsLoading(true);
+  const queryFunction = async () => {
+    const endIndex = startIndex + contentPerPage;
+    const paginatedResults = lessons.slice(startIndex, endIndex);
+
+    return {
+      count: lessons.length,
+      results: paginatedResults,
+    };
   };
-
-  useEffect(() => {
-    if (!queryExists) {
-      if (lessonsSearched.length > 0) return () => {};
-      if (offset <= lessons.length) {
-        console.log('loading lessons...');
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-      }
-      console.log('All lessons loaded');
-    }
-    return () => {};
-  }, [offset, queryExists]);
-
-  useEffect(() => {
-    if (!isLoading) return;
-    if (offset >= lessons.length) setIsLoading(false);
-    setTimeout(() => {
-      setOffset(offset + 10);
-      setIsLoading(false);
-    }, 200);
-  }, [isLoading]);
-
-  const getLessons = () => {
-    if (queryExists) {
-      return lessons;
-    }
-    if (lessonsSearched.length > 0) {
-      return lessonsSearched;
-    }
-    return lessonsFiltered;
-  };
-
-  // const currentFilters = technologies.length
-  //   + (difficulty === undefined || difficulty.length === 0 ? 0 : 1)
-  //   + videoTutorials;
 
   const { isOpen, onClose, onOpen } = useDisclosure();
   const techsQuery = router.query.techs;
@@ -231,7 +185,7 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
         >
           <TitleContent title={t('title')} icon="book" color={iconColor} mobile={false} />
 
-          <Search placeholder={t('search')} onChange={() => setIsLoading(true)} />
+          <Search placeholder={t('search')} />
 
           <Button
             variant="outline"
@@ -283,13 +237,6 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
       <GridContainer
         flex="1"
         gridTemplateColumns="0fr repeat(12, 1fr) 0fr"
-        // margin={[
-        //   '0 5% 0 5%', // 0-30em
-        //   '0 5% 0 5%', // 30em-48em
-        //   '0 5% 0 5%', // 48em-62em
-        //   '0 10% 0 10%', // 62em+
-        // ]}
-        // margin={{ base: '0 4% 0 4%', md: '0 10% 0 10%' }}
       >
         <Text
           size="md"
@@ -300,20 +247,36 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
           {t('description')}
         </Text>
 
-        <ProjectList
-          projects={getLessons()}
-          withoutDifficulty
-          isLoading={isLoading}
-          contextFilter={filteredBy.projectsOptions}
-          projectPath="lesson"
-        />
+        {(search?.length > 0 || currentFilters > 0) ? (
+          <ProjectList
+            projects={lessons}
+            withoutImage
+            contextFilter={filteredBy.projectsOptions}
+            projectPath="lesson"
+          />
+        ) : (
+          <>
+            {isWindow && (
+              <PaginatedView
+                queryFunction={queryFunction}
+                options={{
+                  projectPath: 'lesson',
+                  pagePath: '/lessons',
+                  contextFilter: filteredBy.projectsOptions,
+                  contentPerPage,
+                  disableLangFilter: false,
+                }}
+              />
+            )}
+          </>
+        )}
       </GridContainer>
     </Box>
   );
 };
 
 Projects.propTypes = {
-  technologyTags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  technologyTags: PropTypes.arrayOf(PropTypes.any).isRequired,
   lessons: PropTypes.arrayOf(PropTypes.object).isRequired,
   difficulties: PropTypes.arrayOf(PropTypes.string).isRequired,
 };

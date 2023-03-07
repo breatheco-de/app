@@ -6,7 +6,6 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 const redirectsList = require('./public/redirects.json');
-const redirectsGeneratedList = require('./public/redirects-from-api.json');
 const nextTranslate = require('next-translate');
 
 const externalDevDomain = process.env.VERCEL_ENV !== 'production' ? 'http://localhost:9999' : '';
@@ -36,13 +35,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
   },
   async redirects() {
     return [
-      // {
-      //   source: '/interactive-exercises',
-      //   destination: '/interactive-exercise',
-      //   permanent: true,
-      // },
       ...redirectsList,
-      ...redirectsGeneratedList,
       {
         source: '/interactive-exercises/:slug',
         destination: '/interactive-exercise/:slug',
@@ -85,36 +78,37 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
       },
     ];
   },
-  async rewrites() {
-    return [
-      {
-        source: '/interactive-coding-tutorial/INTERMEDIATE/:slug',
-        destination: '/interactive-coding-tutorial/intermediate/:slug',
-      },
-      {
-        source: '/interactive-coding-tutorial/BEGINNER/:slug',
-        destination: '/interactive-coding-tutorial/beginner/:slug',
-      },
-      {
-        source: '/interactive-coding-tutorial/EASY/:slug',
-        destination: '/interactive-coding-tutorial/easy/:slug',
-      },
-      {
-        source: '/interactive-coding-tutorial/HARD/:slug',
-        destination: '/interactive-coding-tutorial/hard/:slug',
-      },
-      {
-        source: '/profile',
-        destination: '/profile/info',
-      },
-    ];
-  },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: '/interactive-coding-tutorial/INTERMEDIATE/:slug',
+  //       destination: '/interactive-coding-tutorial/intermediate/:slug',
+  //     },
+  //     {
+  //       source: '/interactive-coding-tutorial/BEGINNER/:slug',
+  //       destination: '/interactive-coding-tutorial/beginner/:slug',
+  //     },
+  //     {
+  //       source: '/interactive-coding-tutorial/EASY/:slug',
+  //       destination: '/interactive-coding-tutorial/easy/:slug',
+  //     },
+  //     {
+  //       source: '/interactive-coding-tutorial/HARD/:slug',
+  //       destination: '/interactive-coding-tutorial/hard/:slug',
+  //     },
+  //     {
+  //       source: '/profile',
+  //       destination: '/profile/info',
+  //     },
+  //   ];
+  // },
   // swcMinify: false,
   reactStrictMode: true,
   trailingSlash: false,
   webpack: (config, { isServer }) => {
     if (isServer) {
       require('./scripts/redirects-generator');
+      require('./scripts/sitemap-generator');
       require('./scripts/syllabus');
     }
     if (process.env.VERCEL_ENV !== 'production') {

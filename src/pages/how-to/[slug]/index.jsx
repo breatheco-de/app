@@ -17,6 +17,7 @@ import Icon from '../../../common/components/Icon';
 import TagCapsule from '../../../common/components/TagCapsule';
 import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 import modifyEnv from '../../../../modifyEnv';
+import redirectsFromApi from '../../../../public/redirects-from-api.json';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=1000`);
@@ -122,6 +123,7 @@ export default function HowToSlug({ data, markdown }) {
   // const getImage = preview || defaultImage;
   const router = useRouter();
   const { slug } = router.query;
+  const { locale } = router;
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const linkColor = useColorModeValue('blue.default', 'blue.300');
 
@@ -134,21 +136,27 @@ export default function HowToSlug({ data, markdown }) {
   }, [isHowTo]);
 
   useEffect(async () => {
-    const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
-    const aliasList = await alias.json();
-    const redirectSlug = aliasList[slug] || slug;
-    const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
+    const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/how-to/${slug}`);
 
-    const redirectResults = await dataRedirect.json();
-    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-    const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || data?.slug || slug}`;
-    const pagePath = 'how-to';
+    if (redirect) {
+      router.push(redirect?.destination);
+    } else {
+      const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
+      const aliasList = await alias.json();
+      const redirectSlug = aliasList[slug] || slug;
+      const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
 
-    const aliasRedirect = aliasList[slug] !== undefined && userPathName;
+      const redirectResults = await dataRedirect.json();
+      const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+      const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || data?.slug || slug}`;
+      const pagePath = 'how-to';
 
-    publicRedirectByAsset({
-      router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
-    });
+      const aliasRedirect = aliasList[slug] !== undefined && userPathName;
+
+      publicRedirectByAsset({
+        router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
+      });
+    }
     return () => {};
   }, [router, router.locale, translations]);
 

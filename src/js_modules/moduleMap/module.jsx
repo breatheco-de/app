@@ -110,7 +110,7 @@ const Module = ({
         setCurrentAssetData(assetData);
 
         if (!assetData?.delivery_formats.includes('url')) {
-          const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
+          const fileResp = await bc.todo().getFile({ id: currentTask.id });
           const respData = await fileResp.data;
           setFileData(respData);
           onOpen();

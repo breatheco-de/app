@@ -6,7 +6,6 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import getT from 'next-translate/getT';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import FilterModal from '../../common/components/FilterModal';
@@ -14,8 +13,9 @@ import TitleContent from '../../js_modules/projects/TitleContent';
 import ProjectList from '../../js_modules/projects/ProjectList';
 import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
-import { isWindow } from '../../utils';
 import GridContainer from '../../common/components/GridContainer';
+import { getQueryString } from '../../utils';
+import PaginatedView from '../../common/components/PaginationView';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'projects');
@@ -27,8 +27,6 @@ export const getStaticProps = async ({ locale, locales }) => {
 
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=1000`);
   const data = await resp.json();
-  // .then((res) => res.json())
-  // .catch((err) => console.error(err));
 
   arrProjects = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
@@ -39,13 +37,6 @@ export const getStaticProps = async ({ locale, locales }) => {
 
   let technologyTags = [];
   let difficulties = [];
-
-  // const technologiesResponse = await fetch(
-  //   `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=project&limit=1000`,
-  //   {
-  //     Accept: 'application/json, text/plain, */*',
-  //   },
-  // );
 
   const technologiesResponse = await fetch(
     `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=project&limit=1000`,
@@ -136,15 +127,14 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
   const { t } = useTranslation('projects');
   const { filteredBy, setProjectFilters } = useFilter();
   const iconColor = useColorModeValue('#FFF', '#283340');
-  const [isLoading, setIsLoading] = useState(false);
-  const [offset, setOffset] = useState(10);
   const router = useRouter();
-  const projectsFiltered = projects.slice(0, offset);
-  const queryExists = Object.keys(router.query).length > 0;
-  const projectsSearched = projects.filter(
-    (project) => project.title.toLowerCase()
-      .includes(router?.query?.search?.toLocaleLowerCase() || false),
-  );
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
+  const page = getQueryString('page', 1);
+  const search = getQueryString('search', 1);
+
+  const contentPerPage = 20;
+  const startIndex = (page - 1) * contentPerPage;
 
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const techsQuery = router.query.techs;
@@ -161,46 +151,14 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
     + difficultyIsActive()
     + videoTutorials;
 
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const queryFunction = async () => {
+    const endIndex = startIndex + contentPerPage;
+    const paginatedResults = projects.slice(startIndex, endIndex);
 
-  const handleScroll = () => {
-    const scrollTop = isWindow && document.documentElement.scrollTop;
-    const offsetHeight = isWindow && document.documentElement.offsetHeight;
-    const innerHeight = isWindow && window.innerHeight;
-    if ((innerHeight + scrollTop) <= offsetHeight) return;
-    setIsLoading(true);
-  };
-
-  useEffect(() => {
-    if (!queryExists) {
-      if (projectsSearched.length > 0) return () => { };
-      if (offset <= projects.length) {
-        console.log('loading projects...');
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-      }
-      console.log('All projects loaded');
-    }
-    return () => { };
-  }, [offset, queryExists]);
-
-  useEffect(() => {
-    if (!isLoading) return;
-    if (offset >= projects.length) setIsLoading(false);
-    setTimeout(() => {
-      setOffset(offset + 10);
-      setIsLoading(false);
-    }, 200);
-  }, [isLoading]);
-
-  const getProjects = () => {
-    if (queryExists) {
-      return projects;
-    }
-    if (projectsSearched.length > 0) {
-      return projectsSearched;
-    }
-    return projectsFiltered;
+    return {
+      count: projects.length,
+      results: paginatedResults,
+    };
   };
 
   return (
@@ -271,7 +229,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
             onClose={onClose}
             contextFilter={filteredBy.projectsOptions}
             cardHeight="348px"
-            isLoading={isLoading}
+            // isLoading={isLoading}
             setFilter={setProjectFilters}
             technologyTags={technologyTags}
             difficulties={difficulties}
@@ -289,13 +247,26 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
           {t('description')}
         </Text>
 
-        <ProjectList
-          projects={getProjects()}
-          contextFilter={filteredBy.projectsOptions}
-          isLoading={isLoading}
-          projectPath="interactive-coding-tutorial"
-          pathWithDifficulty
-        />
+        {(search?.length > 0 || currentFilters > 0) ? (
+          <ProjectList
+            projects={projects}
+            withoutImage
+            contextFilter={filteredBy.exercisesOptions}
+            projectPath="how-to"
+          />
+        ) : (
+          <PaginatedView
+            queryFunction={queryFunction}
+            options={{
+              projectPath: 'interactive-coding-tutorial',
+              pagePath: '/interactive-coding-tutorials',
+              contextFilter: filteredBy.exercisesOptions,
+              contentPerPage,
+              disableLangFilter: true,
+            }}
+          />
+        )}
+
       </GridContainer>
     </Box>
   );

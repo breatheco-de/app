@@ -28,8 +28,8 @@ export const getStaticProps = async ({ locale, locales }) => {
       seo: {
         title: data.title,
         description: data?.description || '',
-        pathConnector: '/lear-to-code',
-        url: '/lear-to-code',
+        pathConnector: '/learn-to-code',
+        url: '/learn-to-code',
         type: 'article',
         card: 'large',
         locales,
