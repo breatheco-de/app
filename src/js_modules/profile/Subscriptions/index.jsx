@@ -111,10 +111,10 @@ const Subscriptions = ({ storybookConfig }) => {
                 </Box>
                 <Flex flexDirection="column" gridGap="8px" height="100%" width="100%">
                   <Flex flexDirection="column" gridGap="2px">
-                    <Text fontSize="11px" fontWeight="700">
+                    <Text fontSize="16px" fontWeight="700">
                       {subscription?.plans[0]?.name || toCapitalize(unSlugify(subscription?.plans[0]?.slug))}
                     </Text>
-                    <Text fontSize="16px" fontWeight="700">
+                    <Text fontSize="11px" fontWeight="700">
                       {subscription?.selected_cohort?.name}
                     </Text>
                   </Flex>
