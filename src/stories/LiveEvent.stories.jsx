@@ -22,6 +22,11 @@ export default {
         type: 'text'
       }
     },
+    subLabel: {
+      control: {
+        type: 'text'
+      }
+    },
     live_stream_url: {
       control: {
         type: 'text'
@@ -53,6 +58,7 @@ Default.args = {
   liveEndsAt: new Date(addHours(new Date(), 1)),
   live_stream_url: 'https://www.google.co.ve/',
   featureLabel: 'Live clases, coding sessions, workshops and hangouts every few hours.',
+  subLabel: 'Master Class',
   featureReadMoreUrl: 'https://www.google.co.ve/',
   startingSoonDelta: 30,
   otherEvents: [{
@@ -76,6 +82,7 @@ export const StartsIn5Hours = Component.bind({});
 StartsIn5Hours.args = {
   width: '320px',
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
+  subLabel: 'Master Class',
   featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
   liveStartsAt: new Date(addHours(new Date(), 5)),
@@ -99,6 +106,7 @@ StartsIn5Hours.args = {
 export const NoTodayClass = Component.bind({});
 NoTodayClass.args = {
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
+  subLabel: 'Master Class',
   featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
   otherEvents: [{
@@ -120,6 +128,7 @@ NoTodayClass.args = {
 export const UpcomingEventsTomorrow = Component.bind({});
 UpcomingEventsTomorrow.args = {
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
+  subLabel: 'Master Class',
   featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
   otherEvents: [{
@@ -141,6 +150,7 @@ UpcomingEventsTomorrow.args = {
 export const UpcomingEventToday = Component.bind({});
 UpcomingEventToday.args = {
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
+  subLabel: 'Master Class',
   featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
   otherEvents: [{
@@ -169,6 +179,7 @@ UpcomingEventToday.args = {
 export const EventsIn2DaysOrMore = Component.bind({});
 EventsIn2DaysOrMore.args = {
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
+  subLabel: 'Master Class',
   featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
   otherEvents: [{

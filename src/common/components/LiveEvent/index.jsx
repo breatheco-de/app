@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useState, useEffect } from 'react';
 import {
-  Box, useColorModeValue, Button, useToast,
+  Box, useColorModeValue, Button, useToast, Tag, TagLabel,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
@@ -15,6 +16,7 @@ import Text from '../Text';
 import Icon from '../Icon';
 import { isDateMoreThanAnyDaysAgo } from '../../../utils';
 import OtherEvents from './OtherEvents';
+import useStyle from '../../hooks/useStyle';
 
 const availableLanguages = {
   es,
@@ -30,9 +32,11 @@ const LiveEvent = ({
   startingSoonDelta,
   stTranslation,
   featureLabel,
+  subLabel,
   featureReadMoreUrl,
 }) => {
   const { t, lang } = useTranslation('live-event');
+  const { hexColor, backgroundColor2 } = useStyle();
   const [isOpen, setIsOpen] = useState(false);
   const [showText, setShowText] = useState(false);
   const [timeAgo, setTimeAgo] = useState('');
@@ -138,7 +142,7 @@ const LiveEvent = ({
 
   return (
     <Box
-      padding="16px 25px"
+      padding="10px"
       background={bgColor}
       border="1px solid"
       borderColor="#DADADA"
@@ -147,32 +151,32 @@ const LiveEvent = ({
       minWidth="320px"
     >
       {(featureLabel || featureReadMoreUrl) && (
-      <Text
-        fontSize="sm"
-        lineHeight="19px"
-        fontWeight="700"
-        color={textColor}
-        textAlign="center"
-        marginBottom="15px"
-        marginTop="0"
-      >
-        {featureLabel}
-        {' '}
-        {featureReadMoreUrl && (
-        <Link
-          target="_blank"
-          rel="noopener noreferrer"
-          href={featureReadMoreUrl}
-          color={useColorModeValue('blue.default', 'blue.300')}
-          display="inline-block"
-          letterSpacing="0.05em"
-          locale="en"
-          fontFamily="Lato, Sans-serif"
+        <Text
+          fontSize="sm"
+          lineHeight="19px"
+          fontWeight="700"
+          color={textColor}
+          textAlign="center"
+          marginBottom="15px"
+          marginTop="0"
         >
-          {stTranslation ? stTranslation[lang]['live-event']['learn-more'] : t('learn-more')}
-        </Link>
-        )}
-      </Text>
+          {featureLabel}
+          {' '}
+          {featureReadMoreUrl && (
+            <Link
+              target="_blank"
+              rel="noopener noreferrer"
+              href={featureReadMoreUrl}
+              color={useColorModeValue('blue.default', 'blue.300')}
+              display="inline-block"
+              letterSpacing="0.05em"
+              locale="en"
+              fontFamily="Lato, Sans-serif"
+            >
+              {stTranslation ? stTranslation[lang]['live-event']['learn-more'] : t('learn-more')}
+            </Link>
+          )}
+        </Text>
       )}
       {featuredLiveEventStartsAt ? (
         <Box
@@ -182,7 +186,7 @@ const LiveEvent = ({
           border={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && '2px solid'}
           borderColor={CustomTheme.colors.blue.default2}
           padding="10px"
-          borderRadius="50px"
+          borderRadius="19px"
           width="100%"
           margin="auto"
           cursor={(!liveStartsAt || isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) && 'pointer'}
@@ -225,7 +229,26 @@ const LiveEvent = ({
                 : ''
             }
             opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? '1' : '0.5'}
+            position="relative"
           >
+            {getOtherEvents().length > 0 && (
+              <Box
+                borderRadius="full"
+                width="17px"
+                height="17px"
+                background={CustomTheme.colors.danger}
+                position="absolute"
+                color={CustomTheme.colors.white}
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                left="75%"
+              >
+                <Text linHeight="18px" textAlign="center" fontSize="14px" fontWeight="900">
+                  {getOtherEvents().length}
+                </Text>
+              </Box>
+            )}
             <Icon
               width="50px"
               height="50px"
@@ -237,12 +260,14 @@ const LiveEvent = ({
             justifyContent="center"
             flexDirection="column"
             marginLeft="10px"
+            width="100%"
           >
             <Text
               size="15px"
               lineHeight="18px"
               fontWeight="900"
               color={textColor}
+              opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 1 : 0.5}
               marginBottom="5px"
               marginTop="0"
               onMouseOver={handleShowText}
@@ -258,7 +283,43 @@ const LiveEvent = ({
                 </>
               )}
             </Text>
-            <Text
+            <Box display="flex" justifyContent="space-between">
+              {true && (
+                <Tag
+                  size="sm"
+                  borderRadius="full"
+                  variant="solid"
+                  colorScheme="green"
+                  width="fit-content"
+                  background={backgroundColor2}
+                >
+                  <TagLabel
+                    fontWeight="700"
+                    color={hexColor.blueDefault}
+                    opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 1 : 0.5}
+                  >
+                    {subLabel}
+                  </TagLabel>
+                </Tag>
+              )}
+              <Tag
+                size="sm"
+                borderRadius="full"
+                variant="solid"
+                colorScheme="green"
+                width="fit-content"
+                background={CustomTheme.colors.red.light}
+              >
+                <TagLabel
+                  fontWeight="700"
+                  color={CustomTheme.colors.danger}
+                  opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 1 : 0.2}
+                >
+                  • Live Now!
+                </TagLabel>
+              </Tag>
+            </Box>
+            {/* <Text
               size="14px"
               lineHeight="18px"
               fontWeight="700"
@@ -266,7 +327,7 @@ const LiveEvent = ({
               margin="0"
             >
               {timeAgo}
-            </Text>
+            </Text> */}
           </Box>
         </Box>
       ) : (
@@ -277,10 +338,10 @@ const LiveEvent = ({
           // border={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && '2px solid'}
           borderColor=""
           padding="10px"
-          borderRadius="50px"
+          borderRadius="19px"
           width="100%"
           margin="auto"
-          // cursor={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && 'pointer'}
+        // cursor={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && 'pointer'}
         >
           <Box
             borderRadius="full"
@@ -370,6 +431,7 @@ LiveEvent.propTypes = {
   startingSoonDelta: PropTypes.number,
   // liveUrl: PropTypes.string.isRequired,
   featureLabel: PropTypes.string,
+  subLabel: PropTypes.string,
   featureReadMoreUrl: PropTypes.string,
   liveClassHash: PropTypes.string,
 };
@@ -379,6 +441,7 @@ LiveEvent.defaultProps = {
   stTranslation: null,
   startingSoonDelta: 30,
   featureLabel: null,
+  subLabel: null,
   featureReadMoreUrl: null,
   liveClassHash: null,
 };
