@@ -237,7 +237,7 @@ const ProjectSlug = ({ project, markdown }) => {
             backgroundColor={useColorModeValue('white', 'featuredDark')}
             margin="30px 0"
             // width={{ base: '100%', md: '350px' }}
-            minWidth={{ base: '100%', md: '300px' }}
+            minWidth={{ base: '100%', lg: '300px' }}
             maxWidth="350px"
             height="fit-content"
             borderWidth="0px"
