@@ -115,7 +115,7 @@ const Pricing = ({ data }) => {
             <Button
               variant="default"
               onClick={() => {
-                router.push(`/signup?syllabus=coding-introduction${selectedItem?.type.includes('trial') ? '&plan=coding-introduction-free-trial' : ''}`);
+                router.push(`/signup?syllabus=coding-introduction&plan=${selectedItem?.type.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
               }}
             >
               {selectedItem?.button?.title}
