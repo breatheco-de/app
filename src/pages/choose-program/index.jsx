@@ -366,10 +366,17 @@ function chooseProgram() {
               <LiveEvent
                 featureLabel={t('common:live-event.title')}
                 featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                liveClassHash={liveClass?.hash}
-                liveStartsAt={liveClass?.starting_at}
-                liveEndsAt={liveClass?.ending_at}
+                mainClasses={
+                  liveClass?.hash || liveClass?.starting_at || liveClass?.ending_at ? [{
+                    liveClassHash: liveClass.hash,
+                    liveStartsAt: liveClass.starting_at,
+                    liveEndsAt: liveClass.ending_at,
+                  }] : []
+                }
                 otherEvents={events}
+                // liveClassHash={liveClass?.hash}
+                // liveStartsAt={liveClass?.starting_at}
+                // liveEndsAt={liveClass?.ending_at}
               />
             )}
           </Box>

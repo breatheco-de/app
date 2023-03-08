@@ -6,7 +6,7 @@
     "started": "Started {{time}} ago",
     "ended": "Ended {{time}} ago",
     "few-seconds": "a few seconds",
-    "will-start": "Will start in {{time}}",
+    "will-start": "Starts in {{time}}",
     "upcoming": "Other upcoming live events",
     "inactive-event": "This event is not live yet",
     "no-access": "You do not have access to this event"
