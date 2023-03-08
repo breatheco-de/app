@@ -67,11 +67,11 @@ const ProgramCard = ({
   };
 
   const statusLabel = {
-    active: t('status.active'),
-    fully_paid: t('status.fully-paid'),
-    expired: t('status.expired'),
-    cancelled: t('status.cancelled'),
-    payment_issue: t('status.payment-issue'),
+    active: programCardTR?.status?.active || t('status.active'),
+    fully_paid: programCardTR?.status?.fully_paid || t('status.fully_paid'),
+    expired: programCardTR?.expired || t('status.expired'),
+    cancelled: programCardTR?.status?.cancelled || t('status.cancelled'),
+    payment_issue: programCardTR?.status?.payment_issue || t('status.payment_issue'),
   };
 
   const FreeTagCapsule = () => {
@@ -175,7 +175,7 @@ const ProgramCard = ({
                     <FreeTagCapsule />
                   ) : (
                     <>
-                      {!isCancelled || !isAvailableAsSaas ? (
+                      {(!isCancelled || isAvailableAsSaas === false) ? (
                         <Icon icon="crown" width="22px" height="15px" />
                       ) : (
                         <Box fontSize="12px" display="flex" alignItems="center" background="red.light" color="danger" height="22px" borderRadius="20px" padding="0 10px">
@@ -321,7 +321,7 @@ const ProgramCard = ({
                         lineHeight="14px"
                         fontWeight="700"
                       >
-                        {courseProgress > 0 ? (
+                        {(courseProgress > 0 && !isCancelled) ? (
                           <Button variant="link" onClick={handleChoose} gridGap="6px" fontWeight={700}>
                             {isNumber(String(lessonNumber))
                               ? `${programCardTR?.continue || t('continue')} ${lessonNumber} →`
@@ -348,14 +348,14 @@ const ProgramCard = ({
                     </>
                   )}
                   {/* {isAvailableAsSaas && isFreeTrial && ( */}
-                  {/* {((isAvailableAsSaas && isFreeTrial) || (isAvailableAsSaas && !statusActive)) && (
+                  {((isAvailableAsSaas && isFreeTrial) || (isAvailableAsSaas && !statusActive)) && (
                     <Button
                       marginTop={!isCancelled && courseProgress > 0 && '25px'}
                       borderRadius="3px"
                       width="100%"
                       padding="0"
                       whiteSpace="normal"
-                      onClick={onOpenModal}
+                      // onClick={onOpenModal}
                       variant="default"
                       alignItems="center"
                       background="yellow.default"
@@ -364,7 +364,7 @@ const ProgramCard = ({
                       <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
                       {programCardTR?.upgrade || t('upgrade')}
                     </Button>
-                  )} */}
+                  )}
                 </Box>
               )}
             </>
@@ -426,7 +426,7 @@ ProgramCard.defaultProps = {
   handleChoose: () => {},
   isHiddenOnPrework: false,
   // onOpenModal: () => {},
-  isAvailableAsSaas: true,
+  isAvailableAsSaas: false,
   subscriptionStatus: '',
 };
 
