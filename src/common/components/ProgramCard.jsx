@@ -67,11 +67,11 @@ const ProgramCard = ({
   };
 
   const statusLabel = {
-    active: t('status.active'),
-    fully_paid: t('status.fully-paid'),
-    expired: t('status.expired'),
-    cancelled: t('status.cancelled'),
-    payment_issue: t('status.payment-issue'),
+    active: programCardTR?.status?.active || t('status.active'),
+    fully_paid: programCardTR?.status?.fully_paid || t('status.fully_paid'),
+    expired: programCardTR?.expired || t('status.expired'),
+    cancelled: programCardTR?.status?.cancelled || t('status.cancelled'),
+    payment_issue: programCardTR?.status?.payment_issue || t('status.payment_issue'),
   };
 
   const FreeTagCapsule = () => {
