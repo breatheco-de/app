@@ -12,15 +12,19 @@ import ModalInfo from '../../moduleMap/modalInfo';
 import profileHandlers from './handlers';
 import UpgradeAccessModal from '../../../common/components/UpgradeAccessModal';
 import { toCapitalize, unSlugify } from '../../../utils';
+import useSubscriptionsHandler from '../../../common/store/actions/subscriptionAction';
 
 const Subscriptions = ({ storybookConfig }) => {
   const { t, lang } = useTranslation('profile');
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
-  const [cohortProps, setCohortProps] = useState({});
-  const [subscriptionDataState, setSubscriptionData] = useState([]);
+  const [subscriptionProps, setSubscriptionProps] = useState({});
+  const { state, fetchSubscriptions, cancelSubscription } = useSubscriptionsHandler();
   const [cohortsState, setCohortsState] = useState([]);
 
+  const subscriptionDataState = state?.subscriptions;
+
+  const cohortProps = subscriptionProps.selected_cohort;
   const profileTranslations = storybookConfig?.translations?.profile;
   const subscriptionTranslations = storybookConfig?.translations?.profile?.subscription;
 
@@ -38,7 +42,6 @@ const Subscriptions = ({ storybookConfig }) => {
     onOpenCancelSubscription,
     onOpenUpgrade,
     onCloseUpgrade,
-    setCohortProps,
   });
   const { borderColor2, hexColor, backgroundColor3, fontColor } = useStyle();
 
@@ -49,12 +52,7 @@ const Subscriptions = ({ storybookConfig }) => {
       .then(({ data }) => {
         setCohortsState(data?.cohorts);
       });
-    bc.payment({
-      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
-    }).subscriptions()
-      .then(({ data }) => {
-        setSubscriptionData(data);
-      });
+    fetchSubscriptions();
   }, []);
 
   const cohorts = storybookConfig?.cohorts || cohortsState;
@@ -143,10 +141,6 @@ const Subscriptions = ({ storybookConfig }) => {
                     <Flex gridGap="8px">
                       <Icon icon="refresh_time" width="16px" height="16px" color={blueDefault} />
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
-                        {/* {isNotCancelled
-                          ? subscriptionTranslations?.duration?.replace('{{duration}}', durationFormated(validUntil))
-                            || t('subscription.duration', { duration: durationFormated(validUntil) })
-                          : subscriptionTranslations?.['duration-cancelled'] || t('subscription.duration-cancelled')} */}
 
                         {isNotCancelled
                           ? subscriptionTranslations?.['renewal-date'] || t('subscription.renewal-date', { date: nextPaymentDate[lang] })
@@ -157,9 +151,6 @@ const Subscriptions = ({ storybookConfig }) => {
                       <Icon icon="renewal" width="16px" height="16px" color={blueDefault} />
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
                         {subscriptionTranslations?.renewable || t('subscription.renewable')}
-                        {/* {isNotCancelled
-                          ? (subscriptionTranslations?.renewal?.replace('{{renewal}}', getLocaleDate(subscription?.next_payment_at)) || t('subscription.renewal', { renewal: getLocaleDate(subscription?.next_payment_at) }))
-                          : (subscriptionTranslations?.['not-renewable'] || t('subscription.not-renewable'))} */}
                       </Text>
                     </Flex>
                     <Flex gridGap="8px">
@@ -173,7 +164,7 @@ const Subscriptions = ({ storybookConfig }) => {
                     <Button
                       onClick={() => {
                         button.open();
-                        setCohortProps(subscription?.selected_cohort);
+                        setSubscriptionProps(subscription);
                       }}
                       color="blue.default"
                       margin="7px 0 13px 0"
@@ -200,6 +191,7 @@ const Subscriptions = ({ storybookConfig }) => {
             closeButtonStyles={{ variant: 'outline', color: 'blue.default', borderColor: 'currentColor' }}
             buttonHandlerStyles={{ variant: 'default' }}
             actionHandler={() => {
+              cancelSubscription(subscriptionProps?.id);
               console.log('Cancel subscription triggered!');
             }}
             onClose={() => setCancelModalIsOpen(false)}
