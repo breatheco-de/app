@@ -321,7 +321,7 @@ const ProgramCard = ({
                         lineHeight="14px"
                         fontWeight="700"
                       >
-                        {courseProgress > 0 ? (
+                        {(courseProgress > 0 && !isCancelled) ? (
                           <Button variant="link" onClick={handleChoose} gridGap="6px" fontWeight={700}>
                             {isNumber(String(lessonNumber))
                               ? `${programCardTR?.continue || t('continue')} ${lessonNumber} →`
@@ -348,14 +348,14 @@ const ProgramCard = ({
                     </>
                   )}
                   {/* {isAvailableAsSaas && isFreeTrial && ( */}
-                  {/* {((isAvailableAsSaas && isFreeTrial) || (isAvailableAsSaas && !statusActive)) && (
+                  {((isAvailableAsSaas && isFreeTrial) || (isAvailableAsSaas && !statusActive)) && (
                     <Button
                       marginTop={!isCancelled && courseProgress > 0 && '25px'}
                       borderRadius="3px"
                       width="100%"
                       padding="0"
                       whiteSpace="normal"
-                      onClick={onOpenModal}
+                      // onClick={onOpenModal}
                       variant="default"
                       alignItems="center"
                       background="yellow.default"
@@ -364,7 +364,7 @@ const ProgramCard = ({
                       <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
                       {programCardTR?.upgrade || t('upgrade')}
                     </Button>
-                  )} */}
+                  )}
                 </Box>
               )}
             </>
@@ -426,7 +426,7 @@ ProgramCard.defaultProps = {
   handleChoose: () => {},
   isHiddenOnPrework: false,
   // onOpenModal: () => {},
-  isAvailableAsSaas: true,
+  isAvailableAsSaas: false,
   subscriptionStatus: '',
 };
 

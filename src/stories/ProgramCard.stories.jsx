@@ -389,3 +389,30 @@ isAvailableForSaas.args = {
   freeTrialExpireDate: new Date(addDays(new Date(), 5)),
   // lessonNumber: 1.2,
 };
+
+export const isAvailableForSaasCancelled = Component.bind({});
+isAvailableForSaasCancelled.args = {
+  programName: 'Data Science',
+  programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
+  startsIn: new Date(subDays(new Date(), 1)),
+  isAvailableAsSaas: true,
+  icon: "coding",
+  iconBackground: "blue.default",
+  assistants: mentors,
+  teacher: teachers[0],
+  courseProgress: 15,
+  syllabusContent: {
+    totalLessons: 30,
+    totalProjects: 15,
+    totalExercises: 15,
+    completedLessons: 3,
+    completedProjects: 10,
+    completedExercises: 5,
+  },
+  // haveFreeTrial: true,
+  subscriptionStatus: 'CANCELLED',
+  // isFreeTrial: true,
+  // isBought: true,
+  freeTrialExpireDate: new Date(addDays(new Date(), 5)),
+  // lessonNumber: 1.2,
+};
