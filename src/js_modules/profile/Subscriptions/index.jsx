@@ -214,7 +214,10 @@ const Subscriptions = ({ storybookConfig }) => {
             closeButtonStyles={{ variant: 'outline', color: 'blue.default', borderColor: 'currentColor' }}
             buttonHandlerStyles={{ variant: 'default' }}
             actionHandler={() => {
-              cancelSubscription(subscriptionProps?.id);
+              cancelSubscription(subscriptionProps?.id)
+                .finally(() => {
+                  setCancelModalIsOpen(false);
+                });
             }}
             onClose={() => setCancelModalIsOpen(false)}
           />
