@@ -148,14 +148,14 @@ const AddMember = ({ translation, students, errors, required, hint }) => {
               <Modal isOpen={warningModal} onClose={() => setWarningModal(false)}>
                 <ModalOverlay />
                 <ModalContent>
-                  <ModalHeader>{translation?.finalProjectTranslation?.['modal-form']?.['warning-modal'].title || t('modal-form.warning-modal.title')}</ModalHeader>
+                  <ModalHeader marginTop="15px">{translation?.finalProjectTranslation?.['modal-form']?.['warning-modal'].title || t('modal-form.warning-modal.title')}</ModalHeader>
                   <ModalCloseButton />
                   <ModalBody>
                     {/* {translation?.finalProjectTranslation?.['modal-form']?.confirmation.text || t('modal-form.confirmation.text')} */}
                   </ModalBody>
                   <ModalFooter>
                     <Button
-                      colorScheme="blue"
+                      variant="default"
                       mr={3}
                       onClick={() => {
                         setWarningModal(false);
