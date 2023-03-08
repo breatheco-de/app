@@ -51,14 +51,16 @@ const PaymentInfo = () => {
     cvc: 0,
   });
 
-  const isNotTrial = !checkoutData?.isTrial;
+  const isNotTrial = selectedPlanCheckoutData?.type !== 'TRIAL';
 
   const getPrice = (planProp) => {
-    if (planProp?.financing_options?.length > 0 && planProp?.financing_options[0]?.monthly_price > 0) return planProp?.financing_options[0]?.monthly_price;
-    if (checkoutData?.amount_per_half > 0) return checkoutData?.amount_per_half;
-    if (checkoutData?.amount_per_month > 0) return checkoutData?.amount_per_month;
-    if (checkoutData?.amount_per_quarter > 0) return checkoutData?.amount_per_quarter;
-    if (checkoutData?.amount_per_year > 0) return checkoutData?.amount_per_year;
+    if (isNotTrial) {
+      if (planProp?.financing_options?.length > 0 && planProp?.financing_options[0]?.monthly_price > 0) return planProp?.financing_options[0]?.monthly_price;
+      if (checkoutData?.amount_per_half > 0) return checkoutData?.amount_per_half;
+      if (checkoutData?.amount_per_month > 0) return checkoutData?.amount_per_month;
+      if (checkoutData?.amount_per_quarter > 0) return checkoutData?.amount_per_quarter;
+      if (checkoutData?.amount_per_year > 0) return checkoutData?.amount_per_year;
+    }
     return t('free-trial');
   };
 
@@ -90,6 +92,15 @@ const PaymentInfo = () => {
         if (resp) {
           handlePayment()
             .finally(() => actions.setSubmitting(false));
+        }
+        if (resp.status >= 400) {
+          toast({
+            title: t('alert-message:card-error'),
+            description: t('alert-message:card-error-description'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
         }
       })
       .catch(() => {
@@ -288,7 +299,9 @@ const PaymentInfo = () => {
                   width="100%"
                   textAlign="end"
                 >
-                  {`$${selectedPlanCheckoutData?.price}`}
+                  {selectedPlanCheckoutData?.price <= 0
+                    ? t('free-trial')
+                    : `$${selectedPlanCheckoutData?.price}`}
                 </Heading>
               </Box>
 

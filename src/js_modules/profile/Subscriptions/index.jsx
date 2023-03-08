@@ -145,7 +145,7 @@ const Subscriptions = ({ storybookConfig }) => {
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
 
                         {isNotCancelled
-                          ? subscriptionTranslations?.['renewal-date'] || t('subscription.renewal-date', { date: nextPaymentDate[lang] })
+                          ? subscriptionTranslations?.['renewal-date']?.replace('{{date}}', nextPaymentDate[lang]) || t('subscription.renewal-date', { date: nextPaymentDate[lang] })
                           : subscriptionTranslations?.['renewal-date-cancelled'] || t('subscription.renewal-date-cancelled')}
                       </Text>
                     </Flex>

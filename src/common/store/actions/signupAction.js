@@ -114,6 +114,14 @@ const useSignup = () => {
         if (response?.data?.status === 'FULFILLED') {
           router.push('/choose-program');
         }
+        if (response === undefined || response.status >= 400) {
+          toast({
+            title: t('alert-message:payment-error'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
+        }
         resolve(response);
       })
       .catch(() => {
@@ -230,41 +238,44 @@ const useSignup = () => {
   });
 
   const getPaymentText = () => {
-    if (
-      selectedPlanCheckoutData?.financing_options?.length > 0
-      && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
-      && selectedPlanCheckoutData?.financing_options[0]?.how_many_months === 1
-    ) {
-      return t('info.will-pay-month', {
-        price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price,
-        qty_months: selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
-        total_amount: selectedPlanCheckoutData?.financing_options[0]?.monthly_price * selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
-      });
-    }
-    if (
-      selectedPlanCheckoutData?.financing_options?.length > 0
-      && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
-      && selectedPlanCheckoutData?.financing_options[0]?.how_many_months > 0
-    ) {
-      return t('info.will-pay-monthly', {
-        price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price,
-        qty_months: selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
-        total_amount: selectedPlanCheckoutData?.financing_options[0]?.monthly_price * selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
-        next_month: nextMonthText,
-      });
-    }
+    const planIsNotTrial = selectedPlanCheckoutData?.type !== 'TRIAL';
+    if (planIsNotTrial) {
+      if (
+        selectedPlanCheckoutData?.financing_options?.length > 0
+        && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
+        && selectedPlanCheckoutData?.financing_options[0]?.how_many_months === 1
+      ) {
+        return t('info.will-pay-month', {
+          price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price,
+          qty_months: selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
+          total_amount: selectedPlanCheckoutData?.financing_options[0]?.monthly_price * selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
+        });
+      }
+      if (
+        selectedPlanCheckoutData?.financing_options?.length > 0
+        && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
+        && selectedPlanCheckoutData?.financing_options[0]?.how_many_months > 0
+      ) {
+        return t('info.will-pay-monthly', {
+          price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price,
+          qty_months: selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
+          total_amount: selectedPlanCheckoutData?.financing_options[0]?.monthly_price * selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
+          next_month: nextMonthText,
+        });
+      }
 
-    if (
-      selectedPlanCheckoutData?.financing_options?.length > 0
-      && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
-      && selectedPlanCheckoutData?.financing_options[0]?.how_many_months === 0
-    ) return t('info.will-pay-now', { price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price });
+      if (
+        selectedPlanCheckoutData?.financing_options?.length > 0
+        && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
+        && selectedPlanCheckoutData?.financing_options[0]?.how_many_months === 0
+      ) return t('info.will-pay-now', { price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price });
 
-    if (selectedPlanCheckoutData?.period === 'MONTH') {
-      return t('info.will-pay-per-month', { price: selectedPlanCheckoutData?.price });
-    }
-    if (selectedPlanCheckoutData?.period === 'YEAR') {
-      return t('info.will-pay-per-year', { price: selectedPlanCheckoutData?.price });
+      if (selectedPlanCheckoutData?.period === 'MONTH') {
+        return t('info.will-pay-per-month', { price: selectedPlanCheckoutData?.price });
+      }
+      if (selectedPlanCheckoutData?.period === 'YEAR') {
+        return t('info.will-pay-per-year', { price: selectedPlanCheckoutData?.price });
+      }
     }
 
     return '';
