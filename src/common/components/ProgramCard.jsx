@@ -175,7 +175,7 @@ const ProgramCard = ({
                     <FreeTagCapsule />
                   ) : (
                     <>
-                      {!isCancelled || !isAvailableAsSaas ? (
+                      {(!isCancelled || isAvailableAsSaas === false) ? (
                         <Icon icon="crown" width="22px" height="15px" />
                       ) : (
                         <Box fontSize="12px" display="flex" alignItems="center" background="red.light" color="danger" height="22px" borderRadius="20px" padding="0 10px">
