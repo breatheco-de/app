@@ -24,7 +24,7 @@ const availableLanguages = {
 const ProgramCard = ({
   programName, programDescription, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
   syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
-  width, usersConnected, assistants, teacher, handleChoose, isHiddenOnPrework, onOpenModal, isAvailableAsSaas,
+  width, usersConnected, assistants, teacher, handleChoose, isHiddenOnPrework, isAvailableAsSaas,
   subscriptionStatus,
 }) => {
   const { t, lang } = useTranslation('program-card');
@@ -348,7 +348,7 @@ const ProgramCard = ({
                     </>
                   )}
                   {/* {isAvailableAsSaas && isFreeTrial && ( */}
-                  {((isAvailableAsSaas && isFreeTrial) || (isAvailableAsSaas && !statusActive)) && (
+                  {/* {((isAvailableAsSaas && isFreeTrial) || (isAvailableAsSaas && !statusActive)) && (
                     <Button
                       marginTop={!isCancelled && courseProgress > 0 && '25px'}
                       borderRadius="3px"
@@ -364,7 +364,7 @@ const ProgramCard = ({
                       <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
                       {programCardTR?.upgrade || t('upgrade')}
                     </Button>
-                  )}
+                  )} */}
                 </Box>
               )}
             </>
@@ -403,7 +403,7 @@ ProgramCard.propTypes = {
   iconBackground: PropTypes.string,
   handleChoose: PropTypes.func,
   isHiddenOnPrework: PropTypes.bool,
-  onOpenModal: PropTypes.func,
+  // onOpenModal: PropTypes.func,
   isAvailableAsSaas: PropTypes.bool,
   subscriptionStatus: PropTypes.string,
 };
@@ -425,7 +425,7 @@ ProgramCard.defaultProps = {
   iconBackground: '',
   handleChoose: () => {},
   isHiddenOnPrework: false,
-  onOpenModal: () => {},
+  // onOpenModal: () => {},
   isAvailableAsSaas: true,
   subscriptionStatus: '',
 };
