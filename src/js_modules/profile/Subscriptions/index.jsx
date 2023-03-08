@@ -140,8 +140,15 @@ const Subscriptions = ({ storybookConfig }) => {
                   </Flex>
 
                   <Flex flexDirection="column" gridGap="10px" background={backgroundColor3} borderRadius="4px" padding="8px">
-                    <Flex gridGap="8px">
-                      <Icon icon="refresh_time" width="16px" height="16px" color={blueDefault} />
+                    <Flex gridGap="4px">
+                      <Icon
+                        icon="refresh_time"
+                        width="16px"
+                        height="16px"
+                        color={blueDefault}
+                        withContainer
+                        minWidth="18px"
+                      />
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
 
                         {isNotCancelled
@@ -149,14 +156,28 @@ const Subscriptions = ({ storybookConfig }) => {
                           : subscriptionTranslations?.['renewal-date-cancelled'] || t('subscription.renewal-date-cancelled')}
                       </Text>
                     </Flex>
-                    <Flex gridGap="8px">
-                      <Icon icon="renewal" width="16px" height="16px" color={blueDefault} />
+                    <Flex gridGap="4px">
+                      <Icon
+                        icon="renewal"
+                        width="16px"
+                        height="16px"
+                        color={blueDefault}
+                        withContainer
+                        minWidth="18px"
+                      />
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
                         {subscriptionTranslations?.renewable || t('subscription.renewable')}
                       </Text>
                     </Flex>
-                    <Flex gridGap="8px">
-                      <Icon icon="card" width="18px" height="13px" color={blueDefault} />
+                    <Flex gridGap="4px">
+                      <Icon
+                        icon="card"
+                        width="18px"
+                        height="13px"
+                        color={blueDefault}
+                        withContainer
+                        minWidth="18px"
+                      />
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
                         {subscriptionTranslations?.payment?.replace('{{payment}}', payUnitString(subscription?.pay_every_unit)) || t('subscription.payment', { payment: payUnitString(subscription?.pay_every_unit) })}
                       </Text>
