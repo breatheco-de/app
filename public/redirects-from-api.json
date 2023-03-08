@@ -85,11 +85,6 @@
     "permanent": true
   },
   {
-    "source": "/lesson/building-apis-with-nodejs-expressjs-es",
-    "destination": "/es/lesson/building-apis-with-nodejs-expressjs-es",
-    "permanent": true
-  },
-  {
     "source": "/lesson/asincrono-algoritmos-async-await",
     "destination": "/es/lesson/asincrono-algoritmos-async-await",
     "permanent": true
@@ -260,6 +255,11 @@
     "permanent": true
   },
   {
+    "source": "/lesson/building-apis-with-nodejs-typeorm",
+    "destination": "/es/lesson/building-apis-with-nodejs-typeorm",
+    "permanent": true
+  },
+  {
     "source": "/lesson/python-vs-js-syntax-es",
     "destination": "/es/lesson/python-vs-js-syntax-es",
     "permanent": true
@@ -352,6 +352,11 @@
   {
     "source": "/lesson/introduccion-a-node-js",
     "destination": "/es/lesson/introduccion-a-node-js",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/building-apis-with-nodejs-expressjs-es",
+    "destination": "/es/lesson/building-apis-with-nodejs-expressjs-es",
     "permanent": true
   },
   {

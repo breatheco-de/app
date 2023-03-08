@@ -7,32 +7,22 @@ export default {
   title: 'components/Live Event',
   component: LiveEvent,
   argTypes: {
-    mainEvents: {
+    // liveStartsAt: {
+    //   control: {
+    //     type: 'date'
+    //   }
+    // },
+    // liveEndsAt: {
+    //   control: {
+    //     type: 'date'
+    //   }
+    // },
+    mainClasses: {
       control: {
         type: 'object'
       }
     },
-    liveStartsAt: {
-      control: {
-        type: 'date'
-      }
-    },
-    liveEndsAt: {
-      control: {
-        type: 'date'
-      }
-    },
     featureLabel: {
-      control: {
-        type: 'text'
-      }
-    },
-    subLabel: {
-      control: {
-        type: 'text'
-      }
-    },
-    live_stream_url: {
       control: {
         type: 'text'
       }
@@ -59,18 +49,90 @@ const Component = (args, context) => {
 };
 export const Default = Component.bind({});
 Default.args = {
-  mainEvents: [{
-    liveStartsAt: new Date(subMinutes(new Date(), 40)),
-    liveEndsAt: new Date(addHours(new Date(), 1)),
-    live_stream_url: 'https://www.google.co.ve/',
-    featureLabel: 'Live clases, coding sessions, workshops and hangouts every few hours.',
+  // liveStartsAt: new Date(subMinutes(new Date(), 40)),
+  // liveEndsAt: new Date(addHours(new Date(), 1)),
+  mainClasses: [{
+    starting_at: new Date(subMinutes(new Date(), 40)),
+    ending_at: new Date(addHours(new Date(), 1)),
+    title: 'Miami 53',
     subLabel: 'Master Class',
+    liveClassHash: 'dfsdf',
   }],
-  liveStartsAt: new Date(subMinutes(new Date(), 40)),
-  liveEndsAt: new Date(addHours(new Date(), 1)),
-  live_stream_url: 'https://www.google.co.ve/',
   featureLabel: 'Live clases, coding sessions, workshops and hangouts every few hours.',
-  subLabel: 'Master Class',
+  featureReadMoreUrl: 'https://www.google.co.ve/',
+  startingSoonDelta: 30,
+  otherEvents: [{
+    title: 'My Wonderful HTML Email Workflow',
+    type: 'Workshop',
+    icon_url: 'https://cdn.pixabay.com/photo/2017/08/05/11/16/logo-2582748_960_720.png',
+    starting_at: subMinutes(new Date(), 0),
+    ending_at: addMinutes(new Date(), 180),
+    icon: 'group',
+    fill: '#25BF6C',
+    live_stream_url: 'https://www.google.co.ve/'
+  }, {
+    title: 'Coding Jamming',
+    type: 'Workshop',
+    starting_at: new Date(addMinutes(new Date(), 15)),
+    ending_at: new Date(addHours(new Date(), 2)),
+    icon: 'codeBg',
+    live_stream_url: 'https://www.google.co.ve/'
+  }],
+};
+
+export const TwoMainEvents = Component.bind({});
+TwoMainEvents.args = {
+  mainClasses: [{
+    starting_at: new Date(subMinutes(new Date(), 40)),
+    ending_at: new Date(addHours(new Date(), 1)),
+    title: 'Miami 53',
+    subLabel: 'Master Class',
+    liveClassHash: 'dfsdf',
+  },{
+    starting_at: new Date(subMinutes(new Date(), 40)),
+    ending_at: new Date(addHours(new Date(), 1)),
+    title: 'Miami 53',
+    subLabel: 'Master Class',
+    liveClassHash: 'dfsdf',
+  }],
+  featureLabel: 'Live clases, coding sessions, workshops and hangouts every few hours.',
+  featureReadMoreUrl: 'https://www.google.co.ve/',
+  startingSoonDelta: 30,
+  otherEvents: [{
+    title: 'My Wonderful HTML Email Workflow',
+    type: 'Workshop',
+    icon_url: 'https://cdn.pixabay.com/photo/2017/08/05/11/16/logo-2582748_960_720.png',
+    starting_at: subMinutes(new Date(), 0),
+    ending_at: addMinutes(new Date(), 180),
+    icon: 'group',
+    fill: '#25BF6C',
+    live_stream_url: 'https://www.google.co.ve/'
+  }, {
+    title: 'Coding Jamming',
+    type: 'Workshop',
+    starting_at: new Date(addMinutes(new Date(), 15)),
+    ending_at: new Date(addHours(new Date(), 2)),
+    icon: 'codeBg',
+    live_stream_url: 'https://www.google.co.ve/'
+  }],
+};
+
+export const OneLiveOnly = Component.bind({});
+OneLiveOnly.args = {
+  mainClasses: [{
+    starting_at: new Date(addHours(new Date(), 5)),
+    ending_at: new Date(addHours(new Date(), 8)),
+    title: 'Miami 53',
+    subLabel: 'Master Class',
+    liveClassHash: 'dfsdf',
+  },{
+    starting_at: new Date(subMinutes(new Date(), 40)),
+    ending_at: new Date(addHours(new Date(), 1)),
+    title: 'Miami 53',
+    subLabel: 'Master Class',
+    liveClassHash: 'dfsdf',
+  }],
+  featureLabel: 'Live clases, coding sessions, workshops and hangouts every few hours.',
   featureReadMoreUrl: 'https://www.google.co.ve/',
   startingSoonDelta: 30,
   otherEvents: [{
@@ -95,20 +157,17 @@ Default.args = {
 export const StartsIn5Hours = Component.bind({});
 StartsIn5Hours.args = {
   width: '320px',
-  mainEvents: [{
-    featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
+  mainClasses: [{
     subLabel: 'Master Class',
     featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
     startingSoonDelta: 30,
-    liveStartsAt: new Date(addHours(new Date(), 5)),
-    liveEndsAt: new Date(addHours(new Date(), 6)),
+    starting_at: new Date(addHours(new Date(), 5)),
+    ending_at: new Date(addHours(new Date(), 6)),
+    liveClassHash: 'dfsdf',
   }],
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
-  subLabel: 'Master Class',
   featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
-  liveStartsAt: new Date(addHours(new Date(), 5)),
-  liveEndsAt: new Date(addHours(new Date(), 6)),
   otherEvents: [{
     title: 'My Wonderful HTML Email Workflow',
     type: 'Workshop',
@@ -129,8 +188,8 @@ StartsIn5Hours.args = {
 
 export const NoTodayClass = Component.bind({});
 NoTodayClass.args = {
+  mainClasses:[],
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
-  subLabel: 'Master Class',
   featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
   otherEvents: [{
@@ -154,9 +213,9 @@ NoTodayClass.args = {
 export const UpcomingEventsTomorrow = Component.bind({});
 UpcomingEventsTomorrow.args = {
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
-  subLabel: 'Master Class',
   featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
+  mainClasses:[],
   otherEvents: [{
     title: 'My Wonderful HTML Email Workflow',
     type: 'Workshop',
@@ -178,9 +237,9 @@ UpcomingEventsTomorrow.args = {
 export const UpcomingEventToday = Component.bind({});
 UpcomingEventToday.args = {
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
-  subLabel: 'Master Class',
   featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
+  mainClasses:[],
   otherEvents: [{
     title: '4Geeks GeeksTALKS Europe - Meet our Web- dev Students',
     type: 'Workshop',
@@ -210,9 +269,9 @@ UpcomingEventToday.args = {
 export const EventsIn2DaysOrMore = Component.bind({});
 EventsIn2DaysOrMore.args = {
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
-  subLabel: 'Master Class',
   featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
+  mainClasses:[],
   otherEvents: [{
     title: 'Login flow with React',
     type: 'Workshop',
@@ -245,6 +304,7 @@ EventsIn2DaysOrMore.args = {
 
 export const NoClassAndEventsAvailable = Component.bind({});
 NoClassAndEventsAvailable.args = {
+  mainClasses:[],
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
   featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
   startingSoonDelta: 30,
