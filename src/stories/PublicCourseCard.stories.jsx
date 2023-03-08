@@ -1,5 +1,5 @@
 import React from 'react';
-import { addMinutes, addDays, subHours, addHours, subMinutes, subDays } from 'date-fns';
+import { addDays } from 'date-fns';
 import PublicCourseCard from '../common/components/PublicCourseCard';
 
 export default {
@@ -13,12 +13,12 @@ export default {
     },
     programName: {
       control: {
-        type: 'string'
+        type: 'text'
       }
     },
     programDescription: {
       control: {
-        type: 'string'
+        type: 'text'
       }
     },
     startsIn: {
@@ -28,7 +28,17 @@ export default {
     },
     icon: {
       control: {
-        type: 'string'
+        type: 'text'
+      }
+    },
+    subscriptionStatus: {
+      control: {
+        type: 'text'
+      }
+    },
+    iconBackground: {
+      control: {
+        type: 'text'
       }
     },
     syllabusContent: {
