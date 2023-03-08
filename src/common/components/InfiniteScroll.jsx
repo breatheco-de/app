@@ -68,7 +68,7 @@ function InfiniteScroll({ data, renderItem, loadMore, hasMore, currentPage, page
         }))}
       <div ref={childrenRef} />
       <Box textAlign="center" margin="4rem 0 0 0">
-        {currentPage < pageCount && (
+        {hasMore && (currentPage < pageCount) && (
           <Link
             variant="default"
             href={`${pathname}?page=${currentPage + 1}`}

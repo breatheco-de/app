@@ -14,10 +14,11 @@ import bc from '../../services/breathecode';
 import Link from '../NextChakraLink';
 import Text from '../Text';
 import Icon from '../Icon';
-import { isDateMoreThanAnyDaysAgo } from '../../../utils';
+import { getStorageItem, isDateMoreThanAnyDaysAgo } from '../../../utils';
 import OtherEvents from './OtherEvents';
 import useStyle from '../../hooks/useStyle';
 import useTruncatedText from '../../hooks/useTruncatedText';
+import modifyEnv from '../../../../modifyEnv';
 
 const availableLanguages = {
   es,
@@ -40,6 +41,9 @@ const LiveEvent = ({
   const { hexColor, backgroundColor2 } = useStyle();
   const [isOpen, setIsOpen] = useState(false);
   const [timeAgo, setTimeAgo] = useState('');
+  const accessToken = getStorageItem('accessToken');
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+
   const bgColor = useColorModeValue('white', 'gray.900');
   const bgColor2 = useColorModeValue('featuredLight', 'featuredDark');
   const textColor = useColorModeValue('black', 'white');
@@ -228,7 +232,7 @@ const LiveEvent = ({
                         });
                     }
                     if (!event.liveClassHash) {
-                      window.open(nearestEvent?.live_stream_url);
+                      window.open(`${BREATHECODE_HOST}/v1/events/me/event/${nearestEvent?.id}/join?token=${accessToken}`);
                     }
                   }}
                 >

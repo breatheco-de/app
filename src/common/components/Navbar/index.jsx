@@ -1,7 +1,7 @@
 import {
   Box, Flex, IconButton, Avatar, Stack, Collapse, useColorModeValue,
   useBreakpointValue, useDisclosure, useColorMode, Popover, PopoverTrigger,
-  PopoverContent, PopoverArrow, Button, useMediaQuery,
+  PopoverContent, PopoverArrow, Button,
 } from '@chakra-ui/react';
 import {
   useState, memo, useEffect, Fragment,
@@ -28,7 +28,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   const router = useRouter();
   // const [readSyllabus, setReadSyllabus] = useState([]);
   const [ITEMS, setITEMS] = useState([]);
-  const [isBelowTablet] = useMediaQuery('(max-width: 1000px)');
+  // const [isBelowTablet] = useMediaQuery('(max-width: 1000px)');
   const locale = router.locale === 'default' ? 'en' : router.locale;
 
   const { isOpen, onToggle } = useDisclosure();
@@ -122,7 +122,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
         <Flex
           flex={{ base: 1, md: 'auto' }}
           ml={{ base: -2 }}
-          display={isBelowTablet ? 'flex' : 'none'}
+          display={{ base: 'flex', lg: 'none' }}
           gridGap="12px"
           className="here-2"
         >
@@ -151,7 +151,12 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
           </NextChakraLink>
         </Flex>
 
-        <Flex className="here" flex={{ base: 1 }} display={isBelowTablet ? 'none' : 'flex'} justify={{ base: 'center', md: 'start' }}>
+        <Flex
+          className="here"
+          flex={{ base: 1 }}
+          display={{ base: 'none', lg: 'flex' }}
+          justify={{ base: 'center', md: 'start' }}
+        >
           <NextChakraLink href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
             <Icon icon="logoModern" width="90px" height="20px" />
           </NextChakraLink>
@@ -398,8 +403,14 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
         </Stack>
       </Flex>
 
-      <Collapse in={isOpen} animateOpacity>
-        {isBelowTablet && (
+      <Collapse display={{ lg: 'block' }} in={isOpen} animateOpacity>
+        <MobileNav
+          NAV_ITEMS={ITEMS}
+          haveSession={sessionExists}
+          translations={translations}
+          readSyllabus={readSyllabus}
+        />
+        {/* {isBelowTablet && (
           <MobileNav
             NAV_ITEMS={ITEMS}
             haveSession={sessionExists}
@@ -407,7 +418,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
             readSyllabus={readSyllabus}
             isBelowTablet
           />
-        )}
+        )} */}
       </Collapse>
     </Box>
   );

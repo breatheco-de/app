@@ -1,6 +1,8 @@
 import {
   Box, Avatar, Tag, TagLabel,
 } from '@chakra-ui/react';
+import modifyEnv from '../../../../modifyEnv';
+import { getStorageItem } from '../../../utils';
 import useStyle from '../../hooks/useStyle';
 import CustomTheme from '../../../../styles/theme';
 import useTruncatedText from '../../hooks/useTruncatedText';
@@ -10,6 +12,8 @@ import Text from '../Text';
 
 const OtherEvents = ({ events, isLiveOrStarting, textTime }) => {
   const { hexColor, disabledColor, fontColor } = useStyle();
+  const accessToken = getStorageItem('accessToken');
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   return events.map((event) => {
     const startsAt = event?.starting_at && new Date(event.starting_at);
@@ -41,7 +45,7 @@ const OtherEvents = ({ events, isLiveOrStarting, textTime }) => {
             <Link
               target="_blank"
               rel="noopener noreferrer"
-              href={event?.live_stream_url || '#'}
+              href={`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#'}
               color={fontColor}
               fontSize="15px"
               lineHeight="18px"
