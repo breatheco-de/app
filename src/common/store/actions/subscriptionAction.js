@@ -1,9 +1,11 @@
 import { useSelector, useDispatch } from 'react-redux';
+import { useToast } from '@chakra-ui/react';
 import { CANCEL_SUBSCRIPTION, FETCH_SUBSCRIPTIONS } from '../types';
 import bc from '../../services/breathecode';
 
 const useSubscriptionsHandler = () => {
   const state = useSelector((st) => st.subscriptionsReducer);
+  const toast = useToast();
   const dispatch = useDispatch();
 
   const fetchSubscriptions = () => new Promise((resolve, reject) => {
@@ -32,6 +34,12 @@ const useSubscriptionsHandler = () => {
         });
       })
       .catch((err) => {
+        toast({
+          title: 'Error cancelling subscription',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
         console.log('Error cancelling subscription', err);
       });
   };

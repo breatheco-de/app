@@ -81,14 +81,12 @@ const Subscriptions = ({ storybookConfig }) => {
           gridGap="3rem"
         >
           {subscriptionData.subscriptions.map((subscription) => {
-            // const currentCohort = cohorts.find((l) => l?.cohort.slug === subscription?.selected_cohort?.slug)?.cohort;
             const status = subscription?.status?.toLowerCase();
             const invoice = subscription?.invoices[0];
-            // const isNotCancelled = (getLocaleDate(subscription?.paid_at) !== getLocaleDate(subscription?.next_payment_at) && subscription?.status.toLowerCase() !== 'canceled');
-            const isNotCancelled = (subscription?.status !== 'CANCELLED' && subscription?.status !== 'PAYMENT_ISSUE');
+            const isNotCancelled = subscription?.status !== 'CANCELLED' && subscription?.status !== 'PAYMENT_ISSUE';
             const isFreeTrial = subscription?.status.toLowerCase() === 'free_trial';
             const isFullyPaid = subscription?.status.toLowerCase() === 'fully_paid';
-            // const button = subscriptionHandler(isNotCancelled);
+
             const button = subscriptionHandler(subscription?.status);
             const isNextPaimentExpired = new Date(subscription?.next_payment_at) < new Date();
 
@@ -124,16 +122,20 @@ const Subscriptions = ({ storybookConfig }) => {
                       </Text>
                     )}
                     <Text fontSize="12px" fontWeight="400">
-                      {isNotCancelled
-                        ? (
-                          <>
-                            {isNextPaimentExpired
-                              ? subscriptionTranslations?.['payment-up-to-date'] || t('subscription.payment-up-to-date')
-                              : subscriptionTranslations?.['next-payment']?.replace('{{date}}', getLocaleDate(subscription?.next_payment_at))
-                              || t('subscription.next-payment', { date: getLocaleDate(subscription?.next_payment_at) })}
-                          </>
-                        )
-                        : (subscriptionTranslations?.['last-payment']?.replace('{{date}}', getLocaleDate(invoice?.paid_at)) || t('subscription.last-payment', { date: getLocaleDate(invoice?.paid_at) }))}
+                      {subscription?.status !== 'PAYMENT_ISSUE' && (
+                        <>
+                          {isNotCancelled
+                            ? (
+                              <>
+                                {isNextPaimentExpired
+                                  ? subscriptionTranslations?.['payment-up-to-date'] || t('subscription.payment-up-to-date')
+                                  : subscriptionTranslations?.['next-payment']?.replace('{{date}}', getLocaleDate(subscription?.next_payment_at))
+                                  || t('subscription.next-payment', { date: getLocaleDate(subscription?.next_payment_at) })}
+                              </>
+                            )
+                            : (subscriptionTranslations?.['last-payment']?.replace('{{date}}', getLocaleDate(invoice?.paid_at)) || t('subscription.last-payment', { date: getLocaleDate(invoice?.paid_at) }))}
+                        </>
+                      )}
                     </Text>
                   </Flex>
 
@@ -192,7 +194,6 @@ const Subscriptions = ({ storybookConfig }) => {
             buttonHandlerStyles={{ variant: 'default' }}
             actionHandler={() => {
               cancelSubscription(subscriptionProps?.id);
-              console.log('Cancel subscription triggered!');
             }}
             onClose={() => setCancelModalIsOpen(false)}
           />
