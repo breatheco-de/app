@@ -15,13 +15,19 @@ const subscriptionsReducer = (state = initialState, action) => {
       };
     case CANCEL_SUBSCRIPTION: {
       const updatedSubscription = action.payload;
-      const updatedSubscriptions = state.subscriptions.map((subscription) => {
+      const updatedSubscriptions = state?.subscriptions?.subscriptions?.map((subscription) => {
         if (subscription.id === updatedSubscription.id) {
           return updatedSubscription;
         }
         return subscription;
       });
-      return { ...state, subscriptions: updatedSubscriptions };
+      return {
+        ...state,
+        subscriptions: {
+          ...state.subscriptions,
+          subscriptions: updatedSubscriptions,
+        },
+      };
     }
 
     default:

@@ -24,14 +24,14 @@ const useSubscriptionsHandler = () => {
       });
   });
 
-  const cancelSubscription = (id) => {
+  const cancelSubscription = (id) => new Promise((resolve, reject) => {
     bc.payment().cancelMySubscription(id)
       .then(({ data }) => {
-        console.log('Subscription cancelled');
         dispatch({
           type: CANCEL_SUBSCRIPTION,
           payload: data,
         });
+        resolve(data);
       })
       .catch((err) => {
         toast({
@@ -40,9 +40,9 @@ const useSubscriptionsHandler = () => {
           duration: 5000,
           isClosable: true,
         });
-        console.log('Error cancelling subscription', err);
+        reject(err);
       });
-  };
+  });
 
   return {
     state,
