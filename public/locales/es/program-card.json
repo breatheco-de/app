@@ -6,6 +6,7 @@
     "left": "restantes",
     "non-left": "no quedan días",
     "starts-in": "Empieza en:",
+    "started-in": "Empezó hace:",
     "lessons": "Lecciones",
     "exercises": "Ejercicios",
     "projects": "Proyectos",
@@ -16,5 +17,14 @@
     "start-course": "Empezar curso",
     "free-trial": "Prueba gratis",
     "upgrade": "Mejorar",
+    "status": {
+			"free_trial": "Prueba gratuita",
+			"fully_paid": "Totalmente pagado",
+			"payment_issue": "Problema de pago",
+			"active": "Activo",
+			"expired": "Expirado",
+			"cancelled": "Cancelado",
+			"completed": "Completado"
+    },
     "prework-message": "¡Tendrá acceso a esta cohorte tan pronto como comience!"
 }

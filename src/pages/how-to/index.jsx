@@ -12,9 +12,9 @@ import GridContainer from '../../common/components/GridContainer';
 
 import Icon from '../../common/components/Icon';
 import PaginatedView from '../../common/components/PaginationView';
+import ProjectsLoader from '../../common/components/ProjectsLoader';
 import Text from '../../common/components/Text';
 import useFilter from '../../common/store/actions/filterAction';
-import ProjectList from '../../js_modules/projects/ProjectList';
 import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
 import { getQueryString } from '../../utils';
@@ -139,7 +139,8 @@ export default function HowTo({ data, technologyTags, difficulties }) {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const iconColor = useColorModeValue('#FFF', '#283340');
   const page = getQueryString('page', 1);
-  const search = getQueryString('search', 1);
+  const search = getQueryString('search', '');
+  const pageIsEnabled = getQueryString('page', false);
 
   const contentPerPage = 20;
   const startIndex = (page - 1) * contentPerPage;
@@ -249,20 +250,22 @@ export default function HowTo({ data, technologyTags, difficulties }) {
             {t('description')}
           </Text>
         )}
-        {(search?.length > 0 || currentFilters > 0) ? (
-          <ProjectList
-            projects={data}
-            withoutImage
-            contextFilter={filteredBy.exercisesOptions}
-            projectPath="how-to"
+        {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
+          <ProjectsLoader
+            articles={data}
+            itemsPerPage={20}
+            searchQuery={search}
+            options={{
+              withoutImage: true,
+              contextFilter: filteredBy.howToOptions,
+            }}
           />
         ) : (
           <PaginatedView
             queryFunction={queryFunction}
             options={{
-              projectPath: 'how-to',
               pagePath: '/how-to',
-              contextFilter: filteredBy.exercisesOptions,
+              contextFilter: filteredBy.howToOptions,
               contentPerPage,
               disableLangFilter: true,
             }}

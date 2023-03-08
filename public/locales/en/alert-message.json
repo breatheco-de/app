@@ -67,5 +67,7 @@
   "no-attendance-list-found": "No attendance list found",
   "error-mentorship-service": "There was an error loading the mentorship services",
   "error-finding-mentors": "Something went wrong while looking for mentors for this service",
-  "no-link-exist": "There is no link for this event yet"
+  "no-link-exist": "There is no link for this event yet",
+  "no-course-configuration": "The course configuration you are trying to buy does not exist.",
+  "no-plan-configuration": "The plan configuration you are trying to buy does not exist."
 }

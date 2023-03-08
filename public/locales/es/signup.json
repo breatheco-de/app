@@ -45,6 +45,8 @@
     "will-pay-now": "Pagará ${{price} ahora mismo, no se aplicarán otros cargos en el futuro.",
     "will-pay-per-month": "Te suscribirás y pagarás ${{price}} dólares cada mes",
     "will-pay-per-year": "Te suscribirás y pagarás ${{price}} dólares cada año",
+    "trial": "Prueba por 1 mes",
+    "trial-week": "Prueba por 1 semana",
     "monthly": "Mensual",
     "yearly": "Anual",
     "financing": "Financiado"

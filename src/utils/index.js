@@ -248,6 +248,8 @@ const getQueryString = (key, def) => {
   return urlParams && (urlParams.get(key) || def);
 };
 
+const createArray = (length) => Array.from({ length }, (_, i) => i);
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
@@ -256,4 +258,5 @@ export {
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
+  createArray,
 };
