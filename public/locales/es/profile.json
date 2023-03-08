@@ -5,6 +5,7 @@
   "basic-profile-info": "Información básica del perfil",
   "my-certificates": "Mis certificados",
   "view-certificate": "Ver certificado",
+  "my-subscriptions": "Mis suscripciones",
   "no-certificates": "Aún no hay certificados para mostrar, termina tu proyecto final y obtenlo de inmediato",
   "remove": "Remover",
   "profile-updated": "Perfil actualizado",
@@ -21,6 +22,11 @@
     {
       "title": "Mis certificados",
       "value": "certificates",
+      "disabled": false
+    },
+    {
+      "title": "Suscripciones",
+      "value": "subscriptions",
       "disabled": false
     }
   ],
@@ -56,5 +62,48 @@
     "tooltip-label": "Sube tu imagen de perfil",
     "title": "Sube tu imagen de perfil",
     "submit-button": "Actualizar imagen de perfil"
-  }
+  },
+  "subscription": {
+    "next-payment": "Siguiente pago el {{date}}",
+    "last-payment": "Ultimo pago el {{date}}",
+    "duration": "Duración: {{duration}}",
+    "renewal": "Renovación: {{renewal}}",
+    "renewable": "Renovación: Renovable",
+    "not-renewable": "Renovación: No renovable",
+    "payment": "Pago: {{payment}}",
+    "renewal-date": "Fecha de renovación: {{date}}",
+    "renewal-date-cancelled": "Fecha de renovación: Cancelada",
+    "status": {
+      "free_trial": "Prueba gratuita",
+      "fully_paid": "Totalmente pagado",
+      "payment_issue": "Problema de pago",
+      "active": "Activo",
+      "expired": "Expirado",
+      "cancelled": "Cancelado",
+      "completed": "Completado"
+    },
+    "cancel": "Cancelar suscripción",
+    "upgrade": "Actualizar suscripción",
+    "payment-up-to-date": "Los pagos están al día",
+    "reactivate-subscription": "Reactivar suscripción",
+    "duration-cancelled": "Duración: Cancelada",
+    "cancel-modal": {
+      "title": "Cancelar suscripción",
+      "description": "¿Estás seguro de que desea cancelar su suscripción a {{cohort}}?",
+      "closeText": "No, volver",
+      "handlerText": "Si, confirmar"
+    }
+  },
+  "monthly": "Mensual",
+  "half-year": "Medio año",
+  "quarterly": "Trimestral",
+  "yearly": "Anual",
+  "day": "dia",
+  "days": "dias",
+  "and": "y",
+  "hours": "horas",
+  "months": "meses",
+  "month": "mes",
+  "expired": "Expirado",
+  "no-subscriptions": "Todavía no hay suscripciones para mostrar, suscríbete a una cohorte y obténgala de inmediato"
 }

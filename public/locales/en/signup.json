@@ -45,6 +45,8 @@
     "will-pay-now" : "You will pay ${{price} right now, no other charges apply in the future.",
     "will-pay-per-month": "You will subscribe and pay ${{price}} dollars every month",
     "will-pay-per-year": "You will subscribe and pay ${{price}} dollars every year",
+    "trial": "Trial for 1 month",
+    "trial-week": "Trial for 1 week",
     "monthly": "Monthly",
     "yearly": "Yearly",
     "financing": "Financing"

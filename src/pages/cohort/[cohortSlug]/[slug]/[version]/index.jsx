@@ -387,6 +387,40 @@ const Dashboard = () => {
                 flexDirection="column"
                 gridGap="30px"
               >
+                <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
+                  <TeacherSidebar
+                    title={t('teacher-sidebar.actions')}
+                    user={user}
+                    students={onlyStudentsActive}
+                    sortedAssignments={sortedAssignments}
+                    currentCohortProps={currentCohortProps}
+                    setCurrentCohortProps={setCurrentCohortProps}
+                    width="100%"
+                  />
+                </OnlyFor>
+                {cohortSession?.academy_owner?.white_labeled && (
+                <Box
+                  className="white-label"
+                  borderRadius="md"
+                  padding="10px"
+                  display="flex"
+                  justifyContent="space-around"
+                  bg={colorMode === 'light' ? '#F2F2F2' || 'blue.light' : 'featuredDark'}
+                >
+                  <Avatar
+                    name={cohortSession.academy_owner.name}
+                    src={cohortSession.academy_owner.icon_url}
+                  />
+                  <Box className="white-label-text" width="80%">
+                    <Text size="md" fontWeight="700" marginBottom="5px">
+                      {cohortSession.academy_owner.name}
+                    </Text>
+                    <Text size="sm">
+                      {t('whiteLabeledText')}
+                    </Text>
+                  </Box>
+                </Box>
+                )}
                 {flags?.appReleaseEnableLiveEvents && (
                   <LiveEvent
                     featureLabel={t('common:live-event.title')}
@@ -403,17 +437,6 @@ const Dashboard = () => {
                     studentAndTeachers={onlyStudentsActive}
                   />
                 )}
-                <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
-                  <TeacherSidebar
-                    title={t('teacher-sidebar.actions')}
-                    user={user}
-                    students={onlyStudentsActive}
-                    sortedAssignments={sortedAssignments}
-                    currentCohortProps={currentCohortProps}
-                    setCurrentCohortProps={setCurrentCohortProps}
-                    width="100%"
-                  />
-                </OnlyFor>
                 {cohortSession?.kickoff_date && (
                 <CohortSideBar
                   cohortSession={cohortSession}
@@ -566,23 +589,6 @@ const Dashboard = () => {
               maxWidth="380px"
               minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
             >
-              {flags?.appReleaseEnableLiveEvents && (
-                <LiveEvent
-                  featureLabel={t('common:live-event.title')}
-                  featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                  liveClassHash={liveClass?.hash}
-                  liveStartsAt={liveClass?.starting_at}
-                  liveEndsAt={liveClass?.ending_at}
-                  otherEvents={events}
-                  // featureLabel,
-                />
-              )}
-              {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
-                <FinalProject
-                  tasks={taskTodoState}
-                  studentAndTeachers={onlyStudentsActive}
-                />
-              )}
               <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
                 <TeacherSidebar
                   title={t('teacher-sidebar.actions')}
@@ -616,6 +622,23 @@ const Dashboard = () => {
                     </Text>
                   </Box>
                 </Box>
+              )}
+              {flags?.appReleaseEnableLiveEvents && (
+                <LiveEvent
+                  featureLabel={t('common:live-event.title')}
+                  featureReadMoreUrl={t('common:live-event.readMoreUrl')}
+                  liveClassHash={liveClass?.hash}
+                  liveStartsAt={liveClass?.starting_at}
+                  liveEndsAt={liveClass?.ending_at}
+                  otherEvents={events}
+                  //  featureLabel,
+                />
+              )}
+              {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
+                <FinalProject
+                  tasks={taskTodoState}
+                  studentAndTeachers={onlyStudentsActive}
+                />
               )}
               {cohortSession?.kickoff_date && (
               <CohortSideBar

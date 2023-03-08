@@ -5,6 +5,7 @@
   "basic-profile-info": "Basic Profile Information",
   "my-certificates": "My Certificates",
   "view-certificate": "View certificate",
+  "my-subscriptions": "My Subscriptions",
   "no-certificates": "There are no certificates to show yet, finish your final project and get it immediately",
   "remove": "Remove",
   "profile-updated": "Profile Updated",
@@ -21,6 +22,11 @@
     {
       "title": "My certificates",
       "value": "certificates",
+      "disabled": false
+    },
+    {
+      "title": "Subscriptions",
+      "value": "subscriptions",
       "disabled": false
     }
   ],
@@ -56,5 +62,48 @@
     "tooltip-label": "Upload your profile image",
     "title": "Upload your profile image",
     "submit-button": "Update profile picture"
-  }
+  },
+  "subscription": {
+    "next-payment": "Next payment on {{date}}",
+    "last-payment": "Last payment on {{date}}",
+    "duration": "Duration: {{duration}}",
+    "renewal": "Renewal: {{renewal}}",
+    "renewable": "Renewal: Renewable",
+    "not-renewable": "Renewal: Not renewable",
+    "payment": "Payment: {{payment}}",
+    "renewal-date": "Renewal date: {{date}}",
+    "renewal-date-cancelled": "Renewal date: Cancelled",
+    "status": {
+      "free_trial": "Free trial",
+      "fully_paid": "Fully paid",
+      "payment_issue": "Payment issue",
+      "active": "Active",
+      "expired": "Expired",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    },
+    "cancel": "Cancel subscription",
+    "upgrade": "Upgrade subscription",
+    "payment-up-to-date": "Payments are up to date",
+    "reactivate-subscription": "Reactivate subscription",
+    "duration-cancelled": "Duration: Cancelled",
+    "cancel-modal": {
+      "title": "Cancel subscription",
+      "description": "Are you sure you want to cancel your subscription to {{cohort}}",
+      "closeText": "No, go back",
+      "handlerText": "Yes, confirm"
+    }
+  },
+  "monthly": "Monthly",
+  "half-year": "Half year",
+  "quarterly": "Quarterly",
+  "yearly": "Yearly",
+  "day": "day",
+  "days": "days",
+  "and": "and",
+  "hours": "hours",
+  "months": "months",
+  "month": "month",
+  "expired": "Expired",
+  "no-subscriptions": "There are no subscriptions to show yet, subscribe to a cohort and get it immediately"
 }

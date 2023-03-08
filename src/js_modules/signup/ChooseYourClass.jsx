@@ -3,19 +3,18 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import AlertMessage from '../../common/components/AlertMessage';
-import { getTimeProps } from '../../utils';
+import { getQueryString, getTimeProps } from '../../utils';
 import useGoogleMaps from '../../common/hooks/useGoogleMaps';
 import useSignup from '../../common/store/actions/signupAction';
 import ChooseDate from './ChooseDate';
 import LoaderScreen from '../../common/components/LoaderScreen';
 
 const ChooseYourClass = ({
-  courseChoosed,
+  setCohorts,
 }) => {
   const { t } = useTranslation('signup');
   const [cohortIsLoading, setCohortIsLoading] = useState(true);
@@ -24,63 +23,59 @@ const ChooseYourClass = ({
   const [coords, setCoords] = useState(null);
   const [addressValue, setAddressValue] = useState('');
   const toast = useToast();
-  const router = useRouter();
   const autoCompleteRef = useRef();
   const inputRef = useRef();
   const buttonRef = useRef();
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
   const { isSecondStep, setLocation } = useSignup();
 
+  const plan = getQueryString('plan');
+
   const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(
     GOOGLE_KEY,
     'places',
   );
 
-  const { syllabus } = router.query;
-
   useEffect(() => {
-    if (isSecondStep) {
-      setCohortIsLoading(true);
+    setCohortIsLoading(true);
 
-      bc.public({
-        coordinates: coords?.latitude && `${coords.latitude},${coords.longitude}`,
-        saas: true,
-        syllabus_slug: syllabus || courseChoosed,
-        upcoming: true,
-      })
-        .cohorts()
-        .then(({ data }) => {
-          const formatedData = data.map((date) => {
-            const { kickoffDate, shortWeekDays, availableTime } = getTimeProps(date);
-            return {
-              ...date,
-              kickoffDate,
-              shortWeekDays,
-              availableTime,
-            };
-          });
-          setAvailableDates(formatedData);
-          if (data.length < 1) {
-            toast({
-              title: t('alert-message:no-cohorts-found'),
-              status: 'info',
-              duration: 5000,
-            });
-          }
-        })
-        .catch((error) => {
+    bc.public({
+      coordinates: coords?.latitude && `${coords.latitude},${coords.longitude}`,
+      saas: true,
+      upcoming: true,
+      plan,
+    })
+      .cohorts()
+      .then(({ data }) => {
+        const formatedData = data.map((date) => {
+          const { kickoffDate, shortWeekDays, availableTime } = getTimeProps(date);
+          return {
+            ...date,
+            kickoffDate,
+            shortWeekDays,
+            availableTime,
+          };
+        });
+        setCohorts(formatedData);
+        setAvailableDates(formatedData);
+        if (data.length < 1) {
           toast({
-            title: t('alert-message:something-went-wrong-fetching-cohorts'),
-            description: error.message,
-            status: 'error',
-            duration: 8000,
-            isClosable: true,
+            title: t('alert-message:no-cohorts-found'),
+            status: 'info',
+            duration: 5000,
           });
-        })
-        .finally(() => setCohortIsLoading(false));
-    } else {
-      setCohortIsLoading(false);
-    }
+        }
+      })
+      .catch((error) => {
+        toast({
+          title: t('alert-message:something-went-wrong-fetching-cohorts'),
+          description: error.message,
+          status: 'error',
+          duration: 8000,
+          isClosable: true,
+        });
+      })
+      .finally(() => setCohortIsLoading(false));
   }, [coords, isSecondStep]);
 
   useEffect(() => {
@@ -210,10 +205,10 @@ const ChooseYourClass = ({
 };
 
 ChooseYourClass.propTypes = {
-  courseChoosed: PropTypes.string,
+  setCohorts: PropTypes.func,
 };
 ChooseYourClass.defaultProps = {
-  courseChoosed: '',
+  setCohorts: () => {},
 };
 
 export default ChooseYourClass;

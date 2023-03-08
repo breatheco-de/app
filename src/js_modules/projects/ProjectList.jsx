@@ -1,28 +1,27 @@
-import { useEffect, useState } from 'react';
 import {
-  Box, useColorModeValue, Grid, Flex,
+  Box, useColorModeValue, Flex,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { resizeAllMasonryItems, toCapitalize, unSlugify } from '../../utils/index';
+import Masonry from 'react-masonry-css';
+import { forwardRef } from 'react';
+import { toCapitalize, unSlugify } from '../../utils/index';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
-// import Image from '../../common/components/Image';
 import TagCapsule from '../../common/components/TagCapsule';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import useStyle from '../../common/hooks/useStyle';
 import LoaderScreen from '../../common/components/LoaderScreen';
-import { CardSkeleton } from '../../common/components/Skeleton';
 
-const ProjectList = ({
+const ProjectList = forwardRef(({
   projects, contextFilter, projectPath, pathWithDifficulty,
-  withoutImage, isLoading, withoutDifficulty, containerPadding, isDynamic,
-}) => {
+  withoutImage, isLoading, withoutDifficulty, isDynamic,
+}, ref) => {
   const { t } = useTranslation('common');
   const arrOfTechs = contextFilter?.technologies || [];
-  const [isLoaded, setIsLoaded] = useState(false);
+  // const [isLoaded, setIsLoaded] = useState(false);
   // const difficulty = contextFilter?.difficulty || [];
   const videoTutorials = contextFilter?.videoTutorials || [];
   const router = useRouter();
@@ -85,22 +84,9 @@ const ProjectList = ({
     return res;
   };
 
-  // const [filteredProjects, setFilteredProjects] = useState([]);
   const filteredProjects = projects.filter(
     (project) => contains(project, arrOfTechs),
   );
-
-  useEffect(() => {
-    resizeAllMasonryItems();
-  }, [filteredProjects]);
-
-  useEffect(() => {
-    setIsLoaded(true);
-    const masonryEvents = ['resize'];
-    masonryEvents.forEach((event) => {
-      if (window !== undefined) window.addEventListener(event, resizeAllMasonryItems);
-    });
-  }, []);
 
   const getDifficultyColors = (currDifficulty) => {
     // 'beginner', 'easy', 'intermediate', 'hard'
@@ -122,18 +108,19 @@ const ProjectList = ({
     };
   };
 
-  return isLoaded ? (
+  const breakpointColumnsObj = {
+    default: 3,
+    1100: 3,
+    700: 2,
+    500: 1,
+  };
+
+  return (
     <>
-      <Grid
-        className="masonry"
-        gridTemplateColumns={{
-          base: 'repeat(auto-fill, minmax(15rem, 1fr))',
-          md: 'repeat(auto-fill, minmax(20rem, 1fr))',
-          lg: 'repeat(3, 1fr)',
-        }}
-        gridGap="1em"
-        gridAutoRows="0"
-        padding={containerPadding}
+      <Masonry
+        breakpointCols={breakpointColumnsObj}
+        className="masonry-grid"
+        columnClassName="masonry-grid_column"
       >
         {filteredProjects.map((ex) => {
           const isLesson = isDynamic && getAssetPath(ex) === 'lesson';
@@ -158,7 +145,7 @@ const ProjectList = ({
           };
           return (
             <Box
-              // py={2}
+              ref={ref || null}
               key={`${ex.slug}-${ex.difficulty}`}
               border={useColorModeValue('1px solid #DADADA', 'none')}
               className="card pointer masonry-brick"
@@ -251,7 +238,7 @@ const ProjectList = ({
             </Box>
           );
         })}
-      </Grid>
+      </Masonry>
 
       {isLoading && (
         <Box display="flex" justifyContent="center" mt="2rem" mb="10rem" position="relative">
@@ -267,31 +254,28 @@ const ProjectList = ({
         </Box>
       )}
     </>
-  ) : (
-    <CardSkeleton quantity={6} />
   );
-};
+});
 
 ProjectList.propTypes = {
   projects: PropTypes.arrayOf(PropTypes.object).isRequired,
   contextFilter: PropTypes.objectOf(PropTypes.any),
-  projectPath: PropTypes.string.isRequired,
+  projectPath: PropTypes.string,
   pathWithDifficulty: PropTypes.bool,
   withoutImage: PropTypes.bool,
   isLoading: PropTypes.bool,
   withoutDifficulty: PropTypes.bool,
-  containerPadding: PropTypes.string,
   isDynamic: PropTypes.bool,
 };
 
 ProjectList.defaultProps = {
+  projectPath: '',
   pathWithDifficulty: false,
   withoutImage: false,
   isLoading: false,
   contextFilter: {},
   withoutDifficulty: false,
-  containerPadding: '0 15px',
-  isDynamic: false,
+  isDynamic: true,
 };
 
 export default ProjectList;

@@ -146,8 +146,6 @@ const LessonByTechnology = ({ data, technologyData }) => {
               projects={data}
               withoutImage
               isDynamic
-              containerPadding="0px"
-              // projectPath="lesson"
             />
           </Box>
         )}

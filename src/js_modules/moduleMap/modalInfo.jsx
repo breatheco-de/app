@@ -17,7 +17,8 @@ const ModalInfo = ({
   isOpen, onClose, actionHandler, rejectHandler, forceHandler, disableHandler, title, description,
   teacherFeedback, linkInfo, linkText, link, handlerText, closeText, cancelColorButton,
   handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
-  htmlDescription, markdownDescription, attachment, disableInput,
+  htmlDescription, markdownDescription, attachment, disableInput, descriptionStyle, footerStyle,
+  closeButtonStyles, buttonHandlerStyles, headerStyles,
 }) => {
   const { t } = useTranslation('dashboard');
   const [githubUrl, setGithubUrl] = useState(link);
@@ -61,6 +62,7 @@ const ModalInfo = ({
             borderBottom={1}
             borderStyle="solid"
             borderColor={commonBorderColor}
+            {...headerStyles}
           >
             {title}
           </ModalHeader>
@@ -73,6 +75,7 @@ const ModalInfo = ({
                 fontWeight="400"
                 color={commonTextColor}
                 margin="10px 0 0 0"
+                {...descriptionStyle}
               >
                 {description}
               </Text>
@@ -235,7 +238,7 @@ const ModalInfo = ({
             )}
           </ModalBody>
 
-          <ModalFooter justifyContent="space-evenly">
+          <ModalFooter justifyContent="space-evenly" {...footerStyle}>
             {type === 'taskHandler' ? (
               <Box width="100%" display="flex" justifyContent="space-between">
                 <Button
@@ -267,6 +270,7 @@ const ModalInfo = ({
                   mr={3}
                   onClick={() => rejectFunction()}
                   textTransform="uppercase"
+                  {...closeButtonStyles}
                 >
                   {closeText || t('common:close')}
                 </Button>
@@ -276,6 +280,7 @@ const ModalInfo = ({
                     onClick={actionHandler}
                     colorScheme={handlerColorButton}
                     textTransform="uppercase"
+                    {...buttonHandlerStyles}
                   >
                     {handlerText}
                   </Button>
@@ -356,6 +361,11 @@ ModalInfo.propTypes = {
   htmlDescription: PropTypes.string,
   markdownDescription: PropTypes.string,
   attachment: PropTypes.arrayOf(PropTypes.object),
+  descriptionStyle: PropTypes.objectOf(PropTypes.any),
+  footerStyle: PropTypes.objectOf(PropTypes.any),
+  closeButtonStyles: PropTypes.objectOf(PropTypes.any),
+  buttonHandlerStyles: PropTypes.objectOf(PropTypes.any),
+  headerStyles: PropTypes.objectOf(PropTypes.any),
 };
 
 ModalInfo.defaultProps = {
@@ -383,6 +393,11 @@ ModalInfo.defaultProps = {
   htmlDescription: '',
   markdownDescription: '',
   attachment: [],
+  descriptionStyle: {},
+  footerStyle: {},
+  closeButtonStyles: {},
+  buttonHandlerStyles: {},
+  headerStyles: {},
 };
 
 export default memo(ModalInfo);
