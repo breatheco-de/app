@@ -65,12 +65,10 @@ const profileHandlers = ({
         const currentSlug = data[0]?.original_plan?.slug;
 
         if (data[0]?.show_modal) {
-          console.log('show modal');
           onOpenUpgrade();
         }
 
         if (data[0]?.show_modal === false && data[0]?.original_plan) {
-          console.log('show modal');
           router.push(`/signup?plan=${currentSlug}`);
         }
       });
