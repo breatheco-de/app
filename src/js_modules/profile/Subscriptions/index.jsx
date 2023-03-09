@@ -87,7 +87,7 @@ const Subscriptions = ({ storybookConfig }) => {
             const isFreeTrial = subscription?.status.toLowerCase() === 'free_trial';
             const isFullyPaid = subscription?.status.toLowerCase() === 'fully_paid';
 
-            const button = subscriptionHandler(subscription?.status);
+            const button = subscriptionHandler(subscription);
             const isNextPaimentExpired = new Date(subscription?.next_payment_at) < new Date();
 
             const nextPaymentDate = {
@@ -96,11 +96,11 @@ const Subscriptions = ({ storybookConfig }) => {
             };
 
             return (
-              <Flex key={subscription?.id} position="relative" margin="10px 0 0 0" flexDirection="column" justifyContent="space-between" alignItems="center" border="1px solid" borderColor={borderColor2} p="0 16px 0 16px" borderRadius="9px">
+              <Flex key={subscription?.id} position="relative" margin="10px 0 0 0" flexDirection="column" justifyContent="space-between" alignItems="center" border="1px solid" borderColor={borderColor2} p="14px 16px 14px 14px" borderRadius="9px">
                 <Box borderRadius="50%" bg="green.400" padding="12px" position="absolute" top={-7} left={4}>
                   <Icon icon="data-science" width="30px" height="30px" />
                 </Box>
-                <Box padding="14px 0" width="100%">
+                <Box padding="0 0 14px 0" width="100%">
                   <Text fontSize="12px" fontWeight="700" padding="4px 10px" borderRadius="18px" width="fit-content" margin="0 0 0 auto" {...statusStyles[status] || ''}>
                     {statusLabel[status] || 'unknown'}
                   </Text>
@@ -183,20 +183,23 @@ const Subscriptions = ({ storybookConfig }) => {
                       </Text>
                     </Flex>
                   </Flex>
-                  {!isFullyPaid ? (
+                  {!isFullyPaid && button.isComponent && (
+                    <>
+                      {button?.component}
+                    </>
+                  )}
+                  {!isFullyPaid && !button.isComponent && (
                     <Button
                       onClick={() => {
                         button.open();
                         setSubscriptionProps(subscription);
                       }}
                       color="blue.default"
-                      margin="7px 0 13px 0"
+                      margin="auto 0 0 0"
                       {...button.style}
                     >
                       {button.text}
                     </Button>
-                  ) : (
-                    <Box padding="6px 0 0 0" />
                   )}
                 </Flex>
               </Flex>

@@ -1,3 +1,4 @@
+import { Link } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import useStyle from '../../../common/hooks/useStyle';
@@ -78,7 +79,10 @@ const profileHandlers = ({
       if (days <= 7 && hours < 0) return `${days} ${days > 1 ? daysLabel : dayLabel} ${duration?.hours > 0 ? `${andLabel} ${duration?.hours} ${hoursLabel}` : ''}`;
       return format?.formated;
     },
-    subscriptionHandler: (status) => {
+    subscriptionHandler: (subscription) => {
+      console.log('subscription:::', subscription);
+      const status = subscription?.status;
+      const planSlug = subscription?.plans?.[0]?.slug;
       // ACTIVE, FREE_TRIAL, FULLY_PAID, CANCELLED, PAYMENT_ISSUE
       if (status === 'ACTIVE' || status === 'FULLY_PAID') {
         return {
@@ -114,8 +118,12 @@ const profileHandlers = ({
             color: 'white',
             fontWeight: 700,
           },
-
-          open: onOpenUpgrade,
+          isComponent: true,
+          component: (
+            <Link variant="buttonDefault" textAlign="center" margin="auto 0 0 0" href={`/signup?plan=${planSlug}`}>
+              {subscriptionTR?.['reactivate-subscription'] || t('subscription.reactivate-subscription')}
+            </Link>
+          ),
           close: onCloseUpgrade,
         };
       }
