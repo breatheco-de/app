@@ -32,8 +32,8 @@ const ProgramCard = ({
   const freeTrialExpireDateValue = isValidDate(freeTrialExpireDate) ? new Date(freeTrialExpireDate) : new Date(subMinutes(new Date(), 1));
   const now = new Date();
   const { lightColor, hexColor } = useStyle();
-  const isFreeTrial = subscriptionStatus === 'FREE_TRIAL';
-  const isCancelled = subscriptionStatus === 'CANCELLED' || subscriptionStatus === 'PAYMENT_ISSUE';
+  const isFreeTrial = isAvailableAsSaas && subscriptionStatus === 'FREE_TRIAL';
+  const isCancelled = isAvailableAsSaas && (subscriptionStatus === 'CANCELLED' || subscriptionStatus === 'PAYMENT_ISSUE');
   const isExpired = isFreeTrial && freeTrialExpireDateValue < now;
   const statusActive = subscriptionStatus === 'ACTIVE' || subscriptionStatus === 'FULLY_PAID';
   // const statusActive = subscriptionStatus === 'ACTIVE' || isFreeTrial || subscriptionStatus === 'FULLY_PAID';
@@ -223,7 +223,7 @@ const ProgramCard = ({
             </>
           ) : (
             <>
-              {!hasStarted && statusActive ? (
+              {(!hasStarted && statusActive) || (!hasStarted && isFreeTrial) ? (
                 <Box>
                   <Text
                     fontSize="xs"
@@ -245,17 +245,35 @@ const ProgramCard = ({
                     isAvailableAsSaas={isAvailableAsSaas}
                     subscriptionStatus={subscriptionStatus}
                   />
-                  <Button
-                    marginTop="20px"
-                    borderRadius="3px"
-                    width="100%"
-                    padding="0"
-                    whiteSpace="normal"
-                    variant="default"
-                    onClick={handleChoose}
-                  >
-                    {programCardTR?.['start-course'] || t('start-course')}
-                  </Button>
+                  {isFreeTrial && isExpired ? (
+                    <Button
+                      marginTop={!isCancelled && '20px'}
+                      borderRadius="3px"
+                      width="100%"
+                      padding="0"
+                      whiteSpace="normal"
+                      // onClick={onOpenModal}
+                      variant="default"
+                      alignItems="center"
+                      background="yellow.default"
+                      color="white"
+                    >
+                      <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
+                      {programCardTR?.upgrade || t('upgrade')}
+                    </Button>
+                  ) : (
+                    <Button
+                      marginTop="20px"
+                      borderRadius="3px"
+                      width="100%"
+                      padding="0"
+                      whiteSpace="normal"
+                      variant="default"
+                      onClick={handleChoose}
+                    >
+                      {programCardTR?.['start-course'] || t('start-course')}
+                    </Button>
+                  )}
                   {haveFreeTrial && (
                     <Button
                       marginTop="15px"
@@ -300,27 +318,27 @@ const ProgramCard = ({
                       </Box>
                     )}
                   </Box>
-                  {(!isExpired || !isAvailableAsSaas) && (
-                    <>
-                      <ProjectsSection
-                        startsIn={startsIn}
-                        stTranslation={stTranslation}
-                        syllabusContent={syllabusContent}
-                        courseProgress={courseProgress}
-                        usersConnected={usersConnected}
-                        assistants={assistants}
-                        teacher={teacher}
-                        isAvailableAsSaas={isAvailableAsSaas}
-                        subscriptionStatus={subscriptionStatus}
-                      />
-                      <Text
-                        marginTop="20px"
-                        color={CustomTheme.colors.blue.default}
-                        textAlign="center"
-                        fontSize="xs"
-                        lineHeight="14px"
-                        fontWeight="700"
-                      >
+                  <ProjectsSection
+                    startsIn={startsIn}
+                    stTranslation={stTranslation}
+                    syllabusContent={syllabusContent}
+                    courseProgress={courseProgress}
+                    usersConnected={usersConnected}
+                    assistants={assistants}
+                    teacher={teacher}
+                    isAvailableAsSaas={isAvailableAsSaas}
+                    subscriptionStatus={subscriptionStatus}
+                  />
+                  <Text
+                    marginTop="20px"
+                    color={CustomTheme.colors.blue.default}
+                    textAlign="center"
+                    fontSize="xs"
+                    lineHeight="14px"
+                    fontWeight="700"
+                  >
+                    {!isExpired && (
+                      <>
                         {(courseProgress > 0 && !isCancelled) ? (
                           <Button variant="link" onClick={handleChoose} gridGap="6px" fontWeight={700}>
                             {isNumber(String(lessonNumber))
@@ -337,6 +355,7 @@ const ProgramCard = ({
                               padding="0"
                               whiteSpace="normal"
                               variant="default"
+                              mb={isAvailableAsSaas && !statusActive && '10px'}
                               onClick={handleChoose}
                             >
                               {programCardTR?.['start-course'] || t('start-course')}
@@ -344,13 +363,13 @@ const ProgramCard = ({
                             )}
                           </>
                         )}
-                      </Text>
-                    </>
-                  )}
-                  {/* {isAvailableAsSaas && isFreeTrial && ( */}
+                      </>
+                    )}
+                  </Text>
+
                   {((isAvailableAsSaas && isFreeTrial) || (isAvailableAsSaas && !statusActive)) && (
                     <Button
-                      marginTop={!isCancelled && courseProgress > 0 && '25px'}
+                      marginTop={!isCancelled && !isExpired && courseProgress > 0 && '5px'}
                       borderRadius="3px"
                       width="100%"
                       padding="0"

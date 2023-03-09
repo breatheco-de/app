@@ -88,6 +88,7 @@ const Programs = ({ item, handleChoose, onOpenModal, usersConnected }) => {
       // haveFreeTrial={}
       // isBought={moduleStarted}
       // isBought={!isFreeTrial}
+      isLoading={currentCohortProps === undefined}
       startsIn={item?.cohort?.kickoff_date}
       icon="coding"
       subscriptionStatus={subscription?.status}
