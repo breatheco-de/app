@@ -1,14 +1,16 @@
 import { Link } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import useStyle from '../../../common/hooks/useStyle';
+import bc from '../../../common/services/breathecode';
 
 const profileHandlers = ({
   translations, onCloseCancelSubscription, onOpenCancelSubscription, onOpenUpgrade, onCloseUpgrade,
 }) => {
   const { t } = useTranslation('profile');
   const { reverseFontColor, fontColor, lightColor } = useStyle();
-
+  const router = useRouter();
   const subscriptionTR = translations?.subscription;
 
   const statusLabel = {
@@ -54,6 +56,26 @@ const profileHandlers = ({
     },
   };
 
+  const getPlanOffer = (slug) => {
+    bc.payment({
+      original_plan: slug,
+    }).planOffer()
+      .then((res) => {
+        const data = res?.data;
+        const currentSlug = data[0]?.original_plan?.slug;
+
+        if (data[0]?.show_modal) {
+          console.log('show modal');
+          onOpenUpgrade();
+        }
+
+        if (data[0]?.show_modal === false && data[0]?.original_plan) {
+          console.log('show modal');
+          router.push(`/signup?plan=${currentSlug}`);
+        }
+      });
+  };
+
   return {
     statusStyles,
     statusLabel,
@@ -80,7 +102,6 @@ const profileHandlers = ({
       return format?.formated;
     },
     subscriptionHandler: (subscription) => {
-      console.log('subscription:::', subscription);
       const status = subscription?.status;
       const planSlug = subscription?.plans?.[0]?.slug;
       // ACTIVE, FREE_TRIAL, FULLY_PAID, CANCELLED, PAYMENT_ISSUE
@@ -97,7 +118,7 @@ const profileHandlers = ({
       }
       if (status === 'FREE_TRIAL') {
         return {
-          text: subscriptionTR?.cancel || t('subscription.upgrade'),
+          text: subscriptionTR?.upgrade || t('subscription.upgrade'),
           style: {
             variant: 'outline',
             color: 'blue.default',
@@ -105,7 +126,9 @@ const profileHandlers = ({
             fontWeight: 700,
           },
 
-          open: onOpenUpgrade,
+          open: () => {
+            getPlanOffer(planSlug);
+          },
           close: onCloseUpgrade,
         };
       }
@@ -137,7 +160,10 @@ const profileHandlers = ({
           borderColor: 'currentColor',
           fontWeight: 700,
         },
-        open: onOpenUpgrade,
+        open: () => {
+          getPlanOffer(planSlug);
+          // onOpenUpgrade();
+        },
         close: onCloseUpgrade,
       };
     },
