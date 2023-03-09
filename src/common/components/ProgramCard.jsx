@@ -137,7 +137,7 @@ const ProgramCard = ({
             <></>
           ) : (
             <>
-              {isAvailableAsSaas && statusActive && subscriptionStatus !== 'FREE_TRIAL' ? (
+              {isAvailableAsSaas && statusActive && courseProgress === 0 && subscriptionStatus !== 'FREE_TRIAL' ? (
                 <Flex width="116px" justifyContent="flex-end">
                   <Box marginRight="10px">
                     <Icon
