@@ -15,7 +15,7 @@ import { isNumber } from '../../../utils';
 import useFinalProjectProps from '../../store/actions/finalProjectAction';
 import Icon from '../Icon';
 
-const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, defaultValues }) => {
+const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, defaultValues, refreshFinalProject }) => {
   const { t } = useTranslation('final-project');
   const [students, setStudents] = useState(studentsData);
   const [fileProps, setFileProps] = useState([]);
@@ -95,6 +95,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
       .then((res) => {
         if (res) {
           setFinalProjectData(res.data[0]);
+          refreshFinalProject();
           toast({
             title: 'Success',
             description: 'Your final project has been updated',
@@ -353,6 +354,7 @@ FinalProjectForm.propTypes = {
   storyConfig: PropTypes.objectOf(PropTypes.any),
   handleClose: PropTypes.func,
   defaultValues: PropTypes.objectOf(PropTypes.any),
+  refreshFinalProject: PropTypes.func.isRequired,
 };
 FinalProjectForm.defaultProps = {
   cohortData: {},
