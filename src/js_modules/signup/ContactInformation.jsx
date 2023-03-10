@@ -12,7 +12,7 @@ import Heading from '../../common/components/Heading';
 import { phone } from '../../utils/regex';
 import FieldForm from '../../common/components/Forms/FieldForm';
 import PhoneInput from '../../common/components/PhoneInput';
-import { setStorageItem } from '../../utils';
+import { getQueryString, setStorageItem } from '../../utils';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
 import useCustomToast from '../../common/hooks/useCustomToast';
@@ -34,6 +34,7 @@ const ContactInformation = ({
   const toast = useToast();
   const toastIdRef = useRef();
   const { featuredColor } = useStyle();
+  const plan = getQueryString('plan');
 
   const { syllabus } = router.query;
 
@@ -136,6 +137,7 @@ const ContactInformation = ({
             country: location?.country,
             cohort: dateProps?.id,
             syllabus,
+            plan,
             city: location?.city,
             language: router.locale,
           };

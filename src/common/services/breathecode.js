@@ -208,7 +208,10 @@ const breathecode = {
       courses: () => axios.get(`${host}/marketing/courses${qs}`),
       pay: (data) => axios.post(`${url}/pay${qs}`, data),
       addCard: (data) => axios.post(`${url}/card${qs}`, data),
+      cancelSubscription: (id) => axios.put(`${url}/subscription/${id}/cancel${qs}`),
+      cancelMySubscription: (id) => axios.put(`${url}/me/subscription/${id}/cancel${qs}`),
       getPlan: (slug) => axios.get(`${url}/plan/${slug}${qs}`),
+      planOffer: () => axios.get(`${url}/planoffer${qs}`),
       getPlanProps: (id) => axios.get(`${url}/serviceitem?plan=${id}`),
       getCohortPlans: () => axios.get(`${url}/plan${qs}`),
       service: () => ({

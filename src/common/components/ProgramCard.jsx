@@ -4,19 +4,17 @@ import {
   useColorModeValue,
   Button,
   Flex,
-  AvatarGroup,
   Progress,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { formatDuration, intervalToDuration, subMinutes } from 'date-fns';
 import { es, en } from 'date-fns/locale';
-import { Fragment } from 'react';
 import CustomTheme from '../../../styles/theme';
-import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 import Text from './Text';
 import Icon from './Icon';
 import { isNumber, isValidDate } from '../../utils';
 import useStyle from '../hooks/useStyle';
+import ProjectsSection from './ProjectsSection';
 
 const availableLanguages = {
   es,
@@ -26,17 +24,16 @@ const availableLanguages = {
 const ProgramCard = ({
   programName, programDescription, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
   syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
-  width, usersConnected, assistants, teacher, handleChoose, isHiddenOnPrework, onOpenModal, isAvailableAsSaas,
+  width, usersConnected, assistants, teacher, handleChoose, isHiddenOnPrework, isAvailableAsSaas,
   subscriptionStatus,
 }) => {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
-  const bgColor = useColorModeValue('featuredLight', 'featuredDark');
   const freeTrialExpireDateValue = isValidDate(freeTrialExpireDate) ? new Date(freeTrialExpireDate) : new Date(subMinutes(new Date(), 1));
   const now = new Date();
   const { lightColor, hexColor } = useStyle();
-  const isFreeTrial = subscriptionStatus === 'FREE_TRIAL';
-  const isCancelled = subscriptionStatus === 'CANCELLED' || subscriptionStatus === 'PAYMENT_ISSUE';
+  const isFreeTrial = isAvailableAsSaas && subscriptionStatus === 'FREE_TRIAL';
+  const isCancelled = isAvailableAsSaas && (subscriptionStatus === 'CANCELLED' || subscriptionStatus === 'PAYMENT_ISSUE');
   const isExpired = isFreeTrial && freeTrialExpireDateValue < now;
   const statusActive = subscriptionStatus === 'ACTIVE' || subscriptionStatus === 'FULLY_PAID';
   // const statusActive = subscriptionStatus === 'ACTIVE' || isFreeTrial || subscriptionStatus === 'FULLY_PAID';
@@ -69,139 +66,13 @@ const ProgramCard = ({
     return formated;
   };
 
-  const syllabusArray = () => {
-    const contentArray = [];
-    if (syllabusContent?.totalLessons) {
-      contentArray.push({
-        name: 'lessons',
-        total: syllabusContent.totalLessons,
-        completed: syllabusContent.completedLessons,
-      });
-    }
-    if (syllabusContent?.totalProjects) {
-      contentArray.push({
-        name: 'projects',
-        total: syllabusContent.totalProjects,
-        completed: syllabusContent.completedProjects,
-      });
-    }
-    if (syllabusContent?.totalExercises) {
-      contentArray.push({
-        name: 'exercises',
-        total: syllabusContent.totalExercises,
-        completed: syllabusContent.completedExercises,
-      });
-    }
-    if (syllabusContent?.totalQuizzes) {
-      contentArray.push({
-        name: 'quizzes',
-        total: syllabusContent.totalQuizzes,
-        completed: syllabusContent.completedQuizzes,
-      });
-    }
-    return contentArray;
-  };
-
   const statusLabel = {
-    active: t('status.active'),
-    fully_paid: t('status.fully-paid'),
-    expired: t('status.expired'),
-    cancelled: t('status.cancelled'),
-    payment_issue: t('status.payment-issue'),
+    active: programCardTR?.status?.active || t('status.active'),
+    fully_paid: programCardTR?.status?.fully_paid || t('status.fully_paid'),
+    expired: programCardTR?.expired || t('status.expired'),
+    cancelled: programCardTR?.status?.cancelled || t('status.cancelled'),
+    payment_issue: programCardTR?.status?.payment_issue || t('status.payment_issue'),
   };
-  const existsMentors = assistants?.length > 0 || isNumber(teacher?.id);
-  const countOfMentors = assistants?.length + (teacher?.id ? 1 : 0);
-
-  const ProjectsSection = () => (syllabusArray()?.length > 0 || assistants?.length > 0) && (
-    <Flex justifyContent="space-between" alignItems="center" marginTop="10px" padding="10px" borderRadius="5px" background={bgColor}>
-      {syllabusArray()?.length > 0 && (
-        <Box display="flex" flexDirection="column" gridGap="8px">
-          {syllabusArray().map((elem) => (
-            <Text
-              fontSize="xs"
-              lineHeight="14px"
-              fontWeight="700"
-              color={textColor}
-              key={elem?.name}
-              display="flex"
-            >
-              <Icon
-                width="14px"
-                height="14px"
-                style={{ marginRight: '7px' }}
-                icon="book"
-              />
-              <Box>
-                {((isAvailableAsSaas === false || statusActive || isFreeTrial) && hasStarted && courseProgress > 0) && (
-                <>
-                  <span style={{ color: CustomTheme.colors.blue.default2 }}>{elem.completed || 0}</span>
-                  /
-                </>
-                )}
-                {`${elem.total} ${programCardTR?.[elem.name] || t(elem.name)}`}
-              </Box>
-            </Text>
-          ))}
-        </Box>
-      )}
-      {existsMentors && (
-        <Box>
-          <Text
-            fontSize="xs"
-            lineHeight="14px"
-            fontWeight="700"
-            color={textColor}
-            marginBottom="5px"
-            textAlign="center"
-          >
-            {`${countOfMentors} ${programCardTR?.['mentors-available'] || t('mentors-available')}`}
-          </Text>
-
-          <Box display="flex" justifyContent="space-between" mt="10px" gridGap="22px">
-            {teacher?.id && (
-              <AvatarUser
-                width="42px"
-                height="42px"
-                key={`${teacher.id} - ${teacher.user.first_name}`}
-                fullName={`${teacher?.user?.first_name} ${teacher?.user?.last_name}`}
-                data={teacher}
-                isOnline={usersConnected?.includes(teacher.user.id)}
-                badge
-                customBadge={(
-                  <Box position="absolute" bottom="-6px" right="-8px" background="blue.default" borderRadius="50px" p="5px" border="2px solid white">
-                    <Icon icon="teacher1" width="12px" height="12px" color="#FFFFFF" />
-                  </Box>
-                )}
-              />
-            )}
-            {assistants?.length > 0 && (
-              <AvatarGroup max={assistants?.length <= 2 ? 2 : 1} size="md">
-                {assistants?.map((c, i) => {
-                  const fullName = `${c.user.first_name} ${c.user.last_name}`;
-                  const isOnline = usersConnected?.includes(c.user.id);
-                  return (
-                    <Fragment key={`${c.id} - ${fullName}`}>
-                      <AvatarUser
-                        width="42px"
-                        height="42px"
-                        index={i}
-                        // key={`${c.id} - ${c.user.first_name}`}
-                        isWrapped
-                        fullName={fullName}
-                        data={c}
-                        isOnline={isOnline}
-                        badge
-                      />
-                    </Fragment>
-                  );
-                })}
-              </AvatarGroup>
-            )}
-          </Box>
-        </Box>
-      )}
-    </Flex>
-  );
 
   const FreeTagCapsule = () => {
     let timeString = '';
@@ -266,7 +137,7 @@ const ProgramCard = ({
             <></>
           ) : (
             <>
-              {isAvailableAsSaas && statusActive && subscriptionStatus !== 'FREE_TRIAL' ? (
+              {isAvailableAsSaas && statusActive && courseProgress === 0 && subscriptionStatus !== 'FREE_TRIAL' ? (
                 <Flex width="116px" justifyContent="flex-end">
                   <Box marginRight="10px">
                     <Icon
@@ -304,7 +175,7 @@ const ProgramCard = ({
                     <FreeTagCapsule />
                   ) : (
                     <>
-                      {!isCancelled || !isAvailableAsSaas ? (
+                      {(!isCancelled || isAvailableAsSaas === false) ? (
                         <Icon icon="crown" width="22px" height="15px" />
                       ) : (
                         <Box fontSize="12px" display="flex" alignItems="center" background="red.light" color="danger" height="22px" borderRadius="20px" padding="0 10px">
@@ -352,7 +223,7 @@ const ProgramCard = ({
             </>
           ) : (
             <>
-              {!hasStarted && statusActive ? (
+              {(!hasStarted && statusActive) || (!hasStarted && isFreeTrial) ? (
                 <Box>
                   <Text
                     fontSize="xs"
@@ -363,18 +234,46 @@ const ProgramCard = ({
                     {programDescription}
                     {' '}
                   </Text>
-                  <ProjectsSection />
-                  <Button
-                    marginTop="20px"
-                    borderRadius="3px"
-                    width="100%"
-                    padding="0"
-                    whiteSpace="normal"
-                    variant="default"
-                    onClick={handleChoose}
-                  >
-                    {programCardTR?.['start-course'] || t('start-course')}
-                  </Button>
+                  <ProjectsSection
+                    startsIn={startsIn}
+                    stTranslation={stTranslation}
+                    syllabusContent={syllabusContent}
+                    courseProgress={courseProgress}
+                    usersConnected={usersConnected}
+                    assistants={assistants}
+                    teacher={teacher}
+                    isAvailableAsSaas={isAvailableAsSaas}
+                    subscriptionStatus={subscriptionStatus}
+                  />
+                  {isFreeTrial && isExpired ? (
+                    <Button
+                      marginTop={!isCancelled && '20px'}
+                      borderRadius="3px"
+                      width="100%"
+                      padding="0"
+                      whiteSpace="normal"
+                      // onClick={onOpenModal}
+                      variant="default"
+                      alignItems="center"
+                      background="yellow.default"
+                      color="white"
+                    >
+                      <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
+                      {programCardTR?.upgrade || t('upgrade')}
+                    </Button>
+                  ) : (
+                    <Button
+                      marginTop="20px"
+                      borderRadius="3px"
+                      width="100%"
+                      padding="0"
+                      whiteSpace="normal"
+                      variant="default"
+                      onClick={handleChoose}
+                    >
+                      {programCardTR?.['start-course'] || t('start-course')}
+                    </Button>
+                  )}
                   {haveFreeTrial && (
                     <Button
                       marginTop="15px"
@@ -419,18 +318,28 @@ const ProgramCard = ({
                       </Box>
                     )}
                   </Box>
-                  {(!isExpired || !isAvailableAsSaas) && (
-                    <>
-                      <ProjectsSection />
-                      <Text
-                        marginTop="20px"
-                        color={CustomTheme.colors.blue.default}
-                        textAlign="center"
-                        fontSize="xs"
-                        lineHeight="14px"
-                        fontWeight="700"
-                      >
-                        {courseProgress > 0 ? (
+                  <ProjectsSection
+                    startsIn={startsIn}
+                    stTranslation={stTranslation}
+                    syllabusContent={syllabusContent}
+                    courseProgress={courseProgress}
+                    usersConnected={usersConnected}
+                    assistants={assistants}
+                    teacher={teacher}
+                    isAvailableAsSaas={isAvailableAsSaas}
+                    subscriptionStatus={subscriptionStatus}
+                  />
+                  <Text
+                    marginTop="20px"
+                    color={CustomTheme.colors.blue.default}
+                    textAlign="center"
+                    fontSize="xs"
+                    lineHeight="14px"
+                    fontWeight="700"
+                  >
+                    {!isExpired && (
+                      <>
+                        {(courseProgress > 0 && !isCancelled) ? (
                           <Button variant="link" onClick={handleChoose} gridGap="6px" fontWeight={700}>
                             {isNumber(String(lessonNumber))
                               ? `${programCardTR?.continue || t('continue')} ${lessonNumber} →`
@@ -440,31 +349,32 @@ const ProgramCard = ({
                         ) : (
                           <>
                             {(!isAvailableAsSaas || !isCancelled) && (
-                              <Button
-                                borderRadius="3px"
-                                width="100%"
-                                padding="0"
-                                whiteSpace="normal"
-                                variant="default"
-                                onClick={handleChoose}
-                              >
-                                {programCardTR?.['start-course'] || t('start-course')}
-                              </Button>
+                            <Button
+                              borderRadius="3px"
+                              width="100%"
+                              padding="0"
+                              whiteSpace="normal"
+                              variant="default"
+                              mb={isAvailableAsSaas && !statusActive && '10px'}
+                              onClick={handleChoose}
+                            >
+                              {programCardTR?.['start-course'] || t('start-course')}
+                            </Button>
                             )}
                           </>
                         )}
-                      </Text>
-                    </>
-                  )}
-                  {/* {isAvailableAsSaas && isFreeTrial && ( */}
+                      </>
+                    )}
+                  </Text>
+
                   {((isAvailableAsSaas && isFreeTrial) || (isAvailableAsSaas && !statusActive)) && (
                     <Button
-                      marginTop={!isCancelled && courseProgress > 0 && '25px'}
+                      marginTop={!isCancelled && !isExpired && courseProgress > 0 && '5px'}
                       borderRadius="3px"
                       width="100%"
                       padding="0"
                       whiteSpace="normal"
-                      onClick={onOpenModal}
+                      // onClick={onOpenModal}
                       variant="default"
                       alignItems="center"
                       background="yellow.default"
@@ -512,7 +422,7 @@ ProgramCard.propTypes = {
   iconBackground: PropTypes.string,
   handleChoose: PropTypes.func,
   isHiddenOnPrework: PropTypes.bool,
-  onOpenModal: PropTypes.func,
+  // onOpenModal: PropTypes.func,
   isAvailableAsSaas: PropTypes.bool,
   subscriptionStatus: PropTypes.string,
 };
@@ -534,8 +444,8 @@ ProgramCard.defaultProps = {
   iconBackground: '',
   handleChoose: () => {},
   isHiddenOnPrework: false,
-  onOpenModal: () => {},
-  isAvailableAsSaas: true,
+  // onOpenModal: () => {},
+  isAvailableAsSaas: false,
   subscriptionStatus: '',
 };
 

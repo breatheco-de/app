@@ -425,10 +425,17 @@ const Dashboard = () => {
                   <LiveEvent
                     featureLabel={t('common:live-event.title')}
                     featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                    liveClassHash={liveClass?.hash}
-                    liveStartsAt={liveClass?.starting_at}
-                    liveEndsAt={liveClass?.ending_at}
+                    mainClasses={
+                      liveClass?.hash || liveClass?.starting_at || liveClass?.ending_at ? [{
+                        liveClassHash: liveClass.hash,
+                        liveStartsAt: liveClass.starting_at,
+                        liveEndsAt: liveClass.ending_at,
+                      }] : []
+                    }
                     otherEvents={events}
+                  // liveClassHash={liveClass?.hash}
+                  // liveStartsAt={liveClass?.starting_at}
+                  // liveEndsAt={liveClass?.ending_at}
                   />
                 )}
                 {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
@@ -627,11 +634,17 @@ const Dashboard = () => {
                 <LiveEvent
                   featureLabel={t('common:live-event.title')}
                   featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                  liveClassHash={liveClass?.hash}
-                  liveStartsAt={liveClass?.starting_at}
-                  liveEndsAt={liveClass?.ending_at}
+                  mainClasses={
+                    liveClass?.hash || liveClass?.starting_at || liveClass?.ending_at ? [{
+                      liveClassHash: liveClass.hash,
+                      liveStartsAt: liveClass.starting_at,
+                      liveEndsAt: liveClass.ending_at,
+                    }] : []
+                  }
                   otherEvents={events}
-                  //  featureLabel,
+                // liveClassHash={liveClass?.hash}
+                // liveStartsAt={liveClass?.starting_at}
+                // liveEndsAt={liveClass?.ending_at}
                 />
               )}
               {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (

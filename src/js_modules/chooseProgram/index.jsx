@@ -15,9 +15,9 @@ function ChooseProgram({ chooseList, handleChoose }) {
   const { usersConnected } = useOnline();
   const [showFinished, setShowFinished] = useState(false);
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
-
   const activeCohorts = handlers.getActiveCohorts(chooseList);
   const finishedCohorts = handlers.getCohortsFinished(chooseList);
+
   return (
     <>
       <UpgradeAccessModal
