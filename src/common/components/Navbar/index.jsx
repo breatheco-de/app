@@ -213,7 +213,6 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
               objectFit="cover"
               alt="4Geeks logo"
             />
-            {/* <Icon icon="logoModern" width="90px" height="20px" /> */}
           </NextChakraLink>
         </Flex>
 
