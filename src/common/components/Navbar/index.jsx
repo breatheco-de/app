@@ -196,10 +196,8 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
             background={commonColors}
             icon={
               isOpen ? (
-                // <Icon icon="close2" width="22px" height="22px" />
                 <Close2 />
               ) : (
-                // <Icon icon="hamburger2" width="22px" height="22px" />
                 <Hamburger2 />
               )
             }
