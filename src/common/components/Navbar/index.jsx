@@ -6,6 +6,7 @@ import {
 import {
   useState, memo, useEffect, Fragment,
 } from 'react';
+import Image from 'next/image';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -104,6 +105,64 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
 
   if (pageProps?.previewMode) return null;
 
+  const Close2 = () => (
+    <svg
+      width="22px"
+      height="22px"
+      viewBox="0 0 19 4"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <line
+        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        x1="1.5"
+        y1="2"
+        x2="16.5645"
+        y2="2"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+
+  const Hamburger2 = () => (
+    <svg
+      width="22px"
+      height="22px"
+      viewBox="0 0 28 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <line
+        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        x1="1.5"
+        y1="1.5"
+        x2="26.5"
+        y2="1.5"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      <line
+        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        x1="1.5"
+        y1="12"
+        x2="16.5645"
+        y2="12"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      <line
+        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        x1="1.5"
+        y1="22.5"
+        x2="26.5"
+        y2="22.5"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+
   return (
     <Box>
       <Flex
@@ -137,9 +196,11 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
             background={commonColors}
             icon={
               isOpen ? (
-                <Icon icon="close2" width="22px" height="22px" />
+                // <Icon icon="close2" width="22px" height="22px" />
+                <Close2 />
               ) : (
-                <Icon icon="hamburger2" width="22px" height="22px" />
+                // <Icon icon="hamburger2" width="22px" height="22px" />
+                <Hamburger2 />
               )
             }
             variant="default"
@@ -147,18 +208,30 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
             aria-label="Toggle Navigation"
           />
           <NextChakraLink href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
-            <Icon icon="logoModern" width="90px" height="20px" />
+            <Image
+              src="/static/images/4geeks.png"
+              width="105px"
+              height="35px"
+              objectFit="cover"
+              alt="4Geeks logo"
+            />
+            {/* <Icon icon="logoModern" width="90px" height="20px" /> */}
           </NextChakraLink>
         </Flex>
 
         <Flex
-          className="here"
           flex={{ base: 1 }}
           display={{ base: 'none', lg: 'flex' }}
           justify={{ base: 'center', md: 'start' }}
         >
           <NextChakraLink href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
-            <Icon icon="logoModern" width="90px" height="20px" />
+            <Image
+              src="/static/images/4geeks.png"
+              width="105px"
+              height="35px"
+              objectFit="cover"
+              alt="4Geeks logo"
+            />
           </NextChakraLink>
 
           <Flex display="flex" ml={10}>
