@@ -1,4 +1,5 @@
-import { Box, Button, Flex, Grid } from '@chakra-ui/react';
+/* eslint-disable no-unused-vars */
+import { Box, Button, Flex, Grid, Modal, ModalCloseButton, ModalContent, ModalOverlay } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
@@ -10,9 +11,10 @@ import useStyle from '../../../common/hooks/useStyle';
 import bc from '../../../common/services/breathecode';
 import ModalInfo from '../../moduleMap/modalInfo';
 import profileHandlers from './handlers';
-import UpgradeAccessModal from '../../../common/components/UpgradeAccessModal';
+// import UpgradeAccessModal from '../../../common/components/UpgradeAccessModal';
 import { toCapitalize, unSlugify } from '../../../utils';
 import useSubscriptionsHandler from '../../../common/store/actions/subscriptionAction';
+import ShowPrices from '../../../common/components/ShowPrices';
 
 const Subscriptions = ({ storybookConfig }) => {
   const { t, lang } = useTranslation('profile');
@@ -31,7 +33,10 @@ const Subscriptions = ({ storybookConfig }) => {
   const onOpenCancelSubscription = () => setCancelModalIsOpen(true);
   const onCloseCancelSubscription = () => setCancelModalIsOpen(false);
 
-  const onOpenUpgrade = () => setUpgradeModalIsOpen(true);
+  const onOpenUpgrade = (data) => {
+    console.log('offer_data:::', data);
+    setUpgradeModalIsOpen(true);
+  };
   const onCloseUpgrade = () => setUpgradeModalIsOpen(false);
 
   const {
@@ -224,10 +229,24 @@ const Subscriptions = ({ storybookConfig }) => {
             }}
             onClose={() => setCancelModalIsOpen(false)}
           />
-          <UpgradeAccessModal
+
+          <Modal
             isOpen={upgradeModalIsOpen}
             onClose={() => setUpgradeModalIsOpen(false)}
-          />
+          >
+            <ModalCloseButton />
+            <ModalOverlay />
+            <ModalContent>
+              {/* <ModalBody> */}
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente atque ducimus consectetur perspiciatis? Quis doloribus, rem quae possimus veniam doloremque! Nulla delectus fugiat, magnam necessitatibus deserunt nisi voluptate facilis minus?
+              {/* <ShowPrices /> */}
+
+            </ModalContent>
+          </Modal>
+          {/* <UpgradeAccessModal
+            isOpen={upgradeModalIsOpen}
+            onClose={() => setUpgradeModalIsOpen(false)}
+          /> */}
 
         </Grid>
       ) : (

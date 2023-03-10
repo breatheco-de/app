@@ -62,10 +62,11 @@ const profileHandlers = ({
     }).planOffer()
       .then((res) => {
         const data = res?.data;
-        const currentSlug = data[0]?.original_plan?.slug;
+        const currentPlanOffer = data.find((item) => item?.original_plan?.slug === slug);
+        const currentSlug = currentPlanOffer?.original_plan?.slug;
 
         if (data[0]?.show_modal) {
-          onOpenUpgrade();
+          onOpenUpgrade(currentPlanOffer);
         }
 
         if (data[0]?.show_modal === false && data[0]?.original_plan) {
