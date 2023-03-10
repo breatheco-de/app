@@ -12,10 +12,13 @@ const Programs = ({ item, handleChoose, onOpenModal, usersConnected }) => {
   const { cohort } = item;
   const { version, slug, name } = cohort.syllabus_version;
   const currentCohortProps = programsList[cohort.slug];
-  const subscription = cohort?.available_as_saas && currentCohortProps?.subscription;
+
+  const subscription = (cohort?.available_as_saas && currentCohortProps?.subscription) || (cohort?.available_as_saas && currentCohortProps?.plan_financing);
+
   const isBought = subscription?.invoices?.[0]?.amount >= 0;
   const availableAsSaasButNotBought = cohort?.available_as_saas && !isBought;
   const isFreeTrial = subscription?.status === 'FREE_TRIAL' || availableAsSaasButNotBought;
+  const subscriptionExists = currentCohortProps?.subscription !== null || currentCohortProps?.plan_financing !== null;
 
   const router = useRouter();
 
@@ -73,8 +76,7 @@ const Programs = ({ item, handleChoose, onOpenModal, usersConnected }) => {
     return ({});
   }) : [];
 
-  // console.log('isAvailableAsSaas', cohort?.available_as_saas, cohort?.name);
-  return (
+  return ((cohort?.available_as_saas && subscriptionExists) || cohort?.available_as_saas === false) && (
     <ProgramCard
       width="100%"
       syllabusContent={syllabusContent?.length > 0 ? Object.assign({}, ...syllabusContent) : {}}
@@ -86,6 +88,7 @@ const Programs = ({ item, handleChoose, onOpenModal, usersConnected }) => {
       // haveFreeTrial={}
       // isBought={moduleStarted}
       // isBought={!isFreeTrial}
+      isLoading={currentCohortProps === undefined}
       startsIn={item?.cohort?.kickoff_date}
       icon="coding"
       subscriptionStatus={subscription?.status}

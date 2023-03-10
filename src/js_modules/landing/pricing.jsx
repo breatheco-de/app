@@ -1,37 +1,26 @@
+/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import {
-  Box, Button,
+  Box,
 } from '@chakra-ui/react';
-import { useState, Fragment } from 'react';
-import { useRouter } from 'next/router';
-import useTranslation from 'next-translate/useTranslation';
+import { useState } from 'react';
 // import { useFlags } from 'launchdarkly-react-client-sdk';
+import ShowPrices from '../../common/components/ShowPrices';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
-import useStyle from '../../common/hooks/useStyle';
 
 const Pricing = ({ data }) => {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [selectedFinanceIndex, setSelectedFinanceIndex] = useState(0);
-  const { t } = useTranslation('');
-  const { fontColor, featuredColor } = useStyle();
-  const router = useRouter();
-  // const flags = useFlags();
-
+  const defaultIndex = 0;
+  const defaultFinanceIndex = 0;
   const financeSelected = {
     0: 'list',
     1: 'finance',
   };
-  const financeValue = `${financeSelected[selectedFinanceIndex]}`;
-  const selectedItem = data?.pricing[financeValue][selectedIndex];
+  const [selectedItem, setSelectedItem] = useState(data?.pricing[financeSelected[defaultFinanceIndex]][defaultIndex]);
 
-  const handleSelect = (index) => {
-    setSelectedIndex(index);
-  };
-  const handleSelectFinance = (index) => {
-    setSelectedFinanceIndex(index);
-    setSelectedIndex(0);
+  const onSelect = (item) => {
+    setSelectedItem(item);
   };
 
   return (
@@ -65,71 +54,18 @@ const Pricing = ({ data }) => {
           ))}
         </Box>
       </Box>
-      <Box display="flex" flex={0.5} flexDirection="column" gridGap="20px">
-        <Box width="100%" display="flex" justifyContent="space-between" alignItems="center" mb="6px">
-          <Heading as="h2" size="sm">
-            {data?.pricing['choose-plan']}
-          </Heading>
-          <Box display="flex">
-            <Box p="15px 10px" onClick={() => handleSelectFinance(0)} borderBottom="4px solid" borderColor={selectedFinanceIndex === 0 ? 'blue.default' : 'gray.400'} color={selectedFinanceIndex === 0 ? 'blue.default' : fontColor} cursor="pointer" fontWeight={selectedFinanceIndex === 0 ? '700' : '400'}>
-              {data?.pricing['one-payment']}
-            </Box>
-            <Box p="15px 10px" onClick={() => handleSelectFinance(1)} borderBottom="4px solid" borderColor={selectedFinanceIndex === 1 ? 'blue.default' : 'gray.400'} color={selectedFinanceIndex === 1 ? 'blue.default' : fontColor} cursor="pointer" fontWeight={selectedFinanceIndex === 1 ? '700' : '400'}>
-              {data?.pricing['finance-text']}
-            </Box>
-          </Box>
-        </Box>
-        {data?.pricing[financeValue].filter((l) => l.show === true).map((item, i) => (
-          <Fragment key={`${item.title} ${item?.price}`}>
-            {data?.pricing[financeValue]?.length - 1 === i && (
-              <Box display="flex" alignItems="center">
-                <Box as="hr" color="gray.500" width="100%" />
-                <Text size="md" textAlign="center" width="100%" margin="0">
-                  {data?.pricing['not-ready']}
-                </Text>
-                <Box as="hr" color="gray.500" width="100%" />
-              </Box>
-            )}
-            <Box key={item.title} display="flex" onClick={() => handleSelect(i)} flexDirection={{ base: 'column', md: 'row' }} width="100%" justifyContent="space-between" p={selectedIndex === i ? '22px 18px' : '26px 22px'} gridGap="24px" cursor="pointer" background={selectedIndex !== i && featuredColor} border={selectedIndex === i && '4px solid #0097CD'} borderRadius="8px">
-              <Box display="flex" flex={1} flexDirection="column" gridGap="12px" minWidth={{ base: '100%', md: '288px' }} height="fit-content" fontWeight="400">
-                <Box fontSize="18px" fontWeight="700">
-                  {item?.title}
-                </Box>
-                <Text
-                  size="md"
-                  fontWeight="500"
-                  mb="6px"
-                  dangerouslySetInnerHTML={{ __html: item?.description }}
-                />
-              </Box>
-              <Box display="flex" alignItems="center" gridGap="10px">
-                <Heading as="span" size="m" lineHeight="1" textTransform="uppercase" color="blue.default">
-                  {item?.price}
-                </Heading>
-              </Box>
-            </Box>
-          </Fragment>
-        ))}
-        <Box mt="38px">
-          {process.env.VERCEL_ENV !== 'production' ? (
-            <Button
-              variant="default"
-              onClick={() => {
-                router.push(`/signup?syllabus=coding-introduction${selectedItem?.type.includes('trial') ? '&plan=coding-introduction-free-trial' : ''}`);
-              }}
-            >
-              {selectedItem?.button?.title}
-            </Button>
-          ) : (
-            <Button
-              variant="default"
-              disabled
-            >
-              {t('common:coming-soon')}
-            </Button>
-          )}
-        </Box>
-      </Box>
+      <ShowPrices
+        data={data}
+        title={data?.pricing['choose-plan']}
+        onePaymentLabel={data?.pricing['one-payment']}
+        financeTextLabel={data?.pricing['finance-text']}
+        notReady={data?.pricing['not-ready']}
+        list={data?.pricing.list}
+        finance={data?.pricing.finance}
+        defaultIndex={defaultIndex}
+        defaultFinanceIndex={defaultFinanceIndex}
+        onSelect={onSelect}
+      />
     </Box>
   );
 };

@@ -93,6 +93,9 @@ function chooseProgram() {
           ...programsList[value.cohort.slug],
           ...cohortTasks[value.cohort.slug],
           name: value.cohort.name,
+          plan_financing: subscriptionData?.plan_financings?.find(
+            (sub) => sub.selected_cohort?.slug === value.cohort.slug,
+          ) || null,
           subscription: subscriptionData?.subscriptions?.find(
             (sub) => sub.selected_cohort?.slug === value.cohort.slug,
           ) || null,
@@ -366,10 +369,17 @@ function chooseProgram() {
               <LiveEvent
                 featureLabel={t('common:live-event.title')}
                 featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                liveClassHash={liveClass?.hash}
-                liveStartsAt={liveClass?.starting_at}
-                liveEndsAt={liveClass?.ending_at}
+                mainClasses={
+                  liveClass?.hash || liveClass?.starting_at || liveClass?.ending_at ? [{
+                    liveClassHash: liveClass.hash,
+                    liveStartsAt: liveClass.starting_at,
+                    liveEndsAt: liveClass.ending_at,
+                  }] : []
+                }
                 otherEvents={events}
+                // liveClassHash={liveClass?.hash}
+                // liveStartsAt={liveClass?.starting_at}
+                // liveEndsAt={liveClass?.ending_at}
               />
             )}
           </Box>

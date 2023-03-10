@@ -30,10 +30,9 @@ const Summary = ({
   const borderColor2 = useColorModeValue('black', 'white');
   const { backgroundColor, borderColor, lightColor } = useStyle();
   const router = useRouter();
-  const { plan } = router.query;
 
-  // const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
-  const isNotTrial = !checkoutData?.isTrial;
+  const isNotTrial = selectedPlanCheckoutData?.type !== 'TRIAL';
+
   const periodText = {
     WEEK: t('info.trial-week'),
     MONTH: t('info.monthly'),
@@ -56,24 +55,23 @@ const Summary = ({
       });
   };
   const getPrice = () => {
-    if (selectedPlanCheckoutData?.financing_options?.length > 0 && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0) return selectedPlanCheckoutData?.financing_options[0]?.monthly_price;
-    if (checkoutData?.amount_per_half > 0) return checkoutData?.amount_per_half;
-    if (checkoutData?.amount_per_month > 0) return checkoutData?.amount_per_month;
-    if (checkoutData?.amount_per_quarter > 0) return checkoutData?.amount_per_quarter;
-    if (checkoutData?.amount_per_year > 0) return checkoutData?.amount_per_year;
+    if (isNotTrial) {
+      if (selectedPlanCheckoutData?.financing_options?.length > 0 && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0) return selectedPlanCheckoutData?.financing_options[0]?.monthly_price;
+      if (checkoutData?.amount_per_half > 0) return checkoutData?.amount_per_half;
+      if (checkoutData?.amount_per_month > 0) return checkoutData?.amount_per_month;
+      if (checkoutData?.amount_per_quarter > 0) return checkoutData?.amount_per_quarter;
+      if (checkoutData?.amount_per_year > 0) return checkoutData?.amount_per_year;
+    }
     return t('free-trial');
   };
 
-  const priceIsNotNumber = Number.isNaN(Number(getPrice(selectedPlanCheckoutData)));
+  const priceIsNotNumber = Number.isNaN(Number(getPrice()));
 
   useEffect(() => {
-    const planFindedByQuery = checkoutData?.plans?.find((p) => p?.slug === plan) || {};
-    const planFinded = Object?.values(planFindedByQuery)?.length > 0 && planFindedByQuery;
+    if (checkoutData?.plans[selectedIndex]) {
+      setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
 
-    if (planFinded || checkoutData?.plans[selectedIndex]) {
-      setSelectedPlanCheckoutData(planFinded || checkoutData?.plans[selectedIndex]);
-
-      getPlanProps(planFinded || checkoutData?.plans[selectedIndex]);
+      getPlanProps(checkoutData?.plans[selectedIndex]);
     }
   }, [checkoutData?.plans]);
 
