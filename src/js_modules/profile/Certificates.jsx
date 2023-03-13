@@ -3,10 +3,12 @@ import { formatRelative } from 'date-fns';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { es } from 'date-fns/locale';
+import Head from 'next/head';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import ShareButton from '../../common/components/ShareButton';
 import useStyle from '../../common/hooks/useStyle';
+import { location } from '../../utils';
 
 const Certificates = ({ certificates }) => {
   const { t, lang } = useTranslation('profile');
@@ -14,6 +16,11 @@ const Certificates = ({ certificates }) => {
 
   return (
     <>
+      {location?.pathname?.includes('certificates') && (
+        <Head>
+          <title>{t('my-certificates')}</title>
+        </Head>
+      )}
       <Text fontSize="15px" fontWeight="700" pb="6px">
         {t('my-certificates')}
       </Text>

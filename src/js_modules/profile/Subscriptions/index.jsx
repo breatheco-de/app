@@ -1,20 +1,20 @@
-/* eslint-disable no-unused-vars */
-import { Box, Button, Flex, Grid, Modal, ModalCloseButton, ModalContent, ModalOverlay } from '@chakra-ui/react';
+import { Box, Flex, Grid, Modal, ModalCloseButton, ModalContent, ModalOverlay } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { es } from 'date-fns/locale';
 import { format } from 'date-fns';
+import Head from 'next/head';
 import Icon from '../../../common/components/Icon';
 import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
 import bc from '../../../common/services/breathecode';
 import ModalInfo from '../../moduleMap/modalInfo';
 import profileHandlers from './handlers';
-// import UpgradeAccessModal from '../../../common/components/UpgradeAccessModal';
-import { toCapitalize, unSlugify } from '../../../utils';
+import { location, toCapitalize, unSlugify } from '../../../utils';
 import useSubscriptionsHandler from '../../../common/store/actions/subscriptionAction';
-import ShowPrices from '../../../common/components/ShowPrices';
+import ButtonHandler from './ButtonHandler';
+// import ShowPrices from '../../../common/components/ShowPrices';
 
 const Subscriptions = ({ storybookConfig }) => {
   const { t, lang } = useTranslation('profile');
@@ -31,22 +31,16 @@ const Subscriptions = ({ storybookConfig }) => {
   const subscriptionTranslations = storybookConfig?.translations?.profile?.subscription;
 
   const onOpenCancelSubscription = () => setCancelModalIsOpen(true);
-  const onCloseCancelSubscription = () => setCancelModalIsOpen(false);
 
   const onOpenUpgrade = (data) => {
     console.log('offer_data:::', data);
     setUpgradeModalIsOpen(true);
   };
-  const onCloseUpgrade = () => setUpgradeModalIsOpen(false);
 
   const {
-    statusStyles, statusLabel, getLocaleDate, subscriptionHandler, payUnitString,
+    statusStyles, statusLabel, getLocaleDate, payUnitString,
   } = profileHandlers({
     translations: profileTranslations,
-    onCloseCancelSubscription,
-    onOpenCancelSubscription,
-    onOpenUpgrade,
-    onCloseUpgrade,
   });
   const { borderColor2, hexColor, backgroundColor3, fontColor } = useStyle();
 
@@ -72,6 +66,11 @@ const Subscriptions = ({ storybookConfig }) => {
 
   return (
     <>
+      {location?.pathname?.includes('subscriptions') && (
+        <Head>
+          <title>{t('my-subscriptions')}</title>
+        </Head>
+      )}
       <Text fontSize="15px" fontWeight="700" pb="18px">
         {profileTranslations?.['my-subscriptions'] || t('my-subscriptions')}
       </Text>
@@ -90,9 +89,8 @@ const Subscriptions = ({ storybookConfig }) => {
             const invoice = subscription?.invoices[0];
             const isNotCancelled = subscription?.status !== 'CANCELLED' && subscription?.status !== 'PAYMENT_ISSUE';
             const isFreeTrial = subscription?.status.toLowerCase() === 'free_trial';
-            const isFullyPaid = subscription?.status.toLowerCase() === 'fully_paid';
+            // const isFullyPaid = subscription?.status.toLowerCase() === 'fully_paid';
 
-            const button = subscriptionHandler(subscription);
             const isNextPaimentExpired = new Date(subscription?.next_payment_at) < new Date();
 
             const nextPaymentDate = {
@@ -188,24 +186,13 @@ const Subscriptions = ({ storybookConfig }) => {
                       </Text>
                     </Flex>
                   </Flex>
-                  {!isFullyPaid && button.isComponent && (
-                    <>
-                      {button?.component}
-                    </>
-                  )}
-                  {!isFullyPaid && !button.isComponent && (
-                    <Button
-                      onClick={() => {
-                        button.open();
-                        setSubscriptionProps(subscription);
-                      }}
-                      color="blue.default"
-                      margin="auto 0 0 0"
-                      {...button.style}
-                    >
-                      {button.text}
-                    </Button>
-                  )}
+                  <ButtonHandler
+                    translations={profileTranslations}
+                    subscription={subscription}
+                    onOpenUpgrade={onOpenUpgrade}
+                    setSubscriptionProps={setSubscriptionProps}
+                    onOpenCancelSubscription={onOpenCancelSubscription}
+                  />
                 </Flex>
               </Flex>
             );
