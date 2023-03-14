@@ -250,8 +250,9 @@ const getQueryString = (key, def) => {
 
 const createArray = (length) => Array.from({ length }, (_, i) => i);
 
+const location = isWindow && window.location;
 export {
-  isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
+  isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify, location,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
   removeStorageItem, isDevMode, devLogTable, devLog, languageLabel,
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,

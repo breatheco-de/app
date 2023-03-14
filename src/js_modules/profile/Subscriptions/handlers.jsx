@@ -1,16 +1,12 @@
-import { Link } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import useStyle from '../../../common/hooks/useStyle';
-import bc from '../../../common/services/breathecode';
 
 const profileHandlers = ({
-  translations, onCloseCancelSubscription, onOpenCancelSubscription, onOpenUpgrade, onCloseUpgrade,
+  translations,
 }) => {
   const { t } = useTranslation('profile');
   const { reverseFontColor, fontColor, lightColor } = useStyle();
-  const router = useRouter();
   const subscriptionTR = translations?.subscription;
 
   const statusLabel = {
@@ -56,24 +52,6 @@ const profileHandlers = ({
     },
   };
 
-  const getPlanOffer = (slug) => {
-    bc.payment({
-      original_plan: slug,
-    }).planOffer()
-      .then((res) => {
-        const data = res?.data;
-        const currentSlug = data[0]?.original_plan?.slug;
-
-        if (data[0]?.show_modal) {
-          onOpenUpgrade();
-        }
-
-        if (data[0]?.show_modal === false && data[0]?.original_plan) {
-          router.push(`/signup?plan=${currentSlug}`);
-        }
-      });
-  };
-
   return {
     statusStyles,
     statusLabel,
@@ -98,72 +76,6 @@ const profileHandlers = ({
       if (days > 7) return `${days} ${daysLabel}`;
       if (days <= 7 && hours < 0) return `${days} ${days > 1 ? daysLabel : dayLabel} ${duration?.hours > 0 ? `${andLabel} ${duration?.hours} ${hoursLabel}` : ''}`;
       return format?.formated;
-    },
-    subscriptionHandler: (subscription) => {
-      const status = subscription?.status;
-      const planSlug = subscription?.plans?.[0]?.slug;
-      // ACTIVE, FREE_TRIAL, FULLY_PAID, CANCELLED, PAYMENT_ISSUE
-      if (status === 'ACTIVE' || status === 'FULLY_PAID') {
-        return {
-          text: subscriptionTR?.cancel || t('subscription.cancel'),
-          style: {
-            variant: 'link',
-          },
-
-          open: onOpenCancelSubscription,
-          close: onCloseCancelSubscription,
-        };
-      }
-      if (status === 'FREE_TRIAL') {
-        return {
-          text: subscriptionTR?.upgrade || t('subscription.upgrade'),
-          style: {
-            variant: 'outline',
-            color: 'blue.default',
-            borderColor: 'currentColor',
-            fontWeight: 700,
-          },
-
-          open: () => {
-            getPlanOffer(planSlug);
-          },
-          close: onCloseUpgrade,
-        };
-      }
-
-      if (status === 'CANCELLED') {
-        return {
-          text: subscriptionTR?.['reactivate-subscription'] || t('subscription.reactivate-subscription'),
-          style: {
-            variant: 'default',
-            color: 'white',
-            fontWeight: 700,
-          },
-          isComponent: true,
-          component: (
-            <Link variant="buttonDefault" textAlign="center" margin="auto 0 0 0" href={`/signup?plan=${planSlug}`}>
-              {subscriptionTR?.['reactivate-subscription'] || t('subscription.reactivate-subscription')}
-            </Link>
-          ),
-          close: onCloseUpgrade,
-        };
-      }
-
-      // PAYMENT_ISSUE
-      return {
-        text: subscriptionTR?.upgrade || t('subscription.upgrade'),
-        style: {
-          variant: 'outline',
-          color: 'blue.default',
-          borderColor: 'currentColor',
-          fontWeight: 700,
-        },
-        open: () => {
-          getPlanOffer(planSlug);
-          // onOpenUpgrade();
-        },
-        close: onCloseUpgrade,
-      };
     },
     payUnitString: (payUnit) => {
       if (payUnit === 'MONTH') return translations?.monthly || t('monthly');
