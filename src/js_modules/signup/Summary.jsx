@@ -86,7 +86,7 @@ const Summary = ({
           } else {
             handlePayment({
               ...data,
-              installments: selectedPlanCheckoutData?.how_many_months || selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
+              installments: selectedPlanCheckoutData?.how_many_months,
             })
               .catch(() => {
                 toast({
@@ -264,7 +264,7 @@ const Summary = ({
             </Box>
             <Box display="flex" flexDirection="column" gridGap="7px">
               <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="0px" alignItems="center">
-                <Box display="flex" flexDirection="column" gridGap="7px">
+                <Box display="flex" width={{ base: '100%', md: '' }} flexDirection="column" gridGap="7px">
                   <Heading size="18px">
                     {dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}
                   </Heading>
@@ -350,7 +350,9 @@ const Summary = ({
               .filter((l) => l.status === 'ACTIVE')
               .map((item, i) => {
                 const title = item?.title ? item?.title : toCapitalize(unSlugify(String(item?.slug)));
-                const isSelected = selectedPlanCheckoutData?.period === item?.period;
+                const isSelected = selectedPlanCheckoutData?.period !== 'FINANCING'
+                  ? selectedPlanCheckoutData?.period === item?.period
+                  : selectedPlanCheckoutData?.financingId === item?.financingId;
                 return (
                   <Fragment key={`${item?.slug}-${item?.title}`}>
                     <Box
@@ -387,13 +389,14 @@ const Summary = ({
                           {periodText[item?.period] || t('info.trial')}
                         </Text>
                       </Box>
-                      <Box display="flex" alignItems="center" gridGap="10px">
+                      <Box display="flex" minWidth="90px" alignItems="center" gridGap="10px">
                         <Heading
                           as="span"
                           size={(item?.period !== 'FINANCING' && item?.type !== 'TRIAL') ? 'm' : 'xsm'}
                           lineHeight="1"
                           color="blue.default"
                           width="100%"
+                          textAlign="end"
                         >
                           {item?.priceText}
                         </Heading>
