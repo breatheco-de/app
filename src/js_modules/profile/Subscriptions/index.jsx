@@ -43,7 +43,7 @@ const Subscriptions = ({ storybookConfig }) => {
   } = profileHandlers({
     translations: profileTranslations,
   });
-  const { borderColor2, hexColor, backgroundColor3, fontColor } = useStyle();
+  const { borderColor2, hexColor, backgroundColor3, fontColor, lightColor, modal } = useStyle();
 
   const { blueDefault } = hexColor;
 
@@ -64,6 +64,30 @@ const Subscriptions = ({ storybookConfig }) => {
       const exists = cohorts.some((l) => l?.cohort.slug === subscription?.selected_cohort?.slug);
       return exists;
     });
+
+  const getUpgradeLabel = (outOfConsumables) => {
+    const activeStatus = ['ACTIVE, FULLY_PAID, FREE_TRIAL'];
+    const status = subscriptionProps?.status;
+    if (activeStatus.includes(status) && outOfConsumables) {
+      return {
+        title: t('subscription.upgrade-modal.buy_mentorships'),
+        description: '',
+      };
+    }
+    if (status === 'FREE_TRIAL') {
+      return {
+        title: t('subscription.upgrade-modal.free_trial'),
+        description: t('subscription.upgrade-modal.free_trial_description'),
+      };
+    }
+
+    return {
+      title: t('subscription.upgrade-modal.upgrade_access'),
+      description: '',
+    };
+  };
+
+  const upgradeLabel = getUpgradeLabel(offerProps?.outOfConsumables);
 
   return (
     <>
@@ -221,28 +245,79 @@ const Subscriptions = ({ storybookConfig }) => {
           <Modal
             isOpen={upgradeModalIsOpen}
             onClose={() => setUpgradeModalIsOpen(false)}
-            size="xl"
+            size="5xl"
           >
             <ModalCloseButton />
             <ModalOverlay />
-            <ModalContent>
-              {/* <ModalBody> */}
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente atque ducimus consectetur perspiciatis? Quis doloribus, rem quae possimus veniam doloremque! Nulla delectus fugiat, magnam necessitatibus deserunt nisi voluptate facilis minus?
-              <ShowPrices
-                title={offerProps?.title}
-                list={offerProps?.paymentOptions}
-                onePaymentLabel="One payment"
-                financeTextLabel="Finance"
-                finance={offerProps?.financingOptions}
-                outOfConsumables={offerProps?.outOfConsumables}
-              />
+            <ModalContent background={modal.background3}>
+              <Flex padding="32px" gridGap="35px" flexDirection={{ base: 'column', lg: 'row' }}>
+                <Flex flex={0.5} margin="5rem 0 0 0" flexDirection="column" gridGap="16px" textAlign="center">
+                  <Text fontSize="26px" color="blue.default" fontWeight="700" lineHeight="31px">
+                    {upgradeLabel.title}
+                  </Text>
+                  {upgradeLabel.description && (
+                    <Text fontSize="21px" color={lightColor} fontWeight="700" lineHeight="25.2px">
+                      {upgradeLabel.description}
+                    </Text>
+                  )}
+                  {offerProps?.bullets?.length > 0 && (
+                    <Box
+                      as="ul"
+                      style={{ listStyle: 'none' }}
+                      display="flex"
+                      flexDirection="column"
+                      gridGap="12px"
+                      margin="10px 0 0 5px"
+                    >
+                      {offerProps?.bullets.map((bullet) => (
+                        <Box
+                          as="li"
+                          key={bullet?.features[0]?.description}
+                          display="flex"
+                          flexDirection="row"
+                          lineHeight="24px"
+                          gridGap="8px"
+                        >
+                          <Icon
+                            icon="checked2"
+                            color="#38A56A"
+                            width="13px"
+                            height="10px"
+                            style={{ margin: '8px 0 0 0' }}
+                          />
+                          <Box
+                            fontSize="14px"
+                            fontWeight="600"
+                            letterSpacing="0.05em"
+                            dangerouslySetInnerHTML={{ __html: bullet?.description }}
+                          />
+                          {bullet?.features[0]?.description}
+                        </Box>
+                      ))}
+                    </Box>
+                  )}
+                </Flex>
+                <Box flex={0.5}>
+                  <ShowPrices
+                    title={offerProps?.outOfConsumables
+                      ? t('subscription.upgrade-modal.choose_how_much')
+                      : t('subscription.upgrade-modal.choose_your_plan')}
+                    planSlug={offerProps?.slug}
+                    notReady={t('subscription.upgrade-modal.not_ready_to_commit')}
+                    list={offerProps?.paymentOptions?.length > 0 ? offerProps?.paymentOptions : offerProps?.consumableOptions}
+                    onePaymentLabel={t('subscription.upgrade-modal.one_payment')}
+                    financeTextLabel={t('subscription.upgrade-modal.finance')}
+                    onSelect={(item) => {
+                      console.log('selected:', item);
+                    }}
+                    finance={offerProps?.financingOptions}
+                    outOfConsumables={offerProps?.outOfConsumables}
+                  />
 
+                </Box>
+              </Flex>
             </ModalContent>
           </Modal>
-          {/* <UpgradeAccessModal
-            isOpen={upgradeModalIsOpen}
-            onClose={() => setUpgradeModalIsOpen(false)}
-          /> */}
 
         </Grid>
       ) : (

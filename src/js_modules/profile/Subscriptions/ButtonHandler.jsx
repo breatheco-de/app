@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import Link from '../../../common/components/NextChakraLink';
 import bc from '../../../common/services/breathecode';
-import { toCapitalize, unSlugify } from '../../../utils';
+import { isNumber, toCapitalize, unSlugify } from '../../../utils';
 
 const ButtonHandler = ({
   translations, subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription,
@@ -18,16 +18,23 @@ const ButtonHandler = ({
   const subscriptionTR = translations?.subscription;
   const router = useRouter();
 
+  const getPlanProps = async (slug) => {
+    const resp = await bc.payment().getPlanProps(encodeURIComponent(slug));
+    const data = await resp?.data;
+    return data;
+  };
+
   const getPlanOffer = (slug) => {
     setIsLoading(true);
     bc.payment({
       original_plan: slug,
     }).planOffer()
-      .then((res) => {
+      .then(async (res) => {
         const data = res?.data;
         const currentOffer = data.find((item) => item?.original_plan?.slug === slug);
         const originalPlan = currentOffer?.original_plan;
         const offerData = currentOffer?.suggested_plan;
+        const bullets = await getPlanProps(offerData?.slug);
         const outOfConsumables = currentOffer?.original_plan?.service_items.some((item) => item?.how_many === 0);
 
         // -------------------------------------------------- PREPARING PRICES --------------------------------------------------
@@ -37,45 +44,74 @@ const ButtonHandler = ({
         const existsAmountPerYear = offerData?.price_per_year > 0;
 
         const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
-        const financingOptionsExists = offerData?.financing_options?.length > 0 && offerData?.financing_options[0]?.monthly_price > 0;
+        const financingOptionsExists = offerData?.financing_options?.length > 0;
 
-        const trialPlan = !isNotTrial ? {
-          title: 'Free Trial',
+        const financingOptions = financingOptionsExists
+          ? offerData?.financing_options
+            .filter((l) => l?.monthly_price > 0)
+            .sort((a, b) => a?.monthly_price - b?.monthly_price)
+          : [];
+
+        const getTrialLabel = () => {
+          if (offerData?.trial_duration_unit === 'DAY') {
+            return {
+              priceText: `${t('subscription.upgrade-modal.duration_days', { duration: offerData?.trial_duration })} ${t('subscription.upgrade-modal.connector_duration_trial')}`,
+              description: `${t('subscription.upgrade-modal.no_card_needed')} ${t('subscription.upgrade-modal.duration_days', { duration: offerData?.trial_duration })}`,
+            };
+          }
+          if (offerData?.trial_duration_unit === 'MONTH') {
+            return {
+              priceText: `${offerData?.trial_duration} month trial`,
+              description: `${t('subscription.upgrade-modal.no_card_needed')} ${t('subscription.upgrade-modal.duration_month', { duration: offerData?.trial_duration })}`,
+            };
+          }
+          return {
+            priceText: t('subscription.upgrade-modal.free_trial'),
+            description: '',
+          };
+        };
+        const trialPlan = isNumber(offerData?.trial_duration) ? {
+          title: t('subscription.upgrade-modal.free_trial'),
           price: 0,
-          priceText: t('free-trial'),
+          priceText: getTrialLabel().priceText,
           trialDuration: offerData?.trial_duration,
           period: offerData?.trial_duration_unit,
+          description: getTrialLabel().description,
           type: 'TRIAL',
           isFree: true,
           show: true,
         } : {};
 
         const monthPlan = existsAmountPerMonth ? {
-          title: 'Monthly Payment',
+          title: t('subscription.upgrade-modal.monthly_payment'),
           price: offerData?.price_per_month,
           priceText: `$${offerData?.price_per_month}`,
           period: 'MONTH',
+          description: t('subscription.upgrade-modal.full_access'),
           type: 'PAYMENT',
           show: true,
         } : {};
 
         const yearPlan = existsAmountPerYear ? {
-          title: 'Yearly Payment',
+          title: t('subscription.upgrade-modal.yearly_payment'),
           price: offerData?.price_per_year,
           priceText: `$${offerData?.price_per_year}`,
           period: 'YEAR',
+          description: t('subscription.upgrade-modal.full_access'),
           type: 'PAYMENT',
           show: true,
         } : {};
-        const financingOption = financingOptionsExists ? {
-          title: 'Scholarship Level 1',
-          price: offerData?.financing_options[0]?.monthly_price,
-          priceText: `$${offerData?.financing_options[0]?.monthly_price} x ${offerData?.financing_options[0]?.how_many_months}`,
+
+        const financingOption = financingOptionsExists ? financingOptions.map((item, index) => ({
+          title: `${t('subscription.upgrade-modal.scholarship_level')} ${index + 1}`,
+          price: item?.monthly_price,
+          priceText: `$${item?.monthly_price} x ${item?.how_many_months}`,
           period: 'FINANCING',
-          how_many_months: offerData?.financing_options[0]?.how_many_months,
+          description: t('subscription.upgrade-modal.scholarship_description', { monthly_price: item?.monthly_price, many_months: item?.how_many_months }),
+          how_many_months: item?.how_many_months,
           type: 'PAYMENT',
           show: true,
-        } : {};
+        })) : {};
 
         const consumableOption = outOfConsumables && offerData?.service_items?.length > 0
           ? offerData?.service_items.map((item) => ({
@@ -87,20 +123,22 @@ const ButtonHandler = ({
           }))
           : {};
 
-        const paymentList = [trialPlan, monthPlan, yearPlan].filter((plan) => Object.keys(plan).length > 0);
+        const paymentList = [monthPlan, yearPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
         const financingList = [financingOption].filter((plan) => Object.keys(plan).length > 0);
         const consumableList = [consumableOption].filter((plan) => Object.keys(plan).length > 0);
 
         const finalData = {
           title: toCapitalize(unSlugify(String(offerData?.slug))),
+          slug: offerData?.slug,
           details: offerData?.details,
           expires_at: offerData?.expires_at,
           show_modal: currentOffer?.show_modal,
-          isTrial: !isNotTrial && !financingOptionsExists,
+          pricing_exists: isNotTrial || financingOptionsExists,
           paymentOptions: paymentList,
           financingOptions: financingList,
           outOfConsumables,
           consumableOptions: consumableList,
+          bullets,
         };
         // -------------------------------------------------- END PREPARING PRICES --------------------------------------------------
 
