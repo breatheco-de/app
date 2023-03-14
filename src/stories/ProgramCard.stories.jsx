@@ -207,6 +207,7 @@ courseNotStarted.args = {
   assistants: mentors,
   teacher: teachers[0],
   subscriptionStatus: 'ACTIVE',
+  courseProgress: 0,
   isAvailableAsSaas: true,
   syllabusContent: {
     totalLessons: 30,
