@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import Link from '../../../common/components/NextChakraLink';
 import bc from '../../../common/services/breathecode';
+import { toCapitalize, unSlugify } from '../../../utils';
 
 const ButtonHandler = ({
   translations, subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription,
@@ -26,10 +27,81 @@ const ButtonHandler = ({
         const data = res?.data;
         const currentPlanOffer = data.find((item) => item?.original_plan?.slug === slug);
         const currentSlug = currentPlanOffer?.original_plan?.slug;
-        // const hasConsumables = currentPlanOffer?.original_plan?.service_items.some((item) => item?.how_many > 0);
+        const offerData = currentPlanOffer?.suggested_plan;
+        const outOfConsumables = currentPlanOffer?.original_plan?.service_items.some((item) => item?.how_many === 0);
+
+        // -------------------------------------------------- DEBUG --------------------------------------------------
+
+        const existsAmountPerHalf = offerData?.price_per_half > 0;
+        const existsAmountPerMonth = offerData?.price_per_month > 0;
+        const existsAmountPerQuarter = offerData?.price_per_quarter > 0;
+        const existsAmountPerYear = offerData?.price_per_year > 0;
+
+        const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
+        const financingOptionsExists = offerData?.financing_options?.length > 0 && offerData?.financing_options[0]?.price_per_month > 0;
+
+        const trialPlan = !isNotTrial ? {
+          title: 'Free Trial',
+          price: 0,
+          priceText: t('free-trial'),
+          trialDuration: offerData?.trial_duration,
+          period: offerData?.trial_duration_unit,
+          type: 'TRIAL',
+        } : {};
+
+        const monthPlan = existsAmountPerMonth ? {
+          title: 'Monthly Payment',
+          price: offerData?.price_per_month,
+          priceText: `$${offerData?.price_per_month}`,
+          period: 'MONTH',
+          type: 'PAYMENT',
+        } : {};
+
+        const yearPlan = existsAmountPerYear ? {
+          title: 'Yearly Payment',
+          price: offerData?.price_per_year,
+          priceText: `$${offerData?.price_per_year}`,
+          period: 'YEAR',
+          type: 'PAYMENT',
+        } : {};
+        const financingOption = financingOptionsExists ? {
+          title: 'Scholarship Level 1',
+          price: offerData?.financing_options[0]?.price_per_month,
+          priceText: `$${offerData?.financing_options[0]?.price_per_month} x ${offerData?.financing_options[0]?.how_many_months}`,
+          period: 'FINANCING',
+          how_many_months: offerData?.financing_options[0]?.how_many_months,
+          type: 'PAYMENT',
+        } : {};
+
+        const consumableOption = outOfConsumables && offerData?.service_items?.length > 0
+          ? offerData?.service_items.map((item) => ({
+            title: toCapitalize(unSlugify(String(item?.service?.slug))),
+            price: item?.service?.price_per_unit,
+            how_many: item?.how_many,
+            type: 'CONSUMABLE',
+          }))
+          : {};
+
+        const paymentList = [trialPlan, monthPlan, yearPlan].filter((plan) => Object.keys(plan).length > 0);
+        const financingList = [financingOption].filter((plan) => Object.keys(plan).length > 0);
+        const consumableList = [consumableOption].filter((plan) => Object.keys(plan).length > 0);
+
+        const finalData = {
+          title: toCapitalize(unSlugify(String(offerData?.slug))),
+          details: offerData?.details,
+          expires_at: offerData?.expires_at,
+          show_modal: offerData?.show_modal,
+          isTrial: !isNotTrial && !financingOptionsExists,
+          paymentOptions: paymentList,
+          financingOptions: financingList,
+          outOfConsumables,
+          consumableOptions: consumableList,
+        };
+
+        // -------------------------------------------------- END DEBUG --------------------------------------------------
 
         if (data[0]?.show_modal) {
-          onOpenUpgrade(currentPlanOffer);
+          onOpenUpgrade(finalData);
         }
 
         if (data[0]?.show_modal === false && data[0]?.original_plan) {

@@ -14,7 +14,7 @@ import profileHandlers from './handlers';
 import { location, toCapitalize, unSlugify } from '../../../utils';
 import useSubscriptionsHandler from '../../../common/store/actions/subscriptionAction';
 import ButtonHandler from './ButtonHandler';
-// import ShowPrices from '../../../common/components/ShowPrices';
+import ShowPrices from '../../../common/components/ShowPrices';
 
 const Subscriptions = ({ storybookConfig }) => {
   const { t, lang } = useTranslation('profile');
@@ -23,6 +23,7 @@ const Subscriptions = ({ storybookConfig }) => {
   const [subscriptionProps, setSubscriptionProps] = useState({});
   const { state, fetchSubscriptions, cancelSubscription } = useSubscriptionsHandler();
   const [cohortsState, setCohortsState] = useState([]);
+  const [offerProps, setOfferProps] = useState({});
 
   const subscriptionDataState = state?.subscriptions;
 
@@ -33,7 +34,7 @@ const Subscriptions = ({ storybookConfig }) => {
   const onOpenCancelSubscription = () => setCancelModalIsOpen(true);
 
   const onOpenUpgrade = (data) => {
-    console.log('offer_data:::', data);
+    setOfferProps(data);
     setUpgradeModalIsOpen(true);
   };
 
@@ -226,7 +227,11 @@ const Subscriptions = ({ storybookConfig }) => {
             <ModalContent>
               {/* <ModalBody> */}
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente atque ducimus consectetur perspiciatis? Quis doloribus, rem quae possimus veniam doloremque! Nulla delectus fugiat, magnam necessitatibus deserunt nisi voluptate facilis minus?
-              {/* <ShowPrices /> */}
+              <ShowPrices
+                list={offerProps?.paymentOptions}
+                finance={offerProps?.financingOptions}
+                outOfConsumables={offerProps?.outOfConsumables}
+              />
 
             </ModalContent>
           </Modal>
