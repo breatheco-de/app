@@ -32,7 +32,8 @@ const ButtonHandler = ({
       .then(async (res) => {
         const data = res?.data;
         const currentOffer = data.find((item) => item?.original_plan?.slug === slug);
-        const originalPlan = currentOffer?.original_plan;
+
+        // const originalPlan = currentOffer?.original_plan;
         const offerData = currentOffer?.suggested_plan;
         const bullets = await getPlanProps(offerData?.slug);
         const outOfConsumables = currentOffer?.original_plan?.service_items.some((item) => item?.how_many === 0);
@@ -146,8 +147,8 @@ const ButtonHandler = ({
           onOpenUpgrade(finalData);
         }
 
-        if (currentOffer?.show_modal === false && currentOffer?.original_plan) {
-          router.push(`/signup?plan=${originalPlan?.slug}`);
+        if (currentOffer?.show_modal === false && offerData) {
+          router.push(`/signup?plan=${offerData?.slug}`);
         }
       })
       .finally(() => setIsLoading(false));
@@ -189,6 +190,29 @@ const ButtonHandler = ({
             {subscriptionTR?.['reactivate-subscription'] || t('subscription.reactivate-subscription')}
           </Link>
         ),
+        // component: (
+        //   <Button
+        //     variant="default"
+        //     href={`/signup?plan=${planSlug}`}
+        //     onClick={() => {
+        //       bc.payment({
+        //         original_plan: planSlug,
+        //       }).planOffer()
+        //         .then((response) => {
+        //           const data = response?.data;
+        //           const currentOffer = data.find((item) => item?.original_plan?.slug === planSlug);
+
+        //           if (response.data) {
+        //             router.push(`/signup?plan=${currentOffer?.suggested_plan?.slug}`);
+        //           }
+        //         });
+        //     }}
+        //     textAlign="center"
+        //     margin="auto 0 0 0"
+        //   >
+        //     {subscriptionTR?.['reactivate-subscription'] || t('subscription.reactivate-subscription')}
+        //   </Button>
+        // ),
       };
     }
 
