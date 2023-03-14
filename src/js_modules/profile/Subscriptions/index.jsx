@@ -109,7 +109,10 @@ const Subscriptions = ({ storybookConfig }) => {
           }}
           gridGap="3rem"
         >
-          {subscriptionData.subscriptions.map((subscription) => {
+          {[
+            ...subscriptionData.subscriptions,
+            ...subscriptionData.plan_financings,
+          ].map((subscription) => {
             const status = subscription?.status?.toLowerCase();
             const invoice = subscription?.invoices[0];
             const isNotCancelled = subscription?.status !== 'CANCELLED' && subscription?.status !== 'PAYMENT_ISSUE';

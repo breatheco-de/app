@@ -16,7 +16,16 @@ const useSubscriptionsHandler = () => {
         resolve(data);
         dispatch({
           type: FETCH_SUBSCRIPTIONS,
-          payload: data,
+          payload: {
+            subscriptions: data?.subscriptions.map((s) => ({
+              ...s,
+              type: 'subscription',
+            })),
+            plan_financings: data?.plan_financings.map((f) => ({
+              ...f,
+              type: 'plan_financing',
+            })),
+          },
         });
       })
       .catch((err) => {
