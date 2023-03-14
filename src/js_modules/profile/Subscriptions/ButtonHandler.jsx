@@ -25,20 +25,19 @@ const ButtonHandler = ({
     }).planOffer()
       .then((res) => {
         const data = res?.data;
-        const currentPlanOffer = data.find((item) => item?.original_plan?.slug === slug);
-        const currentSlug = currentPlanOffer?.original_plan?.slug;
-        const offerData = currentPlanOffer?.suggested_plan;
-        const outOfConsumables = currentPlanOffer?.original_plan?.service_items.some((item) => item?.how_many === 0);
+        const currentOffer = data.find((item) => item?.original_plan?.slug === slug);
+        const originalPlan = currentOffer?.original_plan;
+        const offerData = currentOffer?.suggested_plan;
+        const outOfConsumables = currentOffer?.original_plan?.service_items.some((item) => item?.how_many === 0);
 
-        // -------------------------------------------------- DEBUG --------------------------------------------------
-
+        // -------------------------------------------------- PREPARING PRICES --------------------------------------------------
         const existsAmountPerHalf = offerData?.price_per_half > 0;
         const existsAmountPerMonth = offerData?.price_per_month > 0;
         const existsAmountPerQuarter = offerData?.price_per_quarter > 0;
         const existsAmountPerYear = offerData?.price_per_year > 0;
 
         const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
-        const financingOptionsExists = offerData?.financing_options?.length > 0 && offerData?.financing_options[0]?.price_per_month > 0;
+        const financingOptionsExists = offerData?.financing_options?.length > 0 && offerData?.financing_options[0]?.monthly_price > 0;
 
         const trialPlan = !isNotTrial ? {
           title: 'Free Trial',
@@ -47,6 +46,8 @@ const ButtonHandler = ({
           trialDuration: offerData?.trial_duration,
           period: offerData?.trial_duration_unit,
           type: 'TRIAL',
+          isFree: true,
+          show: true,
         } : {};
 
         const monthPlan = existsAmountPerMonth ? {
@@ -55,6 +56,7 @@ const ButtonHandler = ({
           priceText: `$${offerData?.price_per_month}`,
           period: 'MONTH',
           type: 'PAYMENT',
+          show: true,
         } : {};
 
         const yearPlan = existsAmountPerYear ? {
@@ -63,14 +65,16 @@ const ButtonHandler = ({
           priceText: `$${offerData?.price_per_year}`,
           period: 'YEAR',
           type: 'PAYMENT',
+          show: true,
         } : {};
         const financingOption = financingOptionsExists ? {
           title: 'Scholarship Level 1',
-          price: offerData?.financing_options[0]?.price_per_month,
-          priceText: `$${offerData?.financing_options[0]?.price_per_month} x ${offerData?.financing_options[0]?.how_many_months}`,
+          price: offerData?.financing_options[0]?.monthly_price,
+          priceText: `$${offerData?.financing_options[0]?.monthly_price} x ${offerData?.financing_options[0]?.how_many_months}`,
           period: 'FINANCING',
           how_many_months: offerData?.financing_options[0]?.how_many_months,
           type: 'PAYMENT',
+          show: true,
         } : {};
 
         const consumableOption = outOfConsumables && offerData?.service_items?.length > 0
@@ -79,6 +83,7 @@ const ButtonHandler = ({
             price: item?.service?.price_per_unit,
             how_many: item?.how_many,
             type: 'CONSUMABLE',
+            show: true,
           }))
           : {};
 
@@ -90,22 +95,21 @@ const ButtonHandler = ({
           title: toCapitalize(unSlugify(String(offerData?.slug))),
           details: offerData?.details,
           expires_at: offerData?.expires_at,
-          show_modal: offerData?.show_modal,
+          show_modal: currentOffer?.show_modal,
           isTrial: !isNotTrial && !financingOptionsExists,
           paymentOptions: paymentList,
           financingOptions: financingList,
           outOfConsumables,
           consumableOptions: consumableList,
         };
+        // -------------------------------------------------- END PREPARING PRICES --------------------------------------------------
 
-        // -------------------------------------------------- END DEBUG --------------------------------------------------
-
-        if (data[0]?.show_modal) {
+        if (currentOffer?.show_modal) {
           onOpenUpgrade(finalData);
         }
 
-        if (data[0]?.show_modal === false && data[0]?.original_plan) {
-          router.push(`/signup?plan=${currentSlug}`);
+        if (currentOffer?.show_modal === false && currentOffer?.original_plan) {
+          router.push(`/signup?plan=${originalPlan?.slug}`);
         }
       })
       .finally(() => setIsLoading(false));

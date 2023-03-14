@@ -221,6 +221,7 @@ const Subscriptions = ({ storybookConfig }) => {
           <Modal
             isOpen={upgradeModalIsOpen}
             onClose={() => setUpgradeModalIsOpen(false)}
+            size="xl"
           >
             <ModalCloseButton />
             <ModalOverlay />
@@ -228,7 +229,10 @@ const Subscriptions = ({ storybookConfig }) => {
               {/* <ModalBody> */}
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente atque ducimus consectetur perspiciatis? Quis doloribus, rem quae possimus veniam doloremque! Nulla delectus fugiat, magnam necessitatibus deserunt nisi voluptate facilis minus?
               <ShowPrices
+                title={offerProps?.title}
                 list={offerProps?.paymentOptions}
+                onePaymentLabel="One payment"
+                financeTextLabel="Finance"
                 finance={offerProps?.financingOptions}
                 outOfConsumables={offerProps?.outOfConsumables}
               />

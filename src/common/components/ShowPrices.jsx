@@ -75,7 +75,7 @@ const ShowPrices = ({
         </Box>
         <Box textAlign="right" display="flex" flexDirection="column" gridGap="10px">
           <Heading as="span" size="m" lineHeight="1" textTransform="uppercase" color="blue.default">
-            {item?.price}
+            {item?.priceText || item?.price}
           </Heading>
           {item?.lastPrice && (
             <Text lineHeight="21px" fontSize="21px" fontWeight="500" color="#A9A9A9">
@@ -97,30 +97,32 @@ const ShowPrices = ({
         </Heading>
         {!outOfConsumables && (
           <Box display="flex">
-            <Box
-              // p="15px 10px"
-              p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
-              onClick={() => handleSelectFinance(0)}
-              borderBottom="4px solid"
-              borderColor={selectedFinanceIndex === 0 ? 'blue.default' : 'gray.400'}
-              color={selectedFinanceIndex === 0 ? 'blue.default' : fontColor}
-              cursor="pointer"
-              fontWeight={selectedFinanceIndex === 0 ? '700' : '400'}
-            >
-              {onePaymentLabel || data?.pricing['one-payment']}
-            </Box>
-            <Box
-              // p="15px 10px"
-              p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
-              onClick={() => handleSelectFinance(1)}
-              borderBottom="4px solid"
-              borderColor={selectedFinanceIndex === 1 ? 'blue.default' : 'gray.400'}
-              color={selectedFinanceIndex === 1 ? 'blue.default' : fontColor}
-              cursor="pointer"
-              fontWeight={selectedFinanceIndex === 1 ? '700' : '400'}
-            >
-              {financeTextLabel || data?.pricing['finance-text']}
-            </Box>
+            {list.length > 0 && (
+              <Box
+                p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
+                onClick={() => handleSelectFinance(0)}
+                borderBottom="4px solid"
+                borderColor={selectedFinanceIndex === 0 ? 'blue.default' : 'gray.400'}
+                color={selectedFinanceIndex === 0 ? 'blue.default' : fontColor}
+                cursor="pointer"
+                fontWeight={selectedFinanceIndex === 0 ? '700' : '400'}
+              >
+                {onePaymentLabel || data?.pricing['one-payment']}
+              </Box>
+            )}
+            {finance.length > 0 && (
+              <Box
+                p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
+                onClick={() => handleSelectFinance(1)}
+                borderBottom="4px solid"
+                borderColor={selectedFinanceIndex === 1 ? 'blue.default' : 'gray.400'}
+                color={selectedFinanceIndex === 1 ? 'blue.default' : fontColor}
+                cursor="pointer"
+                fontWeight={selectedFinanceIndex === 1 ? '700' : '400'}
+              >
+                {financeTextLabel || data?.pricing['finance-text']}
+              </Box>
+            )}
           </Box>
         )}
       </Box>
@@ -195,7 +197,7 @@ ShowPrices.defaultProps = {
   notReady: null,
   list: null,
   finance: null,
-  onSelect: null,
+  onSelect: () => {},
   defaultIndex: null,
   defaultFinanceIndex: 0,
   outOfConsumables: false,
