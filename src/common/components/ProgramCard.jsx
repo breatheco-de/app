@@ -137,38 +137,45 @@ const ProgramCard = ({
             <></>
           ) : (
             <>
-              {isAvailableAsSaas && statusActive && courseProgress === 0 && subscriptionStatus !== 'FREE_TRIAL' ? (
-                <Flex width="116px" justifyContent="flex-end">
-                  <Box marginRight="10px">
-                    <Icon
-                      width="14px"
-                      height="21px"
-                      icon="rocket"
-                      color={hasStarted ? hexColor.blueDefault : ''}
-                    />
-                  </Box>
-                  <Box>
-                    <Text
-                      fontSize="9px"
-                      lineHeight="9.8px"
-                      fontWeight="600"
-                      color={textColor}
-                    >
-                      {hasStarted
-                        ? `${stTranslation ? stTranslation[lang]['program-card']['started-in'] : t('started-in')}`
-                        : `${stTranslation ? stTranslation[lang]['program-card']['starts-in'] : t('starts-in')}`}
+              {isAvailableAsSaas && statusActive && subscriptionStatus !== 'FREE_TRIAL' ? (
+                <>
+                  {courseProgress === 0 ? (
+                    <Flex width="116px" justifyContent="flex-end">
+                      <Box marginRight="10px">
+                        <Icon
+                          width="14px"
+                          height="21px"
+                          icon="rocket"
+                          color={hasStarted ? hexColor.blueDefault : ''}
+                        />
+                      </Box>
+                      <Box>
+                        <Text
+                          fontSize="9px"
+                          lineHeight="9.8px"
+                          fontWeight="600"
+                          color={textColor}
+                        >
+                          {hasStarted
+                            ? `${stTranslation ? stTranslation[lang]['program-card']['started-in'] : t('started-in')}`
+                            : `${stTranslation ? stTranslation[lang]['program-card']['starts-in'] : t('starts-in')}`}
 
-                    </Text>
-                    <Text
-                      fontSize="9px"
-                      lineHeight="9.8px"
-                      fontWeight="400"
-                      color={textColor}
-                    >
-                      {formatTimeString(new Date(startsIn))}
-                    </Text>
-                  </Box>
-                </Flex>
+                        </Text>
+                        <Text
+                          fontSize="9px"
+                          lineHeight="9.8px"
+                          fontWeight="400"
+                          color={textColor}
+                        >
+                          {formatTimeString(new Date(startsIn))}
+                        </Text>
+                      </Box>
+                    </Flex>
+
+                  ) : (
+                    <Icon icon="crown" width="22px" height="15px" />
+                  )}
+                </>
               ) : (
                 <>
                   {isAvailableAsSaas && isFreeTrial ? (
@@ -259,7 +266,7 @@ const ProgramCard = ({
             </>
           ) : (
             <>
-              {(!hasStarted && statusActive) || (!hasStarted && isFreeTrial) ? (
+              {((!hasStarted && courseProgress === 0) && statusActive) || ((!hasStarted && courseProgress === 0) && isFreeTrial) ? (
                 <Box>
                   <Text
                     fontSize="xs"
