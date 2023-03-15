@@ -9,12 +9,15 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { formatDuration, intervalToDuration, subMinutes } from 'date-fns';
 import { es, en } from 'date-fns/locale';
+import { useState } from 'react';
 import CustomTheme from '../../../styles/theme';
 import Text from './Text';
 import Icon from './Icon';
 import { isNumber, isValidDate } from '../../utils';
 import useStyle from '../hooks/useStyle';
 import ProjectsSection from './ProjectsSection';
+import ButtonHandler from '../../js_modules/profile/Subscriptions/ButtonHandler';
+import UpgradeModal from '../../js_modules/profile/Subscriptions/UpgradeModal';
 
 const availableLanguages = {
   es,
@@ -25,10 +28,14 @@ const ProgramCard = ({
   programName, programDescription, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
   syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
   width, usersConnected, assistants, teacher, handleChoose, isHiddenOnPrework, isAvailableAsSaas,
-  subscriptionStatus,
+  subscriptionStatus, subscription,
 }) => {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
+  const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
+  const [offerProps, setOfferProps] = useState({});
+  const [subscriptionProps, setSubscriptionProps] = useState({});
+
   const freeTrialExpireDateValue = isValidDate(freeTrialExpireDate) ? new Date(freeTrialExpireDate) : new Date(subMinutes(new Date(), 1));
   const now = new Date();
   const { lightColor, hexColor } = useStyle();
@@ -72,6 +79,11 @@ const ProgramCard = ({
     expired: programCardTR?.expired || t('status.expired'),
     cancelled: programCardTR?.status?.cancelled || t('status.cancelled'),
     payment_issue: programCardTR?.status?.payment_issue || t('status.payment_issue'),
+  };
+
+  const onOpenUpgrade = (data) => {
+    setOfferProps(data);
+    setUpgradeModalIsOpen(true);
   };
 
   const FreeTagCapsule = () => {
@@ -137,38 +149,45 @@ const ProgramCard = ({
             <></>
           ) : (
             <>
-              {isAvailableAsSaas && statusActive && courseProgress === 0 && subscriptionStatus !== 'FREE_TRIAL' ? (
-                <Flex width="116px" justifyContent="flex-end">
-                  <Box marginRight="10px">
-                    <Icon
-                      width="14px"
-                      height="21px"
-                      icon="rocket"
-                      color={hasStarted ? hexColor.blueDefault : ''}
-                    />
-                  </Box>
-                  <Box>
-                    <Text
-                      fontSize="9px"
-                      lineHeight="9.8px"
-                      fontWeight="600"
-                      color={textColor}
-                    >
-                      {hasStarted
-                        ? `${stTranslation ? stTranslation[lang]['program-card']['started-in'] : t('started-in')}`
-                        : `${stTranslation ? stTranslation[lang]['program-card']['starts-in'] : t('starts-in')}`}
+              {isAvailableAsSaas && statusActive && subscriptionStatus !== 'FREE_TRIAL' ? (
+                <>
+                  {courseProgress === 0 ? (
+                    <Flex width="116px" justifyContent="flex-end">
+                      <Box marginRight="10px">
+                        <Icon
+                          width="14px"
+                          height="21px"
+                          icon="rocket"
+                          color={hasStarted ? hexColor.blueDefault : ''}
+                        />
+                      </Box>
+                      <Box>
+                        <Text
+                          fontSize="9px"
+                          lineHeight="9.8px"
+                          fontWeight="600"
+                          color={textColor}
+                        >
+                          {hasStarted
+                            ? `${stTranslation ? stTranslation[lang]['program-card']['started-in'] : t('started-in')}`
+                            : `${stTranslation ? stTranslation[lang]['program-card']['starts-in'] : t('starts-in')}`}
 
-                    </Text>
-                    <Text
-                      fontSize="9px"
-                      lineHeight="9.8px"
-                      fontWeight="400"
-                      color={textColor}
-                    >
-                      {formatTimeString(new Date(startsIn))}
-                    </Text>
-                  </Box>
-                </Flex>
+                        </Text>
+                        <Text
+                          fontSize="9px"
+                          lineHeight="9.8px"
+                          fontWeight="400"
+                          color={textColor}
+                        >
+                          {formatTimeString(new Date(startsIn))}
+                        </Text>
+                      </Box>
+                    </Flex>
+
+                  ) : (
+                    <Icon icon="crown" width="22px" height="15px" />
+                  )}
+                </>
               ) : (
                 <>
                   {isAvailableAsSaas && isFreeTrial ? (
@@ -259,7 +278,7 @@ const ProgramCard = ({
             </>
           ) : (
             <>
-              {(!hasStarted && statusActive) || (!hasStarted && isFreeTrial) ? (
+              {((!hasStarted && courseProgress === 0) && statusActive) || ((!hasStarted && courseProgress === 0) && isFreeTrial) ? (
                 <Box>
                   <Text
                     fontSize="xs"
@@ -282,13 +301,18 @@ const ProgramCard = ({
                     subscriptionStatus={subscriptionStatus}
                   />
                   {isFreeTrial && isExpired ? (
-                    <Button
+                    <ButtonHandler
+                      onlyUpgrade
+                      subscription={subscription}
+                      onOpenUpgrade={onOpenUpgrade}
+                      setSubscriptionProps={setSubscriptionProps}
+                      onOpenCancelSubscription={() => {}}
+                      // ------------------
                       marginTop={!isCancelled && '20px'}
                       borderRadius="3px"
                       width="100%"
                       padding="0"
                       whiteSpace="normal"
-                      // onClick={onOpenModal}
                       variant="default"
                       alignItems="center"
                       background="yellow.default"
@@ -296,7 +320,7 @@ const ProgramCard = ({
                     >
                       <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
                       {programCardTR?.upgrade || t('upgrade')}
-                    </Button>
+                    </ButtonHandler>
                   ) : (
                     <Button
                       marginTop="20px"
@@ -404,13 +428,18 @@ const ProgramCard = ({
                   </Text>
 
                   {((isAvailableAsSaas && isFreeTrial) || (isAvailableAsSaas && !statusActive)) && (
-                    <Button
+                    <ButtonHandler
+                      onlyUpgrade
+                      subscription={subscription}
+                      onOpenUpgrade={onOpenUpgrade}
+                      setSubscriptionProps={setSubscriptionProps}
+                      onOpenCancelSubscription={() => {}}
+                      // ------------------
                       marginTop={!isCancelled && !isExpired && courseProgress > 0 && '5px'}
                       borderRadius="3px"
                       width="100%"
                       padding="0"
                       whiteSpace="normal"
-                      // onClick={onOpenModal}
                       variant="default"
                       alignItems="center"
                       background="yellow.default"
@@ -418,7 +447,7 @@ const ProgramCard = ({
                     >
                       <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
                       {programCardTR?.upgrade || t('upgrade')}
-                    </Button>
+                    </ButtonHandler>
                   )}
                 </Box>
               )}
@@ -435,6 +464,13 @@ const ProgramCard = ({
           </Text>
         </Box>
       )}
+
+      <UpgradeModal
+        upgradeModalIsOpen={upgradeModalIsOpen}
+        setUpgradeModalIsOpen={setUpgradeModalIsOpen}
+        subscriptionProps={subscriptionProps}
+        offerProps={offerProps}
+      />
     </Box>
   );
 };
@@ -461,6 +497,7 @@ ProgramCard.propTypes = {
   // onOpenModal: PropTypes.func,
   isAvailableAsSaas: PropTypes.bool,
   subscriptionStatus: PropTypes.string,
+  subscription: PropTypes.objectOf(PropTypes.any),
 };
 
 ProgramCard.defaultProps = {
@@ -483,6 +520,7 @@ ProgramCard.defaultProps = {
   // onOpenModal: () => {},
   isAvailableAsSaas: false,
   subscriptionStatus: '',
+  subscription: {},
 };
 
 export default ProgramCard;

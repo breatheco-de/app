@@ -88,6 +88,7 @@
     },
     "cancel": "Cancel subscription",
     "upgrade": "Upgrade subscription",
+    "upgrade-plan": "Upgrade financing plan",
     "payment-up-to-date": "Payments are up to date",
     "reactivate-subscription": "Reactivate subscription",
     "duration-cancelled": "Duration: Cancelled",
@@ -107,8 +108,8 @@
       "price_remaining_to_pay": "${{price}} remaining to pay",
       "monthly_payment": "Monthly payment",
       "yearly_payment": "Yearly payment",
-      "scholarship_level": "Scholarship Level",
-      "scholarship_description": "You will pay ${{monthly_price}} for {{many_months}} month/months and get full access to all features for the duration of the course.",
+      "many_months_payment": "{{qty}} months payment",
+      "many_months_description": "You will pay ${{monthly_price}} for {{many_months}} months and get full access to all features for the duration of the course.",
       "full_access": "Full access to all features for the duration of the course.",
       "free_trial_description": "Upgrade your plan to access this and many other benefits.",
       "upgrade_access": "Upgrade your membership to access all the benefits of the 4Geeks community"
