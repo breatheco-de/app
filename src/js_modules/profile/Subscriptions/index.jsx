@@ -92,7 +92,7 @@ const Subscriptions = ({ storybookConfig }) => {
             const status = subscription?.status?.toLowerCase();
             const invoice = subscription?.invoices[0];
             const isNotCancelled = subscription?.status !== 'CANCELLED' && subscription?.status !== 'PAYMENT_ISSUE';
-            const isFreeTrial = subscription?.status.toLowerCase() === 'free_trial';
+            const isFreeTrial = subscription?.status?.toLowerCase() === 'free_trial';
 
             const isNextPaimentExpired = new Date(subscription?.next_payment_at) < new Date();
 

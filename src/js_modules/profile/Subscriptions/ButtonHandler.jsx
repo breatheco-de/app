@@ -13,7 +13,7 @@ const ButtonHandler = ({
   const { t } = useTranslation('profile');
   const status = subscription?.status;
   const [isLoading, setIsLoading] = useState(false);
-  const isFullyPaid = subscription?.status.toLowerCase() === 'fully_paid';
+  const isFullyPaid = subscription?.status?.toLowerCase() === 'fully_paid';
   const planSlug = subscription?.plans?.[0]?.slug;
   const subscriptionTR = translations?.subscription;
   const isPlanFinancingExpired = subscription.type === 'plan_financing' && subscription.valid_until < new Date().toISOString();

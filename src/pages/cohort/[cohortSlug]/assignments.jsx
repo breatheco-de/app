@@ -380,7 +380,7 @@ const Assignments = () => {
               }}
               options={currentStudentList.map((student) => ({
                 id: student.user.id,
-                value: `${student.user.first_name}-${student.user.last_name}`.toLowerCase(),
+                value: `${student.user.first_name}-${student.user.last_name}`?.toLowerCase(),
                 label: `${student.user.first_name} ${student.user.last_name}`,
               }))}
             />
