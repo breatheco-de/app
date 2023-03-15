@@ -68,5 +68,6 @@
   "error-finding-mentors": "Algo salió mal al buscar mentores para este servicio",
   "no-link-exist": "Aun no existe un enlace para este evento",
   "no-course-configuration": "La configuración del curso que intenta comprar no existe.",
-  "no-plan-configuration": "La configuración del plan que intenta comprar no existe."
+  "no-plan-configuration": "La configuración del plan que intenta comprar no existe.",
+  "error-getting-offer": "Lo sentimos, no hemos podido obtener la oferta del plan."
 }
