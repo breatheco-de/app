@@ -117,7 +117,6 @@ const Subscriptions = ({ storybookConfig }) => {
             const invoice = subscription?.invoices[0];
             const isNotCancelled = subscription?.status !== 'CANCELLED' && subscription?.status !== 'PAYMENT_ISSUE';
             const isFreeTrial = subscription?.status.toLowerCase() === 'free_trial';
-            // const isFullyPaid = subscription?.status.toLowerCase() === 'fully_paid';
 
             const isNextPaimentExpired = new Date(subscription?.next_payment_at) < new Date();
 
@@ -125,6 +124,11 @@ const Subscriptions = ({ storybookConfig }) => {
               en: format(new Date(subscription?.next_payment_at), 'MMM do'),
               es: format(new Date(subscription?.next_payment_at), 'MMM d', { locale: es }),
             };
+
+            const currentFinancingOption = subscription?.plans[0]?.financing_options?.length > 0
+              && subscription?.plans[0]?.financing_options?.find(
+                (option) => option?.monthly_price === subscription?.monthly_price,
+              );
 
             return (
               <Flex key={subscription?.id} position="relative" margin="10px 0 0 0" flexDirection="column" justifyContent="space-between" alignItems="center" border="1px solid" borderColor={borderColor2} p="14px 16px 14px 14px" borderRadius="9px">
@@ -185,6 +189,7 @@ const Subscriptions = ({ storybookConfig }) => {
                         {isNotCancelled
                           ? subscriptionTranslations?.['renewal-date']?.replace('{{date}}', nextPaymentDate[lang]) || t('subscription.renewal-date', { date: nextPaymentDate[lang] })
                           : subscriptionTranslations?.['renewal-date-cancelled'] || t('subscription.renewal-date-cancelled')}
+
                       </Text>
                     </Flex>
                     <Flex gridGap="4px">
@@ -197,7 +202,9 @@ const Subscriptions = ({ storybookConfig }) => {
                         minWidth="18px"
                       />
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
-                        {subscriptionTranslations?.renewable || t('subscription.renewable')}
+                        {subscription.type === 'plan_financing'
+                          ? subscriptionTranslations?.['not-renewable'] || t('subscription.not-renewable')
+                          : subscriptionTranslations?.renewable || t('subscription.renewable')}
                       </Text>
                     </Flex>
                     <Flex gridGap="4px">
@@ -210,7 +217,13 @@ const Subscriptions = ({ storybookConfig }) => {
                         minWidth="18px"
                       />
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
-                        {subscriptionTranslations?.payment?.replace('{{payment}}', payUnitString(subscription?.pay_every_unit)) || t('subscription.payment', { payment: payUnitString(subscription?.pay_every_unit) })}
+                        {subscription.type === 'plan_financing'
+                          ? (
+                            <>
+                              {`${currentFinancingOption?.how_many_months - subscription?.invoices?.length} payments left`}
+                            </>
+                          )
+                          : subscriptionTranslations?.payment?.replace('{{payment}}', payUnitString(subscription?.pay_every_unit)) || t('subscription.payment', { payment: payUnitString(subscription?.pay_every_unit) })}
                       </Text>
                     </Flex>
                   </Flex>
