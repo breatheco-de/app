@@ -23,6 +23,7 @@ const ShowPrices = ({
   defaultFinanceIndex,
   outOfConsumables,
   stTranslation,
+  handleUpgrade,
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
   const [selectedFinanceIndex, setSelectedFinanceIndex] = useState(defaultFinanceIndex);
@@ -75,8 +76,8 @@ const ShowPrices = ({
           />
         </Box>
 
-        <Box textAlign="right" display="flex" minWidth="110px" justifyContent="center" flexDirection="column" gridGap="10px">
-          <Heading as="span" size="m" lineHeight="1" textTransform="uppercase" color="blue.default">
+        <Box textAlign="right" display="flex" minWidth={item.period !== 'FINANCING' && '110px'} justifyContent="center" flexDirection="column" gridGap="10px">
+          <Heading as="span" size="m" width={item.period === 'FINANCING' && 'max-content'} lineHeight="1" textTransform="uppercase" color="blue.default">
             {item?.priceText || item?.price}
           </Heading>
           {item?.lastPrice && (
@@ -178,7 +179,11 @@ const ShowPrices = ({
             variant="default"
             disabled={!selectedItem && true}
             onClick={() => {
-              router.push(`/signup?syllabus=coding-introduction&plan=${selectedItem?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
+              if (handleUpgrade === false) {
+                router.push(`/signup?syllabus=coding-introduction&plan=${selectedItem?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
+              } else {
+                handleUpgrade(selectedItem);
+              }
             }}
           >
             {stTranslation ? stTranslation[lang].common.enroll : t('common:enroll')}
@@ -209,6 +214,7 @@ ShowPrices.propTypes = {
   defaultFinanceIndex: PropTypes.number,
   outOfConsumables: PropTypes.bool,
   stTranslation: PropTypes.objectOf(PropTypes.any),
+  handleUpgrade: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
 };
 
 ShowPrices.defaultProps = {
@@ -224,6 +230,7 @@ ShowPrices.defaultProps = {
   defaultFinanceIndex: 0,
   outOfConsumables: false,
   stTranslation: null,
+  handleUpgrade: false,
 };
 
 export default ShowPrices;

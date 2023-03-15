@@ -172,7 +172,43 @@ const ProgramCard = ({
               ) : (
                 <>
                   {isAvailableAsSaas && isFreeTrial ? (
-                    <FreeTagCapsule />
+                    <>
+                      {hasStarted ? (
+                        <FreeTagCapsule />
+                      ) : (
+                        <Flex width="116px" justifyContent="flex-end">
+                          <Box marginRight="10px">
+                            <Icon
+                              width="14px"
+                              height="21px"
+                              icon="rocket"
+                              color={hasStarted ? hexColor.blueDefault : ''}
+                            />
+                          </Box>
+                          <Box>
+                            <Text
+                              fontSize="9px"
+                              lineHeight="9.8px"
+                              fontWeight="600"
+                              color={textColor}
+                            >
+                              {hasStarted
+                                ? `${stTranslation ? stTranslation[lang]['program-card']['started-in'] : t('started-in')}`
+                                : `${stTranslation ? stTranslation[lang]['program-card']['starts-in'] : t('starts-in')}`}
+
+                            </Text>
+                            <Text
+                              fontSize="9px"
+                              lineHeight="9.8px"
+                              fontWeight="400"
+                              color={textColor}
+                            >
+                              {formatTimeString(new Date(startsIn))}
+                            </Text>
+                          </Box>
+                        </Flex>
+                      )}
+                    </>
                   ) : (
                     <>
                       {(!isCancelled || isAvailableAsSaas === false) ? (

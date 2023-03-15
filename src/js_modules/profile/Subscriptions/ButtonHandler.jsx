@@ -71,7 +71,8 @@ const ButtonHandler = ({
             description: '',
           };
         };
-        const trialPlan = isNumber(offerData?.trial_duration) ? {
+
+        const trialPlan = isNumber(offerData?.trial_duration) && offerData?.trial_duration > 0 ? {
           title: t('subscription.upgrade-modal.free_trial'),
           price: 0,
           priceText: getTrialLabel().priceText,
@@ -125,7 +126,7 @@ const ButtonHandler = ({
           : {};
 
         const paymentList = [monthPlan, yearPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
-        const financingList = [financingOption].filter((plan) => Object.keys(plan).length > 0);
+        const financingList = financingOption.filter((plan) => Object.keys(plan).length > 0);
         const consumableList = [consumableOption].filter((plan) => Object.keys(plan).length > 0);
 
         const finalData = {
