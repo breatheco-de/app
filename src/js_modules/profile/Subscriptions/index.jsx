@@ -1,18 +1,20 @@
-import { Box, Button, Flex, Grid } from '@chakra-ui/react';
+import { Box, Flex, Grid, Modal, ModalCloseButton, ModalContent, ModalOverlay } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { es } from 'date-fns/locale';
 import { format } from 'date-fns';
+import Head from 'next/head';
 import Icon from '../../../common/components/Icon';
 import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
 import bc from '../../../common/services/breathecode';
 import ModalInfo from '../../moduleMap/modalInfo';
 import profileHandlers from './handlers';
-import UpgradeAccessModal from '../../../common/components/UpgradeAccessModal';
-import { toCapitalize, unSlugify } from '../../../utils';
+import { location, toCapitalize, unSlugify } from '../../../utils';
 import useSubscriptionsHandler from '../../../common/store/actions/subscriptionAction';
+import ButtonHandler from './ButtonHandler';
+import ShowPrices from '../../../common/components/ShowPrices';
 
 const Subscriptions = ({ storybookConfig }) => {
   const { t, lang } = useTranslation('profile');
@@ -21,6 +23,7 @@ const Subscriptions = ({ storybookConfig }) => {
   const [subscriptionProps, setSubscriptionProps] = useState({});
   const { state, fetchSubscriptions, cancelSubscription } = useSubscriptionsHandler();
   const [cohortsState, setCohortsState] = useState([]);
+  const [offerProps, setOfferProps] = useState({});
 
   const subscriptionDataState = state?.subscriptions;
 
@@ -29,21 +32,18 @@ const Subscriptions = ({ storybookConfig }) => {
   const subscriptionTranslations = storybookConfig?.translations?.profile?.subscription;
 
   const onOpenCancelSubscription = () => setCancelModalIsOpen(true);
-  const onCloseCancelSubscription = () => setCancelModalIsOpen(false);
 
-  const onOpenUpgrade = () => setUpgradeModalIsOpen(true);
-  const onCloseUpgrade = () => setUpgradeModalIsOpen(false);
+  const onOpenUpgrade = (data) => {
+    setOfferProps(data);
+    setUpgradeModalIsOpen(true);
+  };
 
   const {
-    statusStyles, statusLabel, getLocaleDate, subscriptionHandler, payUnitString,
+    statusStyles, statusLabel, getLocaleDate, payUnitString,
   } = profileHandlers({
     translations: profileTranslations,
-    onCloseCancelSubscription,
-    onOpenCancelSubscription,
-    onOpenUpgrade,
-    onCloseUpgrade,
   });
-  const { borderColor2, hexColor, backgroundColor3, fontColor } = useStyle();
+  const { borderColor2, hexColor, backgroundColor3, fontColor, lightColor, modal } = useStyle();
 
   const { blueDefault } = hexColor;
 
@@ -65,8 +65,37 @@ const Subscriptions = ({ storybookConfig }) => {
       return exists;
     });
 
+  const getUpgradeLabel = (outOfConsumables) => {
+    const activeStatus = ['ACTIVE, FULLY_PAID, FREE_TRIAL'];
+    const status = subscriptionProps?.status;
+    if (activeStatus.includes(status) && outOfConsumables) {
+      return {
+        title: t('subscription.upgrade-modal.buy_mentorships'),
+        description: '',
+      };
+    }
+    if (status === 'FREE_TRIAL') {
+      return {
+        title: t('subscription.upgrade-modal.free_trial'),
+        description: t('subscription.upgrade-modal.free_trial_description'),
+      };
+    }
+
+    return {
+      title: t('subscription.upgrade-modal.upgrade_access'),
+      description: '',
+    };
+  };
+
+  const upgradeLabel = getUpgradeLabel(offerProps?.outOfConsumables);
+
   return (
     <>
+      {location?.pathname?.includes('subscriptions') && (
+        <Head>
+          <title>{t('my-subscriptions')}</title>
+        </Head>
+      )}
       <Text fontSize="15px" fontWeight="700" pb="18px">
         {profileTranslations?.['my-subscriptions'] || t('my-subscriptions')}
       </Text>
@@ -80,14 +109,16 @@ const Subscriptions = ({ storybookConfig }) => {
           }}
           gridGap="3rem"
         >
-          {subscriptionData.subscriptions.map((subscription) => {
+          {[
+            ...subscriptionData.subscriptions,
+            ...subscriptionData.plan_financings,
+          ].map((subscription) => {
             const status = subscription?.status?.toLowerCase();
             const invoice = subscription?.invoices[0];
             const isNotCancelled = subscription?.status !== 'CANCELLED' && subscription?.status !== 'PAYMENT_ISSUE';
             const isFreeTrial = subscription?.status.toLowerCase() === 'free_trial';
-            const isFullyPaid = subscription?.status.toLowerCase() === 'fully_paid';
+            // const isFullyPaid = subscription?.status.toLowerCase() === 'fully_paid';
 
-            const button = subscriptionHandler(subscription);
             const isNextPaimentExpired = new Date(subscription?.next_payment_at) < new Date();
 
             const nextPaymentDate = {
@@ -183,24 +214,13 @@ const Subscriptions = ({ storybookConfig }) => {
                       </Text>
                     </Flex>
                   </Flex>
-                  {!isFullyPaid && button.isComponent && (
-                    <>
-                      {button?.component}
-                    </>
-                  )}
-                  {!isFullyPaid && !button.isComponent && (
-                    <Button
-                      onClick={() => {
-                        button.open();
-                        setSubscriptionProps(subscription);
-                      }}
-                      color="blue.default"
-                      margin="auto 0 0 0"
-                      {...button.style}
-                    >
-                      {button.text}
-                    </Button>
-                  )}
+                  <ButtonHandler
+                    translations={profileTranslations}
+                    subscription={subscription}
+                    onOpenUpgrade={onOpenUpgrade}
+                    setSubscriptionProps={setSubscriptionProps}
+                    onOpenCancelSubscription={onOpenCancelSubscription}
+                  />
                 </Flex>
               </Flex>
             );
@@ -224,10 +244,83 @@ const Subscriptions = ({ storybookConfig }) => {
             }}
             onClose={() => setCancelModalIsOpen(false)}
           />
-          <UpgradeAccessModal
+
+          <Modal
             isOpen={upgradeModalIsOpen}
             onClose={() => setUpgradeModalIsOpen(false)}
-          />
+            size="5xl"
+          >
+            <ModalCloseButton />
+            <ModalOverlay />
+            <ModalContent background={modal.background3}>
+              <Flex padding="32px" gridGap="35px" flexDirection={{ base: 'column', lg: 'row' }}>
+                <Flex flex={0.5} margin="5rem 0 0 0" flexDirection="column" gridGap="16px" textAlign="center">
+                  <Text fontSize="26px" color="blue.default" fontWeight="700" lineHeight="31px">
+                    {upgradeLabel.title}
+                  </Text>
+                  {upgradeLabel.description && (
+                    <Text fontSize="21px" color={lightColor} fontWeight="700" lineHeight="25.2px">
+                      {upgradeLabel.description}
+                    </Text>
+                  )}
+                  {offerProps?.bullets?.length > 0 && (
+                    <Box
+                      as="ul"
+                      style={{ listStyle: 'none' }}
+                      display="flex"
+                      flexDirection="column"
+                      gridGap="12px"
+                      margin="10px 0 0 5px"
+                    >
+                      {offerProps?.bullets.map((bullet) => (
+                        <Box
+                          as="li"
+                          key={bullet?.features[0]?.description}
+                          display="flex"
+                          flexDirection="row"
+                          lineHeight="24px"
+                          gridGap="8px"
+                        >
+                          <Icon
+                            icon="checked2"
+                            color="#38A56A"
+                            width="13px"
+                            height="10px"
+                            style={{ margin: '8px 0 0 0' }}
+                          />
+                          <Box
+                            fontSize="14px"
+                            fontWeight="600"
+                            letterSpacing="0.05em"
+                            dangerouslySetInnerHTML={{ __html: bullet?.description }}
+                          />
+                          {bullet?.features[0]?.description}
+                        </Box>
+                      ))}
+                    </Box>
+                  )}
+                </Flex>
+                <Box flex={0.5}>
+                  <ShowPrices
+                    title={offerProps?.outOfConsumables
+                      ? t('subscription.upgrade-modal.choose_how_much')
+                      : t('subscription.upgrade-modal.choose_your_plan')}
+                    planSlug={offerProps?.slug}
+                    notReady={t('subscription.upgrade-modal.not_ready_to_commit')}
+                    list={offerProps?.paymentOptions?.length > 0 ? offerProps?.paymentOptions : offerProps?.consumableOptions}
+                    onePaymentLabel={t('subscription.upgrade-modal.one_payment')}
+                    financeTextLabel={t('subscription.upgrade-modal.finance')}
+                    onSelect={(item) => {
+                      console.log('selected:', item);
+                    }}
+                    finance={offerProps?.financingOptions}
+                    outOfConsumables={offerProps?.outOfConsumables}
+                  />
+
+                </Box>
+              </Flex>
+            </ModalContent>
+          </Modal>
 
         </Grid>
       ) : (
