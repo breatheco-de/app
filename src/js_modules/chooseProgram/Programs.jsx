@@ -91,6 +91,7 @@ const Programs = ({ item, handleChoose, onOpenModal, usersConnected }) => {
       isLoading={currentCohortProps === undefined}
       startsIn={item?.cohort?.kickoff_date}
       icon="coding"
+      subscription={subscription}
       subscriptionStatus={subscription?.status}
       iconBackground="blue.default"
       assistants={currentCohortProps?.assistant}

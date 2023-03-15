@@ -8,7 +8,7 @@ import bc from '../../../common/services/breathecode';
 import { isNumber, toCapitalize, unSlugify } from '../../../utils';
 
 const ButtonHandler = ({
-  translations, subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription,
+  translations, subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, onlyUpgrade, children, ...restStyles
 }) => {
   const { t } = useTranslation('profile');
   const status = subscription?.status;
@@ -284,8 +284,9 @@ const ButtonHandler = ({
           color="blue.default"
           margin="auto 0 0 0"
           {...buttonProps.style}
+          {...restStyles}
         >
-          {buttonProps.text}
+          {children || buttonProps.text}
         </Button>
       )}
     </>
@@ -298,6 +299,9 @@ ButtonHandler.propTypes = {
   onOpenUpgrade: PropTypes.func,
   setSubscriptionProps: PropTypes.func,
   onOpenCancelSubscription: PropTypes.func,
+  onlyUpgrade: PropTypes.bool,
+  restStyles: PropTypes.objectOf(PropTypes.any),
+  children: PropTypes.node,
 };
 
 ButtonHandler.defaultProps = {
@@ -306,6 +310,9 @@ ButtonHandler.defaultProps = {
   onOpenUpgrade: () => {},
   setSubscriptionProps: () => {},
   onOpenCancelSubscription: () => {},
+  onlyUpgrade: false,
+  restStyles: {},
+  children: null,
 };
 
 export default ButtonHandler;
