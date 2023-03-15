@@ -301,13 +301,18 @@ const ProgramCard = ({
                     subscriptionStatus={subscriptionStatus}
                   />
                   {isFreeTrial && isExpired ? (
-                    <Button
+                    <ButtonHandler
+                      onlyUpgrade
+                      subscription={subscription}
+                      onOpenUpgrade={onOpenUpgrade}
+                      setSubscriptionProps={setSubscriptionProps}
+                      onOpenCancelSubscription={() => {}}
+                      // ------------------
                       marginTop={!isCancelled && '20px'}
                       borderRadius="3px"
                       width="100%"
                       padding="0"
                       whiteSpace="normal"
-                      // onClick={onOpenModal}
                       variant="default"
                       alignItems="center"
                       background="yellow.default"
@@ -315,7 +320,7 @@ const ProgramCard = ({
                     >
                       <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
                       {programCardTR?.upgrade || t('upgrade')}
-                    </Button>
+                    </ButtonHandler>
                   ) : (
                     <Button
                       marginTop="20px"
@@ -423,28 +428,26 @@ const ProgramCard = ({
                   </Text>
 
                   {((isAvailableAsSaas && isFreeTrial) || (isAvailableAsSaas && !statusActive)) && (
-                    <>
-                      <ButtonHandler
-                        onlyUpgrade
-                        subscription={subscription}
-                        onOpenUpgrade={onOpenUpgrade}
-                        setSubscriptionProps={setSubscriptionProps}
-                        onOpenCancelSubscription={() => {}}
-                        // ------------------
-                        marginTop={!isCancelled && !isExpired && courseProgress > 0 && '5px'}
-                        borderRadius="3px"
-                        width="100%"
-                        padding="0"
-                        whiteSpace="normal"
-                        variant="default"
-                        alignItems="center"
-                        background="yellow.default"
-                        color="white"
-                      >
-                        <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
-                        {programCardTR?.upgrade || t('upgrade')}
-                      </ButtonHandler>
-                    </>
+                    <ButtonHandler
+                      onlyUpgrade
+                      subscription={subscription}
+                      onOpenUpgrade={onOpenUpgrade}
+                      setSubscriptionProps={setSubscriptionProps}
+                      onOpenCancelSubscription={() => {}}
+                      // ------------------
+                      marginTop={!isCancelled && !isExpired && courseProgress > 0 && '5px'}
+                      borderRadius="3px"
+                      width="100%"
+                      padding="0"
+                      whiteSpace="normal"
+                      variant="default"
+                      alignItems="center"
+                      background="yellow.default"
+                      color="white"
+                    >
+                      <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
+                      {programCardTR?.upgrade || t('upgrade')}
+                    </ButtonHandler>
                   )}
                 </Box>
               )}
