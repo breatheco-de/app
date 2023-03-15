@@ -1,5 +1,15 @@
 [
   {
+    "source": "/lesson/introduccion-a-node-js",
+    "destination": "/es/lesson/introduccion-a-node-js",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/building-apis-with-nodejs-expressjs-es",
+    "destination": "/es/lesson/building-apis-with-nodejs-expressjs-es",
+    "permanent": true
+  },
+  {
     "source": "/lesson/trazar-func-con-python-es",
     "destination": "/es/lesson/trazar-func-con-python-es",
     "permanent": true
@@ -347,16 +357,6 @@
   {
     "source": "/lesson/what-is-data-science",
     "destination": "/es/lesson/what-is-data-science",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/introduccion-a-node-js",
-    "destination": "/es/lesson/introduccion-a-node-js",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/building-apis-with-nodejs-expressjs-es",
-    "destination": "/es/lesson/building-apis-with-nodejs-expressjs-es",
     "permanent": true
   },
   {

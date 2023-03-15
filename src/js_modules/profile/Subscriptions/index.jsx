@@ -76,7 +76,7 @@ const Subscriptions = ({ storybookConfig }) => {
     }
     if (status === 'FREE_TRIAL') {
       return {
-        title: t('subscription.upgrade-modal.free_trial'),
+        title: t('subscription.upgrade-modal.upgrade_free_trial'),
         description: t('subscription.upgrade-modal.free_trial_description'),
       };
     }
@@ -88,6 +88,12 @@ const Subscriptions = ({ storybookConfig }) => {
   };
 
   const upgradeLabel = getUpgradeLabel(offerProps?.outOfConsumables);
+
+  const getDefaultFinanceIndex = () => {
+    if (offerProps?.paymentOptions?.length > 0) return 0;
+    if (offerProps?.financingOptions?.length > 0) return 1;
+    return 0;
+  };
 
   return (
     <>
@@ -320,12 +326,16 @@ const Subscriptions = ({ storybookConfig }) => {
                       : t('subscription.upgrade-modal.choose_your_plan')}
                     planSlug={offerProps?.slug}
                     notReady={t('subscription.upgrade-modal.not_ready_to_commit')}
+                    defaultFinanceIndex={getDefaultFinanceIndex()}
                     list={offerProps?.paymentOptions?.length > 0 ? offerProps?.paymentOptions : offerProps?.consumableOptions}
                     onePaymentLabel={t('subscription.upgrade-modal.one_payment')}
                     financeTextLabel={t('subscription.upgrade-modal.finance')}
-                    onSelect={(item) => {
-                      console.log('selected:', item);
+                    handleUpgrade={(item) => {
+                      console.log('handleUpgrade:', item);
                     }}
+                    // onSelect={(item) => {
+                    //   console.log('selected:', item);
+                    // }}
                     finance={offerProps?.financingOptions}
                     outOfConsumables={offerProps?.outOfConsumables}
                   />
