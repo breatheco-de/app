@@ -7,7 +7,6 @@ import {
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
 import { formatDuration, intervalToDuration } from 'date-fns';
-import { es, en } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import CustomTheme from '../../../../styles/theme';
 import bc from '../../services/breathecode';
@@ -19,11 +18,6 @@ import OtherEvents from './OtherEvents';
 import useStyle from '../../hooks/useStyle';
 import useTruncatedText from '../../hooks/useTruncatedText';
 import modifyEnv from '../../../../modifyEnv';
-
-const availableLanguages = {
-  es,
-  en,
-};
 
 const LiveEvent = ({
   // liveUrl,
@@ -38,7 +32,7 @@ const LiveEvent = ({
   featureReadMoreUrl,
 }) => {
   const { t, lang } = useTranslation('live-event');
-  const { hexColor, backgroundColor2 } = useStyle();
+  const { hexColor, disabledColor, backgroundColor2 } = useStyle();
   const [isOpen, setIsOpen] = useState(false);
   const [timeAgo, setTimeAgo] = useState('');
   const accessToken = getStorageItem('accessToken');
@@ -65,6 +59,12 @@ const LiveEvent = ({
     return otherEventsSorted;
   };
 
+  const formatDistanceLocale = {
+    en: { xMonths: '{{count}} m', xWeeks: '{{count}} w', xDays: '{{count}} d', xHours: '{{count}} hr', xMinutes: '{{count}} min' },
+    es: { xMonths: '{{count}} m', xWeeks: '{{count}} sem', xDays: '{{count}} d', xHours: '{{count}} hr', xMinutes: '{{count}} min' },
+  };
+  const shortEnLocale = { formatDistance: (token, count) => formatDistanceLocale[lang][token].replace('{{count}}', count) };
+
   const formatTimeString = (start, isMoreThan2Days = false) => {
     const duration = intervalToDuration({
       end: new Date(),
@@ -75,7 +75,7 @@ const LiveEvent = ({
       {
         format: !isMoreThan2Days ? ['months', 'weeks', 'days', 'hours', 'minutes'] : ['months', 'weeks', 'days'],
         delimiter: ', ',
-        locale: availableLanguages[lang],
+        locale: shortEnLocale,
       });
 
     if (formated === '') return stTranslation ? stTranslation[lang]['live-event']['few-seconds'] : t('few-seconds');
@@ -206,10 +206,18 @@ const LiveEvent = ({
                 <Box
                   display="flex"
                   alignItems="center"
-                  cursor={(!event.liveClassHash || isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) && 'pointer'}
+                  cursor={
+                    (!event.liveClassHash
+                      || isLiveOrStarting(liveStartsAtDate, liveEndsAtDate))
+                    && 'pointer'
+                  }
                   onClick={() => {
-                    if (event.liveClassHash && isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
-                      bc.events().joinLiveClass(event.liveClassHash)
+                    if (
+                      event.liveClassHash
+                      && isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)
+                    ) {
+                      bc.events()
+                        .joinLiveClass(event.liveClassHash)
                         .then((resp) => {
                           if (resp.data?.url) {
                             window.open(resp.data?.url);
@@ -232,7 +240,9 @@ const LiveEvent = ({
                         });
                     }
                     if (!event.liveClassHash) {
-                      window.open(`${BREATHECODE_HOST}/v1/events/me/event/${nearestEvent?.id}/join?token=${accessToken}`);
+                      window.open(
+                        `${BREATHECODE_HOST}/v1/events/me/event/${nearestEvent?.id}/join?token=${accessToken}`,
+                      );
                     }
                   }}
                 >
@@ -242,29 +252,51 @@ const LiveEvent = ({
                     height="50px"
                     className={
                       isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)
-                        ? `${mainClasses.length === 0 ? 'pulse-blue' : 'pulse-red'}`
+                        ? `${
+                          mainClasses.length === 0
+                            ? 'pulse-blue'
+                            : 'pulse-red'
+                        }`
                         : ''
                     }
-                    opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? '1' : '0.5'}
+                    opacity={
+                      isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)
+                        ? '1'
+                        : '0.5'
+                    }
                     position="relative"
                   >
-                    {mainEvents.length <= 1 && getOtherEvents().filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ending_at)))?.length !== 0 && (
-                      <Box
-                        borderRadius="full"
-                        width="17px"
-                        height="17px"
-                        background={CustomTheme.colors.danger}
-                        position="absolute"
-                        color={CustomTheme.colors.white}
-                        display="flex"
-                        flexDirection="column"
-                        justifyContent="center"
-                        left="75%"
-                      >
-                        <Text linHeight="18px" textAlign="center" fontSize="14px" fontWeight="900">
-                          {getOtherEvents().filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ending_at))).length}
-                        </Text>
-                      </Box>
+                    {mainEvents.length <= 1
+                      && getOtherEvents().filter((e) => isLiveOrStarting(
+                        new Date(e?.starting_at),
+                        new Date(e?.ending_at),
+                      ))?.length !== 0 && (
+                        <Box
+                          borderRadius="full"
+                          width="17px"
+                          height="17px"
+                          background={CustomTheme.colors.danger}
+                          position="absolute"
+                          color={CustomTheme.colors.white}
+                          display="flex"
+                          flexDirection="column"
+                          justifyContent="center"
+                          left="75%"
+                        >
+                          <Text
+                            linHeight="18px"
+                            textAlign="center"
+                            fontSize="14px"
+                            fontWeight="900"
+                          >
+                            {
+                              getOtherEvents().filter((e) => isLiveOrStarting(
+                                new Date(e?.starting_at),
+                                new Date(e?.ending_at),
+                              )).length
+                            }
+                          </Text>
+                        </Box>
                     )}
                     <Icon
                       width="50px"
@@ -284,19 +316,23 @@ const LiveEvent = ({
                       lineHeight="18px"
                       fontWeight="900"
                       color={textColor}
-                      opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 1 : 0.5}
+                      opacity={
+                        isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)
+                          ? 1
+                          : 0.5
+                      }
                       marginBottom="5px"
                       marginTop="0"
                       onMouseOver={handleMouseOver}
                       onMouseOut={handleMouseOut}
                     >
                       {truncatedText ? (
-                        <>
-                          {truncatedText}
-                        </>
+                        <>{truncatedText}</>
                       ) : (
                         <>
-                          {stTranslation ? stTranslation[lang]['live-event']['live-class'] : t('live-class')}
+                          {stTranslation
+                            ? stTranslation[lang]['live-event']['live-class']
+                            : t('live-class')}
                         </>
                       )}
                     </Text>
@@ -309,32 +345,50 @@ const LiveEvent = ({
                           colorScheme="green"
                           width="fit-content"
                           background={backgroundColor2}
+                          height="20px"
                         >
                           <TagLabel
                             fontWeight="700"
                             color={hexColor.blueDefault}
-                            opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 1 : 0.5}
+                            opacity={
+                              isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)
+                                ? 1
+                                : 0.5
+                            }
                           >
                             {event.subLabel || event.type}
                           </TagLabel>
                         </Tag>
                       )}
-                      <Tag
-                        size="sm"
-                        borderRadius="full"
-                        variant="solid"
-                        colorScheme="green"
-                        width="fit-content"
-                        background={CustomTheme.colors.red.light}
-                      >
-                        <TagLabel
-                          fontWeight="700"
-                          color={CustomTheme.colors.danger}
-                          opacity={isLive(liveStartsAtDate, liveEndsAtDate) ? 1 : 0.2}
+                      {isLive(liveStartsAtDate, liveEndsAtDate) ? (
+                        <Tag
+                          size="sm"
+                          borderRadius="full"
+                          variant="solid"
+                          colorScheme="green"
+                          width="fit-content"
+                          background={CustomTheme.colors.red.light}
                         >
-                          • Live Now!
-                        </TagLabel>
-                      </Tag>
+                          <TagLabel
+                            fontWeight="700"
+                            color={CustomTheme.colors.danger}
+                          >
+                            {stTranslation ? `• ${stTranslation[lang]['live-event']['live-now']}` : `• ${t('live-now')}`}
+                          </TagLabel>
+                        </Tag>
+                      ) : (
+                        <Text
+                          fontSize="14px"
+                          lineHeight="18px"
+                          fontWeight={500}
+                          color={disabledColor}
+                          marginBottom="0"
+                          marginTop="0"
+                        >
+                          {timeAgo}
+                        </Text>
+
+                      )}
                     </Box>
                   </Box>
                 </Box>
@@ -402,7 +456,9 @@ const LiveEvent = ({
           <OtherEvents
             events={mainEvents.length !== 0 && mainClasses.length !== 0 ? otherEventsSorted : restOfEvents}
             isLiveOrStarting={isLiveOrStarting}
+            isLive={isLive}
             textTime={textTime}
+            stTranslation={stTranslation}
           />
         </Box>
       )}
