@@ -454,14 +454,14 @@ const Dashboard = () => {
                   width="100%"
                 />
                 )}
-                {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
-                <SupportSidebar
-                  title={supportSideBar.title}
-                  subtitle={supportSideBar.description}
-                  teacherAndAssistants={teacherAndAssistants}
-                  actionButtons={supportSideBar.actionButtons}
-                  width="100%"
-                />
+                {cohortSession?.cohort_role?.toLowerCase() === 'student' && flags?.appReleaseEnableMentorshipsWidget && (
+                  <SupportSidebar
+                    title={supportSideBar.title}
+                    subtitle={supportSideBar.description}
+                    teacherAndAssistants={teacherAndAssistants}
+                    actionButtons={supportSideBar.actionButtons}
+                    width="100%"
+                  />
                 )}
               </Box>
             )}
@@ -663,14 +663,14 @@ const Dashboard = () => {
                 width="100%"
               />
               )}
-              {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
-              <SupportSidebar
-                title={supportSideBar.title}
-                subtitle={supportSideBar.description}
-                teacherAndAssistants={teacherAndAssistants}
-                actionButtons={supportSideBar.actionButtons}
-                width="100%"
-              />
+              {cohortSession?.cohort_role?.toLowerCase() === 'student' && flags?.appReleaseEnableMentorshipsWidget && (
+                <SupportSidebar
+                  title={supportSideBar.title}
+                  subtitle={supportSideBar.description}
+                  teacherAndAssistants={teacherAndAssistants}
+                  actionButtons={supportSideBar.actionButtons}
+                  width="100%"
+                />
               )}
             </Box>
           )}

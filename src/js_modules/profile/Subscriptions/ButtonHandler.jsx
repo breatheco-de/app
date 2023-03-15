@@ -89,6 +89,7 @@ const ButtonHandler = ({
             period: 'FINANCING',
             description: t('subscription.upgrade-modal.full_access'),
             how_many_months: item?.how_many_months,
+            suggested_plan: offerData,
             type: 'PAYMENT',
             show: true,
           })) : [];
@@ -100,6 +101,7 @@ const ButtonHandler = ({
             trialDuration: offerData?.trial_duration,
             period: offerData?.trial_duration_unit,
             description: getTrialLabel().description,
+            suggested_plan: offerData,
             type: 'TRIAL',
             isFree: true,
             show: true,
@@ -111,6 +113,7 @@ const ButtonHandler = ({
             priceText: `$${offerData?.price_per_month}`,
             period: 'MONTH',
             description: t('subscription.upgrade-modal.full_access'),
+            suggested_plan: offerData,
             type: 'PAYMENT',
             show: true,
           }] : onePaymentFinancing;
@@ -121,6 +124,7 @@ const ButtonHandler = ({
             priceText: `$${offerData?.price_per_year}`,
             period: 'YEAR',
             description: t('subscription.upgrade-modal.full_access'),
+            suggested_plan: offerData,
             type: 'PAYMENT',
             show: true,
           } : {};
@@ -132,6 +136,7 @@ const ButtonHandler = ({
             period: 'FINANCING',
             description: t('subscription.upgrade-modal.many_months_description', { monthly_price: item?.monthly_price, many_months: item?.how_many_months }),
             how_many_months: item?.how_many_months,
+            suggested_plan: offerData,
             type: 'PAYMENT',
             show: true,
           })) : [];
@@ -141,6 +146,7 @@ const ButtonHandler = ({
               title: toCapitalize(unSlugify(String(item?.service?.slug))),
               price: item?.service?.price_per_unit,
               how_many: item?.how_many,
+              suggested_plan: offerData,
               type: 'CONSUMABLE',
               show: true,
             }))

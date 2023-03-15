@@ -1,5 +1,6 @@
 import { Box, Flex, Modal, ModalCloseButton, ModalContent, ModalOverlay } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Icon from '../../../common/components/Icon';
 import ShowPrices from '../../../common/components/ShowPrices';
@@ -9,6 +10,7 @@ import useStyle from '../../../common/hooks/useStyle';
 const UpgradeModal = ({ upgradeModalIsOpen, setUpgradeModalIsOpen, subscriptionProps, offerProps }) => {
   const { lightColor, modal } = useStyle();
   const { t } = useTranslation('profile');
+  const router = useRouter();
 
   const getDefaultFinanceIndex = () => {
     if (offerProps?.paymentOptions?.length > 0) return 0;
@@ -108,7 +110,8 @@ const UpgradeModal = ({ upgradeModalIsOpen, setUpgradeModalIsOpen, subscriptionP
               onePaymentLabel={t('subscription.upgrade-modal.one_payment')}
               financeTextLabel={t('subscription.upgrade-modal.finance')}
               handleUpgrade={(item) => {
-                console.log('handleUpgrade:', item);
+                // console.log('handleUpgrade:', item);
+                router.push(`/signup?plan=${item?.suggested_plan?.slug}`);
               }}
               // onSelect={(item) => {
               //   console.log('selected:', item);
