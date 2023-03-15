@@ -7,6 +7,7 @@ import {
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
 import { formatDuration, intervalToDuration } from 'date-fns';
+import { es, en } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import CustomTheme from '../../../../styles/theme';
 import bc from '../../services/breathecode';
@@ -18,6 +19,11 @@ import OtherEvents from './OtherEvents';
 import useStyle from '../../hooks/useStyle';
 import useTruncatedText from '../../hooks/useTruncatedText';
 import modifyEnv from '../../../../modifyEnv';
+
+const availableLanguages = {
+  es,
+  en,
+};
 
 const LiveEvent = ({
   // liveUrl,
@@ -63,7 +69,7 @@ const LiveEvent = ({
     en: { xMonths: '{{count}} m', xWeeks: '{{count}} w', xDays: '{{count}} d', xHours: '{{count}} hr', xMinutes: '{{count}} min' },
     es: { xMonths: '{{count}} m', xWeeks: '{{count}} sem', xDays: '{{count}} d', xHours: '{{count}} hr', xMinutes: '{{count}} min' },
   };
-  const shortEnLocale = { formatDistance: (token, count) => formatDistanceLocale[lang][token].replace('{{count}}', count) };
+  const shortEnLocale = { formatDistance: (token, count) => (formatDistanceLocale[lang][token] ? formatDistanceLocale[lang][token].replace('{{count}}', count) : availableLanguages[lang]) };
 
   const formatTimeString = (start, isMoreThan2Days = false) => {
     const duration = intervalToDuration({
