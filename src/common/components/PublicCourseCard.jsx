@@ -1,13 +1,13 @@
+/* eslint-disable camelcase */
 import PropTypes from 'prop-types';
-import { Box, useColorModeValue, Button, Divider } from '@chakra-ui/react';
+import { Box, useColorModeValue, Button, Divider, Img } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import Text from './Text';
 import Heading from './Heading';
-import Icon from './Icon';
 import ProjectsSection from './ProjectsSection';
 
 const PublicCourseCard = ({
-  programName, programDescription, icon, iconBackground, startsIn,
+  programName, programDescription, icon_url, startsIn,
   stTranslation, syllabusContent, courseProgress, usersConnected, assistants,
   teacher, isAvailableAsSaas, subscriptionStatus,
 }) => {
@@ -17,16 +17,21 @@ const PublicCourseCard = ({
   return (
     <Box width="300px">
       <Box
-        borderRadius="9px 9px 0 0"
         width="90%"
         margin="auto"
         height="140px"
-        background={iconBackground}
+        // background={iconBackground}
         display="flex"
         flexDirection="column"
         justifyContent="center"
       >
-        <Icon color="#FFF" icon={icon} width="84px" height="74px" style={{ margin: 'auto' }} />
+        <Img
+          borderRadius="9px 9px 0 0"
+          boxSize="100%"
+          objectFit="cover"
+          src={icon_url}
+          alt="Course Icon"
+        />
       </Box>
       <Box
         border="1px solid"
@@ -47,7 +52,7 @@ const PublicCourseCard = ({
           {programName}
         </Heading>
         <Divider w="90%" margin="auto" />
-        {(syllabusContent || assistants.lenght > 0) ? (
+        {syllabusContent || assistants.lenght > 0 ? (
           <ProjectsSection
             startsIn={startsIn}
             stTranslation={stTranslation}
@@ -90,8 +95,7 @@ const PublicCourseCard = ({
 PublicCourseCard.propTypes = {
   programName: PropTypes.string.isRequired,
   programDescription: PropTypes.string,
-  icon: PropTypes.string,
-  iconBackground: PropTypes.string,
+  icon_url: PropTypes.string,
   startsIn: PropTypes.instanceOf(Date),
   syllabusContent: PropTypes.objectOf(PropTypes.any),
   courseProgress: PropTypes.number,
@@ -105,8 +109,7 @@ PublicCourseCard.propTypes = {
 
 PublicCourseCard.defaultProps = {
   programDescription: null,
-  iconBackground: '',
-  icon: 'coding',
+  icon_url: '',
   stTranslation: null,
   startsIn: null,
   syllabusContent: null,
