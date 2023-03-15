@@ -16,7 +16,7 @@ const ButtonHandler = ({
   const isFullyPaid = subscription?.status.toLowerCase() === 'fully_paid';
   const planSlug = subscription?.plans?.[0]?.slug;
   const subscriptionTR = translations?.subscription;
-  const isPlanFinancingExpired = subscription.type === 'plan_financing' && subscription.valid_until >= new Date().toISOString();
+  const isPlanFinancingExpired = subscription.type === 'plan_financing' && subscription.valid_until < new Date().toISOString();
   const router = useRouter();
   const toast = useToast();
 
@@ -48,10 +48,18 @@ const ButtonHandler = ({
 
           const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
           const financingOptionsExists = offerData?.financing_options?.length > 0;
+          const financingOptionsManyMonthsExists = financingOptionsExists && offerData?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months > 1);
+          const financingOptionsOnePaymentExists = financingOptionsExists && offerData?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months === 1);
 
-          const financingOptions = financingOptionsExists
+          const financingOptionsManyMonths = financingOptionsManyMonthsExists
             ? offerData?.financing_options
-              .filter((l) => l?.monthly_price > 0)
+              .filter((l) => l?.monthly_price > 0 && l?.how_many_months > 1)
+              .sort((a, b) => a?.monthly_price - b?.monthly_price)
+            : [];
+
+          const financingOptionsOnePayment = financingOptionsOnePaymentExists
+            ? offerData?.financing_options
+              .filter((l) => l?.monthly_price > 0 && l?.how_many_months === 1)
               .sort((a, b) => a?.monthly_price - b?.monthly_price)
             : [];
 
@@ -74,6 +82,17 @@ const ButtonHandler = ({
             };
           };
 
+          const onePaymentFinancing = financingOptionsOnePaymentExists ? financingOptionsOnePayment.map((item) => ({
+            title: t('subscription.upgrade-modal.monthly_payment'),
+            price: item?.monthly_price,
+            priceText: `$${item?.monthly_price}`,
+            period: 'FINANCING',
+            description: t('subscription.upgrade-modal.full_access'),
+            how_many_months: item?.how_many_months,
+            type: 'PAYMENT',
+            show: true,
+          })) : [];
+
           const trialPlan = isNumber(offerData?.trial_duration) && offerData?.trial_duration > 0 ? {
             title: t('subscription.upgrade-modal.free_trial'),
             price: 0,
@@ -86,7 +105,7 @@ const ButtonHandler = ({
             show: true,
           } : {};
 
-          const monthPlan = existsAmountPerMonth ? {
+          const monthPlan = !financingOptionsOnePaymentExists && existsAmountPerMonth ? [{
             title: t('subscription.upgrade-modal.monthly_payment'),
             price: offerData?.price_per_month,
             priceText: `$${offerData?.price_per_month}`,
@@ -94,7 +113,7 @@ const ButtonHandler = ({
             description: t('subscription.upgrade-modal.full_access'),
             type: 'PAYMENT',
             show: true,
-          } : {};
+          }] : onePaymentFinancing;
 
           const yearPlan = existsAmountPerYear ? {
             title: t('subscription.upgrade-modal.yearly_payment'),
@@ -106,12 +125,12 @@ const ButtonHandler = ({
             show: true,
           } : {};
 
-          const financingOption = financingOptionsExists ? financingOptions.map((item, index) => ({
-            title: `${t('subscription.upgrade-modal.scholarship_level')} ${index + 1}`,
+          const financingOption = financingOptionsManyMonthsExists ? financingOptionsManyMonths.map((item) => ({
+            title: t('subscription.upgrade-modal.many_months_payment', { qty: item?.how_many_months }),
             price: item?.monthly_price,
             priceText: `$${item?.monthly_price} x ${item?.how_many_months}`,
             period: 'FINANCING',
-            description: t('subscription.upgrade-modal.scholarship_description', { monthly_price: item?.monthly_price, many_months: item?.how_many_months }),
+            description: t('subscription.upgrade-modal.many_months_description', { monthly_price: item?.monthly_price, many_months: item?.how_many_months }),
             how_many_months: item?.how_many_months,
             type: 'PAYMENT',
             show: true,
@@ -127,7 +146,7 @@ const ButtonHandler = ({
             }))
             : {};
 
-          const paymentList = [monthPlan, yearPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
+          const paymentList = [...monthPlan, yearPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
           const financingList = financingOption?.filter((plan) => Object.keys(plan).length > 0);
           const consumableList = [consumableOption].filter((plan) => Object.keys(plan).length > 0);
 

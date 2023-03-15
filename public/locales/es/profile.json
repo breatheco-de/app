@@ -108,8 +108,8 @@
       "price_remaining_to_pay": "${{price}} restantes para pagar",
       "monthly_payment": "Pago mensual",
       "yearly_payment": "Pago anual",
-      "scholarship_level": "Nivel de beca",
-      "scholarship_description": "Pagaras ${{monthly_price}} durante {{many_months}} mes/meses y obtendras Acceso completo a todas las funciones durante la duración del curso.",
+      "many_months_payment": "{{qty}} pagos mensuales",
+      "many_months_description": "Pagaras ${{monthly_price}} durante {{many_months}} meses y obtendras Acceso completo a todas las funciones durante la duración del curso.",
       "full_access": "Acceso completo a todas las funciones durante la duración del curso.",
       "free_trial_description": "Mejora tu plan para acceder a este y muchos otros beneficios.",
       "upgrade_access": "Actualice su membresía para acceder a todos los beneficios de la comunidad 4Geeks"
