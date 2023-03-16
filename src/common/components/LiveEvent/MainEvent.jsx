@@ -4,7 +4,6 @@ import useTranslation from 'next-translate/useTranslation';
 import Text from '../Text';
 import bc from '../../services/breathecode';
 import Icon from '../Icon';
-import useTruncatedText from '../../hooks/useTruncatedText';
 import useStyle from '../../hooks/useStyle';
 import { getStorageItem } from '../../../utils';
 
@@ -13,8 +12,9 @@ const MainEvent = ({
   isLive, stTranslation, mainClasses,
 }) => {
   const { t, lang } = useTranslation('live-event');
+  const limit = 42;
+  const truncatedText = event?.title.length > limit ? `${event?.title?.substring(0, limit)}...` : event?.title;
 
-  const [truncatedText, handleMouseOver, handleMouseOut] = useTruncatedText(event?.title, 35);
   const toast = useToast();
   const { fontColor, backgroundColor2, hexColor } = useStyle();
 
@@ -108,9 +108,7 @@ const MainEvent = ({
             opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 1 : 0.5}
             marginBottom="5px"
             marginTop="0"
-            onMouseOver={handleMouseOver}
-            onMouseOut={handleMouseOut}
-            // title={event?.title}
+            title={event?.title}
           >
             {truncatedText ? (
               <>
