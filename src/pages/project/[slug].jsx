@@ -173,7 +173,7 @@ const ProjectSlug = ({ project, markdown }) => {
     } else {
       const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
       const aliasList = await alias.json();
-      const redirectSlug = aliasList[slug] || slug;
+      const redirectSlug = aliasList[slug];
       const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}?asset_type=project`);
 
       if (dataRedirect.status >= 400) {

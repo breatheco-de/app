@@ -138,20 +138,22 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
     if (redirect) {
       router.push(redirect?.destination);
     } else {
-      const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
+      const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect?academy=4`);
       const aliasList = await alias.json();
-      const redirectSlug = aliasList[slug] || slug;
-      const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
-      const redirectResults = await dataRedirect.json();
+      const redirectSlug = aliasList[slug];
+      if (redirectSlug) {
+        const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
+        const redirectResults = await dataRedirect.json();
 
-      const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-      const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || lesson?.slug || slug}`;
-      const aliasRedirect = aliasList[slug] !== undefined && userPathName;
-      const pagePath = 'lesson';
+        const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+        const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || lesson?.slug || slug}`;
+        const aliasRedirect = aliasList[slug] !== undefined && userPathName;
+        const pagePath = 'lesson';
 
-      publicRedirectByAsset({
-        router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
-      });
+        publicRedirectByAsset({
+          router, aliasRedirect, translations: redirectResults?.translations, userPathName, pagePath, isPublic: true,
+        });
+      }
     }
 
     return () => {};

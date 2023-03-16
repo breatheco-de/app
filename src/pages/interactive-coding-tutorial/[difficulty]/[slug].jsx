@@ -172,24 +172,26 @@ const ProjectSlug = ({ project, markdown }) => {
     } else {
       const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
       const aliasList = await alias.json();
-      const redirectSlug = aliasList[slug] || slug;
-      const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
-      const redirectResults = await dataRedirect.json();
+      const redirectSlug = aliasList[slug];
+      if (redirectSlug) {
+        const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}?asset_type=project`);
+        const redirectResults = await dataRedirect.json();
 
-      // const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-      if (typeof redirectResults.difficulty === 'string') {
-        if (redirectResults.difficulty === 'junior') redirectResults.difficulty = 'easy';
-        else if (redirectResults.difficulty === 'semi-senior') redirectResults.difficulty = 'intermediate';
-        else if (redirectResults.difficulty === 'senior') redirectResults.difficulty = 'hard';
+        // const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+        if (typeof redirectResults.difficulty === 'string') {
+          if (redirectResults.difficulty === 'junior') redirectResults.difficulty = 'easy';
+          else if (redirectResults.difficulty === 'semi-senior') redirectResults.difficulty = 'intermediate';
+          else if (redirectResults.difficulty === 'senior') redirectResults.difficulty = 'hard';
+        }
+
+        const userPathName = `/${router.locale}/interactive-coding-tutorial/${redirectResults?.difficulty?.toLowerCase()}/${redirectResults?.slug || project?.slug || slug}`;
+        const aliasRedirect = aliasList[slug] !== undefined && userPathName;
+        const pagePath = `interactive-coding-tutorial/${difficulty}`;
+
+        publicRedirectByAsset({
+          router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
+        });
       }
-
-      const userPathName = `/${router.locale}/interactive-coding-tutorial/${redirectResults?.difficulty?.toLowerCase()}/${redirectResults?.slug || project?.slug || slug}`;
-      const aliasRedirect = aliasList[slug] !== undefined && userPathName;
-      const pagePath = `interactive-coding-tutorial/${difficulty}`;
-
-      publicRedirectByAsset({
-        router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
-      });
     }
   }, [router, router.locale, translations]);
 

@@ -518,18 +518,20 @@ const Exercise = ({ exercise, markdown }) => {
     } else {
       const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
       const aliasList = await alias.json();
-      const redirectSlug = aliasList[slug] || slug;
-      const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
-      const redirectResults = await dataRedirect.json();
+      const redirectSlug = aliasList[slug];
+      if (redirectSlug) {
+        const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}?asset_type=exercise`);
+        const redirectResults = await dataRedirect.json();
 
-      const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-      const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || exercise?.slug || slug}`;
-      const aliasRedirect = aliasList[slug] !== undefined && userPathName;
-      const pagePath = 'interactive-exercise';
+        const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+        const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || exercise?.slug || slug}`;
+        const aliasRedirect = aliasList[slug] !== undefined && userPathName;
+        const pagePath = 'interactive-exercise';
 
-      publicRedirectByAsset({
-        router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
-      });
+        publicRedirectByAsset({
+          router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
+        });
+      }
     }
   }, [router, router.locale, translations]);
 
@@ -550,7 +552,9 @@ const Exercise = ({ exercise, markdown }) => {
 
   return (
     <>
-      <Script async defer src="https://buttons.github.io/buttons.js" />
+      {exercise?.title && (
+        <Script async defer src="https://buttons.github.io/buttons.js" />
+      )}
       <Box
         background={useColorModeValue('featuredLight', 'featuredDark')}
         // padding={{ base: '4%', lg: '2% 10%' }}
@@ -604,7 +608,9 @@ const Exercise = ({ exercise, markdown }) => {
               {exercise.sub_title}
             </Text>
             )}
-            <a className="github-button" href={exercise?.url} data-icon="octicon-star" aria-label="Star ntkme/github-buttons on GitHub">Star</a>
+            {exercise?.title && (
+              <a className="github-button" href={exercise?.url} data-icon="octicon-star" aria-label="Star ntkme/github-buttons on GitHub">Star</a>
+            )}
             {exercise?.author && (
             <Text size="md" textAlign="left" my="10px" px="0px">
               {`${t('exercises:created')} ${exercise.author.first_name} ${exercise.author.last_name}`}

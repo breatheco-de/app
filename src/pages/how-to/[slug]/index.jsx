@@ -143,19 +143,21 @@ export default function HowToSlug({ data, markdown }) {
     } else {
       const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
       const aliasList = await alias.json();
-      const redirectSlug = aliasList[slug] || slug;
-      const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
+      const redirectSlug = aliasList[slug];
+      if (redirectSlug) {
+        const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}?asset_type=ARTICLE`);
 
-      const redirectResults = await dataRedirect.json();
-      const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-      const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || data?.slug || slug}`;
-      const pagePath = 'how-to';
+        const redirectResults = await dataRedirect.json();
+        const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
+        const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || data?.slug || slug}`;
+        const pagePath = 'how-to';
 
-      const aliasRedirect = aliasList[slug] !== undefined && userPathName;
+        const aliasRedirect = aliasList[slug] !== undefined && userPathName;
 
-      publicRedirectByAsset({
-        router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
-      });
+        publicRedirectByAsset({
+          router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
+        });
+      }
     }
     return () => {};
   }, [router, router.locale, translations]);

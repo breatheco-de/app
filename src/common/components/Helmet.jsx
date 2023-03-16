@@ -40,7 +40,7 @@ const Helmet = ({
       return `https://4geeks.com/${currentlocaleLang}${pathConnector}/${slug}`;
     }
     if ((currentlocaleLang === 'en' || currentlocaleLang === 'us') && currentlocaleLang !== undefined) {
-      return `https://4geeks.com${pathConnector}/${slug}`;
+      return `https://4geeks.com/en${pathConnector}/${slug}`;
     }
     return `https://4geeks.com${locale !== 'en' ? `/${locale}` : ''}${pathConnector}/${slug}`;
   };
