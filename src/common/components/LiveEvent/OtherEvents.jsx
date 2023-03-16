@@ -5,7 +5,6 @@ import modifyEnv from '../../../../modifyEnv';
 import { getStorageItem } from '../../../utils';
 import useStyle from '../../hooks/useStyle';
 import CustomTheme from '../../../../styles/theme';
-import useTruncatedText from '../../hooks/useTruncatedText';
 import Icon from '../Icon';
 import Link from '../NextChakraLink';
 import Text from '../Text';
@@ -14,11 +13,12 @@ const OtherEvents = ({ events, isLiveOrStarting, textTime }) => {
   const { hexColor, disabledColor, fontColor } = useStyle();
   const accessToken = getStorageItem('accessToken');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const limit = 42;
 
   return events.map((event) => {
     const startsAt = event?.starting_at && new Date(event.starting_at);
     const endsAt = event?.ending_at && new Date(event.ending_at);
-    const [truncatedText, handleMouseOver, handleMouseOut] = useTruncatedText(event?.title, 42);
+    const truncatedText = event?.title.length > limit ? `${event?.title?.substring(0, limit)}...` : event?.title;
 
     return (
       <Box
@@ -55,9 +55,7 @@ const OtherEvents = ({ events, isLiveOrStarting, textTime }) => {
               marginTop="0"
               locale="en"
               fontFamily="Lato, Sans-serif"
-              onMouseOver={handleMouseOver}
-              onMouseOut={handleMouseOut}
-              // title={event?.title}
+              title={event?.title}
             // onClick={(e) => {
             //   e?.preventDefault();
 
