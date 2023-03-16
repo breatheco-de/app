@@ -1,7 +1,7 @@
 User-agent: *
-Disallow: /example
+Disallow: /
 
 User-agent: *
 Allow: /
-
 Sitemap: https://4geeks.com/sitemap.xml
+Host: https://4geeks.com
