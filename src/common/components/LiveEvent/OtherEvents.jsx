@@ -57,6 +57,7 @@ const OtherEvents = ({ events, isLiveOrStarting, textTime }) => {
               fontFamily="Lato, Sans-serif"
               onMouseOver={handleMouseOver}
               onMouseOut={handleMouseOut}
+              // title={event?.title}
             // onClick={(e) => {
             //   e?.preventDefault();
 

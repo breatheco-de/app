@@ -52,7 +52,7 @@ const PublicCourseCard = ({
           {programName}
         </Heading>
         <Divider w="90%" margin="auto" />
-        {syllabusContent || assistants.lenght > 0 ? (
+        {syllabusContent || assistants.length > 0 ? (
           <ProjectsSection
             startsIn={startsIn}
             stTranslation={stTranslation}
