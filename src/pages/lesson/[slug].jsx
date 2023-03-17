@@ -33,7 +33,7 @@ export const getStaticPaths = async ({ locales }) => {
   })));
 
   return {
-    fallback: true,
+    fallback: false,
     paths,
   };
 };
@@ -45,8 +45,9 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON`);
   const lesson = await response.json();
+  const isNotCurrentLanguage = locale === 'en' ? lesson?.translations?.us !== slug : lesson?.translations?.[locale] !== slug;
 
-  if (response.status >= 400 || response.status_code >= 400 || lesson.asset_type !== 'LESSON') {
+  if (response.status >= 400 || response.status_code >= 400 || lesson.asset_type !== 'LESSON' || isNotCurrentLanguage) {
     return {
       notFound: true,
     };
@@ -140,7 +141,16 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
     } else {
       const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect?academy=4`);
       const aliasList = await alias.json();
-      const redirectSlug = aliasList[slug];
+      const aliasListKeys = Object.keys(aliasList);
+
+      for (let i = 0; i < aliasListKeys.length; i += 1) {
+        const key = aliasListKeys[i];
+        const lowerCaseKey = key.toLowerCase();
+        aliasList[lowerCaseKey] = aliasList[key];
+        delete aliasList[key];
+      }
+      const redirectSlug = aliasList[slug?.toLowerCase()];
+
       if (redirectSlug) {
         const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
         const redirectResults = await dataRedirect.json();

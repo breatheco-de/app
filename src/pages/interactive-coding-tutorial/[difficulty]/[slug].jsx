@@ -48,7 +48,7 @@ export const getStaticPaths = async ({ locales }) => {
     locale,
   })));
   return {
-    fallback: true,
+    fallback: false,
     paths,
   };
 };
@@ -59,8 +59,9 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`);
   const result = await response.json();
+  const isNotCurrentLanguage = locale === 'en' ? result?.translations?.us !== slug : result?.translations?.[locale] !== slug;
 
-  if (response.status > 400 || result.asset_type !== 'PROJECT') {
+  if (response.status > 400 || result.asset_type !== 'PROJECT' || isNotCurrentLanguage) {
     return {
       notFound: true,
     };
