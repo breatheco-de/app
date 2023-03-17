@@ -57,6 +57,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`);
   const result = await response.json();
+  const difficulty = typeof result.difficulty === 'string' ? result.difficulty?.toLowerCase() : 'unknown';
+
   const isNotCurrentLanguage = locale === 'en' ? result?.translations?.us !== slug : result?.translations?.[locale] !== slug;
 
   if (response.status >= 400 || response.status_code >= 400 || result.asset_type !== 'PROJECT' || isNotCurrentLanguage) {
@@ -65,10 +67,15 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     };
   }
 
+  if (typeof difficulty === 'string') {
+    if (difficulty === 'junior') result.difficulty = 'easy';
+    else if (difficulty === 'semi-senior') result.difficulty = 'intermediate';
+    else if (difficulty === 'senior') result.difficulty = 'hard';
+  }
+
   const {
     title, translations, description, preview,
   } = result;
-  const difficulty = typeof result.difficulty === 'string' ? result.difficulty?.toLowerCase() : 'unknown';
   const defaultSlug = translations?.us || translations?.en;
 
   const markdown = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`)
@@ -78,6 +85,14 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     en: `/project/${defaultSlug}`,
     us: `/project/${defaultSlug}`,
   };
+
+  if (result?.difficulty) {
+    return {
+      redirect: {
+        destination: `/${locale}/interactive-coding-tutorial/${difficulty}/${locale === 'en' ? result?.translations?.us : result?.translations?.[locale]}`,
+      },
+    };
+  }
 
   const translationArray = [
     {
@@ -121,7 +136,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       fallback: false,
       project: {
         ...result,
-        difficulty,
+        difficulty: result?.difficulty,
       },
       markdown,
       translations: translationArray,

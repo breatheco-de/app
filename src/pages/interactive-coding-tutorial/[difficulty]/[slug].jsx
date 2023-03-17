@@ -177,12 +177,13 @@ const ProjectSlug = ({ project, markdown }) => {
       if (redirectSlug) {
         const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}?asset_type=project`);
         const redirectResults = await dataRedirect.json();
+        const difficultyToLowerCase = redirectResults?.difficulty?.toLowerCase();
 
         // const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-        if (typeof redirectResults.difficulty === 'string') {
-          if (redirectResults.difficulty === 'junior') redirectResults.difficulty = 'easy';
-          else if (redirectResults.difficulty === 'semi-senior') redirectResults.difficulty = 'intermediate';
-          else if (redirectResults.difficulty === 'senior') redirectResults.difficulty = 'hard';
+        if (typeof difficultyToLowerCase === 'string') {
+          if (difficultyToLowerCase === 'junior') redirectResults.difficulty = 'easy';
+          else if (difficultyToLowerCase === 'semi-senior') redirectResults.difficulty = 'intermediate';
+          else if (difficultyToLowerCase === 'senior') redirectResults.difficulty = 'hard';
         }
 
         const userPathName = `/${router.locale}/interactive-coding-tutorial/${redirectResults?.difficulty?.toLowerCase()}/${redirectResults?.slug || project?.slug || slug}`;
