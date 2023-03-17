@@ -62,7 +62,7 @@ const ShowPrices = ({
         border={selectedIndex === i && '4px solid #0097CD'}
         borderRadius="8px"
       >
-        <Box display="flex" flexDirection="column" gridGap="12px" minWidth={{ base: 'none', md: '288px' }} height="fit-content" fontWeight="400">
+        <Box display="flex" flexDirection="column" gridGap="12px" height="fit-content" fontWeight="400">
           <Box fontSize="18px" fontWeight="700">
             {item?.title}
           </Box>
@@ -73,7 +73,7 @@ const ShowPrices = ({
             dangerouslySetInnerHTML={{ __html: item?.description }}
           />
         </Box>
-        <Box textAlign="right" display="flex" flexDirection="column" gridGap="10px">
+        <Box flexShrink="0" textAlign="right" display="flex" flexDirection="column" gridGap="10px">
           <Heading as="span" size="m" lineHeight="1" textTransform="uppercase" color="blue.default">
             {item?.price}
           </Heading>
