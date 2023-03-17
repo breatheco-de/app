@@ -255,6 +255,7 @@ const profileHandlers = ({
               duration: 5000,
               isClosable: true,
             });
+            resolve({});
           }
         })
         .catch(() => {

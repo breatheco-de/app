@@ -6,7 +6,7 @@ import Link from '../../../common/components/NextChakraLink';
 import profileHandlers from './handlers';
 
 const ButtonHandler = ({
-  translations, subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, onlyUpgrade, children, ...restStyles
+  translations, subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, ...restStyles
 }) => {
   const { t } = useTranslation('profile');
   const status = subscription?.status;
@@ -18,11 +18,11 @@ const ButtonHandler = ({
 
   const {
     getPlanOffer,
-  } = profileHandlers();
+  } = profileHandlers({});
 
   const handlePlanOffer = () => {
     setIsLoading(true);
-    getPlanOffer(planSlug)
+    getPlanOffer({ slug: planSlug, onOpenUpgrade })
       .finally(() => setIsLoading(false));
   };
 
@@ -59,33 +59,10 @@ const ButtonHandler = ({
         },
         isComponent: true,
         component: (
-          <Link variant="buttonDefault" href={`/signup?plan=${planSlug}`} textAlign="center" margin="auto 0 0 0">
+          <Link variant="buttonDefault" display="inherit" href={`/signup?plan=${planSlug}`} textAlign="center" margin="auto 0 0 0">
             {subscriptionTR?.['reactivate-subscription'] || t('subscription.reactivate-subscription')}
           </Link>
         ),
-        // component: (
-        //   <Button
-        //     variant="default"
-        //     href={`/signup?plan=${planSlug}`}
-        //     onClick={() => {
-        //       bc.payment({
-        //         original_plan: planSlug,
-        //       }).planOffer()
-        //         .then((response) => {
-        //           const data = response?.data;
-        //           const currentOffer = data.find((item) => item?.original_plan?.slug === planSlug);
-
-        //           if (response.data) {
-        //             router.push(`/signup?plan=${currentOffer?.suggested_plan?.slug}`);
-        //           }
-        //         });
-        //     }}
-        //     textAlign="center"
-        //     margin="auto 0 0 0"
-        //   >
-        //     {subscriptionTR?.['reactivate-subscription'] || t('subscription.reactivate-subscription')}
-        //   </Button>
-        // ),
       };
     }
 
@@ -133,7 +110,6 @@ ButtonHandler.propTypes = {
   onOpenUpgrade: PropTypes.func,
   setSubscriptionProps: PropTypes.func,
   onOpenCancelSubscription: PropTypes.func,
-  onlyUpgrade: PropTypes.bool,
   restStyles: PropTypes.objectOf(PropTypes.any),
   children: PropTypes.node,
 };
@@ -144,7 +120,6 @@ ButtonHandler.defaultProps = {
   onOpenUpgrade: () => {},
   setSubscriptionProps: () => {},
   onOpenCancelSubscription: () => {},
-  onlyUpgrade: false,
   restStyles: {},
   children: null,
 };
