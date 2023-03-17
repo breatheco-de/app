@@ -1,4 +1,4 @@
-import { Button, Flex, useToast } from '@chakra-ui/react';
+import { Button, Flex, useToast, Box, Image } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -10,10 +10,12 @@ import { url } from '../../../utils/regex';
 import Heading from '../Heading';
 import AddMember from './AddMember';
 import { usePersistent } from '../../hooks/usePersistent';
+import useStyle from '../../hooks/useStyle';
 import { isNumber } from '../../../utils';
 import useFinalProjectProps from '../../store/actions/finalProjectAction';
+import Icon from '../Icon';
 
-const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, defaultValues }) => {
+const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, defaultValues, refreshFinalProject }) => {
   const { t } = useTranslation('final-project');
   const [students, setStudents] = useState(studentsData);
   const [fileProps, setFileProps] = useState([]);
@@ -22,6 +24,8 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
   const toast = useToast();
   const cohortAcademy = cohortData?.academy?.id || 4;
   const { finalProjectData, setFinalProjectData } = useFinalProjectProps();
+  const { fontColor, backgroundColor } = useStyle();
+  const [prefillImage, setPrefillImage] = useState(finalProjectData?.screenshot || defaultValues?.screenshot || null);
   const [formProps, setFormProps] = useState({
     name: '',
     one_line_desc: '',
@@ -49,7 +53,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
       .required(t(commonTranslation?.validators['description-required'] || 'common:validators.description-required')),
     repo_url: Yup.string().matches(
       url,
-      t(commonTranslation?.validators?.['invalid-url']?.replace('{{url}}', 'https://github.com/') || 'common:validators.invalid-url', { url: 'https://...' }),
+      t(commonTranslation?.validators?.['invalid-url']?.replace('{{url}}', 'https://github.com/') || 'common:validators.invalid-url', { url: 'https://github.com/' }),
     )
       .required(commonTranslation?.validators['repo-url-required'] || t('common:validators.repo-url-required')),
     // slides_url: Yup.string().matches(
@@ -73,15 +77,25 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
     members: Yup.array()
       .of(Yup.string())
       .max(8, t(commonTranslation?.validators['geeks-members-max']?.replace('{{value}}', 8) || 'common:validators.geeks-members-max', { value: 8 }))
-      .min(1, t(commonTranslation?.validators['geeks-members-min']?.replace('{{value}}', 1) || 'common:validators.geeks-members-min', { value: 1 }))
+      // .min(1, t(commonTranslation?.validators['geeks-members-min']?.replace('{{value}}', 1) || 'common:validators.geeks-members-min', { value: 1 }))
       .required(commonTranslation?.validators['geeks-members-required'] || t('common:validators.geeks-members-required')),
   });
 
-  const handleUpdate = (actions, allValues) => {
-    bc.todo().updateFinalProject(allValues)
+  const handleUpdate = async (actions, allValues) => {
+    let result;
+    if (allValues[0].screenshot) {
+      const formdata = new FormData();
+      formdata.append('file', allValues[0].screenshot);
+
+      result = await bc.todo().sendScreenshot(formdata);
+    }
+    const screenshot = result?.data?.url || prefillImage || null;
+    const val = [{ ...allValues[0], screenshot }];
+    bc.todo().updateFinalProject(val)
       .then((res) => {
         if (res) {
           setFinalProjectData(res.data[0]);
+          refreshFinalProject();
           toast({
             title: 'Success',
             description: 'Your final project has been updated',
@@ -111,7 +125,16 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
   };
 
   const handleSubmit = async (actions, allValues) => {
-    bc.todo().createFinalProject(allValues)
+    let result;
+    if (allValues.screenshot) {
+      const formdata = new FormData();
+      formdata.append('file', allValues.screenshot);
+
+      result = await bc.todo().sendScreenshot(formdata);
+    }
+    const screenshot = result?.data?.url || null;
+
+    bc.todo().createFinalProject({ ...allValues, screenshot })
       .then((res) => {
         if (res) {
           setFinalProjectData(res.data[0]);
@@ -180,6 +203,10 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
   };
   const repoUrl = finalProjectData?.repo_url || defaultValues?.repo_url;
   const projectId = finalProjectData?.id || defaultValues?.id;
+
+  const handleCloseFile = () => {
+    setPrefillImage(null);
+  };
   return (
     <Formik
       initialValues={{
@@ -274,27 +301,36 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
                 formProps={formProps}
                 setFormProps={setFormProps}
               /> */}
-              <FieldForm
-                type="file"
-                name="screenshot"
-                translation={{
-                  finalProjectTranslation,
-                  commonTranslation,
-                }}
-                formProps={formProps}
-                fileProps={fileProps}
-                setFileProps={setFileProps}
-                setFormProps={setFormProps}
-                setFieldValue={setFieldValue}
-                maxFileSize={maxFileSize}
-                acceptedFiles="image/jpg, image/jpeg, image/gif, image/png, image/gif"
-                hint={finalProjectTranslation?.['modal-form']?.['screenshot-hint'] || t('modal-form.screenshot-hint')}
-              />
+
+              {!prefillImage ? (
+                <FieldForm
+                  type="file"
+                  name="screenshot"
+                  translation={{
+                    finalProjectTranslation,
+                    commonTranslation,
+                  }}
+                  formProps={formProps}
+                  fileProps={fileProps}
+                  setFileProps={setFileProps}
+                  setFormProps={setFormProps}
+                  setFieldValue={setFieldValue}
+                  maxFileSize={maxFileSize}
+                  acceptedFiles="image/jpg, image/jpeg, image/gif, image/png, image/gif"
+                  hint={finalProjectTranslation?.['modal-form']?.['screenshot-hint'] || t('modal-form.screenshot-hint')}
+                />
+              ) : (
+                <Box width="100 %" height="100%" position="relative">
+                  <Button display="flex" background={backgroundColor} color={fontColor} variant="unstyled" opacity={0.7} _hover={{ opacity: 0.9 }} onClick={handleCloseFile} position="absolute" right={3} top={2}>
+                    <Icon icon="close" width="14px" height="14px" color="currentColor" />
+                  </Button>
+                  <Image src={prefillImage} width="100%" height="auto" borderRadius="3px" />
+                </Box>
+              )}
               <AddMember
                 translation={{ finalProjectTranslation, commonTranslation }}
                 students={students}
                 errors={errorFileds}
-                required
                 hint={finalProjectTranslation?.['modal-form']?.['participants-hint'] || t('modal-form.participants-hint')}
               />
               <Button
@@ -318,6 +354,7 @@ FinalProjectForm.propTypes = {
   storyConfig: PropTypes.objectOf(PropTypes.any),
   handleClose: PropTypes.func,
   defaultValues: PropTypes.objectOf(PropTypes.any),
+  refreshFinalProject: PropTypes.func.isRequired,
 };
 FinalProjectForm.defaultProps = {
   cohortData: {},

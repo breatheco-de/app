@@ -79,10 +79,6 @@ function chooseProgram() {
       .then(({ data }) => {
         setSubscriptionData(data);
       });
-    // bc.payment().courses()
-    //   .then(({ data }) => {
-    //     console.log('courses_data:', data);
-    //   });
   }, []);
 
   useEffect(() => {
@@ -93,6 +89,9 @@ function chooseProgram() {
           ...programsList[value.cohort.slug],
           ...cohortTasks[value.cohort.slug],
           name: value.cohort.name,
+          plan_financing: subscriptionData?.plan_financings?.find(
+            (sub) => sub.selected_cohort?.slug === value.cohort.slug,
+          ) || null,
           subscription: subscriptionData?.subscriptions?.find(
             (sub) => sub.selected_cohort?.slug === value.cohort.slug,
           ) || null,
@@ -374,17 +373,14 @@ function chooseProgram() {
                   }] : []
                 }
                 otherEvents={events}
-                // liveClassHash={liveClass?.hash}
-                // liveStartsAt={liveClass?.starting_at}
-                // liveEndsAt={liveClass?.ending_at}
               />
             )}
           </Box>
         </Flex>
 
         <Box>
-          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '10px' }}>
-            <Heading size="sm" width={{ base: '100%', md: '22rem' }}>
+          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
+            <Heading size="sm" width="fit-content" whiteSpace="nowrap">
               {t('your-active-programs')}
             </Heading>
             <Box as="hr" width="100%" margin="0.5rem 0 0 0" />

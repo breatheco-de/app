@@ -23,11 +23,12 @@ const ShowPrices = ({
   defaultFinanceIndex,
   outOfConsumables,
   stTranslation,
+  handleUpgrade,
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
   const [selectedFinanceIndex, setSelectedFinanceIndex] = useState(defaultFinanceIndex);
   const { t, lang } = useTranslation('');
-  const { fontColor, featuredColor, backgroundColor2 } = useStyle();
+  const { fontColor, disabledColor, featuredColor, backgroundColor2 } = useStyle();
   const router = useRouter();
 
   const financeSelected = {
@@ -44,7 +45,7 @@ const ShowPrices = ({
   const handleSelectFinance = (index) => {
     setSelectedFinanceIndex(index);
     setSelectedIndex(0);
-    onSelect(financeSelected[defaultFinanceIndex][defaultIndex]);
+    onSelect(financeSelected[defaultFinanceIndex][defaultIndex || 0]);
   };
 
   const PlanCard = ({ item, i }) => (
@@ -55,11 +56,12 @@ const ShowPrices = ({
         onClick={() => handleSelect(i, item)}
         width="100%"
         justifyContent="space-between"
-        p={selectedIndex === i ? '18px 14px' : '22px 18px'}
+        p="22px 18px"
         gridGap="24px"
         cursor="pointer"
         background={backgroundColor2}
-        border={selectedIndex === i && '4px solid #0097CD'}
+        border="4px solid"
+        borderColor={selectedIndex === i ? '#0097CD' : 'transparent'}
         borderRadius="8px"
       >
         <Box display="flex" flexDirection="column" gridGap="12px" height="fit-content" fontWeight="400">
@@ -73,9 +75,10 @@ const ShowPrices = ({
             dangerouslySetInnerHTML={{ __html: item?.description }}
           />
         </Box>
-        <Box flexShrink="0" textAlign="right" display="flex" flexDirection="column" gridGap="10px">
-          <Heading as="span" size="m" lineHeight="1" textTransform="uppercase" color="blue.default">
-            {item?.price}
+
+        <Box flexShrink="0" textAlign="right" display="flex" minWidth={item.period !== 'FINANCING' && '110px'} justifyContent="center" flexDirection="column" gridGap="10px">
+          <Heading as="span" size="m" width={item.period === 'FINANCING' && 'max-content'} lineHeight="1" textTransform="uppercase" color="blue.default">
+            {item?.priceText || item?.price}
           </Heading>
           {item?.lastPrice && (
             <Text lineHeight="21px" fontSize="21px" fontWeight="500" color="#A9A9A9">
@@ -89,8 +92,30 @@ const ShowPrices = ({
     </Fragment>
   );
 
+  const getTabColor = (index, tabIsAvailable = true) => {
+    if (selectedFinanceIndex === index) {
+      return {
+        borderBottom: '4px solid',
+        borderColor: 'blue.default',
+        color: 'blue.default',
+        cursor: 'pointer',
+        fontWeight: '700',
+      };
+    }
+    return {
+      borderBottom: '4px solid',
+      borderColor: 'gray.400',
+      color: tabIsAvailable ? fontColor : disabledColor,
+      cursor: tabIsAvailable ? 'pointer' : 'not-allowed',
+      fontWeight: '400',
+    };
+  };
+
+  const paymentTabStyle = getTabColor(0, list?.length > 0);
+  const financeTabStyle = getTabColor(1, finance?.length > 0);
+
   return (
-    <Box borderRadius="12px" padding="10px" background={featuredColor} display="flex" flex={0.5} flexDirection="column" gridGap="20px">
+    <Box borderRadius="12px" padding="16px" background={featuredColor} display="flex" flex={0.5} flexDirection="column" gridGap="20px">
       <Box width="100%" display="flex" flexWrap="wrap" gridGap="5px 10px" justifyContent="space-between" alignItems="center" mb="6px">
         <Heading as="h2" size="sm">
           {title || data?.pricing['choose-plan']}
@@ -98,26 +123,26 @@ const ShowPrices = ({
         {financeSelected[1] && (
           <Box display="flex">
             <Box
-              // p="15px 10px"
               p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
-              onClick={() => handleSelectFinance(0)}
-              borderBottom="4px solid"
-              borderColor={selectedFinanceIndex === 0 ? 'blue.default' : 'gray.400'}
-              color={selectedFinanceIndex === 0 ? 'blue.default' : fontColor}
-              cursor="pointer"
-              fontWeight={selectedFinanceIndex === 0 ? '700' : '400'}
+              onClick={() => {
+                if (list?.length > 0) {
+                  handleSelectFinance(0);
+                }
+              }}
+              {...paymentTabStyle}
             >
               {onePaymentLabel || data?.pricing['one-payment']}
             </Box>
+
             <Box
-              // p="15px 10px"
               p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
-              onClick={() => handleSelectFinance(1)}
-              borderBottom="4px solid"
-              borderColor={selectedFinanceIndex === 1 ? 'blue.default' : 'gray.400'}
-              color={selectedFinanceIndex === 1 ? 'blue.default' : fontColor}
-              cursor="pointer"
-              fontWeight={selectedFinanceIndex === 1 ? '700' : '400'}
+              disabled={finance?.length > 0}
+              onClick={() => {
+                if (finance?.length > 0) {
+                  handleSelectFinance(1);
+                }
+              }}
+              {...financeTabStyle}
             >
               {financeTextLabel || data?.pricing['finance-text']}
             </Box>
@@ -131,7 +156,7 @@ const ShowPrices = ({
         <Box display="flex" alignItems="center">
           <Box as="hr" color="gray.500" width="100%" />
           <Text size="md" textAlign="center" width="100%" margin="0">
-            {notReady || data?.pricing['not-ready']}
+            {notReady || data?.pricing?.['not-ready']}
           </Text>
           <Box as="hr" color="gray.500" width="100%" />
         </Box>
@@ -154,7 +179,11 @@ const ShowPrices = ({
             variant="default"
             disabled={!selectedItem && true}
             onClick={() => {
-              router.push(`/signup?syllabus=coding-introduction&plan=${selectedItem?.type.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
+              if (handleUpgrade === false) {
+                router.push(`/signup?syllabus=coding-introduction&plan=${selectedItem?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
+              } else {
+                handleUpgrade(selectedItem);
+              }
             }}
           >
             {stTranslation ? stTranslation[lang].common.enroll : t('common:enroll')}
@@ -185,6 +214,7 @@ ShowPrices.propTypes = {
   defaultFinanceIndex: PropTypes.number,
   outOfConsumables: PropTypes.bool,
   stTranslation: PropTypes.objectOf(PropTypes.any),
+  handleUpgrade: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
 };
 
 ShowPrices.defaultProps = {
@@ -195,11 +225,12 @@ ShowPrices.defaultProps = {
   notReady: null,
   list: null,
   finance: null,
-  onSelect: null,
+  onSelect: () => {},
   defaultIndex: null,
   defaultFinanceIndex: 0,
   outOfConsumables: false,
   stTranslation: null,
+  handleUpgrade: false,
 };
 
 export default ShowPrices;

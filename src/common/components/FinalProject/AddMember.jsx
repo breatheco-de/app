@@ -1,20 +1,38 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-array-index-key */
+import { useState } from 'react';
 import { useField } from 'formik';
 import PropTypes from 'prop-types';
 import TagsInput from 'react-tagsinput';
-import { Avatar, Box, Flex } from '@chakra-ui/react';
+import {
+  Avatar,
+  Box,
+  Flex,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import AutosuggestInput from './Autosuggest';
 import Icon from '../Icon';
 import useStyle from '../../hooks/useStyle';
+import useAuth from '../../hooks/useAuth';
 import { isNumber } from '../../../utils';
 
 const AddMember = ({ translation, students, errors, required, hint }) => {
   const [field, meta, helpers] = useField('members');
   const { featuredColor, disabledColor, lightColor } = useStyle();
   const { t } = useTranslation('final-project');
+  const { user } = useAuth();
+  const [openModal, setOpenModal] = useState(false);
+  const [warningModal, setWarningModal] = useState(false);
+  const [removeKey, setRemoveKey] = useState(null);
 
   const handleAddTag = (tag) => {
     helpers?.setValue(tag);
@@ -79,11 +97,75 @@ const AddMember = ({ translation, students, errors, required, hint }) => {
                 className="react-tagsinput-remove"
                 onClick={(e) => {
                   e.preventDefault();
-                  onRemove(key);
+
+                  const regExp = /\(([^)]+)\)/;
+                  const members = field.value.map((val) => {
+                    if (typeof val === 'string') return parseInt(regExp.exec(val)[1], 10);
+                    return val;
+                  });
+
+                  if (members.length === 1 && members.includes(user.id)) return setWarningModal(true);
+                  if (user.id === userData?.user?.id) {
+                    setOpenModal(true);
+                    return setRemoveKey(key);
+                  }
+                  return onRemove(key);
                 }}
               >
                 <Icon icon="closeRounded" width="15px" height="15px" color="#999" />
               </Box>
+              <Modal isOpen={openModal} onClose={() => setOpenModal(false)}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>{translation?.finalProjectTranslation?.['modal-form']?.confirmation.title || t('modal-form.confirmation.title')}</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    {translation?.finalProjectTranslation?.['modal-form']?.confirmation.text || t('modal-form.confirmation.text')}
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button
+                      colorScheme="blue"
+                      mr={3}
+                      onClick={() => {
+                        onRemove(removeKey);
+                        setRemoveKey(null);
+                        setOpenModal(false);
+                      }}
+                    >
+                      {translation?.finalProjectTranslation?.['modal-form']?.confirmation.confirm || t('modal-form.confirmation.confirm')}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => setOpenModal(false)}
+                    >
+                      {translation?.finalProjectTranslation?.['modal-form']?.confirmation.cancel || t('modal-form.confirmation.cancel')}
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+
+              {/* Warning modal */}
+              <Modal isOpen={warningModal} onClose={() => setWarningModal(false)}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader marginTop="15px">{translation?.finalProjectTranslation?.['modal-form']?.['warning-modal'].title || t('modal-form.warning-modal.title')}</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    {/* {translation?.finalProjectTranslation?.['modal-form']?.confirmation.text || t('modal-form.confirmation.text')} */}
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button
+                      variant="default"
+                      mr={3}
+                      onClick={() => {
+                        setWarningModal(false);
+                      }}
+                    >
+                      {translation?.finalProjectTranslation?.['modal-form']?.['warning-modal'].close || t('modal-form.warning-modal.close')}
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
             </Box>
           );
         }}

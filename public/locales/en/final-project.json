@@ -31,6 +31,16 @@
     "screenshot-hint": "Your home page or animated gif using the project.",
     "add-participants": "Add participants",
     "participants-hint": "Each student taking part on this project.",
-    "button":"Submit final project"
+    "button":"Submit final project",
+    "confirmation": {
+      "title": "Are you sure?",
+      "text": "If you remove yourself from this project, you won't have access to it, your team mates will have to add you again to regain access.",
+      "confirm": "Remove",
+      "cancel": "Cancel"
+    },
+    "warning-modal": {
+      "title": "Please add someone else in the project if you want to remove yourself.",
+      "close": "Close"
+    }
   }
 }

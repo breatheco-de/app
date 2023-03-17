@@ -1,5 +1,5 @@
 import React from 'react';
-import { addMinutes, addDays, subHours, addHours, subMinutes, subDays } from 'date-fns';
+import { addDays } from 'date-fns';
 import PublicCourseCard from '../common/components/PublicCourseCard';
 
 export default {
@@ -13,12 +13,12 @@ export default {
     },
     programName: {
       control: {
-        type: 'string'
+        type: 'text'
       }
     },
     programDescription: {
       control: {
-        type: 'string'
+        type: 'text'
       }
     },
     startsIn: {
@@ -26,9 +26,14 @@ export default {
         type: 'date'
       }
     },
-    icon: {
+    icon_url: {
       control: {
-        type: 'string'
+        type: 'text'
+      }
+    },
+    subscriptionStatus: {
+      control: {
+        type: 'text'
       }
     },
     syllabusContent: {
@@ -130,8 +135,7 @@ Default.args = {
   programName: 'A.I & Machine Learning',
   programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
   startsIn: new Date(addDays(new Date(), 3)),
-  icon: "coding",
-  iconBackground: "blue.default",
+  icon_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiRhyDX-0U5Znby3iJEeNWKR2Rjv5475ESAA&usqp=CAU",
   syllabusContent: {
     totalLessons: 30,
     totalProjects: 15,
@@ -151,8 +155,7 @@ withDescription.args = {
   programName: 'Data Science',
   programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
   startsIn: new Date(addDays(new Date(), 3)),
-  icon: "brain",
-  iconBackground: "#25BF6C",
+  icon_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSE0DeOwF4LwqSR21nbPQIbtWw65K5utf7RrQ&usqp=CAU",
   subscriptionStatus: 'ACTIVE',
   courseProgress: 7,
 };
