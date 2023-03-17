@@ -25,7 +25,7 @@ const getExercises = () => {
 };
 
 const getProjects = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=1000`)
+  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=2000`)
     .then((res) => {
       //  if res.data.results in map have difficulty === 'junior' change to 'easy' and if difficulty === 'semi-senior' change to 'intermediate' and if difficulty === 'senior' change to 'hard' and if difficulty === null change to 'unknown'
       const dataCleaned = res.data.results.map((item) => {
@@ -115,7 +115,12 @@ const generateAssetRedirect = (pages) => {
   return redirectList || [];
 };
 
-const generateAliasRedirects = async (redirects) => {
+const generateAliasRedirects = async (redirects, projects) => {
+  const list = projects.map((item) => ({
+    source: `/project/${item.slug}`,
+    type: 'PROJECT-REROUTE',
+    destination: `/${item.lang === 'us' ? 'en' : item.lang}/interactive-coding-tutorial/${item.difficulty?.toLowerCase()}/${item.slug}`,
+  }));
   const objectToAliasList = await Promise.all(Object.entries(redirects).map(async ([key, value]) => {
     const lang = value.lang === 'us' ? 'en' : value.lang;
     const getConnector = async () => {
@@ -144,7 +149,7 @@ const generateAliasRedirects = async (redirects) => {
       destination: `/${lang}/${connector}/${value.slug}`,
     });
   }));
-  return objectToAliasList;
+  return [...objectToAliasList, ...list];
 };
 
 async function generateRedirect() {
@@ -160,7 +165,8 @@ async function generateRedirect() {
   const excersisesRedirectList = generateAssetRedirect(excersisesList);
   const projectRedirectList = generateAssetRedirect(projectList);
   const howToRedirectList = generateAssetRedirect(howToList);
-  const aliasRedirectionList = await generateAliasRedirects(aliasRedirectList);
+
+  const aliasRedirectionList = await generateAliasRedirects(aliasRedirectList, projectList);
 
   const redirectJson = [
     ...lessonRedirectList,

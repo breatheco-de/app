@@ -8,6 +8,9 @@ function middleware(req) {
 
   const currentProject = aliasRedirects.find((item) => item?.source === pathname);
   const conditionalResult = () => {
+    if (currentProject?.type === 'PROJECT-REROUTE' && currentProject?.source) {
+      return true;
+    }
     if (currentProject?.source && locale === 'en' && !currentProject?.destination.includes('/en/')) {
       return true;
     }

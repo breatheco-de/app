@@ -84,14 +84,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     us: `/project/${defaultSlug}`,
   };
 
-  if (result?.difficulty) {
-    return {
-      redirect: {
-        destination: `/${locale}/interactive-coding-tutorial/${difficulty}/${locale === 'en' ? result?.translations?.us : result?.translations?.[locale]}`,
-      },
-    };
-  }
-
   const translationArray = [
     {
       value: 'us',
