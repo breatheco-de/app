@@ -211,7 +211,7 @@ const ButtonHandler = ({
 
     if (status === 'FREE_TRIAL' || isPlanFinancingExpired) {
       return {
-        text: isPlanFinancingExpired ? subscriptionTR?.['upgrade-plan'] || t('subscription.upgrade-plan') : (subscriptionTR?.upgrade || t('subscription.upgrade')),
+        text: subscriptionTR?.upgrade || t('subscription.upgrade'),
         style: {
           variant: 'outline',
           color: 'blue.default',
