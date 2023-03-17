@@ -67,9 +67,9 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=exercise`);
   const result = await resp.json();
-  const isNotCurrentPageLanguage = locale === 'en' ? result?.translations?.us !== slug : result?.translations?.[locale] !== slug;
+  // const isNotCurrentPageLanguage = locale === 'en' ? result?.translations?.us !== slug : result?.translations?.[locale] !== slug;
 
-  if (resp.status >= 400 || result.asset_type !== 'EXERCISE' || isNotCurrentPageLanguage) {
+  if (resp.status >= 400 || result.asset_type !== 'EXERCISE') {
     return {
       notFound: true,
     };
@@ -554,6 +554,7 @@ const Exercise = ({ exercise, markdown }) => {
               letterSpacing="0.05em"
               fontWeight="700"
               paddingBottom="10px"
+              width="fit-content"
             >
               {`← ${t('exercises:backToExercises')}`}
             </Link>

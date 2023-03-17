@@ -6,16 +6,16 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
-import Heading from '../../../common/components/Heading';
-import Link from '../../../common/components/NextChakraLink';
-import Text from '../../../common/components/Text';
-import Icon from '../../../common/components/Icon';
-import SimpleTable from '../../../js_modules/projects/SimpleTable';
-import MarkDownParser from '../../../common/components/MarkDownParser';
-import { MDSkeleton } from '../../../common/components/Skeleton';
-import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
-import GridContainer from '../../../common/components/GridContainer';
-import redirectsFromApi from '../../../../public/redirects-from-api.json';
+import Heading from '../../common/components/Heading';
+import Link from '../../common/components/NextChakraLink';
+import Text from '../../common/components/Text';
+import Icon from '../../common/components/Icon';
+import SimpleTable from '../../js_modules/projects/SimpleTable';
+import MarkDownParser from '../../common/components/MarkDownParser';
+import { MDSkeleton } from '../../common/components/Skeleton';
+import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
+import GridContainer from '../../common/components/GridContainer';
+import redirectsFromApi from '../../../public/redirects-from-api.json';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
@@ -41,7 +41,6 @@ export const getStaticPaths = async ({ locales }) => {
   const paths = projects.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
-      difficulty: typeof res.difficulty === 'string' ? res.difficulty?.toLowerCase() : 'unknown',
     },
     locale,
   })));
@@ -57,9 +56,9 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`);
   const result = await response.json();
-  const isNotCurrentPageLanguage = locale === 'en' ? result?.translations?.us !== slug : result?.translations?.[locale] !== slug;
+  // const isNotCurrentPageLanguage = locale === 'en' ? result?.translations?.us !== slug : result?.translations?.[locale] !== slug;
 
-  if (response.status > 400 || result.asset_type !== 'PROJECT' || isNotCurrentPageLanguage) {
+  if (response.status > 400 || result.asset_type !== 'PROJECT') {
     return {
       notFound: true,
     };
@@ -73,8 +72,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
   const difficulty = typeof result.difficulty === 'string' ? result.difficulty.toLowerCase() : 'unknown';
   const ogUrl = {
-    en: `/interactive-coding-tutorial/${difficulty}/${slug}`,
-    us: `/interactive-coding-tutorial/${difficulty}/${slug}`,
+    en: `/interactive-coding-tutorial/${slug}`,
+    us: `/interactive-coding-tutorial/${slug}`,
   };
 
   const translationArray = [
@@ -82,19 +81,19 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       value: 'us',
       lang: 'en',
       slug: translations?.us,
-      link: `/interactive-coding-tutorial/${difficulty}/${translations?.us}`,
+      link: `/interactive-coding-tutorial/${translations?.us}`,
     },
     {
       value: 'en',
       lang: 'en',
       slug: translations?.en,
-      link: `/interactive-coding-tutorial/${difficulty}/${translations?.en}`,
+      link: `/interactive-coding-tutorial/${translations?.en}`,
     },
     {
       value: 'es',
       lang: 'es',
       slug: translations?.es,
-      link: `/es/interactive-coding-tutorial/${difficulty}/${translations?.es}`,
+      link: `/es/interactive-coding-tutorial/${translations?.es}`,
     },
   ].filter((item) => translations?.[item?.value] !== undefined);
 
@@ -102,12 +101,12 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     props: {
       seo: {
         title,
-        url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${difficulty}/${slug}`,
+        url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${slug}`,
         slug,
         description: description || '',
         image: preview || staticImage,
         translations,
-        pathConnector: `/interactive-coding-tutorial/${difficulty}`,
+        pathConnector: '/interactive-coding-tutorial',
         type: 'article',
         keywords: result?.seo_keywords || '',
         card: 'large',
@@ -159,11 +158,11 @@ const ProjectSlug = ({ project, markdown }) => {
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
   const router = useRouter();
-  const { slug, difficulty } = router.query;
+  const { slug } = router.query;
   const { locale } = router;
 
   useEffect(async () => {
-    const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/interactive-coding-tutorial/${difficulty}/${slug}`);
+    const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/interactive-coding-tutorial/${slug}`);
 
     if (redirect) {
       router.push(redirect?.destination);
@@ -184,6 +183,7 @@ const ProjectSlug = ({ project, markdown }) => {
         color={useColorModeValue('blue.default', 'blue.300')}
         display="inline-block"
         letterSpacing="0.05em"
+        width="fit-content"
         fontWeight="700"
         paddingBottom="10px"
       >

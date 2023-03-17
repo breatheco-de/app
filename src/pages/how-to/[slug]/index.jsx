@@ -39,9 +39,9 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=ARTICLE`);
   const data = await resp.json();
-  const isNotCurrentPageLanguage = locale === 'en' ? data?.translations?.us !== slug : data?.translations?.[locale] !== slug;
+  // const isNotCurrentPageLanguage = locale === 'en' ? data?.translations?.us !== slug : data?.translations?.[locale] !== slug;
 
-  if (resp.status >= 400 || isNotCurrentPageLanguage) {
+  if (resp.status >= 400) {
     return {
       notFound: true,
     };
@@ -166,6 +166,7 @@ export default function HowToSlug({ data, markdown }) {
         letterSpacing="0.05em"
         fontWeight="700"
         marginBottom="1rem"
+        width="fit-content"
       >
         {`← ${t('back-to')}`}
       </Link>

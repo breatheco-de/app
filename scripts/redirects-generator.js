@@ -84,8 +84,8 @@ const redirectByLang = ({ slug, lang, difficulty, assetType }) => {
   }
   if (assetTypeValue === 'PROJECT' && difficulty) {
     return {
-      source: `/interactive-coding-tutorial/${difficulty}/${slug}`,
-      destination: `/${lang}/interactive-coding-tutorial/${difficulty}/${slug}`,
+      source: `/interactive-coding-tutorial/${slug}`,
+      destination: `/${lang}/interactive-coding-tutorial/${slug}`,
       ...redirectConfig,
     };
   }
@@ -119,25 +119,15 @@ const generateAliasRedirects = async (redirects, projects) => {
   const list = projects.map((item) => ({
     source: `/project/${item.slug}`,
     type: 'PROJECT-REROUTE',
-    destination: `/${item.lang === 'us' ? 'en' : item.lang}/interactive-coding-tutorial/${item.difficulty?.toLowerCase()}/${item.slug}`,
+    destination: `/${item.lang === 'us' ? 'en' : item.lang}/interactive-coding-tutorial/${item.slug}`,
   }));
   const objectToAliasList = await Promise.all(Object.entries(redirects).map(async ([key, value]) => {
     const lang = value.lang === 'us' ? 'en' : value.lang;
     const getConnector = async () => {
-      if (value.type === 'PROJECT') {
-        const { data } = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${value?.slug}?asset_type=project`);
-        const difficulty = data?.difficulty?.toLowerCase();
-        if (typeof difficulty === 'string') {
-          if (difficulty === 'junior') data.difficulty = 'easy';
-          else if (difficulty === 'semi-senior') data.difficulty = 'intermediate';
-          else if (difficulty === 'senior') data.difficulty = 'hard';
-        }
-
-        return `interactive-coding-tutorial/${data?.difficulty?.toLowerCase()}`;
-      }
+      if (value.type === 'PROJECT') return 'interactive-coding-tutorial';
       if (value.type === 'LESSON') return 'lesson';
       if (value.type === 'EXERCISE') return 'interactive-exercise';
-      if (value.type === 'ARTICLE') return 'how-to';
+      if (value.type === 'ARTICLE' || value.type === 'QUIZ') return 'how-to';
       return null;
     };
 

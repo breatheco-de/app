@@ -83,7 +83,7 @@ async function generateSitemap() {
   const paginatedHowTosRoute = pagination(lessonsPages, 'how-to');
 
   const exercisesRoute = generateSlugByLang(exercisesPages, 'interactive-exercise');
-  const projectsCodingRoute = generateSlugByLang(projectsPages, 'interactive-coding-tutorial', true);
+  const projectsCodingRoute = generateSlugByLang(projectsPages, 'interactive-coding-tutorial');
 
   const howTosRoute = generateSlugByLang(howTosPages, 'how-to');
   const technologyLessonsRoute = generateTechnologySlug(technologyLandingPages, 'lessons/technology');

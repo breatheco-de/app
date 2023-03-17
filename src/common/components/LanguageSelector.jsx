@@ -87,11 +87,14 @@ const LanguageSelector = ({ display, translations }) => {
             const value = translationsPropsExists ? lang?.value : l.value;
             const label = translationsPropsExists ? lang?.label : l.label;
             const path = translationsPropsExists ? l?.link : router.asPath;
+
+            const link = translationsPropsExists && lang?.value === 'en' ? `/en/${path}` : path;
+
             return (
               <NextChakraLink
                 width="100%"
                 key={value}
-                href={path}
+                href={link}
                 locale={value}
                 role="group"
                 alignSelf="center"

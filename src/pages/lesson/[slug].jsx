@@ -43,9 +43,9 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON`);
   const lesson = await response.json();
-  const isNotCurrentPageLanguage = locale === 'en' ? lesson?.translations?.us !== slug : lesson?.translations?.[locale] !== slug;
+  // const isNotCurrentPageLanguage = locale === 'en' ? lesson?.translations?.us !== slug : lesson?.translations?.[locale] !== slug;
 
-  if (response.status >= 400 || response.status_code >= 400 || lesson.asset_type !== 'LESSON' || isNotCurrentPageLanguage) {
+  if (response.status >= 400 || response.status_code >= 400 || lesson.asset_type !== 'LESSON') {
     return {
       notFound: true,
     };
@@ -149,12 +149,12 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
       >
         <Link
           href="/lessons"
-          width="fit-content"
           color={useColorModeValue('blue.default', 'blue.300')}
           display="inline-block"
           letterSpacing="0.05em"
           fontWeight="700"
           paddingBottom="10px"
+          width="fit-content"
         >
           {`← ${t('backToLessons')}`}
         </Link>
