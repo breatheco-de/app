@@ -11,5 +11,9 @@ Host: https://4geeks.com`);
     res.send(`User-agent: *
 Disallow: /`);
   }
+  if (host.includes('vercel.app')) {
+    res.send(`User-agent: *
+Disallow: /`);
+  }
   return res.send('Nothing to see here');
 }
