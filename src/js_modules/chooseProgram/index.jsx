@@ -98,7 +98,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
                   icon="coding"
                   iconLink={item?.icon_url}
                   iconBackground="blue.default"
-                  handleChoose={() => router.push(item?.slug)}
+                  handleChoose={() => router.push(`/signup?plan=${item?.slug}`)}
                   programName={item?.course_translation.title}
                   programDescription={item?.course_translation?.description}
                   width="100%"
