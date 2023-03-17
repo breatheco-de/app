@@ -14,16 +14,14 @@ import SimpleTable from '../../js_modules/projects/SimpleTable';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../common/components/Skeleton';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
-import { publicRedirectByAsset } from '../../lib/redirectsHandler';
-import modifyEnv from '../../../modifyEnv';
 import redirectsFromApi from '../../../public/redirects-from-api.json';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=project`);
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=2000`);
   const data = await response.json();
 
-  projects = Object.values(data);
+  projects = Object.values(data.results);
   if (response.status >= 200 && response.status <= 400) {
     console.log(`SUCCESS: ${projects.length} Projects fetched for /project/[slug]`);
   } else {
@@ -59,9 +57,9 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const result = await response.json();
   const difficulty = typeof result.difficulty === 'string' ? result.difficulty?.toLowerCase() : 'unknown';
 
-  const isNotCurrentLanguage = locale === 'en' ? result?.translations?.us !== slug : result?.translations?.[locale] !== slug;
+  const isNotCurrentPageLanguage = locale === 'en' ? result?.translations?.us !== slug : result?.translations?.[locale] !== slug;
 
-  if (response.status >= 400 || response.status_code >= 400 || result.asset_type !== 'PROJECT' || isNotCurrentLanguage) {
+  if (response.status >= 400 || response.status_code >= 400 || result.asset_type !== 'PROJECT' || isNotCurrentPageLanguage) {
     return {
       notFound: true,
     };
@@ -171,7 +169,6 @@ const TableInfo = ({ t, project, commonTextColor }) => (
 
 const ProjectSlug = ({ project, markdown }) => {
   const { t } = useTranslation('projects');
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const translations = project?.translations || { es: '', en: '' };
   const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
@@ -186,26 +183,6 @@ const ProjectSlug = ({ project, markdown }) => {
 
     if (redirect) {
       router.push(redirect?.destination);
-    } else {
-      const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
-      const aliasList = await alias.json();
-      const redirectSlug = aliasList[slug];
-      const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}?asset_type=project`);
-
-      if (dataRedirect.status >= 400) {
-        router.push('/404');
-      }
-
-      const redirectResults = await dataRedirect.json();
-
-      const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-      const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || project?.slug || slug}`;
-      const aliasRedirect = aliasList[slug] !== undefined && userPathName;
-      const pagePath = 'project';
-
-      publicRedirectByAsset({
-        router, aliasRedirect, translations, userPathName, pagePath,
-      });
     }
   }, [router, router.locale, translations]);
 

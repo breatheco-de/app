@@ -14,17 +14,15 @@ import SimpleTable from '../../../js_modules/projects/SimpleTable';
 import MarkDownParser from '../../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
-import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 import GridContainer from '../../../common/components/GridContainer';
-import modifyEnv from '../../../../modifyEnv';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=project`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=2000`);
   const data = await resp.json();
 
-  projects = Object.values(data);
+  projects = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${projects.length} Projects fetched for /interactive-coding-tutorial`);
   } else {
@@ -59,9 +57,9 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`);
   const result = await response.json();
-  const isNotCurrentLanguage = locale === 'en' ? result?.translations?.us !== slug : result?.translations?.[locale] !== slug;
+  const isNotCurrentPageLanguage = locale === 'en' ? result?.translations?.us !== slug : result?.translations?.[locale] !== slug;
 
-  if (response.status > 400 || result.asset_type !== 'PROJECT' || isNotCurrentLanguage) {
+  if (response.status > 400 || result.asset_type !== 'PROJECT' || isNotCurrentPageLanguage) {
     return {
       notFound: true,
     };
@@ -154,7 +152,6 @@ const TableInfo = ({ t, project, commonTextColor }) => (
 );
 
 const ProjectSlug = ({ project, markdown }) => {
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('projects');
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const translations = project?.translations || { es: '', en: '' };
@@ -170,30 +167,6 @@ const ProjectSlug = ({ project, markdown }) => {
 
     if (redirect) {
       router.push(redirect?.destination);
-    } else {
-      const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
-      const aliasList = await alias.json();
-      const redirectSlug = aliasList[slug];
-      if (redirectSlug) {
-        const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}?asset_type=project`);
-        const redirectResults = await dataRedirect.json();
-        const difficultyToLowerCase = redirectResults?.difficulty?.toLowerCase();
-
-        // const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-        if (typeof difficultyToLowerCase === 'string') {
-          if (difficultyToLowerCase === 'junior') redirectResults.difficulty = 'easy';
-          else if (difficultyToLowerCase === 'semi-senior') redirectResults.difficulty = 'intermediate';
-          else if (difficultyToLowerCase === 'senior') redirectResults.difficulty = 'hard';
-        }
-
-        const userPathName = `/${router.locale}/interactive-coding-tutorial/${redirectResults?.difficulty?.toLowerCase()}/${redirectResults?.slug || project?.slug || slug}`;
-        const aliasRedirect = aliasList[slug] !== undefined && userPathName;
-        const pagePath = `interactive-coding-tutorial/${difficulty}`;
-
-        publicRedirectByAsset({
-          router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
-        });
-      }
     }
   }, [router, router.locale, translations]);
 

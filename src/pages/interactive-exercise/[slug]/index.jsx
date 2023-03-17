@@ -41,16 +41,14 @@ import validationSchema from '../../../common/components/Forms/validationSchemas
 import { processFormEntry } from '../../../common/components/Forms/actions';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import CustomTheme from '../../../../styles/theme';
-import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 import GridContainer from '../../../common/components/GridContainer';
-import modifyEnv from '../../../../modifyEnv';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&big=true`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&big=true&limit=2000`);
   const data = await resp.json();
 
-  const paths = data.flatMap((res) => locales.map((locale) => ({
+  const paths = data.results.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },
@@ -69,9 +67,9 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=exercise`);
   const result = await resp.json();
-  const isNotCurrentLanguage = locale === 'en' ? result?.translations?.us !== slug : result?.translations?.[locale] !== slug;
+  const isNotCurrentPageLanguage = locale === 'en' ? result?.translations?.us !== slug : result?.translations?.[locale] !== slug;
 
-  if (resp.status >= 400 || result.asset_type !== 'EXERCISE' || isNotCurrentLanguage) {
+  if (resp.status >= 400 || result.asset_type !== 'EXERCISE' || isNotCurrentPageLanguage) {
     return {
       notFound: true,
     };
@@ -495,7 +493,6 @@ const TabletWithForm = ({
 
 const Exercise = ({ exercise, markdown }) => {
   const [tags, setTags] = useState([]);
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation(['exercises']);
   const translations = exercise?.translations || { es: '', en: '' };
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
@@ -516,23 +513,6 @@ const Exercise = ({ exercise, markdown }) => {
 
     if (redirect) {
       router.push(redirect?.destination);
-    } else {
-      const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
-      const aliasList = await alias.json();
-      const redirectSlug = aliasList[slug];
-      if (redirectSlug) {
-        const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}?asset_type=exercise`);
-        const redirectResults = await dataRedirect.json();
-
-        const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-        const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || exercise?.slug || slug}`;
-        const aliasRedirect = aliasList[slug] !== undefined && userPathName;
-        const pagePath = 'interactive-exercise';
-
-        publicRedirectByAsset({
-          router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
-        });
-      }
     }
   }, [router, router.locale, translations]);
 

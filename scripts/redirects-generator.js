@@ -56,6 +56,16 @@ const getHowTo = () => {
   return data;
 };
 
+const getAliasRedirects = async () => {
+  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/alias/redirect?academy=4`)
+    .then((res) => res.data)
+    .catch((err) => {
+      console.error('Error getting alias redirects', err);
+    });
+
+  return data;
+};
+
 const redirectByLang = ({ slug, lang, difficulty, assetType }) => {
   const assetTypeValue = assetType?.toUpperCase();
   if (assetTypeValue === 'LESSON') {
@@ -105,6 +115,38 @@ const generateAssetRedirect = (pages) => {
   return redirectList || [];
 };
 
+const generateAliasRedirects = async (redirects) => {
+  const objectToAliasList = await Promise.all(Object.entries(redirects).map(async ([key, value]) => {
+    const lang = value.lang === 'us' ? 'en' : value.lang;
+    const getConnector = async () => {
+      if (value.type === 'PROJECT') {
+        const { data } = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${value?.slug}?asset_type=project`);
+        const difficulty = data?.difficulty?.toLowerCase();
+        if (typeof difficulty === 'string') {
+          if (difficulty === 'junior') data.difficulty = 'easy';
+          else if (difficulty === 'semi-senior') data.difficulty = 'intermediate';
+          else if (difficulty === 'senior') data.difficulty = 'hard';
+        }
+
+        return `interactive-coding-tutorial/${data?.difficulty?.toLowerCase()}`;
+      }
+      if (value.type === 'LESSON') return 'lesson';
+      if (value.type === 'EXERCISE') return 'interactive-exercise';
+      if (value.type === 'ARTICLE') return 'how-to';
+      return null;
+    };
+
+    const connector = await getConnector();
+
+    return ({
+      source: `/${connector}/${key?.toLowerCase()}`,
+      type: value.type,
+      destination: `/${lang}/${connector}/${value.slug}`,
+    });
+  }));
+  return objectToAliasList;
+};
+
 async function generateRedirect() {
   console.log('Generating redirects...');
 
@@ -112,11 +154,13 @@ async function generateRedirect() {
   const excersisesList = await getExercises();
   const projectList = await getProjects();
   const howToList = await getHowTo();
+  const aliasRedirectList = await getAliasRedirects();
 
   const lessonRedirectList = generateAssetRedirect(lessonsList);
   const excersisesRedirectList = generateAssetRedirect(excersisesList);
   const projectRedirectList = generateAssetRedirect(projectList);
   const howToRedirectList = generateAssetRedirect(howToList);
+  const aliasRedirectionList = await generateAliasRedirects(aliasRedirectList);
 
   const redirectJson = [
     ...lessonRedirectList,
@@ -126,6 +170,7 @@ async function generateRedirect() {
   ];
 
   fs.writeFileSync('public/redirects-from-api.json', JSON.stringify(redirectJson, null, 2));
+  fs.writeFileSync('public/alias-redirects.json', JSON.stringify(aliasRedirectionList, null, 2));
 
   console.log('Redirects generated!');
 }

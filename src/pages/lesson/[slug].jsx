@@ -15,17 +15,15 @@ import Link from '../../common/components/NextChakraLink';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import TagCapsule from '../../common/components/TagCapsule';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
-import { publicRedirectByAsset } from '../../lib/redirectsHandler';
 import { MDSkeleton } from '../../common/components/Skeleton';
 import GridContainer from '../../common/components/GridContainer';
-import modifyEnv from '../../../modifyEnv';
 import redirectsFromApi from '../../../public/redirects-from-api.json';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson&limit=2000`);
   const data = await resp.json();
 
-  const paths = data.flatMap((res) => locales.map((locale) => ({
+  const paths = data.results.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },
@@ -45,9 +43,9 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON`);
   const lesson = await response.json();
-  const isNotCurrentLanguage = locale === 'en' ? lesson?.translations?.us !== slug : lesson?.translations?.[locale] !== slug;
+  const isNotCurrentPageLanguage = locale === 'en' ? lesson?.translations?.us !== slug : lesson?.translations?.[locale] !== slug;
 
-  if (response.status >= 400 || response.status_code >= 400 || lesson.asset_type !== 'LESSON' || isNotCurrentLanguage) {
+  if (response.status >= 400 || response.status_code >= 400 || lesson.asset_type !== 'LESSON' || isNotCurrentPageLanguage) {
     return {
       notFound: true,
     };
@@ -121,7 +119,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
 const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
   const { t } = useTranslation('lesson');
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [isFullScreen, setIsFullScreen] = useState(false);
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
 
@@ -138,32 +135,6 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
 
     if (redirect) {
       router.push(redirect?.destination);
-    } else {
-      const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect?academy=4`);
-      const aliasList = await alias.json();
-      const aliasListKeys = Object.keys(aliasList);
-
-      for (let i = 0; i < aliasListKeys.length; i += 1) {
-        const key = aliasListKeys[i];
-        const lowerCaseKey = key.toLowerCase();
-        aliasList[lowerCaseKey] = aliasList[key];
-        delete aliasList[key];
-      }
-      const redirectSlug = aliasList[slug?.toLowerCase()];
-
-      if (redirectSlug) {
-        const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
-        const redirectResults = await dataRedirect.json();
-
-        const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-        const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || lesson?.slug || slug}`;
-        const aliasRedirect = aliasList[slug] !== undefined && userPathName;
-        const pagePath = 'lesson';
-
-        publicRedirectByAsset({
-          router, aliasRedirect, translations: redirectResults?.translations, userPathName, pagePath, isPublic: true,
-        });
-      }
     }
 
     return () => {};
@@ -178,6 +149,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
       >
         <Link
           href="/lessons"
+          width="fit-content"
           color={useColorModeValue('blue.default', 'blue.300')}
           display="inline-block"
           letterSpacing="0.05em"
