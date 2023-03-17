@@ -10,6 +10,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { formatDuration, intervalToDuration, subMinutes } from 'date-fns';
 import { es, en } from 'date-fns/locale';
 import { useState } from 'react';
+import Image from 'next/image';
 import CustomTheme from '../../../styles/theme';
 import Text from './Text';
 import Icon from './Icon';
@@ -28,7 +29,7 @@ const ProgramCard = ({
   programName, programDescription, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
   syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
   width, usersConnected, assistants, teacher, handleChoose, isHiddenOnPrework, isAvailableAsSaas,
-  subscriptionStatus, subscription,
+  subscriptionStatus, subscription, isMarketingCourse, iconLink,
 }) => {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
@@ -135,15 +136,21 @@ const ProgramCard = ({
       position="relative"
       height="min-content"
     >
-      <Box position="absolute" borderRadius="full" top="-30px" background={iconBackground} padding="10px">
-        <Icon
-          width="32px"
-          height="32px"
-          icon={icon}
-        />
-      </Box>
+      {iconLink ? (
+        <Box position="absolute" borderRadius="full" top="-30px" padding="10px">
+          <Image src={iconLink} width="36px" height="36px" />
+        </Box>
+      ) : (
+        <Box position="absolute" borderRadius="full" top="-30px" background={iconBackground} padding="10px">
+          <Icon
+            width="32px"
+            height="32px"
+            icon={icon}
+          />
+        </Box>
+      )}
 
-      {!isHiddenOnPrework && (
+      {!isHiddenOnPrework && !isMarketingCourse && (
         <Flex height="30px" id="upper-left-section" flexDirection="row-reverse">
           {isLoading ? (
             <></>
@@ -253,13 +260,13 @@ const ProgramCard = ({
         fontWeight="700"
         color={textColor}
         marginBottom="10px"
-        marginTop={isHiddenOnPrework && '30px'}
+        marginTop={(isHiddenOnPrework || isMarketingCourse) && '30px'}
       >
         {programName}
         {' '}
       </Text>
 
-      {!isHiddenOnPrework ? (
+      {!isHiddenOnPrework && !isMarketingCourse ? (
         <>
           {isLoading ? (
             <>
@@ -302,7 +309,6 @@ const ProgramCard = ({
                   />
                   {isFreeTrial && isExpired ? (
                     <ButtonHandler
-                      onlyUpgrade
                       subscription={subscription}
                       onOpenUpgrade={onOpenUpgrade}
                       setSubscriptionProps={setSubscriptionProps}
@@ -429,7 +435,6 @@ const ProgramCard = ({
 
                   {((isAvailableAsSaas && isFreeTrial) || (isAvailableAsSaas && !statusActive)) && (
                     <ButtonHandler
-                      onlyUpgrade
                       subscription={subscription}
                       onOpenUpgrade={onOpenUpgrade}
                       setSubscriptionProps={setSubscriptionProps}
@@ -455,14 +460,41 @@ const ProgramCard = ({
           )}
         </>
       ) : (
-        <Box width="100%" display="flex" justifyContent="center">
-          <Text
-            size="12px"
-            color={lightColor}
-          >
-            {programCardTR?.['prework-message'] || t('prework-message')}
-          </Text>
-        </Box>
+        <>
+          {isMarketingCourse ? (
+            <>
+              <Box width="100%" display="flex" justifyContent="center">
+                <Text
+                  size="12px"
+                  color={lightColor}
+                >
+                  {programDescription}
+                </Text>
+              </Box>
+              <Button
+                borderRadius="3px"
+                width="100%"
+                padding="0"
+                whiteSpace="normal"
+                variant="default"
+                mt="20px"
+                onClick={handleChoose}
+              >
+                {t('enroll-now')}
+              </Button>
+            </>
+          ) : (
+            <Box width="100%" display="flex" justifyContent="center">
+              <Text
+                size="12px"
+                color={lightColor}
+              >
+                {programCardTR?.['prework-message'] || t('prework-message')}
+              </Text>
+            </Box>
+          )}
+        </>
+
       )}
 
       <UpgradeModal
@@ -494,6 +526,8 @@ ProgramCard.propTypes = {
   iconBackground: PropTypes.string,
   handleChoose: PropTypes.func,
   isHiddenOnPrework: PropTypes.bool,
+  isMarketingCourse: PropTypes.bool,
+  iconLink: PropTypes.string,
   // onOpenModal: PropTypes.func,
   isAvailableAsSaas: PropTypes.bool,
   subscriptionStatus: PropTypes.string,
@@ -517,6 +551,8 @@ ProgramCard.defaultProps = {
   iconBackground: '',
   handleChoose: () => {},
   isHiddenOnPrework: false,
+  isMarketingCourse: false,
+  iconLink: '',
   // onOpenModal: () => {},
   isAvailableAsSaas: false,
   subscriptionStatus: '',
