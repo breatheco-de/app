@@ -116,7 +116,7 @@ const LanguageSelector = ({ display, translations }) => {
 };
 
 LanguageSelector.propTypes = {
-  translations: PropTypes.objectOf(PropTypes.any),
+  translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   display: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
 };
 
