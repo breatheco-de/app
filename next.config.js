@@ -33,6 +33,14 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        source: '/robots.txt',
+        destination: '/api/robots',
+      },
+    ];
+  },
   async redirects() {
     return [
       ...redirectsList,
