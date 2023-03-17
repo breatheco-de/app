@@ -62,6 +62,32 @@ const list = [
     "type": "pro",
     "show": true,
     "title": "One time payment",
+    "price": "$200",
+    "offerTitle": "Limited offer",
+    "description": "Full access to all features for the duration of the course",
+    "highlightText": "",
+    "bullets": {
+      "title": "What you will get",
+      "list": [
+        {
+          "title": "Unlimited access to group masterclasses"
+        },
+        {
+          "title": "Unlimited access to workshops"
+        },
+        {
+          "title": "Unlimited access to course content"
+        },
+        {
+          "title": "Certificate endorsed by industry leaders"
+        }
+      ]
+    },
+  },
+  {
+    "type": "pro",
+    "show": true,
+    "title": "One time payment",
     "price": "$199",
     "lastPrice": "$399",
     "offerTitle": "Limited offer",
@@ -84,10 +110,6 @@ const list = [
         }
       ]
     },
-    "button": {
-      "title": "Start your free trial",
-      "link": "#enroll"
-    }
   },
   {
     "type": "trial",
@@ -146,10 +168,6 @@ const finance = [
         }
       ]
     },
-    "button": {
-      "title": "Enroll now",
-      "link": "#enroll"
-    }
   },
   {
     "type": "schoolarship-t2",
@@ -176,10 +194,6 @@ const finance = [
         }
       ]
     },
-    "button": {
-      "title": "Enroll now",
-      "link": "#enroll"
-    }
   },
   {
     "type": "schoolarship-trial",
@@ -207,10 +221,6 @@ const finance = [
         }
       ]
     },
-    "button": {
-      "title": "Enroll now",
-      "link": "#enroll"
-    }
   }
 ];
 
@@ -240,10 +250,6 @@ const noConsumablesList = [
         }
       ]
     },
-    "button": {
-      "title": "Start your free trial",
-      "link": "#enroll"
-    }
   },
   {
     "type": "pro",
@@ -270,10 +276,6 @@ const noConsumablesList = [
         }
       ]
     },
-    "button": {
-      "title": "Start your free trial",
-      "link": "#enroll"
-    }
   },
 ];
 
@@ -295,4 +297,14 @@ OutOfConsumables.args = {
   notReady: 'Not ready to commit?',
   list: noConsumablesList,
   outOfConsumables: true,
+};
+
+export const WithFreeTrial = Component.bind({});
+WithFreeTrial.args = {
+  title: 'Choose your plan',
+  onePaymentLabel: 'One payment',
+  financeTextLabel: 'Finance',
+  notReady: 'Not ready to commit?',
+  list,
+  outOfConsumables: false,
 };
