@@ -1,9 +1,7 @@
-/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import {
-  Box, Button, Img,
+  Box, Img,
 } from '@chakra-ui/react';
-import { useState, Fragment } from 'react';
 import Heading from './Heading';
 import Text from './Text';
 import Link from './NextChakraLink';
