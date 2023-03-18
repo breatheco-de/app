@@ -28,20 +28,21 @@ const MktTwoColumnSideImage = ({
     <Box
       padding="20px"
       display="flex"
+      flexWrap={{ base: 'wrap', md: 'nowrap' }}
       gridGap="20px"
       background={background || backgroundColor}
       border={border}
       borderRadius="12px"
       flexDirection={flexDirection[imagePosition]}
     >
-      <Box width="50%">
+      <Box width={{ base: '100% 0', md: '50%' }}>
         <Img
           boxSize="100%"
           objectFit="cover"
           src={imageUrl}
         />
       </Box>
-      <Box width="50%">
+      <Box width={{ base: '100% 0', md: '50%' }}>
         <Heading marginBottom="15px" as="h4" fontSize="14px" color={hexColor.blueDefault}>
           {subTitle}
         </Heading>
