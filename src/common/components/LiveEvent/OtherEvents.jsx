@@ -1,6 +1,7 @@
 import {
   Box, Avatar, Tag, TagLabel,
 } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import modifyEnv from '../../../../modifyEnv';
 import { getStorageItem } from '../../../utils';
 import useStyle from '../../hooks/useStyle';
@@ -9,7 +10,8 @@ import Icon from '../Icon';
 import Link from '../NextChakraLink';
 import Text from '../Text';
 
-const OtherEvents = ({ events, isLiveOrStarting, textTime }) => {
+const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, stTranslation }) => {
+  const { t, lang } = useTranslation('live-event');
   const { hexColor, disabledColor, fontColor } = useStyle();
   const accessToken = getStorageItem('accessToken');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -107,16 +109,34 @@ const OtherEvents = ({ events, isLiveOrStarting, textTime }) => {
               </TagLabel>
             </Tag>
           )}
-          <Text
-            fontSize="14px"
-            lineHeight="18px"
-            fontWeight={500}
-            color={disabledColor}
-            marginBottom="0"
-            marginTop="0"
-          >
-            {startsAt ? textTime(startsAt, endsAt) : ''}
-          </Text>
+          {isLive(startsAt, endsAt) ? (
+            <Tag
+              size="sm"
+              borderRadius="full"
+              variant="solid"
+              colorScheme="green"
+              width="fit-content"
+              background={CustomTheme.colors.red.light}
+            >
+              <TagLabel
+                fontWeight="700"
+                color={CustomTheme.colors.danger}
+              >
+                {stTranslation ? `• ${stTranslation[lang]['live-event']['live-now']}` : `• ${t('live-now')}`}
+              </TagLabel>
+            </Tag>
+          ) : (
+            <Text
+              fontSize="13px"
+              lineHeight="18px"
+              fontWeight={500}
+              color={disabledColor}
+              marginBottom="0"
+              marginTop="0"
+            >
+              {startsAt ? textTime(startsAt, endsAt) : ''}
+            </Text>
+          )}
         </Box>
       </Box>
     );

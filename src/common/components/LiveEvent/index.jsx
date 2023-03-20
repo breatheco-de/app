@@ -51,6 +51,12 @@ const LiveEvent = ({
     return otherEventsSorted;
   };
 
+  const formatDistanceLocale = {
+    en: { xMonths: '{{count}} m', xWeeks: '{{count}} w', xDays: '{{count}} d', xHours: '{{count}} hr', xMinutes: '{{count}} min' },
+    es: { xMonths: '{{count}} m', xWeeks: '{{count}} sem', xDays: '{{count}} d', xHours: '{{count}} hr', xMinutes: '{{count}} min' },
+  };
+  const shortEnLocale = { formatDistance: (token, count) => (formatDistanceLocale[lang][token] ? formatDistanceLocale[lang][token].replace('{{count}}', count) : availableLanguages[lang]) };
+
   const formatTimeString = (start, isMoreThan2Days = false) => {
     const duration = intervalToDuration({
       end: new Date(),
@@ -61,7 +67,7 @@ const LiveEvent = ({
       {
         format: !isMoreThan2Days ? ['months', 'weeks', 'days', 'hours', 'minutes'] : ['months', 'weeks', 'days'],
         delimiter: ', ',
-        locale: availableLanguages[lang],
+        locale: shortEnLocale,
       });
 
     if (formated === '') return stTranslation ? stTranslation[lang]['live-event']['few-seconds'] : t('few-seconds');
@@ -173,6 +179,7 @@ const LiveEvent = ({
               host={BREATHECODE_HOST}
               nearestEvent={nearestEvent}
               isLive={isLive}
+              textTime={textTime}
               stTranslation={stTranslation}
               mainClasses={mainClasses}
             />
@@ -235,7 +242,9 @@ const LiveEvent = ({
           <OtherEvents
             events={mainEvents.length !== 0 && mainClasses.length !== 0 ? otherEventsSorted : restOfEvents}
             isLiveOrStarting={isLiveOrStarting}
+            isLive={isLive}
             textTime={textTime}
+            stTranslation={stTranslation}
           />
         </Box>
       )}
