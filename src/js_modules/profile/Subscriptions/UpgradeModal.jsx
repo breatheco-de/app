@@ -111,7 +111,7 @@ const UpgradeModal = ({ upgradeModalIsOpen, setUpgradeModalIsOpen, subscriptionP
               financeTextLabel={t('subscription.upgrade-modal.finance')}
               handleUpgrade={(item) => {
                 // console.log('handleUpgrade:', item);
-                router.push(`/signup?plan=${item?.suggested_plan?.slug}`);
+                router.push(`checkout?plan=${item?.suggested_plan?.slug}`);
               }}
               // onSelect={(item) => {
               //   console.log('selected:', item);

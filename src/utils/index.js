@@ -251,6 +251,9 @@ const getQueryString = (key, def) => {
 const createArray = (length) => Array.from({ length }, (_, i) => i);
 
 const location = isWindow && window.location;
+
+const url = isWindow && new URL(window.location.href);
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify, location,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
@@ -259,5 +262,5 @@ export {
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
-  createArray,
+  createArray, url,
 };

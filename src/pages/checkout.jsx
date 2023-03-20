@@ -14,11 +14,11 @@ import Icon from '../common/components/Icon';
 import { getDataContentProps } from '../utils/file';
 import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
-import ContactInformation from '../js_modules/signup/ContactInformation';
-import ChooseYourClass from '../js_modules/signup/ChooseYourClass';
+import ContactInformation from '../js_modules/checkout/ContactInformation';
+import ChooseYourClass from '../js_modules/checkout/ChooseYourClass';
 import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem } from '../utils';
-import Summary from '../js_modules/signup/Summary';
-import PaymentInfo from '../js_modules/signup/PaymentInfo';
+import Summary from '../js_modules/checkout/Summary';
+import PaymentInfo from '../js_modules/checkout/PaymentInfo';
 import useSignup from '../common/store/actions/signupAction';
 import axiosInstance from '../axios';
 import LoaderScreen from '../common/components/LoaderScreen';
@@ -31,8 +31,8 @@ export const getStaticProps = async ({ locale, locales }) => {
     domain: process.env.WEBSITE_URL || 'https://4geeks.com',
   });
   const ogUrl = {
-    en: '/signup',
-    us: '/signup',
+    en: '/checkout',
+    us: '/checkout',
   };
 
   return {
@@ -43,8 +43,8 @@ export const getStaticProps = async ({ locale, locales }) => {
         locales,
         locale,
         image,
-        url: ogUrl.en || `/${locale}/signup`,
-        pathConnector: '/signup',
+        url: ogUrl.en || `/${locale}/checkout`,
+        pathConnector: '/checkout',
         keywords,
       },
       fallback: false,
@@ -53,7 +53,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   };
 };
 
-const SignUp = ({ finance }) => {
+const Checkout = ({ finance }) => {
   const { t } = useTranslation('signup');
   const router = useRouter();
   const [cohorts, setCohorts] = useState(null);
@@ -371,12 +371,12 @@ const SignUp = ({ finance }) => {
   );
 };
 
-SignUp.propTypes = {
+Checkout.propTypes = {
   finance: PropTypes.objectOf(PropTypes.any),
 };
 
-SignUp.defaultProps = {
+Checkout.defaultProps = {
   finance: {},
 };
 
-export default SignUp;
+export default Checkout;
