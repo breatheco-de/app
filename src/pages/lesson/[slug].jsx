@@ -43,9 +43,14 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON`);
   const lesson = await response.json();
-  // const isNotCurrentPageLanguage = locale === 'en' ? lesson?.translations?.us !== slug : lesson?.translations?.[locale] !== slug;
 
-  if (response.status >= 400 || response.status_code >= 400 || lesson.asset_type !== 'LESSON') {
+  const engPrefix = {
+    us: 'en',
+    en: 'en',
+  };
+  const isCurrenLang = locale === engPrefix[lesson?.lang] || locale === lesson?.lang;
+
+  if (response.status >= 400 || response.status_code >= 400 || lesson.asset_type !== 'LESSON' || !isCurrenLang) {
     return {
       notFound: true,
     };
