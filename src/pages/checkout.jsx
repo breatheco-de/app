@@ -22,6 +22,7 @@ import PaymentInfo from '../js_modules/checkout/PaymentInfo';
 import useSignup from '../common/store/actions/signupAction';
 import axiosInstance from '../axios';
 import LoaderScreen from '../common/components/LoaderScreen';
+import ModalInfo from '../js_modules/moduleMap/modalInfo';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -59,12 +60,12 @@ const Checkout = ({ finance }) => {
   const [cohorts, setCohorts] = useState(null);
   const [isPreloading, setIsPreloading] = useState(false);
   const {
-    state, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
+    state, toggleIfEnrolled, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
     isFirstStep, isSecondStep, isThirdStep, isFourthStep,
   } = useSignup();
+  const { stepIndex, dateProps, checkoutData, alreadyEnrolled } = state;
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
-  const { stepIndex, dateProps, checkoutData } = state;
   const { user, isLoading } = useAuth();
   const toast = useToast();
   const plan = getQueryString('plan');
@@ -114,7 +115,7 @@ const Checkout = ({ finance }) => {
             if ((resp && resp?.status >= 400) || resp?.data.length === 0) {
               toast({
                 title: t('alert-message:no-plan-configuration'),
-                status: 'warning',
+                status: 'info',
                 duration: 4000,
                 isClosable: true,
               });
@@ -151,7 +152,7 @@ const Checkout = ({ finance }) => {
           .catch(() => {
             toast({
               title: t('alert-message:no-plan-configuration'),
-              status: 'warning',
+              status: 'info',
               duration: 4000,
               isClosable: true,
             });
@@ -184,6 +185,23 @@ const Checkout = ({ finance }) => {
       {isPreloading && (
         <LoaderScreen />
       )}
+      <ModalInfo
+        isOpen={alreadyEnrolled}
+        onClose={() => toggleIfEnrolled(false)}
+        title={t('already-adquired-plan-title')}
+        isReadonly
+        description={t('already-adquired-plan-description')}
+        closeText={t('common:close')}
+        closeButtonVariant="outline"
+        disableInput
+        handlerText={t('subscriptions')}
+        actionHandler={() => {
+          if (window !== undefined) {
+            toggleIfEnrolled(false);
+            router.push('/profile/subscriptions');
+          }
+        }}
+      />
       {/* Stepper */}
       <Box display="flex" gridGap="38px" justifyContent="center" overflow="auto">
         <Box

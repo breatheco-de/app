@@ -1,6 +1,7 @@
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION,
   SET_PAYMENT_INFO, SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS,
+  TOGGLE_IF_ENROLLED,
 } from '../types';
 
 const initialState = {
@@ -20,10 +21,17 @@ const initialState = {
     date: false,
   },
   cohortPlans: null,
+  alreadyEnrolled: false,
 };
 const signupReducer = (state = initialState, action) => {
   switch (action.type) {
     // stepIndex
+    case TOGGLE_IF_ENROLLED: {
+      return {
+        ...state,
+        alreadyEnrolled: action.payload,
+      };
+    }
     case NEXT_STEP: {
       return {
         ...state,

@@ -4,7 +4,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
-  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS,
+  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED,
 } from '../types';
 import { getNextDateInMonths, getTimeProps, toCapitalize, unSlugify } from '../../../utils';
 import bc from '../../services/breathecode';
@@ -85,6 +85,10 @@ const useSignup = () => {
 
   const setPlanProps = (payload) => dispatch({
     type: SET_PLAN_PROPS,
+    payload,
+  });
+  const toggleIfEnrolled = (payload) => dispatch({
+    type: TOGGLE_IF_ENROLLED,
     payload,
   });
 
@@ -234,13 +238,13 @@ const useSignup = () => {
       })
       .catch((err) => {
         reject(err);
-        console.log(err);
-        toast({
-          title: t('alert-message:something-went-wrong-choosing-date'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
+        toggleIfEnrolled(true);
+        // toast({
+        //   title: t('alert-message:something-went-wrong-choosing-date'),
+        //   status: 'error',
+        //   duration: 7000,
+        //   isClosable: true,
+        // });
       });
   });
 
@@ -302,6 +306,7 @@ const useSignup = () => {
     isSecondStep,
     isThirdStep,
     isFourthStep,
+    toggleIfEnrolled,
     nextStep,
     prevStep,
     setLoader,
