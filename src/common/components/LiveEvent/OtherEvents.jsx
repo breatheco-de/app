@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
   Box, Avatar, Tag, TagLabel,
 } from '@chakra-ui/react';
@@ -18,9 +19,17 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, stTranslation
   const limit = 42;
 
   return events.map((event) => {
+    const [time, setTime] = useState('');
     const startsAt = event?.starting_at && new Date(event.starting_at);
     const endsAt = event?.ending_at && new Date(event.ending_at);
     const truncatedText = event?.title.length > limit ? `${event?.title?.substring(0, limit)}...` : event?.title;
+
+    useEffect(() => {
+      const interval = setInterval(() => setTime(textTime(startsAt, endsAt)));
+      return () => {
+        clearInterval(interval);
+      };
+    }, []);
 
     return (
       <Box
@@ -134,7 +143,7 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, stTranslation
               marginBottom="0"
               marginTop="0"
             >
-              {startsAt ? textTime(startsAt, endsAt) : ''}
+              {time}
             </Text>
           )}
         </Box>
