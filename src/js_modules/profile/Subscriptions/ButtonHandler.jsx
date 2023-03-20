@@ -59,7 +59,7 @@ const ButtonHandler = ({
         },
         isComponent: true,
         component: (
-          <Link variant="buttonDefault" display="inherit" href={`/checkout?plan=${planSlug}`} textAlign="center" margin="auto 0 0 0">
+          <Link variant="buttonDefault" justifyContent="center" display="inherit" href={`/checkout?plan=${planSlug}`} textAlign="center" margin="auto 0 0 0">
             {subscriptionTR?.['reactivate-subscription'] || t('subscription.reactivate-subscription')}
           </Link>
         ),
