@@ -7,7 +7,7 @@ import Heading from './Heading';
 import ProjectsSection from './ProjectsSection';
 
 const PublicCourseCard = ({
-  programName, programDescription, icon_url, startsIn,
+  programName, programDescription, icon_url, iconBackground, startsIn,
   stTranslation, syllabusContent, courseProgress, usersConnected, assistants,
   teacher, isAvailableAsSaas, subscriptionStatus,
 }) => {
@@ -17,17 +17,21 @@ const PublicCourseCard = ({
   return (
     <Box width="300px">
       <Box
+        borderRadius="9px 9px 0 0"
         width="90%"
         margin="auto"
         height="140px"
-        // background={iconBackground}
+        background={iconBackground}
         display="flex"
         flexDirection="column"
         justifyContent="center"
       >
+        {/* <Icon color="#FFF" icon={icon} width="84px" height="74px" style={{ margin: 'auto' }} /> */}
         <Img
-          borderRadius="9px 9px 0 0"
-          boxSize="100%"
+          width="84px"
+          height="74px"
+          // boxSize="100%"
+          margin="auto"
           objectFit="cover"
           src={icon_url}
           alt="Course Icon"
@@ -96,6 +100,7 @@ PublicCourseCard.propTypes = {
   programName: PropTypes.string.isRequired,
   programDescription: PropTypes.string,
   icon_url: PropTypes.string,
+  iconBackground: PropTypes.string,
   startsIn: PropTypes.instanceOf(Date),
   syllabusContent: PropTypes.objectOf(PropTypes.any),
   courseProgress: PropTypes.number,
@@ -110,6 +115,7 @@ PublicCourseCard.propTypes = {
 PublicCourseCard.defaultProps = {
   programDescription: null,
   icon_url: '',
+  iconBackground: '',
   stTranslation: null,
   startsIn: null,
   syllabusContent: null,

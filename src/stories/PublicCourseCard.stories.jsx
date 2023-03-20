@@ -31,6 +31,11 @@ export default {
         type: 'text'
       }
     },
+    iconBackground: {
+      control: {
+        type: 'text'
+      }
+    },
     subscriptionStatus: {
       control: {
         type: 'text'
@@ -135,7 +140,8 @@ Default.args = {
   programName: 'A.I & Machine Learning',
   programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
   startsIn: new Date(addDays(new Date(), 3)),
-  icon_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiRhyDX-0U5Znby3iJEeNWKR2Rjv5475ESAA&usqp=CAU",
+  icon_url: "https://www.iconpacks.net/icons/2/free-settings-icon-3110-thumb.png",
+  iconBackground: "blue.default",
   syllabusContent: {
     totalLessons: 30,
     totalProjects: 15,
@@ -155,7 +161,8 @@ withDescription.args = {
   programName: 'Data Science',
   programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
   startsIn: new Date(addDays(new Date(), 3)),
-  icon_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSE0DeOwF4LwqSR21nbPQIbtWw65K5utf7RrQ&usqp=CAU",
+  icon_url: "https://www.freeiconspng.com/thumbs/brain-icon-png/brain-2.png",
+  iconBackground: "#25BF6C",
   subscriptionStatus: 'ACTIVE',
   courseProgress: 7,
 };
