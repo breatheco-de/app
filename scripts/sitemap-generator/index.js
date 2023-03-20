@@ -52,8 +52,8 @@ async function generateSitemap() {
   };
 
   const generateSlugByLang = (data, conector, withDifficulty) => data.map((l) => (withDifficulty
-    ? `${engLang[l.lang] !== 'en' ? `/${l.lang}` : ''}${conector ? `/${conector}` : ''}/${l?.difficulty ? l?.difficulty?.toLowerCase() : 'unknown'}/${l?.slug}`
-    : `${engLang[l.lang] !== 'en' ? `/${l.lang}` : ''}${conector ? `/${conector}` : ''}/${l?.slug}`));
+    ? `${engLang[l.lang] !== 'en' ? `${l?.lang ? `/${l?.lang}` : ''}` : ''}${conector ? `/${conector}` : ''}/${l?.difficulty ? l?.difficulty?.toLowerCase() : 'unknown'}/${l?.slug}`
+    : `${engLang[l.lang] !== 'en' ? `${l?.lang ? `/${l?.lang}` : ''}` : ''}${conector ? `/${conector}` : ''}/${l?.slug}`));
   const generateSlug = (data, conector) => data.map((l) => `${conector ? `/${conector}` : ''}/${l?.slug}`);
 
   const generateTechnologySlug = (data, conector) => (data?.length > 0 ? data.map(
