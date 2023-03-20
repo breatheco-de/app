@@ -6,7 +6,7 @@ import useStyle from '../hooks/useStyle';
 import Heading from './Heading';
 
 const AlertMessage = ({
-  message, type, style, textStyle, full, textColor, dangerouslySetInnerHTML, title,
+  message, type, style, textStyle, full, textColor, dangerouslySetInnerHTML, title, children, ...rest
 }) => {
   const { fontColor } = useStyle();
   const alertColors = {
@@ -16,7 +16,7 @@ const AlertMessage = ({
     info: '#00A0E9',
   };
 
-  return message && (
+  return (message || children) && (
     <Box
       display="flex"
       style={style}
@@ -28,29 +28,34 @@ const AlertMessage = ({
       padding="16px"
       borderRadius="16px"
       gridGap="16px"
+      {...rest}
     >
-      <Icon icon={type} color={full ? '#000' : ''} props={{ full: true }} style={{ minWidth: '18px' }} width="18px" height="18px" />
-      <Box>
-        {title && (
-          <Heading size="20px" letterSpacing="0.02em" mb="10px">
-            {title}
-          </Heading>
-        )}
-        {dangerouslySetInnerHTML ? (
-          <Text
-            fontSize="15px"
-            color={full ? 'black' : (textColor || fontColor)}
-            fontWeight="500"
-            style={{ ...textStyle, margin: '0' }}
-            dangerouslySetInnerHTML={{ __html: message }}
-          />
-        ) : (
-          <Text fontSize="15px" color={full ? 'black' : (textColor || fontColor)} fontWeight="700" style={{ ...textStyle, margin: '0' }}>
-            {message}
-          </Text>
-        )}
-
-      </Box>
+      {children && children}
+      {!children && (
+        <>
+          <Icon icon={type} color={full ? '#000' : ''} props={{ full: true }} style={{ minWidth: '18px' }} width="18px" height="18px" />
+          <Box>
+            {title && (
+              <Heading size="20px" letterSpacing="0.02em" mb="10px">
+                {title}
+              </Heading>
+            )}
+            {dangerouslySetInnerHTML ? (
+              <Text
+                fontSize="15px"
+                color={full ? 'black' : (textColor || fontColor)}
+                fontWeight="500"
+                style={{ ...textStyle, margin: '0' }}
+                dangerouslySetInnerHTML={{ __html: message }}
+              />
+            ) : (
+              <Text fontSize="15px" color={full ? 'black' : (textColor || fontColor)} fontWeight="700" style={{ ...textStyle, margin: '0' }}>
+                {message}
+              </Text>
+            )}
+          </Box>
+        </>
+      )}
     </Box>
   );
 };
@@ -64,6 +69,7 @@ AlertMessage.propTypes = {
   textColor: PropTypes.string,
   dangerouslySetInnerHTML: PropTypes.bool,
   title: PropTypes.string,
+  children: PropTypes.node,
 };
 
 AlertMessage.defaultProps = {
@@ -75,6 +81,7 @@ AlertMessage.defaultProps = {
   textColor: '',
   dangerouslySetInnerHTML: false,
   title: '',
+  children: null,
 };
 
 export default AlertMessage;

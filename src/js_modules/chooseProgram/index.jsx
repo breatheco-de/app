@@ -49,7 +49,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
   const marketingCouses = marketingCursesList && activeSubscriptionCohorts.length > 0 && marketingCursesList.filter(
     (item) => !activeSubscriptionCohorts.some(
       (activeCohort) => activeCohort?.cohort?.syllabus_version?.slug === item?.slug,
-    ),
+    ) && item?.course_translation?.title,
   );
 
   return (
@@ -91,19 +91,17 @@ function ChooseProgram({ chooseList, handleChoose }) {
             height="auto"
             gridGap="4rem"
           >
-            {marketingCouses.map((item) => item?.course_translation?.title && (
-              <Box>
-                <ProgramCard
-                  isMarketingCourse
-                  icon="coding"
-                  iconLink={item?.icon_url}
-                  iconBackground="blue.default"
-                  handleChoose={() => router.push(`/checkout?plan=${item?.slug}`)}
-                  programName={item?.course_translation.title}
-                  programDescription={item?.course_translation?.description}
-                  width="100%"
-                />
-              </Box>
+            {marketingCouses.map((item) => (
+              <ProgramCard
+                isMarketingCourse
+                icon="coding"
+                iconLink={item?.icon_url}
+                iconBackground="blue.default"
+                handleChoose={() => router.push(`/checkout?plan=${item?.slug}`)}
+                programName={item?.course_translation.title}
+                programDescription={item?.course_translation?.description}
+                width="100%"
+              />
             ))}
           </Box>
         </>
