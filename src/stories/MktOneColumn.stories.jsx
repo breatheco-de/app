@@ -30,6 +30,11 @@ export default {
         type: 'text'
       }
     },
+    kpiList: {
+      control: {
+        type: 'object'
+      }
+    },
   }
 };
 
@@ -46,4 +51,25 @@ Default.args = {
   description,
   buttonUrl: 'https://www.google.com',
   buttonLabel: 'Button',
+};
+
+export const KPI = Component.bind({});
+KPI.args = {
+  title: 'This is a long title that can have several lines like this',
+  subTitle: 'This is a small subtitle',
+  description,
+  buttonUrl: 'https://www.google.com',
+  buttonLabel: 'Button',
+  kpiList: [{
+    title: '3 years',
+    description: 'Providing mentoships',
+  }, {
+    title: '+20.790',
+    description: 'Mentoring sessions',
+    color: '#25BF6C'
+  }, {
+    title: '+1.200',
+    description: 'People could find a Job in tech',
+    color: '#FFB718'
+  }]
 };
