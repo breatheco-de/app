@@ -8,7 +8,7 @@ const useStyle = () => {
   const borderColor2 = useColorModeValue('gray.200', 'gray.500');
   const borderColorStrong = useColorModeValue('gray.400', 'gray.500');
   const disabledBackgroundColor = useColorModeValue('gray.250', 'gray.600');
-  const disabledColor = useColorModeValue('gray.600', 'gray.350');
+  const disabledColor = useColorModeValue('gray.500', 'gray.350');
   const featuredColor = useColorModeValue('featuredLight', 'featuredDark');
   const fontColor = useColorModeValue('black', 'white');
   const fontColor2 = useColorModeValue('gray.dark', 'gray.250');
@@ -33,6 +33,7 @@ const useStyle = () => {
     featuredBackground: useColorModeValue('featuredLight', 'darkTheme'),
     background: useColorModeValue('white', 'featuredDark'),
     background2: useColorModeValue('white', 'gray.900'),
+    background3: useColorModeValue('white', 'gray.800'),
     hoverBackground: useColorModeValue('featuredLight', 'gray.700'),
   };
 

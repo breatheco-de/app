@@ -86,6 +86,7 @@ const breathecode = {
       }),
       getFinalProject: () => axios.get(`${url}/user/me/final_project${qs}`),
       createFinalProject: (args) => axios.post(`${url}/user/me/final_project`, args),
+      sendScreenshot: (args) => axios.post(`${url}/user/me/final_project/screenshot`, args),
       updateFinalProject: (args) => axios.put(`${url}/user/me/final_project`, args),
       uploadFile: (id, args) => axios.put(`${url}/task/${id}/attachment${qs}`, args),
       getFile: (args) => axios.get(`${url}/task/${args.id}/attachment`, {
@@ -204,10 +205,13 @@ const breathecode = {
     return {
       checking: (data) => axios.put(`${url}/checking${qs}`, data),
       subscriptions: () => axios.get(`${url}/me/subscription${qs}`),
-      courses: () => axios.get(`${host}/marketing/courses${qs}`),
+      courses: () => axios.get(`${host}/marketing/course${qs}`),
       pay: (data) => axios.post(`${url}/pay${qs}`, data),
       addCard: (data) => axios.post(`${url}/card${qs}`, data),
+      cancelSubscription: (id) => axios.put(`${url}/subscription/${id}/cancel${qs}`),
+      cancelMySubscription: (id) => axios.put(`${url}/me/subscription/${id}/cancel${qs}`),
       getPlan: (slug) => axios.get(`${url}/plan/${slug}${qs}`),
+      planOffer: () => axios.get(`${url}/planoffer${qs}`),
       getPlanProps: (id) => axios.get(`${url}/serviceitem?plan=${id}`),
       getCohortPlans: () => axios.get(`${url}/plan${qs}`),
       service: () => ({

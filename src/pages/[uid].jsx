@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { createClient } from '../../prismicio';
 import { components } from '../../slices';
 
-const Page = ({ page }) => <SliceZone slices={page.data.slices} components={components} />;
+const Page = ({ page }) => <SliceZone slices={page?.data?.slices} components={components} />;
 
 Page.propTypes = {
   page: PropTypes.objectOf(PropTypes.any).isRequired,
@@ -21,7 +21,9 @@ export async function getStaticProps({ params, locale, previewData }) {
     es: 'es-es',
   };
 
-  const page = await client.getByUID('page', uid, { lang: languages[locale] });
+  const page = await client?.getByUID('page', uid, { lang: languages[locale] })
+    .then((response) => response)
+    .catch(() => null);
 
   if (!page) {
     return {
@@ -90,6 +92,6 @@ export async function getStaticPaths() {
   const documents = await client.getAllByType('page', { lang: '*' });
   return {
     paths: documents.map((doc) => ({ params: { uid: doc.uid }, locale: doc.lang.split('-')[0] })),
-    fallback: false,
+    fallback: true,
   };
 }

@@ -90,7 +90,7 @@ const ProjectsSection = ({
                 icon="book"
               />
               <Box>
-                {((isAvailableAsSaas === false || statusActive || isFreeTrial) && hasStarted && courseProgress > 0) && (
+                {((isAvailableAsSaas === false || statusActive || isFreeTrial) && (hasStarted || courseProgress > 0)) && (
                   <>
                     <span style={{ color: CustomTheme.colors.blue.default2 }}>{elem.completed || 0}</span>
                     /

@@ -244,12 +244,13 @@ const ContactInformation = ({
 };
 
 ContactInformation.propTypes = {
-  courseChoosed: PropTypes.string.isRequired,
+  courseChoosed: PropTypes.string,
   formProps: PropTypes.objectOf(PropTypes.any).isRequired,
   setFormProps: PropTypes.func,
 };
 
 ContactInformation.defaultProps = {
+  courseChoosed: '',
   setFormProps: () => {},
 };
 

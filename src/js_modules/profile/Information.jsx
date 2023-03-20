@@ -1,5 +1,6 @@
-import { Avatar, Box, Button, Icon, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Slider, SliderFilledTrack, SliderThumb, SliderTrack, useMediaQuery, useToast } from '@chakra-ui/react';
+import { Avatar, Box, Button, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Slider, SliderFilledTrack, SliderThumb, SliderTrack, useMediaQuery, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
+import Head from 'next/head';
 import { useCallback, useEffect, useState } from 'react';
 import Cropper from 'react-easy-crop';
 import ProfileForm from '../../common/components/profileForm';
@@ -8,7 +9,9 @@ import useAuth from '../../common/hooks/useAuth';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import useStyle from '../../common/hooks/useStyle';
 import bc from '../../common/services/breathecode';
+import { location } from '../../utils';
 import getCroppedImg from '../../utils/cropImage';
+import Icon from '../../common/components/Icon';
 
 const Information = () => {
   const [profile, setProfile] = usePersistent('profile', {});
@@ -129,6 +132,11 @@ const Information = () => {
 
   return (
     <>
+      {location?.pathname?.includes('info') && (
+        <Head>
+          <title>{t('seo.title')}</title>
+        </Head>
+      )}
       <Text fontSize="15px" fontWeight="700" pb="18px">
         {t('basic-profile-info')}
       </Text>
