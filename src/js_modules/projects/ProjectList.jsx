@@ -128,7 +128,7 @@ const ProjectList = forwardRef(({
           const isProject = isDynamic && getAssetPath(ex) === 'interactive-coding-tutorial';
           const isHowTo = isDynamic && getAssetPath(ex) === 'how-to';
 
-          const lang = ex?.lang === 'us' ? 'en' : ex?.lang;
+          const lang = ex?.lang === 'us' ? '' : `/${ex?.lang}`;
           const getLink = () => {
             if (isLesson) {
               return `${lang}/lesson/${ex.slug}`;

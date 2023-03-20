@@ -42,8 +42,7 @@ const Helmet = ({
     if ((currentlocaleLang === 'en' || currentlocaleLang === 'us') && currentlocaleLang !== undefined) {
       return `https://4geeks.com/en${pathConnector}/${slug}`;
     }
-    return `https://4geeks.com/${locale}${pathConnector}/${slug}`;
-    // return `https://4geeks.com${locale !== 'en' ? `/${locale}` : ''}${pathConnector}/${slug}`;
+    return `https://4geeks.com${locale !== 'en' ? `/${locale}` : ''}${pathConnector}/${slug}`;
   };
   const canonicalTranslationsLink = getCanonicalTranslationsLink();
 
@@ -104,7 +103,7 @@ const Helmet = ({
           es: 'es-ES',
         };
         const urlAlternate = `https://4geeks.com/${language}${pathConnector}/${translations[lang]}`;
-        const defaultUrl = `https://4geeks.com/${language}${pathConnector}/${translations?.us || translations?.en}`;
+        const defaultUrl = `https://4geeks.com${pathConnector}/${translations?.us || translations?.en}`;
 
         return ['default', 'us', 'en'].includes(lang) ? (
           <React.Fragment key={`${language} - ${defaultUrl}`}>
