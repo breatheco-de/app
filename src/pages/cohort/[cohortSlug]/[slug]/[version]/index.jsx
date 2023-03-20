@@ -209,8 +209,8 @@ const Dashboard = () => {
       .then(async ({ data }) => {
         const currentPlan = data?.plan_financings?.find((s) => s?.selected_cohort?.slug === cohortSlug);
         const currentSubscription = data?.subscriptions?.find((s) => s?.selected_cohort?.slug === cohortSlug);
-        const prevData = currentPlan || currentSubscription;
-        const planSlug = prevData?.plans?.[0]?.slug;
+        const planData = currentPlan || currentSubscription;
+        const planSlug = planData?.plans?.[0]?.slug;
         const planOffer = await bc.payment({
           original_plan: planSlug,
         }).planOffer().then((res) => res?.data);
@@ -218,7 +218,7 @@ const Dashboard = () => {
         const currentPlanOffer = planOffer?.find((p) => p?.original_plan?.slug === planSlug);
 
         const finalData = {
-          ...prevData,
+          ...planData,
           planOfferExists: currentPlanOffer !== undefined,
         };
 
@@ -395,7 +395,7 @@ const Dashboard = () => {
           }}
         >
           <Box width="100%" minW={{ base: 'auto', md: 'clamp(300px, 60vw, 770px)' }}>
-            {subscriptionData?.i && subscriptionData?.planOfferExists && (
+            {subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists && (
               <AlertMessage
                 full
                 type="warning"
