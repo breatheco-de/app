@@ -41,16 +41,14 @@ import validationSchema from '../../../common/components/Forms/validationSchemas
 import { processFormEntry } from '../../../common/components/Forms/actions';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import CustomTheme from '../../../../styles/theme';
-import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
 import GridContainer from '../../../common/components/GridContainer';
-import modifyEnv from '../../../../modifyEnv';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&big=true`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&big=true&limit=2000`);
   const data = await resp.json();
 
-  const paths = data.flatMap((res) => locales.map((locale) => ({
+  const paths = data.results.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },
@@ -58,7 +56,7 @@ export const getStaticPaths = async ({ locales }) => {
   })));
 
   return {
-    fallback: true,
+    fallback: false,
     paths,
   };
 };
@@ -69,6 +67,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=exercise`);
   const result = await resp.json();
+  // const isNotCurrentPageLanguage = locale === 'en' ? result?.translations?.us !== slug : result?.translations?.[locale] !== slug;
 
   if (resp.status >= 400 || result.asset_type !== 'EXERCISE') {
     return {
@@ -494,7 +493,6 @@ const TabletWithForm = ({
 
 const Exercise = ({ exercise, markdown }) => {
   const [tags, setTags] = useState([]);
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation(['exercises']);
   const translations = exercise?.translations || { es: '', en: '' };
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
@@ -515,21 +513,6 @@ const Exercise = ({ exercise, markdown }) => {
 
     if (redirect) {
       router.push(redirect?.destination);
-    } else {
-      const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
-      const aliasList = await alias.json();
-      const redirectSlug = aliasList[slug] || slug;
-      const dataRedirect = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
-      const redirectResults = await dataRedirect.json();
-
-      const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-      const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || exercise?.slug || slug}`;
-      const aliasRedirect = aliasList[slug] !== undefined && userPathName;
-      const pagePath = 'interactive-exercise';
-
-      publicRedirectByAsset({
-        router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
-      });
     }
   }, [router, router.locale, translations]);
 
@@ -550,7 +533,9 @@ const Exercise = ({ exercise, markdown }) => {
 
   return (
     <>
-      <Script async defer src="https://buttons.github.io/buttons.js" />
+      {exercise?.title && (
+        <Script async defer src="https://buttons.github.io/buttons.js" />
+      )}
       <Box
         background={useColorModeValue('featuredLight', 'featuredDark')}
         // padding={{ base: '4%', lg: '2% 10%' }}
@@ -569,6 +554,7 @@ const Exercise = ({ exercise, markdown }) => {
               letterSpacing="0.05em"
               fontWeight="700"
               paddingBottom="10px"
+              width="fit-content"
             >
               {`← ${t('exercises:backToExercises')}`}
             </Link>
@@ -604,7 +590,9 @@ const Exercise = ({ exercise, markdown }) => {
               {exercise.sub_title}
             </Text>
             )}
-            <a className="github-button" href={exercise?.url} data-icon="octicon-star" aria-label="Star ntkme/github-buttons on GitHub">Star</a>
+            {exercise?.title && (
+              <a className="github-button" href={exercise?.url} data-icon="octicon-star" aria-label="Star ntkme/github-buttons on GitHub">Star</a>
+            )}
             {exercise?.author && (
             <Text size="md" textAlign="left" my="10px" px="0px">
               {`${t('exercises:created')} ${exercise.author.first_name} ${exercise.author.last_name}`}

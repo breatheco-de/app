@@ -96,6 +96,7 @@ const Helmet = ({
 
       {translationsExists && Object.keys(translations).map((lang) => {
         const language = lang === 'us' ? 'en' : lang;
+
         const locationLang = {
           us: 'en-US',
           en: 'en-US',

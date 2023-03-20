@@ -426,7 +426,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
 
 NavbarWithSubNavigation.propTypes = {
   haveSession: PropTypes.bool,
-  translations: PropTypes.objectOf(PropTypes.string),
+  translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   pageProps: PropTypes.objectOf(PropTypes.any),
 };
 NavbarWithSubNavigation.defaultProps = {
