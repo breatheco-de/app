@@ -179,6 +179,7 @@ const LiveEvent = ({
               host={BREATHECODE_HOST}
               nearestEvent={nearestEvent}
               isLive={isLive}
+              textTime={textTime}
               stTranslation={stTranslation}
               mainClasses={mainClasses}
             />
