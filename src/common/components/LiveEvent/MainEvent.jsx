@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Box, Divider, Tag, TagLabel, useToast } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -12,6 +13,7 @@ const MainEvent = ({
   index, event, mainEvents, getOtherEvents, isLiveOrStarting, getLiveIcon, host, nearestEvent,
   isLive, stTranslation, mainClasses, textTime,
 }) => {
+  const [time, setTime] = useState('');
   const { t, lang } = useTranslation('live-event');
   const limit = 42;
   const truncatedText = event?.title?.length > limit ? `${event?.title?.substring(0, limit)}...` : event?.title;
@@ -22,6 +24,13 @@ const MainEvent = ({
   const accessToken = getStorageItem('accessToken');
   const liveStartsAtDate = new Date(event.starting_at);
   const liveEndsAtDate = new Date(event.ending_at);
+
+  useEffect(() => {
+    const interval = setInterval(() => setTime(textTime(liveStartsAtDate, liveEndsAtDate)));
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <>
@@ -165,7 +174,7 @@ const MainEvent = ({
                 marginBottom="0"
                 marginTop="0"
               >
-                {textTime(liveStartsAtDate, liveEndsAtDate)}
+                {time}
               </Text>
             )}
           </Box>
