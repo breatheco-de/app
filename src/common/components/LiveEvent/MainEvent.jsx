@@ -158,7 +158,7 @@ const MainEvent = ({
               </Tag>
             ) : (
               <Text
-                fontSize="14px"
+                fontSize="13px"
                 lineHeight="18px"
                 fontWeight={500}
                 color={disabledColor}
