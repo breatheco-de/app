@@ -50,8 +50,6 @@ export async function getStaticProps({ params, locale, previewData }) {
     };
   }
 
-  const { title, description, image, type } = page?.data;
-
   const translationArray = [
     {
       value: 'us',
