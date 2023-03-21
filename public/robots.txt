@@ -1,7 +1,0 @@
-User-agent: *
-Disallow: /example
-
-User-agent: *
-Allow: /
-
-Sitemap: https://4geeks.com/sitemap.xml

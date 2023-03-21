@@ -128,18 +128,19 @@ const ProjectList = forwardRef(({
           const isProject = isDynamic && getAssetPath(ex) === 'interactive-coding-tutorial';
           const isHowTo = isDynamic && getAssetPath(ex) === 'how-to';
 
+          const lang = ex?.lang === 'us' ? '' : `/${ex?.lang}`;
           const getLink = () => {
             if (isLesson) {
-              return `/lesson/${ex.slug}`;
+              return `${lang}/lesson/${ex.slug}`;
             }
             if (isExercise) {
-              return `/interactive-exercise/${ex.slug}`;
+              return `${lang}/interactive-exercise/${ex.slug}`;
             }
             if (isProject) {
-              return `/interactive-coding-tutorial/${ex.difficulty}/${ex.slug}`;
+              return `${lang}/interactive-coding-tutorial/${ex.slug}`;
             }
             if (isHowTo) {
-              return `/how-to/${ex.slug}`;
+              return `${lang}/how-to/${ex.slug}`;
             }
             return `/${projectPath}${checkIsPathDifficulty(ex.difficulty)}/${ex.slug}`;
           };

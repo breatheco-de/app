@@ -138,7 +138,7 @@ MobileNav.propTypes = {
       ),
     }),
   ),
-  translations: PropTypes.objectOf(PropTypes.any),
+  translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   readSyllabus: PropTypes.arrayOf(PropTypes.any),
 };
 

@@ -1,0 +1,7 @@
+[
+  {
+    "source": "/alias/lesson",
+    "type": "LESSON",
+    "destination": "/destination/lesson"
+  }
+]
