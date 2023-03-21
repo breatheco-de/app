@@ -1,5 +1,5 @@
 import React from 'react';
-import { addMinutes, addDays, subHours, addHours, subMinutes, subDays } from 'date-fns';
+import { addDays } from 'date-fns';
 import PublicCourseCard from '../common/components/PublicCourseCard';
 
 export default {
@@ -13,12 +13,12 @@ export default {
     },
     programName: {
       control: {
-        type: 'string'
+        type: 'text'
       }
     },
     programDescription: {
       control: {
-        type: 'string'
+        type: 'text'
       }
     },
     startsIn: {
@@ -26,9 +26,19 @@ export default {
         type: 'date'
       }
     },
-    icon: {
+    icon_url: {
       control: {
-        type: 'string'
+        type: 'text'
+      }
+    },
+    iconBackground: {
+      control: {
+        type: 'text'
+      }
+    },
+    subscriptionStatus: {
+      control: {
+        type: 'text'
       }
     },
     syllabusContent: {
@@ -130,7 +140,7 @@ Default.args = {
   programName: 'A.I & Machine Learning',
   programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
   startsIn: new Date(addDays(new Date(), 3)),
-  icon: "coding",
+  icon_url: "https://www.iconpacks.net/icons/2/free-settings-icon-3110-thumb.png",
   iconBackground: "blue.default",
   syllabusContent: {
     totalLessons: 30,
@@ -151,7 +161,7 @@ withDescription.args = {
   programName: 'Data Science',
   programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
   startsIn: new Date(addDays(new Date(), 3)),
-  icon: "brain",
+  icon_url: "https://www.freeiconspng.com/thumbs/brain-icon-png/brain-2.png",
   iconBackground: "#25BF6C",
   subscriptionStatus: 'ACTIVE',
   courseProgress: 7,

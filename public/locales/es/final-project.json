@@ -31,6 +31,16 @@
     "screenshot-hint": "Tu página de inicio o gif animado usando el proyecto.",
     "add-participants": "Añadir miembros",
     "participants-hint": "Estudiantes que participaron en este proyecto.",
-    "button": "Subir proyecto final"
+    "button": "Subir proyecto final",
+    "confirmation": {
+      "title": "¿Estas seguro?",
+      "text": "Si te quitas a ti mismo de este proyecto, no tendrás acceso a él, tus compañeros de equipo tendrán que agregarte de nuevo para tener acceso",
+      "confirm": "Remover",
+      "cancel": "Cancelar"
+    },
+    "warning-modal": {
+      "title": "Por favor añade otro miembro al proyecto si quieres quitarte a ti mismo",
+      "close": "Cerrar"
+    }
   }
 }
