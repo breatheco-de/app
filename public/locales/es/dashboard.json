@@ -7,6 +7,7 @@
   "backToChooseProgram": "Volver a elegir programa",
   "progressText": "Progreso en el programa",
   "whiteLabeledText": "Este curso es traído a ti gracias a nuestra alianza con esta universidad.",
+  "free-trial-msg": "Actualmente se encuentra en una prueba gratuita, algunas funciones pueden ser limitadas. ¡Actualiza tu plan para tener acceso ilimitado!",
   "modules": {
     "target-blank-title": "Abrir en nueva ventana",
     "target-blank-msg": "\"{{title}}\" abrirá la siguiente URL en una nueva ventana",

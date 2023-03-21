@@ -246,7 +246,7 @@ const profileHandlers = ({
             }
 
             if (currentOffer?.show_modal === false && offerData) {
-              router.push(`/signup?plan=${offerData?.slug}`);
+              router.push(`/checkout?plan=${offerData?.slug}`);
             }
           } else {
             toast({

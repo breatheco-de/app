@@ -21,18 +21,9 @@ export async function getStaticProps({ params, locale, previewData }) {
     es: 'es-es',
   };
 
-
   const page = await client?.getByUID('page', uid, { lang: languages[locale] })
     .then((response) => response)
     .catch(() => null);
-
-  if (!page) {
-    return {
-      notFound: true,
-    };
-  }
-
-  const { title, description, image, type } = page?.data;
 
   const translationsArr = page?.alternate_languages?.map((tr) => ({
     [tr.lang.split('-')[0]]: tr.uid,

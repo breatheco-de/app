@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Box, Button,
 } from '@chakra-ui/react';
-import { useState, Fragment } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
@@ -49,47 +49,45 @@ const ShowPrices = ({
   };
 
   const PlanCard = ({ item, i }) => (
-    <Fragment key={`${item.title} ${item?.price}`}>
-      <Box
-        key={item.title}
-        display="flex"
-        onClick={() => handleSelect(i, item)}
-        width="100%"
-        justifyContent="space-between"
-        p="22px 18px"
-        gridGap="24px"
-        cursor="pointer"
-        background={backgroundColor2}
-        border="4px solid"
-        borderColor={selectedIndex === i ? '#0097CD' : 'transparent'}
-        borderRadius="8px"
-      >
-        <Box display="flex" flexDirection="column" gridGap="12px" height="fit-content" fontWeight="400">
-          <Box fontSize="18px" fontWeight="700">
-            {item?.title}
-          </Box>
-          <Text
-            size="md"
-            fontWeight="500"
-            mb="6px"
-            dangerouslySetInnerHTML={{ __html: item?.description }}
-          />
+    <Box
+      key={`${item.title} ${item?.price}`}
+      display="flex"
+      onClick={() => handleSelect(i, item)}
+      width="100%"
+      justifyContent="space-between"
+      p="22px 18px"
+      gridGap="24px"
+      cursor="pointer"
+      background={backgroundColor2}
+      border="4px solid"
+      borderColor={selectedIndex === i ? '#0097CD' : 'transparent'}
+      borderRadius="8px"
+    >
+      <Box display="flex" flexDirection="column" width="100%" gridGap="12px" minWidth={{ base: 'none', md: '288px' }} height="fit-content" fontWeight="400">
+        <Box fontSize="18px" fontWeight="700">
+          {item?.title}
         </Box>
-
-        <Box flexShrink="0" textAlign="right" display="flex" minWidth={item.period !== 'FINANCING' && '110px'} justifyContent="center" flexDirection="column" gridGap="10px">
-          <Heading as="span" size="m" width={item.period === 'FINANCING' && 'max-content'} lineHeight="1" textTransform="uppercase" color="blue.default">
-            {item?.priceText || item?.price}
-          </Heading>
-          {item?.lastPrice && (
-            <Text lineHeight="21px" fontSize="21px" fontWeight="500" color="#A9A9A9">
-              <s>
-                {item?.lastPrice}
-              </s>
-            </Text>
-          )}
-        </Box>
+        <Text
+          size="md"
+          fontWeight="500"
+          mb="6px"
+          dangerouslySetInnerHTML={{ __html: item?.description }}
+        />
       </Box>
-    </Fragment>
+
+      <Box textAlign="right" display="flex" minWidth={item.period !== 'FINANCING' && '110px'} justifyContent="center" flexDirection="column" gridGap="10px">
+        <Heading as="span" size="m" width={item.period === 'FINANCING' && 'max-content'} lineHeight="1" textTransform="uppercase" color="blue.default">
+          {item?.priceText || item?.price}
+        </Heading>
+        {item?.lastPrice && (
+          <Text lineHeight="21px" fontSize="21px" fontWeight="500" color="#A9A9A9">
+            <s>
+              {item?.lastPrice}
+            </s>
+          </Text>
+        )}
+      </Box>
+    </Box>
   );
 
   const getTabColor = (index, tabIsAvailable = true) => {
@@ -180,7 +178,7 @@ const ShowPrices = ({
             disabled={!selectedItem && true}
             onClick={() => {
               if (handleUpgrade === false) {
-                router.push(`/signup?syllabus=coding-introduction&plan=${selectedItem?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
+                router.push(`/checkout?syllabus=coding-introduction&plan=${selectedItem?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
               } else {
                 handleUpgrade(selectedItem);
               }

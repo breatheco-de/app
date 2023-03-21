@@ -211,6 +211,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
               width="105px"
               height="35px"
               objectFit="cover"
+              style={{ borderRadius: '3px' }}
               alt="4Geeks logo"
             />
           </NextChakraLink>

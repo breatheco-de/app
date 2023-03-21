@@ -219,7 +219,7 @@ const ModalInfo = ({
                   </Box>
                 )}
 
-                {disableInput && (
+                {disableInput && (linkText || link) && (
                   <Box padding="18px 0 0 0">
                     <Text size="l" fontWeight="bold" color={commonTextColor}>
                       {linkInfo}

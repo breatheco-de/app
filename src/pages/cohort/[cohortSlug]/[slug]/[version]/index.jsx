@@ -43,6 +43,8 @@ import modifyEnv from '../../../../../../modifyEnv';
 import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
 import FinalProjectModal from '../../../../../common/components/FinalProject/Modal';
+import ButtonHandler from '../../../../../js_modules/profile/Subscriptions/ButtonHandler';
+import UpgradeModal from '../../../../../js_modules/profile/Subscriptions/UpgradeModal';
 
 const Dashboard = () => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -57,6 +59,10 @@ const Dashboard = () => {
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
+  const [offerProps, setOfferProps] = useState({});
+  const [subscriptionProps, setSubscriptionProps] = useState({});
+
   const [, setSortedAssignments] = usePersistent('sortedAssignments', []);
   const flags = useFlags();
   const [searchValue, setSearchValue] = useState(router.query.search || '');
@@ -69,6 +75,7 @@ const Dashboard = () => {
   const { user, choose, isLoading } = useAuth();
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const [currentCohortProps, setCurrentCohortProps] = useState({});
+  const [subscriptionData, setSubscriptionData] = useState(null);
   const {
     cohortSession, sortedAssignments, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, taskTodo, taskTodoState,
@@ -144,6 +151,10 @@ const Dashboard = () => {
         });
       });
   };
+  const onOpenUpgrade = (data) => {
+    setOfferProps(data);
+    setUpgradeModalIsOpen(true);
+  };
 
   const removeUnsyncedTasks = async () => {
     const idsParsed = ((taskCohortNull !== undefined) && taskCohortNull).map((task) => task.id).join(','); // 23,2,45,45
@@ -190,6 +201,28 @@ const Dashboard = () => {
       .then((res) => {
         const sortDateToLiveClass = sortToNearestTodayDate(res?.data);
         setLiveClass(sortDateToLiveClass[0]);
+      });
+
+    bc.payment({
+      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+    }).subscriptions()
+      .then(async ({ data }) => {
+        const currentPlan = data?.plan_financings?.find((s) => s?.selected_cohort?.slug === cohortSlug);
+        const currentSubscription = data?.subscriptions?.find((s) => s?.selected_cohort?.slug === cohortSlug);
+        const planData = currentPlan || currentSubscription;
+        const planSlug = planData?.plans?.[0]?.slug;
+        const planOffer = await bc.payment({
+          original_plan: planSlug,
+        }).planOffer().then((res) => res?.data);
+
+        const currentPlanOffer = planOffer?.find((p) => p?.original_plan?.slug === planSlug);
+
+        const finalData = {
+          ...planData,
+          planOfferExists: currentPlanOffer !== undefined,
+        };
+
+        setSubscriptionData(finalData);
       });
   }, []);
 
@@ -288,6 +321,12 @@ const Dashboard = () => {
 
   return (
     <>
+      <UpgradeModal
+        upgradeModalIsOpen={upgradeModalIsOpen}
+        setUpgradeModalIsOpen={setUpgradeModalIsOpen}
+        subscriptionProps={subscriptionProps}
+        offerProps={offerProps}
+      />
       {getMandatoryProjects().length > 0 && (
         <AlertMessage
           full
@@ -356,6 +395,30 @@ const Dashboard = () => {
           }}
         >
           <Box width="100%" minW={{ base: 'auto', md: 'clamp(300px, 60vw, 770px)' }}>
+            {subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists && (
+              <AlertMessage
+                full
+                type="warning"
+                style={{ justifyContent: 'center' }}
+                borderRadius="3px"
+                margin="-28px 0 20px 0"
+                color="black"
+                flexDirection={{ base: 'column', sm: 'row', lg: 'row' }}
+              >
+                <Text size="l">
+                  {t('free-trial-msg')}
+                </Text>
+                <ButtonHandler
+                  subscription={subscriptionData}
+                  onOpenUpgrade={onOpenUpgrade}
+                  setSubscriptionProps={setSubscriptionProps}
+                  onOpenCancelSubscription={() => {}}
+                  padding="0 2rem"
+                  variant="default"
+                  color="white"
+                />
+              </AlertMessage>
+            )}
             {(cohortSession?.syllabus_version?.name || cohortProgram.name) ? (
               <Heading as="h1" size="xl">
                 {cohortSession?.syllabus_version?.name || cohortProgram?.name}

@@ -11,7 +11,7 @@ import CustomTheme from '../../../../styles/theme';
 import Link from '../NextChakraLink';
 import Text from '../Text';
 import Icon from '../Icon';
-import { isDateMoreThanAnyDaysAgo } from '../../../utils';
+import { isDateMoreThanAnyDaysAgo, isValidDate } from '../../../utils';
 import OtherEvents from './OtherEvents';
 import modifyEnv from '../../../../modifyEnv';
 import MainEvent from './MainEvent';
@@ -92,10 +92,11 @@ const LiveEvent = ({
   };
 
   const isLiveOrStarting = (start, end) => {
+    const isValidDates = isValidDate(start) && isValidDate(end);
     const ended = end - new Date() <= 0;
     if (ended) return false;
 
-    const interval = intervalToDuration({ end: new Date(), start });
+    const interval = isValidDates && intervalToDuration({ end: new Date(), start: new Date(start) });
     const {
       days, months, hours, years, minutes,
     } = interval;
@@ -114,7 +115,7 @@ const LiveEvent = ({
     if (mainClasses.length === 0 && nearestEvent) {
       return nearestEvent?.icon || 'group';
     }
-    if (isLiveOrStarting(new Date(event.starting_at), new Date(event.ending_at))) {
+    if (isLiveOrStarting(new Date(event?.starting_at), new Date(event.ending_at))) {
       return 'live-event';
     }
     return 'live-event-opaque';
