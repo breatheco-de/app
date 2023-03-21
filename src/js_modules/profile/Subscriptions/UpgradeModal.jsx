@@ -6,6 +6,7 @@ import Icon from '../../../common/components/Icon';
 import ShowPrices from '../../../common/components/ShowPrices';
 import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
+import { parseQuerys } from '../../../utils/url';
 
 const UpgradeModal = ({ upgradeModalIsOpen, setUpgradeModalIsOpen, subscriptionProps, offerProps }) => {
   const { lightColor, modal } = useStyle();
@@ -111,7 +112,17 @@ const UpgradeModal = ({ upgradeModalIsOpen, setUpgradeModalIsOpen, subscriptionP
               financeTextLabel={t('subscription.upgrade-modal.finance')}
               handleUpgrade={(item) => {
                 // console.log('handleUpgrade:', item);
-                router.push(`checkout?plan=${item?.suggested_plan?.slug}`);
+                const hasAvailableCohorts = item?.suggested_plan?.has_available_cohorts;
+                const period = item?.period;
+
+                const querys = parseQuerys({
+                  plan: item?.suggested_plan?.slug,
+                  has_available_cohorts: hasAvailableCohorts,
+                  price: item?.price,
+                  period,
+                  qty: undefined,
+                });
+                router.push(`/checkout${querys}`);
               }}
               // onSelect={(item) => {
               //   console.log('selected:', item);
