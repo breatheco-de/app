@@ -30,7 +30,7 @@ export async function getStaticProps({ params, locale, previewData }) {
     ...translationsArr?.reduce((acc, curr) => ({ ...acc, ...curr }), {}),
   };
 
-  const isCurrenLang = translations?.[locale] === uid;
+  const isCurrenLang = page?.lang?.split('-')?.[0] === locale;
 
   if (!page || !isCurrenLang) {
     return {
