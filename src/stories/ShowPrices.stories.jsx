@@ -62,6 +62,32 @@ const list = [
     "type": "pro",
     "show": true,
     "title": "One time payment",
+    "price": "$200",
+    "offerTitle": "Limited offer",
+    "description": "Full access to all features for the duration of the course",
+    "highlightText": "",
+    "bullets": {
+      "title": "What you will get",
+      "list": [
+        {
+          "title": "Unlimited access to group masterclasses"
+        },
+        {
+          "title": "Unlimited access to workshops"
+        },
+        {
+          "title": "Unlimited access to course content"
+        },
+        {
+          "title": "Certificate endorsed by industry leaders"
+        }
+      ]
+    },
+  },
+  {
+    "type": "pro",
+    "show": true,
+    "title": "One time payment",
     "price": "$199",
     "lastPrice": "$399",
     "offerTitle": "Limited offer",
@@ -84,10 +110,6 @@ const list = [
         }
       ]
     },
-    "button": {
-      "title": "Start your free trial",
-      "link": "#enroll"
-    }
   },
   {
     "type": "trial",
@@ -125,7 +147,7 @@ const finance = [
     "type": "schoolarship-t1",
     "show": true,
     "title": "scholarship level 1",
-    "price": "$70",
+    "price": "$45 x 5",
     "months": "3 months",
     "highlightText": "",
     "description": "Full access to all features for the duration of the course.",
@@ -146,16 +168,12 @@ const finance = [
         }
       ]
     },
-    "button": {
-      "title": "Enroll now",
-      "link": "#enroll"
-    }
   },
   {
     "type": "schoolarship-t2",
     "show": true,
     "title": "scholarship level 2",
-    "price": "$50",
+    "price": "$70 x 3",
     "months": "5 months",
     "highlightText": "",
     "description": "Full access to all features for the duration of the course.",
@@ -176,10 +194,6 @@ const finance = [
         }
       ]
     },
-    "button": {
-      "title": "Enroll now",
-      "link": "#enroll"
-    }
   },
   {
     "type": "schoolarship-trial",
@@ -207,11 +221,62 @@ const finance = [
         }
       ]
     },
-    "button": {
-      "title": "Enroll now",
-      "link": "#enroll"
-    }
   }
+];
+
+const financeNoFree = [
+  {
+    "type": "schoolarship-t1",
+    "show": true,
+    "title": "scholarship level 1",
+    "price": "$45 x 5",
+    "months": "3 months",
+    "highlightText": "",
+    "description": "Full access to all features for the duration of the course.",
+    "bullets": {
+      "title": "What you will get",
+      "list": [
+        {
+          "title": "scholarship level 1 - featured 1"
+        },
+        {
+          "title": "scholarship level 1 - featured 2"
+        },
+        {
+          "title": "scholarship level 1 - featured 3"
+        },
+        {
+          "title": "scholarship level 1 - featured 4"
+        }
+      ]
+    },
+  },
+  {
+    "type": "schoolarship-t2",
+    "show": true,
+    "title": "scholarship level 2",
+    "price": "$70 x 3",
+    "months": "5 months",
+    "highlightText": "",
+    "description": "Full access to all features for the duration of the course.",
+    "bullets": {
+      "title": "What you will get",
+      "list": [
+        {
+          "title": "scholarship level 2 - featured 1"
+        },
+        {
+          "title": "scholarship level 2 - featured 2"
+        },
+        {
+          "title": "scholarship level 2 - featured 3"
+        },
+        {
+          "title": "scholarship level 2 - featured 4"
+        }
+      ]
+    },
+  },
 ];
 
 const noConsumablesList = [
@@ -240,10 +305,6 @@ const noConsumablesList = [
         }
       ]
     },
-    "button": {
-      "title": "Start your free trial",
-      "link": "#enroll"
-    }
   },
   {
     "type": "pro",
@@ -270,10 +331,6 @@ const noConsumablesList = [
         }
       ]
     },
-    "button": {
-      "title": "Start your free trial",
-      "link": "#enroll"
-    }
   },
 ];
 
@@ -287,6 +344,41 @@ Default.args = {
   finance,
 };
 
+export const OnePaymentOnly = Component.bind({});
+OnePaymentOnly.args = {
+  title: 'Choose your plan',
+  onePaymentLabel: 'One payment',
+  financeTextLabel: 'Finance',
+  notReady: 'Not ready to commit?',
+  list: [{
+    "type": "pro",
+    "show": true,
+    "title": "Monthly Payment",
+    "price": "$200",
+    "offerTitle": "Limited offer",
+    "description": "Full access to all features for the duration of the course",
+    "highlightText": "",
+    "bullets": {
+      "title": "What you will get",
+      "list": [
+        {
+          "title": "Unlimited access to group masterclasses"
+        },
+        {
+          "title": "Unlimited access to workshops"
+        },
+        {
+          "title": "Unlimited access to course content"
+        },
+        {
+          "title": "Certificate endorsed by industry leaders"
+        }
+      ]
+    },
+  }],
+  finance: financeNoFree,
+};
+
 export const OutOfConsumables = Component.bind({});
 OutOfConsumables.args = {
   title: 'Choose your plan',
@@ -295,4 +387,14 @@ OutOfConsumables.args = {
   notReady: 'Not ready to commit?',
   list: noConsumablesList,
   outOfConsumables: true,
+};
+
+export const WithFreeTrial = Component.bind({});
+WithFreeTrial.args = {
+  title: 'Choose your plan',
+  onePaymentLabel: 'One payment',
+  financeTextLabel: 'Finance',
+  notReady: 'Not ready to commit?',
+  list,
+  outOfConsumables: false,
 };

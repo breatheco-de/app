@@ -118,7 +118,7 @@ const ShowPrices = ({
         <Heading as="h2" size="sm">
           {title || data?.pricing['choose-plan']}
         </Heading>
-        {!outOfConsumables && (
+        {financeSelected[1] && (
           <Box display="flex">
             <Box
               p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
