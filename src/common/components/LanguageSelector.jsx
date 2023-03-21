@@ -87,6 +87,7 @@ const LanguageSelector = ({ display, translations }) => {
             const value = translationsPropsExists ? lang?.value : l.value;
             const label = translationsPropsExists ? lang?.label : l.label;
             const path = translationsPropsExists ? l?.link : router.asPath;
+
             return (
               <NextChakraLink
                 width="100%"
@@ -116,7 +117,7 @@ const LanguageSelector = ({ display, translations }) => {
 };
 
 LanguageSelector.propTypes = {
-  translations: PropTypes.objectOf(PropTypes.any),
+  translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   display: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
 };
 

@@ -21,6 +21,7 @@ export async function getStaticProps({ params, locale, previewData }) {
     es: 'es-es',
   };
 
+
   const page = await client?.getByUID('page', uid, { lang: languages[locale] })
     .then((response) => response)
     .catch(() => null);
@@ -40,6 +41,16 @@ export async function getStaticProps({ params, locale, previewData }) {
   const translations = {
     ...translationsArr?.reduce((acc, curr) => ({ ...acc, ...curr }), {}),
   };
+
+  const isCurrenLang = page?.lang?.split('-')?.[0] === locale;
+
+  if (!page || !isCurrenLang) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const { title, description, image, type } = page?.data;
 
   const translationArray = [
     {
