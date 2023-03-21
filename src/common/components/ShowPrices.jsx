@@ -64,7 +64,7 @@ const ShowPrices = ({
         borderColor={selectedIndex === i ? '#0097CD' : 'transparent'}
         borderRadius="8px"
       >
-        <Box display="flex" flexDirection="column" width="100%" gridGap="12px" minWidth={{ base: 'none', md: '288px' }} height="fit-content" fontWeight="400">
+        <Box display="flex" flexDirection="column" gridGap="12px" height="fit-content" fontWeight="400">
           <Box fontSize="18px" fontWeight="700">
             {item?.title}
           </Box>
@@ -76,7 +76,7 @@ const ShowPrices = ({
           />
         </Box>
 
-        <Box textAlign="right" display="flex" minWidth={item.period !== 'FINANCING' && '110px'} justifyContent="center" flexDirection="column" gridGap="10px">
+        <Box flexShrink="0" textAlign="right" display="flex" minWidth={item.period !== 'FINANCING' && '110px'} justifyContent="center" flexDirection="column" gridGap="10px">
           <Heading as="span" size="m" width={item.period === 'FINANCING' && 'max-content'} lineHeight="1" textTransform="uppercase" color="blue.default">
             {item?.priceText || item?.price}
           </Heading>
@@ -120,7 +120,7 @@ const ShowPrices = ({
         <Heading as="h2" size="sm">
           {title || data?.pricing['choose-plan']}
         </Heading>
-        {!outOfConsumables && (
+        {financeSelected[1] && (
           <Box display="flex">
             <Box
               p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
