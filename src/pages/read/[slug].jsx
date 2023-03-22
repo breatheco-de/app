@@ -107,7 +107,12 @@ const Read = ({ data }) => {
         title: currentTranslation.title,
       };
     }
-    return {};
+    return {
+      slug: lesson?.slug,
+      title: lesson?.title,
+      locale: 'en',
+      link: `/lesson/${lesson?.slug}`,
+    };
   };
 
   return (
@@ -231,8 +236,9 @@ const Read = ({ data }) => {
                 return (
                   <Link
                     key={`${translationProps?.slug}-${translationProps?.title}`}
-                    href={translationProps?.link || ''}
+                    href={translationProps?.link}
                     fontSize="15px"
+                    locale={translationProps?.locale || ''}
                     width="fit-content"
                     height="fit-content"
                     color={useColorModeValue('blue.default', 'blue.300')}
