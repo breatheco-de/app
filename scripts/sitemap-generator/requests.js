@@ -1,5 +1,8 @@
 /* eslint-disable no-await-in-loop */
 const { default: axios } = require('axios');
+require('dotenv').config({
+  path: '.env.production',
+});
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
@@ -13,6 +16,15 @@ const getPrismicPages = () => {
       console.error('SITEMAP: Error fetching Prismic pages');
     });
   return data;
+};
+
+const getTechonologyAssets = async (slug) => {
+  const resp = axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset?limit=9000&technologies=${slug}`)
+    .then((res) => res.data.results)
+    .catch(() => {
+      console.error('SITEMAP: Error fetching Technology Assets');
+    });
+  return resp;
 };
 
 const getReadPages = () => {
@@ -54,13 +66,23 @@ const getAsset = async (type) => {
 };
 
 const getLandingTechnologies = () => {
-  const technologies = axios.get(`${BREATHECODE_HOST}/v1/registry/academy/technology`, {
+  const technologies = axios.get(`${BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000`, {
     headers: {
       Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
       Academy: 4,
     },
   })
-    .then((res) => res.data)
+    .then((res) => {
+      const formatedWithAssets = res.data.results.map(async (tech) => {
+        const assets = await getTechonologyAssets(tech?.slug);
+        return { ...tech, assets };
+      });
+
+      const technologiesWithAssets = Promise.all(formatedWithAssets).then(
+        (data) => data.filter((tech) => tech?.assets?.length > 0),
+      );
+      return technologiesWithAssets;
+    })
     .catch(() => {
       console.error('SITEMAP: Error fetching Technologies pages');
     });
@@ -73,4 +95,5 @@ module.exports = {
   getPrismicPages,
   getReadPages,
   getLandingTechnologies,
+  getTechonologyAssets,
 };
