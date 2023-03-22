@@ -180,6 +180,7 @@ const LiveEvent = ({
         >
           {mainEvents.map((event, index) => (
             <MainEvent
+              key={event.id}
               index={index}
               event={event}
               mainEvents={mainEvents}
@@ -277,12 +278,18 @@ const LiveEvent = ({
             setIsOpen(!isOpen);
           }}
         >
-          {getOtherEvents().filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ending_at)))?.length !== 0 && (
-            <Box borderRadius="full" background="none" className="pulse-red" width="16px" height="16px" display="inline-block" marginRight="5px">
-              <Icon width="16px" height="16px" icon="on-live" />
-            </Box>
+          {getOtherEvents().filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ending_at)))?.length !== 0 ? (
+            <>
+              <Box borderRadius="full" background="none" className="pulse-red" width="16px" height="16px" display="inline-block" marginRight="5px">
+                <Icon width="16px" height="16px" icon="on-live" />
+              </Box>
+              {stTranslation ? stTranslation[lang]['live-event']?.['other-live-events-now'] : t('other-live-events-now')}
+            </>
+          ) : (
+            <>
+              {stTranslation ? stTranslation[lang]['live-event'].upcoming : t('upcoming')}
+            </>
           )}
-          {stTranslation ? stTranslation[lang]['live-event'].upcoming : t('upcoming')}
           {isOpen ? (<ChevronUpIcon w={6} h={7} />) : (<ChevronDownIcon w={6} h={7} />)}
         </Button>
       )}
