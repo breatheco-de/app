@@ -4,28 +4,34 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import modifyEnv from '../../../../modifyEnv';
-import { getStorageItem } from '../../../utils';
+import { getStorageItem, lengthOfString } from '../../../utils';
 import useStyle from '../../hooks/useStyle';
 import CustomTheme from '../../../../styles/theme';
 import Icon from '../Icon';
 import Link from '../NextChakraLink';
 import Text from '../Text';
 
-const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, stTranslation }) => {
+const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stTranslation }) => {
   const { t, lang } = useTranslation('live-event');
   const { hexColor, disabledColor, fontColor } = useStyle();
   const accessToken = getStorageItem('accessToken');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-  const limit = 42;
+  const limit = 40;
 
   return events.map((event) => {
     const [time, setTime] = useState('');
+    const titleLength = lengthOfString(event?.title);
     const startsAt = event?.starting_at && new Date(event.starting_at);
     const endsAt = event?.ending_at && new Date(event.ending_at);
-    const truncatedText = event?.title.length > limit ? `${event?.title?.substring(0, limit)}...` : event?.title;
+    const truncatedText = titleLength > limit ? `${event?.title?.substring(0, limit)}...` : event?.title;
 
     useEffect(() => {
-      const interval = setInterval(() => setTime(textTime(startsAt, endsAt)));
+      setTime(textTime(startsAt, endsAt));
+
+      const interval = setInterval(() => {
+        setTime(textTime(startsAt, endsAt));
+      }, 60000);
+
       return () => {
         clearInterval(interval);
       };
@@ -98,7 +104,7 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, stTranslation
           </Box>
         </Box>
         <Box marginTop="10px" display="flex" justifyContent="space-between">
-          {event.type && (
+          {(event?.type || subLabel) && (
             <Tag
               size="sm"
               borderRadius="full"
@@ -114,7 +120,7 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, stTranslation
                 fontWeight="700"
                 color={CustomTheme.colors.success}
               >
-                {event.type}
+                {event?.type || subLabel}
               </TagLabel>
             </Tag>
           )}

@@ -4,22 +4,16 @@ import {
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
-import { formatDuration, intervalToDuration } from 'date-fns';
-import { es, en } from 'date-fns/locale';
+import { intervalToDuration } from 'date-fns';
 import useTranslation from 'next-translate/useTranslation';
 import CustomTheme from '../../../../styles/theme';
 import Link from '../NextChakraLink';
 import Text from '../Text';
 import Icon from '../Icon';
-import { isDateMoreThanAnyDaysAgo } from '../../../utils';
+import { isValidDate } from '../../../utils';
 import OtherEvents from './OtherEvents';
 import modifyEnv from '../../../../modifyEnv';
 import MainEvent from './MainEvent';
-
-const availableLanguages = {
-  es,
-  en,
-};
 
 const LiveEvent = ({
   mainClasses,
@@ -51,24 +45,40 @@ const LiveEvent = ({
     return otherEventsSorted;
   };
 
-  const formatDistanceLocale = {
-    en: { xMonths: '{{count}} m', xWeeks: '{{count}} w', xDays: '{{count}} d', xHours: '{{count}} hr', xMinutes: '{{count}} min' },
-    es: { xMonths: '{{count}} m', xWeeks: '{{count}} sem', xDays: '{{count}} d', xHours: '{{count}} hr', xMinutes: '{{count}} min' },
-  };
-  const shortEnLocale = { formatDistance: (token, count) => (formatDistanceLocale[lang][token] ? formatDistanceLocale[lang][token].replace('{{count}}', count) : availableLanguages[lang]) };
-
-  const formatTimeString = (start, isMoreThan2Days = false) => {
-    const duration = intervalToDuration({
+  const formatTimeString = (start) => {
+    const isValidDates = isValidDate(start);
+    const duration = isValidDates && intervalToDuration({
       end: new Date(),
       start,
     });
 
-    const formated = formatDuration(duration,
-      {
-        format: !isMoreThan2Days ? ['months', 'weeks', 'days', 'hours', 'minutes'] : ['months', 'weeks', 'days'],
-        delimiter: ', ',
-        locale: shortEnLocale,
-      });
+    const formatDurationString = () => {
+      const { months, days, hours, minutes } = duration;
+      if (months >= 1) {
+        return months > 1
+          ? stTranslation?.[lang]?.['live-event']?.['start-months']?.replace('{{time}}', months) || t('start-months', { time: months })
+          : stTranslation?.[lang]?.['live-event']?.['start-month']?.replace('{{time}}', months) || t('start-month', { time: months });
+      }
+      if (days >= 1 && months === 0) {
+        return days > 1
+          ? stTranslation?.[lang]?.['live-event']?.['start-days']?.replace('{{time}}', days) || t('start-days', { time: days })
+          : stTranslation?.[lang]?.['live-event']?.['start-day']?.replace('{{time}}', days) || t('start-day', { time: days });
+      }
+      if (hours >= 1 && days === 0 && months === 0) {
+        return hours > 1
+          ? stTranslation?.[lang]?.['live-event']?.['start-hours']?.replace('{{time}}', hours) || t('start-hours', { time: hours || 0 })
+          : stTranslation?.[lang]?.['live-event']?.['start-hour']?.replace('{{time}}', hours) || t('start-hour', { time: hours || 0 });
+      }
+      if (minutes >= 1 && hours === 0 && days === 0 && months === 0) {
+        return minutes > 1
+          ? stTranslation?.[lang]?.['live-event']?.['start-minutes']?.replace('{{time}}', minutes) || t('start-minutes', { time: minutes || 0 })
+          : stTranslation?.[lang]?.['live-event']?.['start-minute']?.replace('{{time}}', minutes) || t('start-minute', { time: minutes || 0 });
+      }
+
+      return '';
+    };
+
+    const formated = formatDurationString();
 
     if (formated === '') return stTranslation ? stTranslation[lang]['live-event']['few-seconds'] : t('few-seconds');
     return formated;
@@ -78,13 +88,12 @@ const LiveEvent = ({
     const started = start - new Date() <= startingSoonDelta;
     const ended = end - new Date() <= 0;
     let formatedTime;
-    const isMoreThan2Days = isDateMoreThanAnyDaysAgo(start, 2);
 
     if (ended) {
       formatedTime = formatTimeString(end);
       return stTranslation ? stTranslation[lang]['live-event'].ended.replace('{{time}}', formatedTime) : t('ended', { time: formatedTime });
     }
-    formatedTime = formatTimeString(start, isMoreThan2Days);
+    formatedTime = formatTimeString(start);
     if (started) {
       return stTranslation ? stTranslation[lang]['live-event'].started.replace('{{time}}', formatedTime) : t('started', { time: formatedTime });
     }
@@ -92,10 +101,11 @@ const LiveEvent = ({
   };
 
   const isLiveOrStarting = (start, end) => {
+    const isValidDates = isValidDate(start) && isValidDate(end);
     const ended = end - new Date() <= 0;
     if (ended) return false;
 
-    const interval = intervalToDuration({ end: new Date(), start });
+    const interval = isValidDates && intervalToDuration({ end: new Date(), start: new Date(start) });
     const {
       days, months, hours, years, minutes,
     } = interval;
@@ -114,7 +124,7 @@ const LiveEvent = ({
     if (mainClasses.length === 0 && nearestEvent) {
       return nearestEvent?.icon || 'group';
     }
-    if (isLiveOrStarting(new Date(event.starting_at), new Date(event.ending_at))) {
+    if (isLiveOrStarting(new Date(event?.starting_at), new Date(event.ending_at))) {
       return 'live-event';
     }
     return 'live-event-opaque';
@@ -170,6 +180,7 @@ const LiveEvent = ({
         >
           {mainEvents.map((event, index) => (
             <MainEvent
+              key={event.id}
               index={index}
               event={event}
               mainEvents={mainEvents}
@@ -180,6 +191,7 @@ const LiveEvent = ({
               nearestEvent={nearestEvent}
               isLive={isLive}
               textTime={textTime}
+              subLabel={t('master-class')}
               stTranslation={stTranslation}
               mainClasses={mainClasses}
             />
@@ -243,6 +255,7 @@ const LiveEvent = ({
             events={mainEvents.length !== 0 && mainClasses.length !== 0 ? otherEventsSorted : restOfEvents}
             isLiveOrStarting={isLiveOrStarting}
             isLive={isLive}
+            subLabel={t('workshop')}
             textTime={textTime}
             stTranslation={stTranslation}
           />
@@ -265,12 +278,18 @@ const LiveEvent = ({
             setIsOpen(!isOpen);
           }}
         >
-          {getOtherEvents().filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ending_at)))?.length !== 0 && (
-            <Box borderRadius="full" background="none" className="pulse-red" width="16px" height="16px" display="inline-block" marginRight="5px">
-              <Icon width="16px" height="16px" icon="on-live" />
-            </Box>
+          {getOtherEvents().filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ending_at)))?.length !== 0 ? (
+            <>
+              <Box borderRadius="full" background="none" className="pulse-red" width="16px" height="16px" display="inline-block" marginRight="5px">
+                <Icon width="16px" height="16px" icon="on-live" />
+              </Box>
+              {stTranslation ? stTranslation[lang]['live-event']?.['other-live-events-now'] : t('other-live-events-now')}
+            </>
+          ) : (
+            <>
+              {stTranslation ? stTranslation[lang]['live-event'].upcoming : t('upcoming')}
+            </>
           )}
-          {stTranslation ? stTranslation[lang]['live-event'].upcoming : t('upcoming')}
           {isOpen ? (<ChevronUpIcon w={6} h={7} />) : (<ChevronDownIcon w={6} h={7} />)}
         </Button>
       )}

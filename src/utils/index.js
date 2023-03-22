@@ -249,6 +249,7 @@ const getQueryString = (key, def) => {
 };
 
 const createArray = (length) => Array.from({ length }, (_, i) => i);
+const lengthOfString = (string) => (typeof string === 'string' ? string?.replaceAll(/\s/g, '').length : 0);
 
 const location = isWindow && window.location;
 export {
@@ -259,5 +260,5 @@ export {
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
-  createArray,
+  createArray, lengthOfString,
 };
