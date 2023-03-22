@@ -79,7 +79,7 @@ const Read = ({ data }) => {
   const router = useRouter();
   const { t } = useTranslation('read');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
-
+  const locale = router?.locale;
   const containsQueryString = (lesson) => {
     if (typeof router.query.search === 'string' && !lesson.lessons.some(
       (l) => l?.title && l.title?.toLowerCase().includes(router.query.search),
@@ -94,6 +94,21 @@ const Read = ({ data }) => {
     return moduleData.filter(containsQueryString);
   };
   const datafiltered = filteredBySearch();
+
+  const getCurrentLessonProps = (lesson) => {
+    const localePrefix = locale === 'en' ? '' : `/${locale}`;
+    const altEng = locale === 'en' ? 'us' : undefined;
+    const currentTranslation = lesson?.translations?.[locale] || lesson?.translations?.[altEng];
+
+    if (currentTranslation) {
+      return {
+        slug: currentTranslation.slug,
+        link: `${localePrefix}/lesson/${currentTranslation.slug}`,
+        title: currentTranslation.title,
+      };
+    }
+    return {};
+  };
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
@@ -210,21 +225,25 @@ const Read = ({ data }) => {
               padding="22px 30px"
               borderRadius="18px"
             >
-              {element.lessons.map((lesson) => (
-                <Link
-                  key={`${lesson.slug}-${lesson.title}`}
-                  href={`/lesson/${lesson.slug}`}
-                  fontSize="15px"
-                  width="fit-content"
-                  height="fit-content"
-                  color={useColorModeValue('blue.default', 'blue.300')}
-                  display="inline-block"
-                  letterSpacing="0.05em"
-                  fontWeight="700"
-                >
-                  {lesson.title}
-                </Link>
-              ))}
+              {element.lessons.map((lesson) => {
+                const translationProps = getCurrentLessonProps(lesson);
+
+                return (
+                  <Link
+                    key={`${translationProps?.slug}-${translationProps?.title}`}
+                    href={translationProps?.link || ''}
+                    fontSize="15px"
+                    width="fit-content"
+                    height="fit-content"
+                    color={useColorModeValue('blue.default', 'blue.300')}
+                    display="inline-block"
+                    letterSpacing="0.05em"
+                    fontWeight="700"
+                  >
+                    {translationProps?.title}
+                  </Link>
+                );
+              })}
             </Grid>
             )}
           </Box>
