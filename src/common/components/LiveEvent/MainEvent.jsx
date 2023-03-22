@@ -18,14 +18,14 @@ const MainEvent = ({
   const limit = 40;
   const titleLength = lengthOfString(event?.title);
   const truncatedText = titleLength > limit ? `${event?.title?.substring(0, limit)}...` : event?.title;
-  const truncatedTime = lengthOfString(time) > 18 ? `${time?.substring(0, 15)}...` : time;
 
+  const truncatedTime = lengthOfString(time) >= 16 ? `${time?.substring(0, 15)}...` : time;
   const toast = useToast();
   const { fontColor, disabledColor, backgroundColor2, hexColor } = useStyle();
 
   const accessToken = getStorageItem('accessToken');
-  const liveStartsAtDate = new Date(event.starting_at);
-  const liveEndsAtDate = new Date(event.ending_at);
+  const liveStartsAtDate = new Date(event?.starting_at);
+  const liveEndsAtDate = new Date(event?.ending_at);
 
   useEffect(() => {
     setTime(textTime(liveStartsAtDate, liveEndsAtDate));
@@ -33,7 +33,6 @@ const MainEvent = ({
     const interval = setInterval(() => {
       setTime(textTime(liveStartsAtDate, liveEndsAtDate));
     }, 60000);
-
     return () => {
       clearInterval(interval);
     };
@@ -44,10 +43,10 @@ const MainEvent = ({
       <Box
         display="flex"
         alignItems="center"
-        cursor={(!event.liveClassHash || isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) && 'pointer'}
+        cursor={(!event?.hash || isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) && 'pointer'}
         onClick={() => {
-          if (event.liveClassHash && isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
-            bc.events().joinLiveClass(event.liveClassHash)
+          if (event?.hash && isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
+            bc.events().joinLiveClass(event.hash)
               .then((resp) => {
                 if (resp.data?.url) {
                   window.open(resp.data?.url);
@@ -69,7 +68,7 @@ const MainEvent = ({
                 });
               });
           }
-          if (!event.liveClassHash) {
+          if (!event?.hash) {
             window.open(`${host}/v1/events/me/event/${nearestEvent?.id}/join?token=${accessToken}`);
           }
         }}

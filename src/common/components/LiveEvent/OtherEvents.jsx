@@ -24,7 +24,7 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stT
     const startsAt = event?.starting_at && new Date(event.starting_at);
     const endsAt = event?.ending_at && new Date(event.ending_at);
     const truncatedText = titleLength > limit ? `${event?.title?.substring(0, limit)}...` : event?.title;
-    const truncatedTime = lengthOfString(time) > 18 ? `${time?.substring(0, 15)}...` : time;
+    const truncatedTime = lengthOfString(time) >= 16 ? `${time?.substring(0, 15)}...` : time;
 
     useEffect(() => {
       setTime(textTime(startsAt, endsAt));
