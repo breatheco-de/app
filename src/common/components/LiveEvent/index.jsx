@@ -191,7 +191,8 @@ const LiveEvent = ({
               nearestEvent={nearestEvent}
               isLive={isLive}
               textTime={textTime}
-              subLabel={t('master-class')}
+              isWorkshop={!event?.liveClassHash}
+              subLabel={event?.liveClassHash ? t('master-class') : t('workshop')}
               stTranslation={stTranslation}
               mainClasses={mainClasses}
             />

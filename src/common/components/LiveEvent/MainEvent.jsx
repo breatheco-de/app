@@ -11,13 +11,14 @@ import { getStorageItem, lengthOfString } from '../../../utils';
 
 const MainEvent = ({
   index, event, mainEvents, getOtherEvents, isLiveOrStarting, getLiveIcon, host, nearestEvent,
-  isLive, stTranslation, mainClasses, textTime, subLabel,
+  isLive, stTranslation, mainClasses, textTime, subLabel, isWorkshop,
 }) => {
   const [time, setTime] = useState('');
   const { t, lang } = useTranslation('live-event');
   const limit = 40;
   const titleLength = lengthOfString(event?.title);
   const truncatedText = titleLength > limit ? `${event?.title?.substring(0, limit)}...` : event?.title;
+  const truncatedTime = lengthOfString(time) > 18 ? `${time?.substring(0, 15)}...` : time;
 
   const toast = useToast();
   const { fontColor, disabledColor, backgroundColor2, hexColor } = useStyle();
@@ -143,11 +144,11 @@ const MainEvent = ({
                 variant="solid"
                 colorScheme="green"
                 width="fit-content"
-                background={backgroundColor2}
+                background={isWorkshop ? 'green.light' : backgroundColor2}
               >
                 <TagLabel
                   fontWeight="700"
-                  color={hexColor.blueDefault}
+                  color={isWorkshop ? 'success' : hexColor.blueDefault}
                   opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 1 : 0.5}
                 >
                   {event?.subLabel || event?.type || subLabel}
@@ -178,8 +179,9 @@ const MainEvent = ({
                 color={disabledColor}
                 marginBottom="0"
                 marginTop="0"
+                title={time}
               >
-                {time}
+                {truncatedTime}
               </Text>
             )}
           </Box>
@@ -204,9 +206,11 @@ MainEvent.propTypes = {
   stTranslation: PropTypes.objectOf(PropTypes.any).isRequired,
   mainClasses: PropTypes.arrayOf(PropTypes.any).isRequired,
   subLabel: PropTypes.string,
+  isWorkshop: PropTypes.bool,
 };
 MainEvent.defaultProps = {
   subLabel: '',
+  isWorkshop: false,
 };
 
 export default MainEvent;
