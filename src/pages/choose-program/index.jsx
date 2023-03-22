@@ -367,9 +367,9 @@ function chooseProgram() {
                 featureReadMoreUrl={t('common:live-event.readMoreUrl')}
                 mainClasses={
                   liveClass?.hash || liveClass?.starting_at || liveClass?.ending_at ? [{
-                    liveClassHash: liveClass.hash,
-                    liveStartsAt: liveClass.starting_at,
-                    liveEndsAt: liveClass.ending_at,
+                    hash: liveClass.hash,
+                    starting_at: liveClass.starting_at,
+                    ending_at: liveClass.ending_at,
                   }] : []
                 }
                 otherEvents={events}
