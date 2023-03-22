@@ -7,16 +7,17 @@ import bc from '../../services/breathecode';
 import Icon from '../Icon';
 import useStyle from '../../hooks/useStyle';
 import CustomTheme from '../../../../styles/theme';
-import { getStorageItem } from '../../../utils';
+import { getStorageItem, lengthOfString } from '../../../utils';
 
 const MainEvent = ({
   index, event, mainEvents, getOtherEvents, isLiveOrStarting, getLiveIcon, host, nearestEvent,
-  isLive, stTranslation, mainClasses, textTime,
+  isLive, stTranslation, mainClasses, textTime, subLabel,
 }) => {
   const [time, setTime] = useState('');
   const { t, lang } = useTranslation('live-event');
   const limit = 42;
-  const truncatedText = event?.title?.length > limit ? `${event?.title?.substring(0, limit)}...` : event?.title;
+  const titleLength = lengthOfString(event?.title);
+  const truncatedText = titleLength > limit ? `${event?.title?.substring(0, limit)}...` : event?.title;
 
   const toast = useToast();
   const { fontColor, disabledColor, backgroundColor2, hexColor } = useStyle();
@@ -26,7 +27,12 @@ const MainEvent = ({
   const liveEndsAtDate = new Date(event.ending_at);
 
   useEffect(() => {
-    const interval = setInterval(() => setTime(textTime(liveStartsAtDate, liveEndsAtDate)));
+    setTime(textTime(liveStartsAtDate, liveEndsAtDate));
+
+    const interval = setInterval(() => {
+      setTime(textTime(liveStartsAtDate, liveEndsAtDate));
+    }, 60000);
+
     return () => {
       clearInterval(interval);
     };
@@ -84,7 +90,6 @@ const MainEvent = ({
               borderRadius="full"
               width="17px"
               height="17px"
-              background="danger"
               position="absolute"
               color="white"
               display="flex"
@@ -92,9 +97,9 @@ const MainEvent = ({
               justifyContent="center"
               left="75%"
             >
-              <Text linHeight="18px" textAlign="center" fontSize="14px" fontWeight="900">
-                {getOtherEvents().filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ending_at))).length}
-              </Text>
+              <Box borderRadius="full" background="none" className="pulse-red" width="16px" height="16px" display="inline-block" marginRight="5px">
+                <Icon width="16px" height="16px" icon="on-live" />
+              </Box>
             </Box>
           )}
           <Icon
@@ -131,7 +136,7 @@ const MainEvent = ({
             )}
           </Text>
           <Box display="flex" justifyContent="space-between">
-            {(event.subLabel || event.type) && (
+            {(event?.subLabel || event?.type || subLabel) && (
               <Tag
                 size="sm"
                 borderRadius="full"
@@ -145,7 +150,7 @@ const MainEvent = ({
                   color={hexColor.blueDefault}
                   opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 1 : 0.5}
                 >
-                  {event.subLabel || event.type}
+                  {event?.subLabel || event?.type || subLabel}
                 </TagLabel>
               </Tag>
             )}
@@ -198,6 +203,10 @@ MainEvent.propTypes = {
   textTime: PropTypes.func.isRequired,
   stTranslation: PropTypes.objectOf(PropTypes.any).isRequired,
   mainClasses: PropTypes.arrayOf(PropTypes.any).isRequired,
+  subLabel: PropTypes.string,
+};
+MainEvent.defaultProps = {
+  subLabel: '',
 };
 
 export default MainEvent;
