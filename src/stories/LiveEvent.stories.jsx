@@ -301,6 +301,36 @@ EventsIn2DaysOrMore.args = {
     live_stream_url: 'https://www.google.co.ve/#final-project-presentation'
   }],
 };
+export const StartsFewSeconds = Component.bind({});
+StartsFewSeconds.args = {
+  mainClasses: [{
+    starting_at: new Date(addMinutes(new Date(), 1)),
+    ending_at: new Date(addHours(new Date(), 1)),
+    title: 'Miami 53',
+    subLabel: 'Master Class',
+    liveClassHash: 'dfsdf',
+  }],
+  featureLabel: 'Live clases, coding sessions, workshops and hangouts every few hours.',
+  featureReadMoreUrl: 'https://www.google.co.ve/',
+  startingSoonDelta: 30,
+  otherEvents: [{
+    title: 'My Wonderful HTML Email Workflow',
+    type: 'Workshop',
+    icon_url: 'https://cdn.pixabay.com/photo/2017/08/05/11/16/logo-2582748_960_720.png',
+    starting_at: subMinutes(new Date(), 0),
+    ending_at: addMinutes(new Date(), 180),
+    icon: 'group',
+    fill: '#25BF6C',
+    live_stream_url: 'https://www.google.co.ve/'
+  }, {
+    title: 'Coding Jamming',
+    type: 'Workshop',
+    starting_at: new Date(addMinutes(new Date(), 15)),
+    ending_at: new Date(addHours(new Date(), 2)),
+    icon: 'codeBg',
+    live_stream_url: 'https://www.google.co.ve/'
+  }],
+};
 
 export const NoClassAndEventsAvailable = Component.bind({});
 NoClassAndEventsAvailable.args = {
