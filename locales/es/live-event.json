@@ -6,9 +6,19 @@
     "started": "Empezó hace {{time}}",
     "ended": "Terminó hace {{time}}",
     "few-seconds": "unos instantes",
-    "will-start": "En {{time}}",
-    "upcoming": "Otros eventos en vivo",
+    "will-start": "Inicia en {{time}}",
+    "start-hours": "{{time}} horas",
+    "start-hour": "{{time}} hora",
+    "start-months": "{{time}} meses",
+    "start-month": "{{time}} mes",
+    "start-days": "{{time}} días",
+    "start-day": "{{time}} día",
+    "start-minutes": "{{time}} minutos",
+    "start-minute": "{{time}} minuto",
+    "upcoming": "Otros eventos que sucederán ahora",
     "inactive-event": "Este evento aún no está activo",
     "no-access": "No tienes acceso a este evento",
-    "live-now": "¡En Vivo!"
+    "live-now": "¡En Vivo!",
+    "master-class": "Clase Maestra",
+    "workshop": "Taller"
 }

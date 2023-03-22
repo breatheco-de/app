@@ -6,9 +6,19 @@
     "started": "Started {{time}} ago",
     "ended": "Ended {{time}} ago",
     "few-seconds": "a few seconds",
-    "will-start": "In {{time}}",
-    "upcoming": "Other upcoming live events",
+    "will-start": "Starts in {{time}}",
+    "start-hours": "{{time}} hours",
+    "start-hour": "{{time}} hour",
+    "start-months": "{{time}} months",
+    "start-month": "{{time}} month",
+    "start-days": "{{time}} days",
+    "start-day": "{{time}} day",
+    "start-minutes": "{{time}} minutes",
+    "start-minute": "{{time}} minute",
+    "upcoming": "Other events happening now",
     "inactive-event": "This event is not live yet",
     "no-access": "You do not have access to this event",
-    "live-now": "Live Now!"
+    "live-now": "Live Now!",
+    "master-class": "Master Class",
+    "workshop": "Workshop"
 }
