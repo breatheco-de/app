@@ -240,7 +240,7 @@ const Read = ({ data }) => {
                     letterSpacing="0.05em"
                     fontWeight="700"
                   >
-                    {translationProps?.title}
+                    {locale === 'en' ? lesson?.title : translationProps?.title}
                   </Link>
                 );
               })}
