@@ -163,6 +163,19 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
     </svg>
   );
 
+  const logo = useColorModeValue(
+    <Image
+      src="/static/images/4geeks.png"
+      width="105px"
+      height="35px"
+      objectFit="cover"
+      alt="4Geeks logo"
+    />,
+    <Box padding="5px 5px">
+      <Icon icon="4Geeks-logo" width="95px" height="35px" />
+    </Box>,
+  );
+
   return (
     <Box>
       <Flex
@@ -206,13 +219,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
             aria-label="Toggle Navigation"
           />
           <NextChakraLink href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
-            <Image
-              src="/static/images/4geeks.png"
-              width="105px"
-              height="35px"
-              objectFit="cover"
-              alt="4Geeks logo"
-            />
+            {logo}
           </NextChakraLink>
         </Flex>
 
@@ -222,13 +229,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
           justify={{ base: 'center', md: 'start' }}
         >
           <NextChakraLink href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
-            <Image
-              src="/static/images/4geeks.png"
-              width="105px"
-              height="35px"
-              objectFit="cover"
-              alt="4Geeks logo"
-            />
+            {logo}
           </NextChakraLink>
 
           <Flex display="flex" ml={10}>

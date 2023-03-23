@@ -13,7 +13,7 @@ import asPrivate from '../../common/context/PrivateRouteWrapper';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
-import { isPlural, sortToNearestTodayDate } from '../../utils';
+import { isPlural, sortToNearestTodayDate, syncInterval } from '../../utils';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
@@ -50,7 +50,7 @@ function chooseProgram() {
   const [showInvites, setShowInvites] = useState(false);
   const [events, setEvents] = useState(null);
   const [subscriptionData, setSubscriptionData] = useState([]);
-  const [liveClass, setLiveClass] = useState(null);
+  const [liveClasses, setLiveClasses] = useState([]);
   const { state, programsList, updateProgramList } = useProgramList();
   const [cohortTasks, setCohortTasks] = useState({});
   const { isLoading: userLoading, user, choose } = useAuth();
@@ -163,8 +163,16 @@ function chooseProgram() {
     }).liveClass()
       .then((res) => {
         const sortDateToLiveClass = sortToNearestTodayDate(res?.data);
-        setLiveClass(sortDateToLiveClass[0]);
+        const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
+        setLiveClasses(existentLiveClasses);
       });
+    syncInterval(() => {
+      setLiveClasses((prev) => {
+        const sortDateToLiveClass = sortToNearestTodayDate(prev);
+        const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
+        return existentLiveClasses;
+      });
+    });
   }, []);
 
   useEffect(() => {
@@ -365,13 +373,7 @@ function chooseProgram() {
               <LiveEvent
                 featureLabel={t('common:live-event.title')}
                 featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                mainClasses={
-                  liveClass?.hash || liveClass?.starting_at || liveClass?.ending_at ? [{
-                    hash: liveClass.hash,
-                    starting_at: liveClass.starting_at,
-                    ending_at: liveClass.ending_at,
-                  }] : []
-                }
+                mainClasses={liveClasses?.length > 0 ? liveClasses : []}
                 otherEvents={events}
               />
             )}

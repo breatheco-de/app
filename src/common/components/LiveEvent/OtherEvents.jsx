@@ -4,7 +4,7 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import modifyEnv from '../../../../modifyEnv';
-import { getStorageItem, lengthOfString } from '../../../utils';
+import { getStorageItem, lengthOfString, syncInterval } from '../../../utils';
 import useStyle from '../../hooks/useStyle';
 import CustomTheme from '../../../../styles/theme';
 import Icon from '../Icon';
@@ -29,13 +29,15 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stT
     useEffect(() => {
       setTime(textTime(startsAt, endsAt));
 
-      const interval = setInterval(() => {
+      syncInterval(() => {
         setTime(textTime(startsAt, endsAt));
-      }, 60000);
-
-      return () => {
-        clearInterval(interval);
-      };
+      });
+      // const interval = setInterval(() => {
+      //   setTime(textTime(startsAt, endsAt));
+      // }, 60000);
+      // return () => {
+      //   clearInterval(interval);
+      // };
     }, []);
 
     return (
