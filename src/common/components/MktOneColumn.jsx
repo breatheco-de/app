@@ -1,7 +1,9 @@
+/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
   Box, Divider,
 } from '@chakra-ui/react';
+import { PrismicRichText } from '@prismicio/react';
 import Heading from './Heading';
 import Text from './Text';
 import Link from './NextChakraLink';
@@ -14,6 +16,7 @@ const MktOneColumn = ({
   buttonUrl,
   buttonLabel,
   kpiList,
+  slice,
 }) => {
   const { fontColor, fontColor2, hexColor, backgroundColor } = useStyle();
 
@@ -62,14 +65,32 @@ const MktOneColumn = ({
         <Heading as="h2" size="m">
           {title}
         </Heading>
-        <Text
-          fontSize="sm"
-          lineHeight="14px"
-          margin="15px 0"
-          color={fontColor2}
-        >
-          {description}
-        </Text>
+        {slice.primary.description ? (
+          <PrismicRichText
+            field={slice?.primary?.description}
+            components={{
+              paragraph: ({ children }) => (
+                <Text
+                  fontSize="sm"
+                  lineHeight="14px"
+                  margin="15px 0"
+                  color={fontColor2}
+                >
+                  {children}
+                </Text>
+              ),
+            }}
+          />
+        ) : (
+          <Text
+            fontSize="sm"
+            lineHeight="14px"
+            margin="15px 0"
+            color={fontColor2}
+          >
+            {description}
+          </Text>
+        )}
         {buttonUrl && (
           <Link
             variant="buttonDefault"
@@ -92,6 +113,7 @@ MktOneColumn.propTypes = {
   buttonUrl: PropTypes.string,
   buttonLabel: PropTypes.string,
   kpiList: PropTypes.arrayOf(PropTypes.any),
+  slice: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
 };
 
 MktOneColumn.defaultProps = {
@@ -101,6 +123,7 @@ MktOneColumn.defaultProps = {
   buttonUrl: null,
   buttonLabel: null,
   kpiList: [],
+  slice: null,
 };
 
 export default MktOneColumn;

@@ -1,7 +1,9 @@
+/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
   Box, Img,
 } from '@chakra-ui/react';
+import { PrismicRichText } from '@prismicio/react';
 import Heading from './Heading';
 import Text from './Text';
 import Link from './NextChakraLink';
@@ -17,11 +19,13 @@ const MktTwoColumnSideImage = ({
   background,
   border,
   imagePosition,
+  slice,
+  imageAlt,
 }) => {
   const { fontColor2, hexColor, backgroundColor } = useStyle();
   const flexDirection = {
-    right: 'row',
-    left: 'row-reverse',
+    right: 'row-reverse',
+    left: 'row',
   };
 
   return (
@@ -40,6 +44,8 @@ const MktTwoColumnSideImage = ({
           boxSize="100%"
           objectFit="cover"
           src={imageUrl}
+          alt={imageAlt}
+          borderRadius="3px"
         />
       </Box>
       <Box width={{ base: '100% 0', md: '50%' }}>
@@ -49,14 +55,32 @@ const MktTwoColumnSideImage = ({
         <Heading as="h2" size="sm">
           {title}
         </Heading>
-        <Text
-          fontSize="sm"
-          lineHeight="14px"
-          margin="15px 0"
-          color={fontColor2}
-        >
-          {description}
-        </Text>
+        {slice.primary.description ? (
+          <PrismicRichText
+            field={slice?.primary?.description}
+            components={{
+              paragraph: ({ children }) => (
+                <Text
+                  fontSize="sm"
+                  lineHeight="14px"
+                  margin="15px 0"
+                  color={fontColor2}
+                >
+                  {children}
+                </Text>
+              ),
+            }}
+          />
+        ) : (
+          <Text
+            fontSize="sm"
+            lineHeight="14px"
+            margin="15px 0"
+            color={fontColor2}
+          >
+            {description}
+          </Text>
+        )}
         {buttonUrl && (
           <Link
             variant="buttonDefault"
@@ -82,18 +106,22 @@ MktTwoColumnSideImage.propTypes = {
   buttonLabel: PropTypes.string,
   background: PropTypes.string,
   border: PropTypes.string,
+  slice: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
+  imageAlt: PropTypes.string,
 };
 
 MktTwoColumnSideImage.defaultProps = {
   title: null,
   subTitle: null,
   description: null,
-  imagePosition: 'right',
+  imagePosition: 'left',
   imageUrl: null,
   buttonUrl: null,
   buttonLabel: null,
   background: null,
   border: null,
+  slice: null,
+  imageAlt: '',
 };
 
 export default MktTwoColumnSideImage;

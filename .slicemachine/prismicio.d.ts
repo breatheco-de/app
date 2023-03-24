@@ -68,7 +68,7 @@ interface PageDocumentData {
  * Slice for *Page → Slice Zone*
  *
  */
-type PageDocumentDataSlicesSlice = TitleIntroductionSlice | MarkdownSlice;
+type PageDocumentDataSlicesSlice = TitleIntroductionSlice | MarkdownSlice | TwoColumnSlice;
 /**
  * Page document from Prismic
  *
@@ -150,6 +150,175 @@ type MarkdownSliceVariation = MarkdownSliceDefault;
  *
  */
 export type MarkdownSlice = prismicT.SharedSlice<"markdown", MarkdownSliceVariation>;
+/**
+ * Primary content in OneColumn → Primary
+ *
+ */
+interface OneColumnSliceDefaultPrimary {
+    /**
+     * Title field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.title
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    title: prismicT.KeyTextField;
+    /**
+     * SubTitle field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.subtitle
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    subtitle: prismicT.KeyTextField;
+    /**
+     * Description field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Rich Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.description
+     * - **Documentation**: https://prismic.io/docs/core-concepts/rich-text-title
+     *
+     */
+    description: prismicT.RichTextField;
+    /**
+     * Button label field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.button_label
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    button_label: prismicT.KeyTextField;
+    /**
+     * Button url field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Link
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.button_url
+     * - **Documentation**: https://prismic.io/docs/core-concepts/link-content-relationship
+     *
+     */
+    button_url: prismicT.LinkField;
+    /**
+     * KPI Title 1 field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.kpi_title_1
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    kpi_title_1: prismicT.KeyTextField;
+    /**
+     * KPI Description 1 field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.kpi_description_1
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    kpi_description_1: prismicT.KeyTextField;
+    /**
+     * KPI Color 1 field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Color
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.kpi_color_1
+     * - **Documentation**: https://prismic.io/docs/core-concepts/color
+     *
+     */
+    kpi_color_1: prismicT.ColorField;
+    /**
+     * KPI Title 2 field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.kpi_title_2
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    kpi_title_2: prismicT.KeyTextField;
+    /**
+     * KPI Description 2 field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.kpi_description_2
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    kpi_description_2: prismicT.KeyTextField;
+    /**
+     * KPI Color 2 field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Color
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.kpi_color_2
+     * - **Documentation**: https://prismic.io/docs/core-concepts/color
+     *
+     */
+    kpi_color_2: prismicT.ColorField;
+    /**
+     * KPI Title 3 field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.kpi_title_3
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    kpi_title_3: prismicT.KeyTextField;
+    /**
+     * KPI Description 3 field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.kpi_description_3
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    kpi_description_3: prismicT.KeyTextField;
+    /**
+     * KPI Color 3 field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Color
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.kpi_color_3
+     * - **Documentation**: https://prismic.io/docs/core-concepts/color
+     *
+     */
+    kpi_color_3: prismicT.ColorField;
+}
+/**
+ * Default variation for OneColumn Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: `OneColumn`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type OneColumnSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<OneColumnSliceDefaultPrimary>, never>;
+/**
+ * Slice variation for *OneColumn*
+ *
+ */
+type OneColumnSliceVariation = OneColumnSliceDefault;
+/**
+ * OneColumn Shared Slice
+ *
+ * - **API ID**: `one_column`
+ * - **Description**: `OneColumn`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type OneColumnSlice = prismicT.SharedSlice<"one_column", OneColumnSliceVariation>;
 /**
  * Primary content in TitleIntroduction → Primary
  *
@@ -239,11 +408,120 @@ type TitleIntroductionSliceVariation = TitleIntroductionSliceDefault;
  *
  */
 export type TitleIntroductionSlice = prismicT.SharedSlice<"title_introduction", TitleIntroductionSliceVariation>;
+/**
+ * Primary content in TwoColumn → Primary
+ *
+ */
+interface TwoColumnSliceDefaultPrimary {
+    /**
+     * Title field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: two_column.primary.title
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    title: prismicT.KeyTextField;
+    /**
+     * Subtitle field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: two_column.primary.subtitle
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    subtitle: prismicT.KeyTextField;
+    /**
+     * Description field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Rich Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: two_column.primary.description
+     * - **Documentation**: https://prismic.io/docs/core-concepts/rich-text-title
+     *
+     */
+    description: prismicT.RichTextField;
+    /**
+     * image field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Image
+     * - **Placeholder**: *None*
+     * - **API ID Path**: two_column.primary.image
+     * - **Documentation**: https://prismic.io/docs/core-concepts/image
+     *
+     */
+    image: prismicT.ImageField<never>;
+    /**
+     * Button label field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: two_column.primary.button_label
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    button_label: prismicT.KeyTextField;
+    /**
+     * Button url field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Link
+     * - **Placeholder**: *None*
+     * - **API ID Path**: two_column.primary.button_url
+     * - **Documentation**: https://prismic.io/docs/core-concepts/link-content-relationship
+     *
+     */
+    button_url: prismicT.LinkField;
+    /**
+     * Background color field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Color
+     * - **Placeholder**: Example: #FFFFFF
+     * - **API ID Path**: two_column.primary.background_color
+     * - **Documentation**: https://prismic.io/docs/core-concepts/color
+     *
+     */
+    background_color: prismicT.ColorField;
+    /**
+     * Image position field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Select
+     * - **Placeholder**: *None*
+     * - **API ID Path**: two_column.primary.image_position
+     * - **Documentation**: https://prismic.io/docs/core-concepts/select
+     *
+     */
+    image_position: prismicT.SelectField<"left" | "right">;
+}
+/**
+ * Default variation for TwoColumn Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: `TwoColumn`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type TwoColumnSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<TwoColumnSliceDefaultPrimary>, never>;
+/**
+ * Slice variation for *TwoColumn*
+ *
+ */
+type TwoColumnSliceVariation = TwoColumnSliceDefault;
+/**
+ * TwoColumn Shared Slice
+ *
+ * - **API ID**: `two_column`
+ * - **Description**: `TwoColumn`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type TwoColumnSlice = prismicT.SharedSlice<"two_column", TwoColumnSliceVariation>;
 declare module "@prismicio/client" {
     interface CreateClient {
         (repositoryNameOrEndpoint: string, options?: prismic.ClientConfig): prismic.Client<AllDocumentTypes>;
     }
     namespace Content {
-        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice };
+        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
     }
 }

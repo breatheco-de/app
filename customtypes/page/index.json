@@ -51,6 +51,9 @@
             },
             "markdown": {
               "type": "SharedSlice"
+            },
+            "two_column": {
+              "type": "SharedSlice"
             }
           }
         }
