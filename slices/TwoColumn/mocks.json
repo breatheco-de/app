@@ -1,0 +1,82 @@
+[
+  {
+    "__TYPE__": "SharedSliceContent",
+    "variation": "default",
+    "primary": {
+      "title": {
+        "__TYPE__": "FieldContent",
+        "type": "Text",
+        "value": "This is a long title that can have several lines like this"
+      },
+      "subtitle": {
+        "__TYPE__": "FieldContent",
+        "type": "Text",
+        "value": "This is a small subtitle"
+      },
+      "description": {
+        "__TYPE__": "StructuredTextContent",
+        "value": [
+          {
+            "type": "paragraph",
+            "content": {
+              "text": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.",
+              "spans": []
+            },
+            "direction": "ltr"
+          }
+        ]
+      },
+      "image": {
+        "origin": {
+          "id": "q9bXNAz6F4s",
+          "url": "https://images.unsplash.com/photo-1629196615270-9b6d717454da?crop=entropy&cs=srgb&fm=jpg&ixid=MnwzMzc0NjN8MHwxfHNlYXJjaHwyOXx8YWN1YXJlbGF8ZW58MHx8fHwxNjc5Njg3OTg3&ixlib=rb-4.0.3&q=85",
+          "width": 6976,
+          "height": 4870
+        },
+        "url": "https://images.unsplash.com/photo-1629196615270-9b6d717454da?crop=entropy&cs=srgb&fm=jpg&ixid=MnwzMzc0NjN8MHwxfHNlYXJjaHwyOXx8YWN1YXJlbGF8ZW58MHx8fHwxNjc5Njg3OTg3&ixlib=rb-4.0.3&q=85",
+        "width": 6976,
+        "height": 4870,
+        "edit": {
+          "background": "transparent",
+          "zoom": 1,
+          "crop": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        "credits": null,
+        "alt": "blue paint",
+        "__TYPE__": "ImageContent",
+        "thumbnails": {}
+      },
+      "button_label": {
+        "__TYPE__": "FieldContent",
+        "type": "Text",
+        "value": "A button as link"
+      },
+      "button_url": {
+        "__TYPE__": "LinkContent",
+        "value": {
+          "__TYPE__": "ExternalLink",
+          "url": "https://slicemachine.dev"
+        }
+      },
+      "background_color": {
+        "__TYPE__": "FieldContent",
+        "value": "#ffffff",
+        "type": "Color"
+      },
+      "image_position": {
+        "__TYPE__": "FieldContent",
+        "value": "left",
+        "type": "Select"
+      }
+    },
+    "items": [
+      {
+        "__TYPE__": "GroupItemContent",
+        "value": []
+      }
+    ]
+  }
+]
