@@ -54,6 +54,9 @@
             },
             "two_column": {
               "type": "SharedSlice"
+            },
+            "one_column": {
+              "type": "SharedSlice"
             }
           }
         }

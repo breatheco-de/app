@@ -68,7 +68,7 @@ interface PageDocumentData {
  * Slice for *Page → Slice Zone*
  *
  */
-type PageDocumentDataSlicesSlice = TitleIntroductionSlice | MarkdownSlice | TwoColumnSlice;
+type PageDocumentDataSlicesSlice = TitleIntroductionSlice | MarkdownSlice | TwoColumnSlice | OneColumnSlice;
 /**
  * Page document from Prismic
  *
