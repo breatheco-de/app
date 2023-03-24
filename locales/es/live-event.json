@@ -15,7 +15,7 @@
     "start-day": "{{time}} día",
     "start-minutes": "{{time}} minutos",
     "start-minute": "{{time}} minuto",
-    "upcoming": "Otros eventos que sucederán pronto",
+    "upcoming": "Otros eventos que iniciarán pronto",
     "other-live-events-now": "Otros eventos en vivo",
     "inactive-event": "Este evento aún no está activo",
     "no-access": "No tienes acceso a este evento",
