@@ -230,10 +230,14 @@ const sortToNearestTodayDate = (data, minutes = 30) => {
   const filteredDates = data.filter((item) => {
     const startingDate = new Date(item.starting_at);
     const endingDate = new Date(item.ending_at);
-    const isExpired = currentDate > endingDate;
+    const timeDiff = startingDate - currentDate;
+    const minutesDiff = timeDiff / (1000 * 60);
 
-    const isWithinAnyMins = currentDate <= startingDate.setMinutes(startingDate.getMinutes() + minutes);
-    return !item.ending_at || (item.ending_at && (!isExpired || isWithinAnyMins));
+    const hasStarted = startingDate < currentDate;
+    const isGoingToStartInAnyMin = (minutesDiff >= 0 && minutesDiff <= minutes) || hasStarted;
+    const hasExpired = endingDate < currentDate;
+
+    return isGoingToStartInAnyMin && !hasExpired;
   });
   const sortedDates = filteredDates.sort((a, b) => new Date(a.starting_at) - new Date(b.starting_at));
 
