@@ -77,7 +77,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
         </Box>
       )}
 
-      {marketingCouses.length > 0 && (
+      {marketingCouses.length > 0 && marketingCouses.some((l) => l?.course_translation?.title) && (
         <>
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
             <Heading size="sm" width="fit-content" whiteSpace="nowrap">

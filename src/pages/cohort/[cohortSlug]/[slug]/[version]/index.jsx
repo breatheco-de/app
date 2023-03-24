@@ -32,7 +32,7 @@ import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import {
-  slugify, includesToLowerCase, getStorageItem, sortToNearestTodayDate,
+  slugify, includesToLowerCase, getStorageItem, sortToNearestTodayDate, syncInterval,
 } from '../../../../../utils/index';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
@@ -62,7 +62,7 @@ const Dashboard = () => {
   const [searchValue, setSearchValue] = useState(router.query.search || '');
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [events, setEvents] = useState(null);
-  const [liveClass, setLiveClass] = useState(null);
+  const [liveClasses, setLiveClasses] = useState([]);
   const [isOpenFinalProject, setIsOpenFinalProject] = useState(false);
 
   const [session, setSession] = usePersistent('session', {});
@@ -105,6 +105,7 @@ const Dashboard = () => {
   const commonModalColor = useColorModeValue('gray.dark', 'gray.light');
   const accessToken = getStorageItem('accessToken');
   const showGithubWarning = getStorageItem('showGithubWarning');
+  const TwelveHours = 720;
 
   const supportSideBar = t('supportSideBar', {}, { returnObjects: true });
 
@@ -188,9 +189,18 @@ const Dashboard = () => {
       cohort: cohortSlug,
     }).liveClass()
       .then((res) => {
-        const sortDateToLiveClass = sortToNearestTodayDate(res?.data);
-        setLiveClass(sortDateToLiveClass[0]);
+        const sortDateToLiveClass = sortToNearestTodayDate(res?.data, TwelveHours);
+        const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
+        setLiveClasses(existentLiveClasses);
       });
+
+    syncInterval(() => {
+      setLiveClasses((prev) => {
+        const sortDateToLiveClass = sortToNearestTodayDate(prev, TwelveHours);
+        const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
+        return existentLiveClasses;
+      });
+    });
   }, []);
 
   // Fetch cohort data with pathName structure
@@ -425,17 +435,8 @@ const Dashboard = () => {
                   <LiveEvent
                     featureLabel={t('common:live-event.title')}
                     featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                    mainClasses={
-                      liveClass?.hash || liveClass?.starting_at || liveClass?.ending_at ? [{
-                        liveClassHash: liveClass.hash,
-                        liveStartsAt: liveClass.starting_at,
-                        liveEndsAt: liveClass.ending_at,
-                      }] : []
-                    }
+                    mainClasses={liveClasses?.length > 0 ? liveClasses : []}
                     otherEvents={events}
-                  // liveClassHash={liveClass?.hash}
-                  // liveStartsAt={liveClass?.starting_at}
-                  // liveEndsAt={liveClass?.ending_at}
                   />
                 )}
                 {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
@@ -634,17 +635,8 @@ const Dashboard = () => {
                 <LiveEvent
                   featureLabel={t('common:live-event.title')}
                   featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                  mainClasses={
-                    liveClass?.hash || liveClass?.starting_at || liveClass?.ending_at ? [{
-                      liveClassHash: liveClass.hash,
-                      liveStartsAt: liveClass.starting_at,
-                      liveEndsAt: liveClass.ending_at,
-                    }] : []
-                  }
+                  mainClasses={liveClasses?.length > 0 ? liveClasses : []}
                   otherEvents={events}
-                // liveClassHash={liveClass?.hash}
-                // liveStartsAt={liveClass?.starting_at}
-                // liveEndsAt={liveClass?.ending_at}
                 />
               )}
               {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
