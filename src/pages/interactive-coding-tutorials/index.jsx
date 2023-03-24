@@ -108,6 +108,7 @@ export const getStaticProps = async ({ locale, locales }) => {
         keywords,
         locales,
         locale,
+        disableStaticCanonical: true,
         url: ogUrl.en || `/${locale}/interactive-coding-tutorials`,
         pathConnector: '/interactive-coding-tutorials',
         card: 'default',
@@ -255,6 +256,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
             options={{
               withoutImage: true,
               contextFilter: filteredBy.projectsOptions,
+              pagePath: '/interactive-coding-tutorials',
             }}
           />
         ) : (

@@ -13,7 +13,7 @@ import asPrivate from '../../common/context/PrivateRouteWrapper';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
-import { isPlural, sortToNearestTodayDate } from '../../utils';
+import { isPlural, sortToNearestTodayDate, syncInterval } from '../../utils';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
@@ -50,7 +50,7 @@ function chooseProgram() {
   const [showInvites, setShowInvites] = useState(false);
   const [events, setEvents] = useState(null);
   const [subscriptionData, setSubscriptionData] = useState([]);
-  const [liveClass, setLiveClass] = useState(null);
+  const [liveClasses, setLiveClasses] = useState([]);
   const { state, programsList, updateProgramList } = useProgramList();
   const [cohortTasks, setCohortTasks] = useState({});
   const { isLoading: userLoading, user, choose } = useAuth();
@@ -61,6 +61,7 @@ function chooseProgram() {
   const flags = useFlags();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
+  const TwelveHours = 720;
 
   const fetchAdmissions = () => bc.admissions().me();
 
@@ -162,9 +163,17 @@ function chooseProgram() {
       upcoming: true,
     }).liveClass()
       .then((res) => {
-        const sortDateToLiveClass = sortToNearestTodayDate(res?.data);
-        setLiveClass(sortDateToLiveClass[0]);
+        const sortDateToLiveClass = sortToNearestTodayDate(res?.data, TwelveHours);
+        const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
+        setLiveClasses(existentLiveClasses);
       });
+    syncInterval(() => {
+      setLiveClasses((prev) => {
+        const sortDateToLiveClass = sortToNearestTodayDate(prev, TwelveHours);
+        const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
+        return existentLiveClasses;
+      });
+    });
   }, []);
 
   useEffect(() => {
@@ -360,18 +369,12 @@ function chooseProgram() {
               </NextChakraLink>
             )}
           </Box>
-          <Box flex={{ base: 1, md: 0.3 }} zIndex={2} position={{ base: 'inherit', md: 'absolute' }} maxWidth="320px" right={0} top={0}>
+          <Box flex={{ base: 1, md: 0.3 }} zIndex={10} position={{ base: 'inherit', md: 'absolute' }} maxWidth="320px" right={0} top={0}>
             {flags?.appReleaseEnableLiveEvents && (
               <LiveEvent
                 featureLabel={t('common:live-event.title')}
                 featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                mainClasses={
-                  liveClass?.hash || liveClass?.starting_at || liveClass?.ending_at ? [{
-                    liveClassHash: liveClass.hash,
-                    liveStartsAt: liveClass.starting_at,
-                    liveEndsAt: liveClass.ending_at,
-                  }] : []
-                }
+                mainClasses={liveClasses?.length > 0 ? liveClasses : []}
                 otherEvents={events}
               />
             )}

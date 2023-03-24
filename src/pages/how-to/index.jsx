@@ -117,6 +117,7 @@ export const getStaticProps = async ({ locale, locales }) => {
         image,
         locales,
         locale,
+        disableStaticCanonical: true,
         url: ogUrl.en || `/${locale}/how-to`,
         pathConnector: '/how-to',
       },
@@ -258,6 +259,7 @@ export default function HowTo({ data, technologyTags, difficulties }) {
             options={{
               withoutImage: true,
               contextFilter: filteredBy.howToOptions,
+              pagePath: '/how-to',
             }}
           />
         ) : (

@@ -7,35 +7,39 @@ import bc from '../../services/breathecode';
 import Icon from '../Icon';
 import useStyle from '../../hooks/useStyle';
 import CustomTheme from '../../../../styles/theme';
-import { getStorageItem, lengthOfString } from '../../../utils';
+import { getStorageItem, lengthOfString, syncInterval } from '../../../utils';
 
 const MainEvent = ({
   index, event, mainEvents, getOtherEvents, isLiveOrStarting, getLiveIcon, host, nearestEvent,
-  isLive, stTranslation, mainClasses, textTime, subLabel,
+  isLive, stTranslation, mainClasses, textTime, subLabel, isWorkshop,
 }) => {
   const [time, setTime] = useState('');
   const { t, lang } = useTranslation('live-event');
-  const limit = 42;
-  const titleLength = lengthOfString(event?.title);
-  const truncatedText = titleLength > limit ? `${event?.title?.substring(0, limit)}...` : event?.title;
+  const limit = 40;
+  const eventTitle = event?.cohort_name || event?.title;
+  const titleLength = lengthOfString(eventTitle);
+  const truncatedText = titleLength > limit ? `${eventTitle?.substring(0, limit)}...` : eventTitle;
 
+  const truncatedTime = lengthOfString(time) >= 16 ? `${time?.substring(0, 15)}...` : time;
   const toast = useToast();
   const { fontColor, disabledColor, backgroundColor2, hexColor } = useStyle();
 
   const accessToken = getStorageItem('accessToken');
-  const liveStartsAtDate = new Date(event.starting_at);
-  const liveEndsAtDate = new Date(event.ending_at);
+  const liveStartsAtDate = new Date(event?.starting_at);
+  const liveEndsAtDate = new Date(event?.ending_at);
 
   useEffect(() => {
     setTime(textTime(liveStartsAtDate, liveEndsAtDate));
 
-    const interval = setInterval(() => {
+    syncInterval(() => {
       setTime(textTime(liveStartsAtDate, liveEndsAtDate));
-    }, 60000);
-
-    return () => {
-      clearInterval(interval);
-    };
+    });
+    // const interval = setInterval(() => {
+    //   setTime(textTime(liveStartsAtDate, liveEndsAtDate));
+    // }, 60000);
+    // return () => {
+    //   clearInterval(interval);
+    // };
   }, []);
 
   return (
@@ -43,10 +47,10 @@ const MainEvent = ({
       <Box
         display="flex"
         alignItems="center"
-        cursor={(!event.liveClassHash || isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) && 'pointer'}
+        cursor={(!event?.hash || isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) && 'pointer'}
         onClick={() => {
-          if (event.liveClassHash && isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
-            bc.events().joinLiveClass(event.liveClassHash)
+          if (event?.hash && isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
+            bc.events().joinLiveClass(event.hash)
               .then((resp) => {
                 if (resp.data?.url) {
                   window.open(resp.data?.url);
@@ -68,7 +72,7 @@ const MainEvent = ({
                 });
               });
           }
-          if (!event.liveClassHash) {
+          if (!event?.hash) {
             window.open(`${host}/v1/events/me/event/${nearestEvent?.id}/join?token=${accessToken}`);
           }
         }}
@@ -123,9 +127,9 @@ const MainEvent = ({
             opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 1 : 0.5}
             marginBottom="5px"
             marginTop="0"
-            title={event?.title}
+            title={eventTitle}
           >
-            {truncatedText ? (
+            {(truncatedText && eventTitle) ? (
               <>
                 {truncatedText}
               </>
@@ -143,11 +147,11 @@ const MainEvent = ({
                 variant="solid"
                 colorScheme="green"
                 width="fit-content"
-                background={backgroundColor2}
+                background={isWorkshop ? 'green.light' : backgroundColor2}
               >
                 <TagLabel
                   fontWeight="700"
-                  color={hexColor.blueDefault}
+                  color={isWorkshop ? 'success' : hexColor.blueDefault}
                   opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 1 : 0.5}
                 >
                   {event?.subLabel || event?.type || subLabel}
@@ -178,8 +182,9 @@ const MainEvent = ({
                 color={disabledColor}
                 marginBottom="0"
                 marginTop="0"
+                title={time}
               >
-                {time}
+                {truncatedTime}
               </Text>
             )}
           </Box>
@@ -204,9 +209,11 @@ MainEvent.propTypes = {
   stTranslation: PropTypes.objectOf(PropTypes.any).isRequired,
   mainClasses: PropTypes.arrayOf(PropTypes.any).isRequired,
   subLabel: PropTypes.string,
+  isWorkshop: PropTypes.bool,
 };
 MainEvent.defaultProps = {
   subLabel: '',
+  isWorkshop: false,
 };
 
 export default MainEvent;

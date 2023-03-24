@@ -33,6 +33,8 @@ export async function getStaticProps({ params, locale, previewData }) {
     ...translationsArr?.reduce((acc, curr) => ({ ...acc, ...curr }), {}),
   };
 
+  const { title, description, image, type } = page?.data;
+
   const isCurrenLang = page?.lang?.split('-')?.[0] === locale;
 
   if (!page || !isCurrenLang) {
@@ -40,8 +42,6 @@ export async function getStaticProps({ params, locale, previewData }) {
       notFound: true,
     };
   }
-
-  const { title, description, image, type } = page?.data;
 
   const translationArray = [
     {

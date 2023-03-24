@@ -4,7 +4,7 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import modifyEnv from '../../../../modifyEnv';
-import { getStorageItem, lengthOfString } from '../../../utils';
+import { getStorageItem, lengthOfString, syncInterval } from '../../../utils';
 import useStyle from '../../hooks/useStyle';
 import CustomTheme from '../../../../styles/theme';
 import Icon from '../Icon';
@@ -24,17 +24,20 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stT
     const startsAt = event?.starting_at && new Date(event.starting_at);
     const endsAt = event?.ending_at && new Date(event.ending_at);
     const truncatedText = titleLength > limit ? `${event?.title?.substring(0, limit)}...` : event?.title;
+    const truncatedTime = lengthOfString(time) >= 16 ? `${time?.substring(0, 15)}...` : time;
 
     useEffect(() => {
       setTime(textTime(startsAt, endsAt));
 
-      const interval = setInterval(() => {
+      syncInterval(() => {
         setTime(textTime(startsAt, endsAt));
-      }, 60000);
-
-      return () => {
-        clearInterval(interval);
-      };
+      });
+      // const interval = setInterval(() => {
+      //   setTime(textTime(startsAt, endsAt));
+      // }, 60000);
+      // return () => {
+      //   clearInterval(interval);
+      // };
     }, []);
 
     return (
@@ -150,7 +153,7 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stT
               marginBottom="0"
               marginTop="0"
             >
-              {time}
+              {truncatedTime}
             </Text>
           )}
         </Box>

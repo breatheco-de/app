@@ -60,6 +60,7 @@ const PaginatedView = ({ storyConfig, renderComponent, handlePageChange, queryFu
 
   const pageIndexes = getPageIndexes();
   const nextPagePath = pageProps?.pagesArray?.[currentPageIndex];
+  const currentPagePath = pageProps?.pagesArray?.[currentPageIndex - 1];
   const prevPagePath = pageProps?.pagesArray?.[currentPageIndex - 2];
 
   const indexPageExists = prevPagePath || nextPagePath;
@@ -76,6 +77,11 @@ const PaginatedView = ({ storyConfig, renderComponent, handlePageChange, queryFu
   return isNumber(pageProps?.currentPage) ? (
     <Box>
       <Head>
+        {currentPagePath ? (
+          <link rel="canonical" href={`https://4geeks.com${currentPagePath}`} />
+        ) : (
+          <link rel="canonical" href={`https://4geeks.com${pagePath}`} />
+        )}
         {prevPagePath && (
           <link rel="prev" href={prevPagePath} />
         )}
@@ -104,7 +110,7 @@ const PaginatedView = ({ storyConfig, renderComponent, handlePageChange, queryFu
         />
       )}
 
-      {indexPageExists && listToBottom && pageProps?.pages > 0 && pageIndexes?.length > 1 && pageProps?.currentPage && (
+      {indexPageExists && listToBottom && pageProps?.pages > 1 && pageIndexes?.length > 1 && pageProps?.currentPage && (
         <PageIndexes
           pages={pageProps?.pagesArray}
           currentPage={pageProps?.currentPage}
