@@ -56,9 +56,36 @@ async function generateSitemap() {
     : `${engLang[l.lang] !== 'en' ? `${l?.lang ? `/${l?.lang}` : ''}` : ''}${conector ? `/${conector}` : ''}/${l?.slug}`));
   const generateSlug = (data, conector) => data.map((l) => `${conector ? `/${conector}` : ''}/${l?.slug}`);
 
-  const generateTechnologySlug = (data, conector) => (data?.length > 0 ? data.map(
-    (l) => (`/${conector}/${l.slug}`),
-  ) : []);
+  const generateTechnologySlug = (data, conector, type) => {
+    console.log('');
+    if (type === 'lesson') {
+      const lessonsData = data.filter((l) => {
+        const lessonExists = l.assets.some((a) => a?.asset_type === 'LESSON');
+        return lessonExists;
+      });
+      return lessonsData?.map((l) => (`/${conector}/${l.slug}`));
+    }
+    if (type === 'exercise') {
+      const exercisesData = data.filter((l) => {
+        const assets = l.assets.some((a) => a?.asset_type === 'EXERCISE');
+        return assets;
+      });
+      return exercisesData?.map((l) => (`/${conector}/${l.slug}`));
+    }
+    if (type === 'project') {
+      const projectsData = data.filter((l) => {
+        const assets = l.assets.some((a) => a?.asset_type === 'PROJECT');
+        return assets.length > 0 && (`/${conector}/${l.slug}`);
+      });
+      return projectsData;
+    }
+    if (type === 'tech') {
+      return (data?.length > 0 ? data.map(
+        (l) => (`/${conector}/${l.slug}`),
+      ) : []);
+    }
+    return '';
+  };
 
   const generatePrismicSlugByLang = (data) => {
     const typePage = data?.length > 0 && data.filter((p) => p.type === 'page');
@@ -76,20 +103,19 @@ async function generateSitemap() {
   const prismicTypePages = generatePrismicSlugByLang(prismicPages);
   const readRoute = generateSlug(readPages, 'read');
   const lessonsRoute = generateSlugByLang(lessonsPages, 'lesson');
+  const exercisesRoute = generateSlugByLang(exercisesPages, 'interactive-exercise');
+  const projectsCodingRoute = generateSlugByLang(projectsPages, 'interactive-coding-tutorial');
+  const howTosRoute = generateSlugByLang(howTosPages, 'how-to');
 
   const paginatedLessonsRoute = pagination(lessonsPages, 'lessons');
   const paginatedExercisesRoute = pagination(lessonsPages, 'interactive-exercises');
   const paginatedProjectsRoute = pagination(lessonsPages, 'interactive-coding-tutorials');
   const paginatedHowTosRoute = pagination(lessonsPages, 'how-to');
 
-  const exercisesRoute = generateSlugByLang(exercisesPages, 'interactive-exercise');
-  const projectsCodingRoute = generateSlugByLang(projectsPages, 'interactive-coding-tutorial');
-
-  const howTosRoute = generateSlugByLang(howTosPages, 'how-to');
-  const technologyLessonsRoute = generateTechnologySlug(technologyLandingPages, 'lessons/technology');
-  const technologyExercisesRoute = generateTechnologySlug(technologyLandingPages, 'interactive-exercises/technology');
-  const technologyProjectsRoute = generateTechnologySlug(technologyLandingPages, 'interactive-coding-tutorials/technology');
-  const allTechnologiesRoute = generateTechnologySlug(technologyLandingPages, 'technology');
+  const technologyLessonsRoute = generateTechnologySlug(technologyLandingPages, 'lessons/technology', 'lesson');
+  const technologyExercisesRoute = generateTechnologySlug(technologyLandingPages, 'interactive-exercises/technology', 'exercise');
+  const technologyProjectsRoute = generateTechnologySlug(technologyLandingPages, 'interactive-coding-tutorials/technology', 'project');
+  const allTechnologiesRoute = generateTechnologySlug(technologyLandingPages, 'technology', 'tech');
 
   // excludes Nextjs files and API routes.
   const pages = await globby([
