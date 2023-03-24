@@ -61,6 +61,7 @@ function chooseProgram() {
   const flags = useFlags();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
+  const TwelveHours = 720;
 
   const fetchAdmissions = () => bc.admissions().me();
 
@@ -162,13 +163,13 @@ function chooseProgram() {
       upcoming: true,
     }).liveClass()
       .then((res) => {
-        const sortDateToLiveClass = sortToNearestTodayDate(res?.data);
+        const sortDateToLiveClass = sortToNearestTodayDate(res?.data, TwelveHours);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         setLiveClasses(existentLiveClasses);
       });
     syncInterval(() => {
       setLiveClasses((prev) => {
-        const sortDateToLiveClass = sortToNearestTodayDate(prev);
+        const sortDateToLiveClass = sortToNearestTodayDate(prev, TwelveHours);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         return existentLiveClasses;
       });

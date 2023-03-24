@@ -105,6 +105,7 @@ const Dashboard = () => {
   const commonModalColor = useColorModeValue('gray.dark', 'gray.light');
   const accessToken = getStorageItem('accessToken');
   const showGithubWarning = getStorageItem('showGithubWarning');
+  const TwelveHours = 720;
 
   const supportSideBar = t('supportSideBar', {}, { returnObjects: true });
 
@@ -188,14 +189,14 @@ const Dashboard = () => {
       cohort: cohortSlug,
     }).liveClass()
       .then((res) => {
-        const sortDateToLiveClass = sortToNearestTodayDate(res?.data);
+        const sortDateToLiveClass = sortToNearestTodayDate(res?.data, TwelveHours);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         setLiveClasses(existentLiveClasses);
       });
 
     syncInterval(() => {
       setLiveClasses((prev) => {
-        const sortDateToLiveClass = sortToNearestTodayDate(prev);
+        const sortDateToLiveClass = sortToNearestTodayDate(prev, TwelveHours);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         return existentLiveClasses;
       });
