@@ -8,7 +8,6 @@ import Icon from '../../common/components/Icon';
 import { isPlural } from '../../utils';
 import Text from '../../common/components/Text';
 import bc from '../../common/services/breathecode';
-import useOnline from '../../common/hooks/useOnline';
 import handlers from '../../common/handlers';
 import Programs from './Programs';
 import UpgradeAccessModal from '../../common/components/UpgradeAccessModal';
@@ -18,7 +17,6 @@ import Heading from '../../common/components/Heading';
 
 function ChooseProgram({ chooseList, handleChoose }) {
   const { t } = useTranslation('choose-program');
-  const { usersConnected } = useOnline();
   const { programsList } = useProgramList();
   const [marketingCursesList, setMarketingCursesList] = useState([]);
   const [showFinished, setShowFinished] = useState(false);
@@ -70,7 +68,6 @@ function ChooseProgram({ chooseList, handleChoose }) {
               key={item?.cohort?.slug}
               item={item}
               handleChoose={handleChoose}
-              usersConnected={usersConnected}
               onOpenModal={() => setUpgradeModalIsOpen(true)}
             />
           ))}
@@ -161,7 +158,6 @@ function ChooseProgram({ chooseList, handleChoose }) {
                   key={item?.cohort?.slug}
                   item={item}
                   handleChoose={handleChoose}
-                  usersConnected={usersConnected}
                   onOpenModal={() => setUpgradeModalIsOpen(true)}
                 />
               ))}

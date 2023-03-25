@@ -7,7 +7,7 @@ import { usePersistent } from '../../common/hooks/usePersistent';
 import axios from '../../axios';
 import useProgramList from '../../common/store/actions/programListAction';
 
-const Programs = memo(({ item, handleChoose, onOpenModal, usersConnected }) => {
+const Programs = ({ item, handleChoose, onOpenModal }) => {
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const { programsList } = useProgramList();
   const { cohort } = item;
@@ -97,27 +97,24 @@ const Programs = memo(({ item, handleChoose, onOpenModal, usersConnected }) => {
       iconBackground="blue.default"
       assistants={currentCohortProps?.assistant}
       teacher={currentCohortProps?.teacher?.[0]}
-      usersConnected={usersConnected}
       courseProgress={currentCohortProps?.percentage || 0}
       handleChoose={onClickHandler}
       isHiddenOnPrework={isHiddenOnPrework && cohort.stage.includes('PREWORK')}
       onOpenModal={onClickUpgrade}
     />
   );
-});
+};
 
 Programs.propTypes = {
   item: PropTypes.objectOf(PropTypes.any),
   handleChoose: PropTypes.func,
-  usersConnected: PropTypes.arrayOf(PropTypes.any),
   onOpenModal: PropTypes.func,
 };
 
 Programs.defaultProps = {
   item: {},
   handleChoose: () => {},
-  usersConnected: [],
   onOpenModal: () => {},
 };
 
-export default Programs;
+export default memo(Programs);
