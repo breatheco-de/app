@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { subMinutes } from 'date-fns';
+import { memo } from 'react';
 import ProgramCard from '../../common/components/ProgramCard';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import axios from '../../axios';
 import useProgramList from '../../common/store/actions/programListAction';
 
-const Programs = ({ item, handleChoose, onOpenModal, usersConnected }) => {
+const Programs = memo(({ item, handleChoose, onOpenModal, usersConnected }) => {
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const { programsList } = useProgramList();
   const { cohort } = item;
@@ -103,7 +104,7 @@ const Programs = ({ item, handleChoose, onOpenModal, usersConnected }) => {
       onOpenModal={onClickUpgrade}
     />
   );
-};
+});
 
 Programs.propTypes = {
   item: PropTypes.objectOf(PropTypes.any),
