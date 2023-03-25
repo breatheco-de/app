@@ -8,7 +8,6 @@ import Icon from '../../common/components/Icon';
 import { isPlural } from '../../utils';
 import Text from '../../common/components/Text';
 import bc from '../../common/services/breathecode';
-import useOnline from '../../common/hooks/useOnline';
 import handlers from '../../common/handlers';
 import Programs from './Programs';
 import UpgradeAccessModal from '../../common/components/UpgradeAccessModal';
@@ -18,7 +17,6 @@ import Heading from '../../common/components/Heading';
 
 function ChooseProgram({ chooseList, handleChoose }) {
   const { t } = useTranslation('choose-program');
-  const { usersConnected } = useOnline();
   const { programsList } = useProgramList();
   const [marketingCursesList, setMarketingCursesList] = useState([]);
   const [showFinished, setShowFinished] = useState(false);
@@ -49,7 +47,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
   const marketingCouses = marketingCursesList && activeSubscriptionCohorts.length > 0 && marketingCursesList.filter(
     (item) => !activeSubscriptionCohorts.some(
       (activeCohort) => activeCohort?.cohort?.syllabus_version?.slug === item?.slug,
-    ),
+    ) && item?.course_translation?.title,
   );
 
   return (
@@ -70,7 +68,6 @@ function ChooseProgram({ chooseList, handleChoose }) {
               key={item?.cohort?.slug}
               item={item}
               handleChoose={handleChoose}
-              usersConnected={usersConnected}
               onOpenModal={() => setUpgradeModalIsOpen(true)}
             />
           ))}
@@ -91,19 +88,17 @@ function ChooseProgram({ chooseList, handleChoose }) {
             height="auto"
             gridGap="4rem"
           >
-            {marketingCouses.map((item) => item?.course_translation?.title && (
-              <Box>
-                <ProgramCard
-                  isMarketingCourse
-                  icon="coding"
-                  iconLink={item?.icon_url}
-                  iconBackground="blue.default"
-                  handleChoose={() => router.push(`/signup?plan=${item?.slug}`)}
-                  programName={item?.course_translation.title}
-                  programDescription={item?.course_translation?.description}
-                  width="100%"
-                />
-              </Box>
+            {marketingCouses.map((item) => (
+              <ProgramCard
+                isMarketingCourse
+                icon="coding"
+                iconLink={item?.icon_url}
+                iconBackground="blue.default"
+                handleChoose={() => router.push(`/checkout?plan=${item?.slug}`)}
+                programName={item?.course_translation.title}
+                programDescription={item?.course_translation?.description}
+                width="100%"
+              />
             ))}
           </Box>
         </>
@@ -163,7 +158,6 @@ function ChooseProgram({ chooseList, handleChoose }) {
                   key={item?.cohort?.slug}
                   item={item}
                   handleChoose={handleChoose}
-                  usersConnected={usersConnected}
                   onOpenModal={() => setUpgradeModalIsOpen(true)}
                 />
               ))}
