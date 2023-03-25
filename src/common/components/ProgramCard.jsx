@@ -126,8 +126,6 @@ const ProgramCard = ({
     );
   };
 
-  console.log('program card render');
-
   return (
     <Box
       border="1px solid"
