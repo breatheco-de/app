@@ -69,7 +69,6 @@ const Checkout = ({ finance }) => {
   const { user, isLoading } = useAuth();
   const toast = useToast();
   const plan = getQueryString('plan');
-  const hasAvailableCohorts = getQueryString('has_available_cohorts');
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
 
@@ -90,7 +89,6 @@ const Checkout = ({ finance }) => {
   });
 
   const queryPlanExists = plan !== undefined && plan?.length > 0;
-  const queryAvailableCohortsExists = hasAvailableCohorts !== undefined && hasAvailableCohorts?.length > 0;
 
   useEffect(() => {
     if (queryPlanExists && tokenExists) {
@@ -123,8 +121,7 @@ const Checkout = ({ finance }) => {
               });
             }
 
-            // if ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true) {
-            if ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || (queryAvailableCohortsExists && hasAvailableCohorts)) {
+            if ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || (data?.has_available_cohorts && data?.has_available_cohorts === false)) {
               if (resp.status < 400) {
                 const { kickoffDate, weekDays, availableTime } = cohorts?.[0] ? getTimeProps(cohorts[0]) : {};
                 const defaultQueryPropsAux = {
