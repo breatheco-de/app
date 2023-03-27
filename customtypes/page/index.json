@@ -57,6 +57,9 @@
             },
             "one_column": {
               "type": "SharedSlice"
+            },
+            "testimonials": {
+              "type": "SharedSlice"
             }
           }
         }

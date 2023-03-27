@@ -28,24 +28,31 @@ const MktTwoColumnSideImage = ({
     left: 'row',
   };
 
+  const imageProps = slice && slice?.primary?.image?.dimensions;
+
   return (
     <Box
-      padding="20px"
+      padding="20px 0"
       display="flex"
       flexWrap={{ base: 'wrap', md: 'nowrap' }}
       gridGap="20px"
       background={background || backgroundColor}
       border={border}
+      alignItems="center"
       borderRadius="12px"
       flexDirection={flexDirection[imagePosition]}
     >
       <Box width={{ base: '100% 0', md: '50%' }}>
         <Img
           boxSize="100%"
-          objectFit="cover"
+          margin="0 auto"
+          objectFit="contain"
           src={imageUrl}
           alt={imageAlt}
+          title={imageAlt}
           borderRadius="3px"
+          height={imageProps?.height}
+          width={imageProps?.width}
         />
       </Box>
       <Box width={{ base: '100% 0', md: '50%' }}>

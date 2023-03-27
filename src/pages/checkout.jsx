@@ -69,6 +69,7 @@ const Checkout = ({ finance }) => {
   const { user, isLoading } = useAuth();
   const toast = useToast();
   const plan = getQueryString('plan');
+  const planFormated = encodeURIComponent(plan);
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
 
@@ -88,7 +89,7 @@ const Checkout = ({ finance }) => {
     confirm_email: '',
   });
 
-  const queryPlanExists = plan !== undefined && plan?.length > 0;
+  const queryPlanExists = planFormated !== undefined && planFormated?.length > 0;
 
   useEffect(() => {
     if (queryPlanExists && tokenExists) {
@@ -101,7 +102,7 @@ const Checkout = ({ finance }) => {
         });
       }
       if (cohorts && cohorts?.length > 0) {
-        bc.payment().getPlan(plan)
+        bc.payment().getPlan(planFormated)
           .then((resp) => {
             const data = resp?.data;
             const existsAmountPerHalf = data?.price_per_half > 0;
