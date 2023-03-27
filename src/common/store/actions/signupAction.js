@@ -153,12 +153,11 @@ const useSignup = () => {
       headers: new Headers({
         'content-type': 'application/json',
         Authorization: `Token ${accessToken}`,
-
       }),
       body: JSON.stringify(checkingBody),
     })
-      .then((response) => {
-        const data = response?.data;
+      .then(async (response) => {
+        const data = await response.json();
 
         const existsAmountPerHalf = data?.amount_per_half > 0;
         const existsAmountPerMonth = data?.amount_per_month > 0;

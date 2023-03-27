@@ -25,6 +25,14 @@ export async function getStaticProps({ params, locale, previewData }) {
     .then((response) => response)
     .catch(() => null);
 
+  const isCurrenLang = page?.lang?.split('-')?.[0] === locale;
+
+  if (!page || !isCurrenLang) {
+    return {
+      notFound: true,
+    };
+  }
+
   const translationsArr = page?.alternate_languages?.map((tr) => ({
     [tr.lang.split('-')[0]]: tr.uid,
   }));
@@ -34,14 +42,6 @@ export async function getStaticProps({ params, locale, previewData }) {
   };
 
   const { title, description, image, type } = page?.data;
-
-  const isCurrenLang = page?.lang?.split('-')?.[0] === locale;
-
-  if (!page || !isCurrenLang) {
-    return {
-      notFound: true,
-    };
-  }
 
   const translationArray = [
     {
