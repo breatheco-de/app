@@ -36,7 +36,6 @@ const MktTwoColumnSideImage = ({
       gridGap="20px"
       background={background || backgroundColor}
       border={border}
-      borderRadius="12px"
       flexDirection={flexDirection[imagePosition]}
     >
       <Box width={{ base: '100% 0', md: '50%' }}>
