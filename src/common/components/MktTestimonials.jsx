@@ -2,15 +2,31 @@ import PropTypes from 'prop-types';
 import {
   Box, Avatar,
 } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import Heading from './Heading';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
 
 const MktTestimonials = ({
   title,
+  endpoint,
   testimonials,
 }) => {
+  const [testimonialsData, setTestimonialsData] = useState();
   const { fontColor2, backgroundColor } = useStyle();
+
+  useEffect(() => {
+    if (typeof endpoint === 'string' && endpoint.length > 20) {
+      axios.get(`${process.env.BREATHECODE_HOST}${endpoint}`)
+        .then((response) => {
+          setTestimonialsData(response?.data);
+        })
+        .catch((error) => console.log('error:', error));
+    }
+  }, []);
+
+  const testimonialsArray = (testimonialsData?.length > 0 && testimonialsData) || (testimonials.length > 0 && testimonials);
 
   // eslint-disable-next-line react/prop-types
   const TestimonialBox = ({ picture, name, occupation, description }) => (
@@ -47,7 +63,7 @@ const MktTestimonials = ({
   );
 
   return (
-    <Box padding="20px" textAlign="center">
+    <Box padding="20px 0" textAlign="center">
       <Heading as="h2" size="m" marginBottom="20px">
         {title}
       </Heading>
@@ -58,7 +74,7 @@ const MktTestimonials = ({
         display="flex"
         justifyContent="center"
       >
-        {testimonials.map((testimonial) => (
+        {testimonialsArray && testimonialsArray.map((testimonial) => (
           <TestimonialBox
             picture={testimonial.picture}
             name={testimonial.name}
@@ -73,11 +89,13 @@ const MktTestimonials = ({
 
 MktTestimonials.propTypes = {
   title: PropTypes.string,
+  endpoint: PropTypes.string,
   testimonials: PropTypes.arrayOf(PropTypes.any),
 };
 
 MktTestimonials.defaultProps = {
   title: null,
+  endpoint: '',
   testimonials: [],
 };
 

@@ -30,6 +30,7 @@ const ChooseYourClass = ({
   const { isSecondStep, setLocation } = useSignup();
 
   const plan = getQueryString('plan');
+  const planFormated = encodeURIComponent(plan);
 
   const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(
     GOOGLE_KEY,
@@ -43,7 +44,7 @@ const ChooseYourClass = ({
       coordinates: coords?.latitude && `${coords.latitude},${coords.longitude}`,
       saas: true,
       upcoming: true,
-      plan,
+      plan: planFormated,
     })
       .cohorts()
       .then(({ data }) => {
