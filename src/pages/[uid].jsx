@@ -25,13 +25,13 @@ export async function getStaticProps({ params, locale, previewData }) {
     .then((response) => response)
     .catch(() => null);
 
-  if (!page) {
+  const isCurrenLang = page?.lang?.split('-')?.[0] === locale;
+
+  if (!page || !isCurrenLang) {
     return {
       notFound: true,
     };
   }
-
-  const { title, description, image, type } = page?.data;
 
   const translationsArr = page?.alternate_languages?.map((tr) => ({
     [tr.lang.split('-')[0]]: tr.uid,
@@ -41,13 +41,7 @@ export async function getStaticProps({ params, locale, previewData }) {
     ...translationsArr?.reduce((acc, curr) => ({ ...acc, ...curr }), {}),
   };
 
-  const isCurrenLang = page?.lang?.split('-')?.[0] === locale;
-
-  if (!page || !isCurrenLang) {
-    return {
-      notFound: true,
-    };
-  }
+  const { title, description, image, type } = page?.data;
 
   const translationArray = [
     {
