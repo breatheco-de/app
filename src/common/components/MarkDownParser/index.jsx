@@ -102,7 +102,7 @@ const MarkDownParser = ({
         isExternalLink: true,
       },
     ]);
-  }, [token, assetSlug, newExerciseText, continueExerciseText]);
+  }, [token, assetSlug, newExerciseText, continueExerciseText, currentData?.url]);
 
   return (
     <>

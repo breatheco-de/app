@@ -52,7 +52,7 @@ const MktTwoColumnSideImage = ({
           alt={imageAlt}
           title={imageAlt}
           borderRadius="3px"
-          height={imageProps?.height}
+          // height={imageProps?.height}
           width={imageProps?.width}
         />
       </Box>
