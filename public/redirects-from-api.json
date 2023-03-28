@@ -465,303 +465,303 @@
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/family-tree-static-api-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/family-tree-static-api-es",
+    "source": "/interactive-coding-tutorial/family-tree-static-api-es",
+    "destination": "/es/interactive-coding-tutorial/family-tree-static-api-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/exercise-starwars-blog-api-es",
-    "destination": "/es/interactive-coding-tutorial/easy/exercise-starwars-blog-api-es",
+    "source": "/interactive-coding-tutorial/exercise-starwars-blog-api-es",
+    "destination": "/es/interactive-coding-tutorial/exercise-starwars-blog-api-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/python-flask-api-tutorial-es",
-    "destination": "/es/interactive-coding-tutorial/easy/python-flask-api-tutorial-es",
+    "source": "/interactive-coding-tutorial/python-flask-api-tutorial-es",
+    "destination": "/es/interactive-coding-tutorial/python-flask-api-tutorial-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/excuse-generator-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/excuse-generator-es",
+    "source": "/interactive-coding-tutorial/excuse-generator-es",
+    "destination": "/es/interactive-coding-tutorial/excuse-generator-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/todo-list-react-with-fetch-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/todo-list-react-with-fetch-es",
+    "source": "/interactive-coding-tutorial/todo-list-react-with-fetch-es",
+    "destination": "/es/interactive-coding-tutorial/todo-list-react-with-fetch-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/todo-list-cli-python-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/todo-list-cli-python-es",
+    "source": "/interactive-coding-tutorial/todo-list-cli-python-es",
+    "destination": "/es/interactive-coding-tutorial/todo-list-cli-python-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/personal-portfolio-react-es",
-    "destination": "/es/interactive-coding-tutorial/easy/personal-portfolio-react-es",
+    "source": "/interactive-coding-tutorial/personal-portfolio-react-es",
+    "destination": "/es/interactive-coding-tutorial/personal-portfolio-react-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/simple-counter-react-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/simple-counter-react-es",
+    "source": "/interactive-coding-tutorial/simple-counter-react-es",
+    "destination": "/es/interactive-coding-tutorial/simple-counter-react-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/pop-baloons-javascript-es",
-    "destination": "/es/interactive-coding-tutorial/easy/pop-baloons-javascript-es",
+    "source": "/interactive-coding-tutorial/pop-baloons-javascript-es",
+    "destination": "/es/interactive-coding-tutorial/pop-baloons-javascript-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/collaborative-html-website-es",
-    "destination": "/es/interactive-coding-tutorial/easy/collaborative-html-website-es",
+    "source": "/interactive-coding-tutorial/collaborative-html-website-es",
+    "destination": "/es/interactive-coding-tutorial/collaborative-html-website-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/exercise-terminal-challenge-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/exercise-terminal-challenge-es",
+    "source": "/interactive-coding-tutorial/exercise-terminal-challenge-es",
+    "destination": "/es/interactive-coding-tutorial/exercise-terminal-challenge-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/urban-dictionary-cli-es",
-    "destination": "/es/interactive-coding-tutorial/easy/urban-dictionary-cli-es",
+    "source": "/interactive-coding-tutorial/urban-dictionary-cli-es",
+    "destination": "/es/interactive-coding-tutorial/urban-dictionary-cli-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/tictactoe-cli-python-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/tictactoe-cli-python-es",
+    "source": "/interactive-coding-tutorial/tictactoe-cli-python-es",
+    "destination": "/es/interactive-coding-tutorial/tictactoe-cli-python-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/domain-generator-es",
-    "destination": "/es/interactive-coding-tutorial/easy/domain-generator-es",
+    "source": "/interactive-coding-tutorial/domain-generator-es",
+    "destination": "/es/interactive-coding-tutorial/domain-generator-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/hard/css-drawing-goku-es",
-    "destination": "/es/interactive-coding-tutorial/hard/css-drawing-goku-es",
+    "source": "/interactive-coding-tutorial/css-drawing-goku-es",
+    "destination": "/es/interactive-coding-tutorial/css-drawing-goku-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/intermediate/music-player-react-es",
-    "destination": "/es/interactive-coding-tutorial/intermediate/music-player-react-es",
+    "source": "/interactive-coding-tutorial/music-player-react-es",
+    "destination": "/es/interactive-coding-tutorial/music-player-react-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/instagram-data-modeling-es",
-    "destination": "/es/interactive-coding-tutorial/easy/instagram-data-modeling-es",
+    "source": "/interactive-coding-tutorial/instagram-data-modeling-es",
+    "destination": "/es/interactive-coding-tutorial/instagram-data-modeling-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/unit-test-with-jest-es",
-    "destination": "/es/interactive-coding-tutorial/easy/unit-test-with-jest-es",
+    "source": "/interactive-coding-tutorial/unit-test-with-jest-es",
+    "destination": "/es/interactive-coding-tutorial/unit-test-with-jest-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/file-hierarchy-report-es",
-    "destination": "/es/interactive-coding-tutorial/easy/file-hierarchy-report-es",
+    "source": "/interactive-coding-tutorial/file-hierarchy-report-es",
+    "destination": "/es/interactive-coding-tutorial/file-hierarchy-report-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/html5-form-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/html5-form-es",
+    "source": "/interactive-coding-tutorial/html5-form-es",
+    "destination": "/es/interactive-coding-tutorial/html5-form-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/intermediate/spotify-landing-page-es",
-    "destination": "/es/interactive-coding-tutorial/intermediate/spotify-landing-page-es",
+    "source": "/interactive-coding-tutorial/spotify-landing-page-es",
+    "destination": "/es/interactive-coding-tutorial/spotify-landing-page-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/intermediate/contact-list-api-es",
-    "destination": "/es/interactive-coding-tutorial/intermediate/contact-list-api-es",
+    "source": "/interactive-coding-tutorial/contact-list-api-es",
+    "destination": "/es/interactive-coding-tutorial/contact-list-api-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/data-modeling-starwars-es",
-    "destination": "/es/interactive-coding-tutorial/easy/data-modeling-starwars-es",
+    "source": "/interactive-coding-tutorial/data-modeling-starwars-es",
+    "destination": "/es/interactive-coding-tutorial/data-modeling-starwars-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/excuse-generator-python-cli-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/excuse-generator-python-cli-es",
+    "source": "/interactive-coding-tutorial/excuse-generator-python-cli-es",
+    "destination": "/es/interactive-coding-tutorial/excuse-generator-python-cli-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/intermediate/meetup-clone-react-es",
-    "destination": "/es/interactive-coding-tutorial/intermediate/meetup-clone-react-es",
+    "source": "/interactive-coding-tutorial/meetup-clone-react-es",
+    "destination": "/es/interactive-coding-tutorial/meetup-clone-react-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/traffic-light-react-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/traffic-light-react-es",
+    "source": "/interactive-coding-tutorial/traffic-light-react-es",
+    "destination": "/es/interactive-coding-tutorial/traffic-light-react-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/intermediate/landing-page-javascript-es",
-    "destination": "/es/interactive-coding-tutorial/intermediate/landing-page-javascript-es",
+    "source": "/interactive-coding-tutorial/landing-page-javascript-es",
+    "destination": "/es/interactive-coding-tutorial/landing-page-javascript-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/random-card-cli-python-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/random-card-cli-python-es",
+    "source": "/interactive-coding-tutorial/random-card-cli-python-es",
+    "destination": "/es/interactive-coding-tutorial/random-card-cli-python-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/intermediate/contact-list-es",
-    "destination": "/es/interactive-coding-tutorial/intermediate/contact-list-es",
+    "source": "/interactive-coding-tutorial/contact-list-es",
+    "destination": "/es/interactive-coding-tutorial/contact-list-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/intermediate/todo-list-api-es",
-    "destination": "/es/interactive-coding-tutorial/intermediate/todo-list-api-es",
+    "source": "/interactive-coding-tutorial/todo-list-api-es",
+    "destination": "/es/interactive-coding-tutorial/todo-list-api-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/intermediate/starwars-blog-reading-list-es",
-    "destination": "/es/interactive-coding-tutorial/intermediate/starwars-blog-reading-list-es",
+    "source": "/interactive-coding-tutorial/starwars-blog-reading-list-es",
+    "destination": "/es/interactive-coding-tutorial/starwars-blog-reading-list-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/product-landing-page-plain-css-es",
-    "destination": "/es/interactive-coding-tutorial/easy/product-landing-page-plain-css-es",
+    "source": "/interactive-coding-tutorial/product-landing-page-plain-css-es",
+    "destination": "/es/interactive-coding-tutorial/product-landing-page-plain-css-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/learn-in-public-project-es",
-    "destination": "/es/interactive-coding-tutorial/easy/learn-in-public-project-es",
+    "source": "/interactive-coding-tutorial/learn-in-public-project-es",
+    "destination": "/es/interactive-coding-tutorial/learn-in-public-project-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/intermediate/queue-management-cli-python-es",
-    "destination": "/es/interactive-coding-tutorial/intermediate/queue-management-cli-python-es",
+    "source": "/interactive-coding-tutorial/queue-management-cli-python-es",
+    "destination": "/es/interactive-coding-tutorial/queue-management-cli-python-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/intermediate/contact-list-context-es",
-    "destination": "/es/interactive-coding-tutorial/intermediate/contact-list-context-es",
+    "source": "/interactive-coding-tutorial/contact-list-context-es",
+    "destination": "/es/interactive-coding-tutorial/contact-list-context-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/intermediate/sorting-cards-with-select-es",
-    "destination": "/es/interactive-coding-tutorial/intermediate/sorting-cards-with-select-es",
+    "source": "/interactive-coding-tutorial/sorting-cards-with-select-es",
+    "destination": "/es/interactive-coding-tutorial/sorting-cards-with-select-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/intermediate/sorting-cards-with-bubble-es",
-    "destination": "/es/interactive-coding-tutorial/intermediate/sorting-cards-with-bubble-es",
+    "source": "/interactive-coding-tutorial/sorting-cards-with-bubble-es",
+    "destination": "/es/interactive-coding-tutorial/sorting-cards-with-bubble-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/fix-the-misspell-es",
-    "destination": "/es/interactive-coding-tutorial/easy/fix-the-misspell-es",
+    "source": "/interactive-coding-tutorial/fix-the-misspell-es",
+    "destination": "/es/interactive-coding-tutorial/fix-the-misspell-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/landing-page-with-react-es",
-    "destination": "/es/interactive-coding-tutorial/easy/landing-page-with-react-es",
+    "source": "/interactive-coding-tutorial/landing-page-with-react-es",
+    "destination": "/es/interactive-coding-tutorial/landing-page-with-react-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/building-rest-apis-with-flaskpython-es",
-    "destination": "/es/interactive-coding-tutorial/easy/building-rest-apis-with-flaskpython-es",
+    "source": "/interactive-coding-tutorial/building-rest-apis-with-flaskpython-es",
+    "destination": "/es/interactive-coding-tutorial/building-rest-apis-with-flaskpython-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/intermediate/full-stack-project-stories-and-wireframes-es",
-    "destination": "/es/interactive-coding-tutorial/intermediate/full-stack-project-stories-and-wireframes-es",
+    "source": "/interactive-coding-tutorial/full-stack-project-stories-and-wireframes-es",
+    "destination": "/es/interactive-coding-tutorial/full-stack-project-stories-and-wireframes-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/postcard-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/postcard-es",
+    "source": "/interactive-coding-tutorial/postcard-es",
+    "destination": "/es/interactive-coding-tutorial/postcard-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/jwt-authentication-with-flask-react-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/jwt-authentication-with-flask-react-es",
+    "source": "/interactive-coding-tutorial/jwt-authentication-with-flask-react-es",
+    "destination": "/es/interactive-coding-tutorial/jwt-authentication-with-flask-react-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/intermediate/battleship-vanillajs-es",
-    "destination": "/es/interactive-coding-tutorial/intermediate/battleship-vanillajs-es",
+    "source": "/interactive-coding-tutorial/battleship-vanillajs-es",
+    "destination": "/es/interactive-coding-tutorial/battleship-vanillajs-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/conditional-profile-card-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/conditional-profile-card-es",
+    "source": "/interactive-coding-tutorial/conditional-profile-card-es",
+    "destination": "/es/interactive-coding-tutorial/conditional-profile-card-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/intermediate/full-stack-todo-list-es",
-    "destination": "/es/interactive-coding-tutorial/intermediate/full-stack-todo-list-es",
+    "source": "/interactive-coding-tutorial/full-stack-todo-list-es",
+    "destination": "/es/interactive-coding-tutorial/full-stack-todo-list-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/tictactoe-react-es",
-    "destination": "/es/interactive-coding-tutorial/easy/tictactoe-react-es",
+    "source": "/interactive-coding-tutorial/tictactoe-react-es",
+    "destination": "/es/interactive-coding-tutorial/tictactoe-react-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/todo-list-es",
-    "destination": "/es/interactive-coding-tutorial/easy/todo-list-es",
+    "source": "/interactive-coding-tutorial/todo-list-es",
+    "destination": "/es/interactive-coding-tutorial/todo-list-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/multi-view-react-collaborative-website-es",
-    "destination": "/es/interactive-coding-tutorial/easy/multi-view-react-collaborative-website-es",
+    "source": "/interactive-coding-tutorial/multi-view-react-collaborative-website-es",
+    "destination": "/es/interactive-coding-tutorial/multi-view-react-collaborative-website-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/html5-form-validations-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/html5-form-validations-es",
+    "source": "/interactive-coding-tutorial/html5-form-validations-es",
+    "destination": "/es/interactive-coding-tutorial/html5-form-validations-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/todo-list-cli-with-cloud-es",
-    "destination": "/es/interactive-coding-tutorial/easy/todo-list-cli-with-cloud-es",
+    "source": "/interactive-coding-tutorial/todo-list-cli-with-cloud-es",
+    "destination": "/es/interactive-coding-tutorial/todo-list-cli-with-cloud-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/easy/todolist-vanilla-js-es",
-    "destination": "/es/interactive-coding-tutorial/easy/todolist-vanilla-js-es",
+    "source": "/interactive-coding-tutorial/todolist-vanilla-js-es",
+    "destination": "/es/interactive-coding-tutorial/todolist-vanilla-js-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/intermediate/queue-management-api-es",
-    "destination": "/es/interactive-coding-tutorial/intermediate/queue-management-api-es",
+    "source": "/interactive-coding-tutorial/queue-management-api-es",
+    "destination": "/es/interactive-coding-tutorial/queue-management-api-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/random-card-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/random-card-es",
+    "source": "/interactive-coding-tutorial/random-card-es",
+    "destination": "/es/interactive-coding-tutorial/random-card-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/instagram-post-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/instagram-post-es",
+    "source": "/interactive-coding-tutorial/instagram-post-es",
+    "destination": "/es/interactive-coding-tutorial/instagram-post-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/family-static-api-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/family-static-api-es",
+    "source": "/interactive-coding-tutorial/family-static-api-es",
+    "destination": "/es/interactive-coding-tutorial/family-static-api-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/compression-algorithm-python-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/compression-algorithm-python-es",
+    "source": "/interactive-coding-tutorial/compression-algorithm-python-es",
+    "destination": "/es/interactive-coding-tutorial/compression-algorithm-python-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/beginner/instagram-feed-es",
-    "destination": "/es/interactive-coding-tutorial/beginner/instagram-feed-es",
+    "source": "/interactive-coding-tutorial/instagram-feed-es",
+    "destination": "/es/interactive-coding-tutorial/instagram-feed-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/unknown/instagram-feed-bootstrap-es",
-    "destination": "/es/interactive-coding-tutorial/unknown/instagram-feed-bootstrap-es",
+    "source": "/interactive-coding-tutorial/instagram-feed-bootstrap-es",
+    "destination": "/es/interactive-coding-tutorial/instagram-feed-bootstrap-es",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/unknown/Preparate-para-tu-entrevista",
-    "destination": "/es/interactive-coding-tutorial/unknown/Preparate-para-tu-entrevista",
+    "source": "/interactive-coding-tutorial/Preparate-para-tu-entrevista",
+    "destination": "/es/interactive-coding-tutorial/Preparate-para-tu-entrevista",
     "permanent": true
   },
   {

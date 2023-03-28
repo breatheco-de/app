@@ -49,6 +49,10 @@
         "__TYPE__": "ImageContent",
         "thumbnails": {}
       },
+      "link_button": {
+        "__TYPE__": "BooleanContent",
+        "value": false
+      },
       "button_label": {
         "__TYPE__": "FieldContent",
         "type": "Text",

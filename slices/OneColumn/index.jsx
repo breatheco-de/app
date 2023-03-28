@@ -32,6 +32,7 @@ const OneColumn = ({ slice }) => {
       slice={slice}
       title={slice.primary.title}
       subTitle={slice.primary.subtitle}
+      linkButton={slice.primary.link_button}
       buttonUrl={slice.primary.button_url.url}
       buttonLabel={slice.primary.button_label}
       kpiList={items}
