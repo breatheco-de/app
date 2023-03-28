@@ -18,11 +18,7 @@ const MktTestimonials = ({
 
   useEffect(() => {
     if (typeof endpoint === 'string' && endpoint?.length > 8) {
-      axios.get(`${process.env.BREATHECODE_HOST}${endpoint}`, {
-        headers: {
-          Authorization: `Bearer ${process.env.BC_ACADEMY_TOKEN}`,
-        },
-      })
+      axios.get(`${process.env.BREATHECODE_HOST}${endpoint}`)
         .then((response) => {
           setTestimonialsData(response?.data);
         })
