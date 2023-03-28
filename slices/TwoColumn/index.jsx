@@ -13,6 +13,7 @@ const TwoColumn = ({ slice }) => (
     subTitle={slice.primary.subtitle}
     slice={slice}
     background={slice.primary.background_color}
+    linkButton={slice.primary.link_button}
     buttonUrl={slice.primary.button_url.url}
     buttonLabel={slice.primary.button_label}
     imageUrl={slice.primary?.image?.url}

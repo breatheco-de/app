@@ -49,6 +49,15 @@
             "placeholder": ""
           }
         },
+        "link_button": {
+          "type": "Boolean",
+          "config": {
+            "label": "Link Button",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
+          }
+        },
         "button_url": {
           "type": "Link",
           "config": {

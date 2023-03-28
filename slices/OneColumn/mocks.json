@@ -29,6 +29,10 @@
         "type": "Text",
         "value": "Button as link"
       },
+      "link_button": {
+        "__TYPE__": "BooleanContent",
+        "value": false
+      },
       "button_url": {
         "__TYPE__": "LinkContent",
         "value": {

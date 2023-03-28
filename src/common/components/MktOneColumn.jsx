@@ -15,6 +15,7 @@ const MktOneColumn = ({
   description,
   buttonUrl,
   buttonLabel,
+  linkButton,
   kpiList,
   slice,
 }) => {
@@ -93,7 +94,8 @@ const MktOneColumn = ({
         )}
         {buttonUrl && (
           <Link
-            variant="buttonDefault"
+            variant={!linkButton && 'buttonDefault'}
+            color={linkButton ? hexColor.blueDefault : '#FFF'}
             href={buttonUrl}
             textAlign="center"
             display="inline-block"
@@ -112,6 +114,7 @@ MktOneColumn.propTypes = {
   description: PropTypes.string,
   buttonUrl: PropTypes.string,
   buttonLabel: PropTypes.string,
+  linkButton: PropTypes.bool,
   kpiList: PropTypes.arrayOf(PropTypes.any),
   slice: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
 };
@@ -122,6 +125,7 @@ MktOneColumn.defaultProps = {
   description: null,
   buttonUrl: null,
   buttonLabel: null,
+  linkButton: false,
   kpiList: [],
   slice: null,
 };

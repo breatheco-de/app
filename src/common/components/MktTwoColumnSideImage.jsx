@@ -14,6 +14,7 @@ const MktTwoColumnSideImage = ({
   subTitle,
   description,
   imageUrl,
+  linkButton,
   buttonUrl,
   buttonLabel,
   background,
@@ -82,7 +83,8 @@ const MktTwoColumnSideImage = ({
         )}
         {buttonUrl && (
           <Link
-            variant="buttonDefault"
+            variant={!linkButton && 'buttonDefault'}
+            color={linkButton ? hexColor.blueDefault : '#FFF'}
             href={buttonUrl}
             textAlign="center"
             display="inline-block"
@@ -101,6 +103,7 @@ MktTwoColumnSideImage.propTypes = {
   description: PropTypes.string,
   imagePosition: PropTypes.string,
   imageUrl: PropTypes.string,
+  linkButton: PropTypes.bool,
   buttonUrl: PropTypes.string,
   buttonLabel: PropTypes.string,
   background: PropTypes.string,
@@ -115,6 +118,7 @@ MktTwoColumnSideImage.defaultProps = {
   description: null,
   imagePosition: 'left',
   imageUrl: null,
+  linkButton: false,
   buttonUrl: null,
   buttonLabel: null,
   background: null,
