@@ -97,7 +97,7 @@ const useSignup = () => {
 
   const handlePayment = (data) => new Promise((resolve, reject) => {
     const manyInstallmentsExists = selectedPlanCheckoutData?.financing_options?.length > 0 && selectedPlanCheckoutData?.period === 'FINANCING';
-    const isTtrial = selectedPlanCheckoutData?.type === 'TRIAL';
+    const isTtrial = ['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
 
     const getRequests = () => {
       if (!isTtrial) {
@@ -168,6 +168,7 @@ const useSignup = () => {
         const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
         const financingOptionsExists = currentPlan?.financing_options?.length > 0;
         const singlePlan = data?.plans?.length > 0 ? data?.plans[0] : data;
+        const isTotallyFree = !isNotTrial && singlePlan?.trial_duration === 0;
 
         const financingOptions = financingOptionsExists
           ? currentPlan?.financing_options
@@ -175,13 +176,13 @@ const useSignup = () => {
             .sort((a, b) => a?.monthly_price - b?.monthly_price)
           : [];
 
-        const trialPlan = (!isNotTrial && !financingOptionsExists) ? {
+        const trialPlan = (!financingOptionsExists) ? {
           ...singlePlan,
           title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
           price: data?.amount_per_month,
-          priceText: t('free-trial'),
-          period: singlePlan?.trial_duration_unit,
-          type: 'TRIAL',
+          priceText: isTotallyFree ? 'Free' : t('free-trial'),
+          period: isTotallyFree ? 'FREE' : singlePlan?.trial_duration_unit,
+          type: isTotallyFree ? 'FREE' : 'TRIAL',
         } : {};
 
         const monthPlan = existsAmountPerMonth ? {
