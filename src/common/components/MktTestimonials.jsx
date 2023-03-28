@@ -64,9 +64,11 @@ const MktTestimonials = ({
 
   return (
     <Box padding="20px 0" textAlign="center">
-      <Heading as="h2" size="m" marginBottom="20px">
-        {title}
-      </Heading>
+      {title && (
+        <Heading as="h2" size="m" marginBottom="20px">
+          {title}
+        </Heading>
+      )}
       <Box
         gridGap="20px"
         flexWrap="wrap"
