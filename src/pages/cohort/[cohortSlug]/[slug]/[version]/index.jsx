@@ -43,8 +43,6 @@ import modifyEnv from '../../../../../../modifyEnv';
 import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
 import FinalProjectModal from '../../../../../common/components/FinalProject/Modal';
-import ButtonHandler from '../../../../../js_modules/profile/Subscriptions/ButtonHandler';
-import UpgradeModal from '../../../../../js_modules/profile/Subscriptions/UpgradeModal';
 
 const Dashboard = () => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -59,9 +57,6 @@ const Dashboard = () => {
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
-  const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
-  const [offerProps, setOfferProps] = useState({});
-  const [subscriptionProps, setSubscriptionProps] = useState({});
 
   const [, setSortedAssignments] = usePersistent('sortedAssignments', []);
   const flags = useFlags();
@@ -151,10 +146,6 @@ const Dashboard = () => {
           isClosable: true,
         });
       });
-  };
-  const onOpenUpgrade = (data) => {
-    setOfferProps(data);
-    setUpgradeModalIsOpen(true);
   };
 
   const removeUnsyncedTasks = async () => {
@@ -330,12 +321,6 @@ const Dashboard = () => {
 
   return (
     <>
-      <UpgradeModal
-        upgradeModalIsOpen={upgradeModalIsOpen}
-        setUpgradeModalIsOpen={setUpgradeModalIsOpen}
-        subscriptionProps={subscriptionProps}
-        offerProps={offerProps}
-      />
       {getMandatoryProjects().length > 0 && (
         <AlertMessage
           full
@@ -343,6 +328,21 @@ const Dashboard = () => {
           message={t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
           style={{ borderRadius: '0px', justifyContent: 'center' }}
         />
+      )}
+      {subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists && (
+        <AlertMessage
+          full
+          type="warning"
+          message={t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
+          style={{ borderRadius: '0px', justifyContent: 'center' }}
+        >
+          <Text
+            size="l"
+            dangerouslySetInnerHTML={{
+              __html: t('free-trial-msg', { link: '/profile/subscriptions' }),
+            }}
+          />
+        </AlertMessage>
       )}
       <FinalProjectModal
         isOpen={isOpenFinalProject}
@@ -404,30 +404,6 @@ const Dashboard = () => {
           }}
         >
           <Box width="100%" minW={{ base: 'auto', md: 'clamp(300px, 60vw, 770px)' }}>
-            {subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists && (
-              <AlertMessage
-                full
-                type="warning"
-                style={{ justifyContent: 'center' }}
-                borderRadius="3px"
-                margin="-28px 0 20px 0"
-                color="black"
-                flexDirection={{ base: 'column', sm: 'row', lg: 'row' }}
-              >
-                <Text size="l">
-                  {t('free-trial-msg')}
-                </Text>
-                <ButtonHandler
-                  subscription={subscriptionData}
-                  onOpenUpgrade={onOpenUpgrade}
-                  setSubscriptionProps={setSubscriptionProps}
-                  onOpenCancelSubscription={() => {}}
-                  padding="0 2rem"
-                  variant="default"
-                  color="white"
-                />
-              </AlertMessage>
-            )}
             {(cohortSession?.syllabus_version?.name || cohortProgram.name) ? (
               <Heading as="h1" size="xl">
                 {cohortSession?.syllabus_version?.name || cohortProgram?.name}
