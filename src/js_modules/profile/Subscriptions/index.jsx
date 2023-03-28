@@ -59,11 +59,15 @@ const Subscriptions = ({ storybookConfig }) => {
   const subscriptionData = storybookConfig?.subscriptionData || subscriptionDataState;
 
   const cohortsExist = cohorts?.length > 0;
-  const subscriptionsExist = subscriptionData?.subscriptions?.length > 0
+  const subscriptionsExist = (subscriptionData?.subscriptions?.length > 0
     && subscriptionData.subscriptions.some((subscription) => {
       const exists = cohorts.some((l) => l?.cohort.slug === subscription?.selected_cohort?.slug);
       return exists;
-    });
+    })) || (subscriptionData?.plan_financings?.length > 0
+      && subscriptionData.plan_financings.some((subscription) => {
+        const exists = cohorts.some((l) => l?.cohort.slug === subscription?.selected_cohort?.slug);
+        return exists;
+      }));
 
   return (
     <>
