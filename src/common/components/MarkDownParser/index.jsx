@@ -93,12 +93,12 @@ const MarkDownParser = ({
     setLearnpackActions([
       {
         text: newExerciseText,
-        href: `${BREATHECODE_HOST}/v1/me/container/new?token=${token}&cohort=${cohortSession?.id}&repo=${currentData?.url}`,
+        href: `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${token}&cohort=${cohortSession?.id}&repo=${currentData?.url}`,
         isExternalLink: true,
       },
       {
         text: continueExerciseText,
-        href: `${BREATHECODE_HOST}/v1/me/workspaces?token=${token}&cohort=${cohortSession?.id}`,
+        href: `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}`,
         isExternalLink: true,
       },
     ]);
