@@ -93,12 +93,12 @@ const MarkDownParser = ({
     setLearnpackActions([
       {
         text: newExerciseText,
-        href: `${BREATHECODE_HOST}/asset/${assetSlug}?token=${token}`,
+        href: `${BREATHECODE_HOST}/v1/me/container/new?token=${token}&cohort=${cohortSession?.id}`,
         isExternalLink: true,
       },
       {
         text: continueExerciseText,
-        href: 'https://gitpod.io/workspaces',
+        href: `${BREATHECODE_HOST}/v1/me/workspaces?token=${token}&cohort=${cohortSession?.id}`,
         isExternalLink: true,
       },
     ]);
