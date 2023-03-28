@@ -98,7 +98,7 @@ const MarkDownParser = ({
       },
       {
         text: continueExerciseText,
-        href: `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}`,
+        href: `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}&repo=${currentData?.url}`,
         isExternalLink: true,
       },
     ]);
