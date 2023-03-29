@@ -69,7 +69,7 @@ const Checkout = ({ finance }) => {
   const { user, isLoading } = useAuth();
   const toast = useToast();
   const plan = getQueryString('plan');
-  const planFormated = encodeURIComponent(plan);
+  const planFormated = plan && encodeURIComponent(plan);
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
 
@@ -89,7 +89,7 @@ const Checkout = ({ finance }) => {
     confirm_email: '',
   });
 
-  const queryPlanExists = planFormated !== undefined && planFormated?.length > 0;
+  const queryPlanExists = planFormated && planFormated?.length > 0;
 
   useEffect(() => {
     if (queryPlanExists && tokenExists) {

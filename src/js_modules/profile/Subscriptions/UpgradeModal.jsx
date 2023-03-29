@@ -12,6 +12,7 @@ const UpgradeModal = ({ upgradeModalIsOpen, setUpgradeModalIsOpen, subscriptionP
   const { lightColor, modal } = useStyle();
   const { t } = useTranslation('profile');
   const router = useRouter();
+  const isTotallyFree = offerProps?.isTotallyFree === true;
 
   const getDefaultFinanceIndex = () => {
     if (offerProps?.paymentOptions?.length > 0) return 0;
@@ -47,58 +48,60 @@ const UpgradeModal = ({ upgradeModalIsOpen, setUpgradeModalIsOpen, subscriptionP
     <Modal
       isOpen={upgradeModalIsOpen}
       onClose={() => setUpgradeModalIsOpen(false)}
-      size="5xl"
+      size={!isTotallyFree ? '5xl' : 'xl'}
     >
       <ModalCloseButton />
       <ModalOverlay />
       <ModalContent background={modal.background3}>
-        <Flex padding="32px" gridGap="35px" flexDirection={{ base: 'column', lg: 'row' }}>
-          <Flex flex={0.5} margin="5rem 0 0 0" flexDirection="column" gridGap="16px" textAlign="center">
-            <Text fontSize="26px" color="blue.default" fontWeight="700" lineHeight="31px">
-              {upgradeLabel.title}
-            </Text>
-            {upgradeLabel.description && (
-              <Text fontSize="21px" color={lightColor} fontWeight="700" lineHeight="25.2px">
-                {upgradeLabel.description}
+        <Flex padding="32px" gridGap="35px" flexDirection={{ base: 'column', lg: isTotallyFree ? 'column' : 'row' }}>
+          {!isTotallyFree && (
+            <Flex flex={0.5} margin="5rem 0 0 0" flexDirection="column" gridGap="16px" textAlign="center">
+              <Text fontSize="26px" color="blue.default" fontWeight="700" lineHeight="31px">
+                {upgradeLabel.title}
               </Text>
-            )}
-            {offerProps?.bullets?.length > 0 && (
-              <Box
-                as="ul"
-                style={{ listStyle: 'none' }}
-                display="flex"
-                flexDirection="column"
-                gridGap="12px"
-                margin="10px 0 0 5px"
-              >
-                {offerProps?.bullets.map((bullet) => (
-                  <Box
-                    as="li"
-                    key={bullet?.features[0]?.description}
-                    display="flex"
-                    flexDirection="row"
-                    lineHeight="24px"
-                    gridGap="8px"
-                  >
-                    <Icon
-                      icon="checked2"
-                      color="#38A56A"
-                      width="13px"
-                      height="10px"
-                      style={{ margin: '8px 0 0 0' }}
-                    />
+              {upgradeLabel.description && (
+                <Text fontSize="21px" color={lightColor} fontWeight="700" lineHeight="25.2px">
+                  {upgradeLabel.description}
+                </Text>
+              )}
+              {offerProps?.bullets?.length > 0 && (
+                <Box
+                  as="ul"
+                  style={{ listStyle: 'none' }}
+                  display="flex"
+                  flexDirection="column"
+                  gridGap="12px"
+                  margin="10px 0 0 5px"
+                >
+                  {offerProps?.bullets.map((bullet) => (
                     <Box
-                      fontSize="14px"
-                      fontWeight="600"
-                      letterSpacing="0.05em"
-                      dangerouslySetInnerHTML={{ __html: bullet?.description }}
-                    />
-                    {bullet?.features[0]?.description}
-                  </Box>
-                ))}
-              </Box>
-            )}
-          </Flex>
+                      as="li"
+                      key={bullet?.features[0]?.description}
+                      display="flex"
+                      flexDirection="row"
+                      lineHeight="24px"
+                      gridGap="8px"
+                    >
+                      <Icon
+                        icon="checked2"
+                        color="#38A56A"
+                        width="13px"
+                        height="10px"
+                        style={{ margin: '8px 0 0 0' }}
+                      />
+                      <Box
+                        fontSize="14px"
+                        fontWeight="600"
+                        letterSpacing="0.05em"
+                        dangerouslySetInnerHTML={{ __html: bullet?.description }}
+                      />
+                      {bullet?.features[0]?.description}
+                    </Box>
+                  ))}
+                </Box>
+              )}
+            </Flex>
+          )}
           <Box flex={0.5}>
             <ShowPrices
               title={offerProps?.outOfConsumables
@@ -129,6 +132,7 @@ const UpgradeModal = ({ upgradeModalIsOpen, setUpgradeModalIsOpen, subscriptionP
               // }}
               finance={offerProps?.financingOptions}
               outOfConsumables={offerProps?.outOfConsumables}
+              isTotallyFree={isTotallyFree}
             />
 
           </Box>

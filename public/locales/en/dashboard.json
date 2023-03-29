@@ -7,7 +7,7 @@
   "moduleMap": "Module map",
   "progressText": "progress in the program",
   "whiteLabeledText": "This course is brought to you thanks to our parnership with this university",
-  "free-trial-msg": "You are currently on a free trial, some features might be limited. Upgrade your plan to have unlimited access!",
+  "free-trial-msg": "You are currently on a free trial, some features might be limited. <a class='black-link' href='{{link}}'>Upgrade your plan</a> to have unlimited access!",
   "modules": {
     "target-blank-title": "Open in new window",
     "target-blank-msg": "\"{{title}}\" will open the following URL on a new window",

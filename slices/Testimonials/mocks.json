@@ -7,11 +7,6 @@
         "__TYPE__": "FieldContent",
         "value": "shaking",
         "type": "Text"
-      },
-      "endpoint": {
-        "__TYPE__": "FieldContent",
-        "value": "cattle",
-        "type": "Text"
       }
     },
     "items": [

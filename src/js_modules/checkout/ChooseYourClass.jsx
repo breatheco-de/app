@@ -30,7 +30,7 @@ const ChooseYourClass = ({
   const { isSecondStep, setLocation } = useSignup();
 
   const plan = getQueryString('plan');
-  const planFormated = encodeURIComponent(plan);
+  const planFormated = plan ? encodeURIComponent(plan) : undefined;
 
   const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(
     GOOGLE_KEY,
