@@ -196,6 +196,17 @@ interface OneColumnSliceDefaultPrimary {
      */
     button_label: prismicT.KeyTextField;
     /**
+     * Link Button field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Boolean
+     * - **Placeholder**: *None*
+     * - **Default Value**: false
+     * - **API ID Path**: one_column.primary.link_button
+     * - **Documentation**: https://prismic.io/docs/core-concepts/boolean
+     *
+     */
+    link_button: prismicT.BooleanField;
+    /**
      * Button url field in *OneColumn → Primary*
      *
      * - **Field Type**: Link
@@ -295,6 +306,16 @@ interface OneColumnSliceDefaultPrimary {
      *
      */
     kpi_color_3: prismicT.ColorField;
+    /**
+     * background field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Color
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.background
+     * - **Documentation**: https://prismic.io/docs/core-concepts/color
+     *
+     */
+    background: prismicT.ColorField;
 }
 /**
  * Default variation for OneColumn Slice
@@ -512,6 +533,17 @@ interface TwoColumnSliceDefaultPrimary {
      *
      */
     button_label: prismicT.KeyTextField;
+    /**
+     * Link Button field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Boolean
+     * - **Placeholder**: *None*
+     * - **Default Value**: false
+     * - **API ID Path**: two_column.primary.link_button
+     * - **Documentation**: https://prismic.io/docs/core-concepts/boolean
+     *
+     */
+    link_button: prismicT.BooleanField;
     /**
      * Button url field in *TwoColumn → Primary*
      *

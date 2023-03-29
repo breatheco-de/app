@@ -120,6 +120,13 @@
             "label": "KPI Color 3",
             "placeholder": ""
           }
+        },
+        "background": {
+          "type": "Color",
+          "config": {
+            "label": "background",
+            "placeholder": ""
+          }
         }
       },
       "items": {},
