@@ -13,6 +13,32 @@
       "default": {
         "primary": {}
       }
+    },
+    "TwoColumn": {
+      "default": {
+        "primary": {
+          "background_color": {
+            "content": "#ffffff"
+          }
+        }
+      }
+    },
+    "OneColumn": {
+      "default": {
+        "primary": {
+          "kpi_color_2": {
+            "content": "#25bf6c"
+          },
+          "kpi_color_3": {
+            "content": "#ffb718"
+          }
+        }
+      }
+    },
+    "Testimonials": {
+      "default": {
+        "primary": {}
+      }
     }
   }
 }

@@ -21,15 +21,18 @@ import { es } from 'date-fns/locale';
 import { format } from 'date-fns';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
+import useOnline from '../../common/hooks/useOnline';
 
-const AvatarUser = ({
-  data, fullName, containerStyle, width, height, badge, customBadge, isOnline, isWrapped, index, withoutPopover,
+const AvatarUser = memo(({
+  data, fullName, containerStyle, width, height, badge, customBadge, isWrapped, index, withoutPopover,
 }) => {
   const { user } = data;
   const { t } = useTranslation('dashboard');
   const fullNameLabel = fullName || `${user.first_name} ${user.last_name}`;
   const router = useRouter();
+  const { usersConnected } = useOnline();
 
+  const isOnlineUser = usersConnected?.some((id) => id === user?.id);
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const dateFormated = {
     en: data?.created_at && format(new Date(data?.created_at), 'MMMM dd, yyyy'),
@@ -64,10 +67,10 @@ const AvatarUser = ({
             zIndex={index}
           >
             {customBadge && (customBadge)}
-            {badge && isOnline && (
+            {badge && isOnlineUser && (
               <AvatarBadge
                 boxSize="11px"
-                // bg={isOnline ? 'success' : 'danger'}
+                // bg={isOnlineUser ? 'success' : 'danger'}
                 bg="success"
                 top="-4px"
                 right={isWrapped ? '6px' : '4px'}
@@ -129,7 +132,7 @@ const AvatarUser = ({
         zIndex={index}
       >
         {customBadge && (customBadge)}
-        {badge && isOnline && (
+        {badge && isOnlineUser && (
           <AvatarBadge
             boxSize="11px"
             // bg={isOnline ? 'success' : 'danger'}
@@ -143,7 +146,7 @@ const AvatarUser = ({
       </Avatar>
     </WrapItem>
   );
-};
+});
 
 AvatarUser.propTypes = {
   data: PropTypes.objectOf(PropTypes.any).isRequired,
@@ -153,7 +156,6 @@ AvatarUser.propTypes = {
   height: PropTypes.string,
   badge: PropTypes.bool,
   customBadge: PropTypes.node,
-  isOnline: PropTypes.bool,
   isWrapped: PropTypes.bool,
   index: PropTypes.number,
   withoutPopover: PropTypes.bool,
@@ -165,10 +167,9 @@ AvatarUser.defaultProps = {
   height: '39px',
   badge: false,
   customBadge: null,
-  isOnline: false,
   isWrapped: false,
   index: 0,
   withoutPopover: false,
 };
 
-export default memo(AvatarUser);
+export default AvatarUser;

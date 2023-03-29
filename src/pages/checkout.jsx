@@ -14,14 +14,15 @@ import Icon from '../common/components/Icon';
 import { getDataContentProps } from '../utils/file';
 import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
-import ContactInformation from '../js_modules/signup/ContactInformation';
-import ChooseYourClass from '../js_modules/signup/ChooseYourClass';
+import ContactInformation from '../js_modules/checkout/ContactInformation';
+import ChooseYourClass from '../js_modules/checkout/ChooseYourClass';
 import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem } from '../utils';
-import Summary from '../js_modules/signup/Summary';
-import PaymentInfo from '../js_modules/signup/PaymentInfo';
+import Summary from '../js_modules/checkout/Summary';
+import PaymentInfo from '../js_modules/checkout/PaymentInfo';
 import useSignup from '../common/store/actions/signupAction';
 import axiosInstance from '../axios';
 import LoaderScreen from '../common/components/LoaderScreen';
+import ModalInfo from '../js_modules/moduleMap/modalInfo';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -31,8 +32,8 @@ export const getStaticProps = async ({ locale, locales }) => {
     domain: process.env.WEBSITE_URL || 'https://4geeks.com',
   });
   const ogUrl = {
-    en: '/signup',
-    us: '/signup',
+    en: '/checkout',
+    us: '/checkout',
   };
 
   return {
@@ -43,8 +44,8 @@ export const getStaticProps = async ({ locale, locales }) => {
         locales,
         locale,
         image,
-        url: ogUrl.en || `/${locale}/signup`,
-        pathConnector: '/signup',
+        url: ogUrl.en || `/${locale}/checkout`,
+        pathConnector: '/checkout',
         keywords,
       },
       fallback: false,
@@ -53,21 +54,22 @@ export const getStaticProps = async ({ locale, locales }) => {
   };
 };
 
-const SignUp = ({ finance }) => {
+const Checkout = ({ finance }) => {
   const { t } = useTranslation('signup');
   const router = useRouter();
   const [cohorts, setCohorts] = useState(null);
   const [isPreloading, setIsPreloading] = useState(false);
   const {
-    state, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
+    state, toggleIfEnrolled, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
     isFirstStep, isSecondStep, isThirdStep, isFourthStep,
   } = useSignup();
+  const { stepIndex, dateProps, checkoutData, alreadyEnrolled } = state;
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
-  const { stepIndex, dateProps, checkoutData } = state;
   const { user, isLoading } = useAuth();
   const toast = useToast();
   const plan = getQueryString('plan');
+  const planFormated = plan && encodeURIComponent(plan);
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
 
@@ -87,7 +89,7 @@ const SignUp = ({ finance }) => {
     confirm_email: '',
   });
 
-  const queryPlanExists = plan !== undefined && plan?.length > 0;
+  const queryPlanExists = planFormated && planFormated?.length > 0;
 
   useEffect(() => {
     if (queryPlanExists && tokenExists) {
@@ -100,7 +102,7 @@ const SignUp = ({ finance }) => {
         });
       }
       if (cohorts && cohorts?.length > 0) {
-        bc.payment().getPlan(plan)
+        bc.payment().getPlan(planFormated)
           .then((resp) => {
             const data = resp?.data;
             const existsAmountPerHalf = data?.price_per_half > 0;
@@ -114,13 +116,13 @@ const SignUp = ({ finance }) => {
             if ((resp && resp?.status >= 400) || resp?.data.length === 0) {
               toast({
                 title: t('alert-message:no-plan-configuration'),
-                status: 'warning',
+                status: 'info',
                 duration: 4000,
                 isClosable: true,
               });
             }
 
-            if ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true) {
+            if ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || (data?.has_available_cohorts && data?.has_available_cohorts === false)) {
               if (resp.status < 400) {
                 const { kickoffDate, weekDays, availableTime } = cohorts?.[0] ? getTimeProps(cohorts[0]) : {};
                 const defaultQueryPropsAux = {
@@ -151,7 +153,7 @@ const SignUp = ({ finance }) => {
           .catch(() => {
             toast({
               title: t('alert-message:no-plan-configuration'),
-              status: 'warning',
+              status: 'info',
               duration: 4000,
               isClosable: true,
             });
@@ -184,6 +186,23 @@ const SignUp = ({ finance }) => {
       {isPreloading && (
         <LoaderScreen />
       )}
+      <ModalInfo
+        isOpen={alreadyEnrolled}
+        onClose={() => toggleIfEnrolled(false)}
+        title={t('already-adquired-plan-title')}
+        isReadonly
+        description={t('already-adquired-plan-description')}
+        closeText={t('common:close')}
+        closeButtonVariant="outline"
+        disableInput
+        handlerText={t('subscriptions')}
+        actionHandler={() => {
+          if (window !== undefined) {
+            toggleIfEnrolled(false);
+            router.push('/profile/subscriptions');
+          }
+        }}
+      />
       {/* Stepper */}
       <Box display="flex" gridGap="38px" justifyContent="center" overflow="auto">
         <Box
@@ -371,12 +390,12 @@ const SignUp = ({ finance }) => {
   );
 };
 
-SignUp.propTypes = {
+Checkout.propTypes = {
   finance: PropTypes.objectOf(PropTypes.any),
 };
 
-SignUp.defaultProps = {
+Checkout.defaultProps = {
   finance: {},
 };
 
-export default SignUp;
+export default Checkout;

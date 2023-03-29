@@ -57,6 +57,7 @@ const Dashboard = () => {
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+
   const [, setSortedAssignments] = usePersistent('sortedAssignments', []);
   const flags = useFlags();
   const [searchValue, setSearchValue] = useState(router.query.search || '');
@@ -69,6 +70,7 @@ const Dashboard = () => {
   const { user, choose, isLoading } = useAuth();
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const [currentCohortProps, setCurrentCohortProps] = useState({});
+  const [subscriptionData, setSubscriptionData] = useState(null);
   const {
     cohortSession, sortedAssignments, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, taskTodo, taskTodoState,
@@ -194,6 +196,27 @@ const Dashboard = () => {
         setLiveClasses(existentLiveClasses);
       });
 
+    bc.payment({
+      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+    }).subscriptions()
+      .then(async ({ data }) => {
+        const currentPlan = data?.plan_financings?.find((s) => s?.selected_cohort?.slug === cohortSlug);
+        const currentSubscription = data?.subscriptions?.find((s) => s?.selected_cohort?.slug === cohortSlug);
+        const planData = currentPlan || currentSubscription;
+        const planSlug = planData?.plans?.[0]?.slug;
+        const planOffer = await bc.payment({
+          original_plan: planSlug,
+        }).planOffer().then((res) => res?.data);
+
+        const currentPlanOffer = planOffer?.find((p) => p?.original_plan?.slug === planSlug);
+
+        const finalData = {
+          ...planData,
+          planOfferExists: currentPlanOffer !== undefined,
+        };
+
+        setSubscriptionData(finalData);
+      });
     syncInterval(() => {
       setLiveClasses((prev) => {
         const sortDateToLiveClass = sortToNearestTodayDate(prev, TwelveHours);
@@ -305,6 +328,21 @@ const Dashboard = () => {
           message={t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
           style={{ borderRadius: '0px', justifyContent: 'center' }}
         />
+      )}
+      {subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists && (
+        <AlertMessage
+          full
+          type="warning"
+          message={t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
+          style={{ borderRadius: '0px', justifyContent: 'center' }}
+        >
+          <Text
+            size="l"
+            dangerouslySetInnerHTML={{
+              __html: t('free-trial-msg', { link: '/profile/subscriptions' }),
+            }}
+          />
+        </AlertMessage>
       )}
       <FinalProjectModal
         isOpen={isOpenFinalProject}

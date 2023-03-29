@@ -31,9 +31,10 @@ const Summary = ({
   const { backgroundColor, borderColor, lightColor } = useStyle();
   const router = useRouter();
 
-  const isNotTrial = selectedPlanCheckoutData?.type !== 'TRIAL';
+  const isNotTrial = !['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
 
   const periodText = {
+    FREE: t('info.free'),
     WEEK: t('info.trial-week'),
     MONTH: t('info.monthly'),
     YEAR: t('info.yearly'),
@@ -277,7 +278,7 @@ const Summary = ({
                   width="100%"
                 >
                   {selectedPlanCheckoutData?.price <= 0
-                    ? t('free-trial')
+                    ? selectedPlanCheckoutData?.priceText
                     : `$${selectedPlanCheckoutData?.price}`}
                 </Heading>
               </Box>
@@ -392,7 +393,7 @@ const Summary = ({
                       <Box display="flex" minWidth="90px" alignItems="center" gridGap="10px">
                         <Heading
                           as="span"
-                          size={(item?.period !== 'FINANCING' && item?.type !== 'TRIAL') ? 'm' : 'xsm'}
+                          size={(item?.period !== 'FINANCING' && !['FREE', 'TRIAL'].includes(item?.type)) ? 'm' : 'xsm'}
                           lineHeight="1"
                           color="blue.default"
                           width="100%"
@@ -430,7 +431,7 @@ const Summary = ({
             height="45px"
             mt="12px"
           >
-            {t('common:start-free-trial')}
+            {selectedPlanCheckoutData?.type === 'FREE' ? t('start-free-course') : t('common:start-free-trial')}
           </Button>
         )}
       </Box>

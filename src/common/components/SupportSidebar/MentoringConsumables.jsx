@@ -122,7 +122,7 @@ const MentoringConsumables = ({
             </Box>
             <Box as="hr" borderColor="yellow.default" borderWidth="0.5px" width="100%" margin="10px 0 20px 0" />
             <Box fontSize="14px" fontWeight={400} letterSpacing="0.05em" padding="0 10px" color={lightColor}>
-              <Link variant="default" href="/signup">
+              <Link variant="default" href="/checkout">
                 {t('common:upgrade')}
               </Link>
               {' '}

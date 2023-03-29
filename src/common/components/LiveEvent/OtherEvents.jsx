@@ -42,6 +42,7 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stT
 
     return (
       <Box
+        key={event?.id}
         padding="10px"
         borderBottom="1px solid"
         width="90%"
