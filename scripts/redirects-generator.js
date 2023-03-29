@@ -156,7 +156,8 @@ async function generateRedirect() {
   const projectRedirectList = generateAssetRedirect(projectList);
   const howToRedirectList = generateAssetRedirect(howToList);
 
-  const aliasRedirectionList = await generateAliasRedirects(aliasRedirectList, projectList);
+  const aliasRedirectionList = await generateAliasRedirects(aliasRedirectList, projectList)
+    .then((redirects) => redirects.filter((item) => !item.destination?.includes(item?.source)));
 
   const redirectJson = [
     ...lessonRedirectList,
