@@ -24,6 +24,7 @@ const ShowPrices = ({
   outOfConsumables,
   stTranslation,
   handleUpgrade,
+  isTotallyFree,
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
   const [selectedFinanceIndex, setSelectedFinanceIndex] = useState(defaultFinanceIndex);
@@ -118,7 +119,7 @@ const ShowPrices = ({
         <Heading as="h2" size="sm">
           {title || data?.pricing['choose-plan']}
         </Heading>
-        {financeSelected[1] && (
+        {!isTotallyFree && financeSelected[1] && (
           <Box display="flex">
             <Box
               p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
@@ -213,6 +214,7 @@ ShowPrices.propTypes = {
   outOfConsumables: PropTypes.bool,
   stTranslation: PropTypes.objectOf(PropTypes.any),
   handleUpgrade: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+  isTotallyFree: PropTypes.bool,
 };
 
 ShowPrices.defaultProps = {
@@ -229,6 +231,7 @@ ShowPrices.defaultProps = {
   outOfConsumables: false,
   stTranslation: null,
   handleUpgrade: false,
+  isTotallyFree: false,
 };
 
 export default ShowPrices;
