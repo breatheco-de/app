@@ -24,8 +24,7 @@ const MktTestimonials = ({
       axios.get(`${process.env.BREATHECODE_HOST}${endpoint}`)
         .then((response) => {
           setTestimonialsData(response?.data);
-        })
-        .catch((error) => console.log('error:', error));
+        });
     }
   }, []);
 
@@ -83,6 +82,7 @@ const MktTestimonials = ({
       >
         {testimonialsArray && testimonialsArray.map((testimonial) => (
           <TestimonialBox
+            key={testimonial?.id}
             picture={testimonial?.author?.profile?.avatar_url}
             name={`${testimonial?.author?.first_name} ${testimonial?.author?.last_name}`}
             rating={testimonial?.nps_previous_rating}
