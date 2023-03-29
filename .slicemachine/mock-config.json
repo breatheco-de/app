@@ -39,6 +39,11 @@
       "default": {
         "primary": {}
       }
+    },
+    "Partners": {
+      "default": {
+        "primary": {}
+      }
     }
   }
 }

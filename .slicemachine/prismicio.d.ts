@@ -196,6 +196,17 @@ interface OneColumnSliceDefaultPrimary {
      */
     button_label: prismicT.KeyTextField;
     /**
+     * Link Button field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Boolean
+     * - **Placeholder**: *None*
+     * - **Default Value**: false
+     * - **API ID Path**: one_column.primary.link_button
+     * - **Documentation**: https://prismic.io/docs/core-concepts/boolean
+     *
+     */
+    link_button: prismicT.BooleanField;
+    /**
      * Button url field in *OneColumn → Primary*
      *
      * - **Field Type**: Link
@@ -319,6 +330,55 @@ type OneColumnSliceVariation = OneColumnSliceDefault;
  *
  */
 export type OneColumnSlice = prismicT.SharedSlice<"one_column", OneColumnSliceVariation>;
+/**
+ * Primary content in Partners → Primary
+ *
+ */
+interface PartnersSliceDefaultPrimary {
+    /**
+     * title field in *Partners → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: partners.primary.title
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    title: prismicT.KeyTextField;
+    /**
+     * images field in *Partners → Primary*
+     *
+     * - **Field Type**: Rich Text
+     * - **Placeholder**: Images Url
+     * - **API ID Path**: partners.primary.images
+     * - **Documentation**: https://prismic.io/docs/core-concepts/rich-text-title
+     *
+     */
+    images: prismicT.RichTextField;
+}
+/**
+ * Default variation for Partners Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: `Partners`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type PartnersSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<PartnersSliceDefaultPrimary>, never>;
+/**
+ * Slice variation for *Partners*
+ *
+ */
+type PartnersSliceVariation = PartnersSliceDefault;
+/**
+ * Partners Shared Slice
+ *
+ * - **API ID**: `partners`
+ * - **Description**: `Partners`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type PartnersSlice = prismicT.SharedSlice<"partners", PartnersSliceVariation>;
 /**
  * Primary content in Testimonials → Primary
  *
@@ -513,6 +573,17 @@ interface TwoColumnSliceDefaultPrimary {
      */
     button_label: prismicT.KeyTextField;
     /**
+     * Link Button field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Boolean
+     * - **Placeholder**: *None*
+     * - **Default Value**: false
+     * - **API ID Path**: two_column.primary.link_button
+     * - **Documentation**: https://prismic.io/docs/core-concepts/boolean
+     *
+     */
+    link_button: prismicT.BooleanField;
+    /**
      * Button url field in *TwoColumn → Primary*
      *
      * - **Field Type**: Link
@@ -571,6 +642,6 @@ declare module "@prismicio/client" {
         (repositoryNameOrEndpoint: string, options?: prismic.ClientConfig): prismic.Client<AllDocumentTypes>;
     }
     namespace Content {
-        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
+        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, PartnersSliceDefaultPrimary, PartnersSliceDefault, PartnersSliceVariation, PartnersSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
     }
 }

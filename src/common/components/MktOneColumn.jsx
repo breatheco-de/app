@@ -51,7 +51,7 @@ const MktOneColumn = ({
   );
 
   return (
-    <Box padding="20px" textAlign="center">
+    <Box padding="20px" textAlign="center" marginTop="20px">
       <Box>
         <Heading marginBottom="15px" as="h4" fontSize="14px" color={hexColor.blueDefault}>
           {subTitle}
@@ -96,6 +96,7 @@ const MktOneColumn = ({
           <Link
             variant={!linkButton && 'buttonDefault'}
             color={linkButton ? hexColor.blueDefault : '#FFF'}
+            textDecoration={linkButton && 'underline'}
             href={buttonUrl}
             textAlign="center"
             display="inline-block"
