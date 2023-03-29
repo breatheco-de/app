@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
   Box, Avatar,
@@ -7,6 +8,8 @@ import axios from 'axios';
 import Heading from './Heading';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
+import StarRating from './StarRating';
+import { lengthOfString } from '../../utils';
 
 const MktTestimonials = ({
   title,
@@ -28,39 +31,41 @@ const MktTestimonials = ({
 
   const testimonialsArray = (testimonialsData?.length > 0 && testimonialsData) || (testimonials?.length > 0 && testimonials);
 
-  // eslint-disable-next-line react/prop-types
-  const TestimonialBox = ({ picture, name, occupation, description }) => (
-    <Box
-      width="250px"
-      background={backgroundColor}
-      borderRadius="12px"
-      padding="15px"
-      textAlign="center"
-    >
-      <Avatar width="65px" height="65px" name={name} src={picture} />
-      <Text marginTop="15px" lineHeight="16px" fontWeight="900" size="md">
-        {name}
-      </Text>
-      <Text
-        fontSize="sm"
-        lineHeight="12px"
-        fontWeight="700"
-        marginTop="15px"
-        color={fontColor2}
+  const TestimonialBox = ({ picture, name, rating, description }) => {
+    const limit = 160;
+    const descriptionLength = lengthOfString(description);
+    const truncatedDescription = descriptionLength > limit ? `${description?.substring(0, limit)}...` : description;
+
+    return (
+      <Box
+        width="250px"
+        background={backgroundColor}
+        borderRadius="12px"
+        padding="15px"
+        textAlign="center"
       >
-        {occupation}
-      </Text>
-      <Text
-        marginTop="10px"
-        fontSize="sm"
-        fontWeight="400"
-        lineHeight="14px"
-        color={fontColor2}
-      >
-        {`“${description}”`}
-      </Text>
-    </Box>
-  );
+        <Avatar width="65px" height="65px" name={name} src={picture} />
+        <Text marginTop="15px" lineHeight="16px" fontWeight="900" size="md">
+          {name}
+        </Text>
+        <StarRating
+          rating={rating / 2}
+          margin="6px 0 0 0"
+          justifyContent="center"
+        />
+        <Text
+          marginTop="10px"
+          fontSize="sm"
+          fontWeight="400"
+          lineHeight="14px"
+          color={fontColor2}
+          title={description}
+        >
+          {`“${truncatedDescription}”`}
+        </Text>
+      </Box>
+    );
+  };
 
   return (
     <Box padding="20px 0" textAlign="center">
@@ -78,10 +83,10 @@ const MktTestimonials = ({
       >
         {testimonialsArray && testimonialsArray.map((testimonial) => (
           <TestimonialBox
-            picture={testimonial.picture}
-            name={testimonial.name}
-            occupation={testimonial.occupation}
-            description={testimonial.description}
+            picture={testimonial?.author?.profile?.avatar_url}
+            name={`${testimonial?.author?.first_name} ${testimonial?.author?.last_name}`}
+            rating={testimonial?.nps_previous_rating}
+            description={testimonial?.comments}
           />
         ))}
       </Box>
