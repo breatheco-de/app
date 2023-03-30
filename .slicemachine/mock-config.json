@@ -42,6 +42,11 @@
       "default": {
         "primary": {}
       }
+    },
+    "ShowPrices": {
+      "default": {
+        "primary": {}
+      }
     }
   }
 }

@@ -85,7 +85,7 @@ const MktTestimonials = ({
             key={testimonial?.id}
             picture={testimonial?.author?.profile?.avatar_url}
             name={`${testimonial?.author?.first_name} ${testimonial?.author?.last_name}`}
-            rating={testimonial?.nps_previous_rating}
+            rating={testimonial?.total_rating}
             description={testimonial?.comments}
           />
         ))}
