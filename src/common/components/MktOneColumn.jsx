@@ -96,6 +96,7 @@ const MktOneColumn = ({
           <Link
             variant={!linkButton && 'buttonDefault'}
             color={linkButton ? hexColor.blueDefault : '#FFF'}
+            textDecoration={linkButton && 'underline'}
             href={buttonUrl}
             textAlign="center"
             display="inline-block"

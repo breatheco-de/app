@@ -47,6 +47,16 @@
       "default": {
         "primary": {}
       }
+    },
+    "Partners": {
+      "default": {
+        "primary": {}
+      }
+    },
+    "Technologies": {
+      "default": {
+        "primary": {}
+      }
     }
   }
 }

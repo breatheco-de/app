@@ -67,7 +67,7 @@ const MktTestimonials = ({
   };
 
   return (
-    <Box padding="20px 0" textAlign="center">
+    <Box padding="20px 0" textAlign="center" marginBottom="20px">
       {title && (
         <Heading as="h2" size="m" marginBottom="20px">
           {title}

@@ -42,6 +42,7 @@ const MktTwoColumnSideImage = ({
       alignItems="center"
       borderRadius="12px"
       flexDirection={flexDirection[imagePosition]}
+      marginTop="20px"
     >
       <Box width={{ base: '100% 0', md: '50%' }}>
         <Img
@@ -93,6 +94,7 @@ const MktTwoColumnSideImage = ({
           <Link
             variant={!linkButton && 'buttonDefault'}
             color={linkButton ? hexColor.blueDefault : '#FFF'}
+            textDecoration={linkButton && 'underline'}
             href={buttonUrl}
             textAlign="center"
             display="inline-block"
