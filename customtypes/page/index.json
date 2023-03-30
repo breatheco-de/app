@@ -63,6 +63,12 @@
             },
             "show_prices": {
               "type": "SharedSlice"
+            },
+            "technologies": {
+              "type": "SharedSlice"
+            },
+            "partners": {
+              "type": "SharedSlice"
             }
           }
         }
