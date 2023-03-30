@@ -11,7 +11,7 @@ const ShowPrices = ({ slice }) => (
   <MktShowPrices
     title={slice.primary.title}
     description={slice.primary.description}
-    plan={'coding-introduction-free-trial' || slice.primary.plan}
+    plan={slice?.primary?.plan || 'coding-introduction-free-trial'}
     bullets={slice.primary.bullets}
   />
 );
