@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import React from 'react';
 import MktTestimonials from '../../src/common/components/MktTestimonials';
 
@@ -14,5 +14,12 @@ const Testimonials = ({ slice }) => (
     slice={slice}
   />
 );
+Testimonials.propTypes = {
+  slice: PropTypes.objectOf(PropTypes.any),
+};
+
+Testimonials.defaultProps = {
+  slice: {},
+};
 
 export default Testimonials;

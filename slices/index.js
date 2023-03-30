@@ -3,6 +3,7 @@
 import Markdown from './Markdown';
 import OneColumn from './OneColumn';
 import Partners from './Partners';
+import ShowPrices from './ShowPrices';
 import Testimonials from './Testimonials';
 import TitleIntroduction from './TitleIntroduction';
 import TwoColumn from './TwoColumn';
@@ -11,6 +12,7 @@ export {
 	Markdown,
 	OneColumn,
 	Partners,
+	ShowPrices,
 	Testimonials,
 	TitleIntroduction,
 	TwoColumn,
@@ -20,6 +22,7 @@ export const components = {
 	markdown: Markdown,
 	one_column: OneColumn,
 	partners: Partners,
+	show_prices: ShowPrices,
 	testimonials: Testimonials,
 	title_introduction: TitleIntroduction,
 	two_column: TwoColumn,

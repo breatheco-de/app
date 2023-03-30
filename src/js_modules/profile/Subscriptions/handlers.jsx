@@ -96,7 +96,7 @@ const profileHandlers = ({
       if (payUnit === 'YEAR') return translations?.yearly || t('yearly');
       return payUnit;
     },
-    getPlanOffer: ({ slug, onOpenUpgrade = () => {} }) => new Promise((resolve, reject) => {
+    getPlanOffer: ({ slug, onOpenUpgrade = () => {}, disableRedirects = false }) => new Promise((resolve, reject) => {
       bc.payment({
         original_plan: slug,
       }).planOffer()
@@ -250,11 +250,11 @@ const profileHandlers = ({
             };
             // -------------------------------------------------- END PREPARING PRICES --------------------------------------------------
             resolve(finalData);
-            if (currentOffer?.show_modal) {
+            if (currentOffer?.show_modal && !disableRedirects) {
               onOpenUpgrade(finalData);
             }
 
-            if (currentOffer?.show_modal === false && offerData) {
+            if (currentOffer?.show_modal === false && offerData && !disableRedirects) {
               router.push(`/checkout?plan=${offerData?.slug}`);
             }
           } else {

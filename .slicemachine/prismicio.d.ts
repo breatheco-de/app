@@ -68,7 +68,7 @@ interface PageDocumentData {
  * Slice for *Page → Slice Zone*
  *
  */
-type PageDocumentDataSlicesSlice = TitleIntroductionSlice | MarkdownSlice | TwoColumnSlice | OneColumnSlice | TestimonialsSlice;
+type PageDocumentDataSlicesSlice = TitleIntroductionSlice | MarkdownSlice | TwoColumnSlice | OneColumnSlice | TestimonialsSlice | ShowPricesSlice;
 /**
  * Page document from Prismic
  *
@@ -306,6 +306,16 @@ interface OneColumnSliceDefaultPrimary {
      *
      */
     kpi_color_3: prismicT.ColorField;
+    /**
+     * background field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Color
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.background
+     * - **Documentation**: https://prismic.io/docs/core-concepts/color
+     *
+     */
+    background: prismicT.ColorField;
 }
 /**
  * Default variation for OneColumn Slice
@@ -331,54 +341,74 @@ type OneColumnSliceVariation = OneColumnSliceDefault;
  */
 export type OneColumnSlice = prismicT.SharedSlice<"one_column", OneColumnSliceVariation>;
 /**
- * Primary content in Partners → Primary
+ * Primary content in ShowPrices → Primary
  *
  */
-interface PartnersSliceDefaultPrimary {
+interface ShowPricesSliceDefaultPrimary {
     /**
-     * title field in *Partners → Primary*
+     * Title field in *ShowPrices → Primary*
      *
      * - **Field Type**: Text
      * - **Placeholder**: *None*
-     * - **API ID Path**: partners.primary.title
+     * - **API ID Path**: show_prices.primary.title
      * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
      *
      */
     title: prismicT.KeyTextField;
     /**
-     * images field in *Partners → Primary*
+     * Description field in *ShowPrices → Primary*
      *
      * - **Field Type**: Rich Text
-     * - **Placeholder**: Images Url
-     * - **API ID Path**: partners.primary.images
+     * - **Placeholder**: *None*
+     * - **API ID Path**: show_prices.primary.description
      * - **Documentation**: https://prismic.io/docs/core-concepts/rich-text-title
      *
      */
-    images: prismicT.RichTextField;
+    description: prismicT.RichTextField;
+    /**
+     * Plan field in *ShowPrices → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: show_prices.primary.plan
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    plan: prismicT.KeyTextField;
+    /**
+     * Bullets field in *ShowPrices → Primary*
+     *
+     * - **Field Type**: Rich Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: show_prices.primary.bullets
+     * - **Documentation**: https://prismic.io/docs/core-concepts/rich-text-title
+     *
+     */
+    bullets: prismicT.RichTextField;
 }
 /**
- * Default variation for Partners Slice
+ * Default variation for ShowPrices Slice
  *
  * - **API ID**: `default`
- * - **Description**: `Partners`
+ * - **Description**: `ShowPrices`
  * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
  *
  */
-export type PartnersSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<PartnersSliceDefaultPrimary>, never>;
+export type ShowPricesSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<ShowPricesSliceDefaultPrimary>, never>;
 /**
- * Slice variation for *Partners*
+ * Slice variation for *ShowPrices*
  *
  */
-type PartnersSliceVariation = PartnersSliceDefault;
+type ShowPricesSliceVariation = ShowPricesSliceDefault;
 /**
- * Partners Shared Slice
+ * ShowPrices Shared Slice
  *
- * - **API ID**: `partners`
- * - **Description**: `Partners`
+ * - **API ID**: `show_prices`
+ * - **Description**: `ShowPrices`
  * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
  *
  */
-export type PartnersSlice = prismicT.SharedSlice<"partners", PartnersSliceVariation>;
+export type ShowPricesSlice = prismicT.SharedSlice<"show_prices", ShowPricesSliceVariation>;
 /**
  * Primary content in Testimonials → Primary
  *
@@ -642,6 +672,10 @@ declare module "@prismicio/client" {
         (repositoryNameOrEndpoint: string, options?: prismic.ClientConfig): prismic.Client<AllDocumentTypes>;
     }
     namespace Content {
+<<<<<<< HEAD
         export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, PartnersSliceDefaultPrimary, PartnersSliceDefault, PartnersSliceVariation, PartnersSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
+=======
+        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, ShowPricesSliceDefaultPrimary, ShowPricesSliceDefault, ShowPricesSliceVariation, ShowPricesSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
+>>>>>>> d7be3fb63cd17bc2ea9dcee669dcec0e40373b48
     }
 }

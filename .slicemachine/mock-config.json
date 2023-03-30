@@ -31,11 +31,19 @@
           },
           "kpi_color_3": {
             "content": "#ffb718"
+          },
+          "background": {
+            "content": "#eef9fe"
           }
         }
       }
     },
     "Testimonials": {
+      "default": {
+        "primary": {}
+      }
+    },
+    "ShowPrices": {
       "default": {
         "primary": {}
       }

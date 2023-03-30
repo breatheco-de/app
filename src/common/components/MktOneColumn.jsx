@@ -51,7 +51,7 @@ const MktOneColumn = ({
   );
 
   return (
-    <Box padding="20px" textAlign="center" marginTop="20px">
+    <Box padding="50px" textAlign="center" background={slice?.primary?.background}>
       <Box>
         <Heading marginBottom="15px" as="h4" fontSize="14px" color={hexColor.blueDefault}>
           {subTitle}
