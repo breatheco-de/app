@@ -341,6 +341,55 @@ type OneColumnSliceVariation = OneColumnSliceDefault;
  */
 export type OneColumnSlice = prismicT.SharedSlice<"one_column", OneColumnSliceVariation>;
 /**
+ * Primary content in Partners → Primary
+ *
+ */
+interface PartnersSliceDefaultPrimary {
+    /**
+     * title field in *Partners → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: partners.primary.title
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    title: prismicT.KeyTextField;
+    /**
+     * images field in *Partners → Primary*
+     *
+     * - **Field Type**: Rich Text
+     * - **Placeholder**: Images Url
+     * - **API ID Path**: partners.primary.images
+     * - **Documentation**: https://prismic.io/docs/core-concepts/rich-text-title
+     *
+     */
+    images: prismicT.RichTextField;
+}
+/**
+ * Default variation for Partners Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: `Partners`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type PartnersSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<PartnersSliceDefaultPrimary>, never>;
+/**
+ * Slice variation for *Partners*
+ *
+ */
+type PartnersSliceVariation = PartnersSliceDefault;
+/**
+ * Partners Shared Slice
+ *
+ * - **API ID**: `partners`
+ * - **Description**: `Partners`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type PartnersSlice = prismicT.SharedSlice<"partners", PartnersSliceVariation>;
+/**
  * Primary content in ShowPrices → Primary
  *
  */
@@ -672,10 +721,6 @@ declare module "@prismicio/client" {
         (repositoryNameOrEndpoint: string, options?: prismic.ClientConfig): prismic.Client<AllDocumentTypes>;
     }
     namespace Content {
-<<<<<<< HEAD
-        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, PartnersSliceDefaultPrimary, PartnersSliceDefault, PartnersSliceVariation, PartnersSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
-=======
-        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, ShowPricesSliceDefaultPrimary, ShowPricesSliceDefault, ShowPricesSliceVariation, ShowPricesSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
->>>>>>> d7be3fb63cd17bc2ea9dcee669dcec0e40373b48
+        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, PartnersSliceDefaultPrimary, PartnersSliceDefault, PartnersSliceVariation, PartnersSlice, ShowPricesSliceDefaultPrimary, ShowPricesSliceDefault, ShowPricesSliceVariation, ShowPricesSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
     }
 }
