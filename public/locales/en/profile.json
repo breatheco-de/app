@@ -64,6 +64,7 @@
     "submit-button": "Update profile picture"
   },
   "subscription": {
+    "what-you-will-get": "What you will get:",
     "next-payment": "Next payment on {{date}}",
     "last-payment": "Last payment on {{date}}",
     "duration": "Duration: {{duration}}",
