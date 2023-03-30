@@ -1,0 +1,19 @@
+[
+  {
+    "__TYPE__": "SharedSliceContent",
+    "variation": "default",
+    "primary": {
+      "endpoint": {
+        "__TYPE__": "FieldContent",
+        "type": "Text",
+        "value": "/v1/registry/technology?sort_priority=1"
+      }
+    },
+    "items": [
+      {
+        "__TYPE__": "GroupItemContent",
+        "value": []
+      }
+    ]
+  }
+]

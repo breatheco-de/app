@@ -52,6 +52,11 @@
       "default": {
         "primary": {}
       }
+    },
+    "Technologies": {
+      "default": {
+        "primary": {}
+      }
     }
   }
 }

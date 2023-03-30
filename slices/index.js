@@ -4,6 +4,7 @@ import Markdown from './Markdown';
 import OneColumn from './OneColumn';
 import Partners from './Partners';
 import ShowPrices from './ShowPrices';
+import Technologies from './Technologies';
 import Testimonials from './Testimonials';
 import TitleIntroduction from './TitleIntroduction';
 import TwoColumn from './TwoColumn';
@@ -13,6 +14,7 @@ export {
 	OneColumn,
 	Partners,
 	ShowPrices,
+	Technologies,
 	Testimonials,
 	TitleIntroduction,
 	TwoColumn,
@@ -23,6 +25,7 @@ export const components = {
 	one_column: OneColumn,
 	partners: Partners,
 	show_prices: ShowPrices,
+	technologies: Technologies,
 	testimonials: Testimonials,
 	title_introduction: TitleIntroduction,
 	two_column: TwoColumn,
