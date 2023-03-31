@@ -12,6 +12,12 @@ body {
 *.active {
   color: #0097CD;
 }
+
+a.black-link {
+  color: #000000;
+  text-decoration: underline;
+}
+
 *.link {
   color: #0097CD;
 }

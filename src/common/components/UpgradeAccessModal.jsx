@@ -107,7 +107,7 @@ const UpgradeAccessModal = ({
                 variant="default"
                 textTransform="uppercase"
                 onClick={() => router.push({
-                  pathname: '/signup',
+                  pathname: '/checkout',
                   query: {
                     course: currentCourse,
                     plan: selectedProps?.type,

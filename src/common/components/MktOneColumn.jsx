@@ -1,7 +1,9 @@
+/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
   Box, Divider,
 } from '@chakra-ui/react';
+import { PrismicRichText } from '@prismicio/react';
 import Heading from './Heading';
 import Text from './Text';
 import Link from './NextChakraLink';
@@ -13,7 +15,9 @@ const MktOneColumn = ({
   description,
   buttonUrl,
   buttonLabel,
+  linkButton,
   kpiList,
+  slice,
 }) => {
   const { fontColor, fontColor2, hexColor, backgroundColor } = useStyle();
 
@@ -62,17 +66,36 @@ const MktOneColumn = ({
         <Heading as="h2" size="m">
           {title}
         </Heading>
-        <Text
-          fontSize="sm"
-          lineHeight="14px"
-          margin="15px 0"
-          color={fontColor2}
-        >
-          {description}
-        </Text>
+        {slice.primary.description ? (
+          <PrismicRichText
+            field={slice?.primary?.description}
+            components={{
+              paragraph: ({ children }) => (
+                <Text
+                  fontSize="sm"
+                  lineHeight="14px"
+                  margin="15px 0"
+                  color={fontColor2}
+                >
+                  {children}
+                </Text>
+              ),
+            }}
+          />
+        ) : (
+          <Text
+            fontSize="sm"
+            lineHeight="14px"
+            margin="15px 0"
+            color={fontColor2}
+          >
+            {description}
+          </Text>
+        )}
         {buttonUrl && (
           <Link
-            variant="buttonDefault"
+            variant={!linkButton && 'buttonDefault'}
+            color={linkButton ? hexColor.blueDefault : '#FFF'}
             href={buttonUrl}
             textAlign="center"
             display="inline-block"
@@ -91,7 +114,9 @@ MktOneColumn.propTypes = {
   description: PropTypes.string,
   buttonUrl: PropTypes.string,
   buttonLabel: PropTypes.string,
+  linkButton: PropTypes.bool,
   kpiList: PropTypes.arrayOf(PropTypes.any),
+  slice: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
 };
 
 MktOneColumn.defaultProps = {
@@ -100,7 +125,9 @@ MktOneColumn.defaultProps = {
   description: null,
   buttonUrl: null,
   buttonLabel: null,
+  linkButton: false,
   kpiList: [],
+  slice: null,
 };
 
 export default MktOneColumn;

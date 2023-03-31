@@ -30,6 +30,7 @@ const getReadme = ({
           assetType: currentData.asset_type,
         }}
         currentTask={currentTask}
+        currentData={currentData}
       />
     );
   }
@@ -50,6 +51,7 @@ const getReadme = ({
           // subtitle: currentBlankProps.description,
           assetType: currentBlankProps?.asset_type,
         }}
+        currentData={currentBlankProps}
       />
     );
   }
