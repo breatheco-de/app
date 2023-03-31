@@ -240,7 +240,7 @@ const Content = () => {
     } else if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
       axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
         .then(({ data }) => {
-          const currentSlug = data.translations[language] || lessonSlug;
+          const currentSlug = data?.translations?.[language] || lessonSlug;
           const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
           const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
           const extension = urlPathname ? urlPathname.split('.').pop() : null;
