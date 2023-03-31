@@ -390,6 +390,45 @@ type PartnersSliceVariation = PartnersSliceDefault;
  */
 export type PartnersSlice = prismicT.SharedSlice<"partners", PartnersSliceVariation>;
 /**
+ * Primary content in RoadMap → Primary
+ *
+ */
+interface RoadMapSliceDefaultPrimary {
+    /**
+     * Course slug field in *RoadMap → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: road_map.primary.course_slug
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    course_slug: prismicT.KeyTextField;
+}
+/**
+ * Default variation for RoadMap Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: `RoadMap`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type RoadMapSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<RoadMapSliceDefaultPrimary>, never>;
+/**
+ * Slice variation for *RoadMap*
+ *
+ */
+type RoadMapSliceVariation = RoadMapSliceDefault;
+/**
+ * RoadMap Shared Slice
+ *
+ * - **API ID**: `road_map`
+ * - **Description**: `RoadMap`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type RoadMapSlice = prismicT.SharedSlice<"road_map", RoadMapSliceVariation>;
+/**
  * Primary content in ShowPrices → Primary
  *
  */
@@ -760,6 +799,6 @@ declare module "@prismicio/client" {
         (repositoryNameOrEndpoint: string, options?: prismic.ClientConfig): prismic.Client<AllDocumentTypes>;
     }
     namespace Content {
-        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, PartnersSliceDefaultPrimary, PartnersSliceDefault, PartnersSliceVariation, PartnersSlice, ShowPricesSliceDefaultPrimary, ShowPricesSliceDefault, ShowPricesSliceVariation, ShowPricesSlice, TechnologiesSliceDefaultPrimary, TechnologiesSliceDefault, TechnologiesSliceVariation, TechnologiesSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
+        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, PartnersSliceDefaultPrimary, PartnersSliceDefault, PartnersSliceVariation, PartnersSlice, RoadMapSliceDefaultPrimary, RoadMapSliceDefault, RoadMapSliceVariation, RoadMapSlice, ShowPricesSliceDefaultPrimary, ShowPricesSliceDefault, ShowPricesSliceVariation, ShowPricesSlice, TechnologiesSliceDefaultPrimary, TechnologiesSliceDefault, TechnologiesSliceVariation, TechnologiesSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
     }
 }

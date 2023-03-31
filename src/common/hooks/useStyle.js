@@ -12,6 +12,7 @@ const useStyle = () => {
   const featuredColor = useColorModeValue('featuredLight', 'featuredDark');
   const fontColor = useColorModeValue('black', 'white');
   const fontColor2 = useColorModeValue('gray.dark', 'gray.250');
+  const fontColor3 = useColorModeValue('gray.700', 'gray.300');
   const reverseFontColor = useColorModeValue('white', 'gray.900');
   const lightColor = useColorModeValue('gray.600', 'gray.200');
   const tooltipBackground = useColorModeValue('gray.dark', 'gray.dark');
@@ -40,21 +41,22 @@ const useStyle = () => {
   return {
     backgroundColor,
     backgroundColor2,
+    backgroundColor3,
     borderColor,
     borderColor2,
+    borderColorStrong,
     disabledBackgroundColor,
-    backgroundColor3,
     disabledColor,
     featuredColor,
     fontColor,
     fontColor2,
+    fontColor3,
     hexColor,
     input,
-    reverseFontColor,
     lightColor,
     modal,
+    reverseFontColor,
     tooltipBackground,
-    borderColorStrong,
   };
 };
 
