@@ -1,0 +1,35 @@
+[
+  {
+    "__TYPE__": "SharedSliceContent",
+    "variation": "default",
+    "primary": {
+      "course_slug": {
+        "__TYPE__": "FieldContent",
+        "value": "mixture",
+        "type": "Text"
+      },
+      "more_content_button": {
+        "__TYPE__": "BooleanContent",
+        "value": true
+      },
+      "more_content_title": {
+        "__TYPE__": "FieldContent",
+        "value": "build",
+        "type": "Text"
+      },
+      "more_content_link": {
+        "__TYPE__": "LinkContent",
+        "value": {
+          "__TYPE__": "ExternalLink",
+          "url": "http://twitter.com"
+        }
+      }
+    },
+    "items": [
+      {
+        "__TYPE__": "GroupItemContent",
+        "value": []
+      }
+    ]
+  }
+]

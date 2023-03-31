@@ -68,7 +68,7 @@ interface PageDocumentData {
  * Slice for *Page → Slice Zone*
  *
  */
-type PageDocumentDataSlicesSlice = TitleIntroductionSlice | MarkdownSlice | TwoColumnSlice | OneColumnSlice | TestimonialsSlice | ShowPricesSlice | TechnologiesSlice | PartnersSlice;
+type PageDocumentDataSlicesSlice = TitleIntroductionSlice | MarkdownSlice | TwoColumnSlice | OneColumnSlice | TestimonialsSlice | ShowPricesSlice | TechnologiesSlice | PartnersSlice | RoadMapSlice;
 /**
  * Page document from Prismic
  *
@@ -389,6 +389,76 @@ type PartnersSliceVariation = PartnersSliceDefault;
  *
  */
 export type PartnersSlice = prismicT.SharedSlice<"partners", PartnersSliceVariation>;
+/**
+ * Primary content in RoadMap → Primary
+ *
+ */
+interface RoadMapSliceDefaultPrimary {
+    /**
+     * Course slug field in *RoadMap → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: road_map.primary.course_slug
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    course_slug: prismicT.KeyTextField;
+    /**
+     * More content button field in *RoadMap → Primary*
+     *
+     * - **Field Type**: Boolean
+     * - **Placeholder**: *None*
+     * - **Default Value**: false
+     * - **API ID Path**: road_map.primary.more_content_button
+     * - **Documentation**: https://prismic.io/docs/core-concepts/boolean
+     *
+     */
+    more_content_button: prismicT.BooleanField;
+    /**
+     * More content title field in *RoadMap → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: road_map.primary.more_content_title
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    more_content_title: prismicT.KeyTextField;
+    /**
+     * More content link field in *RoadMap → Primary*
+     *
+     * - **Field Type**: Link
+     * - **Placeholder**: *None*
+     * - **API ID Path**: road_map.primary.more_content_link
+     * - **Documentation**: https://prismic.io/docs/core-concepts/link-content-relationship
+     *
+     */
+    more_content_link: prismicT.LinkField;
+}
+/**
+ * Default variation for RoadMap Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: `RoadMap`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type RoadMapSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<RoadMapSliceDefaultPrimary>, never>;
+/**
+ * Slice variation for *RoadMap*
+ *
+ */
+type RoadMapSliceVariation = RoadMapSliceDefault;
+/**
+ * RoadMap Shared Slice
+ *
+ * - **API ID**: `road_map`
+ * - **Description**: `RoadMap`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type RoadMapSlice = prismicT.SharedSlice<"road_map", RoadMapSliceVariation>;
 /**
  * Primary content in ShowPrices → Primary
  *
@@ -760,6 +830,6 @@ declare module "@prismicio/client" {
         (repositoryNameOrEndpoint: string, options?: prismic.ClientConfig): prismic.Client<AllDocumentTypes>;
     }
     namespace Content {
-        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, PartnersSliceDefaultPrimary, PartnersSliceDefault, PartnersSliceVariation, PartnersSlice, ShowPricesSliceDefaultPrimary, ShowPricesSliceDefault, ShowPricesSliceVariation, ShowPricesSlice, TechnologiesSliceDefaultPrimary, TechnologiesSliceDefault, TechnologiesSliceVariation, TechnologiesSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
+        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, PartnersSliceDefaultPrimary, PartnersSliceDefault, PartnersSliceVariation, PartnersSlice, RoadMapSliceDefaultPrimary, RoadMapSliceDefault, RoadMapSliceVariation, RoadMapSlice, ShowPricesSliceDefaultPrimary, ShowPricesSliceDefault, ShowPricesSliceVariation, ShowPricesSlice, TechnologiesSliceDefaultPrimary, TechnologiesSliceDefault, TechnologiesSliceVariation, TechnologiesSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
     }
 }

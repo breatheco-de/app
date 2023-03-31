@@ -1,0 +1,50 @@
+{
+  "id": "road_map",
+  "type": "SharedSlice",
+  "name": "RoadMap",
+  "description": "RoadMap",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "RoadMap",
+      "primary": {
+        "course_slug": {
+          "type": "Text",
+          "config": {
+            "label": "Course slug",
+            "placeholder": ""
+          }
+        },
+        "more_content_button": {
+          "type": "Boolean",
+          "config": {
+            "label": "More content button",
+            "default_value": false,
+            "placeholder_true": "true",
+            "placeholder_false": "false"
+          }
+        },
+        "more_content_title": {
+          "type": "Text",
+          "config": {
+            "label": "More content title",
+            "placeholder": ""
+          }
+        },
+        "more_content_link": {
+          "type": "Link",
+          "config": {
+            "label": "More content link",
+            "placeholder": "",
+            "select": null
+          }
+        }
+      },
+      "items": {},
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    }
+  ]
+}
