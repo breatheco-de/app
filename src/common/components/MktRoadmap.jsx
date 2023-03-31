@@ -1,100 +1,76 @@
 /* eslint-disable no-unused-vars */
 import {
-  Box, TabList, Tabs,
+  Box, Image, TabList, Tabs,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
+import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import { CustomTab } from './Animated';
 import Heading from './Heading';
 import Text from './Text';
+import useStyle from '../hooks/useStyle';
 
 const arrayData = [
   {
     name: 'HTML/CSS',
-    slug: '',
-    short_name: '',
-    icon_url: 'html',
-    description:
-      'During the pre-work you learn some basic <strong>CSS</strong> and <strong>HTML</strong>, and hopefully how to use the <strong>flex-box</strong> to create simple layouts. The first day we will review the pre-work completion and introduce a more evolved CSS that enables amazing layouts and the amazing Bootstrap framework that will make you life so much easier with the "component oriented" approach.',
+    slug: 'html-css',
+    short_name: 'HTML/CSS',
+    icon_url: '',
+    description: 'During the pre-work you learn some basic <strong>CSS</strong> and <strong>HTML</strong>, and hopefully how to use the <strong>flex-box</strong> to create simple layouts. The first day we will review the pre-work completion and introduce a more evolved CSS that enables amazing layouts and the amazing Bootstrap framework that will make you life so much easier with the "component oriented" approach.',
   },
   {
     name: 'Bootstrap',
-    slug: '',
-    short_name: '',
-    icon_url: 'html',
+    slug: 'bootstrap',
+    short_name: 'Bootstrap',
+    icon_url: '',
+    description: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing",
+  },
+  {
+    name: 'Github',
+    slug: 'github',
+    short_name: 'Github',
+    icon_url: '',
+    description: 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution',
+  },
+  {
+    name: 'Git & Gitflow',
+    slug: 'git',
+    short_name: 'Git & Gitflow',
+    icon_url: '',
     description:
-      'During the pre-work you learn some basic <strong>CSS</strong> and <strong>HTML</strong>, and hopefully how to use the <strong>flex-box</strong> to create simple layouts. The first day we will review the pre-work completion and introduce a more evolved CSS that enables amazing layouts and the amazing Bootstrap framework that will make you life so much easier with the "component oriented" approach.',
+      'classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular',
+  },
+  {
+    name: 'Git & Gitflow 2',
+    slug: 'git2eeee',
+    short_name: 'Git & Gitflow 2',
+    icon_url: '',
+    description:
+      'written in 45 BC. This book is a treatise on the theory of ethics, very popular',
   },
 ];
 
-const MktRoadmap = ({ course }) => {
+const MktRoadmap = ({ course, moreContent, buttonTitle, buttonLink }) => {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
-  const [data, setData] = useState([]);
+  const { t } = useTranslation('common');
+  const [data, setData] = useState(arrayData);
+  const { fontColor3 } = useStyle();
   const router = useRouter();
 
   useEffect(() => {
-    setData(arrayData);
+    if (typeof course === 'string') {
+      axios.get(`${process.env.BREATHECODE_HOST}/v1/marketing/course/${course}`)
+        .then((response) => {
+          setData(response?.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   }, []);
-
-  const items = [
-    { id: 1, size: 'large' },
-    { id: 2, size: 'medium' },
-    { id: 3, size: 'medium' },
-    { id: 4, size: 'medium' },
-    { id: 5, size: 'large' },
-    { id: 6, size: 'medium' },
-  ];
-
-  // Fórmula para la curva grande
-  const largeCurve = (left) => {
-    const amp = 100; // Amplitud de la curva grande
-    const frec = 0.05; // Frecuencia de la curva grande
-    const fase = Math.PI / 2; // Fase de la curva grande
-    const py = 200; // Posición vertical inicial de la curva grande
-    return amp * Math.sin(frec * left + fase) + py;
-  };
-
-  // Fórmula para la curva mediana
-  const mediumCurve = (left) => {
-    const amp = 50; // Amplitud de la curva mediana
-    const frec = 0.1; // Frecuencia de la curva mediana
-    const fase = Math.PI; // Fase de la curva mediana
-    const py = 350; // Posición vertical inicial de la curva mediana
-    return amp * Math.sin(frec * left + fase) + py;
-  };
-
-  // const renderItems = () => {
-  //   let left = 0;
-  //   const itemsToRender = [];
-
-  //   items.forEach((item) => {
-  //     const sizeFactor = item.size === 'large' ? 1 : 0.5;
-  //     const top = sizeFactor * (150 * (2 ** (left / 100))) + 50;
-  //     const topMed = sizeFactor * (75 * Math.log(((2 * left) / 100) + 1)) + 175;
-  //     const style = { position: 'absolute', top: `${item.size === 'large' ? top : topMed}px`, left: `${left}px` };
-  //     // const style = { top: `${top}px`, left: `${left}px` };
-  //     itemsToRender.push(<div key={item.id} className={`item ${item.size}`} style={style}>{`Numero ${item.id}`}</div>);
-  //     left += 100; // Incrementa la posición horizontal para cada elemento
-  //   });
-
-  //   return itemsToRender;
-  // };
-
-  // const renderItems = () => {
-  //   let left = 0;
-  //   const itemsToRender = [];
-
-  //   items.forEach((item) => {
-  //     const top = item.size === 'large' ? largeCurve(left) : mediumCurve(left);
-  //     const style = { position: 'absolute', top: `${top}px`, left: `${left}px`, width: '100%', height: 'auto' };
-  //     itemsToRender.push(<div key={item.id} className={`item ${item.size}`} style={style}>{`Numero ${item.id}`}</div>);
-  //     left += 100; // Incrementa la posición horizontal para cada elemento
-  //   });
-
-  //   return itemsToRender;
-  // };
 
   return (
     <Box
@@ -111,16 +87,16 @@ const MktRoadmap = ({ course }) => {
         display={{ base: 'none', md: 'inherit' }}
         position="absolute"
         top="-90px"
-        left="410px"
+        left="300px"
       >
         <Icon icon="curvedLine" width="80px" height="654px" />
       </Box>
-      <Box display="flex" width="100%">
+      <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} width="100%">
         <Tabs
           index={currentTabIndex}
           variant="unstyled"
           display="flex"
-          flex={1}
+          flex={0.5}
           flexDirection={{ base: 'column', md: 'row' }}
           height={{ base: '100%', md: '528px' }}
           mt={{ base: '40px', md: 0 }}
@@ -129,26 +105,61 @@ const MktRoadmap = ({ course }) => {
           <TabList
             position="relative"
             display={{ base: 'none', md: 'inherit' }}
-            width="48rem"
             height="100%"
             zIndex={99}
           >
-            renderItems here
-            <CustomTab
-              onClick={() => router.push('#more-content')}
-              style={{ border: '3px solid #0097CD' }}
-              bottom="57px"
-              left="355px"
-            >
-              {data?.previewModules?.moreContent}
-            </CustomTab>
+            {data?.[0]?.slug && (
+              <CustomTab onClick={() => setCurrentTabIndex(0)} top="20px" left="210px" p="1rem 12px">
+                {data?.[0]?.icon_url && (
+                  <Image src={data?.[0]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
+                )}
+                {data?.[0]?.short_name || data?.[0]?.name}
+              </CustomTab>
+            )}
+
+            {data?.[1]?.slug && (
+              <CustomTab onClick={() => setCurrentTabIndex(1)} top="107px" left="240px" p="1rem 12px">
+                {data?.[1]?.icon_url && (
+                  <Image src={data?.[1]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
+                )}
+                {data?.[1]?.short_name || data?.[1]?.name}
+              </CustomTab>
+            )}
+            {data?.[2]?.slug && (
+              <CustomTab onClick={() => setCurrentTabIndex(2)} top="194px" left="280px" p="1rem 12px">
+                {data?.[2]?.icon_url && (
+                  <Image src={data?.[2]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
+                )}
+                {data?.[2]?.short_name || data?.[2]?.name}
+              </CustomTab>
+            )}
+            {data?.[3]?.slug && (
+              <CustomTab onClick={() => setCurrentTabIndex(3)} bottom="164px" left="270px" p="1rem 12px">
+                {data?.[3]?.icon_url && (
+                  <Image src={data?.[3]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
+                )}
+                {data?.[3]?.short_name || data?.[3]?.name}
+              </CustomTab>
+            )}
+            {moreContent ? (
+              <CustomTab onClick={() => router.push(buttonLink)} style={{ border: '3px solid #0097CD' }} bottom="57px" left="255px">
+                {buttonTitle}
+              </CustomTab>
+            ) : data?.[4]?.slug && (
+              <CustomTab onClick={() => setCurrentTabIndex(4)} bottom="57px" left="255px" p="1rem 12px">
+                {data?.[4]?.icon_url && (
+                  <Image src={data?.[4]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
+                )}
+                {data?.[4]?.short_name || data?.[4]?.name}
+              </CustomTab>
+            )}
+
           </TabList>
         </Tabs>
         <Box
-          flex={0.7}
+          flex={0.5}
           display="flex"
           flexDirection="column"
-          width="472px"
           alignSelf="center"
           gridGap="10px"
         >
@@ -156,12 +167,13 @@ const MktRoadmap = ({ course }) => {
             as="h2"
             size="xsm"
             letterSpacing="0.05em"
+            mb="1rem"
             // color="blue.default"
           >
-            What you will learn
+            {t('what-you-will-learn')}
           </Heading>
           <Text size="26px" fontWeight="700" lineHeight="30px">
-            HTML/CSS
+            {data[currentTabIndex]?.name}
           </Text>
           <Box
             display="flex"
@@ -170,18 +182,22 @@ const MktRoadmap = ({ course }) => {
             height="12rem"
             overflowX="auto"
           >
-            {items.map((item) => (
-              <Box key={item.id}>
-                {item.id}
-              </Box>
-            ))}
+            {data?.[currentTabIndex]?.description && (
+              <Text
+                key={data[currentTabIndex]?.slug}
+                className="scroll-area"
+                id={`${data[currentTabIndex]?.slug}`}
+                minHeight="12rem"
+                fontSize="14px"
+                // mb="4rem"
+                fontWeight="400"
+                lineHeight="24px"
+                letterSpacing="0.05em"
+                color={fontColor3}
+                dangerouslySetInnerHTML={{ __html: data?.[currentTabIndex]?.description }}
+              />
+            )}
           </Box>
-          {/* <Button
-            onClick={() => router.push(data?.previewModules.button.link)}
-            alignSelf={{ base: 'center', md: 'start' }}
-          >
-            {data?.previewModules.button.title}
-          </Button> */}
         </Box>
       </Box>
     </Box>
@@ -189,9 +205,15 @@ const MktRoadmap = ({ course }) => {
 };
 MktRoadmap.propTypes = {
   course: PropTypes.string,
+  buttonTitle: PropTypes.string,
+  buttonLink: PropTypes.string,
+  moreContent: PropTypes.bool,
 };
 MktRoadmap.defaultProps = {
   course: '',
+  buttonTitle: 'More content',
+  buttonLink: '#',
+  moreContent: false,
 };
 
 export default MktRoadmap;
