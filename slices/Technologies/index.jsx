@@ -10,6 +10,7 @@ import MktTechnologies from '../../src/common/components/MktTechnologies';
  */
 const Technologies = ({ slice }) => (
   <MktTechnologies
+    id={slice?.primary?.id_key}
     endpoint={slice.primary.endpoint}
   />
 );

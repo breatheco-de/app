@@ -7,6 +7,11 @@
         "__TYPE__": "FieldContent",
         "type": "Text",
         "value": "/v1/registry/technology?sort_priority=1"
+      },
+      "id_key": {
+        "__TYPE__": "FieldContent",
+        "value": "valley",
+        "type": "Text"
       }
     },
     "items": [

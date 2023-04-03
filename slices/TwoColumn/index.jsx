@@ -9,6 +9,7 @@ import MktTwoColumnSideImage from '../../src/common/components/MktTwoColumnSideI
  */
 const TwoColumn = ({ slice }) => (
   <MktTwoColumnSideImage
+    id={slice?.primary?.id_key}
     title={slice.primary.title}
     subTitle={slice.primary.subtitle}
     slice={slice}

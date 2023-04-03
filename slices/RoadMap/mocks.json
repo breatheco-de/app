@@ -23,6 +23,11 @@
           "__TYPE__": "ExternalLink",
           "url": "http://twitter.com"
         }
+      },
+      "id_key": {
+        "__TYPE__": "FieldContent",
+        "value": "grown",
+        "type": "Text"
       }
     },
     "items": [

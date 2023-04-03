@@ -11,6 +11,13 @@
       "version": "sktwi1xtmkfgx8626",
       "description": "Testimonials",
       "primary": {
+        "id_key": {
+          "type": "Text",
+          "config": {
+            "label": "ID Key",
+            "placeholder": ""
+          }
+        },
         "title": {
           "type": "Text",
           "config": {

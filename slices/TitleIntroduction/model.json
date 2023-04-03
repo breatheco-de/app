@@ -11,6 +11,13 @@
       "version": "sktwi1xtmkfgx8626",
       "description": "TitleIntroduction",
       "primary": {
+        "id_key": {
+          "type": "Text",
+          "config": {
+            "label": "ID Key",
+            "placeholder": ""
+          }
+        },
         "title": {
           "type": "StructuredText",
           "config": {

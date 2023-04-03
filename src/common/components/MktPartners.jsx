@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import {
-  Box, Img,
+  Container, Img,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import Heading from './Heading';
 
-const MktPartners = ({ title, images }) => {
+const MktPartners = ({ id, title, images }) => {
   const cleanImages = images.length > 0 && typeof images[0] === 'string' ? images : images.map((obj) => obj.text);
   const marqueeVariants = {
     animate: {
@@ -21,7 +21,7 @@ const MktPartners = ({ title, images }) => {
     },
   };
   return (
-    <Box width="100%" overflowX="hidden" marginTop="20px">
+    <Container maxW="container.xl" px="10px" id={id} width="100%" overflowX="hidden" marginTop="20px">
       <Heading as="h2" textAlign="center" marginBottom="20px">{title}</Heading>
       <motion.div
         width="100%"
@@ -44,18 +44,20 @@ const MktPartners = ({ title, images }) => {
           />
         ))}
       </motion.div>
-    </Box>
+    </Container>
   );
 };
 
 MktPartners.propTypes = {
   title: PropTypes.string,
   images: PropTypes.arrayOf(PropTypes.any),
+  id: PropTypes.string,
 };
 
 MktPartners.defaultProps = {
   title: null,
   images: [],
+  id: '',
 };
 
 export default MktPartners;

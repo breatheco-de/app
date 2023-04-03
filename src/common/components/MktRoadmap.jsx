@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import {
-  Box, Image, TabList, Tabs,
+  Box, Container, Image, TabList, Tabs,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -54,7 +54,7 @@ const arrayData = [
   },
 ];
 
-const MktRoadmap = ({ course, moreContent, buttonTitle, buttonLink }) => {
+const MktRoadmap = ({ id, course, moreContent, buttonTitle, buttonLink }) => {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const { t } = useTranslation('common');
   const [data, setData] = useState(arrayData);
@@ -75,7 +75,9 @@ const MktRoadmap = ({ course, moreContent, buttonTitle, buttonLink }) => {
   }, []);
 
   return (
-    <Box
+    <Container
+      px="10px"
+      id={id}
       maxW="container.xl"
       m="3rem auto 3rem auto"
       display="flex"
@@ -202,7 +204,7 @@ const MktRoadmap = ({ course, moreContent, buttonTitle, buttonLink }) => {
           </Box>
         </Box>
       </Box>
-    </Box>
+    </Container>
   );
 };
 MktRoadmap.propTypes = {
@@ -210,12 +212,14 @@ MktRoadmap.propTypes = {
   buttonTitle: PropTypes.string,
   buttonLink: PropTypes.string,
   moreContent: PropTypes.bool,
+  id: PropTypes.string,
 };
 MktRoadmap.defaultProps = {
   course: '',
   buttonTitle: 'More content',
   buttonLink: '#',
   moreContent: false,
+  id: '',
 };
 
 export default MktRoadmap;

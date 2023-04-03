@@ -1,7 +1,5 @@
-/* eslint-disable linebreak-style */
-/* eslint-disable react/prop-types */
-/* eslint-disable react/jsx-filename-extension */
 import React from 'react';
+import PropTypes from 'prop-types';
 import MktPartners from '../../src/common/components/MktPartners';
 
 /**
@@ -10,7 +8,19 @@ import MktPartners from '../../src/common/components/MktPartners';
  * @param { PartnersProps }
  */
 const Partners = ({ slice }) => (
-  <MktPartners title={slice.primary.title} images={slice.primary.images} />
+  <MktPartners
+    id={slice?.primary?.id_key}
+    title={slice.primary.title}
+    images={slice.primary.images}
+  />
 );
+
+Partners.propTypes = {
+  slice: PropTypes.objectOf(PropTypes.any),
+};
+
+Partners.defaultProps = {
+  slice: {},
+};
 
 export default Partners;

@@ -1,17 +1,15 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Container, Flex } from '@chakra-ui/react';
 import { PrismicRichText } from '@prismicio/react';
 import profileHandlers from '../../js_modules/profile/Subscriptions/handlers';
 import ShowPrices from './ShowPrices';
 import { parseQuerys } from '../../utils/url';
 import Text from './Text';
 import Icon from './Icon';
-import useStyle from '../hooks/useStyle';
 import Heading from './Heading';
 
 const BulletComponent = ({ bullet, isString }) => (
@@ -42,7 +40,7 @@ const BulletComponent = ({ bullet, isString }) => (
   </Box>
 );
 
-const MktShowPrices = ({ title, description, plan, bullets }) => {
+const MktShowPrices = ({ id, title, description, plan, bullets }) => {
   const { t } = useTranslation('profile');
   const router = useRouter();
   const [offerProps, setOfferProps] = useState({});
@@ -64,7 +62,7 @@ const MktShowPrices = ({ title, description, plan, bullets }) => {
   };
 
   return offerProps?.slug ? (
-    <Flex padding="32px" gridGap="35px" flexDirection={{ base: 'column', lg: isTotallyFree ? 'column' : 'row' }}>
+    <Container display="flex" maxW="container.xl" px="10px" id={id} padding="32px" gridGap="35px" flexDirection={{ base: 'column', lg: isTotallyFree ? 'column' : 'row' }}>
       <Flex flex={0.5} flexDirection="column" margin="1rem 0 0 0" gridGap="8px">
         {title && (
           <Heading as="h2" size="l" margin="0 0 1.5rem 0">
@@ -145,7 +143,7 @@ const MktShowPrices = ({ title, description, plan, bullets }) => {
           isTotallyFree={isTotallyFree}
         />
       </Box>
-    </Flex>
+    </Container>
   ) : 'loading...';
 };
 
@@ -153,10 +151,12 @@ MktShowPrices.propTypes = {
   title: PropTypes.string,
   plan: PropTypes.string.isRequired,
   description: PropTypes.string,
+  id: PropTypes.string,
 };
 MktShowPrices.defaultProps = {
   title: '',
   description: '',
+  id: '',
 };
 
 BulletComponent.propTypes = {
