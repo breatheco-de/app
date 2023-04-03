@@ -42,7 +42,7 @@ const BulletComponent = ({ bullet, isString }) => (
   </Box>
 );
 
-const MktShowPrices = ({ title, description, plan, bullets }) => {
+const MktShowPrices = ({ id, title, description, plan, bullets }) => {
   const { t } = useTranslation('profile');
   const router = useRouter();
   const [offerProps, setOfferProps] = useState({});
@@ -64,7 +64,7 @@ const MktShowPrices = ({ title, description, plan, bullets }) => {
   };
 
   return offerProps?.slug ? (
-    <Flex padding="32px" gridGap="35px" flexDirection={{ base: 'column', lg: isTotallyFree ? 'column' : 'row' }}>
+    <Flex id={id} padding="32px" gridGap="35px" flexDirection={{ base: 'column', lg: isTotallyFree ? 'column' : 'row' }}>
       <Flex flex={0.5} flexDirection="column" margin="1rem 0 0 0" gridGap="8px">
         {title && (
           <Heading as="h2" size="l" margin="0 0 1.5rem 0">

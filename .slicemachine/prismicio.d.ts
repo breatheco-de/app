@@ -465,6 +465,16 @@ export type RoadMapSlice = prismicT.SharedSlice<"road_map", RoadMapSliceVariatio
  */
 interface ShowPricesSliceDefaultPrimary {
     /**
+     * ID Key field in *ShowPrices → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: show_prices.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
+    /**
      * Title field in *ShowPrices → Primary*
      *
      * - **Field Type**: Text
