@@ -5,8 +5,9 @@ import {
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import useTranslation from 'next-translate/useTranslation';
+import axios from '../../axios';
 import Icon from './Icon';
 import { CustomTab } from './Animated';
 import Heading from './Heading';
@@ -60,11 +61,12 @@ const MktRoadmap = ({ course, moreContent, buttonTitle, buttonLink }) => {
   const { fontColor3 } = useStyle();
   const router = useRouter();
 
+  axios.defaults.headers.common['Accept-Language'] = router.locale;
   useEffect(() => {
     if (typeof course === 'string') {
       axios.get(`${process.env.BREATHECODE_HOST}/v1/marketing/course/${course}`)
         .then((response) => {
-          setData(response?.data);
+          setData(response?.data?.course_translation?.course_modules);
         })
         .catch((error) => {
           console.error(error);
@@ -141,7 +143,7 @@ const MktRoadmap = ({ course, moreContent, buttonTitle, buttonLink }) => {
                 {data?.[3]?.short_name || data?.[3]?.name}
               </CustomTab>
             )}
-            {moreContent ? (
+            {(data?.length === 4 || moreContent) ? (
               <CustomTab onClick={() => router.push(buttonLink)} style={{ border: '3px solid #0097CD' }} bottom="57px" left="255px">
                 {buttonTitle}
               </CustomTab>
