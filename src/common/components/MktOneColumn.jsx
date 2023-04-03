@@ -10,6 +10,7 @@ import Link from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
 
 const MktOneColumn = ({
+  id,
   title,
   subTitle,
   description,
@@ -51,7 +52,7 @@ const MktOneColumn = ({
   );
 
   return (
-    <Box padding="50px" textAlign="center" background={slice?.primary?.background}>
+    <Box id={id} padding="50px" textAlign="center" background={slice?.primary?.background}>
       <Box>
         <Heading marginBottom="15px" as="h4" fontSize="14px" color={hexColor.blueDefault}>
           {subTitle}
@@ -118,6 +119,7 @@ MktOneColumn.propTypes = {
   linkButton: PropTypes.bool,
   kpiList: PropTypes.arrayOf(PropTypes.any),
   slice: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
+  id: PropTypes.string,
 };
 
 MktOneColumn.defaultProps = {
@@ -129,6 +131,7 @@ MktOneColumn.defaultProps = {
   linkButton: false,
   kpiList: [],
   slice: null,
+  id: '',
 };
 
 export default MktOneColumn;

@@ -29,6 +29,7 @@ const OneColumn = ({ slice }) => {
 
   return (
     <MktOneColumn
+      id={slice?.primary?.id_key}
       slice={slice}
       title={slice.primary.title}
       subTitle={slice.primary.subtitle}

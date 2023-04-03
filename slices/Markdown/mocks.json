@@ -27,6 +27,11 @@
       "enable_table_of_content": {
         "__TYPE__": "BooleanContent",
         "value": false
+      },
+      "id_key": {
+        "__TYPE__": "FieldContent",
+        "value": "should",
+        "type": "Text"
       }
     },
     "items": [

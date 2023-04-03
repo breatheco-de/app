@@ -12,6 +12,7 @@ import StarRating from './StarRating';
 import { lengthOfString } from '../../utils';
 
 const MktTestimonials = ({
+  id,
   title,
   endpoint,
   testimonials,
@@ -67,7 +68,7 @@ const MktTestimonials = ({
   };
 
   return (
-    <Box padding="20px 0" textAlign="center" marginBottom="20px">
+    <Box id={id} padding="20px 0" textAlign="center" marginBottom="20px">
       {title && (
         <Heading as="h2" size="m" marginBottom="20px">
           {title}

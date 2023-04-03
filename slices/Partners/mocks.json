@@ -76,6 +76,11 @@
             "direction": "ltr"
           }
         ]
+      },
+      "id_key": {
+        "__TYPE__": "FieldContent",
+        "value": "species",
+        "type": "Text"
       }
     },
     "items": [

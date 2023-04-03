@@ -17,7 +17,7 @@ const IntroductionSection = ({
   const colors = useColorModeValue('#000', '#fff');
 
   return (
-    <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="10px">
+    <Box id={slice?.primary?.id_key || ''} display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="10px">
       <Box flex={0.6}>
         <Heading as="span" size="xl" fontWeight="700">
           {slice?.primary?.title ? (

@@ -9,6 +9,7 @@ import MktShowPrices from '../../src/common/components/MktShowPrices';
  */
 const ShowPrices = ({ slice }) => (
   <MktShowPrices
+    id={slice?.primary?.id_key}
     title={slice.primary.title}
     description={slice.primary.description}
     plan={slice?.primary?.plan || 'coding-introduction-free-trial'}

@@ -9,6 +9,7 @@ import MktTestimonials from '../../src/common/components/MktTestimonials';
  */
 const Testimonials = ({ slice }) => (
   <MktTestimonials
+    id={slice?.primary?.id_key}
     title={slice?.primary?.title}
     endpoint={slice?.primary?.endpoint || '/v1/feedback/review'}
     slice={slice}

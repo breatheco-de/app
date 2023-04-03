@@ -86,6 +86,16 @@ export type AllDocumentTypes = PageDocument;
  */
 interface MarkdownSliceDefaultPrimary {
     /**
+     * ID Key field in *Markdown → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: markdown.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
+    /**
      * Title field in *Markdown → Primary*
      *
      * - **Field Type**: Text
@@ -155,6 +165,16 @@ export type MarkdownSlice = prismicT.SharedSlice<"markdown", MarkdownSliceVariat
  *
  */
 interface OneColumnSliceDefaultPrimary {
+    /**
+     * ID Key field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
     /**
      * Title field in *OneColumn → Primary*
      *
@@ -346,6 +366,16 @@ export type OneColumnSlice = prismicT.SharedSlice<"one_column", OneColumnSliceVa
  */
 interface PartnersSliceDefaultPrimary {
     /**
+     * ID Key field in *Partners → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: partners.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
+    /**
      * title field in *Partners → Primary*
      *
      * - **Field Type**: Text
@@ -394,6 +424,16 @@ export type PartnersSlice = prismicT.SharedSlice<"partners", PartnersSliceVariat
  *
  */
 interface RoadMapSliceDefaultPrimary {
+    /**
+     * ID Key field in *RoadMap → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: road_map.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
     /**
      * Course slug field in *RoadMap → Primary*
      *
@@ -465,6 +505,16 @@ export type RoadMapSlice = prismicT.SharedSlice<"road_map", RoadMapSliceVariatio
  */
 interface ShowPricesSliceDefaultPrimary {
     /**
+     * ID Key field in *ShowPrices → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: show_prices.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
+    /**
      * Title field in *ShowPrices → Primary*
      *
      * - **Field Type**: Text
@@ -534,6 +584,16 @@ export type ShowPricesSlice = prismicT.SharedSlice<"show_prices", ShowPricesSlic
  */
 interface TechnologiesSliceDefaultPrimary {
     /**
+     * ID Key field in *Technologies → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: technologies.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
+    /**
      * Endpoint field in *Technologies → Primary*
      *
      * - **Field Type**: Text
@@ -572,6 +632,16 @@ export type TechnologiesSlice = prismicT.SharedSlice<"technologies", Technologie
  *
  */
 interface TestimonialsSliceDefaultPrimary {
+    /**
+     * ID Key field in *Testimonials → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: testimonials.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
     /**
      * Title field in *Testimonials → Primary*
      *
@@ -621,6 +691,16 @@ export type TestimonialsSlice = prismicT.SharedSlice<"testimonials", Testimonial
  *
  */
 interface TitleIntroductionSliceDefaultPrimary {
+    /**
+     * ID Key field in *TitleIntroduction → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: title_introduction.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
     /**
      * Title field in *TitleIntroduction → Primary*
      *
@@ -710,6 +790,16 @@ export type TitleIntroductionSlice = prismicT.SharedSlice<"title_introduction", 
  *
  */
 interface TwoColumnSliceDefaultPrimary {
+    /**
+     * ID Key field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: two_column.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
     /**
      * Title field in *TwoColumn → Primary*
      *

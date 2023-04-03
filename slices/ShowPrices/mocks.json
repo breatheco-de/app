@@ -19,11 +19,6 @@
           }
         ]
       },
-      "plan": {
-        "__TYPE__": "FieldContent",
-        "value": "sick",
-        "type": "Text"
-      },
       "bullets": {
         "__TYPE__": "StructuredTextContent",
         "value": [
@@ -34,6 +29,11 @@
             }
           }
         ]
+      },
+      "id_key": {
+        "__TYPE__": "FieldContent",
+        "value": "hundred",
+        "type": "Text"
       }
     },
     "items": [

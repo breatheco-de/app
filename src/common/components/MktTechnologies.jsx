@@ -4,7 +4,7 @@ import { Box, Img, Button, useColorModeValue } from '@chakra-ui/react';
 import axios from 'axios';
 import Icon from './Icon';
 
-const MktTechnologies = ({ endpoint }) => {
+const MktTechnologies = ({ id, endpoint }) => {
   const carousel = useRef(null);
   const background = useColorModeValue('featuredLight', 'featuredDark');
   const [technologies, setTechnologies] = useState([]);
@@ -21,6 +21,7 @@ const MktTechnologies = ({ endpoint }) => {
 
   return (
     <Box
+      id={id}
       background={background}
       width="100%"
       marginTop="20px"
@@ -87,8 +88,11 @@ const MktTechnologies = ({ endpoint }) => {
 
 MktTechnologies.propTypes = {
   endpoint: PropTypes.string.isRequired,
+  id: PropTypes.string,
 };
 
-MktTechnologies.defaultProps = {};
+MktTechnologies.defaultProps = {
+  id: '',
+};
 
 export default MktTechnologies;
