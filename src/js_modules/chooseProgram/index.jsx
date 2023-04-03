@@ -5,7 +5,7 @@ import { Box } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import axiosInstance from '../../axios';
 import Icon from '../../common/components/Icon';
-import { isPlural } from '../../utils';
+import { isNumber, isPlural } from '../../utils';
 import Text from '../../common/components/Text';
 import bc from '../../common/services/breathecode';
 import handlers from '../../common/handlers';
@@ -88,18 +88,24 @@ function ChooseProgram({ chooseList, handleChoose }) {
             height="auto"
             gridGap="4rem"
           >
-            {marketingCouses.map((item) => (
-              <ProgramCard
-                isMarketingCourse
-                icon="coding"
-                iconLink={item?.icon_url}
-                iconBackground="blue.default"
-                handleChoose={() => router.push(`/checkout?plan=${item?.slug}`)}
-                programName={item?.course_translation.title}
-                programDescription={item?.course_translation?.description}
-                width="100%"
-              />
-            ))}
+            {marketingCouses.map((item) => {
+              const estimatedWeeks = item?.syllabus?.duration_in_hours / item?.syllabus?.week_hours;
+              return (
+                <ProgramCard
+                  isMarketingCourse
+                  icon="coding"
+                  iconLink={item?.icon_url}
+                  iconBackground="blue.default"
+                  handleChoose={() => router.push(`/checkout?plan=${item?.slug}`)}
+                  programName={item?.course_translation.title}
+                  programDescription={item?.course_translation?.description}
+                  bullets={item?.course_translation?.course_modules}
+                  width="100%"
+                  background="blue.light"
+                  estimatedTime={isNumber(estimatedWeeks) && (estimatedWeeks > 1 ? t('estimated-weeks-time', { time: item?.estimated_time }) : t('estimated-week-time', { time: item?.estimated_time }))}
+                />
+              );
+            })}
           </Box>
         </>
       )}
