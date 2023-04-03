@@ -29,7 +29,7 @@ const ProgramCard = ({
   programName, programDescription, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
   syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
   width, assistants, teacher, handleChoose, isHiddenOnPrework, isAvailableAsSaas,
-  subscriptionStatus, subscription, isMarketingCourse, iconLink, bullets, background, estimatedTime,
+  subscriptionStatus, subscription, isMarketingCourse, iconLink, bullets, background,
 }) => {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
@@ -150,13 +150,6 @@ const ProgramCard = ({
           />
         </Box>
       )}
-      {isMarketingCourse && estimatedTime && (
-        <Flex height="30px" id="upper-left-section " background="green.400" color="white" flexDirection="row-reverse" alignItems="center" padding="0 10px" width="fit-content" margin="0 0 12px auto" borderRadius="50px">
-          <Box>
-            {estimatedTime}
-          </Box>
-        </Flex>
-      )}
 
       {!isHiddenOnPrework && !isMarketingCourse && (
         <Flex height="30px" id="upper-left-section" flexDirection="row-reverse">
@@ -268,7 +261,7 @@ const ProgramCard = ({
         fontWeight="700"
         color={textColor}
         marginBottom="10px"
-        marginTop={(isHiddenOnPrework || (isMarketingCourse && !estimatedTime)) && '30px'}
+        marginTop={(isHiddenOnPrework || isMarketingCourse) && '30px'}
       >
         {programName}
         {' '}
@@ -548,7 +541,6 @@ ProgramCard.propTypes = {
   subscription: PropTypes.objectOf(PropTypes.any),
   bullets: PropTypes.arrayOf(PropTypes.any),
   background: PropTypes.string,
-  estimatedTime: PropTypes.string,
 };
 
 ProgramCard.defaultProps = {
@@ -574,7 +566,6 @@ ProgramCard.defaultProps = {
   subscription: {},
   bullets: [],
   background: '',
-  estimatedTime: '',
 };
 
 export default memo(ProgramCard);
