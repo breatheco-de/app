@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -11,7 +10,6 @@ import ShowPrices from './ShowPrices';
 import { parseQuerys } from '../../utils/url';
 import Text from './Text';
 import Icon from './Icon';
-import useStyle from '../hooks/useStyle';
 import Heading from './Heading';
 
 const BulletComponent = ({ bullet, isString }) => (
@@ -153,10 +151,12 @@ MktShowPrices.propTypes = {
   title: PropTypes.string,
   plan: PropTypes.string.isRequired,
   description: PropTypes.string,
+  id: PropTypes.string,
 };
 MktShowPrices.defaultProps = {
   title: '',
   description: '',
+  id: '',
 };
 
 BulletComponent.propTypes = {

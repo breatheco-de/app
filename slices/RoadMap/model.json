@@ -11,6 +11,13 @@
       "version": "sktwi1xtmkfgx8626",
       "description": "RoadMap",
       "primary": {
+        "id_key": {
+          "type": "Text",
+          "config": {
+            "label": "ID Key",
+            "placeholder": ""
+          }
+        },
         "course_slug": {
           "type": "Text",
           "config": {

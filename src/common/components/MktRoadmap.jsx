@@ -54,7 +54,7 @@ const arrayData = [
   },
 ];
 
-const MktRoadmap = ({ course, moreContent, buttonTitle, buttonLink }) => {
+const MktRoadmap = ({ id, course, moreContent, buttonTitle, buttonLink }) => {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const { t } = useTranslation('common');
   const [data, setData] = useState(arrayData);
@@ -76,6 +76,7 @@ const MktRoadmap = ({ course, moreContent, buttonTitle, buttonLink }) => {
 
   return (
     <Box
+      id={id}
       maxW="container.xl"
       m="3rem auto 3rem auto"
       display="flex"
@@ -210,12 +211,14 @@ MktRoadmap.propTypes = {
   buttonTitle: PropTypes.string,
   buttonLink: PropTypes.string,
   moreContent: PropTypes.bool,
+  id: PropTypes.string,
 };
 MktRoadmap.defaultProps = {
   course: '',
   buttonTitle: 'More content',
   buttonLink: '#',
   moreContent: false,
+  id: '',
 };
 
 export default MktRoadmap;

@@ -74,6 +74,11 @@
         "__TYPE__": "FieldContent",
         "value": "left",
         "type": "Select"
+      },
+      "id_key": {
+        "__TYPE__": "FieldContent",
+        "value": "suggest",
+        "type": "Text"
       }
     },
     "items": [

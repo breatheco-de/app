@@ -89,6 +89,11 @@
         "__TYPE__": "FieldContent",
         "value": "#eef9fe",
         "type": "Color"
+      },
+      "id_key": {
+        "__TYPE__": "FieldContent",
+        "value": "successful",
+        "type": "Text"
       }
     },
     "items": [

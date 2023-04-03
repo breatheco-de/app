@@ -10,6 +10,7 @@ import Link from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
 
 const MktTwoColumnSideImage = ({
+  id,
   title,
   subTitle,
   description,
@@ -33,6 +34,7 @@ const MktTwoColumnSideImage = ({
 
   return (
     <Box
+      id={id}
       padding="20px 0"
       display="flex"
       flexWrap={{ base: 'wrap', md: 'nowrap' }}
@@ -120,6 +122,7 @@ MktTwoColumnSideImage.propTypes = {
   border: PropTypes.string,
   slice: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
   imageAlt: PropTypes.string,
+  id: PropTypes.string,
 };
 
 MktTwoColumnSideImage.defaultProps = {
@@ -135,6 +138,7 @@ MktTwoColumnSideImage.defaultProps = {
   border: null,
   slice: null,
   imageAlt: '',
+  id: '',
 };
 
 export default MktTwoColumnSideImage;
