@@ -51,6 +51,7 @@ const MktRecommendedCourses = ({ id, endpoint, background, title }) => {
               icon_url={course.icon_url}
               iconBackground="#25BF6C"
               programName={course.course_translation.title}
+              programSlug={course.slug}
               programDescription={course.course_translation.description}
             />
           ))}

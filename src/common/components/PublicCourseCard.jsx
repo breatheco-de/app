@@ -1,14 +1,15 @@
 /* eslint-disable camelcase */
 import PropTypes from 'prop-types';
-import { Box, useColorModeValue, Button, Divider, Img } from '@chakra-ui/react';
+import { Box, useColorModeValue, Divider, Img } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
+import Link from './NextChakraLink';
 import Text from './Text';
 import Heading from './Heading';
 import ProjectsSection from './ProjectsSection';
 import useStyle from '../hooks/useStyle';
 
 const PublicCourseCard = ({
-  programName, programDescription, icon_url, iconBackground, startsIn,
+  programName, programDescription, programSlug, icon_url, iconBackground, startsIn,
   stTranslation, syllabusContent, courseProgress, usersConnected, assistants,
   teacher, isAvailableAsSaas, subscriptionStatus,
 }) => {
@@ -83,17 +84,16 @@ const PublicCourseCard = ({
             {programDescription}
           </Text>
         )}
-        <Button
+        <Link
+          variant="buttonDefault"
+          href={`/${programSlug}`}
+          textAlign="center"
           margin="10px auto 0 auto"
           display="block"
-          borderRadius="3px"
           width="50%"
-          padding="0"
-          whiteSpace="normal"
-          variant="default"
         >
-          {stTranslation?.[lang]?.common.enroll || t('common:enroll')}
-        </Button>
+          {stTranslation?.[lang]?.common['learn-more'] || t('common:learn-more')}
+        </Link>
       </Box>
     </Box>
   );
@@ -102,6 +102,7 @@ const PublicCourseCard = ({
 PublicCourseCard.propTypes = {
   programName: PropTypes.string.isRequired,
   programDescription: PropTypes.string,
+  programSlug: PropTypes.string.isRequired,
   icon_url: PropTypes.string,
   iconBackground: PropTypes.string,
   startsIn: PropTypes.instanceOf(Date),
