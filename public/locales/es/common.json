@@ -96,6 +96,7 @@
     "title": "{{asset_type}} tiene {{count}} tareas",
     "description": "Para aprovechar mejor esta lección, busca las casillas de verificación y márcalas como completadas a medida que avances."
   },
+  "related-courses": "Cursos relacionados a este artículo",
   "average-duration": "Duración promedio",
   "load-more": "Cargar más",
   "teachers": "Profesores",

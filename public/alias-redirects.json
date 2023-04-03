@@ -1,38 +1,18 @@
 [
   {
-    "source": "/lesson/[unassigned]prepararing-for-software-developer-interview",
+    "source": "/lesson/[draft]what-is-data-science",
     "type": "LESSON",
-    "destination": "/en/lesson/prepararing-for-software-developer-interview"
+    "destination": "/es/lesson/what-is-data-science"
   },
   {
-    "source": "/lesson/[unassigned]python-http-requests",
+    "source": "/lesson/[unassigned]building-your-developer-personal-portfolio",
     "type": "LESSON",
-    "destination": "/en/lesson/python-http-requests"
+    "destination": "/es/lesson/building-your-developer-personal-portfolio"
   },
   {
-    "source": "/lesson/[unassigned]what-is-an-application-model-and-how-to-diagram-it",
+    "source": "/lesson/[unassigned]javascript-objects",
     "type": "LESSON",
-    "destination": "/en/lesson/what-is-an-application-model-and-how-to-diagram-it"
-  },
-  {
-    "source": "/lesson/python-syntax",
-    "type": "LESSON",
-    "destination": "/en/lesson/python-vs-javascript-syntax"
-  },
-  {
-    "source": "/interactive-exercise/events",
-    "type": "EXERCISE",
-    "destination": "/en/interactive-exercise/javascript-events-exercises"
-  },
-  {
-    "source": "/how-to/arquitectura-del-internet",
-    "type": "QUIZ",
-    "destination": "/es/how-to/arquitectura-de-internet"
-  },
-  {
-    "source": "/interactive-exercise/layouts",
-    "type": "EXERCISE",
-    "destination": "/en/interactive-exercise/css-layouts-tutorial-exercises"
+    "destination": "/en/lesson/unassigned_javascript_objects"
   },
   {
     "source": "/interactive-exercise/the-command-line",
@@ -45,324 +25,39 @@
     "destination": "/en/interactive-exercise/command-line-challenge"
   },
   {
-    "source": "/interactive-exercise/js-devmaker",
-    "type": "EXERCISE",
-    "destination": "/en/interactive-exercise/master-javascript-exercises"
-  },
-  {
-    "source": "/interactive-exercise/jsl",
-    "type": "EXERCISE",
-    "destination": "/en/interactive-exercise/master-javascript-exercises"
-  },
-  {
-    "source": "/interactive-exercise/js-beginner",
-    "type": "EXERCISE",
-    "destination": "/en/interactive-exercise/javascript-beginner-exercises"
-  },
-  {
-    "source": "/lesson/what-is-javascript-learn-to-code-in-javascript-es",
+    "source": "/lesson/javascript-objects",
     "type": "LESSON",
-    "destination": "/es/lesson/que-es-javascript-aprende-a-programar-en-javascript"
+    "destination": "/en/lesson/unassigned_javascript_objects"
   },
   {
-    "source": "/lesson/what-is-an-array-define-array-es",
+    "source": "/interactive-coding-tutorial/exercise-instagram-post-2",
+    "type": "PROJECT",
+    "destination": "/en/interactive-coding-tutorial/exercise-instagram-post-3"
+  },
+  {
+    "source": "/interactive-coding-tutorial/interview-preparation-1",
+    "type": "PROJECT",
+    "destination": "/en/interactive-coding-tutorial/interview-preparation-3"
+  },
+  {
+    "source": "/interactive-coding-tutorial/interview-preparation-2",
+    "type": "PROJECT",
+    "destination": "/en/interactive-coding-tutorial/interview-preparation-3"
+  },
+  {
+    "source": "/lesson/unassigned-javascript-objects",
     "type": "LESSON",
-    "destination": "/es/lesson/array-arreglo-en-javascript"
+    "destination": "/en/lesson/unassigned_javascript_objects"
   },
   {
-    "source": "/lesson/regex-tutorial-regular-expression-examples-es",
-    "type": "LESSON",
-    "destination": "/es/lesson/regex-tutorial-regular-expression-ejemplo"
-  },
-  {
-    "source": "/lesson/python-syntax-es",
-    "type": "LESSON",
-    "destination": "/es/lesson/python-vs-js-syntax-es"
-  },
-  {
-    "source": "/lesson/intro-to-4geeks-es",
-    "type": "LESSON",
-    "destination": "/es/lesson/intro-to-4geeks-full-stack-es"
-  },
-  {
-    "source": "/interactive-exercise/react-exercises",
-    "type": "EXERCISE",
-    "destination": "/en/interactive-exercise/react-js-exercises"
-  },
-  {
-    "source": "/interactive-exercise/numpy-exercises-tutorial-us",
-    "type": "EXERCISE",
-    "destination": "/en/interactive-exercise/numpy-exercises-tutorial"
-  },
-  {
-    "source": "/lesson/how-to-use-gitpod-es",
-    "type": "LESSON",
-    "destination": "/es/lesson/como-utilizar-gitpod"
-  },
-  {
-    "source": "/lesson/intro-to-python-es",
-    "type": "LESSON",
-    "destination": "/es/lesson/que-es-python-tutorial"
-  },
-  {
-    "source": "/how-to/nvm-install-windows-es",
-    "type": "ARTICLE",
-    "destination": "/es/how-to/como-instalar-nvm-en-windows"
-  },
-  {
-    "source": "/how-to/ask",
-    "type": "ARTICLE",
-    "destination": "/en/how-to/how-to-ask-programming-questions"
-  },
-  {
-    "source": "/how-to/how-to-ask-programming-questions-es",
-    "type": "ARTICLE",
-    "destination": "/es/how-to/como-hacer-preguntas-de-programacion"
-  },
-  {
-    "source": "/lesson/calculus-and-linear-algebra",
-    "type": "LESSON",
-    "destination": "/en/lesson/integrals-and-derivatives"
-  },
-  {
-    "source": "/lesson/install-node-npm-mac-osx",
-    "type": "LESSON",
-    "destination": "/en/lesson/install-node-nvm-mac-osx"
-  },
-  {
-    "source": "/lesson/get-read-for-your-job-hunt",
-    "type": "LESSON",
-    "destination": "/en/lesson/get-ready-for-your-job-hunt"
-  },
-  {
-    "source": "/lesson/como-conectarte-a-ti-mismo-en-un-trabajo-de-desarrollo-de-software",
-    "type": "LESSON",
-    "destination": "/es/lesson/como-venderte-para-conseguir-trabajo-como-programador"
-  },
-  {
-    "source": "/lesson/bootstrap-tutorial-of-bootstrap-5",
-    "type": "LESSON",
-    "destination": "/en/lesson/bootstrap-tutorial-learn-bootstrap-5-in-10-minutes"
-  },
-  {
-    "source": "/lesson/how-to-networtk-yourself-into-a-software-development-job",
-    "type": "LESSON",
-    "destination": "/en/lesson/how-to-network-yourself-into-a-software-development-job"
-  },
-  {
-    "source": "/lesson/how-to-networkt-yourself-into-a-software-development-job",
-    "type": "LESSON",
-    "destination": "/en/lesson/how-to-network-yourself-into-a-software-development-job"
-  },
-  {
-    "source": "/how-to/hot-to-pay-a-coding-bootcamp",
-    "type": "ARTICLE",
-    "destination": "/en/how-to/how-to-pay-a-coding-bootcamp-2022"
-  },
-  {
-    "source": "/lesson/metodo-de-4geeks-asignacion-de-proyectos",
-    "type": "LESSON",
-    "destination": "/es/lesson/metodo-de-4geeks-tareas-y-proyectos"
-  },
-  {
-    "source": "/lesson/estandates-y-lineamientos-de-codigo",
-    "type": "LESSON",
-    "destination": "/es/lesson/estandares-y-lineamientos-de-codigo"
-  },
-  {
-    "source": "/how-to/regex-for-withespace",
-    "type": "ARTICLE",
-    "destination": "/en/how-to/regex-for-whitespace"
-  },
-  {
-    "source": "/lesson/haciendo-codigo-muy-legible",
-    "type": "LESSON",
-    "destination": "/es/lesson/que-es-y-como-mejorar-la-legibilidad-del-codigo"
-  },
-  {
-    "source": "/lesson/algorito-naive-bayes",
-    "type": "LESSON",
-    "destination": "/es/lesson/algoritmo-naive-bayes"
-  },
-  {
-    "source": "/lesson/implementacion-de-un-modelo-de-machine-learning-usando-flask-y-heroku",
-    "type": "LESSON",
-    "destination": "/es/lesson/implementar-modelo-usando-flask-y-heroku"
-  },
-  {
-    "source": "/project/proyecto-de-ejercicios-de-probabilidad-con-python",
+    "source": "/project/excuse-generator-python-cli",
     "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/proyecto-de-ejercicios-de-probabilidad-con-python"
+    "destination": "/en/interactive-coding-tutorial/excuse-generator-python-cli"
   },
   {
-    "source": "/project/codifica-una-landing-page-con-node",
+    "source": "/project/sorting-cards-with-bubble",
     "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/codifica-una-landing-page-con-node"
-  },
-  {
-    "source": "/project/code-rest-api-with-node-and-jwt-authentication",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/code-rest-api-with-node-and-jwt-authentication"
-  },
-  {
-    "source": "/project/proyecto-tutorial-integrando-el-api-de-twitter",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/proyecto-tutorial-integrando-el-api-de-twitter"
-  },
-  {
-    "source": "/project/instagram-feed-bootstrap",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/instagram-feed-bootstrap"
-  },
-  {
-    "source": "/project/instagram-post-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/instagram-post-es"
-  },
-  {
-    "source": "/project/instagram-feed-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/instagram-feed-es"
-  },
-  {
-    "source": "/project/instagram-data-modeling-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/instagram-data-modeling-es"
-  },
-  {
-    "source": "/project/building-rest-apis-with-flaskpython-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/building-rest-apis-with-flaskpython-es"
-  },
-  {
-    "source": "/project/personal-portfolio-react-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/personal-portfolio-react-es"
-  },
-  {
-    "source": "/project/data-modeling-starwars-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/data-modeling-starwars-es"
-  },
-  {
-    "source": "/project/unit-test-with-jest-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/unit-test-with-jest-es"
-  },
-  {
-    "source": "/project/music-player-react-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/music-player-react-es"
-  },
-  {
-    "source": "/project/battleship-vanillajs-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/battleship-vanillajs-es"
-  },
-  {
-    "source": "/project/todo-list-react-with-fetch-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/todo-list-react-with-fetch-es"
-  },
-  {
-    "source": "/project/todolist-vanilla-js-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/todolist-vanilla-js-es"
-  },
-  {
-    "source": "/project/todo-list-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/todo-list-es"
-  },
-  {
-    "source": "/project/pop-baloons-javascript-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/pop-baloons-javascript-es"
-  },
-  {
-    "source": "/project/html5-form-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/html5-form-es"
-  },
-  {
-    "source": "/project/tictactoe-react-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/tictactoe-react-es"
-  },
-  {
-    "source": "/project/sorting-cards-with-select-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/sorting-cards-with-select-es"
-  },
-  {
-    "source": "/project/multi-view-react-collaborative-website-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/multi-view-react-collaborative-website-es"
-  },
-  {
-    "source": "/project/contact-list-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/contact-list-es"
-  },
-  {
-    "source": "/project/html5-form-validations-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/html5-form-validations-es"
-  },
-  {
-    "source": "/project/fix-the-misspell-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/fix-the-misspell-es"
-  },
-  {
-    "source": "/project/collaborative-html-website-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/collaborative-html-website-es"
-  },
-  {
-    "source": "/project/product-landing-page-plain-css-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/product-landing-page-plain-css-es"
-  },
-  {
-    "source": "/project/file-hierarchy-report-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/file-hierarchy-report-es"
-  },
-  {
-    "source": "/project/random-card-cli-python-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/random-card-cli-python-es"
-  },
-  {
-    "source": "/project/queue-management-cli-python-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/queue-management-cli-python-es"
-  },
-  {
-    "source": "/project/excuse-generator-python-cli-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/excuse-generator-python-cli-es"
-  },
-  {
-    "source": "/project/todo-list-cli-python-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/todo-list-cli-python-es"
-  },
-  {
-    "source": "/project/todo-list-cli-with-cloud-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/todo-list-cli-with-cloud-es"
-  },
-  {
-    "source": "/project/spotify-landing-page-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/spotify-landing-page-es"
-  },
-  {
-    "source": "/project/css-drawing-goku-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/css-drawing-goku-es"
+    "destination": "/en/interactive-coding-tutorial/sorting-cards-with-bubble"
   },
   {
     "source": "/project/family-tree-static-api-es",
@@ -370,9 +65,34 @@
     "destination": "/es/interactive-coding-tutorial/family-tree-static-api-es"
   },
   {
-    "source": "/project/queue-management-api-es",
+    "source": "/project/spotify-landing-page",
     "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/queue-management-api-es"
+    "destination": "/en/interactive-coding-tutorial/spotify-landing-page"
+  },
+  {
+    "source": "/project/unit-test-with-jest",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/unit-test-with-jest"
+  },
+  {
+    "source": "/project/random-card-cli-python",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/random-card-cli-python"
+  },
+  {
+    "source": "/project/instagram-data-modeling",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/instagram-data-modeling"
+  },
+  {
+    "source": "/project/exercise-starwars-blog-api-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/exercise-starwars-blog-api-es"
+  },
+  {
+    "source": "/project/descriptive-statistics-exercises-project-with-python",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/descriptive-statistics-exercises-project-with-python"
   },
   {
     "source": "/project/python-flask-api-tutorial-es",
@@ -380,74 +100,14 @@
     "destination": "/es/interactive-coding-tutorial/python-flask-api-tutorial-es"
   },
   {
-    "source": "/project/urban-dictionary-cli-es",
+    "source": "/project/excuse-generator-es",
     "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/urban-dictionary-cli-es"
+    "destination": "/es/interactive-coding-tutorial/excuse-generator-es"
   },
   {
-    "source": "/project/conditional-profile-card-es",
+    "source": "/project/todo-list-react-with-fetch-es",
     "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/conditional-profile-card-es"
-  },
-  {
-    "source": "/project/compression-algorithm-python-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/compression-algorithm-python-es"
-  },
-  {
-    "source": "/project/crea-rick-and-morty-con-node",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/crea-rick-and-morty-con-node"
-  },
-  {
-    "source": "/project/create-a-landing-page-with-node",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/create-a-landing-page-with-node"
-  },
-  {
-    "source": "/project/realestate-datacleanup-exercise",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/realestate-datacleanup-exercise"
-  },
-  {
-    "source": "/project/proyecto-de-limpieza-de-datos-de-bienes-raices",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/proyecto-de-limpieza-de-datos-de-bienes-raices"
-  },
-  {
-    "source": "/project/crea-un-todolist-con-react-context",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/crea-un-todolist-con-react-context"
-  },
-  {
-    "source": "/project/todo-list-react-context",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/todo-list-react-context"
-  },
-  {
-    "source": "/project/proyecto-tutorial-k-medias",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/proyecto-tutorial-k-medias"
-  },
-  {
-    "source": "/project/k-means-project-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/k-means-project-tutorial"
-  },
-  {
-    "source": "/project/proyecto-tutorial-de-k-vecinos-mas-cercanos",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/proyecto-tutorial-de-k-vecinos-mas-cercanos"
-  },
-  {
-    "source": "/project/k-nearest-neighbors-project-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/k-nearest-neighbors-project-tutorial"
-  },
-  {
-    "source": "/project/Proyecto-de-Ejercicios-de-Probabilidad-con-Python",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/Proyecto-de-Ejercicios-de-Probabilidad-con-Python"
+    "destination": "/es/interactive-coding-tutorial/todo-list-react-with-fetch-es"
   },
   {
     "source": "/project/hypothesis-testing-exercises-project-with-python",
@@ -455,9 +115,14 @@
     "destination": "/en/interactive-coding-tutorial/hypothesis-testing-exercises-project-with-python"
   },
   {
-    "source": "/project/problemas-de-calculo-y-algebra-con-python",
+    "source": "/project/probability-exercises-project-in-python",
     "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/problemas-de-calculo-y-algebra-con-python"
+    "destination": "/en/interactive-coding-tutorial/probability-exercises-project-in-python"
+  },
+  {
+    "source": "/project/todo-list-cli-with-cloud",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/todo-list-cli-with-cloud"
   },
   {
     "source": "/project/calculus-and-algebra-problems-with-python",
@@ -465,14 +130,159 @@
     "destination": "/en/interactive-coding-tutorial/calculus-and-algebra-problems-with-python"
   },
   {
-    "source": "/project/code-rick-and-morty-with-node",
+    "source": "/project/todo-list-react-with-fetch",
     "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/code-rick-and-morty-with-node"
+    "destination": "/en/interactive-coding-tutorial/todo-list-react-with-fetch"
   },
   {
-    "source": "/project/postcard",
+    "source": "/project/probability-distribution-exercises-project-with-python",
     "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/postcard"
+    "destination": "/en/interactive-coding-tutorial/probability-distribution-exercises-project-with-python"
+  },
+  {
+    "source": "/project/random-card",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/random-card"
+  },
+  {
+    "source": "/project/todo-list-cli-python",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/todo-list-cli-python"
+  },
+  {
+    "source": "/project/todo-list-cli-python-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/todo-list-cli-python-es"
+  },
+  {
+    "source": "/project/personal-portfolio-react-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/personal-portfolio-react-es"
+  },
+  {
+    "source": "/project/file-hierarchy-report",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/file-hierarchy-report"
+  },
+  {
+    "source": "/project/simple-counter-react-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/simple-counter-react-es"
+  },
+  {
+    "source": "/project/build-your-resume-html-css",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/build-your-resume-html-css"
+  },
+  {
+    "source": "/project/pop-baloons-javascript-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/pop-baloons-javascript-es"
+  },
+  {
+    "source": "/project/queue-management-cli-python",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/queue-management-cli-python"
+  },
+  {
+    "source": "/project/collaborative-html-website-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/collaborative-html-website-es"
+  },
+  {
+    "source": "/project/landing-page-with-react",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/landing-page-with-react"
+  },
+  {
+    "source": "/project/domain-generator",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/domain-generator"
+  },
+  {
+    "source": "/project/exercise-terminal-challenge-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/exercise-terminal-challenge-es"
+  },
+  {
+    "source": "/project/urban-dictionary-cli-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/urban-dictionary-cli-es"
+  },
+  {
+    "source": "/project/tictactoe-cli-python-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/tictactoe-cli-python-es"
+  },
+  {
+    "source": "/project/exercise-terminal-challenge",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/exercise-terminal-challenge"
+  },
+  {
+    "source": "/project/domain-generator-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/domain-generator-es"
+  },
+  {
+    "source": "/project/starwars-blog-reading-list",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/starwars-blog-reading-list"
+  },
+  {
+    "source": "/project/css-drawing-goku-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/css-drawing-goku-es"
+  },
+  {
+    "source": "/project/compression-algorithm-python",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/compression-algorithm-python"
+  },
+  {
+    "source": "/project/music-player-react-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/music-player-react-es"
+  },
+  {
+    "source": "/project/instagram-data-modeling-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/instagram-data-modeling-es"
+  },
+  {
+    "source": "/project/building-rest-apis-with-flaskpython",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/building-rest-apis-with-flaskpython"
+  },
+  {
+    "source": "/project/unit-test-with-jest-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/unit-test-with-jest-es"
+  },
+  {
+    "source": "/project/file-hierarchy-report-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/file-hierarchy-report-es"
+  },
+  {
+    "source": "/project/html5-form-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/html5-form-es"
+  },
+  {
+    "source": "/project/spotify-landing-page-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/spotify-landing-page-es"
+  },
+  {
+    "source": "/project/fix-the-misspell",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/fix-the-misspell"
+  },
+  {
+    "source": "/project/contact-list-api-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/contact-list-api-es"
   },
   {
     "source": "/project/todolist-vanilla-js",
@@ -480,9 +290,324 @@
     "destination": "/en/interactive-coding-tutorial/todolist-vanilla-js"
   },
   {
+    "source": "/project/data-modeling-starwars-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/data-modeling-starwars-es"
+  },
+  {
+    "source": "/project/excuse-generator-python-cli-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/excuse-generator-python-cli-es"
+  },
+  {
+    "source": "/project/contact-list",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/contact-list"
+  },
+  {
+    "source": "/project/meetup-clone-react-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/meetup-clone-react-es"
+  },
+  {
+    "source": "/project/traffic-light-react-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/traffic-light-react-es"
+  },
+  {
+    "source": "/project/landing-page-javascript-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/landing-page-javascript-es"
+  },
+  {
+    "source": "/project/music-player-react",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/music-player-react"
+  },
+  {
+    "source": "/project/algorithm-optimization-project-machine-learning",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/algorithm-optimization-project-machine-learning"
+  },
+  {
+    "source": "/project/todo-list",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/todo-list"
+  },
+  {
+    "source": "/project/jwt-authentication-with-flask-react",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/jwt-authentication-with-flask-react"
+  },
+  {
+    "source": "/project/random-card-cli-python-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/random-card-cli-python-es"
+  },
+  {
+    "source": "/project/tictactoe-cli-python",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/tictactoe-cli-python"
+  },
+  {
     "source": "/project/landing-page-javascript",
     "type": "PROJECT-REROUTE",
     "destination": "/en/interactive-coding-tutorial/landing-page-javascript"
+  },
+  {
+    "source": "/project/sorting-cards-with-select",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/sorting-cards-with-select"
+  },
+  {
+    "source": "/project/contact-list-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/contact-list-es"
+  },
+  {
+    "source": "/project/todo-list-api-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/todo-list-api-es"
+  },
+  {
+    "source": "/project/conditional-profile-card",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/conditional-profile-card"
+  },
+  {
+    "source": "/project/starwars-blog-reading-list-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/starwars-blog-reading-list-es"
+  },
+  {
+    "source": "/project/product-landing-page-plain-css-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/product-landing-page-plain-css-es"
+  },
+  {
+    "source": "/project/learn-in-public-project-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/learn-in-public-project-es"
+  },
+  {
+    "source": "/project/queue-management-cli-python-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/queue-management-cli-python-es"
+  },
+  {
+    "source": "/project/product-landing-page-plain-css",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/product-landing-page-plain-css"
+  },
+  {
+    "source": "/project/contact-list-context-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/contact-list-context-es"
+  },
+  {
+    "source": "/project/collaborative-html-website",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/collaborative-html-website"
+  },
+  {
+    "source": "/project/todo-list-api",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/todo-list-api"
+  },
+  {
+    "source": "/project/sorting-cards-with-select-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/sorting-cards-with-select-es"
+  },
+  {
+    "source": "/project/personal-portfolio-react",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/personal-portfolio-react"
+  },
+  {
+    "source": "/project/urban-dictionary-cli",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/urban-dictionary-cli"
+  },
+  {
+    "source": "/project/sorting-cards-with-bubble-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/sorting-cards-with-bubble-es"
+  },
+  {
+    "source": "/project/full-stack-project-stories-and-wireframes",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/full-stack-project-stories-and-wireframes"
+  },
+  {
+    "source": "/project/fix-the-misspell-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/fix-the-misspell-es"
+  },
+  {
+    "source": "/project/landing-page-with-react-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/landing-page-with-react-es"
+  },
+  {
+    "source": "/project/building-rest-apis-with-flaskpython-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/building-rest-apis-with-flaskpython-es"
+  },
+  {
+    "source": "/project/full-stack-project-stories-and-wireframes-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/full-stack-project-stories-and-wireframes-es"
+  },
+  {
+    "source": "/project/postcard-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/postcard-es"
+  },
+  {
+    "source": "/project/jwt-authentication-with-flask-react-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/jwt-authentication-with-flask-react-es"
+  },
+  {
+    "source": "/project/battleship-vanillajs-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/battleship-vanillajs-es"
+  },
+  {
+    "source": "/project/conditional-profile-card-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/conditional-profile-card-es"
+  },
+  {
+    "source": "/project/family-static-api",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/family-static-api"
+  },
+  {
+    "source": "/project/full-stack-todo-list-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/full-stack-todo-list-es"
+  },
+  {
+    "source": "/project/tictactoe-react",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/tictactoe-react"
+  },
+  {
+    "source": "/project/python-flask-api-tutorial",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/python-flask-api-tutorial"
+  },
+  {
+    "source": "/project/excuse-generator",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/excuse-generator"
+  },
+  {
+    "source": "/project/tictactoe-react-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/tictactoe-react-es"
+  },
+  {
+    "source": "/project/html5-form",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/html5-form"
+  },
+  {
+    "source": "/project/todo-list-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/todo-list-es"
+  },
+  {
+    "source": "/project/multi-view-react-collaborative-website-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/multi-view-react-collaborative-website-es"
+  },
+  {
+    "source": "/project/html5-form-validations-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/html5-form-validations-es"
+  },
+  {
+    "source": "/project/todo-list-cli-with-cloud-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/todo-list-cli-with-cloud-es"
+  },
+  {
+    "source": "/project/todolist-vanilla-js-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/todolist-vanilla-js-es"
+  },
+  {
+    "source": "/project/data-modeling-starwars",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/data-modeling-starwars"
+  },
+  {
+    "source": "/project/traffic-light-react",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/traffic-light-react"
+  },
+  {
+    "source": "/project/full-stack-todo-list",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/full-stack-todo-list"
+  },
+  {
+    "source": "/project/queue-management-api-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/queue-management-api-es"
+  },
+  {
+    "source": "/project/contact-list-context",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/contact-list-context"
+  },
+  {
+    "source": "/project/queue-management-api",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/queue-management-api"
+  },
+  {
+    "source": "/project/multi-view-react-collaborative-website",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/multi-view-react-collaborative-website"
+  },
+  {
+    "source": "/project/realestate-datacleanup-exercise",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/realestate-datacleanup-exercise"
+  },
+  {
+    "source": "/project/random-card-es",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/random-card-es"
+  },
+  {
+    "source": "/project/css-drawing-goku",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/css-drawing-goku"
+  },
+  {
+    "source": "/project/todo-list-react-context",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/todo-list-react-context"
+  },
+  {
+    "source": "/project/meetup-clone-react",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/meetup-clone-react"
+  },
+  {
+    "source": "/project/pop-baloons-javascript",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/pop-baloons-javascript"
+  },
+  {
+    "source": "/project/contact-list-api",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/contact-list-api"
   },
   {
     "source": "/project/family-tree-static-api",
@@ -495,154 +620,9 @@
     "destination": "/en/interactive-coding-tutorial/simple-counter-react"
   },
   {
-    "source": "/project/domain-generator",
+    "source": "/project/instagram-post-es",
     "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/domain-generator"
-  },
-  {
-    "source": "/project/contact-list",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/contact-list"
-  },
-  {
-    "source": "/project/sorting-cards-with-bubble",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/sorting-cards-with-bubble"
-  },
-  {
-    "source": "/project/unit-test-with-jest",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/unit-test-with-jest"
-  },
-  {
-    "source": "/project/sorting-cards-with-bubble-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/sorting-cards-with-bubble-es"
-  },
-  {
-    "source": "/project/domain-generator-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/domain-generator-es"
-  },
-  {
-    "source": "/project/landing-page-with-react-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/landing-page-with-react-es"
-  },
-  {
-    "source": "/project/music-player-react",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/music-player-react"
-  },
-  {
-    "source": "/project/tictactoe-react",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/tictactoe-react"
-  },
-  {
-    "source": "/project/sorting-cards-with-select",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/sorting-cards-with-select"
-  },
-  {
-    "source": "/project/ml-webapp-using-flask-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/ml-webapp-using-flask-tutorial"
-  },
-  {
-    "source": "/project/NLP-project-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/NLP-project-tutorial"
-  },
-  {
-    "source": "/project/naive-bayes-project-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/naive-bayes-project-tutorial"
-  },
-  {
-    "source": "/project/Preparacion-para-entrevistas",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/Preparacion-para-entrevistas"
-  },
-  {
-    "source": "/project/interview-preparation",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/interview-preparation"
-  },
-  {
-    "source": "/project/probability-exercises-project-in-python",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/probability-exercises-project-in-python"
-  },
-  {
-    "source": "/project/proyecto-de-optimizacion-de-algoritmos-de-machine-learning",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/proyecto-de-optimizacion-de-algoritmos-de-machine-learning"
-  },
-  {
-    "source": "/project/algorithm-optimization-project-machine-learning",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/algorithm-optimization-project-machine-learning"
-  },
-  {
-    "source": "/project/Proyecto-de-distibucion-de-probabilidad-con-python",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/Proyecto-de-distibucion-de-probabilidad-con-python"
-  },
-  {
-    "source": "/project/probability-distribution-exercises-project-with-python",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/probability-distribution-exercises-project-with-python"
-  },
-  {
-    "source": "/project/Tutorial-de-aplicacion-web-de-ml-usando-flask",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/Tutorial-de-aplicacion-web-de-ml-usando-flask"
-  },
-  {
-    "source": "/project/crear-formulario-con-node-js",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/crear-formulario-con-node-js"
-  },
-  {
-    "source": "/project/create-form-node-js",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/create-form-node-js"
-  },
-  {
-    "source": "/project/proyecto-de-stadistica-descriptiva-con-python",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/proyecto-de-stadistica-descriptiva-con-python"
-  },
-  {
-    "source": "/project/descriptive-statistics-exercises-project-with-python",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/descriptive-statistics-exercises-project-with-python"
-  },
-  {
-    "source": "/project/Proyecto-Tutorial-Conectando-a-una-base-de-datos-SQL",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/Proyecto-Tutorial-Conectando-a-una-base-de-datos-SQL"
-  },
-  {
-    "source": "/project/proyecto-totorial-de-mejorando-algoritmos",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/proyecto-totorial-de-mejorando-algoritmos"
-  },
-  {
-    "source": "/project/boosting-algorithms-project-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/boosting-algorithms-project-tutorial"
-  },
-  {
-    "source": "/project/scraping-web-con-beautiful-soup",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/scraping-web-con-beautiful-soup"
-  },
-  {
-    "source": "/project/web-scraping-project-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/web-scraping-project-tutorial"
+    "destination": "/es/interactive-coding-tutorial/instagram-post-es"
   },
   {
     "source": "/project/html5-form-validations",
@@ -650,274 +630,19 @@
     "destination": "/en/interactive-coding-tutorial/html5-form-validations"
   },
   {
-    "source": "/project/html5-form",
+    "source": "/project/family-static-api-es",
     "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/html5-form"
+    "destination": "/es/interactive-coding-tutorial/family-static-api-es"
   },
   {
-    "source": "/project/proyecto-tutorial-de-clasificador-de-imagenes",
+    "source": "/project/compression-algorithm-python-es",
     "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/proyecto-tutorial-de-clasificador-de-imagenes"
+    "destination": "/es/interactive-coding-tutorial/compression-algorithm-python-es"
   },
   {
-    "source": "/project/lineamientos-de-codigo",
+    "source": "/project/learn-in-public-project",
     "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/lineamientos-de-codigo"
-  },
-  {
-    "source": "/project/coding-guidelines-challenge",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/coding-guidelines-challenge"
-  },
-  {
-    "source": "/project/building-rest-apis-with-flaskpython",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/building-rest-apis-with-flaskpython"
-  },
-  {
-    "source": "/project/proyecto-de-regresion-lineal-regularizada",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/proyecto-de-regresion-lineal-regularizada"
-  },
-  {
-    "source": "/project/regularized-linear-regression-project-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/regularized-linear-regression-project-tutorial"
-  },
-  {
-    "source": "/project/proyecto-de-random-forest",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/proyecto-de-random-forest"
-  },
-  {
-    "source": "/project/random-forest-project-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/random-forest-project-tutorial"
-  },
-  {
-    "source": "/project/proyecto-tutorial-de-series-temporales",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/proyecto-tutorial-de-series-temporales"
-  },
-  {
-    "source": "/project/time-series-project-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/time-series-project-tutorial"
-  },
-  {
-    "source": "/project/proyecto-de-serie-termporal-alternativa",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/proyecto-de-serie-termporal-alternativa"
-  },
-  {
-    "source": "/project/alternative-time-series-project",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/alternative-time-series-project"
-  },
-  {
-    "source": "/project/tutorial-de-pagina-web-de-ml-con-streamlit",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/tutorial-de-pagina-web-de-ml-con-streamlit"
-  },
-  {
-    "source": "/project/ml-webapp-using-streamlit-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/ml-webapp-using-streamlit-tutorial"
-  },
-  {
-    "source": "/project/linear-regression-project-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/linear-regression-project-tutorial"
-  },
-  {
-    "source": "/project/decision-tree-project-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/decision-tree-project-tutorial"
-  },
-  {
-    "source": "/project/optimize-your-github-profile",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/optimize-your-github-profile"
-  },
-  {
-    "source": "/project/image-classifier-project-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/image-classifier-project-tutorial"
-  },
-  {
-    "source": "/project/proyecto-final-machine-learning",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/proyecto-final-machine-learning"
-  },
-  {
-    "source": "/project/build-your-full-stack-developer-resume",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/build-your-full-stack-developer-resume"
-  },
-  {
-    "source": "/project/construye-tu-curriculum-de-desarrollador-full-stack",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/construye-tu-curriculum-de-desarrollador-full-stack"
-  },
-  {
-    "source": "/project/machine-learning-final-project",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/machine-learning-final-project"
-  },
-  {
-    "source": "/project/starwars-data-model-typeorm-node-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/starwars-data-model-typeorm-node-es"
-  },
-  {
-    "source": "/project/starwars-data-model-typeorm-node",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/starwars-data-model-typeorm-node"
-  },
-  {
-    "source": "/project/Autenticacion-con-Node-React-y-JWT",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/Autenticacion-con-Node-React-y-JWT"
-  },
-  {
-    "source": "/project/jwt-authentication-with-node-react",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/jwt-authentication-with-node-react"
-  },
-  {
-    "source": "/project/ejercicio-y-tutorial-de-regresion-logistica",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/ejercicio-y-tutorial-de-regresion-logistica"
-  },
-  {
-    "source": "/project/logistic-regression-project-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/logistic-regression-project-tutorial"
-  },
-  {
-    "source": "/project/data-preprocessing-project-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/data-preprocessing-project-tutorial"
-  },
-  {
-    "source": "/project/todo-list",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/todo-list"
-  },
-  {
-    "source": "/project/personal-portfolio-react",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/personal-portfolio-react"
-  },
-  {
-    "source": "/project/code-rest-api-node-with-express",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/code-rest-api-node-with-express"
-  },
-  {
-    "source": "/project/instagram-feed",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/instagram-feed"
-  },
-  {
-    "source": "/project/Optimiza-tu-perfil-de-ingeniero-de-software-en-LinkedIn",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/Optimiza-tu-perfil-de-ingeniero-de-software-en-LinkedIn"
-  },
-  {
-    "source": "/project/excuse-generator",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/excuse-generator"
-  },
-  {
-    "source": "/project/excuse-generator-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/excuse-generator-es"
-  },
-  {
-    "source": "/project/postcard-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/postcard-es"
-  },
-  {
-    "source": "/project/instagram-feed-bootstrap-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/instagram-feed-bootstrap-es"
-  },
-  {
-    "source": "/project/instagram-post",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/instagram-post"
-  },
-  {
-    "source": "/project/exercise-terminal-challenge",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/exercise-terminal-challenge"
-  },
-  {
-    "source": "/project/exercise-terminal-challenge-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/exercise-terminal-challenge-es"
-  },
-  {
-    "source": "/project/todo-list-cli-with-cloud",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/todo-list-cli-with-cloud"
-  },
-  {
-    "source": "/project/random-card-cli-python",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/random-card-cli-python"
-  },
-  {
-    "source": "/project/tictactoe-cli-python-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/tictactoe-cli-python-es"
-  },
-  {
-    "source": "/project/tictactoe-cli-python",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/tictactoe-cli-python"
-  },
-  {
-    "source": "/project/build-your-resume-html-css",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/build-your-resume-html-css"
-  },
-  {
-    "source": "/project/learn-in-public-project-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/learn-in-public-project-es"
-  },
-  {
-    "source": "/project/instagram-data-modeling",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/instagram-data-modeling"
-  },
-  {
-    "source": "/project/full-stack-project-stories-and-wireframes",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/full-stack-project-stories-and-wireframes"
-  },
-  {
-    "source": "/project/full-stack-project-stories-and-wireframes-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/full-stack-project-stories-and-wireframes-es"
-  },
-  {
-    "source": "/project/exercise-starwars-blog-api",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/exercise-starwars-blog-api"
-  },
-  {
-    "source": "/project/exercise-starwars-blog-api-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/exercise-starwars-blog-api-es"
-  },
-  {
-    "source": "/project/data-modeling-starwars",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/data-modeling-starwars"
+    "destination": "/en/interactive-coding-tutorial/learn-in-public-project"
   },
   {
     "source": "/project/battleship-vanillajs",
@@ -925,213 +650,58 @@
     "destination": "/en/interactive-coding-tutorial/battleship-vanillajs"
   },
   {
-    "source": "/project/todo-list-react-with-fetch",
+    "source": "/project/exercise-starwars-blog-api",
     "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/todo-list-react-with-fetch"
+    "destination": "/en/interactive-coding-tutorial/exercise-starwars-blog-api"
   },
   {
-    "source": "/project/pop-baloons-javascript",
+    "source": "/project/instagram-feed-es",
     "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/pop-baloons-javascript"
+    "destination": "/es/interactive-coding-tutorial/instagram-feed-es"
   },
   {
-    "source": "/project/multi-view-react-collaborative-website",
+    "source": "/project/instagram-feed",
     "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/multi-view-react-collaborative-website"
+    "destination": "/en/interactive-coding-tutorial/instagram-feed"
   },
   {
-    "source": "/project/meetup-clone-react",
+    "source": "/project/instagram-feed-bootstrap-es",
     "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/meetup-clone-react"
+    "destination": "/es/interactive-coding-tutorial/instagram-feed-bootstrap-es"
   },
   {
-    "source": "/project/meetup-clone-react-es",
+    "source": "/project/instagram-feed-bootstrap",
     "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/meetup-clone-react-es"
+    "destination": "/en/interactive-coding-tutorial/instagram-feed-bootstrap"
   },
   {
-    "source": "/project/full-stack-todo-list",
+    "source": "/project/exercise-instagram-post-3",
     "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/full-stack-todo-list"
+    "destination": "/en/interactive-coding-tutorial/exercise-instagram-post-3"
   },
   {
-    "source": "/project/full-stack-todo-list-es",
+    "source": "/project/Another-project",
     "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/full-stack-todo-list-es"
+    "destination": "/null/interactive-coding-tutorial/Another-project"
   },
   {
-    "source": "/project/fix-the-misspell",
+    "source": "/project/instagram-post",
     "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/fix-the-misspell"
+    "destination": "/en/interactive-coding-tutorial/instagram-post"
   },
   {
-    "source": "/project/simple-counter-react-es",
+    "source": "/project/postcard",
     "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/simple-counter-react-es"
+    "destination": "/en/interactive-coding-tutorial/postcard"
   },
   {
-    "source": "/project/collaborative-html-website",
+    "source": "/project/Preparate-para-tu-entrevista",
     "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/collaborative-html-website"
+    "destination": "/es/interactive-coding-tutorial/Preparate-para-tu-entrevista"
   },
   {
-    "source": "/project/product-landing-page-plain-css",
+    "source": "/project/This-is-a-working-title",
     "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/product-landing-page-plain-css"
-  },
-  {
-    "source": "/project/file-hierarchy-report",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/file-hierarchy-report"
-  },
-  {
-    "source": "/project/queue-management-cli-python",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/queue-management-cli-python"
-  },
-  {
-    "source": "/project/excuse-generator-python-cli",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/excuse-generator-python-cli"
-  },
-  {
-    "source": "/project/todo-list-cli-python",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/todo-list-cli-python"
-  },
-  {
-    "source": "/project/family-static-api",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/family-static-api"
-  },
-  {
-    "source": "/project/family-static-api-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/family-static-api-es"
-  },
-  {
-    "source": "/project/spotify-landing-page",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/spotify-landing-page"
-  },
-  {
-    "source": "/project/css-drawing-goku",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/css-drawing-goku"
-  },
-  {
-    "source": "/project/contact-list-api",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/contact-list-api"
-  },
-  {
-    "source": "/project/contact-list-api-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/contact-list-api-es"
-  },
-  {
-    "source": "/project/todo-list-api",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/todo-list-api"
-  },
-  {
-    "source": "/project/todo-list-api-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/todo-list-api-es"
-  },
-  {
-    "source": "/project/queue-management-api",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/queue-management-api"
-  },
-  {
-    "source": "/project/python-flask-api-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/python-flask-api-tutorial"
-  },
-  {
-    "source": "/project/urban-dictionary-cli",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/urban-dictionary-cli"
-  },
-  {
-    "source": "/project/conditional-profile-card",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/conditional-profile-card"
-  },
-  {
-    "source": "/project/compression-algorithm-python",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/compression-algorithm-python"
-  },
-  {
-    "source": "/project/landing-page-with-react",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/landing-page-with-react"
-  },
-  {
-    "source": "/project/contact-list-context",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/contact-list-context"
-  },
-  {
-    "source": "/project/contact-list-context-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/contact-list-context-es"
-  },
-  {
-    "source": "/project/random-card",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/random-card"
-  },
-  {
-    "source": "/project/random-card-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/random-card-es"
-  },
-  {
-    "source": "/project/landing-page-javascript-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/landing-page-javascript-es"
-  },
-  {
-    "source": "/project/starwars-blog-reading-list",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/starwars-blog-reading-list"
-  },
-  {
-    "source": "/project/starwars-blog-reading-list-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/starwars-blog-reading-list-es"
-  },
-  {
-    "source": "/project/jwt-authentication-with-flask-react",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/jwt-authentication-with-flask-react"
-  },
-  {
-    "source": "/project/jwt-authentication-with-flask-react-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/jwt-authentication-with-flask-react-es"
-  },
-  {
-    "source": "/project/traffic-light-react",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/traffic-light-react"
-  },
-  {
-    "source": "/project/traffic-light-react-es",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/traffic-light-react-es"
-  },
-  {
-    "source": "/project/connecting-to-a-sql-database-project-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/connecting-to-a-sql-database-project-tutorial"
-  },
-  {
-    "source": "/project/interacting-with-the-twitter-api-project-tutorial",
-    "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/interacting-with-the-twitter-api-project-tutorial"
+    "destination": "/null/interactive-coding-tutorial/This-is-a-working-title"
   }
 ]

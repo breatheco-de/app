@@ -40,6 +40,7 @@ import { MDSkeleton } from '../../../common/components/Skeleton';
 import validationSchema from '../../../common/components/Forms/validationSchemas';
 import { processFormEntry } from '../../../common/components/Forms/actions';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
+import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
 import CustomTheme from '../../../../styles/theme';
 import GridContainer from '../../../common/components/GridContainer';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
@@ -722,6 +723,12 @@ const Exercise = ({ exercise, markdown }) => {
           </Box>
         </Flex>
       </GridContainer>
+      <Box maxWidth="1280px" margin="auto" padding={{ base: '2rem 15px 2rem 15px', md: '2rem 0 2rem 0' }}>
+        <MktRecommendedCourses
+          title={t('common:related-courses')}
+          endpoint={`/v1/marketing/course?technologies=${exercise.technologies.join(',')}`}
+        />
+      </Box>
     </>
   );
 };

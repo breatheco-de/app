@@ -96,6 +96,7 @@
     "title": "{{asset_type}} has {{count}} tasks",
     "description": "To better take advantage of this lesson, look for the checkboxes and mark them as completed as you make progress."
   },
+  "related-courses": "Courses related to this article",
   "average-duration": "Average duration",
   "load-more": "Load more",
   "teachers": "Teachers",

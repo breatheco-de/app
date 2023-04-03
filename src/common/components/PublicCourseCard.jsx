@@ -5,6 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Text from './Text';
 import Heading from './Heading';
 import ProjectsSection from './ProjectsSection';
+import useStyle from '../hooks/useStyle';
 
 const PublicCourseCard = ({
   programName, programDescription, icon_url, iconBackground, startsIn,
@@ -12,6 +13,7 @@ const PublicCourseCard = ({
   teacher, isAvailableAsSaas, subscriptionStatus,
 }) => {
   const { t, lang } = useTranslation('program-card');
+  const { backgroundColor2 } = useStyle();
   const textColor = useColorModeValue('black', 'white');
 
   return (
@@ -43,6 +45,7 @@ const PublicCourseCard = ({
         borderRadius="9px"
         padding="15px"
         height="min-content"
+        background={backgroundColor2}
       >
         <Heading
           size="lg"
@@ -55,7 +58,7 @@ const PublicCourseCard = ({
         >
           {programName}
         </Heading>
-        <Divider w="90%" margin="auto" />
+        <Divider style={{ borderBottomWidth: '1px', borderStyle: 'solid', borderColor: '#DADADA' }} w="90%" margin="auto" />
         {syllabusContent || assistants.length > 0 ? (
           <ProjectsSection
             startsIn={startsIn}
