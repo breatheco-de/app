@@ -8,7 +8,6 @@ import MktOneColumn from '../../src/common/components/MktOneColumn';
  * @param { OneColumnProps }
  */
 const OneColumn = ({ slice }) => {
-  console.log('slice', slice);
   const items = [
     {
       title: slice.primary.kpi_title_1,
