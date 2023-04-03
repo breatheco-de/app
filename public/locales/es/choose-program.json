@@ -11,6 +11,8 @@
   "not-enrolled": "No estás inscrito en ninguna cohorte",
   "more-courses": "Más cursos",
   "read-to-start-learning": "List@ para comenzar a aprender?",
+  "estimated-week-time": "Tiempo estimado: {{duration}} semana",
+  "estimated-weeks-time": "Tiempo estimado: {{duration}} semanas",
   "invite": {
     "notify": "¡Oye! Hay {{cohortInvitationWord}} para ti.",
     "plural-word": "{{invitesLength}} nuevas invitaciones de cohorte",
