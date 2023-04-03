@@ -51,7 +51,7 @@ const MktShowPrices = ({ title, description, plan, bullets }) => {
   } = profileHandlers({});
 
   useEffect(async () => {
-    const data = await getPlanOffer({ slug: plan, disableRedirects: true }).then((res) => res);
+    const data = await getPlanOffer({ slug: plan, disableRedirects: true, withCurrentPlan: true }).then((res) => res);
     setOfferProps(data);
   }, []);
 
