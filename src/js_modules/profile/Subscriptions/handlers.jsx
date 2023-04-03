@@ -96,7 +96,7 @@ const profileHandlers = ({
       if (payUnit === 'YEAR') return translations?.yearly || t('yearly');
       return payUnit;
     },
-    getPlanOffer: ({ slug, onOpenUpgrade = () => {}, disableRedirects = false }) => new Promise((resolve, reject) => {
+    getPlanOffer: ({ slug, onOpenUpgrade = () => {}, disableRedirects = false, withCurrentPlan = false }) => new Promise((resolve, reject) => {
       bc.payment({
         original_plan: slug,
       }).planOffer()
@@ -104,9 +104,9 @@ const profileHandlers = ({
           const data = res?.data;
           const currentOffer = data.find((item) => item?.original_plan?.slug === slug);
           // necesito saber si plan financing tiene un plan offer
-
-          if (currentOffer && currentOffer?.suggested_plan?.slug) {
-            const offerData = currentOffer?.suggested_plan;
+          const currentSuggestedPlan = withCurrentPlan ? currentOffer?.original_plan : currentOffer?.suggested_plan;
+          if (currentOffer && currentSuggestedPlan?.slug) {
+            const offerData = currentSuggestedPlan;
             const bullets = await getPlanProps(offerData?.slug);
             const outOfConsumables = currentOffer?.original_plan?.service_items.some((item) => item?.how_many === 0);
 
@@ -140,6 +140,13 @@ const profileHandlers = ({
                 return {
                   priceText: t('subscription.upgrade-modal.free-course'),
                   description: t('subscription.upgrade-modal.full_access'),
+                };
+              }
+              if (offerData?.trial_duration_unit === 'WEEK') {
+                const weekDays = offerData?.trial_duration * 7;
+                return {
+                  priceText: `${t('subscription.upgrade-modal.duration_days', { duration: weekDays })} ${t('subscription.upgrade-modal.connector_duration_trial')}`,
+                  description: `${t('subscription.upgrade-modal.no_card_needed')} ${t('subscription.upgrade-modal.duration_days', { duration: weekDays })}`,
                 };
               }
               if (offerData?.trial_duration_unit === 'DAY') {
