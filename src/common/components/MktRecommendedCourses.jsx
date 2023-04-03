@@ -9,14 +9,18 @@ import Heading from './Heading';
 import PublicCourseCard from './PublicCourseCard';
 import useStyle from '../hooks/useStyle';
 
-const MktRecommendedCourses = ({ id, background, title, endpoint }) => {
+const MktRecommendedCourses = ({ id, endpoint, background, title }) => {
   const [courses, setCourses] = useState([]);
   const { hexColor, featuredColor, fontColor } = useStyle();
 
   const getCourses = async () => {
-    const res = await fetch(`${process.env.BREATHECODE_HOST}${endpoint}`);
-    const data = await res.json();
-    setCourses(data.filter((course) => course.course_translation).slice(0, 3));
+    try {
+      const res = await fetch(`${process.env.BREATHECODE_HOST}${endpoint}`);
+      const data = await res.json();
+      setCourses(data.filter((course) => course.course_translation).slice(0, 3));
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   useEffect(() => {

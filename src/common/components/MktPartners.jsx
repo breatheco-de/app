@@ -22,7 +22,7 @@ const MktPartners = ({ title, images }) => {
   };
   return (
     <Box width="100%" overflowX="hidden" marginTop="20px">
-      <Heading as="h1" textAlign="center" marginBottom="20px">{title}</Heading>
+      <Heading as="h2" textAlign="center" marginBottom="20px">{title}</Heading>
       <motion.div
         width="100%"
         height="60px"
