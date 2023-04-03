@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import {
-  Box, Image, TabList, Tabs,
+  Box, Container, Image, TabList, Tabs,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -75,7 +75,8 @@ const MktRoadmap = ({ id, course, moreContent, buttonTitle, buttonLink }) => {
   }, []);
 
   return (
-    <Box
+    <Container
+      px="10px"
       id={id}
       maxW="container.xl"
       m="3rem auto 3rem auto"
@@ -203,7 +204,7 @@ const MktRoadmap = ({ id, course, moreContent, buttonTitle, buttonLink }) => {
           </Box>
         </Box>
       </Box>
-    </Box>
+    </Container>
   );
 };
 MktRoadmap.propTypes = {

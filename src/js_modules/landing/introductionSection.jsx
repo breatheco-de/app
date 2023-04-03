@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
-  Box, useColorModeValue, Text, Button,
+  Box, useColorModeValue, Text, Button, Container,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { PrismicRichText } from '@prismicio/react';
@@ -17,7 +17,8 @@ const IntroductionSection = ({
   const colors = useColorModeValue('#000', '#fff');
 
   return (
-    <Box id={slice?.primary?.id_key || ''} display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="10px">
+    // <Container maxW="container.xl" px="10px"></Container>
+    <Container maxW="container.xl" px="10px" id={slice?.primary?.id_key || ''} display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="10px">
       <Box flex={0.6}>
         <Heading as="span" size="xl" fontWeight="700">
           {slice?.primary?.title ? (
@@ -158,7 +159,7 @@ const IntroductionSection = ({
           </video>
         )}
       </Box>
-    </Box>
+    </Container>
   );
 };
 

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import {
-  Box, Img,
+  Container, Img,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import Heading from './Heading';
@@ -21,7 +21,7 @@ const MktPartners = ({ id, title, images }) => {
     },
   };
   return (
-    <Box id={id} width="100%" overflowX="hidden" marginTop="20px">
+    <Container maxW="container.xl" px="10px" id={id} width="100%" overflowX="hidden" marginTop="20px">
       <Heading as="h1" textAlign="center" marginBottom="20px">{title}</Heading>
       <motion.div
         width="100%"
@@ -44,7 +44,7 @@ const MktPartners = ({ id, title, images }) => {
           />
         ))}
       </motion.div>
-    </Box>
+    </Container>
   );
 };
 

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
-  Box, Img,
+  Box, Container, Img,
 } from '@chakra-ui/react';
 import { PrismicRichText } from '@prismicio/react';
 import Heading from './Heading';
@@ -35,76 +35,80 @@ const MktTwoColumnSideImage = ({
   return (
     <Box
       id={id}
-      padding="20px 0"
-      display="flex"
-      flexWrap={{ base: 'wrap', md: 'nowrap' }}
-      gridGap="20px"
       background={background || backgroundColor}
-      border={border}
-      alignItems="center"
-      borderRadius="12px"
-      flexDirection={flexDirection[imagePosition]}
-      marginTop="20px"
     >
-      <Box width={{ base: '100% 0', md: '50%' }}>
-        <Img
-          boxSize="100%"
-          margin="0 auto"
-          objectFit="contain"
-          src={imageUrl}
-          alt={imageAlt}
-          title={imageAlt}
-          borderRadius="3px"
-          // height={imageProps?.height}
-          width={imageProps?.width}
-        />
-      </Box>
-      <Box width={{ base: '100% 0', md: '50%' }}>
-        <Heading marginBottom="15px" as="h4" fontSize="14px" color={hexColor.blueDefault}>
-          {subTitle}
-        </Heading>
-        <Heading as="h2" size="sm">
-          {title}
-        </Heading>
-        {slice.primary.description ? (
-          <PrismicRichText
-            field={slice?.primary?.description}
-            components={{
-              paragraph: ({ children }) => (
-                <Text
-                  fontSize="sm"
-                  lineHeight="14px"
-                  margin="15px 0"
-                  color={fontColor2}
-                >
-                  {children}
-                </Text>
-              ),
-            }}
+      <Container
+        display="flex"
+        flexWrap={{ base: 'wrap', md: 'nowrap' }}
+        maxW="container.xl"
+        border={border}
+        alignItems="center"
+        borderRadius="12px"
+        padding="20px 10px"
+        gridGap="20px"
+        flexDirection={flexDirection[imagePosition]}
+        marginTop="20px"
+      >
+        <Box width={{ base: '100% 0', md: '50%' }}>
+          <Img
+            boxSize="100%"
+            margin="0 auto"
+            objectFit="contain"
+            src={imageUrl}
+            alt={imageAlt}
+            title={imageAlt}
+            borderRadius="3px"
+            // height={imageProps?.height}
+            width={imageProps?.width}
           />
-        ) : (
-          <Text
-            fontSize="sm"
-            lineHeight="14px"
-            margin="15px 0"
-            color={fontColor2}
-          >
-            {description}
-          </Text>
-        )}
-        {buttonUrl && (
-          <Link
-            variant={!linkButton && 'buttonDefault'}
-            color={linkButton ? hexColor.blueDefault : '#FFF'}
-            textDecoration={linkButton && 'underline'}
-            href={buttonUrl}
-            textAlign="center"
-            display="inline-block"
-          >
-            {buttonLabel}
-          </Link>
-        )}
-      </Box>
+        </Box>
+        <Box width={{ base: '100% 0', md: '50%' }}>
+          <Heading marginBottom="15px" as="h4" fontSize="14px" color={hexColor.blueDefault}>
+            {subTitle}
+          </Heading>
+          <Heading as="h2" size="sm">
+            {title}
+          </Heading>
+          {slice.primary.description ? (
+            <PrismicRichText
+              field={slice?.primary?.description}
+              components={{
+                paragraph: ({ children }) => (
+                  <Text
+                    fontSize="sm"
+                    lineHeight="14px"
+                    margin="15px 0"
+                    color={fontColor2}
+                  >
+                    {children}
+                  </Text>
+                ),
+              }}
+            />
+          ) : (
+            <Text
+              fontSize="sm"
+              lineHeight="14px"
+              margin="15px 0"
+              color={fontColor2}
+            >
+              {description}
+            </Text>
+          )}
+          {buttonUrl && (
+            <Link
+              variant={!linkButton && 'buttonDefault'}
+              color={linkButton ? hexColor.blueDefault : '#FFF'}
+              textDecoration={linkButton && 'underline'}
+              href={buttonUrl}
+              textAlign="center"
+              display="inline-block"
+            >
+              {buttonLabel}
+            </Link>
+          )}
+        </Box>
+      </Container>
     </Box>
   );
 };
