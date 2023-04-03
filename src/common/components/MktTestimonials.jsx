@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
-  Box, Avatar,
+  Box, Avatar, Container,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -68,7 +68,7 @@ const MktTestimonials = ({
   };
 
   return (
-    <Box id={id} padding="20px 0" textAlign="center" marginBottom="20px">
+    <Container maxW="container.xl" px="10px" id={id} padding="20px 0" textAlign="center" marginBottom="20px">
       {title && (
         <Heading as="h2" size="m" marginBottom="20px">
           {title}
@@ -91,7 +91,7 @@ const MktTestimonials = ({
           />
         ))}
       </Box>
-    </Box>
+    </Container>
   );
 };
 

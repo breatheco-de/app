@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Img, Button, useColorModeValue } from '@chakra-ui/react';
+import { Box, Img, Button, useColorModeValue, Container } from '@chakra-ui/react';
 import axios from 'axios';
 import Icon from './Icon';
 
@@ -20,7 +20,9 @@ const MktTechnologies = ({ id, endpoint }) => {
   }, []);
 
   return (
-    <Box
+    <Container
+      maxW="container.xl"
+      px="10px"
       id={id}
       background={background}
       width="100%"
@@ -82,7 +84,7 @@ const MktTechnologies = ({ id, endpoint }) => {
           />
         ))}
       </Box>
-    </Box>
+    </Container>
   );
 };
 

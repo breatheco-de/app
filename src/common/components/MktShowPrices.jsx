@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Container, Flex } from '@chakra-ui/react';
 import { PrismicRichText } from '@prismicio/react';
 import profileHandlers from '../../js_modules/profile/Subscriptions/handlers';
 import ShowPrices from './ShowPrices';
@@ -62,7 +62,7 @@ const MktShowPrices = ({ id, title, description, plan, bullets }) => {
   };
 
   return offerProps?.slug ? (
-    <Flex id={id} padding="32px" gridGap="35px" flexDirection={{ base: 'column', lg: isTotallyFree ? 'column' : 'row' }}>
+    <Container display="flex" maxW="container.xl" px="10px" id={id} padding="32px" gridGap="35px" flexDirection={{ base: 'column', lg: isTotallyFree ? 'column' : 'row' }}>
       <Flex flex={0.5} flexDirection="column" margin="1rem 0 0 0" gridGap="8px">
         {title && (
           <Heading as="h2" size="l" margin="0 0 1.5rem 0">
@@ -143,7 +143,7 @@ const MktShowPrices = ({ id, title, description, plan, bullets }) => {
           isTotallyFree={isTotallyFree}
         />
       </Box>
-    </Flex>
+    </Container>
   ) : 'loading...';
 };
 
