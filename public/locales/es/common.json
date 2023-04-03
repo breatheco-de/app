@@ -18,6 +18,7 @@
   "confirm": "Confirmar",
   "submit": "Enviar",
   "enroll": "Unirse Ahora",
+  "learn-more": "Leer más",
   "user-id": "ID de usuario",
   "day": "Día",
   "interactive": "Interactivo",
@@ -96,6 +97,7 @@
     "title": "{{asset_type}} tiene {{count}} tareas",
     "description": "Para aprovechar mejor esta lección, busca las casillas de verificación y márcalas como completadas a medida que avances."
   },
+  "related-courses": "Cursos relacionados a este artículo",
   "average-duration": "Duración promedio",
   "load-more": "Cargar más",
   "teachers": "Profesores",
@@ -159,6 +161,5 @@
     "readMoreUrl": "https://4geeks.com/lesson/live-events-workshops-and-classes"
   },
   "submit-project": "Enviar proyecto",
-  "uploadScreenshot": "Subir captura de pantalla",
-  "what-you-will-learn": "Loque aprenderas"
+  "uploadScreenshot": "Subir captura de pantalla"
 }

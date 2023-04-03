@@ -1,0 +1,47 @@
+{
+  "id": "recommended_courses",
+  "type": "SharedSlice",
+  "name": "RecommendedCourses",
+  "description": "RecommendedCourses",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "RecommendedCourses",
+      "primary": {
+        "componentId": {
+          "type": "Text",
+          "config": {
+            "label": "id",
+            "placeholder": ""
+          }
+        },
+        "endpoint": {
+          "type": "Text",
+          "config": {
+            "label": "endpoint",
+            "placeholder": ""
+          }
+        },
+        "background": {
+          "type": "Text",
+          "config": {
+            "label": "background",
+            "placeholder": ""
+          }
+        },
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "title",
+            "placeholder": ""
+          }
+        }
+      },
+      "items": {},
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    }
+  ]
+}

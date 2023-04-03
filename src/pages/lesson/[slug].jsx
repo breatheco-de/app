@@ -17,6 +17,7 @@ import TagCapsule from '../../common/components/TagCapsule';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 import { MDSkeleton } from '../../common/components/Skeleton';
 import GridContainer from '../../common/components/GridContainer';
+import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import redirectsFromApi from '../../../public/redirects-from-api.json';
 
 export const getStaticPaths = async ({ locales }) => {
@@ -228,6 +229,10 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
             className={`markdown-body ${useColorModeValue('light', 'dark')}`}
           >
             <MarkDownParser content={markdownData.content} withToc isPublic />
+            <MktRecommendedCourses
+              title={t('common:related-courses')}
+              endpoint={`/v1/marketing/course?technologies=${lesson.technologies.join(',')}`}
+            />
             {/* {(markdown && ipynbHtmlUrl === '')
               ? <MarkDownParser content={markdownData.content} />
               : <MDSkeleton />} */}

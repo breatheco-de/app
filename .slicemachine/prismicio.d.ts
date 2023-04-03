@@ -420,6 +420,75 @@ type PartnersSliceVariation = PartnersSliceDefault;
  */
 export type PartnersSlice = prismicT.SharedSlice<"partners", PartnersSliceVariation>;
 /**
+ * Primary content in RecommendedCourses → Primary
+ *
+ */
+interface RecommendedCoursesSliceDefaultPrimary {
+    /**
+     * id field in *RecommendedCourses → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: recommended_courses.primary.componentId
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    componentId: prismicT.KeyTextField;
+    /**
+     * endpoint field in *RecommendedCourses → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: recommended_courses.primary.endpoint
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    endpoint: prismicT.KeyTextField;
+    /**
+     * background field in *RecommendedCourses → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: recommended_courses.primary.background
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    background: prismicT.KeyTextField;
+    /**
+     * title field in *RecommendedCourses → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: recommended_courses.primary.title
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    title: prismicT.KeyTextField;
+}
+/**
+ * Default variation for RecommendedCourses Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: `RecommendedCourses`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type RecommendedCoursesSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<RecommendedCoursesSliceDefaultPrimary>, never>;
+/**
+ * Slice variation for *RecommendedCourses*
+ *
+ */
+type RecommendedCoursesSliceVariation = RecommendedCoursesSliceDefault;
+/**
+ * RecommendedCourses Shared Slice
+ *
+ * - **API ID**: `recommended_courses`
+ * - **Description**: `RecommendedCourses`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type RecommendedCoursesSlice = prismicT.SharedSlice<"recommended_courses", RecommendedCoursesSliceVariation>;
+/**
  * Primary content in RoadMap → Primary
  *
  */
@@ -920,6 +989,6 @@ declare module "@prismicio/client" {
         (repositoryNameOrEndpoint: string, options?: prismic.ClientConfig): prismic.Client<AllDocumentTypes>;
     }
     namespace Content {
-        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, PartnersSliceDefaultPrimary, PartnersSliceDefault, PartnersSliceVariation, PartnersSlice, RoadMapSliceDefaultPrimary, RoadMapSliceDefault, RoadMapSliceVariation, RoadMapSlice, ShowPricesSliceDefaultPrimary, ShowPricesSliceDefault, ShowPricesSliceVariation, ShowPricesSlice, TechnologiesSliceDefaultPrimary, TechnologiesSliceDefault, TechnologiesSliceVariation, TechnologiesSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
+        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, PartnersSliceDefaultPrimary, PartnersSliceDefault, PartnersSliceVariation, PartnersSlice, RecommendedCoursesSliceDefaultPrimary, RecommendedCoursesSliceDefault, RecommendedCoursesSliceVariation, RecommendedCoursesSlice, RoadMapSliceDefaultPrimary, RoadMapSliceDefault, RoadMapSliceVariation, RoadMapSlice, ShowPricesSliceDefaultPrimary, ShowPricesSliceDefault, ShowPricesSliceVariation, ShowPricesSlice, TechnologiesSliceDefaultPrimary, TechnologiesSliceDefault, TechnologiesSliceVariation, TechnologiesSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
     }
 }
