@@ -3,6 +3,7 @@
 import Markdown from './Markdown';
 import OneColumn from './OneColumn';
 import Partners from './Partners';
+import RecommendedCourses from './RecommendedCourses';
 import RoadMap from './RoadMap';
 import ShowPrices from './ShowPrices';
 import Technologies from './Technologies';
@@ -14,6 +15,7 @@ export {
 	Markdown,
 	OneColumn,
 	Partners,
+	RecommendedCourses,
 	RoadMap,
 	ShowPrices,
 	Technologies,
@@ -26,6 +28,7 @@ export const components = {
 	markdown: Markdown,
 	one_column: OneColumn,
 	partners: Partners,
+	recommended_courses: RecommendedCourses,
 	road_map: RoadMap,
 	show_prices: ShowPrices,
 	technologies: Technologies,
