@@ -4,12 +4,13 @@ import {
   Box, Avatar, Container,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useRouter } from 'next/router';
 import Heading from './Heading';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
 import StarRating from './StarRating';
 import { lengthOfString } from '../../utils';
+import axios from '../../axios';
 
 const MktTestimonials = ({
   id,
@@ -18,11 +19,12 @@ const MktTestimonials = ({
   testimonials,
 }) => {
   const [testimonialsData, setTestimonialsData] = useState();
+  const router = useRouter();
   const { fontColor2, backgroundColor } = useStyle();
 
   useEffect(() => {
     if (typeof endpoint === 'string' && endpoint?.length > 8) {
-      axios.get(`${process.env.BREATHECODE_HOST}${endpoint}`)
+      axios.get(`${process.env.BREATHECODE_HOST}${endpoint}?lang=${router?.locale}`)
         .then((response) => {
           setTestimonialsData(response?.data);
         });
