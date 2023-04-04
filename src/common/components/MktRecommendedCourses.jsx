@@ -62,12 +62,6 @@ const MktRecommendedCourses = ({ id, endpoint, background, title }) => {
             iconBackground="#25BF6C"
             programName="Curso Interactivo de Javascript"
             programDescription={dummyText}
-          />
-          <PublicCourseCard
-            icon_url="https://storage.googleapis.com/breathecode/logos-workshops/javascript-event-type.svg"
-            iconBackground="#25BF6C"
-            programName="Curso Interactivo de Javascript"
-            programDescription={dummyText}
           /> */}
         </Box>
       </Box>
