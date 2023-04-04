@@ -68,7 +68,7 @@ interface PageDocumentData {
  * Slice for *Page → Slice Zone*
  *
  */
-type PageDocumentDataSlicesSlice = TitleIntroductionSlice | MarkdownSlice | TwoColumnSlice | OneColumnSlice | TestimonialsSlice | ShowPricesSlice | TechnologiesSlice | PartnersSlice | RoadMapSlice;
+type PageDocumentDataSlicesSlice = TitleIntroductionSlice | MarkdownSlice | TwoColumnSlice | OneColumnSlice | TestimonialsSlice | ShowPricesSlice | TechnologiesSlice | PartnersSlice | RoadMapSlice | RecommendedCoursesSlice;
 /**
  * Page document from Prismic
  *
@@ -514,36 +514,15 @@ interface RoadMapSliceDefaultPrimary {
      */
     course_slug: prismicT.KeyTextField;
     /**
-     * More content button field in *RoadMap → Primary*
-     *
-     * - **Field Type**: Boolean
-     * - **Placeholder**: *None*
-     * - **Default Value**: false
-     * - **API ID Path**: road_map.primary.more_content_button
-     * - **Documentation**: https://prismic.io/docs/core-concepts/boolean
-     *
-     */
-    more_content_button: prismicT.BooleanField;
-    /**
-     * More content title field in *RoadMap → Primary*
+     * Title field in *RoadMap → Primary*
      *
      * - **Field Type**: Text
      * - **Placeholder**: *None*
-     * - **API ID Path**: road_map.primary.more_content_title
+     * - **API ID Path**: road_map.primary.title
      * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
      *
      */
-    more_content_title: prismicT.KeyTextField;
-    /**
-     * More content link field in *RoadMap → Primary*
-     *
-     * - **Field Type**: Link
-     * - **Placeholder**: *None*
-     * - **API ID Path**: road_map.primary.more_content_link
-     * - **Documentation**: https://prismic.io/docs/core-concepts/link-content-relationship
-     *
-     */
-    more_content_link: prismicT.LinkField;
+    title: prismicT.KeyTextField;
 }
 /**
  * Default variation for RoadMap Slice

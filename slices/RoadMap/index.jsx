@@ -14,9 +14,7 @@ const ShowPrices = ({ slice }) => {
     <MktRoadmap
       id={slice?.primary?.id_key}
       course={slice?.primary?.course_slug || ''}
-      buttonTitle={slice.primary.more_content_title || ''}
-      buttonLink={slice?.primary?.more_content_link?.url || ''}
-      moreContent={slice?.primary?.more_content_button || false}
+      title={slice?.primary?.title}
     />
   );
 };

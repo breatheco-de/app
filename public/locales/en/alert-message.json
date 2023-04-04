@@ -70,5 +70,6 @@
   "no-link-exist": "There is no link for this event yet",
   "no-course-configuration": "The course configuration you are trying to buy does not exist.",
   "no-plan-configuration": "The plan configuration you are trying to buy does not exist.",
-  "error-getting-offer": "Sorry, we couldn't get the plan offer."
+  "error-getting-offer": "Sorry, we couldn't get the plan offer.",
+  "error-getting-plan": "Sorry, we couldn't get the plan."
 }

@@ -96,6 +96,191 @@ const profileHandlers = ({
       if (payUnit === 'YEAR') return translations?.yearly || t('yearly');
       return payUnit;
     },
+    getPlan: ({ slug, onOpenUpgrade = () => {}, disableRedirects = false }) => new Promise((resolve, reject) => {
+      bc.payment().getPlan(encodeURIComponent(slug))
+        .then(async (res) => {
+          const data = res?.data;
+
+          const bullets = await getPlanProps(slug);
+          const outOfConsumables = data?.service_items.some((item) => item?.how_many === 0);
+
+          if (data && data?.slug) {
+            const planData = data;
+            // const outOfConsumables = currentPlan?.service_items.some((item) => item?.how_many === 0);
+
+            // -------------------------------------------------- PREPARING PRICES --------------------------------------------------
+            const existsAmountPerHalf = data?.amount_per_half > 0;
+            const existsAmountPerMonth = data?.amount_per_month > 0;
+            const existsAmountPerQuarter = data?.amount_per_quarter > 0;
+            const existsAmountPerYear = data?.amount_per_year > 0;
+
+            const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
+            const financingOptionsExists = planData?.financing_options?.length > 0;
+            const financingOptionsManyMonthsExists = financingOptionsExists && planData?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months > 1);
+            const financingOptionsOnePaymentExists = financingOptionsExists && planData?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months === 1);
+
+            const isTotallyFree = !isNotTrial && planData?.trial_duration === 0 && !financingOptionsExists;
+
+            const financingOptionsManyMonths = financingOptionsManyMonthsExists
+              ? planData?.financing_options
+                .filter((l) => l?.monthly_price > 0 && l?.how_many_months > 1)
+                .sort((a, b) => a?.monthly_price - b?.monthly_price)
+              : [];
+
+            const financingOptionsOnePayment = financingOptionsOnePaymentExists
+              ? planData?.financing_options
+                .filter((l) => l?.monthly_price > 0 && l?.how_many_months === 1)
+                .sort((a, b) => a?.monthly_price - b?.monthly_price)
+              : [];
+
+            const getTrialLabel = () => {
+              if (isTotallyFree) {
+                return {
+                  priceText: t('subscription.upgrade-modal.free-course'),
+                  description: t('subscription.upgrade-modal.full_access'),
+                };
+              }
+              if (planData?.trial_duration_unit === 'WEEK') {
+                const weekDays = planData?.trial_duration * 7;
+                return {
+                  priceText: `${t('subscription.upgrade-modal.duration_days', { duration: weekDays })} ${t('subscription.upgrade-modal.connector_duration_trial')}`,
+                  description: `${t('subscription.upgrade-modal.no_card_needed')} ${t('subscription.upgrade-modal.duration_days', { duration: weekDays })}`,
+                };
+              }
+              if (planData?.trial_duration_unit === 'DAY') {
+                return {
+                  priceText: `${t('subscription.upgrade-modal.duration_days', { duration: planData?.trial_duration })} ${t('subscription.upgrade-modal.connector_duration_trial')}`,
+                  description: `${t('subscription.upgrade-modal.no_card_needed')} ${t('subscription.upgrade-modal.duration_days', { duration: planData?.trial_duration })}`,
+                };
+              }
+              if (planData?.trial_duration_unit === 'MONTH') {
+                return {
+                  priceText: `${planData?.trial_duration} month trial`,
+                  description: `${t('subscription.upgrade-modal.no_card_needed')} ${t('subscription.upgrade-modal.duration_month', { duration: planData?.trial_duration })}`,
+                };
+              }
+              return {
+                priceText: t('subscription.upgrade-modal.free_trial'),
+                description: '',
+              };
+            };
+
+            const onePaymentFinancing = financingOptionsOnePaymentExists ? financingOptionsOnePayment.map((item) => ({
+              title: t('subscription.upgrade-modal.monthly_payment'),
+              price: item?.monthly_price,
+              priceText: `$${item?.monthly_price}`,
+              period: 'FINANCING',
+              description: t('subscription.upgrade-modal.full_access'),
+              how_many_months: item?.how_many_months,
+              suggested_plan: planData,
+              type: 'PAYMENT',
+              show: true,
+            })) : [];
+
+            const trialPlan = (!financingOptionsManyMonthsExists) ? {
+              title: t('subscription.upgrade-modal.free_trial'),
+              price: 0,
+              priceText: getTrialLabel().priceText,
+              trialDuration: planData?.trial_duration,
+              period: planData?.trial_duration_unit,
+              description: getTrialLabel().description,
+              suggested_plan: planData,
+              type: isTotallyFree ? 'FREE' : 'TRIAL',
+              isFree: true,
+              show: true,
+            } : {};
+
+            const monthPlan = !financingOptionsOnePaymentExists && existsAmountPerMonth ? [{
+              title: t('subscription.upgrade-modal.monthly_payment'),
+              price: planData?.price_per_month,
+              priceText: `$${planData?.price_per_month}`,
+              period: 'MONTH',
+              description: t('subscription.upgrade-modal.full_access'),
+              suggested_plan: planData,
+              type: 'PAYMENT',
+              show: true,
+            }] : onePaymentFinancing;
+
+            const yearPlan = existsAmountPerYear ? {
+              title: t('subscription.upgrade-modal.yearly_payment'),
+              price: planData?.price_per_year,
+              priceText: `$${planData?.price_per_year}`,
+              period: 'YEAR',
+              description: t('subscription.upgrade-modal.full_access'),
+              suggested_plan: planData,
+              type: 'PAYMENT',
+              show: true,
+            } : {};
+
+            const financingOption = financingOptionsManyMonthsExists ? financingOptionsManyMonths.map((item) => ({
+              title: t('subscription.upgrade-modal.many_months_payment', { qty: item?.how_many_months }),
+              price: item?.monthly_price,
+              priceText: `$${item?.monthly_price} x ${item?.how_many_months}`,
+              period: 'FINANCING',
+              description: t('subscription.upgrade-modal.many_months_description', { monthly_price: item?.monthly_price, many_months: item?.how_many_months }),
+              how_many_months: item?.how_many_months,
+              suggested_plan: planData,
+              type: 'PAYMENT',
+              show: true,
+            })) : [];
+
+            const consumableOption = outOfConsumables && planData?.service_items?.length > 0
+              ? planData?.service_items.map((item) => ({
+                title: toCapitalize(unSlugify(String(item?.service?.slug))),
+                price: item?.service?.price_per_unit,
+                how_many: item?.how_many,
+                suggested_plan: planData,
+                type: 'CONSUMABLE',
+                show: true,
+              }))
+              : {};
+
+            const paymentList = [...monthPlan, yearPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
+            const financingList = financingOption?.filter((plan) => Object.keys(plan).length > 0);
+            const consumableList = [consumableOption].filter((plan) => Object.keys(plan).length > 0);
+
+            const finalData = {
+              title: toCapitalize(unSlugify(String(planData?.slug))),
+              slug: planData?.slug,
+              isTotallyFree,
+              details: planData?.details,
+              expires_at: planData?.expires_at,
+              pricing_exists: isNotTrial || financingOptionsExists,
+              paymentOptions: paymentList,
+              financingOptions: financingList,
+              outOfConsumables,
+              consumableOptions: consumableList,
+              bullets,
+            };
+            // -------------------------------------------------- END PREPARING PRICES --------------------------------------------------
+            resolve(finalData);
+            if (data?.show_modal && !disableRedirects) {
+              onOpenUpgrade(finalData);
+            }
+
+            if (data?.show_modal === false && planData && !disableRedirects) {
+              router.push(`/checkout?plan=${planData?.slug}`);
+            }
+          } else {
+            toast({
+              title: t('alert-message:error-getting-plan'),
+              status: 'error',
+              duration: 5000,
+              isClosable: true,
+            });
+            resolve({});
+          }
+        })
+        .catch(() => {
+          reject();
+          toast({
+            title: t('alert-message:error-getting-plan'),
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+        });
+    }),
     getPlanOffer: ({ slug, onOpenUpgrade = () => {}, disableRedirects = false, withCurrentPlan = false }) => new Promise((resolve, reject) => {
       bc.payment({
         original_plan: slug,

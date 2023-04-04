@@ -45,11 +45,11 @@ const MktShowPrices = ({ id, title, description, plan, bullets }) => {
   const router = useRouter();
   const [offerProps, setOfferProps] = useState({});
   const {
-    getPlanOffer,
+    getPlan,
   } = profileHandlers({});
 
   useEffect(async () => {
-    const data = await getPlanOffer({ slug: plan, disableRedirects: true, withCurrentPlan: true }).then((res) => res);
+    const data = await getPlan({ slug: plan, disableRedirects: true, withCurrentPlan: true }).then((res) => res);
     setOfferProps(data);
   }, []);
 
@@ -62,7 +62,7 @@ const MktShowPrices = ({ id, title, description, plan, bullets }) => {
   };
 
   return offerProps?.slug ? (
-    <Container display="flex" maxW="container.xl" px="10px" id={id} padding="32px" gridGap="35px" flexDirection={{ base: 'column', lg: isTotallyFree ? 'column' : 'row' }}>
+    <Container display="flex" maxW="container.xl" px="10px" id={id} padding="32px" gridGap="35px" flexDirection={{ base: 'column', lg: 'row' }}>
       <Flex flex={0.5} flexDirection="column" margin="1rem 0 0 0" gridGap="8px">
         {title && (
           <Heading as="h2" size="l" margin="0 0 1.5rem 0">
