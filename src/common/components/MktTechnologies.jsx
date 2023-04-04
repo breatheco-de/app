@@ -4,6 +4,8 @@ import { Box, Img, Button, useColorModeValue, Container } from '@chakra-ui/react
 import axios from 'axios';
 import Icon from './Icon';
 
+const defaultEndpoint = '/v1/registry/technology?sort_priority=1';
+
 const MktTechnologies = ({ id, endpoint }) => {
   const carousel = useRef(null);
   const background = useColorModeValue('featuredLight', 'featuredDark');
@@ -11,12 +13,10 @@ const MktTechnologies = ({ id, endpoint }) => {
   const [index, setIndex] = useState(0);
   const limit = 15;
   useEffect(() => {
-    if (typeof endpoint === 'string' && endpoint?.length > 8) {
-      axios.get(`${process.env.BREATHECODE_HOST}${endpoint}`)
-        .then((response) => {
-          setTechnologies(response.data?.filter((tech) => tech.icon_url));
-        });
-    }
+    axios.get(`${process.env.BREATHECODE_HOST}${typeof endpoint === 'string' && endpoint !== '' ? endpoint : defaultEndpoint}`)
+      .then((response) => {
+        setTechnologies(response.data?.filter((tech) => tech.icon_url));
+      });
   }, []);
 
   return (
@@ -95,7 +95,7 @@ MktTechnologies.propTypes = {
 
 MktTechnologies.defaultProps = {
   id: '',
-  endpoint: '/v1/registry/technology ?sort_priority=1',
+  endpoint: defaultEndpoint,
 };
 
 export default MktTechnologies;
