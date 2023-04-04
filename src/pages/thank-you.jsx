@@ -7,6 +7,7 @@ import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
 import Icon from '../common/components/Icon';
 import { getStorageItem } from '../utils';
+import useStyle from '../common/hooks/useStyle';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'projects');
@@ -26,12 +27,13 @@ export const getStaticProps = async ({ locale, locales }) => {
 
 const ThankYou = () => {
   const { t } = useTranslation('thank-you');
+  const { hexColor, lightColor } = useStyle();
   const subscriptionId = getStorageItem('subscriptionId');
 
   const social = t('share-social', {}, { returnObjects: true });
   return (
-    <Box display="flex" justifyContent="center" background="linear-gradient(180deg, #EEF9FE 50%, white 50%)" width="100%" height="90vh" textAlign="center">
-      <Box borderRadius="20px" p={{ base: '70px 6%', md: '70px 0 0 0' }} m={{ base: 'auto 10px', md: '80px 0 0 0' }} backgroundColor="white" minWidth={{ base: 'auto', md: '700px' }} minHeight={{ base: 'auto', md: '500px' }}>
+    <Box display="flex" justifyContent="center" background={`linear-gradient(180deg, ${hexColor.featuredColor} 50%, ${hexColor.backgroundColor} 50%)`} width="100%" height="90vh" textAlign="center">
+      <Box borderRadius="20px" p={{ base: '70px 6%', md: '70px 0 0 0' }} m={{ base: 'auto 10px', md: '80px 0 0 0' }} backgroundColor={hexColor.backgroundColor} minWidth={{ base: 'auto', md: '700px' }} minHeight={{ base: 'auto', md: '500px' }}>
         <Heading as="h1" size="xl" color="blue.default">
           {t('title')}
         </Heading>
@@ -52,7 +54,7 @@ const ThankYou = () => {
                     fontSize: 'clamp(2.1875rem, 1.74rem + 1.99vw, 3.125rem)',
                     opacity: 1,
                     fontWeight: '700',
-                    backgroundColor: '#F5F5F5',
+                    backgroundColor: hexColor.lightColor2,
                     border: '0',
                   }}
                 />
@@ -60,10 +62,10 @@ const ThankYou = () => {
             })}
           </PinInput>
         </HStack>
-        <Text fontSize="20px" p="10px 0" color="gray.600" fontWeight="600">
+        <Text fontSize="20px" p="10px 0" color={lightColor} fontWeight="600">
           {t('get-ready-to-learn')}
         </Text>
-        <Text fontSize="16px" p="10px 0" margin="0 auto" textAlign="center" color="gray.600" fontWeight="500">
+        <Text fontSize="16px" p="10px 0" margin="0 auto" textAlign="center" color={lightColor} fontWeight="500">
           {t('share-on-social-media')}
           <br />
           {t('motivation-phrase')}
