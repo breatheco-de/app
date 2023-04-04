@@ -15,6 +15,11 @@
     "permanent": true
   },
   {
+    "source": "/lesson/what-is-an-application-model-and-how-to-diagram-it",
+    "destination": "/es/lesson/what-is-an-application-model-and-how-to-diagram-it",
+    "permanent": true
+  },
+  {
     "source": "/lesson/intro-to-machine-learning-prework-es",
     "destination": "/es/lesson/intro-to-machine-learning-prework-es",
     "permanent": true
