@@ -7,17 +7,13 @@ import MktRoadmap from '../../src/common/components/MktRoadmap';
  * @typedef {import("@prismicio/react").SliceComponentProps<ShowPricesSlice>} ShowPricesProps
  * @param { ShowPricesProps }
  */
-const ShowPrices = ({ slice }) => {
-  console.log(slice);
-
-  return (
-    <MktRoadmap
-      id={slice?.primary?.id_key}
-      course={slice?.primary?.course_slug || ''}
-      title={slice?.primary?.title}
-    />
-  );
-};
+const ShowPrices = ({ slice }) => (
+  <MktRoadmap
+    id={slice?.primary?.id_key}
+    course={slice?.primary?.course_slug || ''}
+    title={slice?.primary?.title}
+  />
+);
 ShowPrices.propTypes = {
   slice: PropTypes.objectOf(PropTypes.any),
 };

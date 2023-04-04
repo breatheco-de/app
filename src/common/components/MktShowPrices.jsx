@@ -134,7 +134,6 @@ const MktShowPrices = ({ id, title, description, plan, bullets }) => {
               has_available_cohorts: hasAvailableCohorts,
               price: item?.price,
               period,
-              qty: undefined,
             });
             router.push(`/checkout${querys}`);
           }}
