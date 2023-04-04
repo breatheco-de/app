@@ -167,15 +167,6 @@ const MktRoadmap = ({ id, course, moreContent, buttonTitle, buttonLink }) => {
           alignSelf="center"
           gridGap="10px"
         >
-          <Heading
-            as="h2"
-            size="xsm"
-            letterSpacing="0.05em"
-            mb="1rem"
-            // color="blue.default"
-          >
-            {t('what-you-will-learn')}
-          </Heading>
           <Text size="26px" fontWeight="700" lineHeight="30px">
             {data[currentTabIndex]?.name}
           </Text>

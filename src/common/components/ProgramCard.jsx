@@ -488,7 +488,7 @@ const ProgramCard = ({
                 mt="20px"
                 onClick={handleChoose}
               >
-                {t('enroll-now')}
+                {t('learn-more')}
               </Button>
             </>
           ) : (
