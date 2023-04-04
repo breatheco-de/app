@@ -89,12 +89,13 @@ const MktTechnologies = ({ id, endpoint }) => {
 };
 
 MktTechnologies.propTypes = {
-  endpoint: PropTypes.string.isRequired,
+  endpoint: PropTypes.string,
   id: PropTypes.string,
 };
 
 MktTechnologies.defaultProps = {
   id: '',
+  endpoint: '/v1/registry/technology ?sort_priority=1',
 };
 
 export default MktTechnologies;
