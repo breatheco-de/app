@@ -4,7 +4,7 @@ import { Box, Img, Button, useColorModeValue, Container } from '@chakra-ui/react
 import axios from 'axios';
 import Icon from './Icon';
 
-const defaultEndpoint = '/v1/registry/technology ?sort_priority=1';
+const defaultEndpoint = '/v1/registry/technology?sort_priority=1';
 
 const MktTechnologies = ({ id, endpoint }) => {
   const carousel = useRef(null);
