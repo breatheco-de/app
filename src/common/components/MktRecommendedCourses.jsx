@@ -9,13 +9,15 @@ import Heading from './Heading';
 import PublicCourseCard from './PublicCourseCard';
 import useStyle from '../hooks/useStyle';
 
+const defaultEndpoint = '/v1/marketing/course';
+
 const MktRecommendedCourses = ({ id, endpoint, background, title }) => {
   const [courses, setCourses] = useState([]);
   const { hexColor, featuredColor, fontColor } = useStyle();
 
   const getCourses = async () => {
     try {
-      const res = await fetch(`${process.env.BREATHECODE_HOST}${endpoint}`);
+      const res = await fetch(`${process.env.BREATHECODE_HOST}${typeof endpoint === 'string' && endpoint !== '' ? endpoint : defaultEndpoint}`);
       const data = await res.json();
       setCourses(data.filter((course) => course.course_translation).slice(0, 3));
     } catch (e) {
