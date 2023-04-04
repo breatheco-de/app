@@ -72,6 +72,9 @@
             },
             "road_map": {
               "type": "SharedSlice"
+            },
+            "recommended_courses": {
+              "type": "SharedSlice"
             }
           }
         }
