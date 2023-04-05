@@ -299,11 +299,9 @@ blockquote > :last-child {
 
 .markdown-body.light thead {
   border: 2px solid #E2E8F0;
-  text-align: center;
 }
 .markdown-body.dark thead {
   border: 2px solid #718096;
-  text-align: center;
 }
 
 .markdown-body.light tbody {
@@ -336,7 +334,7 @@ blockquote > :last-child {
 .markdown-body table tr th {
   font-weight: bold;
   /* border: 1px solid #cccccc; */
-  text-align: left;
+  text-align: center;
   margin: 0;
   padding: 6px 13px;
 }
