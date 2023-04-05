@@ -117,7 +117,7 @@
   "warningModal" : {
     "title": "sincronize with github",
     "sub-title": "Your Github account is not connected",
-    "text": "Only by conecting your Github account you will be able to get unlimited Gitpod hours",
+    "text": "Current 4Geeks Academy students with a connected Github account are able to get unlimited Codespaces hours",
     "connect": "CONNECT WITH GITHUB",
     "skip": "Skip for now"
   },
