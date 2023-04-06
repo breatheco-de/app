@@ -334,7 +334,7 @@ blockquote > :last-child {
 .markdown-body table tr th {
   font-weight: bold;
   /* border: 1px solid #cccccc; */
-  text-align: left;
+  text-align: center;
   margin: 0;
   padding: 6px 13px;
 }

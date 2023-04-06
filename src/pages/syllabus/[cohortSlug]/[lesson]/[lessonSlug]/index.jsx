@@ -97,7 +97,7 @@ const Content = () => {
   const lesson = router?.query?.lesson;
   const lessonSlug = router?.query?.lessonSlug;
 
-  const language = router.locale === 'en' ? 'us' : 'es';
+  const language = router?.locale === 'en' ? 'us' : router?.locale;
 
   const isQuiz = lesson === 'answer';
 
@@ -240,18 +240,24 @@ const Content = () => {
     } else if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
       axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
         .then(({ data }) => {
+          const currentSlug = data?.translations?.[language] || lessonSlug;
           const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
+          const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
+          const extension = urlPathname ? urlPathname.split('.').pop() : null;
+          const translatedExtension = language === 'us' ? '' : `.${language}`;
+          const finalPathname = `${pathnameWithoutExtension}${translatedExtension}.${extension}`;
+
           setCallToActionProps({
             token: accessToken,
             assetSlug: lessonSlug,
             gitpod: data.gitpod,
             assetType: assetTypeValues[lesson],
           });
-          setReadmeUrlPathname(urlPathname);
+          setReadmeUrlPathname(finalPathname);
           let currentlocaleLang = data.translations[language];
           const exensionName = getExtensionName(data.readme_url);
           if (exensionName === 'ipynb') {
-            setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${lessonSlug}?theme=${currentTheme}&plain=true`);
+            setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?theme=${currentTheme}&plain=true`);
             setCurrentData(data);
           } else {
             setIpynbHtmlUrl(null);
