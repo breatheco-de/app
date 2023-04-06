@@ -4,7 +4,7 @@
   "error-with-status": "A {{statusCode}} error occurred on server",
   "error-without-status": "An error occurred on the server",
   "edit-on-github": "Edit on Github",
-  "github-warning": "Your Github account is not connected. Only by conecting your Github account you will be able to get unlimited Gitpod hours",
+  "github-warning": "Your Github account is not connected. Only active 4Geeks Academy students with a conected Github account you will be able to get unlimited Codespaces hours.",
   "title": "Welcome | Learn",
   "backToHome": "Back to home",
   "goBack": "Go Back",
@@ -79,7 +79,7 @@
     "mark-as-not-done": "Mark as not done"
   },
   "learnpack": {
-    "description": "This practice will run outside of 4Geeks.com thought LearnPack. An interactive learning tool that runs integrated with VSCode and Gitpod.",
+    "description": "This practice will run outside of 4Geeks.com thought LearnPack. An interactive learning tool that runs integrated with VSCode.",
     "new-exercise": "Start new exercise",
     "continue-exercise": "Continue exercise"
   },

@@ -348,28 +348,6 @@ const Footer = ({ pageProps }) => {
           width={['100%', '100%', '35%', '40%']}
         // alignItems="center"
         >
-          <NextChakraLink href={t('privacy.href')}>
-            <Text fontSize="sm">{t('privacy.label')}</Text>
-          </NextChakraLink>
-          <Divider
-            orientation="vertical"
-            // borderRightWidth="2px"
-            marginLeft="10px"
-            marginRight="10px"
-            borderColor="#3A3A3A"
-            maxH={['20px', '20px', '50', '50']}
-          />
-          <NextChakraLink href={t('cookies.href')}>
-            <Text fontSize="sm">{t('cookies.label')}</Text>
-          </NextChakraLink>
-          <Divider
-            orientation="vertical"
-            // borderRightWidth="2px"
-            marginLeft="10px"
-            marginRight="10px"
-            borderColor="#3A3A3A"
-            maxH={['20px', '20px', '50', '50']}
-          />
           <NextChakraLink href={t('terms.href')}>
             <Text fontSize="sm">{t('terms.label')}</Text>
           </NextChakraLink>

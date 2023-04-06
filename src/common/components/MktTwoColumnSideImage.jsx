@@ -78,7 +78,7 @@ const MktTwoColumnSideImage = ({
                 paragraph: ({ children }) => (
                   <Text
                     fontSize="sm"
-                    lineHeight="14px"
+                    lineHeight="18px"
                     margin="15px 0"
                     color={fontColor2}
                   >

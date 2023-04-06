@@ -12,7 +12,7 @@ const Partners = ({ slice }) => (
     id={slice?.primary?.id_key}
     title={slice?.primary?.title}
     images={slice?.primary?.images}
-    margin={slice?.primary?.margin || '20px 0 0 0'}
+    margin={slice?.primary?.margin || '20px auto 0 auto'}
   />
 );
 
