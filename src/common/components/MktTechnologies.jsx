@@ -6,7 +6,7 @@ import Icon from './Icon';
 
 const defaultEndpoint = '/v1/registry/technology?sort_priority=1';
 
-const MktTechnologies = ({ id, endpoint }) => {
+const MktTechnologies = ({ id, endpoint, ...rest }) => {
   const carousel = useRef(null);
   const background = useColorModeValue('featuredLight', 'featuredDark');
   const [technologies, setTechnologies] = useState([]);
@@ -26,9 +26,9 @@ const MktTechnologies = ({ id, endpoint }) => {
       id={id}
       background={background}
       width="100%"
-      marginTop="20px"
       position="relative"
       padding={{ base: '5px 10px', lg: '5px 20px' }}
+      {...rest}
     >
       <Button
         zIndex="10"

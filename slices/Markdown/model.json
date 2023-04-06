@@ -49,6 +49,13 @@
             "placeholder_true": "true",
             "default_value": false
           }
+        },
+        "margin": {
+          "type": "Text",
+          "config": {
+            "label": "Margin",
+            "placeholder": "top, right, bottom, left"
+          }
         }
       },
       "items": {},

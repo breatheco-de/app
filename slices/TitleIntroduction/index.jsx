@@ -10,6 +10,7 @@ import IntroductionSection from '../../src/js_modules/landing/introductionSectio
 const TitleIntroduction = ({ slice }) => (
   <IntroductionSection
     slice={slice}
+    margin={slice?.primary?.margin || ''}
   />
 );
 TitleIntroduction.propTypes = {

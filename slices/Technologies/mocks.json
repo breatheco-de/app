@@ -3,14 +3,19 @@
     "__TYPE__": "SharedSliceContent",
     "variation": "default",
     "primary": {
-      "endpoint": {
-        "__TYPE__": "FieldContent",
-        "type": "Text",
-        "value": "/v1/registry/technology?sort_priority=1"
-      },
       "id_key": {
         "__TYPE__": "FieldContent",
-        "value": "valley",
+        "value": "space",
+        "type": "Text"
+      },
+      "endpoint": {
+        "__TYPE__": "FieldContent",
+        "value": "writer",
+        "type": "Text"
+      },
+      "margin": {
+        "__TYPE__": "FieldContent",
+        "value": "sign",
         "type": "Text"
       }
     },

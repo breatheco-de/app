@@ -49,6 +49,13 @@
             "allowTargetBlank": true,
             "single": "list-item"
           }
+        },
+        "margin": {
+          "type": "Text",
+          "config": {
+            "label": "Margin",
+            "placeholder": "top, right, bottom, left"
+          }
         }
       },
       "items": {},

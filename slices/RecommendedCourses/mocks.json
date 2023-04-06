@@ -17,6 +17,11 @@
         "__TYPE__": "FieldContent",
         "type": "Text",
         "value": "Courses related to this article"
+      },
+      "margin": {
+        "__TYPE__": "FieldContent",
+        "value": "condition",
+        "type": "Text"
       }
     },
     "items": [

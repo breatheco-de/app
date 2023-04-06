@@ -71,6 +71,13 @@
             },
             "thumbnails": []
           }
+        },
+        "margin": {
+          "type": "Text",
+          "config": {
+            "label": "Margin",
+            "placeholder": "top, right, bottom, left"
+          }
         }
       },
       "items": {},

@@ -270,11 +270,6 @@
     "permanent": true
   },
   {
-    "source": "/lesson/building-apis-with-nodejs-typeorm",
-    "destination": "/es/lesson/building-apis-with-nodejs-typeorm",
-    "permanent": true
-  },
-  {
     "source": "/lesson/python-vs-js-syntax-es",
     "destination": "/es/lesson/python-vs-js-syntax-es",
     "permanent": true
@@ -362,6 +357,11 @@
   {
     "source": "/lesson/what-is-data-science",
     "destination": "/es/lesson/what-is-data-science",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/building-apis-with-nodejs-typeorm",
+    "destination": "/es/lesson/building-apis-with-nodejs-typeorm",
     "permanent": true
   },
   {
