@@ -17,6 +17,7 @@ const MktTestimonials = ({
   title,
   endpoint,
   testimonials,
+  ...rest
 }) => {
   const [testimonialsData, setTestimonialsData] = useState();
   const router = useRouter();
@@ -70,7 +71,7 @@ const MktTestimonials = ({
   };
 
   return (
-    <Container maxW="container.xl" px="10px" id={id} padding="20px 0" textAlign="center" marginBottom="20px">
+    <Container maxW="container.xl" px="10px" id={id} padding="20px 0" textAlign="center" {...rest}>
       {title && (
         <Heading as="h2" size="m" marginBottom="20px">
           {title}

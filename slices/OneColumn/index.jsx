@@ -36,7 +36,7 @@ const OneColumn = ({ slice }) => {
       buttonUrl={slice?.primary?.button_url?.url}
       buttonLabel={slice?.primary?.button_label}
       kpiList={items}
-      margin={slice?.primary?.margin || 0}
+      margin={slice?.primary?.margin || ''}
     />
   );
 };

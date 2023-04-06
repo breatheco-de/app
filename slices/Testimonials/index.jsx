@@ -13,6 +13,7 @@ const Testimonials = ({ slice }) => (
     title={slice?.primary?.title}
     endpoint={slice?.primary?.endpoint || '/v1/feedback/review'}
     slice={slice}
+    margin={slice?.primary?.margin || '0 0 20px 0'}
   />
 );
 Testimonials.propTypes = {

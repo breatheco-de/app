@@ -23,6 +23,7 @@ const MktTwoColumnSideImage = ({
   imagePosition,
   slice,
   imageAlt,
+  ...rest
 }) => {
   const { fontColor2, hexColor, backgroundColor } = useStyle();
   const flexDirection = {
@@ -36,6 +37,7 @@ const MktTwoColumnSideImage = ({
     <Box
       id={id}
       background={background || backgroundColor}
+      {...rest}
     >
       <Container
         display="flex"
