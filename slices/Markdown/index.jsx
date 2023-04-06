@@ -21,8 +21,8 @@ const Markdown = ({ slice }) => {
         md: '1.5fr repeat(12, 1fr) 1.5fr',
       }}
       flex="1"
-      margin="2rem auto 0 auto"
       maxWidth="1280px"
+      margin={slice?.primary?.margin || '2rem auto 0 auto'}
     >
       <Box
         display="grid"

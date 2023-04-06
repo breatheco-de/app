@@ -12,6 +12,7 @@ const ShowPrices = ({ slice }) => (
     id={slice?.primary?.id_key}
     course={slice?.primary?.course_slug || ''}
     title={slice?.primary?.title}
+    margin={slice?.primary?.margin || '3rem auto 3rem auto'}
   />
 );
 ShowPrices.propTypes = {

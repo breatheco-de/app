@@ -19,6 +19,7 @@ const MktOneColumn = ({
   linkButton,
   kpiList,
   slice,
+  ...rest
 }) => {
   const { fontColor, fontColor2, hexColor, backgroundColor } = useStyle();
 
@@ -52,7 +53,7 @@ const MktOneColumn = ({
   );
 
   return (
-    <Box id={id} padding="50px" textAlign="center" background={slice?.primary?.background}>
+    <Box id={id} padding="50px" textAlign="center" background={slice?.primary?.background} {...rest}>
       <Container maxW="container.xl" px="10px">
         <Heading marginBottom="15px" as="h4" fontSize="14px" color={hexColor.blueDefault}>
           {subTitle}
