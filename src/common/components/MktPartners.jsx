@@ -7,7 +7,7 @@ import {
 import { motion, useAnimation } from 'framer-motion';
 import Heading from './Heading';
 
-const MktPartners = ({ id, title, images }) => {
+const MktPartners = ({ id, title, images, ...rest }) => {
   const cleanImages = images.length > 0 && typeof images[0] === 'string' ? images : images.map((obj) => obj.text);
   const controls = useAnimation();
   const observer = useRef();
@@ -37,7 +37,7 @@ const MktPartners = ({ id, title, images }) => {
   }, [motionRef]);
 
   return (
-    <Container maxW="container.xl" px="10px" id={id} width="100%" overflowX="hidden" marginTop="20px">
+    <Container maxW="container.xl" px="10px" id={id} width="100%" overflowX="hidden" {...rest}>
       <Heading as="h2" textAlign="center" marginBottom="20px">{title}</Heading>
       <motion.div
         width="100%"

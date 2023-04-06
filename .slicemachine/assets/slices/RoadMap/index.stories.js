@@ -5,5 +5,5 @@ export default {
 }
 
 
-export const _Default = () => <MyComponent slice={{"variation":"default","version":"sktwi1xtmkfgx8626","items":[{}],"primary":{"id_key":"grown","course_slug":"mixture","title":"pig"},"id":"_Default","slice_type":"road_map"}} />
+export const _Default = () => <MyComponent slice={{"variation":"default","version":"sktwi1xtmkfgx8626","items":[{}],"primary":{"id_key":"grown","course_slug":"start-coding-using-javascript","title":"Example title","margin":"fuel"},"id":"_Default","slice_type":"road_map"}} />
 _Default.storyName = ''

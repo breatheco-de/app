@@ -11,14 +11,22 @@ import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 
 const IntroductionSection = ({
-  data, slice,
+  data, slice, ...rest
 }) => {
   const router = useRouter();
   const colors = useColorModeValue('#000', '#fff');
 
   return (
     // <Container maxW="container.xl" px="10px"></Container>
-    <Container maxW="container.xl" px="10px" id={slice?.primary?.id_key || ''} display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="10px">
+    <Container
+      maxW="container.xl"
+      px="10px"
+      id={slice?.primary?.id_key || ''}
+      display="flex"
+      flexDirection={{ base: 'column', md: 'row' }}
+      gridGap="10px"
+      {...rest}
+    >
       <Box flex={0.6}>
         <Heading as="span" size="xl" fontWeight="700">
           {slice?.primary?.title ? (

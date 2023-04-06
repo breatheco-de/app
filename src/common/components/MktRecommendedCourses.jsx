@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import {
   Box,
@@ -12,7 +11,7 @@ import useStyle from '../hooks/useStyle';
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 2;
 
-const MktRecommendedCourses = ({ id, background, title, technologies }) => {
+const MktRecommendedCourses = ({ id, technologies, background, title, ...rest }) => {
   const [courses, setCourses] = useState([]);
   const { hexColor, featuredColor, fontColor } = useStyle();
 
@@ -38,11 +37,9 @@ const MktRecommendedCourses = ({ id, background, title, technologies }) => {
     getCourses();
   }, []);
 
-  const dummyText = 'Aprende Javascript desde cero en una Semana con este gran curso. En el podrás aprender sobre condicionales, funciones, el manejo de arrays y mucho más!';
-
   return courses.length > 0 && (
     <>
-      <Box flexWrap={{ base: 'wrap', xl: 'nowrap' }} id={id} borderRadius="13px" padding="20px" background={background || featuredColor} display="flex">
+      <Box flexWrap={{ base: 'wrap', xl: 'nowrap' }} id={id} borderRadius="13px" padding="20px" background={background || featuredColor} display="flex" {...rest}>
         {title && (
           <Box flexShrink="1" minWidth="170px">
             <Heading

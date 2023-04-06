@@ -8,7 +8,13 @@ import MktRecommendedCourses from '../../src/common/components/MktRecommendedCou
  * @param { RecommendedCoursesProps }
  */
 const RecommendedCourses = ({ slice }) => (
-  <MktRecommendedCourses id={slice.primary.componentId} technologies={slice.primary.technologies} background={slice.primary.background} title={slice.primary.title} />
+  <MktRecommendedCourses
+    id={slice?.primary?.componentId}
+    background={slice?.primary?.background}
+    technologies={slice.primary.technologies}
+    title={slice?.primary?.title}
+    margin={slice?.primary?.margin}
+  />
 );
 
 export default RecommendedCourses;

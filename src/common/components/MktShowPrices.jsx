@@ -40,7 +40,7 @@ const BulletComponent = ({ bullet, isString }) => (
   </Box>
 );
 
-const MktShowPrices = ({ id, title, description, plan, bullets }) => {
+const MktShowPrices = ({ id, title, description, plan, bullets, ...rest }) => {
   const { t } = useTranslation('profile');
   const router = useRouter();
   const [offerProps, setOfferProps] = useState({});
@@ -62,7 +62,7 @@ const MktShowPrices = ({ id, title, description, plan, bullets }) => {
   };
 
   return offerProps?.slug ? (
-    <Container display="flex" maxW="container.xl" px="10px" id={id} padding="32px" gridGap="35px" flexDirection={{ base: 'column', lg: 'row' }}>
+    <Container display="flex" maxW="container.xl" px="10px" id={id} padding="32px" gridGap="35px" flexDirection={{ base: 'column', lg: 'row' }} {...rest}>
       <Flex flex={0.5} flexDirection="column" margin="1rem 0 0 0" gridGap="8px">
         {title && (
           <Heading as="h2" size="l" margin="0 0 1.5rem 0">

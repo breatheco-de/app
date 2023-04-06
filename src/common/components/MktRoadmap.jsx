@@ -11,7 +11,7 @@ import Heading from './Heading';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
 
-const MktRoadmap = ({ id, title, course }) => {
+const MktRoadmap = ({ id, title, course, ...rest }) => {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [data, setData] = useState([]);
   const { fontColor3 } = useStyle();
@@ -35,13 +35,13 @@ const MktRoadmap = ({ id, title, course }) => {
       px="10px"
       id={id}
       maxW="container.xl"
-      m="3rem auto 3rem auto"
       display="flex"
       flexDirection={{ base: 'column', md: 'row' }}
       height="auto"
       position="relative"
       alignItems="center"
       gridGap={51}
+      {...rest}
     >
       <Box
         display={{ base: 'none', md: 'inherit' }}

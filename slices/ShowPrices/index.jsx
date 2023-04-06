@@ -14,6 +14,7 @@ const ShowPrices = ({ slice }) => (
     description={slice.primary.description}
     plan={slice?.primary?.plan || 'coding-introduction-free-trial'}
     bullets={slice.primary.bullets}
+    margin={slice?.primary?.margin || ''}
   />
 );
 ShowPrices.propTypes = {

@@ -136,6 +136,16 @@ interface MarkdownSliceDefaultPrimary {
      *
      */
     enable_table_of_content: prismicT.BooleanField;
+    /**
+     * Margin field in *Markdown → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: markdown.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
 }
 /**
  * Default variation for Markdown Slice
@@ -405,6 +415,16 @@ interface PartnersSliceDefaultPrimary {
      *
      */
     images: prismicT.RichTextField;
+    /**
+     * Margin field in *Partners → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: partners.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
 }
 /**
  * Default variation for Partners Slice
@@ -533,6 +553,16 @@ interface RoadMapSliceDefaultPrimary {
      *
      */
     title: prismicT.KeyTextField;
+    /**
+     * Margin field in *RoadMap → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: road_map.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
 }
 /**
  * Default variation for RoadMap Slice
@@ -612,6 +642,16 @@ interface ShowPricesSliceDefaultPrimary {
      *
      */
     bullets: prismicT.RichTextField;
+    /**
+     * Margin field in *ShowPrices → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: show_prices.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
 }
 /**
  * Default variation for ShowPrices Slice
@@ -661,6 +701,16 @@ interface TechnologiesSliceDefaultPrimary {
      *
      */
     endpoint: prismicT.KeyTextField;
+    /**
+     * Margin field in *Technologies → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: technologies.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
 }
 /**
  * Default variation for Technologies Slice
@@ -720,6 +770,16 @@ interface TestimonialsSliceDefaultPrimary {
      *
      */
     endpoint: prismicT.KeyTextField;
+    /**
+     * Margin field in *Testimonials → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: testimonials.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
 }
 /**
  * Default variation for Testimonials Slice
@@ -819,6 +879,16 @@ interface TitleIntroductionSliceDefaultPrimary {
      *
      */
     image: prismicT.ImageField<never>;
+    /**
+     * Margin field in *TitleIntroduction → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: title_introduction.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
 }
 /**
  * Default variation for TitleIntroduction Slice
@@ -949,6 +1019,16 @@ interface TwoColumnSliceDefaultPrimary {
      *
      */
     image_position: prismicT.SelectField<"left" | "right">;
+    /**
+     * Margin field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: two_column.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
 }
 /**
  * Default variation for TwoColumn Slice

@@ -17,6 +17,11 @@
         "__TYPE__": "FieldContent",
         "type": "Text",
         "value": "javascript,python"
+      },
+      "margin": {
+        "__TYPE__": "FieldContent",
+        "value": "condition",
+        "type": "Text"
       }
     },
     "items": [

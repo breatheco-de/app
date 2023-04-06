@@ -10,16 +10,17 @@ import MktTwoColumnSideImage from '../../src/common/components/MktTwoColumnSideI
 const TwoColumn = ({ slice }) => (
   <MktTwoColumnSideImage
     id={slice?.primary?.id_key}
-    title={slice.primary.title}
-    subTitle={slice.primary.subtitle}
+    title={slice?.primary?.title}
+    subTitle={slice?.primary?.subtitle}
     slice={slice}
-    background={slice.primary.background_color}
-    linkButton={slice.primary.link_button}
-    buttonUrl={slice.primary.button_url.url}
-    buttonLabel={slice.primary.button_label}
-    imageUrl={slice.primary?.image?.url}
-    imageAlt={slice.primary?.image?.alt}
-    imagePosition={slice.primary.image_position}
+    background={slice?.primary?.background_color}
+    linkButton={slice?.primary?.link_button}
+    buttonUrl={slice?.primary?.button_url.url}
+    buttonLabel={slice?.primary?.button_label}
+    imageUrl={slice?.primary?.image?.url}
+    imageAlt={slice?.primary?.image?.alt}
+    imagePosition={slice?.primary?.image_position}
+    margin={slice?.primary?.margin || ''}
   />
 );
 

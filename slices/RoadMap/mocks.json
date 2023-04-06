@@ -16,7 +16,12 @@
       "course_slug": {
         "__TYPE__": "FieldContent",
         "type": "Text",
-        "value": "javascript-crash-course"
+        "value": "start-coding-using-javascript"
+      },
+      "margin": {
+        "__TYPE__": "FieldContent",
+        "value": "fuel",
+        "type": "Text"
       }
     },
     "items": [
