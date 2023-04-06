@@ -91,8 +91,8 @@ const PublicCourseCard = ({
           margin="10px auto 0 auto"
           display="block"
           width="50%"
-          color="#FFF"
-          textDecoration="none"
+          color="#FFF !important"
+          textDecoration="none !important"
         >
           {stTranslation?.[lang]?.common['learn-more'] || t('common:learn-more')}
         </Link>

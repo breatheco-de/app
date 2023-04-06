@@ -14,6 +14,7 @@ const MktOneColumn = ({
   title,
   subTitle,
   description,
+  paddingMd,
   buttonUrl,
   buttonLabel,
   linkButton,
@@ -78,6 +79,7 @@ const MktOneColumn = ({
                   lineHeight="14px"
                   margin="15px 0"
                   color={fontColor2}
+                  padding={{ base: '0', md: paddingMd }}
                 >
                   {children}
                 </Text>
@@ -115,6 +117,7 @@ MktOneColumn.propTypes = {
   title: PropTypes.string,
   subTitle: PropTypes.string,
   description: PropTypes.string,
+  paddingMd: PropTypes.string,
   buttonUrl: PropTypes.string,
   buttonLabel: PropTypes.string,
   linkButton: PropTypes.bool,
@@ -127,6 +130,7 @@ MktOneColumn.defaultProps = {
   title: null,
   subTitle: null,
   description: null,
+  paddingMd: null,
   buttonUrl: null,
   buttonLabel: null,
   linkButton: false,

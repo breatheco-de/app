@@ -19,8 +19,10 @@
           {
             "type": "paragraph",
             "content": {
-              "text": "Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi."
-            }
+              "text": "Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi. Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi. Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi. Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi. Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi.",
+              "spans": []
+            },
+            "direction": "ltr"
           }
         ]
       },
@@ -94,6 +96,11 @@
         "__TYPE__": "FieldContent",
         "value": "successful",
         "type": "Text"
+      },
+      "paddingMd": {
+        "__TYPE__": "FieldContent",
+        "type": "Text",
+        "value": "0 70px"
       }
     },
     "items": [

@@ -30,11 +30,12 @@ const OneColumn = ({ slice }) => {
     <MktOneColumn
       id={slice?.primary?.id_key}
       slice={slice}
-      title={slice?.primary?.title}
-      subTitle={slice?.primary?.subtitle}
-      linkButton={slice?.primary?.link_button}
-      buttonUrl={slice?.primary?.button_url?.url}
-      buttonLabel={slice?.primary?.button_label}
+      title={slice.primary.title}
+      subTitle={slice.primary.subtitle}
+      paddingMd={slice.primary.paddingMd}
+      linkButton={slice.primary.link_button}
+      buttonUrl={slice.primary.button_url.url}
+      buttonLabel={slice.primary.button_label}
       kpiList={items}
       margin={slice?.primary?.margin || ''}
     />

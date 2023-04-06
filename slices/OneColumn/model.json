@@ -135,6 +135,13 @@
             "placeholder": ""
           }
         },
+        "paddingMd": {
+          "type": "Text",
+          "config": {
+            "label": "padding-md",
+            "placeholder": ""
+          }
+        },
         "margin": {
           "type": "Text",
           "config": {
