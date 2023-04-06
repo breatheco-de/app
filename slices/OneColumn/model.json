@@ -134,6 +134,13 @@
             "label": "background",
             "placeholder": ""
           }
+        },
+        "paddingMd": {
+          "type": "Text",
+          "config": {
+            "label": "padding-md",
+            "placeholder": ""
+          }
         }
       },
       "items": {},

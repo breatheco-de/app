@@ -336,6 +336,16 @@ interface OneColumnSliceDefaultPrimary {
      *
      */
     background: prismicT.ColorField;
+    /**
+     * padding-md field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.paddingMd
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    paddingMd: prismicT.KeyTextField;
 }
 /**
  * Default variation for OneColumn Slice
