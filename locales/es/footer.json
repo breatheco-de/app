@@ -7,17 +7,9 @@
     "error": "Algo ha salido mal"
   },
   "newsletterSucces": "¡Genial! Te has unido exitosamente, Mantengase al pendiente para más información pronto 😁",
-  "privacy": {
-    "label": "Política de privacidad",
-    "href": "#"
-  },
-  "cookies": {
-    "label": "Política de Cookies",
-    "href": "#"
-  },
   "terms": {
     "label": "Términos y condiciones",
-    "href": "#"
+    "href": "/es/terms-and-conditions"
   },
   "company":{
     "title":"EMPRESA",
@@ -61,12 +53,12 @@
     "title":"COMUNIDAD DE 4GEEKS",
     "items":[
       {
-        "label": "Talleres y eventos",
-        "href": "#"
+        "label": "Workshops y eventos",
+        "href": "/es/workshops"
       },
       {
         "label": "Mentorías en vivo",
-        "href": "#"
+        "href": "/es/mentorships"
       },
       {
         "label": "Aprendizaje social y en vivo",
@@ -74,7 +66,7 @@
       },
       {
         "label": "¿Código de conducta?",
-        "href": "#"
+        "href": "/es/codigo-de-conducta"
       }
     ]
   },
