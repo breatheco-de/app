@@ -10,16 +10,25 @@ import PublicCourseCard from './PublicCourseCard';
 import useStyle from '../hooks/useStyle';
 
 const defaultEndpoint = '/v1/marketing/course';
+const coursesLimit = 2;
 
-const MktRecommendedCourses = ({ id, endpoint, background, title }) => {
+const MktRecommendedCourses = ({ id, background, title, technologies }) => {
   const [courses, setCourses] = useState([]);
   const { hexColor, featuredColor, fontColor } = useStyle();
 
   const getCourses = async () => {
     try {
-      const res = await fetch(`${process.env.BREATHECODE_HOST}${typeof endpoint === 'string' && endpoint !== '' ? endpoint : defaultEndpoint}`);
+      if (typeof technologies === 'string' && technologies.length > 0) {
+        const res = await fetch(`${process.env.BREATHECODE_HOST}${defaultEndpoint}?technologies=${technologies}`);
+        const data = await res.json();
+        if (data.length > 0) {
+          setCourses(data.filter((course) => course.course_translation).slice(0, coursesLimit));
+          return;
+        }
+      }
+      const res = await fetch(`${process.env.BREATHECODE_HOST}${defaultEndpoint}`);
       const data = await res.json();
-      setCourses(data.filter((course) => course.course_translation).slice(0, 3));
+      setCourses(data.filter((course) => course.course_translation).slice(0, coursesLimit));
     } catch (e) {
       console.log(e);
     }
@@ -33,9 +42,9 @@ const MktRecommendedCourses = ({ id, endpoint, background, title }) => {
 
   return courses.length > 0 && (
     <>
-      <Box flexWrap={{ base: 'wrap', md: 'nowrap' }} id={id} borderRadius="13px" padding="20px" background={background || featuredColor} display="flex">
+      <Box flexWrap={{ base: 'wrap', xl: 'nowrap' }} id={id} borderRadius="13px" padding="20px" background={background || featuredColor} display="flex">
         {title && (
-          <Box flexShrink="2" maxWidth="350px">
+          <Box flexShrink="1" minWidth="170px">
             <Heading
               as="h2"
               size="30px"
@@ -47,7 +56,7 @@ const MktRecommendedCourses = ({ id, endpoint, background, title }) => {
             </Heading>
           </Box>
         )}
-        <Box width="100%" justifyContent="space-evenly" display="flex" gridGap="10px" flexWrap="wrap">
+        <Box width="100%" flexShrink="0.7" flexDirection="row-reverse" justifyContent="space-around" display="flex" gridGap="10px" flexWrap={{ base: 'wrap', lg: 'nowrap' }}>
           {courses.map((course) => (
             <PublicCourseCard
               icon_url={course.icon_url}
@@ -73,14 +82,14 @@ MktRecommendedCourses.propTypes = {
   id: PropTypes.string,
   background: PropTypes.string,
   title: PropTypes.string,
-  endpoint: PropTypes.string,
+  technologies: PropTypes.string,
 };
 
 MktRecommendedCourses.defaultProps = {
   id: null,
   background: null,
   title: null,
-  endpoint: '/v1/marketing/course',
+  technologies: null,
 };
 
 export default MktRecommendedCourses;

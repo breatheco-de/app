@@ -435,16 +435,6 @@ interface RecommendedCoursesSliceDefaultPrimary {
      */
     componentId: prismicT.KeyTextField;
     /**
-     * endpoint field in *RecommendedCourses → Primary*
-     *
-     * - **Field Type**: Text
-     * - **Placeholder**: *None*
-     * - **API ID Path**: recommended_courses.primary.endpoint
-     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
-     *
-     */
-    endpoint: prismicT.KeyTextField;
-    /**
      * background field in *RecommendedCourses → Primary*
      *
      * - **Field Type**: Text
@@ -464,6 +454,16 @@ interface RecommendedCoursesSliceDefaultPrimary {
      *
      */
     title: prismicT.KeyTextField;
+    /**
+     * technologies field in *RecommendedCourses → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: recommended_courses.primary.technologies
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    technologies: prismicT.KeyTextField;
 }
 /**
  * Default variation for RecommendedCourses Slice
