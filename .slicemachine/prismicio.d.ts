@@ -347,15 +347,15 @@ interface OneColumnSliceDefaultPrimary {
      */
     background: prismicT.ColorField;
     /**
-     * Margin field in *OneColumn → Primary*
+     * padding-md field in *OneColumn → Primary*
      *
      * - **Field Type**: Text
-     * - **Placeholder**: top, right, bottom, left
-     * - **API ID Path**: one_column.primary.margin
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.paddingMd
      * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
      *
      */
-    margin: prismicT.KeyTextField;
+    paddingMd: prismicT.KeyTextField;
 }
 /**
  * Default variation for OneColumn Slice
@@ -465,16 +465,6 @@ interface RecommendedCoursesSliceDefaultPrimary {
      */
     componentId: prismicT.KeyTextField;
     /**
-     * endpoint field in *RecommendedCourses → Primary*
-     *
-     * - **Field Type**: Text
-     * - **Placeholder**: *None*
-     * - **API ID Path**: recommended_courses.primary.endpoint
-     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
-     *
-     */
-    endpoint: prismicT.KeyTextField;
-    /**
      * background field in *RecommendedCourses → Primary*
      *
      * - **Field Type**: Text
@@ -495,15 +485,15 @@ interface RecommendedCoursesSliceDefaultPrimary {
      */
     title: prismicT.KeyTextField;
     /**
-     * Margin field in *RecommendedCourses → Primary*
+     * technologies field in *RecommendedCourses → Primary*
      *
      * - **Field Type**: Text
-     * - **Placeholder**: top, right, bottom, left
-     * - **API ID Path**: recommended_courses.primary.margin
+     * - **Placeholder**: *None*
+     * - **API ID Path**: recommended_courses.primary.technologies
      * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
      *
      */
-    margin: prismicT.KeyTextField;
+    technologies: prismicT.KeyTextField;
 }
 /**
  * Default variation for RecommendedCourses Slice

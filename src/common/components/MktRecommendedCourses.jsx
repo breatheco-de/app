@@ -9,16 +9,25 @@ import PublicCourseCard from './PublicCourseCard';
 import useStyle from '../hooks/useStyle';
 
 const defaultEndpoint = '/v1/marketing/course';
+const coursesLimit = 2;
 
-const MktRecommendedCourses = ({ id, endpoint, background, title, ...rest }) => {
+const MktRecommendedCourses = ({ id, technologies, background, title, ...rest }) => {
   const [courses, setCourses] = useState([]);
   const { hexColor, featuredColor, fontColor } = useStyle();
 
   const getCourses = async () => {
     try {
-      const res = await fetch(`${process.env.BREATHECODE_HOST}${typeof endpoint === 'string' && endpoint !== '' ? endpoint : defaultEndpoint}`);
+      if (typeof technologies === 'string' && technologies.length > 0) {
+        const res = await fetch(`${process.env.BREATHECODE_HOST}${defaultEndpoint}?technologies=${technologies}`);
+        const data = await res.json();
+        if (data.length > 0) {
+          setCourses(data.filter((course) => course.course_translation).slice(0, coursesLimit));
+          return;
+        }
+      }
+      const res = await fetch(`${process.env.BREATHECODE_HOST}${defaultEndpoint}`);
       const data = await res.json();
-      setCourses(data.filter((course) => course.course_translation).slice(0, 3));
+      setCourses(data.filter((course) => course.course_translation).slice(0, coursesLimit));
     } catch (e) {
       console.log(e);
     }
@@ -29,38 +38,40 @@ const MktRecommendedCourses = ({ id, endpoint, background, title, ...rest }) => 
   }, []);
 
   return courses.length > 0 && (
-    <Box flexWrap={{ base: 'wrap', md: 'nowrap' }} id={id} borderRadius="13px" padding="20px" background={background || featuredColor} display="flex" {...rest}>
-      {title && (
-        <Box flexShrink="2" maxWidth="350px">
-          <Heading
-            as="h2"
-            size="30px"
-            fontWeight="700"
-            color={fontColor}
-          >
-            {title}
-            <Icon icon="longArrowRight" style={{ margin: '10px 0' }} color={hexColor.blueDefault} width="80px" />
-          </Heading>
-        </Box>
-      )}
-      <Box width="100%" justifyContent="space-evenly" display="flex" gridGap="10px" flexWrap="wrap">
-        {courses.map((course) => (
-          <PublicCourseCard
-            icon_url={course.icon_url}
+    <>
+      <Box flexWrap={{ base: 'wrap', xl: 'nowrap' }} id={id} borderRadius="13px" padding="20px" background={background || featuredColor} display="flex" {...rest}>
+        {title && (
+          <Box flexShrink="1" minWidth="170px">
+            <Heading
+              as="h2"
+              size="30px"
+              fontWeight="700"
+              color={fontColor}
+            >
+              {title}
+              <Icon icon="longArrowRight" style={{ margin: '10px 0' }} color={hexColor.blueDefault} width="80px" />
+            </Heading>
+          </Box>
+        )}
+        <Box width="100%" flexShrink="0.7" flexDirection="row-reverse" justifyContent="space-around" display="flex" gridGap="10px" flexWrap={{ base: 'wrap', lg: 'nowrap' }}>
+          {courses.map((course) => (
+            <PublicCourseCard
+              icon_url={course.icon_url}
+              iconBackground="#25BF6C"
+              programName={course.course_translation.title}
+              programSlug={course.slug}
+              programDescription={course.course_translation.description}
+            />
+          ))}
+          {/* <PublicCourseCard
+            icon_url="https://storage.googleapis.com/breathecode/logos-workshops/javascript-event-type.svg"
             iconBackground="#25BF6C"
-            programName={course.course_translation.title}
-            programSlug={course.slug}
-            programDescription={course.course_translation.description}
-          />
-        ))}
-        {/* <PublicCourseCard
-          icon_url="https://storage.googleapis.com/breathecode/logos-workshops/javascript-event-type.svg"
-          iconBackground="#25BF6C"
-          programName="Curso Interactivo de Javascript"
-          programDescription={dummyText}
-        /> */}
+            programName="Curso Interactivo de Javascript"
+            programDescription={dummyText}
+          /> */}
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 
@@ -68,14 +79,14 @@ MktRecommendedCourses.propTypes = {
   id: PropTypes.string,
   background: PropTypes.string,
   title: PropTypes.string,
-  endpoint: PropTypes.string,
+  technologies: PropTypes.string,
 };
 
 MktRecommendedCourses.defaultProps = {
   id: null,
   background: null,
   title: null,
-  endpoint: '/v1/marketing/course',
+  technologies: null,
 };
 
 export default MktRecommendedCourses;

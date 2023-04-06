@@ -8,15 +8,15 @@
         "type": "Text",
         "value": "recommended-courses"
       },
-      "endpoint": {
-        "__TYPE__": "FieldContent",
-        "type": "Text",
-        "value": "/v1/marketing/course"
-      },
       "title": {
         "__TYPE__": "FieldContent",
         "type": "Text",
         "value": "Courses related to this article"
+      },
+      "technologies": {
+        "__TYPE__": "FieldContent",
+        "type": "Text",
+        "value": "javascript,python"
       },
       "margin": {
         "__TYPE__": "FieldContent",

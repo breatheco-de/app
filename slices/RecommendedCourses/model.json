@@ -18,13 +18,6 @@
             "placeholder": ""
           }
         },
-        "endpoint": {
-          "type": "Text",
-          "config": {
-            "label": "endpoint",
-            "placeholder": ""
-          }
-        },
         "background": {
           "type": "Text",
           "config": {
@@ -36,6 +29,13 @@
           "type": "Text",
           "config": {
             "label": "title",
+            "placeholder": ""
+          }
+        },
+        "technologies": {
+          "type": "Text",
+          "config": {
+            "label": "technologies",
             "placeholder": ""
           }
         },

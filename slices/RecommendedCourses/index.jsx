@@ -10,8 +10,8 @@ import MktRecommendedCourses from '../../src/common/components/MktRecommendedCou
 const RecommendedCourses = ({ slice }) => (
   <MktRecommendedCourses
     id={slice?.primary?.componentId}
-    endpoint={slice?.primary?.endpoint}
     background={slice?.primary?.background}
+    technologies={slice.primary.technologies}
     title={slice?.primary?.title}
     margin={slice?.primary?.margin}
   />
