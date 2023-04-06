@@ -45,6 +45,7 @@ const ChooseYourClass = ({
       saas: true,
       upcoming: true,
       plan: planFormated,
+      never_ends: false,
     })
       .cohorts()
       .then(({ data }) => {
