@@ -11,6 +11,7 @@ const TitleIntroduction = ({ slice }) => (
   <IntroductionSection
     slice={slice}
     margin={slice?.primary?.margin || '0 auto'}
+    gridGap={slice?.primary?.grid_gap || '24px'}
   />
 );
 TitleIntroduction.propTypes = {

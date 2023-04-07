@@ -356,6 +356,16 @@ interface OneColumnSliceDefaultPrimary {
      *
      */
     paddingMd: prismicT.KeyTextField;
+    /**
+     * Margin field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: one_column.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
 }
 /**
  * Default variation for OneColumn Slice
@@ -494,6 +504,16 @@ interface RecommendedCoursesSliceDefaultPrimary {
      *
      */
     technologies: prismicT.KeyTextField;
+    /**
+     * Margin field in *RecommendedCourses → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: recommended_courses.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
 }
 /**
  * Default variation for RecommendedCourses Slice
@@ -889,6 +909,16 @@ interface TitleIntroductionSliceDefaultPrimary {
      *
      */
     margin: prismicT.KeyTextField;
+    /**
+     * Grid gap field in *TitleIntroduction → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: Space between columns in pixels
+     * - **API ID Path**: title_introduction.primary.grid_gap
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    grid_gap: prismicT.KeyTextField;
 }
 /**
  * Default variation for TitleIntroduction Slice
