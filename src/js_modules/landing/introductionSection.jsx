@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
-  Box, useColorModeValue, Text, Button, Container,
+  Box, useColorModeValue, Text, Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { PrismicRichText } from '@prismicio/react';
@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { MotionBox } from '../../common/components/Animated';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
+import GridContainer from '../../common/components/GridContainer';
 
 const IntroductionSection = ({
   data, slice, ...rest
@@ -17,17 +18,14 @@ const IntroductionSection = ({
   const colors = useColorModeValue('#000', '#fff');
 
   return (
-    // <Container maxW="container.xl" px="10px"></Container>
-    <Container
-      maxW="container.xl"
+    <GridContainer
+      gridTemplateColumns="repeat(10, 1fr)"
+      gridColumn="2 / span 8"
       px="10px"
       id={slice?.primary?.id_key || ''}
-      display="flex"
-      flexDirection={{ base: 'column', md: 'row' }}
-      gridGap="10px"
       {...rest}
     >
-      <Box flex={0.6}>
+      <Box display={{ base: 'block', md: 'grid' }} gridColumn="2 / span 5">
         <Heading as="span" size="xl" fontWeight="700">
           {slice?.primary?.title ? (
             <>
@@ -104,7 +102,7 @@ const IntroductionSection = ({
         )}
 
         {slice?.primary?.buttontext ? (
-          <Button variant="default" fontSize="13px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router?.push('#pricing')}>
+          <Button variant="default" width="fit-content" fontSize="13px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router?.push('#pricing')}>
             <PrismicRichText field={slice?.primary?.buttontext} />
           </Button>
         ) : (
@@ -140,9 +138,9 @@ const IntroductionSection = ({
         </Box>
       </Box>
 
-      <Box flex={0.4} display={{ base: 'none', md: 'initial' }}>
+      <Box display={{ base: 'block', md: 'grid' }} gridColumn="7 / span 3" alignContent="center">
         {slice?.primary?.image?.url ? (
-          <Box display="flex" justifyContent="end">
+          <Box display="flex" height="fit-content" justifyContent="center">
             <Image
               src={slice.primary.image.url}
               alt={slice.primary.image.alt}
@@ -167,7 +165,7 @@ const IntroductionSection = ({
           </video>
         )}
       </Box>
-    </Container>
+    </GridContainer>
   );
 };
 
