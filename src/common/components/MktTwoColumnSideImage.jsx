@@ -1,13 +1,13 @@
-/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
-  Box, Container, Img,
+  Box, Img,
 } from '@chakra-ui/react';
-import { PrismicRichText } from '@prismicio/react';
 import Heading from './Heading';
 import Text from './Text';
 import Link from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
+import GridContainer from './GridContainer';
+import PrismicTextComponent from './PrismicTextComponent';
 
 const MktTwoColumnSideImage = ({
   id,
@@ -27,8 +27,8 @@ const MktTwoColumnSideImage = ({
 }) => {
   const { fontColor2, hexColor, backgroundColor } = useStyle();
   const flexDirection = {
-    right: 'row-reverse',
-    left: 'row',
+    right: 'rtl',
+    left: 'ltr',
   };
 
   const imageProps = slice && slice?.primary?.image?.dimensions;
@@ -39,19 +39,21 @@ const MktTwoColumnSideImage = ({
       background={background || backgroundColor}
       {...rest}
     >
-      <Container
-        display="flex"
-        flexWrap={{ base: 'wrap', md: 'nowrap' }}
-        maxW="container.xl"
+      <GridContainer
+        gridTemplateColumns="repeat(10, 1fr)"
+        id={id}
+        px="10px"
         border={border}
         alignItems="center"
         borderRadius="12px"
         padding="20px 10px"
         gridGap="20px"
-        flexDirection={flexDirection[imagePosition]}
         marginTop="20px"
+        style={{
+          direction: flexDirection[imagePosition],
+        }}
       >
-        <Box width={{ base: '100% 0', md: '50%' }}>
+        <Box display={{ base: 'block', md: 'grid' }} style={{ direction: 'initial' }} gridColumn="2 / span 4">
           <Img
             boxSize="100%"
             margin="0 auto"
@@ -64,7 +66,7 @@ const MktTwoColumnSideImage = ({
             width={imageProps?.width}
           />
         </Box>
-        <Box width={{ base: '100% 0', md: '50%' }}>
+        <Box display={{ base: 'block', md: 'grid' }} style={{ direction: 'initial' }} gridColumn="6 / span 4">
           <Heading marginBottom="15px" as="h4" fontSize="14px" color={hexColor.blueDefault}>
             {subTitle}
           </Heading>
@@ -72,20 +74,8 @@ const MktTwoColumnSideImage = ({
             {title}
           </Heading>
           {slice.primary.description ? (
-            <PrismicRichText
+            <PrismicTextComponent
               field={slice?.primary?.description}
-              components={{
-                paragraph: ({ children }) => (
-                  <Text
-                    fontSize="sm"
-                    lineHeight="18px"
-                    margin="15px 0"
-                    color={fontColor2}
-                  >
-                    {children}
-                  </Text>
-                ),
-              }}
             />
           ) : (
             <Text
@@ -110,7 +100,7 @@ const MktTwoColumnSideImage = ({
             </Link>
           )}
         </Box>
-      </Container>
+      </GridContainer>
     </Box>
   );
 };

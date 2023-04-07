@@ -12,7 +12,7 @@ const Technologies = ({ slice }) => (
   <MktTechnologies
     id={slice?.primary?.id_key}
     endpoint={slice?.primary?.endpoint}
-    margin={slice?.primary?.margin || '20px 0 0 0'}
+    margin={slice?.primary?.margin || '20px auto 0 auto'}
   />
 );
 

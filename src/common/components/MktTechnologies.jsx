@@ -1,8 +1,9 @@
 import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Img, Button, useColorModeValue, Container } from '@chakra-ui/react';
+import { Box, Img, Button, useColorModeValue } from '@chakra-ui/react';
 import axios from 'axios';
 import Icon from './Icon';
+import GridContainer from './GridContainer';
 
 const defaultEndpoint = '/v1/registry/technology?sort_priority=1';
 
@@ -20,71 +21,69 @@ const MktTechnologies = ({ id, endpoint, ...rest }) => {
   }, []);
 
   return (
-    <Container
-      maxW="container.xl"
-      px="10px"
+    <GridContainer
+      gridTemplateColumns="repeat(10, 1fr)"
       id={id}
-      background={background}
-      width="100%"
-      position="relative"
-      padding={{ base: '5px 10px', lg: '5px 20px' }}
+      px="10px"
       {...rest}
     >
-      <Button
-        zIndex="10"
-        transform="rotate(180deg)"
-        padding="0 5px"
-        width="20px"
-        height="25px"
-        position="absolute"
-        top="50%"
-        marginTop="-12.5px"
-        left={{ base: '5px', md: '15px' }}
-        minWidth="none"
-        onClick={() => {
-          setIndex(index >= technologies.length - 1 ? 0 : index + 1);
-          carousel.current.scrollBy(-200, 0);
-        }}
-      >
-        <Icon icon="arrowRight" width="5px" height="10px" />
-      </Button>
-      <Button
-        zIndex="10"
-        padding="0 5px"
-        width="20px"
-        height="25px"
-        position="absolute"
-        top="50%"
-        marginTop="-12.5px"
-        right={{ base: '5px', md: '15px' }}
-        minWidth="none"
-        onClick={() => {
-          setIndex(index >= technologies.length - 1 ? 0 : index + 1);
-          carousel.current.scrollBy(200, 0);
-        }}
-      >
-        <Icon icon="arrowRight" width="5px" height="10px" />
-      </Button>
-      <Box
-        ref={carousel}
-        width="100%"
-        display="flex"
-        justifyContent={{ base: 'space-between', lg: 'space-around' }}
-        overflowX="hidden"
-        gridGap="15px"
-        style={{ scrollBehavior: 'smooth' }}
-      >
-        {technologies.map((tech, i) => i < limit && (
-          <Img
-            // opacity={i === index ? '1' : '0.3'}
-            key={tech.id}
-            src={tech.icon_url}
-            height="60px"
-            width="60px"
-          />
-        ))}
+      <Box display={{ base: 'block', md: 'grid' }} gridColumn="2 / span 8" position="relative" background={background} padding={{ base: '5px 10px', lg: '5px 20px' }}>
+        <Button
+          zIndex="10"
+          transform="rotate(180deg)"
+          padding="0 5px"
+          width="20px"
+          height="25px"
+          position="absolute"
+          top="50%"
+          marginTop="-12.5px"
+          left={{ base: '5px', md: '15px' }}
+          minWidth="none"
+          onClick={() => {
+            setIndex(index >= technologies.length - 1 ? 0 : index + 1);
+            carousel.current.scrollBy(-200, 0);
+          }}
+        >
+          <Icon icon="arrowRight" width="5px" height="10px" />
+        </Button>
+        <Button
+          zIndex="10"
+          padding="0 5px"
+          width="20px"
+          height="25px"
+          position="absolute"
+          top="50%"
+          marginTop="-12.5px"
+          right={{ base: '5px', md: '15px' }}
+          minWidth="none"
+          onClick={() => {
+            setIndex(index >= technologies.length - 1 ? 0 : index + 1);
+            carousel.current.scrollBy(200, 0);
+          }}
+        >
+          <Icon icon="arrowRight" width="5px" height="10px" />
+        </Button>
+        <Box
+          ref={carousel}
+          width="100%"
+          display="flex"
+          justifyContent={{ base: 'space-between', lg: 'space-around' }}
+          overflowX="hidden"
+          gridGap="15px"
+          style={{ scrollBehavior: 'smooth' }}
+        >
+          {technologies.map((tech, i) => i < limit && (
+            <Img
+              // opacity={i === index ? '1' : '0.3'}
+              key={tech.id}
+              src={tech.icon_url}
+              height="60px"
+              width="60px"
+            />
+          ))}
+        </Box>
       </Box>
-    </Container>
+    </GridContainer>
   );
 };
 
