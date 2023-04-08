@@ -97,6 +97,13 @@
             "label": "Margin",
             "placeholder": "top, right, bottom, left"
           }
+        },
+        "grid_gap": {
+          "type": "Text",
+          "config": {
+            "label": "Grid gap",
+            "placeholder": ""
+          }
         }
       },
       "items": {},

@@ -1,13 +1,14 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
-  Box, Container, Divider,
+  Box, Divider,
 } from '@chakra-ui/react';
-import { PrismicRichText } from '@prismicio/react';
 import Heading from './Heading';
 import Text from './Text';
 import Link from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
+import GridContainer from './GridContainer';
+import PrismicTextComponent from './PrismicTextComponent';
 
 const MktOneColumn = ({
   id,
@@ -54,11 +55,18 @@ const MktOneColumn = ({
   );
 
   return (
-    <Box id={id} padding="50px" textAlign="center" background={slice?.primary?.background} {...rest}>
-      <Container maxW="container.xl" px="10px">
-        <Heading marginBottom="15px" as="h4" fontSize="14px" color={hexColor.blueDefault}>
-          {subTitle}
-        </Heading>
+    <GridContainer
+      id={id}
+      gridTemplateColumns="repeat(10, 1fr)"
+      gridColumn="2 / span 8"
+      {...rest}
+    >
+      <Box display="grid" padding="50px" textAlign="center" justifyItems="center" gridGap="14px" background={slice?.primary?.background} style={{ direction: 'initial' }} gridColumn="2 / span 8" px="10px" borderRadius="3px">
+        {subTitle && (
+          <Heading marginBottom="15px" as="h4" fontSize="14px" color={hexColor.blueDefault}>
+            {subTitle}
+          </Heading>
+        )}
         {kpiList.length > 0 && (
           <Box gridGap="20px" flexWrap="wrap" marginBottom="15px" display="flex" justifyContent="center">
             {kpiList.map((kpi) => (
@@ -70,21 +78,9 @@ const MktOneColumn = ({
           {title}
         </Heading>
         {slice.primary.description ? (
-          <PrismicRichText
+          <PrismicTextComponent
             field={slice?.primary?.description}
-            components={{
-              paragraph: ({ children }) => (
-                <Text
-                  fontSize="sm"
-                  lineHeight="14px"
-                  margin="15px 0"
-                  color={fontColor2}
-                  padding={{ base: '0', md: paddingMd }}
-                >
-                  {children}
-                </Text>
-              ),
-            }}
+            margin={{ base: '0 20px', md: '0 6% 0 6%', lg: '0 20% 0 20%' }}
           />
         ) : (
           <Text
@@ -104,12 +100,13 @@ const MktOneColumn = ({
             href={buttonUrl}
             textAlign="center"
             display="inline-block"
+            margin="1rem 0 0 0"
           >
             {buttonLabel}
           </Link>
         )}
-      </Container>
-    </Box>
+      </Box>
+    </GridContainer>
   );
 };
 

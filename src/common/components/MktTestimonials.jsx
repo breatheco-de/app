@@ -1,10 +1,11 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
-  Box, Avatar, Container,
+  Box, Avatar,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import GridContainer from './GridContainer';
 import Heading from './Heading';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
@@ -71,30 +72,47 @@ const MktTestimonials = ({
   };
 
   return (
-    <Container maxW="container.xl" px="10px" id={id} padding="20px 0" textAlign="center" {...rest}>
-      {title && (
-        <Heading as="h2" size="m" marginBottom="20px">
-          {title}
-        </Heading>
-      )}
+    <GridContainer
+      gridTemplateColumns="repeat(10, 1fr)"
+      gridColumn="2 / span 8"
+      px="10px"
+      id={id}
+      {...rest}
+    >
       <Box
-        gridGap="20px"
-        flexWrap="wrap"
-        marginBottom="15px"
-        display="flex"
-        justifyContent="center"
+        display={{ base: 'block', md: 'grid' }}
+        gridColumn="2 / span 8"
+        flexDirection="column"
+        px="10px"
+        padding="20px 0"
+        textAlign="center"
+        width="100%"
+        {...rest}
       >
-        {testimonialsArray && testimonialsArray.map((testimonial) => (
-          <TestimonialBox
-            key={testimonial?.id}
-            picture={testimonial?.author?.profile?.avatar_url}
-            name={`${testimonial?.author?.first_name} ${testimonial?.author?.last_name}`}
-            rating={testimonial?.total_rating}
-            description={testimonial?.comments}
-          />
-        ))}
+        {title && (
+          <Heading as="h2" size="m" marginBottom="20px">
+            {title}
+          </Heading>
+        )}
+        <Box
+          gridGap="20px"
+          flexWrap="wrap"
+          marginBottom="15px"
+          display="flex"
+          justifyContent="center"
+        >
+          {testimonialsArray && testimonialsArray.map((testimonial) => (
+            <TestimonialBox
+              key={testimonial?.id}
+              picture={testimonial?.author?.profile?.avatar_url}
+              name={`${testimonial?.author?.first_name} ${testimonial?.author?.last_name}`}
+              rating={testimonial?.total_rating}
+              description={testimonial?.comments}
+            />
+          ))}
+        </Box>
       </Box>
-    </Container>
+    </GridContainer>
   );
 };
 

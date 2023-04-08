@@ -30,7 +30,6 @@
         ]
       },
       "image": {
-        "__TYPE__": "ImageContent",
         "origin": {
           "id": "main",
           "url": "https://images.unsplash.com/photo-1587905069134-008460d7a636",
@@ -48,6 +47,9 @@
           },
           "background": "transparent"
         },
+        "credits": null,
+        "alt": null,
+        "__TYPE__": "ImageContent",
         "thumbnails": {}
       },
       "button_label": {
@@ -79,6 +81,11 @@
       "margin": {
         "__TYPE__": "FieldContent",
         "value": "explore",
+        "type": "Text"
+      },
+      "grid_gap": {
+        "__TYPE__": "FieldContent",
+        "value": "silly",
         "type": "Text"
       }
     },
