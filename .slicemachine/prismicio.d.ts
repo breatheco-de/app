@@ -1059,6 +1059,16 @@ interface TwoColumnSliceDefaultPrimary {
      *
      */
     margin: prismicT.KeyTextField;
+    /**
+     * Grid gap field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: two_column.primary.grid_gap
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    grid_gap: prismicT.KeyTextField;
 }
 /**
  * Default variation for TwoColumn Slice

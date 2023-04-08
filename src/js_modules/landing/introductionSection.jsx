@@ -81,21 +81,21 @@ const IntroductionSection = ({
             </>
           )}
         </Heading>
-        {slice?.primary?.highlight ? (
+        {slice?.primary?.highlight.length > 0 ? (
           <Box as="strong" className="highlighted" fontSize="35px" display={{ base: 'initial', sm: 'none' }}>
             <PrismicRichText field={slice?.primary?.highlight} />
           </Box>
-        ) : (
+        ) : data?.highlight && (
           <Box as="strong" className="highlighted" fontSize="35px" display={{ base: 'initial', sm: 'none' }}>
             {data?.highlight}
           </Box>
         )}
 
-        {slice?.primary?.description ? (
+        {slice?.primary?.description.length > 0 ? (
           <Text fontSize="18px" fontWeight={700} pt="16px">
             <PrismicRichText field={slice?.primary?.description} />
           </Text>
-        ) : (
+        ) : data?.description && (
           <Text fontSize="18px" fontWeight={700} pt="16px">
             {data?.description}
           </Text>

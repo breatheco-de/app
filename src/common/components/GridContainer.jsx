@@ -1,7 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
-const GridContainer = ({ children, gridTemplateColumns, childrenStyle, gridColumn, ...rest }) => {
+const GridContainer = ({ children, gridTemplateColumns, childrenStyle, gridGap, gridColumn, ...rest }) => {
   const fraction = rest?.fraction || '0fr';
 
   return (
@@ -11,7 +11,7 @@ const GridContainer = ({ children, gridTemplateColumns, childrenStyle, gridColum
       margin={rest.margin || '0 auto'}
       padding={rest.padding || { base: '0 15px', md: '0' }}
       gridTemplateColumns={gridTemplateColumns || `${fraction} repeat(12, 1fr) ${fraction}`}
-      gridGap="24px"
+      gridGap={gridGap}
       {...rest}
     >
       {children}
@@ -24,6 +24,7 @@ GridContainer.propTypes = {
   gridTemplateColumns: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
   childrenStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
   gridColumn: PropTypes.string,
+  gridGap: PropTypes.string,
 };
 
 GridContainer.defaultProps = {
@@ -31,6 +32,7 @@ GridContainer.defaultProps = {
   gridTemplateColumns: null,
   childrenStyle: null,
   gridColumn: '',
+  gridGap: '24px',
 };
 
 export default GridContainer;

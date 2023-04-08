@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
+import PropTypes from 'prop-types';
 import MktTwoColumnSideImage from '../../src/common/components/MktTwoColumnSideImage';
 
 /**
@@ -21,7 +21,16 @@ const TwoColumn = ({ slice }) => (
     imageAlt={slice?.primary?.image?.alt}
     imagePosition={slice?.primary?.image_position}
     margin={slice?.primary?.margin || ''}
+    gridGap={slice?.primary?.grid_gap}
   />
 );
+
+TwoColumn.propTypes = {
+  slice: PropTypes.objectOf(PropTypes.any),
+};
+
+TwoColumn.defaultProps = {
+  slice: {},
+};
 
 export default TwoColumn;

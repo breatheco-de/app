@@ -23,6 +23,7 @@ const MktTwoColumnSideImage = ({
   imagePosition,
   slice,
   imageAlt,
+  gridGap,
   ...rest
 }) => {
   const { fontColor2, hexColor, backgroundColor } = useStyle();
@@ -46,8 +47,8 @@ const MktTwoColumnSideImage = ({
         border={border}
         alignItems="center"
         borderRadius="12px"
-        padding="20px 10px"
-        gridGap="20px"
+        padding={{ base: '20px 10px', md: '0' }}
+        gridGap={gridGap}
         marginTop="20px"
         style={{
           direction: flexDirection[imagePosition],
@@ -95,6 +96,7 @@ const MktTwoColumnSideImage = ({
               href={buttonUrl}
               textAlign="center"
               display="inline-block"
+              width="fit-content"
             >
               {buttonLabel}
             </Link>
@@ -119,6 +121,7 @@ MktTwoColumnSideImage.propTypes = {
   slice: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
   imageAlt: PropTypes.string,
   id: PropTypes.string,
+  gridGap: PropTypes.string,
 };
 
 MktTwoColumnSideImage.defaultProps = {
@@ -135,6 +138,7 @@ MktTwoColumnSideImage.defaultProps = {
   slice: null,
   imageAlt: '',
   id: '',
+  gridGap: '24px',
 };
 
 export default MktTwoColumnSideImage;

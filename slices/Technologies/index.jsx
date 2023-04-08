@@ -1,6 +1,5 @@
-/* eslint-disable linebreak-style */
-/* eslint-disable react/prop-types */
 import React from 'react';
+import PropTypes from 'prop-types';
 import MktTechnologies from '../../src/common/components/MktTechnologies';
 
 /**
@@ -15,5 +14,13 @@ const Technologies = ({ slice }) => (
     margin={slice?.primary?.margin || '20px auto 0 auto'}
   />
 );
+
+Technologies.propTypes = {
+  slice: PropTypes.objectOf(PropTypes.any),
+};
+
+Technologies.defaultProps = {
+  slice: {},
+};
 
 export default Technologies;

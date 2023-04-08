@@ -6,7 +6,7 @@ import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Heading from './Heading';
 
-const PrismicTextComponent = ({ field }) => {
+const PrismicTextComponent = ({ field, ...rest }) => {
   const { fontColor2 } = useStyle();
 
   return (
@@ -14,12 +14,12 @@ const PrismicTextComponent = ({ field }) => {
       field={field}
       components={{
         heading2: ({ children }) => (
-          <Heading size="xl">
+          <Heading size="xl" {...rest}>
             {children}
           </Heading>
         ),
         list: ({ children }) => (
-          <UnorderedList margin="0 1.5em">
+          <UnorderedList margin="0 1.5em" {...rest}>
             {children}
           </UnorderedList>
         ),
@@ -29,6 +29,7 @@ const PrismicTextComponent = ({ field }) => {
             lineHeight="18px"
             margin="15px 0"
             color={fontColor2}
+            {...rest}
           >
             {children}
           </ListItem>
@@ -39,6 +40,7 @@ const PrismicTextComponent = ({ field }) => {
             lineHeight="18px"
             margin="15px 0"
             color={fontColor2}
+            {...rest}
           >
             {children}
           </Text>
