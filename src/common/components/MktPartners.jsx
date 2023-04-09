@@ -56,7 +56,6 @@ const MktPartners = ({ id, title, images, ...rest }) => {
         px={{ base: '10px', md: '0' }}
         width="100%"
         overflowX="hidden"
-        {...rest}
       >
         <motion.div
           width="100%"
