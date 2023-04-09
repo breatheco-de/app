@@ -48,7 +48,7 @@ const MktPartners = ({ id, title, images, ...rest }) => {
         display={{ base: 'block', md: 'grid' }}
         gridColumn="2 / span 8"
       >
-        <Heading as="h2" textAlign="center" marginBottom="20px">{title}</Heading>
+        <Heading as="h2" textAlign="center">{title}</Heading>
       </Box>
       <Box
         display={{ base: 'block', md: 'grid' }}
@@ -56,7 +56,6 @@ const MktPartners = ({ id, title, images, ...rest }) => {
         px={{ base: '10px', md: '0' }}
         width="100%"
         overflowX="hidden"
-        {...rest}
       >
         <motion.div
           width="100%"
