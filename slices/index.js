@@ -7,6 +7,7 @@ import RecommendedCourses from './RecommendedCourses';
 import RoadMap from './RoadMap';
 import ShowPrices from './ShowPrices';
 import Technologies from './Technologies';
+import TechnologiesPills from './TechnologiesPills';
 import Testimonials from './Testimonials';
 import TitleIntroduction from './TitleIntroduction';
 import TwoColumn from './TwoColumn';
@@ -19,6 +20,7 @@ export {
 	RoadMap,
 	ShowPrices,
 	Technologies,
+	TechnologiesPills,
 	Testimonials,
 	TitleIntroduction,
 	TwoColumn,
@@ -32,6 +34,7 @@ export const components = {
 	road_map: RoadMap,
 	show_prices: ShowPrices,
 	technologies: Technologies,
+	technologies_pills: TechnologiesPills,
 	testimonials: Testimonials,
 	title_introduction: TitleIntroduction,
 	two_column: TwoColumn,

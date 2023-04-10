@@ -67,6 +67,11 @@
       "default": {
         "primary": {}
       }
+    },
+    "TechnologiesPills": {
+      "default": {
+        "primary": {}
+      }
     }
   }
 }
