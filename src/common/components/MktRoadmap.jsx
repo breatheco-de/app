@@ -1,5 +1,5 @@
 import {
-  Box, Container, Image, TabList, Tabs,
+  Box, Image, ListItem, TabList, Tabs, UnorderedList,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -10,6 +10,7 @@ import { CustomTab } from './Animated';
 import Heading from './Heading';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
+import GridContainer from './GridContainer';
 
 const MktRoadmap = ({ id, title, course, ...rest }) => {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
@@ -31,27 +32,8 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
   }, []);
 
   return data?.length > 0 && (
-    <Container
-      px="10px"
-      id={id}
-      maxW="container.xl"
-      display="flex"
-      flexDirection={{ base: 'column', md: 'row' }}
-      height="auto"
-      position="relative"
-      alignItems="center"
-      gridGap={51}
-      {...rest}
-    >
-      <Box
-        display={{ base: 'none', md: 'inherit' }}
-        position="absolute"
-        top="-90px"
-        left="300px"
-      >
-        <Icon icon="curvedLine" width="80px" height="654px" />
-      </Box>
-      <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} width="100%">
+    <>
+      <GridContainer id={id} maxWidth="1280px" width="100%" height="auto" gridGap={{ base: '64px', lg: '24px' }} px={{ base: '10px', md: '0' }} {...rest}>
         <Tabs
           index={currentTabIndex}
           variant="unstyled"
@@ -60,8 +42,41 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
           flexDirection={{ base: 'column', md: 'row' }}
           height={{ base: '100%', md: '528px' }}
           mt={{ base: '40px', md: 0 }}
-          alignItems="center"
+          alignItems={{ base: 'flex-start', md: 'center' }}
+          gridColumn="2 / span 3"
+          position="relative"
         >
+          {title && (
+            <Heading
+              as="h2"
+              // fontSize="18px"
+              fontWeight="700"
+              lineHeight="30px"
+              letterSpacing="0.05em"
+              size="m"
+              mb="10px"
+              display={{ base: 'inherit', md: 'none' }}
+            >
+              {title}
+            </Heading>
+          )}
+          <UnorderedList display={{ base: 'flex', md: 'none' }} listStyleType="none" flexDirection="column" mb="20px">
+            {data.map((item, index) => (
+              <ListItem variant="unstyled">
+                <Heading size="xsm" fontWeight="500" color="blue.default" onClick={() => setCurrentTabIndex(index)}>
+                  {item?.short_name || item?.name}
+                </Heading>
+              </ListItem>
+            ))}
+          </UnorderedList>
+          <Box
+            display={{ base: 'none', md: 'inherit' }}
+            position="absolute"
+            top="-20px"
+            left="80px"
+          >
+            <Icon icon="curvedLine" width="80px" height="541px" />
+          </Box>
           <TabList
             position="relative"
             display={{ base: 'none', md: 'inherit' }}
@@ -69,7 +84,7 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
             zIndex={99}
           >
             {data?.[0]?.slug && (
-              <CustomTab onClick={() => setCurrentTabIndex(0)} top="10px" left="210px" p="1rem 12px">
+              <CustomTab onClick={() => setCurrentTabIndex(0)} top="10px" left="0" p="1rem 12px">
                 {data?.[0]?.icon_url && (
                   <Image src={data?.[0]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
                 )}
@@ -78,7 +93,7 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
             )}
 
             {data?.[1]?.slug && (
-              <CustomTab onClick={() => setCurrentTabIndex(1)} top="104px" left="240px" p="1rem 12px">
+              <CustomTab onClick={() => setCurrentTabIndex(1)} top="112px" left="40px" p="1rem 12px">
                 {data?.[1]?.icon_url && (
                   <Image src={data?.[1]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
                 )}
@@ -86,7 +101,7 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
               </CustomTab>
             )}
             {data?.[2]?.slug && (
-              <CustomTab onClick={() => setCurrentTabIndex(2)} top="214px" left="280px" p="1rem 12px">
+              <CustomTab onClick={() => setCurrentTabIndex(2)} top="218px" left="70px" p="1rem 12px">
                 {data?.[2]?.icon_url && (
                   <Image src={data?.[2]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
                 )}
@@ -94,7 +109,7 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
               </CustomTab>
             )}
             {data?.[3]?.slug && (
-              <CustomTab onClick={() => setCurrentTabIndex(3)} bottom="134px" left="270px" p="1rem 12px">
+              <CustomTab onClick={() => setCurrentTabIndex(3)} bottom="144px" left="40px" p="1rem 12px">
                 {data?.[3]?.icon_url && (
                   <Image src={data?.[3]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
                 )}
@@ -102,7 +117,7 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
               </CustomTab>
             )}
             {data?.[4]?.slug && (
-              <CustomTab onClick={() => setCurrentTabIndex(4)} bottom="57px" left="255px" p="1rem 12px">
+              <CustomTab onClick={() => setCurrentTabIndex(4)} bottom="57px" left="30px" p="1rem 12px">
                 {data?.[4]?.icon_url && (
                   <Image src={data?.[4]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
                 )}
@@ -113,9 +128,10 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
           </TabList>
         </Tabs>
         <Box
-          flex={0.5}
+          gridColumn="5 / span 5"
           display="flex"
           flexDirection="column"
+          // marginLeft={{ base: '10px', lg: '-5rem' }}
           alignSelf="center"
           gridGap="10px"
         >
@@ -126,12 +142,12 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
               fontWeight="700"
               lineHeight="30px"
               letterSpacing="0.05em"
-              color="blue.default"
+              display={{ base: 'none', md: 'inherit' }}
             >
               {title}
             </Heading>
           )}
-          <Text size="26px" fontWeight="700" lineHeight="30px">
+          <Text size={{ base: '18px', md: '26px' }} fontWeight="700" lineHeight="30px">
             {data[currentTabIndex]?.name}
           </Text>
           <Box
@@ -158,8 +174,8 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
             )}
           </Box>
         </Box>
-      </Box>
-    </Container>
+      </GridContainer>
+    </>
   );
 };
 MktRoadmap.propTypes = {

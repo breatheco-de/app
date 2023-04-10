@@ -36,7 +36,7 @@ const PrismicTextComponent = ({ field, ...rest }) => {
         ),
         paragraph: ({ children }) => (
           <Text
-            fontSize="sm"
+            fontSize="14px"
             lineHeight="18px"
             margin="15px 0"
             color={fontColor2}

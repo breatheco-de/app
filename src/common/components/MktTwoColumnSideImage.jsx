@@ -42,6 +42,7 @@ const MktTwoColumnSideImage = ({
     >
       <GridContainer
         gridTemplateColumns="repeat(10, 1fr)"
+        maxWidth="1280px"
         id={id}
         px="10px"
         border={border}
@@ -68,9 +69,11 @@ const MktTwoColumnSideImage = ({
           />
         </Box>
         <Box display={{ base: 'block', md: 'grid' }} style={{ direction: 'initial' }} gridColumn="6 / span 4">
-          <Heading marginBottom="15px" as="h4" fontSize="14px" color={hexColor.blueDefault}>
-            {subTitle}
-          </Heading>
+          {subTitle && (
+            <Heading marginBottom="15px" as="h4" fontSize="14px" color={hexColor.blueDefault}>
+              {subTitle}
+            </Heading>
+          )}
           <Heading as="h2" size="sm">
             {title}
           </Heading>
