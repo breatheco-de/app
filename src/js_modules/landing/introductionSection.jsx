@@ -12,7 +12,7 @@ import Icon from '../../common/components/Icon';
 import GridContainer from '../../common/components/GridContainer';
 
 const IntroductionSection = ({
-  data, slice, ...rest
+  data, slice, fitContent, ...rest
 }) => {
   const router = useRouter();
   const colors = useColorModeValue('#000', '#fff');
@@ -24,7 +24,7 @@ const IntroductionSection = ({
       id={slice?.primary?.id_key || ''}
       {...rest}
     >
-      <Box display={{ base: 'block', md: 'grid' }} gridColumn="2 / span 5">
+      <Box display={{ base: 'block', md: 'grid' }} gridColumn={fitContent ? '1 / span 5' : '2 / span 5'}>
         <Heading as="span" size="xl" fontWeight="700">
           {slice?.primary?.title ? (
             <>
@@ -107,7 +107,7 @@ const IntroductionSection = ({
         ) : (
           <>
             {data?.callToAction?.title && (
-              <Button variant="default" fontSize="13px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router.push(data?.callToAction.href)}>
+              <Button variant="default" width="fit-content" fontSize="13px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router.push(data?.callToAction.href)}>
                 {data?.callToAction.title}
               </Button>
             )}
@@ -137,7 +137,7 @@ const IntroductionSection = ({
         </Box>
       </Box>
 
-      <Box display={{ base: 'block', md: 'grid' }} gridColumn="7 / span 3" alignContent="center">
+      <Box display={{ base: 'block', md: 'grid' }} gridColumn={fitContent ? '7 / span 4' : '7 / span 3'} alignContent="center">
         {slice?.primary?.image?.url ? (
           <Box display="flex" height="fit-content" justifyContent="center">
             <Image

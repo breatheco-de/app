@@ -21,7 +21,7 @@ const TwoColumn = ({ slice }) => (
     imageAlt={slice?.primary?.image?.alt}
     imagePosition={slice?.primary?.image_position}
     margin={slice?.primary?.margin || ''}
-    gridGap={slice?.primary?.grid_gap}
+    gridGap={slice?.primary?.grid_gap || '24px'}
   />
 );
 
