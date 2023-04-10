@@ -238,7 +238,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         </Flex>
       </Box>
 
-      <GridContainer position="relative">
+      <GridContainer maxWidth="1280px" position="relative" withContainer gridColumn="1 / span 10">
         <Text
           size="md"
           display="flex"

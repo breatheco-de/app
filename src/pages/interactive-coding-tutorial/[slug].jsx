@@ -184,6 +184,7 @@ const ProjectSlug = ({ project, markdown }) => {
         alignItems="center"
         margin="2rem auto"
         padding="0 15px"
+        withContainer
       >
         <Link
           href="/interactive-coding-tutorials"
@@ -292,12 +293,12 @@ const ProjectSlug = ({ project, markdown }) => {
           </Box>
         </Flex>
       </GridContainer>
-      <Box maxWidth="1280px" margin="auto" padding="0 15px">
+      <GridContainer margin="6rem auto 0 auto" padding="0 15px" withContainer>
         <MktRecommendedCourses
           title={t('common:related-courses')}
           endpoint={`/v1/marketing/course?technologies=${project.technologies.join(',')}`}
         />
-      </Box>
+      </GridContainer>
     </>
   );
 };

@@ -20,7 +20,6 @@ const IntroductionSection = ({
   return (
     <GridContainer
       gridTemplateColumns="repeat(10, 1fr)"
-      gridColumn="2 / span 8"
       px="10px"
       id={slice?.primary?.id_key || ''}
       {...rest}
