@@ -74,7 +74,6 @@ const MktTestimonials = ({
   return (
     <GridContainer
       gridTemplateColumns="repeat(10, 1fr)"
-      gridColumn="2 / span 8"
       px="10px"
       id={id}
       {...rest}

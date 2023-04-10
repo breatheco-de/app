@@ -149,9 +149,13 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
   return (
     <>
       <GridContainer
+        withContainer
+        // gridColumn="1 / span 10"
+        maxWidth="1280px"
         height="100%"
         gridTemplateColumns={{ base: 'repeat(1, 1fr)', md: '0.5fr repeat(12, 1fr) 0.5fr' }}
         margin="4rem auto 0 auto"
+        gridGap="0"
       >
         <Link
           href="/lessons"
@@ -165,13 +169,13 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
           {`← ${t('backToLessons')}`}
         </Link>
       </GridContainer>
-      <Box
-        display={{ base: 'block', md: 'grid' }}
+      <GridContainer
         maxWidth="1280px"
         margin="28px auto 0 auto"
         padding={{ base: '0 15px', md: '0' }}
         height="100%"
-        gridTemplateColumns={{ base: '', md: '3fr repeat(12, 1fr) 3fr' }}
+        gridTemplateColumns="3fr repeat(12, 1fr) 3fr"
+        gridGap="0"
       >
         <Box display="grid" gridColumn="2 / span 12">
           <Box display="flex" gridGap="10px" justifyContent="space-between">
@@ -307,7 +311,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
             </Box>
           )}
         </Box>
-      </Box>
+      </GridContainer>
     </>
   );
 };

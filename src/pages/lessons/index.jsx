@@ -238,7 +238,9 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
 
       <GridContainer
         flex="1"
-        gridTemplateColumns="0fr repeat(12, 1fr) 0fr"
+        withContainer
+        gridColumn="1 / span 10"
+        maxWidth="1280px"
       >
         <Text
           size="md"
