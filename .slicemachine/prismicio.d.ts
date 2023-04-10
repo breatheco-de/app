@@ -756,6 +756,65 @@ type TechnologiesSliceVariation = TechnologiesSliceDefault;
  */
 export type TechnologiesSlice = prismicT.SharedSlice<"technologies", TechnologiesSliceVariation>;
 /**
+ * Primary content in TechnologiesPills → Primary
+ *
+ */
+interface TechnologiesPillsSliceDefaultPrimary {
+    /**
+     * id field in *TechnologiesPills → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: technologies_pills.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
+    /**
+     * technologies field in *TechnologiesPills → Primary*
+     *
+     * - **Field Type**: Rich Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: technologies_pills.primary.technologies
+     * - **Documentation**: https://prismic.io/docs/core-concepts/rich-text-title
+     *
+     */
+    technologies: prismicT.RichTextField;
+    /**
+     * margin field in *TechnologiesPills → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: technologies_pills.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
+}
+/**
+ * Default variation for TechnologiesPills Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: `TechnologiesPills`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type TechnologiesPillsSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<TechnologiesPillsSliceDefaultPrimary>, never>;
+/**
+ * Slice variation for *TechnologiesPills*
+ *
+ */
+type TechnologiesPillsSliceVariation = TechnologiesPillsSliceDefault;
+/**
+ * TechnologiesPills Shared Slice
+ *
+ * - **API ID**: `technologies_pills`
+ * - **Description**: `TechnologiesPills`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type TechnologiesPillsSlice = prismicT.SharedSlice<"technologies_pills", TechnologiesPillsSliceVariation>;
+/**
  * Primary content in Testimonials → Primary
  *
  */
@@ -1098,6 +1157,6 @@ declare module "@prismicio/client" {
         (repositoryNameOrEndpoint: string, options?: prismic.ClientConfig): prismic.Client<AllDocumentTypes>;
     }
     namespace Content {
-        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, PartnersSliceDefaultPrimary, PartnersSliceDefault, PartnersSliceVariation, PartnersSlice, RecommendedCoursesSliceDefaultPrimary, RecommendedCoursesSliceDefault, RecommendedCoursesSliceVariation, RecommendedCoursesSlice, RoadMapSliceDefaultPrimary, RoadMapSliceDefault, RoadMapSliceVariation, RoadMapSlice, ShowPricesSliceDefaultPrimary, ShowPricesSliceDefault, ShowPricesSliceVariation, ShowPricesSlice, TechnologiesSliceDefaultPrimary, TechnologiesSliceDefault, TechnologiesSliceVariation, TechnologiesSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
+        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, PartnersSliceDefaultPrimary, PartnersSliceDefault, PartnersSliceVariation, PartnersSlice, RecommendedCoursesSliceDefaultPrimary, RecommendedCoursesSliceDefault, RecommendedCoursesSliceVariation, RecommendedCoursesSlice, RoadMapSliceDefaultPrimary, RoadMapSliceDefault, RoadMapSliceVariation, RoadMapSlice, ShowPricesSliceDefaultPrimary, ShowPricesSliceDefault, ShowPricesSliceVariation, ShowPricesSlice, TechnologiesSliceDefaultPrimary, TechnologiesSliceDefault, TechnologiesSliceVariation, TechnologiesSlice, TechnologiesPillsSliceDefaultPrimary, TechnologiesPillsSliceDefault, TechnologiesPillsSliceVariation, TechnologiesPillsSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
     }
 }
