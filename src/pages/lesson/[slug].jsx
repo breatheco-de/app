@@ -235,7 +235,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
             <MarkDownParser content={markdownData.content} withToc isPublic />
             <MktRecommendedCourses
               title={t('common:related-courses')}
-              technologies={lesson.technologies.join(',')}
+              technologies={lesson?.technologies.join(',')}
             />
             {/* {(markdown && ipynbHtmlUrl === '')
               ? <MarkDownParser content={markdownData.content} />

@@ -250,15 +250,13 @@ export default function HowToSlug({ data, markdown }) {
               <MDSkeleton />
             )}
           </Box>
-
-        </Box>
-        <Box maxWidth="1020px" margin="auto" padding="0 15px">
-          <MktRecommendedCourses
-            title={t('common:related-courses')}
-            endpoint={`/v1/marketing/course?technologies=${data?.technologies.join(',')}`}
-          />
-        </Box>
-      </GridContainer>
+      </Box>
+      <Box maxWidth="1020px" margin="auto" padding="0 15px">
+        <MktRecommendedCourses
+          title={t('common:related-courses')}
+          technologies={data?.technologies.join(',')}
+        />
+      </Box>
     </>
   );
 }
