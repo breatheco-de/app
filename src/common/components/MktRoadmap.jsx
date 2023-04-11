@@ -142,6 +142,7 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
               fontWeight="700"
               lineHeight="30px"
               letterSpacing="0.05em"
+              color="blue.default"
               display={{ base: 'none', md: 'inherit' }}
             >
               {title}
