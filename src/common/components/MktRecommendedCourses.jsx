@@ -34,16 +34,16 @@ const MktRecommendedCourses = ({ id, technologies, background, title, ...rest })
     }
   };
 
-  const dummyCourse = {
-    icon_url: 'https://storage.googleapis.com/breathecode/logos-workshops/javascript-event-type.svg',
-    slug: 'dummy',
-    course_translation: {
-      title: 'Curso Interactivo de Javascript',
-      description: 'Aprende Javascript desde cero en una Semana con este gran curso. En el podrás aprender sobre condicionales, funciones, el manejo de arrays y mucho más!',
-    },
-  };
+  // const dummyCourse = {
+  //   icon_url: 'https://storage.googleapis.com/breathecode/logos-workshops/javascript-event-type.svg',
+  //   slug: 'dummy',
+  //   course_translation: {
+  //     title: 'Curso Interactivo de Javascript',
+  //     description: 'Aprende Javascript desde cero en una Semana con este gran curso. En el podrás aprender sobre condicionales, funciones, el manejo de arrays y mucho más!',
+  //   },
+  // };
 
-  if (courses.length === 1) setCourses([...courses, dummyCourse]);
+  // if (courses.length === 1) setCourses([...courses, dummyCourse]);
 
   useEffect(() => {
     getCourses();
@@ -58,6 +58,7 @@ const MktRecommendedCourses = ({ id, technologies, background, title, ...rest })
         borderRadius="13px"
         padding={{ base: '20px', lg: '30px' }}
         background={background || featuredColor}
+        maxWidth="1280px"
         display="flex"
         {...rest}
       >
