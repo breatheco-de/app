@@ -37,7 +37,7 @@ const ButtonHandler = ({
       };
     }
 
-    if (status === 'FREE_TRIAL' || isPlanFinancingExpired) {
+    if (status === 'FREE_TRIAL' || (isPlanFinancingExpired && subscription?.planOffer?.pricing_exists)) {
       return {
         text: subscriptionTR?.upgrade || t('subscription.upgrade'),
         style: {

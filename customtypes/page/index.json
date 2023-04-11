@@ -75,6 +75,9 @@
             },
             "recommended_courses": {
               "type": "SharedSlice"
+            },
+            "technologies_pills": {
+              "type": "SharedSlice"
             }
           }
         }
