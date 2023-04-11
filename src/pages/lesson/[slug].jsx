@@ -154,7 +154,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
         maxWidth="1280px"
         height="100%"
         gridTemplateColumns={{ base: 'repeat(1, 1fr)', md: '0.5fr repeat(12, 1fr) 0.5fr' }}
-        margin="4rem auto 0 auto"
+        margin="3rem auto 0 auto"
         gridGap="0"
       >
         <Link
