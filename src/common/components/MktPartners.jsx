@@ -61,7 +61,7 @@ const MktPartners = ({ id, title, images, ...rest }) => {
       >
         <Box
           width="100%"
-          height="55px"
+          height="70px"
           // animate={controls}
           style={{
             display: 'flex',
@@ -75,17 +75,17 @@ const MktPartners = ({ id, title, images, ...rest }) => {
               // ref={lastElementRef}
               key={`image-${i}`}
               src={image}
-              height="55px"
+              height="70px"
               margin="0 20px"
-              maxWidth="160px"
+              maxWidth="180px"
             />
           ) : (
             <Img
               key={`image-${i}`}
               src={image}
-              height="55px"
+              height="70px"
               margin="0 20px"
-              maxWidth="160px"
+              maxWidth="180px"
             />
           )))}
         </Box>

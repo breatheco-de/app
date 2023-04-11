@@ -120,8 +120,8 @@ const IntroductionSection = ({
                 field={slice?.primary?.bullets}
                 components={{
                   listItem: ({ children }, index) => (
-                    <MotionBox whileHover={{ scale: 1.05 }} as="li" key={index} display="flex" fontSize="14px" gridGap="10px" alignItems="center">
-                      <Icon icon="book" width="14px" height="14px" />
+                    <MotionBox whileHover={{ scale: 1.05 }} as="li" key={index} display="flex" fontSize="18px" gridGap="10px" alignItems="center">
+                      <Icon icon="checked2" color="#25BF6C" width="14px" height="14px" />
                       {children}
                     </MotionBox>
                   ),
