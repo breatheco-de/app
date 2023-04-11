@@ -54,7 +54,7 @@ function chooseProgram() {
   const { state, programsList, updateProgramList } = useProgramList();
   const [cohortTasks, setCohortTasks] = useState({});
   const { isLoading: userLoading, user, choose } = useAuth();
-  const { featuredColor, borderColor, lightColor } = useStyle();
+  const { lightColor } = useStyle();
   const router = useRouter();
   const toast = useToast();
   const ldClient = useLDClient();
@@ -294,7 +294,6 @@ function chooseProgram() {
                     size="md"
                   >
                     {t('invite.notify', { cohortInvitationWord: inviteWord() })}
-                    {/* {`Ey! There are ${inviteWord()} for you to accept.`} */}
                     <Text
                       as="button"
                       size="md"
@@ -353,17 +352,7 @@ function chooseProgram() {
                 );
               })}
 
-              {!isLoading && dataQuery?.cohorts <= 0 ? (
-                <Flex flexDirection="column" gridGap="12px" background={featuredColor} padding="14px 20px 14px 20px" borderRadius="9px" border="1px solid" borderColor={borderColor}>
-                  <Heading size="sm" lineHeight="31px">
-                    {t('not-enrolled')}
-                  </Heading>
-                  <Text size="md" fontWeight={600}>
-                    {t('enroll-programs')}
-                  </Text>
-                  <Button variant="default" textransform="uppercase" width="fit-content">Enroll now</Button>
-                </Flex>
-              ) : (
+              {!isLoading && dataQuery?.cohorts > 0 && (
                 <NextChakraLink variant="buttonDefault" href="https://4geeksacademy.slack.com/" target="blank" rel="noopener noreferrer" display="flex" gridGap="10px" width="fit-content" padding="0.5rem 6px 0.5rem 8px">
                   {t('join-our-community')}
                   <Icon icon="slack" width="20px" height="20px" color="currentColor" />
