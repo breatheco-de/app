@@ -5,10 +5,16 @@ import {
   Box, Img,
 } from '@chakra-ui/react';
 // import { motion, useAnimation } from 'framer-motion';
+import { useRef } from 'react';
 import Heading from './Heading';
 import GridContainer from './GridContainer';
+import useGrabToScroll from '../hooks/useGrabToScroll';
+import { toCapitalize } from '../../utils';
 
 const MktPartners = ({ id, title, images, ...rest }) => {
+  const scrollContainerRef = useRef(null);
+  const { grabToScroll } = useGrabToScroll({ ref: scrollContainerRef, horizontal: true });
+
   const cleanImages = images.length > 0 && typeof images[0] === 'string' ? images : images.map((obj) => obj.text);
   const limitedImages = cleanImages.splice(0, 5);
   // const controls = useAnimation();
@@ -57,12 +63,14 @@ const MktPartners = ({ id, title, images, ...rest }) => {
         gridColumn="2 / span 8"
         px={{ base: '10px', md: '0' }}
         width="100%"
-        overflowX="hidden"
       >
         <Box
+          ref={scrollContainerRef}
           width="100%"
           height="70px"
-          // animate={controls}
+          className="hideOverflowX__"
+          onMouseDown={grabToScroll}
+          overflowX="auto"
           style={{
             display: 'flex',
             gridGap: '15px',
@@ -70,24 +78,31 @@ const MktPartners = ({ id, title, images, ...rest }) => {
             width: '100%',
           }}
         >
-          {limitedImages.map((image, i) => (limitedImages.length === i + 1 ? (
-            <Img
-              // ref={lastElementRef}
-              key={`image-${i}`}
-              src={image}
-              height="70px"
-              margin="0 20px"
-              maxWidth="180px"
-            />
-          ) : (
-            <Img
-              key={`image-${i}`}
-              src={image}
-              height="70px"
-              margin="0 20px"
-              maxWidth="180px"
-            />
-          )))}
+          {limitedImages.map((image, i) => {
+            const altTitle = image.split('/logos/')[1].split('.')[0].replace('-', ' ');
+
+            return (limitedImages.length === i + 1 ? (
+              <Img
+                key={`image-${i}`}
+                src={image}
+                height="70px"
+                margin="0 20px"
+                maxWidth="180px"
+                objectFit="contain"
+                title={toCapitalize(altTitle)}
+              />
+            ) : (
+              <Img
+                key={`image-${i}`}
+                src={image}
+                height="70px"
+                margin="0 20px"
+                maxWidth="180px"
+                objectFit="contain"
+                title={toCapitalize(altTitle)}
+              />
+            ));
+          })}
         </Box>
       </Box>
     </GridContainer>

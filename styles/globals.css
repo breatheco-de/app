@@ -96,6 +96,18 @@ featured {
   height: 0!important;
 }
 
+.hideOverflowX__ img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .horizontal-sroll::-webkit-scrollbar {
   width: 6px;
 }
