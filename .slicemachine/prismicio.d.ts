@@ -146,6 +146,16 @@ interface MarkdownSliceDefaultPrimary {
      *
      */
     margin: prismicT.KeyTextField;
+    /**
+     * Padding field in *Markdown → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: markdown.primary.padding
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    padding: prismicT.KeyTextField;
 }
 /**
  * Default variation for Markdown Slice

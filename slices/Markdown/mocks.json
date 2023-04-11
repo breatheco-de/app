@@ -37,6 +37,11 @@
         "__TYPE__": "FieldContent",
         "value": "opposite",
         "type": "Text"
+      },
+      "padding": {
+        "__TYPE__": "FieldContent",
+        "value": "won",
+        "type": "Text"
       }
     },
     "items": [

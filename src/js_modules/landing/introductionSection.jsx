@@ -100,7 +100,7 @@ const IntroductionSection = ({
           </Text>
         )}
 
-        {slice?.primary?.buttontext ? (
+        {slice?.primary?.buttontext?.length > 0 && slice?.primary?.buttontext ? (
           <Button variant="default" width="fit-content" fontSize="13px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router?.push('#pricing')}>
             <PrismicRichText field={slice?.primary?.buttontext} />
           </Button>
@@ -128,7 +128,7 @@ const IntroductionSection = ({
                 }}
               />
             )
-            : data?.bullets.map((l) => (
+            : data?.bullets?.length > 0 && data?.bullets.map((l) => (
               <MotionBox whileHover={{ scale: 1.05 }} as="li" key={l.text} display="flex" fontSize="14px" gridGap="10px" alignItems="center">
                 <Icon icon={l.icon} width="14px" height="14px" />
                 {l.text}
