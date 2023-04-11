@@ -450,13 +450,9 @@ const profileHandlers = ({
               router.push(`/checkout?plan=${offerData?.slug}`);
             }
           } else {
-            toast({
-              title: t('alert-message:error-getting-offer'),
-              status: 'error',
-              duration: 5000,
-              isClosable: true,
+            resolve({
+              status: 'error-getting-plan-offer',
             });
-            resolve({});
           }
         })
         .catch(() => {
