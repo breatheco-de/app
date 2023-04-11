@@ -471,14 +471,16 @@ const ProgramCard = ({
                   {programDescription}
                 </Text>
               </Box>
-              <Flex flexDirection="column" gridGap="8px" background={backgroundColor} padding="10px 12px" borderRadius="4px">
-                {bullets.map((l) => (
-                  <Box display="flex" fontWeight={700} fontSize="14px" gridGap="10px" alignItems="center">
-                    <Icon icon="checked2" color={hexColor.green} width="14px" height="14px" />
-                    {l.name}
-                  </Box>
-                ))}
-              </Flex>
+              {bullets?.length > 0 && (
+                <Flex flexDirection="column" gridGap="8px" background={backgroundColor} padding="10px 12px" borderRadius="4px">
+                  {bullets.map((l) => (
+                    <Box display="flex" fontWeight={700} fontSize="14px" gridGap="10px" alignItems="center">
+                      <Icon icon="checked2" color={hexColor.green} width="14px" height="14px" />
+                      {l.name}
+                    </Box>
+                  ))}
+                </Flex>
+              )}
               <Button
                 borderRadius="3px"
                 width="100%"
