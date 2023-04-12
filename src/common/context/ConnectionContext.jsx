@@ -13,7 +13,7 @@ export const ConnectionContext = createContext({ usersConnected: [] });
 
 const OnlineContext = ({ children }) => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-  const [usersConnected, setUsersConnected] = useState([]);
+  const [usersConnected, setUsersConnected] = useState({});
   const accessToken = getStorageItem('accessToken');
   const { isLoading } = useAuth();
   const [temporalToken, setTemporalToken] = useState(null);
@@ -35,20 +35,24 @@ const OnlineContext = ({ children }) => {
 
   const actions = {
     connected: (data) => {
-      if (usersConnected.includes(data.id)) return;
-      setUsersConnected((prev) => [...prev, data.id]);
+      setUsersConnected((prev) => ({ ...prev, [data.id]: true }));
     },
-    disconnected: (data) => setUsersConnected((prev) => prev.filter((id) => id !== data.id)),
+    disconnected: (data) => {
+      setUsersConnected((prev) => {
+        const updated = { ...prev };
+        delete updated[data.id];
+        return updated;
+      });
+    },
   };
 
   useEffect(() => {
     if (hasLoaded && temporalToken !== null && temporalToken?.token) {
-      // console.log('temporal_token:', temporalToken);
       const client = new W3CWebSocket(`wss://${BREATHECODE_WS}/ws/online?token=${temporalToken.token}`);
 
       client.onopen = () => {
         console.log('WebSocket Client Connected');
-        setUsersConnected((prev) => [...prev, temporalToken.user_id]);
+        setUsersConnected((prev) => ({ ...prev, [temporalToken?.user_id]: true }));
       };
 
       client.onmessage = (event) => {
@@ -61,10 +65,11 @@ const OnlineContext = ({ children }) => {
     }
   }, [isLoading, temporalToken]);
 
+  const arrayOfUsers = Object.keys(usersConnected).map((key) => Number(key));
   return (
     <ConnectionContext.Provider
       value={{
-        usersConnected,
+        usersConnected: arrayOfUsers,
       }}
     >
       {children}

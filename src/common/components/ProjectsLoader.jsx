@@ -10,6 +10,7 @@ function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, optio
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
 
+  const pagePath = options?.pagePath;
   const pathname = router?.pathname || (isWindow ? window?.location?.pathname : '');
 
   const articleChunks = useMemo(() => {
@@ -33,6 +34,7 @@ function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, optio
   return (
     <div>
       <Head>
+        <link rel="canonical" href={`https://4geeks.com${pagePath}`} />
         {currentPage - 1 > 0 && (
           <link rel="prev" href={`${pathname}?page=${currentPage - 1}`} />
         )}

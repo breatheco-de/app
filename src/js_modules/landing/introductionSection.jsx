@@ -17,7 +17,7 @@ const IntroductionSection = ({
   const colors = useColorModeValue('#000', '#fff');
 
   return (
-    <Box display="flex" gridGap="10px">
+    <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="10px">
       <Box flex={0.6}>
         <Heading as="span" size="xl" fontWeight="700">
           {slice?.primary?.title ? (
@@ -33,17 +33,6 @@ const IntroductionSection = ({
                 }}
               />
               {slice?.primary?.highlight && (
-                // <MotionBox
-                //   as="strong"
-                //   className="highlighted box"
-                //   transition={{ duration: 3 }}
-                //   animate={{
-                //     color: [colors, '#0097CD', colors, '#0097CD', colors, colors],
-                //   }}
-                //   margin="0 0 0 10px"
-                //   display={{ base: 'none', sm: 'initial' }}
-                // >
-                // </MotionBox>
                 <PrismicRichText
                   field={slice?.primary?.highlight}
                   components={{
@@ -142,7 +131,7 @@ const IntroductionSection = ({
         </Box>
       </Box>
 
-      <Box flex={0.4} display={{ base: 'none', lg: 'initial' }}>
+      <Box flex={0.4} display={{ base: 'none', md: 'initial' }}>
         {slice?.primary?.image?.url ? (
           <Box display="flex" justifyContent="end">
             <Image

@@ -1,7 +1,9 @@
+/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
   Box, Img,
 } from '@chakra-ui/react';
+import { PrismicRichText } from '@prismicio/react';
 import Heading from './Heading';
 import Text from './Text';
 import Link from './NextChakraLink';
@@ -12,34 +14,46 @@ const MktTwoColumnSideImage = ({
   subTitle,
   description,
   imageUrl,
+  linkButton,
   buttonUrl,
   buttonLabel,
   background,
   border,
   imagePosition,
+  slice,
+  imageAlt,
 }) => {
   const { fontColor2, hexColor, backgroundColor } = useStyle();
   const flexDirection = {
-    right: 'row',
-    left: 'row-reverse',
+    right: 'row-reverse',
+    left: 'row',
   };
+
+  const imageProps = slice && slice?.primary?.image?.dimensions;
 
   return (
     <Box
-      padding="20px"
+      padding="20px 0"
       display="flex"
       flexWrap={{ base: 'wrap', md: 'nowrap' }}
       gridGap="20px"
       background={background || backgroundColor}
       border={border}
+      alignItems="center"
       borderRadius="12px"
       flexDirection={flexDirection[imagePosition]}
     >
       <Box width={{ base: '100% 0', md: '50%' }}>
         <Img
           boxSize="100%"
-          objectFit="cover"
+          margin="0 auto"
+          objectFit="contain"
           src={imageUrl}
+          alt={imageAlt}
+          title={imageAlt}
+          borderRadius="3px"
+          // height={imageProps?.height}
+          width={imageProps?.width}
         />
       </Box>
       <Box width={{ base: '100% 0', md: '50%' }}>
@@ -49,17 +63,36 @@ const MktTwoColumnSideImage = ({
         <Heading as="h2" size="sm">
           {title}
         </Heading>
-        <Text
-          fontSize="sm"
-          lineHeight="14px"
-          margin="15px 0"
-          color={fontColor2}
-        >
-          {description}
-        </Text>
+        {slice.primary.description ? (
+          <PrismicRichText
+            field={slice?.primary?.description}
+            components={{
+              paragraph: ({ children }) => (
+                <Text
+                  fontSize="sm"
+                  lineHeight="14px"
+                  margin="15px 0"
+                  color={fontColor2}
+                >
+                  {children}
+                </Text>
+              ),
+            }}
+          />
+        ) : (
+          <Text
+            fontSize="sm"
+            lineHeight="14px"
+            margin="15px 0"
+            color={fontColor2}
+          >
+            {description}
+          </Text>
+        )}
         {buttonUrl && (
           <Link
-            variant="buttonDefault"
+            variant={!linkButton && 'buttonDefault'}
+            color={linkButton ? hexColor.blueDefault : '#FFF'}
             href={buttonUrl}
             textAlign="center"
             display="inline-block"
@@ -78,22 +111,28 @@ MktTwoColumnSideImage.propTypes = {
   description: PropTypes.string,
   imagePosition: PropTypes.string,
   imageUrl: PropTypes.string,
+  linkButton: PropTypes.bool,
   buttonUrl: PropTypes.string,
   buttonLabel: PropTypes.string,
   background: PropTypes.string,
   border: PropTypes.string,
+  slice: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
+  imageAlt: PropTypes.string,
 };
 
 MktTwoColumnSideImage.defaultProps = {
   title: null,
   subTitle: null,
   description: null,
-  imagePosition: 'right',
+  imagePosition: 'left',
   imageUrl: null,
+  linkButton: false,
   buttonUrl: null,
   buttonLabel: null,
   background: null,
   border: null,
+  slice: null,
+  imageAlt: '',
 };
 
 export default MktTwoColumnSideImage;

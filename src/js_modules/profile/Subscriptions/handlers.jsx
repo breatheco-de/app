@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import useStyle from '../../../common/hooks/useStyle';
 import bc from '../../../common/services/breathecode';
-import { isNumber, toCapitalize, unSlugify } from '../../../utils';
+import { toCapitalize, unSlugify } from '../../../utils';
 
 const profileHandlers = ({
   translations,
@@ -121,6 +121,8 @@ const profileHandlers = ({
             const financingOptionsManyMonthsExists = financingOptionsExists && offerData?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months > 1);
             const financingOptionsOnePaymentExists = financingOptionsExists && offerData?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months === 1);
 
+            const isTotallyFree = !isNotTrial && offerData?.trial_duration === 0 && !financingOptionsExists;
+
             const financingOptionsManyMonths = financingOptionsManyMonthsExists
               ? offerData?.financing_options
                 .filter((l) => l?.monthly_price > 0 && l?.how_many_months > 1)
@@ -134,6 +136,12 @@ const profileHandlers = ({
               : [];
 
             const getTrialLabel = () => {
+              if (isTotallyFree) {
+                return {
+                  priceText: t('subscription.upgrade-modal.free-course'),
+                  description: t('subscription.upgrade-modal.full_access'),
+                };
+              }
               if (offerData?.trial_duration_unit === 'DAY') {
                 return {
                   priceText: `${t('subscription.upgrade-modal.duration_days', { duration: offerData?.trial_duration })} ${t('subscription.upgrade-modal.connector_duration_trial')}`,
@@ -164,7 +172,7 @@ const profileHandlers = ({
               show: true,
             })) : [];
 
-            const trialPlan = isNumber(offerData?.trial_duration) && offerData?.trial_duration > 0 ? {
+            const trialPlan = (!financingOptionsManyMonthsExists) ? {
               title: t('subscription.upgrade-modal.free_trial'),
               price: 0,
               priceText: getTrialLabel().priceText,
@@ -172,7 +180,7 @@ const profileHandlers = ({
               period: offerData?.trial_duration_unit,
               description: getTrialLabel().description,
               suggested_plan: offerData,
-              type: 'TRIAL',
+              type: isTotallyFree ? 'FREE' : 'TRIAL',
               isFree: true,
               show: true,
             } : {};
@@ -229,6 +237,7 @@ const profileHandlers = ({
             const finalData = {
               title: toCapitalize(unSlugify(String(offerData?.slug))),
               slug: offerData?.slug,
+              isTotallyFree,
               details: offerData?.details,
               expires_at: offerData?.expires_at,
               show_modal: currentOffer?.show_modal,
@@ -246,7 +255,7 @@ const profileHandlers = ({
             }
 
             if (currentOffer?.show_modal === false && offerData) {
-              router.push(`/signup?plan=${offerData?.slug}`);
+              router.push(`/checkout?plan=${offerData?.slug}`);
             }
           } else {
             toast({

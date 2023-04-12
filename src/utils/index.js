@@ -225,10 +225,20 @@ const number2DIgits = (number) => number.toString().padStart(2, '0');
 const sortToNearestTodayDate = (data, minutes = 30) => {
   // sort date to the nearest today date and 30minutes after starting time
   const currentDate = new Date();
-  currentDate.setMinutes(currentDate.getMinutes() - minutes);
   if (data === undefined || data?.length === 0) return [];
 
-  const filteredDates = data.filter((item) => new Date(item.starting_at) >= currentDate);
+  const filteredDates = data.filter((item) => {
+    const startingDate = new Date(item.starting_at);
+    const endingDate = new Date(item.ending_at);
+    const timeDiff = startingDate - currentDate;
+    const minutesDiff = timeDiff / (1000 * 60);
+
+    const hasStarted = startingDate < currentDate;
+    const isGoingToStartInAnyMin = (minutesDiff >= 0 && minutesDiff <= minutes) || hasStarted;
+    const hasExpired = endingDate < currentDate;
+
+    return isGoingToStartInAnyMin && !hasExpired;
+  });
   const sortedDates = filteredDates.sort((a, b) => new Date(a.starting_at) - new Date(b.starting_at));
 
   return sortedDates;
@@ -251,7 +261,20 @@ const getQueryString = (key, def) => {
 const createArray = (length) => Array.from({ length }, (_, i) => i);
 const lengthOfString = (string) => (typeof string === 'string' ? string?.replaceAll(/\s/g, '').length : 0);
 
+const syncInterval = (callback = () => {}) => {
+  const now = new Date();
+  const secondsToNextMinute = 60 - now.getSeconds();
+
+  setTimeout(() => {
+    callback();
+    setInterval(callback, 60 * 1000);
+  }, secondsToNextMinute * 1000);
+};
+
 const location = isWindow && window.location;
+
+const url = isWindow && new URL(window.location.href);
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify, location,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
@@ -260,5 +283,5 @@ export {
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
-  createArray, lengthOfString,
+  createArray, url, lengthOfString, syncInterval,
 };
