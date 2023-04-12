@@ -367,7 +367,7 @@ const Checkout = ({ finance }) => {
               variant="outline"
               borderColor="currentColor"
               color="blue.default"
-              disabled={(queryPlanExists && !isFourthStep && !dateProps?.id) || isSecondStep}
+              disabled={(queryPlanExists && !isFourthStep && !dateProps?.id) || isSecondStep || (isThirdStep && cohorts?.length === 1)}
               onClick={() => {
                 if (stepIndex > 0) {
                   prevStep();
