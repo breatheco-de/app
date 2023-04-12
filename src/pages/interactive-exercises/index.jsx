@@ -116,6 +116,7 @@ export const getStaticProps = async ({ locale, locales }) => {
         pathConnector: '/interactive-exercises',
         locales,
         locale,
+        disableStaticCanonical: true,
         keywords,
         card: 'large',
       },
@@ -260,6 +261,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
             options={{
               withoutImage: true,
               contextFilter: filteredBy.exercisesOptions,
+              pagePath: '/interactive-exercises',
 
             }}
           />

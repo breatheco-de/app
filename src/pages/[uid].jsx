@@ -1,11 +1,18 @@
 import { SliceZone } from '@prismicio/react';
 import * as prismicH from '@prismicio/helpers';
+import { Box, Container } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
 import { createClient } from '../../prismicio';
 import { components } from '../../slices';
 
-const Page = ({ page }) => <SliceZone slices={page?.data?.slices} components={components} />;
+const Page = ({ page }) => (
+  <Box pt="3rem">
+    <Container maxW="container.xl" px="10px">
+      <SliceZone slices={page?.data?.slices} components={components} />
+    </Container>
+  </Box>
+);
 
 Page.propTypes = {
   page: PropTypes.objectOf(PropTypes.any).isRequired,
@@ -25,13 +32,13 @@ export async function getStaticProps({ params, locale, previewData }) {
     .then((response) => response)
     .catch(() => null);
 
-  if (!page) {
+  const isCurrenLang = page?.lang?.split('-')?.[0] === locale;
+
+  if (!page || !isCurrenLang) {
     return {
       notFound: true,
     };
   }
-
-  const { title, description, image, type } = page?.data;
 
   const translationsArr = page?.alternate_languages?.map((tr) => ({
     [tr.lang.split('-')[0]]: tr.uid,
@@ -41,13 +48,7 @@ export async function getStaticProps({ params, locale, previewData }) {
     ...translationsArr?.reduce((acc, curr) => ({ ...acc, ...curr }), {}),
   };
 
-  const isCurrenLang = page?.lang?.split('-')?.[0] === locale;
-
-  if (!page || !isCurrenLang) {
-    return {
-      notFound: true,
-    };
-  }
+  const { title, description, image, type } = page?.data;
 
   const translationArray = [
     {

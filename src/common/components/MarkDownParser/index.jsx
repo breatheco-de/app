@@ -21,7 +21,7 @@ import SubTasks from './SubTasks';
 import modifyEnv from '../../../../modifyEnv';
 
 const MarkDownParser = ({
-  content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask, isPublic,
+  content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask, isPublic, currentData,
 }) => {
   const { t } = useTranslation('common');
   const [subTasks, setSubTasks] = useState([]);
@@ -93,16 +93,16 @@ const MarkDownParser = ({
     setLearnpackActions([
       {
         text: newExerciseText,
-        href: `${BREATHECODE_HOST}/asset/${assetSlug}?token=${token}`,
+        href: `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${token}&cohort=${cohortSession?.id}&repo=${currentData?.url}`,
         isExternalLink: true,
       },
       {
         text: continueExerciseText,
-        href: 'https://gitpod.io/workspaces',
+        href: `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}&repo=${currentData?.url}`,
         isExternalLink: true,
       },
     ]);
-  }, [token, assetSlug, newExerciseText, continueExerciseText]);
+  }, [token, assetSlug, newExerciseText, continueExerciseText, currentData?.url]);
 
   return (
     <>
@@ -190,6 +190,7 @@ MarkDownParser.propTypes = {
   titleRightSide: PropTypes.node,
   currentTask: PropTypes.objectOf(PropTypes.any),
   isPublic: PropTypes.bool,
+  currentData: PropTypes.objectOf(PropTypes.any),
 };
 MarkDownParser.defaultProps = {
   content: '',
@@ -199,6 +200,7 @@ MarkDownParser.defaultProps = {
   titleRightSide: null,
   currentTask: {},
   isPublic: false,
+  currentData: {},
 };
 
 export default MarkDownParser;

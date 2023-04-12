@@ -7,7 +7,7 @@ import bc from '../../services/breathecode';
 import Icon from '../Icon';
 import useStyle from '../../hooks/useStyle';
 import CustomTheme from '../../../../styles/theme';
-import { getStorageItem, lengthOfString } from '../../../utils';
+import { getStorageItem, lengthOfString, syncInterval } from '../../../utils';
 
 const MainEvent = ({
   index, event, mainEvents, getOtherEvents, isLiveOrStarting, getLiveIcon, host, nearestEvent,
@@ -16,8 +16,9 @@ const MainEvent = ({
   const [time, setTime] = useState('');
   const { t, lang } = useTranslation('live-event');
   const limit = 40;
-  const titleLength = lengthOfString(event?.title);
-  const truncatedText = titleLength > limit ? `${event?.title?.substring(0, limit)}...` : event?.title;
+  const eventTitle = event?.cohort_name || event?.title;
+  const titleLength = lengthOfString(eventTitle);
+  const truncatedText = titleLength > limit ? `${eventTitle?.substring(0, limit)}...` : eventTitle;
 
   const truncatedTime = lengthOfString(time) >= 16 ? `${time?.substring(0, 15)}...` : time;
   const toast = useToast();
@@ -30,12 +31,15 @@ const MainEvent = ({
   useEffect(() => {
     setTime(textTime(liveStartsAtDate, liveEndsAtDate));
 
-    const interval = setInterval(() => {
+    syncInterval(() => {
       setTime(textTime(liveStartsAtDate, liveEndsAtDate));
-    }, 60000);
-    return () => {
-      clearInterval(interval);
-    };
+    });
+    // const interval = setInterval(() => {
+    //   setTime(textTime(liveStartsAtDate, liveEndsAtDate));
+    // }, 60000);
+    // return () => {
+    //   clearInterval(interval);
+    // };
   }, []);
 
   return (
@@ -123,9 +127,9 @@ const MainEvent = ({
             opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 1 : 0.5}
             marginBottom="5px"
             marginTop="0"
-            title={event?.title}
+            title={eventTitle}
           >
-            {truncatedText ? (
+            {(truncatedText && eventTitle) ? (
               <>
                 {truncatedText}
               </>

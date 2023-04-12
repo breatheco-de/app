@@ -9,7 +9,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { formatDuration, intervalToDuration, subMinutes } from 'date-fns';
 import { es, en } from 'date-fns/locale';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import Image from 'next/image';
 import CustomTheme from '../../../styles/theme';
 import Text from './Text';
@@ -28,7 +28,7 @@ const availableLanguages = {
 const ProgramCard = ({
   programName, programDescription, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
   syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
-  width, usersConnected, assistants, teacher, handleChoose, isHiddenOnPrework, isAvailableAsSaas,
+  width, assistants, teacher, handleChoose, isHiddenOnPrework, isAvailableAsSaas,
   subscriptionStatus, subscription, isMarketingCourse, iconLink,
 }) => {
   const { t, lang } = useTranslation('program-card');
@@ -301,7 +301,6 @@ const ProgramCard = ({
                     stTranslation={stTranslation}
                     syllabusContent={syllabusContent}
                     courseProgress={courseProgress}
-                    usersConnected={usersConnected}
                     assistants={assistants}
                     teacher={teacher}
                     isAvailableAsSaas={isAvailableAsSaas}
@@ -389,7 +388,6 @@ const ProgramCard = ({
                     stTranslation={stTranslation}
                     syllabusContent={syllabusContent}
                     courseProgress={courseProgress}
-                    usersConnected={usersConnected}
                     assistants={assistants}
                     teacher={teacher}
                     isAvailableAsSaas={isAvailableAsSaas}
@@ -520,7 +518,6 @@ ProgramCard.propTypes = {
   lessonNumber: PropTypes.number,
   isLoading: PropTypes.bool,
   width: PropTypes.string,
-  usersConnected: PropTypes.arrayOf(PropTypes.number),
   assistants: PropTypes.arrayOf(PropTypes.any),
   teacher: PropTypes.objectOf(PropTypes.any),
   iconBackground: PropTypes.string,
@@ -545,7 +542,6 @@ ProgramCard.defaultProps = {
   lessonNumber: null,
   isLoading: false,
   width: '292px',
-  usersConnected: [],
   assistants: [],
   teacher: null,
   iconBackground: '',
@@ -553,10 +549,9 @@ ProgramCard.defaultProps = {
   isHiddenOnPrework: false,
   isMarketingCourse: false,
   iconLink: '',
-  // onOpenModal: () => {},
   isAvailableAsSaas: false,
   subscriptionStatus: '',
   subscription: {},
 };
 
-export default ProgramCard;
+export default memo(ProgramCard);

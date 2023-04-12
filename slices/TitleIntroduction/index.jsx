@@ -1,4 +1,3 @@
-import { Box, Container } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import React from 'react';
 import IntroductionSection from '../../src/js_modules/landing/introductionSection';
@@ -9,13 +8,9 @@ import IntroductionSection from '../../src/js_modules/landing/introductionSectio
  * @param { TitleIntroductionProps }
  */
 const TitleIntroduction = ({ slice }) => (
-  <Box pt="3rem">
-    <Container maxW="container.xl" px="4rem">
-      <IntroductionSection
-        slice={slice}
-      />
-    </Container>
-  </Box>
+  <IntroductionSection
+    slice={slice}
+  />
 );
 TitleIntroduction.propTypes = {
   slice: PropTypes.objectOf(PropTypes.any),

@@ -4,10 +4,11 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
-  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS,
+  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED,
 } from '../types';
-import { getNextDateInMonths, getTimeProps, toCapitalize, unSlugify } from '../../../utils';
+import { getNextDateInMonths, getStorageItem, getTimeProps, toCapitalize, unSlugify } from '../../../utils';
 import bc from '../../services/breathecode';
+import modifyEnv from '../../../../modifyEnv';
 
 const useSignup = () => {
   const state = useSelector((sl) => sl.signupReducer);
@@ -16,6 +17,8 @@ const useSignup = () => {
   const router = useRouter();
   const { locale } = router;
   const dispatch = useDispatch();
+  const accessToken = getStorageItem('accessToken');
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const { syllabus, academy } = router.query;
   const nextMonthText = getNextDateInMonths(1).translation[locale];
@@ -87,10 +90,14 @@ const useSignup = () => {
     type: SET_PLAN_PROPS,
     payload,
   });
+  const toggleIfEnrolled = (payload) => dispatch({
+    type: TOGGLE_IF_ENROLLED,
+    payload,
+  });
 
   const handlePayment = (data) => new Promise((resolve, reject) => {
     const manyInstallmentsExists = selectedPlanCheckoutData?.financing_options?.length > 0 && selectedPlanCheckoutData?.period === 'FINANCING';
-    const isTtrial = selectedPlanCheckoutData?.type === 'TRIAL';
+    const isTtrial = ['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
 
     const getRequests = () => {
       if (!isTtrial) {
@@ -133,15 +140,25 @@ const useSignup = () => {
     const selectedPlan = cohortData?.plan ? cohortData?.plan : undefined;
     const cohortPlan = cohortPlans?.length > 0 ? cohortPlans[cohortData?.index || 0] : selectedPlan;
 
-    bc.payment().checking({
+    const checkingBody = {
       type: 'PREVIEW',
       cohort: cohortData?.id || dateProps?.id,
       academy: cohortData?.academy?.id || dateProps?.academy?.id || Number(academy),
       syllabus,
       plans: [selectedPlan?.slug || (cohortPlans?.length > 0 ? cohortPlan?.slug : undefined)],
+    };
+
+    fetch(`${BREATHECODE_HOST}/v1/payments/checking`, {
+      method: 'PUT',
+      headers: new Headers({
+        'content-type': 'application/json',
+        Authorization: `Token ${accessToken}`,
+      }),
+      body: JSON.stringify(checkingBody),
     })
-      .then((response) => {
-        const { data } = response;
+      .then(async (response) => {
+        const data = await response.json();
+
         const existsAmountPerHalf = data?.amount_per_half > 0;
         const existsAmountPerMonth = data?.amount_per_month > 0;
         const existsAmountPerQuarter = data?.amount_per_quarter > 0;
@@ -151,6 +168,7 @@ const useSignup = () => {
         const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
         const financingOptionsExists = currentPlan?.financing_options?.length > 0;
         const singlePlan = data?.plans?.length > 0 ? data?.plans[0] : data;
+        const isTotallyFree = !isNotTrial && singlePlan?.trial_duration === 0;
 
         const financingOptions = financingOptionsExists
           ? currentPlan?.financing_options
@@ -158,13 +176,13 @@ const useSignup = () => {
             .sort((a, b) => a?.monthly_price - b?.monthly_price)
           : [];
 
-        const trialPlan = (!isNotTrial && !financingOptionsExists) ? {
+        const trialPlan = (!financingOptionsExists) ? {
           ...singlePlan,
           title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
           price: data?.amount_per_month,
-          priceText: t('free-trial'),
-          period: singlePlan?.trial_duration_unit,
-          type: 'TRIAL',
+          priceText: isTotallyFree ? 'Free' : t('free-trial'),
+          period: isTotallyFree ? 'FREE' : singlePlan?.trial_duration_unit,
+          type: isTotallyFree ? 'FREE' : 'TRIAL',
         } : {};
 
         const monthPlan = existsAmountPerMonth ? {
@@ -194,7 +212,7 @@ const useSignup = () => {
           period: 'FINANCING',
           how_many_months: item?.how_many_months,
           type: 'PAYMENT',
-        })) : {};
+        })) : [{}];
 
         const planList = [trialPlan, monthPlan, yearPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0);
         const finalData = {
@@ -207,10 +225,9 @@ const useSignup = () => {
           setCheckoutData(finalData);
           resolve(finalData);
         }
-      })
-      .catch((err) => {
-        console.log(err);
-        reject();
+        if (response.status >= 400) {
+          reject(response);
+        }
       })
       .finally(() => {
         setLoader('date', false);
@@ -234,13 +251,16 @@ const useSignup = () => {
       })
       .catch((err) => {
         reject(err);
-        console.log(err);
-        toast({
-          title: t('alert-message:something-went-wrong-choosing-date'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
+        if (err?.status === 400) {
+          toggleIfEnrolled(true);
+        } else {
+          toast({
+            title: t('alert-message:something-went-wrong-choosing-date'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
+        }
       });
   });
 
@@ -302,6 +322,7 @@ const useSignup = () => {
     isSecondStep,
     isThirdStep,
     isFourthStep,
+    toggleIfEnrolled,
     nextStep,
     prevStep,
     setLoader,
