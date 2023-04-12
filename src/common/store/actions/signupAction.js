@@ -143,7 +143,7 @@ const useSignup = () => {
     const checkingBody = {
       type: 'PREVIEW',
       cohort: cohortData?.id || dateProps?.id,
-      academy: cohortData?.academy?.id || dateProps?.academy?.id || Number(academy),
+      academy: cohortData?.academy?.id || dateProps?.academy?.id || (Number(academy) || undefined),
       syllabus,
       plans: [selectedPlan?.slug || (cohortPlans?.length > 0 ? cohortPlan?.slug : undefined)],
     };

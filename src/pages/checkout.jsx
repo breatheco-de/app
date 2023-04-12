@@ -93,6 +93,7 @@ const Checkout = ({ finance }) => {
 
   useEffect(() => {
     if (queryPlanExists && tokenExists) {
+      setIsPreloading(true);
       if (cohorts && cohorts?.length <= 0) {
         toast({
           title: t('alert-message:no-course-configuration'),
@@ -122,7 +123,7 @@ const Checkout = ({ finance }) => {
               });
             }
 
-            if ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || (data?.has_available_cohorts && data?.has_available_cohorts === false)) {
+            if ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || cohorts?.length === 1) {
               if (resp.status < 400) {
                 const { kickoffDate, weekDays, availableTime } = cohorts?.[0] ? getTimeProps(cohorts[0]) : {};
                 const defaultQueryPropsAux = {
@@ -160,6 +161,9 @@ const Checkout = ({ finance }) => {
             setIsPreloading(false);
           });
       }
+      setTimeout(() => {
+        setIsPreloading(false);
+      }, 1000);
     }
   }, [cohorts?.length, accessToken]);
 
