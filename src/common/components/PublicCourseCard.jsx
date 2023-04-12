@@ -1,21 +1,24 @@
 /* eslint-disable camelcase */
 import PropTypes from 'prop-types';
-import { Box, useColorModeValue, Button, Divider, Img } from '@chakra-ui/react';
+import { Box, useColorModeValue, Divider, Img } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
+import Link from './NextChakraLink';
 import Text from './Text';
 import Heading from './Heading';
 import ProjectsSection from './ProjectsSection';
+import useStyle from '../hooks/useStyle';
 
 const PublicCourseCard = ({
-  programName, programDescription, icon_url, iconBackground, startsIn,
+  programName, programDescription, programSlug, icon_url, iconBackground, startsIn,
   stTranslation, syllabusContent, courseProgress, usersConnected, assistants,
-  teacher, isAvailableAsSaas, subscriptionStatus,
+  teacher, isAvailableAsSaas, subscriptionStatus, width,
 }) => {
   const { t, lang } = useTranslation('program-card');
+  const { backgroundColor2 } = useStyle();
   const textColor = useColorModeValue('black', 'white');
 
   return (
-    <Box width="300px">
+    <Box width={width}>
       <Box
         borderRadius="9px 9px 0 0"
         width="90%"
@@ -43,6 +46,7 @@ const PublicCourseCard = ({
         borderRadius="9px"
         padding="15px"
         height="min-content"
+        background={backgroundColor2}
       >
         <Heading
           size="lg"
@@ -55,7 +59,7 @@ const PublicCourseCard = ({
         >
           {programName}
         </Heading>
-        <Divider w="90%" margin="auto" />
+        <Divider style={{ borderBottomWidth: '1px', borderStyle: 'solid', borderColor: '#DADADA' }} w="90%" margin="auto" />
         {syllabusContent || assistants.length > 0 ? (
           <ProjectsSection
             startsIn={startsIn}
@@ -80,17 +84,18 @@ const PublicCourseCard = ({
             {programDescription}
           </Text>
         )}
-        <Button
+        <Link
+          variant="buttonDefault"
+          href={`/${programSlug}`}
+          textAlign="center"
           margin="10px auto 0 auto"
           display="block"
-          borderRadius="3px"
           width="50%"
-          padding="0"
-          whiteSpace="normal"
-          variant="default"
+          color="#FFF !important"
+          textDecoration="none !important"
         >
-          {stTranslation?.[lang]?.common.enroll || t('common:enroll')}
-        </Button>
+          {stTranslation?.[lang]?.common['learn-more'] || t('common:learn-more')}
+        </Link>
       </Box>
     </Box>
   );
@@ -99,6 +104,7 @@ const PublicCourseCard = ({
 PublicCourseCard.propTypes = {
   programName: PropTypes.string.isRequired,
   programDescription: PropTypes.string,
+  programSlug: PropTypes.string.isRequired,
   icon_url: PropTypes.string,
   iconBackground: PropTypes.string,
   startsIn: PropTypes.instanceOf(Date),
@@ -110,6 +116,7 @@ PublicCourseCard.propTypes = {
   teacher: PropTypes.objectOf(PropTypes.any),
   isAvailableAsSaas: PropTypes.bool,
   subscriptionStatus: PropTypes.string,
+  width: PropTypes.string,
 };
 
 PublicCourseCard.defaultProps = {
@@ -125,6 +132,7 @@ PublicCourseCard.defaultProps = {
   teacher: null,
   isAvailableAsSaas: true,
   subscriptionStatus: '',
+  width: '300px',
 };
 
 export default PublicCourseCard;

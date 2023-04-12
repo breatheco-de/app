@@ -68,7 +68,7 @@ interface PageDocumentData {
  * Slice for *Page → Slice Zone*
  *
  */
-type PageDocumentDataSlicesSlice = TitleIntroductionSlice | MarkdownSlice | TwoColumnSlice | OneColumnSlice | TestimonialsSlice;
+type PageDocumentDataSlicesSlice = TitleIntroductionSlice | MarkdownSlice | TwoColumnSlice | OneColumnSlice | TestimonialsSlice | ShowPricesSlice | TechnologiesSlice | PartnersSlice | RoadMapSlice | RecommendedCoursesSlice | TechnologiesPillsSlice;
 /**
  * Page document from Prismic
  *
@@ -85,6 +85,16 @@ export type AllDocumentTypes = PageDocument;
  *
  */
 interface MarkdownSliceDefaultPrimary {
+    /**
+     * ID Key field in *Markdown → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: markdown.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
     /**
      * Title field in *Markdown → Primary*
      *
@@ -126,6 +136,26 @@ interface MarkdownSliceDefaultPrimary {
      *
      */
     enable_table_of_content: prismicT.BooleanField;
+    /**
+     * Margin field in *Markdown → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: markdown.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
+    /**
+     * Padding field in *Markdown → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: markdown.primary.padding
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    padding: prismicT.KeyTextField;
 }
 /**
  * Default variation for Markdown Slice
@@ -155,6 +185,16 @@ export type MarkdownSlice = prismicT.SharedSlice<"markdown", MarkdownSliceVariat
  *
  */
 interface OneColumnSliceDefaultPrimary {
+    /**
+     * ID Key field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
     /**
      * Title field in *OneColumn → Primary*
      *
@@ -195,6 +235,17 @@ interface OneColumnSliceDefaultPrimary {
      *
      */
     button_label: prismicT.KeyTextField;
+    /**
+     * Link Button field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Boolean
+     * - **Placeholder**: *None*
+     * - **Default Value**: false
+     * - **API ID Path**: one_column.primary.link_button
+     * - **Documentation**: https://prismic.io/docs/core-concepts/boolean
+     *
+     */
+    link_button: prismicT.BooleanField;
     /**
      * Button url field in *OneColumn → Primary*
      *
@@ -295,6 +346,36 @@ interface OneColumnSliceDefaultPrimary {
      *
      */
     kpi_color_3: prismicT.ColorField;
+    /**
+     * background field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Color
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.background
+     * - **Documentation**: https://prismic.io/docs/core-concepts/color
+     *
+     */
+    background: prismicT.ColorField;
+    /**
+     * padding-md field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: one_column.primary.paddingMd
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    paddingMd: prismicT.KeyTextField;
+    /**
+     * Margin field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: one_column.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
 }
 /**
  * Default variation for OneColumn Slice
@@ -320,10 +401,444 @@ type OneColumnSliceVariation = OneColumnSliceDefault;
  */
 export type OneColumnSlice = prismicT.SharedSlice<"one_column", OneColumnSliceVariation>;
 /**
+ * Primary content in Partners → Primary
+ *
+ */
+interface PartnersSliceDefaultPrimary {
+    /**
+     * ID Key field in *Partners → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: partners.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
+    /**
+     * title field in *Partners → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: partners.primary.title
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    title: prismicT.KeyTextField;
+    /**
+     * images field in *Partners → Primary*
+     *
+     * - **Field Type**: Rich Text
+     * - **Placeholder**: Images Url
+     * - **API ID Path**: partners.primary.images
+     * - **Documentation**: https://prismic.io/docs/core-concepts/rich-text-title
+     *
+     */
+    images: prismicT.RichTextField;
+    /**
+     * Margin field in *Partners → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: partners.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
+}
+/**
+ * Default variation for Partners Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: `Partners`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type PartnersSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<PartnersSliceDefaultPrimary>, never>;
+/**
+ * Slice variation for *Partners*
+ *
+ */
+type PartnersSliceVariation = PartnersSliceDefault;
+/**
+ * Partners Shared Slice
+ *
+ * - **API ID**: `partners`
+ * - **Description**: `Partners`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type PartnersSlice = prismicT.SharedSlice<"partners", PartnersSliceVariation>;
+/**
+ * Primary content in RecommendedCourses → Primary
+ *
+ */
+interface RecommendedCoursesSliceDefaultPrimary {
+    /**
+     * id field in *RecommendedCourses → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: recommended_courses.primary.componentId
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    componentId: prismicT.KeyTextField;
+    /**
+     * background field in *RecommendedCourses → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: recommended_courses.primary.background
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    background: prismicT.KeyTextField;
+    /**
+     * title field in *RecommendedCourses → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: recommended_courses.primary.title
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    title: prismicT.KeyTextField;
+    /**
+     * technologies field in *RecommendedCourses → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: recommended_courses.primary.technologies
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    technologies: prismicT.KeyTextField;
+    /**
+     * Margin field in *RecommendedCourses → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: recommended_courses.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
+}
+/**
+ * Default variation for RecommendedCourses Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: `RecommendedCourses`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type RecommendedCoursesSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<RecommendedCoursesSliceDefaultPrimary>, never>;
+/**
+ * Slice variation for *RecommendedCourses*
+ *
+ */
+type RecommendedCoursesSliceVariation = RecommendedCoursesSliceDefault;
+/**
+ * RecommendedCourses Shared Slice
+ *
+ * - **API ID**: `recommended_courses`
+ * - **Description**: `RecommendedCourses`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type RecommendedCoursesSlice = prismicT.SharedSlice<"recommended_courses", RecommendedCoursesSliceVariation>;
+/**
+ * Primary content in RoadMap → Primary
+ *
+ */
+interface RoadMapSliceDefaultPrimary {
+    /**
+     * ID Key field in *RoadMap → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: road_map.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
+    /**
+     * Course slug field in *RoadMap → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: road_map.primary.course_slug
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    course_slug: prismicT.KeyTextField;
+    /**
+     * Title field in *RoadMap → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: road_map.primary.title
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    title: prismicT.KeyTextField;
+    /**
+     * Margin field in *RoadMap → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: road_map.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
+}
+/**
+ * Default variation for RoadMap Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: `RoadMap`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type RoadMapSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<RoadMapSliceDefaultPrimary>, never>;
+/**
+ * Slice variation for *RoadMap*
+ *
+ */
+type RoadMapSliceVariation = RoadMapSliceDefault;
+/**
+ * RoadMap Shared Slice
+ *
+ * - **API ID**: `road_map`
+ * - **Description**: `RoadMap`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type RoadMapSlice = prismicT.SharedSlice<"road_map", RoadMapSliceVariation>;
+/**
+ * Primary content in ShowPrices → Primary
+ *
+ */
+interface ShowPricesSliceDefaultPrimary {
+    /**
+     * ID Key field in *ShowPrices → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: show_prices.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
+    /**
+     * Title field in *ShowPrices → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: show_prices.primary.title
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    title: prismicT.KeyTextField;
+    /**
+     * Description field in *ShowPrices → Primary*
+     *
+     * - **Field Type**: Rich Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: show_prices.primary.description
+     * - **Documentation**: https://prismic.io/docs/core-concepts/rich-text-title
+     *
+     */
+    description: prismicT.RichTextField;
+    /**
+     * Plan field in *ShowPrices → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: show_prices.primary.plan
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    plan: prismicT.KeyTextField;
+    /**
+     * Bullets field in *ShowPrices → Primary*
+     *
+     * - **Field Type**: Rich Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: show_prices.primary.bullets
+     * - **Documentation**: https://prismic.io/docs/core-concepts/rich-text-title
+     *
+     */
+    bullets: prismicT.RichTextField;
+    /**
+     * Margin field in *ShowPrices → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: show_prices.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
+}
+/**
+ * Default variation for ShowPrices Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: `ShowPrices`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type ShowPricesSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<ShowPricesSliceDefaultPrimary>, never>;
+/**
+ * Slice variation for *ShowPrices*
+ *
+ */
+type ShowPricesSliceVariation = ShowPricesSliceDefault;
+/**
+ * ShowPrices Shared Slice
+ *
+ * - **API ID**: `show_prices`
+ * - **Description**: `ShowPrices`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type ShowPricesSlice = prismicT.SharedSlice<"show_prices", ShowPricesSliceVariation>;
+/**
+ * Primary content in Technologies → Primary
+ *
+ */
+interface TechnologiesSliceDefaultPrimary {
+    /**
+     * ID Key field in *Technologies → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: technologies.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
+    /**
+     * Endpoint field in *Technologies → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: technologies.primary.endpoint
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    endpoint: prismicT.KeyTextField;
+    /**
+     * Margin field in *Technologies → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: technologies.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
+}
+/**
+ * Default variation for Technologies Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: `Technologies`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type TechnologiesSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<TechnologiesSliceDefaultPrimary>, never>;
+/**
+ * Slice variation for *Technologies*
+ *
+ */
+type TechnologiesSliceVariation = TechnologiesSliceDefault;
+/**
+ * Technologies Shared Slice
+ *
+ * - **API ID**: `technologies`
+ * - **Description**: `Technologies`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type TechnologiesSlice = prismicT.SharedSlice<"technologies", TechnologiesSliceVariation>;
+/**
+ * Primary content in TechnologiesPills → Primary
+ *
+ */
+interface TechnologiesPillsSliceDefaultPrimary {
+    /**
+     * id field in *TechnologiesPills → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: technologies_pills.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
+    /**
+     * technologies field in *TechnologiesPills → Primary*
+     *
+     * - **Field Type**: Rich Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: technologies_pills.primary.technologies
+     * - **Documentation**: https://prismic.io/docs/core-concepts/rich-text-title
+     *
+     */
+    technologies: prismicT.RichTextField;
+    /**
+     * margin field in *TechnologiesPills → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: technologies_pills.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
+}
+/**
+ * Default variation for TechnologiesPills Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: `TechnologiesPills`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type TechnologiesPillsSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<TechnologiesPillsSliceDefaultPrimary>, never>;
+/**
+ * Slice variation for *TechnologiesPills*
+ *
+ */
+type TechnologiesPillsSliceVariation = TechnologiesPillsSliceDefault;
+/**
+ * TechnologiesPills Shared Slice
+ *
+ * - **API ID**: `technologies_pills`
+ * - **Description**: `TechnologiesPills`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type TechnologiesPillsSlice = prismicT.SharedSlice<"technologies_pills", TechnologiesPillsSliceVariation>;
+/**
  * Primary content in Testimonials → Primary
  *
  */
 interface TestimonialsSliceDefaultPrimary {
+    /**
+     * ID Key field in *Testimonials → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: testimonials.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
     /**
      * Title field in *Testimonials → Primary*
      *
@@ -344,6 +859,16 @@ interface TestimonialsSliceDefaultPrimary {
      *
      */
     endpoint: prismicT.KeyTextField;
+    /**
+     * Margin field in *Testimonials → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: testimonials.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
 }
 /**
  * Default variation for Testimonials Slice
@@ -373,6 +898,16 @@ export type TestimonialsSlice = prismicT.SharedSlice<"testimonials", Testimonial
  *
  */
 interface TitleIntroductionSliceDefaultPrimary {
+    /**
+     * ID Key field in *TitleIntroduction → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: title_introduction.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
     /**
      * Title field in *TitleIntroduction → Primary*
      *
@@ -433,6 +968,26 @@ interface TitleIntroductionSliceDefaultPrimary {
      *
      */
     image: prismicT.ImageField<never>;
+    /**
+     * Margin field in *TitleIntroduction → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: title_introduction.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
+    /**
+     * Grid gap field in *TitleIntroduction → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: Space between columns in pixels
+     * - **API ID Path**: title_introduction.primary.grid_gap
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    grid_gap: prismicT.KeyTextField;
 }
 /**
  * Default variation for TitleIntroduction Slice
@@ -462,6 +1017,16 @@ export type TitleIntroductionSlice = prismicT.SharedSlice<"title_introduction", 
  *
  */
 interface TwoColumnSliceDefaultPrimary {
+    /**
+     * ID Key field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: two_column.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
     /**
      * Title field in *TwoColumn → Primary*
      *
@@ -513,6 +1078,17 @@ interface TwoColumnSliceDefaultPrimary {
      */
     button_label: prismicT.KeyTextField;
     /**
+     * Link Button field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Boolean
+     * - **Placeholder**: *None*
+     * - **Default Value**: false
+     * - **API ID Path**: two_column.primary.link_button
+     * - **Documentation**: https://prismic.io/docs/core-concepts/boolean
+     *
+     */
+    link_button: prismicT.BooleanField;
+    /**
      * Button url field in *TwoColumn → Primary*
      *
      * - **Field Type**: Link
@@ -542,6 +1118,26 @@ interface TwoColumnSliceDefaultPrimary {
      *
      */
     image_position: prismicT.SelectField<"left" | "right">;
+    /**
+     * Margin field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: two_column.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
+    /**
+     * Grid gap field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: two_column.primary.grid_gap
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    grid_gap: prismicT.KeyTextField;
 }
 /**
  * Default variation for TwoColumn Slice
@@ -571,6 +1167,6 @@ declare module "@prismicio/client" {
         (repositoryNameOrEndpoint: string, options?: prismic.ClientConfig): prismic.Client<AllDocumentTypes>;
     }
     namespace Content {
-        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
+        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, PartnersSliceDefaultPrimary, PartnersSliceDefault, PartnersSliceVariation, PartnersSlice, RecommendedCoursesSliceDefaultPrimary, RecommendedCoursesSliceDefault, RecommendedCoursesSliceVariation, RecommendedCoursesSlice, RoadMapSliceDefaultPrimary, RoadMapSliceDefault, RoadMapSliceVariation, RoadMapSlice, ShowPricesSliceDefaultPrimary, ShowPricesSliceDefault, ShowPricesSliceVariation, ShowPricesSlice, TechnologiesSliceDefaultPrimary, TechnologiesSliceDefault, TechnologiesSliceVariation, TechnologiesSlice, TechnologiesPillsSliceDefaultPrimary, TechnologiesPillsSliceDefault, TechnologiesPillsSliceVariation, TechnologiesPillsSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
     }
 }

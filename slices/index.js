@@ -2,6 +2,12 @@
 
 import Markdown from './Markdown';
 import OneColumn from './OneColumn';
+import Partners from './Partners';
+import RecommendedCourses from './RecommendedCourses';
+import RoadMap from './RoadMap';
+import ShowPrices from './ShowPrices';
+import Technologies from './Technologies';
+import TechnologiesPills from './TechnologiesPills';
 import Testimonials from './Testimonials';
 import TitleIntroduction from './TitleIntroduction';
 import TwoColumn from './TwoColumn';
@@ -9,6 +15,12 @@ import TwoColumn from './TwoColumn';
 export {
 	Markdown,
 	OneColumn,
+	Partners,
+	RecommendedCourses,
+	RoadMap,
+	ShowPrices,
+	Technologies,
+	TechnologiesPills,
 	Testimonials,
 	TitleIntroduction,
 	TwoColumn,
@@ -17,6 +29,12 @@ export {
 export const components = {
 	markdown: Markdown,
 	one_column: OneColumn,
+	partners: Partners,
+	recommended_courses: RecommendedCourses,
+	road_map: RoadMap,
+	show_prices: ShowPrices,
+	technologies: Technologies,
+	technologies_pills: TechnologiesPills,
 	testimonials: Testimonials,
 	title_introduction: TitleIntroduction,
 	two_column: TwoColumn,

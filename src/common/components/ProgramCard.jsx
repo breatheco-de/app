@@ -29,7 +29,7 @@ const ProgramCard = ({
   programName, programDescription, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
   syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
   width, assistants, teacher, handleChoose, isHiddenOnPrework, isAvailableAsSaas,
-  subscriptionStatus, subscription, isMarketingCourse, iconLink,
+  subscriptionStatus, subscription, isMarketingCourse, iconLink, bullets, background,
 }) => {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
@@ -39,7 +39,7 @@ const ProgramCard = ({
 
   const freeTrialExpireDateValue = isValidDate(freeTrialExpireDate) ? new Date(freeTrialExpireDate) : new Date(subMinutes(new Date(), 1));
   const now = new Date();
-  const { lightColor, hexColor } = useStyle();
+  const { backgroundColor, lightColor, hexColor } = useStyle();
   const isFreeTrial = isAvailableAsSaas && subscriptionStatus === 'FREE_TRIAL';
   const isCancelled = isAvailableAsSaas && (subscriptionStatus === 'CANCELLED' || subscriptionStatus === 'PAYMENT_ISSUE');
   const isExpired = isFreeTrial && freeTrialExpireDateValue < now;
@@ -135,10 +135,11 @@ const ProgramCard = ({
       padding="15px"
       position="relative"
       height="min-content"
+      background={background}
     >
       {iconLink ? (
         <Box position="absolute" borderRadius="full" top="-30px" padding="10px">
-          <Image src={iconLink} width="36px" height="36px" />
+          <Image src={iconLink} width="44px" height="44px" />
         </Box>
       ) : (
         <Box position="absolute" borderRadius="full" top="-30px" background={iconBackground} padding="10px">
@@ -463,12 +464,23 @@ const ProgramCard = ({
             <>
               <Box width="100%" display="flex" justifyContent="center">
                 <Text
-                  size="12px"
-                  color={lightColor}
+                  size="sm"
+                  fontWeight={500}
+                  mb="10px"
                 >
                   {programDescription}
                 </Text>
               </Box>
+              {bullets?.length > 0 && (
+                <Flex flexDirection="column" gridGap="8px" background={backgroundColor} padding="10px 12px" borderRadius="4px">
+                  {bullets.map((l) => (
+                    <Box display="flex" fontWeight={700} fontSize="14px" gridGap="10px" alignItems="center">
+                      <Icon icon="checked2" color={hexColor.green} width="14px" height="14px" />
+                      {l.name}
+                    </Box>
+                  ))}
+                </Flex>
+              )}
               <Button
                 borderRadius="3px"
                 width="100%"
@@ -478,7 +490,7 @@ const ProgramCard = ({
                 mt="20px"
                 onClick={handleChoose}
               >
-                {t('enroll-now')}
+                {t('learn-more')}
               </Button>
             </>
           ) : (
@@ -529,6 +541,8 @@ ProgramCard.propTypes = {
   isAvailableAsSaas: PropTypes.bool,
   subscriptionStatus: PropTypes.string,
   subscription: PropTypes.objectOf(PropTypes.any),
+  bullets: PropTypes.arrayOf(PropTypes.any),
+  background: PropTypes.string,
 };
 
 ProgramCard.defaultProps = {
@@ -552,6 +566,8 @@ ProgramCard.defaultProps = {
   isAvailableAsSaas: false,
   subscriptionStatus: '',
   subscription: {},
+  bullets: [],
+  background: '',
 };
 
 export default memo(ProgramCard);

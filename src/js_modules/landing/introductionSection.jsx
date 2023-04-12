@@ -9,16 +9,22 @@ import Image from 'next/image';
 import { MotionBox } from '../../common/components/Animated';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
+import GridContainer from '../../common/components/GridContainer';
 
 const IntroductionSection = ({
-  data, slice,
+  data, slice, fitContent, ...rest
 }) => {
   const router = useRouter();
   const colors = useColorModeValue('#000', '#fff');
 
   return (
-    <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="10px">
-      <Box flex={0.6}>
+    <GridContainer
+      gridTemplateColumns="repeat(10, 1fr)"
+      px="10px"
+      id={slice?.primary?.id_key || ''}
+      {...rest}
+    >
+      <Box display={{ base: 'block', md: 'grid' }} gridColumn={fitContent ? '1 / span 5' : '2 / span 5'}>
         <Heading as="span" size="xl" fontWeight="700">
           {slice?.primary?.title ? (
             <>
@@ -74,34 +80,34 @@ const IntroductionSection = ({
             </>
           )}
         </Heading>
-        {slice?.primary?.highlight ? (
+        {slice?.primary?.highlight.length > 0 ? (
           <Box as="strong" className="highlighted" fontSize="35px" display={{ base: 'initial', sm: 'none' }}>
             <PrismicRichText field={slice?.primary?.highlight} />
           </Box>
-        ) : (
+        ) : data?.highlight && (
           <Box as="strong" className="highlighted" fontSize="35px" display={{ base: 'initial', sm: 'none' }}>
             {data?.highlight}
           </Box>
         )}
 
-        {slice?.primary?.description ? (
+        {slice?.primary?.description.length > 0 ? (
           <Text fontSize="18px" fontWeight={700} pt="16px">
             <PrismicRichText field={slice?.primary?.description} />
           </Text>
-        ) : (
+        ) : data?.description && (
           <Text fontSize="18px" fontWeight={700} pt="16px">
             {data?.description}
           </Text>
         )}
 
-        {slice?.primary?.buttontext ? (
-          <Button variant="default" fontSize="13px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router?.push('#pricing')}>
+        {slice?.primary?.buttontext?.length > 0 && slice?.primary?.buttontext ? (
+          <Button variant="default" width="fit-content" fontSize="13px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router?.push('#pricing')}>
             <PrismicRichText field={slice?.primary?.buttontext} />
           </Button>
         ) : (
           <>
             {data?.callToAction?.title && (
-              <Button variant="default" fontSize="13px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router.push(data?.callToAction.href)}>
+              <Button variant="default" width="fit-content" fontSize="13px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router.push(data?.callToAction.href)}>
                 {data?.callToAction.title}
               </Button>
             )}
@@ -114,15 +120,15 @@ const IntroductionSection = ({
                 field={slice?.primary?.bullets}
                 components={{
                   listItem: ({ children }, index) => (
-                    <MotionBox whileHover={{ scale: 1.05 }} as="li" key={index} display="flex" fontSize="14px" gridGap="10px" alignItems="center">
-                      <Icon icon="book" width="14px" height="14px" />
+                    <MotionBox whileHover={{ scale: 1.05 }} as="li" key={index} display="flex" fontSize="18px" gridGap="10px" alignItems="center">
+                      <Icon icon="checked2" color="#25BF6C" width="14px" height="14px" />
                       {children}
                     </MotionBox>
                   ),
                 }}
               />
             )
-            : data?.bullets.map((l) => (
+            : data?.bullets?.length > 0 && data?.bullets.map((l) => (
               <MotionBox whileHover={{ scale: 1.05 }} as="li" key={l.text} display="flex" fontSize="14px" gridGap="10px" alignItems="center">
                 <Icon icon={l.icon} width="14px" height="14px" />
                 {l.text}
@@ -131,9 +137,9 @@ const IntroductionSection = ({
         </Box>
       </Box>
 
-      <Box flex={0.4} display={{ base: 'none', md: 'initial' }}>
+      <Box display={{ base: 'block', md: 'grid' }} gridColumn={fitContent ? '7 / span 4' : '7 / span 3'} alignContent="center">
         {slice?.primary?.image?.url ? (
-          <Box display="flex" justifyContent="end">
+          <Box display="flex" height="fit-content" justifyContent="center">
             <Image
               src={slice.primary.image.url}
               alt={slice.primary.image.alt}
@@ -158,7 +164,7 @@ const IntroductionSection = ({
           </video>
         )}
       </Box>
-    </Box>
+    </GridContainer>
   );
 };
 

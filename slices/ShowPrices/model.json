@@ -1,0 +1,65 @@
+{
+  "id": "show_prices",
+  "type": "SharedSlice",
+  "name": "ShowPrices",
+  "description": "ShowPrices",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "ShowPrices",
+      "primary": {
+        "id_key": {
+          "type": "Text",
+          "config": {
+            "label": "ID Key",
+            "placeholder": ""
+          }
+        },
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title",
+            "placeholder": ""
+          }
+        },
+        "description": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Description",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "single": "paragraph,strong,em,list-item,o-list-item"
+          }
+        },
+        "plan": {
+          "type": "Text",
+          "config": {
+            "label": "Plan",
+            "placeholder": ""
+          }
+        },
+        "bullets": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Bullets",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "single": "list-item"
+          }
+        },
+        "margin": {
+          "type": "Text",
+          "config": {
+            "label": "Margin",
+            "placeholder": "top, right, bottom, left"
+          }
+        }
+      },
+      "items": {},
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    }
+  ]
+}

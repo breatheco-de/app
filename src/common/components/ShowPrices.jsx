@@ -115,7 +115,7 @@ const ShowPrices = ({
 
   return (
     <Box borderRadius="12px" padding="16px" background={featuredColor} display="flex" flex={0.5} flexDirection="column" gridGap="20px">
-      <Box width="100%" display="flex" flexWrap="wrap" gridGap="5px 10px" justifyContent="space-between" alignItems="center" mb="6px">
+      <Box width="100%" display="flex" flexWrap="wrap" gridGap="5px 10px" justifyContent={{ base: 'center', sm: 'space-between' }} alignItems="center" mb="6px">
         <Heading as="h2" size="sm">
           {title || data?.pricing['choose-plan']}
         </Heading>

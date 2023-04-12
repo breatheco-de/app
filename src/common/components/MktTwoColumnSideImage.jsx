@@ -1,15 +1,16 @@
-/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
   Box, Img,
 } from '@chakra-ui/react';
-import { PrismicRichText } from '@prismicio/react';
 import Heading from './Heading';
 import Text from './Text';
 import Link from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
+import GridContainer from './GridContainer';
+import PrismicTextComponent from './PrismicTextComponent';
 
 const MktTwoColumnSideImage = ({
+  id,
   title,
   subTitle,
   description,
@@ -22,85 +23,89 @@ const MktTwoColumnSideImage = ({
   imagePosition,
   slice,
   imageAlt,
+  gridGap,
+  ...rest
 }) => {
   const { fontColor2, hexColor, backgroundColor } = useStyle();
   const flexDirection = {
-    right: 'row-reverse',
-    left: 'row',
+    right: 'rtl',
+    left: 'ltr',
   };
 
   const imageProps = slice && slice?.primary?.image?.dimensions;
 
   return (
     <Box
-      padding="20px 0"
-      display="flex"
-      flexWrap={{ base: 'wrap', md: 'nowrap' }}
-      gridGap="20px"
+      id={id}
       background={background || backgroundColor}
-      border={border}
-      alignItems="center"
-      borderRadius="12px"
-      flexDirection={flexDirection[imagePosition]}
+      {...rest}
     >
-      <Box width={{ base: '100% 0', md: '50%' }}>
-        <Img
-          boxSize="100%"
-          margin="0 auto"
-          objectFit="contain"
-          src={imageUrl}
-          alt={imageAlt}
-          title={imageAlt}
-          borderRadius="3px"
-          // height={imageProps?.height}
-          width={imageProps?.width}
-        />
-      </Box>
-      <Box width={{ base: '100% 0', md: '50%' }}>
-        <Heading marginBottom="15px" as="h4" fontSize="14px" color={hexColor.blueDefault}>
-          {subTitle}
-        </Heading>
-        <Heading as="h2" size="sm">
-          {title}
-        </Heading>
-        {slice.primary.description ? (
-          <PrismicRichText
-            field={slice?.primary?.description}
-            components={{
-              paragraph: ({ children }) => (
-                <Text
-                  fontSize="sm"
-                  lineHeight="14px"
-                  margin="15px 0"
-                  color={fontColor2}
-                >
-                  {children}
-                </Text>
-              ),
-            }}
+      <GridContainer
+        gridTemplateColumns="repeat(10, 1fr)"
+        maxWidth="1280px"
+        id={id}
+        px="10px"
+        border={border}
+        alignItems="center"
+        borderRadius="12px"
+        padding={{ base: '20px 10px', md: '0' }}
+        gridGap={gridGap}
+        marginTop="20px"
+        style={{
+          direction: flexDirection[imagePosition],
+        }}
+      >
+        <Box display={{ base: 'block', md: 'grid' }} style={{ direction: 'initial' }} gridColumn="2 / span 4">
+          <Img
+            boxSize="100%"
+            margin="0 auto"
+            objectFit="contain"
+            src={imageUrl}
+            alt={imageAlt}
+            title={imageAlt}
+            borderRadius="3px"
+            // height={imageProps?.height}
+            width={imageProps?.width}
           />
-        ) : (
-          <Text
-            fontSize="sm"
-            lineHeight="14px"
-            margin="15px 0"
-            color={fontColor2}
-          >
-            {description}
-          </Text>
-        )}
-        {buttonUrl && (
-          <Link
-            variant={!linkButton && 'buttonDefault'}
-            color={linkButton ? hexColor.blueDefault : '#FFF'}
-            href={buttonUrl}
-            textAlign="center"
-            display="inline-block"
-          >
-            {buttonLabel}
-          </Link>
-        )}
-      </Box>
+        </Box>
+        <Box display={{ base: 'block', md: 'grid' }} style={{ direction: 'initial' }} gridColumn="6 / span 4">
+          {subTitle && (
+            <Heading marginBottom="15px" as="h4" fontSize="14px" color={hexColor.blueDefault}>
+              {subTitle}
+            </Heading>
+          )}
+          <Heading as="h2" size="sm">
+            {title}
+          </Heading>
+          {slice.primary.description ? (
+            <PrismicTextComponent
+              field={slice?.primary?.description}
+            />
+          ) : (
+            <Text
+              fontSize="sm"
+              lineHeight="14px"
+              margin="15px 0"
+              color={fontColor2}
+            >
+              {description}
+            </Text>
+          )}
+          {buttonUrl && (
+            <Link
+              variant={!linkButton && 'buttonDefault'}
+              color={linkButton ? hexColor.blueDefault : '#FFF'}
+              textDecoration={linkButton && 'underline'}
+              href={buttonUrl}
+              textAlign="center"
+              display="inline-block"
+              width="fit-content"
+            >
+              {buttonLabel}
+            </Link>
+          )}
+        </Box>
+      </GridContainer>
     </Box>
   );
 };
@@ -118,6 +123,8 @@ MktTwoColumnSideImage.propTypes = {
   border: PropTypes.string,
   slice: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
   imageAlt: PropTypes.string,
+  id: PropTypes.string,
+  gridGap: PropTypes.string,
 };
 
 MktTwoColumnSideImage.defaultProps = {
@@ -133,6 +140,8 @@ MktTwoColumnSideImage.defaultProps = {
   border: null,
   slice: null,
   imageAlt: '',
+  id: '',
+  gridGap: '24px',
 };
 
 export default MktTwoColumnSideImage;

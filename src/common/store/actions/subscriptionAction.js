@@ -2,29 +2,42 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useToast } from '@chakra-ui/react';
 import { CANCEL_SUBSCRIPTION, FETCH_SUBSCRIPTIONS } from '../types';
 import bc from '../../services/breathecode';
+import profileHandlers from '../../../js_modules/profile/Subscriptions/handlers';
 
 const useSubscriptionsHandler = () => {
   const state = useSelector((st) => st.subscriptionsReducer);
   const toast = useToast();
   const dispatch = useDispatch();
+  const {
+    getPlanOffer,
+  } = profileHandlers({});
 
   const fetchSubscriptions = () => new Promise((resolve, reject) => {
     bc.payment({
       status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
     }).subscriptions()
-      .then(({ data }) => {
-        resolve(data);
+      .then(async ({ data }) => {
+        const subscriptionsDataWithPlanOffer = data?.subscriptions?.length > 0 ? await Promise.all(data?.subscriptions.map(async (s) => {
+          const planOffer = await getPlanOffer({ slug: s?.plans[0]?.slug, disableRedirects: true });
+          return {
+            ...s,
+            type: 'subscription',
+            planOffer,
+          };
+        })) : [];
+        const planFinancingsDataWithPlanOffer = data?.plan_financings?.length > 0 ? await Promise.all(data?.plan_financings.map(async (f) => {
+          const planOffer = await getPlanOffer({ slug: f?.plans[0]?.slug, disableRedirects: true });
+          return {
+            ...f,
+            type: 'plan_financing',
+            planOffer,
+          };
+        })) : [];
         dispatch({
           type: FETCH_SUBSCRIPTIONS,
           payload: {
-            subscriptions: data?.subscriptions.map((s) => ({
-              ...s,
-              type: 'subscription',
-            })),
-            plan_financings: data?.plan_financings.map((f) => ({
-              ...f,
-              type: 'plan_financing',
-            })),
+            subscriptions: subscriptionsDataWithPlanOffer,
+            plan_financings: planFinancingsDataWithPlanOffer,
           },
         });
       })

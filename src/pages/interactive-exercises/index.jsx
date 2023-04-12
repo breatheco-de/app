@@ -244,7 +244,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
       </Box>
 
       {/* margin={{ base: '0 4% 0 4%', md: '0 10% 0 10%' }} */}
-      <GridContainer>
+      <GridContainer withContainer gridColumn="1 / span 10" maxWidth="1280px">
         <Text
           size="md"
           display="flex"

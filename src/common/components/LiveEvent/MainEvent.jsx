@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Box, Divider, Tag, TagLabel, useToast } from '@chakra-ui/react';
+import { Box, Divider, Tag, TagLabel } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import Text from '../Text';
-import bc from '../../services/breathecode';
 import Icon from '../Icon';
 import useStyle from '../../hooks/useStyle';
 import CustomTheme from '../../../../styles/theme';
@@ -21,7 +20,6 @@ const MainEvent = ({
   const truncatedText = titleLength > limit ? `${eventTitle?.substring(0, limit)}...` : eventTitle;
 
   const truncatedTime = lengthOfString(time) >= 16 ? `${time?.substring(0, 15)}...` : time;
-  const toast = useToast();
   const { fontColor, disabledColor, backgroundColor2, hexColor } = useStyle();
 
   const accessToken = getStorageItem('accessToken');
@@ -50,27 +48,7 @@ const MainEvent = ({
         cursor={(!event?.hash || isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) && 'pointer'}
         onClick={() => {
           if (event?.hash && isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
-            bc.events().joinLiveClass(event.hash)
-              .then((resp) => {
-                if (resp.data?.url) {
-                  window.open(resp.data?.url);
-                } else {
-                  toast({
-                    title: t('alert-message:no-link-exist'),
-                    status: 'info',
-                    duration: 4000,
-                    isClosable: true,
-                  });
-                }
-              })
-              .catch(() => {
-                toast({
-                  title: t('alert-message:something-went-wrong'),
-                  status: 'error',
-                  duration: 3000,
-                  isClosable: true,
-                });
-              });
+            window.open(`${host}/v1/events/me/event/liveclass/join/${event?.hash}?token=${accessToken}`);
           }
           if (!event?.hash) {
             window.open(`${host}/v1/events/me/event/${nearestEvent?.id}/join?token=${accessToken}`);

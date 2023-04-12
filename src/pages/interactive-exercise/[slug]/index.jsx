@@ -40,6 +40,7 @@ import { MDSkeleton } from '../../../common/components/Skeleton';
 import validationSchema from '../../../common/components/Forms/validationSchemas';
 import { processFormEntry } from '../../../common/components/Forms/actions';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
+import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
 import CustomTheme from '../../../../styles/theme';
 import GridContainer from '../../../common/components/GridContainer';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
@@ -506,8 +507,6 @@ const Exercise = ({ exercise, markdown }) => {
   const language = router.locale === 'en' ? 'us' : 'es';
   const { slug } = router.query;
   const { locale } = router;
-  // const defaultImage = '/static/images/code1.png';
-  // const getImage = exercise.preview !== '' ? exercise.preview : defaultImage;
   const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
@@ -544,7 +543,6 @@ const Exercise = ({ exercise, markdown }) => {
       )}
       <Box
         background={useColorModeValue('featuredLight', 'featuredDark')}
-        // padding={{ base: '4%', lg: '2% 10%' }}
       >
         <Box
           className="box-heading"
@@ -610,40 +608,10 @@ const Exercise = ({ exercise, markdown }) => {
       <GridContainer
         height="100%"
         minHeight="500px"
-        // flexDirection="column"
-        // justifyContent="center"
-        // alignItems="center"
-        // margin={{ base: '4% 4% 0 4%', lg: '4% 10% 0 10%' }}
+        withContainer
       >
-        {/* <Link
-          href="/interactive-exercises"
-          color={useColorModeValue('blue.default', 'blue.300')}
-          display="inline-block"
-          letterSpacing="0.05em"
-          fontWeight="700"
-          paddingBottom="10px"
-        >
-          {`← ${t('exercises:backToExercises')}`}
-        </Link> */}
-
         <Flex display={{ base: 'block', lg: 'flex' }} height="100%" gridGap="26px" position="relative">
           <Box flex="1">
-            {/* {exercise?.title ? (
-              <Heading
-                as="h1"
-                size="32px"
-                fontWeight="700"
-                textTransform="capitalize"
-                padding="10px 0 35px 0"
-                transition="color 0.2s ease-in-out"
-                color={useColorModeValue('black', 'white')}
-              >
-                {exercise.title}
-              </Heading>
-            ) : (
-              <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
-            )} */}
-
             <Box
               display={{ base: 'flex', lg: 'none' }}
               flexDirection="column"
@@ -687,13 +655,17 @@ const Exercise = ({ exercise, markdown }) => {
               ) : (
                 <MDSkeleton />
               )}
+              <MktRecommendedCourses
+                title={t('common:related-courses')}
+                technologies={exercise?.technologies.join(',')}
+              />
             </Box>
           </Box>
 
           <Box
             display={{ base: 'none', lg: 'flex' }}
             position="absolute"
-            top="-240px"
+            top="-120px"
             // top="100px"
             right="9%"
             flexDirection="column"

@@ -1,6 +1,6 @@
 import { SliceZone } from '@prismicio/react';
 import * as prismicH from '@prismicio/helpers';
-import { Box, Container } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
 import { createClient } from '../../prismicio';
@@ -8,9 +8,7 @@ import { components } from '../../slices';
 
 const Page = ({ page }) => (
   <Box pt="3rem">
-    <Container maxW="container.xl" px="10px">
-      <SliceZone slices={page?.data?.slices} components={components} />
-    </Container>
+    <SliceZone slices={page?.data?.slices} components={components} />
   </Box>
 );
 
