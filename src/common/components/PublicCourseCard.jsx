@@ -11,14 +11,14 @@ import useStyle from '../hooks/useStyle';
 const PublicCourseCard = ({
   programName, programDescription, programSlug, icon_url, iconBackground, startsIn,
   stTranslation, syllabusContent, courseProgress, usersConnected, assistants,
-  teacher, isAvailableAsSaas, subscriptionStatus, width,
+  teacher, isAvailableAsSaas, subscriptionStatus, width, ...rest
 }) => {
   const { t, lang } = useTranslation('program-card');
   const { backgroundColor2 } = useStyle();
   const textColor = useColorModeValue('black', 'white');
 
   return (
-    <Box width={width}>
+    <Box width={width} {...rest}>
       <Box
         borderRadius="9px 9px 0 0"
         width="90%"
