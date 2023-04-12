@@ -188,7 +188,7 @@ const useSignup = () => {
 
         const monthPlan = existsAmountPerMonth ? {
           ...singlePlan,
-          title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
+          title: singlePlan?.title ? singlePlan?.title : t('monthly_payment'),
           price: data?.amount_per_month,
           priceText: `$${data?.amount_per_month}`,
           plan_id: `p-${data?.amount_per_month}`,
@@ -198,7 +198,7 @@ const useSignup = () => {
 
         const yearPlan = existsAmountPerYear ? {
           ...singlePlan,
-          title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
+          title: singlePlan?.title ? singlePlan?.title : t('yearly_payment'),
           price: data?.amount_per_year,
           priceText: `$${data?.amount_per_year}`,
           plan_id: `p-${data?.amount_per_year}`,
@@ -206,17 +206,21 @@ const useSignup = () => {
           type: 'PAYMENT',
         } : {};
 
-        const financingOption = financingOptionsExists ? financingOptions.map((item, index) => ({
-          ...singlePlan,
-          financingId: index + 1,
-          title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
-          price: item?.monthly_price,
-          priceText: `$${item?.monthly_price} x ${item?.how_many_months}`,
-          plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
-          period: 'FINANCING',
-          how_many_months: item?.how_many_months,
-          type: 'PAYMENT',
-        })) : [{}];
+        const financingOption = financingOptionsExists ? financingOptions.map((item, index) => {
+          const financingTitle = item?.how_many_months === 1 ? t('one_payment') : t('many_months_payment', { qty: item?.how_many_months });
+
+          return ({
+            ...singlePlan,
+            financingId: index + 1,
+            title: singlePlan?.title ? singlePlan?.title : financingTitle,
+            price: item?.monthly_price,
+            priceText: `$${item?.monthly_price} x ${item?.how_many_months}`,
+            plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
+            period: 'FINANCING',
+            how_many_months: item?.how_many_months,
+            type: 'PAYMENT',
+          });
+        }) : [{}];
 
         const planList = [trialPlan, monthPlan, yearPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0);
         const finalData = {

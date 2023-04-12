@@ -353,7 +353,7 @@ const profileHandlers = ({
             };
 
             const onePaymentFinancing = financingOptionsOnePaymentExists ? financingOptionsOnePayment.map((item) => ({
-              title: t('subscription.upgrade-modal.monthly_payment'),
+              title: t('subscription.upgrade-modal.one_payment'),
               price: item?.monthly_price,
               priceText: `$${item?.monthly_price}`,
               period: 'FINANCING',
