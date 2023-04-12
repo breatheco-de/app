@@ -45,11 +45,11 @@ const ChooseYourClass = ({
       saas: true,
       upcoming: true,
       plan: planFormated,
-      never_ends: false,
     })
       .cohorts()
       .then(({ data }) => {
-        const formatedData = data.map((date) => {
+        const dataNeverEnds = data.filter((item) => item?.never_ends === false);
+        const formatedData = dataNeverEnds.map((date) => {
           const { kickoffDate, shortWeekDays, availableTime } = getTimeProps(date);
           return {
             ...date,
