@@ -358,6 +358,7 @@ const profileHandlers = ({
               priceText: `$${item?.monthly_price}`,
               period: 'FINANCING',
               description: t('subscription.upgrade-modal.full_access'),
+              plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
               how_many_months: item?.how_many_months,
               suggested_plan: offerData,
               type: 'PAYMENT',
@@ -371,6 +372,7 @@ const profileHandlers = ({
               trialDuration: offerData?.trial_duration,
               period: offerData?.trial_duration_unit,
               description: getTrialLabel().description,
+              plan_id: `p-${offerData?.trial_duration}-trial`,
               suggested_plan: offerData,
               type: isTotallyFree ? 'FREE' : 'TRIAL',
               isFree: true,
@@ -383,6 +385,7 @@ const profileHandlers = ({
               priceText: `$${offerData?.price_per_month}`,
               period: 'MONTH',
               description: t('subscription.upgrade-modal.full_access'),
+              plan_id: `p-${offerData?.price_per_month}`,
               suggested_plan: offerData,
               type: 'PAYMENT',
               show: true,
@@ -394,6 +397,7 @@ const profileHandlers = ({
               priceText: `$${offerData?.price_per_year}`,
               period: 'YEAR',
               description: t('subscription.upgrade-modal.full_access'),
+              plan_id: `p-${offerData?.price_per_year}`,
               suggested_plan: offerData,
               type: 'PAYMENT',
               show: true,
@@ -405,26 +409,27 @@ const profileHandlers = ({
               priceText: `$${item?.monthly_price} x ${item?.how_many_months}`,
               period: 'FINANCING',
               description: t('subscription.upgrade-modal.many_months_description', { monthly_price: item?.monthly_price, many_months: item?.how_many_months }),
+              plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
               how_many_months: item?.how_many_months,
               suggested_plan: offerData,
               type: 'PAYMENT',
               show: true,
             })) : [];
 
-            const consumableOption = outOfConsumables && offerData?.service_items?.length > 0
-              ? offerData?.service_items.map((item) => ({
-                title: toCapitalize(unSlugify(String(item?.service?.slug))),
-                price: item?.service?.price_per_unit,
-                how_many: item?.how_many,
-                suggested_plan: offerData,
-                type: 'CONSUMABLE',
-                show: true,
-              }))
-              : {};
+            // const consumableOption = outOfConsumables && offerData?.service_items?.length > 0
+            //   ? offerData?.service_items.map((item) => ({
+            //     title: toCapitalize(unSlugify(String(item?.service?.slug))),
+            //     price: item?.service?.price_per_unit,
+            //     how_many: item?.how_many,
+            //     suggested_plan: offerData,
+            //     type: 'CONSUMABLE',
+            //     show: true,
+            //   }))
+            //   : {};
 
             const paymentList = [...monthPlan, yearPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
             const financingList = financingOption?.filter((plan) => Object.keys(plan).length > 0);
-            const consumableList = [consumableOption].filter((plan) => Object.keys(plan).length > 0);
+            // const consumableList = [consumableOption].filter((plan) => Object.keys(plan).length > 0);
 
             const finalData = {
               title: toCapitalize(unSlugify(String(offerData?.slug))),
@@ -437,7 +442,7 @@ const profileHandlers = ({
               paymentOptions: paymentList,
               financingOptions: financingList,
               outOfConsumables,
-              consumableOptions: consumableList,
+              consumableOptions: [],
               bullets,
             };
             // -------------------------------------------------- END PREPARING PRICES --------------------------------------------------

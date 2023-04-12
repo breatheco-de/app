@@ -181,6 +181,7 @@ const useSignup = () => {
           title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
           price: data?.amount_per_month,
           priceText: isTotallyFree ? 'Free' : t('free-trial'),
+          plan_id: `p-${singlePlan?.trial_duration}-trial`,
           period: isTotallyFree ? 'FREE' : singlePlan?.trial_duration_unit,
           type: isTotallyFree ? 'FREE' : 'TRIAL',
         } : {};
@@ -190,6 +191,7 @@ const useSignup = () => {
           title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
           price: data?.amount_per_month,
           priceText: `$${data?.amount_per_month}`,
+          plan_id: `p-${data?.amount_per_month}`,
           period: 'MONTH',
           type: 'PAYMENT',
         } : {};
@@ -199,6 +201,7 @@ const useSignup = () => {
           title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
           price: data?.amount_per_year,
           priceText: `$${data?.amount_per_year}`,
+          plan_id: `p-${data?.amount_per_year}`,
           period: 'YEAR',
           type: 'PAYMENT',
         } : {};
@@ -209,6 +212,7 @@ const useSignup = () => {
           title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
           price: item?.monthly_price,
           priceText: `$${item?.monthly_price} x ${item?.how_many_months}`,
+          plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
           period: 'FINANCING',
           how_many_months: item?.how_many_months,
           type: 'PAYMENT',
