@@ -56,6 +56,13 @@
             "label": "Margin",
             "placeholder": "top, right, bottom, left"
           }
+        },
+        "padding": {
+          "type": "Text",
+          "config": {
+            "label": "Padding",
+            "placeholder": ""
+          }
         }
       },
       "items": {},
