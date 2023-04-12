@@ -28,7 +28,7 @@ const Markdown = ({ slice }) => {
       <Box
         display="grid"
         gridColumn="2 / span 12"
-        padding={padding || { base: '28px 0', md: '28px 32px' }}
+        padding={padding || { base: '28px 10px', md: '28px 0px' }}
         borderRadius="3px"
         // background={useColorModeValue('#F2F6FA', 'featuredDark')}
         width="100%"
