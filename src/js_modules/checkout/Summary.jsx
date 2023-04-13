@@ -297,51 +297,56 @@ const Summary = ({
               )}
             </Box>
           </Box>
-          <Box
-            as="hr"
-            width="100%"
-            margin="0"
-            h="1px"
-            borderColor={borderColor}
-          />
           {planProps?.length > 0 && (
-            <Box fontSize="14px" fontWeight="700" color="blue.default">
-              {t('what-you-will-get')}
+            <>
+              <Box
+                as="hr"
+                width="100%"
+                margin="0"
+                h="1px"
+                borderColor={borderColor}
+              />
+              <Box fontSize="14px" fontWeight="700" color="blue.default">
+                {t('what-you-will-get')}
+              </Box>
+            </>
+          )}
+
+          {planProps?.length > 0 && (
+            <Box
+              as="ul"
+              style={{ listStyle: 'none' }}
+              display="flex"
+              flexDirection="column"
+              gridGap="12px"
+            >
+              {planProps?.map((bullet) => (
+                <Box
+                  as="li"
+                  key={bullet?.features[0]?.description}
+                  display="flex"
+                  flexDirection="row"
+                  lineHeight="24px"
+                  gridGap="8px"
+                >
+                  <Icon
+                    icon="checked2"
+                    color="#38A56A"
+                    width="13px"
+                    height="10px"
+                    style={{ margin: '8px 0 0 0' }}
+                  />
+                  <Box
+                    fontSize="14px"
+                    fontWeight="600"
+                    letterSpacing="0.05em"
+                    dangerouslySetInnerHTML={{ __html: bullet?.description }}
+                  />
+                  {bullet?.features[0]?.description}
+                </Box>
+              ))}
             </Box>
           )}
-          <Box
-            as="ul"
-            style={{ listStyle: 'none' }}
-            display="flex"
-            flexDirection="column"
-            gridGap="12px"
-          >
-            {planProps?.length > 0 && planProps?.map((bullet) => (
-              <Box
-                as="li"
-                key={bullet?.features[0]?.description}
-                display="flex"
-                flexDirection="row"
-                lineHeight="24px"
-                gridGap="8px"
-              >
-                <Icon
-                  icon="checked2"
-                  color="#38A56A"
-                  width="13px"
-                  height="10px"
-                  style={{ margin: '8px 0 0 0' }}
-                />
-                <Box
-                  fontSize="14px"
-                  fontWeight="600"
-                  letterSpacing="0.05em"
-                  dangerouslySetInnerHTML={{ __html: bullet?.description }}
-                />
-                {bullet?.features[0]?.description}
-              </Box>
-            ))}
-          </Box>
         </Box>
         <Box background={backgroundColor} pt="22px">
           <Heading
