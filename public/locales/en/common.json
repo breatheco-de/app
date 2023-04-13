@@ -80,7 +80,7 @@
     "mark-as-not-done": "Mark as not done"
   },
   "learnpack": {
-    "description": "This practice will run outside of 4Geeks.com thought LearnPack. An interactive learning tool that runs integrated with VSCode.",
+    "description": "This practice will run outside of 4Geeks.com through LearnPack. An interactive learning tool that runs integrated with VSCode.",
     "new-exercise": "Start new exercise",
     "continue-exercise": "Continue exercise"
   },

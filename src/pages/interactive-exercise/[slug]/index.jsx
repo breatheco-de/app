@@ -655,6 +655,10 @@ const Exercise = ({ exercise, markdown }) => {
               ) : (
                 <MDSkeleton />
               )}
+              <MktRecommendedCourses
+                title={t('common:related-courses')}
+                technologies={exercise?.technologies.join(',')}
+              />
             </Box>
           </Box>
 
@@ -689,11 +693,6 @@ const Exercise = ({ exercise, markdown }) => {
             )}
           </Box>
         </Flex>
-      </GridContainer>
-      <GridContainer withContainer margin="auto" padding={{ base: '2rem 15px 2rem 15px', md: '2rem 0 2rem 0' }}>
-        <MktRecommendedCourses
-          title={t('common:related-courses')}
-        />
       </GridContainer>
     </>
   );

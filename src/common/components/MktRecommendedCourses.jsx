@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   Box,
 } from '@chakra-ui/react';
@@ -12,6 +12,10 @@ const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 2;
 
 const MktRecommendedCourses = ({ id, technologies, background, title, ...rest }) => {
+  const ref = useRef(null);
+  const [isDown, setIsDown] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
   const [courses, setCourses] = useState([]);
   const { hexColor, featuredColor, fontColor } = useStyle();
 
@@ -20,8 +24,9 @@ const MktRecommendedCourses = ({ id, technologies, background, title, ...rest })
       if (typeof technologies === 'string' && technologies.length > 0) {
         const res = await fetch(`${process.env.BREATHECODE_HOST}${defaultEndpoint}?technologies=${technologies}`);
         const data = await res.json();
-        if (data.length > 0) {
-          setCourses(data.filter((course) => course.course_translation).slice(0, coursesLimit));
+        const filteredData = data.filter((course) => course.course_translation).slice(0, coursesLimit);
+        if (filteredData.length > 0) {
+          setCourses(filteredData);
           return;
         }
       }
@@ -33,15 +38,68 @@ const MktRecommendedCourses = ({ id, technologies, background, title, ...rest })
     }
   };
 
+  // const dummyCourse = {
+  //   icon_url: 'https://storage.googleapis.com/breathecode/logos-workshops/javascript-event-type.svg',
+  //   slug: 'dummy',
+  //   course_translation: {
+  //     title: 'Curso Interactivo de Javascript',
+  //     description: 'Aprende Javascript desde cero en una Semana con este gran curso. En el podrás aprender sobre condicionales, funciones, el manejo de arrays y mucho más!',
+  //   },
+  // };
+
+  // if (courses.length === 1) setCourses([...courses, dummyCourse]);
+
   useEffect(() => {
     getCourses();
   }, []);
 
+  useEffect(() => {
+    if (ref.current?.clientWidth !== ref.current?.scrollWidth) ref.current.scrollLeft = 25;
+  }, [courses]);
+
+  const onMouseDown = (e) => {
+    setIsDown(true);
+    const pageX = e.touches ? e.touches[0].pageX : e.pageX;
+    setStartX(pageX - ref.current.offsetLeft);
+    setScrollLeft(ref.current.scrollLeft);
+  };
+
+  const onMouseLeave = () => {
+    setIsDown(false);
+  };
+
+  const onMouseUp = () => {
+    setIsDown(false);
+  };
+
+  const onMouseMove = (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const pageX = e.touches ? e.touches[0].pageX : e.pageX;
+    const x = pageX - ref.current.offsetLeft;
+    const walk = (x - startX) * 3; //scroll-fast
+    ref.current.scrollLeft = scrollLeft - walk;
+  };
+
   return courses.length > 0 && (
     <>
-      <Box flexWrap={{ base: 'wrap', xl: 'nowrap' }} id={id} borderRadius="13px" padding="20px" background={background || featuredColor} display="flex" {...rest}>
+      <Box
+        // flexWrap={{ base: 'wrap', xl: 'nowrap' }}
+        flexWrap="wrap"
+        id={id}
+        borderRadius="13px"
+        padding={{ base: '20px', lg: '30px' }}
+        background={background || featuredColor}
+        maxWidth="1280px"
+        display="flex"
+        {...rest}
+      >
         {title && (
-          <Box flexShrink="1" minWidth="170px">
+          <Box
+            flexShrink="2"
+            minWidth="170px"
+            maxWidth={{ base: 'none', lg: '300px' }}
+          >
             <Heading
               as="h2"
               size="30px"
@@ -53,7 +111,25 @@ const MktRecommendedCourses = ({ id, technologies, background, title, ...rest })
             </Heading>
           </Box>
         )}
-        <Box width="100%" flexShrink="0.7" flexDirection="row-reverse" justifyContent="space-around" display="flex" gridGap="10px" flexWrap={{ base: 'wrap', lg: 'nowrap' }}>
+        <Box
+          ref={ref}
+          flexGrow="1"
+          flexDirection={{ base: 'row', md: 'row-reverse' }}
+          justifyContent="space-between"
+          display="flex"
+          gridGap="10px"
+          overflowX="hidden"
+          cursor={ref.current?.clientWidth !== ref.current?.scrollWidth && 'grab'}
+          onMouseDown={onMouseDown}
+          onMouseUp={onMouseUp}
+          onMouseMove={onMouseMove}
+          onMouseLeave={onMouseLeave}
+          onTouchStart={onMouseDown}
+          onTouchMove={onMouseMove}
+          onTouchEnd={onMouseLeave}
+          // maxWidth="790px"
+          // flexWrap={{ base: 'wrap', lg: 'nowrap' }}
+        >
           {courses.map((course) => (
             <PublicCourseCard
               icon_url={course.icon_url}
@@ -61,14 +137,9 @@ const MktRecommendedCourses = ({ id, technologies, background, title, ...rest })
               programName={course.course_translation.title}
               programSlug={course.slug}
               programDescription={course.course_translation.description}
+              flexShrink="0"
             />
           ))}
-          {/* <PublicCourseCard
-            icon_url="https://storage.googleapis.com/breathecode/logos-workshops/javascript-event-type.svg"
-            iconBackground="#25BF6C"
-            programName="Curso Interactivo de Javascript"
-            programDescription={dummyText}
-          /> */}
         </Box>
       </Box>
     </>

@@ -13,7 +13,7 @@ const RecommendedCourses = ({ slice }) => (
     background={slice?.primary?.background}
     technologies={slice.primary.technologies}
     title={slice?.primary?.title}
-    margin={slice?.primary?.margin}
+    margin={slice?.primary?.margin || '20px auto 0 auto'}
   />
 );
 
