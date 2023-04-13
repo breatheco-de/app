@@ -10,7 +10,7 @@ import Text from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 import useSignup from '../../common/store/actions/signupAction';
 import bc from '../../common/services/breathecode';
-import { toCapitalize, unSlugify } from '../../utils';
+import { getQueryString, toCapitalize, unSlugify } from '../../utils';
 
 const Summary = ({
   formProps,
@@ -30,6 +30,7 @@ const Summary = ({
   const borderColor2 = useColorModeValue('black', 'white');
   const { backgroundColor, borderColor, lightColor } = useStyle();
   const router = useRouter();
+  const planId = getQueryString('plan_id');
 
   const isNotTrial = !['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
 
@@ -69,7 +70,13 @@ const Summary = ({
   const priceIsNotNumber = Number.isNaN(Number(getPrice()));
 
   useEffect(() => {
-    if (checkoutData?.plans[selectedIndex]) {
+    if (planId?.length > 0) {
+      const findPlan = checkoutData?.plans?.find((plan) => plan.plan_id === planId);
+      setSelectedPlanCheckoutData(findPlan);
+      getPlanProps(findPlan);
+    }
+
+    if (!planId && checkoutData?.plans[selectedIndex]) {
       setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
 
       getPlanProps(checkoutData?.plans[selectedIndex]);

@@ -37,6 +37,8 @@ const ChooseYourClass = ({
     'places',
   );
 
+  const filteredData = Array.isArray(availableDates) && availableDates.filter((item) => item?.never_ends === false);
+
   useEffect(() => {
     setCohortIsLoading(true);
 
@@ -48,8 +50,7 @@ const ChooseYourClass = ({
     })
       .cohorts()
       .then(({ data }) => {
-        const dataNeverEnds = data.filter((item) => item?.never_ends === false);
-        const formatedData = dataNeverEnds.map((date) => {
+        const formatedData = data.map((date) => {
           const { kickoffDate, shortWeekDays, availableTime } = getTimeProps(date);
           return {
             ...date,
@@ -193,8 +194,8 @@ const ChooseYourClass = ({
         gridGap="40px"
         p="0 1rem"
       >
-        {availableDates?.length > 0 && !cohortIsLoading ? (
-          availableDates.map((cohort, index) => (
+        {filteredData?.length > 0 && !cohortIsLoading ? (
+          filteredData.map((cohort, index) => (
             <ChooseDate key={cohort?.id} index={index} cohort={cohort} />
           ))
         ) : (

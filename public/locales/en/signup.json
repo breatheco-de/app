@@ -43,6 +43,10 @@
   "already-have-account": "Already have an account?",
   "login-here": "Login here.",
   "start-free-course": "Start free course",
+  "monthly_payment": "Pago mensual",
+  "yearly_payment": "Pago anual",
+  "one_payment": "One payment",
+  "many_months_payment": "{{qty}} months payment",
   "info": {
     "will-pay-monthly": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}. The first payment will be today and the next one on {{next_month}}.",
     "will-pay-month": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}.",

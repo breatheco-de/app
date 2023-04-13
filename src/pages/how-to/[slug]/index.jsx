@@ -249,6 +249,10 @@ export default function HowToSlug({ data, markdown }) {
             ) : (
               <MDSkeleton />
             )}
+            <MktRecommendedCourses
+              title={t('common:related-courses')}
+              technologies={data?.technologies.join(',')}
+            />
           </Box>
         </Box>
       </GridContainer>

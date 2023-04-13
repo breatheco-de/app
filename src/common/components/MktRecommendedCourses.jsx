@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   Box,
 } from '@chakra-ui/react';
@@ -12,6 +12,10 @@ const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 2;
 
 const MktRecommendedCourses = ({ id, technologies, background, title, ...rest }) => {
+  const ref = useRef(null);
+  const [isDown, setIsDown] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
   const [courses, setCourses] = useState([]);
   const { hexColor, featuredColor, fontColor } = useStyle();
 
@@ -49,6 +53,34 @@ const MktRecommendedCourses = ({ id, technologies, background, title, ...rest })
     getCourses();
   }, []);
 
+  useEffect(() => {
+    if (ref.current?.clientWidth !== ref.current?.scrollWidth) ref.current.scrollLeft = 25;
+  }, [courses]);
+
+  const onMouseDown = (e) => {
+    setIsDown(true);
+    const pageX = e.touches ? e.touches[0].pageX : e.pageX;
+    setStartX(pageX - ref.current.offsetLeft);
+    setScrollLeft(ref.current.scrollLeft);
+  };
+
+  const onMouseLeave = () => {
+    setIsDown(false);
+  };
+
+  const onMouseUp = () => {
+    setIsDown(false);
+  };
+
+  const onMouseMove = (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const pageX = e.touches ? e.touches[0].pageX : e.pageX;
+    const x = pageX - ref.current.offsetLeft;
+    const walk = (x - startX) * 3; //scroll-fast
+    ref.current.scrollLeft = scrollLeft - walk;
+  };
+
   return courses.length > 0 && (
     <>
       <Box
@@ -80,22 +112,32 @@ const MktRecommendedCourses = ({ id, technologies, background, title, ...rest })
           </Box>
         )}
         <Box
+          ref={ref}
           flexGrow="1"
-          flexDirection="row-reverse"
+          flexDirection={{ base: 'row', md: 'row-reverse' }}
           justifyContent="space-between"
           display="flex"
           gridGap="10px"
+          overflowX="hidden"
+          cursor={ref.current?.clientWidth !== ref.current?.scrollWidth && 'grab'}
+          onMouseDown={onMouseDown}
+          onMouseUp={onMouseUp}
+          onMouseMove={onMouseMove}
+          onMouseLeave={onMouseLeave}
+          onTouchStart={onMouseDown}
+          onTouchMove={onMouseMove}
+          onTouchEnd={onMouseLeave}
           // maxWidth="790px"
-          flexWrap={{ base: 'wrap', lg: 'nowrap' }}
+          // flexWrap={{ base: 'wrap', lg: 'nowrap' }}
         >
           {courses.map((course) => (
             <PublicCourseCard
-              // width="280px"
               icon_url={course.icon_url}
               iconBackground="#25BF6C"
               programName={course.course_translation.title}
               programSlug={course.slug}
               programDescription={course.course_translation.description}
+              flexShrink="0"
             />
           ))}
         </Box>
