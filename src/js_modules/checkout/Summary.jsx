@@ -84,38 +84,36 @@ const Summary = ({
   }, [checkoutData?.plans]);
 
   const handleSubmit = () => {
-    if (planProps?.length > 0) {
-      handleChecking({
-        plan: selectedPlanCheckoutData?.slug,
-      })
-        .then((data) => {
-          if (isNotTrial || !priceIsNotNumber) {
-            nextStep();
-          } else {
-            handlePayment({
-              ...data,
-              installments: selectedPlanCheckoutData?.how_many_months,
-            })
-              .catch(() => {
-                toast({
-                  title: t('alert-message:payment-error'),
-                  status: 'error',
-                  duration: 7000,
-                  isClosable: true,
-                });
+    handleChecking({
+      plan: selectedPlanCheckoutData?.slug,
+    })
+      .then((data) => {
+        if (isNotTrial || !priceIsNotNumber) {
+          nextStep();
+        } else {
+          handlePayment({
+            ...data,
+            installments: selectedPlanCheckoutData?.how_many_months,
+          })
+            .catch(() => {
+              toast({
+                title: t('alert-message:payment-error'),
+                status: 'error',
+                duration: 7000,
+                isClosable: true,
               });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          toast({
-            title: 'Something went wrong choosing plan',
-            status: 'error',
-            duration: 6000,
-            isClosable: true,
-          });
+            });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast({
+          title: 'Something went wrong choosing plan',
+          status: 'error',
+          duration: 6000,
+          isClosable: true,
         });
-    }
+      });
   };
 
   return (
