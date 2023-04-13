@@ -172,29 +172,20 @@ const ShowPrices = ({
             {stTranslation ? stTranslation[lang].common['upgrade-plan'].button : t('common:upgrade-plan.button')}
           </Button>
         )}
-        {process.env.VERCEL_ENV !== 'production' ? (
-          <Button
-            display={outOfConsumables && 'none'}
-            variant="default"
-            disabled={!selectedItem && true}
-            onClick={() => {
-              if (handleUpgrade === false) {
-                router.push(`/checkout?syllabus=coding-introduction&plan=${selectedItem?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
-              } else {
-                handleUpgrade(selectedItem);
-              }
-            }}
-          >
-            {stTranslation ? stTranslation[lang].common.enroll : t('common:enroll')}
-          </Button>
-        ) : (
-          <Button
-            variant="default"
-            disabled
-          >
-            {t('common:coming-soon')}
-          </Button>
-        )}
+        <Button
+          display={outOfConsumables && 'none'}
+          variant="default"
+          disabled={!selectedItem && true}
+          onClick={() => {
+            if (handleUpgrade === false) {
+              router.push(`/checkout?syllabus=coding-introduction&plan=${selectedItem?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
+            } else {
+              handleUpgrade(selectedItem);
+            }
+          }}
+        >
+          {stTranslation ? stTranslation[lang].common.enroll : t('common:enroll')}
+        </Button>
       </Box>
     </Box>
   );
