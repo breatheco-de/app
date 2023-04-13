@@ -310,27 +310,29 @@ const PaymentInfo = () => {
               </Text>
             </Box>
           </Box>
-          <Box
-            as="hr"
-            width="100%"
-            margin="0"
-            h="1px"
-            borderColor={borderColor}
-          />
           {planProps?.length > 0 && (
-            <Box fontSize="14px" fontWeight="700" color="blue.default">
-              {t('what-you-will-get')}
-            </Box>
+            <>
+              <Box
+                as="hr"
+                width="100%"
+                margin="0"
+                h="1px"
+                borderColor={borderColor}
+              />
+              <Box fontSize="14px" fontWeight="700" color="blue.default">
+                {t('what-you-will-get')}
+              </Box>
+            </>
           )}
-          <Box
-            as="ul"
-            style={{ listStyle: 'none' }}
-            display="flex"
-            flexDirection="column"
-            gridGap="12px"
-          >
-            {planProps?.length > 0 && planProps?.map((bullet) => (
-              <>
+          {planProps?.length > 0 && (
+            <Box
+              as="ul"
+              style={{ listStyle: 'none' }}
+              display="flex"
+              flexDirection="column"
+              gridGap="12px"
+            >
+              {planProps?.map((bullet) => (
                 <Box
                   as="li"
                   key={bullet?.features[0]?.description}
@@ -354,9 +356,9 @@ const PaymentInfo = () => {
                   />
                   {bullet?.features[0]?.description}
                 </Box>
-              </>
-            ))}
-          </Box>
+              ))}
+            </Box>
+          )}
         </Box>
       </Box>
     </>
