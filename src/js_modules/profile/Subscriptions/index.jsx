@@ -96,6 +96,7 @@ const Subscriptions = ({ storybookConfig }) => {
             const status = subscription?.status?.toLowerCase();
             const invoice = subscription?.invoices[0];
             const isNotCancelled = subscription?.status !== 'CANCELLED' && subscription?.status !== 'PAYMENT_ISSUE';
+            const isTotallyFree = subscription?.invoices[0]?.amount === 0 && subscription?.plans[0]?.trial_duration === 0;
             const isFreeTrial = subscription?.status?.toLowerCase() === 'free_trial';
 
             const isNextPaimentExpired = new Date(subscription?.next_payment_at) < new Date();
@@ -136,7 +137,7 @@ const Subscriptions = ({ storybookConfig }) => {
                         {`$${invoice?.amount}`}
                       </Text>
                     )}
-                    {subscription?.status !== 'PAYMENT_ISSUE' && subscription?.status !== 'FREE_TRIAL' && (
+                    {subscription?.status !== 'PAYMENT_ISSUE' && subscription?.status !== 'FREE_TRIAL' && !isTotallyFree && (
                       <Text fontSize="12px" fontWeight="400">
                         {subscription.type !== 'plan_financing' ? (
                           <>
@@ -225,7 +226,13 @@ const Subscriptions = ({ storybookConfig }) => {
                           : (
                             <>
                               {subscription?.status !== 'FREE_TRIAL'
-                                ? subscriptionTranslations?.payment?.replace('{{payment}}', payUnitString(subscription?.pay_every_unit)) || t('subscription.payment', { payment: payUnitString(subscription?.pay_every_unit) })
+                                ? (
+                                  <>
+                                    {!isTotallyFree
+                                      ? subscriptionTranslations?.payment?.replace('{{payment}}', payUnitString(subscription?.pay_every_unit)) || t('subscription.payment', { payment: payUnitString(subscription?.pay_every_unit) })
+                                      : subscriptionTranslations?.['payment-free'] || t('subscription.payment-free')}
+                                  </>
+                                )
                                 : subscriptionTranslations?.['payment-trial'] || t('subscription.payment-trial')}
                             </>
                           )}
