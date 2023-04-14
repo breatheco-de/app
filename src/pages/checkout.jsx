@@ -362,7 +362,7 @@ const Checkout = ({ finance }) => {
         )}
 
         <Box display="flex" justifyContent="space-between" mt="auto">
-          {stepIndex !== 0 && (
+          {stepIndex !== 0 && !isSecondStep && (
             <Button
               variant="outline"
               borderColor="currentColor"
