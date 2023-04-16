@@ -1,6 +1,5 @@
 /* eslint-disable react/no-array-index-key */
 import { useState, useRef } from 'react';
-import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import {
   Container, Box,
@@ -9,12 +8,11 @@ import Text from './Text';
 import CustomTheme from '../../../styles/theme';
 
 const MktTechnologiesPills = ({ id, technologies, ...rest }) => {
-  const { t } = useTranslation('common');
   const ref = useRef();
   const [isDown, setIsDown] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-  const cleanTeachs = technologies.length > 0 && typeof technologies[0] === 'string' ? [...technologies, `+ ${t('more-technologies').toUpperCase()}`] : technologies.map((obj) => obj.text).push(`+ ${t('more-technologies').toUpperCase()}`);
+  const cleanTeachs = technologies.length > 0 && typeof technologies[0] === 'string' ? technologies : technologies.map((obj) => obj.text);
 
   const colors = [
     CustomTheme.colors.green.light,
