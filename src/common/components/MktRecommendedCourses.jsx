@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import {
-  Box,
+  Container, Box,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Icon from './Icon';
@@ -83,8 +83,10 @@ const MktRecommendedCourses = ({ id, technologies, background, title, ...rest })
 
   return courses.length > 0 && (
     <>
-      <Box
+      <Container
         // flexWrap={{ base: 'wrap', xl: 'nowrap' }}
+        maxW="container.xl"
+        margin="auto"
         flexWrap="wrap"
         id={id}
         borderRadius="13px"
@@ -141,7 +143,7 @@ const MktRecommendedCourses = ({ id, technologies, background, title, ...rest })
             />
           ))}
         </Box>
-      </Box>
+      </Container>
     </>
   );
 };
