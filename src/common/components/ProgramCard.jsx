@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { formatDuration, intervalToDuration, subMinutes } from 'date-fns';
-import { es, en } from 'date-fns/locale';
+import { es } from 'date-fns/locale';
 import { memo, useState } from 'react';
 import Image from 'next/image';
 import CustomTheme from '../../../styles/theme';
@@ -22,7 +22,6 @@ import UpgradeModal from '../../js_modules/profile/Subscriptions/UpgradeModal';
 
 const availableLanguages = {
   es,
-  en,
 };
 
 const ProgramCard = ({
@@ -66,7 +65,7 @@ const ProgramCard = ({
       {
         format: ['months', 'weeks', 'days', 'hours'],
         delimiter: ', ',
-        locale: availableLanguages[lang],
+        locale: availableLanguages[lang] || lang,
       });
 
     if (formated === '') return stTranslation ? stTranslation[lang]['program-card']['starting-today'] : t('starting-today');
@@ -97,7 +96,7 @@ const ProgramCard = ({
     const formated = formatDuration(duration,
       {
         format: ['days'],
-        locale: availableLanguages[lang],
+        locale: availableLanguages[lang] || lang,
       });
 
     if (isExpired) timeString = stTranslation ? stTranslation[lang]['program-card']['non-left'] : t('non-left');

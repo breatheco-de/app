@@ -20,6 +20,7 @@ const TagCapsule = ({
   isLink,
   href,
   borderRadius,
+  ...rest
 }) => {
   const { colorMode } = useColorMode();
 
@@ -37,6 +38,7 @@ const TagCapsule = ({
       px={paddingX}
       borderRadius="15px"
       gridGap={gap}
+      {...rest}
     >
       {tags.map((tag, i) => (isLink ? (
         <Link

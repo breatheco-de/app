@@ -15,6 +15,8 @@ import { location, toCapitalize, unSlugify } from '../../../utils';
 import useSubscriptionsHandler from '../../../common/store/actions/subscriptionAction';
 import ButtonHandler from './ButtonHandler';
 import UpgradeModal from './UpgradeModal';
+import EventCard from '../../../common/components/EventCard';
+import axios from '../../../axios';
 
 const Subscriptions = ({ storybookConfig }) => {
   const { t, lang } = useTranslation('profile');
@@ -24,6 +26,7 @@ const Subscriptions = ({ storybookConfig }) => {
   const { state, fetchSubscriptions, cancelSubscription } = useSubscriptionsHandler();
   const [cohortsState, setCohortsState] = useState([]);
   const [offerProps, setOfferProps] = useState({});
+  const [events, setEvents] = useState([]);
 
   const subscriptionDataState = state?.subscriptions;
 
@@ -48,6 +51,12 @@ const Subscriptions = ({ storybookConfig }) => {
   const { blueDefault } = hexColor;
 
   useEffect(() => {
+    axios.get(`${process.env.BREATHECODE_HOST}/v1/events/me`)
+      .then((resp) => {
+        const data = resp?.data;
+        setEvents(data);
+      });
+
     bc.admissions().me()
       .then(({ data }) => {
         setCohortsState(data?.cohorts);
@@ -276,6 +285,8 @@ const Subscriptions = ({ storybookConfig }) => {
           {subscriptionTranslations?.['no-subscriptions'] || t('no-subscriptions')}
         </Text>
       )}
+
+      <EventCard title={events[1]?.title} data={events[1]} />
 
     </>
   );
