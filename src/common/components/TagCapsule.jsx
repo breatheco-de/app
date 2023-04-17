@@ -20,6 +20,7 @@ const TagCapsule = ({
   isLink,
   href,
   borderRadius,
+  lineHeight,
   ...rest
 }) => {
   const { colorMode } = useColorMode();
@@ -82,9 +83,14 @@ const TagCapsule = ({
           style={style}
           rounded={variant === 'rounded' ? borderRadius : 'none'}
           key={tag?.name || `${tag}-${i}`}
-          lineHeight="22px"
+          lineHeight={lineHeight}
           color={colorMode === 'light' ? 'black' : 'black'}
         >
+          {variant === 'slash' && i !== 0 && (
+            <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
+              {separator}
+            </Box>
+          )}
           <Text
             margin="0"
             alignSelf="center"
@@ -97,11 +103,11 @@ const TagCapsule = ({
           >
             {tag?.name || tag}
           </Text>
-          {variant === 'slash' && i < tags.length - 1 && (
+          {/* {variant === 'slash' && i < tags.length - 1 && (
             <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
               {separator}
             </Box>
-          )}
+          )} */}
         </Box>
       )
       ))}
@@ -125,6 +131,7 @@ TagCapsule.propTypes = {
   href: PropTypes.string,
   borderRadius: PropTypes.string,
   color: PropTypes.string,
+  lineHeight: PropTypes.string,
 };
 TagCapsule.defaultProps = {
   separator: '/',
@@ -143,6 +150,7 @@ TagCapsule.defaultProps = {
   href: '#',
   borderRadius: '15px',
   color: 'black',
+  lineHeight: '22px',
 };
 
 export default memo(TagCapsule);

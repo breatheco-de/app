@@ -21,5 +21,7 @@
     "no-access": "No tienes acceso a este evento",
     "live-now": "¡En Vivo!",
     "master-class": "Clase Maestra",
-    "workshop": "Taller"
+    "workshop": "Taller",
+    "will-start-soon": "Empezará pronto",
+    "time-duration": "{{time}} de duración"
 }
