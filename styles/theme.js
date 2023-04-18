@@ -84,6 +84,7 @@ const CustomTheme = extendTheme({
       default: '#A4A4A4',
       light: '#F5F5F5',
       light2: '#FAFAFA',
+      light3: '#F9F9F9',
       dark: '#3A3A3A',
       100: '#EDF2F7',
       200: '#E2E8F0',

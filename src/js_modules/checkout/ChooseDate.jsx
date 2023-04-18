@@ -1,4 +1,4 @@
-import { Box, Button, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, useToast } from '@chakra-ui/react';
 import { es } from 'date-fns/locale';
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
@@ -28,41 +28,44 @@ const ChooseDate = ({ cohort }) => {
   };
 
   return (
-    <Box display="flex" gridGap="30px">
-      <Text size="18px" fontWeight="400" flex={0.35} textTransform="capitalize">
+    <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '10px', md: '30px' }}>
+      <Text size={{ base: '21px', md: '18px' }} fontWeight={{ base: 700, md: 400 }} flex={0.35} textTransform="capitalize">
         {cohort?.name}
         <Text size="13px" fontWeight="700" textTransform="capitalize">
           {cohort?.syllabus_version?.name}
         </Text>
       </Text>
-      <Box
-        display="flex"
-        flexDirection="column"
-        gridGap="5px"
-        flex={0.2}
-      >
-        <Text size="18px">
-          {kickoffDate[router.locale]}
-        </Text>
-        {cohort?.shortWeekDays[router.locale].length > 0 && (
-          <Text size="14px" color="gray.default">
-            {cohort?.shortWeekDays[router.locale].map(
-              (day, i) => `${day}${i < cohort?.shortWeekDays[router.locale].length - 1 ? '/' : ''}`,
-            )}
+
+      <Flex flex={0.5} justifyContent={{ base: 'space-between', md: 'initial' }} margin={{ base: '10px 0', md: '0px' }}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          gridGap="5px"
+          flex={0.4}
+        >
+          <Text size="18px">
+            {kickoffDate[router.locale]}
           </Text>
-        )}
-      </Box>
-      <Box
-        display="flex"
-        flexDirection="column"
-        gridGap="5px"
-        flex={0.3}
-      >
-        <Text size="18px">{cohort?.availableTime}</Text>
-        <Text size="14px" color="gray.default">
-          {cohort?.timezone}
-        </Text>
-      </Box>
+          {cohort?.shortWeekDays[router.locale].length > 0 && (
+            <Text size="14px" color="gray.default">
+              {cohort?.shortWeekDays[router.locale].map(
+                (day, i) => `${day}${i < cohort?.shortWeekDays[router.locale].length - 1 ? '/' : ''}`,
+              )}
+            </Text>
+          )}
+        </Box>
+        <Box
+          display="flex"
+          flexDirection="column"
+          gridGap="5px"
+          flex={0.5}
+        >
+          <Text size="18px">{cohort?.availableTime}</Text>
+          <Text size="14px" color="gray.default">
+            {cohort?.timezone}
+          </Text>
+        </Box>
+      </Flex>
       <Button
         variant="outline"
         isLoading={isLoading}
@@ -90,7 +93,7 @@ const ChooseDate = ({ cohort }) => {
         }}
         borderColor="currentColor"
         color="blue.default"
-        flex={0.15}
+        flex={{ base: 'none', md: 0.15 }}
       >
         {t('choose-date')}
       </Button>

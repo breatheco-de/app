@@ -157,9 +157,9 @@ const ContactInformation = ({
               gridGap: '22px',
             }}
           >
-            <Box display="flex" flexDirection={{ base: 'column', md: 'row' }}>
+            <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }}>
               <Heading size="18px">{t('about-you')}</Heading>
-              <Flex fontSize="13px" ml={{ base: '0', md: '1rem' }} mt={{ base: '8px', md: '0' }} p="2px 8px" backgroundColor={featuredColor} alignItems="center" borderRadius="4px" gridGap="6px">
+              <Flex fontSize="13px" ml={{ base: '0', sm: '1rem' }} mt={{ base: '10px', sm: '0' }} width="fit-content" p="2px 8px" backgroundColor={featuredColor} alignItems="center" borderRadius="4px" gridGap="6px">
                 {t('already-have-account')}
                 {' '}
                 <NextChakraLink href="/login" redirectAfterLogin fontSize="12px" variant="default">{t('login-here')}</NextChakraLink>

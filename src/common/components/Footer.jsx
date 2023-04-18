@@ -32,11 +32,12 @@ const Footer = ({ pageProps }) => {
   const [formStatus, setFormStatus] = useState('');
   const { colorMode } = useColorMode();
 
+  const hideDivider = pageProps?.hideDivider === true;
   if (pageProps?.previewMode) return null;
 
   return (
     <Container as="footer" maxW="none" padding="20px" position="absolute" top="100%">
-      <Divider borderBottomWidth="2px" m="3rem 0 0 0" />
+      {!hideDivider && <Divider borderBottomWidth="2px" m="3rem 0 0 0" />}
 
       <Flex
         direction={['column', 'column', 'row', 'row']}
