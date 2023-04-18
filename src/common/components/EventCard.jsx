@@ -160,7 +160,7 @@ const EventCard = ({ title, description, host, startingAt, endingAt, technologie
       )}
       {startedButRemain ? (
         <Link href="#top" color="blue.default" display="flex" alignItems="center" justifyContent="center" gridGap="10px">
-          Join workshop
+          {stTranslation ? stTranslation[lang]['live-event']['join-event'] : t('join-event')}
           <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
         </Link>
       ) : (

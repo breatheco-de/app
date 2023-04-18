@@ -23,5 +23,6 @@
     "master-class": "Clase Maestra",
     "workshop": "Taller",
     "will-start-soon": "Empezará pronto",
-    "time-duration": "{{time}} de duración"
+    "time-duration": "{{time}} de duración",
+    "join-event": "Unirse al evento"
 }

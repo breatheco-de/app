@@ -231,7 +231,7 @@ const sortToNearestTodayDate = (data, minutes = 30) => {
     const startingDate = new Date(item.starting_at);
     const endingDate = new Date(item.ending_at);
     const timeDiff = startingDate - currentDate;
-    const minutesDiff = timeDiff / (1000 * 60);
+    const minutesDiff = Math.round(timeDiff / (1000 * 60));
 
     const hasStarted = startingDate < currentDate;
     const isGoingToStartInAnyMin = (minutesDiff >= 0 && minutesDiff <= minutes) || hasStarted;
