@@ -158,7 +158,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
             <Box
               display="grid"
               mt="1rem"
-              gridTemplateColumns="repeat(auto-fill, minmax(14rem, 1fr))"
+              gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
               gridColumnGap="5rem"
               gridRowGap="3rem"
               height="auto"
