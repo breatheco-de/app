@@ -25,8 +25,8 @@ const MktTestimonials = ({
   const { fontColor2, backgroundColor } = useStyle();
 
   useEffect(() => {
-    if (typeof endpoint === 'string' && endpoint?.length > 8) {
-      axios.get(`${endpoint}?lang=${router?.locale}`)
+    if (typeof endpoint === 'string' && endpoint !== '') {
+      axios.get(`${endpoint}${endpoint.includes('?lang=') ? `?lang=${router?.locale}` : ''}`)
         .then((response) => {
           setTestimonialsData(response?.data);
         });
@@ -123,7 +123,7 @@ MktTestimonials.propTypes = {
 
 MktTestimonials.defaultProps = {
   title: null,
-  endpoint: '',
+  endpoint: `${process.env.BREATHECODE_HOST}/v1/feedback/review`,
   testimonials: null,
 };
 
