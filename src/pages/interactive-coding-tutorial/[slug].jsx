@@ -298,12 +298,6 @@ const ProjectSlug = ({ project, markdown }) => {
           </Box>
         </Flex>
       </GridContainer>
-      {/* <GridContainer margin="6rem auto 0 auto" padding="0 15px" withContainer>
-        <MktRecommendedCourses
-          title={t('common:related-courses')}
-          endpoint={`/v1/marketing/course?technologies=${project.technologies.join(',')}`}
-        />
-      </GridContainer> */}
     </>
   );
 };

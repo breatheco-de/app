@@ -1,17 +1,18 @@
 import { useEffect, useState, useRef } from 'react';
 import {
-  Container, Box,
+  Box,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Icon from './Icon';
 import Heading from './Heading';
 import PublicCourseCard from './PublicCourseCard';
+import GridContainer from './GridContainer';
 import useStyle from '../hooks/useStyle';
 
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 2;
 
-const MktRecommendedCourses = ({ id, technologies, background, title, ...rest }) => {
+const MktRecommendedCourses = ({ id, technologies, background, title, gridColumn, ...rest }) => {
   const ref = useRef(null);
   const [isDown, setIsDown] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -83,20 +84,22 @@ const MktRecommendedCourses = ({ id, technologies, background, title, ...rest })
 
   return courses.length > 0 && (
     <>
-      <Container
-        // flexWrap={{ base: 'wrap', xl: 'nowrap' }}
+      <GridContainer
         maxW="container.xl"
-        margin="auto"
-        flexWrap="wrap"
-        id={id}
-        borderRadius="13px"
-        padding={{ base: '20px', lg: '30px' }}
-        background={background || featuredColor}
-        maxWidth="1280px"
-        display="flex"
+        gridTemplateColumns="repeat(10, 1fr)"
         {...rest}
       >
-        {title && (
+        <Box
+        // flexWrap={{ base: 'wrap', xl: 'nowrap' }}
+          gridColumn={gridColumn}
+          flexWrap="wrap"
+          id={id}
+          borderRadius="13px"
+          padding={{ base: '20px', lg: '30px' }}
+          background={background || featuredColor}
+          display="flex"
+        >
+          {title && (
           <Box
             flexShrink="2"
             minWidth="170px"
@@ -112,38 +115,37 @@ const MktRecommendedCourses = ({ id, technologies, background, title, ...rest })
               <Icon icon="longArrowRight" style={{ margin: '10px 0' }} color={hexColor.blueDefault} width="80px" />
             </Heading>
           </Box>
-        )}
-        <Box
-          ref={ref}
-          flexGrow="1"
-          flexDirection={{ base: 'row', md: 'row-reverse' }}
-          justifyContent="space-between"
-          display="flex"
-          gridGap="10px"
-          overflowX="hidden"
-          cursor={ref.current?.clientWidth !== ref.current?.scrollWidth && 'grab'}
-          onMouseDown={onMouseDown}
-          onMouseUp={onMouseUp}
-          onMouseMove={onMouseMove}
-          onMouseLeave={onMouseLeave}
-          onTouchStart={onMouseDown}
-          onTouchMove={onMouseMove}
-          onTouchEnd={onMouseLeave}
-          // maxWidth="790px"
-          // flexWrap={{ base: 'wrap', lg: 'nowrap' }}
-        >
-          {courses.map((course) => (
-            <PublicCourseCard
-              icon_url={course.icon_url}
-              iconBackground="#25BF6C"
-              programName={course.course_translation.title}
-              programSlug={course.slug}
-              programDescription={course.course_translation.description}
-              flexShrink="0"
-            />
-          ))}
+          )}
+          <Box
+            ref={ref}
+            flexGrow="1"
+            flexDirection={{ base: 'row', md: 'row-reverse' }}
+            justifyContent="space-between"
+            display="flex"
+            gridGap="10px"
+            overflowX="hidden"
+            cursor={ref.current?.clientWidth !== ref.current?.scrollWidth && 'grab'}
+            onMouseDown={onMouseDown}
+            onMouseUp={onMouseUp}
+            onMouseMove={onMouseMove}
+            onMouseLeave={onMouseLeave}
+            onTouchStart={onMouseDown}
+            onTouchMove={onMouseMove}
+            onTouchEnd={onMouseLeave}
+          >
+            {courses.map((course) => (
+              <PublicCourseCard
+                icon_url={course.icon_url}
+                iconBackground="#25BF6C"
+                programName={course.course_translation.title}
+                programSlug={course.slug}
+                programDescription={course.course_translation.description}
+                flexShrink="0"
+              />
+            ))}
+          </Box>
         </Box>
-      </Container>
+      </GridContainer>
     </>
   );
 };
@@ -153,6 +155,7 @@ MktRecommendedCourses.propTypes = {
   background: PropTypes.string,
   title: PropTypes.string,
   technologies: PropTypes.string,
+  gridColumn: PropTypes.string,
 };
 
 MktRecommendedCourses.defaultProps = {
@@ -160,6 +163,7 @@ MktRecommendedCourses.defaultProps = {
   background: null,
   title: null,
   technologies: null,
+  gridColumn: '1 / span 10',
 };
 
 export default MktRecommendedCourses;
