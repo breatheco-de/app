@@ -998,6 +998,16 @@ interface TitleIntroductionSliceDefaultPrimary {
      */
     buttontext: prismicT.RichTextField;
     /**
+     * Button link field in *TitleIntroduction → Primary*
+     *
+     * - **Field Type**: Link
+     * - **Placeholder**: *None*
+     * - **API ID Path**: title_introduction.primary.button_link
+     * - **Documentation**: https://prismic.io/docs/core-concepts/link-content-relationship
+     *
+     */
+    button_link: prismicT.LinkField;
+    /**
      * highlight field in *TitleIntroduction → Primary*
      *
      * - **Field Type**: Rich Text
