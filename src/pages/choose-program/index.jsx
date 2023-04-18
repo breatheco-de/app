@@ -366,6 +366,8 @@ function chooseProgram() {
                   featureReadMoreUrl={t('common:live-event.readMoreUrl')}
                   mainClasses={liveClasses?.length > 0 ? liveClasses : []}
                   otherEvents={events}
+                  maxWidth={{ base: '100%', sm: '500px', md: '340px' }}
+                  margin="0 auto"
                 />
               )}
             </Box>
