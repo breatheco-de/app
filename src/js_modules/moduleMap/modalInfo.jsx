@@ -18,7 +18,7 @@ const ModalInfo = ({
   teacherFeedback, linkInfo, linkText, link, handlerText, closeText, cancelColorButton,
   handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
   htmlDescription, markdownDescription, attachment, disableInput, descriptionStyle, footerStyle,
-  closeButtonStyles, buttonHandlerStyles, headerStyles,
+  closeButtonStyles, buttonHandlerStyles, headerStyles, disableCloseButton,
 }) => {
   const { t } = useTranslation('dashboard');
   const [githubUrl, setGithubUrl] = useState(link);
@@ -241,14 +241,16 @@ const ModalInfo = ({
           <ModalFooter justifyContent="space-evenly" {...footerStyle}>
             {type === 'taskHandler' ? (
               <Box width="100%" display="flex" justifyContent="space-between">
-                <Button
-                  fontSize="13px"
-                  variant={closeButtonVariant}
-                  onClick={actionHandler}
-                  textTransform="uppercase"
-                >
-                  {closeText || t('common:close')}
-                </Button>
+                {!disableCloseButton && (
+                  <Button
+                    fontSize="13px"
+                    variant={closeButtonVariant}
+                    onClick={actionHandler}
+                    textTransform="uppercase"
+                  >
+                    {closeText || t('common:close')}
+                  </Button>
+                )}
                 <Button
                   fontSize="13px"
                   disabled={(Array.isArray(attachment) && attachment.length > 0) || isSubmitting || disableHandler}
@@ -263,17 +265,19 @@ const ModalInfo = ({
               </Box>
             ) : (
               <>
-                <Button
-                  fontSize="13px"
-                  variant={closeButtonVariant}
-                  colorScheme={cancelColorButton}
-                  mr={3}
-                  onClick={() => rejectFunction()}
-                  textTransform="uppercase"
-                  {...closeButtonStyles}
-                >
-                  {closeText || t('common:close')}
-                </Button>
+                {!disableCloseButton && (
+                  <Button
+                    fontSize="13px"
+                    variant={closeButtonVariant}
+                    colorScheme={cancelColorButton}
+                    mr={3}
+                    onClick={() => rejectFunction()}
+                    textTransform="uppercase"
+                    {...closeButtonStyles}
+                  >
+                    {closeText || t('common:close')}
+                  </Button>
+                )}
                 {!disableHandler && (
                   <Button
                     fontSize="13px"
@@ -366,6 +370,7 @@ ModalInfo.propTypes = {
   closeButtonStyles: PropTypes.objectOf(PropTypes.any),
   buttonHandlerStyles: PropTypes.objectOf(PropTypes.any),
   headerStyles: PropTypes.objectOf(PropTypes.any),
+  disableCloseButton: PropTypes.bool,
 };
 
 ModalInfo.defaultProps = {
@@ -398,6 +403,7 @@ ModalInfo.defaultProps = {
   closeButtonStyles: {},
   buttonHandlerStyles: {},
   headerStyles: {},
+  disableCloseButton: false,
 };
 
 export default memo(ModalInfo);
