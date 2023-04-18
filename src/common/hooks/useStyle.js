@@ -9,6 +9,7 @@ const useStyle = () => {
   const borderColorStrong = useColorModeValue('gray.400', 'gray.500');
   const disabledBackgroundColor = useColorModeValue('gray.250', 'gray.600');
   const disabledColor = useColorModeValue('gray.500', 'gray.350');
+  const disabledColor2 = useColorModeValue('gray.default', '#CACACA');
   const featuredColor = useColorModeValue('featuredLight', 'featuredDark');
   const fontColor = useColorModeValue('black', 'white');
   const fontColor2 = useColorModeValue('gray.dark', 'gray.250');
@@ -51,6 +52,7 @@ const useStyle = () => {
     borderColorStrong,
     disabledBackgroundColor,
     disabledColor,
+    disabledColor2,
     featuredColor,
     fontColor,
     fontColor2,

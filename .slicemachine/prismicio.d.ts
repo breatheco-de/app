@@ -81,6 +81,75 @@ type PageDocumentDataSlicesSlice = TitleIntroductionSlice | MarkdownSlice | TwoC
 export type PageDocument<Lang extends string = string> = prismicT.PrismicDocumentWithUID<Simplify<PageDocumentData>, "page", Lang>;
 export type AllDocumentTypes = PageDocument;
 /**
+ * Primary content in EventCards → Primary
+ *
+ */
+interface EventCardsSliceDefaultPrimary {
+    /**
+     * Id key field in *EventCards → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: event_cards.primary.id_key
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    id_key: prismicT.KeyTextField;
+    /**
+     * Title field in *EventCards → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: event_cards.primary.title
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    title: prismicT.KeyTextField;
+    /**
+     * Endpoint field in *EventCards → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: *None*
+     * - **API ID Path**: event_cards.primary.endpoint
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    endpoint: prismicT.KeyTextField;
+    /**
+     * Margin field in *EventCards → Primary*
+     *
+     * - **Field Type**: Text
+     * - **Placeholder**: top, right, bottom, left
+     * - **API ID Path**: event_cards.primary.margin
+     * - **Documentation**: https://prismic.io/docs/core-concepts/key-text
+     *
+     */
+    margin: prismicT.KeyTextField;
+}
+/**
+ * Default variation for EventCards Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: `EventCards`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type EventCardsSliceDefault = prismicT.SharedSliceVariation<"default", Simplify<EventCardsSliceDefaultPrimary>, never>;
+/**
+ * Slice variation for *EventCards*
+ *
+ */
+type EventCardsSliceVariation = EventCardsSliceDefault;
+/**
+ * EventCards Shared Slice
+ *
+ * - **API ID**: `event_cards`
+ * - **Description**: `EventCards`
+ * - **Documentation**: https://prismic.io/docs/core-concepts/reusing-slices
+ *
+ */
+export type EventCardsSlice = prismicT.SharedSlice<"event_cards", EventCardsSliceVariation>;
+/**
  * Primary content in Markdown → Primary
  *
  */
@@ -1167,6 +1236,6 @@ declare module "@prismicio/client" {
         (repositoryNameOrEndpoint: string, options?: prismic.ClientConfig): prismic.Client<AllDocumentTypes>;
     }
     namespace Content {
-        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, PartnersSliceDefaultPrimary, PartnersSliceDefault, PartnersSliceVariation, PartnersSlice, RecommendedCoursesSliceDefaultPrimary, RecommendedCoursesSliceDefault, RecommendedCoursesSliceVariation, RecommendedCoursesSlice, RoadMapSliceDefaultPrimary, RoadMapSliceDefault, RoadMapSliceVariation, RoadMapSlice, ShowPricesSliceDefaultPrimary, ShowPricesSliceDefault, ShowPricesSliceVariation, ShowPricesSlice, TechnologiesSliceDefaultPrimary, TechnologiesSliceDefault, TechnologiesSliceVariation, TechnologiesSlice, TechnologiesPillsSliceDefaultPrimary, TechnologiesPillsSliceDefault, TechnologiesPillsSliceVariation, TechnologiesPillsSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
+        export type { PageDocumentData, PageDocumentDataSlicesSlice, PageDocument, AllDocumentTypes, EventCardsSliceDefaultPrimary, EventCardsSliceDefault, EventCardsSliceVariation, EventCardsSlice, MarkdownSliceDefaultPrimary, MarkdownSliceDefault, MarkdownSliceVariation, MarkdownSlice, OneColumnSliceDefaultPrimary, OneColumnSliceDefault, OneColumnSliceVariation, OneColumnSlice, PartnersSliceDefaultPrimary, PartnersSliceDefault, PartnersSliceVariation, PartnersSlice, RecommendedCoursesSliceDefaultPrimary, RecommendedCoursesSliceDefault, RecommendedCoursesSliceVariation, RecommendedCoursesSlice, RoadMapSliceDefaultPrimary, RoadMapSliceDefault, RoadMapSliceVariation, RoadMapSlice, ShowPricesSliceDefaultPrimary, ShowPricesSliceDefault, ShowPricesSliceVariation, ShowPricesSlice, TechnologiesSliceDefaultPrimary, TechnologiesSliceDefault, TechnologiesSliceVariation, TechnologiesSlice, TechnologiesPillsSliceDefaultPrimary, TechnologiesPillsSliceDefault, TechnologiesPillsSliceVariation, TechnologiesPillsSlice, TestimonialsSliceDefaultPrimary, TestimonialsSliceDefault, TestimonialsSliceVariation, TestimonialsSlice, TitleIntroductionSliceDefaultPrimary, TitleIntroductionSliceDefault, TitleIntroductionSliceVariation, TitleIntroductionSlice, TwoColumnSliceDefaultPrimary, TwoColumnSliceDefault, TwoColumnSliceVariation, TwoColumnSlice };
     }
 }
