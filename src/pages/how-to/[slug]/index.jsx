@@ -253,6 +253,7 @@ export default function HowToSlug({ data, markdown }) {
               title={t('common:related-courses')}
               marginBottom="15px"
               technologies={data?.technologies.join(',')}
+              endpoint={`${process.env.BREATHECODE_HOST}/v1/marketing/course`}
             />
           </Box>
         </Box>

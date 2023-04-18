@@ -12,7 +12,7 @@ import useStyle from '../hooks/useStyle';
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 2;
 
-const MktRecommendedCourses = ({ id, technologies, background, title, gridColumn, ...rest }) => {
+const MktRecommendedCourses = ({ id, technologies, background, title, gridColumn, endpoint, ...rest }) => {
   const ref = useRef(null);
   const [isDown, setIsDown] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -23,7 +23,7 @@ const MktRecommendedCourses = ({ id, technologies, background, title, gridColumn
   const getCourses = async () => {
     try {
       if (typeof technologies === 'string' && technologies.length > 0) {
-        const res = await fetch(`${process.env.BREATHECODE_HOST}${defaultEndpoint}?technologies=${technologies}`);
+        const res = await fetch(`${endpoint}?technologies=${technologies}`);
         const data = await res.json();
         const filteredData = data.filter((course) => course.course_translation).slice(0, coursesLimit);
         if (filteredData.length > 0) {
@@ -31,7 +31,7 @@ const MktRecommendedCourses = ({ id, technologies, background, title, gridColumn
           return;
         }
       }
-      const res = await fetch(`${process.env.BREATHECODE_HOST}${defaultEndpoint}`);
+      const res = await fetch(endpoint);
       const data = await res.json();
       setCourses(data.filter((course) => course.course_translation).slice(0, coursesLimit));
     } catch (e) {
@@ -155,6 +155,7 @@ MktRecommendedCourses.propTypes = {
   background: PropTypes.string,
   title: PropTypes.string,
   technologies: PropTypes.string,
+  endpoint: PropTypes.string,
   gridColumn: PropTypes.string,
 };
 
@@ -164,6 +165,7 @@ MktRecommendedCourses.defaultProps = {
   title: null,
   technologies: null,
   gridColumn: '1 / span 10',
+  endpoint: `${process.env.BREATHECODE_HOST}${defaultEndpoint}`,
 };
 
 export default MktRecommendedCourses;
