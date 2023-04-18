@@ -88,6 +88,7 @@ const Checkout = () => {
   });
 
   const queryPlanExists = planFormated && planFormated?.length > 0;
+  const filteredCohorts = Array.isArray(cohorts) && cohorts.filter((item) => item?.never_ends === false);
 
   useEffect(() => {
     if (queryPlanExists && tokenExists) {
@@ -190,8 +191,7 @@ const Checkout = () => {
       }
     };
     return {
-      hide: (stepIndex !== 0 && !isSecondStep) || (stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep),
-      isNotAvailable: (queryPlanExists && !isFourthStep && !dateProps?.id) || isSecondStep || (isThirdStep && cohorts?.length === 1),
+      isNotAvailable: (queryPlanExists && !isFourthStep && !dateProps?.id) || isSecondStep || (isThirdStep && filteredCohorts?.length === 1),
       func: handler,
     };
   };
@@ -257,11 +257,11 @@ const Checkout = () => {
         {isFourthStep && (
           <PaymentInfo />
         )}
-        {handleGoBack().hide && (
+        {((stepIndex !== 0 && !isSecondStep) || (stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep)) && (
           <>
             <Box as="hr" width="100%" margin="10px 0" />
             <Box display="flex" justifyContent="space-between" mt="auto">
-              {stepIndex !== 0 && !isSecondStep && (
+              {handleGoBack().isNotAvailable === false && (
                 <Button
                   variant="outline"
                   borderColor="currentColor"
