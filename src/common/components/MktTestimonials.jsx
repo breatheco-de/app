@@ -26,7 +26,7 @@ const MktTestimonials = ({
 
   useEffect(() => {
     if (typeof endpoint === 'string' && endpoint?.length > 8) {
-      axios.get(`${process.env.BREATHECODE_HOST}${endpoint}?lang=${router?.locale}`)
+      axios.get(`${endpoint}?lang=${router?.locale}`)
         .then((response) => {
           setTestimonialsData(response?.data);
         });
