@@ -12,6 +12,7 @@ import useGoogleMaps from '../../common/hooks/useGoogleMaps';
 import useSignup from '../../common/store/actions/signupAction';
 import ChooseDate from './ChooseDate';
 import LoaderScreen from '../../common/components/LoaderScreen';
+import useStyle from '../../common/hooks/useStyle';
 
 const ChooseYourClass = ({
   setCohorts,
@@ -28,6 +29,7 @@ const ChooseYourClass = ({
   const buttonRef = useRef();
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
   const { isSecondStep, setLocation } = useSignup();
+  const { backgroundColor } = useStyle();
 
   const plan = getQueryString('plan');
   const planFormated = plan ? encodeURIComponent(plan) : undefined;
@@ -149,7 +151,14 @@ const ChooseYourClass = ({
   ));
 
   return isSecondStep && (
-    <>
+    <Box
+      display="flex"
+      flexDirection="column"
+      background={backgroundColor}
+      gridGap={{ base: '20px', md: '20px' }}
+      padding={{ base: '56px 18px', md: '26px 70px' }}
+      borderRadius="22px"
+    >
       <Heading size="18px">{t('your-address')}</Heading>
       <Box display="flex" gridGap="18px" alignItems="center" mt="10px">
         <Input
@@ -163,6 +172,7 @@ const ChooseYourClass = ({
         />
 
         <Button
+          display={{ base: 'none', md: 'block' }}
           type="button"
           height="50px"
           ref={buttonRef}
@@ -184,13 +194,28 @@ const ChooseYourClass = ({
       >
         {t('addres-info')}
       </Box>
+
+      <Button
+        display={{ base: 'block', md: 'none' }}
+        width="fit-content"
+        margin="0 0 0 auto"
+        type="button"
+        padding="12px 24px"
+        ref={buttonRef}
+        isLoading={isLoading}
+        value="Geocode"
+        variant="default"
+      >
+        {t('search-dates')}
+      </Button>
+
       <Heading size="18px" m="1rem 0 1rem 0">
         {t('available-dates')}
       </Heading>
       <Box
         display="flex"
         flexDirection="column"
-        mb="2rem"
+        mb={{ base: '0', md: '2rem' }}
         gridGap="40px"
         p="0 1rem"
       >
@@ -202,8 +227,7 @@ const ChooseYourClass = ({
           <LoaderContent />
         )}
       </Box>
-      <Box as="hr" width="100%" margin="10px 0" />
-    </>
+    </Box>
   );
 };
 

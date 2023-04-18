@@ -14,20 +14,20 @@ const MktEventCards = ({ id, title, endpoint, ...rest }) => {
   const { isLoading } = useAuth();
 
   const FourtyEightHours = 2880;
-  const endpointDefault = endpoint || '/v1/events/me';
+  const endpointDefault = endpoint || '/v1/events/all';
 
   useEffect(() => {
-    if (isLoading === false) {
-      axios.get(`${process.env.BREATHECODE_HOST}${endpointDefault}`)
-        .then((res) => {
-          const data = res?.data;
-          if (data && data.length > 0) {
-            const sortDateToLiveClass = sortToNearestTodayDate(data, FourtyEightHours);
-            const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && l?.ending_at);
-            setEvents(existentLiveClasses);
-          }
-        });
-    }
+    axios.get(`${process.env.BREATHECODE_HOST}${endpointDefault}`)
+      .then((res) => {
+        const data = res?.data;
+        if (data && data.length > 0) {
+          const sortDateToLiveClass = sortToNearestTodayDate(data, FourtyEightHours);
+          const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && l?.ending_at);
+          setEvents(existentLiveClasses);
+        }
+      });
+    // if (isLoading === false) {
+    // }
   }, [isLoading]);
 
   return events?.length > 0 && (
