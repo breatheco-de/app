@@ -78,6 +78,9 @@
             },
             "technologies_pills": {
               "type": "SharedSlice"
+            },
+            "event_cards": {
+              "type": "SharedSlice"
             }
           }
         }

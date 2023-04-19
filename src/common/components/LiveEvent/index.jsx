@@ -22,6 +22,7 @@ const LiveEvent = ({
   stTranslation,
   featureLabel,
   featureReadMoreUrl,
+  ...rest
 }) => {
   const { t, lang } = useTranslation('live-event');
   const [isOpen, setIsOpen] = useState(false);
@@ -139,6 +140,7 @@ const LiveEvent = ({
       borderRadius="11px"
       maxWidth="100%"
       minWidth="320px"
+      {...rest}
     >
       {(featureLabel || featureReadMoreUrl) && (
         <Text

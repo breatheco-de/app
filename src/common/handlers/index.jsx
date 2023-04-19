@@ -1,12 +1,11 @@
 import { formatDuration, intervalToDuration } from 'date-fns';
-import { es, en } from 'date-fns/locale';
+import { es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import { isValidDate, toCapitalize } from '../../utils';
 import bc from '../services/breathecode';
 
 const availableLanguages = {
   es,
-  en,
 };
 
 const taskIcons = {
@@ -125,7 +124,7 @@ const handlers = {
         {
           format: ['months', 'weeks', 'days', 'hours', 'minutes'],
           delimiter: ', ',
-          locale: availableLanguages[lang],
+          locale: availableLanguages[lang] || lang,
         });
 
       if (formated === '') return t('few-seconds');

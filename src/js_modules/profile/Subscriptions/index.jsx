@@ -239,13 +239,15 @@ const Subscriptions = ({ storybookConfig }) => {
                       </Text>
                     </Flex>
                   </Flex>
-                  <ButtonHandler
-                    translations={profileTranslations}
-                    subscription={subscription}
-                    onOpenUpgrade={onOpenUpgrade}
-                    setSubscriptionProps={setSubscriptionProps}
-                    onOpenCancelSubscription={onOpenCancelSubscription}
-                  />
+                  {!isTotallyFree && (
+                    <ButtonHandler
+                      translations={profileTranslations}
+                      subscription={subscription}
+                      onOpenUpgrade={onOpenUpgrade}
+                      setSubscriptionProps={setSubscriptionProps}
+                      onOpenCancelSubscription={onOpenCancelSubscription}
+                    />
+                  )}
                 </Flex>
               </Flex>
             );

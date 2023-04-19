@@ -21,5 +21,8 @@
     "no-access": "You do not have access to this event",
     "live-now": "Live Now!",
     "master-class": "Master Class",
-    "workshop": "Workshop"
+    "workshop": "Workshop",
+    "will-start-soon": "Will start soon",
+    "time-duration": "{{time}} duration",
+    "join-event": "Join Event"
 }
