@@ -141,6 +141,7 @@ const MktShowPrices = ({ id, title, description, plan, bullets, ...rest }) => {
 
               const querys = parseQuerys({
                 plan: item?.suggested_plan?.slug,
+                plan_id: item?.plan_id,
                 has_available_cohorts: hasAvailableCohorts,
                 price: item?.price,
                 period,
@@ -160,7 +161,7 @@ const MktShowPrices = ({ id, title, description, plan, bullets, ...rest }) => {
 MktShowPrices.propTypes = {
   title: PropTypes.string,
   plan: PropTypes.string.isRequired,
-  description: PropTypes.string,
+  description: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.string]),
   id: PropTypes.string,
 };
 MktShowPrices.defaultProps = {

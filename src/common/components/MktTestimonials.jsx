@@ -53,13 +53,13 @@ const MktTestimonials = ({
           {name}
         </Text>
         <StarRating
-          rating={rating / 2}
+          rating={rating}
           margin="6px 0 0 0"
           justifyContent="center"
         />
         <Text
           marginTop="10px"
-          fontSize="sm"
+          fontSize="var(--chakra-fontSizes-xs)"
           fontWeight="400"
           lineHeight="14px"
           color={fontColor2}

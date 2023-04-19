@@ -95,6 +95,13 @@
         "__TYPE__": "FieldContent",
         "value": "",
         "type": "Text"
+      },
+      "button_link": {
+        "__TYPE__": "LinkContent",
+        "value": {
+          "__TYPE__": "ExternalLink",
+          "url": "http://google.com"
+        }
       }
     },
     "items": [

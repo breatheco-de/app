@@ -68,7 +68,7 @@ interface PageDocumentData {
  * Slice for *Page → Slice Zone*
  *
  */
-type PageDocumentDataSlicesSlice = TitleIntroductionSlice | MarkdownSlice | TwoColumnSlice | OneColumnSlice | TestimonialsSlice | ShowPricesSlice | TechnologiesSlice | PartnersSlice | RoadMapSlice | RecommendedCoursesSlice | TechnologiesPillsSlice;
+type PageDocumentDataSlicesSlice = TitleIntroductionSlice | MarkdownSlice | TwoColumnSlice | OneColumnSlice | TestimonialsSlice | ShowPricesSlice | TechnologiesSlice | PartnersSlice | RoadMapSlice | RecommendedCoursesSlice | TechnologiesPillsSlice | EventCardsSlice;
 /**
  * Page document from Prismic
  *
@@ -997,6 +997,16 @@ interface TitleIntroductionSliceDefaultPrimary {
      *
      */
     buttontext: prismicT.RichTextField;
+    /**
+     * Button link field in *TitleIntroduction → Primary*
+     *
+     * - **Field Type**: Link
+     * - **Placeholder**: *None*
+     * - **API ID Path**: title_introduction.primary.button_link
+     * - **Documentation**: https://prismic.io/docs/core-concepts/link-content-relationship
+     *
+     */
+    button_link: prismicT.LinkField;
     /**
      * highlight field in *TitleIntroduction → Primary*
      *

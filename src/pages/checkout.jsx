@@ -203,11 +203,11 @@ const Checkout = () => {
       )}
       <ModalInfo
         isOpen={alreadyEnrolled}
-        onClose={() => toggleIfEnrolled(false)}
+        forceHandler
+        disableCloseButton
         title={t('already-adquired-plan-title')}
         isReadonly
         description={t('already-adquired-plan-description')}
-        closeText={t('common:close')}
         closeButtonVariant="outline"
         disableInput
         handlerText={t('subscriptions')}

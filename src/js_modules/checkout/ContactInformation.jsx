@@ -33,7 +33,7 @@ const ContactInformation = ({
   const router = useRouter();
   const toast = useToast();
   const toastIdRef = useRef();
-  const { featuredColor } = useStyle();
+  const { backgroundColor, featuredColor } = useStyle();
   const plan = getQueryString('plan');
 
   const { syllabus } = router.query;
@@ -121,7 +121,7 @@ const ContactInformation = ({
   };
 
   return (
-    <>
+    <Box background={backgroundColor} p={{ base: '20px 22px', md: '26px 23px' }} height="100%" borderRadius="15px">
       <Formik
         initialValues={{
           first_name: '',
@@ -239,7 +239,7 @@ const ContactInformation = ({
           </Form>
         )}
       </Formik>
-    </>
+    </Box>
   );
 };
 

@@ -77,6 +77,7 @@
     "renewal-date": "Fecha de renovación: {{date}}",
     "renewal-date-unknown": "Fecha de renovación: Desconocida",
     "payment-trial": "Pago: Prueba",
+    "payment-free": "Pago: Libre",
     "renewal-date-cancelled": "Fecha de renovación: Cancelada",
     "status": {
       "free_trial": "Prueba gratuita",

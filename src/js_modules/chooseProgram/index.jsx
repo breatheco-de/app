@@ -50,6 +50,10 @@ function ChooseProgram({ chooseList, handleChoose }) {
     ) && item?.course_translation?.title,
   );
 
+  const isNotAvailableForMktCourses = activeSubscriptionCohorts.length > 0 && activeSubscriptionCohorts.some(
+    (item) => item?.educational_status === 'ACTIVE' && item?.cohort?.available_as_saas === false,
+  );
+
   return (
     <>
       {activeSubscriptionCohorts.length > 0 && (
@@ -82,7 +86,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
         </Box>
       )}
 
-      {marketingCouses.length > 0 && marketingCouses.some((l) => l?.course_translation?.title) && (
+      {!isNotAvailableForMktCourses && marketingCouses.length > 0 && marketingCouses.some((l) => l?.course_translation?.title) && (
         <>
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
             <Heading size="sm" width="fit-content" whiteSpace="nowrap">
@@ -158,7 +162,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
             <Box
               display="grid"
               mt="1rem"
-              gridTemplateColumns="repeat(auto-fill, minmax(14rem, 1fr))"
+              gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
               gridColumnGap="5rem"
               gridRowGap="3rem"
               height="auto"
