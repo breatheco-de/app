@@ -978,6 +978,16 @@ interface TitleIntroductionSliceDefaultPrimary {
      */
     id_key: prismicT.KeyTextField;
     /**
+     * Two Column Size field in *TitleIntroduction → Primary*
+     *
+     * - **Field Type**: Select
+     * - **Placeholder**: *None*
+     * - **API ID Path**: title_introduction.primary.two_column_size
+     * - **Documentation**: https://prismic.io/docs/core-concepts/select
+     *
+     */
+    two_column_size: prismicT.SelectField<"Left is bigger" | "Both are equal" | "Right is bigger">;
+    /**
      * Title field in *TitleIntroduction → Primary*
      *
      * - **Field Type**: Title
