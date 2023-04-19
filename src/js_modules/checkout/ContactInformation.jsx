@@ -74,8 +74,7 @@ const ContactInformation = ({
       .email(t('validators.invalid-email'))
       .required(t('validators.email-required')),
     phone: Yup.string()
-      .matches(phone, t('validators.invalid-phone'))
-      .required(t('validators.phone-required')),
+      .matches(phone, t('validators.invalid-phone')),
     confirm_email: Yup.string()
       .oneOf([Yup.ref('email'), null], t('validators.confirm-email-not-match'))
       .required(t('validators.confirm-email-required')),
