@@ -17,9 +17,9 @@ const IntroductionSection = ({
   const router = useRouter();
   const colors = useColorModeValue('#000', '#fff');
 
-  const isLeftBigger = slice.primary.two_column_size === 'Left is bigger';
-  const isRightBigger = slice.primary.two_column_size === 'Right is bigger';
-  const bothAreEqual = slice.primary.two_column_size === 'Both are equal';
+  const isLeftBigger = slice?.primary?.two_column_size === 'Left is bigger';
+  const isRightBigger = slice?.primary?.two_column_size === 'Right is bigger';
+  const bothAreEqual = slice?.primary?.two_column_size === 'Both are equal';
 
   const getLeftColumnSize = () => {
     if (isLeftBigger) return '2 / span 5';

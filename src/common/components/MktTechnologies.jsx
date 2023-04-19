@@ -5,7 +5,7 @@ import axios from 'axios';
 import Icon from './Icon';
 import GridContainer from './GridContainer';
 
-const defaultEndpoint = `${process.env.BREATHECODE_HOST}/v1/registry/technology?sort_priority=1`;
+const defaultEndpoint = '/v1/registry/technology?sort_priority=1';
 
 const MktTechnologies = ({ id, endpoint, ...rest }) => {
   const carousel = useRef(null);
@@ -16,7 +16,7 @@ const MktTechnologies = ({ id, endpoint, ...rest }) => {
     try {
       axios
         .get(
-          `${
+          `${process.env.BREATHECODE_HOST}${
             typeof endpoint === 'string' && endpoint !== ''
               ? endpoint
               : defaultEndpoint
