@@ -25,8 +25,8 @@ const MktTestimonials = ({
   const { fontColor2, backgroundColor } = useStyle();
 
   useEffect(() => {
-    if (typeof endpoint === 'string' && endpoint !== '') {
-      axios.get(`${endpoint}${endpoint.includes('?lang=') ? `?lang=${router?.locale}` : ''}`)
+    if (typeof endpoint === 'string' && endpoint?.length > 6) {
+      axios.get(`${process.env.BREATHECODE_HOST}${endpoint}?lang=${router?.locale}`)
         .then((response) => {
           setTestimonialsData(response?.data);
         });
