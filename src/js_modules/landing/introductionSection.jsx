@@ -109,11 +109,11 @@ const IntroductionSection = ({
         )}
 
         {slice?.primary?.description.length > 0 ? (
-          <Text fontSize="18px" fontWeight={700} pt="16px">
+          <Text fontSize="21px" fontWeight={700} pt="16px">
             <PrismicRichText field={slice?.primary?.description} />
           </Text>
         ) : data?.description && (
-          <Text fontSize="18px" fontWeight={700} pt="16px">
+          <Text fontSize="21px" fontWeight={700} pt="16px">
             {data?.description}
           </Text>
         )}
@@ -122,7 +122,7 @@ const IntroductionSection = ({
           <Button
             variant="default"
             width="fit-content"
-            fontSize="13px"
+            fontSize="18px"
             m="25px 0"
             letterSpacing="0.05em"
             textTransform="uppercase"
@@ -133,7 +133,7 @@ const IntroductionSection = ({
         ) : (
           <>
             {data?.callToAction?.title && (
-              <Button variant="default" width="fit-content" fontSize="13px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router.push(data?.callToAction.href)}>
+              <Button variant="default" width="fit-content" fontSize="18px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router.push(data?.callToAction.href)}>
                 {data?.callToAction.title}
               </Button>
             )}
