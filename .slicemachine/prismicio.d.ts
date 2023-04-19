@@ -9,7 +9,7 @@ type Simplify<T> = {
 /** Content for Page documents */
 interface PageDocumentData {
     /**
-     * TItle field in *Page*
+     * Title field in *Page*
      *
      * - **Field Type**: Text
      * - **Placeholder**: *None*
