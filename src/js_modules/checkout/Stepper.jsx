@@ -185,12 +185,16 @@ Stepper.propTypes = {
   stepIndex: PropTypes.number.isRequired,
   checkoutData: PropTypes.shape({
     isTrial: PropTypes.bool,
-  }).isRequired,
+  }),
   isFirstStep: PropTypes.bool.isRequired,
   isSecondStep: PropTypes.bool.isRequired,
   isThirdStep: PropTypes.bool.isRequired,
   isFourthStep: PropTypes.bool.isRequired,
   handleGoBack: PropTypes.func.isRequired,
+};
+
+Stepper.defaultProps = {
+  checkoutData: {},
 };
 
 export default Stepper;
