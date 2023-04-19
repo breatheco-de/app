@@ -7,14 +7,20 @@ import Icon from './Icon';
 import Heading from './Heading';
 import TagCapsule from './TagCapsule';
 import Text from './Text';
-import { isValidDate, syncInterval } from '../../utils';
+import { getStorageItem, isValidDate, syncInterval } from '../../utils';
 import useStyle from '../hooks/useStyle';
+import { parseQuerys } from '../../utils/url';
 
-const EventCard = ({ title, description, host, startingAt, endingAt, technologies, stTranslation, ...rest }) => {
+const EventCard = ({ id, title, description, host, startingAt, endingAt, technologies, stTranslation, ...rest }) => {
   const { t, lang } = useTranslation('live-event');
   const [date, setDate] = useState('');
   const { lightColor, disabledColor2 } = useStyle();
   const startedButRemain = date?.started && date?.ended === false;
+  const accessToken = getStorageItem('accessToken');
+
+  const linkQuery = parseQuerys({
+    token: accessToken || undefined,
+  });
 
   const startingSoonDelta = 30;
 
@@ -158,13 +164,23 @@ const EventCard = ({ title, description, host, startingAt, endingAt, technologie
           </Box>
         </Flex>
       )}
-      {startedButRemain ? (
-        <Link href="#top" color="blue.default" display="flex" alignItems="center" justifyContent="center" gridGap="10px">
+      {!startedButRemain ? (
+        <Link
+          margin="auto 0 0 0"
+          href={`${process.env.BREATHECODE_HOST}/v1/events/me/event/${id}/join${linkQuery}`}
+          color="blue.default"
+          target="_blank"
+          rel="noopener noreferrer"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          gridGap="10px"
+        >
           {stTranslation ? stTranslation[lang]['live-event']['join-event'] : t('join-event')}
           <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
         </Link>
       ) : (
-        <Text size="18px" color={disabledColor2} textAlign="center" fontWeight={700}>
+        <Text margin="auto 0 0 0" size="18px" color={disabledColor2} textAlign="center" fontWeight={700}>
           {stTranslation ? stTranslation[lang]['live-event']['will-start-soon'] : t('will-start-soon')}
         </Text>
       )}
@@ -180,6 +196,7 @@ EventCard.propTypes = {
   technologies: PropTypes.arrayOf(PropTypes.string),
   host: PropTypes.oneOfType([PropTypes.string, PropTypes.objectOf(PropTypes.any)]),
   stTranslation: PropTypes.objectOf(PropTypes.any),
+  id: PropTypes.number.isRequired,
 };
 
 EventCard.defaultProps = {
