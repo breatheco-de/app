@@ -21,6 +21,27 @@ const IntroductionSection = ({
   const isRightBigger = slice?.primary?.two_column_size === 'Right is bigger';
   const bothAreEqual = slice?.primary?.two_column_size === 'Both are equal';
 
+  const getHighlightStyle = () => {
+    if (slice?.primary?.highlight_style === 'Colored') {
+      return ({
+        color: 'blue.default',
+        borderBottom: '0px',
+      });
+    }
+    if (slice?.primary?.highlight_style === 'Underlined') {
+      return ({
+        transition: { duration: 3 },
+        animate: {
+          color: [colors, '#0097CD', colors, '#0097CD', colors, colors],
+        },
+      });
+    }
+    return ({
+      color: 'blue.default',
+      borderBottom: '4px solid #0097CD',
+    });
+  };
+
   const getLeftColumnSize = () => {
     if (isLeftBigger) return '2 / span 5';
     if (isRightBigger) return '2 / span 3';
@@ -64,10 +85,7 @@ const IntroductionSection = ({
                       <MotionBox
                         as="strong"
                         className="highlighted box"
-                        transition={{ duration: 3 }}
-                        animate={{
-                          color: [colors, '#0097CD', colors, '#0097CD', colors, colors],
-                        }}
+                        {...getHighlightStyle()}
                         margin="0 0 0 10px"
                         display={{ base: 'none', sm: 'initial' }}
                       >
