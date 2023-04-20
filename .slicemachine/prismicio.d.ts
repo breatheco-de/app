@@ -1028,6 +1028,16 @@ interface TitleIntroductionSliceDefaultPrimary {
      */
     highlight: prismicT.RichTextField;
     /**
+     * Highlight Style field in *TitleIntroduction → Primary*
+     *
+     * - **Field Type**: Select
+     * - **Placeholder**: *None*
+     * - **API ID Path**: title_introduction.primary.highlight_style
+     * - **Documentation**: https://prismic.io/docs/core-concepts/select
+     *
+     */
+    highlight_style: prismicT.SelectField<"Underlined" | "Colored">;
+    /**
      * description field in *TitleIntroduction → Primary*
      *
      * - **Field Type**: Rich Text

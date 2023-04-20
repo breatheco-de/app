@@ -64,6 +64,17 @@
             "single": "em"
           }
         },
+        "highlight_style": {
+          "type": "Select",
+          "config": {
+            "label": "Highlight Style",
+            "placeholder": "",
+            "options": [
+              "Underlined",
+              "Colored"
+            ]
+          }
+        },
         "description": {
           "type": "StructuredText",
           "config": {
