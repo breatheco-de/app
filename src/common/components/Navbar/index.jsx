@@ -23,11 +23,13 @@ import useAuth from '../../hooks/useAuth';
 import LanguageSelector from '../LanguageSelector';
 import syllabusList from '../../../../public/syllabus.json';
 import { isWindow } from '../../../utils';
+import axios from '../../../axios';
+import UpgradeExperience from '../UpgradeExperience';
 
 const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   const { t } = useTranslation('navbar');
   const router = useRouter();
-  // const [readSyllabus, setReadSyllabus] = useState([]);
+  const [mktCourses, setMktCourses] = useState([]);
   const [ITEMS, setITEMS] = useState([]);
   // const [isBelowTablet] = useMediaQuery('(max-width: 1000px)');
   const locale = router.locale === 'default' ? 'en' : router.locale;
@@ -59,6 +61,8 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   }, { returnObjects: true });
   const readSyllabus = JSON.parse(syllabusList);
 
+  axios.defaults.headers.common['Accept-Language'] = locale;
+
   useEffect(() => {
     const items = t('ITEMS', {
       selectedProgramSlug: selectedProgramSlug || '/choose-program',
@@ -83,6 +87,17 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
       { addSuffix: true, locale: es },
     )}`,
   };
+
+  useEffect(() => {
+    axios.get(`${process.env.BREATHECODE_HOST}/v1/marketing/course`)
+      .then((response) => {
+        const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null);
+        setMktCourses(filterByTranslations || []);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -189,12 +204,13 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
         borderBottom={1}
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.900')}
+        justifyContent="space-between"
         align="center"
       >
         <Flex
-          flex={{ base: 1, md: 'auto' }}
+          // flex={{ base: 1, md: 'auto' }}
           ml={{ base: -2 }}
-          display={{ base: 'flex', lg: 'none' }}
+          display={{ base: 'flex', xl: 'none' }}
           gridGap="12px"
           className="here-2"
         >
@@ -218,17 +234,17 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
             height="auto"
             aria-label="Toggle Navigation"
           />
-          <NextChakraLink href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
+          <NextChakraLink minWidth="105px" href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
             {logo}
           </NextChakraLink>
         </Flex>
 
         <Flex
-          flex={{ base: 1 }}
-          display={{ base: 'none', lg: 'flex' }}
-          justify={{ base: 'center', md: 'start' }}
+          // flex={{ base: 1 }}
+          display={{ base: 'none', xl: 'flex' }}
+          justify={{ base: 'center', xl: 'start' }}
         >
-          <NextChakraLink href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
+          <NextChakraLink minWidth="105px" href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
             {logo}
           </NextChakraLink>
 
@@ -237,7 +253,13 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
           </Flex>
         </Flex>
 
-        <Stack flex={{ base: 1, md: 0 }} justify="flex-end" direction="row" gridGap="5px">
+        <Stack justify="flex-end" direction="row" gridGap="5px">
+          {mktCourses?.length > 0 && (
+            <Box display={{ base: 'none', md: 'block' }}>
+              <UpgradeExperience data={mktCourses} />
+            </Box>
+          )}
+
           <LanguageSelector display={{ base: 'none ', md: 'block' }} translations={translations} />
           <IconButton
             style={{
@@ -476,6 +498,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
 
       <Collapse display={{ lg: 'block' }} in={isOpen} animateOpacity>
         <MobileNav
+          mktCourses={mktCourses}
           NAV_ITEMS={ITEMS}
           haveSession={sessionExists}
           translations={translations}

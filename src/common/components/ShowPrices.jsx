@@ -73,7 +73,7 @@ const ShowPrices = ({
       borderColor={selectedIndex === i ? '#0097CD' : 'transparent'}
       borderRadius="8px"
     >
-      <Box display="flex" flexDirection="column" width="100%" gridGap="12px" minWidth={{ base: 'none', md: '288px' }} height="fit-content" fontWeight="400">
+      <Box display="flex" flexDirection="column" width="100%" gridGap="12px" minWidth={{ base: 'none', md: 'auto' }} height="fit-content" fontWeight="400">
         {!item?.isFree && (
           <Box fontSize="18px" fontWeight="700">
             {item?.title}
@@ -87,8 +87,8 @@ const ShowPrices = ({
         />
       </Box>
 
-      <Box textAlign="right" display="flex" minWidth={item.period !== 'FINANCING' && '110px'} justifyContent="center" flexDirection="column" gridGap="10px">
-        <Heading as="span" size="m" width={item.period === 'FINANCING' && 'max-content'} lineHeight="1" textTransform="uppercase" color="blue.default">
+      <Box textAlign="right" display="flex" minWidth={item.period !== 'FINANCING' && 'auto'} justifyContent="center" flexDirection="column" gridGap="10px">
+        <Heading as="span" size={{ base: 'var(--heading-m)', md: 'clamp(0.875rem, 0.3rem + 1.8vw, 2rem)' }} width={item.period === 'FINANCING' && 'max-content'} lineHeight="1" textTransform="uppercase" color="blue.default">
           {item?.priceText || item?.price}
         </Heading>
         {item?.lastPrice && (

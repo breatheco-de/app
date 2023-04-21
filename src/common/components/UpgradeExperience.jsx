@@ -1,16 +1,16 @@
-import { Button, Popover, PopoverTrigger, PopoverContent, Box } from '@chakra-ui/react';
+import { Button, Popover, PopoverTrigger, PopoverContent, Box, Img, PopoverArrow } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { formatDistanceToNowStrict } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { useRouter } from 'next/router';
+// import { formatDistanceToNowStrict } from 'date-fns';
+// import { es } from 'date-fns/locale';
+// import { useRouter } from 'next/router';
 import NextChakraLink from './NextChakraLink';
 import Icon from './Icon';
 
 const UpgradeExperience = ({ storySettings, data }) => {
   const [isOpen, setIsOpen] = useState(storySettings?.open || false);
-  const router = useRouter();
-  const locale = storySettings?.locale || router?.locale;
+  // const router = useRouter();
+  // const locale = storySettings?.locale || router?.locale;
 
   const iconBg = {
     0: 'blue.default',
@@ -22,7 +22,7 @@ const UpgradeExperience = ({ storySettings, data }) => {
       id="Language-Hover"
       isOpen={isOpen}
       onClose={() => setIsOpen(false)}
-      placement="bottom-start"
+      placement="bottom-end"
       trigger="click"
     >
       <PopoverTrigger>
@@ -47,7 +47,7 @@ const UpgradeExperience = ({ storySettings, data }) => {
         width={{ base: '100%', md: 'auto' }}
         minW="210px"
       >
-        {/* <PopoverArrow /> */}
+        <PopoverArrow />
         <Box
           width="100%"
           display="flex"
@@ -55,32 +55,41 @@ const UpgradeExperience = ({ storySettings, data }) => {
           flexDirection="column"
           gridGap="20px"
           padding="12px"
+          minWidth="300px"
         >
-          {data.length > 0 && data.map((item, index) => {
-            const timestamp = item.ending_at ? new Date(item.ending_at) : '';
-            const isTrial = item.status === 'trial';
+          {data?.length > 0 && data.map((item, index) => {
+            // const timestamp = item.ending_at ? new Date(item.ending_at) : '';
+            // const isTrial = item.status === 'trial';
+            const title = item?.course_translation?.title;
 
-            const endingDate = {
-              en: `${formatDistanceToNowStrict(
-                timestamp,
-                'dd',
-              )} left`,
-              es: `${formatDistanceToNowStrict(
-                timestamp,
-                { locale: es },
-                'dd',
-              )} restantes`,
-            };
+            // const endingDate = {
+            //   en: `${formatDistanceToNowStrict(
+            //     timestamp,
+            //     'dd',
+            //   )} left`,
+            //   es: `${formatDistanceToNowStrict(
+            //     timestamp,
+            //     { locale: es },
+            //     'dd',
+            //   )} restantes`,
+            // };
 
             return (
-              <Box key={item.label} display="flex" alignItems="center" gridGap="10px">
-                <Box background={iconBg[index] || iconBg[0]} padding="8px 7px" borderRadius="50%">
-                  <Icon icon={item.icon} width="20px" height="20px" color="#ffffff" />
+              <Box key={item.slug} display="flex" alignItems="center" gridGap="10px">
+                <Box
+                  background={!item?.icon_url && (iconBg[index] || iconBg[0])}
+                  padding={!item?.icon_url && '8px 7px'}
+                  borderRadius="50%"
+                >
+                  {item?.icon_url ? (
+                    <Img src={item?.icon_url} width="28px" height="28px" />
+                  ) : (
+                    <Icon icon="coding" width="20px" height="20px" color="#ffffff" />
+                  )}
                 </Box>
                 <NextChakraLink
                   width="auto"
-                  key={item.label}
-                  href={item.src}
+                  href={`/${item.slug}`}
                   role="group"
                   alignSelf="center"
                   display="flex"
@@ -88,19 +97,19 @@ const UpgradeExperience = ({ storySettings, data }) => {
                   fontWeight="bold"
                   textDecoration="none"
                 >
-                  {item.label}
+                  {title}
                 </NextChakraLink>
-                {isTrial && (
+                {/* {isTrial && (
                   <Box background="red.light2" padding="3px 10px" minWidth="max-content" fontSize="12px" width="fit-content" borderRadius="15px">
                     {endingDate[locale]}
                   </Box>
-                )}
-                {item.status === 'paid' && (
+                )} */}
+                {/* {item.status === 'paid' && (
                   <Icon icon="crown" width="20px" height="15px" />
                 )}
                 {item.status === 'finished' && (
                   <Icon icon="checkboxChecked" width="20px" height="20px" />
-                )}
+                )} */}
               </Box>
             );
           })}
