@@ -18,7 +18,7 @@ const MktRecommendedCourses = ({ id, technologies, background, title, gridColumn
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [courses, setCourses] = useState([]);
-  const { hexColor, featuredColor, fontColor } = useStyle();
+  const { hexColor, fontColor } = useStyle();
 
   const getCourses = async () => {
     try {
@@ -96,25 +96,24 @@ const MktRecommendedCourses = ({ id, technologies, background, title, gridColumn
           id={id}
           borderRadius="13px"
           padding={{ base: '20px', lg: '30px' }}
-          background={background || featuredColor}
+          background={background || 'none'}
           display="flex"
         >
           {title && (
-          <Box
-            flexShrink="2"
-            minWidth="170px"
-            maxWidth={{ base: 'none', lg: '300px' }}
-          >
-            <Heading
-              as="h2"
-              size="30px"
-              fontWeight="700"
-              color={fontColor}
+            <Box
+              flexShrink="2"
+              minWidth="170px"
+              maxWidth={{ base: 'none', lg: '300px' }}
             >
-              {title}
-              <Icon icon="longArrowRight" style={{ margin: '10px 0' }} color={hexColor.blueDefault} width="80px" />
-            </Heading>
-          </Box>
+              <Heading
+                as="h2"
+                size="30px"
+                fontWeight="700"
+                color={fontColor}
+                dangerouslySetInnerHTML={{ __html: title }}
+              />
+              <Icon icon="longArrowRight" style={{ margin: '10px 0' }} color={hexColor.blueDefault} width="100px" height="80px" />
+            </Box>
           )}
           <Box
             ref={ref}
