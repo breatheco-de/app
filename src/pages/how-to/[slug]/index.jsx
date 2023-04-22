@@ -250,7 +250,7 @@ export default function HowToSlug({ data, markdown }) {
               <MDSkeleton />
             )}
             <MktRecommendedCourses
-              title={t('common:related-courses')}
+              title={t('common:continue-learning', { technologies: data?.technologies.slice(0, 4).join(', ') })}
               marginBottom="15px"
               technologies={data?.technologies.join(',')}
               endpoint={`${process.env.BREATHECODE_HOST}/v1/marketing/course`}
