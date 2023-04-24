@@ -89,7 +89,7 @@ const MktTestimonials = ({
         {...rest}
       >
         {title && (
-          <Heading as="h2" size="m" marginBottom="20px">
+          <Heading as="h2" size="sm" marginBottom="20px">
             {title}
           </Heading>
         )}
