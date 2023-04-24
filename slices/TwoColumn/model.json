@@ -22,26 +22,12 @@
           "type": "Select",
           "config": {
             "label": "Information Size",
-            "placeholder": "",
+            "placeholder": "Proportion of sizes",
             "options": [
               "Small",
               "Medium",
               "Large"
             ]
-          }
-        },
-        "title_color": {
-          "type": "Color",
-          "config": {
-            "label": "Title Color",
-            "placeholder": ""
-          }
-        },
-        "subtitle_color": {
-          "type": "Color",
-          "config": {
-            "label": "Subtitle Color",
-            "placeholder": ""
           }
         },
         "text_background_color": {
@@ -51,17 +37,6 @@
             "placeholder": ""
           }
         },
-        "button_color": {
-          "type": "Select",
-          "config": {
-            "label": "Button Color",
-            "placeholder": "",
-            "options": [
-              "Blue",
-              "White"
-            ]
-          }
-        },
         "title": {
           "type": "Text",
           "config": {
@@ -69,10 +44,24 @@
             "placeholder": ""
           }
         },
+        "title_color": {
+          "type": "Color",
+          "config": {
+            "label": "Title Color",
+            "placeholder": ""
+          }
+        },
         "subtitle": {
           "type": "Text",
           "config": {
             "label": "Subtitle",
+            "placeholder": ""
+          }
+        },
+        "subtitle_color": {
+          "type": "Color",
+          "config": {
+            "label": "Subtitle Color",
             "placeholder": ""
           }
         },
@@ -115,6 +104,17 @@
             "label": "Button url",
             "placeholder": "",
             "select": null
+          }
+        },
+        "button_color": {
+          "type": "Select",
+          "config": {
+            "label": "Button Color",
+            "placeholder": "",
+            "options": [
+              "Blue",
+              "White"
+            ]
           }
         },
         "background_color": {
