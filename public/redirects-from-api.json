@@ -1,5 +1,10 @@
 [
   {
+    "source": "/lesson/what-is-data-science",
+    "destination": "/es/lesson/what-is-data-science",
+    "permanent": true
+  },
+  {
     "source": "/lesson/introduccion-a-node-js",
     "destination": "/es/lesson/introduccion-a-node-js",
     "permanent": true
@@ -352,11 +357,6 @@
   {
     "source": "/lesson/bootstrap-tutorial-of-bootstrap-4-es",
     "destination": "/es/lesson/bootstrap-tutorial-of-bootstrap-4-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/what-is-data-science",
-    "destination": "/es/lesson/what-is-data-science",
     "permanent": true
   },
   {

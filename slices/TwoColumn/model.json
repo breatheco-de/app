@@ -18,6 +18,25 @@
             "placeholder": ""
           }
         },
+        "information_size": {
+          "type": "Select",
+          "config": {
+            "label": "Information Size",
+            "placeholder": "Proportion of sizes",
+            "options": [
+              "Small",
+              "Medium",
+              "Large"
+            ]
+          }
+        },
+        "text_background_color": {
+          "type": "Color",
+          "config": {
+            "label": "Text Background Color",
+            "placeholder": ""
+          }
+        },
         "title": {
           "type": "Text",
           "config": {
@@ -25,10 +44,24 @@
             "placeholder": ""
           }
         },
+        "title_color": {
+          "type": "Color",
+          "config": {
+            "label": "Title Color",
+            "placeholder": ""
+          }
+        },
         "subtitle": {
           "type": "Text",
           "config": {
             "label": "Subtitle",
+            "placeholder": ""
+          }
+        },
+        "subtitle_color": {
+          "type": "Color",
+          "config": {
+            "label": "Subtitle Color",
             "placeholder": ""
           }
         },
@@ -71,6 +104,17 @@
             "label": "Button url",
             "placeholder": "",
             "select": null
+          }
+        },
+        "button_color": {
+          "type": "Select",
+          "config": {
+            "label": "Button Color",
+            "placeholder": "",
+            "options": [
+              "Blue",
+              "White"
+            ]
           }
         },
         "background_color": {
