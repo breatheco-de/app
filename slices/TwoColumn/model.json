@@ -18,6 +18,50 @@
             "placeholder": ""
           }
         },
+        "information_size": {
+          "type": "Select",
+          "config": {
+            "label": "Information Size",
+            "placeholder": "",
+            "options": [
+              "Small",
+              "Medium",
+              "Large"
+            ]
+          }
+        },
+        "title_color": {
+          "type": "Color",
+          "config": {
+            "label": "Title Color",
+            "placeholder": ""
+          }
+        },
+        "subtitle_color": {
+          "type": "Color",
+          "config": {
+            "label": "Subtitle Color",
+            "placeholder": ""
+          }
+        },
+        "text_background_color": {
+          "type": "Color",
+          "config": {
+            "label": "Text Background Color",
+            "placeholder": ""
+          }
+        },
+        "button_color": {
+          "type": "Select",
+          "config": {
+            "label": "Button Color",
+            "placeholder": "",
+            "options": [
+              "Blue",
+              "White"
+            ]
+          }
+        },
         "title": {
           "type": "Text",
           "config": {

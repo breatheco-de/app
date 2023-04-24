@@ -1127,6 +1127,56 @@ interface TwoColumnSliceDefaultPrimary {
      */
     id_key: prismicT.KeyTextField;
     /**
+     * Information Size field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Select
+     * - **Placeholder**: *None*
+     * - **API ID Path**: two_column.primary.information_size
+     * - **Documentation**: https://prismic.io/docs/core-concepts/select
+     *
+     */
+    information_size: prismicT.SelectField<"Small" | "Medium" | "Large">;
+    /**
+     * Title Color field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Color
+     * - **Placeholder**: *None*
+     * - **API ID Path**: two_column.primary.title_color
+     * - **Documentation**: https://prismic.io/docs/core-concepts/color
+     *
+     */
+    title_color: prismicT.ColorField;
+    /**
+     * Subtitle Color field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Color
+     * - **Placeholder**: *None*
+     * - **API ID Path**: two_column.primary.subtitle_color
+     * - **Documentation**: https://prismic.io/docs/core-concepts/color
+     *
+     */
+    subtitle_color: prismicT.ColorField;
+    /**
+     * Text Background Color field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Color
+     * - **Placeholder**: *None*
+     * - **API ID Path**: two_column.primary.text_background_color
+     * - **Documentation**: https://prismic.io/docs/core-concepts/color
+     *
+     */
+    text_background_color: prismicT.ColorField;
+    /**
+     * Button Color field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Select
+     * - **Placeholder**: *None*
+     * - **API ID Path**: two_column.primary.button_color
+     * - **Documentation**: https://prismic.io/docs/core-concepts/select
+     *
+     */
+    button_color: prismicT.SelectField<"Blue" | "White">;
+    /**
      * Title field in *TwoColumn → Primary*
      *
      * - **Field Type**: Text

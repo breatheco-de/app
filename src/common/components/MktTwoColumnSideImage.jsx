@@ -9,8 +9,24 @@ import useStyle from '../hooks/useStyle';
 import GridContainer from './GridContainer';
 import PrismicTextComponent from './PrismicTextComponent';
 
+const SIZES = {
+  SMALL: 'Small',
+  MEDIUM: 'Medium',
+  LARGE: 'Large',
+};
+
+const BUTTON_COLOR = {
+  BLUE: 'Blue',
+  WHITE: 'White',
+};
+
 const MktTwoColumnSideImage = ({
   id,
+  informationSize,
+  titleColor,
+  subtitleColor,
+  buttonColor,
+  textBackgroundColor,
   title,
   subTitle,
   description,
@@ -33,6 +49,56 @@ const MktTwoColumnSideImage = ({
   };
 
   const imageProps = slice && slice?.primary?.image?.dimensions;
+
+  const getButtonColors = () => {
+    if (buttonColor === BUTTON_COLOR.BLUE) {
+      return {
+        color: '#FFF',
+        background: 'blue.default',
+      };
+    }
+    if (buttonColor === BUTTON_COLOR.WHITE) {
+      return {
+        color: 'blue.default',
+        background: 'white',
+      };
+    }
+    return {
+      color: '#FFF',
+      background: 'blue.default',
+    };
+  };
+  const buttonColors = getButtonColors();
+
+  const getFontStyles = () => {
+    if (informationSize === SIZES.SMALL) {
+      return {
+        titleSize: '26px',
+        subtitleSize: '14px',
+        descriptionSize: '12px',
+      };
+    }
+    if (informationSize === SIZES.MEDIUM) {
+      return {
+        titleSize: '26px',
+        subtitleSize: '21px',
+        descriptionSize: '18px',
+      };
+    }
+    if (informationSize === SIZES.LARGE) {
+      return {
+        titleSize: '44px',
+        subtitleSize: '21px',
+        descriptionSize: '14px',
+      };
+    }
+    return {
+      titleSize: '26px',
+      subtitleSize: '14px',
+      descriptionSize: '12px',
+    };
+  };
+  const fontStyle = getFontStyles();
 
   return (
     <Box
@@ -68,13 +134,13 @@ const MktTwoColumnSideImage = ({
             width={imageProps?.width}
           />
         </Box>
-        <Box display={{ base: 'block', md: 'grid' }} style={{ direction: 'initial' }} gridColumn="6 / span 4">
+        <Box display={{ base: 'block', md: 'grid' }} style={{ direction: 'initial' }} gridColumn="6 / span 4" background={textBackgroundColor}>
           {subTitle && (
-            <Heading marginBottom="15px" as="h4" fontSize="14px" color={hexColor.blueDefault}>
+            <Heading marginBottom="15px" as="h4" fontSize={fontStyle.subtitleSize} color={subtitleColor || hexColor.blueDefault}>
               {subTitle}
             </Heading>
           )}
-          <Heading as="h2" size="sm">
+          <Heading as="h2" size={fontStyle.titleSize} color={titleColor}>
             {title}
           </Heading>
           {slice.primary.description ? (
@@ -83,7 +149,7 @@ const MktTwoColumnSideImage = ({
             />
           ) : (
             <Text
-              fontSize="sm"
+              fontSize={fontStyle.descriptionSize}
               lineHeight="14px"
               margin="15px 0"
               color={fontColor2}
@@ -94,7 +160,8 @@ const MktTwoColumnSideImage = ({
           {buttonUrl && (
             <Link
               variant={!linkButton && 'buttonDefault'}
-              color={linkButton ? hexColor.blueDefault : '#FFF'}
+              color={linkButton ? hexColor.blueDefault : buttonColors.color}
+              background={buttonColors.background}
               textDecoration={linkButton && 'underline'}
               href={buttonUrl}
               textAlign="center"
@@ -111,6 +178,11 @@ const MktTwoColumnSideImage = ({
 };
 
 MktTwoColumnSideImage.propTypes = {
+  informationSize: PropTypes.string,
+  titleColor: PropTypes.string,
+  subtitleColor: PropTypes.string,
+  buttonColor: PropTypes.string,
+  textBackgroundColor: PropTypes.string,
   title: PropTypes.string,
   subTitle: PropTypes.string,
   description: PropTypes.string,
@@ -128,6 +200,11 @@ MktTwoColumnSideImage.propTypes = {
 };
 
 MktTwoColumnSideImage.defaultProps = {
+  informationSize: 'small',
+  titleColor: null,
+  subtitleColor: null,
+  buttonColor: null,
+  textBackgroundColor: 'transparent',
   title: null,
   subTitle: null,
   description: null,
