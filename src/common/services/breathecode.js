@@ -55,6 +55,11 @@ const breathecode = {
         },
       }),
       cohorts: () => axios.get(`${url}/cohort/all${qs}`),
+      syllabus: (slug, version, academy) => axios.get(`${url}/syllabus/${slug}/version/${version}${qs}`, {
+        headers: academy && {
+          academy,
+        },
+      }),
     };
   },
 

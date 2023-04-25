@@ -12,6 +12,7 @@ import Heading from '../../../common/components/Heading';
 import { usePersistent } from '../../../common/hooks/usePersistent';
 import bc from '../../../common/services/breathecode';
 import Text from '../../../common/components/Text';
+import Icon from '../../../common/components/Icon';
 import TaskLabel from '../../../common/components/taskLabel';
 import { isGithubUrl } from '../../../utils/regex';
 import ButtonHandler from '../../../js_modules/assignmentHandler/index';
@@ -29,6 +30,7 @@ const Assignments = () => {
   const { contextState, setContextState } = useAssignments();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
+  const [mandatoryTasks, setMandatoryTasks] = useState([]);
   const [personalCohorts, setPersonalCohorts] = useState([]);
   // const [allTasksPaginationProps, setAllTasksPaginationProps] = useState({});
   const [allTasksOffset, setAllTasksOffset] = useState(20);
@@ -135,13 +137,17 @@ const Assignments = () => {
         });
       });
     bc.admissions().cohort(cohortSlug, academy)
-      .then(({ data }) => {
+      .then(async ({ data }) => {
         setAllCohorts([{
           label: data.name,
           slug: data.slug,
           value: data.id,
           academy: data.academy.id,
         }]);
+        const syllabusData = await bc.admissions().syllabus(data.syllabus_version.slug, data.syllabus_version.version, academy);
+        let mandatoryAssignments = syllabusData?.data.json.days.filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object').map((obj) => obj.assignments);
+        mandatoryAssignments = [].concat(...mandatoryAssignments).filter((assignment) => assignment.mandatory).map((assignment) => assignment.slug);
+        setMandatoryTasks(mandatoryAssignments);
       })
       .catch(() => {
         toast({
@@ -457,7 +463,8 @@ const Assignments = () => {
 
               return (
                 <Box key={`${index}-${task.slug}-${task.title}-${fullName}`} p="18px 28px" display="flex" width={{ base: 'max-content', md: '100%' }} minWidth={{ base: '620px', md: '100%' }} maxWidth={{ base: '620px', md: '100%' }} gridGap="10px" justifyContent="space-between" flexDirection="row" alignItems="center" border="1px solid" borderColor={borderColor} borderRadius="17px">
-                  <Box width="auto" minWidth="calc(110px - 0.5vw)">
+                  <Box display="flex" width="auto" minWidth="calc(110px - 0.5vw)">
+                    {mandatoryTasks.includes(task.associated_slug) && (<Icon icon="warning" color="yellow.default" width="28px" height="28px" style={{ marginRight: '15px' }} />)}
                     <TaskLabel currentTask={task} t={t} />
                   </Box>
 
