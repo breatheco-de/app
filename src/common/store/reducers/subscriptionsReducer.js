@@ -1,13 +1,19 @@
 import {
-  FETCH_SUBSCRIPTIONS, CANCEL_SUBSCRIPTION,
+  FETCH_SUBSCRIPTIONS, CANCEL_SUBSCRIPTION, IS_LOADING,
 } from '../types';
 
 const initialState = {
   subscriptions: [],
+  isLoading: false,
 };
 
 const subscriptionsReducer = (state = initialState, action) => {
   switch (action.type) {
+    case IS_LOADING:
+      return {
+        ...state,
+        isLoading: action.payload,
+      };
     case FETCH_SUBSCRIPTIONS:
       return {
         ...state,
