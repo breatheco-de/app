@@ -368,7 +368,7 @@ function chooseProgram() {
                 </NextChakraLink>
               )}
             </Box>
-            <Box flex={{ base: 1, md: 0.3 }} zIndex={10} position={{ base: 'inherit', md: 'absolute' }} maxWidth="320px" right={0} top={0}>
+            <Box flex={{ base: 1, md: 0.3 }} zIndex={10} position={{ base: 'inherit', md: 'absolute' }} right={0} top={0}>
               {flags?.appReleaseEnableLiveEvents && (
                 <LiveEvent
                   featureLabel={t('common:live-event.title')}
@@ -376,6 +376,7 @@ function chooseProgram() {
                   mainClasses={liveClasses?.length > 0 ? liveClasses : []}
                   otherEvents={events}
                   maxWidth={{ base: '100%', sm: '500px', md: '340px' }}
+                  minWidth={{ base: '100%', sm: '500px', md: '340px' }}
                   margin="0 auto"
                 />
               )}
