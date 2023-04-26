@@ -15,6 +15,7 @@ import { location, toCapitalize, unSlugify } from '../../../utils';
 import useSubscriptionsHandler from '../../../common/store/actions/subscriptionAction';
 import ButtonHandler from './ButtonHandler';
 import UpgradeModal from './UpgradeModal';
+import { CardSkeleton } from '../../../common/components/Skeleton';
 
 const Subscriptions = ({ storybookConfig }) => {
   const { t, lang } = useTranslation('profile');
@@ -26,6 +27,7 @@ const Subscriptions = ({ storybookConfig }) => {
   const [offerProps, setOfferProps] = useState({});
 
   const subscriptionDataState = state?.subscriptions;
+  const isLoading = state?.isLoading;
 
   const cohortProps = subscriptionProps.selected_cohort;
   const profileTranslations = storybookConfig?.translations?.profile;
@@ -61,13 +63,27 @@ const Subscriptions = ({ storybookConfig }) => {
   const cohortsExist = cohorts?.length > 0;
   const subscriptionsExist = (subscriptionData?.subscriptions?.length > 0
     && subscriptionData.subscriptions.some((subscription) => {
-      const exists = cohorts.some((l) => l?.cohort.slug === subscription?.selected_cohort?.slug);
+      const exists = cohorts.some((l) => l?.cohort?.slug === subscription?.selected_cohort?.slug);
       return exists;
     })) || (subscriptionData?.plan_financings?.length > 0
       && subscriptionData.plan_financings.some((subscription) => {
-        const exists = cohorts.some((l) => l?.cohort.slug === subscription?.selected_cohort?.slug);
+        const exists = cohorts.some((l) => l?.cohort?.slug === subscription?.selected_cohort?.slug);
         return exists;
       }));
+
+  const allSubscriptions = subscriptionData?.subscriptions
+    && subscriptionData?.plan_financings
+    && [...subscriptionData?.subscriptions, ...subscriptionData?.plan_financings]
+      .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
+
+  const subscriptionFiltered = allSubscriptions?.length > 0 ? allSubscriptions.filter((subscription) => {
+    const isFreeTrial = subscription?.status?.toLowerCase() === 'free_trial';
+    const suggestedPlan = allSubscriptions.find((sub) => sub?.plans?.[0]?.slug === subscription?.planOffer?.slug);
+
+    // Ignore free_trial subscription if plan_offer already exists in list
+    if (isFreeTrial && suggestedPlan !== undefined) return false;
+    return true;
+  }) : [];
 
   return (
     <>
@@ -89,10 +105,7 @@ const Subscriptions = ({ storybookConfig }) => {
           }}
           gridGap="3rem"
         >
-          {[
-            ...subscriptionData.subscriptions,
-            ...subscriptionData.plan_financings,
-          ].map((subscription) => {
+          {subscriptionFiltered?.length > 0 && subscriptionFiltered.map((subscription) => {
             const status = subscription?.status?.toLowerCase();
             const invoice = subscription?.invoices[0];
             const isNotCancelled = subscription?.status !== 'CANCELLED' && subscription?.status !== 'PAYMENT_ISSUE';
@@ -281,11 +294,25 @@ const Subscriptions = ({ storybookConfig }) => {
 
         </Grid>
       ) : (
-        <Text fontSize="15px" fontWeight="400" pb="18px">
-          {subscriptionTranslations?.['no-subscriptions'] || t('no-subscriptions')}
-        </Text>
+        <>
+          {isLoading ? (
+            <CardSkeleton
+              gridTemplateColumns={{
+                base: 'repeat(auto-fill, minmax(15rem, 1fr))',
+                md: 'repeat(auto-fill, minmax(20rem, 1fr))',
+                lg: 'repeat(3, 1fr)',
+              }}
+              gridGap="3rem"
+              quantity={6}
+              cardHeight="316px"
+            />
+          ) : (
+            <Text fontSize="15px" fontWeight="400" pb="18px">
+              {subscriptionTranslations?.['no-subscriptions'] || t('no-subscriptions')}
+            </Text>
+          )}
+        </>
       )}
-
     </>
   );
 };

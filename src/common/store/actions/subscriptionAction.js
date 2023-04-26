@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useToast } from '@chakra-ui/react';
-import { CANCEL_SUBSCRIPTION, FETCH_SUBSCRIPTIONS } from '../types';
+import { CANCEL_SUBSCRIPTION, FETCH_SUBSCRIPTIONS, IS_LOADING } from '../types';
 import bc from '../../services/breathecode';
 import profileHandlers from '../../../js_modules/profile/Subscriptions/handlers';
 
@@ -13,6 +13,10 @@ const useSubscriptionsHandler = () => {
   } = profileHandlers({});
 
   const fetchSubscriptions = () => new Promise((resolve, reject) => {
+    dispatch({
+      type: IS_LOADING,
+      payload: true,
+    });
     bc.payment({
       status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
     }).subscriptions()
@@ -43,6 +47,12 @@ const useSubscriptionsHandler = () => {
       })
       .catch((err) => {
         reject(err);
+      })
+      .finally(() => {
+        dispatch({
+          type: IS_LOADING,
+          payload: false,
+        });
       });
   });
 
