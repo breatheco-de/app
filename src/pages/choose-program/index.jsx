@@ -24,6 +24,7 @@ import LiveEvent from '../../common/components/LiveEvent';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useProgramList from '../../common/store/actions/programListAction';
 import handlers from '../../common/handlers';
+import useSubscriptionsHandler from '../../common/store/actions/subscriptionAction';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -52,6 +53,8 @@ function chooseProgram() {
   const [subscriptionData, setSubscriptionData] = useState([]);
   const [liveClasses, setLiveClasses] = useState([]);
   const { state, programsList, updateProgramList } = useProgramList();
+  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
+  const { fetchSubscriptions } = useSubscriptionsHandler();
   const [cohortTasks, setCohortTasks] = useState({});
   const { isLoading: userLoading, user, choose } = useAuth();
   const { lightColor } = useStyle();
@@ -74,16 +77,21 @@ function chooseProgram() {
   const { isLoading, data: dataQuery } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options }, true);
 
   useEffect(() => {
-    bc.payment({
-      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
-    }).subscriptions()
-      .then(({ data }) => {
+    setSubscriptionLoading(true);
+    fetchSubscriptions()
+      .then((data) => {
         setSubscriptionData(data);
-      });
+      })
+      .finally(() => setSubscriptionLoading(false));
   }, []);
 
+  const allSubscriptions = subscriptionData?.subscriptions
+    && subscriptionData?.plan_financings
+    && [...subscriptionData?.subscriptions, ...subscriptionData?.plan_financings]
+      .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
+
   useEffect(() => {
-    if (dataQuery && Object.values(cohortTasks)?.length > 0) {
+    if (subscriptionLoading === false && dataQuery && Object.values(cohortTasks)?.length > 0) {
       updateProgramList(dataQuery?.cohorts?.reduce((acc, value) => {
         acc[value.cohort.slug] = {
           ...state[value.cohort.slug],
@@ -96,13 +104,14 @@ function chooseProgram() {
           subscription: subscriptionData?.subscriptions?.find(
             (sub) => sub.selected_cohort?.slug === value.cohort.slug,
           ) || null,
+          all_subscriptions: allSubscriptions,
           slug: value.cohort.slug,
         };
         return acc;
       }, {}));
       setProfile(dataQuery);
     }
-  }, [dataQuery, cohortTasks]);
+  }, [dataQuery, cohortTasks, subscriptionLoading]);
 
   // console.log('cohorts', dataQuery?.cohorts);
   // TOOD: usar available_as_saas

@@ -78,7 +78,7 @@ const Subscriptions = ({ storybookConfig }) => {
 
   const subscriptionFiltered = allSubscriptions?.length > 0 ? allSubscriptions.filter((subscription) => {
     const isFreeTrial = subscription?.status?.toLowerCase() === 'free_trial';
-    const suggestedPlan = allSubscriptions.find((sub) => sub?.plans?.[0]?.slug === subscription?.planOffer?.slug);
+    const suggestedPlan = (subscription?.planOffer?.slug === undefined && subscription?.planOffer?.status) || allSubscriptions.find((sub) => sub?.plans?.[0]?.slug === subscription?.planOffer?.slug);
 
     // Ignore free_trial subscription if plan_offer already exists in list
     if (isFreeTrial && suggestedPlan !== undefined) return false;
