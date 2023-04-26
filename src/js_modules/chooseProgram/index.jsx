@@ -56,7 +56,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
       && item?.all_subscriptions?.find((sub) => sub?.plans?.[0]?.slug === currentSubscription?.planOffer?.slug));
 
     // Ignore free_trial subscription if plan_offer already exists in list
-    if (isFreeTrial && suggestedPlan === undefined) return false;
+    if (isFreeTrial && suggestedPlan !== undefined) return false;
     if ((cohort?.available_as_saas && subscriptionExists) || cohort?.available_as_saas === false) return true;
 
     return false;

@@ -25,7 +25,7 @@ import LanguageSelector from '../LanguageSelector';
 import syllabusList from '../../../../public/syllabus.json';
 import { isWindow } from '../../../utils';
 import axios from '../../../axios';
-import UpgradeExperience from '../UpgradeExperience';
+// import UpgradeExperience from '../UpgradeExperience';
 
 const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   const { t } = useTranslation('navbar');
@@ -302,11 +302,11 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
         </Flex>
 
         <Stack justify="flex-end" direction="row" gridGap="5px">
-          {!isNotAvailableForMktCourses && marketingCouses?.length > 0 && (
+          {/* {!isNotAvailableForMktCourses && marketingCouses?.length > 0 && (
             <Box display={{ base: 'none', md: 'block' }}>
               <UpgradeExperience data={marketingCouses} />
             </Box>
-          )}
+          )} */}
 
           <LanguageSelector display={{ base: 'none ', md: 'block' }} translations={translations} />
           <IconButton
