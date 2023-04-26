@@ -18,6 +18,7 @@ const PhoneInput = ({
   phoneFormValues,
   prefix,
   containerStyle,
+  required,
   formData,
   style,
   inputStyle,
@@ -214,7 +215,7 @@ const PhoneInput = ({
 
     const cleanedPhoneInput = `+${(prefixCode + input).match(/\d+/g).join('')}`;
 
-    isValid = regex.phone.test(cleanedPhoneInput);
+    isValid = required === false ? true : regex.phone.test(cleanedPhoneInput);
     if (isValid !== validStatus) {
       setValidStatus({
         valid: isValid,
@@ -257,7 +258,7 @@ const PhoneInput = ({
   return (
     <>
       <Box className="react-tel-input" color="black" style={style || containerStyle}>
-        <Field name="phone" onChange={(e) => console.log('event.target.value', e.target.value)}>
+        <Field name="phone">
           {({ field, form }) => (
             <FormControl style={style} isInvalid={form.errors.phone && form.touched.phone}>
               <InputMask
@@ -387,6 +388,7 @@ PhoneInput.propTypes = {
   setShowPhoneWarning: PropTypes.func,
   errorMsg: PropTypes.string,
   placeholder: PropTypes.string,
+  required: PropTypes.bool,
 };
 PhoneInput.defaultProps = {
   defaultMask: '',
@@ -412,6 +414,7 @@ PhoneInput.defaultProps = {
   setShowPhoneWarning: () => {},
   errorMsg: 'Please specify a valid phone number',
   placeholder: 'Phone',
+  required: true,
 };
 
 export default PhoneInput;
