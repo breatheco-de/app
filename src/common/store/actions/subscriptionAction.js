@@ -37,6 +37,11 @@ const useSubscriptionsHandler = () => {
             planOffer,
           };
         })) : [];
+
+        resolve({
+          subscriptions: subscriptionsDataWithPlanOffer,
+          plan_financings: planFinancingsDataWithPlanOffer,
+        });
         dispatch({
           type: FETCH_SUBSCRIPTIONS,
           payload: {

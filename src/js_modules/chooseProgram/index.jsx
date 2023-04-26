@@ -36,13 +36,31 @@ function ChooseProgram({ chooseList, handleChoose }) {
       });
   }, [router?.locale]);
 
-  const activeSubscriptionCohorts = activeCohorts.filter((item) => {
+  const activeSubscriptionCohorts = activeCohorts.length > 0 ? activeCohorts.map((item) => {
     const cohort = item?.cohort;
     const currentCohortProps = programsList[cohort.slug];
-    const subscriptionExists = currentCohortProps?.subscription !== null || currentCohortProps?.plan_financing !== null;
+    return ({
+      ...item,
+      subscription: currentCohortProps?.subscription,
+      plan_financing: currentCohortProps?.plan_financing,
+      all_subscriptions: currentCohortProps?.all_subscriptions,
+      subscription_exists: currentCohortProps?.subscription !== null || currentCohortProps?.plan_financing !== null,
+    });
+  }).filter((item) => {
+    const cohort = item?.cohort;
+    const subscriptionExists = item?.subscription !== null || item?.plan_financing !== null;
 
-    return ((cohort?.available_as_saas && subscriptionExists) || cohort?.available_as_saas === false);
-  });
+    const currentSubscription = item?.plan_financing || item?.subscription;
+    const isFreeTrial = currentSubscription?.status?.toLowerCase() === 'free_trial';
+    const suggestedPlan = (currentSubscription?.planOffer?.slug === undefined && currentSubscription?.planOffer?.status) || (item?.all_subscriptions?.length > 0
+      && item?.all_subscriptions?.find((sub) => sub?.plans?.[0]?.slug === currentSubscription?.planOffer?.slug));
+
+    // Ignore free_trial subscription if plan_offer already exists in list
+    if (isFreeTrial && suggestedPlan === undefined) return false;
+    if ((cohort?.available_as_saas && subscriptionExists) || cohort?.available_as_saas === false) return true;
+
+    return false;
+  }) : [];
 
   const marketingCouses = marketingCursesList && marketingCursesList.filter(
     (item) => !activeSubscriptionCohorts.some(
