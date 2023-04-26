@@ -20,6 +20,7 @@
   "enroll": "Unirse Ahora",
   "learn-more": "Leer más",
   "more-technologies":"Más tecnologías",
+  "continue-learning":"Continúa aprendiendo gratis sobre:<br><br>{{technologies}} y más.",
   "user-id": "ID de usuario",
   "day": "Día",
   "interactive": "Interactivo",
