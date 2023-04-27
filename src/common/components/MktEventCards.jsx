@@ -26,6 +26,8 @@ const MktEventCards = ({ id, title, endpoint, ...rest }) => {
       });
   }, []);
 
+  console.log('events:::', events);
+
   return events?.length > 0 && (
     <GridContainer
       id={id}
@@ -43,7 +45,7 @@ const MktEventCards = ({ id, title, endpoint, ...rest }) => {
         <Icon icon="longArrowRight" width="58px" height="30px" />
       </Flex>
       <Box position="relative" className="hideOverflowX__" overflow="auto" width="100%">
-        <Flex gridGap="24px" width="max-content">
+        <Flex gridGap="24px" width="max-content" margin="0 auto">
           {events.map((event) => (
             <EventCard
               key={event?.id}

@@ -151,7 +151,7 @@ const EventCard = ({ id, title, description, host, startingAt, endingAt, technol
       ) : (
         <Flex gridGap="8px">
           <Box width="35px" height="35px">
-            <Img src="https://via.placeholder.com/150" alt="teacher" width="100%" height="100%" borderRadius="50px" />
+            <Img src={host?.image ? host?.image : '/static/images/4geeks.png'} alt="teacher" width="100%" height="100%" borderRadius="50px" />
           </Box>
           <Box>
             <Heading size="14px" fontWeight={700}>
@@ -164,7 +164,7 @@ const EventCard = ({ id, title, description, host, startingAt, endingAt, technol
           </Box>
         </Flex>
       )}
-      {!startedButRemain ? (
+      {startedButRemain ? (
         <Link
           margin="auto 0 0 0"
           href={`${process.env.BREATHECODE_HOST}/v1/events/me/event/${id}/join${linkQuery}`}
