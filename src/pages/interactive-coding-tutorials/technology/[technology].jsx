@@ -48,8 +48,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=1000`);
   const projects = await response.json();
 
-  const dataFiltered = projects.results.filter(
-    (l) => technologyData?.assets.some((a) => a === l.slug),
+  const dataFiltered = projects?.results?.filter(
+    (l) => technologyData?.assets?.some((a) => a === l?.slug),
   );
 
   if (response.status >= 400 || response.status_code >= 400
