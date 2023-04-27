@@ -44,14 +44,13 @@ export const getStaticProps = async ({ locale, locales }) => {
       Accept: 'application/json, text/plain, */*',
     },
   );
+  const technologies = await technologiesResponse.json();
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /interactive-coding-tutorials`);
+    console.log(`SUCCESS: ${technologies.length} Technologies fetched for /interactive-coding-tutorials`);
   } else {
     console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-coding-tutorials`);
   }
-
-  const technologies = await technologiesResponse.json();
 
   for (let i = 0; i < arrProjects.length; i += 1) {
     // skip repeated projects
