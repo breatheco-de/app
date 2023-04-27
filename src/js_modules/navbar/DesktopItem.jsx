@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import styled from 'styled-components';
+import Image from 'next/image';
 import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
 import NextChakraLink from '../../common/components/NextChakraLink';
@@ -168,6 +169,9 @@ const DesktopItem = ({ item }) => {
                       const {
                         icon, label, subLabel, href,
                       } = child;
+
+                      const isUrl = icon && isAbsoluteUrl(icon);
+
                       return (
                         <Tab
                           key={`${label}-${href}`}
@@ -186,7 +190,9 @@ const DesktopItem = ({ item }) => {
                           // p={2}
                           textAlign="left"
                         >
-                          {icon && <Icon icon={icon} width="33px" height="30px" color={useColorModeValue('#1A202C', '#ffffff')} />}
+                          {icon && (isUrl ? (
+                            <Image src={icon} width={65} height={65} alt={label} />
+                          ) : <Icon icon={icon} width="33px" height="30px" color={useColorModeValue('#1A202C', '#ffffff')} />)}
                           <Text
                             // width="100%"
                             minWidth="130px"

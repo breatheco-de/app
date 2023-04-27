@@ -3,6 +3,7 @@
   "logout": "Logout",
   "language": "Language",
   "my-profile": "My Profile",
+  "start-coding": "Start Coding",
   "ITEMS": [
     {
       "label": "Dashboard",
@@ -21,6 +22,7 @@
       "subMenu": [
         {
           "label": "Read and watch",
+          "slug": "lessons",
           "asPath": "/read-and-watch",
           "description": "It makes sense to start learning by reading and watching videos about fundamentals and how things work.",
           "subMenu": [],
@@ -33,6 +35,7 @@
         },
         {
           "label": "Practice interactively",
+          "slug": "exercises",
           "subLabel": "",
           "description": "Curated list of small interactive and incremental exercises you can take to get better at any coding skill.",
           "href": "/interactive-exercises",
@@ -45,6 +48,7 @@
         },
         {
           "label": "Build projects",
+          "slug": "projects",
           "href": "/interactive-coding-tutorials",
           "description": "Curated section of projects to build while learning with simple instructions, videos, solutions and more.",
           "subMenu": [
@@ -56,6 +60,7 @@
         },
         {
           "label": "How to's?",
+          "slug": "how-tos",
           "href": "/how-to",
           "description": "Guides on different topics related to the technologies that we teach in our courses",
           "subMenu": [
@@ -69,6 +74,7 @@
     },
     {
       "label": "Social & live learning",
+      "slug": "social-and-live-learning",
       "icon": "onlinePeople",
       "disabled": false,
       "description": "The most efficient way to learn: Join a cohort with classmates just like you, live streams, impromptu coding sessions, live tutorials with real experts, and stay motivated.",
