@@ -144,7 +144,7 @@ const EventCard = ({ id, title, description, host, startingAt, endingAt, technol
       </Text>
 
       {/* -------------------------------- host info -------------------------------- */}
-      {typeof host === 'string' ? (
+      {(host !== null && host !== undefined) && (typeof host === 'string' ? (
         <Heading size="14px" fontWeight={700}>
           {host}
         </Heading>
@@ -163,7 +163,7 @@ const EventCard = ({ id, title, description, host, startingAt, endingAt, technol
             </Text> */}
           </Box>
         </Flex>
-      )}
+      ))}
       {startedButRemain ? (
         <Link
           margin="auto 0 0 0"
