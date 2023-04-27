@@ -26,8 +26,6 @@ const MktEventCards = ({ id, title, endpoint, ...rest }) => {
       });
   }, []);
 
-  console.log('events:::', events);
-
   return events?.length > 0 && (
     <GridContainer
       id={id}
