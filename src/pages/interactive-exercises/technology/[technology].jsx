@@ -20,7 +20,7 @@ export const getStaticPaths = async ({ locales }) => {
 
   const paths = data.results.flatMap((res) => locales.map((locale) => ({
     params: {
-      technology: res.slug,
+      technology: encodeURIComponent(res.slug),
     },
     locale,
   })));
