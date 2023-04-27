@@ -63,13 +63,6 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
 
   axios.defaults.headers.common['Accept-Language'] = locale;
 
-  useEffect(() => {
-    const items = t('ITEMS', {
-      selectedProgramSlug: selectedProgramSlug || '/choose-program',
-    }, { returnObjects: true });
-    setITEMS(items.filter((item) => item.disabled !== true));
-  }, [selectedProgramSlug]);
-
   // Verify if teacher acces is with current cohort role
   const getDateJoined = user?.active_cohort?.date_joined
     || cohortSession?.date_joined
@@ -146,6 +139,39 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   const isNotAvailableForMktCourses = activeSubscriptionCohorts.length > 0 && activeSubscriptionCohorts.some(
     (item) => item?.educational_status === 'ACTIVE' && item?.cohort?.available_as_saas === false,
   );
+
+  useEffect(() => {
+    const items = t('ITEMS', {
+      selectedProgramSlug: selectedProgramSlug || '/choose-program',
+    }, { returnObjects: true });
+
+    const mktCoursesFormat = marketingCouses.length > 0 ? marketingCouses.map((item) => ({
+      label: item?.course_translation?.title,
+      asPath: `/course/${item?.slug}`,
+      icon: item?.icon_url,
+      description: item?.course_translation?.description,
+      subMenu: [
+        {
+          href: `/${item?.slug}`,
+          label: t('start-coding'),
+        },
+      ],
+    })) : [];
+
+    const formatItems = items.map((item) => {
+      if (item.slug === 'social-and-live-learning') {
+        return {
+          ...item,
+          subMenu: [
+            ...item.subMenu,
+            ...mktCoursesFormat,
+          ],
+        };
+      }
+      return item;
+    });
+    setITEMS(formatItems.filter((item) => item.disabled !== true));
+  }, [selectedProgramSlug, mktCourses]);
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -546,7 +572,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
 
       <Collapse display={{ lg: 'block' }} in={isOpen} animateOpacity>
         <MobileNav
-          mktCourses={!isNotAvailableForMktCourses ? marketingCouses : []}
+          mktCourses={!isNotAvailableForMktCourses && marketingCouses?.length > 0 ? marketingCouses : []}
           NAV_ITEMS={ITEMS}
           haveSession={sessionExists}
           translations={translations}
