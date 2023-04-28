@@ -643,10 +643,6 @@ const Exercise = ({ exercise, markdown }) => {
             )}
           </Box>
 
-          <Box display={{ base: 'grid', lg: 'none' }} gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '1rem 0 0 0' }}>
-            <MktSideRecommendedCourses />
-          </Box>
-
           {/* MARKDOWN SIDE */}
           <Box
             borderRadius="3px"
