@@ -18,7 +18,7 @@
   "confirm": "Confirmar",
   "submit": "Enviar",
   "enroll": "Unirse Ahora",
-  "learn-more": "Leer más",
+  "learn-more": "Aprender más",
   "more-technologies":"Más tecnologías",
   "continue-learning":"Continúa aprendiendo gratis sobre:<br><br>{{technologies}} y más.",
   "user-id": "ID de usuario",
@@ -163,5 +163,6 @@
     "readMoreUrl": "https://4geeks.com/lesson/live-events-workshops-and-classes"
   },
   "submit-project": "Enviar proyecto",
-  "uploadScreenshot": "Subir captura de pantalla"
+  "uploadScreenshot": "Subir captura de pantalla",
+  "continue-learning-course": "Continúa aprendiendo gratis sobre:"
 }
