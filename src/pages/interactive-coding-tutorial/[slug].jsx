@@ -259,10 +259,6 @@ const ProjectSlug = ({ project, markdown }) => {
               )}
             </Box>
 
-            <Box display={{ base: 'flex', lg: 'none' }} gridColumn="1 / span 1" margin={{ base: '0 0 40px 0', md: '30px 0 30px 0' }}>
-              <MktSideRecommendedCourses />
-            </Box>
-
             {/* MARKDOWN SIDE */}
             <Box
               maxWidth="1012px"

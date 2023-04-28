@@ -181,7 +181,7 @@ export default function HowToSlug({ data, markdown }) {
         </Link>
       </GridContainer>
       <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin="22px auto 0 auto" gridGap="36px" padding="0 10px">
-        <Box gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
+        <Box display={{ base: 'none', md: 'flex' }} height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
           <MktSideRecommendedCourses />
         </Box>
         <Box
@@ -193,20 +193,22 @@ export default function HowToSlug({ data, markdown }) {
           borderColor={useColorModeValue('gray.200', 'gray.900')}
         >
           <Box display="flex" gridGap="10px" justifyContent="space-between" mb="12px">
-            <TagCapsule
-              variant="rounded"
-              isLink
-              href="/how-to"
-              tags={data?.technologies || ['alias', 'redirect']}
-              marginY="8px"
-              fontSize="13px"
-              style={{
-                padding: '2px 10px',
-                margin: '0',
-              }}
-              gap="10px"
-              paddingX="0"
-            />
+            {data?.technologies.length > 0 && (
+              <TagCapsule
+                variant="rounded"
+                isLink
+                href="/how-to"
+                tags={data?.technologies}
+                marginY="8px"
+                fontSize="13px"
+                style={{
+                  padding: '2px 10px',
+                  margin: '0',
+                }}
+                gap="10px"
+                paddingX="0"
+              />
+            )}
             <Link href={data?.readme_url || '#'} width="fit-content" color="gray.400" margin="0 0 0 auto" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
               <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
               {t('common:edit-on-github')}
