@@ -17,6 +17,7 @@ import getMarkDownContent from '../../common/components/MarkDownParser/markdown'
 import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import redirectsFromApi from '../../../public/redirects-from-api.json';
+import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
@@ -178,13 +179,12 @@ const ProjectSlug = ({ project, markdown }) => {
   return (
     <>
       <GridContainer
-        height="100%"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        margin="2rem auto"
-        padding="0 15px"
         withContainer
+        maxWidth="1280px"
+        height="100%"
+        gridTemplateColumns={{ base: 'repeat(1, 1fr)', md: '0.5fr repeat(12, 1fr) 0.5fr' }}
+        margin="3rem auto 0 auto"
+        gridGap="0"
       >
         <Link
           href="/interactive-coding-tutorials"
@@ -197,9 +197,22 @@ const ProjectSlug = ({ project, markdown }) => {
         >
           {`← ${t('projects:backToProjects')}`}
         </Link>
-
-        <Flex display={{ base: 'block', md: 'flex' }} height="100%" gridGap="26px">
-          <Box flex="1">
+      </GridContainer>
+      <GridContainer
+        height="100%"
+        flexDirection="column"
+        justifyContent="center"
+        margin="2rem auto"
+        padding="0 15px"
+        gridGap="36px"
+        gridTemplateColumns={{ base: 'repeat(12, 1fr)', lg: '8fr repeat(12, 1fr) 5fr' }}
+        display={{ base: 'block', sm: 'grid' }}
+      >
+        <Box display={{ base: 'none', lg: 'flex' }} gridColumn="1 / span 1" height="fit-content" margin={{ base: '0 0 40px', md: '30px 0 0 0' }}>
+          <MktSideRecommendedCourses />
+        </Box>
+        <Flex display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '2 / span 10', lg: '2 / span 12' }} height="100%" gridGap="26px">
+          <Box flex="1" width="-webkit-fill-available">
             {project?.title ? (
               <Heading
                 as="h1"
@@ -246,6 +259,10 @@ const ProjectSlug = ({ project, markdown }) => {
               )}
             </Box>
 
+            <Box display={{ base: 'flex', lg: 'none' }} gridColumn="1 / span 1" margin={{ base: '0 0 40px 0', md: '30px 0 30px 0' }}>
+              <MktSideRecommendedCourses />
+            </Box>
+
             {/* MARKDOWN SIDE */}
             <Box
               maxWidth="1012px"
@@ -266,37 +283,36 @@ const ProjectSlug = ({ project, markdown }) => {
               />
             </Box>
           </Box>
-
-          <Box
-            display={{ base: 'none', lg: 'flex' }}
-            flexDirection="column"
-            backgroundColor={useColorModeValue('white', 'featuredDark')}
-            margin="30px 0"
-          // minWidth={{ base: '100%', md: '250px' }}
-            minWidth={{ base: '100%', md: '300px' }}
-            maxWidth="350px"
-            height="fit-content"
-            borderWidth="0px"
-            borderRadius="17px"
-            overflow="hidden"
-            border={1}
-            borderStyle="solid"
-            borderColor={commonBorderColor}
-          >
-            {project && project?.difficulty ? (
-              <>
-                <Box d="flex" justifyContent="center">
-                  <Icon icon="sideSupport" width="300px" height="70px" />
-                </Box>
-                <Box px="22px" pb="30px" pt="20px">
-                  <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
-                </Box>
-              </>
-            ) : (
-              <Skeleton height="646px" width="100%" borderRadius="17px" />
-            )}
-          </Box>
         </Flex>
+        <Box
+          display={{ base: 'none', lg: 'flex' }}
+          gridColumn="14 / span 1"
+          flexDirection="column"
+          backgroundColor={useColorModeValue('white', 'featuredDark')}
+          margin="30px 0"
+          minWidth={{ base: '100%', md: '300px' }}
+          maxWidth="350px"
+          height="fit-content"
+          borderWidth="0px"
+          borderRadius="17px"
+          overflow="hidden"
+          border={1}
+          borderStyle="solid"
+          borderColor={commonBorderColor}
+        >
+          {project && project?.difficulty ? (
+            <>
+              <Box d="flex" justifyContent="center">
+                <Icon icon="sideSupport" width="300px" height="70px" />
+              </Box>
+              <Box px="22px" pb="30px" pt="20px">
+                <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
+              </Box>
+            </>
+          ) : (
+            <Skeleton height="646px" width="100%" borderRadius="17px" />
+          )}
+        </Box>
       </GridContainer>
     </>
   );
