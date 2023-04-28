@@ -68,6 +68,8 @@ const MktTechnologiesPills = ({ id, technologies, ...rest }) => {
           <Text
             key={`${tech}-${i}`}
             height="32px"
+            fontSize="16px"
+            fontWeight="bold"
             padding="10px"
             borderRadius="25px"
             textTransform="uppercase"

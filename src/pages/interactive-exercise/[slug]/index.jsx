@@ -664,7 +664,7 @@ const Exercise = ({ exercise, markdown }) => {
               <MDSkeleton />
             )}
             <MktRecommendedCourses
-              title={t('common:related-courses')}
+              title={t('common:continue-learning', { technologies: exercise?.technologies.slice(0, 4).join(', ') })}
               technologies={exercise?.technologies.join(',')}
             />
           </Box>

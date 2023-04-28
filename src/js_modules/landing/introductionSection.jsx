@@ -139,7 +139,8 @@ const IntroductionSection = ({
         {slice?.primary?.buttontext?.length > 0 && slice?.primary?.buttontext ? (
           <Button
             variant="default"
-            width="200px"
+            width="fit-content"
+            minWidth="200px"
             height="52px"
             fontSize="18px"
             m="25px 0"
@@ -152,7 +153,7 @@ const IntroductionSection = ({
         ) : (
           <>
             {data?.callToAction?.title && (
-              <Button variant="default" width="200px" height="52px" fontSize="18px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router.push(data?.callToAction.href)}>
+              <Button variant="default" width="fit-content" minWidth="200px" height="52px" fontSize="18px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router.push(data?.callToAction.href)}>
                 {data?.callToAction.title}
               </Button>
             )}

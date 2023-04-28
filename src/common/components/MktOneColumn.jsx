@@ -75,7 +75,7 @@ const MktOneColumn = ({
               ))}
             </Box>
           )}
-          <Heading as="h2" size="m">
+          <Heading as="h2" size="m" fontSize="26px">
             {title}
           </Heading>
           {slice.primary.description ? (

@@ -278,7 +278,7 @@ const ProjectSlug = ({ project, markdown }) => {
               )}
               <MktRecommendedCourses
                 marginTop="15px"
-                title={t('common:related-courses')}
+                title={t('common:continue-learning', { technologies: project?.technologies.slice(0, 4).join(', ') })}
                 technologies={project?.technologies.join(',')}
               />
             </Box>
