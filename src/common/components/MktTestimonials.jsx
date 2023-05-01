@@ -124,7 +124,7 @@ MktTestimonials.propTypes = {
 
 MktTestimonials.defaultProps = {
   title: null,
-  endpoint: `${process.env.BREATHECODE_HOST}/v1/feedback/review`,
+  endpoint: '',
   testimonials: null,
 };
 
