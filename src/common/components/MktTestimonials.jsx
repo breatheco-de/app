@@ -29,7 +29,13 @@ const MktTestimonials = ({
     if (typeof endpoint === 'string' && endpoint?.length > 6) {
       axios.get(endpoint || defaultEndpoint)
         .then((response) => {
-          setTestimonialsData(response?.data);
+          const data = response?.data;
+
+          if (typeof data === 'string') {
+            setTestimonialsData([]);
+          } else {
+            setTestimonialsData(data);
+          }
         });
     }
   }, []);
@@ -72,7 +78,7 @@ const MktTestimonials = ({
     );
   };
 
-  return (
+  return testimonialsArray && (
     <GridContainer
       gridTemplateColumns="repeat(10, 1fr)"
       px="10px"
