@@ -45,7 +45,7 @@ const MktSideRecommendedCourses = ({ title, endpoint }) => {
           </Heading>
         </Box>
         <Text fontSize="12px" lineHeight="14px" padding="0 20px">
-          {featuredCourse?.course_translation?.description}
+          {featuredCourse?.course_translation?.short_description || featuredCourse?.course_translation?.description}
         </Text>
         <Button variant="default" width="auto" gridGap="10px" margin="0 20px">
           {t('learn-more')}
