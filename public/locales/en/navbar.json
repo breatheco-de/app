@@ -79,20 +79,7 @@
       "disabled": false,
       "description": "The most efficient way to learn: Join a cohort with classmates just like you, live streams, impromptu coding sessions, live tutorials with real experts, and stay motivated.",
       "asPath": "/read",
-      "subMenu": [
-        {
-          "label": "Intro to coding",
-          "asPath": "/learn-to-code",
-          "icon": "coding",
-          "description": "From zero to getting paid as a developer, learn the skills of today and tomorrow. Boost your professional career and be hired by a technology company.",
-          "subMenu": [
-            {
-              "href": "/learn-to-code",
-              "label": "Start Coding"
-            }
-          ]
-        }
-      ],
+      "subMenu": [],
       "__comment_submenus__": [
         {
           "label": "Data Science",
