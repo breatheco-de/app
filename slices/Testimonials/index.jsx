@@ -11,7 +11,7 @@ const Testimonials = ({ slice }) => (
   <MktTestimonials
     id={slice?.primary?.id_key}
     title={slice?.primary?.title}
-    endpoint={slice?.primary?.endpoint || '/v1/feedback/review'}
+    endpoint={slice?.primary?.endpoint}
     margin={slice?.primary?.margin || '0 auto 20px auto'}
   />
 );
