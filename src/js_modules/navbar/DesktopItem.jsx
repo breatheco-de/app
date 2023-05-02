@@ -15,11 +15,11 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import styled from 'styled-components';
-import Image from 'next/image';
 import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import CustomText from '../../common/components/Text';
+import Image from '../../common/components/Image';
 
 const DesktopItem = ({ item }) => {
   const router = useRouter();
@@ -191,7 +191,7 @@ const DesktopItem = ({ item }) => {
                           textAlign="left"
                         >
                           {icon && (isUrl ? (
-                            <Image src={icon} width={65} height={65} alt={label} />
+                            <Image src={icon} width={33} height={33} alt={label} style={{ minWidth: '33px', minHeight: '33px' }} />
                           ) : <Icon icon={icon} width="33px" height="30px" color={useColorModeValue('#1A202C', '#ffffff')} />)}
                           <Text
                             // width="100%"
