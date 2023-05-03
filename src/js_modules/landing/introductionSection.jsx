@@ -146,7 +146,7 @@ const IntroductionSection = ({
             m="25px 0"
             letterSpacing="0.05em"
             textTransform="uppercase"
-            onClick={() => router?.push(slice?.primary?.button_link || '#pricing')}
+            onClick={() => router?.push(slice?.primary?.button_link?.url || '#pricing')}
           >
             <PrismicRichText field={slice?.primary?.buttontext} />
           </Button>
