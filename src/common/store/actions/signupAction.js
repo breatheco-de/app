@@ -4,14 +4,16 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
-  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED,
+  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED, PREPARING_FOR_COHORT,
 } from '../types';
 import { getNextDateInMonths, getStorageItem, getTimeProps, toCapitalize, unSlugify } from '../../../utils';
 import bc from '../../services/breathecode';
 import modifyEnv from '../../../../modifyEnv';
+import { usePersistent } from '../../hooks/usePersistent';
 
 const useSignup = () => {
   const state = useSelector((sl) => sl.signupReducer);
+  const [, setSubscriptionProcess] = usePersistent('subscription-process', null);
   const { t } = useTranslation('signup');
   const toast = useToast();
   const router = useRouter();
@@ -119,6 +121,14 @@ const useSignup = () => {
     })
       .then((response) => {
         if (response?.data?.status === 'FULFILLED') {
+          setSubscriptionProcess({
+            status: PREPARING_FOR_COHORT,
+            id: dateProps?.id,
+            slug: dateProps?.slug,
+            plan_slug: dateProps?.plan?.slug,
+            academy_info: dateProps?.academy,
+          });
+
           router.push('/choose-program');
         }
         if (response === undefined || response.status >= 400) {
