@@ -98,6 +98,7 @@ const PublicCourseCard = ({
           textDecoration="none !important"
           background="none"
           _hover={{ opacity: 0.7 }}
+          _active={{ opacity: 1 }}
         >
           {stTranslation?.[lang]?.common['learn-more'] || t('common:learn-more')}
         </Link>
