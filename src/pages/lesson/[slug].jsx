@@ -281,17 +281,32 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
                     </Box>
                   </Tooltip>
                 </Button>
-                <iframe
-                  id="iframe"
-                  src={`${ipynbHtmlUrl}?theme=${currentTheme}&plain=true`}
-                  seamless
-                  style={{
-                    width: '100%',
-                    height: '80vh',
-                    maxHeight: '100%',
-                  }}
-                  title={`${lesson.title} IPython Notebook`}
-                />
+                <Box display={currentTheme === 'dark' ? 'block' : 'none'}>
+                  <iframe
+                    id="iframe"
+                    src={`${ipynbHtmlUrl}?theme=dark&plain=true`}
+                    seamless
+                    style={{
+                      width: '100%',
+                      height: '80vh',
+                      maxHeight: '100%',
+                    }}
+                    title={`${lesson.title} IPython Notebook`}
+                  />
+                </Box>
+                <Box display={currentTheme === 'light' ? 'block' : 'none'}>
+                  <iframe
+                    id="iframe"
+                    src={`${ipynbHtmlUrl}?theme=light&plain=true`}
+                    seamless
+                    style={{
+                      width: '100%',
+                      height: '80vh',
+                      maxHeight: '100%',
+                    }}
+                    title={`${lesson.title} IPython Notebook`}
+                  />
+                </Box>
 
                 <Modal isOpen={isFullScreen} closeOnOverlayClick onClose={() => setIsFullScreen(false)} isCentered size="5xl" borderRadius="0">
                   <ModalOverlay />
