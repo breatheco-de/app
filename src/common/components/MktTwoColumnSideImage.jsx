@@ -156,6 +156,12 @@ const MktTwoColumnSideImage = ({
                 variant={!linkButton && 'buttonDefault'}
                 color={linkButton ? hexColor.blueDefault : buttonColors.color}
                 background={linkButton ? 'transparent' : buttonColors.background}
+                _hover={{
+                  background: linkButton ? 'transparent' : buttonColors.background,
+                }}
+                _active={{
+                  background: linkButton ? 'transparent' : buttonColors.background,
+                }}
                 textDecoration={linkButton && 'underline'}
                 fontSize="14px"
                 margin="8px 0 0 0"
