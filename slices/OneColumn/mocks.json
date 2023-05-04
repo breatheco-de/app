@@ -101,6 +101,11 @@
         "__TYPE__": "FieldContent",
         "type": "Text",
         "value": "0 70px"
+      },
+      "font_color": {
+        "__TYPE__": "FieldContent",
+        "value": "#000000",
+        "type": "Color"
       }
     },
     "items": [

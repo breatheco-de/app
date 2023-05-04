@@ -59,7 +59,7 @@ const MktTwoColumnSideImage = ({
     }
     if (buttonColor === BUTTON_COLOR.WHITE) {
       return {
-        color: 'blue.default',
+        color: '#0097CD',
         background: 'white',
       };
     }
@@ -140,6 +140,7 @@ const MktTwoColumnSideImage = ({
             {slice.primary.description ? (
               <PrismicTextComponent
                 field={slice?.primary?.description}
+                color={slice?.primary?.description_color}
               />
             ) : (
               <Text
@@ -154,13 +155,17 @@ const MktTwoColumnSideImage = ({
             {buttonUrl && (
               <Link
                 variant={!linkButton && 'buttonDefault'}
-                color={linkButton ? hexColor.blueDefault : buttonColors.color}
-                background={linkButton ? 'transparent' : buttonColors.background}
+                color={linkButton ? hexColor?.blueDefault : buttonColors?.color}
+                background={linkButton ? 'transparent' : buttonColors?.background}
+                border="1px solid"
+                borderColor="transparent"
                 _hover={{
-                  background: linkButton ? 'transparent' : buttonColors.background,
+                  background: linkButton ? 'transparent' : buttonColors?.background,
+                  borderColor: linkButton ? 'transparent' : buttonColors?.color,
                 }}
                 _active={{
-                  background: linkButton ? 'transparent' : buttonColors.background,
+                  background: linkButton ? 'transparent' : buttonColors?.background,
+                  borderColor: linkButton ? 'transparent' : buttonColors?.color,
                 }}
                 textDecoration={linkButton && 'underline'}
                 fontSize="14px"
