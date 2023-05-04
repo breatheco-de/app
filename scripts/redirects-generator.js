@@ -134,7 +134,7 @@ const generateAliasRedirects = async (redirects, projects) => {
     const connector = await getConnector();
 
     return ({
-      source: `/${connector}/${key?.toLowerCase()}`,
+      source: `/${connector}/${key}`,
       type: value.type,
       destination: `/${lang}/${connector}/${value.slug}`,
     });
@@ -157,7 +157,8 @@ async function generateRedirect() {
   const howToRedirectList = generateAssetRedirect(howToList);
 
   const aliasRedirectionList = await generateAliasRedirects(aliasRedirectList, projectList)
-    .then((redirects) => redirects.filter((item) => !item.destination?.includes(item?.source)));
+    .then((redirects) => redirects);
+    // .filter((item) => !item.destination?.includes(item?.source))
 
   const redirectJson = [
     ...lessonRedirectList,
