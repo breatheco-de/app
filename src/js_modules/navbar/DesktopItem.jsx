@@ -21,6 +21,22 @@ import NextChakraLink from '../../common/components/NextChakraLink';
 import CustomText from '../../common/components/Text';
 import Image from '../../common/components/Image';
 
+const StyledBox = styled(Box)`
+.custom-popover {
+  display: none;
+  top:50px;
+}
+
+:hover .custom-popover {
+  display: block;
+}
+
+`;
+
+const Triangle = styled(Box)`
+display: none;
+`;
+
 const DesktopItem = ({ item }) => {
   const router = useRouter();
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -41,22 +57,6 @@ const DesktopItem = ({ item }) => {
     }
     return 'gray';
   };
-
-  const StyledBox = styled(Box)`
-    .custom-popover {
-      display: none;
-      top:50px;
-    }
-
-    :hover .custom-popover {
-      display: block;
-    }
-
-  `;
-
-  const Triangle = styled(Box)`
-    display: none;
-  `;
 
   return (
     <StyledBox

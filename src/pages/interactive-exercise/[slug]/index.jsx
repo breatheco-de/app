@@ -84,6 +84,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     title, translations, description, preview,
   } = result;
   const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+  if (markdownResp?.status >= 400) {
+    return {
+      notFound: true,
+    };
+  }
+
   const markdown = await markdownResp.text();
 
   // in "lesson.translations" rename "us" key to "en" key if exists

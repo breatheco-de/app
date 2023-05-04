@@ -52,7 +52,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   };
   const isCurrenLang = locale === engPrefix[lesson?.lang] || locale === lesson?.lang;
 
-  if (response.status >= 400 || response.status_code >= 400 || lesson.asset_type !== 'LESSON' || !isCurrenLang) {
+  if (response?.status >= 400 || response?.status_code >= 400 || lesson?.asset_type !== 'LESSON' || !isCurrenLang) {
     return {
       notFound: true,
     };
@@ -72,6 +72,11 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
   if (exensionName !== 'ipynb') {
     const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+    if (resp.status >= 400) {
+      return {
+        notFound: true,
+      };
+    }
     markdown = await resp.text();
   } else {
     ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
