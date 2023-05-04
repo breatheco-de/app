@@ -7,11 +7,9 @@ import Icon from './Icon';
 import axios from '../../axios';
 import EventCard from './EventCard';
 import { sortToNearestTodayDate } from '../../utils';
-import useAuth from '../hooks/useAuth';
 
 const MktEventCards = ({ id, title, endpoint, ...rest }) => {
   const [events, setEvents] = useState([]);
-  const { isLoading } = useAuth();
 
   const FourtyEightHours = 2880;
   const endpointDefault = endpoint || '/v1/events/all';
@@ -26,9 +24,7 @@ const MktEventCards = ({ id, title, endpoint, ...rest }) => {
           setEvents(existentLiveClasses);
         }
       });
-    // if (isLoading === false) {
-    // }
-  }, [isLoading]);
+  }, []);
 
   return events?.length > 0 && (
     <GridContainer
@@ -47,10 +43,11 @@ const MktEventCards = ({ id, title, endpoint, ...rest }) => {
         <Icon icon="longArrowRight" width="58px" height="30px" />
       </Flex>
       <Box position="relative" className="hideOverflowX__" overflow="auto" width="100%">
-        <Flex gridGap="24px" width="max-content">
+        <Flex gridGap="20px" width="max-content" margin="0">
           {events.map((event) => (
             <EventCard
               key={event?.id}
+              id={event?.id}
               title={event?.title}
               host={event?.host}
               description={event?.description}

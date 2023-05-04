@@ -20,10 +20,6 @@ import ProjectsSection from './ProjectsSection';
 import ButtonHandler from '../../js_modules/profile/Subscriptions/ButtonHandler';
 import UpgradeModal from '../../js_modules/profile/Subscriptions/UpgradeModal';
 
-const availableLanguages = {
-  es,
-};
-
 const ProgramCard = ({
   programName, programDescription, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
   syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
@@ -60,17 +56,23 @@ const ProgramCard = ({
     });
 
     if (duration.days > 0) duration.hours = 0;
+    const formated = {
+      en: formatDuration(duration,
+        {
+          format: ['months', 'weeks', 'days', 'hours'],
+          delimiter: ', ',
+        }),
+      es: formatDuration(duration,
+        {
+          format: ['months', 'weeks', 'days', 'hours'],
+          delimiter: ', ',
+          locale: es,
+        }),
+    };
 
-    const formated = formatDuration(duration,
-      {
-        format: ['months', 'weeks', 'days', 'hours'],
-        delimiter: ', ',
-        locale: availableLanguages[lang] || lang,
-      });
-
-    if (formated === '') return stTranslation ? stTranslation[lang]['program-card']['starting-today'] : t('starting-today');
+    if (formated[lang] === '') return stTranslation ? stTranslation[lang]['program-card']['starting-today'] : t('starting-today');
     // if (start < now) return stTranslation ? stTranslation[lang]['program-card'].started : t('started');
-    return formated;
+    return formated[lang];
   };
 
   const statusLabel = {
@@ -93,14 +95,17 @@ const ProgramCard = ({
       start: freeTrialExpireDateValue,
     });
     const hours = duration?.hours;
-    const formated = formatDuration(duration,
-      {
-        format: ['days'],
-        locale: availableLanguages[lang] || lang,
-      });
+    const formated = {
+      en: formatDuration(duration, { format: ['days'] }),
+      es: formatDuration(duration,
+        {
+          format: ['days'],
+          locale: es,
+        }),
+    };
 
     if (isExpired) timeString = stTranslation ? stTranslation[lang]['program-card']['non-left'] : t('non-left');
-    else if (duration.days > 0) timeString = `${formated} ${stTranslation ? stTranslation[lang]['program-card'].left : t('left')}`;
+    else if (duration.days > 0) timeString = `${formated[lang]} ${stTranslation ? stTranslation[lang]['program-card'].left : t('left')}`;
     else if (duration.days === 0 && hours >= 0) timeString = `${hours > 0 ? `${hours}h ${t('common:and')}` : ''} ${duration?.minutes}min`;
     else timeString = stTranslation ? stTranslation[lang]['program-card'].today : t('today');
 

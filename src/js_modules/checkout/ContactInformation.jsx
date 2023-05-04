@@ -9,7 +9,7 @@ import {
 import { useRef } from 'react';
 import Heading from '../../common/components/Heading';
 // import bc from '../../common/services/breathecode';
-import { phone } from '../../utils/regex';
+// import { phone } from '../../utils/regex';
 import FieldForm from '../../common/components/Forms/FieldForm';
 import PhoneInput from '../../common/components/PhoneInput';
 import { getQueryString, setStorageItem } from '../../utils';
@@ -73,9 +73,8 @@ const ContactInformation = ({
     email: Yup.string()
       .email(t('validators.invalid-email'))
       .required(t('validators.email-required')),
-    phone: Yup.string()
-      .matches(phone, t('validators.invalid-phone'))
-      .required(t('validators.phone-required')),
+    phone: Yup.string(),
+    // .matches(phone, t('validators.invalid-phone')),
     confirm_email: Yup.string()
       .oneOf([Yup.ref('email'), null], t('validators.confirm-email-not-match'))
       .required(t('validators.confirm-email-required')),
@@ -106,9 +105,17 @@ const ContactInformation = ({
         router.push('/thank-you');
       }
     }
-    if (resp.status >= 400) {
+    if (resp.status >= 400 && !data?.phone) {
       toast({
         title: t('alert-message:email-already-subscribed'),
+        status: 'warning',
+        duration: 6000,
+        isClosable: true,
+      });
+    }
+    if (resp.status >= 400 && data?.phone) {
+      toast({
+        title: data?.phone[0],
         status: 'warning',
         duration: 6000,
         isClosable: true,
@@ -133,6 +140,7 @@ const ContactInformation = ({
         onSubmit={(values, actions) => {
           const allValues = {
             ...values,
+            phone: values?.phone.includes('undefined') ? '' : values?.phone,
             course: courseChoosed,
             country: location?.country,
             cohort: dateProps?.id,
@@ -195,6 +203,7 @@ const ContactInformation = ({
                   setVal={setFormProps}
                   placeholder={t('common:phone')}
                   formData={formProps}
+                  required={false}
                   sessionContextLocation={location}
                 />
                 {t('phone-info')}

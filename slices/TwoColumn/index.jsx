@@ -22,6 +22,11 @@ const TwoColumn = ({ slice }) => (
     imagePosition={slice?.primary?.image_position}
     margin={slice?.primary?.margin || ''}
     gridGap={slice?.primary?.grid_gap || '24px'}
+    informationSize={slice?.primary?.information_size}
+    titleColor={slice.primary?.title_color}
+    subtitleColor={slice?.primary?.subtitle_color}
+    textBackgroundColor={slice?.primary?.text_background_color}
+    buttonColor={slice?.primary?.button_color}
   />
 );
 

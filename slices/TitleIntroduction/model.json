@@ -18,6 +18,18 @@
             "placeholder": ""
           }
         },
+        "two_column_size": {
+          "type": "Select",
+          "config": {
+            "label": "Two Column Size",
+            "placeholder": "",
+            "options": [
+              "Left is bigger",
+              "Both are equal",
+              "Right is bigger"
+            ]
+          }
+        },
         "title": {
           "type": "StructuredText",
           "config": {
@@ -50,6 +62,17 @@
             "placeholder": "",
             "allowTargetBlank": true,
             "single": "em"
+          }
+        },
+        "highlight_style": {
+          "type": "Select",
+          "config": {
+            "label": "Highlight Style",
+            "placeholder": "",
+            "options": [
+              "Underlined",
+              "Colored"
+            ]
           }
         },
         "description": {

@@ -75,11 +75,12 @@ const MktOneColumn = ({
               ))}
             </Box>
           )}
-          <Heading as="h2" size="m">
+          <Heading as="h2" size="m" fontSize="26px" color={slice?.primary?.font_color}>
             {title}
           </Heading>
-          {slice.primary.description ? (
+          {slice?.primary?.description ? (
             <PrismicTextComponent
+              color={slice?.primary?.font_color}
               field={slice?.primary?.description}
               margin={{ base: '0 20px', md: '0 6% 0 6%', lg: '0 20% 0 20%' }}
             />

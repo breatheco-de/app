@@ -3,7 +3,6 @@ import {
   IconButton,
   Stack,
   useColorModeValue,
-  useBreakpointValue,
   useColorMode,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
@@ -11,9 +10,11 @@ import { useEffect, useState } from 'react';
 import Icon from '../../common/components/Icon';
 import MobileItem from './MobileItem';
 import LanguageSelector from '../../common/components/LanguageSelector';
+// import UpgradeExperience from '../../common/components/UpgradeExperience';
 
 const MobileNav = ({
-  NAV_ITEMS, readSyllabus, haveSession, translations,
+  // eslint-disable-next-line no-unused-vars
+  NAV_ITEMS, readSyllabus, haveSession, translations, mktCourses,
 }) => {
   const [privateItems, setPrivateItems] = useState([]);
   const { colorMode, toggleColorMode } = useColorMode();
@@ -86,6 +87,11 @@ const MobileNav = ({
           />
         );
       })}
+      {/* {mktCourses?.length > 0 && (
+        <Box display={{ base: 'block', md: 'none' }}>
+          <UpgradeExperience data={mktCourses} />
+        </Box>
+      )} */}
 
       <Box
         borderTop={1}
@@ -98,7 +104,7 @@ const MobileNav = ({
       >
         <IconButton
           // style={{ margin: '14px auto 0 auto' }}
-          display={useBreakpointValue({ base: 'flex', md: 'none' })}
+          display="flex"
           _hover={{
             background: commonColors,
           }}
@@ -115,7 +121,7 @@ const MobileNav = ({
             )
           }
         />
-        <LanguageSelector display={{ base: 'block ', md: 'none' }} translations={translations} />
+        <LanguageSelector display="block" translations={translations} />
       </Box>
     </Stack>
   );
@@ -140,6 +146,7 @@ MobileNav.propTypes = {
   ),
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   readSyllabus: PropTypes.arrayOf(PropTypes.any),
+  mktCourses: PropTypes.arrayOf(PropTypes.any),
 };
 
 MobileNav.defaultProps = {
@@ -155,6 +162,7 @@ MobileNav.defaultProps = {
   ],
   readSyllabus: [],
   translations: undefined,
+  mktCourses: [],
 };
 
 export default MobileNav;

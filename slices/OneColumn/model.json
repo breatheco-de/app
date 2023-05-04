@@ -65,6 +65,13 @@
             "select": null
           }
         },
+        "font_color": {
+          "type": "Color",
+          "config": {
+            "label": "Font color",
+            "placeholder": "Color of title and description"
+          }
+        },
         "kpi_title_1": {
           "type": "Text",
           "config": {

@@ -15,6 +15,7 @@ import GridContainer from './GridContainer';
 const MktRoadmap = ({ id, title, course, ...rest }) => {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [data, setData] = useState([]);
+  const [clickTriggered, setClickTriggered] = useState(false);
   const { fontColor3 } = useStyle();
   const router = useRouter();
 
@@ -30,6 +31,31 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
         });
     }
   }, []);
+
+  useEffect(() => {
+    if (clickTriggered) {
+      setTimeout(() => {
+        setClickTriggered(false);
+      }, 5000);
+    }
+    if (!clickTriggered) {
+      const interval = setInterval(() => {
+        if ((data?.[4]?.slug && currentTabIndex === 4) || (!data?.[4]?.slug && currentTabIndex === 3)) {
+          setCurrentTabIndex(0);
+        } else {
+          setCurrentTabIndex((prev) => prev + 1);
+        }
+      }, 3000);
+
+      return () => clearInterval(interval);
+    }
+    return () => {};
+  }, [currentTabIndex, clickTriggered]);
+
+  const handleSelect = (index) => {
+    setClickTriggered(true);
+    setCurrentTabIndex(index);
+  };
 
   return data?.length > 0 && (
     <>
@@ -84,7 +110,7 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
             zIndex={99}
           >
             {data?.[0]?.slug && (
-              <CustomTab onClick={() => setCurrentTabIndex(0)} top="10px" left="0" p="1rem 12px">
+              <CustomTab onClick={() => handleSelect(0)} top="10px" left="0" p="1rem 12px">
                 {data?.[0]?.icon_url && (
                   <Image src={data?.[0]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
                 )}
@@ -93,7 +119,7 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
             )}
 
             {data?.[1]?.slug && (
-              <CustomTab onClick={() => setCurrentTabIndex(1)} top="112px" left="40px" p="1rem 12px">
+              <CustomTab onClick={() => handleSelect(1)} top="112px" left="40px" p="1rem 12px">
                 {data?.[1]?.icon_url && (
                   <Image src={data?.[1]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
                 )}
@@ -101,7 +127,7 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
               </CustomTab>
             )}
             {data?.[2]?.slug && (
-              <CustomTab onClick={() => setCurrentTabIndex(2)} top="218px" left="70px" p="1rem 12px">
+              <CustomTab onClick={() => handleSelect(2)} top="218px" left="70px" p="1rem 12px">
                 {data?.[2]?.icon_url && (
                   <Image src={data?.[2]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
                 )}
@@ -109,7 +135,7 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
               </CustomTab>
             )}
             {data?.[3]?.slug && (
-              <CustomTab onClick={() => setCurrentTabIndex(3)} bottom="144px" left="40px" p="1rem 12px">
+              <CustomTab onClick={() => handleSelect(3)} bottom="144px" left="40px" p="1rem 12px">
                 {data?.[3]?.icon_url && (
                   <Image src={data?.[3]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
                 )}
@@ -117,7 +143,7 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
               </CustomTab>
             )}
             {data?.[4]?.slug && (
-              <CustomTab onClick={() => setCurrentTabIndex(4)} bottom="57px" left="30px" p="1rem 12px">
+              <CustomTab onClick={() => handleSelect(4)} bottom="57px" left="30px" p="1rem 12px">
                 {data?.[4]?.icon_url && (
                   <Image src={data?.[4]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
                 )}

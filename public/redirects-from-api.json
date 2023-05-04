@@ -1,5 +1,20 @@
 [
   {
+    "source": "/lesson/sorting-algorithms-explanied-in-javascript-es",
+    "destination": "/es/lesson/sorting-algorithms-explanied-in-javascript-es",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/bootstrap-tutorial-of-bootstrap-4-es",
+    "destination": "/es/lesson/bootstrap-tutorial-of-bootstrap-4-es",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/what-is-data-science",
+    "destination": "/es/lesson/what-is-data-science",
+    "permanent": true
+  },
+  {
     "source": "/lesson/introduccion-a-node-js",
     "destination": "/es/lesson/introduccion-a-node-js",
     "permanent": true
@@ -335,11 +350,6 @@
     "permanent": true
   },
   {
-    "source": "/lesson/sorting-algorithms-explanied-in-javascript-es",
-    "destination": "/es/lesson/sorting-algorithms-explanied-in-javascript-es",
-    "permanent": true
-  },
-  {
     "source": "/lesson/regex-tutorial-regular-expression-examples-es",
     "destination": "/es/lesson/regex-tutorial-regular-expression-examples-es",
     "permanent": true
@@ -347,16 +357,6 @@
   {
     "source": "/lesson/Desarrollo-agil",
     "destination": "/es/lesson/Desarrollo-agil",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/bootstrap-tutorial-of-bootstrap-4-es",
-    "destination": "/es/lesson/bootstrap-tutorial-of-bootstrap-4-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/what-is-data-science",
-    "destination": "/es/lesson/what-is-data-science",
     "permanent": true
   },
   {

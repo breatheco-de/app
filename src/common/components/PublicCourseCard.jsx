@@ -14,7 +14,7 @@ const PublicCourseCard = ({
   teacher, isAvailableAsSaas, subscriptionStatus, width, ...rest
 }) => {
   const { t, lang } = useTranslation('program-card');
-  const { backgroundColor2 } = useStyle();
+  const { backgroundColor2, hexColor } = useStyle();
   const textColor = useColorModeValue('black', 'white');
 
   return (
@@ -42,7 +42,7 @@ const PublicCourseCard = ({
       </Box>
       <Box
         border="1px solid"
-        borderColor="#DADADA"
+        borderColor={hexColor.blueDefault}
         borderRadius="9px"
         padding="15px"
         height="min-content"
@@ -86,13 +86,19 @@ const PublicCourseCard = ({
         )}
         <Link
           variant="buttonDefault"
+          border="1px solid"
+          borderRadius="3px"
+          borderColor={hexColor.blueDefault}
           href={`/${programSlug}`}
           textAlign="center"
           margin="10px auto 0 auto"
           display="block"
           width="50%"
-          color="#FFF !important"
+          color={`${hexColor.blueDefault} !important`}
           textDecoration="none !important"
+          background="none"
+          _hover={{ opacity: 0.7 }}
+          _active={{ opacity: 1 }}
         >
           {stTranslation?.[lang]?.common['learn-more'] || t('common:learn-more')}
         </Link>

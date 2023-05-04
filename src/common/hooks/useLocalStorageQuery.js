@@ -35,9 +35,10 @@ function useLocalStorageQuery(queryKey, queryFn, options) {
   );
 
   return {
-    data: data || queryResult.data,
+    data: data || queryResult?.data,
     isLoading: isLoading || queryResult.isLoading,
     error: error || queryResult.error,
+    refetch: queryResult?.refetch,
   };
 }
 

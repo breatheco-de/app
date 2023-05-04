@@ -16,10 +16,9 @@ const MktTechnologies = ({ id, endpoint, ...rest }) => {
     try {
       axios
         .get(
-          `${
-            typeof endpoint === 'string' && endpoint !== ''
-              ? endpoint
-              : defaultEndpoint
+          `${typeof endpoint === 'string' && endpoint !== ''
+            ? endpoint
+            : defaultEndpoint
           }`,
         )
         .then((response) => {

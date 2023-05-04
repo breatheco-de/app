@@ -7,12 +7,12 @@ import {
   PopoverTrigger,
   PopoverContent,
   PopoverArrow,
+  Link,
   Button,
   useColorModeValue,
 } from '@chakra-ui/react';
 import styles from '../../../styles/flags.module.css';
 import navbarTR from '../translations/navbar';
-import NextChakraLink from './NextChakraLink';
 import { isWindow } from '../../utils';
 
 const LanguageSelector = ({ display, translations }) => {
@@ -88,12 +88,16 @@ const LanguageSelector = ({ display, translations }) => {
             const label = translationsPropsExists ? lang?.label : l.label;
             const path = translationsPropsExists ? l?.link : router.asPath;
 
+            const cleanedPath = (path === '/' && value !== 'en') ? '' : path;
+            const localePrefix = `${value !== 'en' && !cleanedPath.includes(`/${value}`) ? `/${value}` : ''}`;
+
+            const link = `${localePrefix}${cleanedPath}`;
+
             return (
-              <NextChakraLink
+              <Link
                 width="100%"
                 key={value}
-                href={path}
-                locale={value}
+                href={link}
                 role="group"
                 alignSelf="center"
                 display="flex"
@@ -107,7 +111,7 @@ const LanguageSelector = ({ display, translations }) => {
               >
                 <Box className={`${styles.flag} ${styles[value]}`} width="25px" height="25px" />
                 {label}
-              </NextChakraLink>
+              </Link>
             );
           })}
         </Box>

@@ -7,14 +7,20 @@ import Icon from './Icon';
 import Heading from './Heading';
 import TagCapsule from './TagCapsule';
 import Text from './Text';
-import { isValidDate, syncInterval } from '../../utils';
+import { getStorageItem, isValidDate, syncInterval } from '../../utils';
 import useStyle from '../hooks/useStyle';
+import { parseQuerys } from '../../utils/url';
 
-const EventCard = ({ title, description, host, startingAt, endingAt, technologies, stTranslation, ...rest }) => {
+const EventCard = ({ id, title, description, host, startingAt, endingAt, technologies, stTranslation, ...rest }) => {
   const { t, lang } = useTranslation('live-event');
   const [date, setDate] = useState('');
   const { lightColor, disabledColor2 } = useStyle();
   const startedButRemain = date?.started && date?.ended === false;
+  const accessToken = getStorageItem('accessToken');
+
+  const linkQuery = parseQuerys({
+    token: accessToken || undefined,
+  });
 
   const startingSoonDelta = 30;
 
@@ -100,7 +106,7 @@ const EventCard = ({ title, description, host, startingAt, endingAt, technologie
   }, []);
 
   return (
-    <Flex flexDirection="column" gridGap="16px" maxWidth="320px" borderRadius="12px" padding="16px" border={startedButRemain ? '2px solid' : '1px solid'} borderColor={startedButRemain ? 'blue.default' : 'gray.350'} background={startedButRemain ? 'blue.light' : 'inherit'} {...rest}>
+    <Flex flexDirection="column" gridGap="16px" maxWidth={{ base: '260px', sm: '310px' }} borderRadius="12px" padding="16px" border={startedButRemain ? '2px solid' : '1px solid'} borderColor={startedButRemain ? 'blue.default' : 'gray.350'} background={startedButRemain ? 'blue.light' : 'inherit'} {...rest}>
       {/* -------------------------------- head event info -------------------------------- */}
       <Flex justifyContent="space-between" alignItems="center">
         <Box color={startedButRemain ? 'blue.default' : lightColor} display="flex" alignItems="center" gridGap="8px">
@@ -138,14 +144,14 @@ const EventCard = ({ title, description, host, startingAt, endingAt, technologie
       </Text>
 
       {/* -------------------------------- host info -------------------------------- */}
-      {typeof host === 'string' ? (
+      {(host !== null && host !== undefined) && (typeof host === 'string' ? (
         <Heading size="14px" fontWeight={700}>
           {host}
         </Heading>
       ) : (
         <Flex gridGap="8px">
           <Box width="35px" height="35px">
-            <Img src="https://via.placeholder.com/150" alt="teacher" width="100%" height="100%" borderRadius="50px" />
+            <Img src={host?.image ? host?.image : '/static/images/4geeks.png'} alt="teacher" width="100%" height="100%" borderRadius="50px" />
           </Box>
           <Box>
             <Heading size="14px" fontWeight={700}>
@@ -157,14 +163,24 @@ const EventCard = ({ title, description, host, startingAt, endingAt, technologie
             </Text> */}
           </Box>
         </Flex>
-      )}
+      ))}
       {startedButRemain ? (
-        <Link href="#top" color="blue.default" display="flex" alignItems="center" justifyContent="center" gridGap="10px">
+        <Link
+          margin="auto 0 0 0"
+          href={`${process.env.BREATHECODE_HOST}/v1/events/me/event/${id}/join${linkQuery}`}
+          color="blue.default"
+          target="_blank"
+          rel="noopener noreferrer"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          gridGap="10px"
+        >
           {stTranslation ? stTranslation[lang]['live-event']['join-event'] : t('join-event')}
           <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
         </Link>
       ) : (
-        <Text size="18px" color={disabledColor2} textAlign="center" fontWeight={700}>
+        <Text margin="auto 0 0 0" size="18px" color={disabledColor2} textAlign="center" fontWeight={700}>
           {stTranslation ? stTranslation[lang]['live-event']['will-start-soon'] : t('will-start-soon')}
         </Text>
       )}
@@ -180,6 +196,7 @@ EventCard.propTypes = {
   technologies: PropTypes.arrayOf(PropTypes.string),
   host: PropTypes.oneOfType([PropTypes.string, PropTypes.objectOf(PropTypes.any)]),
   stTranslation: PropTypes.objectOf(PropTypes.any),
+  id: PropTypes.number.isRequired,
 };
 
 EventCard.defaultProps = {

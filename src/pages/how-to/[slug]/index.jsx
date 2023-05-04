@@ -18,6 +18,7 @@ import TagCapsule from '../../../common/components/TagCapsule';
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import GridContainer from '../../../common/components/GridContainer';
+import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=2000`);
@@ -59,6 +60,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   } = data;
 
   const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+  if (markdownResp?.status >= 400) {
+    return {
+      notFound: true,
+    };
+  }
+
   const markdown = await markdownResp.text();
 
   const ogUrl = {
@@ -179,31 +187,35 @@ export default function HowToSlug({ data, markdown }) {
           {`← ${t('back-to')}`}
         </Link>
       </GridContainer>
-      <GridContainer gridTemplateColumns="3fr repeat(12, 1fr) 3fr" gridGap="0" gridColumn="2 / span 12" withContainer maxWidth="1280px">
+      <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin="22px auto 0 auto" gridGap="36px" padding="0 10px">
+        <Box display={{ base: 'none', md: 'flex' }} height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
+          <MktSideRecommendedCourses />
+        </Box>
         <Box
+          gridColumn="2 / span 12"
           gridGap="20px"
-          maxWidth="1020px"
-          margin="3rem auto"
-          padding="0 15px"
+          maxWidth="854px"
           borderBottom={1}
           borderStyle="solid"
           borderColor={useColorModeValue('gray.200', 'gray.900')}
         >
           <Box display="flex" gridGap="10px" justifyContent="space-between" mb="12px">
-            <TagCapsule
-              variant="rounded"
-              isLink
-              href="/how-to"
-              tags={data?.technologies || ['alias', 'redirect']}
-              marginY="8px"
-              fontSize="13px"
-              style={{
-                padding: '2px 10px',
-                margin: '0',
-              }}
-              gap="10px"
-              paddingX="0"
-            />
+            {data?.technologies.length > 0 && (
+              <TagCapsule
+                variant="rounded"
+                isLink
+                href="/how-to"
+                tags={data?.technologies}
+                marginY="8px"
+                fontSize="13px"
+                style={{
+                  padding: '2px 10px',
+                  margin: '0',
+                }}
+                gap="10px"
+                paddingX="0"
+              />
+            )}
             <Link href={data?.readme_url || '#'} width="fit-content" color="gray.400" margin="0 0 0 auto" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
               <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
               {t('common:edit-on-github')}
@@ -250,7 +262,7 @@ export default function HowToSlug({ data, markdown }) {
               <MDSkeleton />
             )}
             <MktRecommendedCourses
-              title={t('common:related-courses')}
+              title={t('common:continue-learning', { technologies: data?.technologies.slice(0, 4).join(', ') })}
               marginBottom="15px"
               technologies={data?.technologies.join(',')}
               endpoint={`${process.env.BREATHECODE_HOST}/v1/marketing/course`}

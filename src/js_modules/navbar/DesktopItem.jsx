@@ -19,6 +19,23 @@ import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import CustomText from '../../common/components/Text';
+import Image from '../../common/components/Image';
+
+const StyledBox = styled(Box)`
+.custom-popover {
+  display: none;
+  top:50px;
+}
+
+:hover .custom-popover {
+  display: block;
+}
+
+`;
+
+const Triangle = styled(Box)`
+display: none;
+`;
 
 const DesktopItem = ({ item }) => {
   const router = useRouter();
@@ -40,22 +57,6 @@ const DesktopItem = ({ item }) => {
     }
     return 'gray';
   };
-
-  const StyledBox = styled(Box)`
-    .custom-popover {
-      display: none;
-      top:50px;
-    }
-
-    :hover .custom-popover {
-      display: block;
-    }
-
-  `;
-
-  const Triangle = styled(Box)`
-    display: none;
-  `;
 
   return (
     <StyledBox
@@ -168,6 +169,9 @@ const DesktopItem = ({ item }) => {
                       const {
                         icon, label, subLabel, href,
                       } = child;
+
+                      const isUrl = icon && isAbsoluteUrl(icon);
+
                       return (
                         <Tab
                           key={`${label}-${href}`}
@@ -186,7 +190,9 @@ const DesktopItem = ({ item }) => {
                           // p={2}
                           textAlign="left"
                         >
-                          {icon && <Icon icon={icon} width="33px" height="30px" color={useColorModeValue('#1A202C', '#ffffff')} />}
+                          {icon && (isUrl ? (
+                            <Image src={icon} width={33} height={33} alt={label} style={{ minWidth: '33px', minHeight: '33px' }} />
+                          ) : <Icon icon={icon} width="33px" height="30px" color={useColorModeValue('#1A202C', '#ffffff')} />)}
                           <Text
                             // width="100%"
                             minWidth="130px"
