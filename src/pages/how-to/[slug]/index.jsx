@@ -19,6 +19,7 @@ import MktRecommendedCourses from '../../../common/components/MktRecommendedCour
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
+import { unSlugify } from '../../../utils/index';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=2000`);
@@ -255,7 +256,7 @@ export default function HowToSlug({ data, markdown }) {
               <MDSkeleton />
             )}
             <MktRecommendedCourses
-              title={t('common:continue-learning', { technologies: data?.technologies.slice(0, 4).join(', ') })}
+              title={t('common:continue-learning', { technologies: data?.technologies.map((tech) => unSlugify(tech)).slice(0, 4).join(', ') })}
               marginBottom="15px"
               technologies={data?.technologies.join(',')}
               endpoint={`${process.env.BREATHECODE_HOST}/v1/marketing/course`}

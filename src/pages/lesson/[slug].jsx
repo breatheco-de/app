@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import getT from 'next-translate/getT';
 import Icon from '../../common/components/Icon';
-import { getExtensionName } from '../../utils';
+import { getExtensionName, unSlugify } from '../../utils';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 import MarkDownParser from '../../common/components/MarkDownParser';
@@ -242,7 +242,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
             >
               <MarkDownParser content={markdownData.content} withToc isPublic />
               <MktRecommendedCourses
-                title={t('common:related-courses')}
+                title={t('common:continue-learning', { technologies: lesson?.technologies.map((tech) => unSlugify(tech)).slice(0, 4).join(', ') })}
                 technologies={lesson?.technologies.join(',')}
               />
               {/* {(markdown && ipynbHtmlUrl === '')
