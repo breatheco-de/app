@@ -11,7 +11,7 @@ tasks:
   - init: 
       (cp -n .env.example .env.development || true) && 
       nvm install v14 &&
-      nvm alias default v14&& 
+      nvm alias default v14 && 
       nvm use v14 &&
       npm install
     command: npm run dev
