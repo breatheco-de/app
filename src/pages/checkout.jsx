@@ -8,9 +8,6 @@ import { useState, useEffect } from 'react';
 import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import PropTypes from 'prop-types';
-import Heading from '../common/components/Heading';
-import Icon from '../common/components/Icon';
 import { getDataContentProps } from '../utils/file';
 import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
@@ -23,6 +20,8 @@ import useSignup from '../common/store/actions/signupAction';
 import axiosInstance from '../axios';
 import LoaderScreen from '../common/components/LoaderScreen';
 import ModalInfo from '../js_modules/moduleMap/modalInfo';
+import useStyle from '../common/hooks/useStyle';
+import Stepper from '../js_modules/checkout/Stepper';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -50,11 +49,12 @@ export const getStaticProps = async ({ locale, locales }) => {
       },
       fallback: false,
       finance,
+      hideDivider: true,
     },
   };
 };
 
-const Checkout = ({ finance }) => {
+const Checkout = () => {
   const { t } = useTranslation('signup');
   const router = useRouter();
   const [cohorts, setCohorts] = useState(null);
@@ -64,6 +64,7 @@ const Checkout = ({ finance }) => {
     isFirstStep, isSecondStep, isThirdStep, isFourthStep,
   } = useSignup();
   const { stepIndex, dateProps, checkoutData, alreadyEnrolled } = state;
+  const { backgroundColor3 } = useStyle();
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { user, isLoading } = useAuth();
@@ -74,12 +75,9 @@ const Checkout = ({ finance }) => {
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
 
   const {
-    course, plan_id, cohort,
+    course, cohort,
   } = router.query;
-  const planChoosed = plan || plan_id || 'trial';
   const courseChoosed = course;
-  const courseTitle = finance[courseChoosed];
-  const planProps = finance.plans.find((l) => l.type === planChoosed || l.type === 'trial');
 
   const [formProps, setFormProps] = useState({
     first_name: '',
@@ -90,9 +88,11 @@ const Checkout = ({ finance }) => {
   });
 
   const queryPlanExists = planFormated && planFormated?.length > 0;
+  const filteredCohorts = Array.isArray(cohorts) && cohorts.filter((item) => item?.never_ends === false);
 
   useEffect(() => {
     if (queryPlanExists && tokenExists) {
+      setIsPreloading(true);
       if (cohorts && cohorts?.length <= 0) {
         toast({
           title: t('alert-message:no-course-configuration'),
@@ -122,7 +122,7 @@ const Checkout = ({ finance }) => {
               });
             }
 
-            if ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || (data?.has_available_cohorts && data?.has_available_cohorts === false)) {
+            if ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || cohorts?.length === 1) {
               if (resp.status < 400) {
                 const { kickoffDate, weekDays, availableTime } = cohorts?.[0] ? getTimeProps(cohorts[0]) : {};
                 const defaultQueryPropsAux = {
@@ -160,6 +160,9 @@ const Checkout = ({ finance }) => {
             setIsPreloading(false);
           });
       }
+      setTimeout(() => {
+        setIsPreloading(false);
+      }, 1000);
     }
   }, [cohorts?.length, accessToken]);
 
@@ -181,18 +184,30 @@ const Checkout = ({ finance }) => {
     }
   }, [user?.id, cohort]);
 
+  const handleGoBack = () => {
+    const handler = () => {
+      if (stepIndex > 0) {
+        prevStep();
+      }
+    };
+    return {
+      isNotAvailable: (queryPlanExists && !isFourthStep && !dateProps?.id) || isSecondStep || (isThirdStep && filteredCohorts?.length === 1),
+      func: handler,
+    };
+  };
+
   return (
-    <Box p={{ base: '2.5rem 1rem', md: '2.5rem 2rem' }} position="relative" minHeight={isPreloading ? '727px' : null}>
+    <Box p={{ base: '2.5rem 0', md: '2.5rem 2rem' }} background={backgroundColor3} position="relative" minHeight={isPreloading ? '727px' : null}>
       {isPreloading && (
         <LoaderScreen />
       )}
       <ModalInfo
         isOpen={alreadyEnrolled}
-        onClose={() => toggleIfEnrolled(false)}
+        forceHandler
+        disableCloseButton
         title={t('already-adquired-plan-title')}
         isReadonly
         description={t('already-adquired-plan-description')}
-        closeText={t('common:close')}
         closeButtonVariant="outline"
         disableInput
         handlerText={t('subscriptions')}
@@ -204,135 +219,25 @@ const Checkout = ({ finance }) => {
         }}
       />
       {/* Stepper */}
-      <Box display="flex" gridGap="38px" justifyContent="center" overflow="auto">
-        <Box
-          display="flex"
-          gridGap="8px"
-          alignItems="center"
-          color={stepIndex !== 0 && 'gray.350'}
-        >
-          {(isSecondStep || isThirdStep || isFourthStep) ? (
-            <Icon icon="verified" width="30px" height="30px" />
-          ) : (
-            <Heading
-              as="span"
-              size="sm"
-              p={isFirstStep ? '3px 8px' : '2px 5px'}
-              mr={isFirstStep && '4px'}
-              background={isFirstStep && 'blue.default'}
-              color={isFirstStep && 'white'}
-              borderRadius="3px"
-              fontWeight="700"
-            >
-              1.
-            </Heading>
-          )}
-          <Heading
-            size="sm"
-            fontWeight={isFirstStep ? '700' : '500'}
-            color={(isSecondStep || isThirdStep || isFourthStep) && 'success'}
-          >
-            {t('contact-information')}
-          </Heading>
-        </Box>
-        <Box
-          display="flex"
-          gridGap="8px"
-          alignItems="center"
-          color={stepIndex !== 1 && 'gray.350'}
-        >
-          {(isThirdStep || isFourthStep) ? (
-            <Icon icon="verified" width="30px" height="30px" />
-          ) : (
-            <Heading
-              as="span"
-              size="sm"
-              p={isSecondStep ? '3px 8px' : '2px 5px'}
-              mr={isSecondStep && '4px'}
-              background={isSecondStep && 'blue.default'}
-              color={isSecondStep && 'white'}
-              borderRadius="3px"
-              fontWeight="500"
-            >
-              2.
-            </Heading>
-          )}
-          <Heading
-            size="sm"
-            fontWeight={isSecondStep ? '700' : '500'}
-            color={(isThirdStep || isFourthStep) && 'success'}
-          >
-            {t('choose-your-class')}
-          </Heading>
-        </Box>
-
-        {/* {!isPreview && (
-        )} */}
-        <Box
-          display="flex"
-          gridGap="8px"
-          alignItems="center"
-          color={stepIndex !== 2 && 'gray.350'}
-        >
-          {isFourthStep ? (
-            <Icon icon="verified" width="30px" height="30px" />
-          ) : (
-            <Heading
-              as="span"
-              size="sm"
-              p={isThirdStep ? '3px 8px' : '2px 5px'}
-              mr={isThirdStep && '4px'}
-              background={isThirdStep && 'blue.default'}
-              color={isThirdStep && 'white'}
-              borderRadius="3px"
-              fontWeight="500"
-            >
-              3.
-            </Heading>
-          )}
-          <Heading
-            size="sm"
-            fontWeight={isThirdStep ? '700' : '500'}
-            color={(isFourthStep) && 'success'}
-          >
-            {t('summary')}
-            {/* {t('payment')} */}
-          </Heading>
-        </Box>
-
-        <Box
-          display={(typeof checkoutData?.isTrial === 'boolean' && !checkoutData?.isTrial) ? 'flex' : 'none'}
-          gridGap="8px"
-          alignItems="center"
-          color={stepIndex !== 3 && 'gray.350'}
-        >
-          <Heading
-            as="span"
-            size="sm"
-            p={isFourthStep ? '3px 8px' : '2px 5px'}
-            mr={isFourthStep && '4px'}
-            background={isFourthStep && 'blue.default'}
-            color={isFourthStep && 'white'}
-            borderRadius="3px"
-            fontWeight="500"
-          >
-            {/* {!isPreview ? '4.' : '3.'} */}
-            4.
-          </Heading>
-          <Heading size="sm" fontWeight={isFourthStep ? '700' : '500'}>
-            {t('payment')}
-          </Heading>
-        </Box>
-      </Box>
+      <Stepper
+        stepIndex={stepIndex}
+        checkoutData={checkoutData}
+        isFirstStep={isFirstStep}
+        isSecondStep={isSecondStep}
+        isThirdStep={isThirdStep}
+        isFourthStep={isFourthStep}
+        handleGoBack={handleGoBack}
+      />
 
       <Box
         display="flex"
         flexDirection="column"
-        gridGap={{ base: '60px', md: '20px' }}
+        gridGap={{ base: '20px', md: '20px' }}
         minHeight="320px"
-        maxWidth={{ base: '100%', md: '800px' }}
-        margin="3.5rem auto 0 auto"
-        padding={{ base: '0 10px', md: '0' }}
+        maxWidth={{ base: '100%', md: '900px' }}
+        margin={{ base: '1.5rem auto 0 auto', md: '3.5rem auto 0 auto' }}
+        padding={{ base: '0px 20px', md: '0' }}
+        // borderRadius={{ base: '22px', md: '0' }}
       >
         {isFirstStep && (
           <ContactInformation
@@ -346,56 +251,44 @@ const Checkout = ({ finance }) => {
         <ChooseYourClass setCohorts={setCohorts} />
 
         {isThirdStep && (
-          <Summary
-            formProps={formProps}
-            courseTitle={courseTitle}
-            planProps={planProps}
-          />
+          <Summary />
         )}
         {/* Fourth step */}
         {isFourthStep && (
           <PaymentInfo />
         )}
-
-        <Box display="flex" justifyContent="space-between" mt="auto">
-          {stepIndex !== 0 && (
-            <Button
-              variant="outline"
-              borderColor="currentColor"
-              color="blue.default"
-              disabled={(queryPlanExists && !isFourthStep && !dateProps?.id) || isSecondStep}
-              onClick={() => {
-                if (stepIndex > 0) {
-                  prevStep();
-                }
-              }}
-            >
-              {t('go-back')}
-            </Button>
-          )}
-          {stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep && (
-            <Button
-              variant="default"
-              disabled={dateProps === null}
-              onClick={() => {
-                nextStep();
-              }}
-            >
-              {t('next-step')}
-            </Button>
-          )}
-        </Box>
+        {((stepIndex !== 0 && !isSecondStep) || (stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep)) && (
+          <>
+            <Box as="hr" width="100%" margin="10px 0" />
+            <Box display="flex" justifyContent="space-between" mt="auto">
+              {handleGoBack().isNotAvailable === false && (
+                <Button
+                  variant="outline"
+                  borderColor="currentColor"
+                  color="blue.default"
+                  disabled={handleGoBack().isNotAvailable}
+                  onClick={() => handleGoBack().func()}
+                >
+                  {t('go-back')}
+                </Button>
+              )}
+              {stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep && (
+                <Button
+                  variant="default"
+                  disabled={dateProps === null}
+                  onClick={() => {
+                    nextStep();
+                  }}
+                >
+                  {t('next-step')}
+                </Button>
+              )}
+            </Box>
+          </>
+        )}
       </Box>
     </Box>
   );
-};
-
-Checkout.propTypes = {
-  finance: PropTypes.objectOf(PropTypes.any),
-};
-
-Checkout.defaultProps = {
-  finance: {},
 };
 
 export default Checkout;

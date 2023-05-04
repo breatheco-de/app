@@ -1,0 +1,34 @@
+[
+  {
+    "__TYPE__": "SharedSliceContent",
+    "variation": "default",
+    "primary": {
+      "id_key": {
+        "__TYPE__": "FieldContent",
+        "value": "grown",
+        "type": "Text"
+      },
+      "title": {
+        "__TYPE__": "FieldContent",
+        "type": "Text",
+        "value": "Example title"
+      },
+      "course_slug": {
+        "__TYPE__": "FieldContent",
+        "type": "Text",
+        "value": "start-coding-using-javascript"
+      },
+      "margin": {
+        "__TYPE__": "FieldContent",
+        "value": "fuel",
+        "type": "Text"
+      }
+    },
+    "items": [
+      {
+        "__TYPE__": "GroupItemContent",
+        "value": []
+      }
+    ]
+  }
+]

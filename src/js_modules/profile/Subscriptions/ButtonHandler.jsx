@@ -27,7 +27,6 @@ const ButtonHandler = ({
   };
 
   const getStyles = () => {
-    // ACTIVE, FREE_TRIAL, FULLY_PAID, CANCELLED, PAYMENT_ISSUE
     if (subscription.type !== 'plan_financing' && (status === 'ACTIVE' || status === 'FULLY_PAID')) {
       return {
         text: subscriptionTR?.cancel || t('subscription.cancel'),
@@ -37,7 +36,7 @@ const ButtonHandler = ({
       };
     }
 
-    if (status === 'FREE_TRIAL' || isPlanFinancingExpired) {
+    if (status === 'FREE_TRIAL' || (isPlanFinancingExpired && subscription?.planOffer?.pricing_exists)) {
       return {
         text: subscriptionTR?.upgrade || t('subscription.upgrade'),
         style: {
@@ -65,6 +64,23 @@ const ButtonHandler = ({
         ),
       };
     }
+
+    // if (status === 'PAYMENT_ISSUE') {
+    //   return {
+    //     text: subscriptionTR?.['reactivate-subscription'] || t('subscription.reactivate-subscription'),
+    //     style: {
+    //       variant: 'default',
+    //       color: 'white',
+    //       fontWeight: 700,
+    //     },
+    //     isComponent: true,
+    //     component: (
+    //       <Link variant="buttonDefault" justifyContent="center" display="inherit" href={`/checkout?plan=${planSlug}`} textAlign="center" margin="auto 0 0 0">
+    //         {subscriptionTR?.['reactivate-subscription'] || t('subscription.reactivate-subscription')}
+    //       </Link>
+    //     ),
+    //   };
+    // }
 
     return {
       text: '',

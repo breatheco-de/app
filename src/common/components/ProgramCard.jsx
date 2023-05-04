@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { formatDuration, intervalToDuration, subMinutes } from 'date-fns';
-import { es, en } from 'date-fns/locale';
+import { es } from 'date-fns/locale';
 import { memo, useState } from 'react';
 import Image from 'next/image';
 import CustomTheme from '../../../styles/theme';
@@ -22,14 +22,13 @@ import UpgradeModal from '../../js_modules/profile/Subscriptions/UpgradeModal';
 
 const availableLanguages = {
   es,
-  en,
 };
 
 const ProgramCard = ({
   programName, programDescription, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
   syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
   width, assistants, teacher, handleChoose, isHiddenOnPrework, isAvailableAsSaas,
-  subscriptionStatus, subscription, isMarketingCourse, iconLink,
+  subscriptionStatus, subscription, isMarketingCourse, iconLink, bullets, background,
 }) => {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
@@ -39,7 +38,7 @@ const ProgramCard = ({
 
   const freeTrialExpireDateValue = isValidDate(freeTrialExpireDate) ? new Date(freeTrialExpireDate) : new Date(subMinutes(new Date(), 1));
   const now = new Date();
-  const { lightColor, hexColor } = useStyle();
+  const { backgroundColor, lightColor, hexColor } = useStyle();
   const isFreeTrial = isAvailableAsSaas && subscriptionStatus === 'FREE_TRIAL';
   const isCancelled = isAvailableAsSaas && (subscriptionStatus === 'CANCELLED' || subscriptionStatus === 'PAYMENT_ISSUE');
   const isExpired = isFreeTrial && freeTrialExpireDateValue < now;
@@ -66,7 +65,7 @@ const ProgramCard = ({
       {
         format: ['months', 'weeks', 'days', 'hours'],
         delimiter: ', ',
-        locale: availableLanguages[lang],
+        locale: availableLanguages[lang] || lang,
       });
 
     if (formated === '') return stTranslation ? stTranslation[lang]['program-card']['starting-today'] : t('starting-today');
@@ -97,7 +96,7 @@ const ProgramCard = ({
     const formated = formatDuration(duration,
       {
         format: ['days'],
-        locale: availableLanguages[lang],
+        locale: availableLanguages[lang] || lang,
       });
 
     if (isExpired) timeString = stTranslation ? stTranslation[lang]['program-card']['non-left'] : t('non-left');
@@ -135,10 +134,11 @@ const ProgramCard = ({
       padding="15px"
       position="relative"
       height="min-content"
+      background={background}
     >
       {iconLink ? (
         <Box position="absolute" borderRadius="full" top="-30px" padding="10px">
-          <Image src={iconLink} width="36px" height="36px" />
+          <Image src={iconLink} width="44px" height="44px" />
         </Box>
       ) : (
         <Box position="absolute" borderRadius="full" top="-30px" background={iconBackground} padding="10px">
@@ -463,12 +463,23 @@ const ProgramCard = ({
             <>
               <Box width="100%" display="flex" justifyContent="center">
                 <Text
-                  size="12px"
-                  color={lightColor}
+                  size="sm"
+                  fontWeight={500}
+                  mb="10px"
                 >
                   {programDescription}
                 </Text>
               </Box>
+              {bullets?.length > 0 && (
+                <Flex flexDirection="column" gridGap="8px" background={backgroundColor} padding="10px 12px" borderRadius="4px">
+                  {bullets.map((l) => (
+                    <Box display="flex" fontWeight={700} fontSize="14px" gridGap="10px" alignItems="center">
+                      <Icon icon="checked2" color={hexColor.green} width="14px" height="14px" />
+                      {l.name}
+                    </Box>
+                  ))}
+                </Flex>
+              )}
               <Button
                 borderRadius="3px"
                 width="100%"
@@ -478,7 +489,7 @@ const ProgramCard = ({
                 mt="20px"
                 onClick={handleChoose}
               >
-                {t('enroll-now')}
+                {t('learn-more')}
               </Button>
             </>
           ) : (
@@ -529,6 +540,8 @@ ProgramCard.propTypes = {
   isAvailableAsSaas: PropTypes.bool,
   subscriptionStatus: PropTypes.string,
   subscription: PropTypes.objectOf(PropTypes.any),
+  bullets: PropTypes.arrayOf(PropTypes.any),
+  background: PropTypes.string,
 };
 
 ProgramCard.defaultProps = {
@@ -552,6 +565,8 @@ ProgramCard.defaultProps = {
   isAvailableAsSaas: false,
   subscriptionStatus: '',
   subscription: {},
+  bullets: [],
+  background: '',
 };
 
 export default memo(ProgramCard);

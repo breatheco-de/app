@@ -16,6 +16,11 @@ export default {
         type: 'text'
       }
     },
+    programSlug: {
+      control: {
+        type: 'text'
+      }
+    },
     programDescription: {
       control: {
         type: 'text'
@@ -139,6 +144,7 @@ export const Default = Component.bind({});
 Default.args = {
   programName: 'A.I & Machine Learning',
   programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
+  programSlug: "machine-learning",
   startsIn: new Date(addDays(new Date(), 3)),
   icon_url: "https://www.iconpacks.net/icons/2/free-settings-icon-3110-thumb.png",
   iconBackground: "blue.default",
@@ -160,6 +166,7 @@ export const withDescription = Component.bind({});
 withDescription.args = {
   programName: 'Data Science',
   programDescription: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
+  programSlug: "machine-learning",
   startsIn: new Date(addDays(new Date(), 3)),
   icon_url: "https://www.freeiconspng.com/thumbs/brain-icon-png/brain-2.png",
   iconBackground: "#25BF6C",

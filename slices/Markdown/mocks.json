@@ -27,6 +27,21 @@
       "enable_table_of_content": {
         "__TYPE__": "BooleanContent",
         "value": false
+      },
+      "id_key": {
+        "__TYPE__": "FieldContent",
+        "value": "should",
+        "type": "Text"
+      },
+      "margin": {
+        "__TYPE__": "FieldContent",
+        "value": "opposite",
+        "type": "Text"
+      },
+      "padding": {
+        "__TYPE__": "FieldContent",
+        "value": "won",
+        "type": "Text"
       }
     },
     "items": [

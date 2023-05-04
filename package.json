@@ -139,7 +139,7 @@
     "husky": "7.0.0",
     "jest": "27.0.6",
     "lint-staged": "11.0.1",
-    "slice-machine-ui": "^0.6.1",
+    "slice-machine-ui": "^0.7.1",
     "storybook-react-i18next": "^1.1.2"
   }
 }

@@ -44,14 +44,26 @@ function ChooseProgram({ chooseList, handleChoose }) {
     return ((cohort?.available_as_saas && subscriptionExists) || cohort?.available_as_saas === false);
   });
 
-  const marketingCouses = marketingCursesList && activeSubscriptionCohorts.length > 0 && marketingCursesList.filter(
+  const marketingCouses = marketingCursesList && marketingCursesList.filter(
     (item) => !activeSubscriptionCohorts.some(
       (activeCohort) => activeCohort?.cohort?.syllabus_version?.slug === item?.slug,
     ) && item?.course_translation?.title,
   );
 
+  const isNotAvailableForMktCourses = activeSubscriptionCohorts.length > 0 && activeSubscriptionCohorts.some(
+    (item) => item?.educational_status === 'ACTIVE' && item?.cohort?.available_as_saas === false,
+  );
+
   return (
     <>
+      {activeSubscriptionCohorts.length > 0 && (
+        <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
+          <Heading size="sm" width="fit-content" whiteSpace="nowrap">
+            {t('your-active-programs')}
+          </Heading>
+          <Box as="hr" width="100%" margin="0.5rem 0 0 0" />
+        </Box>
+      )}
       <UpgradeAccessModal
         isOpen={upgradeModalIsOpen}
         onClose={() => setUpgradeModalIsOpen(false)}
@@ -74,11 +86,11 @@ function ChooseProgram({ chooseList, handleChoose }) {
         </Box>
       )}
 
-      {marketingCouses.length > 0 && marketingCouses.some((l) => l?.course_translation?.title) && (
+      {!isNotAvailableForMktCourses && marketingCouses.length > 0 && marketingCouses.some((l) => l?.course_translation?.title) && (
         <>
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
             <Heading size="sm" width="fit-content" whiteSpace="nowrap">
-              {t('more-courses')}
+              {t('available-courses')}
             </Heading>
             <Box as="hr" width="100%" margin="0.5rem 0 0 0" />
           </Box>
@@ -94,10 +106,12 @@ function ChooseProgram({ chooseList, handleChoose }) {
                 icon="coding"
                 iconLink={item?.icon_url}
                 iconBackground="blue.default"
-                handleChoose={() => router.push(`/checkout?plan=${item?.slug}`)}
+                handleChoose={() => router.push(`/${item?.slug}`)}
                 programName={item?.course_translation.title}
                 programDescription={item?.course_translation?.description}
+                bullets={item?.course_translation?.course_modules}
                 width="100%"
+                background="blue.light"
               />
             ))}
           </Box>
@@ -148,7 +162,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
             <Box
               display="grid"
               mt="1rem"
-              gridTemplateColumns="repeat(auto-fill, minmax(14rem, 1fr))"
+              gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
               gridColumnGap="5rem"
               gridRowGap="3rem"
               height="auto"

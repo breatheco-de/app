@@ -187,6 +187,9 @@ export default function HowTo({ data, technologyTags, difficulties }) {
       >
         <Flex
           gridColumn="2 / span 12"
+          width="100%"
+          margin="0 auto"
+          maxWidth="1280px"
           justifyContent="space-between"
           flex="1"
           gridGap="20px"
@@ -240,17 +243,15 @@ export default function HowTo({ data, technologyTags, difficulties }) {
           />
         </Flex>
       </Box>
-      <GridContainer margin="30px auto 0 auto">
-        {t('description') && (
-          <Text
-            size="md"
-            display="flex"
-            margin={{ base: '30px 8%', md: '30px 28%' }}
-            textAlign="center"
-          >
-            {t('description')}
-          </Text>
-        )}
+      <GridContainer margin="30px auto 0 auto" withContainer gridColumn="1 / span 10" maxWidth="1280px">
+        <Text
+          size="md"
+          display="flex"
+          margin={{ base: '30px 8%', md: '30px 28%' }}
+          textAlign="center"
+        >
+          {t('description')}
+        </Text>
         {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
           <ProjectsLoader
             articles={data}

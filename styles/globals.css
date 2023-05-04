@@ -96,6 +96,18 @@ featured {
   height: 0!important;
 }
 
+.hideOverflowX__ img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .horizontal-sroll::-webkit-scrollbar {
   width: 6px;
 }
@@ -408,4 +420,37 @@ featured {
 .masonry-grid_column > div { /* change div to reference your elements you put in <Masonry> */
   /* background: grey; */
   margin-bottom: 1em;
+}
+
+.star-rating div {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 18px;
+}
+.star-rating div.on {
+  background: #ffb718;
+  background-clip: text;
+  -webkit-text-fill-color: rgb(0 0 0 / 0%);
+  -webkit-text-stroke-width: 0.4px;
+  -webkit-text-stroke-color: rgb(169 169 169);
+}
+.star-rating div.off {
+  background: #ffffff;
+  background-clip: text;
+  -webkit-text-fill-color: rgb(0 0 0 / 0%);
+  -webkit-text-stroke-width: 0.4px;
+  -webkit-text-stroke-color: rgb(169 169 169);
+}
+
+.star-rating div.middle {
+  background: linear-gradient(
+    to right,
+    rgb(255 165 0) 50%,
+    rgb(255 255 255) 50%
+  );
+  background-clip: text;
+  -webkit-text-fill-color: rgb(0 0 0 / 0%);
+  -webkit-text-stroke-width: 0.4px;
+  -webkit-text-stroke-color: rgb(169 169 169);
 }

@@ -11,6 +11,13 @@
       "version": "sktwi1xtmkfgx8626",
       "description": "TwoColumn",
       "primary": {
+        "id_key": {
+          "type": "Text",
+          "config": {
+            "label": "ID Key",
+            "placeholder": ""
+          }
+        },
         "title": {
           "type": "Text",
           "config": {
@@ -82,6 +89,20 @@
               "left",
               "right"
             ]
+          }
+        },
+        "margin": {
+          "type": "Text",
+          "config": {
+            "label": "Margin",
+            "placeholder": "top, right, bottom, left"
+          }
+        },
+        "grid_gap": {
+          "type": "Text",
+          "config": {
+            "label": "Grid gap",
+            "placeholder": ""
           }
         }
       },

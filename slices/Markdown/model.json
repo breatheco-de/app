@@ -11,6 +11,13 @@
       "version": "sktwi1xtmkfgx8626",
       "description": "Markdown",
       "primary": {
+        "id_key": {
+          "type": "Text",
+          "config": {
+            "label": "ID Key",
+            "placeholder": ""
+          }
+        },
         "title": {
           "type": "Text",
           "config": {
@@ -41,6 +48,20 @@
             "placeholder_false": "false",
             "placeholder_true": "true",
             "default_value": false
+          }
+        },
+        "margin": {
+          "type": "Text",
+          "config": {
+            "label": "Margin",
+            "placeholder": "top, right, bottom, left"
+          }
+        },
+        "padding": {
+          "type": "Text",
+          "config": {
+            "label": "Padding",
+            "placeholder": ""
           }
         }
       },

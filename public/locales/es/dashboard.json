@@ -117,7 +117,7 @@
   "warningModal" : {
     "title": "Sincronizar con github",
     "sub-title": "Tu cuenta de Github no está conectada",
-    "text": "Sólo conectando tu cuenta de Github podrás acceder a horas ilimitadas de Gitpod",
+    "text": "Si eres un alumno activo de 4Geeks Academy, conectando tu cuenta de Github podrás acceder a horas ilimitadas de Codespaces",
     "connect": "CONECTAR CON GITHUB",
     "skip": "Saltar por ahora"
   },

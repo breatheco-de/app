@@ -43,6 +43,10 @@
   "already-have-account": "¿Ya tienes una cuenta?",
   "login-here": "Inicia sesión aquí.",
   "start-free-course": "Comenzar curso gratuito",
+  "monthly_payment": "Monthly payment",
+  "yearly_payment": "Yearly payment",
+  "one_payment": "Pago único",
+  "many_months_payment": "{{qty}} pagos mensuales",
   "info": {
     "will-pay-monthly": "Pagará ${{price}} dólares {{qty_months}} veces, por un total de ${{total_amount}}. El primer pago será hoy y el próximo el {{next_month}}.",
     "will-pay-month": "Pagará ${{price}} dólares {{qty_months}} veces, por un total de ${{total_amount}}.",

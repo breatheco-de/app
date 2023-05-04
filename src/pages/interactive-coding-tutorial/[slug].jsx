@@ -15,6 +15,7 @@ import MarkDownParser from '../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../common/components/Skeleton';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 import GridContainer from '../../common/components/GridContainer';
+import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import redirectsFromApi from '../../../public/redirects-from-api.json';
 
 export const getStaticPaths = async ({ locales }) => {
@@ -175,51 +176,104 @@ const ProjectSlug = ({ project, markdown }) => {
   }, [router, router.locale, translations]);
 
   return (
-    <GridContainer
-      height="100%"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      margin="2rem auto"
-      padding="0 15px"
-    >
-      <Link
-        href="/interactive-coding-tutorials"
-        color={useColorModeValue('blue.default', 'blue.300')}
-        display="inline-block"
-        letterSpacing="0.05em"
-        width="fit-content"
-        fontWeight="700"
-        paddingBottom="10px"
+    <>
+      <GridContainer
+        height="100%"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        margin="2rem auto"
+        padding="0 15px"
+        withContainer
       >
-        {`← ${t('projects:backToProjects')}`}
-      </Link>
+        <Link
+          href="/interactive-coding-tutorials"
+          color={useColorModeValue('blue.default', 'blue.300')}
+          display="inline-block"
+          letterSpacing="0.05em"
+          width="fit-content"
+          fontWeight="700"
+          paddingBottom="10px"
+        >
+          {`← ${t('projects:backToProjects')}`}
+        </Link>
 
-      <Flex display={{ base: 'block', md: 'flex' }} height="100%" gridGap="26px">
-        <Box flex="1">
-          {project?.title ? (
-            <Heading
-              as="h1"
-              size="25px"
-              fontWeight="700"
-              padding="10px 0 35px 0"
-              transition="color 0.2s ease-in-out"
-              color={useColorModeValue('black', 'white')}
-              textTransform="capitalize"
+        <Flex display={{ base: 'block', md: 'flex' }} height="100%" gridGap="26px">
+          <Box flex="1">
+            {project?.title ? (
+              <Heading
+                as="h1"
+                size="25px"
+                fontWeight="700"
+                padding="10px 0 35px 0"
+                transition="color 0.2s ease-in-out"
+                color={useColorModeValue('black', 'white')}
+                textTransform="capitalize"
+              >
+                {project.title}
+              </Heading>
+            ) : (
+              <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
+            )}
+
+            <Box
+              display={{ base: 'flex', lg: 'none' }}
+              flexDirection="column"
+              backgroundColor={useColorModeValue('white', 'featuredDark')}
+              margin="30px 0"
+            // width={{ base: '100%', md: '350px' }}
+              minWidth={{ base: '100%', lg: '300px' }}
+              maxWidth="350px"
+              height="fit-content"
+              borderWidth="0px"
+              borderRadius="17px"
+              overflow="hidden"
+              border={1}
+              borderStyle="solid"
+              borderColor={commonBorderColor}
             >
-              {project.title}
-            </Heading>
-          ) : (
-            <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
-          )}
+              {project && project?.difficulty ? (
+                <>
+                  <Box d="flex" justifyContent="center">
+                    <Icon icon="sideSupport" width="300px" height="70px" />
+                  </Box>
+                  <Box px="22px" pb="30px" pt="20px">
+                    <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
+                  </Box>
+                </>
+              ) : (
+                <Skeleton height="100%" width="100%" borderRadius="17px" />
+              )}
+            </Box>
+
+            {/* MARKDOWN SIDE */}
+            <Box
+              maxWidth="1012px"
+              borderRadius="3px"
+              background={useColorModeValue('white', 'darkTheme')}
+              className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
+              transition="background .2s ease"
+            >
+              {typeof markdown === 'string' ? (
+                <MarkDownParser content={markdownData.content} withToc />
+              ) : (
+                <MDSkeleton />
+              )}
+              <MktRecommendedCourses
+                marginTop="15px"
+                title={t('common:related-courses')}
+                technologies={project?.technologies.join(',')}
+              />
+            </Box>
+          </Box>
 
           <Box
-            display={{ base: 'flex', lg: 'none' }}
+            display={{ base: 'none', lg: 'flex' }}
             flexDirection="column"
             backgroundColor={useColorModeValue('white', 'featuredDark')}
             margin="30px 0"
-            // width={{ base: '100%', md: '350px' }}
-            minWidth={{ base: '100%', lg: '300px' }}
+          // minWidth={{ base: '100%', md: '250px' }}
+            minWidth={{ base: '100%', md: '300px' }}
             maxWidth="350px"
             height="fit-content"
             borderWidth="0px"
@@ -239,57 +293,12 @@ const ProjectSlug = ({ project, markdown }) => {
                 </Box>
               </>
             ) : (
-              <Skeleton height="100%" width="100%" borderRadius="17px" />
+              <Skeleton height="646px" width="100%" borderRadius="17px" />
             )}
           </Box>
-
-          {/* MARKDOWN SIDE */}
-          <Box
-            maxWidth="1012px"
-            borderRadius="3px"
-            background={useColorModeValue('white', 'darkTheme')}
-            className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
-            transition="background .2s ease"
-          >
-            {typeof markdown === 'string' ? (
-              <MarkDownParser content={markdownData.content} withToc />
-            ) : (
-              <MDSkeleton />
-            )}
-          </Box>
-        </Box>
-
-        <Box
-          display={{ base: 'none', lg: 'flex' }}
-          flexDirection="column"
-          backgroundColor={useColorModeValue('white', 'featuredDark')}
-          margin="30px 0"
-          // minWidth={{ base: '100%', md: '250px' }}
-          minWidth={{ base: '100%', md: '300px' }}
-          maxWidth="350px"
-          height="fit-content"
-          borderWidth="0px"
-          borderRadius="17px"
-          overflow="hidden"
-          border={1}
-          borderStyle="solid"
-          borderColor={commonBorderColor}
-        >
-          {project && project?.difficulty ? (
-            <>
-              <Box d="flex" justifyContent="center">
-                <Icon icon="sideSupport" width="300px" height="70px" />
-              </Box>
-              <Box px="22px" pb="30px" pt="20px">
-                <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
-              </Box>
-            </>
-          ) : (
-            <Skeleton height="646px" width="100%" borderRadius="17px" />
-          )}
-        </Box>
-      </Flex>
-    </GridContainer>
+        </Flex>
+      </GridContainer>
+    </>
   );
 };
 

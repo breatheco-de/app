@@ -9,15 +9,21 @@ const useStyle = () => {
   const borderColorStrong = useColorModeValue('gray.400', 'gray.500');
   const disabledBackgroundColor = useColorModeValue('gray.250', 'gray.600');
   const disabledColor = useColorModeValue('gray.500', 'gray.350');
+  const disabledColor2 = useColorModeValue('gray.default', '#CACACA');
   const featuredColor = useColorModeValue('featuredLight', 'featuredDark');
   const fontColor = useColorModeValue('black', 'white');
   const fontColor2 = useColorModeValue('gray.dark', 'gray.250');
+  const fontColor3 = useColorModeValue('gray.700', 'gray.300');
   const reverseFontColor = useColorModeValue('white', 'gray.900');
   const lightColor = useColorModeValue('gray.600', 'gray.200');
   const tooltipBackground = useColorModeValue('gray.dark', 'gray.dark');
 
   const hexColor = {
     black: useColorModeValue('#000000', '#ffffff'),
+    backgroundColor: useColorModeValue('#ffffff', '#17202A'),
+    featuredColor: useColorModeValue('#EEF9FE', '#283340'),
+    lightColor: useColorModeValue('#F5F5F5', '#4A5568'),
+    lightColor2: useColorModeValue('#F5F5F5', '#283340'),
     white2: useColorModeValue('#ffffff', '#283340'),
     danger: useColorModeValue('#CD0000', '#e26161'),
     blueDefault: '#0097CD',
@@ -40,21 +46,23 @@ const useStyle = () => {
   return {
     backgroundColor,
     backgroundColor2,
+    backgroundColor3,
     borderColor,
     borderColor2,
+    borderColorStrong,
     disabledBackgroundColor,
-    backgroundColor3,
     disabledColor,
+    disabledColor2,
     featuredColor,
     fontColor,
     fontColor2,
+    fontColor3,
     hexColor,
     input,
-    reverseFontColor,
     lightColor,
     modal,
+    reverseFontColor,
     tooltipBackground,
-    borderColorStrong,
   };
 };
 

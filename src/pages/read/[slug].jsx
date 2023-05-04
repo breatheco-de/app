@@ -183,7 +183,7 @@ const Read = ({ data }) => {
           {t('description')}
         </Text>
       </Flex>
-      <GridContainer flex="1" gridTemplateColumns={{ base: '.5fr repeat(12, 1fr) .5fr', md: '3.8fr repeat(12, 1fr) 3.8fr' }}>
+      <GridContainer withContainer gridTemplateColumns="3.8fr repeat(12, 1fr) 3.8fr" gridColumn="2 / 12 span" gridGap="0" maxWidth="1280px">
         {datafiltered.map(
           (element) => element.label !== '' && (
           <Box key={`${element.id} - ${element.position}`} margin="50px 0 0 0">

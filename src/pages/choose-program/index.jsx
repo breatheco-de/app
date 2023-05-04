@@ -54,7 +54,7 @@ function chooseProgram() {
   const { state, programsList, updateProgramList } = useProgramList();
   const [cohortTasks, setCohortTasks] = useState({});
   const { isLoading: userLoading, user, choose } = useAuth();
-  const { featuredColor, borderColor, lightColor } = useStyle();
+  const { lightColor } = useStyle();
   const router = useRouter();
   const toast = useToast();
   const ldClient = useLDClient();
@@ -267,154 +267,141 @@ function chooseProgram() {
 
   return (
     <Flex alignItems="center" flexDirection="row" mt="40px">
-      <GridContainer width="100%" margin="0 auto" fraction="1fr">
-        <Flex flexDirection={{ base: 'column-reverse', md: 'row' }} gridGap={{ base: '1rem', md: '3.5rem' }} position="relative">
-          <Box width="100%" flex={{ base: 1, md: 0.7 }}>
-            <Heading
-              fontWeight={800}
-              size="xl"
-            >
-              {user?.first_name ? t('welcome-back-user', { name: user?.first_name }) : t('welcome')}
-            </Heading>
+      <GridContainer gridTemplateColumns="repeat(10, 1fr)" width="100%" margin="0 auto">
+        <Box gridColumn="2 / span 8">
+          <Flex flexDirection={{ base: 'column-reverse', md: 'row' }} gridGap={{ base: '1rem', md: '3.5rem' }} position="relative">
+            <Box width="100%" flex={{ base: 1, md: 0.7 }}>
+              <Heading
+                fontWeight={800}
+                size="xl"
+              >
+                {user?.first_name ? t('welcome-back-user', { name: user?.first_name }) : t('welcome')}
+              </Heading>
 
-            <Text size="18px" color={lightColor} fontWeight={500} letterSpacing="0.02em" p="12px 0 30px 0">
-              {t('read-to-start-learning')}
-            </Text>
+              <Text size="18px" color={lightColor} fontWeight={500} letterSpacing="0.02em" p="12px 0 30px 0">
+                {t('read-to-start-learning')}
+              </Text>
 
-            {invites?.length > 0 && (
-              <Box margin="25px 0 0 0" display="flex" alignItems="center" justifyContent="space-between" padding="16px 20px" borderRadius="18px" width={['70%', '68%', '70%', '50%']} background="yellow.light">
-                <Text
-                  color="black"
-                  display="flex"
-                  flexDirection="row"
-                  gridGap="15px"
-                  width="100%"
-                  justifyContent="space-between"
-                  size="md"
-                >
-                  {t('invite.notify', { cohortInvitationWord: inviteWord() })}
-                  {/* {`Ey! There are ${inviteWord()} for you to accept.`} */}
+              {invites?.length > 0 && (
+                <Box margin="25px 0 0 0" display="flex" alignItems="center" justifyContent="space-between" padding="16px 20px" borderRadius="18px" width={['70%', '68%', '70%', '50%']} background="yellow.light">
                   <Text
-                    as="button"
-                    size="md"
-                    fontWeight="bold"
-                    textAlign="left"
-                    gridGap="5px"
-                    _focus={{
-                      boxShadow: '0 0 0 3px rgb(66 153 225 / 60%)',
-                    }}
-                    color="blue.default"
+                    color="black"
                     display="flex"
-                    alignItems="center"
-                    onClick={() => setShowInvites(!showInvites)}
+                    flexDirection="row"
+                    gridGap="15px"
+                    width="100%"
+                    justifyContent="space-between"
+                    size="md"
                   >
-                    {showInvites ? t('invite.hide') : t('invite.show')}
-                    <Icon
-                      icon="arrowDown"
-                      width="20px"
-                      height="20px"
-                      style={{ transform: showInvites ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                    />
-                  </Text>
-                </Text>
-              </Box>
-            )}
-
-            {showInvites && invites.map((item, i) => {
-              const { id } = item;
-              const index = i;
-              return (
-                <Module
-                  key={index}
-                  data={{
-                    title: item.cohort.name,
-                  }}
-                  containerStyle={{
-                    background: '#FFF4DC',
-                  }}
-                  width={['70%', '68%', '70%', '50%']}
-                  rightItemHandler={(
-                    <Button
-                      color="blue.default"
-                      borderColor="blue.default"
-                      textTransform="uppercase"
-                      onClick={() => {
-                        acceptInvite({ id });
+                    {t('invite.notify', { cohortInvitationWord: inviteWord() })}
+                    <Text
+                      as="button"
+                      size="md"
+                      fontWeight="bold"
+                      textAlign="left"
+                      gridGap="5px"
+                      _focus={{
+                        boxShadow: '0 0 0 3px rgb(66 153 225 / 60%)',
                       }}
-                      gridGap="8px"
+                      color="blue.default"
+                      display="flex"
+                      alignItems="center"
+                      onClick={() => setShowInvites(!showInvites)}
                     >
-                      <Text color="blue.default" size="15px">
-                        {t('invite.accept')}
-                      </Text>
-                    </Button>
-                  )}
+                      {showInvites ? t('invite.hide') : t('invite.show')}
+                      <Icon
+                        icon="arrowDown"
+                        width="20px"
+                        height="20px"
+                        style={{ transform: showInvites ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                      />
+                    </Text>
+                  </Text>
+                </Box>
+              )}
+
+              {showInvites && invites.map((item, i) => {
+                const { id } = item;
+                const index = i;
+                return (
+                  <Module
+                    key={index}
+                    data={{
+                      title: item.cohort.name,
+                    }}
+                    containerStyle={{
+                      background: '#FFF4DC',
+                    }}
+                    width={['70%', '68%', '70%', '50%']}
+                    rightItemHandler={(
+                      <Button
+                        color="blue.default"
+                        borderColor="blue.default"
+                        textTransform="uppercase"
+                        onClick={() => {
+                          acceptInvite({ id });
+                        }}
+                        gridGap="8px"
+                      >
+                        <Text color="blue.default" size="15px">
+                          {t('invite.accept')}
+                        </Text>
+                      </Button>
+                    )}
+                  />
+                );
+              })}
+
+              {!isLoading && dataQuery?.cohorts > 0 && (
+                <NextChakraLink variant="buttonDefault" href="https://4geeksacademy.slack.com/" target="blank" rel="noopener noreferrer" display="flex" gridGap="10px" width="fit-content" padding="0.5rem 6px 0.5rem 8px">
+                  {t('join-our-community')}
+                  <Icon icon="slack" width="20px" height="20px" color="currentColor" />
+                </NextChakraLink>
+              )}
+            </Box>
+            <Box flex={{ base: 1, md: 0.3 }} zIndex={10} position={{ base: 'inherit', md: 'absolute' }} maxWidth="320px" right={0} top={0}>
+              {flags?.appReleaseEnableLiveEvents && (
+                <LiveEvent
+                  featureLabel={t('common:live-event.title')}
+                  featureReadMoreUrl={t('common:live-event.readMoreUrl')}
+                  mainClasses={liveClasses?.length > 0 ? liveClasses : []}
+                  otherEvents={events}
+                  maxWidth={{ base: '100%', sm: '500px', md: '340px' }}
+                  margin="0 auto"
                 />
-              );
-            })}
+              )}
+            </Box>
+          </Flex>
 
-            {!isLoading && dataQuery?.cohorts <= 0 ? (
-              <Flex flexDirection="column" gridGap="12px" background={featuredColor} padding="14px 20px 14px 20px" borderRadius="9px" border="1px solid" borderColor={borderColor}>
-                <Heading size="sm" lineHeight="31px">
-                  {t('not-enrolled')}
-                </Heading>
-                <Text size="md" fontWeight={600}>
-                  {t('enroll-programs')}
-                </Text>
-                <Button variant="default" textransform="uppercase" width="fit-content">Enroll now</Button>
-              </Flex>
-            ) : (
-              <NextChakraLink variant="buttonDefault" href="https://4geeksacademy.slack.com/" target="blank" rel="noopener noreferrer" display="flex" gridGap="10px" width="fit-content" padding="0.5rem 6px 0.5rem 8px">
-                {t('join-our-community')}
-                <Icon icon="slack" width="20px" height="20px" color="currentColor" />
-              </NextChakraLink>
+          <Box>
+            {!isLoading && (
+              <ChooseProgram chooseList={dataQuery?.cohorts} handleChoose={handleChoose} />
             )}
           </Box>
-          <Box flex={{ base: 1, md: 0.3 }} zIndex={10} position={{ base: 'inherit', md: 'absolute' }} maxWidth="320px" right={0} top={0}>
-            {flags?.appReleaseEnableLiveEvents && (
-              <LiveEvent
-                featureLabel={t('common:live-event.title')}
-                featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                mainClasses={liveClasses?.length > 0 ? liveClasses : []}
-                otherEvents={events}
-              />
-            )}
-          </Box>
-        </Flex>
-
-        <Box>
-          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
-            <Heading size="sm" width="fit-content" whiteSpace="nowrap">
-              {t('your-active-programs')}
-            </Heading>
-            <Box as="hr" width="100%" margin="0.5rem 0 0 0" />
-          </Box>
-          {!isLoading && dataQuery?.cohorts?.length > 0 && (
-            <ChooseProgram chooseList={dataQuery?.cohorts} handleChoose={handleChoose} />
+          {isLoading && dataQuery?.cohorts?.length > 0 && (
+            <Box
+              display="grid"
+              mt="1rem"
+              gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
+              gridColumnGap="4rem"
+              gridRowGap="3rem"
+              height="auto"
+            >
+              {Array(3).fill(0).map((_, i) => (
+                <Skeleton
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={i}
+                  startColor={commonStartColor}
+                  endColor={commonEndColor}
+                  width="100%"
+                  height="286px"
+                  color="white"
+                  borderRadius="17px"
+                />
+              ))}
+            </Box>
           )}
         </Box>
-        {isLoading && dataQuery?.cohorts?.length > 0 && (
-          <Box
-            display="grid"
-            mt="1rem"
-            gridTemplateColumns="repeat(auto-fill, minmax(14rem, 1fr))"
-            gridColumnGap="5rem"
-            gridRowGap="3rem"
-            height="auto"
-          >
-            {Array(3).fill(0).map((_, i) => (
-              <Skeleton
-                // eslint-disable-next-line react/no-array-index-key
-                key={i}
-                startColor={commonStartColor}
-                endColor={commonEndColor}
-                width="100%"
-                height="286px"
-                color="white"
-                borderRadius="17px"
-              />
-            ))}
-          </Box>
-        )}
       </GridContainer>
     </Flex>
   );

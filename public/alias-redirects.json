@@ -1,175 +1,53 @@
 [
   {
-    "source": "/null/[draft]what-is-data-science",
-    "destination": "/undefined/null/undefined"
+    "source": "/lesson/[draft]what-is-data-science",
+    "type": "LESSON",
+    "destination": "/es/lesson/what-is-data-science"
   },
   {
-    "source": "/null/[unassigned]building-your-developer-personal-portfolio",
-    "destination": "/undefined/null/undefined"
+    "source": "/lesson/[unassigned]building-your-developer-personal-portfolio",
+    "type": "LESSON",
+    "destination": "/es/lesson/building-your-developer-personal-portfolio"
   },
   {
-    "source": "/null/[unassigned]javascript-objects",
-    "destination": "/undefined/null/undefined"
+    "source": "/lesson/[unassigned]javascript-objects",
+    "type": "LESSON",
+    "destination": "/en/lesson/unassigned_javascript_objects"
   },
   {
-    "source": "/null/[unassigned]what-is-an-application-model-and-how-to-diagram-it",
-    "destination": "/undefined/null/undefined"
+    "source": "/interactive-exercise/the-command-line",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/command-line-challenge"
   },
   {
-    "source": "/null/intro-to-4geeks",
-    "destination": "/undefined/null/undefined"
+    "source": "/interactive-exercise/command-line-exercises",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/command-line-challenge"
   },
   {
-    "source": "/null/python-syntax",
-    "destination": "/undefined/null/undefined"
+    "source": "/lesson/javascript-objects",
+    "type": "LESSON",
+    "destination": "/en/lesson/unassigned_javascript_objects"
   },
   {
-    "source": "/null/bootstrap",
-    "destination": "/undefined/null/undefined"
+    "source": "/interactive-coding-tutorial/exercise-instagram-post-2",
+    "type": "PROJECT",
+    "destination": "/en/interactive-coding-tutorial/exercise-instagram-post-3"
   },
   {
-    "source": "/null/events",
-    "destination": "/undefined/null/undefined"
+    "source": "/interactive-coding-tutorial/interview-preparation-1",
+    "type": "PROJECT",
+    "destination": "/en/interactive-coding-tutorial/interview-preparation-3"
   },
   {
-    "source": "/null/arquitectura-del-internet",
-    "destination": "/undefined/null/undefined"
+    "source": "/interactive-coding-tutorial/interview-preparation-2",
+    "type": "PROJECT",
+    "destination": "/en/interactive-coding-tutorial/interview-preparation-3"
   },
   {
-    "source": "/null/react-js",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/layouts",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/the-command-line",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/forms",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/git",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/git-interactive",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/the-dom",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/python-beginner",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/command-line-exercises",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/js-devmaker",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/html",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/css",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/jsl",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/starwars-data-model-typeorm-node",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/js-beginner",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/python-syntax-es",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/intro-to-4geeks-es",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/javascript-objects",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/numpy-exercises",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/react-exercises",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/object-oriented-programing",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/numpy-exercises-tutorial-us",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/nvm-install-windows-es",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/ask",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/how-to-ask-programming-questions-es",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/introduction-to-node-js-es",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/interview-preparation",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/exercise-instagram-post",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/exercise-instagram-post-2",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/interview-preparation-1",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/interview-preparation-2",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/trazar-func-con-python",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/hello-world",
-    "destination": "/undefined/null/undefined"
-  },
-  {
-    "source": "/null/unassigned-javascript-objects",
-    "destination": "/undefined/null/undefined"
+    "source": "/lesson/unassigned-javascript-objects",
+    "type": "LESSON",
+    "destination": "/en/lesson/unassigned_javascript_objects"
   },
   {
     "source": "/project/excuse-generator-python-cli",

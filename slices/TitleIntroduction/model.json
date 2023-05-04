@@ -11,6 +11,13 @@
       "version": "sktwi1xtmkfgx8626",
       "description": "TitleIntroduction",
       "primary": {
+        "id_key": {
+          "type": "Text",
+          "config": {
+            "label": "ID Key",
+            "placeholder": ""
+          }
+        },
         "title": {
           "type": "StructuredText",
           "config": {
@@ -26,6 +33,14 @@
             "placeholder": "",
             "allowTargetBlank": true,
             "single": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "button_link": {
+          "type": "Link",
+          "config": {
+            "label": "Button link",
+            "placeholder": "",
+            "select": null
           }
         },
         "highlight": {
@@ -63,6 +78,20 @@
               "width": 400
             },
             "thumbnails": []
+          }
+        },
+        "margin": {
+          "type": "Text",
+          "config": {
+            "label": "Margin",
+            "placeholder": "top, right, bottom, left"
+          }
+        },
+        "grid_gap": {
+          "type": "Text",
+          "config": {
+            "label": "Grid gap",
+            "placeholder": "Space between columns in pixels"
           }
         }
       },

@@ -10,6 +10,9 @@ import IntroductionSection from '../../src/js_modules/landing/introductionSectio
 const TitleIntroduction = ({ slice }) => (
   <IntroductionSection
     slice={slice}
+    margin={slice?.primary?.margin || '0 auto'}
+    gridGap={slice?.primary?.grid_gap || '24px'}
+    maxWidth="1280px"
   />
 );
 TitleIntroduction.propTypes = {

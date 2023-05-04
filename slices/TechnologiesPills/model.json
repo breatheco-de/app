@@ -1,0 +1,42 @@
+{
+  "id": "technologies_pills",
+  "type": "SharedSlice",
+  "name": "TechnologiesPills",
+  "description": "TechnologiesPills",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "TechnologiesPills",
+      "primary": {
+        "id_key": {
+          "type": "Text",
+          "config": {
+            "label": "id",
+            "placeholder": ""
+          }
+        },
+        "technologies": {
+          "type": "StructuredText",
+          "config": {
+            "label": "technologies",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "single": "list-item"
+          }
+        },
+        "margin": {
+          "type": "Text",
+          "config": {
+            "label": "margin",
+            "placeholder": ""
+          }
+        }
+      },
+      "items": {},
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    }
+  ]
+}

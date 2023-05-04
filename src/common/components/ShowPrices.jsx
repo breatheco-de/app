@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Box, Button,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
@@ -37,12 +37,20 @@ const ShowPrices = ({
     1: finance || data?.pricing.finance,
   };
 
+  const defaultList = financeSelected[selectedFinanceIndex];
   const selectedItem = selectedIndex !== null && financeSelected[selectedFinanceIndex][selectedIndex];
 
   const handleSelect = (index, item) => {
     setSelectedIndex(index);
     if (onSelect) onSelect(item);
   };
+
+  useEffect(() => {
+    if (defaultList.length === 1) {
+      handleSelect(0, defaultList[0]);
+    }
+  }, []);
+
   const handleSelectFinance = (index) => {
     setSelectedFinanceIndex(index);
     setSelectedIndex(0);
@@ -55,6 +63,7 @@ const ShowPrices = ({
       display="flex"
       onClick={() => handleSelect(i, item)}
       width="100%"
+      alignItems={item?.isFree && 'center'}
       justifyContent="space-between"
       p="22px 18px"
       gridGap="24px"
@@ -65,9 +74,11 @@ const ShowPrices = ({
       borderRadius="8px"
     >
       <Box display="flex" flexDirection="column" width="100%" gridGap="12px" minWidth={{ base: 'none', md: '288px' }} height="fit-content" fontWeight="400">
-        <Box fontSize="18px" fontWeight="700">
-          {item?.title}
-        </Box>
+        {!item?.isFree && (
+          <Box fontSize="18px" fontWeight="700">
+            {item?.title}
+          </Box>
+        )}
         <Text
           size="md"
           fontWeight="500"
@@ -112,10 +123,11 @@ const ShowPrices = ({
 
   const paymentTabStyle = getTabColor(0, list?.length > 0);
   const financeTabStyle = getTabColor(1, finance?.length > 0);
+  const existMoreThanOne = financeSelected[selectedFinanceIndex].length > 1;
 
   return (
     <Box borderRadius="12px" padding="16px" background={featuredColor} display="flex" flex={0.5} flexDirection="column" gridGap="20px">
-      <Box width="100%" display="flex" flexWrap="wrap" gridGap="5px 10px" justifyContent="space-between" alignItems="center" mb="6px">
+      <Box width="100%" display="flex" flexWrap="wrap" gridGap="5px 10px" justifyContent={{ base: 'center', sm: 'space-between' }} alignItems="center" mb="6px">
         <Heading as="h2" size="sm">
           {title || data?.pricing['choose-plan']}
         </Heading>
@@ -151,7 +163,7 @@ const ShowPrices = ({
       {financeSelected[selectedFinanceIndex].filter((l) => l.show === true).map((item, i) => (!item.isFree) && (
         <PlanCard item={item} i={i} />
       ))}
-      {financeSelected[selectedFinanceIndex].some((item) => item.isFree) && (
+      {existMoreThanOne && financeSelected[selectedFinanceIndex].some((item) => item.isFree) && (
         <Box display="flex" alignItems="center">
           <Box as="hr" color="gray.500" width="100%" />
           <Text size="md" textAlign="center" width="100%" margin="0">
@@ -160,7 +172,7 @@ const ShowPrices = ({
           <Box as="hr" color="gray.500" width="100%" />
         </Box>
       )}
-      {financeSelected[selectedFinanceIndex].filter((l) => l.show === true).map((item, i) => (item.isFree) && (
+      {financeSelected[selectedFinanceIndex].filter((l) => l.show === true && l?.isFree).map((item, i) => (
         <PlanCard item={item} i={i} />
       ))}
       <Box mt="38px">
@@ -172,29 +184,20 @@ const ShowPrices = ({
             {stTranslation ? stTranslation[lang].common['upgrade-plan'].button : t('common:upgrade-plan.button')}
           </Button>
         )}
-        {process.env.VERCEL_ENV !== 'production' ? (
-          <Button
-            display={outOfConsumables && 'none'}
-            variant="default"
-            disabled={!selectedItem && true}
-            onClick={() => {
-              if (handleUpgrade === false) {
-                router.push(`/checkout?syllabus=coding-introduction&plan=${selectedItem?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
-              } else {
-                handleUpgrade(selectedItem);
-              }
-            }}
-          >
-            {stTranslation ? stTranslation[lang].common.enroll : t('common:enroll')}
-          </Button>
-        ) : (
-          <Button
-            variant="default"
-            disabled
-          >
-            {t('common:coming-soon')}
-          </Button>
-        )}
+        <Button
+          display={outOfConsumables && 'none'}
+          variant="default"
+          disabled={!selectedItem && true}
+          onClick={() => {
+            if (handleUpgrade === false) {
+              router.push(`/checkout?syllabus=coding-introduction&plan=${selectedItem?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
+            } else {
+              handleUpgrade(selectedItem);
+            }
+          }}
+        >
+          {stTranslation ? stTranslation[lang].common.enroll : t('common:enroll')}
+        </Button>
       </Box>
     </Box>
   );

@@ -1,91 +1,117 @@
+/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
   Box, Avatar,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useRouter } from 'next/router';
+import GridContainer from './GridContainer';
 import Heading from './Heading';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
+import StarRating from './StarRating';
+import { lengthOfString } from '../../utils';
+import axios from '../../axios';
 
 const MktTestimonials = ({
+  id,
   title,
   endpoint,
   testimonials,
+  ...rest
 }) => {
   const [testimonialsData, setTestimonialsData] = useState();
+  const router = useRouter();
   const { fontColor2, backgroundColor } = useStyle();
 
   useEffect(() => {
-    if (typeof endpoint === 'string' && endpoint?.length > 8) {
-      axios.get(`${process.env.BREATHECODE_HOST}${endpoint}`)
+    if (typeof endpoint === 'string' && endpoint !== '') {
+      axios.get(`${endpoint}${endpoint.includes('?lang=') ? `?lang=${router?.locale}` : ''}`)
         .then((response) => {
           setTestimonialsData(response?.data);
-        })
-        .catch((error) => console.log('error:', error));
+        });
     }
   }, []);
 
   const testimonialsArray = (testimonialsData?.length > 0 && testimonialsData) || (testimonials?.length > 0 && testimonials);
 
-  // eslint-disable-next-line react/prop-types
-  const TestimonialBox = ({ picture, name, occupation, description }) => (
-    <Box
-      width="250px"
-      background={backgroundColor}
-      borderRadius="12px"
-      padding="15px"
-      textAlign="center"
-    >
-      <Avatar width="65px" height="65px" name={name} src={picture} />
-      <Text marginTop="15px" lineHeight="16px" fontWeight="900" size="md">
-        {name}
-      </Text>
-      <Text
-        fontSize="sm"
-        lineHeight="12px"
-        fontWeight="700"
-        marginTop="15px"
-        color={fontColor2}
+  const TestimonialBox = ({ picture, name, rating, description }) => {
+    const limit = 160;
+    const descriptionLength = lengthOfString(description);
+    const truncatedDescription = descriptionLength > limit ? `${description?.substring(0, limit)}...` : description;
+
+    return (
+      <Box
+        width="250px"
+        background={backgroundColor}
+        borderRadius="12px"
+        padding="15px"
+        textAlign="center"
       >
-        {occupation}
-      </Text>
-      <Text
-        marginTop="10px"
-        fontSize="sm"
-        fontWeight="400"
-        lineHeight="14px"
-        color={fontColor2}
-      >
-        {`“${description}”`}
-      </Text>
-    </Box>
-  );
+        <Avatar width="65px" height="65px" name={name} src={picture} />
+        <Text marginTop="15px" lineHeight="16px" fontWeight="900" size="md">
+          {name}
+        </Text>
+        <StarRating
+          rating={rating}
+          margin="6px 0 0 0"
+          justifyContent="center"
+        />
+        <Text
+          marginTop="10px"
+          fontSize="var(--chakra-fontSizes-xs)"
+          fontWeight="400"
+          lineHeight="14px"
+          color={fontColor2}
+          title={description}
+        >
+          {`“${truncatedDescription}”`}
+        </Text>
+      </Box>
+    );
+  };
 
   return (
-    <Box padding="20px 0" textAlign="center">
-      {title && (
-        <Heading as="h2" size="m" marginBottom="20px">
-          {title}
-        </Heading>
-      )}
+    <GridContainer
+      gridTemplateColumns="repeat(10, 1fr)"
+      px="10px"
+      id={id}
+      {...rest}
+    >
       <Box
-        gridGap="20px"
-        flexWrap="wrap"
-        marginBottom="15px"
-        display="flex"
-        justifyContent="center"
+        display={{ base: 'block', md: 'grid' }}
+        gridColumn="2 / span 8"
+        flexDirection="column"
+        px="10px"
+        padding="20px 0"
+        textAlign="center"
+        width="100%"
+        {...rest}
       >
-        {testimonialsArray && testimonialsArray.map((testimonial) => (
-          <TestimonialBox
-            picture={testimonial.picture}
-            name={testimonial.name}
-            occupation={testimonial.occupation}
-            description={testimonial.description}
-          />
-        ))}
+        {title && (
+          <Heading as="h2" size="m" marginBottom="20px">
+            {title}
+          </Heading>
+        )}
+        <Box
+          gridGap="20px"
+          flexWrap="wrap"
+          marginBottom="15px"
+          display="flex"
+          justifyContent="center"
+        >
+          {testimonialsArray && testimonialsArray.map((testimonial) => (
+            <TestimonialBox
+              key={testimonial?.id}
+              picture={testimonial?.author?.profile?.avatar_url}
+              name={`${testimonial?.author?.first_name} ${testimonial?.author?.last_name}`}
+              rating={testimonial?.total_rating}
+              description={testimonial?.comments}
+            />
+          ))}
+        </Box>
       </Box>
-    </Box>
+    </GridContainer>
   );
 };
 
@@ -97,7 +123,7 @@ MktTestimonials.propTypes = {
 
 MktTestimonials.defaultProps = {
   title: null,
-  endpoint: '',
+  endpoint: `${process.env.BREATHECODE_HOST}/v1/feedback/review`,
   testimonials: null,
 };
 

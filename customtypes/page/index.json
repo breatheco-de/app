@@ -60,6 +60,27 @@
             },
             "testimonials": {
               "type": "SharedSlice"
+            },
+            "show_prices": {
+              "type": "SharedSlice"
+            },
+            "technologies": {
+              "type": "SharedSlice"
+            },
+            "partners": {
+              "type": "SharedSlice"
+            },
+            "road_map": {
+              "type": "SharedSlice"
+            },
+            "recommended_courses": {
+              "type": "SharedSlice"
+            },
+            "technologies_pills": {
+              "type": "SharedSlice"
+            },
+            "event_cards": {
+              "type": "SharedSlice"
             }
           }
         }

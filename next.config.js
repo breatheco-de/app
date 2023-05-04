@@ -95,10 +95,10 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
       require('./scripts/sitemap-generator');
       require('./scripts/syllabus');
     }
-    if (process.env.VERCEL_ENV !== 'production') {
-      config.optimization.minimizer = [];
-      config.optimization.minimize = false; // Disable minification in development
-    }
+    // if (process.env.VERCEL_ENV !== 'production') {
+    //   config.optimization.minimizer = [];
+    //   config.optimization.minimize = false; // Disable minification in development
+    // }
     return config;
   },
   compiler: {

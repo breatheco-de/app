@@ -1,0 +1,34 @@
+[
+  {
+    "__TYPE__": "SharedSliceContent",
+    "variation": "default",
+    "primary": {
+      "componentId": {
+        "__TYPE__": "FieldContent",
+        "type": "Text",
+        "value": "recommended-courses"
+      },
+      "title": {
+        "__TYPE__": "FieldContent",
+        "type": "Text",
+        "value": "Courses related to this article"
+      },
+      "technologies": {
+        "__TYPE__": "FieldContent",
+        "type": "Text",
+        "value": "javascript,python"
+      },
+      "margin": {
+        "__TYPE__": "FieldContent",
+        "value": "condition",
+        "type": "Text"
+      }
+    },
+    "items": [
+      {
+        "__TYPE__": "GroupItemContent",
+        "value": []
+      }
+    ]
+  }
+]

@@ -66,7 +66,7 @@ const Profile = () => {
           style={{ borderRadius: '0px', justifyContent: 'center' }}
         />
       )}
-      <GridContainer minH="480px" childrenStyle={{ display: 'block' }} padding="0 24px">
+      <GridContainer withContainer gridColumn="1 / span 10" maxWidth="1280px" minH="480px" childrenStyle={{ display: 'block' }} padding="0 24px">
         <Heading as="h1" size="m" margin="45px 0">{t('navbar:my-profile')}</Heading>
         <Tabs index={currentTabIndex} display="flex" flexDirection={{ base: 'column', md: 'row' }} variant="unstyled" gridGap="40px">
           <TabList display="flex" flexDirection="column" width={{ base: '100%', md: '300px' }}>
