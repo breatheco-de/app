@@ -74,6 +74,13 @@
             "single": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
           }
         },
+        "description_color": {
+          "type": "Color",
+          "config": {
+            "label": "Description Color",
+            "placeholder": ""
+          }
+        },
         "image": {
           "type": "Image",
           "config": {
