@@ -31,7 +31,6 @@ module.exports = {
     '/profile': ['profile'],
     '/profile/[slug]': ['profile'],
     '/thank-you': ['thank-you'],
-    '/about-us': ['about-us'],
   },
   locales: ['en', 'es'],
   defaultLocale: 'en',

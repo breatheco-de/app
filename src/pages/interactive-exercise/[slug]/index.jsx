@@ -41,6 +41,7 @@ import MktRecommendedCourses from '../../../common/components/MktRecommendedCour
 import CustomTheme from '../../../../styles/theme';
 import GridContainer from '../../../common/components/GridContainer';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
+import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&big=true&limit=2000`);
@@ -83,6 +84,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     title, translations, description, preview,
   } = result;
   const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+  if (markdownResp?.status >= 400) {
+    return {
+      notFound: true,
+    };
+  }
+
   const markdown = await markdownResp.text();
 
   // in "lesson.translations" rename "us" key to "en" key if exists
@@ -607,8 +615,14 @@ const Exercise = ({ exercise, markdown }) => {
       <GridContainer
         height="100%"
         minHeight="500px"
+        gridTemplateColumns={{ base: 'repeat(12, 1fr)', lg: '4fr repeat(12, 1fr)' }}
+        gridGap="36px"
+        padding="0 10px"
       >
-        <Box display={{ base: 'block', lg: 'flex' }} gridColumn="2 / span 5">
+        <Box display={{ base: 'none', lg: 'grid' }} height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '1rem 0 0 0' }}>
+          <MktSideRecommendedCourses />
+        </Box>
+        <Box display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '1 / span 6', lg: '2 / span 8' }}>
           <Box
             display={{ base: 'flex', md: 'none' }}
             flexDirection="column"
@@ -661,7 +675,7 @@ const Exercise = ({ exercise, markdown }) => {
 
         <Box
           display={{ base: 'none', md: 'flex' }}
-          gridColumn="7 / span 3"
+          gridColumn={{ base: '7 / span 4', lg: '10 / span 4' }}
           margin={{ base: '20px 0 0 auto', lg: '-10rem 0 0 auto' }}
           flexDirection="column"
           backgroundColor={useColorModeValue('white', 'featuredDark')}

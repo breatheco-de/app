@@ -38,7 +38,6 @@ const PrismicTextComponent = ({ field, ...rest }) => {
           <Text
             fontSize="14px"
             lineHeight="18px"
-            margin="15px 0"
             color={fontColor2}
             {...rest}
           >

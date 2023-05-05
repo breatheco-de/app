@@ -13,7 +13,7 @@ import asPrivate from '../../common/context/PrivateRouteWrapper';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
-import { isPlural, sortToNearestTodayDate, syncInterval } from '../../utils';
+import { isPlural, removeStorageItem, sortToNearestTodayDate, syncInterval } from '../../utils';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
@@ -24,6 +24,8 @@ import LiveEvent from '../../common/components/LiveEvent';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useProgramList from '../../common/store/actions/programListAction';
 import handlers from '../../common/handlers';
+import useSubscriptionsHandler from '../../common/store/actions/subscriptionAction';
+import { PREPARING_FOR_COHORT } from '../../common/store/types';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -46,13 +48,17 @@ function chooseProgram() {
   const { t } = useTranslation('choose-program');
   const [, setProfile] = usePersistent('profile', {});
   const [, setCohortSession] = usePersistent('cohortSession', {});
+  const [subscriptionProcess] = usePersistent('subscription-process', null);
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
   const [events, setEvents] = useState(null);
   const [subscriptionData, setSubscriptionData] = useState([]);
   const [liveClasses, setLiveClasses] = useState([]);
   const { state, programsList, updateProgramList } = useProgramList();
+  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
+  const { fetchSubscriptions } = useSubscriptionsHandler();
   const [cohortTasks, setCohortTasks] = useState({});
+  const [isRevalidating, setIsRevalidating] = useState(false);
   const { isLoading: userLoading, user, choose } = useAuth();
   const { lightColor } = useStyle();
   const router = useRouter();
@@ -66,24 +72,57 @@ function chooseProgram() {
   const fetchAdmissions = () => bc.admissions().me();
 
   const options = {
-    // cache 1 hour
-    cacheTime: 1000 * 60 * 60,
+    cacheTime: 1000 * 60 * 60, // cache 1 hour
     refetchOnWindowFocus: false,
   };
 
-  const { isLoading, data: dataQuery } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options }, true);
+  const { isLoading, data: dataQuery, refetch } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options });
 
   useEffect(() => {
-    bc.payment({
-      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
-    }).subscriptions()
-      .then(({ data }) => {
+    const cohorts = dataQuery?.cohorts;
+    const cohortIsReady = cohorts?.length > 0 && cohorts?.some((item) => {
+      const cohort = item?.cohort;
+      const academy = cohort?.academy;
+      if (cohort?.id === subscriptionProcess?.id
+        && cohort?.slug === subscriptionProcess?.slug
+        && academy?.id === subscriptionProcess?.academy_info?.id) return true;
+
+      return false;
+    });
+
+    const revalidate = setTimeout(() => {
+      if (subscriptionProcess?.status === PREPARING_FOR_COHORT) {
+        setIsRevalidating(true);
+        if (!cohortIsReady) {
+          refetch();
+          console.log('revalidated on:', new Date().toLocaleString());
+        } else {
+          setIsRevalidating(false);
+          console.log('Start learning!');
+          removeStorageItem('subscription-process');
+        }
+      }
+    }, 2000);
+
+    return () => clearTimeout(revalidate);
+  }, [dataQuery]);
+
+  useEffect(() => {
+    setSubscriptionLoading(true);
+    fetchSubscriptions()
+      .then((data) => {
         setSubscriptionData(data);
-      });
+      })
+      .finally(() => setSubscriptionLoading(false));
   }, []);
 
+  const allSubscriptions = subscriptionData?.subscriptions
+    && subscriptionData?.plan_financings
+    && [...subscriptionData?.subscriptions, ...subscriptionData?.plan_financings]
+      .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
+
   useEffect(() => {
-    if (dataQuery && Object.values(cohortTasks)?.length > 0) {
+    if (subscriptionLoading === false && dataQuery && Object.values(cohortTasks)?.length > 0) {
       updateProgramList(dataQuery?.cohorts?.reduce((acc, value) => {
         acc[value.cohort.slug] = {
           ...state[value.cohort.slug],
@@ -96,13 +135,14 @@ function chooseProgram() {
           subscription: subscriptionData?.subscriptions?.find(
             (sub) => sub.selected_cohort?.slug === value.cohort.slug,
           ) || null,
+          all_subscriptions: allSubscriptions,
           slug: value.cohort.slug,
         };
         return acc;
       }, {}));
       setProfile(dataQuery);
     }
-  }, [dataQuery, cohortTasks]);
+  }, [dataQuery, cohortTasks, subscriptionLoading]);
 
   // console.log('cohorts', dataQuery?.cohorts);
   // TOOD: usar available_as_saas
@@ -359,7 +399,7 @@ function chooseProgram() {
                 </NextChakraLink>
               )}
             </Box>
-            <Box flex={{ base: 1, md: 0.3 }} zIndex={10} position={{ base: 'inherit', md: 'absolute' }} maxWidth="320px" right={0} top={0}>
+            <Box flex={{ base: 1, md: 0.3 }} zIndex={10} position={{ base: 'inherit', md: 'absolute' }} right={0} top={0}>
               {flags?.appReleaseEnableLiveEvents && (
                 <LiveEvent
                   featureLabel={t('common:live-event.title')}
@@ -367,6 +407,7 @@ function chooseProgram() {
                   mainClasses={liveClasses?.length > 0 ? liveClasses : []}
                   otherEvents={events}
                   maxWidth={{ base: '100%', sm: '500px', md: '340px' }}
+                  minWidth={{ base: '100%', sm: '500px', md: '340px' }}
                   margin="0 auto"
                 />
               )}
@@ -378,6 +419,29 @@ function chooseProgram() {
               <ChooseProgram chooseList={dataQuery?.cohorts} handleChoose={handleChoose} />
             )}
           </Box>
+          {isRevalidating && (
+            <Box
+              display="grid"
+              mt="1rem"
+              gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
+              gridColumnGap="4rem"
+              gridRowGap="3rem"
+              height="auto"
+            >
+              {Array(1).fill(0).map((_, i) => (
+                <Skeleton
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={i}
+                  startColor={commonStartColor}
+                  endColor={commonEndColor}
+                  width="100%"
+                  height="286px"
+                  color="white"
+                  borderRadius="17px"
+                />
+              ))}
+            </Box>
+          )}
           {isLoading && dataQuery?.cohorts?.length > 0 && (
             <Box
               display="grid"

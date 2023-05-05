@@ -10,9 +10,10 @@ import { useEffect, useState } from 'react';
 import Icon from '../../common/components/Icon';
 import MobileItem from './MobileItem';
 import LanguageSelector from '../../common/components/LanguageSelector';
-import UpgradeExperience from '../../common/components/UpgradeExperience';
+// import UpgradeExperience from '../../common/components/UpgradeExperience';
 
 const MobileNav = ({
+  // eslint-disable-next-line no-unused-vars
   NAV_ITEMS, readSyllabus, haveSession, translations, mktCourses,
 }) => {
   const [privateItems, setPrivateItems] = useState([]);
@@ -86,11 +87,11 @@ const MobileNav = ({
           />
         );
       })}
-      {mktCourses?.length > 0 && (
+      {/* {mktCourses?.length > 0 && (
         <Box display={{ base: 'block', md: 'none' }}>
           <UpgradeExperience data={mktCourses} />
         </Box>
-      )}
+      )} */}
 
       <Box
         borderTop={1}

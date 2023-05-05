@@ -139,26 +139,27 @@ const IntroductionSection = ({
         {slice?.primary?.buttontext?.length > 0 && slice?.primary?.buttontext ? (
           <Button
             variant="default"
-            width="200px"
+            width="fit-content"
+            minWidth="200px"
             height="52px"
             fontSize="18px"
             m="25px 0"
             letterSpacing="0.05em"
             textTransform="uppercase"
-            onClick={() => router?.push(slice?.primary?.button_link || '#pricing')}
+            onClick={() => router?.push(slice?.primary?.button_link?.url || '#pricing')}
           >
             <PrismicRichText field={slice?.primary?.buttontext} />
           </Button>
         ) : (
           <>
             {data?.callToAction?.title && (
-              <Button variant="default" width="200px" height="52px" fontSize="18px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router.push(data?.callToAction.href)}>
+              <Button variant="default" width="fit-content" minWidth="200px" height="52px" fontSize="18px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router.push(data?.callToAction.href)}>
                 {data?.callToAction.title}
               </Button>
             )}
           </>
         )}
-        {(slice?.primary?.bullets?.[0]?.spans?.length > 0 || data?.bullets?.length > 0) && (
+        {(slice?.primary?.bullets?.[0]?.spans?.length > 0 || slice?.primary?.bullets?.length > 0) && (
           <Box as="ul" display="flex" flexDirection="column" gridGap="4px" width="fit-content">
             {slice?.primary?.bullets?.length > 0
               ? (

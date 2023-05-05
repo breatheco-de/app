@@ -106,7 +106,7 @@ const EventCard = ({ id, title, description, host, startingAt, endingAt, technol
   }, []);
 
   return (
-    <Flex flexDirection="column" gridGap="16px" maxWidth="320px" borderRadius="12px" padding="16px" border={startedButRemain ? '2px solid' : '1px solid'} borderColor={startedButRemain ? 'blue.default' : 'gray.350'} background={startedButRemain ? 'blue.light' : 'inherit'} {...rest}>
+    <Flex flexDirection="column" gridGap="16px" maxWidth={{ base: '260px', sm: '310px' }} borderRadius="12px" padding="16px" border={startedButRemain ? '2px solid' : '1px solid'} borderColor={startedButRemain ? 'blue.default' : 'gray.350'} background={startedButRemain ? 'blue.light' : 'inherit'} {...rest}>
       {/* -------------------------------- head event info -------------------------------- */}
       <Flex justifyContent="space-between" alignItems="center">
         <Box color={startedButRemain ? 'blue.default' : lightColor} display="flex" alignItems="center" gridGap="8px">
@@ -144,14 +144,14 @@ const EventCard = ({ id, title, description, host, startingAt, endingAt, technol
       </Text>
 
       {/* -------------------------------- host info -------------------------------- */}
-      {typeof host === 'string' ? (
+      {(host !== null && host !== undefined) && (typeof host === 'string' ? (
         <Heading size="14px" fontWeight={700}>
           {host}
         </Heading>
       ) : (
         <Flex gridGap="8px">
           <Box width="35px" height="35px">
-            <Img src="https://via.placeholder.com/150" alt="teacher" width="100%" height="100%" borderRadius="50px" />
+            <Img src={host?.image ? host?.image : '/static/images/4geeks.png'} alt="teacher" width="100%" height="100%" borderRadius="50px" />
           </Box>
           <Box>
             <Heading size="14px" fontWeight={700}>
@@ -163,8 +163,8 @@ const EventCard = ({ id, title, description, host, startingAt, endingAt, technol
             </Text> */}
           </Box>
         </Flex>
-      )}
-      {!startedButRemain ? (
+      ))}
+      {startedButRemain ? (
         <Link
           margin="auto 0 0 0"
           href={`${process.env.BREATHECODE_HOST}/v1/events/me/event/${id}/join${linkQuery}`}

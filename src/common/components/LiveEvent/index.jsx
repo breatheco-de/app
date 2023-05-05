@@ -139,7 +139,6 @@ const LiveEvent = ({
       borderColor="#DADADA"
       borderRadius="11px"
       maxWidth="100%"
-      minWidth="320px"
       {...rest}
     >
       {(featureLabel || featureReadMoreUrl) && (
