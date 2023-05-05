@@ -52,7 +52,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   };
   const isCurrenLang = locale === engPrefix[lesson?.lang] || locale === lesson?.lang;
 
-  if (response.status >= 400 || response.status_code >= 400 || lesson.asset_type !== 'LESSON' || !isCurrenLang) {
+  if (response?.status >= 400 || response?.status_code >= 400 || lesson?.asset_type !== 'LESSON' || !isCurrenLang) {
     return {
       notFound: true,
     };
@@ -72,6 +72,11 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
   if (exensionName !== 'ipynb') {
     const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+    if (resp.status >= 400) {
+      return {
+        notFound: true,
+      };
+    }
     markdown = await resp.text();
   } else {
     ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
@@ -281,17 +286,32 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
                     </Box>
                   </Tooltip>
                 </Button>
-                <iframe
-                  id="iframe"
-                  src={`${ipynbHtmlUrl}?theme=${currentTheme}&plain=true`}
-                  seamless
-                  style={{
-                    width: '100%',
-                    height: '80vh',
-                    maxHeight: '100%',
-                  }}
-                  title={`${lesson.title} IPython Notebook`}
-                />
+                <Box display={currentTheme === 'dark' ? 'block' : 'none'}>
+                  <iframe
+                    id="iframe"
+                    src={`${ipynbHtmlUrl}?theme=dark&plain=true`}
+                    seamless
+                    style={{
+                      width: '100%',
+                      height: '80vh',
+                      maxHeight: '100%',
+                    }}
+                    title={`${lesson.title} IPython Notebook`}
+                  />
+                </Box>
+                <Box display={currentTheme === 'light' ? 'block' : 'none'}>
+                  <iframe
+                    id="iframe"
+                    src={`${ipynbHtmlUrl}?theme=light&plain=true`}
+                    seamless
+                    style={{
+                      width: '100%',
+                      height: '80vh',
+                      maxHeight: '100%',
+                    }}
+                    title={`${lesson.title} IPython Notebook`}
+                  />
+                </Box>
 
                 <Modal isOpen={isFullScreen} closeOnOverlayClick onClose={() => setIsFullScreen(false)} isCentered size="5xl" borderRadius="0">
                   <ModalOverlay />

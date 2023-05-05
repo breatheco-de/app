@@ -43,7 +43,7 @@ const MktEventCards = ({ id, title, endpoint, ...rest }) => {
         <Icon icon="longArrowRight" width="58px" height="30px" />
       </Flex>
       <Box position="relative" className="hideOverflowX__" overflow="auto" width="100%">
-        <Flex gridGap="24px" width="max-content" margin="0 auto">
+        <Flex gridGap="20px" width="max-content" margin="0">
           {events.map((event) => (
             <EventCard
               key={event?.id}

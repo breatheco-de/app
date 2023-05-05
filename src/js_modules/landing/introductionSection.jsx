@@ -159,7 +159,7 @@ const IntroductionSection = ({
             )}
           </>
         )}
-        {(slice?.primary?.bullets?.[0]?.spans?.length > 0 || data?.bullets?.length > 0) && (
+        {(slice?.primary?.bullets?.[0]?.spans?.length > 0 || slice?.primary?.bullets?.length > 0) && (
           <Box as="ul" display="flex" flexDirection="column" gridGap="4px" width="fit-content">
             {slice?.primary?.bullets?.length > 0
               ? (

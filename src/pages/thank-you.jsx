@@ -10,7 +10,7 @@ import { getStorageItem } from '../utils';
 import useStyle from '../common/hooks/useStyle';
 
 export const getStaticProps = async ({ locale, locales }) => {
-  const t = await getT(locale, 'projects');
+  const t = await getT(locale, 'thank-you');
 
   return {
     props: {
