@@ -250,9 +250,6 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
                 title={t('common:related-courses')}
                 technologies={lesson?.technologies.join(',')}
               />
-              {/* {(markdown && ipynbHtmlUrl === '')
-                ? <MarkDownParser content={markdownData.content} />
-                : <MDSkeleton />} */}
 
             </Box>
 
@@ -263,14 +260,15 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
               )}
             </>
           )}
-          <Box
-            height="100%"
-            gridColumn="2 / span 12"
-            borderRadius="3px"
-            maxWidth="1280px"
-            width={{ base: '100%', md: 'auto' }}
-          >
-            {ipynbHtmlUrl && markdown === '' && (
+
+          {ipynbHtmlUrl && markdown === '' && (
+            <Box
+              height="100%"
+              gridColumn="2 / span 12"
+              borderRadius="3px"
+              maxWidth="1280px"
+              width={{ base: '100%', md: 'auto' }}
+            >
               <Box width="100%" height="100%">
                 <Button
                   background={currentTheme}
@@ -337,8 +335,8 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
                   </ModalContent>
                 </Modal>
               </Box>
-            )}
-          </Box>
+            </Box>
+          )}
         </Box>
       </GridContainer>
     </>

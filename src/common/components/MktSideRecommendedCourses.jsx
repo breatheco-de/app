@@ -2,29 +2,29 @@ import { Box, Button, Image } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
 import useStyle from '../hooks/useStyle';
 import Heading from './Heading';
 import Text from './Text';
 import Icon from './Icon';
-import axios from '../../axios';
 import { CardSkeleton } from './Skeleton';
 
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
 
 const MktSideRecommendedCourses = ({ title, endpoint }) => {
-  const { t } = useTranslation('common');
+  const { t, lang } = useTranslation('common');
   const [isLoading, setIsLoading] = useState(true);
   const [courses, setCourses] = useState([]);
-  const router = useRouter();
 
   const { featuredColor } = useStyle();
-  axios.defaults.headers.common['Accept-Language'] = router?.locale;
+
+  const headers = {
+    'Accept-Language': lang,
+  };
 
   useEffect(async () => {
     try {
-      const res = await fetch(`${process.env.BREATHECODE_HOST}${endpoint}`);
+      const res = await fetch(`${process.env.BREATHECODE_HOST}${endpoint}`, { headers });
       const data = await res.json();
 
       if (res?.status < 400 && data.length > 0) {
