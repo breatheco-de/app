@@ -106,7 +106,7 @@ const EventCard = ({ id, title, description, host, startingAt, endingAt, technol
   }, []);
 
   return (
-    <Flex flexDirection="column" gridGap="16px" maxWidth="320px" borderRadius="12px" padding="16px" border={startedButRemain ? '2px solid' : '1px solid'} borderColor={startedButRemain ? 'blue.default' : 'gray.350'} background={startedButRemain ? 'blue.light' : 'inherit'} {...rest}>
+    <Flex flexDirection="column" gridGap="16px" maxWidth={{ base: '260px', sm: '310px' }} borderRadius="12px" padding="16px" border={startedButRemain ? '2px solid' : '1px solid'} borderColor={startedButRemain ? 'blue.default' : 'gray.350'} background={startedButRemain ? 'blue.light' : 'inherit'} {...rest}>
       {/* -------------------------------- head event info -------------------------------- */}
       <Flex justifyContent="space-between" alignItems="center">
         <Box color={startedButRemain ? 'blue.default' : lightColor} display="flex" alignItems="center" gridGap="8px">

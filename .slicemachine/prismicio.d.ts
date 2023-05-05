@@ -326,6 +326,16 @@ interface OneColumnSliceDefaultPrimary {
      */
     button_url: prismicT.LinkField;
     /**
+     * Font color field in *OneColumn → Primary*
+     *
+     * - **Field Type**: Color
+     * - **Placeholder**: Color of title and description
+     * - **API ID Path**: one_column.primary.font_color
+     * - **Documentation**: https://prismic.io/docs/core-concepts/color
+     *
+     */
+    font_color: prismicT.ColorField;
+    /**
      * KPI Title 1 field in *OneColumn → Primary*
      *
      * - **Field Type**: Text
@@ -1196,6 +1206,16 @@ interface TwoColumnSliceDefaultPrimary {
      *
      */
     description: prismicT.RichTextField;
+    /**
+     * Description Color field in *TwoColumn → Primary*
+     *
+     * - **Field Type**: Color
+     * - **Placeholder**: *None*
+     * - **API ID Path**: two_column.primary.description_color
+     * - **Documentation**: https://prismic.io/docs/core-concepts/color
+     *
+     */
+    description_color: prismicT.ColorField;
     /**
      * image field in *TwoColumn → Primary*
      *

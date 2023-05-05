@@ -13,7 +13,7 @@ import asPrivate from '../../common/context/PrivateRouteWrapper';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
-import { isPlural, sortToNearestTodayDate, syncInterval } from '../../utils';
+import { isPlural, removeStorageItem, sortToNearestTodayDate, syncInterval } from '../../utils';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
@@ -25,6 +25,7 @@ import NextChakraLink from '../../common/components/NextChakraLink';
 import useProgramList from '../../common/store/actions/programListAction';
 import handlers from '../../common/handlers';
 import useSubscriptionsHandler from '../../common/store/actions/subscriptionAction';
+import { PREPARING_FOR_COHORT } from '../../common/store/types';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -47,6 +48,7 @@ function chooseProgram() {
   const { t } = useTranslation('choose-program');
   const [, setProfile] = usePersistent('profile', {});
   const [, setCohortSession] = usePersistent('cohortSession', {});
+  const [subscriptionProcess] = usePersistent('subscription-process', null);
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
   const [events, setEvents] = useState(null);
@@ -56,6 +58,7 @@ function chooseProgram() {
   const [subscriptionLoading, setSubscriptionLoading] = useState(false);
   const { fetchSubscriptions } = useSubscriptionsHandler();
   const [cohortTasks, setCohortTasks] = useState({});
+  const [isRevalidating, setIsRevalidating] = useState(false);
   const { isLoading: userLoading, user, choose } = useAuth();
   const { lightColor } = useStyle();
   const router = useRouter();
@@ -69,12 +72,40 @@ function chooseProgram() {
   const fetchAdmissions = () => bc.admissions().me();
 
   const options = {
-    // cache 1 hour
-    cacheTime: 1000 * 60 * 60,
+    cacheTime: 1000 * 60 * 60, // cache 1 hour
     refetchOnWindowFocus: false,
   };
 
-  const { isLoading, data: dataQuery } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options }, true);
+  const { isLoading, data: dataQuery, refetch } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options });
+
+  useEffect(() => {
+    const cohorts = dataQuery?.cohorts;
+    const cohortIsReady = cohorts?.length > 0 && cohorts?.some((item) => {
+      const cohort = item?.cohort;
+      const academy = cohort?.academy;
+      if (cohort?.id === subscriptionProcess?.id
+        && cohort?.slug === subscriptionProcess?.slug
+        && academy?.id === subscriptionProcess?.academy_info?.id) return true;
+
+      return false;
+    });
+
+    const revalidate = setTimeout(() => {
+      if (subscriptionProcess?.status === PREPARING_FOR_COHORT) {
+        setIsRevalidating(true);
+        if (!cohortIsReady) {
+          refetch();
+          console.log('revalidated on:', new Date().toLocaleString());
+        } else {
+          setIsRevalidating(false);
+          console.log('Start learning!');
+          removeStorageItem('subscription-process');
+        }
+      }
+    }, 2000);
+
+    return () => clearTimeout(revalidate);
+  }, [dataQuery]);
 
   useEffect(() => {
     setSubscriptionLoading(true);
@@ -388,6 +419,29 @@ function chooseProgram() {
               <ChooseProgram chooseList={dataQuery?.cohorts} handleChoose={handleChoose} />
             )}
           </Box>
+          {isRevalidating && (
+            <Box
+              display="grid"
+              mt="1rem"
+              gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
+              gridColumnGap="4rem"
+              gridRowGap="3rem"
+              height="auto"
+            >
+              {Array(1).fill(0).map((_, i) => (
+                <Skeleton
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={i}
+                  startColor={commonStartColor}
+                  endColor={commonEndColor}
+                  width="100%"
+                  height="286px"
+                  color="white"
+                  borderRadius="17px"
+                />
+              ))}
+            </Box>
+          )}
           {isLoading && dataQuery?.cohorts?.length > 0 && (
             <Box
               display="grid"

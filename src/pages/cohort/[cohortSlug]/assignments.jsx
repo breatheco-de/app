@@ -47,6 +47,7 @@ const Assignments = () => {
   const { contextState, setContextState } = useAssignments();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
+  const [mandatoryTasks, setMandatoryTasks] = useState([]);
   const [personalCohorts, setPersonalCohorts] = useState([]);
   // const [allTasksPaginationProps, setAllTasksPaginationProps] = useState({});
   const [allTasksOffset, setAllTasksOffset] = useState(20);
@@ -160,17 +161,18 @@ const Assignments = () => {
           isClosable: true,
         });
       });
-    bc.admissions()
-      .cohort(cohortSlug, academy)
-      .then(({ data }) => {
-        setAllCohorts([
-          {
-            label: data.name,
-            slug: data.slug,
-            value: data.id,
-            academy: data.academy.id,
-          },
-        ]);
+    bc.admissions().cohort(cohortSlug, academy)
+      .then(async ({ data }) => {
+        setAllCohorts([{
+          label: data.name,
+          slug: data.slug,
+          value: data.id,
+          academy: data.academy.id,
+        }]);
+        const syllabusData = await bc.admissions().syllabus(data.syllabus_version.slug, data.syllabus_version.version, academy);
+        let mandatoryAssignments = syllabusData?.data.json.days.filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object').map((obj) => obj.assignments);
+        mandatoryAssignments = [].concat(...mandatoryAssignments).filter((assignment) => assignment.mandatory).map((assignment) => assignment.slug);
+        setMandatoryTasks(mandatoryAssignments);
       })
       .catch(() => {
         toast({
@@ -807,7 +809,8 @@ const Assignments = () => {
                       borderColor={borderColor}
                       borderRadius="17px"
                     >
-                      <Box width="auto" minWidth="calc(110px - 0.5vw)">
+                      <Box display="flex" width="auto" minWidth="calc(110px - 0.5vw)">
+                        {mandatoryTasks.includes(task.associated_slug) && (<Icon icon="warning" color="yellow.default" width="28px" height="28px" style={{ marginRight: '15px' }} />)}
                         <TaskLabel currentTask={task} t={t} />
                       </Box>
 

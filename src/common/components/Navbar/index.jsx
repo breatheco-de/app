@@ -82,7 +82,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   };
 
   useEffect(() => {
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/marketing/course`)
+    axios.get(`${process.env.BREATHECODE_HOST}/v1/marketing/course?featured=true`)
       .then((response) => {
         const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null);
         setMktCourses(filterByTranslations || []);
