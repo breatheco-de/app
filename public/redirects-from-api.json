@@ -1,5 +1,10 @@
 [
   {
+    "source": "/lesson/react-hooks-explained-es",
+    "destination": "/es/lesson/react-hooks-explained-es",
+    "permanent": true
+  },
+  {
     "source": "/lesson/bootstrap-tutorial-of-bootstrap-4-es",
     "destination": "/es/lesson/bootstrap-tutorial-of-bootstrap-4-es",
     "permanent": true
@@ -47,11 +52,6 @@
   {
     "source": "/lesson/intro-to-python-es",
     "destination": "/es/lesson/intro-to-python-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/react-hooks-explained-es",
-    "destination": "/es/lesson/react-hooks-explained-es",
     "permanent": true
   },
   {

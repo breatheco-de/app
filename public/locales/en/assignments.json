@@ -1,6 +1,8 @@
 {
   "back-to": "Back to Dashboard",
   "title": "Assignments",
+  "students-view": "students view",
+  "projects-view": "projects view",
   "status": {
     "delivered": "Delivered",
     "approved": "Approved",
