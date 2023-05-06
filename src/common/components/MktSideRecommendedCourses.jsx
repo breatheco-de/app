@@ -1,4 +1,4 @@
-import { Box, Button, Image } from '@chakra-ui/react';
+import { Box, Image } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
@@ -7,6 +7,7 @@ import Heading from './Heading';
 import Text from './Text';
 import Icon from './Icon';
 import { CardSkeleton } from './Skeleton';
+import Link from './NextChakraLink';
 
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
@@ -54,10 +55,18 @@ const MktSideRecommendedCourses = ({ title, endpoint }) => {
           <Text fontSize="12px" lineHeight="14px" padding="0 20px">
             {featuredCourse?.course_translation?.short_description || featuredCourse?.course_translation?.description}
           </Text>
-          <Button variant="default" width="auto" gridGap="10px" margin="0 20px">
+          <Link
+            variant="buttonDefault"
+            display="flex"
+            href={`https://4geeks.com/${featuredCourse?.slug}`}
+            alignItems="center"
+            width="auto"
+            gridGap="10px"
+            margin="0 20px"
+          >
             {t('learn-more')}
             <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
-          </Button>
+          </Link>
         </Box>
       ) : (
         <CardSkeleton withoutContainer quantity={1} />
