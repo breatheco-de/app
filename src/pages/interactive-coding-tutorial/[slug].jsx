@@ -214,7 +214,7 @@ const ProjectSlug = ({ project, markdown }) => {
         gridTemplateColumns={{ base: 'repeat(12, 1fr)', lg: '8fr repeat(12, 1fr) 5fr' }}
         display={{ base: 'block', sm: 'grid' }}
       >
-        <Box display={{ base: 'none', lg: 'flex' }} gridColumn="1 / span 1" height="fit-content" margin={{ base: '0 0 40px', md: '30px 0 0 0' }}>
+        <Box display={{ base: 'none', lg: 'flex' }} position="sticky" top="20px" gridColumn="1 / span 1" height="fit-content" margin={{ base: '0 0 40px', md: '30px 0 0 0' }}>
           <MktSideRecommendedCourses />
         </Box>
         <Flex display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '2 / span 10', lg: '2 / span 12' }} height="100%" gridGap="26px">
