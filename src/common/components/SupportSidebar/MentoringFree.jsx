@@ -27,7 +27,7 @@ const MentoringFree = ({
 
   const handleService = (service) => {
     bc.mentorship({
-      service: service.slug,
+      services: service.slug,
       status: 'ACTIVE',
       syllabus: slug,
     }).getMentor()
