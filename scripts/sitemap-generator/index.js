@@ -59,24 +59,24 @@ async function generateSitemap() {
   const generateTechnologySlug = (data, conector, type) => {
     console.log('');
     if (type === 'lesson') {
-      const lessonsData = data.filter((l) => {
+      const lessonsData = data?.length > 0 ? data.filter((l) => {
         const lessonExists = l.assets.some((a) => a?.asset_type === 'LESSON');
         return lessonExists;
-      });
-      return lessonsData?.map((l) => (`/${conector}/${l.slug}`));
+      }) : [];
+      return lessonsData?.map((l) => (`/${conector}/${l?.slug}`));
     }
     if (type === 'exercise') {
-      const exercisesData = data.filter((l) => {
+      const exercisesData = data?.length > 0 ? data.filter((l) => {
         const assets = l.assets.some((a) => a?.asset_type === 'EXERCISE');
         return assets;
-      });
-      return exercisesData?.map((l) => (`/${conector}/${l.slug}`));
+      }) : [];
+      return exercisesData?.map((l) => (`/${conector}/${l?.slug}`));
     }
     if (type === 'project') {
-      const projectsData = data.filter((l) => {
+      const projectsData = data?.length > 0 ? data.filter((l) => {
         const assets = l.assets.some((a) => a?.asset_type === 'PROJECT');
         return assets.length > 0 && (`/${conector}/${l.slug}`);
-      });
+      }) : [];
       return projectsData;
     }
     if (type === 'tech') {

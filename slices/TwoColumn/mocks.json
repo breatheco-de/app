@@ -112,6 +112,11 @@
         "__TYPE__": "FieldContent",
         "value": "basket",
         "type": "Text"
+      },
+      "description_color": {
+        "__TYPE__": "FieldContent",
+        "value": "#000000",
+        "type": "Color"
       }
     },
     "items": [

@@ -61,6 +61,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   } = data;
 
   const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+  if (markdownResp?.status >= 400) {
+    return {
+      notFound: true,
+    };
+  }
+
   const markdown = await markdownResp.text();
 
   const ogUrl = {
