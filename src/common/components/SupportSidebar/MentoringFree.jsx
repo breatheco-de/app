@@ -12,7 +12,7 @@ import bc from '../../services/breathecode';
 
 const MentoringFree = ({
   mentoryProps, width, setMentoryProps,
-  setOpenMentors, programServices, dateFormated, servicesFiltered, searchProps,
+  programServices, dateFormated, servicesFiltered, searchProps,
   setSearchProps, setProgramMentors, savedChanges, setSavedChanges,
   mentorsFiltered, step1, step2, dateFormated2,
 }) => {
@@ -67,7 +67,7 @@ const MentoringFree = ({
         </Box>
       )}
       {!mentoryProps?.service && (
-        <Box position="absolute" top="16px" right="18px" onClick={() => setOpenMentors(false)} cursor="pointer">
+        <Box position="absolute" top="16px" right="18px" onClick={() => {}} cursor="pointer">
           <Icon icon="close" width="15px" height="15px" color="#606060" />
         </Box>
       )}
@@ -249,7 +249,7 @@ const MentoringFree = ({
                     </Button>
                   )}
                   {mentoryProps?.confirm && (
-                    <Button variant="default" onClick={() => setOpenMentors(false)} textTransform="uppercase" margin="15px auto 10px auto">
+                    <Button variant="default" onClick={() => {}} textTransform="uppercase" margin="15px auto 10px auto">
                       Done
                     </Button>
                   )}
@@ -287,7 +287,6 @@ MentoringFree.propTypes = {
   mentoryProps: PropTypes.objectOf(PropTypes.any),
   width: PropTypes.string,
   setMentoryProps: PropTypes.func.isRequired,
-  setOpenMentors: PropTypes.func.isRequired,
   programServices: PropTypes.arrayOf(PropTypes.any),
   dateFormated: PropTypes.objectOf(PropTypes.any).isRequired,
   servicesFiltered: PropTypes.arrayOf(PropTypes.any).isRequired,

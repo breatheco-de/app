@@ -10,11 +10,11 @@ import { getStorageItem, lengthOfString, syncInterval } from '../../../utils';
 
 const MainEvent = ({
   index, event, mainEvents, getOtherEvents, isLiveOrStarting, getLiveIcon, host, nearestEvent,
-  isLive, stTranslation, mainClasses, textTime, subLabel, isWorkshop,
+  isLive, stTranslation, mainClasses, textTime, subLabel, isWorkshop, limitOfText,
 }) => {
   const [time, setTime] = useState('');
   const { t, lang } = useTranslation('live-event');
-  const limit = 40;
+  const limit = limitOfText || 40;
   const eventTitle = event?.cohort_name || event?.title;
   const titleLength = lengthOfString(eventTitle);
   const truncatedText = titleLength > limit ? `${eventTitle?.substring(0, limit)}...` : eventTitle;
@@ -188,10 +188,12 @@ MainEvent.propTypes = {
   mainClasses: PropTypes.arrayOf(PropTypes.any).isRequired,
   subLabel: PropTypes.string,
   isWorkshop: PropTypes.bool,
+  limitOfText: PropTypes.number,
 };
 MainEvent.defaultProps = {
   subLabel: '',
   isWorkshop: false,
+  limitOfText: 40,
 };
 
 export default MainEvent;

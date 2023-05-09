@@ -16,7 +16,7 @@ import MentoringConsumables from './MentoringConsumables';
 import useAuth from '../../hooks/useAuth';
 
 const Mentoring = ({
-  width, programServices, setOpenMentors, flags,
+  width, programServices, flags,
 }) => {
   const { t } = useTranslation('dashboard');
   const [savedChanges, setSavedChanges] = useState({});
@@ -101,6 +101,10 @@ const Mentoring = ({
   useEffect(async () => {
     if (programServices.length > 0) {
       const mentors = await getAllMentorsAvailable();
+      const allConsumables = await bc.payment().service().consumable()
+        .then((res) => res?.data);
+
+      setServiceMentoring(allConsumables);
       setAllMentorsAvailable(mentors);
     }
   }, [programServices]);
@@ -115,7 +119,6 @@ const Mentoring = ({
             serviceMentoring,
             cohortService,
             setMentoryProps,
-            setOpenMentors,
             programServices,
             dateFormated,
             servicesFiltered,
@@ -138,7 +141,6 @@ const Mentoring = ({
             mentoryProps,
             width,
             setMentoryProps,
-            setOpenMentors,
             programServices,
             dateFormated,
             servicesFiltered,
@@ -162,7 +164,6 @@ const Mentoring = ({
 Mentoring.propTypes = {
   programServices: PropTypes.arrayOf(PropTypes.object).isRequired,
   width: PropTypes.string,
-  setOpenMentors: PropTypes.func.isRequired,
   flags: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
