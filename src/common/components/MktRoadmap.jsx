@@ -11,6 +11,9 @@ import Heading from './Heading';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
 import GridContainer from './GridContainer';
+import modifyEnv from '../../../modifyEnv';
+
+const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
 const MktRoadmap = ({ id, title, course, ...rest }) => {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
@@ -22,7 +25,7 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
   axios.defaults.headers.common['Accept-Language'] = router.locale;
   useEffect(() => {
     if (typeof course === 'string') {
-      axios.get(`${process.env.BREATHECODE_HOST}/v1/marketing/course/${course}`)
+      axios.get(`${BREATHECODE_HOST}/v1/marketing/course/${course}`)
         .then((response) => {
           setData(response?.data?.course_translation?.course_modules || []);
         })
