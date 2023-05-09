@@ -47,11 +47,10 @@ const MentoringFree = ({
   mentoryProps, width, setMentoryProps,
   programServices, dateFormated, servicesFiltered, searchProps,
   setSearchProps, setProgramMentors, savedChanges, setSavedChanges,
-  mentorsFiltered, step1, step2, dateFormated2, allMentorsAvailable,
+  mentorsFiltered, dateFormated2, allMentorsAvailable,
 }) => {
   const { t } = useTranslation('dashboard');
 
-  const mentoryFormStarted = mentoryProps?.service || mentoryProps?.mentor || mentoryProps?.date;
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   const [open, setOpen] = useState(false);
   const { borderColor, lightColor, hexColor } = useStyle();
@@ -91,9 +90,6 @@ const MentoringFree = ({
       borderWidth="0px"
       borderRadius="lg"
     >
-      <Box display="flex" justifyContent="center" alignItems="center" width="85px" height="50px" margin="0 auto" borderBottomRadius="10px" backgroundColor="yellow.default">
-        <Icon icon="idea" width="36px" height="36px" />
-      </Box>
       {mentoryProps?.service && (
         <Box position="absolute" top="16px" left="18px" onClick={() => setMentoryProps({})} cursor="pointer">
           <Icon icon="arrowLeft" width="25px" height="25px" color="#606060" />
@@ -104,7 +100,7 @@ const MentoringFree = ({
           <Icon icon="close" width="15px" height="15px" color="#606060" />
         </Box>
       )}
-      <Box display="flex" flexDirection="column" p="4" pb={mentoryFormStarted ? '0px' : '30px'} pt="20px" alignItems="center">
+      <Box display="flex" flexDirection="column" padding="16px" alignItems="center">
         <Box d="flex" flexDirection="column" alignItems="center" justifyContent="center">
           <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
             {t('supportSideBar.mentoring')}
@@ -322,20 +318,6 @@ const MentoringFree = ({
           </>
         )}
 
-        <Box display="flex" gridGap="8px" position="relative" py="20px">
-          <Box onClick={() => setMentoryProps({})} cursor="pointer">
-            <Icon icon="dot" color={step1 ? '#0097CD' : '#DADADA'} width="10px" height="10px" />
-          </Box>
-          <Box
-            onClick={() => setMentoryProps({
-              ...savedChanges, mentor: null, date: null, time: null,
-            })}
-            cursor="pointer"
-          >
-            <Icon icon="dot" color={step2 ? '#0097CD' : '#DADADA'} width="10px" height="10px" />
-          </Box>
-        </Box>
-
       </Box>
     </Box>
   );
@@ -354,8 +336,6 @@ MentoringFree.propTypes = {
   setSavedChanges: PropTypes.func.isRequired,
   setProgramMentors: PropTypes.func,
   mentorsFiltered: PropTypes.arrayOf(PropTypes.any).isRequired,
-  step1: PropTypes.bool.isRequired,
-  step2: PropTypes.bool.isRequired,
   dateFormated2: PropTypes.objectOf(PropTypes.any).isRequired,
   allMentorsAvailable: PropTypes.arrayOf(PropTypes.any).isRequired,
 };

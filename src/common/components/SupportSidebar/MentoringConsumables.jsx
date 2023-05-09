@@ -76,7 +76,7 @@ const MentoringConsumables = ({
   mentoryProps, width, serviceMentoring, cohortService, setMentoryProps,
   programServices, dateFormated, servicesFiltered, searchProps,
   setSearchProps, setProgramMentors, savedChanges, setSavedChanges, setServiceMentoring,
-  mentorsFiltered, step1, step2, dateFormated2, allMentorsAvailable,
+  mentorsFiltered, dateFormated2, allMentorsAvailable,
 }) => {
   const { t } = useTranslation('dashboard');
 
@@ -133,9 +133,9 @@ const MentoringConsumables = ({
       borderWidth="0px"
       borderRadius="lg"
     >
-      <Box display="flex" justifyContent="center" alignItems="center" width="85px" height="50px" margin="0 auto" borderBottomRadius="10px" backgroundColor="yellow.default">
+      {/* <Box display="flex" justifyContent="center" alignItems="center" width="85px" height="50px" margin="0 auto" borderBottomRadius="10px" backgroundColor="yellow.default">
         <Icon icon="idea" width="36px" height="36px" />
-      </Box>
+      </Box> */}
       {mentoryProps?.service && (serviceMentoring?.mentorship_service_sets?.length !== 0 && cohortService?.balance?.unit !== 0) && (
         <Box position="absolute" top="16px" left="18px" onClick={() => setMentoryProps({})} cursor="pointer">
           <Icon icon="arrowLeft" width="25px" height="25px" color="#606060" />
@@ -323,53 +323,6 @@ const MentoringConsumables = ({
                       </Box>
                     </>
                   )}
-                {/* {mentoryProps?.mentor && !mentoryProps?.date && (
-                  <Box width="100%" textAlign="center" mt="10px" background={commonBackground} borderRadius="0.375rem">
-                    <Box width="100%" textAlign="center" color={useColorModeValue('gray.600', 'gray.200')} py="14px" borderBottom="1px solid" borderColor={borderColor} mb="10px">
-                      Select a day
-                    </Box>
-                    <Box>
-                      <ReactDatePicker
-                        wrapperClassName="datePicker"
-                        selected={mentoryProps?.date}
-                        onChange={(date) => {
-                          setMentoryProps({ ...mentoryProps, date });
-                          setSavedChanges({ ...savedChanges, date });
-                        }}
-                        customInput={<ExampleCustomInput />}
-                        filterDate={isWeekday}
-                        dateFormat="dd/MM/yyyy"
-                        inline
-                      />
-                    </Box>
-                  </Box>
-                )}
-                {mentoryProps?.date && !mentoryProps?.time && (
-                  <Box width="100%" textAlign="center" mt="10px" background={commonBackground} borderRadius="0.375rem">
-                    <Box width="100%" textAlign="center" color={useColorModeValue('gray.600', 'gray.200')} py="14px" borderBottom="1px solid" borderColor={borderColor}>
-                      Select a time
-                    </Box>
-                    <Box p="15px 0 8px 0">
-                      <ReactDatePicker
-                        selected={mentoryProps?.time}
-                        onChange={(time) => {
-                          setMentoryProps({ ...mentoryProps, time: format(new Date(time), 'HH:mm') });
-                          setSavedChanges({ ...savedChanges, time: format(new Date(time), 'HH:mm') });
-                        }}
-                        inline
-                        showTimeSelect
-                        showTimeSelectOnly
-                        timeIntervals={60}
-                        timeCaption=""
-                        // dateFormat="h:mm aa"
-                        timeFormat="HH:mm"
-                        minTime={new Date(1970, 1, 1, 15, 0)}
-                        maxTime={new Date(1970, 1, 1, 17, 0)}
-                        // new Date() - 1000 * 60 * 60 * 24, // yesterday
-                      />
-                    </Box>
-                  </Box>
-                )} */}
               </>
             ) : (
               <>
@@ -421,39 +374,6 @@ const MentoringConsumables = ({
             )}
           </>
         )}
-
-        <Box display="flex" gridGap="8px" position="relative" py="20px">
-          <Box onClick={() => setMentoryProps({})} cursor="pointer">
-            <Icon icon="dot" color={step1 ? '#0097CD' : '#DADADA'} width="10px" height="10px" />
-          </Box>
-          <Box
-            onClick={() => setMentoryProps({
-              ...savedChanges, mentor: null, date: null, time: null,
-            })}
-            cursor="pointer"
-          >
-            <Icon icon="dot" color={step2 ? '#0097CD' : '#DADADA'} width="10px" height="10px" />
-          </Box>
-          {/* <Box
-            onClick={() => {
-              setMentoryProps({
-                ...savedChanges, time: null,
-              });
-            }}
-            cursor="pointer"
-          >
-            <Icon icon="dot" color={step3 ? '#0097CD' : '#DADADA'} width="10px" height="10px" />
-          </Box>
-          <Box
-            onClick={() => {
-              setMentoryProps({ ...savedChanges });
-            }}
-            cursor="pointer"
-          >
-            <Icon icon="dot" color={mentoryFormCompleted ? '#0097CD' : '#DADADA'} width="10px" height="10px" />
-          </Box> */}
-        </Box>
-
       </Box>
     </Box>
   );
@@ -475,8 +395,6 @@ MentoringConsumables.propTypes = {
   setProgramMentors: PropTypes.func,
   setServiceMentoring: PropTypes.func,
   mentorsFiltered: PropTypes.arrayOf(PropTypes.any).isRequired,
-  step1: PropTypes.bool.isRequired,
-  step2: PropTypes.bool.isRequired,
   dateFormated2: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
