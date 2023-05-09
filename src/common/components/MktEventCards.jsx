@@ -7,15 +7,17 @@ import Icon from './Icon';
 import axios from '../../axios';
 import EventCard from './EventCard';
 import { sortToNearestTodayDate } from '../../utils';
+import modifyEnv from '../../../modifyEnv';
 
 const MktEventCards = ({ id, title, endpoint, ...rest }) => {
   const [events, setEvents] = useState([]);
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const FourtyEightHours = 2880;
   const endpointDefault = endpoint || '/v1/events/all';
 
   useEffect(() => {
-    axios.get(`${process.env.BREATHECODE_HOST}${endpointDefault}`)
+    axios.get(`${BREATHECODE_HOST}${endpointDefault}`)
       .then((res) => {
         const data = res?.data;
         if (data && data.length > 0) {

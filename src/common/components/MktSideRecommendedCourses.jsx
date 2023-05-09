@@ -8,6 +8,7 @@ import Text from './Text';
 import Icon from './Icon';
 import { CardSkeleton } from './Skeleton';
 import Link from './NextChakraLink';
+import modifyEnv from '../../../modifyEnv';
 
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
@@ -15,6 +16,7 @@ const coursesLimit = 1;
 const MktSideRecommendedCourses = ({ title, endpoint }) => {
   const { t, lang } = useTranslation('common');
   const [isLoading, setIsLoading] = useState(true);
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [courses, setCourses] = useState([]);
 
   const { featuredColor } = useStyle();
@@ -25,7 +27,7 @@ const MktSideRecommendedCourses = ({ title, endpoint }) => {
 
   useEffect(async () => {
     try {
-      const res = await fetch(`${process.env.BREATHECODE_HOST}${endpoint}`, { headers });
+      const res = await fetch(`${BREATHECODE_HOST}${endpoint}`, { headers });
       const data = await res.json();
 
       if (res?.status < 400 && data.length > 0) {
