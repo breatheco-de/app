@@ -1,17 +1,12 @@
 [
   {
-    "source": "/lesson/sorting-algorithms-explanied-in-javascript-es",
-    "destination": "/es/lesson/sorting-algorithms-explanied-in-javascript-es",
-    "permanent": true
-  },
-  {
     "source": "/lesson/bootstrap-tutorial-of-bootstrap-4-es",
     "destination": "/es/lesson/bootstrap-tutorial-of-bootstrap-4-es",
     "permanent": true
   },
   {
-    "source": "/lesson/what-is-data-science",
-    "destination": "/es/lesson/what-is-data-science",
+    "source": "/lesson/raspado-web-con-beautiful-soap",
+    "destination": "/es/lesson/raspado-web-con-beautiful-soap",
     "permanent": true
   },
   {
@@ -347,6 +342,11 @@
   {
     "source": "/lesson/what-is-webpack-es",
     "destination": "/es/lesson/what-is-webpack-es",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/sorting-algorithms-explanied-in-javascript-es",
+    "destination": "/es/lesson/sorting-algorithms-explanied-in-javascript-es",
     "permanent": true
   },
   {

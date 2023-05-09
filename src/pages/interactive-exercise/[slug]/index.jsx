@@ -42,6 +42,7 @@ import CustomTheme from '../../../../styles/theme';
 import GridContainer from '../../../common/components/GridContainer';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
+import { unSlugifyCapitalize } from '../../../utils/index';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&big=true&limit=2000`);
@@ -667,7 +668,7 @@ const Exercise = ({ exercise, markdown }) => {
               <MDSkeleton />
             )}
             <MktRecommendedCourses
-              title={t('common:continue-learning', { technologies: exercise?.technologies.slice(0, 4).join(', ') })}
+              title={t('common:continue-learning', { technologies: exercise?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
               technologies={exercise?.technologies.join(',')}
             />
           </Box>
