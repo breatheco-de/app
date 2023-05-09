@@ -196,6 +196,7 @@ const LiveEvent = ({
               subLabel={event?.hash ? t('master-class') : t('workshop')}
               stTranslation={stTranslation}
               mainClasses={mainClasses}
+              limitOfText={54}
             />
           ))}
         </Box>
