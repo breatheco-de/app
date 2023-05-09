@@ -25,6 +25,9 @@ import LanguageSelector from '../LanguageSelector';
 import syllabusList from '../../../../public/syllabus.json';
 import { isWindow } from '../../../utils';
 import axios from '../../../axios';
+import modifyEnv from '../../../../modifyEnv';
+
+const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 // import UpgradeExperience from '../UpgradeExperience';
 
 const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
@@ -82,7 +85,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   };
 
   useEffect(() => {
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/marketing/course?featured=true`)
+    axios.get(`${BREATHECODE_HOST}/v1/marketing/course?featured=true`)
       .then((response) => {
         const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null);
         setMktCourses(filterByTranslations || []);
