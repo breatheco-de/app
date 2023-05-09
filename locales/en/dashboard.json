@@ -19,7 +19,7 @@
       "handler-text": "Sync now"
     },
     "start-message": "You have not started this module",
-    "no-activities": "No activities for this modules",
+    "no-activities": "The module doesn't have any lessons, exercises or projects",
     "start-module": "Start module"
   },
   "callToAction": {

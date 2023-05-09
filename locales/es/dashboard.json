@@ -19,7 +19,7 @@
       "handler-text": "Sincronizar ahora"
     },
     "start-message": "No has iniciado este módulo",
-    "no-activities": "No hay actividades para este módulo",
+    "no-activities": "El módulo no tiene lecciones, ejercicios o proyectos.",
     "start-module": "Iniciar módulo"
   },
   "callToAction": {
