@@ -7,7 +7,7 @@ import useGrabToScroll from '../hooks/useGrabToScroll';
 import { AnimatedContainer } from './Animated';
 
 // we need to fix a bug that causes the tooltip re-render multiple times when the mouse is over it and ref not being updated
-const DottedTimeline = ({ label, dots, helpText, width }) => {
+const DottedTimeline = ({ label, dots, helpText, width, onClickDots }) => {
   const { borderColor, fontColor2, tooltipBackground, backgroundColor2 } = useStyle();
   const scrollContainerRef = useRef(null);
   const { grabToScroll, isScrollable } = useGrabToScroll({ ref: scrollContainerRef, horizontal: true });
@@ -26,9 +26,9 @@ const DottedTimeline = ({ label, dots, helpText, width }) => {
       </Flex>
       <AnimatedContainer isScrollable={isScrollable} position="relative" overflow="hidden">
         <Flex ref={scrollContainerRef} alignItems="center" className="hideOverflowX__" height="25px" onMouseDown={grabToScroll} position="relative" gridGap="9px" overflowX="auto">
-          {dots && dots.map((dot) => (
+          {dots && dots.map((dot, i) => (
             <Tooltip key={dot.label} hasArrow label={dot.label} placement="top" color="gray.250" fontWeight={700} fontSize="13px" padding="0 6px" bg={tooltipBackground}>
-              <Box background={dot.color} borderRadius="50%" width="10px" minW="10px" height="10px" minH="10px" />
+              <Box onClick={() => onClickDots && onClickDots(dot, i)} cursor={onClickDots && 'pointer'} background={dot.color} borderRadius="50%" width="10px" minW="10px" height="10px" minH="10px" />
             </Tooltip>
           ))}
         </Flex>
@@ -43,6 +43,7 @@ DottedTimeline.propTypes = {
   dots: PropTypes.arrayOf(PropTypes.any),
   helpText: PropTypes.string,
   width: PropTypes.string,
+  onClickDots: PropTypes.func,
 };
 
 DottedTimeline.defaultProps = {
@@ -51,6 +52,7 @@ DottedTimeline.defaultProps = {
   dots: [],
   helpText: '',
   width: '100%',
+  onClickDots: null,
 };
 
 export default DottedTimeline;

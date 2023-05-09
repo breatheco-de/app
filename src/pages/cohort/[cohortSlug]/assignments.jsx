@@ -6,6 +6,8 @@ import useTranslation from 'next-translate/useTranslation';
 import {
   Box,
   Skeleton,
+  Avatar,
+  Flex,
   useColorModeValue,
   useToast,
   Button,
@@ -28,9 +30,10 @@ import bc from '../../../common/services/breathecode';
 import Icon from '../../../common/components/Icon';
 import Text from '../../../common/components/Text';
 import TaskLabel from '../../../common/components/taskLabel';
+import DottedTimeline from '../../../common/components/DottedTimeline';
 import useStyle from '../../../common/hooks/useStyle';
 import { isGithubUrl } from '../../../utils/regex';
-import ButtonHandler from '../../../js_modules/assignmentHandler/index';
+import ButtonHandler, { ReviewModal, NoInfoModal, DeliverModal } from '../../../js_modules/assignmentHandler/index';
 import useAssignments from '../../../common/store/actions/assignmentsAction';
 import { isWindow } from '../../../utils';
 // import Image from '../../../common/components/Image';
@@ -47,7 +50,8 @@ const Assignments = () => {
   const { contextState, setContextState } = useAssignments();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
-  const [mandatoryTasks, setMandatoryTasks] = useState([]);
+  const [mandatoryAssignments, setMandatoryAssignments] = useState([]);
+  const [syllabusProjects, setSyllabusProjects] = useState([]);
   const [personalCohorts, setPersonalCohorts] = useState([]);
   // const [allTasksPaginationProps, setAllTasksPaginationProps] = useState({});
   const [allTasksOffset, setAllTasksOffset] = useState(20);
@@ -57,6 +61,8 @@ const Assignments = () => {
   const [statusLabel, setStatusLabel] = useState(null);
   const [openFilter, setOpenFilter] = useState(false);
   const [currentView, setCurrentView] = useState(query.view || 0);
+  const [currentTask, setCurrentTask] = useState(null);
+  const [deliveryUrl, setDeliveryUrl] = useState('');
 
   const [currentStudentList, setCurrentStudentList] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -75,6 +81,13 @@ const Assignments = () => {
   const lang = {
     es: '/es/',
     en: '/',
+  };
+
+  const statusColors = {
+    APPROVED: hexColor.green,
+    REJECTED: hexColor.danger,
+    UNDELIVERED: hexColor.danger,
+    DELIVERED: hexColor.yellowDefault,
   };
 
   const queryStudentExists = query.student !== undefined && query.student?.length > 0;
@@ -170,9 +183,10 @@ const Assignments = () => {
           academy: data.academy.id,
         }]);
         const syllabusData = await bc.admissions().syllabus(data.syllabus_version.slug, data.syllabus_version.version, academy);
-        let mandatoryAssignments = syllabusData?.data.json.days.filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object').map((obj) => obj.assignments);
-        mandatoryAssignments = [].concat(...mandatoryAssignments).filter((assignment) => assignment.mandatory).map((assignment) => assignment.slug);
-        setMandatoryTasks(mandatoryAssignments);
+        let assignments = syllabusData?.data.json.days.filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object').map((obj) => obj.assignments);
+        assignments = [].concat(...assignments).filter((assignment) => assignment.mandatory);
+        setMandatoryAssignments(assignments);
+        if (syllabusData?.data) setSyllabusProjects(syllabusData.data.json.days.filter((day) => day.project && typeof day.project === 'object').map(({ project }) => ({ ...project })));
       })
       .catch(() => {
         toast({
@@ -326,7 +340,7 @@ const Assignments = () => {
     const filter = {};
     if (projectLabel) filter.project = projectLabel.value;
     if (studentLabel) filter.student = studentLabel.id;
-    if (statusLabel) filter.status = studentLabel.value;
+    if (statusLabel) filter.status = statusLabel.value;
     router.push({
       query: {
         ...router.query,
@@ -346,6 +360,46 @@ const Assignments = () => {
         ...params,
       },
     });
+  };
+
+  const updpateAssignment = (taskUpdated) => {
+    const keyIndex = contextState.allTasks.findIndex((x) => x.id === taskUpdated.id);
+    setContextState({
+      allTasks: [
+        ...contextState.allTasks.slice(0, keyIndex), // before keyIndex (inclusive)
+        taskUpdated, // key item (updated)
+        ...contextState.allTasks.slice(keyIndex + 1), // after keyIndex (exclusive)
+      ],
+    });
+  };
+
+  const getStatus = (task) => {
+    if (!task) return null;
+    if (task.task_status === 'DONE' && task.revision_status === 'PENDING') return 'DELIVERED';
+    if (task.task_status === 'PENDING' && task.revision_status === 'PENDING') return 'UNDELIVERED';
+    return task.revision_status;
+  };
+
+  const showSingleTask = async (task) => {
+    try {
+      const status = getStatus(task);
+      const academyId = selectedCohort?.academy || academy || allCohorts.find((l) => l.slug === cohortSlug)?.academy;
+      if (status === 'UNDELIVERED' || status === 'REJECTED') {
+        const { data } = await bc.todo().deliver({
+          id: task.id,
+          academy: academyId,
+        });
+        setDeliveryUrl(data.delivery_url);
+      }
+      setCurrentTask({ ...task, status });
+    } catch (e) {
+      toast({
+        title: t('alert-message:review-url-error'),
+        status: 'error',
+        duration: 6000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -610,126 +664,6 @@ const Assignments = () => {
         padding={{ base: '0', md: '0 10px', lg: '0' }}
         p="0 0 30px 0"
       >
-        {/* <Text size="20px" display="flex" width="auto" fontWeight="400">
-          {t('filter.assignments-length', {
-            total: contextState.allTasks.length || 0,
-          })}
-        </Text>
-        <Box
-          display="grid"
-          gridTemplateColumns={{
-            base: 'repeat(auto-fill, minmax(11rem, 1fr))',
-            md: 'repeat(auto-fill, minmax(18rem, 1fr))',
-          }}
-          gridGap="14px"
-          py="20px"
-        >
-          {loadStatus.status === 'loading' && (
-            <Skeleton width="100%" height="40px" borderRadius="0.375rem" />
-          )}
-          {loadStatus.loading === false && (
-            <ReactSelect
-              id="project-select"
-              placeholder={t('filter.project')}
-              isClearable
-              value={projectLabel || ''}
-              defaultInputValue={projectDefaultValue}
-              onChange={(selected) => {
-                setProjectLabel(
-                  selected !== null
-                    ? {
-                      value: selected?.value,
-                      label: selected?.label,
-                    }
-                    : null,
-                );
-                router.push({
-                  query: {
-                    ...router.query,
-                    project: selected?.value,
-                  },
-                });
-              }}
-              options={projects.map((project) => ({
-                value: project.associated_slug,
-                label: project.title,
-              }))}
-            />
-          )}
-
-          {loadStatus.status === 'loading' && (
-            <Skeleton width="100%" height="40px" borderRadius="0.375rem" />
-          )}
-          {loadStatus.loading === false && (
-            <ReactSelect
-              id="student-select"
-              placeholder={t('filter.student')}
-              isClearable
-              value={studentLabel || ''}
-              defaultInputValue={defaultStudentLabel}
-              height="50px"
-              fontSize="15px"
-              onChange={(selected) => {
-                setStudentLabel(
-                  selected !== null
-                    ? {
-                      id: selected?.id,
-                      value: selected?.value,
-                      label: selected?.label,
-                    }
-                    : null,
-                );
-                router.push({
-                  query: {
-                    ...router.query,
-                    student: selected?.id,
-                  },
-                });
-              }}
-              options={currentStudentList.map((student) => ({
-                id: student.user.id,
-                value:
-                  `${student.user.first_name}-${student.user.last_name}`?.toLowerCase(),
-                label: `${student.user.first_name} ${student.user.last_name}`,
-              }))}
-            />
-          )}
-
-          {loadStatus.status === 'loading' && (
-            <Skeleton width="100%" height="40px" borderRadius="0.375rem" />
-          )}
-          {loadStatus.loading === false && (
-            <ReactSelect
-              id="status-select"
-              placeholder={t('filter.status')}
-              isClearable
-              value={statusLabel}
-              height="50px"
-              fontSize="15px"
-              defaultInputValue={statusDefaultValue}
-              onChange={(selected) => {
-                setStatusLabel(
-                  selected !== null
-                    ? {
-                      value: selected?.value,
-                      label: selected?.label,
-                    }
-                    : null,
-                );
-                router.push({
-                  query: {
-                    ...router.query,
-                    status: selected?.value,
-                  },
-                });
-              }}
-              options={statusList.map((status) => ({
-                value: status.value,
-                label: status.label,
-              }))}
-            />
-          )}
-        </Box> */}
         {currentView == 1 ? (
           <Box
             minHeight="34vh"
@@ -809,8 +743,22 @@ const Assignments = () => {
                       borderColor={borderColor}
                       borderRadius="17px"
                     >
-                      <Box display="flex" width="auto" minWidth="calc(110px - 0.5vw)">
-                        {mandatoryTasks.includes(task.associated_slug) && (<Icon icon="warning" color="yellow.default" width="28px" height="28px" style={{ marginRight: '15px' }} />)}
+                      <Box
+                        display="flex"
+                        width="auto"
+                        minWidth="calc(110px - 0.5vw)"
+                      >
+                        {mandatoryAssignments.find(
+                          (assignment) => assignment.slug === task.associated_slug,
+                        ) && (
+                          <Icon
+                            icon="warning"
+                            color="yellow.default"
+                            width="28px"
+                            height="28px"
+                            style={{ marginRight: '15px' }}
+                          />
+                        )}
                         <TaskLabel currentTask={task} t={t} />
                       </Box>
 
@@ -893,7 +841,65 @@ const Assignments = () => {
             flexGrow={1}
             overflow="auto"
           >
-            <h2>nueva vista!!</h2>
+            <Flex flexDirection="column" gridGap="18px">
+              {currentStudentList.map((student) => {
+                const fullname = `${student.user.first_name} ${student.user.last_name}`;
+                const dots = syllabusProjects.map((elem) => {
+                  const studentTask = filteredTasks.find(
+                    (task) => task.associated_slug === elem.slug
+                      && student.user.id === task.user.id,
+                  );
+                  return {
+                    ...elem,
+                    ...studentTask,
+                    label: elem.title,
+                    color: statusColors[getStatus(studentTask)] || 'gray',
+                  };
+                });
+                return (
+                  <DottedTimeline
+                    key={student.id}
+                    onClickDots={showSingleTask}
+                    label={(
+                      <Flex gridGap="10px" alignItems="center">
+                        <Avatar
+                          src={student.user.profile?.avatar_url}
+                          width="25px"
+                          height="25px"
+                          style={{ userSelect: 'none' }}
+                        />
+                        <p>{fullname}</p>
+                      </Flex>
+                    )}
+                    dots={dots}
+                    // helpText={percentAttendance}
+                  />
+                );
+              })}
+            </Flex>
+            <ReviewModal
+              currentTask={currentTask}
+              projectLink={`https://4geeks.com${
+                lang[router.locale]
+              }project/${currentTask?.slug}`}
+              updpateAssignment={updpateAssignment}
+              isOpen={currentTask && currentTask.status === 'DELIVERED'}
+              onClose={() => setCurrentTask(null)}
+            />
+            <NoInfoModal
+              isOpen={currentTask && !currentTask.status}
+              onClose={() => setCurrentTask(null)}
+            />
+            <DeliverModal
+              currentTask={currentTask}
+              projectLink={`https://4geeks.com${
+                lang[router.locale]
+              }project/${currentTask?.slug}`}
+              updpateAssignment={updpateAssignment}
+              isOpen={currentTask && (currentTask.status === 'UNDELIVERED' || currentTask.status === 'REJECTED')}
+              onClose={() => setCurrentTask(null)}
+              deliveryUrl={deliveryUrl}
+            />
           </Box>
         )}
       </Box>

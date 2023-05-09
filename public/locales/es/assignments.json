@@ -3,6 +3,7 @@
   "title": "Asignaciones",
   "students-view": "vista de studiantes",
   "projects-view": "vista de proyectos",
+  "no-information": "No hay información disponible para el proyecto de este estudiante",
   "status": {
     "delivered": "Entregado",
     "approved": "Aprobado",

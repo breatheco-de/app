@@ -3,6 +3,7 @@
   "title": "Assignments",
   "students-view": "students view",
   "projects-view": "projects view",
+  "no-information": "No information available about this student's project",
   "status": {
     "delivered": "Delivered",
     "approved": "Approved",
