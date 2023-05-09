@@ -14,12 +14,14 @@ import bc from '../../services/breathecode';
 import MentoringFree from './MentoringFree';
 import MentoringConsumables from './MentoringConsumables';
 import useAuth from '../../hooks/useAuth';
+import { usePersistent } from '../../hooks/usePersistent';
 
 const Mentoring = ({
   width, programServices, flags,
 }) => {
   const { t } = useTranslation('dashboard');
   const [savedChanges, setSavedChanges] = useState({});
+  const [cohortSession] = usePersistent('cohortSession', {});
   const router = useRouter();
   const [serviceMentoring, setServiceMentoring] = useState({});
   const [mentoryProps, setMentoryProps] = useState({});
@@ -109,9 +111,11 @@ const Mentoring = ({
     }
   }, [programServices]);
 
+  const isAvailableForConsumables = cohortSession?.available_as_saas === true;
+
   return !isLoading && user?.id && (
     <>
-      {flags?.appReleaseShowConsumedMentorships ? (
+      {isAvailableForConsumables && flags?.appReleaseShowConsumedMentorships ? (
         <MentoringConsumables
           {...{
             mentoryProps,

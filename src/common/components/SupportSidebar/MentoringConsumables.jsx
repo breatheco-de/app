@@ -9,7 +9,6 @@ import Heading from '../Heading';
 import Icon from '../Icon';
 import Image from '../Image';
 import Link from '../NextChakraLink';
-// import Text from '../Text';
 import bc from '../../services/breathecode';
 import useOnline from '../../hooks/useOnline';
 import AvatarUser from '../../../js_modules/cohortSidebar/avatarUser';
