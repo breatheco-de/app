@@ -147,8 +147,9 @@ function useHandler() {
             label,
             description,
             modules,
+            exists_activities: modules?.length > 0,
             filteredModules,
-            filteredModulesByPending,
+            filteredModulesByPending: modules?.length > 0 ? filteredModulesByPending : null,
             duration_in_days: assignment?.duration_in_days || null,
             teacherInstructions: assignment.teacher_instructions,
             extendedInstructions: assignment.extended_instructions || `${t('teacher-sidebar.no-instructions')}`,
@@ -167,10 +168,10 @@ function useHandler() {
             });
           }
 
-          const filterNotEmptyModules = assignmentsRecopilated.filter(
-            (l) => l.modules.length > 0,
-          );
-          return setSortedAssignments(filterNotEmptyModules);
+          // const filterNotEmptyModules = assignmentsRecopilated.filter(
+          //   (l) => l.modules.length > 0,
+          // );
+          return setSortedAssignments(assignmentsRecopilated);
         }
         return null;
       });
