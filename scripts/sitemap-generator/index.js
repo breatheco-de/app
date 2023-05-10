@@ -75,13 +75,13 @@ async function generateSitemap() {
     if (type === 'project') {
       const projectsData = data?.length > 0 ? data.filter((l) => {
         const assets = l.assets.some((a) => a?.asset_type === 'PROJECT');
-        return assets.length > 0 && (`/${conector}/${l.slug}`);
+        return assets.length > 0 && (`/${conector}/${l?.slug}`);
       }) : [];
       return projectsData;
     }
     if (type === 'tech') {
       return (data?.length > 0 ? data.map(
-        (l) => (`/${conector}/${l.slug}`),
+        (l) => (`/${conector}/${l?.slug}`),
       ) : []);
     }
     return '';

@@ -1,30 +1,33 @@
-import { Box, Button, Image } from '@chakra-ui/react';
+import { Box, Image } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
 import useStyle from '../hooks/useStyle';
 import Heading from './Heading';
 import Text from './Text';
 import Icon from './Icon';
-import axios from '../../axios';
 import { CardSkeleton } from './Skeleton';
+import Link from './NextChakraLink';
+import modifyEnv from '../../../modifyEnv';
 
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
 
 const MktSideRecommendedCourses = ({ title, endpoint }) => {
-  const { t } = useTranslation('common');
+  const { t, lang } = useTranslation('common');
   const [isLoading, setIsLoading] = useState(true);
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [courses, setCourses] = useState([]);
-  const router = useRouter();
 
   const { featuredColor } = useStyle();
-  axios.defaults.headers.common['Accept-Language'] = router?.locale;
+
+  const headers = {
+    'Accept-Language': lang,
+  };
 
   useEffect(async () => {
     try {
-      const res = await fetch(`${process.env.BREATHECODE_HOST}${endpoint}`);
+      const res = await fetch(`${BREATHECODE_HOST}${endpoint}`, { headers });
       const data = await res.json();
 
       if (res?.status < 400 && data.length > 0) {
@@ -54,10 +57,18 @@ const MktSideRecommendedCourses = ({ title, endpoint }) => {
           <Text fontSize="12px" lineHeight="14px" padding="0 20px">
             {featuredCourse?.course_translation?.short_description || featuredCourse?.course_translation?.description}
           </Text>
-          <Button variant="default" width="auto" gridGap="10px" margin="0 20px">
+          <Link
+            variant="buttonDefault"
+            display="flex"
+            href={`https://4geeks.com/${featuredCourse?.slug}`}
+            alignItems="center"
+            width="auto"
+            gridGap="10px"
+            margin="0 20px"
+          >
             {t('learn-more')}
             <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
-          </Button>
+          </Link>
         </Box>
       ) : (
         <CardSkeleton withoutContainer quantity={1} />

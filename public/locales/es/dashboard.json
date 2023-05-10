@@ -19,7 +19,7 @@
       "handler-text": "Sincronizar ahora"
     },
     "start-message": "No has iniciado este módulo",
-    "no-activities": "No hay actividades para este módulo",
+    "no-activities": "El módulo no tiene lecciones, ejercicios o proyectos.",
     "start-module": "Iniciar módulo"
   },
   "callToAction": {
@@ -53,11 +53,16 @@
     "no-mentor-link": "No hay enlace para crear sesión con este mentor",
     "search-mentor": "Buscar mentor por nombre",
     "start-mentorship": "Para comenzar, seleccione un tipo de tutoría",
-    "mentoring": "Tutoría",
+    "mentoring": "Programe una sesión de tutoría 1-1.",
     "select-type": "Seleccione un tipo de tutoría",
     "mentoring-available": "Tutorías disponibles",
     "no-mentoring-available": "No tienes tutorías disponibles.",
     "create-session-text": "Agendar ahora",
+    "learn-more": "Aprender mas.",
+    "learn-more-link": "https://4geeks.com/es/mentorships",
+    "get-more-mentorships": "Consigue más mentorías",
+    "schedule-button": "Programar una sesión de tutoría",
+    "mentors-available": "+{{count}} Mentores disponibles",
     "actionButtons": [
       {
         "name": "mentoring",
@@ -74,7 +79,7 @@
     ]
   },
   "mentorship": {
-    "no-mentorship": "No te quedan más mentorías para programar",
+    "no-mentorship": "Se ha quedado sin tutorías, pero no se preocupe, puede obtener más con unos pocos clics.",
     "get-unlimited-mentorship": "y obtén tutoría ilimitada",
     "you-have": "Tienes",
     "available-sessions": "sesiones disponibles",

@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import getT from 'next-translate/getT';
 import Icon from '../../common/components/Icon';
-import { getExtensionName, unSlugify } from '../../utils';
+import { getExtensionName, unSlugifyCapitalize } from '../../utils';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 import MarkDownParser from '../../common/components/MarkDownParser';
@@ -186,7 +186,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
         // padding={{ base: '0 10px', lg: '0' }}
         padding="0 10px"
       >
-        <Box display={{ base: 'none', md: 'flex' }} height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
+        <Box display={{ base: 'none', md: 'flex' }} position="sticky" top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
           <MktSideRecommendedCourses />
         </Box>
         <Box gridColumn="2 / span 12" maxWidth="854px">
@@ -247,12 +247,9 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
             >
               <MarkDownParser content={markdownData.content} withToc isPublic />
               <MktRecommendedCourses
-                title={t('common:continue-learning', { technologies: lesson?.technologies.map((tech) => unSlugify(tech)).slice(0, 4).join(', ') })}
+                title={t('common:continue-learning', { technologies: lesson?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
                 technologies={lesson?.technologies.join(',')}
               />
-              {/* {(markdown && ipynbHtmlUrl === '')
-                ? <MarkDownParser content={markdownData.content} />
-                : <MDSkeleton />} */}
 
             </Box>
 
@@ -263,14 +260,15 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
               )}
             </>
           )}
-          <Box
-            height="100%"
-            gridColumn="2 / span 12"
-            borderRadius="3px"
-            maxWidth="1280px"
-            width={{ base: '100%', md: 'auto' }}
-          >
-            {ipynbHtmlUrl && markdown === '' && (
+
+          {ipynbHtmlUrl && markdown === '' && (
+            <Box
+              height="100%"
+              gridColumn="2 / span 12"
+              borderRadius="3px"
+              maxWidth="1280px"
+              width={{ base: '100%', md: 'auto' }}
+            >
               <Box width="100%" height="100%">
                 <Button
                   background={currentTheme}
@@ -337,8 +335,8 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
                   </ModalContent>
                 </Modal>
               </Box>
-            )}
-          </Box>
+            </Box>
+          )}
         </Box>
       </GridContainer>
     </>

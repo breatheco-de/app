@@ -5,6 +5,7 @@ import { ListItem, UnorderedList } from '@chakra-ui/react';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Heading from './Heading';
+import Icon from './Icon';
 
 const PrismicTextComponent = ({ field, ...rest }) => {
   const { fontColor2 } = useStyle();
@@ -28,9 +29,13 @@ const PrismicTextComponent = ({ field, ...rest }) => {
             fontSize="sm"
             lineHeight="18px"
             margin="15px 0"
+            display="flex"
+            gridGap="10px"
+            alignItems="center"
             color={fontColor2}
             {...rest}
           >
+            <Icon icon="checked2" color="#25BF6C" width="12px" height="12px" />
             {children}
           </ListItem>
         ),

@@ -19,7 +19,7 @@ import MktRecommendedCourses from '../../../common/components/MktRecommendedCour
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
-import { unSlugify } from '../../../utils/index';
+import { unSlugifyCapitalize } from '../../../utils/index';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=2000`);
@@ -189,7 +189,7 @@ export default function HowToSlug({ data, markdown }) {
         </Link>
       </GridContainer>
       <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin="22px auto 0 auto" gridGap="36px" padding="0 10px">
-        <Box display={{ base: 'none', md: 'flex' }} height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
+        <Box display={{ base: 'none', md: 'flex' }} position="sticky" top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
           <MktSideRecommendedCourses />
         </Box>
         <Box
@@ -263,7 +263,7 @@ export default function HowToSlug({ data, markdown }) {
               <MDSkeleton />
             )}
             <MktRecommendedCourses
-              title={t('common:continue-learning', { technologies: data?.technologies.map((tech) => unSlugify(tech)).slice(0, 4).join(', ') })}
+              title={t('common:continue-learning', { technologies: data?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
               marginBottom="15px"
               technologies={data?.technologies.join(',')}
               endpoint={`${process.env.BREATHECODE_HOST}/v1/marketing/course`}

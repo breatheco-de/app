@@ -37,6 +37,12 @@ const unSlugify = (str) => (typeof str === 'string' ? str
   (txt) => txt.charAt(0) + txt.substr(1).toLowerCase())
   : '');
 
+const unSlugifyCapitalize = (str) => (typeof str === 'string' ? str
+  .replace(/-/g, ' ')
+  .replace(/\w\S*/g,
+  (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase())
+  : '');
+
 const cleanQueryStrings = (url) => url.split('?')[0];
 
 const isPlural = (element) => {
@@ -276,7 +282,7 @@ const location = isWindow && window.location;
 const url = isWindow && new URL(window.location.href);
 
 export {
-  isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify, location,
+  isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify, unSlugifyCapitalize, location,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
   removeStorageItem, isDevMode, devLogTable, devLog, languageLabel,
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
