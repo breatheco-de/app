@@ -95,7 +95,7 @@ const ShareButton = ({
 
             <Stack display={socialList.length <= 2 ? 'flex' : 'grid'} gridTemplateColumns="repeat(auto-fill, minmax(7rem, 1fr))" justifyItems="center" justifyContent={socialList.length <= 2 && 'center'} flexDirection={socialList.length <= 2 && 'row'} gridGap={socialList.length <= 2 && '3rem'}>
               {socialList.map((l) => (
-                <Box style={{ margin: '0px' }} textAlign="center" display="flex" flexDirection="column" gridGap="6px">
+                <Box key={l?.name} style={{ margin: '0px' }} textAlign="center" display="flex" flexDirection="column" gridGap="6px">
                   <Link display="flex" key={l.name} href={l.href} onClick={() => l.target === 'popup' && window.open(l.href, 'popup', 'width=600,height=600,scrollbars=no,resizable=no')} target={l.target === 'popup' ? 'popup' : '_blank'} rel="noopener noreferrer" minWidth="68px" minHeight="68px" alignItems="center" justifyContent="center" borderRadius="35px" backgroundColor={featuredBackground} style={{ margin: '0px' }}>
                     <Icon icon={l.name} color={l.color} width="36px" height="36px" />
                   </Link>
