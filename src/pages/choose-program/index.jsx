@@ -118,7 +118,7 @@ function chooseProgram() {
 
   const allSubscriptions = subscriptionData?.subscriptions
     && subscriptionData?.plan_financings
-    && [...subscriptionData?.subscriptions, ...subscriptionData?.plan_financings]
+    && [...subscriptionData.subscriptions, ...subscriptionData.plan_financings]
       .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
 
   useEffect(() => {
@@ -150,7 +150,7 @@ function chooseProgram() {
     if (dataQuery?.id) {
       dataQuery?.cohorts.map(async (item) => {
         if (item?.cohort?.slug) {
-          const { academy, syllabus_version: syllabusVersion } = item?.cohort;
+          const { academy, syllabus_version: syllabusVersion } = item.cohort;
 
           const tasks = await bc.todo({ cohort: item?.cohort?.id }).getTaskByStudent();
           const studentAndTeachers = await bc.cohort({

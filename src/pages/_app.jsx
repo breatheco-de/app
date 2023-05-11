@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { ChakraProvider } from '@chakra-ui/react';
 import { PrismicProvider } from '@prismicio/react';
 import { PrismicPreview } from '@prismicio/next';
+import { Provider } from 'react-redux';
 import { repositoryName } from '../../prismicio';
 import wrapper from '../store';
 import CustomTheme from '../../styles/theme';
@@ -34,14 +35,27 @@ import '@fontsource/lato/400.css';
 import '@fontsource/lato/700.css';
 import '@fontsource/lato/900.css';
 
-function App({ Component, pageProps }) {
+function InternalLinkComponent(props) {
+  return <Link {...props} />;
+}
+
+function Navbar({ HAVE_SESSION, pageProps }) {
+  if (HAVE_SESSION) {
+    return <NavbarSession pageProps={pageProps} translations={pageProps?.translations} haveSession />;
+  }
+  return <NavbarSession pageProps={pageProps} translations={pageProps?.translations} haveSession={false} />;
+}
+function App({ Component, pageProps, ...rest }) {
   const { isAuthenticated } = useAuth();
+  const [hasMounted, setHasMounted] = useState(false);
+  const { store } = wrapper.useWrappedStore(rest);
   const [haveSession, setHaveSession] = useState(false);
   const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
 
   const queryClient = new QueryClient();
 
   useEffect(() => {
+    setHasMounted(true);
     TagManager.initialize({ gtmId: process.env.TAG_MANAGER_KEY });
   }, []);
 
@@ -52,36 +66,32 @@ function App({ Component, pageProps }) {
     }
   }, [isAuthenticated, HAVE_SESSION]);
 
-  const Navbar = () => {
-    if (HAVE_SESSION) {
-      return <NavbarSession pageProps={pageProps} translations={pageProps?.translations} haveSession={haveSession} />;
-    }
-    return <NavbarSession pageProps={pageProps} translations={pageProps?.translations} haveSession={false} />;
-  };
-
   return (
-    <QueryClientProvider client={queryClient}>
-      <Helmet
-        {...pageProps.seo}
-      />
-      <AuthProvider>
-        <ConnectionProvider>
-          <ChakraProvider resetCSS theme={CustomTheme}>
-            <Navbar />
-            <InterceptionLoader />
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <Helmet {...pageProps.seo} />
+        <AuthProvider>
+          <ConnectionProvider>
+            <ChakraProvider resetCSS theme={CustomTheme}>
+              {/* TODO: fix hydration issues with Navbar and Footer */}
+              {hasMounted && <Navbar HAVE_SESSION={HAVE_SESSION && haveSession} pageProps={pageProps} />}
 
-            <PrismicProvider internalLinkComponent={(props) => <Link {...props} />}>
-              <PrismicPreview repositoryName={repositoryName}>
-                <Component {...pageProps} />
-              </PrismicPreview>
-            </PrismicProvider>
+              <InterceptionLoader />
 
-            <Footer pageProps={pageProps} />
-          </ChakraProvider>
-        </ConnectionProvider>
-      </AuthProvider>
-      <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
-    </QueryClientProvider>
+              <PrismicProvider internalLinkComponent={InternalLinkComponent}>
+                <PrismicPreview repositoryName={repositoryName}>
+                  <Component {...pageProps} />
+                </PrismicPreview>
+              </PrismicProvider>
+
+              {hasMounted && <Footer pageProps={pageProps} />}
+            </ChakraProvider>
+          </ConnectionProvider>
+        </AuthProvider>
+
+        <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+      </QueryClientProvider>
+    </Provider>
   );
 }
 
@@ -89,9 +99,14 @@ App.propTypes = {
   pageProps: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
   Component: PropTypes.elementType.isRequired,
 };
+Navbar.propTypes = {
+  pageProps: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
+  HAVE_SESSION: PropTypes.bool.isRequired,
+};
+
 export default withLDProvider({
   clientSideID: process.env.LD_CLIENT_ID,
   options: {
     bootstrap: 'localStorage',
   },
-})(wrapper.withRedux(App));
+})(App);

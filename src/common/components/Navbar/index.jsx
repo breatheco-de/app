@@ -28,9 +28,71 @@ import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+
+function Close2(colorMode) {
+  return (
+    <svg
+      width="22px"
+      height="22px"
+      viewBox="0 0 19 4"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <line
+        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        x1="1.5"
+        y1="2"
+        x2="16.5645"
+        y2="2"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function Hamburger2(colorMode) {
+  return (
+    <svg
+      width="22px"
+      height="22px"
+      viewBox="0 0 28 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <line
+        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        x1="1.5"
+        y1="1.5"
+        x2="26.5"
+        y2="1.5"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      <line
+        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        x1="1.5"
+        y1="12"
+        x2="16.5645"
+        y2="12"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      <line
+        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        x1="1.5"
+        y1="22.5"
+        x2="26.5"
+        y2="22.5"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
 // import UpgradeExperience from '../UpgradeExperience';
 
-const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
+function NavbarWithSubNavigation({ haveSession, translations, pageProps }) {
   const { t } = useTranslation('navbar');
   const router = useRouter();
   const [mktCourses, setMktCourses] = useState([]);
@@ -197,70 +259,12 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
 
   if (pageProps?.previewMode) return null;
 
-  const Close2 = () => (
-    <svg
-      width="22px"
-      height="22px"
-      viewBox="0 0 19 4"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <line
-        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
-        x1="1.5"
-        y1="2"
-        x2="16.5645"
-        y2="2"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-
-  const Hamburger2 = () => (
-    <svg
-      width="22px"
-      height="22px"
-      viewBox="0 0 28 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <line
-        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
-        x1="1.5"
-        y1="1.5"
-        x2="26.5"
-        y2="1.5"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <line
-        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
-        x1="1.5"
-        y1="12"
-        x2="16.5645"
-        y2="12"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <line
-        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
-        x1="1.5"
-        y1="22.5"
-        x2="26.5"
-        y2="22.5"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-
   const logo = useColorModeValue(
     <Image
       src="/static/images/4geeks.png"
-      width="105px"
-      height="35px"
-      objectFit="cover"
+      width={105}
+      height={35}
+      // objectFit="cover"
       alt="4Geeks logo"
     />,
     <Box padding="5px 5px">
@@ -302,9 +306,9 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
             background={commonColors}
             icon={
               isOpen ? (
-                <Close2 />
+                <Close2 colorMode={colorMode} />
               ) : (
-                <Hamburger2 />
+                <Hamburger2 colorMode={colorMode} />
               )
             }
             variant="default"
@@ -593,12 +597,12 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
       </Collapse>
     </Box>
   );
-};
+}
 
 NavbarWithSubNavigation.propTypes = {
   haveSession: PropTypes.bool,
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
-  pageProps: PropTypes.objectOf(PropTypes.any),
+  pageProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
 };
 NavbarWithSubNavigation.defaultProps = {
   haveSession: false,

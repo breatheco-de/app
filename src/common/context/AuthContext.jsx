@@ -105,7 +105,7 @@ export const AuthContext = createContext({
   ...initialState,
 });
 
-const AuthProvider = ({ children }) => {
+function AuthProvider({ children }) {
   const router = useRouter();
   const [state, dispatch] = useReducer(reducer, initialState);
   const [profile, setProfile] = usePersistent('profile', {});
@@ -119,7 +119,7 @@ const AuthProvider = ({ children }) => {
   // Validate and Fetch user token from localstorage when it changes
   const handleSession = (tokenString) => setTokenSession(tokenString);
 
-  useEffect(async () => {
+  const authHandler = async () => {
     const token = getToken();
     const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
@@ -169,6 +169,10 @@ const AuthProvider = ({ children }) => {
     }
 
     return null;
+  };
+
+  useEffect(() => {
+    authHandler();
   }, [router]);
 
   const login = async (payload = null) => {
@@ -255,6 +259,7 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
+      // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
         ...state,
         method: 'Bearer',
@@ -268,7 +273,7 @@ const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
 AuthProvider.propTypes = {
   children: PropTypes.node,

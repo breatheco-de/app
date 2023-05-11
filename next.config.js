@@ -6,7 +6,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 const redirectsList = require('./public/redirects.json');
-const nextTranslate = require('next-translate');
+const nextTranslate = require('next-translate-plugin');
 
 const externalDevDomain = process.env.VERCEL_ENV !== 'production' ? 'http://localhost:9999' : '';
 const securityHeaders = [
@@ -89,18 +89,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
   // swcMinify: false,
   reactStrictMode: true,
   trailingSlash: false,
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      require('./scripts/redirects-generator');
-      require('./scripts/sitemap-generator');
-      require('./scripts/syllabus');
-    }
-    // if (process.env.VERCEL_ENV !== 'production') {
-    //   config.optimization.minimizer = [];
-    //   config.optimization.minimize = false; // Disable minification in development
-    // }
-    return config;
-  },
+  webpack: (config) => config,
   compiler: {
     // ssr and displayName are configured by default
     styledComponents: true,
