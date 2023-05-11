@@ -10,7 +10,7 @@ import ShareButton from '../../common/components/ShareButton';
 import useStyle from '../../common/hooks/useStyle';
 import { location } from '../../utils';
 
-const Certificates = ({ certificates }) => {
+function Certificates({ certificates }) {
   const { t, lang } = useTranslation('profile');
   const { borderColor2 } = useStyle();
 
@@ -69,10 +69,10 @@ const Certificates = ({ certificates }) => {
       )}
     </>
   );
-};
+}
 
 Certificates.propTypes = {
-  certificates: PropTypes.arrayOf(PropTypes.any),
+  certificates: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 Certificates.defaultProps = {

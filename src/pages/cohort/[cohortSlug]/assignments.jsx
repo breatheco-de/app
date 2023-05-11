@@ -22,7 +22,7 @@ import PopoverHandler from '../../../js_modules/assignmentHandler/PopoverHandler
 import handlers from '../../../common/handlers';
 import LoaderScreen from '../../../common/components/LoaderScreen';
 
-const Assignments = () => {
+function Assignments() {
   const { t } = useTranslation('assignments');
   const router = useRouter();
   const toast = useToast();
@@ -506,6 +506,6 @@ const Assignments = () => {
       </Box>
     </>
   );
-};
+}
 
 export default asPrivate(Assignments);

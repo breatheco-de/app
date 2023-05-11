@@ -7,7 +7,7 @@ import {
 import Text from './Text';
 import CustomTheme from '../../../styles/theme';
 
-const MktTechnologiesPills = ({ id, technologies, ...rest }) => {
+function MktTechnologiesPills({ id, technologies, ...rest }) {
   const ref = useRef();
   const [isDown, setIsDown] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -86,10 +86,10 @@ const MktTechnologiesPills = ({ id, technologies, ...rest }) => {
       </Box>
     </Container>
   );
-};
+}
 
 MktTechnologiesPills.propTypes = {
-  technologies: PropTypes.arrayOf(PropTypes.any),
+  technologies: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   id: PropTypes.string,
 };
 

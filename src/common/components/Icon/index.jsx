@@ -6,9 +6,9 @@ import { Box } from '@chakra-ui/react';
 import iconDic from '../../utils/iconDict.json';
 // const iconDict = require('../common/utils/iconDict.json');
 
-const Icon = ({
+function Icon({
   icon, withContainer, width, height, style, color, secondColor, fill, className, props, full, text, ...rest
-}) => {
+}) {
   if (typeof window === 'undefined' || !window) return '';
   const iconExists = iconDic.includes(icon);
 
@@ -43,7 +43,7 @@ const Icon = ({
       {...props}
     />
   );
-};
+}
 Icon.propTypes = {
   icon: PropTypes.string,
   width: PropTypes.string,
@@ -53,7 +53,7 @@ Icon.propTypes = {
   fill: PropTypes.string,
   full: PropTypes.bool,
   className: PropTypes.string,
-  props: PropTypes.objectOf(PropTypes.any),
+  props: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   style: PropTypes.shape({
     transform: PropTypes.string,
     transition: PropTypes.string,

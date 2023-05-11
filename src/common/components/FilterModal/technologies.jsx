@@ -8,7 +8,7 @@ import Icon from '../Icon';
 import Text from '../Text';
 
 // eslint-disable-next-line react/prop-types
-const TechnologiesSection = ({
+function TechnologiesSection({
   t,
   title,
   show,
@@ -18,7 +18,7 @@ const TechnologiesSection = ({
   technologyTags,
   handleToggle,
   getCheckboxProps,
-}) => {
+}) {
   const [technologySearched, setTechnologySearched] = useState('');
   const { fontColor, hexColor, modal, borderColorStrong } = useStyle();
   const [isMobile] = useMediaQuery('(min-width: 1082px)');
@@ -95,7 +95,7 @@ const TechnologiesSection = ({
       )}
     </Flex>
   );
-};
+}
 
 TechnologiesSection.propTypes = {
   t: PropTypes.func,
@@ -104,7 +104,7 @@ TechnologiesSection.propTypes = {
   commonBorderColor: PropTypes.string.isRequired,
   commonTextColor: PropTypes.string.isRequired,
   checkedTechnologies: PropTypes.arrayOf(PropTypes.string).isRequired,
-  technologyTags: PropTypes.arrayOf(PropTypes.any).isRequired,
+  technologyTags: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   handleToggle: PropTypes.func.isRequired,
   getCheckboxProps: PropTypes.func.isRequired,
 };

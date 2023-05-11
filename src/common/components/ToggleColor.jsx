@@ -1,7 +1,7 @@
 import { Button, useColorMode, Stack } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
-const ToggleColor = ({ title }) => {
+function ToggleColor({ title }) {
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
@@ -13,7 +13,7 @@ const ToggleColor = ({ title }) => {
       </Button>
     </Stack>
   );
-};
+}
 
 ToggleColor.propTypes = {
   title: PropTypes.string,

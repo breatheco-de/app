@@ -3,11 +3,11 @@ import React from 'react';
 import Head from 'next/head';
 import PropTypes from 'prop-types';
 
-const Helmet = ({
+function Helmet({
   title, description, translations, url, image, card, type, twitterUser,
   unlisted, pathConnector, locales, publishedTime, keywords, modifiedTime,
   locale, slug, disableStaticCanonical,
-}) => {
+}) {
   const ogTitle = title.length > 0 ? title : '4Geeks';
   const translationsExists = Object.keys(translations).length > 0;
   const maxCharacters = 155;
@@ -149,7 +149,7 @@ const Helmet = ({
       <meta property="twitter:image:alt" content={descriptionCleaned} />
     </Head>
   );
-};
+}
 
 Helmet.propTypes = {
   title: PropTypes.string,
@@ -159,7 +159,7 @@ Helmet.propTypes = {
   type: PropTypes.string,
   twitterUser: PropTypes.string,
   unlisted: PropTypes.bool,
-  translations: PropTypes.objectOf(PropTypes.any),
+  translations: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   pathConnector: PropTypes.string,
   locales: PropTypes.arrayOf(PropTypes.string),
   publishedTime: PropTypes.string,

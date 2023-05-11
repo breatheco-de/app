@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 import {
   Box,
   useColorModeValue,
@@ -160,12 +161,12 @@ const fields = {
   },
 };
 
-const TabletWithForm = ({
+function TabletWithForm({
   toast,
   exercise,
   commonTextColor,
   commonBorderColor,
-}) => {
+}) {
   const { t } = useTranslation('exercises');
   const { user } = useAuth();
   const [formSended, setFormSended] = useState(false);
@@ -501,9 +502,9 @@ const TabletWithForm = ({
       </Box>
     </>
   );
-};
+}
 
-const Exercise = ({ exercise, markdown }) => {
+function Exercise({ exercise, markdown }) {
   const [tags, setTags] = useState([]);
   const { t } = useTranslation(['exercises']);
   const translations = exercise?.translations || { es: '', en: '' };
@@ -713,10 +714,10 @@ const Exercise = ({ exercise, markdown }) => {
       </GridContainer> */}
     </>
   );
-};
+}
 
 Exercise.propTypes = {
-  exercise: PropTypes.objectOf(PropTypes.any).isRequired,
+  exercise: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   markdown: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
 };
 
@@ -724,10 +725,10 @@ TabletWithForm.propTypes = {
   isSubmitting: PropTypes.bool,
   toast: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
-  user: PropTypes.objectOf(PropTypes.any),
+  user: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   commonTextColor: PropTypes.string.isRequired,
   commonBorderColor: PropTypes.string.isRequired,
-  exercise: PropTypes.objectOf(PropTypes.any).isRequired,
+  exercise: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 TabletWithForm.defaultProps = {
   isSubmitting: false,

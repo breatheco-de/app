@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 import { toast } from '@chakra-ui/react';
 import axios from 'axios';
 import modifyEnv from '../../../modifyEnv';

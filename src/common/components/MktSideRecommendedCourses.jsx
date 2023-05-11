@@ -13,7 +13,7 @@ import modifyEnv from '../../../modifyEnv';
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
 
-const MktSideRecommendedCourses = ({ title, endpoint }) => {
+function MktSideRecommendedCourses({ title, endpoint }) {
   const { t, lang } = useTranslation('common');
   const [isLoading, setIsLoading] = useState(true);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -75,7 +75,7 @@ const MktSideRecommendedCourses = ({ title, endpoint }) => {
       )}
     </Box>
   );
-};
+}
 
 MktSideRecommendedCourses.propTypes = {
   title: PropTypes.string,

@@ -7,7 +7,7 @@ import useGrabToScroll from '../hooks/useGrabToScroll';
 import { AnimatedContainer } from './Animated';
 
 // we need to fix a bug that causes the tooltip re-render multiple times when the mouse is over it and ref not being updated
-const DottedTimeline = ({ label, dots, helpText, width }) => {
+function DottedTimeline({ label, dots, helpText, width }) {
   const { borderColor, fontColor2, tooltipBackground, backgroundColor2 } = useStyle();
   const scrollContainerRef = useRef(null);
   const { grabToScroll, isScrollable } = useGrabToScroll({ ref: scrollContainerRef, horizontal: true });
@@ -35,12 +35,12 @@ const DottedTimeline = ({ label, dots, helpText, width }) => {
       </AnimatedContainer>
     </Flex>
   );
-};
+}
 
 DottedTimeline.propTypes = {
   // storySettings: PropTypes.objectOf(PropTypes.any),
   label: PropTypes.bool,
-  dots: PropTypes.arrayOf(PropTypes.any),
+  dots: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   helpText: PropTypes.string,
   width: PropTypes.string,
 };

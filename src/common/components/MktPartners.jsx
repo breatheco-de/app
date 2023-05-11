@@ -11,7 +11,7 @@ import GridContainer from './GridContainer';
 import useGrabToScroll from '../hooks/useGrabToScroll';
 import { toCapitalize } from '../../utils';
 
-const MktPartners = ({ id, title, images, ...rest }) => {
+function MktPartners({ id, title, images, ...rest }) {
   const scrollContainerRef = useRef(null);
   const { grabToScroll } = useGrabToScroll({ ref: scrollContainerRef, horizontal: true });
 
@@ -107,11 +107,11 @@ const MktPartners = ({ id, title, images, ...rest }) => {
       </Box>
     </GridContainer>
   );
-};
+}
 
 MktPartners.propTypes = {
   title: PropTypes.string,
-  images: PropTypes.arrayOf(PropTypes.any),
+  images: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   id: PropTypes.string,
 };
 

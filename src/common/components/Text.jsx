@@ -9,10 +9,10 @@ const sizes = {
   xs: '10px',
 };
 
-const Text = ({
+function Text({
   children, size, maxWidth, letterSpacing, withLimit, ...rest
-}) => (withLimit ? (
-  <>
+}) {
+  return withLimit ? (
     <Tooltip label={children} hasArrow placement="top-start" openDelay={500}>
       <ChakraText
         className="text"
@@ -28,12 +28,12 @@ const Text = ({
         {children && children}
       </ChakraText>
     </Tooltip>
-  </>
-) : (
-  <ChakraText letterSpacing={letterSpacing} maxWidth={maxWidth} fontSize={sizes[size] || size} {...rest}>
-    {children && children}
-  </ChakraText>
-));
+  ) : (
+    <ChakraText letterSpacing={letterSpacing} maxWidth={maxWidth} fontSize={sizes[size] || size} {...rest}>
+      {children && children}
+    </ChakraText>
+  );
+}
 
 Text.propTypes = {
   size: PropTypes.string,

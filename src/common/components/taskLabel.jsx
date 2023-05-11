@@ -2,7 +2,7 @@ import { memo } from 'react';
 import PropTypes from 'prop-types';
 import Text from './Text';
 
-const TaskLabel = ({ currentTask, t }) => {
+function TaskLabel({ currentTask, t }) {
   const getStatus = () => {
     if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
       if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {
@@ -75,10 +75,10 @@ const TaskLabel = ({ currentTask, t }) => {
       {msg}
     </Text>
   );
-};
+}
 
 TaskLabel.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.any).isRequired,
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   t: PropTypes.func,
 };
 

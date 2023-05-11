@@ -17,7 +17,7 @@ import Subscriptions from '../../js_modules/profile/Subscriptions';
 import Certificates from '../../js_modules/profile/Certificates';
 import Information from '../../js_modules/profile/Information';
 
-const Profile = () => {
+function Profile() {
   const { t } = useTranslation('profile');
   const toast = useToast();
   const { user } = useAuth();
@@ -116,6 +116,6 @@ const Profile = () => {
       </GridContainer>
     </>
   );
-};
+}
 
 export default asPrivate(memo(Profile));

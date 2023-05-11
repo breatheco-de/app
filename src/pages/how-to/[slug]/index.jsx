@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable no-continue */
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
@@ -275,6 +276,6 @@ export default function HowToSlug({ data, markdown }) {
 }
 
 HowToSlug.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any).isRequired,
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   markdown: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
 };

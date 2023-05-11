@@ -1,3 +1,5 @@
+/* eslint-disable no-dupe-else-if */
+/* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable no-extra-boolean-cast */
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -34,7 +36,7 @@ import modifyEnv from '../../../../../../modifyEnv';
 import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';
 
-const Content = () => {
+function Content() {
   const { t } = useTranslation('syllabus');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isLoading, user, choose } = useAuth();
@@ -91,7 +93,7 @@ const Content = () => {
   const currentTheme = useColorModeValue('light', 'dark');
 
   const firstTask = nextModule?.modules[0];
-  const lastPrevTask = prevModule?.modules[prevModule?.modules.length - 1];
+  const lastPrevTask = prevModule?.modules[prevModule?.modules?.length - 1];
 
   const cohortSlug = router?.query?.cohortSlug;
   const lesson = router?.query?.lesson;
@@ -874,6 +876,6 @@ const Content = () => {
       </Box>
     </Flex>
   );
-};
+}
 
 export default asPrivate(Content);

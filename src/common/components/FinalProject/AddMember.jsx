@@ -25,7 +25,7 @@ import useStyle from '../../hooks/useStyle';
 import useAuth from '../../hooks/useAuth';
 import { isNumber } from '../../../utils';
 
-const AddMember = ({ translation, students, errors, required, hint }) => {
+function AddMember({ translation, students, errors, required, hint }) {
   const [field, meta, helpers] = useField('members');
   const { featuredColor, disabledColor, lightColor } = useStyle();
   const { t } = useTranslation('final-project');
@@ -176,14 +176,14 @@ const AddMember = ({ translation, students, errors, required, hint }) => {
       {errors?.members && <Box className="error-message">{errors?.members}</Box>}
     </Box>
   );
-};
+}
 
 AddMember.propTypes = {
   errors: PropTypes.shape({
     members: PropTypes.string,
   }),
-  students: PropTypes.arrayOf(PropTypes.object).isRequired,
-  translation: PropTypes.objectOf(PropTypes.any),
+  students: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)).isRequired,
+  translation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   required: PropTypes.bool,
   hint: PropTypes.string,
 };

@@ -16,23 +16,25 @@ import tomorrow from '../syntaxHighlighter/tomorrow';
 import { slugify } from '../../../../utils';
 import Text from '../../Text';
 
-export const MDLink = ({ children, href }) => (
-  <Link
-    href={href}
-    fontSize="inherit"
-    color="blue.400"
-    fontWeight="700"
-    overflowWrap="anywhere"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    {children}
-  </Link>
-);
+export function MDLink({ children, href }) {
+  return (
+    <Link
+      href={href}
+      fontSize="inherit"
+      color="blue.400"
+      fontWeight="700"
+      overflowWrap="anywhere"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {children}
+    </Link>
+  );
+}
 
-export const Code = ({
+export function Code({
   inline, className, children, ...props
-}) => {
+}) {
   const match = /language-(\w+)/.exec(className || '');
 
   return !inline && match ? (
@@ -50,7 +52,7 @@ export const Code = ({
       {children}
     </code>
   );
-};
+}
 
 function doWithDelay(timeout, doCallback) {
   return new Promise((res) => {
@@ -61,7 +63,7 @@ function doWithDelay(timeout, doCallback) {
   });
 }
 
-export const BeforeAfter = ({ before, after }) => {
+export function BeforeAfter({ before, after }) {
   const [delimerPersentPosition, setDelimerPercentPosition] = useState(50);
   const animationDemo = () => {
     setTimeout(async () => {
@@ -110,35 +112,41 @@ export const BeforeAfter = ({ before, after }) => {
       onChangePercentPosition={setDelimerPercentPosition}
     />
   );
-};
-export const MDHr = () => (<Box as="hr" backgroundColor={useColorModeValue('gray.400', 'gray.500')} mb="20px" />);
+}
+export function MDHr() {
+  return <Box as="hr" backgroundColor={useColorModeValue('gray.400', 'gray.500')} mb="20px" />;
+}
 
-export const MDText = ({ children }) => (
-  <Text size="l" fontWeight="400" lineHeight="24px">
-    {children}
-  </Text>
-);
-
-export const MDTable = ({ children }) => (
-  <Box
-    as="div"
-    minW={{ base: '84vw', md: 'auto' }}
-    maxW={{ base: '84vw', md: 'auto' }}
-    // minW="100vw"
-    // maxW="100vw"
-    width="100%"
-    overflow="auto"
-  >
-    <Box
-      as="table"
-    >
+export function MDText({ children }) {
+  return (
+    <Text size="l" fontWeight="400" lineHeight="24px">
       {children}
+    </Text>
+  );
+}
+
+export function MDTable({ children }) {
+  return (
+    <Box
+      as="div"
+      minW={{ base: '84vw', md: 'auto' }}
+      maxW={{ base: '84vw', md: 'auto' }}
+      // minW="100vw"
+      // maxW="100vw"
+      width="100%"
+      overflow="auto"
+    >
+      <Box
+        as="table"
+      >
+        {children}
+      </Box>
+
     </Box>
+  );
+}
 
-  </Box>
-);
-
-export const MDHeading = ({ children, tagType }) => {
+export function MDHeading({ children, tagType }) {
   const variantsStyle = {
     h1: 'sm',
     h2: 'sm',
@@ -157,13 +165,15 @@ export const MDHeading = ({ children, tagType }) => {
       {children}
     </Heading>
   );
-};
+}
 
-export const DOMComponent = ({ children }) => <Box>{children}</Box>;
+export function DOMComponent({ children }) {
+  return <Box>{children}</Box>;
+}
 
-export const MDCheckbox = ({
+export function MDCheckbox({
   index, children, subTasks, subTasksLoaded, subTasksProps, setSubTasksProps, updateSubTask,
-}) => {
+}) {
   const childrenData = children[1]?.props?.children || children;
   const [isChecked, setIsChecked] = useState(false);
 
@@ -254,11 +264,11 @@ export const MDCheckbox = ({
       </Checkbox>
     </Box>
   );
-};
+}
 
-export const OnlyForBanner = ({
+export function OnlyForBanner({
   children, permission, cohortSession, profile,
-}) => {
+}) {
   const capabilities = (permission || '')?.split(',');
   console.log('md_permissions:', capabilities);
 
@@ -267,7 +277,7 @@ export const OnlyForBanner = ({
       {children}
     </OnlyFor>
   );
-};
+}
 
 Code.propTypes = {
   className: PropTypes.string,
@@ -301,9 +311,9 @@ MDHeading.defaultProps = {
 MDCheckbox.propTypes = {
   children: PropTypes.node.isRequired,
   index: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  subTasks: PropTypes.arrayOf(PropTypes.object),
+  subTasks: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
   subTasksLoaded: PropTypes.bool,
-  subTasksProps: PropTypes.arrayOf(PropTypes.object),
+  subTasksProps: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
   setSubTasksProps: PropTypes.func,
   updateSubTask: PropTypes.func,
 };
@@ -333,8 +343,8 @@ MDText.propTypes = {
 OnlyForBanner.propTypes = {
   children: PropTypes.node.isRequired,
   permission: PropTypes.string,
-  cohortSession: PropTypes.objectOf(PropTypes.any),
-  profile: PropTypes.objectOf(PropTypes.any),
+  cohortSession: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  profile: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 OnlyForBanner.defaultProps = {
   permission: '',

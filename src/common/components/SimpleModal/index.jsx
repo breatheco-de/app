@@ -4,7 +4,7 @@ import {
 import PropTypes from 'prop-types';
 import useStyle from '../../hooks/useStyle';
 
-const SimpleModal = ({ isOpen, title, children, onClose, maxWidth, ...rest }) => {
+function SimpleModal({ isOpen, title, children, onClose, maxWidth, ...rest }) {
   const { modal } = useStyle();
 
   return (
@@ -23,7 +23,7 @@ const SimpleModal = ({ isOpen, title, children, onClose, maxWidth, ...rest }) =>
       </ModalContent>
     </Modal>
   );
-};
+}
 
 SimpleModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,

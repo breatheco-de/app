@@ -24,6 +24,7 @@ module.exports = {
     'object-curly-newline': 'off',
     'spaced-comment': 'off',
     'linebreak-style': ['error', process.platform === 'win32' ? 'windows' : 'unix'],
+    'react/jsx-no-useless-fragment': 'off',
   },
   ignorePatterns: [
     'src/__tests__/*', 'cypress', 'src/stories/**/*.jsx',

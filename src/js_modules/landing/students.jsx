@@ -10,7 +10,7 @@ import {
   avatars, parallaxAvatars,
 } from '../../lib/landing-props';
 
-const Students = ({ data }) => {
+function Students({ data }) {
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const color = useColorModeValue('gray.700', 'gray.300');
   const router = useRouter();
@@ -104,10 +104,10 @@ const Students = ({ data }) => {
       )}
     </Box>
   );
-};
+}
 
 Students.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any).isRequired,
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 export default Students;

@@ -10,7 +10,7 @@ import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 
-const Pricing = ({ data }) => {
+function Pricing({ data }) {
   const defaultIndex = 0;
   const defaultFinanceIndex = 0;
   const financeSelected = {
@@ -68,10 +68,10 @@ const Pricing = ({ data }) => {
       />
     </Box>
   );
-};
+}
 
 Pricing.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any).isRequired,
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 export default Pricing;

@@ -86,7 +86,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   };
 };
 
-const LessonByTechnology = ({ lessons, technologyData }) => {
+function LessonByTechnology({ lessons, technologyData }) {
   const { t } = useTranslation('lesson');
 
   // const translations = lessons?.translations || { es: '', en: '', us: '' };
@@ -136,11 +136,11 @@ const LessonByTechnology = ({ lessons, technologyData }) => {
       />
     </Box>
   );
-};
+}
 
 LessonByTechnology.propTypes = {
-  lessons: PropTypes.arrayOf(PropTypes.object).isRequired,
-  technologyData: PropTypes.objectOf(PropTypes.any).isRequired,
+  lessons: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
+  technologyData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 export default LessonByTechnology;

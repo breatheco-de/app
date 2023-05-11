@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 import { Box, Button, Link, Modal, ModalCloseButton, ModalContent, ModalOverlay } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
@@ -14,7 +15,7 @@ import FinalProjectForm from './Form';
 import useStyle from '../../hooks/useStyle';
 import useFinalProjectProps from '../../store/actions/finalProjectAction';
 
-const FinalProject = ({ storyConfig, studentAndTeachers, tasks }) => {
+function FinalProject({ storyConfig, studentAndTeachers, tasks }) {
   const { t } = useTranslation('final-project');
   const [isOpen, setIsOpen] = useState(false);
   const [openForm, setOpenForm] = useState(false);
@@ -190,12 +191,12 @@ const FinalProject = ({ storyConfig, studentAndTeachers, tasks }) => {
       )}
     </Box>
   );
-};
+}
 
 FinalProject.propTypes = {
-  studentAndTeachers: PropTypes.arrayOf(PropTypes.any),
-  tasks: PropTypes.arrayOf(PropTypes.any),
-  storyConfig: PropTypes.objectOf(PropTypes.any),
+  studentAndTeachers: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  tasks: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  storyConfig: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 FinalProject.defaultProps = {

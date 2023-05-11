@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable no-param-reassign */
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
@@ -129,7 +130,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   };
 };
 
-const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
+function LessonSlug({ lesson, markdown, ipynbHtmlUrl }) {
   const { t } = useTranslation('lesson');
   const [isFullScreen, setIsFullScreen] = useState(false);
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
@@ -341,10 +342,10 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
       </GridContainer>
     </>
   );
-};
+}
 
 LessonSlug.propTypes = {
-  lesson: PropTypes.objectOf(PropTypes.any).isRequired,
+  lesson: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   markdown: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
   ipynbHtmlUrl: PropTypes.string.isRequired,
 };

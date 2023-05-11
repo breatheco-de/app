@@ -13,13 +13,13 @@ import MarkDownParser from '../../common/components/MarkDownParser';
 import Icon from '../../common/components/Icon';
 import iconDict from '../../common/utils/iconDict.json';
 
-const ModalInfo = ({
+function ModalInfo({
   isOpen, onClose, actionHandler, rejectHandler, forceHandler, disableHandler, title, description,
   teacherFeedback, linkInfo, linkText, link, handlerText, closeText, cancelColorButton,
   handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
   htmlDescription, markdownDescription, attachment, disableInput, descriptionStyle, footerStyle,
   closeButtonStyles, buttonHandlerStyles, headerStyles, disableCloseButton,
-}) => {
+}) {
   const { t } = useTranslation('dashboard');
   const [githubUrl, setGithubUrl] = useState(link);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -337,7 +337,7 @@ const ModalInfo = ({
       )}
     </>
   );
-};
+}
 
 ModalInfo.propTypes = {
   isOpen: PropTypes.bool,
@@ -359,17 +359,17 @@ ModalInfo.propTypes = {
   cancelColorButton: PropTypes.string,
   rejectData: PropTypes.objectOf(PropTypes.string),
   sendProject: PropTypes.func,
-  currentTask: PropTypes.objectOf(PropTypes.any),
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   type: PropTypes.string,
   closeButtonVariant: PropTypes.string,
   htmlDescription: PropTypes.string,
   markdownDescription: PropTypes.string,
-  attachment: PropTypes.arrayOf(PropTypes.object),
-  descriptionStyle: PropTypes.objectOf(PropTypes.any),
-  footerStyle: PropTypes.objectOf(PropTypes.any),
-  closeButtonStyles: PropTypes.objectOf(PropTypes.any),
-  buttonHandlerStyles: PropTypes.objectOf(PropTypes.any),
-  headerStyles: PropTypes.objectOf(PropTypes.any),
+  attachment: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
+  descriptionStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  footerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  closeButtonStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  buttonHandlerStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  headerStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   disableCloseButton: PropTypes.bool,
 };
 

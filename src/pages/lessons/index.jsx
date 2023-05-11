@@ -123,7 +123,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   };
 };
 
-const Projects = ({ lessons, technologyTags, difficulties }) => {
+function Projects({ lessons, technologyTags, difficulties }) {
   const { t } = useTranslation('lesson');
   const { filteredBy, setProjectFilters } = useFilter();
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
@@ -283,11 +283,11 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
       </GridContainer>
     </Box>
   );
-};
+}
 
 Projects.propTypes = {
-  technologyTags: PropTypes.arrayOf(PropTypes.any).isRequired,
-  lessons: PropTypes.arrayOf(PropTypes.object).isRequired,
+  technologyTags: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  lessons: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
   difficulties: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 

@@ -6,7 +6,7 @@ import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 
-const Stepper = ({ stepIndex, checkoutData, isFirstStep, isSecondStep, isThirdStep, isFourthStep, handleGoBack }) => {
+function Stepper({ stepIndex, checkoutData, isFirstStep, isSecondStep, isThirdStep, isFourthStep, handleGoBack }) {
   const { t } = useTranslation('signup');
   const { fontColor, disabledColor2 } = useStyle();
 
@@ -179,7 +179,7 @@ const Stepper = ({ stepIndex, checkoutData, isFirstStep, isSecondStep, isThirdSt
       )}
     </>
   );
-};
+}
 
 Stepper.propTypes = {
   stepIndex: PropTypes.number.isRequired,

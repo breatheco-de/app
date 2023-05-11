@@ -86,7 +86,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   };
 };
 
-const ExercisesByTechnology = ({ exercises, technologyData }) => {
+function ExercisesByTechnology({ exercises, technologyData }) {
   const { t } = useTranslation('how-to');
 
   // const translations = exercises?.translations || { es: '', en: '', us: '' };
@@ -136,11 +136,11 @@ const ExercisesByTechnology = ({ exercises, technologyData }) => {
       />
     </Box>
   );
-};
+}
 
 ExercisesByTechnology.propTypes = {
-  exercises: PropTypes.arrayOf(PropTypes.object).isRequired,
-  technologyData: PropTypes.objectOf(PropTypes.any).isRequired,
+  exercises: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
+  technologyData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 export default ExercisesByTechnology;

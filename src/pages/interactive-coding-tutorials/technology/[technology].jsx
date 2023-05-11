@@ -86,7 +86,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   };
 };
 
-const ProjectsByTechnology = ({ projects, technologyData }) => {
+function ProjectsByTechnology({ projects, technologyData }) {
   const { t } = useTranslation('projects');
 
   // const translations = projects?.translations || { es: '', en: '', us: '' };
@@ -137,11 +137,11 @@ const ProjectsByTechnology = ({ projects, technologyData }) => {
       />
     </Box>
   );
-};
+}
 
 ProjectsByTechnology.propTypes = {
-  projects: PropTypes.arrayOf(PropTypes.object).isRequired,
-  technologyData: PropTypes.objectOf(PropTypes.any).isRequired,
+  projects: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
+  technologyData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 export default ProjectsByTechnology;

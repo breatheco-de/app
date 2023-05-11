@@ -2,16 +2,17 @@ import PropTypes from 'prop-types';
 import { Tooltip } from '@chakra-ui/react';
 import Icon from './Icon';
 
-const HelpComponent = ({
+function HelpComponent({
   width, height, style, color, text,
-}) => (
-  <Tooltip label={text} placement="top">
-    <span>
-      <Icon width={width} height={height} style={{ display: 'inline-block', ...style }} color={color} icon="help" />
-    </span>
-  </Tooltip>
-
-);
+}) {
+  return (
+    <Tooltip label={text} placement="top">
+      <span>
+        <Icon width={width} height={height} style={{ display: 'inline-block', ...style }} color={color} icon="help" />
+      </span>
+    </Tooltip>
+  );
+}
 
 HelpComponent.propTypes = {
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

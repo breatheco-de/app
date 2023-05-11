@@ -2,9 +2,9 @@ import { Button, ListItem, UnorderedList } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import NextChakraLink from '../NextChakraLink';
 
-const PageIndexes = ({
+function PageIndexes({
   currentPage, pages, handlePageChange, ...rest
-}) => {
+}) {
   const totalPages = pages?.length || 0;
   const pageIndices = [1];
 
@@ -68,11 +68,11 @@ const PageIndexes = ({
       )))}
     </UnorderedList>
   );
-};
+}
 
 PageIndexes.propTypes = {
   currentPage: PropTypes.number.isRequired,
-  pages: PropTypes.arrayOf(PropTypes.any).isRequired,
+  pages: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   handlePageChange: PropTypes.func,
 };
 

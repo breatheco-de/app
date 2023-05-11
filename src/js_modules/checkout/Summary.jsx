@@ -10,7 +10,7 @@ import useSignup from '../../common/store/actions/signupAction';
 import bc from '../../common/services/breathecode';
 import { getQueryString, toCapitalize, unSlugify } from '../../utils';
 
-const Summary = () => {
+function Summary() {
   const { t } = useTranslation('signup');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [disableHandler, setDisableHandler] = useState(false);
@@ -322,6 +322,6 @@ const Summary = () => {
       </Box>
     </Box>
   );
-};
+}
 
 export default Summary;

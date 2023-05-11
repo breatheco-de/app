@@ -12,10 +12,10 @@ import MobileItem from './MobileItem';
 import LanguageSelector from '../../common/components/LanguageSelector';
 // import UpgradeExperience from '../../common/components/UpgradeExperience';
 
-const MobileNav = ({
+function MobileNav({
   // eslint-disable-next-line no-unused-vars
   NAV_ITEMS, readSyllabus, haveSession, translations, mktCourses,
-}) => {
+}) {
   const [privateItems, setPrivateItems] = useState([]);
   const { colorMode, toggleColorMode } = useColorMode();
   const commonColors = useColorModeValue('white', 'gray.800');
@@ -125,7 +125,7 @@ const MobileNav = ({
       </Box>
     </Stack>
   );
-};
+}
 
 MobileNav.propTypes = {
   haveSession: PropTypes.bool.isRequired,
@@ -145,8 +145,8 @@ MobileNav.propTypes = {
     }),
   ),
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
-  readSyllabus: PropTypes.arrayOf(PropTypes.any),
-  mktCourses: PropTypes.arrayOf(PropTypes.any),
+  readSyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  mktCourses: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 MobileNav.defaultProps = {

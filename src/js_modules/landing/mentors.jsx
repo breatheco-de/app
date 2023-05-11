@@ -11,7 +11,7 @@ import { parallaxAvatars2 } from '../../lib/landing-props';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 
-const Mentors = ({ data, users }) => {
+function Mentors({ data, users }) {
   const [avatarIndex, setAvatarIndex] = useState(1);
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const fadeOutBackground = useColorModeValue('#EEF9FE', '#2D3748');
@@ -94,11 +94,11 @@ const Mentors = ({ data, users }) => {
       </Container>
     </Box>
   );
-};
+}
 
 Mentors.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any).isRequired,
-  users: PropTypes.arrayOf(PropTypes.object),
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  users: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
 };
 
 Mentors.defaultProps = {

@@ -36,7 +36,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   };
 };
 
-const EditMarkdown = () => {
+function EditMarkdown() {
   const [markdownSaved, setMarkdownSaved] = usePersistent('markdown', markdownDefaultText);
   const [markdownValue, setMarkdownValue] = useState(markdownSaved);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -94,6 +94,6 @@ const EditMarkdown = () => {
 
     </Box>
   );
-};
+}
 
 export default EditMarkdown;

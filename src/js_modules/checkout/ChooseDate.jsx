@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 import { Box, Button, Flex, useToast } from '@chakra-ui/react';
 import { es } from 'date-fns/locale';
 import { format } from 'date-fns';
@@ -9,7 +10,7 @@ import Text from '../../common/components/Text';
 import useSignup from '../../common/store/actions/signupAction';
 import bc from '../../common/services/breathecode';
 
-const ChooseDate = ({ cohort }) => {
+function ChooseDate({ cohort }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const toast = useToast();
@@ -49,7 +50,7 @@ const ChooseDate = ({ cohort }) => {
           {cohort?.shortWeekDays[router.locale].length > 0 && (
             <Text size="14px" color="gray.default">
               {cohort?.shortWeekDays[router.locale].map(
-                (day, i) => `${day}${i < cohort?.shortWeekDays[router.locale].length - 1 ? '/' : ''}`,
+                (day, i) => `${day}${i < cohort?.shortWeekDays?.[router?.locale].length - 1 ? '/' : ''}`,
               )}
             </Text>
           )}
@@ -99,10 +100,10 @@ const ChooseDate = ({ cohort }) => {
       </Button>
     </Box>
   );
-};
+}
 
 ChooseDate.propTypes = {
-  cohort: PropTypes.objectOf(PropTypes.any),
+  cohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 ChooseDate.defaultProps = {

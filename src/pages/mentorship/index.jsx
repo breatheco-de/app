@@ -35,7 +35,29 @@ import CustomTheme from '../../../styles/theme';
 import GridContainer from '../../common/components/GridContainer';
 // import KPI from '../../common/components/KPI';
 
-const Mentorship = () => {
+// eslint-disable-next-line react/prop-types
+const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
+  const { t } = useTranslation('mentorship');
+
+  return (
+    // eslint-disable-next-line react/button-has-type
+    <Button
+      size={['md', 'md', 'lg', 'lg']}
+      display="inline-block"
+      colorScheme="blue"
+      variant="ghost"
+      onClick={onClick}
+      ref={ref}
+      marginLeft={['5px', '5px', '10px', '10px']}
+    >
+      {value || t('common:select')}
+      {' '}
+      <ChevronDownIcon />
+    </Button>
+  );
+});
+
+function Mentorship() {
   const { t } = useTranslation('mentorship');
   const { colorMode } = useColorMode();
   const router = useRouter();
@@ -80,24 +102,6 @@ const Mentorship = () => {
       setIsLoading(false);
     }
   }, [startDate]);
-
-  // eslint-disable-next-line react/prop-types
-  const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => (
-    // eslint-disable-next-line react/button-has-type
-    <Button
-      size={['md', 'md', 'lg', 'lg']}
-      display="inline-block"
-      colorScheme="blue"
-      variant="ghost"
-      onClick={onClick}
-      ref={ref}
-      marginLeft={['5px', '5px', '10px', '10px']}
-    >
-      {value || t('common:select')}
-      {' '}
-      <ChevronDownIcon />
-    </Button>
-  ));
 
   const getExtraTime = (str) => str.substr(0, str.indexOf(', the expected duration')).replace('Extra time of ', '');
   const getExpectedTime = (str) => str.substr(str.indexOf(', the expected duration')).replace(', the expected duration was ', '');
@@ -348,7 +352,7 @@ const Mentorship = () => {
     </Container>
 
   );
-};
+}
 
 const StyledContainer = styled.div`
   width: 100%;

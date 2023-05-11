@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -13,11 +14,11 @@ import Text from './Text';
 import Icon from './Icon';
 import { isNumber } from '../../utils';
 
-const ProjectsSection = ({
+function ProjectsSection({
   startsIn, stTranslation, syllabusContent, courseProgress,
   usersConnected, assistants, teacher, isAvailableAsSaas,
   subscriptionStatus,
-}) => {
+}) {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
   const bgColor = useColorModeValue('featuredLight', 'featuredDark');
@@ -160,16 +161,16 @@ const ProjectsSection = ({
       )}
     </Flex>
   );
-};
+}
 
 ProjectsSection.propTypes = {
   startsIn: PropTypes.instanceOf(Date),
-  syllabusContent: PropTypes.objectOf(PropTypes.any),
+  syllabusContent: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   courseProgress: PropTypes.number,
-  stTranslation: PropTypes.objectOf(PropTypes.any),
+  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   usersConnected: PropTypes.arrayOf(PropTypes.number),
-  assistants: PropTypes.arrayOf(PropTypes.any),
-  teacher: PropTypes.objectOf(PropTypes.any),
+  assistants: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  teacher: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   isAvailableAsSaas: PropTypes.bool,
   subscriptionStatus: PropTypes.string,
 };

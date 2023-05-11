@@ -18,9 +18,9 @@ import NextChakraLink from '../../common/components/NextChakraLink';
 import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
 
-const MobileItem = ({
+function MobileItem({
   label, subMenu, href, asPath, description, icon,
-}) => {
+}) {
   const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
   const linkColor = useColorModeValue('gray.600', 'gray.200');
@@ -159,7 +159,7 @@ const MobileItem = ({
       </Collapse>
     </Stack>
   );
-};
+}
 
 MobileItem.propTypes = {
   label: PropTypes.string.isRequired,

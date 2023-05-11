@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, LinkBox } from '@chakra-ui/react';
 import { PrismicRichText } from '@prismicio/react';
 import profileHandlers from '../../js_modules/profile/Subscriptions/handlers';
 import ShowPrices from './ShowPrices';
@@ -13,35 +13,45 @@ import Icon from './Icon';
 import Heading from './Heading';
 import GridContainer from './GridContainer';
 
-const BulletComponent = ({ bullet, isString }) => (
-  <Box
-    as="li"
-    key={isString ? bullet : bullet?.features[0]?.description}
-    display="flex"
-    flexDirection="row"
-    lineHeight="24px"
-    gridGap="8px"
-  >
-    <Icon
-      icon="checked2"
-      color="#38A56A"
-      width="13px"
-      height="10px"
-      style={{ margin: '8px 0 0 0' }}
-    />
-    {bullet?.description && (
+function Paragraph({ children }, index) {
+  return (
+    <Text key={index} size="md">
+      {children}
+    </Text>
+  );
+}
+
+function BulletComponent({ bullet, isString }) {
+  return (
+    <LinkBox
+      as="li"
+      key={isString ? bullet : bullet?.features[0]?.description}
+      display="flex"
+      flexDirection="row"
+      lineHeight="24px"
+      gridGap="8px"
+    >
+      <Icon
+        icon="checked2"
+        color="#38A56A"
+        width="13px"
+        height="10px"
+        style={{ margin: '8px 0 0 0' }}
+      />
+      {bullet?.description && (
       <Box
         fontSize="14px"
         fontWeight="600"
         letterSpacing="0.05em"
         dangerouslySetInnerHTML={{ __html: bullet?.description }}
       />
-    )}
-    {isString ? bullet : bullet?.features[0]?.description}
-  </Box>
-);
+      )}
+      {isString ? bullet : bullet?.features[0]?.description}
+    </LinkBox>
+  );
+}
 
-const MktShowPrices = ({ id, title, description, plan, bullets, ...rest }) => {
+function MktShowPrices({ id, title, description, plan, bullets, ...rest }) {
   const { t } = useTranslation('profile');
   const router = useRouter();
   const [offerProps, setOfferProps] = useState({});
@@ -81,11 +91,7 @@ const MktShowPrices = ({ id, title, description, plan, bullets, ...rest }) => {
           <PrismicRichText
             field={description}
             components={{
-              paragraph: ({ children }, index) => (
-                <Text key={index} size="md">
-                  {children}
-                </Text>
-              ),
+              paragraph: Paragraph,
             }}
           />
         )}
@@ -109,9 +115,8 @@ const MktShowPrices = ({ id, title, description, plan, bullets, ...rest }) => {
                   <PrismicRichText
                     field={bullets}
                     components={{
-                      listItem: ({ children }, index) => (
-                        <BulletComponent key={index} bullet={children} isString />
-                      ),
+                      listItem: ({ children }, index) => BulletComponent({ key: index, bullet: children, isString: true }),
+                      // listItem: ({ children }, index) => <BulletComponent key={index} bullet={children} isString />,
                     }}
                   />
                 )
@@ -153,7 +158,7 @@ const MktShowPrices = ({ id, title, description, plan, bullets, ...rest }) => {
       </Box>
     </GridContainer>
   ) : 'loading...';
-};
+}
 
 MktShowPrices.propTypes = {
   title: PropTypes.string,

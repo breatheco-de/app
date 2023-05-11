@@ -259,8 +259,8 @@ const ProjectList = forwardRef(({
 });
 
 ProjectList.propTypes = {
-  projects: PropTypes.arrayOf(PropTypes.object).isRequired,
-  contextFilter: PropTypes.objectOf(PropTypes.any),
+  projects: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
+  contextFilter: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   projectPath: PropTypes.string,
   pathWithDifficulty: PropTypes.bool,
   withoutImage: PropTypes.bool,

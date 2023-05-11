@@ -10,7 +10,56 @@ import Heading from './Heading';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
 
-const ShowPrices = ({
+function PlanCard({ item, i, handleSelect, selectedIndex }) {
+  const { backgroundColor2 } = useStyle();
+
+  return (
+    <Box
+      key={`${item.title} ${item?.price}`}
+      display="flex"
+      onClick={() => handleSelect(i, item)}
+      width="100%"
+      alignItems={item?.isFree && 'center'}
+      justifyContent="space-between"
+      p="22px 18px"
+      gridGap="24px"
+      cursor="pointer"
+      background={backgroundColor2}
+      border="4px solid"
+      borderColor={selectedIndex === i ? '#0097CD' : 'transparent'}
+      borderRadius="8px"
+    >
+      <Box display="flex" flexDirection="column" width="100%" gridGap="12px" minWidth={{ base: 'none', md: 'auto' }} height="fit-content" fontWeight="400">
+        {!item?.isFree && (
+        <Box fontSize="18px" fontWeight="700">
+          {item?.title}
+        </Box>
+        )}
+        <Text
+          size="md"
+          fontWeight="500"
+          mb="6px"
+          dangerouslySetInnerHTML={{ __html: item?.description }}
+        />
+      </Box>
+
+      <Box textAlign="right" display="flex" minWidth={item.period !== 'FINANCING' && 'auto'} justifyContent="center" flexDirection="column" gridGap="10px">
+        <Heading as="span" size={{ base: 'var(--heading-m)', md: 'clamp(0.875rem, 0.3rem + 1.8vw, 2rem)' }} width={item.period === 'FINANCING' && 'max-content'} lineHeight="1" textTransform="uppercase" color="blue.default">
+          {item?.priceText || item?.price}
+        </Heading>
+        {item?.lastPrice && (
+        <Text lineHeight="21px" fontSize="21px" fontWeight="500" color="#A9A9A9">
+          <s>
+            {item?.lastPrice}
+          </s>
+        </Text>
+        )}
+      </Box>
+    </Box>
+  );
+}
+
+function ShowPrices({
   data,
   title,
   onePaymentLabel,
@@ -25,11 +74,11 @@ const ShowPrices = ({
   stTranslation,
   handleUpgrade,
   isTotallyFree,
-}) => {
+}) {
   const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
   const [selectedFinanceIndex, setSelectedFinanceIndex] = useState(defaultFinanceIndex);
   const { t, lang } = useTranslation('');
-  const { fontColor, disabledColor, featuredColor, backgroundColor2 } = useStyle();
+  const { fontColor, disabledColor, featuredColor } = useStyle();
   const router = useRouter();
 
   const financeSelected = {
@@ -56,51 +105,6 @@ const ShowPrices = ({
     setSelectedIndex(0);
     onSelect(financeSelected[defaultFinanceIndex][defaultIndex || 0]);
   };
-
-  const PlanCard = ({ item, i }) => (
-    <Box
-      key={`${item.title} ${item?.price}`}
-      display="flex"
-      onClick={() => handleSelect(i, item)}
-      width="100%"
-      alignItems={item?.isFree && 'center'}
-      justifyContent="space-between"
-      p="22px 18px"
-      gridGap="24px"
-      cursor="pointer"
-      background={backgroundColor2}
-      border="4px solid"
-      borderColor={selectedIndex === i ? '#0097CD' : 'transparent'}
-      borderRadius="8px"
-    >
-      <Box display="flex" flexDirection="column" width="100%" gridGap="12px" minWidth={{ base: 'none', md: 'auto' }} height="fit-content" fontWeight="400">
-        {!item?.isFree && (
-          <Box fontSize="18px" fontWeight="700">
-            {item?.title}
-          </Box>
-        )}
-        <Text
-          size="md"
-          fontWeight="500"
-          mb="6px"
-          dangerouslySetInnerHTML={{ __html: item?.description }}
-        />
-      </Box>
-
-      <Box textAlign="right" display="flex" minWidth={item.period !== 'FINANCING' && 'auto'} justifyContent="center" flexDirection="column" gridGap="10px">
-        <Heading as="span" size={{ base: 'var(--heading-m)', md: 'clamp(0.875rem, 0.3rem + 1.8vw, 2rem)' }} width={item.period === 'FINANCING' && 'max-content'} lineHeight="1" textTransform="uppercase" color="blue.default">
-          {item?.priceText || item?.price}
-        </Heading>
-        {item?.lastPrice && (
-          <Text lineHeight="21px" fontSize="21px" fontWeight="500" color="#A9A9A9">
-            <s>
-              {item?.lastPrice}
-            </s>
-          </Text>
-        )}
-      </Box>
-    </Box>
-  );
 
   const getTabColor = (index, tabIsAvailable = true) => {
     if (selectedFinanceIndex === index) {
@@ -161,7 +165,7 @@ const ShowPrices = ({
         )}
       </Box>
       {financeSelected[selectedFinanceIndex].filter((l) => l.show === true).map((item, i) => (!item.isFree) && (
-        <PlanCard item={item} i={i} />
+        <PlanCard item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
       ))}
       {existMoreThanOne && financeSelected[selectedFinanceIndex].some((item) => item.isFree) && (
         <Box display="flex" alignItems="center">
@@ -173,7 +177,7 @@ const ShowPrices = ({
         </Box>
       )}
       {financeSelected[selectedFinanceIndex].filter((l) => l.show === true && l?.isFree).map((item, i) => (
-        <PlanCard item={item} i={i} />
+        <PlanCard item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
       ))}
       <Box mt="38px">
         {process.env.VERCEL_ENV !== 'production' && outOfConsumables && (
@@ -201,21 +205,21 @@ const ShowPrices = ({
       </Box>
     </Box>
   );
-};
+}
 
 ShowPrices.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any),
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   title: PropTypes.string,
   onePaymentLabel: PropTypes.string,
   financeTextLabel: PropTypes.string,
   notReady: PropTypes.string,
-  list: PropTypes.arrayOf(PropTypes.any),
-  finance: PropTypes.arrayOf(PropTypes.any),
+  list: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  finance: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   onSelect: PropTypes.func,
   defaultIndex: PropTypes.number,
   defaultFinanceIndex: PropTypes.number,
   outOfConsumables: PropTypes.bool,
-  stTranslation: PropTypes.objectOf(PropTypes.any),
+  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   handleUpgrade: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
   isTotallyFree: PropTypes.bool,
 };

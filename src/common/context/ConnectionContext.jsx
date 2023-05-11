@@ -11,7 +11,7 @@ import modifyEnv from '../../../modifyEnv';
 
 export const ConnectionContext = createContext({ usersConnected: [] });
 
-const OnlineContext = ({ children }) => {
+function OnlineContext({ children }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [usersConnected, setUsersConnected] = useState({});
   const accessToken = getStorageItem('accessToken');
@@ -68,6 +68,7 @@ const OnlineContext = ({ children }) => {
   const arrayOfUsers = Object.keys(usersConnected).map((key) => Number(key));
   return (
     <ConnectionContext.Provider
+      // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
         usersConnected: arrayOfUsers,
       }}
@@ -75,7 +76,7 @@ const OnlineContext = ({ children }) => {
       {children}
     </ConnectionContext.Provider>
   );
-};
+}
 
 OnlineContext.propTypes = {
   children: PropTypes.node.isRequired,

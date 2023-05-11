@@ -6,11 +6,11 @@ import { useEffect, useRef, useState } from 'react';
 import sparkline from '@fnando/sparkline';
 import { Box, Flex } from '@chakra-ui/react';
 
-const Sparkline = ({
+function Sparkline({
   values, backgroundColor, fillColor, strokeColor, interactive, lineWidth,
   width, height, strokeWidth, strokeDasharray, strokeDashoffset, circleWidth, containerWidth, tooltipContent,
   chartStyle,
-}) => {
+}) {
   const sparklineRef = useRef(null);
   const [currentDatapoint, setCurrentDatapoint] = useState(values[0]);
 
@@ -121,7 +121,7 @@ const Sparkline = ({
       </Flex>
     </Box>
   );
-};
+}
 
 Sparkline.propTypes = {
   values: PropTypes.arrayOf(
@@ -143,7 +143,7 @@ Sparkline.propTypes = {
   interactive: PropTypes.bool,
   circleWidth: PropTypes.number,
   lineWidth: PropTypes.number,
-  chartStyle: PropTypes.objectOf(PropTypes.any),
+  chartStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 Sparkline.defaultProps = {

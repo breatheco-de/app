@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import {
   Box, Button, FormLabel, Input, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, Textarea, useToast, useColorModeValue, useDisclosure,
 } from '@chakra-ui/react';
@@ -13,9 +12,77 @@ import bc from '../../common/services/breathecode';
 // import { getStorageItem } from '../../utils';
 // import Modal from './modal';
 
-const DeliverModal = ({
+function ReviewButton({ type, comment, onClose, currentTask, updpateAssignment }) {
+  const { t } = useTranslation('assignments');
+  const toast = useToast();
+
+  const statusColor = {
+    approve: 'success',
+    reject: 'error',
+  };
+  const buttonColor = {
+    approve: 'success',
+    reject: 'danger',
+  };
+  const buttonText = {
+    approve: t('review-assignment.approve'),
+    reject: t('review-assignment.reject'),
+  };
+  const revisionStatus = {
+    approve: 'APPROVED',
+    reject: 'REJECTED',
+  };
+  const alertStatus = {
+    approve: t('alert-message:review-assignment-approve'),
+    reject: t('alert-message:review-assignment-reject'),
+  };
+  return (
+    <Button
+      background={buttonColor[type]}
+      _hover={{ background: buttonColor[type] }}
+      onClick={() => {
+        if (revisionStatus[type] !== undefined) {
+          bc.todo().update({
+            id: currentTask.id,
+            revision_status: revisionStatus[type],
+            description: comment,
+          })
+            .then(() => {
+              toast({
+                title: alertStatus[type],
+                status: statusColor[type],
+                duration: 5000,
+                isClosable: true,
+              });
+              updpateAssignment({
+                ...currentTask,
+                id: currentTask.id,
+                revision_status: revisionStatus[type],
+                description: comment,
+              });
+              onClose();
+            })
+            .catch(() => {
+              toast({
+                title: t('alert-message:review-assignment-error'),
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+              });
+            });
+        }
+      }}
+      color="white"
+      fontSize="13px"
+      textTransform="uppercase"
+    >
+      {buttonText[type]}
+    </Button>
+  );
+}
+function DeliverModal({
   currentTask, projectLink, updpateAssignment,
-}) => {
+}) {
   const { t } = useTranslation('assignments');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
@@ -205,85 +272,14 @@ const DeliverModal = ({
 
     </Box>
   );
-};
+}
 
-const ReviewModal = ({ currentTask, projectLink, updpateAssignment }) => {
+function ReviewModal({ currentTask, projectLink, updpateAssignment }) {
   const { t } = useTranslation('assignments');
-  const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [comment, setComment] = useState('');
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
   const commonBorderColor = useColorModeValue('gray.250', 'gray.500');
-
-  const ReviewButton = ({ type }) => {
-    const statusColor = {
-      approve: 'success',
-      reject: 'error',
-    };
-    const buttonColor = {
-      approve: 'success',
-      reject: 'danger',
-    };
-    const buttonText = {
-      approve: t('review-assignment.approve'),
-      reject: t('review-assignment.reject'),
-    };
-    const revisionStatus = {
-      approve: 'APPROVED',
-      reject: 'REJECTED',
-    };
-    const alertStatus = {
-      approve: t('alert-message:review-assignment-approve'),
-      reject: t('alert-message:review-assignment-reject'),
-    };
-    return (
-      <Button
-        background={buttonColor[type]}
-        _hover={{ background: buttonColor[type] }}
-        onClick={() => {
-          if (revisionStatus[type] !== undefined) {
-            bc.todo().update({
-              id: currentTask.id,
-              revision_status: revisionStatus[type],
-              description: comment,
-            })
-              .then(() => {
-                toast({
-                  title: alertStatus[type],
-                  status: statusColor[type],
-                  duration: 5000,
-                  isClosable: true,
-                });
-                updpateAssignment({
-                  ...currentTask,
-                  id: currentTask.id,
-                  revision_status: revisionStatus[type],
-                  description: comment,
-                });
-                onClose();
-              })
-              .catch(() => {
-                toast({
-                  title: t('alert-message:review-assignment-error'),
-                  status: 'error',
-                  duration: 5000,
-                  isClosable: true,
-                });
-              });
-          }
-        }}
-        color="white"
-        fontSize="13px"
-        textTransform="uppercase"
-      >
-        {buttonText[type]}
-      </Button>
-    );
-  };
-
-  ReviewButton.propTypes = {
-    type: PropTypes.string.isRequired,
-  };
 
   return (
     <Box width="auto" height="auto">
@@ -318,7 +314,7 @@ const ReviewModal = ({ currentTask, projectLink, updpateAssignment }) => {
             <Box pt={6} display="flex" flexDirection="row" justifyContent="space-between">
               {['reject', 'approve'].map((type) => (
                 <Fragment key={type}>
-                  <ReviewButton type={type} />
+                  <ReviewButton type={type} comment={comment} onClose={onClose} currentTask={currentTask} updpateAssignment={updpateAssignment} />
                 </Fragment>
               ))}
             </Box>
@@ -327,11 +323,11 @@ const ReviewModal = ({ currentTask, projectLink, updpateAssignment }) => {
       </Modal>
     </Box>
   );
-};
+}
 
-const ButtonHandler = ({
+function ButtonHandler({
   currentTask, cohortSession, contextState, setContextState,
-}) => {
+}) {
   const { t } = useTranslation('assignments');
   const router = useRouter();
   const toast = useToast();
@@ -424,12 +420,20 @@ const ButtonHandler = ({
       <DeliverModal currentTask={currentTask} projectLink={projectLink} cohortSession={cohortSession} updpateAssignment={updpateAssignment} />
     </Box>
   );
+}
+
+ReviewButton.propTypes = {
+  type: PropTypes.string.isRequired,
+  comment: PropTypes.string.isRequired,
+  onClose: PropTypes.func.isRequired,
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  updpateAssignment: PropTypes.func.isRequired,
 };
 
 ButtonHandler.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.any),
-  cohortSession: PropTypes.objectOf(PropTypes.any),
-  contextState: PropTypes.objectOf(PropTypes.any).isRequired,
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  cohortSession: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  contextState: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   setContextState: PropTypes.func.isRequired,
 };
 ButtonHandler.defaultProps = {
@@ -437,12 +441,12 @@ ButtonHandler.defaultProps = {
   cohortSession: null,
 };
 DeliverModal.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.any).isRequired,
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   projectLink: PropTypes.string.isRequired,
   updpateAssignment: PropTypes.func.isRequired,
 };
 ReviewModal.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.any).isRequired,
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   projectLink: PropTypes.string.isRequired,
   updpateAssignment: PropTypes.func.isRequired,
 };

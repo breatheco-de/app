@@ -54,7 +54,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   };
 };
 
-const Checkout = () => {
+function Checkout() {
   const { t } = useTranslation('signup');
   const router = useRouter();
   const [cohorts, setCohorts] = useState(null);
@@ -289,6 +289,6 @@ const Checkout = () => {
       </Box>
     </Box>
   );
-};
+}
 
 export default Checkout;

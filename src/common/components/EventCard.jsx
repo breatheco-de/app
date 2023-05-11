@@ -12,7 +12,7 @@ import useStyle from '../hooks/useStyle';
 import { parseQuerys } from '../../utils/url';
 import modifyEnv from '../../../modifyEnv';
 
-const EventCard = ({ id, title, description, host, startingAt, endingAt, technologies, stTranslation, ...rest }) => {
+function EventCard({ id, title, description, host, startingAt, endingAt, technologies, stTranslation, ...rest }) {
   const { t, lang } = useTranslation('live-event');
   const [date, setDate] = useState('');
   const { lightColor, disabledColor2 } = useStyle();
@@ -188,7 +188,7 @@ const EventCard = ({ id, title, description, host, startingAt, endingAt, technol
       )}
     </Flex>
   );
-};
+}
 
 EventCard.propTypes = {
   title: PropTypes.string.isRequired,
@@ -197,7 +197,7 @@ EventCard.propTypes = {
   endingAt: PropTypes.string,
   technologies: PropTypes.arrayOf(PropTypes.string),
   host: PropTypes.oneOfType([PropTypes.string, PropTypes.objectOf(PropTypes.any)]),
-  stTranslation: PropTypes.objectOf(PropTypes.any),
+  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   id: PropTypes.number.isRequired,
 };
 

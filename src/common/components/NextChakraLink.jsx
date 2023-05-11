@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { setStorageItem } from '../../utils';
 
-const NextChakraLink = ({
+function NextChakraLink({
   href,
   as,
   replace,
@@ -16,7 +16,7 @@ const NextChakraLink = ({
   redirectAfterLogin,
   onClick,
   ...chakraProps
-}) => {
+}) {
   const router = useRouter();
 
   return (
@@ -42,7 +42,7 @@ const NextChakraLink = ({
       </ChakraLink>
     </NextLink>
   );
-};
+}
 
 NextChakraLink.propTypes = {
   href: PropTypes.string,

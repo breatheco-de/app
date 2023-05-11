@@ -6,11 +6,11 @@ import {
 import useStyle from '../../hooks/useStyle';
 import FileInput from './FileInput';
 
-const FieldForm = ({
+function FieldForm({
   type, name, label, placeholder, formProps, setFormProps, style, withLabel, pattern, handleOnChange, externValue, onClick,
   acceptedFiles, maxFileSize, multipleFiles, fileProps, setFileProps, setFieldValue, translation, required, hint, maxLength,
   spellcheck,
-}) => {
+}) {
   const { input, lightColor } = useStyle();
   const inputBorderColor = input.borderColor;
 
@@ -117,16 +117,16 @@ const FieldForm = ({
       }}
     </Field>
   );
-};
+}
 
 FieldForm.propTypes = {
   type: PropTypes.string,
   name: PropTypes.string,
   label: PropTypes.string,
   placeholder: PropTypes.string,
-  formProps: PropTypes.objectOf(PropTypes.any),
+  formProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   setFormProps: PropTypes.func,
-  style: PropTypes.objectOf(PropTypes.any),
+  style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   withLabel: PropTypes.bool,
   pattern: PropTypes.string,
   handleOnChange: PropTypes.func,
@@ -136,10 +136,10 @@ FieldForm.propTypes = {
   acceptedFiles: PropTypes.string,
   maxFileSize: PropTypes.number,
   multipleFiles: PropTypes.bool,
-  fileProps: PropTypes.arrayOf(PropTypes.any),
+  fileProps: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   setFileProps: PropTypes.func,
   setFieldValue: PropTypes.func,
-  translation: PropTypes.objectOf(PropTypes.any),
+  translation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   required: PropTypes.bool,
   hint: PropTypes.string,
   spellcheck: PropTypes.bool,

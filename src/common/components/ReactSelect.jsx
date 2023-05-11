@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-exports */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/prop-types */
 import React, { cloneElement, forwardRef } from 'react';

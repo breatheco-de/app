@@ -1,3 +1,4 @@
+/* eslint-disable default-param-last */
 import axios from '../../axios';
 import { parseQuerys } from '../../utils/url';
 import modifyEnv from '../../../modifyEnv';

@@ -14,9 +14,9 @@ import bc from '../../common/services/breathecode';
 import ShareButton from '../../common/components/ShareButton';
 // import { usePersistent } from '../../common/hooks/usePersistent';
 
-const Module = ({
+function Module({
   data, taskTodo, currIndex,
-}) => {
+}) {
   const { t } = useTranslation('dashboard');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { contextState, setContextState } = useModuleMap();
@@ -193,12 +193,12 @@ const Module = ({
       )}
     </>
   );
-};
+}
 
 Module.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any),
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   currIndex: PropTypes.number,
-  taskTodo: PropTypes.arrayOf(PropTypes.object).isRequired,
+  taskTodo: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
 };
 Module.defaultProps = {
   data: {},

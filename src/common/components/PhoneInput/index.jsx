@@ -13,7 +13,7 @@ import { Field } from 'formik';
 import countriesList from './countriesList';
 // import { Colors } from '../../Styling';
 
-const PhoneInput = ({
+function PhoneInput({
   defaultMask,
   phoneFormValues,
   prefix,
@@ -38,7 +38,7 @@ const PhoneInput = ({
   setShowPhoneWarning,
   errorMsg,
   placeholder,
-}) => {
+}) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -256,125 +256,123 @@ const PhoneInput = ({
   });
 
   return (
-    <>
-      <Box className="react-tel-input" color="black" style={style || containerStyle}>
-        <Field name="phone">
-          {({ field, form }) => (
-            <FormControl style={style} isInvalid={form.errors.phone && form.touched.phone}>
-              <InputMask
-                {...field}
-                data-cy="phone"
-                className={`form-control ${!validStatus.valid ? 'invalid' : ''}`}
-                style={inputStyle}
-                placeholder={placeholder}
-                onChange={(e) => {
-                  const cleanedPhoneInput = `+${(e.target.value)?.match(/\d+/g)?.join('')}`;
-                  e.target.value = cleanedPhoneInput || e.target.value;
+    <Box className="react-tel-input" color="black" style={style || containerStyle}>
+      <Field name="phone">
+        {({ field, form }) => (
+          <FormControl style={style} isInvalid={form.errors.phone && form.touched.phone}>
+            <InputMask
+              {...field}
+              data-cy="phone"
+              className={`form-control ${!validStatus.valid ? 'invalid' : ''}`}
+              style={inputStyle}
+              placeholder={placeholder}
+              onChange={(e) => {
+                const cleanedPhoneInput = `+${(e.target.value)?.match(/\d+/g)?.join('')}`;
+                e.target.value = cleanedPhoneInput || e.target.value;
 
-                  handlePhoneInput(e);
-                  field.onChange(e);
-                }}
-                value={phoneNumber}
-                type="phone"
-                id={id || 'phone'}
-                // mask="+1\(999) 999-9999"/
-                mask={getCountryPhoneMask()}
-                maskChar=""
-                // formatChars={{
-                //   "9": "[0-9]",
-                //   "a": "[A-Za-z]",
-                //   "*": "[A-Za-z0-9]"
-                // }}
-              />
-              <FormErrorMessage>{form.errors.phone}</FormErrorMessage>
-            </FormControl>
-          )}
-        </Field>
+                handlePhoneInput(e);
+                field.onChange(e);
+              }}
+              value={phoneNumber}
+              type="phone"
+              id={id || 'phone'}
+              // mask="+1\(999) 999-9999"/
+              mask={getCountryPhoneMask()}
+              maskChar=""
+              // formatChars={{
+              //   "9": "[0-9]",
+              //   "a": "[A-Za-z]",
+              //   "*": "[A-Za-z0-9]"
+              // }}
+            />
+            <FormErrorMessage>{form.errors.phone}</FormErrorMessage>
+          </FormControl>
+        )}
+      </Field>
 
+      <div
+        ref={dropdownMenuRef}
+        className={`flag-dropdown ${showDropdown ? 'open' : ''} ${
+          !validStatus.valid ? 'invalid' : ''
+        }`}
+        style={buttonStyle}
+      >
         <div
-          ref={dropdownMenuRef}
-          className={`flag-dropdown ${showDropdown ? 'open' : ''} ${
-            !validStatus.valid ? 'invalid' : ''
-          }`}
-          style={buttonStyle}
+          onClick={(e) => handleFlagDropdownClick(e)}
+          className={`selected-flag ${showDropdown ? 'open' : ''}`}
+          title={
+            selectedCountry
+              ? `${selectedCountry.name}: + ${selectedCountry.dialCode}`
+              : ''
+          }
+          role="button"
+          aria-haspopup="listbox"
+          aria-expanded={showDropdown ? true : undefined}
         >
-          <div
-            onClick={(e) => handleFlagDropdownClick(e)}
-            className={`selected-flag ${showDropdown ? 'open' : ''}`}
-            title={
-              selectedCountry
-                ? `${selectedCountry.name}: + ${selectedCountry.dialCode}`
-                : ''
-            }
-            role="button"
-            aria-haspopup="listbox"
-            aria-expanded={showDropdown ? true : undefined}
-          >
-            <div className={`flag ${selectedCountry.iso2}`}>
-              <div className={`arrow ${showDropdown ? 'up' : ''}`} />
-            </div>
+          <div className={`flag ${selectedCountry.iso2}`}>
+            <div className={`arrow ${showDropdown ? 'up' : ''}`} />
           </div>
-          {showDropdown && (
-            <ul
-              className={`country-list ${showDropdown ? 'hide' : ''}`}
-              style={dropdownStyle}
-              role="listbox"
-              tabIndex="0"
-            >
-              {enableSearch && (
-                <li className={`search ${searchClass}`}>
-                  {!disableSearchIcon && (
-                    <span
-                      className={`search-emoji ${
-                        searchClass ? `${searchClass}-emoji` : ''
-                      }`}
-                      role="img"
-                      aria-label="Magnifying glass"
-                    >
-                      &#128270;
-                    </span>
-                  )}
-                  <input
-                    className={`search-box ${
-                      searchClass ? `${searchClass}-box` : ''
-                    }`}
-                    style={searchStyle}
-                    type="search"
-                    placeholder={searchPlaceholder}
-                    // eslint-disable-next-line jsx-a11y/no-autofocus
-                    autoFocus
-                    autoComplete={autocompleteSearch ? 'on' : 'off'}
-                    value={searchValue}
-                    onChange={(e) => handleSearchChange(e)}
-                  />
-                </li>
-              )}
-              {countryDropdownList.length > 0 ? (
-                countryDropdownList
-              ) : (
-                <li className="no-entries-message">
-                  <span>{searchNotFound}</span>
-                </li>
-              )}
-            </ul>
-          )}
         </div>
-      </Box>
-    </>
+        {showDropdown && (
+          <ul
+            className={`country-list ${showDropdown ? 'hide' : ''}`}
+            style={dropdownStyle}
+            role="listbox"
+            tabIndex="0"
+          >
+            {enableSearch && (
+              <li className={`search ${searchClass}`}>
+                {!disableSearchIcon && (
+                  <span
+                    className={`search-emoji ${
+                      searchClass ? `${searchClass}-emoji` : ''
+                    }`}
+                    role="img"
+                    aria-label="Magnifying glass"
+                  >
+                    &#128270;
+                  </span>
+                )}
+                <input
+                  className={`search-box ${
+                    searchClass ? `${searchClass}-box` : ''
+                  }`}
+                  style={searchStyle}
+                  type="search"
+                  placeholder={searchPlaceholder}
+                  // eslint-disable-next-line jsx-a11y/no-autofocus
+                  autoFocus
+                  autoComplete={autocompleteSearch ? 'on' : 'off'}
+                  value={searchValue}
+                  onChange={(e) => handleSearchChange(e)}
+                />
+              </li>
+            )}
+            {countryDropdownList.length > 0 ? (
+              countryDropdownList
+            ) : (
+              <li className="no-entries-message">
+                <span>{searchNotFound}</span>
+              </li>
+            )}
+          </ul>
+        )}
+      </div>
+    </Box>
   );
-};
+}
 
 PhoneInput.propTypes = {
   defaultMask: PropTypes.string,
-  phoneFormValues: PropTypes.objectOf(PropTypes.any),
+  phoneFormValues: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   prefix: PropTypes.string,
-  containerStyle: PropTypes.objectOf(PropTypes.any),
-  formData: PropTypes.objectOf(PropTypes.any),
-  style: PropTypes.objectOf(PropTypes.any),
-  inputStyle: PropTypes.objectOf(PropTypes.any),
-  buttonStyle: PropTypes.objectOf(PropTypes.any),
-  dropdownStyle: PropTypes.objectOf(PropTypes.any),
-  searchStyle: PropTypes.objectOf(PropTypes.any),
+  containerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  formData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  inputStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  buttonStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  dropdownStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  searchStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   setVal: PropTypes.func,
   enableSearch: PropTypes.bool,
   searchClass: PropTypes.string,
@@ -383,8 +381,8 @@ PhoneInput.propTypes = {
   searchPlaceholder: PropTypes.string,
   autocompleteSearch: PropTypes.bool,
   searchNotFound: PropTypes.string,
-  sessionContextLocation: PropTypes.objectOf(PropTypes.any),
-  campusDial: PropTypes.objectOf(PropTypes.any),
+  sessionContextLocation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  campusDial: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   setShowPhoneWarning: PropTypes.func,
   errorMsg: PropTypes.string,
   placeholder: PropTypes.string,

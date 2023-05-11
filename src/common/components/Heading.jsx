@@ -11,12 +11,13 @@ const sizes = {
   xsm: 'var(--heading-xsm)', // min 16px ---- max 22px
 };
 
-const Heading = ({ children, size, ...rest }) => (
-  // size per default => in case of Heading need a size less than 20px (xxsm)
-  <THeading fontSize={sizes[size] || size} {...rest}>
-    {children}
-  </THeading>
-);
+function Heading({ children, size, ...rest }) {
+  return (
+    <THeading fontSize={sizes[size] || size} {...rest}>
+      {children}
+    </THeading>
+  );
+}
 
 Heading.propTypes = {
   size: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),

@@ -19,7 +19,7 @@ import AlertMessage from '../../../common/components/AlertMessage';
 import bc from '../../../common/services/breathecode';
 import asPrivate from '../../../common/context/PrivateRouteWrapper';
 
-const Survey = () => {
+function Survey() {
   const router = useRouter();
   const { t } = useTranslation('survey');
   const { surveyId } = router.query;
@@ -161,6 +161,6 @@ const Survey = () => {
       </main>
     </div>
   );
-};
+}
 
 export default asPrivate(Survey);

@@ -100,7 +100,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   };
 };
 
-const LessonByTechnology = ({ data, technologyData }) => {
+function LessonByTechnology({ data, technologyData }) {
   const { t } = useTranslation('technologies');
 
   return (
@@ -152,11 +152,11 @@ const LessonByTechnology = ({ data, technologyData }) => {
       </Flex>
     </Box>
   );
-};
+}
 
 LessonByTechnology.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.object),
-  technologyData: PropTypes.objectOf(PropTypes.any).isRequired,
+  data: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
+  technologyData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   // projects: PropTypes.arrayOf(PropTypes.object),
   // exercises: PropTypes.arrayOf(PropTypes.object),
   // howTos: PropTypes.arrayOf(PropTypes.object),

@@ -8,7 +8,7 @@ import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
 import { parseQuerys } from '../../../utils/url';
 
-const UpgradeModal = ({ upgradeModalIsOpen, setUpgradeModalIsOpen, subscriptionProps, offerProps }) => {
+function UpgradeModal({ upgradeModalIsOpen, setUpgradeModalIsOpen, subscriptionProps, offerProps }) {
   const { lightColor, modal } = useStyle();
   const { t } = useTranslation('profile');
   const router = useRouter();
@@ -137,13 +137,13 @@ const UpgradeModal = ({ upgradeModalIsOpen, setUpgradeModalIsOpen, subscriptionP
       </ModalContent>
     </Modal>
   );
-};
+}
 
 UpgradeModal.propTypes = {
   upgradeModalIsOpen: PropTypes.bool.isRequired,
   setUpgradeModalIsOpen: PropTypes.func.isRequired,
-  subscriptionProps: PropTypes.objectOf(PropTypes.any).isRequired,
-  offerProps: PropTypes.objectOf(PropTypes.any).isRequired,
+  subscriptionProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  offerProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 export default UpgradeModal;

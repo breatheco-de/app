@@ -10,7 +10,7 @@ const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREAT
 
 const defaultEndpoint = `${BREATHECODE_HOST}/v1/registry/technology?sort_priority=1`;
 
-const MktTechnologies = ({ id, endpoint, ...rest }) => {
+function MktTechnologies({ id, endpoint, ...rest }) {
   const carousel = useRef(null);
   const [technologies, setTechnologies] = useState([]);
   const [index, setIndex] = useState(0);
@@ -107,7 +107,7 @@ const MktTechnologies = ({ id, endpoint, ...rest }) => {
       </Box>
     </GridContainer>
   );
-};
+}
 
 MktTechnologies.propTypes = {
   endpoint: PropTypes.string,

@@ -5,8 +5,8 @@ import { useState } from 'react';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 
-const FileInput = ({ name, formProps, setFormProps, handleOnChange, acceptedFiles, maxFileSize, multipleFiles,
-  fileProps, setFileProps, setFieldValue, form, field, translation, required }) => {
+function FileInput({ name, formProps, setFormProps, handleOnChange, acceptedFiles, maxFileSize, multipleFiles,
+  fileProps, setFileProps, setFieldValue, form, field, translation, required }) {
   const { hexColor, fontColor, backgroundColor } = useStyle();
   const [dragOver, setDragOver] = useState(false);
   const { t } = useTranslation('');
@@ -96,23 +96,23 @@ const FileInput = ({ name, formProps, setFormProps, handleOnChange, acceptedFile
       )}
     </>
   );
-};
+}
 
 FileInput.propTypes = {
   type: PropTypes.string,
   name: PropTypes.string,
-  formProps: PropTypes.objectOf(PropTypes.any),
+  formProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   setFormProps: PropTypes.func,
   handleOnChange: PropTypes.func,
   acceptedFiles: PropTypes.string,
   maxFileSize: PropTypes.number,
   multipleFiles: PropTypes.bool,
-  fileProps: PropTypes.arrayOf(PropTypes.any),
+  fileProps: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   setFileProps: PropTypes.func,
   setFieldValue: PropTypes.func,
-  form: PropTypes.objectOf(PropTypes.any).isRequired,
-  field: PropTypes.objectOf(PropTypes.any).isRequired,
-  translation: PropTypes.objectOf(PropTypes.any),
+  form: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  field: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  translation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   required: PropTypes.bool,
 };
 

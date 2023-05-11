@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 import { useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -6,9 +7,9 @@ import useStyle from '../../../common/hooks/useStyle';
 import bc from '../../../common/services/breathecode';
 import { toCapitalize, unSlugify } from '../../../utils';
 
-const profileHandlers = ({
+function profileHandlers({
   translations,
-}) => {
+}) {
   const { t } = useTranslation('profile');
   const { reverseFontColor, fontColor, lightColor } = useStyle();
   const subscriptionTR = translations?.subscription;
@@ -464,10 +465,10 @@ const profileHandlers = ({
         });
     }),
   };
-};
+}
 
 profileHandlers.propTypes = {
-  translations: PropTypes.objectOf(PropTypes.any),
+  translations: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 profileHandlers.defaultProps = {

@@ -202,7 +202,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
 }
 
 ChooseProgram.propTypes = {
-  chooseList: PropTypes.arrayOf(PropTypes.object),
+  chooseList: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   handleChoose: PropTypes.func,
 };
 ChooseProgram.defaultProps = {

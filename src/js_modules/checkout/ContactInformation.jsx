@@ -19,11 +19,11 @@ import useCustomToast from '../../common/hooks/useCustomToast';
 import modifyEnv from '../../../modifyEnv';
 import useSignup from '../../common/store/actions/signupAction';
 
-const ContactInformation = ({
+function ContactInformation({
   courseChoosed,
   formProps, setFormProps,
 
-}) => {
+}) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
   const {
@@ -250,11 +250,11 @@ const ContactInformation = ({
       </Formik>
     </Box>
   );
-};
+}
 
 ContactInformation.propTypes = {
   courseChoosed: PropTypes.string,
-  formProps: PropTypes.objectOf(PropTypes.any).isRequired,
+  formProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   setFormProps: PropTypes.func,
 };
 

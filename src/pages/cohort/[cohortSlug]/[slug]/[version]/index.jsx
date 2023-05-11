@@ -44,7 +44,7 @@ import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
 import FinalProjectModal from '../../../../../common/components/FinalProject/Modal';
 
-const Dashboard = () => {
+function Dashboard() {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('dashboard');
   const toast = useToast();
@@ -775,6 +775,6 @@ const Dashboard = () => {
       )}
     </>
   );
-};
+}
 
 export default asPrivate(Dashboard);

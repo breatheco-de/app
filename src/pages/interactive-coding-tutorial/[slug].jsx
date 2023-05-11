@@ -138,32 +138,34 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   };
 };
 
-const TableInfo = ({ t, project, commonTextColor }) => (
-  <>
-    <Box d="flex" alignItems="baseline" justifyContent="center">
-      <Heading size="l" textAlign="center" justify="center" mt="0px" mb="0px">
-        {t('table.title')}
-      </Heading>
-    </Box>
+function TableInfo({ t, project, commonTextColor }) {
+  return (
+    <>
+      <Box d="flex" alignItems="baseline" justifyContent="center">
+        <Heading size="l" textAlign="center" justify="center" mt="0px" mb="0px">
+          {t('table.title')}
+        </Heading>
+      </Box>
 
-    <Box d="flex" alignItems="baseline" justifyContent="center" flexDirection="column">
-      <Text size="md" color={commonTextColor} textAlign="center" my="10px" px="0px">
-        {t('table.description')}
-      </Text>
-      <SimpleTable
-        href="/interactive-coding-tutorials"
-        difficulty={typeof project.difficulty === 'string' ? project.difficulty.toLowerCase() : 'unknown'}
-        repository={project?.url}
-        duration={project.duration}
-        videoAvailable={project.solution_video_url}
-        technologies={project.technologies}
-        liveDemoAvailable={project.intro_video_url}
-      />
-    </Box>
-  </>
-);
+      <Box d="flex" alignItems="baseline" justifyContent="center" flexDirection="column">
+        <Text size="md" color={commonTextColor} textAlign="center" my="10px" px="0px">
+          {t('table.description')}
+        </Text>
+        <SimpleTable
+          href="/interactive-coding-tutorials"
+          difficulty={typeof project.difficulty === 'string' ? project.difficulty.toLowerCase() : 'unknown'}
+          repository={project?.url}
+          duration={project.duration}
+          videoAvailable={project.solution_video_url}
+          technologies={project.technologies}
+          liveDemoAvailable={project.intro_video_url}
+        />
+      </Box>
+    </>
+  );
+}
 
-const ProjectSlug = ({ project, markdown }) => {
+function ProjectSlug({ project, markdown }) {
   const { t } = useTranslation('projects');
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const translations = project?.translations || { es: '', en: '' };
@@ -318,16 +320,16 @@ const ProjectSlug = ({ project, markdown }) => {
       </GridContainer>
     </>
   );
-};
+}
 
 ProjectSlug.propTypes = {
-  project: PropTypes.objectOf(PropTypes.any).isRequired,
+  project: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   markdown: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
   // translations: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
 };
 
 TableInfo.propTypes = {
-  project: PropTypes.objectOf(PropTypes.any).isRequired,
+  project: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   commonTextColor: PropTypes.string.isRequired,
   t: PropTypes.func,
 };

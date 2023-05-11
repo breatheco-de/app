@@ -37,7 +37,7 @@ const Triangle = styled(Box)`
 display: none;
 `;
 
-const DesktopItem = ({ item }) => {
+function DesktopItem({ item }) {
   const router = useRouter();
   const [popoverOpen, setPopoverOpen] = useState(false);
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
@@ -303,7 +303,7 @@ const DesktopItem = ({ item }) => {
       )}
     </StyledBox>
   );
-};
+}
 
 DesktopItem.propTypes = {
   item: PropTypes.shape({
@@ -312,7 +312,7 @@ DesktopItem.propTypes = {
     asPath: PropTypes.string,
     icon: PropTypes.string,
     description: PropTypes.string,
-    subMenu: PropTypes.arrayOf(PropTypes.any),
+    subMenu: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   }).isRequired,
 };
 

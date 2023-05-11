@@ -20,7 +20,7 @@ const BUTTON_COLOR = {
   WHITE: 'White',
 };
 
-const MktTwoColumnSideImage = ({
+function MktTwoColumnSideImage({
   id,
   informationSize,
   titleColor,
@@ -41,7 +41,7 @@ const MktTwoColumnSideImage = ({
   imageAlt,
   gridGap,
   ...rest
-}) => {
+}) {
   const { fontColor2, hexColor, backgroundColor } = useStyle();
   const flexDirection = {
     right: 'ltr',
@@ -195,7 +195,7 @@ const MktTwoColumnSideImage = ({
       </GridContainer>
     </Box>
   );
-};
+}
 
 MktTwoColumnSideImage.propTypes = {
   informationSize: PropTypes.string,

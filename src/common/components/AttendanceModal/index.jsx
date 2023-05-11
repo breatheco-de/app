@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -15,9 +16,9 @@ import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import useStyle from '../../hooks/useStyle';
 import handlers from '../../handlers';
 
-const AttendanceModal = ({
+function AttendanceModal({
   title, message, isOpen, onClose, sortedAssignments, students, currentCohortProps,
-}) => {
+}) {
   const { t } = useTranslation('dashboard');
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const [historyLog, setHistoryLog] = useState();
@@ -391,9 +392,9 @@ const AttendanceModal = ({
       </ModalContent>
     </Modal>
   );
-};
+}
 
-export const CheckboxCard = (props) => {
+export function CheckboxCard(props) {
   const { children } = props;
   const { getInputProps, getCheckboxProps } = useCheckbox(props);
   const input = getInputProps();
@@ -424,7 +425,7 @@ export const CheckboxCard = (props) => {
       </Box>
     </Box>
   );
-};
+}
 
 CheckboxCard.propTypes = {
   children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
@@ -434,11 +435,11 @@ CheckboxCard.propTypes = {
 AttendanceModal.propTypes = {
   title: PropTypes.string,
   message: PropTypes.string,
-  sortedAssignments: PropTypes.arrayOf(PropTypes.object).isRequired,
-  students: PropTypes.arrayOf(PropTypes.object).isRequired,
+  sortedAssignments: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)).isRequired,
+  students: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)).isRequired,
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
-  currentCohortProps: PropTypes.objectOf(PropTypes.any),
+  currentCohortProps: PropTypes.objectOf(PropTypes.string),
   setCurrentCohortProps: PropTypes.func,
 };
 AttendanceModal.defaultProps = {

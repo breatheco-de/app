@@ -8,12 +8,12 @@ import Icon from './Icon';
 import Counter from './ProgressCircle/Counter';
 import ChakraText from './Text';
 
-const KPI = ({
+function KPI({
   label, icon, value, unit, max,
   variation, variationColor, style,
   changeWithColor, valueUnit, unstyled, chart,
   fontSize, iconSize, labelSize,
-}) => {
+}) {
   const verifiVariation = () => {
     if (variation.includes('+')) return 'up';
     if (variation.includes('-')) return 'down';
@@ -112,7 +112,7 @@ const KPI = ({
       </Box>
     </Stack>
   );
-};
+}
 
 KPI.propTypes = {
   label: PropTypes.string.isRequired,
@@ -122,7 +122,7 @@ KPI.propTypes = {
   max: PropTypes.number,
   variation: PropTypes.string,
   variationColor: PropTypes.string,
-  style: PropTypes.objectOf(PropTypes.any),
+  style: PropTypes.objectOf(PropTypes.string),
   changeWithColor: PropTypes.bool,
   valueUnit: PropTypes.string,
   unstyled: PropTypes.bool,

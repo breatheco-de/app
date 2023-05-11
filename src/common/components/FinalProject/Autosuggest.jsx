@@ -66,12 +66,12 @@ const AutosuggestInput = forwardRef(({ handleChange, placeholder, addTag, studen
 });
 
 AutosuggestInput.propTypes = {
-  props: PropTypes.objectOf(PropTypes.any),
+  props: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   handleChange: PropTypes.func.isRequired,
   value: PropTypes.string.isRequired,
   addTag: PropTypes.func.isRequired,
-  ref: PropTypes.objectOf(PropTypes.any).isRequired,
-  students: PropTypes.arrayOf(PropTypes.object).isRequired,
+  ref: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  students: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)).isRequired,
   placeholder: PropTypes.string,
 };
 AutosuggestInput.defaultProps = {

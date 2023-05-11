@@ -7,9 +7,9 @@ import { Fragment, useState } from 'react';
 import Icon from './Icon';
 import Text from './Text';
 
-const StickySideBar = ({
+function StickySideBar({
   menu, width, top, right, left,
-}) => {
+}) {
   // Modal states
   const [openKeyConcepts, setOpenKeyConcepts] = useState(false);
   const [openTeacherInstructions, setOpenTeacherInstructions] = useState(false);
@@ -40,16 +40,15 @@ const StickySideBar = ({
   };
 
   return (
-    <>
-      <VStack
-        width={width}
-        position="fixed"
-        zIndex={9}
-        top={top}
-        right={right}
-        left={left}
-      >
-        {
+    <VStack
+      width={width}
+      position="fixed"
+      zIndex={9}
+      top={top}
+      right={right}
+      left={left}
+    >
+      {
           menu.map((item, i) => {
             const currentModalState = getCurrentModalState(item.slug);
             const index = i;
@@ -142,13 +141,12 @@ const StickySideBar = ({
             );
           })
           }
-      </VStack>
-    </>
+    </VStack>
   );
-};
+}
 
 StickySideBar.propTypes = {
-  menu: PropTypes.arrayOf(PropTypes.array),
+  menu: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   width: PropTypes.string,
   top: PropTypes.string,
   right: PropTypes.string,

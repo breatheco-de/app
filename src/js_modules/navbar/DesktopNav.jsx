@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import DesktopItem from './DesktopItem';
 
-const DesktopNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
+function DesktopNav({ NAV_ITEMS, readSyllabus, haveSession }) {
   const [privateItems, setPrivateItems] = useState([]);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const DesktopNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
       ))}
     </Stack>
   );
-};
+}
 
 DesktopNav.propTypes = {
   haveSession: PropTypes.bool.isRequired,
@@ -62,7 +62,7 @@ DesktopNav.propTypes = {
       ),
     }),
   ),
-  readSyllabus: PropTypes.arrayOf(PropTypes.any),
+  readSyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 DesktopNav.defaultProps = {
