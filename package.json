@@ -33,7 +33,7 @@
     "lint:fix": "eslint src/**/*.{js,jsx} --fix",
     "lint:fix:components": "eslint --fix src/common/components/**/*.{js,jsx}",
     "prepare": "husky install",
-    "make:sitemap": "node ./scripts/sitemap-generator",
+    "make:sitemap": "node ./scripts/sitemap-generator.js",
     "slicemachine": "start-slicemachine",
     "make:redirect": "node ./scripts/redirects-generator.js",
     "make:syllabus": "node ./scripts/syllabus.js",
