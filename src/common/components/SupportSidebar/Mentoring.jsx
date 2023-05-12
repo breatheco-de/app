@@ -115,7 +115,7 @@ const Mentoring = ({
 
   return !isLoading && user?.id && (
     <>
-      {isAvailableForConsumables && flags?.appReleaseShowConsumedMentorships ? (
+      {!isAvailableForConsumables && flags?.appReleaseShowConsumedMentorships ? (
         <MentoringConsumables
           {...{
             mentoryProps,
