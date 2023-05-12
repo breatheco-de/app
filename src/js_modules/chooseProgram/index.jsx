@@ -14,6 +14,7 @@ import UpgradeAccessModal from '../../common/components/UpgradeAccessModal';
 import useProgramList from '../../common/store/actions/programListAction';
 import ProgramCard from '../../common/components/ProgramCard';
 import Heading from '../../common/components/Heading';
+import useStyle from '../../common/hooks/useStyle';
 
 function ChooseProgram({ chooseList, handleChoose }) {
   const { t } = useTranslation('choose-program');
@@ -23,6 +24,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
   const activeCohorts = handlers.getActiveCohorts(chooseList);
   const finishedCohorts = handlers.getCohortsFinished(chooseList);
+  const { featuredColor } = useStyle();
   const router = useRouter();
 
   useEffect(() => {
@@ -129,7 +131,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
                 programDescription={item?.course_translation?.description}
                 bullets={item?.course_translation?.course_modules}
                 width="100%"
-                background="blue.light"
+                background={featuredColor}
               />
             ))}
           </Box>
