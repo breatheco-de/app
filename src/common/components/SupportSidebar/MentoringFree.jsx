@@ -90,14 +90,14 @@ const MentoringFree = ({
       borderWidth="0px"
       borderRadius="lg"
     >
-      {mentoryProps?.service && (
+      {open && mentoryProps?.service && (
         <Box position="absolute" top="16px" left="18px" onClick={() => setMentoryProps({})} cursor="pointer">
           <Icon icon="arrowLeft" width="25px" height="25px" color="#606060" />
         </Box>
       )}
       {open && !mentoryProps?.service && (
-        <Box position="absolute" top="16px" right="18px" onClick={() => setOpen(false)} cursor="pointer">
-          <Icon icon="close" width="15px" height="15px" color="#606060" />
+        <Box position="absolute" top="16px" left="18px" onClick={() => setOpen(false)} cursor="pointer">
+          <Icon icon="arrowLeft" width="25px" height="25px" color="#606060" />
         </Box>
       )}
       <Box display="flex" flexDirection="column" padding="16px" alignItems="center">

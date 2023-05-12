@@ -81,7 +81,6 @@ const MentoringConsumables = ({
   const { t } = useTranslation('dashboard');
 
   const isNotProduction = process.env.VERCEL_ENV !== 'production';
-  const mentoryFormStarted = mentoryProps?.service || mentoryProps?.mentor || mentoryProps?.date;
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   const [open, setOpen] = useState(false);
   const { borderColor, lightColor, hexColor } = useStyle();
@@ -133,20 +132,18 @@ const MentoringConsumables = ({
       borderWidth="0px"
       borderRadius="lg"
     >
-      {/* <Box display="flex" justifyContent="center" alignItems="center" width="85px" height="50px" margin="0 auto" borderBottomRadius="10px" backgroundColor="yellow.default">
-        <Icon icon="idea" width="36px" height="36px" />
-      </Box> */}
-      {mentoryProps?.service && (serviceMentoring?.mentorship_service_sets?.length !== 0 && cohortService?.balance?.unit !== 0) && (
+
+      {open && mentoryProps?.service && (
         <Box position="absolute" top="16px" left="18px" onClick={() => setMentoryProps({})} cursor="pointer">
           <Icon icon="arrowLeft" width="25px" height="25px" color="#606060" />
         </Box>
       )}
-      {existsConsumables && (!mentoryProps?.service || serviceMentoring?.mentorship_service_sets?.length !== 0 || cohortService?.balance?.unit >= 0) && (
-        <Box position="absolute" top="16px" right="18px" onClick={() => setOpen(false)} cursor="pointer">
-          <Icon icon="close" width="15px" height="15px" color="#606060" />
+      {open && !mentoryProps?.service && (
+        <Box position="absolute" top="16px" left="18px" onClick={() => setOpen(false)} cursor="pointer">
+          <Icon icon="arrowLeft" width="25px" height="25px" color="#606060" />
         </Box>
       )}
-      <Box display="flex" flexDirection="column" p="4" pb={mentoryFormStarted ? '0px' : '30px'} pt="20px" alignItems="center">
+      <Box display="flex" flexDirection="column" p="4" pt="20px" alignItems="center">
         {existsConsumables ? (
           <>
             <Box d="flex" flexDirection="column" alignItems="center" justifyContent="center">
@@ -211,7 +208,7 @@ const MentoringConsumables = ({
             {!mentoryProps?.time ? (
               <>
                 {mentoryProps?.service && (
-                  <Box display="flex" alignItems="center" justifyContent="flex-start" gridGap="10px" background={commonBackground} mt="20px" px="20px" py="15px" textAlign="center" w="100%" borderTopRadius="0.375rem">
+                  <Box display="flex" alignItems="center" justifyContent="flex-start" gridGap="10px" background={commonBackground} mt="34px" px="20px" py="15px" textAlign="center" w="100%" borderTopRadius="0.375rem">
                     <Box>
                       <Icon icon="checked2" width="15px" height="15px" color={hexColor.greenLight} />
                     </Box>
