@@ -1,17 +1,22 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-unused-vars */
-/* eslint-disable eqeqeq */
 /* eslint-disable no-continue */
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
   Box,
-  Skeleton,
   Avatar,
   Flex,
   useColorModeValue,
   useToast,
   Button,
   ButtonGroup,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverBody,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -22,7 +27,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import asPrivate from '../../../common/context/PrivateRouteWrapper';
-import ReactSelect from '../../../common/components/ReactSelect';
+import ReactSelect, { AsyncSelect } from '../../../common/components/ReactSelect';
 import Link from '../../../common/components/NextChakraLink';
 import Heading from '../../../common/components/Heading';
 import { usePersistent } from '../../../common/hooks/usePersistent';
@@ -33,7 +38,7 @@ import TaskLabel from '../../../common/components/taskLabel';
 import DottedTimeline from '../../../common/components/DottedTimeline';
 import useStyle from '../../../common/hooks/useStyle';
 import { isGithubUrl } from '../../../utils/regex';
-import ButtonHandler, { ReviewModal, NoInfoModal, DeliverModal } from '../../../js_modules/assignmentHandler/index';
+import ButtonHandler, { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../../js_modules/assignmentHandler/index';
 import useAssignments from '../../../common/store/actions/assignmentsAction';
 import { isWindow } from '../../../utils';
 // import Image from '../../../common/components/Image';
@@ -43,38 +48,85 @@ import LoaderScreen from '../../../common/components/LoaderScreen';
 
 const Assignments = () => {
   const { t } = useTranslation('assignments');
+  const statusList = [
+    {
+      label: t('status.delivered'),
+      value: 'delivered',
+    },
+    {
+      label: t('status.approved'),
+      value: 'approved',
+    },
+    {
+      label: t('status.rejected'),
+      value: 'rejected',
+    },
+    {
+      label: t('status.undelivered'),
+      value: 'undelivered',
+    },
+    {
+      label: t('status.ignored'),
+      value: 'ignored',
+    },
+  ];
+  const typeList = [
+    {
+      label: t('type.project'),
+      value: 'PROJECT',
+    },
+    {
+      label: t('type.quiz'),
+      value: 'QUIZ',
+    },
+    {
+      label: t('type.lesson'),
+      value: 'LESSON',
+    },
+    {
+      label: t('type.exercise'),
+      value: 'EXERCISE',
+    },
+  ];
   const router = useRouter();
   const { query } = router;
+  const { cohortSlug, academy } = query;
   const toast = useToast();
   const { hexColor } = useStyle();
   const { contextState, setContextState } = useAssignments();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
-  const [mandatoryAssignments, setMandatoryAssignments] = useState([]);
-  const [syllabusProjects, setSyllabusProjects] = useState([]);
+  const [syllabusData, setSyllabusData] = useState({
+    projects: [],
+    assignments: [],
+  });
   const [personalCohorts, setPersonalCohorts] = useState([]);
   // const [allTasksPaginationProps, setAllTasksPaginationProps] = useState({});
   const [allTasksOffset, setAllTasksOffset] = useState(20);
   const [isFetching, setIsFetching] = useState(false);
+  const [typeLabel, setTypeLabel] = useState(typeList.find((option) => option.value === query.task_type) || {
+    label: t('type.project'),
+    value: 'PROJECT',
+  });
   const [studentLabel, setStudentLabel] = useState(null);
   const [projectLabel, setProjectLabel] = useState(null);
-  const [statusLabel, setStatusLabel] = useState(null);
+  const [statusLabel, setStatusLabel] = useState(statusList.find((option) => option.value === query.status));
   const [openFilter, setOpenFilter] = useState(false);
-  const [currentView, setCurrentView] = useState(query.view || 0);
+  const [currentView, setCurrentView] = useState(Number(query.view) || 0);
   const [currentTask, setCurrentTask] = useState(null);
   const [deliveryUrl, setDeliveryUrl] = useState('');
+  const [sort, setSort] = useState(query.sort || undefined);
 
   const [currentStudentList, setCurrentStudentList] = useState([]);
-  const [projects, setProjects] = useState([]);
+  // const [projects, setProjects] = useState([]);
 
   const [selectedCohort, setSelectedCohort] = useState({});
-  const [selectedCohortSlug, setSelectedCohortSlug] = useState(null);
+  const [selectedCohortSlug, setSelectedCohortSlug] = useState(cohortSlug);
   const [loadStatus, setLoadStatus] = useState({
     loading: true,
     status: 'loading',
   });
 
-  const { cohortSlug, academy } = query;
   const linkColor = useColorModeValue('blue.default', 'blue.300');
   const borderColor = useColorModeValue('gray.200', 'gray.500');
 
@@ -98,42 +150,48 @@ const Assignments = () => {
     ?.filter((l) => l.user.id === Number(router.query.student))
     .map((l) => l?.user?.id)[0];
 
+  const reverseStatus = (status) => {
+    if (status === 'delivered') return { task_status: 'DONE', revision_status: 'PENDING' };
+    if (status === 'approved') return { revision_status: 'APPROVED' };
+    if (status === 'rejected') return { revision_status: 'REJECTED' };
+    if (status === 'undelivered') return { task_status: 'PENDING', revision_status: 'PENDING' };
+    if (status === 'ignored') return { revision_status: 'ignored' };
+    return {};
+  };
+
   const getFilterAssignments = (cohortId, academyId, studentId) => {
     setLoadStatus({ loading: true, status: 'loading' });
     bc.todo({
       limit: 1000,
-      task_type: 'PROJECT',
+      task_type: typeLabel?.value || undefined,
       student: studentId || undefined,
+      sort,
+      like: query.project,
+      ...reverseStatus(query.status),
     })
       .getAssignments({ id: cohortId, academy: academyId })
       .then((projectList) => {
         setIsFetching(false);
         const allTasks = projectList.data?.results;
 
-        // Clean repeated task.id in stored contextState.allTasks
-        const cleanedTeacherTask = allTasks.filter(
-          (l) => !contextState.allTasks.some((j) => j.id === l.id),
-        );
-
-        const arrOfProjects = [...contextState.allTasks, ...cleanedTeacherTask];
         setContextState({
-          allTasks: arrOfProjects,
+          allTasks: [...allTasks],
         });
 
-        const projectsList = [];
-        for (let i = 0; i < allTasks.length; i += 1) {
-          const isProject = allTasks[i].task_type === 'PROJECT';
-          if (
-            projectsList.find(
-              (p) => allTasks[i] !== 'PROJECT'
-                && allTasks[i].associated_slug === p.associated_slug,
-            )
-          ) {
-            continue;
-          }
-          if (isProject) projectsList.push(allTasks[i]);
-        }
-        if (projectsList.length > 0) setProjects(projectsList);
+        // const projectsList = [];
+        // for (let i = 0; i < allTasks.length; i += 1) {
+        //   const isProject = allTasks[i].task_type === 'PROJECT';
+        //   if (
+        //     projectsList.find(
+        //       (p) => allTasks[i] !== 'PROJECT'
+        //         && allTasks[i].associated_slug === p.associated_slug,
+        //     )
+        //   ) {
+        //     continue;
+        //   }
+        //   if (isProject) projectsList.push(allTasks[i]);
+        // }
+        // if (projectsList.length > 0) setProjects(projectsList);
       })
       .catch((error) => {
         setIsFetching(false);
@@ -182,11 +240,20 @@ const Assignments = () => {
           value: data.id,
           academy: data.academy.id,
         }]);
-        const syllabusData = await bc.admissions().syllabus(data.syllabus_version.slug, data.syllabus_version.version, academy);
-        let assignments = syllabusData?.data.json.days.filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object').map((obj) => obj.assignments);
-        assignments = [].concat(...assignments).filter((assignment) => assignment.mandatory);
-        setMandatoryAssignments(assignments);
-        if (syllabusData?.data) setSyllabusProjects(syllabusData.data.json.days.filter((day) => day.project && typeof day.project === 'object').map(({ project }) => ({ ...project })));
+        const syllabusInfo = await bc.admissions().syllabus(data.syllabus_version.slug, data.syllabus_version.version, academy);
+        if (syllabusInfo?.data) {
+          let assignments = syllabusInfo.data.json.days.filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object').map((obj) => obj.assignments);
+          assignments = [].concat(...assignments);
+          const syllabusProjects = syllabusInfo.data.json.days.filter((day) => day.project && typeof day.project === 'object').map(({ project }) => ({ ...project }));
+          if (query.project) {
+            const filteredProject = syllabusProjects.find((project) => project.slug === query.project);
+            setProjectLabel(filteredProject && { label: filteredProject.title, value: filteredProject.slug });
+          }
+          setSyllabusData({
+            projects: syllabusProjects,
+            assignments,
+          });
+        }
       })
       .catch(() => {
         toast({
@@ -198,7 +265,7 @@ const Assignments = () => {
       });
   }, []);
 
-  useEffect(() => {
+  const loadStudents = () => {
     const findSelectedCohort = allCohorts.find(
       (l) => l.slug === selectedCohortSlug,
     );
@@ -211,9 +278,19 @@ const Assignments = () => {
 
     if (cohortId) {
       setSelectedCohort(currentCohort);
-      handlers
-        .getStudents(slug, academyId)
-        .then((students) => {
+      bc.cohort({ sort, users: query.student })
+        .getStudentsWithTasks(slug, academyId)
+        .then((res) => {
+          const students = res?.data;
+          if (query.student) {
+            const filteredStudent = students.find((student) => student.user.id === Number(query.student));
+            setStudentLabel(filteredStudent && {
+              id: filteredStudent.user.id,
+              value:
+                `${filteredStudent.user.first_name}-${filteredStudent.user.last_name}`?.toLowerCase(),
+              label: `${filteredStudent.user.first_name} ${filteredStudent.user.last_name}`,
+            });
+          }
           setCurrentStudentList(students);
         })
         .catch(() => {
@@ -229,39 +306,19 @@ const Assignments = () => {
     if (!cohortId && allCohorts.length > 0) {
       setLoadStatus({ loading: false, status: 'idle' });
     }
+  };
+
+  useEffect(() => {
+    loadStudents();
   }, [
     allCohorts,
     selectedCohortSlug,
     studentDefaultValue,
-    router.query.student,
+    router.query,
   ]);
 
   const filteredTasks = contextState.allTasks.length > 0
     ? contextState.allTasks
-      .filter((task) => {
-        const statusConditional = {
-          delivered:
-                task.task_status === 'DONE'
-                && task.revision_status === 'PENDING',
-          approved: task.revision_status === 'APPROVED',
-          rejected: task.revision_status === 'REJECTED',
-          undelivered:
-                task.task_status === 'PENDING'
-                && task.revision_status === 'PENDING',
-          ignored: task.revision_status === 'IGNORED',
-        };
-
-        if (queryStatusExists && !statusConditional[router.query.status]) { return false; }
-        if (
-          queryProjectExists
-              && task.associated_slug !== router.query.project
-        ) { return false; }
-        if (
-          queryStudentExists
-              && task.user.id !== Number(router.query.student)
-        ) { return false; }
-        return true;
-      })
       .filter((_, i) => i < allTasksOffset)
     : [];
 
@@ -299,41 +356,6 @@ const Assignments = () => {
     }
   }, [isFetching, queryStatusExists, queryProjectExists, queryStudentExists]);
 
-  const statusList = [
-    {
-      label: t('status.delivered'),
-      value: 'delivered',
-    },
-    {
-      label: t('status.approved'),
-      value: 'approved',
-    },
-    {
-      label: t('status.rejected'),
-      value: 'rejected',
-    },
-    {
-      label: t('status.undelivered'),
-      value: 'undelivered',
-    },
-    {
-      label: t('status.ignored'),
-      value: 'ignored',
-    },
-  ];
-
-  const defaultStudentLabel = currentStudentList
-    ?.filter((l) => l.user.id === Number(router.query.student))
-    .map((l) => `${l.user.first_name} ${l.user.last_name}`)[0];
-
-  const projectDefaultValue = projects.find(
-    (l) => l.associated_slug === router.query.project,
-  )?.title;
-
-  const statusDefaultValue = statusList.find(
-    (l) => l.value === router.query.status,
-  )?.label;
-
   const closeFilterModal = () => setOpenFilter(false);
 
   const applyFilters = () => {
@@ -341,6 +363,7 @@ const Assignments = () => {
     if (projectLabel) filter.project = projectLabel.value;
     if (studentLabel) filter.student = studentLabel.id;
     if (statusLabel) filter.status = statusLabel.value;
+    if (typeLabel) filter.task_type = typeLabel.value;
     router.push({
       query: {
         ...router.query,
@@ -351,10 +374,11 @@ const Assignments = () => {
   };
 
   const clearFilters = () => {
-    const { project, student, status, ...params } = router.query;
+    const { project, student, status, task_type, ...params } = router.query;
     setProjectLabel(null);
     setStudentLabel(null);
     setStatusLabel(null);
+    setTypeLabel(null);
     router.push({
       query: {
         ...params,
@@ -371,6 +395,7 @@ const Assignments = () => {
         ...contextState.allTasks.slice(keyIndex + 1), // after keyIndex (exclusive)
       ],
     });
+    loadStudents();
   };
 
   const getStatus = (task) => {
@@ -383,6 +408,7 @@ const Assignments = () => {
   const showSingleTask = async (task) => {
     try {
       const status = getStatus(task);
+      let file;
       const academyId = selectedCohort?.academy || academy || allCohorts.find((l) => l.slug === cohortSlug)?.academy;
       if (status === 'UNDELIVERED' || status === 'REJECTED') {
         const { data } = await bc.todo().deliver({
@@ -390,8 +416,21 @@ const Assignments = () => {
           academy: academyId,
         });
         setDeliveryUrl(data.delivery_url);
+      } else if (status === 'APPROVED' || status === 'DELIVERED') {
+        setIsFetching(true);
+        const assetResp = await bc.lesson().getAsset(task.slug);
+        if (assetResp && assetResp.status < 400) {
+          const dataAsset = assetResp.data;
+          if (!dataAsset?.delivery_formats.includes('url')) {
+            const fileResp = await bc.todo().getFile({ id: task.id, academyId: cohortSession?.academy?.id });
+            if (fileResp && fileResp.status < 400) {
+              file = await fileResp.data;
+            }
+          }
+        }
+        setIsFetching(false);
       }
-      setCurrentTask({ ...task, status });
+      setCurrentTask({ ...task, status, file });
     } catch (e) {
       toast({
         title: t('alert-message:review-url-error'),
@@ -449,14 +488,14 @@ const Assignments = () => {
             placeholder={t('common:select-cohort')}
             noOptionsMessage={() => t('common:no-options-message')}
             defaultInputValue={selectedCohort?.label}
-            onChange={({ slug }) => {
-              if (slug !== selectedCohort.slug) {
+            onChange={(cohort) => {
+              if (cohort.slug !== selectedCohort.slug) {
                 setCurrentStudentList([]);
                 setContextState({
                   allTasks: [],
                 });
               }
-              setSelectedCohortSlug(slug);
+              setSelectedCohortSlug(cohort.slug);
             }}
             options={personalCohorts.map((cohort) => ({
               value: cohort.value,
@@ -482,11 +521,11 @@ const Assignments = () => {
           spacing="6"
         >
           <Button
-            background={currentView == 0 ? hexColor.blueDefault : 'none'}
+            background={currentView === 0 ? hexColor.blueDefault : 'none'}
             borderColor={hexColor.blueDefault}
             _hover={{ opacity: 0.8 }}
             _active={{ opacity: 0.8 }}
-            color={currentView == 0 ? '#FFF' : hexColor.blueDefault}
+            color={currentView === 0 ? '#FFF' : hexColor.blueDefault}
             textTransform="uppercase"
             padding="5px"
             height="30px"
@@ -495,7 +534,7 @@ const Assignments = () => {
                 icon="student"
                 width="15px"
                 height="15px"
-                color={currentView == 0 ? '#FFF' : hexColor.blueDefault}
+                color={currentView === 0 ? '#FFF' : hexColor.blueDefault}
               />
             )}
             onClick={() => {
@@ -511,9 +550,9 @@ const Assignments = () => {
             {t('students-view')}
           </Button>
           <Button
-            background={currentView == 1 ? hexColor.blueDefault : 'none'}
+            background={currentView === 1 ? hexColor.blueDefault : 'none'}
             borderColor={hexColor.blueDefault}
-            color={currentView == 1 ? '#FFF' : hexColor.blueDefault}
+            color={currentView === 1 ? '#FFF' : hexColor.blueDefault}
             _hover={{ opacity: 0.8 }}
             _active={{ opacity: 0.8 }}
             textTransform="uppercase"
@@ -524,7 +563,7 @@ const Assignments = () => {
                 icon="laptop-code"
                 width="20px"
                 height="20px"
-                color={currentView == 1 ? '#FFF' : hexColor.blueDefault}
+                color={currentView === 1 ? '#FFF' : hexColor.blueDefault}
               />
             )}
             onClick={() => {
@@ -540,7 +579,7 @@ const Assignments = () => {
             {t('projects-view')}
           </Button>
         </ButtonGroup>
-        <Box>
+        <Box display="flex" gridGap="10px">
           <Button
             variant="ghost"
             color={hexColor.blueDefault}
@@ -549,13 +588,37 @@ const Assignments = () => {
           >
             {t('common:filters')}
           </Button>
-          <Button
-            variant="ghost"
-            color={hexColor.blueDefault}
-            leftIcon={<Icon icon="sort" width="20px" height="20px" />}
-          >
-            {t('common:sort')}
-          </Button>
+          <Popover>
+            <PopoverTrigger>
+              <Button variant="unstyled" display="flex" gridGap="6px" color={hexColor.blueDefault} alignItems="center">
+                <Icon icon="sort" width="18px" heigh="11px" color="currentColor" />
+                <Text textTransform="uppercase" size="14px" fontWeight={700}>
+                  {t('common:sort')}
+                </Text>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent>
+              <PopoverArrow />
+              <PopoverCloseButton />
+              <PopoverBody display="flex" flexDirection="column" alignItems="flex-start" pl={4}>
+                <Button
+                  variant="unstyled"
+                  onClick={() => {
+                    const value = typeof sort === 'string' && sort.startsWith('-') ? 'user__first_name' : '-user__first_name';
+                    setSort(value);
+                    router.push({
+                      query: {
+                        ...router.query,
+                        sort: value,
+                      },
+                    });
+                  }}
+                >
+                  {`${t('sort.student')} ${typeof sort === 'string' && sort.startsWith('-') ? '▼' : '▲'}`}
+                </Button>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
         </Box>
       </Box>
       <Modal isOpen={openFilter} onClose={closeFilterModal}>
@@ -564,36 +627,64 @@ const Assignments = () => {
           <ModalHeader>{t('common:filters')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
+            {currentView === 1 && (
+              <Box marginBottom="10px">
+                <ReactSelect
+                  id="type-select"
+                  placeholder={t('filter.type')}
+                  isClearable
+                  value={typeLabel}
+                  height="50px"
+                  fontSize="15px"
+                  onChange={(selected) => {
+                    setTypeLabel(
+                      selected !== null
+                        ? {
+                          value: selected?.value,
+                          label: selected?.label,
+                        }
+                        : null,
+                    );
+                  }}
+                  options={typeList.map((type) => ({
+                    value: type.value,
+                    label: type.label,
+                  }))}
+                />
+              </Box>
+            )}
+            {currentView === 1 && (
+              <Box marginBottom="10px">
+                <ReactSelect
+                  id="project-select"
+                  placeholder={t('filter.project')}
+                  isClearable
+                  value={projectLabel || ''}
+                  // defaultInputValue={projectDefaultValue}
+                  onChange={(selected) => {
+                    setProjectLabel(
+                      selected !== null
+                        ? {
+                          value: selected?.value,
+                          label: selected?.label,
+                        }
+                        : null,
+                    );
+                  }}
+                  options={syllabusData.projects.map((project) => ({
+                    value: project.slug,
+                    label: project.title,
+                  }))}
+                />
+              </Box>
+            )}
             <Box marginBottom="10px">
-              <ReactSelect
-                id="project-select"
-                placeholder={t('filter.project')}
-                isClearable
-                value={projectLabel || ''}
-                defaultInputValue={projectDefaultValue}
-                onChange={(selected) => {
-                  setProjectLabel(
-                    selected !== null
-                      ? {
-                        value: selected?.value,
-                        label: selected?.label,
-                      }
-                      : null,
-                  );
-                }}
-                options={projects.map((project) => ({
-                  value: project.associated_slug,
-                  label: project.title,
-                }))}
-              />
-            </Box>
-            <Box marginBottom="10px">
-              <ReactSelect
+              <AsyncSelect
                 id="student-select"
                 placeholder={t('filter.student')}
                 isClearable
                 value={studentLabel || ''}
-                defaultInputValue={defaultStudentLabel}
+                // defaultInputValue={defaultStudentLabel}
                 height="50px"
                 fontSize="15px"
                 onChange={(selected) => {
@@ -607,39 +698,46 @@ const Assignments = () => {
                       : null,
                   );
                 }}
-                options={currentStudentList.map((student) => ({
-                  id: student.user.id,
-                  value:
-                    `${student.user.first_name}-${student.user.last_name}`?.toLowerCase(),
-                  label: `${student.user.first_name} ${student.user.last_name}`,
-                }))}
+                defaultOptions
+                cacheOptions
+                loadOptions={(inputValue) => handlers
+                  .getStudents(selectedCohortSlug, allCohorts.find((c) => c.slug === selectedCohortSlug)?.id || academy)
+                  .then((students) => students.filter((student) => `${student.user.first_name} ${student.user.last_name}`.toLowerCase().includes(inputValue.toLowerCase()))
+                    .map((student) => ({
+                      id: student.user.id,
+                      value:
+                        `${student.user.first_name}-${student.user.last_name}`?.toLowerCase(),
+                      label: `${student.user.first_name} ${student.user.last_name}`,
+                    })))}
               />
             </Box>
-            <Box marginBottom="10px">
-              <ReactSelect
-                id="status-select"
-                placeholder={t('filter.status')}
-                isClearable
-                value={statusLabel}
-                height="50px"
-                fontSize="15px"
-                defaultInputValue={statusDefaultValue}
-                onChange={(selected) => {
-                  setStatusLabel(
-                    selected !== null
-                      ? {
-                        value: selected?.value,
-                        label: selected?.label,
-                      }
-                      : null,
-                  );
-                }}
-                options={statusList.map((status) => ({
-                  value: status.value,
-                  label: status.label,
-                }))}
-              />
-            </Box>
+            {currentView === 1 && (
+              <Box marginBottom="10px">
+                <ReactSelect
+                  id="status-select"
+                  placeholder={t('filter.status')}
+                  isClearable
+                  value={statusLabel}
+                  height="50px"
+                  fontSize="15px"
+                  // defaultInputValue={statusDefaultValue}
+                  onChange={(selected) => {
+                    setStatusLabel(
+                      selected !== null
+                        ? {
+                          value: selected?.value,
+                          label: selected?.label,
+                        }
+                        : null,
+                    );
+                  }}
+                  options={statusList.map((status) => ({
+                    value: status.value,
+                    label: status.label,
+                  }))}
+                />
+              </Box>
+            )}
           </ModalBody>
 
           <ModalFooter justifyContent="space-between">
@@ -664,7 +762,7 @@ const Assignments = () => {
         padding={{ base: '0', md: '0 10px', lg: '0' }}
         p="0 0 30px 0"
       >
-        {currentView == 1 ? (
+        {currentView === 1 ? (
           <Box
             minHeight="34vh"
             borderRadius="3px"
@@ -748,8 +846,8 @@ const Assignments = () => {
                         width="auto"
                         minWidth="calc(110px - 0.5vw)"
                       >
-                        {mandatoryAssignments.find(
-                          (assignment) => assignment.slug === task.associated_slug,
+                        {syllabusData.assignments.find(
+                          (assignment) => assignment.slug === task.associated_slug && assignment.mandatory,
                         ) && (
                           <Icon
                             icon="warning"
@@ -785,7 +883,7 @@ const Assignments = () => {
                           currentTask={task}
                           cohortSession={cohortSession}
                           contextState={contextState}
-                          setContextState={setContextState}
+                          updpateAssignment={updpateAssignment}
                         />
                       </Box>
                     </Box>
@@ -843,16 +941,19 @@ const Assignments = () => {
           >
             <Flex flexDirection="column" gridGap="18px">
               {currentStudentList.map((student) => {
+                const { user } = student;
                 const fullname = `${student.user.first_name} ${student.user.last_name}`;
-                const dots = syllabusProjects.map((elem) => {
-                  const studentTask = filteredTasks.find(
-                    (task) => task.associated_slug === elem.slug
-                      && student.user.id === task.user.id,
+                const dots = syllabusData.projects.map((elem) => {
+                  const studentTask = student.tasks.find((task) => task.associated_slug === elem.slug);
+                  const mandatory = syllabusData.assignments.some(
+                    (assignment) => assignment.slug === elem.slug && assignment.mandatory,
                   );
                   return {
                     ...elem,
                     ...studentTask,
                     label: elem.title,
+                    highlight: mandatory,
+                    user,
                     color: statusColors[getStatus(studentTask)] || 'gray',
                   };
                 });
@@ -872,7 +973,7 @@ const Assignments = () => {
                       </Flex>
                     )}
                     dots={dots}
-                    // helpText={percentAttendance}
+                    helpText={`${t('educational-status')}: ${student.educational_status}`}
                   />
                 );
               })}
@@ -899,6 +1000,15 @@ const Assignments = () => {
               isOpen={currentTask && (currentTask.status === 'UNDELIVERED' || currentTask.status === 'REJECTED')}
               onClose={() => setCurrentTask(null)}
               deliveryUrl={deliveryUrl}
+            />
+            <DetailsModal
+              currentTask={currentTask}
+              projectLink={`https://4geeks.com${
+                lang[router.locale]
+              }project/${currentTask?.slug}`}
+              updpateAssignment={updpateAssignment}
+              isOpen={currentTask && currentTask.status === 'APPROVED'}
+              onClose={() => setCurrentTask(null)}
             />
           </Box>
         )}

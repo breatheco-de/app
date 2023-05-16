@@ -10,8 +10,161 @@ import {
   memo, useEffect, useState, useRef, Fragment,
 } from 'react';
 import bc from '../../common/services/breathecode';
+import Icon from '../../common/components/Icon';
+import useStyle from '../../common/hooks/useStyle';
 // import { getStorageItem } from '../../utils';
 // import Modal from './modal';
+
+export const DetailsModal = ({
+  currentTask, projectLink, updpateAssignment, isOpen, onClose,
+}) => {
+  const { hexColor } = useStyle();
+  const { t } = useTranslation('assignments');
+  const [openUndoApproval, setOpenUndoApproval] = useState(false);
+  const toast = useToast();
+  // const textAreaRef = useRef(null);
+  const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
+  const fontColor = useColorModeValue('gra.dark', 'gray.250');
+  const labelColor = useColorModeValue('gray.600', 'gray.200');
+  const commonBorderColor = useColorModeValue('gray.250', 'gray.500');
+  const taskIsIgnored = currentTask?.revision_status === 'IGNORED';
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="lg"
+    >
+      <ModalOverlay />
+      <ModalContent borderRadius="17px" marginTop="10%">
+        <ModalHeader fontSize="15px" color={labelColor} textAlign="center" letterSpacing="0.05em" borderBottom="1px solid" borderColor={commonBorderColor} fontWeight="bold" textTransform="uppercase">
+          {t('review-assignment.title')}
+        </ModalHeader>
+        <ModalCloseButton />
+        <ModalBody pb={4} px={{ base: '10px', md: '35px' }}>
+          <Box display="flex" flexDirection="column" pb={6}>
+            <Text color={fontColor}>{fullName}</Text>
+            <Link href={projectLink} fontWeight="700" letterSpacing="0.05em" width="fit-content" target="_blank" rel="noopener noreferrer" color="blue.default">
+              {currentTask?.title}
+            </Link>
+          </Box>
+          {currentTask?.github_url && (
+            <Box pb={6}>
+              <Text color={fontColor}>{t('review-assignment.github-url')}</Text>
+              <Link
+                variant="default"
+                width="100%"
+                href={currentTask.github_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {currentTask.github_url}
+              </Link>
+
+            </Box>
+          )}
+          {currentTask?.file && Array.isArray(currentTask.file) && (
+            <Box pb={6}>
+              <Text color={fontColor}>{t('review-assignment.files')}</Text>
+              {currentTask.file.map((file) => {
+                const extension = file.name.split('.').pop();
+                return (
+                  <Link
+                    variant="default"
+                    width="100%"
+                    // justifyContent="space-between"
+                    key={file.id}
+                    href={file.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                                // margin="0 0 0 10px"
+                    display="flex"
+                    gridGap="8px"
+                  >
+                    <Text size="l" withLimit={file.name.length > 28}>
+                      {file.name}
+                    </Text>
+                    {extension && (
+                    <Icon icon="download" width="16px" height="16px" color={hexColor.blueDefault} />
+                    )}
+                  </Link>
+                );
+              })}
+            </Box>
+          )}
+          {currentTask?.description && (
+            <Box pb={6}>
+              <Text color={fontColor}>{t('review-assignment.description')}</Text>
+              <Text color={fontColor}>{currentTask.description}</Text>
+            </Box>
+          )}
+        </ModalBody>
+        <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={commonBorderColor}>
+          <Button onClick={() => setOpenUndoApproval(true)} variant={taskIsIgnored ? 'default' : 'outline'} textTransform="uppercase">
+            {t('task-handler.undo-approval')}
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+
+      <Modal
+          // isCentered
+        isOpen={openUndoApproval}
+        onClose={() => setOpenUndoApproval(false)}
+        size="lg"
+      >
+        <ModalOverlay />
+        <ModalContent borderRadius="17px" marginTop="10%">
+          <ModalHeader fontSize="15px" color="gray.600" textAlign="center" letterSpacing="0.05em" borderBottom="1px solid" borderColor={commonBorderColor} fontWeight="bold" textTransform="uppercase">
+            {t('deliver-assignment.title')}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pt="2rem" pb="2rem" px={{ base: '20px', md: '15%' }}>
+            <Text fontSize="22px" fontWeight="700" textAlign="center">
+              {t('task-handler.confirm-undo', { student: fullName })}
+            </Text>
+          </ModalBody>
+          <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={commonBorderColor}>
+            <Button
+              onClick={() => {
+                bc.todo().update({
+                  id: currentTask.id,
+                  revision_status: 'PENDING',
+                })
+                  .then(() => {
+                    updpateAssignment({
+                      ...currentTask,
+                      id: currentTask.id,
+                      revision_status: 'PENDING',
+                    });
+                    setOpenUndoApproval(false);
+                    onClose();
+                    toast({
+                      title: t('alert-message:review-assignment-updated'),
+                      status: 'success',
+                      duration: 5000,
+                      isClosable: true,
+                    });
+                  })
+                  .catch(() => {
+                    toast({
+                      title: t('alert-message:review-assignment-error'),
+                      status: 'error',
+                      duration: 5000,
+                      isClosable: true,
+                    });
+                  });
+              }}
+              variant={taskIsIgnored ? 'default' : 'outline'}
+              textTransform="uppercase"
+            >
+              {t('task-handler.undo-approval')}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </Modal>
+  );
+};
 
 export const DeliverModal = ({
   currentTask, projectLink, updpateAssignment, deliveryUrl, isOpen, onClose,
@@ -122,7 +275,7 @@ export const DeliverModal = ({
           <ModalCloseButton />
           <ModalBody pt="2rem" pb="2rem" px={{ base: '20px', md: '15%' }}>
             <Text fontSize="22px" fontWeight="700" textAlign="center">
-              {`Are you sure you want to ignore this task for ${fullName}?`}
+              {t('deliver-assignment.confirm-ignore', { student: fullName })}
             </Text>
           </ModalBody>
           <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={commonBorderColor}>
@@ -266,10 +419,12 @@ export const NoInfoModal = ({ isOpen, onClose }) => {
 
 export const ReviewModal = ({ currentTask, projectLink, updpateAssignment, isOpen, onClose }) => {
   const { t } = useTranslation('assignments');
+  const { hexColor } = useStyle();
   const toast = useToast();
   const [comment, setComment] = useState('');
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
   const commonBorderColor = useColorModeValue('gray.250', 'gray.500');
+  const fontColor = useColorModeValue('gra.dark', 'gray.250');
 
   const ReviewButton = ({ type }) => {
     const statusColor = {
@@ -374,6 +529,50 @@ export const ReviewModal = ({ currentTask, projectLink, updpateAssignment, isOpe
               {currentTask?.title}
             </Link>
           </Box>
+          {currentTask?.github_url && (
+            <Box pb={6}>
+              <Text color={fontColor}>{t('review-assignment.github-url')}</Text>
+              <Link
+                variant="default"
+                width="100%"
+                href={currentTask.github_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {currentTask.github_url}
+              </Link>
+
+            </Box>
+          )}
+          {currentTask?.file && Array.isArray(currentTask.file) && (
+            <Box pb={6}>
+              <Text color={fontColor}>{t('review-assignment.files')}</Text>
+              {currentTask.file.map((file) => {
+                const extension = file.name.split('.').pop();
+                return (
+                  <Link
+                    variant="default"
+                    width="100%"
+                    // justifyContent="space-between"
+                    key={file.id}
+                    href={file.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                                // margin="0 0 0 10px"
+                    display="flex"
+                    gridGap="8px"
+                  >
+                    <Text size="l" withLimit={file.name.length > 28}>
+                      {file.name}
+                    </Text>
+                    {extension && (
+                    <Icon icon="download" width="16px" height="16px" color={hexColor.blueDefault} />
+                    )}
+                  </Link>
+                );
+              })}
+            </Box>
+          )}
           <Textarea
             onChange={(e) => setComment(e.target.value)}
             placeholder={t('review-assignment.comment-placeholder')}
@@ -425,7 +624,7 @@ const ReviewHandler = ({ currentTask, projectLink, updpateAssignment }) => {
 };
 
 const ButtonHandler = ({
-  currentTask, cohortSession, contextState, setContextState,
+  currentTask, cohortSession, updpateAssignment,
 }) => {
   const { t } = useTranslation('assignments');
   const router = useRouter();
@@ -435,17 +634,6 @@ const ButtonHandler = ({
     en: '/',
   };
   const projectLink = `https://4geeks.com${lang[router.locale]}project/${currentTask.associated_slug}`;
-
-  const updpateAssignment = async (taskUpdated) => {
-    const keyIndex = contextState.allTasks.findIndex((x) => x.id === taskUpdated.id);
-    await setContextState({
-      allTasks: [
-        ...contextState.allTasks.slice(0, keyIndex), // before keyIndex (inclusive)
-        taskUpdated, // key item (updated)
-        ...contextState.allTasks.slice(keyIndex + 1), // after keyIndex (exclusive)
-      ],
-    });
-  };
 
   // const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
 
@@ -524,8 +712,7 @@ const ButtonHandler = ({
 ButtonHandler.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.any),
   cohortSession: PropTypes.objectOf(PropTypes.any),
-  contextState: PropTypes.objectOf(PropTypes.any).isRequired,
-  setContextState: PropTypes.func.isRequired,
+  updpateAssignment: PropTypes.func.isRequired,
 };
 ButtonHandler.defaultProps = {
   currentTask: null,
@@ -559,6 +746,14 @@ ReviewModal.propTypes = {
 };
 
 NoInfoModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+};
+
+DetailsModal.propTypes = {
+  currentTask: PropTypes.objectOf(PropTypes.any).isRequired,
+  projectLink: PropTypes.string.isRequired,
+  updpateAssignment: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };

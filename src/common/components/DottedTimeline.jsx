@@ -11,6 +11,7 @@ const DottedTimeline = ({ label, dots, helpText, width, onClickDots }) => {
   const { borderColor, fontColor2, tooltipBackground, backgroundColor2 } = useStyle();
   const scrollContainerRef = useRef(null);
   const { grabToScroll, isScrollable } = useGrabToScroll({ ref: scrollContainerRef, horizontal: true });
+  const highLightColor = '#F5FC00';
 
   return (
     <Flex borderRadius="17px" flexDirection="column" gridGap="4px" width={width} padding="20px 29px" border="1px solid" borderColor={borderColor} background={backgroundColor2}>
@@ -28,7 +29,7 @@ const DottedTimeline = ({ label, dots, helpText, width, onClickDots }) => {
         <Flex ref={scrollContainerRef} alignItems="center" className="hideOverflowX__" height="25px" onMouseDown={grabToScroll} position="relative" gridGap="9px" overflowX="auto">
           {dots && dots.map((dot, i) => (
             <Tooltip key={dot.label} hasArrow label={dot.label} placement="top" color="gray.250" fontWeight={700} fontSize="13px" padding="0 6px" bg={tooltipBackground}>
-              <Box onClick={() => onClickDots && onClickDots(dot, i)} cursor={onClickDots && 'pointer'} background={dot.color} borderRadius="50%" width="10px" minW="10px" height="10px" minH="10px" />
+              <Box onClick={() => onClickDots && onClickDots(dot, i)} border="2px solid" borderColor={dot.highlight ? highLightColor : dot.color} cursor={onClickDots && 'pointer'} background={dot.color} borderRadius="50%" width="10px" minW="10px" height="10px" minH="10px" />
             </Tooltip>
           ))}
         </Flex>

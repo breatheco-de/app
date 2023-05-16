@@ -128,7 +128,12 @@ const breathecode = {
       }),
       getFilterStudents: () => axios.get(`${url}/cohort/user${qs}`),
       getMembers: () => axios.get(`${url}/cohort/user${qs}`),
-      getStudents: (cohortId, academyId) => axios.get(`${url}/cohort/user?role=STUDENT&cohorts=${cohortId}`, {
+      getStudents: (cohortId, academyId) => axios.get(`${url}/cohort/user?roles=STUDENT&cohorts=${cohortId}`, {
+        headers: academyId && {
+          academy: academyId,
+        },
+      }),
+      getStudentsWithTasks: (cohortId, academyId) => axios.get(`${url}/cohort/user?tasks=True&roles=STUDENT&cohorts=${cohortId}${qs.replace('?', '&')}`, {
         headers: academyId && {
           academy: academyId,
         },

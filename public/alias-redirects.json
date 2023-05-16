@@ -680,6 +680,11 @@
     "destination": "/en/interactive-coding-tutorial/exercise-starwars-blog-api"
   },
   {
+    "source": "/project/student-external-profile",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/student-external-profile"
+  },
+  {
     "source": "/project/instagram-feed-es",
     "type": "PROJECT-REROUTE",
     "destination": "/es/interactive-coding-tutorial/instagram-feed-es"

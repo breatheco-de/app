@@ -4,12 +4,19 @@
   "students-view": "vista de studiantes",
   "projects-view": "vista de proyectos",
   "no-information": "No hay información disponible para el proyecto de este estudiante",
+  "educational-status": "Estatus eduacional",
   "status": {
     "delivered": "Entregado",
     "approved": "Aprobado",
     "rejected": "Rechazado",
     "undelivered": "No entregado",
     "ignored": "Ignorado"
+  },
+  "type": {
+    "project": "Proyecto",
+    "quiz": "Quiz",
+    "lesson": "Lección",
+    "exercise": "Ejercicio"
   },
   "label": {
     "status": "Estado",
@@ -19,7 +26,11 @@
     "files-received": "{{files}} Archivos entregados",
     "link-received": "Enlace entregado"
   },
+  "sort": {
+    "student": "Ordenar por nombre"
+  },
   "filter": {
+    "type": "Filtrar por Tipo",
     "project": "Filtrar por proyecto",
     "student": "Filtrar por Estudiante",
     "status": "Filtrar por Estado",
@@ -28,7 +39,8 @@
   "task-handler": {
     "review": "Revisar",
     "deliver": "Entregar",
-    "undo-approval": "Deshacer acción"
+    "undo-approval": "Deshacer acción",
+    "confirm-undo": "¿Estas seguro de que quieres revertir la aprobación para {{student}}?"
   },
   "deliver-assignment": {
     "title": "Entregar tarea",
@@ -36,6 +48,7 @@
     "hint": "Comparte el enlace con el estudiante",
     "button": "Ignorar tarea",
     "ignore-task": "Ignorar tarea",
+    "confirm-ignore": "¿Estas seguro de que quieres ignorar esta tarea para {{student}}?",
     "mark-as-pending": "Marcar como pendiente",
     "copy": "Copiar enlace",
     "copied": "¡Copiado!"
@@ -44,6 +57,9 @@
     "title": "Revisión de asignación",
     "reject": "Rechazar",
     "approve": "Aprobar",
+    "files": "Archivos",
+    "description": "Descripción",
+    "github-url": "URL de Github",
     "comment-placeholder": "Comentario o retroalimentación para el estudiante (opcional)",
     "no-review-required": "Este proyecto puede ser aprobado sin requerir revisión, ya que no fue necesario enviar ningún archivo ni url"
   }

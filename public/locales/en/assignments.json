@@ -4,12 +4,19 @@
   "students-view": "students view",
   "projects-view": "projects view",
   "no-information": "No information available about this student's project",
+  "educational-status": "Educational Status",
   "status": {
     "delivered": "Delivered",
     "approved": "Approved",
     "rejected": "Rejected",
     "undelivered": "Undelivered",
     "ignored": "Ignored"
+  },
+  "type": {
+    "project": "Project",
+    "quiz": "Quiz",
+    "lesson": "Lesson",
+    "exercise": "Exercise"
   },
   "label": {
     "status": "Status",
@@ -19,7 +26,11 @@
     "files-received": "{{files}} Files delivered",
     "link-received": "Link delivered"
   },
+  "sort": {
+    "student": "Sort By Student"
+  },
   "filter": {
+    "type": "Filter by Type",
     "project": "Filter by Project",
     "student": "Filter by Student",
     "status": "Filter by Status",
@@ -28,7 +39,8 @@
   "task-handler": {
     "review": "Review",
     "deliver": "Deliver",
-    "undo-approval": "Undo Approval"
+    "undo-approval": "Undo Approval",
+    "confirm-undo": "Are you sure you want to undo approval for {{student}}?"
   },
   "deliver-assignment": {
     "title": "Deliver assignment",
@@ -36,6 +48,7 @@
     "hint": "Share the link with the student",
     "button": "Ignore task",
     "ignore-task": "Ignore task",
+    "confirm-ignore": "Are you sure you want to ignore this task for {{student}}?",
     "mark-as-pending": "Mark as pending",
     "copy": "Copy link",
     "copied": "Copied!"
@@ -44,6 +57,9 @@
     "title": "Assignment Review",
     "reject": "Mark as rejected",
     "approve": "Mark as approved",
+    "files": "Files",
+    "description": "Description",
+    "github-url": "Github URL",
     "comment-placeholder": "Comment or feedback for the student (optional)",
     "no-review-required": "This project can be approved without requiring review, since it was not necessary to send any file or url"
   }
