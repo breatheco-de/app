@@ -15,6 +15,11 @@
     "destination": "/en/lesson/unassigned_javascript_objects"
   },
   {
+    "source": "/lesson/how-to-create-unit-testing-with-Javascript-and-Jest",
+    "type": "LESSON",
+    "destination": "/en/lesson/how-to-create-unit-testing-with-javascript-and-jest"
+  },
+  {
     "source": "/interactive-exercise/the-command-line",
     "type": "EXERCISE",
     "destination": "/en/interactive-exercise/command-line-challenge"
@@ -30,6 +35,16 @@
     "destination": "/en/lesson/unassigned_javascript_objects"
   },
   {
+    "source": "/interactive-coding-tutorial/interview-preparation",
+    "type": "PROJECT",
+    "destination": "/en/interactive-coding-tutorial/interview-preparation-3"
+  },
+  {
+    "source": "/interactive-coding-tutorial/exercise-instagram-post",
+    "type": "PROJECT",
+    "destination": "/en/interactive-coding-tutorial/exercise-instagram-post-3"
+  },
+  {
     "source": "/interactive-coding-tutorial/exercise-instagram-post-2",
     "type": "PROJECT",
     "destination": "/en/interactive-coding-tutorial/exercise-instagram-post-3"
@@ -43,6 +58,16 @@
     "source": "/interactive-coding-tutorial/interview-preparation-2",
     "type": "PROJECT",
     "destination": "/en/interactive-coding-tutorial/interview-preparation-3"
+  },
+  {
+    "source": "/lesson/trazar-func-con-python",
+    "type": "LESSON",
+    "destination": "/es/lesson/trazar-func-con-python-es"
+  },
+  {
+    "source": "/how-to/hello-world",
+    "type": "ARTICLE",
+    "destination": "/es/how-to/hello-world1"
   },
   {
     "source": "/lesson/unassigned-javascript-objects",
@@ -653,6 +678,11 @@
     "source": "/project/exercise-starwars-blog-api",
     "type": "PROJECT-REROUTE",
     "destination": "/en/interactive-coding-tutorial/exercise-starwars-blog-api"
+  },
+  {
+    "source": "/project/student-external-profile",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/student-external-profile"
   },
   {
     "source": "/project/instagram-feed-es",
