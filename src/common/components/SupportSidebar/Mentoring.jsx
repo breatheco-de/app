@@ -35,8 +35,6 @@ const Mentoring = ({
     mentorSearch: '',
   });
 
-  const cohortService = serviceMentoring?.mentorship_service_sets?.find((c) => c?.slug === savedChanges?.service?.slug);
-
   const servicesFiltered = programServices.filter(
     (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
   );
@@ -112,6 +110,7 @@ const Mentoring = ({
   }, [programServices]);
 
   const isAvailableForConsumables = cohortSession?.available_as_saas === true;
+  const mentorshipService = serviceMentoring?.mentorship_service_sets?.find((c) => c?.slug === savedChanges?.service?.slug);
 
   return !isLoading && user?.id && (
     <>
@@ -121,7 +120,7 @@ const Mentoring = ({
             mentoryProps,
             width,
             serviceMentoring,
-            cohortService,
+            mentorshipService,
             setMentoryProps,
             programServices,
             dateFormated,
