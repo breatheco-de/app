@@ -73,7 +73,7 @@ const ProfilesSection = ({
 };
 
 const MentoringConsumables = ({
-  mentoryProps, width, serviceMentoring, cohortService, setMentoryProps,
+  mentoryProps, width, serviceMentoring, mentorshipService, setMentoryProps,
   programServices, dateFormated, servicesFiltered, searchProps,
   setSearchProps, setProgramMentors, savedChanges, setSavedChanges, setServiceMentoring,
   mentorsFiltered, dateFormated2, allMentorsAvailable,
@@ -90,7 +90,7 @@ const MentoringConsumables = ({
 
   const existsConsumables = serviceMentoring?.mentorship_service_sets?.length > 0 || (Array.isArray(serviceMentoring?.mentorship_service_sets) && serviceMentoring?.mentorship_service_sets.some((item) => item?.balance > 0));
 
-  const existConsumablesOnCurrentService = serviceMentoring?.mentorship_service_sets?.length > 0 && cohortService?.balance?.unit !== 0;
+  const existConsumablesOnCurrentService = serviceMentoring?.mentorship_service_sets?.length > 0 && mentorshipService?.balance?.unit !== 0;
 
   const handleService = (service) => {
     bc.mentorship({
@@ -147,7 +147,7 @@ const MentoringConsumables = ({
         {existsConsumables ? (
           <>
             <Box d="flex" flexDirection="column" alignItems="center" justifyContent="center">
-              {!mentoryProps?.service && (serviceMentoring?.mentorship_service_sets?.length !== 0 || cohortService?.balance?.unit !== 0) && (
+              {!mentoryProps?.service && (serviceMentoring?.mentorship_service_sets?.length !== 0 || mentorshipService?.balance?.unit !== 0) && (
                 <>
                   <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
                     {t('supportSideBar.mentoring')}
@@ -191,8 +191,8 @@ const MentoringConsumables = ({
               {t('mentorship.you-have')}
             </Box>
             <Box display="flex" color="white" justifyContent="center" alignItems="center" background="green.400" width="30px" height="30px" borderRadius="50%">
-              {cohortService?.balance?.unit > 0 ? cohortService?.balance?.unit : ''}
-              {cohortService?.balance?.unit === -1 ? (
+              {mentorshipService?.balance > 0 ? mentorshipService?.balance : ''}
+              {mentorshipService?.balance === -1 ? (
                 <Icon icon="infinite" width="20px" height="20px" />
               ) : ''}
             </Box>
@@ -380,7 +380,7 @@ MentoringConsumables.propTypes = {
   mentoryProps: PropTypes.objectOf(PropTypes.any),
   width: PropTypes.string,
   serviceMentoring: PropTypes.objectOf(PropTypes.any),
-  cohortService: PropTypes.objectOf(PropTypes.any),
+  mentorshipService: PropTypes.objectOf(PropTypes.any),
   setMentoryProps: PropTypes.func.isRequired,
   programServices: PropTypes.arrayOf(PropTypes.any),
   dateFormated: PropTypes.objectOf(PropTypes.any).isRequired,
@@ -399,7 +399,7 @@ MentoringConsumables.defaultProps = {
   mentoryProps: [],
   width: '100%',
   serviceMentoring: {},
-  cohortService: {},
+  mentorshipService: {},
   programServices: [],
   setProgramMentors: () => {},
   setServiceMentoring: () => {},
