@@ -13,11 +13,14 @@ const urlExists = (url, callback) => {
   xhr.send();
 };
 
-const parseQuerys = (query) => {
+const parseQuerys = (query, connector = false) => {
   let queryString = '';
   try {
     Object.keys(query).forEach((key) => {
       // query[key] !== undefined && query[key] !== null
+      if (connector) {
+        queryString += `&${key}=${query[key]}`;
+      }
       if (query[key] !== undefined) {
         queryString += `${queryString ? '&' : '?'}${key}=${query[key]}`;
       }
@@ -28,7 +31,7 @@ const parseQuerys = (query) => {
   return queryString;
 };
 
-export {
+module.exports = {
   isAbsoluteUrl,
   getUrlProps,
   urlExists,
