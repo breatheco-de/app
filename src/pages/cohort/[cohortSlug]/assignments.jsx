@@ -672,7 +672,7 @@ const Assignments = () => {
                         : null,
                     );
                   }}
-                  options={syllabusData.projects.map((project) => ({
+                  options={syllabusData.assignments.map((project) => ({
                     value: project.slug,
                     label: project.title,
                   }))}
