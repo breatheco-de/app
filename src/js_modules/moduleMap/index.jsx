@@ -12,7 +12,7 @@ import Icon from '../../common/components/Icon';
 const ModuleMap = ({
   index, userId, contextState, setContextState, slug, modules, filteredModules,
   title, description, taskTodo, cohortSession, taskCohortNull, filteredModulesByPending,
-  showPendingTasks, searchValue,
+  showPendingTasks, searchValue, existsActivities,
 }) => {
   const { t } = useTranslation('dashboard');
   const toast = useToast();
@@ -52,7 +52,7 @@ const ModuleMap = ({
     return false;
   };
 
-  return (
+  return ((showPendingTasks && filteredModulesByPending !== null) || (showPendingTasks === false)) && (
     <Box
       key={index}
       width="100%"
@@ -99,7 +99,7 @@ const ModuleMap = ({
       )}
 
       {filteredModules.length >= 1
-        ? currentModules.map((module, i) => {
+        ? Array.isArray(currentModules) && currentModules.map((module, i) => {
           const cheatedIndex = i;
           return (
             <Module
@@ -121,9 +121,9 @@ const ModuleMap = ({
             borderColor={commonBorderColor}
           >
             <Text fontSize="15px" color="gray.default">
-              {modules.length === 0 ? t('modules.no-activities') : t('modules.start-message')}
+              {existsActivities ? t('modules.start-message') : t('modules.no-activities')}
             </Text>
-            {modules.length !== 0 && (
+            {existsActivities && (
               <Button
                 color="blue.default"
                 textTransform="uppercase"
@@ -159,6 +159,7 @@ ModuleMap.propTypes = {
   filteredModulesByPending: PropTypes.arrayOf(PropTypes.object),
   showPendingTasks: PropTypes.bool,
   searchValue: PropTypes.string,
+  existsActivities: PropTypes.bool.isRequired,
 };
 ModuleMap.defaultProps = {
   modules: [],

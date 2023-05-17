@@ -1,7 +1,7 @@
 import {
   Box, Flex, IconButton, Avatar, Stack, Collapse, useColorModeValue,
   useBreakpointValue, useDisclosure, useColorMode, Popover, PopoverTrigger,
-  PopoverContent, PopoverArrow, Button,
+  PopoverContent, PopoverArrow, Button, Link,
 } from '@chakra-ui/react';
 import {
   useState, memo, useEffect, Fragment,
@@ -21,10 +21,14 @@ import { usePersistent } from '../../hooks/usePersistent';
 import Heading from '../Heading';
 import Text from '../Text';
 import useAuth from '../../hooks/useAuth';
+import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
 import syllabusList from '../../../../public/syllabus.json';
 import { isWindow } from '../../../utils';
 import axios from '../../../axios';
+import modifyEnv from '../../../../modifyEnv';
+
+const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 // import UpgradeExperience from '../UpgradeExperience';
 
 const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
@@ -51,6 +55,11 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   const queryToken = isWindow && query.get('token')?.split('?')[0];
   const queryTokenExists = isWindow && queryToken !== undefined && queryToken;
   const sessionExists = haveSession || queryTokenExists;
+
+  const {
+    languagesTR,
+  } = navbarTR[locale];
+  const translationsPropsExists = translations?.length > 0;
 
   const { selectedProgramSlug } = cohortSession;
 
@@ -82,7 +91,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   };
 
   useEffect(() => {
-    axios.get(`${process.env.BREATHECODE_HOST}/v1/marketing/course?featured=true`)
+    axios.get(`${BREATHECODE_HOST}/v1/marketing/course?featured=true`)
       .then((response) => {
         const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null);
         setMktCourses(filterByTranslations || []);
@@ -427,20 +436,32 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
                       {t('language')}
                     </Text>
                     <Box display="flex" flexDirection="row">
-                      {langs.map((lang, i) => {
-                        const getIconFlags = lang === 'en' ? 'usaFlag' : 'spainFlag';
-                        const getLangName = lang === 'en' ? 'Eng' : 'Esp';
+                      {((translationsPropsExists
+                        && translations)
+                        || languagesTR).map((l, i) => {
+                        const lang = languagesTR.filter((language) => language?.value === l?.lang)[0];
+                        const value = translationsPropsExists ? lang?.value : l.value;
+                        const path = translationsPropsExists ? l?.link : router.asPath;
+
+                        const cleanedPath = (path === '/' && value !== 'en') ? '' : path;
+                        const localePrefix = `${value !== 'en' && !cleanedPath.includes(`/${value}`) ? `/${value}` : ''}`;
+
+                        const link = `${localePrefix}${cleanedPath}`;
+
+                        const getIconFlags = value === 'en' ? 'usaFlag' : 'spainFlag';
+                        const getLangName = value === 'en' ? 'Eng' : 'Esp';
+
                         return (
                           <Fragment key={lang}>
-                            <NextChakraLink
+                            <Link
                               _hover={{
                                 textDecoration: 'none',
                                 color: 'blue.default',
                               }}
                               color={locale === lang ? 'blue.default' : linkColor}
                               fontWeight={locale === lang ? '700' : '400'}
-                              href={router.asPath}
-                              locale={lang}
+                              key={value}
+                              href={link}
                               display="flex"
                               alignItems="center"
                               textTransform="uppercase"
@@ -449,7 +470,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
                             >
                               <Icon icon={getIconFlags} width="16px" height="16px" />
                               {getLangName}
-                            </NextChakraLink>
+                            </Link>
                             {
                               i < langs.length - 1 && (
                                 <Box width="1px" height="100%" background="gray.350" margin="0 6px" />

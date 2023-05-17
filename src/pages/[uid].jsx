@@ -7,7 +7,7 @@ import { createClient } from '../../prismicio';
 import { components } from '../../slices';
 
 const Page = ({ page }) => (
-  <Box pt="3rem">
+  <Box className="prismic-body" pt="3rem">
     <SliceZone slices={page?.data?.slices} components={components} />
   </Box>
 );

@@ -19,7 +19,7 @@
       "handler-text": "Sync now"
     },
     "start-message": "You have not started this module",
-    "no-activities": "No activities for this modules",
+    "no-activities": "The module doesn't have any lessons, exercises or projects",
     "start-module": "Start module"
   },
   "callToAction": {
@@ -53,11 +53,16 @@
     "no-mentor-link": "No link to create session with this mentor",
     "search-mentor": "Search mentor by name",
     "start-mentorship": "To get started, select a mentorship type",
-    "mentoring": "Mentoring",
+    "mentoring": "Schedule a 1-1 mentoring session.",
     "select-type": "Select a type of mentorship",
     "mentoring-available": "Avalible mentorships",
     "no-mentoring-available": "You have no mentorships available.",
     "create-session-text": "Book now",
+    "learn-more": "Learn more.",
+    "learn-more-link": "https://4geeks.com/mentorships",
+    "get-more-mentorships": "Get more mentorships",
+    "schedule-button": "Schedule a mentoring session",
+    "mentors-available": "+{{count}} Mentors available",
     "actionButtons": [
       {
         "name": "mentoring",
@@ -74,7 +79,7 @@
     ]
   },
   "mentorship": {
-    "no-mentorship": "You have no more mentorships left to schedule",
+    "no-mentorship": "You have ran out of mentorships, but don't worry, you can get more in a few clicks.",
     "get-unlimited-mentorship": "and get unlimited mentorship",
     "you-have": "You have",
     "available-sessions": "available sessions",
