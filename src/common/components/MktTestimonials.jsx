@@ -52,8 +52,11 @@ const MktTestimonials = ({
     return (
       <Box
         width="250px"
+        minWidth="250px"
         background={backgroundColor}
-        borderRadius="12px"
+        border="2px solid"
+        borderColor="blue.default"
+        borderRadius="7px"
         padding="15px"
         textAlign="center"
       >
@@ -104,10 +107,11 @@ const MktTestimonials = ({
         )}
         <Box
           gridGap="20px"
-          flexWrap="wrap"
+          flexDirection="row"
           marginBottom="15px"
           display="flex"
-          justifyContent="center"
+          overflow="auto"
+          justifyContent={{ base: 'inherit', md: 'center' }}
         >
           {testimonialsArray && testimonialsArray.map((testimonial) => (
             <TestimonialBox
