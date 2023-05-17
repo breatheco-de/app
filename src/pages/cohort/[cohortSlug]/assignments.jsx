@@ -359,6 +359,7 @@ const Assignments = () => {
   const closeFilterModal = () => setOpenFilter(false);
 
   const applyFilters = () => {
+    const { project, student, status, task_type, ...params } = router.query;
     const filter = {};
     if (projectLabel) filter.project = projectLabel.value;
     if (studentLabel) filter.student = studentLabel.id;
@@ -366,7 +367,7 @@ const Assignments = () => {
     if (typeLabel) filter.task_type = typeLabel.value;
     router.push({
       query: {
-        ...router.query,
+        ...params,
         ...filter,
       },
     });
@@ -507,12 +508,12 @@ const Assignments = () => {
       </Box>
       <Box
         display="flex"
+        flexWrap="wrap"
         justifyContent="space-between"
         gridGap="20px"
-        maxWidth="1012px"
-        margin={{ base: '3% 4%', md: '3% auto 4% auto', lg: '3% auto 4% auto' }}
-        padding={{ base: '0', md: '0 10px', lg: '0' }}
-        p="0 0 30px 0"
+        maxWidth={{ base: '90%', md: '90%', lg: '1012px' }}
+        margin={{ base: '3% auto', md: '3% auto 4% auto', lg: '3% auto 4% auto' }}
+        padding={{ base: '0', lg: '0' }}
       >
         <ButtonGroup
           borderColor={hexColor.blueDefault}
@@ -527,7 +528,7 @@ const Assignments = () => {
             _active={{ opacity: 0.8 }}
             color={currentView === 0 ? '#FFF' : hexColor.blueDefault}
             textTransform="uppercase"
-            padding="5px"
+            padding="5px 15px"
             height="30px"
             leftIcon={(
               <Icon
@@ -556,7 +557,7 @@ const Assignments = () => {
             _hover={{ opacity: 0.8 }}
             _active={{ opacity: 0.8 }}
             textTransform="uppercase"
-            padding="5px"
+            padding="5px 15px"
             height="30px"
             leftIcon={(
               <Icon
@@ -588,7 +589,7 @@ const Assignments = () => {
           >
             {t('common:filters')}
           </Button>
-          <Popover>
+          <Popover maxWidth="200px" placement="bottom-start">
             <PopoverTrigger>
               <Button variant="unstyled" display="flex" gridGap="6px" color={hexColor.blueDefault} alignItems="center">
                 <Icon icon="sort" width="18px" heigh="11px" color="currentColor" />
@@ -671,7 +672,7 @@ const Assignments = () => {
                         : null,
                     );
                   }}
-                  options={syllabusData.projects.map((project) => ({
+                  options={syllabusData.assignments.map((project) => ({
                     value: project.slug,
                     label: project.title,
                   }))}
@@ -773,7 +774,7 @@ const Assignments = () => {
           >
             <Box
               display="flex"
-              margin="20px 32px"
+              margin="20px 32px 20px 55px"
               gridGap="10px"
               justifyContent="space-between"
               flexDirection="row"
@@ -783,7 +784,7 @@ const Assignments = () => {
               <Text
                 size="15px"
                 display="flex"
-                width={{ base: '6.8rem', md: '37%' }}
+                width={{ base: '6.8rem', md: '50%' }}
                 fontWeight="700"
               >
                 {t('label.status')}
@@ -844,23 +845,24 @@ const Assignments = () => {
                       <Box
                         display="flex"
                         width="auto"
-                        minWidth="calc(110px - 0.5vw)"
+                        minWidth="calc(160px - 0.5vw)"
                       >
-                        {syllabusData.assignments.find(
-                          (assignment) => assignment.slug === task.associated_slug && assignment.mandatory,
-                        ) && (
-                          <Icon
-                            icon="warning"
-                            color="yellow.default"
-                            width="28px"
-                            height="28px"
-                            style={{ marginRight: '15px' }}
-                          />
-                        )}
+                        <Box width="28px" height="28px" marginRight="15px">
+                          {syllabusData.assignments.find(
+                            (assignment) => assignment.slug === task.associated_slug && assignment.mandatory,
+                          ) && (
+                            <Icon
+                              icon="warning"
+                              color="yellow.default"
+                              width="28px"
+                              height="28px"
+                            />
+                          )}
+                        </Box>
                         <TaskLabel currentTask={task} t={t} />
                       </Box>
 
-                      <Box width="40%">
+                      <Box width="35%">
                         <Text size="15px">{fullName}</Text>
                         <Link
                           variant="default"
@@ -943,11 +945,9 @@ const Assignments = () => {
               {currentStudentList.map((student) => {
                 const { user } = student;
                 const fullname = `${student.user.first_name} ${student.user.last_name}`;
-                const dots = syllabusData.projects.map((elem) => {
+                const dots = syllabusData.assignments.map((elem) => {
                   const studentTask = student.tasks.find((task) => task.associated_slug === elem.slug);
-                  const mandatory = syllabusData.assignments.some(
-                    (assignment) => assignment.slug === elem.slug && assignment.mandatory,
-                  );
+                  const { mandatory } = elem;
                   return {
                     ...elem,
                     ...studentTask,
