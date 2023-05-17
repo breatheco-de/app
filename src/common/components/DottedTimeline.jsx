@@ -28,9 +28,20 @@ const DottedTimeline = ({ label, dots, helpText, width, onClickDots }) => {
       <AnimatedContainer isScrollable={isScrollable} position="relative" overflow="hidden">
         <Flex ref={scrollContainerRef} alignItems="center" className="hideOverflowX__" height="25px" onMouseDown={grabToScroll} position="relative" gridGap="9px" overflowX="auto">
           {dots && dots.map((dot, i) => (
-            <Tooltip key={dot.label} hasArrow label={dot.label} placement="top" color="gray.250" fontWeight={700} fontSize="13px" padding="0 6px" bg={tooltipBackground}>
-              <Box onClick={() => onClickDots && onClickDots(dot, i)} border="2px solid" borderColor={dot.highlight ? highLightColor : dot.color} cursor={onClickDots && 'pointer'} background={dot.color} borderRadius="50%" width="10px" minW="10px" height="10px" minH="10px" />
-            </Tooltip>
+            <Box padding="5px 0" borderBottom={dot.highlight && '2px solid'} borderColor={highLightColor}>
+              <Tooltip key={dot.label} hasArrow label={dot.label} placement="top" color="gray.250" fontWeight={700} fontSize="13px" padding="0 6px" bg={tooltipBackground}>
+                <Box
+                  onClick={() => onClickDots && onClickDots(dot, i)}
+                  cursor={onClickDots && 'pointer'}
+                  background={dot.color}
+                  borderRadius="50%"
+                  width="10px"
+                  minW="10px"
+                  height="10px"
+                  minH="10px"
+                />
+              </Tooltip>
+            </Box>
           ))}
         </Flex>
       </AnimatedContainer>
