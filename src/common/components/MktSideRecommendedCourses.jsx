@@ -8,7 +8,7 @@ import Icon from './Icon';
 import { CardSkeleton } from './Skeleton';
 import Link from './NextChakraLink';
 import modifyEnv from '../../../modifyEnv';
-import { toCapitalize } from '../../utils';
+// import { toCapitalize } from '../../utils';
 import TagCapsule from './TagCapsule';
 
 const defaultEndpoint = '/v1/marketing/course';
@@ -46,9 +46,10 @@ const MktSideRecommendedCourses = ({ title, endpoint }) => {
       {!isLoading && courses?.length > 0 ? (
         <Box display="flex" flexDirection={{ base: 'row', md: 'column' }} overflow="auto" gridGap="14px">
           {courses.map((course) => {
-            const tags = course?.technologies?.length > 0 && typeof course?.technologies === 'string'
-              ? course?.technologies?.split(',').map((tag) => toCapitalize(tag?.trim()))
-              : [];
+            // const tags = course?.technologies?.length > 0 && typeof course?.technologies === 'string'
+            //   ? course?.technologies?.split(',').map((tag) => toCapitalize(tag?.trim()))
+            //   : [];
+            const tags = ['Free course'];
 
             return (
               <Box key={course?.slug} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="#F9F9F9" color="black" padding="9px 8px" borderRadius="8px">
