@@ -2,7 +2,6 @@ import { Box, Image } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import useStyle from '../hooks/useStyle';
 import Heading from './Heading';
 import Text from './Text';
 import Icon from './Icon';
@@ -20,8 +19,6 @@ const MktSideRecommendedCourses = ({ title, endpoint }) => {
   const [isLoading, setIsLoading] = useState(true);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [courses, setCourses] = useState([]);
-
-  const { featuredColor } = useStyle();
 
   const headers = {
     'Accept-Language': lang,
@@ -42,7 +39,7 @@ const MktSideRecommendedCourses = ({ title, endpoint }) => {
   }, []);
 
   return (
-    <Box background={featuredColor} minWidth={{ base: '100%', md: '214px' }} width="auto" padding="8px" borderRadius="8px" margin="0 auto">
+    <Box minWidth={{ base: '100%', md: '214px' }} width="auto" padding="8px" borderRadius="8px" margin="0 auto">
       <Heading size="18px" lineHeight="21px" m="10px 0 20px 0">
         {title || t('continue-learning-course')}
       </Heading>
@@ -54,7 +51,7 @@ const MktSideRecommendedCourses = ({ title, endpoint }) => {
               : [];
 
             return (
-              <Box key={course?.slug} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="white" color="black" padding="9px 8px" borderRadius="8px">
+              <Box key={course?.slug} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="#F9F9F9" color="black" padding="9px 8px" borderRadius="8px">
                 <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'none', md: 'inherit' }} />
                 <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px">
                   <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'inherit', md: 'none' }} />
@@ -72,6 +69,7 @@ const MktSideRecommendedCourses = ({ title, endpoint }) => {
                   variant="buttonDefault"
                   href={`https://4geeks.com/${course?.slug}`}
                   alignItems="center"
+                  background="success"
                   width="auto"
                   gridGap="10px"
                   margin="0 20px"
