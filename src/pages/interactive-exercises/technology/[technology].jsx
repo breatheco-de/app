@@ -4,7 +4,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Text from '../../../common/components/Text';
-import { slugify, toCapitalize } from '../../../utils';
+import { toCapitalize } from '../../../utils';
 import Heading from '../../../common/components/Heading';
 import ProjectList from '../../../js_modules/projects/ProjectList';
 
@@ -20,7 +20,7 @@ export const getStaticPaths = async ({ locales }) => {
 
   const paths = data?.results?.length > 0 ? data?.results?.flatMap((res) => locales.map((locale) => ({
     params: {
-      technology: slugify(res.slug),
+      technology: res.slug,
     },
     locale,
   }))) : [];
