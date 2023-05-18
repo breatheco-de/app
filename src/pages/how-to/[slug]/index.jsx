@@ -189,7 +189,7 @@ export default function HowToSlug({ data, markdown }) {
         </Link>
       </GridContainer>
       <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin="22px auto 0 auto" gridGap="36px" padding="0 10px">
-        <Box display={{ base: 'flex', md: 'flex' }} position="sticky" top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
+        <Box display="flex" position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
           <MktSideRecommendedCourses />
         </Box>
         <Box
