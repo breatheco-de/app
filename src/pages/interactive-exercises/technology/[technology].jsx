@@ -18,12 +18,12 @@ export const getStaticPaths = async ({ locales }) => {
   });
   const data = await resp.json();
 
-  const paths = data.results.flatMap((res) => locales.map((locale) => ({
+  const paths = data?.results?.length > 0 ? data?.results?.flatMap((res) => locales.map((locale) => ({
     params: {
       technology: slugify(res.slug),
     },
     locale,
-  })));
+  }))) : [];
 
   return {
     fallback: false,
