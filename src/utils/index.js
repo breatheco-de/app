@@ -277,6 +277,12 @@ const syncInterval = (callback = () => {}) => {
   }, secondsToNextMinute * 1000);
 };
 
+function getBrowserSize() {
+  const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+  const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+  return { width, height };
+}
+
 const location = isWindow && window.location;
 
 const url = isWindow && new URL(window.location.href);
@@ -289,5 +295,5 @@ export {
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
-  createArray, url, lengthOfString, syncInterval,
+  createArray, url, lengthOfString, syncInterval, getBrowserSize,
 };
