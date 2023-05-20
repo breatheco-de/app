@@ -15,8 +15,8 @@ import AvatarUser from '../../../js_modules/cohortSidebar/avatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped } from '../Skeleton';
 
-const NoConsumablesCard = ({ t, setMentoryProps, disableBackButton = false }) => (
-  <Box display="flex" flexDirection="column" alignItems="center">
+const NoConsumablesCard = ({ t, setMentoryProps, disableBackButton = false, ...rest }) => (
+  <Box display="flex" flexDirection="column" alignItems="center" {...rest}>
     <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
       {t('mentorship.no-mentorship')}
       <br />
@@ -50,7 +50,7 @@ const ProfilesSection = ({
   const { usersConnected } = useOnline();
 
   return (
-    <AvatarGroup max={4}>
+    <AvatarGroup max={4} justifyContent="center">
       {profiles?.map((c, i) => {
         const fullName = `${c.user.first_name} ${c.user.last_name}`;
         const isOnline = usersConnected?.includes(c.user.id);
@@ -89,7 +89,7 @@ const MentoringConsumables = ({
   const toast = useToast();
   const { slug } = router.query;
 
-  const existsConsumables = serviceMentoring?.mentorship_service_sets?.length > 0 || (Array.isArray(serviceMentoring?.mentorship_service_sets) && serviceMentoring?.mentorship_service_sets.some((item) => item?.balance > 0));
+  const existsConsumables = true || serviceMentoring?.mentorship_service_sets?.length > 0 || (Array.isArray(serviceMentoring?.mentorship_service_sets) && serviceMentoring?.mentorship_service_sets.some((item) => item?.balance > 0));
 
   const existConsumablesOnCurrentService = serviceMentoring?.mentorship_service_sets?.length > 0 && Object.values(mentorshipService).length > 0 && mentorshipService?.balance > 0;
 
@@ -188,7 +188,8 @@ const MentoringConsumables = ({
                     </>
                   )}
                   <Text color="gray.600" size="12px" margin="8px 0 0 0">
-                    {t('supportSideBar.mentors-available', { count: allMentorsAvailable.length })}
+                    {t('supportSideBar.mentors-available', { count: 3 })}
+                    {/* {t('supportSideBar.mentors-available', { count: allMentorsAvailable.length })} */}
                   </Text>
                 </Box>
                 <Button variant="default" onClick={() => setOpen(true)}>
@@ -217,7 +218,7 @@ const MentoringConsumables = ({
           </Box>
         )}
         {mentoryProps?.service && open && !mentoryProps?.mentor && !existConsumablesOnCurrentService ? (
-          <NoConsumablesCard t={t} setMentoryProps={setMentoryProps} />
+          <NoConsumablesCard t={t} setMentoryProps={setMentoryProps} mt="30px" />
         ) : open && (
           <>
             {!mentoryProps?.time ? (

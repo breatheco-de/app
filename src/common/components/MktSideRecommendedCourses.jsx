@@ -1,4 +1,4 @@
-import { Box, Image } from '@chakra-ui/react';
+import { Box, Image, Link } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
@@ -6,13 +6,31 @@ import Heading from './Heading';
 import Text from './Text';
 import Icon from './Icon';
 import { CardSkeleton } from './Skeleton';
-import Link from './NextChakraLink';
+// import Link from './NextChakraLink';
 import modifyEnv from '../../../modifyEnv';
 // import { toCapitalize } from '../../utils';
 import TagCapsule from './TagCapsule';
+import { getBrowserSize } from '../../utils';
 
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
+
+const Container = ({ course, courses, children }) => {
+  const { width: screenWidth } = getBrowserSize();
+  if (screenWidth < 768) {
+    return (
+      <Link href={`https://4geeks.com/${course?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="#F9F9F9" color="black" padding="9px 8px" borderRadius="8px">
+        {children}
+      </Link>
+    );
+  }
+
+  return (
+    <Box minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="#F9F9F9" color="black" padding="9px 8px" borderRadius="8px">
+      {children}
+    </Box>
+  );
+};
 
 const MktSideRecommendedCourses = ({ title, endpoint }) => {
   const { t, lang } = useTranslation('common');
@@ -52,7 +70,7 @@ const MktSideRecommendedCourses = ({ title, endpoint }) => {
             const tags = ['Free course'];
 
             return (
-              <Box key={course?.slug} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="#F9F9F9" color="black" padding="9px 8px" borderRadius="8px">
+              <Container key={course?.slug} course={course} courses={courses}>
                 <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'none', md: 'inherit' }} />
                 <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px">
                   <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'inherit', md: 'none' }} />
@@ -70,7 +88,7 @@ const MktSideRecommendedCourses = ({ title, endpoint }) => {
                   variant="buttonDefault"
                   href={`https://4geeks.com/${course?.slug}`}
                   alignItems="center"
-                  background="success"
+                  colorScheme="success"
                   width="auto"
                   gridGap="10px"
                   margin="0 20px"
@@ -89,7 +107,7 @@ const MktSideRecommendedCourses = ({ title, endpoint }) => {
                 >
                   <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
                 </Link>
-              </Box>
+              </Container>
             );
           })}
         </Box>
@@ -108,6 +126,17 @@ MktSideRecommendedCourses.propTypes = {
 MktSideRecommendedCourses.defaultProps = {
   title: '',
   endpoint: defaultEndpoint,
+};
+
+Container.propTypes = {
+  course: PropTypes.objectOf(PropTypes.any),
+  courses: PropTypes.arrayOf(PropTypes.any),
+  children: PropTypes.node.isRequired,
+};
+
+Container.defaultProps = {
+  course: {},
+  courses: [],
 };
 
 export default MktSideRecommendedCourses;
