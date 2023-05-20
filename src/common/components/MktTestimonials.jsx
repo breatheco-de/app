@@ -104,10 +104,11 @@ function MktTestimonials({
         )}
         <Box
           gridGap="20px"
-          flexWrap="wrap"
+          flexDirection="row"
           marginBottom="15px"
           display="flex"
-          justifyContent="center"
+          overflow="auto"
+          justifyContent={{ base: 'inherit', md: 'center' }}
         >
           {testimonialsArray && testimonialsArray.map((testimonial) => (
             <TestimonialBox

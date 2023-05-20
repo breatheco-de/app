@@ -1,25 +1,42 @@
-import { Box, Image } from '@chakra-ui/react';
+import { Box, Image, Link } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import useStyle from '../hooks/useStyle';
 import Heading from './Heading';
 import Text from './Text';
 import Icon from './Icon';
 import { CardSkeleton } from './Skeleton';
-import Link from './NextChakraLink';
+// import Link from './NextChakraLink';
 import modifyEnv from '../../../modifyEnv';
+// import { toCapitalize } from '../../utils';
+import TagCapsule from './TagCapsule';
+import { getBrowserSize } from '../../utils';
 
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
+
+function Container({ course, courses, children }) {
+  const { width: screenWidth } = getBrowserSize();
+  if (screenWidth < 768) {
+    return (
+      <Link href={`https://4geeks.com/${course?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="#F9F9F9" color="black" padding="9px 8px" borderRadius="8px">
+        {children}
+      </Link>
+    );
+  }
+
+  return (
+    <Box minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="#F9F9F9" color="black" padding="9px 8px" borderRadius="8px">
+      {children}
+    </Box>
+  );
+}
 
 function MktSideRecommendedCourses({ title, endpoint }) {
   const { t, lang } = useTranslation('common');
   const [isLoading, setIsLoading] = useState(true);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [courses, setCourses] = useState([]);
-
-  const { featuredColor } = useStyle();
 
   const headers = {
     'Accept-Language': lang,
@@ -39,36 +56,60 @@ function MktSideRecommendedCourses({ title, endpoint }) {
     }
   }, []);
 
-  const featuredCourse = courses?.[0];
-
   return (
-    <Box background={featuredColor} minWidth="214px" width="auto" padding="8px" borderRadius="8px" margin="0 auto">
+    <Box minWidth={{ base: '100%', md: '214px' }} width="auto" padding="8px" borderRadius="8px" margin="0 auto">
       <Heading size="18px" lineHeight="21px" m="10px 0 20px 0">
         {title || t('continue-learning-course')}
       </Heading>
-      {!isLoading ? (
-        <Box display="flex" flexDirection="column" gridGap="10px" background="white" color="black" padding="9px 8px" borderRadius="8px">
-          <Box display="flex" gridGap="8px">
-            <Image src={featuredCourse?.icon_url} width="46px" height="46px" borderRadius="8px" background="green.400" />
-            <Heading size="18px">
-              {featuredCourse?.course_translation?.title}
-            </Heading>
-          </Box>
-          <Text fontSize="12px" lineHeight="14px" padding="0 20px">
-            {featuredCourse?.course_translation?.short_description || featuredCourse?.course_translation?.description}
-          </Text>
-          <Link
-            variant="buttonDefault"
-            display="flex"
-            href={`https://4geeks.com/${featuredCourse?.slug}`}
-            alignItems="center"
-            width="auto"
-            gridGap="10px"
-            margin="0 20px"
-          >
-            {t('learn-more')}
-            <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
-          </Link>
+      {!isLoading && courses?.length > 0 ? (
+        <Box display="flex" flexDirection={{ base: 'row', md: 'column' }} overflow="auto" gridGap="14px">
+          {courses.map((course) => {
+            // const tags = course?.technologies?.length > 0 && typeof course?.technologies === 'string'
+            //   ? course?.technologies?.split(',').map((tag) => toCapitalize(tag?.trim()))
+            //   : [];
+            const tags = ['Free course'];
+
+            return (
+              <Container key={course?.slug} course={course} courses={courses}>
+                <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'none', md: 'inherit' }} />
+                <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px">
+                  <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'inherit', md: 'none' }} />
+
+                  <Image display={{ base: 'none', md: 'inherit' }} src={course?.icon_url} width="46px" height="46px" borderRadius="8px" background="green.400" />
+                  <Heading size="18px">
+                    {course?.course_translation?.title}
+                  </Heading>
+                </Box>
+                <Text display={{ base: 'none', md: 'inherit' }} fontSize="12px" lineHeight="14px" padding="0 20px">
+                  {course?.course_translation?.short_description || course?.course_translation?.description}
+                </Text>
+                <Link
+                  display={{ base: 'none', md: 'flex' }}
+                  variant="buttonDefault"
+                  href={`https://4geeks.com/${course?.slug}`}
+                  alignItems="center"
+                  colorScheme="success"
+                  width="auto"
+                  gridGap="10px"
+                  margin="0 20px"
+                >
+                  {t('learn-more')}
+                  <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
+                </Link>
+                <Link
+                  display={{ base: 'flex', md: 'none' }}
+                  href={`https://4geeks.com/${course?.slug}`}
+                  alignItems="center"
+                  width="auto"
+                  color="green.400"
+                  gridGap="10px"
+                  margin="0 20px"
+                >
+                  <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
+                </Link>
+              </Container>
+            );
+          })}
         </Box>
       ) : (
         <CardSkeleton withoutContainer quantity={1} />
@@ -85,6 +126,17 @@ MktSideRecommendedCourses.propTypes = {
 MktSideRecommendedCourses.defaultProps = {
   title: '',
   endpoint: defaultEndpoint,
+};
+
+Container.propTypes = {
+  course: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.string])),
+  courses: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.string])),
+  children: PropTypes.node.isRequired,
+};
+
+Container.defaultProps = {
+  course: {},
+  courses: [],
 };
 
 export default MktSideRecommendedCourses;

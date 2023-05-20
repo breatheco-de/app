@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import getT from 'next-translate/getT';
 import Icon from '../../common/components/Icon';
-import { getExtensionName } from '../../utils';
+import { getExtensionName, unSlugifyCapitalize } from '../../utils';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 import MarkDownParser from '../../common/components/MarkDownParser';
@@ -187,7 +187,7 @@ function LessonSlug({ lesson, markdown, ipynbHtmlUrl }) {
         // padding={{ base: '0 10px', lg: '0' }}
         padding="0 10px"
       >
-        <Box display={{ base: 'none', md: 'flex' }} position="sticky" top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
+        <Box display="flex" position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
           <MktSideRecommendedCourses />
         </Box>
         <Box gridColumn="2 / span 12" maxWidth="854px">
@@ -248,7 +248,7 @@ function LessonSlug({ lesson, markdown, ipynbHtmlUrl }) {
             >
               <MarkDownParser content={markdownData.content} withToc isPublic />
               <MktRecommendedCourses
-                title={t('common:related-courses')}
+                title={t('common:continue-learning', { technologies: lesson?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
                 technologies={lesson?.technologies.join(',')}
               />
 

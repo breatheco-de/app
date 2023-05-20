@@ -18,6 +18,7 @@ import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import redirectsFromApi from '../../../public/redirects-from-api.json';
 import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
+import { unSlugifyCapitalize } from '../../utils/index';
 
 export const getStaticPaths = async ({ locales }) => {
   let projects = [];
@@ -216,7 +217,7 @@ function ProjectSlug({ project, markdown }) {
         gridTemplateColumns={{ base: 'repeat(12, 1fr)', lg: '8fr repeat(12, 1fr) 5fr' }}
         display={{ base: 'block', sm: 'grid' }}
       >
-        <Box display={{ base: 'none', lg: 'flex' }} position="sticky" top="20px" gridColumn="1 / span 1" height="fit-content" margin={{ base: '0 0 40px', md: '30px 0 0 0' }}>
+        <Box display="flex" position={{ base: 'inherit', md: 'sticky' }} top="20px" gridColumn="1 / span 1" height="fit-content" margin={{ base: '0 0 40px', md: '30px 0 0 0' }}>
           <MktSideRecommendedCourses />
         </Box>
         <Flex display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '2 / span 10', lg: '2 / span 12' }} height="100%" gridGap="26px">
@@ -282,7 +283,7 @@ function ProjectSlug({ project, markdown }) {
               )}
               <MktRecommendedCourses
                 marginTop="15px"
-                title={t('common:continue-learning', { technologies: project?.technologies.slice(0, 4).join(', ') })}
+                title={t('common:continue-learning', { technologies: project?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ').replace(/-|_/g, ' ') })}
                 technologies={project?.technologies.join(',')}
               />
             </Box>

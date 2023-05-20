@@ -1,12 +1,17 @@
 [
   {
-    "source": "/lesson/Introduction-to-express-js-es",
-    "destination": "/es/lesson/Introduction-to-express-js-es",
+    "source": "/lesson/react-hooks-explained-es",
+    "destination": "/es/lesson/react-hooks-explained-es",
     "permanent": true
   },
   {
-    "source": "/lesson/mongoose_with_mongodb-es",
-    "destination": "/es/lesson/mongoose_with_mongodb-es",
+    "source": "/lesson/bootstrap-tutorial-of-bootstrap-4-es",
+    "destination": "/es/lesson/bootstrap-tutorial-of-bootstrap-4-es",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/raspado-web-con-beautiful-soap",
+    "destination": "/es/lesson/raspado-web-con-beautiful-soap",
     "permanent": true
   },
   {
@@ -365,8 +370,43 @@
     "permanent": true
   },
   {
-    "source": "/lesson/depurando-codigo-css",
-    "destination": "/es/lesson/depurando-codigo-css",
+    "source": "/lesson/controlled-vs-uncontrolled-inputs-react-js-es",
+    "destination": "/es/lesson/controlled-vs-uncontrolled-inputs-react-js-es",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/intro-to-python-es",
+    "destination": "/es/lesson/intro-to-python-es",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/php-syntax-es",
+    "destination": "/es/lesson/php-syntax-es",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/learning-to-code-with-python-es",
+    "destination": "/es/lesson/learning-to-code-with-python-es",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/learn-in-public-es",
+    "destination": "/es/lesson/learn-in-public-es",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/javascript-import-es",
+    "destination": "/es/lesson/javascript-import-es",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/intro-to-prework-es",
+    "destination": "/es/lesson/intro-to-prework-es",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/css-layouts-es",
+    "destination": "/es/lesson/css-layouts-es",
     "permanent": true
   },
   {
@@ -735,8 +775,13 @@
     "permanent": true
   },
   {
-    "source": "/lesson/working-with-strings-in-python-es",
-    "destination": "/es/lesson/working-with-strings-in-python-es",
+    "source": "/lesson/sorting-algorithms-explanied-in-javascript-es",
+    "destination": "/es/lesson/sorting-algorithms-explanied-in-javascript-es",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/regex-tutorial-regular-expression-examples-es",
+    "destination": "/es/lesson/regex-tutorial-regular-expression-examples-es",
     "permanent": true
   },
   {

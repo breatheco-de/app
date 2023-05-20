@@ -63,7 +63,7 @@ function TaskLabel({ currentTask, t }) {
 
   return (
     <Text
-      border="1px solid"
+      border={msg && '1px solid'}
       borderColor={borderColor[status] || 'none'}
       backgroundColor={backgroundColor[status]}
       color={fontColor[status]}
