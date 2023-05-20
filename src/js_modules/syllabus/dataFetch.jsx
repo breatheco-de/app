@@ -1,5 +1,4 @@
 /* eslint-disable no-unsafe-optional-chaining */
-import { toast } from '@chakra-ui/react';
 import axios from 'axios';
 import modifyEnv from '../../../modifyEnv';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
@@ -9,7 +8,7 @@ import { getExtensionName } from '../../utils';
 import { Config } from './config';
 
 export const getCurrentCohort = ({
-  cohortSlug, choose, router, t,
+  cohortSlug, choose, router, t, toast,
 }) => {
   bc.admissions().me()
     .then(({ data }) => {
@@ -44,7 +43,7 @@ export const getCurrentCohort = ({
 
 export const defaultDataFetch = async ({
   currentBlankProps, lessonSlug, assetTypeValues, lesson, setQuizSlug, setReadme,
-  setCurrentData, setIpynbHtmlUrl, router, t,
+  setCurrentData, setIpynbHtmlUrl, router, t, toast,
 }) => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const currentLanguageLabel = router.language === 'en' ? t('common:english') : t('common:spanish');
@@ -92,7 +91,7 @@ export const defaultDataFetch = async ({
 };
 
 export const prepareCohortContext = ({
-  user, cohortSession, setCohortSession, setContextState, router, t,
+  user, cohortSession, setCohortSession, setContextState, router, t, toast,
 }) => {
   const academyId = user.active_cohort.academy_id;
   const { version, slug } = user.active_cohort;

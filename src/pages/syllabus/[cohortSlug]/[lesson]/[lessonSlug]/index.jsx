@@ -296,6 +296,7 @@ function Content() {
                   setReadme,
                   setCurrentData,
                   setIpynbHtmlUrl,
+                  toast,
                   router,
                   t,
                 });

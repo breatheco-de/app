@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import aliasRedirects from '../../public/alias-redirects.json';
-import { redirectHandler } from '../lib/redirectsHandler';
+import aliasRedirects from '../public/alias-redirects.json';
+import { redirectHandler } from './lib/redirectsHandler';
 
 function middleware(req) {
   const url = req.nextUrl;

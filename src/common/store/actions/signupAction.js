@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 import { useSelector, useDispatch } from 'react-redux';
 import { useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';

@@ -1,6 +1,7 @@
 const navbar = {
   width: '100%',
   handleChange: () => {
+    // eslint-disable-next-line no-alert
     alert('Handle User Function Clicked');
   },
   menuList: [

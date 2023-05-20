@@ -3,7 +3,7 @@ import {
   memo, useState, useEffect,
 } from 'react';
 import {
-  toast,
+  useToast,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
@@ -16,9 +16,9 @@ import MentoringConsumables from './MentoringConsumables';
 import useAuth from '../../hooks/useAuth';
 import { usePersistent } from '../../hooks/usePersistent';
 
-const Mentoring = ({
+function Mentoring({
   width, programServices, flags,
-}) => {
+}) {
   const { t } = useTranslation('dashboard');
   const [savedChanges, setSavedChanges] = useState({});
   const [cohortSession] = usePersistent('cohortSession', {});
@@ -28,6 +28,7 @@ const Mentoring = ({
   const [allMentorsAvailable, setAllMentorsAvailable] = useState([]);
   const [programMentors, setProgramMentors] = useState([]);
   const { isLoading, user } = useAuth();
+  const toast = useToast();
   const { slug } = router.query;
 
   const [searchProps, setSearchProps] = useState({
@@ -62,7 +63,7 @@ const Mentoring = ({
 
   useEffect(() => {
     if (mentoryProps?.time) {
-      const [hours, minutes] = mentoryProps?.time.split(':');
+      const [hours, minutes] = mentoryProps.time.split(':');
 
       const nDate = mentoryProps?.date
         && new Date(mentoryProps.date);
@@ -163,12 +164,12 @@ const Mentoring = ({
       )}
     </>
   );
-};
+}
 
 Mentoring.propTypes = {
-  programServices: PropTypes.arrayOf(PropTypes.object).isRequired,
+  programServices: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any, PropTypes.object])).isRequired,
   width: PropTypes.string,
-  flags: PropTypes.objectOf(PropTypes.any).isRequired,
+  flags: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any, PropTypes.object])).isRequired,
 };
 
 Mentoring.defaultProps = {
