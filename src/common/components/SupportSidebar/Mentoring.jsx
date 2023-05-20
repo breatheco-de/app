@@ -99,14 +99,18 @@ function Mentoring({
     return [];
   };
 
-  useEffect(async () => {
-    if (programServices.length > 0) {
-      const mentors = await getAllMentorsAvailable();
-      const allConsumables = await bc.payment().service().consumable()
-        .then((res) => res?.data);
+  const getMentorsAndConsumables = async () => {
+    const mentors = await getAllMentorsAvailable();
+    const allConsumables = await bc.payment().service().consumable()
+      .then((res) => res?.data);
 
-      setServiceMentoring(allConsumables);
-      setAllMentorsAvailable(mentors);
+    setServiceMentoring(allConsumables);
+    setAllMentorsAvailable(mentors);
+  };
+
+  useEffect(() => {
+    if (programServices.length > 0) {
+      getMentorsAndConsumables();
     }
   }, [programServices]);
 

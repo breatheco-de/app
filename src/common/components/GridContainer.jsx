@@ -25,7 +25,7 @@ GridContainer.propTypes = {
   children: PropTypes.node,
   gridTemplateColumns: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
   childrenStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
-  gridColumn: PropTypes.string,
+  gridColumn: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   gridGap: PropTypes.string,
   withContainer: PropTypes.bool,
 };

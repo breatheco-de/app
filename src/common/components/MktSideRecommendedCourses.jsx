@@ -42,7 +42,7 @@ function MktSideRecommendedCourses({ title, endpoint }) {
     'Accept-Language': lang,
   };
 
-  useEffect(async () => {
+  const fetchCourses = async () => {
     try {
       const res = await fetch(`${BREATHECODE_HOST}${endpoint}`, { headers });
       const data = await res.json();
@@ -54,6 +54,10 @@ function MktSideRecommendedCourses({ title, endpoint }) {
     } catch (e) {
       console.log(e);
     }
+  };
+
+  useEffect(() => {
+    fetchCourses();
   }, []);
 
   return (

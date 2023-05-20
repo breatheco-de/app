@@ -22,7 +22,7 @@ function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFu
   const pagePath = options?.pagePath || '/';
   const disableLangFilter = options?.disableLangFilter || false;
 
-  useEffect(async () => {
+  const handlePaginationProps = async () => {
     const respData = await queryFunction();
     const pages = Math.ceil(respData.count / contentPerPage);
     // Generate an array of pages to be used in the pagination component e.g: `/lessons?page=2`
@@ -37,6 +37,9 @@ function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFu
 
       setData(respData);
     }
+  };
+  useEffect(() => {
+    handlePaginationProps();
   }, [page, queryFunction]);
 
   const currentPageIndex = parseInt(page, 10);

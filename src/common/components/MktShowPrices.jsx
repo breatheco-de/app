@@ -59,9 +59,13 @@ function MktShowPrices({ id, title, description, plan, bullets, ...rest }) {
     getPlan,
   } = profileHandlers({});
 
-  useEffect(async () => {
+  const handleGetPlan = async () => {
     const data = await getPlan({ slug: plan, disableRedirects: true, withCurrentPlan: true }).then((res) => res);
     setOfferProps(data);
+  };
+
+  useEffect(() => {
+    handleGetPlan();
   }, []);
 
   const isTotallyFree = offerProps?.isTotallyFree === true;

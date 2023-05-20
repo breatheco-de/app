@@ -1,10 +1,22 @@
 import { NextResponse } from 'next/server';
 import aliasRedirects from '../public/alias-redirects.json';
-import { redirectHandler } from './lib/redirectsHandler';
 
-function middleware(req) {
-  const url = req.nextUrl;
-  const { pathname } = url;
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|static|_next/static|_next/image|favicon.ico).*)',
+  ],
+};
+
+async function middleware(req) {
+  const url = await req.nextUrl.clone();
+  const { origin, pathname } = url;
 
   const currentProject = aliasRedirects.find((item) => {
     const sourceWithEngPrefix = `/en${item?.source}`;
@@ -24,6 +36,10 @@ function middleware(req) {
     return false;
   };
 
-  return redirectHandler(req, conditionalResult(), NextResponse, currentProject?.destination);
+  if (conditionalResult()) {
+    console.log(`Middleware: redirecting from ${pathname} → ${currentProject?.destination}`);
+    return NextResponse.redirect(`${origin}${currentProject?.destination || ''}`);
+  }
+  return NextResponse.next();
 }
 export default middleware;

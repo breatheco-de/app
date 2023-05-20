@@ -88,10 +88,15 @@ function chooseProgram() {
 
   const { isLoading, data: dataQuery, refetch } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options });
 
-  useEffect(async () => {
+  const getMembers = async (cohortSubscription) => {
+    const members = await getStudentAndTeachers(cohortSubscription);
+    return members;
+  };
+
+  useEffect(() => {
     const cohorts = dataQuery?.cohorts;
     const cohortSubscription = cohorts?.find((item) => item?.cohort?.slug === subscriptionProcess?.slug);
-    const members = cohortSubscription?.cohort?.slug ? await getStudentAndTeachers(cohortSubscription) : [];
+    const members = cohortSubscription?.cohort?.slug ? getMembers(cohortSubscription) : [];
     const cohortIsReady = cohorts?.length > 0 && cohorts?.some((item) => {
       const cohort = item?.cohort;
       const academy = cohort?.academy;

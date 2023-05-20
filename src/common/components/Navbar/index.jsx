@@ -3,6 +3,7 @@ import {
   useBreakpointValue, useDisclosure, useColorMode, Popover, PopoverTrigger,
   PopoverContent, PopoverArrow, Button, Link,
 } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import {
   useState, memo, useEffect, Fragment,
 } from 'react';
@@ -270,7 +271,11 @@ function NavbarWithSubNavigation({ haveSession, translations, pageProps }) {
       src="/static/images/4geeks.png"
       width={105}
       height={35}
-      // objectFit="cover"
+      style={{
+        maxHeight: '35px',
+        minHeight: '35px',
+        objectFit: 'cover',
+      }}
       alt="4Geeks logo"
     />,
     <Box padding="5px 5px">
@@ -321,9 +326,9 @@ function NavbarWithSubNavigation({ haveSession, translations, pageProps }) {
             height="auto"
             aria-label="Toggle Navigation"
           />
-          <NextChakraLink minWidth="105px" href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
+          <NextLink href={sessionExists ? programSlug : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
             {logo}
-          </NextChakraLink>
+          </NextLink>
         </Flex>
 
         <Flex
@@ -331,9 +336,9 @@ function NavbarWithSubNavigation({ haveSession, translations, pageProps }) {
           display={{ base: 'none', xl: 'flex' }}
           justify={{ base: 'center', xl: 'start' }}
         >
-          <NextChakraLink minWidth="105px" href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
+          <NextLink href={sessionExists ? programSlug : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
             {logo}
-          </NextChakraLink>
+          </NextLink>
 
           <Flex display="flex" ml={10}>
             <DesktopNav NAV_ITEMS={ITEMS.length > 0 ? ITEMS : noscriptItems} haveSession={sessionExists} readSyllabus={readSyllabus} />

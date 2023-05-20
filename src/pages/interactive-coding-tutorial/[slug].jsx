@@ -177,7 +177,7 @@ function ProjectSlug({ project, markdown }) {
   const { slug } = router.query;
   const { locale } = router;
 
-  useEffect(async () => {
+  useEffect(() => {
     const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/interactive-coding-tutorial/${slug}`);
 
     if (redirect) {

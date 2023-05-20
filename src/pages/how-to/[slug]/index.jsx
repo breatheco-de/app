@@ -150,7 +150,7 @@ export default function HowToSlug({ data, markdown }) {
     }
   }, [isHowTo]);
 
-  useEffect(async () => {
+  useEffect(() => {
     const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/how-to/${slug}`);
 
     if (redirect) {

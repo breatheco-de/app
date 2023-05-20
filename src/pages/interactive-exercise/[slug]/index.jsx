@@ -520,12 +520,16 @@ function Exercise({ exercise, markdown }) {
 
   const toast = useToast();
 
-  useEffect(async () => {
+  const handleRedirect = async () => {
     const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/interactive-exercise/${slug}`);
 
     if (redirect) {
       router.push(redirect?.destination);
     }
+  };
+
+  useEffect(() => {
+    handleRedirect();
   }, [router, router.locale, translations]);
 
   const tagsArray = (exer) => {

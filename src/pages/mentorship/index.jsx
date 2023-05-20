@@ -80,11 +80,12 @@ function Mentorship() {
   const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
   const commonFontColor = useColorModeValue('gray.dark', 'gray.light');
 
-  // {
-  //   started_after: '2022-05-01',
-  //   ended_before: '2022-05-31',
-  // }
-  useEffect(async () => {
+  const getMentorshipSessions = async (filter) => {
+    const { data } = await bc.mentorship(filter).getMySessions();
+    return data;
+  };
+
+  useEffect(() => {
     setIsLoading(true);
     let filter = {};
     if (startDate) {
@@ -94,7 +95,7 @@ function Mentorship() {
       };
     }
     try {
-      const { data } = await bc.mentorship(filter).getMySessions();
+      const data = getMentorshipSessions(filter);
       setIsLoading(false);
       setSessions(data);
     } catch (e) {

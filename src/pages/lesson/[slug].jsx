@@ -143,7 +143,7 @@ function LessonSlug({ lesson, markdown, ipynbHtmlUrl }) {
   const { slug } = router.query;
   const { locale } = router;
 
-  useEffect(async () => {
+  useEffect(() => {
     const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/lesson/${slug}`);
 
     if (redirect) {

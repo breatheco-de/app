@@ -30,6 +30,7 @@ function NextChakraLink({
       shallow={shallow}
     >
       <ChakraLink
+        as="div"
         onClick={() => {
           if (redirectAfterLogin && typeof href === 'string' && href.includes('/login')) {
             setStorageItem('redirect', router?.asPath);
