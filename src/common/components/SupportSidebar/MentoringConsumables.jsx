@@ -91,9 +91,11 @@ function MentoringConsumables({
   const toast = useToast();
   const { slug } = router.query;
 
-  const existsConsumables = true || serviceMentoring?.mentorship_service_sets?.length > 0 || (Array.isArray(serviceMentoring?.mentorship_service_sets) && serviceMentoring?.mentorship_service_sets.some((item) => item?.balance > 0));
+  const currentBalance = (Number(mentorshipService?.balance) && mentorshipService?.balance) || (Number(mentorshipService?.balance?.unit) && mentorshipService?.balance?.unit);
 
-  const existConsumablesOnCurrentService = serviceMentoring?.mentorship_service_sets?.length > 0 && Object.values(mentorshipService).length > 0 && mentorshipService?.balance > 0;
+  const existsConsumables = Array.isArray(serviceMentoring?.mentorship_service_sets) && serviceMentoring?.mentorship_service_sets.some((item) => item?.balance > 0 || item?.balance?.unit > 0);
+
+  const existConsumablesOnCurrentService = serviceMentoring?.mentorship_service_sets?.length > 0 && Object.values(mentorshipService).length > 0 && currentBalance > 0;
 
   useEffect(() => {
     if (allMentorsAvailable?.length === 0) {
@@ -151,7 +153,7 @@ function MentoringConsumables({
         {existsConsumables ? (
           <>
             <Box d="flex" flexDirection="column" alignItems="center" justifyContent="center">
-              {!mentoryProps?.service && (serviceMentoring?.mentorship_service_sets?.length !== 0 || mentorshipService?.balance !== 0) && (
+              {!mentoryProps?.service && (serviceMentoring?.mentorship_service_sets?.length !== 0 || currentBalance !== 0) && (
                 <>
                   <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
                     {t('supportSideBar.mentoring')}
@@ -209,8 +211,8 @@ function MentoringConsumables({
               {t('mentorship.you-have')}
             </Box>
             <Box display="flex" color="white" justifyContent="center" alignItems="center" background="green.400" width="30px" height="30px" borderRadius="50%">
-              {mentorshipService?.balance > 0 ? mentorshipService?.balance : ''}
-              {mentorshipService?.balance === -1 ? (
+              {currentBalance > 0 ? currentBalance : ''}
+              {currentBalance === -1 ? (
                 <Icon icon="infinite" width="20px" height="20px" />
               ) : ''}
             </Box>
