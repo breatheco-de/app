@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
-import { AvatarGroup, Box, Button, Input, InputGroup, InputRightElement, useColorModeValue, useToast } from '@chakra-ui/react';
+import { Avatar, AvatarGroup, Box, Button, Input, InputGroup, InputRightElement, useColorModeValue, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useStyle from '../../hooks/useStyle';
 import Heading from '../Heading';
 import Icon from '../Icon';
@@ -54,9 +54,18 @@ const MentoringFree = ({
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   const [open, setOpen] = useState(false);
   const { borderColor, lightColor, hexColor } = useStyle();
+  const [existsMentors, setExistsMentors] = useState(true);
   const router = useRouter();
   const toast = useToast();
   const { slug } = router.query;
+
+  useEffect(() => {
+    if (allMentorsAvailable?.length === 0) {
+      setTimeout(() => {
+        setExistsMentors(false);
+      }, 1500);
+    }
+  }, [allMentorsAvailable]);
 
   const handleService = (service) => {
     bc.mentorship({
@@ -117,11 +126,24 @@ const MentoringFree = ({
         </Box>
         {!open && (
           <>
-            <Box margin="15px 0">
+            <Box display="flex" flexDirection="column" margin="15px 0">
               {allMentorsAvailable.length > 0 ? (
                 <ProfilesSection profiles={allMentorsAvailable} />
               ) : (
-                <AvatarSkeletonWrapped quantity={4} />
+                <>
+                  {existsMentors && (
+                    <AvatarSkeletonWrapped quantity={4} />
+                  )}
+                  {!existsMentors && (
+                    <Avatar
+                      width="48px"
+                      height="48px"
+                      margin="0px auto"
+                      style={{ userSelect: 'none' }}
+                      src="/static/images/angry-avatar.png"
+                    />
+                  )}
+                </>
               )}
               <Text color="gray.600" size="12px" margin="8px 0 0 0">
                 {t('supportSideBar.mentors-available', { count: allMentorsAvailable.length })}
