@@ -12,6 +12,7 @@ import Text from './Text';
 import useStyle from '../hooks/useStyle';
 import GridContainer from './GridContainer';
 import modifyEnv from '../../../modifyEnv';
+import { url } from '../../utils/regex';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
@@ -34,6 +35,8 @@ function MktRoadmap({ id, title, course, ...rest }) {
         });
     }
   }, []);
+
+  const isUrl = (string) => url.test(string);
 
   useEffect(() => {
     if (clickTriggered) {
@@ -59,6 +62,8 @@ function MktRoadmap({ id, title, course, ...rest }) {
     setClickTriggered(true);
     setCurrentTabIndex(index);
   };
+
+  console.log('data?.[1]?.icon_url:::', isUrl('google.com'));
 
   return data?.length > 0 && (
     <GridContainer id={id} maxWidth="1280px" width="100%" height="auto" gridGap={{ base: '64px', lg: '24px' }} px={{ base: '10px', md: '0' }} {...rest}>
@@ -112,8 +117,8 @@ function MktRoadmap({ id, title, course, ...rest }) {
           zIndex={99}
         >
           {data?.[0]?.slug && (
-          <CustomTab onClick={() => handleSelect(0)} top="10px" left="0" p="1rem 12px">
-            {data?.[0]?.icon_url && (
+          <CustomTab onClick={() => handleSelect(0)} top="10px" left="0" style={{ padding: '20px 4px' }}>
+            {isUrl(data?.[0]?.icon_url) && (
             <Image src={data?.[0]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
             )}
             {data?.[0]?.short_name || data?.[0]?.name}
@@ -121,32 +126,32 @@ function MktRoadmap({ id, title, course, ...rest }) {
           )}
 
           {data?.[1]?.slug && (
-          <CustomTab onClick={() => handleSelect(1)} top="112px" left="40px" p="1rem 12px">
-            {data?.[1]?.icon_url && (
+          <CustomTab onClick={() => handleSelect(1)} top="112px" left="40px" style={{ padding: '20px 4px' }}>
+            {isUrl(data?.[1]?.icon_url) && (
             <Image src={data?.[1]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
             )}
             {data?.[1]?.short_name || data?.[1]?.name}
           </CustomTab>
           )}
           {data?.[2]?.slug && (
-          <CustomTab onClick={() => handleSelect(2)} top="218px" left="70px" p="1rem 12px">
-            {data?.[2]?.icon_url && (
+          <CustomTab onClick={() => handleSelect(2)} top="218px" left="70px" style={{ padding: '20px 4px' }}>
+            {isUrl(data?.[2]?.icon_url) && (
             <Image src={data?.[2]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
             )}
             {data?.[2]?.short_name || data?.[2]?.name}
           </CustomTab>
           )}
           {data?.[3]?.slug && (
-          <CustomTab onClick={() => handleSelect(3)} bottom="144px" left="40px" p="1rem 12px">
-            {data?.[3]?.icon_url && (
+          <CustomTab onClick={() => handleSelect(3)} bottom="144px" left="40px" style={{ padding: '20px 4px' }}>
+            {isUrl(data?.[3]?.icon_url) && (
             <Image src={data?.[3]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
             )}
             {data?.[3]?.short_name || data?.[3]?.name}
           </CustomTab>
           )}
           {data?.[4]?.slug && (
-          <CustomTab onClick={() => handleSelect(4)} bottom="57px" left="30px" p="1rem 12px">
-            {data?.[4]?.icon_url && (
+          <CustomTab onClick={() => handleSelect(4)} bottom="57px" left="30px" style={{ padding: '20px 4px' }}>
+            {isUrl(data?.[4]?.icon_url) && (
             <Image src={data?.[4]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
             )}
             {data?.[4]?.short_name || data?.[4]?.name}

@@ -21,7 +21,6 @@ import ConnectionProvider from '../common/context/ConnectionContext';
 import Footer from '../common/components/Footer';
 import Helmet from '../common/components/Helmet';
 import InterceptionLoader from '../common/components/InterceptionLoader';
-import useAuth from '../common/hooks/useAuth';
 
 import '../../styles/globals.css';
 import '../../styles/react-tags-input.css';
@@ -39,32 +38,15 @@ function InternalLinkComponent(props) {
   return <Link {...props} />;
 }
 
-function Navbar({ HAVE_SESSION, pageProps }) {
-  if (HAVE_SESSION) {
-    return <NavbarSession pageProps={pageProps} translations={pageProps?.translations} haveSession />;
-  }
-  return <NavbarSession pageProps={pageProps} translations={pageProps?.translations} haveSession={false} />;
-}
 function App({ Component, pageProps, ...rest }) {
-  const { isAuthenticated } = useAuth();
   const [hasMounted, setHasMounted] = useState(false);
   const { store } = wrapper.useWrappedStore(rest);
-  const [haveSession, setHaveSession] = useState(false);
-  const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
-
   const queryClient = new QueryClient();
 
   useEffect(() => {
     setHasMounted(true);
     TagManager.initialize({ gtmId: process.env.TAG_MANAGER_KEY });
   }, []);
-
-  useEffect(() => {
-    // verify if accessToken exists
-    if (isAuthenticated || HAVE_SESSION) {
-      setHaveSession(true);
-    }
-  }, [isAuthenticated, HAVE_SESSION]);
 
   return (
     <Provider store={store}>
@@ -73,8 +55,7 @@ function App({ Component, pageProps, ...rest }) {
         <AuthProvider>
           <ConnectionProvider>
             <ChakraProvider resetCSS theme={CustomTheme}>
-              {/* TODO: fix hydration issues with Navbar and Footer */}
-              {hasMounted && <Navbar HAVE_SESSION={HAVE_SESSION && haveSession} pageProps={pageProps} />}
+              {hasMounted && <NavbarSession pageProps={pageProps} translations={pageProps?.translations} />}
 
               <InterceptionLoader />
 
@@ -98,10 +79,6 @@ function App({ Component, pageProps, ...rest }) {
 App.propTypes = {
   pageProps: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
   Component: PropTypes.elementType.isRequired,
-};
-Navbar.propTypes = {
-  pageProps: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
-  HAVE_SESSION: PropTypes.bool.isRequired,
 };
 
 export default withLDProvider({

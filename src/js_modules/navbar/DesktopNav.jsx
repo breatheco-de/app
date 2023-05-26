@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { Stack } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import DesktopItem from './DesktopItem';
 
 function DesktopNav({ NAV_ITEMS, readSyllabus, haveSession }) {
@@ -77,4 +77,4 @@ DesktopNav.defaultProps = {
   readSyllabus: [],
 };
 
-export default DesktopNav;
+export default memo(DesktopNav);

@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import styled from 'styled-components';
 import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
@@ -74,7 +74,7 @@ function DesktopItem({ item }) {
         },
       }}
     >
-      {item.subMenu ? (
+      {item?.subMenu?.length > 0 ? (
         <>
           <Button
             variant="unstyled"
@@ -91,7 +91,7 @@ function DesktopItem({ item }) {
             onClick={() => setPopoverOpen(!popoverOpen)}
           >
             {item.label}
-            {item.subMenu && (
+            {item?.subMenu?.length > 0 && (
               <Icon
                 icon="arrowDown"
                 color="currentColor"
@@ -316,4 +316,4 @@ DesktopItem.propTypes = {
   }).isRequired,
 };
 
-export default DesktopItem;
+export default memo(DesktopItem);

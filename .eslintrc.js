@@ -3,11 +3,7 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: [
-    'plugin:react/recommended',
-    'plugin:@next/next/recommended',
-    'airbnb',
-  ],
+  extends: ['plugin:react/recommended', 'plugin:@next/next/recommended', 'airbnb', 'plugin:storybook/recommended'],
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -27,8 +23,5 @@ module.exports = {
     'react/jsx-no-useless-fragment': 'off',
     'default-param-last': 'off',
   },
-  ignorePatterns: [
-    'src/__tests__/*', 'cypress', 'src/stories/**/*.jsx',
-    'src/stories/**/*.js',
-  ],
+  ignorePatterns: ['src/__tests__/*', 'cypress', 'src/stories/**/*.jsx', 'src/stories/**/*.js'],
 };

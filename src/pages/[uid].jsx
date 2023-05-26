@@ -22,8 +22,12 @@ function Page({ page }) {
 }
 
 Page.propTypes = {
-  page: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  page: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
+Page.defaultProps = {
+  page: {},
+};
+
 export default Page;
 
 export async function getStaticProps({ params, locale, previewData }) {
