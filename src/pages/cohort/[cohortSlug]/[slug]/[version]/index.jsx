@@ -6,12 +6,13 @@ import {
   Checkbox, Input, InputGroup, InputRightElement, IconButton,
   keyframes, usePrefersReducedMotion, Avatar, useColorMode,
   Modal, ModalBody, ModalCloseButton, ModalContent,
-  ModalHeader, ModalOverlay, Button, useMediaQuery,
+  ModalHeader, ModalOverlay, Button, Accordion, AccordionItem, AccordionButton, AccordionPanel,
 } from '@chakra-ui/react';
 // import io from 'socket.io-client';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { useFlags, useLDClient } from 'launchdarkly-react-client-sdk';
+import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
 import packageJson from '../../../../../../package.json';
@@ -32,7 +33,7 @@ import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import {
-  slugify, includesToLowerCase, getStorageItem, sortToNearestTodayDate, syncInterval,
+  slugify, includesToLowerCase, getStorageItem, sortToNearestTodayDate, syncInterval, getBrowserSize, calculateDifferenceDays,
 } from '../../../../../utils/index';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
@@ -43,6 +44,7 @@ import modifyEnv from '../../../../../../modifyEnv';
 import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
 import FinalProjectModal from '../../../../../common/components/FinalProject/Modal';
+import useStyle from '../../../../../common/hooks/useStyle';
 
 const Dashboard = () => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -65,10 +67,12 @@ const Dashboard = () => {
   const [events, setEvents] = useState(null);
   const [liveClasses, setLiveClasses] = useState([]);
   const [isOpenFinalProject, setIsOpenFinalProject] = useState(false);
+  const { featuredColor } = useStyle();
 
   const [session, setSession] = usePersistent('session', {});
   const { user, choose, isLoading } = useAuth();
-  const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
+
+  const isBelowTablet = getBrowserSize()?.width < 768;
   const [currentCohortProps, setCurrentCohortProps] = useState({});
   const [subscriptionData, setSubscriptionData] = useState(null);
   const {
@@ -319,6 +323,8 @@ const Dashboard = () => {
     return filtered.length !== 0;
   }) : sortedAssignments;
 
+  const cohortUserDaysCalculated = calculateDifferenceDays(cohortSession?.cohort_user?.created_at);
+
   return (
     <>
       {getMandatoryProjects().length > 0 && (
@@ -504,6 +510,32 @@ const Dashboard = () => {
                 )}
               </Box>
             )}
+            {(cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result <= 3) && (
+              <Accordion allowMultiple>
+                <AccordionItem background={featuredColor} borderRadius="17px" border="0">
+                  {({ isExpanded }) => (
+                    <>
+                      <span>
+                        <AccordionButton display="flex" gridGap="16px" padding="10.5px 20px" borderRadius="17px">
+                          <Icon icon="cameraFilled" width="29px" height="16px" color="#0097CF" />
+                          <Box as="span" fontSize="21px" fontWeight={700} flex="1" textAlign="left">
+                            {t('intro-video-title')}
+                          </Box>
+                          <Icon withContainer icon="arrowRight" width="11px" height="20px" color="currentColor" style={{ }} transform={isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'} transition="transform 0.2s ease-in" />
+                        </AccordionButton>
+                      </span>
+                      <AccordionPanel padding="0px 4px 4px 4px">
+                        <ReactPlayerV2
+                          className="intro-video"
+                          url={cohortSession?.intro_video}
+                        />
+                      </AccordionPanel>
+                    </>
+                  )}
+                </AccordionItem>
+              </Accordion>
+            )}
+
             {
             cohortSession.current_module && dailyModuleData && (
               <CallToAction
@@ -518,13 +550,15 @@ const Dashboard = () => {
             )
           }
 
-            <Box marginTop="36px">
-              <ProgressBar
-                taskTodo={taskTodoState}
-                progressText={t('progressText')}
-                width="100%"
-              />
-            </Box>
+            {(cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 2) && (
+              <Box marginTop="36px">
+                <ProgressBar
+                  taskTodo={taskTodoState}
+                  progressText={t('progressText')}
+                  width="100%"
+                />
+              </Box>
+            )}
 
             <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="32px" />
 
