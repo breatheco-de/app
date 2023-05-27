@@ -283,6 +283,23 @@ function getBrowserSize() {
   return { width, height };
 }
 
+function calculateDifferenceDays(fecha) {
+  const fechaActual = new Date();
+  const fechaDada = new Date(fecha);
+
+  // Convert dates to milliseconds
+  const milisegundosPorDia = 24 * 60 * 60 * 1000;
+  const diferenciaEnMilisegundos = fechaDada - fechaActual;
+
+  // Calculate the difference in days by rounding down
+  const diferenciaEnDias = Math.floor(diferenciaEnMilisegundos / milisegundosPorDia);
+
+  return {
+    isRemainingToExpire: diferenciaEnDias > 0,
+    result: Math.abs(diferenciaEnDias),
+  };
+}
+
 const location = isWindow && window.location;
 
 const url = isWindow && new URL(window.location.href);
@@ -295,5 +312,5 @@ export {
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
-  createArray, url, lengthOfString, syncInterval, getBrowserSize,
+  createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays,
 };
