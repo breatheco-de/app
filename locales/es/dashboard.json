@@ -8,6 +8,7 @@
   "progressText": "Progreso en el programa",
   "whiteLabeledText": "Este curso es traído a ti gracias a nuestra alianza con esta universidad.",
   "free-trial-msg": "Actualmente se encuentra en una prueba gratuita, algunas funciones pueden ser limitadas. ¡<a class='black-link' href='{{link}}'>Actualiza tu plan</a> para tener acceso ilimitado!",
+  "intro-video-title": "Bienvenido a la introducción de codificación",
   "modules": {
     "target-blank-title": "Abrir en nueva ventana",
     "target-blank-msg": "\"{{title}}\" abrirá la siguiente URL en una nueva ventana",
