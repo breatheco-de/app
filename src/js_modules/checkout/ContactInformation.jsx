@@ -93,16 +93,13 @@ function ContactInformation({
 
     const respPlan = await bc.payment().getPlan(planFormated);
     const dataOfPlan = respPlan?.data;
+    if (resp.status < 400 && typeof data?.id === 'number') {
+      if (dataOfPlan?.has_waiting_list === true) {
+        setStorageItem('subscriptionId', data.id);
+        router.push('/thank-you');
+      }
 
-    if (dataOfPlan?.has_waiting_list === true) {
-      setStorageItem('subscriptionId', data.id);
-      router.push('/thank-you');
-    }
-
-    if (resp.status < 400) {
-      // setStorageItem('subscriptionId', data.id);
-
-      if (data?.access_token) {
+      if (data?.access_token && !dataOfPlan?.has_waiting_list) {
         router.push({
           query: {
             ...router.query,
@@ -111,10 +108,8 @@ function ContactInformation({
         });
         nextStep();
       }
-      // else {
-      //   router.push('/thank-you');
-      // }
     }
+
     if (resp.status >= 400 && !data?.phone) {
       toast({
         title: t('alert-message:email-already-subscribed'),
