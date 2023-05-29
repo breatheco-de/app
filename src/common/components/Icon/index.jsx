@@ -1,10 +1,9 @@
-/* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
-import loadable from '@loadable/component';
+import React, { memo } from 'react';
+import dynamic from 'next/dynamic';
+// import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
 import { Box } from '@chakra-ui/react';
 import iconDic from '../../utils/iconDict.json';
-// const iconDict = require('../common/utils/iconDict.json');
 
 function Icon({
   icon, withContainer, width, height, style, color, secondColor, fill, className, props, full, text, ...rest
@@ -12,8 +11,11 @@ function Icon({
   if (typeof window === 'undefined' || !window) return '';
   const iconExists = iconDic.includes(icon);
 
+  const Comp = dynamic(() => import(`./set/${iconExists ? icon : 'info'}`));
+
   // eslint-disable-next-line no-console
-  const Comp = loadable(() => import(`./set/${iconExists ? icon : 'info'}`).catch((err) => console.error(`Error with icon ${icon}:`, err)));
+  // const Comp = loadable(() => import(`./set/${iconExists ? icon : 'info'}`).catch((err) => console.error(`Error with icon ${icon}:`, err)));
+
   return withContainer ? (
     <Box {...rest}>
       <Comp
@@ -75,4 +77,4 @@ Icon.defaultProps = {
   text: '',
   withContainer: false,
 };
-export default Icon;
+export default memo(Icon);
