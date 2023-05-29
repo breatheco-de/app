@@ -13,7 +13,7 @@ function Icon({
   const iconExists = iconDic.includes(icon);
 
   // eslint-disable-next-line no-console
-  const Comp = loadable(() => import(`./set/${iconExists ? icon : 'info'}`).catch((err) => console.error(err)));
+  const Comp = loadable(() => import(`./set/${iconExists ? icon : 'info'}`).catch((err) => console.error(`Error with icon ${icon}:`, err)));
   return withContainer ? (
     <Box {...rest}>
       <Comp

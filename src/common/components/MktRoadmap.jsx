@@ -63,8 +63,6 @@ function MktRoadmap({ id, title, course, ...rest }) {
     setCurrentTabIndex(index);
   };
 
-  console.log('data?.[1]?.icon_url:::', isUrl('google.com'));
-
   return data?.length > 0 && (
     <GridContainer id={id} maxWidth="1280px" width="100%" height="auto" gridGap={{ base: '64px', lg: '24px' }} px={{ base: '10px', md: '0' }} {...rest}>
       <Tabs
