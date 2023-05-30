@@ -1,4 +1,6 @@
 /* eslint-disable react/prop-types */
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -141,8 +143,8 @@ const MarkDownParser = ({
 
       <ReactMarkdown
       // gemoji plugin
-        remarkPlugins={[remarkGfm, remarkGemoji]}
-        rehypePlugins={[rehypeRaw]}
+        remarkPlugins={[remarkGfm, remarkGemoji, remarkMath]}
+        rehypePlugins={[rehypeRaw, rehypeKatex]}
         components={{
           a: MDLink,
           code: Code,
