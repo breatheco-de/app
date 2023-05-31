@@ -550,7 +550,7 @@ const Dashboard = () => {
             )
           }
 
-            {(cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 3) && (
+            {(cohortSession?.cohort_role === 'TEACHER' || (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 3)) && (
               <Box marginTop="36px">
                 <ProgressBar
                   taskTodo={taskTodoState}
