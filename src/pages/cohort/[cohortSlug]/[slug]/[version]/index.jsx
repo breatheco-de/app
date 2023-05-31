@@ -510,8 +510,8 @@ const Dashboard = () => {
                 )}
               </Box>
             )}
-            {(cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result <= 3) && (
-              <Accordion allowMultiple>
+            {cohortSession?.intro_video && cohortUserDaysCalculated?.isRemainingToExpire === false && (
+              <Accordion defaultIndex={cohortUserDaysCalculated?.result <= 3 ? [0] : [1]} allowMultiple>
                 <AccordionItem background={featuredColor} borderRadius="17px" border="0">
                   {({ isExpanded }) => (
                     <>
