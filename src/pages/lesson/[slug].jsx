@@ -186,7 +186,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
         // padding={{ base: '0 10px', lg: '0' }}
         padding="0 10px"
       >
-        <Box display={{ base: 'none', md: 'flex' }} position="sticky" top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
+        <Box display="flex" position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
           <MktSideRecommendedCourses />
         </Box>
         <Box gridColumn="2 / span 12" maxWidth="854px">

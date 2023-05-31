@@ -76,10 +76,22 @@ function chooseProgram() {
     refetchOnWindowFocus: false,
   };
 
+  const getStudentAndTeachers = async (item) => {
+    const users = await bc.cohort({
+      role: 'TEACHER,ASSISTANT',
+      cohorts: item?.cohort?.slug,
+      academy: item?.cohort?.academy?.id,
+    }).getMembers();
+
+    return users || [];
+  };
+
   const { isLoading, data: dataQuery, refetch } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options });
 
-  useEffect(() => {
+  useEffect(async () => {
     const cohorts = dataQuery?.cohorts;
+    const cohortSubscription = cohorts?.find((item) => item?.cohort?.slug === subscriptionProcess?.slug);
+    const members = cohortSubscription?.cohort?.slug ? await getStudentAndTeachers(cohortSubscription) : [];
     const cohortIsReady = cohorts?.length > 0 && cohorts?.some((item) => {
       const cohort = item?.cohort;
       const academy = cohort?.academy;
@@ -93,7 +105,7 @@ function chooseProgram() {
     const revalidate = setTimeout(() => {
       if (subscriptionProcess?.status === PREPARING_FOR_COHORT) {
         setIsRevalidating(true);
-        if (!cohortIsReady) {
+        if (!cohortIsReady && members.length === 0) {
           refetch();
           console.log('revalidated on:', new Date().toLocaleString());
         } else {
@@ -105,7 +117,7 @@ function chooseProgram() {
     }, 2000);
 
     return () => clearTimeout(revalidate);
-  }, [dataQuery]);
+  }, [dataQuery?.cohorts]);
 
   useEffect(() => {
     setSubscriptionLoading(true);
@@ -147,7 +159,7 @@ function chooseProgram() {
   // console.log('cohorts', dataQuery?.cohorts);
   // TOOD: usar available_as_saas
   useEffect(() => {
-    if (dataQuery?.id) {
+    if (dataQuery?.id && dataQuery?.cohorts?.length > 0) {
       dataQuery?.cohorts.map(async (item) => {
         if (item?.cohort?.slug) {
           const { academy, syllabus_version: syllabusVersion } = item?.cohort;
@@ -188,7 +200,7 @@ function chooseProgram() {
         return null;
       });
     }
-  }, [dataQuery?.id]);
+  }, [dataQuery?.id, isLoading]);
 
   const userID = user?.id;
 

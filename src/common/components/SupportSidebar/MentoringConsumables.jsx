@@ -3,7 +3,7 @@ import { Avatar, AvatarGroup, Box, Button, Input, InputGroup, InputRightElement,
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useStyle from '../../hooks/useStyle';
 import Heading from '../Heading';
 import Icon from '../Icon';
@@ -15,8 +15,8 @@ import AvatarUser from '../../../js_modules/cohortSidebar/avatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped } from '../Skeleton';
 
-const NoConsumablesCard = ({ t, setMentoryProps, disableBackButton = false }) => (
-  <Box display="flex" flexDirection="column" alignItems="center">
+const NoConsumablesCard = ({ t, setMentoryProps, disableBackButton = false, ...rest }) => (
+  <Box display="flex" flexDirection="column" alignItems="center" {...rest}>
     <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
       {t('mentorship.no-mentorship')}
       <br />
@@ -50,7 +50,7 @@ const ProfilesSection = ({
   const { usersConnected } = useOnline();
 
   return (
-    <AvatarGroup max={4}>
+    <AvatarGroup max={4} justifyContent="center">
       {profiles?.map((c, i) => {
         const fullName = `${c.user.first_name} ${c.user.last_name}`;
         const isOnline = usersConnected?.includes(c.user.id);
@@ -73,25 +73,35 @@ const ProfilesSection = ({
 };
 
 const MentoringConsumables = ({
-  mentoryProps, width, serviceMentoring, cohortService, setMentoryProps,
+  mentoryProps, width, serviceMentoring, mentorshipService, setMentoryProps,
   programServices, dateFormated, servicesFiltered, searchProps,
-  setSearchProps, setProgramMentors, savedChanges, setSavedChanges, setServiceMentoring,
+  setSearchProps, setProgramMentors, savedChanges, setSavedChanges,
   mentorsFiltered, dateFormated2, allMentorsAvailable,
 }) => {
   const { t } = useTranslation('dashboard');
 
   const isNotProduction = process.env.VERCEL_ENV !== 'production';
-  const mentoryFormStarted = mentoryProps?.service || mentoryProps?.mentor || mentoryProps?.date;
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   const [open, setOpen] = useState(false);
+  const [existsMentors, setExistsMentors] = useState(true);
   const { borderColor, lightColor, hexColor } = useStyle();
   const router = useRouter();
   const toast = useToast();
   const { slug } = router.query;
 
-  const existsConsumables = serviceMentoring?.mentorship_service_sets?.length > 0 || (Array.isArray(serviceMentoring?.mentorship_service_sets) && serviceMentoring?.mentorship_service_sets.some((item) => item?.balance > 0));
+  const currentBalance = (Number(mentorshipService?.balance) && mentorshipService?.balance) || (Number(mentorshipService?.balance?.unit) && mentorshipService?.balance?.unit);
 
-  const existConsumablesOnCurrentService = serviceMentoring?.mentorship_service_sets?.length > 0 && cohortService?.balance?.unit !== 0;
+  const existsConsumables = Array.isArray(serviceMentoring?.mentorship_service_sets) && serviceMentoring?.mentorship_service_sets.some((item) => item?.balance > 0 || item?.balance?.unit > 0);
+
+  const existConsumablesOnCurrentService = serviceMentoring?.mentorship_service_sets?.length > 0 && Object.values(mentorshipService).length > 0 && currentBalance > 0;
+
+  useEffect(() => {
+    if (allMentorsAvailable?.length === 0) {
+      setTimeout(() => {
+        setExistsMentors(false);
+      }, 1500);
+    }
+  }, [allMentorsAvailable]);
 
   const handleService = (service) => {
     bc.mentorship({
@@ -115,13 +125,6 @@ const MentoringConsumables = ({
           isClosable: true,
         });
       });
-
-    bc.payment({
-      mentorship_service: service.id,
-    }).service().consumable()
-      .then((res) => {
-        setServiceMentoring(res?.data);
-      });
   };
 
   return (
@@ -133,24 +136,22 @@ const MentoringConsumables = ({
       borderWidth="0px"
       borderRadius="lg"
     >
-      {/* <Box display="flex" justifyContent="center" alignItems="center" width="85px" height="50px" margin="0 auto" borderBottomRadius="10px" backgroundColor="yellow.default">
-        <Icon icon="idea" width="36px" height="36px" />
-      </Box> */}
-      {mentoryProps?.service && (serviceMentoring?.mentorship_service_sets?.length !== 0 && cohortService?.balance?.unit !== 0) && (
+
+      {open && mentoryProps?.service && (
         <Box position="absolute" top="16px" left="18px" onClick={() => setMentoryProps({})} cursor="pointer">
           <Icon icon="arrowLeft" width="25px" height="25px" color="#606060" />
         </Box>
       )}
-      {existsConsumables && (!mentoryProps?.service || serviceMentoring?.mentorship_service_sets?.length !== 0 || cohortService?.balance?.unit >= 0) && (
-        <Box position="absolute" top="16px" right="18px" onClick={() => setOpen(false)} cursor="pointer">
-          <Icon icon="close" width="15px" height="15px" color="#606060" />
+      {open && !mentoryProps?.service && (
+        <Box position="absolute" top="16px" left="18px" onClick={() => setOpen(false)} cursor="pointer">
+          <Icon icon="arrowLeft" width="25px" height="25px" color="#606060" />
         </Box>
       )}
-      <Box display="flex" flexDirection="column" p="4" pb={mentoryFormStarted ? '0px' : '30px'} pt="20px" alignItems="center">
+      <Box display="flex" flexDirection="column" p="4" pt="20px" alignItems="center">
         {existsConsumables ? (
           <>
             <Box d="flex" flexDirection="column" alignItems="center" justifyContent="center">
-              {!mentoryProps?.service && (serviceMentoring?.mentorship_service_sets?.length !== 0 || cohortService?.balance?.unit !== 0) && (
+              {!mentoryProps?.service && (serviceMentoring?.mentorship_service_sets?.length !== 0 || currentBalance !== 0) && (
                 <>
                   <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
                     {t('supportSideBar.mentoring')}
@@ -169,14 +170,28 @@ const MentoringConsumables = ({
             </Box>
             {!open && (
               <>
-                <Box margin="15px 0">
+                <Box margin="15px 0" display="flex" flexDirection="column">
                   {allMentorsAvailable.length > 0 ? (
                     <ProfilesSection profiles={allMentorsAvailable} />
                   ) : (
-                    <AvatarSkeletonWrapped quantity={4} />
+                    <>
+                      {existsMentors && (
+                        <AvatarSkeletonWrapped quantity={4} />
+                      )}
+                      {!existsMentors && allMentorsAvailable.length === 0 && (
+                        <Avatar
+                          width="48px"
+                          height="48px"
+                          margin="0 auto"
+                          style={{ userSelect: 'none' }}
+                          src="/static/images/angry-avatar.png"
+                        />
+                      )}
+                    </>
                   )}
                   <Text color="gray.600" size="12px" margin="8px 0 0 0">
-                    {t('supportSideBar.mentors-available', { count: allMentorsAvailable.length })}
+                    {t('supportSideBar.mentors-available', { count: 3 })}
+                    {/* {t('supportSideBar.mentors-available', { count: allMentorsAvailable.length })} */}
                   </Text>
                 </Box>
                 <Button variant="default" onClick={() => setOpen(true)}>
@@ -194,8 +209,8 @@ const MentoringConsumables = ({
               {t('mentorship.you-have')}
             </Box>
             <Box display="flex" color="white" justifyContent="center" alignItems="center" background="green.400" width="30px" height="30px" borderRadius="50%">
-              {cohortService?.balance?.unit > 0 ? cohortService?.balance?.unit : ''}
-              {cohortService?.balance?.unit === -1 ? (
+              {currentBalance > 0 ? currentBalance : ''}
+              {currentBalance === -1 ? (
                 <Icon icon="infinite" width="20px" height="20px" />
               ) : ''}
             </Box>
@@ -205,13 +220,13 @@ const MentoringConsumables = ({
           </Box>
         )}
         {mentoryProps?.service && open && !mentoryProps?.mentor && !existConsumablesOnCurrentService ? (
-          <NoConsumablesCard t={t} setMentoryProps={setMentoryProps} />
+          <NoConsumablesCard t={t} setMentoryProps={setMentoryProps} mt="30px" />
         ) : open && (
           <>
             {!mentoryProps?.time ? (
               <>
                 {mentoryProps?.service && (
-                  <Box display="flex" alignItems="center" justifyContent="flex-start" gridGap="10px" background={commonBackground} mt="20px" px="20px" py="15px" textAlign="center" w="100%" borderTopRadius="0.375rem">
+                  <Box display="flex" alignItems="center" justifyContent="flex-start" gridGap="10px" background={commonBackground} mt="34px" px="20px" py="15px" textAlign="center" w="100%" borderTopRadius="0.375rem">
                     <Box>
                       <Icon icon="checked2" width="15px" height="15px" color={hexColor.greenLight} />
                     </Box>
@@ -383,7 +398,7 @@ MentoringConsumables.propTypes = {
   mentoryProps: PropTypes.objectOf(PropTypes.any),
   width: PropTypes.string,
   serviceMentoring: PropTypes.objectOf(PropTypes.any),
-  cohortService: PropTypes.objectOf(PropTypes.any),
+  mentorshipService: PropTypes.objectOf(PropTypes.any),
   setMentoryProps: PropTypes.func.isRequired,
   programServices: PropTypes.arrayOf(PropTypes.any),
   dateFormated: PropTypes.objectOf(PropTypes.any).isRequired,
@@ -393,7 +408,7 @@ MentoringConsumables.propTypes = {
   savedChanges: PropTypes.objectOf(PropTypes.any).isRequired,
   setSavedChanges: PropTypes.func.isRequired,
   setProgramMentors: PropTypes.func,
-  setServiceMentoring: PropTypes.func,
+  // setServiceMentoring: PropTypes.func,
   mentorsFiltered: PropTypes.arrayOf(PropTypes.any).isRequired,
   dateFormated2: PropTypes.objectOf(PropTypes.any).isRequired,
 };
@@ -402,10 +417,10 @@ MentoringConsumables.defaultProps = {
   mentoryProps: [],
   width: '100%',
   serviceMentoring: {},
-  cohortService: {},
+  mentorshipService: {},
   programServices: [],
   setProgramMentors: () => {},
-  setServiceMentoring: () => {},
+  // setServiceMentoring: () => {},
 };
 
 export default MentoringConsumables;

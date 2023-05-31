@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react';
 import { useRef } from 'react';
 import Heading from '../../common/components/Heading';
-// import bc from '../../common/services/breathecode';
+import bc from '../../common/services/breathecode';
 // import { phone } from '../../utils/regex';
 import FieldForm from '../../common/components/Forms/FieldForm';
 import PhoneInput from '../../common/components/PhoneInput';
@@ -30,11 +30,12 @@ const ContactInformation = ({
     state, nextStep,
   } = useSignup();
   const { stepIndex, dateProps, location } = state;
+  const plan = getQueryString('plan');
+  const planFormated = plan && encodeURIComponent(plan);
   const router = useRouter();
   const toast = useToast();
   const toastIdRef = useRef();
   const { backgroundColor, featuredColor } = useStyle();
-  const plan = getQueryString('plan');
 
   const { syllabus } = router.query;
 
@@ -88,12 +89,17 @@ const ContactInformation = ({
       },
       body: JSON.stringify(allValues),
     });
-
     const data = await resp.json();
-    if (resp.status < 400) {
-      setStorageItem('subscriptionId', data.id);
 
-      if (data?.access_token) {
+    const respPlan = await bc.payment().getPlan(planFormated);
+    const dataOfPlan = respPlan?.data;
+    if (resp.status < 400 && typeof data?.id === 'number') {
+      if (dataOfPlan?.has_waiting_list === true) {
+        setStorageItem('subscriptionId', data.id);
+        router.push('/thank-you');
+      }
+
+      if (data?.access_token && !dataOfPlan?.has_waiting_list) {
         router.push({
           query: {
             ...router.query,
@@ -101,10 +107,9 @@ const ContactInformation = ({
           },
         });
         nextStep();
-      } else {
-        router.push('/thank-you');
       }
     }
+
     if (resp.status >= 400 && !data?.phone) {
       toast({
         title: t('alert-message:email-already-subscribed'),
