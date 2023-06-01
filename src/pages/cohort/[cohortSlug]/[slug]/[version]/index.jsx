@@ -32,7 +32,7 @@ import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import {
-  slugify, includesToLowerCase, getStorageItem, sortToNearestTodayDate,
+  slugify, includesToLowerCase, getStorageItem, sortToNearestTodayDate, syncInterval,
 } from '../../../../../utils/index';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
@@ -57,18 +57,20 @@ const Dashboard = () => {
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+
   const [, setSortedAssignments] = usePersistent('sortedAssignments', []);
   const flags = useFlags();
   const [searchValue, setSearchValue] = useState(router.query.search || '');
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [events, setEvents] = useState(null);
-  const [liveClass, setLiveClass] = useState(null);
+  const [liveClasses, setLiveClasses] = useState([]);
   const [isOpenFinalProject, setIsOpenFinalProject] = useState(false);
 
   const [session, setSession] = usePersistent('session', {});
   const { user, choose, isLoading } = useAuth();
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const [currentCohortProps, setCurrentCohortProps] = useState({});
+  const [subscriptionData, setSubscriptionData] = useState(null);
   const {
     cohortSession, sortedAssignments, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, taskTodo, taskTodoState,
@@ -105,6 +107,7 @@ const Dashboard = () => {
   const commonModalColor = useColorModeValue('gray.dark', 'gray.light');
   const accessToken = getStorageItem('accessToken');
   const showGithubWarning = getStorageItem('showGithubWarning');
+  const TwelveHours = 720;
 
   const supportSideBar = t('supportSideBar', {}, { returnObjects: true });
 
@@ -188,9 +191,39 @@ const Dashboard = () => {
       cohort: cohortSlug,
     }).liveClass()
       .then((res) => {
-        const sortDateToLiveClass = sortToNearestTodayDate(res?.data);
-        setLiveClass(sortDateToLiveClass[0]);
+        const sortDateToLiveClass = sortToNearestTodayDate(res?.data, TwelveHours);
+        const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
+        setLiveClasses(existentLiveClasses);
       });
+
+    bc.payment({
+      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+    }).subscriptions()
+      .then(async ({ data }) => {
+        const currentPlan = data?.plan_financings?.find((s) => s?.selected_cohort?.slug === cohortSlug);
+        const currentSubscription = data?.subscriptions?.find((s) => s?.selected_cohort?.slug === cohortSlug);
+        const planData = currentPlan || currentSubscription;
+        const planSlug = planData?.plans?.[0]?.slug;
+        const planOffer = await bc.payment({
+          original_plan: planSlug,
+        }).planOffer().then((res) => res?.data);
+
+        const currentPlanOffer = planOffer?.find((p) => p?.original_plan?.slug === planSlug);
+
+        const finalData = {
+          ...planData,
+          planOfferExists: currentPlanOffer !== undefined,
+        };
+
+        setSubscriptionData(finalData);
+      });
+    syncInterval(() => {
+      setLiveClasses((prev) => {
+        const sortDateToLiveClass = sortToNearestTodayDate(prev, TwelveHours);
+        const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
+        return existentLiveClasses;
+      });
+    });
   }, []);
 
   // Fetch cohort data with pathName structure
@@ -296,6 +329,21 @@ const Dashboard = () => {
           style={{ borderRadius: '0px', justifyContent: 'center' }}
         />
       )}
+      {subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists && (
+        <AlertMessage
+          full
+          type="warning"
+          message={t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
+          style={{ borderRadius: '0px', justifyContent: 'center' }}
+        >
+          <Text
+            size="l"
+            dangerouslySetInnerHTML={{
+              __html: t('free-trial-msg', { link: '/profile/subscriptions' }),
+            }}
+          />
+        </AlertMessage>
+      )}
       <FinalProjectModal
         isOpen={isOpenFinalProject}
         closeOnOverlayClick={false}
@@ -387,22 +435,6 @@ const Dashboard = () => {
                 flexDirection="column"
                 gridGap="30px"
               >
-                {flags?.appReleaseEnableLiveEvents && (
-                  <LiveEvent
-                    featureLabel={t('common:live-event.title')}
-                    featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                    liveClassHash={liveClass?.hash}
-                    liveStartsAt={liveClass?.starting_at}
-                    liveEndsAt={liveClass?.ending_at}
-                    otherEvents={events}
-                  />
-                )}
-                {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
-                  <FinalProject
-                    tasks={taskTodoState}
-                    studentAndTeachers={onlyStudentsActive}
-                  />
-                )}
                 <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
                   <TeacherSidebar
                     title={t('teacher-sidebar.actions')}
@@ -414,6 +446,43 @@ const Dashboard = () => {
                     width="100%"
                   />
                 </OnlyFor>
+                {cohortSession?.academy_owner?.white_labeled && (
+                <Box
+                  className="white-label"
+                  borderRadius="md"
+                  padding="10px"
+                  display="flex"
+                  justifyContent="space-around"
+                  bg={colorMode === 'light' ? '#F2F2F2' || 'blue.light' : 'featuredDark'}
+                >
+                  <Avatar
+                    name={cohortSession.academy_owner.name}
+                    src={cohortSession.academy_owner.icon_url}
+                  />
+                  <Box className="white-label-text" width="80%">
+                    <Text size="md" fontWeight="700" marginBottom="5px">
+                      {cohortSession.academy_owner.name}
+                    </Text>
+                    <Text size="sm">
+                      {t('whiteLabeledText')}
+                    </Text>
+                  </Box>
+                </Box>
+                )}
+                {flags?.appReleaseEnableLiveEvents && (
+                  <LiveEvent
+                    featureLabel={t('common:live-event.title')}
+                    featureReadMoreUrl={t('common:live-event.readMoreUrl')}
+                    mainClasses={liveClasses?.length > 0 ? liveClasses : []}
+                    otherEvents={events}
+                  />
+                )}
+                {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
+                  <FinalProject
+                    tasks={taskTodoState}
+                    studentAndTeachers={onlyStudentsActive}
+                  />
+                )}
                 {cohortSession?.kickoff_date && (
                 <CohortSideBar
                   cohortSession={cohortSession}
@@ -424,14 +493,14 @@ const Dashboard = () => {
                   width="100%"
                 />
                 )}
-                {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
-                <SupportSidebar
-                  title={supportSideBar.title}
-                  subtitle={supportSideBar.description}
-                  teacherAndAssistants={teacherAndAssistants}
-                  actionButtons={supportSideBar.actionButtons}
-                  width="100%"
-                />
+                {cohortSession?.cohort_role?.toLowerCase() === 'student' && flags?.appReleaseEnableMentorshipsWidget && (
+                  <SupportSidebar
+                    title={supportSideBar.title}
+                    subtitle={supportSideBar.description}
+                    teacherAndAssistants={teacherAndAssistants}
+                    actionButtons={supportSideBar.actionButtons}
+                    width="100%"
+                  />
                 )}
               </Box>
             )}
@@ -508,7 +577,7 @@ const Dashboard = () => {
                 <>
                   {sortedAssignmentsSearched.map((assignment, i) => {
                     const {
-                      label, description, filteredModules, modules, filteredModulesByPending,
+                      label, description, filteredModules, exists_activities: existsActivities, modules, filteredModulesByPending,
                     } = assignment;
 
                     const filteredModulesSearched = searchValue.length > 0
@@ -528,6 +597,7 @@ const Dashboard = () => {
                       <ModuleMap
                         key={index}
                         userId={user?.id}
+                        existsActivities={existsActivities}
                         cohortSession={cohortSession}
                         taskCohortNull={taskCohortNull}
                         contextState={contextState}
@@ -566,23 +636,6 @@ const Dashboard = () => {
               maxWidth="380px"
               minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
             >
-              {flags?.appReleaseEnableLiveEvents && (
-                <LiveEvent
-                  featureLabel={t('common:live-event.title')}
-                  featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                  liveClassHash={liveClass?.hash}
-                  liveStartsAt={liveClass?.starting_at}
-                  liveEndsAt={liveClass?.ending_at}
-                  otherEvents={events}
-                  // featureLabel,
-                />
-              )}
-              {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
-                <FinalProject
-                  tasks={taskTodoState}
-                  studentAndTeachers={onlyStudentsActive}
-                />
-              )}
               <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
                 <TeacherSidebar
                   title={t('teacher-sidebar.actions')}
@@ -617,6 +670,20 @@ const Dashboard = () => {
                   </Box>
                 </Box>
               )}
+              {flags?.appReleaseEnableLiveEvents && (
+                <LiveEvent
+                  featureLabel={t('common:live-event.title')}
+                  featureReadMoreUrl={t('common:live-event.readMoreUrl')}
+                  mainClasses={liveClasses?.length > 0 ? liveClasses : []}
+                  otherEvents={events}
+                />
+              )}
+              {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
+                <FinalProject
+                  tasks={taskTodoState}
+                  studentAndTeachers={onlyStudentsActive}
+                />
+              )}
               {cohortSession?.kickoff_date && (
               <CohortSideBar
                 cohortSession={cohortSession}
@@ -627,14 +694,14 @@ const Dashboard = () => {
                 width="100%"
               />
               )}
-              {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
-              <SupportSidebar
-                title={supportSideBar.title}
-                subtitle={supportSideBar.description}
-                teacherAndAssistants={teacherAndAssistants}
-                actionButtons={supportSideBar.actionButtons}
-                width="100%"
-              />
+              {cohortSession?.cohort_role?.toLowerCase() === 'student' && flags?.appReleaseEnableMentorshipsWidget && (
+                <SupportSidebar
+                  title={supportSideBar.title}
+                  subtitle={supportSideBar.description}
+                  teacherAndAssistants={teacherAndAssistants}
+                  actionButtons={supportSideBar.actionButtons}
+                  width="100%"
+                />
               )}
             </Box>
           )}

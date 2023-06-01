@@ -32,11 +32,12 @@ const Footer = ({ pageProps }) => {
   const [formStatus, setFormStatus] = useState('');
   const { colorMode } = useColorMode();
 
+  const hideDivider = pageProps?.hideDivider === true;
   if (pageProps?.previewMode) return null;
 
   return (
     <Container as="footer" maxW="none" padding="20px" position="absolute" top="100%">
-      <Divider borderBottomWidth="2px" m="3rem 0 0 0" />
+      {!hideDivider && <Divider borderBottomWidth="2px" m="3rem 0 0 0" />}
 
       <Flex
         direction={['column', 'column', 'row', 'row']}
@@ -348,28 +349,6 @@ const Footer = ({ pageProps }) => {
           width={['100%', '100%', '35%', '40%']}
         // alignItems="center"
         >
-          <NextChakraLink href={t('privacy.href')}>
-            <Text fontSize="sm">{t('privacy.label')}</Text>
-          </NextChakraLink>
-          <Divider
-            orientation="vertical"
-            // borderRightWidth="2px"
-            marginLeft="10px"
-            marginRight="10px"
-            borderColor="#3A3A3A"
-            maxH={['20px', '20px', '50', '50']}
-          />
-          <NextChakraLink href={t('cookies.href')}>
-            <Text fontSize="sm">{t('cookies.label')}</Text>
-          </NextChakraLink>
-          <Divider
-            orientation="vertical"
-            // borderRightWidth="2px"
-            marginLeft="10px"
-            marginRight="10px"
-            borderColor="#3A3A3A"
-            maxH={['20px', '20px', '50', '50']}
-          />
           <NextChakraLink href={t('terms.href')}>
             <Text fontSize="sm">{t('terms.label')}</Text>
           </NextChakraLink>

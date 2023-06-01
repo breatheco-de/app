@@ -4,7 +4,7 @@
   "error-with-status": "A {{statusCode}} error occurred on server",
   "error-without-status": "An error occurred on the server",
   "edit-on-github": "Edit on Github",
-  "github-warning": "Your Github account is not connected. Only by conecting your Github account you will be able to get unlimited Gitpod hours",
+  "github-warning": "Your Github account is not connected. Only active 4Geeks Academy students with a conected Github account you will be able to get unlimited Codespaces hours.",
   "title": "Welcome | Learn",
   "backToHome": "Back to home",
   "goBack": "Go Back",
@@ -14,9 +14,14 @@
   "quiz": "Quiz",
   "filter": "Filter",
   "filters": "Filters",
+  "sort": "Sort",
   "close": "Close",
   "confirm": "Confirm",
   "submit": "Submit",
+  "enroll": "Enroll now",
+  "learn-more": "Learn more",
+  "more-technologies":"More technologies",
+  "continue-learning":"Continue learning for free about:<br><br>{{technologies}} and more.",
   "user-id": "User ID",
   "day": "Day",
   "interactive": "Interactive",
@@ -77,7 +82,7 @@
     "mark-as-not-done": "Mark as not done"
   },
   "learnpack": {
-    "description": "This practice will run outside of 4Geeks.com thought LearnPack. An interactive learning tool that runs integrated with VSCode and Gitpod.",
+    "description": "This practice will run outside of 4Geeks.com through LearnPack. An interactive learning tool that runs integrated with VSCode.",
     "new-exercise": "Start new exercise",
     "continue-exercise": "Continue exercise"
   },
@@ -95,6 +100,7 @@
     "title": "{{asset_type}} has {{count}} tasks",
     "description": "To better take advantage of this lesson, look for the checkboxes and mark them as completed as you make progress."
   },
+  "related-courses": "Courses related to this article",
   "average-duration": "Average duration",
   "load-more": "Load more",
   "teachers": "Teachers",
@@ -158,5 +164,6 @@
     "readMoreUrl": "https://4geeks.com/lesson/live-events-workshops-and-classes"
   },
   "submit-project": "Submit project",
-  "uploadScreenshot": "Upload screenshot"
+  "uploadScreenshot": "Upload screenshot",
+  "continue-learning-course": "Continue learning for free about:"
 }

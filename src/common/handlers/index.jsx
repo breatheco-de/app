@@ -1,12 +1,11 @@
 import { formatDuration, intervalToDuration } from 'date-fns';
-import { es, en } from 'date-fns/locale';
+import { es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
-import { toCapitalize } from '../../utils';
+import { isValidDate, toCapitalize } from '../../utils';
 import bc from '../services/breathecode';
 
 const availableLanguages = {
   es,
-  en,
 };
 
 const taskIcons = {
@@ -38,12 +37,18 @@ const handlers = {
   getStudents: (slug, academyId) => new Promise((resolve, reject) => {
     bc.cohort().getStudents(slug, academyId)
       .then(({ data }) => {
-        // filter only active students
-        const activeStudents = data.filter((l) => l.educational_status === 'ACTIVE' && l.role === 'STUDENT');
-        const sortedStudents = activeStudents.sort(
+        const sortedStudents = data.sort(
           (a, b) => a.user.first_name.localeCompare(b.user.first_name),
         );
         resolve(sortedStudents);
+      }).catch((err) => {
+        reject(err);
+      });
+  }),
+  getStudentsWithTasks: (slug, academyId) => new Promise((resolve, reject) => {
+    bc.cohort().getStudentsWithTasks(slug, academyId)
+      .then(({ data }) => {
+        resolve(data);
       }).catch((err) => {
         reject(err);
       });
@@ -112,22 +117,30 @@ const handlers = {
 
   formatTimeString: (start) => {
     const { t, lang } = useTranslation('live-event');
-    const duration = intervalToDuration({
-      end: new Date(),
-      start,
-    });
-    const formated = formatDuration(duration,
-      {
-        format: ['months', 'weeks', 'days', 'hours', 'minutes'],
-        delimiter: ', ',
-        locale: availableLanguages[lang],
-      });
+    const validDate = isValidDate(start);
 
-    if (formated === '') return t('few-seconds');
-    return {
-      formated,
-      duration,
-    };
+    const status = new Date(start) < new Date() ? 'expired' : 'active';
+
+    if (validDate) {
+      const duration = intervalToDuration({
+        end: new Date(),
+        start: new Date(start),
+      });
+      const formated = formatDuration(duration,
+        {
+          format: ['months', 'weeks', 'days', 'hours', 'minutes'],
+          delimiter: ', ',
+          locale: availableLanguages[lang] || lang,
+        });
+
+      if (formated === '') return t('few-seconds');
+      return {
+        status,
+        formated,
+        duration,
+      };
+    }
+    return null;
   },
   checkIfExpired: ({ date, year = 'numeric', month = 'long', day = 'numeric', hour, minute }) => {
     const { lang } = useTranslation('live-event');

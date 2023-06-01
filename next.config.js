@@ -33,6 +33,14 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        source: '/robots.txt',
+        destination: '/api/robots',
+      },
+    ];
+  },
   async redirects() {
     return [
       ...redirectsList,
@@ -78,30 +86,6 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
       },
     ];
   },
-  // async rewrites() {
-  //   return [
-  //     {
-  //       source: '/interactive-coding-tutorial/INTERMEDIATE/:slug',
-  //       destination: '/interactive-coding-tutorial/intermediate/:slug',
-  //     },
-  //     {
-  //       source: '/interactive-coding-tutorial/BEGINNER/:slug',
-  //       destination: '/interactive-coding-tutorial/beginner/:slug',
-  //     },
-  //     {
-  //       source: '/interactive-coding-tutorial/EASY/:slug',
-  //       destination: '/interactive-coding-tutorial/easy/:slug',
-  //     },
-  //     {
-  //       source: '/interactive-coding-tutorial/HARD/:slug',
-  //       destination: '/interactive-coding-tutorial/hard/:slug',
-  //     },
-  //     {
-  //       source: '/profile',
-  //       destination: '/profile/info',
-  //     },
-  //   ];
-  // },
   // swcMinify: false,
   reactStrictMode: true,
   trailingSlash: false,
@@ -111,10 +95,10 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
       require('./scripts/sitemap-generator');
       require('./scripts/syllabus');
     }
-    if (process.env.VERCEL_ENV !== 'production') {
-      config.optimization.minimizer = [];
-      config.optimization.minimize = false; // Disable minification in development
-    }
+    // if (process.env.VERCEL_ENV !== 'production') {
+    //   config.optimization.minimizer = [];
+    //   config.optimization.minimize = false; // Disable minification in development
+    // }
     return config;
   },
   compiler: {

@@ -3,6 +3,7 @@
   "logout": "Cerrar sesión",
   "language": "Idioma",
   "my-profile": "Mi perfil",
+  "start-coding": "Empezar a programar",
   "ITEMS": [
     {
       "label": "Dashboard",
@@ -69,24 +70,12 @@
     },
     {
       "label": "Aprendizaje social y en vivo",
+      "slug": "social-and-live-learning",
       "icon": "book",
       "disabled": false,
       "description": "La forma más eficiente de aprender: Únete a una cohorte con compañeros, transmisiones en vivo, sesiones improvisadas de codificación, tutorías en vivo con expertos reales y mantenga la motivación.",
       "asPath": "/read",
-      "subMenu": [
-        {
-          "label": "Introducción al código",
-          "asPath": "/learn-to-code",
-          "icon": "coding",
-          "description": "De cero a que te paguen como desarrollador, aprende las habilidades del presente y del futuro. Impulsa tu carrera profesional y sé contratado por una empresa tecnológica.",
-          "subMenu": [
-            {
-              "href": "/learn-to-code",
-              "label": "Empezar a programar"
-            }
-          ]
-        }
-      ],
+      "subMenu": [],
       "__comment_submenus__": [
         {
           "label": "Data Science",

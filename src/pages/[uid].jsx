@@ -1,11 +1,16 @@
 import { SliceZone } from '@prismicio/react';
 import * as prismicH from '@prismicio/helpers';
+import { Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
 import { createClient } from '../../prismicio';
 import { components } from '../../slices';
 
-const Page = ({ page }) => <SliceZone slices={page.data.slices} components={components} />;
+const Page = ({ page }) => (
+  <Box className="prismic-body" pt="3rem">
+    <SliceZone slices={page?.data?.slices} components={components} />
+  </Box>
+);
 
 Page.propTypes = {
   page: PropTypes.objectOf(PropTypes.any).isRequired,
@@ -21,15 +26,17 @@ export async function getStaticProps({ params, locale, previewData }) {
     es: 'es-es',
   };
 
-  const page = await client.getByUID('page', uid, { lang: languages[locale] });
+  const page = await client?.getByUID('page', uid, { lang: languages[locale] })
+    .then((response) => response)
+    .catch(() => null);
 
-  if (!page) {
+  const isCurrenLang = page?.lang?.split('-')?.[0] === locale;
+
+  if (!page || !isCurrenLang) {
     return {
       notFound: true,
     };
   }
-
-  const { title, description, image, type } = page?.data;
 
   const translationsArr = page?.alternate_languages?.map((tr) => ({
     [tr.lang.split('-')[0]]: tr.uid,
@@ -38,6 +45,8 @@ export async function getStaticProps({ params, locale, previewData }) {
   const translations = {
     ...translationsArr?.reduce((acc, curr) => ({ ...acc, ...curr }), {}),
   };
+
+  const { title, description, image, type } = page?.data;
 
   const translationArray = [
     {
@@ -90,6 +99,6 @@ export async function getStaticPaths() {
   const documents = await client.getAllByType('page', { lang: '*' });
   return {
     paths: documents.map((doc) => ({ params: { uid: doc.uid }, locale: doc.lang.split('-')[0] })),
-    fallback: false,
+    fallback: true,
   };
 }

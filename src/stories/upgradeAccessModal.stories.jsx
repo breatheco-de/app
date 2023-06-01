@@ -98,4 +98,5 @@ Default.args = {
       }
     },
   ],
+  image: 'static/images/meeting.png'
 };

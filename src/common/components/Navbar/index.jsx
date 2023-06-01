@@ -1,11 +1,12 @@
 import {
   Box, Flex, IconButton, Avatar, Stack, Collapse, useColorModeValue,
   useBreakpointValue, useDisclosure, useColorMode, Popover, PopoverTrigger,
-  PopoverContent, PopoverArrow, Button, useMediaQuery,
+  PopoverContent, PopoverArrow, Button, Link,
 } from '@chakra-ui/react';
 import {
   useState, memo, useEffect, Fragment,
 } from 'react';
+import Image from 'next/image';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -13,34 +14,40 @@ import { es } from 'date-fns/locale';
 import { formatDistanceStrict } from 'date-fns';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
+import bc from '../../services/breathecode';
 import DesktopNav from '../../../js_modules/navbar/DesktopNav';
 import MobileNav from '../../../js_modules/navbar/MobileNav';
 import { usePersistent } from '../../hooks/usePersistent';
 import Heading from '../Heading';
 import Text from '../Text';
 import useAuth from '../../hooks/useAuth';
+import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
 import syllabusList from '../../../../public/syllabus.json';
 import { isWindow } from '../../../utils';
+import axios from '../../../axios';
+import modifyEnv from '../../../../modifyEnv';
+
+const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+// import UpgradeExperience from '../UpgradeExperience';
 
 const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   const { t } = useTranslation('navbar');
   const router = useRouter();
-  // const [readSyllabus, setReadSyllabus] = useState([]);
+  const [mktCourses, setMktCourses] = useState([]);
   const [ITEMS, setITEMS] = useState([]);
-  const [isBelowTablet] = useMediaQuery('(max-width: 1000px)');
-  const locale = router.locale === 'default' ? 'en' : router.locale;
-
+  const [cohortsOfUser, setCohortsOfUser] = useState([]);
   const { isOpen, onToggle } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
-  const commonColors = useColorModeValue('white', 'gray.800');
-  const popoverContentBgColor = useColorModeValue('white', 'gray.800');
-  const commonBorderColor = useColorModeValue('gray.200', 'gray.700');
-  const { user, logout } = useAuth();
+  const { isLoading, user, logout } = useAuth();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   const langs = ['en', 'es'];
+  const locale = router.locale === 'default' ? 'en' : router.locale;
+  const commonColors = useColorModeValue('white', 'gray.800');
+  const popoverContentBgColor = useColorModeValue('white', 'gray.800');
+  const commonBorderColor = useColorModeValue('gray.200', 'gray.700');
   const linkColor = useColorModeValue('gray.600', 'gray.200');
   const fontColor = useColorModeValue('black', 'gray.200');
 
@@ -48,6 +55,11 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   const queryToken = isWindow && query.get('token')?.split('?')[0];
   const queryTokenExists = isWindow && queryToken !== undefined && queryToken;
   const sessionExists = haveSession || queryTokenExists;
+
+  const {
+    languagesTR,
+  } = navbarTR[locale];
+  const translationsPropsExists = translations?.length > 0;
 
   const { selectedProgramSlug } = cohortSession;
 
@@ -58,12 +70,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   }, { returnObjects: true });
   const readSyllabus = JSON.parse(syllabusList);
 
-  useEffect(() => {
-    const items = t('ITEMS', {
-      selectedProgramSlug: selectedProgramSlug || '/choose-program',
-    }, { returnObjects: true });
-    setITEMS(items.filter((item) => item.disabled !== true));
-  }, [selectedProgramSlug]);
+  axios.defaults.headers.common['Accept-Language'] = locale;
 
   // Verify if teacher acces is with current cohort role
   const getDateJoined = user?.active_cohort?.date_joined
@@ -82,6 +89,98 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
       { addSuffix: true, locale: es },
     )}`,
   };
+
+  useEffect(() => {
+    axios.get(`${BREATHECODE_HOST}/v1/marketing/course?featured=true`)
+      .then((response) => {
+        const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null);
+        setMktCourses(filterByTranslations || []);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading && user !== null && mktCourses?.length > 0) {
+      Promise.all([
+        bc.payment({
+          status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+        }).subscriptions(),
+        bc.admissions().me(),
+      ])
+        .then((responses) => {
+          const [subscriptions, userResp] = responses;
+          const subscriptionRespData = subscriptions?.data;
+          const formatedCohortSubscriptions = userResp?.data?.cohorts?.map((value) => ({
+            ...value,
+            name: value.cohort.name,
+            plan_financing: subscriptionRespData?.plan_financings?.find(
+              (sub) => sub?.selected_cohort?.slug === value?.cohort?.slug,
+            ) || null,
+            subscription: subscriptionRespData?.subscriptions?.find(
+              (sub) => sub?.selected_cohort?.slug === value?.cohort?.slug,
+            ) || null,
+            slug: value?.cohort?.slug,
+          }));
+
+          setCohortsOfUser(formatedCohortSubscriptions);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, [isLoading, mktCourses]);
+
+  const activeSubscriptionCohorts = cohortsOfUser?.length > 0 ? cohortsOfUser?.filter((item) => {
+    const cohort = item?.cohort;
+    const subscriptionExists = item?.subscription !== null || item?.plan_financing !== null;
+
+    return ((cohort?.available_as_saas && subscriptionExists) || cohort?.available_as_saas === false);
+  }) : [];
+
+  const marketingCouses = Array.isArray(mktCourses) && mktCourses.filter(
+    (item) => !activeSubscriptionCohorts.some(
+      (activeCohort) => activeCohort?.cohort?.syllabus_version?.slug === item?.slug,
+    ) && item?.course_translation?.title,
+  );
+
+  const isNotAvailableForMktCourses = activeSubscriptionCohorts.length > 0 && activeSubscriptionCohorts.some(
+    (item) => item?.educational_status === 'ACTIVE' && item?.cohort?.available_as_saas === false,
+  );
+
+  useEffect(() => {
+    const items = t('ITEMS', {
+      selectedProgramSlug: selectedProgramSlug || '/choose-program',
+    }, { returnObjects: true });
+
+    const mktCoursesFormat = marketingCouses.length > 0 ? marketingCouses.map((item) => ({
+      label: item?.course_translation?.title,
+      asPath: `/course/${item?.slug}`,
+      icon: item?.icon_url,
+      description: item?.course_translation?.description,
+      subMenu: [
+        {
+          href: `/${item?.slug}`,
+          label: t('start-coding'),
+        },
+      ],
+    })) : [];
+
+    const formatItems = items.map((item) => {
+      if (item.slug === 'social-and-live-learning') {
+        return {
+          ...item,
+          subMenu: [
+            ...item.subMenu,
+            ...mktCoursesFormat,
+          ],
+        };
+      }
+      return item;
+    });
+    setITEMS(formatItems.filter((item) => item.disabled !== true));
+  }, [selectedProgramSlug, mktCourses]);
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -104,6 +203,77 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
 
   if (pageProps?.previewMode) return null;
 
+  const Close2 = () => (
+    <svg
+      width="22px"
+      height="22px"
+      viewBox="0 0 19 4"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <line
+        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        x1="1.5"
+        y1="2"
+        x2="16.5645"
+        y2="2"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+
+  const Hamburger2 = () => (
+    <svg
+      width="22px"
+      height="22px"
+      viewBox="0 0 28 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <line
+        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        x1="1.5"
+        y1="1.5"
+        x2="26.5"
+        y2="1.5"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      <line
+        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        x1="1.5"
+        y1="12"
+        x2="16.5645"
+        y2="12"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      <line
+        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        x1="1.5"
+        y1="22.5"
+        x2="26.5"
+        y2="22.5"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+
+  const logo = useColorModeValue(
+    <Image
+      src="/static/images/4geeks.png"
+      width="105px"
+      height="35px"
+      objectFit="cover"
+      alt="4Geeks logo"
+    />,
+    <Box padding="5px 5px">
+      <Icon icon="4Geeks-logo" width="95px" height="35px" />
+    </Box>,
+  );
+
   return (
     <Box>
       <Flex
@@ -117,12 +287,13 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
         borderBottom={1}
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.900')}
+        justifyContent="space-between"
         align="center"
       >
         <Flex
-          flex={{ base: 1, md: 'auto' }}
+          // flex={{ base: 1, md: 'auto' }}
           ml={{ base: -2 }}
-          display={isBelowTablet ? 'flex' : 'none'}
+          display={{ base: 'flex', xl: 'none' }}
           gridGap="12px"
           className="here-2"
         >
@@ -137,23 +308,27 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
             background={commonColors}
             icon={
               isOpen ? (
-                <Icon icon="close2" width="22px" height="22px" />
+                <Close2 />
               ) : (
-                <Icon icon="hamburger2" width="22px" height="22px" />
+                <Hamburger2 />
               )
             }
             variant="default"
             height="auto"
             aria-label="Toggle Navigation"
           />
-          <NextChakraLink href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
-            <Icon icon="logoModern" width="90px" height="20px" />
+          <NextChakraLink minWidth="105px" href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
+            {logo}
           </NextChakraLink>
         </Flex>
 
-        <Flex className="here" flex={{ base: 1 }} display={isBelowTablet ? 'none' : 'flex'} justify={{ base: 'center', md: 'start' }}>
-          <NextChakraLink href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
-            <Icon icon="logoModern" width="90px" height="20px" />
+        <Flex
+          // flex={{ base: 1 }}
+          display={{ base: 'none', xl: 'flex' }}
+          justify={{ base: 'center', xl: 'start' }}
+        >
+          <NextChakraLink minWidth="105px" href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
+            {logo}
           </NextChakraLink>
 
           <Flex display="flex" ml={10}>
@@ -161,7 +336,13 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
           </Flex>
         </Flex>
 
-        <Stack flex={{ base: 1, md: 0 }} justify="flex-end" direction="row" gridGap="5px">
+        <Stack justify="flex-end" direction="row" gridGap="5px">
+          {/* {!isNotAvailableForMktCourses && marketingCouses?.length > 0 && (
+            <Box display={{ base: 'none', md: 'block' }}>
+              <UpgradeExperience data={marketingCouses} />
+            </Box>
+          )} */}
+
           <LanguageSelector display={{ base: 'none ', md: 'block' }} translations={translations} />
           <IconButton
             style={{
@@ -255,20 +436,32 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
                       {t('language')}
                     </Text>
                     <Box display="flex" flexDirection="row">
-                      {langs.map((lang, i) => {
-                        const getIconFlags = lang === 'en' ? 'usaFlag' : 'spainFlag';
-                        const getLangName = lang === 'en' ? 'Eng' : 'Esp';
+                      {((translationsPropsExists
+                        && translations)
+                        || languagesTR).map((l, i) => {
+                        const lang = languagesTR.filter((language) => language?.value === l?.lang)[0];
+                        const value = translationsPropsExists ? lang?.value : l.value;
+                        const path = translationsPropsExists ? l?.link : router.asPath;
+
+                        const cleanedPath = (path === '/' && value !== 'en') ? '' : path;
+                        const localePrefix = `${value !== 'en' && !cleanedPath.includes(`/${value}`) ? `/${value}` : ''}`;
+
+                        const link = `${localePrefix}${cleanedPath}`;
+
+                        const getIconFlags = value === 'en' ? 'usaFlag' : 'spainFlag';
+                        const getLangName = value === 'en' ? 'Eng' : 'Esp';
+
                         return (
                           <Fragment key={lang}>
-                            <NextChakraLink
+                            <Link
                               _hover={{
                                 textDecoration: 'none',
                                 color: 'blue.default',
                               }}
                               color={locale === lang ? 'blue.default' : linkColor}
                               fontWeight={locale === lang ? '700' : '400'}
-                              href={router.asPath}
-                              locale={lang}
+                              key={value}
+                              href={link}
                               display="flex"
                               alignItems="center"
                               textTransform="uppercase"
@@ -277,7 +470,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
                             >
                               <Icon icon={getIconFlags} width="16px" height="16px" />
                               {getLangName}
-                            </NextChakraLink>
+                            </Link>
                             {
                               i < langs.length - 1 && (
                                 <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
@@ -398,8 +591,15 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
         </Stack>
       </Flex>
 
-      <Collapse in={isOpen} animateOpacity>
-        {isBelowTablet && (
+      <Collapse display={{ lg: 'block' }} in={isOpen} animateOpacity>
+        <MobileNav
+          mktCourses={!isNotAvailableForMktCourses && marketingCouses?.length > 0 ? marketingCouses : []}
+          NAV_ITEMS={ITEMS}
+          haveSession={sessionExists}
+          translations={translations}
+          readSyllabus={readSyllabus}
+        />
+        {/* {isBelowTablet && (
           <MobileNav
             NAV_ITEMS={ITEMS}
             haveSession={sessionExists}
@@ -407,7 +607,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
             readSyllabus={readSyllabus}
             isBelowTablet
           />
-        )}
+        )} */}
       </Collapse>
     </Box>
   );
@@ -415,7 +615,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
 
 NavbarWithSubNavigation.propTypes = {
   haveSession: PropTypes.bool,
-  translations: PropTypes.objectOf(PropTypes.string),
+  translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   pageProps: PropTypes.objectOf(PropTypes.any),
 };
 NavbarWithSubNavigation.defaultProps = {

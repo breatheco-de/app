@@ -9,9 +9,11 @@ import Text from '../../src/common/components/Text';
 
 const Markdown = ({ slice }) => {
   const rawText = prismicH.asText(slice.primary.markdown);
+  const padding = slice?.primary?.padding?.length > 0 && slice?.primary?.padding;
 
   return (
     <Box
+      id={slice?.primary?.id_key}
       display="grid"
       flexDirection="column"
       alignItems="center"
@@ -20,13 +22,13 @@ const Markdown = ({ slice }) => {
         md: '1.5fr repeat(12, 1fr) 1.5fr',
       }}
       flex="1"
-      margin="2rem auto 0 auto"
       maxWidth="1280px"
+      margin={slice?.primary?.margin || '2rem auto 0 auto'}
     >
       <Box
         display="grid"
         gridColumn="2 / span 12"
-        padding={{ base: '28px 0', md: '28px 32px' }}
+        padding={padding || { base: '28px 10px', md: '28px 0px' }}
         borderRadius="3px"
         // background={useColorModeValue('#F2F6FA', 'featuredDark')}
         width="100%"
@@ -43,7 +45,9 @@ const Markdown = ({ slice }) => {
             {slice.primary.description}
           </Text>
         )}
-        <MarkDownParser content={rawText} isPublic withToc={slice?.primary?.enable_table_of_content} />
+        {rawText?.length > 0 && (
+          <MarkDownParser content={rawText} isPublic withToc={slice?.primary?.enable_table_of_content} />
+        )}
       </Box>
     </Box>
   );

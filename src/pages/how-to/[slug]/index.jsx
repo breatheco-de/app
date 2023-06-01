@@ -15,12 +15,14 @@ import Heading from '../../../common/components/Heading';
 import Text from '../../../common/components/Text';
 import Icon from '../../../common/components/Icon';
 import TagCapsule from '../../../common/components/TagCapsule';
-import { publicRedirectByAsset } from '../../../lib/redirectsHandler';
-import modifyEnv from '../../../../modifyEnv';
+import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
+import GridContainer from '../../../common/components/GridContainer';
+import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
+import { unSlugifyCapitalize } from '../../../utils/index';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=1000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=2000`);
   const data = await resp.json();
   const howToData = data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como');
 
@@ -31,7 +33,7 @@ export const getStaticPaths = async ({ locales }) => {
     locale,
   })));
   return {
-    fallback: true,
+    fallback: false,
     paths,
   };
 };
@@ -41,8 +43,14 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=ARTICLE`);
   const data = await resp.json();
+  const engPrefix = {
+    us: 'en',
+    en: 'en',
+  };
 
-  if (resp.status >= 400) {
+  const isCurrenLang = locale === engPrefix[data?.lang] || locale === data?.lang;
+
+  if (resp.status >= 400 || !isCurrenLang) {
     return {
       notFound: true,
     };
@@ -53,6 +61,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   } = data;
 
   const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+  if (markdownResp?.status >= 400) {
+    return {
+      notFound: true,
+    };
+  }
+
   const markdown = await markdownResp.text();
 
   const ogUrl = {
@@ -110,7 +125,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
 export default function HowToSlug({ data, markdown }) {
   const { t } = useTranslation('how-to');
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   // const { title, author, preview } = data;
   const [neverLoaded, setNeverLoaded] = useState(false);
   const title = data?.title || '';
@@ -140,22 +154,6 @@ export default function HowToSlug({ data, markdown }) {
 
     if (redirect) {
       router.push(redirect?.destination);
-    } else {
-      const alias = await fetch(`${BREATHECODE_HOST}/v1/registry/alias/redirect`);
-      const aliasList = await alias.json();
-      const redirectSlug = aliasList[slug] || slug;
-      const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
-
-      const redirectResults = await dataRedirect.json();
-      const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-      const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || data?.slug || slug}`;
-      const pagePath = 'how-to';
-
-      const aliasRedirect = aliasList[slug] !== undefined && userPathName;
-
-      publicRedirectByAsset({
-        router, aliasRedirect, translations, userPathName, pagePath, isPublic: true,
-      });
     }
     return () => {};
   }, [router, router.locale, translations]);
@@ -167,89 +165,113 @@ export default function HowToSlug({ data, markdown }) {
   }, []);
 
   return (
-    <Box
-      gridGap="20px"
-      maxWidth="1020px"
-      margin="3rem auto"
-      padding="0 15px"
-      borderBottom={1}
-      borderStyle="solid"
-      borderColor={useColorModeValue('gray.200', 'gray.900')}
-    >
-      <Link
-        href="/how-to"
-        gridColumn="2 / span 12"
-        color={linkColor}
-        display="inline-block"
-        letterSpacing="0.05em"
-        fontWeight="700"
-        marginBottom="1rem"
+    <>
+      <GridContainer
+        withContainer
+        // gridColumn="1 / span 10"
+        maxWidth="1280px"
+        height="100%"
+        gridTemplateColumns={{ base: 'repeat(1, 1fr)', md: '0.5fr repeat(12, 1fr) 0.5fr' }}
+        margin="3rem auto 0 auto"
+        gridGap="0"
       >
-        {`← ${t('back-to')}`}
-      </Link>
-      <Box display="flex" gridGap="10px" justifyContent="space-between" mb="12px">
-        <TagCapsule
-          variant="rounded"
-          isLink
+        <Link
           href="/how-to"
-          tags={data?.technologies || ['alias', 'redirect']}
-          marginY="8px"
-          fontSize="13px"
-          style={{
-            padding: '2px 10px',
-            margin: '0',
-          }}
-          gap="10px"
-          paddingX="0"
-        />
-        <Link href={data?.readme_url || '#'} width="fit-content" color="gray.400" margin="0 0 0 auto" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
-          <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-          {t('common:edit-on-github')}
+          gridColumn="2 / span 12"
+          color={linkColor}
+          display="inline-block"
+          letterSpacing="0.05em"
+          fontWeight="700"
+          marginBottom="1rem"
+          width="fit-content"
+        >
+          {`← ${t('back-to')}`}
         </Link>
-      </Box>
-      {title ? (
-        <Heading size="l" fontWeight="700">
-          {title}
-        </Heading>
-      ) : (
-        <Skeleton height="45px" width="100%" borderRadius="10px" />
-      )}
-      <Box margin="24px 0 1.5rem 0">
-        <Text size="l" fontWeight="900" textTransform="uppercase">
-          {t('written-by')}
-        </Text>
-        {author ? (
-          <Text fontSize="l">
-            {`${author.first_name} ${author.last_name}`}
-          </Text>
-        ) : (
-          <>
-            {neverLoaded ? (
+      </GridContainer>
+      <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin="22px auto 0 auto" gridGap="36px" padding="0 10px">
+        <Box display="flex" position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
+          <MktSideRecommendedCourses />
+        </Box>
+        <Box
+          gridColumn="2 / span 12"
+          gridGap="20px"
+          maxWidth="854px"
+          borderBottom={1}
+          borderStyle="solid"
+          borderColor={useColorModeValue('gray.200', 'gray.900')}
+        >
+          <Box display="flex" gridGap="10px" justifyContent="space-between" mb="12px">
+            {data?.technologies.length > 0 && (
+              <TagCapsule
+                variant="rounded"
+                isLink
+                href="/how-to"
+                tags={data?.technologies}
+                marginY="8px"
+                fontSize="13px"
+                style={{
+                  padding: '2px 10px',
+                  margin: '0',
+                }}
+                gap="10px"
+                paddingX="0"
+              />
+            )}
+            <Link href={data?.readme_url || '#'} width="fit-content" color="gray.400" margin="0 0 0 auto" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
+              <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+              {t('common:edit-on-github')}
+            </Link>
+          </Box>
+          {title ? (
+            <Heading size="l" fontWeight="700">
+              {title}
+            </Heading>
+          ) : (
+            <Skeleton height="45px" width="100%" borderRadius="10px" />
+          )}
+          <Box margin="24px 0 1.5rem 0">
+            <Text size="l" fontWeight="900" textTransform="uppercase">
+              {t('written-by')}
+            </Text>
+            {author ? (
               <Text fontSize="l">
-                @4GeeksAcademy
+                {`${author.first_name} ${author.last_name}`}
               </Text>
             ) : (
-              <Skeleton height="20px" width="220px" borderRadius="10px" />
+              <>
+                {neverLoaded ? (
+                  <Text fontSize="l">
+                    @4GeeksAcademy
+                  </Text>
+                ) : (
+                  <Skeleton height="20px" width="220px" borderRadius="10px" />
+                )}
+              </>
             )}
-          </>
-        )}
-      </Box>
+          </Box>
 
-      {/* <Image src={getImage} alt={title} margin="20px 0 30px 0" width="100%" borderRadius="10px" height="100%" style={{ aspectRatio: '12/6' }} /> */}
-      <Box
-        borderRadius="3px"
-        margin="0 auto"
-        flexGrow={1}
-        className={`markdown-body ${useColorModeValue('light', 'dark')}`}
-      >
-        {markdown ? (
-          <MarkDownParser content={markdownData.content} />
-        ) : (
-          <MDSkeleton />
-        )}
-      </Box>
-
-    </Box>
+          {/* <Image src={getImage} alt={title} margin="20px 0 30px 0" width="100%" borderRadius="10px" height="100%" style={{ aspectRatio: '12/6' }} /> */}
+          <Box
+            borderRadius="3px"
+            margin="0 auto"
+            flexGrow={1}
+            className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+          >
+            {markdown ? (
+              <MarkDownParser content={markdownData.content} />
+            ) : (
+              <MDSkeleton />
+            )}
+            <MktRecommendedCourses
+              title={t('common:continue-learning', { technologies: data?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
+              marginBottom="15px"
+              technologies={data?.technologies.join(',')}
+              endpoint={`${process.env.BREATHECODE_HOST}/v1/marketing/course`}
+            />
+          </Box>
+        </Box>
+      </GridContainer>
+    </>
   );
 }
 

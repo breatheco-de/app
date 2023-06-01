@@ -3,13 +3,23 @@
     "__TYPE__": "SharedSliceContent",
     "variation": "default",
     "primary": {
+      "id_key": {
+        "__TYPE__": "FieldContent",
+        "value": "journey",
+        "type": "Text"
+      },
+      "two_column_size": {
+        "__TYPE__": "FieldContent",
+        "value": "Right is bigger",
+        "type": "Select"
+      },
       "title": {
         "__TYPE__": "StructuredTextContent",
         "value": [
           {
             "type": "heading1",
             "content": {
-              "text": "Something"
+              "text": "Throw"
             }
           }
         ]
@@ -20,12 +30,17 @@
           {
             "type": "paragraph",
             "content": {
-              "text": "Magna fugiat exercitation",
-              "spans": []
-            },
-            "direction": "ltr"
+              "text": "Non et ullamco esse ex laboris. Amet in nulla mollit esse minim laboris ea labore laborum exercitation sit."
+            }
           }
         ]
+      },
+      "button_link": {
+        "__TYPE__": "LinkContent",
+        "value": {
+          "__TYPE__": "ExternalLink",
+          "url": "https://prismic.io"
+        }
       },
       "highlight": {
         "__TYPE__": "StructuredTextContent",
@@ -33,12 +48,15 @@
           {
             "type": "paragraph",
             "content": {
-              "text": "Laboris",
-              "spans": []
-            },
-            "direction": "ltr"
+              "text": "Do qui enim est eiusmod commodo ut quis anim nisi pariatur labore ipsum aute."
+            }
           }
         ]
+      },
+      "highlight_style": {
+        "__TYPE__": "FieldContent",
+        "value": "Colored",
+        "type": "Select"
       },
       "description": {
         "__TYPE__": "StructuredTextContent",
@@ -46,10 +64,8 @@
           {
             "type": "paragraph",
             "content": {
-              "text": "Ut exercitation et anim laboris cupidatat est ut.",
-              "spans": []
-            },
-            "direction": "ltr"
+              "text": "Tempor officia nisi in do. Laborum deserunt ullamco pariatur incididunt velit excepteur velit Lorem ut cupidatat laborum ipsum laboris occaecat et."
+            }
           }
         ]
       },
@@ -59,33 +75,43 @@
           {
             "type": "paragraph",
             "content": {
-              "text": "In consectetur consequat quis in amet consectetur ipsum excepteur elit dolor cupidatat et Lorem enim nostrud. Pariatur exercitation eu amet esse voluptate dolore proident incididunt cupidatat. Deserunt irure aute nisi officia et consequat ad adipisicing elit velit excepteur duis pariatur aliqua tempor."
+              "text": "Veniam laboris non aliquip elit irure excepteur aliqua nisi est. Aliqua Lorem aute nisi adipisicing eu enim culpa minim ad fugiat aliqua anim sint minim sint."
             }
           }
         ]
       },
       "image": {
         "origin": {
-          "id": "QUHuwyNgSA0",
-          "url": "https://images.unsplash.com/photo-1579403124614-197f69d8187b?crop=entropy&cs=tinysrgb&fm=jpg&ixid=MnwzMzc0NjN8MHwxfHNlYXJjaHwxMHx8ZGV2ZWxvcG1lbnR8ZW58MHx8fHwxNjc1NjQ3NDM2&ixlib=rb-4.0.3&q=80",
-          "width": 3394,
-          "height": 4243
+          "id": "main",
+          "url": "https://images.unsplash.com/photo-1541807084-5c52b6b3adef",
+          "width": 4000,
+          "height": 6000
         },
-        "url": "https://images.unsplash.com/photo-1579403124614-197f69d8187b?crop=entropy&cs=tinysrgb&fm=jpg&ixid=MnwzMzc0NjN8MHwxfHNlYXJjaHwxMHx8ZGV2ZWxvcG1lbnR8ZW58MHx8fHwxNjc1NjQ3NDM2&ixlib=rb-4.0.3&q=80&rect=0%2C0%2C3394%2C4243&w=400&h=500",
+        "url": "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?rect=0%2C0%2C4000%2C6000&w=400&h=600",
         "width": 400,
-        "height": 500,
+        "height": 600,
         "edit": {
-          "background": "transparent",
           "zoom": 1,
           "crop": {
             "x": 0,
             "y": 0
-          }
+          },
+          "background": "transparent"
         },
         "credits": null,
-        "alt": "asdasdsss",
+        "alt": null,
         "__TYPE__": "ImageContent",
         "thumbnails": {}
+      },
+      "margin": {
+        "__TYPE__": "FieldContent",
+        "value": "somewhere",
+        "type": "Text"
+      },
+      "grid_gap": {
+        "__TYPE__": "FieldContent",
+        "value": "lay",
+        "type": "Text"
       }
     },
     "items": [

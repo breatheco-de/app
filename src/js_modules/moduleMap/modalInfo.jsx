@@ -17,7 +17,8 @@ const ModalInfo = ({
   isOpen, onClose, actionHandler, rejectHandler, forceHandler, disableHandler, title, description,
   teacherFeedback, linkInfo, linkText, link, handlerText, closeText, cancelColorButton,
   handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
-  htmlDescription, markdownDescription, attachment, disableInput,
+  htmlDescription, markdownDescription, attachment, disableInput, descriptionStyle, footerStyle,
+  closeButtonStyles, buttonHandlerStyles, headerStyles, disableCloseButton,
 }) => {
   const { t } = useTranslation('dashboard');
   const [githubUrl, setGithubUrl] = useState(link);
@@ -61,6 +62,7 @@ const ModalInfo = ({
             borderBottom={1}
             borderStyle="solid"
             borderColor={commonBorderColor}
+            {...headerStyles}
           >
             {title}
           </ModalHeader>
@@ -73,6 +75,7 @@ const ModalInfo = ({
                 fontWeight="400"
                 color={commonTextColor}
                 margin="10px 0 0 0"
+                {...descriptionStyle}
               >
                 {description}
               </Text>
@@ -216,7 +219,7 @@ const ModalInfo = ({
                   </Box>
                 )}
 
-                {disableInput && (
+                {disableInput && (linkText || link) && (
                   <Box padding="18px 0 0 0">
                     <Text size="l" fontWeight="bold" color={commonTextColor}>
                       {linkInfo}
@@ -235,17 +238,19 @@ const ModalInfo = ({
             )}
           </ModalBody>
 
-          <ModalFooter justifyContent="space-evenly">
+          <ModalFooter justifyContent="space-evenly" {...footerStyle}>
             {type === 'taskHandler' ? (
               <Box width="100%" display="flex" justifyContent="space-between">
-                <Button
-                  fontSize="13px"
-                  variant={closeButtonVariant}
-                  onClick={actionHandler}
-                  textTransform="uppercase"
-                >
-                  {closeText || t('common:close')}
-                </Button>
+                {!disableCloseButton && (
+                  <Button
+                    fontSize="13px"
+                    variant={closeButtonVariant}
+                    onClick={actionHandler}
+                    textTransform="uppercase"
+                  >
+                    {closeText || t('common:close')}
+                  </Button>
+                )}
                 <Button
                   fontSize="13px"
                   disabled={(Array.isArray(attachment) && attachment.length > 0) || isSubmitting || disableHandler}
@@ -260,22 +265,26 @@ const ModalInfo = ({
               </Box>
             ) : (
               <>
-                <Button
-                  fontSize="13px"
-                  variant={closeButtonVariant}
-                  colorScheme={cancelColorButton}
-                  mr={3}
-                  onClick={() => rejectFunction()}
-                  textTransform="uppercase"
-                >
-                  {closeText || t('common:close')}
-                </Button>
+                {!disableCloseButton && (
+                  <Button
+                    fontSize="13px"
+                    variant={closeButtonVariant}
+                    colorScheme={cancelColorButton}
+                    mr={3}
+                    onClick={() => rejectFunction()}
+                    textTransform="uppercase"
+                    {...closeButtonStyles}
+                  >
+                    {closeText || t('common:close')}
+                  </Button>
+                )}
                 {!disableHandler && (
                   <Button
                     fontSize="13px"
                     onClick={actionHandler}
                     colorScheme={handlerColorButton}
                     textTransform="uppercase"
+                    {...buttonHandlerStyles}
                   >
                     {handlerText}
                   </Button>
@@ -356,6 +365,12 @@ ModalInfo.propTypes = {
   htmlDescription: PropTypes.string,
   markdownDescription: PropTypes.string,
   attachment: PropTypes.arrayOf(PropTypes.object),
+  descriptionStyle: PropTypes.objectOf(PropTypes.any),
+  footerStyle: PropTypes.objectOf(PropTypes.any),
+  closeButtonStyles: PropTypes.objectOf(PropTypes.any),
+  buttonHandlerStyles: PropTypes.objectOf(PropTypes.any),
+  headerStyles: PropTypes.objectOf(PropTypes.any),
+  disableCloseButton: PropTypes.bool,
 };
 
 ModalInfo.defaultProps = {
@@ -383,6 +398,12 @@ ModalInfo.defaultProps = {
   htmlDescription: '',
   markdownDescription: '',
   attachment: [],
+  descriptionStyle: {},
+  footerStyle: {},
+  closeButtonStyles: {},
+  buttonHandlerStyles: {},
+  headerStyles: {},
+  disableCloseButton: false,
 };
 
 export default memo(ModalInfo);

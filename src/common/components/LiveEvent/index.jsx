@@ -1,43 +1,31 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
-  Box, useColorModeValue, Button, useToast,
+  Box, useColorModeValue, Button,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
-import { formatDuration, intervalToDuration } from 'date-fns';
-import { es, en } from 'date-fns/locale';
+import { intervalToDuration } from 'date-fns';
 import useTranslation from 'next-translate/useTranslation';
 import CustomTheme from '../../../../styles/theme';
-import bc from '../../services/breathecode';
 import Link from '../NextChakraLink';
 import Text from '../Text';
 import Icon from '../Icon';
-import { getStorageItem, isDateMoreThanAnyDaysAgo } from '../../../utils';
+import { isValidDate } from '../../../utils';
 import OtherEvents from './OtherEvents';
 import modifyEnv from '../../../../modifyEnv';
-
-const availableLanguages = {
-  es,
-  en,
-};
+import MainEvent from './MainEvent';
 
 const LiveEvent = ({
-  // liveUrl,
-  liveClassHash,
-  liveStartsAt,
-  liveEndsAt,
+  mainClasses,
   otherEvents,
   startingSoonDelta,
   stTranslation,
   featureLabel,
   featureReadMoreUrl,
+  ...rest
 }) => {
   const { t, lang } = useTranslation('live-event');
   const [isOpen, setIsOpen] = useState(false);
-  const [showText, setShowText] = useState(false);
-  const [timeAgo, setTimeAgo] = useState('');
-  const accessToken = getStorageItem('accessToken');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const bgColor = useColorModeValue('white', 'gray.900');
@@ -48,35 +36,50 @@ const LiveEvent = ({
   const otherEventsSorted = otherEvents?.length > 0 ? otherEvents.sort((a, b) => new Date(a.starting_at) - new Date(b.starting_at)) : [];
   const nearestEvent = otherEventsSorted[0];
   const restOfEvents = otherEventsSorted.slice(1);
-  const featuredLiveEventStartsAt = liveStartsAt || nearestEvent?.starting_at;
-  const featuredLiveEventEndsAt = liveEndsAt || nearestEvent?.ending_at;
 
-  const liveStartsAtDate = new Date(featuredLiveEventStartsAt);
-  const liveEndsAtDate = new Date(featuredLiveEventEndsAt);
-  const textLimit = 35;
+  const mainEvents = mainClasses.length === 0 && nearestEvent ? [nearestEvent] : [...mainClasses];
 
-  const truncatedText = (showText || nearestEvent?.title?.length < textLimit) ? nearestEvent?.title : `${nearestEvent?.title.slice(0, textLimit)}...`;
-
-  const toast = useToast();
   const getOtherEvents = () => {
-    if (!liveStartsAt && nearestEvent) {
+    if (mainClasses.length === 0 && nearestEvent) {
       return restOfEvents;
     }
     return otherEventsSorted;
   };
 
-  const formatTimeString = (start, isMoreThan2Days = false) => {
-    const duration = intervalToDuration({
+  const formatTimeString = (start) => {
+    const isValidDates = isValidDate(start);
+    const duration = isValidDates && intervalToDuration({
       end: new Date(),
       start,
     });
 
-    const formated = formatDuration(duration,
-      {
-        format: !isMoreThan2Days ? ['months', 'weeks', 'days', 'hours', 'minutes'] : ['months', 'weeks', 'days'],
-        delimiter: ', ',
-        locale: availableLanguages[lang],
-      });
+    const formatDurationString = () => {
+      const { months, days, hours, minutes } = duration;
+      if (months >= 1) {
+        return months > 1
+          ? stTranslation?.[lang]?.['live-event']?.['start-months']?.replace('{{time}}', months) || t('start-months', { time: months })
+          : stTranslation?.[lang]?.['live-event']?.['start-month']?.replace('{{time}}', months) || t('start-month', { time: months });
+      }
+      if (days >= 1 && months === 0) {
+        return days > 1
+          ? stTranslation?.[lang]?.['live-event']?.['start-days']?.replace('{{time}}', days) || t('start-days', { time: days })
+          : stTranslation?.[lang]?.['live-event']?.['start-day']?.replace('{{time}}', days) || t('start-day', { time: days });
+      }
+      if (hours >= 1 && days === 0 && months === 0) {
+        return hours > 1
+          ? stTranslation?.[lang]?.['live-event']?.['start-hours']?.replace('{{time}}', hours) || t('start-hours', { time: hours || 0 })
+          : stTranslation?.[lang]?.['live-event']?.['start-hour']?.replace('{{time}}', hours) || t('start-hour', { time: hours || 0 });
+      }
+      if (minutes >= 1 && hours === 0 && days === 0 && months === 0) {
+        return minutes > 1
+          ? stTranslation?.[lang]?.['live-event']?.['start-minutes']?.replace('{{time}}', minutes) || t('start-minutes', { time: minutes || 0 })
+          : stTranslation?.[lang]?.['live-event']?.['start-minute']?.replace('{{time}}', minutes) || t('start-minute', { time: minutes || 0 });
+      }
+
+      return '';
+    };
+
+    const formated = formatDurationString();
 
     if (formated === '') return stTranslation ? stTranslation[lang]['live-event']['few-seconds'] : t('few-seconds');
     return formated;
@@ -86,37 +89,24 @@ const LiveEvent = ({
     const started = start - new Date() <= startingSoonDelta;
     const ended = end - new Date() <= 0;
     let formatedTime;
-    const isMoreThan2Days = isDateMoreThanAnyDaysAgo(start, 2);
 
     if (ended) {
       formatedTime = formatTimeString(end);
       return stTranslation ? stTranslation[lang]['live-event'].ended.replace('{{time}}', formatedTime) : t('ended', { time: formatedTime });
     }
-    formatedTime = formatTimeString(start, isMoreThan2Days);
+    formatedTime = formatTimeString(start);
     if (started) {
       return stTranslation ? stTranslation[lang]['live-event'].started.replace('{{time}}', formatedTime) : t('started', { time: formatedTime });
     }
     return stTranslation ? stTranslation[lang]['live-event']['will-start'].replace('{{time}}', formatedTime) : t('will-start', { time: formatedTime });
   };
 
-  useEffect(() => {
-    // initial time
-    if (featuredLiveEventStartsAt) {
-      setTimeAgo(textTime(liveStartsAtDate, liveEndsAtDate));
-    }
-    // update time every minute
-    const interval = setInterval(() => {
-      setTimeAgo(featuredLiveEventStartsAt ? textTime(liveStartsAtDate, liveEndsAtDate) : '');
-    }, 60000);
-
-    return () => clearInterval(interval);
-  }, [featuredLiveEventStartsAt]);
-
   const isLiveOrStarting = (start, end) => {
+    const isValidDates = isValidDate(start) && isValidDate(end);
     const ended = end - new Date() <= 0;
     if (ended) return false;
 
-    const interval = intervalToDuration({ end: new Date(), start });
+    const interval = isValidDates && intervalToDuration({ end: new Date(), start: new Date(start) });
     const {
       days, months, hours, years, minutes,
     } = interval;
@@ -124,167 +114,102 @@ const LiveEvent = ({
     return start - new Date() <= 0 || (totalTime === minutes && minutes <= startingSoonDelta);
   };
 
-  const getLiveIcon = () => {
-    if (!liveStartsAt && nearestEvent) {
+  const isLive = (start, end) => {
+    const ended = end - new Date() <= 0;
+    if (ended) return false;
+
+    return start - new Date() <= 0;
+  };
+
+  const getLiveIcon = (event) => {
+    if (mainClasses.length === 0 && nearestEvent) {
       return nearestEvent?.icon || 'group';
     }
-    if (isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
+    if (isLiveOrStarting(new Date(event?.starting_at), new Date(event.ending_at))) {
       return 'live-event';
     }
     return 'live-event-opaque';
   };
 
-  const handleShowText = () => {
-    if (nearestEvent?.title?.length > textLimit) {
-      setShowText(true);
-    }
-  };
-
   return (
     <Box
-      padding="16px 25px"
+      padding="10px"
       background={bgColor}
       border="1px solid"
       borderColor="#DADADA"
       borderRadius="11px"
       maxWidth="100%"
-      minWidth="320px"
+      {...rest}
     >
       {(featureLabel || featureReadMoreUrl) && (
-      <Text
-        fontSize="sm"
-        lineHeight="19px"
-        fontWeight="700"
-        color={textColor}
-        textAlign="center"
-        marginBottom="15px"
-        marginTop="0"
-      >
-        {featureLabel}
-        {' '}
-        {featureReadMoreUrl && (
-        <Link
-          target="_blank"
-          rel="noopener noreferrer"
-          href={featureReadMoreUrl}
-          color={useColorModeValue('blue.default', 'blue.300')}
-          display="inline-block"
-          letterSpacing="0.05em"
-          locale="en"
-          fontFamily="Lato, Sans-serif"
+        <Text
+          fontSize="sm"
+          lineHeight="19px"
+          fontWeight="700"
+          color={textColor}
+          textAlign="center"
+          marginBottom="15px"
+          marginTop="0"
         >
-          {stTranslation ? stTranslation[lang]['live-event']['learn-more'] : t('learn-more')}
-        </Link>
-        )}
-      </Text>
+          {featureLabel}
+          {' '}
+          {featureReadMoreUrl && (
+            <Link
+              target="_blank"
+              rel="noopener noreferrer"
+              href={featureReadMoreUrl}
+              color={useColorModeValue('blue.default', 'blue.300')}
+              display="inline-block"
+              letterSpacing="0.05em"
+              locale="en"
+              fontFamily="Lato, Sans-serif"
+            >
+              {stTranslation ? stTranslation[lang]['live-event']['learn-more'] : t('learn-more')}
+            </Link>
+          )}
+        </Text>
       )}
-      {featuredLiveEventStartsAt ? (
+      {mainEvents.length !== 0 ? (
         <Box
-          display="flex"
-          alignItems="center"
           background={bgColor2}
-          border={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && '2px solid'}
+          border={mainEvents.some((event) => isLiveOrStarting(new Date(event.starting_at), new Date(event.ending_at))) && '2px solid'}
           borderColor={CustomTheme.colors.blue.default2}
           padding="10px"
-          borderRadius="50px"
+          borderRadius="19px"
           width="100%"
           margin="auto"
-          cursor={(!liveStartsAt || isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) && 'pointer'}
-          onClick={() => {
-            if (liveStartsAt && isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
-              bc.events().joinLiveClass(liveClassHash)
-                .then((resp) => {
-                  if (resp.data?.url) {
-                    window.open(resp.data?.url);
-                  } else {
-                    toast({
-                      title: t('alert-message:no-link-exist'),
-                      status: 'info',
-                      duration: 4000,
-                      isClosable: true,
-                    });
-                  }
-                })
-                .catch(() => {
-                  toast({
-                    title: t('alert-message:something-went-wrong'),
-                    status: 'error',
-                    duration: 3000,
-                    isClosable: true,
-                  });
-                });
-            }
-            if (!liveStartsAt) {
-              window.open(`${BREATHECODE_HOST}/v1/events/me/event/${nearestEvent?.id}/join?token=${accessToken}`);
-            }
-          }}
         >
-          <Box
-            borderRadius="full"
-            width="50px"
-            height="50px"
-            className={
-              isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)
-                ? `${!liveStartsAt ? 'pulse-blue' : 'pulse-red'}`
-                : ''
-            }
-            opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? '1' : '0.5'}
-          >
-            <Icon
-              width="50px"
-              height="50px"
-              icon={getLiveIcon()}
+          {mainEvents.map((event, index) => (
+            <MainEvent
+              key={event.id}
+              index={index}
+              event={event}
+              mainEvents={mainEvents}
+              getOtherEvents={getOtherEvents}
+              isLiveOrStarting={isLiveOrStarting}
+              getLiveIcon={getLiveIcon}
+              host={BREATHECODE_HOST}
+              nearestEvent={nearestEvent}
+              isLive={isLive}
+              textTime={textTime}
+              isWorkshop={!event?.hash}
+              subLabel={event?.hash ? t('master-class') : t('workshop')}
+              stTranslation={stTranslation}
+              mainClasses={mainClasses}
+              limitOfText={54}
             />
-          </Box>
-          <Box
-            display="flex"
-            justifyContent="center"
-            flexDirection="column"
-            marginLeft="10px"
-          >
-            <Text
-              size="15px"
-              lineHeight="18px"
-              fontWeight="900"
-              color={textColor}
-              marginBottom="5px"
-              marginTop="0"
-              onMouseOver={handleShowText}
-              onMouseOut={() => setShowText(false)}
-            >
-              {liveStartsAt ? (
-                <>
-                  {stTranslation ? stTranslation[lang]['live-event']['live-class'] : t('live-class')}
-                </>
-              ) : (
-                <>
-                  {truncatedText}
-                </>
-              )}
-            </Text>
-            <Text
-              size="14px"
-              lineHeight="18px"
-              fontWeight="700"
-              color={textGrayColor}
-              margin="0"
-            >
-              {timeAgo}
-            </Text>
-          </Box>
+          ))}
         </Box>
       ) : (
         <Box
           display="flex"
           alignItems="center"
           background={bgColor2}
-          // border={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && '2px solid'}
           borderColor=""
           padding="10px"
-          borderRadius="50px"
+          borderRadius="19px"
           width="100%"
           margin="auto"
-          // cursor={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) && 'pointer'}
         >
           <Box
             borderRadius="full"
@@ -330,9 +255,12 @@ const LiveEvent = ({
       {isOpen && (
         <Box marginTop="10px" maxHeight="450px" overflow="auto">
           <OtherEvents
-            events={liveStartsAt ? otherEventsSorted : restOfEvents}
+            events={mainEvents.length !== 0 && mainClasses.length !== 0 ? otherEventsSorted : restOfEvents}
             isLiveOrStarting={isLiveOrStarting}
+            isLive={isLive}
+            subLabel={t('workshop')}
             textTime={textTime}
+            stTranslation={stTranslation}
           />
         </Box>
       )}
@@ -353,12 +281,18 @@ const LiveEvent = ({
             setIsOpen(!isOpen);
           }}
         >
-          {getOtherEvents().filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ending_at)))?.length !== 0 && (
-            <Box borderRadius="full" background="none" className="pulse-red" width="16px" height="16px" display="inline-block" marginRight="5px">
-              <Icon width="16px" height="16px" icon="on-live" />
-            </Box>
+          {getOtherEvents().filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ending_at)))?.length !== 0 ? (
+            <>
+              <Box borderRadius="full" background="none" className="pulse-red" width="16px" height="16px" display="inline-block" marginRight="5px">
+                <Icon width="16px" height="16px" icon="on-live" />
+              </Box>
+              {stTranslation ? stTranslation[lang]['live-event']?.['other-live-events-now'] : t('other-live-events-now')}
+            </>
+          ) : (
+            <>
+              {stTranslation ? stTranslation[lang]['live-event'].upcoming : t('upcoming')}
+            </>
           )}
-          {stTranslation ? stTranslation[lang]['live-event'].upcoming : t('upcoming')}
           {isOpen ? (<ChevronUpIcon w={6} h={7} />) : (<ChevronDownIcon w={6} h={7} />)}
         </Button>
       )}
@@ -367,24 +301,21 @@ const LiveEvent = ({
 };
 
 LiveEvent.propTypes = {
-  liveStartsAt: PropTypes.instanceOf(Date).isRequired,
-  liveEndsAt: PropTypes.instanceOf(Date).isRequired,
+  mainClasses: PropTypes.arrayOf(PropTypes.any),
   otherEvents: PropTypes.arrayOf(PropTypes.any),
   stTranslation: PropTypes.objectOf(PropTypes.any),
   startingSoonDelta: PropTypes.number,
-  // liveUrl: PropTypes.string.isRequired,
   featureLabel: PropTypes.string,
   featureReadMoreUrl: PropTypes.string,
-  liveClassHash: PropTypes.string,
 };
 
 LiveEvent.defaultProps = {
+  mainClasses: [],
   otherEvents: [],
   stTranslation: null,
   startingSoonDelta: 30,
   featureLabel: null,
   featureReadMoreUrl: null,
-  liveClassHash: null,
 };
 
 export default LiveEvent;

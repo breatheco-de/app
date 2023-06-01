@@ -68,7 +68,7 @@ const publicRedirectByAsset = ({
       || userPathName === `/es/${pagePath}/${translationUs}`)
     ) {
       console.log(`Page: redirecting from ${userPathName} → ${`/es/${pagePath}/${translations.es}`}`);
-      return router.push(`/es/${pagePath}/${translations.es}`);
+      router.push(`/es/${pagePath}/${translations.es}`);
     }
 
     if (
@@ -77,7 +77,7 @@ const publicRedirectByAsset = ({
         || userPathName === `/en/${pagePath}/${translations.es}`)
     ) {
       console.log(`Page: redirecting from ${userPathName} → ${`/${pagePath}/${translationUs}`}`);
-      return router.push(`/en/${pagePath}/${translationUs}`);
+      router.push(`/en/${pagePath}/${translationUs}`);
     }
   }
   return '';

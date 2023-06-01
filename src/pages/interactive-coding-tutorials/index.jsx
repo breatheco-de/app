@@ -10,12 +10,12 @@ import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import FilterModal from '../../common/components/FilterModal';
 import TitleContent from '../../js_modules/projects/TitleContent';
-import ProjectList from '../../js_modules/projects/ProjectList';
 import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 import GridContainer from '../../common/components/GridContainer';
 import { getQueryString } from '../../utils';
 import PaginatedView from '../../common/components/PaginationView';
+import ProjectsLoader from '../../common/components/ProjectsLoader';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'projects');
@@ -44,14 +44,13 @@ export const getStaticProps = async ({ locale, locales }) => {
       Accept: 'application/json, text/plain, */*',
     },
   );
+  const technologies = await technologiesResponse.json();
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /interactive-coding-tutorials`);
+    console.log(`SUCCESS: ${technologies.length} Technologies fetched for /interactive-coding-tutorials`);
   } else {
     console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-coding-tutorials`);
   }
-
-  const technologies = await technologiesResponse.json();
 
   for (let i = 0; i < arrProjects.length; i += 1) {
     // skip repeated projects
@@ -108,6 +107,7 @@ export const getStaticProps = async ({ locale, locales }) => {
         keywords,
         locales,
         locale,
+        disableStaticCanonical: true,
         url: ogUrl.en || `/${locale}/interactive-coding-tutorials`,
         pathConnector: '/interactive-coding-tutorials',
         card: 'default',
@@ -131,7 +131,8 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const page = getQueryString('page', 1);
-  const search = getQueryString('search', 1);
+  const search = getQueryString('search', '');
+  const pageIsEnabled = getQueryString('page', false);
 
   const contentPerPage = 20;
   const startIndex = (page - 1) * contentPerPage;
@@ -229,7 +230,6 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
             onClose={onClose}
             contextFilter={filteredBy.projectsOptions}
             cardHeight="348px"
-            // isLoading={isLoading}
             setFilter={setProjectFilters}
             technologyTags={technologyTags}
             difficulties={difficulties}
@@ -237,7 +237,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         </Flex>
       </Box>
 
-      <GridContainer>
+      <GridContainer maxWidth="1280px" position="relative" withContainer gridColumn="1 / span 10">
         <Text
           size="md"
           display="flex"
@@ -247,20 +247,23 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
           {t('description')}
         </Text>
 
-        {(search?.length > 0 || currentFilters > 0) ? (
-          <ProjectList
-            projects={projects}
-            withoutImage
-            contextFilter={filteredBy.exercisesOptions}
-            projectPath="how-to"
+        {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
+          <ProjectsLoader
+            articles={projects}
+            itemsPerPage={20}
+            searchQuery={search}
+            options={{
+              withoutImage: true,
+              contextFilter: filteredBy.projectsOptions,
+              pagePath: '/interactive-coding-tutorials',
+            }}
           />
         ) : (
           <PaginatedView
             queryFunction={queryFunction}
             options={{
-              projectPath: 'interactive-coding-tutorial',
               pagePath: '/interactive-coding-tutorials',
-              contextFilter: filteredBy.exercisesOptions,
+              contextFilter: filteredBy.projectsOptions,
               contentPerPage,
               disableLangFilter: true,
             }}
@@ -273,7 +276,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
 };
 
 Projects.propTypes = {
-  technologyTags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  technologyTags: PropTypes.arrayOf(PropTypes.any).isRequired,
   projects: PropTypes.arrayOf(PropTypes.object).isRequired,
   difficulties: PropTypes.arrayOf(PropTypes.string).isRequired,
 };

@@ -10,12 +10,12 @@ import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import FilterModal from '../../common/components/FilterModal';
 import TitleContent from '../../js_modules/projects/TitleContent';
-import ProjectList from '../../js_modules/projects/ProjectList';
 import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
-import { getQueryString, isWindow } from '../../utils';
+import { getQueryString } from '../../utils';
 import GridContainer from '../../common/components/GridContainer';
 import PaginatedView from '../../common/components/PaginationView';
+import ProjectsLoader from '../../common/components/ProjectsLoader';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'exercises');
@@ -54,14 +54,13 @@ export const getStaticProps = async ({ locale, locales }) => {
       Accept: 'application/json, text/plain, */*',
     },
   );
+  const technologies = await technologiesResponse.json();
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /interactive-exercises`);
+    console.log(`SUCCESS: ${technologies.length} Technologies fetched for /interactive-exercises`);
   } else {
     console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-exercises`);
   }
-
-  const technologies = await technologiesResponse.json();
 
   for (let i = 0; i < arrExercises.length; i += 1) {
     // skip repeated exercises
@@ -116,6 +115,7 @@ export const getStaticProps = async ({ locale, locales }) => {
         pathConnector: '/interactive-exercises',
         locales,
         locale,
+        disableStaticCanonical: true,
         keywords,
         card: 'large',
       },
@@ -134,7 +134,8 @@ function Exercices({ exercises, technologyTags, difficulties }) {
   const { filteredBy, setExerciseFilters } = useFilter();
   const router = useRouter();
   const page = getQueryString('page', 1);
-  const search = getQueryString('search', 1);
+  const search = getQueryString('search', '');
+  const pageIsEnabled = getQueryString('page', false);
 
   const contentPerPage = 20;
   const startIndex = (page - 1) * contentPerPage;
@@ -242,7 +243,7 @@ function Exercices({ exercises, technologyTags, difficulties }) {
       </Box>
 
       {/* margin={{ base: '0 4% 0 4%', md: '0 10% 0 10%' }} */}
-      <GridContainer>
+      <GridContainer withContainer gridColumn="1 / span 10" maxWidth="1280px">
         <Text
           size="md"
           display="flex"
@@ -251,32 +252,28 @@ function Exercices({ exercises, technologyTags, difficulties }) {
         >
           {t('description')}
         </Text>
-        {(search?.length > 0 || currentFilters > 0) ? (
-          <>
-            {exercises?.length > 0 && (
-              <ProjectList
-                projects={exercises}
-                withoutImage
-                contextFilter={filteredBy.exercisesOptions}
-                projectPath="interactive-exercise"
-              />
-            )}
-          </>
+        {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
+          <ProjectsLoader
+            articles={exercises}
+            itemsPerPage={20}
+            searchQuery={search}
+            options={{
+              withoutImage: true,
+              contextFilter: filteredBy.exercisesOptions,
+              pagePath: '/interactive-exercises',
+
+            }}
+          />
         ) : (
-          <>
-            {isWindow && (
-              <PaginatedView
-                queryFunction={queryFunction}
-                options={{
-                  projectPath: 'interactive-exercise',
-                  pagePath: '/interactive-exercises',
-                  contextFilter: filteredBy.exercisesOptions,
-                  contentPerPage,
-                  disableLangFilter: true,
-                }}
-              />
-            )}
-          </>
+          <PaginatedView
+            queryFunction={queryFunction}
+            options={{
+              pagePath: '/interactive-exercises',
+              contextFilter: filteredBy.exercisesOptions,
+              contentPerPage,
+              disableLangFilter: true,
+            }}
+          />
         )}
       </GridContainer>
     </Box>

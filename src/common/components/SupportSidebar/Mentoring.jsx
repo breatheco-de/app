@@ -1,55 +1,39 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable max-len */
+/* eslint-disable react/prop-types */
 import {
-  memo, useState, forwardRef, useEffect,
+  memo, useState, useEffect,
 } from 'react';
 import {
-  Box, useColorMode, useColorModeValue, Input, InputRightElement, InputGroup, Button, Tooltip, toast,
+  toast,
 } from '@chakra-ui/react';
-// import getDay from 'date-fns/getDay';
 import PropTypes from 'prop-types';
-import useTranslation from 'next-translate/useTranslation';
-// import ReactDatePicker from 'react-datepicker';
-// import { ChevronDownIcon } from '@chakra-ui/icons';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useRouter } from 'next/router';
-import { useFlags } from 'launchdarkly-react-client-sdk';
-import Icon from '../Icon';
-import Text from '../Text';
-import Image from '../Image';
-import Link from '../NextChakraLink';
-import Heading from '../Heading';
-import useStyle from '../../hooks/useStyle';
+import useTranslation from 'next-translate/useTranslation';
 import bc from '../../services/breathecode';
 import MentoringFree from './MentoringFree';
 import MentoringConsumables from './MentoringConsumables';
 import useAuth from '../../hooks/useAuth';
-// import { usePersistent } from '../../hooks/usePersistent';
+import { usePersistent } from '../../hooks/usePersistent';
 
 const Mentoring = ({
-  width, programServices, setOpenMentors, flags,
+  width, programServices, flags,
 }) => {
   const { t } = useTranslation('dashboard');
   const [savedChanges, setSavedChanges] = useState({});
-  const { colorMode } = useColorMode();
+  const [cohortSession] = usePersistent('cohortSession', {});
   const router = useRouter();
   const [serviceMentoring, setServiceMentoring] = useState({});
   const [mentoryProps, setMentoryProps] = useState({});
+  const [allMentorsAvailable, setAllMentorsAvailable] = useState([]);
   const [programMentors, setProgramMentors] = useState([]);
   const { isLoading, user } = useAuth();
   const { slug } = router.query;
-  const isNotProduction = process.env.VERCEL_ENV !== 'production';
 
   const [searchProps, setSearchProps] = useState({
     serviceSearch: '',
     mentorSearch: '',
   });
-
-  const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
-  const { borderColor, lightColor, hexColor } = useStyle();
-
-  const cohortService = serviceMentoring?.mentorship_services?.find((c) => c?.slug === savedChanges?.service?.slug);
 
   const servicesFiltered = programServices.filter(
     (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
@@ -64,22 +48,6 @@ const Mentoring = ({
     },
   );
 
-  // const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => (
-  //   <Button
-  //     size={['md', 'md', 'lg', 'lg']}
-  //     display="inline-block"
-  //     colorScheme="blue"
-  //     variant="ghost"
-  //     onClick={onClick}
-  //     ref={ref}
-  //     marginLeft={['5px', '5px', '10px', '10px']}
-  //   >
-  //     {value || t('common:select')}
-  //     {' '}
-  //     <ChevronDownIcon />
-  //   </Button>
-  // ));
-
   const dateFormated = {
     en: mentoryProps?.date && format(new Date(mentoryProps.date), 'MMMM dd'),
     es: mentoryProps?.date && format(new Date(mentoryProps.date), "dd 'de' MMMM", { locale: es }),
@@ -89,11 +57,6 @@ const Mentoring = ({
     en: mentoryProps?.date && format(new Date(mentoryProps.date), 'MMMM dd, yyyy'),
     es: mentoryProps?.date && format(new Date(mentoryProps.date), "dd 'de' MMMM, yyyy", { locale: es }),
   };
-
-  // const isWeekday = (date) => {
-  //   const day = getDay(date);
-  //   return day !== 0 && day !== 6;
-  // };
 
   useEffect(() => {
     if (mentoryProps?.time) {
@@ -108,60 +71,57 @@ const Mentoring = ({
     }
   }, [mentoryProps?.time]);
 
-  const mentoryFormStarted = mentoryProps?.service || mentoryProps?.mentor || mentoryProps?.date;
   const step1 = !mentoryProps?.service;
   const step2 = mentoryProps?.service && !mentoryProps?.date;
-  // const step3 = mentoryProps?.service
-  //   && mentoryProps?.mentor
-  //   && mentoryProps?.date
-  //   && !mentoryProps.time;
-  // const mentoryFormCompleted = mentoryProps?.service
-  //   && mentoryProps?.mentor
-  //   && mentoryProps?.date
-  //   && mentoryProps?.time;
 
-  const handleService = (service) => {
-    bc.mentorship({
-      service: service.slug,
-      status: 'ACTIVE',
-      syllabus: slug,
-    }).getMentor()
-      .then((res) => {
-        setProgramMentors(res.data);
-        setTimeout(() => {
-          setMentoryProps({ ...mentoryProps, service });
-          setSavedChanges({ ...savedChanges, service });
-        }, 50);
-      })
-      .catch(() => {
-        toast({
-          title: 'Error',
-          description: t('alert-message:error-finding-mentors'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
+  const getAllMentorsAvailable = () => {
+    const servicesSlugs = programServices.map((service) => service?.slug);
+
+    if (servicesSlugs.length > 0) {
+      return bc.mentorship({
+        services: servicesSlugs.toString(),
+        status: 'ACTIVE',
+        syllabus: slug,
+      }).getMentor()
+        .then((res) => res?.data)
+        .catch(() => {
+          toast({
+            title: 'Error',
+            description: t('alert-message:error-finding-mentors'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
         });
-      });
+    }
 
-    bc.payment({
-      mentorship_service: service.id,
-    }).service().consumable()
-      .then((res) => {
-        setServiceMentoring(res.data);
-      });
+    return [];
   };
+
+  useEffect(async () => {
+    if (programServices.length > 0) {
+      const mentors = await getAllMentorsAvailable();
+      const allConsumables = await bc.payment().service().consumable()
+        .then((res) => res?.data);
+
+      setServiceMentoring(allConsumables);
+      setAllMentorsAvailable(mentors);
+    }
+  }, [programServices]);
+
+  const isAvailableForConsumables = cohortSession?.available_as_saas === true;
+  const mentorshipService = serviceMentoring?.mentorship_service_sets?.find((c) => c?.slug.toLowerCase() === savedChanges?.service?.slug.toLowerCase());
 
   return !isLoading && user?.id && (
     <>
-      {flags?.appReleaseShowConsumedMentorships ? (
+      {isAvailableForConsumables && flags?.appReleaseShowConsumedMentorships ? (
         <MentoringConsumables
           {...{
             mentoryProps,
             width,
             serviceMentoring,
-            cohortService,
+            mentorshipService,
             setMentoryProps,
-            setOpenMentors,
             programServices,
             dateFormated,
             servicesFiltered,
@@ -175,6 +135,7 @@ const Mentoring = ({
             step1,
             step2,
             dateFormated2,
+            allMentorsAvailable,
           }}
         />
       ) : (
@@ -183,7 +144,6 @@ const Mentoring = ({
             mentoryProps,
             width,
             setMentoryProps,
-            setOpenMentors,
             programServices,
             dateFormated,
             servicesFiltered,
@@ -196,6 +156,7 @@ const Mentoring = ({
             step1,
             step2,
             dateFormated2,
+            allMentorsAvailable,
           }}
         />
       )}
@@ -206,7 +167,6 @@ const Mentoring = ({
 Mentoring.propTypes = {
   programServices: PropTypes.arrayOf(PropTypes.object).isRequired,
   width: PropTypes.string,
-  setOpenMentors: PropTypes.func.isRequired,
   flags: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 

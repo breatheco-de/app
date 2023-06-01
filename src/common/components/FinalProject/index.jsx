@@ -22,7 +22,7 @@ const FinalProject = ({ storyConfig, studentAndTeachers, tasks }) => {
   const [cohortSession] = usePersistent('cohortSession', {});
   const router = useRouter();
   const { modal } = useStyle();
-  const { finalProjectData } = useFinalProjectProps();
+  const { finalProjectData, setFinalProjectData } = useFinalProjectProps();
   const storyConfigExists = Object.keys(storyConfig).length > 0;
   const finalProjectTranslation = storyConfig?.translation?.[storyConfig?.locale]['final-project'];
   const repoUrl = finalProjectData?.repo_url || finalProject?.currentProject?.repo_url;
@@ -44,6 +44,24 @@ const FinalProject = ({ storyConfig, studentAndTeachers, tasks }) => {
       full_name: `${student?.user?.first_name} ${student?.user?.last_name}`,
     },
   }));
+
+  const refreshFinalProject = async () => {
+    const res = await bc.todo({
+      visibility_status: 'PRIVATE',
+    }).getFinalProject();
+
+    const currentProject = res?.data?.find((project) => project?.cohort?.slug === cohortSlug) || null;
+
+    if (currentProject !== null && res.data.length > 0) {
+      setFinalProjects({
+        currentProject,
+        allProjects: res?.data,
+      });
+    } else {
+      setFinalProjects([]);
+      setFinalProjectData({});
+    }
+  };
 
   useEffect(() => {
     if (!storyConfigExists) {
@@ -164,6 +182,7 @@ const FinalProject = ({ storyConfig, studentAndTeachers, tasks }) => {
               allProjects={finalProject?.allProjects}
               cohortData={cohortSession}
               studentsData={students}
+              refreshFinalProject={refreshFinalProject}
               handleClose={() => setOpenForm(false)}
             />
           </ModalContent>

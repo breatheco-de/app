@@ -301,7 +301,7 @@ const Attendance = () => {
 
   return (
     <>
-      <GridContainer maxW="1080px" mt="18px">
+      <GridContainer margin="18px auto 0 auto" withContainer>
         <Link
           href={cohortSession?.selectedProgramSlug || '/choose-program'}
           color="blue.default"
@@ -312,7 +312,7 @@ const Attendance = () => {
           {`← ${t('back-to')}`}
         </Link>
       </GridContainer>
-      <Box display="flex" maxW="1080px" m="0 auto" justifyContent="space-between" padding="45px 0 28px 0" borderBottom="1px solid" borderColor={borderColor} flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
+      <Box display="flex" maxW="1148px" m="0 auto" justifyContent="space-between" padding="45px 0 28px 0" borderBottom="1px solid" borderColor={borderColor} flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
         <Box display="flex" alignItems="center" gridGap="8px">
           <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
             {`${t('title')}:`}
@@ -373,7 +373,8 @@ const Attendance = () => {
       </Box>
       <GridContainer
         flexDirection="column"
-        maxW="1080px"
+        // maxW="1080px"
+        withContainer
       >
         <Flex gridGap="25px" justifyContent="flex-end" padding="34px 0">
           <InputGroup width="200px">

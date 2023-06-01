@@ -5,17 +5,25 @@ const useStyle = () => {
   const backgroundColor2 = useColorModeValue('white', 'gray.700');
   const backgroundColor3 = useColorModeValue('gray.light2', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const borderColor2 = useColorModeValue('gray.200', 'gray.500');
   const borderColorStrong = useColorModeValue('gray.400', 'gray.500');
   const disabledBackgroundColor = useColorModeValue('gray.250', 'gray.600');
-  const disabledColor = useColorModeValue('gray.600', 'gray.350');
+  const disabledColor = useColorModeValue('gray.500', 'gray.350');
+  const disabledColor2 = useColorModeValue('gray.default', '#CACACA');
   const featuredColor = useColorModeValue('featuredLight', 'featuredDark');
   const fontColor = useColorModeValue('black', 'white');
   const fontColor2 = useColorModeValue('gray.dark', 'gray.250');
+  const fontColor3 = useColorModeValue('gray.700', 'gray.300');
+  const reverseFontColor = useColorModeValue('white', 'gray.900');
   const lightColor = useColorModeValue('gray.600', 'gray.200');
   const tooltipBackground = useColorModeValue('gray.dark', 'gray.dark');
 
   const hexColor = {
     black: useColorModeValue('#000000', '#ffffff'),
+    backgroundColor: useColorModeValue('#ffffff', '#17202A'),
+    featuredColor: useColorModeValue('#EEF9FE', '#283340'),
+    lightColor: useColorModeValue('#F5F5F5', '#4A5568'),
+    lightColor2: useColorModeValue('#F5F5F5', '#283340'),
     white2: useColorModeValue('#ffffff', '#283340'),
     danger: useColorModeValue('#CD0000', '#e26161'),
     blueDefault: '#0097CD',
@@ -31,25 +39,30 @@ const useStyle = () => {
     featuredBackground: useColorModeValue('featuredLight', 'darkTheme'),
     background: useColorModeValue('white', 'featuredDark'),
     background2: useColorModeValue('white', 'gray.900'),
+    background3: useColorModeValue('white', 'gray.800'),
     hoverBackground: useColorModeValue('featuredLight', 'gray.700'),
   };
 
   return {
     backgroundColor,
     backgroundColor2,
-    borderColor,
-    disabledBackgroundColor,
     backgroundColor3,
+    borderColor,
+    borderColor2,
+    borderColorStrong,
+    disabledBackgroundColor,
     disabledColor,
+    disabledColor2,
     featuredColor,
     fontColor,
     fontColor2,
+    fontColor3,
     hexColor,
     input,
     lightColor,
     modal,
+    reverseFontColor,
     tooltipBackground,
-    borderColorStrong,
   };
 };
 

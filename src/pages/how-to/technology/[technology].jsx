@@ -18,12 +18,12 @@ export const getStaticPaths = async ({ locales }) => {
   });
   const data = await resp.json();
 
-  const paths = data.results.flatMap((res) => locales.map((locale) => ({
+  const paths = data?.results?.length > 0 ? data?.results?.flatMap((res) => locales.map((locale) => ({
     params: {
-      technology: res.slug,
+      technology: res?.slug,
     },
     locale,
-  })));
+  }))) : [];
 
   return {
     fallback: false,
@@ -48,8 +48,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=1000`);
   const exercises = await response.json();
 
-  const dataFiltered = exercises.results.filter(
-    (l) => technologyData.assets.some((a) => a === l.slug) && (l?.category?.slug === 'how-to' || l?.category?.slug === 'como'),
+  const dataFiltered = exercises?.results?.filter(
+    (l) => technologyData?.assets?.some((a) => a === l?.slug) && (l?.category?.slug === 'how-to' || l?.category?.slug === 'como'),
   );
 
   if (response.status >= 400 || response.status_code >= 400

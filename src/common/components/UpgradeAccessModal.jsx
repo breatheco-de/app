@@ -14,28 +14,19 @@ import financeES from '../../../public/locales/es/finance.json';
 import { toCapitalize } from '../../utils';
 
 const UpgradeAccessModal = ({
-  storySettings, open,
+  storySettings, isOpen, onClose,
 }) => {
-  const [isOpen, setIsOpen] = useState(open);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedProps, setSelectedProps] = useState({});
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
-
   const router = useRouter();
-
   const courseQuery = router?.query?.course;
   const currLocale = storySettings?.locale || router?.locale;
-
   const jsonData = currLocale === 'en' ? financeEN : financeES;
   const finance = jsonData;
-
   const currentCourse = courseQuery || 'coding-introduction';
   const { featuredColor, backgroundColor2, hexColor } = useStyle();
-  const selectedItem = storySettings?.plans[selectedIndex] || finance.plans[selectedIndex];
-
-  const onClose = () => {
-    setIsOpen(false);
-  };
+  const selectedItem = storySettings?.plans?.[selectedIndex] || finance.plans[selectedIndex];
 
   const handleSelect = (dataProps, index) => {
     setSelectedProps(dataProps);
@@ -57,7 +48,7 @@ const UpgradeAccessModal = ({
           <Flex flexDirection={{ base: 'column', lg: 'row' }} gridGap="35px" padding={{ base: '0', md: '55px' }}>
             <Box display="flex" flexDirection="column" flex={1} gridGap="10px">
               <Box w="100%" position="relative">
-                <Image src="static/images/meeting.png" style={{ aspectRatio: '12/8' }} margin="0 auto" w="auto" h="auto" layout="fill" zIndex={10} top="0" left="0" />
+                <Image src={storySettings?.image || '/static/images/meeting.png'} style={{ aspectRatio: '12/8' }} margin="0 auto" w="auto" h="auto" layout="fill" zIndex={10} top="0" left="0" />
                 <Box w="10px" h="10px" borderRadius="40px" background="#EB5757" position="absolute" top="4.3rem" left="0.6rem" />
                 <Box w="31px" h="31px" borderRadius="40px" background="blue.default" position="absolute" bottom="5rem" left="0" />
                 <Box w="76.4px" h="76.4px" borderRadius="40px" background="blue.light" position="absolute" top="4.4rem" left="0" zIndex={-1} />
@@ -116,7 +107,7 @@ const UpgradeAccessModal = ({
                 variant="default"
                 textTransform="uppercase"
                 onClick={() => router.push({
-                  pathname: '/signup',
+                  pathname: '/checkout',
                   query: {
                     course: currentCourse,
                     plan: selectedProps?.type,
@@ -135,14 +126,16 @@ const UpgradeAccessModal = ({
 
 UpgradeAccessModal.propTypes = {
   storySettings: PropTypes.objectOf(PropTypes.any),
-  open: PropTypes.bool,
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
 };
 
 UpgradeAccessModal.defaultProps = {
   storySettings: {
     isOpen: false,
   },
-  open: false,
+  isOpen: false,
+  onClose: () => {},
 };
 
 export default UpgradeAccessModal;

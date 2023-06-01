@@ -18,12 +18,12 @@ export const getStaticPaths = async ({ locales }) => {
   });
   const data = await resp.json();
 
-  const paths = data.results.flatMap((res) => locales.map((locale) => ({
+  const paths = data?.results?.length > 0 ? data.results.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },
     locale,
-  })));
+  }))) : [];
 
   return {
     fallback: false,
@@ -146,8 +146,6 @@ const LessonByTechnology = ({ data, technologyData }) => {
               projects={data}
               withoutImage
               isDynamic
-              containerPadding="0px"
-              // projectPath="lesson"
             />
           </Box>
         )}

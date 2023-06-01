@@ -10,12 +10,12 @@ import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import FilterModal from '../../common/components/FilterModal';
 import TitleContent from '../../js_modules/projects/TitleContent';
-import ProjectList from '../../js_modules/projects/ProjectList';
 import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 import GridContainer from '../../common/components/GridContainer';
 import PaginatedView from '../../common/components/PaginationView';
 import { getQueryString, isWindow } from '../../utils';
+import ProjectsLoader from '../../common/components/ProjectsLoader';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'lesson');
@@ -44,14 +44,13 @@ export const getStaticProps = async ({ locale, locales }) => {
       Accept: 'application/json, text/plain, */*',
     },
   );
+  const technologies = await technologiesResponse.json();
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    console.log(`SUCCESS: ${technologiesResponse.length} Technologies fetched for /lessons`);
+    console.log(`SUCCESS: ${technologies.length} Technologies fetched for /lessons`);
   } else {
     console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /lessons`);
   }
-
-  const technologies = await technologiesResponse.json();
 
   for (let i = 0; i < arrLessons.length; i += 1) {
     // skip repeated lessons
@@ -108,6 +107,7 @@ export const getStaticProps = async ({ locale, locales }) => {
         keywords,
         locales,
         locale,
+        disableStaticCanonical: true,
         url: ogUrl.en || `/${locale}/lessons`,
         pathConnector: '/lessons',
         card: 'default',
@@ -130,7 +130,8 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
   const router = useRouter();
   const iconColor = useColorModeValue('#FFF', '#283340');
   const page = getQueryString('page', 1);
-  const search = getQueryString('search', 1);
+  const pageIsEnabled = getQueryString('page', false);
+  const search = getQueryString('search', '');
 
   const contentPerPage = 20;
   const startIndex = (page - 1) * contentPerPage;
@@ -236,7 +237,9 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
 
       <GridContainer
         flex="1"
-        gridTemplateColumns="0fr repeat(12, 1fr) 0fr"
+        withContainer
+        gridColumn="1 / span 10"
+        maxWidth="1280px"
       >
         <Text
           size="md"
@@ -247,12 +250,19 @@ const Projects = ({ lessons, technologyTags, difficulties }) => {
           {t('description')}
         </Text>
 
-        {(search?.length > 0 || currentFilters > 0) ? (
-          <ProjectList
-            projects={lessons}
-            withoutImage
-            contextFilter={filteredBy.projectsOptions}
-            projectPath="lesson"
+        {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
+          <ProjectsLoader
+            articles={lessons}
+            itemsPerPage={20}
+            // renderItem={false}
+            searchQuery={search}
+            options={{
+              withoutImage: true,
+              withoutDifficulty: true,
+              contextFilter: filteredBy.projectsOptions,
+              projectPath: 'lesson',
+              pagePath: '/lessons',
+            }}
           />
         ) : (
           <>

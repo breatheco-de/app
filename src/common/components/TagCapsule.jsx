@@ -20,6 +20,8 @@ const TagCapsule = ({
   isLink,
   href,
   borderRadius,
+  lineHeight,
+  ...rest
 }) => {
   const { colorMode } = useColorMode();
 
@@ -37,6 +39,7 @@ const TagCapsule = ({
       px={paddingX}
       borderRadius="15px"
       gridGap={gap}
+      {...rest}
     >
       {tags.map((tag, i) => (isLink ? (
         <Link
@@ -80,9 +83,14 @@ const TagCapsule = ({
           style={style}
           rounded={variant === 'rounded' ? borderRadius : 'none'}
           key={tag?.name || `${tag}-${i}`}
-          lineHeight="22px"
+          lineHeight={lineHeight}
           color={colorMode === 'light' ? 'black' : 'black'}
         >
+          {variant === 'slash' && i !== 0 && (
+            <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
+              {separator}
+            </Box>
+          )}
           <Text
             margin="0"
             alignSelf="center"
@@ -95,11 +103,11 @@ const TagCapsule = ({
           >
             {tag?.name || tag}
           </Text>
-          {variant === 'slash' && i < tags.length - 1 && (
+          {/* {variant === 'slash' && i < tags.length - 1 && (
             <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
               {separator}
             </Box>
-          )}
+          )} */}
         </Box>
       )
       ))}
@@ -118,11 +126,12 @@ TagCapsule.propTypes = {
   marginY: PropTypes.string,
   gap: PropTypes.string,
   style: PropTypes.shape({}),
-  fontWeight: PropTypes.string,
+  fontWeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   isLink: PropTypes.bool,
   href: PropTypes.string,
   borderRadius: PropTypes.string,
   color: PropTypes.string,
+  lineHeight: PropTypes.string,
 };
 TagCapsule.defaultProps = {
   separator: '/',
@@ -132,7 +141,7 @@ TagCapsule.defaultProps = {
   variant: 'slash',
   paddingX: '20px',
   marginY: '18px',
-  fontWeight: '500',
+  fontWeight: 500,
   gap: '0',
   style: {
     margin: '0',
@@ -141,6 +150,7 @@ TagCapsule.defaultProps = {
   href: '#',
   borderRadius: '15px',
   color: 'black',
+  lineHeight: '22px',
 };
 
 export default memo(TagCapsule);

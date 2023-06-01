@@ -334,7 +334,7 @@ blockquote > :last-child {
 .markdown-body table tr th {
   font-weight: bold;
   /* border: 1px solid #cccccc; */
-  text-align: left;
+  text-align: center;
   margin: 0;
   padding: 6px 13px;
 }
@@ -462,19 +462,18 @@ blockquote > :last-child {
   text-align: right;
 }
 
-.markdown-body code, tt {
+.markdown-body code, .markdown-body tt {
   margin: 0 2px;
   padding: 2px 5px;
-  white-space: nowrap;
+  white-space: break-spaces;
   background-color: rgb(45, 45, 45);
   color: #ccc;
 }
 
-.markdown-body.dark code, tt {
-  white-space: nowrap;
+.markdown-body.dark code, .markdown-body tt {
+  white-space: break-spaces;
   background-color: #28292A;
   color: #ccc;
-  /* border-radius: 3px; */
 }
 
 .markdown-body pre code {

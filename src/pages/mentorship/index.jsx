@@ -146,10 +146,10 @@ const Mentorship = () => {
   return (
     <Container maxW="none" padding="0">
       <GridContainer
+        withContainer
+        my="3rem"
         className="kpi-container"
         maxW="none"
-        // paddingRight="20%"
-        // paddingLeft={['5%', '5%', '10%', '10%']}
         paddingTop="20px"
         paddingBottom="20px"
       >
