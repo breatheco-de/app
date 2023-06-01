@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import ReactPlayer from 'react-player';
 
 function ReactPlayerV2({
-  url, controls, className, iframeStyle,
+  url, controls, className, iframeStyle, ...rest
 }) {
-  const isLoomVideo = url.includes('loom.com');
+  const isLoomVideo = url && url.includes('loom.com');
   const getVideo = () => {
     if (isLoomVideo) {
       return url.replace('/share/', '/embed/');
@@ -24,6 +24,7 @@ function ReactPlayerV2({
           width="100%"
           height="-webkit-fill-available"
           style={iframeStyle}
+          {...rest}
         />
 
       )}
