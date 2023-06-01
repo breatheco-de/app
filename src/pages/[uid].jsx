@@ -37,8 +37,17 @@ export async function getStaticProps({ params, locale, previewData }) {
       notFound: true,
     };
   }
+  const languagesArr = [
+    ...page?.alternate_languages,
+    {
+      id: page?.id,
+      type: page?.type,
+      lang: page?.lang,
+      uid: page?.uid,
+    },
+  ];
 
-  const translationsArr = page?.alternate_languages?.map((tr) => ({
+  const translationsArr = languagesArr?.map((tr) => ({
     [tr.lang.split('-')[0]]: tr.uid,
   }));
 
