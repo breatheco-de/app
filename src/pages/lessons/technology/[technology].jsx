@@ -43,7 +43,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     },
   });
   const techs = await responseTechs.json(); // array of objects
-  const technologyData = techs.results.find((tech) => tech.slug === technology);
+  const technologyData = (Array.isArray(techs?.results) && techs?.results) > 0 ? techs.results.find((tech) => tech.slug === technology) : {};
 
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson&limit=1000`);
   const lessons = await response.json();
@@ -52,7 +52,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     (l) => technologyData?.assets?.some((a) => a === l?.slug),
   );
 
-  if (response.status >= 400 || response.status_code >= 400
+  if (responseTechs.status >= 400 || response.status >= 400 || response.status_code >= 400
     || !technologyData || dataFiltered.length === 0) {
     return {
       notFound: true,
@@ -108,11 +108,11 @@ function LessonByTechnology({ lessons, technologyData }) {
         fontWeight="700"
         paddingBottom="6px"
       >
-        {t('landing-technology.title', { technology: toCapitalize(technologyData.title) })}
+        {t('landing-technology.title', { technology: toCapitalize(technologyData?.title) })}
       </Text>
       <Box flex="1" pb="2rem">
         <Heading as="span" size="xl">
-          {t('landing-technology.subTitle', { technology: toCapitalize(technologyData.title) })}
+          {t('landing-technology.subTitle', { technology: toCapitalize(technologyData?.title) })}
         </Heading>
 
         <Text
@@ -126,21 +126,22 @@ function LessonByTechnology({ lessons, technologyData }) {
           {technologyData?.description || t('description')}
         </Text>
       </Box>
-
-      <ProjectList
-        projects={lessons}
-        withoutImage
-        // isLoading={isLoading}
-        // contextFilter={}
-        projectPath="lesson"
-      />
+      {lessons?.length > 0 && (
+        <ProjectList
+          projects={lessons}
+          withoutImage
+          // isLoading={isLoading}
+          // contextFilter={}
+          projectPath="lesson"
+        />
+      )}
     </Box>
   );
 }
 
 LessonByTechnology.propTypes = {
-  lessons: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
-  technologyData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  lessons: PropTypes.arrayOf(PropTypes.string).isRequired,
+  technologyData: PropTypes.objectOf(PropTypes.string).isRequired,
 };
 
 export default LessonByTechnology;
