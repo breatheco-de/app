@@ -600,7 +600,7 @@ export const ButtonHandlerByTaskStatus = ({
                         variant="default"
                         onClick={() => handleUploadFile()}
                         isLoading={isUploading}
-                        disabled={isUploading || fileProps.some((file) => typeof file?.type !== 'string') || fileErrorExists || fileSumSize > maxFileSize}
+                        disabled={isUploading || fileProps?.length === 0 || fileProps.some((file) => typeof file?.type !== 'string') || fileErrorExists || fileSumSize > maxFileSize}
                         textTransform="uppercase"
                       >
                         {t('common:upload')}
