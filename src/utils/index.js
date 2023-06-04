@@ -280,9 +280,12 @@ const syncInterval = (callback = () => {}) => {
 };
 
 function getBrowserSize() {
-  const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-  const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-  return { width, height };
+  if (isWindow) {
+    const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    return { width, height };
+  }
+  return {};
 }
 
 function calculateDifferenceDays(fecha) {

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Field } from 'formik';
+import { Field, ErrorMessage } from 'formik';
 import {
   Box, FormControl, FormLabel, Input, Textarea,
 } from '@chakra-ui/react';
@@ -109,7 +109,7 @@ const FieldForm = ({
                 <Box fontSize="sm" color={lightColor} mt={2}>{hint}</Box>
               )}
               {form.errors[name] && (
-                <Box className="error-message">{form.errors[name]}</Box>
+                <ErrorMessage name={name} component={Box} className="error-message" />
               )}
             </FormControl>
           )

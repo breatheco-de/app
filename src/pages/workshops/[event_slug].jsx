@@ -1,9 +1,8 @@
 import { useRouter } from 'next/router';
 import {
-  Avatar,
   Box, Button, Skeleton, useColorModeValue,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as Yup from 'yup';
 import { intervalToDuration, format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -14,17 +13,22 @@ import bc from '../../common/services/breathecode';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
-import { capitalizeFirstLetter, isValidDate } from '../../utils';
+import { capitalizeFirstLetter, isValidDate, setStorageItem } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import Icon from '../../common/components/Icon';
 import FieldForm from '../../common/components/Forms/FieldForm';
 import Link from '../../common/components/NextChakraLink';
+import PublicProfile from '../../common/components/PublicProfile';
+import modifyEnv from '../../../modifyEnv';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
 const Page = () => {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [event, setEvent] = useState({});
   const router = useRouter();
   const { t } = useTranslation('workshops');
   const { locale } = router;
+  const toastIdRef = useRef();
   const { event_slug: eventSlug } = router.query;
   const { backgroundColor, featuredColor, hexColor } = useStyle();
   const [formProps, setFormProps] = useState({
@@ -32,6 +36,30 @@ const Page = () => {
     last_name: '',
     email: '',
   });
+
+  const { createToast } = useCustomToast({
+    toastIdRef,
+    status: 'info',
+    title: t('signup:alert-message.title'),
+    content: (
+      <Box>
+        {t('signup:alert-message.message1')}
+        {' '}
+        <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
+        .
+        <br />
+        {t('signup:alert-message.message2')}
+        {' '}
+        <Link variant="default" color="blue.200" href="/login" redirectAfterLogin>{t('signup:alert-message.click-here-to-login')}</Link>
+        {' '}
+        {t('signup:alert-message.or-click-here')}
+        {' '}
+        <Link variant="default" color="blue.200" href="/#">{t('signup:alert-message.message3')}</Link>
+        .
+      </Box>
+    ),
+  });
+
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
 
   useEffect(() => {
@@ -66,6 +94,29 @@ const Page = () => {
     email: Yup.string().email(t('common:validators.invalid-email')).required(t('common:validators.email-required')),
   });
 
+  const handleSubmit = async (actions, allValues) => {
+    const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(allValues),
+    });
+    const data = await resp.json();
+
+    if (resp.status < 400 && typeof data?.id === 'number') {
+      setStorageItem('subscriptionId', data.id);
+      router.push('/thank-you');
+    }
+    if (resp.status > 400) {
+      actions.setSubmitting(false);
+    }
+    if (resp.status === 409) {
+      createToast();
+      actions.setSubmitting(false);
+    }
+  };
+
   return (
     <>
       <Box
@@ -79,16 +130,22 @@ const Page = () => {
           gridTemplateColumns="2fr repeat(12, 1fr) 2fr"
           gridGap="36px"
           padding="0 10px"
+          display={{ base: 'flex', md: 'grid' }}
         >
           <Box display="flex" flexDirection="column" justifyContent="center" gridGap="15px" gridColumn="2 / span 8">
+            <Box display="flex" mt={{ base: '0', md: '1rem' }} gridGap="6px" background="yellow.light" borderRadius="20px" alignItems="center" width="fit-content" padding="8px 12px">
+              <Icon icon="usaFlag" width="15px" height="15px" />
+              <Text size="13px" fontWeight={700}>
+                Javascript Beginner Workshop
+              </Text>
+            </Box>
             {event?.title ? (
               <Heading
                 as="h1"
                 size="50px"
                 fontWeight="700"
+                lineHeight="52px"
                 textTransform="capitalize"
-                paddingTop="10px"
-                transition="color 0.2s ease-in-out"
                 color={useColorModeValue('black', 'white')}
               >
                 {event.title}
@@ -123,7 +180,7 @@ const Page = () => {
         {/* <Box display={{ base: 'none', lg: 'grid' }} position="sticky" top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '1rem 0 0 0' }}>
           <MktSideRecommendedCourses />
         </Box> */}
-        <Box display={{ base: 'block', lg: 'flex' }} flexDirection="column" gridColumn={{ base: '1 / span 6', lg: '2 / span 8' }}>
+        <Box display={{ base: 'block', lg: 'flex' }} flexDirection="column" gridColumn={{ base: '2 / span 6', lg: '2 / span 8' }}>
 
           {/* MARKDOWN SIDE */}
           <Box
@@ -143,41 +200,17 @@ const Page = () => {
             <Text size="26px" fontWeight={700}>
               Your host for this event
             </Text>
-            <Box display="flex" gridGap="24px" background={featuredColor} borderRadius="12px" padding="16px 24px">
-              <Avatar
-                width="102px"
-                height="102px"
-                name="Brent Solomon"
-                src="https://assets.breatheco.de/apis/img/images.php?blob&random&cat=icon&tags=brent,solomon"
-              />
-              <Box display="flex" flexDirection="column" gridGap="6.5px">
-                <Text size="26px" fontWeight={700} lineHeight="31.2px">
-                  Brent Solomon
-                </Text>
-                <Text size="16px" fontWeight={400} color="blue.default" lineHeight="19.36px">
-                  Buenos aires, Argentina
-                </Text>
-                <Text size="12px" fontWeight={400}>
-                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa...
-                </Text>
-                <Box display="flex" gridGap="16px" margin="20px 0 0 0">
-                  <Icon icon="github" width="20px" height="20px" />
-                  <Icon icon="twitter" width="20px" height="20px" />
-                  <Icon icon="linkedin" width="20px" height="20px" />
-                  <Icon icon="git" width="20px" height="20px" />
-                </Box>
-              </Box>
-            </Box>
+            <PublicProfile />
 
           </Box>
-          <Text size="26px" fontWeight={700}>
+          {/* <Text size="26px" fontWeight={700}>
             We will be coding the following project
-          </Text>
+          </Text> */}
         </Box>
 
         <Box
-          display={{ base: 'none', md: 'flex' }}
-          gridColumn={{ base: '7 / span 4', lg: '10 / span 4' }}
+          display="flex"
+          gridColumn={{ base: '8 / span 4', lg: '10 / span 4' }}
           margin={{ base: '20px 0 0 auto', lg: '-12.95rem 0 0 auto' }}
           flexDirection="column"
           backgroundColor={backgroundColor}
@@ -195,7 +228,7 @@ const Page = () => {
           borderStyle="solid"
           borderColor={commonBorderColor}
         >
-          <Image src="/static/images/person-smile1.png" width={342} height={177} objectFit="cover" />
+          <Image src="/static/images/person-smile1.png" width={342} title="Form image" height={177} objectFit="cover" />
           <Text size="21px" fontWeight={700} lineHeight="25px">
             Join The Workshop
           </Text>
@@ -210,23 +243,7 @@ const Page = () => {
                 email: '',
               }}
               onSubmit={(values, actions) => {
-                // const userIds = values?.members?.map((member) => {
-                //   const tagId = getTag(member);
-                //   const replaceTag = typeof tagId === 'string' ? tagId?.replace(/\(([^)]+)\)/, '')?.trim() : tagId;
-                //   const userData = students?.find((student) => student?.user?.id === Number(tagId));
-                //   return userData?.user?.id || replaceTag;
-                // });
-                // const allValues = {
-                //   ...values,
-                //   cohort: cohortSession?.id,
-                //   members: userIds,
-                //   id: projectId,
-                // };
-
-                // if (repoUrl) {
-                //   handleUpdate(actions, [allValues]);
-                // }
-                actions.setSubmitting(false);
+                handleSubmit(actions, values);
               }}
               validationSchema={subscriptionValidation}
             >
@@ -269,6 +286,7 @@ const Page = () => {
                     type="submit"
                     variant="default"
                     isLoading={isSubmitting}
+                    title="Join Workshop"
                   >
                     Join Workshop
                   </Button>
@@ -281,16 +299,6 @@ const Page = () => {
               )}
             </Formik>
           </Box>
-          {/* {exercise?.slug ? (
-            <TabletWithForm
-              toast={toast}
-              exercise={exercise}
-              commonTextColor={commonTextColor}
-              commonBorderColor={commonBorderColor}
-            />
-          ) : (
-            <Skeleton height="646px" width="100%" borderRadius="17px" />
-          )} */}
         </Box>
       </GridContainer>
     </>
