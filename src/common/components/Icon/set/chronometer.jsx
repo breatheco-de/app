@@ -1,4 +1,4 @@
-const ghost = ({
+const chronometer = ({
   width, height, style, color,
 }) => (
   <svg
@@ -27,4 +27,4 @@ const ghost = ({
 
 );
 
-export default ghost;
+export default chronometer;

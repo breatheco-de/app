@@ -84,7 +84,7 @@ const getExtensionName = (key) => {
 };
 
 const devLog = (msg, ...params) => { // Relevant logs only in dev mode
-  if (isDevMode) console.log(`[🛠️ DEVELOPMENT LOG] ${msg}`, ...params);
+  if (isDevMode) console.log(`[🛠️ DEV LOG] ${msg}`, ...params);
 };
 
 const devLogTable = (msg, array) => { // Relevant table logs with title only in dev mode
@@ -161,6 +161,8 @@ const getTimeProps = (date) => {
 
 // convert the input array to camel case
 const toCapitalize = (input = '') => input.charAt(0).toUpperCase() + input.toLowerCase().slice(1);
+
+const capitalizeFirstLetter = (str = '') => str.charAt(0).toUpperCase() + str.slice(1);
 
 function formatBytes(bytes, decimals = 2) {
   if (!+bytes) return '0 Bytes';
@@ -312,5 +314,5 @@ export {
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
-  createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays,
+  createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, capitalizeFirstLetter,
 };
