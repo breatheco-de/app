@@ -9,7 +9,7 @@ const HAVE_SESSION = isWindow ? localStorage.getItem('accessToken') !== null : f
  * principal use for dibuging for another issues and prevent
  * to create unused console.logs in production
 */
-const isDevMode = isWindow && (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'preview' || window.location.hostname === 'localhost');
+const isDevMode = isWindow && (process.env.VERCEL_ENV !== 'production' || process.env.NODE_ENV !== 'production');
 
 const languageLabel = {
   es: 'spanish',
@@ -84,7 +84,7 @@ const getExtensionName = (key) => {
 };
 
 const devLog = (msg, ...params) => { // Relevant logs only in dev mode
-  if (isDevMode) console.log(`🛠️ ${msg}`, ...params);
+  if (isDevMode) console.log(`[🛠️ DEVELOPMENT LOG] ${msg}`, ...params);
 };
 
 const devLogTable = (msg, array) => { // Relevant table logs with title only in dev mode

@@ -174,10 +174,10 @@ function useHandler() {
             });
           }
 
-          // const filterNotEmptyModules = assignmentsRecopilated.filter(
-          //   (l) => l.modules.length > 0,
-          // );
-          return setSortedAssignments(assignmentsRecopilated);
+          const filterNotEmptyModules = assignmentsRecopilated.filter(
+            (l) => l.modules.length > 0,
+          );
+          return setSortedAssignments(filterNotEmptyModules);
         }
         return null;
       });
