@@ -37,12 +37,18 @@ const handlers = {
   getStudents: (slug, academyId) => new Promise((resolve, reject) => {
     bc.cohort().getStudents(slug, academyId)
       .then(({ data }) => {
-        // filter only active students
-        const activeStudents = data.filter((l) => l.educational_status === 'ACTIVE' && l.role === 'STUDENT');
-        const sortedStudents = activeStudents.sort(
+        const sortedStudents = data.sort(
           (a, b) => a.user.first_name.localeCompare(b.user.first_name),
         );
         resolve(sortedStudents);
+      }).catch((err) => {
+        reject(err);
+      });
+  }),
+  getStudentsWithTasks: (slug, academyId) => new Promise((resolve, reject) => {
+    bc.cohort().getStudentsWithTasks(slug, academyId)
+      .then(({ data }) => {
+        resolve(data);
       }).catch((err) => {
         reject(err);
       });

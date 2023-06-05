@@ -577,7 +577,7 @@ const Dashboard = () => {
                 <>
                   {sortedAssignmentsSearched.map((assignment, i) => {
                     const {
-                      label, description, filteredModules, modules, filteredModulesByPending,
+                      label, description, filteredModules, exists_activities: existsActivities, modules, filteredModulesByPending,
                     } = assignment;
 
                     const filteredModulesSearched = searchValue.length > 0
@@ -597,6 +597,7 @@ const Dashboard = () => {
                       <ModuleMap
                         key={index}
                         userId={user?.id}
+                        existsActivities={existsActivities}
                         cohortSession={cohortSession}
                         taskCohortNull={taskCohortNull}
                         contextState={contextState}

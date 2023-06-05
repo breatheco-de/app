@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import styles from '../../styles/Home.module.css';
 import { H1 } from '../common/styledComponents/Head';
+import modifyEnv from '../../modifyEnv';
 
 export const getStaticProps = () => ({
   props: {
@@ -15,12 +16,13 @@ export const getStaticProps = () => ({
 
 export default function Thmbnail() {
   const [asset, setAsset] = useState(null);
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
   const { slug } = router.query;
 
   useEffect(async () => {
     if (slug !== undefined) {
-      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
+      const response = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${slug}`);
       const result = await response.json();
 
       setAsset(result);

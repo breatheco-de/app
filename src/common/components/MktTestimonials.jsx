@@ -12,6 +12,7 @@ import useStyle from '../hooks/useStyle';
 import StarRating from './StarRating';
 import { lengthOfString } from '../../utils';
 import axios from '../../axios';
+import modifyEnv from '../../../modifyEnv';
 
 const MktTestimonials = ({
   id,
@@ -21,9 +22,10 @@ const MktTestimonials = ({
   ...rest
 }) => {
   const [testimonialsData, setTestimonialsData] = useState();
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
-  const { fontColor2, backgroundColor } = useStyle();
-  const defaultEndpoint = `${process.env.BREATHECODE_HOST}/v1/feedback/review?lang=${router?.locale}`;
+  const { fontColor2, featuredColor } = useStyle();
+  const defaultEndpoint = `${BREATHECODE_HOST}/v1/feedback/review?lang=${router?.locale}`;
 
   useEffect(() => {
     if (typeof endpoint === 'string' && endpoint?.length > 6) {
@@ -50,8 +52,9 @@ const MktTestimonials = ({
     return (
       <Box
         width="250px"
-        background={backgroundColor}
-        borderRadius="12px"
+        minWidth="250px"
+        background={featuredColor}
+        borderRadius="15px"
         padding="15px"
         textAlign="center"
       >
@@ -102,10 +105,11 @@ const MktTestimonials = ({
         )}
         <Box
           gridGap="20px"
-          flexWrap="wrap"
+          flexDirection="row"
           marginBottom="15px"
           display="flex"
-          justifyContent="center"
+          overflow="auto"
+          justifyContent={{ base: 'inherit', md: 'center' }}
         >
           {testimonialsArray && testimonialsArray.map((testimonial) => (
             <TestimonialBox

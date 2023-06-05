@@ -9,18 +9,21 @@ import Heading from './Heading';
 import PublicCourseCard from './PublicCourseCard';
 import GridContainer from './GridContainer';
 import useStyle from '../hooks/useStyle';
+import modifyEnv from '../../../modifyEnv';
 
-const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 2;
 
 const MktRecommendedCourses = ({ id, technologies, background, title, gridColumn, endpoint, ...rest }) => {
   const { lang } = useTranslation('common');
   const ref = useRef(null);
   const [isDown, setIsDown] = useState(false);
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [courses, setCourses] = useState([]);
   const { hexColor, fontColor, featuredColor } = useStyle();
+
+  const defaultHostAndEndpoint = `${BREATHECODE_HOST}/v1/marketing/course`;
 
   const headers = {
     'Accept-Language': lang,
@@ -29,7 +32,7 @@ const MktRecommendedCourses = ({ id, technologies, background, title, gridColumn
   const getCourses = async () => {
     try {
       if (typeof technologies === 'string' && technologies.length > 0) {
-        const res = await fetch(`${endpoint}?technologies=${technologies}`, { headers });
+        const res = await fetch(`${endpoint || defaultHostAndEndpoint}?technologies=${technologies}`, { headers });
         const data = await res.json();
         const filteredData = data.filter((course) => course.course_translation).slice(0, coursesLimit);
         if (filteredData.length > 0) {
@@ -37,7 +40,7 @@ const MktRecommendedCourses = ({ id, technologies, background, title, gridColumn
           return;
         }
       }
-      const res = await fetch(endpoint, { headers });
+      const res = await fetch(endpoint || defaultHostAndEndpoint, { headers });
       const data = await res.json();
       setCourses(data.filter((course) => course.course_translation).slice(0, coursesLimit));
     } catch (e) {
@@ -163,7 +166,7 @@ MktRecommendedCourses.defaultProps = {
   title: null,
   technologies: null,
   gridColumn: '1 / span 10',
-  endpoint: `${process.env.BREATHECODE_HOST}${defaultEndpoint}`,
+  endpoint: '',
 };
 
 export default MktRecommendedCourses;

@@ -6,7 +6,14 @@ function middleware(req) {
   const url = req.nextUrl;
   const { pathname } = url;
 
-  const currentProject = aliasRedirects.find((item) => item?.source === pathname);
+  const currentProject = aliasRedirects.find((item) => {
+    const sourceWithEngPrefix = `/en${item?.source}`;
+    const destinationIsNotEqualToSource = item?.source !== item?.destination && sourceWithEngPrefix !== item?.destination;
+
+    if (item?.source === pathname && destinationIsNotEqualToSource) return true;
+    return false;
+  });
+
   const conditionalResult = () => {
     if (currentProject?.type === 'PROJECT-REROUTE' && currentProject?.source) {
       return true;

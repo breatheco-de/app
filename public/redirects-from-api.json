@@ -1,7 +1,7 @@
 [
   {
-    "source": "/lesson/sorting-algorithms-explanied-in-javascript-es",
-    "destination": "/es/lesson/sorting-algorithms-explanied-in-javascript-es",
+    "source": "/lesson/react-hooks-explained-es",
+    "destination": "/es/lesson/react-hooks-explained-es",
     "permanent": true
   },
   {
@@ -10,8 +10,8 @@
     "permanent": true
   },
   {
-    "source": "/lesson/what-is-data-science",
-    "destination": "/es/lesson/what-is-data-science",
+    "source": "/lesson/raspado-web-con-beautiful-soap",
+    "destination": "/es/lesson/raspado-web-con-beautiful-soap",
     "permanent": true
   },
   {
@@ -52,11 +52,6 @@
   {
     "source": "/lesson/intro-to-python-es",
     "destination": "/es/lesson/intro-to-python-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/react-hooks-explained-es",
-    "destination": "/es/lesson/react-hooks-explained-es",
     "permanent": true
   },
   {
@@ -347,6 +342,11 @@
   {
     "source": "/lesson/what-is-webpack-es",
     "destination": "/es/lesson/what-is-webpack-es",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/sorting-algorithms-explanied-in-javascript-es",
+    "destination": "/es/lesson/sorting-algorithms-explanied-in-javascript-es",
     "permanent": true
   },
   {

@@ -85,6 +85,9 @@ featured {
      transform: translate(0px);
   }
 }
+.prismic-body h2 {
+  font-size: 32px;
+}
 
 .upload-wrapper:hover .icon-bounce,
 .upload-wrapper.dragOver .icon-bounce {

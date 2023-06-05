@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import {
-  Grid, Box, SkeletonText, Skeleton, useColorModeValue, SkeletonCircle, Flex,
+  Grid, Box, SkeletonText, Skeleton, useColorModeValue, SkeletonCircle, Flex, AvatarGroup,
 } from '@chakra-ui/react';
 import useStyle from '../hooks/useStyle';
 
@@ -331,6 +331,31 @@ export const AvatarSkeleton = ({
   );
 };
 
+export const AvatarSkeletonWrapped = ({
+  quantity, ...chakraProps
+}) => {
+  const commonStartColor = useColorModeValue('gray.300', 'gray.light');
+  const commonEndColor = useColorModeValue('gray.400', 'gray.400');
+
+  const arrOfCircles = new Array(quantity).fill(['circles']);
+
+  return (
+    <AvatarGroup max={chakraProps?.max || 4} {...chakraProps}>
+      {arrOfCircles?.map((c, i) => {
+        const index = i;
+        return (
+          <SkeletonCircle
+            key={index}
+            startColor={commonStartColor}
+            endColor={commonEndColor}
+            size="10"
+          />
+        );
+      })}
+    </AvatarGroup>
+  );
+};
+
 export const SimpleSkeleton = ({ width, height, ...chakraProps }) => {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
@@ -386,4 +411,10 @@ AvatarSkeleton.defaultProps = {
   templateColumns: 'repeat(auto-fill, minmax(3.5rem, 1fr))',
   gridAutoRows: '3.4rem',
   gridGap: 0,
+};
+AvatarSkeletonWrapped.propTypes = {
+  quantity: PropTypes.number,
+};
+AvatarSkeletonWrapped.defaultProps = {
+  quantity: 3,
 };

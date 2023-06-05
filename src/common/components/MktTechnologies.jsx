@@ -4,8 +4,11 @@ import { Box, Img, Button } from '@chakra-ui/react';
 import axios from 'axios';
 import Icon from './Icon';
 import GridContainer from './GridContainer';
+import modifyEnv from '../../../modifyEnv';
 
-const defaultEndpoint = `${process.env.BREATHECODE_HOST}/v1/registry/technology?sort_priority=1`;
+const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+
+const defaultEndpoint = `${BREATHECODE_HOST}/v1/registry/technology?sort_priority=1`;
 
 const MktTechnologies = ({ id, endpoint, ...rest }) => {
   const carousel = useRef(null);

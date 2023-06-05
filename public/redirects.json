@@ -4,5 +4,41 @@
     "destination": "/es/sobre-nosotros",
     "locale": false,
     "permanent": true
+  },
+  {
+    "source": "/es/lesson/routing-our-views-with-react-router",
+    "destination": "/lesson/routing-our-views-with-react-router",
+    "locale": false,
+    "permanent": true
+  },
+  {
+    "source": "/es/how-to/nvm-install-windows",
+    "destination": "/how-to/nvm-install-windows",
+    "locale": false,
+    "permanent": true
+  },
+  {
+    "source": "/es/lesson/javascript-import",
+    "destination": "/lesson/javascript-import",
+    "locale": false,
+    "permanent": true
+  },
+  {
+    "source": "/es/lesson/building-apis-with-python-flask",
+    "destination": "/lesson/building-apis-with-python-flask",
+    "locale": false,
+    "permanent": true
+  },
+  {
+    "source": "/es/lesson/user-stories-examples",
+    "destination": "/lesson/user-stories-examples",
+    "locale": false,
+    "permanent": true
+  },
+  {
+    "source": "/es/interactive-coding-tutorial/beginner/random-card-es",
+    "destination": "/es/interactive-coding-tutorial/random-card-es",
+    "locale": false,
+    "permanent": true
   }
 ]

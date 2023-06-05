@@ -37,6 +37,12 @@ const unSlugify = (str) => (typeof str === 'string' ? str
   (txt) => txt.charAt(0) + txt.substr(1).toLowerCase())
   : '');
 
+const unSlugifyCapitalize = (str) => (typeof str === 'string' ? str
+  .replace(/-/g, ' ')
+  .replace(/\w\S*/g,
+  (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase())
+  : '');
+
 const cleanQueryStrings = (url) => url.split('?')[0];
 
 const isPlural = (element) => {
@@ -247,6 +253,7 @@ const sortToNearestTodayDate = (data, minutes = 30) => {
 const isNumber = (value) => Number.isFinite(Number(value)); // number or string with number (without letters)
 
 const isValidDate = (dateString) => !Number.isNaN(Date.parse(dateString));
+
 const isDateMoreThanAnyDaysAgo = (date, days = 7) => {
   const now = new Date();
   const AnyDaysAgo = addDays(now, days);
@@ -271,17 +278,23 @@ const syncInterval = (callback = () => {}) => {
   }, secondsToNextMinute * 1000);
 };
 
+function getBrowserSize() {
+  const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+  const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+  return { width, height };
+}
+
 const location = isWindow && window.location;
 
 const url = isWindow && new URL(window.location.href);
 
 export {
-  isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify, location,
+  isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify, unSlugifyCapitalize, location,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
   removeStorageItem, isDevMode, devLogTable, devLog, languageLabel,
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
-  createArray, url, lengthOfString, syncInterval,
+  createArray, url, lengthOfString, syncInterval, getBrowserSize,
 };
