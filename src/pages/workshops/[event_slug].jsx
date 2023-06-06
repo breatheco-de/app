@@ -162,7 +162,7 @@ const Page = () => {
           <Box display="flex" flexDirection="column" justifyContent="center" gridGap="15px" gridColumn="2 / span 8">
             <Box display="flex" mt={{ base: '0', md: '1rem' }} gridGap="6px" background="yellow.light" borderRadius="20px" alignItems="center" width="fit-content" padding="8px 12px">
               <Icon icon="usaFlag" width="15px" height="15px" />
-              <Text size="13px" fontWeight={700}>
+              <Text size="13px" fontWeight={700} color="#000">
                 Javascript Beginner Workshop
               </Text>
             </Box>
@@ -223,10 +223,9 @@ const Page = () => {
         gridGap="36px"
         padding="0 10px"
       >
-        <Box display={{ base: 'block', lg: 'flex' }} flexDirection="column" gridColumn={{ base: '2 / span 6', lg: '2 / span 8' }}>
+        <Box display={{ base: 'block', lg: 'flex' }} gridGap="30px" flexDirection="column" gridColumn={{ base: '2 / span 6', lg: '2 / span 8' }}>
           <Box
             borderRadius="3px"
-            marginBottom="30px"
             maxWidth="1012px"
             width={{ base: 'auto', lg: '100%' }}
           >
