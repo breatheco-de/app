@@ -235,17 +235,16 @@ const Page = () => {
             <br />
             This hands-on experience will not only enhance your understanding of these technologies but also equip you with a valuable project to add to your portfolio. Don&apos;t miss out on this chance to learn from an expert and take your skills to new heights! */}
           </Box>
-          <Box display="flex" flexDirection="column" gridGap="12px" mb="31px">
-            <Text size="26px" fontWeight={700}>
-              {t('host-label-text')}
-            </Text>
-            {!eventNotExists && (event?.host_user || event?.host) && (
+          {!eventNotExists && (event?.host_user || event?.host) && (
+            <Box display="flex" flexDirection="column" gridGap="12px" mb="31px">
+              <Text size="26px" fontWeight={700}>
+                {t('host-label-text')}
+              </Text>
               <PublicProfile
                 profile={(typeof event?.host_user === 'object' && event?.host_user !== null) ? event.host_user : event?.host}
               />
-            )}
-
-          </Box>
+            </Box>
+          )}
           {/* <Text size="26px" fontWeight={700}>
             We will be coding the following project
           </Text> */}
