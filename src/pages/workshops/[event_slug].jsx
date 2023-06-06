@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import {
-  Box, Button, Skeleton, useColorModeValue,
+  Box, Button, Grid, Skeleton, useColorModeValue,
 } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import * as Yup from 'yup';
@@ -22,6 +22,7 @@ import PublicProfile from '../../common/components/PublicProfile';
 import modifyEnv from '../../../modifyEnv';
 import useCustomToast from '../../common/hooks/useCustomToast';
 import useAuth from '../../common/hooks/useAuth';
+import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 
 const Page = () => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -29,6 +30,9 @@ const Page = () => {
   const [event, setEvent] = useState({
     loaded: false,
   });
+  const [users, setUsers] = useState([]);
+  const [showAll, setShowAll] = useState(false);
+
   const router = useRouter();
   const { t } = useTranslation('workshops');
   const { locale } = router;
@@ -69,9 +73,16 @@ const Page = () => {
   useEffect(() => {
     bc.public().events()
       .then((res) => {
-        const findEvent = res.data.find((l) => l?.slug === eventSlug);
+        const findedEvent = res.data.find((l) => l?.slug === eventSlug);
+        if (findedEvent?.id) {
+          bc.events().getUsers(findedEvent?.id)
+            .then((resp) => {
+              setUsers(resp.data);
+            })
+            .catch(() => {});
+        }
         setEvent({
-          ...findEvent,
+          ...findedEvent,
           loaded: true,
         });
       })
@@ -129,9 +140,6 @@ const Page = () => {
   };
 
   const eventNotExists = event?.loaded && !event?.slug;
-
-  console.log('event:::', event);
-  console.log('isAuthenticated:::', isAuthenticated);
 
   return (
     <>
@@ -236,7 +244,11 @@ const Page = () => {
             <Text size="26px" fontWeight={700}>
               {t('host-label-text')}
             </Text>
-            <PublicProfile />
+            {!eventNotExists && (event?.host_user || event?.host) && (
+              <PublicProfile
+                profile={(typeof event?.host_user === 'object' && event?.host_user !== null) ? event.host_user : event?.host}
+              />
+            )}
 
           </Box>
           {/* <Text size="26px" fontWeight={700}>
@@ -249,149 +261,188 @@ const Page = () => {
           gridColumn={{ base: '8 / span 4', lg: '10 / span 4' }}
           margin={{ base: '20px 0 0 auto', lg: '-12.95rem 0 0 auto' }}
           flexDirection="column"
-          backgroundColor={backgroundColor}
           transition="background 0.2s ease-in-out"
-          // width={{ base: '300px', lg: '350px', xl: '350px' }}
           width="100%"
           textAlign="center"
-          // minWidth="250px"
           height="fit-content"
           borderWidth="0px"
           gridGap="10px"
-          borderRadius="17px"
           overflow="hidden"
-          border={1}
-          borderStyle="solid"
-          borderColor={commonBorderColor}
         >
-          <Image src="/static/images/person-smile1.png" width={342} title="Form image" height={177} objectFit="cover" />
+          <Box
+            display="flex"
+            flexDirection="column"
+            gridGap="10px"
+            borderRadius="17px"
+            border={1}
+            borderStyle="solid"
+            borderColor={commonBorderColor}
+            backgroundColor={backgroundColor}
+          >
+            <Image src="/static/images/person-smile1.png" width={342} title="Form image" height={177} objectFit="cover" style={{ borderTopLeftRadius: '17px', borderTopRightRadius: '17px' }} />
 
-          <Box display="flex" flexDirection="column" gridGap="10px" padding="0 18px 18px">
-            {isAuthenticated && user?.id ? (
-              <>
-                <Text size="21px" fontWeight={700} lineHeight="25px">
-                  {`Hello ${user.first_name}`}
-                </Text>
-                <Text size="14px" fontWeight={700} lineHeight="18px">
-                  {t('suggest-join-event')}
-                </Text>
-                <Button
-                  mt="10px"
-                  type="submit"
-                  variant="default"
-                  // title="RSVP for this Workshop"
-                  disabled={eventNotExists && !isAuthenticated}
-                  onClick={() => {
-                    if (isAuthenticated) {
-                      bc.events().applyEvent(event.id)
-                        .then(() => {});
-                    }
-                  }}
-                >
-                  {t('reserv-button-text')}
-                </Button>
-                <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
-                  {`You are not ${user.first_name}?`}
-                  {' '}
+            <Box display="flex" flexDirection="column" gridGap="10px" padding="0 18px 18px">
+              {isAuthenticated && user?.id ? (
+                <>
+                  <Text size="21px" fontWeight={700} lineHeight="25px">
+                    {`Hello ${user.first_name}`}
+                  </Text>
+                  <Text size="14px" fontWeight={700} lineHeight="18px">
+                    {t('suggest-join-event')}
+                  </Text>
                   <Button
-                    variant="link"
-                    fontSize="13px"
-                    height="auto"
+                    mt="10px"
+                    type="submit"
+                    variant="default"
+                    // title="RSVP for this Workshop"
+                    disabled={eventNotExists && !isAuthenticated}
                     onClick={() => {
-                      setStorageItem('redirect', router?.asPath);
-                      setTimeout(() => {
-                        logout(() => {
-                          router.push('/login');
-                        });
-                        // router.push('/login');
-                      }, 150);
+                      if (isAuthenticated) {
+                        bc.events().applyEvent(event.id)
+                          .then(() => {});
+                      }
                     }}
                   >
-                    {`${t('common:logout-and-switch-user')}.`}
+                    {t('reserv-button-text')}
                   </Button>
-                </Text>
-              </>
-            ) : (
-              <>
-                <Text size="21px" fontWeight={700} lineHeight="25px">
-                  {t('form.title')}
-                </Text>
-                <Text size="14px" fontWeight={700} lineHeight="18px">
-                  {t('form.description')}
-                </Text>
-                <Box>
-                  <Formik
-                    initialValues={{
-                      first_name: '',
-                      last_name: '',
-                      email: '',
-                    }}
-                    onSubmit={(values, actions) => {
-                      handleSubmit(actions, values);
-                    }}
-                    validationSchema={subscriptionValidation}
-                  >
-                    {({ isSubmitting }) => (
-                      <Form
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gridGap: '10px',
-                          padding: '18px',
-                        }}
-                      >
-                        <FieldForm
-                          type="text"
-                          name="first_name"
-                          label={t('common:first-name')}
-                          required
-                          formProps={formProps}
-                          setFormProps={setFormProps}
-                          readOnly={eventNotExists}
-                        />
-                        <FieldForm
-                          type="text"
-                          name="last_name"
-                          label={t('common:last-name')}
-                          required
-                          formProps={formProps}
-                          setFormProps={setFormProps}
-                          readOnly={eventNotExists}
-                        />
-                        <FieldForm
-                          type="text"
-                          name="email"
-                          label={t('common:email')}
-                          required
-                          formProps={formProps}
-                          setFormProps={setFormProps}
-                          readOnly={eventNotExists}
-                        />
-
-                        <Button
-                          mt="10px"
-                          type="submit"
-                          variant="default"
-                          isLoading={isSubmitting}
-                          title="Join Workshop"
-                          disabled={eventNotExists}
+                  <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
+                    {`You are not ${user.first_name}?`}
+                    {' '}
+                    <Button
+                      variant="link"
+                      fontSize="13px"
+                      height="auto"
+                      onClick={() => {
+                        setStorageItem('redirect', router?.asPath);
+                        setTimeout(() => {
+                          logout(() => {
+                            router.push('/login');
+                          });
+                          // router.push('/login');
+                        }, 150);
+                      }}
+                    >
+                      {`${t('common:logout-and-switch-user')}.`}
+                    </Button>
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Text size="21px" fontWeight={700} lineHeight="25px">
+                    {t('form.title')}
+                  </Text>
+                  <Text size="14px" fontWeight={700} lineHeight="18px">
+                    {t('form.description')}
+                  </Text>
+                  <Box>
+                    <Formik
+                      initialValues={{
+                        first_name: '',
+                        last_name: '',
+                        email: '',
+                      }}
+                      onSubmit={(values, actions) => {
+                        handleSubmit(actions, values);
+                      }}
+                      validationSchema={subscriptionValidation}
+                    >
+                      {({ isSubmitting }) => (
+                        <Form
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gridGap: '10px',
+                            padding: '18px',
+                          }}
                         >
-                          {t('join-workshops')}
-                        </Button>
-                        <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
-                          {t('signup:already-have-account')}
-                          {' '}
-                          <Link redirectAfterLogin variant="default" href="/login" fontSize="13px">
-                            {t('signup:login-here')}
-                          </Link>
-                        </Text>
-                      </Form>
-                    )}
-                  </Formik>
-                </Box>
-              </>
-            )}
+                          <FieldForm
+                            type="text"
+                            name="first_name"
+                            label={t('common:first-name')}
+                            required
+                            formProps={formProps}
+                            setFormProps={setFormProps}
+                            readOnly={eventNotExists}
+                          />
+                          <FieldForm
+                            type="text"
+                            name="last_name"
+                            label={t('common:last-name')}
+                            required
+                            formProps={formProps}
+                            setFormProps={setFormProps}
+                            readOnly={eventNotExists}
+                          />
+                          <FieldForm
+                            type="text"
+                            name="email"
+                            label={t('common:email')}
+                            required
+                            formProps={formProps}
+                            setFormProps={setFormProps}
+                            readOnly={eventNotExists}
+                          />
+
+                          <Button
+                            mt="10px"
+                            type="submit"
+                            variant="default"
+                            isLoading={isSubmitting}
+                            title="Join Workshop"
+                            disabled={eventNotExists}
+                          >
+                            {t('join-workshops')}
+                          </Button>
+                          <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
+                            {t('signup:already-have-account')}
+                            {' '}
+                            <Link redirectAfterLogin variant="default" href="/login" fontSize="13px">
+                              {t('signup:login-here')}
+                            </Link>
+                          </Text>
+                        </Form>
+                      )}
+                    </Formik>
+                  </Box>
+                </>
+              )}
+            </Box>
           </Box>
+
+          {users?.length > 0 && (
+            <Box background={featuredColor} padding="20px 25px" borderRadius="17px">
+              <Text>
+                {`${users.length} people are already registered in this event. 27 more spots available`}
+              </Text>
+              <Grid
+                gridAutoRows="3.4rem"
+                templateColumns="repeat(auto-fill, minmax(3.5rem, 1fr))"
+                gap={0}
+                maxH={showAll ? '270px' : 'auto'}
+                height={showAll ? '100%' : 'auto'}
+                overflowY="auto"
+              >
+                {users?.map((c) => {
+                  const fullName = `${c?.attendee?.user?.first_name} ${c?.attendee?.user?.last_name}`;
+                  return c?.attendee?.id && (
+                    <AvatarUser
+                      key={`${c?.attendee?.id} - ${c?.attendee?.user?.first_name}`}
+                      fullName={fullName}
+                      data={c.atendee}
+                      // isOnline={isOnline}
+                      badge
+                      withoutPopover
+                    />
+                  );
+                })}
+              </Grid>
+              {users.length > 12 && !showAll && (
+                <Button variant="link" height="auto" onClick={() => setShowAll(true)}>
+                  Load more
+                </Button>
+              )}
+            </Box>
+          )}
         </Box>
       </GridContainer>
     </>

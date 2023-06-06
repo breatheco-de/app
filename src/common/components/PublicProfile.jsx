@@ -10,7 +10,11 @@ import Link from './NextChakraLink';
 function PublicProfile({ profile }) {
   const { featuredColor, hexColor } = useStyle();
 
-  const { first_name: firstName, last_name: lastName, country, description } = profile;
+  const firstName = profile?.first_name;
+  const lastName = profile?.last_name;
+  const country = profile?.country;
+  const description = profile?.description;
+
   const fullName = `${firstName} ${lastName}`;
   const socialMedia = [
     {
@@ -44,14 +48,18 @@ function PublicProfile({ profile }) {
       />
       <Box display="flex" flexDirection="column" gridGap="6.5px">
         <Text size="26px" fontWeight={700} lineHeight="31.2px">
-          {fullName}
+          {typeof profile === 'string' ? profile : fullName}
         </Text>
-        <Text size="16px" fontWeight={400} color="blue.default" lineHeight="19.36px">
-          {country}
-        </Text>
-        <Text size="12px" fontWeight={400}>
-          {description}
-        </Text>
+        {country && (
+          <Text size="16px" fontWeight={400} color="blue.default" lineHeight="19.36px">
+            {country}
+          </Text>
+        )}
+        {description && (
+          <Text size="12px" fontWeight={400}>
+            {description}
+          </Text>
+        )}
         <Box display="flex" gridGap="16px" margin="20px 0 0 0">
           {socialMedia.map((social) => (
             <Link key={`${social?.name}-${social?.url}`} href={social.url} title={social.name}>
