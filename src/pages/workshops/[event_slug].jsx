@@ -153,11 +153,11 @@ const Page = () => {
       >
         <GridContainer
           height="100%"
-          minHeight="290px"
           gridTemplateColumns="2fr repeat(12, 1fr) 2fr"
           gridGap="36px"
-          padding="0 10px"
           display={{ base: 'flex', md: 'grid' }}
+          padding="37px 10px"
+          minHeight="290px"
         >
           <Box display="flex" flexDirection="column" justifyContent="center" gridGap="15px" gridColumn="2 / span 8">
             <Box display="flex" mt={{ base: '0', md: '1rem' }} gridGap="6px" background="yellow.light" borderRadius="20px" alignItems="center" width="fit-content" padding="8px 12px">
@@ -235,13 +235,13 @@ const Page = () => {
             <br />
             This hands-on experience will not only enhance your understanding of these technologies but also equip you with a valuable project to add to your portfolio. Don&apos;t miss out on this chance to learn from an expert and take your skills to new heights! */}
           </Box>
-          {!eventNotExists && (event?.host_user || event?.host) && (
+          {!eventNotExists && (typeof event?.host_user === 'object' && event?.host_user !== null) && (
             <Box display="flex" flexDirection="column" gridGap="12px" mb="31px">
               <Text size="26px" fontWeight={700}>
                 {t('host-label-text')}
               </Text>
               <PublicProfile
-                profile={(typeof event?.host_user === 'object' && event?.host_user !== null) ? event.host_user : event?.host}
+                profile={event.host_user}
               />
             </Box>
           )}
