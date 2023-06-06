@@ -154,7 +154,6 @@ const Page = () => {
         <GridContainer
           height="100%"
           minHeight="290px"
-          // gridTemplateColumns={{ base: 'repeat(12, 1fr)', lg: '2fr repeat(12, 1fr)' }}
           gridTemplateColumns="2fr repeat(12, 1fr) 2fr"
           gridGap="36px"
           padding="0 10px"
@@ -224,19 +223,12 @@ const Page = () => {
         gridGap="36px"
         padding="0 10px"
       >
-        {/* <Box display={{ base: 'none', lg: 'grid' }} position="sticky" top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '1rem 0 0 0' }}>
-          <MktSideRecommendedCourses />
-        </Box> */}
         <Box display={{ base: 'block', lg: 'flex' }} flexDirection="column" gridColumn={{ base: '2 / span 6', lg: '2 / span 8' }}>
-
-          {/* MARKDOWN SIDE */}
           <Box
             borderRadius="3px"
-            marginBottom="17px"
+            marginBottom="30px"
             maxWidth="1012px"
-            flexGrow={1}
             width={{ base: 'auto', lg: '100%' }}
-            className={`markdown-body ${useColorModeValue('light', 'dark')}`}
           >
             {event?.description}
             {/* Join us for an exciting opportunity to bring your HTML, CSS, and JavaScript skills to the next level! Our special speaker Brent Solomon, a seasoned teacher at 4Geeks Academy USA and Software Engineer at Amazon Web Services, will guide you through the process of building a sleek and functional TodoList using Vanilla JavaScript.
