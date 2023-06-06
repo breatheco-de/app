@@ -77,10 +77,14 @@ const Page = () => {
         if (findedEvent?.id) {
           bc.events().getUsers(findedEvent?.id)
             .then((resp) => {
-              setUsers(resp.data);
+              const cleanedData = resp.data.filter((l) => l?.attendee?.first_name && l?.attendee?.last_name);
+              setUsers(cleanedData);
             })
             .catch(() => {});
+        } else {
+          router.push('/404');
         }
+
         setEvent({
           ...findedEvent,
           loaded: true,
@@ -423,12 +427,13 @@ const Page = () => {
                 overflowY="auto"
               >
                 {users?.map((c) => {
-                  const fullName = `${c?.attendee?.user?.first_name} ${c?.attendee?.user?.last_name}`;
+                  const fullName = `${c?.attendee?.first_name} ${c?.attendee?.last_name}`;
                   return c?.attendee?.id && (
                     <AvatarUser
-                      key={`${c?.attendee?.id} - ${c?.attendee?.user?.first_name}`}
+                      key={`${c?.attendee?.id} - ${c?.attendee?.first_name}`}
                       fullName={fullName}
-                      data={c.atendee}
+                      avatarUrl={c?.attendee?.profile?.avatar_url}
+                      data={c?.attendee}
                       // isOnline={isOnline}
                       badge
                       withoutPopover
