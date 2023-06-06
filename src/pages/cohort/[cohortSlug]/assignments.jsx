@@ -133,7 +133,10 @@ function Assignments() {
   });
   const [studentLabel, setStudentLabel] = useState(null);
   const [projectLabel, setProjectLabel] = useState(null);
-  const [educationalLabel, setEducationalLabel] = useState(null);
+  const [educationalLabel, setEducationalLabel] = useState(educationalStatusList.find((option) => option.value === query.educational_status) || {
+    label: t('educational-list.active'),
+    value: 'active',
+  });
   const [statusLabel, setStatusLabel] = useState(statusList.find((option) => option.value === query.status));
   const [openFilter, setOpenFilter] = useState(false);
   const [currentView, setCurrentView] = useState(Number(query.view) || 0);
@@ -302,7 +305,7 @@ function Assignments() {
 
     if (cohortId) {
       setSelectedCohort(currentCohort);
-      bc.cohort({ sort, users: query.student, educational_status: query.educational_status })
+      bc.cohort({ sort, users: query.student, educational_status: educationalLabel?.value })
         .getStudentsWithTasks(slug, academyId)
         .then((res) => {
           const students = res?.data;
@@ -539,7 +542,7 @@ function Assignments() {
         justifyContent="space-between"
         gridGap="20px"
         maxWidth={{ base: '90%', md: '90%', lg: '1012px' }}
-        margin={{ base: '3% auto', md: '3% auto 4% auto', lg: '3% auto 4% auto' }}
+        margin={{ base: '3% auto', md: '3% auto 0 auto', lg: '3% auto 0 auto' }}
         padding={{ base: '0', lg: '0' }}
       >
         <ButtonGroup
@@ -810,7 +813,7 @@ function Assignments() {
       <Box
         gridGap="20px"
         maxWidth="1012px"
-        margin={{ base: '3% 4%', md: '3% auto 2% auto', lg: '3% auto 2% auto' }}
+        margin={{ base: '3% 4%', md: '2% auto 2% auto', lg: '2% auto 2% auto' }}
         padding={{ base: '0', md: '0 10px', lg: '0' }}
         p="0 0 30px 0"
       >

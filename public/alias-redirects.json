@@ -2,7 +2,7 @@
   {
     "source": "/lesson/[unassigned]prepararing-for-software-developer-interview",
     "type": "LESSON",
-    "destination": "/en/lesson/what-is-data-science"
+    "destination": "/en/lesson/prepararing-for-software-developer-interview"
   },
   {
     "source": "/lesson/[unassigned]python-http-requests",
@@ -53,6 +53,46 @@
     "source": "/lesson/how-to-create-unit-testing-with-Javascript-and-Jest",
     "type": "LESSON",
     "destination": "/en/lesson/how-to-create-unit-testing-with-javascript-and-jest"
+  },
+  {
+    "source": "/lesson/intro-to-4geeks",
+    "type": "LESSON",
+    "destination": "/en/lesson/intro-to-4geeks-full-stack"
+  },
+  {
+    "source": "/lesson/python-syntax",
+    "type": "LESSON",
+    "destination": "/en/lesson/python-vs-javascript-syntax"
+  },
+  {
+    "source": "/interactive-exercise/react-js-exercises",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/react-js-tutorial-exercises"
+  },
+  {
+    "source": "/how-to/bootstrap",
+    "type": "QUIZ",
+    "destination": "/en/how-to/bootstrap-quiz"
+  },
+  {
+    "source": "/interactive-exercise/events",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/javascript-events-exercises"
+  },
+  {
+    "source": "/how-to/arquitectura-del-internet",
+    "type": "QUIZ",
+    "destination": "/es/how-to/arquitectura-de-internet"
+  },
+  {
+    "source": "/interactive-exercise/react-js",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/react-js-tutorial-exercises"
+  },
+  {
+    "source": "/interactive-exercise/layouts",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/css-layouts-tutorial-exercises"
   },
   {
     "source": "/interactive-exercise/the-command-line",
@@ -125,42 +165,77 @@
     "destination": "/es/lesson/que-es-javascript-aprende-a-programar-en-javascript"
   },
   {
-    "source": "/interactive-coding-tutorial/interview-preparation",
-    "type": "PROJECT",
-    "destination": "/en/interactive-coding-tutorial/interview-preparation-3"
-  },
-  {
-    "source": "/interactive-coding-tutorial/exercise-instagram-post",
-    "type": "PROJECT",
-    "destination": "/en/interactive-coding-tutorial/exercise-instagram-post-3"
-  },
-  {
-    "source": "/interactive-coding-tutorial/exercise-instagram-post-2",
-    "type": "PROJECT",
-    "destination": "/en/interactive-coding-tutorial/exercise-instagram-post-3"
-  },
-  {
-    "source": "/interactive-coding-tutorial/interview-preparation-1",
-    "type": "PROJECT",
-    "destination": "/en/interactive-coding-tutorial/interview-preparation-3"
-  },
-  {
-    "source": "/interactive-coding-tutorial/interview-preparation-2",
-    "type": "PROJECT",
-    "destination": "/en/interactive-coding-tutorial/interview-preparation-3"
-  },
-  {
-    "source": "/lesson/trazar-func-con-python",
+    "source": "/lesson/what-is-an-array-define-array-es",
     "type": "LESSON",
-    "destination": "/es/lesson/trazar-func-con-python-es"
+    "destination": "/es/lesson/array-arreglo-en-javascript"
   },
   {
-    "source": "/how-to/hello-world",
+    "source": "/lesson/regex-tutorial-regular-expression-examples-es",
+    "type": "LESSON",
+    "destination": "/es/lesson/regex-tutorial-regular-expression-ejemplo"
+  },
+  {
+    "source": "/lesson/python-syntax-es",
+    "type": "LESSON",
+    "destination": "/es/lesson/python-vs-js-syntax-es"
+  },
+  {
+    "source": "/lesson/intro-to-4geeks-es",
+    "type": "LESSON",
+    "destination": "/es/lesson/intro-to-4geeks-full-stack-es"
+  },
+  {
+    "source": "/interactive-exercise/numpy-exercises",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/numpy-exercises-tutorial"
+  },
+  {
+    "source": "/interactive-exercise/react-exercises",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/react-js-tutorial-exercises"
+  },
+  {
+    "source": "/interactive-exercise/object-oriented-programing",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/object-oriented-programing-in-javascript"
+  },
+  {
+    "source": "/interactive-exercise/numpy-exercises-tutorial-us",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/numpy-exercises-tutorial"
+  },
+  {
+    "source": "/lesson/how-to-use-gitpod-es",
+    "type": "LESSON",
+    "destination": "/es/lesson/como-utilizar-gitpod"
+  },
+  {
+    "source": "/lesson/intro-to-python-es",
+    "type": "LESSON",
+    "destination": "/es/lesson/que-es-python-tutorial"
+  },
+  {
+    "source": "/how-to/nvm-install-windows-es",
     "type": "ARTICLE",
-    "destination": "/es/how-to/hello-world1"
+    "destination": "/es/how-to/como-instalar-nvm-en-windows"
   },
   {
-    "source": "/lesson/unassigned-javascript-objects",
+    "source": "/how-to/ask",
+    "type": "ARTICLE",
+    "destination": "/en/how-to/how-to-ask-programming-questions"
+  },
+  {
+    "source": "/how-to/how-to-ask-programming-questions-es",
+    "type": "ARTICLE",
+    "destination": "/es/how-to/como-hacer-preguntas-de-programacion"
+  },
+  {
+    "source": "/interactive-exercise/pandas-exercises-tutorial-es",
+    "type": "EXERCISE",
+    "destination": "/es/interactive-exercise/tutorial-pandas-para-machine-learning"
+  },
+  {
+    "source": "/lesson/calculus-and-linear-algebra",
     "type": "LESSON",
     "destination": "/es/lesson/array-arreglo-en-javascript"
   },
@@ -1145,12 +1220,12 @@
     "destination": "/en/interactive-coding-tutorial/building-rest-apis-with-flaskpython"
   },
   {
-    "source": "/project/student-external-profile",
+    "source": "/project/proyecto-de-regresion-lineal-regularizada",
     "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/student-external-profile"
+    "destination": "/es/interactive-coding-tutorial/proyecto-de-regresion-lineal-regularizada"
   },
   {
-    "source": "/project/instagram-feed-es",
+    "source": "/project/regularized-linear-regression-project-tutorial",
     "type": "PROJECT-REROUTE",
     "destination": "/es/interactive-coding-tutorial/proyecto-de-regresion-lineal-regularizada"
   },

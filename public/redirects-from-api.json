@@ -1,17 +1,27 @@
 [
   {
-    "source": "/lesson/react-hooks-explained-es",
-    "destination": "/es/lesson/react-hooks-explained-es",
+    "source": "/lesson/formularios-con-node",
+    "destination": "/es/lesson/formularios-con-node",
     "permanent": true
   },
   {
-    "source": "/lesson/bootstrap-tutorial-of-bootstrap-4-es",
-    "destination": "/es/lesson/bootstrap-tutorial-of-bootstrap-4-es",
+    "source": "/lesson/Introduction-to-express-js-es",
+    "destination": "/es/lesson/Introduction-to-express-js-es",
     "permanent": true
   },
   {
-    "source": "/lesson/raspado-web-con-beautiful-soap",
-    "destination": "/es/lesson/raspado-web-con-beautiful-soap",
+    "source": "/lesson/Graficar-funciones-con-Python",
+    "destination": "/es/lesson/Graficar-funciones-con-Python",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/intro_mongodb_and_mongoose-es",
+    "destination": "/es/lesson/intro_mongodb_and_mongoose-es",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/using_mongodb-es",
+    "destination": "/es/lesson/using_mongodb-es",
     "permanent": true
   },
   {
@@ -370,43 +380,8 @@
     "permanent": true
   },
   {
-    "source": "/lesson/controlled-vs-uncontrolled-inputs-react-js-es",
-    "destination": "/es/lesson/controlled-vs-uncontrolled-inputs-react-js-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/intro-to-python-es",
-    "destination": "/es/lesson/intro-to-python-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/php-syntax-es",
-    "destination": "/es/lesson/php-syntax-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/learning-to-code-with-python-es",
-    "destination": "/es/lesson/learning-to-code-with-python-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/learn-in-public-es",
-    "destination": "/es/lesson/learn-in-public-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/javascript-import-es",
-    "destination": "/es/lesson/javascript-import-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/intro-to-prework-es",
-    "destination": "/es/lesson/intro-to-prework-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/css-layouts-es",
-    "destination": "/es/lesson/css-layouts-es",
+    "source": "/lesson/depurando-codigo-css",
+    "destination": "/es/lesson/depurando-codigo-css",
     "permanent": true
   },
   {
@@ -780,8 +755,8 @@
     "permanent": true
   },
   {
-    "source": "/lesson/regex-tutorial-regular-expression-examples-es",
-    "destination": "/es/lesson/regex-tutorial-regular-expression-examples-es",
+    "source": "/lesson/regex-tutorial-regular-expression-ejemplo",
+    "destination": "/es/lesson/regex-tutorial-regular-expression-ejemplo",
     "permanent": true
   },
   {
@@ -800,8 +775,8 @@
     "permanent": true
   },
   {
-    "source": "/interactive-exercise/pandas-exercises-tutorial-es",
-    "destination": "/es/interactive-exercise/pandas-exercises-tutorial-es",
+    "source": "/lesson/depurando-codigo-html",
+    "destination": "/es/lesson/depurando-codigo-html",
     "permanent": true
   },
   {

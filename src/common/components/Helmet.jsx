@@ -33,7 +33,7 @@ function Helmet({
       lang: localeTranslation[lang] || lang,
     }),
   );
-  const currentlocaleLang = getLocalePath().find((l) => l.slug === slug)?.lang || locale;
+  const currentlocaleLang = getLocalePath().find((l) => l.slug === slug && l?.lang === locale)?.lang || locale;
 
   const getCanonicalTranslationsLink = () => {
     if (currentlocaleLang !== 'en' && currentlocaleLang !== undefined) {
