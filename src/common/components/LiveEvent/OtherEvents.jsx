@@ -3,8 +3,8 @@ import {
   Box, Avatar, Tag, TagLabel,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import modifyEnv from '../../../../modifyEnv';
-import { getStorageItem, lengthOfString, syncInterval } from '../../../utils';
+// import modifyEnv from '../../../../modifyEnv';
+import { lengthOfString, syncInterval } from '../../../utils';
 import useStyle from '../../hooks/useStyle';
 import CustomTheme from '../../../../styles/theme';
 import Icon from '../Icon';
@@ -14,8 +14,8 @@ import Text from '../Text';
 const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stTranslation }) => {
   const { t, lang } = useTranslation('live-event');
   const { hexColor, disabledColor, fontColor } = useStyle();
-  const accessToken = getStorageItem('accessToken');
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  // const accessToken = getStorageItem('accessToken');
+  // const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const limit = 40;
 
   return events.map((event) => {
@@ -66,7 +66,8 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stT
             <Link
               target="_blank"
               rel="noopener noreferrer"
-              href={`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#'}
+              href={`/workshops/${event?.slug}` || '#'}
+              // href={`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#'}
               color={fontColor}
               fontSize="15px"
               lineHeight="18px"
