@@ -21,10 +21,14 @@ import Link from '../../common/components/NextChakraLink';
 import PublicProfile from '../../common/components/PublicProfile';
 import modifyEnv from '../../../modifyEnv';
 import useCustomToast from '../../common/hooks/useCustomToast';
+import useAuth from '../../common/hooks/useAuth';
 
 const Page = () => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-  const [event, setEvent] = useState({});
+  const { isAuthenticated, user, logout } = useAuth();
+  const [event, setEvent] = useState({
+    loaded: false,
+  });
   const router = useRouter();
   const { t } = useTranslation('workshops');
   const { locale } = router;
@@ -66,9 +70,16 @@ const Page = () => {
     bc.public().events()
       .then((res) => {
         const findEvent = res.data.find((l) => l?.slug === eventSlug);
-        setEvent(findEvent);
+        setEvent({
+          ...findEvent,
+          loaded: true,
+        });
       })
-      .catch(() => {});
+      .catch(() => {
+        setEvent({
+          loaded: true,
+        });
+      });
   }, []);
 
   const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
@@ -117,6 +128,11 @@ const Page = () => {
     }
   };
 
+  const eventNotExists = event?.loaded && !event?.slug;
+
+  console.log('event:::', event);
+  console.log('isAuthenticated:::', isAuthenticated);
+
   return (
     <>
       <Box
@@ -139,33 +155,52 @@ const Page = () => {
                 Javascript Beginner Workshop
               </Text>
             </Box>
-            {event?.title ? (
-              <Heading
-                as="h1"
-                size="50px"
-                fontWeight="700"
-                lineHeight="52px"
-                textTransform="capitalize"
-                color={useColorModeValue('black', 'white')}
-              >
-                {event.title}
-              </Heading>
+            {event.loaded ? (
+              <>
+                {event?.title && !eventNotExists ? (
+                  <Heading
+                    as="h1"
+                    size="50px"
+                    fontWeight="700"
+                    lineHeight="52px"
+                    textTransform="capitalize"
+                    color={useColorModeValue('black', 'white')}
+                  >
+                    {event.title}
+                  </Heading>
+                ) : (
+                  <Heading
+                    as="h1"
+                    size="35px"
+                    fontWeight="700"
+                    lineHeight="52px"
+                    textTransform="capitalize"
+                    color={useColorModeValue('black', 'white')}
+                  >
+                    {t('no-event-found')}
+                  </Heading>
+                )}
+              </>
             ) : (
               <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
             )}
             <Box display="flex" flexDirection="column" gridGap="8px" id="event-info">
-              <Box display="flex" gridGap="10px">
-                <Icon icon="calendar" width="20px" height="20px" color={hexColor.fontColor3} />
-                <Text withTooltip size="14px" label={capitalizeFirstLetter(countryOfDate)} fontWeight={700} width="fit-content">
-                  {capitalizeFirstLetter(formatedDate[locale])}
-                </Text>
-              </Box>
-              <Box display="flex" gridGap="10px">
-                <Icon icon="chronometer-full" width="20px" height="20px" color={hexColor.fontColor3} />
-                <Text size="sm">
-                  {`${duration.hours} hr duraiton`}
-                </Text>
-              </Box>
+              {formatedDate[locale] && (
+                <Box display="flex" gridGap="10px">
+                  <Icon icon="calendar" width="20px" height="20px" color={hexColor.fontColor3} />
+                  <Text withTooltip size="14px" label={capitalizeFirstLetter(countryOfDate)} fontWeight={700} width="fit-content">
+                    {capitalizeFirstLetter(formatedDate[locale])}
+                  </Text>
+                </Box>
+              )}
+              {duration?.hours && (
+                <Box display="flex" gridGap="10px">
+                  <Icon icon="chronometer-full" width="20px" height="20px" color={hexColor.fontColor3} />
+                  <Text size="sm">
+                    {`${duration.hours} hr duraiton`}
+                  </Text>
+                </Box>
+              )}
             </Box>
           </Box>
 
@@ -191,14 +226,15 @@ const Page = () => {
             width={{ base: 'auto', lg: '100%' }}
             className={`markdown-body ${useColorModeValue('light', 'dark')}`}
           >
-            Join us for an exciting opportunity to bring your HTML, CSS, and JavaScript skills to the next level! Our special speaker Brent Solomon, a seasoned teacher at 4Geeks Academy USA and Software Engineer at Amazon Web Services, will guide you through the process of building a sleek and functional TodoList using Vanilla JavaScript.
+            {event?.description}
+            {/* Join us for an exciting opportunity to bring your HTML, CSS, and JavaScript skills to the next level! Our special speaker Brent Solomon, a seasoned teacher at 4Geeks Academy USA and Software Engineer at Amazon Web Services, will guide you through the process of building a sleek and functional TodoList using Vanilla JavaScript.
             <br />
             <br />
-            This hands-on experience will not only enhance your understanding of these technologies but also equip you with a valuable project to add to your portfolio. Don&apos;t miss out on this chance to learn from an expert and take your skills to new heights!
+            This hands-on experience will not only enhance your understanding of these technologies but also equip you with a valuable project to add to your portfolio. Don&apos;t miss out on this chance to learn from an expert and take your skills to new heights! */}
           </Box>
           <Box display="flex" flexDirection="column" gridGap="12px" mb="31px">
             <Text size="26px" fontWeight={700}>
-              Your host for this event
+              {t('host-label-text')}
             </Text>
             <PublicProfile />
 
@@ -229,75 +265,132 @@ const Page = () => {
           borderColor={commonBorderColor}
         >
           <Image src="/static/images/person-smile1.png" width={342} title="Form image" height={177} objectFit="cover" />
-          <Text size="21px" fontWeight={700} lineHeight="25px">
-            Join The Workshop
-          </Text>
-          <Text size="14px" fontWeight={700} lineHeight="18px">
-            Sign in to join other coders live solving technical or career challenges.
-          </Text>
-          <Box>
-            <Formik
-              initialValues={{
-                first_name: '',
-                last_name: '',
-                email: '',
-              }}
-              onSubmit={(values, actions) => {
-                handleSubmit(actions, values);
-              }}
-              validationSchema={subscriptionValidation}
-            >
-              {({ isSubmitting }) => (
-                <Form
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gridGap: '10px',
-                    padding: '18px',
+
+          <Box display="flex" flexDirection="column" gridGap="10px" padding="0 18px 18px">
+            {isAuthenticated && user?.id ? (
+              <>
+                <Text size="21px" fontWeight={700} lineHeight="25px">
+                  {`Hello ${user.first_name}`}
+                </Text>
+                <Text size="14px" fontWeight={700} lineHeight="18px">
+                  {t('suggest-join-event')}
+                </Text>
+                <Button
+                  mt="10px"
+                  type="submit"
+                  variant="default"
+                  // title="RSVP for this Workshop"
+                  disabled={eventNotExists && !isAuthenticated}
+                  onClick={() => {
+                    if (isAuthenticated) {
+                      bc.events().applyEvent(event.id)
+                        .then(() => {});
+                    }
                   }}
                 >
-                  <FieldForm
-                    type="text"
-                    name="first_name"
-                    label={t('common:first-name')}
-                    required
-                    formProps={formProps}
-                    setFormProps={setFormProps}
-                  />
-                  <FieldForm
-                    type="text"
-                    name="last_name"
-                    label={t('common:last-name')}
-                    required
-                    formProps={formProps}
-                    setFormProps={setFormProps}
-                  />
-                  <FieldForm
-                    type="text"
-                    name="email"
-                    label={t('common:email')}
-                    required
-                    formProps={formProps}
-                    setFormProps={setFormProps}
-                  />
-
+                  {t('reserv-button-text')}
+                </Button>
+                <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
+                  {`You are not ${user.first_name}?`}
+                  {' '}
                   <Button
-                    mt="10px"
-                    type="submit"
-                    variant="default"
-                    isLoading={isSubmitting}
-                    title="Join Workshop"
+                    variant="link"
+                    fontSize="13px"
+                    height="auto"
+                    onClick={() => {
+                      setStorageItem('redirect', router?.asPath);
+                      setTimeout(() => {
+                        logout(() => {
+                          router.push('/login');
+                        });
+                        // router.push('/login');
+                      }, 150);
+                    }}
                   >
-                    Join Workshop
+                    {`${t('common:logout-and-switch-user')}.`}
                   </Button>
-                  <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
-                    You already have an account?
-                    {' '}
-                    <Link redirectAfterLogin variant="default" href="/login" fontSize="13px">Login here.</Link>
-                  </Text>
-                </Form>
-              )}
-            </Formik>
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text size="21px" fontWeight={700} lineHeight="25px">
+                  {t('form.title')}
+                </Text>
+                <Text size="14px" fontWeight={700} lineHeight="18px">
+                  {t('form.description')}
+                </Text>
+                <Box>
+                  <Formik
+                    initialValues={{
+                      first_name: '',
+                      last_name: '',
+                      email: '',
+                    }}
+                    onSubmit={(values, actions) => {
+                      handleSubmit(actions, values);
+                    }}
+                    validationSchema={subscriptionValidation}
+                  >
+                    {({ isSubmitting }) => (
+                      <Form
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gridGap: '10px',
+                          padding: '18px',
+                        }}
+                      >
+                        <FieldForm
+                          type="text"
+                          name="first_name"
+                          label={t('common:first-name')}
+                          required
+                          formProps={formProps}
+                          setFormProps={setFormProps}
+                          readOnly={eventNotExists}
+                        />
+                        <FieldForm
+                          type="text"
+                          name="last_name"
+                          label={t('common:last-name')}
+                          required
+                          formProps={formProps}
+                          setFormProps={setFormProps}
+                          readOnly={eventNotExists}
+                        />
+                        <FieldForm
+                          type="text"
+                          name="email"
+                          label={t('common:email')}
+                          required
+                          formProps={formProps}
+                          setFormProps={setFormProps}
+                          readOnly={eventNotExists}
+                        />
+
+                        <Button
+                          mt="10px"
+                          type="submit"
+                          variant="default"
+                          isLoading={isSubmitting}
+                          title="Join Workshop"
+                          disabled={eventNotExists}
+                        >
+                          {t('join-workshops')}
+                        </Button>
+                        <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
+                          {t('signup:already-have-account')}
+                          {' '}
+                          <Link redirectAfterLogin variant="default" href="/login" fontSize="13px">
+                            {t('signup:login-here')}
+                          </Link>
+                        </Text>
+                      </Form>
+                    )}
+                  </Formik>
+                </Box>
+              </>
+            )}
           </Box>
         </Box>
       </GridContainer>

@@ -54,7 +54,7 @@ function PublicProfile({ profile }) {
         </Text>
         <Box display="flex" gridGap="16px" margin="20px 0 0 0">
           {socialMedia.map((social) => (
-            <Link href={social.url} title={social.name}>
+            <Link key={`${social?.name}-${social?.url}`} href={social.url} title={social.name}>
               <Icon icon={social.icon} width="20px" height="20px" color={hexColor.blueDefault} />
             </Link>
           ))}

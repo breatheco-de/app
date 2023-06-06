@@ -165,5 +165,6 @@
   },
   "submit-project": "Submit project",
   "uploadScreenshot": "Upload screenshot",
-  "continue-learning-course": "Continue learning for free about:"
+  "continue-learning-course": "Continue learning for free about:",
+  "logout-and-switch-user": "Logout and switch user"
 }

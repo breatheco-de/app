@@ -9,7 +9,7 @@ import FileInput from './FileInput';
 const FieldForm = ({
   type, name, label, placeholder, formProps, setFormProps, style, withLabel, pattern, handleOnChange, externValue, onClick,
   acceptedFiles, maxFileSize, multipleFiles, fileProps, setFileProps, setFieldValue, translation, required, hint, maxLength,
-  spellcheck,
+  spellcheck, readOnly,
 }) => {
   const { input, lightColor } = useStyle();
   const inputBorderColor = input.borderColor;
@@ -59,6 +59,7 @@ const FieldForm = ({
                     borderColor={inputBorderColor}
                     borderRadius="3px"
                     flex={0.5}
+                    readOnly={readOnly}
                   />
                   {maxLength > 0 && (
                     <Box position="absolute" color={inputBorderColor} bottom="6px" right={3}>
@@ -103,6 +104,7 @@ const FieldForm = ({
                   borderColor={inputBorderColor}
                   borderRadius="3px"
                   flex={0.5}
+                  readOnly={readOnly}
                 />
               )}
               {hint && !form.errors[name] && (
@@ -143,6 +145,7 @@ FieldForm.propTypes = {
   required: PropTypes.bool,
   hint: PropTypes.string,
   spellcheck: PropTypes.bool,
+  readOnly: PropTypes.bool,
 };
 
 FieldForm.defaultProps = {
@@ -169,6 +172,7 @@ FieldForm.defaultProps = {
   required: false,
   hint: '',
   spellcheck: false,
+  readOnly: false,
 };
 
 export default FieldForm;

@@ -1,0 +1,11 @@
+{
+  "no-event-found": "No hay eventos disponibles con esta URL 😕",
+  "host-label-text": "Anfitrión para este evento",
+  "suggest-join-event": "Haga clic a continuación para confirmar su participación y guardar su lugar para este evento",
+  "reserv-button-text": "Reservar lugar",
+  "form": {
+    "title": "únete al taller",
+    "description": "Inicia sesión para unirte a otros programadores en vivo resolviendo desafíos técnicos o profesionales."
+  },
+  "join-workshop": "Entra al taller"
+}
