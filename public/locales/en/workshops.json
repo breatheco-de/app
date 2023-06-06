@@ -3,6 +3,7 @@
   "host-label-text": "Host for this event",
   "suggest-join-event": "Click below to confirm your participation and save your spot for this event",
   "reserv-button-text": "Reserve your spot",
+  "duration-hours": "{{hours}}hr duration",
   "form": {
     "title": "Join The Workshop",
     "description": "Sign in to join other coders live solving technical or career challenges."

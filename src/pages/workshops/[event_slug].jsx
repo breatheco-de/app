@@ -208,7 +208,7 @@ const Page = () => {
                 <Box display="flex" gridGap="10px">
                   <Icon icon="chronometer-full" width="20px" height="20px" color={hexColor.fontColor3} />
                   <Text size="sm">
-                    {`${duration.hours} hr duraiton`}
+                    {t('duration-hours', { hours: duration.hours })}
                   </Text>
                 </Box>
               )}

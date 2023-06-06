@@ -3,6 +3,7 @@
   "host-label-text": "Anfitrión para este evento",
   "suggest-join-event": "Haga clic a continuación para confirmar su participación y guardar su lugar para este evento",
   "reserv-button-text": "Reservar lugar",
+  "duration-hours": "{{hours}}hr de duración",
   "form": {
     "title": "únete al taller",
     "description": "Inicia sesión para unirte a otros programadores en vivo resolviendo desafíos técnicos o profesionales."
