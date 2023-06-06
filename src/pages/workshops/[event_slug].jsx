@@ -253,7 +253,7 @@ const Page = () => {
         <Box
           display="flex"
           gridColumn={{ base: '8 / span 4', lg: '10 / span 4' }}
-          margin={{ base: '20px 0 0 auto', lg: '-12.95rem 0 0 auto' }}
+          margin={{ base: '20px 0 0 auto', lg: '-13.44rem 0 0 auto' }}
           flexDirection="column"
           transition="background 0.2s ease-in-out"
           width="100%"
