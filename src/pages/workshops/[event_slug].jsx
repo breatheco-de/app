@@ -385,7 +385,7 @@ const Page = () => {
                             title="Join Workshop"
                             disabled={eventNotExists}
                           >
-                            {t('join-workshops')}
+                            {t('join-workshop')}
                           </Button>
                           <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                             {t('signup:already-have-account')}
