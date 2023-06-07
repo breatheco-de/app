@@ -4,9 +4,15 @@
   "suggest-join-event": "Click below to confirm your participation and save your spot for this event",
   "reserv-button-text": "Reserve your spot",
   "duration-hours": "{{hours}}hr duration",
+  "greetings": "Hello {{name}} 👋",
+  "switch-user-connector": "You are not {{name}}?",
   "form": {
     "title": "Join The Workshop",
-    "description": "Sign in to join other coders live solving technical or career challenges."
+    "description": "Sign in to join other coders live solving technical or career challenges.",
+    "ready-to-join-title": "Ready to join?",
+    "ready-to-join-description": "Join other programmers live to solve technical or professional challenges"
   },
-  "join-workshop": "Join Workshop"
+  "users-registered-count": "{{count}} people are already registered in this event. 27 more spots available",
+  "join-workshop": "Join Workshop",
+  "join": "Join Now"
 }

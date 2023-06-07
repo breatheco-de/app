@@ -288,20 +288,20 @@ function getBrowserSize() {
   return {};
 }
 
-function calculateDifferenceDays(fecha) {
-  const fechaActual = new Date();
-  const fechaDada = new Date(fecha);
+function calculateDifferenceDays(date) {
+  const now = new Date();
+  const givenDate = new Date(date);
 
   // Convert dates to milliseconds
-  const milisegundosPorDia = 24 * 60 * 60 * 1000;
-  const diferenciaEnMilisegundos = fechaDada - fechaActual;
+  const millisecondsPerDay = 24 * 60 * 60 * 1000;
+  const diffInMilliseconds = givenDate - now;
 
   // Calculate the difference in days by rounding down
-  const diferenciaEnDias = Math.floor(diferenciaEnMilisegundos / milisegundosPorDia);
+  const diffInDays = Math.floor(diffInMilliseconds / millisecondsPerDay);
 
   return {
-    isRemainingToExpire: diferenciaEnDias > 0,
-    result: Math.abs(diferenciaEnDias),
+    isRemainingToExpire: diffInMilliseconds > 0,
+    result: Math.abs(diffInDays),
   };
 }
 

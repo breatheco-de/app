@@ -4,9 +4,15 @@
   "suggest-join-event": "Haga clic a continuación para confirmar su participación y guardar su lugar para este evento",
   "reserv-button-text": "Reservar lugar",
   "duration-hours": "{{hours}}hr de duración",
+  "greetings": "Hola {{name}} 👋",
+  "switch-user-connector": "No eres {{name}}?",
   "form": {
-    "title": "únete al taller",
-    "description": "Inicia sesión para unirte a otros programadores en vivo resolviendo desafíos técnicos o profesionales."
+    "title": "Únete al taller",
+    "description": "Inicia sesión para unirte a otros programadores en vivo resolviendo desafíos técnicos o profesionales.",
+    "ready-to-join-title": "Listo para unirse?",
+    "ready-to-join-description": "Únete junto a otros programadores en vivo resolviendo desafíos técnicos o profesionales."
   },
-  "join-workshop": "Entra al taller"
+  "users-registered-count": "{{count}} personas ya se han registrado a este evento. Quedan disponibles 27 lugares más.",
+  "join-workshop": "Entra al taller",
+  "join": "Unirse ahora"
 }

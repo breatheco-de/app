@@ -1,74 +1,40 @@
-import { useRouter } from 'next/router';
 import {
   Box, Button, Grid, Skeleton, useColorModeValue,
 } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
-import * as Yup from 'yup';
+import { useEffect, useState } from 'react';
 import { intervalToDuration, format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import Image from 'next/image';
-import { Form, Formik } from 'formik';
 import useTranslation from 'next-translate/useTranslation';
+import { useRouter } from 'next/router';
+import Image from 'next/image';
 import bc from '../../common/services/breathecode';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
-import { capitalizeFirstLetter, isValidDate, setStorageItem } from '../../utils';
+import { capitalizeFirstLetter, isValidDate } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import Icon from '../../common/components/Icon';
-import FieldForm from '../../common/components/Forms/FieldForm';
-import Link from '../../common/components/NextChakraLink';
 import PublicProfile from '../../common/components/PublicProfile';
-import modifyEnv from '../../../modifyEnv';
-import useCustomToast from '../../common/hooks/useCustomToast';
-import useAuth from '../../common/hooks/useAuth';
 import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
+import ShowOnSignUp from '../../common/components/ShowOnSignup';
+import useAuth from '../../common/hooks/useAuth';
+import Timer from '../../common/components/Timer';
 
 const Page = () => {
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-  const { isAuthenticated, user, logout } = useAuth();
   const [event, setEvent] = useState({
     loaded: false,
   });
   const [users, setUsers] = useState([]);
   const [showAll, setShowAll] = useState(false);
+  const [applied, setApplied] = useState(false);
+  const [readyToJoinEvent, setReadyToJoinEvent] = useState(false);
 
   const router = useRouter();
   const { t } = useTranslation('workshops');
   const { locale } = router;
-  const toastIdRef = useRef();
+  const { isAuthenticated, user } = useAuth();
   const { event_slug: eventSlug } = router.query;
-  const { backgroundColor, featuredColor, hexColor } = useStyle();
-  const [formProps, setFormProps] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-  });
-
-  const { createToast } = useCustomToast({
-    toastIdRef,
-    status: 'info',
-    title: t('signup:alert-message.title'),
-    content: (
-      <Box>
-        {t('signup:alert-message.message1')}
-        {' '}
-        <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
-        .
-        <br />
-        {t('signup:alert-message.message2')}
-        {' '}
-        <Link variant="default" color="blue.200" href="/login" redirectAfterLogin>{t('signup:alert-message.click-here-to-login')}</Link>
-        {' '}
-        {t('signup:alert-message.or-click-here')}
-        {' '}
-        <Link variant="default" color="blue.200" href="/#">{t('signup:alert-message.message3')}</Link>
-        .
-      </Box>
-    ),
-  });
-
-  const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
+  const { featuredColor, hexColor } = useStyle();
 
   useEffect(() => {
     bc.public().events()
@@ -77,8 +43,9 @@ const Page = () => {
         if (findedEvent?.id) {
           bc.events().getUsers(findedEvent?.id)
             .then((resp) => {
-              const cleanedData = resp.data.filter((l) => l?.attendee?.first_name && l?.attendee?.last_name);
-              setUsers(cleanedData);
+              const onlyExistentUsers = resp.data.filter((l) => l?.attendee?.first_name && l?.attendee?.last_name);
+
+              setUsers(onlyExistentUsers);
             })
             .catch(() => {});
         } else {
@@ -114,36 +81,29 @@ const Page = () => {
     en: format(new Date(event?.starting_at), 'EEEE, MMMM do - p (OOO)', { timeZone }),
   } : {};
 
-  const subscriptionValidation = Yup.object().shape({
-    first_name: Yup.string().min(2, t('common:validators.short-input')).max(50, t('common:validators.long-input')).required(t('common:validators.first-name-required')),
-    last_name: Yup.string().min(2, t('common:validators.short-input')).max(50, t('common:validators.long-input')).required(t('common:validators.last-name-required')),
-    email: Yup.string().email(t('common:validators.invalid-email')).required(t('common:validators.email-required')),
-  });
-
-  const handleSubmit = async (actions, allValues) => {
-    const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(allValues),
-    });
-    const data = await resp.json();
-
-    if (resp.status < 400 && typeof data?.id === 'number') {
-      setStorageItem('subscriptionId', data.id);
-      router.push('/thank-you');
-    }
-    if (resp.status > 400) {
-      actions.setSubmitting(false);
-    }
-    if (resp.status === 409) {
-      createToast();
-      actions.setSubmitting(false);
-    }
-  };
-
   const eventNotExists = event?.loaded && !event?.slug;
+  const isAuth = isAuthenticated && user?.id;
+
+  const alreadyApplied = users.some((l) => l?.attendee?.id === user?.id) || applied;
+
+  const dynamicFormInfo = () => {
+    if (isAuth && !alreadyApplied) {
+      return ({
+        title: t('greetings', { name: user?.first_name }),
+        description: t('suggest-join-event'),
+      });
+    }
+    return ({
+      title: readyToJoinEvent ? t('form.ready-to-join-title') : t('form.title'),
+      description: readyToJoinEvent ? t('form.ready-to-join-description') : t('form.description'),
+    });
+  };
+  const formInfo = dynamicFormInfo();
+
+  const handleOnReadyToStart = () => {
+    console.log('Timer finished');
+    setReadyToJoinEvent(true);
+  };
 
   return (
     <>
@@ -230,10 +190,6 @@ const Page = () => {
             width={{ base: 'auto', lg: '100%' }}
           >
             {event?.description}
-            {/* Join us for an exciting opportunity to bring your HTML, CSS, and JavaScript skills to the next level! Our special speaker Brent Solomon, a seasoned teacher at 4Geeks Academy USA and Software Engineer at Amazon Web Services, will guide you through the process of building a sleek and functional TodoList using Vanilla JavaScript.
-            <br />
-            <br />
-            This hands-on experience will not only enhance your understanding of these technologies but also equip you with a valuable project to add to your portfolio. Don&apos;t miss out on this chance to learn from an expert and take your skills to new heights! */}
           </Box>
           {!eventNotExists && (typeof event?.host_user === 'object' && event?.host_user !== null) && (
             <Box display="flex" flexDirection="column" gridGap="12px" mb="31px">
@@ -263,150 +219,49 @@ const Page = () => {
           gridGap="10px"
           overflow="hidden"
         >
-          <Box
-            display="flex"
-            flexDirection="column"
-            gridGap="10px"
-            borderRadius="17px"
-            border={1}
-            borderStyle="solid"
-            borderColor={commonBorderColor}
-            backgroundColor={backgroundColor}
-          >
-            <Image src="/static/images/person-smile1.png" width={342} title="Form image" height={177} objectFit="cover" style={{ borderTopLeftRadius: '17px', borderTopRightRadius: '17px' }} />
-
-            <Box display="flex" flexDirection="column" gridGap="10px" padding="0 18px 18px">
-              {isAuthenticated && user?.id ? (
-                <>
-                  <Text size="21px" fontWeight={700} lineHeight="25px">
-                    {`Hello ${user.first_name}`}
-                  </Text>
-                  <Text size="14px" fontWeight={700} lineHeight="18px">
-                    {t('suggest-join-event')}
-                  </Text>
-                  <Button
-                    mt="10px"
-                    type="submit"
-                    variant="default"
-                    // title="RSVP for this Workshop"
-                    disabled={eventNotExists && !isAuthenticated}
-                    onClick={() => {
-                      if (isAuthenticated) {
-                        bc.events().applyEvent(event.id)
-                          .then(() => {});
-                      }
-                    }}
-                  >
-                    {t('reserv-button-text')}
-                  </Button>
-                  <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
-                    {`You are not ${user.first_name}?`}
-                    {' '}
-                    <Button
-                      variant="link"
-                      fontSize="13px"
-                      height="auto"
-                      onClick={() => {
-                        setStorageItem('redirect', router?.asPath);
-                        setTimeout(() => {
-                          logout(() => {
-                            router.push('/login');
-                          });
-                          // router.push('/login');
-                        }, 150);
-                      }}
-                    >
-                      {`${t('common:logout-and-switch-user')}.`}
-                    </Button>
-                  </Text>
-                </>
-              ) : (
-                <>
-                  <Text size="21px" fontWeight={700} lineHeight="25px">
-                    {t('form.title')}
-                  </Text>
-                  <Text size="14px" fontWeight={700} lineHeight="18px">
-                    {t('form.description')}
-                  </Text>
-                  <Box>
-                    <Formik
-                      initialValues={{
-                        first_name: '',
-                        last_name: '',
-                        email: '',
-                      }}
-                      onSubmit={(values, actions) => {
-                        handleSubmit(actions, values);
-                      }}
-                      validationSchema={subscriptionValidation}
-                    >
-                      {({ isSubmitting }) => (
-                        <Form
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gridGap: '10px',
-                            padding: '18px',
-                          }}
-                        >
-                          <FieldForm
-                            type="text"
-                            name="first_name"
-                            label={t('common:first-name')}
-                            required
-                            formProps={formProps}
-                            setFormProps={setFormProps}
-                            readOnly={eventNotExists}
-                          />
-                          <FieldForm
-                            type="text"
-                            name="last_name"
-                            label={t('common:last-name')}
-                            required
-                            formProps={formProps}
-                            setFormProps={setFormProps}
-                            readOnly={eventNotExists}
-                          />
-                          <FieldForm
-                            type="text"
-                            name="email"
-                            label={t('common:email')}
-                            required
-                            formProps={formProps}
-                            setFormProps={setFormProps}
-                            readOnly={eventNotExists}
-                          />
-
-                          <Button
-                            mt="10px"
-                            type="submit"
-                            variant="default"
-                            isLoading={isSubmitting}
-                            title="Join Workshop"
-                            disabled={eventNotExists}
-                          >
-                            {t('join-workshop')}
-                          </Button>
-                          <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
-                            {t('signup:already-have-account')}
-                            {' '}
-                            <Link redirectAfterLogin variant="default" href="/login" fontSize="13px">
-                              {t('signup:login-here')}
-                            </Link>
-                          </Text>
-                        </Form>
-                      )}
-                    </Formik>
-                  </Box>
-                </>
-              )}
-            </Box>
-          </Box>
+          {event?.id && (
+            <ShowOnSignUp
+              headContent={alreadyApplied
+                ? <Timer applied={alreadyApplied} startingAt={event?.starting_at} onFinish={handleOnReadyToStart} />
+                : <Image src="/static/images/person-smile1.png" width={342} title="Form image" height={177} objectFit="cover" style={{ borderTopLeftRadius: '17px', borderTopRightRadius: '17px' }} />}
+              title={formInfo?.title}
+              description={formInfo?.description}
+              readOnly={event?.loaded && !event?.slug}
+            >
+              <Button
+                mt="10px"
+                type="submit"
+                variant="default"
+                disabled={!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated))}
+                _disabled={{
+                  background: 'gray.dark',
+                }}
+                _hover={{
+                  background: 'gray.dark',
+                }}
+                _active={{
+                  background: 'gray.dark',
+                }}
+                onClick={() => {
+                  setApplied(true);
+                  if (readyToJoinEvent && alreadyApplied) {
+                    console.log('Join event started');
+                  }
+                  if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
+                    bc.events().applyEvent(event?.id)
+                      .then(() => {});
+                  }
+                }}
+              >
+                {alreadyApplied ? t('join') : t('reserv-button-text')}
+              </Button>
+            </ShowOnSignUp>
+          )}
 
           {users?.length > 0 && (
-            <Box background={featuredColor} padding="20px 25px" borderRadius="17px">
+            <Box display="flex" flexDirection="column" gridGap="18px" background={featuredColor} padding="20px 25px" borderRadius="17px">
               <Text>
-                {`${users.length} people are already registered in this event. 27 more spots available`}
+                {t('users-registered-count', { count: users.length })}
               </Text>
               <Grid
                 gridAutoRows="3.4rem"
@@ -424,7 +279,6 @@ const Page = () => {
                       fullName={fullName}
                       avatarUrl={c?.attendee?.profile?.avatar_url}
                       data={c?.attendee}
-                      // isOnline={isOnline}
                       badge
                       withoutPopover
                     />
@@ -433,7 +287,7 @@ const Page = () => {
               </Grid>
               {users.length > 12 && !showAll && (
                 <Button variant="link" height="auto" onClick={() => setShowAll(true)}>
-                  Load more
+                  {t('common:load-more')}
                 </Button>
               )}
             </Box>

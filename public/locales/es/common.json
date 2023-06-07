@@ -24,6 +24,8 @@
   "continue-learning":"Continúa aprendiendo gratis sobre:<br><br>{{technologies}} y más.",
   "user-id": "ID de usuario",
   "day": "Día",
+  "days": "Días",
+  "short-seconds": "Seg",
   "interactive": "Interactivo",
   "beginner": "Principiante", 
   "easy": "Fácil", 
