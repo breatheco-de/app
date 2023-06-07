@@ -24,6 +24,8 @@
   "continue-learning":"Continue learning for free about:<br><br>{{technologies}} and more.",
   "user-id": "User ID",
   "day": "Day",
+  "days": "Days",
+  "short-seconds": "Sec",
   "interactive": "Interactive",
   "beginner": "Beginner", 
   "easy": "Easy", 
@@ -165,5 +167,6 @@
   },
   "submit-project": "Submit project",
   "uploadScreenshot": "Upload screenshot",
-  "continue-learning-course": "Continue learning for free about:"
+  "continue-learning-course": "Continue learning for free about:",
+  "logout-and-switch-user": "Logout and switch user"
 }

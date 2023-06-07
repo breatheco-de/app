@@ -51,7 +51,7 @@ const MainEvent = ({
             window.open(`${host}/v1/events/me/event/liveclass/join/${event?.hash}?token=${accessToken}`);
           }
           if (!event?.hash) {
-            window.open(`${host}/v1/events/me/event/${nearestEvent?.id}/join?token=${accessToken}`);
+            window.open(`/${lang}/workshops/${nearestEvent?.slug}`);
           }
         }}
       >

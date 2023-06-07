@@ -42,7 +42,7 @@ import CustomTheme from '../../../../styles/theme';
 import GridContainer from '../../../common/components/GridContainer';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
-import { unSlugifyCapitalize } from '../../../utils/index';
+import useStyle from '../../../common/hooks/useStyle';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&big=true&limit=2000`);
@@ -172,6 +172,7 @@ const TabletWithForm = ({
   const [formSended, setFormSended] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [formStatus, setFormStatus] = useState({ status: 'idle', msg: '' });
+  const { backgroundColor } = useStyle();
 
   const UrlInput = styled.input`
     cursor: pointer;
@@ -253,9 +254,9 @@ const TabletWithForm = ({
                                 id="full_name"
                                 placeholder={t('common:full-name')}
                                 type="name"
+                                backgroundColor={backgroundColor}
                                 style={{
                                   borderRadius: '3px',
-                                  backgroundColor: useColorModeValue('white', 'darkTheme'),
                                   transition: 'background 0.2s ease-in-out',
                                 }}
                               />
@@ -275,9 +276,9 @@ const TabletWithForm = ({
                                 id="email"
                                 placeholder={t('common:email')}
                                 type="email"
+                                backgroundColor={backgroundColor}
                                 style={{
                                   borderRadius: '3px',
-                                  backgroundColor: useColorModeValue('white', 'darkTheme'),
                                   transition: 'background 0.2s ease-in-out',
                                 }}
                               />
@@ -620,7 +621,7 @@ const Exercise = ({ exercise, markdown }) => {
         gridGap="36px"
         padding="0 10px"
       >
-        <Box display="grid" position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '1rem 0 0 0' }}>
+        <Box display={{ base: 'none', lg: 'grid' }} position="sticky" top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '1rem 0 0 0' }}>
           <MktSideRecommendedCourses />
         </Box>
         <Box display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '1 / span 6', lg: '2 / span 8' }}>
@@ -668,7 +669,7 @@ const Exercise = ({ exercise, markdown }) => {
               <MDSkeleton />
             )}
             <MktRecommendedCourses
-              title={t('common:continue-learning', { technologies: exercise?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
+              title={t('common:continue-learning', { technologies: exercise?.technologies.slice(0, 4).join(', ') })}
               technologies={exercise?.technologies.join(',')}
             />
           </Box>
