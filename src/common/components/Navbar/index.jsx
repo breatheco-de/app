@@ -29,7 +29,6 @@ import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-// import UpgradeExperience from '../UpgradeExperience';
 
 const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   const { t } = useTranslation('navbar');
