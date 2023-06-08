@@ -41,7 +41,7 @@ import MktRecommendedCourses from '../../../common/components/MktRecommendedCour
 import CustomTheme from '../../../../styles/theme';
 import GridContainer from '../../../common/components/GridContainer';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
-import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
+// import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import useStyle from '../../../common/hooks/useStyle';
 
 export const getStaticPaths = async ({ locales }) => {
@@ -621,9 +621,9 @@ const Exercise = ({ exercise, markdown }) => {
         gridGap="36px"
         padding="0 10px"
       >
-        <Box display={{ base: 'none', lg: 'grid' }} position="sticky" top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '1rem 0 0 0' }}>
+        {/* <Box display={{ base: 'none', lg: 'grid' }} position="sticky" top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '1rem 0 0 0' }}>
           <MktSideRecommendedCourses />
-        </Box>
+        </Box> */}
         <Box display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '1 / span 6', lg: '2 / span 8' }}>
           <Box
             display={{ base: 'flex', md: 'none' }}
