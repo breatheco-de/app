@@ -52,7 +52,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   };
   const isCurrenLang = locale === engPrefix[lesson?.lang] || locale === lesson?.lang;
 
-  if (response?.status >= 400 || response?.status_code >= 400 || !isCurrenLang) {
+  if (response?.status >= 400 || response?.status_code >= 400 || !['ARTICLE', 'LESSON'].includes(lesson?.asset_type) || !isCurrenLang) {
     return {
       notFound: true,
     };
