@@ -124,6 +124,8 @@ const Subscriptions = ({ storybookConfig }) => {
                 (option) => option?.monthly_price === subscription?.monthly_price,
               );
 
+            console.log('invoice?.amount:::', invoice?.amount);
+
             return (
               <Flex key={subscription?.id} height="fit-content" position="relative" margin="10px 0 0 0" flexDirection="column" justifyContent="space-between" alignItems="center" border="1px solid" borderColor={borderColor2} p="14px 16px 14px 14px" borderRadius="9px">
                 <Box borderRadius="50%" bg="green.400" padding="12px" position="absolute" top={-7} left={4}>
@@ -147,7 +149,7 @@ const Subscriptions = ({ storybookConfig }) => {
                   <Flex alignItems="center" gridGap="10px">
                     {!isFreeTrial && (
                       <Text fontSize="18px" fontWeight="700">
-                        {`$${invoice?.amount}`}
+                        {`$${invoice?.amount || 0}`}
                       </Text>
                     )}
                     {subscription?.status !== 'PAYMENT_ISSUE' && subscription?.status !== 'FREE_TRIAL' && !isTotallyFree && (
