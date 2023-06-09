@@ -17,7 +17,7 @@ import getMarkDownContent from '../../common/components/MarkDownParser/markdown'
 import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import redirectsFromApi from '../../../public/redirects-from-api.json';
-import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
+// import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import { unSlugifyCapitalize } from '../../utils/index';
 
 export const getStaticPaths = async ({ locales }) => {
@@ -215,9 +215,9 @@ const ProjectSlug = ({ project, markdown }) => {
         gridTemplateColumns={{ base: 'repeat(12, 1fr)', lg: '8fr repeat(12, 1fr) 5fr' }}
         display={{ base: 'block', sm: 'grid' }}
       >
-        <Box display="flex" position={{ base: 'inherit', md: 'sticky' }} top="20px" gridColumn="1 / span 1" height="fit-content" margin={{ base: '0 0 40px', md: '30px 0 0 0' }}>
+        {/* <Box display="flex" position={{ base: 'inherit', md: 'sticky' }} top="20px" gridColumn="1 / span 1" height="fit-content" margin={{ base: '0 0 40px', md: '30px 0 0 0' }}>
           <MktSideRecommendedCourses />
-        </Box>
+        </Box> */}
         <Flex display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '2 / span 10', lg: '2 / span 12' }} height="100%" gridGap="26px">
           <Box flex="1" width="-webkit-fill-available">
             {project?.title ? (

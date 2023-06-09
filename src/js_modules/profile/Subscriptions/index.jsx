@@ -147,7 +147,7 @@ const Subscriptions = ({ storybookConfig }) => {
                   <Flex alignItems="center" gridGap="10px">
                     {!isFreeTrial && (
                       <Text fontSize="18px" fontWeight="700">
-                        {`$${invoice?.amount}`}
+                        {`$${invoice?.amount || 0}`}
                       </Text>
                     )}
                     {subscription?.status !== 'PAYMENT_ISSUE' && subscription?.status !== 'FREE_TRIAL' && !isTotallyFree && (

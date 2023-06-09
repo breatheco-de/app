@@ -21,7 +21,7 @@
   },
   "finished": {
     "plural": "There are {{finishedCohorts}} programs you have already finished.",
-    "singular": "There are {{finishedCohorts}} program you have already finished.",
+    "singular": "There is {{finishedCohorts}} program you have already finished.",
     "show": "click here to display them",
     "hide": "click here to hide them"
   },
