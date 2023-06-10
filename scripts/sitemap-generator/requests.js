@@ -9,6 +9,7 @@ const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-te
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
 const PRISMIC_API = process.env.PRISMIC_API || 'https://your-prismic-repo.cdn.prismic.io/api/v2';
 const PRISMIC_REF = process.env.PRISMIC_REF || 'Y-EX4MPL3R3F';
+const AVAILABLE_ASSET_STATUS = ['PUBLISHED'];
 
 const getPrismicPages = () => {
   const data = axios.get(`${PRISMIC_API}/documents/search?ref=${PRISMIC_REF}&type=page&lang=*`)
@@ -46,7 +47,10 @@ const getAsset = async (type, extraQuerys = {}) => {
   let allResults = [];
 
   let results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&limit=${limit}&offset=${offset}${qs}`)
-    .then((res) => res.data.results)
+    .then((res) => {
+      const publishedData = res.data.results.filter((asset) => AVAILABLE_ASSET_STATUS.includes(asset.status));
+      return publishedData;
+    })
     .catch(() => {
       console.error(`SITEMAP: Error fetching ${type.toUpperCase()} pages`);
       return [];
@@ -57,7 +61,10 @@ const getAsset = async (type, extraQuerys = {}) => {
     offset += limit;
 
     results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&limit=${limit}&offset=${offset}${qs}`)
-      .then((res) => res.data.results)
+      .then((res) => {
+        const publishedData = res.data.results.filter((asset) => AVAILABLE_ASSET_STATUS.includes(asset.status));
+        return publishedData;
+      })
       .catch(() => {
         console.error(`SITEMAP: Error fetching ${type.toUpperCase()} pages`);
         return [];

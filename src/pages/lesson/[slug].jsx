@@ -24,8 +24,10 @@ import MktSideRecommendedCourses from '../../common/components/MktSideRecommende
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=LESSON,ARTICLE&exclude_category=how-to,como&academy=4,5,6&limit=2000`);
   const data = await resp.json();
+  const AVAILABLE_ASSET_STATUS = ['PUBLISHED'];
 
-  const paths = data.results.flatMap((res) => locales.map((locale) => ({
+  const publishedData = data.results.filter((res) => AVAILABLE_ASSET_STATUS.includes(res.status));
+  const paths = publishedData.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },

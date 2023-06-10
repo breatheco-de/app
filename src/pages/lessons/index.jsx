@@ -18,6 +18,7 @@ import { getQueryString, isWindow } from '../../utils';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
 
 export const getStaticProps = async ({ locale, locales }) => {
+  const AVAILABLE_ASSET_STATUS = ['PUBLISHED'];
   const t = await getT(locale, 'lesson');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
@@ -28,7 +29,8 @@ export const getStaticProps = async ({ locale, locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=LESSON,ARTICLE&exclude_category=how-to,como&academy=4,5,6&limit=2000`);
   const data = await resp.json();
 
-  arrLessons = Object.values(data.results);
+  const publishedData = data.results.filter((res) => AVAILABLE_ASSET_STATUS.includes(res.status));
+  arrLessons = Object.values(publishedData);
   if (resp.status !== undefined && resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${arrLessons.length} Lessons fetched for /lessons`);
   } else {

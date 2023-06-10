@@ -20,6 +20,7 @@ import TitleContent from '../../js_modules/projects/TitleContent';
 import { getQueryString } from '../../utils';
 
 export const getStaticProps = async ({ locale, locales }) => {
+  const AVAILABLE_ASSET_STATUS = ['PUBLISHED'];
   const t = await getT(locale, 'how-to');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
@@ -34,7 +35,8 @@ export const getStaticProps = async ({ locale, locales }) => {
     es: 'es',
   };
 
-  arrHowTos = Object.values(data.results);
+  const publishedData = data.results.filter((res) => AVAILABLE_ASSET_STATUS.includes(res.status));
+  arrHowTos = Object.values(publishedData);
   if (resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${arrHowTos.length} How To's fetched`);
   } else {

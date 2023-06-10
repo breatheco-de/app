@@ -18,21 +18,18 @@ import PaginatedView from '../../common/components/PaginationView';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
 
 export const getStaticProps = async ({ locale, locales }) => {
+  const AVAILABLE_ASSET_STATUS = ['PUBLISHED'];
   const t = await getT(locale, 'exercises');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const currentLang = locale === 'en' ? 'us' : 'es';
   const exercises = []; // filtered exercises after removing repeated
   let arrExercises = []; // incoming exercises
-  const resp = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&limit=2000`,
-    {
-      Accept: 'application/json, text/plain, */*',
-    },
-  );
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&limit=2000`);
   const data = await resp.json();
 
-  arrExercises = Object.values(data.results);
+  const publishedData = data.results.filter((res) => AVAILABLE_ASSET_STATUS.includes(res.status));
+  arrExercises = Object.values(publishedData);
   if (resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${arrExercises.length} Exercises fetched for /interactive-exercises`);
   } else {

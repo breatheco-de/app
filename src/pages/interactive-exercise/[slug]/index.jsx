@@ -45,10 +45,12 @@ import MktSideRecommendedCourses from '../../../common/components/MktSideRecomme
 import { unSlugifyCapitalize } from '../../../utils/index';
 
 export const getStaticPaths = async ({ locales }) => {
+  const AVAILABLE_ASSET_STATUS = ['PUBLISHED'];
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&big=true&limit=2000`);
   const data = await resp.json();
 
-  const paths = data.results.flatMap((res) => locales.map((locale) => ({
+  const publishedData = data.results.filter((res) => AVAILABLE_ASSET_STATUS.includes(res.status));
+  const paths = publishedData.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },

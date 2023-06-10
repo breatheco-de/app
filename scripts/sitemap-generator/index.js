@@ -27,7 +27,11 @@ async function generateSitemap() {
 
   const prismicPages = await getPrismicPages();
   const readPages = await getReadPages();
-  const lessonsPages = await getAsset('LESSON,ARTICLE&exclude_category=how-to,como&academy=4,5,6', { exclude_category: 'how-to,como' });
+  const lessonsPages = await getAsset('LESSON,ARTICLE', {
+    exclude_category: 'how-to,como',
+    academy: '4,5,6',
+  });
+
   const exercisesPages = await getAsset('exercise');
   const projectsPages = await getAsset('project');
   const howTosPages = await getAsset('article').then(
@@ -108,9 +112,9 @@ async function generateSitemap() {
   const howTosRoute = generateSlugByLang(howTosPages, 'how-to');
 
   const paginatedLessonsRoute = pagination(lessonsPages, 'lessons');
-  const paginatedExercisesRoute = pagination(lessonsPages, 'interactive-exercises');
-  const paginatedProjectsRoute = pagination(lessonsPages, 'interactive-coding-tutorials');
-  const paginatedHowTosRoute = pagination(lessonsPages, 'how-to');
+  const paginatedExercisesRoute = pagination(exercisesPages, 'interactive-exercises');
+  const paginatedProjectsRoute = pagination(projectsPages, 'interactive-coding-tutorials');
+  const paginatedHowTosRoute = pagination(howTosPages, 'how-to');
 
   const technologyLessonsRoute = generateTechnologySlug(technologyLandingPages, 'lessons/technology', 'lesson');
   const technologyExercisesRoute = generateTechnologySlug(technologyLandingPages, 'interactive-exercises/technology', 'exercise');
