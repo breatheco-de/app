@@ -556,7 +556,9 @@ const Exercise = ({ exercise, markdown }) => {
           padding={{ base: '2rem 15px 2rem 15px', md: '2rem 0 2rem 0' }}
           margin="0 auto"
           withContainer
-          gridColumn={{ base: '2 / span 10', lg: '2 / span 5' }}
+          gridTemplateColumns="repeat(12, 1fr)"
+          gridColumn={{ base: '2 / span 12', lg: '2 / span 7' }}
+          gridGap="36px"
           childrenStyle={{
             padding: '0 30px 0 0',
           }}
@@ -617,14 +619,14 @@ const Exercise = ({ exercise, markdown }) => {
       <GridContainer
         height="100%"
         minHeight="500px"
-        gridTemplateColumns={{ base: 'repeat(12, 1fr)', lg: '4fr repeat(12, 1fr)' }}
+        gridTemplateColumns={{ base: 'repeat(12, 1fr)', lg: 'repeat(12, 1fr)' }}
         gridGap="36px"
-        padding="0 10px"
+        padding={{ base: '0 10px', md: '0' }}
       >
         {/* <Box display={{ base: 'none', lg: 'grid' }} position="sticky" top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '1rem 0 0 0' }}>
           <MktSideRecommendedCourses />
         </Box> */}
-        <Box display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '1 / span 6', lg: '2 / span 8' }}>
+        <Box display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '2 / span 6', lg: '2 / span 7' }}>
           <Box
             display={{ base: 'flex', md: 'none' }}
             flexDirection="column"
@@ -677,7 +679,7 @@ const Exercise = ({ exercise, markdown }) => {
 
         <Box
           display={{ base: 'none', md: 'flex' }}
-          gridColumn={{ base: '7 / span 4', lg: '10 / span 4' }}
+          gridColumn={{ base: '8 / span 4', lg: '9 / span 3' }}
           margin={{ base: '20px 0 0 auto', lg: '-10rem 0 0 auto' }}
           flexDirection="column"
           backgroundColor={useColorModeValue('white', 'featuredDark')}
