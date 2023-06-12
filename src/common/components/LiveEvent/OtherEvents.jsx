@@ -68,7 +68,6 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stT
               target="_blank"
               rel="noopener noreferrer"
               href={`/${lang}/workshops/${event?.slug}` || '#'}
-              // href={`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#'}
               color={fontColor}
               fontSize="15px"
               lineHeight="18px"

@@ -47,8 +47,8 @@ const AvatarUser = memo(({
     student: t('common:student'),
   };
   const infoText = {
-    en: `${roles[data?.role?.toLowerCase()] || 'member'} in this cohort since`,
-    es: `${roles[data?.role?.toLowerCase()] || 'member'} en esta cohorte desde`,
+    en: `${roles[data?.role?.toLowerCase()] || 'Member'} in this cohort since`,
+    es: `${roles[data?.role?.toLowerCase()] || 'Miembro'} en esta cohorte desde`,
   };
   const placementCard = isBelowTablet ? 'auto' : 'left-end';
   const avatar = user?.profile?.avatar_url || user?.github?.avatar_url || avatarUrl;
@@ -110,7 +110,7 @@ const AvatarUser = memo(({
             <Heading size="15px">
               {fullNameLabel}
             </Heading>
-            {infoText[router?.locale] && (
+            {infoText[router?.locale] && roles[data?.role?.toLowerCase()] && (
               <Text size="sm" fontWeight="400">
                 {`${infoText[router?.locale]} ${dateFormated[router?.locale]}`}
               </Text>

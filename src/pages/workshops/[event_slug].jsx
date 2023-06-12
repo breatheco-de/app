@@ -11,7 +11,7 @@ import bc from '../../common/services/breathecode';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
-import { capitalizeFirstLetter, isValidDate } from '../../utils';
+import { capitalizeFirstLetter, getStorageItem, isValidDate } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import Icon from '../../common/components/Icon';
 import PublicProfile from '../../common/components/PublicProfile';
@@ -20,7 +20,10 @@ import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import useAuth from '../../common/hooks/useAuth';
 import Timer from '../../common/components/Timer';
 
+const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
+
 const Page = () => {
+  const { t } = useTranslation('workshops');
   const [event, setEvent] = useState({
     loaded: false,
   });
@@ -28,9 +31,9 @@ const Page = () => {
   const [showAll, setShowAll] = useState(false);
   const [applied, setApplied] = useState(false);
   const [readyToJoinEvent, setReadyToJoinEvent] = useState(false);
+  const accessToken = getStorageItem('accessToken');
 
   const router = useRouter();
-  const { t } = useTranslation('workshops');
   const { locale } = router;
   const { isAuthenticated, user } = useAuth();
   const { event_slug: eventSlug } = router.query;
@@ -222,7 +225,7 @@ const Page = () => {
           {event?.id && (
             <ShowOnSignUp
               headContent={alreadyApplied
-                ? <Timer applied={alreadyApplied} startingAt={event?.starting_at} onFinish={handleOnReadyToStart} />
+                ? <Timer startingAt={event?.starting_at} onFinish={handleOnReadyToStart} />
                 : <Image src="/static/images/person-smile1.png" width={342} title="Form image" height={177} objectFit="cover" style={{ borderTopLeftRadius: '17px', borderTopRightRadius: '17px' }} />}
               title={formInfo?.title}
               description={formInfo?.description}
@@ -234,22 +237,23 @@ const Page = () => {
                 variant="default"
                 disabled={!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                 _disabled={{
-                  background: 'gray.dark',
+                  background: readyToJoinEvent ? '' : 'gray.dark',
                 }}
                 _hover={{
-                  background: 'gray.dark',
+                  background: readyToJoinEvent ? '' : 'gray.dark',
                 }}
                 _active={{
-                  background: 'gray.dark',
+                  background: readyToJoinEvent ? '' : 'gray.dark',
                 }}
                 onClick={() => {
-                  setApplied(true);
                   if (readyToJoinEvent && alreadyApplied) {
-                    console.log('Join event started');
+                    router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
                   }
                   if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
                     bc.events().applyEvent(event?.id)
-                      .then(() => {});
+                      .then(() => {
+                        setApplied(true);
+                      });
                   }
                 }}
               >
@@ -285,7 +289,7 @@ const Page = () => {
                   );
                 })}
               </Grid>
-              {users.length > 12 && !showAll && (
+              {users.length > 15 && !showAll && (
                 <Button variant="link" height="auto" onClick={() => setShowAll(true)}>
                   {t('common:load-more')}
                 </Button>
