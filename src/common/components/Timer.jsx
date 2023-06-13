@@ -6,6 +6,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Text from './Text';
 import Heading from './Heading';
 import { calculateDifferenceDays } from '../../utils';
+import LoaderScreen from './LoaderScreen';
 
 const TimeString = ({ string, label }) => (
   <Box display="flex" flexDirection="column">
@@ -22,6 +23,7 @@ const TimeString = ({ string, label }) => (
 
 const Timer = ({ startingAt, onFinish }) => {
   const [timer, setTimer] = useState({});
+  const [loading, setLoading] = useState(true);
   const [justFinished, setJustFinished] = useState(false);
   const { t } = useTranslation('common');
 
@@ -36,6 +38,7 @@ const Timer = ({ startingAt, onFinish }) => {
       const { isRemainingToExpire } = calculateDifferenceDays(startingAtDate);
 
       if (isRemainingToExpire) {
+        setLoading(false);
         setTimer({
           days: String(intervalDurationObj.days).padStart(2, '0'),
           hours: String(intervalDurationObj.hours).padStart(2, '0'),
@@ -46,6 +49,7 @@ const Timer = ({ startingAt, onFinish }) => {
       if (!isRemainingToExpire && !justFinished) {
         onFinish();
         setJustFinished(true);
+        setLoading(false);
       }
     }, 1000);
 
@@ -55,8 +59,9 @@ const Timer = ({ startingAt, onFinish }) => {
   }, [justFinished]);
 
   return (
-    <Box overflow="auto" display="flex" padding={{ base: '18px 24px', md: '0 24px' }} width="100%" height={{ base: 'auto', md: '177px' }} background="yellow.light">
-      <Box display="flex" gridGap="11px" margin="0 auto" alignItems="center" fontSize="40px">
+    <Box overflow="auto" display="flex" position="relative" borderTopRadius="16px" padding={{ base: '18px 24px', md: '0 24px' }} width="100%" height={{ base: 'auto', md: '177px' }} background="yellow.light">
+      {loading && <LoaderScreen width="95px" height="95px" background="#FFF4DC" opacity={0.9} />}
+      <Box filter={loading && 'blur(3px)'} display="flex" gridGap="11px" margin="0 auto" alignItems="center" fontSize="40px">
         <TimeString label={t('days')} string={timer?.days} />
         <Box margin="-2rem 0 0 0">
           :

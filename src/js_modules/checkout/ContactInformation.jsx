@@ -179,7 +179,7 @@ const ContactInformation = ({
               </Flex>
             </Box>
             <Box display="flex" gridGap="18px" flexDirection={{ base: 'column', md: 'row' }}>
-              <Box display="flex" gridGap="18px" flex={0.5}>
+              <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="18px" flex={0.5}>
                 <FieldForm
                   type="text"
                   name="first_name"
@@ -214,7 +214,7 @@ const ContactInformation = ({
                 {t('phone-info')}
               </Box>
             </Box>
-            <Box display="flex" gridGap="18px">
+            <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="18px">
               <Box
                 display="flex"
                 flex={0.5}
