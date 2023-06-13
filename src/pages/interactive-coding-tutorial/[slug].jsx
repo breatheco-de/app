@@ -191,10 +191,10 @@ const ProjectSlug = ({ project, markdown }) => {
       margin="0 auto 2rem auto"
       padding="0 15px"
       gridGap="36px"
-      gridTemplateColumns={{ base: 'repeat(12, 1fr)', lg: '5fr repeat(12, 1fr) 5fr' }}
+      gridTemplateColumns={{ base: 'repeat(12, 1fr)', lg: 'repeat(12, 1fr)' }}
       display={{ base: 'block', sm: 'grid' }}
     >
-      <Flex display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '2 / span 10', lg: '2 / span 12' }} height="100%" gridGap="26px">
+      <Flex display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '2 / span 10', lg: '2 / span 7' }} height="100%" gridGap="26px">
         <Box flex="1" width="-webkit-fill-available">
           <Link
             margin="3rem 0 32px 0"
@@ -276,7 +276,7 @@ const ProjectSlug = ({ project, markdown }) => {
       </Flex>
       <Box
         display={{ base: 'none', lg: 'flex' }}
-        gridColumn="14 / span 1"
+        gridColumn="9 / span 3"
         flexDirection="column"
         backgroundColor={useColorModeValue('white', 'featuredDark')}
         margin="30px 0"
