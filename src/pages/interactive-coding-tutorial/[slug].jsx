@@ -21,13 +21,11 @@ import MktSideRecommendedCourses from '../../common/components/MktSideRecommende
 import { unSlugifyCapitalize } from '../../utils/index';
 
 export const getStaticPaths = async ({ locales }) => {
-  const AVAILABLE_ASSET_STATUS = ['PUBLISHED'];
   let projects = [];
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=2000`);
   const data = await resp.json();
 
-  const publishedData = data.results.filter((res) => AVAILABLE_ASSET_STATUS.includes(res.status));
-  projects = Object.values(publishedData);
+  projects = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${projects.length} Projects fetched for /interactive-coding-tutorial`);
   } else {

@@ -16,9 +16,16 @@ import GridContainer from '../../common/components/GridContainer';
 import { getQueryString } from '../../utils';
 import PaginatedView from '../../common/components/PaginationView';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
+import { parseQuerys } from '../../utils/url';
 
 export const getStaticProps = async ({ locale, locales }) => {
-  const AVAILABLE_ASSET_STATUS = ['PUBLISHED'];
+  const qs = parseQuerys({
+    asset_type: 'PROJECT',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    limit: 2000,
+  });
+
   const t = await getT(locale, 'projects');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
@@ -26,11 +33,10 @@ export const getStaticProps = async ({ locale, locales }) => {
   const projects = []; // filtered projects after removing repeated
   let arrProjects = []; // incoming projects
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=1000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?${qs}`);
   const data = await resp.json();
 
-  const publishedData = data.results.filter((res) => AVAILABLE_ASSET_STATUS.includes(res.status));
-  arrProjects = Object.values(publishedData);
+  arrProjects = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${arrProjects.length} Projects fetched`);
   } else {

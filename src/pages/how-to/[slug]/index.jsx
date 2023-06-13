@@ -20,15 +20,21 @@ import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import { unSlugifyCapitalize } from '../../../utils/index';
+import { parseQuerys } from '../../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
-  const AVAILABLE_ASSET_STATUS = ['PUBLISHED'];
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=2000`);
+  const qs = parseQuerys({
+    asset_type: 'ARTICLE',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    limit: 2000,
+  });
+
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${qs}`);
   const data = await resp.json();
   const howToData = data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como');
 
-  const publishedData = howToData.filter((res) => AVAILABLE_ASSET_STATUS.includes(res.status));
-  const paths = publishedData.flatMap((res) => locales.map((locale) => ({
+  const paths = howToData.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },

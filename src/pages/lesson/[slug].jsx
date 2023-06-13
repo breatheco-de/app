@@ -20,14 +20,22 @@ import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import redirectsFromApi from '../../../public/redirects-from-api.json';
 import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
+import { parseQuerys } from '../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=LESSON,ARTICLE&exclude_category=how-to,como&academy=4,5,6,47&limit=2000`);
-  const data = await resp.json();
-  const AVAILABLE_ASSET_STATUS = ['PUBLISHED'];
+  const qs = parseQuerys({
+    asset_type: 'LESSON,ARTICLE',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    exclude_category: 'how-to,como',
+    academy: '4,5,6,47',
+    limit: 2000,
+  });
 
-  const publishedData = data.results.filter((res) => AVAILABLE_ASSET_STATUS.includes(res.status));
-  const paths = publishedData.flatMap((res) => locales.map((locale) => ({
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${qs}`);
+  const data = await resp.json();
+
+  const paths = data.results.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },
@@ -45,7 +53,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
 
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON`);
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
   const lesson = await response.json();
 
   const engPrefix = {

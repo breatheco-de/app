@@ -16,9 +16,18 @@ import GridContainer from '../../common/components/GridContainer';
 import PaginatedView from '../../common/components/PaginationView';
 import { getQueryString, isWindow } from '../../utils';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
+import { parseQuerys } from '../../utils/url';
 
 export const getStaticProps = async ({ locale, locales }) => {
-  const AVAILABLE_ASSET_STATUS = ['PUBLISHED'];
+  const qs = parseQuerys({
+    asset_type: 'LESSON,ARTICLE',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    exclude_category: 'how-to,como',
+    academy: '4,5,6,47',
+    limit: 2000,
+  });
+
   const t = await getT(locale, 'lesson');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
@@ -26,11 +35,10 @@ export const getStaticProps = async ({ locale, locales }) => {
   const lessons = []; // filtered lessons after removing repeated
   let arrLessons = []; // incoming lessons
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=LESSON,ARTICLE&exclude_category=how-to,como&academy=4,5,6,47&limit=2000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${qs}`);
   const data = await resp.json();
 
-  const publishedData = data.results.filter((res) => AVAILABLE_ASSET_STATUS.includes(res.status));
-  arrLessons = Object.values(publishedData);
+  arrLessons = Object.values(data.results);
   if (resp.status !== undefined && resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${arrLessons.length} Lessons fetched for /lessons`);
   } else {

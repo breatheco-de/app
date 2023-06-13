@@ -18,15 +18,22 @@ import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
 import { getQueryString } from '../../utils';
+import { parseQuerys } from '../../utils/url';
 
 export const getStaticProps = async ({ locale, locales }) => {
-  const AVAILABLE_ASSET_STATUS = ['PUBLISHED'];
   const t = await getT(locale, 'how-to');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const howTos = []; // filtered howTos after removing repeated
   let arrHowTos = []; // incoming howTos
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=1000`);
+
+  const qs = parseQuerys({
+    asset_type: 'ARTICLE',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    limit: 2000,
+  });
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${qs}`);
   const data = await resp.json();
   // .then((res) => res.json())
   // .catch((err) => console.log(err));
@@ -35,8 +42,7 @@ export const getStaticProps = async ({ locale, locales }) => {
     es: 'es',
   };
 
-  const publishedData = data.results.filter((res) => AVAILABLE_ASSET_STATUS.includes(res.status));
-  arrHowTos = Object.values(publishedData);
+  arrHowTos = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${arrHowTos.length} How To's fetched`);
   } else {
