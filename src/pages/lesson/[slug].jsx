@@ -20,19 +20,9 @@ import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import redirectsFromApi from '../../../public/redirects-from-api.json';
 import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
-import { parseQuerys } from '../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
-  const qs = parseQuerys({
-    asset_type: 'LESSON,ARTICLE',
-    visibility: 'PUBLIC',
-    status: 'PUBLISHED',
-    exclude_category: 'how-to,como',
-    academy: '4,5,6,47',
-    limit: 2000,
-  });
-
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${qs}`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=LESSON,ARTICLE&visibility=PUBLIC&status=PUBLISHED&exclude_category=how-to,como&academy=4,5,6&limit=2000`);
   const data = await resp.json();
 
   const paths = data.results.flatMap((res) => locales.map((locale) => ({

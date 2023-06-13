@@ -7,7 +7,6 @@ import Text from '../../../common/components/Text';
 import { toCapitalize } from '../../../utils';
 import Heading from '../../../common/components/Heading';
 import ProjectList from '../../../js_modules/projects/ProjectList';
-import { parseQuerys } from '../../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000`, {
@@ -36,12 +35,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { technology } = params;
   const currentLang = locale === 'en' ? 'us' : 'es';
 
-  const assetQs = parseQuerys({
-    asset_type: 'ARTICLE',
-    visibility: 'PUBLIC',
-    status: 'PUBLISHED',
-    limit: 2000,
-  });
   const responseTechs = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?slug=${technology}&limit=1000`, {
     method: 'GET',
     headers: {
@@ -52,7 +45,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const techs = await responseTechs.json(); // array of objects
   const technologyData = techs.results.find((tech) => tech.slug === technology);
 
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${assetQs}`);
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&visibility=PUBLIC&status=PUBLISHED&limit=2000`);
   const exercises = await response.json();
 
   const dataFiltered = exercises?.results?.filter(
