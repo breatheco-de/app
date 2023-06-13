@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop */
 const { default: axios } = require('axios');
+const { parseQuerys } = require('../../src/utils/url');
 require('dotenv').config({
   path: '.env.production',
 });
@@ -38,12 +39,13 @@ const getReadPages = () => {
   return resp;
 };
 
-const getAsset = async (type) => {
+const getAsset = async (type, extraQuerys = {}) => {
+  const qs = parseQuerys(extraQuerys, true);
   const limit = 100;
   let offset = 0;
   let allResults = [];
 
-  let results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&limit=${limit}&offset=${offset}`)
+  let results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&limit=${limit}&offset=${offset}${qs}`)
     .then((res) => res.data.results)
     .catch(() => {
       console.error(`SITEMAP: Error fetching ${type.toUpperCase()} pages`);
@@ -54,7 +56,7 @@ const getAsset = async (type) => {
     allResults = allResults.concat(results);
     offset += limit;
 
-    results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&limit=${limit}&offset=${offset}`)
+    results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&limit=${limit}&offset=${offset}${qs}`)
       .then((res) => res.data.results)
       .catch(() => {
         console.error(`SITEMAP: Error fetching ${type.toUpperCase()} pages`);
