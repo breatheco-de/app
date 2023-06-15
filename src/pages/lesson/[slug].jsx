@@ -22,7 +22,7 @@ import redirectsFromApi from '../../../public/redirects-from-api.json';
 import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson&limit=2000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=LESSON,ARTICLE&exclude_category=how-to,como&academy=4,5,6,47&limit=2000`);
   const data = await resp.json();
 
   const paths = data.results.flatMap((res) => locales.map((locale) => ({
@@ -52,7 +52,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   };
   const isCurrenLang = locale === engPrefix[lesson?.lang] || locale === lesson?.lang;
 
-  if (response?.status >= 400 || response?.status_code >= 400 || lesson?.asset_type !== 'LESSON' || !isCurrenLang) {
+  if (response?.status >= 400 || response?.status_code >= 400 || !['ARTICLE', 'LESSON'].includes(lesson?.asset_type) || !isCurrenLang) {
     return {
       notFound: true,
     };
