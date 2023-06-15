@@ -84,6 +84,12 @@ function useHandler() {
           ...currentCohort,
           date_joined: data.date_joined,
           cohort_role: findCohort.role,
+          cohort_user: {
+            created_at: findCohort?.created_at,
+            educational_status: findCohort?.educational_status,
+            finantial_status: findCohort?.finantial_status,
+            role: findCohort?.role,
+          },
         });
         choose({
           cohort_slug: cohortSlug,
@@ -168,10 +174,10 @@ function useHandler() {
             });
           }
 
-          // const filterNotEmptyModules = assignmentsRecopilated.filter(
-          //   (l) => l.modules.length > 0,
-          // );
-          return setSortedAssignments(assignmentsRecopilated);
+          const filterNotEmptyModules = assignmentsRecopilated.filter(
+            (l) => l.modules.length > 0,
+          );
+          return setSortedAssignments(filterNotEmptyModules);
         }
         return null;
       });

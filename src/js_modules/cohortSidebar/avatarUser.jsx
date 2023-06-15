@@ -24,7 +24,7 @@ import Text from '../../common/components/Text';
 import useOnline from '../../common/hooks/useOnline';
 
 const AvatarUser = memo(({
-  data, fullName, containerStyle, width, height, badge, customBadge, isWrapped, index, withoutPopover,
+  data, fullName, containerStyle, width, height, badge, customBadge, isWrapped, index, withoutPopover, avatarUrl,
 }) => {
   const { user } = data;
   const { t } = useTranslation('dashboard');
@@ -47,10 +47,11 @@ const AvatarUser = memo(({
     student: t('common:student'),
   };
   const infoText = {
-    en: `${roles[data?.role?.toLowerCase()] || 'member'} in this cohort since`,
-    es: `${roles[data?.role?.toLowerCase()] || 'member'} en esta cohorte desde`,
+    en: `${roles[data?.role?.toLowerCase()] || 'Member'} in this cohort since`,
+    es: `${roles[data?.role?.toLowerCase()] || 'Miembro'} en esta cohorte desde`,
   };
   const placementCard = isBelowTablet ? 'auto' : 'left-end';
+  const avatar = user?.profile?.avatar_url || user?.github?.avatar_url || avatarUrl;
 
   return !withoutPopover ? (
     <Popover trigger="hover" key={fullNameLabel} placement={placementCard}>
@@ -62,7 +63,7 @@ const AvatarUser = memo(({
             height={height}
             style={{ userSelect: 'none' }}
             title={fullNameLabel}
-            src={user?.profile?.avatar_url || user?.github?.avatar_url}
+            src={avatar}
             marginLeft={isWrapped ? '-10px' : '0px'}
             zIndex={index}
           >
@@ -103,13 +104,13 @@ const AvatarUser = memo(({
             width="95px"
             height="95px"
             style={{ userSelect: 'none' }}
-            src={user?.profile?.avatar_url || user?.github?.avatar_url}
+            src={avatar}
           />
           <Box display="flex" flexDirection="column" justifyContent="center" gridGap="10px" height="auto">
             <Heading size="15px">
               {fullNameLabel}
             </Heading>
-            {infoText[router?.locale] && (
+            {infoText[router?.locale] && roles[data?.role?.toLowerCase()] && (
               <Text size="sm" fontWeight="400">
                 {`${infoText[router?.locale]} ${dateFormated[router?.locale]}`}
               </Text>
@@ -127,7 +128,7 @@ const AvatarUser = memo(({
         height={height}
         style={{ userSelect: 'none' }}
         title={fullNameLabel}
-        src={user?.profile?.avatar_url || user?.github?.avatar_url}
+        src={avatar}
         marginLeft={isWrapped ? '-10px' : '0px'}
         zIndex={index}
       >
@@ -159,6 +160,7 @@ AvatarUser.propTypes = {
   isWrapped: PropTypes.bool,
   index: PropTypes.number,
   withoutPopover: PropTypes.bool,
+  avatarUrl: PropTypes.string,
 };
 AvatarUser.defaultProps = {
   fullName: '',
@@ -170,6 +172,7 @@ AvatarUser.defaultProps = {
   isWrapped: false,
   index: 0,
   withoutPopover: false,
+  avatarUrl: '',
 };
 
 export default AvatarUser;

@@ -93,16 +93,13 @@ const ContactInformation = ({
 
     const respPlan = await bc.payment().getPlan(planFormated);
     const dataOfPlan = respPlan?.data;
+    if (resp.status < 400 && typeof data?.id === 'number') {
+      if (dataOfPlan?.has_waiting_list === true) {
+        setStorageItem('subscriptionId', data.id);
+        router.push('/thank-you');
+      }
 
-    if (dataOfPlan?.has_waiting_list === true) {
-      setStorageItem('subscriptionId', data.id);
-      router.push('/thank-you');
-    }
-
-    if (resp.status < 400) {
-      // setStorageItem('subscriptionId', data.id);
-
-      if (data?.access_token) {
+      if (data?.access_token && !dataOfPlan?.has_waiting_list) {
         router.push({
           query: {
             ...router.query,
@@ -111,10 +108,8 @@ const ContactInformation = ({
         });
         nextStep();
       }
-      // else {
-      //   router.push('/thank-you');
-      // }
     }
+
     if (resp.status >= 400 && !data?.phone) {
       toast({
         title: t('alert-message:email-already-subscribed'),
@@ -184,7 +179,7 @@ const ContactInformation = ({
               </Flex>
             </Box>
             <Box display="flex" gridGap="18px" flexDirection={{ base: 'column', md: 'row' }}>
-              <Box display="flex" gridGap="18px" flex={0.5}>
+              <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="18px" flex={0.5}>
                 <FieldForm
                   type="text"
                   name="first_name"
@@ -219,7 +214,7 @@ const ContactInformation = ({
                 {t('phone-info')}
               </Box>
             </Box>
-            <Box display="flex" gridGap="18px">
+            <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="18px">
               <Box
                 display="flex"
                 flex={0.5}

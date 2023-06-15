@@ -9,7 +9,7 @@ const HAVE_SESSION = isWindow ? localStorage.getItem('accessToken') !== null : f
  * principal use for dibuging for another issues and prevent
  * to create unused console.logs in production
 */
-const isDevMode = isWindow && (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'preview' || window.location.hostname === 'localhost');
+const isDevMode = isWindow && (process.env.VERCEL_ENV !== 'production' || process.env.NODE_ENV !== 'production');
 
 const languageLabel = {
   es: 'spanish',
@@ -84,7 +84,7 @@ const getExtensionName = (key) => {
 };
 
 const devLog = (msg, ...params) => { // Relevant logs only in dev mode
-  if (isDevMode) console.log(`🛠️ ${msg}`, ...params);
+  if (isDevMode) console.log(`[🛠️ DEV LOG] ${msg}`, ...params);
 };
 
 const devLogTable = (msg, array) => { // Relevant table logs with title only in dev mode
@@ -161,6 +161,8 @@ const getTimeProps = (date) => {
 
 // convert the input array to camel case
 const toCapitalize = (input = '') => input.charAt(0).toUpperCase() + input.toLowerCase().slice(1);
+
+const capitalizeFirstLetter = (str = '') => str.charAt(0).toUpperCase() + str.slice(1);
 
 function formatBytes(bytes, decimals = 2) {
   if (!+bytes) return '0 Bytes';
@@ -279,9 +281,29 @@ const syncInterval = (callback = () => {}) => {
 };
 
 function getBrowserSize() {
-  const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-  const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-  return { width, height };
+  if (isWindow) {
+    const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    return { width, height };
+  }
+  return {};
+}
+
+function calculateDifferenceDays(date) {
+  const now = new Date();
+  const givenDate = new Date(date);
+
+  // Convert dates to milliseconds
+  const millisecondsPerDay = 24 * 60 * 60 * 1000;
+  const diffInMilliseconds = givenDate - now;
+
+  // Calculate the difference in days by rounding down
+  const diffInDays = Math.floor(diffInMilliseconds / millisecondsPerDay);
+
+  return {
+    isRemainingToExpire: diffInMilliseconds > 0,
+    result: Math.abs(diffInDays),
+  };
 }
 
 const location = isWindow && window.location;
@@ -296,5 +318,5 @@ export {
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
-  createArray, url, lengthOfString, syncInterval, getBrowserSize,
+  createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, capitalizeFirstLetter,
 };

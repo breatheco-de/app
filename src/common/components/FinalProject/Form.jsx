@@ -242,7 +242,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
       validationSchema={finalProjectValidation}
     >
       {({ errors, isSubmitting, setFieldValue }) => {
-        const errorFileds = errors;
+        const errorFields = errors;
 
         return (
           <Flex flexDirection="column" padding="20px" gridGap="30px">
@@ -330,7 +330,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
               <AddMember
                 translation={{ finalProjectTranslation, commonTranslation }}
                 students={students}
-                errors={errorFileds}
+                errors={errorFields}
                 hint={finalProjectTranslation?.['modal-form']?.['participants-hint'] || t('modal-form.participants-hint')}
               />
               <Button

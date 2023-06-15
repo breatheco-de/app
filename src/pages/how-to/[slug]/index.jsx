@@ -166,30 +166,8 @@ export default function HowToSlug({ data, markdown }) {
 
   return (
     <>
-      <GridContainer
-        withContainer
-        // gridColumn="1 / span 10"
-        maxWidth="1280px"
-        height="100%"
-        gridTemplateColumns={{ base: 'repeat(1, 1fr)', md: '0.5fr repeat(12, 1fr) 0.5fr' }}
-        margin="3rem auto 0 auto"
-        gridGap="0"
-      >
-        <Link
-          href="/how-to"
-          gridColumn="2 / span 12"
-          color={linkColor}
-          display="inline-block"
-          letterSpacing="0.05em"
-          fontWeight="700"
-          marginBottom="1rem"
-          width="fit-content"
-        >
-          {`← ${t('back-to')}`}
-        </Link>
-      </GridContainer>
-      <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin="22px auto 0 auto" gridGap="36px" padding="0 10px">
-        <Box display="flex" position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
+      <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin="0 auto" gridGap="36px" padding="0 10px">
+        <Box display="flex" position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '6.2rem 0 0 0' }}>
           <MktSideRecommendedCourses />
         </Box>
         <Box
@@ -200,6 +178,18 @@ export default function HowToSlug({ data, markdown }) {
           borderStyle="solid"
           borderColor={useColorModeValue('gray.200', 'gray.900')}
         >
+          <Link
+            href="/how-to"
+            margin="3rem 0 2.375rem 0"
+            gridColumn="2 / span 12"
+            color={linkColor}
+            display="inline-block"
+            letterSpacing="0.05em"
+            fontWeight="700"
+            width="fit-content"
+          >
+            {`← ${t('back-to')}`}
+          </Link>
           <Box display="flex" gridGap="10px" justifyContent="space-between" mb="12px">
             {data?.technologies.length > 0 && (
               <TagCapsule

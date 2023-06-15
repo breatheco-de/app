@@ -392,6 +392,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
                   height="30px"
                   borderRadius="30px"
                   onClick={() => setSettingsOpen(!settingsOpen)}
+                  title="Profile"
                 >
                   <Avatar
                     // name={user?.first_name}
@@ -546,6 +547,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
                             logout();
                           }, 150);
                         }}
+                        title={t('logout')}
                       >
                         <Icon icon="logout" width="20px" height="20px" />
                         <Box

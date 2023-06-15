@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
   Box,
+  Divider,
   Avatar,
   Flex,
   useColorModeValue,
@@ -48,6 +49,28 @@ import LoaderScreen from '../../../common/components/LoaderScreen';
 
 const Assignments = () => {
   const { t } = useTranslation('assignments');
+  const educationalStatusList = [
+    {
+      label: t('educational-list.active'),
+      value: 'active',
+    },
+    {
+      label: t('educational-list.postponed'),
+      value: 'postponed',
+    },
+    {
+      label: t('educational-list.graduated'),
+      value: 'graduated',
+    },
+    {
+      label: t('educational-list.suspended'),
+      value: 'suspended',
+    },
+    {
+      label: t('educational-list.dropped'),
+      value: 'dropped',
+    },
+  ];
   const statusList = [
     {
       label: t('status.delivered'),
@@ -110,6 +133,10 @@ const Assignments = () => {
   });
   const [studentLabel, setStudentLabel] = useState(null);
   const [projectLabel, setProjectLabel] = useState(null);
+  const [educationalLabel, setEducationalLabel] = useState(educationalStatusList.find((option) => option.value === query.educational_status) || {
+    label: t('educational-list.active'),
+    value: 'active',
+  });
   const [statusLabel, setStatusLabel] = useState(statusList.find((option) => option.value === query.status));
   const [openFilter, setOpenFilter] = useState(false);
   const [currentView, setCurrentView] = useState(Number(query.view) || 0);
@@ -278,7 +305,7 @@ const Assignments = () => {
 
     if (cohortId) {
       setSelectedCohort(currentCohort);
-      bc.cohort({ sort, users: query.student })
+      bc.cohort({ sort, users: query.student, educational_status: educationalLabel?.value })
         .getStudentsWithTasks(slug, academyId)
         .then((res) => {
           const students = res?.data;
@@ -359,12 +386,13 @@ const Assignments = () => {
   const closeFilterModal = () => setOpenFilter(false);
 
   const applyFilters = () => {
-    const { project, student, status, task_type, ...params } = router.query;
+    const { project, student, status, task_type, educational_status, ...params } = router.query;
     const filter = {};
     if (projectLabel) filter.project = projectLabel.value;
     if (studentLabel) filter.student = studentLabel.id;
     if (statusLabel) filter.status = statusLabel.value;
     if (typeLabel) filter.task_type = typeLabel.value;
+    if (educationalLabel) filter.educational_status = educationalLabel.value;
     router.push({
       query: {
         ...params,
@@ -375,11 +403,12 @@ const Assignments = () => {
   };
 
   const clearFilters = () => {
-    const { project, student, status, task_type, ...params } = router.query;
+    const { project, student, status, task_type, educational_status, ...params } = router.query;
     setProjectLabel(null);
     setStudentLabel(null);
     setStatusLabel(null);
     setTypeLabel(null);
+    setEducationalLabel(null);
     router.push({
       query: {
         ...params,
@@ -445,41 +474,39 @@ const Assignments = () => {
   return (
     <>
       <Box
-        display="flex"
-        justifyContent="space-between"
-        margin={{ base: '2% 4% 0 4%', lg: '2% 12% 0 12%' }}
+        paddingBottom="30px"
+        maxWidth={{ base: '90%', md: '90%', lg: '1012px' }}
+        margin="2% auto 0 auto"
       >
-        <Link
-          href={cohortSession?.selectedProgramSlug || '/choose-program'}
-          color={linkColor}
-          display="inline-block"
-          letterSpacing="0.05em"
-          fontWeight="700"
+        <Box
+          display="flex"
+          justifyContent="space-between"
         >
-          {`← ${t('back-to')}`}
-        </Link>
-      </Box>
-      <Box
-        display="flex"
-        borderBottom="1px solid"
-        borderColor={borderColor}
-        flexDirection={{ base: 'column', md: 'row' }}
-        gridGap={{ base: '0', md: '10px' }}
-        p={{
-          base: '50px 4% 30px 4%',
-          md: '50px 10% 30px 10%',
-          lg: '50px 12% 30px 12%',
-        }}
-        alignItems={{ base: 'start', md: 'center' }}
-      >
-        <Heading
-          size="m"
-          style={{ margin: '0' }}
-          padding={{ base: '0', md: '0 0 5px 0 !important' }}
+          <Link
+            href={cohortSession?.selectedProgramSlug || '/choose-program'}
+            color={linkColor}
+            display="inline-block"
+            letterSpacing="0.05em"
+            fontWeight="700"
+          >
+            {`← ${t('back-to')}`}
+          </Link>
+        </Box>
+        <Box
+          display="flex"
+          flexDirection={{ base: 'column', md: 'row' }}
+          gridGap={{ base: '0', md: '10px' }}
+          paddingTop="50px"
+          alignItems={{ base: 'start', md: 'center' }}
         >
-          {`${t('title')}:`}
-        </Heading>
-        {personalCohorts.length > 0 && (
+          <Heading
+            size="m"
+            style={{ margin: '0' }}
+            padding={{ base: '0', md: '0 0 5px 0 !important' }}
+          >
+            {`${t('title')}:`}
+          </Heading>
+          {personalCohorts.length > 0 && (
           <ReactSelect
             unstyled
             color="#0097CD"
@@ -504,15 +531,18 @@ const Assignments = () => {
               label: cohort.label,
             }))}
           />
-        )}
+          )}
+        </Box>
       </Box>
+      <Divider borderBottom="1px solid" color={borderColor} />
+
       <Box
         display="flex"
         flexWrap="wrap"
         justifyContent="space-between"
         gridGap="20px"
         maxWidth={{ base: '90%', md: '90%', lg: '1012px' }}
-        margin={{ base: '3% auto', md: '3% auto 4% auto', lg: '3% auto 4% auto' }}
+        margin={{ base: '3% auto', md: '3% auto 0 auto', lg: '3% auto 0 auto' }}
         padding={{ base: '0', lg: '0' }}
       >
         <ButtonGroup
@@ -529,7 +559,7 @@ const Assignments = () => {
             color={currentView === 0 ? '#FFF' : hexColor.blueDefault}
             textTransform="uppercase"
             padding="5px 15px"
-            height="30px"
+            height="40px"
             leftIcon={(
               <Icon
                 icon="student"
@@ -558,7 +588,7 @@ const Assignments = () => {
             _active={{ opacity: 0.8 }}
             textTransform="uppercase"
             padding="5px 15px"
-            height="30px"
+            height="40px"
             leftIcon={(
               <Icon
                 icon="laptop-code"
@@ -679,6 +709,30 @@ const Assignments = () => {
                 />
               </Box>
             )}
+            {currentView === 0 && (
+              <Box marginBottom="10px">
+                <ReactSelect
+                  id="educational-select"
+                  placeholder={t('filter.educational-status')}
+                  isClearable
+                  value={educationalLabel || ''}
+                  onChange={(selected) => {
+                    setEducationalLabel(
+                      selected !== null
+                        ? {
+                          value: selected?.value,
+                          label: selected?.label,
+                        }
+                        : null,
+                    );
+                  }}
+                  options={educationalStatusList.map((stat) => ({
+                    value: stat.value,
+                    label: stat.label,
+                  }))}
+                />
+              </Box>
+            )}
             <Box marginBottom="10px">
               <AsyncSelect
                 id="student-select"
@@ -759,7 +813,7 @@ const Assignments = () => {
       <Box
         gridGap="20px"
         maxWidth="1012px"
-        margin={{ base: '3% 4%', md: '3% auto 4% auto', lg: '3% auto 4% auto' }}
+        margin={{ base: '3% 4%', md: '2% auto 2% auto', lg: '2% auto 2% auto' }}
         padding={{ base: '0', md: '0 10px', lg: '0' }}
         p="0 0 30px 0"
       >
@@ -846,6 +900,7 @@ const Assignments = () => {
                         display="flex"
                         width="auto"
                         minWidth="calc(160px - 0.5vw)"
+                        // width="153px"
                       >
                         <Box width="28px" height="28px" marginRight="15px">
                           {syllabusData.assignments.find(

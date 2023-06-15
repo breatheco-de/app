@@ -58,7 +58,7 @@ const PopoverHandler = ({ task, githubUrl, haveGithubDomain }) => {
   };
 
   return (
-    <Box width={githubUrl ? 'auto' : '4%'}>
+    <Box minWidth="62px" width={githubUrl ? 'auto' : '4%'}>
       {githubUrl && (
 
         <Popover

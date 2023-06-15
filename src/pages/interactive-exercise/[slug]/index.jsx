@@ -41,8 +41,8 @@ import MktRecommendedCourses from '../../../common/components/MktRecommendedCour
 import CustomTheme from '../../../../styles/theme';
 import GridContainer from '../../../common/components/GridContainer';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
-import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
-import { unSlugifyCapitalize } from '../../../utils/index';
+// import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
+import useStyle from '../../../common/hooks/useStyle';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&big=true&limit=2000`);
@@ -172,6 +172,7 @@ const TabletWithForm = ({
   const [formSended, setFormSended] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [formStatus, setFormStatus] = useState({ status: 'idle', msg: '' });
+  const { backgroundColor } = useStyle();
 
   const UrlInput = styled.input`
     cursor: pointer;
@@ -253,9 +254,9 @@ const TabletWithForm = ({
                                 id="full_name"
                                 placeholder={t('common:full-name')}
                                 type="name"
+                                backgroundColor={backgroundColor}
                                 style={{
                                   borderRadius: '3px',
-                                  backgroundColor: useColorModeValue('white', 'darkTheme'),
                                   transition: 'background 0.2s ease-in-out',
                                 }}
                               />
@@ -275,9 +276,9 @@ const TabletWithForm = ({
                                 id="email"
                                 placeholder={t('common:email')}
                                 type="email"
+                                backgroundColor={backgroundColor}
                                 style={{
                                   borderRadius: '3px',
-                                  backgroundColor: useColorModeValue('white', 'darkTheme'),
                                   transition: 'background 0.2s ease-in-out',
                                 }}
                               />
@@ -555,7 +556,9 @@ const Exercise = ({ exercise, markdown }) => {
           padding={{ base: '2rem 15px 2rem 15px', md: '2rem 0 2rem 0' }}
           margin="0 auto"
           withContainer
-          gridColumn={{ base: '2 / span 10', lg: '2 / span 5' }}
+          gridTemplateColumns="repeat(12, 1fr)"
+          gridColumn={{ base: '2 / span 12', lg: '2 / span 7' }}
+          gridGap="36px"
           childrenStyle={{
             padding: '0 30px 0 0',
           }}
@@ -616,14 +619,14 @@ const Exercise = ({ exercise, markdown }) => {
       <GridContainer
         height="100%"
         minHeight="500px"
-        gridTemplateColumns={{ base: 'repeat(12, 1fr)', lg: '4fr repeat(12, 1fr)' }}
+        gridTemplateColumns={{ base: 'repeat(12, 1fr)', lg: 'repeat(12, 1fr)' }}
         gridGap="36px"
-        padding="0 10px"
+        padding={{ base: '0 10px', md: '0' }}
       >
-        <Box display="grid" position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '1rem 0 0 0' }}>
+        {/* <Box display={{ base: 'none', lg: 'grid' }} position="sticky" top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '1rem 0 0 0' }}>
           <MktSideRecommendedCourses />
-        </Box>
-        <Box display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '1 / span 6', lg: '2 / span 8' }}>
+        </Box> */}
+        <Box display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '2 / span 6', lg: '2 / span 7' }}>
           <Box
             display={{ base: 'flex', md: 'none' }}
             flexDirection="column"
@@ -668,7 +671,7 @@ const Exercise = ({ exercise, markdown }) => {
               <MDSkeleton />
             )}
             <MktRecommendedCourses
-              title={t('common:continue-learning', { technologies: exercise?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
+              title={t('common:continue-learning', { technologies: exercise?.technologies.slice(0, 4).join(', ') })}
               technologies={exercise?.technologies.join(',')}
             />
           </Box>
@@ -676,7 +679,7 @@ const Exercise = ({ exercise, markdown }) => {
 
         <Box
           display={{ base: 'none', md: 'flex' }}
-          gridColumn={{ base: '7 / span 4', lg: '10 / span 4' }}
+          gridColumn={{ base: '8 / span 4', lg: '9 / span 3' }}
           margin={{ base: '20px 0 0 auto', lg: '-10rem 0 0 auto' }}
           flexDirection="column"
           backgroundColor={useColorModeValue('white', 'featuredDark')}

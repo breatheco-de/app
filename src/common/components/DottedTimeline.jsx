@@ -11,7 +11,7 @@ const DottedTimeline = ({ label, dots, helpText, width, onClickDots }) => {
   const { borderColor, fontColor2, tooltipBackground, backgroundColor2 } = useStyle();
   const scrollContainerRef = useRef(null);
   const { grabToScroll, isScrollable } = useGrabToScroll({ ref: scrollContainerRef, horizontal: true });
-  const highLightColor = '#F5FC00';
+  const highLightColor = 'yellow.default';
 
   return (
     <Flex borderRadius="17px" flexDirection="column" gridGap="4px" width={width} padding="20px 29px" border="1px solid" borderColor={borderColor} background={backgroundColor2}>

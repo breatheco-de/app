@@ -33,7 +33,7 @@ const Helmet = ({
       lang: localeTranslation[lang] || lang,
     }),
   );
-  const currentlocaleLang = getLocalePath().find((l) => l.slug === slug)?.lang || locale;
+  const currentlocaleLang = getLocalePath().find((l) => l.slug === slug && l?.lang === locale)?.lang || locale;
 
   const getCanonicalTranslationsLink = () => {
     if (currentlocaleLang !== 'en' && currentlocaleLang !== undefined) {
@@ -57,6 +57,7 @@ const Helmet = ({
   return (
     <Head>
       <title>{title.length > 0 ? `${title} | 4Geeks` : '4Geeks'}</title>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" integrity="sha384-Xi8rHCmBmhbuyyhbI88391ZKP2dmfnOl4rT9ZfRI7mLTdk1wblIUnrIq35nqwEvC" crossOrigin="anonymous" />
       <meta name="description" content={descriptionCleaned} />
       {unlisted === true && <meta name="robots" content="noindex" />}
       <link rel="icon" href="/4Geeks.ico" />

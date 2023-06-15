@@ -12,6 +12,13 @@
     "undelivered": "Undelivered",
     "ignored": "Ignored"
   },
+  "educational-list": {
+    "active": "Active",
+    "postponed": "Postponed",
+    "graduated": "Graduated",
+    "suspended": "Suspended",
+    "dropped": "Dropped"
+  },
   "type": {
     "project": "Project",
     "quiz": "Quiz",
@@ -34,6 +41,7 @@
     "project": "Filter by Project",
     "student": "Filter by Student",
     "status": "Filter by Status",
+    "educational-status": "Filter by Educational Status",
     "assignments-length": "Current list of {{total}} assignments"
   },
   "task-handler": {
