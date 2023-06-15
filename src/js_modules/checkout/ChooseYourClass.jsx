@@ -217,11 +217,10 @@ const ChooseYourClass = ({
         flexDirection="column"
         mb={{ base: '0', md: '2rem' }}
         gridGap="40px"
-        p="0 1rem"
       >
         {filteredData?.length > 0 && !cohortIsLoading ? (
           filteredData.map((cohort, index) => (
-            <ChooseDate key={cohort?.id} index={index} cohort={cohort} />
+            <ChooseDate key={cohort?.id} index={index} cohort={cohort} background="gray.light3" padding="13px" borderRadius="4px" />
           ))
         ) : (
           <LoaderContent />

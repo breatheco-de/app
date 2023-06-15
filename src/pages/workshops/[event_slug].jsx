@@ -274,6 +274,7 @@ const Page = () => {
                 maxH={showAll ? '270px' : 'auto'}
                 height={showAll ? '100%' : 'auto'}
                 overflowY="auto"
+                maxHeight="163.20px"
               >
                 {users?.map((c) => {
                   const fullName = `${c?.attendee?.first_name} ${c?.attendee?.last_name}`;

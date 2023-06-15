@@ -36,7 +36,7 @@ const Summary = () => {
   };
 
   const getPlanProps = (selectedPlan) => {
-    bc.payment().getPlanProps(encodeURIComponent(selectedPlan.slug))
+    bc.payment().getPlanProps(encodeURIComponent(selectedPlan?.slug))
       .then((resp) => {
         if (!resp) {
           setDisableHandler(true);
@@ -305,6 +305,7 @@ const Summary = () => {
           ) : (
             <Button
               variant="outline"
+              width="100%"
               borderColor="blue.200"
               onClick={handleSubmit}
               isDisabled={disableHandler}
