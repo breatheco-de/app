@@ -14,7 +14,7 @@ import useCustomToast from '../hooks/useCustomToast';
 import modifyEnv from '../../../modifyEnv';
 import { setStorageItem } from '../../utils';
 
-const ShowOnSignUp = ({ headContent, title, description, readOnly, children }) => {
+const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, children, ...rest }) => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
   const { backgroundColor, featuredColor } = useStyle();
@@ -97,8 +97,10 @@ const ShowOnSignUp = ({ headContent, title, description, readOnly, children }) =
       borderStyle="solid"
       borderColor={commonBorderColor}
       backgroundColor={backgroundColor}
+      {...rest}
     >
       {headContent}
+      {subContent}
 
       <Box display="flex" flexDirection="column" gridGap="10px" padding="0 18px 18px">
 
@@ -213,6 +215,7 @@ const ShowOnSignUp = ({ headContent, title, description, readOnly, children }) =
 
 ShowOnSignUp.propTypes = {
   headContent: PropTypes.node,
+  subContent: PropTypes.node,
   title: PropTypes.string,
   description: PropTypes.string,
   readOnly: PropTypes.bool,
@@ -221,6 +224,7 @@ ShowOnSignUp.propTypes = {
 
 ShowOnSignUp.defaultProps = {
   headContent: null,
+  subContent: null,
   title: '',
   description: '',
   readOnly: false,

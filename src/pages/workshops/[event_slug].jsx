@@ -225,11 +225,17 @@ const Page = () => {
           {event?.id && (
             <ShowOnSignUp
               headContent={alreadyApplied
-                ? <Timer startingAt={event?.starting_at} onFinish={handleOnReadyToStart} />
-                : <Image src="/static/images/person-smile1.png" width={342} title="Form image" height={177} objectFit="cover" style={{ borderTopLeftRadius: '17px', borderTopRightRadius: '17px' }} />}
+                ? <Timer startingAt={event?.starting_at} onFinish={handleOnReadyToStart} background="transparent" color="white" />
+                : <Image src="/static/images/person-smile1.png" width={342} title="Form image" height={177} objectFit="cover" style={{ borderTopLeftRadius: '17px', borderTopRightRadius: '17px', zIndex: 10 }} />}
+              subContent={alreadyApplied && (
+                <Box position="absolute" top="0px" left="0px" zIndex={1} width={342} height={177}>
+                  <Image src="/static/videos/bubbles_2.gif" width={342} height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" />
+                </Box>
+              )}
               title={formInfo?.title}
               description={formInfo?.description}
               readOnly={event?.loaded && !event?.slug}
+              position="relative"
             >
               <Button
                 mt="10px"
