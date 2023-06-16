@@ -86,6 +86,7 @@ const ContactInformation = ({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept-Language': router?.locale || 'en',
       },
       body: JSON.stringify(allValues),
     });

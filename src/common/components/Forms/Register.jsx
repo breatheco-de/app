@@ -40,7 +40,10 @@ function Register() {
         // passwordConfirmation: '',
       }}
       onSubmit={(values, actions) => {
-        bc.auth().subscribe(values).then(({ data }) => {
+        bc.auth().subscribe({
+          ...values,
+          plan: 'base-plan',
+        }).then(({ data }) => {
           setStorageItem('subscriptionId', data.id);
           toast({
             title: t('alert-message:added-to-waiting-list'),

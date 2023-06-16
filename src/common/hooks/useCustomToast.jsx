@@ -13,6 +13,7 @@ const useCustomToast = ({
   toastIdRef,
   title = 'Already have an account?',
   status = 'info',
+  position = 'top',
   duration = 16000,
   content,
   isClosable = true,
@@ -26,6 +27,7 @@ const useCustomToast = ({
 
   const createToast = () => {
     toastIdRef.current = toast({
+      position,
       status,
       render: () => (
         <Box

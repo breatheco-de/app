@@ -37,6 +37,7 @@ const ShowOnSignUp = ({ headContent, title, description, readOnly, children }) =
 
   const { createToast } = useCustomToast({
     toastIdRef,
+    position: 'top',
     status: 'info',
     title: t('signup:alert-message.title'),
     content: (
@@ -63,21 +64,25 @@ const ShowOnSignUp = ({ headContent, title, description, readOnly, children }) =
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept-Language': router?.locale || 'en',
       },
-      body: JSON.stringify(allValues),
+      body: JSON.stringify({
+        ...allValues,
+        plan: 'base-plan',
+      }),
     });
+
     const formData = await resp.json();
 
-    if (resp.status < 400 && typeof formData?.id === 'number') {
-      setStorageItem('subscriptionId', formData.id);
-      router.push('/thank-you');
-    }
-    if (resp.status > 400) {
+    if (typeof resp?.status === 'number') {
       actions.setSubmitting(false);
-    }
-    if (resp.status === 409) {
-      createToast();
-      actions.setSubmitting(false);
+      if (resp.status < 400 && typeof formData?.id === 'number') {
+        setStorageItem('subscriptionId', formData.id);
+        router.push('/thank-you');
+      }
+      if (resp.status === 400) {
+        createToast();
+      }
     }
   };
   const isAuth = isAuthenticated && user?.id;
