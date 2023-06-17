@@ -1,7 +1,7 @@
-import { Box, Button, useColorModeValue } from '@chakra-ui/react';
+import { Box, Button, useColorModeValue, useToast } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -10,7 +10,6 @@ import Text from './Text';
 import FieldForm from './Forms/FieldForm';
 import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
-import useCustomToast from '../hooks/useCustomToast';
 import modifyEnv from '../../../modifyEnv';
 import { setStorageItem } from '../../utils';
 
@@ -19,7 +18,7 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
   const { isAuthenticated, user, logout } = useAuth();
   const { backgroundColor, featuredColor } = useStyle();
   const { t } = useTranslation('workshops');
-  const toastIdRef = useRef();
+  const toast = useToast();
   const router = useRouter();
   const [formProps, setFormProps] = useState({
     first_name: '',
@@ -35,30 +34,6 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
 
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
 
-  const { createToast } = useCustomToast({
-    toastIdRef,
-    position: 'top',
-    status: 'info',
-    title: t('signup:alert-message.title'),
-    content: (
-      <Box>
-        {t('signup:alert-message.message1')}
-        {' '}
-        <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
-        .
-        <br />
-        {t('signup:alert-message.message2')}
-        {' '}
-        <Link variant="default" color="blue.200" href="/login" redirectAfterLogin>{t('signup:alert-message.click-here-to-login')}</Link>
-        {' '}
-        {t('signup:alert-message.or-click-here')}
-        {' '}
-        <Link variant="default" color="blue.200" href="/#">{t('signup:alert-message.message3')}</Link>
-        .
-      </Box>
-    ),
-  });
-
   const handleSubmit = async (actions, allValues) => {
     const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
@@ -72,16 +47,68 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
       }),
     });
 
-    const formData = await resp.json();
+    const data = await resp.json();
 
-    if (typeof resp?.status === 'number') {
-      actions.setSubmitting(false);
-      if (resp.status < 400 && typeof formData?.id === 'number') {
-        setStorageItem('subscriptionId', formData.id);
-        router.push('/thank-you');
-      }
-      if (resp.status === 400) {
-        createToast();
+    if (data?.access_token && data?.is_email_validated === false) {
+      toast({
+        position: 'top',
+        status: 'warning',
+        title: t('signup:alert-message-validate-email.title'),
+        description: (
+          <Box>
+            {t('signup:alert-message-validate-email.description')}
+            {' '}
+            <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
+            .
+            <br />
+            {t('signup:alert-message-validate-email.description2')}
+          </Box>
+        ),
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+    if (data?.access_token && data?.is_email_validated === true) {
+      router.push({
+        query: {
+          ...router.query,
+          token: data.access_token,
+        },
+      });
+    }
+    if (data?.access_token === null) {
+      if (typeof resp?.status === 'number') {
+        actions.setSubmitting(false);
+        if (resp.status < 400 && typeof data?.id === 'number') {
+          setStorageItem('subscriptionId', data.id);
+          router.push('/thank-you');
+        }
+        if (resp.status === 400) {
+          toast({
+            position: 'top',
+            status: 'info',
+            title: t('signup:alert-message.title'),
+            description: (
+              <Box>
+                {t('signup:alert-message.message1')}
+                {' '}
+                <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
+                .
+                <br />
+                {t('signup:alert-message.message2')}
+                {' '}
+                <Link variant="default" color="blue.200" href="/login" redirectAfterLogin>{t('signup:alert-message.click-here-to-login')}</Link>
+                {' '}
+                {t('signup:alert-message.or-click-here')}
+                {' '}
+                <Link variant="default" color="blue.200" href="/#">{t('signup:alert-message.message3')}</Link>
+                .
+              </Box>
+            ),
+            duration: 9000,
+            isClosable: true,
+          });
+        }
       }
     }
   };
@@ -103,7 +130,6 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
       {subContent}
 
       <Box display="flex" flexDirection="column" gridGap="10px" padding="0 18px 18px">
-
         <Text size="21px" fontWeight={700} lineHeight="25px">
           {title}
         </Text>

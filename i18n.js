@@ -3,7 +3,7 @@ module.exports = {
     // Enable translations for the following pages
     '*': ['common', 'navbar', 'footer', 'alert-message', 'share', 'live-event', 'program-card', 'final-project', 'profile'],
     '/': ['home', 'social'],
-    '/login': ['login'],
+    '/login': ['login', 'signup'],
     '/example': ['counter'],
     '/cohort/[cohortSlug]/[slug]/[version]': ['dashboard', 'projects', 'profile'],
     '/cohort/[cohortSlug]/assignments': ['assignments'],

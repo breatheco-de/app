@@ -14,10 +14,12 @@ import { Form, Formik, Field } from 'formik';
 import { useRouter } from 'next/router';
 // import Icon from '../Icon';
 import validationSchema from './validationSchemas';
-import bc from '../../services/breathecode';
 import { setStorageItem } from '../../../utils';
+import modifyEnv from '../../../../modifyEnv';
+import Link from '../NextChakraLink';
 
 function Register() {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('login');
   // const [showPSW, setShowPSW] = useState(false);
   // const [showRepeatPSW, setShowRepeatPSW] = useState(false);
@@ -39,29 +41,82 @@ function Register() {
         // password: '',
         // passwordConfirmation: '',
       }}
-      onSubmit={(values, actions) => {
-        bc.auth().subscribe({
-          ...values,
-          plan: 'base-plan',
-        }).then(({ data }) => {
-          setStorageItem('subscriptionId', data.id);
+      onSubmit={async (values, actions) => {
+        const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept-Language': router?.locale || 'en',
+          },
+          body: JSON.stringify({
+            ...values,
+            plan: 'base-plan',
+          }),
+        });
+        const data = await resp.json();
+
+        if (data?.access_token && data?.is_email_validated === false) {
           toast({
-            title: t('alert-message:added-to-waiting-list'),
-            // title: 'Your email has been added to our list!',
-            status: 'success',
+            position: 'top',
+            status: 'warning',
+            title: t('signup:alert-message-validate-email.title'),
+            description: (
+              <Box>
+                {t('signup:alert-message-validate-email.description')}
+                {' '}
+                <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
+                .
+                <br />
+                {t('signup:alert-message-validate-email.description2')}
+              </Box>
+            ),
             duration: 9000,
             isClosable: true,
           });
-          router.push('/thank-you');
-        }).catch(() => {
-          toast({
-            title: t('alert-message:email-already-subscribed'),
-            status: 'info',
-            duration: 6000,
-            isClosable: true,
+        }
+        if (data?.access_token && data?.is_email_validated === true) {
+          router.push({
+            query: {
+              ...router.query,
+              token: data.access_token,
+            },
           });
-          actions.setSubmitting(false);
-        });
+        }
+        if (data?.access_token === null) {
+          if (typeof resp?.status === 'number') {
+            actions.setSubmitting(false);
+            if (resp.status < 400 && typeof data?.id === 'number') {
+              setStorageItem('subscriptionId', data.id);
+              router.push('/thank-you');
+            }
+            if (resp.status === 400) {
+              toast({
+                position: 'top',
+                status: 'info',
+                title: t('signup:alert-message.title'),
+                description: (
+                  <Box>
+                    {t('signup:alert-message.message1')}
+                    {' '}
+                    <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
+                    .
+                    <br />
+                    {t('signup:alert-message.message2')}
+                    {' '}
+                    <Link variant="default" color="blue.200" href="/login" redirectAfterLogin>{t('signup:alert-message.click-here-to-login')}</Link>
+                    {' '}
+                    {t('signup:alert-message.or-click-here')}
+                    {' '}
+                    <Link variant="default" color="blue.200" href="/#">{t('signup:alert-message.message3')}</Link>
+                    .
+                  </Box>
+                ),
+                duration: 9000,
+                isClosable: true,
+              });
+            }
+          }
+        }
       }}
       validationSchema={validationSchema.register}
     >

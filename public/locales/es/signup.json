@@ -85,5 +85,10 @@
     "click-here-to-login": "haga clic aquí para iniciar sesión ahora",
     "or-click-here": "o haga clic aquí en",
     "message3": "olvidé la contraseña"
+  },
+  "alert-message-validate-email": {
+    "title": "Verificar correo electrónico",
+    "description": "Aún no ha validado su correo electrónico, inicie sesión en su cuenta de correo electrónico y busque la invitación de",
+    "description2": "¡No olvides revisar también la bandeja de entrada de spam de tu correo electrónico!"
   }
 }

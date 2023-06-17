@@ -85,5 +85,10 @@
     "click-here-to-login": "click here to login now",
     "or-click-here": "or click here on",
     "message3": "forgot password to get a new one"
+  },
+  "alert-message-validate-email": {
+    "title": "Verify email",
+    "description": "You haven't validated your email yet, log in into your email account and look for the invitation to",
+    "description2": "Don't forget to check your email spam inbox as well!"
   }
 }
