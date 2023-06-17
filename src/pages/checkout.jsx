@@ -58,6 +58,7 @@ const Checkout = () => {
   const { t } = useTranslation('signup');
   const router = useRouter();
   const [cohorts, setCohorts] = useState(null);
+  const [isPreselectedCohort, setIsPreselectedCohort] = useState(false);
   const [isPreloading, setIsPreloading] = useState(false);
   const {
     state, toggleIfEnrolled, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
@@ -124,6 +125,7 @@ const Checkout = () => {
 
             if ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || cohorts?.length === 1) {
               if (resp.status < 400) {
+                setIsPreselectedCohort(true);
                 const { kickoffDate, weekDays, availableTime } = cohorts?.[0] ? getTimeProps(cohorts[0]) : {};
                 const defaultQueryPropsAux = {
                   ...cohorts[0],
@@ -136,17 +138,11 @@ const Checkout = () => {
                 handleChecking({ ...defaultQueryPropsAux, plan: data })
                   .then(() => {
                     handleStep(2);
-                  })
-                  .finally(() => {
-                    setTimeout(() => {
-                      setIsPreloading(false);
-                    }, 650);
                   });
               }
             }
 
             if (data?.is_renewable === false || data?.is_renewable === undefined) {
-              setIsPreloading(false);
               handleStep(1);
             }
           })
@@ -157,12 +153,11 @@ const Checkout = () => {
               duration: 4000,
               isClosable: true,
             });
-            setIsPreloading(false);
           });
       }
       setTimeout(() => {
         setIsPreloading(false);
-      }, 1000);
+      }, 2600);
     }
   }, [cohorts?.length, accessToken]);
 
@@ -192,12 +187,13 @@ const Checkout = () => {
     };
     return {
       isNotAvailable: (queryPlanExists && !isFourthStep && !dateProps?.id) || isSecondStep || (isThirdStep && filteredCohorts?.length === 1),
+      must_hidde: isPreselectedCohort && isThirdStep,
       func: handler,
     };
   };
 
   return (
-    <Box p={{ base: '2.5rem 0', md: '2.5rem 2rem' }} background={backgroundColor3} position="relative" minHeight={isPreloading ? '727px' : null}>
+    <Box p={{ base: '2.5rem 0', md: '2.5rem 2rem' }} background={backgroundColor3} position="relative" minHeight={isPreloading ? '727px' : 'auto'}>
       {isPreloading && (
         <LoaderScreen />
       )}
@@ -261,7 +257,7 @@ const Checkout = () => {
           <>
             <Box as="hr" width="100%" margin="10px 0" />
             <Box display="flex" justifyContent="space-between" mt="auto">
-              {handleGoBack().isNotAvailable === false && (
+              {!handleGoBack().must_hidde && handleGoBack().isNotAvailable === false && (
                 <Button
                   variant="outline"
                   borderColor="currentColor"
