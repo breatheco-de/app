@@ -132,7 +132,7 @@ const Stepper = ({ stepIndex, checkoutData, isFirstStep, isSecondStep, isThirdSt
 
       {typeof handleGoBack === 'function' && (
         <Box display={{ base: 'flex', md: 'none' }} gridGap="20px" justifyContent="space-between" overflow="auto" padding="0 20px">
-          {handleGoBack().isNotAvailable === false ? (
+          {!handleGoBack().must_hidde && handleGoBack().isNotAvailable === false ? (
             <Box display="flex" onClick={() => handleGoBack().func()} alignItems="center" padding="10px 0px">
               <Icon icon="arrowRight" width="10px" height="20px" style={{ transform: 'rotate(180deg)' }} />
             </Box>

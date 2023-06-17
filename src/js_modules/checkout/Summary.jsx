@@ -124,7 +124,7 @@ const Summary = () => {
           w="100%"
           height="fit-content"
           p="11px 14px"
-          gridGap="12px"
+          gridGap="8px"
           borderRadius="14px"
         >
           <Heading size="15px" color="blue.default" textTransform="uppercase">

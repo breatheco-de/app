@@ -74,7 +74,7 @@ function Register() {
             isClosable: true,
           });
         }
-        if (data?.access_token && data?.is_email_validated === true) {
+        if (data?.access_token && (data?.is_email_validated === true || data?.is_email_validated === undefined) && data?.is_email_validated === true) {
           router.push({
             query: {
               ...router.query,

@@ -94,7 +94,7 @@ const ContactInformation = ({
         });
       }
 
-      if (data?.access_token && data?.is_email_validated === true && !dataOfPlan?.has_waiting_list) {
+      if (data?.access_token && (data?.is_email_validated === true || data?.is_email_validated === undefined) && !dataOfPlan?.has_waiting_list) {
         router.push({
           query: {
             ...router.query,

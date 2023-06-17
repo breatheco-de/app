@@ -68,7 +68,7 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
         isClosable: true,
       });
     }
-    if (data?.access_token && data?.is_email_validated === true) {
+    if (data?.access_token && (data?.is_email_validated === true || data?.is_email_validated === undefined)) {
       router.push({
         query: {
           ...router.query,
