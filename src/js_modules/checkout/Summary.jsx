@@ -22,7 +22,7 @@ const Summary = () => {
   const toast = useToast();
 
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
-  const { backgroundColor, borderColor, lightColor } = useStyle();
+  const { backgroundColor, borderColor, lightColor, hexColor } = useStyle();
   const planId = getQueryString('plan_id');
 
   const isNotTrial = !['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
@@ -256,7 +256,7 @@ const Summary = () => {
                       gridGap={{ base: '0', md: '12px' }}
                       cursor="pointer"
                       // background={selectedIndex !== i && featuredColor}
-                      border={isSelected ? '2px solid #0097CD' : '2px solid transparent'}
+                      border={isSelected ? '2px solid #0097CD' : `2px solid ${hexColor.featuredColor}`}
                       borderRadius="13px"
                     >
                       <Box
