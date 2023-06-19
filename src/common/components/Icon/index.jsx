@@ -15,9 +15,8 @@ const Icon = ({
   // eslint-disable-next-line no-console
   const Comp = loadable(() => import(`./set/${iconExists ? icon : 'info'}`).catch((err) => console.error(err)));
   return withContainer ? (
-    <Box {...rest}>
+    <Box className={className} {...rest}>
       <Comp
-        className={className}
         width={width}
         height={height}
         style={{ ...style, minWidth: width, height }}

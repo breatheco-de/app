@@ -19,6 +19,7 @@ import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import useAuth from '../../common/hooks/useAuth';
 import Timer from '../../common/components/Timer';
+import ComponentOnTime from '../../common/components/ComponentOnTime';
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 
@@ -113,7 +114,23 @@ const Page = () => {
       <Box
         background={useColorModeValue('featuredLight', 'featuredDark')}
         marginBottom="37px"
+        position="relative"
       >
+        <Box position="absolute" top="104px" left="-40px" zIndex={1}>
+          <svg width="110" height="151" viewBox="0 0 110 151" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M42.3031 77.3264L88.5358 24.5161L110 0H88.5358H67.6969L0 77.3264L67.5109 151H88.5358H109.814L88.5358 127.78L42.3031 77.3264Z" fill="#0097CF" />
+          </svg>
+        </Box>
+
+        <Box position="absolute" top="-65px" right="-20px" zIndex={1}>
+          <svg width="503" height="255" viewBox="0 0 503 255" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="285.5" cy="99" rx="9.5" ry="9" fill="#FFA600" />
+            <ellipse cx="324.5" cy="99" rx="9.5" ry="9" fill="#EB5757" />
+            <ellipse cx="246.5" cy="99" rx="9.5" ry="9" fill="#0097CF" />
+            <path d="M461.466 161.21L416.074 212.971L395 237L416.074 237L436.534 237L503 161.21L436.717 89L416.074 89L395.183 89L416.074 111.759L461.466 161.21Z" fill="#0097CF" />
+            <path d="M71.5644 129.587L70.6552 130.607L71.5873 131.607L151.023 216.809L185.231 253.5L152.121 253.5L116.648 253.5L2.02928 130.561L116.988 1.50002L152.121 1.50003L185.655 1.50003L151 40.4036L152.121 41.4013L151 40.4037L71.5644 129.587Z" stroke="#25BF6C" strokeWidth="3" />
+          </svg>
+        </Box>
         <GridContainer
           height="100%"
           gridTemplateColumns="2fr repeat(12, 1fr) 2fr"
@@ -123,11 +140,24 @@ const Page = () => {
           minHeight="290px"
         >
           <Box display="flex" flexDirection="column" justifyContent="center" gridGap="15px" gridColumn="2 / span 8">
-            <Box display="flex" mt={{ base: '0', md: '1rem' }} gridGap="6px" background="yellow.light" borderRadius="20px" alignItems="center" width="fit-content" padding="8px 12px">
-              <Icon icon="usaFlag" width="15px" height="15px" />
-              <Text size="13px" fontWeight={700} color="#000">
-                Javascript Beginner Workshop
-              </Text>
+            <Box display="flex" mt={{ base: '0', md: '1rem' }} alignItems="center" gridGap="24px">
+              <Box display="flex" gridGap="6px" background="yellow.light" borderRadius="20px" alignItems="center" width="fit-content" padding="4px 10px">
+                <Icon icon="usaFlag" width="15px" height="15px" />
+                <Text size="13px" fontWeight={700} color="#000">
+                  Javascript Beginner Workshop
+                </Text>
+              </Box>
+              {event?.id && (
+                <ComponentOnTime
+                  startingAt={event?.starting_at}
+                  finishedView={(
+                    <Box display="flex" alignItems="center" fontWeight={700} color="danger" fontSize="12px" background="red.light" borderRadius="18px" padding="4px 10px" gridGap="10px">
+                      <Icon withContainer className="pulse-red" icon="dot" color="currentColor" width="8px" height="8px" borderRadius="50px" />
+                      {t('common:live-now')}
+                    </Box>
+                  )}
+                />
+              )}
             </Box>
             {event.loaded ? (
               <>
@@ -161,7 +191,7 @@ const Page = () => {
             <Box display="flex" flexDirection="column" gridGap="8px" id="event-info">
               {formatedDate[locale] && (
                 <Box display="flex" gridGap="10px">
-                  <Icon icon="calendar" width="20px" height="20px" color={hexColor.fontColor3} />
+                  <Icon icon="calendar" width="20px" height="20px" color={hexColor.blueDefault} />
                   <Text withTooltip size="14px" label={capitalizeFirstLetter(countryOfDate)} fontWeight={700} width="fit-content">
                     {capitalizeFirstLetter(formatedDate[locale])}
                   </Text>
@@ -169,7 +199,7 @@ const Page = () => {
               )}
               {duration?.hours && (
                 <Box display="flex" gridGap="10px">
-                  <Icon icon="chronometer-full" width="20px" height="20px" color={hexColor.fontColor3} />
+                  <Icon icon="chronometer-full" width="20px" height="20px" color={hexColor.blueDefault} />
                   <Text size="sm">
                     {t('duration-hours', { hours: duration.hours })}
                   </Text>
