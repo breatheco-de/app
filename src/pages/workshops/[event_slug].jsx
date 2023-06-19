@@ -1,5 +1,5 @@
 import {
-  Box, Button, Grid, Skeleton, useColorModeValue,
+  Box, Button, Grid, Skeleton, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { intervalToDuration, format } from 'date-fns';
@@ -36,6 +36,7 @@ const Page = () => {
 
   const router = useRouter();
   const { locale } = router;
+  const toast = useToast();
   const { isAuthenticated, user } = useAuth();
   const { event_slug: eventSlug } = router.query;
   const { featuredColor, hexColor } = useStyle();
@@ -273,13 +274,13 @@ const Page = () => {
                 variant="default"
                 disabled={!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                 _disabled={{
-                  background: readyToJoinEvent ? '' : 'gray.dark',
+                  background: (readyToJoinEvent || !alreadyApplied) ? '' : 'gray.350',
                 }}
                 _hover={{
-                  background: readyToJoinEvent ? '' : 'gray.dark',
+                  background: (readyToJoinEvent || !alreadyApplied) ? '' : 'gray.350',
                 }}
                 _active={{
-                  background: readyToJoinEvent ? '' : 'gray.dark',
+                  background: (readyToJoinEvent || !alreadyApplied) ? '' : 'gray.350',
                 }}
                 onClick={() => {
                   if (readyToJoinEvent && alreadyApplied) {
@@ -287,8 +288,18 @@ const Page = () => {
                   }
                   if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
                     bc.events().applyEvent(event?.id)
-                      .then(() => {
-                        setApplied(true);
+                      .then((resp) => {
+                        if (resp !== undefined) {
+                          setApplied(true);
+                        } else {
+                          toast({
+                            position: 'top',
+                            status: 'error',
+                            title: t('alert-message:event-access-error'),
+                            isClosable: true,
+                            duration: 6000,
+                          });
+                        }
                       });
                   }
                 }}
