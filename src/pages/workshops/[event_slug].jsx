@@ -115,6 +115,7 @@ const Page = () => {
         background={useColorModeValue('featuredLight', 'featuredDark')}
         marginBottom="37px"
         position="relative"
+        overflowX="hidden"
       >
         <Box position="absolute" top="104px" left="-40px" zIndex={1}>
           <svg width="110" height="151" viewBox="0 0 110 151" fill="none" xmlns="http://www.w3.org/2000/svg">
