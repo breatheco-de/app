@@ -65,6 +65,7 @@ const ChooseYourClass = ({
         setAvailableDates(filteredCohorts);
         if (data.length < 1) {
           toast({
+            position: 'top',
             title: t('alert-message:no-cohorts-found'),
             status: 'info',
             duration: 5000,
@@ -73,6 +74,7 @@ const ChooseYourClass = ({
       })
       .catch((error) => {
         toast({
+          position: 'top',
           title: t('alert-message:something-went-wrong-fetching-cohorts'),
           description: error.message,
           status: 'error',
@@ -112,6 +114,7 @@ const ChooseYourClass = ({
           })
           .catch(() => {
             toast({
+              position: 'top',
               title: t('alert-message:google-maps-no-coincidences'),
               status: 'warning',
               duration: 5000,

@@ -133,6 +133,7 @@ const useSignup = () => {
         }
         if (response === undefined || response.status >= 400) {
           toast({
+            position: 'top',
             title: t('alert-message:payment-error'),
             status: 'error',
             duration: 7000,
@@ -273,6 +274,7 @@ const useSignup = () => {
           toggleIfEnrolled(true);
         } else {
           toast({
+            position: 'top',
             title: t('alert-message:something-went-wrong-choosing-date'),
             status: 'error',
             duration: 7000,

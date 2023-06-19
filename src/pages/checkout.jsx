@@ -96,6 +96,7 @@ const Checkout = () => {
       setIsPreloading(true);
       if (cohorts && cohorts?.length <= 0) {
         toast({
+          position: 'top',
           title: t('alert-message:no-course-configuration'),
           status: 'warning',
           duration: 4000,
@@ -116,6 +117,7 @@ const Checkout = () => {
 
             if ((resp && resp?.status >= 400) || resp?.data.length === 0) {
               toast({
+                position: 'top',
                 title: t('alert-message:no-plan-configuration'),
                 status: 'info',
                 duration: 4000,
@@ -148,6 +150,7 @@ const Checkout = () => {
           })
           .catch(() => {
             toast({
+              position: 'top',
               title: t('alert-message:no-plan-configuration'),
               status: 'info',
               duration: 4000,

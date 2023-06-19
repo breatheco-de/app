@@ -90,6 +90,7 @@ const Summary = () => {
           })
             .catch(() => {
               toast({
+                position: 'top',
                 title: t('alert-message:payment-error'),
                 status: 'error',
                 duration: 7000,
@@ -101,6 +102,7 @@ const Summary = () => {
       .catch((err) => {
         console.log(err);
         toast({
+          position: 'top',
           title: 'Something went wrong choosing plan',
           status: 'error',
           duration: 6000,

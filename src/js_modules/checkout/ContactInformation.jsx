@@ -107,6 +107,7 @@ const ContactInformation = ({
 
     if (resp.status >= 400 && data?.phone) {
       toast({
+        position: 'top',
         title: data?.phone[0],
         status: 'warning',
         duration: 6000,

@@ -77,6 +77,7 @@ const ChooseDate = ({ cohort, ...rest }) => {
             .then(({ data }) => {
               if (data.length === 0) {
                 toast({
+                  position: 'top',
                   title: t('alert-message:no-plan-configuration'),
                   status: 'info',
                   duration: 6000,

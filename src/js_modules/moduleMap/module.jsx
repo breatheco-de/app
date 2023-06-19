@@ -94,6 +94,7 @@ const Module = ({
       setSettingsOpen(!settingsOpen);
     } else {
       toast({
+        position: 'top',
         title: t('alert-message:something-went-wrong'),
         status: 'error',
         duration: 7000,
