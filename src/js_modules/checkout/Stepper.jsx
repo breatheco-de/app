@@ -131,11 +131,13 @@ function Stepper({ stepIndex, checkoutData, isFirstStep, isSecondStep, isThirdSt
       </Box>
 
       {typeof handleGoBack === 'function' && (
-        <Box display={{ base: 'flex', md: 'none' }} gridGap="38px" justifyContent="space-between" overflow="auto" padding="0 20px">
-          {handleGoBack().isNotAvailable === false && (
-            <Box display="flex" onClick={() => handleGoBack().func()} alignItems="center" transform="rotate(180deg)" padding="10px 20px">
-              <Icon icon="arrowRight" width="10px" height="20px" />
+        <Box display={{ base: 'flex', md: 'none' }} gridGap="20px" justifyContent="space-between" overflow="auto" padding="0 20px">
+          {!handleGoBack().must_hidde && handleGoBack().isNotAvailable === false ? (
+            <Box display="flex" onClick={() => handleGoBack().func()} alignItems="center" padding="10px 0px">
+              <Icon icon="arrowRight" width="10px" height="20px" style={{ transform: 'rotate(180deg)' }} />
             </Box>
+          ) : (
+            <Box padding="10px 0px" />
           )}
           <Box
             display="flex"
@@ -143,18 +145,6 @@ function Stepper({ stepIndex, checkoutData, isFirstStep, isSecondStep, isThirdSt
             alignItems="center"
             color={stepIndex !== 0 && 'gray.350'}
           >
-            <Heading
-              as="span"
-              size="sm"
-              p="2px 10px"
-              mr="4px"
-              background="blue.default"
-              color="white"
-              borderRadius="3px"
-              fontWeight="700"
-            >
-              {stepIndex || 1}
-            </Heading>
             <Heading
               size="sm"
               fontWeight="700"
@@ -168,7 +158,7 @@ function Stepper({ stepIndex, checkoutData, isFirstStep, isSecondStep, isThirdSt
           </Box>
           <Flex fontSize="24px" gridGap="3px" color={disabledColor2} fontWeight={700}>
             <Text size="24px" color="blue.default">
-              {stepIndex || 1}
+              {(stepIndex + 1) || 1}
             </Text>
             /
             <Text size="24px">
@@ -190,11 +180,12 @@ Stepper.propTypes = {
   isSecondStep: PropTypes.bool.isRequired,
   isThirdStep: PropTypes.bool.isRequired,
   isFourthStep: PropTypes.bool.isRequired,
-  handleGoBack: PropTypes.func.isRequired,
+  handleGoBack: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
 };
 
 Stepper.defaultProps = {
   checkoutData: {},
+  handleGoBack: null,
 };
 
 export default Stepper;

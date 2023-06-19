@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Box, Divider, Tag, TagLabel } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import Image from 'next/image';
 import Text from '../Text';
 import Icon from '../Icon';
 import useStyle from '../../hooks/useStyle';
@@ -53,6 +54,7 @@ function MainEvent({
           }
           if (!event?.hash) {
             window.open(`${host}/v1/events/me/event/${nearestEvent?.id}/join?token=${accessToken}`);
+            // window.open(`/${lang}/workshops/${nearestEvent?.slug}`);
           }
         }}
       >
@@ -85,11 +87,15 @@ function MainEvent({
               </Box>
             </Box>
           )}
-          <Icon
-            width="50px"
-            height="50px"
-            icon={getLiveIcon(event)}
-          />
+          {event?.event_type?.icon_url ? (
+            <Image src={event?.event_type?.icon_url} width={50} height={50} />
+          ) : (
+            <Icon
+              width="50px"
+              height="50px"
+              icon={getLiveIcon(event)}
+            />
+          )}
         </Box>
         <Box
           display="flex"

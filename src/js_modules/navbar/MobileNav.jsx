@@ -113,6 +113,7 @@ function MobileNav({
           }}
           background={commonColors}
           onClick={toggleColorMode}
+          title="Toggle Color Mode"
           icon={
             colorMode === 'light' ? (
               <Icon icon="light" width="25px" height="23px" color="black" />

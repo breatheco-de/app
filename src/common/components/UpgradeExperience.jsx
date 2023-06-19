@@ -1,11 +1,17 @@
 import { Button, Popover, PopoverTrigger, PopoverContent, Box, Img, PopoverArrow } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-// import { formatDistanceToNowStrict } from 'date-fns';
-// import { es } from 'date-fns/locale';
+// import { formatDuration, intervalToDuration } from 'date-fns';
+// import { es, en } from 'date-fns/locale';
 // import { useRouter } from 'next/router';
 import NextChakraLink from './NextChakraLink';
 import Icon from './Icon';
+// import { isDateMoreThanAnyDaysAgo } from '../../utils';
+
+// const availableLanguages = {
+//  es,
+//  en,
+//};
 
 function UpgradeExperience({ storySettings, data }) {
   const [isOpen, setIsOpen] = useState(storySettings?.open || false);
@@ -61,18 +67,33 @@ function UpgradeExperience({ storySettings, data }) {
             // const timestamp = item.ending_at ? new Date(item.ending_at) : '';
             // const isTrial = item.status === 'trial';
             const title = item?.course_translation?.title;
+            // const hasExpired = timestamp - new Date() <= 0;
+            // const isMoreThanOneDay = isDateMoreThanAnyDaysAgo(timestamp, 1);
+            // const formatTimeString = (start) => {
+            //  const duration = intervalToDuration({
+            //    end: new Date(),
+            //    start,
+            //  });
 
-            // const endingDate = {
-            //   en: `${formatDistanceToNowStrict(
-            //     timestamp,
-            //     'dd',
-            //   )} left`,
-            //   es: `${formatDistanceToNowStrict(
-            //     timestamp,
-            //     { locale: es },
-            //     'dd',
-            //   )} restantes`,
-            // };
+            //  const formated = formatDuration(duration,
+            //    {
+            //      format: isMoreThanOneDay ? ['days'] : ['days', 'hours', 'minutes'],
+            //      delimiter: ', ',
+            //      locale: availableLanguages[locale],
+            //    });
+            //  if (hasExpired && locale === 'es') {
+            //    return `Hace ${formated}`;
+            //  }
+            //  if (hasExpired && locale === 'en') {
+            //    return `${formated} ag//o`;
+            //  }
+
+            //  if (!hasExpired && locale === 'es') {
+            //    return `Quedan ${formated}`;
+            //  }
+            //  return `${formated} left`;
+            //};
+            // const endingDate = formatTimeString(timestamp);
 
             return (
               <Box key={item.slug} display="flex" alignItems="center" gridGap="10px">
@@ -101,7 +122,7 @@ function UpgradeExperience({ storySettings, data }) {
                 </NextChakraLink>
                 {/* {isTrial && (
                   <Box background="red.light2" padding="3px 10px" minWidth="max-content" fontSize="12px" width="fit-content" borderRadius="15px">
-                    {endingDate[locale]}
+                    {endingDate}
                   </Box>
                 )} */}
                 {/* {item.status === 'paid' && (

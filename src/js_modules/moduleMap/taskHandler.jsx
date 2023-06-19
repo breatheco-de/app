@@ -127,6 +127,7 @@ export function ButtonHandlerByTaskStatus({
   const [fileProps, setFileProps] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const fileContainerRef = useRef(null);
+  const fileInputRef = useRef();
   const commonInputColor = useColorModeValue('gray.600', 'gray.200');
   const commonInputActiveColor = useColorModeValue('gray.800', 'gray.350');
   const taskIsAproved = allowText && currentTask?.revision_status === 'APPROVED';
@@ -286,9 +287,9 @@ export function ButtonHandlerByTaskStatus({
       closeSettings();
     };
 
-    const handleChangeFile = (event) => {
+    const handleChangeFile = (e) => {
       setDragOver(false);
-      const fileProp = event.currentTarget.files;
+      const fileProp = e.target.files;
       const formatFileArr = mimeTypes.replaceAll('.', '').split(',');
       if (fileProp.length > 0) {
         Array.from(fileProp).forEach((file) => {
@@ -315,6 +316,14 @@ export function ButtonHandlerByTaskStatus({
       }
     };
 
+    const handleRemoveFileInList = (name) => {
+      const updatedFileList = fileProps.filter((file) => file.name !== name);
+      setFileProps(updatedFileList);
+      fileInputRef.current.removeAttribute('multiple');
+      fileInputRef.current.value = null;
+      fileInputRef.current.setAttribute('multiple', 'multiple');
+    };
+
     const handleUploadFile = async () => {
       setIsUploading(true);
       const formdata = new FormData();
@@ -332,6 +341,7 @@ export function ButtonHandlerByTaskStatus({
           githubUrl: respData?.url,
         });
         toast({
+          position: 'top',
           title: t('alert-message:files-uploaded'),
           status: 'success',
           duration: 4000,
@@ -341,6 +351,7 @@ export function ButtonHandlerByTaskStatus({
       } else {
         setIsUploading(false);
         toast({
+          position: 'top',
           title: t('alert-message:something-went-wrong-with', { property: 'Files' }),
           status: 'error',
           duration: 4000,
@@ -527,7 +538,8 @@ export function ButtonHandlerByTaskStatus({
                         type="file"
                         name="Upload file"
                         title=""
-                        onChange={(event) => handleChangeFile(event)}
+                        ref={fileInputRef}
+                        onChange={handleChangeFile}
                         accept={currentAssetData?.delivery_formats}
                         placeholder="Upload profile image"
                         multiple="multiple"
@@ -576,7 +588,7 @@ export function ButtonHandlerByTaskStatus({
                                   p="7px"
                                   backgroundColor="gray.500"
                                   onClick={() => {
-                                    setFileProps((prev) => prev.filter((item) => item.name !== file.name));
+                                    handleRemoveFileInList(file.name);
                                   }}
                                   cursor="pointer"
                                 >
@@ -596,7 +608,7 @@ export function ButtonHandlerByTaskStatus({
                         variant="default"
                         onClick={() => handleUploadFile()}
                         isLoading={isUploading}
-                        disabled={isUploading || fileProps.some((file) => typeof file?.type !== 'string') || fileErrorExists || fileSumSize > maxFileSize}
+                        disabled={isUploading || fileProps?.length === 0 || fileProps.some((file) => typeof file?.type !== 'string') || fileErrorExists || fileSumSize > maxFileSize}
                         textTransform="uppercase"
                       >
                         {t('common:upload')}

@@ -2,6 +2,7 @@ import { Box, Image, Link } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
 import Heading from './Heading';
 import Text from './Text';
 import Icon from './Icon';
@@ -16,10 +17,14 @@ const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
 
 function Container({ course, courses, children }) {
+  const router = useRouter();
+  const langConnector = router.locale === 'en' ? '' : `/${router.locale}`;
+
   const { width: screenWidth } = getBrowserSize();
+
   if (screenWidth < 768) {
     return (
-      <Link href={`https://4geeks.com/${course?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="#F9F9F9" color="black" padding="9px 8px" borderRadius="8px">
+      <Link href={`https://4geeks.com${langConnector}/${course?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="#F9F9F9" color="black" padding="9px 8px" borderRadius="8px">
         {children}
       </Link>
     );
@@ -37,6 +42,8 @@ function MktSideRecommendedCourses({ title, endpoint }) {
   const [isLoading, setIsLoading] = useState(true);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [courses, setCourses] = useState([]);
+  const router = useRouter();
+  const langConnector = router.locale === 'en' ? '' : `/${router.locale}`;
 
   const headers = {
     'Accept-Language': lang,
@@ -90,7 +97,7 @@ function MktSideRecommendedCourses({ title, endpoint }) {
                 <Link
                   display={{ base: 'none', md: 'flex' }}
                   variant="buttonDefault"
-                  href={`https://4geeks.com/${course?.slug}`}
+                  href={`https://4geeks.com${langConnector}/${course?.slug}`}
                   alignItems="center"
                   colorScheme="success"
                   width="auto"
@@ -102,7 +109,7 @@ function MktSideRecommendedCourses({ title, endpoint }) {
                 </Link>
                 <Link
                   display={{ base: 'flex', md: 'none' }}
-                  href={`https://4geeks.com/${course?.slug}`}
+                  href={`https://4geeks.com${langConnector}/${course?.slug}`}
                   alignItems="center"
                   width="auto"
                   color="green.400"

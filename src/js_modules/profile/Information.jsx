@@ -39,6 +39,7 @@ function Information() {
     // Validate file is of type Image
     if (file && !fileTypes.includes(file.type)) {
       toast({
+        position: 'top',
         title: t('alert-message:file-type-error', { type: file.type.split('/')[1] }),
         status: 'warning',
         duration: 3000,
@@ -93,6 +94,7 @@ function Information() {
               });
               setShowModal(false);
               toast({
+                position: 'top',
                 title: t('alert-message:submitting-picture-success'),
                 status: 'success',
                 duration: 5000,
@@ -103,6 +105,7 @@ function Information() {
         .catch(() => {
           setIsLoading(false);
           toast({
+            position: 'top',
             title: t('alert-message:error-submitting-picture'),
             status: 'error',
             duration: 5000,

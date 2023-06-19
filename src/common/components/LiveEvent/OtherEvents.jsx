@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import {
-  Box, Avatar, Tag, TagLabel,
+  Box, Tag, TagLabel,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
+import Image from 'next/image';
 import modifyEnv from '../../../../modifyEnv';
 import { getStorageItem, lengthOfString, syncInterval } from '../../../utils';
 import useStyle from '../../hooks/useStyle';
@@ -50,9 +51,9 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stT
         borderColor="#DADADA"
       >
         <Box display="flex">
-          <Box width="37px" height="37px" className={isLiveOrStarting(startsAt, endsAt) ? 'pulse-blue' : ''} borderRadius="full">
-            {event?.icon_url ? (
-              <Avatar src={event?.icon_url} name="icon url" width="37px" height="37px" />
+          <Box width="37px" height="37px" style={{ minWidth: '37px' }} className={isLiveOrStarting(startsAt, endsAt) ? 'pulse-blue' : ''} borderRadius="full">
+            {event?.event_type?.icon_url ? (
+              <Image src={event?.event_type?.icon_url} name={event?.title} width={40} height={40} />
             ) : (
               <Icon fill={event.fill || hexColor.greenLight} color={event.color} style={{ flexShrink: 0 }} width="37px" height="37px" icon={event.icon || 'group'} />
             )}
@@ -67,6 +68,7 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stT
               target="_blank"
               rel="noopener noreferrer"
               href={`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#'}
+              // href={`/${lang}/workshops/${event?.slug}` || '#'}
               color={fontColor}
               fontSize="15px"
               lineHeight="18px"

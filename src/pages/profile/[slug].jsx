@@ -48,6 +48,7 @@ function Profile() {
       })
       .catch(() => {
         toast({
+          position: 'top',
           title: t('alert-message:something-went-wrong-with', { property: 'Certificates' }),
           status: 'error',
           duration: 5000,

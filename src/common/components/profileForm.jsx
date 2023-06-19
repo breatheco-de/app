@@ -61,6 +61,7 @@ function ProfileForm({ profile }) {
         bc.auth().updateProfile(values)
           .then(({ data }) => {
             toast({
+              position: 'top',
               title: t('profile:profile-updated'),
               status: 'success',
               duration: 9000,
@@ -76,6 +77,7 @@ function ProfileForm({ profile }) {
           })
           .catch(() => {
             toast({
+              position: 'top',
               title: t('profile:update-failed'),
               // description: err.message,
               status: 'error',
@@ -326,6 +328,7 @@ function ProfileForm({ profile }) {
                             router.reload();
                           }, 1000);
                           toast({
+                            position: 'top',
                             title: t('alert-message:any-removed', { any: 'GitHub' }),
                             description: t('alert-message:github-account-removed'),
                             status: 'success',
@@ -335,6 +338,7 @@ function ProfileForm({ profile }) {
                         })
                         .catch(() => {
                           toast({
+                            position: 'top',
                             title: t('alert-message:something-went-wrong'),
                             description: t('alert-message:error-removing-github'),
                             status: 'error',

@@ -32,6 +32,7 @@ export const getCurrentCohort = ({
     .catch((err) => {
       router.push('/choose-program');
       toast({
+        position: 'top',
         title: t('alert-message:invalid-cohort-slug'),
         description: err,
         status: 'error',
@@ -58,6 +59,7 @@ export const defaultDataFetch = async ({
         const currData = respData.data;
         const markdownData = respMarkdown.data;
         toast({
+          position: 'top',
           title: t('alert-message:language-not-found', { currentLanguageLabel }),
           // not found, showing the english version`,
           status: 'warning',
@@ -80,6 +82,7 @@ export const defaultDataFetch = async ({
       })
       .catch(() => {
         toast({
+          position: 'top',
           title: t('alert-message:default-version-not-found', { lesson }),
           // description: 'Content not found',
           status: 'error',
@@ -127,6 +130,7 @@ export const prepareCohortContext = ({
       });
     }).catch((err) => {
       toast({
+        position: 'top',
         title: t('alert-message:error-fetching-role', { role: currentAcademy?.role }),
         description: err.message,
         status: 'error',

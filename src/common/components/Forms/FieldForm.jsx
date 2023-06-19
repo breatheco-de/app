@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Field } from 'formik';
+import { Field, ErrorMessage } from 'formik';
 import {
   Box, FormControl, FormLabel, Input, Textarea,
 } from '@chakra-ui/react';
@@ -9,7 +9,7 @@ import FileInput from './FileInput';
 function FieldForm({
   type, name, label, placeholder, formProps, setFormProps, style, withLabel, pattern, handleOnChange, externValue, onClick,
   acceptedFiles, maxFileSize, multipleFiles, fileProps, setFileProps, setFieldValue, translation, required, hint, maxLength,
-  spellcheck,
+  spellcheck, readOnly,
 }) {
   const { input, lightColor } = useStyle();
   const inputBorderColor = input.borderColor;
@@ -59,6 +59,7 @@ function FieldForm({
                     borderColor={inputBorderColor}
                     borderRadius="3px"
                     flex={0.5}
+                    readOnly={readOnly}
                   />
                   {maxLength > 0 && (
                     <Box position="absolute" color={inputBorderColor} bottom="6px" right={3}>
@@ -103,13 +104,14 @@ function FieldForm({
                   borderColor={inputBorderColor}
                   borderRadius="3px"
                   flex={0.5}
+                  readOnly={readOnly}
                 />
               )}
               {hint && !form.errors[name] && (
                 <Box fontSize="sm" color={lightColor} mt={2}>{hint}</Box>
               )}
               {form.errors[name] && (
-                <Box className="error-message">{form.errors[name]}</Box>
+                <ErrorMessage name={name} component={Box} className="error-message" />
               )}
             </FormControl>
           )
@@ -143,6 +145,7 @@ FieldForm.propTypes = {
   required: PropTypes.bool,
   hint: PropTypes.string,
   spellcheck: PropTypes.bool,
+  readOnly: PropTypes.bool,
 };
 
 FieldForm.defaultProps = {
@@ -169,6 +172,7 @@ FieldForm.defaultProps = {
   required: false,
   hint: '',
   spellcheck: false,
+  readOnly: false,
 };
 
 export default FieldForm;

@@ -87,6 +87,7 @@ function Mentoring({
         .then((res) => res?.data)
         .catch(() => {
           toast({
+            position: 'top',
             title: 'Error',
             description: t('alert-message:error-finding-mentors'),
             status: 'error',

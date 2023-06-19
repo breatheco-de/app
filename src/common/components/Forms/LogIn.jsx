@@ -39,6 +39,7 @@ function LogIn() {
             if (data.status === 200) {
               actions.setSubmitting(false);
               toast({
+                position: 'top',
                 title: t('alert-message:welcome'),
                 // description: t('alert-message:select-program'),
                 status: 'success',
@@ -50,6 +51,7 @@ function LogIn() {
           .catch(() => {
             actions.setSubmitting(false);
             toast({
+              position: 'top',
               title: t('alert-message:account-not-found'),
               // description: error.message,
               status: 'error',

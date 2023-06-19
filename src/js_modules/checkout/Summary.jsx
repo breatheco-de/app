@@ -22,7 +22,7 @@ function Summary() {
   const toast = useToast();
 
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
-  const { backgroundColor, borderColor, lightColor } = useStyle();
+  const { backgroundColor, borderColor, lightColor, hexColor } = useStyle();
   const planId = getQueryString('plan_id');
 
   const isNotTrial = !['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
@@ -36,7 +36,7 @@ function Summary() {
   };
 
   const getPlanProps = (selectedPlan) => {
-    bc.payment().getPlanProps(encodeURIComponent(selectedPlan.slug))
+    bc.payment().getPlanProps(encodeURIComponent(selectedPlan?.slug))
       .then((resp) => {
         if (!resp) {
           setDisableHandler(true);
@@ -90,6 +90,7 @@ function Summary() {
           })
             .catch(() => {
               toast({
+                position: 'top',
                 title: t('alert-message:payment-error'),
                 status: 'error',
                 duration: 7000,
@@ -101,6 +102,7 @@ function Summary() {
       .catch((err) => {
         console.log(err);
         toast({
+          position: 'top',
           title: 'Something went wrong choosing plan',
           status: 'error',
           duration: 6000,
@@ -124,7 +126,7 @@ function Summary() {
           w="100%"
           height="fit-content"
           p="11px 14px"
-          gridGap="12px"
+          gridGap="8px"
           borderRadius="14px"
         >
           <Heading size="15px" color="blue.default" textTransform="uppercase">
@@ -256,7 +258,7 @@ function Summary() {
                       gridGap={{ base: '0', md: '12px' }}
                       cursor="pointer"
                       // background={selectedIndex !== i && featuredColor}
-                      border={isSelected ? '2px solid #0097CD' : '2px solid transparent'}
+                      border={isSelected ? '2px solid #0097CD' : `2px solid ${hexColor.featuredColor}`}
                       borderRadius="13px"
                     >
                       <Box
@@ -305,6 +307,7 @@ function Summary() {
           ) : (
             <Button
               variant="outline"
+              width="100%"
               borderColor="blue.200"
               onClick={handleSubmit}
               isDisabled={disableHandler}

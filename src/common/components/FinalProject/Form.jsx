@@ -97,6 +97,7 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
           setFinalProjectData(res.data[0]);
           refreshFinalProject();
           toast({
+            position: 'top',
             title: 'Success',
             description: 'Your final project has been updated',
             status: 'success',
@@ -104,6 +105,7 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
           });
         } else {
           toast({
+            position: 'top',
             title: 'Error',
             description: 'Something went wrong updating your final project',
             status: 'error',
@@ -114,6 +116,7 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
       })
       .catch(() => {
         toast({
+          position: 'top',
           title: 'Error',
           description: 'Something went wrong submiting your final project',
           status: 'error',
@@ -139,6 +142,7 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
         if (res) {
           setFinalProjectData(res.data[0]);
           toast({
+            position: 'top',
             title: 'Success',
             description: 'Your final project has been sended',
             status: 'success',
@@ -147,6 +151,7 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
           handleClose();
         } else {
           toast({
+            position: 'top',
             title: 'Error',
             description: 'Something went wrong submiting your final project',
             status: 'error',
@@ -156,6 +161,7 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
       })
       .catch(() => {
         toast({
+          position: 'top',
           title: 'Error',
           description: 'Something went wrong submiting your final project',
           status: 'error',
@@ -242,7 +248,7 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
       validationSchema={finalProjectValidation}
     >
       {({ errors, isSubmitting, setFieldValue }) => {
-        const errorFileds = errors;
+        const errorFields = errors;
 
         return (
           <Flex flexDirection="column" padding="20px" gridGap="30px">
@@ -330,7 +336,7 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
               <AddMember
                 translation={{ finalProjectTranslation, commonTranslation }}
                 students={students}
-                errors={errorFileds}
+                errors={errorFields}
                 hint={finalProjectTranslation?.['modal-form']?.['participants-hint'] || t('modal-form.participants-hint')}
               />
               <Button

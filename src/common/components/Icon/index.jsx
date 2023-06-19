@@ -17,9 +17,8 @@ function Icon({
   // const Comp = loadable(() => import(`./set/${iconExists ? icon : 'info'}`).catch((err) => console.error(`Error with icon ${icon}:`, err)));
 
   return withContainer ? (
-    <Box {...rest}>
+    <Box className={className} {...rest}>
       <Comp
-        className={className}
         width={width}
         height={height}
         style={{ ...style, minWidth: width, height }}

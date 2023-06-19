@@ -100,6 +100,7 @@ function PaymentInfo() {
         }
         if (resp.status >= 400) {
           toast({
+            position: 'top',
             title: t('alert-message:card-error'),
             description: t('alert-message:card-error-description'),
             status: 'error',
@@ -112,6 +113,7 @@ function PaymentInfo() {
         setIsSubmitting(false);
         actions.setSubmitting(false);
         toast({
+          position: 'top',
           title: t('alert-message:card-error'),
           description: t('alert-message:card-error-description'),
           status: 'error',

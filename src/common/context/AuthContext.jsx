@@ -238,11 +238,14 @@ function AuthProvider({ children }) {
     });
   };
 
-  const logout = () => {
-    if (queryTokenExists) {
-      router.push(cleanUrl);
-    } else {
-      router.reload();
+  const logout = (callback = null) => {
+    if (typeof callback === 'function') callback();
+    if (typeof callback !== 'function') {
+      if (queryTokenExists) {
+        router.push(cleanUrl);
+      } else {
+        router.reload();
+      }
     }
     handleSession(null);
     setProfile({});

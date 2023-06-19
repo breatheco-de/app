@@ -45,6 +45,7 @@ function PopoverHandler({ task, githubUrl, haveGithubDomain }) {
             setSettingsOpen(true);
           } else {
             toast({
+              position: 'top',
               title: t('alert-message:current-task-no-files'),
               status: 'error',
               duration: 4000,

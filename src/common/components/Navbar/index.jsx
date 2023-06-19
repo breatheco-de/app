@@ -28,6 +28,7 @@ import syllabusList from '../../../../public/syllabus.json';
 import { getBrowserSize, isWindow } from '../../../utils';
 import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
+// import UpgradeExperience from '../UpgradeExperience';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
@@ -92,7 +93,6 @@ function Hamburger2(colorMode) {
     </svg>
   );
 }
-// import UpgradeExperience from '../UpgradeExperience';
 
 function NavbarWithSubNavigation({ translations, pageProps }) {
   const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
@@ -297,7 +297,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   );
 
   return (
-    <Box>
+    <Box position="relative" zIndex={100}>
       <Flex
         transition="all .2s ease"
         bg={useColorModeValue('white', 'gray.800')}
@@ -409,6 +409,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                   height="30px"
                   borderRadius="30px"
                   onClick={() => setSettingsOpen(!settingsOpen)}
+                  title="Profile"
                 >
                   <Avatar
                     width="30px"
@@ -560,6 +561,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                             logout();
                           }, 150);
                         }}
+                        title={t('logout')}
                       >
                         <Icon icon="logout" width="20px" height="20px" />
                         <Box

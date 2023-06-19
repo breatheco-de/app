@@ -24,6 +24,8 @@
   "continue-learning":"Continúa aprendiendo gratis sobre:<br><br>{{technologies}} y más.",
   "user-id": "ID de usuario",
   "day": "Día",
+  "days": "Días",
+  "short-seconds": "Seg",
   "interactive": "Interactivo",
   "beginner": "Principiante", 
   "easy": "Fácil", 
@@ -48,6 +50,7 @@
   "any-available": "{{any}} disponible",
   "not-available": "No disponible",
   "live-demo": "Demo en vivo",
+  "live-now": "¡En Vivo!",
   "technologies": "Tecnologías",
   "full-screen": "Pantalla completa",
   "no-title": "Sin título 🙂",
@@ -165,5 +168,7 @@
   },
   "submit-project": "Enviar proyecto",
   "uploadScreenshot": "Subir captura de pantalla",
-  "continue-learning-course": "Continúa aprendiendo gratis sobre:"
+  "continue-learning-course": "Continúa aprendiendo gratis sobre:",
+  "logout-and-switch-user": "Cerrar sesión e iniciar como otro usuario",
+  "free": "Gratis"
 }

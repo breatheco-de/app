@@ -25,7 +25,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   const lessons = []; // filtered lessons after removing repeated
   let arrLessons = []; // incoming lessons
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson&limit=2000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=LESSON,ARTICLE&exclude_category=how-to,como&academy=4,5,6,47&limit=2000`);
   const data = await resp.json();
 
   arrLessons = Object.values(data.results);
@@ -114,7 +114,7 @@ export const getStaticProps = async ({ locale, locales }) => {
       },
 
       fallback: false,
-      lessons: lessons.filter((lesson) => lesson?.lang === currentLang && lesson?.asset_type === 'LESSON').map(
+      lessons: lessons.filter((lesson) => lesson?.lang === currentLang).map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
       technologyTags,

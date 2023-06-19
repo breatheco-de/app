@@ -240,6 +240,8 @@ const breathecode = {
       liveClass: () => axios.get(`${url}/event/liveclass${qs}`),
       joinLiveClass: (liveClassHash) => axios.get(`${url}/event/liveclass/join/${liveClassHash}${qs}`),
       joinLiveClass2: (liveClassHash) => axios.get(`${host}/me/event/liveclass/join/${liveClassHash}${qs}`),
+      applyEvent: (eventId) => axios.post(`${url}/event/${eventId}/checkin${qs}`),
+      getUsers: (eventId) => axios.get(`${host}/events/event/${eventId}/checkin${qs}`),
     };
   },
 };
