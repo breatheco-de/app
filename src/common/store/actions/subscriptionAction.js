@@ -72,6 +72,7 @@ const useSubscriptionsHandler = () => {
       })
       .catch((err) => {
         toast({
+          position: 'top',
           title: 'Error cancelling subscription',
           status: 'error',
           duration: 5000,

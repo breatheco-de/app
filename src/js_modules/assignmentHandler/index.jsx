@@ -139,6 +139,7 @@ export const DetailsModal = ({
                     setOpenUndoApproval(false);
                     onClose();
                     toast({
+                      position: 'top',
                       title: t('alert-message:review-assignment-updated'),
                       status: 'success',
                       duration: 5000,
@@ -147,6 +148,7 @@ export const DetailsModal = ({
                   })
                   .catch(() => {
                     toast({
+                      position: 'top',
                       title: t('alert-message:review-assignment-error'),
                       status: 'error',
                       duration: 5000,
@@ -287,6 +289,7 @@ export const DeliverModal = ({
                 })
                   .then(() => {
                     toast({
+                      position: 'top',
                       title: t('alert-message:review-assignment-ignored-task'),
                       status: 'success',
                       duration: 5000,
@@ -302,6 +305,7 @@ export const DeliverModal = ({
                   })
                   .catch(() => {
                     toast({
+                      position: 'top',
                       title: t('alert-message:review-assignment-error'),
                       status: 'error',
                       duration: 5000,
@@ -361,6 +365,7 @@ const DeliverHandler = ({
             })
             .catch(() => {
               toast({
+                position: 'top',
                 title: t('alert-message:review-url-error'),
                 status: 'error',
                 duration: 6000,
@@ -461,6 +466,7 @@ export const ReviewModal = ({ currentTask, projectLink, updpateAssignment, isOpe
               })
               .then(() => {
                 toast({
+                  position: 'top',
                   title: alertStatus[type],
                   status: statusColor[type],
                   duration: 5000,
@@ -476,6 +482,7 @@ export const ReviewModal = ({ currentTask, projectLink, updpateAssignment, isOpe
               })
               .catch(() => {
                 toast({
+                  position: 'top',
                   title: t('alert-message:review-assignment-error'),
                   status: 'error',
                   duration: 5000,
@@ -670,6 +677,7 @@ const ButtonHandler = ({
                     revision_status: 'PENDING',
                   });
                   toast({
+                    position: 'top',
                     title: t('alert-message:review-assignment-updated'),
                     status: 'success',
                     duration: 5000,
@@ -678,6 +686,7 @@ const ButtonHandler = ({
                 })
                 .catch(() => {
                   toast({
+                    position: 'top',
                     title: t('alert-message:review-assignment-error'),
                     status: 'error',
                     duration: 5000,

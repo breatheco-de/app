@@ -274,7 +274,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   );
 
   return (
-    <Box>
+    <Box position="relative" zIndex={100}>
       <Flex
         transition="all .2s ease"
         bg={useColorModeValue('white', 'gray.800')}

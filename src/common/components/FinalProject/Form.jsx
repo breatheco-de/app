@@ -97,6 +97,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
           setFinalProjectData(res.data[0]);
           refreshFinalProject();
           toast({
+            position: 'top',
             title: 'Success',
             description: 'Your final project has been updated',
             status: 'success',
@@ -104,6 +105,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
           });
         } else {
           toast({
+            position: 'top',
             title: 'Error',
             description: 'Something went wrong updating your final project',
             status: 'error',
@@ -114,6 +116,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
       })
       .catch(() => {
         toast({
+          position: 'top',
           title: 'Error',
           description: 'Something went wrong submiting your final project',
           status: 'error',
@@ -139,6 +142,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
         if (res) {
           setFinalProjectData(res.data[0]);
           toast({
+            position: 'top',
             title: 'Success',
             description: 'Your final project has been sended',
             status: 'success',
@@ -147,6 +151,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
           handleClose();
         } else {
           toast({
+            position: 'top',
             title: 'Error',
             description: 'Something went wrong submiting your final project',
             status: 'error',
@@ -156,6 +161,7 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
       })
       .catch(() => {
         toast({
+          position: 'top',
           title: 'Error',
           description: 'Something went wrong submiting your final project',
           status: 'error',

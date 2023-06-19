@@ -53,6 +53,7 @@ function useHandler() {
         });
       }).catch((err) => {
         toast({
+          position: 'top',
           title: t('alert-message:error-fetching-role', { role: currentAcademy?.role }),
           description: err.message,
           status: 'error',
@@ -106,6 +107,7 @@ function useHandler() {
       }).catch((error) => {
         router.push('/choose-program');
         toast({
+          position: 'top',
           title: t('alert-message:invalid-cohort-slug'),
           // title: 'Invalid cohort slug',
           status: 'error',

@@ -273,6 +273,7 @@ const CohortSideBar = ({
           });
         }).catch(() => {
           toast({
+            position: 'top',
             title: t('alert-message:error-fetching-alumni-geeks'),
             status: 'error',
             duration: 7000,

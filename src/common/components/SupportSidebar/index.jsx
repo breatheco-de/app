@@ -20,6 +20,7 @@ const SupportSidebar = () => {
       }
     }).catch(() => {
       toast({
+        position: 'top',
         title: 'Error',
         description: t('alert-message:error-mentorship-service'),
         status: 'error',

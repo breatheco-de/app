@@ -59,6 +59,7 @@ const DirectAccessModal = ({ storySettings, title, modalIsOpen }) => {
     }
     if (resp.status >= 400) {
       toast({
+        position: 'top',
         title: t('alert-message:email-already-subscribed'),
         status: 'warning',
         duration: 6000,
