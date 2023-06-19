@@ -106,7 +106,6 @@ const Page = () => {
   const formInfo = dynamicFormInfo();
 
   const handleOnReadyToStart = () => {
-    console.log('Timer finished');
     setReadyToJoinEvent(true);
   };
 
@@ -285,6 +284,7 @@ const Page = () => {
                 onClick={() => {
                   if (readyToJoinEvent && alreadyApplied) {
                     router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
+                    // router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
                   }
                   if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
                     bc.events().applyEvent(event?.id)
