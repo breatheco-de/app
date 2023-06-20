@@ -323,7 +323,7 @@ function Footer({ pageProps }) {
           {t('iconogram', {}, { returnObjects: true }).map((item) => (
             <Box key={`${item.title}-${item.href}`} width="48%" marginRight="2px" marginBottom="5px">
               <NextChakraLink href={item.href}>
-                <Heading as="h3" fontSize="12px" marginBottom="15px">
+                <Heading display="flex" alignItems="center" as="h3" fontSize="12px" marginBottom="15px">
                   <Icon color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} icon={item.icon} style={{ display: 'inline', marginRight: '10px' }} width="40px" height="40px" />
                   {item.title.toUpperCase()}
                 </Heading>
