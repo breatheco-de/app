@@ -74,27 +74,27 @@ const ContactInformation = ({
         router.push('/thank-you');
       }
 
-      if (data?.access_token && data?.is_email_validated === false) {
-        toast({
-          position: 'top',
-          status: 'warning',
-          title: t('signup:alert-message-validate-email.title'),
-          description: (
-            <Box>
-              {t('signup:alert-message-validate-email.description')}
-              {' '}
-              <NextChakraLink variant="default" color="blue.200" href="/">4Geeks.com</NextChakraLink>
-              .
-              <br />
-              {t('signup:alert-message-validate-email.description2')}
-            </Box>
-          ),
-          duration: 9000,
-          isClosable: true,
-        });
-      }
+      // if (data?.access_token && data?.is_email_validated === false) {
+      //   toast({
+      //     position: 'top',
+      //     status: 'warning',
+      //     title: t('signup:alert-message-validate-email.title'),
+      //     description: (
+      //       <Box>
+      //         {t('signup:alert-message-validate-email.description')}
+      //         {' '}
+      //         <NextChakraLink variant="default" color="blue.200" href="/">4Geeks.com</NextChakraLink>
+      //         .
+      //         <br />
+      //         {t('signup:alert-message-validate-email.description2')}
+      //       </Box>
+      //     ),
+      //     duration: 9000,
+      //     isClosable: true,
+      //   });
+      // }
 
-      if (data?.access_token && (data?.is_email_validated === true || data?.is_email_validated === undefined) && !dataOfPlan?.has_waiting_list) {
+      if (data?.access_token && !dataOfPlan?.has_waiting_list) {
         router.push({
           query: {
             ...router.query,

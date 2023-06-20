@@ -55,26 +55,26 @@ function Register() {
         });
         const data = await resp.json();
 
-        if (data?.access_token && data?.is_email_validated === false) {
-          toast({
-            position: 'top',
-            status: 'warning',
-            title: t('signup:alert-message-validate-email.title'),
-            description: (
-              <Box>
-                {t('signup:alert-message-validate-email.description')}
-                {' '}
-                <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
-                .
-                <br />
-                {t('signup:alert-message-validate-email.description2')}
-              </Box>
-            ),
-            duration: 9000,
-            isClosable: true,
-          });
-        }
-        if (data?.access_token && (data?.is_email_validated === true || data?.is_email_validated === undefined) && data?.is_email_validated === true) {
+        // if (data?.access_token && data?.is_email_validated === false) {
+        //   toast({
+        //     position: 'top',
+        //     status: 'warning',
+        //     title: t('signup:alert-message-validate-email.title'),
+        //     description: (
+        //       <Box>
+        //         {t('signup:alert-message-validate-email.description')}
+        //         {' '}
+        //         <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
+        //         .
+        //         <br />
+        //         {t('signup:alert-message-validate-email.description2')}
+        //       </Box>
+        //     ),
+        //     duration: 9000,
+        //     isClosable: true,
+        //   });
+        // }
+        if (data?.access_token) {
           router.push({
             query: {
               ...router.query,
