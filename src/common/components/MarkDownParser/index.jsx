@@ -55,7 +55,6 @@ function OnlyForComponent({ cohortSession, profile, ...props }) {
 }
 
 function ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTasks, updateSubTask, ...props }) {
-  // eslint-disable-next-line prefer-destructuring
   const childrenExists = props?.children?.length >= 0;
   const type = childrenExists && props?.children[0]?.props && props.children[0].props.type;
   const type2 = childrenExists && props?.children[1]?.props && props.children[1]?.props.node?.children[0]?.properties?.type;
@@ -221,7 +220,7 @@ function MarkDownParser({
           onlyfor: ({ ...props }) => OnlyForComponent({ ...props, cohortSession, profile }),
           // Component for list of checkbox
           // children[1].props.node.children[0].properties.type
-          li: ({ ...props }) => ListComponent(subTasksLoaded, subTasksProps, setSubTasksProps, subTasks, updateSubTask, props),
+          li: ({ ...props }) => ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTasks, updateSubTask, ...props }),
         }}
       >
         {content}
