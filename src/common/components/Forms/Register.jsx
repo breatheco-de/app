@@ -55,26 +55,26 @@ function Register() {
         });
         const data = await resp.json();
 
-        if (data?.access_token && data?.is_email_validated === false) {
-          toast({
-            position: 'top',
-            status: 'warning',
-            title: t('signup:alert-message-validate-email.title'),
-            description: (
-              <Box>
-                {t('signup:alert-message-validate-email.description')}
-                {' '}
-                <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
-                .
-                <br />
-                {t('signup:alert-message-validate-email.description2')}
-              </Box>
-            ),
-            duration: 9000,
-            isClosable: true,
-          });
-        }
-        if (data?.access_token && (data?.is_email_validated === true || data?.is_email_validated === undefined) && data?.is_email_validated === true) {
+        // if (data?.access_token && data?.is_email_validated === false) {
+        //   toast({
+        //     position: 'top',
+        //     status: 'warning',
+        //     title: t('signup:alert-message-validate-email.title'),
+        //     description: (
+        //       <Box>
+        //         {t('signup:alert-message-validate-email.description')}
+        //         {' '}
+        //         <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
+        //         .
+        //         <br />
+        //         {t('signup:alert-message-validate-email.description2')}
+        //       </Box>
+        //     ),
+        //     duration: 9000,
+        //     isClosable: true,
+        //   });
+        // }
+        if (data?.access_token) {
           router.push({
             query: {
               ...router.query,
@@ -82,39 +82,37 @@ function Register() {
             },
           });
         }
-        if (data?.access_token === null) {
-          if (typeof resp?.status === 'number') {
-            actions.setSubmitting(false);
-            if (resp.status < 400 && typeof data?.id === 'number') {
-              setStorageItem('subscriptionId', data.id);
-              router.push('/thank-you');
-            }
-            if (resp.status === 400) {
-              toast({
-                position: 'top',
-                status: 'info',
-                title: t('signup:alert-message.title'),
-                description: (
-                  <Box>
-                    {t('signup:alert-message.message1')}
-                    {' '}
-                    <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
-                    .
-                    <br />
-                    {t('signup:alert-message.message2')}
-                    {' '}
-                    <Link variant="default" color="blue.200" href="/login" redirectAfterLogin>{t('signup:alert-message.click-here-to-login')}</Link>
-                    {' '}
-                    {t('signup:alert-message.or-click-here')}
-                    {' '}
-                    <Link variant="default" color="blue.200" href="/#">{t('signup:alert-message.message3')}</Link>
-                    .
-                  </Box>
-                ),
-                duration: 9000,
-                isClosable: true,
-              });
-            }
+        if (typeof resp?.status === 'number') {
+          actions.setSubmitting(false);
+          if (resp.status < 400 && typeof data?.id === 'number') {
+            setStorageItem('subscriptionId', data.id);
+            router.push('/thank-you');
+          }
+          if (resp.status === 400) {
+            toast({
+              position: 'top',
+              status: 'info',
+              title: t('signup:alert-message.title'),
+              description: (
+                <Box>
+                  {t('signup:alert-message.message1')}
+                  {' '}
+                  <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
+                  .
+                  <br />
+                  {t('signup:alert-message.message2')}
+                  {' '}
+                  <Link variant="default" color="blue.200" href="/login" redirectAfterLogin>{t('signup:alert-message.click-here-to-login')}</Link>
+                  {' '}
+                  {t('signup:alert-message.or-click-here')}
+                  {' '}
+                  <Link variant="default" color="blue.200" href="/#">{t('signup:alert-message.message3')}</Link>
+                  .
+                </Box>
+              ),
+              duration: 9000,
+              isClosable: true,
+            });
           }
         }
       }}
