@@ -242,7 +242,7 @@ function Page() {
         <Box
           display="flex"
           gridColumn={{ base: '8 / span 4', lg: '10 / span 4' }}
-          margin={{ base: '20px 0 0 auto', lg: '-13.44rem 0 0 auto' }}
+          margin={{ base: '20px 0 0 auto', lg: '-13.42rem 0 0 auto' }}
           flexDirection="column"
           transition="background 0.2s ease-in-out"
           width="100%"
@@ -256,10 +256,10 @@ function Page() {
             <ShowOnSignUp
               headContent={alreadyApplied
                 ? <Timer startingAt={event?.starting_at} onFinish={handleOnReadyToStart} background="transparent" color="white" />
-                : <Image src="/static/images/person-smile1.png" width={342} title="Form image" height={177} objectFit="cover" style={{ borderTopLeftRadius: '17px', borderTopRightRadius: '17px', zIndex: 10 }} />}
+                : <Image src="/static/images/person-smile1.png" width={342} title="Form image" height={177} style={{ borderTopLeftRadius: '17px', borderTopRightRadius: '17px', maxHeight: '177px', objectFit: 'cover', zIndex: 10 }} />}
               subContent={alreadyApplied && (
                 <Box position="absolute" top="0px" left="0px" zIndex={1} width="100%" height={177}>
-                  <Image src="/static/videos/bubbles_2.gif" width={342} height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" />
+                  <Image src="/static/videos/bubbles_2.gif" width={342} height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px', maxHeight: '177px', objectFit: 'cover' }} title="Bubbles" />
                 </Box>
               )}
               title={formInfo?.title}

@@ -242,7 +242,10 @@ function AuthProvider({ children }) {
     if (typeof callback === 'function') callback();
     if (typeof callback !== 'function') {
       if (queryTokenExists) {
-        router.push(cleanUrl);
+        router.push(cleanUrl)
+          .then(() => {
+            router.reload();
+          });
       } else {
         router.reload();
       }
