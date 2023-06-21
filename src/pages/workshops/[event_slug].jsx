@@ -42,50 +42,26 @@ const Page = () => {
   const { featuredColor, hexColor } = useStyle();
 
   useEffect(() => {
-    // bc.public().singleEvent(675)
-    // .then((res) => {
-    //   bc.events().getUsers(findedEvent?.id)
-    //   .then((resp) => {
-    //     const onlyExistentUsers = resp.data.filter((l) => l?.attendee?.first_name && l?.attendee?.last_name);
-
-    //     setAllUsersJoined(resp.data);
-    //     setUsers(onlyExistentUsers);
-    //   })
-    //   .catch(() => {});
-
-    //   setEvent({
-    //     ...res.event,
-    //     loaded: true,
-    //   });
-    // });
-    // .catch(() => {
-    //   router.push('/404');
-    //   setEvent({
-    //     loaded: true,
-    //   });
-    // });
-    bc.public().events()
+    bc.public().singleEvent(eventSlug)
       .then((res) => {
-        const findedEvent = res.data.find((l) => l?.slug === eventSlug);
-        if (findedEvent?.id) {
-          bc.events().getUsers(findedEvent?.id)
-            .then((resp) => {
-              const onlyExistentUsers = resp.data.filter((l) => l?.attendee?.first_name && l?.attendee?.last_name);
+        const data = res?.data;
 
-              setAllUsersJoined(resp.data);
-              setUsers(onlyExistentUsers);
-            })
-            .catch(() => {});
-        } else {
-          router.push('/404');
-        }
+        bc.events().getUsers(data?.id)
+          .then((resp) => {
+            const onlyExistentUsers = resp.data.filter((l) => l?.attendee?.first_name && l?.attendee?.last_name);
+
+            setAllUsersJoined(resp.data);
+            setUsers(onlyExistentUsers);
+          })
+          .catch(() => {});
 
         setEvent({
-          ...findedEvent,
+          ...data,
           loaded: true,
         });
       })
       .catch(() => {
+        router.push('/404');
         setEvent({
           loaded: true,
         });
@@ -169,12 +145,12 @@ const Page = () => {
         >
           <Box display="flex" flexDirection="column" justifyContent="center" gridGap="15px" gridColumn="2 / span 8">
             <Box display="flex" mt={{ base: '0', md: '1rem' }} alignItems="center" gridGap="24px">
-              <Box display="flex" gridGap="6px" background="yellow.light" borderRadius="20px" alignItems="center" width="fit-content" padding="4px 10px">
+              {/* <Box display="flex" gridGap="6px" background="yellow.light" borderRadius="20px" alignItems="center" width="fit-content" padding="4px 10px">
                 <Icon icon="usaFlag" width="15px" height="15px" />
                 <Text size="13px" fontWeight={700} color="#000">
                   Javascript Beginner Workshop
                 </Text>
-              </Box>
+              </Box> */}
               {event?.id && (
                 <ComponentOnTime
                   startingAt={event?.starting_at}
@@ -216,7 +192,7 @@ const Page = () => {
             ) : (
               <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
             )}
-            <Box display="flex" flexDirection="column" gridGap="8px" id="event-info">
+            <Box display="flex" flexDirection="column" gridGap="9px" id="event-info">
               {formatedDate[locale] && (
                 <Box display="flex" gridGap="10px">
                   <Icon icon="calendar" width="20px" height="20px" color={hexColor.blueDefault} />
@@ -245,20 +221,21 @@ const Page = () => {
         padding="0 10px"
       >
         <Box display={{ base: 'block', lg: 'flex' }} gridGap="30px" flexDirection="column" gridColumn={{ base: '2 / span 6', lg: '2 / span 8' }}>
-          <Box
+          <Text
+            size="14px"
             borderRadius="3px"
             maxWidth="1012px"
             width={{ base: 'auto', lg: '100%' }}
           >
             {event?.description}
-          </Box>
+          </Text>
           {!eventNotExists && (typeof event?.host_user === 'object' && event?.host_user !== null) && (
             <Box display="flex" flexDirection="column" gridGap="12px" mb="31px">
               <Text size="26px" fontWeight={700}>
                 {t('host-label-text')}
               </Text>
               <PublicProfile
-                profile={event.host_user}
+                data={event.host_user}
               />
             </Box>
           )}
