@@ -238,7 +238,6 @@ const Attendance = () => {
       }).filter((l) => l.date !== null);
       const sortedByAscDate = averageEachDay.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-      console.log('studentsWithDays:::', studentsWithDays);
       setAllStudentsWithDays({
         studentList: studentsWithDays,
         averageEachDay: sortedByAscDate,
