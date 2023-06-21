@@ -74,20 +74,32 @@ const getLandingTechnologies = () => {
       Academy: 4,
     },
   })
-    .then((res) => {
+    .then(async (res) => {
       const formatedWithAssets = res.data.results.map(async (tech) => {
         const assets = await getTechonologyAssets(tech?.slug);
         return { ...tech, assets };
       });
 
-      const technologiesWithAssets = Promise.all(formatedWithAssets).then(
-        (formatedData) => formatedData.filter((tech) => tech?.assets?.length > 0)
+      const technologiesInEnglish = Promise.all(formatedWithAssets).then(
+        (formatedData) => formatedData.filter((tech) => tech?.assets?.length > 0 && tech?.assets?.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'))
           .map((finalData) => ({
             ...finalData,
-            lang: finalData?.assets?.some((asset) => asset?.lang === 'es') ? 'es' : 'en',
+            lang: 'en',
           })),
       );
-      return technologiesWithAssets;
+
+      const technologiesInSpanish = Promise.all(formatedWithAssets).then(
+        (formatedData) => formatedData.filter((tech) => tech?.assets?.length > 0 && tech.assets?.some((asset) => asset?.lang === 'es'))
+          .map((finalData) => ({
+            ...finalData,
+            lang: 'es',
+          })),
+      );
+
+      const dataEng = await technologiesInEnglish;
+      const dataEsp = await technologiesInSpanish;
+
+      return [...dataEng, ...dataEsp];
     })
     .catch(() => {
       console.error('SITEMAP: Error fetching Technologies pages');
