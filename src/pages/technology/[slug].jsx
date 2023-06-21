@@ -69,10 +69,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     return false;
   });
 
-  const allAssetsFiltered = data.filter(
-    (l) => technologyData.assets.some((a) => a === l.slug),
-  );
-
   const ogUrl = {
     en: `/technology/${slug}`,
     us: `/technology/${slug}`,
@@ -93,7 +89,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       },
       fallback: false,
       technologyData,
-      data: allAssetsFiltered.filter((project) => project.lang === currentLang).map(
+      data: data.filter((project) => project.lang === currentLang).map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
     },

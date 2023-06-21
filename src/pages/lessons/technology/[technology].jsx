@@ -45,12 +45,10 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const techs = await responseTechs.json(); // array of objects
   const technologyData = techs.results.find((tech) => tech.slug === technology);
 
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson&limit=1000`);
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson&limit=1000&technologies=${technology}`);
   const lessons = await response.json();
 
-  const dataFiltered = lessons?.results?.filter(
-    (l) => technologyData?.assets?.some((a) => a === l?.slug),
-  );
+  const dataFiltered = lessons?.results;
 
   if (response.status >= 400 || response.status_code >= 400
     || !technologyData || dataFiltered.length === 0) {
@@ -133,6 +131,7 @@ const LessonByTechnology = ({ lessons, technologyData }) => {
         // isLoading={isLoading}
         // contextFilter={}
         projectPath="lesson"
+        notFoundMessage={t('common:asset-not-found-in-current-language')}
       />
     </Box>
   );
