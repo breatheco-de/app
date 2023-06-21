@@ -1,12 +1,11 @@
 import {
-  Box, Button, Grid, Skeleton, useColorModeValue, useToast,
+  Box, Button, Grid, Skeleton, useColorModeValue, useToast, Image,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { intervalToDuration, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 import bc from '../../common/services/breathecode';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
@@ -248,7 +247,8 @@ const Page = () => {
           margin={{ base: '20px 0 0 auto', lg: '-13.44rem 0 0 auto' }}
           flexDirection="column"
           transition="background 0.2s ease-in-out"
-          width="100%"
+          // width={{ base: '320px', md: 'auto' }}
+          width="auto"
           textAlign="center"
           height="fit-content"
           borderWidth="0px"
@@ -258,11 +258,11 @@ const Page = () => {
           {event?.id && (
             <ShowOnSignUp
               headContent={alreadyApplied
-                ? <Timer startingAt={event?.starting_at} onFinish={handleOnReadyToStart} background="transparent" color="white" />
-                : <Image src="/static/images/person-smile1.png" width={342} title="Form image" height={177} objectFit="cover" style={{ borderTopLeftRadius: '17px', borderTopRightRadius: '17px', zIndex: 10 }} />}
+                ? <Timer startingAt={event?.starting_at} onFinish={handleOnReadyToStart} background="transparent" color="white" height="177px" />
+                : <Image src="/static/images/person-smile1.png" width="100%" title="Form image" height={177} objectFit="cover" style={{ borderTopLeftRadius: '17px', borderTopRightRadius: '17px', zIndex: 10 }} />}
               subContent={alreadyApplied && (
                 <Box position="absolute" top="0px" left="0px" zIndex={1} width="100%" height={177}>
-                  <Image src="/static/videos/bubbles_2.gif" width={342} height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" />
+                  <Image src="/static/videos/bubbles_2.gif" width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" />
                 </Box>
               )}
               title={formInfo?.title}
@@ -277,12 +277,15 @@ const Page = () => {
                 disabled={!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                 _disabled={{
                   background: (readyToJoinEvent || !alreadyApplied) ? '' : 'gray.350',
+                  cursor: (readyToJoinEvent || !alreadyApplied) ? 'pointer' : 'not-allowed',
                 }}
                 _hover={{
                   background: (readyToJoinEvent || !alreadyApplied) ? '' : 'gray.350',
+                  cursor: (readyToJoinEvent || !alreadyApplied) ? 'pointer' : 'not-allowed',
                 }}
                 _active={{
                   background: (readyToJoinEvent || !alreadyApplied) ? '' : 'gray.350',
+                  cursor: (readyToJoinEvent || !alreadyApplied) ? 'pointer' : 'not-allowed',
                 }}
                 onClick={() => {
                   if (readyToJoinEvent && alreadyApplied) {
