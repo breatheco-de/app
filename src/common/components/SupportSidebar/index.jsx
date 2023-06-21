@@ -30,7 +30,7 @@ const SupportSidebar = () => {
     });
   }, []);
 
-  return (
+  return programServices.length > 0 && (
     <Mentoring
       programServices={programServices}
       flags={flags}
