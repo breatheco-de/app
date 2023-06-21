@@ -28,6 +28,7 @@ const Page = () => {
     loaded: false,
   });
   const [users, setUsers] = useState([]);
+  const [allUsersJoined, setAllUsersJoined] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const [applied, setApplied] = useState(false);
   const [readyToJoinEvent, setReadyToJoinEvent] = useState(false);
@@ -41,27 +42,26 @@ const Page = () => {
   const { featuredColor, hexColor } = useStyle();
 
   useEffect(() => {
-    bc.public().events()
+    bc.public().singleEvent(eventSlug)
       .then((res) => {
-        const findedEvent = res.data.find((l) => l?.slug === eventSlug);
-        if (findedEvent?.id) {
-          bc.events().getUsers(findedEvent?.id)
-            .then((resp) => {
-              const onlyExistentUsers = resp.data.filter((l) => l?.attendee?.first_name && l?.attendee?.last_name);
+        const data = res?.data;
 
-              setUsers(onlyExistentUsers);
-            })
-            .catch(() => {});
-        } else {
-          router.push('/404');
-        }
+        bc.events().getUsers(data?.id)
+          .then((resp) => {
+            const onlyExistentUsers = resp.data.filter((l) => l?.attendee?.first_name && l?.attendee?.last_name);
+
+            setAllUsersJoined(resp.data);
+            setUsers(onlyExistentUsers);
+          })
+          .catch(() => {});
 
         setEvent({
-          ...findedEvent,
+          ...data,
           loaded: true,
         });
       })
       .catch(() => {
+        router.push('/404');
         setEvent({
           loaded: true,
         });
@@ -108,6 +108,8 @@ const Page = () => {
     setReadyToJoinEvent(true);
   };
 
+  const spotsRemain = event?.capacity - allUsersJoined.length;
+
   return (
     <>
       <Box
@@ -116,13 +118,13 @@ const Page = () => {
         position="relative"
         overflowX="hidden"
       >
-        <Box filter={{ base: 'blur(6px)', md: 'blur(0px)' }} position="absolute" top="104px" left="-40px" zIndex={1}>
+        <Box display={{ base: 'none', md: 'block' }} filter={{ base: 'blur(6px)', md: 'blur(0px)' }} position="absolute" top="104px" left="-40px" zIndex={1}>
           <svg width="110" height="151" viewBox="0 0 110 151" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M42.3031 77.3264L88.5358 24.5161L110 0H88.5358H67.6969L0 77.3264L67.5109 151H88.5358H109.814L88.5358 127.78L42.3031 77.3264Z" fill="#0097CF" />
           </svg>
         </Box>
 
-        <Box filter={{ base: 'blur(6px)', md: 'blur(0px)' }} position="absolute" top="-65px" right="-20px" zIndex={1}>
+        <Box display={{ base: 'none', md: 'block' }} filter={{ base: 'blur(6px)', md: 'blur(0px)' }} position="absolute" top="-65px" right="-20px" zIndex={1}>
           <svg width="503" height="255" viewBox="0 0 503 255" fill="none" xmlns="http://www.w3.org/2000/svg">
             <ellipse cx="285.5" cy="99" rx="9.5" ry="9" fill="#FFA600" />
             <ellipse cx="324.5" cy="99" rx="9.5" ry="9" fill="#EB5757" />
@@ -143,12 +145,12 @@ const Page = () => {
         >
           <Box display="flex" flexDirection="column" justifyContent="center" gridGap="15px" gridColumn="2 / span 8">
             <Box display="flex" mt={{ base: '0', md: '1rem' }} alignItems="center" gridGap="24px">
-              <Box display="flex" gridGap="6px" background="yellow.light" borderRadius="20px" alignItems="center" width="fit-content" padding="4px 10px">
+              {/* <Box display="flex" gridGap="6px" background="yellow.light" borderRadius="20px" alignItems="center" width="fit-content" padding="4px 10px">
                 <Icon icon="usaFlag" width="15px" height="15px" />
                 <Text size="13px" fontWeight={700} color="#000">
                   Javascript Beginner Workshop
                 </Text>
-              </Box>
+              </Box> */}
               {event?.id && (
                 <ComponentOnTime
                   startingAt={event?.starting_at}
@@ -190,7 +192,7 @@ const Page = () => {
             ) : (
               <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
             )}
-            <Box display="flex" flexDirection="column" gridGap="8px" id="event-info">
+            <Box display="flex" flexDirection="column" gridGap="9px" id="event-info">
               {formatedDate[locale] && (
                 <Box display="flex" gridGap="10px">
                   <Icon icon="calendar" width="20px" height="20px" color={hexColor.blueDefault} />
@@ -219,20 +221,21 @@ const Page = () => {
         padding="0 10px"
       >
         <Box display={{ base: 'block', lg: 'flex' }} gridGap="30px" flexDirection="column" gridColumn={{ base: '2 / span 6', lg: '2 / span 8' }}>
-          <Box
+          <Text
+            size="14px"
             borderRadius="3px"
             maxWidth="1012px"
             width={{ base: 'auto', lg: '100%' }}
           >
             {event?.description}
-          </Box>
+          </Text>
           {!eventNotExists && (typeof event?.host_user === 'object' && event?.host_user !== null) && (
             <Box display="flex" flexDirection="column" gridGap="12px" mb="31px">
               <Text size="26px" fontWeight={700}>
                 {t('host-label-text')}
               </Text>
               <PublicProfile
-                profile={event.host_user}
+                data={event.host_user}
               />
             </Box>
           )}
@@ -257,10 +260,16 @@ const Page = () => {
         >
           {event?.id && (
             <ShowOnSignUp
-              headContent={alreadyApplied
-                ? <Timer startingAt={event?.starting_at} onFinish={handleOnReadyToStart} background="transparent" color="white" height="177px" />
-                : <Image src="/static/images/person-smile1.png" width="100%" title="Form image" height={177} objectFit="cover" style={{ borderTopLeftRadius: '17px', borderTopRightRadius: '17px', zIndex: 10 }} />}
-              subContent={alreadyApplied && (
+              headContent={(
+                <Timer
+                  startingAt={event?.starting_at}
+                  onFinish={handleOnReadyToStart}
+                  background="transparent"
+                  color="white"
+                  height="177px"
+                />
+                )}
+              subContent={(
                 <Box position="absolute" top="0px" left="0px" zIndex={1} width="100%" height={177}>
                   <Image src="/static/videos/bubbles_2.gif" width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" />
                 </Box>
@@ -318,7 +327,7 @@ const Page = () => {
           {users?.length > 0 && (
             <Box display="flex" flexDirection="column" gridGap="18px" background={featuredColor} padding="20px 25px" borderRadius="17px">
               <Text>
-                {t('users-registered-count', { count: users.length })}
+                {t('users-registered-count', { count: allUsersJoined.length, spot_count: spotsRemain })}
               </Text>
               <Grid
                 gridAutoRows="3.4rem"

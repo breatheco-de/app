@@ -6,6 +6,8 @@ import PropTypes from 'prop-types';
 import {
   Box, Button, Flex, useToast,
 } from '@chakra-ui/react';
+import Link from 'next/link';
+import { useState } from 'react';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 // import { phone } from '../../utils/regex';
@@ -16,6 +18,7 @@ import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
 import useSignup from '../../common/store/actions/signupAction';
+import ModalInfo from '../moduleMap/modalInfo';
 
 const ContactInformation = ({
   courseChoosed,
@@ -32,6 +35,7 @@ const ContactInformation = ({
   const planFormated = plan && encodeURIComponent(plan);
   const router = useRouter();
   const toast = useToast();
+  const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const { backgroundColor, featuredColor } = useStyle();
 
   const { syllabus } = router.query;
@@ -115,30 +119,7 @@ const ContactInformation = ({
       });
     }
     if (resp.status === 400) {
-      toast({
-        position: 'top',
-        status: 'info',
-        title: t('signup:alert-message.title'),
-        description: (
-          <Box>
-            {t('signup:alert-message.message1')}
-            {' '}
-            <NextChakraLink variant="default" color="blue.200" href="/">4Geeks.com</NextChakraLink>
-            .
-            <br />
-            {t('signup:alert-message.message2')}
-            {' '}
-            <NextChakraLink variant="default" color="blue.200" href="/login" redirectAfterLogin>{t('signup:alert-message.click-here-to-login')}</NextChakraLink>
-            {' '}
-            {t('signup:alert-message.or-click-here')}
-            {' '}
-            <NextChakraLink variant="default" color="blue.200" href="/#">{t('signup:alert-message.message3')}</NextChakraLink>
-            .
-          </Box>
-        ),
-        duration: 9000,
-        isClosable: true,
-      });
+      setShowAlreadyMember(true);
     }
     actions.setSubmitting(false);
   };
@@ -264,6 +245,30 @@ const ContactInformation = ({
           </Form>
         )}
       </Formik>
+      <ModalInfo
+        isOpen={showAlreadyMember}
+        headerStyles={{ textAlign: 'center' }}
+        onClose={() => setShowAlreadyMember(false)}
+        title={t('signup:alert-message.title')}
+        childrenDescription={(
+          <Box textAlign="center">
+            {t('signup:alert-message.message1')}
+            {' '}
+            <Link variant="default" href="/">4Geeks.com</Link>
+            .
+            <br />
+            {t('signup:alert-message.message2')}
+            .
+          </Box>
+        )}
+        disableCloseButton
+        actionHandler={() => {
+          setStorageItem('redirect', router?.asPath);
+          router.push('/login');
+          setShowAlreadyMember(false);
+        }}
+        handlerText={t('common:login')}
+      />
     </Box>
   );
 };

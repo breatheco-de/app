@@ -7,35 +7,45 @@ import Text from './Text';
 import Icon from './Icon';
 import Link from './NextChakraLink';
 
-function PublicProfile({ profile }) {
+function PublicProfile({ data }) {
   const { featuredColor, hexColor } = useStyle();
 
-  const firstName = profile?.first_name;
-  const lastName = profile?.last_name;
-  const country = profile?.country;
-  const description = profile?.description;
+  const profile = data?.profile;
+  const {
+    avatar_url: avatarImage,
+    bio: description,
+    github_username: githubLink,
+    twitter_username: twitterLink,
+    linkedin_url: linkedinLink,
+    blog: websiteLink,
+    portfolio_url: portfolioLink,
+  } = profile;
+
+  const firstName = data?.first_name;
+  const lastName = data?.last_name;
+  const country = data?.country;
 
   const fullName = `${firstName} ${lastName}`;
   const socialMedia = [
     {
       name: 'Github',
       icon: 'github',
-      url: 'https://github.com',
+      url: githubLink,
     },
     {
       name: 'Twitter',
       icon: 'twitter',
-      url: 'https://twitter.com',
+      url: twitterLink,
     },
     {
       name: 'Linkedin',
       icon: 'linkedin',
-      url: 'https://linkedin.com',
+      url: linkedinLink,
     },
     {
       name: 'Website',
       icon: 'globe',
-      url: 'https://google.com',
+      url: websiteLink || portfolioLink,
     },
   ];
   return (
@@ -44,11 +54,11 @@ function PublicProfile({ profile }) {
         width={{ base: '78px', md: '102px' }}
         height={{ base: '78px', md: '102px' }}
         name="Brent Solomon"
-        src="https://assets.breatheco.de/apis/img/images.php?blob&random&cat=icon&tags=brent,solomon"
+        src={avatarImage}
       />
       <Box display="flex" flexDirection="column" gridGap="6.5px">
         <Text size="26px" fontWeight={700} lineHeight="31.2px">
-          {typeof profile === 'string' ? profile : fullName}
+          {typeof data === 'string' ? data : fullName}
         </Text>
         {country && (
           <Text size="16px" fontWeight={400} color="blue.default" lineHeight="19.36px">
@@ -61,8 +71,8 @@ function PublicProfile({ profile }) {
           </Text>
         )}
         <Box display="flex" gridGap="16px" margin="20px 0 0 0">
-          {socialMedia.map((social) => (
-            <Link key={`${social?.name}-${social?.url}`} href={social.url} title={social.name}>
+          {socialMedia.filter((l) => typeof l.url === 'string').map((social) => (
+            <Link key={`${social?.name}-${social?.url}`} href={social.url} target="_blank" rel="noopener noreferer" title={social.name}>
               <Icon icon={social.icon} width="20px" height="20px" color={hexColor.blueDefault} />
             </Link>
           ))}
@@ -73,15 +83,10 @@ function PublicProfile({ profile }) {
 }
 
 PublicProfile.propTypes = {
-  profile: PropTypes.shape({
-    first_name: PropTypes.string,
-    last_name: PropTypes.string,
-    country: PropTypes.string,
-    description: PropTypes.string,
-  }),
+  data: PropTypes.objectOf(PropTypes.any),
 };
 PublicProfile.defaultProps = {
-  profile: {
+  data: {
     first_name: 'Brent',
     last_name: 'Solomon',
     country: 'Buenos aires, Argentina',

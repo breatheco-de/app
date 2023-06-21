@@ -12,7 +12,7 @@
     "ready-to-join-title": "Ready to join?",
     "ready-to-join-description": "Join other programmers live to solve technical or professional challenges"
   },
-  "users-registered-count": "{{count}} people are already registered in this event. 27 more spots available",
-  "join-workshop": "Join Workshop",
+  "users-registered-count": "{{count}} people are already registered in this event. {{spot_count}} more spots available",
+  "join-workshop": "Register for this Workshop",
   "join": "Join Now"
 }
