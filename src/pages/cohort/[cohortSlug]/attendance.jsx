@@ -81,7 +81,9 @@ const Attendance = () => {
     let finalPercentage = 0;
 
     allStudentsWithDays.studentList.forEach((student) => {
-      finalPercentage += student.percentage;
+      if (student?.percentage >= 0) {
+        finalPercentage += student.percentage;
+      }
     });
     return calcPercentage((finalPercentage / 100), allStudentsWithDays.studentList.length);
   };
@@ -236,6 +238,7 @@ const Attendance = () => {
       }).filter((l) => l.date !== null);
       const sortedByAscDate = averageEachDay.sort((a, b) => new Date(a.date) - new Date(b.date));
 
+      console.log('studentsWithDays:::', studentsWithDays);
       setAllStudentsWithDays({
         studentList: studentsWithDays,
         averageEachDay: sortedByAscDate,
