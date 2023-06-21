@@ -28,6 +28,7 @@ const Page = () => {
     loaded: false,
   });
   const [users, setUsers] = useState([]);
+  const [allUsersJoined, setAllUsersJoined] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const [applied, setApplied] = useState(false);
   const [readyToJoinEvent, setReadyToJoinEvent] = useState(false);
@@ -41,6 +42,28 @@ const Page = () => {
   const { featuredColor, hexColor } = useStyle();
 
   useEffect(() => {
+    // bc.public().singleEvent(675)
+    // .then((res) => {
+    //   bc.events().getUsers(findedEvent?.id)
+    //   .then((resp) => {
+    //     const onlyExistentUsers = resp.data.filter((l) => l?.attendee?.first_name && l?.attendee?.last_name);
+
+    //     setAllUsersJoined(resp.data);
+    //     setUsers(onlyExistentUsers);
+    //   })
+    //   .catch(() => {});
+
+    //   setEvent({
+    //     ...res.event,
+    //     loaded: true,
+    //   });
+    // });
+    // .catch(() => {
+    //   router.push('/404');
+    //   setEvent({
+    //     loaded: true,
+    //   });
+    // });
     bc.public().events()
       .then((res) => {
         const findedEvent = res.data.find((l) => l?.slug === eventSlug);
@@ -49,6 +72,7 @@ const Page = () => {
             .then((resp) => {
               const onlyExistentUsers = resp.data.filter((l) => l?.attendee?.first_name && l?.attendee?.last_name);
 
+              setAllUsersJoined(resp.data);
               setUsers(onlyExistentUsers);
             })
             .catch(() => {});
@@ -107,6 +131,8 @@ const Page = () => {
   const handleOnReadyToStart = () => {
     setReadyToJoinEvent(true);
   };
+
+  const spotsRemain = event?.capacity - allUsersJoined.length;
 
   return (
     <>
@@ -257,10 +283,16 @@ const Page = () => {
         >
           {event?.id && (
             <ShowOnSignUp
-              headContent={alreadyApplied
-                ? <Timer startingAt={event?.starting_at} onFinish={handleOnReadyToStart} background="transparent" color="white" height="177px" />
-                : <Image src="/static/images/person-smile1.png" width="100%" title="Form image" height={177} objectFit="cover" style={{ borderTopLeftRadius: '17px', borderTopRightRadius: '17px', zIndex: 10 }} />}
-              subContent={alreadyApplied && (
+              headContent={(
+                <Timer
+                  startingAt={event?.starting_at}
+                  onFinish={handleOnReadyToStart}
+                  background="transparent"
+                  color="white"
+                  height="177px"
+                />
+                )}
+              subContent={(
                 <Box position="absolute" top="0px" left="0px" zIndex={1} width="100%" height={177}>
                   <Image src="/static/videos/bubbles_2.gif" width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" />
                 </Box>
@@ -318,7 +350,7 @@ const Page = () => {
           {users?.length > 0 && (
             <Box display="flex" flexDirection="column" gridGap="18px" background={featuredColor} padding="20px 25px" borderRadius="17px">
               <Text>
-                {t('users-registered-count', { count: users.length })}
+                {t('users-registered-count', { count: allUsersJoined.length, spot_count: spotsRemain })}
               </Text>
               <Grid
                 gridAutoRows="3.4rem"

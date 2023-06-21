@@ -70,9 +70,10 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
     //   });
     // }
     if (data?.access_token) {
-      router.push({
+      router.push('/checkout', {
         query: {
           ...router.query,
+          plan: 'base-plan',
           token: data.access_token,
         },
       });
@@ -194,7 +195,7 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
                     type="submit"
                     variant="default"
                     isLoading={isSubmitting}
-                    title="Join Workshop"
+                    title={t('join-workshop')}
                     disabled={readOnly}
                   >
                     {t('join-workshop')}

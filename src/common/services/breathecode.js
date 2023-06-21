@@ -206,6 +206,7 @@ const breathecode = {
     return {
       mentors: () => axios.get(`${url}/cohort/user${qs}`),
       events: () => axios.get(`${host}/events/all${qs}`),
+      singleEvent: (slug) => axios.get(`${host}/events/event/${slug}${qs}`),
       cohorts: () => axios.get(`${host}/admissions/cohort/all${qs}`),
     };
   },
