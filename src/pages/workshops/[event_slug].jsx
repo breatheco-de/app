@@ -116,13 +116,13 @@ const Page = () => {
         position="relative"
         overflowX="hidden"
       >
-        <Box filter={{ base: 'blur(6px)', md: 'blur(0px)' }} position="absolute" top="104px" left="-40px" zIndex={1}>
+        <Box display={{ base: 'none', md: 'block' }} filter={{ base: 'blur(6px)', md: 'blur(0px)' }} position="absolute" top="104px" left="-40px" zIndex={1}>
           <svg width="110" height="151" viewBox="0 0 110 151" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M42.3031 77.3264L88.5358 24.5161L110 0H88.5358H67.6969L0 77.3264L67.5109 151H88.5358H109.814L88.5358 127.78L42.3031 77.3264Z" fill="#0097CF" />
           </svg>
         </Box>
 
-        <Box filter={{ base: 'blur(6px)', md: 'blur(0px)' }} position="absolute" top="-65px" right="-20px" zIndex={1}>
+        <Box display={{ base: 'none', md: 'block' }} filter={{ base: 'blur(6px)', md: 'blur(0px)' }} position="absolute" top="-65px" right="-20px" zIndex={1}>
           <svg width="503" height="255" viewBox="0 0 503 255" fill="none" xmlns="http://www.w3.org/2000/svg">
             <ellipse cx="285.5" cy="99" rx="9.5" ry="9" fill="#FFA600" />
             <ellipse cx="324.5" cy="99" rx="9.5" ry="9" fill="#EB5757" />

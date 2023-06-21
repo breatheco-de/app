@@ -6,26 +6,27 @@ import {
   FormLabel,
   Input,
   FormErrorMessage,
-  useToast,
   Box,
   // InputRightElement,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 import { useRouter } from 'next/router';
 // import Icon from '../Icon';
+import { useState } from 'react';
 import validationSchema from './validationSchemas';
 import { setStorageItem } from '../../../utils';
 import modifyEnv from '../../../../modifyEnv';
 import Link from '../NextChakraLink';
+import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 
 function Register() {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('login');
+  const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   // const [showPSW, setShowPSW] = useState(false);
   // const [showRepeatPSW, setShowRepeatPSW] = useState(false);
 
   const router = useRouter();
-  const toast = useToast();
 
   // const toggleShowRepeatPSW = () => setShowRepeatPSW(!showRepeatPSW);
   // const toggleShowPSW = () => setShowPSW(!showPSW);
@@ -89,30 +90,7 @@ function Register() {
             router.push('/thank-you');
           }
           if (resp.status === 400) {
-            toast({
-              position: 'top',
-              status: 'info',
-              title: t('signup:alert-message.title'),
-              description: (
-                <Box>
-                  {t('signup:alert-message.message1')}
-                  {' '}
-                  <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
-                  .
-                  <br />
-                  {t('signup:alert-message.message2')}
-                  {' '}
-                  <Link variant="default" color="blue.200" href="/login" redirectAfterLogin>{t('signup:alert-message.click-here-to-login')}</Link>
-                  {' '}
-                  {t('signup:alert-message.or-click-here')}
-                  {' '}
-                  <Link variant="default" color="blue.200" href="/#">{t('signup:alert-message.message3')}</Link>
-                  .
-                </Box>
-              ),
-              duration: 9000,
-              isClosable: true,
-            });
+            setShowAlreadyMember(true);
           }
         }
       }}
@@ -338,6 +316,30 @@ function Register() {
           </Stack>
         </Form>
       )}
+      <ModalInfo
+        isOpen={showAlreadyMember}
+        headerStyles={{ textAlign: 'center' }}
+        onClose={() => setShowAlreadyMember(false)}
+        title={t('signup:alert-message.title')}
+        childrenDescription={(
+          <Box textAlign="center">
+            {t('signup:alert-message.message1')}
+            {' '}
+            <Link variant="default" href="/">4Geeks.com</Link>
+            .
+            <br />
+            {t('signup:alert-message.message2')}
+            .
+          </Box>
+        )}
+        disableCloseButton
+        actionHandler={() => {
+          setStorageItem('redirect', router?.asPath);
+          router.push('/login');
+          setShowAlreadyMember(false);
+        }}
+        handlerText={t('common:login')}
+      />
     </Formik>
   );
 }

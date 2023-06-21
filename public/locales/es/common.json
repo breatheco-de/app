@@ -171,5 +171,6 @@
   "uploadScreenshot": "Subir captura de pantalla",
   "continue-learning-course": "Continúa aprendiendo gratis sobre:",
   "logout-and-switch-user": "Cerrar sesión e iniciar como otro usuario",
-  "free": "Gratis"
+  "free": "Gratis",
+  "login": "Iniciar sesión"
 }

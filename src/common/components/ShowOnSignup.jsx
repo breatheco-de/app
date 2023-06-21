@@ -1,4 +1,4 @@
-import { Box, Button, useColorModeValue, useToast } from '@chakra-ui/react';
+import { Box, Button, useColorModeValue } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
 import { useState } from 'react';
@@ -12,13 +12,14 @@ import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
 import { setStorageItem } from '../../utils';
+import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 
 const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, children, ...rest }) => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
   const { backgroundColor, featuredColor } = useStyle();
+  const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const { t } = useTranslation('workshops');
-  const toast = useToast();
   const router = useRouter();
   const [formProps, setFormProps] = useState({
     first_name: '',
@@ -84,30 +85,7 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
         router.push('/thank-you');
       }
       if (resp.status === 400) {
-        toast({
-          position: 'top',
-          status: 'info',
-          title: t('signup:alert-message.title'),
-          description: (
-            <Box>
-              {t('signup:alert-message.message1')}
-              {' '}
-              <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
-              .
-              <br />
-              {t('signup:alert-message.message2')}
-              {' '}
-              <Link variant="default" color="blue.200" href="/login" redirectAfterLogin>{t('signup:alert-message.click-here-to-login')}</Link>
-              {' '}
-              {t('signup:alert-message.or-click-here')}
-              {' '}
-              <Link variant="default" color="blue.200" href="/#">{t('signup:alert-message.message3')}</Link>
-              .
-            </Box>
-          ),
-          duration: 9000,
-          isClosable: true,
-        });
+        setShowAlreadyMember(true);
       }
     }
   };
@@ -234,6 +212,31 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
           </Box>
         )}
       </Box>
+
+      <ModalInfo
+        isOpen={showAlreadyMember}
+        headerStyles={{ textAlign: 'center' }}
+        onClose={() => setShowAlreadyMember(false)}
+        title={t('signup:alert-message.title')}
+        childrenDescription={(
+          <Box textAlign="center">
+            {t('signup:alert-message.message1')}
+            {' '}
+            <Link variant="default" href="/">4Geeks.com</Link>
+            .
+            <br />
+            {t('signup:alert-message.message2')}
+            .
+          </Box>
+        )}
+        disableCloseButton
+        actionHandler={() => {
+          setStorageItem('redirect', router?.asPath);
+          router.push('/login');
+          setShowAlreadyMember(false);
+        }}
+        handlerText={t('common:login')}
+      />
     </Box>
   );
 };

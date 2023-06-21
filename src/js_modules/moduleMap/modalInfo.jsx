@@ -18,7 +18,7 @@ const ModalInfo = ({
   teacherFeedback, linkInfo, linkText, link, handlerText, closeText, cancelColorButton,
   handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
   htmlDescription, markdownDescription, attachment, disableInput, descriptionStyle, footerStyle,
-  closeButtonStyles, buttonHandlerStyles, headerStyles, disableCloseButton,
+  closeButtonStyles, buttonHandlerStyles, headerStyles, disableCloseButton, childrenDescription,
 }) => {
   const { t } = useTranslation('dashboard');
   const [githubUrl, setGithubUrl] = useState(link);
@@ -109,6 +109,7 @@ const ModalInfo = ({
                 }}
               />
             )}
+            {childrenDescription && childrenDescription}
             {teacherFeedback && (
               <Box margin="15px 0 0 0" padding="12px 16px" background={commonHighlightColor} display="flex" flexDirection="column" gridGap="0px">
                 <Text size="l" fontWeight="700" color={useColorModeValue('gray.800', 'gray.light')}>
@@ -371,6 +372,7 @@ ModalInfo.propTypes = {
   buttonHandlerStyles: PropTypes.objectOf(PropTypes.any),
   headerStyles: PropTypes.objectOf(PropTypes.any),
   disableCloseButton: PropTypes.bool,
+  childrenDescription: PropTypes.node,
 };
 
 ModalInfo.defaultProps = {
@@ -404,6 +406,7 @@ ModalInfo.defaultProps = {
   buttonHandlerStyles: {},
   headerStyles: {},
   disableCloseButton: false,
+  childrenDescription: null,
 };
 
 export default memo(ModalInfo);
