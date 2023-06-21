@@ -134,6 +134,7 @@ const ProjectsByTechnology = ({ projects, technologyData }) => {
         // contextFilter={}
         projectPath="interactive-coding-tutorial"
         pathWithDifficulty
+        notFoundMessage={t('common:asset-not-found-in-current-language')}
       />
     </Box>
   );

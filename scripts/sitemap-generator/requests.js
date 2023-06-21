@@ -81,7 +81,11 @@ const getLandingTechnologies = () => {
       });
 
       const technologiesWithAssets = Promise.all(formatedWithAssets).then(
-        (data) => data.filter((tech) => tech?.assets?.length > 0),
+        (formatedData) => formatedData.filter((tech) => tech?.assets?.length > 0)
+          .map((finalData) => ({
+            ...finalData,
+            lang: finalData?.assets?.some((asset) => asset?.lang === 'es') ? 'es' : 'en',
+          })),
       );
       return technologiesWithAssets;
     })

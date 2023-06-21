@@ -133,6 +133,7 @@ const ExercisesByTechnology = ({ exercises, technologyData }) => {
         // isLoading={isLoading}
         // contextFilter={}
         projectPath="interactive-exercise"
+        notFoundMessage={t('common:asset-not-found-in-current-language')}
       />
     </Box>
   );

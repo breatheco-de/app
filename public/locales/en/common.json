@@ -55,6 +55,7 @@
   "full-screen": "Full screen",
   "no-title": "No title 🙂",
   "search-not-found": "No matches found for this search",
+  "asset-not-found-in-current-language": "There are not content for this technology on this language, try a different language.",
   "no-elements": "No elements found",
   "select": "Select",
   "difficulties": "Difficulties",
