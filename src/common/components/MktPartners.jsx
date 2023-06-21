@@ -14,6 +14,7 @@ import { toCapitalize } from '../../utils';
 const MktPartners = ({ id, title, images, ...rest }) => {
   const scrollContainerRef = useRef(null);
   const { grabToScroll } = useGrabToScroll({ ref: scrollContainerRef, horizontal: true });
+  // const bgColor = useColorModeValue('', 'white');
 
   const cleanImages = images.length > 0 && typeof images[0] === 'string' ? images : images.map((obj) => obj.text);
   const limitedImages = cleanImages.splice(0, 5);
@@ -67,7 +68,7 @@ const MktPartners = ({ id, title, images, ...rest }) => {
         <Box
           ref={scrollContainerRef}
           width="100%"
-          height="70px"
+          // height="70px"
           className="hideOverflowX__"
           onMouseDown={grabToScroll}
           overflowX="auto"
@@ -85,9 +86,12 @@ const MktPartners = ({ id, title, images, ...rest }) => {
               <Img
                 key={`image-${i}`}
                 src={image}
-                height="70px"
+                height="76px"
                 margin="0 20px"
-                maxWidth="180px"
+                borderRadius="5px"
+                padding="6px"
+                background="white"
+                maxWidth="186px"
                 objectFit="contain"
                 title={toCapitalize(altTitle)}
               />
@@ -95,9 +99,12 @@ const MktPartners = ({ id, title, images, ...rest }) => {
               <Img
                 key={`image-${i}`}
                 src={image}
-                height="70px"
+                height="76px"
                 margin="0 20px"
-                maxWidth="180px"
+                borderRadius="5px"
+                padding="6px"
+                background="white"
+                maxWidth="186px"
                 objectFit="contain"
                 title={toCapitalize(altTitle)}
               />

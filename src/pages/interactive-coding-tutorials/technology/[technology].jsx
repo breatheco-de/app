@@ -45,7 +45,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const techs = await responseTechs.json(); // array of objects
   const technologyData = techs.results.find((tech) => tech.slug === technology);
 
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=1000&technologies=${technology}`);
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=PROJECT&visibility=PUBLIC&status=PUBLISHED&limit=1000&technologies=${technology}`);
   const projects = await response.json();
 
   const dataFiltered = projects?.results;
