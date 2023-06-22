@@ -29,14 +29,17 @@ export default function Thmbnail() {
     }
   }, [slug]);
 
+  const randomImgNumber = Math.floor(Math.random() * 5) + 1;
+
   const Div = styled.div`
-    background: url("/static/images/random-bg${Math.floor(Math.random() * 4) + 1}.png");
+    background: url("/static/images/random-bg${randomImgNumber}.png");
     background-repeat: no-repeat;
     background-size: cover;
     height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    color: ${(randomImgNumber === 2 || randomImgNumber === 3) ? 'white' : 'black'};
   `;
 
   if (!asset) return null;
