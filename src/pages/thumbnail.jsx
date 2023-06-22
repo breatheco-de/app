@@ -30,7 +30,7 @@ export default function Thmbnail() {
   }, [slug]);
 
   const Div = styled.div`
-    background: url("/static/images/random-bg${Math.floor(Math.random() * 4) + 1}.png");
+    background: url("/static/images/random-bg${Math.floor(Math.random() * 5) + 1}.png");
     background-repeat: no-repeat;
     background-size: cover;
     height: 100vh;
