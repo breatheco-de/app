@@ -78,7 +78,7 @@ const Summary = () => {
 
   const handleSubmit = () => {
     handleChecking({
-      plan: selectedPlanCheckoutData?.slug,
+      plan: selectedPlanCheckoutData,
     })
       .then((data) => {
         if (isNotTrial || !priceIsNotNumber) {
@@ -99,8 +99,7 @@ const Summary = () => {
             });
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         toast({
           position: 'top',
           title: 'Something went wrong choosing plan',
