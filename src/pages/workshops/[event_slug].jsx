@@ -316,6 +316,15 @@ const Page = () => {
                         }
                       });
                   }
+                  if (isAuthenticated && !alreadyApplied && readyToJoinEvent) {
+                    toast({
+                      position: 'top',
+                      status: 'error',
+                      title: t('alert-message:error-event-already-started'),
+                      isClosable: true,
+                      duration: 6000,
+                    });
+                  }
                 }}
               >
                 {alreadyApplied ? t('join') : t('reserv-button-text')}
