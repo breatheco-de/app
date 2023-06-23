@@ -145,12 +145,11 @@ const Page = () => {
         >
           <Box display="flex" flexDirection="column" justifyContent="center" gridGap="15px" gridColumn="2 / span 8">
             <Box display="flex" mt={{ base: '0', md: '1rem' }} alignItems="center" gridGap="24px">
-              {/* <Box display="flex" gridGap="6px" background="yellow.light" borderRadius="20px" alignItems="center" width="fit-content" padding="4px 10px">
-                <Icon icon="usaFlag" width="15px" height="15px" />
-                <Text size="13px" fontWeight={700} color="#000">
-                  Javascript Beginner Workshop
+              {event?.event_type?.name && (
+                <Text size="12px" fontWeight={700} background="yellow.light" borderRadius="20px" alignItems="center" width="fit-content" padding="4px 10px">
+                  {event.event_type.name}
                 </Text>
-              </Box> */}
+              )}
               {event?.id && (
                 <ComponentOnTime
                   startingAt={event?.starting_at}
@@ -316,6 +315,15 @@ const Page = () => {
                           });
                         }
                       });
+                  }
+                  if (isAuthenticated && !alreadyApplied && readyToJoinEvent) {
+                    toast({
+                      position: 'top',
+                      status: 'error',
+                      title: t('alert-message:error-event-already-started'),
+                      isClosable: true,
+                      duration: 6000,
+                    });
                   }
                 }}
               >

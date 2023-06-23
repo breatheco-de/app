@@ -76,7 +76,7 @@ function Register() {
             },
             body: JSON.stringify({
               ...values,
-              plan: 'base-plan',
+              plan: '4geeks-standard',
             }),
           });
           const data = await resp.json();
@@ -102,13 +102,14 @@ function Register() {
           // }
           if (data?.access_token) {
             router.push({
+              pathname: '/checkout',
               query: {
-                ...router.query,
+                plan: '4geeks-standard',
                 token: data.access_token,
               },
             });
           }
-          if (typeof resp?.status === 'number') {
+          if (typeof resp?.status === 'number' && data?.access_token === null) {
             actions.setSubmitting(false);
             if (resp.status < 400 && typeof data?.id === 'number') {
               setStorageItem('subscriptionId', data.id);

@@ -44,7 +44,7 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
       },
       body: JSON.stringify({
         ...allValues,
-        plan: 'base-plan',
+        plan: '4geeks-standard',
       }),
     });
 
@@ -70,16 +70,16 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
     //   });
     // }
     if (data?.access_token) {
-      router.push('/checkout', {
+      router.push({
+        pathname: '/checkout',
         query: {
-          ...router.query,
-          plan: 'base-plan',
+          plan: '4geeks-standard',
           token: data.access_token,
         },
       });
     }
 
-    if (typeof resp?.status === 'number') {
+    if (typeof resp?.status === 'number' && data?.access_token === null) {
       actions.setSubmitting(false);
       if (resp.status < 400 && typeof data?.id === 'number') {
         setStorageItem('subscriptionId', data.id);
