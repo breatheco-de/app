@@ -57,7 +57,9 @@ export const getStaticProps = async ({ locale, locales }) => {
 const Checkout = () => {
   const { t } = useTranslation('signup');
   const router = useRouter();
-  const [cohorts, setCohorts] = useState(null);
+  const [cohortsData, setCohortsData] = useState({
+    loading: true,
+  });
   const [isPreselectedCohort, setIsPreselectedCohort] = useState(false);
   const [isPreloading, setIsPreloading] = useState(false);
   const {
@@ -66,6 +68,8 @@ const Checkout = () => {
   } = useSignup();
   const { stepIndex, dateProps, checkoutData, alreadyEnrolled } = state;
   const { backgroundColor3 } = useStyle();
+
+  const cohorts = cohortsData?.cohorts;
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { user, isLoading } = useAuth();
@@ -92,63 +96,21 @@ const Checkout = () => {
   const filteredCohorts = Array.isArray(cohorts) && cohorts.filter((item) => item?.never_ends === false);
 
   useEffect(() => {
-    if (queryPlanExists && tokenExists) {
+    if (queryPlanExists && tokenExists && !cohortsData.loading) {
       setIsPreloading(true);
-      if (cohorts && cohorts?.length <= 0) {
-        toast({
-          position: 'top',
-          title: t('alert-message:no-course-configuration'),
-          status: 'warning',
-          duration: 4000,
-          isClosable: true,
-        });
-      }
-      if (cohorts && cohorts?.length > 0) {
-        bc.payment().getPlan(planFormated)
-          .then((resp) => {
-            const data = resp?.data;
-            const existsAmountPerHalf = data?.price_per_half > 0;
-            const existsAmountPerMonth = data?.price_per_month > 0;
-            const existsAmountPerQuarter = data?.price_per_quarter > 0;
-            const existsAmountPerYear = data?.price_per_year > 0;
-            const fiancioptionsExists = data?.financing_options?.length > 0 && data?.financing_options?.[0]?.monthly_price > 0;
 
-            const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear || fiancioptionsExists;
+      bc.payment().getPlan(planFormated)
+        .then((resp) => {
+          const data = resp?.data;
+          const existsAmountPerHalf = data?.price_per_half > 0;
+          const existsAmountPerMonth = data?.price_per_month > 0;
+          const existsAmountPerQuarter = data?.price_per_quarter > 0;
+          const existsAmountPerYear = data?.price_per_year > 0;
+          const fiancioptionsExists = data?.financing_options?.length > 0 && data?.financing_options?.[0]?.monthly_price > 0;
 
-            if ((resp && resp?.status >= 400) || resp?.data.length === 0) {
-              toast({
-                position: 'top',
-                title: t('alert-message:no-plan-configuration'),
-                status: 'info',
-                duration: 4000,
-                isClosable: true,
-              });
-            }
+          const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear || fiancioptionsExists;
 
-            if ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || cohorts?.length === 1) {
-              if (resp.status < 400) {
-                setIsPreselectedCohort(true);
-                const { kickoffDate, weekDays, availableTime } = cohorts?.[0] ? getTimeProps(cohorts[0]) : {};
-                const defaultQueryPropsAux = {
-                  ...cohorts[0],
-                  kickoffDate,
-                  weekDays,
-                  availableTime,
-                };
-
-                setCohortPlans([data]);
-                handleChecking({ ...defaultQueryPropsAux, plan: data })
-                  .then(() => {
-                    handleStep(2);
-                  });
-              }
-            }
-
-            if (data?.is_renewable === false || data?.is_renewable === undefined) {
-              handleStep(1);
-            }
-          })
-          .catch(() => {
+          if ((resp && resp?.status >= 400) || resp?.data.length === 0) {
             toast({
               position: 'top',
               title: t('alert-message:no-plan-configuration'),
@@ -156,13 +118,53 @@ const Checkout = () => {
               duration: 4000,
               isClosable: true,
             });
+          }
+          if ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || cohorts?.length === 1) {
+            if (resp.status < 400 && cohorts?.length > 0) {
+              setIsPreselectedCohort(true);
+              const { kickoffDate, weekDays, availableTime } = cohorts?.[0] ? getTimeProps(cohorts[0]) : {};
+              const defaultCohortProps = {
+                ...cohorts[0],
+                kickoffDate,
+                weekDays,
+                availableTime,
+              };
+
+              setCohortPlans([data]);
+              handleChecking({ ...defaultCohortProps, plan: data })
+                .then(() => {
+                  handleStep(2);
+                });
+            }
+            if (cohorts.length === 0) {
+              setCohortPlans([{
+                plan: data,
+              }]);
+              handleChecking({ plan: data })
+                .then(() => {
+                  handleStep(2);
+                });
+            }
+          }
+
+          if (data?.is_renewable === false || data?.is_renewable === undefined) {
+            handleStep(1);
+          }
+        })
+        .catch(() => {
+          toast({
+            position: 'top',
+            title: t('alert-message:no-plan-configuration'),
+            status: 'info',
+            duration: 4000,
+            isClosable: true,
           });
-      }
+        });
       setTimeout(() => {
         setIsPreloading(false);
       }, 2600);
     }
-  }, [cohorts?.length, accessToken]);
+  }, [cohortsData.loading, accessToken]);
 
   useEffect(() => {
     if (user?.id && !isLoading) {
@@ -247,7 +249,7 @@ const Checkout = () => {
         )}
 
         {/* Second step */}
-        <ChooseYourClass setCohorts={setCohorts} />
+        <ChooseYourClass setCohorts={setCohortsData} />
 
         {isThirdStep && (
           <Summary />

@@ -61,16 +61,11 @@ const ChooseYourClass = ({
         });
 
         const filteredCohorts = Array.isArray(formatedData) ? formatedData.filter((item) => item?.never_ends === false) : null;
-        setCohorts(filteredCohorts);
+        setCohorts({
+          cohorts: filteredCohorts,
+          loading: false,
+        });
         setAvailableDates(filteredCohorts);
-        if (data.length < 1) {
-          toast({
-            position: 'top',
-            title: t('alert-message:no-cohorts-found'),
-            status: 'info',
-            duration: 5000,
-          });
-        }
       })
       .catch((error) => {
         toast({
