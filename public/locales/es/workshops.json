@@ -5,7 +5,7 @@
   "reserv-button-text": "Reservar lugar",
   "duration-hours": "{{hours}}hr de duración",
   "greetings": "Hola {{name}} 👋",
-  "switch-user-connector": "No eres {{name}}?",
+  "switch-user-connector": "¿No eres {{name}}?",
   "form": {
     "title": "Únete al taller",
     "description": "Inicia sesión para unirte a otros programadores en vivo resolviendo desafíos técnicos o profesionales.",

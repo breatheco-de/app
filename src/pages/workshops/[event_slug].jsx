@@ -133,6 +133,10 @@ const Page = () => {
 
   const spotsRemain = event?.capacity - allUsersJoined.length;
 
+  const arrayOfImages = [
+    '/static/images/person1.png',
+  ];
+
   return (
     <>
       {event.loaded && (
@@ -288,7 +292,11 @@ const Page = () => {
         >
           {event?.id && (
             <ShowOnSignUp
-              headContent={(
+              headContent={readyToJoinEvent ? (
+                <Box position="relative" zIndex={1} width="100%" height={177}>
+                  <Image src={arrayOfImages[0]} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" />
+                </Box>
+              ) : (
                 <Timer
                   startingAt={event?.starting_at}
                   onFinish={handleOnReadyToStart}
@@ -297,20 +305,7 @@ const Page = () => {
                   height="177px"
                 />
               )}
-              // headContent={readyToJoinEvent ? (
-              //   <Box>
-              //     asdasdasdasd
-              //   </Box>
-              // ) : (
-              //   <Timer
-              //     startingAt={event?.starting_at}
-              //     onFinish={handleOnReadyToStart}
-              //     background="transparent"
-              //     color="white"
-              //     height="177px"
-              //   />
-              // )}
-              subContent={(
+              subContent={!readyToJoinEvent && (
                 <Box position="absolute" top="0px" left="0px" zIndex={1} width="100%" height={177}>
                   <Image src="/static/videos/bubbles_2.gif" width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" />
                 </Box>
