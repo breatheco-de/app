@@ -9,8 +9,8 @@
   "form": {
     "title": "Únete al taller",
     "description": "Inicia sesión para unirte a otros programadores en vivo resolviendo desafíos técnicos o profesionales.",
-    "ready-to-join-title": "Listo para unirse?",
-    "ready-to-join-description": "Únete junto a otros programadores en vivo resolviendo desafíos técnicos o profesionales."
+    "ready-to-join-title": "¡En vivo ahora!",
+    "ready-to-join-description": "Este taller se está desarrollando en este momento. Haz clic en el botón de abajo para unirte al evento."
   },
   "users-registered-count": "{{count}} personas ya se han registrado a este evento. Quedan disponibles {{spot_count}} cupos más.",
   "join-workshop": "Regístrarse al taller",

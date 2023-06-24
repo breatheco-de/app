@@ -9,8 +9,8 @@
   "form": {
     "title": "Join The Workshop",
     "description": "Sign in to join other coders live solving technical or career challenges.",
-    "ready-to-join-title": "Ready to join?",
-    "ready-to-join-description": "Join other programmers live to solve technical or professional challenges"
+    "ready-to-join-title": "Live now!",
+    "ready-to-join-description": "This workshop is happening right now. Click the button below to join the event."
   },
   "users-registered-count": "{{count}} people are already registered in this event. {{spot_count}} more spots available",
   "join-workshop": "Register for this Workshop",

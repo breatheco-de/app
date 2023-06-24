@@ -6,11 +6,12 @@ import { intervalToDuration, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import bc from '../../common/services/breathecode';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
-import { capitalizeFirstLetter, getStorageItem, isValidDate } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import Icon from '../../common/components/Icon';
 import PublicProfile from '../../common/components/PublicProfile';
@@ -48,10 +49,30 @@ const Page = () => {
 
         bc.events().getUsers(data?.id)
           .then((resp) => {
-            const onlyExistentUsers = resp.data.filter((l) => l?.attendee?.first_name && l?.attendee?.last_name);
-
+            const formatedUsers = resp.data.map((l, i) => {
+              const index = i + 1;
+              const avatarNumber = adjustNumberBeetwenMinMax({
+                number: index,
+                min: 1,
+                max: 20,
+              });
+              if (l?.attendee === null) {
+                return {
+                  ...l,
+                  attendee: {
+                    id: (i * 99) + 1,
+                    first_name: 'Anonymous',
+                    last_name: '',
+                    profile: {
+                      avatar_url: `https://breathecode.herokuapp.com/static/img/avatar-${avatarNumber}.png`,
+                    },
+                  },
+                };
+              }
+              return l;
+            });
             setAllUsersJoined(resp.data);
-            setUsers(onlyExistentUsers);
+            setUsers(formatedUsers);
           })
           .catch(() => {});
 
@@ -67,6 +88,8 @@ const Page = () => {
         });
       });
   }, []);
+
+  const limitedUsers = showAll ? users : users.slice(0, 15);
 
   const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
 
@@ -112,6 +135,12 @@ const Page = () => {
 
   return (
     <>
+      {event.loaded && (
+        <Head>
+          <title>{`${event.title} | 4Geeks`}</title>
+          <meta name="description" content={event?.description} />
+        </Head>
+      )}
       <Box
         background={useColorModeValue('featuredLight', 'featuredDark')}
         marginBottom="37px"
@@ -200,10 +229,10 @@ const Page = () => {
                   </Text>
                 </Box>
               )}
-              {duration?.hours && (
+              {duration?.hours > 0 && (
                 <Box display="flex" gridGap="10px">
                   <Icon icon="chronometer-full" width="20px" height="20px" color={hexColor.blueDefault} />
-                  <Text size="sm">
+                  <Text size="sm" lineHeight="20px">
                     {t('duration-hours', { hours: duration.hours })}
                   </Text>
                 </Box>
@@ -267,7 +296,20 @@ const Page = () => {
                   color="white"
                   height="177px"
                 />
-                )}
+              )}
+              // headContent={readyToJoinEvent ? (
+              //   <Box>
+              //     asdasdasdasd
+              //   </Box>
+              // ) : (
+              //   <Timer
+              //     startingAt={event?.starting_at}
+              //     onFinish={handleOnReadyToStart}
+              //     background="transparent"
+              //     color="white"
+              //     height="177px"
+              //   />
+              // )}
               subContent={(
                 <Box position="absolute" top="0px" left="0px" zIndex={1} width="100%" height={177}>
                   <Image src="/static/videos/bubbles_2.gif" width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" />
@@ -282,6 +324,7 @@ const Page = () => {
                 mt="10px"
                 type="submit"
                 variant="default"
+                textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
                 disabled={!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                 _disabled={{
                   background: (readyToJoinEvent || !alreadyApplied) ? '' : 'gray.350',
@@ -305,6 +348,13 @@ const Page = () => {
                       .then((resp) => {
                         if (resp !== undefined) {
                           setApplied(true);
+                          toast({
+                            position: 'top',
+                            status: 'success',
+                            title: t('alert-message:success-event-reservation'),
+                            isClosable: true,
+                            duration: 6000,
+                          });
                         } else {
                           toast({
                             position: 'top',
@@ -333,7 +383,7 @@ const Page = () => {
           )}
 
           {users?.length > 0 && (
-            <Box display="flex" flexDirection="column" gridGap="18px" background={featuredColor} padding="20px 25px" borderRadius="17px">
+            <Box maxHeight="294px" display="flex" flexDirection="column" gridGap="18px" background={featuredColor} padding="20px 25px" borderRadius="17px">
               <Text>
                 {t('users-registered-count', { count: allUsersJoined.length, spot_count: spotsRemain })}
               </Text>
@@ -344,11 +394,10 @@ const Page = () => {
                 maxH={showAll ? '270px' : 'auto'}
                 height={showAll ? '100%' : 'auto'}
                 overflowY="auto"
-                maxHeight="163.20px"
               >
-                {users?.map((c) => {
+                {limitedUsers?.map((c) => {
                   const fullName = `${c?.attendee?.first_name} ${c?.attendee?.last_name}`;
-                  return c?.attendee?.id && (
+                  return (
                     <AvatarUser
                       key={`${c?.attendee?.id} - ${c?.attendee?.first_name}`}
                       fullName={fullName}
