@@ -339,6 +339,19 @@ const getAsset = async (type, extraQuerys = {}) => {
   return allResults;
 };
 
+function adjustNumberBeetwenMinMax({ number = 1, min = 1, max = 10 }) {
+  const range = max - min;
+  const overflow = (number - max) % range;
+  const underflow = (min - number) % range;
+  if (number > max) {
+    return max - overflow;
+  }
+  if (number < min) {
+    return max - underflow;
+  }
+  return number;
+}
+
 const location = isWindow && window.location;
 
 const url = isWindow && new URL(window.location.href);
@@ -352,5 +365,5 @@ export {
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, capitalizeFirstLetter,
-  getAsset,
+  getAsset, adjustNumberBeetwenMinMax,
 };
