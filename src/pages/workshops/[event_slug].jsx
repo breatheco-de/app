@@ -11,7 +11,7 @@ import bc from '../../common/services/breathecode';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
-import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate, setStorageItem } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import Icon from '../../common/components/Icon';
 import PublicProfile from '../../common/components/PublicProfile';
@@ -360,19 +360,18 @@ const Page = () => {
                         } else {
                           toast({
                             position: 'top',
-                            status: 'error',
+                            status: 'info',
                             title: t('alert-message:event-access-error'),
                             isClosable: true,
                             duration: 6000,
                           });
-                          // If need access, redirect to checkout page
-                          // setStorageItem('redirect-after-register', router?.asPath);
-                          // router.push({
-                          //   pathname: '/checkout',
-                          //   query: {
-                          //     plan: '4geeks-standard',
-                          //   },
-                          // });
+                          setStorageItem('redirect-after-register', router?.asPath);
+                          router.push({
+                            pathname: '/checkout',
+                            query: {
+                              plan: '4geeks-standard',
+                            },
+                          });
                         }
                       });
                   }
