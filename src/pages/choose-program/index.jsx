@@ -108,6 +108,7 @@ function chooseProgram() {
         if (!cohortIsReady && members.length === 0) {
           refetch();
           console.log('revalidated on:', new Date().toLocaleString());
+          setIsRevalidating(false);
         } else {
           setIsRevalidating(false);
           console.log('Start learning!');
