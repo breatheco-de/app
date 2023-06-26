@@ -1,5 +1,5 @@
 import {
-  Tab, TabList, TabPanel, TabPanels, Tabs, useToast,
+  Tab, TabList, TabPanel, TabPanels, Tabs,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import {
@@ -19,7 +19,7 @@ import Information from '../../js_modules/profile/Information';
 
 const Profile = () => {
   const { t } = useTranslation('profile');
-  const toast = useToast();
+  // const toast = useToast();
   const { user } = useAuth();
   const router = useRouter();
   const { asPath } = router;
@@ -45,15 +45,6 @@ const Profile = () => {
     bc.certificate().get()
       .then(({ data }) => {
         setCertificates(data);
-      })
-      .catch(() => {
-        toast({
-          position: 'top',
-          title: t('alert-message:something-went-wrong-with', { property: 'Certificates' }),
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
       });
   }, []);
 

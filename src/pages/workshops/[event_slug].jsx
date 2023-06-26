@@ -45,6 +45,9 @@ const Page = () => {
   useEffect(() => {
     bc.public().singleEvent(eventSlug)
       .then((res) => {
+        if (res === undefined) {
+          router.push('/404');
+        }
         const data = res?.data;
 
         bc.events().getUsers(data?.id)
@@ -141,8 +144,12 @@ const Page = () => {
     <>
       {event.loaded && (
         <Head>
-          <title>{`${event.title} | 4Geeks`}</title>
-          <meta name="description" content={event?.description} />
+          {event?.title && (
+            <title>{`${event?.title} | 4Geeks`}</title>
+          )}
+          {event?.description && (
+            <meta name="description" content={event?.description} />
+          )}
         </Head>
       )}
       <Box
