@@ -70,6 +70,7 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
     //   });
     // }
     if (data?.access_token) {
+      setStorageItem('redirect-after-register', router?.asPath);
       router.push({
         pathname: '/checkout',
         query: {

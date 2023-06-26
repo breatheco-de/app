@@ -45,6 +45,9 @@ const Page = () => {
   useEffect(() => {
     bc.public().singleEvent(eventSlug)
       .then((res) => {
+        if (res === undefined) {
+          router.push('/404');
+        }
         const data = res?.data;
 
         bc.events().getUsers(data?.id)
@@ -141,8 +144,12 @@ const Page = () => {
     <>
       {event.loaded && (
         <Head>
-          <title>{`${event.title} | 4Geeks`}</title>
-          <meta name="description" content={event?.description} />
+          {event?.title && (
+            <title>{`${event?.title} | 4Geeks`}</title>
+          )}
+          {event?.description && (
+            <meta name="description" content={event?.description} />
+          )}
         </Head>
       )}
       <Box
@@ -358,13 +365,21 @@ const Page = () => {
                             isClosable: true,
                             duration: 6000,
                           });
+                          // If need access, redirect to checkout page
+                          // setStorageItem('redirect-after-register', router?.asPath);
+                          // router.push({
+                          //   pathname: '/checkout',
+                          //   query: {
+                          //     plan: '4geeks-standard',
+                          //   },
+                          // });
                         }
                       });
                   }
                   if (isAuthenticated && !alreadyApplied && readyToJoinEvent) {
                     toast({
                       position: 'top',
-                      status: 'error',
+                      status: 'warning',
                       title: t('alert-message:error-event-already-started'),
                       isClosable: true,
                       duration: 6000,
