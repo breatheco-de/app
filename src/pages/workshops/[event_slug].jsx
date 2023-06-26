@@ -358,13 +358,21 @@ const Page = () => {
                             isClosable: true,
                             duration: 6000,
                           });
+                          // If need access, redirect to checkout page
+                          // setStorageItem('redirect-after-register', router?.asPath);
+                          // router.push({
+                          //   pathname: '/checkout',
+                          //   query: {
+                          //     plan: '4geeks-standard',
+                          //   },
+                          // });
                         }
                       });
                   }
                   if (isAuthenticated && !alreadyApplied && readyToJoinEvent) {
                     toast({
                       position: 'top',
-                      status: 'error',
+                      status: 'warning',
                       title: t('alert-message:error-event-already-started'),
                       isClosable: true,
                       duration: 6000,
