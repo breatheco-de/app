@@ -73,7 +73,7 @@ const Timer = ({ startingAt, onFinish, autoRemove, ...rest }) => {
             </Box>
           </>
         )}
-        {autoRemove && timer?.hours <= 0 ? null : (
+        {autoRemove && timer?.hours <= 0 && timer?.days <= 0 ? null : (
           <>
             <TimeString label="Hrs" string={timer?.hours} />
             <Box margin="-2rem 0 0 0">
@@ -81,7 +81,7 @@ const Timer = ({ startingAt, onFinish, autoRemove, ...rest }) => {
             </Box>
           </>
         )}
-        {autoRemove && timer?.minutes <= 0 ? null : (
+        {autoRemove && timer?.minutes <= 0 && timer?.hours <= 0 && timer?.days <= 0 ? null : (
           <>
             <TimeString label="Min" string={timer.minutes} />
             <Box margin="-2rem 0 0 0">
