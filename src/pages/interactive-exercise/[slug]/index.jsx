@@ -465,7 +465,7 @@ const TabletWithForm = ({
                 <Link
                   target="_blank"
                   rel="noopener noreferrer"
-                  href="https://www.gitpod.io/docs/introduction"
+                  href="https://4geeks.com/lesson/how-to-use-gitpod"
                   display="inline-block"
                   letterSpacing="0.05em"
                   fontFamily="Lato, Sans-serif"
@@ -476,7 +476,7 @@ const TabletWithForm = ({
                 <Link
                   target="_blank"
                   rel="noopener noreferrer"
-                  href="https://docs.github.com/codespaces"
+                  href="https://4geeks.com/lesson/what-is-github-codespaces"
                 // color={useColorModeValue('blue.default', 'blue.300')}
                   display="inline-block"
                   letterSpacing="0.05em"
