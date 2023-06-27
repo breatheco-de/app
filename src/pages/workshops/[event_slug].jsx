@@ -344,7 +344,7 @@ const Page = () => {
                     router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
                     // router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
                   }
-                  if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
+                  if (isAuthenticated && !alreadyApplied) {
                     bc.events().applyEvent(event?.id)
                       .then((resp) => {
                         if (resp !== undefined) {
@@ -373,15 +373,6 @@ const Page = () => {
                           });
                         }
                       });
-                  }
-                  if (isAuthenticated && !alreadyApplied && readyToJoinEvent) {
-                    toast({
-                      position: 'top',
-                      status: 'warning',
-                      title: t('alert-message:error-event-already-started'),
-                      isClosable: true,
-                      duration: 6000,
-                    });
                   }
                 }}
               >
