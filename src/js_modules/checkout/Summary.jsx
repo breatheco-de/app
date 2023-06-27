@@ -194,7 +194,7 @@ const Summary = () => {
               flexDirection="column"
               gridGap="12px"
             >
-              {planProps?.map((bullet) => (
+              {planProps?.map((bullet) => bullet?.features[0]?.description && (
                 <Box
                   as="li"
                   key={bullet?.features[0]?.description}
