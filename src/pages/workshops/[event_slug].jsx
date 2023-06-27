@@ -187,7 +187,7 @@ const Page = () => {
           <Box display="flex" flexDirection="column" justifyContent="center" gridGap="15px" gridColumn="2 / span 8">
             <Box display="flex" mt={{ base: '0', md: '1rem' }} alignItems="center" gridGap="24px">
               {event?.event_type?.name && (
-                <Text size="12px" fontWeight={700} background="yellow.light" borderRadius="20px" alignItems="center" width="fit-content" padding="4px 10px">
+                <Text size="12px" color="black" fontWeight={700} background="yellow.light" borderRadius="20px" alignItems="center" width="fit-content" padding="4px 10px">
                   {event.event_type.name}
                 </Text>
               )}
@@ -303,6 +303,7 @@ const Page = () => {
                 </Box>
               ) : (
                 <Timer
+                  autoRemove
                   startingAt={event?.starting_at}
                   onFinish={handleOnReadyToStart}
                   background="transparent"

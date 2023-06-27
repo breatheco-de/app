@@ -21,7 +21,7 @@ const TimeString = ({ string, label }) => (
   </Box>
 );
 
-const Timer = ({ startingAt, onFinish, ...rest }) => {
+const Timer = ({ startingAt, onFinish, autoRemove, ...rest }) => {
   const [timer, setTimer] = useState({});
   const [loading, setLoading] = useState(true);
   const [justFinished, setJustFinished] = useState(false);
@@ -65,18 +65,30 @@ const Timer = ({ startingAt, onFinish, ...rest }) => {
     <Box overflowX="hidden" display="flex" position="relative" zIndex={10} borderTopRadius="16px" padding={{ base: '18px 24px', md: '0 24px' }} width="100%" height={{ base: 'auto', md: '177px' }} background="yellow.light" {...rest}>
       {loading && <LoaderScreen width="95px" height="95px" background="blue.light" opacity={0.9} />}
       <Box filter={loading && 'blur(3px)'} display="flex" gridGap="11px" margin="0 auto" alignItems="center" fontSize="40px">
-        <TimeString label={t('days')} string={timer?.days} />
-        <Box margin="-2rem 0 0 0">
-          :
-        </Box>
-        <TimeString label="Hrs" string={timer?.hours} />
-        <Box margin="-2rem 0 0 0">
-          :
-        </Box>
-        <TimeString label="Min" string={timer.minutes} />
-        <Box margin="-2rem 0 0 0">
-          :
-        </Box>
+        {autoRemove && timer?.days <= 0 ? null : (
+          <>
+            <TimeString label={t('days')} string={timer?.days} />
+            <Box margin="-2rem 0 0 0">
+              :
+            </Box>
+          </>
+        )}
+        {autoRemove && timer?.hours <= 0 ? null : (
+          <>
+            <TimeString label="Hrs" string={timer?.hours} />
+            <Box margin="-2rem 0 0 0">
+              :
+            </Box>
+          </>
+        )}
+        {autoRemove && timer?.minutes <= 0 ? null : (
+          <>
+            <TimeString label="Min" string={timer.minutes} />
+            <Box margin="-2rem 0 0 0">
+              :
+            </Box>
+          </>
+        )}
         <TimeString label={t('short-seconds')} string={timer.seconds} />
       </Box>
     </Box>
@@ -86,10 +98,12 @@ const Timer = ({ startingAt, onFinish, ...rest }) => {
 Timer.propTypes = {
   startingAt: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   onFinish: PropTypes.func,
+  autoRemove: PropTypes.bool,
 };
 Timer.defaultProps = {
   startingAt: null,
   onFinish: () => {},
+  autoRemove: false,
 };
 
 TimeString.propTypes = {
