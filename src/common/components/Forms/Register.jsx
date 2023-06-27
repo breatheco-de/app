@@ -18,6 +18,7 @@ import { setStorageItem } from '../../../utils';
 import modifyEnv from '../../../../modifyEnv';
 import Link from '../NextChakraLink';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
+import Text from '../Text';
 
 function Register() {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -196,6 +197,9 @@ function Register() {
                       borderColor="gray.default"
                       borderRadius="3px"
                     />
+                    <Text size="12px" color="blue.default">
+                      {t('signup:phone-info')}
+                    </Text>
                     <FormErrorMessage>{form.errors.phone}</FormErrorMessage>
                   </FormControl>
                 )}
