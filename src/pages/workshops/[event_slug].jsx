@@ -20,6 +20,7 @@ import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import useAuth from '../../common/hooks/useAuth';
 import Timer from '../../common/components/Timer';
 import ComponentOnTime from '../../common/components/ComponentOnTime';
+import MarkDownParser from '../../common/components/MarkDownParser';
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 
@@ -147,8 +148,8 @@ const Page = () => {
           {event?.title && (
             <title>{`${event?.title} | 4Geeks`}</title>
           )}
-          {event?.description && (
-            <meta name="description" content={event?.description} />
+          {event?.excerpt && (
+            <meta name="description" content={event?.excerpt} />
           )}
         </Head>
       )}
@@ -260,14 +261,11 @@ const Page = () => {
         padding="0 10px"
       >
         <Box display={{ base: 'block', lg: 'flex' }} gridGap="30px" flexDirection="column" gridColumn={{ base: '2 / span 6', lg: '2 / span 8' }}>
-          <Text
-            size="14px"
-            borderRadius="3px"
-            maxWidth="1012px"
-            width={{ base: 'auto', lg: '100%' }}
-          >
-            {event?.description}
-          </Text>
+
+          <Box display="flex" flexDirection="column" gridGap="10px">
+            <MarkDownParser content={event?.description} />
+          </Box>
+
           {!eventNotExists && (typeof event?.host_user === 'object' && event?.host_user !== null) && (
             <Box display="flex" flexDirection="column" gridGap="12px" mb="31px">
               <Text size="26px" fontWeight={700}>
