@@ -120,6 +120,7 @@ const Attendance = () => {
       })
       .catch(() => {
         toast({
+          position: 'top',
           title: t('alert-message:error-fetching-cohorts'),
           status: 'error',
           duration: 7000,
@@ -143,6 +144,7 @@ const Attendance = () => {
           if (Object.keys(daysLog).length <= 0) {
             setCurrentDaysLog({});
             toast({
+              position: 'top',
               title: t('alert-message:no-attendance-list-found'),
               status: 'warning',
               duration: 7000,
@@ -154,6 +156,7 @@ const Attendance = () => {
         })
         .catch(() => {
           toast({
+            position: 'top',
             title: t('alert-message:error-fetching-activities'),
             status: 'error',
             duration: 7000,
@@ -166,6 +169,7 @@ const Attendance = () => {
         })
         .catch(() => {
           toast({
+            position: 'top',
             title: t('alert-message:error-fetching-students'),
             status: 'error',
             duration: 7000,

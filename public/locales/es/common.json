@@ -50,10 +50,12 @@
   "any-available": "{{any}} disponible",
   "not-available": "No disponible",
   "live-demo": "Demo en vivo",
+  "live-now": "¡En Vivo!",
   "technologies": "Tecnologías",
   "full-screen": "Pantalla completa",
   "no-title": "Sin título 🙂",
   "search-not-found": "No se encontraron coincidencias para esta búsqueda",
+  "asset-not-found-in-current-language": "No hay contenido relacionado a esta tecnología que mostrar, pruebe con otro idioma.",
   "no-elements": "No se encontraron elementos",
   "select": "Seleccione",
   "difficulties": "Dificultades",
@@ -169,5 +171,6 @@
   "uploadScreenshot": "Subir captura de pantalla",
   "continue-learning-course": "Continúa aprendiendo gratis sobre:",
   "logout-and-switch-user": "Cerrar sesión e iniciar como otro usuario",
-  "free": "Gratis"
+  "free": "Gratis",
+  "login": "Iniciar sesión"
 }

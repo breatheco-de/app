@@ -20,6 +20,7 @@ const useSignup = () => {
   const { locale } = router;
   const dispatch = useDispatch();
   const accessToken = getStorageItem('accessToken');
+  const redirectAfterRegister = getStorageItem('redirect-after-register');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const { syllabus, academy } = router.query;
@@ -129,10 +130,16 @@ const useSignup = () => {
             academy_info: dateProps?.academy,
           });
 
-          router.push('/choose-program');
+          if (redirectAfterRegister && redirectAfterRegister?.length > 0) {
+            router.push(redirectAfterRegister);
+            localStorage.removeItem('redirect');
+          } else {
+            router.push('/choose-program');
+          }
         }
         if (response === undefined || response.status >= 400) {
           toast({
+            position: 'top',
             title: t('alert-message:payment-error'),
             status: 'error',
             duration: 7000,
@@ -273,6 +280,7 @@ const useSignup = () => {
           toggleIfEnrolled(true);
         } else {
           toast({
+            position: 'top',
             title: t('alert-message:something-went-wrong-choosing-date'),
             status: 'error',
             duration: 7000,

@@ -335,6 +335,7 @@ export const ButtonHandlerByTaskStatus = ({
           githubUrl: respData?.url,
         });
         toast({
+          position: 'top',
           title: t('alert-message:files-uploaded'),
           status: 'success',
           duration: 4000,
@@ -344,6 +345,7 @@ export const ButtonHandlerByTaskStatus = ({
       } else {
         setIsUploading(false);
         toast({
+          position: 'top',
           title: t('alert-message:something-went-wrong-with', { property: 'Files' }),
           status: 'error',
           duration: 4000,

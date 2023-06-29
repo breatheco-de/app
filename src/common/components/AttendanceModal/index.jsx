@@ -57,6 +57,7 @@ const AttendanceModal = ({
       })
       .catch(() => {
         toast({
+          position: 'top',
           title: t('alert-message:error-getting-previous-attendance'),
           status: 'error',
           duration: 9000,
@@ -120,6 +121,7 @@ const AttendanceModal = ({
       .then((data) => {
         setAttendanceList(data);
         toast({
+          position: 'top',
           title: t('alert-message:attendancy-reported'),
           status: 'success',
           duration: 9000,
@@ -128,6 +130,7 @@ const AttendanceModal = ({
       })
       .catch(() => {
         toast({
+          position: 'top',
           title: t('alert-message:attendancy-report-error'),
           status: 'error',
           duration: 9000,
@@ -153,6 +156,7 @@ const AttendanceModal = ({
         })
         .catch(() => {
           toast({
+            position: 'top',
             title: t('alert-message:error-updating-day-and-modules'),
             status: 'error',
             duration: 7000,
@@ -164,6 +168,7 @@ const AttendanceModal = ({
         .finally(() => setIsLoading(false));
     } else {
       toast({
+        position: 'top',
         title: t('alert-message:error-updating-day-and-modules'),
         status: 'error',
         duration: 7000,

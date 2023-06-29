@@ -114,7 +114,7 @@ export const BeforeAfter = ({ before, after }) => {
 export const MDHr = () => (<Box as="hr" backgroundColor={useColorModeValue('gray.400', 'gray.500')} mb="20px" />);
 
 export const MDText = ({ children }) => (
-  <Text size="l" fontWeight="400" lineHeight="24px">
+  <Text size="l" fontWeight="400">
     {children}
   </Text>
 );

@@ -9,7 +9,7 @@ import Text from '../../common/components/Text';
 import useSignup from '../../common/store/actions/signupAction';
 import bc from '../../common/services/breathecode';
 
-const ChooseDate = ({ cohort }) => {
+const ChooseDate = ({ cohort, ...rest }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const toast = useToast();
@@ -28,7 +28,7 @@ const ChooseDate = ({ cohort }) => {
   };
 
   return (
-    <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '10px', md: '30px' }}>
+    <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '10px', md: '30px' }} {...rest}>
       <Text size={{ base: '21px', md: '18px' }} fontWeight={{ base: 700, md: 400 }} flex={0.35} textTransform="capitalize">
         {cohort?.name}
         <Text size="13px" fontWeight="700" textTransform="capitalize">
@@ -46,9 +46,9 @@ const ChooseDate = ({ cohort }) => {
           <Text size="18px">
             {kickoffDate[router.locale]}
           </Text>
-          {cohort?.shortWeekDays[router.locale].length > 0 && (
+          {Array.isArray(cohort?.shortWeekDays?.[router.locale]) && cohort?.shortWeekDays?.[router.locale]?.length > 0 && (
             <Text size="14px" color="gray.default">
-              {cohort?.shortWeekDays[router.locale].map(
+              {cohort?.shortWeekDays?.[router.locale].map(
                 (day, i) => `${day}${i < cohort?.shortWeekDays[router.locale].length - 1 ? '/' : ''}`,
               )}
             </Text>
@@ -77,6 +77,7 @@ const ChooseDate = ({ cohort }) => {
             .then(({ data }) => {
               if (data.length === 0) {
                 toast({
+                  position: 'top',
                   title: t('alert-message:no-plan-configuration'),
                   status: 'info',
                   duration: 6000,

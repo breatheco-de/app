@@ -6,7 +6,8 @@ import PropTypes from 'prop-types';
 import {
   Box, Button, Flex, useToast,
 } from '@chakra-ui/react';
-import { useRef } from 'react';
+import Link from 'next/link';
+import { useState } from 'react';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 // import { phone } from '../../utils/regex';
@@ -15,9 +16,9 @@ import PhoneInput from '../../common/components/PhoneInput';
 import { getQueryString, setStorageItem } from '../../utils';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
-import useCustomToast from '../../common/hooks/useCustomToast';
 import modifyEnv from '../../../modifyEnv';
 import useSignup from '../../common/store/actions/signupAction';
+import ModalInfo from '../moduleMap/modalInfo';
 
 const ContactInformation = ({
   courseChoosed,
@@ -34,33 +35,10 @@ const ContactInformation = ({
   const planFormated = plan && encodeURIComponent(plan);
   const router = useRouter();
   const toast = useToast();
-  const toastIdRef = useRef();
+  const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const { backgroundColor, featuredColor } = useStyle();
 
   const { syllabus } = router.query;
-
-  const { createToast } = useCustomToast({
-    toastIdRef,
-    status: 'info',
-    title: t('alert-message.title'),
-    content: (
-      <Box>
-        {t('alert-message.message1')}
-        {' '}
-        <NextChakraLink variant="default" color="blue.200" href="/">4Geeks.com</NextChakraLink>
-        .
-        <br />
-        {t('alert-message.message2')}
-        {' '}
-        <NextChakraLink variant="default" color="blue.200" href="/login" redirectAfterLogin>{t('alert-message.click-here-to-login')}</NextChakraLink>
-        {' '}
-        {t('alert-message.or-click-here')}
-        {' '}
-        <NextChakraLink variant="default" color="blue.200" href="#">{t('alert-message.message3')}</NextChakraLink>
-        .
-      </Box>
-    ),
-  });
 
   const signupValidation = Yup.object().shape({
     first_name: Yup.string()
@@ -86,6 +64,7 @@ const ContactInformation = ({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept-Language': router?.locale || 'en',
       },
       body: JSON.stringify(allValues),
     });
@@ -99,6 +78,26 @@ const ContactInformation = ({
         router.push('/thank-you');
       }
 
+      // if (data?.access_token && data?.is_email_validated === false) {
+      //   toast({
+      //     position: 'top',
+      //     status: 'warning',
+      //     title: t('signup:alert-message-validate-email.title'),
+      //     description: (
+      //       <Box>
+      //         {t('signup:alert-message-validate-email.description')}
+      //         {' '}
+      //         <NextChakraLink variant="default" color="blue.200" href="/">4Geeks.com</NextChakraLink>
+      //         .
+      //         <br />
+      //         {t('signup:alert-message-validate-email.description2')}
+      //       </Box>
+      //     ),
+      //     duration: 9000,
+      //     isClosable: true,
+      //   });
+      // }
+
       if (data?.access_token && !dataOfPlan?.has_waiting_list) {
         router.push({
           query: {
@@ -110,24 +109,17 @@ const ContactInformation = ({
       }
     }
 
-    if (resp.status >= 400 && !data?.phone) {
-      toast({
-        title: t('alert-message:email-already-subscribed'),
-        status: 'warning',
-        duration: 6000,
-        isClosable: true,
-      });
-    }
     if (resp.status >= 400 && data?.phone) {
       toast({
+        position: 'top',
         title: data?.phone[0],
         status: 'warning',
         duration: 6000,
         isClosable: true,
       });
     }
-    if (resp.status === 409) {
-      createToast();
+    if (resp.status === 400) {
+      setShowAlreadyMember(true);
     }
     actions.setSubmitting(false);
   };
@@ -253,6 +245,30 @@ const ContactInformation = ({
           </Form>
         )}
       </Formik>
+      <ModalInfo
+        isOpen={showAlreadyMember}
+        headerStyles={{ textAlign: 'center' }}
+        onClose={() => setShowAlreadyMember(false)}
+        title={t('signup:alert-message.title')}
+        childrenDescription={(
+          <Box textAlign="center">
+            {t('signup:alert-message.message1')}
+            {' '}
+            <Link variant="default" href="/">4Geeks.com</Link>
+            .
+            <br />
+            {t('signup:alert-message.message2')}
+            .
+          </Box>
+        )}
+        disableCloseButton
+        actionHandler={() => {
+          setStorageItem('redirect', router?.asPath);
+          router.push('/login');
+          setShowAlreadyMember(false);
+        }}
+        handlerText={t('common:login')}
+      />
     </Box>
   );
 };

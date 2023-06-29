@@ -206,6 +206,7 @@ const breathecode = {
     return {
       mentors: () => axios.get(`${url}/cohort/user${qs}`),
       events: () => axios.get(`${host}/events/all${qs}`),
+      singleEvent: (slug) => axios.get(`${host}/events/event/${slug}${qs}`),
       cohorts: () => axios.get(`${host}/admissions/cohort/all${qs}`),
     };
   },
@@ -240,7 +241,7 @@ const breathecode = {
       joinLiveClass: (liveClassHash) => axios.get(`${url}/event/liveclass/join/${liveClassHash}${qs}`),
       joinLiveClass2: (liveClassHash) => axios.get(`${host}/me/event/liveclass/join/${liveClassHash}${qs}`),
       applyEvent: (eventId) => axios.post(`${url}/event/${eventId}/checkin${qs}`),
-      getUsers: (eventId) => axios.get(`${host}/events/event/${eventId}/checkin`),
+      getUsers: (eventId) => axios.get(`${host}/events/event/${eventId}/checkin${qs}`),
     };
   },
 };

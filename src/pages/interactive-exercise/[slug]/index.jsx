@@ -221,6 +221,7 @@ const TabletWithForm = ({
                     } else {
                       setFormStatus({ status: 'thank-you', msg: 'Thank you for your request!' });
                       toast({
+                        position: 'top',
                         title: t('alert-message:request-apply-success'),
                         description: t('alert-message:email-will-be-sent'),
                         status: 'success',
@@ -452,6 +453,7 @@ const TabletWithForm = ({
                     e.target.select();
                     navigator.clipboard.writeText(`git clone ${exercise.url}`);
                     toast({
+                      position: 'top',
                       title: t('modal.copy-command'),
                       status: 'success',
                       duration: 7000,

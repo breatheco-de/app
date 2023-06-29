@@ -39,8 +39,6 @@ const ChooseYourClass = ({
     'places',
   );
 
-  const filteredData = Array.isArray(availableDates) && availableDates.filter((item) => item?.never_ends === false);
-
   useEffect(() => {
     setCohortIsLoading(true);
 
@@ -61,18 +59,17 @@ const ChooseYourClass = ({
             availableTime,
           };
         });
-        setCohorts(formatedData);
-        setAvailableDates(formatedData);
-        if (data.length < 1) {
-          toast({
-            title: t('alert-message:no-cohorts-found'),
-            status: 'info',
-            duration: 5000,
-          });
-        }
+
+        const filteredCohorts = Array.isArray(formatedData) ? formatedData.filter((item) => item?.never_ends === false) : null;
+        setCohorts({
+          cohorts: filteredCohorts,
+          loading: false,
+        });
+        setAvailableDates(filteredCohorts);
       })
       .catch((error) => {
         toast({
+          position: 'top',
           title: t('alert-message:something-went-wrong-fetching-cohorts'),
           description: error.message,
           status: 'error',
@@ -112,6 +109,7 @@ const ChooseYourClass = ({
           })
           .catch(() => {
             toast({
+              position: 'top',
               title: t('alert-message:google-maps-no-coincidences'),
               status: 'warning',
               duration: 5000,
@@ -144,7 +142,7 @@ const ChooseYourClass = ({
 
   const LoaderContent = () => (cohortIsLoading ? (
     <Box display="flex" justifyContent="center" mt="4rem" mb="8rem" position="relative">
-      <LoaderScreen width="130px" height="130px" />
+      <LoaderScreen />
     </Box>
   ) : (
     <AlertMessage type="info" message={t('no-date-available')} />
@@ -217,11 +215,10 @@ const ChooseYourClass = ({
         flexDirection="column"
         mb={{ base: '0', md: '2rem' }}
         gridGap="40px"
-        p="0 1rem"
       >
-        {filteredData?.length > 0 && !cohortIsLoading ? (
-          filteredData.map((cohort, index) => (
-            <ChooseDate key={cohort?.id} index={index} cohort={cohort} />
+        {Array.isArray(availableDates) && availableDates?.length > 0 && !cohortIsLoading ? (
+          availableDates.map((cohort, index) => (
+            <ChooseDate key={cohort?.id} index={index} cohort={cohort} background="gray.light3" padding="13px" borderRadius="4px" />
           ))
         ) : (
           <LoaderContent />

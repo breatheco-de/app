@@ -153,6 +153,10 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
       selectedProgramSlug: selectedProgramSlug || '/choose-program',
     }, { returnObjects: true });
 
+    const itemsLogged = t('navbar-logged:ITEMS', {
+      selectedProgramSlug: selectedProgramSlug || '/choose-program',
+    }, { returnObjects: true });
+
     const mktCoursesFormat = marketingCouses.length > 0 ? marketingCouses.map((item) => ({
       label: item?.course_translation?.title,
       asPath: `/course/${item?.slug}`,
@@ -178,8 +182,12 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
       }
       return item;
     });
-    setITEMS(formatItems.filter((item) => item.disabled !== true));
-  }, [selectedProgramSlug, mktCourses]);
+    if (!isLoading && user?.id) {
+      setITEMS(itemsLogged.filter((item) => item.disabled !== true));
+    } else {
+      setITEMS(formatItems.filter((item) => item.disabled !== true));
+    }
+  }, [user, isLoading, selectedProgramSlug, mktCourses]);
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -274,7 +282,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   );
 
   return (
-    <Box>
+    <Box position="relative" zIndex={100}>
       <Flex
         transition="all .2s ease"
         bg={useColorModeValue('white', 'gray.800')}

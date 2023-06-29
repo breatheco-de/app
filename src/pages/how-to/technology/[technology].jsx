@@ -7,6 +7,7 @@ import Text from '../../../common/components/Text';
 import { toCapitalize } from '../../../utils';
 import Heading from '../../../common/components/Heading';
 import ProjectList from '../../../js_modules/projects/ProjectList';
+import { parseQuerys } from '../../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000`, {
@@ -45,15 +46,23 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const techs = await responseTechs.json(); // array of objects
   const technologyData = techs.results.find((tech) => tech.slug === technology);
 
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&visibility=PUBLIC&status=PUBLISHED&limit=2000`);
+  const qs = parseQuerys({
+    asset_type: 'ARTICLE',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    limit: 1000,
+    technologies: technology,
+  });
+
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${qs}`);
   const exercises = await response.json();
 
   const dataFiltered = exercises?.results?.filter(
-    (l) => technologyData?.assets?.some((a) => a === l?.slug) && (l?.category?.slug === 'how-to' || l?.category?.slug === 'como'),
+    (l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como',
   );
 
   if (response.status >= 400 || response.status_code >= 400
-    || !technologyData || dataFiltered.length === 0) {
+    || !technologyData || dataFiltered?.length === 0) {
     return {
       notFound: true,
     };
@@ -133,6 +142,7 @@ const ExercisesByTechnology = ({ exercises, technologyData }) => {
         // isLoading={isLoading}
         // contextFilter={}
         projectPath="how-to"
+        notFoundMessage={t('common:asset-not-found-in-current-language')}
       />
     </Box>
   );

@@ -61,6 +61,8 @@ const MainEvent = ({
           borderRadius="full"
           width="50px"
           height="50px"
+          minHeight="50px"
+          maxHeight="50px"
           className={
             isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)
               ? `${mainClasses.length === 0 ? 'pulse-blue' : 'pulse-red'}`

@@ -20,6 +20,7 @@ const SupportSidebar = () => {
       }
     }).catch(() => {
       toast({
+        position: 'top',
         title: 'Error',
         description: t('alert-message:error-mentorship-service'),
         status: 'error',
@@ -29,7 +30,7 @@ const SupportSidebar = () => {
     });
   }, []);
 
-  return (
+  return programServices.length > 0 && (
     <Mentoring
       programServices={programServices}
       flags={flags}

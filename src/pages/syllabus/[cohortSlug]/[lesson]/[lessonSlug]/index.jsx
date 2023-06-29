@@ -225,6 +225,7 @@ const Content = () => {
   const EventIfNotFound = () => {
     setCurrentData({});
     toast({
+      position: 'top',
       title: t('alert-message:content-not-found', { lesson }),
       status: 'error',
       duration: 7000,
@@ -309,6 +310,7 @@ const Content = () => {
     if (sortedAssignments.length <= 0) {
       router.push('/choose-program');
       toast({
+        position: 'top',
         title: t('alert-message:no-cohort-modules-found'),
         status: 'error',
         duration: 7000,

@@ -17,7 +17,7 @@ import LoaderScreen from '../../common/components/LoaderScreen';
 
 const ProjectList = forwardRef(({
   projects, contextFilter, projectPath, pathWithDifficulty,
-  withoutImage, isLoading, withoutDifficulty, isDynamic,
+  withoutImage, isLoading, withoutDifficulty, isDynamic, notFoundMessage,
 }, ref) => {
   const { t } = useTranslation('common');
   const arrOfTechs = contextFilter?.technologies || [];
@@ -250,7 +250,7 @@ const ProjectList = forwardRef(({
       {filteredProjects.length === 0 && (
         <Box height="50vh" width="100%">
           <Text size="20px" padding="30px 0" textAlign="center" fontWeight={500}>
-            {t('search-not-found')}
+            {notFoundMessage || t('search-not-found')}
           </Text>
         </Box>
       )}
@@ -259,6 +259,7 @@ const ProjectList = forwardRef(({
 });
 
 ProjectList.propTypes = {
+  notFoundMessage: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   projects: PropTypes.arrayOf(PropTypes.object).isRequired,
   contextFilter: PropTypes.objectOf(PropTypes.any),
   projectPath: PropTypes.string,
@@ -270,6 +271,7 @@ ProjectList.propTypes = {
 };
 
 ProjectList.defaultProps = {
+  notFoundMessage: '',
   projectPath: '',
   pathWithDifficulty: false,
   withoutImage: false,

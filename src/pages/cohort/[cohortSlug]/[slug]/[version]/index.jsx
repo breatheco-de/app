@@ -143,6 +143,7 @@ const Dashboard = () => {
       .catch(() => {
         setModalIsOpen(false);
         toast({
+          position: 'top',
           title: t('alert-message:task-cant-sync-with-cohort'),
           // title: 'Some Tasks cannot synced with current cohort',
           status: 'error',
@@ -159,6 +160,7 @@ const Dashboard = () => {
     }).deleteBulk()
       .then(() => {
         toast({
+          position: 'top',
           title: t('alert-message:unsynced-tasks-removed'),
           status: 'success',
           duration: 5000,
@@ -168,6 +170,7 @@ const Dashboard = () => {
       })
       .catch(() => {
         toast({
+          position: 'top',
           title: t('alert-message:unsynced-tasks-cant-be-removed'),
           status: 'error',
           duration: 5000,
@@ -249,6 +252,7 @@ const Dashboard = () => {
       }
     }).catch(() => {
       toast({
+        position: 'top',
         title: t('alert-message:error-fetching-students-and-teachers'),
         status: 'error',
         duration: 7000,

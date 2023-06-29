@@ -1,7 +1,7 @@
 import { Box, Button, useColorModeValue } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -10,16 +10,16 @@ import Text from './Text';
 import FieldForm from './Forms/FieldForm';
 import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
-import useCustomToast from '../hooks/useCustomToast';
 import modifyEnv from '../../../modifyEnv';
 import { setStorageItem } from '../../utils';
+import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 
-const ShowOnSignUp = ({ headContent, title, description, readOnly, children }) => {
+const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, children, ...rest }) => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
   const { backgroundColor, featuredColor } = useStyle();
+  const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const { t } = useTranslation('workshops');
-  const toastIdRef = useRef();
   const router = useRouter();
   const [formProps, setFormProps] = useState({
     first_name: '',
@@ -35,49 +35,60 @@ const ShowOnSignUp = ({ headContent, title, description, readOnly, children }) =
 
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
 
-  const { createToast } = useCustomToast({
-    toastIdRef,
-    status: 'info',
-    title: t('signup:alert-message.title'),
-    content: (
-      <Box>
-        {t('signup:alert-message.message1')}
-        {' '}
-        <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
-        .
-        <br />
-        {t('signup:alert-message.message2')}
-        {' '}
-        <Link variant="default" color="blue.200" href="/login" redirectAfterLogin>{t('signup:alert-message.click-here-to-login')}</Link>
-        {' '}
-        {t('signup:alert-message.or-click-here')}
-        {' '}
-        <Link variant="default" color="blue.200" href="/#">{t('signup:alert-message.message3')}</Link>
-        .
-      </Box>
-    ),
-  });
-
   const handleSubmit = async (actions, allValues) => {
     const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept-Language': router?.locale || 'en',
       },
-      body: JSON.stringify(allValues),
+      body: JSON.stringify({
+        ...allValues,
+        plan: '4geeks-standard',
+      }),
     });
-    const formData = await resp.json();
 
-    if (resp.status < 400 && typeof formData?.id === 'number') {
-      setStorageItem('subscriptionId', formData.id);
-      router.push('/thank-you');
+    const data = await resp.json();
+
+    // if (data?.access_token && data?.is_email_validated === false) {
+    //   toast({
+    //     position: 'top',
+    //     status: 'warning',
+    //     title: t('signup:alert-message-validate-email.title'),
+    //     description: (
+    //       <Box>
+    //         {t('signup:alert-message-validate-email.description')}
+    //         {' '}
+    //         <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
+    //         .
+    //         <br />
+    //         {t('signup:alert-message-validate-email.description2')}
+    //       </Box>
+    //     ),
+    //     duration: 9000,
+    //     isClosable: true,
+    //   });
+    // }
+    if (data?.access_token) {
+      setStorageItem('redirect-after-register', router?.asPath);
+      router.push({
+        pathname: '/checkout',
+        query: {
+          plan: '4geeks-standard',
+          token: data.access_token,
+        },
+      });
     }
-    if (resp.status > 400) {
+
+    if (typeof resp?.status === 'number' && data?.access_token === null) {
       actions.setSubmitting(false);
-    }
-    if (resp.status === 409) {
-      createToast();
-      actions.setSubmitting(false);
+      if (resp.status < 400 && typeof data?.id === 'number') {
+        setStorageItem('subscriptionId', data.id);
+        router.push('/thank-you');
+      }
+      if (resp.status === 400) {
+        setShowAlreadyMember(true);
+      }
     }
   };
   const isAuth = isAuthenticated && user?.id;
@@ -92,11 +103,12 @@ const ShowOnSignUp = ({ headContent, title, description, readOnly, children }) =
       borderStyle="solid"
       borderColor={commonBorderColor}
       backgroundColor={backgroundColor}
+      {...rest}
     >
       {headContent}
+      {subContent}
 
       <Box display="flex" flexDirection="column" gridGap="10px" padding="0 18px 18px">
-
         <Text size="21px" fontWeight={700} lineHeight="25px">
           {title}
         </Text>
@@ -184,7 +196,7 @@ const ShowOnSignUp = ({ headContent, title, description, readOnly, children }) =
                     type="submit"
                     variant="default"
                     isLoading={isSubmitting}
-                    title="Join Workshop"
+                    title={t('join-workshop')}
                     disabled={readOnly}
                   >
                     {t('join-workshop')}
@@ -202,12 +214,38 @@ const ShowOnSignUp = ({ headContent, title, description, readOnly, children }) =
           </Box>
         )}
       </Box>
+
+      <ModalInfo
+        isOpen={showAlreadyMember}
+        headerStyles={{ textAlign: 'center' }}
+        onClose={() => setShowAlreadyMember(false)}
+        title={t('signup:alert-message.title')}
+        childrenDescription={(
+          <Box textAlign="center">
+            {t('signup:alert-message.message1')}
+            {' '}
+            <Link variant="default" href="/">4Geeks.com</Link>
+            .
+            <br />
+            {t('signup:alert-message.message2')}
+            .
+          </Box>
+        )}
+        disableCloseButton
+        actionHandler={() => {
+          setStorageItem('redirect', router?.asPath);
+          router.push('/login');
+          setShowAlreadyMember(false);
+        }}
+        handlerText={t('common:login')}
+      />
     </Box>
   );
 };
 
 ShowOnSignUp.propTypes = {
   headContent: PropTypes.node,
+  subContent: PropTypes.node,
   title: PropTypes.string,
   description: PropTypes.string,
   readOnly: PropTypes.bool,
@@ -216,6 +254,7 @@ ShowOnSignUp.propTypes = {
 
 ShowOnSignUp.defaultProps = {
   headContent: null,
+  subContent: null,
   title: '',
   description: '',
   readOnly: false,

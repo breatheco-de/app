@@ -58,31 +58,32 @@ async function generateSitemap() {
   const generateSlug = (data, conector) => data.map((l) => `${conector ? `/${conector}` : ''}/${l?.slug}`);
 
   const generateTechnologySlug = (data, conector, type) => {
-    console.log('');
+    const getLangConnector = (lang) => (lang === 'en' ? '' : `/${lang}`);
+
     if (type === 'lesson') {
       const lessonsData = data?.length > 0 ? data.filter((l) => {
         const lessonExists = l.assets.some((a) => a?.asset_type === 'LESSON');
         return lessonExists;
       }) : [];
-      return lessonsData?.map((l) => (`/${conector}/${l?.slug}`));
+      return lessonsData?.map((l) => (`${getLangConnector(l.lang)}/${conector}/${l?.slug}`));
     }
     if (type === 'exercise') {
       const exercisesData = data?.length > 0 ? data.filter((l) => {
         const assets = l.assets.some((a) => a?.asset_type === 'EXERCISE');
         return assets;
       }) : [];
-      return exercisesData?.map((l) => (`/${conector}/${l?.slug}`));
+      return exercisesData?.map((l) => (`${getLangConnector(l.lang)}/${conector}/${l?.slug}`));
     }
     if (type === 'project') {
       const projectsData = data?.length > 0 ? data.filter((l) => {
         const assets = l.assets.some((a) => a?.asset_type === 'PROJECT');
-        return assets.length > 0 && (`/${conector}/${l?.slug}`);
+        return assets.length > 0 && (`${getLangConnector(l.lang)}/${conector}/${l?.slug}`);
       }) : [];
       return projectsData;
     }
     if (type === 'tech') {
       return (data?.length > 0 ? data.map(
-        (l) => (`/${conector}/${l?.slug}`),
+        (l) => (`${getLangConnector(l.lang)}/${conector}/${l?.slug}`),
       ) : []);
     }
     return '';

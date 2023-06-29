@@ -256,6 +256,7 @@ const profileHandlers = ({
             }
           } else {
             toast({
+              position: 'top',
               title: t('alert-message:error-getting-plan'),
               status: 'error',
               duration: 5000,
@@ -267,6 +268,7 @@ const profileHandlers = ({
         .catch(() => {
           reject();
           toast({
+            position: 'top',
             title: t('alert-message:error-getting-plan'),
             status: 'error',
             duration: 5000,
@@ -456,6 +458,7 @@ const profileHandlers = ({
         .catch(() => {
           reject();
           toast({
+            position: 'top',
             title: t('alert-message:error-getting-offer'),
             status: 'error',
             duration: 5000,

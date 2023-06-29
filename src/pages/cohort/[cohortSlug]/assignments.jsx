@@ -223,6 +223,7 @@ const Assignments = () => {
       .catch((error) => {
         setIsFetching(false);
         toast({
+          position: 'top',
           title: t('alert-message:error-fetching-tasks'),
           status: 'error',
           duration: 7000,
@@ -253,6 +254,7 @@ const Assignments = () => {
       })
       .catch(() => {
         toast({
+          position: 'top',
           title: t('alert-message:error-fetching-personal-cohorts'),
           status: 'error',
           duration: 7000,
@@ -284,6 +286,7 @@ const Assignments = () => {
       })
       .catch(() => {
         toast({
+          position: 'top',
           title: t('alert-message:error-fetching-cohorts'),
           status: 'error',
           duration: 7000,
@@ -322,6 +325,7 @@ const Assignments = () => {
         })
         .catch(() => {
           toast({
+            position: 'top',
             title: t('alert-message:error-fetching-students'),
             status: 'error',
             duration: 7000,
@@ -463,6 +467,7 @@ const Assignments = () => {
       setCurrentTask({ ...task, status, file });
     } catch (e) {
       toast({
+        position: 'top',
         title: t('alert-message:review-url-error'),
         status: 'error',
         duration: 6000,

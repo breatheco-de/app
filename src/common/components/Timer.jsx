@@ -21,37 +21,40 @@ const TimeString = ({ string, label }) => (
   </Box>
 );
 
-const Timer = ({ startingAt, onFinish }) => {
+const Timer = ({ startingAt, onFinish, autoRemove, ...rest }) => {
   const [timer, setTimer] = useState({});
   const [loading, setLoading] = useState(true);
   const [justFinished, setJustFinished] = useState(false);
   const { t } = useTranslation('common');
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date();
-      const startingAtDate = new Date(startingAt);
-      const intervalDurationObj = intervalToDuration({
-        start: startingAtDate,
-        end: now,
-      });
-      const { isRemainingToExpire } = calculateDifferenceDays(startingAtDate);
-
-      if (isRemainingToExpire) {
-        setLoading(false);
-        setTimer({
-          days: String(intervalDurationObj.days).padStart(2, '0'),
-          hours: String(intervalDurationObj.hours).padStart(2, '0'),
-          minutes: String(intervalDurationObj.minutes).padStart(2, '0'),
-          seconds: String(intervalDurationObj.seconds).padStart(2, '0'),
+    let interval;
+    if (justFinished === false) {
+      interval = setInterval(() => {
+        const now = new Date();
+        const startingAtDate = new Date(startingAt);
+        const intervalDurationObj = intervalToDuration({
+          start: startingAtDate,
+          end: now,
         });
-      }
-      if (!isRemainingToExpire && !justFinished) {
-        onFinish();
-        setJustFinished(true);
-        setLoading(false);
-      }
-    }, 1000);
+        const { isRemainingToExpire } = calculateDifferenceDays(startingAtDate);
+
+        if (isRemainingToExpire) {
+          setLoading(false);
+          setTimer({
+            days: String(intervalDurationObj.days).padStart(2, '0'),
+            hours: String(intervalDurationObj.hours).padStart(2, '0'),
+            minutes: String(intervalDurationObj.minutes).padStart(2, '0'),
+            seconds: String(intervalDurationObj.seconds).padStart(2, '0'),
+          });
+        }
+        if (!isRemainingToExpire && !justFinished) {
+          onFinish();
+          setJustFinished(true);
+          setLoading(false);
+        }
+      }, 1000);
+    }
 
     return () => {
       clearInterval(interval);
@@ -59,21 +62,33 @@ const Timer = ({ startingAt, onFinish }) => {
   }, [justFinished]);
 
   return (
-    <Box overflow="auto" display="flex" position="relative" borderTopRadius="16px" padding={{ base: '18px 24px', md: '0 24px' }} width="100%" height={{ base: 'auto', md: '177px' }} background="yellow.light">
-      {loading && <LoaderScreen width="95px" height="95px" background="#FFF4DC" opacity={0.9} />}
+    <Box overflowX="hidden" display="flex" position="relative" zIndex={10} borderTopRadius="16px" padding={{ base: '18px 24px', md: '0 24px' }} width="100%" height={{ base: 'auto', md: '177px' }} background="yellow.light" {...rest}>
+      {loading && <LoaderScreen width="95px" height="95px" background="blue.light" opacity={0.9} />}
       <Box filter={loading && 'blur(3px)'} display="flex" gridGap="11px" margin="0 auto" alignItems="center" fontSize="40px">
-        <TimeString label={t('days')} string={timer?.days} />
-        <Box margin="-2rem 0 0 0">
-          :
-        </Box>
-        <TimeString label="Hrs" string={timer?.hours} />
-        <Box margin="-2rem 0 0 0">
-          :
-        </Box>
-        <TimeString label="Min" string={timer.minutes} />
-        <Box margin="-2rem 0 0 0">
-          :
-        </Box>
+        {autoRemove && timer?.days <= 0 ? null : (
+          <>
+            <TimeString label={t('days')} string={timer?.days} />
+            <Box margin="-2rem 0 0 0">
+              :
+            </Box>
+          </>
+        )}
+        {autoRemove && timer?.hours <= 0 && timer?.days <= 0 ? null : (
+          <>
+            <TimeString label="Hrs" string={timer?.hours} />
+            <Box margin="-2rem 0 0 0">
+              :
+            </Box>
+          </>
+        )}
+        {autoRemove && timer?.minutes <= 0 && timer?.hours <= 0 && timer?.days <= 0 ? null : (
+          <>
+            <TimeString label="Min" string={timer.minutes} />
+            <Box margin="-2rem 0 0 0">
+              :
+            </Box>
+          </>
+        )}
         <TimeString label={t('short-seconds')} string={timer.seconds} />
       </Box>
     </Box>
@@ -83,10 +98,12 @@ const Timer = ({ startingAt, onFinish }) => {
 Timer.propTypes = {
   startingAt: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   onFinish: PropTypes.func,
+  autoRemove: PropTypes.bool,
 };
 Timer.defaultProps = {
   startingAt: null,
   onFinish: () => {},
+  autoRemove: false,
 };
 
 TimeString.propTypes = {
