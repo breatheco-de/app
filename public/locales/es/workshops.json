@@ -13,9 +13,12 @@
     "ready-to-join-description": "Este evento está sucediendo ahora mismo. Regístrese ahora para unirse al evento.",
     "ready-to-join-description-logged": "Este evento está sucediendo ahora mismo. Haga clic a continuación para unirse al evento.",
     "joined-title": "Este evento comenzará pronto",
-    "joined-description": "Ya te registraste para este evento. Podrás unirte una vez que comience."
+    "joined-description": "Ya te registraste para este evento. Podrás unirte una vez que comience.",
+    "finished-title": "Este evento ha finalizado",
+    "finished-description": "¡Sigue buscando nuevas experiencias de aprendizaje y mantén viva tu pasión por el conocimiento!"
   },
   "users-registered-count": "{{count}} personas ya se han registrado a este evento. Quedan disponibles {{spot_count}} cupos más.",
   "join-workshop": "Regístrarse al taller",
-  "join": "Unirse ahora"
+  "join": "Unirse ahora",
+  "event-finished": "Evento finalizado"
 }

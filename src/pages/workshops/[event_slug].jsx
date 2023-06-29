@@ -34,6 +34,7 @@ const Page = () => {
   const [showAll, setShowAll] = useState(false);
   const [applied, setApplied] = useState(false);
   const [readyToJoinEvent, setReadyToJoinEvent] = useState(false);
+  const [finishedEvent, setFinishedEvent] = useState(false);
   const accessToken = getStorageItem('accessToken');
 
   const router = useRouter();
@@ -118,6 +119,12 @@ const Page = () => {
   const alreadyApplied = users.some((l) => l?.attendee?.id === user?.id) || applied;
 
   const dynamicFormInfo = () => {
+    if (finishedEvent) {
+      return ({
+        title: t('form.finished-title'),
+        description: t('form.finished-description'),
+      });
+    }
     if (isAuth && !alreadyApplied) {
       return ({
         title: t('greetings', { name: user?.first_name }),
@@ -146,12 +153,15 @@ const Page = () => {
   const handleOnReadyToStart = () => {
     setReadyToJoinEvent(true);
   };
+  const handleOnFinished = () => {
+    setFinishedEvent(true);
+  };
 
   const spotsRemain = event?.capacity - allUsersJoined.length;
-
   const arrayOfImages = [
     '/static/images/person1.png',
   ];
+  const buttonEnabled = !finishedEvent && (readyToJoinEvent || !alreadyApplied);
 
   return (
     <>
@@ -206,6 +216,8 @@ const Page = () => {
               {event?.id && (
                 <ComponentOnTime
                   startingAt={event?.starting_at}
+                  endingAt={event?.ending_at}
+                  onEndedEvent={handleOnFinished}
                   finishedView={(
                     <Box display="flex" alignItems="center" fontWeight={700} color="danger" fontSize="12px" background="red.light" borderRadius="18px" padding="4px 10px" gridGap="10px">
                       <Icon withContainer className="pulse-red" icon="dot" color="currentColor" width="8px" height="8px" borderRadius="50px" />
@@ -338,56 +350,59 @@ const Page = () => {
                 type="submit"
                 variant="default"
                 textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
-                disabled={!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated))}
+                disabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                 _disabled={{
-                  background: (readyToJoinEvent || !alreadyApplied) ? '' : 'gray.350',
-                  cursor: (readyToJoinEvent || !alreadyApplied) ? 'pointer' : 'not-allowed',
+                  background: buttonEnabled ? '' : 'gray.350',
+                  cursor: buttonEnabled ? 'pointer' : 'not-allowed',
                 }}
                 _hover={{
-                  background: (readyToJoinEvent || !alreadyApplied) ? '' : 'gray.350',
-                  cursor: (readyToJoinEvent || !alreadyApplied) ? 'pointer' : 'not-allowed',
+                  background: buttonEnabled ? '' : 'gray.350',
+                  cursor: buttonEnabled ? 'pointer' : 'not-allowed',
                 }}
                 _active={{
-                  background: (readyToJoinEvent || !alreadyApplied) ? '' : 'gray.350',
-                  cursor: (readyToJoinEvent || !alreadyApplied) ? 'pointer' : 'not-allowed',
+                  background: buttonEnabled ? '' : 'gray.350',
+                  cursor: buttonEnabled ? 'pointer' : 'not-allowed',
                 }}
                 onClick={() => {
-                  if ((readyToJoinEvent && alreadyApplied) || readyToJoinEvent) {
-                    router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
-                  }
-                  if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
-                    bc.events().applyEvent(event?.id)
-                      .then((resp) => {
-                        if (resp !== undefined) {
-                          setApplied(true);
-                          toast({
-                            position: 'top',
-                            status: 'success',
-                            title: t('alert-message:success-event-reservation'),
-                            isClosable: true,
-                            duration: 6000,
-                          });
-                        } else {
-                          toast({
-                            position: 'top',
-                            status: 'info',
-                            title: t('alert-message:event-access-error'),
-                            isClosable: true,
-                            duration: 6000,
-                          });
-                          setStorageItem('redirect-after-register', router?.asPath);
-                          router.push({
-                            pathname: '/checkout',
-                            query: {
-                              plan: '4geeks-standard',
-                            },
-                          });
-                        }
-                      });
+                  if (!finishedEvent) {
+                    if ((readyToJoinEvent && alreadyApplied) || readyToJoinEvent) {
+                      router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
+                    }
+                    if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
+                      bc.events().applyEvent(event?.id)
+                        .then((resp) => {
+                          if (resp !== undefined) {
+                            setApplied(true);
+                            toast({
+                              position: 'top',
+                              status: 'success',
+                              title: t('alert-message:success-event-reservation'),
+                              isClosable: true,
+                              duration: 6000,
+                            });
+                          } else {
+                            toast({
+                              position: 'top',
+                              status: 'info',
+                              title: t('alert-message:event-access-error'),
+                              isClosable: true,
+                              duration: 6000,
+                            });
+                            setStorageItem('redirect-after-register', router?.asPath);
+                            router.push({
+                              pathname: '/checkout',
+                              query: {
+                                plan: '4geeks-standard',
+                              },
+                            });
+                          }
+                        });
+                    }
                   }
                 }}
               >
-                {(alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text')}
+                {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
+                {finishedEvent && t('event-finished')}
               </Button>
             </ShowOnSignUp>
           )}
