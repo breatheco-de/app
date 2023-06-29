@@ -290,8 +290,6 @@ const AuthProvider = ({ children }) => {
     });
   };
 
-  console.log('modalState:::', modalState);
-
   return (
     <AuthContext.Provider
       value={{
