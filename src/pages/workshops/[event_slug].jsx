@@ -64,7 +64,7 @@ const Page = () => {
                 return {
                   ...l,
                   attendee: {
-                    id: (i * 99) + 1,
+                    id: 475335 + i,
                     first_name: 'Anonymous',
                     last_name: '',
                     profile: {
@@ -124,9 +124,21 @@ const Page = () => {
         description: t('suggest-join-event'),
       });
     }
+    if (isAuth && alreadyApplied) {
+      return ({
+        title: readyToJoinEvent ? t('form.ready-to-join-title') : t('form.joined-title'),
+        description: readyToJoinEvent ? t('form.ready-to-join-description-logged') : t('form.joined-description'),
+      });
+    }
+    if (!isAuth && readyToJoinEvent) {
+      return ({
+        title: t('form.ready-to-join-title'),
+        description: t('form.ready-to-join-description'),
+      });
+    }
     return ({
-      title: readyToJoinEvent ? t('form.ready-to-join-title') : t('form.title'),
-      description: readyToJoinEvent ? t('form.ready-to-join-description') : t('form.description'),
+      title: t('form.title'),
+      description: t('form.description'),
     });
   };
   const formInfo = dynamicFormInfo();
@@ -340,11 +352,10 @@ const Page = () => {
                   cursor: (readyToJoinEvent || !alreadyApplied) ? 'pointer' : 'not-allowed',
                 }}
                 onClick={() => {
-                  if (readyToJoinEvent && alreadyApplied) {
+                  if ((readyToJoinEvent && alreadyApplied) || readyToJoinEvent) {
                     router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
-                    // router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
                   }
-                  if (isAuthenticated && !alreadyApplied) {
+                  if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
                     bc.events().applyEvent(event?.id)
                       .then((resp) => {
                         if (resp !== undefined) {
@@ -376,7 +387,7 @@ const Page = () => {
                   }
                 }}
               >
-                {alreadyApplied ? t('join') : t('reserv-button-text')}
+                {(alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text')}
               </Button>
             </ShowOnSignUp>
           )}

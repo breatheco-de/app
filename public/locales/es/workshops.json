@@ -7,10 +7,13 @@
   "greetings": "Hola {{name}} 👋",
   "switch-user-connector": "¿No eres {{name}}?",
   "form": {
-    "title": "Únete al taller",
+    "title": "Únete a este evento",
     "description": "Inicia sesión para unirte a otros programadores en vivo resolviendo desafíos técnicos o profesionales.",
     "ready-to-join-title": "¡En vivo ahora!",
-    "ready-to-join-description": "Este taller se está desarrollando en este momento. Haz clic en el botón de abajo para unirte al evento."
+    "ready-to-join-description": "Este evento está sucediendo ahora mismo. Regístrese ahora para unirse al evento.",
+    "ready-to-join-description-logged": "Este evento está sucediendo ahora mismo. Haga clic a continuación para unirse al evento.",
+    "joined-title": "Este evento comenzará pronto",
+    "joined-description": "Ya te registraste para este evento. Podrás unirte una vez que comience."
   },
   "users-registered-count": "{{count}} personas ya se han registrado a este evento. Quedan disponibles {{spot_count}} cupos más.",
   "join-workshop": "Regístrarse al taller",
