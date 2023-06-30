@@ -195,6 +195,7 @@ const AuthProvider = ({ children }) => {
         if (responseData?.silent_code === SILENT_CODE.email_not_validated) {
           setModalState({
             ...payload,
+            ...responseData,
             state: true,
           });
         }
@@ -306,6 +307,9 @@ const AuthProvider = ({ children }) => {
       <ModalInfo
         headerStyles={{ textAlign: 'center' }}
         title={t('signup:alert-message.validate-email-title')}
+        footerStyle={{ flexDirection: 'row-reverse' }}
+        closeButtonVariant="outline"
+        closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
         childrenDescription={(
           <Text
             size="14px"
@@ -314,13 +318,32 @@ const AuthProvider = ({ children }) => {
           />
         )}
         isOpen={modalState.state}
-        disableHandler
-        disableCloseButton
+        buttonHandlerStyles={{ variant: 'default' }}
         actionHandler={() => {
-          // bc.auth().resendConfirmationEmail()
-          //   .then((resp) => {});
+          const inviteId = modalState?.data?.[0]?.id;
+          bc.auth().resendConfirmationEmail(inviteId)
+            .then((resp) => {
+              const data = resp?.data;
+              if (data === undefined) {
+                toast({
+                  position: 'top',
+                  status: 'info',
+                  title: t('signup:alert-message.email-already-sent'),
+                  isClosable: true,
+                  duration: 6000,
+                });
+              } else {
+                toast({
+                  position: 'top',
+                  status: 'success',
+                  title: t('signup:alert-message.email-sent-to', { email: data?.email }),
+                  isClosable: true,
+                  duration: 6000,
+                });
+              }
+            });
         }}
-        handlerText={t('common:resend')}
+        handlerText={t('signup:resend')}
         onClose={() => setModalState({
           ...modalState,
           state: false,
