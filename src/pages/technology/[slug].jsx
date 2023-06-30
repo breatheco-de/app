@@ -16,7 +16,7 @@ export const getStaticPaths = async ({ locales }) => {
       Academy: 4,
     },
   });
-  const data = await resp.json();
+  const data = resp?.status > 400 ? {} : await resp?.json();
 
   const paths = data?.results?.length > 0 ? data.results.flatMap((res) => locales.map((locale) => ({
     params: {
@@ -136,15 +136,14 @@ const LessonByTechnology = ({ data, technologyData }) => {
       </Box>
 
       <Flex flexDirection="column" gridGap="3rem">
-        {data.length > 0 && (
-          <Box display="flex" flexDirection="column" gridGap="18px">
-            <ProjectList
-              projects={data}
-              withoutImage
-              isDynamic
-            />
-          </Box>
-        )}
+        <Box display="flex" flexDirection="column" gridGap="18px">
+          <ProjectList
+            projects={data}
+            withoutImage
+            isDynamic
+            notFoundMessage={t('common:asset-not-found-in-current-language')}
+          />
+        </Box>
       </Flex>
     </Box>
   );

@@ -64,9 +64,9 @@ function App({ Component, pageProps }) {
       <Helmet
         {...pageProps.seo}
       />
-      <AuthProvider>
-        <ConnectionProvider>
-          <ChakraProvider resetCSS theme={CustomTheme}>
+      <ChakraProvider resetCSS theme={CustomTheme}>
+        <AuthProvider>
+          <ConnectionProvider>
             <Navbar />
             <InterceptionLoader />
 
@@ -77,9 +77,9 @@ function App({ Component, pageProps }) {
             </PrismicProvider>
 
             <Footer pageProps={pageProps} />
-          </ChakraProvider>
-        </ConnectionProvider>
-      </AuthProvider>
+          </ConnectionProvider>
+        </AuthProvider>
+      </ChakraProvider>
       <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
     </QueryClientProvider>
   );

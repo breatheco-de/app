@@ -125,13 +125,13 @@ const Page = () => {
         description: t('form.finished-description'),
       });
     }
-    if (isAuth && !alreadyApplied) {
+    if (isAuth && (!alreadyApplied && !readyToJoinEvent)) {
       return ({
         title: t('greetings', { name: user?.first_name }),
         description: t('suggest-join-event'),
       });
     }
-    if (isAuth && alreadyApplied) {
+    if (isAuth) {
       return ({
         title: readyToJoinEvent ? t('form.ready-to-join-title') : t('form.joined-title'),
         description: readyToJoinEvent ? t('form.ready-to-join-description-logged') : t('form.joined-description'),

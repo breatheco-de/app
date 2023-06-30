@@ -17,7 +17,7 @@ export const getStaticPaths = async ({ locales }) => {
       Academy: 4,
     },
   });
-  const data = await resp.json();
+  const data = resp?.status > 400 ? {} : await resp?.json();
 
   const paths = data?.results?.length > 0 ? data?.results?.flatMap((res) => locales.map((locale) => ({
     params: {

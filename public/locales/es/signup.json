@@ -84,7 +84,9 @@
     "message2": "Si conoces su contraseña, haga clic a continuación para iniciar sesión.",
     "click-here-to-login": "haga clic aquí para iniciar sesión ahora",
     "or-click-here": "o haga clic aquí en",
-    "message3": "olvidé la contraseña"
+    "message3": "olvidé la contraseña",
+    "validate-email-title": "Verifique su correo electrónico",
+    "validate-email-description": "Enviamos un correo electrónico de confirmación a: <strong>{{email}}</strong>, verifique su correo electrónico y haga clic en el enlace de confirmación."
   },
   "alert-message-validate-email": {
     "title": "Verificar correo electrónico",
