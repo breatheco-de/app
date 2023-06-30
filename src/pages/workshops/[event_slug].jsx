@@ -21,6 +21,7 @@ import useAuth from '../../common/hooks/useAuth';
 import Timer from '../../common/components/Timer';
 import ComponentOnTime from '../../common/components/ComponentOnTime';
 import MarkDownParser from '../../common/components/MarkDownParser';
+import MktEventCards from '../../common/components/MktEventCards';
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 
@@ -321,6 +322,7 @@ const Page = () => {
         >
           {event?.id && (
             <ShowOnSignUp
+              hideForm={finishedEvent}
               headContent={readyToJoinEvent ? (
                 <Box position="relative" zIndex={1} width="100%" height={177}>
                   <Image src={arrayOfImages[0]} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" />
@@ -443,6 +445,7 @@ const Page = () => {
           )}
         </Box>
       </GridContainer>
+      {finishedEvent && (<MktEventCards margin="2rem auto 0 auto" />)}
     </>
   );
 };

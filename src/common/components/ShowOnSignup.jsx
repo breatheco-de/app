@@ -14,7 +14,7 @@ import modifyEnv from '../../../modifyEnv';
 import { setStorageItem } from '../../utils';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 
-const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, children, ...rest }) => {
+const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, children, hideForm, ...rest }) => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
   const { backgroundColor, featuredColor } = useStyle();
@@ -49,6 +49,7 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
     });
 
     const data = await resp.json();
+    setStorageItem('subscriptionId', data?.id);
 
     // if (data?.access_token && data?.is_email_validated === false) {
     //   toast({
@@ -141,7 +142,7 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
           </>
         )}
 
-        {!isAuth && (
+        {!isAuth && !hideForm && (
           <Box>
             <Formik
               initialValues={{
@@ -250,6 +251,7 @@ ShowOnSignUp.propTypes = {
   description: PropTypes.string,
   readOnly: PropTypes.bool,
   children: PropTypes.node,
+  hideForm: PropTypes.bool,
 };
 
 ShowOnSignUp.defaultProps = {
@@ -259,6 +261,7 @@ ShowOnSignUp.defaultProps = {
   description: '',
   readOnly: false,
   children: null,
+  hideForm: false,
 };
 
 export default ShowOnSignUp;
