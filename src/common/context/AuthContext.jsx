@@ -1,15 +1,15 @@
-import React, { createContext, useEffect, useReducer } from 'react';
+import React, { createContext, useEffect, useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-// import useTranslation from 'next-translate/useTranslation';
+import useTranslation from 'next-translate/useTranslation';
 import { useToast } from '@chakra-ui/react';
 import bc from '../services/breathecode';
 import { isWindow, removeURLParameter } from '../../utils';
 import axiosInstance from '../../axios';
 import { usePersistent } from '../hooks/usePersistent';
 import modifyEnv from '../../../modifyEnv';
-// import ModalInfo from '../../js_modules/moduleMap/modalInfo';
-// import Text from '../components/Text';
+import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import Text from '../components/Text';
 
 const initialState = {
   isLoading: true,
@@ -17,9 +17,9 @@ const initialState = {
   user: null,
 };
 
-// const SILENT_CODE = {
-//   email_not_validated: 'email-not-validated',
-// };
+const SILENT_CODE = {
+  email_not_validated: 'email-not-validated',
+};
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -115,13 +115,13 @@ export const AuthContext = createContext({
 
 const AuthProvider = ({ children }) => {
   const router = useRouter();
-  // const { t, lang } = useTranslation('footer');
+  const { t, lang } = useTranslation('footer');
   const toast = useToast();
   const [state, dispatch] = useReducer(reducer, initialState);
-  // const [modalState, setModalState] = useState({
-  //   state: false,
-  //   user: null,
-  // });
+  const [modalState, setModalState] = useState({
+    state: false,
+    user: null,
+  });
   const [profile, setProfile] = usePersistent('profile', {});
   // const [session, setSession] = usePersistent('session', {});
 
@@ -189,15 +189,15 @@ const AuthProvider = ({ children }) => {
     const redirect = isWindow && localStorage.getItem('redirect');
     try {
       if (payload) {
-        const response = await bc.auth().login2(payload);
+        const response = await bc.auth().login2(payload, lang);
         const responseData = await response.json();
 
-        // if (responseData?.silent_code === SILENT_CODE.email_not_validated) {
-        //   setModalState({
-        //     ...payload,
-        //     state: true,
-        //   });
-        // }
+        if (responseData?.silent_code === SILENT_CODE.email_not_validated) {
+          setModalState({
+            ...payload,
+            state: true,
+          });
+        }
         if (responseData?.silent !== true && responseData?.non_field_errors?.length > 0) {
           for (let i = 0; i < responseData.non_field_errors.length; i += 1) {
             const indexFromOne = i + 1;
@@ -303,7 +303,7 @@ const AuthProvider = ({ children }) => {
       }}
     >
       {children}
-      {/* <ModalInfo
+      <ModalInfo
         headerStyles={{ textAlign: 'center' }}
         title={t('signup:alert-message.validate-email-title')}
         childrenDescription={(
@@ -325,7 +325,7 @@ const AuthProvider = ({ children }) => {
           ...modalState,
           state: false,
         })}
-      /> */}
+      />
     </AuthContext.Provider>
   );
 };
