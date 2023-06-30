@@ -115,7 +115,7 @@ export const AuthContext = createContext({
 
 const AuthProvider = ({ children }) => {
   const router = useRouter();
-  const { t, lang } = useTranslation('footer');
+  const { t } = useTranslation('footer');
   const toast = useToast();
   const [state, dispatch] = useReducer(reducer, initialState);
   const [modalState, setModalState] = useState({
@@ -189,7 +189,7 @@ const AuthProvider = ({ children }) => {
     const redirect = isWindow && localStorage.getItem('redirect');
     try {
       if (payload) {
-        const response = await bc.auth().login2(payload, lang);
+        const response = await bc.auth().login(payload);
         const responseData = await response.json();
 
         if (responseData?.silent_code === SILENT_CODE.email_not_validated) {
