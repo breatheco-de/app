@@ -86,11 +86,14 @@
     "or-click-here": "or click here on",
     "message3": "forgot password to get a new one",
     "validate-email-title": "Verify your email",
-    "validate-email-description": "We sent a confirmation email to: <strong>{{email}}</strong>, please check your email and click on the confirmation link."
+    "validate-email-description": "We sent a confirmation email to: <strong>{{email}}</strong>, please check your email and click on the confirmation link.",
+    "email-sent-to": "We sent you a confirmation email to {{email}}!",
+    "email-already-sent": "You have a pending invitation sent less than 1 day ago, check your email"
   },
   "alert-message-validate-email": {
     "title": "Verify email",
     "description": "You haven't validated your email yet, log in into your email account and look for the invitation to",
     "description2": "Don't forget to check your email spam inbox as well!"
-  }
+  },
+  "resend": "Resend"
 }
