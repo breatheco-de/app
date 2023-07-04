@@ -114,7 +114,7 @@ const Checkout = () => {
         })
         .catch(() => {});
     }
-    if (queryPlanExists && tokenExists && !cohortsData.loading) {
+    if (!queryServiceExists && queryPlanExists && tokenExists && !cohortsData.loading) {
       setIsPreloading(true);
 
       bc.payment().getPlan(planFormated)
