@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import { useToast } from '@chakra-ui/react';
+import { Avatar, Box, useToast } from '@chakra-ui/react';
 import bc from '../services/breathecode';
 import { isWindow, removeURLParameter } from '../../utils';
 import axiosInstance from '../../axios';
@@ -311,11 +311,14 @@ const AuthProvider = ({ children }) => {
         closeButtonVariant="outline"
         closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
         childrenDescription={(
-          <Text
-            size="14px"
-            textAlign="center"
-            dangerouslySetInnerHTML={{ __html: t('signup:alert-message.validate-email-description', { email: modalState?.email }) }}
-          />
+          <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+            <Avatar src="https://breathecode.herokuapp.com/static/img/avatar-1.png" border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+            <Text
+              size="14px"
+              textAlign="center"
+              dangerouslySetInnerHTML={{ __html: t('signup:alert-message.validate-email-description', { email: modalState?.email }) }}
+            />
+          </Box>
         )}
         isOpen={modalState.state}
         buttonHandlerStyles={{ variant: 'default' }}

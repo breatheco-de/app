@@ -352,6 +352,41 @@ function adjustNumberBeetwenMinMax({ number = 1, min = 1, max = 10 }) {
   return number;
 }
 
+function getDiscountedPrice({ numItems, maxItems, discountRatio, bundleSize, pricePerUnit }) {
+  if (numItems > maxItems) {
+      console.log('numItems cannot be greater than maxItems');
+  }
+
+  let totalDiscountRatio = 0;
+  let currentDiscountRatio = discountRatio;
+  const discountNerf = 0.1;
+  const maxDiscount = 0.2;
+
+  for (let i = 0; i < Math.floor(numItems / bundleSize); i += 1) {
+      totalDiscountRatio += currentDiscountRatio;
+      currentDiscountRatio -= currentDiscountRatio * discountNerf;
+  }
+
+  if (totalDiscountRatio > maxDiscount) {
+      totalDiscountRatio = maxDiscount;
+  }
+
+  const amount = pricePerUnit * numItems;
+  const discount = amount * totalDiscountRatio;
+
+  return {
+    price: amount,
+    priceDiscounted: amount - discount,
+  };
+}
+
+const formatPrice = (price = 0, hideDecimals = false) => {
+  if (price % 1 === 0) {
+    return hideDecimals ? `$${price.toFixed(0)}` : `$${price.toFixed(2)}`;
+  }
+  return `$${price.toFixed(2)}`;
+};
+
 const location = isWindow && window.location;
 
 const url = isWindow && new URL(window.location.href);
@@ -365,5 +400,5 @@ export {
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, capitalizeFirstLetter,
-  getAsset, adjustNumberBeetwenMinMax,
+  getAsset, adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice,
 };
