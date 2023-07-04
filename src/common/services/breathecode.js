@@ -239,6 +239,8 @@ const breathecode = {
       getCohortPlans: () => axios.get(`${url}/plan${qs}`),
       service: () => ({
         consumable: () => axios.get(`${url}/me/service/consumable${qs}`),
+        getAcademyService: (serviceSlug) => axios.get(`${url}/academy/academyservice/${serviceSlug}${qs}`),
+        payConsumable: (data) => axios.post(`${url}/consumable/checkout${qs}`, data),
       }),
       getEvent: (eventId) => axios.get(`${host}/events/academy/event/${eventId}${qs}`),
       events: () => axios.get(`${host}/events/me?online_event=true&${qs}`),

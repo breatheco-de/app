@@ -1,7 +1,7 @@
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION,
   SET_PAYMENT_INFO, SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS,
-  TOGGLE_IF_ENROLLED,
+  TOGGLE_IF_ENROLLED, SET_SERVICE_PROPS, SET_SELECTED_SERVICE,
 } from '../types';
 
 const initialState = {
@@ -103,7 +103,18 @@ const signupReducer = (state = initialState, action) => {
         selectedPlanCheckoutData: action.payload,
       };
     }
-
+    case SET_SERVICE_PROPS: {
+      return {
+        ...state,
+        serviceProps: action.payload,
+      };
+    }
+    case SET_SELECTED_SERVICE: {
+      return {
+        ...state,
+        selectedService: action.payload,
+      };
+    }
     case SET_PLAN_PROPS: {
       return {
         ...state,

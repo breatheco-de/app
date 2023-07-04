@@ -4,9 +4,9 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
-  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED, PREPARING_FOR_COHORT,
+  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED, PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE,
 } from '../types';
-import { getNextDateInMonths, getStorageItem, getTimeProps, toCapitalize, unSlugify } from '../../../utils';
+import { formatPrice, getDiscountedPrice, getNextDateInMonths, getStorageItem, getTimeProps, toCapitalize, unSlugify } from '../../../utils';
 import bc from '../../services/breathecode';
 import modifyEnv from '../../../../modifyEnv';
 import { usePersistent } from '../../hooks/usePersistent';
@@ -69,6 +69,10 @@ const useSignup = () => {
     payload,
     value,
   });
+  const setServiceProps = (payload) => dispatch({
+    type: SET_SERVICE_PROPS,
+    payload,
+  });
 
   const setPlanData = (payload) => dispatch({
     type: SET_PLAN_DATA,
@@ -95,6 +99,10 @@ const useSignup = () => {
   });
   const toggleIfEnrolled = (payload) => dispatch({
     type: TOGGLE_IF_ENROLLED,
+    payload,
+  });
+  const setSelectedService = (payload) => dispatch({
+    type: SET_SELECTED_SERVICE,
     payload,
   });
 
@@ -259,6 +267,41 @@ const useSignup = () => {
       });
   });
 
+  const handleServiceToConsume = (data) => {
+    const discountRatio = data?.discount_ratio;
+    const bundleSize = data?.bundle_size;
+    const pricePerUnit = data?.price_per_unit;
+    const maxItems = data?.max_items;
+    const maxNumItems = Math.floor(maxItems / bundleSize);
+    const allItems = [];
+
+    for (let num = 1; num <= maxNumItems; num += 1) {
+      const numItems = num * bundleSize;
+
+      if (numItems % bundleSize === 0) {
+        const discountedPrice = getDiscountedPrice({
+          numItems, maxItems, discountRatio, bundleSize, pricePerUnit,
+        });
+
+        allItems.push({
+          id: num,
+          title: `${numItems} Mentorship sessions`,
+          qty: numItems,
+          pricePerUnit: discountedPrice.priceDiscounted / numItems,
+          price: discountedPrice.price,
+          priceText: formatPrice(discountedPrice.priceDiscounted, true),
+          priceDiscounted: discountedPrice.priceDiscounted,
+          type: 'CONSUMABLE',
+        });
+      }
+    }
+
+    setServiceProps({
+      ...data,
+      list: allItems,
+    });
+  };
+
   const handleChecking = (cohortData) => new Promise((resolve, reject) => {
     if (cohortData?.id) {
       const { kickoffDate, weekDays, availableTime } = getTimeProps(cohortData);
@@ -364,6 +407,8 @@ const useSignup = () => {
     setPlanProps,
     setCohortPlans,
     getPaymentText,
+    handleServiceToConsume,
+    setSelectedService,
   };
 };
 

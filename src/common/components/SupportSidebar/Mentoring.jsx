@@ -17,7 +17,7 @@ import useAuth from '../../hooks/useAuth';
 import { usePersistent } from '../../hooks/usePersistent';
 
 const Mentoring = ({
-  width, programServices, flags,
+  width, programServices, subscriptionData, flags,
 }) => {
   const { t } = useTranslation('dashboard');
   const [savedChanges, setSavedChanges] = useState({});
@@ -137,6 +137,7 @@ const Mentoring = ({
             step2,
             dateFormated2,
             allMentorsAvailable,
+            subscriptionData,
           }}
         />
       ) : (
@@ -169,6 +170,7 @@ Mentoring.propTypes = {
   programServices: PropTypes.arrayOf(PropTypes.object).isRequired,
   width: PropTypes.string,
   flags: PropTypes.objectOf(PropTypes.any).isRequired,
+  subscriptionData: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 Mentoring.defaultProps = {

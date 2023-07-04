@@ -15,34 +15,48 @@ import AvatarUser from '../../../js_modules/cohortSidebar/avatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped } from '../Skeleton';
 
-const NoConsumablesCard = ({ t, setMentoryProps, disableBackButton = false, ...rest }) => (
-  <Box display="flex" flexDirection="column" alignItems="center" {...rest}>
-    <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
-      {t('mentorship.no-mentorship')}
-      <br />
-      <Link size="14px" variant="default" className="link" href={t('supportSideBar.learn-more-link')} target="_blank" rel="noopener noreferrer">
-        {t('supportSideBar.learn-more')}
-      </Link>
-    </Heading>
-    <Avatar
-      width="55px"
-      height="55px"
-      margin="16px 0"
-      style={{ userSelect: 'none' }}
-      src="/static/images/angry-avatar.png"
-    />
-    <Link display="flex" variant="buttonDefault" fontSize="14px" fontWeight={700} href="/checkout" alignItems="center" gridGap="10px">
-      {t('supportSideBar.get-more-mentorships')}
-      <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
-    </Link>
+const NoConsumablesCard = ({ t, setMentoryProps, subscriptionData, disableBackButton = false, ...rest }) => {
+  const academyService = subscriptionData?.mentorshipServiceSet?.academy_services;
 
-    {!disableBackButton && (
-      <Button variant="link" fontSize="14px" onClick={() => setMentoryProps({})} letterSpacing="0.05em">
-        {t('common:go-back')}
-      </Button>
-    )}
-  </Box>
-);
+  return (
+    <Box display="flex" flexDirection="column" alignItems="center" {...rest}>
+      <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
+        {t('mentorship.no-mentorship')}
+        <br />
+        <Link size="14px" variant="default" className="link" href={t('supportSideBar.learn-more-link')} target="_blank" rel="noopener noreferrer">
+          {t('supportSideBar.learn-more')}
+        </Link>
+      </Heading>
+      <Avatar
+        width="55px"
+        height="55px"
+        margin="16px 0"
+        style={{ userSelect: 'none' }}
+        src="/static/images/angry-avatar.png"
+      />
+      <Link
+        display="flex"
+        variant="buttonDefault"
+        fontSize="14px"
+        fontWeight={700}
+        href={academyService?.service?.slug
+          ? `/checkout?service=${academyService?.service?.slug}&academy=${academyService?.academy?.id}`
+          : '/checkout'}
+        alignItems="center"
+        gridGap="10px"
+      >
+        {t('supportSideBar.get-more-mentorships')}
+        <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
+      </Link>
+
+      {!disableBackButton && (
+        <Button variant="link" fontSize="14px" onClick={() => setMentoryProps({})} letterSpacing="0.05em">
+          {t('common:go-back')}
+        </Button>
+      )}
+    </Box>
+  );
+};
 
 const ProfilesSection = ({
   profiles,
@@ -76,7 +90,7 @@ const MentoringConsumables = ({
   mentoryProps, width, serviceMentoring, mentorshipService, setMentoryProps,
   programServices, dateFormated, servicesFiltered, searchProps,
   setSearchProps, setProgramMentors, savedChanges, setSavedChanges,
-  mentorsFiltered, dateFormated2, allMentorsAvailable,
+  mentorsFiltered, dateFormated2, allMentorsAvailable, subscriptionData,
 }) => {
   const { t } = useTranslation('dashboard');
 
@@ -202,7 +216,7 @@ const MentoringConsumables = ({
               </>
             )}
           </>
-        ) : <NoConsumablesCard t={t} setMentoryProps={setMentoryProps} disableBackButton />}
+        ) : <NoConsumablesCard t={t} subscriptionData={subscriptionData} setMentoryProps={setMentoryProps} disableBackButton />}
 
         {isNotProduction && open && mentoryProps?.service && !mentoryProps?.mentor && existConsumablesOnCurrentService && (
           <Box display="flex" alignItems="center" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0">
@@ -221,7 +235,7 @@ const MentoringConsumables = ({
           </Box>
         )}
         {mentoryProps?.service && open && !mentoryProps?.mentor && !existConsumablesOnCurrentService ? (
-          <NoConsumablesCard t={t} setMentoryProps={setMentoryProps} mt="30px" />
+          <NoConsumablesCard t={t} subscriptionData={subscriptionData} setMentoryProps={setMentoryProps} mt="30px" />
         ) : open && (
           <>
             {!mentoryProps?.time ? (
@@ -316,7 +330,7 @@ const MentoringConsumables = ({
                                   {`${mentor.user.first_name} ${mentor.user.last_name}`}
                                 </Box>
                                 <Box as="hr" borderColor={borderColor} my="5px" />
-                                <Box textTransform="capitalize">
+                                <Box>
                                   {(mentor.one_line_bio && mentor.one_line_bio !== '') ? `${mentor.one_line_bio} ` : ''}
                                   {mentor?.booking_url ? (
                                     <Link variant="default" href={mentor?.booking_url} target="_blank" rel="noopener noreferrer">
@@ -412,6 +426,7 @@ MentoringConsumables.propTypes = {
   // setServiceMentoring: PropTypes.func,
   mentorsFiltered: PropTypes.arrayOf(PropTypes.any).isRequired,
   dateFormated2: PropTypes.objectOf(PropTypes.any).isRequired,
+  subscriptionData: PropTypes.objectOf(PropTypes.any),
 };
 
 MentoringConsumables.defaultProps = {
@@ -421,6 +436,7 @@ MentoringConsumables.defaultProps = {
   mentorshipService: {},
   programServices: [],
   setProgramMentors: () => {},
+  subscriptionData: {},
   // setServiceMentoring: () => {},
 };
 

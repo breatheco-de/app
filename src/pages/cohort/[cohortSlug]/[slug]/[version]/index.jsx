@@ -80,8 +80,6 @@ const Dashboard = () => {
     getMandatoryProjects, getTasksWithoutCohort, taskTodo, taskTodoState,
   } = useHandler();
 
-  const teacherAndAssistants = studentAndTeachers.filter((st) => st.role === 'TEACHER' || st.role === 'ASSISTANT');
-
   const { cohortSlug, slug } = router.query;
 
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -112,8 +110,6 @@ const Dashboard = () => {
   const accessToken = getStorageItem('accessToken');
   const showGithubWarning = getStorageItem('showGithubWarning');
   const TwelveHours = 720;
-
-  const supportSideBar = t('supportSideBar', {}, { returnObjects: true });
 
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
 
@@ -207,9 +203,9 @@ const Dashboard = () => {
       status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
     }).subscriptions()
       .then(async ({ data }) => {
-        const currentPlan = data?.plan_financings?.find((s) => s?.selected_cohort?.slug === cohortSlug);
+        const currentPlanFinancing = data?.plan_financings?.find((s) => s?.selected_cohort?.slug === cohortSlug);
         const currentSubscription = data?.subscriptions?.find((s) => s?.selected_cohort?.slug === cohortSlug);
-        const planData = currentPlan || currentSubscription;
+        const planData = currentPlanFinancing || currentSubscription;
         const planSlug = planData?.plans?.[0]?.slug;
         const planOffer = await bc.payment({
           original_plan: planSlug,
@@ -219,6 +215,7 @@ const Dashboard = () => {
 
         const finalData = {
           ...planData,
+          mentorshipServiceSet: planData?.selected_mentorship_service_set,
           planOfferExists: currentPlanOffer !== undefined,
         };
 
@@ -504,13 +501,7 @@ const Dashboard = () => {
                 />
                 )}
                 {cohortSession?.cohort_role?.toLowerCase() === 'student' && flags?.appReleaseEnableMentorshipsWidget && (
-                  <SupportSidebar
-                    title={supportSideBar.title}
-                    subtitle={supportSideBar.description}
-                    teacherAndAssistants={teacherAndAssistants}
-                    actionButtons={supportSideBar.actionButtons}
-                    width="100%"
-                  />
+                  <SupportSidebar subscriptionData={subscriptionData} />
                 )}
               </Box>
             )}
@@ -733,13 +724,7 @@ const Dashboard = () => {
               />
               )}
               {cohortSession?.cohort_role?.toLowerCase() === 'student' && flags?.appReleaseEnableMentorshipsWidget && (
-                <SupportSidebar
-                  title={supportSideBar.title}
-                  subtitle={supportSideBar.description}
-                  teacherAndAssistants={teacherAndAssistants}
-                  actionButtons={supportSideBar.actionButtons}
-                  width="100%"
-                />
+                <SupportSidebar subscriptionData={subscriptionData} />
               )}
             </Box>
           )}
