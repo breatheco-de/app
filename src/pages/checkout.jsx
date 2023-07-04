@@ -22,6 +22,7 @@ import LoaderScreen from '../common/components/LoaderScreen';
 import ModalInfo from '../js_modules/moduleMap/modalInfo';
 import useStyle from '../common/hooks/useStyle';
 import Stepper from '../js_modules/checkout/Stepper';
+import ServiceSummary from '../js_modules/checkout/ServiceSummary';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -62,19 +63,22 @@ const Checkout = () => {
   });
   const [isPreselectedCohort, setIsPreselectedCohort] = useState(false);
   const [isPreloading, setIsPreloading] = useState(false);
+  const [serviceToRequest, setServiceToRequest] = useState({});
   const {
     state, toggleIfEnrolled, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
-    isFirstStep, isSecondStep, isThirdStep, isFourthStep,
+    handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep,
   } = useSignup();
-  const { stepIndex, dateProps, checkoutData, alreadyEnrolled } = state;
+  const { stepIndex, dateProps, checkoutData, alreadyEnrolled, serviceProps } = state;
   const { backgroundColor3 } = useStyle();
 
   const cohorts = cohortsData?.cohorts;
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
-  const { user, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const toast = useToast();
   const plan = getQueryString('plan');
+  const service = getQueryString('service');
+  const academy = getQueryString('academy');
   const planFormated = plan && encodeURIComponent(plan);
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
@@ -93,9 +97,23 @@ const Checkout = () => {
   });
 
   const queryPlanExists = planFormated && planFormated?.length > 0;
+  const queryServiceExists = service && service?.length > 0;
   const filteredCohorts = Array.isArray(cohorts) && cohorts.filter((item) => item?.never_ends === false);
 
   useEffect(() => {
+    if (queryServiceExists && academy && tokenExists && isAuthenticated) {
+      bc.payment({
+        academy: Number(academy),
+      }).service().getAcademyService(service)
+        .then((resp) => {
+          if (resp !== undefined) {
+            handleStep(2);
+            handleServiceToConsume(resp?.data);
+            setServiceToRequest(resp?.data);
+          }
+        })
+        .catch(() => {});
+    }
     if (queryPlanExists && tokenExists && !cohortsData.loading) {
       setIsPreloading(true);
 
@@ -164,7 +182,7 @@ const Checkout = () => {
         setIsPreloading(false);
       }, 2600);
     }
-  }, [cohortsData.loading, accessToken]);
+  }, [cohortsData.loading, accessToken, isAuthenticated]);
 
   useEffect(() => {
     if (user?.id && !isLoading) {
@@ -220,15 +238,17 @@ const Checkout = () => {
         }}
       />
       {/* Stepper */}
-      <Stepper
-        stepIndex={stepIndex}
-        checkoutData={checkoutData}
-        isFirstStep={isFirstStep}
-        isSecondStep={isSecondStep}
-        isThirdStep={isThirdStep}
-        isFourthStep={isFourthStep}
-        handleGoBack={handleGoBack}
-      />
+      {!serviceToRequest?.id && (
+        <Stepper
+          stepIndex={stepIndex}
+          checkoutData={checkoutData}
+          isFirstStep={isFirstStep}
+          isSecondStep={isSecondStep}
+          isThirdStep={isThirdStep}
+          isFourthStep={isFourthStep}
+          handleGoBack={handleGoBack}
+        />
+      )}
 
       <Box
         display="flex"
@@ -236,7 +256,7 @@ const Checkout = () => {
         gridGap={{ base: '20px', md: '20px' }}
         minHeight="320px"
         maxWidth={{ base: '100%', md: '900px' }}
-        margin={{ base: '1.5rem auto 0 auto', md: '3.5rem auto 0 auto' }}
+        margin={{ base: '1.5rem auto 0 auto', md: serviceToRequest?.id ? '3.5rem auto' : '3.5rem auto 0 auto' }}
         padding={{ base: '0px 20px', md: '0' }}
         // borderRadius={{ base: '22px', md: '0' }}
       >
@@ -251,14 +271,17 @@ const Checkout = () => {
         {/* Second step */}
         <ChooseYourClass setCohorts={setCohortsData} />
 
-        {isThirdStep && (
+        {isThirdStep && !serviceProps?.id && (
           <Summary />
+        )}
+        {isThirdStep && serviceProps?.id && (
+          <ServiceSummary service={serviceProps} />
         )}
         {/* Fourth step */}
         {isFourthStep && (
           <PaymentInfo />
         )}
-        {((stepIndex !== 0 && !isSecondStep) || (stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep)) && (
+        {!queryServiceExists && ((stepIndex !== 0 && !isSecondStep) || (stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep)) && (
           <>
             <Box as="hr" width="100%" margin="10px 0" />
             <Box display="flex" justifyContent="space-between" mt="auto">
