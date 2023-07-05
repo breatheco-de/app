@@ -74,7 +74,7 @@ const ServiceSummary = ({ service }) => {
   });
 
   const dataToAssign = {
-    service: service?.id,
+    service: service?.service?.slug,
     academy: service?.academy?.id,
     how_many: selectedService?.qty,
     mentorship_service_set: service.serviceInfo.type === 'mentorship' ? service.serviceInfo.id : undefined,
