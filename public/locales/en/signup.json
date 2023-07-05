@@ -106,6 +106,7 @@
     "you-have-received": "You have received",
     "events": "events",
     "sessions": "sesiones",
-    "back-to-dashboard": "Back to dashboard"
+    "back-to-dashboard": "Back to dashboard",
+    "confirm-purchase-connector": "You are about to buy:"
   }
 }
