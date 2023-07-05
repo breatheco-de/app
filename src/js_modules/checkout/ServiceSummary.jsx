@@ -475,7 +475,7 @@ const ServiceSummary = ({ service }) => {
               childrenDescription={(
                 <Box display="flex" flexDirection="column" gridGap="24px">
                   <Box margin="16px auto 0 auto" fontSize="18px" fontWeight={700}>
-                    You are about to buy:
+                    {t('consumables.confirm-purchase-connector')}
                   </Box>
 
                   <Box display="flex" justifyContent="space-between" gridGap="10px">
@@ -489,7 +489,7 @@ const ServiceSummary = ({ service }) => {
                         {t(`${service.serviceInfo.type}-bundle-title`)}
                       </Box>
                     </Box>
-                    <Box display="flex" flexDirection="column" gridGap="0px" fontWeight={700} lineHeight="32px" background={backgroundColor3} alignItems="center" padding="10px 15px">
+                    <Box display="flex" flexDirection="column" borderRadius="11px" gridGap="0px" fontWeight={700} lineHeight="32px" background={backgroundColor3} alignItems="center" padding="10px 15px">
                       <Box fontSize="38px">{selectedService?.qty}</Box>
                       <Box fontSize="28px">
                         {service.serviceInfo.type === 'mentorship' ? 'sessions' : 'events'}
