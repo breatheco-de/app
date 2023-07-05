@@ -141,6 +141,7 @@ const useSignup = () => {
           if (redirectAfterRegister && redirectAfterRegister?.length > 0) {
             router.push(redirectAfterRegister);
             localStorage.removeItem('redirect');
+            localStorage.removeItem('redirect-after-register');
           } else {
             router.push('/choose-program');
           }

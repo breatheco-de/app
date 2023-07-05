@@ -78,7 +78,6 @@ const Checkout = () => {
   const toast = useToast();
   const plan = getQueryString('plan');
   const service = getQueryString('service');
-  const academy = getQueryString('academy');
   const planFormated = plan && encodeURIComponent(plan);
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
@@ -101,18 +100,53 @@ const Checkout = () => {
   const filteredCohorts = Array.isArray(cohorts) && cohorts.filter((item) => item?.never_ends === false);
 
   useEffect(() => {
-    if (queryServiceExists && academy && tokenExists && isAuthenticated) {
+    if (queryServiceExists && !queryPlanExists && tokenExists && isAuthenticated) {
+      setIsPreloading(true);
       bc.payment({
-        academy: Number(academy),
-      }).service().getAcademyService(service)
-        .then((resp) => {
-          if (resp !== undefined) {
-            handleStep(2);
-            handleServiceToConsume(resp?.data);
-            setServiceToRequest(resp?.data);
+        status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+      }).subscriptions()
+        .then(({ data }) => {
+          const subscriptionRespData = data;
+          const items = {
+            subscriptions: subscriptionRespData?.subscriptions,
+            plan_financings: subscriptionRespData?.plan_financings,
+          };
+          const subscription = items?.subscriptions?.find(
+            (item) => item?.selected_mentorship_service_set?.slug === service,
+          );
+          const planFinanncing = items?.plan_financings?.find(
+            (item) => item?.selected_mentorship_service_set?.slug === service,
+          );
+
+          const currentSubscription = subscription || planFinanncing;
+          const isMentorshipType = currentSubscription?.selected_mentorship_service_set?.slug === service;
+          const serviceData = isMentorshipType
+            ? currentSubscription?.selected_mentorship_service_set
+            : currentSubscription?.selected_event_type_set;
+
+          if (serviceData) {
+            bc.payment({
+              academy: Number(serviceData?.academy?.id),
+            }).service().getAcademyService(service)
+              .then((resp) => {
+                if (resp !== undefined) {
+                  handleStep(2);
+                  handleServiceToConsume({
+                    ...resp?.data,
+                    serviceInfo: {
+                      type: isMentorshipType ? 'mentorship' : 'event',
+                      ...serviceData,
+                    },
+                  });
+                  setServiceToRequest(resp?.data);
+                }
+              })
+              .catch(() => {});
           }
-        })
-        .catch(() => {});
+        });
+      setTimeout(() => {
+        setIsPreloading(false);
+      }, 2600);
     }
     if (!queryServiceExists && queryPlanExists && tokenExists && !cohortsData.loading) {
       setIsPreloading(true);

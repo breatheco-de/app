@@ -96,5 +96,16 @@
     "description": "Aún no ha validado su correo electrónico, inicie sesión en su cuenta de correo electrónico y busque la invitación de",
     "description2": "¡No olvides revisar también la bandeja de entrada de spam de tu correo electrónico!"
   },
-  "resend": "Reenviar"
+  "resend": "Reenviar",
+  "mentorship-bundle-title": "Paquete de sesiones de tutoría",
+  "event-bundle-title": "Paquete de acceso a eventos",
+  "consumables": {
+    "select-bundle": "Seleccione un paquete:",
+    "change-my-selection": "Cambiar mi selección",
+    "purchase-completed-title": "Ha completado con éxito la compra",
+    "you-have-received": "Has recibido",
+    "events": "eventos",
+    "sessions": "sesiones",
+    "back-to-dashboard": "Volver al dashboard"
+  }
 }

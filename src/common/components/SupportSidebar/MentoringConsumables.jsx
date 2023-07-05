@@ -40,7 +40,7 @@ const NoConsumablesCard = ({ t, setMentoryProps, subscriptionData, disableBackBu
         fontSize="14px"
         fontWeight={700}
         href={academyService?.service?.slug
-          ? `/checkout?service=${academyService?.service?.slug}&academy=${academyService?.academy?.id}`
+          ? `/checkout?service=${academyService?.service?.slug}`
           : '/checkout'}
         alignItems="center"
         gridGap="10px"

@@ -96,5 +96,16 @@
     "description": "You haven't validated your email yet, log in into your email account and look for the invitation to",
     "description2": "Don't forget to check your email spam inbox as well!"
   },
-  "resend": "Resend"
+  "resend": "Resend",
+  "mentorship-bundle-title": "Mentorship sessions bundle",
+  "event-bundle-title": "Event bundle",
+  "consumables": {
+    "select-bundle": "Select your bundle:",
+    "change-my-selection": "Change my selection",
+    "purchase-completed-title": "You have successfully completed the purchase",
+    "you-have-received": "You have received",
+    "events": "events",
+    "sessions": "sesiones",
+    "back-to-dashboard": "Back to dashboard"
+  }
 }
