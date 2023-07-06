@@ -7,22 +7,22 @@ import Icon from './Icon';
 import Heading from './Heading';
 import TagCapsule from './TagCapsule';
 import Text from './Text';
-import { getStorageItem, isValidDate, syncInterval } from '../../utils';
+import { isValidDate, syncInterval } from '../../utils';
 import useStyle from '../hooks/useStyle';
-import { parseQuerys } from '../../utils/url';
-import modifyEnv from '../../../modifyEnv';
+// import { parseQuerys } from '../../utils/url';
+// import modifyEnv from '../../../modifyEnv';
 
-const EventCard = ({ id, title, description, host, startingAt, endingAt, technologies, stTranslation, ...rest }) => {
+const EventCard = ({ id, slug, title, description, host, startingAt, endingAt, technologies, stTranslation, ...rest }) => {
   const { t, lang } = useTranslation('live-event');
   const [date, setDate] = useState('');
   const { lightColor, disabledColor2 } = useStyle();
   const startedButRemain = date?.started && date?.ended === false;
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-  const accessToken = getStorageItem('accessToken');
+  // const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  // const accessToken = getStorageItem('accessToken');
 
-  const linkQuery = parseQuerys({
-    token: accessToken || undefined,
-  });
+  // const linkQuery = parseQuerys({
+  //   token: accessToken || undefined,
+  // });
 
   const startingSoonDelta = 30;
 
@@ -169,7 +169,8 @@ const EventCard = ({ id, title, description, host, startingAt, endingAt, technol
       {startedButRemain ? (
         <Link
           margin="auto 0 0 0"
-          href={`${BREATHECODE_HOST}/v1/events/me/event/${id}/join${linkQuery}`}
+          // href={`${BREATHECODE_HOST}/v1/events/me/event/${id}/join${linkQuery}`}
+          href={`/${lang}/workshops/${slug}`}
           color="blue.default"
           target="_blank"
           rel="noopener noreferrer"
@@ -199,6 +200,7 @@ EventCard.propTypes = {
   host: PropTypes.oneOfType([PropTypes.string, PropTypes.objectOf(PropTypes.any)]),
   stTranslation: PropTypes.objectOf(PropTypes.any),
   id: PropTypes.number.isRequired,
+  slug: PropTypes.string.isRequired,
 };
 
 EventCard.defaultProps = {

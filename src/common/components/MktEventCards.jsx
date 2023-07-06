@@ -50,6 +50,7 @@ const MktEventCards = ({ id, title, endpoint, ...rest }) => {
             <EventCard
               key={event?.id}
               id={event?.id}
+              slug={event?.slug}
               title={event?.title}
               host={event?.host}
               description={event?.description}
