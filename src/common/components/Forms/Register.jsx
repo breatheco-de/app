@@ -81,6 +81,7 @@ function Register() {
             }),
           });
           const data = await resp.json();
+          setStorageItem('subscriptionId', data?.id);
 
           // if (data?.access_token && data?.is_email_validated === false) {
           //   toast({

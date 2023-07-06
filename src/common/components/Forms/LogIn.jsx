@@ -36,12 +36,11 @@ function LogIn() {
       onSubmit={(values, actions) => {
         login(values)
           .then((data) => {
+            actions.setSubmitting(false);
             if (data.status === 200) {
-              actions.setSubmitting(false);
               toast({
                 position: 'top',
                 title: t('alert-message:welcome'),
-                // description: t('alert-message:select-program'),
                 status: 'success',
                 duration: 9000,
                 isClosable: true,

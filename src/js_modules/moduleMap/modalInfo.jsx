@@ -19,6 +19,7 @@ const ModalInfo = ({
   handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
   htmlDescription, markdownDescription, attachment, disableInput, descriptionStyle, footerStyle,
   closeButtonStyles, buttonHandlerStyles, headerStyles, disableCloseButton, childrenDescription,
+  maxWidth,
 }) => {
   const { t } = useTranslation('dashboard');
   const [githubUrl, setGithubUrl] = useState(link);
@@ -57,7 +58,8 @@ const ModalInfo = ({
     <>
       <Modal closeOnOverlayClick={!forceHandler} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent>
+        {/* md */}
+        <ModalContent maxWidth={maxWidth || 'md'} borderRadius="17px">
           <ModalHeader
             borderBottom={1}
             borderStyle="solid"
@@ -373,6 +375,7 @@ ModalInfo.propTypes = {
   headerStyles: PropTypes.objectOf(PropTypes.any),
   disableCloseButton: PropTypes.bool,
   childrenDescription: PropTypes.node,
+  maxWidth: PropTypes.string,
 };
 
 ModalInfo.defaultProps = {
@@ -407,6 +410,7 @@ ModalInfo.defaultProps = {
   headerStyles: {},
   disableCloseButton: false,
   childrenDescription: null,
+  maxWidth: 'md',
 };
 
 export default memo(ModalInfo);

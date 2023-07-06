@@ -40,6 +40,7 @@
   "email": "Email",
   "address": "Where do you live?",
   "signing-for": "You are signing up for",
+  "getting-for": "You are getting for",
   "already-have-account": "Already have an account?",
   "login-here": "Login here.",
   "start-free-course": "Start free course",
@@ -84,11 +85,28 @@
     "message2": "If you know your password, click below to login.",
     "click-here-to-login": "click here to login now",
     "or-click-here": "or click here on",
-    "message3": "forgot password to get a new one"
+    "message3": "forgot password to get a new one",
+    "validate-email-title": "Verify your email",
+    "validate-email-description": "We sent a confirmation email to: <strong>{{email}}</strong>, please check your email and click on the confirmation link.",
+    "email-sent-to": "We sent you a confirmation email to {{email}}!",
+    "email-already-sent": "You have a pending invitation sent less than 1 day ago, check your email"
   },
   "alert-message-validate-email": {
     "title": "Verify email",
     "description": "You haven't validated your email yet, log in into your email account and look for the invitation to",
     "description2": "Don't forget to check your email spam inbox as well!"
+  },
+  "resend": "Resend",
+  "mentorship-bundle-title": "Mentorship sessions bundle",
+  "event-bundle-title": "Event bundle",
+  "consumables": {
+    "select-bundle": "Select your bundle:",
+    "change-my-selection": "Change my selection",
+    "purchase-completed-title": "You have successfully completed the purchase",
+    "you-have-received": "You have received",
+    "events": "events",
+    "sessions": "sesiones",
+    "back-to-dashboard": "Back to dashboard",
+    "confirm-purchase-connector": "You are about to buy:"
   }
 }

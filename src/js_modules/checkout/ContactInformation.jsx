@@ -69,6 +69,7 @@ const ContactInformation = ({
       body: JSON.stringify(allValues),
     });
     const data = await resp.json();
+    setStorageItem('subscriptionId', data?.id);
 
     const respPlan = await bc.payment().getPlan(planFormated);
     const dataOfPlan = respPlan?.data;

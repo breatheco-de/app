@@ -17,7 +17,7 @@ import useAuth from '../../hooks/useAuth';
 import { usePersistent } from '../../hooks/usePersistent';
 
 const Mentoring = ({
-  width, programServices, flags,
+  width, programServices, subscriptionData, flags,
 }) => {
   const { t } = useTranslation('dashboard');
   const [savedChanges, setSavedChanges] = useState({});
@@ -38,6 +38,10 @@ const Mentoring = ({
   const servicesFiltered = programServices.filter(
     (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
   );
+  const suscriptionServicesFiltered = subscriptionData?.mentorshipServiceSet.length > 0
+    ? subscriptionData?.mentorshipServiceSet?.filter(
+      (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
+    ) : [];
 
   const mentorsFiltered = programMentors.filter(
     (mentor) => {
@@ -125,7 +129,7 @@ const Mentoring = ({
             setMentoryProps,
             programServices,
             dateFormated,
-            servicesFiltered,
+            servicesFiltered: suscriptionServicesFiltered,
             searchProps,
             setSearchProps,
             setProgramMentors,
@@ -137,6 +141,7 @@ const Mentoring = ({
             step2,
             dateFormated2,
             allMentorsAvailable,
+            subscriptionData,
           }}
         />
       ) : (
@@ -169,6 +174,7 @@ Mentoring.propTypes = {
   programServices: PropTypes.arrayOf(PropTypes.object).isRequired,
   width: PropTypes.string,
   flags: PropTypes.objectOf(PropTypes.any).isRequired,
+  subscriptionData: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 Mentoring.defaultProps = {
