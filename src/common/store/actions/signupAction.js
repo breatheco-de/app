@@ -280,18 +280,18 @@ const useSignup = () => {
       const numItems = num * bundleSize;
 
       if (numItems % bundleSize === 0) {
-        const discountedPrice = getDiscountedPrice({
-          numItems, maxItems, discountRatio, bundleSize, pricePerUnit,
+        const price = getDiscountedPrice({
+          numItems, maxItems, discountRatio, bundleSize, pricePerUnit, startDiscountFrom: 1,
         });
 
         allItems.push({
           id: num,
           title: `${numItems} Mentorship sessions`,
           qty: numItems,
-          pricePerUnit: discountedPrice.priceDiscounted / numItems,
-          price: discountedPrice.price,
-          priceText: formatPrice(discountedPrice.priceDiscounted, true),
-          priceDiscounted: discountedPrice.priceDiscounted,
+          pricePerUnit: price.discounted / numItems,
+          price: price.original,
+          priceText: formatPrice(price.discounted, true),
+          priceDiscounted: price.discounted,
           type: 'CONSUMABLE',
         });
       }

@@ -12,7 +12,6 @@ const saveForm = async (formData = null, tags = [], automations = []) => {
   if (!Array.isArray(tags)) throw Error('Tags must be an array');
   if (typeof (formData) !== 'object') throw Error('Missing formData');
 
-  console.log('formData', formData);
   const resp = await fetch(`${BREATHECODE_HOST}/v1/marketing/lead`, {
     headers: new Headers({ 'content-type': 'application/json' }),
     method: 'POST',

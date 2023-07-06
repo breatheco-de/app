@@ -262,21 +262,23 @@ const ServiceSummary = ({ service }) => {
                             >
                               {item?.priceText}
                             </Heading>
-                            <Heading
-                              as="span"
-                              position="absolute"
-                              bottom="-18px"
-                              right="0px"
-                              size="16px"
-                              lineHeight="1"
-                              color="#999"
-                              textDecorationLine="line-through"
-                              // text-decoration-line
-                              width="auto"
-                              textAlign="end"
-                            >
-                              {`${formatPrice(item?.price, true)}`}
-                            </Heading>
+                            {item?.price !== item?.priceDiscounted && (
+                              <Heading
+                                as="span"
+                                position="absolute"
+                                bottom="-18px"
+                                right="0px"
+                                size="16px"
+                                lineHeight="1"
+                                color="#999"
+                                textDecorationLine="line-through"
+                                // text-decoration-line
+                                width="auto"
+                                textAlign="end"
+                              >
+                                {`${formatPrice(item?.price, true)}`}
+                              </Heading>
+                            )}
                           </Box>
                         </Box>
                       );
@@ -321,21 +323,22 @@ const ServiceSummary = ({ service }) => {
                           >
                             {selectedService?.priceText}
                           </Heading>
-                          <Heading
-                            as="span"
-                            position="absolute"
-                            bottom="-18px"
-                            right="0px"
-                            size="16px"
-                            lineHeight="1"
-                            color="#999"
-                            textDecorationLine="line-through"
-                            // text-decoration-line
-                            width="auto"
-                            textAlign="end"
-                          >
-                            {`${formatPrice(selectedService?.price, true)}`}
-                          </Heading>
+                          {selectedService?.priceDiscounted !== selectedService?.price && (
+                            <Heading
+                              as="span"
+                              position="absolute"
+                              bottom="-18px"
+                              right="0px"
+                              size="16px"
+                              lineHeight="1"
+                              color="#999"
+                              textDecorationLine="line-through"
+                              width="auto"
+                              textAlign="end"
+                            >
+                              {`${formatPrice(selectedService?.price, true)}`}
+                            </Heading>
+                          )}
                         </Box>
                       </Box>
                     )}
