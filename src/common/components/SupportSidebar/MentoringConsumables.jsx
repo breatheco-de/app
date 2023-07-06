@@ -15,8 +15,10 @@ import AvatarUser from '../../../js_modules/cohortSidebar/avatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped } from '../Skeleton';
 
-const NoConsumablesCard = ({ t, setMentoryProps, subscriptionData, disableBackButton = false, ...rest }) => {
-  const academyService = subscriptionData?.mentorshipServiceSet?.academy_services;
+const NoConsumablesCard = ({ t, setMentoryProps, mentoryProps, subscriptionData, disableBackButton = false, ...rest }) => {
+  const academyService = mentoryProps?.service?.slug
+    ? mentoryProps?.service
+    : subscriptionData?.mentorshipServiceSet?.mentorship_services?.[0];
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" {...rest}>
@@ -39,8 +41,8 @@ const NoConsumablesCard = ({ t, setMentoryProps, subscriptionData, disableBackBu
         variant="buttonDefault"
         fontSize="14px"
         fontWeight={700}
-        href={academyService?.service?.slug
-          ? `/checkout?service=${academyService?.service?.slug}`
+        href={academyService?.slug
+          ? `/checkout?service=${academyService?.slug}`
           : '/checkout'}
         alignItems="center"
         gridGap="10px"
@@ -204,10 +206,12 @@ const MentoringConsumables = ({
                       )}
                     </>
                   )}
-                  <Text color="gray.600" size="12px" margin="8px 0 0 0">
-                    {t('supportSideBar.mentors-available', { count: 3 })}
-                    {/* {t('supportSideBar.mentors-available', { count: allMentorsAvailable.length })} */}
-                  </Text>
+                  {existsConsumables && (
+                    <Text color="gray.600" size="12px" margin="8px 0 0 0">
+                      {t('supportSideBar.mentors-available', { count: 3 })}
+                      {/* {t('supportSideBar.mentors-available', { count: allMentorsAvailable.length })} */}
+                    </Text>
+                  )}
                 </Box>
                 <Button variant="default" onClick={() => setOpen(true)}>
                   {t('supportSideBar.schedule-button')}
@@ -216,7 +220,7 @@ const MentoringConsumables = ({
               </>
             )}
           </>
-        ) : <NoConsumablesCard t={t} subscriptionData={subscriptionData} setMentoryProps={setMentoryProps} disableBackButton />}
+        ) : <NoConsumablesCard t={t} mentoryProps={mentoryProps} subscriptionData={subscriptionData} setMentoryProps={setMentoryProps} disableBackButton />}
 
         {isNotProduction && open && mentoryProps?.service && !mentoryProps?.mentor && existConsumablesOnCurrentService && (
           <Box display="flex" alignItems="center" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0">
@@ -235,7 +239,7 @@ const MentoringConsumables = ({
           </Box>
         )}
         {mentoryProps?.service && open && !mentoryProps?.mentor && !existConsumablesOnCurrentService ? (
-          <NoConsumablesCard t={t} subscriptionData={subscriptionData} setMentoryProps={setMentoryProps} mt="30px" />
+          <NoConsumablesCard t={t} mentoryProps={mentoryProps} subscriptionData={subscriptionData} setMentoryProps={setMentoryProps} mt="30px" />
         ) : open && (
           <>
             {!mentoryProps?.time ? (

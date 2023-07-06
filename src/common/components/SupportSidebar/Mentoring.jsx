@@ -38,6 +38,10 @@ const Mentoring = ({
   const servicesFiltered = programServices.filter(
     (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
   );
+  const suscriptionServicesFiltered = subscriptionData?.mentorshipServiceSet.length > 0
+    ? subscriptionData?.mentorshipServiceSet?.filter(
+      (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
+    ) : [];
 
   const mentorsFiltered = programMentors.filter(
     (mentor) => {
@@ -125,7 +129,7 @@ const Mentoring = ({
             setMentoryProps,
             programServices,
             dateFormated,
-            servicesFiltered,
+            servicesFiltered: suscriptionServicesFiltered,
             searchProps,
             setSearchProps,
             setProgramMentors,

@@ -112,14 +112,14 @@ const Checkout = () => {
             plan_financings: subscriptionRespData?.plan_financings,
           };
           const subscription = items?.subscriptions?.find(
-            (item) => item?.selected_mentorship_service_set?.slug === service,
+            (item) => item?.selected_mentorship_service_set?.mentorship_services?.some((l) => l?.slug === service),
           );
           const planFinanncing = items?.plan_financings?.find(
-            (item) => item?.selected_mentorship_service_set?.slug === service,
+            (item) => item?.selected_mentorship_service_set?.mentorship_services?.some((l) => l?.slug === service),
           );
 
           const currentSubscription = subscription || planFinanncing;
-          const isMentorshipType = currentSubscription?.selected_mentorship_service_set?.slug === service;
+          const isMentorshipType = currentSubscription?.selected_mentorship_service_set?.mentorship_services?.some((l) => l?.slug === service);
           const serviceData = isMentorshipType
             ? currentSubscription?.selected_mentorship_service_set
             : currentSubscription?.selected_event_type_set;

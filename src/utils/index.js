@@ -352,7 +352,7 @@ function adjustNumberBeetwenMinMax({ number = 1, min = 1, max = 10 }) {
   return number;
 }
 
-function getDiscountedPrice({ numItems, maxItems, discountRatio, bundleSize, pricePerUnit }) {
+function getDiscountedPrice({ numItems, maxItems, discountRatio, bundleSize, pricePerUnit, startDiscountFrom = 0 }) {
   if (numItems > maxItems) {
       console.log('numItems cannot be greater than maxItems');
   }
@@ -362,7 +362,7 @@ function getDiscountedPrice({ numItems, maxItems, discountRatio, bundleSize, pri
   const discountNerf = 0.1;
   const maxDiscount = 0.2;
 
-  for (let i = 0; i < Math.floor(numItems / bundleSize); i += 1) {
+  for (let i = startDiscountFrom; i < Math.floor(numItems / bundleSize); i += 1) {
       totalDiscountRatio += currentDiscountRatio;
       currentDiscountRatio -= currentDiscountRatio * discountNerf;
   }
@@ -375,8 +375,8 @@ function getDiscountedPrice({ numItems, maxItems, discountRatio, bundleSize, pri
   const discount = amount * totalDiscountRatio;
 
   return {
-    price: amount,
-    priceDiscounted: amount - discount,
+    original: amount,
+    discounted: amount - discount,
   };
 }
 
