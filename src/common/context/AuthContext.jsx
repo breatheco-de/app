@@ -200,7 +200,7 @@ const AuthProvider = ({ children }) => {
           });
         }
         if (responseData?.silent !== true && responseData?.non_field_errors?.length > 0) {
-          for (let i = 0; i < responseData.non_field_errors.length; i += 1) {
+          for (let i = 0; i < responseData.non_field_errors?.length; i += 1) {
             const indexFromOne = i + 1;
             toast({
               position: 'top',
