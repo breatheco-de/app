@@ -328,7 +328,7 @@ const Dashboard = () => {
 
   return (
     <>
-      {getMandatoryProjects().length > 0 && (
+      {getMandatoryProjects() && getMandatoryProjects().length > 0 && (
         <AlertMessage
           full
           type="warning"
@@ -390,7 +390,7 @@ const Dashboard = () => {
         <ModalInfo
           isOpen={modalIsOpen}
           onClose={() => setModalIsOpen(false)}
-          title={t('unsynced.title', { taskLength: taskCohortNull.length })}
+          title={t('unsynced.title', { taskLength: taskCohortNull && taskCohortNull.length })}
           description={t('unsynced.description')}
           handlerColorButton="blue"
           rejectHandler={() => removeUnsyncedTasks()}
@@ -602,20 +602,20 @@ const Dashboard = () => {
               display="flex"
               flexDirection="column"
             >
-              {sortedAssignments.length >= 1 ? (
+              {sortedAssignments && sortedAssignments.length >= 1 ? (
                 <>
                   {sortedAssignmentsSearched.map((assignment, i) => {
                     const {
                       label, description, filteredModules, exists_activities: existsActivities, modules, filteredModulesByPending,
                     } = assignment;
 
-                    const filteredModulesSearched = searchValue.length > 0
+                    const filteredModulesSearched = searchValue && searchValue.length > 0
                       ? filteredModules.filter(
                         (l) => includesToLowerCase(l.title, searchValue),
                       )
                       : filteredModules;
 
-                    const filteredModulesByPendingSearched = searchValue.length > 0
+                    const filteredModulesByPendingSearched = searchValue && searchValue.length > 0
                       ? filteredModulesByPending.filter(
                         (l) => includesToLowerCase(l.title, searchValue),
                       )
@@ -644,7 +644,7 @@ const Dashboard = () => {
                       />
                     );
                   })}
-                  {sortedAssignmentsSearched.length <= 0 && (
+                  {sortedAssignmentsSearched && sortedAssignmentsSearched.length <= 0 && (
                   <Text size="l">
                     {t('modules.search-not-found')}
                   </Text>
