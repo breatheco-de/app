@@ -242,7 +242,7 @@ const Dashboard = () => {
   // Students and Teachers data
   useEffect(() => {
     bc.cohort().getStudents(cohortSlug).then(({ data }) => {
-      if (data.length > 0) {
+      if (data && data.length > 0) {
         setSudentAndTeachers(data.sort(
           (a, b) => a.user.first_name.localeCompare(b.user.first_name),
         ));
@@ -312,10 +312,10 @@ const Dashboard = () => {
   }));
 
   const modulesExists = sortedAssignments.some(
-    (assignment) => assignment.filteredModules.length !== 0,
+    (assignment) => assignment.filteredModules && assignment.filteredModules.length !== 0,
   );
 
-  const sortedAssignmentsSearched = searchValue.length > 0 ? sortedAssignments.filter((l) => {
+  const sortedAssignmentsSearched = (searchValue && searchValue.length > 0) ? sortedAssignments.filter((l) => {
     const { filteredModules } = l;
     const filtered = filteredModules.filter((module) => {
       const { title } = module;
