@@ -77,7 +77,7 @@ MktEventCards.defaultProps = {
   id: '',
   title: 'Starting soon',
   endpoint: '',
-  hoursToLimit: 48,
+  hoursToLimit: 1440, // 60 days
 };
 
 export default MktEventCards;
