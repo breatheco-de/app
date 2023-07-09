@@ -4,9 +4,9 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import {
+  Avatar,
   Box, Button, Flex, useToast,
 } from '@chakra-ui/react';
-import Link from 'next/link';
 import { useState } from 'react';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
@@ -19,6 +19,8 @@ import useStyle from '../../common/hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
 import useSignup from '../../common/store/actions/signupAction';
 import ModalInfo from '../moduleMap/modalInfo';
+import Text from '../../common/components/Text';
+import SILENT_CODE from '../../utils/silent_codes';
 
 const ContactInformation = ({
   courseChoosed,
@@ -69,6 +71,9 @@ const ContactInformation = ({
       body: JSON.stringify(allValues),
     });
     const data = await resp.json();
+    if (data.silent_code === SILENT_CODE.USER_INVITE_EXISTS) {
+      setShowAlreadyMember(true);
+    }
     setStorageItem('subscriptionId', data?.id);
 
     const respPlan = await bc.payment().getPlan(planFormated);
@@ -118,9 +123,6 @@ const ContactInformation = ({
         duration: 6000,
         isClosable: true,
       });
-    }
-    if (resp.status === 400) {
-      setShowAlreadyMember(true);
     }
     actions.setSubmitting(false);
   };
@@ -252,14 +254,13 @@ const ContactInformation = ({
         onClose={() => setShowAlreadyMember(false)}
         title={t('signup:alert-message.title')}
         childrenDescription={(
-          <Box textAlign="center">
-            {t('signup:alert-message.message1')}
-            {' '}
-            <Link variant="default" href="/">4Geeks.com</Link>
-            .
-            <br />
-            {t('signup:alert-message.message2')}
-            .
+          <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+            <Avatar src="https://breathecode.herokuapp.com/static/img/avatar-7.png" border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+            <Text
+              size="14px"
+              textAlign="center"
+              dangerouslySetInnerHTML={{ __html: t('signup:alert-message.description') }}
+            />
           </Box>
         )}
         disableCloseButton

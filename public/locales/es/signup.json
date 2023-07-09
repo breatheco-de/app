@@ -80,9 +80,8 @@
   },
   "no-date-available": "Actualmente no tenemos fechas disponibles para la ubicación ingresada",
   "alert-message": {
-    "title": "¿Ya tienes una cuenta?",
-    "message1": "Parece que ya tiene una cuenta en",
-    "message2": "Si conoces su contraseña, haga clic a continuación para iniciar sesión.",
+    "title": "¿Ya eres usuario?",
+    "description": "Parece que ya tiene una cuenta en 4geeks.com",
     "click-here-to-login": "haga clic aquí para iniciar sesión ahora",
     "or-click-here": "o haga clic aquí en",
     "message3": "olvidé la contraseña",
