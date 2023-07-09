@@ -9,11 +9,11 @@ import EventCard from './EventCard';
 import { sortToNearestTodayDate } from '../../utils';
 import modifyEnv from '../../../modifyEnv';
 
-const MktEventCards = ({ id, title, endpoint, ...rest }) => {
+const MktEventCards = ({ id, title, hoursToLimit, endpoint, ...rest }) => {
   const [events, setEvents] = useState([]);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
-  const FourtyEightHours = 2880;
+  const hoursLimited = hoursToLimit * 60;
   const endpointDefault = endpoint || '/v1/events/all';
 
   useEffect(() => {
@@ -21,7 +21,7 @@ const MktEventCards = ({ id, title, endpoint, ...rest }) => {
       .then((res) => {
         const data = res?.data;
         if (data && data.length > 0) {
-          const sortDateToLiveClass = sortToNearestTodayDate(data, FourtyEightHours);
+          const sortDateToLiveClass = sortToNearestTodayDate(data, hoursLimited);
           const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && l?.ending_at);
           setEvents(existentLiveClasses);
         }
@@ -46,13 +46,14 @@ const MktEventCards = ({ id, title, endpoint, ...rest }) => {
       </Flex>
       <Box position="relative" className="hideOverflowX__" overflow="auto" width="100%">
         <Flex gridGap="20px" width="max-content" margin="0">
-          {events.map((event) => (
+          {events.map((event) => event.slug !== null && (
             <EventCard
               key={event?.id}
               id={event?.id}
               slug={event?.slug}
               title={event?.title}
               host={event?.host}
+              ignoreDynamicHandler
               description={event?.description}
               technologies={event?.technologies || []}
               startingAt={event?.starting_at}
@@ -69,12 +70,14 @@ MktEventCards.propTypes = {
   id: PropTypes.string,
   title: PropTypes.string,
   endpoint: PropTypes.string,
+  hoursToLimit: PropTypes.number,
 };
 
 MktEventCards.defaultProps = {
   id: '',
   title: 'Starting soon',
   endpoint: '',
+  hoursToLimit: 48,
 };
 
 export default MktEventCards;
