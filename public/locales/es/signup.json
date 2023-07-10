@@ -76,7 +76,8 @@
     "invalid-email": "Correo electrónico inválido",
     "email-required": "Correo electronico es requerido",
     "confirm-email-required": "Confirmar Correo electronico es requerido",
-    "confirm-email-not-match": "Los correos electrónicos no coinciden"
+    "confirm-email-not-match": "Los correos electrónicos no coinciden",
+    "termns-and-conditions-required": "Acepto recibir información a mi correo electrónico sobre talleres de programación, eventos, cursos y otros materiales de marketing. Nunca compartiremos su correo electrónico,"
   },
   "no-date-available": "Actualmente no tenemos fechas disponibles para la ubicación ingresada",
   "alert-message": {

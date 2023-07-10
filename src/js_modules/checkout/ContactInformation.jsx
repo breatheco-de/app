@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import {
   Avatar,
-  Box, Button, Flex, useToast,
+  Box, Button, Checkbox, Flex, useToast,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import Heading from '../../common/components/Heading';
@@ -38,6 +38,7 @@ const ContactInformation = ({
   const router = useRouter();
   const toast = useToast();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
   const { backgroundColor, featuredColor } = useStyle();
 
   const { syllabus } = router.query;
@@ -56,9 +57,9 @@ const ContactInformation = ({
       .required(t('validators.email-required')),
     phone: Yup.string(),
     // .matches(phone, t('validators.invalid-phone')),
-    confirm_email: Yup.string()
-      .oneOf([Yup.ref('email'), null], t('validators.confirm-email-not-match'))
-      .required(t('validators.confirm-email-required')),
+    // confirm_email: Yup.string()
+    //   .oneOf([Yup.ref('email'), null], t('validators.confirm-email-not-match'))
+    //   .required(t('validators.confirm-email-required')),
   });
 
   const handleSubmit = async (actions, allValues) => {
@@ -135,7 +136,7 @@ const ContactInformation = ({
           last_name: '',
           phone: '',
           email: '',
-          confirm_email: '',
+          // confirm_email: '',
         }}
         onSubmit={(values, actions) => {
           const allValues = {
@@ -162,37 +163,39 @@ const ContactInformation = ({
             style={{
               display: 'flex',
               flexDirection: 'column',
-              gridGap: '22px',
+              gridGap: '62px',
             }}
           >
-            <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }}>
-              <Heading size="18px">{t('about-you')}</Heading>
-              <Flex fontSize="13px" ml={{ base: '0', sm: '1rem' }} mt={{ base: '10px', sm: '0' }} width="fit-content" p="2px 8px" backgroundColor={featuredColor} alignItems="center" borderRadius="4px" gridGap="6px">
-                {t('already-have-account')}
-                {' '}
-                <NextChakraLink href="/login" redirectAfterLogin fontSize="12px" variant="default">{t('login-here')}</NextChakraLink>
-              </Flex>
-            </Box>
-            <Box display="flex" gridGap="18px" flexDirection={{ base: 'column', md: 'row' }}>
-              <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="18px" flex={0.5}>
-                <FieldForm
-                  type="text"
-                  name="first_name"
-                  label={t('common:first-name')}
-                  formProps={formProps}
-                  setFormProps={setFormProps}
-                />
-                <FieldForm
-                  type="text"
-                  name="last_name"
-                  label={t('common:last-name')}
-                  formProps={formProps}
-                  setFormProps={setFormProps}
-                />
+            <Box display="flex" flexDirection="column" maxWidth="430px" margin="0 auto" gridGap="22px">
+              <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }}>
+                <Heading size="18px">{t('about-you')}</Heading>
+                <Flex fontSize="13px" ml={{ base: '0', sm: '1rem' }} mt={{ base: '10px', sm: '0' }} width="fit-content" p="2px 8px" backgroundColor={featuredColor} alignItems="center" borderRadius="4px" gridGap="6px">
+                  {t('already-have-account')}
+                  {' '}
+                  <NextChakraLink href="/login" redirectAfterLogin fontSize="12px" variant="default">{t('login-here')}</NextChakraLink>
+                </Flex>
+              </Box>
+              <Box display="flex" gridGap="18px" flexDirection={{ base: 'column', md: 'row' }}>
+                <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="18px" flex={1}>
+                  <FieldForm
+                    type="text"
+                    name="first_name"
+                    label={t('common:first-name')}
+                    formProps={formProps}
+                    setFormProps={setFormProps}
+                  />
+                  <FieldForm
+                    type="text"
+                    name="last_name"
+                    label={t('common:last-name')}
+                    formProps={formProps}
+                    setFormProps={setFormProps}
+                  />
+                </Box>
               </Box>
               <Box
                 display="flex"
-                flex={0.5}
+                flex={1}
                 flexDirection="column"
                 fontSize="12px"
                 color="blue.default2"
@@ -208,38 +211,40 @@ const ContactInformation = ({
                 />
                 {t('phone-info')}
               </Box>
-            </Box>
-            <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="18px">
-              <Box
-                display="flex"
-                flex={0.5}
-                flexDirection="column"
-                fontSize="12px"
-                gridGap="4px"
-              >
-                <FieldForm
-                  type="email"
-                  name="email"
-                  label={t('common:email')}
-                  formProps={formProps}
-                  setFormProps={setFormProps}
-                />
-                <Box color="blue.default2">{t('email-info')}</Box>
+              <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="18px">
+                <Box
+                  display="flex"
+                  flex={1}
+                  flexDirection="column"
+                  fontSize="12px"
+                  gridGap="4px"
+                >
+                  <FieldForm
+                    type="email"
+                    name="email"
+                    label={t('common:email')}
+                    formProps={formProps}
+                    setFormProps={setFormProps}
+                  />
+                  <Box color="blue.default2">{t('email-info')}</Box>
+                </Box>
               </Box>
-
-              <FieldForm
-                style={{ flex: 0.5 }}
-                type="email"
-                name="confirm_email"
-                label={t('common:confirm-email')}
-                formProps={formProps}
-                setFormProps={setFormProps}
-              />
+              <Checkbox size="md" spacing="8px" colorScheme="green" isChecked={isChecked} onChange={() => setIsChecked(!isChecked)}>
+                <Text size="10px">
+                  {t('validators.termns-and-conditions-required')}
+                  {' '}
+                  <NextChakraLink variant="default" fontSize="10px" href="/privacy-policy" target="_blank">
+                    {t('common:privacy-policy')}
+                  </NextChakraLink>
+                  .
+                </Text>
+              </Checkbox>
             </Box>
             <Button
               width="fit-content"
               type="submit"
               variant="default"
+              disabled={isChecked === false}
               isLoading={isSubmitting}
               alignSelf="flex-end"
             >
