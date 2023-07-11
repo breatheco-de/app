@@ -3,4 +3,6 @@ const SILENT_CODE = {
   EMAIL_NOT_VALIDATED: 'email-not-validated',
 };
 
-export default SILENT_CODE;
+export {
+  SILENT_CODE,
+};

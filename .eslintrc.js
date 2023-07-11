@@ -23,6 +23,7 @@ module.exports = {
     'max-len': 'off',
     'object-curly-newline': 'off',
     'spaced-comment': 'off',
+    'import/prefer-default-export': 'off',
     'linebreak-style': ['error', process.platform === 'win32' ? 'windows' : 'unix'],
   },
   ignorePatterns: [

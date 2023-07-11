@@ -20,7 +20,7 @@ import modifyEnv from '../../../modifyEnv';
 import useSignup from '../../common/store/actions/signupAction';
 import ModalInfo from '../moduleMap/modalInfo';
 import Text from '../../common/components/Text';
-import SILENT_CODE from '../../utils/silent_codes';
+import { SILENT_CODE } from '../../lib/types';
 
 const ContactInformation = ({
   courseChoosed,

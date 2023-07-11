@@ -13,7 +13,7 @@ import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
 import { setStorageItem } from '../../utils';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
-import SILENT_CODE from '../../utils/silent_codes';
+import { SILENT_CODE } from '../../lib/types';
 
 const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, children, hideForm, ...rest }) => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });

@@ -19,7 +19,7 @@ import { setStorageItem } from '../../../utils';
 import modifyEnv from '../../../../modifyEnv';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import Text from '../Text';
-import SILENT_CODE from '../../../utils/silent_codes';
+import { SILENT_CODE } from '../../../lib/types';
 
 function Register() {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });

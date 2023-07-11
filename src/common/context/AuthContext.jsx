@@ -10,7 +10,7 @@ import { usePersistent } from '../hooks/usePersistent';
 import modifyEnv from '../../../modifyEnv';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import Text from '../components/Text';
-import SILENT_CODE from '../../utils/silent_codes';
+import { SILENT_CODE } from '../../lib/types';
 
 const initialState = {
   isLoading: true,
