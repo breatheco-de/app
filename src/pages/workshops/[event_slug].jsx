@@ -158,7 +158,7 @@ const Page = () => {
     setFinishedEvent(true);
   };
 
-  const spotsRemain = event?.capacity - allUsersJoined.length;
+  const spotsRemain = event?.capacity - allUsersJoined?.length;
   const arrayOfImages = [
     '/static/images/person1.png',
   ];
