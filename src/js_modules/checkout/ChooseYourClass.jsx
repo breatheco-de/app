@@ -177,6 +177,7 @@ const ChooseYourClass = ({
           isLoading={isLoading}
           value="Geocode"
           variant="default"
+          flexShrink={0}
         >
           {t('search-dates')}
         </Button>
@@ -203,6 +204,7 @@ const ChooseYourClass = ({
         isLoading={isLoading}
         value="Geocode"
         variant="default"
+        flexShrink={0}
       >
         {t('search-dates')}
       </Button>

@@ -7,6 +7,7 @@ import {
   Input,
   FormErrorMessage,
   Box,
+  Avatar,
   // InputRightElement,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
@@ -16,9 +17,9 @@ import { useState } from 'react';
 import validationSchema from './validationSchemas';
 import { setStorageItem } from '../../../utils';
 import modifyEnv from '../../../../modifyEnv';
-import Link from '../NextChakraLink';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import Text from '../Text';
+import { SILENT_CODE } from '../../../lib/types';
 
 function Register() {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -40,14 +41,13 @@ function Register() {
         onClose={() => setShowAlreadyMember(false)}
         title={t('signup:alert-message.title')}
         childrenDescription={(
-          <Box textAlign="center">
-            {t('signup:alert-message.message1')}
-            {' '}
-            <Link variant="default" href="/">4Geeks.com</Link>
-            .
-            <br />
-            {t('signup:alert-message.message2')}
-            .
+          <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+            <Avatar src="https://breathecode.herokuapp.com/static/img/avatar-7.png" border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+            <Text
+              size="14px"
+              textAlign="center"
+              dangerouslySetInnerHTML={{ __html: t('signup:alert-message.description') }}
+            />
           </Box>
         )}
         disableCloseButton
@@ -81,6 +81,9 @@ function Register() {
             }),
           });
           const data = await resp.json();
+          if (data.silent_code === SILENT_CODE.USER_INVITE_EXISTS) {
+            setShowAlreadyMember(true);
+          }
           setStorageItem('subscriptionId', data?.id);
 
           // if (data?.access_token && data?.is_email_validated === false) {
@@ -116,9 +119,6 @@ function Register() {
             if (resp.status < 400 && typeof data?.id === 'number') {
               setStorageItem('subscriptionId', data.id);
               router.push('/thank-you');
-            }
-            if (resp.status === 400) {
-              setShowAlreadyMember(true);
             }
           }
         }}

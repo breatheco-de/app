@@ -12,7 +12,7 @@ import useStyle from '../hooks/useStyle';
 // import { parseQuerys } from '../../utils/url';
 // import modifyEnv from '../../../modifyEnv';
 
-const EventCard = ({ id, slug, title, description, host, startingAt, endingAt, technologies, stTranslation, ...rest }) => {
+const EventCard = ({ id, slug, title, ignoreDynamicHandler, description, host, startingAt, endingAt, technologies, stTranslation, ...rest }) => {
   const { t, lang } = useTranslation('live-event');
   const [date, setDate] = useState('');
   const { lightColor, disabledColor2 } = useStyle();
@@ -166,10 +166,9 @@ const EventCard = ({ id, slug, title, description, host, startingAt, endingAt, t
           </Box>
         </Flex>
       ))}
-      {startedButRemain ? (
+      {(ignoreDynamicHandler || startedButRemain) ? (
         <Link
           margin="auto 0 0 0"
-          // href={`${BREATHECODE_HOST}/v1/events/me/event/${id}/join${linkQuery}`}
           href={`/${lang}/workshops/${slug}`}
           color="blue.default"
           target="_blank"
@@ -201,6 +200,7 @@ EventCard.propTypes = {
   stTranslation: PropTypes.objectOf(PropTypes.any),
   id: PropTypes.number.isRequired,
   slug: PropTypes.string.isRequired,
+  ignoreDynamicHandler: PropTypes.bool,
 };
 
 EventCard.defaultProps = {
@@ -210,6 +210,7 @@ EventCard.defaultProps = {
   technologies: [],
   host: '',
   stTranslation: null,
+  ignoreDynamicHandler: false,
 };
 
 export default EventCard;
