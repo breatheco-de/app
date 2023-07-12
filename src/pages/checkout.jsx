@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import {
+  Avatar,
   Box,
   Button,
   useToast,
@@ -23,6 +24,7 @@ import ModalInfo from '../js_modules/moduleMap/modalInfo';
 import useStyle from '../common/hooks/useStyle';
 import Stepper from '../js_modules/checkout/Stepper';
 import ServiceSummary from '../js_modules/checkout/ServiceSummary';
+import Text from '../common/components/Text';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -64,6 +66,7 @@ const Checkout = () => {
   const [isPreselectedCohort, setIsPreselectedCohort] = useState(false);
   const [isPreloading, setIsPreloading] = useState(false);
   const [serviceToRequest, setServiceToRequest] = useState({});
+  const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const {
     state, toggleIfEnrolled, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
     handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep,
@@ -255,6 +258,58 @@ const Checkout = () => {
         <LoaderScreen />
       )}
       <ModalInfo
+        headerStyles={{ textAlign: 'center' }}
+        title={t('signup:alert-message.validate-email-title')}
+        footerStyle={{ flexDirection: 'row-reverse' }}
+        closeButtonVariant="outline"
+        closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
+        childrenDescription={(
+          <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+            <Avatar src="https://breathecode.herokuapp.com/static/img/avatar-1.png" border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+            <Text
+              size="14px"
+              textAlign="center"
+              dangerouslySetInnerHTML={{ __html: t('signup:alert-message.validate-email-description', { email: verifyEmailProps?.data?.email }) }}
+            />
+          </Box>
+        )}
+        isOpen={verifyEmailProps.state}
+        buttonHandlerStyles={{ variant: 'default' }}
+        actionHandler={() => {
+          const inviteId = verifyEmailProps?.data?.id;
+          bc.auth().resendConfirmationEmail(inviteId)
+            .then((resp) => {
+              const data = resp?.data;
+              if (data === undefined) {
+                toast({
+                  position: 'top',
+                  status: 'info',
+                  title: t('signup:alert-message.email-already-sent'),
+                  isClosable: true,
+                  duration: 6000,
+                });
+              } else {
+                toast({
+                  position: 'top',
+                  status: 'success',
+                  title: t('signup:alert-message.email-sent-to', { email: data?.email }),
+                  isClosable: true,
+                  duration: 6000,
+                });
+              }
+            });
+        }}
+        handlerText={t('signup:resend')}
+        forceHandlerAndClose
+        onClose={() => {
+          setVerifyEmailProps({
+            ...verifyEmailProps,
+            state: false,
+          });
+        }}
+      />
+
+      <ModalInfo
         isOpen={alreadyEnrolled}
         forceHandler
         disableCloseButton
@@ -299,6 +354,7 @@ const Checkout = () => {
             courseChoosed={courseChoosed}
             formProps={formProps}
             setFormProps={setFormProps}
+            setVerifyEmailProps={setVerifyEmailProps}
           />
         )}
 

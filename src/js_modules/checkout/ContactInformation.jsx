@@ -23,9 +23,7 @@ import Text from '../../common/components/Text';
 import { SILENT_CODE } from '../../lib/types';
 
 const ContactInformation = ({
-  courseChoosed,
-  formProps, setFormProps,
-
+  courseChoosed, formProps, setFormProps, setVerifyEmailProps,
 }) => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
@@ -86,6 +84,13 @@ const ContactInformation = ({
       }
 
       if (data?.access_token && !dataOfPlan?.has_waiting_list) {
+        setVerifyEmailProps({
+          data: {
+            ...allValues,
+            ...data,
+          },
+          state: true,
+        });
         router.push({
           query: {
             ...router.query,
@@ -266,6 +271,7 @@ ContactInformation.propTypes = {
   courseChoosed: PropTypes.string,
   formProps: PropTypes.objectOf(PropTypes.any).isRequired,
   setFormProps: PropTypes.func,
+  setVerifyEmailProps: PropTypes.func.isRequired,
 };
 
 ContactInformation.defaultProps = {
