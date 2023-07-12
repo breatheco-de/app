@@ -19,7 +19,7 @@ const ModalInfo = ({
   handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
   htmlDescription, markdownDescription, attachment, disableInput, descriptionStyle, footerStyle,
   closeButtonStyles, buttonHandlerStyles, headerStyles, disableCloseButton, childrenDescription,
-  maxWidth,
+  maxWidth, forceHandlerAndClose,
 }) => {
   const { t } = useTranslation('dashboard');
   const [githubUrl, setGithubUrl] = useState(link);
@@ -32,7 +32,7 @@ const ModalInfo = ({
   const commonHighlightColor = useColorModeValue('gray.250', 'darkTheme');
 
   const rejectFunction = () => {
-    if (forceHandler) {
+    if (forceHandler && !forceHandlerAndClose) {
       setConfirmRejection(true);
     } else {
       onClose();
@@ -376,6 +376,7 @@ ModalInfo.propTypes = {
   disableCloseButton: PropTypes.bool,
   childrenDescription: PropTypes.node,
   maxWidth: PropTypes.string,
+  forceHandlerAndClose: PropTypes.bool,
 };
 
 ModalInfo.defaultProps = {
@@ -411,6 +412,7 @@ ModalInfo.defaultProps = {
   disableCloseButton: false,
   childrenDescription: null,
   maxWidth: 'md',
+  forceHandlerAndClose: false,
 };
 
 export default memo(ModalInfo);
