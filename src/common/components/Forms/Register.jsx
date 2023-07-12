@@ -14,6 +14,7 @@ import { Form, Formik, Field } from 'formik';
 import { useRouter } from 'next/router';
 // import Icon from '../Icon';
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import validationSchema from './validationSchemas';
 import { getStorageItem, setStorageItem } from '../../../utils';
 import modifyEnv from '../../../../modifyEnv';
@@ -22,7 +23,7 @@ import Text from '../Text';
 import { SILENT_CODE } from '../../../lib/types';
 import useAuth from '../../hooks/useAuth';
 
-function Register() {
+function Register({ currentTabIndex }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('login');
   const { isAuthenticated } = useAuth();
@@ -34,7 +35,7 @@ function Register() {
   const router = useRouter();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && currentTabIndex === 1) {
       setShowAlreadyMember(true);
     }
   }, [isAuthenticated]);
@@ -353,5 +354,12 @@ function Register() {
     </>
   );
 }
+
+Register.propTypes = {
+  currentTabIndex: PropTypes.number,
+};
+Register.defaultProps = {
+  currentTabIndex: 0,
+};
 
 export default Register;
