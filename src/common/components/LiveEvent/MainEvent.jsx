@@ -63,6 +63,7 @@ const MainEvent = ({
           height="50px"
           minHeight="50px"
           maxHeight="50px"
+          flexShrink={0}
           className={
             isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)
               ? `${mainClasses.length === 0 ? 'pulse-blue' : 'pulse-red'}`
@@ -89,7 +90,7 @@ const MainEvent = ({
             </Box>
           )}
           {event?.event_type?.icon_url ? (
-            <Image src={event?.event_type?.icon_url} width={50} height={50} />
+            <Image src={event?.event_type?.icon_url} width={50} height={50} style={{ borderRadius: '50px' }} />
           ) : (
             <Icon
               width="50px"
