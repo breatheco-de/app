@@ -10,15 +10,12 @@ import { usePersistent } from '../hooks/usePersistent';
 import modifyEnv from '../../../modifyEnv';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import Text from '../components/Text';
+import { SILENT_CODE } from '../../lib/types';
 
 const initialState = {
   isLoading: true,
   isAuthenticated: false,
   user: null,
-};
-
-const SILENT_CODE = {
-  email_not_validated: 'email-not-validated',
 };
 
 const reducer = (state, action) => {
@@ -192,7 +189,7 @@ const AuthProvider = ({ children }) => {
         const response = await bc.auth().login2(payload, lang);
         const responseData = await response.json();
 
-        if (responseData?.silent_code === SILENT_CODE.email_not_validated) {
+        if (responseData?.silent_code === SILENT_CODE.EMAIL_NOT_VALIDATED) {
           setModalState({
             ...payload,
             ...responseData,
@@ -282,6 +279,7 @@ const AuthProvider = ({ children }) => {
     setProfile({});
     localStorage.removeItem('showGithubWarning');
     localStorage.removeItem('redirect-after-register');
+    localStorage.removeItem('redirect');
     dispatch({ type: 'LOGOUT' });
   };
 

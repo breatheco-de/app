@@ -7,28 +7,37 @@ import {
   Input,
   FormErrorMessage,
   Box,
+  Avatar,
   // InputRightElement,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 import { useRouter } from 'next/router';
 // import Icon from '../Icon';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import validationSchema from './validationSchemas';
-import { setStorageItem } from '../../../utils';
+import { getStorageItem, setStorageItem } from '../../../utils';
 import modifyEnv from '../../../../modifyEnv';
-import Link from '../NextChakraLink';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import Text from '../Text';
+import { SILENT_CODE } from '../../../lib/types';
+import useAuth from '../../hooks/useAuth';
 
 function Register() {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('login');
+  const { isAuthenticated } = useAuth();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
+  const accessToken = getStorageItem('accessToken');
   // const [showPSW, setShowPSW] = useState(false);
   // const [showRepeatPSW, setShowRepeatPSW] = useState(false);
 
   const router = useRouter();
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      setShowAlreadyMember(true);
+    }
+  }, [isAuthenticated]);
   // const toggleShowRepeatPSW = () => setShowRepeatPSW(!showRepeatPSW);
   // const toggleShowPSW = () => setShowPSW(!showPSW);
 
@@ -40,23 +49,34 @@ function Register() {
         onClose={() => setShowAlreadyMember(false)}
         title={t('signup:alert-message.title')}
         childrenDescription={(
-          <Box textAlign="center">
-            {t('signup:alert-message.message1')}
-            {' '}
-            <Link variant="default" href="/">4Geeks.com</Link>
-            .
-            <br />
-            {t('signup:alert-message.message2')}
-            .
+          <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+            <Avatar src="https://breathecode.herokuapp.com/static/img/avatar-7.png" border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+            <Text
+              size="14px"
+              textAlign="center"
+              dangerouslySetInnerHTML={{ __html: t('signup:alert-message.description') }}
+            />
           </Box>
         )}
-        disableCloseButton
+        forceHandler={accessToken}
+        closeButtonVariant="outline"
+        disableCloseButton={accessToken}
+        closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
+        buttonHandlerStyles={accessToken ? { variant: 'outline', borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' } : {}}
         actionHandler={() => {
-          setStorageItem('redirect', router?.asPath);
-          router.push('/login');
-          setShowAlreadyMember(false);
+          if (accessToken) {
+            router.push({
+              pathname: '/checkout',
+              query: {
+                plan: '4geeks-standard',
+              },
+            });
+          } else {
+            router.push('/login?tab=login');
+            setShowAlreadyMember(false);
+          }
         }}
-        handlerText={t('common:login')}
+        handlerText={accessToken ? t('common:close') : t('common:login')}
       />
       <Formik
         initialValues={{
@@ -81,33 +101,17 @@ function Register() {
             }),
           });
           const data = await resp.json();
+          if (data.silent_code === SILENT_CODE.USER_EXISTS) {
+            setShowAlreadyMember(true);
+          }
           setStorageItem('subscriptionId', data?.id);
 
-          // if (data?.access_token && data?.is_email_validated === false) {
-          //   toast({
-          //     position: 'top',
-          //     status: 'warning',
-          //     title: t('signup:alert-message-validate-email.title'),
-          //     description: (
-          //       <Box>
-          //         {t('signup:alert-message-validate-email.description')}
-          //         {' '}
-          //         <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
-          //         .
-          //         <br />
-          //         {t('signup:alert-message-validate-email.description2')}
-          //       </Box>
-          //     ),
-          //     duration: 9000,
-          //     isClosable: true,
-          //   });
-          // }
           if (data?.access_token) {
+            setShowAlreadyMember(true);
             router.push({
-              pathname: '/checkout',
               query: {
-                plan: '4geeks-standard',
                 token: data.access_token,
+                from: 'register',
               },
             });
           }
@@ -116,9 +120,6 @@ function Register() {
             if (resp.status < 400 && typeof data?.id === 'number') {
               setStorageItem('subscriptionId', data.id);
               router.push('/thank-you');
-            }
-            if (resp.status === 400) {
-              setShowAlreadyMember(true);
             }
           }
         }}

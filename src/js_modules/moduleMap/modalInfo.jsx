@@ -320,7 +320,7 @@ const ModalInfo = ({
               >
                 {rejectData.closeText}
               </Button>
-              {!disableHandler && (
+              {(!disableHandler || forceHandler) && (
                 <Button
                   fontSize="13px"
                   colorScheme="blue"

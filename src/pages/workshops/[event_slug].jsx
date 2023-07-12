@@ -445,7 +445,7 @@ const Page = () => {
           )}
         </Box>
       </GridContainer>
-      {finishedEvent && (<MktEventCards gridTemplateColumns="2fr repeat(12, 1fr) 2fr" gridColumn="2 / span 12" margin="2rem 0 0 0" maxWidth="auto" padding="0 10px" />)}
+      {finishedEvent && (<MktEventCards gridTemplateColumns="2fr repeat(12, 1fr) 2fr" gridColumn="2 / span 12" margin="2rem auto 0 auto" maxWidth="1440px" padding="0 10px" />)}
     </>
   );
 };
