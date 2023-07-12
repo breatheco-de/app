@@ -157,7 +157,7 @@ function Register({ setIsLoggedFromRegister }) {
           });
           const data = await resp.json();
           if (data.silent_code === SILENT_CODE.USER_EXISTS
-            || data.silent_code === SILENT_CODE.USER_INVITE_ACCEPTED_EXISTS) {
+              || data.silent_code === SILENT_CODE.USER_INVITE_ACCEPTED_EXISTS) {
             setShowAlreadyMember(true);
           }
           setStorageItem('subscriptionId', data?.id);
