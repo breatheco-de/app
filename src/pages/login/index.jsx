@@ -44,9 +44,12 @@ function login() {
   const redirect = isWindow && localStorage.getItem('redirect');
   const router = useRouter();
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
+  const queryFrom = getQueryString('from');
 
   const fontColor = useColorModeValue('gray.default', 'gray.400');
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
+
+  const loggedFromRegister = queryFrom === 'register';
 
   const tabQueryString = getQueryString('tab');
 
@@ -61,7 +64,7 @@ function login() {
     }
   }, [tabQueryString]);
   useEffect(() => {
-    if (user !== null && user !== undefined) {
+    if (user !== null && user !== undefined && !loggedFromRegister) {
       if (redirect && redirect.length > 0 && isWindow) {
         router.push(redirect);
         localStorage.removeItem('redirect');

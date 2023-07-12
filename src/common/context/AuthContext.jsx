@@ -279,6 +279,7 @@ const AuthProvider = ({ children }) => {
     setProfile({});
     localStorage.removeItem('showGithubWarning');
     localStorage.removeItem('redirect-after-register');
+    localStorage.removeItem('redirect');
     dispatch({ type: 'LOGOUT' });
   };
 
