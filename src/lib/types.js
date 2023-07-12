@@ -1,5 +1,5 @@
 const SILENT_CODE = {
-  USER_INVITE_EXISTS: 'user-invite-exists-status-accepted',
+  USER_EXISTS: 'user-exists',
   EMAIL_NOT_VALIDATED: 'email-not-validated',
 };
 

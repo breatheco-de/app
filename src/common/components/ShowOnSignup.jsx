@@ -50,30 +50,11 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
     });
 
     const data = await resp.json();
-    if (data.silent_code === SILENT_CODE.USER_INVITE_EXISTS) {
+    if (data.silent_code === SILENT_CODE.USER_EXISTS) {
       setShowAlreadyMember(true);
     }
     setStorageItem('subscriptionId', data?.id);
 
-    // if (data?.access_token && data?.is_email_validated === false) {
-    //   toast({
-    //     position: 'top',
-    //     status: 'warning',
-    //     title: t('signup:alert-message-validate-email.title'),
-    //     description: (
-    //       <Box>
-    //         {t('signup:alert-message-validate-email.description')}
-    //         {' '}
-    //         <Link variant="default" color="blue.200" href="/">4Geeks.com</Link>
-    //         .
-    //         <br />
-    //         {t('signup:alert-message-validate-email.description2')}
-    //       </Box>
-    //     ),
-    //     duration: 9000,
-    //     isClosable: true,
-    //   });
-    // }
     if (data?.access_token) {
       setStorageItem('redirect-after-register', router?.asPath);
       router.push({
@@ -232,10 +213,11 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
             />
           </Box>
         )}
-        disableCloseButton
+        closeButtonVariant="outline"
+        closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
         actionHandler={() => {
           setStorageItem('redirect', router?.asPath);
-          router.push('/login');
+          router.push('/login?tab=login');
           setShowAlreadyMember(false);
         }}
         handlerText={t('common:login')}
