@@ -62,7 +62,7 @@ function Register() {
         closeButtonVariant="outline"
         disableCloseButton={accessToken}
         closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
-        buttonHandlerStyles={accessToken ? { variant: 'outline', borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' } : {}}
+        buttonHandlerStyles={accessToken ? { variant: 'outline', borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' } : { variant: 'default' }}
         actionHandler={() => {
           if (accessToken) {
             router.push({
@@ -101,7 +101,8 @@ function Register() {
             }),
           });
           const data = await resp.json();
-          if (data.silent_code === SILENT_CODE.USER_EXISTS) {
+          if (data.silent_code === SILENT_CODE.USER_EXISTS
+            || data.silent_code === SILENT_CODE.USER_INVITE_ACCEPTED_EXISTS) {
             setShowAlreadyMember(true);
           }
           setStorageItem('subscriptionId', data?.id);
