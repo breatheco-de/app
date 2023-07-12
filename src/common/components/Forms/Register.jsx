@@ -14,6 +14,7 @@ import { Form, Formik, Field } from 'formik';
 import { useRouter } from 'next/router';
 // import Icon from '../Icon';
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import validationSchema from './validationSchemas';
 import { getStorageItem, setStorageItem } from '../../../utils';
 import modifyEnv from '../../../../modifyEnv';
@@ -22,7 +23,7 @@ import Text from '../Text';
 import { SILENT_CODE } from '../../../lib/types';
 import useAuth from '../../hooks/useAuth';
 
-function Register() {
+function Register({ currentTabIndex }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('login');
   const { isAuthenticated } = useAuth();
@@ -34,7 +35,7 @@ function Register() {
   const router = useRouter();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && currentTabIndex === 1) {
       setShowAlreadyMember(true);
     }
   }, [isAuthenticated]);
@@ -62,7 +63,7 @@ function Register() {
         closeButtonVariant="outline"
         disableCloseButton={accessToken}
         closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
-        buttonHandlerStyles={accessToken ? { variant: 'outline', borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' } : {}}
+        buttonHandlerStyles={accessToken ? { variant: 'outline', borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' } : { variant: 'default' }}
         actionHandler={() => {
           if (accessToken) {
             router.push({
@@ -101,7 +102,8 @@ function Register() {
             }),
           });
           const data = await resp.json();
-          if (data.silent_code === SILENT_CODE.USER_EXISTS) {
+          if (data.silent_code === SILENT_CODE.USER_EXISTS
+            || data.silent_code === SILENT_CODE.USER_INVITE_ACCEPTED_EXISTS) {
             setShowAlreadyMember(true);
           }
           setStorageItem('subscriptionId', data?.id);
@@ -352,5 +354,12 @@ function Register() {
     </>
   );
 }
+
+Register.propTypes = {
+  currentTabIndex: PropTypes.number,
+};
+Register.defaultProps = {
+  currentTabIndex: 0,
+};
 
 export default Register;

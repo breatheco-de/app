@@ -59,7 +59,7 @@ const ModalInfo = ({
       <Modal closeOnOverlayClick={!forceHandler} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         {/* md */}
-        <ModalContent maxWidth={maxWidth || 'md'} borderRadius="17px">
+        <ModalContent maxWidth={maxWidth || 'md'} borderRadius="6px">
           <ModalHeader
             borderBottom={1}
             borderStyle="solid"

@@ -215,6 +215,7 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
         )}
         closeButtonVariant="outline"
         closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
+        buttonHandlerStyles={{ variant: 'default' }}
         actionHandler={() => {
           setStorageItem('redirect', router?.asPath);
           router.push('/login?tab=login');

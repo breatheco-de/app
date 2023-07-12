@@ -127,7 +127,7 @@ function login() {
                     <Login />
                   </TabPanel>
                   <TabPanel>
-                    <Register />
+                    <Register currentTabIndex={currentTabIndex} />
                   </TabPanel>
                 </TabPanels>
               </Stack>
