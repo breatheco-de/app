@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, useColorModeValue } from '@chakra-ui/react';
+import { Avatar, Box, Button, useColorModeValue, useToast } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
 import { useState } from 'react';
@@ -14,14 +14,17 @@ import modifyEnv from '../../../modifyEnv';
 import { setStorageItem } from '../../utils';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import { SILENT_CODE } from '../../lib/types';
+import bc from '../services/breathecode';
 
 const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, children, hideForm, ...rest }) => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
   const { backgroundColor, featuredColor } = useStyle();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
+  const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const { t } = useTranslation('workshops');
   const router = useRouter();
+  const toast = useToast();
   const [formProps, setFormProps] = useState({
     first_name: '',
     last_name: '',
@@ -50,17 +53,24 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
     });
 
     const data = await resp.json();
-    if (data.silent_code === SILENT_CODE.USER_EXISTS) {
+    if (data.silent_code === SILENT_CODE.USER_EXISTS
+        || data.silent_code === SILENT_CODE.USER_INVITE_ACCEPTED_EXISTS) {
       setShowAlreadyMember(true);
     }
     setStorageItem('subscriptionId', data?.id);
 
     if (data?.access_token) {
       setStorageItem('redirect-after-register', router?.asPath);
+      setVerifyEmailProps({
+        data: {
+          ...allValues,
+          ...data,
+        },
+        state: true,
+      });
       router.push({
-        pathname: '/checkout',
         query: {
-          plan: '4geeks-standard',
+          ...router.query,
           token: data.access_token,
         },
       });
@@ -215,12 +225,71 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
         )}
         closeButtonVariant="outline"
         closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
+        buttonHandlerStyles={{ variant: 'default' }}
         actionHandler={() => {
           setStorageItem('redirect', router?.asPath);
           router.push('/login?tab=login');
           setShowAlreadyMember(false);
         }}
         handlerText={t('common:login')}
+      />
+
+      <ModalInfo
+        headerStyles={{ textAlign: 'center' }}
+        title={t('signup:alert-message.validate-email-title')}
+        footerStyle={{ flexDirection: 'row-reverse' }}
+        closeButtonVariant="outline"
+        closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
+        childrenDescription={(
+          <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+            <Avatar src="https://breathecode.herokuapp.com/static/img/avatar-1.png" border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+            <Text
+              size="14px"
+              textAlign="center"
+              dangerouslySetInnerHTML={{ __html: t('signup:alert-message.validate-email-description', { email: verifyEmailProps?.data?.email }) }}
+            />
+          </Box>
+        )}
+        isOpen={verifyEmailProps.state}
+        buttonHandlerStyles={{ variant: 'default' }}
+        actionHandler={() => {
+          const inviteId = verifyEmailProps?.data?.id;
+          bc.auth().resendConfirmationEmail(inviteId)
+            .then((resp) => {
+              const data = resp?.data;
+              if (data === undefined) {
+                toast({
+                  position: 'top',
+                  status: 'info',
+                  title: t('signup:alert-message.email-already-sent'),
+                  isClosable: true,
+                  duration: 6000,
+                });
+              } else {
+                toast({
+                  position: 'top',
+                  status: 'success',
+                  title: t('signup:alert-message.email-sent-to', { email: data?.email }),
+                  isClosable: true,
+                  duration: 6000,
+                });
+              }
+            });
+        }}
+        handlerText={t('signup:resend')}
+        forceHandlerAndClose
+        onClose={() => {
+          setVerifyEmailProps({
+            ...verifyEmailProps,
+            state: false,
+          });
+          router.push({
+            pathname: '/checkout',
+            query: {
+              plan: '4geeks-standard',
+            },
+          });
+        }}
       />
     </Box>
   );

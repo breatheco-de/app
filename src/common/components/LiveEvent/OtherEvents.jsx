@@ -50,7 +50,7 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stT
         margin="auto"
         borderColor="#DADADA"
       >
-        <Box display="flex">
+        <Box display="flex" flexShrink={0}>
           <Box width="37px" height="37px" minHeight="37px" maxHeight="37px" style={{ minWidth: '37px' }} className={isLiveOrStarting(startsAt, endsAt) ? 'pulse-blue' : ''} borderRadius="full">
             {event?.event_type?.icon_url ? (
               <Image src={event?.event_type?.icon_url} name={event?.title} width={40} height={40} />
