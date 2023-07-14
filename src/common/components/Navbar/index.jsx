@@ -491,7 +491,9 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                               size="sm"
                             >
                               <Icon icon={getIconFlags} width="16px" height="16px" />
-                              {getLangName}
+                              <span>
+                                {getLangName}
+                              </span>
                             </Link>
                             {
                               i < langs.length - 1 && (
