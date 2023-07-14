@@ -1,8 +1,9 @@
 import {
   Box, Flex, IconButton, Avatar, Stack, Collapse, useColorModeValue,
-  useBreakpointValue, useDisclosure, useColorMode, Popover, PopoverTrigger,
+  useDisclosure, useColorMode, Popover, PopoverTrigger,
   PopoverContent, PopoverArrow, Button, Link,
 } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import {
   useState, memo, useEffect, Fragment,
 } from 'react';
@@ -24,36 +25,112 @@ import useAuth from '../../hooks/useAuth';
 import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
 import syllabusList from '../../../../public/syllabus.json';
-import { isWindow } from '../../../utils';
+import { getBrowserSize, isWindow } from '../../../utils';
 import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
+// import UpgradeExperience from '../UpgradeExperience';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
-const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
-  const { t } = useTranslation('navbar');
-  const router = useRouter();
-  const [mktCourses, setMktCourses] = useState([]);
+function Close2(colorMode) {
+  return (
+    <svg
+      width="22px"
+      height="22px"
+      viewBox="0 0 19 4"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <line
+        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        x1="1.5"
+        y1="2"
+        x2="16.5645"
+        y2="2"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function Hamburger2(colorMode) {
+  return (
+    <svg
+      width="22px"
+      height="22px"
+      viewBox="0 0 28 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <line
+        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        x1="1.5"
+        y1="1.5"
+        x2="26.5"
+        y2="1.5"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      <line
+        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        x1="1.5"
+        y1="12"
+        x2="16.5645"
+        y2="12"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      <line
+        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        x1="1.5"
+        y1="22.5"
+        x2="26.5"
+        y2="22.5"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function NavbarWithSubNavigation({ translations, pageProps }) {
+  const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
+
+  const [haveSession, setHaveSession] = useState(HAVE_SESSION);
+  const { isAuthenticated, isLoading, user, logout } = useAuth();
   const [ITEMS, setITEMS] = useState([]);
+  const [mktCourses, setMktCourses] = useState([]);
   const [cohortsOfUser, setCohortsOfUser] = useState([]);
-  const { isOpen, onToggle } = useDisclosure();
-  const { colorMode, toggleColorMode } = useColorMode();
-  const { isLoading, user, logout } = useAuth();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const langs = ['en', 'es'];
-  const locale = router.locale === 'default' ? 'en' : router.locale;
+  const { t } = useTranslation('navbar');
+  const router = useRouter();
+  const { isOpen, onToggle } = useDisclosure();
+  const { colorMode, toggleColorMode } = useColorMode();
   const commonColors = useColorModeValue('white', 'gray.800');
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
   const commonBorderColor = useColorModeValue('gray.200', 'gray.700');
   const linkColor = useColorModeValue('gray.600', 'gray.200');
   const fontColor = useColorModeValue('black', 'gray.200');
 
+  const langs = ['en', 'es'];
+  const locale = router.locale === 'default' ? 'en' : router.locale;
+
   const query = isWindow && new URLSearchParams(window.location.search || '');
   const queryToken = isWindow && query.get('token')?.split('?')[0];
   const queryTokenExists = isWindow && queryToken !== undefined && queryToken;
   const sessionExists = haveSession || queryTokenExists;
+  const { width: screenWidth } = getBrowserSize();
+  const isMobile = screenWidth < 768;
+
+  useEffect(() => {
+    // verify if accessToken exists
+    if (!isLoading && isAuthenticated) {
+      setHaveSession(true);
+    }
+  }, [isLoading]);
 
   const {
     languagesTR,
@@ -210,70 +287,16 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
 
   if (pageProps?.previewMode) return null;
 
-  const Close2 = () => (
-    <svg
-      width="22px"
-      height="22px"
-      viewBox="0 0 19 4"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <line
-        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
-        x1="1.5"
-        y1="2"
-        x2="16.5645"
-        y2="2"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-
-  const Hamburger2 = () => (
-    <svg
-      width="22px"
-      height="22px"
-      viewBox="0 0 28 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <line
-        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
-        x1="1.5"
-        y1="1.5"
-        x2="26.5"
-        y2="1.5"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <line
-        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
-        x1="1.5"
-        y1="12"
-        x2="16.5645"
-        y2="12"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <line
-        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
-        x1="1.5"
-        y1="22.5"
-        x2="26.5"
-        y2="22.5"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-
   const logo = useColorModeValue(
     <Image
       src="/static/images/4geeks.png"
-      width="105px"
-      height="35px"
-      objectFit="cover"
+      width={105}
+      height={35}
+      style={{
+        maxHeight: '35px',
+        minHeight: '35px',
+        objectFit: 'cover',
+      }}
       alt="4Geeks logo"
     />,
     <Box padding="5px 5px">
@@ -287,7 +310,6 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
         transition="all .2s ease"
         bg={useColorModeValue('white', 'gray.800')}
         color={useColorModeValue('gray.600', 'white')}
-        // minH="60px"
         height="7vh"
         py={{ base: '8px' }}
         px={{ base: 4 }}
@@ -297,46 +319,46 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
         justifyContent="space-between"
         align="center"
       >
-        <Flex
-          // flex={{ base: 1, md: 'auto' }}
-          ml={{ base: -2 }}
-          display={{ base: 'flex', xl: 'none' }}
-          gridGap="12px"
-          className="here-2"
-        >
-          <IconButton
-            onClick={onToggle}
-            _hover={{
-              background: commonColors,
-            }}
-            _active={{
-              background: commonColors,
-            }}
-            background={commonColors}
-            icon={
-              isOpen ? (
-                <Close2 />
-              ) : (
-                <Hamburger2 />
-              )
-            }
-            variant="default"
-            height="auto"
-            aria-label="Toggle Navigation"
-          />
-          <NextChakraLink minWidth="105px" href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
-            {logo}
-          </NextChakraLink>
-        </Flex>
+        {isMobile && (
+          <Flex
+            ml={{ base: -2 }}
+            display={{ base: 'flex', xl: 'none' }}
+            gridGap="12px"
+            className="here-2"
+          >
+            <IconButton
+              onClick={onToggle}
+              _hover={{
+                background: commonColors,
+              }}
+              _active={{
+                background: commonColors,
+              }}
+              background={commonColors}
+              icon={
+                isOpen ? (
+                  <Close2 colorMode={colorMode} />
+                ) : (
+                  <Hamburger2 colorMode={colorMode} />
+                )
+              }
+              variant="default"
+              height="auto"
+              aria-label="Toggle Navigation"
+            />
+            <NextLink href={sessionExists ? programSlug : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
+              {logo}
+            </NextLink>
+          </Flex>
+        )}
 
         <Flex
-          // flex={{ base: 1 }}
           display={{ base: 'none', xl: 'flex' }}
           justify={{ base: 'center', xl: 'start' }}
         >
-          <NextChakraLink minWidth="105px" href={sessionExists ? programSlug : '/'} alignSelf="center" display="flex">
+          <NextLink href={sessionExists ? programSlug : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
             {logo}
-          </NextChakraLink>
+          </NextLink>
 
           <Flex display="flex" ml={10}>
             <DesktopNav NAV_ITEMS={ITEMS.length > 0 ? ITEMS : noscriptItems} haveSession={sessionExists} readSyllabus={readSyllabus} />
@@ -355,7 +377,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
             style={{
               margin: 0,
             }}
-            display={useBreakpointValue({ base: 'none', md: 'flex' })}
+            display={isMobile ? 'none' : 'flex'}
             height="auto"
             _hover={{
               background: commonColors,
@@ -366,11 +388,6 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
             aria-label="Dark mode switch"
             background={commonColors}
             onClick={() => {
-              // if (colorMode === 'light') {
-              //   document.documentElement.setAttribute('data-color-mode', 'dark');
-              // } else {
-              //   document.documentElement.setAttribute('data-color-mode', 'light');
-              // }
               toggleColorMode();
             }}
             icon={
@@ -403,7 +420,6 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
                   title="Profile"
                 >
                   <Avatar
-                    // name={user?.first_name}
                     width="30px"
                     marginY="auto"
                     height="30px"
@@ -415,14 +431,12 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
               <PopoverContent
                 border={0}
                 boxShadow="2xl"
-                // bg={popoverContentBgColor}
                 rounded="md"
                 width={{ base: '100%', md: 'auto' }}
                 minW={{ base: 'auto', md: 'md' }}
               >
                 <PopoverArrow />
                 <Box
-                  // border={0}
                   boxShadow="dark-lg"
                   bg={popoverContentBgColor}
                   rounded="md"
@@ -587,7 +601,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
               letterSpacing="0.05em"
             >
               <Button
-                display={useBreakpointValue({ base: 'flex', md: 'flex' })}
+                display="flex"
                 width="100px"
                 fontWeight={700}
                 lineHeight="0.05em"
@@ -600,35 +614,26 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
         </Stack>
       </Flex>
 
-      <Collapse display={{ lg: 'block' }} in={isOpen} animateOpacity>
-        <MobileNav
-          mktCourses={!isNotAvailableForMktCourses && marketingCouses?.length > 0 ? marketingCouses : []}
-          NAV_ITEMS={ITEMS}
-          haveSession={sessionExists}
-          translations={translations}
-          readSyllabus={readSyllabus}
-        />
-        {/* {isBelowTablet && (
+      {isMobile && (
+        <Collapse display={{ lg: 'block' }} in={isOpen} animateOpacity>
           <MobileNav
+            mktCourses={!isNotAvailableForMktCourses && marketingCouses?.length > 0 ? marketingCouses : []}
             NAV_ITEMS={ITEMS}
             haveSession={sessionExists}
             translations={translations}
             readSyllabus={readSyllabus}
-            isBelowTablet
           />
-        )} */}
-      </Collapse>
+        </Collapse>
+      )}
     </Box>
   );
-};
+}
 
 NavbarWithSubNavigation.propTypes = {
-  haveSession: PropTypes.bool,
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
-  pageProps: PropTypes.objectOf(PropTypes.any),
+  pageProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
 };
 NavbarWithSubNavigation.defaultProps = {
-  haveSession: false,
   translations: undefined,
   pageProps: undefined,
 };

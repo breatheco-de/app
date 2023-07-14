@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   QueryClient,
   QueryClientProvider,
@@ -20,7 +20,6 @@ import ConnectionProvider from '../common/context/ConnectionContext';
 import Footer from '../common/components/Footer';
 import Helmet from '../common/components/Helmet';
 import InterceptionLoader from '../common/components/InterceptionLoader';
-import useAuth from '../common/hooks/useAuth';
 
 import '../../styles/globals.css';
 import '../../styles/react-tags-input.css';
@@ -35,29 +34,14 @@ import '@fontsource/lato/700.css';
 import '@fontsource/lato/900.css';
 
 function App({ Component, pageProps }) {
-  const { isAuthenticated } = useAuth();
-  const [haveSession, setHaveSession] = useState(false);
-  const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
+  const [hasMounted, setHasMounted] = useState(false);
 
   const queryClient = new QueryClient();
 
   useEffect(() => {
+    setHasMounted(true);
     TagManager.initialize({ gtmId: process.env.TAG_MANAGER_KEY });
   }, []);
-
-  useEffect(() => {
-    // verify if accessToken exists
-    if (isAuthenticated || HAVE_SESSION) {
-      setHaveSession(true);
-    }
-  }, [isAuthenticated, HAVE_SESSION]);
-
-  const Navbar = () => {
-    if (HAVE_SESSION) {
-      return <NavbarSession pageProps={pageProps} translations={pageProps?.translations} haveSession={haveSession} />;
-    }
-    return <NavbarSession pageProps={pageProps} translations={pageProps?.translations} haveSession={false} />;
-  };
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -65,9 +49,10 @@ function App({ Component, pageProps }) {
         {...pageProps.seo}
       />
       <ChakraProvider resetCSS theme={CustomTheme}>
+
         <AuthProvider>
           <ConnectionProvider>
-            <Navbar />
+            {hasMounted && <NavbarSession pageProps={pageProps} translations={pageProps?.translations} />}
             <InterceptionLoader />
 
             <PrismicProvider internalLinkComponent={(props) => <Link {...props} />}>
@@ -76,7 +61,7 @@ function App({ Component, pageProps }) {
               </PrismicPreview>
             </PrismicProvider>
 
-            <Footer pageProps={pageProps} />
+            {hasMounted && <Footer pageProps={pageProps} />}
           </ConnectionProvider>
         </AuthProvider>
       </ChakraProvider>

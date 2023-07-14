@@ -387,7 +387,9 @@ const Dashboard = () => {
               style={{ marginRight: '7px' }}
               color="currentColor"
             />
-            {t('backToChooseProgram')}
+            <span>
+              {t('backToChooseProgram')}
+            </span>
           </NextChakraLink>
         </Box>
 
