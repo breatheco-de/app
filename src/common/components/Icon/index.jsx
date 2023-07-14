@@ -1,10 +1,8 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
 import { Box } from '@chakra-ui/react';
 import iconDic from '../../utils/iconDict.json';
-// const iconDict = require('../common/utils/iconDict.json');
 
 const Icon = ({
   icon, withContainer, width, height, style, color, secondColor, fill, className, props, full, text, ...rest
@@ -12,7 +10,6 @@ const Icon = ({
   if (typeof window === 'undefined' || !window) return '';
   const iconExists = iconDic.includes(icon);
 
-  // eslint-disable-next-line no-console
   const Comp = loadable(() => import(`./set/${iconExists ? icon : 'info'}`).catch((err) => console.error(err)));
   return withContainer ? (
     <Box className={className} {...rest}>
