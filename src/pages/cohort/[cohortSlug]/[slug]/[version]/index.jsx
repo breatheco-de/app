@@ -522,7 +522,7 @@ const Dashboard = () => {
                           <Box as="span" fontSize="21px" fontWeight={700} flex="1" textAlign="left">
                             {t('intro-video-title')}
                           </Box>
-                          <Icon withContainer icon="arrowRight" width="11px" height="20px" color="currentColor" style={{ }} transform={isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'} transition="transform 0.2s ease-in" />
+                          <Icon icon="arrowRight" width="11px" height="20px" color="currentColor" style={{ }} transform={isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'} transition="transform 0.2s ease-in" />
                         </AccordionButton>
                       </span>
                       <AccordionPanel padding="0px 4px 4px 4px">

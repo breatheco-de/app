@@ -90,9 +90,7 @@ const DesktopItem = ({ item }) => {
             }}
             onClick={() => setPopoverOpen(!popoverOpen)}
           >
-            <span>
-              {item.label}
-            </span>
+            {item.label}
             {item.subMenu && (
               <Icon
                 icon="arrowDown"
@@ -292,9 +290,7 @@ const DesktopItem = ({ item }) => {
             color: 'blue.default',
           }}
         >
-          <span>
-            {item.label}
-          </span>
+          {item.label}
           {item.subMenu && (
             <Icon
               icon="arrowDown"

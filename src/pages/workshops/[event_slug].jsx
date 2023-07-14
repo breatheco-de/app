@@ -221,7 +221,7 @@ const Page = () => {
                   onEndedEvent={handleOnFinished}
                   finishedView={(
                     <Box display="flex" alignItems="center" fontWeight={700} color="danger" fontSize="12px" background="red.light" borderRadius="18px" padding="4px 10px" gridGap="10px">
-                      <Icon withContainer className="pulse-red" icon="dot" color="currentColor" width="8px" height="8px" borderRadius="50px" />
+                      <Icon className="pulse-red" icon="dot" color="currentColor" width="8px" height="8px" borderRadius="50px" />
                       {t('common:live-now')}
                     </Box>
                   )}

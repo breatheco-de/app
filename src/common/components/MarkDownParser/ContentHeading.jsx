@@ -25,11 +25,12 @@ const ContentHeading = ({
     >
       <Box marginBottom="1.5rem">
         <Box display="flex" justifyContent="space-between" gridGap="16px" margin="2rem 0 0 0">
-          <Heading size="m" display="inline-flex" gridGap="10px" margin="0 0 0 0 !important">
+          <Box display="flex" gridGap="16px" alignItems="center">
             <Icon icon={assetTypeIcons[assetType] || 'book'} height="30px" color="#0097CD" width="28px" style={{ margin: 'auto', marginRight: '0.4rem' }} />
-            {' '}
-            {title}
-          </Heading>
+            <Heading size="m" display="inline-flex" gridGap="10px" margin="0 0 0 0 !important">
+              {title}
+            </Heading>
+          </Box>
           {titleRightSide}
         </Box>
         {callToAction}
