@@ -75,6 +75,7 @@ const Dashboard = () => {
   const isBelowTablet = getBrowserSize()?.width < 768;
   const [currentCohortProps, setCurrentCohortProps] = useState({});
   const [subscriptionData, setSubscriptionData] = useState(null);
+  const [allSubscriptions, setAllSubscriptions] = useState(null);
   const {
     cohortSession, sortedAssignments, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, taskTodo, taskTodoState,
@@ -215,10 +216,13 @@ const Dashboard = () => {
 
         const finalData = {
           ...planData,
-          mentorshipServiceSet: planData?.selected_mentorship_service_set,
           planOfferExists: currentPlanOffer !== undefined,
         };
 
+        const planFinancings = data?.plan_financings?.length > 0 ? data?.plan_financings : [];
+        const subscriptions = data?.subscriptions?.length > 0 ? data?.subscriptions : [];
+
+        setAllSubscriptions([...planFinancings, ...subscriptions]);
         setSubscriptionData(finalData);
       });
     syncInterval(() => {
@@ -501,7 +505,7 @@ const Dashboard = () => {
                 />
                 )}
                 {cohortSession?.cohort_role?.toLowerCase() === 'student' && flags?.appReleaseEnableMentorshipsWidget && (
-                  <SupportSidebar subscriptionData={subscriptionData} />
+                  <SupportSidebar subscriptions={allSubscriptions} subscriptionData={subscriptionData} />
                 )}
               </Box>
             )}
@@ -724,7 +728,7 @@ const Dashboard = () => {
               />
               )}
               {cohortSession?.cohort_role?.toLowerCase() === 'student' && flags?.appReleaseEnableMentorshipsWidget && (
-                <SupportSidebar subscriptionData={subscriptionData} />
+                <SupportSidebar subscriptions={allSubscriptions} subscriptionData={subscriptionData} />
               )}
             </Box>
           )}

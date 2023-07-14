@@ -18,7 +18,7 @@ import { AvatarSkeletonWrapped } from '../Skeleton';
 const NoConsumablesCard = ({ t, setMentoryProps, mentoryProps, subscriptionData, disableBackButton = false, ...rest }) => {
   const academyService = mentoryProps?.service?.slug
     ? mentoryProps?.service
-    : subscriptionData?.mentorshipServiceSet?.mentorship_services?.[0];
+    : subscriptionData?.selected_mentorship_service_set?.mentorship_services?.[0];
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" {...rest}>
