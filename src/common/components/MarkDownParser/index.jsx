@@ -21,6 +21,7 @@ import ContentHeading from './ContentHeading';
 import CallToAction from '../CallToAction';
 import SubTasks from './SubTasks';
 import modifyEnv from '../../../../modifyEnv';
+import Quote from './Quote';
 
 const MarkDownParser = ({
   content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask, isPublic, currentData,
@@ -136,7 +137,7 @@ const MarkDownParser = ({
           <SubTasks subTasks={subTasks} assetType={assetType} />
         )}
       </ContentHeading>
-
+      <Quote>Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it -- Brian Kernighan</Quote>
       {isPublic && withToc && (
         <Toc content={content} />
       )}
