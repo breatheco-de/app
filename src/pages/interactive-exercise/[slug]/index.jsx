@@ -471,9 +471,7 @@ const TabletWithForm = ({
                 ))}
               </OrderedList>
               <Text display="flex" alignItems="center" marginTop="15px">
-                <span>
-                  <Icon width="19px" height="19px" style={{ display: 'inline-block' }} icon="help" />
-                </span>
+                <Icon width="19px" height="19px" style={{ display: 'inline-block' }} icon="help" />
                 <Link
                   href="/how-to/github-clone-repository"
                   target="_blank"

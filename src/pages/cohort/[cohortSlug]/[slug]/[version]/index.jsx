@@ -75,6 +75,7 @@ const Dashboard = () => {
   const isBelowTablet = getBrowserSize()?.width < 768;
   const [currentCohortProps, setCurrentCohortProps] = useState({});
   const [subscriptionData, setSubscriptionData] = useState(null);
+  const [allSubscriptions, setAllSubscriptions] = useState(null);
   const {
     cohortSession, sortedAssignments, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, taskTodo, taskTodoState,
@@ -215,10 +216,13 @@ const Dashboard = () => {
 
         const finalData = {
           ...planData,
-          mentorshipServiceSet: planData?.selected_mentorship_service_set,
           planOfferExists: currentPlanOffer !== undefined,
         };
 
+        const planFinancings = data?.plan_financings?.length > 0 ? data?.plan_financings : [];
+        const subscriptions = data?.subscriptions?.length > 0 ? data?.subscriptions : [];
+
+        setAllSubscriptions([...planFinancings, ...subscriptions]);
         setSubscriptionData(finalData);
       });
     syncInterval(() => {
@@ -383,7 +387,9 @@ const Dashboard = () => {
               style={{ marginRight: '7px' }}
               color="currentColor"
             />
-            {t('backToChooseProgram')}
+            <span>
+              {t('backToChooseProgram')}
+            </span>
           </NextChakraLink>
         </Box>
 
@@ -501,7 +507,7 @@ const Dashboard = () => {
                 />
                 )}
                 {cohortSession?.cohort_role?.toLowerCase() === 'student' && flags?.appReleaseEnableMentorshipsWidget && (
-                  <SupportSidebar subscriptionData={subscriptionData} />
+                  <SupportSidebar subscriptions={allSubscriptions} subscriptionData={subscriptionData} />
                 )}
               </Box>
             )}
@@ -516,7 +522,7 @@ const Dashboard = () => {
                           <Box as="span" fontSize="21px" fontWeight={700} flex="1" textAlign="left">
                             {t('intro-video-title')}
                           </Box>
-                          <Icon withContainer icon="arrowRight" width="11px" height="20px" color="currentColor" style={{ }} transform={isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'} transition="transform 0.2s ease-in" />
+                          <Icon icon="arrowRight" width="11px" height="20px" color="currentColor" style={{ }} transform={isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'} transition="transform 0.2s ease-in" />
                         </AccordionButton>
                       </span>
                       <AccordionPanel padding="0px 4px 4px 4px">
@@ -724,7 +730,7 @@ const Dashboard = () => {
               />
               )}
               {cohortSession?.cohort_role?.toLowerCase() === 'student' && flags?.appReleaseEnableMentorshipsWidget && (
-                <SupportSidebar subscriptionData={subscriptionData} />
+                <SupportSidebar subscriptions={allSubscriptions} subscriptionData={subscriptionData} />
               )}
             </Box>
           )}
