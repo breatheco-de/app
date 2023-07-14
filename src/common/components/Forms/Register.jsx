@@ -8,36 +8,34 @@ import {
   FormErrorMessage,
   Box,
   Avatar,
+  useToast,
   // InputRightElement,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 import { useRouter } from 'next/router';
 // import Icon from '../Icon';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 import validationSchema from './validationSchemas';
 import { getStorageItem, setStorageItem } from '../../../utils';
 import modifyEnv from '../../../../modifyEnv';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import Text from '../Text';
 import { SILENT_CODE } from '../../../lib/types';
-import useAuth from '../../hooks/useAuth';
+import bc from '../../services/breathecode';
 
-function Register() {
+function Register({ setIsLoggedFromRegister }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('login');
-  const { isAuthenticated } = useAuth();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
+  const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const accessToken = getStorageItem('accessToken');
+  const toast = useToast();
   // const [showPSW, setShowPSW] = useState(false);
   // const [showRepeatPSW, setShowRepeatPSW] = useState(false);
 
   const router = useRouter();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      setShowAlreadyMember(true);
-    }
-  }, [isAuthenticated]);
   // const toggleShowRepeatPSW = () => setShowRepeatPSW(!showRepeatPSW);
   // const toggleShowPSW = () => setShowPSW(!showPSW);
 
@@ -62,7 +60,7 @@ function Register() {
         closeButtonVariant="outline"
         disableCloseButton={accessToken}
         closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
-        buttonHandlerStyles={accessToken ? { variant: 'outline', borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' } : {}}
+        buttonHandlerStyles={accessToken ? { variant: 'outline', borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' } : { variant: 'default' }}
         actionHandler={() => {
           if (accessToken) {
             router.push({
@@ -77,6 +75,63 @@ function Register() {
           }
         }}
         handlerText={accessToken ? t('common:close') : t('common:login')}
+      />
+      <ModalInfo
+        headerStyles={{ textAlign: 'center' }}
+        title={t('signup:alert-message.validate-email-title')}
+        footerStyle={{ flexDirection: 'row-reverse' }}
+        closeButtonVariant="outline"
+        closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
+        childrenDescription={(
+          <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+            <Avatar src="https://breathecode.herokuapp.com/static/img/avatar-1.png" border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+            <Text
+              size="14px"
+              textAlign="center"
+              dangerouslySetInnerHTML={{ __html: t('signup:alert-message.validate-email-description', { email: verifyEmailProps?.data?.email }) }}
+            />
+          </Box>
+        )}
+        isOpen={verifyEmailProps.state}
+        buttonHandlerStyles={{ variant: 'default' }}
+        actionHandler={() => {
+          const inviteId = verifyEmailProps?.data?.id;
+          bc.auth().resendConfirmationEmail(inviteId)
+            .then((resp) => {
+              const data = resp?.data;
+              if (data === undefined) {
+                toast({
+                  position: 'top',
+                  status: 'info',
+                  title: t('signup:alert-message.email-already-sent'),
+                  isClosable: true,
+                  duration: 6000,
+                });
+              } else {
+                toast({
+                  position: 'top',
+                  status: 'success',
+                  title: t('signup:alert-message.email-sent-to', { email: data?.email }),
+                  isClosable: true,
+                  duration: 6000,
+                });
+              }
+            });
+        }}
+        handlerText={t('signup:resend')}
+        forceHandlerAndClose
+        onClose={() => {
+          setVerifyEmailProps({
+            ...verifyEmailProps,
+            state: false,
+          });
+          router.push({
+            pathname: '/checkout',
+            query: {
+              plan: '4geeks-standard',
+            },
+          });
+        }}
       />
       <Formik
         initialValues={{
@@ -101,17 +156,23 @@ function Register() {
             }),
           });
           const data = await resp.json();
-          if (data.silent_code === SILENT_CODE.USER_EXISTS) {
+          if (data.silent_code === SILENT_CODE.USER_EXISTS
+              || data.silent_code === SILENT_CODE.USER_INVITE_ACCEPTED_EXISTS) {
             setShowAlreadyMember(true);
           }
           setStorageItem('subscriptionId', data?.id);
-
           if (data?.access_token) {
-            setShowAlreadyMember(true);
+            setIsLoggedFromRegister(true);
+            setVerifyEmailProps({
+              data: {
+                ...values,
+                ...data,
+              },
+              state: true,
+            });
             router.push({
               query: {
                 token: data.access_token,
-                from: 'register',
               },
             });
           }
@@ -352,5 +413,12 @@ function Register() {
     </>
   );
 }
+
+Register.propTypes = {
+  setIsLoggedFromRegister: PropTypes.func,
+};
+Register.defaultProps = {
+  setIsLoggedFromRegister: () => {},
+};
 
 export default Register;
