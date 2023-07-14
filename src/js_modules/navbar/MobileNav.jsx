@@ -14,7 +14,7 @@ import LanguageSelector from '../../common/components/LanguageSelector';
 
 const MobileNav = ({
   // eslint-disable-next-line no-unused-vars
-  NAV_ITEMS, readSyllabus, haveSession, translations, mktCourses,
+  NAV_ITEMS, readSyllabus, haveSession, translations,
 }) => {
   const [privateItems, setPrivateItems] = useState([]);
   const { colorMode, toggleColorMode } = useColorMode();
@@ -147,7 +147,6 @@ MobileNav.propTypes = {
   ),
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   readSyllabus: PropTypes.arrayOf(PropTypes.any),
-  mktCourses: PropTypes.arrayOf(PropTypes.any),
 };
 
 MobileNav.defaultProps = {
@@ -163,7 +162,6 @@ MobileNav.defaultProps = {
   ],
   readSyllabus: [],
   translations: undefined,
-  mktCourses: [],
 };
 
 export default MobileNav;
