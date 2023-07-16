@@ -1,19 +1,18 @@
 import React, { useEffect,useState } from 'react';
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, Divider } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import quoteImg from '../../img/quote.png';
 import whiteQuoteImg from '../../img/white-quote.png';
 
 const Quote = ({ children, ...props }) => {
-const [version,setVersion] = useState(4)
+const [version,setVersion] = useState(2)
   const { id, ...rest } = props;
 
   const quote = children.split('--');
 
-//  useEffect(()=>{
-//   setVersion(Math.floor(Math.random() * 4 ) + 1)
-//   console.log(version)
-//  },[])
+ useEffect(()=>{
+  setVersion(Math.floor(Math.random() * 4 ) + 1)
+ },[])
  
   if( version == 1) {
     return (
@@ -40,8 +39,17 @@ const [version,setVersion] = useState(4)
     return (      
           <Flex justifyContent="center" alignItems="center" flexDirection="column">
             <Box {...rest} className="quote-container" display="flex" flexDirection="column" alignContent="center" width="43%">
-              <Box className="quote-img" width="3.5%" mr="5" mb="3">
-                <img src={quoteImg.src} alt="quoteImg" />
+              <Box className='quote-divider-container' display="flex" alignItems="center">
+
+                <Box className="quote-img" width="3.5%" mr="5" mb="3">
+                  <img src={quoteImg.src} alt="quoteImg" />
+                </Box>
+                <hr style={{    width: "100%",
+                  backgroundColor: "#cccccca6",
+                  height: "0.5px",
+                  marginBottom: "8px"}}/>
+                
+                {/* <Divider /> */}
               </Box>
               <Box className="quote-content">
                       <Box className="quote-paragraph">
