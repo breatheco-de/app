@@ -6,9 +6,7 @@ const HelpComponent = ({
   width, height, style, color, text,
 }) => (
   <Tooltip label={text} placement="top">
-    <span>
-      <Icon width={width} height={height} style={{ display: 'inline-block', ...style }} color={color} icon="help" />
-    </span>
+    <Icon width={width} height={height} style={{ display: 'inline-block', ...style }} color={color} icon="help" />
   </Tooltip>
 
 );
