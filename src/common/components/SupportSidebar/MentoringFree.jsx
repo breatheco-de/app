@@ -146,7 +146,7 @@ const MentoringFree = ({
                   )}
                 </>
               )}
-              <Text color="gray.600" size="12px" margin="8px 0 0 0">
+              <Text color={lightColor} size="12px" margin="8px 0 0 0">
                 {t('supportSideBar.mentors-available', { count: allMentorsAvailable.length })}
               </Text>
             </Box>
