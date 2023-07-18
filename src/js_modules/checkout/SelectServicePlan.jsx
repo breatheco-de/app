@@ -7,6 +7,7 @@ import bc from '../../common/services/breathecode';
 import { getQueryString, toCapitalize, unSlugify } from '../../utils';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import Text from '../../common/components/Text';
+import { parseQuerys } from '../../utils/url';
 
 const SelectServicePlan = () => {
   const { t, lang } = useTranslation('signup');
@@ -46,7 +47,11 @@ const SelectServicePlan = () => {
     }
 
     if (findedPlanCoincidences.length === 1) {
-      const pageToRedirect = `/${lang}/checkout?mentorship_service_set=${findedPlanCoincidences[0]?.selected_mentorship_service_set?.slug}&service=${findedPlanCoincidences[0]?.selected_mentorship_service_set.mentorship_services[0]?.slug}`;
+      const qs = parseQuerys({
+        mentorship_service_set: findedPlanCoincidences[0]?.selected_mentorship_service_set?.slug,
+        service: findedPlanCoincidences[0]?.selected_mentorship_service_set.mentorship_services[0]?.slug,
+      });
+      const pageToRedirect = `/${lang}/checkout${qs}`;
       window.location.href = pageToRedirect;
     }
     setSubscriptions(findedPlanCoincidences);
@@ -57,11 +62,13 @@ const SelectServicePlan = () => {
   }, []);
 
   const handleContinue = () => {
-    const pageToRedirect = `/${lang}/checkout?mentorship_service_set=${selectedService?.selected_mentorship_service_set?.slug}&service=${selectedService?.selected_mentorship_service_set.mentorship_services[0]?.slug}`;
+    const qs = parseQuerys({
+      mentorship_service_set: selectedService?.selected_mentorship_service_set?.slug,
+      service: selectedService?.selected_mentorship_service_set.mentorship_services[0]?.slug,
+    });
+    const pageToRedirect = `/${lang}/checkout${qs}`;
     window.location.href = pageToRedirect;
   };
-
-  console.log('subscriptions:::', subscriptions);
 
   return (
     <Box maxWidth="1280px" display="flex" alignItems="center" flexDirection="column" gridGap="2rem" padding="24px" bg={backgroundColor} width="100%" margin="0 auto" borderRadius="17px">
@@ -76,7 +83,7 @@ const SelectServicePlan = () => {
       {isLoading ? (
         <LoaderScreen width="240px" height="240px" position="relative" />
       ) : (
-        <Box display="flex" flexDirection="column" gridGap="20px" width={{ base: 'auto', md: '80%' }}>
+        <Box display="flex" flexDirection="column" gridGap="4rem" width={{ base: 'auto', md: '80%' }}>
           {subscriptions.length > 0 && subscriptions.map((s) => {
             const title = unSlugify(s?.plans?.[0]?.slug);
             const cohortData = s?.selected_cohort;
@@ -92,14 +99,14 @@ const SelectServicePlan = () => {
                 flexDirection="row"
                 width="100%"
                 justifyContent="space-between"
-                p={{ base: '14px', sm: '22px 18px' }}
+                p={{ base: '14px', sm: '16px 18px' }}
                 gridGap={{ base: '12px', md: '20px' }}
                 cursor="pointer"
                 border={isSelected ? '2px solid #0097CD' : `2px solid ${hexColor.featuredColor}`}
                 borderRadius="13px"
                 alignItems="center"
               >
-                <Box display="flex" flexDirection="column" gridGap="12px">
+                <Box display="flex" flexDirection="column" gridGap="8px">
                   <Heading size="16px">
                     {toCapitalize(title)}
                   </Heading>
@@ -114,7 +121,8 @@ const SelectServicePlan = () => {
             variant="default"
             disabled={!selectedService?.plans?.[0]?.slug}
             onClick={handleContinue}
-            width="100%"
+            width="120px"
+            margin="0 auto"
           >
             {t('common:continue')}
           </Button>
