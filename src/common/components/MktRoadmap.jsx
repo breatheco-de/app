@@ -91,7 +91,7 @@ const MktRoadmap = ({ id, title, course, ...rest }) => {
           )}
           <UnorderedList display={{ base: 'flex', md: 'none' }} listStyleType="none" flexDirection="column" mb="20px">
             {data.map((item, index) => (
-              <ListItem variant="unstyled">
+              <ListItem key={item.name} variant="unstyled">
                 <Heading size="xsm" fontWeight="500" color="blue.default" onClick={() => setCurrentTabIndex(index)}>
                   {item?.short_name || item?.name}
                 </Heading>

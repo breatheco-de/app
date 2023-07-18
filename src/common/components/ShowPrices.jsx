@@ -161,7 +161,7 @@ const ShowPrices = ({
         )}
       </Box>
       {financeSelected[selectedFinanceIndex].filter((l) => l.show === true).map((item, i) => (!item.isFree) && (
-        <PlanCard item={item} i={i} />
+        <PlanCard key={item?.title} item={item} i={i} />
       ))}
       {existMoreThanOne && financeSelected[selectedFinanceIndex].some((item) => item.isFree) && (
         <Box display="flex" alignItems="center">
@@ -173,7 +173,7 @@ const ShowPrices = ({
         </Box>
       )}
       {financeSelected[selectedFinanceIndex].filter((l) => l.show === true && l?.isFree).map((item, i) => (
-        <PlanCard item={item} i={i} />
+        <PlanCard key={item?.title} item={item} i={i} />
       ))}
       <Box mt="38px">
         {process.env.VERCEL_ENV !== 'production' && outOfConsumables && (
