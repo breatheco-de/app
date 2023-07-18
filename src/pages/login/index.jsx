@@ -33,7 +33,6 @@ export const getStaticProps = async ({ locale, locales }) => {
         url: ogUrl.en || `/${locale}/login`,
         pathConnector: '/login',
       },
-      fallback: false,
     },
   };
 };
