@@ -115,7 +115,9 @@ const Mentoring = ({
   }, [programServices]);
 
   const isAvailableForConsumables = cohortSession?.available_as_saas === true;
-  const mentorshipService = serviceMentoring?.mentorship_service_sets?.find((c) => c?.slug.toLowerCase() === savedChanges?.service?.slug.toLowerCase());
+  const mentorshipService = serviceMentoring?.mentorship_service_sets?.find(
+    (c) => c?.slug.toLowerCase() === subscriptionData?.selected_mentorship_service_set?.slug.toLowerCase(),
+  );
 
   return !isLoading && user?.id && (
     <>
