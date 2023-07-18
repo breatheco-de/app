@@ -108,5 +108,10 @@
     "sessions": "sesiones",
     "back-to-dashboard": "Volver al dashboard",
     "confirm-purchase-connector": "Estás a punto de comprar:"
+  },
+  "select-mentorship-plan": {
+    "title": "Seleccione un plan de mentoria",
+    "description": "Encontramos planes con mentorías disponibles para ti, selecciona uno antes de continuar:",
+    "cohort-connector": "Cohorte: {{name}}"
   }
 }
