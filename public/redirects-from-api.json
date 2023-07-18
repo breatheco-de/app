@@ -1,17 +1,7 @@
 [
   {
-    "source": "/lesson/formularios-con-node",
-    "destination": "/es/lesson/formularios-con-node",
-    "permanent": true
-  },
-  {
     "source": "/lesson/Introduction-to-express-js-es",
     "destination": "/es/lesson/Introduction-to-express-js-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/Graficar-funciones-con-Python",
-    "destination": "/es/lesson/Graficar-funciones-con-Python",
     "permanent": true
   },
   {
@@ -25,13 +15,18 @@
     "permanent": true
   },
   {
+    "source": "/lesson/introduccion-a-express-generator",
+    "destination": "/es/lesson/introduccion-a-express-generator",
+    "permanent": true
+  },
+  {
     "source": "/lesson/introduccion-a-node-js",
     "destination": "/es/lesson/introduccion-a-node-js",
     "permanent": true
   },
   {
-    "source": "/lesson/introduccion-a-express-generator",
-    "destination": "/es/lesson/introduccion-a-express-generator",
+    "source": "/lesson/mongoose_with_mongodb-es",
+    "destination": "/es/lesson/mongoose_with_mongodb-es",
     "permanent": true
   },
   {
@@ -45,13 +40,18 @@
     "permanent": true
   },
   {
-    "source": "/lesson/como-utilizar-node-y-npm",
-    "destination": "/es/lesson/como-utilizar-node-y-npm",
+    "source": "/lesson/formularios-con-node",
+    "destination": "/es/lesson/formularios-con-node",
     "permanent": true
   },
   {
-    "source": "/lesson/mongoose_with_mongodb-es",
-    "destination": "/es/lesson/mongoose_with_mongodb-es",
+    "source": "/lesson/Graficar-funciones-con-Python",
+    "destination": "/es/lesson/Graficar-funciones-con-Python",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/como-utilizar-node-y-npm",
+    "destination": "/es/lesson/como-utilizar-node-y-npm",
     "permanent": true
   },
   {
@@ -855,13 +855,13 @@
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/Crea-un-API-Rest-en-NodeJs-con-ExpressJs",
-    "destination": "/es/interactive-coding-tutorial/Crea-un-API-Rest-en-NodeJs-con-ExpressJs",
+    "source": "/interactive-coding-tutorial/codifica-una-landing-page-con-node",
+    "destination": "/es/interactive-coding-tutorial/codifica-una-landing-page-con-node",
     "permanent": true
   },
   {
-    "source": "/interactive-coding-tutorial/codifica-una-landing-page-con-node",
-    "destination": "/es/interactive-coding-tutorial/codifica-una-landing-page-con-node",
+    "source": "/interactive-coding-tutorial/Crea-un-API-Rest-en-NodeJs-con-ExpressJs",
+    "destination": "/es/interactive-coding-tutorial/Crea-un-API-Rest-en-NodeJs-con-ExpressJs",
     "permanent": true
   },
   {

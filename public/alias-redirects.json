@@ -615,14 +615,14 @@
     "destination": "/en/interactive-coding-tutorial/code-rest-api-with-node-and-jwt-authentication"
   },
   {
-    "source": "/project/Crea-un-API-Rest-en-NodeJs-con-ExpressJs",
-    "type": "PROJECT-REROUTE",
-    "destination": "/es/interactive-coding-tutorial/Crea-un-API-Rest-en-NodeJs-con-ExpressJs"
-  },
-  {
     "source": "/project/codifica-una-landing-page-con-node",
     "type": "PROJECT-REROUTE",
     "destination": "/es/interactive-coding-tutorial/codifica-una-landing-page-con-node"
+  },
+  {
+    "source": "/project/Crea-un-API-Rest-en-NodeJs-con-ExpressJs",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/Crea-un-API-Rest-en-NodeJs-con-ExpressJs"
   },
   {
     "source": "/project/Tutorial-de-Proyecto-de-NLP",
