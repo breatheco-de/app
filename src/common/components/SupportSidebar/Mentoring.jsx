@@ -129,7 +129,7 @@ const Mentoring = ({
             serviceMentoring,
             mentorshipService,
             setMentoryProps,
-            programServices,
+            programServices: subscriptionData?.selected_mentorship_service_set?.mentorship_services,
             dateFormated,
             servicesFiltered: suscriptionServicesFiltered,
             searchProps,

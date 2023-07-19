@@ -3,7 +3,7 @@ import { Avatar, AvatarGroup, Box, Button, Input, InputGroup, InputRightElement,
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import useStyle from '../../hooks/useStyle';
 import Heading from '../Heading';
 import Icon from '../Icon';
@@ -99,8 +99,6 @@ const MentoringConsumables = ({
 
   const currentBalance = (Number(mentorshipService?.balance) && mentorshipService?.balance) || (Number(mentorshipService?.balance?.unit) && mentorshipService?.balance?.unit);
 
-  const existsConsumables = Array.isArray(serviceMentoring?.mentorship_service_sets) && serviceMentoring?.mentorship_service_sets.some((item) => item?.balance > 0 || item?.balance?.unit > 0);
-
   const existConsumablesOnCurrentService = serviceMentoring?.mentorship_service_sets?.length > 0 && Object.values(mentorshipService).length > 0 && currentBalance > 0;
 
   useEffect(() => {
@@ -154,8 +152,9 @@ const MentoringConsumables = ({
     );
 
     const propsToQueryString = {
-      service_set: relevantProps.map((p) => p.mentorship_service_set_slug).join(','),
+      mentorship_service_set: relevantProps.map((p) => p.mentorship_service_set_slug).join(','),
       plans: relevantProps.map((p) => p.plan_slug).join(','),
+      selected_service: mentoryProps?.service?.slug,
     };
 
     router.push({
@@ -185,62 +184,55 @@ const MentoringConsumables = ({
         </Box>
       )}
       <Box display="flex" flexDirection="column" p="4" pt="20px" alignItems="center">
-        {existsConsumables ? (
+        <Box d="flex" flexDirection="column" alignItems="center" justifyContent="center">
+          {!mentoryProps?.service && (serviceMentoring?.mentorship_service_sets?.length !== 0 || currentBalance !== 0) && (
+            <>
+              <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
+                {t('supportSideBar.mentoring')}
+                <br />
+                <Link size="14px" variant="default" className="link" href={t('supportSideBar.learn-more-link')} target="_blank" rel="noopener noreferrer">
+                  {t('supportSideBar.learn-more')}
+                </Link>
+              </Heading>
+              {!mentoryProps?.service && programServices.length <= 0 && (
+                <Heading size="16px" textAlign="center" justify="center" mt="10px" mb="0px">
+                  {programServices.length > 0 ? `${programServices.length} ${t('supportSideBar.mentoring-available')}` : t('supportSideBar.no-mentoring-available')}
+                </Heading>
+              )}
+            </>
+          )}
+        </Box>
+        {!open && (
           <>
-            <Box d="flex" flexDirection="column" alignItems="center" justifyContent="center">
-              {!mentoryProps?.service && (serviceMentoring?.mentorship_service_sets?.length !== 0 || currentBalance !== 0) && (
+            <Box margin="15px 0" display="flex" flexDirection="column">
+              {allMentorsAvailable.length > 0 ? (
+                <ProfilesSection profiles={allMentorsAvailable} />
+              ) : (
                 <>
-                  <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
-                    {t('supportSideBar.mentoring')}
-                    <br />
-                    <Link size="14px" variant="default" className="link" href={t('supportSideBar.learn-more-link')} target="_blank" rel="noopener noreferrer">
-                      {t('supportSideBar.learn-more')}
-                    </Link>
-                  </Heading>
-                  {!mentoryProps?.service && programServices.length <= 0 && (
-                    <Heading size="16px" textAlign="center" justify="center" mt="10px" mb="0px">
-                      {programServices.length > 0 ? `${programServices.length} ${t('supportSideBar.mentoring-available')}` : t('supportSideBar.no-mentoring-available')}
-                    </Heading>
+                  {existsMentors && (
+                    <AvatarSkeletonWrapped quantity={4} />
+                  )}
+                  {!existsMentors && allMentorsAvailable.length === 0 && (
+                    <Avatar
+                      width="48px"
+                      height="48px"
+                      margin="0 auto"
+                      style={{ userSelect: 'none' }}
+                      src="/static/images/angry-avatar.png"
+                    />
                   )}
                 </>
               )}
+              <Text color={lightColor} size="12px" margin="8px 0 0 0">
+                {t('supportSideBar.mentors-available', { count: 3 })}
+              </Text>
             </Box>
-            {!open && (
-              <>
-                <Box margin="15px 0" display="flex" flexDirection="column">
-                  {allMentorsAvailable.length > 0 ? (
-                    <ProfilesSection profiles={allMentorsAvailable} />
-                  ) : (
-                    <>
-                      {existsMentors && (
-                        <AvatarSkeletonWrapped quantity={4} />
-                      )}
-                      {!existsMentors && allMentorsAvailable.length === 0 && (
-                        <Avatar
-                          width="48px"
-                          height="48px"
-                          margin="0 auto"
-                          style={{ userSelect: 'none' }}
-                          src="/static/images/angry-avatar.png"
-                        />
-                      )}
-                    </>
-                  )}
-                  {existsConsumables && (
-                    <Text color={lightColor} size="12px" margin="8px 0 0 0">
-                      {t('supportSideBar.mentors-available', { count: 3 })}
-                      {/* {t('supportSideBar.mentors-available', { count: allMentorsAvailable.length })} */}
-                    </Text>
-                  )}
-                </Box>
-                <Button variant="default" onClick={() => setOpen(true)}>
-                  {t('supportSideBar.schedule-button')}
-                  <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
-                </Button>
-              </>
-            )}
+            <Button variant="default" onClick={() => setOpen(true)}>
+              {t('supportSideBar.schedule-button')}
+              <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
+            </Button>
           </>
-        ) : <NoConsumablesCard t={t} mentoryProps={mentoryProps} handleGetMoreMentorships={handleGetMoreMentorships} subscriptionData={subscriptionData} setMentoryProps={setMentoryProps} disableBackButton />}
+        )}
 
         {isNotProduction && open && mentoryProps?.service && !mentoryProps?.mentor && existConsumablesOnCurrentService && (
           <Box display="flex" alignItems="center" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0">
@@ -311,7 +303,7 @@ const MentoringConsumables = ({
                     </InputGroup>
                     <Box maxHeight="10rem" width="100%" overflow="auto" borderBottomRadius="0.375rem">
                       {servicesFiltered.length > 0 ? servicesFiltered.map((service) => (
-                        <Box borderTop="1px solid" cursor="pointer" onClick={() => handleService(service)} borderColor={borderColor} py="14px" background={commonBackground} width="100%" px="22px" _hover={{ background: useColorModeValue('featuredLight', 'gray.700') }}>
+                        <Box key={service.name} borderTop="1px solid" cursor="pointer" onClick={() => handleService(service)} borderColor={borderColor} py="14px" background={commonBackground} width="100%" px="22px" _hover={{ background: useColorModeValue('featuredLight', 'gray.700') }}>
                           {service.name}
                         </Box>
                       )) : (
@@ -334,7 +326,7 @@ const MentoringConsumables = ({
                       </InputGroup>
                       <Box maxHeight="18rem" width="100%" background={commonBackground} overflow="auto" borderBottomRadius="0.375rem">
                         {mentorsFiltered.length > 0 ? mentorsFiltered.map((mentor, i) => (
-                          <>
+                          <Fragment key={mentor?.user?.id}>
                             {i !== 0 && (
                               <Box as="hr" borderColor="gray.300" margin="0 18px" />
                             )}
@@ -368,7 +360,7 @@ const MentoringConsumables = ({
                                 </Box>
                               </Box>
                             </Box>
-                          </>
+                          </Fragment>
                         )) : (
                           <Box borderTop="1px solid" borderColor={borderColor} py="14px" background={commonBackground} width="100%" px="22px">
                             {t('supportSideBar.no-mentors')}

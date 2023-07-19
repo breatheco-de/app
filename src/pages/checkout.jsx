@@ -83,8 +83,8 @@ const Checkout = () => {
   const toast = useToast();
   const plan = getQueryString('plan');
   const queryPlans = getQueryString('plans');
-  const queryServiceSet = getQueryString('service_set');
-  const mentorshipServiceSetSlug = queryServiceSet || getQueryString('mentorship_service_set');
+  const mentorshipServiceSetSlug = getQueryString('mentorship_service_set');
+  const eventTypeSetSlug = getQueryString('event_type_set');
   const planFormated = plan && encodeURIComponent(plan);
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
@@ -104,13 +104,15 @@ const Checkout = () => {
 
   const queryPlanExists = planFormated && planFormated?.length > 0;
   const queryMentorshipServiceSlugExists = mentorshipServiceSetSlug && mentorshipServiceSetSlug?.length > 0;
+  const queryEventTypeSetSlugExists = eventTypeSetSlug && eventTypeSetSlug?.length > 0;
   const queryPlansExists = queryPlans && queryPlans?.length > 0;
-  const queryServiceSetExists = queryServiceSet && queryServiceSet?.length > 0;
   const filteredCohorts = Array.isArray(cohorts) && cohorts.filter((item) => item?.never_ends === false);
+
+  const queryServiceExists = queryMentorshipServiceSlugExists || queryEventTypeSetSlugExists;
 
   useEffect(() => {
     const isAvailableToSelectPlan = queryPlansExists && queryPlans?.split(',')?.length > 1;
-    if (isAuthenticated && isAvailableToSelectPlan && queryServiceSetExists) {
+    if (isAuthenticated && isAvailableToSelectPlan && queryServiceExists) {
       setReadyToSelectService(true);
     }
     if (!queryPlanExists && tokenExists && isAuthenticated && !isAvailableToSelectPlan) {
@@ -125,10 +127,16 @@ const Checkout = () => {
             plan_financings: subscriptionRespData?.plan_financings,
           };
           const subscription = items?.subscriptions?.find(
-            (item) => item?.selected_mentorship_service_set?.slug === mentorshipServiceSetSlug,
+            (item) => (
+              item?.selected_mentorship_service_set?.slug === mentorshipServiceSetSlug
+              || item?.selected_event_type_set?.slug === eventTypeSetSlug
+            ),
           );
           const planFinanncing = items?.plan_financings?.find(
-            (item) => item?.selected_mentorship_service_set?.slug === mentorshipServiceSetSlug,
+            (item) => (
+              item?.selected_mentorship_service_set?.slug === mentorshipServiceSetSlug
+              || item?.selected_event_type_set?.slug === eventTypeSetSlug
+            ),
           );
 
           const currentSubscription = subscription || planFinanncing;
@@ -162,7 +170,7 @@ const Checkout = () => {
         setIsPreloading(false);
       }, 2600);
     }
-    if (!queryMentorshipServiceSlugExists && queryPlanExists && tokenExists && !cohortsData.loading) {
+    if (!queryServiceExists && queryPlanExists && tokenExists && !cohortsData.loading) {
       setIsPreloading(true);
 
       bc.payment().getPlan(planFormated)
@@ -387,7 +395,7 @@ const Checkout = () => {
         {!readyToSelectService && isFourthStep && (
           <PaymentInfo />
         )}
-        {!queryMentorshipServiceSlugExists && ((stepIndex !== 0 && !isSecondStep) || (stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep)) && (
+        {!queryServiceExists && ((stepIndex !== 0 && !isSecondStep) || (stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep)) && (
           <>
             <Box as="hr" width="100%" margin="10px 0" />
             <Box display="flex" justifyContent="space-between" mt="auto">
