@@ -189,10 +189,16 @@ const Page = () => {
   const existsConsumables = typeof currentConsumable?.balance?.unit === 'number' && currentConsumable?.balance?.unit > 0;
 
   const existsAvailableAsSaas = myCohorts.some((c) => c?.cohort?.available_as_saas === false);
-  const isFreeForConsumables = event?.free_for_bootcamps === true && existsAvailableAsSaas;
+  const isFreeForConsumables = finishedEvent || (event?.free_for_bootcamps === true && existsAvailableAsSaas);
 
   const dynamicFormInfo = () => {
-    if (isAuth && !existsConsumables && !isFreeForConsumables) {
+    if (finishedEvent) {
+      return ({
+        title: t('form.finished-title'),
+        description: t('form.finished-description'),
+      });
+    }
+    if (!finishedEvent && isAuth && !existsConsumables && !isFreeForConsumables) {
       return ({
         title: '',
         childrenDescription: (
@@ -202,12 +208,6 @@ const Page = () => {
             <Link variant="default" href="google.com">{t('no-consumables.link-text')}</Link> */}
           </Text>
         ),
-      });
-    }
-    if (finishedEvent) {
-      return ({
-        title: t('form.finished-title'),
-        description: t('form.finished-description'),
       });
     }
     if (isAuth && (!alreadyApplied && !readyToJoinEvent)) {
@@ -420,7 +420,7 @@ const Page = () => {
               readOnly={event?.loaded && !event?.slug}
               position="relative"
             >
-              {(isFreeForConsumables || existsConsumables) ? (
+              {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
                 <Button
                   mt="10px"
                   type="submit"
@@ -494,7 +494,7 @@ const Page = () => {
                     variant="default"
                     fontSize="14px"
                     fontWeight={700}
-                    onClick={() => handleGetMoreEventConsumables()}
+                    onClick={handleGetMoreEventConsumables}
                     alignItems="center"
                     gridGap="10px"
                   >

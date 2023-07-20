@@ -76,7 +76,7 @@ const ServiceSummary = ({ service }) => {
   });
 
   const dataToAssign = {
-    service: service?.serviceInfo?.type === 'mentorship' ? service?.serviceInfo.mentorship_services?.[0].slug : undefined,
+    service: service?.serviceInfo?.type === 'mentorship' ? service?.serviceInfo.mentorship_services?.[0].slug : service?.service?.slug,
     academy: service?.academy?.id,
     how_many: selectedService?.qty,
     mentorship_service_set: service.serviceInfo.type === 'mentorship' ? service.serviceInfo.id : undefined,
@@ -93,7 +93,7 @@ const ServiceSummary = ({ service }) => {
       })
       .catch(() => {});
   };
-  const handleSubmit = (actions, values) => {
+  const handleSubmit = (_, values) => {
     bc.payment().addCard(values)
       .then((resp) => {
         if (resp) {
@@ -151,7 +151,7 @@ const ServiceSummary = ({ service }) => {
                 <Box color="yellow.default" fontSize="16px" textTransform="uppercase" fontWeight={900}>
                   {t('consumables.you-have-received')}
                 </Box>
-                <Box display="flex" gridGap="12px">
+                <Box display="flex" alignItems="center" gridGap="12px">
                   <Box>
                     <Box background="yellow.default" minWidth="50px" borderRadius="50px" width="fit-content" padding="10px">
                       <Icon icon="idea" width="40px" height="40px" />
