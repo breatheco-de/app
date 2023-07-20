@@ -1,11 +1,7 @@
 /* eslint-disable no-loop-func */
 /* eslint-disable no-await-in-loop */
-import {
-  Prism as SyntaxHighlighter,
-} from 'react-syntax-highlighter';
-import {
-  Box, Checkbox, Link, useColorModeValue,
-} from '@chakra-ui/react';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { Box, Checkbox, Link, useColorModeValue, Flex } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import ReactDOMServer from 'react-dom/server';
@@ -15,6 +11,8 @@ import OnlyFor from '../../OnlyFor';
 import tomorrow from '../syntaxHighlighter/tomorrow';
 import { slugify } from '../../../../utils';
 import Text from '../../Text';
+import quoteImg from '../../../img/quote.png';
+import whiteQuoteImg from '../../../img/white-quote.png';
 
 export const MDLink = ({ children, href }) => (
   <Link
@@ -30,9 +28,7 @@ export const MDLink = ({ children, href }) => (
   </Link>
 );
 
-export const Code = ({
-  inline, className, children, ...props
-}) => {
+export const Code = ({ inline, className, children, ...props }) => {
   const match = /language-(\w+)/.exec(className || '');
 
   return !inline && match ? (
@@ -50,6 +46,219 @@ export const Code = ({
       {children}
     </code>
   );
+};
+
+// quote style versions
+const QuoteVersion1 = ({ ...props }) => {
+  const { id, ...rest } = props;
+  const quote = props.children[0].split('--');
+  return (
+    <Flex justifyContent="center" alignItems="center">
+      <Box
+        {...rest}
+        className="quote-container"
+        display="flex"
+        alignContent="center"
+        width="43%"
+      >
+        <Box
+          className="quote-img"
+          bg="#EEF9FE"
+          width="25.7%"
+          mr="3"
+          padding="9px"
+        >
+          <img src={quoteImg.src} alt="quoteImg" />
+        </Box>
+        <Box className="quote-content">
+          <Box className="quote-paragraph">
+            {quote[0]}
+            &quot;
+          </Box>
+          <Box
+            className="quote-author"
+            fontSize="xs"
+            margin="1.5%"
+            color="#0097CF"
+          >
+            --
+            {quote[1]}
+          </Box>
+        </Box>
+      </Box>
+    </Flex>
+  );
+};
+const QuoteVersion2 = ({ ...props }) => {
+  const quote = props.children[0].split('--');
+  return (
+    <Flex justifyContent="center" alignItems="center" flexDirection="column">
+      <Box
+        className="quote-container"
+        display="flex"
+        flexDirection="column"
+        alignContent="center"
+        width="43%"
+      >
+        <Box
+          className="quote-divider-container"
+          display="flex"
+          alignItems="center"
+        >
+          <Box className="quote-img" width="3.5%" mr="5" mb="3">
+            <img src={quoteImg.src} alt="quoteImg" />
+          </Box>
+          <hr
+            style={{
+              width: '100%',
+              backgroundColor: '#cccccca6',
+              height: '0.5px',
+              marginBottom: '8px',
+            }}
+          />
+        </Box>
+        <Box className="quote-content">
+          <Box className="quote-paragraph">
+            {quote[0]}
+            &quot;
+          </Box>
+          <Box
+            className="quote-author"
+            fontSize="xs"
+            margin="1.5%"
+            color="#0097CF"
+          >
+            --
+            {quote[1]}
+          </Box>
+        </Box>
+      </Box>
+    </Flex>
+  );
+};
+const QuoteVersion3 = ({ ...props }) => {
+  const quote = props.children[0].split('--');
+  const splitP = quote[0].split('.');
+
+  return (
+    <Flex justifyContent="center" alignItems="center" flexDirection="column">
+      <Box
+        className="quote-container"
+        display="flex"
+        flexDirection="column"
+        alignContent="center"
+        width="47%"
+      >
+        <Box className="quote-img" width="3.5%" mr="5" mb="3">
+          <img src={quoteImg.src} alt="quoteImg" />
+        </Box>
+        <Box className="quote-content">
+          <Box className="quote-paragraph-container">
+            <Box className="quote-paragraph">
+              {splitP[0].split(' ').map((item, index) => (
+                <span
+                  key={item}
+                  style={{
+                    backgroundColor: '#0097CF',
+                    marginRight: '3px',
+                    padding: '0px 1px 2px 3px',
+                    color: 'white',
+                  }}
+                >
+                  {index === splitP[0].split(' ').length - 1
+                    ? `${item}. ` : `${item} `}
+                </span>
+              ))}
+              {splitP[1]}
+              &quot;
+            </Box>
+          </Box>
+          <Box
+            className="quote-author"
+            fontSize="xs"
+            margin="1.5%"
+            color="#0097CF"
+          >
+            --
+            {quote[1]}
+          </Box>
+        </Box>
+      </Box>
+    </Flex>
+  );
+};
+const QuoteVersion4 = ({ ...props }) => {
+  const quote = props.children[0].split('--');
+  return (
+    <Flex justifyContent="center" alignItems="center" flexDirection="column">
+      <Box
+        className="quote-container"
+        display="flex"
+        flexDirection="column"
+        alignContent="center"
+        width="44%"
+      >
+        <Box
+          className="quote-img"
+          width="5.5%"
+          bg="#0097CF"
+          p="5px"
+          mr="5"
+          mb="2"
+        >
+          <img src={whiteQuoteImg.src} alt="quoteImg" />
+        </Box>
+        <Box className="quote-content">
+          <Box className="quote-paragraph">
+            {quote[0]}
+            &quot;
+          </Box>
+          <Box
+            className="quote-author"
+            fontSize="xs"
+            margin="1.5%"
+            color="#0097CF"
+          >
+            --
+            {quote[1]}
+          </Box>
+        </Box>
+      </Box>
+    </Flex>
+  );
+};
+export const Quote = ({ children }) => {
+  const [version, setVersion] = useState(2);
+
+  useEffect(() => {
+    setVersion(Math.floor(Math.random() * 4) + 1);
+  }, []);
+  if (version === 1 && children.length > 0) {
+    return (
+      <QuoteVersion1>
+        {children}
+      </QuoteVersion1>
+    );
+  } if (version === 2 && children.length > 0) {
+    return (
+      <QuoteVersion2>
+        {children}
+      </QuoteVersion2>
+    );
+  } if (version === 3 && children.length > 0) {
+    return (
+      <QuoteVersion3>
+        {children}
+      </QuoteVersion3>
+    );
+  } if (version === 4 && children.length > 0) {
+    return (
+      <QuoteVersion4>
+        {children}
+      </QuoteVersion4>
+    );
+  }
+  return null;
 };
 
 function doWithDelay(timeout, doCallback) {
@@ -111,7 +320,13 @@ export const BeforeAfter = ({ before, after }) => {
     />
   );
 };
-export const MDHr = () => (<Box as="hr" backgroundColor={useColorModeValue('gray.400', 'gray.500')} mb="20px" />);
+export const MDHr = () => (
+  <Box
+    as="hr"
+    backgroundColor={useColorModeValue('gray.400', 'gray.500')}
+    mb="20px"
+  />
+);
 
 export const MDText = ({ children }) => (
   <Text size="l" fontWeight="400">
@@ -129,12 +344,7 @@ export const MDTable = ({ children }) => (
     width="100%"
     overflow="auto"
   >
-    <Box
-      as="table"
-    >
-      {children}
-    </Box>
-
+    <Box as="table">{children}</Box>
   </Box>
 );
 
@@ -162,7 +372,13 @@ export const MDHeading = ({ children, tagType }) => {
 export const DOMComponent = ({ children }) => <Box>{children}</Box>;
 
 export const MDCheckbox = ({
-  index, children, subTasks, subTasksLoaded, subTasksProps, setSubTasksProps, updateSubTask,
+  index,
+  children,
+  subTasks,
+  subTasksLoaded,
+  subTasksProps,
+  setSubTasksProps,
+  updateSubTask,
 }) => {
   const childrenData = children[1]?.props?.children || children;
   const [isChecked, setIsChecked] = useState(false);
@@ -201,7 +417,9 @@ export const MDCheckbox = ({
 
   useEffect(() => {
     if (subTasksLoaded) {
-      if (subTasksProps?.length > 0 && subTasksProps.find((l) => l?.id === slug)) return () => {};
+      if (
+        subTasksProps?.length > 0 && subTasksProps.find((l) => l?.id === slug)
+      ) { return () => {}; }
 
       if (currentSubTask.length > 0) {
         setSubTasksProps((prev) => {
@@ -249,7 +467,12 @@ export const MDCheckbox = ({
 
   return (
     <Box as="li" id={slug} display="block" marginLeft="-1.5rem">
-      <Checkbox id={`${index}`} alignItems="flex-start" isChecked={isChecked} onChange={() => handleChecked()}>
+      <Checkbox
+        id={`${index}`}
+        alignItems="flex-start"
+        isChecked={isChecked}
+        onChange={() => handleChecked()}
+      >
         {cleanedChildren}
       </Checkbox>
     </Box>
@@ -257,13 +480,22 @@ export const MDCheckbox = ({
 };
 
 export const OnlyForBanner = ({
-  children, permission, cohortSession, profile,
+  children,
+  permission,
+  cohortSession,
+  profile,
 }) => {
   const capabilities = (permission || '')?.split(',');
   console.log('md_permissions:', capabilities);
 
   return (
-    <OnlyFor onlyMember withBanner profile={profile} cohortSession={cohortSession} capabilities={capabilities}>
+    <OnlyFor
+      onlyMember
+      withBanner
+      profile={profile}
+      cohortSession={cohortSession}
+      capabilities={capabilities}
+    >
       {children}
     </OnlyFor>
   );
@@ -343,4 +575,45 @@ OnlyForBanner.defaultProps = {
 };
 DOMComponent.propTypes = {
   children: PropTypes.node.isRequired,
+};
+
+Quote.propTypes = {
+  children: PropTypes.node,
+  // id: PropTypes.string,
+};
+Quote.defaultProps = {
+  children: '',
+  // id: '',
+};
+QuoteVersion1.propTypes = {
+  children: PropTypes.node,
+  id: PropTypes.string,
+};
+QuoteVersion1.defaultProps = {
+  children: '',
+  id: '',
+};
+QuoteVersion2.propTypes = {
+  children: PropTypes.node,
+  id: PropTypes.string,
+};
+QuoteVersion2.defaultProps = {
+  children: '',
+  id: '',
+};
+QuoteVersion3.propTypes = {
+  children: PropTypes.node,
+  id: PropTypes.string,
+};
+QuoteVersion3.defaultProps = {
+  children: '',
+  id: '',
+};
+QuoteVersion4.propTypes = {
+  children: PropTypes.node,
+  id: PropTypes.string,
+};
+QuoteVersion4.defaultProps = {
+  children: '',
+  id: '',
 };
