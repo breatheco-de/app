@@ -107,7 +107,12 @@
     "events": "eventos",
     "sessions": "sesiones",
     "back-to-dashboard": "Volver al dashboard",
-    "confirm-purchase-connector": "Estás a punto de comprar:"
+    "confirm-purchase-connector": "Estás a punto de comprar:",
+    "qty-events-to-consume": "{{qty}} eventos para aplicar",
+    "qty-mentorship-sessions": "{{qty}} sesiones de tutoría",
+    "price-event-per-qty": "{{price}} por evento",
+    "price-mentorship-per-qty": "{{price}} por mentoría",
+    "confirm-purchase": "Confirmar compra"
   },
   "select-mentorship-plan": {
     "title": "Seleccione un plan de mentoria",

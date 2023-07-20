@@ -26,6 +26,7 @@ import Stepper from '../js_modules/checkout/Stepper';
 import ServiceSummary from '../js_modules/checkout/ServiceSummary';
 import Text from '../common/components/Text';
 import SelectServicePlan from '../js_modules/checkout/SelectServicePlan';
+import modifyEnv from '../../modifyEnv';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -59,6 +60,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 };
 
 const Checkout = () => {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
   const router = useRouter();
   const [cohortsData, setCohortsData] = useState({
@@ -145,11 +147,11 @@ const Checkout = () => {
           const serviceData = isMentorshipType
             ? currentSubscription?.selected_mentorship_service_set
             : currentSubscription?.selected_event_type_set;
-
+          const serviceSetSlug = isMentorshipType ? mentorshipServiceSetSlug : eventTypeSetSlug;
           if (serviceData) {
             bc.payment({
               academy: Number(serviceData?.academy?.id),
-            }).service().getAcademyService(mentorshipServiceSetSlug)
+            }).service().getAcademyService(serviceSetSlug)
               .then((resp) => {
                 if (resp !== undefined) {
                   handleStep(2);
@@ -284,7 +286,7 @@ const Checkout = () => {
         closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
         childrenDescription={(
           <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
-            <Avatar src="https://breathecode.herokuapp.com/static/img/avatar-1.png" border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+            <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
             <Text
               size="14px"
               textAlign="center"

@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState, forwardRef } from 'react';
+import { useState, forwardRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Avatar, Box, Button, Input, Link, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
@@ -16,6 +16,7 @@ import { formatPrice, number2DIgits } from '../../utils';
 import DatePickerField from '../../common/components/Forms/DateField';
 import ModalInfo from '../moduleMap/modalInfo';
 import { usePersistent } from '../../common/hooks/usePersistent';
+import modifyEnv from '../../../modifyEnv';
 
 const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
   const { t } = useTranslation('signup');
@@ -37,14 +38,15 @@ const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
 });
 
 const ServiceSummary = ({ service }) => {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
   const {
     state, setSelectedService, setPaymentInfo,
   } = useSignup();
+  const { selectedService, paymentInfo } = state;
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [purchaseCompleted, setPurchaseCompleted] = useState(false);
   const [cohortSession] = usePersistent('cohortSession', {});
-  const { selectedService, paymentInfo } = state;
   const { backgroundColor, lightColor, hexColor, backgroundColor3 } = useStyle();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [stateCard, setStateCard] = useState({
@@ -74,7 +76,7 @@ const ServiceSummary = ({ service }) => {
   });
 
   const dataToAssign = {
-    service: service?.serviceInfo?.type === 'mentorship' ? service?.serviceInfo.mentorship_services?.[0].slug : service?.service?.slug,
+    service: service?.serviceInfo?.type === 'mentorship' ? service?.serviceInfo.mentorship_services?.[0].slug : undefined,
     academy: service?.academy?.id,
     how_many: selectedService?.qty,
     mentorship_service_set: service.serviceInfo.type === 'mentorship' ? service.serviceInfo.id : undefined,
@@ -120,6 +122,12 @@ const ServiceSummary = ({ service }) => {
       });
   };
 
+  useEffect(() => {
+    if (service.list.length === 1) {
+      setSelectedService(service.list[0]);
+    }
+  }, [service]);
+
   return (
     <Box
       display="flex"
@@ -132,7 +140,7 @@ const ServiceSummary = ({ service }) => {
         ? (
           <Box display="flex" justifyContent="center" flexDirection="column" gridGap="24px">
             <Box display="flex" flexDirection="column" gridGap="12px" alignItems="center" padding="14px 23px" background={backgroundColor} borderRadius="15px">
-              <Avatar src="https://breathecode.herokuapp.com/static/img/avatar-8.png" border="3px solid #25BF6C" width="91px" height="91px" borderRadius="50px" />
+              <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-8.png`} border="3px solid #25BF6C" width="91px" height="91px" borderRadius="50px" />
               <Box fontSize="26px" fontWeight={700} width={{ base: 'auto', md: '75%' }} textAlign="center">
                 {t('consumables.purchase-completed-title')}
               </Box>
@@ -196,7 +204,7 @@ const ServiceSummary = ({ service }) => {
                         <Icon icon="idea" width="40px" height="40px" color="#fff" />
                       </Box>
                     </Box>
-                    <Box display="flex" flexDirection="column" gridGap="7px">
+                    <Box display="flex" width="100%" flexDirection="column" gridGap="7px">
                       <Heading size="21px" width="70%">
                         {t(`${service.serviceInfo.type}-bundle-title`)}
                       </Heading>
@@ -210,7 +218,7 @@ const ServiceSummary = ({ service }) => {
                     <Heading as="span" size="21px">
                       {t('consumables.select-bundle')}
                     </Heading>
-                    {selectedService?.id && (
+                    {selectedService?.id && service.list.length > 1 && (
                       <Button fontSize="14px" variant="link" onClick={() => setSelectedService({})}>
                         {t('consumables.change-my-selection')}
                       </Button>
@@ -245,10 +253,14 @@ const ServiceSummary = ({ service }) => {
                             fontWeight="400"
                           >
                             <Box fontSize={{ base: '16px', md: '18px' }} fontWeight="700">
-                              {item?.title}
+                              {service.serviceInfo.type === 'mentorship'
+                                ? t('consumables.qty-mentorship-sessions', { qty: item.qty })
+                                : t('consumables.qty-events-to-consume', { qty: item.qty })}
                             </Box>
                             <Text fontSize="14px" color={isSelected ? 'blue.default' : lightColor} fontWeight={isSelected ? 700 : 400}>
-                              {`${formatPrice(item.pricePerUnit, true)} per session`}
+                              {service.serviceInfo.type === 'mentorship'
+                                ? t('consumables.price-mentorship-per-qty', { price: formatPrice(item.pricePerUnit, true) })
+                                : t('consumables.price-event-per-qty', { price: formatPrice(item.pricePerUnit, true) })}
                             </Text>
                           </Box>
                           <Box position="relative" display="flex" alignItems="center" height="fit-content" gridGap="10px">
@@ -309,7 +321,9 @@ const ServiceSummary = ({ service }) => {
                             {selectedService?.title}
                           </Box>
                           <Text fontSize="14px" color="blue.default" fontWeight={700}>
-                            {`${formatPrice(selectedService.pricePerUnit, true)} per session`}
+                            {service.serviceInfo.type === 'mentorship'
+                              ? t('consumables.price-mentorship-per-qty', { price: formatPrice(selectedService.pricePerUnit, true) })
+                              : t('consumables.price-event-per-qty', { price: formatPrice(selectedService.pricePerUnit, true) })}
                           </Text>
                         </Box>
                         <Box position="relative" display="flex" height="fit-content" alignItems="center" gridGap="10px">
@@ -474,7 +488,7 @@ const ServiceSummary = ({ service }) => {
               }}
               maxWidth="lg"
               // footerStyle={{ flexDirection: 'row-reverse' }}
-              title="Confirm purchase"
+              title={t('consumables.confirm-purchase')}
               childrenDescription={(
                 <Box display="flex" flexDirection="column" gridGap="24px">
                   <Box margin="16px auto 0 auto" fontSize="18px" fontWeight={700}>
@@ -495,14 +509,14 @@ const ServiceSummary = ({ service }) => {
                     <Box display="flex" flexDirection="column" borderRadius="11px" gridGap="0px" fontWeight={700} lineHeight="32px" background={backgroundColor3} alignItems="center" padding="10px 15px">
                       <Box fontSize="38px">{selectedService?.qty}</Box>
                       <Box fontSize="28px">
-                        {service.serviceInfo.type === 'mentorship' ? 'sessions' : 'events'}
+                        {service.serviceInfo.type === 'mentorship' ? t('consumables.sessions') : t('consumables.events')}
                       </Box>
                     </Box>
                   </Box>
                 </Box>
               )}
               buttonHandlerStyles={{ variant: 'default' }}
-              handlerText="Confirm"
+              handlerText={t('common:confirm')}
               actionHandler={() => handlePayConsumable()}
               onClose={() => {
                 setIsSubmitting(false);

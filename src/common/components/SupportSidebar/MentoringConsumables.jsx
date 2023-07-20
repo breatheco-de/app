@@ -81,7 +81,7 @@ const ProfilesSection = ({
 };
 
 const MentoringConsumables = ({
-  mentoryProps, width, serviceMentoring, mentorshipService, setMentoryProps,
+  mentoryProps, width, consumables, mentorshipService, setMentoryProps,
   programServices, dateFormated, servicesFiltered, searchProps,
   setSearchProps, setProgramMentors, savedChanges, setSavedChanges,
   mentorsFiltered, dateFormated2, allMentorsAvailable, subscriptionData, allSubscriptions,
@@ -99,7 +99,7 @@ const MentoringConsumables = ({
 
   const currentBalance = (Number(mentorshipService?.balance) && mentorshipService?.balance) || (Number(mentorshipService?.balance?.unit) && mentorshipService?.balance?.unit);
 
-  const existConsumablesOnCurrentService = serviceMentoring?.mentorship_service_sets?.length > 0 && Object.values(mentorshipService).length > 0 && currentBalance > 0;
+  const existConsumablesOnCurrentService = consumables?.mentorship_service_sets?.length > 0 && Object.values(mentorshipService).length > 0 && currentBalance > 0;
 
   useEffect(() => {
     if (allMentorsAvailable?.length === 0) {
@@ -185,7 +185,7 @@ const MentoringConsumables = ({
       )}
       <Box display="flex" flexDirection="column" p="4" pt="20px" alignItems="center">
         <Box d="flex" flexDirection="column" alignItems="center" justifyContent="center">
-          {!mentoryProps?.service && (serviceMentoring?.mentorship_service_sets?.length !== 0 || currentBalance !== 0) && (
+          {!mentoryProps?.service && (consumables?.mentorship_service_sets?.length !== 0 || currentBalance !== 0) && (
             <>
               <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
                 {t('supportSideBar.mentoring')}
@@ -428,7 +428,7 @@ const MentoringConsumables = ({
 MentoringConsumables.propTypes = {
   mentoryProps: PropTypes.objectOf(PropTypes.any),
   width: PropTypes.string,
-  serviceMentoring: PropTypes.objectOf(PropTypes.any),
+  consumables: PropTypes.objectOf(PropTypes.any),
   mentorshipService: PropTypes.objectOf(PropTypes.any),
   setMentoryProps: PropTypes.func.isRequired,
   programServices: PropTypes.arrayOf(PropTypes.any),
@@ -439,7 +439,6 @@ MentoringConsumables.propTypes = {
   savedChanges: PropTypes.objectOf(PropTypes.any).isRequired,
   setSavedChanges: PropTypes.func.isRequired,
   setProgramMentors: PropTypes.func,
-  // setServiceMentoring: PropTypes.func,
   mentorsFiltered: PropTypes.arrayOf(PropTypes.any).isRequired,
   dateFormated2: PropTypes.objectOf(PropTypes.any).isRequired,
   subscriptionData: PropTypes.objectOf(PropTypes.any),
@@ -449,13 +448,12 @@ MentoringConsumables.propTypes = {
 MentoringConsumables.defaultProps = {
   mentoryProps: [],
   width: '100%',
-  serviceMentoring: {},
+  consumables: {},
   mentorshipService: {},
   programServices: [],
   setProgramMentors: () => {},
   subscriptionData: {},
   allSubscriptions: [],
-  // setServiceMentoring: () => {},
 };
 
 export default MentoringConsumables;

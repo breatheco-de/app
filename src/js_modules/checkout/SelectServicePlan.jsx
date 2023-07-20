@@ -17,7 +17,26 @@ const SelectServicePlan = () => {
   const [selectedService, setSelectedService] = useState({});
 
   const queryPlans = getQueryString('plans');
-  const queryServiceSet = getQueryString('service_set');
+  const queryMentorshipServiceSet = getQueryString('mentorship_service_set');
+  const queryEventTypeSet = getQueryString('event_type_set');
+
+  const allQueryPlans = queryPlans.split(',');
+  const allQueryMentorshipServiceSet = typeof queryMentorshipServiceSet === 'string' ? queryMentorshipServiceSet.split(',') : [];
+  const allQueryEventTypeSet = typeof queryEventTypeSet === 'string' ? queryEventTypeSet.split(',') : [];
+
+  const getServiceSlug = (subscription) => {
+    if (allQueryEventTypeSet.length > 0) {
+      return {
+        event_type_set: subscription?.selected_event_type_set?.slug,
+        // TODO: Preguntar si service para los eventos es necesario
+        service: subscription?.selected_event_type_set?.event_types[0]?.slug,
+      };
+    }
+    return {
+      mentorship_service_set: subscription?.selected_mentorship_service_set?.slug,
+      service: subscription?.selected_mentorship_service_set?.mentorship_services[0]?.slug,
+    };
+  };
 
   const getSubscriptions = async () => {
     const resp = await bc.payment({
@@ -28,28 +47,34 @@ const SelectServicePlan = () => {
     const planFinancing = data.plan_financings.length > 0 ? data.plan_financings : [];
     const planSubscriptions = data.subscriptions.length > 0 ? data.subscriptions : [];
 
-    const allQueryPlans = queryPlans.split(',');
-    const allQueryServiceSet = queryServiceSet.split(',');
     const allPlans = [...planFinancing, ...planSubscriptions];
 
     const findedPlanCoincidences = allPlans.filter((plan) => {
       const findedPlan = allQueryPlans.find(
         (queryPlan) => queryPlan === plan?.plans?.[0]?.slug,
       );
-      const findedServiceSet = allQueryServiceSet.find(
+      const findedMentorshipServiceSet = allQueryMentorshipServiceSet.find(
         (qServiceSet) => qServiceSet === plan?.selected_mentorship_service_set?.slug,
       );
-      return findedPlan && findedServiceSet;
+      const findedEventTypeSet = allQueryEventTypeSet.find(
+        (qEventTypeSet) => qEventTypeSet === plan?.selected_event_type_set?.slug,
+      );
+
+      if (allQueryEventTypeSet.length > 0) {
+        return findedPlan && findedEventTypeSet;
+      }
+
+      return findedPlan && findedMentorshipServiceSet;
     });
 
     if (resp.statusText === 'OK' && findedPlanCoincidences.length > 1) {
       setIsLoading(false);
     }
+    setIsLoading(false);
 
     if (findedPlanCoincidences.length === 1) {
       const qs = parseQuerys({
-        mentorship_service_set: findedPlanCoincidences[0]?.selected_mentorship_service_set?.slug,
-        service: findedPlanCoincidences[0]?.selected_mentorship_service_set.mentorship_services[0]?.slug,
+        ...getServiceSlug(findedPlanCoincidences[0]),
       });
       const pageToRedirect = `/${lang}/checkout${qs}`;
       window.location.href = pageToRedirect;
@@ -63,8 +88,7 @@ const SelectServicePlan = () => {
 
   const handleContinue = () => {
     const qs = parseQuerys({
-      mentorship_service_set: selectedService?.selected_mentorship_service_set?.slug,
-      service: selectedService?.selected_mentorship_service_set.mentorship_services[0]?.slug,
+      ...getServiceSlug(selectedService),
     });
     const pageToRedirect = `/${lang}/checkout${qs}`;
     window.location.href = pageToRedirect;

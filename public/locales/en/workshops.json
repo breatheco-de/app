@@ -20,5 +20,11 @@
   "users-registered-count": "{{count}} people are already registered in this event. {{spot_count}} more spots available",
   "join-workshop": "Register for this Workshop",
   "join": "Join Now",
-  "event-finished": "Event Finished"
+  "event-finished": "Event Finished",
+  "no-consumables": {
+    "description": "You have run out of workshops, but don't worry, you can get more in a few clicks.",
+    "link-text": "Learn more.",
+    "link": "",
+    "get-more-workshops": "Get more workshops"
+  }
 }

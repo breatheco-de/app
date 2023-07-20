@@ -1,5 +1,5 @@
 import {
-  Box, Button, Grid, Skeleton, useColorModeValue, useToast, Image,
+  Box, Button, Grid, Skeleton, useColorModeValue, useToast, Image, Avatar,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { intervalToDuration, format } from 'date-fns';
@@ -32,10 +32,13 @@ const Page = () => {
   });
   const [users, setUsers] = useState([]);
   const [allUsersJoined, setAllUsersJoined] = useState([]);
+  const [subscriptions, setSubscriptions] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const [applied, setApplied] = useState(false);
   const [readyToJoinEvent, setReadyToJoinEvent] = useState(false);
   const [finishedEvent, setFinishedEvent] = useState(false);
+  const [consumables, setConsumables] = useState([]);
+  const [myCohorts, setMyCohorts] = useState([]);
   const accessToken = getStorageItem('accessToken');
 
   const router = useRouter();
@@ -70,7 +73,7 @@ const Page = () => {
                     first_name: 'Anonymous',
                     last_name: '',
                     profile: {
-                      avatar_url: `https://breathecode.herokuapp.com/static/img/avatar-${avatarNumber}.png`,
+                      avatar_url: `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`,
                     },
                   },
                 };
@@ -119,7 +122,88 @@ const Page = () => {
 
   const alreadyApplied = users.some((l) => l?.attendee?.id === user?.id) || applied;
 
+  const handleOnReadyToStart = () => {
+    setReadyToJoinEvent(true);
+  };
+  const handleOnFinished = () => {
+    setFinishedEvent(true);
+  };
+
+  useEffect(() => {
+    if (isAuth) {
+      bc.payment({
+        status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+      }).subscriptions()
+        .then(({ data }) => {
+          const planFinancing = data.plan_financings.length > 0 ? data.plan_financings : [];
+          const planSubscriptions = data.subscriptions.length > 0 ? data.subscriptions : [];
+
+          const allPlans = [...planFinancing, ...planSubscriptions];
+
+          setSubscriptions(allPlans);
+        });
+      bc.payment().service().consumable()
+        .then((res) => {
+          setConsumables(res.data);
+        });
+      bc.admissions().me()
+        .then((res) => {
+          setMyCohorts(res.data.cohorts);
+        });
+    }
+  }, [isAuth]);
+
+  const spotsRemain = event?.capacity - allUsersJoined?.length;
+  const arrayOfImages = [
+    '/static/images/person1.png',
+  ];
+  const buttonEnabled = !finishedEvent && (readyToJoinEvent || !alreadyApplied);
+
+  const handleGetMoreEventConsumables = () => {
+    const findedPlanCoincidences = subscriptions.filter(
+      (s) => s.selected_event_type_set?.event_types.some(
+        (ev) => ev?.slug === event?.event_type?.slug,
+      ),
+    );
+    const relevantProps = findedPlanCoincidences.map(
+      (subscription) => ({
+        event_type_set_slug: subscription?.selected_event_type_set.slug,
+        plan_slug: subscription?.plans?.[0]?.slug,
+      }),
+    );
+
+    const propsToQueryString = {
+      event_type_set: relevantProps.map((p) => p.event_type_set_slug).join(','),
+      plans: relevantProps.map((p) => p.plan_slug).join(','),
+    };
+
+    router.push({
+      pathname: '/checkout',
+      query: propsToQueryString,
+    });
+  };
+
+  const currentConsumable = consumables?.event_type_sets?.find(
+    (c) => c?.slug.toLowerCase() === subscriptions?.selected_event_type_set?.slug.toLowerCase(),
+  );
+  const existsConsumables = typeof currentConsumable?.balance?.unit === 'number' && currentConsumable?.balance?.unit > 0;
+
+  const existsAvailableAsSaas = myCohorts.some((c) => c?.cohort?.available_as_saas === false);
+  const isFreeForConsumables = event?.free_for_bootcamps === true && existsAvailableAsSaas;
+
   const dynamicFormInfo = () => {
+    if (isAuth && !existsConsumables && !isFreeForConsumables) {
+      return ({
+        title: '',
+        childrenDescription: (
+          <Text size="14px" fontWeight={700} lineHeight="18px">
+            {t('no-consumables.description')}
+            {/* {' '}
+            <Link variant="default" href="google.com">{t('no-consumables.link-text')}</Link> */}
+          </Text>
+        ),
+      });
+    }
     if (finishedEvent) {
       return ({
         title: t('form.finished-title'),
@@ -150,19 +234,6 @@ const Page = () => {
     });
   };
   const formInfo = dynamicFormInfo();
-
-  const handleOnReadyToStart = () => {
-    setReadyToJoinEvent(true);
-  };
-  const handleOnFinished = () => {
-    setFinishedEvent(true);
-  };
-
-  const spotsRemain = event?.capacity - allUsersJoined?.length;
-  const arrayOfImages = [
-    '/static/images/person1.png',
-  ];
-  const buttonEnabled = !finishedEvent && (readyToJoinEvent || !alreadyApplied);
 
   return (
     <>
@@ -323,6 +394,7 @@ const Page = () => {
           {event?.id && (
             <ShowOnSignUp
               hideForm={finishedEvent}
+              hideSwitchUser={!isFreeForConsumables && !existsConsumables}
               headContent={readyToJoinEvent ? (
                 <Box position="relative" zIndex={1} width="100%" height={177}>
                   <Image src={arrayOfImages[0]} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" />
@@ -344,68 +416,93 @@ const Page = () => {
               )}
               title={formInfo?.title}
               description={formInfo?.description}
+              childrenDescription={formInfo?.childrenDescription}
               readOnly={event?.loaded && !event?.slug}
               position="relative"
             >
-              <Button
-                mt="10px"
-                type="submit"
-                variant="default"
-                textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
-                disabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
-                _disabled={{
-                  background: buttonEnabled ? '' : 'gray.350',
-                  cursor: buttonEnabled ? 'pointer' : 'not-allowed',
-                }}
-                _hover={{
-                  background: buttonEnabled ? '' : 'gray.350',
-                  cursor: buttonEnabled ? 'pointer' : 'not-allowed',
-                }}
-                _active={{
-                  background: buttonEnabled ? '' : 'gray.350',
-                  cursor: buttonEnabled ? 'pointer' : 'not-allowed',
-                }}
-                onClick={() => {
-                  if (!finishedEvent) {
-                    if ((readyToJoinEvent && alreadyApplied) || readyToJoinEvent) {
-                      router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
+              {(isFreeForConsumables || existsConsumables) ? (
+                <Button
+                  mt="10px"
+                  type="submit"
+                  variant="default"
+                  textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
+                  disabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
+                  _disabled={{
+                    background: buttonEnabled ? '' : 'gray.350',
+                    cursor: buttonEnabled ? 'pointer' : 'not-allowed',
+                  }}
+                  _hover={{
+                    background: buttonEnabled ? '' : 'gray.350',
+                    cursor: buttonEnabled ? 'pointer' : 'not-allowed',
+                  }}
+                  _active={{
+                    background: buttonEnabled ? '' : 'gray.350',
+                    cursor: buttonEnabled ? 'pointer' : 'not-allowed',
+                  }}
+                  onClick={() => {
+                    if (!finishedEvent) {
+                      if ((readyToJoinEvent && alreadyApplied) || readyToJoinEvent) {
+                        router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
+                      }
+                      if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
+                        bc.events().applyEvent(event?.id)
+                          .then((resp) => {
+                            if (resp !== undefined) {
+                              setApplied(true);
+                              toast({
+                                position: 'top',
+                                status: 'success',
+                                title: t('alert-message:success-event-reservation'),
+                                isClosable: true,
+                                duration: 6000,
+                              });
+                            } else {
+                              toast({
+                                position: 'top',
+                                status: 'info',
+                                title: t('alert-message:event-access-error'),
+                                isClosable: true,
+                                duration: 6000,
+                              });
+                              setStorageItem('redirect-after-register', router?.asPath);
+                              router.push({
+                                pathname: '/checkout',
+                                query: {
+                                  plan: '4geeks-standard',
+                                },
+                              });
+                            }
+                          });
+                      }
                     }
-                    if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
-                      bc.events().applyEvent(event?.id)
-                        .then((resp) => {
-                          if (resp !== undefined) {
-                            setApplied(true);
-                            toast({
-                              position: 'top',
-                              status: 'success',
-                              title: t('alert-message:success-event-reservation'),
-                              isClosable: true,
-                              duration: 6000,
-                            });
-                          } else {
-                            toast({
-                              position: 'top',
-                              status: 'info',
-                              title: t('alert-message:event-access-error'),
-                              isClosable: true,
-                              duration: 6000,
-                            });
-                            setStorageItem('redirect-after-register', router?.asPath);
-                            router.push({
-                              pathname: '/checkout',
-                              query: {
-                                plan: '4geeks-standard',
-                              },
-                            });
-                          }
-                        });
-                    }
-                  }
-                }}
-              >
-                {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
-                {finishedEvent && t('event-finished')}
-              </Button>
+                  }}
+                >
+                  {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
+                  {finishedEvent && t('event-finished')}
+                </Button>
+              ) : (
+                <Box display="flex" flexDirection="column" alignItems="center">
+                  <Avatar
+                    width="85px"
+                    height="85px"
+                    margin="16px 0"
+                    style={{ userSelect: 'none' }}
+                    src="/static/images/angry-avatar.png"
+                  />
+                  <Button
+                    display="flex"
+                    variant="default"
+                    fontSize="14px"
+                    fontWeight={700}
+                    onClick={() => handleGetMoreEventConsumables()}
+                    alignItems="center"
+                    gridGap="10px"
+                  >
+                    {t('no-consumables.get-more-workshops')}
+                    <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
+                  </Button>
+                </Box>
+              )}
             </ShowOnSignUp>
           )}
 

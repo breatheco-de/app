@@ -111,6 +111,7 @@ export const AuthContext = createContext({
 });
 
 const AuthProvider = ({ children }) => {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
   const { t, lang } = useTranslation('footer');
   const toast = useToast();
@@ -132,7 +133,6 @@ const AuthProvider = ({ children }) => {
 
   useEffect(async () => {
     const token = getToken();
-    const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
     if (token !== undefined && token !== null) {
       const requestToken = await fetch(`${BREATHECODE_HOST}/v1/auth/token/${token}`, {
@@ -203,7 +203,8 @@ const AuthProvider = ({ children }) => {
               position: 'top',
               status: 'error',
               title: responseData.non_field_errors[i],
-              duration: 6000 + (1000 * indexFromOne),
+              duration: 5000 + (1000 * indexFromOne),
+              isClosable: true,
             });
           }
         }
@@ -311,7 +312,7 @@ const AuthProvider = ({ children }) => {
         closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
         childrenDescription={(
           <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
-            <Avatar src="https://breathecode.herokuapp.com/static/img/avatar-1.png" border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+            <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
             <Text
               size="14px"
               textAlign="center"
