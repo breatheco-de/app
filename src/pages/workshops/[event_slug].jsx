@@ -155,7 +155,7 @@ const Page = () => {
 
   const spotsRemain = event?.capacity - allUsersJoined?.length;
   const arrayOfImages = [
-    '/static/images/person1.png',
+    '/static/images/person1.webp',
   ];
   const buttonEnabled = !finishedEvent && (readyToJoinEvent || !alreadyApplied);
 
