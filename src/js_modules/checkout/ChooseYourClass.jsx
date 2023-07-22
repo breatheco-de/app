@@ -29,7 +29,7 @@ const ChooseYourClass = ({
   const buttonRef = useRef();
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
   const { isSecondStep, setLocation } = useSignup();
-  const { backgroundColor } = useStyle();
+  const { backgroundColor, backgroundColor3 } = useStyle();
 
   const plan = getQueryString('plan');
   const planFormated = plan ? encodeURIComponent(plan) : undefined;
@@ -220,7 +220,7 @@ const ChooseYourClass = ({
       >
         {Array.isArray(availableDates) && availableDates?.length > 0 && !cohortIsLoading ? (
           availableDates.map((cohort, index) => (
-            <ChooseDate key={cohort?.id} index={index} cohort={cohort} background="gray.light3" padding="13px" borderRadius="4px" />
+            <ChooseDate key={cohort?.id} index={index} cohort={cohort} background={backgroundColor3} padding="13px" borderRadius="4px" />
           ))
         ) : (
           <LoaderContent />
