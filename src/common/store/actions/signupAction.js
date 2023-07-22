@@ -202,10 +202,10 @@ const useSignup = () => {
             .sort((a, b) => a?.monthly_price - b?.monthly_price)
           : [];
 
-        const trialPlan = (!financingOptionsExists) ? {
+        const trialPlan = (!financingOptionsExists && !isNotTrial) ? {
           ...singlePlan,
           title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
-          price: data?.amount_per_month,
+          price: 0,
           priceText: isTotallyFree ? 'Free' : t('free-trial'),
           plan_id: `p-${singlePlan?.trial_duration}-trial`,
           period: isTotallyFree ? 'FREE' : singlePlan?.trial_duration_unit,
@@ -219,6 +219,24 @@ const useSignup = () => {
           priceText: `$${data?.amount_per_month}`,
           plan_id: `p-${data?.amount_per_month}`,
           period: 'MONTH',
+          type: 'PAYMENT',
+        } : {};
+        const quarterPlan = existsAmountPerQuarter ? {
+          ...singlePlan,
+          title: singlePlan?.title ? singlePlan?.title : t('quarterly_payment'),
+          price: data?.amount_per_quarter,
+          priceText: `$${data?.amount_per_quarter}`,
+          plan_id: `p-${data?.amount_per_quarter}`,
+          period: 'QUARTER',
+          type: 'PAYMENT',
+        } : {};
+        const halfPlan = existsAmountPerHalf ? {
+          ...singlePlan,
+          title: singlePlan?.title ? singlePlan?.title : t('half_yearly_payment'),
+          price: data?.amount_per_half,
+          priceText: `$${data?.amount_per_half}`,
+          plan_id: `p-${data?.amount_per_half}`,
+          period: 'HALF',
           type: 'PAYMENT',
         } : {};
 
@@ -248,7 +266,7 @@ const useSignup = () => {
           });
         }) : [{}];
 
-        const planList = [trialPlan, monthPlan, yearPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0);
+        const planList = [trialPlan, monthPlan, quarterPlan, halfPlan, yearPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0);
         const finalData = {
           ...data,
           isTrial: !isNotTrial && !financingOptionsExists,
@@ -377,6 +395,12 @@ const useSignup = () => {
 
       if (selectedPlanCheckoutData?.period === 'MONTH') {
         return t('info.will-pay-per-month', { price: selectedPlanCheckoutData?.price });
+      }
+      if (selectedPlanCheckoutData?.period === 'QUARTER') {
+        return t('info.will-pay-per-quarter', { price: selectedPlanCheckoutData?.price });
+      }
+      if (selectedPlanCheckoutData?.period === 'HALF') {
+        return t('info.will-pay-per-half-year', { price: selectedPlanCheckoutData?.price });
       }
       if (selectedPlanCheckoutData?.period === 'YEAR') {
         return t('info.will-pay-per-year', { price: selectedPlanCheckoutData?.price });

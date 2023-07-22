@@ -31,6 +31,8 @@ const Summary = () => {
     FREE: t('info.free'),
     WEEK: t('info.trial-week'),
     MONTH: t('info.monthly'),
+    QUARTER: t('info.quarterly'),
+    HALF: t('info.half-yearly'),
     YEAR: t('info.yearly'),
     FINANCING: t('info.financing'),
   };
@@ -237,8 +239,8 @@ const Summary = () => {
               .map((item, i) => {
                 const title = item?.title ? item?.title : toCapitalize(unSlugify(String(item?.slug)));
                 const isSelected = selectedPlanCheckoutData?.period !== 'FINANCING'
-                  ? selectedPlanCheckoutData?.period === item?.period
-                  : selectedPlanCheckoutData?.financingId === item?.financingId;
+                  ? selectedPlanCheckoutData?.plan_id === item?.plan_id
+                  : selectedPlanCheckoutData?.plan_id === item?.plan_id;
                 return (
                   <Fragment key={`${item?.slug}-${item?.title}`}>
                     <Box
