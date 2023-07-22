@@ -186,7 +186,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
         // padding={{ base: '0 10px', lg: '0' }}
         padding="0 10px"
       >
-        <Box display="flex" position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
+        <Box display={{ base: 'none', md: 'flex' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
           <MktSideRecommendedCourses />
         </Box>
         <Box gridColumn="2 / span 12" maxWidth="854px">
@@ -231,7 +231,6 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
               <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
             )}
           </Box>
-
           {markdown && ipynbHtmlUrl === '' ? (
             <Box
               height="100%"
@@ -246,7 +245,11 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
               className={`markdown-body ${useColorModeValue('light', 'dark')}`}
             >
               <MarkDownParser content={markdownData.content} withToc isPublic />
+              <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'flex', md: 'none' }} width="100%" bottom="0px" height="fit-content" gridColumn="1 / span 1">
+                <MktSideRecommendedCourses title={false} padding="0" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
+              </Box>
               <MktRecommendedCourses
+                display={{ base: 'none', md: 'grid' }}
                 title={t('common:continue-learning', { technologies: lesson?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
                 technologies={lesson?.technologies.join(',')}
               />

@@ -14,7 +14,7 @@ import LanguageSelector from '../../common/components/LanguageSelector';
 
 const MobileNav = ({
   // eslint-disable-next-line no-unused-vars
-  NAV_ITEMS, readSyllabus, haveSession, translations,
+  NAV_ITEMS, readSyllabus, onClickLink, haveSession, translations,
 }) => {
   const [privateItems, setPrivateItems] = useState([]);
   const { colorMode, toggleColorMode } = useColorMode();
@@ -68,6 +68,7 @@ const MobileNav = ({
             subMenu={subMenu}
             href={href}
             asPath={asPath}
+            onClickLink={onClickLink}
           />
         );
       })}
@@ -84,6 +85,7 @@ const MobileNav = ({
             label={label}
             subMenu={subMenu}
             href={href}
+            onClickLink={onClickLink}
           />
         );
       })}
@@ -147,6 +149,7 @@ MobileNav.propTypes = {
   ),
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   readSyllabus: PropTypes.arrayOf(PropTypes.any),
+  onClickLink: PropTypes.func.isRequired,
 };
 
 MobileNav.defaultProps = {

@@ -623,6 +623,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
             haveSession={sessionExists}
             translations={translations}
             readSyllabus={readSyllabus}
+            onClickLink={onToggle}
           />
         </Collapse>
       )}
