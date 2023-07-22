@@ -61,7 +61,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
 const Checkout = () => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-  const { t } = useTranslation('signup');
+  const { t, lang } = useTranslation('signup');
   const router = useRouter();
   const [cohortsData, setCohortsData] = useState({
     loading: true,
@@ -195,7 +195,10 @@ const Checkout = () => {
               isClosable: true,
             });
           }
-          if ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || cohorts?.length === 1) {
+          if (data?.has_waiting_list === true) {
+            router.push(`/${lang}/thank-you`);
+          }
+          if (data?.has_waiting_list === false && ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || cohorts?.length === 1)) {
             if (resp.status < 400 && cohorts?.length > 0) {
               setIsPreselectedCohort(true);
               const { kickoffDate, weekDays, availableTime } = cohorts?.[0] ? getTimeProps(cohorts[0]) : {};
