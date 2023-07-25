@@ -59,12 +59,11 @@ const QuoteVersion1 = ({ ...props }) => {
         className="quote-container"
         display="flex"
         alignContent="center"
-        width="43%"
+        width="100%"
       >
         <Box
           className="quote-img"
           bg="#EEF9FE"
-          width="25.7%"
           mr="3"
           padding="9px"
         >
@@ -98,7 +97,7 @@ const QuoteVersion2 = ({ ...props }) => {
         display="flex"
         flexDirection="column"
         alignContent="center"
-        width="43%"
+        width="100%"
       >
         <Box
           className="quote-divider-container"
@@ -147,7 +146,7 @@ const QuoteVersion3 = ({ ...props }) => {
         display="flex"
         flexDirection="column"
         alignContent="center"
-        width="47%"
+        width="100%"
       >
         <Box className="quote-img" width="3.5%" mr="5" mb="3">
           <img src={quoteImg.src} alt="quoteImg" />
@@ -196,7 +195,7 @@ const QuoteVersion4 = ({ ...props }) => {
         display="flex"
         flexDirection="column"
         alignContent="center"
-        width="44%"
+        width="100%"
       >
         <Box
           className="quote-img"
