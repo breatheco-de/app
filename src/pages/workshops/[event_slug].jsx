@@ -26,12 +26,16 @@ import modifyEnv from '../../../modifyEnv';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
-export const getStaticPaths = async () => {
+export const getStaticPaths = async ({ locales }) => {
   const { data } = await bc.public().events();
+
   const paths = data.filter((ev) => ev?.slug)
-    .map((event) => ({
-      params: { event_slug: event.slug },
-    }));
+    .flatMap((res) => locales.map((locale) => ({
+      params: {
+        slug: res.slug,
+      },
+      locale,
+    })));
 
   return {
     paths,
