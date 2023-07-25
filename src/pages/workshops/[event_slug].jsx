@@ -44,28 +44,23 @@ export const getStaticProps = async ({ params, locale }) => {
   const { data } = await bc.public().singleEvent(slug);
   const lang = data?.lang === 'us' ? 'en' : data?.lang;
 
-  const translations = {
-    us: data.slug,
-    en: data.slug,
-    es: data.slug,
-  };
   const translationArray = [
     {
       value: 'en',
       lang: 'en',
-      slug: translations?.en,
-      link: `/workshops/${translations?.en}`,
+      slug: data?.slug,
+      link: `/workshops/${data?.slug}`,
     },
     {
       value: 'es',
       lang: 'es',
-      slug: translations?.es,
-      link: `/es/workshops/${translations?.es}`,
+      slug: data?.slug,
+      link: `/es/workshops/${data?.slug}`,
     },
-  ].filter((item) => translations?.[item?.value] !== undefined);
+  ].filter((item) => item?.value === data?.lang);
   const filterByCurrentLang = translationArray.filter((item) => item?.lang === lang);
 
-  if (data?.lang !== locale) {
+  if (data?.slug && data?.lang !== locale) {
     return {
       notFound: true,
     };
@@ -78,9 +73,9 @@ export const getStaticProps = async ({ params, locale }) => {
   return ({
     props: {
       seo: {
-        title: data.title || '',
+        title: data?.title || '',
         description: data?.excerpt || '',
-        image: data.banner || '',
+        image: data?.banner || '',
         pathConnector: '/workshops',
         url: `${lang === 'en' ? '' : `/${lang}`}/workshops/${slug}`,
         slug,
@@ -295,7 +290,7 @@ const Page = ({ event }) => {
     image: event?.banner,
     location: {
       '@type': 'Place',
-      name: event.venue.title,
+      name: event?.venue.title,
       address: event.venue.street_address,
       // url: `https://www.4geeks.com/workshops/${event.slug}`,
     },
