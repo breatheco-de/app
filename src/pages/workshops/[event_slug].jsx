@@ -46,14 +46,17 @@ export const getStaticPaths = async ({ locales }) => {
 
 export const getStaticProps = async ({ params, locale }) => {
   const { event_slug: slug } = params;
-  const { data } = await bc.public().singleEvent(slug);
-  const lang = data?.lang === 'us' ? 'en' : data?.lang;
+  const resp = await bc.public().singleEvent(slug).catch(() => ({
+    statusText: 'not-found',
+  }));
+  const data = resp?.data;
 
-  if (data === undefined || !data?.slug || !data?.lang.includes(locale)) {
+  if (resp.statusText === 'not-found' || !data?.slug || !data?.lang.includes(locale)) {
     return {
       notFound: true,
     };
   }
+  const lang = data?.lang === 'us' ? 'en' : data?.lang;
 
   const translationArray = [
     {
@@ -312,9 +315,9 @@ const Page = ({ event }) => {
       <Head>
         <script
           type="application/ld+json"
-        >
-          {JSON.stringify(eventStructuredData)}
-        </script>
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(eventStructuredData) }}
+        />
       </Head>
       <Box
         background={useColorModeValue('featuredLight', 'featuredDark')}
