@@ -285,8 +285,33 @@ const Page = ({ event }) => {
   };
   const formInfo = dynamicFormInfo();
 
+  const eventStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: event?.title,
+    description: event?.description,
+    startDate: event?.start_date,
+    endDate: event?.end_date,
+    image: event?.banner,
+    location: {
+      '@type': 'Place',
+      name: event.venue.title,
+      address: event.venue.street_address,
+      // url: `https://www.4geeks.com/workshops/${event.slug}`,
+    },
+    organizer: {
+      '@type': 'Organization',
+      name: event.academy.name,
+      // url: 'https://www.4geeks.com',
+    },
+    eventStatus: 'https://schema.org/EventScheduled',
+  };
+
   return (
     <>
+      <script type="application/ld+json">
+        {JSON.stringify(eventStructuredData)}
+      </script>
       <Box
         background={useColorModeValue('featuredLight', 'featuredDark')}
         marginBottom="37px"
