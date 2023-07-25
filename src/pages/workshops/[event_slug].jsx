@@ -32,7 +32,7 @@ export const getStaticPaths = async ({ locales }) => {
   const paths = data.filter((ev) => ev?.slug)
     .flatMap((res) => locales.map((locale) => ({
       params: {
-        slug: res.slug,
+        event_slug: res.slug,
       },
       locale,
     })));
@@ -64,7 +64,7 @@ export const getStaticProps = async ({ params, locale }) => {
   ].filter((item) => item?.value === data?.lang);
   const filterByCurrentLang = translationArray.filter((item) => item?.lang === lang);
 
-  if (data?.slug && data?.lang !== locale) {
+  if (data?.slug && !data?.lang.includes(locale)) {
     return {
       notFound: true,
     };
@@ -233,7 +233,9 @@ const Page = ({ event }) => {
   };
 
   const currentConsumable = consumables?.event_type_sets?.find(
-    (c) => c?.slug.toLowerCase() === subscriptions?.selected_event_type_set?.slug.toLowerCase(),
+    (c) => subscriptions.some(
+      (s) => c?.slug.toLowerCase() === s?.selected_event_type_set?.slug.toLowerCase(),
+    ),
   );
   const existsConsumables = typeof currentConsumable?.balance?.unit === 'number' && (currentConsumable?.balance?.unit > 0 || currentConsumable?.balance?.unit === -1);
 
@@ -253,8 +255,6 @@ const Page = ({ event }) => {
         childrenDescription: (
           <Text size="14px" fontWeight={700} lineHeight="18px">
             {t('no-consumables.description')}
-            {/* {' '}
-            <Link variant="default" href="google.com">{t('no-consumables.link-text')}</Link> */}
           </Text>
         ),
       });
@@ -294,13 +294,13 @@ const Page = ({ event }) => {
     image: event?.banner,
     location: {
       '@type': 'Place',
-      name: event?.venue.title,
-      address: event.venue.street_address,
+      name: event?.venue?.title,
+      address: event?.venue?.street_address,
       // url: `https://www.4geeks.com/workshops/${event.slug}`,
     },
     organizer: {
       '@type': 'Organization',
-      name: event.academy.name,
+      name: event?.academy?.name,
       // url: 'https://www.4geeks.com',
     },
     eventStatus: 'https://schema.org/EventScheduled',
@@ -483,6 +483,7 @@ const Page = ({ event }) => {
               childrenDescription={formInfo?.childrenDescription}
               readOnly={!event?.slug}
               position="relative"
+              gridGap={existsConsumables ? '10px' : '16px'}
             >
               {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
                 <Button
@@ -549,7 +550,7 @@ const Page = ({ event }) => {
                   <Avatar
                     width="85px"
                     height="85px"
-                    margin="16px 0"
+                    margin="0 0 16px 0"
                     style={{ userSelect: 'none' }}
                     src="/static/images/angry-avatar.png"
                   />
@@ -561,6 +562,7 @@ const Page = ({ event }) => {
                     onClick={handleGetMoreEventConsumables}
                     alignItems="center"
                     gridGap="10px"
+                    width="100%"
                   >
                     {t('no-consumables.get-more-workshops')}
                     <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
