@@ -235,7 +235,7 @@ const Page = ({ event }) => {
   const currentConsumable = consumables?.event_type_sets?.find(
     (c) => c?.slug.toLowerCase() === subscriptions?.selected_event_type_set?.slug.toLowerCase(),
   );
-  const existsConsumables = typeof currentConsumable?.balance?.unit === 'number' && currentConsumable?.balance?.unit > 0;
+  const existsConsumables = typeof currentConsumable?.balance?.unit === 'number' && (currentConsumable?.balance?.unit > 0 || currentConsumable?.balance?.unit === -1);
 
   const existsAvailableAsSaas = myCohorts.some((c) => c?.cohort?.available_as_saas === false);
   const isFreeForConsumables = finishedEvent || (event?.free_for_bootcamps === true && existsAvailableAsSaas);
