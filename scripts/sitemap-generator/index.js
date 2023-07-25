@@ -2,7 +2,7 @@ const fs = require('fs');
 const globby = require('globby');
 
 const {
-  getPrismicPages, getReadPages, getAsset, getLandingTechnologies,
+  getPrismicPages, getReadPages, getAsset, getLandingTechnologies, getEvents,
 } = require('./requests');
 
 const createArray = (length) => Array.from({ length }, (_, i) => i);
@@ -35,6 +35,7 @@ async function generateSitemap() {
     (data) => data.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como'),
   );
   const technologyLandingPages = await getLandingTechnologies();
+  const eventsPages = await getEvents();
 
   const pagination = (data, conector) => {
     const limit = 20;
@@ -52,9 +53,13 @@ async function generateSitemap() {
     return paginated;
   };
 
-  const generateSlugByLang = (data, conector, withDifficulty) => data.map((l) => (withDifficulty
-    ? `${engLang[l.lang] !== 'en' ? `${l?.lang ? `/${l?.lang}` : ''}` : ''}${conector ? `/${conector}` : ''}/${l?.difficulty ? l?.difficulty?.toLowerCase() : 'unknown'}/${l?.slug}`
-    : `${engLang[l.lang] !== 'en' ? `${l?.lang ? `/${l?.lang}` : ''}` : ''}${conector ? `/${conector}` : ''}/${l?.slug}`));
+  const generateSlugByLang = (data, conector, withDifficulty) => {
+    const filteredBySlug = data.filter((f) => f?.slug);
+
+    return filteredBySlug.map((l) => (withDifficulty
+      ? `${engLang[l.lang] !== 'en' ? `${l?.lang ? `/${l?.lang}` : ''}` : ''}${conector ? `/${conector}` : ''}/${l?.difficulty ? l?.difficulty?.toLowerCase() : 'unknown'}/${l?.slug}`
+      : `${engLang[l.lang] !== 'en' ? `${l?.lang ? `/${l?.lang}` : ''}` : ''}${conector ? `/${conector}` : ''}/${l?.slug}`));
+  };
   const generateSlug = (data, conector) => data.map((l) => `${conector ? `/${conector}` : ''}/${l?.slug}`);
 
   const generateTechnologySlug = (data, conector, type) => {
@@ -108,6 +113,7 @@ async function generateSitemap() {
   const exercisesRoute = generateSlugByLang(exercisesPages, 'interactive-exercise');
   const projectsCodingRoute = generateSlugByLang(projectsPages, 'interactive-coding-tutorial');
   const howTosRoute = generateSlugByLang(howTosPages, 'how-to');
+  const eventsRoute = generateSlugByLang(eventsPages, 'workshops');
 
   const paginatedLessonsRoute = pagination(lessonsPages, 'lessons');
   const paginatedExercisesRoute = pagination(exercisesPages, 'interactive-exercises');
@@ -142,6 +148,7 @@ async function generateSitemap() {
   const projectsSitemap = sitemapTemplate(projectsCodingRoute);
   const exercisesSitemap = sitemapTemplate(exercisesRoute);
   const technologiesSitemap = sitemapTemplate([...technologyLessonsRoute, ...technologyExercisesRoute, ...technologyProjectsRoute, ...allTechnologiesRoute]);
+  const eventsSitemap = sitemapTemplate(eventsRoute);
 
   const sitemap = listOfSitemapsTemplate([
     'pages-sitemap.xml',
@@ -159,6 +166,7 @@ async function generateSitemap() {
     fs.writeFileSync('public/projects-sitemap.xml', projectsSitemap);
     fs.writeFileSync('public/exercises-sitemap.xml', exercisesSitemap);
     fs.writeFileSync('public/technologies-sitemap.xml', technologiesSitemap);
+    fs.writeFileSync('public/events-sitemap.xml', eventsSitemap);
   } catch (err) {
     console.error("Couldn't write sitemaps files", err);
   }
