@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 const Helmet = ({
   title, description, translations, url, image, card, type, twitterUser,
   unlisted, pathConnector, locales, publishedTime, keywords, modifiedTime,
-  locale, slug, disableStaticCanonical,
+  locale, slug, disableStaticCanonical, eventStartAt,
 }) => {
   const ogTitle = title.length > 0 ? title : '4Geeks';
   const translationsExists = Object.keys(translations).length > 0;
@@ -138,6 +138,7 @@ const Helmet = ({
       <meta property="og:image:height" content={imageProps.height} /> */}
 
       <meta property="og:type" content={type} />
+      {type === 'event' && <meta property="og:event:start_time" content={eventStartAt} />}
       {type === 'article' && publishedTime && <meta property="article:published_time" content={publishedTime} />}
       {type === 'article' && modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
 
@@ -170,6 +171,7 @@ Helmet.propTypes = {
   locale: PropTypes.string,
   slug: PropTypes.string,
   disableStaticCanonical: PropTypes.bool,
+  eventStartAt: PropTypes.string,
 };
 
 Helmet.defaultProps = {
@@ -190,6 +192,7 @@ Helmet.defaultProps = {
   locale: '',
   slug: '',
   disableStaticCanonical: false,
+  eventStartAt: '',
 };
 
 export default Helmet;
