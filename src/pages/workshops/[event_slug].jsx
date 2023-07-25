@@ -560,7 +560,8 @@ const Page = ({ event }) => {
                     height="85px"
                     margin="0 0 16px 0"
                     style={{ userSelect: 'none' }}
-                    src="/static/images/angry-avatar.png"
+                    src={`${BREATHECODE_HOST}/static/img/avatar-7.png`}
+                    alt="No consumables avatar"
                   />
                   <Button
                     display="flex"
