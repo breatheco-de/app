@@ -48,6 +48,12 @@ export const getStaticProps = async ({ params, locale }) => {
   const { data } = await bc.public().singleEvent(slug);
   const lang = data?.lang === 'us' ? 'en' : data?.lang;
 
+  if (data === undefined || !data?.slug || !data?.lang.includes(locale)) {
+    return {
+      notFound: true,
+    };
+  }
+
   const translationArray = [
     {
       value: 'en',
@@ -63,12 +69,6 @@ export const getStaticProps = async ({ params, locale }) => {
     },
   ].filter((item) => item?.value === data?.lang);
   const filterByCurrentLang = translationArray.filter((item) => item?.lang === lang);
-
-  if (data?.slug && !data?.lang.includes(locale)) {
-    return {
-      notFound: true,
-    };
-  }
 
   const objForTranslations = {
     [lang]: data?.slug,
