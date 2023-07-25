@@ -1,12 +1,12 @@
 import {
-  Box, Button, Grid, Skeleton, useColorModeValue, useToast, Image, Avatar,
+  Box, Button, Grid, useColorModeValue, useToast, Image, Avatar, Skeleton,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { intervalToDuration, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import Head from 'next/head';
+import PropTypes from 'prop-types';
 import bc from '../../common/services/breathecode';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
@@ -22,14 +22,84 @@ import Timer from '../../common/components/Timer';
 import ComponentOnTime from '../../common/components/ComponentOnTime';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import MktEventCards from '../../common/components/MktEventCards';
+import modifyEnv from '../../../modifyEnv';
 
-const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
+const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
-const Page = () => {
-  const { t } = useTranslation('workshops');
-  const [event, setEvent] = useState({
-    loaded: false,
+export const getStaticPaths = async () => {
+  const { data } = await bc.public().events();
+  const paths = data.filter((ev) => ev?.slug)
+    .map((event) => ({
+      params: { event_slug: event.slug },
+    }));
+
+  return {
+    paths,
+    fallback: true,
+  };
+};
+
+export const getStaticProps = async ({ params, locale }) => {
+  const { event_slug: slug } = params;
+  const { data } = await bc.public().singleEvent(slug);
+  const lang = data?.lang === 'us' ? 'en' : data?.lang;
+
+  const translations = {
+    us: data.slug,
+    en: data.slug,
+    es: data.slug,
+  };
+  const translationArray = [
+    {
+      value: 'en',
+      lang: 'en',
+      slug: translations?.en,
+      link: `/workshops/${translations?.en}`,
+    },
+    {
+      value: 'es',
+      lang: 'es',
+      slug: translations?.es,
+      link: `/es/workshops/${translations?.es}`,
+    },
+  ].filter((item) => translations?.[item?.value] !== undefined);
+  const filterByCurrentLang = translationArray.filter((item) => item?.lang === lang);
+
+  if (data?.lang !== locale) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const objForTranslations = {
+    [lang]: data?.slug,
+  };
+
+  return ({
+    props: {
+      seo: {
+        title: data.title || '',
+        description: data?.excerpt || '',
+        image: data.banner || '',
+        pathConnector: '/workshops',
+        url: `${lang === 'en' ? '' : `/${lang}`}/workshops/${slug}`,
+        slug,
+        type: 'event',
+        card: 'large',
+        translations: objForTranslations,
+        eventStartAt: data?.starting_at || '',
+        locale,
+        publishedTime: data?.published_at || '',
+        modifiedTime: data?.updated_at || '',
+      },
+      translations: filterByCurrentLang,
+      event: data,
+    },
   });
+};
+
+const Page = ({ event }) => {
+  const { t } = useTranslation('workshops');
   const [users, setUsers] = useState([]);
   const [allUsersJoined, setAllUsersJoined] = useState([]);
   const [subscriptions, setSubscriptions] = useState([]);
@@ -45,57 +115,37 @@ const Page = () => {
   const { locale } = router;
   const toast = useToast();
   const { isAuthenticated, user } = useAuth();
-  const { event_slug: eventSlug } = router.query;
   const { featuredColor, hexColor } = useStyle();
 
   useEffect(() => {
-    bc.public().singleEvent(eventSlug)
-      .then((res) => {
-        if (res === undefined) {
-          router.push('/404');
-        }
-        const data = res?.data;
-
-        bc.events().getUsers(data?.id)
-          .then((resp) => {
-            const formatedUsers = resp.data.map((l, i) => {
-              const index = i + 1;
-              const avatarNumber = adjustNumberBeetwenMinMax({
-                number: index,
-                min: 1,
-                max: 20,
-              });
-              if (l?.attendee === null) {
-                return {
-                  ...l,
-                  attendee: {
-                    id: 475335 + i,
-                    first_name: 'Anonymous',
-                    last_name: '',
-                    profile: {
-                      avatar_url: `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`,
-                    },
-                  },
-                };
-              }
-              return l;
-            });
-            setAllUsersJoined(resp.data);
-            setUsers(formatedUsers);
-          })
-          .catch(() => {});
-
-        setEvent({
-          ...data,
-          loaded: true,
+    bc.events().getUsers(event?.id)
+      .then((resp) => {
+        const formatedUsers = resp.data.map((l, i) => {
+          const index = i + 1;
+          const avatarNumber = adjustNumberBeetwenMinMax({
+            number: index,
+            min: 1,
+            max: 20,
+          });
+          if (l?.attendee === null) {
+            return {
+              ...l,
+              attendee: {
+                id: 475335 + i,
+                first_name: 'Anonymous',
+                last_name: '',
+                profile: {
+                  avatar_url: `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`,
+                },
+              },
+            };
+          }
+          return l;
         });
+        setAllUsersJoined(resp.data);
+        setUsers(formatedUsers);
       })
-      .catch(() => {
-        router.push('/404');
-        setEvent({
-          loaded: true,
-        });
-      });
+      .catch(() => {});
   }, []);
 
   const limitedUsers = showAll ? users : users.slice(0, 15);
@@ -117,7 +167,7 @@ const Page = () => {
     en: format(new Date(event?.starting_at), 'EEEE, MMMM do - p (OOO)', { timeZone }),
   } : {};
 
-  const eventNotExists = event?.loaded && !event?.slug;
+  const eventNotExists = !event?.slug;
   const isAuth = isAuthenticated && user?.id;
 
   const alreadyApplied = users.some((l) => l?.attendee?.id === user?.id) || applied;
@@ -237,16 +287,6 @@ const Page = () => {
 
   return (
     <>
-      {event.loaded && (
-        <Head>
-          {event?.title && (
-            <title>{`${event?.title} | 4Geeks`}</title>
-          )}
-          {event?.excerpt && (
-            <meta name="description" content={event?.excerpt} />
-          )}
-        </Head>
-      )}
       <Box
         background={useColorModeValue('featuredLight', 'featuredDark')}
         marginBottom="37px"
@@ -299,7 +339,7 @@ const Page = () => {
                 />
               )}
             </Box>
-            {event.loaded ? (
+            {event?.slug ? (
               <>
                 {event?.title && !eventNotExists ? (
                   <Heading
@@ -417,7 +457,7 @@ const Page = () => {
               title={formInfo?.title}
               description={formInfo?.description}
               childrenDescription={formInfo?.childrenDescription}
-              readOnly={event?.loaded && !event?.slug}
+              readOnly={!event?.slug}
               position="relative"
             >
               {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
@@ -545,6 +585,13 @@ const Page = () => {
       {finishedEvent && (<MktEventCards gridTemplateColumns="2fr repeat(12, 1fr) 2fr" gridColumn="2 / span 12" margin="2rem auto 0 auto" maxWidth="1440px" padding="0 10px" />)}
     </>
   );
+};
+
+Page.propTypes = {
+  event: PropTypes.objectOf(PropTypes.any),
+};
+Page.defaultProps = {
+  event: {},
 };
 
 export default Page;

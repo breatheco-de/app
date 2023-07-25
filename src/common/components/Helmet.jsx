@@ -9,7 +9,8 @@ const Helmet = ({
   locale, slug, disableStaticCanonical, eventStartAt,
 }) => {
   const ogTitle = title.length > 0 ? title : '4Geeks';
-  const translationsExists = Object.keys(translations).length > 0;
+  const translationsArray = Object.keys(translations);
+  const translationsExists = translationsArray.length > 0;
   const maxCharacters = 155;
   const descriptionCleaned = description.length > maxCharacters
     ? `${description.substring(0, maxCharacters)}...`
@@ -95,7 +96,7 @@ const Helmet = ({
         <link rel="canonical" href={canonicalTranslationsLink} />
       )}
 
-      {translationsExists && Object.keys(translations).map((lang) => {
+      {translationsExists && translationsArray.length > 1 && translationsArray.map((lang) => {
         const language = lang === 'us' ? 'en' : lang;
 
         const locationLang = {
