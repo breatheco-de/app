@@ -289,7 +289,7 @@ const Page = ({ event }) => {
     '@context': 'https://schema.org',
     '@type': 'Event',
     name: event?.title,
-    description: event?.description,
+    description: event?.excerpt,
     startDate: event?.start_date,
     endDate: event?.end_date,
     image: event?.banner,
