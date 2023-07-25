@@ -7,6 +7,7 @@ import { es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
+import Head from 'next/head';
 import bc from '../../common/services/breathecode';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
@@ -308,9 +309,13 @@ const Page = ({ event }) => {
 
   return (
     <>
-      <script type="application/ld+json">
-        {JSON.stringify(eventStructuredData)}
-      </script>
+      <Head>
+        <script
+          type="application/ld+json"
+        >
+          {JSON.stringify(eventStructuredData)}
+        </script>
+      </Head>
       <Box
         background={useColorModeValue('featuredLight', 'featuredDark')}
         marginBottom="37px"
