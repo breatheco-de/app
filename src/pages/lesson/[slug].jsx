@@ -260,7 +260,7 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
               )}
             </>
           )}
-          <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'flex', md: 'none' }} width="100%" bottom="0px" height="fit-content" gridColumn="1 / span 1">
+          <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'flex', md: 'none' }} width="100%" bottom="0px" left="0px" height="fit-content" gridColumn="1 / span 1">
             <MktSideRecommendedCourses title={false} padding="0" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
           </Box>
 
