@@ -245,9 +245,6 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
               className={`markdown-body ${useColorModeValue('light', 'dark')}`}
             >
               <MarkDownParser content={markdownData.content} withToc isPublic />
-              <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'flex', md: 'none' }} width="100%" bottom="0px" height="fit-content" gridColumn="1 / span 1">
-                <MktSideRecommendedCourses title={false} padding="0" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
-              </Box>
               <MktRecommendedCourses
                 display={{ base: 'none', md: 'grid' }}
                 title={t('common:continue-learning', { technologies: lesson?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
@@ -263,6 +260,9 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
               )}
             </>
           )}
+          <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'flex', md: 'none' }} width="100%" bottom="0px" height="fit-content" gridColumn="1 / span 1">
+            <MktSideRecommendedCourses title={false} padding="0" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
+          </Box>
 
           {ipynbHtmlUrl && markdown === '' && (
             <Box
