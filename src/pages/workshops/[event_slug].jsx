@@ -232,6 +232,7 @@ const Page = ({ event }) => {
       plans: relevantProps.map((p) => p.plan_slug).join(','),
     };
 
+    setStorageItem('redirected-from', router?.asPath);
     router.push({
       pathname: '/checkout',
       query: propsToQueryString,
