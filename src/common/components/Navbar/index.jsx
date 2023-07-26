@@ -138,10 +138,9 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
     return ((cohort?.available_as_saas && subscriptionExists) || cohort?.available_as_saas === false);
   }) : [];
 
-  const marketingCouses = Array.isArray(mktCourses) && mktCourses.filter(
+  const marketingCourses = Array.isArray(mktCourses) && mktCourses.filter(
     (item) => !activeSubscriptionCohorts.some(
-      (activeCohort) => activeCohort?.subscription?.plans[0]?.slug === item?.slug
-        || activeCohort?.plan_financing?.plans[0]?.slug === item?.slug,
+      (activeCohort) => activeCohort?.cohort?.syllabus_version?.slug === item?.slug,
     ) && item?.course_translation?.title,
   );
 
@@ -158,7 +157,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
       selectedProgramSlug: selectedProgramSlug || '/choose-program',
     }, { returnObjects: true });
 
-    const mktCoursesFormat = marketingCouses.length > 0 ? marketingCouses.map((item) => ({
+    const mktCoursesFormat = marketingCourses.length > 0 ? marketingCourses.map((item) => ({
       label: item?.course_translation?.title,
       asPath: `/course/${item?.slug}`,
       icon: item?.icon_url,
@@ -345,9 +344,9 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
         </Flex>
 
         <Stack justify="flex-end" direction="row" gridGap="5px">
-          {/* {!isNotAvailableForMktCourses && marketingCouses?.length > 0 && (
+          {/* {!isNotAvailableForMktCourses && marketingCourses?.length > 0 && (
             <Box display={{ base: 'none', md: 'block' }}>
-              <UpgradeExperience data={marketingCouses} />
+              <UpgradeExperience data={marketingCourses} />
             </Box>
           )} */}
 
@@ -603,7 +602,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
 
       <Collapse display={{ lg: 'block' }} in={isOpen} animateOpacity>
         <MobileNav
-          mktCourses={!isNotAvailableForMktCourses && marketingCouses?.length > 0 ? marketingCouses : []}
+          mktCourses={!isNotAvailableForMktCourses && marketingCourses?.length > 0 ? marketingCourses : []}
           NAV_ITEMS={ITEMS}
           haveSession={sessionExists}
           translations={translations}
