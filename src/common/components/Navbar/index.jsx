@@ -94,7 +94,7 @@ function Hamburger2(colorMode) {
   );
 }
 
-function NavbarWithSubNavigation({ translations, pageProps }) {
+function NavbarWithSubNavigation({ translations, disableLangSwitcher, pageProps }) {
   const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
 
   const [haveSession, setHaveSession] = useState(HAVE_SESSION);
@@ -373,7 +373,9 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
             </Box>
           )} */}
 
-          <LanguageSelector display={{ base: 'none ', md: 'block' }} translations={translations} />
+          {disableLangSwitcher !== true && (
+            <LanguageSelector display={{ base: 'none ', md: 'block' }} translations={translations} />
+          )}
           <IconButton
             style={{
               margin: 0,
@@ -458,51 +460,53 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                     <Text size="md" fontWeight="700">
                       {t('language')}
                     </Text>
-                    <Box display="flex" flexDirection="row">
-                      {((translationsPropsExists
-                        && translations)
-                        || languagesTR).map((l, i) => {
-                        const lang = languagesTR.filter((language) => language?.value === l?.lang)[0];
-                        const value = translationsPropsExists ? lang?.value : l.value;
-                        const path = translationsPropsExists ? l?.link : router.asPath;
+                    {disableLangSwitcher !== true && (
+                      <Box display="flex" flexDirection="row">
+                        {((translationsPropsExists
+                          && translations)
+                          || languagesTR).map((l, i) => {
+                          const lang = languagesTR.filter((language) => language?.value === l?.lang)[0];
+                          const value = translationsPropsExists ? lang?.value : l.value;
+                          const path = translationsPropsExists ? l?.link : router.asPath;
 
-                        const cleanedPath = (path === '/' && value !== 'en') ? '' : path;
-                        const localePrefix = `${value !== 'en' && !cleanedPath.includes(`/${value}`) ? `/${value}` : ''}`;
+                          const cleanedPath = (path === '/' && value !== 'en') ? '' : path;
+                          const localePrefix = `${value !== 'en' && !cleanedPath.includes(`/${value}`) ? `/${value}` : ''}`;
 
-                        const link = `${localePrefix}${cleanedPath}`;
+                          const link = `${localePrefix}${cleanedPath}`;
 
-                        const getIconFlags = value === 'en' ? 'usaFlag' : 'spainFlag';
-                        const getLangName = value === 'en' ? 'Eng' : 'Esp';
+                          const getIconFlags = value === 'en' ? 'usaFlag' : 'spainFlag';
+                          const getLangName = value === 'en' ? 'Eng' : 'Esp';
 
-                        return (
-                          <Fragment key={lang}>
-                            <Link
-                              _hover={{
-                                textDecoration: 'none',
-                                color: 'blue.default',
-                              }}
-                              color={locale === lang ? 'blue.default' : linkColor}
-                              fontWeight={locale === lang ? '700' : '400'}
-                              key={value}
-                              href={link}
-                              display="flex"
-                              alignItems="center"
-                              textTransform="uppercase"
-                              gridGap="5px"
-                              size="sm"
-                            >
-                              <Icon icon={getIconFlags} width="16px" height="16px" />
-                              {getLangName}
-                            </Link>
-                            {
-                              i < langs.length - 1 && (
-                                <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
-                              )
-                            }
-                          </Fragment>
-                        );
-                      })}
-                    </Box>
+                          return (
+                            <Fragment key={lang}>
+                              <Link
+                                _hover={{
+                                  textDecoration: 'none',
+                                  color: 'blue.default',
+                                }}
+                                color={locale === lang ? 'blue.default' : linkColor}
+                                fontWeight={locale === lang ? '700' : '400'}
+                                key={value}
+                                href={link}
+                                display="flex"
+                                alignItems="center"
+                                textTransform="uppercase"
+                                gridGap="5px"
+                                size="sm"
+                              >
+                                <Icon icon={getIconFlags} width="16px" height="16px" />
+                                {getLangName}
+                              </Link>
+                              {
+                                i < langs.length - 1 && (
+                                  <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
+                                )
+                              }
+                            </Fragment>
+                          );
+                        })}
+                      </Box>
+                    )}
                   </Box>
 
                   {/* Container Section */}
@@ -634,10 +638,12 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
 NavbarWithSubNavigation.propTypes = {
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   pageProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
+  disableLangSwitcher: PropTypes.bool,
 };
 NavbarWithSubNavigation.defaultProps = {
   translations: undefined,
   pageProps: undefined,
+  disableLangSwitcher: false,
 };
 
 export default memo(NavbarWithSubNavigation);

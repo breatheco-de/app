@@ -22,7 +22,7 @@ const MktEventCards = ({ id, title, hoursToLimit, endpoint, ...rest }) => {
         const data = res?.data;
         if (data && data.length > 0) {
           const sortDateToLiveClass = sortToNearestTodayDate(data, hoursLimited);
-          const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && l?.ending_at);
+          const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && l?.ending_at && l?.slug);
           setEvents(existentLiveClasses);
         }
       });
@@ -54,7 +54,7 @@ const MktEventCards = ({ id, title, hoursToLimit, endpoint, ...rest }) => {
               title={event?.title}
               host={event?.host}
               ignoreDynamicHandler
-              description={event?.description}
+              description={event?.excerpt}
               technologies={event?.technologies || []}
               startingAt={event?.starting_at}
               endingAt={event?.ending_at}

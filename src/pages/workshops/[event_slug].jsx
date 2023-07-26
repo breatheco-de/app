@@ -71,8 +71,7 @@ export const getStaticProps = async ({ params, locale }) => {
       slug: data?.slug,
       link: `/es/workshops/${data?.slug}`,
     },
-  ].filter((item) => item?.value === data?.lang);
-  const filterByCurrentLang = translationArray.filter((item) => item?.lang === lang);
+  ].filter((item) => lang.includes(item?.lang));
 
   const objForTranslations = {
     [lang]: data?.slug,
@@ -95,7 +94,8 @@ export const getStaticProps = async ({ params, locale }) => {
         publishedTime: data?.published_at || '',
         modifiedTime: data?.updated_at || '',
       },
-      translations: filterByCurrentLang,
+      translations: translationArray,
+      disableLangSwitcher: true,
       event: data,
     },
   });
@@ -121,35 +121,37 @@ const Page = ({ event }) => {
   const { featuredColor, hexColor } = useStyle();
 
   useEffect(() => {
-    bc.events().getUsers(event?.id)
-      .then((resp) => {
-        const formatedUsers = resp.data.map((l, i) => {
-          const index = i + 1;
-          const avatarNumber = adjustNumberBeetwenMinMax({
-            number: index,
-            min: 1,
-            max: 20,
-          });
-          if (l?.attendee === null) {
-            return {
-              ...l,
-              attendee: {
-                id: 475335 + i,
-                first_name: 'Anonymous',
-                last_name: '',
-                profile: {
-                  avatar_url: `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`,
+    if (event?.id) {
+      bc.events().getUsers(event?.id)
+        .then((resp) => {
+          const formatedUsers = resp.data.map((l, i) => {
+            const index = i + 1;
+            const avatarNumber = adjustNumberBeetwenMinMax({
+              number: index,
+              min: 1,
+              max: 20,
+            });
+            if (l?.attendee === null) {
+              return {
+                ...l,
+                attendee: {
+                  id: 475335 + i,
+                  first_name: 'Anonymous',
+                  last_name: '',
+                  profile: {
+                    avatar_url: `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`,
+                  },
                 },
-              },
-            };
-          }
-          return l;
-        });
-        setAllUsersJoined(resp.data);
-        setUsers(formatedUsers);
-      })
-      .catch(() => {});
-  }, []);
+              };
+            }
+            return l;
+          });
+          setAllUsersJoined(resp.data);
+          setUsers(formatedUsers);
+        })
+        .catch(() => {});
+    }
+  }, [event]);
 
   const limitedUsers = showAll ? users : users.slice(0, 15);
 
@@ -498,6 +500,7 @@ const Page = ({ event }) => {
                   mt="10px"
                   type="submit"
                   variant="default"
+                  background={buttonEnabled ? '' : 'gray.350'}
                   textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
                   disabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                   _disabled={{
