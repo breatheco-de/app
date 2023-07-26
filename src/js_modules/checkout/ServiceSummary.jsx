@@ -12,7 +12,7 @@ import Icon from '../../common/components/Icon';
 import useStyle from '../../common/hooks/useStyle';
 import Text from '../../common/components/Text';
 import FieldForm from '../../common/components/Forms/FieldForm';
-import { formatPrice, number2DIgits } from '../../utils';
+import { formatPrice, number2DIgits, getStorageItem } from '../../utils';
 import DatePickerField from '../../common/components/Forms/DateField';
 import ModalInfo from '../moduleMap/modalInfo';
 import { usePersistent } from '../../common/hooks/usePersistent';
@@ -55,6 +55,7 @@ const ServiceSummary = ({ service }) => {
     exp_year: 0,
     cvc: 0,
   });
+  const redirectedFrom = getStorageItem('redirected-from');
 
   const toast = useToast();
 
@@ -170,8 +171,8 @@ const ServiceSummary = ({ service }) => {
               </Box>
             </Box>
             <Box display="flex" gridGap="12px" margin="2rem auto 0 auto" alignItems="center">
-              <Link variant="default" href={cohortSession?.selectedProgramSlug || ''}>
-                {t('consumables.back-to-dashboard')}
+              <Link variant="default" onClick={() => localStorage.removeItem('redirected-from')} href={redirectedFrom || cohortSession?.selectedProgramSlug || ''}>
+                {t('common:go-back')}
               </Link>
               <Icon icon="longArrowRight" width="24px" height="10px" color={hexColor.blueDefault} />
             </Box>

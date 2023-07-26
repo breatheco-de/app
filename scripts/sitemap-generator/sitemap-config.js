@@ -7,6 +7,7 @@ const getFrequently = (route) => {
     || route.includes('/lessons')
     || route.includes('/about-us')
     || route.includes('/login')
+    || route.includes('/workshops')
     || route === ''
   ) return 'weekly';
   if (
@@ -17,6 +18,14 @@ const getFrequently = (route) => {
   ) return 'monthly';
   return 'yearly';
 };
+const getPriotity = (route) => {
+  if (route.includes('/how-to')) return '0.9';
+  if (route.includes('/lessons') || route.includes('/read/')) return '0.8';
+  if (route.includes('/interactive-exercises')) return '0.7';
+  if (route.includes('/interactive-coding-tutorial')) return '0.6';
+  if (route.includes('/workshops')) return '0.5';
+  return '0.6';
+};
 
 function addPage(page, index) {
   const path = page.replace('src/pages', '').replace('/index', '').replace('.jsx', '').replace('.js', '');
@@ -26,7 +35,7 @@ function addPage(page, index) {
     <loc>${`${websiteUrl}${route}`}</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
     <changefreq>${getFrequently(route)}</changefreq>
-    <priority>0.9</priority>
+    <priority>${getPriotity(route)}</priority>
   </url>`;
 }
 function addSitemap(page, index) {

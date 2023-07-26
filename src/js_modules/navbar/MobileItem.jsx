@@ -20,7 +20,7 @@ import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
 
 const MobileItem = ({
-  label, subMenu, href, asPath, description, icon,
+  label, subMenu, href, onClickLink, asPath, description, icon,
 }) => {
   // const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
@@ -44,6 +44,7 @@ const MobileItem = ({
             target={isAbsoluteUrl(href) ? '_blank' : undefined}
             rel={isAbsoluteUrl(href) ? 'noopener noreferrer' : undefined}
             display="flex"
+            onClick={onClickLink}
             justifyContent="space-between"
             align="center"
             _hover={{
@@ -133,6 +134,7 @@ const MobileItem = ({
                       {child.subMenu.map((l) => (
                         <NextChakraLink
                           key={l.label}
+                          onClick={onClickLink}
                           // color={getColorLink(l.href)}
                           style={{ textDecoration: 'none' }}
                           href={l.href}
@@ -147,6 +149,7 @@ const MobileItem = ({
             ) : (
               <NextChakraLink
                 key={child.label}
+                onClick={onClickLink}
                 // color={getColorLink(child.href)}
                 style={{ textDecoration: 'none' }}
                 py={2}
@@ -174,6 +177,7 @@ MobileItem.propTypes = {
       href: PropTypes.string,
     }),
   ),
+  onClickLink: PropTypes.func.isRequired,
 };
 
 MobileItem.defaultProps = {

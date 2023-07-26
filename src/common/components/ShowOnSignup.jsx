@@ -101,7 +101,7 @@ const ShowOnSignUp = ({ headContent, title, description, childrenDescription, su
       {headContent}
       {subContent}
 
-      <Box display="flex" flexDirection="column" gridGap="10px" padding="0 18px 18px">
+      <Box display="flex" flexDirection="column" gridGap={rest?.gridGap || '10px'} padding="0 18px 18px">
         {title && (
           <Text size="21px" fontWeight={700} lineHeight="25px">
             {title}

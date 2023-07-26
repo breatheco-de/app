@@ -167,7 +167,7 @@ export default function HowToSlug({ data, markdown }) {
   return (
     <>
       <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin="0 auto" gridGap="36px" padding="0 10px">
-        <Box display="flex" position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '6.2rem 0 0 0' }}>
+        <Box display={{ base: 'none', md: 'flex' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '6.2rem 0 0 0' }}>
           <MktSideRecommendedCourses />
         </Box>
         <Box
@@ -252,7 +252,11 @@ export default function HowToSlug({ data, markdown }) {
             ) : (
               <MDSkeleton />
             )}
+            <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'flex', md: 'none' }} width="100%" bottom="0px" height="fit-content" gridColumn="1 / span 1">
+              <MktSideRecommendedCourses title={false} padding="0" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
+            </Box>
             <MktRecommendedCourses
+              display={{ base: 'none', md: 'grid' }}
               title={t('common:continue-learning', { technologies: data?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
               marginBottom="15px"
               technologies={data?.technologies.join(',')}

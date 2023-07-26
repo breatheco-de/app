@@ -56,6 +56,13 @@ const getHowTo = () => {
   return data;
 };
 
+const getEvents = () => {
+  const data = axios.get(`${BREATHECODE_HOST}/v1/events/all`)
+    .then((res) => res.data)
+    .catch((err) => console.log(err));
+  return data;
+};
+
 const getAliasRedirects = async () => {
   const data = axios.get(`${BREATHECODE_HOST}/v1/registry/alias/redirect?academy=4`)
     .then((res) => res.data)
@@ -68,6 +75,13 @@ const getAliasRedirects = async () => {
 
 const redirectByLang = ({ slug, lang, difficulty, assetType }) => {
   const assetTypeValue = assetType?.toUpperCase();
+  if (assetTypeValue === 'EVENT') {
+    return {
+      source: `/workshops/${slug}`,
+      destination: `/${lang}/workshops/${slug}`,
+      ...redirectConfig,
+    };
+  }
   if (assetTypeValue === 'LESSON') {
     return {
       source: `/lesson/${slug}`,
@@ -99,7 +113,7 @@ const redirectByLang = ({ slug, lang, difficulty, assetType }) => {
   return null;
 };
 
-const generateAssetRedirect = (pages) => {
+const generateAssetRedirect = (pages, type) => {
   const redirectList = pages.filter((page) => page.lang !== 'us' && page.lang !== 'en' && page.lang !== null)
     .map((page) => {
       const { slug, lang, asset_type: assetType } = page;
@@ -108,7 +122,7 @@ const generateAssetRedirect = (pages) => {
         slug,
         lang,
         difficulty: assetType?.toUpperCase() === 'PROJECT' ? page?.difficulty?.toLowerCase() : null,
-        assetType,
+        assetType: assetType || type,
       });
       return redirect;
     });
@@ -149,12 +163,14 @@ async function generateRedirect() {
   const excersisesList = await getExercises();
   const projectList = await getProjects();
   const howToList = await getHowTo();
+  const eventList = await getEvents();
   const aliasRedirectList = await getAliasRedirects();
 
   const lessonRedirectList = generateAssetRedirect(lessonsList);
   const excersisesRedirectList = generateAssetRedirect(excersisesList);
   const projectRedirectList = generateAssetRedirect(projectList);
   const howToRedirectList = generateAssetRedirect(howToList);
+  const eventRedirectList = generateAssetRedirect(eventList, 'EVENT');
 
   const aliasRedirectionList = await generateAliasRedirects(aliasRedirectList, projectList)
     .then((redirects) => redirects);
@@ -165,6 +181,7 @@ async function generateRedirect() {
     ...excersisesRedirectList,
     ...projectRedirectList,
     ...howToRedirectList,
+    ...eventRedirectList,
   ];
 
   fs.writeFileSync('public/redirects-from-api.json', JSON.stringify(redirectJson, null, 2));
