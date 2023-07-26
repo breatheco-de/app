@@ -145,7 +145,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   );
 
   const isNotAvailableForMktCourses = activeSubscriptionCohorts.length > 0 && activeSubscriptionCohorts.some(
-    (item) => item?.educational_status === 'ACTIVE' && item?.cohort?.available_as_saas === false,
+    (item) => item?.cohort?.available_as_saas === false,
   );
 
   useEffect(() => {
