@@ -39,7 +39,7 @@ const MktEventCards = ({ id, title, hoursToLimit, endpoint, ...rest }) => {
       {...rest}
     >
       <Flex alignItems="center" gridGap="32px" marginBottom="32px">
-        <Heading as="h2" size="l" fontWeight={700}>
+        <Heading as="h2" fontWeight={700} style={{ fontSize: '38px' }}>
           {title}
         </Heading>
         <Icon icon="longArrowRight" width="58px" height="30px" />
