@@ -133,7 +133,7 @@ const EventCard = ({ id, slug, title, ignoreDynamicHandler, description, host, s
         )}
       </Flex>
 
-      <Heading size="sm" fontWeight={700}>
+      <Heading fontWeight={700} style={{ fontSize: '24px' }}>
         {title}
       </Heading>
 
@@ -147,7 +147,7 @@ const EventCard = ({ id, slug, title, ignoreDynamicHandler, description, host, s
 
       {/* -------------------------------- host info -------------------------------- */}
       {(host !== null && host !== undefined) && (typeof host === 'string' ? (
-        <Heading size="14px" fontWeight={700}>
+        <Heading as="span" fontWeight={700} style={{ fontSize: '14px' }}>
           {host}
         </Heading>
       ) : (
