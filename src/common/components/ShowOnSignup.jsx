@@ -57,6 +57,15 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
         || data.silent_code === SILENT_CODE.USER_INVITE_ACCEPTED_EXISTS) {
       setShowAlreadyMember(true);
     }
+    if (resp?.status >= 400) {
+      toast({
+        position: 'top',
+        title: data?.detail,
+        status: 'error',
+        isClosable: true,
+        duration: 6000,
+      });
+    }
     setStorageItem('subscriptionId', data?.id);
 
     if (data?.access_token) {
