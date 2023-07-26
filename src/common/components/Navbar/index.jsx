@@ -140,7 +140,8 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
 
   const marketingCouses = Array.isArray(mktCourses) && mktCourses.filter(
     (item) => !activeSubscriptionCohorts.some(
-      (activeCohort) => activeCohort?.cohort?.syllabus_version?.slug === item?.slug,
+      (activeCohort) => activeCohort?.subscription?.plans[0]?.slug === item?.slug
+        || activeCohort?.plan_financing?.plans[0]?.slug === item?.slug,
     ) && item?.course_translation?.title,
   );
 
