@@ -64,7 +64,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
     return false;
   }) : [];
 
-  const marketingCouses = marketingCursesList && marketingCursesList.filter(
+  const marketingCourses = marketingCursesList && marketingCursesList.filter(
     (item) => !activeSubscriptionCohorts.some(
       (activeCohort) => activeCohort?.cohort?.syllabus_version?.slug === item?.slug,
     ) && item?.course_translation?.title,
@@ -106,7 +106,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
         </Box>
       )}
 
-      {!isNotAvailableForMktCourses && marketingCouses.length > 0 && marketingCouses.some((l) => l?.course_translation?.title) && (
+      {!isNotAvailableForMktCourses && marketingCourses.length > 0 && marketingCourses.some((l) => l?.course_translation?.title) && (
         <>
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
             <Heading size="sm" width="fit-content" whiteSpace="nowrap">
@@ -120,7 +120,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
             height="auto"
             gridGap="4rem"
           >
-            {marketingCouses.map((item) => (
+            {marketingCourses.map((item) => (
               <ProgramCard
                 isMarketingCourse
                 icon="coding"
