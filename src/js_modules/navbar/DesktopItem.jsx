@@ -43,6 +43,8 @@ const DesktopItem = ({ item }) => {
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
   const popoverBorderColor = useColorModeValue('gray.250', 'gray.dark');
   const linkColor = useColorModeValue('gray.600', 'gray.200');
+  const groupColor = useColorModeValue('gray.900', 'featuredLight');
+  const linkHoverColor = useColorModeValue('featuredLight', 'gray.900');
 
   const getColorLink = (link) => {
     if (router?.pathname === link || router.asPath === link || router?.pathname.includes(link)) {
@@ -198,7 +200,7 @@ const DesktopItem = ({ item }) => {
                             minWidth="130px"
                             // transition="all .3s ease"
                             color={getColorLink(href)}
-                            _groupHover={{ color: useColorModeValue('gray.900', 'featuredLight') }}
+                            _groupHover={{ color: groupColor }}
                             fontWeight={500}
                           >
                             {label}
@@ -232,14 +234,14 @@ const DesktopItem = ({ item }) => {
                             display="block"
                             p={2}
                             style={{ borderRadius: '5px' }}
-                            _hover={{ bg: useColorModeValue('featuredLight', 'gray.900') }}
+                            _hover={{ bg: linkHoverColor }}
                           >
                             <Stack direction="row" align="center">
                               <Box>
                                 <Text
                                   // transition="all .3s ease"
                                   color={getColorLink(l.href)}
-                                  _groupHover={{ color: useColorModeValue('gray.900', 'featuredLight') }}
+                                  _groupHover={{ color: groupColor }}
                                   fontWeight={500}
                                 >
                                   {l.label}

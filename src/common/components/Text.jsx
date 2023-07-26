@@ -36,7 +36,7 @@ const Text = ({
 ));
 
 Text.propTypes = {
-  size: PropTypes.string,
+  size: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   letterSpacing: PropTypes.string,
   maxWidth: PropTypes.string,
   children: PropTypes.node,

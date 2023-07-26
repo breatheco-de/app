@@ -16,7 +16,7 @@ import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import { SILENT_CODE } from '../../lib/types';
 import bc from '../services/breathecode';
 
-const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, children, hideForm, ...rest }) => {
+const ShowOnSignUp = ({ headContent, title, description, childrenDescription, subContent, readOnly, children, hideForm, hideSwitchUser, ...rest }) => {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
   const { backgroundColor, featuredColor } = useStyle();
@@ -102,35 +102,42 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
       {subContent}
 
       <Box display="flex" flexDirection="column" gridGap="10px" padding="0 18px 18px">
-        <Text size="21px" fontWeight={700} lineHeight="25px">
-          {title}
-        </Text>
-        <Text size="14px" fontWeight={700} lineHeight="18px">
-          {description}
-        </Text>
+        {title && (
+          <Text size="21px" fontWeight={700} lineHeight="25px">
+            {title}
+          </Text>
+        )}
+        {description && (
+          <Text size="14px" fontWeight={700} lineHeight="18px">
+            {description}
+          </Text>
+        )}
+        {childrenDescription}
         {isAuth && (
           <>
             {children}
 
-            <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
-              {t('switch-user-connector', { name: user.first_name })}
-              {' '}
-              <Button
-                variant="link"
-                fontSize="13px"
-                height="auto"
-                onClick={() => {
-                  setStorageItem('redirect', router?.asPath);
-                  setTimeout(() => {
-                    logout(() => {
-                      router.push('/login');
-                    });
-                  }, 150);
-                }}
-              >
-                {`${t('common:logout-and-switch-user')}.`}
-              </Button>
-            </Text>
+            {hideSwitchUser ? null : (
+              <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
+                {t('switch-user-connector', { name: user.first_name })}
+                {' '}
+                <Button
+                  variant="link"
+                  fontSize="13px"
+                  height="auto"
+                  onClick={() => {
+                    setStorageItem('redirect', router?.asPath);
+                    setTimeout(() => {
+                      logout(() => {
+                        router.push('/login');
+                      });
+                    }, 150);
+                  }}
+                >
+                  {`${t('common:logout-and-switch-user')}.`}
+                </Button>
+              </Text>
+            )}
           </>
         )}
 
@@ -215,7 +222,7 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
         title={t('signup:alert-message.title')}
         childrenDescription={(
           <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
-            <Avatar src="https://breathecode.herokuapp.com/static/img/avatar-7.png" border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+            <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-7.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
             <Text
               size="14px"
               textAlign="center"
@@ -242,7 +249,7 @@ const ShowOnSignUp = ({ headContent, title, description, subContent, readOnly, c
         closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
         childrenDescription={(
           <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
-            <Avatar src="https://breathecode.herokuapp.com/static/img/avatar-1.png" border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+            <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
             <Text
               size="14px"
               textAlign="center"
@@ -303,6 +310,8 @@ ShowOnSignUp.propTypes = {
   readOnly: PropTypes.bool,
   children: PropTypes.node,
   hideForm: PropTypes.bool,
+  childrenDescription: PropTypes.node,
+  hideSwitchUser: PropTypes.bool,
 };
 
 ShowOnSignUp.defaultProps = {
@@ -313,6 +322,8 @@ ShowOnSignUp.defaultProps = {
   readOnly: false,
   children: null,
   hideForm: false,
+  childrenDescription: null,
+  hideSwitchUser: false,
 };
 
 export default ShowOnSignUp;
