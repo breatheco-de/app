@@ -1,9 +1,7 @@
-/* eslint-disable no-tabs */
 import {
   Box, Img, useColorModeValue,
 } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
-import getT from 'next-translate/getT';
 import { useState, useEffect } from 'react';
 import MarkDownParser from '../common/components/MarkDownParser';
 import { usePersistent } from '../common/hooks/usePersistent';
@@ -19,12 +17,12 @@ const MarkdownEditor = dynamic(
 );
 
 export const getStaticProps = async ({ locale, locales }) => {
-  const t = await getT(locale, 'about-us');
-  const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
+  const image = 'https://4geeks.com/static/images/4geeks.png';
 
   return {
     props: {
       seo: {
+        title: 'Markdown Editor',
         locales,
         locale,
         image,

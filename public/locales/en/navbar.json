@@ -80,48 +80,12 @@
       "description": "The most efficient way to learn: Join a cohort with classmates just like you, live streams, impromptu coding sessions, live tutorials with real experts, and stay motivated.",
       "asPath": "/read",
       "subMenu": [],
-      "__comment_submenus__": [
-        {
-          "label": "Data Science",
-          "asPath": "#data-science",
-          "icon": "data-science",
-          "description": "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.",
-          "subMenu": [
-            {
-              "href": "#science",
-              "label": "Browse articles"
-            }
-          ]
-        },
-        {
-          "label": "#30DaysOfGeekCoding",
-          "asPath": "#30DaysOfGeekCoding",
-          "icon": "socialMedia",
-          "description": "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.",
-          "subMenu": [
-            {
-              "href": "#start",
-              "label": "Start building"
-            }
-          ]
-        },
-        {
-          "label": "A.I. & Machine Learning",
-          "asPath": "#machine-learning",
-          "icon": "brain",
-          "description": "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.",
-          "subMenu": [
-            {
-              "href": "#start",
-              "label": "Start learning"
-            }
-          ]
-        }
-      ]
+      "hide_on_auth": true
     },
     {
       "label": "Coding Bootcamp",
-      "href": "https://4geeksacademy.com"
+      "href": "https://4geeksacademy.com",
+      "hide_on_auth": true
     }
   ],
   "languages": [
