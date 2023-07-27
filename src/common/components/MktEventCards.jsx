@@ -54,7 +54,7 @@ const MktEventCards = ({ id, title, hoursToLimit, endpoint, ...rest }) => {
               title={event?.title}
               host={event?.host}
               ignoreDynamicHandler
-              description={event?.description}
+              description={event?.excerpt}
               technologies={event?.technologies || []}
               startingAt={event?.starting_at}
               endingAt={event?.ending_at}
