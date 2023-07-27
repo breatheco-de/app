@@ -12,7 +12,7 @@
   "available-courses": "Available courses",
   "read-to-start-learning": "Ready to start learning?",
   "invite": {
-    "notify": "Ey! There are {{cohortInvitationWord}} for you to accept.",
+    "notify": "Hey! There are {{cohortInvitationWord}} for you to accept.",
     "plural-word": "{{invitesLength}} new cohort invitations",
     "singular-word": "{{invitesLength}} new cohort invitation",
     "show": "show invites",

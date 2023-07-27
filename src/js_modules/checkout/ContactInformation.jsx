@@ -73,6 +73,15 @@ const ContactInformation = ({
     if (data.silent_code === SILENT_CODE.USER_EXISTS) {
       setShowAlreadyMember(true);
     }
+    if (resp?.status >= 400) {
+      toast({
+        position: 'top',
+        title: data?.detail,
+        status: 'error',
+        isClosable: true,
+        duration: 6000,
+      });
+    }
     setStorageItem('subscriptionId', data?.id);
 
     const respPlan = await bc.payment().getPlan(planFormated);

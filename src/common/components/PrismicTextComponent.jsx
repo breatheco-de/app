@@ -55,7 +55,7 @@ const PrismicTextComponent = ({ field, ...rest }) => {
 };
 
 PrismicTextComponent.propTypes = {
-  field: PropTypes.objectOf(PropTypes.any),
+  field: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
 };
 
 PrismicTextComponent.defaultProps = {
