@@ -1,11 +1,12 @@
-/* eslint-disable no-param-reassign */
 import { Stack } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import DesktopItem from './DesktopItem';
+import syllabusList from '../../../public/syllabus.json';
 
-const DesktopNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
+const DesktopNav = ({ NAV_ITEMS, extraContent, haveSession }) => {
   const [privateItems, setPrivateItems] = useState([]);
+  const readSyllabus = JSON.parse(syllabusList);
 
   useEffect(() => {
     if (haveSession) {
@@ -15,31 +16,33 @@ const DesktopNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
 
   const publicItems = NAV_ITEMS.filter((item) => item.private !== true);
 
-  const customPublicItems = publicItems.map((publicItem) => {
-    if (publicItem.asPath === '/read' && readSyllabus.length > 0 && Array.isArray(publicItem.subMenu)) {
-      publicItem.subMenu.map((l) => {
-        if (typeof l.asPath === 'string' && l.asPath === '/read-and-watch' && Array.isArray(l.subMenuContent)) {
-          const courseFetched = readSyllabus;
+  const customPublicItems = publicItems;
+  const allItems = [...privateItems, ...customPublicItems];
 
-          l.subMenu = l?.subMenu || [];
-          l.subMenu = [...courseFetched, ...l.subMenuContent];
-
-          return l;
-        }
-        return l;
-      });
+  // manage submenus in level 1
+  const prepareSubMenuData = (item) => {
+    if (item.slug === 'social-and-live-learning') {
+      return extraContent;
     }
-    return publicItem;
-  });
+    return item?.subMenu;
+  };
 
   return (
     <Stack className="hideOverflowX__" direction="row" width="auto" spacing={4} alignItems="center">
-      {privateItems.length > 0 && privateItems.map((privateItem) => (
-        <DesktopItem key={privateItem.label} item={privateItem} />
-      ))}
-      {customPublicItems.length > 0 && customPublicItems.map((publicItem) => (
-        <DesktopItem key={publicItem.label} item={publicItem} />
-      ))}
+      {customPublicItems.length > 0 && allItems.map((publicItem) => {
+        const submenuData = prepareSubMenuData(publicItem);
+
+        const data = {
+          ...publicItem,
+          subMenu: publicItem?.subMenu?.length > 1
+            ? publicItem?.subMenu
+            : submenuData,
+        };
+
+        return (
+          <DesktopItem key={publicItem.label} item={data} readSyllabus={readSyllabus} />
+        );
+      })}
     </Stack>
   );
 };
@@ -62,7 +65,7 @@ DesktopNav.propTypes = {
       ),
     }),
   ),
-  readSyllabus: PropTypes.arrayOf(PropTypes.any),
+  extraContent: PropTypes.arrayOf(PropTypes.object),
 };
 
 DesktopNav.defaultProps = {
@@ -74,7 +77,7 @@ DesktopNav.defaultProps = {
       asPath: '/',
     },
   ],
-  readSyllabus: [],
+  extraContent: [],
 };
 
 export default DesktopNav;

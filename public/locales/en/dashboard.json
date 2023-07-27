@@ -16,7 +16,7 @@
     "show-pending-tasks": "Show only Pending Tasks",
     "activitiesLength": "{{count}} Activities",
     "newActivities": {
-      "title": "Ey! There are {{tasksLength}} new activities on this day",
+      "title": "Hey! There are {{tasksLength}} new activities on this day",
       "handler-text": "Sync now"
     },
     "start-message": "You have not started this module",
