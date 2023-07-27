@@ -63,7 +63,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
 
   const programSlug = cohortSession?.selectedProgramSlug || '/choose-program';
 
-  const noscriptItems = t('ITEMS', {
+  const items = t('ITEMS', {
     selectedProgramSlug: selectedProgramSlug || '/choose-program',
   }, { returnObjects: true });
 
@@ -161,10 +161,6 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   })) : [];
 
   useEffect(() => {
-    const items = t('ITEMS', {
-      selectedProgramSlug: selectedProgramSlug || '/choose-program',
-    }, { returnObjects: true });
-
     if (!isLoading && user?.id) {
       setITEMS(items.filter((item) => item.disabled !== true && item?.hide_on_auth !== true));
     } else {
@@ -322,7 +318,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
           </NextChakraLink>
 
           <Flex display="flex" ml={10}>
-            <DesktopNav NAV_ITEMS={ITEMS.length > 0 ? ITEMS : noscriptItems} extraContent={mktCoursesFormat} haveSession={sessionExists} />
+            <DesktopNav NAV_ITEMS={ITEMS} extraContent={mktCoursesFormat} haveSession={sessionExists} />
           </Flex>
         </Flex>
 
