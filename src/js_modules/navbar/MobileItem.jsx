@@ -20,11 +20,13 @@ import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
 
 const MobileItem = ({
-  label, subMenu, href, asPath, description, icon,
+  label, subMenu, href, asPath, description, icon, readSyllabus,
 }) => {
   // const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
   const linkColor = useColorModeValue('gray.600', 'gray.200');
+  const bordercolor1 = useColorModeValue('gray.200', 'gray.700');
+  const bordercolor2 = useColorModeValue('gray.200', 'gray.900');
 
   // const getColorLink = (link) => {
   //   if (router?.pathname === link || router.asPath === link || router?.pathname.includes(link)) {
@@ -32,6 +34,7 @@ const MobileItem = ({
   //   }
   //   return linkColor;
   // };
+  const itemSubMenu = subMenu?.length > 0 && subMenu;
 
   return (
     <Stack spacing={4}>
@@ -57,7 +60,7 @@ const MobileItem = ({
           </NextChakraLink>
         </Box>
       )}
-      {subMenu && (
+      {itemSubMenu && (
         <Flex
           py={2}
           justifyContent="left"
@@ -87,7 +90,7 @@ const MobileItem = ({
         <Stack
           pl={4}
           borderLeft="2px solid"
-          borderColor={useColorModeValue('gray.200', 'gray.700')}
+          borderColor={bordercolor1}
           align="start"
         >
           <Flex
@@ -96,7 +99,7 @@ const MobileItem = ({
             gridGap="15px"
             borderBottom={1}
             borderStyle="solid"
-            borderColor={useColorModeValue('gray.200', 'gray.900')}
+            borderColor={bordercolor2}
             alignItems="center"
             color={linkColor}
           >
@@ -113,8 +116,8 @@ const MobileItem = ({
             </Box>
           </Flex>
 
-          {subMenu
-            && subMenu.map((child) => (child.subMenu ? (
+          {itemSubMenu
+            && itemSubMenu.map((child) => (child.subMenu ? (
               <Accordion key={child.label} allowMultiple width="100%">
                 <AccordionItem border="0">
                   <AccordionButton>
@@ -174,6 +177,7 @@ MobileItem.propTypes = {
       href: PropTypes.string,
     }),
   ),
+  readSyllabus: PropTypes.arrayOf(PropTypes.any).isRequired,
 };
 
 MobileItem.defaultProps = {

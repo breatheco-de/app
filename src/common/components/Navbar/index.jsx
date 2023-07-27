@@ -23,7 +23,6 @@ import Text from '../Text';
 import useAuth from '../../hooks/useAuth';
 import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
-import syllabusList from '../../../../public/syllabus.json';
 import { isWindow } from '../../../utils';
 import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
@@ -67,7 +66,6 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
   const noscriptItems = t('ITEMS', {
     selectedProgramSlug: selectedProgramSlug || '/choose-program',
   }, { returnObjects: true });
-  const readSyllabus = JSON.parse(syllabusList);
 
   axios.defaults.headers.common['Accept-Language'] = locale;
 
@@ -148,44 +146,29 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
     (item) => item?.cohort?.available_as_saas === false,
   );
 
+  const mktCoursesFormat = marketingCourses.length > 0 ? marketingCourses.map((item) => ({
+    slug: item?.slug,
+    label: item?.course_translation?.title,
+    asPath: `/course/${item?.slug}`,
+    icon: item?.icon_url,
+    description: item?.course_translation?.description,
+    subMenu: [
+      {
+        href: `/${item?.slug}`,
+        label: t('start-coding'),
+      },
+    ],
+  })) : [];
+
   useEffect(() => {
     const items = t('ITEMS', {
       selectedProgramSlug: selectedProgramSlug || '/choose-program',
     }, { returnObjects: true });
 
-    const itemsLogged = t('navbar-logged:ITEMS', {
-      selectedProgramSlug: selectedProgramSlug || '/choose-program',
-    }, { returnObjects: true });
-
-    const mktCoursesFormat = marketingCourses.length > 0 ? marketingCourses.map((item) => ({
-      label: item?.course_translation?.title,
-      asPath: `/course/${item?.slug}`,
-      icon: item?.icon_url,
-      description: item?.course_translation?.description,
-      subMenu: [
-        {
-          href: `/${item?.slug}`,
-          label: t('start-coding'),
-        },
-      ],
-    })) : [];
-
-    const formatItems = items.map((item) => {
-      if (item.slug === 'social-and-live-learning') {
-        return {
-          ...item,
-          subMenu: [
-            ...item.subMenu,
-            ...mktCoursesFormat,
-          ],
-        };
-      }
-      return item;
-    });
     if (!isLoading && user?.id) {
-      setITEMS(itemsLogged.filter((item) => item.disabled !== true));
+      setITEMS(items.filter((item) => item.disabled !== true && item?.hide_on_auth !== true));
     } else {
-      setITEMS(formatItems.filter((item) => item.disabled !== true));
+      setITEMS(items.filter((item) => item.disabled !== true));
     }
   }, [user, isLoading, selectedProgramSlug, mktCourses]);
 
@@ -339,7 +322,7 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
           </NextChakraLink>
 
           <Flex display="flex" ml={10}>
-            <DesktopNav NAV_ITEMS={ITEMS.length > 0 ? ITEMS : noscriptItems} haveSession={sessionExists} readSyllabus={readSyllabus} />
+            <DesktopNav NAV_ITEMS={ITEMS.length > 0 ? ITEMS : noscriptItems} extraContent={mktCoursesFormat} haveSession={sessionExists} />
           </Flex>
         </Flex>
 
@@ -602,18 +585,16 @@ const NavbarWithSubNavigation = ({ haveSession, translations, pageProps }) => {
 
       <Collapse display={{ lg: 'block' }} in={isOpen} animateOpacity>
         <MobileNav
-          mktCourses={!isNotAvailableForMktCourses && marketingCourses?.length > 0 ? marketingCourses : []}
+          mktCourses={!isNotAvailableForMktCourses && mktCoursesFormat}
           NAV_ITEMS={ITEMS}
           haveSession={sessionExists}
           translations={translations}
-          readSyllabus={readSyllabus}
         />
         {/* {isBelowTablet && (
           <MobileNav
             NAV_ITEMS={ITEMS}
             haveSession={sessionExists}
             translations={translations}
-            readSyllabus={readSyllabus}
             isBelowTablet
           />
         )} */}
