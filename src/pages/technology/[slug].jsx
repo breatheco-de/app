@@ -47,7 +47,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const responseAssetsList = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?limit=9000&technologies=${slug}`);
   const allAssetList = await responseAssetsList.json();
 
-  if (allAssetList?.status < 400) {
+  if (responseAssetsList?.status >= 400) {
     return {
       notFound: true,
     };

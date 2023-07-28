@@ -23,6 +23,7 @@ const LoaderScreen = ({ width, height, ...rest }) => {
         src="/static/images/loader.gif"
         width={width}
         height={height}
+        alt="loader"
       />
       {/* <Img
         src="/4Geeks.ico"
