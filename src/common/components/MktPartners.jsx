@@ -94,6 +94,7 @@ const MktPartners = ({ id, title, images, ...rest }) => {
                 maxWidth="186px"
                 objectFit="contain"
                 title={toCapitalize(altTitle)}
+                alt={altTitle}
               />
             ) : (
               <Img
@@ -107,6 +108,7 @@ const MktPartners = ({ id, title, images, ...rest }) => {
                 maxWidth="186px"
                 objectFit="contain"
                 title={toCapitalize(altTitle)}
+                alt={altTitle}
               />
             ));
           })}
