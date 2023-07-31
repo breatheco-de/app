@@ -31,7 +31,7 @@ import modifyEnv from '../../../../modifyEnv';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
-function Close2(colorMode) {
+function Close2() {
   return (
     <svg
       width="22px"
@@ -41,7 +41,7 @@ function Close2(colorMode) {
       xmlns="http://www.w3.org/2000/svg"
     >
       <line
-        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        stroke="currentColor"
         x1="1.5"
         y1="2"
         x2="16.5645"
@@ -53,7 +53,7 @@ function Close2(colorMode) {
   );
 }
 
-function Hamburger2(colorMode) {
+function Hamburger2() {
   return (
     <svg
       width="22px"
@@ -63,7 +63,7 @@ function Hamburger2(colorMode) {
       xmlns="http://www.w3.org/2000/svg"
     >
       <line
-        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        stroke="currentColor"
         x1="1.5"
         y1="1.5"
         x2="26.5"
@@ -72,7 +72,7 @@ function Hamburger2(colorMode) {
         strokeLinecap="round"
       />
       <line
-        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        stroke="currentColor"
         x1="1.5"
         y1="12"
         x2="16.5645"
@@ -81,7 +81,7 @@ function Hamburger2(colorMode) {
         strokeLinecap="round"
       />
       <line
-        stroke={colorMode === 'light' ? '#000000' : '#FFFFFF'}
+        stroke="currentColor"
         x1="1.5"
         y1="22.5"
         x2="26.5"
@@ -107,12 +107,13 @@ function NavbarWithSubNavigation({ translations, disableLangSwitcher, pageProps 
   const { t } = useTranslation('navbar');
   const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { toggleColorMode } = useColorMode();
   const commonColors = useColorModeValue('white', 'gray.800');
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
   const commonBorderColor = useColorModeValue('gray.200', 'gray.700');
   const linkColor = useColorModeValue('gray.600', 'gray.200');
   const fontColor = useColorModeValue('black', 'gray.200');
+  const colorMode = useColorModeValue('light', 'dark');
 
   const langs = ['en', 'es'];
   const locale = router.locale === 'default' ? 'en' : router.locale;
@@ -315,11 +316,12 @@ function NavbarWithSubNavigation({ translations, disableLangSwitcher, pageProps 
                 background: commonColors,
               }}
               background={commonColors}
+              color={colorMode === 'light' ? 'black' : 'white'}
               icon={
                 isOpen ? (
-                  <Close2 colorMode={colorMode} />
+                  <Close2 />
                 ) : (
-                  <Hamburger2 colorMode={colorMode} />
+                  <Hamburger2 />
                 )
               }
               variant="default"
