@@ -177,15 +177,20 @@ const handlers = {
 
     const visibleForTeacher = programRole !== 'STUDENT';
 
+    const showCohortToHide = [
+      'ENDED',
+    ].includes(programCohortStage);
     const showCohort = [
       'STARTED',
       'ACTIVE',
       'FINAL_PROJECT',
     ].includes(programCohortStage);
 
+    const cohortIsAvailable = showCohort && !showCohortToHide;
+
     const showStudent = ['ACTIVE'].includes(educationalStatus) && programRole === 'STUDENT';
 
-    const show = visibleForTeacher || showCohort || showStudent;
+    const show = cohortIsAvailable && (visibleForTeacher || showStudent);
 
     return show;
   }),

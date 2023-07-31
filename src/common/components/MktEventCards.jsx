@@ -46,7 +46,7 @@ const MktEventCards = ({ id, title, hoursToLimit, endpoint, ...rest }) => {
       </Flex>
       <Box position="relative" className="hideOverflowX__" overflow="auto" width="100%">
         <Flex gridGap="20px" width="max-content" margin="0">
-          {events.map((event) => event.slug !== null && (
+          {events.map((event) => (
             <EventCard
               key={event?.id}
               id={event?.id}
