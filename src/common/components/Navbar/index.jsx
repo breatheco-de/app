@@ -457,7 +457,7 @@ function NavbarWithSubNavigation({ translations, disableLangSwitcher, pageProps 
                           const getLangName = value === 'en' ? 'Eng' : 'Esp';
 
                           return (
-                            <Fragment key={lang}>
+                            <Fragment key={lang || value}>
                               <Link
                                 _hover={{
                                   textDecoration: 'none',
