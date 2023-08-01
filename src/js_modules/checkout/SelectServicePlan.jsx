@@ -1,4 +1,4 @@
-import { Box, Button } from '@chakra-ui/react';
+import { Avatar, Box, Button, ListItem, UnorderedList, useColorModeValue } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from '../../common/components/Heading';
@@ -8,10 +8,13 @@ import { getQueryString, toCapitalize, unSlugify } from '../../utils';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import Text from '../../common/components/Text';
 import { parseQuerys } from '../../utils/url';
+import Icon from '../../common/components/Icon';
+import modifyEnv from '../../../modifyEnv';
 
 const SelectServicePlan = () => {
   const { t, lang } = useTranslation('signup');
-  const { backgroundColor, hexColor } = useStyle();
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const { backgroundColor, hexColor, modal } = useStyle();
   const [isLoading, setIsLoading] = useState(true);
   const [subscriptions, setSubscriptions] = useState([]);
   const [selectedService, setSelectedService] = useState({});
@@ -19,17 +22,18 @@ const SelectServicePlan = () => {
   const queryPlans = getQueryString('plans');
   const queryMentorshipServiceSet = getQueryString('mentorship_service_set');
   const queryEventTypeSet = getQueryString('event_type_set');
+  const backgroundItem = useColorModeValue('#F9F9F9', 'gray.800');
 
   const allQueryPlans = queryPlans.split(',');
   const allQueryMentorshipServiceSet = typeof queryMentorshipServiceSet === 'string' ? queryMentorshipServiceSet.split(',') : [];
   const allQueryEventTypeSet = typeof queryEventTypeSet === 'string' ? queryEventTypeSet.split(',') : [];
+  const allServices = [...allQueryMentorshipServiceSet, ...allQueryEventTypeSet];
 
   const getServiceSlug = (subscription) => {
     if (allQueryEventTypeSet.length > 0) {
       return {
         event_type_set: subscription?.selected_event_type_set?.slug,
-        // TODO: Preguntar si service para los eventos es necesario
-        service: subscription?.selected_event_type_set?.event_types[0]?.slug,
+        // service: subscription?.selected_event_type_set?.slug,
       };
     }
     return {
@@ -86,6 +90,9 @@ const SelectServicePlan = () => {
     getSubscriptions();
   }, []);
 
+  const isEventTypeSet = allQueryEventTypeSet.length > 0;
+  const isMentorshipServiceSet = allQueryMentorshipServiceSet.length > 0;
+
   const handleContinue = () => {
     const qs = parseQuerys({
       ...getServiceSlug(selectedService),
@@ -95,63 +102,100 @@ const SelectServicePlan = () => {
   };
 
   return (
-    <Box maxWidth="1280px" display="flex" alignItems="center" flexDirection="column" gridGap="2rem" padding="24px" bg={backgroundColor} width="100%" margin="0 auto" borderRadius="17px">
-      <Box display="flex" flexDirection="column" gridGap="14px">
-        <Heading size="m" m="0 auto">
-          {t('select-mentorship-plan.title')}
+    <Box maxWidth="552px" display="flex" margin="0 auto" flexDirection="column" gridGap="24px">
+      <Box display="flex" flexDirection="column" gridGap="12px" padding="25px 37px" bg={backgroundColor} width="100%" margin="0 auto" borderRadius="15px">
+        <Heading size="16px" color="yellow.default" textTransform="uppercase">
+          {isEventTypeSet && t('event-bundle-title')}
+          {isMentorshipServiceSet && t('mentorship-bundle-title')}
         </Heading>
-        <Text size="14px" width="60%" textAlign="center" margin="0 auto">
-          {t('select-mentorship-plan.description')}
-        </Text>
-      </Box>
-      {isLoading ? (
-        <LoaderScreen width="240px" height="240px" position="relative" />
-      ) : (
-        <Box display="flex" flexDirection="column" gridGap="4rem" width={{ base: 'auto', md: '80%' }}>
-          {subscriptions.length > 0 && subscriptions.map((s) => {
-            const title = unSlugify(s?.plans?.[0]?.slug);
-            const cohortData = s?.selected_cohort;
-            const isSelected = selectedService?.plans?.[0]?.slug === s?.plans?.[0]?.slug;
-
-            return s?.plans?.[0]?.slug && (
-              <Box
-                key={`${s?.slug}-${s?.title}`}
-                display="flex"
-                onClick={() => {
-                  setSelectedService(s);
-                }}
-                flexDirection="row"
-                width="100%"
-                justifyContent="space-between"
-                p={{ base: '14px', sm: '16px 18px' }}
-                gridGap={{ base: '12px', md: '20px' }}
-                cursor="pointer"
-                border={isSelected ? '2px solid #0097CD' : `2px solid ${hexColor.featuredColor}`}
-                borderRadius="13px"
-                alignItems="center"
-              >
-                <Box display="flex" flexDirection="column" gridGap="8px">
-                  <Heading size="16px">
-                    {toCapitalize(title)}
-                  </Heading>
-                  <Text size="14px">
-                    {t('select-mentorship-plan.cohort-connector', { name: cohortData?.name })}
-                  </Text>
-                </Box>
-              </Box>
-            );
-          })}
-          <Button
-            variant="default"
-            disabled={!selectedService?.plans?.[0]?.slug}
-            onClick={handleContinue}
-            width="120px"
-            margin="0 auto"
-          >
-            {t('common:continue')}
-          </Button>
+        <Box display="flex" gridGap="12px" alignItems="center">
+          <Icon icon="rocket" width="25px" height="38px" color="#ffffff" backgroundColor="yellow.default" padding="10px 15px" borderRadius="full" flexShrink={0} />
+          <Text size="21px" lineHeight="normal" fontWeight={700} maxWidth="70%">
+            {t('select-service-of-plan.title')}
+          </Text>
         </Box>
-      )}
+      </Box>
+
+      <Box display="flex" alignItems="center" flexDirection="column" padding="14px 23px" bg={backgroundColor} width="100%" margin="0 auto" borderRadius="15px">
+        {isLoading ? (
+          <LoaderScreen width="240px" height="240px" position="relative" />
+        ) : (
+          <Box display="flex" flexDirection="column" gridGap="12px" width="100%">
+            <Box display="flex" gridGap="12px" flexDirection="column" alignItems={subscriptions.length <= 0 && 'center'}>
+              <Text size="21px" fontWeight={700}>
+                {subscriptions.length > 0
+                  ? t('select-service-of-plan.select-text')
+                  : t('select-service-of-plan.subscription-not-found')}
+              </Text>
+              <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-7.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+            </Box>
+
+            {subscriptions.length <= 0 && (
+              <Box display="flex" flexDirection="column" gridGap="10px">
+                <Text size="16px">
+                  {t('select-service-of-plan.no-plan-found-for-service')}
+                </Text>
+                <UnorderedList display="flex" mb="14px" flexDirection="column" gridGap="4px" width="100%">
+                  {allServices.map((service) => (
+                    <ListItem key={service} fontSize="14px">
+                      {toCapitalize(unSlugify(service))}
+                    </ListItem>
+                  ))}
+                </UnorderedList>
+              </Box>
+            )}
+            {subscriptions.length > 0 && subscriptions.map((s) => {
+              const plan = s?.plans?.[0];
+              const title = unSlugify(plan?.slug);
+              const isSelected = selectedService?.plans?.[0]?.slug === plan?.slug;
+              const eventTypeSetSlug = s?.selected_event_type_set?.slug;
+              const mentorshipServiceSetSlug = s?.selected_mentorship_service_set?.slug;
+
+              const isEvent = allQueryEventTypeSet.includes(eventTypeSetSlug);
+              const isMentorship = allQueryMentorshipServiceSet.includes(mentorshipServiceSetSlug);
+
+              return plan?.slug && (
+                <Box
+                  key={`${s?.slug}-${s?.title}`}
+                  display="flex"
+                  onClick={() => {
+                    setSelectedService(s);
+                  }}
+                  flexDirection="row"
+                  width="100%"
+                  background={isSelected ? modal.hoverBackground : backgroundItem}
+                  justifyContent="space-between"
+                  p={{ base: '14px', sm: '16px 18px' }}
+                  gridGap={{ base: '12px', md: '20px' }}
+                  cursor="pointer"
+                  border={isSelected ? '2px solid #0097CD' : `2px solid ${hexColor.featuredColor}`}
+                  borderRadius="13px"
+                  alignItems="center"
+                >
+                  <Box display="flex" flexDirection="column" gridGap="0px">
+                    <Heading size="14px" fontWeight={700} lineHeight="24px" textTransform="uppercase">
+                      {toCapitalize(title)}
+                    </Heading>
+                    <Text size="14px">
+                      {isEvent && toCapitalize(unSlugify(eventTypeSetSlug))}
+                      {isMentorship && toCapitalize(unSlugify(mentorshipServiceSetSlug))}
+                    </Text>
+                  </Box>
+                </Box>
+              );
+            })}
+          </Box>
+        )}
+      </Box>
+      <Button
+        variant="default"
+        disabled={!selectedService?.plans?.[0]?.slug}
+        onClick={handleContinue}
+        width="100%"
+        margin="0 auto"
+      >
+        {t('common:continue')}
+      </Button>
     </Box>
   );
 };
