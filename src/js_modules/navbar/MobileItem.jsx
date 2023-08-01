@@ -19,7 +19,7 @@ import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
 
 const MobileItem = ({
-  label, subMenu, href, onClickLink, description, icon,
+  label, subMenu, href, onClickLink, description, icon, readSyllabus,
 }) => {
   // const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
@@ -33,7 +33,17 @@ const MobileItem = ({
   //   }
   //   return linkColor;
   // };
-  const itemSubMenu = subMenu?.length > 0 && subMenu;
+  // manage subMenus in level 2
+  const itemSubMenu = subMenu?.length > 0 && subMenu.map((l) => {
+    const isLessons = l.slug === 'lessons';
+    if (isLessons) {
+      return ({
+        ...l,
+        subMenu: [...readSyllabus, ...l.subMenuContent],
+      });
+    }
+    return l;
+  });
 
   return (
     <Stack spacing={4}>
@@ -179,6 +189,7 @@ MobileItem.propTypes = {
     }),
   ),
   onClickLink: PropTypes.func.isRequired,
+  readSyllabus: PropTypes.arrayOf(PropTypes.any).isRequired,
 };
 
 MobileItem.defaultProps = {
