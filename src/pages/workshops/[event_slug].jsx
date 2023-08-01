@@ -464,7 +464,7 @@ const Page = ({ event }) => {
           height="fit-content"
           borderWidth="0px"
           gridGap="10px"
-          overflow="hidden"
+          overflow={{ base: 'inherit', md: 'hidden' }}
         >
           {event?.id && (
             <ShowOnSignUp
@@ -472,7 +472,7 @@ const Page = ({ event }) => {
               hideSwitchUser={!isFreeForConsumables && !existsConsumables}
               headContent={readyToJoinEvent ? (
                 <Box position="relative" zIndex={1} width="100%" height={177}>
-                  <Image src={arrayOfImages[0]} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" />
+                  <Image src={arrayOfImages[0]} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" alt="head banner" />
                 </Box>
               ) : (
                 <Timer
@@ -501,7 +501,7 @@ const Page = ({ event }) => {
                   mt="10px"
                   type="submit"
                   variant="default"
-                  background={buttonEnabled ? '' : 'gray.350'}
+                  background={buttonEnabled ? 'blue.default' : 'gray.350'}
                   textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
                   disabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                   _disabled={{
