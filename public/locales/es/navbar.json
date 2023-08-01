@@ -22,6 +22,7 @@
       "subMenu": [
         {
           "label": "Lecturas y videos",
+          "slug": "lessons",
           "asPath": "/read-and-watch",
           "description": "Tiene sentido comenzar a aprender leyendo y viendo videos sobre los fundamentos y cómo funcionan las cosas.",
           "subMenu": [],
@@ -34,6 +35,7 @@
         },
         {
           "label": "Prácticas Interactivas",
+          "slug": "exercises",
           "subLabel": "",
           "description": "Lista curada de tutoriales interactivos, con soluciones y videos para practicar y mejorar tus habilidades.",
           "href": "/interactive-exercises",
@@ -46,6 +48,7 @@
         },
         {
           "label": "Construye Projectos",
+          "slug": "projects",
           "href": "/interactive-coding-tutorials",
           "description": "Selección curada de tutoriales y projectos para construir con instrucciones simples y video soluciones",
           "subMenu": [
@@ -57,6 +60,7 @@
         },
         {
           "label": "Preguntas Frecuentes",
+          "slug": "how-tos",
           "href": "/how-to",
           "description": "Guías sobre distintos temas relacionados con las tecnologías que enseñamos en nuestros cursos",
           "subMenu": [

@@ -120,9 +120,12 @@
     "price-mentorship-per-qty": "{{price}} per mentorship",
     "confirm-purchase": "Confirm purchase"
   },
-  "select-mentorship-plan": {
-    "title": "Select plan to buy mentorship",
+  "select-service-of-plan": {
+    "title": "Which experience do you want to upgrade?",
     "description": "We find plans with mentoring available for you, select one before continuing:",
-    "cohort-connector": "Cohort: {{name}}"
+    "select-text": "Select experience",
+    "cohort-connector": "Cohort: {{name}}",
+    "subscription-not-found": "Subscription not found",
+    "no-plan-found-for-service": "You don't have any subscription related to the following services:"
   }
 }
