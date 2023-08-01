@@ -71,7 +71,7 @@ const QuoteVersion1 = ({ ...props }) => {
         </Box>
         <Box className="quote-content">
           <Box className="quote-paragraph">
-            {quote[0]}
+            {quote[0].trim()}
             &quot;
           </Box>
           <Box
@@ -118,7 +118,7 @@ const QuoteVersion2 = ({ ...props }) => {
         </Box>
         <Box className="quote-content">
           <Box className="quote-paragraph">
-            {quote[0]}
+            {quote[0].trim()}
             &quot;
           </Box>
           <Box
@@ -168,7 +168,7 @@ const QuoteVersion3 = ({ ...props }) => {
                     ? `${item}. ` : `${item} `}
                 </span>
               ))}
-              {splitP[1]}
+              {splitP[1].trim()}
               &quot;
             </Box>
           </Box>
@@ -209,7 +209,7 @@ const QuoteVersion4 = ({ ...props }) => {
         </Box>
         <Box className="quote-content">
           <Box className="quote-paragraph">
-            {quote[0]}
+            {quote[0].trim()}
             &quot;
           </Box>
           <Box
