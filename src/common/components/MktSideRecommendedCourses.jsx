@@ -1,4 +1,4 @@
-import { Box, Image, Link } from '@chakra-ui/react';
+import { Box, Image, Link, useColorModeValue } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
@@ -12,32 +12,35 @@ import modifyEnv from '../../../modifyEnv';
 // import { toCapitalize } from '../../utils';
 import TagCapsule from './TagCapsule';
 import { getBrowserSize } from '../../utils';
+import useStyle from '../hooks/useStyle';
 
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
 
-function Container({ course, courses, borderRadius, children }) {
+function Container({ course, courses, borderRadius, children, ...rest }) {
   const router = useRouter();
+  const { fontColor } = useStyle();
+  const bgColor = useColorModeValue('gray.light3', 'featuredDark');
   const langConnector = router.locale === 'en' ? '' : `/${router.locale}`;
 
   const { width: screenWidth } = getBrowserSize();
 
   if (screenWidth < 768) {
     return (
-      <Link href={`https://4geeks.com${langConnector}/${course?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="#F9F9F9" color="black" padding="9px 8px" borderRadius={borderRadius}>
+      <Link href={`https://4geeks.com${langConnector}/${course?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background={bgColor} color={fontColor} borderRadius={borderRadius} {...rest}>
         {children}
       </Link>
     );
   }
 
   return (
-    <Box minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="#F9F9F9" color="black" padding="9px 8px" borderRadius={borderRadius}>
+    <Box minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background={bgColor} color={fontColor} borderRadius={borderRadius} {...rest}>
       {children}
     </Box>
   );
 }
 
-function MktSideRecommendedCourses({ title, endpoint, ...rest }) {
+function MktSideRecommendedCourses({ title, endpoint, containerPadding, ...rest }) {
   const { t, lang } = useTranslation('common');
   const [isLoading, setIsLoading] = useState(true);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -83,7 +86,7 @@ function MktSideRecommendedCourses({ title, endpoint, ...rest }) {
             const tags = ['Free course'];
 
             return (
-              <Container key={course?.slug} course={course} courses={courses} borderRadius={rest.borderRadius}>
+              <Container key={course?.slug} course={course} courses={courses} borderRadius={rest.borderRadius} padding={containerPadding}>
                 <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'none', md: 'inherit' }} />
                 <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px">
                   <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'inherit', md: 'none' }} />
@@ -134,11 +137,13 @@ function MktSideRecommendedCourses({ title, endpoint, ...rest }) {
 MktSideRecommendedCourses.propTypes = {
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   endpoint: PropTypes.string,
+  containerPadding: PropTypes.string,
 };
 
 MktSideRecommendedCourses.defaultProps = {
   title: '',
   endpoint: defaultEndpoint,
+  containerPadding: '9px 8px',
 };
 
 Container.propTypes = {

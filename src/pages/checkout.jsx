@@ -113,7 +113,7 @@ function Checkout() {
   const queryServiceExists = queryMentorshipServiceSlugExists || queryEventTypeSetSlugExists;
 
   useEffect(() => {
-    const isAvailableToSelectPlan = queryPlansExists && queryPlans?.split(',')?.length > 1;
+    const isAvailableToSelectPlan = queryPlansExists && queryPlans?.split(',')?.length > 0;
     if (isAuthenticated && isAvailableToSelectPlan && queryServiceExists) {
       setReadyToSelectService(true);
     }

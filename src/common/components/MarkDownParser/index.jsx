@@ -13,7 +13,7 @@ import bc from '../../services/breathecode';
 
 // import { useRouter } from 'next/router';
 import {
-  BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner,
+  BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner, Quote,
 } from './MDComponents';
 import { usePersistent } from '../../hooks/usePersistent';
 import Toc from './toc';
@@ -191,7 +191,6 @@ function MarkDownParser({
           <SubTasks subTasks={subTasks} assetType={assetType} />
         )}
       </ContentHeading>
-
       {isPublic && withToc && (
         <Toc content={content} />
       )}
@@ -221,6 +220,7 @@ function MarkDownParser({
           // Component for list of checkbox
           // children[1].props.node.children[0].properties.type
           li: ({ ...props }) => ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTasks, updateSubTask, ...props }),
+          quote: Quote,
         }}
       >
         {content}
