@@ -2,7 +2,7 @@ import { Box, Img } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useStyle from '../hooks/useStyle';
 
-const LoaderScreen = ({ width, height, ...rest }) => {
+function LoaderScreen({ width, height, ...rest }) {
   const { backgroundColor } = useStyle();
 
   return (
@@ -38,12 +38,12 @@ const LoaderScreen = ({ width, height, ...rest }) => {
       <Box className="loader" /> */}
     </Box>
   );
-};
+}
 
 LoaderScreen.propTypes = {
   width: PropTypes.string,
   height: PropTypes.string,
-  rest: PropTypes.objectOf(PropTypes.any),
+  rest: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
 };
 LoaderScreen.defaultProps = {
   width: '200px',

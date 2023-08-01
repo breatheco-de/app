@@ -7,7 +7,7 @@ import Heading from '../Heading';
 import Text from '../Text';
 import FinalProjectForm from './Form';
 
-const FinalProjectModal = ({ storyConfig, isOpen, cohortData, studentsData, closeModal, closeOnOverlayClick }) => {
+function FinalProjectModal({ storyConfig, isOpen, cohortData, studentsData, closeModal, closeOnOverlayClick }) {
   const { t } = useTranslation('final-project');
   const [openForm, setOpenForm] = useState(false);
   const finalProjectTranslation = storyConfig?.translation?.[storyConfig?.locale]['final-project'];
@@ -64,13 +64,13 @@ const FinalProjectModal = ({ storyConfig, isOpen, cohortData, studentsData, clos
       )}
     </>
   );
-};
+}
 
 FinalProjectModal.propTypes = {
-  storyConfig: PropTypes.objectOf(PropTypes.any),
+  storyConfig: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   isOpen: PropTypes.bool,
-  cohortData: PropTypes.objectOf(PropTypes.any),
-  studentsData: PropTypes.arrayOf(PropTypes.object),
+  cohortData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  studentsData: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
   closeModal: PropTypes.func,
   closeOnOverlayClick: PropTypes.bool,
 };

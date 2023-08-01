@@ -101,7 +101,7 @@ export const getStaticProps = async ({ params, locale }) => {
   });
 };
 
-const Page = ({ event }) => {
+function Page({ event }) {
   const { t } = useTranslation('workshops');
   const [users, setUsers] = useState([]);
   const [allUsersJoined, setAllUsersJoined] = useState([]);
@@ -208,7 +208,10 @@ const Page = ({ event }) => {
     }
   }, [isAuth]);
 
-  const spotsRemain = event?.capacity - allUsersJoined?.length;
+  const capacity = event?.capacity || 0;
+  const allUsersJoinedLength = allUsersJoined?.length || 0;
+  const spotsRemain = (capacity - allUsersJoinedLength);
+
   const arrayOfImages = [
     '/static/images/person1.webp',
   ];
@@ -314,7 +317,7 @@ const Page = ({ event }) => {
   };
 
   return (
-    <>
+    <Box as="div">
       <Head>
         <script
           type="application/ld+json"
@@ -455,7 +458,7 @@ const Page = ({ event }) => {
         <Box
           display="flex"
           gridColumn={{ base: '8 / span 4', lg: '10 / span 4' }}
-          margin={{ base: '20px 0 0 auto', lg: '-13.44rem 0 0 auto' }}
+          margin={{ base: '20px 0 0 auto', lg: '-13.42rem 0 0 auto' }}
           flexDirection="column"
           transition="background 0.2s ease-in-out"
           // width={{ base: '320px', md: 'auto' }}
@@ -622,12 +625,12 @@ const Page = ({ event }) => {
         </Box>
       </GridContainer>
       {finishedEvent && (<MktEventCards gridTemplateColumns="2fr repeat(12, 1fr) 2fr" gridColumn="2 / span 12" margin="2rem auto 0 auto" maxWidth="1440px" padding="0 10px" />)}
-    </>
+    </Box>
   );
-};
+}
 
 Page.propTypes = {
-  event: PropTypes.objectOf(PropTypes.any),
+  event: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 Page.defaultProps = {
   event: {},

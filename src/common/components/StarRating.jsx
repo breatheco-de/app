@@ -2,7 +2,7 @@ import { Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const StarRating = ({ rating, ...rest }) => {
+function StarRating({ rating, ...rest }) {
   const getRate = (index, rate) => {
     if (Math.round(rate) === index && rate % 1 !== 0) {
       return 'middle';
@@ -31,7 +31,7 @@ const StarRating = ({ rating, ...rest }) => {
       })}
     </Box>
   );
-};
+}
 
 StarRating.propTypes = {
   rating: PropTypes.number,

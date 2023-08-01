@@ -151,9 +151,9 @@ const AvatarUser = memo(({
 });
 
 AvatarUser.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any).isRequired,
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   fullName: PropTypes.string,
-  containerStyle: PropTypes.objectOf(PropTypes.any),
+  containerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   width: PropTypes.string,
   height: PropTypes.string,
   badge: PropTypes.bool,

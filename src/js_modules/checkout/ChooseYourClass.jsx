@@ -14,9 +14,21 @@ import ChooseDate from './ChooseDate';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import useStyle from '../../common/hooks/useStyle';
 
-const ChooseYourClass = ({
+function LoaderContent({ cohortIsLoading }) {
+  const { t } = useTranslation('signup');
+
+  return cohortIsLoading ? (
+    <Box display="flex" justifyContent="center" mt="4rem" mb="8rem" position="relative">
+      <LoaderScreen width="130px" height="130px" />
+    </Box>
+  ) : (
+    <AlertMessage type="info" message={t('no-date-available')} />
+  );
+}
+
+function ChooseYourClass({
   setCohorts,
-}) => {
+}) {
   const { t } = useTranslation('signup');
   const [cohortIsLoading, setCohortIsLoading] = useState(true);
   const [availableDates, setAvailableDates] = useState(null);
@@ -140,14 +152,6 @@ const ChooseYourClass = ({
     }
   }, [gmapStatus]);
 
-  const LoaderContent = () => (cohortIsLoading ? (
-    <Box display="flex" justifyContent="center" mt="4rem" mb="8rem" position="relative">
-      <LoaderScreen />
-    </Box>
-  ) : (
-    <AlertMessage type="info" message={t('no-date-available')} />
-  ));
-
   return isSecondStep && (
     <Box
       display="flex"
@@ -223,18 +227,21 @@ const ChooseYourClass = ({
             <ChooseDate key={cohort?.id} index={index} cohort={cohort} background={backgroundColor3} padding="13px" borderRadius="4px" />
           ))
         ) : (
-          <LoaderContent />
+          <LoaderContent cohortIsLoading={cohortIsLoading} />
         )}
       </Box>
     </Box>
   );
-};
+}
 
 ChooseYourClass.propTypes = {
   setCohorts: PropTypes.func,
 };
 ChooseYourClass.defaultProps = {
   setCohorts: () => {},
+};
+LoaderContent.propTypes = {
+  cohortIsLoading: PropTypes.bool.isRequired,
 };
 
 export default ChooseYourClass;

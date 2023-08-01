@@ -25,7 +25,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   };
 };
 
-const ThankYou = () => {
+function ThankYou() {
   const { t } = useTranslation('thank-you');
   const { hexColor, lightColor } = useStyle();
   const subscriptionId = getStorageItem('subscriptionId');
@@ -81,6 +81,6 @@ const ThankYou = () => {
       </Box>
     </Box>
   );
-};
+}
 
 export default ThankYou;

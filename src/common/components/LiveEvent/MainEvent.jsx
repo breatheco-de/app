@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 import { useEffect, useState } from 'react';
 import { Box, Divider, Tag, TagLabel } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
@@ -9,10 +10,10 @@ import useStyle from '../../hooks/useStyle';
 import CustomTheme from '../../../../styles/theme';
 import { getStorageItem, lengthOfString, syncInterval } from '../../../utils';
 
-const MainEvent = ({
+function MainEvent({
   index, event, mainEvents, getOtherEvents, isLiveOrStarting, getLiveIcon, host, nearestEvent,
   isLive, stTranslation, mainClasses, textTime, subLabel, isWorkshop, limitOfText,
-}) => {
+}) {
   const [time, setTime] = useState('');
   const { t, lang } = useTranslation('live-event');
   const limit = limitOfText || 40;
@@ -180,21 +181,21 @@ const MainEvent = ({
       {index !== mainEvents.length - 1 && <Divider margin="10px 0" />}
     </>
   );
-};
+}
 
 MainEvent.propTypes = {
   index: PropTypes.number.isRequired,
-  event: PropTypes.objectOf(PropTypes.any).isRequired,
-  mainEvents: PropTypes.arrayOf(PropTypes.any).isRequired,
+  event: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  mainEvents: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   getOtherEvents: PropTypes.func.isRequired,
   isLiveOrStarting: PropTypes.func.isRequired,
   getLiveIcon: PropTypes.func.isRequired,
   host: PropTypes.string.isRequired,
-  nearestEvent: PropTypes.objectOf(PropTypes.any).isRequired,
+  nearestEvent: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   isLive: PropTypes.func.isRequired,
   textTime: PropTypes.func.isRequired,
-  stTranslation: PropTypes.objectOf(PropTypes.any).isRequired,
-  mainClasses: PropTypes.arrayOf(PropTypes.any).isRequired,
+  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  mainClasses: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   subLabel: PropTypes.string,
   isWorkshop: PropTypes.bool,
   limitOfText: PropTypes.number,

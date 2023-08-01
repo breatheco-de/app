@@ -1,10 +1,10 @@
 import { Stack } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import DesktopItem from './DesktopItem';
 import syllabusList from '../../../public/syllabus.json';
 
-const DesktopNav = ({ NAV_ITEMS, extraContent, haveSession }) => {
+function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
   const [privateItems, setPrivateItems] = useState([]);
   const readSyllabus = JSON.parse(syllabusList);
 
@@ -45,7 +45,7 @@ const DesktopNav = ({ NAV_ITEMS, extraContent, haveSession }) => {
       })}
     </Stack>
   );
-};
+}
 
 DesktopNav.propTypes = {
   haveSession: PropTypes.bool.isRequired,
@@ -65,7 +65,7 @@ DesktopNav.propTypes = {
       ),
     }),
   ),
-  extraContent: PropTypes.arrayOf(PropTypes.object),
+  extraContent: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
 };
 
 DesktopNav.defaultProps = {
@@ -80,4 +80,4 @@ DesktopNav.defaultProps = {
   extraContent: [],
 };
 
-export default DesktopNav;
+export default memo(DesktopNav);

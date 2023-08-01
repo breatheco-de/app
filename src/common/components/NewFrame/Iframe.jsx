@@ -1,23 +1,25 @@
 import PropTypes from 'prop-types';
 import { memo } from 'react';
 
-const Iframe = ({
+function Iframe({
   src, style, width, height, title, id,
-}) => (
-  <iframe
-    id={id}
-    src={src}
-    width={width}
-    height={height}
-    style={style}
-    title={title}
-  />
-);
+}) {
+  return (
+    <iframe
+      id={id}
+      src={src}
+      width={width}
+      height={height}
+      style={style}
+      title={title}
+    />
+  );
+}
 
 Iframe.propTypes = {
   src: PropTypes.string.isRequired,
   id: PropTypes.string,
-  style: PropTypes.objectOf(PropTypes.any),
+  style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   width: PropTypes.string,
   height: PropTypes.string,
   title: PropTypes.string,

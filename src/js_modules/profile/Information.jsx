@@ -13,7 +13,7 @@ import { location } from '../../utils';
 import getCroppedImg from '../../utils/cropImage';
 import Icon from '../../common/components/Icon';
 
-const Information = () => {
+function Information() {
   const [profile, setProfile] = usePersistent('profile', {});
   const { t } = useTranslation('profile');
   const { user, updateProfilePicture } = useAuth();
@@ -242,6 +242,6 @@ const Information = () => {
       </Box>
     </>
   );
-};
+}
 
 export default Information;

@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/jsx-no-useless-fragment */
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -20,12 +22,57 @@ import ProjectsSection from './ProjectsSection';
 import ButtonHandler from '../../js_modules/profile/Subscriptions/ButtonHandler';
 import UpgradeModal from '../../js_modules/profile/Subscriptions/UpgradeModal';
 
-const ProgramCard = ({
+function FreeTagCapsule({ isExpired, freeTrialExpireDateValue, now, stTranslation, lang }) {
+  const { t } = useTranslation('program-card');
+  let timeString = '';
+  const duration = intervalToDuration({
+    end: now,
+    start: freeTrialExpireDateValue,
+  });
+  const hours = duration?.hours;
+  const formated = {
+    en: formatDuration(duration, { format: ['days'] }),
+    es: formatDuration(
+      duration,
+      {
+        format: ['days'],
+        locale: es,
+      },
+    ),
+  };
+
+  if (isExpired) timeString = stTranslation ? stTranslation[lang]['program-card']['non-left'] : t('non-left');
+  else if (duration.days > 0) timeString = `${formated[lang]} ${stTranslation ? stTranslation[lang]['program-card'].left : t('left')}`;
+  else if (duration.days === 0 && hours >= 0) timeString = `${hours > 0 ? `${hours}h ${t('common:and')}` : ''} ${duration?.minutes}min`;
+  else timeString = stTranslation ? stTranslation[lang]['program-card'].today : t('today');
+
+  return (
+    <Flex
+      borderRadius="15px"
+      background={isExpired ? '#FFE7E9' : CustomTheme.colors.yellow.light}
+      padding="5px"
+      height="21px"
+      alignItems="center"
+    >
+      <Icon icon="free" width="29px" height="14px" style={{ marginRight: '5px' }} />
+      <Text
+        fontSize="xs"
+        lineHeight="14px"
+        fontWeight="400"
+        color={isExpired ? '#EB5757' : '#01455E'}
+      >
+        {timeString}
+      </Text>
+    </Flex>
+  );
+}
+
+function ProgramCard({
   programName, programDescription, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
   syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
   width, assistants, teacher, handleChoose, isHiddenOnPrework, isAvailableAsSaas,
   subscriptionStatus, subscription, isMarketingCourse, iconLink, bullets, background,
-}) => {
+}) {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
@@ -57,17 +104,21 @@ const ProgramCard = ({
 
     if (duration.days > 0) duration.hours = 0;
     const formated = {
-      en: formatDuration(duration,
+      en: formatDuration(
+        duration,
         {
           format: ['months', 'weeks', 'days', 'hours'],
           delimiter: ', ',
-        }),
-      es: formatDuration(duration,
+        },
+      ),
+      es: formatDuration(
+        duration,
         {
           format: ['months', 'weeks', 'days', 'hours'],
           delimiter: ', ',
           locale: es,
-        }),
+        },
+      ),
     };
 
     if (formated[lang] === '') return stTranslation ? stTranslation[lang]['program-card']['starting-today'] : t('starting-today');
@@ -86,48 +137,6 @@ const ProgramCard = ({
   const onOpenUpgrade = (data) => {
     setOfferProps(data);
     setUpgradeModalIsOpen(true);
-  };
-
-  const FreeTagCapsule = () => {
-    let timeString = '';
-    const duration = intervalToDuration({
-      end: now,
-      start: freeTrialExpireDateValue,
-    });
-    const hours = duration?.hours;
-    const formated = {
-      en: formatDuration(duration, { format: ['days'] }),
-      es: formatDuration(duration,
-        {
-          format: ['days'],
-          locale: es,
-        }),
-    };
-
-    if (isExpired) timeString = stTranslation ? stTranslation[lang]['program-card']['non-left'] : t('non-left');
-    else if (duration.days > 0) timeString = `${formated[lang]} ${stTranslation ? stTranslation[lang]['program-card'].left : t('left')}`;
-    else if (duration.days === 0 && hours >= 0) timeString = `${hours > 0 ? `${hours}h ${t('common:and')}` : ''} ${duration?.minutes}min`;
-    else timeString = stTranslation ? stTranslation[lang]['program-card'].today : t('today');
-
-    return (
-      <Flex
-        borderRadius="15px"
-        background={isExpired ? '#FFE7E9' : CustomTheme.colors.yellow.light}
-        padding="5px"
-        height="21px"
-        alignItems="center"
-      >
-        <Icon icon="free" width="29px" height="14px" style={{ marginRight: '5px' }} />
-        <Text
-          fontSize="xs"
-          lineHeight="14px"
-          fontWeight="400"
-          color={isExpired ? '#EB5757' : '#01455E'}
-        >
-          {timeString}
-        </Text>
-      </Flex>
-    );
   };
 
   return (
@@ -519,7 +528,7 @@ const ProgramCard = ({
       />
     </Box>
   );
-};
+}
 
 ProgramCard.propTypes = {
   programName: PropTypes.string.isRequired,
@@ -528,14 +537,14 @@ ProgramCard.propTypes = {
   freeTrialExpireDate: PropTypes.instanceOf(Date),
   haveFreeTrial: PropTypes.bool,
   icon: PropTypes.string.isRequired,
-  syllabusContent: PropTypes.objectOf(PropTypes.any),
+  syllabusContent: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   courseProgress: PropTypes.number,
-  stTranslation: PropTypes.objectOf(PropTypes.any),
+  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   lessonNumber: PropTypes.number,
   isLoading: PropTypes.bool,
   width: PropTypes.string,
-  assistants: PropTypes.arrayOf(PropTypes.any),
-  teacher: PropTypes.objectOf(PropTypes.any),
+  assistants: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  teacher: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   iconBackground: PropTypes.string,
   handleChoose: PropTypes.func,
   isHiddenOnPrework: PropTypes.bool,
@@ -544,8 +553,8 @@ ProgramCard.propTypes = {
   // onOpenModal: PropTypes.func,
   isAvailableAsSaas: PropTypes.bool,
   subscriptionStatus: PropTypes.string,
-  subscription: PropTypes.objectOf(PropTypes.any),
-  bullets: PropTypes.arrayOf(PropTypes.any),
+  subscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  bullets: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   background: PropTypes.string,
 };
 

@@ -13,10 +13,10 @@ import LanguageSelector from '../../common/components/LanguageSelector';
 import syllabusList from '../../../public/syllabus.json';
 // import UpgradeExperience from '../../common/components/UpgradeExperience';
 
-const MobileNav = ({
+function MobileNav({
   // eslint-disable-next-line no-unused-vars
   NAV_ITEMS, haveSession, translations, mktCourses, onClickLink,
-}) => {
+}) {
   const [privateItems, setPrivateItems] = useState([]);
   const { colorMode, toggleColorMode } = useColorMode();
   const commonColors = useColorModeValue('white', 'gray.800');
@@ -101,9 +101,9 @@ const MobileNav = ({
           title="Toggle Color Mode"
           icon={
             colorMode === 'light' ? (
-              <Icon icon="light" width="25px" height="23px" color="black" />
+              <Icon icon="light" id="light-button-mobile" width="25px" height="23px" color="black" />
             ) : (
-              <Icon icon="dark" width="20px" height="20px" />
+              <Icon icon="dark" id="dark-button-mobile" width="20px" height="20px" />
             )
           }
         />
@@ -111,14 +111,14 @@ const MobileNav = ({
       </Box>
     </Stack>
   );
-};
+}
 
 MobileNav.propTypes = {
   haveSession: PropTypes.bool.isRequired,
-  NAV_ITEMS: PropTypes.arrayOf(PropTypes.any),
+  NAV_ITEMS: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   onClickLink: PropTypes.func.isRequired,
-  mktCourses: PropTypes.arrayOf(PropTypes.any),
+  mktCourses: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
 };
 
 MobileNav.defaultProps = {

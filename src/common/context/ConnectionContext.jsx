@@ -1,5 +1,5 @@
 import {
-  createContext, useEffect, useState,
+  createContext, useEffect, useMemo, useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
@@ -11,7 +11,7 @@ import modifyEnv from '../../../modifyEnv';
 
 export const ConnectionContext = createContext({ usersConnected: [] });
 
-const OnlineContext = ({ children }) => {
+function OnlineContext({ children }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [usersConnected, setUsersConnected] = useState({});
   const accessToken = getStorageItem('accessToken');
@@ -65,17 +65,18 @@ const OnlineContext = ({ children }) => {
     }
   }, [isLoading, temporalToken]);
 
-  const arrayOfUsers = Object.keys(usersConnected).map((key) => Number(key));
+  const values = useMemo(() => ({
+    usersConnected: Object.keys(usersConnected).map((key) => Number(key)),
+  }), [usersConnected]);
+
   return (
     <ConnectionContext.Provider
-      value={{
-        usersConnected: arrayOfUsers,
-      }}
+      value={values}
     >
       {children}
     </ConnectionContext.Provider>
   );
-};
+}
 
 OnlineContext.propTypes = {
   children: PropTypes.node.isRequired,

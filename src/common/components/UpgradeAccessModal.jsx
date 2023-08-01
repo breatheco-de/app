@@ -13,9 +13,9 @@ import financeEN from '../../../public/locales/en/finance.json';
 import financeES from '../../../public/locales/es/finance.json';
 import { toCapitalize } from '../../utils';
 
-const UpgradeAccessModal = ({
+function UpgradeAccessModal({
   storySettings, isOpen, onClose,
-}) => {
+}) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedProps, setSelectedProps] = useState({});
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
@@ -122,10 +122,10 @@ const UpgradeAccessModal = ({
       </ModalContent>
     </Modal>
   );
-};
+}
 
 UpgradeAccessModal.propTypes = {
-  storySettings: PropTypes.objectOf(PropTypes.any),
+  storySettings: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
 };

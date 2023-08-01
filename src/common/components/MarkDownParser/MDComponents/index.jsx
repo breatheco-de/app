@@ -14,21 +14,23 @@ import Text from '../../Text';
 import quoteImg from '../../../img/quote.png';
 import whiteQuoteImg from '../../../img/white-quote.png';
 
-export const MDLink = ({ children, href }) => (
-  <Link
-    href={href}
-    fontSize="inherit"
-    color="blue.400"
-    fontWeight="700"
-    overflowWrap="anywhere"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    {children}
-  </Link>
-);
+export function MDLink({ children, href }) {
+  return (
+    <Link
+      href={href}
+      fontSize="inherit"
+      color="blue.400"
+      fontWeight="700"
+      overflowWrap="anywhere"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {children}
+    </Link>
+  );
+}
 
-export const Code = ({ inline, className, children, ...props }) => {
+export function Code({ inline, className, children, ...props }) {
   const match = /language-(\w+)/.exec(className || '');
 
   return !inline && match ? (
@@ -46,10 +48,10 @@ export const Code = ({ inline, className, children, ...props }) => {
       {children}
     </code>
   );
-};
+}
 
 // quote style versions
-const QuoteVersion1 = ({ ...props }) => {
+function QuoteVersion1({ ...props }) {
   const { id, ...rest } = props;
   const quote = props.children[0].split('--');
   return (
@@ -87,8 +89,8 @@ const QuoteVersion1 = ({ ...props }) => {
       </Box>
     </Flex>
   );
-};
-const QuoteVersion2 = ({ ...props }) => {
+}
+function QuoteVersion2({ ...props }) {
   const quote = props.children[0].split('--');
   return (
     <Flex justifyContent="center" alignItems="center" flexDirection="column">
@@ -134,8 +136,8 @@ const QuoteVersion2 = ({ ...props }) => {
       </Box>
     </Flex>
   );
-};
-const QuoteVersion3 = ({ ...props }) => {
+}
+function QuoteVersion3({ ...props }) {
   const quote = props.children[0].split('--');
   const splitP = quote[0].split('.');
 
@@ -185,8 +187,8 @@ const QuoteVersion3 = ({ ...props }) => {
       </Box>
     </Flex>
   );
-};
-const QuoteVersion4 = ({ ...props }) => {
+}
+function QuoteVersion4({ ...props }) {
   const quote = props.children[0].split('--');
   return (
     <Flex justifyContent="center" alignItems="center" flexDirection="column">
@@ -225,8 +227,8 @@ const QuoteVersion4 = ({ ...props }) => {
       </Box>
     </Flex>
   );
-};
-export const Quote = ({ children }) => {
+}
+export function Quote({ children }) {
   const [version, setVersion] = useState(2);
 
   useEffect(() => {
@@ -258,7 +260,7 @@ export const Quote = ({ children }) => {
     );
   }
   return null;
-};
+}
 
 function doWithDelay(timeout, doCallback) {
   return new Promise((res) => {
@@ -269,7 +271,7 @@ function doWithDelay(timeout, doCallback) {
   });
 }
 
-export const BeforeAfter = ({ before, after }) => {
+export function BeforeAfter({ before, after }) {
   const [delimerPersentPosition, setDelimerPercentPosition] = useState(50);
   const animationDemo = () => {
     setTimeout(async () => {
@@ -318,36 +320,41 @@ export const BeforeAfter = ({ before, after }) => {
       onChangePercentPosition={setDelimerPercentPosition}
     />
   );
-};
-export const MDHr = () => (
-  <Box
-    as="hr"
-    backgroundColor={useColorModeValue('gray.400', 'gray.500')}
-    mb="20px"
-  />
-);
+}
+export function MDHr() {
+  return <Box as="hr" backgroundColor={useColorModeValue('gray.400', 'gray.500')} mb="20px" />;
+}
 
-export const MDText = ({ children }) => (
-  <Text size="l" fontWeight="400">
-    {children}
-  </Text>
-);
+export function MDText({ children }) {
+  return (
+    <Text size="l" fontWeight="400">
+      {children}
+    </Text>
+  );
+}
 
-export const MDTable = ({ children }) => (
-  <Box
-    as="div"
-    minW={{ base: '84vw', md: 'auto' }}
-    maxW={{ base: '84vw', md: 'auto' }}
-    // minW="100vw"
-    // maxW="100vw"
-    width="100%"
-    overflow="auto"
-  >
-    <Box as="table">{children}</Box>
-  </Box>
-);
+export function MDTable({ children }) {
+  return (
+    <Box
+      as="div"
+      minW={{ base: '84vw', md: 'auto' }}
+      maxW={{ base: '84vw', md: 'auto' }}
+      // minW="100vw"
+      // maxW="100vw"
+      width="100%"
+      overflow="auto"
+    >
+      <Box
+        as="table"
+      >
+        {children}
+      </Box>
 
-export const MDHeading = ({ children, tagType }) => {
+    </Box>
+  );
+}
+
+export function MDHeading({ children, tagType }) {
   const variantsStyle = {
     h1: 'sm',
     h2: 'sm',
@@ -366,19 +373,15 @@ export const MDHeading = ({ children, tagType }) => {
       {children}
     </Heading>
   );
-};
+}
 
-export const DOMComponent = ({ children }) => <Box>{children}</Box>;
+export function DOMComponent({ children }) {
+  return <Box>{children}</Box>;
+}
 
-export const MDCheckbox = ({
-  index,
-  children,
-  subTasks,
-  subTasksLoaded,
-  subTasksProps,
-  setSubTasksProps,
-  updateSubTask,
-}) => {
+export function MDCheckbox({
+  index, children, subTasks, subTasksLoaded, subTasksProps, setSubTasksProps, updateSubTask,
+}) {
   const childrenData = children[1]?.props?.children || children;
   const [isChecked, setIsChecked] = useState(false);
 
@@ -476,14 +479,11 @@ export const MDCheckbox = ({
       </Checkbox>
     </Box>
   );
-};
+}
 
-export const OnlyForBanner = ({
-  children,
-  permission,
-  cohortSession,
-  profile,
-}) => {
+export function OnlyForBanner({
+  children, permission, cohortSession, profile,
+}) {
   const capabilities = (permission || '')?.split(',');
   console.log('md_permissions:', capabilities);
 
@@ -498,7 +498,7 @@ export const OnlyForBanner = ({
       {children}
     </OnlyFor>
   );
-};
+}
 
 Code.propTypes = {
   className: PropTypes.string,
@@ -532,9 +532,9 @@ MDHeading.defaultProps = {
 MDCheckbox.propTypes = {
   children: PropTypes.node.isRequired,
   index: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  subTasks: PropTypes.arrayOf(PropTypes.object),
+  subTasks: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
   subTasksLoaded: PropTypes.bool,
-  subTasksProps: PropTypes.arrayOf(PropTypes.object),
+  subTasksProps: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
   setSubTasksProps: PropTypes.func,
   updateSubTask: PropTypes.func,
 };
@@ -564,8 +564,8 @@ MDText.propTypes = {
 OnlyForBanner.propTypes = {
   children: PropTypes.node.isRequired,
   permission: PropTypes.string,
-  cohortSession: PropTypes.objectOf(PropTypes.any),
-  profile: PropTypes.objectOf(PropTypes.any),
+  cohortSession: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  profile: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 OnlyForBanner.defaultProps = {
   permission: '',

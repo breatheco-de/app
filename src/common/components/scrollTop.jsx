@@ -7,7 +7,7 @@ const scrollTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-const ScrollTop = () => {
+function ScrollTop() {
   const prevScrollY = useRef(0);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
 
@@ -54,6 +54,6 @@ const ScrollTop = () => {
       />
     </Box>
   );
-};
+}
 
 export default ScrollTop;

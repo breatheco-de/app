@@ -2,7 +2,7 @@ import { Button, Heading, Stack } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import useCounter from '../store/actions/counterAction';
 
-const Counter = () => {
+function Counter() {
   const { t } = useTranslation(['counter']);
   const {
     count, increment, decrement, reset,
@@ -31,6 +31,6 @@ const Counter = () => {
       </Stack>
     </div>
   );
-};
+}
 
 export default Counter;

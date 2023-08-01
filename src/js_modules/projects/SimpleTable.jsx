@@ -5,7 +5,7 @@ import TagCapsule from '../../common/components/TagCapsule';
 import Text from '../../common/components/Text';
 import Link from '../../common/components/NextChakraLink';
 
-const SimpleTable = ({
+function SimpleTable({
   difficulty,
   repository,
   duration,
@@ -13,7 +13,7 @@ const SimpleTable = ({
   liveDemoAvailable,
   technologies,
   href,
-}) => {
+}) {
   const { t } = useTranslation('exercises');
   const verifyIfNotNull = (value) => value !== null && value;
   const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
@@ -175,7 +175,7 @@ const SimpleTable = ({
       </Flex>
     </Flex>
   );
-};
+}
 
 SimpleTable.propTypes = {
   difficulty: PropTypes.string,

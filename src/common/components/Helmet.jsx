@@ -3,11 +3,11 @@ import React from 'react';
 import Head from 'next/head';
 import PropTypes from 'prop-types';
 
-const Helmet = ({
+function Helmet({
   title, description, translations, url, image, card, type, twitterUser,
   unlisted, pathConnector, locales, publishedTime, keywords, modifiedTime,
   locale, slug, disableStaticCanonical, eventStartAt,
-}) => {
+}) {
   const ogTitle = title.length > 0 ? title : '4Geeks';
   const translationsArray = Object.keys(translations);
   const translationsExists = translationsArray.length > 0;
@@ -58,7 +58,6 @@ const Helmet = ({
   return (
     <Head>
       <title>{title.length > 0 ? `${title} | 4Geeks` : '4Geeks'}</title>
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" integrity="sha384-Xi8rHCmBmhbuyyhbI88391ZKP2dmfnOl4rT9ZfRI7mLTdk1wblIUnrIq35nqwEvC" crossOrigin="anonymous" />
       <meta name="description" content={descriptionCleaned} />
       {unlisted === true && <meta name="robots" content="noindex" />}
       <link rel="icon" href="/4Geeks.ico" />
@@ -152,7 +151,7 @@ const Helmet = ({
       <meta property="twitter:image:alt" content={descriptionCleaned} />
     </Head>
   );
-};
+}
 
 Helmet.propTypes = {
   title: PropTypes.string,
@@ -162,7 +161,7 @@ Helmet.propTypes = {
   type: PropTypes.string,
   twitterUser: PropTypes.string,
   unlisted: PropTypes.bool,
-  translations: PropTypes.objectOf(PropTypes.any),
+  translations: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   pathConnector: PropTypes.string,
   locales: PropTypes.arrayOf(PropTypes.string),
   publishedTime: PropTypes.string,

@@ -88,10 +88,15 @@ function chooseProgram() {
 
   const { isLoading, data: dataQuery, refetch } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options });
 
-  useEffect(async () => {
+  const getMembers = async (cohortSubscription) => {
+    const members = await getStudentAndTeachers(cohortSubscription);
+    return members;
+  };
+
+  useEffect(() => {
     const cohorts = dataQuery?.cohorts;
     const cohortSubscription = cohorts?.find((item) => item?.cohort?.slug === subscriptionProcess?.slug);
-    const members = cohortSubscription?.cohort?.slug ? await getStudentAndTeachers(cohortSubscription) : [];
+    const members = cohortSubscription?.cohort?.slug ? getMembers(cohortSubscription) : [];
     const cohortIsReady = cohorts?.length > 0 && cohorts?.some((item) => {
       const cohort = item?.cohort;
       const academy = cohort?.academy;
@@ -131,7 +136,7 @@ function chooseProgram() {
 
   const allSubscriptions = subscriptionData?.subscriptions
     && subscriptionData?.plan_financings
-    && [...subscriptionData?.subscriptions, ...subscriptionData?.plan_financings]
+    && [...subscriptionData.subscriptions, ...subscriptionData.plan_financings]
       .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
 
   useEffect(() => {
@@ -163,7 +168,7 @@ function chooseProgram() {
     if (dataQuery?.id && dataQuery?.cohorts?.length > 0) {
       dataQuery?.cohorts.map(async (item) => {
         if (item?.cohort?.slug) {
-          const { academy, syllabus_version: syllabusVersion } = item?.cohort;
+          const { academy, syllabus_version: syllabusVersion } = item.cohort;
 
           const tasks = await bc.todo({ cohort: item?.cohort?.id }).getTaskByStudent();
           const studentAndTeachers = await bc.cohort({

@@ -3,18 +3,31 @@ import * as prismicH from '@prismicio/helpers';
 import { Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
+import { useEffect, useState } from 'react';
 import { createClient } from '../../prismicio';
 import { components } from '../../slices';
 
-const Page = ({ page }) => (
-  <Box className="prismic-body" pt="3rem">
-    <SliceZone slices={page?.data?.slices} components={components} />
-  </Box>
-);
+function Page({ page }) {
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  return hasMounted && (
+    <Box className="prismic-body" pt="3rem">
+      <SliceZone slices={page?.data?.slices} components={components} />
+    </Box>
+  );
+}
 
 Page.propTypes = {
-  page: PropTypes.objectOf(PropTypes.any).isRequired,
+  page: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
+Page.defaultProps = {
+  page: {},
+};
+
 export default Page;
 
 export async function getStaticProps({ params, locale, previewData }) {
@@ -37,8 +50,10 @@ export async function getStaticProps({ params, locale, previewData }) {
       notFound: true,
     };
   }
+  const alternateLanguages = Array.isArray(page?.alternate_languages) ? page?.alternate_languages : [];
+
   const languagesArr = [
-    ...page?.alternate_languages,
+    ...alternateLanguages,
     {
       id: page?.id,
       type: page?.type,
@@ -55,7 +70,7 @@ export async function getStaticProps({ params, locale, previewData }) {
     ...translationsArr?.reduce((acc, curr) => ({ ...acc, ...curr }), {}),
   };
 
-  const { title, description, image, type } = page?.data;
+  const { title, description, image, type } = page.data;
 
   const translationArray = [
     {

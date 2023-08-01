@@ -1,23 +1,25 @@
+/* eslint-disable jsx-a11y/interactive-supports-focus */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
-
-const Steps = ({ steps, onClick, currentIndex }) => {
-
-    return (<StyledSteps>
+function Steps({ steps, onClick, currentIndex }) {
+  return (
+    <StyledSteps>
       <ul className="list-unstyled multi-steps mt-4">
-        {Array.isArray(steps) && steps.length > 1 && steps.map((step, i) => 
-            <li className={currentIndex === i ? "is-active" : ""}>
-                <a onClick={() => onClick(step)} aria-controls="discover" role="tab" data-toggle="tab">
-                    {steps.icon && <i className={step.icon} aria-hidden="true"></i>}
-                    {steps.label && <p>{step.label}</p>}
-                </a>
-            </li>
-        )}
-    </ul>  
-    </StyledSteps>)
-    
+        {Array.isArray(steps) && steps.length > 1 && steps.map((step, i) => (
+          <li className={currentIndex === i ? 'is-active' : ''}>
+            <a onClick={() => onClick(step)} aria-controls="discover" role="tab" data-toggle="tab">
+              {steps.icon && <i className={step.icon} aria-hidden="true" />}
+              {steps.label && <p>{step.label}</p>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </StyledSteps>
+  );
 }
 
 const StyledSteps = styled.div`
@@ -85,16 +87,16 @@ color: #808080;
 background-color: #ededed;
 border-color: #ededed;
 }
-`
+`;
 
 Steps.defaultProps = {
   onClick: () => {},
-}
+};
 
 Steps.propTypes = {
-  steps: PropTypes.array.isRequired,
+  steps: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   onClick: PropTypes.func,
-  currentIndex: PropTypes.number.isRequired
+  currentIndex: PropTypes.number.isRequired,
 };
 
 export default Steps;

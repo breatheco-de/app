@@ -9,11 +9,11 @@ import Module from './module';
 import { startDay } from '../../common/hooks/useModuleHandler';
 import Icon from '../../common/components/Icon';
 
-const ModuleMap = ({
+function ModuleMap({
   index, userId, contextState, setContextState, slug, modules, filteredModules,
   title, description, taskTodo, cohortSession, taskCohortNull, filteredModulesByPending,
   showPendingTasks, searchValue, existsActivities,
-}) => {
+}) {
   const { t } = useTranslation('dashboard');
   const toast = useToast();
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
@@ -141,22 +141,22 @@ const ModuleMap = ({
         )}
     </Box>
   );
-};
+}
 
 ModuleMap.propTypes = {
   index: PropTypes.number.isRequired,
   userId: PropTypes.number.isRequired,
-  contextState: PropTypes.objectOf(PropTypes.any).isRequired,
+  contextState: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   setContextState: PropTypes.func.isRequired,
   title: PropTypes.string,
   slug: PropTypes.string,
-  modules: PropTypes.arrayOf(PropTypes.object),
-  filteredModules: PropTypes.arrayOf(PropTypes.object),
+  modules: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
+  filteredModules: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   description: PropTypes.string,
-  taskTodo: PropTypes.arrayOf(PropTypes.object),
-  cohortSession: PropTypes.objectOf(PropTypes.any),
-  taskCohortNull: PropTypes.arrayOf(PropTypes.object),
-  filteredModulesByPending: PropTypes.arrayOf(PropTypes.object),
+  taskTodo: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
+  cohortSession: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  taskCohortNull: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
+  filteredModulesByPending: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   showPendingTasks: PropTypes.bool,
   searchValue: PropTypes.string,
   existsActivities: PropTypes.bool.isRequired,

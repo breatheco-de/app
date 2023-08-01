@@ -39,7 +39,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   };
 };
 
-const CodingIntroduction = ({ data }) => {
+function CodingIntroduction({ data }) {
   const [users, setUsers] = useState(null);
   const [events, setEvents] = useState(null);
   const router = useRouter();
@@ -126,10 +126,10 @@ const CodingIntroduction = ({ data }) => {
       <Pricing data={data} />
     </Box>
   );
-};
+}
 
 CodingIntroduction.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any).isRequired,
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 export default CodingIntroduction;

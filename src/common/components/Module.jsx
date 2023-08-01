@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 import {
   Box, Heading, Stack, Flex, useColorModeValue, HStack, Tooltip, Link,
 } from '@chakra-ui/react';
@@ -9,10 +10,10 @@ import Icon from './Icon';
 // import Link from './NextChakraLink';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 
-const Module = ({
+function Module({
   onClickHandler, data, containerStyle, leftContentStyle, containerPX, width, currIndex,
   isDone, rightItemHandler, link, textWithLink, mandatory,
-}) => {
+}) {
   const { t } = useTranslation('dashboard');
   const containerBackground = isDone ? useColorModeValue('featuredLight', 'featuredDark') : useColorModeValue('white', 'primary');
   const commonFontColor = useColorModeValue('gray.600', 'gray.200');
@@ -191,13 +192,13 @@ const Module = ({
       </HStack>
     </Stack>
   );
-};
+}
 
 Module.propTypes = {
   onClickHandler: PropTypes.func,
-  data: PropTypes.objectOf(PropTypes.any),
-  containerStyle: PropTypes.objectOf(PropTypes.any),
-  leftContentStyle: PropTypes.objectOf(PropTypes.any),
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  containerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  leftContentStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   containerPX: PropTypes.string,
   width: PropTypes.string,
   link: PropTypes.string,

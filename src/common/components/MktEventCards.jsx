@@ -9,7 +9,7 @@ import EventCard from './EventCard';
 import { sortToNearestTodayDate } from '../../utils';
 import modifyEnv from '../../../modifyEnv';
 
-const MktEventCards = ({ id, title, hoursToLimit, endpoint, ...rest }) => {
+function MktEventCards({ id, title, hoursToLimit, endpoint, ...rest }) {
   const [events, setEvents] = useState([]);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
@@ -64,7 +64,7 @@ const MktEventCards = ({ id, title, hoursToLimit, endpoint, ...rest }) => {
       </Box>
     </GridContainer>
   );
-};
+}
 
 MktEventCards.propTypes = {
   id: PropTypes.string,

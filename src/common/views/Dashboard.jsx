@@ -20,7 +20,7 @@ import ProgressBar from '../components/ProgressBar';
 import Heading from '../components/Heading';
 import Text from '../components/Text';
 
-const Dashboard = () => {
+function Dashboard() {
   // const { updateModuleStatus } = useModuleMap();
   // const handleModuleStatus = (event, module) => {
   //   event.stopPropagation();
@@ -93,6 +93,6 @@ const Dashboard = () => {
       </Container>
     </div>
   );
-};
+}
 
 export default Dashboard;

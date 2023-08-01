@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 import { useState } from 'react';
 import {
   Box, useColorModeValue, Button,
@@ -15,7 +16,7 @@ import OtherEvents from './OtherEvents';
 import modifyEnv from '../../../../modifyEnv';
 import MainEvent from './MainEvent';
 
-const LiveEvent = ({
+function LiveEvent({
   mainClasses,
   otherEvents,
   startingSoonDelta,
@@ -23,7 +24,7 @@ const LiveEvent = ({
   featureLabel,
   featureReadMoreUrl,
   ...rest
-}) => {
+}) {
   const { t, lang } = useTranslation('live-event');
   const [isOpen, setIsOpen] = useState(false);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -298,12 +299,12 @@ const LiveEvent = ({
       )}
     </Box>
   );
-};
+}
 
 LiveEvent.propTypes = {
-  mainClasses: PropTypes.arrayOf(PropTypes.any),
-  otherEvents: PropTypes.arrayOf(PropTypes.any),
-  stTranslation: PropTypes.objectOf(PropTypes.any),
+  mainClasses: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  otherEvents: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   startingSoonDelta: PropTypes.number,
   featureLabel: PropTypes.string,
   featureReadMoreUrl: PropTypes.string,

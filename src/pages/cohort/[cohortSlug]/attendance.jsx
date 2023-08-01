@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable no-nested-ternary */
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
@@ -30,7 +31,7 @@ import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../common/componen
 import Sparkline from '../../../common/components/Sparkline';
 import KPI from '../../../common/components/KPI';
 
-const Attendance = () => {
+function Attendance() {
   const { t } = useTranslation('attendance');
   const router = useRouter();
   const toast = useToast();
@@ -494,6 +495,6 @@ const Attendance = () => {
       </GridContainer>
     </>
   );
-};
+}
 
 export default asPrivate(Attendance);

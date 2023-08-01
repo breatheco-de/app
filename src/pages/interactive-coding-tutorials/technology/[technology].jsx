@@ -58,7 +58,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
   const dataFiltered = projects?.results;
 
-  if (response.status >= 400 || response.status_code >= 400
+  if (responseTechs.status >= 400 || response.status >= 400 || response.status_code >= 400
     || !technologyData || dataFiltered.length === 0) {
     return {
       notFound: true,
@@ -92,7 +92,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   };
 };
 
-const ProjectsByTechnology = ({ projects, technologyData }) => {
+function ProjectsByTechnology({ projects, technologyData }) {
   const { t } = useTranslation('projects');
 
   // const translations = projects?.translations || { es: '', en: '', us: '' };
@@ -114,11 +114,11 @@ const ProjectsByTechnology = ({ projects, technologyData }) => {
         fontWeight="700"
         paddingBottom="6px"
       >
-        {t('landing-technology.title', { technology: toCapitalize(technologyData.title) })}
+        {t('landing-technology.title', { technology: toCapitalize(technologyData?.title) })}
       </Text>
       <Box flex="1" pb="2rem">
         <Heading as="span" size="xl">
-          {t('landing-technology.subTitle', { technology: toCapitalize(technologyData.title) })}
+          {t('landing-technology.subTitle', { technology: toCapitalize(technologyData?.title) })}
         </Heading>
 
         <Text
@@ -133,22 +133,24 @@ const ProjectsByTechnology = ({ projects, technologyData }) => {
         </Text>
       </Box>
 
-      <ProjectList
-        projects={projects}
-        // withoutImage
-        // isLoading={isLoading}
-        // contextFilter={}
-        projectPath="interactive-coding-tutorial"
-        pathWithDifficulty
-        notFoundMessage={t('common:asset-not-found-in-current-language')}
-      />
+      {projects?.length > 0 && (
+        <ProjectList
+          projects={projects}
+          // withoutImage
+          // isLoading={isLoading}
+          // contextFilter={}
+          projectPath="interactive-coding-tutorial"
+          pathWithDifficulty
+          notFoundMessage={t('common:asset-not-found-in-current-language')}
+        />
+      )}
     </Box>
   );
-};
+}
 
 ProjectsByTechnology.propTypes = {
-  projects: PropTypes.arrayOf(PropTypes.object).isRequired,
-  technologyData: PropTypes.objectOf(PropTypes.any).isRequired,
+  projects: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
+  technologyData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 export default ProjectsByTechnology;

@@ -93,7 +93,7 @@ function Hamburger2() {
   );
 }
 
-function NavbarWithSubNavigation({ translations, disableLangSwitcher, pageProps }) {
+function NavbarWithSubNavigation({ translations, pageProps }) {
   const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
 
   const [haveSession, setHaveSession] = useState(HAVE_SESSION);
@@ -115,6 +115,7 @@ function NavbarWithSubNavigation({ translations, disableLangSwitcher, pageProps 
   const fontColor = useColorModeValue('black', 'gray.200');
   const colorMode = useColorModeValue('light', 'dark');
 
+  const disableLangSwitcher = pageProps?.disableLangSwitcher || false;
   const langs = ['en', 'es'];
   const locale = router.locale === 'default' ? 'en' : router.locale;
 
@@ -376,9 +377,9 @@ function NavbarWithSubNavigation({ translations, disableLangSwitcher, pageProps 
             }}
             icon={
               colorMode === 'light' ? (
-                <Icon icon="light" width="25px" height="23px" color="black" />
+                <Icon icon="light" id="light-button-desktop" width="25px" height="23px" color="black" />
               ) : (
-                <Icon icon="dark" width="20px" height="20px" />
+                <Icon icon="dark" id="dark-button-desktop" width="20px" height="20px" />
               )
             }
           />
@@ -609,15 +610,16 @@ function NavbarWithSubNavigation({ translations, disableLangSwitcher, pageProps 
           onClickLink={onToggle}
         />
         {/* {isBelowTablet && (
-          <MobileNav
-            mktCourses={!isNotAvailableForMktCourses && marketingCouses?.length > 0 ? marketingCouses : []}
-            NAV_ITEMS={ITEMS}
-            haveSession={sessionExists}
-            translations={translations}
-            readSyllabus={readSyllabus}
-            onClickLink={onToggle}
-          />
-        )} */}
+              <MobileNav
+                mktCourses={!isNotAvailableForMktCourses && marketingCouses?.length > 0 ? marketingCouses : []}
+                NAV_ITEMS={ITEMS}
+                haveSession={sessionExists}
+                translations={translations}
+                readSyllabus={readSyllabus}
+                onClickLink={onToggle}
+              />
+            )}
+        */}
       </Collapse>
     </Box>
   );
@@ -626,12 +628,10 @@ function NavbarWithSubNavigation({ translations, disableLangSwitcher, pageProps 
 NavbarWithSubNavigation.propTypes = {
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   pageProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
-  disableLangSwitcher: PropTypes.bool,
 };
 NavbarWithSubNavigation.defaultProps = {
   translations: undefined,
   pageProps: undefined,
-  disableLangSwitcher: false,
 };
 
 export default memo(NavbarWithSubNavigation);

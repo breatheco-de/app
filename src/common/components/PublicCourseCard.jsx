@@ -8,11 +8,11 @@ import Heading from './Heading';
 import ProjectsSection from './ProjectsSection';
 import useStyle from '../hooks/useStyle';
 
-const PublicCourseCard = ({
+function PublicCourseCard({
   programName, programDescription, programSlug, icon_url, iconBackground, startsIn,
   stTranslation, syllabusContent, courseProgress, usersConnected, assistants,
   teacher, isAvailableAsSaas, subscriptionStatus, width, ...rest
-}) => {
+}) {
   const { t, lang } = useTranslation('program-card');
   const { backgroundColor2, hexColor } = useStyle();
   const textColor = useColorModeValue('black', 'white');
@@ -105,7 +105,7 @@ const PublicCourseCard = ({
       </Box>
     </Box>
   );
-};
+}
 
 PublicCourseCard.propTypes = {
   programName: PropTypes.string.isRequired,
@@ -114,12 +114,12 @@ PublicCourseCard.propTypes = {
   icon_url: PropTypes.string,
   iconBackground: PropTypes.string,
   startsIn: PropTypes.instanceOf(Date),
-  syllabusContent: PropTypes.objectOf(PropTypes.any),
+  syllabusContent: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   courseProgress: PropTypes.number,
-  stTranslation: PropTypes.objectOf(PropTypes.any),
+  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   usersConnected: PropTypes.arrayOf(PropTypes.number),
-  assistants: PropTypes.arrayOf(PropTypes.any),
-  teacher: PropTypes.objectOf(PropTypes.any),
+  assistants: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  teacher: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   isAvailableAsSaas: PropTypes.bool,
   subscriptionStatus: PropTypes.string,
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.objectOf(PropTypes.any)]),

@@ -16,7 +16,7 @@ import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import { SILENT_CODE } from '../../lib/types';
 import bc from '../services/breathecode';
 
-const ShowOnSignUp = ({ headContent, title, description, childrenDescription, subContent, readOnly, children, hideForm, hideSwitchUser, ...rest }) => {
+function ShowOnSignUp({ headContent, title, description, childrenDescription, subContent, readOnly, children, hideForm, hideSwitchUser, ...rest }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
   const { backgroundColor, featuredColor } = useStyle();
@@ -309,7 +309,7 @@ const ShowOnSignUp = ({ headContent, title, description, childrenDescription, su
       />
     </Box>
   );
-};
+}
 
 ShowOnSignUp.propTypes = {
   headContent: PropTypes.node,

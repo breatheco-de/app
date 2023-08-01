@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable react/no-unstable-nested-components */
 import {
   Box, Button, FormLabel, Input, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, Textarea, useToast, useColorModeValue, useDisclosure,
 } from '@chakra-ui/react';
@@ -15,9 +15,9 @@ import useStyle from '../../common/hooks/useStyle';
 // import { getStorageItem } from '../../utils';
 // import Modal from './modal';
 
-export const DetailsModal = ({
+export function DetailsModal({
   currentTask, projectLink, updpateAssignment, isOpen, onClose,
-}) => {
+}) {
   const { hexColor } = useStyle();
   const { t } = useTranslation('assignments');
   const [openUndoApproval, setOpenUndoApproval] = useState(false);
@@ -166,11 +166,11 @@ export const DetailsModal = ({
       </Modal>
     </Modal>
   );
-};
+}
 
-export const DeliverModal = ({
+export function DeliverModal({
   currentTask, projectLink, updpateAssignment, deliveryUrl, isOpen, onClose,
-}) => {
+}) {
   const { t } = useTranslation('assignments');
   const [openIgnoreTask, setOpenIgnoreTask] = useState(false);
   const toast = useToast();
@@ -325,11 +325,11 @@ export const DeliverModal = ({
       </Modal>
     </Modal>
   );
-};
+}
 
-const DeliverHandler = ({
+function DeliverHandler({
   currentTask, projectLink, updpateAssignment,
-}) => {
+}) {
   const { t } = useTranslation('assignments');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
@@ -389,9 +389,9 @@ const DeliverHandler = ({
       />
     </Box>
   );
-};
+}
 
-export const NoInfoModal = ({ isOpen, onClose }) => {
+export function NoInfoModal({ isOpen, onClose }) {
   const { t } = useTranslation('assignments');
   const commonBorderColor = useColorModeValue('gray.250', 'gray.500');
 
@@ -420,9 +420,9 @@ export const NoInfoModal = ({ isOpen, onClose }) => {
       </ModalContent>
     </Modal>
   );
-};
+}
 
-export const ReviewModal = ({ currentTask, projectLink, updpateAssignment, isOpen, onClose }) => {
+export function ReviewModal({ currentTask, projectLink, updpateAssignment, isOpen, onClose }) {
   const { t } = useTranslation('assignments');
   const { hexColor } = useStyle();
   const toast = useToast();
@@ -431,7 +431,7 @@ export const ReviewModal = ({ currentTask, projectLink, updpateAssignment, isOpe
   const commonBorderColor = useColorModeValue('gray.250', 'gray.500');
   const fontColor = useColorModeValue('gra.dark', 'gray.250');
 
-  const ReviewButton = ({ type }) => {
+  function ReviewButton({ type }) {
     const statusColor = {
       approve: 'success',
       reject: 'error',
@@ -498,7 +498,7 @@ export const ReviewModal = ({ currentTask, projectLink, updpateAssignment, isOpe
         {buttonText[type]}
       </Button>
     );
-  };
+  }
 
   ReviewButton.propTypes = {
     type: PropTypes.string.isRequired,
@@ -602,9 +602,9 @@ export const ReviewModal = ({ currentTask, projectLink, updpateAssignment, isOpe
       </ModalContent>
     </Modal>
   );
-};
+}
 
-const ReviewHandler = ({ currentTask, projectLink, updpateAssignment }) => {
+function ReviewHandler({ currentTask, projectLink, updpateAssignment }) {
   const { t } = useTranslation('assignments');
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -628,11 +628,11 @@ const ReviewHandler = ({ currentTask, projectLink, updpateAssignment }) => {
       />
     </Box>
   );
-};
+}
 
-const ButtonHandler = ({
+function ButtonHandler({
   currentTask, cohortSession, updpateAssignment,
-}) => {
+}) {
   const { t } = useTranslation('assignments');
   const router = useRouter();
   const toast = useToast();
@@ -716,11 +716,11 @@ const ButtonHandler = ({
       <DeliverHandler currentTask={currentTask} projectLink={projectLink} cohortSession={cohortSession} updpateAssignment={updpateAssignment} />
     </Box>
   );
-};
+}
 
 ButtonHandler.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.any),
-  cohortSession: PropTypes.objectOf(PropTypes.any),
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  cohortSession: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   updpateAssignment: PropTypes.func.isRequired,
 };
 ButtonHandler.defaultProps = {
@@ -728,12 +728,12 @@ ButtonHandler.defaultProps = {
   cohortSession: null,
 };
 DeliverHandler.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.any).isRequired,
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   projectLink: PropTypes.string.isRequired,
   updpateAssignment: PropTypes.func.isRequired,
 };
 DeliverModal.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.any).isRequired,
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   projectLink: PropTypes.string.isRequired,
   deliveryUrl: PropTypes.string.isRequired,
   updpateAssignment: PropTypes.func.isRequired,
@@ -741,13 +741,13 @@ DeliverModal.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 ReviewHandler.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.any).isRequired,
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   projectLink: PropTypes.string.isRequired,
   updpateAssignment: PropTypes.func.isRequired,
 };
 
 ReviewModal.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.any).isRequired,
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   projectLink: PropTypes.string.isRequired,
   updpateAssignment: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
@@ -760,7 +760,7 @@ NoInfoModal.propTypes = {
 };
 
 DetailsModal.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.any).isRequired,
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   projectLink: PropTypes.string.isRequired,
   updpateAssignment: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,

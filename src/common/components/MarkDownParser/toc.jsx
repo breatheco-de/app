@@ -8,7 +8,7 @@ import React, { Fragment } from 'react';
 import Anchor from './Anchor';
 import { slugify } from '../../../utils';
 
-const Toc = ({ content }) => {
+function Toc({ content }) {
   const { colorMode } = useColorMode();
   const getHierarchy = () => {
     const hierarchy = [];
@@ -121,7 +121,7 @@ const Toc = ({ content }) => {
       })}
     </Box>
   );
-};
+}
 
 Toc.propTypes = {
   content: PropTypes.string,
