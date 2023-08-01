@@ -1,4 +1,4 @@
-import { Box, Image, Link } from '@chakra-ui/react';
+import { Box, Image, Link, useColorModeValue } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
@@ -12,26 +12,29 @@ import modifyEnv from '../../../modifyEnv';
 // import { toCapitalize } from '../../utils';
 import TagCapsule from './TagCapsule';
 import { getBrowserSize } from '../../utils';
+import useStyle from '../hooks/useStyle';
 
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
 
 const Container = ({ course, courses, borderRadius, children, ...rest }) => {
   const router = useRouter();
+  const { fontColor } = useStyle();
+  const bgColor = useColorModeValue('gray.light3', 'featuredDark');
   const langConnector = router.locale === 'en' ? '' : `/${router.locale}`;
 
   const { width: screenWidth } = getBrowserSize();
 
   if (screenWidth < 768) {
     return (
-      <Link href={`https://4geeks.com${langConnector}/${course?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="#F9F9F9" color="black" borderRadius={borderRadius} {...rest}>
+      <Link href={`https://4geeks.com${langConnector}/${course?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background={bgColor} color={fontColor} borderRadius={borderRadius} {...rest}>
         {children}
       </Link>
     );
   }
 
   return (
-    <Box minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="#F9F9F9" color="black" borderRadius={borderRadius} {...rest}>
+    <Box minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background={bgColor} color={fontColor} borderRadius={borderRadius} {...rest}>
       {children}
     </Box>
   );
