@@ -52,7 +52,7 @@ function App({ Component, pageProps }) {
 
         <AuthProvider>
           <ConnectionProvider>
-            {hasMounted && <NavbarSession pageProps={pageProps} translations={pageProps?.translations} />}
+            {hasMounted && <NavbarSession pageProps={pageProps} disableLangSwitcher={pageProps?.disableLangSwitcher} translations={pageProps?.translations} />}
             <InterceptionLoader />
 
             <PrismicProvider internalLinkComponent={(props) => <Link {...props} />}>

@@ -103,7 +103,7 @@ const UpgradeExperience = ({ storySettings, data }) => {
                   borderRadius="50%"
                 >
                   {item?.icon_url ? (
-                    <Img src={item?.icon_url} width="28px" height="28px" />
+                    <Img src={item?.icon_url} width="28px" height="28px" alt="icon" />
                   ) : (
                     <Icon icon="coding" width="20px" height="20px" color="#ffffff" />
                   )}

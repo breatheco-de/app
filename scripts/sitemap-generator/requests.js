@@ -39,6 +39,13 @@ const getReadPages = () => {
   return resp;
 };
 
+const getEvents = async (extraQuerys = {}) => {
+  const qs = parseQuerys(extraQuerys, true);
+  const { data } = await axios.get(`${BREATHECODE_HOST}/v1/events/all${qs}`);
+
+  return data;
+};
+
 const getAsset = async (type, extraQuerys = {}) => {
   const qs = parseQuerys(extraQuerys, true);
   const limit = 100;
@@ -114,4 +121,5 @@ module.exports = {
   getReadPages,
   getLandingTechnologies,
   getTechonologyAssets,
+  getEvents,
 };

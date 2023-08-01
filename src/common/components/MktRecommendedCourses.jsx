@@ -81,73 +81,71 @@ const MktRecommendedCourses = ({ id, technologies, background, title, gridColumn
   };
 
   return courses.length > 0 && (
-    <>
-      <GridContainer
-        maxW="container.xl"
-        gridTemplateColumns="repeat(10, 1fr)"
-        padding="0"
-        {...rest}
+    <GridContainer
+      maxW="container.xl"
+      gridTemplateColumns="repeat(10, 1fr)"
+      padding="0"
+      {...rest}
+    >
+      <Box
+      // flexWrap={{ base: 'wrap', xl: 'nowrap' }}
+        gridColumn={gridColumn}
+        flexWrap="wrap"
+        id={id}
+        borderRadius="13px"
+        padding={{ base: '20px', lg: '30px' }}
+        background={background || featuredColor}
+        display="flex"
       >
-        <Box
-        // flexWrap={{ base: 'wrap', xl: 'nowrap' }}
-          gridColumn={gridColumn}
-          flexWrap="wrap"
-          id={id}
-          borderRadius="13px"
-          padding={{ base: '20px', lg: '30px' }}
-          background={background || featuredColor}
-          display="flex"
-        >
-          {title && (
-            <Box
-              flexShrink="2"
-              minWidth="170px"
-              maxWidth={{ base: 'none', lg: '300px' }}
-            >
-              <Heading
-                as="h2"
-                size="30px"
-                fontWeight="700"
-                color={fontColor}
-                dangerouslySetInnerHTML={{ __html: title }}
-              />
-              <Icon icon="longArrowRight" style={{ margin: '10px 0' }} color={hexColor.blueDefault} width="100px" height="80px" />
-            </Box>
-          )}
+        {title && (
           <Box
-            ref={ref}
-            flexGrow="1"
-            flexDirection={{ base: 'row', xl: courses.length === 1 && 'row-reverse' }}
-            justifyContent={{ base: courses.length > 1 && 'space-between', md: courses.length > 1 ? 'space-between' : 'center', xl: 'space-between' }}
-            display="flex"
-            gridGap="10px"
-            overflowX="hidden"
-            cursor={ref.current?.clientWidth !== ref.current?.scrollWidth && 'grab'}
-            onMouseDown={onMouseDown}
-            onMouseUp={onMouseUp}
-            onMouseMove={onMouseMove}
-            onMouseLeave={onMouseLeave}
-            onTouchStart={onMouseDown}
-            onTouchMove={onMouseMove}
-            onTouchEnd={onMouseLeave}
+            flexShrink="2"
+            minWidth="170px"
+            maxWidth={{ base: 'none', lg: '300px' }}
           >
-            {courses.map((course) => (
-              <PublicCourseCard
-                margin={{ base: courses.length === 1 && 'auto', md: '0' }}
-                width={{ base: courses.length === 1 ? '99%' : '300px', sm: '300px' }}
-                maxWidth="300px"
-                icon_url={course.icon_url}
-                iconBackground="#25BF6C"
-                programName={course.course_translation.title}
-                programSlug={course.slug}
-                programDescription={course.course_translation.description}
-                flexShrink="0"
-              />
-            ))}
+            <Heading
+              as="h2"
+              size="30px"
+              fontWeight="700"
+              color={fontColor}
+              dangerouslySetInnerHTML={{ __html: title }}
+            />
+            <Icon icon="longArrowRight" style={{ margin: '10px 0' }} color={hexColor.blueDefault} width="100px" height="80px" />
           </Box>
+        )}
+        <Box
+          ref={ref}
+          flexGrow="1"
+          flexDirection={{ base: 'row', xl: courses.length === 1 && 'row-reverse' }}
+          justifyContent={{ base: courses.length > 1 && 'space-between', md: courses.length > 1 ? 'space-between' : 'center', xl: 'space-between' }}
+          display="flex"
+          gridGap="10px"
+          overflowX="hidden"
+          cursor={ref.current?.clientWidth !== ref.current?.scrollWidth && 'grab'}
+          onMouseDown={onMouseDown}
+          onMouseUp={onMouseUp}
+          onMouseMove={onMouseMove}
+          onMouseLeave={onMouseLeave}
+          onTouchStart={onMouseDown}
+          onTouchMove={onMouseMove}
+          onTouchEnd={onMouseLeave}
+        >
+          {courses.map((course) => (
+            <PublicCourseCard
+              margin={{ base: courses.length === 1 && 'auto', md: '0' }}
+              width={{ base: courses.length === 1 ? '99%' : '300px', sm: '300px' }}
+              maxWidth="300px"
+              icon_url={course.icon_url}
+              iconBackground="#25BF6C"
+              programName={course.course_translation.title}
+              programSlug={course.slug}
+              programDescription={course.course_translation.description}
+              flexShrink="0"
+            />
+          ))}
         </Box>
-      </GridContainer>
-    </>
+      </Box>
+    </GridContainer>
   );
 };
 

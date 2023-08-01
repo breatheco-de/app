@@ -113,7 +113,7 @@ const MktTestimonials = ({
         >
           {testimonialsArray && testimonialsArray.map((testimonial) => (
             <TestimonialBox
-              key={`${testimonial?.id}-${testimonial?.author?.first_name}`}
+              key={`${testimonial?.author?.first_name}-${testimonial?.author?.last_name}`}
               picture={testimonial?.author?.profile?.avatar_url}
               name={`${testimonial?.author?.first_name} ${testimonial?.author?.last_name}`}
               rating={testimonial?.total_rating}

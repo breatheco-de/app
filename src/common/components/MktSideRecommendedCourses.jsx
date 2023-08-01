@@ -16,7 +16,7 @@ import { getBrowserSize } from '../../utils';
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
 
-const Container = ({ course, courses, children }) => {
+const Container = ({ course, courses, borderRadius, children }) => {
   const router = useRouter();
   const langConnector = router.locale === 'en' ? '' : `/${router.locale}`;
 
@@ -24,20 +24,20 @@ const Container = ({ course, courses, children }) => {
 
   if (screenWidth < 768) {
     return (
-      <Link href={`https://4geeks.com${langConnector}/${course?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="#F9F9F9" color="black" padding="9px 8px" borderRadius="8px">
+      <Link href={`https://4geeks.com${langConnector}/${course?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="#F9F9F9" color="black" padding="9px 8px" borderRadius={borderRadius}>
         {children}
       </Link>
     );
   }
 
   return (
-    <Box minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="#F9F9F9" color="black" padding="9px 8px" borderRadius="8px">
+    <Box minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background="#F9F9F9" color="black" padding="9px 8px" borderRadius={borderRadius}>
       {children}
     </Box>
   );
 };
 
-const MktSideRecommendedCourses = ({ title, endpoint }) => {
+const MktSideRecommendedCourses = ({ title, endpoint, ...rest }) => {
   const { t, lang } = useTranslation('common');
   const [isLoading, setIsLoading] = useState(true);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -64,10 +64,12 @@ const MktSideRecommendedCourses = ({ title, endpoint }) => {
   }, []);
 
   return (
-    <Box minWidth={{ base: '100%', md: '214px' }} width="auto" padding="8px" borderRadius="8px" margin="0 auto">
-      <Heading size="18px" lineHeight="21px" m="10px 0 20px 0">
-        {title || t('continue-learning-course')}
-      </Heading>
+    <Box minWidth={{ base: '100%', md: '214px' }} width="auto" padding="8px" margin="0 auto" {...rest}>
+      {title && (
+        <Heading size="18px" lineHeight="21px" m="10px 0 20px 0">
+          {title || t('continue-learning-course')}
+        </Heading>
+      )}
       {!isLoading && courses?.length > 0 ? (
         <Box display="flex" flexDirection={{ base: 'row', md: 'column' }} overflow="auto" gridGap="14px">
           {courses.map((course) => {
@@ -77,7 +79,7 @@ const MktSideRecommendedCourses = ({ title, endpoint }) => {
             const tags = ['Free course'];
 
             return (
-              <Container key={course?.slug} course={course} courses={courses}>
+              <Container key={course?.slug} course={course} courses={courses} borderRadius={rest.borderRadius}>
                 <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'none', md: 'inherit' }} />
                 <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px">
                   <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'inherit', md: 'none' }} />
@@ -119,14 +121,14 @@ const MktSideRecommendedCourses = ({ title, endpoint }) => {
           })}
         </Box>
       ) : (
-        <CardSkeleton withoutContainer quantity={1} />
+        <CardSkeleton withoutContainer quantity={1} height={rest.skeletonHeight} borderRadius={rest.skeletonBorderRadius} />
       )}
     </Box>
   );
 };
 
 MktSideRecommendedCourses.propTypes = {
-  title: PropTypes.string,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   endpoint: PropTypes.string,
 };
 
@@ -139,11 +141,13 @@ Container.propTypes = {
   course: PropTypes.objectOf(PropTypes.any),
   courses: PropTypes.arrayOf(PropTypes.any),
   children: PropTypes.node.isRequired,
+  borderRadius: PropTypes.string,
 };
 
 Container.defaultProps = {
   course: {},
   courses: [],
+  borderRadius: '8px',
 };
 
 export default MktSideRecommendedCourses;

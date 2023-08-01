@@ -22,7 +22,7 @@ const MktEventCards = ({ id, title, hoursToLimit, endpoint, ...rest }) => {
         const data = res?.data;
         if (data && data.length > 0) {
           const sortDateToLiveClass = sortToNearestTodayDate(data, hoursLimited);
-          const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && l?.ending_at);
+          const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && l?.ending_at && l?.slug);
           setEvents(existentLiveClasses);
         }
       });
@@ -39,14 +39,14 @@ const MktEventCards = ({ id, title, hoursToLimit, endpoint, ...rest }) => {
       {...rest}
     >
       <Flex alignItems="center" gridGap="32px" marginBottom="32px">
-        <Heading size="l" fontWeight={700}>
+        <Heading as="h2" fontWeight={700} style={{ fontSize: '38px' }}>
           {title}
         </Heading>
         <Icon icon="longArrowRight" width="58px" height="30px" />
       </Flex>
       <Box position="relative" className="hideOverflowX__" overflow="auto" width="100%">
         <Flex gridGap="20px" width="max-content" margin="0">
-          {events.map((event) => event.slug !== null && (
+          {events.map((event) => (
             <EventCard
               key={event?.id}
               id={event?.id}
@@ -54,7 +54,7 @@ const MktEventCards = ({ id, title, hoursToLimit, endpoint, ...rest }) => {
               title={event?.title}
               host={event?.host}
               ignoreDynamicHandler
-              description={event?.description}
+              description={event?.excerpt}
               technologies={event?.technologies || []}
               startingAt={event?.starting_at}
               endingAt={event?.ending_at}

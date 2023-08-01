@@ -57,6 +57,15 @@ const ShowOnSignUp = ({ headContent, title, description, childrenDescription, su
         || data.silent_code === SILENT_CODE.USER_INVITE_ACCEPTED_EXISTS) {
       setShowAlreadyMember(true);
     }
+    if (resp?.status >= 400) {
+      toast({
+        position: 'top',
+        title: data?.detail,
+        status: 'error',
+        isClosable: true,
+        duration: 6000,
+      });
+    }
     setStorageItem('subscriptionId', data?.id);
 
     if (data?.access_token) {
@@ -101,7 +110,7 @@ const ShowOnSignUp = ({ headContent, title, description, childrenDescription, su
       {headContent}
       {subContent}
 
-      <Box display="flex" flexDirection="column" gridGap="10px" padding="0 18px 18px">
+      <Box display="flex" flexDirection="column" gridGap={rest?.gridGap || '10px'} padding="0 18px 18px">
         {title && (
           <Text size="21px" fontWeight={700} lineHeight="25px">
             {title}

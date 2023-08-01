@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
   Box,
   Flex,
@@ -20,11 +19,13 @@ import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
 
 const MobileItem = ({
-  label, subMenu, href, asPath, description, icon,
+  label, subMenu, href, onClickLink, description, icon,
 }) => {
   // const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
   const linkColor = useColorModeValue('gray.600', 'gray.200');
+  const bordercolor1 = useColorModeValue('gray.200', 'gray.700');
+  const bordercolor2 = useColorModeValue('gray.200', 'gray.900');
 
   // const getColorLink = (link) => {
   //   if (router?.pathname === link || router.asPath === link || router?.pathname.includes(link)) {
@@ -32,6 +33,7 @@ const MobileItem = ({
   //   }
   //   return linkColor;
   // };
+  const itemSubMenu = subMenu?.length > 0 && subMenu;
 
   return (
     <Stack spacing={4}>
@@ -44,6 +46,7 @@ const MobileItem = ({
             target={isAbsoluteUrl(href) ? '_blank' : undefined}
             rel={isAbsoluteUrl(href) ? 'noopener noreferrer' : undefined}
             display="flex"
+            onClick={onClickLink}
             justifyContent="space-between"
             align="center"
             _hover={{
@@ -57,7 +60,7 @@ const MobileItem = ({
           </NextChakraLink>
         </Box>
       )}
-      {subMenu && (
+      {itemSubMenu && (
         <Flex
           py={2}
           justifyContent="left"
@@ -87,7 +90,7 @@ const MobileItem = ({
         <Stack
           pl={4}
           borderLeft="2px solid"
-          borderColor={useColorModeValue('gray.200', 'gray.700')}
+          borderColor={bordercolor1}
           align="start"
         >
           <Flex
@@ -96,7 +99,7 @@ const MobileItem = ({
             gridGap="15px"
             borderBottom={1}
             borderStyle="solid"
-            borderColor={useColorModeValue('gray.200', 'gray.900')}
+            borderColor={bordercolor2}
             alignItems="center"
             color={linkColor}
           >
@@ -113,8 +116,8 @@ const MobileItem = ({
             </Box>
           </Flex>
 
-          {subMenu
-            && subMenu.map((child) => (child.subMenu ? (
+          {itemSubMenu
+            && itemSubMenu.map((child) => (child.subMenu ? (
               <Accordion key={child.label} allowMultiple width="100%">
                 <AccordionItem border="0">
                   <AccordionButton>
@@ -133,6 +136,7 @@ const MobileItem = ({
                       {child.subMenu.map((l) => (
                         <NextChakraLink
                           key={l.label}
+                          onClick={onClickLink}
                           // color={getColorLink(l.href)}
                           style={{ textDecoration: 'none' }}
                           href={l.href}
@@ -147,6 +151,7 @@ const MobileItem = ({
             ) : (
               <NextChakraLink
                 key={child.label}
+                onClick={onClickLink}
                 // color={getColorLink(child.href)}
                 style={{ textDecoration: 'none' }}
                 py={2}
@@ -166,7 +171,6 @@ MobileItem.propTypes = {
   description: PropTypes.string,
   icon: PropTypes.string,
   href: PropTypes.string,
-  asPath: PropTypes.string,
   subMenu: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string,
@@ -174,10 +178,10 @@ MobileItem.propTypes = {
       href: PropTypes.string,
     }),
   ),
+  onClickLink: PropTypes.func.isRequired,
 };
 
 MobileItem.defaultProps = {
-  asPath: '',
   href: '/',
   description: '',
   icon: 'book',
