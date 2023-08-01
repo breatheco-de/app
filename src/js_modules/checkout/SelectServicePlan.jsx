@@ -19,12 +19,12 @@ const SelectServicePlan = () => {
   const [subscriptions, setSubscriptions] = useState([]);
   const [selectedService, setSelectedService] = useState({});
 
-  const queryPlans = getQueryString('plans');
+  // const queryPlans = getQueryString('plans');
   const queryMentorshipServiceSet = getQueryString('mentorship_service_set');
   const queryEventTypeSet = getQueryString('event_type_set');
   const backgroundItem = useColorModeValue('#F9F9F9', 'gray.800');
 
-  const allQueryPlans = queryPlans.split(',');
+  // const allQueryPlans = queryPlans.split(',');
   const allQueryMentorshipServiceSet = typeof queryMentorshipServiceSet === 'string' ? queryMentorshipServiceSet.split(',') : [];
   const allQueryEventTypeSet = typeof queryEventTypeSet === 'string' ? queryEventTypeSet.split(',') : [];
   const allServices = [...allQueryMentorshipServiceSet, ...allQueryEventTypeSet];
@@ -54,9 +54,9 @@ const SelectServicePlan = () => {
     const allPlans = [...planFinancing, ...planSubscriptions];
 
     const findedPlanCoincidences = allPlans.filter((plan) => {
-      const findedPlan = allQueryPlans.find(
-        (queryPlan) => queryPlan === plan?.plans?.[0]?.slug,
-      );
+      // const findedPlan = allQueryPlans.find(
+      //   (queryPlan) => queryPlan === plan?.plans?.[0]?.slug,
+      // );
       const findedMentorshipServiceSet = allQueryMentorshipServiceSet.find(
         (qServiceSet) => qServiceSet === plan?.selected_mentorship_service_set?.slug,
       );
@@ -65,10 +65,12 @@ const SelectServicePlan = () => {
       );
 
       if (allQueryEventTypeSet.length > 0) {
-        return findedPlan && findedEventTypeSet;
+        return findedEventTypeSet;
+        // return findedPlan && findedEventTypeSet;
       }
 
-      return findedPlan && findedMentorshipServiceSet;
+      return findedMentorshipServiceSet;
+      // return findedPlan && findedMentorshipServiceSet;
     });
 
     if (resp.statusText === 'OK' && findedPlanCoincidences.length > 1) {
@@ -127,7 +129,9 @@ const SelectServicePlan = () => {
                   ? t('select-service-of-plan.select-text')
                   : t('select-service-of-plan.subscription-not-found')}
               </Text>
-              <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-7.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+              {subscriptions.length <= 0 && (
+                <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-7.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+              )}
             </Box>
 
             {subscriptions.length <= 0 && (
