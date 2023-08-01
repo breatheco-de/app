@@ -1,5 +1,5 @@
 import {
-  createContext, useEffect, useState,
+  createContext, useEffect, useMemo, useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
@@ -65,13 +65,13 @@ function OnlineContext({ children }) {
     }
   }, [isLoading, temporalToken]);
 
-  const arrayOfUsers = Object.keys(usersConnected).map((key) => Number(key));
+  const values = useMemo(() => ({
+    usersConnected: Object.keys(usersConnected).map((key) => Number(key)),
+  }), [usersConnected]);
+
   return (
     <ConnectionContext.Provider
-      // eslint-disable-next-line react/jsx-no-constructed-context-values
-      value={{
-        usersConnected: arrayOfUsers,
-      }}
+      value={values}
     >
       {children}
     </ConnectionContext.Provider>
