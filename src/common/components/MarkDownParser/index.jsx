@@ -13,7 +13,7 @@ import bc from '../../services/breathecode';
 
 // import { useRouter } from 'next/router';
 import {
-  BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner,
+  BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner, Quote,
 } from './MDComponents';
 import { usePersistent } from '../../hooks/usePersistent';
 import Toc from './toc';
@@ -136,7 +136,6 @@ const MarkDownParser = ({
           <SubTasks subTasks={subTasks} assetType={assetType} />
         )}
       </ContentHeading>
-
       {isPublic && withToc && (
         <Toc content={content} />
       )}
@@ -176,6 +175,7 @@ const MarkDownParser = ({
               <li>{props?.children}</li>
             );
           },
+          quote: Quote,
         }}
       >
         {content}
