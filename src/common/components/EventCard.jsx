@@ -15,7 +15,7 @@ import useStyle from '../hooks/useStyle';
 function EventCard({ id, slug, title, ignoreDynamicHandler, description, host, startingAt, endingAt, technologies, stTranslation, ...rest }) {
   const { t, lang } = useTranslation('live-event');
   const [date, setDate] = useState('');
-  const { lightColor, disabledColor2 } = useStyle();
+  const { lightColor, disabledColor2, featuredColor } = useStyle();
   const startedButRemain = date?.started && date?.ended === false;
   // const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   // const accessToken = getStorageItem('accessToken');
@@ -108,7 +108,7 @@ function EventCard({ id, slug, title, ignoreDynamicHandler, description, host, s
   }, []);
 
   return (
-    <Flex flexDirection="column" gridGap="16px" maxWidth={{ base: '260px', sm: '310px' }} borderRadius="12px" padding="16px" border={startedButRemain ? '2px solid' : '1px solid'} borderColor={startedButRemain ? 'blue.default' : 'gray.350'} background={startedButRemain ? 'blue.light' : 'inherit'} {...rest}>
+    <Flex flexDirection="column" gridGap="16px" maxWidth={{ base: '260px', sm: '310px' }} borderRadius="12px" padding="16px" border={startedButRemain ? '2px solid' : '1px solid'} borderColor={startedButRemain ? 'blue.default' : 'gray.350'} background={startedButRemain ? featuredColor : 'inherit'} {...rest}>
       {/* -------------------------------- head event info -------------------------------- */}
       <Flex justifyContent="space-between" alignItems="center">
         <Box color={startedButRemain ? 'blue.default' : lightColor} display="flex" alignItems="center" gridGap="8px">
