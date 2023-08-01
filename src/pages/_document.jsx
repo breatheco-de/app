@@ -1,24 +1,9 @@
-/* eslint-disable react/no-danger */
 import * as React from 'react';
 
 import { ColorModeScript } from '@chakra-ui/react';
 import createEmotionServer from '@emotion/server/create-instance';
 import Document, { Head, Html, Main, NextScript } from 'next/document';
 import emotionCache from '../lib/emotion-cache';
-// import { Html, Head, Main, NextScript } from 'next/document';
-
-// export default function Document() {
-//   // <Html className="notranslate" translate="no">
-//   return (
-//     <Html>
-//       <Head />
-//       <body>
-//         <Main />
-//         <NextScript />
-//       </body>
-//     </Html>
-//   );
-// }
 
 const { extractCritical } = createEmotionServer(emotionCache);
 
@@ -34,6 +19,13 @@ export default class CustomDocument extends Document {
           key="emotion-css"
           dangerouslySetInnerHTML={{ __html: styles.css }}
           data-emotion-css={styles.ids.join(' ')}
+        />,
+        <link
+          key="katex-css"
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css"
+          integrity="sha384-Xi8rHCmBmhbuyyhbI88391ZKP2dmfnOl4rT9ZfRI7mLTdk1wblIUnrIq35nqwEvC"
+          crossOrigin="anonymous"
         />,
       ],
     };
