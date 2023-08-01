@@ -123,7 +123,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   };
 };
 
-const Projects = ({ projects, technologyTags, difficulties }) => {
+function Projects({ projects, technologyTags, difficulties }) {
   const { t } = useTranslation('projects');
   const { filteredBy, setProjectFilters } = useFilter();
   const iconColor = useColorModeValue('#FFF', '#283340');
@@ -273,11 +273,11 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
       </GridContainer>
     </Box>
   );
-};
+}
 
 Projects.propTypes = {
-  technologyTags: PropTypes.arrayOf(PropTypes.any).isRequired,
-  projects: PropTypes.arrayOf(PropTypes.object).isRequired,
+  technologyTags: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  projects: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
   difficulties: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 

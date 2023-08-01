@@ -22,9 +22,9 @@ import ModalInfo from '../moduleMap/modalInfo';
 import Text from '../../common/components/Text';
 import { SILENT_CODE } from '../../lib/types';
 
-const ContactInformation = ({
+function ContactInformation({
   courseChoosed, formProps, setFormProps, setVerifyEmailProps,
-}) => {
+}) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
   const {
@@ -274,11 +274,11 @@ const ContactInformation = ({
       />
     </Box>
   );
-};
+}
 
 ContactInformation.propTypes = {
   courseChoosed: PropTypes.string,
-  formProps: PropTypes.objectOf(PropTypes.any).isRequired,
+  formProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   setFormProps: PropTypes.func,
   setVerifyEmailProps: PropTypes.func.isRequired,
 };

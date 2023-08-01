@@ -3,10 +3,10 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import Devices from '../responsive';
 
-const Heading = ({ type, children, className }) => {
+function Heading({ type, children, className }) {
   const Comp = type;
   return <Comp className={className}>{children}</Comp>;
-};
+}
 
 Heading.propTypes = {
   type: PropTypes.string,

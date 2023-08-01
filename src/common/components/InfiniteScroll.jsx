@@ -87,7 +87,7 @@ function InfiniteScroll({ data, renderItem, loadMore, hasMore, currentPage, page
 }
 
 InfiniteScroll.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.any).isRequired,
+  data: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   renderItem: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
   loadMore: PropTypes.func.isRequired,
   hasMore: PropTypes.bool.isRequired,

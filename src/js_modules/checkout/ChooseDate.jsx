@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 import { Box, Button, Flex, useToast } from '@chakra-ui/react';
 import { es } from 'date-fns/locale';
 import { format } from 'date-fns';
@@ -9,7 +10,7 @@ import Text from '../../common/components/Text';
 import useSignup from '../../common/store/actions/signupAction';
 import bc from '../../common/services/breathecode';
 
-const ChooseDate = ({ cohort, ...rest }) => {
+function ChooseDate({ cohort, ...rest }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const toast = useToast();
@@ -100,10 +101,10 @@ const ChooseDate = ({ cohort, ...rest }) => {
       </Button>
     </Box>
   );
-};
+}
 
 ChooseDate.propTypes = {
-  cohort: PropTypes.objectOf(PropTypes.any),
+  cohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 ChooseDate.defaultProps = {

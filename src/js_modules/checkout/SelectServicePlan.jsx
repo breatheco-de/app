@@ -11,7 +11,7 @@ import { parseQuerys } from '../../utils/url';
 import Icon from '../../common/components/Icon';
 import modifyEnv from '../../../modifyEnv';
 
-const SelectServicePlan = () => {
+function SelectServicePlan() {
   const { t, lang } = useTranslation('signup');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { backgroundColor, hexColor, modal } = useStyle();
@@ -202,6 +202,6 @@ const SelectServicePlan = () => {
       </Button>
     </Box>
   );
-};
+}
 
 export default SelectServicePlan;

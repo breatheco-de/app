@@ -13,7 +13,7 @@ import modifyEnv from '../../../modifyEnv';
 
 const coursesLimit = 2;
 
-const MktRecommendedCourses = ({ id, technologies, background, title, gridColumn, endpoint, ...rest }) => {
+function MktRecommendedCourses({ id, technologies, background, title, gridColumn, endpoint, ...rest }) {
   const { lang } = useTranslation('common');
   const ref = useRef(null);
   const [isDown, setIsDown] = useState(false);
@@ -88,7 +88,7 @@ const MktRecommendedCourses = ({ id, technologies, background, title, gridColumn
       {...rest}
     >
       <Box
-      // flexWrap={{ base: 'wrap', xl: 'nowrap' }}
+        // flexWrap={{ base: 'wrap', xl: 'nowrap' }}
         gridColumn={gridColumn}
         flexWrap="wrap"
         id={id}
@@ -147,7 +147,7 @@ const MktRecommendedCourses = ({ id, technologies, background, title, gridColumn
       </Box>
     </GridContainer>
   );
-};
+}
 
 MktRecommendedCourses.propTypes = {
   id: PropTypes.string,

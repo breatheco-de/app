@@ -740,8 +740,13 @@
     "permanent": true
   },
   {
-    "source": "/lesson/working-with-strings-in-python-es",
-    "destination": "/es/lesson/working-with-strings-in-python-es",
+    "source": "/lesson/sorting-algorithms-explanied-in-javascript-es",
+    "destination": "/es/lesson/sorting-algorithms-explanied-in-javascript-es",
+    "permanent": true
+  },
+  {
+    "source": "/lesson/regex-tutorial-regular-expression-ejemplo",
+    "destination": "/es/lesson/regex-tutorial-regular-expression-ejemplo",
     "permanent": true
   },
   {
@@ -760,8 +765,8 @@
     "permanent": true
   },
   {
-    "source": "/interactive-exercise/tutorial-pandas-para-machine-learning",
-    "destination": "/es/interactive-exercise/tutorial-pandas-para-machine-learning",
+    "source": "/lesson/depurando-codigo-html",
+    "destination": "/es/lesson/depurando-codigo-html",
     "permanent": true
   },
   {

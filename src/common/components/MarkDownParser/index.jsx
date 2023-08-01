@@ -13,7 +13,7 @@ import bc from '../../services/breathecode';
 
 // import { useRouter } from 'next/router';
 import {
-  BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner,
+  BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner, Quote,
 } from './MDComponents';
 import { usePersistent } from '../../hooks/usePersistent';
 import Toc from './toc';
@@ -22,9 +22,60 @@ import CallToAction from '../CallToAction';
 import SubTasks from './SubTasks';
 import modifyEnv from '../../../../modifyEnv';
 
-const MarkDownParser = ({
+function MarkdownH2Heading({ ...props }) {
+  return (
+    <MDHeading tagType="h2" {...props} />
+  );
+}
+function MarkdownH3Heading({ ...props }) {
+  return (
+    <MDHeading tagType="h3" {...props} />
+  );
+}
+function UlComponent({ children }) {
+  return (<ul className="md-bullet">{children}</ul>);
+}
+function OlComponent({ children }) {
+  return (<ol className="md-bullet">{children}</ol>);
+}
+function ImgComponent({ ...props }) {
+  return (<Img className="MDImg" {...props} />);
+}
+function ParagraphComponent({ ...props }) {
+  return (<MDText {...props} />);
+}
+function HrComponent({ ...props }) {
+  return (<MDHr {...props} />);
+}
+function IframeComponent({ ...props }) {
+  return (<iframe title={props.title || 'iframe-content'} className="MDIframe" {...props} />);
+}
+function OnlyForComponent({ cohortSession, profile, ...props }) {
+  return (<OnlyForBanner cohortSession={cohortSession} profile={profile} {...props} />);
+}
+
+function ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTasks, updateSubTask, ...props }) {
+  const childrenExists = props?.children?.length >= 0;
+  const type = childrenExists && props?.children[0]?.props && props.children[0].props.type;
+  const type2 = childrenExists && props?.children[1]?.props && props.children[1]?.props.node?.children[0]?.properties?.type;
+  return (type === 'checkbox' || type2 === 'checkbox') ? (
+    <MDCheckbox
+      className="MDCheckbox"
+      {...props}
+      subTasksLoaded={subTasksLoaded}
+      subTasksProps={subTasksProps}
+      setSubTasksProps={setSubTasksProps}
+      subTasks={subTasks}
+      updateSubTask={updateSubTask}
+    />
+  ) : (
+    <li>{props?.children}</li>
+  );
+}
+
+function MarkDownParser({
   content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask, isPublic, currentData,
-}) => {
+}) {
   const { t } = useTranslation('common');
   const [subTasks, setSubTasks] = useState([]);
   const [subTasksLoaded, setSubTasksLoaded] = useState(false);
@@ -62,8 +113,7 @@ const MarkDownParser = ({
     }
   }, [currentTask]);
 
-  // Create subTasks if not exists
-  useEffect(async () => {
+  const createSubTasksIfNotExists = async () => {
     // const cleanedSubTasks = subTasks.filter((task) => task.id !== currentTask.id);
     if (currentTask?.id && subTasksProps.length > 0) {
       const resp = await bc.todo().subtask().update(
@@ -78,6 +128,11 @@ const MarkDownParser = ({
         setSubTasks(respData);
       }
     }
+  };
+
+  // Create subTasks if not exists
+  useEffect(() => {
+    createSubTasksIfNotExists();
   }, [subTasksProps]);
 
   const newExerciseText = t('learnpack.new-exercise');
@@ -136,7 +191,6 @@ const MarkDownParser = ({
           <SubTasks subTasks={subTasks} assetType={assetType} />
         )}
       </ContentHeading>
-
       {isPublic && withToc && (
         <Toc content={content} />
       )}
@@ -148,51 +202,42 @@ const MarkDownParser = ({
         components={{
           a: MDLink,
           code: Code,
-          h1: ({ ...props }) => <MDHeading tagType="h2" {...props} />,
-          h2: ({ ...props }) => <MDHeading tagType="h2" {...props} />,
-          h3: ({ ...props }) => <MDHeading tagType="h3" {...props} />,
-          ul: ({ ...props }) => <ul className="md-bullet">{props.children}</ul>,
-          ol: ({ ...props }) => <ol className="md-bullet">{props.children}</ol>,
-          img: ({ ...props }) => <Img className="MDImg" {...props} />,
-          p: ({ ...props }) => <MDText {...props} />,
-          hr: ({ ...props }) => <MDHr {...props} />,
+          h1: MarkdownH2Heading,
+          h2: MarkdownH2Heading,
+          h3: MarkdownH3Heading,
+          ul: UlComponent,
+          ol: OlComponent,
+          img: ImgComponent,
+          p: ParagraphComponent,
+          hr: HrComponent,
           BeforeAfter,
           'before-after': BeforeAfter,
-          iframe: ({ ...props }) => <iframe title={props.title || 'iframe-content'} className="MDIframe" {...props} />,
+          iframe: IframeComponent,
           // table: {
           //   component: MDTable,
           // },
-          onlyfor: ({ ...props }) => <OnlyForBanner cohortSession={cohortSession} profile={profile} {...props} />,
+          onlyfor: ({ ...props }) => OnlyForComponent({ ...props, cohortSession, profile }),
           // Component for list of checkbox
           // children[1].props.node.children[0].properties.type
-          li: ({ ...props }) => {
-            // eslint-disable-next-line prefer-destructuring
-            const childrenExists = props?.children?.length >= 0;
-            const type = childrenExists && props?.children[0]?.props && props.children[0].props.type;
-            const type2 = childrenExists && props?.children[1]?.props && props.children[1]?.props.node?.children[0]?.properties?.type;
-            return (type === 'checkbox' || type2 === 'checkbox') ? (
-              <MDCheckbox className="MDCheckbox" {...props} subTasksLoaded={subTasksLoaded} subTasksProps={subTasksProps} setSubTasksProps={setSubTasksProps} subTasks={subTasks} updateSubTask={updateSubTask} />
-            ) : (
-              <li>{props?.children}</li>
-            );
-          },
+          li: ({ ...props }) => ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTasks, updateSubTask, ...props }),
+          quote: Quote,
         }}
       >
         {content}
       </ReactMarkdown>
     </>
   );
-};
+}
 
 MarkDownParser.propTypes = {
   content: PropTypes.string,
-  callToActionProps: PropTypes.objectOf(PropTypes.any),
+  callToActionProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
   withToc: PropTypes.bool,
-  frontMatter: PropTypes.objectOf(PropTypes.any),
+  frontMatter: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
   titleRightSide: PropTypes.node,
-  currentTask: PropTypes.objectOf(PropTypes.any),
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
   isPublic: PropTypes.bool,
-  currentData: PropTypes.objectOf(PropTypes.any),
+  currentData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
 };
 MarkDownParser.defaultProps = {
   content: '',

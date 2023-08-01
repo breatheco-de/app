@@ -4,9 +4,9 @@ import Heading from '../Heading';
 import Text from '../Text';
 import Icon from '../Icon';
 
-const ContentHeading = ({
+function ContentHeading({
   content, children, callToAction, titleRightSide,
-}) => {
+}) {
   const { title, subtitle, assetType } = content;
   const assetTypeIcons = {
     LESSON: 'book',
@@ -43,10 +43,10 @@ const ContentHeading = ({
       {children}
     </Box>
   );
-};
+}
 
 ContentHeading.propTypes = {
-  content: PropTypes.objectOf(PropTypes.any),
+  content: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
   callToAction: PropTypes.node,
   titleRightSide: PropTypes.node,

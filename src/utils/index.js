@@ -35,14 +35,18 @@ const slugify = (str) => (typeof str === 'string' ? str
 
 const unSlugify = (str) => (typeof str === 'string' ? str
   .replace(/-/g, ' ')
-  .replace(/\w\S*/g,
-  (txt) => txt.charAt(0) + txt.substr(1).toLowerCase())
+  .replace(
+    /\w\S*/g,
+    (txt) => txt.charAt(0) + txt.substr(1).toLowerCase(),
+  )
   : '');
 
 const unSlugifyCapitalize = (str) => (typeof str === 'string' ? str
   .replace(/-/g, ' ')
-  .replace(/\w\S*/g,
-  (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase())
+  .replace(
+/\w\S*/g,
+  (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase(),
+)
   : '');
 
 const cleanQueryStrings = (url) => url.split('?')[0];

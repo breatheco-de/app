@@ -46,7 +46,7 @@ import FinalProject from '../../../../../common/components/FinalProject';
 import FinalProjectModal from '../../../../../common/components/FinalProject/Modal';
 import useStyle from '../../../../../common/hooks/useStyle';
 
-const Dashboard = () => {
+function Dashboard() {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('dashboard');
   const toast = useToast();
@@ -804,6 +804,6 @@ const Dashboard = () => {
       )}
     </>
   );
-};
+}
 
 export default asPrivate(Dashboard);

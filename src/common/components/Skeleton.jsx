@@ -4,7 +4,7 @@ import {
 } from '@chakra-ui/react';
 import useStyle from '../hooks/useStyle';
 
-export const MDSkeleton = () => {
+export function MDSkeleton() {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
 
@@ -73,9 +73,9 @@ export const MDSkeleton = () => {
       />
     </Box>
   );
-};
+}
 
-export const ModuleMapSkeleton = () => {
+export function ModuleMapSkeleton() {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
 
@@ -171,12 +171,12 @@ export const ModuleMapSkeleton = () => {
       />
     </Box>
   );
-};
+}
 
-export const CardSkeleton = ({
+export function CardSkeleton({
   withoutContainer, quantity, templateColumns, gridGap, cardWidth, cardHeight,
   cardRadius, ...rest
-}) => {
+}) {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
 
@@ -220,9 +220,9 @@ export const CardSkeleton = ({
       })}
     </>
   );
-};
+}
 
-export const DottedTimelineSkeleton = () => {
+export function DottedTimelineSkeleton() {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
   const { borderColor, backgroundColor2 } = useStyle();
@@ -271,10 +271,10 @@ export const DottedTimelineSkeleton = () => {
       })}
     </Flex>
   );
-};
-export const AvatarSkeleton = ({
+}
+export function AvatarSkeleton({
   withText, quantity, templateColumns, gridAutoRows, gridGap, ...chakraProps
-}) => {
+}) {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
 
@@ -329,11 +329,11 @@ export const AvatarSkeleton = ({
       )}
     </>
   );
-};
+}
 
-export const AvatarSkeletonWrapped = ({
+export function AvatarSkeletonWrapped({
   quantity, ...chakraProps
-}) => {
+}) {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
 
@@ -354,9 +354,9 @@ export const AvatarSkeletonWrapped = ({
       })}
     </AvatarGroup>
   );
-};
+}
 
-export const SimpleSkeleton = ({ width, height, ...chakraProps }) => {
+export function SimpleSkeleton({ width, height, ...chakraProps }) {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
   return (
@@ -368,7 +368,7 @@ export const SimpleSkeleton = ({ width, height, ...chakraProps }) => {
       endColor={commonEndColor}
     />
   );
-};
+}
 
 CardSkeleton.propTypes = {
   withoutContainer: PropTypes.bool,

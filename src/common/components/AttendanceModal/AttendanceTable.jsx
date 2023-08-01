@@ -8,7 +8,7 @@ import {
 import { useRouter } from 'next/router';
 import Icon from '../Icon';
 
-const AttendanceTable = ({ attendanceTaken }) => {
+function AttendanceTable({ attendanceTaken }) {
   const { t } = useTranslation('dashboard');
   const router = useRouter();
   const attendanceLog = [...attendanceTaken.attendanceStudents, ...attendanceTaken.unattendanceStudents];
@@ -40,12 +40,8 @@ const AttendanceTable = ({ attendanceTaken }) => {
         </Td>
         <Td>
           {router.locale === 'es'
-            ? format(
-              new Date(attendanceTaken.updated_at), 'dd/MM/yyyy',
-            )
-            : format(
-              new Date(attendanceTaken.updated_at), 'yyyy/MM/dd',
-            )}
+            ? format(new Date(attendanceTaken.updated_at), 'dd/MM/yyyy')
+            : format(new Date(attendanceTaken.updated_at), 'yyyy/MM/dd')}
         </Td>
         <Td>{dateElapsed}</Td>
       </Tr>
@@ -75,7 +71,7 @@ const AttendanceTable = ({ attendanceTaken }) => {
       )}
     </TableContainer>
   );
-};
+}
 
 AttendanceTable.propTypes = {
   attendanceTaken: PropTypes.shape({

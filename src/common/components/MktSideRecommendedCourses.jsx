@@ -17,7 +17,7 @@ import useStyle from '../hooks/useStyle';
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
 
-const Container = ({ course, courses, borderRadius, children, ...rest }) => {
+function Container({ course, courses, borderRadius, children, ...rest }) {
   const router = useRouter();
   const { fontColor } = useStyle();
   const bgColor = useColorModeValue('gray.light3', 'featuredDark');
@@ -38,9 +38,9 @@ const Container = ({ course, courses, borderRadius, children, ...rest }) => {
       {children}
     </Box>
   );
-};
+}
 
-const MktSideRecommendedCourses = ({ title, endpoint, containerPadding, ...rest }) => {
+function MktSideRecommendedCourses({ title, endpoint, containerPadding, ...rest }) {
   const { t, lang } = useTranslation('common');
   const [isLoading, setIsLoading] = useState(true);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -52,7 +52,7 @@ const MktSideRecommendedCourses = ({ title, endpoint, containerPadding, ...rest 
     'Accept-Language': lang,
   };
 
-  useEffect(async () => {
+  const fetchCourses = async () => {
     try {
       const res = await fetch(`${BREATHECODE_HOST}${endpoint}`, { headers });
       const data = await res.json();
@@ -64,6 +64,10 @@ const MktSideRecommendedCourses = ({ title, endpoint, containerPadding, ...rest 
     } catch (e) {
       console.log(e);
     }
+  };
+
+  useEffect(() => {
+    fetchCourses();
   }, []);
 
   return (
@@ -128,7 +132,7 @@ const MktSideRecommendedCourses = ({ title, endpoint, containerPadding, ...rest 
       )}
     </Box>
   );
-};
+}
 
 MktSideRecommendedCourses.propTypes = {
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
@@ -143,8 +147,8 @@ MktSideRecommendedCourses.defaultProps = {
 };
 
 Container.propTypes = {
-  course: PropTypes.objectOf(PropTypes.any),
-  courses: PropTypes.arrayOf(PropTypes.any),
+  course: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.string])),
+  courses: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.string])),
   children: PropTypes.node.isRequired,
   borderRadius: PropTypes.string,
 };

@@ -10,7 +10,7 @@ import Icon from '../../common/components/Icon';
 import useDistanceDate from '../../common/hooks/useDistanceDate';
 import { devLog } from '../../utils';
 
-const Events = ({ data, events }) => {
+function Events({ data, events }) {
   const featuredColors = useColorModeValue('featuredLight', 'featuredDark');
   const router = useRouter();
 
@@ -145,10 +145,10 @@ const Events = ({ data, events }) => {
       </Box>
     </Container>
   );
-};
+}
 
 Events.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any).isRequired,
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   events: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.any), PropTypes.any]),
 };
 Events.defaultProps = {

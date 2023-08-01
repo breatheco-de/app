@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Box, useColorModeValue } from '@chakra-ui/react';
 import MotionBox from '../MotionBox';
 
-const Progress = ({
+function Progress({
   percents,
   duration,
   delay,
@@ -13,7 +13,7 @@ const Progress = ({
   baseColor,
   borderRadius,
   widthSize,
-}) => {
+}) {
   const [barWidth, setBarWidth] = useState(0);
   const [initialized, setInitialized] = useState(false);
   const progressClass = typeof document !== 'undefined' && document.querySelector('.progress-bar');
@@ -68,7 +68,7 @@ const Progress = ({
       />
     </Box>
   );
-};
+}
 
 Progress.propTypes = {
   percents: PropTypes.number,

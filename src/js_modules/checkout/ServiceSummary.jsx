@@ -37,7 +37,7 @@ const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
   );
 });
 
-const ServiceSummary = ({ service }) => {
+function ServiceSummary({ service }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
   const {
@@ -377,9 +377,12 @@ const ServiceSummary = ({ service }) => {
                       cvc: '',
                     }}
                     onSubmit={(values, actions) => {
+                      const expMonthValue = values.exp?.getMonth() || 0;
+                      const expYearValue = values.exp?.getFullYear() || 0;
+
                       setIsSubmitting(true);
-                      const expMonth = number2DIgits(values.exp?.getMonth() + 1);
-                      const expYear = number2DIgits(values.exp?.getFullYear() - 2000);
+                      const expMonth = number2DIgits(expMonthValue + 1);
+                      const expYear = number2DIgits(expYearValue - 2000);
 
                       const allValues = {
                         card_number: stateCard.card_number,
@@ -530,10 +533,10 @@ const ServiceSummary = ({ service }) => {
         )}
     </Box>
   );
-};
+}
 
 ServiceSummary.propTypes = {
-  service: PropTypes.objectOf(PropTypes.any),
+  service: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 ServiceSummary.defaultProps = {
   service: {},

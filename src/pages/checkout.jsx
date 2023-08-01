@@ -59,7 +59,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   };
 };
 
-const Checkout = () => {
+function Checkout() {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t, lang } = useTranslation('signup');
   const router = useRouter();
@@ -432,6 +432,6 @@ const Checkout = () => {
       </Box>
     </Box>
   );
-};
+}
 
 export default Checkout;

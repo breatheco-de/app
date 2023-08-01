@@ -75,7 +75,7 @@ export const getStaticProps = async ({ locale, locales, params }) => {
   };
 };
 
-const Read = ({ data }) => {
+function Read({ data }) {
   const router = useRouter();
   const { t } = useTranslation('read');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
@@ -258,10 +258,10 @@ const Read = ({ data }) => {
       </GridContainer>
     </Box>
   );
-};
+}
 
 Read.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any),
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 Read.defaultProps = {
   data: null,

@@ -7,7 +7,7 @@ import { usePersistent } from '../../common/hooks/usePersistent';
 import axios from '../../axios';
 import useProgramList from '../../common/store/actions/programListAction';
 
-const Programs = ({ item, handleChoose, onOpenModal }) => {
+function Programs({ item, handleChoose, onOpenModal }) {
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const { programsList } = useProgramList();
   const { cohort } = item;
@@ -103,10 +103,10 @@ const Programs = ({ item, handleChoose, onOpenModal }) => {
       onOpenModal={onClickUpgrade}
     />
   );
-};
+}
 
 Programs.propTypes = {
-  item: PropTypes.objectOf(PropTypes.any),
+  item: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   handleChoose: PropTypes.func,
   onOpenModal: PropTypes.func,
 };

@@ -5,7 +5,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { FormControl, FormErrorMessage } from '@chakra-ui/react';
 
-const DatePickerField = ({ onChange, style, ...props }) => {
+function DatePickerField({ onChange, style, ...props }) {
   const { setFieldValue } = useFormikContext();
   const [field] = useField(props);
 
@@ -27,11 +27,11 @@ const DatePickerField = ({ onChange, style, ...props }) => {
       )}
     </Field>
   );
-};
+}
 
 DatePickerField.propTypes = {
   onChange: PropTypes.func,
-  style: PropTypes.objectOf(PropTypes.any),
+  style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 DatePickerField.defaultProps = {

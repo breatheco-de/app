@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
   Button, FormControl, Stack, Text, Box, Input, FormErrorMessage,
-  FormLabel, useToast, Link, Spacer, Flex, InputRightElement,
+  FormLabel, useToast, Link, Spacer, Flex, InputRightElement, InputGroup,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 // import { useRouter } from 'next/router';
@@ -123,37 +123,39 @@ function LogIn() {
                   >
                     {t('common:password')}
                   </FormLabel>
-                  <Input
-                    {...field}
-                    id="current-password"
-                    autoComplete="current-password"
-                    type={showPSW ? 'text' : 'password'}
-                    placeholder="***********"
-                    height="50px"
-                    borderColor="gray.default"
-                    borderRadius="3px"
-                  />
-                  <InputRightElement width="2.5rem" top="33.5px" right="10px">
-                    <Button
-                      background="transparent"
-                      width="100%"
-                      height="100%"
-                      padding="0"
-                      onClick={() => setShowPSW(!showPSW)}
-                      _hover={{
-                        background: 'transparent',
-                      }}
-                      _active={{
-                        background: 'transparent',
-                      }}
-                    >
-                      {showPSW ? (
-                        <Icon icon="eyeOpen" color="#A4A4A4" width="24px" height="24px" />
-                      ) : (
-                        <Icon icon="eyeClosed" color="#A4A4A4" width="24px" height="24px" />
-                      )}
-                    </Button>
-                  </InputRightElement>
+                  <InputGroup>
+                    <Input
+                      {...field}
+                      id="current-password"
+                      autoComplete="current-password"
+                      type={showPSW ? 'text' : 'password'}
+                      placeholder="***********"
+                      height="50px"
+                      borderColor="gray.default"
+                      borderRadius="3px"
+                    />
+                    <InputRightElement width="2.5rem" top="5px" right="10px">
+                      <Button
+                        background="transparent"
+                        width="100%"
+                        height="100%"
+                        padding="0"
+                        onClick={() => setShowPSW(!showPSW)}
+                        _hover={{
+                          background: 'transparent',
+                        }}
+                        _active={{
+                          background: 'transparent',
+                        }}
+                      >
+                        {showPSW ? (
+                          <Icon icon="eyeOpen" color="#A4A4A4" width="24px" height="24px" />
+                        ) : (
+                          <Icon icon="eyeClosed" color="#A4A4A4" width="24px" height="24px" />
+                        )}
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
                   <FormErrorMessage>{form.errors.password}</FormErrorMessage>
                 </FormControl>
               )}

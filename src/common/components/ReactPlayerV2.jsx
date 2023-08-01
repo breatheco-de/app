@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import ReactPlayer from 'react-player';
 
-const ReactPlayerV2 = ({
+function ReactPlayerV2({
   url, controls, className, iframeStyle, ...rest
-}) => {
+}) {
   const isLoomVideo = url && url.includes('loom.com');
   const getVideo = () => {
     if (isLoomVideo) {
@@ -50,7 +50,7 @@ const ReactPlayerV2 = ({
       )}
     </>
   );
-};
+}
 
 ReactPlayerV2.propTypes = {
   url: PropTypes.string,

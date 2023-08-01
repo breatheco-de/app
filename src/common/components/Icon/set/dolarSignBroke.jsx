@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 import { useColorMode } from '@chakra-ui/react';
 
-const DolarSignBroke = ({
+function DolarSignBroke({
   width, height, style, color, fill,
-}) => {
+}) {
   const { colorMode } = useColorMode();
   return (
     <svg
@@ -21,6 +21,6 @@ const DolarSignBroke = ({
     </svg>
 
   );
-};
+}
 
 export default DolarSignBroke;

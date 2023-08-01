@@ -8,10 +8,10 @@ import Heading from '../../common/components/Heading';
 import { Config, getSlideProps } from './config';
 import Timeline from '../../common/components/Timeline';
 
-const TimelineSidebar = ({
+function TimelineSidebar({
   cohortSession, filterEmptyModules, onClickAssignment, showPendingTasks, setShowPendingTasks,
   isOpen, onToggle,
-}) => {
+}) {
   const { t } = useTranslation('syllabus');
   const Open = !isOpen;
   const slide = getSlideProps(Open);
@@ -125,11 +125,11 @@ const TimelineSidebar = ({
       </Box>
     </>
   );
-};
+}
 
 TimelineSidebar.propTypes = {
-  cohortSession: PropTypes.objectOf(PropTypes.any),
-  filterEmptyModules: PropTypes.arrayOf(PropTypes.any),
+  cohortSession: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  filterEmptyModules: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   onClickAssignment: PropTypes.func,
   showPendingTasks: PropTypes.bool,
   isOpen: PropTypes.bool,

@@ -83,7 +83,7 @@ function PublicProfile({ data }) {
 }
 
 PublicProfile.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any),
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 PublicProfile.defaultProps = {
   data: {

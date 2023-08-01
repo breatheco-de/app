@@ -15,46 +15,48 @@ import AvatarUser from '../../../js_modules/cohortSidebar/avatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped } from '../Skeleton';
 
-const NoConsumablesCard = ({ t, setMentoryProps, handleGetMoreMentorships, mentoryProps, subscriptionData, disableBackButton = false, ...rest }) => (
-  <Box display="flex" flexDirection="column" alignItems="center" {...rest}>
-    <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
-      {t('mentorship.no-mentorship')}
-      <br />
-      <Link size="14px" variant="default" className="link" href={t('supportSideBar.learn-more-link')} target="_blank" rel="noopener noreferrer">
-        {t('supportSideBar.learn-more')}
-      </Link>
-    </Heading>
-    <Avatar
-      width="55px"
-      height="55px"
-      margin="16px 0"
-      style={{ userSelect: 'none' }}
-      src="/static/images/angry-avatar.png"
-    />
-    <Button
-      display="flex"
-      variant="default"
-      fontSize="14px"
-      fontWeight={700}
-      onClick={() => handleGetMoreMentorships()}
-      alignItems="center"
-      gridGap="10px"
-    >
-      {t('supportSideBar.get-more-mentorships')}
-      <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
-    </Button>
+function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mentoryProps, subscriptionData, disableBackButton = false, ...rest }) {
+  return (
+    <Box display="flex" flexDirection="column" alignItems="center" {...rest}>
+      <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
+        {t('mentorship.no-mentorship')}
+        <br />
+        <Link size="14px" variant="default" className="link" href={t('supportSideBar.learn-more-link')} target="_blank" rel="noopener noreferrer">
+          {t('supportSideBar.learn-more')}
+        </Link>
+      </Heading>
+      <Avatar
+        width="55px"
+        height="55px"
+        margin="16px 0"
+        style={{ userSelect: 'none' }}
+        src="/static/images/angry-avatar.png"
+      />
+      <Button
+        display="flex"
+        variant="default"
+        fontSize="14px"
+        fontWeight={700}
+        onClick={() => handleGetMoreMentorships()}
+        alignItems="center"
+        gridGap="10px"
+      >
+        {t('supportSideBar.get-more-mentorships')}
+        <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
+      </Button>
 
-    {!disableBackButton && (
-    <Button variant="link" fontSize="14px" onClick={() => setMentoryProps({})} letterSpacing="0.05em">
-      {t('common:go-back')}
-    </Button>
-    )}
-  </Box>
-);
+      {!disableBackButton && (
+      <Button variant="link" fontSize="14px" onClick={() => setMentoryProps({})} letterSpacing="0.05em">
+        {t('common:go-back')}
+      </Button>
+      )}
+    </Box>
+  );
+}
 
-const ProfilesSection = ({
+function ProfilesSection({
   profiles,
-}) => {
+}) {
   const { usersConnected } = useOnline();
 
   return (
@@ -78,14 +80,14 @@ const ProfilesSection = ({
       })}
     </AvatarGroup>
   );
-};
+}
 
-const MentoringConsumables = ({
+function MentoringConsumables({
   mentoryProps, width, consumables, mentorshipService, setMentoryProps,
   programServices, dateFormated, servicesFiltered, searchProps,
   setSearchProps, setProgramMentors, savedChanges, setSavedChanges,
   mentorsFiltered, dateFormated2, allMentorsAvailable, subscriptionData, allSubscriptions,
-}) => {
+}) {
   const { t } = useTranslation('dashboard');
 
   const isNotProduction = process.env.VERCEL_ENV !== 'production';
@@ -423,26 +425,26 @@ const MentoringConsumables = ({
       </Box>
     </Box>
   );
-};
+}
 
 MentoringConsumables.propTypes = {
-  mentoryProps: PropTypes.objectOf(PropTypes.any),
+  mentoryProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])),
   width: PropTypes.string,
-  consumables: PropTypes.objectOf(PropTypes.any),
-  mentorshipService: PropTypes.objectOf(PropTypes.any),
+  consumables: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  mentorshipService: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   setMentoryProps: PropTypes.func.isRequired,
-  programServices: PropTypes.arrayOf(PropTypes.any),
-  dateFormated: PropTypes.objectOf(PropTypes.any).isRequired,
-  servicesFiltered: PropTypes.arrayOf(PropTypes.any).isRequired,
-  searchProps: PropTypes.objectOf(PropTypes.any).isRequired,
+  programServices: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])),
+  dateFormated: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])).isRequired,
+  servicesFiltered: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])).isRequired,
+  searchProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])).isRequired,
   setSearchProps: PropTypes.func.isRequired,
-  savedChanges: PropTypes.objectOf(PropTypes.any).isRequired,
+  savedChanges: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])).isRequired,
   setSavedChanges: PropTypes.func.isRequired,
   setProgramMentors: PropTypes.func,
-  mentorsFiltered: PropTypes.arrayOf(PropTypes.any).isRequired,
-  dateFormated2: PropTypes.objectOf(PropTypes.any).isRequired,
-  subscriptionData: PropTypes.objectOf(PropTypes.any),
-  allSubscriptions: PropTypes.arrayOf(PropTypes.any),
+  mentorsFiltered: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  dateFormated2: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  subscriptionData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  allSubscriptions: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 MentoringConsumables.defaultProps = {

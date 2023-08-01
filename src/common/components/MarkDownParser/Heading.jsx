@@ -1,28 +1,28 @@
 import PropTypes from 'prop-types';
 
-const H1 = ({ children, ...props }) => (
-  <div><h1 {...props}>{children}</h1></div>
-);
+function H1({ children, ...props }) {
+  return <div><h1 {...props}>{children}</h1></div>;
+}
 
-const H2 = ({ children, ...props }) => (
-  <div><h2 {...props}>{children}</h2></div>
-);
+function H2({ children, ...props }) {
+  return <div><h2 {...props}>{children}</h2></div>;
+}
 
-const H3 = ({ children, ...props }) => (
-  <div><h3 {...props}>{children}</h3></div>
-);
+function H3({ children, ...props }) {
+  return <div><h3 {...props}>{children}</h3></div>;
+}
 
-const H4 = ({ children, ...props }) => (
-  <div><h4 {...props}>{children}</h4></div>
-);
+function H4({ children, ...props }) {
+  return <div><h4 {...props}>{children}</h4></div>;
+}
 
-const H5 = ({ children, ...props }) => (
-  <div><h5 {...props}>{children}</h5></div>
-);
+function H5({ children, ...props }) {
+  return <div><h5 {...props}>{children}</h5></div>;
+}
 
-const H6 = ({ children, ...props }) => (
-  <div><h6 {...props}>{children}</h6></div>
-);
+function H6({ children, ...props }) {
+  return <div><h6 {...props}>{children}</h6></div>;
+}
 
 H1.propTypes = {
   children: PropTypes.node,

@@ -8,6 +8,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import TagManager from 'react-gtm-module';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
+import { Provider } from 'react-redux';
 import { ChakraProvider } from '@chakra-ui/react';
 import { PrismicProvider } from '@prismicio/react';
 import { PrismicPreview } from '@prismicio/next';
@@ -33,8 +34,14 @@ import '@fontsource/lato/400.css';
 import '@fontsource/lato/700.css';
 import '@fontsource/lato/900.css';
 
-function App({ Component, pageProps }) {
+function InternalLinkComponent(props) {
+  return <Link {...props} />;
+}
+
+function App({ Component, ...rest }) {
   const [hasMounted, setHasMounted] = useState(false);
+  const { store, props } = wrapper.useWrappedStore(rest);
+  const pageProps = props?.pageProps || {};
 
   const queryClient = new QueryClient();
 
@@ -45,26 +52,28 @@ function App({ Component, pageProps }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Helmet
-        {...pageProps.seo}
-      />
-      <ChakraProvider resetCSS theme={CustomTheme}>
+      <Provider store={store}>
+        <Helmet
+          {...pageProps.seo}
+        />
+        <ChakraProvider resetCSS theme={CustomTheme}>
 
-        <AuthProvider>
-          <ConnectionProvider>
-            {hasMounted && <NavbarSession pageProps={pageProps} disableLangSwitcher={pageProps?.disableLangSwitcher} translations={pageProps?.translations} />}
-            <InterceptionLoader />
+          <AuthProvider>
+            <ConnectionProvider>
+              {hasMounted && <NavbarSession pageProps={pageProps} translations={pageProps?.translations} />}
+              <InterceptionLoader />
 
-            <PrismicProvider internalLinkComponent={(props) => <Link {...props} />}>
-              <PrismicPreview repositoryName={repositoryName}>
-                <Component {...pageProps} />
-              </PrismicPreview>
-            </PrismicProvider>
+              <PrismicProvider internalLinkComponent={InternalLinkComponent}>
+                <PrismicPreview repositoryName={repositoryName}>
+                  <Component {...pageProps} />
+                </PrismicPreview>
+              </PrismicProvider>
 
-            {hasMounted && <Footer pageProps={pageProps} />}
-          </ConnectionProvider>
-        </AuthProvider>
-      </ChakraProvider>
+              {hasMounted && <Footer pageProps={pageProps} />}
+            </ConnectionProvider>
+          </AuthProvider>
+        </ChakraProvider>
+      </Provider>
       <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
     </QueryClientProvider>
   );
@@ -74,9 +83,10 @@ App.propTypes = {
   pageProps: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
   Component: PropTypes.elementType.isRequired,
 };
+
 export default withLDProvider({
   clientSideID: process.env.LD_CLIENT_ID,
   options: {
     bootstrap: 'localStorage',
   },
-})(wrapper.withRedux(App));
+})(App);

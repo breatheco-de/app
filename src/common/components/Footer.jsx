@@ -27,7 +27,7 @@ import AlertMessage from './AlertMessage';
 import CustomTheme from '../../../styles/theme';
 import bc from '../services/breathecode';
 
-const Footer = ({ pageProps }) => {
+function Footer({ pageProps }) {
   const { t } = useTranslation('footer');
   const [email, setEmail] = useState('');
   const [formStatus, setFormStatus] = useState('');
@@ -373,13 +373,13 @@ const Footer = ({ pageProps }) => {
     //   </Text>
     // </Box>
   );
-};
+}
 
 Footer.propTypes = {
-  pageProps: PropTypes.objectOf(PropTypes.any),
+  pageProps: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
 };
 Footer.defaultProps = {
-  pageProps: undefined,
+  pageProps: {},
 };
 
 export default Footer;

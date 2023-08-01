@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 import { Button } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -5,9 +6,9 @@ import { useState } from 'react';
 import Link from '../../../common/components/NextChakraLink';
 import profileHandlers from './handlers';
 
-const ButtonHandler = ({
+function ButtonHandler({
   translations, subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, ...restStyles
-}) => {
+}) {
   const { t } = useTranslation('profile');
   const status = subscription?.status;
   const [isLoading, setIsLoading] = useState(false);
@@ -118,15 +119,15 @@ const ButtonHandler = ({
       )}
     </>
   );
-};
+}
 
 ButtonHandler.propTypes = {
-  translations: PropTypes.objectOf(PropTypes.any),
-  subscription: PropTypes.objectOf(PropTypes.any),
+  translations: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  subscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   onOpenUpgrade: PropTypes.func,
   setSubscriptionProps: PropTypes.func,
   onOpenCancelSubscription: PropTypes.func,
-  restStyles: PropTypes.objectOf(PropTypes.any),
+  restStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   children: PropTypes.node,
 };
 

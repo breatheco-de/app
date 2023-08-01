@@ -13,15 +13,17 @@ import AttendanceModal from './AttendanceModal';
 import { usePersistent } from '../hooks/usePersistent';
 import { isWindow } from '../../utils';
 
-const ItemText = ({ text }) => (
-  <Text display="flex" whiteSpace="pre-wrap" textAlign="left" textTransform="uppercase" size="12px" color={useColorModeValue('black', 'white')}>
-    {text}
-  </Text>
-);
+function ItemText({ text }) {
+  return (
+    <Text display="flex" whiteSpace="pre-wrap" textAlign="left" textTransform="uppercase" size="12px" color={useColorModeValue('black', 'white')}>
+      {text}
+    </Text>
+  );
+}
 
-const ItemButton = ({
+function ItemButton({
   children, actionHandler,
-}) => {
+}) {
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   return (
     <Button
@@ -45,11 +47,11 @@ const ItemButton = ({
       {children}
     </Button>
   );
-};
+}
 
-const TeacherSidebar = ({
+function TeacherSidebar({
   title, user, students, width, sortedAssignments, currentCohortProps, setCurrentCohortProps,
-}) => {
+}) {
   const { t } = useTranslation('dashboard');
   const { colorMode } = useColorMode();
   const [openAttendance, setOpenAttendance] = useState(false);
@@ -169,15 +171,15 @@ const TeacherSidebar = ({
       </Box>
     </Box>
   );
-};
+}
 
 TeacherSidebar.propTypes = {
   title: PropTypes.string,
-  user: PropTypes.objectOf(PropTypes.any),
-  students: PropTypes.arrayOf(PropTypes.any),
+  user: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  students: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   width: PropTypes.string,
-  sortedAssignments: PropTypes.arrayOf(PropTypes.object),
-  currentCohortProps: PropTypes.objectOf(PropTypes.any),
+  sortedAssignments: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
+  currentCohortProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   setCurrentCohortProps: PropTypes.func,
 };
 

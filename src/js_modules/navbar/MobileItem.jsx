@@ -18,10 +18,9 @@ import NextChakraLink from '../../common/components/NextChakraLink';
 import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
 
-const MobileItem = ({
+function MobileItem({
   label, subMenu, href, onClickLink, description, icon, readSyllabus,
-}) => {
-  // const router = useRouter();
+}) {
   const { isOpen, onToggle } = useDisclosure();
   const linkColor = useColorModeValue('gray.600', 'gray.200');
   const bordercolor1 = useColorModeValue('gray.200', 'gray.700');
@@ -174,7 +173,7 @@ const MobileItem = ({
       </Collapse>
     </Stack>
   );
-};
+}
 
 MobileItem.propTypes = {
   label: PropTypes.string.isRequired,
@@ -189,7 +188,7 @@ MobileItem.propTypes = {
     }),
   ),
   onClickLink: PropTypes.func.isRequired,
-  readSyllabus: PropTypes.arrayOf(PropTypes.any).isRequired,
+  readSyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 MobileItem.defaultProps = {

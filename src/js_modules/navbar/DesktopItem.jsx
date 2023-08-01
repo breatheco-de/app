@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import styled from 'styled-components';
 import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
@@ -38,7 +38,7 @@ const Triangle = styled(Box)`
 display: none;
 `;
 
-const DesktopItem = ({ item, readSyllabus }) => {
+function DesktopItem({ item, readSyllabus }) {
   const router = useRouter();
   const [popoverOpen, setPopoverOpen] = useState(false);
   const { borderColor, hexColor } = useStyle();
@@ -110,7 +110,7 @@ const DesktopItem = ({ item, readSyllabus }) => {
             onClick={() => setPopoverOpen(!popoverOpen)}
           >
             {item.label}
-            {item.subMenu && (
+            {item?.subMenu?.length > 0 && (
               <Icon
                 icon="arrowDown"
                 color="currentColor"
@@ -322,7 +322,7 @@ const DesktopItem = ({ item, readSyllabus }) => {
       )}
     </StyledBox>
   );
-};
+}
 
 DesktopItem.propTypes = {
   item: PropTypes.shape({
@@ -331,9 +331,9 @@ DesktopItem.propTypes = {
     asPath: PropTypes.string,
     icon: PropTypes.string,
     description: PropTypes.string,
-    subMenu: PropTypes.arrayOf(PropTypes.any),
+    subMenu: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   }).isRequired,
-  readSyllabus: PropTypes.arrayOf(PropTypes.any).isRequired,
+  readSyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
-export default DesktopItem;
+export default memo(DesktopItem);

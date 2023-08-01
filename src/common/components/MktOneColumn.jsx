@@ -10,23 +10,9 @@ import useStyle from '../hooks/useStyle';
 import GridContainer from './GridContainer';
 import PrismicTextComponent from './PrismicTextComponent';
 
-const MktOneColumn = ({
-  id,
-  title,
-  subTitle,
-  description,
-  paddingMd,
-  buttonUrl,
-  buttonLabel,
-  linkButton,
-  kpiList,
-  slice,
-  ...rest
-}) => {
-  const { fontColor, fontColor2, hexColor, backgroundColor } = useStyle();
-
-  // eslint-disable-next-line react/prop-types
-  const MktKPI = ({ kpiTitle, kpiDescription, color }) => (
+function MktKPI({ kpiTitle, kpiDescription, color }) {
+  const { fontColor, hexColor, backgroundColor } = useStyle();
+  return (
     <Box
       width="200px"
       background={backgroundColor}
@@ -53,6 +39,22 @@ const MktOneColumn = ({
       </Text>
     </Box>
   );
+}
+
+function MktOneColumn({
+  id,
+  title,
+  subTitle,
+  description,
+  paddingMd,
+  buttonUrl,
+  buttonLabel,
+  linkButton,
+  kpiList,
+  slice,
+  ...rest
+}) {
+  const { fontColor2, hexColor } = useStyle();
 
   return (
     <Box background={slice?.primary?.background} {...rest}>
@@ -111,7 +113,7 @@ const MktOneColumn = ({
       </GridContainer>
     </Box>
   );
-};
+}
 
 MktOneColumn.propTypes = {
   title: PropTypes.string,
@@ -121,7 +123,7 @@ MktOneColumn.propTypes = {
   buttonUrl: PropTypes.string,
   buttonLabel: PropTypes.string,
   linkButton: PropTypes.bool,
-  kpiList: PropTypes.arrayOf(PropTypes.any),
+  kpiList: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   slice: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
   id: PropTypes.string,
 };

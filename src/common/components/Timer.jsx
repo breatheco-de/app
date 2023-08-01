@@ -8,20 +8,22 @@ import Heading from './Heading';
 import { calculateDifferenceDays } from '../../utils';
 import LoaderScreen from './LoaderScreen';
 
-const TimeString = ({ string, label }) => (
-  <Box display="flex" flexDirection="column">
-    <Heading size="l" fontWeight={700}>
-      {string}
-    </Heading>
-    {label && (
+function TimeString({ string, label }) {
+  return (
+    <Box display="flex" flexDirection="column">
+      <Heading size="l" fontWeight={700}>
+        {string}
+      </Heading>
+      {label && (
       <Text size="15px" fontWeight={700} textTransform="uppercase">
         {label}
       </Text>
-    )}
-  </Box>
-);
+      )}
+    </Box>
+  );
+}
 
-const Timer = ({ startingAt, onFinish, autoRemove, ...rest }) => {
+function Timer({ startingAt, onFinish, autoRemove, ...rest }) {
   const [timer, setTimer] = useState({});
   const [loading, setLoading] = useState(true);
   const [justFinished, setJustFinished] = useState(false);
@@ -93,7 +95,7 @@ const Timer = ({ startingAt, onFinish, autoRemove, ...rest }) => {
       </Box>
     </Box>
   );
-};
+}
 
 Timer.propTypes = {
   startingAt: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),

@@ -88,17 +88,17 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       },
       fallback: false,
       technologyData,
-      exercises: dataFiltered.filter((project) => project.lang === currentLang).map(
+      articles: dataFiltered.filter((project) => project.lang === currentLang).map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
     },
   };
 };
 
-const ExercisesByTechnology = ({ exercises, technologyData }) => {
+function ExercisesByTechnology({ articles, technologyData }) {
   const { t } = useTranslation('how-to');
 
-  // const translations = exercises?.translations || { es: '', en: '', us: '' };
+  // const translations = articles?.translations || { es: '', en: '', us: '' };
 
   return (
     <Box
@@ -117,11 +117,11 @@ const ExercisesByTechnology = ({ exercises, technologyData }) => {
         fontWeight="700"
         paddingBottom="6px"
       >
-        {t('landing-technology.title', { technology: toCapitalize(technologyData.title) })}
+        {t('landing-technology.title', { technology: toCapitalize(technologyData?.title) })}
       </Text>
       <Box flex="1" pb="2rem">
         <Heading as="span" size="xl">
-          {t('landing-technology.subTitle', { technology: toCapitalize(technologyData.title) })}
+          {t('landing-technology.subTitle', { technology: toCapitalize(technologyData?.title) })}
         </Heading>
 
         <Text
@@ -137,7 +137,7 @@ const ExercisesByTechnology = ({ exercises, technologyData }) => {
       </Box>
 
       <ProjectList
-        projects={exercises}
+        projects={articles}
         // withoutImage
         // isLoading={isLoading}
         // contextFilter={}
@@ -146,11 +146,11 @@ const ExercisesByTechnology = ({ exercises, technologyData }) => {
       />
     </Box>
   );
-};
+}
 
 ExercisesByTechnology.propTypes = {
-  exercises: PropTypes.arrayOf(PropTypes.object).isRequired,
-  technologyData: PropTypes.objectOf(PropTypes.any).isRequired,
+  articles: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
+  technologyData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 export default ExercisesByTechnology;

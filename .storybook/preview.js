@@ -1,5 +1,5 @@
 import React from 'react';
-import {addDecorator} from '@storybook/react';
+// import {addDecorators} from '@storybook/react';
 import {ChakraProvider} from '@chakra-ui/react';
 import { Provider } from 'react-redux';
 import I18nProvider from 'next-translate/I18nProvider'
@@ -33,9 +33,8 @@ export const parameters = {
   },
 }
 
-const myDecorator = (story, context, ...props) => {
+const myDecorator = (Story, context) => {
   const [{ locale }] = useGlobals();
-  const Story =  story;
   const args = {
     ...context.args,
     translation: context.parameters.i18n.store.data,
@@ -43,31 +42,109 @@ const myDecorator = (story, context, ...props) => {
   }
   return (
     <I18nProvider lang={locale || 'en'} >
-      {/* {story({stTranslation: context.parameters.i18n.store.data})} */}
       <Story args={args} stTranslation={context.parameters.i18n.store.data} />
-    </I18nProvider>);
+    </I18nProvider>
+  );
 };
-
-addDecorator((storyFn) => (
-  <ChakraProvider resetCSS theme={CustomTheme}>
-    {storyFn()}
-  </ChakraProvider>
-))
 
 const store = initStore();
 
-const ProviderWrapper = ({ children, store }) => (
-    <Provider store={store}>
-        {children}
-    </Provider>
+const ProviderWrapper = ({ children }) => (
+  <Provider store={store}>
+    {children}
+  </Provider>
 );
 
-const withProvider = (Story) => (
-    <ProviderWrapper store={store}>
-        <Story />
+export const decorators = [
+  (Story) => (
+    <ChakraProvider resetCSS theme={CustomTheme}>
+      {Story()}
+    </ChakraProvider>
+  ),
+  (Story) => (
+    <ProviderWrapper>
+      {Story()}
     </ProviderWrapper>
-)
+  ),
+  myDecorator,
+];
 
-addDecorator(withProvider);
+export const globalTypes = {
+  locale: {
+    name: 'Locale',
+    description: 'Internationalization locale',
+    defaultValue: 'en',
+    toolbar: {
+      icon: 'globe',
+      items: [
+        { value: 'en', right: '🇺🇸', title: 'English' },
+        { value: 'es', right: '🇪🇸', title: 'Spanish' },
+      ],
+    },
+  },
+};
 
-addDecorator(myDecorator);
+export const decoratorsPreview = [
+  (Story, { globals }) => {
+    const locale = globals.locale;
+    return (
+      <I18nProvider lang={locale || 'en'}>
+        <Story {...globals} />
+      </I18nProvider>
+    );
+  },
+];
+// export const parameters = {
+//   actions: { argTypesRegex: "^on[A-Z].*" },
+//   controls: {
+//     matchers: {
+//       color: /(background|color)$/i,
+//       date: /Date$/,
+//     },
+//   },
+//   i18n,
+//   locale: 'en',
+//   locales: {
+//     en: 'English',
+//     es: 'Spanish',  
+//   },
+// }
+
+// const myDecorator = (story, context, ...props) => {
+//   const [{ locale }] = useGlobals();
+//   const Story =  story;
+//   const args = {
+//     ...context.args,
+//     translation: context.parameters.i18n.store.data,
+//     locale: locale || 'en',
+//   }
+//   return (
+//     <I18nProvider lang={locale || 'en'} >
+//       {/* {story({stTranslation: context.parameters.i18n.store.data})} */}
+//       <Story args={args} stTranslation={context.parameters.i18n.store.data} />
+//     </I18nProvider>);
+// };
+
+// const store = initStore();
+
+// const ProviderWrapper = ({ children, store }) => (
+//     <Provider store={store}>
+//         {children}
+//     </Provider>
+// );
+
+// const withProvider = (Story) => (
+//     <ProviderWrapper store={store}>
+//         <Story />
+//     </ProviderWrapper>
+// )
+
+// addDecorators(
+//   myDecorator,
+//   withProvider,
+//   (storyFn) => (
+//     <ChakraProvider resetCSS theme={CustomTheme}>
+//       {storyFn()}
+//     </ChakraProvider>
+//   )
+// );

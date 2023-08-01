@@ -20,12 +20,16 @@ export default function Thmbnail() {
   const router = useRouter();
   const { slug } = router.query;
 
-  useEffect(async () => {
-    if (slug !== undefined) {
-      const response = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${slug}`);
-      const result = await response.json();
+  const getAsset = async () => {
+    const response = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${slug}`);
+    const result = await response.json();
 
-      setAsset(result);
+    setAsset(result);
+  };
+
+  useEffect(() => {
+    if (slug !== undefined) {
+      getAsset();
     }
   }, [slug]);
 

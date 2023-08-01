@@ -7,7 +7,7 @@ import {
 } from '@chakra-ui/react';
 import CustomTheme from '../../../styles/theme';
 
-const SmartTextArea = ({ value, maxLength, ...props }) => {
+function SmartTextArea({ value, maxLength, ...props }) {
   const { t } = useTranslation('survey');
   const length = value && typeof (value) === 'string' ? value.length : 0;
   const textColor = () => {
@@ -39,7 +39,7 @@ const SmartTextArea = ({ value, maxLength, ...props }) => {
     </Container>
 
   );
-};
+}
 
 SmartTextArea.defaultProps = {
   value: null,

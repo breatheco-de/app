@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 import { useEffect, useState } from 'react';
 
 const useGrabToScroll = ({ ref, vertical, horizontal }) => {
