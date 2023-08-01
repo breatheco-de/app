@@ -5,9 +5,9 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
-  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED, PREPARING_FOR_COHORT,
+  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED, PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE,
 } from '../types';
-import { getNextDateInMonths, getStorageItem, getTimeProps, toCapitalize, unSlugify } from '../../../utils';
+import { formatPrice, getDiscountedPrice, getNextDateInMonths, getStorageItem, getTimeProps, toCapitalize, unSlugify } from '../../../utils';
 import bc from '../../services/breathecode';
 import modifyEnv from '../../../../modifyEnv';
 import { usePersistent } from '../../hooks/usePersistent';
@@ -21,6 +21,7 @@ const useSignup = () => {
   const { locale } = router;
   const dispatch = useDispatch();
   const accessToken = getStorageItem('accessToken');
+  const redirectAfterRegister = getStorageItem('redirect-after-register');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const { syllabus, academy } = router.query;
@@ -69,6 +70,10 @@ const useSignup = () => {
     payload,
     value,
   });
+  const setServiceProps = (payload) => dispatch({
+    type: SET_SERVICE_PROPS,
+    payload,
+  });
 
   const setPlanData = (payload) => dispatch({
     type: SET_PLAN_DATA,
@@ -95,6 +100,10 @@ const useSignup = () => {
   });
   const toggleIfEnrolled = (payload) => dispatch({
     type: TOGGLE_IF_ENROLLED,
+    payload,
+  });
+  const setSelectedService = (payload) => dispatch({
+    type: SET_SELECTED_SERVICE,
     payload,
   });
 
@@ -130,7 +139,13 @@ const useSignup = () => {
             academy_info: dateProps?.academy,
           });
 
-          router.push('/choose-program');
+          if (redirectAfterRegister && redirectAfterRegister?.length > 0) {
+            router.push(redirectAfterRegister);
+            localStorage.removeItem('redirect');
+            localStorage.removeItem('redirect-after-register');
+          } else {
+            router.push('/choose-program');
+          }
         }
         if (response === undefined || response.status >= 400) {
           toast({
@@ -188,10 +203,10 @@ const useSignup = () => {
             .sort((a, b) => a?.monthly_price - b?.monthly_price)
           : [];
 
-        const trialPlan = (!financingOptionsExists) ? {
+        const trialPlan = (!financingOptionsExists && !isNotTrial) ? {
           ...singlePlan,
           title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
-          price: data?.amount_per_month,
+          price: 0,
           priceText: isTotallyFree ? 'Free' : t('free-trial'),
           plan_id: `p-${singlePlan?.trial_duration}-trial`,
           period: isTotallyFree ? 'FREE' : singlePlan?.trial_duration_unit,
@@ -205,6 +220,24 @@ const useSignup = () => {
           priceText: `$${data?.amount_per_month}`,
           plan_id: `p-${data?.amount_per_month}`,
           period: 'MONTH',
+          type: 'PAYMENT',
+        } : {};
+        const quarterPlan = existsAmountPerQuarter ? {
+          ...singlePlan,
+          title: singlePlan?.title ? singlePlan?.title : t('quarterly_payment'),
+          price: data?.amount_per_quarter,
+          priceText: `$${data?.amount_per_quarter}`,
+          plan_id: `p-${data?.amount_per_quarter}`,
+          period: 'QUARTER',
+          type: 'PAYMENT',
+        } : {};
+        const halfPlan = existsAmountPerHalf ? {
+          ...singlePlan,
+          title: singlePlan?.title ? singlePlan?.title : t('half_yearly_payment'),
+          price: data?.amount_per_half,
+          priceText: `$${data?.amount_per_half}`,
+          plan_id: `p-${data?.amount_per_half}`,
+          period: 'HALF',
           type: 'PAYMENT',
         } : {};
 
@@ -234,7 +267,7 @@ const useSignup = () => {
           });
         }) : [{}];
 
-        const planList = [trialPlan, monthPlan, yearPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0);
+        const planList = [trialPlan, monthPlan, quarterPlan, halfPlan, yearPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0);
         const finalData = {
           ...data,
           isTrial: !isNotTrial && !financingOptionsExists,
@@ -253,6 +286,41 @@ const useSignup = () => {
         setLoader('date', false);
       });
   });
+
+  const handleServiceToConsume = (data) => {
+    const discountRatio = data?.discount_ratio;
+    const bundleSize = data?.bundle_size;
+    const pricePerUnit = data?.price_per_unit;
+    const maxItems = data?.max_items;
+    const maxNumItems = Math.floor(maxItems / bundleSize);
+    const allItems = [];
+
+    for (let num = 1; num <= maxNumItems; num += 1) {
+      const numItems = num * bundleSize;
+
+      if (numItems % bundleSize === 0) {
+        const price = getDiscountedPrice({
+          numItems, maxItems, discountRatio, bundleSize, pricePerUnit, startDiscountFrom: 1,
+        });
+
+        allItems.push({
+          id: num,
+          title: `${numItems} Mentorship sessions`,
+          qty: numItems,
+          pricePerUnit: price.discounted / numItems,
+          price: price.original,
+          priceText: formatPrice(price.discounted, true),
+          priceDiscounted: price.discounted,
+          type: 'CONSUMABLE',
+        });
+      }
+    }
+
+    setServiceProps({
+      ...data,
+      list: allItems,
+    });
+  };
 
   const handleChecking = (cohortData) => new Promise((resolve, reject) => {
     if (cohortData?.id) {
@@ -329,6 +397,12 @@ const useSignup = () => {
       if (selectedPlanCheckoutData?.period === 'MONTH') {
         return t('info.will-pay-per-month', { price: selectedPlanCheckoutData?.price });
       }
+      if (selectedPlanCheckoutData?.period === 'QUARTER') {
+        return t('info.will-pay-per-quarter', { price: selectedPlanCheckoutData?.price });
+      }
+      if (selectedPlanCheckoutData?.period === 'HALF') {
+        return t('info.will-pay-per-half-year', { price: selectedPlanCheckoutData?.price });
+      }
       if (selectedPlanCheckoutData?.period === 'YEAR') {
         return t('info.will-pay-per-year', { price: selectedPlanCheckoutData?.price });
       }
@@ -359,6 +433,8 @@ const useSignup = () => {
     setPlanProps,
     setCohortPlans,
     getPaymentText,
+    handleServiceToConsume,
+    setSelectedService,
   };
 };
 

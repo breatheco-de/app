@@ -21,7 +21,7 @@ function ProfilesSection({
   const { usersConnected } = useOnline();
 
   return (
-    <AvatarGroup max={4}>
+    <AvatarGroup max={4} justifyContent="center">
       {profiles?.map((c, i) => {
         const fullName = `${c.user.first_name} ${c.user.last_name}`;
         const isOnline = usersConnected?.includes(c.user.id);
@@ -146,7 +146,7 @@ function MentoringFree({
                   )}
                 </>
               )}
-              <Text color="gray.600" size="12px" margin="8px 0 0 0">
+              <Text color={lightColor} size="12px" margin="8px 0 0 0">
                 {t('supportSideBar.mentors-available', { count: allMentorsAvailable.length })}
               </Text>
             </Box>
@@ -266,7 +266,7 @@ function MentoringFree({
                                   {`${mentor.user.first_name} ${mentor.user.last_name}`}
                                 </Box>
                                 <Box as="hr" borderColor={borderColor} my="5px" />
-                                <Box textTransform="capitalize">
+                                <Box>
                                   {(mentor.one_line_bio && mentor.one_line_bio !== '') ? `${mentor.one_line_bio} ` : ''}
                                   {mentor?.booking_url ? (
                                     <Link variant="default" href={mentor?.booking_url} target="_blank" rel="noopener noreferrer">

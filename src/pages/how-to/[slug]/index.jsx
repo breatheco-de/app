@@ -23,7 +23,7 @@ import MktSideRecommendedCourses from '../../../common/components/MktSideRecomme
 import { unSlugifyCapitalize } from '../../../utils/index';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=2000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&visibility=PUBLIC&status=PUBLISHED&limit=2000`);
   const data = await resp.json();
   const howToData = data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como');
 
@@ -168,7 +168,7 @@ export default function HowToSlug({ data, markdown }) {
   return (
     <>
       <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin="0 auto" gridGap="36px" padding="0 10px">
-        <Box display="flex" position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '6.2rem 0 0 0' }}>
+        <Box display={{ base: 'none', md: 'flex' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '6.2rem 0 0 0' }}>
           <MktSideRecommendedCourses />
         </Box>
         <Box
@@ -253,7 +253,11 @@ export default function HowToSlug({ data, markdown }) {
             ) : (
               <MDSkeleton />
             )}
+            <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'flex', md: 'none' }} width="100%" bottom="0px" height="fit-content" gridColumn="1 / span 1">
+              <MktSideRecommendedCourses title={false} padding="0" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
+            </Box>
             <MktRecommendedCourses
+              display={{ base: 'none', md: 'grid' }}
               title={t('common:continue-learning', { technologies: data?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
               marginBottom="15px"
               technologies={data?.technologies.join(',')}

@@ -129,7 +129,7 @@ function IntroductionSection({
         )}
 
         {slice?.primary?.description.length > 0 ? (
-          <Text fontSize="21px" fontWeight={700} pt="16px">
+          <Text as="div" fontSize="21px" fontWeight={700} pt="16px">
             <PrismicRichText field={slice?.primary?.description} />
           </Text>
         ) : data?.description && (

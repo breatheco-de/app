@@ -135,7 +135,7 @@ function PopoverHandler({ task, githubUrl, haveGithubDomain }) {
                                 {file.name}
                               </Text>
                               {extension && (
-                              <Icon icon="download" width="16px" height="16px" color={hexColor.blueDefault} />
+                                <Icon icon="download" width="16px" height="16px" color={hexColor.blueDefault} />
                               )}
                             </Link>
                           );

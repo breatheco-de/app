@@ -161,7 +161,11 @@ function MktShowPrices({ id, title, description, plan, bullets, ...rest }) {
         />
       </Box>
     </GridContainer>
-  ) : 'loading...';
+  ) : (
+    <span>
+      loading...
+    </span>
+  );
 }
 
 MktShowPrices.propTypes = {

@@ -4,8 +4,8 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import Image from 'next/image';
-import modifyEnv from '../../../../modifyEnv';
-import { getStorageItem, lengthOfString, syncInterval } from '../../../utils';
+// import modifyEnv from '../../../../modifyEnv';
+import { lengthOfString, syncInterval } from '../../../utils';
 import useStyle from '../../hooks/useStyle';
 import CustomTheme from '../../../../styles/theme';
 import Icon from '../Icon';
@@ -15,8 +15,8 @@ import Text from '../Text';
 const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stTranslation }) => {
   const { t, lang } = useTranslation('live-event');
   const { hexColor, disabledColor, fontColor } = useStyle();
-  const accessToken = getStorageItem('accessToken');
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  // const accessToken = getStorageItem('accessToken');
+  // const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const limit = 40;
 
   return events.map((event) => {
@@ -50,8 +50,8 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stT
         margin="auto"
         borderColor="#DADADA"
       >
-        <Box display="flex">
-          <Box width="37px" height="37px" style={{ minWidth: '37px' }} className={isLiveOrStarting(startsAt, endsAt) ? 'pulse-blue' : ''} borderRadius="full">
+        <Box display="flex" flexShrink={0}>
+          <Box width="37px" height="37px" minHeight="37px" maxHeight="37px" style={{ minWidth: '37px' }} className={isLiveOrStarting(startsAt, endsAt) ? 'pulse-blue' : ''} borderRadius="full">
             {event?.event_type?.icon_url ? (
               <Image src={event?.event_type?.icon_url} name={event?.title} width={40} height={40} />
             ) : (
@@ -67,8 +67,8 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stT
             <Link
               target="_blank"
               rel="noopener noreferrer"
-              href={`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#'}
-              // href={`/${lang}/workshops/${event?.slug}` || '#'}
+              // href={`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#'}
+              href={`/${lang}/workshops/${event?.slug}` || '#'}
               color={fontColor}
               fontSize="15px"
               lineHeight="18px"

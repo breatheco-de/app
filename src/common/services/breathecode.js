@@ -13,6 +13,18 @@ const breathecode = {
     const url = `${host}/auth`;
     return {
       login: (payload) => axios.post(`${url}/login/`, { ...payload, user_agent: 'bc/student' }),
+      login2: (payload, lang = 'en') => fetch(`${url}/login/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept-Language': lang,
+        },
+        body: JSON.stringify({
+          ...payload,
+          user_agent: 'bc/student',
+        }),
+      }),
+      resendConfirmationEmail: (inviteId) => axios.put(`${url}/invite/resend/${inviteId}`),
       me: () => axios.get(`${url}/user/me`),
       updateProfile: (arg) => axios.put(`${url}/user/me`, { ...arg }),
       updatePicture: (args) => axios.put(`${url}/profile/me/picture`, args),
@@ -207,6 +219,7 @@ const breathecode = {
     return {
       mentors: () => axios.get(`${url}/cohort/user${qs}`),
       events: () => axios.get(`${host}/events/all${qs}`),
+      singleEvent: (slug) => axios.get(`${host}/events/event/${slug}${qs}`),
       cohorts: () => axios.get(`${host}/admissions/cohort/all${qs}`),
     };
   },
@@ -227,6 +240,8 @@ const breathecode = {
       getCohortPlans: () => axios.get(`${url}/plan${qs}`),
       service: () => ({
         consumable: () => axios.get(`${url}/me/service/consumable${qs}`),
+        getAcademyService: (serviceSlug) => axios.get(`${url}/academy/academyservice/${serviceSlug}${qs}`),
+        payConsumable: (data) => axios.post(`${url}/consumable/checkout${qs}`, data),
       }),
       getEvent: (eventId) => axios.get(`${host}/events/academy/event/${eventId}${qs}`),
       events: () => axios.get(`${host}/events/me?online_event=true&${qs}`),

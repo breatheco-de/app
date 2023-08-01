@@ -13,24 +13,26 @@ import {
   AccordionPanel,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
 
 function MobileItem({
-  label, subMenu, href, asPath, description, icon,
+  label, subMenu, href, onClickLink, description, icon,
 }) {
-  const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
   const linkColor = useColorModeValue('gray.600', 'gray.200');
+  const bordercolor1 = useColorModeValue('gray.200', 'gray.700');
+  const bordercolor2 = useColorModeValue('gray.200', 'gray.900');
 
-  const getColorLink = (link) => {
-    if (router?.pathname === link || router.asPath === link || router?.pathname.includes(link)) {
-      return 'blue.default';
-    }
-    return linkColor;
-  };
+  // const getColorLink = (link) => {
+  //   if (router?.pathname === link || router.asPath === link || router?.pathname.includes(link)) {
+  //     return 'blue.default';
+  //   }
+  //   return linkColor;
+  // };
+  const itemSubMenu = subMenu?.length > 0 && subMenu;
 
   return (
     <Stack spacing={4}>
@@ -43,6 +45,7 @@ function MobileItem({
             target={isAbsoluteUrl(href) ? '_blank' : undefined}
             rel={isAbsoluteUrl(href) ? 'noopener noreferrer' : undefined}
             display="flex"
+            onClick={onClickLink}
             justifyContent="space-between"
             align="center"
             _hover={{
@@ -50,13 +53,13 @@ function MobileItem({
               color: 'blue.default',
             }}
           >
-            <Text fontWeight={400} color={getColorLink(href || asPath)}>
+            <Text fontWeight={400}>
               {label}
             </Text>
           </NextChakraLink>
         </Box>
       )}
-      {subMenu && (
+      {itemSubMenu && (
         <Flex
           py={2}
           justifyContent="left"
@@ -68,14 +71,13 @@ function MobileItem({
             textDecoration: 'none',
           }}
         >
-          <Text fontWeight={400} color={getColorLink(href || asPath)}>
+          <Text fontWeight={400}>
             {label}
           </Text>
           <Box
             display="flex"
             onClick={(e) => e.preventDefault()}
             transition="all .25s ease-in-out"
-            color={getColorLink(href || asPath)}
             transform={isOpen ? 'rotate(90deg)' : 'rotate(0deg)'}
           >
             <Icon icon="arrowRight" color="currentColor" width="12px" height="12px" />
@@ -87,7 +89,7 @@ function MobileItem({
         <Stack
           pl={4}
           borderLeft="2px solid"
-          borderColor={useColorModeValue('gray.200', 'gray.700')}
+          borderColor={bordercolor1}
           align="start"
         >
           <Flex
@@ -96,7 +98,7 @@ function MobileItem({
             gridGap="15px"
             borderBottom={1}
             borderStyle="solid"
-            borderColor={useColorModeValue('gray.200', 'gray.900')}
+            borderColor={bordercolor2}
             alignItems="center"
             color={linkColor}
           >
@@ -113,8 +115,8 @@ function MobileItem({
             </Box>
           </Flex>
 
-          {subMenu
-            && subMenu.map((child) => (child.subMenu ? (
+          {itemSubMenu
+            && itemSubMenu.map((child) => (child.subMenu ? (
               <Accordion key={child.label} allowMultiple width="100%">
                 <AccordionItem border="0">
                   <AccordionButton>
@@ -133,7 +135,8 @@ function MobileItem({
                       {child.subMenu.map((l) => (
                         <NextChakraLink
                           key={l.label}
-                          color={getColorLink(l.href)}
+                          onClick={onClickLink}
+                          // color={getColorLink(l.href)}
                           style={{ textDecoration: 'none' }}
                           href={l.href}
                         >
@@ -147,7 +150,8 @@ function MobileItem({
             ) : (
               <NextChakraLink
                 key={child.label}
-                color={getColorLink(child.href)}
+                onClick={onClickLink}
+                // color={getColorLink(child.href)}
                 style={{ textDecoration: 'none' }}
                 py={2}
                 href={child.href}
@@ -166,7 +170,6 @@ MobileItem.propTypes = {
   description: PropTypes.string,
   icon: PropTypes.string,
   href: PropTypes.string,
-  asPath: PropTypes.string,
   subMenu: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string,
@@ -174,10 +177,10 @@ MobileItem.propTypes = {
       href: PropTypes.string,
     }),
   ),
+  onClickLink: PropTypes.func.isRequired,
 };
 
 MobileItem.defaultProps = {
-  asPath: '',
   href: '/',
   description: '',
   icon: 'book',

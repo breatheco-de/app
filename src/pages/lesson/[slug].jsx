@@ -23,7 +23,7 @@ import redirectsFromApi from '../../../public/redirects-from-api.json';
 import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=LESSON,ARTICLE&exclude_category=how-to,como&academy=4,5,6,47&limit=2000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=LESSON,ARTICLE&visibility=PUBLIC&status=PUBLISHED&exclude_category=how-to,como&academy=4,5,6,47&limit=2000`);
   const data = await resp.json();
 
   const paths = data.results.flatMap((res) => locales.map((locale) => ({
@@ -44,7 +44,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
 
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON`);
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
   const lesson = await response.json();
 
   const engPrefix = {
@@ -187,7 +187,7 @@ function LessonSlug({ lesson, markdown, ipynbHtmlUrl }) {
         // padding={{ base: '0 10px', lg: '0' }}
         padding="0 10px"
       >
-        <Box display="flex" position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
+        <Box display={{ base: 'none', md: 'flex' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
           <MktSideRecommendedCourses />
         </Box>
         <Box gridColumn="2 / span 12" maxWidth="854px">
@@ -232,7 +232,6 @@ function LessonSlug({ lesson, markdown, ipynbHtmlUrl }) {
               <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
             )}
           </Box>
-
           {markdown && ipynbHtmlUrl === '' ? (
             <Box
               height="100%"
@@ -248,6 +247,7 @@ function LessonSlug({ lesson, markdown, ipynbHtmlUrl }) {
             >
               <MarkDownParser content={markdownData.content} withToc isPublic />
               <MktRecommendedCourses
+                display={{ base: 'none', md: 'grid' }}
                 title={t('common:continue-learning', { technologies: lesson?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
                 technologies={lesson?.technologies.join(',')}
               />
@@ -261,6 +261,9 @@ function LessonSlug({ lesson, markdown, ipynbHtmlUrl }) {
               )}
             </>
           )}
+          <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'flex', md: 'none' }} width="100%" bottom="0px" left="0px" height="fit-content" gridColumn="1 / span 1">
+            <MktSideRecommendedCourses title={false} padding="0" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
+          </Box>
 
           {ipynbHtmlUrl && markdown === '' && (
             <Box

@@ -101,6 +101,7 @@ function MktTechnologies({ id, endpoint, ...rest }) {
               src={tech.icon_url}
               height="60px"
               width="60px"
+              alt={tech?.title || tech?.slug}
             />
           ))}
         </Box>

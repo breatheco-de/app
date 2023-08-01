@@ -25,7 +25,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   const projects = []; // filtered projects after removing repeated
   let arrProjects = []; // incoming projects
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=1000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=PROJECT&visibility=PUBLIC&status=PUBLISHED&limit=2000`);
   const data = await resp.json();
 
   arrProjects = Object.values(data.results);

@@ -24,7 +24,6 @@ import Text from '../Text';
 import useAuth from '../../hooks/useAuth';
 import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
-import syllabusList from '../../../../public/syllabus.json';
 import { getBrowserSize, isWindow } from '../../../utils';
 import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
@@ -115,6 +114,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const linkColor = useColorModeValue('gray.600', 'gray.200');
   const fontColor = useColorModeValue('black', 'gray.200');
 
+  const disableLangSwitcher = pageProps?.disableLangSwitcher || false;
   const langs = ['en', 'es'];
   const locale = router.locale === 'default' ? 'en' : router.locale;
 
@@ -141,10 +141,9 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
 
   const programSlug = cohortSession?.selectedProgramSlug || '/choose-program';
 
-  const noscriptItems = t('ITEMS', {
+  const items = t('ITEMS', {
     selectedProgramSlug: selectedProgramSlug || '/choose-program',
   }, { returnObjects: true });
-  const readSyllabus = JSON.parse(syllabusList);
 
   axios.defaults.headers.common['Accept-Language'] = locale;
 
@@ -215,48 +214,37 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
     return ((cohort?.available_as_saas && subscriptionExists) || cohort?.available_as_saas === false);
   }) : [];
 
-  const marketingCouses = Array.isArray(mktCourses) && mktCourses.filter(
+  const marketingCourses = Array.isArray(mktCourses) && mktCourses.filter(
     (item) => !activeSubscriptionCohorts.some(
       (activeCohort) => activeCohort?.cohort?.syllabus_version?.slug === item?.slug,
     ) && item?.course_translation?.title,
   );
 
   const isNotAvailableForMktCourses = activeSubscriptionCohorts.length > 0 && activeSubscriptionCohorts.some(
-    (item) => item?.educational_status === 'ACTIVE' && item?.cohort?.available_as_saas === false,
+    (item) => item?.cohort?.available_as_saas === false,
   );
 
+  const mktCoursesFormat = marketingCourses.length > 0 ? marketingCourses.map((item) => ({
+    slug: item?.slug,
+    label: item?.course_translation?.title,
+    asPath: `/course/${item?.slug}`,
+    icon: item?.icon_url,
+    description: item?.course_translation?.description,
+    subMenu: [
+      {
+        href: `/${item?.slug}`,
+        label: t('start-coding'),
+      },
+    ],
+  })) : [];
+
   useEffect(() => {
-    const items = t('ITEMS', {
-      selectedProgramSlug: selectedProgramSlug || '/choose-program',
-    }, { returnObjects: true });
-
-    const mktCoursesFormat = marketingCouses.length > 0 ? marketingCouses.map((item) => ({
-      label: item?.course_translation?.title,
-      asPath: `/course/${item?.slug}`,
-      icon: item?.icon_url,
-      description: item?.course_translation?.description,
-      subMenu: [
-        {
-          href: `/${item?.slug}`,
-          label: t('start-coding'),
-        },
-      ],
-    })) : [];
-
-    const formatItems = items.map((item) => {
-      if (item.slug === 'social-and-live-learning') {
-        return {
-          ...item,
-          subMenu: [
-            ...item.subMenu,
-            ...mktCoursesFormat,
-          ],
-        };
-      }
-      return item;
-    });
-    setITEMS(formatItems.filter((item) => item.disabled !== true));
-  }, [selectedProgramSlug, mktCourses]);
+    if (!isLoading && user?.id) {
+      setITEMS(items.filter((item) => item.disabled !== true && item?.hide_on_auth !== true));
+    } else {
+      setITEMS(items.filter((item) => item.disabled !== true));
+    }
+  }, [user, isLoading, selectedProgramSlug, mktCourses]);
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -284,6 +272,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
       src="/static/images/4geeks.png"
       width={105}
       height={35}
+      objectFit="cover"
       style={{
         maxHeight: '35px',
         minHeight: '35px',
@@ -353,18 +342,20 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           </NextLink>
 
           <Flex display="flex" ml={10}>
-            <DesktopNav NAV_ITEMS={ITEMS.length > 0 ? ITEMS : noscriptItems} haveSession={sessionExists} readSyllabus={readSyllabus} />
+            <DesktopNav NAV_ITEMS={ITEMS} extraContent={mktCoursesFormat} haveSession={sessionExists} />
           </Flex>
         </Flex>
 
         <Stack justify="flex-end" direction="row" gridGap="5px">
-          {/* {!isNotAvailableForMktCourses && marketingCouses?.length > 0 && (
+          {/* {!isNotAvailableForMktCourses && marketingCourses?.length > 0 && (
             <Box display={{ base: 'none', md: 'block' }}>
-              <UpgradeExperience data={marketingCouses} />
+              <UpgradeExperience data={marketingCourses} />
             </Box>
           )} */}
 
-          <LanguageSelector display={{ base: 'none ', md: 'block' }} translations={translations} />
+          {disableLangSwitcher !== true && (
+            <LanguageSelector display={{ base: 'none ', md: 'block' }} translations={translations} />
+          )}
           <IconButton
             style={{
               margin: 0,
@@ -384,9 +375,9 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
             }}
             icon={
               colorMode === 'light' ? (
-                <Icon icon="light" width="25px" height="23px" color="black" />
+                <Icon icon="light" id="light-button-desktop" width="25px" height="23px" color="black" />
               ) : (
-                <Icon icon="dark" width="20px" height="20px" />
+                <Icon icon="dark" id="dark-button-desktop" width="20px" height="20px" />
               )
             }
           />
@@ -449,51 +440,53 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                     <Text size="md" fontWeight="700">
                       {t('language')}
                     </Text>
-                    <Box display="flex" flexDirection="row">
-                      {((translationsPropsExists
-                        && translations)
-                        || languagesTR).map((l, i) => {
-                        const lang = languagesTR.filter((language) => language?.value === l?.lang)[0];
-                        const value = translationsPropsExists ? lang?.value : l.value;
-                        const path = translationsPropsExists ? l?.link : router.asPath;
+                    {disableLangSwitcher !== true && (
+                      <Box display="flex" flexDirection="row">
+                        {((translationsPropsExists
+                          && translations)
+                          || languagesTR).map((l, i) => {
+                          const lang = languagesTR.filter((language) => language?.value === l?.lang)[0];
+                          const value = translationsPropsExists ? lang?.value : l.value;
+                          const path = translationsPropsExists ? l?.link : router.asPath;
 
-                        const cleanedPath = (path === '/' && value !== 'en') ? '' : path;
-                        const localePrefix = `${value !== 'en' && !cleanedPath.includes(`/${value}`) ? `/${value}` : ''}`;
+                          const cleanedPath = (path === '/' && value !== 'en') ? '' : path;
+                          const localePrefix = `${value !== 'en' && !cleanedPath.includes(`/${value}`) ? `/${value}` : ''}`;
 
-                        const link = `${localePrefix}${cleanedPath}`;
+                          const link = `${localePrefix}${cleanedPath}`;
 
-                        const getIconFlags = value === 'en' ? 'usaFlag' : 'spainFlag';
-                        const getLangName = value === 'en' ? 'Eng' : 'Esp';
+                          const getIconFlags = value === 'en' ? 'usaFlag' : 'spainFlag';
+                          const getLangName = value === 'en' ? 'Eng' : 'Esp';
 
-                        return (
-                          <Fragment key={lang}>
-                            <Link
-                              _hover={{
-                                textDecoration: 'none',
-                                color: 'blue.default',
-                              }}
-                              color={locale === lang ? 'blue.default' : linkColor}
-                              fontWeight={locale === lang ? '700' : '400'}
-                              key={value}
-                              href={link}
-                              display="flex"
-                              alignItems="center"
-                              textTransform="uppercase"
-                              gridGap="5px"
-                              size="sm"
-                            >
-                              <Icon icon={getIconFlags} width="16px" height="16px" />
-                              {getLangName}
-                            </Link>
-                            {
-                              i < langs.length - 1 && (
-                                <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
-                              )
-                            }
-                          </Fragment>
-                        );
-                      })}
-                    </Box>
+                          return (
+                            <Fragment key={lang}>
+                              <Link
+                                _hover={{
+                                  textDecoration: 'none',
+                                  color: 'blue.default',
+                                }}
+                                color={locale === lang ? 'blue.default' : linkColor}
+                                fontWeight={locale === lang ? '700' : '400'}
+                                key={value}
+                                href={link}
+                                display="flex"
+                                alignItems="center"
+                                textTransform="uppercase"
+                                gridGap="5px"
+                                size="sm"
+                              >
+                                <Icon icon={getIconFlags} width="16px" height="16px" />
+                                {getLangName}
+                              </Link>
+                              {
+                                i < langs.length - 1 && (
+                                  <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
+                                )
+                              }
+                            </Fragment>
+                          );
+                        })}
+                      </Box>
+                    )}
                   </Box>
 
                   {/* Container Section */}
@@ -606,17 +599,26 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
         </Stack>
       </Flex>
 
-      {isMobile && (
-        <Collapse display={{ lg: 'block' }} in={isOpen} animateOpacity>
-          <MobileNav
-            mktCourses={!isNotAvailableForMktCourses && marketingCouses?.length > 0 ? marketingCouses : []}
-            NAV_ITEMS={ITEMS}
-            haveSession={sessionExists}
-            translations={translations}
-            readSyllabus={readSyllabus}
-          />
-        </Collapse>
-      )}
+      <Collapse display={{ lg: 'block' }} in={isOpen} animateOpacity>
+        <MobileNav
+          mktCourses={!isNotAvailableForMktCourses && mktCoursesFormat}
+          NAV_ITEMS={ITEMS}
+          haveSession={sessionExists}
+          translations={translations}
+          onClickLink={onToggle}
+        />
+        {/* {isBelowTablet && (
+              <MobileNav
+                mktCourses={!isNotAvailableForMktCourses && marketingCouses?.length > 0 ? marketingCouses : []}
+                NAV_ITEMS={ITEMS}
+                haveSession={sessionExists}
+                translations={translations}
+                readSyllabus={readSyllabus}
+                onClickLink={onToggle}
+              />
+            )}
+        */}
+      </Collapse>
     </Box>
   );
 }

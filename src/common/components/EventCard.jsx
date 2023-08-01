@@ -7,22 +7,22 @@ import Icon from './Icon';
 import Heading from './Heading';
 import TagCapsule from './TagCapsule';
 import Text from './Text';
-import { getStorageItem, isValidDate, syncInterval } from '../../utils';
+import { isValidDate, syncInterval } from '../../utils';
 import useStyle from '../hooks/useStyle';
-import { parseQuerys } from '../../utils/url';
-import modifyEnv from '../../../modifyEnv';
+// import { parseQuerys } from '../../utils/url';
+// import modifyEnv from '../../../modifyEnv';
 
-function EventCard({ id, title, description, host, startingAt, endingAt, technologies, stTranslation, ...rest }) {
+function EventCard({ id, slug, title, ignoreDynamicHandler, description, host, startingAt, endingAt, technologies, stTranslation, ...rest }) {
   const { t, lang } = useTranslation('live-event');
   const [date, setDate] = useState('');
   const { lightColor, disabledColor2 } = useStyle();
   const startedButRemain = date?.started && date?.ended === false;
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-  const accessToken = getStorageItem('accessToken');
+  // const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  // const accessToken = getStorageItem('accessToken');
 
-  const linkQuery = parseQuerys({
-    token: accessToken || undefined,
-  });
+  // const linkQuery = parseQuerys({
+  //   token: accessToken || undefined,
+  // });
 
   const startingSoonDelta = 30;
 
@@ -133,7 +133,7 @@ function EventCard({ id, title, description, host, startingAt, endingAt, technol
         )}
       </Flex>
 
-      <Heading size="sm" fontWeight={700}>
+      <Heading fontWeight={700} style={{ fontSize: '24px' }}>
         {title}
       </Heading>
 
@@ -147,7 +147,7 @@ function EventCard({ id, title, description, host, startingAt, endingAt, technol
 
       {/* -------------------------------- host info -------------------------------- */}
       {(host !== null && host !== undefined) && (typeof host === 'string' ? (
-        <Heading size="14px" fontWeight={700}>
+        <Heading as="span" fontWeight={700} style={{ fontSize: '14px' }}>
           {host}
         </Heading>
       ) : (
@@ -166,10 +166,10 @@ function EventCard({ id, title, description, host, startingAt, endingAt, technol
           </Box>
         </Flex>
       ))}
-      {startedButRemain ? (
+      {(ignoreDynamicHandler || startedButRemain) ? (
         <Link
           margin="auto 0 0 0"
-          href={`${BREATHECODE_HOST}/v1/events/me/event/${id}/join${linkQuery}`}
+          href={`/${lang}/workshops/${slug}`}
           color="blue.default"
           target="_blank"
           rel="noopener noreferrer"
@@ -199,6 +199,8 @@ EventCard.propTypes = {
   host: PropTypes.oneOfType([PropTypes.string, PropTypes.objectOf(PropTypes.any)]),
   stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   id: PropTypes.number.isRequired,
+  slug: PropTypes.string.isRequired,
+  ignoreDynamicHandler: PropTypes.bool,
 };
 
 EventCard.defaultProps = {
@@ -208,6 +210,7 @@ EventCard.defaultProps = {
   technologies: [],
   host: '',
   stTranslation: null,
+  ignoreDynamicHandler: false,
 };
 
 export default EventCard;

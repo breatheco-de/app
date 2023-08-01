@@ -39,13 +39,20 @@ const getReadPages = () => {
   return resp;
 };
 
+const getEvents = async (extraQuerys = {}) => {
+  const qs = parseQuerys(extraQuerys, true);
+  const { data } = await axios.get(`${BREATHECODE_HOST}/v1/events/all${qs}`);
+
+  return data;
+};
+
 const getAsset = async (type, extraQuerys = {}) => {
   const qs = parseQuerys(extraQuerys, true);
   const limit = 100;
   let offset = 0;
   let allResults = [];
 
-  let results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&limit=${limit}&offset=${offset}${qs}`)
+  let results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&visibility=PUBLIC&status=PUBLISHED&limit=${limit}&offset=${offset}${qs}`)
     .then((res) => res.data.results)
     .catch(() => {
       console.error(`SITEMAP: Error fetching ${type.toUpperCase()} pages`);
@@ -56,7 +63,7 @@ const getAsset = async (type, extraQuerys = {}) => {
     allResults = allResults.concat(results);
     offset += limit;
 
-    results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&limit=${limit}&offset=${offset}${qs}`)
+    results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&visibility=PUBLIC&status=PUBLISHED&limit=${limit}&offset=${offset}${qs}`)
       .then((res) => res.data.results)
       .catch(() => {
         console.error(`SITEMAP: Error fetching ${type.toUpperCase()} pages`);
@@ -74,16 +81,32 @@ const getLandingTechnologies = () => {
       Academy: 4,
     },
   })
-    .then((res) => {
+    .then(async (res) => {
       const formatedWithAssets = res.data.results.map(async (tech) => {
         const assets = await getTechonologyAssets(tech?.slug);
         return { ...tech, assets };
       });
 
-      const technologiesWithAssets = Promise.all(formatedWithAssets).then(
-        (data) => data.filter((tech) => tech?.assets?.length > 0),
+      const technologiesInEnglish = Promise.all(formatedWithAssets).then(
+        (formatedData) => formatedData.filter((tech) => tech?.assets?.length > 0 && tech?.assets?.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'))
+          .map((finalData) => ({
+            ...finalData,
+            lang: 'en',
+          })),
       );
-      return technologiesWithAssets;
+
+      const technologiesInSpanish = Promise.all(formatedWithAssets).then(
+        (formatedData) => formatedData.filter((tech) => tech?.assets?.length > 0 && tech.assets?.some((asset) => asset?.lang === 'es'))
+          .map((finalData) => ({
+            ...finalData,
+            lang: 'es',
+          })),
+      );
+
+      const dataEng = await technologiesInEnglish;
+      const dataEsp = await technologiesInSpanish;
+
+      return [...dataEng, ...dataEsp];
     })
     .catch(() => {
       console.error('SITEMAP: Error fetching Technologies pages');
@@ -98,4 +121,5 @@ module.exports = {
   getReadPages,
   getLandingTechnologies,
   getTechonologyAssets,
+  getEvents,
 };

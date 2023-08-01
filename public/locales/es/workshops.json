@@ -5,14 +5,26 @@
   "reserv-button-text": "Reservar lugar",
   "duration-hours": "{{hours}}hr de duración",
   "greetings": "Hola {{name}} 👋",
-  "switch-user-connector": "No eres {{name}}?",
+  "switch-user-connector": "¿No eres {{name}}?",
   "form": {
-    "title": "Únete al taller",
+    "title": "Únete a este evento",
     "description": "Inicia sesión para unirte a otros programadores en vivo resolviendo desafíos técnicos o profesionales.",
-    "ready-to-join-title": "Listo para unirse?",
-    "ready-to-join-description": "Únete junto a otros programadores en vivo resolviendo desafíos técnicos o profesionales."
+    "ready-to-join-title": "¡En vivo ahora!",
+    "ready-to-join-description": "Este evento está sucediendo ahora mismo. Regístrese ahora para unirse al evento.",
+    "ready-to-join-description-logged": "Este evento está sucediendo ahora mismo. Haga clic a continuación para unirse al evento.",
+    "joined-title": "Este evento comenzará pronto",
+    "joined-description": "Ya te registraste para este evento. Podrás unirte una vez que comience.",
+    "finished-title": "Este evento ha finalizado",
+    "finished-description": "¡Sigue buscando nuevas experiencias de aprendizaje y mantén viva tu pasión por el conocimiento!"
   },
-  "users-registered-count": "{{count}} personas ya se han registrado a este evento. Quedan disponibles 27 lugares más.",
-  "join-workshop": "Entra al taller",
-  "join": "Unirse ahora"
+  "users-registered-count": "{{count}} personas ya se han registrado a este evento. Quedan disponibles {{spot_count}} cupos más.",
+  "join-workshop": "Regístrarse al taller",
+  "join": "Unirse ahora",
+  "event-finished": "Evento finalizado",
+  "no-consumables": {
+    "description": "Te has quedado sin talleres, pero no te preocupes, puedes conseguir más con unos pocos clics.",
+    "link-text": "Aprende más.",
+    "link": "",
+    "get-more-workshops": "Get more workshops"
+  }
 }

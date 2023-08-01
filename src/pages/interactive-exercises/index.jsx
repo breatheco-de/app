@@ -24,12 +24,8 @@ export const getStaticProps = async ({ locale, locales }) => {
   const currentLang = locale === 'en' ? 'us' : 'es';
   const exercises = []; // filtered exercises after removing repeated
   let arrExercises = []; // incoming exercises
-  const resp = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&limit=2000`,
-    {
-      Accept: 'application/json, text/plain, */*',
-    },
-  );
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=EXERCISE&visibility=PUBLIC&status=PUBLISHED&limit=2000
+  `);
   const data = await resp.json();
 
   arrExercises = Object.values(data.results);

@@ -75,12 +75,11 @@ function Dashboard() {
   const isBelowTablet = getBrowserSize()?.width < 768;
   const [currentCohortProps, setCurrentCohortProps] = useState({});
   const [subscriptionData, setSubscriptionData] = useState(null);
+  const [allSubscriptions, setAllSubscriptions] = useState(null);
   const {
     cohortSession, sortedAssignments, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, taskTodo, taskTodoState,
   } = useHandler();
-
-  const teacherAndAssistants = studentAndTeachers.filter((st) => st.role === 'TEACHER' || st.role === 'ASSISTANT');
 
   const { cohortSlug, slug } = router.query;
 
@@ -112,8 +111,6 @@ function Dashboard() {
   const accessToken = getStorageItem('accessToken');
   const showGithubWarning = getStorageItem('showGithubWarning');
   const TwelveHours = 720;
-
-  const supportSideBar = t('supportSideBar', {}, { returnObjects: true });
 
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
 
@@ -207,9 +204,9 @@ function Dashboard() {
       status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
     }).subscriptions()
       .then(async ({ data }) => {
-        const currentPlan = data?.plan_financings?.find((s) => s?.selected_cohort?.slug === cohortSlug);
+        const currentPlanFinancing = data?.plan_financings?.find((s) => s?.selected_cohort?.slug === cohortSlug);
         const currentSubscription = data?.subscriptions?.find((s) => s?.selected_cohort?.slug === cohortSlug);
-        const planData = currentPlan || currentSubscription;
+        const planData = currentPlanFinancing || currentSubscription;
         const planSlug = planData?.plans?.[0]?.slug;
         const planOffer = await bc.payment({
           original_plan: planSlug,
@@ -222,6 +219,10 @@ function Dashboard() {
           planOfferExists: currentPlanOffer !== undefined,
         };
 
+        const planFinancings = data?.plan_financings?.length > 0 ? data?.plan_financings : [];
+        const subscriptions = data?.subscriptions?.length > 0 ? data?.subscriptions : [];
+
+        setAllSubscriptions([...planFinancings, ...subscriptions]);
         setSubscriptionData(finalData);
       });
     syncInterval(() => {
@@ -245,7 +246,7 @@ function Dashboard() {
   // Students and Teachers data
   useEffect(() => {
     bc.cohort().getStudents(cohortSlug).then(({ data }) => {
-      if (data.length > 0) {
+      if (data && data.length > 0) {
         setSudentAndTeachers(data.sort(
           (a, b) => a.user.first_name.localeCompare(b.user.first_name),
         ));
@@ -315,10 +316,10 @@ function Dashboard() {
   }));
 
   const modulesExists = sortedAssignments.some(
-    (assignment) => assignment.filteredModules.length !== 0,
+    (assignment) => assignment.filteredModules && assignment.filteredModules.length !== 0,
   );
 
-  const sortedAssignmentsSearched = searchValue.length > 0 ? sortedAssignments.filter((l) => {
+  const sortedAssignmentsSearched = (searchValue && searchValue.length > 0) ? sortedAssignments.filter((l) => {
     const { filteredModules } = l;
     const filtered = filteredModules.filter((module) => {
       const { title } = module;
@@ -331,7 +332,7 @@ function Dashboard() {
 
   return (
     <>
-      {getMandatoryProjects().length > 0 && (
+      {getMandatoryProjects() && getMandatoryProjects().length > 0 && (
         <AlertMessage
           full
           type="warning"
@@ -386,14 +387,16 @@ function Dashboard() {
               style={{ marginRight: '7px' }}
               color="currentColor"
             />
-            {t('backToChooseProgram')}
+            <span>
+              {t('backToChooseProgram')}
+            </span>
           </NextChakraLink>
         </Box>
 
         <ModalInfo
           isOpen={modalIsOpen}
           onClose={() => setModalIsOpen(false)}
-          title={t('unsynced.title', { taskLength: taskCohortNull.length })}
+          title={t('unsynced.title', { taskLength: taskCohortNull && taskCohortNull.length })}
           description={t('unsynced.description')}
           handlerColorButton="blue"
           rejectHandler={() => removeUnsyncedTasks()}
@@ -504,13 +507,7 @@ function Dashboard() {
                 />
                 )}
                 {cohortSession?.cohort_role?.toLowerCase() === 'student' && flags?.appReleaseEnableMentorshipsWidget && (
-                  <SupportSidebar
-                    title={supportSideBar.title}
-                    subtitle={supportSideBar.description}
-                    teacherAndAssistants={teacherAndAssistants}
-                    actionButtons={supportSideBar.actionButtons}
-                    width="100%"
-                  />
+                  <SupportSidebar subscriptions={allSubscriptions} subscriptionData={subscriptionData} />
                 )}
               </Box>
             )}
@@ -525,7 +522,7 @@ function Dashboard() {
                           <Box as="span" fontSize="21px" fontWeight={700} flex="1" textAlign="left">
                             {t('intro-video-title')}
                           </Box>
-                          <Icon withContainer icon="arrowRight" width="11px" height="20px" color="currentColor" style={{ }} transform={isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'} transition="transform 0.2s ease-in" />
+                          <Icon icon="arrowRight" width="11px" height="20px" color="currentColor" style={{ }} transform={isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'} transition="transform 0.2s ease-in" />
                         </AccordionButton>
                       </span>
                       <AccordionPanel padding="0px 4px 4px 4px">
@@ -611,20 +608,20 @@ function Dashboard() {
               display="flex"
               flexDirection="column"
             >
-              {sortedAssignments.length >= 1 ? (
+              {sortedAssignments && sortedAssignments.length >= 1 ? (
                 <>
                   {sortedAssignmentsSearched.map((assignment, i) => {
                     const {
                       label, description, filteredModules, exists_activities: existsActivities, modules, filteredModulesByPending,
                     } = assignment;
 
-                    const filteredModulesSearched = searchValue.length > 0
+                    const filteredModulesSearched = searchValue && searchValue.length > 0
                       ? filteredModules.filter(
                         (l) => includesToLowerCase(l.title, searchValue),
                       )
                       : filteredModules;
 
-                    const filteredModulesByPendingSearched = searchValue.length > 0
+                    const filteredModulesByPendingSearched = searchValue && searchValue.length > 0
                       ? filteredModulesByPending.filter(
                         (l) => includesToLowerCase(l.title, searchValue),
                       )
@@ -653,7 +650,7 @@ function Dashboard() {
                       />
                     );
                   })}
-                  {sortedAssignmentsSearched.length <= 0 && (
+                  {sortedAssignmentsSearched && sortedAssignmentsSearched.length <= 0 && (
                   <Text size="l">
                     {t('modules.search-not-found')}
                   </Text>
@@ -733,13 +730,7 @@ function Dashboard() {
               />
               )}
               {cohortSession?.cohort_role?.toLowerCase() === 'student' && flags?.appReleaseEnableMentorshipsWidget && (
-                <SupportSidebar
-                  title={supportSideBar.title}
-                  subtitle={supportSideBar.description}
-                  teacherAndAssistants={teacherAndAssistants}
-                  actionButtons={supportSideBar.actionButtons}
-                  width="100%"
-                />
+                <SupportSidebar subscriptions={allSubscriptions} subscriptionData={subscriptionData} />
               )}
             </Box>
           )}

@@ -257,9 +257,7 @@ function Mentorship() {
                   <Flex alignItems="center">
                     {tooltipsGenerator(session).map((tooltip) => (
                       <Tooltip label={tooltip.label} fontSize="md" placement="top">
-                        <span>
-                          <Icon style={{ marginRight: '15px' }} icon={tooltip.icon} width="25px" height="25px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
-                        </span>
+                        <Icon style={{ marginRight: '15px' }} icon={tooltip.icon} width="25px" height="25px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
                       </Tooltip>
                     ))}
                     <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link" onClick={() => setShowModal({ show: true, session })}>
@@ -275,9 +273,7 @@ function Mentorship() {
                   <Flex wrap="wrap" maxWith="250px" className="icons-row-responsive" alignItems="center">
                     {tooltipsGenerator(session).map((tooltip) => (
                       <Tooltip label={tooltip.label} fontSize="md" placement="top">
-                        <span>
-                          <Icon style={{ marginRight: '15px', marginTop: '5px' }} icon={tooltip.icon} width="20px" height="20px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
-                        </span>
+                        <Icon style={{ marginRight: '15px', marginTop: '5px' }} icon={tooltip.icon} width="20px" height="20px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
                       </Tooltip>
                     ))}
                     <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link" onClick={() => setShowModal({ show: true, session })}>

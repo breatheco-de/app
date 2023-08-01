@@ -17,13 +17,13 @@ import useAuth from '../../hooks/useAuth';
 import { usePersistent } from '../../hooks/usePersistent';
 
 function Mentoring({
-  width, programServices, flags,
+  width, programServices, subscriptions, subscriptionData, flags,
 }) {
   const { t } = useTranslation('dashboard');
   const [savedChanges, setSavedChanges] = useState({});
   const [cohortSession] = usePersistent('cohortSession', {});
   const router = useRouter();
-  const [serviceMentoring, setServiceMentoring] = useState({});
+  const [consumables, setConsumables] = useState({});
   const [mentoryProps, setMentoryProps] = useState({});
   const [allMentorsAvailable, setAllMentorsAvailable] = useState([]);
   const [programMentors, setProgramMentors] = useState([]);
@@ -39,6 +39,10 @@ function Mentoring({
   const servicesFiltered = programServices.filter(
     (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
   );
+  const suscriptionServicesFiltered = subscriptionData?.selected_mentorship_service_set?.mentorship_services?.length > 0
+    ? subscriptionData?.selected_mentorship_service_set?.mentorship_services?.filter(
+      (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
+    ) : [];
 
   const mentorsFiltered = programMentors.filter(
     (mentor) => {
@@ -105,18 +109,22 @@ function Mentoring({
     const allConsumables = await bc.payment().service().consumable()
       .then((res) => res?.data);
 
-    setServiceMentoring(allConsumables);
+    setConsumables(allConsumables);
     setAllMentorsAvailable(mentors);
+    // setServiceMentoring(allConsumables);
+    // setAllMentorsAvailable(mentors);
   };
 
   useEffect(() => {
-    if (programServices.length > 0) {
+    if (programServices?.length > 0) {
       getMentorsAndConsumables();
     }
   }, [programServices]);
 
   const isAvailableForConsumables = cohortSession?.available_as_saas === true;
-  const mentorshipService = serviceMentoring?.mentorship_service_sets?.find((c) => c?.slug.toLowerCase() === savedChanges?.service?.slug.toLowerCase());
+  const mentorshipService = consumables?.mentorship_service_sets?.find(
+    (c) => c?.slug.toLowerCase() === subscriptionData?.selected_mentorship_service_set?.slug.toLowerCase(),
+  );
 
   return !isLoading && user?.id && (
     <>
@@ -125,23 +133,24 @@ function Mentoring({
           {...{
             mentoryProps,
             width,
-            serviceMentoring,
+            consumables,
             mentorshipService,
             setMentoryProps,
-            programServices,
+            programServices: subscriptionData?.selected_mentorship_service_set?.mentorship_services,
             dateFormated,
-            servicesFiltered,
+            servicesFiltered: suscriptionServicesFiltered,
             searchProps,
             setSearchProps,
             setProgramMentors,
             savedChanges,
             setSavedChanges,
-            setServiceMentoring,
             mentorsFiltered,
             step1,
             step2,
             dateFormated2,
             allMentorsAvailable,
+            subscriptionData,
+            allSubscriptions: subscriptions,
           }}
         />
       ) : (
@@ -174,10 +183,13 @@ Mentoring.propTypes = {
   programServices: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any, PropTypes.object])).isRequired,
   width: PropTypes.string,
   flags: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any, PropTypes.object])).isRequired,
+  subscriptionData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  subscriptions: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 Mentoring.defaultProps = {
   width: '100%',
+  subscriptions: [],
 };
 
 export default memo(Mentoring);

@@ -66,6 +66,7 @@ const AvatarUser = memo(({
             src={avatar}
             marginLeft={isWrapped ? '-10px' : '0px'}
             zIndex={index}
+            alt={`${fullNameLabel} - image`}
           >
             {customBadge && (customBadge)}
             {badge && isOnlineUser && (

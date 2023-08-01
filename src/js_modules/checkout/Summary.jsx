@@ -31,6 +31,8 @@ function Summary() {
     FREE: t('info.free'),
     WEEK: t('info.trial-week'),
     MONTH: t('info.monthly'),
+    QUARTER: t('info.quarterly'),
+    HALF: t('info.half-yearly'),
     YEAR: t('info.yearly'),
     FINANCING: t('info.financing'),
   };
@@ -78,7 +80,7 @@ function Summary() {
 
   const handleSubmit = () => {
     handleChecking({
-      plan: selectedPlanCheckoutData?.slug,
+      plan: selectedPlanCheckoutData,
     })
       .then((data) => {
         if (isNotTrial || !priceIsNotNumber) {
@@ -99,8 +101,7 @@ function Summary() {
             });
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         toast({
           position: 'top',
           title: 'Something went wrong choosing plan',
@@ -195,7 +196,7 @@ function Summary() {
               flexDirection="column"
               gridGap="12px"
             >
-              {planProps?.map((bullet) => (
+              {planProps?.map((bullet) => bullet?.features[0]?.description && (
                 <Box
                   as="li"
                   key={bullet?.features[0]?.description}
@@ -238,8 +239,8 @@ function Summary() {
               .map((item, i) => {
                 const title = item?.title ? item?.title : toCapitalize(unSlugify(String(item?.slug)));
                 const isSelected = selectedPlanCheckoutData?.period !== 'FINANCING'
-                  ? selectedPlanCheckoutData?.period === item?.period
-                  : selectedPlanCheckoutData?.financingId === item?.financingId;
+                  ? selectedPlanCheckoutData?.plan_id === item?.plan_id
+                  : selectedPlanCheckoutData?.plan_id === item?.plan_id;
                 return (
                   <Fragment key={`${item?.slug}-${item?.title}`}>
                     <Box

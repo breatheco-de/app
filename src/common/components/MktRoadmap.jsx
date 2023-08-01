@@ -12,7 +12,6 @@ import Text from './Text';
 import useStyle from '../hooks/useStyle';
 import GridContainer from './GridContainer';
 import modifyEnv from '../../../modifyEnv';
-import { url } from '../../utils/regex';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
@@ -35,8 +34,6 @@ function MktRoadmap({ id, title, course, ...rest }) {
         });
     }
   }, []);
-
-  const isUrl = (string) => url.test(string);
 
   useEffect(() => {
     if (clickTriggered) {
@@ -78,22 +75,22 @@ function MktRoadmap({ id, title, course, ...rest }) {
         position="relative"
       >
         {title && (
-        <Heading
-          as="h2"
-              // fontSize="18px"
-          fontWeight="700"
-          lineHeight="30px"
-          letterSpacing="0.05em"
-          size="m"
-          mb="10px"
-          display={{ base: 'inherit', md: 'none' }}
-        >
-          {title}
-        </Heading>
+          <Heading
+            as="h2"
+            // fontSize="18px"
+            fontWeight="700"
+            lineHeight="30px"
+            letterSpacing="0.05em"
+            size="m"
+            mb="10px"
+            display={{ base: 'inherit', md: 'none' }}
+          >
+            {title}
+          </Heading>
         )}
         <UnorderedList display={{ base: 'flex', md: 'none' }} listStyleType="none" flexDirection="column" mb="20px">
           {data.map((item, index) => (
-            <ListItem variant="unstyled">
+            <ListItem key={item.name} variant="unstyled">
               <Heading size="xsm" fontWeight="500" color="blue.default" onClick={() => setCurrentTabIndex(index)}>
                 {item?.short_name || item?.name}
               </Heading>
@@ -115,45 +112,45 @@ function MktRoadmap({ id, title, course, ...rest }) {
           zIndex={99}
         >
           {data?.[0]?.slug && (
-          <CustomTab onClick={() => handleSelect(0)} top="10px" left="0" style={{ padding: '20px 4px' }}>
-            {isUrl(data?.[0]?.icon_url) && (
-            <Image src={data?.[0]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
-            )}
-            {data?.[0]?.short_name || data?.[0]?.name}
-          </CustomTab>
+            <CustomTab onClick={() => handleSelect(0)} top="10px" left="0" p="1rem 12px">
+              {data?.[0]?.icon_url && (
+                <Image src={data?.[0]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
+              )}
+              {data?.[0]?.short_name || data?.[0]?.name}
+            </CustomTab>
           )}
 
           {data?.[1]?.slug && (
-          <CustomTab onClick={() => handleSelect(1)} top="112px" left="40px" style={{ padding: '20px 4px' }}>
-            {isUrl(data?.[1]?.icon_url) && (
-            <Image src={data?.[1]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
-            )}
-            {data?.[1]?.short_name || data?.[1]?.name}
-          </CustomTab>
+            <CustomTab onClick={() => handleSelect(1)} top="112px" left="40px" p="1rem 12px">
+              {data?.[1]?.icon_url && (
+                <Image src={data?.[1]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
+              )}
+              {data?.[1]?.short_name || data?.[1]?.name}
+            </CustomTab>
           )}
           {data?.[2]?.slug && (
-          <CustomTab onClick={() => handleSelect(2)} top="218px" left="70px" style={{ padding: '20px 4px' }}>
-            {isUrl(data?.[2]?.icon_url) && (
-            <Image src={data?.[2]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
-            )}
-            {data?.[2]?.short_name || data?.[2]?.name}
-          </CustomTab>
+            <CustomTab onClick={() => handleSelect(2)} top="218px" left="70px" p="1rem 12px">
+              {data?.[2]?.icon_url && (
+                <Image src={data?.[2]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
+              )}
+              {data?.[2]?.short_name || data?.[2]?.name}
+            </CustomTab>
           )}
           {data?.[3]?.slug && (
-          <CustomTab onClick={() => handleSelect(3)} bottom="144px" left="40px" style={{ padding: '20px 4px' }}>
-            {isUrl(data?.[3]?.icon_url) && (
-            <Image src={data?.[3]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
-            )}
-            {data?.[3]?.short_name || data?.[3]?.name}
-          </CustomTab>
+            <CustomTab onClick={() => handleSelect(3)} bottom="144px" left="40px" p="1rem 12px">
+              {data?.[3]?.icon_url && (
+                <Image src={data?.[3]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
+              )}
+              {data?.[3]?.short_name || data?.[3]?.name}
+            </CustomTab>
           )}
           {data?.[4]?.slug && (
-          <CustomTab onClick={() => handleSelect(4)} bottom="57px" left="30px" style={{ padding: '20px 4px' }}>
-            {isUrl(data?.[4]?.icon_url) && (
-            <Image src={data?.[4]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
-            )}
-            {data?.[4]?.short_name || data?.[4]?.name}
-          </CustomTab>
+            <CustomTab onClick={() => handleSelect(4)} bottom="57px" left="30px" p="1rem 12px">
+              {data?.[4]?.icon_url && (
+                <Image src={data?.[4]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
+              )}
+              {data?.[4]?.short_name || data?.[4]?.name}
+            </CustomTab>
           )}
 
         </TabList>
@@ -162,22 +159,22 @@ function MktRoadmap({ id, title, course, ...rest }) {
         gridColumn="5 / span 5"
         display="flex"
         flexDirection="column"
-          // marginLeft={{ base: '10px', lg: '-5rem' }}
+        // marginLeft={{ base: '10px', lg: '-5rem' }}
         alignSelf="center"
         gridGap="10px"
       >
         {title && (
-        <Heading
-          as="h2"
-          fontSize="18px"
-          fontWeight="700"
-          lineHeight="30px"
-          letterSpacing="0.05em"
-          color="blue.default"
-          display={{ base: 'none', md: 'inherit' }}
-        >
-          {title}
-        </Heading>
+          <Heading
+            as="h2"
+            fontSize="18px"
+            fontWeight="700"
+            lineHeight="30px"
+            letterSpacing="0.05em"
+            color="blue.default"
+            display={{ base: 'none', md: 'inherit' }}
+          >
+            {title}
+          </Heading>
         )}
         <Text size={{ base: '18px', md: '26px' }} fontWeight="700" lineHeight="30px">
           {data[currentTabIndex]?.name}
@@ -190,19 +187,19 @@ function MktRoadmap({ id, title, course, ...rest }) {
           overflowX="auto"
         >
           {data?.[currentTabIndex]?.description && (
-          <Text
-            key={data[currentTabIndex]?.slug}
-            className="scroll-area"
-            id={`${data[currentTabIndex]?.slug}`}
-            minHeight="12rem"
-            fontSize="14px"
-                // mb="4rem"
-            fontWeight="400"
-            lineHeight="24px"
-            letterSpacing="0.05em"
-            color={fontColor3}
-            dangerouslySetInnerHTML={{ __html: data?.[currentTabIndex]?.description }}
-          />
+            <Text
+              key={data[currentTabIndex]?.slug}
+              className="scroll-area"
+              id={`${data[currentTabIndex]?.slug}`}
+              minHeight="12rem"
+              fontSize="14px"
+              // mb="4rem"
+              fontWeight="400"
+              lineHeight="24px"
+              letterSpacing="0.05em"
+              color={fontColor3}
+              dangerouslySetInnerHTML={{ __html: data?.[currentTabIndex]?.description }}
+            />
           )}
         </Box>
       </Box>

@@ -85,7 +85,7 @@ export function DetailsModal({
                       {file.name}
                     </Text>
                     {extension && (
-                    <Icon icon="download" width="16px" height="16px" color={hexColor.blueDefault} />
+                      <Icon icon="download" width="16px" height="16px" color={hexColor.blueDefault} />
                     )}
                   </Link>
                 );
@@ -573,7 +573,7 @@ export function ReviewModal({ currentTask, projectLink, updpateAssignment, isOpe
                       {file.name}
                     </Text>
                     {extension && (
-                    <Icon icon="download" width="16px" height="16px" color={hexColor.blueDefault} />
+                      <Icon icon="download" width="16px" height="16px" color={hexColor.blueDefault} />
                     )}
                   </Link>
                 );

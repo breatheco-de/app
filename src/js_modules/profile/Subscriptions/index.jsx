@@ -179,7 +179,6 @@ function Subscriptions({ storybookConfig }) {
                         width="16px"
                         height="16px"
                         color={blueDefault}
-                        withContainer
                         minWidth="18px"
                       />
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
@@ -210,7 +209,6 @@ function Subscriptions({ storybookConfig }) {
                         width="16px"
                         height="16px"
                         color={blueDefault}
-                        withContainer
                         minWidth="18px"
                       />
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
@@ -225,7 +223,6 @@ function Subscriptions({ storybookConfig }) {
                         width="18px"
                         height="13px"
                         color={blueDefault}
-                        withContainer
                         minWidth="18px"
                       />
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">

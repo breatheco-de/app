@@ -82,7 +82,9 @@ function Attendance() {
     let finalPercentage = 0;
 
     allStudentsWithDays.studentList.forEach((student) => {
-      finalPercentage += student.percentage;
+      if (student?.percentage >= 0) {
+        finalPercentage += student.percentage;
+      }
     });
     return calcPercentage((finalPercentage / 100), allStudentsWithDays.studentList.length);
   };

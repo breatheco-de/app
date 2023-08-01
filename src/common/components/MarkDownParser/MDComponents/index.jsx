@@ -119,7 +119,7 @@ export function MDHr() {
 
 export function MDText({ children }) {
   return (
-    <Text size="l" fontWeight="400" lineHeight="24px">
+    <Text size="l" fontWeight="400">
       {children}
     </Text>
   );

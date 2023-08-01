@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import {
+  Avatar,
   Box,
   Button,
   useToast,
@@ -22,6 +23,10 @@ import LoaderScreen from '../common/components/LoaderScreen';
 import ModalInfo from '../js_modules/moduleMap/modalInfo';
 import useStyle from '../common/hooks/useStyle';
 import Stepper from '../js_modules/checkout/Stepper';
+import ServiceSummary from '../js_modules/checkout/ServiceSummary';
+import Text from '../common/components/Text';
+import SelectServicePlan from '../js_modules/checkout/SelectServicePlan';
+import modifyEnv from '../../modifyEnv';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -55,22 +60,33 @@ export const getStaticProps = async ({ locale, locales }) => {
 };
 
 function Checkout() {
-  const { t } = useTranslation('signup');
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const { t, lang } = useTranslation('signup');
   const router = useRouter();
-  const [cohorts, setCohorts] = useState(null);
+  const [cohortsData, setCohortsData] = useState({
+    loading: true,
+  });
   const [isPreselectedCohort, setIsPreselectedCohort] = useState(false);
   const [isPreloading, setIsPreloading] = useState(false);
+  const [serviceToRequest, setServiceToRequest] = useState({});
+  const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const {
     state, toggleIfEnrolled, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
-    isFirstStep, isSecondStep, isThirdStep, isFourthStep,
+    handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep,
   } = useSignup();
-  const { stepIndex, dateProps, checkoutData, alreadyEnrolled } = state;
+  const [readyToSelectService, setReadyToSelectService] = useState(false);
+  const { stepIndex, dateProps, checkoutData, alreadyEnrolled, serviceProps } = state;
   const { backgroundColor3 } = useStyle();
 
+  const cohorts = cohortsData?.cohorts;
+
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
-  const { user, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const toast = useToast();
   const plan = getQueryString('plan');
+  const queryPlans = getQueryString('plans');
+  const mentorshipServiceSetSlug = getQueryString('mentorship_service_set');
+  const eventTypeSetSlug = getQueryString('event_type_set');
   const planFormated = plan && encodeURIComponent(plan);
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
@@ -89,66 +105,88 @@ function Checkout() {
   });
 
   const queryPlanExists = planFormated && planFormated?.length > 0;
+  const queryMentorshipServiceSlugExists = mentorshipServiceSetSlug && mentorshipServiceSetSlug?.length > 0;
+  const queryEventTypeSetSlugExists = eventTypeSetSlug && eventTypeSetSlug?.length > 0;
+  const queryPlansExists = queryPlans && queryPlans?.length > 0;
   const filteredCohorts = Array.isArray(cohorts) && cohorts.filter((item) => item?.never_ends === false);
 
+  const queryServiceExists = queryMentorshipServiceSlugExists || queryEventTypeSetSlugExists;
+
   useEffect(() => {
-    if (queryPlanExists && tokenExists) {
+    const isAvailableToSelectPlan = queryPlansExists && queryPlans?.split(',')?.length > 1;
+    if (isAuthenticated && isAvailableToSelectPlan && queryServiceExists) {
+      setReadyToSelectService(true);
+    }
+    if (!queryPlanExists && tokenExists && isAuthenticated && !isAvailableToSelectPlan) {
       setIsPreloading(true);
-      if (cohorts && cohorts?.length <= 0) {
-        toast({
-          position: 'top',
-          title: t('alert-message:no-course-configuration'),
-          status: 'warning',
-          duration: 4000,
-          isClosable: true,
-        });
-      }
-      if (cohorts && cohorts?.length > 0) {
-        bc.payment().getPlan(planFormated)
-          .then((resp) => {
-            const data = resp?.data;
-            const existsAmountPerHalf = data?.price_per_half > 0;
-            const existsAmountPerMonth = data?.price_per_month > 0;
-            const existsAmountPerQuarter = data?.price_per_quarter > 0;
-            const existsAmountPerYear = data?.price_per_year > 0;
-            const fiancioptionsExists = data?.financing_options?.length > 0 && data?.financing_options?.[0]?.monthly_price > 0;
+      bc.payment({
+        status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+      }).subscriptions()
+        .then(({ data }) => {
+          const subscriptionRespData = data;
+          const items = {
+            subscriptions: subscriptionRespData?.subscriptions,
+            plan_financings: subscriptionRespData?.plan_financings,
+          };
+          const subscription = items?.subscriptions?.find(
+            (item) => (
+              item?.selected_mentorship_service_set?.slug === mentorshipServiceSetSlug
+              || item?.selected_event_type_set?.slug === eventTypeSetSlug
+            ),
+          );
+          const planFinanncing = items?.plan_financings?.find(
+            (item) => (
+              item?.selected_mentorship_service_set?.slug === mentorshipServiceSetSlug
+              || item?.selected_event_type_set?.slug === eventTypeSetSlug
+            ),
+          );
 
-            const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear || fiancioptionsExists;
+          const currentSubscription = subscription || planFinanncing;
+          const isMentorshipType = currentSubscription?.selected_mentorship_service_set?.slug === mentorshipServiceSetSlug;
 
-            if ((resp && resp?.status >= 400) || resp?.data.length === 0) {
-              toast({
-                position: 'top',
-                title: t('alert-message:no-plan-configuration'),
-                status: 'info',
-                duration: 4000,
-                isClosable: true,
-              });
-            }
-
-            if ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || cohorts?.length === 1) {
-              if (resp.status < 400) {
-                setIsPreselectedCohort(true);
-                const { kickoffDate, weekDays, availableTime } = cohorts?.[0] ? getTimeProps(cohorts[0]) : {};
-                const defaultQueryPropsAux = {
-                  ...cohorts[0],
-                  kickoffDate,
-                  weekDays,
-                  availableTime,
-                };
-
-                setCohortPlans([data]);
-                handleChecking({ ...defaultQueryPropsAux, plan: data })
-                  .then(() => {
-                    handleStep(2);
+          const serviceData = isMentorshipType
+            ? currentSubscription?.selected_mentorship_service_set
+            : currentSubscription?.selected_event_type_set;
+          const serviceSetSlug = isMentorshipType ? mentorshipServiceSetSlug : eventTypeSetSlug;
+          if (serviceData) {
+            bc.payment({
+              academy: Number(serviceData?.academy?.id),
+            }).service().getAcademyService(serviceSetSlug)
+              .then((resp) => {
+                if (resp !== undefined) {
+                  handleStep(2);
+                  handleServiceToConsume({
+                    ...resp?.data,
+                    serviceInfo: {
+                      type: isMentorshipType ? 'mentorship' : 'event',
+                      ...serviceData,
+                    },
                   });
-              }
-            }
+                  setServiceToRequest(resp?.data);
+                }
+              })
+              .catch(() => {});
+          }
+        });
+      setTimeout(() => {
+        setIsPreloading(false);
+      }, 2600);
+    }
+    if (!queryServiceExists && queryPlanExists && tokenExists && !cohortsData.loading) {
+      setIsPreloading(true);
 
-            if (data?.is_renewable === false || data?.is_renewable === undefined) {
-              handleStep(1);
-            }
-          })
-          .catch(() => {
+      bc.payment().getPlan(planFormated)
+        .then((resp) => {
+          const data = resp?.data;
+          const existsAmountPerHalf = data?.price_per_half > 0;
+          const existsAmountPerMonth = data?.price_per_month > 0;
+          const existsAmountPerQuarter = data?.price_per_quarter > 0;
+          const existsAmountPerYear = data?.price_per_year > 0;
+          const fiancioptionsExists = data?.financing_options?.length > 0 && data?.financing_options?.[0]?.monthly_price > 0;
+
+          const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear || fiancioptionsExists;
+
+          if ((resp && resp?.status >= 400) || resp?.data.length === 0) {
             toast({
               position: 'top',
               title: t('alert-message:no-plan-configuration'),
@@ -156,13 +194,56 @@ function Checkout() {
               duration: 4000,
               isClosable: true,
             });
+          }
+          if (data?.has_waiting_list === true) {
+            router.push(`/${lang}/thank-you`);
+          }
+          if (data?.has_waiting_list === false && ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || cohorts?.length === 1)) {
+            if (resp.status < 400 && cohorts?.length > 0) {
+              setIsPreselectedCohort(true);
+              const { kickoffDate, weekDays, availableTime } = cohorts?.[0] ? getTimeProps(cohorts[0]) : {};
+              const defaultCohortProps = {
+                ...cohorts[0],
+                kickoffDate,
+                weekDays,
+                availableTime,
+              };
+
+              setCohortPlans([data]);
+              handleChecking({ ...defaultCohortProps, plan: data })
+                .then(() => {
+                  handleStep(2);
+                });
+            }
+            if (cohorts.length === 0) {
+              setCohortPlans([{
+                plan: data,
+              }]);
+              handleChecking({ plan: data })
+                .then(() => {
+                  handleStep(2);
+                });
+            }
+          }
+
+          if (data?.is_renewable === false || data?.is_renewable === undefined) {
+            handleStep(1);
+          }
+        })
+        .catch(() => {
+          toast({
+            position: 'top',
+            title: t('alert-message:no-plan-configuration'),
+            status: 'info',
+            duration: 4000,
+            isClosable: true,
           });
-      }
+        });
       setTimeout(() => {
         setIsPreloading(false);
       }, 2600);
     }
-  }, [cohorts?.length, accessToken]);
+  }, [cohortsData.loading, accessToken, isAuthenticated]);
 
   useEffect(() => {
     if (user?.id && !isLoading) {
@@ -201,6 +282,58 @@ function Checkout() {
         <LoaderScreen />
       )}
       <ModalInfo
+        headerStyles={{ textAlign: 'center' }}
+        title={t('signup:alert-message.validate-email-title')}
+        footerStyle={{ flexDirection: 'row-reverse' }}
+        closeButtonVariant="outline"
+        closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
+        childrenDescription={(
+          <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+            <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+            <Text
+              size="14px"
+              textAlign="center"
+              dangerouslySetInnerHTML={{ __html: t('signup:alert-message.validate-email-description', { email: verifyEmailProps?.data?.email }) }}
+            />
+          </Box>
+        )}
+        isOpen={verifyEmailProps.state}
+        buttonHandlerStyles={{ variant: 'default' }}
+        actionHandler={() => {
+          const inviteId = verifyEmailProps?.data?.id;
+          bc.auth().resendConfirmationEmail(inviteId)
+            .then((resp) => {
+              const data = resp?.data;
+              if (data === undefined) {
+                toast({
+                  position: 'top',
+                  status: 'info',
+                  title: t('signup:alert-message.email-already-sent'),
+                  isClosable: true,
+                  duration: 6000,
+                });
+              } else {
+                toast({
+                  position: 'top',
+                  status: 'success',
+                  title: t('signup:alert-message.email-sent-to', { email: data?.email }),
+                  isClosable: true,
+                  duration: 6000,
+                });
+              }
+            });
+        }}
+        handlerText={t('signup:resend')}
+        forceHandlerAndClose
+        onClose={() => {
+          setVerifyEmailProps({
+            ...verifyEmailProps,
+            state: false,
+          });
+        }}
+      />
+
+      <ModalInfo
         isOpen={alreadyEnrolled}
         forceHandler
         disableCloseButton
@@ -218,15 +351,17 @@ function Checkout() {
         }}
       />
       {/* Stepper */}
-      <Stepper
-        stepIndex={stepIndex}
-        checkoutData={checkoutData}
-        isFirstStep={isFirstStep}
-        isSecondStep={isSecondStep}
-        isThirdStep={isThirdStep}
-        isFourthStep={isFourthStep}
-        handleGoBack={handleGoBack}
-      />
+      {!readyToSelectService && !serviceToRequest?.id && (
+        <Stepper
+          stepIndex={stepIndex}
+          checkoutData={checkoutData}
+          isFirstStep={isFirstStep}
+          isSecondStep={isSecondStep}
+          isThirdStep={isThirdStep}
+          isFourthStep={isFourthStep}
+          handleGoBack={handleGoBack}
+        />
+      )}
 
       <Box
         display="flex"
@@ -234,29 +369,38 @@ function Checkout() {
         gridGap={{ base: '20px', md: '20px' }}
         minHeight="320px"
         maxWidth={{ base: '100%', md: '900px' }}
-        margin={{ base: '1.5rem auto 0 auto', md: '3.5rem auto 0 auto' }}
+        margin={{ base: '1.5rem auto 0 auto', md: serviceToRequest?.id ? '3.5rem auto' : '3.5rem auto 0 auto' }}
         padding={{ base: '0px 20px', md: '0' }}
         // borderRadius={{ base: '22px', md: '0' }}
       >
-        {isFirstStep && (
+        {!readyToSelectService && isFirstStep && (
           <ContactInformation
             courseChoosed={courseChoosed}
             formProps={formProps}
             setFormProps={setFormProps}
+            setVerifyEmailProps={setVerifyEmailProps}
           />
         )}
 
         {/* Second step */}
-        <ChooseYourClass setCohorts={setCohorts} />
+        {!readyToSelectService && (
+          <ChooseYourClass setCohorts={setCohortsData} />
+        )}
 
-        {isThirdStep && (
+        {!readyToSelectService && isThirdStep && !serviceProps?.id && (
           <Summary />
         )}
+        {!readyToSelectService && isThirdStep && serviceProps?.id && (
+          <ServiceSummary service={serviceProps} />
+        )}
+        {readyToSelectService && (
+          <SelectServicePlan />
+        )}
         {/* Fourth step */}
-        {isFourthStep && (
+        {!readyToSelectService && isFourthStep && (
           <PaymentInfo />
         )}
-        {((stepIndex !== 0 && !isSecondStep) || (stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep)) && (
+        {!queryServiceExists && ((stepIndex !== 0 && !isSecondStep) || (stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep)) && (
           <>
             <Box as="hr" width="100%" margin="10px 0" />
             <Box display="flex" justifyContent="space-between" mt="auto">

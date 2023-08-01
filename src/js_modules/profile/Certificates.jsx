@@ -26,7 +26,7 @@ function Certificates({ certificates }) {
       </Text>
       {certificates && certificates?.map((l, i) => {
         const index = `${i} - ${l.created_at} - ${l.specialty.name}`;
-        const createdAt = l.specialty.created_at;
+        const createdAt = l.created_at;
         const dateCreated = {
           es: formatRelative(new Date(createdAt), new Date(), { locale: es }),
           en: formatRelative(new Date(createdAt), new Date()),

@@ -16,6 +16,7 @@ import {
   Divider,
   Heading,
   Link,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { Search2Icon, CheckIcon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
@@ -31,6 +32,9 @@ function Footer({ pageProps }) {
   const [email, setEmail] = useState('');
   const [formStatus, setFormStatus] = useState('');
   const { colorMode } = useColorMode();
+
+  const iconogram = t('iconogram', {}, { returnObjects: true });
+  const iconColor = useColorModeValue('gray.dark', 'white');
 
   const hideDivider = pageProps?.hideDivider === true;
   if (pageProps?.previewMode) return null;
@@ -239,7 +243,7 @@ function Footer({ pageProps }) {
               {t('social.title')}
             </Heading>
             <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
-              {t('iconogram', {}, { returnObjects: true }).map((item) => (
+              {Array.isArray(iconogram) && iconogram.map((item) => (
                 <Box key={`${item.title}-${item.href}`} as="li" pb="6px" overflow="auto" role="presentation" display="flex">
                   <NextChakraLink href={item.href} fontSize="0.875rem">
                     {item.title.toUpperCase()}
@@ -320,11 +324,12 @@ function Footer({ pageProps }) {
             'flex', // 62em+
           ]}
         >
-          {t('iconogram', {}, { returnObjects: true }).map((item) => (
+
+          {Array.isArray(iconogram) && iconogram.map((item) => (
             <Box key={`${item.title}-${item.href}`} width="48%" marginRight="2px" marginBottom="5px">
-              <NextChakraLink href={item.href}>
-                <Heading display="flex" alignItems="center" as="h3" fontSize="12px" marginBottom="15px">
-                  <Icon color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} icon={item.icon} style={{ display: 'inline', marginRight: '10px' }} width="40px" height="40px" />
+              <NextChakraLink href={item.href} display="flex" alignItems="center" marginBottom="15px">
+                <Icon color={iconColor} icon={item.icon} style={{ display: 'inline', marginRight: '10px' }} width="40px" height="40px" />
+                <Heading as="h3" fontSize="12px">
                   {item.title.toUpperCase()}
                 </Heading>
               </NextChakraLink>

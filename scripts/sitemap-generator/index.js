@@ -2,7 +2,7 @@ const fs = require('fs');
 const globby = require('globby');
 
 const {
-  getPrismicPages, getReadPages, getAsset, getLandingTechnologies,
+  getPrismicPages, getReadPages, getAsset, getLandingTechnologies, getEvents,
 } = require('./requests');
 
 const createArray = (length) => Array.from({ length }, (_, i) => i);
@@ -27,13 +27,15 @@ async function generateSitemap() {
 
   const prismicPages = await getPrismicPages();
   const readPages = await getReadPages();
-  const lessonsPages = await getAsset('LESSON,ARTICLE&exclude_category=how-to,como&academy=4,5,6,47', { exclude_category: 'how-to,como' });
+  const lessonsPages = await getAsset('LESSON,ARTICLE&exclude_category=how-to,como&academy=4,5,6,47');
+
   const exercisesPages = await getAsset('exercise');
   const projectsPages = await getAsset('project');
   const howTosPages = await getAsset('article').then(
     (data) => data.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como'),
   );
   const technologyLandingPages = await getLandingTechnologies();
+  const eventsPages = await getEvents();
 
   const pagination = (data, conector) => {
     const limit = 20;
@@ -51,37 +53,42 @@ async function generateSitemap() {
     return paginated;
   };
 
-  const generateSlugByLang = (data, conector, withDifficulty) => data.map((l) => (withDifficulty
-    ? `${engLang[l.lang] !== 'en' ? `${l?.lang ? `/${l?.lang}` : ''}` : ''}${conector ? `/${conector}` : ''}/${l?.difficulty ? l?.difficulty?.toLowerCase() : 'unknown'}/${l?.slug}`
-    : `${engLang[l.lang] !== 'en' ? `${l?.lang ? `/${l?.lang}` : ''}` : ''}${conector ? `/${conector}` : ''}/${l?.slug}`));
+  const generateSlugByLang = (data, conector, withDifficulty) => {
+    const filteredBySlug = data.filter((f) => f?.slug);
+
+    return filteredBySlug.map((l) => (withDifficulty
+      ? `${engLang[l.lang] !== 'en' ? `${l?.lang ? `/${l?.lang}` : ''}` : ''}${conector ? `/${conector}` : ''}/${l?.difficulty ? l?.difficulty?.toLowerCase() : 'unknown'}/${l?.slug}`
+      : `${engLang[l.lang] !== 'en' ? `${l?.lang ? `/${l?.lang}` : ''}` : ''}${conector ? `/${conector}` : ''}/${l?.slug}`));
+  };
   const generateSlug = (data, conector) => data.map((l) => `${conector ? `/${conector}` : ''}/${l?.slug}`);
 
   const generateTechnologySlug = (data, conector, type) => {
-    console.log('');
+    const getLangConnector = (lang) => (lang === 'en' ? '' : `/${lang}`);
+
     if (type === 'lesson') {
       const lessonsData = data?.length > 0 ? data.filter((l) => {
         const lessonExists = l.assets.some((a) => a?.asset_type === 'LESSON');
         return lessonExists;
       }) : [];
-      return lessonsData?.map((l) => (`/${conector}/${l?.slug}`));
+      return lessonsData?.map((l) => (`${getLangConnector(l.lang)}/${conector}/${l?.slug}`));
     }
     if (type === 'exercise') {
       const exercisesData = data?.length > 0 ? data.filter((l) => {
         const assets = l.assets.some((a) => a?.asset_type === 'EXERCISE');
         return assets;
       }) : [];
-      return exercisesData?.map((l) => (`/${conector}/${l?.slug}`));
+      return exercisesData?.map((l) => (`${getLangConnector(l.lang)}/${conector}/${l?.slug}`));
     }
     if (type === 'project') {
       const projectsData = data?.length > 0 ? data.filter((l) => {
         const assets = l.assets.some((a) => a?.asset_type === 'PROJECT');
-        return assets.length > 0 && (`/${conector}/${l?.slug}`);
+        return assets.length > 0 && (`${getLangConnector(l.lang)}/${conector}/${l?.slug}`);
       }) : [];
       return projectsData;
     }
     if (type === 'tech') {
       return (data?.length > 0 ? data.map(
-        (l) => (`/${conector}/${l?.slug}`),
+        (l) => (`${getLangConnector(l.lang)}/${conector}/${l?.slug}`),
       ) : []);
     }
     return '';
@@ -106,11 +113,12 @@ async function generateSitemap() {
   const exercisesRoute = generateSlugByLang(exercisesPages, 'interactive-exercise');
   const projectsCodingRoute = generateSlugByLang(projectsPages, 'interactive-coding-tutorial');
   const howTosRoute = generateSlugByLang(howTosPages, 'how-to');
+  const eventsRoute = generateSlugByLang(eventsPages, 'workshops');
 
   const paginatedLessonsRoute = pagination(lessonsPages, 'lessons');
-  const paginatedExercisesRoute = pagination(lessonsPages, 'interactive-exercises');
-  const paginatedProjectsRoute = pagination(lessonsPages, 'interactive-coding-tutorials');
-  const paginatedHowTosRoute = pagination(lessonsPages, 'how-to');
+  const paginatedExercisesRoute = pagination(exercisesPages, 'interactive-exercises');
+  const paginatedProjectsRoute = pagination(projectsPages, 'interactive-coding-tutorials');
+  const paginatedHowTosRoute = pagination(howTosPages, 'how-to');
 
   const technologyLessonsRoute = generateTechnologySlug(technologyLandingPages, 'lessons/technology', 'lesson');
   const technologyExercisesRoute = generateTechnologySlug(technologyLandingPages, 'interactive-exercises/technology', 'exercise');
@@ -140,6 +148,7 @@ async function generateSitemap() {
   const projectsSitemap = sitemapTemplate(projectsCodingRoute);
   const exercisesSitemap = sitemapTemplate(exercisesRoute);
   const technologiesSitemap = sitemapTemplate([...technologyLessonsRoute, ...technologyExercisesRoute, ...technologyProjectsRoute, ...allTechnologiesRoute]);
+  const eventsSitemap = sitemapTemplate(eventsRoute);
 
   const sitemap = listOfSitemapsTemplate([
     'pages-sitemap.xml',
@@ -157,6 +166,7 @@ async function generateSitemap() {
     fs.writeFileSync('public/projects-sitemap.xml', projectsSitemap);
     fs.writeFileSync('public/exercises-sitemap.xml', exercisesSitemap);
     fs.writeFileSync('public/technologies-sitemap.xml', technologiesSitemap);
+    fs.writeFileSync('public/events-sitemap.xml', eventsSitemap);
   } catch (err) {
     console.error("Couldn't write sitemaps files", err);
   }

@@ -18,7 +18,8 @@ function ModalInfo({
   teacherFeedback, linkInfo, linkText, link, handlerText, closeText, cancelColorButton,
   handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
   htmlDescription, markdownDescription, attachment, disableInput, descriptionStyle, footerStyle,
-  closeButtonStyles, buttonHandlerStyles, headerStyles, disableCloseButton,
+  closeButtonStyles, buttonHandlerStyles, headerStyles, disableCloseButton, childrenDescription,
+  maxWidth, forceHandlerAndClose,
 }) {
   const { t } = useTranslation('dashboard');
   const [githubUrl, setGithubUrl] = useState(link);
@@ -31,7 +32,7 @@ function ModalInfo({
   const commonHighlightColor = useColorModeValue('gray.250', 'darkTheme');
 
   const rejectFunction = () => {
-    if (forceHandler) {
+    if (forceHandler && !forceHandlerAndClose) {
       setConfirmRejection(true);
     } else {
       onClose();
@@ -57,7 +58,8 @@ function ModalInfo({
     <>
       <Modal closeOnOverlayClick={!forceHandler} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent>
+        {/* md */}
+        <ModalContent maxWidth={maxWidth || 'md'} borderRadius="6px">
           <ModalHeader
             borderBottom={1}
             borderStyle="solid"
@@ -109,6 +111,7 @@ function ModalInfo({
                 }}
               />
             )}
+            {childrenDescription && childrenDescription}
             {teacherFeedback && (
               <Box margin="15px 0 0 0" padding="12px 16px" background={commonHighlightColor} display="flex" flexDirection="column" gridGap="0px">
                 <Text size="l" fontWeight="700" color={useColorModeValue('gray.800', 'gray.light')}>
@@ -317,7 +320,7 @@ function ModalInfo({
               >
                 {rejectData.closeText}
               </Button>
-              {!disableHandler && (
+              {(!disableHandler || forceHandler) && (
                 <Button
                   fontSize="13px"
                   colorScheme="blue"
@@ -371,6 +374,9 @@ ModalInfo.propTypes = {
   buttonHandlerStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   headerStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   disableCloseButton: PropTypes.bool,
+  childrenDescription: PropTypes.node,
+  maxWidth: PropTypes.string,
+  forceHandlerAndClose: PropTypes.bool,
 };
 
 ModalInfo.defaultProps = {
@@ -404,6 +410,9 @@ ModalInfo.defaultProps = {
   buttonHandlerStyles: {},
   headerStyles: {},
   disableCloseButton: false,
+  childrenDescription: null,
+  maxWidth: 'md',
+  forceHandlerAndClose: false,
 };
 
 export default memo(ModalInfo);

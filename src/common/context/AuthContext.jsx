@@ -1,11 +1,16 @@
-import React, { createContext, useEffect, useReducer } from 'react';
+import React, { createContext, useEffect, useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
+import useTranslation from 'next-translate/useTranslation';
+import { Avatar, Box, useToast } from '@chakra-ui/react';
 import bc from '../services/breathecode';
 import { isWindow, removeURLParameter } from '../../utils';
 import axiosInstance from '../../axios';
 import { usePersistent } from '../hooks/usePersistent';
 import modifyEnv from '../../../modifyEnv';
+import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import Text from '../components/Text';
+import { SILENT_CODE } from '../../lib/types';
 
 const initialState = {
   isLoading: true,
@@ -106,8 +111,15 @@ export const AuthContext = createContext({
 });
 
 function AuthProvider({ children }) {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
+  const { t, lang } = useTranslation('footer');
+  const toast = useToast();
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [modalState, setModalState] = useState({
+    state: false,
+    user: null,
+  });
   const [profile, setProfile] = usePersistent('profile', {});
   // const [session, setSession] = usePersistent('session', {});
 
@@ -121,7 +133,6 @@ function AuthProvider({ children }) {
 
   const authHandler = async () => {
     const token = getToken();
-    const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
     if (token !== undefined && token !== null) {
       const requestToken = await fetch(`${BREATHECODE_HOST}/v1/auth/token/${token}`, {
@@ -179,12 +190,34 @@ function AuthProvider({ children }) {
     const redirect = isWindow && localStorage.getItem('redirect');
     try {
       if (payload) {
-        const response = await bc.auth().login(payload);
+        const response = await bc.auth().login2(payload, lang);
+        const responseData = await response.json();
+
+        if (responseData?.silent_code === SILENT_CODE.EMAIL_NOT_VALIDATED) {
+          setModalState({
+            ...payload,
+            ...responseData,
+            state: true,
+          });
+        }
+        if (responseData?.silent !== true && responseData?.non_field_errors?.length > 0) {
+          for (let i = 0; i < responseData.non_field_errors?.length; i += 1) {
+            const indexFromOne = i + 1;
+            toast({
+              position: 'top',
+              status: 'error',
+              title: responseData.non_field_errors[i],
+              duration: 5000 + (1000 * indexFromOne),
+              isClosable: true,
+            });
+          }
+        }
+
         if (response.status === 200) {
-          handleSession(response.data.token || response.token);
+          handleSession(responseData.token || response.token);
           dispatch({
             type: 'LOGIN',
-            payload: response.data,
+            payload: responseData,
           });
           if (redirect && redirect.length > 0) {
             router.push(redirect);
@@ -253,6 +286,8 @@ function AuthProvider({ children }) {
     handleSession(null);
     setProfile({});
     localStorage.removeItem('showGithubWarning');
+    localStorage.removeItem('redirect-after-register');
+    localStorage.removeItem('redirect');
     dispatch({ type: 'LOGOUT' });
   };
 
@@ -277,6 +312,54 @@ function AuthProvider({ children }) {
       }}
     >
       {children}
+      <ModalInfo
+        headerStyles={{ textAlign: 'center' }}
+        title={t('signup:alert-message.validate-email-title')}
+        footerStyle={{ flexDirection: 'row-reverse' }}
+        closeButtonVariant="outline"
+        closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
+        childrenDescription={(
+          <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+            <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+            <Text
+              size="14px"
+              textAlign="center"
+              dangerouslySetInnerHTML={{ __html: t('signup:alert-message.validate-email-description', { email: modalState?.email }) }}
+            />
+          </Box>
+        )}
+        isOpen={modalState.state}
+        buttonHandlerStyles={{ variant: 'default' }}
+        actionHandler={() => {
+          const inviteId = modalState?.data?.[0]?.id;
+          bc.auth().resendConfirmationEmail(inviteId)
+            .then((resp) => {
+              const data = resp?.data;
+              if (data === undefined) {
+                toast({
+                  position: 'top',
+                  status: 'info',
+                  title: t('signup:alert-message.email-already-sent'),
+                  isClosable: true,
+                  duration: 6000,
+                });
+              } else {
+                toast({
+                  position: 'top',
+                  status: 'success',
+                  title: t('signup:alert-message.email-sent-to', { email: data?.email }),
+                  isClosable: true,
+                  duration: 6000,
+                });
+              }
+            });
+        }}
+        handlerText={t('signup:resend')}
+        onClose={() => setModalState({
+          ...modalState,
+          state: false,
+        })}
+      />
     </AuthContext.Provider>
   );
 }

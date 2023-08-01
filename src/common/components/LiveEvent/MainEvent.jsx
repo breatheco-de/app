@@ -53,8 +53,8 @@ function MainEvent({
             window.open(`${host}/v1/events/me/event/liveclass/join/${event?.hash}?token=${accessToken}`);
           }
           if (!event?.hash) {
-            window.open(`${host}/v1/events/me/event/${nearestEvent?.id}/join?token=${accessToken}`);
-            // window.open(`/${lang}/workshops/${nearestEvent?.slug}`);
+            // window.open(`${host}/v1/events/me/event/${nearestEvent?.id}/join?token=${accessToken}`);
+            window.open(`/${lang}/workshops/${nearestEvent?.slug}`);
           }
         }}
       >
@@ -62,6 +62,9 @@ function MainEvent({
           borderRadius="full"
           width="50px"
           height="50px"
+          minHeight="50px"
+          maxHeight="50px"
+          flexShrink={0}
           className={
             isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)
               ? `${mainClasses.length === 0 ? 'pulse-blue' : 'pulse-red'}`
@@ -88,7 +91,7 @@ function MainEvent({
             </Box>
           )}
           {event?.event_type?.icon_url ? (
-            <Image src={event?.event_type?.icon_url} width={50} height={50} />
+            <Image src={event?.event_type?.icon_url} width={50} height={50} style={{ borderRadius: '50px' }} />
           ) : (
             <Icon
               width="50px"

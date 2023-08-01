@@ -10,15 +10,17 @@ import { useEffect, useState } from 'react';
 import Icon from '../../common/components/Icon';
 import MobileItem from './MobileItem';
 import LanguageSelector from '../../common/components/LanguageSelector';
+import syllabusList from '../../../public/syllabus.json';
 // import UpgradeExperience from '../../common/components/UpgradeExperience';
 
 function MobileNav({
   // eslint-disable-next-line no-unused-vars
-  NAV_ITEMS, readSyllabus, haveSession, translations, mktCourses,
+  NAV_ITEMS, haveSession, translations, mktCourses, onClickLink,
 }) {
   const [privateItems, setPrivateItems] = useState([]);
   const { colorMode, toggleColorMode } = useColorMode();
   const commonColors = useColorModeValue('white', 'gray.800');
+  const readSyllabus = JSON.parse(syllabusList);
 
   useEffect(() => {
     if (haveSession) {
@@ -27,22 +29,16 @@ function MobileNav({
   }, [haveSession]);
   const publicItems = NAV_ITEMS.filter((item) => item.private !== true);
 
-  const customPublicItems = publicItems.map((publicItem) => {
-    if (publicItem.asPath === '/read' && readSyllabus.length > 0) {
-      publicItem.subMenu.map((l) => {
-        if (l.asPath === '/read-and-watch') {
-          const courseFetched = readSyllabus;
-          const menus = [...courseFetched, ...l.subMenuContent];
+  const customPublicItems = publicItems;
+  const allItems = [...privateItems, ...customPublicItems];
 
-          // eslint-disable-next-line no-param-reassign
-          l.subMenu = menus;
-        }
-        return l;
-      });
+  // manage submenus in level 1
+  const prepareSubMenuData = (item) => {
+    if (item.slug === 'social-and-live-learning') {
+      return mktCourses;
     }
-    return publicItem;
-  });
-
+    return item?.subMenu;
+  };
   return (
     <Stack
       position="absolute"
@@ -55,35 +51,24 @@ function MobileNav({
       borderStyle="solid"
       borderColor={useColorModeValue('gray.200', 'gray.900')}
     >
-      {privateItems.length > 0 && privateItems.map((privateItem) => {
+      {customPublicItems.length > 0 && allItems.map((publicItem) => {
         const {
-          label, subMenu, href, asPath, description, icon,
-        } = privateItem;
-        return (
-          <MobileItem
-            key={label}
-            description={description}
-            icon={icon}
-            label={label}
-            subMenu={subMenu}
-            href={href}
-            asPath={asPath}
-          />
-        );
-      })}
-
-      {customPublicItems.map((publicItem) => {
-        const {
-          label, subMenu, href, description, icon,
+          label, href, description, icon,
         } = publicItem;
+        const submenuData = prepareSubMenuData(publicItem);
+
         return (
           <MobileItem
             key={label}
             description={description}
             icon={icon}
             label={label}
-            subMenu={subMenu}
+            subMenu={publicItem?.subMenu?.length > 1
+              ? publicItem?.subMenu
+              : submenuData}
             href={href}
+            onClickLink={onClickLink}
+            readSyllabus={readSyllabus}
           />
         );
       })}
@@ -116,9 +101,9 @@ function MobileNav({
           title="Toggle Color Mode"
           icon={
             colorMode === 'light' ? (
-              <Icon icon="light" width="25px" height="23px" color="black" />
+              <Icon icon="light" id="light-button-mobile" width="25px" height="23px" color="black" />
             ) : (
-              <Icon icon="dark" width="20px" height="20px" />
+              <Icon icon="dark" id="dark-button-mobile" width="20px" height="20px" />
             )
           }
         />
@@ -130,24 +115,10 @@ function MobileNav({
 
 MobileNav.propTypes = {
   haveSession: PropTypes.bool.isRequired,
-  NAV_ITEMS: PropTypes.arrayOf(
-    PropTypes.shape({
-      label: PropTypes.string.isRequired,
-      description: PropTypes.string,
-      icon: PropTypes.string,
-      href: PropTypes.string,
-      subMenu: PropTypes.arrayOf(
-        PropTypes.shape({
-          label: PropTypes.string,
-          subLabel: PropTypes,
-          href: PropTypes.string,
-        }),
-      ),
-    }),
-  ),
+  NAV_ITEMS: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
-  readSyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
-  mktCourses: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  onClickLink: PropTypes.func.isRequired,
+  mktCourses: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
 };
 
 MobileNav.defaultProps = {
@@ -161,7 +132,6 @@ MobileNav.defaultProps = {
       },
     },
   ],
-  readSyllabus: [],
   translations: undefined,
   mktCourses: [],
 };

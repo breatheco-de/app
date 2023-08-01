@@ -19,6 +19,7 @@ module.exports = {
     'max-len': 'off',
     'object-curly-newline': 'off',
     'spaced-comment': 'off',
+    'import/prefer-default-export': 'off',
     'linebreak-style': ['error', process.platform === 'win32' ? 'windows' : 'unix'],
     'react/jsx-no-useless-fragment': 'off',
     'default-param-last': 'off',

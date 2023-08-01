@@ -16,6 +16,7 @@
   "filters": "Filters",
   "sort": "Sort",
   "close": "Close",
+  "continue": "Continue",
   "confirm": "Confirm",
   "submit": "Submit",
   "enroll": "Enroll now",
@@ -55,6 +56,7 @@
   "full-screen": "Full screen",
   "no-title": "No title 🙂",
   "search-not-found": "No matches found for this search",
+  "asset-not-found-in-current-language": "There are not content for this technology on this language, try a different language.",
   "no-elements": "No elements found",
   "select": "Select",
   "difficulties": "Difficulties",
@@ -170,5 +172,7 @@
   "uploadScreenshot": "Upload screenshot",
   "continue-learning-course": "Continue learning for free about:",
   "logout-and-switch-user": "Logout and switch user",
-  "free": "Free"
+  "free": "Free",
+  "login": "Login",
+  "privacy-policy": "Privacy policy"
 }

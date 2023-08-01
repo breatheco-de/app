@@ -98,20 +98,20 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
         display="flex"
       >
         {title && (
-        <Box
-          flexShrink="2"
-          minWidth="170px"
-          maxWidth={{ base: 'none', lg: '300px' }}
-        >
-          <Heading
-            as="h2"
-            size="30px"
-            fontWeight="700"
-            color={fontColor}
-            dangerouslySetInnerHTML={{ __html: title }}
-          />
-          <Icon icon="longArrowRight" style={{ margin: '10px 0' }} color={hexColor.blueDefault} width="100px" height="80px" />
-        </Box>
+          <Box
+            flexShrink="2"
+            minWidth="170px"
+            maxWidth={{ base: 'none', lg: '300px' }}
+          >
+            <Heading
+              as="h2"
+              size="30px"
+              fontWeight="700"
+              color={fontColor}
+              dangerouslySetInnerHTML={{ __html: title }}
+            />
+            <Icon icon="longArrowRight" style={{ margin: '10px 0' }} color={hexColor.blueDefault} width="100px" height="80px" />
+          </Box>
         )}
         <Box
           ref={ref}

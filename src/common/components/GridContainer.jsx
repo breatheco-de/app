@@ -13,7 +13,7 @@ function GridContainer({ children, gridTemplateColumns, childrenStyle, gridGap, 
       {...rest}
     >
       {withContainer ? (
-        <Box gridColumn={gridColumn || '2 / span 8'} {...childrenStyle}>
+        <Box as="div" gridColumn={gridColumn || '2 / span 8'} {...childrenStyle}>
           {children}
         </Box>
       ) : children}
@@ -26,7 +26,7 @@ GridContainer.propTypes = {
   gridTemplateColumns: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
   childrenStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
   gridColumn: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  gridGap: PropTypes.string,
+  gridGap: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   withContainer: PropTypes.bool,
 };
 

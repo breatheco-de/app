@@ -429,23 +429,52 @@ function Content() {
 
   const handleNextPage = () => {
     setCurrentData({});
+    setCurrentSelectedModule(null);
+    setCallToActionProps({});
+    setReadme(null);
+    setIpynbHtmlUrl(null);
+    setCurrentBlankProps(null);
     if (nextAssignment !== null) {
       if (nextAssignment?.target === 'blank') {
         setCurrentBlankProps(nextAssignment);
-        router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+        router.push({
+          query: {
+            cohortSlug,
+            lesson: nextAssignment?.type?.toLowerCase(),
+            lessonSlug: nextAssignment?.slug,
+          },
+        });
       } else {
         setCurrentBlankProps(null);
-        router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+        router.push({
+          query: {
+            cohortSlug,
+            lesson: nextAssignment?.type?.toLowerCase(),
+            lessonSlug: nextAssignment?.slug,
+          },
+        });
       }
     } else if (!!nextModule) {
       if (firstTask.target !== 'blank') {
         if (cohortSlug && !!firstTask && !!nextModule?.filteredModules[0]) {
-          router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
+          router.push({
+            query: {
+              cohortSlug,
+              lesson: firstTask?.type?.toLowerCase(),
+              lessonSlug: firstTask?.slug,
+            },
+          });
         } else {
           setOpenNextModuleModal(true);
         }
       } else {
-        router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
+        router.push({
+          query: {
+            cohortSlug,
+            lesson: firstTask?.type?.toLowerCase(),
+            lessonSlug: firstTask?.slug,
+          },
+        });
         setCurrentBlankProps(firstTask);
       }
     }
@@ -453,23 +482,52 @@ function Content() {
 
   const handlePrevPage = () => {
     setCurrentData({});
+    setCurrentSelectedModule(null);
+    setCallToActionProps({});
+    setReadme(null);
+    setIpynbHtmlUrl(null);
+    setCurrentBlankProps(null);
     if (previousAssignment !== null) {
       if (previousAssignment?.target === 'blank') {
         setCurrentBlankProps(previousAssignment);
-        router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
+        router.push({
+          query: {
+            cohortSlug,
+            lesson: previousAssignment?.type?.toLowerCase(),
+            lessonSlug: previousAssignment?.slug,
+          },
+        });
       } else {
         setCurrentBlankProps(null);
-        router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
+        router.push({
+          query: {
+            cohortSlug,
+            lesson: previousAssignment?.type?.toLowerCase(),
+            lessonSlug: previousAssignment?.slug,
+          },
+        });
       }
     } else if (!!prevModule) {
       if (lastPrevTask.target !== 'blank') {
         if (cohortSlug && !!lastPrevTask) {
-          router.push(router.push(`/syllabus/${cohortSlug}/${lastPrevTask?.type?.toLowerCase()}/${lastPrevTask?.slug}`));
+          router.push({
+            query: {
+              cohortSlug,
+              lesson: lastPrevTask?.type?.toLowerCase(),
+              lessonSlug: lastPrevTask?.slug,
+            },
+          });
         }
       } else {
         setCurrentBlankProps(lastPrevTask);
         setCurrentData(lastPrevTask);
-        router.push(router.push(`/syllabus/${cohortSlug}/${lastPrevTask?.type?.toLowerCase()}/${lastPrevTask?.slug}`));
+        router.push({
+          query: {
+            cohortSlug,
+            lesson: lastPrevTask?.type?.toLowerCase(),
+            lessonSlug: lastPrevTask?.slug,
+          },
+        });
       }
     }
   };
@@ -727,7 +785,13 @@ function Content() {
                     setClickedPage(previousAssignment);
                     if (previousAssignment?.target === 'blank') {
                       setCurrentBlankProps(previousAssignment);
-                      router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
+                      router.push({
+                        query: {
+                          cohortSlug,
+                          lesson: previousAssignment?.type?.toLowerCase(),
+                          lessonSlug: previousAssignment?.slug,
+                        },
+                      });
                     } else {
                       handlePrevPage();
                     }
@@ -761,14 +825,26 @@ function Content() {
                       if (!taskIsNotDone) {
                         if (nextAssignment?.target === 'blank') {
                           setCurrentBlankProps(nextAssignment);
-                          router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                          router.push({
+                            query: {
+                              cohortSlug,
+                              lesson: nextAssignment?.type?.toLowerCase(),
+                              lessonSlug: nextAssignment?.slug,
+                            },
+                          });
                         } else {
                           setCurrentBlankProps(null);
                           handleNextPage();
                         }
                       }
                     } else if (nextModule && cohortSlug && !!firstTask) {
-                      router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
+                      router.push({
+                        query: {
+                          cohortSlug,
+                          lesson: firstTask?.type?.toLowerCase(),
+                          lessonSlug: firstTask?.slug,
+                        },
+                      });
                     } else {
                       setOpenNextModuleModal(true);
                     }

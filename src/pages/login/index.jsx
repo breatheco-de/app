@@ -33,7 +33,6 @@ export const getStaticProps = async ({ locale, locales }) => {
         url: ogUrl.en || `/${locale}/login`,
         pathConnector: '/login',
       },
-      fallback: false,
     },
   };
 };
@@ -44,6 +43,7 @@ function login() {
   const redirect = isWindow && localStorage.getItem('redirect');
   const router = useRouter();
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
+  const [isLoggedFromRegister, setIsLoggedFromRegister] = useState(false);
 
   const fontColor = useColorModeValue('gray.default', 'gray.400');
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
@@ -61,7 +61,7 @@ function login() {
     }
   }, [tabQueryString]);
   useEffect(() => {
-    if (user !== null && user !== undefined) {
+    if (user !== null && user !== undefined && !isLoggedFromRegister) {
       if (redirect && redirect.length > 0 && isWindow) {
         router.push(redirect);
         localStorage.removeItem('redirect');
@@ -124,7 +124,7 @@ function login() {
                     <Login />
                   </TabPanel>
                   <TabPanel>
-                    <Register />
+                    <Register setIsLoggedFromRegister={setIsLoggedFromRegister} />
                   </TabPanel>
                 </TabPanels>
               </Stack>

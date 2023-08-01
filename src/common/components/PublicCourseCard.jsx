@@ -122,7 +122,7 @@ PublicCourseCard.propTypes = {
   teacher: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   isAvailableAsSaas: PropTypes.bool,
   subscriptionStatus: PropTypes.string,
-  width: PropTypes.string,
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.objectOf(PropTypes.any)]),
 };
 
 PublicCourseCard.defaultProps = {

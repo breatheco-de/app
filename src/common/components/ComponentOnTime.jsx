@@ -2,18 +2,25 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { calculateDifferenceDays } from '../../utils';
 
-function ComponentOnTime({ startingAt, finishedView, idleView }) {
+function ComponentOnTime({ startingAt, endingAt, finishedView, idleView, onEndedEvent }) {
+  const [justStarted, setJustStarted] = useState(false);
   const [justFinished, setJustFinished] = useState(false);
 
   useEffect(() => {
     let interval;
-    if (justFinished === false) {
+    if (!justStarted && !justFinished) {
       interval = setInterval(() => {
         const startingAtDate = new Date(startingAt);
-        const { isRemainingToExpire } = calculateDifferenceDays(startingAtDate);
+        const endingAtDate = new Date(endingAt);
+        const { isRemainingToExpire: remainingToStartedDate } = calculateDifferenceDays(startingAtDate);
+        const { isRemainingToExpire: remainingToEndedAtDate } = calculateDifferenceDays(endingAtDate);
 
-        if (!isRemainingToExpire && !justFinished) {
+        if (!remainingToStartedDate) {
+          setJustStarted(true);
+        }
+        if (!remainingToEndedAtDate) {
           setJustFinished(true);
+          onEndedEvent();
         }
       }, 1000);
     }
@@ -21,11 +28,11 @@ function ComponentOnTime({ startingAt, finishedView, idleView }) {
     return () => {
       clearInterval(interval);
     };
-  }, [justFinished]);
+  }, [justStarted, justFinished]);
 
   return (
     <>
-      {justFinished ? (
+      {(justStarted && !justFinished) ? (
         finishedView
       ) : (
         idleView
@@ -36,14 +43,18 @@ function ComponentOnTime({ startingAt, finishedView, idleView }) {
 
 ComponentOnTime.propTypes = {
   startingAt: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  endingAt: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   finishedView: PropTypes.node,
   idleView: PropTypes.node,
+  onEndedEvent: PropTypes.func,
 };
 
 ComponentOnTime.defaultProps = {
   startingAt: null,
+  endingAt: null,
   finishedView: null,
   idleView: null,
+  onEndedEvent: () => {},
 };
 
 export default ComponentOnTime;

@@ -16,7 +16,7 @@ export const getStaticPaths = async ({ locales }) => {
       Academy: 4,
     },
   });
-  const data = await resp.json();
+  const data = resp?.status > 400 ? {} : await resp?.json();
 
   const paths = data?.results?.length > 0 ? data.results.flatMap((res) => locales.map((locale) => ({
     params: {
@@ -47,7 +47,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const responseAssetsList = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?limit=9000&technologies=${slug}`);
   const allAssetList = await responseAssetsList.json();
 
-  if (allAssetList?.status < 400) {
+  if (responseAssetsList?.status >= 400) {
     return {
       notFound: true,
     };
@@ -69,10 +69,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     return false;
   });
 
-  const allAssetsFiltered = data.filter(
-    (l) => technologyData.assets.some((a) => a === l.slug),
-  );
-
   const ogUrl = {
     en: `/technology/${slug}`,
     us: `/technology/${slug}`,
@@ -93,7 +89,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       },
       fallback: false,
       technologyData,
-      data: allAssetsFiltered.filter((project) => project.lang === currentLang).map(
+      data: data.filter((project) => project.lang === currentLang).map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
     },
@@ -140,15 +136,14 @@ function LessonByTechnology({ data, technologyData }) {
       </Box>
 
       <Flex flexDirection="column" gridGap="3rem">
-        {data.length > 0 && (
-          <Box display="flex" flexDirection="column" gridGap="18px">
-            <ProjectList
-              projects={data}
-              withoutImage
-              isDynamic
-            />
-          </Box>
-        )}
+        <Box display="flex" flexDirection="column" gridGap="18px">
+          <ProjectList
+            projects={data}
+            withoutImage
+            isDynamic
+            notFoundMessage={t('common:asset-not-found-in-current-language')}
+          />
+        </Box>
       </Flex>
     </Box>
   );

@@ -7,9 +7,7 @@ function HelpComponent({
 }) {
   return (
     <Tooltip label={text} placement="top">
-      <span>
-        <Icon width={width} height={height} style={{ display: 'inline-block', ...style }} color={color} icon="help" />
-      </span>
+      <Icon width={width} height={height} style={{ display: 'inline-block', ...style }} color={color} icon="help" />
     </Tooltip>
   );
 }

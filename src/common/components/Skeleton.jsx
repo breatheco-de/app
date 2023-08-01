@@ -175,7 +175,7 @@ export function ModuleMapSkeleton() {
 
 export function CardSkeleton({
   withoutContainer, quantity, templateColumns, gridGap, cardWidth, cardHeight,
-  cardRadius, ...chakraProps
+  cardRadius, ...rest
 }) {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
@@ -184,7 +184,7 @@ export function CardSkeleton({
     <Grid
       gridTemplateColumns={templateColumns}
       gridGap={gridGap}
-      {...chakraProps}
+      {...rest}
     >
       {Array(quantity).fill('l').map((_, i) => {
         const index = i;
@@ -208,13 +208,13 @@ export function CardSkeleton({
         const index = i;
         return (
           <Skeleton
-            {...chakraProps}
             key={index}
             width={cardWidth}
             height={cardHeight}
             borderRadius={cardRadius}
             startColor={commonStartColor}
             endColor={commonEndColor}
+            {...rest}
           />
         );
       })}

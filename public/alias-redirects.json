@@ -700,9 +700,19 @@
     "destination": "/es/interactive-coding-tutorial/projecto-hipotesis-testing-con-python"
   },
   {
-    "source": "/lesson/javscript-substring",
-    "type": "LESSON",
-    "destination": "/es/lesson/javascript-substring"
+    "source": "/how-to/javscript-substring",
+    "type": "ARTICLE",
+    "destination": "/es/how-to/javascript-substring"
+  },
+  {
+    "source": "/how-to/foreach-javascript",
+    "type": "ARTICLE",
+    "destination": "/es/how-to/metodo-foreach-javascript"
+  },
+  {
+    "source": "/project/code-rest-api-with-node-and-jwt-authentication",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/code-rest-api-with-node-and-jwt-authentication"
   },
   {
     "source": "/project/codifica-una-landing-page-con-node",
@@ -710,9 +720,9 @@
     "destination": "/es/interactive-coding-tutorial/codifica-una-landing-page-con-node"
   },
   {
-    "source": "/project/code-rest-api-with-node-and-jwt-authentication",
+    "source": "/project/Crea-un-API-Rest-en-NodeJs-con-ExpressJs",
     "type": "PROJECT-REROUTE",
-    "destination": "/en/interactive-coding-tutorial/code-rest-api-with-node-and-jwt-authentication"
+    "destination": "/es/interactive-coding-tutorial/Crea-un-API-Rest-en-NodeJs-con-ExpressJs"
   },
   {
     "source": "/project/Tutorial-de-Proyecto-de-NLP",
