@@ -70,12 +70,13 @@ function Dashboard() {
   const { featuredColor } = useStyle();
 
   const [session, setSession] = usePersistent('session', {});
-  const { user, choose, isLoading } = useAuth();
+  const { user, choose, isLoading, isAuthenticated } = useAuth();
 
   const isBelowTablet = getBrowserSize()?.width < 768;
   const [currentCohortProps, setCurrentCohortProps] = useState({});
   const [subscriptionData, setSubscriptionData] = useState(null);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
+  const [isAvailableToShowWarningModal, setIsAvailableToShowModalMessage] = useState(false);
   const {
     cohortSession, sortedAssignments, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, taskTodo, taskTodoState,
@@ -175,6 +176,20 @@ function Dashboard() {
         });
       });
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      bc.admissions().me()
+        .then((resp) => {
+          const data = resp?.data;
+          const cohorts = data?.cohorts;
+          const isToShowGithubMessage = cohorts?.some(
+            (l) => l?.educational_status === 'ACTIVE' && l.cohort.available_as_saas === false,
+          );
+          setIsAvailableToShowModalMessage(isToShowGithubMessage);
+        });
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && session?.closedFinalProjectModal !== true) {
@@ -737,70 +752,72 @@ function Dashboard() {
         </Flex>
       </Container>
       {showGithubWarning === 'active' && (
-      <Modal
-        isOpen={showWarningModal}
-        size="md"
-        margin="0 10px"
-        onClose={() => {
-          setShowWarningModal(false);
-          localStorage.setItem('showGithubWarning', 'postponed');
-        }}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader color={commonModalColor} borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
-            {t('warningModal.title')}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody padding={{ base: '15px 22px' }}>
-            <Text textAlign="center" fontSize="14px" lineHeight="24px" marginBottom="15px" fontWeight="400">
-              {t('warningModal.sub-title')}
-            </Text>
-            <Text marginBottom="25px" color={commonFontColor} textAlign="center" fontSize="12px" lineHeight="24px">
-              {t('warningModal.text')}
-            </Text>
-            <Button
-              textAlign="center"
-              variant="outline"
-              margin="auto"
-              fontSize="13px"
-              fontWeight="700"
-              display="flex"
-              width="100%"
-              marginBottom="15px"
-              onClick={(e) => {
-                e.preventDefault();
-                window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
-              }}
-            >
-              <Icon
-                icon="github"
-                width="16px"
-                height="16px"
-                style={{ marginRight: '5px' }}
-              />
-              {' '}
-              {t('warningModal.connect')}
-            </Button>
-            <Button
-              textAlign="center"
-              variant="link"
-              margin="auto"
-              fontSize="15px"
-              lineHeight="22px"
-              fontWeight="700"
-              display="block"
-              color={commonModalColor}
-              onClick={() => {
-                setShowWarningModal(false);
-                localStorage.setItem('showGithubWarning', 'postponed');
-              }}
-            >
-              {t('warningModal.skip')}
-            </Button>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+        <Modal
+          isOpen={showWarningModal}
+          size="md"
+          margin="0 10px"
+          onClose={() => {
+            setShowWarningModal(false);
+            localStorage.setItem('showGithubWarning', 'postponed');
+          }}
+        >
+          <ModalOverlay />
+          <ModalContent style={{ margin: '3rem 0 0 0' }}>
+            <ModalHeader color={commonModalColor} borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
+              {t('warningModal.title')}
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody padding={{ base: '15px 22px' }}>
+              <Text textAlign="center" fontSize="14px" lineHeight="24px" marginBottom="15px" fontWeight="400">
+                {t('warningModal.sub-title')}
+              </Text>
+              {isAvailableToShowWarningModal && (
+                <Text marginBottom="25px" color={commonFontColor} textAlign="center" fontSize="12px" lineHeight="24px">
+                  {t('warningModal.text')}
+                </Text>
+              )}
+              <Button
+                textAlign="center"
+                variant="outline"
+                margin="auto"
+                fontSize="13px"
+                fontWeight="700"
+                display="flex"
+                width="100%"
+                marginBottom="15px"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
+                }}
+              >
+                <Icon
+                  icon="github"
+                  width="16px"
+                  height="16px"
+                  style={{ marginRight: '5px' }}
+                />
+                {' '}
+                {t('warningModal.connect')}
+              </Button>
+              <Button
+                textAlign="center"
+                variant="link"
+                margin="auto"
+                fontSize="15px"
+                lineHeight="22px"
+                fontWeight="700"
+                display="block"
+                color={commonModalColor}
+                onClick={() => {
+                  setShowWarningModal(false);
+                  localStorage.setItem('showGithubWarning', 'postponed');
+                }}
+              >
+                {t('warningModal.skip')}
+              </Button>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
       )}
     </>
   );

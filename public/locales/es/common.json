@@ -4,6 +4,7 @@
   "error-with-status": "{{statusCode}} error ocurrió en el servidor",
   "error-without-status": "Un error ocurrió en el server",
   "edit-on-github": "Editar en Github",
+  "github-not-connected": "Tu cuenta de Github no está conectada.",
   "github-warning": "Tu cuenta de Github no está conectada. Estudiantes activos de 4Geeks Academy que tengan conectanda su cuenta de Github pueden acceder a horas ilimitadas de Codespaces.",
   "title": "Bienvenido | Learn",
   "backToHome": "Volver a la página principal",
