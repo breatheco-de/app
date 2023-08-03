@@ -374,7 +374,7 @@ function Content() {
     currentTask,
   });
 
-  const teacherActions = !profesionalRoles.includes(cohortSession.cohort_role)
+  const teacherActions = profesionalRoles.includes(cohortSession.cohort_role)
     ? [
       {
         icon: 'message',
