@@ -132,6 +132,7 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
         >
           {courses.map((course) => (
             <PublicCourseCard
+              key={course.slug}
               margin={{ base: courses.length === 1 && 'auto', md: '0' }}
               width={{ base: courses.length === 1 ? '99%' : '300px', sm: '300px' }}
               maxWidth="300px"
