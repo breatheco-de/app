@@ -213,7 +213,7 @@ export default function HowToSlug({ data, markdown }) {
             </Link>
           </Box>
           {title ? (
-            <Heading size="l" as='h1' fontWeight="700">
+            <Heading size="l" as="h1" fontWeight="700">
               {title}
             </Heading>
           ) : (
