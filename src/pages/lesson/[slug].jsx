@@ -1,17 +1,15 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable no-param-reassign */
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, useColorModeValue, Modal, Button, Tooltip,
-  ModalOverlay, ModalContent, ModalCloseButton, Skeleton,
+  Box, useColorModeValue, Skeleton,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import getT from 'next-translate/getT';
 import Icon from '../../common/components/Icon';
 import { getExtensionName, unSlugifyCapitalize } from '../../utils';
-import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import TagCapsule from '../../common/components/TagCapsule';
@@ -69,7 +67,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
   const exensionName = getExtensionName(lesson.readme_url);
   let markdown = '';
-  let ipynbHtmlUrl = '';
+  let ipynbHtml = '';
 
   if (exensionName !== 'ipynb') {
     const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
@@ -80,7 +78,18 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     }
     markdown = await resp.text();
   } else {
-    ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
+    // ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
+    const ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.html`;
+    const resp = await fetch(ipynbHtmlUrl);
+    if (resp.status >= 400) {
+      return {
+        notFound: true,
+      };
+    }
+    ipynbHtml = {
+      html: await resp.text(),
+      statusText: resp.statusText,
+    };
   }
   const translationArray = [
     {
@@ -125,23 +134,22 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       lesson,
       translations: translationArray,
       markdown,
-      ipynbHtmlUrl,
+      ipynbHtml,
     },
   };
 };
 
-function LessonSlug({ lesson, markdown, ipynbHtmlUrl }) {
+function LessonSlug({ lesson, markdown, ipynbHtml }) {
   const { t } = useTranslation('lesson');
-  const [isFullScreen, setIsFullScreen] = useState(false);
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
 
   const translations = lesson?.translations || { es: '', en: '', us: '' };
 
   const router = useRouter();
-  const currentTheme = useColorModeValue('light', 'dark');
-  const iconColorTheme = useColorModeValue('#000000', '#ffffff');
   const { slug } = router.query;
   const { locale } = router;
+
+  const isIpynb = ipynbHtml.statusText === 'OK';
 
   useEffect(() => {
     const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/lesson/${slug}`);
@@ -178,13 +186,10 @@ function LessonSlug({ lesson, markdown, ipynbHtmlUrl }) {
       </GridContainer>
       <GridContainer
         maxWidth="1440px"
-        // maxWidth="1280px"
         margin="28px auto 0 auto"
         height="100%"
-        // gridTemplateColumns="3fr repeat(12, 1fr) 3fr"
         gridTemplateColumns="4fr repeat(12, 1fr)"
         gridGap="36px"
-        // padding={{ base: '0 10px', lg: '0' }}
         padding="0 10px"
       >
         <Box display={{ base: 'none', md: 'flex' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
@@ -216,23 +221,8 @@ function LessonSlug({ lesson, markdown, ipynbHtmlUrl }) {
                 {t('common:edit-on-github')}
               </Link>
             </Box>
-            {lesson?.title ? (
-              <Heading
-                as="h1"
-                size="30px"
-                fontWeight="700"
-                margin="22px 0 20px 0"
-                transition="color 0.2s ease-in-out"
-                color={useColorModeValue('black', 'white')}
-                textTransform="uppercase"
-              >
-                {lesson.title}
-              </Heading>
-            ) : (
-              <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
-            )}
           </Box>
-          {markdown && ipynbHtmlUrl === '' ? (
+          {markdown && !isIpynb ? (
             <Box
               height="100%"
               margin="0 rem auto 0 auto"
@@ -256,7 +246,7 @@ function LessonSlug({ lesson, markdown, ipynbHtmlUrl }) {
 
           ) : (
             <>
-              {ipynbHtmlUrl === '' && (
+              {!isIpynb && (
                 <MDSkeleton />
               )}
             </>
@@ -265,7 +255,7 @@ function LessonSlug({ lesson, markdown, ipynbHtmlUrl }) {
             <MktSideRecommendedCourses title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
           </Box>
 
-          {ipynbHtmlUrl && markdown === '' && (
+          {isIpynb && markdown === '' && ipynbHtml?.html && (
             <Box
               height="100%"
               gridColumn="2 / span 12"
@@ -274,70 +264,10 @@ function LessonSlug({ lesson, markdown, ipynbHtmlUrl }) {
               width={{ base: '100%', md: 'auto' }}
             >
               <Box width="100%" height="100%">
-                <Button
-                  background={currentTheme}
-                  position="absolute"
-                  margin="1rem 0 0 2rem"
-                  padding="5px"
-                  height="auto"
-                  onClick={() => setIsFullScreen(true)}
-                >
-                  <Tooltip label={t('common:full-screen')} placement="top">
-                    <Box>
-                      <Icon icon="screen" color={iconColorTheme} width="22px" height="22px" />
-                    </Box>
-                  </Tooltip>
-                </Button>
-                <Box display={currentTheme === 'dark' ? 'block' : 'none'}>
-                  <iframe
-                    id="iframe"
-                    src={`${ipynbHtmlUrl}?theme=dark&plain=true`}
-                    seamless
-                    style={{
-                      width: '100%',
-                      height: '80vh',
-                      maxHeight: '100%',
-                    }}
-                    title={`${lesson.title} IPython Notebook`}
-                  />
-                </Box>
-                <Box display={currentTheme === 'light' ? 'block' : 'none'}>
-                  <iframe
-                    id="iframe"
-                    src={`${ipynbHtmlUrl}?theme=light&plain=true`}
-                    seamless
-                    style={{
-                      width: '100%',
-                      height: '80vh',
-                      maxHeight: '100%',
-                    }}
-                    title={`${lesson.title} IPython Notebook`}
-                  />
-                </Box>
-
-                <Modal isOpen={isFullScreen} closeOnOverlayClick onClose={() => setIsFullScreen(false)} isCentered size="5xl" borderRadius="0">
-                  <ModalOverlay />
-                  <ModalContent>
-                    <ModalCloseButton
-                      style={{
-                        top: '9px',
-                        right: '18px',
-                        zIndex: '99',
-                      }}
-                    />
-                    <iframe
-                      id="iframe"
-                      src={`${ipynbHtmlUrl}?theme=${currentTheme}&plain=true`}
-                      seamless
-                      style={{
-                        width: '100%',
-                        height: '100vh',
-                        maxHeight: '100%',
-                      }}
-                      title={`${lesson.title} IPython Notebook`}
-                    />
-                  </ModalContent>
-                </Modal>
+                <Box
+                  className="ipynb-html"
+                  dangerouslySetInnerHTML={{ __html: ipynbHtml.html }}
+                />
               </Box>
             </Box>
           )}
@@ -350,7 +280,7 @@ function LessonSlug({ lesson, markdown, ipynbHtmlUrl }) {
 LessonSlug.propTypes = {
   lesson: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   markdown: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-  ipynbHtmlUrl: PropTypes.string.isRequired,
+  ipynbHtml: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])).isRequired,
 };
 
 export default LessonSlug;

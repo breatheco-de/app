@@ -1,0 +1,62 @@
+.ipynb-html p {
+  margin-top: 1rem;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+}
+
+.ipynb-html h1 {
+  font-size: 30px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 22px 0 20px 0;
+
+}
+
+.ipynb-html h1:hover .anchor-link,
+.ipynb-html h2:hover .anchor-link,
+.ipynb-html h3:hover .anchor-link,
+.ipynb-html h4:hover .anchor-link,
+.ipynb-html h5:hover .anchor-link,
+.ipynb-html h6:hover .anchor-link {
+  visibility: visible;
+}
+
+.ipynb-html a.anchor-link {
+  visibility: hidden;
+  padding: 0px 20px;
+  color: #0097CD;
+}
+
+.ipynb-html * + ul {
+  margin-top: 1rem;
+  padding-left: 2rem;
+}
+
+.ipynb-html pre {
+  background-color: #2b2b2b;
+  color: white;
+  border-radius: 6px;
+  padding: 1em 2em;
+  margin-top: 1rem;
+  background: rgb(45, 45, 45);
+}
+
+.ipynb-html .kc {
+  color: #008000
+}
+
+.ipynb-html .o {
+  color: rgb(103, 205, 204);
+}
+
+.ipynb-html .p {
+  color: #42a5f5;
+}
+
+.ipynb-html .s1 {
+  color: rgb(126, 198, 153);
+}
+
+.ipynb-html .mi {
+  color: rgb(240, 141, 73);
+}
