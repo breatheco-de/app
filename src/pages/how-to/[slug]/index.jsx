@@ -254,7 +254,7 @@ export default function HowToSlug({ data, markdown }) {
               <MDSkeleton />
             )}
             <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'flex', md: 'none' }} width="100%" bottom="0px" height="fit-content" gridColumn="1 / span 1">
-              <MktSideRecommendedCourses title={false} containerPadding="16px 12px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
+              <MktSideRecommendedCourses title={false} containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
             </Box>
             <MktRecommendedCourses
               display={{ base: 'none', md: 'grid' }}

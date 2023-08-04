@@ -218,7 +218,7 @@ function AttendanceModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent maxWidth="-webkit-fit-content" borderRadius="17px" padding="10px" bg={colorMode === 'light' ? 'white' : 'featuredDark'}>
+      <ModalContent maxWidth="-webkit-fit-content" borderRadius="17px" padding="10px" style={{ margin: '3rem 0 0 0' }} bg={colorMode === 'light' ? 'white' : 'featuredDark'}>
         <ModalHeader fontSize="30px" paddingBottom={0}>
           {title}
         </ModalHeader>

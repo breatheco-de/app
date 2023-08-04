@@ -53,7 +53,7 @@ function Markdown({ slice }) {
   );
 }
 Markdown.propTypes = {
-  slice: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
+  slice: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };
 
 Markdown.defaultProps = {
