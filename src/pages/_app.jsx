@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import {
   QueryClient,
   QueryClientProvider,
@@ -62,16 +62,21 @@ function App({ Component, ...rest }) {
 
             <AuthProvider>
               <ConnectionProvider>
-                {hasMounted && <NavbarSession pageProps={pageProps} translations={pageProps?.translations} />}
-                <InterceptionLoader />
+                {hasMounted && (
+                  // fix flickering on client side
+                  <Fragment key="load-on-client-side">
+                    <NavbarSession pageProps={pageProps} translations={pageProps?.translations} />
+                    <InterceptionLoader />
 
-                <PrismicProvider internalLinkComponent={InternalLinkComponent}>
-                  <PrismicPreview repositoryName={repositoryName}>
-                    <Component {...pageProps} />
-                  </PrismicPreview>
-                </PrismicProvider>
+                    <PrismicProvider internalLinkComponent={InternalLinkComponent}>
+                      <PrismicPreview repositoryName={repositoryName}>
+                        <Component {...pageProps} />
+                      </PrismicPreview>
+                    </PrismicProvider>
 
-                {hasMounted && <Footer pageProps={pageProps} />}
+                    <Footer pageProps={pageProps} />
+                  </Fragment>
+                )}
               </ConnectionProvider>
             </AuthProvider>
           </ChakraProvider>
