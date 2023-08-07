@@ -35,6 +35,7 @@ import useHandler from '../../../../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../../../../modifyEnv';
 import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';
+import useStyle from '../../../../../common/hooks/useStyle';
 
 function Content() {
   const { t } = useTranslation('syllabus');
@@ -75,6 +76,7 @@ function Content() {
     cohortSession, sortedAssignments, getCohortAssignments, getCohortData, prepareTasks,
     taskTodo,
   } = useHandler();
+  const { featuredLight, fontColor, borderColor } = useStyle();
 
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
@@ -619,8 +621,8 @@ function Content() {
           className={`markdown-body ${currentTheme}`}
           flexGrow={1}
           marginLeft={0}
-          margin="0 auto"
-          padding={{ base: '25px 10px 0 10px', md: '25px 2rem 0 2rem' }}
+          margin="25px auto 0 auto"
+          padding={{ base: '0px 10px 0 10px', md: '0px 2rem 0 2rem' }}
           width="100%"
           maxWidth="1024px"
           transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
@@ -628,6 +630,7 @@ function Content() {
           transitionDuration={Open ? '225ms' : '195ms'}
           transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
           transitionDelay="0ms"
+          position="relative"
         >
 
           {extendedInstructions !== null && (
@@ -715,6 +718,25 @@ function Content() {
               {t('open-google-collab')}
             </Link>
           )}
+          <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
+            {currentData?.url && (
+              <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={`${currentData.url}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
+                <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+                {t('edit-page')}
+              </Link>
+            )}
+
+            {ipynbHtmlUrl && currentData?.url && (
+              <Box width={{ base: '1px', md: '100%' }} height={{ base: 'auto', md: '1px' }} background={borderColor} />
+            )}
+
+            {ipynbHtmlUrl && readmeUrlPathname && (
+              <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" color="white" href={`https://colab.research.google.com/github${readmeUrlPathname}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
+                <Icon icon="collab" color="#A0AEC0" width="28px" height="28px" />
+                {t('open-google-collab')}
+              </Link>
+            )}
+          </Box>
           {ipynbHtmlUrl && (
             <iframe
               id="iframe"
