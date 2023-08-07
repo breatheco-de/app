@@ -167,7 +167,7 @@ export default function HowToSlug({ data, markdown }) {
 
   return (
     <>
-      <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin="0 auto" gridGap="36px" padding="0 10px">
+      <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin={{ base: '0 10px', md: '0 auto' }} gridGap="36px" padding={{ base: '', md: '0 10px' }}>
         <Box display={{ base: 'none', md: 'flex' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '6.2rem 0 0 0' }}>
           <MktSideRecommendedCourses />
         </Box>
@@ -253,8 +253,8 @@ export default function HowToSlug({ data, markdown }) {
             ) : (
               <MDSkeleton />
             )}
-            <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'flex', md: 'none' }} width="100%" bottom="0px" height="fit-content" gridColumn="1 / span 1">
-              <MktSideRecommendedCourses title={false} containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
+            <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'flex', md: 'none' }} width="100%" bottom="0px" left="0px" height="fit-content" gridColumn="1 / span 1">
+              <MktSideRecommendedCourses title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
             </Box>
             <MktRecommendedCourses
               display={{ base: 'none', md: 'grid' }}
