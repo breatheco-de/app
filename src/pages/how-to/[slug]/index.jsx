@@ -267,7 +267,7 @@ export default function HowToSlug({ data, markdown }) {
             />
           </Box>
         </Box>
-        <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'flex', md: 'none' }} width="100%" bottom="0px" left="0px" height="fit-content" gridColumn="1 / span 1">
+        <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'initial', md: 'none' }} width="100%" bottom={0} left={0} height="auto">
           <MktSideRecommendedCourses title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
         </Box>
       </GridContainer>
