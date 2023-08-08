@@ -51,7 +51,7 @@ export const getStaticProps = async ({ params, locale }) => {
   }));
   const data = resp?.data;
 
-  if (resp.statusText === 'not-found' || !data?.slug || !data?.lang.includes(locale)) {
+  if (resp.statusText === 'not-found' || !data?.slug || (data?.lang.length > 0 && !data?.lang.includes(locale))) {
     return {
       notFound: true,
     };
@@ -71,7 +71,7 @@ export const getStaticProps = async ({ params, locale }) => {
       slug: data?.slug,
       link: `/es/workshops/${data?.slug}`,
     },
-  ].filter((item) => lang.includes(item?.lang));
+  ].filter((item) => lang?.length > 0 && lang.includes(item?.lang));
 
   const objForTranslations = {
     [lang]: data?.slug,
