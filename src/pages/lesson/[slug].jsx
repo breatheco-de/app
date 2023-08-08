@@ -20,6 +20,7 @@ import MktRecommendedCourses from '../../common/components/MktRecommendedCourses
 import redirectsFromApi from '../../../public/redirects-from-api.json';
 import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
+import useStyle from '../../common/hooks/useStyle';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=LESSON,ARTICLE&visibility=PUBLIC&status=PUBLISHED&exclude_category=how-to,como&academy=4,5,6,47&limit=2000`);
@@ -50,6 +51,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     us: 'en',
     en: 'en',
   };
+
+  const urlPathname = lesson?.readme_url ? lesson?.readme_url.split('https://github.com')[1] : null;
+  const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
+  const extension = urlPathname ? urlPathname.split('.').pop() : null;
+  const translatedExtension = locale === 'us' ? '' : `.${locale}`;
+  const finalPathname = `https://colab.research.google.com/github${pathnameWithoutExtension}${translatedExtension}.${extension}`;
+
   const isCurrenLang = locale === engPrefix[lesson?.lang] || locale === lesson?.lang;
 
   if (response?.status >= 400 || response?.status_code >= 400 || !['ARTICLE', 'LESSON'].includes(lesson?.asset_type) || !isCurrenLang) {
@@ -132,7 +140,10 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         modifiedTime: lesson?.updated_at || '',
       },
       fallback: false,
-      lesson,
+      lesson: {
+        ...lesson,
+        collab_url: finalPathname,
+      },
       translations: translationArray,
       markdown,
       ipynbHtml,
@@ -143,7 +154,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 function LessonSlug({ lesson, markdown, ipynbHtml }) {
   const { t } = useTranslation('lesson');
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
-
+  const { fontColor, borderColor, featuredLight } = useStyle();
   const translations = lesson?.translations || { es: '', en: '', us: '' };
 
   const router = useRouter();
@@ -198,29 +209,47 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
         </Box>
         <Box gridColumn="2 / span 12" maxWidth="854px">
           <Box display="grid" gridColumn="2 / span 12">
-            <Box display="flex" gridGap="10px" justifyContent="space-between">
-              {lesson?.technologies ? (
-                <TagCapsule
-                  isLink
-                  href="/lessons"
-                  variant="rounded"
-                  tags={lesson?.technologies || ['']}
-                  marginY="8px"
-                  fontSize="13px"
-                  style={{
-                    padding: '2px 10px',
-                    margin: '0',
-                  }}
-                  gap="10px"
-                  paddingX="0"
-                />
-              ) : (
-                <Skeleton width="130px" height="26px" borderRadius="10px" />
-              )}
-              <Link href={lesson?.readme_url || '#aliasRedirection'} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
-                <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-                {t('common:edit-on-github')}
-              </Link>
+            <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="0 0 1rem 0" gridGap="10px" justifyContent="space-between" position="relative">
+              <Box>
+                {lesson?.technologies ? (
+                  <TagCapsule
+                    isLink
+                    href="/lessons"
+                    variant="rounded"
+                    tags={lesson?.technologies || ['']}
+                    marginY="8px"
+                    fontSize="13px"
+                    style={{
+                      padding: '2px 10px',
+                      margin: '0',
+                    }}
+                    gap="10px"
+                    paddingX="0"
+                  />
+                ) : (
+                  <Skeleton width="130px" height="26px" borderRadius="10px" />
+                )}
+              </Box>
+              <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '0 0 1rem 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
+                {lesson?.readme_url && (
+                  <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={`${lesson?.readme_url}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
+                    <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+                    {t('common:edit-on-github')}
+                  </Link>
+                )}
+
+                {isIpynb && lesson?.collab_url && lesson?.readme_url && (
+                  <Box width={{ base: '1px', md: '100%' }} height={{ base: 'auto', md: '1px' }} background={borderColor} />
+                )}
+
+                {isIpynb && lesson?.collab_url && lesson?.readme_url && (
+                  <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" color="white" href={lesson?.collab_url} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
+                    <Icon icon="collab" color="#A0AEC0" width="28px" height="28px" />
+                    {t('common:open-google-collab')}
+                  </Link>
+                )}
+              </Box>
+
             </Box>
           </Box>
           {markdown && !isIpynb ? (

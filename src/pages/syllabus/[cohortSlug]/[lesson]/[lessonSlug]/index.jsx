@@ -712,12 +712,6 @@ function Content() {
             </Box>
           )}
 
-          {ipynbHtmlUrl && readmeUrlPathname && (
-            <Link href={`https://colab.research.google.com/github${readmeUrlPathname}`} margin="0 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
-              <Icon icon="google-collab" color="#A0AEC0" width="28px" height="28px" />
-              {t('open-google-collab')}
-            </Link>
-          )}
           <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
             {currentData?.url && (
               <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={`${currentData.url}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
