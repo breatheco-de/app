@@ -1,0 +1,18 @@
+{
+  "back-to": "Back to Dashboard",
+  "relevant-activities": "Relevant Activities",
+  "activities": "Activities",
+  "deliverables": "Deliverables",
+  "deliverables-section": {
+    "lessons": "Lessons completed",
+    "projects": "Projects completed",
+    "exercises": "Completed LearnPack Exercies"
+  },
+  "educational-status": "Educational Status",
+  "analitics": {
+    "total-mentorships": "Total mentorships",
+    "projects-completed": "Projects completed",
+    "percentage-attendance": "% of attendance",
+    "completed-learnpack": "Completed LearnPack exercises"
+  }
+}
