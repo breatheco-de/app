@@ -5,7 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { Avatar, Box, useToast } from '@chakra-ui/react';
 import bc from '../services/breathecode';
 import { isWindow, removeURLParameter } from '../../utils';
-import axiosInstance from '../../axios';
+import axiosInstance, { cancelAllCurrentRequests } from '../../axios';
 import { usePersistent } from '../hooks/usePersistent';
 import modifyEnv from '../../../modifyEnv';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
@@ -272,6 +272,10 @@ function AuthProvider({ children }) {
   };
 
   const logout = (callback = null) => {
+    cancelAllCurrentRequests();
+    handleSession(null);
+    setProfile({});
+
     if (typeof callback === 'function') callback();
     if (typeof callback !== 'function') {
       if (queryTokenExists) {
@@ -283,8 +287,6 @@ function AuthProvider({ children }) {
         router.reload();
       }
     }
-    handleSession(null);
-    setProfile({});
     localStorage.removeItem('showGithubWarning');
     localStorage.removeItem('redirect-after-register');
     localStorage.removeItem('redirect');

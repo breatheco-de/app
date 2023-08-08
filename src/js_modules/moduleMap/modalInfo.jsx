@@ -59,7 +59,7 @@ function ModalInfo({
       <Modal closeOnOverlayClick={!forceHandler} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         {/* md */}
-        <ModalContent maxWidth={maxWidth || 'md'} borderRadius="6px">
+        <ModalContent maxWidth={maxWidth || 'md'} borderRadius="6px" style={{ marginTop: '2rem' }}>
           <ModalHeader
             borderBottom={1}
             borderStyle="solid"
@@ -256,7 +256,7 @@ function ModalInfo({
                 )}
                 <Button
                   fontSize="13px"
-                  disabled={(Array.isArray(attachment) && attachment.length > 0) || isSubmitting || disableHandler}
+                  isDisabled={(Array.isArray(attachment) && attachment.length > 0) || isSubmitting || disableHandler}
                   isLoading={isSubmitting}
                   onClick={() => resubmitHandler()}
                   variant="default"

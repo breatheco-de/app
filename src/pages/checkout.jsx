@@ -409,7 +409,7 @@ function Checkout() {
                   variant="outline"
                   borderColor="currentColor"
                   color="blue.default"
-                  disabled={handleGoBack().isNotAvailable}
+                  isDisabled={handleGoBack().isNotAvailable}
                   onClick={() => handleGoBack().func()}
                 >
                   {t('go-back')}
@@ -418,7 +418,7 @@ function Checkout() {
               {stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep && (
                 <Button
                   variant="default"
-                  disabled={dateProps === null}
+                  isDisabled={dateProps === null}
                   onClick={() => {
                     nextStep();
                   }}

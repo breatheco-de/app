@@ -393,7 +393,7 @@ function Attendance() {
                 cursor: 'default',
                 opacity: showSearch ? 1 : 0,
               }}
-              disabled={!showSearch}
+              isDisabled={!showSearch}
               animation={showSearch ? slideLeftAnimation : ''}
               onChange={handleSearch}
             />

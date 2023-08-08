@@ -183,7 +183,7 @@ function ShowPrices({
         {process.env.VERCEL_ENV !== 'production' && outOfConsumables && (
           <Button
             variant="default"
-            disabled={!selectedItem && true}
+            isDisabled={!selectedItem && true}
           >
             {stTranslation ? stTranslation[lang].common['upgrade-plan'].button : t('common:upgrade-plan.button')}
           </Button>
@@ -191,7 +191,7 @@ function ShowPrices({
         <Button
           display={outOfConsumables && 'none'}
           variant="default"
-          disabled={!selectedItem && true}
+          isDisabled={!selectedItem && true}
           onClick={() => {
             if (handleUpgrade === false) {
               router.push(`/checkout?syllabus=coding-introduction&plan=${selectedItem?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);

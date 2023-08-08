@@ -17,14 +17,13 @@ function ContentHeading({
 
   return content && Object.keys(content).length !== 0 && (
     <Box
-      borderBottom={1}
       borderStyle="solid"
       borderColor={useColorModeValue('gray.200', 'gray.900')}
       paddingBottom="2rem"
       marginBottom="2rem"
     >
       <Box marginBottom="1.5rem">
-        <Box display="flex" justifyContent="space-between" gridGap="16px" margin="2rem 0 0 0">
+        <Box display="flex" justifyContent="space-between" gridGap="16px" margin={{ base: '1rem 0 0 0', md: '2rem 0 0 0' }}>
           <Box display="flex" gridGap="16px" alignItems="center">
             <Icon icon={assetTypeIcons[assetType] || 'book'} height="30px" color="#0097CD" width="28px" style={{ margin: 'auto', marginRight: '0.4rem' }} />
             <Heading size="m" display="inline-flex" gridGap="10px" margin="0 0 0 0 !important">

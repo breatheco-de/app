@@ -51,12 +51,12 @@ export const getStaticProps = async ({ params, locale }) => {
   }));
   const data = resp?.data;
 
-  if (resp.statusText === 'not-found' || !data?.slug || !data?.lang.includes(locale)) {
+  if (resp.statusText === 'not-found' || !data?.slug || (data?.lang !== null && !data?.lang.includes(locale))) {
     return {
       notFound: true,
     };
   }
-  const lang = data?.lang === 'us' ? 'en' : data?.lang;
+  const lang = (data?.lang === 'us' || data?.lang === null) ? 'en' : data?.lang;
 
   const translationArray = [
     {
@@ -71,7 +71,7 @@ export const getStaticProps = async ({ params, locale }) => {
       slug: data?.slug,
       link: `/es/workshops/${data?.slug}`,
     },
-  ].filter((item) => lang.includes(item?.lang));
+  ].filter((item) => lang?.length > 0 && lang.includes(item?.lang));
 
   const objForTranslations = {
     [lang]: data?.slug,
@@ -506,7 +506,7 @@ function Page({ event }) {
                   variant="default"
                   background={buttonEnabled ? 'blue.default' : 'gray.350'}
                   textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
-                  disabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
+                  isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                   _disabled={{
                     background: buttonEnabled ? '' : 'gray.350',
                     cursor: buttonEnabled ? 'pointer' : 'not-allowed',

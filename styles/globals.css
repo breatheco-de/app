@@ -475,25 +475,3 @@ featured {
   border-bottom-left-radius: 17px;
   border-bottom-right-radius: 17px;
 }
-
-.chakra-ui-light .katex {
-  background-color: #1D1F21;
-}
-.chakra-ui-dark .katex {
-  background-color: #2D3748;
-}
-
-.katex {
-  color: #FFFFFF;
-  font-size: 16px;
-  padding: 0.1rem 0.2rem;
-	border-radius: 0.25rem;
-	margin-top: 0.5rem;
-	margin-bottom: 0.5rem;
-}
-.math-inline {
-  display: inline-flex;
-}
-.mfrac {
-  font-size: 22px;
-}

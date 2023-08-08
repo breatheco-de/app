@@ -592,7 +592,7 @@ function Dashboard() {
                       cursor: 'default',
                       opacity: showSearch ? 1 : 0,
                     }}
-                    disabled={!showSearch}
+                    isDisabled={!showSearch}
                     animation={showSearch ? slideLeftAnimation : ''}
                     onChange={(e) => setSearchValue(e.target.value)}
                     color={commonInputColor}
