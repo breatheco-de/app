@@ -5,27 +5,36 @@ import katex from 'katex';
 import { Box } from '@chakra-ui/react';
 import 'katex/dist/katex.min.css';
 
-function transform(node) {
-  if (typeof node === 'string') {
-    const mathRegex = /\${1,2}\s*([^$]+)\s*\${1,2}/g;
+function replace(node) {
+  if (node.type === 'text' && node.data) {
+    const mathRegex = /\${1,2}([^$]+)\${1,2}/g;
 
-    const textWithMath = node.replace(mathRegex, (match, formula) => {
+    if (node?.data.startsWith("'$")
+      || node?.data.endsWith("$'")
+      || node?.data.startsWith("'$$")
+      || node?.data.endsWith("$$'")) {
+      return node.data;
+    }
+
+    const textWithMath = node.data.replace(mathRegex, (match, formula) => {
       if (match.startsWith('$$') && match.endsWith('$$')) {
         return `<div class="formula-fragment">${katex.renderToString(formula, { throwOnError: false })}</div>`;
       }
       return katex.renderToString(formula, { throwOnError: false });
     });
 
-    if (textWithMath.length === 0) return null;
-    return <span dangerouslySetInnerHTML={{ __html: textWithMath }} />;
-  }
+    if (textWithMath.includes('<span class="katex">') && !textWithMath.includes('<pre>')) {
+      return <span dangerouslySetInnerHTML={{ __html: textWithMath }} />;
+    }
 
+    return textWithMath;
+  }
   return node;
 }
 
 function MathRenderer({ html }) {
   const options = {
-    transform,
+    replace,
   };
 
   const parsedHtml = parse(html, options);
