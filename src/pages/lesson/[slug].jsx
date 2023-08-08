@@ -55,7 +55,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const urlPathname = lesson?.readme_url ? lesson?.readme_url.split('https://github.com')[1] : null;
   const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
   const extension = urlPathname ? urlPathname.split('.').pop() : null;
-  const translatedExtension = locale === 'us' ? '' : `.${locale}`;
+  const translatedExtension = (lesson?.lang === 'us' || lesson?.lang === null) ? '' : `.${lesson?.lang}`;
   const finalPathname = `https://colab.research.google.com/github${pathnameWithoutExtension}${translatedExtension}.${extension}`;
 
   const isCurrenLang = locale === engPrefix[lesson?.lang] || locale === lesson?.lang;
