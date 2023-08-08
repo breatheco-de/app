@@ -19,6 +19,7 @@ import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import redirectsFromApi from '../../../public/redirects-from-api.json';
 import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
+import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=LESSON,ARTICLE&visibility=PUBLIC&status=PUBLISHED&exclude_category=how-to,como&academy=4,5,6,47&limit=2000`);
@@ -264,9 +265,8 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
               width={{ base: '100%', md: 'auto' }}
             >
               <Box width="100%" height="100%">
-                <Box
-                  className="ipynb-html"
-                  dangerouslySetInnerHTML={{ __html: ipynbHtml.html }}
+                <IpynbHtmlParser
+                  html={ipynbHtml.html}
                 />
               </Box>
             </Box>

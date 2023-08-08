@@ -1,3 +1,32 @@
+
+.chakra-ui-light .katex {
+  background-color: #1D1F21;
+}
+.chakra-ui-dark .katex {
+  background-color: #2D3748;
+}
+.chakra-ui-dark .formula-fragment {
+  background-color: #2D3748;
+}
+.chakra-ui-light .formula-fragment {
+  background-color: #1D1F21;
+}
+
+.katex {
+  color: #FFFFFF;
+  font-size: 16px;
+  padding: 0.1rem 0.2rem;
+	border-radius: 0.25rem;
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
+}
+.math-inline {
+  display: inline-flex;
+}
+.mfrac {
+  font-size: 22px;
+}
+
 .ipynb-html p {
   margin-top: 1rem;
   font-size: 15px;
@@ -5,11 +34,33 @@
 }
 
 .ipynb-html h1 {
-  font-size: 30px;
+  font-size: var(--heading-m);
+}
+.ipynb-html h2 {
+  font-size: var(--heading-sm);
+}
+.ipynb-html h3 {
+  font-size: var(--heading-sm);
+}
+.ipynb-html h4 {
+  font-size: var(--heading-xsm);
+}
+.ipynb-html h5 {
+  font-size: var(--heading-xsm);
+}
+.ipynb-html h6 {
+  font-size: var(--heading-xsm);
+}
+
+.ipynb-html h1,
+.ipynb-html h2,
+.ipynb-html h3,
+.ipynb-html h4,
+.ipynb-html h5,
+.ipynb-html h6 {
   font-weight: 700;
   text-transform: uppercase;
   margin: 22px 0 20px 0;
-
 }
 
 .ipynb-html h1:hover .anchor-link,
@@ -26,6 +77,15 @@
   padding: 0px 20px;
   color: #0097CD;
 }
+.ipynb-html a {
+  color: #0097CD;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+.ipynb-html a:hover {
+  text-decoration: underline;
+}
 
 .ipynb-html * + ul {
   margin-top: 1rem;
@@ -34,6 +94,7 @@
 
 .ipynb-html pre {
   background-color: #2b2b2b;
+  overflow: auto;
   color: white;
   border-radius: 6px;
   padding: 1em 2em;
@@ -43,6 +104,12 @@
 
 .ipynb-html .kc {
   color: #008000
+}
+.ipynb-html .kn {
+  color: #4caf50
+}
+.ipynb-html .k {
+  color: #4caf50
 }
 
 .ipynb-html .o {
@@ -57,6 +124,30 @@
   color: rgb(126, 198, 153);
 }
 
-.ipynb-html .mi {
+.ipynb-html .mi,
+.ipynb-html .mf {
   color: rgb(240, 141, 73);
+}
+
+.ipynb-html .sa,
+.ipynb-html .s2,
+.ipynb-html .si {
+  color: #ff7070;
+}
+
+.ipynb-html .formula-fragment > .katex {
+  display: inline-block;
+  padding: 10px;
+}
+.ipynb-html .formula-fragment {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  border-radius: 4px;
+  font-size: 1.2em;
+  line-height: 1.2em;
+  text-align: center;
+}
+.ipynb-html .katex {
+  display: -webkit-inline-box;
+  display: inline;
 }
