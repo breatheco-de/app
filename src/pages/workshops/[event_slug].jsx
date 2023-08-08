@@ -51,12 +51,12 @@ export const getStaticProps = async ({ params, locale }) => {
   }));
   const data = resp?.data;
 
-  if (resp.statusText === 'not-found' || !data?.slug || (data?.lang?.length > 0 && !data?.lang.includes(locale))) {
+  if (resp.statusText === 'not-found' || !data?.slug || (data?.lang !== null && !data?.lang.includes(locale))) {
     return {
       notFound: true,
     };
   }
-  const lang = data?.lang === 'us' ? 'en' : data?.lang;
+  const lang = (data?.lang === 'us' || data?.lang === null) ? 'en' : data?.lang;
 
   const translationArray = [
     {
