@@ -193,7 +193,7 @@ function SelectServicePlan() {
       </Box>
       <Button
         variant="default"
-        disabled={!selectedService?.plans?.[0]?.slug}
+        isDisabled={!selectedService?.plans?.[0]?.slug}
         onClick={handleContinue}
         width="100%"
         margin="0 auto"

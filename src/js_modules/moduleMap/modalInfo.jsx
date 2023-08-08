@@ -256,7 +256,7 @@ function ModalInfo({
                 )}
                 <Button
                   fontSize="13px"
-                  disabled={(Array.isArray(attachment) && attachment.length > 0) || isSubmitting || disableHandler}
+                  isDisabled={(Array.isArray(attachment) && attachment.length > 0) || isSubmitting || disableHandler}
                   isLoading={isSubmitting}
                   onClick={() => resubmitHandler()}
                   variant="default"

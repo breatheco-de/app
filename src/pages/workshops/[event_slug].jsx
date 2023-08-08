@@ -506,7 +506,7 @@ function Page({ event }) {
                   variant="default"
                   background={buttonEnabled ? 'blue.default' : 'gray.350'}
                   textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
-                  disabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
+                  isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                   _disabled={{
                     background: buttonEnabled ? '' : 'gray.350',
                     cursor: buttonEnabled ? 'pointer' : 'not-allowed',

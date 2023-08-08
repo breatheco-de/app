@@ -327,7 +327,7 @@ function AttendanceModal({
             minWidth="173.4px"
             textTransform="uppercase"
             fontSize="13px"
-            disabled={checked.length < 1 || isLoading}
+            isDisabled={checked.length < 1 || isLoading}
             variant="default"
             onClick={handleAttendance}
             rightIcon={<Icon icon="longArrowRight" width="15px" color={checked.length < 1 ? 'black' : 'white'} />}
