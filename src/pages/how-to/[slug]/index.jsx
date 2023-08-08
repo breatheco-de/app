@@ -253,9 +253,6 @@ export default function HowToSlug({ data, markdown }) {
             ) : (
               <MDSkeleton />
             )}
-            <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'flex', md: 'none' }} width="100%" bottom="0px" left="0px" height="fit-content" gridColumn="1 / span 1">
-              <MktSideRecommendedCourses title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
-            </Box>
             <MktRecommendedCourses
               display={{ base: 'none', md: 'grid' }}
               title={t('common:continue-learning', { technologies: data?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
@@ -264,6 +261,9 @@ export default function HowToSlug({ data, markdown }) {
               endpoint={`${process.env.BREATHECODE_HOST}/v1/marketing/course`}
             />
           </Box>
+        </Box>
+        <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'flex', md: 'none' }} width="100%" bottom="0px" left="0px" height="fit-content" gridColumn="1 / span 1">
+          <MktSideRecommendedCourses title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
         </Box>
       </GridContainer>
     </>
