@@ -177,7 +177,7 @@ const handlers = {
 
     const visibleForTeacher = programRole !== 'STUDENT';
 
-    const showCohortToHide = [
+    const cohortToIgnore = ![
       'ENDED',
     ].includes(programCohortStage);
     const showCohort = [
@@ -186,11 +186,12 @@ const handlers = {
       'FINAL_PROJECT',
     ].includes(programCohortStage);
 
-    const cohortIsAvailable = showCohort && !showCohortToHide;
+    const cohortIsAvailable = showCohort && cohortToIgnore;
+    const isNotHiddenOnPrework = programCohortStage === 'PREWORK' && program?.cohort?.is_hidden_on_prework === false;
 
     const showStudent = ['ACTIVE'].includes(educationalStatus) && programRole === 'STUDENT';
 
-    const show = cohortIsAvailable && (visibleForTeacher || showStudent);
+    const show = (cohortIsAvailable || isNotHiddenOnPrework) && (visibleForTeacher || showStudent);
 
     return show;
   }),
