@@ -70,5 +70,8 @@
   "no-course-configuration": "La configuración del curso que intenta comprar no existe.",
   "no-plan-configuration": "La configuración del plan que intenta comprar no existe.",
   "error-getting-offer": "Lo sentimos, no hemos podido obtener la oferta del plan.",
-  "error-getting-plan": "Lo sentimos, no hemos podido obtener el plan."
+  "error-getting-plan": "Lo sentimos, no hemos podido obtener el plan.",
+  "event-access-error": "No tienes acceso para aplicar en este evento",
+  "error-event-already-started": "No puedes reservar cupo para este evento porque ya ha comenzado",
+  "success-event-reservation": "¡Has reservado con éxito un cupo para este evento.!"
 }

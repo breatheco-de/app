@@ -71,5 +71,8 @@
   "no-course-configuration": "The course configuration you are trying to buy does not exist.",
   "no-plan-configuration": "The plan configuration you are trying to buy does not exist.",
   "error-getting-offer": "Sorry, we couldn't get the plan offer.",
-  "error-getting-plan": "Sorry, we couldn't get the plan."
+  "error-getting-plan": "Sorry, we couldn't get the plan.",
+  "event-access-error": "You dont have access to apply in this event",
+  "error-event-already-started": "You cannot reserve a spot for this event because it has already started.",
+  "success-event-reservation": "You have successfully reserved a spot for this event."
 }

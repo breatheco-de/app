@@ -40,11 +40,14 @@
   "email": "Email",
   "address": "Where do you live?",
   "signing-for": "You are signing up for",
+  "getting-for": "You are getting",
   "already-have-account": "Already have an account?",
   "login-here": "Login here.",
   "start-free-course": "Start free course",
-  "monthly_payment": "Pago mensual",
-  "yearly_payment": "Pago anual",
+  "monthly_payment": "Monthly payment",
+  "quarterly_payment": "Quarterly payment",
+  "half_yearly_payment": "Half yearly payment",
+  "yearly_payment": "Yearly payment",
   "one_payment": "One payment",
   "many_months_payment": "{{qty}} months payment",
   "info": {
@@ -52,11 +55,15 @@
     "will-pay-month": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}.",
     "will-pay-now" : "You will pay ${{price} right now, no other charges apply in the future.",
     "will-pay-per-month": "You will subscribe and pay ${{price}} dollars every month",
+    "will-pay-per-quarter": "You will subscribe and pay ${{price}} dollars every quarter",
+    "will-pay-per-half-year": "You will subscribe and pay ${{price}} dollars every half year",
     "will-pay-per-year": "You will subscribe and pay ${{price}} dollars every year",
     "free": "Totally free",
     "trial": "Trial for 1 month",
     "trial-week": "Trial for 1 week",
     "monthly": "Monthly",
+    "quarterly": "Quarterly",
+    "half-yearly": "Half yearly",
     "yearly": "Yearly",
     "financing": "Financing"
   },
@@ -75,15 +82,50 @@
     "invalid-email": "Invalid email",
     "email-required": "Email is required",
     "confirm-email-required": "Confirm Email is required",
-    "confirm-email-not-match": "Emails don't match"
+    "confirm-email-not-match": "Emails don't match",
+    "termns-and-conditions-required": "I accept to receive information to my email about coding workshops, events, courses and other marketing materials. We'll never share your email,"
   },
   "no-date-available": "We currently have no dates available for the location entered",
   "alert-message": {
-    "title": "Already have an account?",
-    "message1": "It seems that you already have an account, please check your email inbox for any messages from",
-    "message2": "If you know your password",
+    "title": "Already a member?",
+    "description": "It seems that you already have an account in 4geeks.com",
     "click-here-to-login": "click here to login now",
     "or-click-here": "or click here on",
-    "message3": "forgot password to get a new one"
+    "message3": "forgot password to get a new one",
+    "validate-email-title": "Verify your email",
+    "validate-email-description": "We sent a confirmation email to: <strong>{{email}}</strong>, please check your email and click on the confirmation link.",
+    "email-sent-to": "We sent you a confirmation email to {{email}}!",
+    "email-already-sent": "You have a pending invitation sent less than 1 day ago, check your email"
+  },
+  "alert-message-validate-email": {
+    "title": "Verify email",
+    "description": "You haven't validated your email yet, log in into your email account and look for the invitation to",
+    "description2": "Don't forget to check your email spam inbox as well!"
+  },
+  "resend": "Resend",
+  "mentorship-bundle-title": "Mentorship sessions bundle",
+  "event-bundle-title": "Event bundle",
+  "consumables": {
+    "select-bundle": "Select your bundle:",
+    "change-my-selection": "Change my selection",
+    "purchase-completed-title": "You have successfully completed the purchase",
+    "you-have-received": "You have received",
+    "events": "events",
+    "sessions": "sesiones",
+    "back-to-dashboard": "Back to dashboard",
+    "confirm-purchase-connector": "You are about to buy:",
+    "qty-events-to-consume": "{{qty}} events to apply",
+    "qty-mentorship-sessions": "{{qty}} mentorship sessions",
+    "price-event-per-qty": "{{price}} per event",
+    "price-mentorship-per-qty": "{{price}} per mentorship",
+    "confirm-purchase": "Confirm purchase"
+  },
+  "select-service-of-plan": {
+    "title": "Which experience do you want to upgrade?",
+    "description": "We find plans with mentoring available for you, select one before continuing:",
+    "select-text": "Select experience",
+    "cohort-connector": "Cohort: {{name}}",
+    "subscription-not-found": "Subscription not found",
+    "no-plan-found-for-service": "You don't have any subscription related to the following services:"
   }
 }

@@ -1,0 +1,30 @@
+{
+  "no-event-found": "No event available with this URL 😕",
+  "host-label-text": "Host for this event",
+  "suggest-join-event": "Click below to confirm your participation and save your spot for this event",
+  "reserv-button-text": "Reserve your spot",
+  "duration-hours": "{{hours}}hr duration",
+  "greetings": "Hello {{name}} 👋",
+  "switch-user-connector": "You are not {{name}}?",
+  "form": {
+    "title": "Join this event",
+    "description": "Sign in to join other coders live solving technical or career challenges.",
+    "ready-to-join-title": "Live now!",
+    "ready-to-join-description": "This event is happening right now. Register now to join the event.",
+    "ready-to-join-description-logged": "This event is happening right now. Click below to join the event.",
+    "joined-title": "This event will start soon",
+    "joined-description": "You have already signed up for this event. You will be able to join once it starts.",
+    "finished-title": "This event has ended",
+    "finished-description": "Keep looking for new learning experiences and keep your passion for knowledge alive!"
+  },
+  "users-registered-count": "{{count}} people are already registered in this event. {{spot_count}} more spots available",
+  "join-workshop": "Register for this Workshop",
+  "join": "Join Now",
+  "event-finished": "Event Finished",
+  "no-consumables": {
+    "description": "You have run out of workshops, but don't worry, you can get more in a few clicks.",
+    "link-text": "Learn more.",
+    "link": "",
+    "get-more-workshops": "Get more workshops"
+  }
+}

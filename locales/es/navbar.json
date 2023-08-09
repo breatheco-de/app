@@ -22,6 +22,7 @@
       "subMenu": [
         {
           "label": "Lecturas y videos",
+          "slug": "lessons",
           "asPath": "/read-and-watch",
           "description": "Tiene sentido comenzar a aprender leyendo y viendo videos sobre los fundamentos y cómo funcionan las cosas.",
           "subMenu": [],
@@ -34,6 +35,7 @@
         },
         {
           "label": "Prácticas Interactivas",
+          "slug": "exercises",
           "subLabel": "",
           "description": "Lista curada de tutoriales interactivos, con soluciones y videos para practicar y mejorar tus habilidades.",
           "href": "/interactive-exercises",
@@ -46,6 +48,7 @@
         },
         {
           "label": "Construye Projectos",
+          "slug": "projects",
           "href": "/interactive-coding-tutorials",
           "description": "Selección curada de tutoriales y projectos para construir con instrucciones simples y video soluciones",
           "subMenu": [
@@ -57,6 +60,7 @@
         },
         {
           "label": "Preguntas Frecuentes",
+          "slug": "how-tos",
           "href": "/how-to",
           "description": "Guías sobre distintos temas relacionados con las tecnologías que enseñamos en nuestros cursos",
           "subMenu": [
@@ -76,48 +80,12 @@
       "description": "La forma más eficiente de aprender: Únete a una cohorte con compañeros, transmisiones en vivo, sesiones improvisadas de codificación, tutorías en vivo con expertos reales y mantenga la motivación.",
       "asPath": "/read",
       "subMenu": [],
-      "__comment_submenus__": [
-        {
-          "label": "Data Science",
-          "asPath": "#data-science",
-          "icon": "data-science",
-          "description": "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.",
-          "subMenu": [
-            {
-              "href": "#science",
-              "label": "Browse articles"
-            }
-          ]
-        },
-        {
-          "label": "#30DaysOfGeekCoding",
-          "asPath": "#30DaysOfGeekCoding",
-          "icon": "socialMedia",
-          "description": "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.",
-          "subMenu": [
-            {
-              "href": "#start",
-              "label": "Start building"
-            }
-          ]
-        },
-        {
-          "label": "A.I. & Machine Learning",
-          "asPath": "#machine-learning",
-          "icon": "brain",
-          "description": "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.",
-          "subMenu": [
-            {
-              "href": "#start",
-              "label": "Start learning"
-            }
-          ]
-        }
-      ]
+      "hide_on_auth": true
     },
     {
       "label": "Coding Bootcamp",
-      "href": "https://4geeksacademy.com"
+      "href": "https://4geeksacademy.com",
+      "hide_on_auth": true
     }
   ],
   "languages": [

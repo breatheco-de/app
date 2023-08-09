@@ -40,11 +40,14 @@
   "email": "Correo electrónico",
   "address": "¿Dónde vives?",
   "signing-for": "Te estás registrando en",
+  "getting-for": "Estas obteniendo",
   "already-have-account": "¿Ya tienes una cuenta?",
   "login-here": "Inicia sesión aquí.",
   "start-free-course": "Comenzar curso gratuito",
-  "monthly_payment": "Monthly payment",
-  "yearly_payment": "Yearly payment",
+  "monthly_payment": "Pago mensual",
+  "quarterly_payment": "Pago trimestral",
+  "half_yearly_payment": "Pago semestral",
+  "yearly_payment": "Pago anual",
   "one_payment": "Pago único",
   "many_months_payment": "{{qty}} pagos mensuales",
   "info": {
@@ -52,11 +55,15 @@
     "will-pay-month": "Pagará ${{price}} dólares {{qty_months}} veces, por un total de ${{total_amount}}.",
     "will-pay-now": "Pagará ${{price} ahora mismo, no se aplicarán otros cargos en el futuro.",
     "will-pay-per-month": "Te suscribirás y pagarás ${{price}} dólares cada mes",
+    "will-pay-per-quarter": "Te suscribirás y pagarás ${{price}} dólares cada trimestre",
+    "will-pay-per-half-year": "Te suscribirás y pagarás ${{price}} dólares cada semestre",
     "will-pay-per-year": "Te suscribirás y pagarás ${{price}} dólares cada año",
     "free": "Totalmente gratuito.",
     "trial": "Prueba por 1 mes",
     "trial-week": "Prueba por 1 semana",
     "monthly": "Mensual",
+    "quarterly": "Trimestral",
+    "half-yearly": "Semestral",
     "yearly": "Anual",
     "financing": "Financiado"
   },
@@ -75,15 +82,50 @@
     "invalid-email": "Correo electrónico inválido",
     "email-required": "Correo electronico es requerido",
     "confirm-email-required": "Confirmar Correo electronico es requerido",
-    "confirm-email-not-match": "Los correos electrónicos no coinciden"
+    "confirm-email-not-match": "Los correos electrónicos no coinciden",
+    "termns-and-conditions-required": "Acepto recibir información a mi correo electrónico sobre talleres de programación, eventos, cursos y otros materiales de marketing. Nunca compartiremos su correo electrónico,"
   },
   "no-date-available": "Actualmente no tenemos fechas disponibles para la ubicación ingresada",
   "alert-message": {
-    "title": "¿Ya tienes una cuenta?",
-    "message1": "Parece que ya tiene una cuenta, revise su bandeja de entrada de correo electrónico para ver si hay mensajes de",
-    "message2": "Si sabes tu contraseña",
+    "title": "¿Ya eres usuario?",
+    "description": "Parece que ya tiene una cuenta en 4geeks.com",
     "click-here-to-login": "haga clic aquí para iniciar sesión ahora",
     "or-click-here": "o haga clic aquí en",
-    "message3": "olvidé la contraseña"
+    "message3": "olvidé la contraseña",
+    "validate-email-title": "Verifique su correo electrónico",
+    "validate-email-description": "Enviamos un correo electrónico de confirmación a: <strong>{{email}}</strong>, verifique su correo electrónico y haga clic en el enlace de confirmación.",
+    "email-sent-to": "Enviamos un correo electrónico de confirmación a {{email}}!",
+    "email-already-sent": "Tienes una invitación pendiente enviada hace menos de 1 día, revisa tu correo"
+  },
+  "alert-message-validate-email": {
+    "title": "Verificar correo electrónico",
+    "description": "Aún no ha validado su correo electrónico, inicie sesión en su cuenta de correo electrónico y busque la invitación de",
+    "description2": "¡No olvides revisar también la bandeja de entrada de spam de tu correo electrónico!"
+  },
+  "resend": "Reenviar",
+  "mentorship-bundle-title": "Paquete de sesiones de tutoría",
+  "event-bundle-title": "Paquete de acceso a eventos",
+  "consumables": {
+    "select-bundle": "Seleccione un paquete:",
+    "change-my-selection": "Cambiar mi selección",
+    "purchase-completed-title": "Ha completado con éxito la compra",
+    "you-have-received": "Has recibido",
+    "events": "eventos",
+    "sessions": "sesiones",
+    "back-to-dashboard": "Volver al dashboard",
+    "confirm-purchase-connector": "Estás a punto de comprar:",
+    "qty-events-to-consume": "{{qty}} eventos para aplicar",
+    "qty-mentorship-sessions": "{{qty}} sesiones de tutoría",
+    "price-event-per-qty": "{{price}} por evento",
+    "price-mentorship-per-qty": "{{price}} por mentoría",
+    "confirm-purchase": "Confirmar compra"
+  },
+  "select-service-of-plan": {
+    "title": "¿Qué experiencia quieres actualizar?",
+    "description": "Encontramos planes con mentorías disponibles para ti, selecciona uno antes de continuar:",
+    "select-text": "Seleccionar experiencia",
+    "cohort-connector": "Cohorte: {{name}}",
+    "subscription-not-found": "Suscripción no encontrada",
+    "no-plan-found-for-service": "No tienes ninguna suscripción relacionado con el siguiente servicio:"
   }
 }
