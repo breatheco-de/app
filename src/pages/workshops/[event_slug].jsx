@@ -440,13 +440,13 @@ function Page({ event }) {
             <MarkDownParser content={event?.description} />
           </Box>
 
-          {!eventNotExists && (typeof event?.host_user === 'object' && event?.host_user !== null) && (
+          {!eventNotExists && (event?.host_user && typeof event?.host_user === 'object' && event?.host_user !== null) && (
             <Box display="flex" flexDirection="column" gridGap="12px" mb="31px">
               <Text size="26px" fontWeight={700}>
                 {t('host-label-text')}
               </Text>
               <PublicProfile
-                data={event.host_user}
+                data={event?.host_user}
               />
             </Box>
           )}
@@ -603,7 +603,7 @@ function Page({ event }) {
               >
                 {limitedUsers?.map((c) => {
                   const fullName = `${c?.attendee?.first_name} ${c?.attendee?.last_name}`;
-                  return (
+                  return c?.attendee?.profile?.avatar_url && (
                     <AvatarUser
                       key={`${c?.attendee?.id} - ${c?.attendee?.first_name}`}
                       fullName={fullName}
