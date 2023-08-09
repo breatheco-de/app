@@ -469,7 +469,7 @@ function ServiceSummary({ service }) {
                           type="submit"
                           width="100%"
                           variant="default"
-                          disabled={!selectedService?.id}
+                          isDisabled={!selectedService?.id}
                           isLoading={isSubmitting}
                           height="40px"
                           mt="0"

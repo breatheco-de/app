@@ -20,11 +20,12 @@ import Information from '../../js_modules/profile/Information';
 function Profile() {
   const { t } = useTranslation('profile');
   // const toast = useToast();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const router = useRouter();
   const { asPath } = router;
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [certificates, setCertificates] = useState([]);
+  const [isAvailableToShowModalMessage, setIsAvailableToShowModalMessage] = useState([]);
   const tabListMenu = t('tabList', {}, { returnObjects: true });
 
   const tabPosition = {
@@ -48,13 +49,27 @@ function Profile() {
       });
   }, []);
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      bc.admissions().me()
+        .then((resp) => {
+          const data = resp?.data;
+          const cohorts = data?.cohorts;
+          const isToShowGithubMessage = cohorts?.some(
+            (l) => l?.educational_status === 'ACTIVE' && l.cohort.available_as_saas === false,
+          );
+          setIsAvailableToShowModalMessage(isToShowGithubMessage);
+        });
+    }
+  }, [isAuthenticated]);
+
   return (
     <>
       {user && !user.github && (
         <AlertMessage
           full
           type="warning"
-          message={t('common:github-warning')}
+          message={isAvailableToShowModalMessage ? t('common:github-warning') : t('common:github-not-connected')}
           style={{ borderRadius: '0px', justifyContent: 'center' }}
         />
       )}

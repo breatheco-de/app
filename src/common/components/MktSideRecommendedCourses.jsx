@@ -117,7 +117,7 @@ function MktSideRecommendedCourses({ title, endpoint, containerPadding, ...rest 
                   href={`https://4geeks.com${langConnector}/${course?.slug}`}
                   alignItems="center"
                   width="auto"
-                  color="green.400"
+                  color="green.light"
                   gridGap="10px"
                   margin="0 20px"
                 >

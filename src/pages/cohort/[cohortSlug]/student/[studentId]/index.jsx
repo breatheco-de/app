@@ -27,7 +27,7 @@ function StudentReport() {
   const [selectedCohortUser, setSelectedCohortUser] = useState(null);
   const [cohortUsers, setCohortUsers] = useState([]);
   const [attendance, setAttendance] = useState([]);
-  const [assignments, setAssignments] = useState({
+  const [studentAssignments, setStudentAssignments] = useState({
     lessons: [],
     projects: [],
     exercises: [],
@@ -64,15 +64,25 @@ function StudentReport() {
             distinct: 'true',
           })
           .getAssignments({ id: selectedCohortUser.cohort.id, academy }),
+        bc.admissions().cohort(selectedCohortUser.cohort.slug, academy),
       ])
-        .then((res) => {
+        .then(async (res) => {
           setAttendance(res[0].data);
           const nonDuplicated = [...new Map(res[1].data.results.map((item) => [item.id, item])).values()];
-          setAssignments({
+          setStudentAssignments({
             lessons: nonDuplicated.filter((elem) => elem.task_type === 'LESSON'),
             projects: nonDuplicated.filter((elem) => elem.task_type === 'EXERCISE'),
             exercises: nonDuplicated.filter((elem) => elem.task_type === 'PROJECT'),
           });
+          const syllabusInfo = await bc.admissions().syllabus(res[2].data.syllabus_version.slug, res[2].data.syllabus_version.version, academy);
+          console.log(syllabusInfo);
+          if (syllabusInfo?.data) {
+            let assignments = syllabusInfo.data.json.days.filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object').map((obj) => obj.assignments);
+            assignments = [].concat(...assignments);
+            console.log('assignments');
+            console.log(assignments);
+            const syllabusProjects = syllabusInfo.data.json.days.filter((day) => day.project && typeof day.project === 'object').map(({ project }) => ({ ...project }));
+          }
         })
         .catch((e) => {
           console.log(e);
@@ -261,7 +271,7 @@ function StudentReport() {
                     <p>{t('deliverables-section.lessons')}</p>
                   </Flex>
                 )}
-                dots={assignments.lessons.map((lesson) => ({ ...lesson, label: lesson.title }))}
+                dots={studentAssignments.lessons.map((lesson) => ({ ...lesson, label: lesson.title }))}
                 helpText={`${t('educational-status')}: ${selectedCohortUser?.educational_status}`}
               />
             </Box>
@@ -279,7 +289,7 @@ function StudentReport() {
                     <p>{t('deliverables-section.projects')}</p>
                   </Flex>
                 )}
-                dots={assignments.projects.map((project) => ({ ...project, label: project.title, borderColor: hexColor.fontColor3 }))}
+                dots={studentAssignments.projects.map((project) => ({ ...project, label: project.title, borderColor: hexColor.fontColor3 }))}
                 helpText={`${t('educational-status')}: ${selectedCohortUser?.educational_status}`}
               />
             </Box>

@@ -21,6 +21,7 @@ import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import { unSlugifyCapitalize } from '../../../utils/index';
+import useStyle from '../../../common/hooks/useStyle';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&visibility=PUBLIC&status=PUBLISHED&limit=2000`);
@@ -130,6 +131,7 @@ export default function HowToSlug({ data, markdown }) {
   const [neverLoaded, setNeverLoaded] = useState(false);
   const title = data?.title || '';
   const author = data?.author || '';
+  const { fontColor, featuredLight } = useStyle();
   // const preview = data?.preview || '';
 
   // const { translations } = data;
@@ -167,7 +169,7 @@ export default function HowToSlug({ data, markdown }) {
 
   return (
     <>
-      <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin="0 auto" gridGap="36px" padding="0 10px">
+      <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin={{ base: '0 10px', md: '0 auto' }} gridGap="36px" padding={{ base: '', md: '0 10px' }}>
         <Box display={{ base: 'none', md: 'flex' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '6.2rem 0 0 0' }}>
           <MktSideRecommendedCourses />
         </Box>
@@ -191,7 +193,7 @@ export default function HowToSlug({ data, markdown }) {
           >
             {`← ${t('back-to')}`}
           </Link>
-          <Box display="flex" gridGap="10px" justifyContent="space-between" mb="12px">
+          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="10px" justifyContent="space-between" mb="12px">
             {data?.technologies.length > 0 && (
               <TagCapsule
                 variant="rounded"
@@ -208,10 +210,13 @@ export default function HowToSlug({ data, markdown }) {
                 paddingX="0"
               />
             )}
-            <Link href={data?.readme_url || '#'} width="fit-content" color="gray.400" margin="0 0 0 auto" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
-              <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-              {t('common:edit-on-github')}
-            </Link>
+            <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '0 0 1rem 0', md: '0px' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
+              <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={data?.readme_url} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
+                <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+                {t('common:edit-on-github')}
+              </Link>
+
+            </Box>
           </Box>
           {title ? (
             <Heading size="l" as="h1" fontWeight="700">
@@ -253,9 +258,6 @@ export default function HowToSlug({ data, markdown }) {
             ) : (
               <MDSkeleton />
             )}
-            <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'flex', md: 'none' }} width="100%" bottom="0px" height="fit-content" gridColumn="1 / span 1">
-              <MktSideRecommendedCourses title={false} containerPadding="16px 12px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
-            </Box>
             <MktRecommendedCourses
               display={{ base: 'none', md: 'grid' }}
               title={t('common:continue-learning', { technologies: data?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
@@ -264,6 +266,9 @@ export default function HowToSlug({ data, markdown }) {
               endpoint={`${process.env.BREATHECODE_HOST}/v1/marketing/course`}
             />
           </Box>
+        </Box>
+        <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'initial', md: 'none' }} width="100%" bottom={0} left={0} height="auto">
+          <MktSideRecommendedCourses title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
         </Box>
       </GridContainer>
     </>

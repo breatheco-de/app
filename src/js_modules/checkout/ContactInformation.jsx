@@ -238,7 +238,7 @@ function ContactInformation({
               width="fit-content"
               type="submit"
               variant="default"
-              disabled={isChecked === false}
+              isDisabled={isChecked === false}
               isLoading={isSubmitting}
               alignSelf="flex-end"
             >

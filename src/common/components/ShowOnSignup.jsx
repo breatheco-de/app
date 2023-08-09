@@ -206,7 +206,7 @@ function ShowOnSignUp({ headContent, title, description, childrenDescription, su
                     variant="default"
                     isLoading={isSubmitting}
                     title={t('join-workshop')}
-                    disabled={readOnly}
+                    isDisabled={readOnly}
                   >
                     {t('join-workshop')}
                   </Button>
