@@ -122,7 +122,7 @@ function Page({ event }) {
 
   useEffect(() => {
     if (event?.id) {
-      const eventLang = event?.lang === 'us' && event?.lang === null ? 'en' : event?.lang;
+      const eventLang = (event?.lang === 'us' || event?.lang === null) ? 'en' : event?.lang;
       if (event?.lang !== locale) {
         router.push(`/${eventLang}/workshops/${event?.slug}`);
       }
