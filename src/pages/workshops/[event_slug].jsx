@@ -122,6 +122,15 @@ function Page({ event }) {
 
   useEffect(() => {
     if (event?.id) {
+      const eventLang = event?.lang === 'us' && event?.lang === null ? 'en' : event?.lang;
+      if (event?.lang !== locale) {
+        router.push(`/${eventLang}/workshops/${event?.slug}`);
+      }
+    }
+  }, [event]);
+
+  useEffect(() => {
+    if (event?.id) {
       bc.events().getUsers(event?.id)
         .then((resp) => {
           const formatedUsers = resp.data.map((l, i) => {

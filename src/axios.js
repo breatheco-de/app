@@ -41,11 +41,12 @@ export const cancelCurrentRequest = (message = 'Last request was canceled') => {
   }
 };
 
-// Add a listener to cancel requests on page change or reload
-if (typeof window !== 'undefined') {
-  window.addEventListener('beforeunload', () => {
-    cancelAllCurrentRequests();
-  });
-}
+export const cancelRequestsOnBeforeUnload = () => {
+  if (typeof window !== 'undefined') {
+    window.addEventListener('beforeunload', () => {
+      cancelAllCurrentRequests();
+    });
+  }
+};
 
 export default axiosInstance;
