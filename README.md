@@ -53,6 +53,5 @@ npm run lint:files
 ## Fix lint errors
 npm run lint:fix
 
-
 <!-- lista con pages si es privada o no -->
 <!-- hacer un archivo json con toods las paginas (no getStaticProps) -->
