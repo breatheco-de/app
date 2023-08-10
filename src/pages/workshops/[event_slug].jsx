@@ -51,7 +51,7 @@ export const getStaticProps = async ({ params, locale }) => {
   }));
   const data = resp?.data;
 
-  if (resp.statusText === 'not-found' || !data?.slug || (data?.lang !== null && !data?.lang.includes(locale))) {
+  if (resp.statusText === 'not-found' || !data?.slug) {
     return {
       notFound: true,
     };
