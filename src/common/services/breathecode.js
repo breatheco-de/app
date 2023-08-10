@@ -8,7 +8,11 @@ const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.B
 const host = `${BREATHECODE_HOST}/v1`;
 
 const breathecode = {
-  get: (url) => axios.get(url),
+  get: (url) => fetch(url, {
+    headers: {
+      ...axios.defaults.headers.common,
+    },
+  }).then((res) => res).catch((err) => console.error(err)),
   auth: () => {
     const url = `${host}/auth`;
     return {
@@ -240,7 +244,8 @@ const breathecode = {
       getCohortPlans: () => axios.get(`${url}/plan${qs}`),
       service: () => ({
         consumable: () => axios.get(`${url}/me/service/consumable${qs}`),
-        getAcademyService: (serviceSlug) => axios.get(`${url}/academy/academyservice/${serviceSlug}${qs}`),
+        // getAcademyService: (serviceSlug) => axios.get(`${url}/academy/academyservice/${serviceSlug}${qs}`),
+        getAcademyService: () => breathecode.get(`${url}/academy/academyservice${qs}`),
         payConsumable: (data) => axios.post(`${url}/consumable/checkout${qs}`, data),
       }),
       getEvent: (eventId) => axios.get(`${host}/events/academy/event/${eventId}${qs}`),
