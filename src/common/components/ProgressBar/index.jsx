@@ -9,9 +9,9 @@ import Counter from '../ProgressCircle/Counter';
 import Text from '../Text';
 import Progress from './Progress';
 
-const ProgressBar = ({
+function ProgressBar({
   progressText, taskTodo, width,
-}) => {
+}) {
   const { fontColor } = useStyle();
 
   const { allTasks, percentage } = handlers.handleTasks(taskTodo);
@@ -45,12 +45,12 @@ const ProgressBar = ({
       </Flex>
     </Box>
   );
-};
+}
 
 ProgressBar.propTypes = {
   width: PropTypes.string,
   progressText: PropTypes.string,
-  taskTodo: PropTypes.arrayOf(PropTypes.object),
+  taskTodo: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 ProgressBar.defaultProps = {
   width: '100%',

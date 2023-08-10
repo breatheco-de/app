@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-no-useless-fragment */
+/* eslint-disable react/no-unstable-nested-components */
 import {
   FormControl, Input, Button, Popover, PopoverTrigger, PopoverContent,
   PopoverArrow, PopoverHeader, PopoverCloseButton, PopoverBody, useDisclosure,
@@ -19,7 +21,7 @@ import MarkDownParser from '../../common/components/MarkDownParser';
 import iconDict from '../../common/utils/iconDict.json';
 import { usePersistent } from '../../common/hooks/usePersistent';
 
-export const TextByTaskStatus = ({ currentTask, t }) => {
+export function TextByTaskStatus({ currentTask, t }) {
   const taskIsAproved = currentTask?.revision_status === 'APPROVED';
   // task project status
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
@@ -69,9 +71,9 @@ export const TextByTaskStatus = ({ currentTask, t }) => {
       {t('common:taskStatus.mark-as-done')}
     </>
   );
-};
+}
 
-export const IconByTaskStatus = ({ currentTask, noDeliveryFormat }) => {
+export function IconByTaskStatus({ currentTask, noDeliveryFormat }) {
   // task project status
   const hasDeliveryFormat = !noDeliveryFormat;
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
@@ -94,17 +96,17 @@ export const IconByTaskStatus = ({ currentTask, noDeliveryFormat }) => {
     return <Icon icon="verified" color="#25BF6C" width="27px" />;
   }
   return <Icon icon="unchecked" color="#C4C4C4" width="27px" />;
-};
+}
 
 TextByTaskStatus.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.any),
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   t: PropTypes.func.isRequired,
 };
 TextByTaskStatus.defaultProps = {
   currentTask: {},
 };
 IconByTaskStatus.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.any),
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   noDeliveryFormat: PropTypes.bool,
 };
 IconByTaskStatus.defaultProps = {
@@ -112,10 +114,10 @@ IconByTaskStatus.defaultProps = {
   noDeliveryFormat: false,
 };
 
-export const ButtonHandlerByTaskStatus = ({
+export function ButtonHandlerByTaskStatus({
   currentTask, sendProject, changeStatusAssignment, toggleSettings, closeSettings,
   settingsOpen, allowText, onClickHandler, currentAssetData, fileData, handleOpen,
-}) => {
+}) {
   const { t } = useTranslation('dashboard');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [cohortSession] = usePersistent('cohortSession', {});
@@ -143,61 +145,65 @@ export const ButtonHandlerByTaskStatus = ({
   const toast = useToast();
 
   const howToSendProjectUrl = 'https://4geeksacademy.notion.site/How-to-deliver-a-project-e1db0a8b1e2e4fbda361fc2f5457c0de';
-  const TaskButton = () => (
-    <Button
-      display="flex"
-      onClick={(event) => {
-        changeStatusAssignment(event, currentTask);
-        onClickHandler();
-      }}
-      disabled={taskIsAproved}
-      minWidth="26px"
-      minHeight="26px"
-      background={allowText ? 'blue.default' : 'none'}
-      lineHeight={allowText ? '15px' : '0'}
-      padding={allowText ? '12px 24px' : '0'}
-      borderRadius={allowText ? '3px' : '30px'}
-      variant={allowText ? 'default' : 'none'}
-      textTransform={allowText ? 'uppercase' : 'none'}
-      gridGap={allowText ? '12px' : '0'}
-    >
-      {allowText ? (
-        <TextByTaskStatus currentTask={currentTask} t={t} />
-      ) : (
-        <IconByTaskStatus currentTask={currentTask} />
-      )}
-    </Button>
-  );
+  function TaskButton() {
+    return (
+      <Button
+        display="flex"
+        onClick={(event) => {
+          changeStatusAssignment(event, currentTask);
+          onClickHandler();
+        }}
+        isDisabled={taskIsAproved}
+        minWidth="26px"
+        minHeight="26px"
+        background={allowText ? 'blue.default' : 'none'}
+        lineHeight={allowText ? '15px' : '0'}
+        padding={allowText ? '12px 24px' : '0'}
+        borderRadius={allowText ? '3px' : '30px'}
+        variant={allowText ? 'default' : 'none'}
+        textTransform={allowText ? 'uppercase' : 'none'}
+        gridGap={allowText ? '12px' : '0'}
+      >
+        {allowText ? (
+          <TextByTaskStatus currentTask={currentTask} t={t} />
+        ) : (
+          <IconByTaskStatus currentTask={currentTask} />
+        )}
+      </Button>
+    );
+  }
 
-  const OpenModalButton = () => (
-    <Button
-      onClick={(event) => {
-        if (noDeliveryFormat) {
-          changeStatusAssignment(event, currentTask, 'PENDING');
-        } else {
-          handleOpen(() => onOpen());
-        }
-      }}
-      disabled={taskIsAproved}
-      display="flex"
-      minWidth="26px"
-      minHeight="26px"
-      height="fit-content"
-      background={allowText ? 'blue.default' : 'none'}
-      lineHeight={allowText ? '15px' : '0'}
-      padding={allowText ? '12px 24px' : '0'}
-      borderRadius={allowText ? '3px' : '30px'}
-      variant={allowText ? 'default' : 'none'}
-      textTransform={allowText ? 'uppercase' : 'none'}
-      gridGap={allowText ? '12px' : '0'}
-    >
-      {allowText ? (
-        <TextByTaskStatus currentTask={currentTask} t={t} />
-      ) : (
-        <IconByTaskStatus currentTask={currentTask} noDeliveryFormat={noDeliveryFormat} />
-      )}
-    </Button>
-  );
+  function OpenModalButton() {
+    return (
+      <Button
+        onClick={(event) => {
+          if (noDeliveryFormat) {
+            changeStatusAssignment(event, currentTask, 'PENDING');
+          } else {
+            handleOpen(() => onOpen());
+          }
+        }}
+        isDisabled={taskIsAproved}
+        display="flex"
+        minWidth="26px"
+        minHeight="26px"
+        height="fit-content"
+        background={allowText ? 'blue.default' : 'none'}
+        lineHeight={allowText ? '15px' : '0'}
+        padding={allowText ? '12px 24px' : '0'}
+        borderRadius={allowText ? '3px' : '30px'}
+        variant={allowText ? 'default' : 'none'}
+        textTransform={allowText ? 'uppercase' : 'none'}
+        gridGap={allowText ? '12px' : '0'}
+      >
+        {allowText ? (
+          <TextByTaskStatus currentTask={currentTask} t={t} />
+        ) : (
+          <IconByTaskStatus currentTask={currentTask} noDeliveryFormat={noDeliveryFormat} />
+        )}
+      </Button>
+    );
+  }
 
   // PRROJECT CASE
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
@@ -382,7 +388,7 @@ export const ButtonHandlerByTaskStatus = ({
           <Button
             display="flex"
             variant={allowText ? 'default' : 'none'}
-            disabled={taskIsAproved}
+            isDisabled={taskIsAproved}
             minWidth="26px"
             minHeight="26px"
             height="fit-content"
@@ -602,7 +608,7 @@ export const ButtonHandlerByTaskStatus = ({
                         variant="default"
                         onClick={() => handleUploadFile()}
                         isLoading={isUploading}
-                        disabled={isUploading || fileProps?.length === 0 || fileProps.some((file) => typeof file?.type !== 'string') || fileErrorExists || fileSumSize > maxFileSize}
+                        isDisabled={isUploading || fileProps?.length === 0 || fileProps.some((file) => typeof file?.type !== 'string') || fileErrorExists || fileSumSize > maxFileSize}
                         textTransform="uppercase"
                       >
                         {t('common:upload')}
@@ -623,10 +629,10 @@ export const ButtonHandlerByTaskStatus = ({
   return (
     <TaskButton />
   );
-};
+}
 
 ButtonHandlerByTaskStatus.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.any),
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   sendProject: PropTypes.func.isRequired,
   changeStatusAssignment: PropTypes.func.isRequired,
   toggleSettings: PropTypes.func,
@@ -635,8 +641,8 @@ ButtonHandlerByTaskStatus.propTypes = {
   allowText: PropTypes.bool,
   onClickHandler: PropTypes.func,
   handleOpen: PropTypes.func,
-  currentAssetData: PropTypes.objectOf(PropTypes.any),
-  fileData: PropTypes.objectOf(PropTypes.any),
+  currentAssetData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  fileData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 ButtonHandlerByTaskStatus.defaultProps = {
   currentTask: null,

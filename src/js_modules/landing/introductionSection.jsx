@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-no-useless-fragment */
+/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
@@ -11,9 +13,9 @@ import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import GridContainer from '../../common/components/GridContainer';
 
-const IntroductionSection = ({
+function IntroductionSection({
   data, slice, fitContent, ...rest
-}) => {
+}) {
   const router = useRouter();
   const colors = useColorModeValue('#000', '#fff');
 
@@ -127,7 +129,7 @@ const IntroductionSection = ({
         )}
 
         {slice?.primary?.description.length > 0 ? (
-          <Text fontSize="21px" fontWeight={700} pt="16px">
+          <Text as="div" fontSize="21px" fontWeight={700} pt="16px">
             <PrismicRichText field={slice?.primary?.description} />
           </Text>
         ) : data?.description && (
@@ -218,11 +220,11 @@ const IntroductionSection = ({
       </Box>
     </GridContainer>
   );
-};
+}
 
 IntroductionSection.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any),
-  slice: PropTypes.objectOf(PropTypes.any),
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  slice: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 IntroductionSection.defaultProps = {

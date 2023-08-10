@@ -10,7 +10,7 @@ import Heading from '../../common/components/Heading';
 import ScrollSpy from '../../common/components/ScrollSpy';
 import { slugify } from '../../utils';
 
-const PreviewModules = ({ data }) => {
+function PreviewModules({ data }) {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const router = useRouter();
   const color = useColorModeValue('gray.700', 'gray.300');
@@ -110,10 +110,10 @@ const PreviewModules = ({ data }) => {
       </Box>
     </Box>
   );
-};
+}
 
 PreviewModules.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any).isRequired,
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 export default PreviewModules;

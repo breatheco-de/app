@@ -13,13 +13,14 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import styled from 'styled-components';
 import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import CustomText from '../../common/components/Text';
 import Image from '../../common/components/Image';
+import useStyle from '../../common/hooks/useStyle';
 
 const StyledBox = styled(Box)`
 .custom-popover {
@@ -37,12 +38,18 @@ const Triangle = styled(Box)`
 display: none;
 `;
 
-const DesktopItem = ({ item }) => {
+function DesktopItem({ item, readSyllabus }) {
   const router = useRouter();
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const { borderColor, hexColor } = useStyle();
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
   const popoverBorderColor = useColorModeValue('gray.250', 'gray.dark');
   const linkColor = useColorModeValue('gray.600', 'gray.200');
+  const groupHoverColor = useColorModeValue('gray.900', 'featuredLight');
+  const backgroundHoverLink = useColorModeValue('featuredLight', 'gray.900');
+  const iconColor = hexColor.black;
+  const borderSize = useColorModeValue(1, 2);
+  const backgroundOfLine = useColorModeValue('gray.300', 'gray.700');
 
   const getColorLink = (link) => {
     if (router?.pathname === link || router.asPath === link || router?.pathname.includes(link)) {
@@ -57,6 +64,18 @@ const DesktopItem = ({ item }) => {
     }
     return 'gray';
   };
+
+  // manage subMenus in level 2
+  const itemSubMenu = item?.subMenu?.length > 0 && item.subMenu.map((l) => {
+    const isLessons = l.slug === 'lessons';
+    if (isLessons) {
+      return ({
+        ...l,
+        subMenu: [...readSyllabus, ...l.subMenuContent],
+      });
+    }
+    return l;
+  });
 
   return (
     <StyledBox
@@ -74,7 +93,7 @@ const DesktopItem = ({ item }) => {
         },
       }}
     >
-      {item.subMenu ? (
+      {itemSubMenu ? (
         <>
           <Button
             variant="unstyled"
@@ -91,7 +110,7 @@ const DesktopItem = ({ item }) => {
             onClick={() => setPopoverOpen(!popoverOpen)}
           >
             {item.label}
-            {item.subMenu && (
+            {item?.subMenu?.length > 0 && (
               <Icon
                 icon="arrowDown"
                 color="currentColor"
@@ -138,9 +157,9 @@ const DesktopItem = ({ item }) => {
               <Flex
                 flexDirection="row"
                 padding="0 0 16px 0"
-                borderBottom={useColorModeValue(1, 2)}
+                borderBottom={borderSize}
                 borderStyle="solid"
-                borderColor={useColorModeValue('gray.200', 'gray.700')}
+                borderColor={borderColor}
                 alignItems="center"
                 color={linkColor}
                 mb="10px"
@@ -165,7 +184,7 @@ const DesktopItem = ({ item }) => {
               >
                 <TabList display="flex" gridGap="12px" flexDirection={{ base: 'row', md: 'column' }} width={{ base: '100%', md: 'auto' }}>
                   {
-                    item.subMenu.map((child) => {
+                    itemSubMenu && itemSubMenu.map((child) => {
                       const {
                         icon, label, subLabel, href,
                       } = child;
@@ -192,13 +211,13 @@ const DesktopItem = ({ item }) => {
                         >
                           {icon && (isUrl ? (
                             <Image src={icon} width={33} height={33} alt={label} style={{ minWidth: '33px', minHeight: '33px' }} />
-                          ) : <Icon icon={icon} width="33px" height="30px" color={useColorModeValue('#1A202C', '#ffffff')} />)}
+                          ) : <Icon icon={icon} width="33px" height="30px" color={iconColor} />)}
                           <Text
                             // width="100%"
                             minWidth="130px"
                             // transition="all .3s ease"
                             color={getColorLink(href)}
-                            _groupHover={{ color: useColorModeValue('gray.900', 'featuredLight') }}
+                            _groupHover={{ color: groupHoverColor }}
                             fontWeight={500}
                           >
                             {label}
@@ -210,9 +229,9 @@ const DesktopItem = ({ item }) => {
                     })
                   }
                 </TabList>
-                <Box width="3px" background={useColorModeValue('gray.300', 'gray.700')} margin="0 15px" />
+                <Box width="3px" background={backgroundOfLine} margin="0 15px" />
                 <TabPanels>
-                  {item.subMenu.map((child) => {
+                  {itemSubMenu && itemSubMenu.map((child) => {
                     const {
                       description, subMenu,
                     } = child;
@@ -232,14 +251,14 @@ const DesktopItem = ({ item }) => {
                             display="block"
                             p={2}
                             style={{ borderRadius: '5px' }}
-                            _hover={{ bg: useColorModeValue('featuredLight', 'gray.900') }}
+                            _hover={{ bg: backgroundHoverLink }}
                           >
                             <Stack direction="row" align="center">
                               <Box>
                                 <Text
                                   // transition="all .3s ease"
                                   color={getColorLink(l.href)}
-                                  _groupHover={{ color: useColorModeValue('gray.900', 'featuredLight') }}
+                                  _groupHover={{ color: groupHoverColor }}
                                   fontWeight={500}
                                 >
                                   {l.label}
@@ -303,7 +322,7 @@ const DesktopItem = ({ item }) => {
       )}
     </StyledBox>
   );
-};
+}
 
 DesktopItem.propTypes = {
   item: PropTypes.shape({
@@ -312,8 +331,9 @@ DesktopItem.propTypes = {
     asPath: PropTypes.string,
     icon: PropTypes.string,
     description: PropTypes.string,
-    subMenu: PropTypes.arrayOf(PropTypes.any),
+    subMenu: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   }).isRequired,
+  readSyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
-export default DesktopItem;
+export default memo(DesktopItem);

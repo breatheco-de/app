@@ -46,7 +46,7 @@ import FinalProject from '../../../../../common/components/FinalProject';
 import FinalProjectModal from '../../../../../common/components/FinalProject/Modal';
 import useStyle from '../../../../../common/hooks/useStyle';
 
-const Dashboard = () => {
+function Dashboard() {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('dashboard');
   const toast = useToast();
@@ -70,11 +70,13 @@ const Dashboard = () => {
   const { featuredColor } = useStyle();
 
   const [session, setSession] = usePersistent('session', {});
-  const { user, choose, isLoading } = useAuth();
+  const { user, choose, isLoading, isAuthenticated } = useAuth();
 
   const isBelowTablet = getBrowserSize()?.width < 768;
   const [currentCohortProps, setCurrentCohortProps] = useState({});
   const [subscriptionData, setSubscriptionData] = useState(null);
+  const [allSubscriptions, setAllSubscriptions] = useState(null);
+  const [isAvailableToShowWarningModal, setIsAvailableToShowModalMessage] = useState(false);
   const {
     cohortSession, sortedAssignments, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, taskTodo, taskTodoState,
@@ -176,6 +178,20 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    if (isAuthenticated) {
+      bc.admissions().me()
+        .then((resp) => {
+          const data = resp?.data;
+          const cohorts = data?.cohorts;
+          const isToShowGithubMessage = cohorts?.some(
+            (l) => l?.educational_status === 'ACTIVE' && l.cohort.available_as_saas === false,
+          );
+          setIsAvailableToShowModalMessage(isToShowGithubMessage);
+        });
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
     if (flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && session?.closedFinalProjectModal !== true) {
       setIsOpenFinalProject(true);
     }
@@ -215,10 +231,13 @@ const Dashboard = () => {
 
         const finalData = {
           ...planData,
-          mentorshipServiceSet: planData?.selected_mentorship_service_set,
           planOfferExists: currentPlanOffer !== undefined,
         };
 
+        const planFinancings = data?.plan_financings?.length > 0 ? data?.plan_financings : [];
+        const subscriptions = data?.subscriptions?.length > 0 ? data?.subscriptions : [];
+
+        setAllSubscriptions([...planFinancings, ...subscriptions]);
         setSubscriptionData(finalData);
       });
     syncInterval(() => {
@@ -383,7 +402,9 @@ const Dashboard = () => {
               style={{ marginRight: '7px' }}
               color="currentColor"
             />
-            {t('backToChooseProgram')}
+            <span>
+              {t('backToChooseProgram')}
+            </span>
           </NextChakraLink>
         </Box>
 
@@ -501,7 +522,7 @@ const Dashboard = () => {
                 />
                 )}
                 {cohortSession?.cohort_role?.toLowerCase() === 'student' && flags?.appReleaseEnableMentorshipsWidget && (
-                  <SupportSidebar subscriptionData={subscriptionData} />
+                  <SupportSidebar subscriptions={allSubscriptions} subscriptionData={subscriptionData} />
                 )}
               </Box>
             )}
@@ -516,7 +537,7 @@ const Dashboard = () => {
                           <Box as="span" fontSize="21px" fontWeight={700} flex="1" textAlign="left">
                             {t('intro-video-title')}
                           </Box>
-                          <Icon withContainer icon="arrowRight" width="11px" height="20px" color="currentColor" style={{ }} transform={isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'} transition="transform 0.2s ease-in" />
+                          <Icon icon="arrowRight" width="11px" height="20px" color="currentColor" style={{ }} transform={isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'} transition="transform 0.2s ease-in" />
                         </AccordionButton>
                       </span>
                       <AccordionPanel padding="0px 4px 4px 4px">
@@ -571,7 +592,7 @@ const Dashboard = () => {
                       cursor: 'default',
                       opacity: showSearch ? 1 : 0,
                     }}
-                    disabled={!showSearch}
+                    isDisabled={!showSearch}
                     animation={showSearch ? slideLeftAnimation : ''}
                     onChange={(e) => setSearchValue(e.target.value)}
                     color={commonInputColor}
@@ -724,80 +745,82 @@ const Dashboard = () => {
               />
               )}
               {cohortSession?.cohort_role?.toLowerCase() === 'student' && flags?.appReleaseEnableMentorshipsWidget && (
-                <SupportSidebar subscriptionData={subscriptionData} />
+                <SupportSidebar subscriptions={allSubscriptions} subscriptionData={subscriptionData} />
               )}
             </Box>
           )}
         </Flex>
       </Container>
       {showGithubWarning === 'active' && (
-      <Modal
-        isOpen={showWarningModal}
-        size="md"
-        margin="0 10px"
-        onClose={() => {
-          setShowWarningModal(false);
-          localStorage.setItem('showGithubWarning', 'postponed');
-        }}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader color={commonModalColor} borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
-            {t('warningModal.title')}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody padding={{ base: '15px 22px' }}>
-            <Text textAlign="center" fontSize="14px" lineHeight="24px" marginBottom="15px" fontWeight="400">
-              {t('warningModal.sub-title')}
-            </Text>
-            <Text marginBottom="25px" color={commonFontColor} textAlign="center" fontSize="12px" lineHeight="24px">
-              {t('warningModal.text')}
-            </Text>
-            <Button
-              textAlign="center"
-              variant="outline"
-              margin="auto"
-              fontSize="13px"
-              fontWeight="700"
-              display="flex"
-              width="100%"
-              marginBottom="15px"
-              onClick={(e) => {
-                e.preventDefault();
-                window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
-              }}
-            >
-              <Icon
-                icon="github"
-                width="16px"
-                height="16px"
-                style={{ marginRight: '5px' }}
-              />
-              {' '}
-              {t('warningModal.connect')}
-            </Button>
-            <Button
-              textAlign="center"
-              variant="link"
-              margin="auto"
-              fontSize="15px"
-              lineHeight="22px"
-              fontWeight="700"
-              display="block"
-              color={commonModalColor}
-              onClick={() => {
-                setShowWarningModal(false);
-                localStorage.setItem('showGithubWarning', 'postponed');
-              }}
-            >
-              {t('warningModal.skip')}
-            </Button>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+        <Modal
+          isOpen={showWarningModal}
+          size="md"
+          margin="0 10px"
+          onClose={() => {
+            setShowWarningModal(false);
+            localStorage.setItem('showGithubWarning', 'postponed');
+          }}
+        >
+          <ModalOverlay />
+          <ModalContent style={{ margin: '3rem 0 0 0' }}>
+            <ModalHeader color={commonModalColor} borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
+              {t('warningModal.title')}
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody padding={{ base: '15px 22px' }}>
+              <Text textAlign="center" fontSize="14px" lineHeight="24px" marginBottom="15px" fontWeight="400">
+                {t('warningModal.sub-title')}
+              </Text>
+              {isAvailableToShowWarningModal && (
+                <Text marginBottom="25px" color={commonFontColor} textAlign="center" fontSize="12px" lineHeight="24px">
+                  {t('warningModal.text')}
+                </Text>
+              )}
+              <Button
+                textAlign="center"
+                variant="outline"
+                margin="auto"
+                fontSize="13px"
+                fontWeight="700"
+                display="flex"
+                width="100%"
+                marginBottom="15px"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
+                }}
+              >
+                <Icon
+                  icon="github"
+                  width="16px"
+                  height="16px"
+                  style={{ marginRight: '5px' }}
+                />
+                {' '}
+                {t('warningModal.connect')}
+              </Button>
+              <Button
+                textAlign="center"
+                variant="link"
+                margin="auto"
+                fontSize="15px"
+                lineHeight="22px"
+                fontWeight="700"
+                display="block"
+                color={commonModalColor}
+                onClick={() => {
+                  setShowWarningModal(false);
+                  localStorage.setItem('showGithubWarning', 'postponed');
+                }}
+              >
+                {t('warningModal.skip')}
+              </Button>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
       )}
     </>
   );
-};
+}
 
 export default asPrivate(Dashboard);

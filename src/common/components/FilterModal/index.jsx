@@ -23,9 +23,9 @@ import TechnologiesSection from './technologies';
 import DifficultySection from './difficulty';
 import useStyle from '../../hooks/useStyle';
 
-const FilterModal = ({
+function FilterModal({
   title, isModalOpen, onClose, setFilter, contextFilter, technologyTags, difficulties,
-}) => {
+}) {
   const { t } = useTranslation('common');
   const [checkedTechnologies, setCheckedTechnologies] = useState([]);
   const [withVideo, setWithVideo] = useState(false);
@@ -213,7 +213,7 @@ const FilterModal = ({
             fontSize="13px"
             textTransform="uppercase"
             variant="default"
-            disabled={fLength <= 0}
+            isDisabled={fLength <= 0}
             onClick={() => handleSubmit()}
             rightIcon={<Icon icon="longArrowRight" width="15px" color={fLength <= 0 ? '#3A3A3A' : '#FFFFFF'} />}
           >
@@ -223,13 +223,13 @@ const FilterModal = ({
       </ModalContent>
     </Modal>
   );
-};
+}
 
 FilterModal.propTypes = {
   title: PropTypes.string,
   setFilter: PropTypes.func.isRequired,
-  contextFilter: PropTypes.objectOf(PropTypes.any).isRequired,
-  technologyTags: PropTypes.arrayOf(PropTypes.any),
+  contextFilter: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  technologyTags: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   difficulties: PropTypes.arrayOf(PropTypes.string),
   isModalOpen: PropTypes.bool,
   onClose: PropTypes.func,

@@ -15,7 +15,7 @@ import styles from '../../../styles/flags.module.css';
 import navbarTR from '../translations/navbar';
 import { isWindow } from '../../utils';
 
-const LanguageSelector = ({ display, translations }) => {
+function LanguageSelector({ display, translations }) {
   const router = useRouter();
   const locale = router.locale === 'default' ? 'en' : router.locale;
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
@@ -118,7 +118,7 @@ const LanguageSelector = ({ display, translations }) => {
       </PopoverContent>
     </Popover>
   );
-};
+}
 
 LanguageSelector.propTypes = {
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),

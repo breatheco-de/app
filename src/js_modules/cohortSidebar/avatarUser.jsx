@@ -66,6 +66,7 @@ const AvatarUser = memo(({
             src={avatar}
             marginLeft={isWrapped ? '-10px' : '0px'}
             zIndex={index}
+            alt={`${fullNameLabel} - image`}
           >
             {customBadge && (customBadge)}
             {badge && isOnlineUser && (
@@ -150,9 +151,9 @@ const AvatarUser = memo(({
 });
 
 AvatarUser.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any).isRequired,
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   fullName: PropTypes.string,
-  containerStyle: PropTypes.objectOf(PropTypes.any),
+  containerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   width: PropTypes.string,
   height: PropTypes.string,
   badge: PropTypes.bool,

@@ -15,7 +15,7 @@ import { isNumber } from '../../../utils';
 import useFinalProjectProps from '../../store/actions/finalProjectAction';
 import Icon from '../Icon';
 
-const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, defaultValues, refreshFinalProject }) => {
+function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, defaultValues, refreshFinalProject }) {
   const { t } = useTranslation('final-project');
   const [students, setStudents] = useState(studentsData);
   const [fileProps, setFileProps] = useState([]);
@@ -352,14 +352,14 @@ const FinalProjectForm = ({ storyConfig, cohortData, studentsData, handleClose, 
       }}
     </Formik>
   );
-};
+}
 
 FinalProjectForm.propTypes = {
-  cohortData: PropTypes.objectOf(PropTypes.any),
-  studentsData: PropTypes.arrayOf(PropTypes.object),
-  storyConfig: PropTypes.objectOf(PropTypes.any),
+  cohortData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  studentsData: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
+  storyConfig: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   handleClose: PropTypes.func,
-  defaultValues: PropTypes.objectOf(PropTypes.any),
+  defaultValues: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   refreshFinalProject: PropTypes.func.isRequired,
 };
 FinalProjectForm.defaultProps = {

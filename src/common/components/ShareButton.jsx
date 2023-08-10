@@ -12,9 +12,9 @@ import Text from './Text';
 import Link from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
 
-const ShareButton = ({
+function ShareButton({
   variant, title, shareText, message, link, socials, withParty, onlyModal,
-}) => {
+}) {
   const { t } = useTranslation('profile');
   const [party, setParty] = useState(true);
   const [isOpen, setIsOpen] = useState(onlyModal || false);
@@ -148,7 +148,7 @@ const ShareButton = ({
       </Modal>
     </>
   );
-};
+}
 
 ShareButton.propTypes = {
   variant: PropTypes.string,

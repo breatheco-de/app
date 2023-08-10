@@ -22,9 +22,9 @@ import ModalInfo from '../moduleMap/modalInfo';
 import Text from '../../common/components/Text';
 import { SILENT_CODE } from '../../lib/types';
 
-const ContactInformation = ({
+function ContactInformation({
   courseChoosed, formProps, setFormProps, setVerifyEmailProps,
-}) => {
+}) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
   const {
@@ -238,7 +238,7 @@ const ContactInformation = ({
               width="fit-content"
               type="submit"
               variant="default"
-              disabled={isChecked === false}
+              isDisabled={isChecked === false}
               isLoading={isSubmitting}
               alignSelf="flex-end"
             >
@@ -254,7 +254,7 @@ const ContactInformation = ({
         title={t('signup:alert-message.title')}
         childrenDescription={(
           <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
-            <Avatar src="https://breathecode.herokuapp.com/static/img/avatar-7.png" border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+            <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-7.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
             <Text
               size="14px"
               textAlign="center"
@@ -274,11 +274,11 @@ const ContactInformation = ({
       />
     </Box>
   );
-};
+}
 
 ContactInformation.propTypes = {
   courseChoosed: PropTypes.string,
-  formProps: PropTypes.objectOf(PropTypes.any).isRequired,
+  formProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   setFormProps: PropTypes.func,
   setVerifyEmailProps: PropTypes.func.isRequired,
 };

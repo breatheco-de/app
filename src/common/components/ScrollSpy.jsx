@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+/* eslint-disable no-unsafe-optional-chaining */
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-const ScrollSpy = ({
+function ScrollSpy({
   className,
   offsetTop,
   autoScrollOffsetTop,
@@ -10,7 +11,7 @@ const ScrollSpy = ({
   children,
   isCustomElement,
   containerClass,
-}) => {
+}) {
   let currentChild = 0;
   let scrollSpyNavContainer;
   let viewportWidth;
@@ -76,9 +77,7 @@ const ScrollSpy = ({
           && center.x >= target.offsetLeft
           && center.x < target.offsetLeft + target.offsetWidth;
 
-        const visibleVertical = isBetween(
-          target.offsetTop, targetElements[i + 1]?.offsetTop, center.y,
-        );
+        const visibleVertical = isBetween(target.offsetTop, targetElements[i + 1]?.offsetTop, center.y);
 
         if (visibleVertical && visibleHorizontal) {
           source.classList.add(className);
@@ -132,8 +131,8 @@ const ScrollSpy = ({
     children, className, duration, offsetTop, autoScrollOffsetTop, offsetLeft, handleAutoNavScroll,
   ]);
 
-  return <>{children}</>;
-};
+  return children;
+}
 
 export default ScrollSpy;
 

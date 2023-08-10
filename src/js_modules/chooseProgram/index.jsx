@@ -66,7 +66,8 @@ function ChooseProgram({ chooseList, handleChoose }) {
 
   const marketingCourses = marketingCursesList && marketingCursesList.filter(
     (item) => !activeSubscriptionCohorts.some(
-      (activeCohort) => activeCohort?.cohort?.syllabus_version?.slug === item?.slug,
+      (activeCohort) => activeCohort?.subscription?.plans[0]?.slug === item?.slug
+        || activeCohort?.plan_financing?.plans[0]?.slug === item?.slug,
     ) && item?.course_translation?.title,
   );
 
@@ -204,7 +205,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
 }
 
 ChooseProgram.propTypes = {
-  chooseList: PropTypes.arrayOf(PropTypes.object),
+  chooseList: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   handleChoose: PropTypes.func,
 };
 ChooseProgram.defaultProps = {

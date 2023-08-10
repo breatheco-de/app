@@ -76,7 +76,7 @@ function useHandler() {
         const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
         const currentCohort = findCohort?.cohort;
         const { version, name } = currentCohort.syllabus_version;
-        if (!cohortSession.academy.id) {
+        if (!cohortSession?.academy?.id) {
           router.push('/choose-program');
         }
 

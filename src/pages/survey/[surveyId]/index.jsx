@@ -19,7 +19,7 @@ import AlertMessage from '../../../common/components/AlertMessage';
 import bc from '../../../common/services/breathecode';
 import asPrivate from '../../../common/context/PrivateRouteWrapper';
 
-const Survey = () => {
+function Survey() {
   const router = useRouter();
   const { t } = useTranslation('survey');
   const { surveyId } = router.query;
@@ -28,24 +28,28 @@ const Survey = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [currentIndex, setcurrentIndex] = useState(0);
 
-  useEffect(async () => {
+  const handleSurvey = async () => {
+    await bc.feedback().getSurvey(surveyId)
+      .then((res) => {
+        if (res === undefined) {
+          setMsg({ text: 'expired', type: 'error' });
+          return;
+        }
+        const { data } = res;
+        console.log(data);
+        setQuestions(data.map((q) => ({ message: q.title, ...q })));
+        setMsg(null);
+      })
+      .catch((error) => {
+        console.log('error_surver:', error);
+        setMsg({ text: error.message || error, type: 'error' });
+        setQuestions([]);
+      });
+  };
+
+  useEffect(() => {
     if (surveyId) {
-      await bc.feedback().getSurvey(surveyId)
-        .then((res) => {
-          if (res === undefined) {
-            setMsg({ text: 'expired', type: 'error' });
-            return;
-          }
-          const { data } = res;
-          console.log(data);
-          setQuestions(data.map((q) => ({ message: q.title, ...q })));
-          setMsg(null);
-        })
-        .catch((error) => {
-          console.log('error_surver:', error);
-          setMsg({ text: error.message || error, type: 'error' });
-          setQuestions([]);
-        });
+      handleSurvey();
     }
   }, []);
 
@@ -161,6 +165,6 @@ const Survey = () => {
       </main>
     </div>
   );
-};
+}
 
 export default asPrivate(Survey);

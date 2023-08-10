@@ -20,19 +20,23 @@ export default function Thmbnail() {
   const router = useRouter();
   const { slug } = router.query;
 
-  useEffect(async () => {
-    if (slug !== undefined) {
-      const response = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${slug}`);
-      const result = await response.json();
+  const getAsset = async () => {
+    const response = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${slug}`);
+    const result = await response.json();
 
-      setAsset(result);
+    setAsset(result);
+  };
+
+  useEffect(() => {
+    if (slug !== undefined) {
+      getAsset();
     }
   }, [slug]);
 
   const randomImgNumber = Math.floor(Math.random() * 5) + 1;
 
   const Div = styled.div`
-    background: url("/static/images/random-bg${randomImgNumber}.png");
+    background: url("/static/images/thumbnail/random-bg${randomImgNumber}.webp");
     background-repeat: no-repeat;
     background-size: cover;
     height: 100vh;

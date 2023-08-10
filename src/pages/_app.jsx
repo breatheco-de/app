@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import {
   QueryClient,
   QueryClientProvider,
@@ -8,7 +8,9 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import TagManager from 'react-gtm-module';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
+import { Provider } from 'react-redux';
 import { ChakraProvider } from '@chakra-ui/react';
+import { CacheProvider } from '@chakra-ui/next-js';
 import { PrismicProvider } from '@prismicio/react';
 import { PrismicPreview } from '@prismicio/next';
 import { repositoryName } from '../../prismicio';
@@ -20,13 +22,13 @@ import ConnectionProvider from '../common/context/ConnectionContext';
 import Footer from '../common/components/Footer';
 import Helmet from '../common/components/Helmet';
 import InterceptionLoader from '../common/components/InterceptionLoader';
-import useAuth from '../common/hooks/useAuth';
 
 import '../../styles/globals.css';
 import '../../styles/react-tags-input.css';
 import '../../styles/markdown.css';
 import '../../styles/phoneInput/index.css';
 import '../../styles/datePicker.css';
+import '../../styles/ipynb.css';
 
 import '@fontsource/lato/100.css';
 import '@fontsource/lato/300.css';
@@ -34,52 +36,53 @@ import '@fontsource/lato/400.css';
 import '@fontsource/lato/700.css';
 import '@fontsource/lato/900.css';
 
-function App({ Component, pageProps }) {
-  const { isAuthenticated } = useAuth();
-  const [haveSession, setHaveSession] = useState(false);
-  const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
+function InternalLinkComponent(props) {
+  return <Link {...props} />;
+}
+
+function App({ Component, ...rest }) {
+  const [hasMounted, setHasMounted] = useState(false);
+  const { store, props } = wrapper.useWrappedStore(rest);
+  const pageProps = props?.pageProps || {};
 
   const queryClient = new QueryClient();
 
   useEffect(() => {
+    setHasMounted(true);
     TagManager.initialize({ gtmId: process.env.TAG_MANAGER_KEY });
   }, []);
 
-  useEffect(() => {
-    // verify if accessToken exists
-    if (isAuthenticated || HAVE_SESSION) {
-      setHaveSession(true);
-    }
-  }, [isAuthenticated, HAVE_SESSION]);
-
-  const Navbar = () => {
-    if (HAVE_SESSION) {
-      return <NavbarSession pageProps={pageProps} translations={pageProps?.translations} haveSession={haveSession} />;
-    }
-    return <NavbarSession pageProps={pageProps} translations={pageProps?.translations} haveSession={false} />;
-  };
-
   return (
     <QueryClientProvider client={queryClient}>
-      <Helmet
-        {...pageProps.seo}
-      />
-      <ChakraProvider resetCSS theme={CustomTheme}>
-        <AuthProvider>
-          <ConnectionProvider>
-            <Navbar />
-            <InterceptionLoader />
+      <Provider store={store}>
+        <Helmet
+          {...pageProps.seo}
+        />
+        <CacheProvider>
+          <ChakraProvider resetCSS theme={CustomTheme}>
 
-            <PrismicProvider internalLinkComponent={(props) => <Link {...props} />}>
-              <PrismicPreview repositoryName={repositoryName}>
-                <Component {...pageProps} />
-              </PrismicPreview>
-            </PrismicProvider>
+            <AuthProvider>
+              <ConnectionProvider>
+                {hasMounted && (
+                  // fix flickering on client side
+                  <Fragment key="load-on-client-side">
+                    <NavbarSession pageProps={pageProps} translations={pageProps?.translations} />
+                    <InterceptionLoader />
 
-            <Footer pageProps={pageProps} />
-          </ConnectionProvider>
-        </AuthProvider>
-      </ChakraProvider>
+                    <PrismicProvider internalLinkComponent={InternalLinkComponent}>
+                      <PrismicPreview repositoryName={repositoryName}>
+                        <Component {...pageProps} />
+                      </PrismicPreview>
+                    </PrismicProvider>
+
+                    <Footer pageProps={pageProps} />
+                  </Fragment>
+                )}
+              </ConnectionProvider>
+            </AuthProvider>
+          </ChakraProvider>
+        </CacheProvider>
+      </Provider>
       <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
     </QueryClientProvider>
   );
@@ -89,9 +92,10 @@ App.propTypes = {
   pageProps: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
   Component: PropTypes.elementType.isRequired,
 };
+
 export default withLDProvider({
   clientSideID: process.env.LD_CLIENT_ID,
   options: {
     bootstrap: 'localStorage',
   },
-})(wrapper.withRedux(App));
+})(App);

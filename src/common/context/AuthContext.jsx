@@ -5,7 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { Avatar, Box, useToast } from '@chakra-ui/react';
 import bc from '../services/breathecode';
 import { isWindow, removeURLParameter } from '../../utils';
-import axiosInstance from '../../axios';
+import axiosInstance, { cancelAllCurrentRequests } from '../../axios';
 import { usePersistent } from '../hooks/usePersistent';
 import modifyEnv from '../../../modifyEnv';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
@@ -110,7 +110,8 @@ export const AuthContext = createContext({
   ...initialState,
 });
 
-const AuthProvider = ({ children }) => {
+function AuthProvider({ children }) {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
   const { t, lang } = useTranslation('footer');
   const toast = useToast();
@@ -130,9 +131,8 @@ const AuthProvider = ({ children }) => {
   // Validate and Fetch user token from localstorage when it changes
   const handleSession = (tokenString) => setTokenSession(tokenString);
 
-  useEffect(async () => {
+  const authHandler = async () => {
     const token = getToken();
-    const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
     if (token !== undefined && token !== null) {
       const requestToken = await fetch(`${BREATHECODE_HOST}/v1/auth/token/${token}`, {
@@ -180,6 +180,10 @@ const AuthProvider = ({ children }) => {
     }
 
     return null;
+  };
+
+  useEffect(() => {
+    authHandler();
   }, [router]);
 
   const login = async (payload = null) => {
@@ -203,7 +207,8 @@ const AuthProvider = ({ children }) => {
               position: 'top',
               status: 'error',
               title: responseData.non_field_errors[i],
-              duration: 6000 + (1000 * indexFromOne),
+              duration: 5000 + (1000 * indexFromOne),
+              isClosable: true,
             });
           }
         }
@@ -267,16 +272,21 @@ const AuthProvider = ({ children }) => {
   };
 
   const logout = (callback = null) => {
+    cancelAllCurrentRequests();
+    handleSession(null);
+    setProfile({});
+
     if (typeof callback === 'function') callback();
     if (typeof callback !== 'function') {
       if (queryTokenExists) {
-        router.push(cleanUrl);
+        router.push(cleanUrl)
+          .then(() => {
+            router.reload();
+          });
       } else {
         router.reload();
       }
     }
-    handleSession(null);
-    setProfile({});
     localStorage.removeItem('showGithubWarning');
     localStorage.removeItem('redirect-after-register');
     localStorage.removeItem('redirect');
@@ -292,6 +302,7 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
+      // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
         ...state,
         method: 'Bearer',
@@ -311,7 +322,7 @@ const AuthProvider = ({ children }) => {
         closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
         childrenDescription={(
           <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
-            <Avatar src="https://breathecode.herokuapp.com/static/img/avatar-1.png" border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+            <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
             <Text
               size="14px"
               textAlign="center"
@@ -353,7 +364,7 @@ const AuthProvider = ({ children }) => {
       />
     </AuthContext.Provider>
   );
-};
+}
 
 AuthProvider.propTypes = {
   children: PropTypes.node,

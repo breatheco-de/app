@@ -7,55 +7,68 @@ import Text from './Text';
 import Heading from './Heading';
 import Icon from './Icon';
 
-const PrismicTextComponent = ({ field, ...rest }) => {
+function Heading2({ children, ...rest }) {
+  return (
+    <Heading size="xl" {...rest}>
+      {children}
+    </Heading>
+  );
+}
+function List({ children, ...rest }) {
+  return (
+    <UnorderedList margin="0 1.5em" {...rest}>
+      {children}
+    </UnorderedList>
+  );
+}
+function ListItemComponent({ children, color, ...rest }) {
+  return (
+    <ListItem
+      fontSize="sm"
+      lineHeight="18px"
+      margin="15px 0"
+      display="flex"
+      gridGap="10px"
+      alignItems="center"
+      color={color}
+      {...rest}
+    >
+      <Icon icon="checked2" color="#25BF6C" width="12px" height="12px" />
+      {children}
+    </ListItem>
+  );
+}
+function Paragraph({ children, color, ...rest }) {
+  return (
+    <Text
+      fontSize="14px"
+      lineHeight="18px"
+      color={color}
+      {...rest}
+    >
+      {children}
+    </Text>
+  );
+}
+
+function PrismicTextComponent({ field, ...rest }) {
   const { fontColor2 } = useStyle();
 
   return (
     <PrismicRichText
       field={field}
       components={{
-        heading2: ({ children }) => (
-          <Heading size="xl" {...rest}>
-            {children}
-          </Heading>
-        ),
-        list: ({ children }) => (
-          <UnorderedList margin="0 1.5em" {...rest}>
-            {children}
-          </UnorderedList>
-        ),
-        listItem: ({ children }) => (
-          <ListItem
-            fontSize="sm"
-            lineHeight="18px"
-            margin="15px 0"
-            display="flex"
-            gridGap="10px"
-            alignItems="center"
-            color={fontColor2}
-            {...rest}
-          >
-            <Icon icon="checked2" color="#25BF6C" width="12px" height="12px" />
-            {children}
-          </ListItem>
-        ),
-        paragraph: ({ children }) => (
-          <Text
-            fontSize="14px"
-            lineHeight="18px"
-            color={fontColor2}
-            {...rest}
-          >
-            {children}
-          </Text>
-        ),
+        heading2: ({ children }) => Heading2({ children, ...rest }),
+        list: ({ children }) => List({ children, ...rest }),
+        listItem: ({ children }) => ListItemComponent({ children, color: fontColor2, ...rest }),
+        paragraph: ({ children }) => Paragraph({ children, color: fontColor2, ...rest }),
       }}
     />
   );
-};
+}
 
 PrismicTextComponent.propTypes = {
-  field: PropTypes.objectOf(PropTypes.any),
+  field: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
 };
 
 PrismicTextComponent.defaultProps = {

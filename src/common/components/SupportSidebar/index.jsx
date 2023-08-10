@@ -1,6 +1,6 @@
 import { useEffect, memo } from 'react';
 import {
-  toast,
+  useToast,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useFlags } from 'launchdarkly-react-client-sdk';
@@ -9,8 +9,9 @@ import bc from '../../services/breathecode';
 import { usePersistent } from '../../hooks/usePersistent';
 import Mentoring from './Mentoring';
 
-const SupportSidebar = ({ subscriptionData }) => {
+function SupportSidebar({ subscriptions, subscriptionData }) {
   const { t } = useTranslation();
+  const toast = useToast();
   const [programServices, setProgramServices] = usePersistent('programServices', []);
   const flags = useFlags();
 
@@ -34,18 +35,21 @@ const SupportSidebar = ({ subscriptionData }) => {
   return programServices.length > 0 && (
     <Mentoring
       programServices={programServices}
+      subscriptions={subscriptions}
       subscriptionData={subscriptionData}
       flags={flags}
     />
   );
-};
+}
 
 SupportSidebar.propTypes = {
   subscriptionData: PropTypes.shape({}),
+  subscriptions: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
 };
 
 SupportSidebar.defaultProps = {
   subscriptionData: {},
+  subscriptions: [],
 };
 
 export default memo(SupportSidebar);

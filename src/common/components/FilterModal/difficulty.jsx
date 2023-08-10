@@ -9,7 +9,7 @@ import Text from '../Text';
 import Icon from '../Icon';
 import useStyle from '../../hooks/useStyle';
 
-const DifficultySection = ({
+function DifficultySection({
   t,
   title,
   commonTextColor,
@@ -19,7 +19,7 @@ const DifficultySection = ({
   contextFilter,
   setDifficultyPosition,
   setFilter,
-}) => {
+}) {
   const router = useRouter();
   const [queryPosition, setQueryPosition] = useState(null);
   const defaultDifficulties = ['junior', 'mid-level', 'senior'];
@@ -194,7 +194,7 @@ const DifficultySection = ({
       )}
     </Flex>
   );
-};
+}
 DifficultySection.propTypes = {
   t: PropTypes.func,
   title: PropTypes.string,
@@ -202,7 +202,7 @@ DifficultySection.propTypes = {
   commonBorderColor: PropTypes.string.isRequired,
   commonTextColor: PropTypes.string.isRequired,
   difficultyPosition: PropTypes.number,
-  contextFilter: PropTypes.objectOf(PropTypes.any).isRequired,
+  contextFilter: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   setDifficultyPosition: PropTypes.func.isRequired,
   setFilter: PropTypes.func.isRequired,
 };

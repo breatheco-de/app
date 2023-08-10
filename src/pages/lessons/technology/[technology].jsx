@@ -61,7 +61,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
   const dataFiltered = lessons?.results;
 
-  if (response.status >= 400 || response.status_code >= 400
+  if (responseTechs.status >= 400 || response.status_code >= 400
     || !technologyData || dataFiltered.length === 0) {
     return {
       notFound: true,
@@ -95,7 +95,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   };
 };
 
-const LessonByTechnology = ({ lessons, technologyData }) => {
+function LessonByTechnology({ lessons, technologyData }) {
   const { t } = useTranslation('lesson');
 
   // const translations = lessons?.translations || { es: '', en: '', us: '' };
@@ -117,11 +117,11 @@ const LessonByTechnology = ({ lessons, technologyData }) => {
         fontWeight="700"
         paddingBottom="6px"
       >
-        {t('landing-technology.title', { technology: toCapitalize(technologyData.title) })}
+        {t('landing-technology.title', { technology: toCapitalize(technologyData?.title) })}
       </Text>
       <Box flex="1" pb="2rem">
         <Heading as="span" size="xl">
-          {t('landing-technology.subTitle', { technology: toCapitalize(technologyData.title) })}
+          {t('landing-technology.subTitle', { technology: toCapitalize(technologyData?.title) })}
         </Heading>
 
         <Text
@@ -136,21 +136,23 @@ const LessonByTechnology = ({ lessons, technologyData }) => {
         </Text>
       </Box>
 
-      <ProjectList
-        projects={lessons}
-        withoutImage
-        // isLoading={isLoading}
-        // contextFilter={}
-        projectPath="lesson"
-        notFoundMessage={t('common:asset-not-found-in-current-language')}
-      />
+      {lessons?.length > 0 && (
+        <ProjectList
+          projects={lessons}
+          withoutImage
+          // isLoading={isLoading}
+          // contextFilter={}
+          projectPath="lesson"
+          notFoundMessage={t('common:asset-not-found-in-current-language')}
+        />
+      )}
     </Box>
   );
-};
+}
 
 LessonByTechnology.propTypes = {
-  lessons: PropTypes.arrayOf(PropTypes.object).isRequired,
-  technologyData: PropTypes.objectOf(PropTypes.any).isRequired,
+  lessons: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)).isRequired,
+  technologyData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])).isRequired,
 };
 
 export default LessonByTechnology;

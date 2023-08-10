@@ -5,9 +5,9 @@ import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 import Heading from './Heading';
 
-const AlertMessage = ({
+function AlertMessage({
   message, type, style, textStyle, full, textColor, dangerouslySetInnerHTML, title, children, ...rest
-}) => {
+}) {
   const { fontColor } = useStyle();
   const alertColors = {
     warning: '#FFB718',
@@ -58,14 +58,14 @@ const AlertMessage = ({
       )}
     </Box>
   );
-};
+}
 
 AlertMessage.propTypes = {
   message: PropTypes.string,
   type: PropTypes.string,
-  style: PropTypes.objectOf(PropTypes.any),
+  style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   full: PropTypes.bool,
-  textStyle: PropTypes.objectOf(PropTypes.any),
+  textStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   textColor: PropTypes.string,
   dangerouslySetInnerHTML: PropTypes.bool,
   title: PropTypes.string,

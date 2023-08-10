@@ -1,3 +1,5 @@
+/* eslint-disable no-dupe-else-if */
+/* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable no-extra-boolean-cast */
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -33,8 +35,9 @@ import useHandler from '../../../../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../../../../modifyEnv';
 import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';
+import useStyle from '../../../../../common/hooks/useStyle';
 
-const Content = () => {
+function Content() {
   const { t } = useTranslation('syllabus');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isLoading, user, choose } = useAuth();
@@ -73,6 +76,7 @@ const Content = () => {
     cohortSession, sortedAssignments, getCohortAssignments, getCohortData, prepareTasks,
     taskTodo,
   } = useHandler();
+  const { featuredLight, fontColor, borderColor } = useStyle();
 
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
@@ -91,7 +95,7 @@ const Content = () => {
   const currentTheme = useColorModeValue('light', 'dark');
 
   const firstTask = nextModule?.modules[0];
-  const lastPrevTask = prevModule?.modules[prevModule?.modules.length - 1];
+  const lastPrevTask = prevModule?.modules[prevModule?.modules?.length - 1];
 
   const cohortSlug = router?.query?.cohortSlug;
   const lesson = router?.query?.lesson;
@@ -295,6 +299,7 @@ const Content = () => {
                   setReadme,
                   setCurrentData,
                   setIpynbHtmlUrl,
+                  toast,
                   router,
                   t,
                 });
@@ -426,23 +431,52 @@ const Content = () => {
 
   const handleNextPage = () => {
     setCurrentData({});
+    setCurrentSelectedModule(null);
+    setCallToActionProps({});
+    setReadme(null);
+    setIpynbHtmlUrl(null);
+    setCurrentBlankProps(null);
     if (nextAssignment !== null) {
       if (nextAssignment?.target === 'blank') {
         setCurrentBlankProps(nextAssignment);
-        router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+        router.push({
+          query: {
+            cohortSlug,
+            lesson: nextAssignment?.type?.toLowerCase(),
+            lessonSlug: nextAssignment?.slug,
+          },
+        });
       } else {
         setCurrentBlankProps(null);
-        router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+        router.push({
+          query: {
+            cohortSlug,
+            lesson: nextAssignment?.type?.toLowerCase(),
+            lessonSlug: nextAssignment?.slug,
+          },
+        });
       }
     } else if (!!nextModule) {
       if (firstTask.target !== 'blank') {
         if (cohortSlug && !!firstTask && !!nextModule?.filteredModules[0]) {
-          router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
+          router.push({
+            query: {
+              cohortSlug,
+              lesson: firstTask?.type?.toLowerCase(),
+              lessonSlug: firstTask?.slug,
+            },
+          });
         } else {
           setOpenNextModuleModal(true);
         }
       } else {
-        router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
+        router.push({
+          query: {
+            cohortSlug,
+            lesson: firstTask?.type?.toLowerCase(),
+            lessonSlug: firstTask?.slug,
+          },
+        });
         setCurrentBlankProps(firstTask);
       }
     }
@@ -450,23 +484,52 @@ const Content = () => {
 
   const handlePrevPage = () => {
     setCurrentData({});
+    setCurrentSelectedModule(null);
+    setCallToActionProps({});
+    setReadme(null);
+    setIpynbHtmlUrl(null);
+    setCurrentBlankProps(null);
     if (previousAssignment !== null) {
       if (previousAssignment?.target === 'blank') {
         setCurrentBlankProps(previousAssignment);
-        router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
+        router.push({
+          query: {
+            cohortSlug,
+            lesson: previousAssignment?.type?.toLowerCase(),
+            lessonSlug: previousAssignment?.slug,
+          },
+        });
       } else {
         setCurrentBlankProps(null);
-        router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
+        router.push({
+          query: {
+            cohortSlug,
+            lesson: previousAssignment?.type?.toLowerCase(),
+            lessonSlug: previousAssignment?.slug,
+          },
+        });
       }
     } else if (!!prevModule) {
       if (lastPrevTask.target !== 'blank') {
         if (cohortSlug && !!lastPrevTask) {
-          router.push(router.push(`/syllabus/${cohortSlug}/${lastPrevTask?.type?.toLowerCase()}/${lastPrevTask?.slug}`));
+          router.push({
+            query: {
+              cohortSlug,
+              lesson: lastPrevTask?.type?.toLowerCase(),
+              lessonSlug: lastPrevTask?.slug,
+            },
+          });
         }
       } else {
         setCurrentBlankProps(lastPrevTask);
         setCurrentData(lastPrevTask);
-        router.push(router.push(`/syllabus/${cohortSlug}/${lastPrevTask?.type?.toLowerCase()}/${lastPrevTask?.slug}`));
+        router.push({
+          query: {
+            cohortSlug,
+            lesson: lastPrevTask?.type?.toLowerCase(),
+            lessonSlug: lastPrevTask?.slug,
+          },
+        });
       }
     }
   };
@@ -558,8 +621,8 @@ const Content = () => {
           className={`markdown-body ${currentTheme}`}
           flexGrow={1}
           marginLeft={0}
-          margin="0 auto"
-          padding={{ base: '25px 10px 0 10px', md: '25px 2rem 0 2rem' }}
+          margin="25px auto 0 auto"
+          padding={{ base: '0px 10px 0 10px', md: '0px 2rem 0 2rem' }}
           width="100%"
           maxWidth="1024px"
           transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
@@ -567,10 +630,11 @@ const Content = () => {
           transitionDuration={Open ? '225ms' : '195ms'}
           transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
           transitionDelay="0ms"
+          position="relative"
         >
 
           {extendedInstructions !== null && (
-            <SimpleModal isOpen={extendedIsEnabled} onClose={() => setExtendedIsEnabled(false)} margin="5rem 0" padding="2rem 0 2rem 0">
+            <SimpleModal isOpen={extendedIsEnabled} onClose={() => setExtendedIsEnabled(false)} padding="2rem 0 2rem 0" style={{ margin: '3rem 0' }}>
               <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
                 <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
                   {`${t('teacherSidebar.instructions')}:`}
@@ -603,7 +667,7 @@ const Content = () => {
                 )}
               </Box>
 
-              {selectedSyllabus && cohortModule?.id !== selectedSyllabus?.id && (
+              {selectedSyllabus && cohortModule?.id && cohortModule?.id !== selectedSyllabus?.id && (
                 <AlertMessage
                   type="info"
                   style={{
@@ -648,12 +712,25 @@ const Content = () => {
             </Box>
           )}
 
-          {ipynbHtmlUrl && readmeUrlPathname && (
-            <Link href={`https://colab.research.google.com/github${readmeUrlPathname}`} margin="0 8vw 1rem auto" width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
-              <Icon icon="google-collab" color="#A0AEC0" width="28px" height="28px" />
-              {t('open-google-collab')}
-            </Link>
-          )}
+          <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
+            {currentData?.url && (
+              <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={`${currentData.url}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
+                <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+                {t('edit-page')}
+              </Link>
+            )}
+
+            {ipynbHtmlUrl && currentData?.url && (
+              <Box width={{ base: '1px', md: '100%' }} height={{ base: 'auto', md: '1px' }} background={borderColor} />
+            )}
+
+            {ipynbHtmlUrl && readmeUrlPathname && (
+              <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" color="white" href={`https://colab.research.google.com/github${readmeUrlPathname}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
+                <Icon icon="collab" color="#A0AEC0" width="28px" height="28px" />
+                {t('open-google-collab')}
+              </Link>
+            )}
+          </Box>
           {ipynbHtmlUrl && (
             <iframe
               id="iframe"
@@ -724,7 +801,13 @@ const Content = () => {
                     setClickedPage(previousAssignment);
                     if (previousAssignment?.target === 'blank') {
                       setCurrentBlankProps(previousAssignment);
-                      router.push(`/syllabus/${cohortSlug}/${previousAssignment?.type?.toLowerCase()}/${previousAssignment?.slug}`);
+                      router.push({
+                        query: {
+                          cohortSlug,
+                          lesson: previousAssignment?.type?.toLowerCase(),
+                          lessonSlug: previousAssignment?.slug,
+                        },
+                      });
                     } else {
                       handlePrevPage();
                     }
@@ -758,14 +841,26 @@ const Content = () => {
                       if (!taskIsNotDone) {
                         if (nextAssignment?.target === 'blank') {
                           setCurrentBlankProps(nextAssignment);
-                          router.push(`/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`);
+                          router.push({
+                            query: {
+                              cohortSlug,
+                              lesson: nextAssignment?.type?.toLowerCase(),
+                              lessonSlug: nextAssignment?.slug,
+                            },
+                          });
                         } else {
                           setCurrentBlankProps(null);
                           handleNextPage();
                         }
                       }
                     } else if (nextModule && cohortSlug && !!firstTask) {
-                      router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
+                      router.push({
+                        query: {
+                          cohortSlug,
+                          lesson: firstTask?.type?.toLowerCase(),
+                          lessonSlug: firstTask?.slug,
+                        },
+                      });
                     } else {
                       setOpenNextModuleModal(true);
                     }
@@ -784,7 +879,7 @@ const Content = () => {
 
               <Modal isOpen={openNextPageModal} size="xl" margin="0 10px" onClose={() => setOpenNextPageModal(false)}>
                 <ModalOverlay />
-                <ModalContent>
+                <ModalContent style={{ margin: '3rem 0' }}>
                   <ModalHeader borderBottom="1px solid" fontSize="15px" borderColor={commonBorderColor} textAlign="center">
                     {assetTypeValues[lesson]}
                   </ModalHeader>
@@ -838,7 +933,7 @@ const Content = () => {
 
               <Modal isOpen={openNextModuleModal} size="xl" margin="0 10px" onClose={() => setOpenNextModuleModal(false)}>
                 <ModalOverlay />
-                <ModalContent>
+                <ModalContent style={{ margin: '3rem 0' }}>
                   <ModalCloseButton />
                   <ModalBody padding={{ base: '26px 18px', md: '42px 36px' }}>
                     <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
@@ -876,6 +971,6 @@ const Content = () => {
       </Box>
     </Flex>
   );
-};
+}
 
 export default asPrivate(Content);

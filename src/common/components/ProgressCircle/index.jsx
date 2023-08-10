@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Box, Flex } from '@chakra-ui/react';
 import Counter from './Counter';
 
-const ProgressCircle = ({
+function ProgressCircle({
   percents,
   counterString,
   counter,
@@ -15,7 +15,7 @@ const ProgressCircle = ({
   size,
   strokeWidth = 6,
   caption,
-}) => {
+}) {
   const radius = 45;
   const circumference = Math.ceil(2 * Math.PI * radius);
   const fillPercents = Math.abs(
@@ -48,11 +48,7 @@ const ProgressCircle = ({
             size={`${Math.round(0.25 * size)}px`}
             fontWeight="700"
           >
-            {counterString ? (
-              <>
-                {counterString}
-              </>
-            ) : (
+            {counterString || (
               <>
                 <Counter valueTo={percents} totalDuration={duration + delay} />
                 %
@@ -116,7 +112,7 @@ const ProgressCircle = ({
       )}
     </>
   );
-};
+}
 
 ProgressCircle.propTypes = {
   percents: PropTypes.number,

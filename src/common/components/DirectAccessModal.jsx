@@ -11,7 +11,7 @@ import Heading from './Heading';
 import modifyEnv from '../../../modifyEnv';
 import { setStorageItem, toCapitalize } from '../../utils';
 
-const DirectAccessModal = ({ storySettings, title, modalIsOpen }) => {
+function DirectAccessModal({ storySettings, title, modalIsOpen }) {
   const { t } = useTranslation('profile');
   const {
     modal,
@@ -141,12 +141,12 @@ const DirectAccessModal = ({ storySettings, title, modalIsOpen }) => {
       </ModalContent>
     </Modal>
   );
-};
+}
 
 DirectAccessModal.propTypes = {
   modalIsOpen: PropTypes.bool,
   title: PropTypes.string,
-  storySettings: PropTypes.objectOf(PropTypes.any),
+  storySettings: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 DirectAccessModal.defaultProps = {
   modalIsOpen: false,

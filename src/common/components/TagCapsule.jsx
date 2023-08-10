@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Text from './Text';
 import Link from './NextChakraLink';
 
-const TagCapsule = ({
+function TagCapsule({
   tags,
   separator,
   background,
@@ -22,7 +22,7 @@ const TagCapsule = ({
   borderRadius,
   lineHeight,
   ...rest
-}) => {
+}) {
   const { colorMode } = useColorMode();
 
   return tags.length !== 0 && (
@@ -113,13 +113,13 @@ const TagCapsule = ({
       ))}
     </Stack>
   );
-};
+}
 
 TagCapsule.propTypes = {
   tags: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
   fontSize: PropTypes.string,
   separator: PropTypes.string,
-  containerStyle: PropTypes.objectOf(PropTypes.any),
+  containerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   background: PropTypes.string,
   variant: PropTypes.string,
   paddingX: PropTypes.string,

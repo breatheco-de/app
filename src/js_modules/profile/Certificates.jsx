@@ -10,7 +10,7 @@ import ShareButton from '../../common/components/ShareButton';
 import useStyle from '../../common/hooks/useStyle';
 import { location } from '../../utils';
 
-const Certificates = ({ certificates }) => {
+function Certificates({ certificates }) {
   const { t, lang } = useTranslation('profile');
   const { borderColor2 } = useStyle();
 
@@ -26,7 +26,7 @@ const Certificates = ({ certificates }) => {
       </Text>
       {certificates && certificates?.map((l, i) => {
         const index = `${i} - ${l.created_at} - ${l.specialty.name}`;
-        const createdAt = l.specialty.created_at;
+        const createdAt = l.created_at;
         const dateCreated = {
           es: formatRelative(new Date(createdAt), new Date(), { locale: es }),
           en: formatRelative(new Date(createdAt), new Date()),
@@ -69,10 +69,10 @@ const Certificates = ({ certificates }) => {
       )}
     </>
   );
-};
+}
 
 Certificates.propTypes = {
-  certificates: PropTypes.arrayOf(PropTypes.any),
+  certificates: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 Certificates.defaultProps = {

@@ -14,17 +14,53 @@ import { lengthOfString } from '../../utils';
 import axios from '../../axios';
 import modifyEnv from '../../../modifyEnv';
 
-const MktTestimonials = ({
+function TestimonialBox({ picture, name, rating, description }) {
+  const { fontColor2, backgroundColor } = useStyle();
+  const limit = 160;
+  const descriptionLength = lengthOfString(description);
+  const truncatedDescription = descriptionLength > limit ? `${description?.substring(0, limit)}...` : description;
+
+  return (
+    <Box
+      width="250px"
+      background={backgroundColor}
+      borderRadius="12px"
+      padding="15px"
+      textAlign="center"
+    >
+      <Avatar width="65px" height="65px" name={name} src={picture} />
+      <Text marginTop="15px" lineHeight="16px" fontWeight="900" size="md">
+        {name}
+      </Text>
+      <StarRating
+        rating={rating}
+        margin="6px 0 0 0"
+        justifyContent="center"
+      />
+      <Text
+        marginTop="10px"
+        fontSize="var(--chakra-fontSizes-xs)"
+        fontWeight="400"
+        lineHeight="14px"
+        color={fontColor2}
+        title={description}
+      >
+        {`“${truncatedDescription}”`}
+      </Text>
+    </Box>
+  );
+}
+
+function MktTestimonials({
   id,
   title,
   endpoint,
   testimonials,
   ...rest
-}) => {
+}) {
   const [testimonialsData, setTestimonialsData] = useState();
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
-  const { fontColor2, featuredColor } = useStyle();
   const defaultEndpoint = `${BREATHECODE_HOST}/v1/feedback/review?lang=${router?.locale}`;
 
   useEffect(() => {
@@ -43,43 +79,6 @@ const MktTestimonials = ({
   }, []);
 
   const testimonialsArray = (testimonialsData?.length > 0 && testimonialsData) || (testimonials?.length > 0 && testimonials);
-
-  const TestimonialBox = ({ picture, name, rating, description }) => {
-    const limit = 160;
-    const descriptionLength = lengthOfString(description);
-    const truncatedDescription = descriptionLength > limit ? `${description?.substring(0, limit)}...` : description;
-
-    return (
-      <Box
-        width="250px"
-        minWidth="250px"
-        background={featuredColor}
-        borderRadius="15px"
-        padding="15px"
-        textAlign="center"
-      >
-        <Avatar width="65px" height="65px" name={name} src={picture} />
-        <Text marginTop="15px" lineHeight="16px" fontWeight="900" size="md">
-          {name}
-        </Text>
-        <StarRating
-          rating={rating}
-          margin="6px 0 0 0"
-          justifyContent="center"
-        />
-        <Text
-          marginTop="10px"
-          fontSize="var(--chakra-fontSizes-xs)"
-          fontWeight="400"
-          lineHeight="14px"
-          color={fontColor2}
-          title={description}
-        >
-          {`“${truncatedDescription}”`}
-        </Text>
-      </Box>
-    );
-  };
 
   return testimonialsArray && (
     <GridContainer
@@ -113,7 +112,7 @@ const MktTestimonials = ({
         >
           {testimonialsArray && testimonialsArray.map((testimonial) => (
             <TestimonialBox
-              key={testimonial?.id}
+              key={`${testimonial?.author?.first_name}-${testimonial?.author?.last_name}`}
               picture={testimonial?.author?.profile?.avatar_url}
               name={`${testimonial?.author?.first_name} ${testimonial?.author?.last_name}`}
               rating={testimonial?.total_rating}
@@ -124,12 +123,12 @@ const MktTestimonials = ({
       </Box>
     </GridContainer>
   );
-};
+}
 
 MktTestimonials.propTypes = {
   title: PropTypes.string,
   endpoint: PropTypes.string,
-  testimonials: PropTypes.arrayOf(PropTypes.any),
+  testimonials: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 MktTestimonials.defaultProps = {

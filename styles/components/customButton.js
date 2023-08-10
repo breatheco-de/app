@@ -13,7 +13,7 @@ const ButtonStyles = {
       color: 'white',
       border: '0',
       height: props.height || '40px',
-      borderRadius: '3px',
+      borderRadius: '4px',
       fontSize: '13px',
       letterSpacing: '0.05em',
       opacity: 1,
@@ -40,7 +40,7 @@ const ButtonStyles = {
       bg: 'danger',
       color: 'white',
       border: '0',
-      borderRadius: '3px',
+      borderRadius: '4px',
       fontSize: '13px',
       letterSpacing: '0.05em',
       _hover: {
@@ -67,7 +67,7 @@ const ButtonStyles = {
       color: 'white',
       border: '0',
       height: props.height || '40px',
-      borderRadius: '3px',
+      borderRadius: '4px',
       fontSize: '13px',
       letterSpacing: '0.05em',
       _hover: {
@@ -96,7 +96,7 @@ const ButtonStyles = {
       border: '1px solid',
       borderColor: props.borderColor || props.colorMode === 'dark' ? 'white' : 'black',
       height: props.height || '40px',
-      borderRadius: '3px',
+      borderRadius: '4px',
       fontSize: '13px',
       letterSpacing: '0.05em',
       _hover: {
@@ -127,7 +127,7 @@ const ButtonStyles = {
       color: 'blue.default',
       height: props.height || '40px',
       border: '0',
-      borderRadius: '3px',
+      borderRadius: '4px',
       fontSize: '13px',
       letterSpacing: '0.05em',
       _hover: {
@@ -162,7 +162,7 @@ const ButtonStyles = {
   //     color="white"
   //     p="10px 16px"
   //     border="0"
-  //     borderRadius="3px"
+  //     borderRadius="4px"
   //   >
   //     {children}
   //   </MotionBox>

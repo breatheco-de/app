@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
@@ -8,7 +9,7 @@ import PageIndexes from './PageIndexes';
 import { getQueryString, isNumber } from '../../../utils';
 import { CardSkeleton } from '../Skeleton';
 
-const PaginatedView = ({ storyConfig, renderComponent, handlePageChange, queryFunction, options }) => {
+function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFunction, options }) {
   const [data, setData] = useState([]);
   const [pageProps, setPageProps] = useState({});
   const router = useRouter();
@@ -21,7 +22,7 @@ const PaginatedView = ({ storyConfig, renderComponent, handlePageChange, queryFu
   const pagePath = options?.pagePath || '/';
   const disableLangFilter = options?.disableLangFilter || false;
 
-  useEffect(async () => {
+  const handlePaginationProps = async () => {
     const respData = await queryFunction();
     const pages = Math.ceil(respData.count / contentPerPage);
     // Generate an array of pages to be used in the pagination component e.g: `/lessons?page=2`
@@ -36,6 +37,9 @@ const PaginatedView = ({ storyConfig, renderComponent, handlePageChange, queryFu
 
       setData(respData);
     }
+  };
+  useEffect(() => {
+    handlePaginationProps();
   }, [page, queryFunction]);
 
   const currentPageIndex = parseInt(page, 10);
@@ -124,13 +128,13 @@ const PaginatedView = ({ storyConfig, renderComponent, handlePageChange, queryFu
       quantity={6}
     />
   );
-};
+}
 
 PaginatedView.propTypes = {
-  storyConfig: PropTypes.objectOf(PropTypes.any),
+  storyConfig: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   renderComponent: PropTypes.func,
   queryFunction: PropTypes.func.isRequired,
-  options: PropTypes.objectOf(PropTypes.any),
+  options: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   handlePageChange: PropTypes.func,
 };
 

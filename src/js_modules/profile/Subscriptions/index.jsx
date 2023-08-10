@@ -1,3 +1,5 @@
+/* eslint-disable no-unsafe-optional-chaining */
+/* eslint-disable react/jsx-no-useless-fragment */
 import { Box, Flex, Grid } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
@@ -17,7 +19,7 @@ import ButtonHandler from './ButtonHandler';
 import UpgradeModal from './UpgradeModal';
 import { CardSkeleton } from '../../../common/components/Skeleton';
 
-const Subscriptions = ({ storybookConfig }) => {
+function Subscriptions({ storybookConfig }) {
   const { t, lang } = useTranslation('profile');
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
@@ -177,7 +179,6 @@ const Subscriptions = ({ storybookConfig }) => {
                         width="16px"
                         height="16px"
                         color={blueDefault}
-                        withContainer
                         minWidth="18px"
                       />
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
@@ -208,7 +209,6 @@ const Subscriptions = ({ storybookConfig }) => {
                         width="16px"
                         height="16px"
                         color={blueDefault}
-                        withContainer
                         minWidth="18px"
                       />
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
@@ -223,7 +223,6 @@ const Subscriptions = ({ storybookConfig }) => {
                         width="18px"
                         height="13px"
                         color={blueDefault}
-                        withContainer
                         minWidth="18px"
                       />
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
@@ -315,7 +314,7 @@ const Subscriptions = ({ storybookConfig }) => {
       )}
     </>
   );
-};
+}
 
 Subscriptions.propTypes = {
   storybookConfig: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),

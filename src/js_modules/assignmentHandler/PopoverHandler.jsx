@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 import {
   Box, Button, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, useToast,
 } from '@chakra-ui/react';
@@ -13,7 +14,7 @@ import Link from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
 import { usePersistent } from '../../common/hooks/usePersistent';
 
-const PopoverHandler = ({ task, githubUrl, haveGithubDomain }) => {
+function PopoverHandler({ task, githubUrl, haveGithubDomain }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [assetData, setAssetData] = useState(null);
@@ -134,7 +135,7 @@ const PopoverHandler = ({ task, githubUrl, haveGithubDomain }) => {
                                 {file.name}
                               </Text>
                               {extension && (
-                              <Icon icon="download" width="16px" height="16px" color={hexColor.blueDefault} />
+                                <Icon icon="download" width="16px" height="16px" color={hexColor.blueDefault} />
                               )}
                             </Link>
                           );
@@ -150,10 +151,10 @@ const PopoverHandler = ({ task, githubUrl, haveGithubDomain }) => {
       )}
     </Box>
   );
-};
+}
 
 PopoverHandler.propTypes = {
-  task: PropTypes.objectOf(PropTypes.any),
+  task: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   githubUrl: PropTypes.string.isRequired,
   haveGithubDomain: PropTypes.bool,
 };

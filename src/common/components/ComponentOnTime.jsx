@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { calculateDifferenceDays } from '../../utils';
 
-const ComponentOnTime = ({ startingAt, endingAt, finishedView, idleView, onEndedEvent }) => {
+function ComponentOnTime({ startingAt, endingAt, finishedView, idleView, onEndedEvent }) {
   const [justStarted, setJustStarted] = useState(false);
   const [justFinished, setJustFinished] = useState(false);
 
@@ -39,7 +39,7 @@ const ComponentOnTime = ({ startingAt, endingAt, finishedView, idleView, onEnded
       )}
     </>
   );
-};
+}
 
 ComponentOnTime.propTypes = {
   startingAt: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),

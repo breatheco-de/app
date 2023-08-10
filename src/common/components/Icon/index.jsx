@@ -1,21 +1,25 @@
-/* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
-import loadable from '@loadable/component';
+import React, { memo, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import PropTypes from 'prop-types';
 import { Box } from '@chakra-ui/react';
 import iconDic from '../../utils/iconDict.json';
-// const iconDict = require('../common/utils/iconDict.json');
 
-const Icon = ({
-  icon, withContainer, width, height, style, color, secondColor, fill, className, props, full, text, ...rest
-}) => {
+function Icon({
+  icon, width, height, style, color, secondColor, fill, className, props, full, text, ...rest
+}) {
+  const [isMounted, setIsMounted] = React.useState(false);
   if (typeof window === 'undefined' || !window) return '';
   const iconExists = iconDic.includes(icon);
 
-  // eslint-disable-next-line no-console
-  const Comp = loadable(() => import(`./set/${iconExists ? icon : 'info'}`).catch((err) => console.error(err)));
-  return withContainer ? (
-    <Box className={className} {...rest}>
+  // fix hydration error
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const Comp = dynamic(() => import(`./set/${iconExists ? icon : 'info'}`));
+
+  return isMounted && (
+    <Box as="span" id={`icon-${icon}`} className={className} {...rest}>
       <Comp
         width={width}
         height={height}
@@ -28,21 +32,9 @@ const Icon = ({
         {...props}
       />
     </Box>
-  ) : (
-    <Comp
-      className={className}
-      width={width}
-      height={height}
-      style={{ ...style, minWidth: width, height }}
-      color={color}
-      secondColor={secondColor}
-      fill={fill}
-      full={full}
-      text={text}
-      {...props}
-    />
   );
-};
+}
+
 Icon.propTypes = {
   icon: PropTypes.string,
   width: PropTypes.string,
@@ -52,13 +44,12 @@ Icon.propTypes = {
   fill: PropTypes.string,
   full: PropTypes.bool,
   className: PropTypes.string,
-  props: PropTypes.objectOf(PropTypes.any),
+  props: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   style: PropTypes.shape({
     transform: PropTypes.string,
     transition: PropTypes.string,
   }),
   text: PropTypes.string,
-  withContainer: PropTypes.bool,
 };
 Icon.defaultProps = {
   icon: '',
@@ -72,6 +63,5 @@ Icon.defaultProps = {
   className: '',
   props: {},
   text: '',
-  withContainer: false,
 };
-export default Icon;
+export default memo(Icon);

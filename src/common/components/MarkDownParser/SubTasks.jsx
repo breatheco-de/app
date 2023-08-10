@@ -6,9 +6,9 @@ import ProgressCircle from '../ProgressCircle';
 import Text from '../Text';
 import { toCapitalize } from '../../../utils';
 
-const SubTasks = ({
+function SubTasks({
   subTasks, title, description, stTranslation, assetType,
-}) => {
+}) {
   const { t, lang } = useTranslation('common');
 
   const stTitle = stTranslation && stTranslation[lang].common.subtasks.title.replace('{{count}}', subTasks.length);
@@ -31,13 +31,13 @@ const SubTasks = ({
       </Box>
     </Box>
   );
-};
+}
 
 SubTasks.propTypes = {
-  subTasks: PropTypes.arrayOf(PropTypes.any),
+  subTasks: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   title: PropTypes.string,
   description: PropTypes.string,
-  stTranslation: PropTypes.objectOf(PropTypes.any),
+  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   assetType: PropTypes.string,
 };
 

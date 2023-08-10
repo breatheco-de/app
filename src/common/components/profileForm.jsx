@@ -17,7 +17,7 @@ import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
 
-const ProfileForm = ({ profile }) => {
+function ProfileForm({ profile }) {
   const { t } = useTranslation('profile');
   const toast = useToast();
   const router = useRouter();
@@ -177,7 +177,7 @@ const ProfileForm = ({ profile }) => {
                         form.handleChange(e);
                       }}
                       defaultValue={profile?.email || ''}
-                      disabled
+                      isDisabled
                       _disabled={{
                         backgroundColor: disabledBackgroundColor,
                         cursor: 'not-allowed',
@@ -360,10 +360,10 @@ const ProfileForm = ({ profile }) => {
       )}
     </Formik>
   );
-};
+}
 
 ProfileForm.propTypes = {
-  profile: PropTypes.objectOf(PropTypes.any),
+  profile: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 ProfileForm.defaultProps = {

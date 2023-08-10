@@ -7,7 +7,7 @@ import MarkDownParser from '../../src/common/components/MarkDownParser';
 import Heading from '../../src/common/components/Heading';
 import Text from '../../src/common/components/Text';
 
-const Markdown = ({ slice }) => {
+function Markdown({ slice }) {
   const rawText = prismicH.asText(slice.primary.markdown);
   const padding = slice?.primary?.padding?.length > 0 && slice?.primary?.padding;
 
@@ -51,9 +51,9 @@ const Markdown = ({ slice }) => {
       </Box>
     </Box>
   );
-};
+}
 Markdown.propTypes = {
-  slice: PropTypes.objectOf(PropTypes.any),
+  slice: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };
 
 Markdown.defaultProps = {

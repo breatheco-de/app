@@ -15,9 +15,9 @@ import { AvatarSkeletonWrapped } from '../Skeleton';
 import useOnline from '../../hooks/useOnline';
 import AvatarUser from '../../../js_modules/cohortSidebar/avatarUser';
 
-const ProfilesSection = ({
+function ProfilesSection({
   profiles,
-}) => {
+}) {
   const { usersConnected } = useOnline();
 
   return (
@@ -41,14 +41,14 @@ const ProfilesSection = ({
       })}
     </AvatarGroup>
   );
-};
+}
 
-const MentoringFree = ({
+function MentoringFree({
   mentoryProps, width, setMentoryProps,
   programServices, dateFormated, servicesFiltered, searchProps,
   setSearchProps, setProgramMentors, savedChanges, setSavedChanges,
   mentorsFiltered, dateFormated2, allMentorsAvailable,
-}) => {
+}) {
   const { t } = useTranslation('dashboard');
 
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
@@ -146,7 +146,7 @@ const MentoringFree = ({
                   )}
                 </>
               )}
-              <Text color="gray.600" size="12px" margin="8px 0 0 0">
+              <Text color={lightColor} size="12px" margin="8px 0 0 0">
                 {t('supportSideBar.mentors-available', { count: allMentorsAvailable.length })}
               </Text>
             </Box>
@@ -344,23 +344,23 @@ const MentoringFree = ({
       </Box>
     </Box>
   );
-};
+}
 
 MentoringFree.propTypes = {
-  mentoryProps: PropTypes.objectOf(PropTypes.any),
+  mentoryProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])),
   width: PropTypes.string,
   setMentoryProps: PropTypes.func.isRequired,
-  programServices: PropTypes.arrayOf(PropTypes.any),
-  dateFormated: PropTypes.objectOf(PropTypes.any).isRequired,
-  servicesFiltered: PropTypes.arrayOf(PropTypes.any).isRequired,
-  searchProps: PropTypes.objectOf(PropTypes.any).isRequired,
+  programServices: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])),
+  dateFormated: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])).isRequired,
+  servicesFiltered: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])).isRequired,
+  searchProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])).isRequired,
   setSearchProps: PropTypes.func.isRequired,
-  savedChanges: PropTypes.objectOf(PropTypes.any).isRequired,
+  savedChanges: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])).isRequired,
   setSavedChanges: PropTypes.func.isRequired,
   setProgramMentors: PropTypes.func,
-  mentorsFiltered: PropTypes.arrayOf(PropTypes.any).isRequired,
-  dateFormated2: PropTypes.objectOf(PropTypes.any).isRequired,
-  allMentorsAvailable: PropTypes.arrayOf(PropTypes.any).isRequired,
+  mentorsFiltered: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])).isRequired,
+  dateFormated2: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])).isRequired,
+  allMentorsAvailable: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])).isRequired,
 };
 
 MentoringFree.defaultProps = {

@@ -13,7 +13,7 @@ import Icon from './Icon';
 //  en,
 //};
 
-const UpgradeExperience = ({ storySettings, data }) => {
+function UpgradeExperience({ storySettings, data }) {
   const [isOpen, setIsOpen] = useState(storySettings?.open || false);
   // const router = useRouter();
   // const locale = storySettings?.locale || router?.locale;
@@ -103,7 +103,7 @@ const UpgradeExperience = ({ storySettings, data }) => {
                   borderRadius="50%"
                 >
                   {item?.icon_url ? (
-                    <Img src={item?.icon_url} width="28px" height="28px" />
+                    <Img src={item?.icon_url} width="28px" height="28px" alt="icon" />
                   ) : (
                     <Icon icon="coding" width="20px" height="20px" color="#ffffff" />
                   )}
@@ -138,11 +138,11 @@ const UpgradeExperience = ({ storySettings, data }) => {
       </PopoverContent>
     </Popover>
   );
-};
+}
 
 UpgradeExperience.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.object),
-  storySettings: PropTypes.objectOf(PropTypes.any),
+  data: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  storySettings: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 UpgradeExperience.defaultProps = {
   data: [],

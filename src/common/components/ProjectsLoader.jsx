@@ -62,11 +62,11 @@ function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, optio
 }
 
 ProjectsLoader.propTypes = {
-  articles: PropTypes.arrayOf(PropTypes.any).isRequired,
+  articles: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   itemsPerPage: PropTypes.number.isRequired,
   renderItem: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
   searchQuery: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
-  options: PropTypes.objectOf(PropTypes.any),
+  options: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 ProjectsLoader.defaultProps = {

@@ -3,13 +3,14 @@ import React from 'react';
 import Head from 'next/head';
 import PropTypes from 'prop-types';
 
-const Helmet = ({
+function Helmet({
   title, description, translations, url, image, card, type, twitterUser,
   unlisted, pathConnector, locales, publishedTime, keywords, modifiedTime,
-  locale, slug, disableStaticCanonical,
-}) => {
+  locale, slug, disableStaticCanonical, eventStartAt,
+}) {
   const ogTitle = title.length > 0 ? title : '4Geeks';
-  const translationsExists = Object.keys(translations).length > 0;
+  const translationsArray = Object.keys(translations);
+  const translationsExists = translationsArray.length > 0;
   const maxCharacters = 155;
   const descriptionCleaned = description.length > maxCharacters
     ? `${description.substring(0, maxCharacters)}...`
@@ -57,7 +58,6 @@ const Helmet = ({
   return (
     <Head>
       <title>{title.length > 0 ? `${title} | 4Geeks` : '4Geeks'}</title>
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" integrity="sha384-Xi8rHCmBmhbuyyhbI88391ZKP2dmfnOl4rT9ZfRI7mLTdk1wblIUnrIq35nqwEvC" crossOrigin="anonymous" />
       <meta name="description" content={descriptionCleaned} />
       {unlisted === true && <meta name="robots" content="noindex" />}
       <link rel="icon" href="/4Geeks.ico" />
@@ -95,7 +95,7 @@ const Helmet = ({
         <link rel="canonical" href={canonicalTranslationsLink} />
       )}
 
-      {translationsExists && Object.keys(translations).map((lang) => {
+      {translationsExists && translationsArray.length > 1 && translationsArray.map((lang) => {
         const language = lang === 'us' ? 'en' : lang;
 
         const locationLang = {
@@ -138,6 +138,7 @@ const Helmet = ({
       <meta property="og:image:height" content={imageProps.height} /> */}
 
       <meta property="og:type" content={type} />
+      {type === 'event' && <meta property="og:event:start_time" content={eventStartAt} />}
       {type === 'article' && publishedTime && <meta property="article:published_time" content={publishedTime} />}
       {type === 'article' && modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
 
@@ -150,7 +151,7 @@ const Helmet = ({
       <meta property="twitter:image:alt" content={descriptionCleaned} />
     </Head>
   );
-};
+}
 
 Helmet.propTypes = {
   title: PropTypes.string,
@@ -160,7 +161,7 @@ Helmet.propTypes = {
   type: PropTypes.string,
   twitterUser: PropTypes.string,
   unlisted: PropTypes.bool,
-  translations: PropTypes.objectOf(PropTypes.any),
+  translations: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   pathConnector: PropTypes.string,
   locales: PropTypes.arrayOf(PropTypes.string),
   publishedTime: PropTypes.string,
@@ -170,6 +171,7 @@ Helmet.propTypes = {
   locale: PropTypes.string,
   slug: PropTypes.string,
   disableStaticCanonical: PropTypes.bool,
+  eventStartAt: PropTypes.string,
 };
 
 Helmet.defaultProps = {
@@ -190,6 +192,7 @@ Helmet.defaultProps = {
   locale: '',
   slug: '',
   disableStaticCanonical: false,
+  eventStartAt: '',
 };
 
 export default Helmet;

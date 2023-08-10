@@ -15,6 +15,41 @@
     "destination": "/en/lesson/what-is-an-application-model-and-how-to-diagram-it"
   },
   {
+    "source": "/lesson/intro-to-4geeks",
+    "type": "LESSON",
+    "destination": "/en/lesson/intro-to-4geeks-full-stack"
+  },
+  {
+    "source": "/lesson/python-syntax",
+    "type": "LESSON",
+    "destination": "/en/lesson/python-vs-javascript-syntax"
+  },
+  {
+    "source": "/how-to/bootstrap",
+    "type": "QUIZ",
+    "destination": "/en/how-to/bootstrap-quiz"
+  },
+  {
+    "source": "/interactive-exercise/events",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/javascript-events-exercises"
+  },
+  {
+    "source": "/how-to/arquitectura-del-internet",
+    "type": "QUIZ",
+    "destination": "/es/how-to/arquitectura-de-internet"
+  },
+  {
+    "source": "/interactive-exercise/react-js",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/react-js-exercises"
+  },
+  {
+    "source": "/interactive-exercise/layouts",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/css-layouts-tutorial-exercises"
+  },
+  {
     "source": "/lesson/how-to-create-unit-testing-with-Javascript-and-Jest",
     "type": "LESSON",
     "destination": "/en/lesson/how-to-create-unit-testing-with-javascript-and-jest"
@@ -198,6 +233,71 @@
     "source": "/interactive-exercise/pandas-exercises-tutorial-es",
     "type": "EXERCISE",
     "destination": "/es/interactive-exercise/tutorial-pandas-para-machine-learning"
+  },
+  {
+    "source": "/lesson/calculus-and-linear-algebra",
+    "type": "LESSON",
+    "destination": "/es/lesson/array-arreglo-en-javascript"
+  },
+  {
+    "source": "/lesson/regex-tutorial-regular-expression-examples-es",
+    "type": "LESSON",
+    "destination": "/es/lesson/regex-tutorial-regular-expression-ejemplo"
+  },
+  {
+    "source": "/lesson/python-syntax-es",
+    "type": "LESSON",
+    "destination": "/es/lesson/python-vs-js-syntax-es"
+  },
+  {
+    "source": "/lesson/intro-to-4geeks-es",
+    "type": "LESSON",
+    "destination": "/es/lesson/intro-to-4geeks-full-stack-es"
+  },
+  {
+    "source": "/interactive-exercise/numpy-exercises",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/numpy-exercises-tutorial"
+  },
+  {
+    "source": "/interactive-exercise/react-exercises",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/react-js-exercises"
+  },
+  {
+    "source": "/interactive-exercise/object-oriented-programing",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/object-oriented-programing-in-javascript"
+  },
+  {
+    "source": "/interactive-exercise/numpy-exercises-tutorial-us",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/numpy-exercises-tutorial"
+  },
+  {
+    "source": "/lesson/how-to-use-gitpod-es",
+    "type": "LESSON",
+    "destination": "/es/lesson/como-utilizar-gitpod"
+  },
+  {
+    "source": "/lesson/intro-to-python-es",
+    "type": "LESSON",
+    "destination": "/es/lesson/que-es-python-tutorial"
+  },
+  {
+    "source": "/how-to/nvm-install-windows-es",
+    "type": "ARTICLE",
+    "destination": "/es/how-to/como-instalar-nvm-en-windows"
+  },
+  {
+    "source": "/how-to/ask",
+    "type": "ARTICLE",
+    "destination": "/en/how-to/how-to-ask-programming-questions"
+  },
+  {
+    "source": "/how-to/how-to-ask-programming-questions-es",
+    "type": "ARTICLE",
+    "destination": "/es/how-to/como-hacer-preguntas-de-programacion"
   },
   {
     "source": "/lesson/calculus-and-linear-algebra",
@@ -1131,6 +1231,11 @@
   },
   {
     "source": "/project/proyecto-de-regresion-lineal-regularizada",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/proyecto-de-regresion-lineal-regularizada"
+  },
+  {
+    "source": "/project/regularized-linear-regression-project-tutorial",
     "type": "PROJECT-REROUTE",
     "destination": "/es/interactive-coding-tutorial/proyecto-de-regresion-lineal-regularizada"
   },

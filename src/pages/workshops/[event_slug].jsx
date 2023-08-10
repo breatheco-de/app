@@ -1,11 +1,12 @@
 import {
-  Box, Button, Grid, Skeleton, useColorModeValue, useToast, Image,
+  Box, Button, Grid, useColorModeValue, useToast, Image, Avatar, Skeleton,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { intervalToDuration, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import PropTypes from 'prop-types';
 import Head from 'next/head';
 import bc from '../../common/services/breathecode';
 import GridContainer from '../../common/components/GridContainer';
@@ -22,78 +23,135 @@ import Timer from '../../common/components/Timer';
 import ComponentOnTime from '../../common/components/ComponentOnTime';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import MktEventCards from '../../common/components/MktEventCards';
+import modifyEnv from '../../../modifyEnv';
 
-const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
+const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
-const Page = () => {
-  const { t } = useTranslation('workshops');
-  const [event, setEvent] = useState({
-    loaded: false,
+export const getStaticPaths = async ({ locales }) => {
+  const { data } = await bc.public().events();
+
+  const paths = data.filter((ev) => ev?.slug)
+    .flatMap((res) => locales.map((locale) => ({
+      params: {
+        event_slug: res.slug,
+      },
+      locale,
+    })));
+
+  return {
+    paths,
+    fallback: true,
+  };
+};
+
+export const getStaticProps = async ({ params, locale }) => {
+  const { event_slug: slug } = params;
+  const resp = await bc.public().singleEvent(slug).catch(() => ({
+    statusText: 'not-found',
+  }));
+  const data = resp?.data;
+
+  if (resp.statusText === 'not-found' || !data?.slug || (data?.lang !== null && !data?.lang.includes(locale))) {
+    return {
+      notFound: true,
+    };
+  }
+  const lang = (data?.lang === 'us' || data?.lang === null) ? 'en' : data?.lang;
+
+  const translationArray = [
+    {
+      value: 'en',
+      lang: 'en',
+      slug: data?.slug,
+      link: `/workshops/${data?.slug}`,
+    },
+    {
+      value: 'es',
+      lang: 'es',
+      slug: data?.slug,
+      link: `/es/workshops/${data?.slug}`,
+    },
+  ].filter((item) => lang?.length > 0 && lang.includes(item?.lang));
+
+  const objForTranslations = {
+    [lang]: data?.slug,
+  };
+
+  return ({
+    props: {
+      seo: {
+        title: data?.title || '',
+        description: data?.excerpt || '',
+        image: data?.banner || '',
+        pathConnector: '/workshops',
+        url: `${lang === 'en' ? '' : `/${lang}`}/workshops/${slug}`,
+        slug,
+        type: 'event',
+        card: 'large',
+        translations: objForTranslations,
+        eventStartAt: data?.starting_at || '',
+        locale,
+        publishedTime: data?.published_at || '',
+        modifiedTime: data?.updated_at || '',
+      },
+      translations: translationArray,
+      disableLangSwitcher: true,
+      event: data,
+    },
   });
+};
+
+function Page({ event }) {
+  const { t } = useTranslation('workshops');
   const [users, setUsers] = useState([]);
   const [allUsersJoined, setAllUsersJoined] = useState([]);
+  const [subscriptions, setSubscriptions] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const [applied, setApplied] = useState(false);
   const [readyToJoinEvent, setReadyToJoinEvent] = useState(false);
   const [finishedEvent, setFinishedEvent] = useState(false);
+  const [consumables, setConsumables] = useState([]);
+  const [myCohorts, setMyCohorts] = useState([]);
   const accessToken = getStorageItem('accessToken');
 
   const router = useRouter();
   const { locale } = router;
   const toast = useToast();
   const { isAuthenticated, user } = useAuth();
-  const { event_slug: eventSlug } = router.query;
   const { featuredColor, hexColor } = useStyle();
 
   useEffect(() => {
-    bc.public().singleEvent(eventSlug)
-      .then((res) => {
-        if (res === undefined) {
-          router.push('/404');
-        }
-        const data = res?.data;
-
-        bc.events().getUsers(data?.id)
-          .then((resp) => {
-            const formatedUsers = resp.data.map((l, i) => {
-              const index = i + 1;
-              const avatarNumber = adjustNumberBeetwenMinMax({
-                number: index,
-                min: 1,
-                max: 20,
-              });
-              if (l?.attendee === null) {
-                return {
-                  ...l,
-                  attendee: {
-                    id: 475335 + i,
-                    first_name: 'Anonymous',
-                    last_name: '',
-                    profile: {
-                      avatar_url: `https://breathecode.herokuapp.com/static/img/avatar-${avatarNumber}.png`,
-                    },
-                  },
-                };
-              }
-              return l;
+    if (event?.id) {
+      bc.events().getUsers(event?.id)
+        .then((resp) => {
+          const formatedUsers = resp.data.map((l, i) => {
+            const index = i + 1;
+            const avatarNumber = adjustNumberBeetwenMinMax({
+              number: index,
+              min: 1,
+              max: 20,
             });
-            setAllUsersJoined(resp.data);
-            setUsers(formatedUsers);
-          })
-          .catch(() => {});
-
-        setEvent({
-          ...data,
-          loaded: true,
-        });
-      })
-      .catch(() => {
-        router.push('/404');
-        setEvent({
-          loaded: true,
-        });
-      });
-  }, []);
+            if (l?.attendee === null) {
+              return {
+                ...l,
+                attendee: {
+                  id: 475335 + i,
+                  first_name: 'Anonymous',
+                  last_name: '',
+                  profile: {
+                    avatar_url: `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`,
+                  },
+                },
+              };
+            }
+            return l;
+          });
+          setAllUsersJoined(resp.data);
+          setUsers(formatedUsers);
+        })
+        .catch(() => {});
+    }
+  }, [event]);
 
   const limitedUsers = showAll ? users : users.slice(0, 15);
 
@@ -114,16 +172,101 @@ const Page = () => {
     en: format(new Date(event?.starting_at), 'EEEE, MMMM do - p (OOO)', { timeZone }),
   } : {};
 
-  const eventNotExists = event?.loaded && !event?.slug;
+  const eventNotExists = !event?.slug;
   const isAuth = isAuthenticated && user?.id;
 
   const alreadyApplied = users.some((l) => l?.attendee?.id === user?.id) || applied;
+
+  const handleOnReadyToStart = () => {
+    setReadyToJoinEvent(true);
+  };
+  const handleOnFinished = () => {
+    setFinishedEvent(true);
+  };
+
+  useEffect(() => {
+    if (isAuth) {
+      bc.payment({
+        status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+      }).subscriptions()
+        .then(({ data }) => {
+          const planFinancing = data.plan_financings.length > 0 ? data.plan_financings : [];
+          const planSubscriptions = data.subscriptions.length > 0 ? data.subscriptions : [];
+
+          const allPlans = [...planFinancing, ...planSubscriptions];
+
+          setSubscriptions(allPlans);
+        });
+      bc.payment().service().consumable()
+        .then((res) => {
+          setConsumables(res.data);
+        });
+      bc.admissions().me()
+        .then((res) => {
+          setMyCohorts(res.data.cohorts);
+        });
+    }
+  }, [isAuth]);
+
+  const capacity = event?.capacity || 0;
+  const allUsersJoinedLength = allUsersJoined?.length || 0;
+  const spotsRemain = (capacity - allUsersJoinedLength);
+
+  const arrayOfImages = [
+    '/static/images/person1.webp',
+  ];
+  const buttonEnabled = !finishedEvent && (readyToJoinEvent || !alreadyApplied);
+
+  const handleGetMoreEventConsumables = () => {
+    const findedPlanCoincidences = subscriptions.filter(
+      (s) => s.selected_event_type_set?.event_types.some(
+        (ev) => ev?.slug === event?.event_type?.slug,
+      ),
+    );
+    const relevantProps = findedPlanCoincidences.map(
+      (subscription) => ({
+        event_type_set_slug: subscription?.selected_event_type_set.slug,
+        plan_slug: subscription?.plans?.[0]?.slug,
+      }),
+    );
+
+    const propsToQueryString = {
+      event_type_set: relevantProps.map((p) => p.event_type_set_slug).join(','),
+      plans: relevantProps.map((p) => p.plan_slug).join(','),
+    };
+
+    setStorageItem('redirected-from', router?.asPath);
+    router.push({
+      pathname: '/checkout',
+      query: propsToQueryString,
+    });
+  };
+
+  const currentConsumable = consumables?.event_type_sets?.find(
+    (c) => subscriptions.some(
+      (s) => c?.slug.toLowerCase() === s?.selected_event_type_set?.slug.toLowerCase(),
+    ),
+  );
+  const existsConsumables = typeof currentConsumable?.balance?.unit === 'number' && (currentConsumable?.balance?.unit > 0 || currentConsumable?.balance?.unit === -1);
+
+  const existsAvailableAsSaas = myCohorts.some((c) => c?.cohort?.available_as_saas === false);
+  const isFreeForConsumables = finishedEvent || (event?.free_for_bootcamps === true && existsAvailableAsSaas);
 
   const dynamicFormInfo = () => {
     if (finishedEvent) {
       return ({
         title: t('form.finished-title'),
         description: t('form.finished-description'),
+      });
+    }
+    if (!finishedEvent && isAuth && !existsConsumables && !isFreeForConsumables) {
+      return ({
+        title: '',
+        childrenDescription: (
+          <Text size="14px" fontWeight={700} lineHeight="18px">
+            {t('no-consumables.description')}
+          </Text>
+        ),
       });
     }
     if (isAuth && (!alreadyApplied && !readyToJoinEvent)) {
@@ -151,31 +294,37 @@ const Page = () => {
   };
   const formInfo = dynamicFormInfo();
 
-  const handleOnReadyToStart = () => {
-    setReadyToJoinEvent(true);
+  const eventStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: event?.title,
+    description: event?.excerpt,
+    startDate: event?.start_date,
+    endDate: event?.end_date,
+    image: event?.banner,
+    location: {
+      '@type': 'Place',
+      name: event?.venue?.title,
+      address: event?.venue?.street_address,
+      // url: `https://www.4geeks.com/workshops/${event.slug}`,
+    },
+    organizer: {
+      '@type': 'Organization',
+      name: event?.academy?.name,
+      // url: 'https://www.4geeks.com',
+    },
+    eventStatus: 'https://schema.org/EventScheduled',
   };
-  const handleOnFinished = () => {
-    setFinishedEvent(true);
-  };
-
-  const spotsRemain = event?.capacity - allUsersJoined?.length;
-  const arrayOfImages = [
-    '/static/images/person1.png',
-  ];
-  const buttonEnabled = !finishedEvent && (readyToJoinEvent || !alreadyApplied);
 
   return (
-    <>
-      {event.loaded && (
-        <Head>
-          {event?.title && (
-            <title>{`${event?.title} | 4Geeks`}</title>
-          )}
-          {event?.excerpt && (
-            <meta name="description" content={event?.excerpt} />
-          )}
-        </Head>
-      )}
+    <Box as="div">
+      <Head>
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(eventStructuredData) }}
+        />
+      </Head>
       <Box
         background={useColorModeValue('featuredLight', 'featuredDark')}
         marginBottom="37px"
@@ -221,14 +370,14 @@ const Page = () => {
                   onEndedEvent={handleOnFinished}
                   finishedView={(
                     <Box display="flex" alignItems="center" fontWeight={700} color="danger" fontSize="12px" background="red.light" borderRadius="18px" padding="4px 10px" gridGap="10px">
-                      <Icon withContainer className="pulse-red" icon="dot" color="currentColor" width="8px" height="8px" borderRadius="50px" />
+                      <Icon className="pulse-red" icon="dot" color="currentColor" width="8px" height="8px" borderRadius="50px" />
                       {t('common:live-now')}
                     </Box>
                   )}
                 />
               )}
             </Box>
-            {event.loaded ? (
+            {event?.slug ? (
               <>
                 {event?.title && !eventNotExists ? (
                   <Heading
@@ -291,13 +440,13 @@ const Page = () => {
             <MarkDownParser content={event?.description} />
           </Box>
 
-          {!eventNotExists && (typeof event?.host_user === 'object' && event?.host_user !== null) && (
+          {!eventNotExists && (event?.host_user && typeof event?.host_user === 'object' && event?.host_user !== null) && (
             <Box display="flex" flexDirection="column" gridGap="12px" mb="31px">
               <Text size="26px" fontWeight={700}>
                 {t('host-label-text')}
               </Text>
               <PublicProfile
-                data={event.host_user}
+                data={event?.host_user}
               />
             </Box>
           )}
@@ -309,7 +458,7 @@ const Page = () => {
         <Box
           display="flex"
           gridColumn={{ base: '8 / span 4', lg: '10 / span 4' }}
-          margin={{ base: '20px 0 0 auto', lg: '-13.44rem 0 0 auto' }}
+          margin={{ base: '20px 0 0 auto', lg: '-13.42rem 0 0 auto' }}
           flexDirection="column"
           transition="background 0.2s ease-in-out"
           // width={{ base: '320px', md: 'auto' }}
@@ -318,14 +467,15 @@ const Page = () => {
           height="fit-content"
           borderWidth="0px"
           gridGap="10px"
-          overflow="hidden"
+          overflow={{ base: 'inherit', md: 'hidden' }}
         >
           {event?.id && (
             <ShowOnSignUp
               hideForm={finishedEvent}
+              hideSwitchUser={!isFreeForConsumables && !existsConsumables}
               headContent={readyToJoinEvent ? (
                 <Box position="relative" zIndex={1} width="100%" height={177}>
-                  <Image src={arrayOfImages[0]} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" />
+                  <Image src={arrayOfImages[0]} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" alt="head banner" />
                 </Box>
               ) : (
                 <Timer
@@ -344,68 +494,97 @@ const Page = () => {
               )}
               title={formInfo?.title}
               description={formInfo?.description}
-              readOnly={event?.loaded && !event?.slug}
+              childrenDescription={formInfo?.childrenDescription}
+              readOnly={!event?.slug}
               position="relative"
+              gridGap={existsConsumables ? '10px' : '16px'}
             >
-              <Button
-                mt="10px"
-                type="submit"
-                variant="default"
-                textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
-                disabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
-                _disabled={{
-                  background: buttonEnabled ? '' : 'gray.350',
-                  cursor: buttonEnabled ? 'pointer' : 'not-allowed',
-                }}
-                _hover={{
-                  background: buttonEnabled ? '' : 'gray.350',
-                  cursor: buttonEnabled ? 'pointer' : 'not-allowed',
-                }}
-                _active={{
-                  background: buttonEnabled ? '' : 'gray.350',
-                  cursor: buttonEnabled ? 'pointer' : 'not-allowed',
-                }}
-                onClick={() => {
-                  if (!finishedEvent) {
-                    if ((readyToJoinEvent && alreadyApplied) || readyToJoinEvent) {
-                      router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
+              {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
+                <Button
+                  mt="10px"
+                  type="submit"
+                  variant="default"
+                  background={buttonEnabled ? 'blue.default' : 'gray.350'}
+                  textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
+                  isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
+                  _disabled={{
+                    background: buttonEnabled ? '' : 'gray.350',
+                    cursor: buttonEnabled ? 'pointer' : 'not-allowed',
+                  }}
+                  _hover={{
+                    background: buttonEnabled ? '' : 'gray.350',
+                    cursor: buttonEnabled ? 'pointer' : 'not-allowed',
+                  }}
+                  _active={{
+                    background: buttonEnabled ? '' : 'gray.350',
+                    cursor: buttonEnabled ? 'pointer' : 'not-allowed',
+                  }}
+                  onClick={() => {
+                    if (!finishedEvent) {
+                      if ((readyToJoinEvent && alreadyApplied) || readyToJoinEvent) {
+                        router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
+                      }
+                      if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
+                        bc.events().applyEvent(event?.id)
+                          .then((resp) => {
+                            if (resp !== undefined) {
+                              setApplied(true);
+                              toast({
+                                position: 'top',
+                                status: 'success',
+                                title: t('alert-message:success-event-reservation'),
+                                isClosable: true,
+                                duration: 6000,
+                              });
+                            } else {
+                              toast({
+                                position: 'top',
+                                status: 'info',
+                                title: t('alert-message:event-access-error'),
+                                isClosable: true,
+                                duration: 6000,
+                              });
+                              setStorageItem('redirect-after-register', router?.asPath);
+                              router.push({
+                                pathname: '/checkout',
+                                query: {
+                                  plan: '4geeks-standard',
+                                },
+                              });
+                            }
+                          });
+                      }
                     }
-                    if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
-                      bc.events().applyEvent(event?.id)
-                        .then((resp) => {
-                          if (resp !== undefined) {
-                            setApplied(true);
-                            toast({
-                              position: 'top',
-                              status: 'success',
-                              title: t('alert-message:success-event-reservation'),
-                              isClosable: true,
-                              duration: 6000,
-                            });
-                          } else {
-                            toast({
-                              position: 'top',
-                              status: 'info',
-                              title: t('alert-message:event-access-error'),
-                              isClosable: true,
-                              duration: 6000,
-                            });
-                            setStorageItem('redirect-after-register', router?.asPath);
-                            router.push({
-                              pathname: '/checkout',
-                              query: {
-                                plan: '4geeks-standard',
-                              },
-                            });
-                          }
-                        });
-                    }
-                  }
-                }}
-              >
-                {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
-                {finishedEvent && t('event-finished')}
-              </Button>
+                  }}
+                >
+                  {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
+                  {finishedEvent && t('event-finished')}
+                </Button>
+              ) : (
+                <Box display="flex" flexDirection="column" alignItems="center">
+                  <Avatar
+                    width="85px"
+                    height="85px"
+                    margin="0 0 16px 0"
+                    style={{ userSelect: 'none' }}
+                    src={`${BREATHECODE_HOST}/static/img/avatar-7.png`}
+                    alt="No consumables avatar"
+                  />
+                  <Button
+                    display="flex"
+                    variant="default"
+                    fontSize="14px"
+                    fontWeight={700}
+                    onClick={handleGetMoreEventConsumables}
+                    alignItems="center"
+                    gridGap="10px"
+                    width="100%"
+                  >
+                    {t('no-consumables.get-more-workshops')}
+                    <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
+                  </Button>
+                </Box>
+              )}
             </ShowOnSignUp>
           )}
 
@@ -424,7 +603,7 @@ const Page = () => {
               >
                 {limitedUsers?.map((c) => {
                   const fullName = `${c?.attendee?.first_name} ${c?.attendee?.last_name}`;
-                  return (
+                  return c?.attendee?.profile?.avatar_url && (
                     <AvatarUser
                       key={`${c?.attendee?.id} - ${c?.attendee?.first_name}`}
                       fullName={fullName}
@@ -446,8 +625,15 @@ const Page = () => {
         </Box>
       </GridContainer>
       {finishedEvent && (<MktEventCards gridTemplateColumns="2fr repeat(12, 1fr) 2fr" gridColumn="2 / span 12" margin="2rem auto 0 auto" maxWidth="1440px" padding="0 10px" />)}
-    </>
+    </Box>
   );
+}
+
+Page.propTypes = {
+  event: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+};
+Page.defaultProps = {
+  event: {},
 };
 
 export default Page;

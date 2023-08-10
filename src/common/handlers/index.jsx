@@ -84,17 +84,15 @@ const handlers = {
   }),
 
   saveCohortAttendancy: ({ cohortSlug, students, checked, currentModule }) => new Promise((resolve, reject) => {
-    const attendanceIds = students.reduce(
-      (accumulator, { user }) => {
-        const attended = checked.some((id) => parseInt(id, 10) === user.id);
-        if (attended) {
-          accumulator.attended.push(user.id);
-        } else {
-          accumulator.unattended.push(user.id);
-        }
-        return accumulator;
-      }, { attended: [], unattended: [] },
-    );
+    const attendanceIds = students.reduce((accumulator, { user }) => {
+      const attended = checked.some((id) => parseInt(id, 10) === user.id);
+      if (attended) {
+        accumulator.attended.push(user.id);
+      } else {
+        accumulator.unattended.push(user.id);
+      }
+      return accumulator;
+    }, { attended: [], unattended: [] });
 
     const dataStruct = {
       current_module: currentModule,
@@ -126,12 +124,14 @@ const handlers = {
         end: new Date(),
         start: new Date(start),
       });
-      const formated = formatDuration(duration,
+      const formated = formatDuration(
+        duration,
         {
           format: ['months', 'weeks', 'days', 'hours', 'minutes'],
           delimiter: ', ',
           locale: availableLanguages[lang] || lang,
-        });
+        },
+      );
 
       if (formated === '') return t('few-seconds');
       return {
@@ -177,15 +177,21 @@ const handlers = {
 
     const visibleForTeacher = programRole !== 'STUDENT';
 
+    const cohortToIgnore = ![
+      'ENDED',
+    ].includes(programCohortStage);
     const showCohort = [
       'STARTED',
       'ACTIVE',
       'FINAL_PROJECT',
     ].includes(programCohortStage);
 
+    const cohortIsAvailable = showCohort && cohortToIgnore;
+    const isNotHiddenOnPrework = programCohortStage === 'PREWORK' && program?.cohort?.is_hidden_on_prework === false;
+
     const showStudent = ['ACTIVE'].includes(educationalStatus) && programRole === 'STUDENT';
 
-    const show = visibleForTeacher || showCohort || showStudent;
+    const show = (cohortIsAvailable || isNotHiddenOnPrework) && (visibleForTeacher || showStudent);
 
     return show;
   }),
