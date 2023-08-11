@@ -303,6 +303,11 @@ function Page({ event }) {
   };
   const formInfo = dynamicFormInfo();
 
+  const hostUserExists = event?.host_user
+    && typeof event?.host_user === 'object'
+    && event?.host_user !== null
+    && event?.host_user?.profile?.bio;
+
   const eventStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'Event',
@@ -449,7 +454,7 @@ function Page({ event }) {
             <MarkDownParser content={event?.description} />
           </Box>
 
-          {!eventNotExists && (event?.host_user && typeof event?.host_user === 'object' && event?.host_user !== null) && (
+          {!eventNotExists && hostUserExists && (
             <Box display="flex" flexDirection="column" gridGap="12px" mb="31px">
               <Text size="26px" fontWeight={700}>
                 {t('host-label-text')}
