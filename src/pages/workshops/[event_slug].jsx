@@ -24,6 +24,7 @@ import ComponentOnTime from '../../common/components/ComponentOnTime';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import MktEventCards from '../../common/components/MktEventCards';
 import modifyEnv from '../../../modifyEnv';
+import useSubscribeToPlan from '../../common/hooks/useSubscribeToPlan';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
@@ -118,13 +119,14 @@ function Page({ event }) {
   const { locale } = router;
   const toast = useToast();
   const { isAuthenticated, user } = useAuth();
+  const { isInProcessOfSubscription, handleSubscribeToPlan, setIsInProcessOfSubscription } = useSubscribeToPlan();
   const { featuredColor, hexColor } = useStyle();
 
   useEffect(() => {
     if (event?.id) {
       const eventLang = (event?.lang === 'us' || event?.lang === null) ? 'en' : event?.lang;
-      if (event?.lang !== locale) {
-        router.push(`/${eventLang}/workshops/${event?.slug}`);
+      if (eventLang !== locale) {
+        window.location.href = `/${eventLang}/workshops/${event?.slug}`;
       }
     }
   }, [event]);
@@ -193,27 +195,38 @@ function Page({ event }) {
     setFinishedEvent(true);
   };
 
+  const getMySubscriptions = () => {
+    bc.payment({
+      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+    }).subscriptions()
+      .then(({ data }) => {
+        const planFinancing = data.plan_financings.length > 0 ? data.plan_financings : [];
+        const planSubscriptions = data.subscriptions.length > 0 ? data.subscriptions : [];
+
+        const allPlans = [...planFinancing, ...planSubscriptions];
+
+        setSubscriptions(allPlans);
+      });
+  };
+  const getCurrentConsumables = () => {
+    bc.payment().service().consumable()
+      .then((res) => {
+        setConsumables(res.data);
+      });
+  };
+
+  const getMyCurrentCohorts = () => {
+    bc.admissions().me()
+      .then((res) => {
+        setMyCohorts(res.data.cohorts);
+      });
+  };
+
   useEffect(() => {
     if (isAuth) {
-      bc.payment({
-        status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
-      }).subscriptions()
-        .then(({ data }) => {
-          const planFinancing = data.plan_financings.length > 0 ? data.plan_financings : [];
-          const planSubscriptions = data.subscriptions.length > 0 ? data.subscriptions : [];
-
-          const allPlans = [...planFinancing, ...planSubscriptions];
-
-          setSubscriptions(allPlans);
-        });
-      bc.payment().service().consumable()
-        .then((res) => {
-          setConsumables(res.data);
-        });
-      bc.admissions().me()
-        .then((res) => {
-          setMyCohorts(res.data.cohorts);
-        });
+      getMySubscriptions();
+      getCurrentConsumables();
+      getMyCurrentCohorts();
     }
   }, [isAuth]);
 
@@ -238,17 +251,25 @@ function Page({ event }) {
         plan_slug: subscription?.plans?.[0]?.slug,
       }),
     );
-
     const propsToQueryString = {
       event_type_set: relevantProps.map((p) => p.event_type_set_slug).join(','),
       plans: relevantProps.map((p) => p.plan_slug).join(','),
     };
 
-    setStorageItem('redirected-from', router?.asPath);
-    router.push({
-      pathname: '/checkout',
-      query: propsToQueryString,
-    });
+    if (findedPlanCoincidences?.length > 0) {
+      setStorageItem('redirected-from', router?.asPath);
+      router.push({
+        pathname: '/checkout',
+        query: propsToQueryString,
+      });
+    } else {
+      handleSubscribeToPlan({ slug: '4geeks-standard' })
+        .finally(() => {
+          getMySubscriptions();
+          getCurrentConsumables();
+          setIsInProcessOfSubscription(false);
+        });
+    }
   };
 
   const currentConsumable = consumables?.event_type_sets?.find(
@@ -558,13 +579,13 @@ function Page({ event }) {
                                 isClosable: true,
                                 duration: 6000,
                               });
-                              setStorageItem('redirect-after-register', router?.asPath);
-                              router.push({
-                                pathname: '/checkout',
-                                query: {
-                                  plan: '4geeks-standard',
-                                },
-                              });
+                              // setStorageItem('redirect-after-register', router?.asPath);
+                              // router.push({
+                              //   pathname: '/checkout',
+                              //   query: {
+                              //     plan: '4geeks-standard',
+                              //   },
+                              // });
                             }
                           });
                       }
@@ -590,6 +611,7 @@ function Page({ event }) {
                     fontSize="14px"
                     fontWeight={700}
                     onClick={handleGetMoreEventConsumables}
+                    isLoading={isInProcessOfSubscription}
                     alignItems="center"
                     gridGap="10px"
                     width="100%"

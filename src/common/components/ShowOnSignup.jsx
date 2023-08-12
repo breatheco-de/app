@@ -15,10 +15,12 @@ import { setStorageItem } from '../../utils';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import { SILENT_CODE } from '../../lib/types';
 import bc from '../services/breathecode';
+import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
 
 function ShowOnSignUp({ headContent, title, description, childrenDescription, subContent, readOnly, children, hideForm, hideSwitchUser, ...rest }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
+  const { handleSubscribeToPlan, successModal } = useSubscribeToPlan();
   const { backgroundColor, featuredColor } = useStyle();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
@@ -70,6 +72,7 @@ function ShowOnSignUp({ headContent, title, description, childrenDescription, su
 
     if (data?.access_token) {
       setStorageItem('redirect-after-register', router?.asPath);
+      handleSubscribeToPlan({ slug: '4geeks-standard', accessToken: data?.access_token });
       setVerifyEmailProps({
         data: {
           ...allValues,
@@ -249,6 +252,8 @@ function ShowOnSignUp({ headContent, title, description, childrenDescription, su
         }}
         handlerText={t('common:login')}
       />
+
+      {successModal}
 
       <ModalInfo
         headerStyles={{ textAlign: 'center' }}

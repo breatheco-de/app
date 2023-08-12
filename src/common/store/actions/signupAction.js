@@ -12,7 +12,7 @@ import bc from '../../services/breathecode';
 import modifyEnv from '../../../../modifyEnv';
 import { usePersistent } from '../../hooks/usePersistent';
 
-const useSignup = () => {
+const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
   const state = useSelector((sl) => sl.signupReducer);
   const [, setSubscriptionProcess] = usePersistent('subscription-process', null);
   const { t } = useTranslation('signup');
@@ -139,12 +139,14 @@ const useSignup = () => {
             academy_info: dateProps?.academy,
           });
 
-          if (redirectAfterRegister && redirectAfterRegister?.length > 0) {
-            router.push(redirectAfterRegister);
-            localStorage.removeItem('redirect');
-            localStorage.removeItem('redirect-after-register');
-          } else {
-            router.push('/choose-program');
+          if (!disableRedirectAfterSuccess) {
+            if (redirectAfterRegister && redirectAfterRegister?.length > 0) {
+              router.push(redirectAfterRegister);
+              localStorage.removeItem('redirect');
+              localStorage.removeItem('redirect-after-register');
+            } else {
+              router.push('/choose-program');
+            }
           }
         }
         if (response === undefined || response.status >= 400) {
@@ -179,7 +181,7 @@ const useSignup = () => {
       method: 'PUT',
       headers: new Headers({
         'content-type': 'application/json',
-        Authorization: `Token ${accessToken}`,
+        Authorization: `Token ${cohortData?.token || accessToken}`,
       }),
       body: JSON.stringify(checkingBody),
     })
