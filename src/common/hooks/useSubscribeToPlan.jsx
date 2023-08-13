@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Box, ListItem, UnorderedList, useToast, Button } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { Image } from '@chakra-ui/next-js';
+import { useRouter } from 'next/router';
 import bc from '../services/breathecode';
 import SimpleModal from '../components/SimpleModal';
 import useSignup from '../store/actions/signupAction';
@@ -11,9 +12,10 @@ import Heading from '../components/Heading';
 import { toCapitalize, unSlugify } from '../../utils';
 import Icon from '../components/Icon';
 
-const useSubscribeToPlan = () => {
+const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose-program' } = {}) => {
   const { t } = useTranslation(['common']);
   const [planProps, setPlanProps] = useState({});
+  const router = useRouter();
   const [isInProcessOfSubscription, setIsInProcessOfSubscription] = useState(false);
   const { handleChecking, handlePayment } = useSignup({ disableRedirectAfterSuccess: true });
   const { modal } = useStyle();
@@ -71,10 +73,18 @@ const useSubscribeToPlan = () => {
       });
   });
 
+  const onClose = () => {
+    if (enableRedirectOnCTA === true && redirectTo?.length > 0) {
+      router.push(redirectTo);
+    } else {
+      setIsCheckingSuccess(false);
+    }
+  };
+
   const successModal = useMemo(() => (
     <SimpleModal
       isOpen={isCheckingSuccess}
-      onClose={() => setIsCheckingSuccess(false)}
+      onClose={onClose}
       style={{ marginTop: '10vh', padding: '16px' }}
       maxWidth="45rem"
       bodyStyles={{ padding: '0' }}
@@ -126,7 +136,7 @@ const useSubscribeToPlan = () => {
               })}
             </UnorderedList>
           </Box>
-          <Button variant="link" onClick={() => setIsCheckingSuccess(false)} width="auto" margin="0 auto" gridGap="6px">
+          <Button variant="link" onClick={onClose} width="auto" margin="0 auto" gridGap="6px">
             {t('signup:continue-learning')}
             <Icon icon="longArrowRight" color="currentColor" width="24px" height="10px" />
           </Button>

@@ -71,15 +71,16 @@ function ShowOnSignUp({ headContent, title, description, childrenDescription, su
     setStorageItem('subscriptionId', data?.id);
 
     if (data?.access_token) {
-      setStorageItem('redirect-after-register', router?.asPath);
-      handleSubscribeToPlan({ slug: '4geeks-standard', accessToken: data?.access_token });
-      setVerifyEmailProps({
-        data: {
-          ...allValues,
-          ...data,
-        },
-        state: true,
-      });
+      handleSubscribeToPlan({ slug: '4geeks-standard', accessToken: data?.access_token })
+        .finally(() => {
+          setVerifyEmailProps({
+            data: {
+              ...allValues,
+              ...data,
+            },
+            state: true,
+          });
+        });
       router.push({
         query: {
           ...router.query,
