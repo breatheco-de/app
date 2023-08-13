@@ -128,11 +128,6 @@ function Page({ event }) {
       if (eventLang !== locale) {
         window.location.href = `/${eventLang}/workshops/${event?.slug}`;
       }
-    }
-  }, [event]);
-
-  useEffect(() => {
-    if (event?.id) {
       bc.events().getUsers(event?.id)
         .then((resp) => {
           const formatedUsers = resp.data.map((l, i) => {
@@ -579,13 +574,6 @@ function Page({ event }) {
                                 isClosable: true,
                                 duration: 6000,
                               });
-                              // setStorageItem('redirect-after-register', router?.asPath);
-                              // router.push({
-                              //   pathname: '/checkout',
-                              //   query: {
-                              //     plan: '4geeks-standard',
-                              //   },
-                              // });
                             }
                           });
                       }

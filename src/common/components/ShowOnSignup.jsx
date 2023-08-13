@@ -304,12 +304,6 @@ function ShowOnSignUp({ headContent, title, description, childrenDescription, su
             ...verifyEmailProps,
             state: false,
           });
-          router.push({
-            pathname: '/checkout',
-            query: {
-              plan: '4geeks-standard',
-            },
-          });
         }}
       />
     </Box>
