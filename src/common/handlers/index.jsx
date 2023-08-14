@@ -168,7 +168,8 @@ const handlers = {
     const showStudent = ['GRADUATED', 'POSTPONED', 'ACTIVE'].includes(
       educationalStatus,
     );
-    return showCohort && showStudent;
+    const isNotHiddenOnPrework = programCohortStage === 'PREWORK' && program?.cohort?.is_hidden_on_prework === false;
+    return (showCohort || isNotHiddenOnPrework) && showStudent;
   }),
   getActiveCohorts: (cohorts) => cohorts.filter((program) => {
     const educationalStatus = program?.educational_status?.toUpperCase();
