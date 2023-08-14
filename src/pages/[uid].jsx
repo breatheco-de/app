@@ -3,18 +3,11 @@ import * as prismicH from '@prismicio/helpers';
 import { Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
-import { useEffect, useState } from 'react';
 import { createClient } from '../../prismicio';
 import { components } from '../../slices';
 
 function Page({ page }) {
-  const [hasMounted, setHasMounted] = useState(false);
-
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
-
-  return hasMounted && (
+  return (
     <Box className="prismic-body" pt="3rem">
       <SliceZone slices={page?.data?.slices} components={components} />
     </Box>
@@ -33,6 +26,14 @@ export default Page;
 export async function getStaticProps({ params, locale, previewData }) {
   const client = createClient({ previewData });
   const { uid } = params;
+  const prismicRef = process.env.PRISMIC_REF;
+  const prismicApi = process.env.PRISMIC_API;
+
+  if (!prismicRef && !prismicApi) {
+    return {
+      notFound: true,
+    };
+  }
 
   const languages = {
     en: 'en-us',
