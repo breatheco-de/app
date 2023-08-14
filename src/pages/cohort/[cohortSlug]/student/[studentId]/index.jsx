@@ -32,6 +32,11 @@ function StudentReport() {
     projects: [],
     exercises: [],
   });
+  const [cohortAssignments, setCohortAssignments] = useState({
+    lessons: [],
+    projects: [],
+    exercises: [],
+  });
   const [cohortSession] = usePersistent('cohortSession', {});
   const user = cohortUsers[0]?.user;
 
@@ -61,7 +66,6 @@ function StudentReport() {
             limit: 1000,
             task_type: 'PROJECT,LESSON,EXERCISE',
             student: studentId,
-            distinct: 'true',
           })
           .getAssignments({ id: selectedCohortUser.cohort.id, academy }),
         bc.admissions().cohort(selectedCohortUser.cohort.slug, academy),
@@ -70,18 +74,24 @@ function StudentReport() {
           setAttendance(res[0].data);
           const nonDuplicated = [...new Map(res[1].data.results.map((item) => [item.id, item])).values()];
           setStudentAssignments({
-            lessons: nonDuplicated.filter((elem) => elem.task_type === 'LESSON'),
-            projects: nonDuplicated.filter((elem) => elem.task_type === 'EXERCISE'),
-            exercises: nonDuplicated.filter((elem) => elem.task_type === 'PROJECT'),
+            lessons: res[1].data.results.filter((elem) => elem.task_type === 'LESSON'),
+            projects: res[1].data.results.filter((elem) => elem.task_type === 'PROJECT'),
+            exercises: res[1].data.results.filter((elem) => elem.task_type === 'EXERCISE'),
           });
           const syllabusInfo = await bc.admissions().syllabus(res[2].data.syllabus_version.slug, res[2].data.syllabus_version.version, academy);
-          console.log(syllabusInfo);
+
           if (syllabusInfo?.data) {
-            let assignments = syllabusInfo.data.json.days.filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object').map((obj) => obj.assignments);
-            assignments = [].concat(...assignments);
-            console.log('assignments');
-            console.log(assignments);
-            const syllabusProjects = syllabusInfo.data.json.days.filter((day) => day.project && typeof day.project === 'object').map(({ project }) => ({ ...project }));
+            let projects = syllabusInfo.data.json.days.filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object').map((obj) => obj.assignments);
+            projects = [].concat(...projects);
+            let lessons = syllabusInfo.data.json.days.filter((obj) => obj.lessons && Array.isArray(obj.lessons) && obj.lessons.length > 0 && typeof obj.lessons[0] === 'object').map((obj) => obj.lessons);
+            lessons = [].concat(...lessons);
+            let exercises = syllabusInfo.data.json.days.filter((obj) => obj.replits && Array.isArray(obj.replits) && obj.replits.length > 0 && typeof obj.replits[0] === 'object').map((obj) => obj.replits);
+            exercises = [].concat(...exercises);
+            setCohortAssignments({
+              projects,
+              lessons,
+              exercises,
+            });
           }
         })
         .catch((e) => {
@@ -89,6 +99,49 @@ function StudentReport() {
         });
     }
   }, [selectedCohortUser]);
+
+  const getLessonStatus = (lesson) => {
+    if (lesson) {
+      if (lesson.task_status === 'DONE') return hexColor.green;
+      if (!lesson.opened_at) return hexColor.danger;
+      return hexColor.yellowDefault;
+    }
+    return hexColor.fontColor3;
+  };
+
+  const getProjectStatus = (project) => {
+    if (!project) return { borderColor: hexColor.fontColor3 };
+    if (project.revision_status === 'DONE') return { color: hexColor.green };
+    if (project.revision_status === 'REJECTED') return { color: hexColor.danger };
+    if (project.task_status === 'DONE' && project.revision_status === 'PENDING') return { color: hexColor.yellowDefault };
+    return { color: hexColor.fontColor3 };
+  };
+
+  const projectStatusLabel = t('project-status', {}, { returnObjects: true });
+  const lessonStatusLabel = t('lesson-status', {}, { returnObjects: true });
+
+  const lessonsDots = cohortAssignments.lessons.map((lesson) => {
+    const studentLesson = studentAssignments.lessons.find((elem) => elem.associated_slug === lesson.slug);
+    return { ...lesson, label: lesson.title, color: getLessonStatus(studentLesson) };
+  });
+
+  const projectDots = cohortAssignments.projects.map((project) => {
+    const studentProject = studentAssignments.projects.find((elem) => elem.associated_slug === project.slug);
+    const label = studentProject ? (
+      <>
+        <Text textAlign="center">{projectStatusLabel[studentProject.revision_status.toLowerCase()]}</Text>
+        <Text textAlign="center">{project.title}</Text>
+      </>
+    ) : (
+      <Text>{project.title}</Text>
+    );
+
+    return {
+      ...project,
+      label,
+      ...getProjectStatus(studentProject),
+    };
+  });
 
   return (
     <Box>
@@ -254,6 +307,24 @@ function StudentReport() {
         <Box width="100%" maxWidth="695px">
           <Box marginBottom="20px" width="100%">
             <Heading color={hexColor.fontColor2} size="m">{`${t('relevant-activities')}:`}</Heading>
+            <Box marginTop="20px">
+              <DottedTimeline
+                onClickDots={() => {}}
+                label={(
+                  <Flex gridGap="10px" alignItems="center">
+                    <Icon
+                      icon="list"
+                      color={hexColor.blueDefault}
+                      width="20px"
+                      height="20px"
+                    />
+                    <p>{t('attendance')}</p>
+                  </Flex>
+                )}
+                dots={[]}
+                helpText={`${t('educational-status')}: ${selectedCohortUser?.educational_status}`}
+              />
+            </Box>
           </Box>
           <Box width="100%">
             <Heading color={hexColor.fontColor2} size="m">{`${t('deliverables')}:`}</Heading>
@@ -271,7 +342,7 @@ function StudentReport() {
                     <p>{t('deliverables-section.lessons')}</p>
                   </Flex>
                 )}
-                dots={studentAssignments.lessons.map((lesson) => ({ ...lesson, label: lesson.title }))}
+                dots={lessonsDots}
                 helpText={`${t('educational-status')}: ${selectedCohortUser?.educational_status}`}
               />
             </Box>
@@ -289,7 +360,7 @@ function StudentReport() {
                     <p>{t('deliverables-section.projects')}</p>
                   </Flex>
                 )}
-                dots={studentAssignments.projects.map((project) => ({ ...project, label: project.title, borderColor: hexColor.fontColor3 }))}
+                dots={projectDots}
                 helpText={`${t('educational-status')}: ${selectedCohortUser?.educational_status}`}
               />
             </Box>

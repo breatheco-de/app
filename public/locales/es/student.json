@@ -2,6 +2,7 @@
   "back-to": "Volver al Dashboard",
   "relevant-activities": "Actividades relevantes",
   "activities": "Actividades",
+  "attendance": "Asistencia",
   "deliverables": "Entregables",
   "deliverables-section": {
     "lessons": "Lecciones completadas",
@@ -14,5 +15,15 @@
     "projects-completed": "Projectos completados",
     "percentage-attendance": "% de asistencia",
     "completed-learnpack": "Ejercicios de Learnpack completados"
+  },
+  "project-status": {
+    "done": "Aprovado",
+    "pending": "Pendiente",
+    "ignored": "Ignorado",
+    "rejected": "Rejechazado"
+  },
+  "lesson-status": {
+    "done": "Completado",
+    "pending": "Pendiente"
   }
 }
