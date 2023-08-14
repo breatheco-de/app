@@ -26,7 +26,7 @@ export const getStaticPaths = async ({ locales }) => {
     asset_type: 'PROJECT',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
-    academy: process.env.WHITE_LABLE_ACADEMY,
+    academy: process.env.WHITE_LABLE_ACADEMY || '4,5,6,47',
     limit: 2000,
   });
   let projects = [];
