@@ -50,6 +50,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     asset_type: 'PROJECT',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
+    academy: process.env.WHITE_LABLE_ACADEMY,
     limit: 1000,
     technologies: technology,
   });

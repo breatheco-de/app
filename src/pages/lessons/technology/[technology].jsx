@@ -51,7 +51,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
     exclude_category: 'how-to,como',
-    academy: '4,5,6,47',
+    academy: process.env.WHITE_LABLE_ACADEMY,
     limit: 1000,
     technologies: technology,
   });

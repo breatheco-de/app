@@ -21,9 +21,18 @@ import redirectsFromApi from '../../../public/redirects-from-api.json';
 import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 import useStyle from '../../common/hooks/useStyle';
+import { parseQuerys } from '../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=LESSON,ARTICLE&visibility=PUBLIC&status=PUBLISHED&exclude_category=how-to,como&academy=4,5,6,47&limit=2000`);
+  const querys = parseQuerys({
+    asset_type: 'LESSON,ARTICLE',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    exclude_category: 'how-to,como',
+    academy: process.env.WHITE_LABLE_ACADEMY,
+    limit: 2000,
+  });
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
 
   const paths = data.results.flatMap((res) => locales.map((locale) => ({
