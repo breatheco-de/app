@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import {
   QueryClient,
   QueryClientProvider,
@@ -35,20 +35,26 @@ import '@fontsource/lato/300.css';
 import '@fontsource/lato/400.css';
 import '@fontsource/lato/700.css';
 import '@fontsource/lato/900.css';
+import modifyEnv from '../../modifyEnv';
+import AlertMessage from '../common/components/AlertMessage';
 
 function InternalLinkComponent(props) {
   return <Link {...props} />;
 }
 
 function App({ Component, ...rest }) {
-  const [hasMounted, setHasMounted] = useState(false);
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  // const [hasMounted, setHasMounted] = useState(false);
   const { store, props } = wrapper.useWrappedStore(rest);
   const pageProps = props?.pageProps || {};
+
+  const isEnvModified = process.env.VERCEL_ENV !== 'production'
+    && BREATHECODE_HOST !== process.env.BREATHECODE_HOST;
 
   const queryClient = new QueryClient();
 
   useEffect(() => {
-    setHasMounted(true);
+    // setHasMounted(true);
     TagManager.initialize({ gtmId: process.env.TAG_MANAGER_KEY });
   }, []);
 
@@ -63,21 +69,28 @@ function App({ Component, ...rest }) {
 
             <AuthProvider>
               <ConnectionProvider>
-                {hasMounted && (
-                  // fix flickering on client side
-                  <Fragment key="load-on-client-side">
-                    <NavbarSession pageProps={pageProps} translations={pageProps?.translations} />
-                    <InterceptionLoader />
 
-                    <PrismicProvider internalLinkComponent={InternalLinkComponent}>
-                      <PrismicPreview repositoryName={repositoryName}>
-                        <Component {...pageProps} />
-                      </PrismicPreview>
-                    </PrismicProvider>
+                <Fragment key="load-on-client-side">
+                  <NavbarSession pageProps={pageProps} translations={pageProps?.translations} />
+                  {isEnvModified && (
+                    <AlertMessage
+                      full
+                      type="warning"
+                      message={`You not on the test environment, you are on "${BREATHECODE_HOST}"`}
+                      borderRadius="0px"
+                      justifyContent="center"
+                    />
+                  )}
+                  <InterceptionLoader />
 
-                    <Footer pageProps={pageProps} />
-                  </Fragment>
-                )}
+                  <PrismicProvider internalLinkComponent={InternalLinkComponent}>
+                    <PrismicPreview repositoryName={repositoryName}>
+                      <Component {...pageProps} />
+                    </PrismicPreview>
+                  </PrismicProvider>
+
+                  <Footer pageProps={pageProps} />
+                </Fragment>
               </ConnectionProvider>
             </AuthProvider>
           </ChakraProvider>

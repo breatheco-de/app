@@ -273,7 +273,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
       src="/static/images/4geeks.png"
       width={105}
       height={35}
-      objectFit="cover"
       style={{
         maxHeight: '35px',
         minHeight: '35px',

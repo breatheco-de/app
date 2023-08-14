@@ -174,7 +174,6 @@ export default function HowTo({ data, technologyTags, difficulties }) {
 
   return (
     <>
-      <TitleContent title={t('title')} icon="document" color={iconColor} mobile />
       <Box
         display="grid"
         gridTemplateColumns={{
@@ -191,12 +190,15 @@ export default function HowTo({ data, technologyTags, difficulties }) {
           margin="0 auto"
           maxWidth="1280px"
           justifyContent="space-between"
+          flexDirection={{ base: 'column', md: 'row' }}
           flex="1"
-          gridGap="20px"
+          gridGap="10px"
           padding={{ base: '3% 0 4% 0', md: '1.5% 0 1.5% 0' }}
         >
-          <TitleContent title={t('title')} icon="document" color={iconColor} mobile={false} />
+          <TitleContent title={t('title')} icon="book" color={iconColor} margin={{ base: '0 0 10px 0', md: '0' }} />
+
           <Search placeholder={t('search')} />
+
           <Button
             variant="outline"
             backgroundColor={useColorModeValue('', 'gray.800')}
