@@ -343,7 +343,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           </NextLink>
 
           <Flex display="flex" ml={10}>
-            <DesktopNav NAV_ITEMS={ITEMS} extraContent={mktCoursesFormat} haveSession={sessionExists} />
+            <DesktopNav NAV_ITEMS={ITEMS?.length > 0 ? ITEMS : items} extraContent={mktCoursesFormat} haveSession={sessionExists} />
           </Flex>
         </Flex>
 
@@ -603,7 +603,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
       <Collapse display={{ lg: 'block' }} in={isOpen} animateOpacity>
         <MobileNav
           mktCourses={!isNotAvailableForMktCourses && mktCoursesFormat}
-          NAV_ITEMS={ITEMS}
+          NAV_ITEMS={ITEMS?.length > 0 ? ITEMS : items}
           haveSession={sessionExists}
           translations={translations}
           onClickLink={onToggle}
