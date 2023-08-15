@@ -26,6 +26,7 @@ import { useRouter } from 'next/router';
 import Script from 'next/script';
 import getT from 'next-translate/getT';
 import styled from 'styled-components';
+import Head from 'next/head';
 import useAuth from '../../../common/hooks/useAuth';
 import Heading from '../../../common/components/Heading';
 import Link from '../../../common/components/NextChakraLink';
@@ -45,6 +46,7 @@ import redirectsFromApi from '../../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import useStyle from '../../../common/hooks/useStyle';
 import { parseQuerys } from '../../../utils/url';
+import { cleanObject } from '../../../utils';
 
 export const getStaticPaths = async ({ locales }) => {
   const querys = parseQuerys({
@@ -135,6 +137,28 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     },
   ].filter((item) => translations?.[item?.value] !== undefined);
 
+  const eventStructuredData = {
+    '@context': 'http://schema.org',
+    '@type': 'Article',
+    name: result?.title,
+    description: result?.description,
+    url: `https://4geeks.com/${slug}`,
+    image: `https://4geeks.com/thumbnail?slug=${slug}`,
+    datePublished: result?.published_at,
+    dateModified: result?.updated_at,
+    author: result?.author ? {
+      '@type': 'Person',
+      name: `${result?.author?.first_name} ${result?.author?.last_name}`,
+    } : null,
+    keywords: result?.seo_keywords,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://4geeks.com/${slug}`,
+    },
+  };
+
+  const cleanedStructuredData = cleanObject(eventStructuredData);
+
   return {
     props: {
       seo: {
@@ -154,7 +178,10 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         modifiedTime: result?.updated_at || '',
       },
       fallback: false,
-      exercise: result,
+      exercise: {
+        ...result,
+        structuredData: cleanedStructuredData,
+      },
       translations: translationArray,
       markdown,
     },
@@ -194,6 +221,14 @@ function TabletWithForm({
 
   return (
     <>
+      {exercise?.structuredData?.name && (
+        <Head>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(exercise.structuredData) }}
+          />
+        </Head>
+      )}
       <Box
         px="22px"
         pb="30px"

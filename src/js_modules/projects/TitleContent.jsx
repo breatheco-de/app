@@ -4,14 +4,14 @@ import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 
 function TitleContent({
-  title, icon, color, mobile,
+  title, icon, color, ...rest
 }) {
   return (
     <Flex
       alignItems="center"
       gridGap="20px"
-      padding={mobile === true ? '4% 4% 0 4%' : ''}
-      display={mobile === true ? { base: 'flex', md: 'none' } : { base: 'none', md: 'flex' }}
+      display="flex"
+      {...rest}
     >
       <Box
         display="flex"
@@ -34,13 +34,11 @@ function TitleContent({
 
 TitleContent.propTypes = {
   title: PropTypes.string,
-  mobile: PropTypes.bool,
   icon: PropTypes.string,
   color: PropTypes.string,
 };
 TitleContent.defaultProps = {
   title: 'Title',
-  mobile: true,
   icon: 'strength',
   color: '#FFFFFF',
 };
