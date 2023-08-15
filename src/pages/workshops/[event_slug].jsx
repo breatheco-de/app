@@ -51,7 +51,7 @@ export const getStaticProps = async ({ params, locale }) => {
   }));
   const data = resp?.data;
 
-  if (resp.statusText === 'not-found' || !data?.slug || (data?.lang !== null && !data?.lang.includes(locale))) {
+  if (resp.statusText === 'not-found' || !data?.slug) {
     return {
       notFound: true,
     };
@@ -119,6 +119,15 @@ function Page({ event }) {
   const toast = useToast();
   const { isAuthenticated, user } = useAuth();
   const { featuredColor, hexColor } = useStyle();
+
+  useEffect(() => {
+    if (event?.id) {
+      const eventLang = (event?.lang === 'us' || event?.lang === null) ? 'en' : event?.lang;
+      if (event?.lang !== locale) {
+        router.push(`/${eventLang}/workshops/${event?.slug}`);
+      }
+    }
+  }, [event]);
 
   useEffect(() => {
     if (event?.id) {

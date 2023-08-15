@@ -151,21 +151,30 @@ function Checkout() {
           if (serviceData) {
             bc.payment({
               academy: Number(serviceData?.academy?.id),
-            }).service().getAcademyService(serviceSetSlug)
-              .then((resp) => {
-                if (resp !== undefined) {
+              event_type_set: serviceSetSlug,
+            }).service().getAcademyService()
+              .then(async (resp) => {
+                const respData = await resp.json();
+                if (resp.status > 400) {
+                  toast({
+                    title: respData.detail,
+                    status: 'error',
+                    duration: 6000,
+                    position: 'top',
+                  });
+                }
+                if (resp.status < 400 && respData !== undefined && respData.length > 0) {
                   handleStep(2);
                   handleServiceToConsume({
-                    ...resp?.data,
+                    ...respData[0],
                     serviceInfo: {
                       type: isMentorshipType ? 'mentorship' : 'event',
                       ...serviceData,
                     },
                   });
-                  setServiceToRequest(resp?.data);
+                  setServiceToRequest(respData[0]);
                 }
-              })
-              .catch(() => {});
+              });
           }
         });
       setTimeout(() => {
