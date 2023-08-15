@@ -245,7 +245,6 @@ function StudentReport() {
   };
 
   const onCloseProject = () => setCurrentProject(null);
-  // fake comment
 
   return (
     <Box>
