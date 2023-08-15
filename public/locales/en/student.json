@@ -23,13 +23,20 @@
     "rejected": "Rejected"
   },
   "lesson-status": {
-    "done": "Completed",
-    "pending": "Pending"
+    "completed": "Completed",
+    "unread": "Unread",
+    "started": "Started",
+    "not-opened": "Not opened"
   },
   "attendance-status": {
     "attended": "Attended",
     "absent": "Absent",
     "not-taken": "Not taken",
     "no-info": "No information"
+  },
+  "exercise-status": {
+    "completed": "Marked as completed",
+    "not-opened": "Not opened",
+    "not-started": "Not started"
   }
 }

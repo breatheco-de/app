@@ -83,8 +83,6 @@ function StudentReport() {
         .then(async (res) => {
           const currentDaysLog = res[0].data;
           const durationInDays = res[2].data?.syllabus_version?.duration_in_days;
-          console.log('durationInDays');
-          console.log(durationInDays);
           const days = Array.from(Array(durationInDays).keys()).map((i) => {
             const day = i + 1;
             const dayData = currentDaysLog[day];
@@ -118,20 +116,20 @@ function StudentReport() {
     }
   }, [selectedCohortUser]);
 
-  const getLessonStatus = (lesson) => {
-    if (lesson) {
-      if (lesson.task_status === 'DONE') return hexColor.green;
-      if (!lesson.opened_at) return hexColor.danger;
-      return hexColor.yellowDefault;
-    }
-    return hexColor.fontColor3;
+  const lessonStyles = {
+    COMPLETED: hexColor.green,
+    UNREAD: hexColor.danger,
+    STARTED: hexColor.yellowDefault,
+    'NOT-OPENED': hexColor.fontColor3,
   };
 
-  const attendanceStyles = {
-    ATTENDED: hexColor.green,
-    ABSENT: hexColor.danger,
-    'NO-INFO': hexColor.yellowDefault,
-    'NOT-TAKEN': hexColor.fontColor3,
+  const getLessonStatus = (lesson) => {
+    if (lesson) {
+      if (lesson.task_status === 'DONE') return 'COMPLETED';
+      if (!lesson.opened_at) return 'UNREAD';
+      return 'STARTED';
+    }
+    return 'NOT-OPENED';
   };
 
   const projectStyles = {
@@ -143,11 +141,18 @@ function StudentReport() {
   };
 
   const getProjectStatus = (project) => {
-    if (!project || !project.id) return 'NOT-OPENED';
+    if (!project) return 'NOT-OPENED';
     if (project.revision_status === 'APPROVED') return 'APPROVED';
     if (project.revision_status === 'REJECTED') return 'REJECTED';
     if (project.task_status === 'DONE' && project.revision_status === 'PENDING') return 'DELIVERED';
     return 'UNDELIVERED';
+  };
+
+  const attendanceStyles = {
+    ATTENDED: hexColor.green,
+    ABSENT: hexColor.danger,
+    'NO-INFO': hexColor.yellowDefault,
+    'NOT-TAKEN': hexColor.fontColor3,
   };
 
   const getAttendanceStatus = (day) => {
@@ -157,9 +162,24 @@ function StudentReport() {
     return 'NO-INFO';
   };
 
+  const exerciseStyles = {
+    COMPLETED: { color: hexColor.green },
+    'NOT-STARTED': { color: hexColor.fontColor3 },
+    'NOT-OPENED': { borderColor: hexColor.fontColor3 },
+  };
+
+  const getExerciseStatus = (exercise) => {
+    if (exercise) {
+      if (exercise.task_status === 'DONE') return 'COMPLETED';
+      if (!exercise.opened_at) return 'NOT-STARTED';
+    }
+    return 'NOT-OPENED';
+  };
+
   const projectStatusLabel = t('project-status', {}, { returnObjects: true });
   const lessonStatusLabel = t('lesson-status', {}, { returnObjects: true });
   const attendanceStatusLabel = t('attendance-status', {}, { returnObjects: true });
+  const exerciseStatusLabel = t('exercise-status', {}, { returnObjects: true });
 
   const attendanceDots = attendance.map((day, i) => {
     const status = getAttendanceStatus(day);
@@ -175,9 +195,10 @@ function StudentReport() {
 
   const lessonsDots = cohortAssignments.lessons.map((lesson) => {
     const studentLesson = studentAssignments.lessons.find((elem) => elem.associated_slug === lesson.slug);
+    const status = getLessonStatus(studentLesson);
     const label = studentLesson ? (
       <>
-        <Text textAlign="center">{lessonStatusLabel[studentLesson.task_status.toLowerCase()]}</Text>
+        <Text textAlign="center">{lessonStatusLabel[status.toLowerCase()]}</Text>
         <Text textAlign="center">{lesson.title}</Text>
         {studentLesson.updated_at && <Text textAlign="center">{format(new Date(studentLesson.updated_at), 'M/dd/yyyy')}</Text>}
       </>
@@ -187,16 +208,17 @@ function StudentReport() {
         <Text textAlign="center">{lesson.title}</Text>
       </>
     );
-    return { ...lesson, label, color: getLessonStatus(studentLesson) };
+    return { ...lesson, label, color: lessonStyles[status] };
   });
 
   const projectDots = cohortAssignments.projects.map((project) => {
     const studentProject = studentAssignments.projects.find((elem) => elem.associated_slug === project.slug);
+    const status = getProjectStatus(studentProject);
     const label = studentProject ? (
       <>
         <Text textAlign="center">{projectStatusLabel[studentProject.revision_status.toLowerCase()]}</Text>
         <Text textAlign="center">{project.title}</Text>
-        {studentProject.updated_at && <Text textAlign="center">{format(new Date(studentProject.updated_at), 'm/dd/yyyy')}</Text>}
+        {studentProject.updated_at && <Text textAlign="center">{format(new Date(studentProject.updated_at), 'M/dd/yyyy')}</Text>}
       </>
     ) : (
       <Text>{project.title}</Text>
@@ -206,13 +228,34 @@ function StudentReport() {
       ...project,
       label,
       ...studentProject,
-      ...projectStyles[getProjectStatus(studentProject)],
+      status,
+      ...projectStyles[status],
+    };
+  });
+
+  const exerciseDots = cohortAssignments.exercises.map((exercise) => {
+    const studentExercise = studentAssignments.exercises.find((elem) => elem.associated_slug === exercise.slug);
+    const status = getExerciseStatus(studentExercise);
+    const label = studentExercise ? (
+      <>
+        <Text textAlign="center">{exerciseStatusLabel[status.toLowerCase()]}</Text>
+        <Text textAlign="center">{exercise.title}</Text>
+      </>
+    ) : (
+      <Text>{exercise.title}</Text>
+    );
+
+    return {
+      ...exercise,
+      label,
+      ...studentExercise,
+      ...exerciseStyles[status],
     };
   });
 
   const showSingleTask = async (task) => {
     try {
-      const status = getProjectStatus(task);
+      const { status } = task;
       let file;
       if (status === 'UNDELIVERED' || status === 'REJECTED') {
         const { data } = await bc.todo().deliver({
@@ -342,7 +385,7 @@ function StudentReport() {
             borderColor={hexColor.featuredColor}
           >
             <Text color={hexColor.fontColor2} fontWeight="700">
-              {t('analitics.total-mentorships')}
+              {t('analitics.projects-completed')}
             </Text>
             <Box display="flex" gap="10px" alignItems="center">
               <Icon
@@ -364,7 +407,7 @@ function StudentReport() {
             borderColor={hexColor.featuredColor}
           >
             <Text color={hexColor.fontColor2} fontWeight="700">
-              {t('analitics.total-mentorships')}
+              {t('analitics.percentage-attendance')}
             </Text>
             <Box display="flex" gap="10px" alignItems="center">
               <Icon
@@ -386,7 +429,7 @@ function StudentReport() {
             borderColor={hexColor.featuredColor}
           >
             <Text color={hexColor.fontColor2} fontWeight="700">
-              {t('analitics.total-mentorships')}
+              {t('analitics.completed-learnpack')}
             </Text>
             <Box display="flex" gap="10px" alignItems="center">
               <Icon
@@ -424,7 +467,6 @@ function StudentReport() {
                   </Flex>
                 )}
                 dots={attendanceDots}
-                helpText={`${t('educational-status')}: ${selectedCohortUser?.educational_status}`}
               />
             </Box>
           </Box>
@@ -444,7 +486,6 @@ function StudentReport() {
                   </Flex>
                 )}
                 dots={lessonsDots}
-                helpText={`${t('educational-status')}: ${selectedCohortUser?.educational_status}`}
               />
             </Box>
             <Box marginTop="20px">
@@ -462,7 +503,21 @@ function StudentReport() {
                   </Flex>
                 )}
                 dots={projectDots}
-                helpText={`${t('educational-status')}: ${selectedCohortUser?.educational_status}`}
+              />
+            </Box>
+            <Box marginTop="20px">
+              <DottedTimeline
+                label={(
+                  <Flex gridGap="10px" alignItems="center">
+                    <Icon
+                      icon="learnpack"
+                      width="20px"
+                      height="20px"
+                    />
+                    <p>{t('deliverables-section.exercises')}</p>
+                  </Flex>
+                )}
+                dots={exerciseDots}
               />
             </Box>
           </Box>
