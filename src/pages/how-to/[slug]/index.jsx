@@ -8,6 +8,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import getT from 'next-translate/getT';
+import Head from 'next/head';
 import Link from '../../../common/components/NextChakraLink';
 import MarkDownParser from '../../../common/components/MarkDownParser';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
@@ -20,7 +21,7 @@ import MktRecommendedCourses from '../../../common/components/MktRecommendedCour
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
-import { unSlugifyCapitalize } from '../../../utils/index';
+import { cleanObject, unSlugifyCapitalize } from '../../../utils/index';
 import useStyle from '../../../common/hooks/useStyle';
 
 export const getStaticPaths = async ({ locales }) => {
@@ -98,6 +99,27 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     },
   ].filter((item) => translations?.[item?.value] !== undefined);
 
+  const eventStructuredData = {
+    '@context': 'http://schema.org',
+    '@type': 'Article',
+    name: data?.title,
+    description: data?.description,
+    url: `https://4geeks.com/${slug}`,
+    image: `https://4geeks.com/thumbnail?slug=${slug}`,
+    datePublished: data?.published_at,
+    dateModified: data?.updated_at,
+    author: data?.author ? {
+      '@type': 'Person',
+      name: `${data?.author?.first_name} ${data?.author?.last_name}`,
+    } : null,
+    keywords: data?.seo_keywords,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://4geeks.com/${slug}`,
+    },
+  };
+  const cleanedStructuredData = cleanObject(eventStructuredData);
+
   return {
     props: {
       seo: {
@@ -119,7 +141,10 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       translations: translationArray,
       // page props
       fallback: false,
-      data: data || {},
+      data: {
+        ...data,
+        structuredData: cleanedStructuredData,
+      },
       markdown: markdown || '',
     },
   };
@@ -169,6 +194,14 @@ export default function HowToSlug({ data, markdown }) {
 
   return (
     <>
+      {data?.structuredData?.name && (
+        <Head>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(data.structuredData) }}
+          />
+        </Head>
+      )}
       <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin={{ base: '0 10px', md: '0 auto' }} gridGap="36px" padding={{ base: '', md: '0 10px' }}>
         <Box display={{ base: 'none', md: 'flex' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '6.2rem 0 0 0' }}>
           <MktSideRecommendedCourses />
