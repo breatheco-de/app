@@ -25,5 +25,11 @@
   "lesson-status": {
     "done": "Completed",
     "pending": "Pending"
+  },
+  "attendance-status": {
+    "attended": "Attended",
+    "absent": "Absent",
+    "not-taken": "Not taken",
+    "no-info": "No information"
   }
 }

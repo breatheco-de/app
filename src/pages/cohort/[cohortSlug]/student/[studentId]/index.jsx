@@ -81,7 +81,16 @@ function StudentReport() {
         bc.admissions().cohort(selectedCohortUser.cohort.slug, academy),
       ])
         .then(async (res) => {
-          setAttendance(res[0].data);
+          const currentDaysLog = res[0].data;
+          const durationInDays = res[2].data?.syllabus_version?.duration_in_days;
+          console.log('durationInDays');
+          console.log(durationInDays);
+          const days = Array.from(Array(durationInDays).keys()).map((i) => {
+            const day = i + 1;
+            const dayData = currentDaysLog[day];
+            return dayData;
+          });
+          setAttendance(days);
           setStudentAssignments({
             lessons: res[1].data.results.filter((elem) => elem.task_type === 'LESSON'),
             projects: res[1].data.results.filter((elem) => elem.task_type === 'PROJECT'),
@@ -118,6 +127,13 @@ function StudentReport() {
     return hexColor.fontColor3;
   };
 
+  const attendanceStyles = {
+    ATTENDED: hexColor.green,
+    ABSENT: hexColor.danger,
+    'NO-INFO': hexColor.yellowDefault,
+    'NOT-TAKEN': hexColor.fontColor3,
+  };
+
   const projectStyles = {
     APPROVED: { color: hexColor.green },
     REJECTED: { color: hexColor.danger },
@@ -134,8 +150,28 @@ function StudentReport() {
     return 'UNDELIVERED';
   };
 
+  const getAttendanceStatus = (day) => {
+    if (!day) return 'NOT-TAKEN';
+    if (day.attendance_ids.includes(Number(studentId))) return 'ATTENDED';
+    if (day.unattendance_ids.includes(Number(studentId))) return 'ABSENT';
+    return 'NO-INFO';
+  };
+
   const projectStatusLabel = t('project-status', {}, { returnObjects: true });
   const lessonStatusLabel = t('lesson-status', {}, { returnObjects: true });
+  const attendanceStatusLabel = t('attendance-status', {}, { returnObjects: true });
+
+  const attendanceDots = attendance.map((day, i) => {
+    const status = getAttendanceStatus(day);
+    const label = (
+      <>
+        <Text textAlign="center">{attendanceStatusLabel[status.toLowerCase()]}</Text>
+        <Text textAlign="center">{`${t('common:day')} ${1 + i}`}</Text>
+        {day?.updated_at && <Text textAlign="center">{format(new Date(day.updated_at), 'M/dd/yyyy')}</Text>}
+      </>
+    );
+    return { label, color: attendanceStyles[status] };
+  });
 
   const lessonsDots = cohortAssignments.lessons.map((lesson) => {
     const studentLesson = studentAssignments.lessons.find((elem) => elem.associated_slug === lesson.slug);
@@ -143,7 +179,7 @@ function StudentReport() {
       <>
         <Text textAlign="center">{lessonStatusLabel[studentLesson.task_status.toLowerCase()]}</Text>
         <Text textAlign="center">{lesson.title}</Text>
-        {studentLesson.updated_at && <Text textAlign="center">{format(new Date(studentLesson.updated_at), 'm/dd/yyyy')}</Text>}
+        {studentLesson.updated_at && <Text textAlign="center">{format(new Date(studentLesson.updated_at), 'M/dd/yyyy')}</Text>}
       </>
     ) : (
       <>
@@ -376,7 +412,6 @@ function StudentReport() {
             <Heading color={hexColor.fontColor2} size="m">{`${t('relevant-activities')}:`}</Heading>
             <Box marginTop="20px">
               <DottedTimeline
-                onClickDots={() => {}}
                 label={(
                   <Flex gridGap="10px" alignItems="center">
                     <Icon
@@ -388,7 +423,7 @@ function StudentReport() {
                     <p>{t('attendance')}</p>
                   </Flex>
                 )}
-                dots={[]}
+                dots={attendanceDots}
                 helpText={`${t('educational-status')}: ${selectedCohortUser?.educational_status}`}
               />
             </Box>
