@@ -17,7 +17,7 @@
     "completed-learnpack": "Ejercicios de Learnpack completados"
   },
   "project-status": {
-    "done": "Aprovado",
+    "approved": "Aprovado",
     "pending": "Pendiente",
     "ignored": "Ignorado",
     "rejected": "Rejechazado"

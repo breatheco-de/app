@@ -5,9 +5,12 @@ import {
   Divider,
   useColorModeValue,
   Flex,
+  useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import { format } from 'date-fns';
+import { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../../../../js_modules/assignmentHandler/index';
 import useStyle from '../../../../../common/hooks/useStyle';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import bc from '../../../../../common/services/breathecode';
@@ -22,9 +25,12 @@ import Link from '../../../../../common/components/NextChakraLink';
 function StudentReport() {
   const { t } = useTranslation('student');
   const router = useRouter();
+  const toast = useToast();
   const { query } = router;
   const { cohortSlug, studentId, academy } = query;
   const [selectedCohortUser, setSelectedCohortUser] = useState(null);
+  const [deliveryUrl, setDeliveryUrl] = useState('');
+  const [currentProject, setCurrentProject] = useState(null);
   const [cohortUsers, setCohortUsers] = useState([]);
   const [attendance, setAttendance] = useState([]);
   const [studentAssignments, setStudentAssignments] = useState({
@@ -43,6 +49,10 @@ function StudentReport() {
   const { hexColor } = useStyle();
   const linkColor = useColorModeValue('blue.default', 'blue.300');
   const borderColor = useColorModeValue('gray.200', 'gray.500');
+  const lang = {
+    es: '/es/',
+    en: '/',
+  };
 
   useEffect(() => {
     bc.admissions({ users: studentId }).cohortUsers(academy)
@@ -72,7 +82,6 @@ function StudentReport() {
       ])
         .then(async (res) => {
           setAttendance(res[0].data);
-          const nonDuplicated = [...new Map(res[1].data.results.map((item) => [item.id, item])).values()];
           setStudentAssignments({
             lessons: res[1].data.results.filter((elem) => elem.task_type === 'LESSON'),
             projects: res[1].data.results.filter((elem) => elem.task_type === 'PROJECT'),
@@ -109,12 +118,20 @@ function StudentReport() {
     return hexColor.fontColor3;
   };
 
+  const projectStyles = {
+    APPROVED: { color: hexColor.green },
+    REJECTED: { color: hexColor.danger },
+    DELIVERED: { color: hexColor.yellowDefault },
+    'NOT-OPENED': { borderColor: hexColor.fontColor3 },
+    UNDELIVERED: { color: hexColor.fontColor3 },
+  };
+
   const getProjectStatus = (project) => {
-    if (!project) return { borderColor: hexColor.fontColor3 };
-    if (project.revision_status === 'DONE') return { color: hexColor.green };
-    if (project.revision_status === 'REJECTED') return { color: hexColor.danger };
-    if (project.task_status === 'DONE' && project.revision_status === 'PENDING') return { color: hexColor.yellowDefault };
-    return { color: hexColor.fontColor3 };
+    if (!project || !project.id) return 'NOT-OPENED';
+    if (project.revision_status === 'APPROVED') return 'APPROVED';
+    if (project.revision_status === 'REJECTED') return 'REJECTED';
+    if (project.task_status === 'DONE' && project.revision_status === 'PENDING') return 'DELIVERED';
+    return 'UNDELIVERED';
   };
 
   const projectStatusLabel = t('project-status', {}, { returnObjects: true });
@@ -122,7 +139,19 @@ function StudentReport() {
 
   const lessonsDots = cohortAssignments.lessons.map((lesson) => {
     const studentLesson = studentAssignments.lessons.find((elem) => elem.associated_slug === lesson.slug);
-    return { ...lesson, label: lesson.title, color: getLessonStatus(studentLesson) };
+    const label = studentLesson ? (
+      <>
+        <Text textAlign="center">{lessonStatusLabel[studentLesson.task_status.toLowerCase()]}</Text>
+        <Text textAlign="center">{lesson.title}</Text>
+        {studentLesson.updated_at && <Text textAlign="center">{format(new Date(studentLesson.updated_at), 'm/dd/yyyy')}</Text>}
+      </>
+    ) : (
+      <>
+        <Text textAlign="center">{t('lesson-status.pending')}</Text>
+        <Text textAlign="center">{lesson.title}</Text>
+      </>
+    );
+    return { ...lesson, label, color: getLessonStatus(studentLesson) };
   });
 
   const projectDots = cohortAssignments.projects.map((project) => {
@@ -131,6 +160,7 @@ function StudentReport() {
       <>
         <Text textAlign="center">{projectStatusLabel[studentProject.revision_status.toLowerCase()]}</Text>
         <Text textAlign="center">{project.title}</Text>
+        {studentProject.updated_at && <Text textAlign="center">{format(new Date(studentProject.updated_at), 'm/dd/yyyy')}</Text>}
       </>
     ) : (
       <Text>{project.title}</Text>
@@ -139,9 +169,46 @@ function StudentReport() {
     return {
       ...project,
       label,
-      ...getProjectStatus(studentProject),
+      ...studentProject,
+      ...projectStyles[getProjectStatus(studentProject)],
     };
   });
+
+  const showSingleTask = async (task) => {
+    try {
+      const status = getProjectStatus(task);
+      let file;
+      if (status === 'UNDELIVERED' || status === 'REJECTED') {
+        const { data } = await bc.todo().deliver({
+          id: task.id,
+          academy,
+        });
+        setDeliveryUrl(data.delivery_url);
+      } else if (status === 'APPROVED' || status === 'DELIVERED') {
+        const assetResp = await bc.lesson().getAsset(task.slug);
+        if (assetResp && assetResp.status < 400) {
+          const dataAsset = assetResp.data;
+          if (!dataAsset?.delivery_formats.includes('url')) {
+            const fileResp = await bc.todo().getFile({ id: task.id, academyId: cohortSession?.academy?.id });
+            if (fileResp && fileResp.status < 400) {
+              file = await fileResp.data;
+            }
+          }
+        }
+      }
+      setCurrentProject({ ...task, status, file });
+    } catch (e) {
+      toast({
+        position: 'top',
+        title: t('alert-message:review-url-error'),
+        status: 'error',
+        duration: 6000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const onCloseProject = () => setCurrentProject(null);
 
   return (
     <Box>
@@ -330,7 +397,6 @@ function StudentReport() {
             <Heading color={hexColor.fontColor2} size="m">{`${t('deliverables')}:`}</Heading>
             <Box marginTop="20px">
               <DottedTimeline
-                onClickDots={() => {}}
                 label={(
                   <Flex gridGap="10px" alignItems="center">
                     <Icon
@@ -348,7 +414,7 @@ function StudentReport() {
             </Box>
             <Box marginTop="20px">
               <DottedTimeline
-                onClickDots={() => {}}
+                onClickDots={showSingleTask}
                 label={(
                   <Flex gridGap="10px" alignItems="center">
                     <Icon
@@ -365,6 +431,38 @@ function StudentReport() {
               />
             </Box>
           </Box>
+          <ReviewModal
+            currentTask={currentProject}
+            projectLink={`https://4geeks.com${
+              lang[router.locale]
+            }project/${currentProject?.slug}`}
+            isOpen={currentProject && currentProject.status === 'DELIVERED'}
+            onClose={onCloseProject}
+            readOnly
+          />
+          <NoInfoModal
+            isOpen={currentProject && currentProject.status === 'NOT-OPENED'}
+            onClose={onCloseProject}
+          />
+          <DeliverModal
+            currentTask={currentProject}
+            projectLink={`https://4geeks.com${
+              lang[router.locale]
+            }project/${currentProject?.slug}`}
+            isOpen={currentProject && (currentProject.status === 'UNDELIVERED' || currentProject.status === 'REJECTED')}
+            onClose={onCloseProject}
+            deliveryUrl={deliveryUrl}
+            readOnly
+          />
+          <DetailsModal
+            currentTask={currentProject}
+            projectLink={`https://4geeks.com${
+              lang[router.locale]
+            }project/${currentProject?.slug}`}
+            isOpen={currentProject && currentProject.status === 'APPROVED'}
+            onClose={onCloseProject}
+            readOnly
+          />
         </Box>
       </Flex>
     </Box>

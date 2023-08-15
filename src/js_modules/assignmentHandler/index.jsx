@@ -16,7 +16,7 @@ import useStyle from '../../common/hooks/useStyle';
 // import Modal from './modal';
 
 export function DetailsModal({
-  currentTask, projectLink, updpateAssignment, isOpen, onClose,
+  currentTask, projectLink, updpateAssignment, isOpen, onClose, readOnly,
 }) {
   const { hexColor } = useStyle();
   const { t } = useTranslation('assignments');
@@ -99,11 +99,13 @@ export function DetailsModal({
             </Box>
           )}
         </ModalBody>
-        <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={commonBorderColor}>
-          <Button onClick={() => setOpenUndoApproval(true)} variant={taskIsIgnored ? 'default' : 'outline'} textTransform="uppercase">
-            {t('task-handler.undo-approval')}
-          </Button>
-        </ModalFooter>
+        {!readOnly && (
+          <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={commonBorderColor}>
+            <Button onClick={() => setOpenUndoApproval(true)} variant={taskIsIgnored ? 'default' : 'outline'} textTransform="uppercase">
+              {t('task-handler.undo-approval')}
+            </Button>
+          </ModalFooter>
+        )}
       </ModalContent>
 
       <Modal
@@ -169,7 +171,7 @@ export function DetailsModal({
 }
 
 export function DeliverModal({
-  currentTask, projectLink, updpateAssignment, deliveryUrl, isOpen, onClose,
+  currentTask, projectLink, updpateAssignment, deliveryUrl, isOpen, onClose, readOnly,
 }) {
   const { t } = useTranslation('assignments');
   const [openIgnoreTask, setOpenIgnoreTask] = useState(false);
@@ -254,13 +256,15 @@ export function DeliverModal({
             {t('deliver-assignment.hint')}
           </Text>
         </ModalBody>
-        <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={commonBorderColor}>
-          <Button onClick={() => setOpenIgnoreTask(true)} variant={taskIsIgnored ? 'default' : 'outline'} textTransform="uppercase">
-            {taskIsIgnored
-              ? t('deliver-assignment.mark-as-pending')
-              : t('deliver-assignment.ignore-task')}
-          </Button>
-        </ModalFooter>
+        {!readOnly && (
+          <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={commonBorderColor}>
+            <Button onClick={() => setOpenIgnoreTask(true)} variant={taskIsIgnored ? 'default' : 'outline'} textTransform="uppercase">
+              {taskIsIgnored
+                ? t('deliver-assignment.mark-as-pending')
+                : t('deliver-assignment.ignore-task')}
+            </Button>
+          </ModalFooter>
+        )}
       </ModalContent>
 
       <Modal
@@ -422,7 +426,7 @@ export function NoInfoModal({ isOpen, onClose }) {
   );
 }
 
-export function ReviewModal({ currentTask, projectLink, updpateAssignment, isOpen, onClose }) {
+export function ReviewModal({ currentTask, projectLink, updpateAssignment, isOpen, onClose, readOnly }) {
   const { t } = useTranslation('assignments');
   const { hexColor } = useStyle();
   const toast = useToast();
@@ -580,24 +584,28 @@ export function ReviewModal({ currentTask, projectLink, updpateAssignment, isOpe
               })}
             </Box>
           )}
-          <Textarea
-            onChange={(e) => setComment(e.target.value)}
-            placeholder={t('review-assignment.comment-placeholder')}
-            fontSize="14px"
-            height="128px"
-          />
-          <Box
-            pt={6}
-            display="flex"
-            flexDirection="row"
-            justifyContent="space-between"
-          >
-            {['reject', 'approve'].map((type) => (
-              <Fragment key={type}>
-                <ReviewButton type={type} />
-              </Fragment>
-            ))}
-          </Box>
+          {!readOnly && (
+            <>
+              <Textarea
+                onChange={(e) => setComment(e.target.value)}
+                placeholder={t('review-assignment.comment-placeholder')}
+                fontSize="14px"
+                height="128px"
+              />
+              <Box
+                pt={6}
+                display="flex"
+                flexDirection="row"
+                justifyContent="space-between"
+              >
+                {['reject', 'approve'].map((type) => (
+                  <Fragment key={type}>
+                    <ReviewButton type={type} />
+                  </Fragment>
+                ))}
+              </Box>
+            </>
+          )}
         </ModalBody>
       </ModalContent>
     </Modal>
@@ -736,9 +744,13 @@ DeliverModal.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   projectLink: PropTypes.string.isRequired,
   deliveryUrl: PropTypes.string.isRequired,
+  readOnly: PropTypes.bool,
   updpateAssignment: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+};
+DeliverModal.defaultProps = {
+  readOnly: false,
 };
 ReviewHandler.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
@@ -752,6 +764,11 @@ ReviewModal.propTypes = {
   updpateAssignment: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  readOnly: PropTypes.bool,
+};
+
+ReviewModal.defaultProps = {
+  readOnly: false,
 };
 
 NoInfoModal.propTypes = {
@@ -765,6 +782,11 @@ DetailsModal.propTypes = {
   updpateAssignment: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  readOnly: PropTypes.bool,
+};
+
+DetailsModal.defaultProps = {
+  readOnly: false,
 };
 
 export default memo(ButtonHandler);
