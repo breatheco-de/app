@@ -7,9 +7,9 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import getT from 'next-translate/getT';
+import Head from 'next/head';
 import Icon from '../../common/components/Icon';
-import { getExtensionName, unSlugifyCapitalize } from '../../utils';
+import { cleanObject, getExtensionName, unSlugifyCapitalize } from '../../utils';
 import Link from '../../common/components/NextChakraLink';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import TagCapsule from '../../common/components/TagCapsule';
@@ -49,9 +49,7 @@ export const getStaticPaths = async ({ locales }) => {
 };
 
 export const getStaticProps = async ({ params, locale, locales }) => {
-  const t = await getT(locale, 'lesson');
   const { slug } = params;
-  const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
 
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
   const lesson = await response.json();
@@ -130,12 +128,34 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     },
   ].filter((item) => translations?.[item?.value] !== undefined);
 
+  const eventStructuredData = {
+    '@context': 'http://schema.org',
+    '@type': 'Article',
+    name: lesson?.title,
+    description: lesson?.description,
+    url: `https://4geeks.com/${slug}`,
+    image: `https://4geeks.com/thumbnail?slug=${slug}`,
+    datePublished: lesson?.published_at,
+    dateModified: lesson?.updated_at,
+    author: lesson?.author ? {
+      '@type': 'Person',
+      name: `${lesson?.author?.first_name} ${lesson?.author?.last_name}`,
+    } : null,
+    keywords: lesson?.seo_keywords,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://4geeks.com/${slug}`,
+    },
+  };
+
+  const cleanedStructuredData = cleanObject(eventStructuredData);
+
   return {
     props: {
       seo: {
         title,
         description: description || '',
-        image: lesson.preview || staticImage,
+        image: `https://4geeks.com/thumbnail?slug=${slug}`,
         pathConnector: translationsExists ? '/lesson' : `/lesson/${slug}`,
         url: ogUrl.en || `/${locale}/lesson/${slug}`,
         slug,
@@ -152,6 +172,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       lesson: {
         ...lesson,
         collab_url: finalPathname,
+        structuredData: cleanedStructuredData,
       },
       translations: translationArray,
       markdown,
@@ -184,6 +205,14 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
 
   return (
     <>
+      {lesson?.structuredData?.name && (
+        <Head>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(lesson.structuredData) }}
+          />
+        </Head>
+      )}
       <GridContainer
         withContainer
         // gridColumn="1 / span 10"

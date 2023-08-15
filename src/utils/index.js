@@ -395,6 +395,21 @@ const location = isWindow && window.location;
 
 const url = isWindow && new URL(window.location.href);
 
+function cleanObject(obj) {
+  const cleaned = {};
+
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] !== undefined && obj[key] !== null) {
+      if (Array.isArray(obj[key]) && obj[key].length === 0) {
+        return; // Ignore empty arrays
+      }
+      cleaned[key] = obj[key];
+    }
+  });
+
+  return cleaned;
+}
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify, unSlugifyCapitalize, location,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
@@ -404,5 +419,5 @@ export {
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, capitalizeFirstLetter,
-  getAsset, adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice,
+  getAsset, adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject,
 };
