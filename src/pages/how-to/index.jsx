@@ -18,6 +18,7 @@ import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
 import { getQueryString } from '../../utils';
+import { parseQuerys } from '../../utils/url';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'how-to');
@@ -26,7 +27,15 @@ export const getStaticProps = async ({ locale, locales }) => {
   const howTos = []; // filtered howTos after removing repeated
   let arrHowTos = []; // incoming howTos
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&visibility=PUBLIC&status=PUBLISHED&limit=2000`);
+  const querys = parseQuerys({
+    asset_type: 'ARTICLE',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    academy: process.env.WHITE_LABLE_ACADEMY || '4,5,6,47',
+    limit: 2000,
+  });
+
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
   // .then((res) => res.json())
   // .catch((err) => console.log(err));

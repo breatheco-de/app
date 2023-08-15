@@ -10,7 +10,8 @@ import ProjectList from '../../../js_modules/projects/ProjectList';
 import { parseQuerys } from '../../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000`, {
+  const WHITE_LABLE_ACADEMY = process.env.WHITE_LABLE_ACADEMY || '4,5,6,47';
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000&academy=${WHITE_LABLE_ACADEMY}`, {
     method: 'GET',
     headers: {
       Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
@@ -35,8 +36,9 @@ export const getStaticPaths = async ({ locales }) => {
 export const getStaticProps = async ({ params, locale, locales }) => {
   const { technology } = params;
   const currentLang = locale === 'en' ? 'us' : 'es';
+  const WHITE_LABLE_ACADEMY = process.env.WHITE_LABLE_ACADEMY || '4,5,6,47';
 
-  const responseTechs = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?slug=${technology}&limit=1000`, {
+  const responseTechs = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?slug=${technology}&limit=1000&academy=${WHITE_LABLE_ACADEMY}`, {
     method: 'GET',
     headers: {
       Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
@@ -50,6 +52,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     asset_type: 'PROJECT',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
+    academy: process.env.WHITE_LABLE_ACADEMY || '4,5,6,47',
     limit: 1000,
     technologies: technology,
   });

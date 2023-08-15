@@ -16,6 +16,7 @@ import { getQueryString } from '../../utils';
 import GridContainer from '../../common/components/GridContainer';
 import PaginatedView from '../../common/components/PaginationView';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
+import { parseQuerys } from '../../utils/url';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'exercises');
@@ -24,8 +25,14 @@ export const getStaticProps = async ({ locale, locales }) => {
   const currentLang = locale === 'en' ? 'us' : 'es';
   const exercises = []; // filtered exercises after removing repeated
   let arrExercises = []; // incoming exercises
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=EXERCISE&visibility=PUBLIC&status=PUBLISHED&limit=2000
-  `);
+  const querys = parseQuerys({
+    asset_type: 'EXERCISE',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    academy: process.env.WHITE_LABLE_ACADEMY || '4,5,6,47',
+    limit: 2000,
+  });
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
 
   arrExercises = Object.values(data.results);

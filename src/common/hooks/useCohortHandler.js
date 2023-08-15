@@ -237,6 +237,7 @@ function useHandler() {
     getMandatoryProjects,
     getTasksWithoutCohort,
     taskTodo,
+    setTaskTodo,
     taskTodoState,
   };
 }
