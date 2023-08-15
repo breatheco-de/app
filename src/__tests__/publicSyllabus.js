@@ -8,9 +8,6 @@ const fail = (msg, ...params) => {
 }
 
 const publicSyllabus = async () => {
-  if (!process.env.WHITE_LABLE_ACADEMY) {
-    fail('ERROR: The project needs the environment variable "WHITE_LABLE ACADEMY"')
-  }
   const resp = await axios.get(
     `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`,
   )
