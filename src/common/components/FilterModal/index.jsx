@@ -213,7 +213,7 @@ function FilterModal({
             fontSize="13px"
             textTransform="uppercase"
             variant="default"
-            disabled={fLength <= 0}
+            isDisabled={fLength <= 0}
             onClick={() => handleSubmit()}
             rightIcon={<Icon icon="longArrowRight" width="15px" color={fLength <= 0 ? '#3A3A3A' : '#FFFFFF'} />}
           >

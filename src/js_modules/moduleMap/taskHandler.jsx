@@ -153,7 +153,7 @@ export function ButtonHandlerByTaskStatus({
           changeStatusAssignment(event, currentTask);
           onClickHandler();
         }}
-        disabled={taskIsAproved}
+        isDisabled={taskIsAproved}
         minWidth="26px"
         minHeight="26px"
         background={allowText ? 'blue.default' : 'none'}
@@ -183,7 +183,7 @@ export function ButtonHandlerByTaskStatus({
             handleOpen(() => onOpen());
           }
         }}
-        disabled={taskIsAproved}
+        isDisabled={taskIsAproved}
         display="flex"
         minWidth="26px"
         minHeight="26px"
@@ -388,7 +388,7 @@ export function ButtonHandlerByTaskStatus({
           <Button
             display="flex"
             variant={allowText ? 'default' : 'none'}
-            disabled={taskIsAproved}
+            isDisabled={taskIsAproved}
             minWidth="26px"
             minHeight="26px"
             height="fit-content"
@@ -608,7 +608,7 @@ export function ButtonHandlerByTaskStatus({
                         variant="default"
                         onClick={() => handleUploadFile()}
                         isLoading={isUploading}
-                        disabled={isUploading || fileProps?.length === 0 || fileProps.some((file) => typeof file?.type !== 'string') || fileErrorExists || fileSumSize > maxFileSize}
+                        isDisabled={isUploading || fileProps?.length === 0 || fileProps.some((file) => typeof file?.type !== 'string') || fileErrorExists || fileSumSize > maxFileSize}
                         textTransform="uppercase"
                       >
                         {t('common:upload')}

@@ -177,7 +177,7 @@ function ProfileForm({ profile }) {
                         form.handleChange(e);
                       }}
                       defaultValue={profile?.email || ''}
-                      disabled
+                      isDisabled
                       _disabled={{
                         backgroundColor: disabledBackgroundColor,
                         cursor: 'not-allowed',

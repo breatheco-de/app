@@ -3,7 +3,7 @@
   "module-not-started": "You haven't started this module yet",
   "no-modules-to-show": "No modules to show",
   "edit-page": "Edit on Github",
-  "open-google-collab": "Open in Google Collab",
+  "open-google-collab": "Open in Collab",
   "next-page": "Next page",
   "previous-page": "Previous page",
   "ask-to-done": "Would you like to mark this \"{{taskType}}\" as done before moving on?",

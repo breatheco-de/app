@@ -17,6 +17,7 @@ const useStyle = () => {
   const reverseFontColor = useColorModeValue('white', 'gray.900');
   const lightColor = useColorModeValue('gray.600', 'gray.200');
   const tooltipBackground = useColorModeValue('gray.dark', 'gray.dark');
+  const featuredLight = useColorModeValue('gray.light3', 'featuredDark');
 
   const hexColor = {
     black: useColorModeValue('#000000', '#ffffff'),
@@ -64,6 +65,7 @@ const useStyle = () => {
     modal,
     reverseFontColor,
     tooltipBackground,
+    featuredLight,
   };
 };
 

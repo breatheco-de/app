@@ -297,7 +297,7 @@ function TabletWithForm({
                           borderRadius="3px"
                           width="100%"
                           padding="0"
-                          disabled={formStatus.status === 'thank-you'}
+                          isDisabled={formStatus.status === 'thank-you'}
                           whiteSpace="normal"
                           isLoading={isSubmitting}
                           type="submit"
