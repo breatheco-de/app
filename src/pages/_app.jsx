@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import Link from 'next/link';
 import { Provider } from 'react-redux';
 import { ChakraProvider } from '@chakra-ui/react';
-import { CacheProvider } from '@chakra-ui/next-js';
 import { PrismicProvider } from '@prismicio/react';
 import { PrismicPreview } from '@prismicio/next';
 import { repositoryName } from '../../prismicio';
@@ -44,7 +43,6 @@ function InternalLinkComponent(props) {
 
 function App({ Component, ...rest }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-  // const [hasMounted, setHasMounted] = useState(false);
   const { store, props } = wrapper.useWrappedStore(rest);
   const pageProps = props?.pageProps || {};
 
@@ -54,7 +52,6 @@ function App({ Component, ...rest }) {
   const queryClient = new QueryClient();
 
   useEffect(() => {
-    // setHasMounted(true);
     TagManager.initialize({ gtmId: process.env.TAG_MANAGER_KEY });
   }, []);
 
@@ -64,37 +61,34 @@ function App({ Component, ...rest }) {
         <Helmet
           {...pageProps.seo}
         />
-        <CacheProvider>
-          <ChakraProvider resetCSS theme={CustomTheme}>
+        <ChakraProvider resetCSS theme={CustomTheme}>
+          <AuthProvider>
+            <ConnectionProvider>
 
-            <AuthProvider>
-              <ConnectionProvider>
+              <Fragment key="load-on-client-side">
+                <NavbarSession pageProps={pageProps} translations={pageProps?.translations} />
+                {isEnvModified && (
+                  <AlertMessage
+                    full
+                    type="warning"
+                    message={`You not on the test environment, you are on "${BREATHECODE_HOST}"`}
+                    borderRadius="0px"
+                    justifyContent="center"
+                  />
+                )}
+                <InterceptionLoader />
 
-                <Fragment key="load-on-client-side">
-                  <NavbarSession pageProps={pageProps} translations={pageProps?.translations} />
-                  {isEnvModified && (
-                    <AlertMessage
-                      full
-                      type="warning"
-                      message={`You not on the test environment, you are on "${BREATHECODE_HOST}"`}
-                      borderRadius="0px"
-                      justifyContent="center"
-                    />
-                  )}
-                  <InterceptionLoader />
+                <PrismicProvider internalLinkComponent={InternalLinkComponent}>
+                  <PrismicPreview repositoryName={repositoryName}>
+                    <Component {...pageProps} />
+                  </PrismicPreview>
+                </PrismicProvider>
 
-                  <PrismicProvider internalLinkComponent={InternalLinkComponent}>
-                    <PrismicPreview repositoryName={repositoryName}>
-                      <Component {...pageProps} />
-                    </PrismicPreview>
-                  </PrismicProvider>
-
-                  <Footer pageProps={pageProps} />
-                </Fragment>
-              </ConnectionProvider>
-            </AuthProvider>
-          </ChakraProvider>
-        </CacheProvider>
+                <Footer pageProps={pageProps} />
+              </Fragment>
+            </ConnectionProvider>
+          </AuthProvider>
+        </ChakraProvider>
       </Provider>
       <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
     </QueryClientProvider>
