@@ -50,6 +50,8 @@ function DesktopItem({ item, readSyllabus }) {
   const iconColor = hexColor.black;
   const borderSize = useColorModeValue(1, 2);
   const backgroundOfLine = useColorModeValue('gray.300', 'gray.700');
+  const prismicRef = process.env.PRISMIC_REF;
+  const prismicApi = process.env.PRISMIC_API;
 
   const getColorLink = (link) => {
     if (router?.pathname === link || router.asPath === link || router?.pathname.includes(link)) {
@@ -76,6 +78,10 @@ function DesktopItem({ item, readSyllabus }) {
     }
     return l;
   });
+
+  if (item.slug === 'social-and-live-learning' && !prismicRef && !prismicApi) {
+    return null;
+  }
 
   return (
     <StyledBox
@@ -332,6 +338,7 @@ DesktopItem.propTypes = {
     icon: PropTypes.string,
     description: PropTypes.string,
     subMenu: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+    slug: PropTypes.string,
   }).isRequired,
   readSyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };

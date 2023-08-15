@@ -15,10 +15,12 @@ import { setStorageItem } from '../../utils';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import { SILENT_CODE } from '../../lib/types';
 import bc from '../services/breathecode';
+import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
 
 function ShowOnSignUp({ headContent, title, description, childrenDescription, subContent, readOnly, children, hideForm, hideSwitchUser, ...rest }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
+  const { handleSubscribeToPlan, successModal } = useSubscribeToPlan();
   const { backgroundColor, featuredColor } = useStyle();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
@@ -69,14 +71,16 @@ function ShowOnSignUp({ headContent, title, description, childrenDescription, su
     setStorageItem('subscriptionId', data?.id);
 
     if (data?.access_token) {
-      setStorageItem('redirect-after-register', router?.asPath);
-      setVerifyEmailProps({
-        data: {
-          ...allValues,
-          ...data,
-        },
-        state: true,
-      });
+      handleSubscribeToPlan({ slug: '4geeks-standard', accessToken: data?.access_token })
+        .finally(() => {
+          setVerifyEmailProps({
+            data: {
+              ...allValues,
+              ...data,
+            },
+            state: true,
+          });
+        });
       router.push({
         query: {
           ...router.query,
@@ -250,6 +254,8 @@ function ShowOnSignUp({ headContent, title, description, childrenDescription, su
         handlerText={t('common:login')}
       />
 
+      {successModal}
+
       <ModalInfo
         headerStyles={{ textAlign: 'center' }}
         title={t('signup:alert-message.validate-email-title')}
@@ -298,12 +304,6 @@ function ShowOnSignUp({ headContent, title, description, childrenDescription, su
           setVerifyEmailProps({
             ...verifyEmailProps,
             state: false,
-          });
-          router.push({
-            pathname: '/checkout',
-            query: {
-              plan: '4geeks-standard',
-            },
           });
         }}
       />
