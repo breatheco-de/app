@@ -45,6 +45,7 @@ import GridContainer from '../../../common/components/GridContainer';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import useStyle from '../../../common/hooks/useStyle';
+import { parseQuerys } from '../../../utils/url';
 import { cleanObject } from '../../../utils';
 import { parseQuerys } from '../../../utils/url';
 

@@ -19,8 +19,8 @@ import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import redirectsFromApi from '../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
-import { unSlugifyCapitalize, cleanObject } from '../../utils/index';
 import { parseQuerys } from '../../utils/url';
+import { cleanObject, unSlugifyCapitalize } from '../../utils/index';
 
 export const getStaticPaths = async ({ locales }) => {
   const querys = parseQuerys({
