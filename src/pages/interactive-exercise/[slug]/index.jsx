@@ -47,6 +47,7 @@ import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import useStyle from '../../../common/hooks/useStyle';
 import { parseQuerys } from '../../../utils/url';
 import { cleanObject } from '../../../utils';
+import { parseQuerys } from '../../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
   const querys = parseQuerys({

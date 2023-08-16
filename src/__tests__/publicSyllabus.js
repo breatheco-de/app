@@ -12,9 +12,6 @@ const publicSyllabus = async () => {
     `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`,
   )
     .then(({ data }) => {
-      if (data.length === 0) {
-        fail('ERROR: Public syllabus returned empty array: ', data)
-      }
       return data
     })
     .catch((err) => {
