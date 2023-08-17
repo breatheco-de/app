@@ -23,6 +23,17 @@ export default Page;
 
 export async function getStaticProps({ locale, locales, previewData }) {
   const client = createClient({ previewData });
+  const prismicRef = process.env.PRISMIC_REF;
+  const prismicApi = process.env.PRISMIC_API;
+
+  if (!prismicRef && !prismicApi) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/login',
+      },
+    };
+  }
 
   const languages = {
     en: 'en-us',

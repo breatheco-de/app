@@ -16,6 +16,7 @@ import GridContainer from '../../common/components/GridContainer';
 import { getQueryString } from '../../utils';
 import PaginatedView from '../../common/components/PaginationView';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
+import { parseQuerys } from '../../utils/url';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'projects');
@@ -24,8 +25,15 @@ export const getStaticProps = async ({ locale, locales }) => {
   const currentLang = locale === 'en' ? 'us' : 'es';
   const projects = []; // filtered projects after removing repeated
   let arrProjects = []; // incoming projects
+  const querys = parseQuerys({
+    asset_type: 'PROJECT',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    academy: process.env.WHITE_LABLE_ACADEMY || '4,5,6,47',
+    limit: 2000,
+  });
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=PROJECT&visibility=PUBLIC&status=PUBLISHED&limit=2000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
 
   arrProjects = Object.values(data.results);

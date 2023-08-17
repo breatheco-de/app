@@ -5,6 +5,8 @@
     "keywords": ["4Geeks registro", "Inscripción"],
     "image": "{{domain}}/static/images/4geeks.png"
   },
+  "welcome-to": "Bienvenido a:",
+  "continue-learning": "Seguir aprendiendo",
   "subscriptions": "Suscripciones",
   "go-back": "Volver",
   "next-step": "Siguiente paso",
@@ -51,6 +53,7 @@
   "one_payment": "Pago único",
   "many_months_payment": "{{qty}} pagos mensuales",
   "info": {
+    "this-plan-includes": "Este plan incluye",
     "will-pay-monthly": "Pagará ${{price}} dólares {{qty_months}} veces, por un total de ${{total_amount}}. El primer pago será hoy y el próximo el {{next_month}}.",
     "will-pay-month": "Pagará ${{price}} dólares {{qty_months}} veces, por un total de ${{total_amount}}.",
     "will-pay-now": "Pagará ${{price} ahora mismo, no se aplicarán otros cargos en el futuro.",

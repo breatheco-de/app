@@ -74,7 +74,7 @@ function Content() {
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
     cohortSession, sortedAssignments, getCohortAssignments, getCohortData, prepareTasks,
-    taskTodo,
+    taskTodo, setTaskTodo,
   } = useHandler();
   const { featuredLight, fontColor, borderColor } = useStyle();
 
@@ -153,6 +153,20 @@ function Content() {
       choose,
     });
   }, []);
+
+  useEffect(() => {
+    if (currentTask && !currentTask.opened_at) {
+      bc.todo().update({ ...currentTask, opened_at: new Date() })
+        .then((result) => {
+          if (result.data) {
+            const updateTasks = taskTodo;
+            const index = updateTasks.findIndex((el) => el.task_type === assetTypeValues[lesson] && el.associated_slug === lessonSlug);
+            updateTasks[index].opened_at = result.data.opened_at;
+            setTaskTodo([...updateTasks]);
+          }
+        }).catch((e) => console.log(e));
+    }
+  }, [currentTask]);
 
   useEffect(() => {
     if (taskTodo.length > 0) {

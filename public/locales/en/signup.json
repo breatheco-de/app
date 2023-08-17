@@ -5,6 +5,8 @@
     "keywords": ["4Geeks signup", "Signup"],
     "image": "{{domain}}/static/images/4geeks.png"
   },
+  "welcome-to": "Welcome to:",
+  "continue-learning": "Continue learning",
   "subscriptions": "Subscriptions",
   "go-back": "Go back",
   "next-step": "Next step",
@@ -51,6 +53,7 @@
   "one_payment": "One payment",
   "many_months_payment": "{{qty}} months payment",
   "info": {
+    "this-plan-includes": "This plan includes",
     "will-pay-monthly": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}. The first payment will be today and the next one on {{next_month}}.",
     "will-pay-month": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}.",
     "will-pay-now" : "You will pay ${{price} right now, no other charges apply in the future.",
