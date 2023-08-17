@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
@@ -40,7 +40,6 @@ display: none;
 
 function DesktopItem({ item, readSyllabus }) {
   const router = useRouter();
-  const [popoverOpen, setPopoverOpen] = useState(false);
   const { borderColor, hexColor } = useStyle();
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
   const popoverBorderColor = useColorModeValue('gray.250', 'gray.dark');
@@ -113,7 +112,6 @@ function DesktopItem({ item, readSyllabus }) {
               textDecoration: 'none',
               color: 'blue.default',
             }}
-            onClick={() => setPopoverOpen(!popoverOpen)}
           >
             {item.label}
             {item?.subMenu?.length > 0 && (
