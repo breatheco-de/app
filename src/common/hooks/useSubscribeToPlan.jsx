@@ -64,6 +64,9 @@ const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose
                           isClosable: true,
                         });
                       });
+                  })
+                  .catch(() => {
+                    reject();
                   });
               }
             });
