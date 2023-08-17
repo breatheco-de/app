@@ -7,6 +7,7 @@ import Text from '../../../common/components/Text';
 import { toCapitalize } from '../../../utils';
 import Heading from '../../../common/components/Heading';
 import ProjectList from '../../../js_modules/projects/ProjectList';
+import { parseQuerys } from '../../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000`, {
@@ -16,14 +17,14 @@ export const getStaticPaths = async ({ locales }) => {
       Academy: 4,
     },
   });
-  const data = await resp.json();
+  const data = resp?.status > 400 ? {} : await resp?.json();
 
-  const paths = data.results.flatMap((res) => locales.map((locale) => ({
+  const paths = data?.results?.length > 0 ? data?.results?.flatMap((res) => locales.map((locale) => ({
     params: {
       technology: res.slug,
     },
     locale,
-  })));
+  }))) : [];
 
   return {
     fallback: false,
@@ -45,14 +46,19 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const techs = await responseTechs.json(); // array of objects
   const technologyData = techs.results.find((tech) => tech.slug === technology);
 
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=exercise&limit=1000`);
+  const qs = parseQuerys({
+    asset_type: 'EXERCISE',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    limit: 1000,
+    technologies: technology,
+  });
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${qs}`);
   const exercises = await response.json();
 
-  const dataFiltered = exercises.results.filter(
-    (l) => technologyData.assets.some((a) => a === l.slug),
-  );
+  const dataFiltered = exercises?.results;
 
-  if (response.status >= 400 || response.status_code >= 400
+  if (responseTechs.status >= 400 || response.status >= 400 || response.status_code >= 400
     || !technologyData || dataFiltered.length === 0) {
     return {
       notFound: true,
@@ -86,7 +92,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   };
 };
 
-const ExercisesByTechnology = ({ exercises, technologyData }) => {
+function ExercisesByTechnology({ exercises, technologyData }) {
   const { t } = useTranslation('exercises');
 
   // const translations = exercises?.translations || { es: '', en: '', us: '' };
@@ -108,11 +114,11 @@ const ExercisesByTechnology = ({ exercises, technologyData }) => {
         fontWeight="700"
         paddingBottom="6px"
       >
-        {t('landing-technology.title', { technology: toCapitalize(technologyData.title) })}
+        {t('landing-technology.title', { technology: toCapitalize(technologyData?.title) })}
       </Text>
       <Box flex="1" pb="2rem">
         <Heading as="span" size="xl">
-          {t('landing-technology.subTitle', { technology: toCapitalize(technologyData.title) })}
+          {t('landing-technology.subTitle', { technology: toCapitalize(technologyData?.title) })}
         </Heading>
 
         <Text
@@ -127,20 +133,23 @@ const ExercisesByTechnology = ({ exercises, technologyData }) => {
         </Text>
       </Box>
 
-      <ProjectList
-        projects={exercises}
-        // withoutImage
-        // isLoading={isLoading}
-        // contextFilter={}
-        projectPath="interactive-exercise"
-      />
+      {exercises?.length > 0 && (
+        <ProjectList
+          projects={exercises}
+          // withoutImage
+          // isLoading={isLoading}
+          // contextFilter={}
+          projectPath="interactive-exercise"
+          notFoundMessage={t('common:asset-not-found-in-current-language')}
+        />
+      )}
     </Box>
   );
-};
+}
 
 ExercisesByTechnology.propTypes = {
-  exercises: PropTypes.arrayOf(PropTypes.object).isRequired,
-  technologyData: PropTypes.objectOf(PropTypes.any).isRequired,
+  exercises: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
+  technologyData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 export default ExercisesByTechnology;

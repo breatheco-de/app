@@ -18,13 +18,14 @@ import {
 import { useRouter } from 'next/router';
 import Icon from '../Icon';
 import Text from '../Text';
+import { isWindow } from '../../../utils';
 import TechnologiesSection from './technologies';
 import DifficultySection from './difficulty';
 import useStyle from '../../hooks/useStyle';
 
-const FilterModal = ({
+function FilterModal({
   title, isModalOpen, onClose, setFilter, contextFilter, technologyTags, difficulties,
-}) => {
+}) {
   const { t } = useTranslation('common');
   const [checkedTechnologies, setCheckedTechnologies] = useState([]);
   const [withVideo, setWithVideo] = useState(false);
@@ -51,11 +52,26 @@ const FilterModal = ({
     }
   }, [router.query.withVideo]);
 
+  // const getDifficultyPosition = (difficulty) => {
+  //   if (difficulty === 'beginner' || difficulty === 'easy') {
+  //     return 0;
+  //   }
+  //   if (difficulty === 'intermediate') {
+  //     return 1;
+  //   }
+  //   if (difficulty === 'hard') {
+  //     return 2;
+  //   }
+  //   return 0;
+  // };
+
   const handleToggle = () => setShow(!show);
 
+  const newDifficulties = ['junior', 'mid-level', 'senior'];
   const currentDifficultyPosition = router.query.difficulty || difficultyPosition;
+
   const handleSubmit = () => {
-    const difficulty = difficulties[difficultyPosition] || '';
+    const difficulty = newDifficulties[difficultyPosition] || '';
     const techs = checkedTechnologies.join(',') || '';
     onClose();
     router.push({
@@ -137,17 +153,19 @@ const FilterModal = ({
             />
 
             {/* <------------------- Difficulty section -------------------> */}
-            <DifficultySection
-              t={t}
-              title={t('difficulties')}
-              setFilter={setFilter}
-              contextFilter={contextFilter}
-              setDifficultyPosition={setDifficultyPosition}
-              difficulties={difficulties}
-              commonTextColor={lightColor}
-              difficultyPosition={difficultyPosition}
-              commonBorderColor={borderColor}
-            />
+            {isWindow && !window.location.pathname.includes('/lessons') && (
+              <DifficultySection
+                t={t}
+                title={t('difficulties')}
+                setFilter={setFilter}
+                contextFilter={contextFilter}
+                setDifficultyPosition={setDifficultyPosition}
+                difficulties={difficulties}
+                commonTextColor={lightColor}
+                difficultyPosition={difficultyPosition}
+                commonBorderColor={borderColor}
+              />
+            )}
 
             <Flex flexDirection="row" justifyContent="space-between">
               <Text fontSize="1rem" fontWeight="bold" textTransform="uppercase" color={lightColor} padding="20px 0">
@@ -195,7 +213,7 @@ const FilterModal = ({
             fontSize="13px"
             textTransform="uppercase"
             variant="default"
-            disabled={fLength <= 0}
+            isDisabled={fLength <= 0}
             onClick={() => handleSubmit()}
             rightIcon={<Icon icon="longArrowRight" width="15px" color={fLength <= 0 ? '#3A3A3A' : '#FFFFFF'} />}
           >
@@ -205,13 +223,13 @@ const FilterModal = ({
       </ModalContent>
     </Modal>
   );
-};
+}
 
 FilterModal.propTypes = {
   title: PropTypes.string,
   setFilter: PropTypes.func.isRequired,
-  contextFilter: PropTypes.objectOf(PropTypes.any).isRequired,
-  technologyTags: PropTypes.arrayOf(PropTypes.string),
+  contextFilter: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  technologyTags: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   difficulties: PropTypes.arrayOf(PropTypes.string),
   isModalOpen: PropTypes.bool,
   onClose: PropTypes.func,

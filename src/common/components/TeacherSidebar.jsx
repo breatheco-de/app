@@ -11,17 +11,19 @@ import Icon from './Icon';
 import Text from './Text';
 import AttendanceModal from './AttendanceModal';
 import { usePersistent } from '../hooks/usePersistent';
-import { isWindow, getStorageItem } from '../../utils';
+import { isWindow } from '../../utils';
 
-const ItemText = ({ text }) => (
-  <Text display="flex" whiteSpace="pre-wrap" textAlign="left" textTransform="uppercase" size="12px" color={useColorModeValue('black', 'white')}>
-    {text}
-  </Text>
-);
+function ItemText({ text }) {
+  return (
+    <Text display="flex" whiteSpace="pre-wrap" textAlign="left" textTransform="uppercase" size="12px" color={useColorModeValue('black', 'white')}>
+      {text}
+    </Text>
+  );
+}
 
-const ItemButton = ({
+function ItemButton({
   children, actionHandler,
-}) => {
+}) {
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   return (
     <Button
@@ -45,19 +47,20 @@ const ItemButton = ({
       {children}
     </Button>
   );
-};
+}
 
-const TeacherSidebar = ({
+function TeacherSidebar({
   title, user, students, width, sortedAssignments, currentCohortProps, setCurrentCohortProps,
-}) => {
+}) {
   const { t } = useTranslation('dashboard');
   const { colorMode } = useColorMode();
   const [openAttendance, setOpenAttendance] = useState(false);
   const [cohortSession] = usePersistent('cohortSession', {});
-  const accessToken = getStorageItem('accessToken');
+  // const accessToken = getStorageItem('accessToken');
   const router = useRouter();
+  const { cohortSlug } = router.query;
 
-  const { slug, academy } = cohortSession;
+  // const { slug, academy } = cohortSession;
 
   const todayIs = {
     en: format(new Date(), "'Today is' do 'of' MMMM"),
@@ -104,9 +107,7 @@ const TeacherSidebar = ({
           {cohortSession.ending_date && (
             <ItemButton
               actionHandler={() => {
-                if (cohortSession.bc_id && isWindow) {
-                  window.open(`https://attendance.breatheco.de/?cohort_slug=${slug}&teacher=${cohortSession.bc_id}&token=${accessToken}&academy=${academy.id}`, '_blank');
-                }
+                window.open(`/cohort/${cohortSlug}/attendance`, '_blank');
               }}
             >
               <ItemText text={t('teacher-sidebar.review-attendancy')} />
@@ -119,9 +120,7 @@ const TeacherSidebar = ({
           {/* Assignments */}
           <ItemButton
             actionHandler={() => {
-              if (cohortSession.bc_id && isWindow) {
-                window.open(`${window.location.pathname}/assignments`, '_blank');
-              }
+              window.open(`/cohort/${cohortSlug}/assignments?academy=${cohortSession?.academy?.id}`, '_blank');
             }}
           >
             <ItemText text={t('teacher-sidebar.assignments')} />
@@ -155,30 +154,32 @@ const TeacherSidebar = ({
           </ItemButton> */}
         </Box>
 
-        <AttendanceModal
-          isOpen={openAttendance}
-          students={students}
-          sortedAssignments={sortedAssignments}
-          onClose={() => setOpenAttendance(false)}
-          title={t('attendance-modal.start-today-class')}
-          // title="Start your today's class"
-          currentCohortProps={currentCohortProps}
-          setCurrentCohortProps={setCurrentCohortProps}
-          message={greetings[router.locale]}
-          width="100%"
-        />
+        {openAttendance && (
+          <AttendanceModal
+            isOpen={openAttendance}
+            students={students}
+            sortedAssignments={sortedAssignments}
+            onClose={() => setOpenAttendance(false)}
+            title={t('attendance-modal.start-today-class')}
+            // title="Start your today's class"
+            currentCohortProps={currentCohortProps}
+            setCurrentCohortProps={setCurrentCohortProps}
+            message={greetings[router.locale]}
+            width="100%"
+          />
+        )}
       </Box>
     </Box>
   );
-};
+}
 
 TeacherSidebar.propTypes = {
   title: PropTypes.string,
-  user: PropTypes.objectOf(PropTypes.any),
-  students: PropTypes.arrayOf(PropTypes.any),
+  user: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  students: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   width: PropTypes.string,
-  sortedAssignments: PropTypes.arrayOf(PropTypes.object),
-  currentCohortProps: PropTypes.objectOf(PropTypes.any),
+  sortedAssignments: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
+  currentCohortProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   setCurrentCohortProps: PropTypes.func,
 };
 

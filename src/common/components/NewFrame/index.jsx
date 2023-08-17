@@ -2,9 +2,9 @@ import { memo } from 'react';
 import PropTypes from 'prop-types';
 import loadable from '@loadable/component';
 
-const NewFrame = ({
+function NewFrame({
   src, style, width, height, title, id,
-}) => {
+}) {
   if (typeof window === 'undefined' || !window) return '';
 
   const Iframe = loadable(() => import('./Iframe'), {
@@ -21,12 +21,12 @@ const NewFrame = ({
       title={title}
     />
   );
-};
+}
 
 NewFrame.propTypes = {
   src: PropTypes.string.isRequired,
   id: PropTypes.string,
-  style: PropTypes.objectOf(PropTypes.any),
+  style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   width: PropTypes.string,
   height: PropTypes.string,
   title: PropTypes.string,

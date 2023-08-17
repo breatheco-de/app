@@ -7,6 +7,8 @@
   "moduleMap": "Module map",
   "progressText": "progress in the program",
   "whiteLabeledText": "This course is brought to you thanks to our parnership with this university",
+  "free-trial-msg": "You are currently on a free trial, some features might be limited. <a class='black-link' href='{{link}}'>Upgrade your plan</a> to have unlimited access!",
+  "intro-video-title": "Welcome to coding introduction",
   "modules": {
     "target-blank-title": "Open in new window",
     "target-blank-msg": "\"{{title}}\" will open the following URL on a new window",
@@ -14,11 +16,11 @@
     "show-pending-tasks": "Show only Pending Tasks",
     "activitiesLength": "{{count}} Activities",
     "newActivities": {
-      "title": "Ey! There are {{tasksLength}} new activities on this day",
+      "title": "Hey! There are {{tasksLength}} new activities on this day",
       "handler-text": "Sync now"
     },
     "start-message": "You have not started this module",
-    "no-activities": "No activities for this modules",
+    "no-activities": "The module doesn't have any lessons, exercises or projects",
     "start-module": "Start module"
   },
   "callToAction": {
@@ -52,11 +54,16 @@
     "no-mentor-link": "No link to create session with this mentor",
     "search-mentor": "Search mentor by name",
     "start-mentorship": "To get started, select a mentorship type",
-    "mentoring": "Mentoring",
+    "mentoring": "Schedule a 1-1 mentoring session.",
     "select-type": "Select a type of mentorship",
     "mentoring-available": "Avalible mentorships",
     "no-mentoring-available": "You have no mentorships available.",
     "create-session-text": "Book now",
+    "learn-more": "Learn more.",
+    "learn-more-link": "https://4geeks.com/mentorships",
+    "get-more-mentorships": "Get more mentorships",
+    "schedule-button": "Schedule a mentoring session",
+    "mentors-available": "+{{count}} Mentors available",
     "actionButtons": [
       {
         "name": "mentoring",
@@ -72,6 +79,13 @@
       }
     ]
   },
+  "mentorship": {
+    "no-mentorship": "You have ran out of mentorships, but don't worry, you can get more in a few clicks.",
+    "get-unlimited-mentorship": "and get unlimited mentorship",
+    "you-have": "You have",
+    "available-sessions": "available sessions",
+    "tooltip": "Mentorships reload every week"
+  },
   "deliverProject": {
     "title": "Deliver assignment",
     "how-to-deliver": "How to deliver projects",
@@ -83,7 +97,8 @@
     "error-file-size": "File size must be less than 10mb.",
     "total-size": "Total size {{size}}",
     "invalid-url": "Invalid URL, expected link must contain: {{url}}",
-    "url-is-required": "URL is required"
+    "url-is-required": "URL is required",
+    "no-delivery-needed": "To deliver this assignment you are not required to upload or specify anything, just click on the button below \"Deliver assignment\" and it will be considered done."
   },
   "modalInfo": {
     "title": "Review status",
@@ -96,7 +111,7 @@
       "remove-delivery": "Remove delivery",
       "resubmit-assignment": "Resubmit assignment"
     },
-    "link-info": "",
+    "link-info": "Sent to teacher:",
     "remove-delivery": "Remove delivery",
     "non-github-url": {
       "title": "non-github URL detected",
@@ -108,7 +123,7 @@
   "warningModal" : {
     "title": "sincronize with github",
     "sub-title": "Your Github account is not connected",
-    "text": "Only by conecting your Github account you will be able to get unlimited Gitpod hours",
+    "text": "Current 4Geeks Academy students with a connected Github account are able to get unlimited Codespaces hours",
     "connect": "CONNECT WITH GITHUB",
     "skip": "Skip for now"
   },
@@ -131,10 +146,13 @@
     "day": "Day",
     "module": "Module",
     "attendance-taken-table-message": "This information is displayed based on the last assistance issued on the selected day, with the date issued in UTC time.",
-    "list-attendance-title": "Attendance list taken ({{count}} results)",
-    "warn-premature-teaching": {
-      "title": "Premature module start",
-      "description": "Are you sure you want to start teaching <strong>{{module}}</strong>? The suggested duration for the previous module is in {{durationInDays}} days and you have <strong>only covered for {{day}} days.</strong>"
+    "attendance-already-taken": {
+      "title": "Modify attendance?",
+      "description": "The attendance for this day has already been taken. Are you sure you want to modify it?"
+    },
+    "warn-slower-teaching": {
+      "title": "Delayed module start",
+      "description": "Are you sure you want to start teaching <strong>{{module}}</strong>? You are about to teach the current module for {{repeated}} days and the suggested duration is {{expected}} days."
     }
   },
   "teacher-sidebar": {
@@ -142,6 +160,7 @@
     "take-attendancy": "Take attendancy",
     "review-attendancy": "Review attendancy",
     "assignments": "Assignments",
-    "teacher-tutorial": "Teacher tutorial"
+    "teacher-tutorial": "Teacher tutorial",
+    "no-instructions": ">:warning: No available instruction found for this module"
   }
 }

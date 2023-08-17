@@ -45,42 +45,48 @@ const MotionBox = motion(Box);
 const MotionButton = motion(Button);
 const MotionAvatar = motion(Avatar);
 
-const AnimatedButton = ({
+function AnimatedButton({
   children, onClick, toUppercase, rest,
-}) => (
-  <MotionButton whileHover={{ scale: 1.05 }} whileTap={{ scale: 1 }} variant="default" onClick={onClick} {...rest} fontSize="13px" m="25px 0" width="fit-content" letterSpacing="0.05em" textTransform={toUppercase ? 'uppercase' : ''}>
-    {children}
-  </MotionButton>
-);
-const AnimatedAvatar = ({
+}) {
+  return (
+    <MotionButton whileHover={{ scale: 1.05 }} whileTap={{ scale: 1 }} variant="default" onClick={onClick} {...rest} fontSize="13px" m="25px 0" width="fit-content" letterSpacing="0.05em" textTransform={toUppercase ? 'uppercase' : ''}>
+      {children}
+    </MotionButton>
+  );
+}
+function AnimatedAvatar({
   src, width, height, top, bottom, left, right, style, onClick,
-}) => (
-  <MotionAvatar whileHover={{ scale: 1.05 }} onClick={onClick} whileTap={{ scale: 0.95 }} src={src} width={width} height={height} style={{ ...style, userSelect: 'none' }} left={left} right={right} top={top} bottom={bottom} position="absolute" bg="transparent" zIndex={2} />
-);
+}) {
+  return <MotionAvatar whileHover={{ scale: 1.05 }} onClick={onClick} whileTap={{ scale: 0.95 }} src={src} width={width} height={height} style={{ ...style, userSelect: 'none' }} left={left} right={right} top={top} bottom={bottom} position="absolute" bg="transparent" zIndex={2} />;
+}
 
-const CustomTab = ({
+function CustomTab({
   children, onClick, top, bottom, left, right, style,
-}) => (
-  <Tab _selected={{ backgroundColor: 'blue.default', color: 'white' }} style={style} p="20px 0" width="178px" fontSize="15px" background="blue.light" color="blue.default" onClick={onClick} textTransform="uppercase" position="absolute" left={left} right={right} top={top} bottom={bottom} borderRadius="22px" fontWeight="700">
-    {children}
-  </Tab>
-);
+}) {
+  return (
+    <Tab _selected={{ backgroundColor: 'blue.default', color: 'white' }} style={style} p="20px 0" width="178px" fontSize="15px" background="blue.light" color="blue.default" onClick={onClick} textTransform="uppercase" position="absolute" left={left} right={right} top={top} bottom={bottom} borderRadius="22px" fontWeight="700">
+      {children}
+    </Tab>
+  );
+}
 
-const ShadowCard = ({ data, style, ...rest }) => (
-  <Box position="absolute" boxShadow="lg" {...rest} style={style} display="flex" flexDirection="column" borderRadius="8px" background="white" zIndex={0}>
-    <Box color="black" fontSize="15px" fontWeight="900" textAlign="center">
-      {`${data.firstName} ${data.lastName}`}
+function ShadowCard({ data, style, ...rest }) {
+  return (
+    <Box position="absolute" boxShadow="lg" {...rest} style={style} display="flex" flexDirection="column" borderRadius="8px" background="white" zIndex={0}>
+      <Box color="black" fontSize="15px" fontWeight="900" textAlign="center">
+        {`${data.firstName} ${data.lastName}`}
+      </Box>
+      <Box color="black" fontSize="15px" fontWeight="400" textAlign="center" letterSpacing="0.05em">
+        {data.workPosition || 'Ceo @ Globant'}
+      </Box>
+      <Link href="#schedule" variant="default" fontSize="15px" fontWeight="700" letterSpacing="0.05em" textAlign="center">
+        Schedule a mentoring session
+      </Link>
     </Box>
-    <Box color="black" fontSize="15px" fontWeight="400" textAlign="center" letterSpacing="0.05em">
-      {data.workPosition || 'Ceo @ Globant'}
-    </Box>
-    <Link href="#schedule" variant="default" fontSize="15px" fontWeight="700" letterSpacing="0.05em" textAlign="center">
-      Schedule a mentoring session
-    </Link>
-  </Box>
-);
+  );
+}
 
-const CodingIntroduction = ({ data }) => {
+function CodingIntroduction({ data }) {
   const featuredColors = useColorModeValue('featuredLight', 'featuredDark');
   const fadeOutBackground = useColorModeValue('#EEF9FE', '#718096');
   const colors = useColorModeValue('#000', '#fff');
@@ -497,10 +503,10 @@ const CodingIntroduction = ({ data }) => {
       </Box>
     </Box>
   );
-};
+}
 
 CodingIntroduction.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any).isRequired,
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 AnimatedButton.propTypes = {
   children: PropTypes.oneOfType([
@@ -509,7 +515,7 @@ AnimatedButton.propTypes = {
   ]).isRequired,
   key: PropTypes.string,
   toUppercase: PropTypes.bool,
-  rest: PropTypes.arrayOf(PropTypes.any),
+  rest: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   onClick: PropTypes.func,
 };
 AnimatedAvatar.propTypes = {
@@ -520,7 +526,7 @@ AnimatedAvatar.propTypes = {
   right: PropTypes.string,
   top: PropTypes.string,
   bottom: PropTypes.string,
-  style: PropTypes.objectOf(PropTypes.any),
+  style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   onClick: PropTypes.func,
 };
 CustomTab.propTypes = {
@@ -533,11 +539,11 @@ CustomTab.propTypes = {
   top: PropTypes.string,
   bottom: PropTypes.string,
   onClick: PropTypes.func,
-  style: PropTypes.objectOf(PropTypes.any),
+  style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 ShadowCard.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any),
-  style: PropTypes.objectOf(PropTypes.any),
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 CustomTab.defaultProps = {

@@ -1,14 +1,15 @@
 import PropTypes from 'prop-types';
 import {
-  Grid, Box, SkeletonText, Skeleton, useColorModeValue, SkeletonCircle,
+  Grid, Box, SkeletonText, Skeleton, useColorModeValue, SkeletonCircle, Flex, AvatarGroup,
 } from '@chakra-ui/react';
+import useStyle from '../hooks/useStyle';
 
-export const MDSkeleton = () => {
+export function MDSkeleton() {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
 
   return (
-    <Box padding="2" boxShadow="lg" bg={useColorModeValue('white', 'dark')}>
+    <Box padding="2" bg={useColorModeValue('white', 'dark')}>
       <SkeletonText
         startColor={commonStartColor}
         endColor={commonEndColor}
@@ -26,7 +27,7 @@ export const MDSkeleton = () => {
         noOfLines={4}
         spacing="4"
       />
-      <Box padding="6" marginY="8" borderRadius="8px" boxShadow="lg" bg="black">
+      <Box padding="6" marginY="8" borderRadius="8px" bg="black">
         <SkeletonText
           startColor={commonStartColor}
           endColor={commonEndColor}
@@ -43,7 +44,7 @@ export const MDSkeleton = () => {
         noOfLines={4}
         spacing="4"
       />
-      <Box padding="6" marginY="8" borderRadius="8px" boxShadow="lg" bg="black">
+      <Box padding="6" marginY="8" borderRadius="8px" bg="black">
         <SkeletonText
           startColor={commonStartColor}
           endColor={commonEndColor}
@@ -72,14 +73,14 @@ export const MDSkeleton = () => {
       />
     </Box>
   );
-};
+}
 
-export const ModuleMapSkeleton = () => {
+export function ModuleMapSkeleton() {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
 
   return (
-    <Box padding="2" boxShadow="lg" bg={useColorModeValue('white', 'dark')}>
+    <Box padding="2" bg={useColorModeValue('white', 'dark')}>
       <Skeleton
         startColor={commonStartColor}
         endColor={commonEndColor}
@@ -170,20 +171,20 @@ export const ModuleMapSkeleton = () => {
       />
     </Box>
   );
-};
+}
 
-export const CardSkeleton = ({
+export function CardSkeleton({
   withoutContainer, quantity, templateColumns, gridGap, cardWidth, cardHeight,
-  cardRadius, ...chakraProps
-}) => {
+  cardRadius, ...rest
+}) {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
 
   return !withoutContainer ? (
     <Grid
-      {...chakraProps}
       gridTemplateColumns={templateColumns}
       gridGap={gridGap}
+      {...rest}
     >
       {Array(quantity).fill('l').map((_, i) => {
         const index = i;
@@ -195,6 +196,8 @@ export const CardSkeleton = ({
             borderRadius={cardRadius}
             startColor={commonStartColor}
             endColor={commonEndColor}
+            opacity={1}
+            zIndex={2}
           />
         );
       })}
@@ -205,23 +208,73 @@ export const CardSkeleton = ({
         const index = i;
         return (
           <Skeleton
-            {...chakraProps}
             key={index}
             width={cardWidth}
             height={cardHeight}
             borderRadius={cardRadius}
             startColor={commonStartColor}
             endColor={commonEndColor}
+            {...rest}
           />
         );
       })}
     </>
   );
-};
+}
 
-export const AvatarSkeleton = ({
+export function DottedTimelineSkeleton() {
+  const commonStartColor = useColorModeValue('gray.300', 'gray.light');
+  const commonEndColor = useColorModeValue('gray.400', 'gray.400');
+  const { borderColor, backgroundColor2 } = useStyle();
+  return (
+    <Flex flexDirection="column" gridGap="20px">
+      {Array(3).fill('l').map((_, i) => {
+        const index = i;
+        return (
+          <Flex key={index} borderRadius="17px" flexDirection="column" gridGap="4px" width="100%" padding="20px 29px" border="1px solid" borderColor={borderColor} background={backgroundColor2}>
+            <Flex justifyContent="space-between" fontWeight={700}>
+              <Box display="flex" width="100%" alignItems="center" gridGap="10px">
+                <SkeletonCircle
+                  startColor={commonStartColor}
+                  endColor={commonEndColor}
+                  size="25px"
+                />
+                <Skeleton
+                  minHeight="14px"
+                  startColor={commonStartColor}
+                  endColor={commonEndColor}
+                  width="200px"
+                  color="white"
+                  borderRadius="17px"
+                />
+              </Box>
+              <Skeleton
+                startColor={commonStartColor}
+                endColor={commonEndColor}
+                width="15%"
+                height="14px"
+                color="white"
+                borderRadius="17px"
+              />
+            </Flex>
+            <Skeleton
+              mt="12px"
+              startColor={commonStartColor}
+              endColor={commonEndColor}
+              width="100%"
+              height="14px"
+              color="white"
+              borderRadius="17px"
+            />
+          </Flex>
+        );
+      })}
+    </Flex>
+  );
+}
+export function AvatarSkeleton({
   withText, quantity, templateColumns, gridAutoRows, gridGap, ...chakraProps
-}) => {
+}) {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
 
@@ -276,9 +329,34 @@ export const AvatarSkeleton = ({
       )}
     </>
   );
-};
+}
 
-export const SimpleSkeleton = ({ width, height, ...chakraProps }) => {
+export function AvatarSkeletonWrapped({
+  quantity, ...chakraProps
+}) {
+  const commonStartColor = useColorModeValue('gray.300', 'gray.light');
+  const commonEndColor = useColorModeValue('gray.400', 'gray.400');
+
+  const arrOfCircles = new Array(quantity).fill(['circles']);
+
+  return (
+    <AvatarGroup max={chakraProps?.max || 4} {...chakraProps}>
+      {arrOfCircles?.map((c, i) => {
+        const index = i;
+        return (
+          <SkeletonCircle
+            key={index}
+            startColor={commonStartColor}
+            endColor={commonEndColor}
+            size="10"
+          />
+        );
+      })}
+    </AvatarGroup>
+  );
+}
+
+export function SimpleSkeleton({ width, height, ...chakraProps }) {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
   return (
@@ -290,7 +368,7 @@ export const SimpleSkeleton = ({ width, height, ...chakraProps }) => {
       endColor={commonEndColor}
     />
   );
-};
+}
 
 CardSkeleton.propTypes = {
   withoutContainer: PropTypes.bool,
@@ -333,4 +411,10 @@ AvatarSkeleton.defaultProps = {
   templateColumns: 'repeat(auto-fill, minmax(3.5rem, 1fr))',
   gridAutoRows: '3.4rem',
   gridGap: 0,
+};
+AvatarSkeletonWrapped.propTypes = {
+  quantity: PropTypes.number,
+};
+AvatarSkeletonWrapped.defaultProps = {
+  quantity: 3,
 };

@@ -11,10 +11,10 @@ import { usePersistent } from './usePersistent';
 function useHandler() {
   const router = useRouter();
   const { t } = useTranslation('dashboard');
-  const [, setSyllabus] = usePersistent('syllabus', []);
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
+  const [taskTodoState, setTaskTodoState] = useState([]);
   const [taskCohortNull, setTaskCohortNull] = useState([]);
   const toast = useToast();
 
@@ -36,7 +36,6 @@ function useHandler() {
       ]).then((
         [taskTodoData, programData, userRoles],
       ) => {
-        const moduleData = programData.data.json?.days || programData.data.json?.modules;
         const technologiesArray = programData.data.main_technologies
           ? programData.data.main_technologies.split(',').map((el) => el.trim())
           : [];
@@ -48,13 +47,13 @@ function useHandler() {
           bc_id: user.id,
           user_capabilities: userRoles.data.capabilities,
         });
-        setSyllabus(moduleData);
         setContextState({
           taskTodo: taskTodoData.data,
           cohortProgram: programData.data,
         });
       }).catch((err) => {
         toast({
+          position: 'top',
           title: t('alert-message:error-fetching-role', { role: currentAcademy?.role }),
           description: err.message,
           status: 'error',
@@ -75,9 +74,9 @@ function useHandler() {
         const { cohorts } = data;
         // find cohort with current slug
         const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
-        const currentCohort = findCohort.cohort;
+        const currentCohort = findCohort?.cohort;
         const { version, name } = currentCohort.syllabus_version;
-        if (!cohortSession.academy.id) {
+        if (!cohortSession?.academy?.id) {
           router.push('/choose-program');
         }
 
@@ -86,6 +85,12 @@ function useHandler() {
           ...currentCohort,
           date_joined: data.date_joined,
           cohort_role: findCohort.role,
+          cohort_user: {
+            created_at: findCohort?.created_at,
+            educational_status: findCohort?.educational_status,
+            finantial_status: findCohort?.finantial_status,
+            role: findCohort?.role,
+          },
         });
         choose({
           cohort_slug: cohortSlug,
@@ -102,6 +107,7 @@ function useHandler() {
       }).catch((error) => {
         router.push('/choose-program');
         toast({
+          position: 'top',
           title: t('alert-message:invalid-cohort-slug'),
           // title: 'Invalid cohort slug',
           status: 'error',
@@ -127,6 +133,7 @@ function useHandler() {
 
     if (contextState.cohortProgram.json && contextState.taskTodo) {
       setTaskTodo(contextState.taskTodo);
+      setTaskTodoState(contextState.taskTodo);
       cohort.map((assignment) => {
         const {
           id, label, description, lessons, replits, assignments, quizzes,
@@ -148,11 +155,12 @@ function useHandler() {
             label,
             description,
             modules,
+            exists_activities: modules?.length > 0,
             filteredModules,
-            filteredModulesByPending,
+            filteredModulesByPending: modules?.length > 0 ? filteredModulesByPending : null,
             duration_in_days: assignment?.duration_in_days || null,
             teacherInstructions: assignment.teacher_instructions,
-            extendedInstructions: assignment.extended_instructions,
+            extendedInstructions: assignment.extended_instructions || `${t('teacher-sidebar.no-instructions')}`,
             keyConcepts: assignment['key-concepts'],
           };
 
@@ -168,10 +176,10 @@ function useHandler() {
             });
           }
 
-          const filterEmptyModules = assignmentsRecopilated.filter(
+          const filterNotEmptyModules = assignmentsRecopilated.filter(
             (l) => l.modules.length > 0,
           );
-          return setSortedAssignments(filterEmptyModules);
+          return setSortedAssignments(filterNotEmptyModules);
         }
         return null;
       });
@@ -226,10 +234,10 @@ function useHandler() {
     getCohortData,
     prepareTasks,
     getDailyModuleData,
-    setSyllabus,
     getMandatoryProjects,
     getTasksWithoutCohort,
     taskTodo,
+    taskTodoState,
   };
 }
 

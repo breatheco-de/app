@@ -1,8 +1,22 @@
 # 4Geeks Developers Community
 
-## Getting Started
+## Getting Started.
 
-First, run the development server:
+Install node:
+
+```bash
+nvm install 18
+# then
+nvm use 18 
+```
+
+Install packages:
+
+```bash
+npm install --legacy-peer-deps
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
@@ -38,7 +52,6 @@ npm run lint:files
 
 ## Fix lint errors
 npm run lint:fix
-
 
 <!-- lista con pages si es privada o no -->
 <!-- hacer un archivo json con toods las paginas (no getStaticProps) -->

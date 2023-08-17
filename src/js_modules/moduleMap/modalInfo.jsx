@@ -13,12 +13,14 @@ import MarkDownParser from '../../common/components/MarkDownParser';
 import Icon from '../../common/components/Icon';
 import iconDict from '../../common/utils/iconDict.json';
 
-const ModalInfo = ({
+function ModalInfo({
   isOpen, onClose, actionHandler, rejectHandler, forceHandler, disableHandler, title, description,
   teacherFeedback, linkInfo, linkText, link, handlerText, closeText, cancelColorButton,
   handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
-  htmlDescription, markdownDescription, attachment,
-}) => {
+  htmlDescription, markdownDescription, attachment, disableInput, descriptionStyle, footerStyle,
+  closeButtonStyles, buttonHandlerStyles, headerStyles, disableCloseButton, childrenDescription,
+  maxWidth, forceHandlerAndClose,
+}) {
   const { t } = useTranslation('dashboard');
   const [githubUrl, setGithubUrl] = useState(link);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,7 +32,7 @@ const ModalInfo = ({
   const commonHighlightColor = useColorModeValue('gray.250', 'darkTheme');
 
   const rejectFunction = () => {
-    if (forceHandler) {
+    if (forceHandler && !forceHandlerAndClose) {
       setConfirmRejection(true);
     } else {
       onClose();
@@ -56,11 +58,13 @@ const ModalInfo = ({
     <>
       <Modal closeOnOverlayClick={!forceHandler} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent>
+        {/* md */}
+        <ModalContent maxWidth={maxWidth || 'md'} borderRadius="6px" style={{ marginTop: '2rem' }}>
           <ModalHeader
             borderBottom={1}
             borderStyle="solid"
             borderColor={commonBorderColor}
+            {...headerStyles}
           >
             {title}
           </ModalHeader>
@@ -73,6 +77,7 @@ const ModalInfo = ({
                 fontWeight="400"
                 color={commonTextColor}
                 margin="10px 0 0 0"
+                {...descriptionStyle}
               >
                 {description}
               </Text>
@@ -106,6 +111,7 @@ const ModalInfo = ({
                 }}
               />
             )}
+            {childrenDescription && childrenDescription}
             {teacherFeedback && (
               <Box margin="15px 0 0 0" padding="12px 16px" background={commonHighlightColor} display="flex" flexDirection="column" gridGap="0px">
                 <Text size="l" fontWeight="700" color={useColorModeValue('gray.800', 'gray.light')}>
@@ -162,7 +168,7 @@ const ModalInfo = ({
               </Box>
             ) : (
               <>
-                {!disableHandler && link && !linkText ? (
+                {!disableInput && !disableHandler && link && (
                   <Box padding="18px 0 0 0">
                     <Formik
                       initialValues={{ githubUrl: link }}
@@ -214,12 +220,19 @@ const ModalInfo = ({
                     </Formik>
 
                   </Box>
-                ) : linkInfo && (
-                  <Box padding="20px 0">
+                )}
+
+                {disableInput && (linkText || link) && (
+                  <Box padding="18px 0 0 0">
                     <Text size="l" fontWeight="bold" color={commonTextColor}>
                       {linkInfo}
                     </Text>
-                    <Link href={link} color={useColorModeValue('blue.default', 'blue.300')} target="_blank" rel="noopener noreferrer">
+                    <Link
+                      href={link}
+                      color={useColorModeValue('blue.default', 'blue.300')}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       {linkText || link}
                     </Link>
                   </Box>
@@ -228,10 +241,10 @@ const ModalInfo = ({
             )}
           </ModalBody>
 
-          {!disableHandler && (
-            <ModalFooter justifyContent="space-evenly">
-              {type === 'taskHandler' ? (
-                <Box width="100%" display="flex" justifyContent="space-between">
+          <ModalFooter justifyContent="space-evenly" {...footerStyle}>
+            {type === 'taskHandler' ? (
+              <Box width="100%" display="flex" justifyContent="space-between">
+                {!disableCloseButton && (
                   <Button
                     fontSize="13px"
                     variant={closeButtonVariant}
@@ -240,22 +253,22 @@ const ModalInfo = ({
                   >
                     {closeText || t('common:close')}
                   </Button>
-                  {!disableHandler && (
-                    <Button
-                      fontSize="13px"
-                      disabled={(Array.isArray(attachment) && attachment.length > 0) || isSubmitting}
-                      isLoading={isSubmitting}
-                      onClick={() => resubmitHandler()}
-                      variant="default"
-                      // colorScheme="blue"
-                      textTransform="uppercase"
-                    >
-                      {handlerText}
-                    </Button>
-                  )}
-                </Box>
-              ) : (
-                <>
+                )}
+                <Button
+                  fontSize="13px"
+                  isDisabled={(Array.isArray(attachment) && attachment.length > 0) || isSubmitting || disableHandler}
+                  isLoading={isSubmitting}
+                  onClick={() => resubmitHandler()}
+                  variant="default"
+                  // colorScheme="blue"
+                  textTransform="uppercase"
+                >
+                  {handlerText}
+                </Button>
+              </Box>
+            ) : (
+              <>
+                {!disableCloseButton && (
                   <Button
                     fontSize="13px"
                     variant={closeButtonVariant}
@@ -263,23 +276,25 @@ const ModalInfo = ({
                     mr={3}
                     onClick={() => rejectFunction()}
                     textTransform="uppercase"
+                    {...closeButtonStyles}
                   >
                     {closeText || t('common:close')}
                   </Button>
-                  {!disableHandler && (
-                    <Button
-                      fontSize="13px"
-                      onClick={actionHandler}
-                      colorScheme={handlerColorButton}
-                      textTransform="uppercase"
-                    >
-                      {handlerText}
-                    </Button>
-                  )}
-                </>
-              )}
-            </ModalFooter>
-          )}
+                )}
+                {!disableHandler && (
+                  <Button
+                    fontSize="13px"
+                    onClick={actionHandler}
+                    colorScheme={handlerColorButton}
+                    textTransform="uppercase"
+                    {...buttonHandlerStyles}
+                  >
+                    {handlerText}
+                  </Button>
+                )}
+              </>
+            )}
+          </ModalFooter>
         </ModalContent>
       </Modal>
 
@@ -305,7 +320,7 @@ const ModalInfo = ({
               >
                 {rejectData.closeText}
               </Button>
-              {!disableHandler && (
+              {(!disableHandler || forceHandler) && (
                 <Button
                   fontSize="13px"
                   colorScheme="blue"
@@ -325,7 +340,7 @@ const ModalInfo = ({
       )}
     </>
   );
-};
+}
 
 ModalInfo.propTypes = {
   isOpen: PropTypes.bool,
@@ -334,6 +349,7 @@ ModalInfo.propTypes = {
   rejectHandler: PropTypes.func,
   forceHandler: PropTypes.bool,
   disableHandler: PropTypes.bool,
+  disableInput: PropTypes.bool,
   title: PropTypes.string,
   description: PropTypes.string,
   teacherFeedback: PropTypes.string,
@@ -346,12 +362,21 @@ ModalInfo.propTypes = {
   cancelColorButton: PropTypes.string,
   rejectData: PropTypes.objectOf(PropTypes.string),
   sendProject: PropTypes.func,
-  currentTask: PropTypes.objectOf(PropTypes.any),
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   type: PropTypes.string,
   closeButtonVariant: PropTypes.string,
   htmlDescription: PropTypes.string,
   markdownDescription: PropTypes.string,
-  attachment: PropTypes.arrayOf(PropTypes.object),
+  attachment: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
+  descriptionStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  footerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  closeButtonStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  buttonHandlerStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  headerStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  disableCloseButton: PropTypes.bool,
+  childrenDescription: PropTypes.node,
+  maxWidth: PropTypes.string,
+  forceHandlerAndClose: PropTypes.bool,
 };
 
 ModalInfo.defaultProps = {
@@ -364,6 +389,7 @@ ModalInfo.defaultProps = {
   description: '',
   teacherFeedback: '',
   linkInfo: '',
+  disableInput: false,
   linkText: '',
   link: '',
   handlerText: 'Remove delivery',
@@ -378,6 +404,15 @@ ModalInfo.defaultProps = {
   htmlDescription: '',
   markdownDescription: '',
   attachment: [],
+  descriptionStyle: {},
+  footerStyle: {},
+  closeButtonStyles: {},
+  buttonHandlerStyles: {},
+  headerStyles: {},
+  disableCloseButton: false,
+  childrenDescription: null,
+  maxWidth: 'md',
+  forceHandlerAndClose: false,
 };
 
 export default memo(ModalInfo);

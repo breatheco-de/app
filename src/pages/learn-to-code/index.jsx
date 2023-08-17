@@ -16,7 +16,7 @@ import Events from '../../js_modules/landing/events';
 import PreviewModules from '../../js_modules/landing/previewModules';
 import Pricing from '../../js_modules/landing/pricing';
 
-export const getStaticProps = async ({ locale }) => {
+export const getStaticProps = async ({ locale, locales }) => {
   const data = getDataContentProps(
     `public/locales/${locale}`,
     'learn-to-code',
@@ -25,11 +25,21 @@ export const getStaticProps = async ({ locale }) => {
   return {
     props: {
       data,
+      seo: {
+        title: data.title,
+        description: data?.description || '',
+        pathConnector: '/learn-to-code',
+        url: '/learn-to-code',
+        type: 'article',
+        card: 'large',
+        locales,
+        locale,
+      },
     },
   };
 };
 
-const CodingIntroduction = ({ data }) => {
+function CodingIntroduction({ data }) {
   const [users, setUsers] = useState(null);
   const [events, setEvents] = useState(null);
   const router = useRouter();
@@ -56,7 +66,7 @@ const CodingIntroduction = ({ data }) => {
   return (
     <Box pt="3rem">
       <Container maxW="container.xl" px="0">
-        <IntroductionSection data={data} />
+        <IntroductionSection data={data} fitContent />
 
         <Box p="30px 0">
           {data?.awards?.title && (
@@ -116,10 +126,10 @@ const CodingIntroduction = ({ data }) => {
       <Pricing data={data} />
     </Box>
   );
-};
+}
 
 CodingIntroduction.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any).isRequired,
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 export default CodingIntroduction;

@@ -1,9 +1,7 @@
-/* eslint-disable no-tabs */
 import {
   Box, Img, useColorModeValue,
 } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
-import getT from 'next-translate/getT';
 import { useState, useEffect } from 'react';
 import MarkDownParser from '../common/components/MarkDownParser';
 import { usePersistent } from '../common/hooks/usePersistent';
@@ -19,12 +17,12 @@ const MarkdownEditor = dynamic(
 );
 
 export const getStaticProps = async ({ locale, locales }) => {
-  const t = await getT(locale, 'about-us');
-  const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
+  const image = 'https://4geeks.com/static/images/4geeks.png';
 
   return {
     props: {
       seo: {
+        title: 'Markdown Editor',
         locales,
         locale,
         image,
@@ -36,7 +34,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   };
 };
 
-const EditMarkdown = () => {
+function EditMarkdown() {
   const [markdownSaved, setMarkdownSaved] = usePersistent('markdown', markdownDefaultText);
   const [markdownValue, setMarkdownValue] = useState(markdownSaved);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -67,7 +65,7 @@ const EditMarkdown = () => {
     <Box display="flex" flexDirection="column">
       {!isLoaded && (
         <Box position="absolute" background={bgColor} zIndex={99} h="100vh" display="flex" alignItems="center" justifyContent="center" width="100%">
-          <Img src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" />
+          <Img src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" alt="4Geeks Icon" />
           <Box className="loader" />
         </Box>
       )}
@@ -94,6 +92,6 @@ const EditMarkdown = () => {
 
     </Box>
   );
-};
+}
 
 export default EditMarkdown;

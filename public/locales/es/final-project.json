@@ -1,0 +1,46 @@
+{
+  "congratulations": "¡Felicitaciones!",
+  "graduated-as": "Te has graduado con éxito como:",
+  "see-my-certificate": "Ver mi certificado",
+  "what-do-you-need-to-graduate": "¿Qué necesitas para graduarte?",
+  "almost-there": "¡Casi llegamos! Estás en el último sprint antes de la graduación, asegúrate de completar las siguientes actividades:",
+  "edit-final-project": "Editar información",
+  "add-final-project": "Agregar información del proyecto",
+  "completed": "Completado",
+  "complete-required-projects": "Completar los proyectos requeridos",
+  "modal": {
+    "title": "Es hora del proyecto final!",
+    "subtitle": "Felicitaciones por llegar a esta fase del programa.",
+    "description": "Todavía estamos aprendiendo mucho, pero este último proyecto se convertirá en algo para mostrar a amigos y posibles empleadores.",
+    "bullets": [
+      "<a class='link' href='/#' target='blank' rel='noopener noreferrer'>¿Por qué construir un proyecto final?</a>",
+      "<a class='link' href='/#' target='blank' rel='noopener noreferrer'>¿Cómo elegir el tema de tu proyecto final?</a>"
+    ],
+    "button": "Subir proyecto final"
+  },
+  "modal-form": {
+    "title": "Proyecto final",
+    "project-name": "Nombre del proyecto",
+    "one-line-description": "Descripción en una línea",
+    "description": "Descripción",
+    "github-url": "Github URL",
+    "repository-url": "URL de repositorio",
+    "slides-url": "Slides URL",
+    "repository-hint": "Proporcione la URL del repositorio para este proyecto.",
+    "upload-screenshot": "Subir captura de pantalla",
+    "screenshot-hint": "Tu página de inicio o gif animado usando el proyecto.",
+    "add-participants": "Añadir miembros",
+    "participants-hint": "Estudiantes que participaron en este proyecto.",
+    "button": "Subir proyecto final",
+    "confirmation": {
+      "title": "¿Estas seguro?",
+      "text": "Si te quitas a ti mismo de este proyecto, no tendrás acceso a él, tus compañeros de equipo tendrán que agregarte de nuevo para tener acceso",
+      "confirm": "Remover",
+      "cancel": "Cancelar"
+    },
+    "warning-modal": {
+      "title": "Por favor añade otro miembro al proyecto si quieres quitarte a ti mismo",
+      "close": "Cerrar"
+    }
+  }
+}

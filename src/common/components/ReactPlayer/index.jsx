@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 import React from 'react';
 import styled from 'styled-components';
 import YouTube from 'react-youtube';
@@ -73,11 +74,11 @@ const Image = styled.div`
   }
 `;
 
-const Player = ({
+function Player({
   id, onPlay, playOnThumbnail, onPause, onEnd, onError, onStateChange, onPlaybackRateChange,
   onPlaybackQualityChange, imageSize, playerVars, noCookies, style, className, thumb,
   imageWidth, ...rest
-}) => {
+}) {
   const [showVideo, setShowVideo] = React.useState(false);
   // const [vid, setVid] = React.useState({});
 
@@ -164,7 +165,7 @@ const Player = ({
       )}
     </VideoWrapper>
   );
-};
+}
 
 export default Player;
 
@@ -204,9 +205,9 @@ Player.propTypes = {
   /** .Function that runs when the video changes quality */
   onPlaybackQualityChange: PropTypes.func,
   /** https://developers.google.com/youtube/player_parameters */
-  playerVars: PropTypes.objectOf(PropTypes.any),
+  playerVars: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   /** .Styles to apply over the wrappr */
-  style: PropTypes.objectOf(PropTypes.any),
+  style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   /** .if set to true will change the host to  "https://www.youtube-nocookie.com" */
   noCookies: PropTypes.bool,
   /** .Size of the thumbnail we get from youtube */

@@ -6,17 +6,18 @@ import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+// import modifyEnv from '../../../modifyEnv';
 import FilterModal from '../../common/components/FilterModal';
 import GridContainer from '../../common/components/GridContainer';
 
 import Icon from '../../common/components/Icon';
+import PaginatedView from '../../common/components/PaginationView';
+import ProjectsLoader from '../../common/components/ProjectsLoader';
 import Text from '../../common/components/Text';
 import useFilter from '../../common/store/actions/filterAction';
-import ProjectList from '../../js_modules/projects/ProjectList';
 import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
-import { isWindow } from '../../utils';
+import { getQueryString } from '../../utils';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'how-to');
@@ -24,7 +25,8 @@ export const getStaticProps = async ({ locale, locales }) => {
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const howTos = []; // filtered howTos after removing repeated
   let arrHowTos = []; // incoming howTos
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=ARTICLE&limit=1000`);
+
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&visibility=PUBLIC&status=PUBLISHED&limit=2000`);
   const data = await resp.json();
   // .then((res) => res.json())
   // .catch((err) => console.log(err));
@@ -42,6 +44,26 @@ export const getStaticProps = async ({ locale, locales }) => {
 
   let technologyTags = [];
   let difficulties = [];
+
+  // const technologiesResponse = await fetch(
+  //   `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=ARTICLE&limit=1000`,
+  //   {
+  //     Accept: 'application/json, text/plain, */*',
+  //   },
+  // );
+  const technologiesResponse = await fetch(
+    `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=ARTICLE&limit=1000`,
+    {
+      Accept: 'application/json, text/plain, */*',
+    },
+  );
+  const technologies = await technologiesResponse.json();
+
+  if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
+    console.log(`SUCCESS: ${technologies.length} Technologies fetched for /how-to`);
+  } else {
+    console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /how-to`);
+  }
 
   for (let i = 0; i < arrHowTos.length; i += 1) {
     // skip repeated howTos
@@ -63,6 +85,8 @@ export const getStaticProps = async ({ locale, locales }) => {
 
   technologyTags = [...new Set(technologyTags)];
   difficulties = [...new Set(difficulties)];
+
+  technologyTags = technologies.filter((technology) => technologyTags.includes(technology.slug.toLowerCase()));
 
   // Verify if difficulty exist in expected position, else fill void array with 'nullString'
   const verifyDifficultyExists = (difficultiesArray, difficulty) => {
@@ -93,6 +117,7 @@ export const getStaticProps = async ({ locale, locales }) => {
         image,
         locales,
         locale,
+        disableStaticCanonical: true,
         url: ogUrl.en || `/${locale}/how-to`,
         pathConnector: '/how-to',
       },
@@ -112,15 +137,14 @@ export default function HowTo({ data, technologyTags, difficulties }) {
   const { t } = useTranslation('how-to');
   const router = useRouter();
   const { filteredBy, setHowToFilters } = useFilter();
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const iconColor = useColorModeValue('#FFF', '#283340');
-  const [isLoading, setIsLoading] = useState(false);
-  const [offset, setOffset] = useState(10);
+  const page = getQueryString('page', 1);
+  const search = getQueryString('search', '');
+  const pageIsEnabled = getQueryString('page', false);
 
-  const howTosFiltered = data.slice(0, offset);
-  const howTosSearched = data.filter(
-    (howTo) => howTo.title.toLowerCase()
-      .includes(router?.query?.search?.toLocaleLowerCase() || false),
-  );
+  const contentPerPage = 20;
+  const startIndex = (page - 1) * contentPerPage;
 
   const { technologies, difficulty, videoTutorials } = filteredBy.howToOptions;
 
@@ -138,44 +162,18 @@ export default function HowTo({ data, technologyTags, difficulties }) {
     + difficultyIsActive()
     + videoTutorials;
 
-  let initialSearchValue;
-  useEffect(() => {
-    initialSearchValue = router.query && router.query.search;
-  }, [initialSearchValue]);
+  const queryFunction = async () => {
+    const endIndex = startIndex + contentPerPage;
+    const paginatedResults = data.slice(startIndex, endIndex);
 
-  const { isOpen, onClose, onOpen } = useDisclosure();
-
-  const handleScroll = () => {
-    const scrollTop = isWindow && document.documentElement.scrollTop;
-    const offsetHeight = isWindow && document.documentElement.offsetHeight;
-    const innerHeight = isWindow && window.innerHeight;
-    if ((innerHeight + scrollTop) <= offsetHeight) return;
-    setIsLoading(true);
+    return {
+      count: data.length,
+      results: paginatedResults,
+    };
   };
-
-  useEffect(() => {
-    if (howTosSearched.length > 0) return () => {};
-    if (offset <= data.length) {
-      console.log('loading how to\'s...');
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
-    }
-    console.log('All how to\'s loaded');
-    return () => {};
-  }, [offset, howTosSearched]);
-
-  useEffect(() => {
-    if (!isLoading) return;
-    if (offset >= data.length) setIsLoading(false);
-    setTimeout(() => {
-      setOffset(offset + 10);
-      setIsLoading(false);
-    }, 200);
-  }, [isLoading]);
 
   return (
     <>
-      <TitleContent title={t('title')} icon="document" color={iconColor} mobile />
       <Box
         display="grid"
         gridTemplateColumns={{
@@ -188,13 +186,19 @@ export default function HowTo({ data, technologyTags, difficulties }) {
       >
         <Flex
           gridColumn="2 / span 12"
+          width="100%"
+          margin="0 auto"
+          maxWidth="1280px"
           justifyContent="space-between"
+          flexDirection={{ base: 'column', md: 'row' }}
           flex="1"
-          gridGap="20px"
+          gridGap="10px"
           padding={{ base: '3% 0 4% 0', md: '1.5% 0 1.5% 0' }}
         >
-          <TitleContent title={t('title')} icon="document" color={iconColor} mobile={false} />
+          <TitleContent title={t('title')} icon="book" color={iconColor} margin={{ base: '0 0 10px 0', md: '0' }} />
+
           <Search placeholder={t('search')} />
+
           <Button
             variant="outline"
             backgroundColor={useColorModeValue('', 'gray.800')}
@@ -241,32 +245,45 @@ export default function HowTo({ data, technologyTags, difficulties }) {
           />
         </Flex>
       </Box>
-      <GridContainer margin="30px auto 0 auto">
-        {t('description') && (
-          <Text
-            size="md"
-            display="flex"
-            margin={{ base: '30px 8%', md: '30px 28%' }}
-            textAlign="center"
-          >
-            {t('description')}
-          </Text>
+      <GridContainer margin="30px auto 0 auto" withContainer gridColumn="1 / span 10" maxWidth="1280px">
+        <Text
+          size="md"
+          display="flex"
+          margin={{ base: '30px 8%', md: '30px 28%' }}
+          textAlign="center"
+        >
+          {t('description')}
+        </Text>
+        {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
+          <ProjectsLoader
+            articles={data}
+            itemsPerPage={20}
+            searchQuery={search}
+            options={{
+              withoutImage: true,
+              contextFilter: filteredBy.howToOptions,
+              pagePath: '/how-to',
+            }}
+          />
+        ) : (
+          <PaginatedView
+            queryFunction={queryFunction}
+            options={{
+              pagePath: '/how-to',
+              contextFilter: filteredBy.howToOptions,
+              contentPerPage,
+              disableLangFilter: true,
+            }}
+          />
         )}
-        <ProjectList
-          projects={howTosSearched.length > 0 ? howTosSearched : howTosFiltered}
-          contextFilter={filteredBy.howToOptions}
-          isLoading={isLoading}
-          projectPath="how-to"
-          exampleImage="/static/images/coding-notebook.png"
-        />
       </GridContainer>
     </>
   );
 }
 
 HowTo.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.any),
-  technologyTags: PropTypes.arrayOf(PropTypes.string),
+  data: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  technologyTags: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.string), PropTypes.objectOf(PropTypes.any)]),
   difficulties: PropTypes.arrayOf(PropTypes.string),
 };
 

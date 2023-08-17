@@ -3,7 +3,7 @@
   "module-not-started": "You haven't started this module yet",
   "no-modules-to-show": "No modules to show",
   "edit-page": "Edit on Github",
-  "open-google-collab": "Open in Google Collab",
+  "open-google-collab": "Open in Collab",
   "next-page": "Next page",
   "previous-page": "Previous page",
   "ask-to-done": "Would you like to mark this \"{{taskType}}\" as done before moving on?",
@@ -15,6 +15,12 @@
     "module-duration": "⏰ Duration: {{duration}} days.",
     "alert-updated-module-instructions": "Currently viewing instructions from a module that does not correspond to the selected lesson",
     "no-teacher-instructions-found": "No instructions found for the current module",
-    "key-concepts": "Key concepts"
-  }
+    "key-concepts": "Key concepts",
+    "no-need-to-teach-today": {
+      "title": "This is not what you need to teach today.",
+      "description": "According to the syllabus and the information you set up on the attendance, students are learning the module <strong>\"{{module_name}}\"</strong> today instead. Please move back to that module to keep teaching the class or update the module information in the attendance if needed."
+    }
+  },
+  "reached-the-end-of-the-module": "You have reached the end of the current module \"{{label}}\" but you can start the next module \"{{nextModuleLabel}}\" right way.",
+  "start-next-module": "Yes, let's start the next module"
 }

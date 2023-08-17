@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-exports */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/prop-types */
 import React, { cloneElement, forwardRef } from 'react';
@@ -300,10 +301,10 @@ const ChakraReactSelect = ({
   const inputProps = useFormControl({ isDisabled, isInvalid });
 
   // The chakra theme styles for TagCloseButton when focused
-  const closeButtonFocus = chakraTheme.components.Tag.baseStyle.closeButton._focus;
+  const closeButtonFocus = chakraTheme.components.Tag.baseStyle.closeButton._focusVisible;
   const multiValueRemoveFocusStyle = {
-    background: closeButtonFocus.bg,
-    boxShadow: chakraTheme.shadows[closeButtonFocus.boxShadow],
+    background: closeButtonFocus?.bg,
+    boxShadow: chakraTheme.shadows[closeButtonFocus?.boxShadow],
   };
 
   // The chakra UI global placeholder color

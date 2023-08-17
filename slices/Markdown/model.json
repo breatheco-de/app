@@ -1,0 +1,72 @@
+{
+  "id": "markdown",
+  "type": "SharedSlice",
+  "name": "Markdown",
+  "description": "Markdown",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "Markdown",
+      "primary": {
+        "id_key": {
+          "type": "Text",
+          "config": {
+            "label": "ID Key",
+            "placeholder": ""
+          }
+        },
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title",
+            "placeholder": ""
+          }
+        },
+        "description": {
+          "type": "Text",
+          "config": {
+            "label": "Description",
+            "placeholder": ""
+          }
+        },
+        "markdown": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Markdown",
+            "placeholder": "",
+            "allowTargetBlank": false,
+            "single": "preformatted"
+          }
+        },
+        "enable_table_of_content": {
+          "type": "Boolean",
+          "config": {
+            "label": "Enable Table of Content",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
+          }
+        },
+        "margin": {
+          "type": "Text",
+          "config": {
+            "label": "Margin",
+            "placeholder": "top, right, bottom, left"
+          }
+        },
+        "padding": {
+          "type": "Text",
+          "config": {
+            "label": "Padding",
+            "placeholder": ""
+          }
+        }
+      },
+      "items": {},
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    }
+  ]
+}

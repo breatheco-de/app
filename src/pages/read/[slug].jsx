@@ -75,10 +75,12 @@ export const getStaticProps = async ({ locale, locales, params }) => {
   };
 };
 
-const Read = ({ data }) => {
+function Read({ data }) {
   const router = useRouter();
   const { t } = useTranslation('read');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
+  const iconColor = useColorModeValue('#FFF', '#283340');
+  const locale = router?.locale;
 
   const containsQueryString = (lesson) => {
     if (typeof router.query.search === 'string' && !lesson.lessons.some(
@@ -95,9 +97,28 @@ const Read = ({ data }) => {
   };
   const datafiltered = filteredBySearch();
 
+  const getCurrentLessonProps = (lesson) => {
+    const localePrefix = locale === 'en' ? '' : `/${locale}`;
+    const altEng = locale === 'en' ? 'us' : undefined;
+    const currentTranslation = lesson?.translations?.[locale] || lesson?.translations?.[altEng];
+
+    if (currentTranslation) {
+      return {
+        slug: currentTranslation.slug,
+        link: `${localePrefix}/lesson/${currentTranslation.slug}`,
+        title: currentTranslation.title,
+      };
+    }
+    return {
+      slug: lesson?.slug,
+      title: lesson?.title,
+      locale: 'en',
+      link: `/lesson/${lesson?.slug}`,
+    };
+  };
+
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-      <TitleContent title={t('title')} mobile />
       <Box
         display="grid"
         gridTemplateColumns={{
@@ -114,11 +135,12 @@ const Read = ({ data }) => {
           margin="0 auto"
           maxWidth="1280px"
           justifyContent="space-between"
+          flexDirection={{ base: 'column', md: 'row' }}
           flex="1"
-          gridGap="20px"
+          gridGap="10px"
           padding={{ base: '3% 15px 4% 15px', md: '1.5% 0 1.5% 0' }}
         >
-          <TitleContent title={t('title')} mobile={false} />
+          <TitleContent title={t('title')} icon="book" color={iconColor} margin={{ base: '0 0 10px 0', md: '0' }} />
 
           <Search placeholder={t('search')} />
 
@@ -163,7 +185,7 @@ const Read = ({ data }) => {
           {t('description')}
         </Text>
       </Flex>
-      <GridContainer flex="1" gridTemplateColumns={{ base: '.5fr repeat(12, 1fr) .5fr', md: '3.8fr repeat(12, 1fr) 3.8fr' }}>
+      <GridContainer withContainer gridTemplateColumns="3.8fr repeat(12, 1fr) 3.8fr" gridColumn="2 / 12 span" gridGap="0" maxWidth="1280px">
         {datafiltered.map(
           (element) => element.label !== '' && (
           <Box key={`${element.id} - ${element.position}`} margin="50px 0 0 0">
@@ -210,21 +232,26 @@ const Read = ({ data }) => {
               padding="22px 30px"
               borderRadius="18px"
             >
-              {element.lessons.map((lesson) => (
-                <Link
-                  key={`${lesson.slug}-${lesson.title}`}
-                  href={`/lesson/${lesson.slug}`}
-                  fontSize="15px"
-                  width="fit-content"
-                  height="fit-content"
-                  color={useColorModeValue('blue.default', 'blue.300')}
-                  display="inline-block"
-                  letterSpacing="0.05em"
-                  fontWeight="700"
-                >
-                  {lesson.title}
-                </Link>
-              ))}
+              {element.lessons.map((lesson) => {
+                const translationProps = getCurrentLessonProps(lesson);
+
+                return (
+                  <Link
+                    key={`${translationProps?.slug}-${translationProps?.title}`}
+                    href={translationProps?.link}
+                    fontSize="15px"
+                    locale={translationProps?.locale || ''}
+                    width="fit-content"
+                    height="fit-content"
+                    color={useColorModeValue('blue.default', 'blue.300')}
+                    display="inline-block"
+                    letterSpacing="0.05em"
+                    fontWeight="700"
+                  >
+                    {locale === 'en' ? lesson?.title : translationProps?.title}
+                  </Link>
+                );
+              })}
             </Grid>
             )}
           </Box>
@@ -233,10 +260,10 @@ const Read = ({ data }) => {
       </GridContainer>
     </Box>
   );
-};
+}
 
 Read.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any),
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 Read.defaultProps = {
   data: null,

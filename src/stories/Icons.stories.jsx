@@ -1,6 +1,5 @@
 import { Box } from '@chakra-ui/layout';
 import React from 'react';
-import { useState } from 'react';
 import Icon from '../common/components/Icon';
 
 const iconDict = require('../common/utils/iconDict.json');
@@ -11,7 +10,7 @@ export default {
   argTypes: {
     icon: {
       control: {
-        type: 'input',
+        type: 'text',
       }
     },
     style: {
@@ -56,13 +55,9 @@ export default {
 };
 
 const Component = (args) => {
-  const [searchValue, setSearchValue] = useState('');
-  const iconDictSearched = iconDict.filter((icon) => icon?.toLowerCase().includes(searchValue?.toLowerCase()))
+  const iconDictSearched = iconDict.filter((icon) => icon?.toLowerCase().includes(args.icon?.toLowerCase()))
   return (
     <>
-      <Box width="100%" my="2rem" display="flex" justifyContent="center">
-        <Box as="input" shadow="none" height="35px" p="0 15px" border="2px solid" borderColor="gray.400" borderRadius="15px" type="text" placeholder="search icon" onChange={(e) => setSearchValue(e.target.value)} width="180px" />
-      </Box>
       <Box display="grid" gridTemplateColumns={`repeat(auto-fill, minmax(${args.width * 2}px, 1fr))`} gridGap="28px" width="100%" height="fit-content">
         {iconDictSearched.map((icon, i) => {
           const index = i;
@@ -83,6 +78,7 @@ const Component = (args) => {
 };
 export const Default = Component.bind({});
 Default.args = {
+  icon: '',
   width: 50,
   height: 50,
   color: '#000'

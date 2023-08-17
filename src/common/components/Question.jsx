@@ -11,7 +11,7 @@ const options = {
   mobile: [10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
 };
 
-const Question = ({ question, onChange }) => {
+function Question({ question, onChange }) {
   const { t } = useTranslation('survey');
   const [focused, setFocused] = useState(-1);
   useEffect(() => {
@@ -81,7 +81,7 @@ const Question = ({ question, onChange }) => {
       </Container>
     </Container>
   );
-};
+}
 
 Question.defaultProps = {
   onChange: () => { },

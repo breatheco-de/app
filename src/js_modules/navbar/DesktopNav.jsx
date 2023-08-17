@@ -1,10 +1,12 @@
 import { Stack } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import DesktopItem from './DesktopItem';
+import syllabusList from '../../../public/syllabus.json';
 
-const DesktopNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
+function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
   const [privateItems, setPrivateItems] = useState([]);
+  const readSyllabus = JSON.parse(syllabusList);
 
   useEffect(() => {
     if (haveSession) {
@@ -14,33 +16,36 @@ const DesktopNav = ({ NAV_ITEMS, readSyllabus, haveSession }) => {
 
   const publicItems = NAV_ITEMS.filter((item) => item.private !== true);
 
-  const customPublicItems = publicItems.map((publicItem) => {
-    if (publicItem.asPath === '/read' && readSyllabus.length > 0) {
-      publicItem.subMenu.map((l) => {
-        if (l.asPath === '/read-and-watch') {
-          const courseFetched = readSyllabus;
-          const menus = [...courseFetched, ...l.subMenuContent];
+  const customPublicItems = publicItems;
+  const allItems = [...privateItems, ...customPublicItems];
 
-          // eslint-disable-next-line no-param-reassign
-          l.subMenu = menus;
-        }
-        return l;
-      });
+  // manage submenus in level 1
+  const prepareSubMenuData = (item) => {
+    if (item.slug === 'social-and-live-learning') {
+      return extraContent;
     }
-    return publicItem;
-  });
+    return item?.subMenu;
+  };
 
   return (
-    <Stack className="hideOverflowX__" direction="row" overflow={{ base: 'auto', lg: 'auto' }} width="60vw" spacing={4} alignItems="center">
-      {privateItems.length > 0 && privateItems.map((privateItem) => (
-        <DesktopItem key={privateItem.label} item={privateItem} />
-      ))}
-      {customPublicItems.length > 0 && customPublicItems.map((publicItem) => (
-        <DesktopItem key={publicItem.label} item={publicItem} />
-      ))}
+    <Stack className="hideOverflowX__" direction="row" width="auto" spacing={4} alignItems="center">
+      {customPublicItems.length > 0 && allItems.map((publicItem) => {
+        const submenuData = prepareSubMenuData(publicItem);
+
+        const data = {
+          ...publicItem,
+          subMenu: publicItem?.subMenu?.length > 1
+            ? publicItem?.subMenu
+            : submenuData,
+        };
+
+        return (
+          <DesktopItem key={publicItem.label} item={data} readSyllabus={readSyllabus} />
+        );
+      })}
     </Stack>
   );
-};
+}
 
 DesktopNav.propTypes = {
   haveSession: PropTypes.bool.isRequired,
@@ -60,7 +65,7 @@ DesktopNav.propTypes = {
       ),
     }),
   ),
-  readSyllabus: PropTypes.arrayOf(PropTypes.any),
+  extraContent: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
 };
 
 DesktopNav.defaultProps = {
@@ -72,7 +77,7 @@ DesktopNav.defaultProps = {
       asPath: '/',
     },
   ],
-  readSyllabus: [],
+  extraContent: [],
 };
 
-export default DesktopNav;
+export default memo(DesktopNav);

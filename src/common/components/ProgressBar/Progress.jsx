@@ -1,9 +1,9 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Box, useColorModeValue } from '@chakra-ui/react';
 import MotionBox from '../MotionBox';
 
-const Progress = ({
+function Progress({
   percents,
   duration,
   delay,
@@ -12,19 +12,24 @@ const Progress = ({
   progressColor,
   baseColor,
   borderRadius,
-}) => {
+  widthSize,
+}) {
   const [barWidth, setBarWidth] = useState(0);
   const [initialized, setInitialized] = useState(false);
+  const progressClass = typeof document !== 'undefined' && document.querySelector('.progress-bar');
 
-  useLayoutEffect(() => {
-    const progressClass = document.querySelector('.progress-bar');
-    setBarWidth(progressClass.scrollWidth);
-    setTimeout(() => {
-      setInitialized(true);
-    }, 600);
-  }, []);
+  useEffect(() => {
+    if (progressClass) {
+      setBarWidth(progressClass.scrollWidth);
+      setTimeout(() => {
+        setInitialized(true);
+      }, 600);
+    }
+  }, [progressClass]);
 
-  const percentsOffset = (percents - 100) * (barWidth / 100);
+  const barWidthDefault = widthSize || barWidth;
+
+  const percentsOffset = (percents - 100) * (barWidthDefault / 100);
 
   const transition = {
     duration,
@@ -35,7 +40,7 @@ const Progress = ({
   const variants = {
     enter: {
       opacity: 0,
-      x: -barWidth,
+      x: -barWidthDefault,
     },
     animate: {
       opacity: 1,
@@ -63,7 +68,7 @@ const Progress = ({
       />
     </Box>
   );
-};
+}
 
 Progress.propTypes = {
   percents: PropTypes.number,
@@ -74,6 +79,7 @@ Progress.propTypes = {
   progressColor: PropTypes.string,
   baseColor: PropTypes.string,
   borderRadius: PropTypes.string,
+  widthSize: PropTypes.oneOfType([PropTypes.number, PropTypes.any]),
 };
 Progress.defaultProps = {
   percents: 0,
@@ -84,6 +90,7 @@ Progress.defaultProps = {
   progressColor: '',
   baseColor: '',
   borderRadius: '2px',
+  widthSize: null,
 };
 
 export default Progress;

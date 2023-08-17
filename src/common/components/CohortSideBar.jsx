@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable brace-style */
 import { memo, useState, useEffect } from 'react';
@@ -19,10 +20,11 @@ import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 import { AvatarSkeleton } from './Skeleton';
 import useOnline from '../hooks/useOnline';
 import useStyle from '../hooks/useStyle';
+import useProgramList from '../store/actions/programListAction';
 
-const ProfilesSection = ({
+function ProfilesSection({
   title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher, withoutPopover, showButton,
-}) => {
+}) {
   const { t } = useTranslation('dashboard');
   const [showMoreStudents, setShowMoreStudents] = useState(false);
   const { usersConnected } = useOnline();
@@ -208,12 +210,12 @@ const ProfilesSection = ({
       )}
     </Box>
   );
-};
+}
 
-const CohortSideBar = ({
+function CohortSideBar({
   title, teacherVersionActive, cohort, cohortCity, background, width, containerStyle,
   studentAndTeachers,
-}) => {
+}) {
   const { t } = useTranslation('dashboard');
   const router = useRouter();
   const toast = useToast();
@@ -222,6 +224,7 @@ const CohortSideBar = ({
   const [alumniGeeksList, setAlumniGeeksList] = useState({});
   const [activeStudentsLoading, setActiveStudentsLoading] = useState(true);
   const [graduatedStudentsLoading, setGraduatedStudentsLoading] = useState(true);
+  const { addTeacherProgramList } = useProgramList();
   const teacher = studentAndTeachers.filter((st) => st.role === 'TEACHER');
   const activeStudents = studentAndTeachers.filter(
     (st) => st.role === 'STUDENT' && ['ACTIVE', 'GRADUATED'].includes(st.educational_status),
@@ -271,6 +274,7 @@ const CohortSideBar = ({
           });
         }).catch(() => {
           toast({
+            position: 'top',
             title: t('alert-message:error-fetching-alumni-geeks'),
             status: 'error',
             duration: 7000,
@@ -292,6 +296,12 @@ const CohortSideBar = ({
       }, 4000);
     }
   }, [studentsJoined]);
+
+  useEffect(() => {
+    if (studentAndTeachers.length > 0) {
+      addTeacherProgramList({ teacher, assistant: teacherAssistants });
+    }
+  }, [router?.query?.cohortSlug, studentAndTeachers?.length]);
 
   return (
     <Box
@@ -448,15 +458,15 @@ const CohortSideBar = ({
       </Box>
     </Box>
   );
-};
+}
 
 ProfilesSection.propTypes = {
   title: PropTypes.string,
   paginationProps: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
   setAlumniGeeksList: PropTypes.oneOfType([PropTypes.func, PropTypes.any]),
-  profiles: PropTypes.arrayOf(PropTypes.object),
+  profiles: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   wrapped: PropTypes.bool,
-  teacher: PropTypes.arrayOf(PropTypes.object),
+  teacher: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   withoutPopover: PropTypes.bool,
   showButton: PropTypes.bool,
 };
@@ -476,10 +486,10 @@ CohortSideBar.propTypes = {
   width: PropTypes.string,
   title: PropTypes.string,
   teacherVersionActive: PropTypes.bool,
-  containerStyle: PropTypes.objectOf(PropTypes.any),
-  studentAndTeachers: PropTypes.arrayOf(PropTypes.object),
+  containerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  studentAndTeachers: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   cohortCity: PropTypes.string,
-  cohort: PropTypes.objectOf(PropTypes.any),
+  cohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   background: PropTypes.string,
   // handleStudySession: PropTypes.func,
 };

@@ -16,24 +16,32 @@ import {
   Divider,
   Heading,
   Link,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { Search2Icon, CheckIcon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
 import NextChakraLink from './NextChakraLink';
 import Icon from './Icon';
 import AlertMessage from './AlertMessage';
 import CustomTheme from '../../../styles/theme';
 import bc from '../services/breathecode';
 
-const Footer = () => {
+function Footer({ pageProps }) {
   const { t } = useTranslation('footer');
   const [email, setEmail] = useState('');
   const [formStatus, setFormStatus] = useState('');
   const { colorMode } = useColorMode();
 
+  const iconogram = t('iconogram', {}, { returnObjects: true });
+  const iconColor = useColorModeValue('gray.dark', 'white');
+
+  const hideDivider = pageProps?.hideDivider === true;
+  if (pageProps?.previewMode) return null;
+
   return (
     <Container as="footer" maxW="none" padding="20px" position="absolute" top="100%">
-      <Divider borderBottomWidth="2px" m="3rem 0 0 0" />
+      {!hideDivider && <Divider borderBottomWidth="2px" m="3rem 0 0 0" />}
 
       <Flex
         direction={['column', 'column', 'row', 'row']}
@@ -235,7 +243,7 @@ const Footer = () => {
               {t('social.title')}
             </Heading>
             <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
-              {t('iconogram', {}, { returnObjects: true }).map((item) => (
+              {Array.isArray(iconogram) && iconogram.map((item) => (
                 <Box key={`${item.title}-${item.href}`} as="li" pb="6px" overflow="auto" role="presentation" display="flex">
                   <NextChakraLink href={item.href} fontSize="0.875rem">
                     {item.title.toUpperCase()}
@@ -316,11 +324,12 @@ const Footer = () => {
             'flex', // 62em+
           ]}
         >
-          {t('iconogram', {}, { returnObjects: true }).map((item) => (
+
+          {Array.isArray(iconogram) && iconogram.map((item) => (
             <Box key={`${item.title}-${item.href}`} width="48%" marginRight="2px" marginBottom="5px">
-              <NextChakraLink href={item.href}>
-                <Heading as="h3" fontSize="12px" marginBottom="15px">
-                  <Icon color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} icon={item.icon} style={{ display: 'inline', marginRight: '10px' }} width="40px" height="40px" />
+              <NextChakraLink href={item.href} display="flex" alignItems="center" marginBottom="15px">
+                <Icon color={iconColor} icon={item.icon} style={{ display: 'inline', marginRight: '10px' }} width="40px" height="40px" />
+                <Heading as="h3" fontSize="12px">
                   {item.title.toUpperCase()}
                 </Heading>
               </NextChakraLink>
@@ -345,28 +354,6 @@ const Footer = () => {
           width={['100%', '100%', '35%', '40%']}
         // alignItems="center"
         >
-          <NextChakraLink href={t('privacy.href')}>
-            <Text fontSize="sm">{t('privacy.label')}</Text>
-          </NextChakraLink>
-          <Divider
-            orientation="vertical"
-            // borderRightWidth="2px"
-            marginLeft="10px"
-            marginRight="10px"
-            borderColor="#3A3A3A"
-            maxH={['20px', '20px', '50', '50']}
-          />
-          <NextChakraLink href={t('cookies.href')}>
-            <Text fontSize="sm">{t('cookies.label')}</Text>
-          </NextChakraLink>
-          <Divider
-            orientation="vertical"
-            // borderRightWidth="2px"
-            marginLeft="10px"
-            marginRight="10px"
-            borderColor="#3A3A3A"
-            maxH={['20px', '20px', '50', '50']}
-          />
           <NextChakraLink href={t('terms.href')}>
             <Text fontSize="sm">{t('terms.label')}</Text>
           </NextChakraLink>
@@ -386,6 +373,13 @@ const Footer = () => {
     //   </Text>
     // </Box>
   );
+}
+
+Footer.propTypes = {
+  pageProps: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
+};
+Footer.defaultProps = {
+  pageProps: {},
 };
 
 export default Footer;

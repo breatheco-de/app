@@ -1,30 +1,32 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable no-param-reassign */
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
-import axios from 'axios';
 import {
-  Box, useColorModeValue, useToast, Modal, Button, Tooltip,
-  ModalOverlay, ModalContent, ModalCloseButton, Skeleton,
+  Box, useColorModeValue, Skeleton,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import getT from 'next-translate/getT';
+import Head from 'next/head';
 import Icon from '../../common/components/Icon';
-import { languageLabel, getExtensionName } from '../../utils';
-import Heading from '../../common/components/Heading';
+import { cleanObject, getExtensionName, unSlugifyCapitalize } from '../../utils';
 import Link from '../../common/components/NextChakraLink';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import TagCapsule from '../../common/components/TagCapsule';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
-import { publicRedirectByAsset } from '../../lib/redirectsHandler';
 import { MDSkeleton } from '../../common/components/Skeleton';
 import GridContainer from '../../common/components/GridContainer';
+import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
+import redirectsFromApi from '../../../public/redirects-from-api.json';
+import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
+import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
+import useStyle from '../../common/hooks/useStyle';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=lesson`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=LESSON,ARTICLE&visibility=PUBLIC&status=PUBLISHED&exclude_category=how-to,como&academy=4,5,6,47&limit=2000`);
   const data = await resp.json();
 
-  const paths = data.flatMap((res) => locales.map((locale) => ({
+  const paths = data.results.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },
@@ -32,20 +34,31 @@ export const getStaticPaths = async ({ locales }) => {
   })));
 
   return {
-    fallback: true,
+    fallback: false,
     paths,
   };
 };
 
 export const getStaticProps = async ({ params, locale, locales }) => {
-  const t = await getT(locale, 'lesson');
   const { slug } = params;
-  const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
 
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=LESSON`);
+  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
   const lesson = await response.json();
 
-  if (response.status >= 400 || response.status_code >= 400 || lesson.asset_type !== 'LESSON') {
+  const engPrefix = {
+    us: 'en',
+    en: 'en',
+  };
+
+  const urlPathname = lesson?.readme_url ? lesson?.readme_url.split('https://github.com')[1] : null;
+  const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
+  const extension = urlPathname ? urlPathname.split('.').pop() : null;
+  const translatedExtension = (lesson?.lang === 'us' || lesson?.lang === null) ? '' : `.${lesson?.lang}`;
+  const finalPathname = `https://colab.research.google.com/github${pathnameWithoutExtension}${translatedExtension}.${extension}`;
+
+  const isCurrenLang = locale === engPrefix[lesson?.lang] || locale === lesson?.lang;
+
+  if (response?.status >= 400 || response?.status_code >= 400 || !['ARTICLE', 'LESSON'].includes(lesson?.asset_type) || !isCurrenLang) {
     return {
       notFound: true,
     };
@@ -61,23 +74,82 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
   const exensionName = getExtensionName(lesson.readme_url);
   let markdown = '';
-  let ipynbHtmlUrl = '';
+  let ipynbHtml = '';
 
   if (exensionName !== 'ipynb') {
     const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+    if (resp.status >= 400) {
+      return {
+        notFound: true,
+      };
+    }
     markdown = await resp.text();
   } else {
-    ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
+    // ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
+    const ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.html`;
+    const resp = await fetch(ipynbHtmlUrl);
+    if (resp.status >= 400) {
+      return {
+        notFound: true,
+      };
+    }
+    ipynbHtml = {
+      html: await resp.text(),
+      statusText: resp.statusText,
+    };
   }
+  const translationArray = [
+    {
+      value: 'us',
+      lang: 'en',
+      slug: translations?.us,
+      link: `/lesson/${translations?.us}`,
+    },
+    {
+      value: 'en',
+      lang: 'en',
+      slug: translations?.en,
+      link: `/lesson/${translations?.en}`,
+    },
+    {
+      value: 'es',
+      lang: 'es',
+      slug: translations?.es,
+      link: `/es/lesson/${translations?.es}`,
+    },
+  ].filter((item) => translations?.[item?.value] !== undefined);
+
+  const eventStructuredData = {
+    '@context': 'http://schema.org',
+    '@type': 'Article',
+    name: lesson?.title,
+    description: lesson?.description,
+    url: `https://4geeks.com/${slug}`,
+    image: `https://4geeks.com/thumbnail?slug=${slug}`,
+    datePublished: lesson?.published_at,
+    dateModified: lesson?.updated_at,
+    author: lesson?.author ? {
+      '@type': 'Person',
+      name: `${lesson?.author?.first_name} ${lesson?.author?.last_name}`,
+    } : null,
+    keywords: lesson?.seo_keywords,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://4geeks.com/${slug}`,
+    },
+  };
+
+  const cleanedStructuredData = cleanObject(eventStructuredData);
 
   return {
     props: {
       seo: {
         title,
         description: description || '',
-        image: lesson.preview || staticImage,
+        image: `https://4geeks.com/thumbnail?slug=${slug}`,
         pathConnector: translationsExists ? '/lesson' : `/lesson/${slug}`,
         url: ogUrl.en || `/${locale}/lesson/${slug}`,
+        slug,
         type: 'article',
         card: 'large',
         translations,
@@ -88,73 +160,58 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         modifiedTime: lesson?.updated_at || '',
       },
       fallback: false,
-      lesson,
+      lesson: {
+        ...lesson,
+        collab_url: finalPathname,
+        structuredData: cleanedStructuredData,
+      },
+      translations: translationArray,
       markdown,
-      ipynbHtmlUrl,
-      // translations: lesson.translations,
+      ipynbHtml,
     },
   };
 };
 
-const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
+function LessonSlug({ lesson, markdown, ipynbHtml }) {
   const { t } = useTranslation('lesson');
-  const [isFullScreen, setIsFullScreen] = useState(false);
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
-
+  const { fontColor, borderColor, featuredLight } = useStyle();
   const translations = lesson?.translations || { es: '', en: '', us: '' };
 
   const router = useRouter();
-  const toast = useToast();
-  const currentTheme = useColorModeValue('light', 'dark');
-  const iconColorTheme = useColorModeValue('#000000', '#ffffff');
-  const language = router.locale === 'en' ? 'us' : 'es';
   const { slug } = router.query;
-  const currentLanguageLabel = languageLabel[language] || language;
+  const { locale } = router;
 
-  useEffect(async () => {
-    const alias = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/alias/redirect`);
-    const aliasList = await alias.json();
-    const redirectSlug = aliasList[slug] || slug;
-    const dataRedirect = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${redirectSlug}`);
-    const redirectResults = await dataRedirect.json();
+  const isIpynb = ipynbHtml.statusText === 'OK';
 
-    const pathWithoutSlug = router.asPath.slice(0, router.asPath.lastIndexOf('/'));
-    const userPathName = `/${router.locale}${pathWithoutSlug}/${redirectResults?.slug || lesson?.slug || slug}`;
-    const aliasRedirect = aliasList[slug] !== undefined && userPathName;
-    const pagePath = 'lesson';
+  useEffect(() => {
+    const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/lesson/${slug}`);
 
-    publicRedirectByAsset({
-      router, aliasRedirect, translations, userPathName, pagePath,
-    });
+    if (redirect) {
+      router.push(redirect?.destination);
+    }
 
     return () => {};
   }, [router, router.locale, translations]);
 
-  useEffect(() => {
-    if (ipynbHtmlUrl === '') {
-      axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?type=lesson`)
-        .then(({ data }) => {
-          let currentlocaleLang = data.translations[language];
-          if (currentlocaleLang === undefined) currentlocaleLang = `${slug}-${language}`;
-          axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=LESSON`)
-            .catch(() => {
-              toast({
-                title: t('alert-message:language-not-found', { currentLanguageLabel }),
-                status: 'warning',
-                duration: 5500,
-                isClosable: true,
-              });
-            });
-        });
-    }
-  }, [language]);
-
   return (
     <>
+      {lesson?.structuredData?.name && (
+        <Head>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(lesson.structuredData) }}
+          />
+        </Head>
+      )}
       <GridContainer
+        withContainer
+        // gridColumn="1 / span 10"
+        maxWidth="1280px"
         height="100%"
         gridTemplateColumns={{ base: 'repeat(1, 1fr)', md: '0.5fr repeat(12, 1fr) 0.5fr' }}
-        margin="4rem auto 0 auto"
+        margin="3rem auto 0 auto"
+        gridGap="0"
       >
         <Link
           href="/lessons"
@@ -163,157 +220,125 @@ const LessonSlug = ({ lesson, markdown, ipynbHtmlUrl }) => {
           letterSpacing="0.05em"
           fontWeight="700"
           paddingBottom="10px"
+          width="fit-content"
         >
           {`← ${t('backToLessons')}`}
         </Link>
       </GridContainer>
-      <Box
-        display={{ base: 'block', md: 'grid' }}
-        maxWidth="1280px"
+      <GridContainer
+        maxWidth="1440px"
         margin="28px auto 0 auto"
-        padding={{ base: '0 15px', md: '0' }}
         height="100%"
-        gridTemplateColumns={{ base: '', md: '3fr repeat(12, 1fr) 3fr' }}
+        gridTemplateColumns="4fr repeat(12, 1fr)"
+        gridGap="36px"
+        padding="0 10px"
       >
-        <Box display="grid" gridColumn="2 / span 12">
-          <Box display="flex" gridGap="10px" justifyContent="space-between">
-            {lesson?.technologies ? (
-              <TagCapsule
-                isLink
-                href="/lessons"
-                variant="rounded"
-                tags={lesson?.technologies || ['']}
-                marginY="8px"
-                fontSize="13px"
-                style={{
-                  padding: '2px 10px',
-                  margin: '0',
-                }}
-                gap="10px"
-                paddingX="0"
-              />
-            ) : (
-              <Skeleton width="130px" height="26px" borderRadius="10px" />
-            )}
-            <Link href={lesson?.readme_url || '#aliasRedirection'} width="fit-content" color="gray.400" target="_blank" rel="noopener noreferrer" display="flex" justifyContent="right" gridGap="12px" alignItems="center">
-              <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-              {t('common:edit-on-github')}
-            </Link>
-          </Box>
-          {lesson?.title ? (
-            <Heading
-              as="h1"
-              size="30px"
-              fontWeight="700"
-              margin="22px 0 20px 0"
-              transition="color 0.2s ease-in-out"
-              color={useColorModeValue('black', 'white')}
-              textTransform="uppercase"
-            >
-              {lesson.title}
-            </Heading>
-          ) : (
-            <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
-          )}
+        <Box display={{ base: 'none', md: 'flex' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
+          <MktSideRecommendedCourses />
         </Box>
+        <Box gridColumn="2 / span 12" maxWidth="854px">
+          <Box display="grid" gridColumn="2 / span 12">
+            <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="0 0 1rem 0" gridGap="10px" justifyContent="space-between" position="relative">
+              <Box>
+                {lesson?.technologies ? (
+                  <TagCapsule
+                    isLink
+                    href="/lessons"
+                    variant="rounded"
+                    tags={lesson?.technologies || ['']}
+                    marginY="8px"
+                    fontSize="13px"
+                    style={{
+                      padding: '2px 10px',
+                      margin: '0',
+                    }}
+                    gap="10px"
+                    paddingX="0"
+                  />
+                ) : (
+                  <Skeleton width="130px" height="26px" borderRadius="10px" />
+                )}
+              </Box>
+              <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '0 0 1rem 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
+                {lesson?.readme_url && (
+                  <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={`${lesson?.readme_url}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
+                    <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+                    {t('common:edit-on-github')}
+                  </Link>
+                )}
 
-        {markdown && ipynbHtmlUrl === '' ? (
-          <Box
-            height="100%"
-            margin="0 rem auto 0 auto"
-            // display="grid"
-            gridColumn="2 / span 12"
-            transition="background 0.2s ease-in-out"
-            borderRadius="3px"
-            maxWidth="1280px"
-            background={useColorModeValue('white', 'dark')}
-            width={{ base: '100%', md: 'auto' }}
-            className={`markdown-body ${useColorModeValue('light', 'dark')}`}
-          >
-            <MarkDownParser content={markdownData.content} />
-            {/* {(markdown && ipynbHtmlUrl === '')
-              ? <MarkDownParser content={markdownData.content} />
-              : <MDSkeleton />} */}
+                {isIpynb && lesson?.collab_url && lesson?.readme_url && (
+                  <Box width={{ base: '1px', md: '100%' }} height={{ base: 'auto', md: '1px' }} background={borderColor} />
+                )}
 
+                {isIpynb && lesson?.collab_url && lesson?.readme_url && (
+                  <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" color="white" href={lesson?.collab_url} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
+                    <Icon icon="collab" color="#A0AEC0" width="28px" height="28px" />
+                    {t('common:open-google-collab')}
+                  </Link>
+                )}
+              </Box>
+
+            </Box>
           </Box>
-
-        ) : (
-          <>
-            {ipynbHtmlUrl === '' && (
-              <MDSkeleton />
-            )}
-          </>
-        )}
-        <Box
-          height="100%"
-          gridColumn="2 / span 12"
-          borderRadius="3px"
-          maxWidth="1280px"
-          width={{ base: '100%', md: 'auto' }}
-        >
-          {ipynbHtmlUrl && markdown === '' && (
-            <Box width="100%" height="100%">
-              <Button
-                background={currentTheme}
-                position="absolute"
-                margin="1rem 0 0 2rem"
-                padding="5px"
-                height="auto"
-                onClick={() => setIsFullScreen(true)}
-              >
-                <Tooltip label={t('common:full-screen')} placement="top">
-                  <Box>
-                    <Icon icon="screen" color={iconColorTheme} width="22px" height="22px" />
-                  </Box>
-                </Tooltip>
-              </Button>
-              <iframe
-                id="iframe"
-                src={`${ipynbHtmlUrl}?theme=${currentTheme}&plain=true`}
-                seamless
-                style={{
-                  width: '100%',
-                  height: '80vh',
-                  maxHeight: '100%',
-                }}
-                title={`${lesson.title} IPython Notebook`}
+          {markdown && !isIpynb ? (
+            <Box
+              height="100%"
+              margin="0 rem auto 0 auto"
+              // display="grid"
+              gridColumn="2 / span 12"
+              transition="background 0.2s ease-in-out"
+              borderRadius="3px"
+              maxWidth="1280px"
+              background={useColorModeValue('white', 'dark')}
+              width={{ base: '100%', md: 'auto' }}
+              className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+            >
+              <MarkDownParser content={markdownData.content} withToc isPublic />
+              <MktRecommendedCourses
+                display={{ base: 'none', md: 'grid' }}
+                title={t('common:continue-learning', { technologies: lesson?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
+                technologies={lesson?.technologies.join(',')}
               />
 
-              <Modal isOpen={isFullScreen} closeOnOverlayClick onClose={() => setIsFullScreen(false)} isCentered size="5xl" borderRadius="0">
-                <ModalOverlay />
-                <ModalContent>
-                  <ModalCloseButton
-                    style={{
-                      top: '9px',
-                      right: '18px',
-                      zIndex: '99',
-                    }}
-                  />
-                  <iframe
-                    id="iframe"
-                    src={`${ipynbHtmlUrl}?theme=${currentTheme}&plain=true`}
-                    seamless
-                    style={{
-                      width: '100%',
-                      height: '100vh',
-                      maxHeight: '100%',
-                    }}
-                    title={`${lesson.title} IPython Notebook`}
-                  />
-                </ModalContent>
-              </Modal>
+            </Box>
+
+          ) : (
+            <>
+              {!isIpynb && (
+                <MDSkeleton />
+              )}
+            </>
+          )}
+          <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'initial', md: 'none' }} width="100%" bottom={0} left={0} height="auto">
+            <MktSideRecommendedCourses title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
+          </Box>
+
+          {isIpynb && markdown === '' && ipynbHtml?.html && (
+            <Box
+              height="100%"
+              gridColumn="2 / span 12"
+              borderRadius="3px"
+              maxWidth="1280px"
+              width={{ base: '100%', md: 'auto' }}
+            >
+              <Box width="100%" height="100%">
+                <IpynbHtmlParser
+                  html={ipynbHtml.html}
+                />
+              </Box>
             </Box>
           )}
         </Box>
-      </Box>
+      </GridContainer>
     </>
   );
-};
+}
 
 LessonSlug.propTypes = {
-  lesson: PropTypes.objectOf(PropTypes.any).isRequired,
+  lesson: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   markdown: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-  ipynbHtmlUrl: PropTypes.string.isRequired,
+  ipynbHtml: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])).isRequired,
 };
 
 export default LessonSlug;

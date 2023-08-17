@@ -1,0 +1,47 @@
+{
+  "id": "event_cards",
+  "type": "SharedSlice",
+  "name": "EventCards",
+  "description": "EventCards",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "EventCards",
+      "primary": {
+        "id_key": {
+          "type": "Text",
+          "config": {
+            "label": "Id key",
+            "placeholder": ""
+          }
+        },
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title",
+            "placeholder": ""
+          }
+        },
+        "endpoint": {
+          "type": "Text",
+          "config": {
+            "label": "Endpoint",
+            "placeholder": ""
+          }
+        },
+        "margin": {
+          "type": "Text",
+          "config": {
+            "label": "Margin",
+            "placeholder": "top, right, bottom, left"
+          }
+        }
+      },
+      "items": {},
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    }
+  ]
+}

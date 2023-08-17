@@ -37,4 +37,7 @@ Default.args = {
   value: 8.5,
   max: null,
   variation: "4",
+  fontSize: 'l',
+  iconSize: '26px',
+  labelSize: '15px',
 };

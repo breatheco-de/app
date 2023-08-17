@@ -7,17 +7,9 @@
     "error": "Something went wrong"
   },
   "newsletterSucces": "Amazing! You have successfully joined, stay tuned for upcoming information soon 😁",
-  "privacy": {
-    "label": "Privacy policies",
-    "href": "#"
-  },
-  "cookies": {
-    "label": "Cookies policies",
-    "href": "#"
-  },
   "terms": {
     "label": "Terms & Conditions",
-    "href": "#"
+    "href": "/terms-and-conditions"
   },
   "company":{
     "title":"COMPANY",
@@ -62,19 +54,19 @@
     "items":[
       {
         "label": "Workshops and events",
-        "href": "#"
+        "href": "/workshops"
       },
       {
         "label": "Live Mentorships",
-        "href": "#"
+        "href": "/mentorships"
       },
       {
         "label": "Social & Live Learning",
         "href": "#"
       },
       {
-        "label": "Code of conduct?",
-        "href": "#"
+        "label": "Code of conduct",
+        "href": "/code-of-conduct-and-ethic"
       }
     ]
   },

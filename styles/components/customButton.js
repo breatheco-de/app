@@ -9,22 +9,23 @@ const ButtonStyles = {
   // styles for different visual variants ("outline", "solid", more...)
   variants: {
     default: (props) => ({
-      bg: 'blue.default',
+      bg: props?.background ? props?.background : 'blue.default',
       color: 'white',
       border: '0',
       height: props.height || '40px',
-      borderRadius: '3px',
+      borderRadius: '4px',
       fontSize: '13px',
       letterSpacing: '0.05em',
+      opacity: 1,
       _hover: {
-        bg: '#00A0DA',
+        bg: props?.background ? props?.background : 'blue.default',
         opacity: 1,
         _disabled: {
           bgColor: '#EBEBEB',
         },
       },
       _active: {
-        bg: 'blue.default',
+        bg: props?.background ? props?.background : 'blue.default',
       },
       _disabled: {
         bg: '#EBEBEB',
@@ -39,7 +40,7 @@ const ButtonStyles = {
       bg: 'danger',
       color: 'white',
       border: '0',
-      borderRadius: '3px',
+      borderRadius: '4px',
       fontSize: '13px',
       letterSpacing: '0.05em',
       _hover: {
@@ -66,7 +67,7 @@ const ButtonStyles = {
       color: 'white',
       border: '0',
       height: props.height || '40px',
-      borderRadius: '3px',
+      borderRadius: '4px',
       fontSize: '13px',
       letterSpacing: '0.05em',
       _hover: {
@@ -95,7 +96,7 @@ const ButtonStyles = {
       border: '1px solid',
       borderColor: props.borderColor || props.colorMode === 'dark' ? 'white' : 'black',
       height: props.height || '40px',
-      borderRadius: '3px',
+      borderRadius: '4px',
       fontSize: '13px',
       letterSpacing: '0.05em',
       _hover: {
@@ -126,7 +127,7 @@ const ButtonStyles = {
       color: 'blue.default',
       height: props.height || '40px',
       border: '0',
-      borderRadius: '3px',
+      borderRadius: '4px',
       fontSize: '13px',
       letterSpacing: '0.05em',
       _hover: {
@@ -161,7 +162,7 @@ const ButtonStyles = {
   //     color="white"
   //     p="10px 16px"
   //     border="0"
-  //     borderRadius="3px"
+  //     borderRadius="4px"
   //   >
   //     {children}
   //   </MotionBox>

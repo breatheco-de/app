@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 import { useColorMode } from '@chakra-ui/react';
 
-const LogoIcon = ({
+function LogoIcon({
   width, height, style,
-}) => {
+}) {
   const { colorMode } = useColorMode();
   return (
     <svg
@@ -34,6 +34,6 @@ const LogoIcon = ({
     </svg>
 
   );
-};
+}
 
 export default LogoIcon;

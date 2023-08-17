@@ -1,6 +1,7 @@
 const navbar = {
   width: '100%',
   handleChange: () => {
+    // eslint-disable-next-line no-alert
     alert('Handle User Function Clicked');
   },
   menuList: [
@@ -195,6 +196,73 @@ const progressBar = {
   width: '100%',
 };
 
+const checkoutProps = {
+  service_items: [
+    {
+      unit_type: 'UNIT',
+      how_many: 2,
+      service: {
+        slug: 'give-classes',
+        price_per_unit: 10,
+        private: true,
+        groups: [
+          {
+            name: 'Student',
+            permissions: [
+              {
+                name: 'Get my certificate',
+                codename: 'get_my_certificate',
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+  plans: [
+    {
+      slug: 'coding-introduction-usa',
+      status: 'VISIBLE',
+      renew_every: 1,
+      renew_every_unit: 'MONTH',
+      trial_duration: 0,
+      trial_duration_unit: 'MONTH',
+      service_items: [
+        {
+          unit_type: 'UNIT',
+          how_many: 10,
+          service: {
+            slug: 'give-classes',
+            price_per_unit: 10,
+            private: true,
+            groups: [
+              {
+                name: 'Student',
+                permissions: [
+                  {
+                    name: 'Get my certificate',
+                    codename: 'get_my_certificate',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    },
+  ],
+  status: 'CHECKING',
+  type: 'PREVIEW',
+  is_recurrent: false,
+  was_delivered: false,
+  amount_per_month: 20,
+  amount_per_quarter: 60,
+  amount_per_half: 120,
+  amount_per_year: 240,
+  token: 'f3dab7a094670e7b3582e52c9b320896e759a5be',
+  expires_at: '2022-11-16T00:06:45.582553Z',
+};
+
 export default {
   navbar,
   cohortSideBar,
@@ -203,4 +271,5 @@ export default {
   tapCapsule,
   callToAction,
   progressBar,
+  checkoutProps,
 };

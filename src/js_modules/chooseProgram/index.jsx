@@ -1,85 +1,153 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { Box } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
+import axiosInstance from '../../axios';
 import Icon from '../../common/components/Icon';
 import { isPlural } from '../../utils';
 import Text from '../../common/components/Text';
-import ProgramList from './programList';
+import bc from '../../common/services/breathecode';
+import handlers from '../../common/handlers';
+import Programs from './Programs';
+import UpgradeAccessModal from '../../common/components/UpgradeAccessModal';
+import useProgramList from '../../common/store/actions/programListAction';
+import ProgramCard from '../../common/components/ProgramCard';
+import Heading from '../../common/components/Heading';
+import useStyle from '../../common/hooks/useStyle';
 
 function ChooseProgram({ chooseList, handleChoose }) {
   const { t } = useTranslation('choose-program');
+  const { programsList } = useProgramList();
+  const [marketingCursesList, setMarketingCursesList] = useState([]);
   const [showFinished, setShowFinished] = useState(false);
+  const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
+  const activeCohorts = handlers.getActiveCohorts(chooseList);
+  const finishedCohorts = handlers.getCohortsFinished(chooseList);
+  const { featuredColor } = useStyle();
+  const router = useRouter();
 
-  const activeCohorts = chooseList.filter((program) => {
-    const educationalStatus = program?.educational_status?.toUpperCase();
-    const programRole = program?.role?.toUpperCase();
-    const programCohortStage = program?.cohort?.stage?.toUpperCase();
+  useEffect(() => {
+    axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
+  }, [router.locale]);
 
-    const includesPrework = ['PREWORK'].includes(programCohortStage);
-    const visibleForTeacher = includesPrework && programRole !== 'STUDENT';
+  useEffect(() => {
+    bc.payment().courses()
+      .then(({ data }) => {
+        setMarketingCursesList(data);
+      });
+  }, [router?.locale]);
 
-    const showCohort = [
-      'STARTED',
-      'ACTIVE',
-      'FINAL_PROJECT',
-    ].includes(programCohortStage);
+  const activeSubscriptionCohorts = activeCohorts.length > 0 ? activeCohorts.map((item) => {
+    const cohort = item?.cohort;
+    const currentCohortProps = programsList[cohort.slug];
+    return ({
+      ...item,
+      subscription: currentCohortProps?.subscription,
+      plan_financing: currentCohortProps?.plan_financing,
+      all_subscriptions: currentCohortProps?.all_subscriptions,
+      subscription_exists: currentCohortProps?.subscription !== null || currentCohortProps?.plan_financing !== null,
+    });
+  }).filter((item) => {
+    const cohort = item?.cohort;
+    const subscriptionExists = item?.subscription !== null || item?.plan_financing !== null;
 
-    const showStudent = ['ACTIVE'].includes(educationalStatus)
-      && !includesPrework
-      && programRole === 'STUDENT';
+    const currentSubscription = item?.plan_financing || item?.subscription;
+    const isFreeTrial = currentSubscription?.status?.toLowerCase() === 'free_trial';
+    const suggestedPlan = (currentSubscription?.planOffer?.slug === undefined && currentSubscription?.planOffer?.status) || (item?.all_subscriptions?.length > 0
+      && item?.all_subscriptions?.find((sub) => sub?.plans?.[0]?.slug === currentSubscription?.planOffer?.slug));
 
-    const show = visibleForTeacher || showCohort || showStudent;
+    // Ignore free_trial subscription if plan_offer already exists in list
+    if (isFreeTrial && suggestedPlan !== undefined) return false;
+    if ((cohort?.available_as_saas && subscriptionExists) || cohort?.available_as_saas === false) return true;
 
-    return show;
-  });
+    return false;
+  }) : [];
 
-  const finishedCohorts = chooseList.filter((program) => {
-    const educationalStatus = program?.educational_status?.toUpperCase();
-    const programCohortStage = program?.cohort?.stage?.toUpperCase();
+  const marketingCourses = marketingCursesList && marketingCursesList.filter(
+    (item) => !activeSubscriptionCohorts.some(
+      (activeCohort) => activeCohort?.subscription?.plans[0]?.slug === item?.slug
+        || activeCohort?.plan_financing?.plans[0]?.slug === item?.slug,
+    ) && item?.course_translation?.title,
+  );
 
-    const showCohort = ['ENDED'].includes(programCohortStage);
-    // ACTIVE: show be here because the student may not have delivered all the homework
-    const showStudent = ['GRADUATED', 'POSTPONED', 'ACTIVE'].includes(
-      educationalStatus,
-    );
-    return showCohort && showStudent;
-  });
+  const isNotAvailableForMktCourses = activeSubscriptionCohorts.length > 0 && activeSubscriptionCohorts.some(
+    (item) => item?.cohort?.available_as_saas === false,
+  );
 
   return (
     <>
-      {activeCohorts.length > 0 && (
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          flexDirection="column"
-          borderRadius="25px"
-          height="100%"
-          width={['70%', '68%', '70%', '50%']}
-          gridGap="2px"
-        >
-          {activeCohorts.map((item, i) => {
-            const index = i;
-            return (
-              <ProgramList
-                key={index}
-                item={item}
-                handleChoose={handleChoose}
-              />
-            );
-          })}
+      {activeSubscriptionCohorts.length > 0 && (
+        <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
+          <Heading size="sm" width="fit-content" whiteSpace="nowrap">
+            {t('your-active-programs')}
+          </Heading>
+          <Box as="hr" width="100%" margin="0.5rem 0 0 0" />
         </Box>
+      )}
+      <UpgradeAccessModal
+        isOpen={upgradeModalIsOpen}
+        onClose={() => setUpgradeModalIsOpen(false)}
+      />
+      {activeSubscriptionCohorts.length > 0 && (
+        <Box
+          display="grid"
+          gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
+          height="auto"
+          gridGap="4rem"
+        >
+          {activeSubscriptionCohorts.map((item) => (
+            <Programs
+              key={item?.cohort?.slug}
+              item={item}
+              handleChoose={handleChoose}
+              onOpenModal={() => setUpgradeModalIsOpen(true)}
+            />
+          ))}
+        </Box>
+      )}
+
+      {!isNotAvailableForMktCourses && marketingCourses.length > 0 && marketingCourses.some((l) => l?.course_translation?.title) && (
+        <>
+          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
+            <Heading size="sm" width="fit-content" whiteSpace="nowrap">
+              {t('available-courses')}
+            </Heading>
+            <Box as="hr" width="100%" margin="0.5rem 0 0 0" />
+          </Box>
+          <Box
+            display="grid"
+            gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
+            height="auto"
+            gridGap="4rem"
+          >
+            {marketingCourses.map((item) => (
+              <ProgramCard
+                isMarketingCourse
+                icon="coding"
+                iconLink={item?.icon_url}
+                iconBackground="blue.default"
+                handleChoose={() => router.push(`/${item?.slug}`)}
+                programName={item?.course_translation.title}
+                programDescription={item?.course_translation?.description}
+                bullets={item?.course_translation?.course_modules}
+                width="100%"
+                background={featuredColor}
+              />
+            ))}
+          </Box>
+        </>
       )}
 
       {
         finishedCohorts.length > 0 && (
           <>
             <Box
-              width={['70%', '68%', '70%', '50%']}
               display="flex"
-              padding="25px 0"
+              margin="2rem auto"
               flexDirection={{ base: 'column', md: 'row' }}
-              gridGap="6px"
+              gridGap={{ base: '0', md: '6px' }}
+              justifyContent="center"
             >
               <Text
                 size="md"
@@ -90,6 +158,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
               </Text>
               <Text
                 as="button"
+                alignSelf="center"
                 size="md"
                 fontWeight="bold"
                 textAlign="left"
@@ -112,24 +181,21 @@ function ChooseProgram({ chooseList, handleChoose }) {
               </Text>
             </Box>
             <Box
-              display="flex"
-              justifyContent="space-between"
-              flexDirection="column"
-              borderRadius="25px"
-              height="100%"
-              width={['70%', '68%', '70%', '50%']}
-              gridGap="2px"
+              display="grid"
+              mt="1rem"
+              gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
+              gridColumnGap="5rem"
+              gridRowGap="3rem"
+              height="auto"
             >
-              {showFinished && finishedCohorts.map((item, i) => {
-                const index = i;
-                return (
-                  <ProgramList
-                    key={index}
-                    item={item}
-                    handleChoose={handleChoose}
-                  />
-                );
-              })}
+              {showFinished && finishedCohorts.map((item) => (
+                <Programs
+                  key={item?.cohort?.slug}
+                  item={item}
+                  handleChoose={handleChoose}
+                  onOpenModal={() => setUpgradeModalIsOpen(true)}
+                />
+              ))}
             </Box>
           </>
         )
@@ -139,7 +205,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
 }
 
 ChooseProgram.propTypes = {
-  chooseList: PropTypes.arrayOf(PropTypes.object),
+  chooseList: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   handleChoose: PropTypes.func,
 };
 ChooseProgram.defaultProps = {

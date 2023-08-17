@@ -1,19 +1,14 @@
-import { createStore, applyMiddleware, combineReducers } from 'redux';
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { HYDRATE, createWrapper } from 'next-redux-wrapper';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import thunkMiddleware from 'redux-thunk';
 import counterReducer from './common/store/reducers/counterReducer';
 import todosReducer from './common/store/reducers/todoReducer';
 import moduleMapReducer from './common/store/reducers/moduleMapReducer';
 import filterReducer from './common/store/reducers/filterReducer';
 import assignmentsReducer from './common/store/reducers/assignmentsReducer';
-
-const bindMiddleware = (middleware) => {
-  if (process.env.NODE_ENV !== 'production') {
-    return composeWithDevTools(applyMiddleware(...middleware));
-  }
-  return applyMiddleware(...middleware);
-};
+import programListReducer from './common/store/reducers/programListReducer';
+import signupReducer from './common/store/reducers/signupReducer';
+import finalProjectReducer from './common/store/reducers/finalProjectReducer';
+import subscriptionsReducer from './common/store/reducers/subscriptionsReducer';
 
 const combinedReducer = combineReducers({
   counterReducer,
@@ -21,6 +16,10 @@ const combinedReducer = combineReducers({
   moduleMapReducer,
   filterReducer,
   assignmentsReducer,
+  programListReducer,
+  signupReducer,
+  finalProjectReducer,
+  subscriptionsReducer,
 });
 
 const reducer = (state, action) => {
@@ -34,7 +33,11 @@ const reducer = (state, action) => {
   return combinedReducer(state, action);
 };
 
-export const initStore = () => createStore(reducer, bindMiddleware([thunkMiddleware]));
+export const initStore = () => configureStore({
+  reducer,
+  devTools: process.env.VERCEL_ENV !== 'production' && process.env.NODE_ENV !== 'production',
+  // middleware: [],
+});
 
 const wrapper = createWrapper(initStore);
 export default wrapper;

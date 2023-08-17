@@ -21,15 +21,18 @@ import { es } from 'date-fns/locale';
 import { format } from 'date-fns';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
+import useOnline from '../../common/hooks/useOnline';
 
-const AvatarUser = ({
-  data, fullName, containerStyle, width, height, badge, customBadge, isOnline, isWrapped, index, withoutPopover,
+const AvatarUser = memo(({
+  data, fullName, containerStyle, width, height, badge, customBadge, isWrapped, index, withoutPopover, avatarUrl,
 }) => {
   const { user } = data;
   const { t } = useTranslation('dashboard');
   const fullNameLabel = fullName || `${user.first_name} ${user.last_name}`;
   const router = useRouter();
+  const { usersConnected } = useOnline();
 
+  const isOnlineUser = usersConnected?.some((id) => id === user?.id);
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const dateFormated = {
     en: data?.created_at && format(new Date(data?.created_at), 'MMMM dd, yyyy'),
@@ -44,10 +47,11 @@ const AvatarUser = ({
     student: t('common:student'),
   };
   const infoText = {
-    en: `${roles[data?.role?.toLowerCase()] || 'member'} in this cohort since`,
-    es: `${roles[data?.role?.toLowerCase()] || 'member'} en esta cohorte desde`,
+    en: `${roles[data?.role?.toLowerCase()] || 'Member'} in this cohort since`,
+    es: `${roles[data?.role?.toLowerCase()] || 'Miembro'} en esta cohorte desde`,
   };
   const placementCard = isBelowTablet ? 'auto' : 'left-end';
+  const avatar = user?.profile?.avatar_url || user?.github?.avatar_url || avatarUrl;
 
   return !withoutPopover ? (
     <Popover trigger="hover" key={fullNameLabel} placement={placementCard}>
@@ -59,15 +63,16 @@ const AvatarUser = ({
             height={height}
             style={{ userSelect: 'none' }}
             title={fullNameLabel}
-            src={user?.profile?.avatar_url || user?.github?.avatar_url}
+            src={avatar}
             marginLeft={isWrapped ? '-10px' : '0px'}
             zIndex={index}
+            alt={`${fullNameLabel} - image`}
           >
             {customBadge && (customBadge)}
-            {badge && isOnline && (
+            {badge && isOnlineUser && (
               <AvatarBadge
                 boxSize="11px"
-                // bg={isOnline ? 'success' : 'danger'}
+                // bg={isOnlineUser ? 'success' : 'danger'}
                 bg="success"
                 top="-4px"
                 right={isWrapped ? '6px' : '4px'}
@@ -100,15 +105,17 @@ const AvatarUser = ({
             width="95px"
             height="95px"
             style={{ userSelect: 'none' }}
-            src={user?.profile?.avatar_url || user?.github?.avatar_url}
+            src={avatar}
           />
           <Box display="flex" flexDirection="column" justifyContent="center" gridGap="10px" height="auto">
             <Heading size="15px">
               {fullNameLabel}
             </Heading>
-            <Text size="sm" fontWeight="400">
-              {`${infoText[router.locale]} ${dateFormated[router.locale]}`}
-            </Text>
+            {infoText[router?.locale] && roles[data?.role?.toLowerCase()] && (
+              <Text size="sm" fontWeight="400">
+                {`${infoText[router?.locale]} ${dateFormated[router?.locale]}`}
+              </Text>
+            )}
 
           </Box>
         </PopoverBody>
@@ -122,12 +129,12 @@ const AvatarUser = ({
         height={height}
         style={{ userSelect: 'none' }}
         title={fullNameLabel}
-        src={user?.profile?.avatar_url || user?.github?.avatar_url}
+        src={avatar}
         marginLeft={isWrapped ? '-10px' : '0px'}
         zIndex={index}
       >
         {customBadge && (customBadge)}
-        {badge && isOnline && (
+        {badge && isOnlineUser && (
           <AvatarBadge
             boxSize="11px"
             // bg={isOnline ? 'success' : 'danger'}
@@ -141,32 +148,32 @@ const AvatarUser = ({
       </Avatar>
     </WrapItem>
   );
-};
+});
 
 AvatarUser.propTypes = {
-  data: PropTypes.objectOf(PropTypes.any).isRequired,
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   fullName: PropTypes.string,
-  containerStyle: PropTypes.objectOf(PropTypes.any),
+  containerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   width: PropTypes.string,
   height: PropTypes.string,
-  badge: PropTypes.elementType,
-  customBadge: PropTypes.elementType,
-  isOnline: PropTypes.bool,
+  badge: PropTypes.bool,
+  customBadge: PropTypes.node,
   isWrapped: PropTypes.bool,
   index: PropTypes.number,
   withoutPopover: PropTypes.bool,
+  avatarUrl: PropTypes.string,
 };
 AvatarUser.defaultProps = {
   fullName: '',
   containerStyle: {},
   width: '39px',
   height: '39px',
-  badge: null,
+  badge: false,
   customBadge: null,
-  isOnline: false,
   isWrapped: false,
   index: 0,
   withoutPopover: false,
+  avatarUrl: '',
 };
 
-export default memo(AvatarUser);
+export default AvatarUser;

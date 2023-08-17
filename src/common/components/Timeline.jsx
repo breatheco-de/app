@@ -15,9 +15,9 @@ const color = {
   dark: 'featuredDark',
 };
 
-const Timeline = ({
+function Timeline({
   title, assignments, technologies, width, onClickAssignment, showPendingTasks,
-}) => {
+}) {
   const { t } = useTranslation('syllabus');
   const { colorMode } = useColorMode();
   const router = useRouter();
@@ -119,12 +119,12 @@ const Timeline = ({
       </Box>
     </>
   );
-};
+}
 
 Timeline.propTypes = {
   title: PropTypes.string,
-  assignments: PropTypes.arrayOf(PropTypes.any),
-  technologies: PropTypes.arrayOf(PropTypes.object),
+  assignments: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  technologies: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   width: PropTypes.string,
   onClickAssignment: PropTypes.func,
   showPendingTasks: PropTypes.bool,

@@ -1,12 +1,13 @@
 const axios = require('axios');
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+});
 const fail = (msg, ...params) => {
   console.error(msg, ...params);
   process.exit(1);
 }
 
 const publicSyllabus = async () => {
-  console.log('process.env.BREATHECODE_HOST:', process.env.BREATHECODE_HOST);
-  console.log('process.env.SYLLABUS:', process.env.SYLLABUS);
   const resp = await axios.get(
     `${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`,
   )

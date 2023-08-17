@@ -6,16 +6,16 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import getT from 'next-translate/getT';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import FilterModal from '../../common/components/FilterModal';
 import TitleContent from '../../js_modules/projects/TitleContent';
-import ProjectList from '../../js_modules/projects/ProjectList';
 import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
-import { isWindow } from '../../utils';
 import GridContainer from '../../common/components/GridContainer';
+import { getQueryString } from '../../utils';
+import PaginatedView from '../../common/components/PaginationView';
+import ProjectsLoader from '../../common/components/ProjectsLoader';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'projects');
@@ -25,10 +25,8 @@ export const getStaticProps = async ({ locale, locales }) => {
   const projects = []; // filtered projects after removing repeated
   let arrProjects = []; // incoming projects
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?type=project&limit=1000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=PROJECT&visibility=PUBLIC&status=PUBLISHED&limit=2000`);
   const data = await resp.json();
-  // .then((res) => res.json())
-  // .catch((err) => console.error(err));
 
   arrProjects = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
@@ -39,6 +37,20 @@ export const getStaticProps = async ({ locale, locales }) => {
 
   let technologyTags = [];
   let difficulties = [];
+
+  const technologiesResponse = await fetch(
+    `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=project&limit=1000`,
+    {
+      Accept: 'application/json, text/plain, */*',
+    },
+  );
+  const technologies = await technologiesResponse.json();
+
+  if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
+    console.log(`SUCCESS: ${technologies.length} Technologies fetched for /interactive-coding-tutorials`);
+  } else {
+    console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-coding-tutorials`);
+  }
 
   for (let i = 0; i < arrProjects.length; i += 1) {
     // skip repeated projects
@@ -54,9 +66,9 @@ export const getStaticProps = async ({ locale, locales }) => {
 
     if (arrProjects[i].difficulty === null) arrProjects[i].difficulty = 'unknown';
     if (typeof arrProjects[i].difficulty === 'string' || arrProjects[i].difficulty === null) {
-      if (arrProjects[i].difficulty === 'junior') arrProjects[i].difficulty = 'easy';
-      else if (arrProjects[i].difficulty === 'semi-senior') arrProjects[i].difficulty = 'intermediate';
-      else if (arrProjects[i].difficulty === 'senior') arrProjects[i].difficulty = 'hard';
+      if (arrProjects[i].difficulty?.toLowerCase() === 'junior') arrProjects[i].difficulty = 'easy';
+      else if (arrProjects[i].difficulty?.toLowerCase() === 'semi-senior') arrProjects[i].difficulty = 'intermediate';
+      else if (arrProjects[i].difficulty?.toLowerCase() === 'senior') arrProjects[i].difficulty = 'hard';
 
       difficulties.push(arrProjects[i].difficulty);
     }
@@ -64,6 +76,8 @@ export const getStaticProps = async ({ locale, locales }) => {
 
   technologyTags = [...new Set(technologyTags)];
   difficulties = [...new Set(difficulties)];
+
+  technologyTags = technologies.filter((technology) => technologyTags.includes(technology.slug.toLowerCase()));
 
   // Verify if difficulty exist in expected position, else fill void array with 'nullString'
   const verifyDifficultyExists = (difficultiesArray, difficulty) => {
@@ -93,6 +107,7 @@ export const getStaticProps = async ({ locale, locales }) => {
         keywords,
         locales,
         locale,
+        disableStaticCanonical: true,
         url: ogUrl.en || `/${locale}/interactive-coding-tutorials`,
         pathConnector: '/interactive-coding-tutorials',
         card: 'default',
@@ -108,18 +123,19 @@ export const getStaticProps = async ({ locale, locales }) => {
   };
 };
 
-const Projects = ({ projects, technologyTags, difficulties }) => {
+function Projects({ projects, technologyTags, difficulties }) {
   const { t } = useTranslation('projects');
   const { filteredBy, setProjectFilters } = useFilter();
   const iconColor = useColorModeValue('#FFF', '#283340');
-  const [isLoading, setIsLoading] = useState(false);
-  const [offset, setOffset] = useState(10);
   const router = useRouter();
-  const projectsFiltered = projects.slice(0, offset);
-  const projectsSearched = projects.filter(
-    (project) => project.title.toLowerCase()
-      .includes(router?.query?.search?.toLocaleLowerCase() || false),
-  );
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
+  const page = getQueryString('page', 1);
+  const search = getQueryString('search', '');
+  const pageIsEnabled = getQueryString('page', false);
+
+  const contentPerPage = 20;
+  const startIndex = (page - 1) * contentPerPage;
 
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const techsQuery = router.query.techs;
@@ -136,42 +152,24 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
     + difficultyIsActive()
     + videoTutorials;
 
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const queryFunction = async () => {
+    const endIndex = startIndex + contentPerPage;
+    const paginatedResults = projects.slice(startIndex, endIndex);
 
-  const handleScroll = () => {
-    const scrollTop = isWindow && document.documentElement.scrollTop;
-    const offsetHeight = isWindow && document.documentElement.offsetHeight;
-    const innerHeight = isWindow && window.innerHeight;
-    if ((innerHeight + scrollTop) <= offsetHeight) return;
-    setIsLoading(true);
+    return {
+      count: projects.length,
+      results: paginatedResults,
+    };
   };
-
-  useEffect(() => {
-    if (projectsSearched.length > 0) return () => {};
-    if (offset <= projects.length) {
-      console.log('loading projects...');
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
-    }
-    console.log('All projects loaded');
-    return () => {};
-  }, [offset, projectsSearched]);
-
-  useEffect(() => {
-    if (!isLoading) return;
-    if (offset >= projects.length) setIsLoading(false);
-    setTimeout(() => {
-      setOffset(offset + 10);
-      setIsLoading(false);
-    }, 200);
-  }, [isLoading]);
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-      <TitleContent title={t('title')} mobile color={iconColor} />
       <Box
         display="grid"
-        gridTemplateColumns="0fr repeat(12, 1fr) 0fr"
+        gridTemplateColumns={{
+          base: '.5fr repeat(12, 1fr) .5fr',
+          md: '1.5fr repeat(12, 1fr) 1.5fr',
+        }}
         borderBottom={1}
         borderStyle="solid"
         borderColor={useColorModeValue('gray.200', 'gray.700')}
@@ -182,11 +180,12 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
           margin="0 auto"
           maxWidth="1280px"
           justifyContent="space-between"
+          flexDirection={{ base: 'column', md: 'row' }}
           flex="1"
-          gridGap="20px"
+          gridGap="10px"
           padding={{ base: '3% 15px 4% 15px', md: '1.5% 0 1.5% 0' }}
         >
-          <TitleContent title={t('title')} mobile={false} color={iconColor} />
+          <TitleContent title={t('title')} icon="book" color={iconColor} margin={{ base: '0 0 10px 0', md: '0' }} />
 
           <Search placeholder={t('search')} />
 
@@ -231,7 +230,6 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
             onClose={onClose}
             contextFilter={filteredBy.projectsOptions}
             cardHeight="348px"
-            isLoading={isLoading}
             setFilter={setProjectFilters}
             technologyTags={technologyTags}
             difficulties={difficulties}
@@ -239,7 +237,7 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
         </Flex>
       </Box>
 
-      <GridContainer>
+      <GridContainer maxWidth="1280px" position="relative" withContainer gridColumn="1 / span 10">
         <Text
           size="md"
           display="flex"
@@ -249,21 +247,37 @@ const Projects = ({ projects, technologyTags, difficulties }) => {
           {t('description')}
         </Text>
 
-        <ProjectList
-          projects={projectsSearched.length > 0 ? projectsSearched : projectsFiltered}
-          contextFilter={filteredBy.projectsOptions}
-          isLoading={isLoading}
-          projectPath="interactive-coding-tutorial"
-          pathWithDifficulty
-        />
+        {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
+          <ProjectsLoader
+            articles={projects}
+            itemsPerPage={20}
+            searchQuery={search}
+            options={{
+              withoutImage: true,
+              contextFilter: filteredBy.projectsOptions,
+              pagePath: '/interactive-coding-tutorials',
+            }}
+          />
+        ) : (
+          <PaginatedView
+            queryFunction={queryFunction}
+            options={{
+              pagePath: '/interactive-coding-tutorials',
+              contextFilter: filteredBy.projectsOptions,
+              contentPerPage,
+              disableLangFilter: true,
+            }}
+          />
+        )}
+
       </GridContainer>
     </Box>
   );
-};
+}
 
 Projects.propTypes = {
-  technologyTags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  projects: PropTypes.arrayOf(PropTypes.object).isRequired,
+  technologyTags: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  projects: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
   difficulties: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 

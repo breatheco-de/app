@@ -15,8 +15,9 @@ import bc from '../services/breathecode';
 import { usePersistent } from '../hooks/usePersistent';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
+import modifyEnv from '../../../modifyEnv';
 
-const ProfileForm = ({ profile }) => {
+function ProfileForm({ profile }) {
   const { t } = useTranslation('profile');
   const toast = useToast();
   const router = useRouter();
@@ -25,10 +26,11 @@ const ProfileForm = ({ profile }) => {
   const [userInfo, setUserInfo] = useState(null);
   const [defaultUserInfo, setDefaultUserInfo] = useState(null);
   const accessToken = getStorageItem('accessToken');
-  const { disabledBackgroundColor } = useStyle();
+
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const {
-    borderColor, backgroundColor, lightColor, disabledColor, modal,
+    borderColor, backgroundColor, lightColor, disabledColor, modal, disabledBackgroundColor,
   } = useStyle();
 
   const hasGithub = profile.github && profile.github.username !== '';
@@ -59,6 +61,7 @@ const ProfileForm = ({ profile }) => {
         bc.auth().updateProfile(values)
           .then(({ data }) => {
             toast({
+              position: 'top',
               title: t('profile:profile-updated'),
               status: 'success',
               duration: 9000,
@@ -74,6 +77,7 @@ const ProfileForm = ({ profile }) => {
           })
           .catch(() => {
             toast({
+              position: 'top',
               title: t('profile:update-failed'),
               // description: err.message,
               status: 'error',
@@ -173,7 +177,7 @@ const ProfileForm = ({ profile }) => {
                         form.handleChange(e);
                       }}
                       defaultValue={profile?.email || ''}
-                      disabled
+                      isDisabled
                       _disabled={{
                         backgroundColor: disabledBackgroundColor,
                         cursor: 'not-allowed',
@@ -282,7 +286,7 @@ const ProfileForm = ({ profile }) => {
                     // href="#"
                     onClick={(e) => {
                       e.preventDefault();
-                      window.location.href = `${process.env.BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
+                      window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
                     }}
                   >
                     {t('connect-github')}
@@ -324,6 +328,7 @@ const ProfileForm = ({ profile }) => {
                             router.reload();
                           }, 1000);
                           toast({
+                            position: 'top',
                             title: t('alert-message:any-removed', { any: 'GitHub' }),
                             description: t('alert-message:github-account-removed'),
                             status: 'success',
@@ -333,6 +338,7 @@ const ProfileForm = ({ profile }) => {
                         })
                         .catch(() => {
                           toast({
+                            position: 'top',
                             title: t('alert-message:something-went-wrong'),
                             description: t('alert-message:error-removing-github'),
                             status: 'error',
@@ -354,10 +360,10 @@ const ProfileForm = ({ profile }) => {
       )}
     </Formik>
   );
-};
+}
 
 ProfileForm.propTypes = {
-  profile: PropTypes.objectOf(PropTypes.any),
+  profile: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 ProfileForm.defaultProps = {

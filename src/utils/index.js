@@ -1,15 +1,17 @@
 /* eslint-disable indent */
-import { format } from 'date-fns';
+import { addDays, format, isAfter } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { parseQuerys } from './url';
 
 const isWindow = typeof window !== 'undefined';
+const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 
 const HAVE_SESSION = isWindow ? localStorage.getItem('accessToken') !== null : false;
 /** @const isDevMode
  * principal use for dibuging for another issues and prevent
  * to create unused console.logs in production
 */
-const isDevMode = isWindow && (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'preview' || window.location.hostname === 'localhost');
+const isDevMode = isWindow && (process.env.VERCEL_ENV !== 'production' || process.env.NODE_ENV !== 'production');
 
 const languageLabel = {
   es: 'spanish',
@@ -33,8 +35,18 @@ const slugify = (str) => (typeof str === 'string' ? str
 
 const unSlugify = (str) => (typeof str === 'string' ? str
   .replace(/-/g, ' ')
-  .replace(/\w\S*/g,
-  (txt) => txt.charAt(0) + txt.substr(1).toLowerCase())
+  .replace(
+    /\w\S*/g,
+    (txt) => txt.charAt(0) + txt.substr(1).toLowerCase(),
+  )
+  : '');
+
+const unSlugifyCapitalize = (str) => (typeof str === 'string' ? str
+  .replace(/-/g, ' ')
+  .replace(
+/\w\S*/g,
+  (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase(),
+)
   : '');
 
 const cleanQueryStrings = (url) => url.split('?')[0];
@@ -78,7 +90,7 @@ const getExtensionName = (key) => {
 };
 
 const devLog = (msg, ...params) => { // Relevant logs only in dev mode
-  if (isDevMode) console.log(`🛠️ ${msg}`, ...params);
+  if (isDevMode) console.log(`[🛠️ DEV LOG] ${msg}`, ...params);
 };
 
 const devLogTable = (msg, array) => { // Relevant table logs with title only in dev mode
@@ -112,6 +124,21 @@ function removeURLParameter(url, parameter) {
   return url;
 }
 
+const getNextDateInMonths = (months = 1) => {
+  const today = new Date();
+  const nextMonth = new Date();
+  nextMonth.setMonth(today.getMonth() + months);
+
+  const shortWeekDays = {
+    en: format(new Date(nextMonth), 'MMM do, YYY'),
+    es: format(new Date(nextMonth), "dd 'de' MMMM, YYY", { locale: es }),
+  };
+  return {
+    date: nextMonth,
+    translation: shortWeekDays,
+  };
+};
+
 const getTimeProps = (date) => {
   const kickoffDate = {
     en: date?.kickoff_date && format(new Date(date.kickoff_date), 'MMMM do YYY'),
@@ -120,12 +147,12 @@ const getTimeProps = (date) => {
       && format(new Date(date.kickoff_date), "d 'de' MMMM YYY", { locale: es }),
   };
   const weekDays = {
-    en: date.timeslots.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE'))),
-    es: date.timeslots.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE', { locale: es }))),
+    en: date.timeslots?.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE'))),
+    es: date.timeslots?.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE', { locale: es }))),
   };
   const shortWeekDays = {
-    en: date.timeslots.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE'))),
-    es: date.timeslots.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE', { locale: es }))),
+    en: date.timeslots?.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE'))),
+    es: date.timeslots?.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE', { locale: es }))),
   };
   const getHours = (time) => new Date(time).toLocaleTimeString([], { timeZone: 'UTC', hour: '2-digit', minute: '2-digit' });
   const availableTime = date.timeslots.length > 0 && `${getHours(date.timeslots[0].starting_at)} - ${getHours(date.timeslots[0].ending_at)}`;
@@ -141,6 +168,8 @@ const getTimeProps = (date) => {
 // convert the input array to camel case
 const toCapitalize = (input = '') => input.charAt(0).toUpperCase() + input.toLowerCase().slice(1);
 
+const capitalizeFirstLetter = (str = '') => str.charAt(0).toUpperCase() + str.slice(1);
+
 function formatBytes(bytes, decimals = 2) {
   if (!+bytes) return '0 Bytes';
 
@@ -153,10 +182,242 @@ function formatBytes(bytes, decimals = 2) {
   return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
 }
 
+const resizeMasonryItem = (item) => {
+  /* Get the grid object, its row-gap, and the size of its implicit rows */
+  const grid = document.getElementsByClassName('masonry')[0];
+  // eslint-disable-next-line radix
+  const rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-row-gap'));
+  // eslint-disable-next-line radix
+  const rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-auto-rows'));
+
+  /*
+   * Spanning for any brick = S
+   * Grid's row-gap = G
+   * Size of grid's implicitly create row-track = R
+   * Height of item content = H
+   * Net height of the item = H1 = H + G
+   * Net height of the implicit row-track = T = G + R
+   * S = H1 / T
+   */
+
+  // We add the 2 to include the height od the 'Read Lesson' link
+  const rowSpan = Math.ceil((item.querySelector('.masonry-content').getBoundingClientRect().height + rowGap) / (rowHeight + rowGap)) + 3;
+
+  /* Set the spanning as calculated above (S) */
+  // eslint-disable-next-line no-param-reassign
+  item.style.gridRowEnd = `span ${rowSpan}`;
+};
+
+const resizeAllMasonryItems = () => {
+  // Get all item class objects in one list
+  const allItems = document.getElementsByClassName('masonry-brick');
+
+  /*
+   * Loop through the above list and execute the spanning function to
+   * each list-item (i.e. each masonry item)
+   */
+  for (let i = 0; i < allItems.length; i += 1) {
+    resizeMasonryItem(allItems[i]);
+  }
+};
+
+const calcSVGViewBox = (pathId) => {
+  if (typeof document !== 'undefined') {
+    const svg = document.querySelector(pathId);
+    if (svg) {
+      const clientRect = svg?.getBBox();
+
+      const viewBox = `${clientRect.x} ${clientRect.y} ${clientRect.width} ${clientRect.height}`;
+      return viewBox;
+    }
+  }
+  return '';
+};
+
+const number2DIgits = (number) => number.toString().padStart(2, '0');
+
+const sortToNearestTodayDate = (data, minutes = 30) => {
+  // sort date to the nearest today date and 30minutes after starting time
+  const currentDate = new Date();
+  if (data === undefined || data?.length === 0) return [];
+
+  const filteredDates = data.filter((item) => {
+    const startingDate = new Date(item.starting_at);
+    const endingDate = new Date(item.ending_at);
+    const timeDiff = startingDate - currentDate;
+    const minutesDiff = Math.round(timeDiff / (1000 * 60));
+
+    const hasStarted = startingDate < currentDate;
+    const isGoingToStartInAnyMin = (minutesDiff >= 0 && minutesDiff <= minutes) || hasStarted;
+    const hasExpired = endingDate < currentDate;
+
+    return isGoingToStartInAnyMin && !hasExpired;
+  });
+  const sortedDates = filteredDates.sort((a, b) => new Date(a.starting_at) - new Date(b.starting_at));
+
+  return sortedDates;
+};
+
+const isNumber = (value) => Number.isFinite(Number(value)); // number or string with number (without letters)
+
+const isValidDate = (dateString) => !Number.isNaN(Date.parse(dateString));
+
+const isDateMoreThanAnyDaysAgo = (date, days = 7) => {
+  const now = new Date();
+  const AnyDaysAgo = addDays(now, days);
+  return isAfter(date, AnyDaysAgo);
+};
+
+const getQueryString = (key, def) => {
+  const urlParams = isWindow && new URLSearchParams(window.location.search);
+  return urlParams && (urlParams.get(key) || def);
+};
+
+const createArray = (length) => Array.from({ length }, (_, i) => i);
+const lengthOfString = (string) => (typeof string === 'string' ? string?.replaceAll(/\s/g, '').length : 0);
+
+const syncInterval = (callback = () => {}) => {
+  const now = new Date();
+  const secondsToNextMinute = 60 - now.getSeconds();
+
+  setTimeout(() => {
+    callback();
+    setInterval(callback, 60 * 1000);
+  }, secondsToNextMinute * 1000);
+};
+
+function getBrowserSize() {
+  if (isWindow) {
+    const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    return { width, height };
+  }
+  return {};
+}
+
+function calculateDifferenceDays(date) {
+  const now = new Date();
+  const givenDate = new Date(date);
+
+  // Convert dates to milliseconds
+  const millisecondsPerDay = 24 * 60 * 60 * 1000;
+  const diffInMilliseconds = givenDate - now;
+
+  // Calculate the difference in days by rounding down
+  const diffInDays = Math.floor(diffInMilliseconds / millisecondsPerDay);
+
+  return {
+    isRemainingToExpire: diffInMilliseconds > 0,
+    result: Math.abs(diffInDays),
+  };
+}
+
+const getAsset = async (type, extraQuerys = {}) => {
+  const qs = parseQuerys(extraQuerys, true);
+  const limit = 100;
+  let offset = 0;
+  let allResults = [];
+
+  let results = await fetch(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&limit=${limit}&offset=${offset}${qs}`)
+    .then((res) => res.json())
+    .then((data) => data.results)
+    .catch(() => {
+      console.error(`PAGE: Error fetching ${type.toUpperCase()} pages`);
+      return [];
+    });
+
+  while (results.length > 0) {
+    allResults = allResults.concat(results);
+    offset += limit;
+
+    // eslint-disable-next-line no-await-in-loop
+    results = await fetch(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&limit=${limit}&offset=${offset}${qs}`)
+      .then((res) => res.json())
+      .then((data) => data.results)
+      .catch(() => {
+        console.error(`PAGE: Error fetching ${type.toUpperCase()} pages`);
+        return [];
+      });
+  }
+
+  return allResults;
+};
+
+function adjustNumberBeetwenMinMax({ number = 1, min = 1, max = 10 }) {
+  const range = max - min;
+  const overflow = (number - max) % range;
+  const underflow = (min - number) % range;
+  if (number > max) {
+    return max - overflow;
+  }
+  if (number < min) {
+    return max - underflow;
+  }
+  return number;
+}
+
+function getDiscountedPrice({ numItems, maxItems, discountRatio, bundleSize, pricePerUnit, startDiscountFrom = 0 }) {
+  if (numItems > maxItems) {
+      console.log('numItems cannot be greater than maxItems');
+  }
+
+  let totalDiscountRatio = 0;
+  let currentDiscountRatio = discountRatio;
+  const discountNerf = 0.1;
+  const maxDiscount = 0.2;
+
+  for (let i = startDiscountFrom; i < Math.floor(numItems / bundleSize); i += 1) {
+      totalDiscountRatio += currentDiscountRatio;
+      currentDiscountRatio -= currentDiscountRatio * discountNerf;
+  }
+
+  if (totalDiscountRatio > maxDiscount) {
+      totalDiscountRatio = maxDiscount;
+  }
+
+  const amount = pricePerUnit * numItems;
+  const discount = amount * totalDiscountRatio;
+
+  return {
+    original: amount,
+    discounted: amount - discount,
+  };
+}
+
+const formatPrice = (price = 0, hideDecimals = false) => {
+  if (price % 1 === 0) {
+    return hideDecimals ? `$${price.toFixed(0)}` : `$${price.toFixed(2)}`;
+  }
+  return `$${price.toFixed(2)}`;
+};
+
+const location = isWindow && window.location;
+
+const url = isWindow && new URL(window.location.href);
+
+function cleanObject(obj) {
+  const cleaned = {};
+
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] !== undefined && obj[key] !== null) {
+      if (Array.isArray(obj[key]) && obj[key].length === 0) {
+        return; // Ignore empty arrays
+      }
+      cleaned[key] = obj[key];
+    }
+  });
+
+  return cleaned;
+}
+
 export {
-  isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify,
+  isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify, unSlugifyCapitalize, location,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
   removeStorageItem, isDevMode, devLogTable, devLog, languageLabel,
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
+  resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
+  sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
+  createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, capitalizeFirstLetter,
+  getAsset, adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject,
 };

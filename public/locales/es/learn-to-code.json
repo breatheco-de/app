@@ -6,7 +6,7 @@
   "course": "coding-introduction",
   "callToAction": {
     "title": "Únete a la proxima cohorte",
-    "href": "#"
+    "href": "#pricing"
   },
   "bullets": [
     {
@@ -67,7 +67,7 @@
     "description": "Algunos de nuestros estudiantes están abiertos a hablar con otros en cualquier momento, al presionar este botón podrá programar una reunión con uno de ellos.",
     "button": {
       "title": "Conoce a los desarrolladores en proceso",
-      "link": "#students"
+      "link": "#pricing"
     }
   },
   "mentors": {
@@ -198,7 +198,7 @@
     "moreContent": "Ver todo el contenido",
     "button": {
       "title": "Inscribete ahora",
-      "link": "#apply"
+      "link": "#pricing"
     }
   },
 
@@ -227,7 +227,7 @@
     },
     "button": {
       "title": "Enlístate ahora",
-      "link": "#apply"
+      "link": "#pricing"
     }
   },
 
@@ -244,7 +244,7 @@
         "show": true,
         "title": "Pago único",
         "price": "$199",
-        "lastPrice": "<s>$399</s>",
+        "lastPrice": "$399",
         "offerTitle": "Oferta límite",
         "description": "Acceso completo a todas las funciones durante la duración del curso",
         "highlightText": "",
@@ -275,6 +275,7 @@
         "show": true,
         "title": "Prueba gratis",
         "price": "Prueba gratis de 7 días",
+        "isFree": true,
         "lastPrice": "",
         "description": "No se necesita tarjeta. Acceso completo a todas las funciones durante 7 días",
         "highlightText": "",
@@ -364,6 +365,7 @@
       {
         "type": "schoolarship-trial",
         "show": true,
+        "isFree": true,
         "title": "Prueba gratis",
         "price": "Prueba de 7 días",
         "months": "",

@@ -24,6 +24,7 @@ export const updateAssignment = ({
         ],
       });
       toast({
+        position: 'top',
         title: t('alert-message:assignment-updated'),
         status: 'success',
         duration: 6000,
@@ -33,6 +34,7 @@ export const updateAssignment = ({
       closeSettings();
     }).catch(() => {
       toast({
+        position: 'top',
         title: t('alert-message:assignment-update-error'),
         status: 'errror',
         duration: 5000,
@@ -73,13 +75,11 @@ export const updateAssignment = ({
           ],
         });
         toast({
+          position: 'top',
           // title: `"${res.data.title}" has been updated successfully`,
           title: isDelivering
             ? t('alert-message:delivery-success')
             : t('alert-message:delivery-removed'),
-          // title: `Your project ${isDelivering ?
-          // 'has been delivered' : 'delivery has been removed'} successfully`,
-          description: isDelivering ? t('alert-message:delivery-link', { url: data.github_url }) : '',
           status: 'success',
           duration: 6000,
           isClosable: true,
@@ -88,6 +88,7 @@ export const updateAssignment = ({
       }
     }).catch(() => {
       toast({
+        position: 'top',
         title: t('alert-message:delivery-error'),
         status: 'errror',
         duration: 5000,
@@ -106,6 +107,7 @@ export const startDay = async ({
 
     if (response.status < 400) {
       toast({
+        position: 'top',
         title: label
           ? t('alert-message:module-started', { title: label })
           : t('alert-message:module-sync-success'),
@@ -126,6 +128,7 @@ export const startDay = async ({
   } catch (err) {
     console.log('error_ADD_TASK 🔴 ', err);
     toast({
+      position: 'top',
       title: t('alert-message:module-start-error'),
       status: 'error',
       duration: 6000,

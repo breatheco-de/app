@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
   Button, FormControl, Stack, Text, Box, Input, FormErrorMessage,
-  FormLabel, useToast, Link, Spacer, Flex, InputRightElement,
+  FormLabel, useToast, Link, Spacer, Flex, InputRightElement, InputGroup,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 // import { useRouter } from 'next/router';
@@ -10,19 +10,21 @@ import Icon from '../Icon/index';
 import validationSchema from './validationSchemas';
 import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
+import modifyEnv from '../../../../modifyEnv';
 
 function LogIn() {
   const { t } = useTranslation('login');
   const [showPSW, setShowPSW] = useState(false);
   const { login } = useAuth();
   const toast = useToast();
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   // const router = useRouter();
   const [curUrl, setUrl] = useState('');
   useEffect(() => setUrl(typeof window !== 'undefined' ? window.location.href : ''), []);
   const { borderColor } = useStyle();
 
   const githubLoginUrl = (typeof window !== 'undefined')
-    ? `${process.env.BREATHECODE_HOST}/v1/auth/github?url=${curUrl}`
+    ? `${BREATHECODE_HOST}/v1/auth/github?url=${curUrl}`
     : '#';
 
   return (
@@ -34,11 +36,11 @@ function LogIn() {
       onSubmit={(values, actions) => {
         login(values)
           .then((data) => {
+            actions.setSubmitting(false);
             if (data.status === 200) {
-              actions.setSubmitting(false);
               toast({
+                position: 'top',
                 title: t('alert-message:welcome'),
-                // description: t('alert-message:select-program'),
                 status: 'success',
                 duration: 9000,
                 isClosable: true,
@@ -48,6 +50,7 @@ function LogIn() {
           .catch(() => {
             actions.setSubmitting(false);
             toast({
+              position: 'top',
               title: t('alert-message:account-not-found'),
               // description: error.message,
               status: 'error',
@@ -120,37 +123,39 @@ function LogIn() {
                   >
                     {t('common:password')}
                   </FormLabel>
-                  <Input
-                    {...field}
-                    id="current-password"
-                    autoComplete="current-password"
-                    type={showPSW ? 'text' : 'password'}
-                    placeholder="***********"
-                    height="50px"
-                    borderColor="gray.default"
-                    borderRadius="3px"
-                  />
-                  <InputRightElement width="2.5rem" top="33.5px" right="10px">
-                    <Button
-                      background="transparent"
-                      width="100%"
-                      height="100%"
-                      padding="0"
-                      onClick={() => setShowPSW(!showPSW)}
-                      _hover={{
-                        background: 'transparent',
-                      }}
-                      _active={{
-                        background: 'transparent',
-                      }}
-                    >
-                      {showPSW ? (
-                        <Icon icon="eyeOpen" color="#A4A4A4" width="24px" height="24px" />
-                      ) : (
-                        <Icon icon="eyeClosed" color="#A4A4A4" width="24px" height="24px" />
-                      )}
-                    </Button>
-                  </InputRightElement>
+                  <InputGroup>
+                    <Input
+                      {...field}
+                      id="current-password"
+                      autoComplete="current-password"
+                      type={showPSW ? 'text' : 'password'}
+                      placeholder="***********"
+                      height="50px"
+                      borderColor="gray.default"
+                      borderRadius="3px"
+                    />
+                    <InputRightElement width="2.5rem" top="5px" right="10px">
+                      <Button
+                        background="transparent"
+                        width="100%"
+                        height="100%"
+                        padding="0"
+                        onClick={() => setShowPSW(!showPSW)}
+                        _hover={{
+                          background: 'transparent',
+                        }}
+                        _active={{
+                          background: 'transparent',
+                        }}
+                      >
+                        {showPSW ? (
+                          <Icon icon="eyeOpen" color="#A4A4A4" width="24px" height="24px" />
+                        ) : (
+                          <Icon icon="eyeClosed" color="#A4A4A4" width="24px" height="24px" />
+                        )}
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
                   <FormErrorMessage>{form.errors.password}</FormErrorMessage>
                 </FormControl>
               )}
@@ -164,7 +169,7 @@ function LogIn() {
                 align="right"
                 target="_blank"
                 rel="noopener noreferrer"
-                href={`${process.env.BREATHECODE_HOST}/v1/auth/password/reset?url=${curUrl}`}
+                href={`${BREATHECODE_HOST}/v1/auth/password/reset?url=${curUrl}`}
               >
                 {t('forgot-password')}
               </Link>

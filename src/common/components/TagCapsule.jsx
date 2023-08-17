@@ -4,10 +4,11 @@ import PropTypes from 'prop-types';
 import Text from './Text';
 import Link from './NextChakraLink';
 
-const TagCapsule = ({
+function TagCapsule({
   tags,
   separator,
   background,
+  color,
   variant,
   paddingX,
   marginY,
@@ -19,7 +20,9 @@ const TagCapsule = ({
   isLink,
   href,
   borderRadius,
-}) => {
+  lineHeight,
+  ...rest
+}) {
   const { colorMode } = useColorMode();
 
   return tags.length !== 0 && (
@@ -36,6 +39,7 @@ const TagCapsule = ({
       px={paddingX}
       borderRadius="15px"
       gridGap={gap}
+      {...rest}
     >
       {tags.map((tag, i) => (isLink ? (
         <Link
@@ -47,7 +51,7 @@ const TagCapsule = ({
           padding={variant === 'rounded' ? '0 10px' : '0'}
           style={style}
           rounded={variant === 'rounded' ? borderRadius : 'none'}
-          key={tag.name || `${tag}-${i}`}
+          key={tag?.name || `${tag}-${i}`}
           lineHeight="22px"
           color={colorMode === 'light' ? 'black' : 'black'}
         >
@@ -61,7 +65,7 @@ const TagCapsule = ({
             color="black"
             textTransform="uppercase"
           >
-            {tag.name || tag}
+            {tag?.name || tag}
           </Text>
           {variant === 'slash' && i < tags.length - 1 && (
             <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
@@ -78,10 +82,15 @@ const TagCapsule = ({
           padding={variant === 'rounded' ? '0 10px' : '0'}
           style={style}
           rounded={variant === 'rounded' ? borderRadius : 'none'}
-          key={tag.name || `${tag}-${i}`}
-          lineHeight="22px"
+          key={tag?.name || `${tag}-${i}`}
+          lineHeight={lineHeight}
           color={colorMode === 'light' ? 'black' : 'black'}
         >
+          {variant === 'slash' && i !== 0 && (
+            <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
+              {separator}
+            </Box>
+          )}
           <Text
             margin="0"
             alignSelf="center"
@@ -89,38 +98,40 @@ const TagCapsule = ({
             textAlign="center"
             size={fontSize}
             fontWeight={fontWeight}
-            color="black"
+            color={color}
             textTransform="uppercase"
           >
-            {tag.name || tag}
+            {tag?.name || tag}
           </Text>
-          {variant === 'slash' && i < tags.length - 1 && (
+          {/* {variant === 'slash' && i < tags.length - 1 && (
             <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
               {separator}
             </Box>
-          )}
+          )} */}
         </Box>
       )
       ))}
     </Stack>
   );
-};
+}
 
 TagCapsule.propTypes = {
   tags: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
   fontSize: PropTypes.string,
   separator: PropTypes.string,
-  containerStyle: PropTypes.objectOf(PropTypes.any),
+  containerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   background: PropTypes.string,
   variant: PropTypes.string,
   paddingX: PropTypes.string,
   marginY: PropTypes.string,
   gap: PropTypes.string,
   style: PropTypes.shape({}),
-  fontWeight: PropTypes.string,
+  fontWeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   isLink: PropTypes.bool,
   href: PropTypes.string,
   borderRadius: PropTypes.string,
+  color: PropTypes.string,
+  lineHeight: PropTypes.string,
 };
 TagCapsule.defaultProps = {
   separator: '/',
@@ -130,7 +141,7 @@ TagCapsule.defaultProps = {
   variant: 'slash',
   paddingX: '20px',
   marginY: '18px',
-  fontWeight: '500',
+  fontWeight: 500,
   gap: '0',
   style: {
     margin: '0',
@@ -138,6 +149,8 @@ TagCapsule.defaultProps = {
   isLink: false,
   href: '#',
   borderRadius: '15px',
+  color: 'black',
+  lineHeight: '22px',
 };
 
 export default memo(TagCapsule);

@@ -3,7 +3,7 @@ import { Progress } from '@chakra-ui/react';
 import axiosInstance from '../../axios';
 import useAuth from '../hooks/useAuth';
 
-const InterceptionLoader = () => {
+function InterceptionLoader() {
   const { logout } = useAuth();
   const [loading, setLoading] = useState(false);
 
@@ -15,7 +15,7 @@ const InterceptionLoader = () => {
     }, (error) => {
       Promise.reject(error);
       const statusError = error.response.status;
-      console.log('error_request:', error);
+      console.error('Error_request:', error);
       setLoading(false);
       if (statusError === 401) {
         handleLogout();
@@ -25,7 +25,7 @@ const InterceptionLoader = () => {
       setLoading(false);
       return res;
     }, (error) => {
-      const statusError = error.response.status;
+      const statusError = error.response?.status;
       Promise.reject(error);
       setLoading(false);
       if (statusError === 401) {
@@ -49,6 +49,6 @@ const InterceptionLoader = () => {
       isIndeterminate
     />
   );
-};
+}
 
 export default InterceptionLoader;

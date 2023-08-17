@@ -1,0 +1,24 @@
+{
+  "back-to": "Back to Dashboard",
+  "title": "Attendance",
+  "attendance": "attendance",
+  "label": {
+    "status": "Status",
+    "student-and-assignments": "Student and Assignments",
+    "link": "Link/File",
+    "actions": "Actions",
+    "files-received": "{{files}} Files delivered",
+    "link-received": "Link delivered"
+  },
+  "filter": {
+    "sort-by": "Sort by",
+    "sort-by-name": "Sort by name",
+    "sort-by-percentage": "Sort by percentage",
+    "project": "Filter by Project",
+    "student": "Filter by Student",
+    "status": "Filter by Status",
+    "assignments-length": "Current list of {{total}} assignments"
+  },
+  "no-content-to-show": "Nothing to see here, please select another cohort",
+  "no-attendance-list-found": "No attendance list found, please take the first attendance <br /> in this cohort and try again"
+}

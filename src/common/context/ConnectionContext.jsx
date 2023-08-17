@@ -1,5 +1,5 @@
 import {
-  createContext, useEffect, useState,
+  createContext, useEffect, useMemo, useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
@@ -7,17 +7,19 @@ import { getStorageItem } from '../../utils';
 import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import axiosInstance from '../../axios';
+import modifyEnv from '../../../modifyEnv';
 
 export const ConnectionContext = createContext({ usersConnected: [] });
 
-const OnlineContext = ({ children }) => {
-  const [usersConnected, setUsersConnected] = useState([]);
+function OnlineContext({ children }) {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const [usersConnected, setUsersConnected] = useState({});
   const accessToken = getStorageItem('accessToken');
   const { isLoading } = useAuth();
   const [temporalToken, setTemporalToken] = useState(null);
   const hasLoaded = !isLoading;
 
-  const BREATHECODE_WS = String(process.env.BREATHECODE_HOST).replace('https://', '');
+  const BREATHECODE_WS = String(BREATHECODE_HOST).replace('https://', '');
 
   useEffect(() => {
     if (hasLoaded && accessToken) {
@@ -33,20 +35,24 @@ const OnlineContext = ({ children }) => {
 
   const actions = {
     connected: (data) => {
-      if (usersConnected.includes(data.id)) return;
-      setUsersConnected((prev) => [...prev, data.id]);
+      setUsersConnected((prev) => ({ ...prev, [data.id]: true }));
     },
-    disconnected: (data) => setUsersConnected((prev) => prev.filter((id) => id !== data.id)),
+    disconnected: (data) => {
+      setUsersConnected((prev) => {
+        const updated = { ...prev };
+        delete updated[data.id];
+        return updated;
+      });
+    },
   };
 
   useEffect(() => {
     if (hasLoaded && temporalToken !== null && temporalToken?.token) {
-      console.log('temporal_token:', temporalToken);
       const client = new W3CWebSocket(`wss://${BREATHECODE_WS}/ws/online?token=${temporalToken.token}`);
 
       client.onopen = () => {
         console.log('WebSocket Client Connected');
-        setUsersConnected((prev) => [...prev, temporalToken.user_id]);
+        setUsersConnected((prev) => ({ ...prev, [temporalToken?.user_id]: true }));
       };
 
       client.onmessage = (event) => {
@@ -59,16 +65,18 @@ const OnlineContext = ({ children }) => {
     }
   }, [isLoading, temporalToken]);
 
+  const values = useMemo(() => ({
+    usersConnected: Object.keys(usersConnected).map((key) => Number(key)),
+  }), [usersConnected]);
+
   return (
     <ConnectionContext.Provider
-      value={{
-        usersConnected,
-      }}
+      value={values}
     >
       {children}
     </ConnectionContext.Provider>
   );
-};
+}
 
 OnlineContext.propTypes = {
   children: PropTypes.node.isRequired,

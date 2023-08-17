@@ -35,7 +35,29 @@ import CustomTheme from '../../../styles/theme';
 import GridContainer from '../../common/components/GridContainer';
 // import KPI from '../../common/components/KPI';
 
-const Mentorship = () => {
+// eslint-disable-next-line react/prop-types
+const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
+  const { t } = useTranslation('mentorship');
+
+  return (
+    // eslint-disable-next-line react/button-has-type
+    <Button
+      size={['md', 'md', 'lg', 'lg']}
+      display="inline-block"
+      colorScheme="blue"
+      variant="ghost"
+      onClick={onClick}
+      ref={ref}
+      marginLeft={['5px', '5px', '10px', '10px']}
+    >
+      {value || t('common:select')}
+      {' '}
+      <ChevronDownIcon />
+    </Button>
+  );
+});
+
+function Mentorship() {
   const { t } = useTranslation('mentorship');
   const { colorMode } = useColorMode();
   const router = useRouter();
@@ -58,11 +80,12 @@ const Mentorship = () => {
   const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
   const commonFontColor = useColorModeValue('gray.dark', 'gray.light');
 
-  // {
-  //   started_after: '2022-05-01',
-  //   ended_before: '2022-05-31',
-  // }
-  useEffect(async () => {
+  const getMentorshipSessions = async (filter) => {
+    const { data } = await bc.mentorship(filter).getMySessions();
+    return data;
+  };
+
+  useEffect(() => {
     setIsLoading(true);
     let filter = {};
     if (startDate) {
@@ -72,7 +95,7 @@ const Mentorship = () => {
       };
     }
     try {
-      const { data } = await bc.mentorship(filter).getMySessions();
+      const data = getMentorshipSessions(filter);
       setIsLoading(false);
       setSessions(data);
     } catch (e) {
@@ -80,24 +103,6 @@ const Mentorship = () => {
       setIsLoading(false);
     }
   }, [startDate]);
-
-  // eslint-disable-next-line react/prop-types
-  const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => (
-    // eslint-disable-next-line react/button-has-type
-    <Button
-      size={['md', 'md', 'lg', 'lg']}
-      display="inline-block"
-      colorScheme="blue"
-      variant="ghost"
-      onClick={onClick}
-      ref={ref}
-      marginLeft={['5px', '5px', '10px', '10px']}
-    >
-      {value || t('common:select')}
-      {' '}
-      <ChevronDownIcon />
-    </Button>
-  ));
 
   const getExtraTime = (str) => str.substr(0, str.indexOf(', the expected duration')).replace('Extra time of ', '');
   const getExpectedTime = (str) => str.substr(str.indexOf(', the expected duration')).replace(', the expected duration was ', '');
@@ -146,10 +151,10 @@ const Mentorship = () => {
   return (
     <Container maxW="none" padding="0">
       <GridContainer
+        withContainer
+        my="3rem"
         className="kpi-container"
         maxW="none"
-        // paddingRight="20%"
-        // paddingLeft={['5%', '5%', '10%', '10%']}
         paddingTop="20px"
         paddingBottom="20px"
       >
@@ -252,9 +257,7 @@ const Mentorship = () => {
                   <Flex alignItems="center">
                     {tooltipsGenerator(session).map((tooltip) => (
                       <Tooltip label={tooltip.label} fontSize="md" placement="top">
-                        <span>
-                          <Icon style={{ marginRight: '15px' }} icon={tooltip.icon} width="25px" height="25px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
-                        </span>
+                        <Icon style={{ marginRight: '15px' }} icon={tooltip.icon} width="25px" height="25px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
                       </Tooltip>
                     ))}
                     <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link" onClick={() => setShowModal({ show: true, session })}>
@@ -270,9 +273,7 @@ const Mentorship = () => {
                   <Flex wrap="wrap" maxWith="250px" className="icons-row-responsive" alignItems="center">
                     {tooltipsGenerator(session).map((tooltip) => (
                       <Tooltip label={tooltip.label} fontSize="md" placement="top">
-                        <span>
-                          <Icon style={{ marginRight: '15px', marginTop: '5px' }} icon={tooltip.icon} width="20px" height="20px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
-                        </span>
+                        <Icon style={{ marginRight: '15px', marginTop: '5px' }} icon={tooltip.icon} width="20px" height="20px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
                       </Tooltip>
                     ))}
                     <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link" onClick={() => setShowModal({ show: true, session })}>
@@ -348,7 +349,7 @@ const Mentorship = () => {
     </Container>
 
   );
-};
+}
 
 const StyledContainer = styled.div`
   width: 100%;

@@ -7,14 +7,15 @@ import {
   PopoverTrigger,
   PopoverContent,
   PopoverArrow,
+  Link,
   Button,
   useColorModeValue,
 } from '@chakra-ui/react';
 import styles from '../../../styles/flags.module.css';
 import navbarTR from '../translations/navbar';
-import NextChakraLink from './NextChakraLink';
+import { isWindow } from '../../utils';
 
-const LanguageSelector = ({ display, translations }) => {
+function LanguageSelector({ display, translations }) {
   const router = useRouter();
   const locale = router.locale === 'default' ? 'en' : router.locale;
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
@@ -24,8 +25,10 @@ const LanguageSelector = ({ display, translations }) => {
   } = navbarTR[locale];
   const [languagesOpen, setLanguagesOpen] = useState(false);
   const currentLanguage = languagesTR.filter((l) => l.value === locale)[0];
-
-  const translationsPropsExists = Object.keys(translations).length > 0;
+  const translationsPropsExists = translations?.length > 0;
+  const currentTranslationLanguage = isWindow
+    && translationsPropsExists
+    && translations?.find((l) => l?.slug === window.location.pathname?.split('/')?.pop());
 
   return (
     <Popover
@@ -54,7 +57,7 @@ const LanguageSelector = ({ display, translations }) => {
           onClick={() => setLanguagesOpen(!languagesOpen)}
         >
           <Box
-            className={`${styles.flag} ${styles[currentLanguage.value]}`}
+            className={`${styles.flag} ${styles[currentTranslationLanguage?.lang || currentLanguage?.value]}`}
             width="25px"
             height="25px"
           />
@@ -78,42 +81,47 @@ const LanguageSelector = ({ display, translations }) => {
           padding="12px"
         >
           {((translationsPropsExists
-            && Object.keys(translations))
+            && translations)
             || languagesTR).map((l) => {
-            const lang = languagesTR.filter((language) => language.value === l)[0];
-            const value = translationsPropsExists ? lang.value : l.value;
-            const label = translationsPropsExists ? lang.label : l.label;
-            const path = translationsPropsExists ? translations[value] : router.asPath;
+            const lang = languagesTR.filter((language) => language?.value === l?.lang)[0];
+            const value = translationsPropsExists ? lang?.value : l.value;
+            const label = translationsPropsExists ? lang?.label : l.label;
+            const path = translationsPropsExists ? l?.link : router.asPath;
+
+            const cleanedPath = (path === '/' && value !== 'en') ? '' : path;
+            const localePrefix = `${value !== 'en' && !cleanedPath.includes(`/${value}`) ? `/${value}` : ''}`;
+
+            const link = `${localePrefix}${cleanedPath}`;
+
             return (
-              <NextChakraLink
+              <Link
                 width="100%"
                 key={value}
-                href={path}
-                locale={value}
+                href={link}
                 role="group"
                 alignSelf="center"
                 display="flex"
                 gridGap="5px"
                 fontWeight="bold"
                 textDecoration="none"
-                opacity={locale === (value) ? 1 : 0.75}
+                opacity={locale === value ? 1 : 0.75}
                 _hover={{
                   opacity: 1,
                 }}
               >
                 <Box className={`${styles.flag} ${styles[value]}`} width="25px" height="25px" />
                 {label}
-              </NextChakraLink>
+              </Link>
             );
           })}
         </Box>
       </PopoverContent>
     </Popover>
   );
-};
+}
 
 LanguageSelector.propTypes = {
-  translations: PropTypes.objectOf(PropTypes.any),
+  translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   display: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
 };
 

@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Icon from '../../common/components/Icon';
 
-const Search = ({ placeholder, onChange }) => {
+function Search({ placeholder, onChange }) {
   const router = useRouter();
   const [value, setValue] = useState('');
 
@@ -68,7 +68,7 @@ const Search = ({ placeholder, onChange }) => {
       )}
     </Formik>
   );
-};
+}
 
 Search.propTypes = {
   placeholder: PropTypes.string,

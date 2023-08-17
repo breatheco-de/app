@@ -2,7 +2,7 @@ import { Box } from '@chakra-ui/react';
 import NextImage from 'next/image';
 import PropTypes from 'prop-types';
 
-const ChakraNextImage = (props) => {
+function Image(props) {
   const {
     src, alt, objectFit, layout, quality, priority, classNameImg, styleImg, ...rest
   } = props;
@@ -19,9 +19,9 @@ const ChakraNextImage = (props) => {
       />
     </Box>
   );
-};
+}
 
-ChakraNextImage.propTypes = {
+Image.propTypes = {
   src: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   alt: PropTypes.string.isRequired,
   quality: PropTypes.number,
@@ -29,9 +29,9 @@ ChakraNextImage.propTypes = {
   priority: PropTypes.bool,
   objectFit: PropTypes.string,
   classNameImg: PropTypes.string,
-  styleImg: PropTypes.objectOf(PropTypes.any),
+  styleImg: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
-ChakraNextImage.defaultProps = {
+Image.defaultProps = {
   src: '/static/images/code1.png',
   quality: 100,
   layout: 'fill',
@@ -41,4 +41,4 @@ ChakraNextImage.defaultProps = {
   styleImg: {},
 };
 
-export default ChakraNextImage;
+export default Image;

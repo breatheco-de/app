@@ -1,0 +1,90 @@
+{
+  "id": "page",
+  "label": "Page",
+  "repeatable": true,
+  "status": true,
+  "json": {
+    "Main": {
+      "uid": {
+        "type": "UID",
+        "config": {
+          "label": "UID",
+          "placeholder": ""
+        }
+      },
+      "title": {
+        "type": "Text",
+        "config": {
+          "label": "TItle",
+          "placeholder": ""
+        }
+      },
+      "description": {
+        "type": "Text",
+        "config": {
+          "label": "description",
+          "placeholder": "Description for Social Cards"
+        }
+      },
+      "image": {
+        "type": "Image",
+        "config": {
+          "label": "image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
+      "type": {
+        "type": "Text",
+        "config": {
+          "label": "type",
+          "placeholder": "The default type is \"website\""
+        }
+      },
+      "slices": {
+        "type": "Slices",
+        "fieldset": "Slice Zone",
+        "config": {
+          "choices": {
+            "title_introduction": {
+              "type": "SharedSlice"
+            },
+            "markdown": {
+              "type": "SharedSlice"
+            },
+            "two_column": {
+              "type": "SharedSlice"
+            },
+            "one_column": {
+              "type": "SharedSlice"
+            },
+            "testimonials": {
+              "type": "SharedSlice"
+            },
+            "show_prices": {
+              "type": "SharedSlice"
+            },
+            "technologies": {
+              "type": "SharedSlice"
+            },
+            "partners": {
+              "type": "SharedSlice"
+            },
+            "road_map": {
+              "type": "SharedSlice"
+            },
+            "recommended_courses": {
+              "type": "SharedSlice"
+            },
+            "technologies_pills": {
+              "type": "SharedSlice"
+            },
+            "event_cards": {
+              "type": "SharedSlice"
+            }
+          }
+        }
+      }
+    }
+  }
+}

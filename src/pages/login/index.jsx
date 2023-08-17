@@ -3,7 +3,7 @@ import {
   Flex, Stack, Box, Tabs, TabList, Tab, TabPanels, TabPanel, Image, useColorModeValue,
 } from '@chakra-ui/react';
 // import I from 'next/image';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 // import logo from '../../../public/static/images/bc_logo.png';
 import getT from 'next-translate/getT';
@@ -11,7 +11,7 @@ import Login from '../../common/components/Forms/LogIn';
 import Register from '../../common/components/Forms/Register';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
-import { isWindow } from '../../utils';
+import { getQueryString, isWindow } from '../../utils';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'login');
@@ -33,7 +33,6 @@ export const getStaticProps = async ({ locale, locales }) => {
         url: ogUrl.en || `/${locale}/login`,
         pathConnector: '/login',
       },
-      fallback: false,
     },
   };
 };
@@ -43,18 +42,32 @@ function login() {
   const { user } = useAuth();
   const redirect = isWindow && localStorage.getItem('redirect');
   const router = useRouter();
+  const [currentTabIndex, setCurrentTabIndex] = useState(0);
+  const [isLoggedFromRegister, setIsLoggedFromRegister] = useState(false);
+
   const fontColor = useColorModeValue('gray.default', 'gray.400');
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
 
+  const tabQueryString = getQueryString('tab');
+
+  const tabPosition = {
+    login: 0,
+    register: 1,
+  };
+
   useEffect(() => {
-    if (user !== null && user !== undefined) {
+    if (tabQueryString) {
+      setCurrentTabIndex(tabPosition[tabQueryString]);
+    }
+  }, [tabQueryString]);
+  useEffect(() => {
+    if (user !== null && user !== undefined && !isLoggedFromRegister) {
       if (redirect && redirect.length > 0 && isWindow) {
         router.push(redirect);
         localStorage.removeItem('redirect');
       } else {
         router.push('/choose-program');
       }
-      // router.back();
     }
   }, [user]);
 
@@ -66,7 +79,7 @@ function login() {
             <Icon icon="logoModern" width="200px" height="100px" />
           </Box>
           <Stack spacing={6}>
-            <Tabs isFitted variant="enclosed">
+            <Tabs index={currentTabIndex} isFitted variant="enclosed">
               <Stack spacing={8}>
                 <TabList align="center" justify="center">
                   <Tab
@@ -75,6 +88,7 @@ function login() {
                       borderBottomColor: 'blue.default',
                       borderBottomWidth: '3px',
                     }}
+                    onClick={() => setCurrentTabIndex(0)}
                     color={fontColor}
                     boxShadow="none !important"
                     fontWeight="600"
@@ -92,6 +106,7 @@ function login() {
                       borderBottomColor: 'blue.default',
                       borderBottomWidth: '3px',
                     }}
+                    onClick={() => setCurrentTabIndex(1)}
                     color={fontColor}
                     boxShadow="none !important"
                     fontWeight="600"
@@ -109,7 +124,7 @@ function login() {
                     <Login />
                   </TabPanel>
                   <TabPanel>
-                    <Register />
+                    <Register setIsLoggedFromRegister={setIsLoggedFromRegister} />
                   </TabPanel>
                 </TabPanels>
               </Stack>
