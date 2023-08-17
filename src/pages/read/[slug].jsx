@@ -79,7 +79,9 @@ function Read({ data }) {
   const router = useRouter();
   const { t } = useTranslation('read');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
+  const iconColor = useColorModeValue('#FFF', '#283340');
   const locale = router?.locale;
+
   const containsQueryString = (lesson) => {
     if (typeof router.query.search === 'string' && !lesson.lessons.some(
       (l) => l?.title && l.title?.toLowerCase().includes(router.query.search),
@@ -117,7 +119,6 @@ function Read({ data }) {
 
   return (
     <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-      <TitleContent title={t('title')} mobile />
       <Box
         display="grid"
         gridTemplateColumns={{
@@ -134,11 +135,12 @@ function Read({ data }) {
           margin="0 auto"
           maxWidth="1280px"
           justifyContent="space-between"
+          flexDirection={{ base: 'column', md: 'row' }}
           flex="1"
-          gridGap="20px"
+          gridGap="10px"
           padding={{ base: '3% 15px 4% 15px', md: '1.5% 0 1.5% 0' }}
         >
-          <TitleContent title={t('title')} mobile={false} />
+          <TitleContent title={t('title')} icon="book" color={iconColor} margin={{ base: '0 0 10px 0', md: '0' }} />
 
           <Search placeholder={t('search')} />
 

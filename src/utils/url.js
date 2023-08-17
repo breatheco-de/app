@@ -26,7 +26,7 @@ const parseQuerys = (query, connector = false) => {
       }
     });
   } catch (e) {
-    return '';
+    return console.error('🛠️ parseQuerys error:', e);
   }
   return queryString;
 };

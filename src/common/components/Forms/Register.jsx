@@ -23,11 +23,13 @@ import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import Text from '../Text';
 import { SILENT_CODE } from '../../../lib/types';
 import bc from '../../services/breathecode';
+import useSubscribeToPlan from '../../hooks/useSubscribeToPlan';
 
 function Register({ setIsLoggedFromRegister }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('login');
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
+  const { handleSubscribeToPlan, successModal } = useSubscribeToPlan({ enableRedirectOnCTA: true });
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const accessToken = getStorageItem('accessToken');
   const toast = useToast();
@@ -41,6 +43,7 @@ function Register({ setIsLoggedFromRegister }) {
 
   return (
     <>
+      {successModal}
       <ModalInfo
         isOpen={showAlreadyMember}
         headerStyles={{ textAlign: 'center' }}
@@ -125,12 +128,6 @@ function Register({ setIsLoggedFromRegister }) {
             ...verifyEmailProps,
             state: false,
           });
-          router.push({
-            pathname: '/checkout',
-            query: {
-              plan: '4geeks-standard',
-            },
-          });
         }}
       />
       <Formik
@@ -172,13 +169,20 @@ function Register({ setIsLoggedFromRegister }) {
           setStorageItem('subscriptionId', data?.id);
           if (data?.access_token) {
             setIsLoggedFromRegister(true);
-            setVerifyEmailProps({
-              data: {
-                ...values,
-                ...data,
-              },
-              state: true,
-            });
+
+            handleSubscribeToPlan({
+              slug: '4geeks-standard',
+              accessToken: data?.access_token,
+            })
+              .finally(() => {
+                setVerifyEmailProps({
+                  data: {
+                    ...values,
+                    ...data,
+                  },
+                  state: true,
+                });
+              });
             router.push({
               query: {
                 token: data.access_token,

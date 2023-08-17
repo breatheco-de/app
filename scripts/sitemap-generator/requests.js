@@ -9,6 +9,7 @@ const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-te
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
 const PRISMIC_API = process.env.PRISMIC_API || 'https://your-prismic-repo.cdn.prismic.io/api/v2';
 const PRISMIC_REF = process.env.PRISMIC_REF || 'Y-EX4MPL3R3F';
+const WHITE_LABLE_ACADEMY = process.env.WHITE_LABLE_ACADEMY || '4,5,6,47';
 
 const getPrismicPages = () => {
   const data = axios.get(`${PRISMIC_API}/documents/search?ref=${PRISMIC_REF}&type=page&lang=*`)
@@ -20,7 +21,7 @@ const getPrismicPages = () => {
 };
 
 const getTechonologyAssets = async (slug) => {
-  const resp = axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset?limit=9000&technologies=${slug}`)
+  const resp = axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset?limit=9000&technologies=${slug}&academy=${WHITE_LABLE_ACADEMY}`)
     .then((res) => res.data.results)
     .catch(() => {
       console.error('SITEMAP: Error fetching Technology Assets');
@@ -52,7 +53,7 @@ const getAsset = async (type, extraQuerys = {}) => {
   let offset = 0;
   let allResults = [];
 
-  let results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&visibility=PUBLIC&status=PUBLISHED&limit=${limit}&offset=${offset}${qs}`)
+  let results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&visibility=PUBLIC&status=PUBLISHED&limit=${limit}&offset=${offset}${qs}&academy=${WHITE_LABLE_ACADEMY}`)
     .then((res) => res.data.results)
     .catch(() => {
       console.error(`SITEMAP: Error fetching ${type.toUpperCase()} pages`);
@@ -75,7 +76,7 @@ const getAsset = async (type, extraQuerys = {}) => {
 };
 
 const getLandingTechnologies = () => {
-  const technologies = axios.get(`${BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000`, {
+  const technologies = axios.get(`${BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000&academy=${WHITE_LABLE_ACADEMY}`, {
     headers: {
       Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
       Academy: 4,
