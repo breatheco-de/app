@@ -14,6 +14,8 @@ import useOnline from '../../hooks/useOnline';
 import AvatarUser from '../../../js_modules/cohortSidebar/avatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped } from '../Skeleton';
+import modifyEnv from '../../../../modifyEnv';
+import { usePersistent } from '../../hooks/usePersistent';
 
 function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mentoryProps, subscriptionData, disableBackButton = false, ...rest }) {
   return (
@@ -90,6 +92,8 @@ function MentoringConsumables({
 }) {
   const { t } = useTranslation('dashboard');
 
+  const [cohortSession] = usePersistent('cohortSession', {});
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const isNotProduction = process.env.VERCEL_ENV !== 'production';
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   const [open, setOpen] = useState(false);
@@ -351,7 +355,12 @@ function MentoringConsumables({
                                 <Box>
                                   {(mentor.one_line_bio && mentor.one_line_bio !== '') ? `${mentor.one_line_bio} ` : ''}
                                   {mentor?.booking_url ? (
-                                    <Link variant="default" href={mentor?.booking_url} target="_blank" rel="noopener noreferrer">
+                                    <Link
+                                      variant="default"
+                                      href={`${BREATHECODE_HOST}/mentor/${mentor?.slug}?utm_campaign=${mentoryProps?.service?.slug}&utm_source=4geeks&salesforce_uuid=${cohortSession?.bc_id}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
                                       {t('supportSideBar.create-session-text', { name: mentor.user.first_name })}
                                     </Link>
                                   ) : (
