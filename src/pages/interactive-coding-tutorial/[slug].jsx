@@ -121,7 +121,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   ].filter((item) => translations?.[item?.value] !== undefined);
 
   const eventStructuredData = {
-    '@context': 'http://schema.org',
+    '@context': 'https://schema.org',
     '@type': 'Article',
     name: result?.title,
     description: result?.description,
