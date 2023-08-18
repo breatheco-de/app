@@ -60,14 +60,16 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
     //   url,
     //   t(commonTranslation?.validators['invalid-url'] || 'common:validators.invalid-url'),
     // ),
-    screenshot: Yup.mixed()
+    screenshot: Yup.mixed().nullable()
       .test('fileFormat', t(commonTranslation?.validators['unsupported-image-file'] || 'common:validators.unsupported-image-file'), (value) => {
+        if (prefillImage) return true;
         if (value) {
           return ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'].includes(value.type);
         }
         return true;
       })
       .test('fileSize', commonTranslation?.validators['long-file'] || t('common:validators.long-file'), (value) => {
+        if (prefillImage) return true;
         if (value) {
           return value.size <= maxFileSize;
         }
