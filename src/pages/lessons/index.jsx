@@ -36,7 +36,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
 
-  arrLessons = Object.values(data.results);
+  arrLessons = Object.values(data?.results);
   if (resp.status !== undefined && resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${arrLessons.length} Lessons fetched for /lessons`);
   } else {
