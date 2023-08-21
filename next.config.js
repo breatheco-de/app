@@ -126,6 +126,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
       'storage.googleapis.com',
       'images.prismic.io',
       'images.unsplash.com',
+      'refreshmiami.com',
     ],
     // formats: ['image/avif', 'image/webp'],
   },
