@@ -12,7 +12,6 @@ function PublicProfile({ data }) {
 
   const profile = data?.profile;
   const {
-    avatar_url: avatarImage,
     bio: description,
     github_username: githubLink,
     twitter_username: twitterLink,
@@ -24,6 +23,7 @@ function PublicProfile({ data }) {
   const firstName = data?.first_name;
   const lastName = data?.last_name;
   const country = data?.country;
+  const avatarImage = data?.avatar_url;
 
   const fullName = `${firstName} ${lastName}`;
   const socialMedia = [
