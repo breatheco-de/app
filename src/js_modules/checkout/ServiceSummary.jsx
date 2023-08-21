@@ -77,7 +77,7 @@ function ServiceSummary({ service }) {
   });
 
   const dataToAssign = {
-    service: service?.serviceInfo?.type === 'mentorship' ? service?.serviceInfo.mentorship_services?.[0].slug : service?.service?.slug,
+    service: service?.service?.slug,
     academy: service?.academy?.id,
     how_many: selectedService?.qty,
     mentorship_service_set: service.serviceInfo.type === 'mentorship' ? service.serviceInfo.id : undefined,
