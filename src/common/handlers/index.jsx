@@ -164,20 +164,20 @@ const handlers = {
     const programCohortStage = program?.cohort?.stage?.toUpperCase();
 
     const hasEnded = ['ENDED'].includes(programCohortStage);
-    const isActiveButGraduated = educationalStatus === 'GRADUATED' && programCohortStage === 'ACTIVE';
+    const isGraduated = educationalStatus === 'GRADUATED';
 
     const showStudent = ['GRADUATED', 'POSTPONED', 'ACTIVE'].includes(educationalStatus);
     const isNotHiddenOnPrework = programCohortStage === 'PREWORK'
       && program?.cohort?.is_hidden_on_prework === false
       && hasEnded;
 
-    return (isActiveButGraduated || hasEnded || isNotHiddenOnPrework) && showStudent;
+    return (isGraduated || hasEnded || isNotHiddenOnPrework) && showStudent;
   }),
   getActiveCohorts: (cohorts) => cohorts.filter((program) => {
     const educationalStatus = program?.educational_status?.toUpperCase();
     const programRole = program?.role?.toUpperCase();
     const programCohortStage = program?.cohort?.stage?.toUpperCase();
-    const isActiveButGraduated = educationalStatus === 'GRADUATED' && programCohortStage === 'ACTIVE';
+    const isGraduated = educationalStatus === 'GRADUATED';
 
     const visibleForTeacher = programRole !== 'STUDENT';
 
@@ -197,7 +197,7 @@ const handlers = {
 
     const showStudent = ['ACTIVE'].includes(educationalStatus) && programRole === 'STUDENT';
 
-    const show = !isActiveButGraduated && (cohortIsAvailable || isNotHiddenOnPrework) && (visibleForTeacher || showStudent);
+    const show = !isGraduated && (cohortIsAvailable || isNotHiddenOnPrework) && (visibleForTeacher || showStudent);
 
     return show;
   }),
