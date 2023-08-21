@@ -17,8 +17,8 @@ function PublicProfile({ data }) {
   const country = data?.country;
   const avatarImage = data?.avatar_url;
   const description = profile?.bio;
-  const githubLink = profile?.github_username;
-  const twitterLink = profile?.twitter_username;
+  const githubUsername = profile?.github_username;
+  const twitterUsername = profile?.twitter_username;
   const linkedinLink = profile?.linkedin_url;
   const websiteLink = profile?.blog;
   const portfolioLink = profile?.portfolio_url;
@@ -28,12 +28,12 @@ function PublicProfile({ data }) {
     {
       name: 'Github',
       icon: 'github',
-      url: githubLink,
+      url: githubUsername ? `https://github.com/${githubUsername}` : null,
     },
     {
       name: 'Twitter',
       icon: 'twitter',
-      url: twitterLink,
+      url: twitterUsername ? `https://twitter.com/${twitterUsername}` : null,
     },
     {
       name: 'Linkedin',
