@@ -14,8 +14,8 @@ function PublicProfile({ data }) {
   const {
     avatar_url: avatarImage,
     bio: description,
-    github_username: githubLink,
-    twitter_username: twitterLink,
+    github_username: githubUsername,
+    twitter_username: twitterUsername,
     linkedin_url: linkedinLink,
     blog: websiteLink,
     portfolio_url: portfolioLink,
@@ -30,12 +30,12 @@ function PublicProfile({ data }) {
     {
       name: 'Github',
       icon: 'github',
-      url: githubLink,
+      url: githubUsername ? `https://github.com/${githubUsername}` : null,
     },
     {
       name: 'Twitter',
       icon: 'twitter',
-      url: twitterLink,
+      url: twitterUsername ? `https://twitter.com/${twitterUsername}` : null,
     },
     {
       name: 'Linkedin',
