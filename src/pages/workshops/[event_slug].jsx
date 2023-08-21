@@ -34,7 +34,7 @@ export const getStaticPaths = async ({ locales }) => {
   const paths = data.filter((ev) => ev?.slug)
     .flatMap((res) => locales.map((locale) => ({
       params: {
-        event_slug: res.slug,
+        event_slug: res?.slug,
       },
       locale,
     })));
