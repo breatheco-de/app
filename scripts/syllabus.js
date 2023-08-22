@@ -12,7 +12,7 @@ async function generateSyllabus() {
   const whiteLableArray = whiteLabelAcademies?.length > 0 ? whiteLabelAcademies.split(',') : [];
 
   if (whiteLableArray?.length > 0) {
-    console.log('White label academy has been set to: ', whiteLabelAcademies);
+    console.log('White label academy has been set to: ', whiteLableArray);
 
     const logoData = await axios.get(`${BREATHECODE_HOST}/v1/admissions/academy/${whiteLableArray[0]}`)
       .then((resp) => resp?.data);
