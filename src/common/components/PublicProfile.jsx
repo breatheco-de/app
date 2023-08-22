@@ -11,19 +11,17 @@ function PublicProfile({ data }) {
   const { featuredColor, hexColor } = useStyle();
 
   const profile = data?.profile;
-  const {
-    bio: description,
-    github_username: githubUsername,
-    twitter_username: twitterUsername,
-    linkedin_url: linkedinLink,
-    blog: websiteLink,
-    portfolio_url: portfolioLink,
-  } = profile;
 
   const firstName = data?.first_name;
   const lastName = data?.last_name;
   const country = data?.country;
   const avatarImage = data?.avatar_url;
+  const description = profile?.bio;
+  const githubUsername = profile?.github_username;
+  const twitterUsername = profile?.twitter_username;
+  const linkedinLink = profile?.linkedin_url;
+  const websiteLink = profile?.blog;
+  const portfolioLink = profile?.portfolio_url;
 
   const fullName = `${firstName} ${lastName}`;
   const socialMedia = [

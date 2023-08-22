@@ -6,6 +6,7 @@ export default function handler(req, res) {
 Allow: /
 Disallow: /static/
 Disallow: /_next/
+Disallow: /*.json$
 Sitemap: https://4geeks.com/sitemap.xml
 Host: https://4geeks.com`);
   }
