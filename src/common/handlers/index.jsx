@@ -163,21 +163,25 @@ const handlers = {
     const educationalStatus = program?.educational_status?.toUpperCase();
     const programCohortStage = program?.cohort?.stage?.toUpperCase();
 
-    const showCohort = ['ENDED'].includes(programCohortStage);
-    // ACTIVE: show be here because the student may not have delivered all the homework
-    const showStudent = ['GRADUATED', 'POSTPONED', 'ACTIVE'].includes(
-      educationalStatus,
-    );
-    return showCohort && showStudent;
+    const hasEnded = ['ENDED'].includes(programCohortStage);
+    const isGraduated = educationalStatus === 'GRADUATED';
+
+    const showStudent = ['GRADUATED', 'POSTPONED', 'ACTIVE'].includes(educationalStatus);
+    const isNotHiddenOnPrework = programCohortStage === 'PREWORK'
+      && program?.cohort?.is_hidden_on_prework === false
+      && hasEnded;
+
+    return (isGraduated || hasEnded || isNotHiddenOnPrework) && showStudent;
   }),
   getActiveCohorts: (cohorts) => cohorts.filter((program) => {
     const educationalStatus = program?.educational_status?.toUpperCase();
     const programRole = program?.role?.toUpperCase();
     const programCohortStage = program?.cohort?.stage?.toUpperCase();
+    const isGraduated = educationalStatus === 'GRADUATED';
 
     const visibleForTeacher = programRole !== 'STUDENT';
 
-    const cohortToIgnore = ![
+    const hasEnded = [
       'ENDED',
     ].includes(programCohortStage);
     const showCohort = [
@@ -186,12 +190,14 @@ const handlers = {
       'FINAL_PROJECT',
     ].includes(programCohortStage);
 
-    const cohortIsAvailable = showCohort && cohortToIgnore;
-    const isNotHiddenOnPrework = programCohortStage === 'PREWORK' && program?.cohort?.is_hidden_on_prework === false;
+    const cohortIsAvailable = showCohort && !hasEnded;
+    const isNotHiddenOnPrework = programCohortStage === 'PREWORK'
+      && program?.cohort?.is_hidden_on_prework === false
+      && !hasEnded;
 
     const showStudent = ['ACTIVE'].includes(educationalStatus) && programRole === 'STUDENT';
 
-    const show = (cohortIsAvailable || isNotHiddenOnPrework) && (visibleForTeacher || showStudent);
+    const show = !isGraduated && (cohortIsAvailable || isNotHiddenOnPrework) && (visibleForTeacher || showStudent);
 
     return show;
   }),

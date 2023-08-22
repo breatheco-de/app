@@ -25,7 +25,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Script from 'next/script';
 import getT from 'next-translate/getT';
-// import styled from 'styled-components';
+import Head from 'next/head';
 import useAuth from '../../../common/hooks/useAuth';
 import Heading from '../../../common/components/Heading';
 import Link from '../../../common/components/NextChakraLink';
@@ -44,9 +44,18 @@ import GridContainer from '../../../common/components/GridContainer';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import useStyle from '../../../common/hooks/useStyle';
+import { parseQuerys } from '../../../utils/url';
+import { cleanObject } from '../../../utils';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&big=true&limit=2000`);
+  const querys = parseQuerys({
+    asset_type: 'EXERCISE',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    limit: 2000,
+  });
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
 
   const paths = data.results.flatMap((res) => locales.map((locale) => ({
@@ -127,6 +136,28 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     },
   ].filter((item) => translations?.[item?.value] !== undefined);
 
+  const eventStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    name: result?.title,
+    description: result?.description,
+    url: `https://4geeks.com/${slug}`,
+    image: `https://4geeks.com/thumbnail?slug=${slug}`,
+    datePublished: result?.published_at,
+    dateModified: result?.updated_at,
+    author: result?.author ? {
+      '@type': 'Person',
+      name: `${result?.author?.first_name} ${result?.author?.last_name}`,
+    } : null,
+    keywords: result?.seo_keywords,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://4geeks.com/${slug}`,
+    },
+  };
+
+  const cleanedStructuredData = cleanObject(eventStructuredData);
+
   return {
     props: {
       seo: {
@@ -146,7 +177,10 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         modifiedTime: result?.updated_at || '',
       },
       fallback: false,
-      exercise: result,
+      exercise: {
+        ...result,
+        structuredData: cleanedStructuredData,
+      },
       translations: translationArray,
       markdown,
     },
@@ -186,6 +220,14 @@ function TabletWithForm({
 
   return (
     <>
+      {exercise?.structuredData?.name && (
+        <Head>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(exercise.structuredData) }}
+          />
+        </Head>
+      )}
       <Box
         px="22px"
         pb="30px"

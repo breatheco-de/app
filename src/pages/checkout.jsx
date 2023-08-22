@@ -147,11 +147,12 @@ function Checkout() {
           const serviceData = isMentorshipType
             ? currentSubscription?.selected_mentorship_service_set
             : currentSubscription?.selected_event_type_set;
-          const serviceSetSlug = isMentorshipType ? mentorshipServiceSetSlug : eventTypeSetSlug;
+
           if (serviceData) {
             bc.payment({
               academy: Number(serviceData?.academy?.id),
-              event_type_set: serviceSetSlug,
+              event_type_set: !isMentorshipType ? eventTypeSetSlug : undefined,
+              mentorship_service_set: isMentorshipType ? mentorshipServiceSetSlug : undefined,
             }).service().getAcademyService()
               .then(async (resp) => {
                 const respData = await resp.json();

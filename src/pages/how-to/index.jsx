@@ -18,6 +18,7 @@ import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
 import { getQueryString } from '../../utils';
+import { parseQuerys } from '../../utils/url';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'how-to');
@@ -26,7 +27,15 @@ export const getStaticProps = async ({ locale, locales }) => {
   const howTos = []; // filtered howTos after removing repeated
   let arrHowTos = []; // incoming howTos
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&visibility=PUBLIC&status=PUBLISHED&limit=2000`);
+  const querys = parseQuerys({
+    asset_type: 'ARTICLE',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    limit: 2000,
+  });
+
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
   // .then((res) => res.json())
   // .catch((err) => console.log(err));
@@ -174,7 +183,6 @@ export default function HowTo({ data, technologyTags, difficulties }) {
 
   return (
     <>
-      <TitleContent title={t('title')} icon="document" color={iconColor} mobile />
       <Box
         display="grid"
         gridTemplateColumns={{
@@ -191,12 +199,15 @@ export default function HowTo({ data, technologyTags, difficulties }) {
           margin="0 auto"
           maxWidth="1280px"
           justifyContent="space-between"
+          flexDirection={{ base: 'column', md: 'row' }}
           flex="1"
-          gridGap="20px"
+          gridGap="10px"
           padding={{ base: '3% 0 4% 0', md: '1.5% 0 1.5% 0' }}
         >
-          <TitleContent title={t('title')} icon="document" color={iconColor} mobile={false} />
+          <TitleContent title={t('title')} icon="book" color={iconColor} margin={{ base: '0 0 10px 0', md: '0' }} />
+
           <Search placeholder={t('search')} />
+
           <Button
             variant="outline"
             backgroundColor={useColorModeValue('', 'gray.800')}

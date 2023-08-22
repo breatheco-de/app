@@ -232,7 +232,7 @@ function Mentorship() {
               <th className="icons-row-head">{t('events')}</th>
               <th className="session-time-head">{t('billed')}</th>
             </tr>
-            {sessions.map((session) => (
+            {sessions?.length > 0 && sessions.map((session) => (
               <tr className="table-rows">
                 <td className="session-date">
                   <Text fontSize="md">
