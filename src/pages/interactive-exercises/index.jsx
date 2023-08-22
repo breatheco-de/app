@@ -29,7 +29,7 @@ export const getStaticProps = async ({ locale, locales }) => {
     asset_type: 'EXERCISE',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
-    academy: process.env.WHITE_LABLE_ACADEMY || '4,5,6,47',
+    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
     limit: 2000,
   });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);

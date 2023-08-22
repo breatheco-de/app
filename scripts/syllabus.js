@@ -6,7 +6,7 @@ require('dotenv').config({
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
-const whiteLableAcademies = process.env.WHITE_LABLE_ACADEMY;
+const whiteLableAcademies = process.env.WHITE_LABEL_ACADEMY;
 
 async function generateSyllabus() {
   const whiteLableArray = whiteLableAcademies?.length > 0 ? whiteLableAcademies.split(',') : [];

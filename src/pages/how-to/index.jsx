@@ -31,7 +31,7 @@ export const getStaticProps = async ({ locale, locales }) => {
     asset_type: 'ARTICLE',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
-    academy: process.env.WHITE_LABLE_ACADEMY || '4,5,6,47',
+    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
     limit: 2000,
   });
 
