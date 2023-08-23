@@ -22,6 +22,7 @@ import MktSideRecommendedCourses from '../../common/components/MktSideRecommende
 import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 import useStyle from '../../common/hooks/useStyle';
 import { parseQuerys } from '../../utils/url';
+import Heading from '../../common/components/Heading';
 
 export const getStaticPaths = async ({ locales }) => {
   const querys = parseQuerys({
@@ -290,6 +291,12 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
 
             </Box>
           </Box>
+          {lesson?.title && (
+            <Heading size="l" as="h1" fontWeight="700" margin="0rem 0 2rem 0">
+              {lesson.title}
+            </Heading>
+          )}
+
           {markdown && !isIpynb ? (
             <Box
               height="100%"
