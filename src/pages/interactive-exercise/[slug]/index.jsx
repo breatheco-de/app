@@ -628,7 +628,7 @@ function Exercise({ exercise, markdown }) {
           {exercise?.title ? (
             <Heading
               as="h1"
-              size="40px"
+              size="l"
               fontWeight="700"
               textTransform="capitalize"
               paddingTop="10px"
