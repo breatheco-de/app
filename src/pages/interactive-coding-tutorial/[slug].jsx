@@ -253,7 +253,7 @@ function ProjectSlug({ project, markdown }) {
             {project?.title ? (
               <Heading
                 as="h1"
-                size="25px"
+                size="l"
                 fontWeight="700"
                 padding="10px 0 35px 0"
                 transition="color 0.2s ease-in-out"
