@@ -21,6 +21,7 @@ import redirectsFromApi from '../../../public/redirects-from-api.json';
 import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 import useStyle from '../../common/hooks/useStyle';
+import Heading from '../../common/components/Heading';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=LESSON,ARTICLE&visibility=PUBLIC&status=PUBLISHED&exclude_category=how-to,como&academy=4,5,6,47&limit=2000`);
@@ -281,6 +282,12 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
 
             </Box>
           </Box>
+          {lesson?.title && (
+            <Heading size="l" as="h1" fontWeight="700" margin="0rem 0 2rem 0">
+              {lesson.title}
+            </Heading>
+          )}
+
           {markdown && !isIpynb ? (
             <Box
               height="100%"
