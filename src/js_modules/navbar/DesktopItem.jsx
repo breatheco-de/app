@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
@@ -40,7 +40,6 @@ display: none;
 
 function DesktopItem({ item, readSyllabus }) {
   const router = useRouter();
-  const [popoverOpen, setPopoverOpen] = useState(false);
   const { borderColor, hexColor } = useStyle();
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
   const popoverBorderColor = useColorModeValue('gray.250', 'gray.dark');
@@ -50,6 +49,8 @@ function DesktopItem({ item, readSyllabus }) {
   const iconColor = hexColor.black;
   const borderSize = useColorModeValue(1, 2);
   const backgroundOfLine = useColorModeValue('gray.300', 'gray.700');
+  const prismicRef = process.env.PRISMIC_REF;
+  const prismicApi = process.env.PRISMIC_API;
 
   const getColorLink = (link) => {
     if (router?.pathname === link || router.asPath === link || router?.pathname.includes(link)) {
@@ -76,6 +77,10 @@ function DesktopItem({ item, readSyllabus }) {
     }
     return l;
   });
+
+  if (item.slug === 'social-and-live-learning' && !prismicRef && !prismicApi) {
+    return null;
+  }
 
   return (
     <StyledBox
@@ -107,7 +112,6 @@ function DesktopItem({ item, readSyllabus }) {
               textDecoration: 'none',
               color: 'blue.default',
             }}
-            onClick={() => setPopoverOpen(!popoverOpen)}
           >
             {item.label}
             {item?.subMenu?.length > 0 && (
@@ -332,6 +336,7 @@ DesktopItem.propTypes = {
     icon: PropTypes.string,
     description: PropTypes.string,
     subMenu: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+    slug: PropTypes.string,
   }).isRequired,
   readSyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };

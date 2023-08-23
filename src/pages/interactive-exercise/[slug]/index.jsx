@@ -15,8 +15,8 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  ListItem,
-  OrderedList,
+  Grid,
+  GridItem,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -25,7 +25,6 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Script from 'next/script';
 import getT from 'next-translate/getT';
-import styled from 'styled-components';
 import Head from 'next/head';
 import useAuth from '../../../common/hooks/useAuth';
 import Heading from '../../../common/components/Heading';
@@ -40,15 +39,23 @@ import validationSchema from '../../../common/components/Forms/validationSchemas
 import { processFormEntry } from '../../../common/components/Forms/actions';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
-import CustomTheme from '../../../../styles/theme';
+// import CustomTheme from '../../../../styles/theme';
 import GridContainer from '../../../common/components/GridContainer';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import useStyle from '../../../common/hooks/useStyle';
+import { parseQuerys } from '../../../utils/url';
 import { cleanObject } from '../../../utils';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&big=true&limit=2000`);
+  const querys = parseQuerys({
+    asset_type: 'EXERCISE',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    limit: 2000,
+  });
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
 
   const paths = data.results.flatMap((res) => locales.map((locale) => ({
@@ -130,7 +137,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   ].filter((item) => translations?.[item?.value] !== undefined);
 
   const eventStructuredData = {
-    '@context': 'http://schema.org',
+    '@context': 'https://schema.org',
     '@type': 'Article',
     name: result?.title,
     description: result?.description,
@@ -200,16 +207,16 @@ function TabletWithForm({
   const [formSended, setFormSended] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [formStatus, setFormStatus] = useState({ status: 'idle', msg: '' });
-  const { backgroundColor } = useStyle();
+  const { backgroundColor, hexColor } = useStyle();
 
-  const UrlInput = styled.input`
-    cursor: pointer;
-    background: none;
-    width: 100%;
-    &:focus {
-      outline: none;
-    }
-  `;
+  // const UrlInput = styled.input`
+  //   cursor: pointer;
+  //   background: none;
+  //   width: 100%;
+  //   &:focus {
+  //     outline: none;
+  //   }
+  // `;
 
   return (
     <>
@@ -257,7 +264,6 @@ function TabletWithForm({
                     } else {
                       setFormStatus({ status: 'thank-you', msg: 'Thank you for your request!' });
                       toast({
-                        position: 'top',
                         title: t('alert-message:request-apply-success'),
                         description: t('alert-message:email-will-be-sent'),
                         status: 'success',
@@ -332,7 +338,7 @@ function TabletWithForm({
                           borderRadius="3px"
                           width="100%"
                           padding="0"
-                          isDisabled={formStatus.status === 'thank-you'}
+                          disabled={formStatus.status === 'thank-you'}
                           whiteSpace="normal"
                           isLoading={isSubmitting}
                           type="submit"
@@ -392,35 +398,12 @@ function TabletWithForm({
                 // color={fontColor}
                 fontSize="14px"
                 alignItems="center"
-                onClick={() => {
-                  if (typeof window !== 'undefined') {
-                    window.open(`https://gitpod.io#${exercise.url}`, '_blank').focus();
-                  }
-                }}
+                onClick={() => setShowModal(true)}
               >
                 {'  '}
-                <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color="currentColor" />
+                <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="learnpack" color="currentColor" />
                 {t('open-gitpod')}
               </Button>
-              <Text
-                color={CustomTheme.colors.blue.default}
-                fontSize="13px"
-                textAlign="center"
-                marginTop="10px"
-              >
-                {t('powered')}
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="https://www.learnpack.co"
-                // color={useColorModeValue('blue.default', 'blue.300')}
-                  display="inline-block"
-                  letterSpacing="0.05em"
-                  fontFamily="Lato, Sans-serif"
-                >
-                  Learnpack
-                </Link>
-              </Text>
               <Button
                 marginTop="20px"
                 borderRadius="3px"
@@ -433,7 +416,11 @@ function TabletWithForm({
                 textTransform="uppercase"
                 borderColor="blue.default"
                 color="blue.default"
-                onClick={() => setShowModal(true)}
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    window.open(exercise.url, '_blank').focus();
+                  }
+                }}
               >
                 {t('clone')}
               </Button>
@@ -441,7 +428,7 @@ function TabletWithForm({
           )}
         <Modal
           isOpen={showModal}
-          size="md"
+          size="xl"
           margin="0 10px"
           onClose={() => {
             setShowModal(false);
@@ -454,21 +441,57 @@ function TabletWithForm({
             </ModalHeader>
             <ModalCloseButton />
             <ModalBody padding={{ base: '30px' }}>
-              <Text marginBottom="15px" fontSize="14px" lineHeight="24px">
+              <Text marginBottom="15px" fontSize="14px" lineHeight="24px" textAlign="center">
                 {t('modal.text-part-one')}
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode"
-                  color={useColorModeValue('blue.default', 'blue.300')}
-                  display="inline-block"
-                  letterSpacing="0.05em"
-                  fontFamily="Lato, Sans-serif"
-                >
-                  Learnpack Plugin
-                </Link>
-                {t('modal.text-part-two')}
               </Text>
+              <Grid templateColumns="repeat(2, 1fr)" gap={2} marginBottom="15px">
+                <GridItem w="100%">
+                  <Button
+                    borderRadius="3px"
+                    width="100%"
+                    fontSize="14px"
+                    padding="0"
+                    whiteSpace="normal"
+                    variant="otuline"
+                    border="1px solid"
+                    borderColor="blue.default"
+                    fontWeight="700"
+                    color="blue.default"
+                    onClick={() => {
+                      if (typeof window !== 'undefined') {
+                        window.open(`https://gitpod.io#${exercise.url}`, '_blank').focus();
+                      }
+                    }}
+                  >
+                    {'  '}
+                    <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color={hexColor.blueDefault} />
+                    Gitpod
+                  </Button>
+                </GridItem>
+                <GridItem w="100%">
+                  <Button
+                    borderRadius="3px"
+                    width="100%"
+                    fontSize="14px"
+                    padding="0"
+                    whiteSpace="normal"
+                    variant="otuline"
+                    border="1px solid"
+                    borderColor="blue.default"
+                    fontWeight="700"
+                    color="blue.default"
+                    onClick={() => {
+                      if (typeof window !== 'undefined') {
+                        window.open(`https://github.com/codespaces/new/?repo=${exercise.url.replace('https://github.com/', '')}`, '_blank').focus();
+                      }
+                    }}
+                  >
+                    {'  '}
+                    <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="github" color={hexColor.blueDefault} />
+                    Github Codespaces
+                  </Button>
+                </GridItem>
+              </Grid>
               <Text
                 // cursor="pointer"
                 id="command-container"
@@ -477,51 +500,36 @@ function TabletWithForm({
                 fontWeight="400"
                 marginBottom="5px"
                 style={{ borderRadius: '5px' }}
+                textAlign="center"
                 fontSize="14px"
                 lineHeight="24px"
               >
-                <UrlInput
-                  id="clone-command"
-                  value={`git clone ${exercise.url}`}
-                  type="text"
-                  readOnly
-                  onClick={(e) => {
-                    e.target.select();
-                    navigator.clipboard.writeText(`git clone ${exercise.url}`);
-                    toast({
-                      position: 'top',
-                      title: t('modal.copy-command'),
-                      status: 'success',
-                      duration: 7000,
-                      isClosable: true,
-                    });
-                  }}
-                />
-              </Text>
-              <Text marginBottom="15px" fontSize="12px" fontWeight="700" lineHeight="24px">
-                {t('modal.note', { folder: exercise?.url ? exercise?.url?.substr(exercise?.url?.lastIndexOf('/') + 1, exercise?.url?.length) : '' })}
-              </Text>
-              <OrderedList>
-                {t('modal.steps', {}, { returnObjects: true }).map((step) => (
-                  <ListItem key={step} fontSize="14px">{step}</ListItem>
-                ))}
-              </OrderedList>
-              <Text display="flex" alignItems="center" marginTop="15px">
-                <Icon width="19px" height="19px" style={{ display: 'inline-block' }} icon="help" />
+                {t('modal.text-part-two')}
                 <Link
-                  href="/how-to/github-clone-repository"
                   target="_blank"
-                  fontSize="15px"
-                  fontWeight="700"
-                  color={useColorModeValue('blue.default', 'blue.300')}
+                  rel="noopener noreferrer"
+                  href="https://4geeks.com/lesson/how-to-use-gitpod"
                   display="inline-block"
                   letterSpacing="0.05em"
                   fontFamily="Lato, Sans-serif"
-                  marginLeft="10px"
+                  color="blue.default"
                 >
-                  {t('how-to-clone')}
+                  Gitpod
+                </Link>
+                {t('modal.or')}
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://4geeks.com/lesson/what-is-github-codespaces"
+                  color="blue.default"
+                  display="inline-block"
+                  letterSpacing="0.05em"
+                  fontFamily="Lato, Sans-serif"
+                >
+                  Github Codespaces
                 </Link>
               </Text>
+
             </ModalBody>
           </ModalContent>
         </Modal>

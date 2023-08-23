@@ -7,6 +7,7 @@ import syllabusList from '../../../public/syllabus.json';
 function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
   const [privateItems, setPrivateItems] = useState([]);
   const readSyllabus = JSON.parse(syllabusList);
+  const syllabusExists = readSyllabus.length > 0;
 
   useEffect(() => {
     if (haveSession) {
@@ -40,7 +41,7 @@ function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
         };
 
         return (
-          <DesktopItem key={publicItem.label} item={data} readSyllabus={readSyllabus} />
+          <DesktopItem key={publicItem.label} item={data} readSyllabus={syllabusExists ? readSyllabus : []} />
         );
       })}
     </Stack>

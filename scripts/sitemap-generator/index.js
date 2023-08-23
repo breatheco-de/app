@@ -27,7 +27,7 @@ async function generateSitemap() {
 
   const prismicPages = await getPrismicPages();
   const readPages = await getReadPages();
-  const lessonsPages = await getAsset('LESSON,ARTICLE&exclude_category=how-to,como&academy=4,5,6,47');
+  const lessonsPages = await getAsset('LESSON,ARTICLE&exclude_category=how-to,como');
 
   const exercisesPages = await getAsset('exercise');
   const projectsPages = await getAsset('project');

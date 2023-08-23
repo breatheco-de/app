@@ -126,6 +126,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
       'storage.googleapis.com',
       'images.prismic.io',
       'images.unsplash.com',
+      'refreshmiami.com',
     ],
     // formats: ['image/avif', 'image/webp'],
   },
@@ -141,5 +142,6 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     LD_CLIENT_ID: process.env.LD_CLIENT_ID,
     PRISMIC_REF: process.env.PRISMIC_REF,
     PRISMIC_API: process.env.PRISMIC_API,
+    WHITE_LABEL_ACADEMY: process.env.WHITE_LABEL_ACADEMY,
   },
 })));
