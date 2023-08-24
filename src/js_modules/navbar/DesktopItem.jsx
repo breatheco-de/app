@@ -70,6 +70,7 @@ function DesktopItem({ item, readSyllabus }) {
   const existsSubMenu = item?.subMenu?.length > 0;
   const withPopover = item?.with_popover?.active;
   const existsItemWithPopover = existsSubMenu || withPopover;
+
   const itemSubMenu = existsSubMenu ? item.subMenu.map((l) => {
     const isLessons = l.slug === 'lessons';
     if (isLessons) {

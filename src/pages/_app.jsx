@@ -15,7 +15,7 @@ import { PrismicPreview } from '@prismicio/next';
 import { repositoryName } from '../../prismicio';
 import wrapper from '../store';
 import CustomTheme from '../../styles/theme';
-import NavbarSession from '../common/components/Navbar';
+import Navbar from '../common/components/Navbar';
 import AuthProvider from '../common/context/AuthContext';
 import ConnectionProvider from '../common/context/ConnectionContext';
 import Footer from '../common/components/Footer';
@@ -36,7 +36,6 @@ import '@fontsource/lato/700.css';
 import '@fontsource/lato/900.css';
 import modifyEnv from '../../modifyEnv';
 import AlertMessage from '../common/components/AlertMessage';
-import WhiteLabelHeader from '../common/components/WhiteLabelHeader';
 
 function InternalLinkComponent(props) {
   return <Link {...props} />;
@@ -73,11 +72,7 @@ function App({ Component, ...rest }) {
             <ConnectionProvider>
 
               <Fragment key="load-on-client-side">
-                {existsWhiteLabel ? (
-                  <WhiteLabelHeader />
-                ) : (
-                  <NavbarSession pageProps={pageProps} translations={pageProps?.translations} />
-                )}
+                <Navbar pageProps={pageProps} translations={pageProps?.translations} />
                 {isEnvModified && (
                   <AlertMessage
                     full

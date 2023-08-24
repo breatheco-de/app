@@ -90,6 +90,11 @@
   ],
   "white-label-version-items": [
     {
+      "label": "Dashboard",
+      "private": true,
+      "href": "{{selectedProgramSlug}}"
+    },
+    {
       "label": "More ways of learning",
       "icon": "4GeeksIcon",
       "image": "/static/images/4geeks.png",
