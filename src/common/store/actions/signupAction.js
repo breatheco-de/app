@@ -179,7 +179,7 @@ const useSignup = () => {
       method: 'PUT',
       headers: new Headers({
         'content-type': 'application/json',
-        Authorization: `Token ${accessToken}`,
+        Authorization: `Token ${cohortData?.token || accessToken}`,
       }),
       body: JSON.stringify(checkingBody),
     })
