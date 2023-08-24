@@ -36,6 +36,7 @@ import '@fontsource/lato/700.css';
 import '@fontsource/lato/900.css';
 import modifyEnv from '../../modifyEnv';
 import AlertMessage from '../common/components/AlertMessage';
+import WhiteLabelHeader from '../common/components/WhiteLabelHeader';
 
 function InternalLinkComponent(props) {
   return <Link {...props} />;
@@ -45,6 +46,8 @@ function App({ Component, ...rest }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { store, props } = wrapper.useWrappedStore(rest);
   const pageProps = props?.pageProps || {};
+  const whiteLabelAcademy = process.env.WHITE_LABEL_ACADEMY;
+  const existsWhiteLabel = typeof whiteLabelAcademy === 'string' && whiteLabelAcademy.length > 0;
 
   const isEnvModified = process.env.VERCEL_ENV !== 'production'
     && BREATHECODE_HOST !== process.env.BREATHECODE_HOST;
@@ -66,7 +69,11 @@ function App({ Component, ...rest }) {
             <ConnectionProvider>
 
               <Fragment key="load-on-client-side">
-                <NavbarSession pageProps={pageProps} translations={pageProps?.translations} />
+                {existsWhiteLabel ? (
+                  <WhiteLabelHeader />
+                ) : (
+                  <NavbarSession pageProps={pageProps} translations={pageProps?.translations} />
+                )}
                 {isEnvModified && (
                   <AlertMessage
                     full

@@ -27,7 +27,7 @@ import LanguageSelector from '../LanguageSelector';
 import { getBrowserSize, isWindow } from '../../../utils';
 import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
-import logloData from '../../../../public/logo.json';
+import logoData from '../../../../public/logo.json';
 // import UpgradeExperience from '../UpgradeExperience';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -125,7 +125,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const queryTokenExists = isWindow && queryToken !== undefined && queryToken;
   const sessionExists = haveSession || queryTokenExists;
   const { width: screenWidth } = getBrowserSize();
-  const isMobile = screenWidth < 768;
+  const isTablet = screenWidth < 996;
 
   useEffect(() => {
     // verify if accessToken exists
@@ -301,7 +301,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
         justifyContent="space-between"
         align="center"
       >
-        {isMobile && (
+        {isTablet && (
           <Flex
             ml={{ base: -2 }}
             display={{ base: 'flex', xl: 'none' }}
@@ -330,10 +330,10 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               aria-label="Toggle Navigation"
             />
             <NextLink href={sessionExists ? programSlug : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
-              {logloData?.logo_url
+              {logoData?.logo_url
                 ? (
                   <Image
-                    src={logloData.logo_url}
+                    src={logoData.logo_url}
                     width={105}
                     height={35}
                     style={{
@@ -341,7 +341,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                       minHeight: '35px',
                       objectFit: 'cover',
                     }}
-                    alt={logloData?.name ? `${logloData.name} logo` : '4Geeks logo'}
+                    alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
                   />
                 )
                 : logo}
@@ -350,14 +350,14 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
         )}
 
         <Flex
-          display={{ base: 'none', xl: 'flex' }}
+          display={{ base: 'none', lg: 'flex' }}
           justify={{ base: 'center', xl: 'start' }}
         >
           <NextLink href={sessionExists ? programSlug : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
-            {logloData?.logo_url
+            {logoData?.logo_url
               ? (
                 <Image
-                  src={logloData.logo_url}
+                  src={logoData.logo_url}
                   width={105}
                   height={35}
                   style={{
@@ -365,7 +365,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                     minHeight: '35px',
                     objectFit: 'cover',
                   }}
-                  alt={logloData?.name ? `${logloData.name} logo` : '4Geeks logo'}
+                  alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
                 />
               )
               : logo}
@@ -390,7 +390,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
             style={{
               margin: 0,
             }}
-            display={isMobile ? 'none' : 'flex'}
+            display={isTablet ? 'none' : 'flex'}
             height="auto"
             _hover={{
               background: commonColors,
