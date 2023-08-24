@@ -25,22 +25,23 @@ import NextChakraLink from './NextChakraLink';
 import Icon from './Icon';
 import AlertMessage from './AlertMessage';
 import CustomTheme from '../../../styles/theme';
+import useStyle from '../hooks/useStyle';
 import bc from '../services/breathecode';
 
 function Footer({ pageProps }) {
   const { t } = useTranslation('footer');
+  const { hexColor } = useStyle();
   const [email, setEmail] = useState('');
   const [formStatus, setFormStatus] = useState('');
   const { colorMode } = useColorMode();
 
   const iconogram = t('iconogram', {}, { returnObjects: true });
-  const iconColor = useColorModeValue('gray.dark', 'white');
 
   const hideDivider = pageProps?.hideDivider === true;
   if (pageProps?.previewMode) return null;
 
   return (
-    <Container as="footer" maxW="none" padding="20px" position="absolute" top="100%">
+    <Container background="none" as="footer" maxW="none" padding="20px" position="absolute" top="100%">
       {!hideDivider && <Divider borderBottomWidth="2px" m="3rem 0 0 0" />}
 
       <Flex
@@ -328,7 +329,7 @@ function Footer({ pageProps }) {
           {Array.isArray(iconogram) && iconogram.map((item) => (
             <Box key={`${item.title}-${item.href}`} width="48%" marginRight="2px" marginBottom="5px">
               <NextChakraLink href={item.href} display="flex" alignItems="center" marginBottom="15px">
-                <Icon color={iconColor} icon={item.icon} style={{ display: 'inline', marginRight: '10px' }} width="40px" height="40px" />
+                <Icon color={hexColor.black} icon={item.icon} style={{ display: 'inline', marginRight: '10px' }} width="40px" height="40px" />
                 <Heading as="h3" fontSize="12px">
                   {item.title.toUpperCase()}
                 </Heading>
