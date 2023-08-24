@@ -1,6 +1,7 @@
 import { useColorModeValue } from '@chakra-ui/react';
 
 const useStyle = () => {
+  const navbarBackground = useColorModeValue('white', 'gray.800');
   const backgroundColor = useColorModeValue('white', 'darkTheme');
   const backgroundColor2 = useColorModeValue('white', 'gray.700');
   const backgroundColor3 = useColorModeValue('gray.light2', 'gray.800');
@@ -66,6 +67,7 @@ const useStyle = () => {
     reverseFontColor,
     tooltipBackground,
     featuredLight,
+    navbarBackground,
   };
 };
 
