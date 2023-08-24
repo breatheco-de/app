@@ -34,7 +34,7 @@ export const getStaticPaths = async ({ locales }) => {
   const paths = data.filter((ev) => ev?.slug)
     .flatMap((res) => locales.map((locale) => ({
       params: {
-        event_slug: res.slug,
+        event_slug: res?.slug,
       },
       locale,
     })));
@@ -258,7 +258,7 @@ function Page({ event }) {
         query: propsToQueryString,
       });
     } else {
-      handleSubscribeToPlan({ slug: '4geeks-standard' })
+      handleSubscribeToPlan({ slug: '4geeks-standard', accessToken })
         .finally(() => {
           getMySubscriptions();
           getCurrentConsumables();
