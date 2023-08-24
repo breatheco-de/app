@@ -41,6 +41,7 @@ function MobileNav({
     }
     return item?.subMenu;
   };
+
   return (
     <Stack
       position="absolute"
@@ -66,6 +67,8 @@ function MobileNav({
         return (
           <MobileItem
             key={label}
+            with_popover={item?.with_popover}
+            image={item?.image}
             description={description}
             icon={icon}
             label={label}

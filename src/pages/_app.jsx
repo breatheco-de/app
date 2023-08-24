@@ -15,7 +15,7 @@ import { PrismicPreview } from '@prismicio/next';
 import { repositoryName } from '../../prismicio';
 import wrapper from '../store';
 import CustomTheme from '../../styles/theme';
-import NavbarSession from '../common/components/Navbar';
+import Navbar from '../common/components/Navbar';
 import AuthProvider from '../common/context/AuthContext';
 import ConnectionProvider from '../common/context/ConnectionContext';
 import Footer from '../common/components/Footer';
@@ -44,7 +44,13 @@ function InternalLinkComponent(props) {
 function App({ Component, ...rest }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { store, props } = wrapper.useWrappedStore(rest);
-  const pageProps = props?.pageProps || {};
+  const whiteLabelAcademy = process.env.WHITE_LABEL_ACADEMY;
+  const existsWhiteLabel = typeof whiteLabelAcademy === 'string' && whiteLabelAcademy.length > 0;
+
+  const pageProps = {
+    ...props?.pageProps,
+    existsWhiteLabel,
+  } || {};
 
   const isEnvModified = process.env.VERCEL_ENV !== 'production'
     && BREATHECODE_HOST !== process.env.BREATHECODE_HOST;
@@ -66,7 +72,7 @@ function App({ Component, ...rest }) {
             <ConnectionProvider>
 
               <Fragment key="load-on-client-side">
-                <NavbarSession pageProps={pageProps} translations={pageProps?.translations} />
+                <Navbar pageProps={pageProps} translations={pageProps?.translations} />
                 {isEnvModified && (
                   <AlertMessage
                     full

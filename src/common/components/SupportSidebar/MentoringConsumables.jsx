@@ -263,7 +263,7 @@ function MentoringConsumables({
             {!mentoryProps?.time ? (
               <>
                 {mentoryProps?.service && (
-                  <Box display="flex" alignItems="center" justifyContent="flex-start" gridGap="10px" background={commonBackground} mt="34px" px="20px" py="15px" textAlign="center" w="100%" borderTopRadius="0.375rem">
+                  <Box display="flex" alignItems="center" justifyContent="flex-start" gridGap="10px" background={commonBackground} mt={currentBalance > 0 ? '22px' : '34px'} px="20px" py="15px" textAlign="center" w="100%" borderTopRadius="0.375rem">
                     <Box>
                       <Icon icon="checked2" width="15px" height="15px" color={hexColor.greenLight} />
                     </Box>
