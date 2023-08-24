@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import {
   Box,
@@ -9,22 +7,17 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Button,
   IconButton,
-  InputLeftElement,
-  useColorMode,
   Divider,
   Heading,
   Link,
-  useColorModeValue,
 } from '@chakra-ui/react';
-import { Search2Icon, CheckIcon } from '@chakra-ui/icons';
+import { CheckIcon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import NextChakraLink from './NextChakraLink';
 import Icon from './Icon';
 import AlertMessage from './AlertMessage';
-import CustomTheme from '../../../styles/theme';
 import useStyle from '../hooks/useStyle';
 import bc from '../services/breathecode';
 
@@ -33,7 +26,6 @@ function Footer({ pageProps }) {
   const { hexColor } = useStyle();
   const [email, setEmail] = useState('');
   const [formStatus, setFormStatus] = useState('');
-  const { colorMode } = useColorMode();
 
   const iconogram = t('iconogram', {}, { returnObjects: true });
 
@@ -63,7 +55,7 @@ function Footer({ pageProps }) {
               <Icon icon="github" width="23px" height="23px" />
             </Link>
             <Link key="youtube" href="https://www.youtube.com/user/alesanchezr" target="_blank" rel="noopener noreferrer">
-              <Icon icon="youtube" width="23px" height="23px" color={colorMode === 'light' ? '#020203' : '#FFFFFF'} />
+              <Icon icon="youtube" width="23px" height="23px" color={hexColor.black} />
             </Link>
           </Flex>
         </Box>
@@ -99,12 +91,10 @@ function Footer({ pageProps }) {
             >
               <Text>{t('subscribe')}</Text>
               <InputGroup
-              // borderColor={colorMode === 'light' ? '#020203' : '#FFFFFF'}
-                color={colorMode === 'light' ? '#020203' : '#FFFFFF'}
+                color={hexColor.black}
               >
                 <Input
                   width="100%"
-                // borderRadius="50px"
                   placeholder="Email"
                   type="email"
                   required
@@ -112,7 +102,7 @@ function Footer({ pageProps }) {
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <InputRightElement
-                  borderColor={colorMode === 'light' ? '#020203' : '#FFFFFF'}
+                  borderColor={hexColor.black}
                 >
                   <IconButton
                     aria-label="Submit form"
@@ -136,23 +126,6 @@ function Footer({ pageProps }) {
               message={t(`newsletter.${formStatus}`)}
             />
           )}
-          {/* SEARCH BAR */}
-          {/* <InputGroup>
-            <InputLeftElement
-              pointerEvents="none"
-              color="gray.300"
-              fontSize="1.2em"
-              // eslint-disable-next-line react/no-children-prop
-              children={<Search2Icon color={colorMode === 'light' ? '#020203' : '#FFFFFF'} />}
-            />
-            <Input
-              borderColor={colorMode === 'light' ? '#020203' : '#FFFFFF'}
-              color={colorMode === 'light' ? '#020203' : '#FFFFFF'}
-              width="100%"
-              borderRadius="50px"
-              placeholder={t('search')}
-            />
-          </InputGroup> */}
         </Box>
       </Flex>
       <Divider borderBottomWidth="2px" />
@@ -361,18 +334,6 @@ function Footer({ pageProps }) {
         </Flex>
       </Flex>
     </Container>
-    // <Box
-    //   height="70px"
-    //   mt="64px"
-    //   px="4%"
-    //   alignItems="center"
-    //   justifyContent="center"
-    //   display="flex"
-    // >
-    //   <Text textAlign="center" py="12px" fontSize="10px">
-    //     {t('copyright')}
-    //   </Text>
-    // </Box>
   );
 }
 
