@@ -74,13 +74,6 @@ function ShowOnSignUp({
     setStorageItem('subscriptionId', data?.id);
 
     if (data?.access_token) {
-      router.push({
-        query: {
-          ...router.query,
-          token: data.access_token,
-        },
-      });
-
       handleSubscribeToPlan({ slug: '4geeks-standard', accessToken: data?.access_token })
         .finally(() => {
           refetchAfterSuccess();
@@ -92,6 +85,12 @@ function ShowOnSignUp({
             state: true,
           });
         });
+      router.push({
+        query: {
+          ...router.query,
+          token: data.access_token,
+        },
+      });
     }
 
     if (typeof resp?.status === 'number' && data?.access_token === null) {
