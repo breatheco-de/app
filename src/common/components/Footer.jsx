@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import {
   Box,
@@ -9,38 +7,33 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Button,
   IconButton,
-  InputLeftElement,
-  useColorMode,
   Divider,
   Heading,
   Link,
-  useColorModeValue,
 } from '@chakra-ui/react';
-import { Search2Icon, CheckIcon } from '@chakra-ui/icons';
+import { CheckIcon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import NextChakraLink from './NextChakraLink';
 import Icon from './Icon';
 import AlertMessage from './AlertMessage';
-import CustomTheme from '../../../styles/theme';
+import useStyle from '../hooks/useStyle';
 import bc from '../services/breathecode';
 
 function Footer({ pageProps }) {
   const { t } = useTranslation('footer');
+  const { hexColor } = useStyle();
   const [email, setEmail] = useState('');
   const [formStatus, setFormStatus] = useState('');
-  const { colorMode } = useColorMode();
 
   const iconogram = t('iconogram', {}, { returnObjects: true });
-  const iconColor = useColorModeValue('gray.dark', 'white');
 
   const hideDivider = pageProps?.hideDivider === true;
   if (pageProps?.previewMode) return null;
 
   return (
-    <Container as="footer" maxW="none" padding="20px" position="absolute" top="100%">
+    <Container background="none" as="footer" maxW="none" padding="20px" position="absolute" top="100%">
       {!hideDivider && <Divider borderBottomWidth="2px" m="3rem 0 0 0" />}
 
       {!pageProps?.existsWhiteLabel && (
@@ -64,7 +57,7 @@ function Footer({ pageProps }) {
                   <Icon icon="github" width="23px" height="23px" />
                 </Link>
                 <Link key="youtube" href="https://www.youtube.com/user/alesanchezr" target="_blank" rel="noopener noreferrer">
-                  <Icon icon="youtube" width="23px" height="23px" color={colorMode === 'light' ? '#020203' : '#FFFFFF'} />
+                  <Icon icon="youtube" width="23px" height="23px" color={hexColor.black} />
                 </Link>
               </Flex>
             </Box>
@@ -100,12 +93,10 @@ function Footer({ pageProps }) {
                 >
                   <Text>{t('subscribe')}</Text>
                   <InputGroup
-                  // borderColor={colorMode === 'light' ? '#020203' : '#FFFFFF'}
-                    color={colorMode === 'light' ? '#020203' : '#FFFFFF'}
+                    color={hexColor.black}
                   >
                     <Input
                       width="100%"
-                    // borderRadius="50px"
                       placeholder="Email"
                       type="email"
                       required
@@ -113,7 +104,7 @@ function Footer({ pageProps }) {
                       onChange={(e) => setEmail(e.target.value)}
                     />
                     <InputRightElement
-                      borderColor={colorMode === 'light' ? '#020203' : '#FFFFFF'}
+                      borderColor={hexColor.black}
                     >
                       <IconButton
                         aria-label="Submit form"
@@ -137,23 +128,6 @@ function Footer({ pageProps }) {
                   message={t(`newsletter.${formStatus}`)}
                 />
               )}
-              {/* SEARCH BAR */}
-              {/* <InputGroup>
-                <InputLeftElement
-                  pointerEvents="none"
-                  color="gray.300"
-                  fontSize="1.2em"
-                  // eslint-disable-next-line react/no-children-prop
-                  children={<Search2Icon color={colorMode === 'light' ? '#020203' : '#FFFFFF'} />}
-                />
-                <Input
-                  borderColor={colorMode === 'light' ? '#020203' : '#FFFFFF'}
-                  color={colorMode === 'light' ? '#020203' : '#FFFFFF'}
-                  width="100%"
-                  borderRadius="50px"
-                  placeholder={t('search')}
-                />
-              </InputGroup> */}
             </Box>
           </Flex>
           <Divider borderBottomWidth="2px" />
@@ -330,7 +304,7 @@ function Footer({ pageProps }) {
               {Array.isArray(iconogram) && iconogram.map((item) => (
                 <Box key={`${item.title}-${item.href}`} width="48%" marginRight="2px" marginBottom="5px">
                   <NextChakraLink href={item.href} display="flex" alignItems="center" marginBottom="15px">
-                    <Icon color={iconColor} icon={item.icon} style={{ display: 'inline', marginRight: '10px' }} width="40px" height="40px" />
+                    <Icon color={hexColor.black} icon={item.icon} style={{ display: 'inline', marginRight: '10px' }} width="40px" height="40px" />
                     <Heading as="h3" fontSize="12px">
                       {item.title.toUpperCase()}
                     </Heading>
@@ -343,7 +317,6 @@ function Footer({ pageProps }) {
           <Divider borderBottomWidth="2px" />
         </>
       )}
-
       <Flex
         key="copyright"
         padding="20px 20px 0 20px"
@@ -365,18 +338,6 @@ function Footer({ pageProps }) {
         </Flex>
       </Flex>
     </Container>
-    // <Box
-    //   height="70px"
-    //   mt="64px"
-    //   px="4%"
-    //   alignItems="center"
-    //   justifyContent="center"
-    //   display="flex"
-    // >
-    //   <Text textAlign="center" py="12px" fontSize="10px">
-    //     {t('copyright')}
-    //   </Text>
-    // </Box>
   );
 }
 

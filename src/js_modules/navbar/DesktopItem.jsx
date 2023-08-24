@@ -27,16 +27,9 @@ const StyledBox = styled(Box)`
   display: none;
   top:50px;
 }
-
-:hover .custom-popover {
-  display: block;
-}
-
 `;
 
-const Triangle = styled(Box)`
-display: none;
-`;
+const Triangle = styled(Box)``;
 
 function DesktopItem({ item, readSyllabus }) {
   const router = useRouter();
@@ -91,16 +84,8 @@ function DesktopItem({ item, readSyllabus }) {
       key={item.label}
       position="relative"
       className="styled-box"
-      css={{
-        '&:hover': {
-          '.custom-popover': {
-            display: 'block',
-          },
-          '.triangle': {
-            display: 'block',
-          },
-        },
-      }}
+      role="group"
+      _groupHover={{ display: 'block' }}
     >
       {existsItemWithPopover ? (
         <>
@@ -139,6 +124,8 @@ function DesktopItem({ item, readSyllabus }) {
             border="1px solid"
             borderColor={popoverBorderColor}
             width="640px"
+            role="group"
+            _groupHover={{ display: 'block' }}
           >
             <div style={{ width: '100%', position: 'absolute', top: '-10px' }}>
               <Triangle
