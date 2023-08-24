@@ -30,7 +30,7 @@ import ScrollTop from '../../../../../common/components/scrollTop';
 import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar';
 import bc from '../../../../../common/services/breathecode';
 import { defaultDataFetch } from '../../../../../js_modules/syllabus/dataFetch';
-import getReadme from '../../../../../js_modules/syllabus/getReadme';
+import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/SyllabusMarkdownComponent';
 import useHandler from '../../../../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../../../../modifyEnv';
 import SimpleModal from '../../../../../common/components/SimpleModal';
@@ -378,18 +378,6 @@ function Content() {
     });
   }, [contextState.cohortProgram, contextState.taskTodo, router]);
 
-  const GetReadme = () => getReadme({
-    ipynbHtmlUrl,
-    readme,
-    currentBlankProps,
-    callToActionProps,
-    currentData,
-    lesson,
-    quizSlug,
-    lessonSlug,
-    currentTask,
-  });
-
   const teacherActions = profesionalRoles.includes(cohortSession.cohort_role)
     ? [
       {
@@ -727,7 +715,7 @@ function Content() {
           )}
 
           <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
-            {currentData?.url && (
+            {currentData?.url && !isQuiz && (
               <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={`${currentData.url}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
                 <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
                 {t('edit-page')}
@@ -771,7 +759,21 @@ function Content() {
                 title="Breathecode Quiz"
               />
             </Box>
-          ) : GetReadme()}
+          ) : (
+            <SyllabusMarkdownComponent
+              {...{
+                ipynbHtmlUrl,
+                readme,
+                currentBlankProps,
+                callToActionProps,
+                currentData,
+                lesson,
+                quizSlug,
+                lessonSlug,
+                currentTask,
+              }}
+            />
+          )}
 
           <Box margin="4rem 0 0 0" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px" alignItems="center" justifyContent="space-between" padding="1.75rem 0 " borderTop="2px solid" borderColor={commonBorderColor} width="100%">
             <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px">

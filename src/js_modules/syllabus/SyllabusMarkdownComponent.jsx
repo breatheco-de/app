@@ -1,12 +1,12 @@
+/* eslint-disable react/prop-types */
 import useTranslation from 'next-translate/useTranslation';
-// import MarkDownParser from '../../common/components/MarkDownParser';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../common/components/Skeleton';
 
-const getReadme = ({
+function SyllabusMarkdownComponent({
   ipynbHtmlUrl, readme, currentBlankProps, callToActionProps, currentData, lesson,
   quizSlug, lessonSlug, currentTask,
-}) => {
+}) {
   const { t } = useTranslation('syllabus');
   const blankText = t('blank-page', { url: currentBlankProps?.url });
 
@@ -45,6 +45,6 @@ const getReadme = ({
     return <MDSkeleton />;
   }
   return false;
-};
+}
 
-export default getReadme;
+export default SyllabusMarkdownComponent;
