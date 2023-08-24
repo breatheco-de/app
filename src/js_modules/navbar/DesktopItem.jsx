@@ -82,13 +82,6 @@ function DesktopItem({ item, readSyllabus }) {
       className="styled-box"
       role="group"
       _groupHover={{ display: 'block' }}
-      // css={{
-      //   '&:hover': {
-      //     '.custom-popover': {
-      //       display: 'block',
-      //     },
-      //   },
-      // }}
     >
       {itemSubMenu ? (
         <>
