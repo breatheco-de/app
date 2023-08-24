@@ -27,7 +27,6 @@ import LanguageSelector from '../LanguageSelector';
 import { getBrowserSize, isWindow } from '../../../utils';
 import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
-import logoData from '../../../../public/logo.json';
 // import UpgradeExperience from '../UpgradeExperience';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -330,21 +329,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               aria-label="Toggle Navigation"
             />
             <NextLink href={sessionExists ? programSlug : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
-              {logoData?.logo_url
-                ? (
-                  <Image
-                    src={logoData.logo_url}
-                    width={105}
-                    height={35}
-                    style={{
-                      maxHeight: '35px',
-                      minHeight: '35px',
-                      objectFit: 'cover',
-                    }}
-                    alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
-                  />
-                )
-                : logo}
+              {logo}
             </NextLink>
           </Flex>
         )}
@@ -354,21 +339,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           justify={{ base: 'center', xl: 'start' }}
         >
           <NextLink href={sessionExists ? programSlug : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
-            {logoData?.logo_url
-              ? (
-                <Image
-                  src={logoData.logo_url}
-                  width={105}
-                  height={35}
-                  style={{
-                    maxHeight: '35px',
-                    minHeight: '35px',
-                    objectFit: 'cover',
-                  }}
-                  alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
-                />
-              )
-              : logo}
+            {logo}
           </NextLink>
 
           <Flex display="flex" ml={10}>

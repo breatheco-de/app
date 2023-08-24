@@ -45,9 +45,13 @@ function InternalLinkComponent(props) {
 function App({ Component, ...rest }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { store, props } = wrapper.useWrappedStore(rest);
-  const pageProps = props?.pageProps || {};
   const whiteLabelAcademy = process.env.WHITE_LABEL_ACADEMY;
   const existsWhiteLabel = typeof whiteLabelAcademy === 'string' && whiteLabelAcademy.length > 0;
+
+  const pageProps = {
+    ...props?.pageProps,
+    existsWhiteLabel,
+  } || {};
 
   const isEnvModified = process.env.VERCEL_ENV !== 'production'
     && BREATHECODE_HOST !== process.env.BREATHECODE_HOST;
