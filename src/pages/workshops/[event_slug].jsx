@@ -258,7 +258,7 @@ function Page({ event }) {
         query: propsToQueryString,
       });
     } else {
-      handleSubscribeToPlan({ slug: '4geeks-standard', accessToken })
+      handleSubscribeToPlan({ slug: '4geeks-standard' })
         .finally(() => {
           getMySubscriptions();
           getCurrentConsumables();
