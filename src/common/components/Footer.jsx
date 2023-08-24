@@ -97,7 +97,6 @@ function Footer({ pageProps }) {
                   >
                     <Input
                       width="100%"
-                    // borderRadius="50px"
                       placeholder="Email"
                       type="email"
                       required
@@ -318,7 +317,6 @@ function Footer({ pageProps }) {
           <Divider borderBottomWidth="2px" />
         </>
       )}
-
       <Flex
         key="copyright"
         padding="20px 20px 0 20px"
