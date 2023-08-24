@@ -25,7 +25,7 @@ import { cleanObject, unSlugifyCapitalize } from '../../../utils/index';
 import useStyle from '../../../common/hooks/useStyle';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&visibility=PUBLIC&status=PUBLISHED&limit=2000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE,LESSON&visibility=PUBLIC&status=PUBLISHED&limit=2000`);
   const data = await resp.json();
   const howToData = data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como');
 

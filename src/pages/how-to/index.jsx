@@ -26,7 +26,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   const howTos = []; // filtered howTos after removing repeated
   let arrHowTos = []; // incoming howTos
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&visibility=PUBLIC&status=PUBLISHED&limit=2000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE,LESSON&visibility=PUBLIC&status=PUBLISHED&limit=2000`);
   const data = await resp.json();
   // .then((res) => res.json())
   // .catch((err) => console.log(err));
