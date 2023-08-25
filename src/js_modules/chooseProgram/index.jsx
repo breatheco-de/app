@@ -45,7 +45,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
       ...item,
       cohort: {
         ...cohort,
-        available_as_saas: item?.role === 'TEACHE' ? false : cohort?.available_as_saas,
+        available_as_saas: item?.role === 'TEACHER' ? false : cohort?.available_as_saas,
       },
       subscription: currentCohortProps?.subscription,
       plan_financing: currentCohortProps?.plan_financing,
