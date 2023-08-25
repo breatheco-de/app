@@ -18,7 +18,7 @@ const publicSyllabus = async () => {
       warn('WARN: Public syllabus Fetch', err.message)
     });
 
-  console.log('Public syllabus is working fine', resp);
+  // console.log('Public syllabus is working fine', resp);
 }
 
 publicSyllabus();
