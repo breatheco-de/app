@@ -21,6 +21,11 @@ const fail = (msg, ...params) => {
   process.exit(1);
 };
 
+const warn = (msg, ...params) => {
+  console.warn(msg, ...params);
+  process.exit(0);
+};
+
 const success = (msg, ...params) => {
   console.log(msg, ...params);
   process.exit(0);
@@ -29,5 +34,6 @@ const success = (msg, ...params) => {
 module.exports = {
   walk,
   fail,
+  warn,
   success,
 };
