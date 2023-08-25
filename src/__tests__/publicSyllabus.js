@@ -15,10 +15,11 @@ const publicSyllabus = async () => {
       return data
     })
     .catch((err) => {
-      fail('ERROR: Public syllabus Fetch', err.message)
+      return []
+      // fail('ERROR: Public syllabus Fetch', err.message)
     });
 
-  console.log('Public syllabus is working fine', resp);
+  // console.log('Public syllabus is working fine', resp);
 }
 
 publicSyllabus();
